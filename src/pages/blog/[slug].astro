@@ -1,28 +1,22 @@
+---
 import { getCollection } from 'astro:content';
+// Removed Markdown import (not exported by Astro)
+import Layout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map(post => ({ params: { slug: post.slug } }));
 }
 
-export async function get({ params }) {
-  const { slug } = params;
-  const posts = await getCollection('blog');
-  const post = posts.find(p => p.slug === slug);
-  return {
-    props: { post },
-  };
-}
-
+const { slug } = Astro.params;
+const posts = await getCollection('blog');
+const post = posts.find(p => p.slug === slug);
 ---
 
-<html>
-  <head>
-    <title>{post.title}</title>
-  </head>
-  <body>
-    <h1>{post.title}</h1>
-    <p>{post.description}</p>
-    <article>{post.body}</article>
-  </body>
-</html>
+<Layout>
+  <h1 class="text-3xl font-bold mb-4">{post.data.title}</h1>
+  <p class="mb-6 text-gray-600 dark:text-gray-400">{post.data.description}</p>
+  <article class="prose dark:prose-invert">
+    <div set:html={post.body} />
+  </article>
+</Layout>

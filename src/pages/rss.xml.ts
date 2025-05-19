@@ -1,9 +1,17 @@
-import rss, { pagesGlobToRssItems } from '@astrojs/rss';
+import rss from '@astrojs/rss';
+import { getCollection } from 'astro:content';
 
-export const GET = () =>
-  rss({
+export async function GET() {
+  const posts = await getCollection('blog');
+  return rss({
     title: 'Blake Oxford Blog',
     description: 'RSS feed for Blake Oxford’s blog',
     site: 'https://blakeoxford.com', // Update to your deployed site URL
-    items: pagesGlobToRssItems(import.meta.glob('./blog/*.mdx')),
+    items: posts.map(post => ({
+      title: post.data.title,
+      description: post.data.description,
+      pubDate: post.data.pubDate,
+      link: `/blog/${post.slug}/`,
+    })),
   });
+}

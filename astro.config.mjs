@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
-import tailwind from '@astrojs/tailwind';
+import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
@@ -8,9 +8,11 @@ import compress from 'astro-compress';
 export default defineConfig({
   adapter: cloudflare(),
   integrations: [
-    tailwind(),
     mdx(),
     sitemap(),
     compress(),
   ],
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });
