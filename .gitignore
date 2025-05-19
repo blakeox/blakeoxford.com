@@ -134,3 +134,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Astro build output
+/dist
+
+# Ignore .DS_Store (macOS)
+.DS_Store
