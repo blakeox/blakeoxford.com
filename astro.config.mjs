@@ -6,6 +6,8 @@ import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
 
 export default defineConfig({
+  envPrefix: 'PUBLIC_',
+  site: 'https://your-domain.com',
   adapter: cloudflare(),
   integrations: [
     mdx(),

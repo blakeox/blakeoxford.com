@@ -1,0 +1,11 @@
+{
+  // Recommended extensions for this workspace
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "stylelint.vscode-stylelint",
+    "astro-build.astro-vscode",
+    "bradlc.vscode-tailwindcss",
+    "DavidAnson.vscode-markdownlint"
+  ]
+}

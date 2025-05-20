@@ -1,0 +1,40 @@
+---
+const colors = [
+  { name: 'Primary', class: 'bg-primary', hex: '#2563eb' },
+  { name: 'Primary Light', class: 'bg-primary-light', hex: '#3b82f6' },
+  { name: 'Primary Dark', class: 'bg-primary-dark', hex: '#1e40af' },
+  { name: 'Secondary', class: 'bg-secondary', hex: '#f59e42' },
+  { name: 'Secondary Light', class: 'bg-secondary-light', hex: '#fbbf24' },
+  { name: 'Secondary Dark', class: 'bg-secondary-dark', hex: '#b45309' },
+  { name: 'Accent', class: 'bg-accent', hex: '#10b981' },
+  { name: 'Accent Light', class: 'bg-accent-light', hex: '#6ee7b7' },
+  { name: 'Accent Dark', class: 'bg-accent-dark', hex: '#047857' },
+  { name: 'Background', class: 'bg-background', hex: '#f9fafb' },
+  { name: 'Background Dark', class: 'bg-background-dark', hex: '#18181b' },
+  { name: 'Foreground', class: 'text-foreground', hex: '#18181b' },
+  { name: 'Foreground Light', class: 'text-foreground-light', hex: '#f9fafb' },
+];
+---
+
+<table class="min-w-full text-sm">
+  <thead>
+    <tr>
+      <th class="text-left p-2">Name</th>
+      <th class="text-left p-2">Swatch</th>
+      <th class="text-left p-2">Class</th>
+      <th class="text-left p-2">Hex</th>
+    </tr>
+  </thead>
+  <tbody>
+    {colors.map(color => (
+      <tr>
+        <td class="p-2">{color.name}</td>
+        <td class="p-2">
+          <span class={`inline-block w-8 h-8 rounded border border-gray-200 ${color.class}`}></span>
+        </td>
+        <td class="p-2 font-mono">{color.class}</td>
+        <td class="p-2 font-mono">{color.hex}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

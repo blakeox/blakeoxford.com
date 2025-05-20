@@ -1,0 +1,42 @@
+{
+  "extends": [
+    "stylelint-config-recommended",
+    "stylelint-config-tailwindcss",
+    "stylelint-config-recess-order"
+  ],
+  "plugins": ["stylelint-order"],
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "tailwind",
+          "apply",
+          "variants",
+          "responsive",
+          "screen",
+          "layer"
+        ]
+      }
+    ],
+    "color-no-hex": true,
+    "declaration-property-value-disallowed-list": {
+      "/color/": [
+        "/#(?:[0-9a-fA-F]{3}){1,2}/"
+      ],
+      "/(margin|padding|gap|width|height|top|left|right|bottom)/": [
+        "/\\d+(px|rem|em)$/"
+      ]
+    }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.scss"],
+      "customSyntax": "postcss-scss"
+    },
+    {
+      "files": ["**/*.astro"],
+      "customSyntax": "postcss-html"
+    }
+  ]
+}

@@ -88,8 +88,17 @@ pnpm build
 
 ### Preview Locally
 
+The Cloudflare adapter doesn’t support `astro preview`. For local development with HMR:
+
 ```bash
-pnpm preview
+pnpm dev
+```
+
+To preview a production build locally, install a static server and serve the `dist/` folder:
+
+```bash
+pnpm build
+npx serve dist/
 ```
 
 ---
@@ -114,6 +123,30 @@ pnpm preview
 - Light/Dark theme toggle with Tailwind
 - Offline support via Service Workers (e.g., Workbox)
 - Webhook or GitHub Action to re-deploy on CMS updates
+
+---
+
+## 📡 RSS Feed
+
+Your blog RSS feed is available at `/rss.xml`. Subscribe here:
+
+```text
+https://blakeoxford.com/rss.xml
+```
+
+---
+
+## ⚙️ Troubleshooting
+
+- **Sessions KV binding**: If you see warnings about `Invalid binding "SESSION"`, create a Cloudflare KV namespace and add a `SESSION` binding in your `wrangler.toml`.
+- **Sitemap integration**: The `@astrojs/sitemap` plugin requires a `site` field in `astro.config.mjs`. For example:
+
+```js
+export default defineConfig({
+  site: 'https://blakeoxford.com',
+  // ...other config
+});
+```
 
 ---
 
