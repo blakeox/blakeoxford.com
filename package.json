@@ -9,7 +9,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint . --ext .js,.ts,.astro,.mdx",
-    "lint:fix": "eslint . --ext .js,.ts,.astro,.mdx --fix"
+    "lint:fix": "eslint . --ext .js,.ts,.astro,.mdx --fix",
+    "lint:css": "stylelint 'src/styles/**/*.css'",
+    "lint:css:fix": "stylelint 'src/styles/**/*.css' --fix"
   },
   "dependencies": {
     "astro": "latest"

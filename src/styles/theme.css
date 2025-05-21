@@ -5,47 +5,41 @@
 */
 
 :root {
+  /* stylelint-disable color-no-hex, declaration-property-value-disallowed-list */
+
   /* ---------- Colors ---------- */
   --color-primary: #2563eb;
   --color-primary-light: #3b82f6;
   --color-primary-dark: #1e40af;
-
   --color-secondary: #f59e42;
   --color-secondary-light: #fbbf24;
   --color-secondary-dark: #b45309;
-
   --color-accent: #10b981;
   --color-accent-light: #6ee7b7;
   --color-accent-dark: #047857;
-
   --color-background: #f9fafb;
   --color-background-dark: #18181b;
-
   --color-foreground: #18181b;
   --color-foreground-light: #f9fafb;
-
   --color-neutral: #64748b;
   --color-neutral-light: #cbd5e1;
   --color-neutral-dark: #334155;
-
   --color-success: #22c55e;
   --color-success-light: #4ade80;
   --color-success-dark: #15803d;
-
   --color-warning: #facc15;
   --color-warning-light: #fde047;
   --color-warning-dark: #a16207;
-
   --color-error: #ef4444;
   --color-error-light: #f87171;
   --color-error-dark: #991b1b;
-
   --color-info: #0ea5e9;
   --color-info-light: #38bdf8;
   --color-info-dark: #0369a1;
+  /* stylelint-enable */
 
-  /* Navbar */
-  --navbar-bg: #ffffff;
+  /* Navbar */
+  --navbar-bg: #fff;
   --navbar-bg-dark: #1f1f1f;
   --navbar-text: #18181b;
   --navbar-text-dark: #f9fafb;
@@ -60,8 +54,7 @@
   /* ---------- Typography ---------- */
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-heading: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'Fira Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-
+  --font-mono: 'Fira Mono', ui-monospace, sfmono-regular, menlo, monospace;
   --fs-xs: 0.75rem;
   --fs-sm: 0.875rem;
   --fs-base: 1rem;
@@ -75,7 +68,6 @@
   --fs-7xl: 4.5rem;
   --fs-8xl: 6rem;
   --fs-9xl: 8rem;
-
   --fw-thin: 100;
   --fw-extralight: 200;
   --fw-light: 300;
@@ -85,14 +77,12 @@
   --fw-bold: 700;
   --fw-extrabold: 800;
   --fw-black: 900;
-
   --ls-tighter: -0.05em;
   --ls-tight: -0.025em;
   --ls-normal: 0em;
   --ls-wide: 0.025em;
   --ls-wider: 0.05em;
   --ls-widest: 0.1em;
-
   --lh-none: 1;
   --lh-tight: 1.25;
   --lh-snug: 1.375;
@@ -108,38 +98,33 @@
   --space-34: 8.5rem;
   --space-38: 9.5rem;
   --space-42: 10.5rem;
-
   --radius-none: 0px;
   --radius-sm: 0.125rem;
-  --radius: 0.25rem;          /* DEFAULT */
+  --radius: 0.25rem; /* DEFAULT */
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
   --radius-full: 9999px;
-
   --border-0: 0px;
   --border-1: 1px;
   --border-2: 2px;
   --border-4: 4px;
   --border-8: 8px;
-
-  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
-  --shadow: 0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px 0 rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0,0,0,0.25);
-  --shadow-inner: inset 0 2px 4px 0 rgba(0,0,0,0.06);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 10px 10px -5px rgb(0 0 0 / 4%);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 25%);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 6%);
   --shadow-none: none;
-
-  --ring-width: 1px;          /* DEFAULT */
+  --ring-width: 1px; /* DEFAULT */
   --ring-width-0: 0px;
   --ring-width-1: 1px;
   --ring-width-2: 2px;
   --ring-width-4: 4px;
-
   --opacity-0: 0;
   --opacity-5: 0.05;
   --opacity-10: 0.1;
@@ -148,7 +133,6 @@
   --opacity-50: 0.5;
   --opacity-75: 0.75;
   --opacity-100: 1;
-
   --z-auto: auto;
   --z-0: 0;
   --z-10: 10;
@@ -175,47 +159,49 @@
 
   /* ---------- Animations ---------- */
   --anim-spin-slow: spin 3s linear infinite;
-  --anim-fade-in: fadeIn 0.5s ease-in forwards;
-  --anim-pulse-slow: pulseSlow 2s cubic-bezier(0.4,0,0.6,1) infinite;
-  --anim-bounce-y: bounceY 1s infinite;
-  --anim-slide-up: slideUp 0.5s cubic-bezier(0.4,0,0.2,1) both;
-  --anim-slide-down: slideDown 0.5s cubic-bezier(0.4,0,0.2,1) both;
-  --anim-slide-left: slideLeft 0.5s cubic-bezier(0.4,0,0.2,1) both;
-  --anim-slide-right: slideRight 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  --anim-fade-in: fadein 0.5s ease-in forwards;
+  --anim-pulse-slow: pulseslow 2s cubic-bezier(0.4,0,0.6,1) infinite;
+  --anim-bounce-y: bouncey 1s infinite;
+  --anim-slide-up: slideup 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  --anim-slide-down: slidedown 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  --anim-slide-left: slideleft 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  --anim-slide-right: slideright 0.5s cubic-bezier(0.4,0,0.2,1) both;
 }
 
 /* Keyframes */
-@keyframes fadeIn {
+@keyframes fadein {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
 
-@keyframes pulseSlow {
-  0%,100% { opacity: 1; }
+@keyframes pulseslow {
+  0% { opacity: 1; }
   50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
-@keyframes bounceY {
-  0%,100% { transform: translateY(0%); animation-timing-function:cubic-bezier(0.8,0,1,1); }
-  50% { transform: translateY(-25%); animation-timing-function:cubic-bezier(0,0,0.2,1); }
+@keyframes bouncey {
+  0% { opacity: 1; transform: translateY(0%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+  50% { opacity: 1; transform: translateY(-25%); animation-timing-function: cubic-bezier(0,0,0.2,1); }
+  100% { opacity: 1; transform: translateY(0%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
 }
 
-@keyframes slideUp {
-  0% { opacity:0; transform: translateY(100%); }
-  100% { opacity:1; transform: translateY(0); }
+@keyframes slideup {
+  0% { opacity: 0; transform: translateY(100%); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideDown {
-  0% { opacity:0; transform: translateY(-100%); }
-  100% { opacity:1; transform: translateY(0); }
+@keyframes slidedown {
+  0% { opacity: 0; transform: translateY(-100%); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideLeft {
-  0% { opacity:0; transform: translateX(100%); }
-  100% { opacity:1; transform: translateX(0); }
+@keyframes slideleft {
+  0% { opacity: 0; transform: translateX(100%); }
+  100% { opacity: 1; transform: translateX(0); }
 }
 
-@keyframes slideRight {
-  0% { opacity:0; transform: translateX(-100%); }
-  100% { opacity:1; transform: translateX(0); }
+@keyframes slideright {
+  0% { opacity: 0; transform: translateX(-100%); }
+  100% { opacity: 1; transform: translateX(0); }
 }

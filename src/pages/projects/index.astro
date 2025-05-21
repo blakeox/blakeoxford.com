@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/BaseLayout.astro';
+
+const projects = (await getCollection('projects')) as any[];
+---
+
+<Layout>
+  <section class="c-projects-list container" role="region" aria-labelledby="projects-title">
+    <h1 id="projects-title" class="c-projects-list__header__title">Projects</h1>
+    <p class="c-projects-list__header__intro">Explore a curated collection of projects showcasing key skills in process automation, finance, and more. Use the filters to narrow your interests.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {projects
+        .filter((p: any) => !p.data.draft)
+        .sort((a: any, b: any) => b.data.date.getTime() - a.data.date.getTime())
+        .map((project: any) => (
+          <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg flex flex-col">
+            <a href={`/projects/${project.slug}/`}>
+              <img
+                src={project.data.image || '/assets/images/default-project.png'}
+                alt={project.data.title}
+                class="mb-4 rounded"
+                loading="lazy"
+              />
+            </a>
+            <h3 class="text-xl font-semibold mb-2">
+              <a href={`/projects/${project.slug}/`} class="hover:underline">
+                {project.data.title}
+              </a>
+            </h3>
+            {project.data.description && (
+              <p class="flex-grow text-gray-700 dark:text-gray-300 mb-4">{project.data.description}</p>
+            )}
+            <a
+              href={`/projects/${project.slug}/`}
+              class="mt-auto inline-block text-accent font-semibold hover:underline"
+              aria-label={`View ${project.data.title}`}
+            >
+              View Project
+            </a>
+          </div>
+        ))}
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,142 @@
+---
+import Layout from '../layouts/BaseLayout.astro';
+const title = "About Me";
+const description = "Learn about Blake Oxford, a visionary leader in IT and business transformation. Explore key skills, career highlights, and connect with Blake.";
+const canonicalUrl = "https://blakeoxford.com/about/";
+---
+
+<Layout title={title} description={description} image="/assets/images/Blake-O-scaled.jpg" url={canonicalUrl}>
+  <section class="about-page container max-w-3xl mx-auto py-12 relative bg-gradient-to-r from-accent/10 to-background overflow-hidden rounded-2xl shadow-xl animate-fade-in">
+    <!-- Decorative background shapes -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+
+    <!-- Avatar -->
+    <div class="flex justify-center mb-8 animate-fade-in">
+      <img src="/assets/images/Blake-O-scaled.jpg" alt="Photo of Blake Oxford in professional attire" class="w-36 h-36 rounded-full shadow-lg border-4 border-accent bg-background" loading="lazy" />
+    </div>
+
+    <h1 class="page-title text-4xl font-heading font-bold text-center mb-6 text-foreground animate-fade-in">About Me</h1>
+
+    <!-- Anchor Navigation -->
+    <nav class="c-anchor-links scroll-animate flex justify-center mb-10" aria-label="Page Sections">
+      <ul class="c-anchor-links__list flex flex-wrap gap-4">
+        <li><a class="c-anchor-links__link px-4 py-2 rounded-lg bg-accent-light text-accent-dark font-medium hover:bg-accent-dark hover:text-accent-light transition" href="#about-summary">Summary</a></li>
+        <li><a class="c-anchor-links__link px-4 py-2 rounded-lg bg-accent-light text-accent-dark font-medium hover:bg-accent-dark hover:text-accent-light transition" href="#about-education">Education</a></li>
+        <li><a class="c-anchor-links__link px-4 py-2 rounded-lg bg-accent-light text-accent-dark font-medium hover:bg-accent-dark hover:text-accent-light transition" href="#about-skills">Key Skills</a></li>
+        <li><a class="c-anchor-links__link px-4 py-2 rounded-lg bg-accent-light text-accent-dark font-medium hover:bg-accent-dark hover:text-accent-light transition" href="#about-timeline">Career Highlights</a></li>
+        <li><a class="c-anchor-links__link px-4 py-2 rounded-lg bg-accent-light text-accent-dark font-medium hover:bg-accent-dark hover:text-accent-light transition" href="#about-social">Connect</a></li>
+      </ul>
+    </nav>
+
+    <!-- Professional Summary -->
+    <section class="about-section scroll-animate mb-12 animate-slide-up" id="about-summary">
+      <h2 class="text-2xl font-heading font-bold mb-4 text-accent-dark animate-fade-in">Professional Summary</h2>
+      <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">I am a visionary leader with a proven track record of scaling organizations, optimizing financial systems, and leveraging technology to streamline operations and maximize business outcomes.</p>
+      <div class="c-key-achievements scroll-animate bg-accent-light/40 rounded-lg p-6 mb-2 animate-fade-in">
+        <h3 class="c-key-achievements__heading text-xl font-semibold mb-3 text-accent-dark">Key Achievements</h3>
+        <ul class="c-key-achievements__list space-y-2">
+          <li class="c-key-achievements__list__item flex items-start gap-2"><span>🚀</span><span><strong>Self-taught Revenue Cycle Management:</strong> Led end-to-end AdvancedMD practice management system implementation by devouring every industry book, podcast, and help file—then authored SOPs and trained the entire team.</span></li>
+          <li class="c-key-achievements__list__item flex items-start gap-2"><span>📊</span><span><strong>Data-Driven Continuous Improvement:</strong> Built SQL &amp; Power BI analytics and automated auditing tools that surfaced operational bottlenecks and drove targeted, measurable performance gains.</span></li>
+          <li class="c-key-achievements__list__item flex items-start gap-2"><span>💰</span><span><strong>Multi-Million-Dollar Cost Savings:</strong> Delivered substantial savings through process automation using Azure, Power BI, OpenAI integrations, and enterprise system consolidations.</span></li>
+          <li class="c-key-achievements__list__item flex items-start gap-2"><span>☁️</span><span><strong>Enterprise SaaS Rollouts:</strong> Orchestrated company-wide deployments of Sage Intacct, Azure/Intune, ADP Workforce Now, Cornerstone LMS, and custom OpenAI workflows for 180+ users.</span></li>
+          <li class="c-key-achievements__list__item flex items-start gap-2"><span>⚡</span><span><strong>Rapid Cloud Migration:</strong> Migrated 180 staff from Google Workspace to Microsoft 365 at the start of COVID-19, ensuring zero disruption to business continuity.</span></li>
+          <li class="c-key-achievements__list__item flex items-start gap-2"><span>📈</span><span><strong>Advanced Financial Forecasting:</strong> Designed real-time Power BI dashboards and predictive models that empowered leadership to make data-backed decisions on departmental investments and restructures.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section class="about-section scroll-animate mb-12 animate-slide-up" id="about-education">
+      <h2 class="text-2xl font-heading font-bold mb-4 text-accent-dark animate-fade-in">Education</h2>
+      <p class="text-lg text-gray-700 dark:text-gray-300">Bachelor in Business Finance, Calvin College</p>
+    </section>
+
+    <!-- Skills -->
+    <section class="about-section scroll-animate mb-12 animate-slide-up" id="about-skills">
+      <h2 class="text-2xl font-heading font-bold mb-4 text-accent-dark animate-fade-in">Key Skills</h2>
+      <ul class="tag-list flex flex-wrap gap-3">
+        <li class="tag bg-accent-light text-accent-dark px-4 py-2 rounded-lg font-medium">Enterprise Systems (AdvancedMD, Sage Intacct, ADP)</li>
+        <li class="tag bg-accent-light text-accent-dark px-4 py-2 rounded-lg font-medium">AI &amp; Business Process Automation</li>
+        <li class="tag bg-accent-light text-accent-dark px-4 py-2 rounded-lg font-medium">IT Infrastructure &amp; Azure Cloud</li>
+        <li class="tag bg-accent-light text-accent-dark px-4 py-2 rounded-lg font-medium">SQL, Power BI, Python</li>
+        <li class="tag bg-accent-light text-accent-dark px-4 py-2 rounded-lg font-medium">Financial Reporting &amp; Forecasting</li>
+        <li class="tag bg-accent-light text-accent-dark px-4 py-2 rounded-lg font-medium">Team Leadership &amp; Strategy</li>
+      </ul>
+    </section>
+
+    <!-- Career Timeline -->
+    <section class="about-section timeline scroll-animate mb-12 animate-slide-up" id="about-timeline" tabindex="0">
+      <h2 class="text-2xl font-heading font-bold mb-4 text-accent-dark animate-fade-in">Career Highlights</h2>
+      <div class="relative">
+        <div class="hidden md:block absolute -top-8 right-0 text-sm text-accent-dark animate-fade-in z-10">
+          <span class="inline-flex items-center gap-1"><svg class="w-4 h-4 animate-bounce-x" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg> Scroll horizontally</span>
+        </div>
+        <div class="overflow-x-auto flex space-x-8 py-4 px-2 scrollbar-thin scrollbar-thumb-accent/60 scrollbar-track-transparent snap-x snap-mandatory" role="list" aria-label="Timeline">
+          <div class="flex-none w-80 bg-background dark:bg-background-dark rounded-lg p-6 shadow snap-center animate-fade-in" data-year="2024">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="timeline-icon text-2xl" aria-label="2024 icon">🏆</span>
+              <span class="text-lg font-bold text-accent-dark">2024</span>
+            </div>
+            <ul class="list-disc list-inside ml-4 text-base space-y-1">
+              <li>Launched enterprise-wide OpenAI workflow automations.</li>
+              <li>Oversaw successful Azure/Intune rollout for 180+ users.</li>
+            </ul>
+          </div>
+          <div class="flex-none w-80 bg-background dark:bg-background-dark rounded-lg p-6 shadow snap-center animate-fade-in" data-year="2022">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="timeline-icon text-2xl" aria-label="2022 icon">☁️</span>
+              <span class="text-lg font-bold text-accent-dark">2022</span>
+            </div>
+            <ul class="list-disc list-inside ml-4 text-base space-y-1">
+              <li>Led Google Workspace to Microsoft 365 migration for 180 staff.</li>
+              <li>Implemented Sage Intacct and ADP Workforce Now.</li>
+            </ul>
+          </div>
+          <div class="flex-none w-80 bg-background dark:bg-background-dark rounded-lg p-6 shadow snap-center animate-fade-in" data-year="2020">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="timeline-icon text-2xl" aria-label="2020 icon">💡</span>
+              <span class="text-lg font-bold text-accent-dark">2020</span>
+            </div>
+            <ul class="list-disc list-inside ml-4 text-base space-y-1">
+              <li>Developed Power BI dashboards for real-time financial forecasting.</li>
+              <li>Authored SOPs and trained team on AdvancedMD RCM.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <ul class="timeline-dots flex gap-2 justify-center mt-6 md:hidden" aria-label="Timeline navigation">
+        <span class="visually-hidden">Timeline progress</span>
+        <li class="w-3 h-3 rounded-full bg-accent-dark opacity-80"></li>
+        <li class="w-3 h-3 rounded-full bg-accent-light opacity-60"></li>
+        <li class="w-3 h-3 rounded-full bg-accent-light opacity-60"></li>
+      </ul>
+    </section>
+
+    <!-- Resume Summary -->
+    <section class="about-section resume-summary scroll-animate mb-12 animate-slide-up">
+      <h2 class="text-2xl font-heading font-bold mb-4 text-accent-dark animate-fade-in">Resume Highlights</h2>
+      <ul class="list-disc list-inside ml-4 space-y-2">
+        <li><strong>Practice Management &amp; RCM:</strong> End-to-end AdvancedMD implementation, SOP creation, team training.</li>
+        <li><strong>Automation &amp; Savings:</strong> Multi-million-dollar overhead reduction via Azure, Power BI, and OpenAI-driven workflows.</li>
+        <li><strong>Cloud &amp; SaaS:</strong> Google Workspace → Microsoft 365 migration for 180 users; Sage Intacct; Azure/Intune; ADP; Cornerstone LMS.</li>
+        <li><strong>Data Analytics:</strong> Real-time SQL/Power BI dashboards &amp; predictive financial models for C-suite decision support.</li>
+      </ul>
+    </section>
+
+    <!-- CTAs -->
+    <section class="about-cta-section scroll-animate flex flex-col items-center gap-4 animate-fade-in">
+      <a href="/contact/" class="c-btn bg-accent text-background font-bold px-6 py-3 rounded shadow hover:bg-accent-dark transition-all duration-200 flex items-center gap-2" aria-label="Contact Blake">🚀 Ready to scale your business? Let’s talk!</a>
+      <a href="/assets/files/BlakeOxford_Resume.pdf" class="c-btn c-btn--secondary bg-accent-light text-accent-dark font-semibold px-6 py-3 rounded shadow hover:bg-accent-dark hover:text-accent-light transition-all duration-200" aria-label="Download Resume">📄 Download Resume</a>
+    </section>
+
+    <!-- Connect -->
+    <section id="about-social" class="about-section scroll-animate mt-12 animate-slide-up">
+      <h2 class="text-2xl font-heading font-bold mb-4 text-accent-dark animate-fade-in">Connect</h2>
+      <ul class="social-links flex gap-6 justify-center">
+        <li><a href="https://linkedin.com/in/blake-oxford" aria-label="LinkedIn" class="text-accent-dark hover:text-accent transition-colors text-xl font-semibold">LinkedIn</a></li>
+        <li><a href="https://github.com/blakeox" aria-label="GitHub" class="text-accent-dark hover:text-accent transition-colors text-xl font-semibold">GitHub</a></li>
+      </ul>
+    </section>
+  </section>
+</Layout>

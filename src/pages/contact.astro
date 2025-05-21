@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/BaseLayout.astro';
+const title = "Contact Me";
+const description = "Get in touch with Blake Oxford for collaboration, inquiries, or just to say hello!";
+const canonicalUrl = "https://blakeoxford.com/contact/";
+---
+
+<Layout title={title} description={description} url={canonicalUrl}>
+  <section class="c-contact-page container max-w-2xl mx-auto py-12 relative bg-gradient-to-r from-accent/20 to-transparent overflow-hidden">
+    <!-- Decorative background shapes -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+
+    <!-- Avatar -->
+    <div class="flex justify-center mb-6 animate-fade-in">
+      <img src="/assets/images/Blake-O-scaled.jpg" alt="Blake Oxford" class="w-32 h-32 rounded-full shadow-lg" loading="lazy" />
+    </div>
+
+    <h1 class="c-contact-page__title text-4xl font-bold mb-2 text-center fade-in">{title}</h1>
+    <p class="text-lg text-center mb-4 text-gray-700 dark:text-gray-300 fade-in">Let's connect! Whether you want to collaborate, have a question, or just want to say hello, I'm always happy to chat.</p>
+    <p class="text-sm text-center text-gray-500 mb-8">I usually reply within 24 hours.</p>
+
+    <!-- Contact Information -->
+    <div class="c-contact-page__info scroll-animate flex flex-col md:flex-row items-center justify-center gap-8 mb-12">
+      <div class="flex flex-col items-center gap-2">
+        <span class="text-accent text-2xl">✉️</span>
+        <a href="mailto:blakepoxford@outlook.com" aria-label="Email Blake Oxford" data-analytics="contact-email" class="font-medium text-primary hover:text-accent transition-colors">blakepoxford@outlook.com</a>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <span class="text-accent text-2xl">📞</span>
+        <a href="tel:2482024479" aria-label="Call Blake Oxford" data-analytics="contact-phone" class="font-medium text-primary hover:text-accent transition-colors">248-202-4479</a>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <span class="text-accent text-2xl">💼</span>
+        <a href="https://linkedin.com/in/blake-oxford" target="_blank" rel="noopener" aria-label="Visit Blake Oxford’s LinkedIn profile" data-analytics="contact-linkedin" class="font-medium text-primary hover:text-accent transition-colors">linkedin.com/in/blake-oxford</a>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <h2 class="c-contact-page__subtitle text-2xl font-semibold text-center mb-4 scroll-animate">Or Send Me a Message</h2>
+    <!-- Form status message -->
+    <div id="form-status" aria-live="polite" class="hidden text-center text-green-600 font-semibold mb-4"></div>
+    <div class="c-contact-page__form-container scroll-animate bg-white dark:bg-gray-900 rounded-xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30 animate-slide-up">
+      <form name="contact" method="POST" action="?success=true" data-netlify="true" netlify-honeypot="bot-field" class="space-y-6">
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="hidden">
+          <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
+        </p>
+        <div class="flex flex-col gap-2">
+          <label for="name" class="font-semibold text-lg">Name</label>
+          <input type="text" id="name" name="name" required class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white transition-colors duration-200" placeholder="Your Name" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="email" class="font-semibold text-lg">Email</label>
+          <input type="email" id="email" name="email" required class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white transition-colors duration-200" placeholder="you@email.com" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="message" class="font-semibold text-lg">Message</label>
+          <textarea id="message" name="message" rows="5" required class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white transition-colors duration-200" placeholder="How can I help you? Let's build something great together!"></textarea>
+        </div>
+        <button type="submit" class="c-btn bg-accent text-background font-bold px-6 py-3 rounded shadow hover:bg-accent-dark transition-all duration-200 flex items-center gap-2 mx-auto focus:ring-4 focus:ring-accent/50">🚀 Send Message</button>
+      </form>
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Alternatively, you can <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAANAAReUJElUQ0hGTkZSRkdSSUpPU1RHVDg2MlpYTkg3VC4u" target="_blank" rel="noopener" class="underline text-accent hover:text-accent-dark">use my Microsoft Form</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Success & Confetti Script -->
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('success') === 'true') {
+        const status = document.getElementById('form-status');
+        status.textContent = 'Thank you for your message! 🎉';
+        status.classList.remove('hidden');
+        // launch confetti
+        import('https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js').then(module => {
+          module.default({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        });
+      }
+    });
+  </script>
+</Layout>

@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map(project => ({ params: { slug: project.slug } }));
+}
+
+const { slug } = Astro.params;
+const projects = await getCollection('projects');
+const project = projects.find(p => p.slug === slug);
+if (!project) {
+  throw new Error(`Project not found: ${slug}`);
+}
+
+const { title, description, date, image, tags, link } = project.data;
+const formattedDate = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+const canonicalUrl = `https://blakeoxford.com/projects/${slug}/`;
+---
+
+<Layout title={title} description={description} image={image || '/assets/images/default-project.png'} url={canonicalUrl}>
+  <article class="c-project-detail container">
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="Breadcrumb" class="breadcrumb text-sm mb-4">
+      <a href="/" class="hover:underline">Home</a> / <a href="/projects/" class="hover:underline">Projects</a> / <span aria-current="page">{title}</span>
+    </nav>
+
+    <h1 class="c-project-detail__title text-3xl font-bold mb-4">{title}</h1>
+
+    {image && (
+      <div class="c-project-detail__image-wrapper mb-6">
+        <img src={image} alt={title} class="c-project-detail__image mx-auto" loading="lazy" />
+      </div>
+    )}
+
+    {description && <p class="c-project-detail__overview mb-4">{description}</p>}
+
+    <p class="mb-4"><strong>Date:</strong> {formattedDate}</p>
+
+    {link && (
+      <p class="mb-6">
+        <a href={link} target="_blank" rel="noopener noreferrer" class="c-btn" aria-label={`Visit ${title}`}>
+          View Project
+        </a>
+      </p>
+    )}
+
+    <div class="c-project-detail__body prose prose-lg dark:prose-invert mb-8">
+      <div set:html={project.body} />
+    </div>
+
+    {tags && tags.length > 0 && (
+      <p class="mb-8">
+        <strong>Tags:</strong>
+        <ul class="c-tag-list list-inline mt-2">
+          {tags.map(tag => (
+            <li class="c-tag-list__item inline-block mr-2" key={tag}>
+              <a href={`/projects/?filter=${tag.toLowerCase().replace(/ /g, '-')}`} class="c-btn c-btn--secondary" aria-label={`Filter projects by ${tag}`}>{tag}</a>
+            </li>
+          ))}
+        </ul>
+      </p>
+    )}
+
+    <div class="c-project-detail__navigation text-center mt-8">
+      <a href="/projects/" class="c-btn c-btn--secondary" aria-label="Back to Projects">Back to Projects</a>
+    </div>
+  </article>
+</Layout>
