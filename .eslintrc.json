@@ -27,7 +27,7 @@
   "rules": {
     "semi": ["error", "always"],
     "quotes": ["error", "single"],
-    "@typescript-eslint/no-unused-vars": ["warn"],
+    "@typescript-eslint/no-unused-vars": ["warn", { "args": "after-used", "ignoreRestSiblings": true }],
     "@typescript-eslint/explicit-module-boundary-types": "off"
   },
   "overrides": [

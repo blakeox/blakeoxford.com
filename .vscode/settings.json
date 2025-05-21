@@ -2,13 +2,11 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.stylelint": true,
-    "source.fixAll.eslint": true
+    "source.fixAll": "explicit"
   },
   "stylelint.validate": [
     "css",
-    "scss",
-    "astro"
+    "scss"
   ],
   "files.exclude": {
     "**/.DS_Store": true,

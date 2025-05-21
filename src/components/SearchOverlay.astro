@@ -1,0 +1,134 @@
+---
+// SearchOverlay.astro component
+---
+
+<div id="search-overlay" class="fixed inset-0 bg-background/95 dark:bg-backgroundDark/95 z-[1100] hidden flex-col items-center pt-24 overflow-y-auto backdrop-blur transition-all duration-300">
+  <div class="w-full max-w-xl mx-auto px-4">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-heading font-medium text-foreground dark:text-foregroundDark">
+        Search
+      </h2>
+      <button 
+        id="close-search" 
+        class="text-foreground dark:text-foregroundDark p-2 rounded-md hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent transition-colors duration-200"
+        aria-label="Close search"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div class="relative mb-8">
+      <input
+        id="search-input"
+        type="text"
+        placeholder="Search for content..."
+        class="w-full px-4 py-3 text-foreground dark:text-foregroundDark bg-background dark:bg-backgroundDark border border-border dark:border-borderDark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors duration-200"
+        aria-label="Search"
+      />
+      <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-foreground dark:text-foregroundDark opacity-50 text-sm">Press '/' to focus</span>
+    </div>
+    
+    <div id="search-results" class="space-y-4">
+      <!-- Search results will be inserted here -->
+      <div class="text-center text-foreground/60 dark:text-foregroundDark/60 py-8">
+        Start typing to search...
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add search overlay functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchToggle = document.getElementById('search-toggle');
+    const searchOverlay = document.getElementById('search-overlay');
+    const closeSearch = document.getElementById('close-search');
+    const searchInput = document.getElementById('search-input');
+    
+    if (!searchToggle || !searchOverlay || !closeSearch || !searchInput) {
+      console.warn('Search elements not found. Search functionality cannot be initialized.');
+      return;
+    }
+    
+    // Toggle search overlay
+    searchToggle.addEventListener('click', () => {
+      searchOverlay.classList.toggle('hidden');
+      searchOverlay.classList.toggle('flex');
+      
+      if (!searchOverlay.classList.contains('hidden')) {
+        // Focus search input when overlay is shown
+        searchInput.focus();
+        
+        // Prevent body scrolling
+        document.body.style.overflow = 'hidden';
+      } else {
+        // Restore body scrolling
+        document.body.style.overflow = '';
+      }
+    });
+    
+    // Close search overlay
+    closeSearch.addEventListener('click', () => {
+      searchOverlay.classList.add('hidden');
+      searchOverlay.classList.remove('flex');
+      document.body.style.overflow = '';
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !searchOverlay.classList.contains('hidden')) {
+        searchOverlay.classList.add('hidden');
+        searchOverlay.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+    });
+    
+    // Simple search implementation
+    searchInput.addEventListener('input', debounce(performSearch, 300));
+    
+    function performSearch() {
+      const query = searchInput.value.toLowerCase();
+      const resultsContainer = document.getElementById('search-results');
+      
+      if (!resultsContainer) return;
+      
+      // Clear previous results
+      resultsContainer.innerHTML = '';
+      
+      // Show loading state
+      if (query.length > 0) {
+        resultsContainer.innerHTML = '<div class="text-center py-4">Searching...</div>';
+        
+        // You would normally fetch results from an API here
+        // For now, we'll just use a timeout to simulate an API call
+        setTimeout(() => {
+          // This is a placeholder. In a real implementation, you would:
+          // 1. Fetch search results from your backend/API
+          // 2. Process the results and create HTML elements
+          // 3. Append them to the results container
+          
+          resultsContainer.innerHTML = query.length 
+            ? `<div class="text-center py-4">Search results for "${query}" would appear here.</div>` 
+            : '<div class="text-center py-4">Start typing to search...</div>';
+        }, 500);
+      } else {
+        resultsContainer.innerHTML = '<div class="text-center py-4">Start typing to search...</div>';
+      }
+    }
+    
+    // Debounce function to limit API calls
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          func.apply(context, args);
+        }, wait);
+      };
+    }
+  });
+</script>

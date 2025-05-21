@@ -50,4 +50,17 @@ export const colors = {
     light: '#38bdf8',
     dark: '#0369a1',
   },
+  navbar: {
+    background: '#ffffff',
+    backgroundDark: '#1f1f1f',
+    text: '#18181b',
+    textDark: '#f9fafb',
+    hoverBackground: '#f1f5f9',
+    hoverBackgroundDark: '#2a2a2a',
+    activeBackground: '#eff6ff',
+    activeBackgroundDark: '#27272a',
+    activeText: '#2563eb',
+    border: '#e2e8f0',
+    borderDark: '#3f3f46',
+  },
 };

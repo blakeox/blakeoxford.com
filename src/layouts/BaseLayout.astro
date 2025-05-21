@@ -8,6 +8,19 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Prevent flash of unstyled content -->
+    <script is:inline>
+      // Check for dark mode preference at the browser level
+      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      // Check for theme stored in local storage
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme === 'dark' || (!storedTheme && prefersDarkMode)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
     <!-- Favicon and touch icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
@@ -52,6 +65,8 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
     <!-- <script src="/assets/js/image-lazyload.js" defer></script> -->
     <!-- <script src="/assets/js/search-overlay.js" defer></script> -->
     <!-- <script src="/assets/js/search-enhancements.js" defer></script> -->
+    <!-- Theme debugger script - REMOVE IN PRODUCTION -->
+    <script src="/assets/js/theme-debugger.js"></script>
   </head>
   <body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
     <Header />

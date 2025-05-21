@@ -1,3 +1,4 @@
+import type { Config } from 'tailwindcss';
 import { colors } from './src/tokens/colors';
 import { fontFamily } from './src/tokens/fontFamily';
 import { fontSize } from './src/tokens/fontSize';
@@ -22,15 +23,14 @@ import { ringWidth } from './src/tokens/ringWidth';
 import { transitionDuration } from './src/tokens/transitionDuration';
 import { transitionDelay } from './src/tokens/transitionDelay';
 
-export default {
+const config: Config = {
   content: ['./src/**/*.{astro,html,js,jsx,ts,tsx,md,mdx}'],
   darkMode: 'class',
-  safelist: [
-    // Add only token-based classes you want to guarantee are always available (optional, for dynamic classes)
-    // Example: 'bg-primary', 'text-accent', 'rounded-lg', ...
-  ],
   theme: {
-    colors,
+    colors: {
+      ...colors,
+      navbar: colors.navbar,
+    },
     fontFamily,
     fontSize,
     fontWeight,
@@ -61,16 +61,6 @@ export default {
     require('@tailwindcss/line-clamp'),
     require('@tailwindcss/container-queries'),
   ],
-  corePlugins: {
-    preflight: true,
-    // Disable unused utilities for stricter enforcement (examples below)
-    float: false,
-    clear: false,
-    objectFit: false,
-    objectPosition: false,
-    overscrollBehavior: false,
-    resize: false,
-    userSelect: false,
-    // Add more as needed to lock down the utility set
-  },
 };
+
+export default config;
