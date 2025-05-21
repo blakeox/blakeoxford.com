@@ -1,19 +1,26 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
+import CoinFlipImage from '../components/CoinFlipImage.astro';
 const title = "About Me";
 const description = "Learn about Blake Oxford, a visionary leader in IT and business transformation. Explore key skills, career highlights, and connect with Blake.";
 const canonicalUrl = "https://blakeoxford.com/about/";
 ---
 
 <Layout title={title} description={description} image="/assets/images/Blake-O-scaled.jpg" url={canonicalUrl}>
-  <section class="about-page container max-w-3xl mx-auto py-12 relative bg-gradient-to-r from-accent/10 to-background overflow-hidden rounded-2xl shadow-xl animate-fade-in">
+  <section class="about-page w-full max-w-none px-0 py-12 relative bg-gradient-to-r from-accent/10 to-background overflow-hidden rounded-none shadow-none animate-fade-in">
     <!-- Decorative background shapes -->
     <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
     <!-- Avatar -->
     <div class="flex justify-center mb-8 animate-fade-in">
-      <img src="/assets/images/Blake-O-scaled.jpg" alt="Photo of Blake Oxford in professional attire" class="w-36 h-36 rounded-full shadow-lg border-4 border-accent bg-background" loading="lazy" />
+      <CoinFlipImage 
+        frontSrc="/assets/images/Blake-O-scaled.jpg" 
+        backSrc="/assets/images/china-profile-picture.jpg" 
+        alt="Photo of Blake Oxford in professional attire" 
+        size={144} 
+        flipMultipleTimes={true}
+      />
     </div>
 
     <h1 class="page-title text-4xl font-heading font-bold text-center mb-6 text-foreground animate-fade-in">About Me</h1>
@@ -68,40 +75,47 @@ const canonicalUrl = "https://blakeoxford.com/about/";
     <!-- Career Timeline -->
     <section class="about-section timeline scroll-animate mb-12 animate-slide-up" id="about-timeline" tabindex="0">
       <h2 class="text-2xl font-heading font-bold mb-4 text-accent-dark animate-fade-in">Career Highlights</h2>
-      <div class="relative">
-        <div class="hidden md:block absolute -top-8 right-0 text-sm text-accent-dark animate-fade-in z-10">
-          <span class="inline-flex items-center gap-1"><svg class="w-4 h-4 animate-bounce-x" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg> Scroll horizontally</span>
-        </div>
-        <div class="overflow-x-auto flex space-x-8 py-4 px-2 scrollbar-thin scrollbar-thumb-accent/60 scrollbar-track-transparent snap-x snap-mandatory" role="list" aria-label="Timeline">
-          <div class="flex-none w-80 bg-background dark:bg-background-dark rounded-lg p-6 shadow snap-center animate-fade-in" data-year="2024">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="timeline-icon text-2xl" aria-label="2024 icon">🏆</span>
-              <span class="text-lg font-bold text-accent-dark">2024</span>
+      <div class="relative flex flex-col md:flex-row items-start md:items-stretch gap-0 md:gap-8">
+        <!-- Vertical timeline line for desktop, horizontal for mobile -->
+        <div class="hidden md:block absolute left-1/2 top-0 h-full w-1 bg-gradient-to-b from-accent/40 to-accent/10 rounded-full z-0" style="transform: translateX(-50%);"></div>
+        <div class="md:hidden absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-accent/40 to-accent/10 rounded-full z-0" style="transform: translateY(-50%);"></div>
+        <div class="flex flex-col md:flex-row w-full z-10">
+          <!-- Timeline items -->
+          <div class="timeline-item flex md:flex-col items-center md:items-start md:w-1/3 mb-8 md:mb-0 relative group animate-fade-in">
+            <div class="timeline-dot w-8 h-8 flex items-center justify-center rounded-full bg-accent text-white text-2xl font-bold shadow-lg border-4 border-white dark:border-background z-10 group-hover:scale-110 transition-transform duration-200">🏆</div>
+            <div class="timeline-content ml-4 md:ml-0 md:mt-4 bg-background dark:bg-background-dark rounded-lg p-6 shadow animate-fade-in w-full">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg font-bold text-accent-dark">2024</span>
+              </div>
+              <ul class="list-disc list-inside ml-4 text-base space-y-1">
+                <li>Launched enterprise-wide OpenAI workflow automations.</li>
+                <li>Oversaw successful Azure/Intune rollout for 180+ users.</li>
+              </ul>
             </div>
-            <ul class="list-disc list-inside ml-4 text-base space-y-1">
-              <li>Launched enterprise-wide OpenAI workflow automations.</li>
-              <li>Oversaw successful Azure/Intune rollout for 180+ users.</li>
-            </ul>
           </div>
-          <div class="flex-none w-80 bg-background dark:bg-background-dark rounded-lg p-6 shadow snap-center animate-fade-in" data-year="2022">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="timeline-icon text-2xl" aria-label="2022 icon">☁️</span>
-              <span class="text-lg font-bold text-accent-dark">2022</span>
+          <div class="timeline-item flex md:flex-col items-center md:items-start md:w-1/3 mb-8 md:mb-0 relative group animate-fade-in">
+            <div class="timeline-dot w-8 h-8 flex items-center justify-center rounded-full bg-accent text-white text-2xl font-bold shadow-lg border-4 border-white dark:border-background z-10 group-hover:scale-110 transition-transform duration-200">☁️</div>
+            <div class="timeline-content ml-4 md:ml-0 md:mt-4 bg-background dark:bg-background-dark rounded-lg p-6 shadow animate-fade-in w-full">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg font-bold text-accent-dark">2022</span>
+              </div>
+              <ul class="list-disc list-inside ml-4 text-base space-y-1">
+                <li>Led Google Workspace to Microsoft 365 migration for 180 staff.</li>
+                <li>Implemented Sage Intacct and ADP Workforce Now.</li>
+              </ul>
             </div>
-            <ul class="list-disc list-inside ml-4 text-base space-y-1">
-              <li>Led Google Workspace to Microsoft 365 migration for 180 staff.</li>
-              <li>Implemented Sage Intacct and ADP Workforce Now.</li>
-            </ul>
           </div>
-          <div class="flex-none w-80 bg-background dark:bg-background-dark rounded-lg p-6 shadow snap-center animate-fade-in" data-year="2020">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="timeline-icon text-2xl" aria-label="2020 icon">💡</span>
-              <span class="text-lg font-bold text-accent-dark">2020</span>
+          <div class="timeline-item flex md:flex-col items-center md:items-start md:w-1/3 mb-8 md:mb-0 relative group animate-fade-in">
+            <div class="timeline-dot w-8 h-8 flex items-center justify-center rounded-full bg-accent text-white text-2xl font-bold shadow-lg border-4 border-white dark:border-background z-10 group-hover:scale-110 transition-transform duration-200">💡</div>
+            <div class="timeline-content ml-4 md:ml-0 md:mt-4 bg-background dark:bg-background-dark rounded-lg p-6 shadow animate-fade-in w-full">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg font-bold text-accent-dark">2020</span>
+              </div>
+              <ul class="list-disc list-inside ml-4 text-base space-y-1">
+                <li>Developed Power BI dashboards for real-time financial forecasting.</li>
+                <li>Authored SOPs and trained team on AdvancedMD RCM.</li>
+              </ul>
             </div>
-            <ul class="list-disc list-inside ml-4 text-base space-y-1">
-              <li>Developed Power BI dashboards for real-time financial forecasting.</li>
-              <li>Authored SOPs and trained team on AdvancedMD RCM.</li>
-            </ul>
           </div>
         </div>
       </div>
@@ -139,4 +153,23 @@ const canonicalUrl = "https://blakeoxford.com/about/";
       </ul>
     </section>
   </section>
+  <style>
+.timeline-item {
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.timeline-item:hover .timeline-dot {
+  box-shadow: 0 8px 24px 0 rgba(0,0,0,0.18);
+  transform: scale(1.15) rotate(-6deg);
+}
+.timeline-dot {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.timeline-content {
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.timeline-content:hover {
+  background: var(--color-accent-light, #f3f4f6);
+  box-shadow: 0 6px 24px 0 rgba(0,0,0,0.10);
+}
+</style>
 </Layout>

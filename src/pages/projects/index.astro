@@ -6,25 +6,28 @@ const projects = (await getCollection('projects')) as any[];
 ---
 
 <Layout>
-  <section class="c-projects-list container" role="region" aria-labelledby="projects-title">
-    <h1 id="projects-title" class="c-projects-list__header__title">Projects</h1>
-    <p class="c-projects-list__header__intro">Explore a curated collection of projects showcasing key skills in process automation, finance, and more. Use the filters to narrow your interests.</p>
+  <section class="c-projects-list w-full max-w-none px-0 py-12 relative bg-gradient-to-r from-accent/10 to-background overflow-hidden rounded-none shadow-none animate-fade-in" role="region" aria-labelledby="projects-title">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+    <h1 id="projects-title" class="text-4xl font-bold mb-4 text-accent-dark text-center animate-fade-in">Projects</h1>
+    <p class="text-lg text-center mb-8 text-gray-700 dark:text-gray-300 animate-fade-in">Explore a curated collection of projects showcasing key skills in process automation, finance, and more. Use the filters to narrow your interests.</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid projects-masonry grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"
+         style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: stretch;">
       {projects
         .filter((p: any) => !p.data.draft)
         .sort((a: any, b: any) => b.data.date.getTime() - a.data.date.getTime())
         .map((project: any) => (
-          <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg flex flex-col">
-            <a href={`/projects/${project.slug}/`}>
+          <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-xl flex flex-col group hover:scale-[1.03] hover:shadow-2xl transition-all duration-200 animate-slide-up">
+            <a href={`/projects/${project.slug}/`} class="block mb-4 rounded-xl overflow-hidden">
               <img
                 src={project.data.image || '/assets/images/default-project.png'}
                 alt={project.data.title}
-                class="mb-4 rounded"
+                class="rounded-xl group-hover:scale-105 transition-transform duration-200"
                 loading="lazy"
               />
             </a>
-            <h3 class="text-xl font-semibold mb-2">
+            <h3 class="text-xl font-bold mb-2 text-accent-dark flex items-center gap-2">
               <a href={`/projects/${project.slug}/`} class="hover:underline">
                 {project.data.title}
               </a>
@@ -34,7 +37,7 @@ const projects = (await getCollection('projects')) as any[];
             )}
             <a
               href={`/projects/${project.slug}/`}
-              class="mt-auto inline-block text-accent font-semibold hover:underline"
+              class="mt-auto inline-block c-btn bg-accent text-background font-semibold px-5 py-2 rounded shadow hover:bg-accent-dark transition-all duration-200"
               aria-label={`View ${project.data.title}`}
             >
               View Project
@@ -44,3 +47,27 @@ const projects = (await getCollection('projects')) as any[];
     </div>
   </section>
 </Layout>
+
+<style>
+.projects-masonry {
+  /* Masonry layout for modern browsers */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+@media (min-width: 640px) {
+  .projects-masonry {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .projects-masonry {
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  }
+}
+@supports (grid-template-rows: masonry) {
+  .projects-masonry {
+    grid-template-rows: masonry;
+  }
+}
+</style>

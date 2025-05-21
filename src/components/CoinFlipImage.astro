@@ -1,0 +1,52 @@
+---
+// CoinFlipImage.astro
+// Props: frontSrc, backSrc, alt, size (optional), flipMultipleTimes (optional)
+const { frontSrc, backSrc, alt = '', size = 144, flipMultipleTimes = false } = Astro.props;
+---
+<div class="coin-flip" style={`width:${size}px;height:${size}px;`} tabindex="0" aria-label="Flippable coin image">
+  <div class={"coin-flip-inner" + (flipMultipleTimes ? " coin-flip-multi" : "") }>
+    <img src={frontSrc} alt={alt} class="coin-flip-front" loading="lazy" draggable="false" />
+    <img src={backSrc} alt={alt} class="coin-flip-back" loading="lazy" draggable="false" />
+  </div>
+</div>
+
+<style>
+.coin-flip {
+  perspective: 1000px;
+  display: inline-block;
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  overflow: hidden;
+  cursor: pointer;
+}
+.coin-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+  transform-style: preserve-3d;
+}
+.coin-flip-inner.coin-flip-multi {
+  transition: transform 1.4s cubic-bezier(0.4,0,0.2,1);
+}
+.coin-flip:hover .coin-flip-inner,
+.coin-flip:focus .coin-flip-inner {
+  transform: rotateY(180deg);
+}
+.coin-flip:hover .coin-flip-inner.coin-flip-multi,
+.coin-flip:focus .coin-flip-inner.coin-flip-multi {
+  transform: rotateY(900deg); /* 2.5 full spins (360*2.5) */
+}
+.coin-flip-front, .coin-flip-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  backface-visibility: hidden;
+  border-radius: 50%;
+  top: 0; left: 0;
+}
+.coin-flip-back {
+  transform: rotateY(180deg);
+}
+</style>
