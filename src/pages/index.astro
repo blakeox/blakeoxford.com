@@ -18,19 +18,35 @@ const featuredProjects = projects
 
   <main id="main-content" aria-label="Main Content" tabindex="-1" class="space-y-20">
     <!-- Hero Section -->
-    <section class="c-hero bg-gradient-to-br from-accent/10 to-background dark:from-accent/20 dark:to-gray-900 py-20 rounded-2xl shadow-xl animate-fade-in">
-      <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 px-4">
-        <img src="/assets/images/Blake-O-scaled.jpg" alt="Blake Oxford" class="w-56 h-56 rounded-full object-cover shadow-2xl border-4 border-accent animate-fade-in" loading="lazy" />
-        <div class="flex-1 animate-slide-up">
-          <h1 class="text-5xl font-extrabold mb-4 text-accent-dark">Welcome to My Portfolio</h1>
-          <p class="text-xl mb-6 text-gray-700 dark:text-gray-200">Hi, I'm <strong>Blake Oxford</strong> — a leader in IT and business transformation. I bridge the gap between technology and strategy to drive efficiency, scale operations, and empower teams. Explore my work, insights, and let’s connect!</p>
-          <a href="/about/" class="inline-block bg-accent text-background font-semibold px-8 py-3 rounded-lg shadow hover:bg-accent-dark transition-all duration-200 text-lg" data-analytics="hero-cta">Learn More About Me</a>
+    <section class="c-hero w-screen min-h-[90vh] flex flex-col justify-start relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-gradient-to-br from-accent/10 to-background dark:from-accent/20 dark:to-gray-900 py-2 md:py-4 rounded-2xl shadow-xl animate-fade-in"
+      role="banner" aria-label="Site introduction and welcome">
+      <div class="flex flex-col items-center gap-6 md:gap-10 px-2 sm:px-4 w-full max-w-none">
+        <img src="/assets/images/Blake-O-scaled.jpg" alt="Blake Oxford" class="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-full object-cover shadow-2xl border-4 border-accent animate-fade-in animate-bounce-y mb-2 md:mb-4" loading="lazy" />
+        <div class="animate-slide-up text-center flex flex-col justify-center">
+          <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2 md:mb-3 text-accent-dark animate-fade-in">Welcome to My Portfolio</h1>
+          <p class="text-base sm:text-lg md:text-lg mb-3 md:mb-4 text-gray-700 dark:text-gray-200">
+            Hi, I'm <span class="font-bold text-accent text-lg md:text-xl">Blake Oxford</span> — a leader in IT and business transformation. I bridge the gap between technology and strategy to drive efficiency, scale operations, and empower teams. Explore my work, insights, and let’s connect!
+          </p>
+          <a href="/about/" class="mx-auto inline-flex items-center justify-center bg-accent text-background font-semibold px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg shadow hover:bg-accent-dark transition-all duration-200 text-sm sm:text-base animate-fade-in" data-analytics="hero-cta">Learn More About Me</a>
         </div>
       </div>
+      {/* Decorative SVG wave divider */}
+      <div aria-hidden="true" class="absolute left-0 right-0 bottom-0 w-full overflow-hidden pointer-events-none" style="line-height:0">
+        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 md:h-20 lg:h-24">
+          <path fill="currentColor" fill-opacity="0.08" d="M0,32 C360,80 1080,0 1440,48 L1440,80 L0,80 Z" />
+        </svg>
+      </div>
+      {/* Scroll Down Indicator */}
+      <button type="button" class="absolute left-1/2 -translate-x-1/2 bottom-4 flex flex-col items-center animate-bounce-y z-10 focus:outline-none" aria-label="Scroll down" onclick="document.getElementById('featured-projects').scrollIntoView({ behavior: 'smooth', block: 'start' })">
+        <span class="text-sm text-accent-dark mb-1">Scroll Down</span>
+        <svg class="w-6 h-6 text-accent-dark" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
     </section>
 
     <!-- Featured Projects Section -->
-    <section class="c-featured-projects container mx-auto px-4" aria-labelledby="featured-projects">
+    <section id="featured-projects" class="c-featured-projects container mx-auto px-4" aria-labelledby="featured-projects">
       <h2 id="featured-projects" class="text-3xl font-bold mb-8 text-accent-dark animate-fade-in">Featured Projects</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {featuredProjects.map((project: any) => (

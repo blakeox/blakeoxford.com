@@ -17,10 +17,10 @@
   --color-accent: #10b981;
   --color-accent-light: #6ee7b7;
   --color-accent-dark: #047857;
-  --color-background: #f9fafb;
-  --color-background-dark: #18181b;
   --color-foreground: #18181b;
   --color-foreground-light: #f9fafb;
+  --color-background: #f9fafb;
+  --color-background-dark: #18181b;
   --color-neutral: #64748b;
   --color-neutral-light: #cbd5e1;
   --color-neutral-dark: #334155;
@@ -36,11 +36,74 @@
   --color-info: #0ea5e9;
   --color-info-light: #38bdf8;
   --color-info-dark: #0369a1;
+  /* ---------- Surfaces & Overlays ---------- */
+  --color-surface: #fff;                /* Card & sheet background (light)   */
+  --color-surface-subtle: #f3f4f6;         /* Subtle surface (light)            */
+  --color-surface-dark: #1f1f1f;           /* Card & sheet background (dark)    */
+  --color-surface-dark-subtle: #27272a;    /* Subtle surface (dark)             */
+
+  /* Shadow chroma – referenced by all shadow tokens for theme switching */
+  --shadow-chroma-light: 0 0 0 / 0.08;
+  --shadow-chroma-dark: 0 0 0 / 0.60;
+  /* ---------- Gradients ---------- */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
+  --gradient-accent:  linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent) 50%, var(--color-accent-dark) 100%);
+
+  /* ---------- Overlays ---------- */
+  --overlay-10: rgba(0, 0, 0, 0.10);
+  --overlay-20: rgba(0, 0, 0, 0.20);
+  --overlay-40: rgba(0, 0, 0, 0.40);
+
+  /* ---------- Focus ---------- */
+  --focus-ring-color: var(--color-primary);
+  --focus-ring: 0 0 0 2px var(--focus-ring-color);
+
+  /* ---------- Text Selection ---------- */
+  --selection-bg: var(--color-primary-light);
+  --selection-bg-dark: var(--color-primary-dark);
+  --selection-text: #fff;
+
+  /* ---------- Motion ---------- */
+  --duration-fast: 150ms;
+  --duration: 250ms;          /* DEFAULT */
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);          /* Material‑like */
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);          /* Dramatic */
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+  /* ---------- Blur & Glass ---------- */
+  --blur-sm: 4px;
+  --blur: 8px;              /* DEFAULT */
+  --blur-lg: 16px;
+  --glass-surface-bg: rgba(255,255,255,0.65);
+  --glass-surface-bg-dark: rgba(32,32,32,0.55);
+  --glass-border: 1px solid rgba(255,255,255,0.25);
+  --glass-border-dark: 1px solid rgba(255,255,255,0.08);
+
+  /* ---------- Elevation Semantic ---------- */
+  --elevation-1: var(--shadow-sm);
+  --elevation-2: var(--shadow);
+  --elevation-3: var(--shadow-md);
+  --elevation-4: var(--shadow-lg);
+  --elevation-5: var(--shadow-xl);
+
+  /* ---------- Container Max‑Widths ---------- */
+  --container-sm: 40rem;   /* ~640px */
+  --container-md: 48rem;   /* ~768px */
+  --container-lg: 64rem;   /* ~1024px */
+  --container-xl: 80rem;   /* ~1280px */
+  --container-2xl: 96rem;  /* ~1536px */
+
+  /* ---------- Utility Colors ---------- */
+  --color-backdrop: rgba(0,0,0,0.6);
+  --color-backdrop-light: rgba(255,255,255,0.6);
+
   /* stylelint-enable */
 
   /* Navbar */
   --navbar-bg: #fff;
-  --navbar-bg-dark: #1f1f1f;
+  --navbar-bg-dark: #1a1a1e;
   --navbar-text: #18181b;
   --navbar-text-dark: #f9fafb;
   --navbar-hover-bg: #f1f5f9;
@@ -112,15 +175,15 @@
   --border-2: 2px;
   --border-4: 4px;
   --border-8: 8px;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 10px 10px -5px rgb(0 0 0 / 4%);
-  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 25%);
-  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 6%);
+  --shadow-sm: 0 1px 2px 0 rgb(var(--shadow-chroma-light));
+  --shadow: 0 1px 3px 0 rgb(var(--shadow-chroma-light)), 0 1px 2px 0 rgb(var(--shadow-chroma-light));
+  --shadow-md: 0 4px 6px -1px rgb(var(--shadow-chroma-light)), 0 2px 4px -1px rgb(var(--shadow-chroma-light));
+  --shadow-lg: 0 10px 15px -3px rgb(var(--shadow-chroma-light)), 0 4px 6px -2px rgb(var(--shadow-chroma-light));
+  --shadow-xl: 0 20px 25px -5px rgb(var(--shadow-chroma-light)), 0 10px 10px -5px rgb(var(--shadow-chroma-light));
+  --shadow-2xl: 0 25px 50px -12px rgb(var(--shadow-chroma-light));
+  --shadow-inner: inset 0 2px 4px 0 rgb(var(--shadow-chroma-light));
   --shadow-none: none;
-  --ring-width: 1px; /* DEFAULT */
+  --ring-width: 2px; /* DEFAULT – better accessibility */
   --ring-width-0: 0px;
   --ring-width-1: 1px;
   --ring-width-2: 2px;
@@ -166,6 +229,8 @@
   --anim-slide-down: slidedown 0.5s cubic-bezier(0.4,0,0.2,1) both;
   --anim-slide-left: slideleft 0.5s cubic-bezier(0.4,0,0.2,1) both;
   --anim-slide-right: slideright 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  --anim-shimmer: shimmer 1.25s linear infinite;
+  --anim-wiggle: wiggle 600ms var(--ease-emphasized) infinite;
 }
 
 /* Keyframes */
@@ -204,4 +269,45 @@
 @keyframes slideright {
   0% { opacity: 0; transform: translateX(-100%); }
   100% { opacity: 1; transform: translateX(0); }
+}
+
+/* Shimmer highlights (for loading skeletons) */
+@keyframes shimmer {
+  0%   { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Wiggle (subtle attention‑grab) */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50%      { transform: rotate(2deg); }
+}
+
+/* ---------- Global Selection Styles ---------- */
+::selection {
+  color: var(--selection-text);
+  text-shadow: none;
+  background: var(--selection-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background: var(--selection-bg-dark);
+  }
+}
+/* ---------- Dark‑mode variable overrides ---------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Activate dark shadow chroma */
+    --shadow-chroma-light: var(--shadow-chroma-dark);
+
+    /* Surfaces & navigation */
+    --navbar-bg: var(--color-surface-dark);
+    --navbar-hover-bg: var(--color-surface-dark-subtle);
+    --navbar-border: #3f3f46;
+
+    /* Glass surfaces in dark */
+    --glass-surface-bg: var(--glass-surface-bg-dark);
+    --glass-border: var(--glass-border-dark);
+  }
 }
