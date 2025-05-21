@@ -1,7 +1,64 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
 ---
-<Layout>
-  <h1 class="text-4xl font-bold mb-4">Welcome to Blake Oxford's Portfolio</h1>
-  <p>This is a blazing-fast, modern portfolio built with Astro and Tailwind CSS, deployed on Cloudflare Pages.</p>
+<Layout title="Welcome to My Portfolio" description="Explore my projects, blog posts, and get in touch with me.">
+  <!-- Skip to main content for accessibility -->
+  <a href="#main-content" class="sr-only focus:not-sr-only absolute top-4 left-4 bg-accent text-background font-semibold px-4 py-2 rounded transition">Skip to main content</a>
+
+  <main id="main-content" aria-label="Main Content" tabindex="-1" class="space-y-16">
+    <!-- Hero Section -->
+    <section class="c-hero bg-gray-100 dark:bg-gray-800 py-16">
+      <div class="container mx-auto flex flex-col md:flex-row items-center gap-8 px-4">
+        <img src="/assets/images/Blake-O-scaled.jpg" alt="Blake Oxford" class="w-48 h-48 rounded-full object-cover shadow-lg" loading="lazy" />
+        <div>
+          <h1 class="text-5xl font-bold mb-4">Welcome to My Portfolio</h1>
+          <p class="text-lg mb-6">Hi, I'm <strong>Blake Oxford</strong>, a leader in IT and business transformation. I specialize in bridging the gap between technology and strategy to drive efficiency and scale operations.</p>
+          <a href="/about/" class="inline-block bg-accent text-background font-semibold px-6 py-3 rounded transition hover:bg-accent/90" data-analytics="hero-cta">Learn More About Me</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Projects Section -->
+    <section class="c-featured-projects container mx-auto px-4" aria-labelledby="featured-projects">
+      <h2 id="featured-projects" class="text-3xl font-semibold mb-6">Featured Projects</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Example Project Card -->
+        <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg flex flex-col">
+          <img src="/assets/images/default-project.png" alt="Default placeholder image for a project" class="mb-4 rounded" loading="lazy" />
+          <h3 class="text-xl font-semibold mb-2"><a href="#" class="hover:underline">Project Title</a></h3>
+          <p class="flex-grow text-gray-700 dark:text-gray-300 mb-4">Project description goes here.</p>
+          <a href="#" class="mt-auto inline-block text-accent font-semibold hover:underline">View Project</a>
+        </div>
+        <!-- More project cards... -->
+      </div>
+      <div class="mt-6 text-center">
+        <a href="/projects/" class="border border-accent text-accent font-semibold px-5 py-2 rounded hover:bg-accent hover:text-background transition">View My Projects</a>
+      </div>
+    </section>
+
+    <!-- Latest Blog Posts Section -->
+    <section class="c-latest-blog-posts container mx-auto px-4" aria-labelledby="latest-blog-posts">
+      <h2 id="latest-blog-posts" class="text-3xl font-semibold mb-6">Latest Blog Posts</h2>
+      <ul class="space-y-4">
+        <!-- Example Blog Item -->
+        <li>
+          <a href="#" class="block p-4 bg-white dark:bg-gray-900 rounded-lg shadow transition hover:shadow-md">
+            <h3 class="text-xl font-semibold">Blog Post Title</h3>
+            <time class="text-sm text-gray-500 dark:text-gray-400">May 21, 2025</time>
+          </a>
+        </li>
+        <!-- More blog items... -->
+      </ul>
+      <div class="mt-6 text-center">
+        <a href="/blog/" class="bg-accent text-background font-semibold px-5 py-2 rounded hover:bg-accent/90 transition">View All Blog Posts</a>
+      </div>
+    </section>
+
+    <!-- Call-to-Action Section -->
+    <section class="call-to-action container mx-auto px-4 text-center py-16">
+      <h2 class="text-3xl font-semibold mb-4">Want to Work Together?</h2>
+      <p class="text-lg mb-6">I'm always open to exciting new opportunities and collaborations. Let's create something amazing together!</p>
+      <a href="/contact/" class="bg-accent text-background font-semibold px-6 py-3 rounded hover:bg-accent/90 transition">Contact Me</a>
+    </section>
+  </main>
 </Layout>

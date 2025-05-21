@@ -8,5 +8,6 @@ export default defineConfig({
       reporter: ['text', 'html'],
     },
     include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+    exclude: ['node_modules', 'dist'],
   },
 });

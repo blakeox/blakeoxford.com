@@ -1,4 +1,9 @@
 /* src/styles/global.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+/* Import Tailwind’s base styles and utilities */
+@import "tailwindcss";
+
+/* Import your consolidated design tokens as a theme */
+@import "./theme.css";
+
+

@@ -1,9 +1,9 @@
 import { defineConfig } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
-import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   envPrefix: 'PUBLIC_',
