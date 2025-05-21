@@ -46,10 +46,10 @@
     // Apply emergency fix if needed
     if (state.isDark) {
       document.querySelectorAll('.hidden.dark\\:block').forEach(el => {
-        (el as HTMLElement).style.display = 'block';
+        el.style.display = 'block';
       });
       document.querySelectorAll('.block.dark\\:hidden').forEach(el => {
-        (el as HTMLElement).style.display = 'none';
+        el.style.display = 'none';
       });
     }
     
