@@ -75,8 +75,8 @@ function createNavLink(link, isMobile = false) {
   
   // Different styling for mobile vs desktop navigation
   a.className = isMobile
-    ? 'block text-foreground font-medium hover:text-accent focus:text-accent transition-colors duration-200 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-accent focus:bg-accent/10 aria-[current=page]:font-bold aria-[current=page]:text-accent'
-    : 'text-navbar-text dark:text-navbar-textDark font-medium hover:bg-navbar-hoverBackground dark:hover:bg-navbar-hoverBackgroundDark transition-all duration-200 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark aria-[current=page]:font-bold aria-[current=page]:text-navbar-activeText';
+    ? 'nav-link block text-foreground dark:text-foreground-light font-medium hover:text-accent focus:text-accent transition-colors duration-200 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-accent focus:bg-accent/10 aria-[current=page]:font-bold aria-[current=page]:text-accent'
+    : 'nav-link text-navbar-text dark:text-navbar-textDark font-medium hover:bg-navbar-hoverBackground dark:hover:bg-navbar-hoverBackgroundDark transition-all duration-200 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark aria-[current=page]:font-bold aria-[current=page]:text-navbar-activeText';
   
   return a;
 }

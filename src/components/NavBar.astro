@@ -4,76 +4,433 @@ import SearchOverlay from './SearchOverlay.astro';
 ---
 <!-- Skip to main content for accessibility -->
 <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 z-[1100] bg-accent text-background font-semibold px-4 py-2 rounded transition-colors duration-200">Skip to main content</a>
-<nav class="sticky top-0 z-[1000] bg-navbar-background/95 dark:bg-navbar-backgroundDark/95 border-b border-navbar-border dark:border-navbar-borderDark backdrop-blur transition-colors duration-300 transition-transform nav-visible" aria-label="Main Navigation">
+<nav class="navbar-container sticky top-0 z-[1000] transition-all duration-500 nav-visible" aria-label="Main Navigation" data-navbar>
   <style>
+    /* Enhanced Navbar Styles */
+    .navbar-container {
+      background: var(--glass-surface-bg);
+      backdrop-filter: blur(var(--blur-lg));
+      -webkit-backdrop-filter: blur(var(--blur-lg));
+      border-bottom: var(--glass-border);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-50);
+      transition: all 0.3s var(--ease-emphasized);
+    }
+    
+    .dark .navbar-container {
+      background: var(--glass-surface-bg-dark);
+      border-bottom: var(--glass-border-dark);
+    }
+    
+    /* Enhanced navbar visibility states */
     .nav-hidden {
       transform: translateY(-100%);
-      transition: transform 0.3s ease-in-out;
+      opacity: 0.95;
+      transition: all 0.4s var(--ease-emphasized);
     }
     
     .nav-visible {
       transform: translateY(0);
-      transition: transform 0.3s ease-in-out;
+      opacity: 1;
+      transition: all 0.4s var(--ease-emphasized);
     }
     
+    /* Navbar blur enhancement on scroll */
+    .navbar-container.scrolled {
+      background: var(--glass-surface-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: var(--elevation-2);
+    }
+    
+    .dark .navbar-container.scrolled {
+      background: var(--glass-surface-bg-dark);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Enhanced logo with gradient border */
+    .navbar-logo {
+      position: relative;
+      background: linear-gradient(135deg, var(--color-background) 0%, var(--color-accent-light) 100%);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      transition: all 0.3s var(--ease-emphasized);
+    }
+    
+    .navbar-logo::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: var(--gradient-accent);
+      border-radius: inherit;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s var(--ease-emphasized);
+    }
+    
+    .navbar-logo:hover::before,
+    .navbar-logo:focus::before {
+      opacity: 1;
+    }
+    
+    /* Mobile menu enhancements */
+    .mobile-menu {
+      background: var(--glass-surface-bg);
+      backdrop-filter: blur(var(--blur-lg));
+      -webkit-backdrop-filter: blur(var(--blur-lg));
+      border-bottom: var(--glass-border);
+      transform: translateY(-100%);
+      opacity: 0;
+      transition: all 0.3s var(--ease-emphasized);
+      will-change: transform, opacity;
+    }
+    
+    .dark .mobile-menu {
+      background: var(--glass-surface-bg-dark);
+      border-bottom: var(--glass-border-dark);
+    }
+    
+    .mobile-menu.open {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    /* Enhanced button interactions */
+    .nav-button {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s var(--ease-standard);
+    }
+    
+    .nav-button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: var(--color-accent);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.4s var(--ease-emphasized);
+      opacity: 0.1;
+      z-index: -1;
+    }
+    
+    .nav-button:hover::before,
+    .nav-button:focus::before {
+      width: 100%;
+      height: 100%;
+      border-radius: 0.5rem;
+    }
+    
+    /* Hamburger menu animation */
+    .hamburger-line {
+      transition: all 0.3s var(--ease-emphasized);
+      transform-origin: center;
+    }
+    
+    .hamburger-open .hamburger-line:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+    
+    .hamburger-open .hamburger-line:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    
+    .hamburger-open .hamburger-line:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+    
+    /* Page transition animations */
     .page-transition-enter {
-      animation: fadeIn 0.3s ease-out forwards;
+      animation: fadeInScale 0.4s var(--ease-emphasized) forwards;
     }
     
     .page-transition-exit {
-      animation: fadeOut 0.2s ease-in forwards;
+      animation: fadeOutScale 0.3s var(--ease-emphasized) forwards;
     }
     
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    @keyframes fadeInScale {
+      from { 
+        opacity: 0; 
+        transform: scale(0.95) translateY(10px);
+      }
+      to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0);
+      }
     }
     
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to { opacity: 0; }
+    @keyframes fadeOutScale {
+      from { 
+        opacity: 1; 
+        transform: scale(1) translateY(0);
+      }
+      to { 
+        opacity: 0; 
+        transform: scale(0.95) translateY(-10px);
+      }
+    }
+    
+    /* Enhanced focus styles */
+    .nav-focus {
+      outline: none;
+      position: relative;
+    }
+    
+    .nav-focus::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: var(--focus-ring-color);
+      border-radius: inherit;
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.2s var(--ease-standard);
+    }
+    
+    .nav-focus:focus::after {
+      opacity: 0.2;
+    }
+    
+    /* Micro-animations */
+    @keyframes pulseGlow {
+      0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(var(--color-accent), 0.4);
+      }
+      50% { 
+        box-shadow: 0 0 0 10px rgba(var(--color-accent), 0);
+      }
+    }
+    
+    .pulse-glow {
+      animation: pulseGlow 2s infinite;
+    }
+    
+    /* Search button enhancement */
+    .search-button {
+      position: relative;
+      transition: all 0.2s var(--ease-standard);
+    }
+    
+    .search-button:hover {
+      transform: scale(1.05);
+    }
+    
+    .search-button:active {
+      transform: scale(0.95);
+    }
+
+    /* Enhanced Brand Logo */
+    .brand-avatar {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .brand-avatar::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(
+        from 0deg,
+        var(--color-accent),
+        var(--color-primary),
+        var(--color-accent-light),
+        var(--color-accent)
+      );
+      animation: rotate 8s linear infinite;
+      opacity: 0;
+      transition: opacity 0.3s var(--ease-standard);
+    }
+    
+    .navbar-logo:hover .brand-avatar::before {
+      opacity: 0.8;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Navigation Link Enhancements */
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s var(--ease-emphasized);
+    }
+    
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--gradient-accent);
+      transition: all 0.3s var(--ease-emphasized);
+      transform: translateX(-50%);
+    }
+    
+    .nav-link:hover::before,
+    .nav-link:focus::before,
+    .nav-link[aria-current="page"]::before {
+      width: 100%;
+    }
+    
+    .nav-link[aria-current="page"] {
+      color: var(--color-accent);
+      font-weight: var(--fw-semibold);
+    }
+
+    /* Mobile Menu Enhanced Styling */
+    .mobile-menu-backdrop {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay-40);
+      backdrop-filter: blur(4px);
+      z-index: var(--z-40);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s var(--ease-emphasized);
+    }
+    
+    .mobile-menu-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Scroll Progress Indicator */
+    .scroll-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: var(--gradient-accent);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.1s linear;
+      z-index: 1;
+    }
+
+    /* Theme-specific enhancements */
+    .theme-light {
+      --navbar-glow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    .theme-dark {
+      --navbar-glow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .navbar-container.scrolled {
+      box-shadow: var(--navbar-glow, var(--elevation-2));
+    }
+
+    /* Advanced animations for page transitions */
+    .page-transition-exit .navbar-container {
+      transform: translateY(-100%);
+      transition: transform 0.3s var(--ease-emphasized);
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+      .mobile-menu {
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+    }
+
+    /* Reduce motion for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      .navbar-container,
+      .nav-button,
+      .navbar-logo,
+      .mobile-menu,
+      .nav-link {
+        transition: none !important;
+        animation: none !important;
+      }
+      
+      .brand-avatar::before {
+        animation: none !important;
+      }
     }
   </style>
   <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
+    <!-- Mobile Menu Toggle -->
     <button
       id="nav-toggle"
       type="button"
-      class="text-navbar-text dark:text-navbar-textDark md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark transition-colors duration-200"
+      class="nav-button text-navbar-text dark:text-navbar-textDark md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark transition-colors duration-200"
       aria-label="Toggle navigation"
       aria-expanded="false"
       aria-controls="nav-mobile-links"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="menu-icon w-6 h-6 text-navbar-text dark:text-navbar-textDark" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      <svg xmlns="http://www.w3.org/2000/svg" class="close-icon hidden w-6 h-6 text-navbar-text dark:text-navbar-textDark" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      <div class="hamburger-container w-6 h-6 flex flex-col justify-center items-center space-y-1">
+        <span class="hamburger-line w-6 h-0.5 bg-current transform transition-all duration-300"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-current transform transition-all duration-300"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-current transform transition-all duration-300"></span>
+      </div>
     </button>
-    <a class="flex items-center gap-2 font-heading text-xl text-navbar-text dark:text-navbar-textDark no-underline focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark rounded transition-colors duration-200" href="/" aria-label="Home">
-      <span class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-accent font-heading text-lg mr-2 bg-gradient-to-br from-background to-accent/10 text-accent shadow-sm">B</span>
-      <span class="sr-only">Blake Oxford Portfolio</span>
+
+    <!-- Brand/Logo -->
+    <a class="navbar-logo flex items-center gap-2 font-heading text-xl text-navbar-text dark:text-navbar-textDark no-underline focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark rounded transition-colors duration-200" href="/" aria-label="Blake Oxford Portfolio - Home">
+      <span class="brand-avatar inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-accent font-heading text-lg mr-2 bg-gradient-to-br from-background to-accent/10 text-accent shadow-sm hover:shadow-md transition-all duration-300">
+        B
+      </span>
+      <span class="brand-text sr-only">Blake Oxford</span>
     </a>
-    <ul class="hidden md:flex gap-6 items-center list-none m-0 p-0" id="nav-links">
+
+    <!-- Desktop Navigation Links -->
+    <ul class="hidden md:flex gap-6 items-center list-none m-0 p-0" id="nav-links" role="menubar">
       <!-- Nav links will be hydrated by JS -->
     </ul>
     
-    <!-- Theme Toggle -->
-    <div class="flex items-center">
+    <!-- Right Side Actions -->
+    <div class="flex items-center gap-2">
       <!-- Search Button -->
       <button
         id="search-toggle"
         type="button" 
-        class="text-navbar-text dark:text-navbar-textDark p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark transition-colors duration-200 mr-2"
-        aria-label="Toggle search"
+        class="search-button nav-button text-navbar-text dark:text-navbar-textDark p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark transition-all duration-200"
+        aria-label="Open search"
+        aria-keyshortcuts="/"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </button>
+
+      <!-- Theme Toggle -->
       <ThemeToggle client:load />
     </div>
   </div>
-  <ul class="md:hidden flex-col gap-2 px-4 pb-4 pt-2 bg-navbar-background dark:bg-navbar-backgroundDark border-b border-navbar-border dark:border-navbar-borderDark transition-all duration-300 hidden" id="nav-mobile-links">
-    <!-- Mobile nav links will be hydrated by JS -->
-  </ul>
+
+  <!-- Mobile Navigation Menu -->
+  <div class="mobile-menu md:hidden" id="nav-mobile-links">
+    <ul class="flex flex-col gap-2 px-4 pb-4 pt-2 list-none m-0" role="menu">
+      <!-- Mobile nav links will be hydrated by JS -->
+    </ul>
+  </div>
+  
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+  
+  <!-- Enhanced Navigation Scripts -->
   <script type="module" src="/assets/js/NavBarMenu.js"></script>
+  <script type="module" src="/assets/js/NavBarEnhanced.js"></script>
 </nav>
 
 <!-- Search Overlay -->
