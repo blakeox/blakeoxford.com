@@ -164,11 +164,11 @@ class SearchOverlayEnhancer {
 
   openSearch() {
     this.isOpen = true;
-    this.searchOverlay.classList.remove('hidden');
+    this.searchOverlay.classList.add('active');
     
     // Trigger animation
     requestAnimationFrame(() => {
-      this.searchOverlay.classList.add('active');
+      // Already active
     });
     
     // Focus search input
@@ -188,7 +188,7 @@ class SearchOverlayEnhancer {
     
     // Hide overlay after animation
     setTimeout(() => {
-      this.searchOverlay.classList.add('hidden');
+      // Remains in DOM but not visible
     }, 300);
     
     // Restore body scroll

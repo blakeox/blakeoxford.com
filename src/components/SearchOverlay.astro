@@ -2,11 +2,7 @@
 // SearchOverlay.astro component
 ---
 
----
-// SearchOverlay.astro component with enhanced functionality
----
-
-<div id="search-overlay" class="search-overlay fixed inset-0 z-[1100] hidden">
+<div id="search-overlay" class="search-overlay fixed inset-0 z-[1100]">
   <div class="search-backdrop"></div>
   <div class="search-container">
     <div class="search-header">
@@ -477,35 +473,25 @@
 
     // All elements are present, so searchInput is not null here
     
-    // Toggle search overlay
-    searchToggle.addEventListener('click', () => {
-      searchOverlay.classList.toggle('hidden');
-      searchOverlay.classList.toggle('flex');
-      
-      if (!searchOverlay.classList.contains('hidden')) {
-        // Focus search input when overlay is shown
-        (searchInput as HTMLInputElement).focus();
-        
-        // Prevent body scrolling
-        document.body.style.overflow = 'hidden';
-      } else {
-        // Restore body scrolling
-        document.body.style.overflow = '';
-      }
+    // Open search overlay
+    searchToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      searchOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      searchInput.focus();
     });
     
     // Close search overlay
-    closeSearch.addEventListener('click', () => {
-      searchOverlay.classList.add('hidden');
-      searchOverlay.classList.remove('flex');
+    closeSearch.addEventListener('click', (e) => {
+      e.preventDefault();
+      searchOverlay.classList.remove('active');
       document.body.style.overflow = '';
     });
     
     // Close on escape key
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !searchOverlay.classList.contains('hidden')) {
-        searchOverlay.classList.add('hidden');
-        searchOverlay.classList.remove('flex');
+      if (e.key === 'Escape' && searchOverlay.classList.contains('active')) {
+        searchOverlay.classList.remove('active');
         document.body.style.overflow = '';
       }
     });
