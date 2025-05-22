@@ -295,19 +295,22 @@
     background: var(--selection-bg-dark);
   }
 }
-/* ---------- Dark‑mode variable overrides ---------- */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Activate dark shadow chroma */
-    --shadow-chroma-light: var(--shadow-chroma-dark);
+/* ---------- Dark‑mode variable overrides driven by `.dark` class ---------- */
+.dark:root {
+  /* Activate dark shadow chroma */
+  --shadow-chroma-light: var(--shadow-chroma-dark);
 
-    /* Surfaces & navigation */
-    --navbar-bg: var(--color-surface-dark);
-    --navbar-hover-bg: var(--color-surface-dark-subtle);
-    --navbar-border: #3f3f46;
+  /* Surfaces & navigation */
+  --navbar-bg: var(--color-surface-dark);
+  --navbar-hover-bg: var(--color-surface-dark-subtle);
+  --navbar-border: #3f3f46;
 
-    /* Glass surfaces in dark */
-    --glass-surface-bg: var(--glass-surface-bg-dark);
-    --glass-border: var(--glass-border-dark);
-  }
+  /* Glass surfaces in dark */
+  --glass-surface-bg: var(--glass-surface-bg-dark);
+  --glass-border: var(--glass-border-dark);
+}
+
+/* Ensure text‑selection color also responds to `.dark` class */
+.dark ::selection {
+  background: var(--selection-bg-dark);
 }
