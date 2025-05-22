@@ -3,6 +3,10 @@
 /* Import Tailwind’s base styles and utilities */
 @import "tailwindcss";
 
+/* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
+   class (or any of its descendants) is in the selector chain.   */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Import your consolidated design tokens as a theme */
 @import "./theme.css";
 
