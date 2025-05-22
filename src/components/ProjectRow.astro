@@ -1,8 +1,9 @@
 ---
 // ProjectRow.astro
-import type { Project } from 'astro:content';
+// import type { CollectionEntry } from 'astro:content';
+// TODO: Use correct type from astro:content when available
 const { project, featured = false, align = 'left' } = Astro.props as {
-  project: Project;
+  project: any; // fallback to any due to type issues
   featured?: boolean;
   align?: 'left' | 'right';
 };
@@ -27,7 +28,7 @@ const { slug, data } = project;
       )}
     </h2>
     {data.date && (
-      <time class="text-xs text-gray-500 dark:text-gray-400 mb-1" dateTime={data.date.toISOString()}>{data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+      <time class="text-xs text-gray-500 dark:text-gray-400 mb-1" datetime={data.date.toISOString()}>{data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
     )}
     {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
       <ul class="flex flex-wrap gap-2 mb-1" aria-label="Project tags">

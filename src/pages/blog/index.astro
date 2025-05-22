@@ -23,7 +23,7 @@ const canonicalUrl = "https://blakeoxford.com/blog/";
         </div>
       )}
       {posts.map((post: any) => (
-        <article class="blog-post scroll-animate bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col" key={post.slug} data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description?.toLowerCase() || ''}>
+        <article class="blog-post scroll-animate bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col" data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description?.toLowerCase() || ''}>
           <h2 class="text-2xl font-semibold mb-2">
             <a href={`/blog/${post.slug}/`} class="hover:underline" data-analytics="blog-read-more">{post.data.title}</a>
           </h2>

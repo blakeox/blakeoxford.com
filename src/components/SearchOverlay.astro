@@ -51,6 +51,8 @@
       console.warn('Search elements not found. Search functionality cannot be initialized.');
       return;
     }
+
+    // All elements are present, so searchInput is not null here
     
     // Toggle search overlay
     searchToggle.addEventListener('click', () => {
@@ -59,7 +61,7 @@
       
       if (!searchOverlay.classList.contains('hidden')) {
         // Focus search input when overlay is shown
-        searchInput.focus();
+        (searchInput as HTMLInputElement).focus();
         
         // Prevent body scrolling
         document.body.style.overflow = 'hidden';
@@ -86,10 +88,10 @@
     });
     
     // Simple search implementation
-    searchInput.addEventListener('input', debounce(performSearch, 300));
+    (searchInput as HTMLInputElement).addEventListener('input', debounce(performSearch, 300));
     
     function performSearch() {
-      const query = searchInput.value.toLowerCase();
+      const query = (searchInput as HTMLInputElement).value.toLowerCase();
       const resultsContainer = document.getElementById('search-results');
       
       if (!resultsContainer) return;
@@ -119,11 +121,11 @@
     }
     
     // Debounce function to limit API calls
-    function debounce(func, wait) {
-      let timeout;
-      return function() {
+    function debounce(func: (...args: any[]) => void, wait: number) {
+      let timeout: ReturnType<typeof setTimeout>;
+      return function(this: unknown) {
         const context = this;
-        const args = arguments;
+        const args = Array.from(arguments);
         clearTimeout(timeout);
         timeout = setTimeout(() => {
           func.apply(context, args);
