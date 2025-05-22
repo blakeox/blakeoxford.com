@@ -14,7 +14,12 @@
     "lint:css:fix": "stylelint 'src/styles/**/*.css' --fix"
   },
   "dependencies": {
-    "astro": "latest"
+    "@astrojs/react": "^4.2.7",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
+    "astro": "latest",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "latest",

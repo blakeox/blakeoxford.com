@@ -4,16 +4,28 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "strict": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["astro/client"],
-    "forceConsistentCasingInFileNames": true
+    "types": [
+      "astro/client"
+    ],
+    "forceConsistentCasingInFileNames": true,
+    "jsxImportSource": "react"
   },
-  "include": ["src", ".astro/types.d.ts", ".astro/content.d.ts", "src/global.d.ts"],
-  "exclude": ["node_modules", "dist", "public"]
+  "include": [
+    "src",
+    ".astro/types.d.ts",
+    ".astro/content.d.ts",
+    "src/global.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "public"
+  ]
 }
