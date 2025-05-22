@@ -2,23 +2,28 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import ProjectRow from '../../components/ProjectRow.astro';
 
 const projects = (await getCollection('projects')) as any[];
 ---
 
-<Layout>
-  <section class="c-projects-list w-full max-w-none px-0 py-12 relative bg-gradient-to-r from-accent/10 to-background overflow-hidden rounded-none shadow-none animate-fade-in" role="region" aria-labelledby="projects-title">
+<Layout wide>
+  <section class="c-projects-list w-full py-12 relative bg-gradient-to-r from-accent/10 to-background overflow-hidden rounded-none shadow-none animate-fade-in" role="region" aria-labelledby="projects-title">
     <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
     <h1 id="projects-title" class="text-4xl font-bold mb-4 text-accent-dark text-center animate-fade-in">Projects</h1>
     <p class="text-lg text-center mb-8 text-gray-700 dark:text-gray-300 animate-fade-in">Explore a curated collection of projects showcasing key skills in process automation, finance, and more. Use the filters to narrow your interests.</p>
 
-    <div class="grid projects-masonry grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    <div class="flex flex-col gap-8 w-full">
       {projects
         .filter((p: any) => !p.data.draft)
         .sort((a: any, b: any) => b.data.date.getTime() - a.data.date.getTime())
-        .map((project: any) => (
-          <ProjectCard project={project} />
+        .map((project: any, idx: number) => (
+          <ProjectRow 
+            project={project} 
+            featured={["enterprise-digital-transformation","advancedmd-implementation","bank-projections-modeling"].includes(project.slug)}
+            align={idx % 2 === 0 ? 'left' : 'right'}
+          />
         ))}
     </div>
   </section>
