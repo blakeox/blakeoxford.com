@@ -1,11 +1,16 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import ProjectCard from '../components/ProjectCard.astro';
 const projects = (await getCollection('projects')) as any[];
-const featuredProjects = projects
-  .filter((p: any) => !p.data.draft)
-  .sort((a: any, b: any) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
+const featuredSlugs = [
+  "enterprise-digital-transformation",
+  "advancedmd-implementation",
+  "bank-projections-modeling"
+];
+const featuredProjects = featuredSlugs
+  .map((slug) => projects.find((p: any) => p.slug === slug))
+  .filter((p): p is any => !!p);
 ---
 <Layout title="Welcome to My Portfolio" description="Explore my projects, blog posts, and get in touch with me.">
   <!-- Decorative background shapes -->
@@ -50,32 +55,7 @@ const featuredProjects = projects
       <h2 id="featured-projects" class="text-3xl font-bold mb-8 text-accent-dark animate-fade-in">Featured Projects</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {featuredProjects.map((project: any) => (
-          <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-xl flex flex-col group hover:scale-[1.03] hover:shadow-2xl transition-all duration-200 animate-slide-up">
-            <a href={`/projects/${project.slug}/`} class="block mb-4 rounded-xl overflow-hidden">
-              <img
-                src={project.data.image || '/assets/images/default-project.png'}
-                alt={project.data.title}
-                class="rounded-xl group-hover:scale-105 transition-transform duration-200"
-                loading="lazy"
-              />
-            </a>
-            <h3 class="text-xl font-bold mb-2 text-accent-dark flex items-center gap-2">
-              <a href={`/projects/${project.slug}/`} class="hover:underline">
-                {project.data.title}
-              </a>
-              <span class="inline-block bg-accent-light text-accent-dark text-xs font-semibold px-2 py-1 rounded">Featured</span>
-            </h3>
-            {project.data.description && (
-              <p class="flex-grow text-gray-700 dark:text-gray-300 mb-4">{project.data.description}</p>
-            )}
-            <a
-              href={`/projects/${project.slug}/`}
-              class="mt-auto inline-block c-btn bg-accent text-background font-semibold px-5 py-2 rounded shadow hover:bg-accent-dark transition-all duration-200"
-              aria-label={`View ${project.data.title}`}
-            >
-              View Project
-            </a>
-          </div>
+          <ProjectCard project={project} featured={true} />
         ))}
       </div>
       <div class="mt-8 text-center animate-fade-in">

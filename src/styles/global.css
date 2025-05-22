@@ -30,6 +30,14 @@
 .text-foreground { color: var(--color-foreground) !important; }
 .text-foreground-light { color: var(--color-foreground-light) !important; }
 
+/* Additional utilities for theme tokens */
+.text-neutral { color: var(--color-neutral) !important; }
+.text-neutral-light { color: var(--color-neutral-light) !important; }
+.text-neutral-dark { color: var(--color-neutral-dark) !important; }
+
+.border-surface-subtle { border-color: var(--color-surface-subtle) !important; }
+.border-surface-dark-subtle { border-color: var(--color-surface-dark-subtle) !important; }
+
 /* Theme toggle spin animation */
 @keyframes theme-toggle-spin {
   0% { transform: rotate(0deg); }

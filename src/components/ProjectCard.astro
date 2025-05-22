@@ -1,0 +1,41 @@
+---
+import type { Project } from 'astro:content';
+
+const { project, featured = false } = Astro.props as {
+  project: Project;
+  featured?: boolean;
+};
+const { slug, data } = project;
+---
+<article class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-xl flex flex-col group hover:scale-[1.03] hover:shadow-2xl transition-all duration-200 animate-slide-up">
+  {featured && (
+    <div class="flex justify-end mb-2">
+      <span class="bg-accent-light text-accent-dark text-xs font-semibold px-3 py-1 rounded shadow-md">Featured</span>
+    </div>
+  )}
+  <a href={`/projects/${slug}/`} class="block mb-4 rounded-xl overflow-hidden">
+    <img
+      src={data.image || '/assets/images/default-project.png'}
+      alt={data.title}
+      class="rounded-xl group-hover:scale-105 transition-transform duration-200"
+      loading="lazy"
+    />
+  </a>
+  <h3 class="text-xl font-bold mb-2 text-accent-dark">
+    <a href={`/projects/${slug}/`} class="hover:underline flex items-center gap-2">
+      {data.title}
+    </a>
+  </h3>
+  {data.description && (
+    <p class="flex-grow text-gray-700 dark:text-gray-300 mb-4">
+      {data.description}
+    </p>
+  )}
+  <a
+    href={`/projects/${slug}/`}
+    class="mt-auto inline-block c-btn bg-accent text-background font-semibold px-5 py-2 rounded shadow hover:bg-accent-dark transition-all duration-200"
+    aria-label={`View ${data.title}`}
+  >
+    View Project
+  </a>
+</article>
