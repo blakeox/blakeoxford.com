@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
+  const buttonRef = useRef(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('theme');
@@ -18,12 +19,22 @@ export default function ThemeToggle() {
     document.documentElement.dataset.theme = next ? 'dark' : 'light';
     localStorage.setItem('theme', next ? 'dark' : 'light');
     setIsDark(next);
+    // Add spin animation
+    if (buttonRef.current) {
+      buttonRef.current.classList.add('theme-toggle-spin');
+      setTimeout(() => {
+        if (buttonRef.current) {
+          buttonRef.current.classList.remove('theme-toggle-spin');
+        }
+      }, 600); // match animation duration in CSS
+    }
   };
 
   return (
     <button
       id="theme-toggle"
       type="button"
+      ref={buttonRef}
       onClick={toggleTheme}
       className="p-2 rounded-md text-navbar-text dark:text-navbar-textDark hover:bg-navbar-hoverBackground dark:hover:bg-navbar-hoverBackgroundDark focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark transition-colors duration-200"
       aria-label="Toggle between dark and light mode"
