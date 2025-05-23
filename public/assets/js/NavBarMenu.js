@@ -68,12 +68,18 @@ class NavBarMenu {
   // --- Mobile Menu ---
   setupMobileMenu() {
     if (!this.navToggle || !this.mobileMenu) return;
+    this.overlay = document.querySelector('.mobile-menu-overlay');
     this.navToggle.addEventListener('click', (e) => {
       e.preventDefault();
       this.toggleMobileMenu();
     });
+    if (this.overlay) {
+      this.overlay.addEventListener('click', () => {
+        if (this.isMenuOpen) this.closeMobileMenu();
+      });
+    }
     document.addEventListener('click', (e) => {
-      if (this.isMenuOpen && !this.navbar.contains(e.target) && !this.mobileMenu.contains(e.target)) {
+      if (this.isMenuOpen && !this.navbar.contains(e.target) && !this.mobileMenu.contains(e.target) && (!this.overlay || !this.overlay.contains(e.target))) {
         this.closeMobileMenu();
       }
     });
@@ -99,6 +105,7 @@ class NavBarMenu {
     this.navToggle.classList.add('hamburger-open');
     this.navToggle.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
+    if (this.overlay) this.overlay.style.display = 'block';
     const firstMenuItem = this.mobileMenu.querySelector('a, button');
     if (firstMenuItem) {
       setTimeout(() => firstMenuItem.focus(), 100);
@@ -112,6 +119,7 @@ class NavBarMenu {
     this.navToggle.classList.remove('hamburger-open');
     this.navToggle.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
+    if (this.overlay) this.overlay.style.display = 'none';
     document.body.classList.remove('mobile-menu-open');
   }
 

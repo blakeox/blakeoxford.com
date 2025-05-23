@@ -114,6 +114,14 @@
   background: var(--glass-surface-bg-dark);
   border-bottom: var(--glass-border-dark);
 }
+.dark .mobile-menu,
+.dark .mobile-menu .nav-link {
+  color: #fff !important;
+}
+.dark .mobile-menu .nav-link[aria-current="page"] {
+  background: var(--color-accent);
+  color: var(--color-background) !important;
+}
 .mobile-menu.open {
   transform: translateY(0);
   opacity: 1;
