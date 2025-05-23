@@ -1,6 +1,6 @@
 /* src/styles/global.css */
 
-/* Import Tailwind’s base styles and utilities */
+/* Import Tailwind's base styles and utilities */
 @import "tailwindcss";
 
 /* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
@@ -48,5 +48,117 @@
 }
 
 /* Add more as needed for other tokens */
+
+/* --- Navbar Styles (moved from NavBar.astro) --- */
+.navbar-container {
+  background: var(--glass-surface-bg);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
+  border-bottom: var(--glass-border);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-50);
+  transition: all 0.3s var(--ease-emphasized);
+}
+.dark .navbar-container {
+  background: var(--glass-surface-bg-dark);
+  border-bottom: var(--glass-border-dark);
+}
+.nav-link {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s var(--ease-emphasized);
+}
+.nav-link[aria-current="page"] {
+  color: var(--color-accent);
+  font-weight: var(--fw-semibold);
+}
+.nav-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s var(--ease-standard);
+}
+.brand-avatar {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-accent);
+  color: var(--color-background);
+  border: 2px solid transparent;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
+  transition: background 0.3s var(--ease-emphasized);
+}
+.dark .brand-avatar {
+  background: var(--color-accent-light);
+  color: var(--color-foreground);
+}
+.mobile-menu {
+  background: var(--glass-surface-bg);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
+  border-bottom: var(--glass-border);
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: all 0.3s var(--ease-emphasized);
+  will-change: transform, opacity;
+}
+.dark .mobile-menu {
+  background: var(--glass-surface-bg-dark);
+  border-bottom: var(--glass-border-dark);
+}
+.mobile-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+}
+.hamburger-line {
+  transition: all 0.3s var(--ease-emphasized);
+  transform-origin: center;
+}
+.scroll-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--gradient-accent);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.1s linear;
+  z-index: 1;
+}
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .mobile-menu {
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .navbar-container,
+  .nav-button,
+  .navbar-logo,
+  .mobile-menu,
+  .nav-link {
+    transition: none !important;
+    animation: none !important;
+  }
+  .brand-avatar::before {
+    animation: none !important;
+  }
+}
+
+/* --- Navbar Animations (moved from NavBar.astro) --- */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes fadeOutScale {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to { opacity: 0; transform: scale(0.95) translateY(-10px); }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--color-accent), 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(var(--color-accent), 0); }
+}
 
 
