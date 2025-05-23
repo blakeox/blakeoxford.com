@@ -106,10 +106,30 @@ class NavBarMenu {
     this.navToggle.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
     if (this.overlay) this.overlay.style.display = 'block';
-    const firstMenuItem = this.mobileMenu.querySelector('a, button');
-    if (firstMenuItem) {
-      setTimeout(() => firstMenuItem.focus(), 100);
+    const focusable = this.mobileMenu.querySelectorAll('a, button');
+    if (focusable.length) {
+      setTimeout(() => focusable[0].focus(), 100);
     }
+    this.focusTrapHandler = (e) => {
+      if (!this.isMenuOpen) return;
+      if (e.key !== 'Tab') return;
+      const focusableEls = Array.from(this.mobileMenu.querySelectorAll('a, button'));
+      if (!focusableEls.length) return;
+      const first = focusableEls[0];
+      const last = focusableEls[focusableEls.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', this.focusTrapHandler, true);
     document.body.classList.add('mobile-menu-open');
   }
 
@@ -120,6 +140,7 @@ class NavBarMenu {
     this.navToggle.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
     if (this.overlay) this.overlay.style.display = 'none';
+    document.removeEventListener('keydown', this.focusTrapHandler, true);
     document.body.classList.remove('mobile-menu-open');
   }
 

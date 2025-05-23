@@ -140,10 +140,16 @@ import navLinks from '../config/navLinks.js';
   <div class="mobile-menu-overlay fixed inset-0 bg-black/40 z-[1040] transition-opacity duration-200 md:hidden" tabindex="-1" aria-hidden="true" style="display:none;"></div>
   <!-- Mobile Navigation Menu -->
   <div class="mobile-menu md:hidden rounded-t-2xl shadow-2xl max-w-[95vw] mx-auto mt-2 open:opacity-100 open:translate-y-0" id="nav-mobile-links">
-    <ul class="flex flex-col gap-3 px-4 pb-6 pt-6 list-none m-0" role="menu">
+    <ul class="flex flex-col gap-3 px-4 pb-6 pt-2 list-none m-0" role="menu">
       {navLinks.map(link => (
-        <li role="none">
-          <a class="nav-link block text-lg text-foreground font-medium hover:bg-accent/10 focus:bg-accent/20 transition-colors duration-200 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent" href={link.href} data-analytics={link.analytics} role="menuitem">{link.label}</a>
+        <li role="none" class="relative">
+          <a class="nav-link block text-lg text-foreground font-medium hover:bg-accent/10 focus:bg-accent/20 transition-colors duration-200 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent mobile-tap-effect {link.active ? 'active' : ''}" href={link.href} data-analytics={link.analytics} role="menuitem" aria-current={Astro.url.pathname === link.href ? 'page' : undefined}>
+            {/* Active link indicator bar */}
+            {Astro.url.pathname === link.href && (
+              <span class="absolute left-0 top-2 bottom-2 w-1 rounded-full bg-accent"></span>
+            )}
+            {link.label}
+          </a>
         </li>
       ))}
     </ul>
