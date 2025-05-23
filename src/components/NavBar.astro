@@ -14,6 +14,10 @@ import navLinks from '../config/navLinks.js';
 ---
 <!-- Skip to main content for accessibility -->
 <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 z-[1100] bg-accent text-background font-semibold px-4 py-2 rounded transition-colors duration-200">Skip to main content</a>
+<!-- Add at the top of the nav for scroll progress bar -->
+<div class="nav-scroll-progress fixed top-0 left-0 w-full h-1 z-[1101] bg-transparent">
+  <div id="nav-scroll-progress-bar" class="h-full bg-accent transition-all duration-200" style="width:0%"></div>
+</div>
 <nav class="navbar-container sticky top-0 z-[1000] transition-all duration-500 nav-visible" aria-label="Main Navigation" data-navbar>
   <style>
     /* Only keep advanced/dynamic/animation-specific styles here */
@@ -106,17 +110,18 @@ import navLinks from '../config/navLinks.js';
       </div>
     </button>
     <!-- Brand/Logo -->
-    <a class="navbar-logo flex items-center gap-2 font-heading text-xl text-navbar-text dark:text-navbar-textDark no-underline focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark rounded transition-colors duration-200" href="/" aria-label="Blake Oxford Portfolio - Home">
+    <a class="navbar-logo flex items-center gap-2 font-heading text-xl text-navbar-text dark:text-navbar-textDark no-underline focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark rounded transition-colors duration-200 hover:scale-110 hover:rotate-2 hover:shadow-lg" href="/" aria-label="Blake Oxford Portfolio - Home" data-sound="logo">
       <span class="brand-avatar inline-flex items-center justify-center w-10 h-10 rounded-full font-heading text-lg mr-2 text-background dark:text-foreground transition-all duration-300">
         B
       </span>
       <span class="brand-text sr-only">Blake Oxford</span>
     </a>
     <!-- Desktop Navigation Links -->
-    <ul class="hidden md:flex gap-6 items-center list-none m-0 p-0" id="nav-links" role="menubar">
+    <ul class="hidden md:flex gap-6 items-center list-none m-0 p-0 relative" id="nav-links" role="menubar">
+      <div id="nav-blob-underline" class="absolute bottom-0 left-0 h-2 rounded-full bg-accent/70 transition-all duration-300 pointer-events-none" style="width:0;transform:translateX(0);"></div>
       {navLinks.map(link => (
         <li role="none">
-          <a class="nav-link" href={link.href} data-analytics={link.analytics} role="menuitem">{link.label}</a>
+          <a class="nav-link" href={link.href} data-analytics={link.analytics} role="menuitem" data-sound="nav" aria-current={Astro.url.pathname === link.href ? 'page' : undefined}>{link.label}</a>
         </li>
       ))}
     </ul>
@@ -161,3 +166,27 @@ import navLinks from '../config/navLinks.js';
 </nav>
 <!-- Search Overlay -->
 <SearchOverlay />
+<!-- Command palette modal -->
+<div id="nav-cmdk-modal" class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none">
+  <div class="bg-background dark:bg-background-dark rounded-xl shadow-2xl p-6 w-full max-w-md">
+    <input type="text" class="w-full p-3 rounded border border-accent mb-2 text-lg bg-background dark:bg-background-dark" placeholder="Type a page or command..." autofocus />
+    <div class="text-sm text-neutral">(This is a placeholder. Fuzzy search and actions coming soon!)</div>
+  </div>
+</div>
+<!-- Accessibility help modal -->
+<div id="nav-help-modal" class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none">
+  <div class="bg-background dark:bg-background-dark rounded-xl shadow-2xl p-6 w-full max-w-md">
+    <h2 class="text-xl font-bold mb-2">Navigation Shortcuts</h2>
+    <ul class="list-disc pl-5 mb-2">
+      <li><kbd>Alt+H</kbd>: Home</li>
+      <li><kbd>Alt+A</kbd>: About</li>
+      <li><kbd>Alt+P</kbd>: Projects</li>
+      <li><kbd>Alt+B</kbd>: Blog</li>
+      <li><kbd>Alt+C</kbd>: Contact</li>
+      <li><kbd>/</kbd>: Search</li>
+      <li><kbd>Esc</kbd>: Close menu/modals</li>
+      <li><kbd>Cmd+K</kbd> or <kbd>Ctrl+K</kbd>: Command palette</li>
+    </ul>
+    <div class="text-sm text-neutral">All navigation is fully keyboard accessible and screen reader friendly.</div>
+  </div>
+</div>

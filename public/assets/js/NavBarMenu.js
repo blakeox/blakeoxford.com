@@ -53,6 +53,12 @@ class NavBarMenu {
     this.setupAnalytics();
     this.setupAccessibilityEnhancements();
     this.highlightActiveLink();
+    this.setupAnimatedUnderline();
+    this.setupScrollProgressBar();
+    this.setupCommandPalette();
+    this.setupHelpModal();
+    this.setupContextualNavClass();
+    this.setupSoundEffects();
   }
 
   cacheElements() {
@@ -399,6 +405,113 @@ class NavBarMenu {
       clearTimeout(timeout);
       timeout = setTimeout(later, wait);
     };
+  }
+
+  setupAnimatedUnderline() {
+    const navLinks = Array.from(document.querySelectorAll('#nav-links .nav-link'));
+    const blob = document.getElementById('nav-blob-underline');
+    if (!blob || !navLinks.length) return;
+    const moveBlob = (el) => {
+      const rect = el.getBoundingClientRect();
+      const parentRect = el.parentElement.parentElement.getBoundingClientRect();
+      blob.style.width = rect.width + 'px';
+      blob.style.transform = `translateX(${rect.left - parentRect.left}px)`;
+      blob.style.opacity = 1;
+    };
+    const resetBlob = () => {
+      const active = navLinks.find(l => l.getAttribute('aria-current') === 'page');
+      if (active) moveBlob(active);
+      else blob.style.opacity = 0;
+    };
+    navLinks.forEach(link => {
+      link.addEventListener('mouseenter', () => moveBlob(link));
+      link.addEventListener('focus', () => moveBlob(link));
+      link.addEventListener('mouseleave', resetBlob);
+      link.addEventListener('blur', resetBlob);
+    });
+    window.addEventListener('resize', resetBlob);
+    resetBlob();
+  }
+
+  setupScrollProgressBar() {
+    const bar = document.getElementById('nav-scroll-progress-bar');
+    if (!bar) return;
+    const update = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = percent + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+
+  setupCommandPalette() {
+    const modal = document.getElementById('nav-cmdk-modal');
+    const btn = document.getElementById('nav-cmdk-toggle');
+    const input = modal?.querySelector('input');
+    const open = () => {
+      modal.classList.add('active');
+      setTimeout(() => input?.focus(), 100);
+    };
+    const close = () => {
+      modal.classList.remove('active');
+    };
+    btn?.addEventListener('click', open);
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        open();
+      }
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        close();
+      }
+    });
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) close();
+    });
+  }
+
+  setupHelpModal() {
+    const modal = document.getElementById('nav-help-modal');
+    const btn = document.getElementById('nav-help-toggle');
+    const open = () => modal.classList.add('active');
+    const close = () => modal.classList.remove('active');
+    btn?.addEventListener('click', open);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '?' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        open();
+      }
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        close();
+      }
+    });
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) close();
+    });
+  }
+
+  setupContextualNavClass() {
+    const path = window.location.pathname;
+    let context = '';
+    if (path.startsWith('/blog')) context = 'nav-context-blog';
+    else if (path.startsWith('/projects')) context = 'nav-context-projects';
+    else if (path.startsWith('/contact')) context = 'nav-context-contact';
+    if (context) this.navbar.classList.add(context);
+  }
+
+  setupSoundEffects() {
+    const play = (el) => {
+      const sound = el.getAttribute('data-sound');
+      if (sound) console.log('Play sound:', sound); // Replace with real sound logic
+    };
+    document.querySelectorAll('[data-sound]').forEach(el => {
+      el.addEventListener('click', () => play(el));
+      el.addEventListener('focus', () => play(el));
+      el.addEventListener('mouseenter', () => play(el));
+    });
   }
 }
 
