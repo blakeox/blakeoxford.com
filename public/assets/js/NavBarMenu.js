@@ -1,8 +1,9 @@
-// NavBarMenu.js: Modular enhancement for navigation (ARIA, scroll, keyboard, analytics, accessibility, etc.)
-// Imports analytics, accessibility, and scroll utilities
+// NavBarMenu.js: Modular enhancement for navigation (ARIA, scroll, keyboard, analytics, accessibility, dropdowns, etc.)
+// Imports analytics, accessibility, scroll, and dropdown utilities
 import { trackEvent } from './analytics.js';
 import { addSkipToContentLink, enhanceFocusManagement } from './a11y.js';
 import { setupScrollEffects, setupScrollBehavior, setupPageTransitions } from './scroll.js';
+import { setupDropdowns, setupDropdownKeyboardNavigation } from './dropdown.js';
 // Features: Navigation hydration, ARIA, analytics, scroll effects, theme integration, accessibility, keyboard shortcuts, progressive enhancement
 
 /**
@@ -42,6 +43,9 @@ class NavBarMenu {
     setupScrollEffects(this);
     setupScrollBehavior(this.navbar);
     setupPageTransitions();
+    // Enable interactive dropdowns and keyboard navigation
+    setupDropdowns();
+    setupDropdownKeyboardNavigation();
     this.setupMobileMenu();
     this.setupKeyboardShortcuts();
     this.setupProgressiveEnhancements();
