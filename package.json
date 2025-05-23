@@ -31,6 +31,7 @@
     "@tailwindcss/postcss": "latest",
     "@tailwindcss/typography": "latest",
     "@tailwindcss/vite": "^4.1.7",
+    "@types/nanoid": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "astro-compress": "latest",

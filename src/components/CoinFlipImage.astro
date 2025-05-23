@@ -1,52 +1,231 @@
 ---
 // CoinFlipImage.astro
-// Props: frontSrc, backSrc, alt, size (optional), flipMultipleTimes (optional)
-const { frontSrc, backSrc, alt = '', size = 144, flipMultipleTimes = false } = Astro.props;
+// Props: frontSrc, backSrc, altFront, altBack, size (optional), flipMultipleTimes (optional), class (optional), duration (optional), flipOnClick (optional), flipAxis (optional), flipEase (optional), multiFlipDuration (optional), multiFlipEase (optional)
+function simpleId() {
+  return 'coin-flip-' + Math.random().toString(36).slice(2, 10);
+}
+const {
+  frontSrc,
+  backSrc,
+  altFront = '',
+  altBack = '',
+  size = 144,
+  flipMultipleTimes = false,
+  class: customClass = '',
+  duration = 700, // ms
+  flipOnClick = true,
+  flipAxis = 'y', // 'y' (default) or 'x'
+  flipEase = 'cubic-bezier(0.22,1,0.36,1)', // ease-out for realism
+  multiFlipDuration = 2000, // ms, slower for multi-flip
+  multiFlipEase = 'cubic-bezier(.68,-0.55,.27,1.55)' // springy for multi-flip
+} = Astro.props;
+const uniqueId = simpleId();
+const axis = flipAxis === 'x' ? 'X' : 'Y';
+const ease = flipEase || 'cubic-bezier(0.22,1,0.36,1)';
+const multiEase = multiFlipEase || 'cubic-bezier(.68,-0.55,.27,1.55)';
 ---
-<div class="coin-flip" style={`width:${size}px;height:${size}px;`} tabindex="0" aria-label="Flippable coin image">
-  <div class={"coin-flip-inner" + (flipMultipleTimes ? " coin-flip-multi" : "") }>
-    <img src={frontSrc} alt={alt} class="coin-flip-front" loading="lazy" draggable="false" />
-    <img src={backSrc} alt={alt} class="coin-flip-back" loading="lazy" draggable="false" />
+<noscript>
+  <img src={frontSrc} alt={altFront} style={`width:${size}px;height:${size}px;`} class={`coin-flip-front ${customClass}`} />
+</noscript>
+<div
+  class={`coin-flip ${customClass}`}
+  style={`width:${size}px;height:${size}px;`}
+  tabindex="0"
+  role="button"
+  aria-pressed="false"
+  aria-label="Flippable coin image"
+  id={uniqueId + '-root'}
+  data-flip-on-click={flipOnClick}
+  data-flip-axis={axis}
+>
+  <div class={"coin-flip-inner" + (flipMultipleTimes ? " coin-flip-multi" : "")}
+    id={uniqueId + '-inner'}
+    style={flipMultipleTimes
+      ? `transition-duration:${multiFlipDuration}ms;transition-timing-function:${multiEase};`
+      : `transition-duration:${duration}ms;transition-timing-function:${ease};`}
+  >
+    <div class="coin-flip-face coin-flip-front-face">
+      <img src={frontSrc} alt={altFront} class="coin-flip-front" loading="lazy" draggable="false" />
+      <div class="coin-flip-highlight"></div>
+    </div>
+    <div class="coin-flip-edge"></div>
+    <div class="coin-flip-face coin-flip-back-face">
+      <img src={backSrc} alt={altBack} class="coin-flip-back" loading="lazy" draggable="false" />
+      <div class="coin-flip-highlight"></div>
+    </div>
   </div>
+  <span id={uniqueId + '-live'} class="sr-only" aria-live="polite"></span>
 </div>
+
+<script is:inline>
+if (typeof window !== 'undefined') {
+  const uniqueId = "{uniqueId}";
+  const root = document.getElementById(uniqueId + '-root');
+  const inner = document.getElementById(uniqueId + '-inner');
+  const live = document.getElementById(uniqueId + '-live');
+  let isFlipped = false;
+  let axis = root ? root.dataset.flipAxis : 'Y';
+  if (root && inner) {
+    function announce() {
+      if (live) {
+        live.textContent = isFlipped ? `${altBack}` : `${altFront}`;
+      }
+    }
+    function setTransform() {
+      if (isFlipped) {
+        if (inner.classList.contains('coin-flip-multi')) {
+          inner.style.transform = `rotate${axis}(900deg)`;
+        } else {
+          inner.style.transform = `rotate${axis}(180deg)`;
+        }
+      } else {
+        inner.style.transform = '';
+      }
+    }
+    root.addEventListener('keydown', function(e) {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        isFlipped = !isFlipped;
+        setTransform();
+        root.setAttribute('aria-pressed', isFlipped);
+        announce();
+      }
+    });
+    if (root.dataset.flipOnClick === 'true') {
+      root.addEventListener('click', function() {
+        isFlipped = !isFlipped;
+        setTransform();
+        root.setAttribute('aria-pressed', isFlipped);
+        announce();
+      });
+      root.addEventListener('touchend', function() {
+        isFlipped = !isFlipped;
+        setTransform();
+        root.setAttribute('aria-pressed', isFlipped);
+        announce();
+      });
+    }
+    root.addEventListener('blur', function() {
+      isFlipped = false;
+      setTransform();
+      root.setAttribute('aria-pressed', 'false');
+      announce();
+    });
+  }
+}
+</script>
 
 <style>
 .coin-flip {
   perspective: 1000px;
   display: inline-block;
-  border-radius: 50%;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  border-radius: var(--radius-full, 50%);
+  box-shadow: var(--shadow-lg, 0 4px 16px rgba(0,0,0,0.10));
   overflow: hidden;
   cursor: pointer;
+  outline: none;
+}
+.coin-flip:focus {
+  box-shadow: 0 0 0 2px var(--focus-ring-color, #2563eb), var(--shadow-lg, 0 4px 16px rgba(0,0,0,0.10));
 }
 .coin-flip-inner {
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+  transition-property: transform;
+  transition-timing-function: var(--ease-standard, cubic-bezier(0.4,0,0.2,1));
   transform-style: preserve-3d;
 }
 .coin-flip-inner.coin-flip-multi {
-  transition: transform 1.4s cubic-bezier(0.4,0,0.2,1);
+  /* duration and timing function are set inline */
 }
-.coin-flip:hover .coin-flip-inner,
-.coin-flip:focus .coin-flip-inner {
-  transform: rotateY(180deg);
-}
-.coin-flip:hover .coin-flip-inner.coin-flip-multi,
-.coin-flip:focus .coin-flip-inner.coin-flip-multi {
-  transform: rotateY(900deg); /* 2.5 full spins (360*2.5) */
-}
-.coin-flip-front, .coin-flip-back {
+.coin-flip-face {
   position: absolute;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  backface-visibility: hidden;
-  border-radius: 50%;
   top: 0; left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  border-radius: var(--radius-full, 50%);
+  overflow: hidden;
 }
-.coin-flip-back {
+.coin-flip-front-face {
+  z-index: 2;
+}
+.coin-flip-back-face {
   transform: rotateY(180deg);
+  z-index: 2;
+}
+.coin-flip-front, .coin-flip-back {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-full, 50%);
+  display: block;
+}
+.coin-flip-highlight {
+  pointer-events: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full, 50%);
+  background: radial-gradient(ellipse 60% 30% at 60% 30%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 80%, transparent 100%);
+  mix-blend-mode: lighten;
+  z-index: 3;
+}
+.coin-flip-edge {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full, 50%);
+  z-index: 1;
+  box-shadow:
+    0 0 0 3px rgba(80,80,80,0.12) inset,
+    0 0 8px 2px rgba(0,0,0,0.10) inset;
+  background: repeating-linear-gradient(90deg, rgba(180,180,180,0.12) 0 2px, transparent 2px 6px);
+  pointer-events: none;
+}
+/* Flip axis logic */
+.coin-flip-inner {
+  /* Default is Y axis, but JS sets transform inline for flipping */
+}
+@media (prefers-reduced-motion: reduce) {
+  .coin-flip-inner,
+  .coin-flip-inner.coin-flip-multi {
+    transition: none !important;
+  }
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+/* --- Hover/Focus Flip for Y axis --- */
+.coin-flip[data-flip-axis="Y"]:hover .coin-flip-inner,
+.coin-flip[data-flip-axis="Y"]:focus .coin-flip-inner {
+  transform: rotateY(180deg);
+}
+.coin-flip[data-flip-axis="Y"]:hover .coin-flip-inner.coin-flip-multi,
+.coin-flip[data-flip-axis="Y"]:focus .coin-flip-inner.coin-flip-multi {
+  transform: rotateY(900deg);
+}
+/* --- Hover/Focus Flip for X axis --- */
+.coin-flip[data-flip-axis="X"]:hover .coin-flip-inner,
+.coin-flip[data-flip-axis="X"]:focus .coin-flip-inner {
+  transform: rotateX(180deg);
+}
+.coin-flip[data-flip-axis="X"]:hover .coin-flip-inner.coin-flip-multi,
+.coin-flip[data-flip-axis="X"]:focus .coin-flip-inner.coin-flip-multi {
+  transform: rotateX(900deg);
 }
 </style>
