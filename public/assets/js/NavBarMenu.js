@@ -1,4 +1,8 @@
-// NavBarMenu.js: Unified navigation logic (merged with NavBarEnhanced.js)
+// NavBarMenu.js: Modular enhancement for navigation (ARIA, scroll, keyboard, analytics, accessibility, etc.)
+// Imports analytics, accessibility, and scroll utilities
+import { trackEvent } from './analytics.js';
+import { addSkipToContentLink, enhanceFocusManagement } from './a11y.js';
+import { setupScrollEffects, setupScrollBehavior, setupPageTransitions } from './scroll.js';
 // Features: Navigation hydration, ARIA, analytics, scroll effects, theme integration, accessibility, keyboard shortcuts, progressive enhancement
 
 /**
@@ -11,32 +15,6 @@
  * @property {string} [target] - Target attribute for link (_blank, _self, etc.)
  * @property {NavLink[]} [children] - Child links for dropdown menus
  */
-
-/**
- * Navigation links configuration
- * @type {NavLink[]}
- */
-const navLinksData = [
-  { href: '/', label: 'Home', analytics: 'nav-home' },
-  { href: '/about/', label: 'About', analytics: 'nav-about' },
-  { 
-    href: '/projects/', 
-    label: 'Projects', 
-    analytics: 'nav-projects',
-    // Example of dropdown menu:
-    // children: [
-    //   { href: '/projects/web/', label: 'Web Projects', analytics: 'nav-projects-web' },
-    //   { href: '/projects/design/', label: 'Design Work', analytics: 'nav-projects-design' },
-    //   { href: '/projects/open-source/', label: 'Open Source', analytics: 'nav-projects-opensource' },
-    // ]
-  },
-  { href: '/blog/', label: 'Blog', analytics: 'nav-blog' },
-  { href: '/contact/', label: 'Contact', analytics: 'nav-contact' },
-  // Social media links - uncomment and customize as needed
-  // { href: 'https://github.com/yourusername', label: 'GitHub', analytics: 'nav-github', external: true, target: '_blank' },
-  // { href: 'https://linkedin.com/in/yourusername', label: 'LinkedIn', analytics: 'nav-linkedin', external: true, target: '_blank' },
-  // { href: 'https://twitter.com/yourusername', label: 'Twitter', analytics: 'nav-twitter', external: true, target: '_blank' },
-];
 
 class NavBarMenu {
   constructor() {
@@ -59,8 +37,11 @@ class NavBarMenu {
 
   init() {
     this.cacheElements();
-    this.addSkipToContentLink();
-    this.setupScrollEffects();
+    addSkipToContentLink();
+    // Use modular scroll utilities
+    setupScrollEffects(this);
+    setupScrollBehavior(this.navbar);
+    setupPageTransitions();
     this.setupMobileMenu();
     this.setupKeyboardShortcuts();
     this.setupProgressiveEnhancements();
@@ -68,8 +49,6 @@ class NavBarMenu {
     this.setupAnalytics();
     this.setupAccessibilityEnhancements();
     this.highlightActiveLink();
-    this.setupPageTransitions();
-    this.setupScrollBehavior();
   }
 
   cacheElements() {
@@ -80,50 +59,6 @@ class NavBarMenu {
     if (!this.navbar) {
       console.warn('NavBar: Main navbar element not found');
     }
-  }
-
-  // --- Scroll Effects ---
-  setupScrollEffects() {
-    let scrollTimeout;
-    const handleScroll = () => {
-      if (!this.ticking) {
-        requestAnimationFrame(() => {
-          this.updateNavbarOnScroll();
-          this.ticking = false;
-        });
-        this.ticking = true;
-      }
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        this.onScrollEnd();
-      }, 150);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-  }
-
-  updateNavbarOnScroll() {
-    const currentScrollY = window.scrollY;
-    const scrollDelta = currentScrollY - this.lastScrollY;
-    if (currentScrollY > 50) {
-      this.navbar.classList.add('scrolled');
-    } else {
-      this.navbar.classList.remove('scrolled');
-    }
-    if (Math.abs(scrollDelta) > 5) {
-      if (scrollDelta > 0 && currentScrollY > 100) {
-        this.navbar.classList.remove('nav-visible');
-        this.navbar.classList.add('nav-hidden');
-      } else if (scrollDelta < 0) {
-        this.navbar.classList.remove('nav-hidden');
-        this.navbar.classList.add('nav-visible');
-      }
-    }
-    this.lastScrollY = currentScrollY;
-  }
-
-  onScrollEnd() {
-    this.navbar.classList.remove('nav-hidden');
-    this.navbar.classList.add('nav-visible');
   }
 
   // --- Mobile Menu ---
@@ -302,7 +237,7 @@ class NavBarMenu {
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         const analyticsId = link.dataset.analytics;
-        this.trackEvent('navigation_click', {
+        trackEvent('navigation_click', {
           link_id: analyticsId,
           link_url: link.href,
           link_text: link.textContent.trim()
@@ -311,75 +246,25 @@ class NavBarMenu {
     });
     if (this.navToggle) {
       this.navToggle.addEventListener('click', () => {
-        this.trackEvent('mobile_menu_toggle', {
+        trackEvent('mobile_menu_toggle', {
           action: this.isMenuOpen ? 'close' : 'open'
         });
       });
     }
     if (this.searchToggle) {
       this.searchToggle.addEventListener('click', () => {
-        this.trackEvent('search_opened', {
+        trackEvent('search_opened', {
           trigger: 'button_click'
         });
       });
     }
   }
 
-  trackEvent(eventName, eventData = {}) {
-    if (typeof gtag === 'function') {
-      gtag('event', eventName, eventData);
-    } else if (typeof plausible === 'function') {
-      plausible(eventName, { props: eventData });
-    } else if (typeof fathom === 'object' && typeof fathom.trackEvent === 'function') {
-      fathom.trackEvent(eventName, eventData);
-    } else {
-      console.debug('[NavBar Analytics]', eventName, eventData);
-    }
-  }
-
   // --- Accessibility ---
   setupAccessibilityEnhancements() {
-    this.addSkipToContentLink();
-    this.enhanceFocusManagement();
+    addSkipToContentLink();
+    enhanceFocusManagement(this.navbar, this.trapFocus.bind(this), () => this.isMenuOpen);
     this.addLandmarkRoles();
-  }
-
-  addSkipToContentLink() {
-    if (!document.getElementById('skip-to-content')) {
-      const skipLink = document.createElement('a');
-      skipLink.id = 'skip-to-content';
-      skipLink.href = '#main';
-      skipLink.textContent = 'Skip to main content';
-      skipLink.className = 'sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-background focus:text-foreground focus:outline-none focus:ring-2 focus:ring-accent';
-      document.body.insertBefore(skipLink, document.body.firstChild);
-    }
-  }
-
-  enhanceFocusManagement() {
-    this.navbar.addEventListener('keydown', (e) => {
-      if (this.isMenuOpen && e.key === 'Tab') {
-        this.trapFocus(e);
-      }
-    });
-  }
-
-  trapFocus(e) {
-    const focusableElements = this.mobileMenu.querySelectorAll(
-      'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
-    );
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
-    if (e.shiftKey) {
-      if (document.activeElement === firstElement) {
-        e.preventDefault();
-        lastElement.focus();
-      }
-    } else {
-      if (document.activeElement === lastElement) {
-        e.preventDefault();
-        firstElement.focus();
-      }
-    }
   }
 
   addLandmarkRoles() {
