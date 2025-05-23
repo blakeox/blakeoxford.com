@@ -349,4 +349,60 @@
   transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s;
 }
 
+/* Hero Section Enhancements */
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 18s linear infinite;
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 66, 0.4); }
+  50% { box-shadow: 0 0 32px 8px rgba(245, 158, 66, 0.18); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s infinite;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: transform 0.12s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s, background 0.2s, color 0.2s;
+}
+.btn:active, .mobile-tap-effect:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-background);
+  box-shadow: 0 4px 24px 0 var(--color-accent-light);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background: var(--color-accent-dark);
+  color: var(--color-background);
+}
+.btn-secondary {
+  background: transparent;
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+}
+.btn-secondary:hover, .btn-secondary:focus {
+  background: var(--color-accent);
+  color: var(--color-background);
+}
+.profile-img-wrapper .animate-pulse-glow {
+  z-index: 1;
+  box-shadow: 0 0 0 0 rgba(245, 158, 66, 0.4);
+  pointer-events: none;
+}
+.profile-img-wrapper img {
+  z-index: 2;
+  position: relative;
+}
+
 

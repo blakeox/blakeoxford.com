@@ -421,6 +421,9 @@
     transform: translateY(12px) scale(0.98);
     animation: fadein-slide 0.35s cubic-bezier(0.4,0,0.2,1) forwards;
     animation-delay: var(--result-delay, 0ms);
+    border: 1.5px solid transparent;
+    background-clip: padding-box;
+    overflow: hidden;
   }
   
   .dark .search-result-item {
@@ -430,10 +433,11 @@
   
   .search-result-item:hover,
   .search-result-item.highlighted {
-    background: var(--color-accent-light);
-    color: var(--color-background);
+    border: 1.5px solid var(--color-accent);
+    background: linear-gradient(120deg, var(--color-accent-light) 80%, var(--color-accent) 100%);
     box-shadow: 0 4px 24px 0 rgba(37,99,235,0.10), 0 1.5px 8px 0 rgba(30,41,59,0.10);
     transform: scale(1.025);
+    animation: card-pop 0.18s cubic-bezier(.68,-0.55,.27,1.55);
   }
   
   .search-result-item:active {
@@ -454,11 +458,37 @@
     font-size: 1.25rem;
     margin-top: 0.25rem;
     box-shadow: 0 1px 4px 0 rgba(37,99,235,0.10);
+    transition: filter 0.2s, transform 0.2s;
+  }
+  
+  .search-result-item:hover .search-result-icon,
+  .search-result-item:focus .search-result-icon {
+    filter: drop-shadow(0 0 4px var(--color-accent));
+    animation: icon-wiggle 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+  }
+  
+  @keyframes icon-wiggle {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(-8deg); }
+    40% { transform: rotate(8deg); }
+    60% { transform: rotate(-4deg); }
+    80% { transform: rotate(4deg); }
+    100% { transform: rotate(0deg); }
   }
   
   .search-result-content {
     flex: 1;
     min-width: 0;
+  }
+  
+  .search-result-title,
+  .search-result-excerpt {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+    position: relative;
   }
   
   .search-result-title {
@@ -473,12 +503,18 @@
     color: var(--color-neutral);
     margin: 0;
     line-height: var(--lh-normal);
+    max-width: 32ch;
+    opacity: 0.85;
   }
   
-  .search-result-item:hover .search-result-excerpt,
-  .search-result-item.highlighted .search-result-excerpt {
-    color: var(--color-background);
-    opacity: 0.8;
+  .search-result-excerpt::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 2.5em;
+    background: linear-gradient(to right, transparent, var(--color-surface));
+    pointer-events: none;
+    display: block;
   }
   
   .search-result-type {
@@ -509,13 +545,14 @@
     margin-left: 0.5em;
     margin-bottom: 0.25rem;
     vertical-align: middle;
+    transition: transform 0.18s, background 0.18s, color 0.18s;
   }
   
   .search-result-item:hover .search-result-type-badge,
   .search-result-item.highlighted .search-result-type-badge {
-    color: var(--color-background);
+    transform: scale(1.12);
     background: var(--color-accent);
-    opacity: 0.9;
+    color: var(--color-background);
   }
   
   .search-suggestion-list {
@@ -718,6 +755,45 @@
     0% { opacity: 0; transform: translateY(-40px) scale(0.8); }
     20% { opacity: 1; }
     100% { opacity: 0; transform: translateY(100vh) scale(1.2); }
+  }
+  .search-result-image {
+    width: 3.25rem;
+    height: 3.25rem;
+    max-width: 56px;
+    max-height: 56px;
+    object-fit: cover;
+    border-radius: var(--radius-xl);
+    margin-right: 1rem;
+    box-shadow: 0 1px 4px 0 rgba(30,41,59,0.10);
+    flex-shrink: 0;
+    background: var(--color-surface-subtle);
+    display: block;
+    transition: box-shadow 0.18s, transform 0.18s;
+  }
+  .search-result-item:hover .search-result-image,
+  .search-result-item:focus .search-result-image {
+    box-shadow: 0 4px 16px 0 rgba(37,99,235,0.18);
+    transform: scale(1.07);
+  }
+  .search-result-image[onerror] {
+    content: url('/assets/images/fallback-search.png'); /* fallback image path */
+  }
+  @media (max-width: 768px) {
+    .search-result-image {
+      width: 2.25rem;
+      height: 2.25rem;
+      max-width: 36px;
+      max-height: 36px;
+      margin-right: 0.5rem;
+    }
+  }
+  /* Touch highlight for mobile */
+  @media (hover: none) and (pointer: coarse) {
+    .search-result-item:active {
+      background: var(--color-accent);
+      color: var(--color-background);
+      box-shadow: 0 2px 8px 0 rgba(37,99,235,0.10);
+    }
   }
 </style>
 

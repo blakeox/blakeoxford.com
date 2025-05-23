@@ -272,18 +272,20 @@ class SearchOverlayEnhancer {
 
   renderResults(results) {
     if (!this.searchResults) return;
-    
     if (results.length === 0) {
       this.showNoResults();
       return;
     }
-    
     const resultsHTML = results.map((result, index) => {
       const iconHTML = this.getIconHTML(result.icon);
       const typeLabel = this.getTypeLabel(result.type);
-      
+      // Only render image if result.image exists
+      const imageHTML = result.image
+        ? `<img src="${result.image}" alt="" class="search-result-image" loading="lazy" />`
+        : '';
       return `
         <a href="${result.url}" class="search-result-item" data-index="${index}">
+          ${imageHTML}
           <div class="search-result-icon">
             ${iconHTML}
           </div>
@@ -295,9 +297,7 @@ class SearchOverlayEnhancer {
         </a>
       `;
     }).join('');
-    
     this.searchResults.innerHTML = resultsHTML;
-    
     // Add click listeners to results
     this.setupResultListeners();
   }
