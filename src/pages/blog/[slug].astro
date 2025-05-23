@@ -5,18 +5,46 @@ import Layout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  return posts.map(post => ({ params: { slug: post.slug } }));
+  return posts.map((post: any) => ({ params: { slug: post.slug } }));
 }
 
 const { slug } = Astro.params;
 const posts = await getCollection('blog');
-const post = posts.find(p => p.slug === slug);
+const post = posts.find((p: any) => p.slug === slug);
 ---
 
-<Layout>
-  <h1 class="text-3xl font-bold mb-4">{post.data.title}</h1>
-  <p class="mb-6 text-gray-600 dark:text-gray-400">{post.data.description}</p>
-  <article class="prose dark:prose-invert">
-    <div set:html={post.body} />
+<Layout wide={true}>
+  <!-- Blog Post Hero Banner -->
+  <section class="relative overflow-hidden py-16 md:py-24 bg-gradient-to-br from-background via-accent/5 to-background">
+    <!-- Animated SVG background pattern -->
+    <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+      <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="blog-hero-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M0 40L40 0M20 40L40 20M0 20L20 0" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.12" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#blog-hero-grid)" />
+      </svg>
+    </div>
+    <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex flex-col items-center text-center">
+        <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl text-gradient bg-gradient-to-r from-accent-dark to-purple-600 mb-4 animate-fade-in">{post.data.title}</h1>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-2 animate-fade-in">{post.data.description}</p>
+      </div>
+    </div>
+    <!-- Decorative SVG divider -->
+    <div aria-hidden="true" class="w-full overflow-hidden pointer-events-none mt-8">
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 md:h-20 lg:h-24">
+        <path fill="currentColor" fill-opacity="0.08" d="M0,32 C360,80 1080,0 1440,48 L1440,80 L0,80 Z" />
+      </svg>
+    </div>
+  </section>
+  <article class="c-blog-detail px-4 md:px-12 lg:px-32 py-12">
+    <h2 class="font-heading font-bold text-3xl md:text-4xl text-gradient bg-gradient-to-r from-accent-dark to-purple-600 mb-4">Blog Post</h2>
+    <p class="mb-6 text-gray-600 dark:text-gray-400">{post.data.description}</p>
+    <div class="prose dark:prose-invert">
+      <div set:html={post.body} />
+    </div>
   </article>
 </Layout>

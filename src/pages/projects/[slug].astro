@@ -4,12 +4,12 @@ import Layout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
-  return projects.map(project => ({ params: { slug: project.slug } }));
+  return projects.map((project: any) => ({ params: { slug: project.slug } }));
 }
 
 const { slug } = Astro.params;
 const projects = await getCollection('projects');
-const project = projects.find(p => p.slug === slug);
+const project = projects.find((p: any) => p.slug === slug);
 if (!project) {
   throw new Error(`Project not found: ${slug}`);
 }
@@ -19,50 +19,69 @@ const formattedDate = date.toLocaleDateString('en-US', { month: 'long', year: 'n
 const canonicalUrl = `https://blakeoxford.com/projects/${slug}/`;
 ---
 
-<Layout title={title} description={description} image={image || '/assets/images/default-project.png'} url={canonicalUrl}>
-  <article class="c-project-detail container">
+<Layout title={title} description={description} image={image || '/assets/images/default-project.png'} url={canonicalUrl} wide={true}>
+  <!-- Project Hero Banner -->
+  <section class="relative overflow-hidden py-16 md:py-24 bg-gradient-to-br from-background via-accent/5 to-background">
+    <!-- Animated SVG background pattern -->
+    <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+      <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="project-hero-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M0 40L40 0M20 40L40 20M0 20L20 0" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.12" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#project-hero-grid)" />
+      </svg>
+    </div>
+    <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex flex-col items-center text-center">
+        <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl text-gradient bg-gradient-to-r from-accent-dark to-purple-600 mb-4 animate-fade-in">{title}</h1>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-2 animate-fade-in">{description}</p>
+        <p class="text-sm text-accent-dark mb-6 animate-fade-in"><strong>Date:</strong> {formattedDate}</p>
+        {image && (
+          <div class="mx-auto mb-8 rounded-full p-2 bg-gradient-to-r from-accent to-purple-500 shadow-lg animate-fade-in" style="max-width:340px;">
+            <img src={image} alt={title} class="rounded-full w-full h-auto object-cover border-4 border-white dark:border-gray-900 shadow-xl" loading="lazy" />
+          </div>
+        )}
+      </div>
+    </div>
+    <!-- Decorative SVG divider -->
+    <div aria-hidden="true" class="w-full overflow-hidden pointer-events-none mt-8">
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 md:h-20 lg:h-24">
+        <path fill="currentColor" fill-opacity="0.08" d="M0,32 C360,80 1080,0 1440,48 L1440,80 L0,80 Z" />
+      </svg>
+    </div>
+  </section>
+  <article class="c-project-detail px-4 md:px-12 lg:px-32 py-12">
     <!-- Breadcrumb Navigation -->
     <nav aria-label="Breadcrumb" class="breadcrumb text-sm mb-4">
       <a href="/" class="hover:underline">Home</a> / <a href="/projects/" class="hover:underline">Projects</a> / <span aria-current="page">{title}</span>
     </nav>
-
-    <h1 class="c-project-detail__title text-3xl font-bold mb-4">{title}</h1>
-
-    {image && (
-      <div class="c-project-detail__image-wrapper mb-6">
-        <img src={image} alt={title} class="c-project-detail__image mx-auto" loading="lazy" />
-      </div>
-    )}
-
+    <h2 class="c-project-detail__title font-heading font-bold text-3xl md:text-4xl text-gradient bg-gradient-to-r from-accent-dark to-purple-600 mb-4">Overview</h2>
     {description && <p class="c-project-detail__overview mb-4">{description}</p>}
-
     <p class="mb-4"><strong>Date:</strong> {formattedDate}</p>
-
     {link && (
       <p class="mb-6">
-        <a href={link} target="_blank" rel="noopener noreferrer" class="c-btn" aria-label={`Visit ${title}`}>
+        <a href={link} target="_blank" rel="noopener noreferrer" class="c-btn btn btn-primary" aria-label={`Visit ${title}`}>
           View Project
         </a>
       </p>
     )}
-
     <div class="c-project-detail__body prose prose-lg dark:prose-invert mb-8">
       <div set:html={project.body} />
     </div>
-
     {tags && tags.length > 0 && (
-      <p class="mb-8">
-        <strong>Tags:</strong>
+      <div class="mb-8">
+        <h3 class="font-heading font-bold text-2xl text-gradient bg-gradient-to-r from-accent-dark to-purple-600 mb-2">Tags</h3>
         <ul class="c-tag-list list-inline mt-2">
-          {tags.map(tag => (
-            <li class="c-tag-list__item inline-block mr-2" key={tag}>
+          {tags.map((tag: any) => (
+            <li class="c-tag-list__item inline-block mr-2">
               <a href={`/projects/?filter=${tag.toLowerCase().replace(/ /g, '-')}`} class="c-btn c-btn--secondary" aria-label={`Filter projects by ${tag}`}>{tag}</a>
             </li>
           ))}
         </ul>
-      </p>
+      </div>
     )}
-
     <div class="c-project-detail__navigation text-center mt-8">
       <a href="/projects/" class="c-btn c-btn--secondary" aria-label="Back to Projects">Back to Projects</a>
     </div>
