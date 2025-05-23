@@ -1,0 +1,7 @@
+[
+  {
+    "title": "Hello World",
+    "excerpt": "My first blog post using Astro Content Collections and MDX.",
+    "url": "/blog/hello-world"
+  }
+]

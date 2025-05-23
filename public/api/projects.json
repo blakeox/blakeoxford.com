@@ -1,0 +1,27 @@
+[
+  {
+    "title": "ADP Workforce Now Implementation",
+    "excerpt": "Implemented ADP Workforce Now with seamless GL integration for Sage Intacct, robust HCM and recruiting integrations with Indeed, and comprehensive reporting through PowerBI.",
+    "url": "/projects/adp-workforcenow"
+  },
+  {
+    "title": "AdvancedMD Implementation",
+    "excerpt": "Transitioned from paper records to a unified digital EHR system, integrating ABA, PT, OT, ST, and medical appointments with electronic billing.",
+    "url": "/projects/advancedmd-implementation"
+  },
+  {
+    "title": "Bank Projections and Financial Modeling",
+    "excerpt": "Developed detailed financial models and projections to secure a $10M loan for a 36,000 sq. ft facility.",
+    "url": "/projects/bank-projections-modeling"
+  },
+  {
+    "title": "Enterprise Digital Transformation",
+    "excerpt": "Transitioned from paper-based workflows to cloud-based SaaS solutions, saving over $250K+ annually.",
+    "url": "/projects/enterprise-digital-transformation"
+  },
+  {
+    "title": "Sage Intacct Integration with Square POS",
+    "excerpt": "Implemented Sage Intacct and integrated it with Square POS through Shogo, building custom reports for seamless accounting reconciliation.",
+    "url": "/projects/sage-intacct-integration-with-square-pos"
+  }
+]

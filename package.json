@@ -5,19 +5,21 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "npm run generate:search-index && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint . --ext .js,.ts,.astro,.mdx",
     "lint:fix": "eslint . --ext .js,.ts,.astro,.mdx --fix",
     "lint:css": "stylelint 'src/styles/**/*.css'",
-    "lint:css:fix": "stylelint 'src/styles/**/*.css' --fix"
+    "lint:css:fix": "stylelint 'src/styles/**/*.css' --fix",
+    "generate:search-index": "node scripts/generate-search-index.js"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.7",
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
     "astro": "latest",
+    "gray-matter": "^4.0.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
