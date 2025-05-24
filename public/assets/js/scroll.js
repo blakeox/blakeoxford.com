@@ -9,14 +9,18 @@ export function setupScrollEffects(context) {
   const handleScroll = () => {
     if (!context.ticking) {
       requestAnimationFrame(() => {
-        context.updateNavbarOnScroll();
+        if (typeof context.updateNavbarOnScroll === 'function') {
+          context.updateNavbarOnScroll();
+        }
         context.ticking = false;
       });
       context.ticking = true;
     }
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
-      context.onScrollEnd();
+      if (typeof context.onScrollEnd === 'function') {
+        context.onScrollEnd();
+      }
     }, 150);
   };
   window.addEventListener('scroll', handleScroll, { passive: true });
@@ -108,4 +112,4 @@ export function debounce(func, wait) {
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
   };
-} 
+}
