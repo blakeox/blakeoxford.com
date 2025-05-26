@@ -20,6 +20,11 @@
     "url": "/projects/enterprise-digital-transformation"
   },
   {
+    "title": "Power BI Reporting & Compliance Intelligence System",
+    "excerpt": "Built a dynamic Power BI platform with operational dashboards and integrated compliance tools—leveraging advanced text similarity algorithms to detect documentation anomalies.",
+    "url": "/projects/powerbi"
+  },
+  {
     "title": "Sage Intacct Integration with Square POS",
     "excerpt": "Implemented Sage Intacct and integrated it with Square POS through Shogo, building custom reports for seamless accounting reconciliation.",
     "url": "/projects/sage-intacct-integration-with-square-pos"

@@ -12,7 +12,8 @@
     "lint:fix": "eslint . --ext .js,.ts,.astro,.mdx --fix",
     "lint:css": "stylelint 'src/styles/**/*.css'",
     "lint:css:fix": "stylelint 'src/styles/**/*.css' --fix",
-    "generate:search-index": "node scripts/generate-search-index.js"
+    "generate:search-index": "node scripts/generate-search-index.js",
+    "test": "vitest"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.7",
@@ -21,7 +22,8 @@
     "astro": "latest",
     "gray-matter": "^4.0.3",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "zod": "^3.25.28"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "latest",
@@ -33,15 +35,19 @@
     "@tailwindcss/postcss": "latest",
     "@tailwindcss/typography": "latest",
     "@tailwindcss/vite": "^4.1.7",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/nanoid": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
+    "@vitejs/plugin-react": "^4.5.0",
     "astro-compress": "latest",
     "astro-eslint-parser": "latest",
     "autoprefixer": "latest",
     "eslint": "latest",
     "eslint-plugin-astro": "latest",
     "eslint-plugin-mdx": "latest",
+    "jsdom": "^26.1.0",
     "postcss": "latest",
     "postcss-html": "latest",
     "postcss-scss": "latest",

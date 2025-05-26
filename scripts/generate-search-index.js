@@ -35,4 +35,7 @@ const projectsIndex = buildIndex('src/content/projects', '/projects');
 writeJSON(path.join(__dirname, '../public/api/blog.json'), blogIndex);
 writeJSON(path.join(__dirname, '../public/api/projects.json'), projectsIndex);
 
-console.log('Search indexes generated: blog.json, projects.json'); 
+console.log('Search indexes generated: blog.json, projects.json');
+
+// Export functions for testing
+export { parseMDXFile, buildIndex, getFiles };
