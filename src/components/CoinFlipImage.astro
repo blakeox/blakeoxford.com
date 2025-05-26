@@ -7,7 +7,7 @@ function simpleId() {
 const {
   frontSrc,
   backSrc,
-  altFront = '',
+  alt = '',        // alias for front alt text
   altBack = '',
   size = 144,
   flipMultipleTimes = false,
@@ -19,33 +19,33 @@ const {
   multiFlipDuration = 2000, // ms, slower for multi-flip
   multiFlipEase = 'cubic-bezier(.68,-0.55,.27,1.55)' // springy for multi-flip
 } = Astro.props;
-const uniqueId = simpleId();
+// Compute axis and easing values
 const axis = flipAxis === 'x' ? 'X' : 'Y';
-const ease = flipEase || 'cubic-bezier(0.22,1,0.36,1)';
-const multiEase = multiFlipEase || 'cubic-bezier(.68,-0.55,.27,1.55)';
+const ease = flipEase;
+const multiEase = multiFlipEase;
+const uniqueId = simpleId();
 ---
 <noscript>
-  <img src={frontSrc} alt={altFront} style={`width:${size}px;height:${size}px;`} class={`coin-flip-front ${customClass}`} />
+  <img src={frontSrc} alt={alt} style={`width:${size}px;height:${size}px;`} class={`coin-flip-front ${customClass}`} />
 </noscript>
-<div
+<button
+  type="button"
   class={`coin-flip ${customClass}`}
   style={`width:${size}px;height:${size}px;`}
-  tabindex="0"
-  role="button"
   aria-pressed="false"
-  aria-label="Flippable coin image"
+  aria-label="Flip image; shows front/back of a coin."
   id={uniqueId + '-root'}
   data-flip-on-click={flipOnClick}
   data-flip-axis={axis}
 >
-  <div class={"coin-flip-inner" + (flipMultipleTimes ? " coin-flip-multi" : "")}
-    id={uniqueId + '-inner'}
-    style={flipMultipleTimes
+   <div class={"coin-flip-inner" + (flipMultipleTimes ? " coin-flip-multi" : "")} 
+     id={uniqueId + '-inner'}
+     style={flipMultipleTimes
       ? `transition-duration:${multiFlipDuration}ms;transition-timing-function:${multiEase};`
       : `transition-duration:${duration}ms;transition-timing-function:${ease};`}
   >
     <div class="coin-flip-face coin-flip-front-face">
-      <img src={frontSrc} alt={altFront} class="coin-flip-front" loading="lazy" draggable="false" />
+      <img src={frontSrc} alt={alt} class="coin-flip-front" loading="lazy" draggable="false" />
       <div class="coin-flip-highlight"></div>
     </div>
     <div class="coin-flip-edge"></div>
@@ -55,63 +55,29 @@ const multiEase = multiFlipEase || 'cubic-bezier(.68,-0.55,.27,1.55)';
     </div>
   </div>
   <span id={uniqueId + '-live'} class="sr-only" aria-live="polite"></span>
-</div>
+</button>
 
 <script is:inline>
-if (typeof window !== 'undefined') {
-  const uniqueId = "{uniqueId}";
-  const root = document.getElementById(uniqueId + '-root');
-  const inner = document.getElementById(uniqueId + '-inner');
-  const live = document.getElementById(uniqueId + '-live');
+// Locate root and inner by deriving uniqueId from element ID
+const root = document.currentScript.previousElementSibling;
+if (root) {
+  const baseId = root.id.replace('-root', '');
+  const inner = document.getElementById(baseId + '-inner');
+  const live = document.getElementById(baseId + '-live');
   let isFlipped = false;
-  let axis = root ? root.dataset.flipAxis : 'Y';
-  if (root && inner) {
-    function announce() {
-      if (live) {
-        live.textContent = isFlipped ? `${altBack}` : `${altFront}`;
-      }
-    }
-    function setTransform() {
-      if (isFlipped) {
-        if (inner.classList.contains('coin-flip-multi')) {
-          inner.style.transform = `rotate${axis}(900deg)`;
-        } else {
-          inner.style.transform = `rotate${axis}(180deg)`;
-        }
-      } else {
-        inner.style.transform = '';
-      }
-    }
-    root.addEventListener('keydown', function(e) {
-      if (e.key === ' ' || e.key === 'Enter') {
-        e.preventDefault();
-        isFlipped = !isFlipped;
-        setTransform();
-        root.setAttribute('aria-pressed', isFlipped);
-        announce();
-      }
-    });
-    if (root.dataset.flipOnClick === 'true') {
-      root.addEventListener('click', function() {
-        isFlipped = !isFlipped;
-        setTransform();
-        root.setAttribute('aria-pressed', isFlipped);
-        announce();
-      });
-      root.addEventListener('touchend', function() {
-        isFlipped = !isFlipped;
-        setTransform();
-        root.setAttribute('aria-pressed', isFlipped);
-        announce();
-      });
-    }
-    root.addEventListener('blur', function() {
-      isFlipped = false;
-      setTransform();
-      root.setAttribute('aria-pressed', 'false');
+  let axis = root.dataset.flipAxis || 'Y';
+  function announce() { if (live) live.textContent = isFlipped ? altBack : alt; }
+  function setTransform() { inner.style.transform = isFlipped ? `rotate${axis}(${flipMultipleTimes?900:180}deg)` : ''; }
+  root.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault(); isFlipped = !isFlipped; setTransform(); root.setAttribute('aria-pressed', isFlipped);
       announce();
-    });
+    }
+  });
+  if (root.dataset.flipOnClick === 'true') {
+    root.addEventListener('click', () => { isFlipped = !isFlipped; setTransform(); root.setAttribute('aria-pressed', isFlipped); announce(); });
   }
+  root.addEventListener('blur', () => { isFlipped = false; setTransform(); root.setAttribute('aria-pressed', 'false'); announce(); });
 }
 </script>
 

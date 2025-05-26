@@ -80,8 +80,25 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
     <!-- <script src="/assets/js/search-enhancements.js" defer></script> -->
     <!-- Theme toggle debugger script - REMOVE IN PRODUCTION -->
     <script is:inline src="/assets/js/theme-toggle-debugger.js"></script>
+    <!-- JSON-LD Person Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Blake Oxford",
+      "url": "https://blakeoxford.com",
+      "image": "https://blakeoxford.com/assets/images/Blake-O-scaled.jpg",
+      "jobTitle": "Systems Architect · Workflow Strategist · Action-Oriented Operator",
+      "description": "Learn about Blake Oxford, Systems Architect, Workflow Strategist, and Action-Oriented Operator.",
+      "sameAs": [
+        "https://www.linkedin.com/in/blakeoxford/",
+        "https://github.com/blakeoxford",
+        "https://learn.microsoft.com/users/BlakeOxford-1002"
+      ]
+    }
+    </script>
   </head>
-  <body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <body id="top" class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
     <NavBar />
     <main class={
       `prose prose-gray dark:prose-invert ${wide ? 'max-w-none px-0' : 'max-w-3xl mx-auto p-4'}`
