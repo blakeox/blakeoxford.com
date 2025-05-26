@@ -8,7 +8,12 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Ignore Lighthouse and other test output reports
+chromewebdata_*.report.html
+test-results/
+playwright-report/
+*.lighthouse.report.html
 
 # Runtime data
 pids

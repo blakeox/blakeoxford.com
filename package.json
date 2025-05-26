@@ -35,6 +35,7 @@
     "@astrojs/rss": "latest",
     "@astrojs/sitemap": "latest",
     "@eslint/js": "latest",
+    "@playwright/test": "^1.52.0",
     "@tailwindcss/container-queries": "latest",
     "@tailwindcss/postcss": "latest",
     "@tailwindcss/typography": "latest",

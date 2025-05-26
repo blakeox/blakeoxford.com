@@ -86,8 +86,9 @@ test.describe('Contact form', () => {
     await expect(page).toHaveURL(/contact/);
     
     // Check for validation message
+    // Use HTMLInputElement for checkValidity
     const emailInput = page.locator('#email');
-    const isValid = await emailInput.evaluate((el) => el.checkValidity());
+    const isValid = await emailInput.evaluate((el) => (el as HTMLInputElement).checkValidity());
     expect(isValid).toBeFalsy();
   });
 });
