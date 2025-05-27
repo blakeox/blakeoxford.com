@@ -106,6 +106,14 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
       })(window,document,'script','dataLayer','GTM-MDX5DR6Q');
     `}</script>
     <!-- End Google Tag Manager -->
+    <!-- Google Analytics (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CS4BH1K3HG"></script>
+    <script is:inline>{`
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CS4BH1K3HG');
+    `}</script>
   </head>
   <body id="top" class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Google Tag Manager (noscript) -->
