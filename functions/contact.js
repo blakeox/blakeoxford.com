@@ -77,10 +77,11 @@ export async function onRequestPost(context) {
     });
     if (!mailRes.ok) {
       const error = await mailRes.text();
+      console.error('Resend API error (site owner):', error);
       return Response.redirect('/contact?error=1', 303);
     }
     // Send confirmation email to user
-    await fetch('https://api.resend.com/emails', {
+    const confirmRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${resendApiKey}`,
@@ -93,7 +94,12 @@ export async function onRequestPost(context) {
         text: `Hi ${name},\n\nThank you for reaching out! I have received your message and will get back to you soon.\n\nYour message:\n${message}\n\nBest,\nBlake Oxford`
       })
     });
-    // Redirect to success
+    if (!confirmRes.ok) {
+      const error = await confirmRes.text();
+      console.error('Resend API error (confirmation):', error);
+      return Response.redirect('/contact?error=1', 303);
+    }
+    // Redirect to /contact?success=true (no trailing slash)
     return Response.redirect('/contact?success=true', 303);
   } catch (err) {
     return new Response('Server error: ' + err, { status: 500 });
