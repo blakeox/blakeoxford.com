@@ -6,17 +6,13 @@ declare module 'astro:content' {
 			remarkPluginFrontmatter: Record<string, any>;
 			components: import('astro').MDXInstance<{}>['components'];
 		}>;
+		'.md': Promise<RenderResult>;
 	}
-}
 
-declare module 'astro:content' {
 	export interface RenderResult {
-		Content: import('astro/runtime/server/index.js').AstroComponentFactory;
+		Content: any; // Fallback to any due to module resolution error
 		headings: import('astro').MarkdownHeading[];
 		remarkPluginFrontmatter: Record<string, any>;
-	}
-	interface Render {
-		'.md': Promise<RenderResult>;
 	}
 
 	export interface RenderedContent {
@@ -26,9 +22,7 @@ declare module 'astro:content' {
 			[key: string]: unknown;
 		};
 	}
-}
 
-declare module 'astro:content' {
 	type Flatten<T> = T extends { [K: string]: infer U } ? U : never;
 
 	export type CollectionKey = keyof AnyEntryMap;
@@ -63,7 +57,6 @@ declare module 'astro:content' {
 		E extends ValidContentEntrySlug<C> | (string & {}),
 	>(
 		collection: C,
-		// Note that this has to accept a regular string too, for SSR
 		entrySlug: E,
 	): E extends ValidContentEntrySlug<C>
 		? Promise<CollectionEntry<C>>
