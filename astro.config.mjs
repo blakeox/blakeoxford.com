@@ -4,11 +4,12 @@ import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
   envPrefix: 'PUBLIC_',
   site: 'https://blakeoxford.com',      // ← your real domain
-  // adapter: cloudflare(),             // ← remove for fully static output
+  adapter: cloudflare(),                // ← enable for Cloudflare deployment
   integrations: [
     mdx(),
     sitemap(),
