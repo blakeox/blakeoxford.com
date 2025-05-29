@@ -99,16 +99,18 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
           <label for="message" class="font-semibold text-lg">Message <span class="text-accent">*</span></label>
           <textarea id="message" name="message" rows="5" required aria-required="true" class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white transition-colors duration-200" placeholder="How can I help you? Let's build something great together!"></textarea>
         </div>
+
+        <!-- Cloudflare Turnstile widget -->
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAABeu0PfX8oWvQvjR"></div>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
         <button type="submit" class="c-btn bg-accent text-background font-semibold px-5 py-2 rounded-lg shadow hover:bg-accent-dark transition-all duration-200 text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-accent flex items-center gap-2 mx-auto">🚀 Send Message</button>
       </form>
-      <div class="mt-6 text-center">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Alternatively, you can <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAANAAReUJElUQ0hGTkZSRkdSSUpPU1RHVDg2MlpYTkg3VC4u" target="_blank" rel="noopener" class="underline text-accent hover:text-accent-dark">use my Microsoft Form</a>.</p>
-      </div>
     </div>
     <!-- Secondary CTA -->
     <div class="mt-12 text-center animate-fade-in animate-slide-up">
-      <a href="/projects/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold text-lg hover:bg-accent hover:text-background focus:bg-accent-dark focus:text-background transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent-dark mobile-tap-effect mr-4">See My Work</a>
-      <a href="/blog/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold text-lg hover:bg-accent hover:text-background focus:bg-accent-dark focus:text-background transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent-dark mobile-tap-effect">Read My Blog</a>
+      <a href="/projects/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold text-lg hover:bg-accent hover:text-background focus:bg-accent-dark focus:text-background transition-all	duration-200 focus:outline-none focus:ring-2 focus:ring-accent-dark mobile-tap-effect mr-4">See My Work</a>
+      <a href="/blog/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold text-lg hover:bg-accent hover:text-background focus:bg-accent-dark focus:text-background transition-all	duration-200 focus:outline-none focus:ring-2 focus:ring-accent-dark mobile-tap-effect">Read My Blog</a>
     </div>
   </section>
   <!-- Success & Confetti Script -->
@@ -142,7 +144,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
               const check = document.createElement('span');
               check.innerHTML = ' <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="inline-block align-middle text-green-500 animate-fade-in" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
               status.appendChild(check);
-              // launch confetti
+              // launch	confetti
               import('https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js').then(module => {
                 module.default({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
               });
@@ -163,9 +165,9 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
   </script>
   <!-- Sticky Back to Top Button -->
   <div class="fixed bottom-6 right-6 z-50">
-    <a href="#contact-title" class="bg-accent hover:bg-accent-dark text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" aria-label="Back to top">
+    <a href="#contact-title" class="bg-accent hover:bg-accent-dark text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all	duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" aria-label="Back to top">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7	v18" />
       </svg>
     </a>
   </div>
