@@ -1,8 +1,8 @@
 import { Resend } from 'resend';
 
-export async function post({ request }) {
+export async function POST(context) {
   try {
-    const { name, email, message } = await request.json();
+    const { name, email, message } = await context.request.json();
     if (!name || !email || !message) {
       return new Response(JSON.stringify({ error: 'Missing required fields.' }), { status: 400 });
     }
@@ -22,3 +22,5 @@ export async function post({ request }) {
     return new Response(JSON.stringify({ error: 'Server error.' }), { status: 500 });
   }
 }
+
+export const prerender = false;
