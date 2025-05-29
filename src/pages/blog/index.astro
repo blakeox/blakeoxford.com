@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import BlogPostRow from '../../components/BlogPostRow.astro';
 const posts = (await getCollection('blog')) as any[];
 const title = "Blog";
 const description = "Explore my latest thoughts, tutorials, and insights on web development, design, and technology.";
@@ -31,29 +32,15 @@ const canonicalUrl = "https://blakeoxford.com/blog/";
         <path fill="currentColor" fill-opacity="0.08" d="M0,32 C360,80 1080,0 1440,48 L1440,80 L0,80 Z" />
       </svg>
     </div>
-    <!-- Blog Search Bar -->
-    <div class="blog-search mb-8 max-w-2xl mx-auto">
-      <input type="text" id="blog-search-input" placeholder="Search blog posts..." aria-label="Search blog posts" class="w-full p-3 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900" />
-    </div>
-    <div class="blog-posts grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {posts.length === 0 && (
-        <div id="no-results">
-          <p>No matching blog posts found.</p>
-        </div>
-      )}
-      {posts.map((post: any) => (
-        <article class="blog-post scroll-animate bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 flex flex-col border border-gray-100 dark:border-gray-800" data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description?.toLowerCase() || ''}>
-          <h2 class="text-2xl font-semibold mb-2">
-            <a href={`/blog/${post.slug}/`} class="hover:underline text-gradient bg-gradient-to-r from-accent-dark to-purple-600" data-analytics="blog-read-more">{post.data.title}</a>
-          </h2>
-          {post.data.description && <p class="mb-4 text-gray-700 dark:text-gray-300">{post.data.description}</p>}
-          <a href={`/blog/${post.slug}/`} class="c-btn btn btn-primary mt-auto self-start" data-analytics="blog-read-more">Read More</a>
-        </article>
-      ))}
+
+    <!-- Replace search bar and grid list with flex list of BlogPostRow -->
+    <div class="flex flex-col gap-6 md:gap-4 w-full">
+      {posts
+        .filter((p: any) => !p.data.draft)
+        .sort((a: any, b: any) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+        .map((post: any, idx: number) => (
+          <BlogPostRow post={post} align={idx % 2 === 0 ? 'left' : 'right'} />
+        ))}
     </div>
   </section>
-  <script src="/assets/js/scroll.js" defer></script>
-  <script src="/assets/js/image-lazyload.js" defer></script>
-  <script src="/assets/js/filter.js" defer></script>
-  <script src="/assets/js/analytics.js" defer></script>
 </Layout>
