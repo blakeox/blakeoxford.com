@@ -82,7 +82,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
     <!-- Form status message -->
     <div id="form-status" aria-live="polite" class="hidden text-center text-green-600 font-semibold mb-4"></div>
     <div class="c-contact-page__form-container scroll-animate bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30 animate-slide-up">
-      <form name="contact" method="POST" action="?success=true" data-netlify="true" netlify-honeypot="bot-field" class="space-y-6">
+      <form id="contact-form" class="space-y-6">
         <input type="hidden" name="form-name" value="contact" />
         <p class="hidden">
           <label>Don't fill this out if you're human: <input name="bot-field" /></label>
@@ -114,18 +114,49 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
   <!-- Success & Confetti Script -->
   <script is:inline>
     document.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('success') === 'true') {
-        const status = document.getElementById('form-status');
-        status.textContent = 'Thank you for your message! 🎉';
-        status.classList.remove('hidden');
-        // Add checkmark animation
-        const check = document.createElement('span');
-        check.innerHTML = ' <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="inline-block align-middle text-green-500 animate-fade-in" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
-        status.appendChild(check);
-        // launch confetti
-        import('https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js').then(module => {
-          module.default({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      const form = document.getElementById('contact-form');
+      const status = document.getElementById('form-status');
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          status.textContent = '';
+          status.classList.add('hidden');
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+          if (data['bot-field']) return;
+          try {
+            const res = await fetch('/api/send-email', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: data.name,
+                email: data.email,
+                message: data.message
+              })
+            });
+            const result = await res.json();
+            if (result.success) {
+              status.textContent = 'Thank you for your message! 🎉';
+              status.classList.remove('hidden');
+              // Add checkmark animation
+              const check = document.createElement('span');
+              check.innerHTML = ' <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="inline-block align-middle text-green-500 animate-fade-in" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+              status.appendChild(check);
+              // launch confetti
+              import('https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js').then(module => {
+                module.default({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+              });
+              form.reset();
+            } else {
+              status.textContent = result.error || 'Something went wrong. Please try again.';
+              status.classList.remove('hidden');
+              status.classList.add('text-red-600');
+            }
+          } catch {
+            status.textContent = 'Server error. Please try again later.';
+            status.classList.remove('hidden');
+            status.classList.add('text-red-600');
+          }
         });
       }
     });
