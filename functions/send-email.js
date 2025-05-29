@@ -1,13 +1,13 @@
 import { Resend } from 'resend';
 
-const WINDOW_SECONDS = 30;   // 30 seconds
-const MAX_PER_WINDOW = 2;    // allow 2 submits per window
+const WINDOW_SECONDS = 30;  // 30 seconds
+const MAX_PER_WINDOW = 2;   // 2 submits per window
 
 export async function onRequestPost(context) {
   try {
-    /* ────── Parse body (JSON or formData) ────── */
-    let name, email, message, token, botField;
+    // ─── Parse incoming data (AJAX JSON or standard form POST) ───
     const ct = context.request.headers.get('content-type') || '';
+    let name, email, message, token, botField;
     if (ct.includes('application/json')) {
       ({ name, email, message, token } = await context.request.json());
     } else {
@@ -22,15 +22,19 @@ export async function onRequestPost(context) {
     const ip  = context.request.headers.get('CF-Connecting-IP') ?? 'unknown';
     const now = new Date().toISOString();
 
-    /* ────── Honeypot ────── */
-    if (botField) return okResponse();
+    // ─── Honeypot: silently succeed if bot-field is filled ───
+    if (botField) {
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200, headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
-    /* ────── Validate ────── */
+    // ─── Basic validation ───
     if (!name || !email || !message || !token) {
       return errorResponse(400, 'Missing required fields or Turnstile token.');
     }
 
-    /* ────── Rate-limit via KV ────── */
+    // ─── Rate-limit per IP using KV ───
     try {
       const key  = `ip:${ip}`;
       const hits = await context.env.RATE_LIMIT_KV.get(key);
@@ -46,22 +50,25 @@ export async function onRequestPost(context) {
       console.warn('⚠️ Rate-limit KV error (continuing):', e);
     }
 
-    /* ────── Verify Turnstile ────── */
-    const verify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        secret:   context.env.TURNSTILE_SECRET_KEY,
-        response: token,
-        remoteip: ip
-      })
-    }).then(r => r.json());
+    // ─── Verify Turnstile token ───
+    const verify = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          secret:   context.env.TURNSTILE_SECRET_KEY,
+          response: token,
+          remoteip: ip,
+        }),
+      }
+    ).then(r => r.json());
 
     if (!verify.success) {
       return errorResponse(403, 'Bot verification failed.');
     }
 
-    /* ────── Send email via Resend ────── */
+    // ─── Send email via Resend ───
     const resend = new Resend(context.env.RESEND_API_KEY);
     const { error } = await resend.emails.send({
       from:     'Contact Form <noreply@blakeoxford.com>',
@@ -73,23 +80,27 @@ export async function onRequestPost(context) {
              <p><strong>Email:</strong> ${email}</p>
              <p>${message.replace(/\n/g,'<br>')}</p>`
     });
+
     if (error) {
       return errorResponse(500, 'Failed to send email.');
     }
 
-    /* ────── Store submission in KV ────── */
+    // ─── Log submission in KV ───
     try {
       const id = `${Date.now()}_${crypto.randomUUID()}`;
       await context.env.CONTACT_MESSAGES.put(
         `msg:${id}`,
         JSON.stringify({ id, now, ip, name, email, message }),
-        { expirationTtl: 60 * 60 * 24 * 365 }  // 1 year
+        { expirationTtl: 60 * 60 * 24 * 365 } // one year
       );
     } catch (e) {
       console.warn('⚠️ Submission KV write failed:', e);
     }
 
-    return okResponse();
+    // ─── All done! Return JSON success ───
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200, headers: { 'Content-Type': 'application/json' }
+    });
 
   } catch (err) {
     console.error('💥 send-email error:', err);
@@ -97,17 +108,7 @@ export async function onRequestPost(context) {
   }
 }
 
-/* ────── Helpers ────── */
-function okResponse() {
-  return new Response(JSON.stringify({ success: true }), {
-    status: 303,
-    headers: {
-      'Content-Type':  'application/json',
-      'Location':      '/contact/?success=true'
-    }
-  });
-}
-
+// ─── Helpers ───
 function errorResponse(status, msg) {
   const headers = { 'Content-Type': 'application/json' };
   if (status === 429) headers['Retry-After'] = WINDOW_SECONDS.toString();
