@@ -1,0 +1,3 @@
+name = "blakeoxford"
+compatibility_date = "2025-05-29"
+pages_build_output_dir = "./dist"
