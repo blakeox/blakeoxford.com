@@ -31,7 +31,6 @@
     "zod": "^3.25.28"
   },
   "devDependencies": {
-    "@astrojs/cloudflare": "latest",
     "@astrojs/mdx": "latest",
     "@astrojs/rss": "latest",
     "@astrojs/sitemap": "latest",
@@ -50,6 +49,7 @@
     "astro-compress": "latest",
     "astro-eslint-parser": "latest",
     "autoprefixer": "latest",
+    "cssnano": "^7.0.7",
     "eslint": "latest",
     "eslint-plugin-astro": "latest",
     "eslint-plugin-mdx": "latest",

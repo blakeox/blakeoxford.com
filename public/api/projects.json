@@ -20,6 +20,11 @@
     "url": "/projects/enterprise-digital-transformation"
   },
   {
+    "title": "FermentApp: Fermentation Tracking & Task Scheduler",
+    "excerpt": "Designed and developed FermentApp, an iOS application to track fermentation processes, schedule essential tasks, and visualize historical data for optimal batch outcomes.",
+    "url": "/projects/ferment-app"
+  },
+  {
     "title": "Power BI Reporting & Compliance Intelligence System",
     "excerpt": "Built a dynamic Power BI platform with operational dashboards and integrated compliance tools—leveraging advanced text similarity algorithms to detect documentation anomalies.",
     "url": "/projects/powerbi"
