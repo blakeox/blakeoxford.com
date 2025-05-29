@@ -36,7 +36,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
 
   {/* Main contact section */}
   <section id="contact-info" class="c-contact-page w-full py-20 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background animate-fade-in" role="region" aria-labelledby="contact-title">
-    {/* Animated SVG background pattern */}
+    <!-- Animated SVG background pattern -->
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -47,11 +47,11 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
         <rect width="100%" height="100%" fill="url(#contact-grid)" />
       </svg>
     </div>
-    {/* Blurred/floating shapes */}
+    <!-- Blurred/floating shapes -->
     <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
-    {/* Avatar */}
+    <!-- Avatar -->
     <div class="flex justify-center mb-6 animate-fade-in">
       <img src="/assets/images/Blake-O-scaled.jpg" alt="Blake Oxford" class="w-32 h-32 rounded-full shadow-lg border-4 border-accent animate-fade-in animate-slide-up" loading="lazy" />
     </div>
@@ -60,14 +60,14 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
     <p class="text-lg text-center mb-4 text-gray-700 dark:text-gray-300 animate-fade-in">Let's connect! Whether you want to collaborate, have a question, or just want to say hello, I'm always happy to chat.</p>
     <p class="text-sm text-center text-gray-500 mb-8 animate-fade-in">I usually reply within 24 hours.</p>
 
-    {/* Decorative SVG divider */}
+    <!-- Decorative SVG divider -->
     <div aria-hidden="true" class="w-full overflow-hidden pointer-events-none mb-8">
       <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 md:h-20 lg:h-24">
         <path fill="currentColor" fill-opacity="0.08" d="M0,32 C360,80 1080,0 1440,48 L1440,80 L0,80 Z" />
       </svg>
     </div>
 
-    {/* Contact Information */}
+    <!-- Contact Information -->
     <div class="c-contact-page__info scroll-animate flex flex-col md:flex-row items-center justify-center gap-8 mb-12">
       <a href="mailto:blakepoxford@outlook.com" class="flex flex-col items-center gap-2 group focus:outline-none" aria-label="Email Blake Oxford" title="Email">
         <span class="text-accent text-2xl group-hover:scale-110 transition">✉️</span>
@@ -77,22 +77,22 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
         <span class="text-accent text-2xl group-hover:scale-110 transition">📞</span>
         <span class="font-medium text-primary group-hover:text-accent transition-colors">248-202-4479</span>
       </a>
-      <a href="https://linkedin.com/in/blake-oxford" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 group focus:outline-none" aria-label="Visit Blake Oxford's LinkedIn profile" title="LinkedIn">
+      <a href="https://linkedin.com/in/blake-oxford" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 group focus:outline-none" aria-label="LinkedIn" title="LinkedIn">
         <span class="text-accent text-2xl group-hover:scale-110 transition">💼</span>
         <span class="font-medium text-primary group-hover:text-accent transition-colors">linkedin.com/in/blake-oxford</span>
       </a>
     </div>
 
-    {/* Contact Form */}
+    <!-- Contact Form -->
     <h2 id="message-form" class="c-contact-page__subtitle font-heading font-bold text-2xl md:text-3xl text-gradient bg-gradient-to-r from-accent-dark to-purple-600 text-center mb-4 scroll-animate">Or Send Me a Message</h2>
 
-    {/* status banner */}
+    <!-- Form status banner -->
     <div id="form-status" aria-live="polite" class="hidden text-center font-semibold mb-4"></div>
 
     <div class="c-contact-page__form-container scroll-animate bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30">
       <form id="contact-form" method="POST" action="/send-email" class="space-y-6">
-        <input type="hidden" name="form-name" value="contact"/>
-        <p class="hidden"><label>Don't fill this out: <input name="bot-field"/></label></p>
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
 
         <div class="flex flex-col gap-2">
           <label for="name" class="font-semibold text-lg">Name <span class="text-accent">*</span></label>
@@ -100,15 +100,15 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
         </div>
         <div class="flex flex-col gap-2">
           <label for="email" class="font-semibold text-lg">Email <span class="text-accent">*</span></label>
-          <input id="email" name="email" type="email" autocomplete="email" aria-describedby="emailHelp" required class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white" placeholder="you@email.com"/>
-          <small id="emailHelp" class="text-sm text-gray-500">We’ll never share your email.</small>
+          <input id="email" name="email" type="email" autocomplete="email" required class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white" placeholder="you@email.com"/>
+          <small class="text-sm text-gray-500">We’ll never share your email.</small>
         </div>
         <div class="flex flex-col gap-2">
           <label for="message" class="font-semibold text-lg">Message <span class="text-accent">*</span></label>
           <textarea id="message" name="message" rows="5" required class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white" placeholder="How can I help you?"></textarea>
         </div>
 
-        {/* Turnstile */}
+        <!-- Cloudflare Turnstile widget -->
         <div class="cf-turnstile" data-sitekey="0x4AAAAAABeu0PfX8oWvQvjR"></div>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
@@ -119,16 +119,16 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
       </form>
     </div>
 
-    {/* Secondary CTA */}
+    <!-- Secondary CTA -->
     <div class="mt-12 text-center animate-fade-in animate-slide-up">
       <a href="/projects/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold hover:bg-accent hover:text-background">See My Work</a>
       <a href="/blog/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold hover:bg-accent hover:text-background">Read My Blog</a>
     </div>
   </section>
 
-  {/* Confetti & JS */}
+  <!-- Confetti & JS -->
   <script is:inline>
-    // banner for no‑JS fallback redirect
+    // Show banner if redirected with success
     if (new URLSearchParams(location.search).get('success') === 'true') {
       const s = document.getElementById('form-status');
       s.textContent = 'Thank you for your message! 🎉';
@@ -136,41 +136,59 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('contact-form');
+      const form   = document.getElementById('contact-form');
       const status = document.getElementById('form-status');
-      const btn = form.querySelector('button'); const label=document.getElementById('btn-label'); const spin=document.getElementById('spinner');
+      const btn    = form.querySelector('button');
+      const label  = document.getElementById('btn-label');
+      const spinner= document.getElementById('spinner');
 
-      form.addEventListener('submit', async e => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        status.classList.add('hidden'); btn.disabled=true; label.textContent='Sending…'; spin.classList.remove('hidden');
-        const fd = new FormData(form);
+        status.classList.add('hidden');
+        btn.disabled = true; label.textContent = 'Sending…'; spinner.classList.remove('hidden');
+
+        const fd    = new FormData(form);
         if (fd.get('bot-field')) return;
+
+        // Include Turnstile token here:
         const token = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
+
+        const payload = {
+          name:    fd.get('name'),
+          email:   fd.get('email'),
+          message: fd.get('message'),
+          token    // ← send the token
+        };
 
         try {
           const res = await fetch('/send-email', {
-            method:'POST', headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({ name:fd.get('name'), email:fd.get('email'), message:fd.get('message'), token })
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
           });
-          const j = await res.json();
-          if (j.success) {
-            status.textContent='Thank you for your message! 🎉';
-            status.classList.remove('hidden','text-red-600'); status.classList.add('text-green-600');
-            (await import('https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js')).default({particleCount:100,spread:70,origin:{y:0.6}});
+          const json = await res.json();
+
+          if (json.success) {
+            status.textContent = 'Thank you for your message! 🎉';
+            status.classList.remove('hidden', 'text-red-600'); status.classList.add('text-green-600');
+            import('https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js')
+              .then(mod => mod.default({ particleCount: 100, spread: 70, origin: { y: 0.6 } }));
             form.reset();
           } else {
-            status.textContent=j.error||'Something went wrong.'; status.classList.remove('hidden'); status.classList.add('text-red-600');
+            status.textContent = json.error || 'Something went wrong.';
+            status.classList.remove('hidden'); status.classList.add('text-red-600');
           }
         } catch {
-          status.textContent='Server error. Please try again later.'; status.classList.remove('hidden'); status.classList.add('text-red-600');
+          status.textContent = 'Server error. Please try again later.';
+          status.classList.remove('hidden'); status.classList.add('text-red-600');
         } finally {
-          btn.disabled=false; label.textContent='Send Message'; spin.classList.add('hidden');
+          btn.disabled = false; label.textContent = 'Send Message'; spinner.classList.add('hidden');
         }
       });
     });
   </script>
 
-  {/* Back to top */}
+  <!-- Back to top -->
   <div class="fixed bottom-6 right-6 z-50">
     <a href="#contact-title" class="bg-accent hover:bg-accent-dark text-white p-3 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" aria-label="Back to top">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

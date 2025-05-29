@@ -1,15 +1,15 @@
 import { Resend } from 'resend';
 
-const WINDOW_SECONDS = 30;    // logical window
-const MAX_PER_WINDOW  = 2;    // max msgs per window
-const KV_TTL          = 60;   // must be ≥60 for Cloudflare KV
+const WINDOW_SECONDS = 30;    // logical window duration
+const MAX_PER_WINDOW  = 2;    // allowed submissions per window
+const KV_TTL          = 60;   // Cloudflare KV minimum TTL in seconds
 
 export async function onRequestPost(context) {
-  const ct      = context.request.headers.get('content-type') || '';
-  const isJson  = ct.includes('application/json');
+  const ct     = context.request.headers.get('content-type') || '';
+  const isJson = ct.includes('application/json');
 
   try {
-    // ─── Parse payload ───────────────────────
+    // ─── Parse incoming data ─────────────────────────
     let name, email, message, token, botField;
     if (isJson) {
       ({ name, email, message, token } = await context.request.json());
@@ -25,17 +25,17 @@ export async function onRequestPost(context) {
     const ip  = context.request.headers.get('CF-Connecting-IP') ?? 'unknown';
     const now = new Date().toISOString();
 
-    // ─── Honeypot ────────────────────────────
+    // ─── Honeypot: silently succeed ───────────────────
     if (botField) {
       return jsonOrRedirect({ success: true }, isJson);
     }
 
-    // ─── Validation ──────────────────────────
+    // ─── Validate required fields & token ────────────
     if (!name || !email || !message || !token) {
       return errorResponse(400, 'Missing required fields or Turnstile token.', isJson);
     }
 
-    // ─── Rate-limit via KV ────────────────────
+    // ─── Rate‐limit per IP via KV ────────────────────
     try {
       const key  = `ip:${ip}`;
       const hits = await context.env.RATE_LIMIT_KV.get(key);
@@ -51,7 +51,7 @@ export async function onRequestPost(context) {
       console.warn('⚠️ Rate-limit KV error (continuing):', e);
     }
 
-    // ─── Turnstile verify ─────────────────────
+    // ─── Verify Turnstile ────────────────────────────
     const verify = await fetch(
       'https://challenges.cloudflare.com/turnstile/v0/siteverify',
       {
@@ -69,7 +69,7 @@ export async function onRequestPost(context) {
       return errorResponse(403, 'Bot verification failed.', isJson);
     }
 
-    // ─── Send email via Resend ───────────────
+    // ─── Send email via Resend ───────────────────────
     const resend = new Resend(context.env.RESEND_API_KEY);
     const { error } = await resend.emails.send({
       from:     'Contact Form <noreply@blakeoxford.com>',
@@ -85,7 +85,7 @@ export async function onRequestPost(context) {
       return errorResponse(500, 'Failed to send email.', isJson);
     }
 
-    // ─── Log to KV ───────────────────────────
+    // ─── Log submission in KV ────────────────────────
     try {
       const id = `${Date.now()}_${crypto.randomUUID()}`;
       await context.env.CONTACT_MESSAGES.put(
@@ -97,7 +97,7 @@ export async function onRequestPost(context) {
       console.warn('⚠️ Submission KV write failed:', e);
     }
 
-    // ─── Success ─────────────────────────────
+    // ─── Success response ────────────────────────────
     return jsonOrRedirect({ success: true }, isJson);
 
   } catch (err) {
@@ -106,24 +106,22 @@ export async function onRequestPost(context) {
   }
 }
 
-/* ─── Helpers ─────────────────────────────────── */
+/* ─── Helpers ───────────────────────────────────── */
 
-// Return JSON 200 for AJAX, or 303 redirect for classic form-POST
+// AJAX → 200 JSON, Non-JS form → 303 redirect
 function jsonOrRedirect(body, isJson) {
   if (isJson) {
     return new Response(JSON.stringify(body), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
-  } else {
-    return Response.redirect('/contact/?success=true', 303);
   }
+  return Response.redirect('/contact/?success=true', 303);
 }
 
-// Return JSON error + optional Retry-After header
+// JSON error with Retry-After (429) or redirect for form
 function errorResponse(status, msg, isJson) {
   if (!isJson) {
-    // non-JS fallback, just redirect back with error query
     return Response.redirect(`/contact/?error=${encodeURIComponent(msg)}`, 303);
   }
   const headers = { 'Content-Type': 'application/json' };
