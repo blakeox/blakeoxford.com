@@ -7,6 +7,7 @@ import react from '@astrojs/react';
 import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
+  output: 'static',
   envPrefix: 'PUBLIC_',
   site: 'https://blakeoxford.com',      // ← your real domain
   adapter: cloudflare(),                // ← enable for Cloudflare deployment
