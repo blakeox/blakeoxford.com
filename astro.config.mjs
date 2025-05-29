@@ -9,17 +9,17 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   output: 'static',
   envPrefix: 'PUBLIC_',
-  site: 'https://blakeoxford.com',      // ← your real domain
-  adapter: cloudflare(),                // ← enable for Cloudflare deployment
+  site: 'https://blakeoxford.com',
+  adapter: cloudflare(),
   integrations: [
     mdx(),
     sitemap(),
     compress(),
-    react(),                           // React support for .jsx islands
+    react({ ssr: false }), // ← disables React SSR to prevent MessageChannel error
   ],
   vite: {
     plugins: [
-      tailwindcss(),                   // Tailwind 4 via Vite plugin
+      tailwindcss(),
     ],
   },
 });
