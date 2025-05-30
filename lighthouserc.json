@@ -3,7 +3,7 @@
     "collect": {
       "url": [
         "http://localhost:4321/",
-        "http://localhost:4321/about",
+        "http://localhost:4321/about/",
         "http://localhost:4321/blog",
         "http://localhost:4321/projects"
       ],

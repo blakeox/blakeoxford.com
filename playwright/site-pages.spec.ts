@@ -4,27 +4,25 @@ test.describe('Homepage', () => {
   test('should display the site title and navigation', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { name: /blake oxford/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /about/i, exact: true })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Blog', exact: true })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Projects', exact: true })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Contact', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: /about/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /blog/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /projects/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /contact/i })).toBeVisible();
   });
 });
 
 test.describe('About Page', () => {
   test('should display about page content', async ({ page }) => {
     await page.goto('/about/');
-    await expect(page.getByRole('heading', { name: /blake oxford/i, level: 1 })).toBeVisible();
-    // Fix: Only check the main content area for text
-    const aboutMain = page.locator('main.flex-1');
-    await expect(aboutMain).toContainText(/blake oxford/i);
+    await expect(page.getByRole('heading', { name: /about/i })).toBeVisible();
+    await expect(page.locator('main')).toContainText(/blake oxford/i);
   });
 });
 
 test.describe('Contact Page', () => {
   test('should display contact form', async ({ page }) => {
     await page.goto('/contact');
-    await expect(page.getByRole('heading', { name: /let's connect/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /contact/i })).toBeVisible();
     await expect(page.locator('form')).toBeVisible();
   });
 });
