@@ -16,8 +16,8 @@ if (!project) {
   throw new Error(`Project not found: ${slug}`);
 }
 
-// Compile the MDX/Markdown into a Content component
-const { Content } = await render(project);
+// Compile the MDX/Markdown into a Content component and capture body
+const { Content, body } = await render(project);
 
 const { title, description, date, image, tags } = project.data;
 const formattedDate = date.toLocaleDateString('en-US', {
@@ -25,6 +25,10 @@ const formattedDate = date.toLocaleDateString('en-US', {
   year: 'numeric',
 });
 const canonicalUrl = `https://blakeoxford.com/projects/${slug}/`;
+
+const index = projects.findIndex((p) => p.slug === slug);
+const prevProject = projects[index - 1];
+const nextProject = projects[index + 1];
 ---
 
 <Layout
@@ -34,62 +38,62 @@ const canonicalUrl = `https://blakeoxford.com/projects/${slug}/`;
   url={canonicalUrl}
   wide={true}
 >
-  <!-- Project Hero Banner -->
-  <section class="relative overflow-hidden py-16 md:py-24 bg-gradient-to-br from-background via-accent/5 to-background">
-    <!-- … your existing hero SVG & markup … -->
+  <!-- Enhanced Hero Section -->
+  <section class="bg-gray-100 dark:bg-gray-800 py-12">
+    <img src={image || '/assets/images/default-project.png'} alt={title} class="w-full h-64 object-cover rounded-lg mb-6" />
+    <div class="text-center px-4">
+      <h1 class="text-4xl font-extrabold mb-2">{title}</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{formattedDate}</p>
+      {project.data.link && (
+        <a href={project.data.link} target="_blank" rel="noopener noreferrer" class="c-btn c-btn--primary">
+          Visit Project
+        </a>
+      )}
+    </div>
   </section>
 
-  <article class="c-project-detail px-4 md:px-12 lg:px-32 py-12">
-    <!-- Breadcrumb Navigation -->
-    <nav aria-label="Breadcrumb" class="breadcrumb text-sm mb-4">
-      <a href="/" class="hover:underline">Home</a> /
-      <a href="/projects/" class="hover:underline">Projects</a> /
-      <span aria-current="page">{title}</span>
-    </nav>
-
-    <h2
-      class="c-project-detail__title font-heading font-bold text-3xl md:text-4xl
-             text-gradient bg-gradient-to-r from-accent-dark to-purple-600 mb-4"
-    >
-      Overview
-    </h2>
-
-    {description && <p class="c-project-detail__overview mb-4">{description}</p>}
-    <p class="mb-4"><strong>Date:</strong> {formattedDate}</p>
-
-    <!-- Render the compiled MDX/Markdown here -->
-    <div class="prose prose-lg dark:prose-invert mb-8">
-      <Content />
-    </div>
-
-    {tags && tags.length > 0 && (
-      <div class="mb-8">
-        <h3
-          class="font-heading font-bold text-2xl text-gradient
-                 bg-gradient-to-r from-accent-dark to-purple-600 mb-2"
-        >
-          Tags
-        </h3>
-        <ul class="c-tag-list list-inline mt-2">
-          {tags.map((tag) => (
-            <li class="c-tag-list__item inline-block mr-2">
-              <a
-                href={`/projects/?filter=${tag.toLowerCase().replace(/ /g, '-')}`}
-                class="c-btn c-btn--secondary"
-                aria-label={`Filter projects by ${tag}`}
-              >
-                {tag}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
-
-    <div class="c-project-detail__navigation text-center mt-8">
-      <a href="/projects/" class="c-btn c-btn--secondary" aria-label="Back to Projects">
-        Back to Projects
-      </a>
-    </div>
+  <!-- Wrap content in Tailwind Typography for consistent styling -->
+  <article class="prose prose-lg mx-auto px-4 md:px-12 lg:px-32 py-12">
+    <!-- MDX-to-HTML renderer injects headings, lists, code fences, etc. -->
+    <Content {...body} />
   </article>
+
+  {tags && tags.length > 0 && (
+    <aside class="mx-auto px-4 md:px-12 lg:px-32 mb-12">
+      <h3 class="font-heading font-bold text-2xl mb-2">Tags</h3>
+      <ul class="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <li key={tag}>
+            <a
+              href={`/projects/?filter=${tag.toLowerCase().replace(/ /g, '-')}`}
+              class="c-btn c-btn--secondary"
+              aria-label={`Filter projects by ${tag}`}
+            >
+              {tag}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )}
+
+  <!-- Prev/Next Navigation -->
+  <nav class="flex justify-between max-w-3xl mx-auto px-4 md:px-12 lg:px-32 my-12">
+    {prevProject && (
+      <a href={`/projects/${prevProject.slug}`} class="c-btn c-btn--secondary">
+        &larr; {prevProject.data.title}
+      </a>
+    )}
+    {nextProject && (
+      <a href={`/projects/${nextProject.slug}`} class="c-btn c-btn--secondary">
+        {nextProject.data.title} &rarr;
+      </a>
+    )}
+  </nav>
+
+  <div class="text-center mb-24">
+    <a href="/projects/" class="c-btn c-btn--secondary">
+      Back to Projects
+    </a>
+  </div>
 </Layout>
