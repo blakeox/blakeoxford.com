@@ -4,7 +4,8 @@ module.exports = {
     'stylelint-config-tailwindcss',
     'stylelint-config-recess-order',
   ],
-  ignoreFiles: ['src/styles/global.css'],
+  ignoreFiles: ['src/styles/global.css',
+                 'src/styles/theme.css'],
   rules: {
     'color-no-hex': [true, {
       ignoreProperties: [

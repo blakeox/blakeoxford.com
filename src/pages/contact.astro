@@ -80,16 +80,41 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
 
         <div class="flex flex-col gap-2">
           <label for="name" class="font-semibold text-lg">Name <span class="text-accent">*</span></label>
-          <input id="name" name="name" autocomplete="name" required class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white" placeholder="Your Name" />
+          <input
+            id="name"
+            name="name"
+            autocomplete="name"
+            required
+            aria-required="true"
+            class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white"
+            placeholder="Your Name"
+          />
         </div>
         <div class="flex flex-col gap-2">
           <label for="email" class="font-semibold text-lg">Email <span class="text-accent">*</span></label>
-          <input id="email" name="email" type="email" autocomplete="email" required class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white" placeholder="you@email.com"/>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            aria-required="true"
+            class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white"
+            placeholder="you@email.com"
+          />
           <small class="text-sm text-gray-500">We’ll never share your email.</small>
         </div>
         <div class="flex flex-col gap-2">
           <label for="message" class="font-semibold text-lg">Message <span class="text-accent">*</span></label>
-          <textarea id="message" name="message" rows="5" required class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white" placeholder="How can I help you?"></textarea>
+          <textarea
+            id="message"
+            name="message"
+            rows="5"
+            required
+            aria-required="true"
+            class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white"
+            placeholder="How can I help you?"
+          ></textarea>
         </div>
 
         <!-- Cloudflare Turnstile widget -->

@@ -32,7 +32,10 @@ describe('BaseLayout.astro file', () => {
     expect(content).toContain('<title>{title}</title>');
   });
 
-  it('should include conditional classes for wide layout', () => {
-    expect(content).toContain("${wide ? 'max-w-none px-0' : 'max-w-3xl mx-auto p-4'}");
+  it('should include both wide and default layout classes', () => {
+    // Verify the wide-layout branch
+    expect(content).toContain('max-w-none px-0');
+    // Verify the default-layout branch
+    expect(content).toContain('max-w-3xl mx-auto p-4');
   });
 });

@@ -3,6 +3,7 @@ import containerQueries from '@tailwindcss/container-queries';
 import typography from '@tailwindcss/typography';
 
 export default /** @type {import('tailwindcss').Config} */ {
+  darkMode: 'class',
   content: [
     './src/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
   ],
@@ -37,6 +38,29 @@ export default /** @type {import('tailwindcss').Config} */ {
       screens: {
         'sm-md': { raw: '(min-width: 651px) and (max-width: 767px)' },
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            h2: {
+              fontSize: theme('fontSize.6xl'),
+              fontWeight: theme('fontWeight.bold'),
+              marginTop: '2em',
+              marginBottom: '0.5em',
+            },
+            h3: {
+              fontSize: theme('fontSize.4xl'),
+              fontWeight: theme('fontWeight.semibold'),
+              marginTop: '1.5em',
+              marginBottom: '0.5em',
+            },
+          },
+        },
+        dark: {
+          css: {
+            color: theme('colors.gray.300'),
+          },
+        },
+      }),
     },
   },
   plugins: [
