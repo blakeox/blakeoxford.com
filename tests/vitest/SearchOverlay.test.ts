@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('SearchOverlay.astro file', () => {
   let content: string;
-  const filePath = path.resolve(__dirname, '../src/components/SearchOverlay.astro');
+  const filePath = path.resolve(__dirname, '../../src/components/SearchOverlay.astro');
 
   beforeAll(() => {
     content = fs.readFileSync(filePath, 'utf-8');

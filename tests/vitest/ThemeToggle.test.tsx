@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
-import ThemeToggle from '../src/components/ThemeToggle';
+import ThemeToggle from '../../src/components/ThemeToggle';
 
 describe('ThemeToggle component', () => {
   beforeEach(() => {

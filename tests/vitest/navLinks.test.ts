@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import navLinks from '../src/config/navLinks';
+import navLinks from '../../src/config/navLinks';
 
 describe('navLinks configuration', () => {
   it('should contain the correct number of links', () => {

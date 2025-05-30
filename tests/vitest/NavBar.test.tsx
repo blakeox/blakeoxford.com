@@ -7,7 +7,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('NavBar.astro file', () => {
-  const filePath = path.resolve(__dirname, '../src/components/NavBar.astro');
+  const filePath = path.resolve(__dirname, '../../src/components/NavBar.astro');
   let content;
   beforeAll(() => {
     content = fs.readFileSync(filePath, 'utf-8');

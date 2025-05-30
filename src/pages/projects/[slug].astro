@@ -4,14 +4,14 @@ import Layout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
-  return projects.map((project) => ({
+  return projects.map((project: typeof projects[number]) => ({
     params: { slug: project.slug },
   }));
 }
 
 const { slug } = Astro.params;
 const projects = await getCollection('projects');
-const project = projects.find((p) => p.slug === slug);
+const project = projects.find((p: typeof projects[number]) => p.slug === slug);
 if (!project) {
   throw new Error(`Project not found: ${slug}`);
 }
@@ -26,7 +26,7 @@ const formattedDate = date.toLocaleDateString('en-US', {
 });
 const canonicalUrl = `https://blakeoxford.com/projects/${slug}/`;
 
-const index = projects.findIndex((p) => p.slug === slug);
+const index = projects.findIndex((p: typeof projects[number]) => p.slug === slug);
 const prevProject = projects[index - 1];
 const nextProject = projects[index + 1];
 ---
@@ -62,8 +62,8 @@ const nextProject = projects[index + 1];
     <aside class="mx-auto px-4 md:px-12 lg:px-32 mb-12">
       <h3 class="font-heading font-bold text-2xl mb-2">Tags</h3>
       <ul class="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <li key={tag}>
+        {tags.map((tag: string) => (
+          <li>
             <a
               href={`/projects/?filter=${tag.toLowerCase().replace(/ /g, '-')}`}
               class="c-btn c-btn--secondary"

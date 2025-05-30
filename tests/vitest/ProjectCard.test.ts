@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { describe, it, expect, beforeAll } from 'vitest';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const filePath = path.resolve(__dirname, '../src/components/ProjectCard.astro');
+const filePath = path.resolve(__dirname, '../../src/components/ProjectCard.astro');
 let content: string;
 
 describe('ProjectCard.astro file', () => {

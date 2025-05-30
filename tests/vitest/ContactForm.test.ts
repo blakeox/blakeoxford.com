@@ -10,7 +10,7 @@ describe('Contact form validation', () => {
   
   beforeEach(() => {
     // Read the contact form markup from the file
-    const contactPagePath = path.resolve(__dirname, '../src/pages/contact.astro');
+    const contactPagePath = path.resolve(__dirname, '../../src/pages/contact.astro');
     const contactPage = fs.readFileSync(contactPagePath, 'utf-8');
     
     // Find the form section in the file

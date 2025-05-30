@@ -5,7 +5,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 
 // ESM __dirname shim
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const filePath = path.resolve(__dirname, '../src/components/ProjectRow.astro');
+const filePath = path.resolve(__dirname, '../../src/components/ProjectRow.astro');
 let content: string;
 
 describe('ProjectRow.astro file', () => {

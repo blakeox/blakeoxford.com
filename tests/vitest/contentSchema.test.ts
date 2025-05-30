@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { collections } from '../src/content/config';
+import { collections } from '../../src/content/config';
 
 const { blog, projects } = collections;
 
