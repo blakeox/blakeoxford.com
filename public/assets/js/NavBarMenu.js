@@ -47,6 +47,7 @@ class NavBarMenu {
     setupDropdowns();
     setupDropdownKeyboardNavigation();
     this.setupMobileMenu();
+    this.setupSearchToggle(); // Add search toggle setup
     this.setupKeyboardShortcuts();
     this.setupProgressiveEnhancements();
     this.setupThemeIntegration();
@@ -66,6 +67,22 @@ class NavBarMenu {
     this.navToggle = document.getElementById('nav-toggle');
     this.mobileMenu = document.getElementById('nav-mobile-links');
     this.searchToggle = document.getElementById('search-toggle');
+    
+    // Add retry logic for elements that might not be immediately available
+    if (!this.navToggle || !this.mobileMenu) {
+      console.warn('NavBar: Some elements not found on first attempt, retrying...');
+      setTimeout(() => {
+        this.navToggle = this.navToggle || document.getElementById('nav-toggle');
+        this.mobileMenu = this.mobileMenu || document.getElementById('nav-mobile-links');
+        this.searchToggle = this.searchToggle || document.getElementById('search-toggle');
+        
+        if (this.navToggle && this.mobileMenu) {
+          console.log('NavBar: Elements found on retry, setting up mobile menu...');
+          this.setupMobileMenu();
+        }
+      }, 100);
+    }
+    
     if (!this.navbar) {
       console.warn('NavBar: Main navbar element not found');
     }
@@ -73,22 +90,36 @@ class NavBarMenu {
 
   // --- Mobile Menu ---
   setupMobileMenu() {
-    if (!this.navToggle || !this.mobileMenu) return;
+    if (!this.navToggle || !this.mobileMenu) {
+      console.warn('NavBar: Mobile menu elements not found');
+      return;
+    }
+    
     this.overlay = document.querySelector('.mobile-menu-overlay');
-    this.navToggle.addEventListener('click', (e) => {
+    
+    // Mobile menu toggle handler
+    const handleToggle = (e) => {
       e.preventDefault();
+      e.stopPropagation();
       this.toggleMobileMenu();
-    });
+    };
+    
+    // Add event listeners for both click and touch
+    this.navToggle.addEventListener('click', handleToggle);
+    this.navToggle.addEventListener('touchstart', handleToggle, { passive: false });
+    
     if (this.overlay) {
       this.overlay.addEventListener('click', () => {
         if (this.isMenuOpen) this.closeMobileMenu();
       });
     }
+    
     document.addEventListener('click', (e) => {
       if (this.isMenuOpen && !this.navbar.contains(e.target) && !this.mobileMenu.contains(e.target) && (!this.overlay || !this.overlay.contains(e.target))) {
         this.closeMobileMenu();
       }
     });
+    
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.isMenuOpen) {
         this.closeMobileMenu();
@@ -150,12 +181,44 @@ class NavBarMenu {
     document.body.classList.remove('mobile-menu-open');
   }
 
+  // --- Search Toggle ---
+  setupSearchToggle() {
+    if (!this.searchToggle) {
+      console.warn('NavBar: Search toggle not found');
+      return;
+    }
+    
+    // Add both click and touch events for better mobile support
+    const handleSearchToggle = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Search toggle triggered');
+      
+      // Trigger the search overlay (handled by SearchOverlayEnhanced.js)
+      const searchOverlay = document.getElementById('search-overlay');
+      if (searchOverlay && window.searchOverlayEnhancer) {
+        window.searchOverlayEnhancer.openSearch();
+      } else {
+        // Fallback: dispatch a custom event
+        document.dispatchEvent(new CustomEvent('openSearch'));
+      }
+    };
+    
+    this.searchToggle.addEventListener('click', handleSearchToggle);
+    this.searchToggle.addEventListener('touchstart', handleSearchToggle, { passive: false });
+  }
+
   // --- Keyboard Shortcuts ---
   setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
       if (e.key === '/' && !this.isInputFocused()) {
         e.preventDefault();
-        this.searchToggle?.click();
+        // Trigger search through the search overlay enhancer
+        if (window.searchOverlayEnhancer) {
+          window.searchOverlayEnhancer.openSearch();
+        } else {
+          this.searchToggle?.click();
+        }
       }
       if (e.altKey) {
         switch (e.key) {

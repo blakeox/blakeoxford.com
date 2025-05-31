@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple Hamburger Test</title>
+        <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .output { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+    </head>
+    <body>
+        <h1>Hamburger Menu Test</h1>
+        <div id="output" class="output"></div>
+
+        <button onclick="testElements()">Test Elements</button>
+        <button onclick="testClick()">Test Click</button>
+        <button onclick="openMain()">Open Main Site</button>
+
+        <script>
+        function log(message) {
+            const output = document.getElementById('output');
+            output.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+            console.log(message);
+        }
+        
+        function testElements() {
+            log('=== Testing Elements ===');
+            
+            // Open the main site and test
+            const mainWindow = window.open('http://localhost:4324/', 'main');
+            
+            setTimeout(() => {
+                try {
+                    const navToggle = mainWindow.document.getElementById('nav-toggle');
+                    const mobileMenu = mainWindow.document.getElementById('nav-mobile-links');
+                    
+                    log('Nav toggle found: ' + !!navToggle);
+                    log('Mobile menu found: ' + !!mobileMenu);
+                    
+                    if (navToggle) {
+                        log('Nav toggle tag: ' + navToggle.tagName);
+                        log('Nav toggle classes: ' + navToggle.className);
+                        log('Nav toggle style: ' + navToggle.style.cssText);
+                        
+                        const rect = navToggle.getBoundingClientRect();
+                        log(`Nav toggle size: ${rect.width}x${rect.height}`);
+                        log(`Nav toggle position: ${rect.x}, ${rect.y}`);
+                        log('Nav toggle visible: ' + (rect.width > 0 && rect.height > 0));
+                    }
+                    
+                } catch (e) {
+                    log('Error: ' + e.message);
+                }
+            }, 2000);
+        }
+        
+        function testClick() {
+            log('=== Testing Click ===');
+            
+            // Open the main site and test click
+            const mainWindow = window.open('http://localhost:4324/', 'main');
+            
+            setTimeout(() => {
+                try {
+                    const navToggle = mainWindow.document.getElementById('nav-toggle');
+                    
+                    if (navToggle) {
+                        log('Attempting to click hamburger...');
+                        navToggle.click();
+                        log('Click command sent');
+                        
+                        // Check if menu opened
+                        setTimeout(() => {
+                            const mobileMenu = mainWindow.document.getElementById('nav-mobile-links');
+                            if (mobileMenu) {
+                                log('Mobile menu classes after click: ' + mobileMenu.className);
+                                log('Mobile menu has "open" class: ' + mobileMenu.classList.contains('open'));
+                            }
+                        }, 500);
+                        
+                    } else {
+                        log('Nav toggle not found');
+                    }
+                    
+                } catch (e) {
+                    log('Error: ' + e.message);
+                }
+            }, 2000);
+        }
+        
+        function openMain() {
+            window.open('http://localhost:4324/', '_blank');
+        }
+        
+        // Auto-test on load
+        setTimeout(testElements, 1000);
+    </script>
+    </body>
+</html>

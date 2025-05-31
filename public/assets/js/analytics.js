@@ -41,10 +41,10 @@ export function trackEvent(eventName, eventData = {}) {
   }
 }
 
-// General analytics utility for event tracking
+// General analytics utility for event tracking (legacy format)
 // This file is loaded by Google Tag Manager, which can be configured to send data to Google Analytics, Microsoft Clarity, etc.
 
-export function trackEvent({ category, action, label = '', value = undefined }) {
+export function trackEventLegacy({ category, action, label = '', value = undefined }) {
   if (window && window.dataLayer) {
     window.dataLayer.push({
       event: 'custom_event',

@@ -52,8 +52,8 @@
 /* --- Navbar Styles (moved from NavBar.astro) --- */
 .navbar-container {
   background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
-  backdrop-filter: blur(18px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
   border-bottom: 1.5px solid var(--glass-border);
   box-shadow: 0 4px 32px 0 rgba(0,0,0,0.08);
   position: sticky;
@@ -78,6 +78,13 @@
   position: relative;
   overflow: hidden;
   transition: all 0.2s var(--ease-standard);
+  /* Ensure buttons are properly clickable on mobile */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Minimum touch target size for accessibility */
+  min-width: 44px;
+  min-height: 44px;
 }
 .brand-avatar {
   position: relative;
@@ -94,8 +101,8 @@
 }
 .mobile-menu {
   background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
-  backdrop-filter: blur(24px) saturate(1.2);
   -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.2);
   border: 1.5px solid var(--glass-border);
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   border-radius: 1.25rem 1.25rem 0 0;
@@ -196,9 +203,15 @@
   .mobile-menu {
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
-    overscroll-behavior: contain;
     left: 0.5rem;
     right: 0.5rem;
+  }
+  
+  /* Apply overscroll-behavior only when supported */
+  @supports (overscroll-behavior: contain) {
+    .mobile-menu {
+      overscroll-behavior: contain;
+    }
   }
 }
 /* Reduce motion for accessibility */
@@ -261,8 +274,8 @@
 /* Glassmorphism enhancements */
 .navbar-container {
   background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
-  backdrop-filter: blur(18px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
   border-bottom: 1.5px solid var(--glass-border);
   box-shadow: 0 4px 32px 0 rgba(0,0,0,0.08);
 }
@@ -272,8 +285,8 @@
 }
 .mobile-menu {
   background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
-  backdrop-filter: blur(24px) saturate(1.2);
   -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.2);
   border: 1.5px solid var(--glass-border);
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }

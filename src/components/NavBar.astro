@@ -15,8 +15,8 @@ import navLinks from '../config/navLinks.js';
 <!-- Skip to main content for accessibility -->
 <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 z-[1100] bg-accent text-background font-semibold px-4 py-2 rounded transition-colors duration-200">Skip to main content</a>
 <!-- Add at the top of the nav for scroll progress bar -->
-<div class="nav-scroll-progress fixed top-0 left-0 w-full h-1 z-[1101] bg-transparent">
-  <div id="nav-scroll-progress-bar" class="h-full bg-accent transition-all duration-200" style="width:0%"></div>
+<div class="nav-scroll-progress fixed top-0 left-0 w-full h-1 z-[999] bg-transparent" style="pointer-events: none !important;">
+  <div id="nav-scroll-progress-bar" class="h-full bg-accent transition-all duration-200" style="width:0%; pointer-events: none !important;"></div>
 </div>
 <nav class="navbar-container sticky top-0 z-[1000] transition-all duration-500 nav-visible" aria-label="Main Navigation" data-navbar>
   <style>
@@ -98,10 +98,11 @@ import navLinks from '../config/navLinks.js';
     <button
       id="nav-toggle"
       type="button"
-      class="nav-button text-navbar-text dark:text-navbar-textDark md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark transition-colors duration-200"
+      class="nav-button text-navbar-text dark:text-navbar-textDark md:hidden p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark transition-colors duration-200"
       aria-label="Toggle navigation"
       aria-expanded="false"
       aria-controls="nav-mobile-links"
+      style="position: relative; z-index: 1010; min-width: 48px; min-height: 48px; touch-action: manipulation;"
     >
       <div class="hamburger-container w-6 h-6 flex flex-col justify-center items-center space-y-1">
         <span class="hamburger-line w-6 h-0.5 bg-current"></span>
@@ -161,8 +162,8 @@ import navLinks from '../config/navLinks.js';
   </div>
   <!-- Scroll Progress Indicator -->
   <div class="scroll-progress" id="scroll-progress"></div>
-  <!-- Only load the merged JS, now with defer for performance -->
-  <script type="module" src="/assets/js/NavBarMenu.js" defer></script>
+  <!-- Load the navigation JavaScript -->
+  <script type="module" src="/assets/js/NavBarMenu.js"></script>
 </nav>
 <!-- Search Overlay -->
 <SearchOverlay />

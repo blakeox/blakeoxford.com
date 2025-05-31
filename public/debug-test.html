@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mobile Menu Debug Test</title>
+        <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #debug-output { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        #test-button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+    </head>
+    <body>
+        <h1>Mobile Menu Debug Test</h1>
+        <div id="debug-output"></div>
+        <button id="test-button" onclick="runTest()">Test Mobile Menu</button>
+
+        <script>
+        function log(message) {
+            const output = document.getElementById('debug-output');
+            output.innerHTML += message + '<br>';
+            console.log(message);
+        }
+        
+        function runTest() {
+            log('=== Testing Mobile Menu Elements ===');
+            
+            // Check if we can access the main site in iframe
+            try {
+                const navToggle = parent.document.getElementById('nav-toggle');
+                const mobileMenu = parent.document.getElementById('nav-mobile-links');
+                
+                log('Nav toggle: ' + (navToggle ? 'Found ✅' : 'Not found ❌'));
+                log('Mobile menu: ' + (mobileMenu ? 'Found ✅' : 'Not found ❌'));
+                
+                if (navToggle) {
+                    log('Nav toggle classes: ' + navToggle.className);
+                    const rect = navToggle.getBoundingClientRect();
+                    log('Nav toggle dimensions: ' + rect.width + 'x' + rect.height);
+                    log('Nav toggle position: ' + rect.x + ',' + rect.y);
+                    
+                    // Test if we can trigger click
+                    navToggle.addEventListener('click', function(e) {
+                        log('🎯 Click event triggered!');
+                    });
+                    
+                    // Try to click it
+                    setTimeout(() => {
+                        log('Attempting programmatic click...');
+                        navToggle.click();
+                    }, 1000);
+                }
+                
+                if (mobileMenu) {
+                    log('Mobile menu classes: ' + mobileMenu.className);
+                }
+                
+            } catch (e) {
+                log('Error accessing parent document: ' + e.message);
+                log('Testing current page instead...');
+                
+                // Fallback: open the main site
+                window.open('http://localhost:4324/', '_blank');
+            }
+        }
+        
+        // Auto-run test
+        setTimeout(runTest, 1000);
+    </script>
+    </body>
+</html>
