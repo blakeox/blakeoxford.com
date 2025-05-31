@@ -37,18 +37,7 @@ const testimonials = [
 // Timeline Data
 const timelineItems = [
   {
-    year: "2024",
-    icon: "🏆",
-    title: "Enterprise AI Implementation",
-    achievements: [
-      "Launched enterprise-wide OpenAI workflows saving 20+ hours per week across teams",
-      "Oversaw Azure/Intune rollout for 180+ users, increasing security posture by 40%",
-      "Integrated AI-driven analytics into financial forecasting, improving accuracy by 25%"
-    ],
-    color: "from-blue-500 to-purple-600"
-  },
-  {
-    year: "2023",
+    year: "2019",
     icon: "🔄",
     title: "System Integration & Optimization",
     achievements: [
@@ -59,7 +48,7 @@ const timelineItems = [
     color: "from-teal-500 to-blue-500"
   },
   {
-    year: "2022",
+    year: "2020",
     icon: "☁️",
     title: "Cloud Migration & Digital Transformation",
     achievements: [
@@ -70,7 +59,7 @@ const timelineItems = [
     color: "from-green-500 to-teal-500"
   },
   {
-    year: "2020",
+    year: "2023",
     icon: "💡",
     title: "Analytics & Process Innovation",
     achievements: [
@@ -79,6 +68,17 @@ const timelineItems = [
       "Built SQL-based reporting suite that surfaced $1.2M in unbilled services"
     ],
     color: "from-amber-500 to-green-500"
+  },
+  {
+    year: "2024",
+    icon: "🤖",
+    title: "AI-Powered Compliance & Workflow Enhancement",
+    achievements: [
+      "Developed and launched a real-time Azure OpenAI auditing system for clinical notes, ensuring insurance compliance before submission",
+      "Enabled automated coaching for providers and technicians, improving documentation quality and reducing claim denials",
+      "Integrated AI into daily workflows for tasks like insurance appeals and internal process optimization, saving hours across departments"
+    ],
+    color: "from-blue-500 to-purple-600"
   }
 ];
 
@@ -395,7 +395,7 @@ const skills = [
                               <span class="font-semibold text-blue-600 dark:text-blue-400">MS</span>
                             </div>
                             <div>
-                              <div class="font-medium">Microsoft Certified: Azure Administrator</div>
+                              <div class="font-medium">Microsoft Certified: Azure Fundamentals</div>
                               <div class="text-sm text-gray-600 dark:text-gray-400">Issued 2022</div>
                             </div>
                           </div>
@@ -585,91 +585,6 @@ const skills = [
           </div>
         </section>
         
-        <!-- Social Connection -->
-        <section id="about-social" class="py-24 bg-gradient-to-br from-accent/5 to-background">
-          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
-            <div class="max-w-3xl mx-auto text-center mb-12">
-              <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Let's Connect</span>
-              <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-purple-600">Get In Touch</h2>
-              <p class="text-lg text-gray-700 dark:text-gray-300">
-                Connect with me on professional platforms or reach out directly to discuss opportunities.
-              </p>
-            </div>
-            
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <!-- Contact Card -->
-              <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-lg bg-accent/10 text-accent mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-1.997 1.884z" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-4">Email</h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-6">For direct inquiries and professional opportunities</p>
-                <a href="/contact/" class="inline-flex items-center px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent-dark transition-all duration-200 shadow-lg">
-                  <span class="mr-2">Contact Me</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </a>
-              </div>
-              
-              <!-- Social Links -->
-              <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center md:col-span-2 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-lg bg-purple-500/10 text-purple-500 mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-4">Connect on Social</h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-6">Follow my professional journey and connect with me on social media</p>
-                
-                <div class="flex items-center justify-center gap-6">
-                  {socialLinks.map(link => (
-                    <a 
-                      href={link.url}
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      class="group flex flex-col items-center"
-                      aria-label={`Connect with Blake on ${link.name}`}
-                    >
-                      <div class="w-14 h-14 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 group-hover:bg-accent/10 transition-all duration-200">
-                        {link.icon === 'linkedin' && (
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
-                          </svg>
-                        )}
-                        {link.icon === 'github' && (
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                          </svg>
-                        )}
-                        {link.icon === 'microsoft-learn' && (
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M3 4v16h18V4H3zm16 14H5V6h14v12z" />
-                            <path d="M7 8h10v2H7zm0 4h10v2H7z" />
-                          </svg>
-                        )}
-                      </div>
-                      <span class="mt-2 font-medium text-gray-900 dark:text-gray-100 group-hover:text-accent transition-colors">
-                        {link.name}
-                      </span>
-                    </a>
-                  ))}
-                </div
-                
-                <div class="mt-8">
-                  <a href="/resume" class="inline-flex items-center px-6 py-3 border border-accent text-accent rounded-lg hover:bg-accent/10 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" />
-                    </svg>
-                    Download Resume
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <!-- Resume Highlights -->
         <section id="resume-highlights" class="py-24 relative bg-gradient-to-br from-accent/5 to-background overflow-hidden">
           <!-- Curved divider at top -->
@@ -872,69 +787,98 @@ const skills = [
 
         <!-- CTA & Social -->
         <section id="cta" class="py-24 relative overflow-hidden bg-gradient-to-br from-accent/10 via-background to-accent/10">
-          <!-- Background decoration -->
-          <div class="absolute inset-0 z-0 opacity-20">
-            <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="network-pattern" width="100" height="100" patternUnits="userSpaceOnUse">
-                  <circle cx="50" cy="50" r="2" fill="currentColor" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#network-pattern)" />
-            </svg>
-          </div>
-
           <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Projects CTA -->
             <div class="max-w-2xl mx-auto text-center mb-16">
-              <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-accent/10 text-accent mb-4">Let's Connect</span>
+              <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-accent/10 text-accent mb-4">Projects</span>
               <h2 class="text-3xl md:text-4xl lg:text-5xl font-heading font-bold bg-gradient-to-r from-accent-dark to-purple-600 text-transparent bg-clip-text mb-6">
-                Ready to Transform Your Business?
+                Dive into My Work
               </h2>
               <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">
-                Let's discuss how my expertise in technology, finance, and process optimization can help scale your organization to the next level.
+                Explore a selection of projects showcasing my expertise in technology, finance, and process optimization.
               </p>
-              
-              <div class="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-                <a href="/contact/" class="inline-flex items-center justify-center px-8 py-4 rounded-lg font-bold bg-gradient-to-r from-accent to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+              <div class="flex justify-center mb-12">
+                <a href="/projects" class="inline-flex items-center justify-center px-8 py-4 rounded-lg font-bold bg-gradient-to-r from-accent to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  🚀 Ready to scale? Let's talk!
-                </a>
-                <a href="/projects" class="inline-flex items-center justify-center px-8 py-4 rounded-lg font-bold border-2 border-accent text-accent hover:bg-accent/10 transition-all duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h10M5 11h14M7 15h10" />
                   </svg>
                   View My Projects
                 </a>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Social Connection (moved to bottom) -->
+        <section id="about-social" class="py-24 bg-gradient-to-br from-accent/5 to-background">
+          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center mb-12">
+              <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Let's Connect</span>
+              <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-purple-600">Get In Touch</h2>
+              <p class="text-lg text-gray-700 dark:text-gray-300">
+                Connect with me on professional platforms or reach out directly to discuss opportunities.
+              </p>
+            </div>
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <!-- Contact Card -->
+              <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-lg bg-accent/10 text-accent mb-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Email</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">For direct inquiries and professional opportunities</p>
+                <a href="/contact/" class="inline-flex items-center px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent-dark transition-all duration-200 shadow-lg">
+                  <span class="mr-2">Contact Me</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </a>
+              </div>
               
-              <h3 class="text-xl font-semibold mb-6">Connect With Me</h3>
-              <div class="flex justify-center gap-6">
-                {socialLinks.map((link) => (
-                  <a 
-                    href={link.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    class="social-icon-link group flex items-center justify-center w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
-                    aria-label={`Connect with Blake Oxford on ${link.name}`}
-                  >
-                    {link.icon === 'linkedin' ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-purple-600 transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
-                      </svg>
-                    ) : link.icon === 'github' ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-purple-600 transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                    </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-purple-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                      </svg>
-                    )}
-                  </a>
-                ))}
+              <!-- Social Links -->
+              <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center md:col-span-2 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-lg bg-purple-500/10 text-purple-500 mb-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Connect on Social</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">Follow my professional journey and connect with me on social media</p>
+                
+                <div class="flex items-center justify-center gap-6">
+                  {socialLinks.map(link => (
+                    <a 
+                      href={link.url}
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      class="group flex flex-col items-center"
+                      aria-label={`Connect with Blake on ${link.name}`}
+                    >
+                      <div class="w-14 h-14 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 group-hover:bg-accent/10 transition-all duration-200">
+                        {link.icon === 'linkedin' && (
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+                          </svg>
+                        )}
+                        {link.icon === 'github' && (
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                          </svg>
+                        )}
+                        {link.icon === 'microsoft-learn' && (
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 4v16h18V4H3zm16 14H5V6h14v12z" />
+                            <path d="M7 8h10v2H7zm0 4h10v2H7z" />
+                          </svg>
+                        )}
+                      </div>
+                      <span class="mt-2 font-medium text-gray-900 dark:text-gray-100 group-hover:text-accent transition-colors">
+                        {link.name}
+                      </span>
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
