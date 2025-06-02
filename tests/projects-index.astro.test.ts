@@ -1,0 +1,1 @@
+// File intentionally removed: this test file was empty and caused test runner errors.
