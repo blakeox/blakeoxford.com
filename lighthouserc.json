@@ -5,20 +5,31 @@
         "http://localhost:4321/",
         "http://localhost:4321/about/",
         "http://localhost:4321/blog",
-        "http://localhost:4321/projects"
+        "http://localhost:4321/projects",
+        "http://localhost:4321/contact/"
       ],
-      "numberOfRuns": 3
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "emulatedFormFactor": "desktop"
+      }
     },
     "assert": {
       "assertions": {
         "categories:performance": ["warn", { "minScore": 0.9 }],
         "categories:accessibility": ["error", { "minScore": 0.9 }],
         "categories:best-practices": ["warn", { "minScore": 0.9 }],
-        "categories:seo": ["warn", { "minScore": 0.9 }]
+        "categories:seo": ["warn", { "minScore": 0.9 }],
+        "resource-summary:script:size": ["warn", { "maxNumericValue": 250000 }],
+        "resource-summary:stylesheet:size": ["warn", { "maxNumericValue": 100000 }]
       }
     },
     "upload": {
       "target": "temporary-public-storage"
+    },
+    "server": {
+      "port": 4321,
+      "waitForReady": true
     }
   }
 }
