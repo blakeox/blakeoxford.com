@@ -47,6 +47,13 @@
   animation: theme-toggle-spin 0.6s cubic-bezier(0.4,0,0.2,1);
 }
 
+/* Custom gradient utility for from-accent (workaround for Tailwind v4+ bug) */
+.from-accent {
+  --tw-gradient-from: #10b981;
+  --tw-gradient-to: rgb(16 185 129 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
 /* Add more as needed for other tokens */
 
 /* --- Navbar Styles (moved from NavBar.astro) --- */

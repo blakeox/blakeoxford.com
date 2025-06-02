@@ -91,587 +91,604 @@ const skills = [
   { name: "Financial Reporting & Forecasting", level: 95 },
   { name: "Team Leadership & Strategy", level: 90 }
 ];
+
+// Social Media Links HTML (Astro-safe)
+const socialLinksHtml = socialLinks.map(link => {
+  let iconSvg = '';
+  if (link.icon === 'linkedin') {
+    iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/></svg>`;
+  } else if (link.icon === 'github') {
+    iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`;
+  } else if (link.icon === 'microsoft-learn') {
+    iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4v16h18V4H3zm16 14H5V6h14v12z" /><path d="M7 8h10v2H7zm0 4h10v2H7z" /></svg>`;
+  }
+  return `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center" aria-label="Connect with Blake on ${link.name}"><div class="w-14 h-14 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 group-hover:bg-accent/10 transition-all duration-200">${iconSvg}</div><span class="mt-2 font-medium text-gray-900 dark:text-gray-100 group-hover:text-accent transition-colors">${link.name}</span></a>`;
+}).join('');
 ---
 
 <Layout title={title} description={description} image="/assets/images/Blake-O-scaled.jpg" url={canonicalUrl} wide={true}>
-  <!-- Progress Indicator -->
-  <div class="fixed left-0 top-0 h-1 z-50 bg-gradient-to-r from-accent to-purple-500" id="progress-bar"></div>
+  <main id="main-content" class="flex-1 w-full mx-auto px-4 md:px-8 max-w-4xl">
+    <h1 class="font-heading font-bold text-5xl md:text-6xl mb-8 text-gradient bg-gradient-to-r from-[#047857] to-purple-600 text-center">
+      Blake Oxford
+    </h1>
+    <!-- Progress Indicator -->
+    <div class="fixed left-0 top-0 h-1 z-50 bg-gradient-to-r from-[#10b981] to-purple-500" id="progress-bar"></div>
 
-  <div>
-    <main class="flex-1">
-      <!-- Sticky Navigation -->
-      <nav id="sticky-nav" class="sticky top-0 z-40 backdrop-blur-md bg-background/80 dark:bg-background-dark/80 shadow-sm py-4 transition-all duration-300">
-        <div class="flex justify-center space-x-4 md:space-x-8 text-sm font-medium">
-          <a href="#about-me" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">About Me</a>
-          <a href="#achievements" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Achievements</a>
-          <a href="#education-skills" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Education & Skills</a>
-          <a href="#about-timeline" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Career Highlights</a>
-          <a href="#testimonials" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Testimonials</a>
-          <a href="#about-social" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Connect</a>
-        </div>
-      </nav>
-      <div class="space-y-12 md:space-y-24">
+    <div>
+      <main class="flex-1">
+        <!-- Sticky Navigation -->
+        <nav id="sticky-nav" class="sticky top-0 z-40 backdrop-blur-md bg-background/80 dark:bg-background-dark/80 shadow-sm py-4 transition-all duration-300">
+          <div class="flex justify-center space-x-4 md:space-x-8 text-sm font-medium">
+            <a href="#about-me" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">About Me</a>
+            <a href="#achievements" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Achievements</a>
+            <a href="#education-skills" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Education & Skills</a>
+            <a href="#about-timeline" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Career Highlights</a>
+            <a href="#testimonials" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Testimonials</a>
+            <a href="#about-social" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Connect</a>
+          </div>
+        </nav>
+        <div class="space-y-12 md:space-y-24">
 
-        <!-- Hero -->
-        <section id="about-me" class="relative overflow-hidden py-32 min-h-[80vh] flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark">
-          <!-- Animated background pattern -->
-          <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
-            <div class="absolute inset-0"></div>
-          </div>
-          
-          <!-- Curved divider at bottom -->
-          <div class="absolute bottom-0 left-0 w-full overflow-hidden rotate-180">
-            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
-            </svg>
-          </div>
-          
-          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-              <div class="order-2 md:order-1 animate-fadeIn">
-                <div class="prose lg:prose-xl dark:prose-invert">
-                  <h1 class="font-heading font-bold text-5xl md:text-6xl lg:text-7xl mb-6">
-                    <span class="block animate-fadeInUp text-accent dark:text-accent-light" style="animation-delay: 0.2s;">About Me</span>
-                  </h1>
-                  <span class="block text-2xl md:text-3xl lg:text-4xl mt-2 animate-fadeInUp text-gray-900 dark:text-gray-100" style="animation-delay: 0.5s;">Systems Architect · Workflow Strategist · Action-Oriented Operator</span>
-                  <p class="animate-fadeInUp text-gray-800 dark:text-gray-100 dark:border-l-4 dark:border-accent-darker pl-4" style="animation-delay: 0.8s;">
-                    I specialize in dissecting complex operations and rebuilding them with smarter, tech-enabled systems that drive growth. From high-stakes rollouts to scaling multi-site teams, I’ve led transformative initiatives that unify tools, streamline workflows, and create clarity out of chaos. I’m relentless about progress and operate with a clear mindset: evolve, or fall behind.
-                  </p>
-                </div>
-              </div>
-              <div class="order-1 md:order-2 flex justify-center md:justify-end animate-fadeIn" style="animation-delay: 0.5s;">
-                <div class="relative">
-                  <!-- Decorative elements around the image -->
-                  <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-purple-500/30 blur-xl opacity-70 animate-pulse"></div>
-                  <div class="relative rounded-full p-1 bg-gradient-to-r from-accent to-purple-500">
-                    <CoinFlipImage 
-                      frontSrc="/assets/images/Blake-O-scaled.jpg" 
-                      backSrc="/assets/images/china-profile-picture.jpg" 
-                      alt="Blake Oxford" 
-                      size={280} 
-                      flipMultipleTimes
-                      role="img"
-                      aria-label="Photo of Blake Oxford"
-                    />
-                  </div>
-                  <!-- Floating elements -->
-                  <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white text-xl animate-float" style="animation-delay: 0.2s;">
-                    💡
-                  </div>
-                  <div class="absolute -bottom-2 -left-4 w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white text-xl animate-float" style="animation-delay: 0.8s;">
-                    🚀
-                  </div>
-                  <div class="absolute top-1/2 -right-10 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-lg animate-float" style="animation-delay: 1.4s;">
-                    ☁️
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Achievements -->
-        <section id="achievements" class="py-24 relative overflow-hidden bg-gray-50 dark:bg-gray-800/30">
-          <!-- Background pattern -->
-          <div class="absolute inset-0 z-0 opacity-5">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
-                  <path d="M 8 0 L 0 0 0 8" fill="none" stroke="currentColor" stroke-width="0.5"/>
-                </pattern>
-                <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-                  <rect width="80" height="80" fill="url(#smallGrid)"/>
-                  <path d="M 80 0 L 0 0 0 80" fill="none" stroke="currentColor" stroke-width="1"/>
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
-          </div>
-          
-          <!-- Wavy separator at top -->
-          <div class="absolute top-0 left-0 w-full overflow-hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full">
-              <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-white dark:fill-gray-900"></path>
-              <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-white dark:fill-gray-900"></path>
-              <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-white dark:fill-gray-900"></path>
-            </svg>
-          </div>
-          
-          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="max-w-3xl mx-auto text-center mb-12">
-              <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Core Strengths</span>
-              <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-purple-600">Key Achievements</h2>
-              <p class="text-lg text-gray-700 dark:text-gray-300">
-                A track record of innovative solutions and measurable results across business operations, financial systems, and technology integration.
-              </p>
+          <!-- Hero -->
+          <section id="about-me" class="relative overflow-hidden py-32 min-h-[80vh] flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark">
+            <!-- Animated background pattern -->
+            <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
+              <div class="absolute inset-0"></div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-              <!-- Achievement 1 -->
-              <div class="bg-white/80 dark:bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-accent to-purple-600 text-white text-2xl mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-3 text-accent-dark dark:text-accent-light">Enterprise Transformation</h3>
-                <p class="mb-4 text-gray-700 dark:text-gray-300">Successfully led Google Workspace to Microsoft 365 migration for 180+ staff with zero downtime, integrating 5 legacy systems.</p>
-                <ul class="space-y-2">
-                  <li class="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm">Zero downtime during migration</span>
-                  </li>
-                  <li class="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm">5 legacy systems consolidated</span>
-                  </li>
-                  <li class="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm">100% employee adoption</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <!-- Achievement 2 -->
-              <div class="bg-white/80 dark:bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 text-white text-2xl mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-3 text-accent-dark dark:text-accent-light">Financial Analytics</h3>
-                <p class="mb-4 text-gray-700 dark:text-gray-300">Built sophisticated Power BI dashboards for real-time financial forecasting that revealed $1.2M in unbilled services.</p>
-                <ul class="space-y-2">
-                  <li class="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm">$1.2M in unbilled services identified</span>
-                  </li>
-                  <li class="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm">Real-time forecast dashboards</span>
-                  </li>
-                  <li class="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm">25% improved financial accuracy</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <!-- Achievement 3 (Modified: AI-Powered Analytics) -->
-              <div class="bg-white/80 dark:bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-500 text-white text-2xl mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-3 text-accent-dark dark:text-accent-light">AI-Powered Analytics Overhaul</h3>
-                <p class="mb-4 text-gray-700 dark:text-gray-300">Led the modernization of enterprise analytics by integrating AI-driven insights, centralizing KPIs, and building real-time dashboards that transformed operational decision-making.</p>
-                <ul class="space-y-2">
-                  <li class="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm">Deployed 30+ AI-enhanced dashboards across 6 departments</span>
-                  </li>
-                  <li class="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm">Cut reporting delays by 50% with predictive data models</span>
-                  </li>
-                  <li class="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm">Unified metrics and insights for real-time decision-making</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Education & Skills -->
-        <section id="education-skills" class="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
-          <!-- Background geometric shapes -->
-          <div class="absolute inset-0 z-0 opacity-20 overflow-hidden">
-            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/30 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"></div>
-          </div>
-          
-          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="max-w-3xl mx-auto text-center mb-16">
-              <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Capabilities</span>
-              <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-purple-600">Skills & Education</h2>
-              <p class="text-lg text-gray-700 dark:text-gray-300">
-                Professional expertise and educational background that fuel innovative solutions and transformational leadership.
-              </p>
+            <!-- Curved divider at bottom -->
+            <div class="absolute bottom-0 left-0 w-full overflow-hidden rotate-180">
+              <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
+              </svg>
             </div>
             
-            <!-- Two column layout -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
-              <!-- Skills Column -->
-              <div class="space-y-8">
-                <h3 class="text-2xl font-bold border-l-4 border-accent pl-4 mb-4">Technical Skills & Tools</h3>
-                <ul class="space-y-2 text-sm">
-                  <li><strong>Enterprise Systems:</strong> AdvancedMD, Sage Intacct, ADP</li>
-                  <li><strong>Data & Analytics:</strong> SQL, Power BI, Python</li>
-                  <li><strong>Cloud Infrastructure:</strong> Azure, Intune</li>
-                  <li><strong>Automation & AI:</strong> Power Automate, OpenAI Workflows</li>
-                </ul>
-                <h3 class="text-2xl font-bold border-l-4 border-purple-500 pl-4 mt-8 mb-4">Leadership & Strategy</h3>
-                <ul class="space-y-2 text-sm">
-                  <li>Strategic Planning</li>
-                  <li>Team Management</li>
-                  <li>Cross-functional Collaboration</li>
-                  <li>Change Management</li>
-                </ul>
+            <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+              <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="order-2 md:order-1 animate-fadeIn">
+                  <div class="prose lg:prose-xl dark:prose-invert">
+                    <h1 class="font-heading font-bold text-5xl md:text-6xl lg:text-7xl mb-6">
+                      <span class="block animate-fadeInUp text-accent dark:text-accent-light" style="animation-delay: 0.2s;">About Me</span>
+                    </h1>
+                    <span class="block text-2xl md:text-3xl lg:text-4xl mt-2 animate-fadeInUp text-gray-900 dark:text-gray-100" style="animation-delay: 0.5s;">Systems Architect · Workflow Strategist · Action-Oriented Operator</span>
+                    <p class="animate-fadeInUp text-gray-800 dark:text-gray-100 dark:border-l-4 dark:border-accent-darker pl-4" style="animation-delay: 0.8s;">
+                      I specialize in dissecting complex operations and rebuilding them with smarter, tech-enabled systems that drive growth. From high-stakes rollouts to scaling multi-site teams, I’ve led transformative initiatives that unify tools, streamline workflows, and create clarity out of chaos. I’m relentless about progress and operate with a clear mindset: evolve, or fall behind.
+                    </p>
+                  </div>
+                </div>
+                <div class="order-1 md:order-2 flex justify-center md:justify-end animate-fadeIn" style="animation-delay: 0.5s;">
+                  <div class="relative">
+                    <!-- Decorative elements around the image -->
+                    <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-[#10b981]/30 to-purple-500/30 blur-xl opacity-70 animate-pulse"></div>
+                    <div class="relative rounded-full p-1 bg-gradient-to-r from-[#10b981] to-purple-500">
+                      <CoinFlipImage 
+                        frontSrc="/assets/images/Blake-O-scaled.jpg" 
+                        backSrc="/assets/images/china-profile-picture.jpg" 
+                        alt="Blake Oxford" 
+                        size={280} 
+                        flipMultipleTimes
+                        role="img"
+                        aria-label="Photo of Blake Oxford"
+                      />
+                    </div>
+                    <!-- Floating elements -->
+                    <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white text-xl animate-float" style="animation-delay: 0.2s;">
+                      💡
+                    </div>
+                    <div class="absolute -bottom-2 -left-4 w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white text-xl animate-float" style="animation-delay: 0.8s;">
+                      🚀
+                    </div>
+                    <div class="absolute top-1/2 -right-10 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-lg animate-float" style="animation-delay: 1.4s;">
+                      ☁️
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Achievements -->
+          <section id="achievements" class="py-24 relative overflow-hidden bg-gray-50 dark:bg-gray-800/30">
+            <!-- Background pattern -->
+            <div class="absolute inset-0 z-0 opacity-5">
+              <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+                    <path d="M 8 0 L 0 0 0 8" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                  </pattern>
+                  <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+                    <rect width="80" height="80" fill="url(#smallGrid)"/>
+                    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="currentColor" stroke-width="1"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+              </svg>
+            </div>
+            
+            <!-- Wavy separator at top -->
+            <div class="absolute top-0 left-0 w-full overflow-hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-white dark:fill-gray-900"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-white dark:fill-gray-900"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-white dark:fill-gray-900"></path>
+              </svg>
+            </div>
+            
+            <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+              <div class="max-w-3xl mx-auto text-center mb-12">
+                <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Core Strengths</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-[#10b981] to-purple-600">Key Achievements</h2>
+                <p class="text-lg text-gray-700 dark:text-gray-300">
+                  A track record of innovative solutions and measurable results across business operations, financial systems, and technology integration.
+                </p>
               </div>
               
-              <!-- Education Column -->
-              <div>
-                <h3 class="text-2xl font-bold border-l-4 border-purple-500 pl-4 mb-8">Education & Certifications</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+                <!-- Achievement 1 -->
+                <div class="bg-white/80 dark:bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-[#10b981] to-purple-600 text-white text-2xl mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-xl font-bold mb-3 text-accent-dark dark:text-accent-light">Enterprise Transformation</h3>
+                  <p class="mb-4 text-gray-700 dark:text-gray-300">Successfully led Google Workspace to Microsoft 365 migration for 180+ staff with zero downtime, integrating 5 legacy systems.</p>
+                  <ul class="space-y-2">
+                    <li class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="text-sm">Zero downtime during migration</span>
+                    </li>
+                    <li class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="text-sm">5 legacy systems consolidated</span>
+                    </li>
+                    <li class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="text-sm">100% employee adoption</span>
+                    </li>
+                  </ul>
+                </div>
                 
+                <!-- Achievement 2 -->
+                <div class="bg-white/80 dark:bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 text-white text-2xl mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-xl font-bold mb-3 text-accent-dark dark:text-accent-light">Financial Analytics</h3>
+                  <p class="mb-4 text-gray-700 dark:text-gray-300">Built sophisticated Power BI dashboards for real-time financial forecasting that revealed $1.2M in unbilled services.</p>
+                  <ul class="space-y-2">
+                    <li class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="text-sm">$1.2M in unbilled services identified</span>
+                    </li>
+                    <li class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="text-sm">Real-time forecast dashboards</span>
+                    </li>
+                    <li class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="text-sm">25% improved financial accuracy</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <!-- Achievement 3 (Modified: AI-Powered Analytics) -->
+                <div class="bg-white/80 dark:bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-500 text-white text-2xl mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-xl font-bold mb-3 text-accent-dark dark:text-accent-light">AI-Powered Analytics Overhaul</h3>
+                  <p class="mb-4 text-gray-700 dark:text-gray-300">Led the modernization of enterprise analytics by integrating AI-driven insights, centralizing KPIs, and building real-time dashboards that transformed operational decision-making.</p>
+                  <ul class="space-y-2">
+                    <li class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="text-sm">Deployed 30+ AI-enhanced dashboards across 6 departments</span>
+                    </li>
+                    <li class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="text-sm">Cut reporting delays by 50% with predictive data models</span>
+                    </li>
+                    <li class="flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span class="text-sm">Unified metrics and insights for real-time decision-making</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Education & Skills -->
+          <section id="education-skills" class="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
+            <!-- Background geometric shapes -->
+            <div class="absolute inset-0 z-0 opacity-20 overflow-hidden">
+              <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/30 rounded-full blur-3xl"></div>
+              <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"></div>
+            </div>
+            
+            <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+              <div class="max-w-3xl mx-auto text-center mb-16">
+                <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Capabilities</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-[#10b981] to-purple-600">Skills & Education</h2>
+                <p class="text-lg text-gray-700 dark:text-gray-300">
+                  Professional expertise and educational background that fuel innovative solutions and transformational leadership.
+                </p>
+              </div>
+              
+              <!-- Two column layout -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
+                <!-- Skills Column -->
                 <div class="space-y-8">
-                  <!-- Education Item 1 -->
-                  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-start">
-                      <div class="flex-shrink-0 bg-accent/10 p-3 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                          <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                        </svg>
+                  <h3 class="text-2xl font-bold border-l-4 border-accent pl-4 mb-4">Technical Skills & Tools</h3>
+                  <ul class="space-y-2 text-sm">
+                    <li><strong>Enterprise Systems:</strong> AdvancedMD, Sage Intacct, ADP</li>
+                    <li><strong>Data & Analytics:</strong> SQL, Power BI, Python</li>
+                    <li><strong>Cloud Infrastructure:</strong> Azure, Intune</li>
+                    <li><strong>Automation & AI:</strong> Power Automate, OpenAI Workflows</li>
+                  </ul>
+                  <h3 class="text-2xl font-bold border-l-4 border-purple-500 pl-4 mt-8 mb-4">Leadership & Strategy</h3>
+                  <ul class="space-y-2 text-sm">
+                    <li>Strategic Planning</li>
+                    <li>Team Management</li>
+                    <li>Cross-functional Collaboration</li>
+                    <li>Change Management</li>
+                  </ul>
+                </div>
+                
+                <!-- Education Column -->
+                <div>
+                  <h3 class="text-2xl font-bold border-l-4 border-purple-500 pl-4 mb-8">Education & Certifications</h3>
+                  
+                  <div class="space-y-8">
+                    <!-- Education Item 1 -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                      <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-accent/10 p-3 rounded-lg">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                            <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                          </svg>
+                        </div>
+                        <div class="ml-4">
+                          <h4 class="font-bold text-lg">Calvin College</h4>
+                          <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">Bachelor of Arts in Finance</div>
+                          <p class="text-gray-700 dark:text-gray-300">
+                            Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects.
+                          </p>
+                        </div>
                       </div>
-                      <div class="ml-4">
-                        <h4 class="font-bold text-lg">Calvin College</h4>
-                        <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">Bachelor of Arts in Finance</div>
-                        <p class="text-gray-700 dark:text-gray-300">
-                          Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects.
-                        </p>
+                    </div>
+                    
+                    <!-- Certifications -->
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                      <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-purple-500/10 p-3 rounded-lg">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                          </svg>
+                        </div>
+                        <div class="ml-4">
+                          <h4 class="font-bold text-lg">Professional Certifications</h4>
+                          <div class="space-y-3 mt-4">
+                            <div class="flex items-center gap-3">
+                              <div class="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                <span class="font-semibold text-purple-600 dark:text-purple-400">PY</span>
+                              </div>
+                              <div>
+                                <div class="font-medium">Python for Data Science</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Issued 2021</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
-                  <!-- Certifications -->
-                  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-start">
-                      <div class="flex-shrink-0 bg-purple-500/10 p-3 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Career Timeline -->
+          <section id="about-timeline" class="py-24 bg-gradient-to-br from-gray-900 to-black text-white relative overflow-hidden">
+            <!-- Overlay dots pattern -->
+            <div class="absolute inset-0 z-0 opacity-10">
+              <div class="absolute inset-0" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                  <defs>
+                    <pattern id="dots-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <circle cx="3" cy="3" r="1" fill="white" />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#dots-pattern)" />
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Wavy separator at top -->
+            <div class="absolute top-0 left-0 w-full overflow-hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-gray-50 dark:fill-gray-800"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-gray-50 dark:fill-gray-800"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-gray-50 dark:fill-gray-800"></path>
+              </svg>
+            </div>
+            
+            <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+              <div class="max-w-3xl mx-auto text-center mb-16">
+                <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/20 mb-4">Career Path</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-[#10b981] to-purple-600">Professional Journey</h2>
+                <p class="text-lg text-gray-300">
+                  Key career milestones and achievements that have shaped my professional path and expertise.
+                </p>
+              </div>
+              
+              <!-- Mobile Timeline (horizontal scroll) -->
+              <div class="md:hidden overflow-x-auto pb-8 timeline-scroll-container">
+                <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
+                  {timelineItems.map((item, index) => (
+                    <div class="flex-none w-80 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-accent/10 transition-all">
+                      <div class="flex items-center mb-4">
+                        <div class={`w-12 h-12 flex items-center justify-center rounded-full text-xl bg-gradient-to-br ${item.color}`}>
+                          {item.icon}
+                        </div>
+                        <div class="ml-4">
+                          <h3 class="font-bold text-xl">{item.year}</h3>
+                          <p class="text-accent">{item.title}</p>
+                        </div>
+                      </div>
+                      <div class="pl-2 border-l-2 border-gray-700 space-y-2">
+                        {item.achievements.map(achievement => (
+                          <p class="text-sm text-gray-300">{achievement}</p>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <!-- Desktop Timeline (vertical) -->
+              <div class="hidden md:block relative">
+                <!-- Timeline center line -->
+                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#10b981] via-purple-500 to-blue-500"></div>
+                
+                <div class="space-y-0">
+                  {timelineItems.map((item, index) => (
+                    <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'}`}>
+                      <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
+                        <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
+                          <div class={`bg-gray-800/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-${index % 2 === 0 ? 'accent' : 'purple-500'}/10`}>
+                            <div class="flex items-center mb-4 gap-4">
+                              <div class={`inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br ${item.color} text-2xl`}>
+                                {item.icon}
+                              </div>
+                              <div>
+                                <h3 class="text-2xl font-bold text-white">{item.year}</h3>
+                                <p class="text-accent">{item.title}</p>
+                              </div>
+                            </div>
+                            <div class="space-y-3 pl-4 border-l-2 border-gray-700">
+                              {item.achievements.map(achievement => (
+                                <p class="text-gray-300">{achievement}</p>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Timeline dot -->
+                      <div class="absolute left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full border-4 border-gray-900 bg-accent"></div>
+                      
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Testimonials -->
+          <section id="testimonials" class="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative">
+            <!-- Background blur elements -->
+            <div class="absolute top-1/3 right-1/4 w-64 h-64 bg-accent-light/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+            
+            <!-- Wavy separator at top -->
+            <div class="absolute top-0 left-0 w-full overflow-hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-gray-900 dark:fill-black"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-gray-900 dark:fill-black"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-gray-900 dark:fill-black"></path>
+              </svg>
+            </div>
+            
+            <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+              <div class="max-w-3xl mx-auto text-center mb-16">
+                <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Trusted By</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-[#10b981] to-purple-600">Client Testimonials</h2>
+                <p class="text-lg text-gray-700 dark:text-gray-300">
+                  Hear what colleagues and clients have to say about working with me.
+                </p>
+              </div>
+              
+              <!-- Testimonials slider -->
+              <div class="testimonials-wrapper">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {testimonials.map((testimonial) => (
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-xl dark:shadow-gray-900/30 border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                      <div class="flex items-center mb-6">
+                        <div class="relative">
+                          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-[#10b981] to-purple-500 blur-sm opacity-70"></div>
+                          <img 
+                            src={testimonial.image} 
+                            alt={testimonial.name} 
+                            class="w-14 h-14 rounded-full object-cover border-2 border-white dark:border-gray-800 relative z-10"
+                            loading="lazy"
+                            width="56"
+                            height="56"
+                          />
+                        </div>
+                        <div class="ml-4">
+                          <h3 class="font-bold text-lg">{testimonial.name}</h3>
+                          <p class="text-sm text-gray-500 dark:text-gray-400">{testimonial.title}</p>
+                        </div>
+                      </div>
+                      <div class="relative">
+                        <svg class="w-10 h-10 text-accent/10 absolute -top-4 -left-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                        </svg>
+                        <p class="text-gray-700 dark:text-gray-300 mb-4 italic relative z-10">{testimonial.quote}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          <!-- Resume Highlights -->
+          <section id="resume-highlights" class="py-24 relative bg-gradient-to-br from-[#10b981]/5 to-background overflow-hidden">
+            <!-- Curved divider at top -->
+            <div class="absolute top-0 left-0 w-full overflow-hidden">
+              <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-background dark:fill-background-dark"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-background dark:fill-background-dark"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-background dark:fill-background-dark"></path>
+              </svg>
+            </div>
+            
+            <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10 pt-16">
+              <div class="max-w-2xl mx-auto text-center mb-16">
+                <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-accent/10 text-accent mb-4">Professional Experience</span>
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-heading font-bold bg-gradient-to-r from-[#047857] to-purple-600 text-transparent bg-clip-text mb-6">
+                  Resume Highlights
+                </h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300">
+                  Core expertise and significant achievements
+                </p>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                <div class="flex flex-col gap-8 h-full">
+                  <!-- Practice Management & RCM -->
+                  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                    <div class="flex items-center mb-4">
+                      <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <h3 class="text-xl font-bold">Practice Management & RCM</h3>
+                    </div>
+                    <div>
+                      <p class="text-gray-600 dark:text-gray-300 mb-2">End-to-end AdvancedMD implementation, including:</p>
+                      <ul class="space-y-2 ml-6">
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          System architecture and workflow design
+                        </li>
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Comprehensive SOP development and documentation
+                        </li>
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Cross-functional team training and certification
+                        </li>
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Revenue cycle optimization and compliance assurance
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <!-- Cloud & SaaS -->
+                  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                    <div class="flex items-center mb-4">
+                      <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                        </svg>
+                      </div>
+                      <h3 class="text-xl font-bold">Cloud & SaaS</h3>
+                    </div>
+                    <div>
+                      <p class="text-gray-600 dark:text-gray-300 mb-2">Comprehensive enterprise technology transformation:</p>
+                      <ul class="space-y-2 ml-6">
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Google Workspace → Microsoft 365 migration for 180 users
+                        </li>
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Sage Intacct financial platform implementation
+                        </li>
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Azure/Intune endpoint management deployment
+                        </li>
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          ADP Workforce Now and Cornerstone LMS integration
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-8 h-full">
+                  <!-- Automation & Savings -->
+                  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                    <div class="flex items-center mb-4">
+                      <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                         </svg>
                       </div>
-                      <div class="ml-4">
-                        <h4 class="font-bold text-lg">Professional Certifications</h4>
-                        <div class="space-y-3 mt-4">
-                          <div class="flex items-center gap-3">
-                            <div class="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                              <span class="font-semibold text-purple-600 dark:text-purple-400">PY</span>
-                            </div>
-                            <div>
-                              <div class="font-medium">Python for Data Science</div>
-                              <div class="text-sm text-gray-600 dark:text-gray-400">Issued 2021</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <h3 class="text-xl font-bold">Automation & Savings</h3>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Career Timeline -->
-        <section id="about-timeline" class="py-24 bg-gradient-to-br from-gray-900 to-black text-white relative overflow-hidden">
-          <!-- Overlay dots pattern -->
-          <div class="absolute inset-0 z-0 opacity-10">
-            <div class="absolute inset-0" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-                <defs>
-                  <pattern id="dots-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <circle cx="3" cy="3" r="1" fill="white" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#dots-pattern)" />
-              </svg>
-            </div>
-          </div>
-          
-          <!-- Wavy separator at top -->
-          <div class="absolute top-0 left-0 w-full overflow-hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full">
-              <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-gray-50 dark:fill-gray-800"></path>
-              <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-gray-50 dark:fill-gray-800"></path>
-              <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-gray-50 dark:fill-gray-800"></path>
-            </svg>
-          </div>
-          
-          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="max-w-3xl mx-auto text-center mb-16">
-              <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/20 mb-4">Career Path</span>
-              <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-purple-600">Professional Journey</h2>
-              <p class="text-lg text-gray-300">
-                Key career milestones and achievements that have shaped my professional path and expertise.
-              </p>
-            </div>
-            
-            <!-- Mobile Timeline (horizontal scroll) -->
-            <div class="md:hidden overflow-x-auto pb-8 timeline-scroll-container">
-              <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
-                {timelineItems.map((item, index) => (
-                  <div class="flex-none w-80 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-accent/10 transition-all">
-                    <div class="flex items-center mb-4">
-                      <div class={`w-12 h-12 flex items-center justify-center rounded-full text-xl bg-gradient-to-br ${item.color}`}>
-                        {item.icon}
-                      </div>
-                      <div class="ml-4">
-                        <h3 class="font-bold text-xl">{item.year}</h3>
-                        <p class="text-accent">{item.title}</p>
-                      </div>
-                    </div>
-                    <div class="pl-2 border-l-2 border-gray-700 space-y-2">
-                      {item.achievements.map(achievement => (
-                        <p class="text-sm text-gray-300">{achievement}</p>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <!-- Desktop Timeline (vertical) -->
-            <div class="hidden md:block relative">
-              <!-- Timeline center line -->
-              <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-accent via-purple-500 to-blue-500"></div>
-              
-              <div class="space-y-0">
-                {timelineItems.map((item, index) => (
-                  <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'}`}>
-                    <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
-                      <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
-                        <div class={`bg-gray-800/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-${index % 2 === 0 ? 'accent' : 'purple-500'}/10`}>
-                          <div class="flex items-center mb-4 gap-4">
-                            <div class={`inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br ${item.color} text-2xl`}>
-                              {item.icon}
-                            </div>
-                            <div>
-                              <h3 class="text-2xl font-bold text-white">{item.year}</h3>
-                              <p class="text-accent">{item.title}</p>
-                            </div>
-                          </div>
-                          <div class="space-y-3 pl-4 border-l-2 border-gray-700">
-                            {item.achievements.map(achievement => (
-                              <p class="text-gray-300">{achievement}</p>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <!-- Timeline dot -->
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full border-4 border-gray-900 bg-accent"></div>
-                    
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Testimonials -->
-        <section id="testimonials" class="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative">
-          <!-- Background blur elements -->
-          <div class="absolute top-1/3 right-1/4 w-64 h-64 bg-accent-light/10 rounded-full blur-3xl"></div>
-          <div class="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
-          
-          <!-- Wavy separator at top -->
-          <div class="absolute top-0 left-0 w-full overflow-hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full">
-              <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-gray-900 dark:fill-black"></path>
-              <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-gray-900 dark:fill-black"></path>
-              <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-gray-900 dark:fill-black"></path>
-            </svg>
-          </div>
-          
-          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="max-w-3xl mx-auto text-center mb-16">
-              <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Trusted By</span>
-              <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-purple-600">Client Testimonials</h2>
-              <p class="text-lg text-gray-700 dark:text-gray-300">
-                Hear what colleagues and clients have to say about working with me.
-              </p>
-            </div>
-            
-            <!-- Testimonials slider -->
-            <div class="testimonials-wrapper">
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {testimonials.map((testimonial) => (
-                  <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-xl dark:shadow-gray-900/30 border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                    <div class="flex items-center mb-6">
-                      <div class="relative">
-                        <div class="absolute inset-0 rounded-full bg-gradient-to-r from-accent to-purple-500 blur-sm opacity-70"></div>
-                        <img 
-                          src={testimonial.image} 
-                          alt={testimonial.name} 
-                          class="w-14 h-14 rounded-full object-cover border-2 border-white dark:border-gray-800 relative z-10"
-                          loading="lazy"
-                          width="56"
-                          height="56"
-                        />
-                      </div>
-                      <div class="ml-4">
-                        <h3 class="font-bold text-lg">{testimonial.name}</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">{testimonial.title}</p>
-                      </div>
-                    </div>
-                    <div class="relative">
-                      <svg class="w-10 h-10 text-accent/10 absolute -top-4 -left-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                      </svg>
-                      <p class="text-gray-700 dark:text-gray-300 mb-4 italic relative z-10">{testimonial.quote}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <!-- Resume Highlights -->
-        <section id="resume-highlights" class="py-24 relative bg-gradient-to-br from-accent/5 to-background overflow-hidden">
-          <!-- Curved divider at top -->
-          <div class="absolute top-0 left-0 w-full overflow-hidden">
-            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
-              <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-background dark:fill-background-dark"></path>
-              <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-background dark:fill-background-dark"></path>
-              <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-background dark:fill-background-dark"></path>
-            </svg>
-          </div>
-          
-          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10 pt-16">
-            <div class="max-w-2xl mx-auto text-center mb-16">
-              <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-accent/10 text-accent mb-4">Professional Experience</span>
-              <h2 class="text-3xl md:text-4xl lg:text-5xl font-heading font-bold bg-gradient-to-r from-accent-dark to-purple-600 text-transparent bg-clip-text mb-6">
-                Resume Highlights
-              </h2>
-              <p class="text-lg text-gray-600 dark:text-gray-300">
-                Core expertise and significant achievements
-              </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-              <div class="flex flex-col gap-8 h-full">
-                <!-- Practice Management & RCM -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-                  <div class="flex items-center mb-4">
-                    <div class="rounded-full bg-gradient-to-r from-accent to-purple-600 p-3 mr-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <h3 class="text-xl font-bold">Practice Management & RCM</h3>
-                  </div>
-                  <div>
-                    <p class="text-gray-600 dark:text-gray-300 mb-2">End-to-end AdvancedMD implementation, including:</p>
-                    <ul class="space-y-2 ml-6">
-                      <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        System architecture and workflow design
-                      </li>
-                      <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        Comprehensive SOP development and documentation
-                      </li>
-                      <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        Cross-functional team training and certification
-                      </li>
-                      <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        Revenue cycle optimization and compliance assurance
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <!-- Cloud & SaaS -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-                  <div class="flex items-center mb-4">
-                    <div class="rounded-full bg-gradient-to-r from-accent to-purple-600 p-3 mr-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                      </svg>
-                    </div>
-                    <h3 class="text-xl font-bold">Cloud & SaaS</h3>
-                  </div>
-                  <div>
-                    <p class="text-gray-600 dark:text-gray-300 mb-2">Comprehensive enterprise technology transformation:</p>
-                    <ul class="space-y-2 ml-6">
-                      <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        Google Workspace → Microsoft 365 migration for 180 users
-                      </li>
-                      <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        Sage Intacct financial platform implementation
-                      </li>
-                      <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        Azure/Intune endpoint management deployment
-                      </li>
-                      <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        ADP Workforce Now and Cornerstone LMS integration
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-col gap-8 h-full">
-                <!-- Automation & Savings -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-                  <div class="flex items-center mb-4">
-                    <div class="rounded-full bg-gradient-to-r from-accent to-purple-600 p-3 mr-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                      </svg>
-                    </div>
-                    <h3 class="text-xl font-bold">Automation & Savings</h3>
-                  </div>
-                  <div>
-                    <p class="text-gray-600 dark:text-gray-300 mb-2">Multi-million-dollar overhead reduction via:</p>
-                    <ul class="space-y-2 ml-6">
-                      <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1  1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    <div>
+                      <p class="text-gray-600 dark:text-gray-300 mb-2">Multi-million-dollar overhead reduction via:</p>
+                      <ul class="space-y-2 ml-6">
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1  1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
                     <span class="text-sm">Azure cloud infrastructure optimization</span>
                   </li>
@@ -699,10 +716,10 @@ const skills = [
                 <!-- Data Analytics -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                   <div class="flex items-center mb-4">
-                    <div class="rounded-full bg-gradient-to-r from-accent to-purple-600 p-3 mr-4">
+                    <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
                     </div>
                     <h3 class="text-xl font-bold">Data Analytics</h3>
                   </div>
@@ -729,7 +746,7 @@ const skills = [
                       </li>
                       <li class="flex items-start">
                         <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8  0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          <path fill-rule="evenodd" d="M10 18a8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
                         Automated KPI tracking and performance visualization
                       </li>
@@ -740,7 +757,7 @@ const skills = [
             </div>
               
             <div class="mt-12 text-center">
-              <a href="/contact/" class="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gradient-to-r from-accent to-purple-600 hover:from-accent-dark hover:to-purple-700 transition-all duration-300">
+              <a href="/contact/" class="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gradient-to-r from-[#10b981] to-purple-600 hover:from-[#047857] hover:to-purple-700 transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -751,7 +768,7 @@ const skills = [
         </section>
 
         <!-- CTA & Social -->
-        <section id="cta" class="py-24 relative overflow-hidden bg-gradient-to-br from-accent/10 via-background to-accent/10">
+        <section id="cta" class="py-24 relative overflow-hidden bg-gradient-to-br from-[#10b981]/10 via-background to-[#10b981]/10">
           <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
             <!-- Projects CTA -->
             <div class="max-w-2xl mx-auto text-center mb-16">
@@ -775,7 +792,7 @@ const skills = [
         </section>
 
         <!-- Social Connection (moved to bottom) -->
-        <section id="about-social" class="py-24 bg-gradient-to-br from-accent/5 to-background">
+        <section id="about-social" class="py-24 bg-gradient-to-br from-[#10b981]/5 to-background">
           <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
             <div class="max-w-3xl mx-auto text-center mb-12">
               <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Let's Connect</span>
@@ -789,7 +806,7 @@ const skills = [
               <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-lg bg-accent/10 text-accent mb-6">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <h3 class="text-xl font-bold mb-4">Email</h3>
@@ -802,49 +819,7 @@ const skills = [
               </div>
               
               <!-- Social Links -->
-              <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center md:col-span-2 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-lg bg-purple-500/10 text-purple-500 mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-4">Connect on Social</h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-6">Follow my professional journey and connect with me on social media</p>
-                
-                <div class="flex items-center justify-center gap-6">
-                  {socialLinks.map(link => (
-                    <a 
-                      href={link.url}
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      class="group flex flex-col items-center"
-                      aria-label={`Connect with Blake on ${link.name}`}
-                    >
-                      <div class="w-14 h-14 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 group-hover:bg-accent/10 transition-all duration-200">
-                        {link.icon === 'linkedin' && (
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
-                          </svg>
-                        )}
-                        {link.icon === 'github' && (
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                          </svg>
-                        )}
-                        {link.icon === 'microsoft-learn' && (
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent group-hover:text-accent-dark transition-colors" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M3 4v16h18V4H3zm16 14H5V6h14v12z" />
-                            <path d="M7 8h10v2H7zm0 4h10v2H7z" />
-                          </svg>
-                        )}
-                      </div>
-                      <span class="mt-2 font-medium text-gray-900 dark:text-gray-100 group-hover:text-accent transition-colors">
-                        {link.name}
-                      </span>
-                    </a>
-                  ))}
-                </div>
-              </div>
+              <div class="flex items-center justify-center gap-6" set:html={socialLinksHtml}></div>
             </div>
           </div>
         </section>

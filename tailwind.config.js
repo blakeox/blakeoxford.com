@@ -6,6 +6,10 @@ export default /** @type {import('tailwindcss').Config} */ {
   darkMode: 'class',
   content: [
     './src/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
+    './tests/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
+    './playwright/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
+    './public/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
+    './*.{astro,html,js,jsx,ts,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -15,7 +19,8 @@ export default /** @type {import('tailwindcss').Config} */ {
         'primary-light':    'var(--color-primary-light)',
         'primary-dark':     'var(--color-primary-dark)',
 
-        accent:             '#10b981', // static value for gradient utilities
+        // 'accent' is a static hex for gradient utilities (e.g., from-accent). If you want dynamic gradients, use a CSS variable and add a custom utility in global.css.
+        accent:             '#10b981',
         'accent-light':     '#6ee7b7',
         'accent-dark':      '#047857',
 

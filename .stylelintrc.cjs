@@ -52,6 +52,33 @@ module.exports = {
         'color-function-alias-notation': null,
         'color-function-notation': null,
         'alpha-value-notation': null,
+        // Allow arbitrary values for Tailwind gradients (e.g., from-[#10b981])
+        'selector-class-pattern': null,
+        'value-no-vendor-prefix': null,
+        'function-no-unknown': [true, {
+          ignoreFunctions: [
+            '/^theme$/',
+            '/^var$/',
+            '/^linear-gradient$/',
+            '/^radial-gradient$/',
+            '/^repeating-linear-gradient$/',
+            '/^repeating-radial-gradient$/',
+          ]
+        }],
+        'declaration-property-value-allowed-list': {
+          'background-image': [
+            '/^linear-gradient/',
+            '/^radial-gradient/',
+            '/^repeating-linear-gradient/',
+            '/^repeating-radial-gradient/',
+            '/^url/',
+            '/^var/',
+            '/^theme/',
+            '/^from-\[#/',
+            '/^to-\[#/',
+            '/^via-\[#/'
+          ]
+        },
       },
     },
   ],
