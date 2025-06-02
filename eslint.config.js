@@ -7,8 +7,9 @@ import astroParser from 'astro-eslint-parser';
 
 export default [
   js.configs.recommended,
+  // Type-aware linting for main TS source files only
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['src/**/*.ts', 'src/**/*.tsx'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -36,13 +37,44 @@ export default [
       ]
     },
   },
+  // TypeScript files outside src/ (no type-checking)
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    ignores: ['src/**/*.ts', 'src/**/*.tsx'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      // Warn on hardcoded color strings (hex, rgb, hsl) in code
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: "Literal[value][raw=/#[0-9a-fA-F]{3,6}|rgb\\(|hsl\\(/]",
+          message: 'Use Tailwind token classes for colors, not hardcoded values.'
+        },
+        {
+          selector: "Literal[value][raw=/\\d+(px|rem|em)/]",
+          message: 'Use Tailwind token classes for spacing/sizing, not hardcoded units.'
+        }
+      ]
+    },
+  },
+  // Astro files
   {
     files: ['**/*.astro'],
     plugins: {
       astro,
     },
     languageOptions: {
-      parser: astro.parsers['astro-eslint-parser'],
+      parser: astroParser,
       parserOptions: {
         parser: tsparser,
         extraFileExtensions: ['.astro'],
@@ -64,13 +96,11 @@ export default [
       ]
     },
   },
+  // MDX files
   {
     files: ['**/*.mdx'],
     plugins: {
       mdx,
-    },
-    languageOptions: {
-      parser: mdx.parsers['mdx-eslint-parser'],
     },
     rules: {
       ...mdx.configs.recommended.rules,
