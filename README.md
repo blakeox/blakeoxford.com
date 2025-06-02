@@ -92,7 +92,7 @@ A blazing-fast, modern portfolio site built with [Astro](https://astro.build), d
 
 ### Prerequisites
 
-- Node.js v18+
+- Node.js v22+
 
 - Corepack enabled: `corepack enable`
 
