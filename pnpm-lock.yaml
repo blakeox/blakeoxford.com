@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@astrojs/react':
-        specifier: ^4.2.7
-        version: 4.2.7(@types/node@22.15.28)(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(jiti@2.4.2)(lightningcss@1.30.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(terser@5.39.0)(yaml@2.8.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/node@22.15.28)(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(jiti@2.4.2)(lightningcss@1.30.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(terser@5.39.0)(yaml@2.8.0)
       '@types/react':
         specifier: ^19.1.5
         version: 19.1.5
@@ -180,9 +180,9 @@ packages:
     resolution: {integrity: sha512-GilTHKGCW6HMq7y3BUv9Ac7GMe/MO9gi9GW62GzKtth0SwukCu/qp2wLiGpEujhY+VVhaG9v7kv/5vFzvf4NYw==}
     engines: {node: ^18.17.1 || ^20.3.0 || >=22.0.0}
 
-  '@astrojs/react@4.2.7':
-    resolution: {integrity: sha512-/wM90noT/6QyJEOGdDmDbq2D9qZooKTJNG1M8olmsW5ns6bJ7uxG5fzkYxcpA3WUTD6Dj6NtpEqchvb5h8Fa+g==}
-    engines: {node: ^18.17.1 || ^20.3.0 || >=22.0.0}
+  '@astrojs/react@4.3.0':
+    resolution: {integrity: sha512-N02aj52Iezn69qHyx5+XvPqgsPMEnel9mI5JMbGiRMTzzLMuNaxRVoQTaq2024Dpr7BLsxCjqMkNvelqMDhaHA==}
+    engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0}
     peerDependencies:
       '@types/react': ^17.0.50 || ^18.0.21 || ^19.0.0
       '@types/react-dom': ^17.0.17 || ^18.0.6 || ^19.0.0
@@ -4186,7 +4186,7 @@ snapshots:
     dependencies:
       prismjs: 1.30.0
 
-  '@astrojs/react@4.2.7(@types/node@22.15.28)(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(jiti@2.4.2)(lightningcss@1.30.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(terser@5.39.0)(yaml@2.8.0)':
+  '@astrojs/react@4.3.0(@types/node@22.15.28)(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(jiti@2.4.2)(lightningcss@1.30.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(terser@5.39.0)(yaml@2.8.0)':
     dependencies:
       '@types/react': 19.1.5
       '@types/react-dom': 19.1.5(@types/react@19.1.5)
