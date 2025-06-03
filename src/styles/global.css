@@ -10,34 +10,6 @@
 /* Import your consolidated design tokens as a theme */
 @import "./theme.css";
 
-/* Custom utility classes using design tokens */
-.bg-primary { background-color: var(--color-primary) !important; }
-.bg-primary-light { background-color: var(--color-primary-light) !important; }
-.bg-primary-dark { background-color: var(--color-primary-dark) !important; }
-.bg-accent { background-color: var(--color-accent) !important; }
-.bg-accent-light { background-color: var(--color-accent-light) !important; }
-.bg-accent-dark { background-color: var(--color-accent-dark) !important; }
-.bg-surface { background-color: var(--color-surface) !important; }
-.bg-surface-dark { background-color: var(--color-surface-dark) !important; }
-.bg-background { background-color: var(--color-background) !important; }
-.bg-background-dark { background-color: var(--color-background-dark) !important; }
-.text-primary { color: var(--color-primary) !important; }
-.text-primary-dark { color: var(--color-primary-dark) !important; }
-.text-accent { color: var(--color-accent) !important; }
-.text-accent-dark { color: var(--color-accent-dark) !important; }
-.text-background { color: var(--color-background) !important; }
-.text-background-dark { color: var(--color-background-dark) !important; }
-.text-foreground { color: var(--color-foreground) !important; }
-.text-foreground-light { color: var(--color-foreground-light) !important; }
-
-/* Additional utilities for theme tokens */
-.text-neutral { color: var(--color-neutral) !important; }
-.text-neutral-light { color: var(--color-neutral-light) !important; }
-.text-neutral-dark { color: var(--color-neutral-dark) !important; }
-
-.border-surface-subtle { border-color: var(--color-surface-subtle) !important; }
-.border-surface-dark-subtle { border-color: var(--color-surface-dark-subtle) !important; }
-
 /* Theme toggle spin animation */
 @keyframes theme-toggle-spin {
   0% { transform: rotate(0deg); }
