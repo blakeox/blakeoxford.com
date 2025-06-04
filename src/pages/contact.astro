@@ -7,34 +7,34 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide={true}>
-  {/* Sticky progress bar and nav */}
-  <div class="fixed left-0 top-0 h-1 z-50 bg-gradient-to-r from-[#10b981] to-purple-500" id="progress-bar"></div>
+  <!-- Sticky progress bar and nav -->
+  <div class="fixed left-0 top-0 h-1 z-50 bg-gradient-to-r from-accent to-purple-500" id="progress-bar"></div>
   <nav id="sticky-nav" class="sticky top-0 z-40 backdrop-blur-md bg-background/80 dark:bg-background-dark/80 shadow-sm py-4">
     <div class="flex justify-center space-x-4 text-sm font-medium">
-      <a href="#contact-info" class="nav-link px-3 py-2 rounded-md hover:text-accent">Contact Info</a>
-      <a href="#message-form" class="nav-link px-3 py-2 rounded-md hover:text-accent">Message</a>
-      <a href="#social" class="nav-link px-3 py-2 rounded-md hover:text-accent">Social</a>
+      <a href="#contact-info" class="nav-link px-3 py-2 rounded-md hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">Contact Info</a>
+      <a href="#message-form" class="nav-link px-3 py-2 rounded-md hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">Message</a>
+      <a href="#social" class="nav-link px-3 py-2 rounded-md hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">Social</a>
     </div>
   </nav>
 
-  {/* Hero section */}
+  <!-- Hero section -->
   <section id="hero" class="py-20 md:py-32 bg-gradient-to-br from-background via-accent/5 to-background relative overflow-hidden">
     <div class="container mx-auto max-w-screen-xl px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
       <div class="space-y-6">
-        <h1 class="font-heading font-bold text-5xl md:text-6xl text-gradient bg-gradient-to-r from-[#047857] to-purple-600">Let's Connect</h1>
-        <p class="text-lg text-gray-700 dark:text-gray-300">Have a project in mind or just want to say hello? I’m all ears—whether it’s a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can’t wait to build something great together!</p>
-        <a href="#message-form" class="c-btn bg-accent text-background px-6 py-3 rounded-lg font-semibold hover:bg-accent-dark transition">Send a Message</a>
+        <h1 class="font-heading font-bold text-h1 md:text-6xl text-gradient bg-gradient-to-r from-accent to-accent-dark">Let's Connect</h1>
+        <p class="text-lg text-neutral dark:text-foreground-light">Have a project in mind or just want to say hello? I’m all ears—whether it’s a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can’t wait to build something great together!</p>
+        <a href="#message-form" class="btn btn-primary px-6 py-3 rounded-lg font-semibold hover:bg-accent-dark transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">Send a Message</a>
       </div>
       <div class="flex justify-center md:justify-end">
         <div class="relative">
           <CoinFlipImage frontSrc="/assets/images/Blake-O-scaled.jpg" backSrc="/assets/images/china-profile-picture.jpg" alt="Blake Oxford" size={260} flipMultipleTimes />
-          <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white animate-float">💡</div>
+          <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-background animate-float">💡</div>
         </div>
       </div>
     </div>
   </section>
 
-  {/* Main contact section */}
+  <!-- Main contact section -->
   <section id="contact-info" class="c-contact-page w-full py-20 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background animate-fade-in" role="region" aria-labelledby="contact-title">
     <!-- Animated SVG background pattern -->
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
@@ -48,32 +48,32 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
       </svg>
     </div>
     <!-- Blurred/floating shapes -->
-    <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+    <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
     <!-- Contact Information -->
     <div class="c-contact-page__info scroll-animate flex flex-col md:flex-row items-center justify-center gap-8 mb-12">
-      <a href="mailto:blakepoxford@outlook.com" class="flex flex-col items-center gap-2 group focus:outline-none" aria-label="Email Blake Oxford" title="Email">
+      <a href="mailto:blakepoxford@outlook.com" class="flex flex-col items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label="Email Blake Oxford" title="Email">
         <span class="text-accent text-2xl group-hover:scale-110 transition">✉️</span>
         <span class="font-medium text-primary group-hover:text-accent transition-colors">blakepoxford@outlook.com</span>
       </a>
-      <a href="tel:2482024479" class="flex flex-col items-center gap-2 group focus:outline-none" aria-label="Call Blake Oxford" title="Phone">
+      <a href="tel:2482024479" class="flex flex-col items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label="Call Blake Oxford" title="Phone">
         <span class="text-accent text-2xl group-hover:scale-110 transition">📞</span>
         <span class="font-medium text-primary group-hover:text-accent transition-colors">248-202-4479</span>
       </a>
-      <a href="https://linkedin.com/in/blake-oxford" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 group focus:outline-none" aria-label="LinkedIn" title="LinkedIn">
+      <a href="https://linkedin.com/in/blake-oxford" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label="LinkedIn" title="LinkedIn">
         <span class="text-accent text-2xl group-hover:scale-110 transition">💼</span>
         <span class="font-medium text-primary group-hover:text-accent transition-colors">linkedin.com/in/blake-oxford</span>
       </a>
     </div>
 
     <!-- Contact Form -->
-    <h2 id="message-form" class="c-contact-page__subtitle font-heading font-bold text-2xl md:text-3xl text-gradient bg-gradient-to-r from-[#047857] to-purple-600 text-center mb-4 scroll-animate">Or Send Me a Message</h2>
+    <h2 id="message-form" class="c-contact-page__subtitle font-heading font-bold text-2xl md:text-3xl text-gradient bg-gradient-to-r from-accent to-accent-dark text-center mb-4 scroll-animate">Or Send Me a Message</h2>
 
     <!-- Form status banner -->
     <div id="form-status" aria-live="polite" class="hidden text-center font-semibold mb-4"></div>
 
-    <div class="c-contact-page__form-container scroll-animate bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30">
+    <div class="c-contact-page__form-container scroll-animate bg-surface dark:bg-surface-dark rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30">
       <form id="contact-form" method="POST" action="/send-email" class="space-y-6">
         <input type="hidden" name="form-name" value="contact" />
         <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
@@ -86,7 +86,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
             autocomplete="name"
             required
             aria-required="true"
-            class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white"
+            class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-surface-dark bg-surface"
             placeholder="Your Name"
           />
         </div>
@@ -99,10 +99,10 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
             autocomplete="email"
             required
             aria-required="true"
-            class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white"
+            class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-surface-dark bg-surface"
             placeholder="you@email.com"
           />
-          <small class="text-sm text-gray-500">I'll never share your email.</small>
+          <small class="text-sm text-neutral">I'll never share your email.</small>
         </div>
         <div class="flex flex-col gap-2">
           <label for="message" class="font-semibold text-lg">Message <span class="text-accent">*</span></label>
@@ -112,7 +112,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
             rows="5"
             required
             aria-required="true"
-            class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-gray-800 bg-white"
+            class="w-full p-3 rounded border-2 border-accent focus:border-accent-dark dark:border-accent-dark dark:bg-surface-dark bg-surface"
             placeholder="How can I help you?"
           ></textarea>
         </div>
@@ -121,7 +121,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
         <div class="cf-turnstile" data-sitekey="0x4AAAAAABeu0PfX8oWvQvjR"></div>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
-        <button type="submit" class="c-btn bg-accent text-background font-semibold px-5 py-2 rounded-lg shadow hover:bg-accent-dark transition flex items-center gap-2 mx-auto">
+        <button type="submit" class="c-btn bg-accent text-background font-semibold px-5 py-2 rounded-lg shadow hover:bg-accent-dark transition flex items-center gap-2 mx-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
           🚀 <span id="btn-label">Send Message</span>
           <svg id="spinner" class="hidden animate-spin h-5 w-5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/></svg>
         </button>
@@ -130,8 +130,8 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
 
     <!-- Secondary CTA -->
     <div class="mt-12 text-center animate-fade-in animate-slide-up">
-      <a href="/projects/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold hover:bg-accent hover:text-background">See My Work</a>
-      <a href="/blog/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold hover:bg-accent hover:text-background">Read My Blog</a>
+      <a href="/projects/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold hover:bg-accent hover:text-background focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">See My Work</a>
+      <a href="/blog/" class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold hover:bg-accent hover:text-background focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">Read My Blog</a>
     </div>
   </section>
 
@@ -199,7 +199,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
 
   <!-- Back to top -->
   <div class="fixed bottom-6 right-6 z-50">
-    <a href="#hero" class="bg-accent hover:bg-accent-dark text-white p-3 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" aria-label="Back to top">
+    <a href="#hero" class="bg-accent hover:bg-accent-dark text-background p-3 rounded-full shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent" aria-label="Back to top">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
       </svg>

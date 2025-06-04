@@ -36,19 +36,19 @@ pnpm format         # Prettier
 
 | Folder / file                | Purpose                                  |
 | ---------------------------- | ---------------------------------------- |
-| `src/styles/global.css`      | Tailwind base, `@tailwind` directives.   |
-| `src/styles/theme.css`       | **Design‑token declarations** (CSS vars) |
+| `src/styles/global.css`      | Tailwind base, `@tailwind` directives, custom utility classes (e.g., gradient workarounds). |
+| `src/styles/theme.css`       | **Design‑token declarations** (CSS vars; single source of truth for all design primitives) |
 | Component folder + `.astro`  | Collocated styles via `<style>` or `*.module.scss` |
 | `src/styles/*.scss`          | Shared bespoke styles (rare)             |
 
-Prefer co‑locating truly one‑off styles with their component.
+> **Note:** All design tokens (colors, spacing, radius, font, etc.) are defined in `theme.css` and mapped one-to-one in `tailwind.config.js` via `theme.extend`. If a token is missing, add it in both files before use. Do not use raw values anywhere in the codebase.
 
 ---
 
 ## 4. Design‑Token Philosophy
 
-* Single source of truth → `src/styles/theme.css`  
-* Exposed **one‑to‑one** in `tailwind.config.mjs` (`theme.extend`)  
+* **Single source of truth** → `src/styles/theme.css`  
+* **Mapped one‑to‑one** in `tailwind.config.mjs` (`theme.extend`) for all Tailwind utilities (colors, spacing, radius, font, z-index, shadow, etc.)
 * **Never** use raw values (`#2563eb`, `16px`, `2rem`, …) – instead use CSS vars via Tailwind classes:
 
 | Primitive      | ✅ **Do**                                | ❌ **Don’t**     |
@@ -56,8 +56,21 @@ Prefer co‑locating truly one‑off styles with their component.
 | Colour         | `class="text-primary-dark"`              | `style="color:#1e40af"` |
 | Spacing        | `class="p-4"`                            | `style="padding:1rem"` |
 | Radius         | `class="rounded-lg"`                     | `border‑radius:0.5rem` |
+| Font size      | `class="text-lg"`                        | `font-size:1.125rem` |
+| Z-index        | `class="z-50"`                           | `z-index:50` |
+| Shadow         | `class="shadow-lg"`                      | `box-shadow:...` |
 
 If a token is missing, add it in **theme.css** *and* mirror it in **tailwind.config.mjs** before use.
+
+> **Semantic tokens**: Use semantic names for tokens (e.g., `--color-primary`, `--fs-h1`, `--radius-lg`) and reference them in Tailwind config. See `tailwind.config.js` for all mapped utilities.
+
+---
+
+## 4a. Custom Utilities & Plugins
+
+* **Custom utilities** (e.g., `.from-accent`) are defined in `global.css` to work around Tailwind v4+ limitations for gradients. Use these classes as needed for consistent theming.
+* **Tailwind plugins**: The project uses the Typography plugin (`@tailwindcss/typography`) for Markdown/MDX content and the Container Queries plugin (`@tailwindcss/container-queries`).
+* **Safelist**: Common gradient and color classes are safelisted in `tailwind.config.js` to ensure they are always available, even if not statically detected.
 
 ---
 
@@ -82,21 +95,31 @@ Light / dark / *light‑alpha* variants follow the same naming.
 | Brand accent       | `--gradient-accent`               | `bg-gradient-accent` |
 | Brand tertiary     | `--gradient-tertiary`             | `bg-gradient-tertiary` |
 
-Tailwind utilities are mapped via `backgroundImage`.
+Tailwind utilities are mapped via `backgroundImage` in `tailwind.config.js`. For dynamic or custom gradients, use the custom utility classes defined in `global.css`.
 
 ---
 
-## 6. Surfaces & Elevation
+## 6. Surfaces, Elevation & Animation
 
 * **Surface colours** – `--color-surface` / `--color-surface-dark`  
 * **Shadow chroma** auto‑switches for dark‑mode (`prefers‑color‑scheme`).  
-* Semantic elevation tokens: `--elevation‑{1..5}` → `shadow‑sm` … `shadow‑xl`.
+* Semantic elevation tokens: `--elevation‑{1..5}` → `shadow‑sm` … `shadow‑xl` (all mapped in Tailwind config).
+* **All animation, shadow, and z-index utilities** are mapped to tokens in `theme.css` and extended in Tailwind config.
 
 > Use `class="shadow-elevation-3"` (shortcut plugin) instead of picking a size manually.
 
 ---
 
-## 7. Motion & Duration
+## 7. Typography, Spacing & Responsive
+
+* **Typography**: All font sizes, weights, line heights, and letter spacings are tokenized in `theme.css` and mapped in `tailwind.config.js` (e.g., `text-h1`, `font-heading`, `leading-heading`).
+* **Spacing**: Use only Tailwind spacing utilities mapped to tokens (e.g., `p-4`, `gap-18`).
+* **Breakpoints**: Responsive breakpoints are defined in both `theme.css` and `tailwind.config.js`.
+* **Container max-widths**: Use `max-w-container-lg` etc., as mapped in Tailwind config.
+
+---
+
+## 8. Motion & Duration
 
 | Token                | Value       | Typical usage                            |
 | -------------------- | ----------- | ---------------------------------------- |
@@ -110,7 +133,7 @@ Use via Tailwind plugin **`transition‑token`**:
 
 ---
 
-## 8. Animations
+## 9. Animations
 
 Built‑in keyframes & utilities:
 
@@ -125,7 +148,7 @@ Built‑in keyframes & utilities:
 
 ---
 
-## 9. Accessibility
+## 10. Accessibility
 
 * All colour combos meet **WCAG AA** (`⩾ 4.5:1` for text).  
 * Use semantic HTML (`<button>`, `<nav>`, etc.) and ARIA only when necessary.  
@@ -133,7 +156,7 @@ Built‑in keyframes & utilities:
 
 ---
 
-## 10. Commit & Review Checklist
+## 11. Commit & Review Checklist
 
 1. **No hard‑coded primitives** – all values come from tokens/Tailwind utilities.  
 2. Components are responsive from **xs → 2xl** breakpoints.  
@@ -143,7 +166,7 @@ Built‑in keyframes & utilities:
 
 ---
 
-## 11. Further Reading
+## 12. Further Reading
 
 * Tailwind docs – <https://tailwindcss.com/docs>  
 * Astro styling – <https://docs.astro.build/en/guides/styling/>  

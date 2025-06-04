@@ -48,6 +48,11 @@
   /* ---------- Gradients ---------- */
   --gradient-primary: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
   --gradient-accent:  linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent) 50%, var(--color-accent-dark) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--color-secondary-light) 0%, var(--color-secondary) 50%, var(--color-secondary-dark) 100%);
+  --gradient-info: linear-gradient(135deg, var(--color-info-light) 0%, var(--color-info) 50%, var(--color-info-dark) 100%);
+  --gradient-success: linear-gradient(135deg, var(--color-success-light) 0%, var(--color-success) 50%, var(--color-success-dark) 100%);
+  --gradient-warning: linear-gradient(135deg, var(--color-warning-light) 0%, var(--color-warning) 50%, var(--color-warning-dark) 100%);
+  --gradient-error: linear-gradient(135deg, var(--color-error-light) 0%, var(--color-error) 50%, var(--color-error-dark) 100%);
 
   /* ---------- Overlays ---------- */
   --overlay-10: rgba(0, 0, 0, 0.10);
@@ -80,6 +85,10 @@
   --glass-surface-bg-dark: rgba(32,32,32,0.55);
   --glass-border: 1px solid rgba(255,255,255,0.25);
   --glass-border-dark: 1px solid rgba(255,255,255,0.08);
+  --glass-surface-bg-xl: rgba(255,255,255,0.85);
+  --glass-surface-bg-dark-xl: rgba(32,32,32,0.75);
+  --glass-border-xl: 1.5px solid rgba(255,255,255,0.35);
+  --glass-border-dark-xl: 1.5px solid rgba(255,255,255,0.15);
 
   /* ---------- Elevation Semantic ---------- */
   --elevation-1: var(--shadow-sm);
@@ -218,7 +227,13 @@
   --z-50: 50;
   --z-max: 9999;
 
-  /* Container padding */
+  /* ---------- Z-Index Layers (Extended) ---------- */
+  --z-toast: 1300;
+  --z-popover: 1175;
+  --z-sticky: 1020;
+  /* Existing: --z-modal, --z-overlay, --z-tooltip, --z-dropdown */
+
+  /* ---------- Container padding */
   --container-padding: 1rem;
   --container-padding-sm: 2rem;
   --container-padding-lg: 4rem;

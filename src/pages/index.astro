@@ -29,32 +29,30 @@ const featuredProjects = featuredSlugs
       <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
         <div class="absolute inset-0"></div>
       </div>
-      
       <!-- Curved divider at bottom -->
       <div class="absolute bottom-0 left-0 w-full overflow-hidden rotate-180">
         <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
         </svg>
       </div>
-      
       <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid md:grid-cols-2 gap-12 items-center">
           <!-- Left: Text -->
           <div class="order-2 md:order-1 animate-fadeIn">
             <div class="prose lg:prose-xl dark:prose-invert">
-              <h1 class="font-heading font-bold text-5xl md:text-6xl lg:text-7xl mb-6">
-                <span class="block animate-fadeInUp text-accent dark:text-accent-light" style="animation-delay: 0.2s;">Blake Oxford</span>
+              <h1 class="font-heading font-bold text-h1 md:text-6xl text-gradient bg-gradient-to-r from-accent to-accent-dark mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                <span class="block">Blake Oxford</span>
               </h1>
-              <span class="block text-2xl md:text-3xl lg:text-4xl mt-2 animate-fadeInUp text-gray-900 dark:text-gray-100" style="animation-delay: 0.5s;">
+              <span class="block text-h3 md:text-h3 lg:text-h3 mt-2 animate-fadeInUp text-foreground dark:text-foreground-light" style="animation-delay: 0.5s;">
                 Systems Architect · Workflow Strategist · Action-Oriented Operator
               </span>
-              <p class="animate-fadeInUp text-gray-800 dark:text-gray-100 dark:border-l-4 dark:border-accent-darker pl-4" style="animation-delay: 0.8s;">
+              <p class="animate-fadeInUp text-body dark:text-foreground-light dark:border-l-4 dark:border-accent-dark pl-4" style="animation-delay: 0.8s;">
                 I turn complexity into opportunity—designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results.
               </p>
             </div>
             <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6 animate-fadeInUp" style="animation-delay: 1.1s;">
               <a
                 href="/contact/"
-                class="c-btn bg-accent text-background font-bold px-6 py-3 rounded-lg shadow-lg hover:scale-105 hover:bg-accent-dark transition-all duration-200 text-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-accent mobile-tap-effect"
+                class="btn btn-primary mobile-tap-effect"
                 data-analytics="hero-cta"
                 aria-label="Start a conversation with Blake Oxford"
               >
@@ -62,7 +60,7 @@ const featuredProjects = featuredSlugs
               </a>
               <a
                 href="/projects/"
-                class="btn btn-secondary px-6 py-3 rounded-lg border-2 border-accent text-accent font-semibold text-lg hover:bg-accent hover:text-background focus:bg-accent-dark focus:text-background transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent-dark mobile-tap-effect"
+                class="btn btn-secondary mobile-tap-effect"
                 aria-label="See Blake Oxford's featured work"
               >
                 🚀 View My Work
@@ -73,8 +71,8 @@ const featuredProjects = featuredSlugs
           <div class="flex justify-center md:justify-end order-1 md:order-2 animate-fadeIn" style="animation-delay: 0.5s;">
             <div class="relative">
               <!-- Decorative elements around the image -->
-              <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-[#10b981]/30 to-purple-500/30 blur-xl opacity-70 animate-pulse"></div>
-              <div class="relative rounded-full p-1 bg-gradient-to-r from-[#10b981] to-purple-500">
+              <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-purple-500/30 blur-xl opacity-70 animate-pulse"></div>
+              <div class="relative rounded-full p-1 bg-gradient-to-r from-accent to-purple-500">
                 <CoinFlipImage 
                   frontSrc="/assets/images/Blake-O-scaled.jpg" 
                   backSrc="/assets/images/china-profile-picture.jpg" 
@@ -86,9 +84,9 @@ const featuredProjects = featuredSlugs
                 />
               </div>
               <!-- Floating elements -->
-              <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white text-xl animate-float" style="animation-delay: 0.2s;">💡</div>
-              <div class="absolute -bottom-2 -left-4 w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white text-xl animate-float" style="animation-delay: 0.8s;">🚀</div>
-              <div class="absolute top-1/2 -right-10 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-lg animate-float" style="animation-delay: 1.4s;">☁️</div>
+              <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-background text-xl animate-float" style="animation-delay: 0.2s;">💡</div>
+              <div class="absolute -bottom-2 -left-4 w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-background text-xl animate-float" style="animation-delay: 0.8s;">🚀</div>
+              <div class="absolute top-1/2 -right-10 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-background text-lg animate-float" style="animation-delay: 1.4s;">☁️</div>
             </div>
           </div>
         </div>
@@ -103,41 +101,41 @@ const featuredProjects = featuredSlugs
 
     <!-- Featured Projects Section -->
     <section id="featured-projects" class="c-featured-projects container mx-auto px-4" aria-labelledby="featured-projects">
-      <h2 id="featured-projects" class="text-3xl font-bold mb-8 text-accent-dark animate-fade-in">Featured Projects</h2>
+      <h2 id="featured-projects" class="text-h2 font-bold mb-8 text-accent-dark animate-fade-in">Featured Projects</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {featuredProjects.map((project: any) => (
           <ProjectCard project={project} featured={true} />
         ))}
       </div>
       <div class="mt-8 text-center animate-fade-in">
-        <a href="/projects/" class="border-2 border-accent text-accent font-semibold px-6 py-3 rounded-lg hover:bg-accent hover:text-background transition-all duration-200">View All Projects</a>
+        <a href="/projects/" class="btn btn-secondary">View All Projects</a>
       </div>
     </section>
 
     <!-- Latest Blog Posts Section -->
     <section class="c-latest-blog-posts container mx-auto px-4" aria-labelledby="latest-blog-posts">
-      <h2 id="latest-blog-posts" class="text-3xl font-bold mb-8 text-accent-dark animate-fade-in">Latest Blog Posts</h2>
+      <h2 id="latest-blog-posts" class="text-h2 font-bold mb-8 text-accent-dark animate-fade-in">Latest Blog Posts</h2>
       <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Example Blog Item -->
-        <li class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 animate-slide-up">
+        <li class="bg-surface dark:bg-gray-900 rounded-2xl shadow-xl p-6 animate-slide-up">
           <a href="#" class="block hover:scale-105 transition-transform duration-200">
-            <h3 class="text-xl font-semibold mb-2">Blog Post Title</h3>
-            <time class="text-sm text-gray-500 dark:text-gray-400">May 21, 2025</time>
-            <p class="mt-2 text-gray-700 dark:text-gray-300">A short excerpt or summary of the blog post goes here to entice the reader to click through and read more.</p>
+            <h3 class="text-h3 font-semibold mb-2">Blog Post Title</h3>
+            <time class="text-sm text-neutral">May 21, 2025</time>
+            <p class="mt-2 text-neutral">A short excerpt or summary of the blog post goes here to entice the reader to click through and read more.</p>
           </a>
         </li>
         <!-- More blog items can be dynamically rendered here -->
       </ul>
       <div class="mt-8 text-center animate-fade-in">
-        <a href="/blog/" class="bg-accent text-background font-semibold px-6 py-3 rounded-lg hover:bg-accent-dark transition-all duration-200">View All Blog Posts</a>
+        <a href="/blog/" class="btn btn-primary">View All Blog Posts</a>
       </div>
     </section>
 
     <!-- Call-to-Action Section -->
     <section class="call-to-action container mx-auto px-4 text-center py-16 animate-fade-in">
-      <h2 class="text-3xl font-bold mb-4 text-accent-dark flex items-center justify-center gap-2"><span>🤝</span> Want to Work Together?</h2>
-      <p class="text-lg mb-6 text-gray-700 dark:text-gray-300">I'm always open to exciting new opportunities and collaborations. Let's create something amazing together!</p>
-      <a href="/contact/" class="bg-accent text-background font-semibold px-8 py-3 rounded-lg shadow hover:bg-accent-dark transition-all duration-200 text-lg">Contact Me</a>
+      <h2 class="text-h2 font-bold mb-4 text-accent-dark flex items-center justify-center gap-2"><span>🤝</span> Want to Work Together?</h2>
+      <p class="text-lg mb-6 text-neutral">I'm always open to exciting new opportunities and collaborations. Let's create something amazing together!</p>
+      <a href="/contact/" class="btn btn-primary">Contact Me</a>
     </section>
   </main>
 </Layout>

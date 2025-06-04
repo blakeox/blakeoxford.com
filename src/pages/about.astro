@@ -45,7 +45,7 @@ const timelineItems = [
       "Reduced manual data entry by 80% through custom API integrations",
       "Implemented automated reconciliation processes, reducing month-end close by 3 days"
     ],
-    color: "from-teal-500 to-blue-500"
+    color: "from-secondary to-primary"
   },
   {
     year: "2020",
@@ -56,7 +56,7 @@ const timelineItems = [
       "Implemented Sage Intacct and ADP Workforce Now, consolidating 5 legacy systems",
       "Designed disaster recovery protocols reducing potential data loss window by 90%"
     ],
-    color: "from-green-500 to-teal-500"
+    color: "from-accent to-accent-dark"
   },
   {
     year: "2023",
@@ -65,9 +65,9 @@ const timelineItems = [
     achievements: [
       "Developed Power BI dashboards for real-time financial forecasting",
       "Authored SOPs and trained team on AdvancedMD RCM",
-      "Built SQL-based reporting suite that surfaced $1.2M in unbilled services"
+      "$1.2M in unbilled services surfaced via SQL-based reporting suite"
     ],
-    color: "from-amber-500 to-green-500"
+    color: "from-secondary-light to-accent"
   },
   {
     year: "2024",
@@ -78,7 +78,7 @@ const timelineItems = [
       "Enabled automated coaching for providers and technicians, improving documentation quality and reducing claim denials",
       "Integrated AI into daily workflows for tasks like insurance appeals and internal process optimization, saving hours across departments"
     ],
-    color: "from-blue-500 to-purple-600"
+    color: "from-primary to-accent-dark"
   }
 ];
 
@@ -109,7 +109,7 @@ const socialLinksHtml = socialLinks.map(link => {
 <Layout title={title} description={description} image="/assets/images/Blake-O-scaled.jpg" url={canonicalUrl} wide={true}>
   <main id="main-content">
     <!-- Progress Indicator -->
-    <div class="fixed left-0 top-0 h-1 z-50 bg-gradient-to-r from-[#10b981] to-purple-500" id="progress-bar"></div>
+    <div class="fixed left-0 top-0 h-1 z-50 bg-gradient-to-r from-accent to-accent-dark" id="progress-bar"></div>
 
     <div>
       <main class="flex-1">
@@ -132,31 +132,25 @@ const socialLinksHtml = socialLinks.map(link => {
             <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
               <div class="absolute inset-0"></div>
             </div>
-            
             <!-- Curved divider at bottom -->
             <div class="absolute bottom-0 left-0 w-full overflow-hidden rotate-180">
               <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
               </svg>
             </div>
-            
             <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
               <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="order-2 md:order-1 animate-fadeIn">
+                  <!-- Add your about text and intro here, using prose and token-driven classes -->
                   <div class="prose lg:prose-xl dark:prose-invert">
-                    <h1 class="font-heading font-bold text-5xl md:text-6xl lg:text-7xl mb-6">
-                      <span class="block animate-fadeInUp text-accent dark:text-accent-light" style="animation-delay: 0.2s;">About Me</span>
-                    </h1>
-                    <span class="block text-2xl md:text-3xl lg:text-4xl mt-2 animate-fadeInUp text-gray-900 dark:text-gray-100" style="animation-delay: 0.5s;">Systems Architect · Workflow Strategist · Action-Oriented Operator</span>
-                    <p class="animate-fadeInUp text-gray-800 dark:text-gray-100 dark:border-l-4 dark:border-accent-darker pl-4" style="animation-delay: 0.8s;">
-                      I specialize in dissecting complex operations and rebuilding them with smarter, tech-enabled systems that drive growth. From high-stakes rollouts to scaling multi-site teams, I’ve led transformative initiatives that unify tools, streamline workflows, and create clarity out of chaos. I’m relentless about progress and operate with a clear mindset: evolve, or fall behind.
-                    </p>
+                    <h1 class="font-heading font-bold text-h1 md:text-6xl text-gradient bg-gradient-to-r from-accent to-accent-dark mb-6 animate-fadeInUp">Blake Oxford</h1>
+                    <span class="block text-h3 md:text-h3 lg:text-h3 mt-2 animate-fadeInUp text-foreground dark:text-foreground-light">Systems Architect · Workflow Strategist · Action-Oriented Operator</span>
+                    <p class="animate-fadeInUp text-body dark:text-foreground-light dark:border-l-4 dark:border-accent-dark pl-4">I turn complexity into opportunity—designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results.</p>
                   </div>
                 </div>
                 <div class="order-1 md:order-2 flex justify-center md:justify-end animate-fadeIn" style="animation-delay: 0.5s;">
                   <div class="relative">
-                    <!-- Decorative elements around the image -->
-                    <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-[#10b981]/30 to-purple-500/30 blur-xl opacity-70 animate-pulse"></div>
-                    <div class="relative rounded-full p-1 bg-gradient-to-r from-[#10b981] to-purple-500">
+                    <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-accent-dark/30 blur-xl opacity-70 animate-pulse"></div>
+                    <div class="relative rounded-full p-1 bg-gradient-to-r from-accent to-accent-dark">
                       <CoinFlipImage 
                         frontSrc="/assets/images/Blake-O-scaled.jpg" 
                         backSrc="/assets/images/china-profile-picture.jpg" 
@@ -167,16 +161,9 @@ const socialLinksHtml = socialLinks.map(link => {
                         aria-label="Photo of Blake Oxford"
                       />
                     </div>
-                    <!-- Floating elements -->
-                    <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white text-xl animate-float" style="animation-delay: 0.2s;">
-                      💡
-                    </div>
-                    <div class="absolute -bottom-2 -left-4 w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white text-xl animate-float" style="animation-delay: 0.8s;">
-                      🚀
-                    </div>
-                    <div class="absolute top-1/2 -right-10 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-lg animate-float" style="animation-delay: 1.4s;">
-                      ☁️
-                    </div>
+                    <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-background text-xl animate-float">💡</div>
+                    <div class="absolute -bottom-2 -left-4 w-10 h-10 bg-accent-dark rounded-full flex items-center justify-center text-background text-xl animate-float">🚀</div>
+                    <div class="absolute top-1/2 -right-10 w-8 h-8 bg-accent-light rounded-full flex items-center justify-center text-background text-lg animate-float">☁️</div>
                   </div>
                 </div>
               </div>
@@ -184,128 +171,115 @@ const socialLinksHtml = socialLinks.map(link => {
           </section>
 
           <!-- Achievements -->
-          <section id="achievements" class="py-24 relative overflow-hidden bg-gray-50 dark:bg-gray-800/30">
+          <section id="achievements" class="py-24 relative overflow-hidden bg-surface dark:bg-surface-dark">
             <!-- Background pattern -->
             <div class="absolute inset-0 z-0 opacity-5">
               <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                  <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
-                    <path d="M 8 0 L 0 0 0 8" fill="none" stroke="currentColor" stroke-width="0.5"/>
-                  </pattern>
-                  <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-                    <rect width="80" height="80" fill="url(#smallGrid)"/>
-                    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="currentColor" stroke-width="1"/>
-                  </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#grid)" />
               </svg>
             </div>
-            
             <!-- Wavy separator at top -->
             <div class="absolute top-0 left-0 w-full overflow-hidden">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full">
-                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-white dark:fill-gray-900"></path>
-                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-white dark:fill-gray-900"></path>
-                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-white dark:fill-gray-900"></path>
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-background dark:fill-background-dark"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39 116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-background dark:fill-background-dark"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-background dark:fill-background-dark"></path>
               </svg>
             </div>
-            
             <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
               <div class="max-w-3xl mx-auto text-center mb-12">
                 <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Core Strengths</span>
-                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-[#10b981] to-purple-600">Key Achievements</h2>
-                <p class="text-lg text-gray-700 dark:text-gray-300">
-                  A track record of innovative solutions and measurable results across business operations, financial systems, and technology integration.
+                <h2 class="text-h2 md:text-h1 font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-accent-dark bg-clip-text text-transparent">Key Achievements</h2>
+                <p class="text-lg text-neutral">
                 </p>
               </div>
-              
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
                 <!-- Achievement 1 -->
-                <div class="bg-white/80 dark:bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-[#10b981] to-purple-600 text-white text-2xl mb-6">
+                <div class="bg-surface/80 dark:bg-surface-dark/80 p-8 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-accent to-tertiary text-foreground-light text-2xl mb-6">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
                   <h3 class="text-xl font-bold mb-3 text-accent-dark dark:text-accent-light">Enterprise Transformation</h3>
-                  <p class="mb-4 text-gray-700 dark:text-gray-300">Successfully led Google Workspace to Microsoft 365 migration for 180+ staff with zero downtime, integrating 5 legacy systems.</p>
+                  <p class="mb-4 text-neutral dark:text-neutral-light">Successfully led Google Workspace to Microsoft 365 migration for 180+ staff with zero downtime, integrating 5 legacy systems.</p>
                   <ul class="space-y-2">
                     <li class="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success mr-2 mt-0.5" fill="none" viewBox="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span class="text-sm">Zero downtime during migration</span>
                     </li>
                     <li class="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success mr-2 mt-0.5" fill="none" viewBox="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span class="text-sm">5 legacy systems consolidated</span>
                     </li>
                     <li class="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success mr-2 mt-0.5" fill="none" viewBox="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span class="text-sm">100% employee adoption</span>
                     </li>
                   </ul>
                 </div>
-                
                 <!-- Achievement 2 -->
-                <div class="bg-white/80 dark:bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 text-white text-2xl mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="bg-surface/80 dark:bg-surface-dark/80 p-8 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-primary to-info text-foreground-light text-2xl mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="http://www.w3.org/2000/svg">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                   </div>
                   <h3 class="text-xl font-bold mb-3 text-accent-dark dark:text-accent-light">Financial Analytics</h3>
-                  <p class="mb-4 text-gray-700 dark:text-gray-300">Built sophisticated Power BI dashboards for real-time financial forecasting that revealed $1.2M in unbilled services.</p>
+                  <p class="mb-4 text-neutral dark:text-neutral-light">Built sophisticated Power BI dashboards for real-time financial forecasting that revealed $1.2M in unbilled services.</p>
                   <ul class="space-y-2">
                     <li class="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success mr-2 mt-0.5" fill="none" viewBox="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span class="text-sm">$1.2M in unbilled services identified</span>
                     </li>
                     <li class="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success mr-2 mt-0.5" fill="none" viewBox="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span class="text-sm">Real-time forecast dashboards</span>
                     </li>
                     <li class="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success mr-2 mt-0.5" fill="none" viewBox="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span class="text-sm">25% improved financial accuracy</span>
                     </li>
                   </ul>
                 </div>
-                
-                <!-- Achievement 3 (Modified: AI-Powered Analytics) -->
-                <div class="bg-white/80 dark:bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-500 text-white text-2xl mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- Achievement 3 (AI-Powered Analytics) -->
+                <div class="bg-surface/80 dark:bg-surface-dark/80 p-8 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-primary-dark to-tertiary text-foreground-light text-2xl mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="http://www.w3.org/2000/svg">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
                   <h3 class="text-xl font-bold mb-3 text-accent-dark dark:text-accent-light">AI-Powered Analytics Overhaul</h3>
-                  <p class="mb-4 text-gray-700 dark:text-gray-300">Led the modernization of enterprise analytics by integrating AI-driven insights, centralizing KPIs, and building real-time dashboards that transformed operational decision-making.</p>
+                  <p class="mb-4 text-neutral dark:text-neutral-light">Led the modernization of enterprise analytics by integrating AI-driven insights, centralizing KPIs, and building real-time dashboards that transformed operational decision-making.</p>
                   <ul class="space-y-2">
                     <li class="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success mr-2 mt-0.5" fill="none" viewBox="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span class="text-sm">Deployed 30+ AI-enhanced dashboards across 6 departments</span>
                     </li>
                     <li class="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success mr-2 mt-0.5" fill="none" viewBox="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span class="text-sm">Cut reporting delays by 50% with predictive data models</span>
                     </li>
                     <li class="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success mr-2 mt-0.5" fill="none" viewBox="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span class="text-sm">Unified metrics and insights for real-time decision-making</span>
@@ -317,22 +291,19 @@ const socialLinksHtml = socialLinks.map(link => {
           </section>
 
           <!-- Education & Skills -->
-          <section id="education-skills" class="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
+          <section id="education-skills" class="py-24 bg-gradient-to-b from-background to-surface dark:from-background-dark dark:to-surface-dark relative overflow-hidden">
             <!-- Background geometric shapes -->
             <div class="absolute inset-0 z-0 opacity-20 overflow-hidden">
               <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/30 rounded-full blur-3xl"></div>
               <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"></div>
             </div>
-            
             <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
               <div class="max-w-3xl mx-auto text-center mb-16">
                 <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Capabilities</span>
-                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-[#10b981] to-purple-600">Skills & Education</h2>
-                <p class="text-lg text-gray-700 dark:text-gray-300">
-                  Professional expertise and educational background that fuel innovative solutions and transformational leadership.
+                <h2 class="text-h2 md:text-h1 font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-accent-dark bg-clip-text text-transparent">Skills & Education</h2>
+                <p class="text-lg text-neutral">
                 </p>
               </div>
-              
               <!-- Two column layout -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
                 <!-- Skills Column -->
@@ -352,14 +323,12 @@ const socialLinksHtml = socialLinks.map(link => {
                     <li>Change Management</li>
                   </ul>
                 </div>
-                
                 <!-- Education Column -->
                 <div>
                   <h3 class="text-2xl font-bold border-l-4 border-purple-500 pl-4 mb-8">Education & Certifications</h3>
-                  
                   <div class="space-y-8">
                     <!-- Education Item 1 -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                    <div class="bg-surface dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-border dark:border-gray-700 hover:shadow-xl transition-all duration-300">
                       <div class="flex items-start">
                         <div class="flex-shrink-0 bg-accent/10 p-3 rounded-lg">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -377,9 +346,8 @@ const socialLinksHtml = socialLinks.map(link => {
                         </div>
                       </div>
                     </div>
-                    
                     <!-- Certifications -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                    <div class="bg-surface dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-border dark:border-gray-700 hover:shadow-xl transition-all duration-300">
                       <div class="flex items-start">
                         <div class="flex-shrink-0 bg-purple-500/10 p-3 rounded-lg">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -405,43 +373,32 @@ const socialLinksHtml = socialLinks.map(link => {
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
 
           <!-- Career Timeline -->
-          <section id="about-timeline" class="py-24 bg-gradient-to-br from-gray-900 to-black text-white relative overflow-hidden">
+          <section id="about-timeline" class="py-24 bg-gradient-to-br from-background-dark to-black text-foreground-light relative overflow-hidden">
             <!-- Overlay dots pattern -->
             <div class="absolute inset-0 z-0 opacity-10">
               <div class="absolute inset-0" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-                  <defs>
-                    <pattern id="dots-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <circle cx="3" cy="3" r="1" fill="white" />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#dots-pattern)" />
                 </svg>
               </div>
             </div>
-            
             <!-- Wavy separator at top -->
             <div class="absolute top-0 left-0 w-full overflow-hidden">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full">
-                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-gray-50 dark:fill-gray-800"></path>
-                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-gray-50 dark:fill-gray-800"></path>
-                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-gray-50 dark:fill-gray-800"></path>
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-surface dark:fill-surface-dark"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-surface dark:fill-surface-dark"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-surface dark:fill-surface-dark"></path>
               </svg>
             </div>
-            
             <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
               <div class="max-w-3xl mx-auto text-center mb-16">
                 <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/20 mb-4">Career Path</span>
-                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-[#10b981] to-purple-600">Professional Journey</h2>
-                <p class="text-lg text-gray-300">
-                  Key career milestones and achievements that have shaped my professional path and expertise.
+                <h2 class="text-h2 md:text-h1 font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-accent-dark bg-clip-text text-transparent">Professional Journey</h2>
+                <p class="text-lg text-neutral-light">
                 </p>
               </div>
-              
               <!-- Mobile Timeline (horizontal scroll) -->
               <div class="md:hidden overflow-x-auto pb-8 timeline-scroll-container">
                 <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
@@ -465,12 +422,10 @@ const socialLinksHtml = socialLinks.map(link => {
                   ))}
                 </div>
               </div>
-              
               <!-- Desktop Timeline (vertical) -->
               <div class="hidden md:block relative">
                 <!-- Timeline center line -->
                 <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#10b981] via-purple-500 to-blue-500"></div>
-                
                 <div class="space-y-0">
                   {timelineItems.map((item, index) => (
                     <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'}`}>
@@ -494,10 +449,8 @@ const socialLinksHtml = socialLinks.map(link => {
                           </div>
                         </div>
                       </div>
-                      
                       <!-- Timeline dot -->
                       <div class="absolute left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full border-4 border-gray-900 bg-accent"></div>
-                      
                     </div>
                   ))}
                 </div>
@@ -506,34 +459,31 @@ const socialLinksHtml = socialLinks.map(link => {
           </section>
 
           <!-- Testimonials -->
-          <section id="testimonials" class="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative">
+          <section id="testimonials" class="py-24 bg-gradient-to-b from-surface to-background dark:from-surface-dark dark:to-background-dark relative">
             <!-- Background blur elements -->
             <div class="absolute top-1/3 right-1/4 w-64 h-64 bg-accent-light/10 rounded-full blur-3xl"></div>
             <div class="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
-            
             <!-- Wavy separator at top -->
             <div class="absolute top-0 left-0 w-full overflow-hidden">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full">
-                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-gray-900 dark:fill-black"></path>
-                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-gray-900 dark:fill-black"></path>
-                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-gray-900 dark:fill-black"></path>
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-background-dark dark:fill-black"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-background-dark dark:fill-black"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-background-dark dark:fill-black"></path>
               </svg>
             </div>
-            
             <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
               <div class="max-w-3xl mx-auto text-center mb-16">
-                <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Trusted By</span>
-                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-[#10b981] to-purple-600">Client Testimonials</h2>
-                <p class="text-lg text-gray-700 dark:text-gray-300">
+                <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Testimonials</span>
+                <h2 class="text-h2 md:text-h1 font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-accent-dark">What People Say</h2>
+                <p class="text-lg text-foreground/80 dark:text-foreground-light/80">
                   Hear what colleagues and clients have to say about working with me.
                 </p>
               </div>
-              
               <!-- Testimonials slider -->
               <div class="testimonials-wrapper">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {testimonials.map((testimonial) => (
-                    <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-xl dark:shadow-gray-900/30 border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="bg-surface dark:bg-gray-800 rounded-xl p-8 shadow-xl dark:shadow-gray-900/30 border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                       <div class="flex items-center mb-6">
                         <div class="relative">
                           <div class="absolute inset-0 rounded-full bg-gradient-to-r from-[#10b981] to-purple-500 blur-sm opacity-70"></div>
@@ -563,9 +513,9 @@ const socialLinksHtml = socialLinks.map(link => {
               </div>
             </div>
           </section>
-          
+
           <!-- Resume Highlights -->
-          <section id="resume-highlights" class="py-24 relative bg-gradient-to-br from-[#10b981]/5 to-background overflow-hidden">
+          <section id="resume-highlights" class="py-24 relative bg-gradient-to-br from-accent/5 to-background overflow-hidden">
             <!-- Curved divider at top -->
             <div class="absolute top-0 left-0 w-full overflow-hidden">
               <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
@@ -574,22 +524,18 @@ const socialLinksHtml = socialLinks.map(link => {
                 <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-background dark:fill-background-dark"></path>
               </svg>
             </div>
-            
             <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10 pt-16">
               <div class="max-w-2xl mx-auto text-center mb-16">
-                <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-accent/10 text-accent mb-4">Professional Experience</span>
-                <h2 class="text-3xl md:text-4xl lg:text-5xl font-heading font-bold bg-gradient-to-r from-[#047857] to-purple-600 text-transparent bg-clip-text mb-6">
-                  Resume Highlights
-                </h2>
-                <p class="text-lg text-gray-600 dark:text-gray-300">
+                <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Resume</span>
+                <h2 class="text-h2 md:text-h1 font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-accent-dark bg-clip-text text-transparent">Resume Highlights</h2>
+                <p class="text-lg text-foreground/80 dark:text-foreground-light/80">
                   Core expertise and significant achievements
                 </p>
               </div>
-              
               <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
                 <div class="flex flex-col gap-8 h-full">
                   <!-- Practice Management & RCM -->
-                  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                  <div class="bg-surface dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                     <div class="flex items-center mb-4">
                       <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -602,13 +548,13 @@ const socialLinksHtml = socialLinks.map(link => {
                       <p class="text-gray-600 dark:text-gray-300 mb-2">End-to-end AdvancedMD implementation, including:</p>
                       <ul class="space-y-2 ml-6">
                         <li class="flex items-start">
-                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                           </svg>
                           System architecture and workflow design
                         </li>
                         <li class="flex items-start">
-                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                           </svg>
                           Comprehensive SOP development and documentation
@@ -629,7 +575,7 @@ const socialLinksHtml = socialLinks.map(link => {
                     </div>
                   </div>
                   <!-- Cloud & SaaS -->
-                  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                  <div class="bg-surface dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                     <div class="flex items-center mb-4">
                       <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -642,26 +588,26 @@ const socialLinksHtml = socialLinks.map(link => {
                       <p class="text-gray-600 dark:text-gray-300 mb-2">Comprehensive enterprise technology transformation:</p>
                       <ul class="space-y-2 ml-6">
                         <li class="flex items-start">
-                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 18a8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                           </svg>
                           Google Workspace → Microsoft 365 migration for 180 users
                         </li>
                         <li class="flex items-start">
-                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 18a8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                           </svg>
                           Sage Intacct financial platform implementation
                         </li>
                         <li class="flex items-start">
-                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 18a8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                           </svg>
                           Azure/Intune endpoint management deployment
                         </li>
                         <li class="flex items-start">
                           <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M10 18a8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                           </svg>
                           ADP Workforce Now and Cornerstone LMS integration
                         </li>
@@ -671,12 +617,12 @@ const socialLinksHtml = socialLinks.map(link => {
                 </div>
                 <div class="flex flex-col gap-8 h-full">
                   <!-- Automation & Savings -->
-                  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                  <div class="bg-surface dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                     <div class="flex items-center mb-4">
                       <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                        </div>
+                        </svg>
                       </div>
                       <h3 class="text-xl font-bold">Automation & Savings</h3>
                     </div>
@@ -685,33 +631,33 @@ const socialLinksHtml = socialLinks.map(link => {
                       <ul class="space-y-2 ml-6">
                         <li class="flex items-start">
                           <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1  1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-sm">Azure cloud infrastructure optimization</span>
-                  </li>
-                  <li class="flex items-start">
-                    <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-sm">Power BI analytics and real-time dashboarding</span>
-                  </li>
-                  <li class="flex items-start">
-                    <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-sm">Custom OpenAI workflow integrations</span>
-                  </li>
-                  <li class="flex items-start">
-                    <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-sm">Enterprise system consolidations and integrations</span>
-                  </li>
-                </ul>
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                          </svg>
+                          <span class="text-sm">Azure cloud infrastructure optimization</span>
+                        </li>
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                          </svg>
+                          <span class="text-sm">Power BI analytics and real‑time dashboarding</span>
+                        </li>
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                          </svg>
+                          <span class="text-sm">Custom OpenAI workflow integrations</span>
+                        </li>
+                        <li class="flex items-start">
+                          <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                          </svg>
+                          <span class="text-sm">Enterprise system consolidations and integrations</span>
+                        </li>
+                      </ul>
                   </div>
                 </div>
                 <!-- Data Analytics -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                <div class="bg-surface dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                   <div class="flex items-center mb-4">
                     <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -724,25 +670,25 @@ const socialLinksHtml = socialLinks.map(link => {
                     <p class="text-gray-600 dark:text-gray-300 mb-2">Comprehensive business intelligence solutions:</p>
                     <ul class="space-y-2 ml-6">
                       <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
                           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
                         Real-time SQL/Power BI dashboards
                       </li>
                       <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
                           <path fill-rule="evenodd" d="M10 18a8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
                         Predictive financial modeling systems
                       </li>
                       <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
                           <path fill-rule="evenodd" d="M10 18a8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
                         C-suite executive decision support frameworks
                       </li>
                       <li class="flex items-start">
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2" viewBox="http://www.w3.org/2000/svg">
                           <path fill-rule="evenodd" d="M10 18a8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
                         Automated KPI tracking and performance visualization
@@ -752,76 +698,73 @@ const socialLinksHtml = socialLinks.map(link => {
                 </div>
               </div>
             </div>
-              
             <div class="mt-12 text-center">
-              <a href="/contact/" class="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gradient-to-r from-[#10b981] to-purple-600 hover:from-[#047857] hover:to-purple-700 transition-all duration-300">
+              <a href="/contact/" class="btn btn-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Download Full Resume
               </a>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <!-- CTA & Social -->
-        <section id="cta" class="py-24 relative overflow-hidden bg-gradient-to-br from-[#10b981]/10 via-background to-[#10b981]/10">
-          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <!-- Projects CTA -->
-            <div class="max-w-2xl mx-auto text-center mb-16">
-              <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-accent/10 text-accent mb-4">Projects</span>
-              <h2 class="text-3xl md:text-4xl lg:text-5xl font-heading font-bold bg-gradient-to-r from-accent-dark to-purple-600 text-transparent bg-clip-text mb-6">
-                Dive into My Work
-              </h2>
-              <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">
-                Explore a selection of projects showcasing my expertise in technology, finance, and process optimization.
-              </p>
-              <div class="flex justify-center mb-12">
-                <a href="/projects" class="inline-flex items-center justify-center px-8 py-4 rounded-lg font-bold bg-gradient-to-r from-accent to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h10M5 11h14M7 15h10" />
-                  </svg>
-                  View My Projects
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Social Connection (moved to bottom) -->
-        <section id="about-social" class="py-24 bg-gradient-to-br from-[#10b981]/5 to-background">
-          <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
-            <div class="max-w-3xl mx-auto text-center mb-12">
-              <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Let's Connect</span>
-              <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-purple-600">Get In Touch</h2>
-              <p class="text-lg text-gray-700 dark:text-gray-300">
-                Connect with me on professional platforms or reach out directly to discuss opportunities.
-              </p>
-            </div>
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <!-- Contact Card -->
-              <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-lg bg-accent/10 text-accent mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+          <!-- CTA & Social -->
+          <section id="cta" class="py-24 relative overflow-hidden bg-gradient-to-br from-accent/10 via-background to-accent/10">
+            <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+              <!-- Projects CTA -->
+              <div class="max-w-2xl mx-auto text-center mb-16">
+                <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-accent/10 text-accent mb-4">Projects</span>
+                <h2 class="text-h2 md:text-h1 font-heading font-bold bg-gradient-to-r from-accent-dark to-accent bg-clip-text text-transparent mb-6">
+                  Dive into My Work
+                </h2>
+                <p class="text-lg text-neutral mb-8">
+                  Explore a selection of projects showcasing my expertise in technology, finance, and process optimization.
+                </p>
+                <div class="flex justify-center mb-12">
+                  <a href="/projects" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h10M5 11h14M7 15h10" />
+                    </svg>
+                    View My Projects
+                  </a>
                 </div>
-                <h3 class="text-xl font-bold mb-4">Email</h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-6">For direct inquiries and professional opportunities</p>
-                <a href="/contact/" class="inline-flex items-center px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent-dark transition-all duration-200 shadow-lg">
-                  <span class="mr-2">Contact Me</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </a>
               </div>
-              
+            </div>
+          </section>
+
+          <!-- Social Connection (moved to bottom) -->
+          <section id="about-social" class="py-24 bg-gradient-to-br from-accent/5 to-background">
+            <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+              <div class="max-w-3xl mx-auto text-center mb-12">
+                <span class="inline-block py-1 px-3 rounded-full text-sm font-semibold tracking-wide text-accent bg-accent/10 mb-4">Let's Connect</span>
+                <h2 class="text-h2 md:text-h1 font-bold mb-6 text-gradient bg-gradient-to-r from-accent to-accent-dark">Get In Touch</h2>
+                <p class="text-lg text-neutral">
+                </p>
+              </div>
+              <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Contact Card -->
+                <div class="bg-surface dark:bg-surface-dark rounded-xl p-8 shadow-lg border border-border dark:border-border-dark text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                  <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-lg bg-accent/10 text-accent mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-xl font-bold mb-4">Email</h3>
+                  <p class="text-gray-600 dark:text-gray-300 mb-6">For direct inquiries and professional opportunities</p>
+                  <a href="/contact/" class="btn btn-primary">
+                    <span class="mr-2">Contact Me</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </a>
+              </div>
               <!-- Social Links -->
               <div class="flex items-center justify-center gap-6" set:html={socialLinksHtml}></div>
             </div>
           </div>
         </section>
 
-      </div>
-    </main>
-  </div>
+      </main>
+    </div>
+  </main>
 </Layout>

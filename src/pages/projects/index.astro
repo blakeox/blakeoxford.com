@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/BaseLayout.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
 import ProjectRow from '../../components/ProjectRow.astro';
 
 const projects = (await getCollection('projects')) as any[];
@@ -23,8 +22,8 @@ const projects = (await getCollection('projects')) as any[];
     <!-- Blurred/floating shapes -->
     <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
-    <h1 id="projects-title" class="font-heading font-bold text-5xl md:text-6xl text-gradient bg-gradient-to-r from-[#047857] to-purple-600 mb-6 text-center animate-fade-in">Projects</h1>
-    <p class="text-lg text-center mb-8 text-gray-700 dark:text-gray-300 animate-fade-in">Explore a curated collection of projects showcasing key skills in process automation, finance, and more. Use the filters to narrow your interests.</p>
+    <h1 id="projects-title" class="font-heading font-bold text-h1 md:text-6xl text-gradient bg-gradient-to-r from-accent to-accent-dark mb-6 text-center animate-fade-in">Projects</h1>
+    <p class="text-lg text-center mb-8 text-foreground-light dark:text-foreground animate-fade-in">Explore a curated collection of projects showcasing key skills in process automation, finance, and more. Use the filters to narrow your interests.</p>
     <!-- Decorative SVG divider -->
     <div aria-hidden="true" class="w-full overflow-hidden pointer-events-none mb-8">
       <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 md:h-20 lg:h-24">
