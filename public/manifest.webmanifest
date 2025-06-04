@@ -2,19 +2,29 @@
   "name": "Blake Oxford Portfolio",
   "short_name": "BlakeOxford",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#18181b",
   "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "description": "Portfolio of Blake Oxford – Systems Architect, Workflow Strategist, and Action-Oriented Operator.",
+  "lang": "en",
   "icons": [
     {
-      "src": "/assets/images/icon-192x192.png",
-      "sizes": "192x192",
+      "src": "/assets/images/favicon-32x32.png",
+      "sizes": "32x32",
       "type": "image/png"
     },
     {
-      "src": "/assets/images/icon-512x512.png",
-      "sizes": "512x512",
+      "src": "/assets/images/favicon-16x16.png",
+      "sizes": "16x16",
       "type": "image/png"
+    },
+    {
+      "src": "/assets/images/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

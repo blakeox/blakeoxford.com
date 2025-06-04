@@ -27,11 +27,5 @@
     "upload": {
       "target": "temporary-public-storage"
     }
-  },
-  "server": {
-    "command": "pnpm exec serve dist --listen 0.0.0.0:4321",
-    "host": "0.0.0.0",
-    "port": 4321,
-    "waitForReady": true
   }
 }
