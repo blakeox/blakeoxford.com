@@ -28,5 +28,21 @@ jobs:
       - name: Build site
         run: pnpm run build
 
+      - name: Serve site
+        run: pnpm exec serve dist --listen 4321 &
+
+      - name: Wait for site to be available
+        run: |
+          for i in {1..10}; do
+            if curl -sSf http://localhost:4321 > /dev/null; then
+              echo "Site is up!"
+              exit 0
+            fi
+            echo "Waiting for site... ($i)"
+            sleep 2
+          done
+          echo "Site did not start in time" >&2
+          exit 1
+
       - name: Run Lighthouse CI
         run: pnpm run lh:ci
