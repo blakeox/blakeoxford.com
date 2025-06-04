@@ -29,7 +29,7 @@ jobs:
         run: pnpm run build
 
       - name: Serve site
-        run: pnpm exec serve dist --listen 4321 &
+        run: pnpm exec serve dist --listen 0.0.0.0:4321 &
 
       - name: Wait for site to be available
         run: |

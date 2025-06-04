@@ -14,6 +14,7 @@ chromewebdata_*.report.html
 test-results/
 playwright-report/
 *.lighthouse.report.html
+.lighthouseci/
 
 # Runtime data
 pids

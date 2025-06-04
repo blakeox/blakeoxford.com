@@ -1,5 +1,15 @@
 [
   {
+    "title": "OpenAI-Powered Documentation Quality Feedback System",
+    "excerpt": "Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.",
+    "url": "/projects/LLM-note-coaching"
+  },
+  {
+    "title": "Microsoft Fabric Reporting & Compliance Intelligence System",
+    "excerpt": "Architected a robust Microsoft Fabric solution combining Power BI, SQL-based pipelines, and NLP-driven compliance checks to transform documentation quality and operational visibility in healthcare.",
+    "url": "/projects/Microsoft-Fabric"
+  },
+  {
     "title": "ADP Workforce Now Implementation",
     "excerpt": "Implemented ADP Workforce Now…",
     "url": "/projects/adp-workforcenow"
@@ -23,11 +33,6 @@
     "title": "FermentApp: Fermentation Tracking & Task Scheduler",
     "excerpt": "Designed and developed FermentApp, an iOS application to track fermentation processes, schedule essential tasks, and visualize historical data for optimal batch outcomes.",
     "url": "/projects/ferment-app"
-  },
-  {
-    "title": "Power BI Reporting & Compliance Intelligence System",
-    "excerpt": "Built a dynamic Power BI platform with operational dashboards and integrated compliance tools—leveraging advanced text similarity algorithms to detect documentation anomalies.",
-    "url": "/projects/powerbi"
   },
   {
     "title": "Sage Intacct Integration with Square POS",
