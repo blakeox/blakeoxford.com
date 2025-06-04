@@ -45,4 +45,6 @@ jobs:
           exit 1
 
       - name: Run Lighthouse CI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm run lh:ci
