@@ -1,0 +1,40 @@
+---
+title: "OpenAI-Powered Documentation Quality Feedback System"
+description: "Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards."
+date: 2023-11-01
+tags:
+  - OpenAI
+  - Natural Language Processing
+  - Healthcare IT
+  - Compliance
+  - Blue Cross Blue Shield
+  - Documentation Quality
+  - Python
+image: "/assets/images/openai-doc-quality.png"
+link: ""
+---
+
+### Background
+
+To further elevate clinical documentation and streamline compliance efforts, I architected a solution leveraging the OpenAI API to automatically review de-identified patient notes. By integrating with existing data pipelines, this system pulled encrypted, PHI-stripped records from our SQL Server repository, forwarded them to the OpenAI Playground with a custom prompt tailored to Blue Cross Blue Shield (BCBS) audit criteria, and returned granular, role-based feedback. The result was a near real-time mechanism for technicians and providers to iteratively refine their notes—significantly reducing audit exceptions and rework.
+
+### Key Achievements
+
+- **Automated Note Ingestion & De-Identification:** Designed a secure ETL process using Python and SQL Server that extracted patient notes, applied deterministic de-identification routines (redacting names, dates, and identifiers), and staged content for API consumption—all within HIPAA-compliant guardrails.
+- **Custom BCBS Audit Prompt Engineering:** Collaborated with clinical auditors to craft a specialized prompt that instructed OpenAI’s GPT-4 model to evaluate each note against BCBS documentation guidelines, identifying missing elements (e.g., medical necessity language, precise CPT justification, signature line) and highlighting potential risk areas (e.g., ambiguous phrasing, unsupported treatment rationale).
+- **Role-Specific Feedback Generation:** Implemented logic to parse the model’s response and categorize feedback by audience type:
+  - **Technicians/Assistants:** Action items on capturing intervention details, including units of service and clinician credentials.
+  - **Providers/BCBAs:** Recommendations on enhancing clinical rationale, aligning treatment goals with evaluative criteria, and ensuring consistency with state therapy regulations.
+- **Integrated Review Dashboard:** Built a Power BI integration that consumed the OpenAI feedback JSON, rendering a column-level view of audit readiness metrics. Providers could filter by date range, note author, or patient cohort—making it trivial to identify systemic documentation gaps and monitor improvement over time.
+- **API-Driven Continuous Improvement:** Deployed a serverless function in Azure Functions that orchestrated nightly batch processing of new notes. If the model flagged more than 5 notes with critical omissions, the system automatically triggered an email alert to compliance leads, ensuring proactive remediation.
+
+### Impact
+
+By embedding AI-driven review directly into our clinical workflow, we achieved:
+
+- **50% Reduction in Audit Exceptions:** Providers received immediate, contextual feedback, leading to more compliant notes on the first pass and lowering secondary review cycles.
+- **Consistent Audit Preparedness:** Technicians adopted a standardized documentation style guided by the AI’s recommendations—minimizing variability across therapists and sites.
+- **Resource Optimization:** Compliance teams reallocated 20 hours/week from manual note reviews to higher-value tasks (e.g., targeted training, process refinement).
+- **Scalable Architecture:** The modular design supports onboarding additional payers (e.g., Aetna, UnitedHealthcare) by swapping in new prompt templates—paving the way for multi-payer audit readiness.
+
+This OpenAI-powered system transformed passive documentation checks into an active, data-driven coaching tool—ensuring our providers and technicians consistently meet BCBS requirements and drive better patient care.
