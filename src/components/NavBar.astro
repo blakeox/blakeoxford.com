@@ -13,12 +13,28 @@ import SearchOverlay from './SearchOverlay.astro';
 import navLinks from '../config/navLinks.js';
 ---
 <!-- Skip to main content for accessibility -->
-<a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 z-[1100] bg-accent text-background font-semibold px-4 py-2 rounded transition-colors duration-200">Skip to main content</a>
+<a
+  href="#main-content"
+  class="sr-only focus:not-sr-only absolute left-2 top-2 z-[1100] bg-accent text-background font-semibold px-4 py-2 rounded transition-colors duration-200"
+>
+  Skip to main content
+</a>
 <!-- Add at the top of the nav for scroll progress bar -->
-<div class="nav-scroll-progress fixed top-0 left-0 w-full h-1 z-[999] bg-transparent" style="pointer-events: none !important;">
-  <div id="nav-scroll-progress-bar" class="h-full bg-accent transition-all duration-200" style="width:0%; pointer-events: none !important;"></div>
+<div
+  class="nav-scroll-progress fixed top-0 left-0 w-full h-1 z-[999] bg-transparent"
+  style="pointer-events: none !important;"
+>
+  <div
+    id="nav-scroll-progress-bar"
+    class="h-full bg-accent transition-all duration-200"
+    style="width:0%; pointer-events: none !important;"
+  ></div>
 </div>
-<nav class="navbar-container sticky top-0 z-[1000] transition-all duration-500 nav-visible" aria-label="Main Navigation" data-navbar>
+<nav
+  class="navbar-container sticky top-0 z-[1000] transition-all duration-500 nav-visible"
+  aria-label="Main Navigation"
+  data-navbar
+>
   <style>
     /* Only keep advanced/dynamic/animation-specific styles here */
     .nav-link::before {
@@ -34,7 +50,7 @@ import navLinks from '../config/navLinks.js';
     }
     .nav-link:hover::before,
     .nav-link:focus::before,
-    .nav-link[aria-current="page"]::before {
+    .nav-link[aria-current='page']::before {
       width: 100%;
     }
     /* Hamburger menu animation */
@@ -55,7 +71,7 @@ import navLinks from '../config/navLinks.js';
     .page-transition-exit {
       animation: fadeOutScale 0.3s var(--ease-emphasized) forwards;
     }
-    /* Enhanced focus styles */
+    /* Enhanced focus styles (not applied by default) */
     .nav-focus {
       outline: none;
       position: relative;
@@ -92,13 +108,22 @@ import navLinks from '../config/navLinks.js';
       transform: translateY(-100%);
       transition: transform 0.3s var(--ease-emphasized);
     }
+
+    /* Override any focus/hover outline or shadow inside the navbar */
+    nav [data-sound]:focus,
+    nav [data-sound]:hover,
+    nav button:focus,
+    nav a:focus {
+      outline: none;
+      box-shadow: none;
+    }
   </style>
   <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
     <!-- Mobile Menu Toggle -->
     <button
       id="nav-toggle"
       type="button"
-      class="nav-button text-navbar-text dark:text-navbar-textDark md:hidden p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark transition-colors duration-200"
+      class="nav-button text-navbar-text dark:text-navbar-textDark md:hidden p-3 rounded-md transition-colors duration-200"
       aria-label="Toggle navigation"
       aria-expanded="false"
       aria-controls="nav-mobile-links"
@@ -111,18 +136,38 @@ import navLinks from '../config/navLinks.js';
       </div>
     </button>
     <!-- Brand/Logo -->
-    <a class="navbar-logo flex items-center gap-2 font-heading text-xl text-navbar-text dark:text-navbar-textDark no-underline focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark rounded transition-colors duration-200 hover:scale-110 hover:rotate-2 hover:shadow-lg" href="/" aria-label="Blake Oxford Portfolio - Home" data-sound="logo">
-      <span class="brand-avatar inline-flex items-center justify-center w-10 h-10 rounded-full font-heading text-lg mr-2 text-background dark:text-foreground transition-all duration-300">
+    <a
+      class="navbar-logo flex items-center gap-2 font-heading text-xl text-navbar-text dark:text-navbar-textDark no-underline rounded transition-colors duration-200 hover:scale-110 hover:rotate-2 hover:shadow-lg"
+      href="/"
+      aria-label="Blake Oxford Portfolio - Home"
+      data-sound="logo"
+    >
+      <span
+        class="brand-avatar inline-flex items-center justify-center w-10 h-10 rounded-full font-heading text-lg mr-2 text-background dark:text-foreground transition-all duration-300"
+      >
         B
       </span>
       <span class="brand-text sr-only">Blake Oxford</span>
     </a>
     <!-- Desktop Navigation Links -->
     <ul class="hidden md:flex gap-6 items-center list-none m-0 p-0 relative" id="nav-links" role="menubar">
-      <div id="nav-blob-underline" class="absolute bottom-0 left-0 h-2 rounded-full bg-accent/70 transition-all duration-300 pointer-events-none" style="width:0;transform:translateX(0);"></div>
-      {navLinks.map(link => (
+      <div
+        id="nav-blob-underline"
+        class="absolute bottom-0 left-0 h-2 rounded-full bg-accent/70 transition-all duration-300 pointer-events-none"
+        style="width:0;transform:translateX(0);"
+      ></div>
+      {navLinks.map((link) => (
         <li role="none">
-          <a class="nav-link" href={link.href} data-analytics={link.analytics} role="menuitem" data-sound="nav" aria-current={Astro.url.pathname === link.href ? 'page' : undefined}>{link.label}</a>
+          <a
+            class="nav-link"
+            href={link.href}
+            data-analytics={link.analytics}
+            role="menuitem"
+            data-sound="nav"
+            aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
         </li>
       ))}
     </ul>
@@ -131,25 +176,51 @@ import navLinks from '../config/navLinks.js';
       <button
         id="search-toggle"
         type="button"
-        class="search-button nav-button text-navbar-text dark:text-navbar-textDark p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-navbar-text dark:focus:ring-navbar-textDark transition-all duration-200"
+        class="search-button nav-button text-navbar-text dark:text-navbar-textDark p-2 rounded-md transition-all duration-200"
         aria-label="Open search"
         aria-keyshortcuts="/"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
         </svg>
       </button>
       <ThemeToggle client:load />
     </div>
   </div>
   <!-- Mobile Menu Overlay (click to close) -->
-  <div class="mobile-menu-overlay fixed inset-0 bg-black/40 z-[1040] transition-opacity duration-200 md:hidden" tabindex="-1" aria-hidden="true" style="display:none;"></div>
+  <div
+    class="mobile-menu-overlay fixed inset-0 bg-black/40 z-[1040] transition-opacity duration-200 md:hidden"
+    tabindex="-1"
+    aria-hidden="true"
+    style="display:none;"
+  ></div>
   <!-- Mobile Navigation Menu -->
-  <div class="mobile-menu md:hidden rounded-t-2xl shadow-2xl max-w-[95vw] mx-auto mt-2 open:opacity-100 open:translate-y-0" id="nav-mobile-links">
+  <div
+    class="mobile-menu md:hidden rounded-t-2xl shadow-2xl max-w-[95vw] mx-auto mt-2 open:opacity-100 open:translate-y-0"
+    id="nav-mobile-links"
+  >
     <ul class="flex flex-col gap-3 px-4 pb-6 pt-2 list-none m-0" role="menu">
-      {navLinks.map(link => (
+      {navLinks.map((link) => (
         <li role="none" class="relative">
-          <a class="nav-link block text-lg text-foreground font-medium hover:bg-accent/10 focus:bg-accent/20 transition-colors duration-200 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent mobile-tap-effect {link.active ? 'active' : ''}" href={link.href} data-analytics={link.analytics} role="menuitem" aria-current={Astro.url.pathname === link.href ? 'page' : undefined}>
+          <a
+            class="nav-link block text-lg text-foreground font-medium hover:bg-accent/10 focus:bg-accent/20 transition-colors duration-200 py-3 px-4 rounded-xl mobile-tap-effect {link.active ? 'active' : ''}"
+            href={link.href}
+            data-analytics={link.analytics}
+            role="menuitem"
+            aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
+          >
             {/* Active link indicator bar */}
             {Astro.url.pathname === link.href && (
               <span class="absolute left-0 top-2 bottom-2 w-1 rounded-full bg-accent"></span>
@@ -168,14 +239,25 @@ import navLinks from '../config/navLinks.js';
 <!-- Search Overlay -->
 <SearchOverlay />
 <!-- Command palette modal -->
-<div id="nav-cmdk-modal" class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none">
+<div
+  id="nav-cmdk-modal"
+  class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none"
+>
   <div class="bg-background dark:bg-background-dark rounded-xl shadow-2xl p-6 w-full max-w-md">
-    <input type="text" class="w-full p-3 rounded border border-accent mb-2 text-lg bg-background dark:bg-background-dark" placeholder="Type a page or command..." autofocus />
+    <input
+      type="text"
+      class="w-full p-3 rounded border border-accent mb-2 text-lg bg-background dark:bg-background-dark"
+      placeholder="Type a page or command..."
+      autofocus
+    />
     <div class="text-sm text-neutral">(This is a placeholder. Fuzzy search and actions coming soon!)</div>
   </div>
 </div>
 <!-- Accessibility help modal -->
-<div id="nav-help-modal" class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none">
+<div
+  id="nav-help-modal"
+  class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none"
+>
   <div class="bg-background dark:bg-background-dark rounded-xl shadow-2xl p-6 w-full max-w-md">
     <h2 class="text-xl font-bold mb-2">Navigation Shortcuts</h2>
     <ul class="list-disc pl-5 mb-2">
