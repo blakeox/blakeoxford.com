@@ -24,7 +24,7 @@ const featuredProjects = featuredSlugs
 
   <main id="main-content" aria-label="Main Content" tabindex="-1" class="space-y-20">
     <!-- Hero Section -->
-    <section id="about-me" class="relative overflow-hidden py-32 min-h-[80vh] flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark">
+    <section id="about-me" class="relative overflow-hidden py-32 min-h-[80vh] flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark mb-0">
       <!-- Animated background pattern -->
       <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
         <div class="absolute inset-0"></div>
@@ -42,10 +42,10 @@ const featuredProjects = featuredSlugs
               <h1 class="font-heading font-bold text-h1 md:text-6xl text-gradient bg-gradient-to-r from-accent to-accent-dark mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
                 <span class="block">Blake Oxford</span>
               </h1>
-              <span class="block text-h3 md:text-h3 lg:text-h3 mt-2 animate-fadeInUp text-foreground dark:text-foreground-light" style="animation-delay: 0.5s;">
+              <p class="block text-lead mt-2 animate-fadeInUp text-foreground dark:text-foreground-light font-medium" style="animation-delay: 0.5s;">
                 Systems Architect · Workflow Strategist · Action-Oriented Operator
-              </span>
-              <p class="animate-fadeInUp text-body dark:text-foreground-light dark:border-l-4 dark:border-accent-dark pl-4" style="animation-delay: 0.8s;">
+              </p>
+              <p class="animate-fadeInUp text-body dark:text-foreground-light border-l-4 border-accent dark:border-accent-dark pl-4" style="animation-delay: 0.8s;">
                 I turn complexity into opportunity—designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results.
               </p>
             </div>
@@ -92,12 +92,21 @@ const featuredProjects = featuredSlugs
           </div>
         </div>
       </div>
-      <!-- Decorative SVG wave divider -->
-      <div aria-hidden="true" class="absolute left-0 right-0 bottom-0 w-full overflow-hidden pointer-events-none" style="line-height:0">
-        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 md:h-20 lg:h-24">
-          <path fill="currentColor" fill-opacity="0.08" d="M0,32 C360,80 1080,0 1440,48 L1440,80 L0,80 Z" />
-        </svg>
-      </div>
+    </section>
+
+    <!-- Technologies I Excel At Section -->
+    <section id="technologies" class="w-full py-16 text-center animate-fade-in bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
+      <h2 class="text-h2 font-bold mb-8 text-accent-dark">Technologies I Excel At</h2>
+      <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
+        {['Python Automation', 'OpenAI API', 'Microsoft Intune', 'SQL', 'Google Cloud', 'Firebase', 'Azure', 'Cloudflare', 'Microsoft Fabric'].map((tech) => (
+          <li class="flex flex-col items-center group">
+            <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform">
+              <img src={`/assets/images/${tech.toLowerCase().replace(/ /g, '-')}-logo.png`} alt={`${tech} Logo`} class="w-full h-full object-contain" />
+            </div>
+            <span class="group-hover:text-accent transition-colors">{tech}</span>
+          </li>
+        ))}
+      </ul>
     </section>
 
     <!-- Featured Projects Section -->
