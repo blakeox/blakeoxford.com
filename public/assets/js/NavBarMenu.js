@@ -39,13 +39,19 @@ class NavBarMenu {
   init() {
     this.cacheElements();
     addSkipToContentLink();
+    
+    // Initialize navbar state communication
+    this.initializeNavbarState();
+    
     // Use modular scroll utilities
     setupScrollEffects(this);
     setupScrollBehavior(this.navbar);
     setupPageTransitions();
+    
     // Enable interactive dropdowns and keyboard navigation
     setupDropdowns();
     setupDropdownKeyboardNavigation();
+    
     this.setupMobileMenu();
     this.setupSearchToggle(); // Add search toggle setup
     this.setupKeyboardShortcuts();
@@ -86,6 +92,39 @@ class NavBarMenu {
     if (!this.navbar) {
       console.warn('NavBar: Main navbar element not found');
     }
+  }
+
+  // --- Navigation State Management ---
+  initializeNavbarState() {
+    // Set initial navbar state
+    this.updateNavbarState(false);
+    
+    // Store reference to the update method for other components
+    window.updateNavbarState = this.updateNavbarState.bind(this);
+  }
+
+  updateNavbarState(isHidden) {
+    if (!this.navbar) return;
+    
+    console.log(`NavBarMenu: Updating navbar state - ${isHidden ? 'hidden' : 'visible'}`);
+    
+    // Update CSS custom property and data attribute for global coordination
+    document.documentElement.style.setProperty('--navbar-state', isHidden ? 'hidden' : 'visible');
+    document.documentElement.setAttribute('data-navbar-state', isHidden ? 'hidden' : 'visible');
+    
+    // Apply the classes to navbar
+    if (isHidden) {
+      this.navbar.classList.add('nav-hidden');
+      this.navbar.classList.remove('nav-visible');
+    } else {
+      this.navbar.classList.add('nav-visible');
+      this.navbar.classList.remove('nav-hidden');
+    }
+
+    // Emit custom event for other components to listen to
+    document.dispatchEvent(new CustomEvent('navbarStateChange', {
+      detail: { isHidden, navbar: this.navbar }
+    }));
   }
 
   // --- Mobile Menu ---
@@ -443,18 +482,19 @@ class NavBarMenu {
     const navbar = this.navbar;
     const scrollThreshold = 50;
     if (!navbar) return;
+
     const handleScroll = this.debounce(() => {
       const currentScroll = window.scrollY || document.documentElement.scrollTop;
       if (Math.abs(lastScrollTop - currentScroll) < scrollThreshold) return;
+      
       if (currentScroll > lastScrollTop && currentScroll > 100) {
-        navbar.classList.add('nav-hidden');
-        navbar.classList.remove('nav-visible');
+        this.updateNavbarState(true); // Hide navbar
       } else {
-        navbar.classList.add('nav-visible');
-        navbar.classList.remove('nav-hidden');
+        this.updateNavbarState(false); // Show navbar
       }
       lastScrollTop = currentScroll;
     }, 50);
+
     window.addEventListener('scroll', handleScroll, { passive: true });
   }
 

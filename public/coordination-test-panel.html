@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Real-time Coordination Test</title>
+        <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 400px;
+            z-index: 9999;
+            font-size: 14px;
+        }
+        .status-item {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+            background: #f8f9fa;
+        }
+        .status-item.success { background: #d4edda; color: #155724; }
+        .status-item.error { background: #f8d7da; color: #721c24; }
+        .status-item.warning { background: #fff3cd; color: #856404; }
+        .test-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .test-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .test-btn:hover { background: #0056b3; }
+        .real-time-info {
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f1f3f4;
+            border-radius: 4px;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="test-panel">
+            <h3>Navbar-Sticky Nav Coordination Test</h3>
+            <div id="status-container"></div>
+            <div class="test-actions">
+                <button class="test-btn" onclick="testHideNavbar()">Hide
+                    Navbar</button>
+                <button class="test-btn" onclick="testShowNavbar()">Show
+                    Navbar</button>
+                <button class="test-btn" onclick="refreshStatus()">Refresh
+                    Status</button>
+                <button class="test-btn" onclick="testScrollBehavior()">Auto
+                    Scroll Test</button>
+            </div>
+            <div class="real-time-info" id="real-time-info">
+                Real-time info will appear here...
+            </div>
+        </div>
+
+        <script>
+        let statusContainer, realTimeInfo;
+        
+        function init() {
+            statusContainer = document.getElementById('status-container');
+            realTimeInfo = document.getElementById('real-time-info');
+            refreshStatus();
+            startRealTimeMonitoring();
+        }
+        
+        function addStatus(message, type = 'info') {
+            const item = document.createElement('div');
+            item.className = `status-item ${type}`;
+            item.textContent = message;
+            statusContainer.appendChild(item);
+        }
+        
+        function clearStatus() {
+            statusContainer.innerHTML = '';
+        }
+        
+        function refreshStatus() {
+            clearStatus();
+            
+            // Check if we're on the about page
+            if (!window.location.pathname.includes('/about/')) {
+                addStatus('⚠️ Not on about page - navigate to /about/ to test', 'warning');
+                return;
+            }
+            
+            // Check for navbar
+            const navbar = document.querySelector('[data-navbar]');
+            if (navbar) {
+                addStatus('✅ Navbar found with data-navbar attribute', 'success');
+            } else {
+                addStatus('❌ Navbar not found', 'error');
+            }
+            
+            // Check for sticky nav
+            const stickyNav = document.getElementById('sticky-nav');
+            if (stickyNav) {
+                addStatus('✅ Sticky nav found', 'success');
+                const computedStyle = window.getComputedStyle(stickyNav);
+                addStatus(`📍 Sticky nav position: ${computedStyle.position}, top: ${computedStyle.top}`, 'info');
+            } else {
+                addStatus('❌ Sticky nav not found', 'error');
+            }
+            
+            // Check navbar state
+            const navbarState = document.documentElement.getAttribute('data-navbar-state');
+            addStatus(`📊 Current navbar state: ${navbarState || 'not set'}`, navbarState ? 'success' : 'warning');
+            
+            // Check NavBarMenu
+            if (window.navBarMenu) {
+                addStatus('✅ NavBarMenu instance found', 'success');
+            } else {
+                addStatus('❌ NavBarMenu instance not found', 'error');
+            }
+            
+            // Check sticky nav coordinator
+            if (window.stickyNavCoordinator) {
+                addStatus('✅ StickyNavCoordinator found', 'success');
+            } else {
+                addStatus('⚠️ StickyNavCoordinator not found globally', 'warning');
+            }
+            
+            // Check for coordination scripts
+            const scripts = Array.from(document.scripts).map(s => s.src);
+            const navBarScript = scripts.find(s => s.includes('NavBarMenu.js'));
+            const coordinatorScript = scripts.find(s => s.includes('sticky-nav-coordinator.js'));
+            
+            if (navBarScript) {
+                addStatus('✅ NavBarMenu.js loaded', 'success');
+            } else {
+                addStatus('❌ NavBarMenu.js not loaded', 'error');
+            }
+            
+            if (coordinatorScript) {
+                addStatus('✅ Sticky nav coordinator script loaded', 'success');
+            } else {
+                addStatus('❌ Sticky nav coordinator script not loaded', 'error');
+            }
+        }
+        
+        function testHideNavbar() {
+            if (window.updateNavbarState) {
+                window.updateNavbarState(true);
+                addStatus('🔄 Tested hiding navbar', 'info');
+                setTimeout(refreshStatus, 500);
+            } else {
+                addStatus('❌ updateNavbarState function not available', 'error');
+            }
+        }
+        
+        function testShowNavbar() {
+            if (window.updateNavbarState) {
+                window.updateNavbarState(false);
+                addStatus('🔄 Tested showing navbar', 'info');
+                setTimeout(refreshStatus, 500);
+            } else {
+                addStatus('❌ updateNavbarState function not available', 'error');
+            }
+        }
+        
+        function testScrollBehavior() {
+            addStatus('🔄 Starting scroll test...', 'info');
+            // Scroll down to trigger hide
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+            setTimeout(() => {
+                // Scroll back up to trigger show
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(refreshStatus, 1000);
+            }, 2000);
+        }
+        
+        function startRealTimeMonitoring() {
+            function updateRealTimeInfo() {
+                const stickyNav = document.getElementById('sticky-nav');
+                const navbarState = document.documentElement.getAttribute('data-navbar-state');
+                const scrollY = window.scrollY;
+                
+                let info = `Scroll: ${scrollY}px\n`;
+                info += `Navbar State: ${navbarState || 'not set'}\n`;
+                
+                if (stickyNav) {
+                    const style = window.getComputedStyle(stickyNav);
+                    const rect = stickyNav.getBoundingClientRect();
+                    info += `Sticky Nav:\n`;
+                    info += `  Classes: ${Array.from(stickyNav.classList).join(', ')}\n`;
+                    info += `  Top (CSS): ${style.top}\n`;
+                    info += `  Top (Rect): ${rect.top.toFixed(1)}px\n`;
+                    info += `  Transform: ${style.transform}\n`;
+                }
+                
+                realTimeInfo.textContent = info;
+            }
+            
+            // Update every 100ms
+            setInterval(updateRealTimeInfo, 100);
+            
+            // Listen for navbar state changes
+            document.addEventListener('navbarStateChange', (event) => {
+                addStatus(`🔄 Navbar state changed: ${event.detail.isHidden ? 'hidden' : 'visible'}`, 'info');
+            });
+        }
+        
+        // Initialize when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+    </body>
+</html>

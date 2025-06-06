@@ -2,8 +2,8 @@
 import '../styles/global.css'; // Import global styles (includes Tailwind and theme tokens)
 import NavBar from '../components/NavBar.astro';
 import Footer from '../components/Footer.astro';
-// wide: when true, disable the default max-width wrapper for full-width layouts
-const { title = 'Your Site', description = 'A modern Astro site', url = 'https://yourdomain.com', image = '/assets/images/og-image.png', wide = false, keywords = '' } = Astro.props;
+const { title = 'Blake Oxford Portfolio', description = 'Check out my work and lets get in touch', url = 'https://blakeoxford.com', wide = false, keywords = '' } = Astro.props;
+const isAboutPage = Astro.url.pathname === '/about/';
 ---
 <html lang="en" class="scroll-smooth">
   <head>
@@ -125,6 +125,19 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <NavBar />
+    {isAboutPage && (
+      <nav id="sticky-nav" class="sticky-nav-pillbar mx-auto mt-24 transition-all duration-500">
+        <div class="sticky-nav-pillbar-outer"></div>
+        <div class="sticky-nav-pillbar-inner">
+          <a href="#about-me" class="sticky-nav-pill">About Me</a>
+          <a href="#achievements" class="sticky-nav-pill">Achievements</a>
+          <a href="#education-skills" class="sticky-nav-pill">Education & Skills</a>
+          <a href="#about-timeline" class="sticky-nav-pill">Career Highlights</a>
+          <a href="#testimonials" class="sticky-nav-pill">Testimonials</a>
+          <a href="#about-social" class="sticky-nav-pill">Connect</a>
+        </div>
+      </nav>
+    )}
     <main id="main-content" tabindex="-1" aria-label="Main Content" class={
       wide
         ? 'max-w-none px-0'
@@ -141,6 +154,14 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
         </svg>
       </a>
     </div>
+    <!-- Load sticky nav coordinator for about page -->
+    {isAboutPage && (
+      <script type="module" src="/assets/js/sticky-nav-coordinator.js"></script>
+    )}
+    <!-- Debug coordination in development -->
+    {isAboutPage && import.meta.env.DEV && (
+      <script src="/debug-coordination-inline.js"></script>
+    )}
     <style>
       .fixed.bottom-6.right-6.z-50 {
         /* Ensures the button is always visible and styled */

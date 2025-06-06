@@ -341,6 +341,15 @@
   transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s;
 }
 
+/* CSS Custom Properties for navbar state communication */
+:root {
+  --navbar-state: visible; /* 'visible' or 'hidden' */
+  --navbar-height: 80px; /* Default navbar height */
+}
+
+/* Sticky nav pillbar: respond to navbar state via CSS custom properties */
+/* Navbar-Sticky Nav Coordination Styles - consolidated with main pillbar styles below */
+
 /* Hero Section Enhancements */
 @keyframes spin-slow {
   0% { transform: rotate(0deg); }
@@ -637,6 +646,139 @@ html::-webkit-scrollbar-thumb {
   .text-lead {
     font-size: var(--fs-3xl, 1.875rem);
   }
+}
+
+/* --- Sticky Nav Pills & Surrounding Pill --- */
+.sticky-nav-pillbar {
+  position: sticky;
+  top: 6rem; /* Default position accounting for navbar height */
+  z-index: 1020;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  margin: 0 auto 2rem auto;
+  width: fit-content;
+  background: linear-gradient(90deg, var(--color-accent-light) 0%, var(--color-accent) 100%);
+  border-radius: 9999px;
+  box-shadow: 0 4px 32px 0 rgba(16,185,129,0.10);
+  transition: box-shadow 0.3s, background 0.3s, top 0.4s cubic-bezier(.4,0,.2,1), transform 0.3s cubic-bezier(.4,0,.2,1);
+  min-width: 320px;
+  max-width: 90vw;
+}
+
+/* Navbar coordination - when navbar is hidden, move sticky nav up */
+html[data-navbar-state="hidden"] .sticky-nav-pillbar {
+  top: 1.5rem;
+}
+
+/* Enhanced coordination with navbar state */
+.sticky-nav-pillbar.navbar-hidden {
+  transform: translateY(-10px);
+  box-shadow: 0 6px 40px 0 rgba(16,185,129,0.15);
+}
+
+.sticky-nav-pillbar.navbar-visible {
+  transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .sticky-nav-pillbar {
+    top: 4.5rem;
+  }
+  
+  html[data-navbar-state="hidden"] .sticky-nav-pillbar {
+    top: 0.5rem;
+  }
+}
+
+.sticky-nav-pillbar-inner {
+  display: flex;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+.sticky-nav-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--color-accent-dark);
+  background: var(--color-background);
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px 0 rgba(16,185,129,0.08);
+  cursor: pointer;
+  outline: none;
+  border: none;
+  transition: color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.3s cubic-bezier(.4,0,.2,1);
+  z-index: 2;
+}
+.sticky-nav-pill.active, .sticky-nav-pill:focus-visible {
+  color: var(--color-background);
+  background: linear-gradient(90deg, var(--color-accent) 60%, var(--color-accent-dark) 100%);
+  box-shadow: 0 4px 16px 0 rgba(16,185,129,0.18);
+  transform: scale(1.08);
+}
+.sticky-nav-pill:not(.active):hover {
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+}
+.sticky-nav-pillbar-outer {
+  position: absolute;
+  top: -0.5rem;
+  left: -1.5rem;
+  right: -1.5rem;
+  bottom: -0.5rem;
+  border-radius: 9999px;
+  background: rgba(16,185,129,0.08);
+  z-index: 0;
+  box-shadow: 0 8px 32px 0 rgba(16,185,129,0.10);
+  pointer-events: none;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+@media (max-width: 640px) {
+  .sticky-nav-pillbar {
+    top: 0.5rem;
+    min-width: 90vw;
+    padding: 0.25rem 0.25rem;
+  }
+  .sticky-nav-pill {
+    font-size: 0.98rem;
+    padding: 0.4rem 1rem;
+  }
+}
+/* Slide animation for pill transitions */
+.sticky-nav-pillbar .sticky-nav-pill {
+  opacity: 0.7;
+  transform: translateX(0);
+  transition: opacity 0.2s, transform 0.4s cubic-bezier(.4,0,.2,1);
+}
+.sticky-nav-pillbar .sticky-nav-pill.slide-in {
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 3;
+}
+.sticky-nav-pillbar .sticky-nav-pill.slide-out {
+  opacity: 0.5;
+  transform: translateX(40px) scale(0.95);
+}
+.dark .sticky-nav-pillbar {
+  background: linear-gradient(90deg, var(--color-accent-dark) 0%, var(--color-accent) 100%);
+  box-shadow: 0 4px 32px 0 rgba(16,185,129,0.18);
+}
+.dark .sticky-nav-pillbar-outer {
+  background: rgba(16,185,129,0.16);
+}
+.dark .sticky-nav-pill {
+  background: var(--color-background-dark);
+  color: var(--color-accent-light);
+}
+.dark .sticky-nav-pill.active, .dark .sticky-nav-pill:focus-visible {
+  color: var(--color-background-dark);
+  background: linear-gradient(90deg, var(--color-accent) 60%, var(--color-accent-dark) 100%);
 }
 
 

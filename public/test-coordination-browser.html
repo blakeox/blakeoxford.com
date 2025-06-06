@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Test Navbar-Sticky Nav Coordination</title>
+        <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 200vh; /* Make page scrollable */
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        }
+        
+        /* Mock navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4rem;
+            background: #333;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            transition: transform 0.3s ease;
+        }
+        
+        .navbar.hidden {
+            transform: translateY(-100%);
+        }
+        
+        /* Mock sticky nav pillbar */
+        .sticky-nav-pillbar {
+            position: fixed;
+            top: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 40;
+            transition: top 0.4s cubic-bezier(.4,0,.2,1);
+        }
+        
+        /* Coordination styles */
+        html[data-navbar-state="hidden"] .sticky-nav-pillbar {
+            top: 1.5rem !important;
+        }
+        
+        .sticky-nav-pillbar.navbar-hidden {
+            background: rgba(255, 200, 200, 0.9);
+        }
+        
+        .sticky-nav-pillbar.navbar-visible {
+            background: rgba(200, 255, 200, 0.9);
+        }
+        
+        .content {
+            margin-top: 8rem;
+            padding: 2rem;
+        }
+        
+        .debug-info {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-width: 300px;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="navbar" data-navbar>
+            Mock Navbar - Scroll to test auto-hide
+        </div>
+
+        <div class="sticky-nav-pillbar" id="sticky-nav">
+            <div class="sticky-nav-pillbar-inner">
+                Sticky Nav Pillbar
+            </div>
+        </div>
+
+        <div class="content">
+            <h1>Test Page for Navbar-Sticky Nav Coordination</h1>
+            <p>Scroll down to see the navbar hide and the sticky nav adjust its
+                position.</p>
+            <p>The sticky nav should move up when the navbar is hidden and move
+                back down when the navbar is visible.</p>
+
+            <div
+                style="height: 100vh; background: linear-gradient(to bottom, #ffeaa7, #fab1a0);">
+                <h2>Content Section 1</h2>
+                <p>Keep scrolling to test the coordination...</p>
+            </div>
+
+            <div
+                style="height: 100vh; background: linear-gradient(to bottom, #fab1a0, #fd79a8);">
+                <h2>Content Section 2</h2>
+                <p>More content to enable scrolling...</p>
+            </div>
+        </div>
+
+        <div class="debug-info" id="debug-info">
+            <div>Navbar State: <span id="navbar-state">visible</span></div>
+            <div>Scroll Position: <span id="scroll-pos">0</span></div>
+            <div>HTML Data Attr: <span id="html-attr">none</span></div>
+            <div>Sticky Nav Classes: <span id="sticky-classes">none</span></div>
+        </div>
+
+        <!-- Load the coordination scripts -->
+        <script src="/assets/js/NavBarMenu.js"></script>
+        <script src="/assets/js/sticky-nav-coordinator.js"></script>
+
+        <script>
+        // Initialize debug display
+        function updateDebugInfo() {
+            const scrollPos = window.scrollY || document.documentElement.scrollTop;
+            const htmlAttr = document.documentElement.getAttribute('data-navbar-state') || 'none';
+            const stickyNav = document.getElementById('sticky-nav');
+            const stickyClasses = stickyNav ? Array.from(stickyNav.classList).join(', ') || 'none' : 'not found';
+            
+            document.getElementById('scroll-pos').textContent = Math.round(scrollPos);
+            document.getElementById('html-attr').textContent = htmlAttr;
+            document.getElementById('sticky-classes').textContent = stickyClasses;
+            document.getElementById('navbar-state').textContent = htmlAttr === 'hidden' ? 'hidden' : 'visible';
+        }
+        
+        // Update debug info on scroll
+        window.addEventListener('scroll', updateDebugInfo, { passive: true });
+        
+        // Update debug info on navbar state changes
+        document.addEventListener('navbarStateChange', (event) => {
+            console.log('Navbar state change detected:', event.detail);
+            updateDebugInfo();
+        });
+        
+        // Initial update
+        updateDebugInfo();
+        
+        // Initialize navbar with mock behavior
+        class MockNavBar {
+            constructor() {
+                this.navbar = document.querySelector('[data-navbar]');
+                this.setupScrollBehavior();
+                this.initializeNavbarState();
+            }
+            
+            initializeNavbarState() {
+                document.documentElement.setAttribute('data-navbar-state', 'visible');
+                this.updateNavbarState(false);
+            }
+            
+            updateNavbarState(isHidden) {
+                const state = isHidden ? 'hidden' : 'visible';
+                document.documentElement.setAttribute('data-navbar-state', state);
+                
+                // Dispatch custom event
+                const event = new CustomEvent('navbarStateChange', {
+                    detail: { isHidden }
+                });
+                document.dispatchEvent(event);
+                
+                // Update navbar visibility
+                if (this.navbar) {
+                    this.navbar.classList.toggle('hidden', isHidden);
+                }
+                
+                console.log(`Navbar state updated: ${state}`);
+            }
+            
+            setupScrollBehavior() {
+                let lastScrollTop = 0;
+                const scrollThreshold = 50;
+                
+                const handleScroll = this.debounce(() => {
+                    const currentScroll = window.scrollY || document.documentElement.scrollTop;
+                    if (Math.abs(lastScrollTop - currentScroll) < scrollThreshold) return;
+                    
+                    if (currentScroll > lastScrollTop && currentScroll > 100) {
+                        this.updateNavbarState(true); // Hide navbar
+                    } else {
+                        this.updateNavbarState(false); // Show navbar
+                    }
+                    lastScrollTop = currentScroll;
+                }, 50);
+                
+                window.addEventListener('scroll', handleScroll, { passive: true });
+            }
+            
+            debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+        }
+        
+        // Initialize mock navbar when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new MockNavBar();
+        });
+    </script>
+    </body>
+</html>
