@@ -128,26 +128,26 @@
   --font-display: 'Playfair Display', 'Montserrat', ui-serif, serif;
   --font-ui: 'Inter', ui-sans-serif, system-ui, sans-serif;
   /* Semantic font size tokens for headings and UI */
-  --fs-h1: var(--fs-6xl);
-  --fs-h2: var(--fs-5xl);
-  --fs-h3: var(--fs-4xl);
-  --fs-h4: var(--fs-3xl);
-  --fs-h5: var(--fs-2xl);
-  --fs-h6: var(--fs-xl);
-  --fs-ui: var(--fs-sm);
-  --fs-xs: 0.75rem;
-  --fs-sm: 0.875rem;
-  --fs-base: 1rem;
-  --fs-lg: 1.125rem;
-  --fs-xl: 1.25rem;
-  --fs-2xl: 1.5rem;
-  --fs-3xl: 1.875rem;
-  --fs-4xl: 2.25rem;
-  --fs-5xl: 3rem;
-  --fs-6xl: 3.75rem;
-  --fs-7xl: 4.5rem;
-  --fs-8xl: 6rem;
-  --fs-9xl: 8rem;
+  --fs-h1: var(--fs-9xl); /* 8rem, 128px */
+  --fs-h2: var(--fs-8xl); /* 6rem, 96px */
+  --fs-h3: var(--fs-7xl); /* 4.5rem, 72px */
+  --fs-h4: var(--fs-6xl); /* 3.75rem, 60px */
+  --fs-h5: var(--fs-5xl); /* 3rem, 48px */
+  --fs-h6: var(--fs-3xl); /* 1.875rem, 30px */
+  --fs-ui: var(--fs-base); /* 1rem, 16px */
+  --fs-xs: 0.75rem;       /* 12px */
+  --fs-sm: 0.875rem;      /* 14px */
+  --fs-base: 1rem;        /* 16px */
+  --fs-lg: 1.125rem;      /* 18px */
+  --fs-xl: 1.25rem;       /* 20px */
+  --fs-2xl: 1.5rem;       /* 24px */
+  --fs-3xl: 1.875rem;     /* 30px */
+  --fs-4xl: 2.25rem;      /* 36px */
+  --fs-5xl: 3rem;         /* 48px */
+  --fs-6xl: 3.75rem;      /* 60px */
+  --fs-7xl: 4.5rem;       /* 72px */
+  --fs-8xl: 6rem;         /* 96px */
+  --fs-9xl: 8rem;         /* 128px */
   --fw-thin: 100;
   --fw-extralight: 200;
   --fw-light: 300;
