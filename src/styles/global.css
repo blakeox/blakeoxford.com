@@ -12,7 +12,6 @@
 
 /* Theme toggle spin animation */
 @keyframes theme-toggle-spin {
-  0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 .theme-toggle-spin {
@@ -637,6 +636,23 @@ html::-webkit-scrollbar-thumb {
   .text-lead {
     font-size: var(--fs-3xl, 1.875rem);
   }
+}
+
+/* vertical mask helper */
+.mask-fade-y {
+  --fade-size: 18%;             /* adjust once, affects all uses */
+  -webkit-mask-image: linear-gradient(
+    transparent 0%,
+    #000 var(--fade-size),
+    #000 calc(100% - var(--fade-size)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    transparent 0%,
+    #000 var(--fade-size),
+    #000 calc(100% - var(--fade-size)),
+    transparent 100%
+  );
 }
 
 

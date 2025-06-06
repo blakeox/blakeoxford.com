@@ -1,0 +1,70 @@
+---
+/*  PhotoCarousel.astro
+    • Desktop (md+): twin vertical columns scrolling opposite ways
+    • Mobile:   single horizontal strip scrolling left
+*/
+---
+
+<div class="relative w-full h-full overflow-hidden select-none">
+  <!-- ▼ Mobile horizontal strip -->
+  <div class="absolute inset-0 flex md:hidden items-center">
+    <ul class="flex gap-6 animate-carousel-x">
+      {[
+        '/assets/images/Blake-O-scaled.jpg',
+        '/assets/images/china-profile-picture.jpg',
+        '/assets/images/og-image.jpg',
+        '/assets/images/LI-In-Bug.png',
+        '/assets/images/github-mark.png',
+        // duplicate the set for seamless loop
+        '/assets/images/Blake-O-scaled.jpg',
+        '/assets/images/china-profile-picture.jpg',
+        '/assets/images/og-image.jpg',
+        '/assets/images/LI-In-Bug.png',
+        '/assets/images/github-mark.png',
+      ].map(src => (
+        <li class="h-40 w-40 flex-shrink-0">
+          <img src={src} alt="Portfolio photo" class="h-full w-full rounded-xl object-cover shadow-lg" />
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- ▼ Desktop twin columns -->
+  <div class="absolute inset-0 hidden md:flex gap-8">
+    <!-- Column A – up -->
+    <ul class="flex flex-col gap-8 animate-carousel-up shrink-0">
+      {['/assets/images/Blake-O-scaled.jpg','/assets/images/china-profile-picture.jpg','/assets/images/og-image.jpg']
+        .flatMap(src => [src, src]) /* duplicate for loop */
+        .map(src => (
+          <li class="w-56 aspect-square">
+            <img src={src} alt="" class="h-full w-full rounded-2xl object-cover shadow-xl" />
+          </li>
+        ))}
+    </ul>
+
+    <!-- Column B – down -->
+    <ul class="flex flex-col gap-8 animate-carousel-down shrink-0">
+      {['/assets/images/LI-In-Bug.png','/assets/images/github-mark.png','/assets/images/Blake-O-scaled.jpg']
+        .flatMap(src => [src, src])
+        .map(src => (
+          <li class="w-56 aspect-square">
+            <img src={src} alt="" class="h-full w-full rounded-2xl object-cover shadow-xl" />
+          </li>
+        ))}
+    </ul>
+  </div>
+
+  <span class="sr-only">Continuously scrolling photo gallery</span>
+</div>
+
+<style is:global>
+/* vertical loop */
+@keyframes carousel-up   { from {transform: translateY(0)}     to {transform: translateY(-100%)} }
+@keyframes carousel-down { from {transform: translateY(-100%)} to {transform: translateY(0)}     }
+.animate-carousel-up   { animation: carousel-up   28s linear infinite }
+.animate-carousel-down { animation: carousel-down 28s linear infinite }
+
+/* horizontal loop (mobile) */
+@keyframes carousel-x { from {transform: translateX(0)} to {transform: translateX(-50%)} }
+.animate-carousel-x   { animation: carousel-x 24s linear infinite }
+</style>
