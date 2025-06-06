@@ -19,6 +19,7 @@ import navLinks from '../config/navLinks.js';
 >
   Skip to main content
 </a>
+
 <!-- Add at the top of the nav for scroll progress bar -->
 <div
   class="nav-scroll-progress fixed top-0 left-0 w-full h-1 z-[999] bg-transparent"
@@ -30,6 +31,7 @@ import navLinks from '../config/navLinks.js';
     style="width:0%; pointer-events: none !important;"
   ></div>
 </div>
+
 <nav
   class="navbar-container sticky top-0 z-[1000] transition-all duration-500 nav-visible"
   aria-label="Main Navigation"
@@ -53,6 +55,12 @@ import navLinks from '../config/navLinks.js';
     .nav-link[aria-current='page']::before {
       width: 100%;
     }
+
+    /* Disable tap-highlight on mobile for nav links */
+    .nav-link {
+      -webkit-tap-highlight-color: transparent;
+    }
+
     /* Hamburger menu animation */
     .hamburger-open .hamburger-line:nth-child(1) {
       transform: rotate(45deg) translate(6px, 6px);
@@ -64,6 +72,7 @@ import navLinks from '../config/navLinks.js';
     .hamburger-open .hamburger-line:nth-child(3) {
       transform: rotate(-45deg) translate(6px, -6px);
     }
+
     /* Page transition animations */
     .page-transition-enter {
       animation: fadeInScale 0.4s var(--ease-emphasized) forwards;
@@ -71,6 +80,7 @@ import navLinks from '../config/navLinks.js';
     .page-transition-exit {
       animation: fadeOutScale 0.3s var(--ease-emphasized) forwards;
     }
+
     /* Enhanced focus styles (not applied by default) */
     .nav-focus {
       outline: none;
@@ -92,9 +102,11 @@ import navLinks from '../config/navLinks.js';
     .nav-focus:focus::after {
       opacity: 0.2;
     }
+
     .pulse-glow {
       animation: pulseGlow 2s infinite;
     }
+
     .theme-light {
       --navbar-glow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
@@ -109,15 +121,17 @@ import navLinks from '../config/navLinks.js';
       transition: transform 0.3s var(--ease-emphasized);
     }
 
-    /* Override any focus/hover outline or shadow inside the navbar */
+    /* Override any focus/hover outline, shadow, or background inside the navbar */
     nav [data-sound]:focus,
     nav [data-sound]:hover,
     nav button:focus,
     nav a:focus {
       outline: none;
       box-shadow: none;
+      background-color: transparent;
     }
   </style>
+
   <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
     <!-- Mobile Menu Toggle -->
     <button
@@ -135,6 +149,7 @@ import navLinks from '../config/navLinks.js';
         <span class="hamburger-line w-6 h-0.5 bg-current"></span>
       </div>
     </button>
+
     <!-- Brand/Logo -->
     <a
       class="navbar-logo flex items-center gap-2 font-heading text-xl text-navbar-text dark:text-navbar-textDark no-underline rounded transition-colors duration-200 hover:scale-110 hover:rotate-2 hover:shadow-lg"
@@ -149,6 +164,7 @@ import navLinks from '../config/navLinks.js';
       </span>
       <span class="brand-text sr-only">Blake Oxford</span>
     </a>
+
     <!-- Desktop Navigation Links -->
     <ul class="hidden md:flex gap-6 items-center list-none m-0 p-0 relative" id="nav-links" role="menubar">
       <div
@@ -171,6 +187,7 @@ import navLinks from '../config/navLinks.js';
         </li>
       ))}
     </ul>
+
     <!-- Right Side Actions -->
     <div class="flex items-center gap-2">
       <button
@@ -199,6 +216,7 @@ import navLinks from '../config/navLinks.js';
       <ThemeToggle client:load />
     </div>
   </div>
+
   <!-- Mobile Menu Overlay (click to close) -->
   <div
     class="mobile-menu-overlay fixed inset-0 bg-black/40 z-[1040] transition-opacity duration-200 md:hidden"
@@ -206,6 +224,7 @@ import navLinks from '../config/navLinks.js';
     aria-hidden="true"
     style="display:none;"
   ></div>
+
   <!-- Mobile Navigation Menu -->
   <div
     class="mobile-menu md:hidden rounded-t-2xl shadow-2xl max-w-[95vw] mx-auto mt-2 open:opacity-100 open:translate-y-0"
@@ -215,7 +234,7 @@ import navLinks from '../config/navLinks.js';
       {navLinks.map((link) => (
         <li role="none" class="relative">
           <a
-            class="nav-link block text-lg text-foreground font-medium hover:bg-accent/10 focus:bg-accent/20 transition-colors duration-200 py-3 px-4 rounded-xl mobile-tap-effect {link.active ? 'active' : ''}"
+            class="nav-link block text-lg text-foreground font-medium hover:bg-accent/10 transition-colors duration-200 py-3 px-4 rounded-xl mobile-tap-effect {link.active ? 'active' : ''}"
             href={link.href}
             data-analytics={link.analytics}
             role="menuitem"
@@ -231,13 +250,17 @@ import navLinks from '../config/navLinks.js';
       ))}
     </ul>
   </div>
+
   <!-- Scroll Progress Indicator -->
   <div class="scroll-progress" id="scroll-progress"></div>
+
   <!-- Load the navigation JavaScript -->
   <script type="module" src="/assets/js/NavBarMenu.js"></script>
 </nav>
+
 <!-- Search Overlay -->
 <SearchOverlay />
+
 <!-- Command palette modal -->
 <div
   id="nav-cmdk-modal"
@@ -253,6 +276,7 @@ import navLinks from '../config/navLinks.js';
     <div class="text-sm text-neutral">(This is a placeholder. Fuzzy search and actions coming soon!)</div>
   </div>
 </div>
+
 <!-- Accessibility help modal -->
 <div
   id="nav-help-modal"
