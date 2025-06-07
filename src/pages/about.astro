@@ -79,7 +79,7 @@ const timelineItems: TimelineItem[] = [
       "Reduced manual data entry by 80% through custom API integrations",
       "Implemented automated reconciliation processes, reducing month-end close by 3 days"
     ],
-    color: "from-secondary to-primary"
+    color: "from-[#10b981] to-purple-500"
   },
   {
     year: "2020",
@@ -90,7 +90,7 @@ const timelineItems: TimelineItem[] = [
       "Implemented Sage Intacct and ADP Workforce Now, consolidating 5 legacy systems",
       "Designed disaster recovery protocols reducing potential data loss window by 90%"
     ],
-    color: "from-accent to-accent-dark"
+    color: "from-[#10b981] to-purple-500"
   },
   {
     year: "2023",
@@ -101,7 +101,7 @@ const timelineItems: TimelineItem[] = [
       "Authored SOPs and trained team on AdvancedMD RCM",
       "$1.2M in unbilled services surfaced via SQL-based reporting suite"
     ],
-    color: "from-secondary-light to-accent"
+    color: "from-[#10b981] to-purple-500"
   },
   {
     year: "2024",
@@ -112,7 +112,7 @@ const timelineItems: TimelineItem[] = [
       "Enabled automated coaching for providers and technicians, improving documentation quality and reducing claim denials",
       "Integrated AI into daily workflows for tasks like insurance appeals and internal process optimization, saving hours across departments"
     ],
-    color: "from-primary to-accent-dark"
+    color: "from-[#10b981] to-purple-500"
   }
 ];
 ---
@@ -404,62 +404,147 @@ const timelineItems: TimelineItem[] = [
                 <p class="text-lg text-neutral-light">
                 </p>
               </div>
+              <!-- Desktop Timeline (vertical) -->
+              <div class="hidden md:block relative">
+                <!-- Timeline center line with gradient animation -->
+                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#10b981] via-purple-500 to-blue-500 animate-gradient-shift"></div>
+                <div class="space-y-0">
+                  {timelineItems.map((item, index) => (
+                    <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'} group`}>
+                      <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
+                        <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
+                          <div class={`bg-gray-800/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-${index % 2 === 0 ? 'accent' : 'purple-500'}/10 group-hover:bg-gray-800/95 relative overflow-hidden`}>
+                            {/* Background gradient effect */}
+                            <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            
+                            <div class="flex items-center mb-6 gap-4 relative">
+                              <div class={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${item.color} text-2xl group-hover:scale-110 transition-transform duration-300 relative`}>
+                                {/* Multiple gradient layers for depth */}
+                                <div class="absolute inset-0 rounded-full bg-gradient-to-br from-accent/20 to-purple-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div class="absolute inset-0 rounded-full bg-gradient-to-br from-accent/30 to-purple-500/30 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                {/* Enhanced icon container */}
+                                <div class="relative z-10 w-8 h-8">
+                                  {item.icon === "🔄" && (
+                                    <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                  )}
+                                  {item.icon === "☁️" && (
+                                    <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                                    </svg>
+                                  )}
+                                  {item.icon === "💡" && (
+                                    <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    </svg>
+                                  )}
+                                  {item.icon === "🤖" && (
+                                    <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                                    </svg>
+                                  )}
+                                </div>
+                              </div>
+                              <div class="flex-1">
+                                <h3 class="text-2xl font-bold text-white group-hover:text-accent transition-colors duration-300">{item.year}</h3>
+                                <p class="text-accent group-hover:text-accent-light transition-colors duration-300">{item.title}</p>
+                              </div>
+                            </div>
+                            <div class="space-y-3 pl-4 border-l-2 border-gray-700 group-hover:border-accent/50 transition-colors duration-300 relative">
+                              {item.achievements.map((achievement, idx) => (
+                                <p class="text-gray-300 group-hover:text-gray-200 transition-colors duration-300 flex items-start transform hover:translate-x-1 transition-transform duration-200" style={`transition-delay: ${idx * 50}ms`}>
+                                  <svg class="w-4 h-4 text-accent mt-1 mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  {achievement}
+                                </p>
+                              ))}
+                            </div>
+                            {/* Bottom gradient line */}
+                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Timeline dot with pulse animation */}
+                      <div class="absolute left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full border-4 border-gray-900 bg-accent group-hover:scale-125 transition-transform duration-300">
+                        <div class="absolute inset-0 rounded-full bg-accent animate-ping opacity-75"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <!-- Mobile Timeline (horizontal scroll) -->
               <div class="md:hidden overflow-x-auto pb-8 timeline-scroll-container">
                 <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
                   {timelineItems.map((item) => (
-                    <div class="flex-none w-80 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-accent/10 transition-all">
-                      <div class="flex items-center mb-4">
-                        <div class={`w-12 h-12 flex items-center justify-center rounded-full text-xl bg-gradient-to-br ${item.color}`}>
-                          {item.icon}
-                        </div>
-                        <div class="ml-4">
-                          <h3 class="font-bold text-xl">{item.year}</h3>
-                          <p class="text-accent">{item.title}</p>
-                        </div>
-                      </div>
-                      <div class="pl-2 border-l-2 border-gray-700 space-y-2">
-                        {item.achievements.map(achievement => (
-                          <p class="text-sm text-gray-300">{achievement}</p>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <!-- Desktop Timeline (vertical) -->
-              <div class="hidden md:block relative">
-                <!-- Timeline center line -->
-                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#10b981] via-purple-500 to-blue-500"></div>
-                <div class="space-y-0">
-                  {timelineItems.map((item, index) => (
-                    <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'}`}>
-                      <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
-                        <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
-                          <div class={`bg-gray-800/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-${index % 2 === 0 ? 'accent' : 'purple-500'}/10`}>
-                            <div class="flex items-center mb-4 gap-4">
-                              <div class={`inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br ${item.color} text-2xl`}>
-                                {item.icon}
-                              </div>
-                              <div>
-                                <h3 class="text-2xl font-bold text-white">{item.year}</h3>
-                                <p class="text-accent">{item.title}</p>
-                              </div>
-                            </div>
-                            <div class="space-y-3 pl-4 border-l-2 border-gray-700">
-                              {item.achievements.map(achievement => (
-                                <p class="text-gray-300">{achievement}</p>
-                              ))}
-                            </div>
+                    <div class="flex-none w-80 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-accent/10 transition-all group relative overflow-hidden">
+                      {/* Background gradient effect */}
+                      <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      
+                      <div class="flex items-center mb-6 relative">
+                        <div class={`w-14 h-14 flex items-center justify-center rounded-full text-xl bg-gradient-to-br ${item.color} group-hover:scale-110 transition-transform duration-300 relative`}>
+                          {/* Multiple gradient layers for depth */}
+                          <div class="absolute inset-0 rounded-full bg-gradient-to-br from-accent/20 to-purple-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          <div class="absolute inset-0 rounded-full bg-gradient-to-br from-accent/30 to-purple-500/30 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+                          {/* Enhanced icon container */}
+                          <div class="relative z-10 w-7 h-7">
+                            {item.icon === "🔄" && (
+                              <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              </svg>
+                            )}
+                            {item.icon === "☁️" && (
+                              <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                              </svg>
+                            )}
+                            {item.icon === "💡" && (
+                              <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                              </svg>
+                            )}
+                            {item.icon === "🤖" && (
+                              <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                              </svg>
+                            )}
                           </div>
                         </div>
+                        <div class="ml-4 flex-1">
+                          <h3 class="font-bold text-xl group-hover:text-accent transition-colors duration-300">{item.year}</h3>
+                          <p class="text-accent group-hover:text-accent-light transition-colors duration-300">{item.title}</p>
+                        </div>
                       </div>
-                      <!-- Timeline dot -->
-                      <div class="absolute left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full border-4 border-gray-900 bg-accent"></div>
+                      <div class="pl-2 border-l-2 border-gray-700 group-hover:border-accent/50 transition-colors duration-300 space-y-2 relative">
+                        {item.achievements.map((achievement, idx) => (
+                          <p class="text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300 flex items-start transform hover:translate-x-1 transition-transform duration-200" style={`transition-delay: ${idx * 50}ms`}>
+                            <svg class="w-3 h-3 text-accent mt-1 mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {achievement}
+                          </p>
+                        ))}
+                      </div>
+                      {/* Bottom gradient line */}
+                      <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
                     </div>
                   ))}
                 </div>
               </div>
+
+              <style>
+                @keyframes gradient-shift {
+                  0% { background-position: 0% 0%; }
+                  50% { background-position: 0% 100%; }
+                  100% { background-position: 0% 0%; }
+                }
+                .animate-gradient-shift {
+                  background-size: 100% 200%;
+                  animation: gradient-shift 8s ease infinite;
+                }
+              </style>
             </div>
           </section>
 
@@ -487,6 +572,7 @@ const timelineItems: TimelineItem[] = [
                       <div class="flex items-center mb-6">
                         <div class="relative">
                           <div class="absolute inset-0 rounded-full bg-gradient-to-r from-[#10b981] to-purple-500 blur-sm opacity-70 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-[#10b981] to-purple-500 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
                           <img 
                             src={testimonial.image} 
                             alt={`${testimonial.name}, ${testimonial.title}`}
@@ -607,7 +693,7 @@ const timelineItems: TimelineItem[] = [
                       <li class="flex items-start">
                         <!-- People/Learning Icon -->
                         <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
                         ADP Workforce Now and Cornerstone LMS integration
                       </li>
