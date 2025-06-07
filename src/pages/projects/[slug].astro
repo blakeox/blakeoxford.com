@@ -26,9 +26,6 @@ const formattedDate = date.toLocaleDateString('en-US', {
 });
 const canonicalUrl = `https://blakeoxford.com/projects/${slug}/`;
 
-const index = projects.findIndex((p: typeof projects[number]) => p.slug === slug);
-const prevProject = projects[index - 1];
-const nextProject = projects[index + 1];
 ---
 
 <Layout
@@ -76,24 +73,4 @@ const nextProject = projects[index + 1];
       </ul>
     </aside>
   )}
-
-  <!-- Prev/Next Navigation -->
-  <nav class="flex justify-between max-w-3xl mx-auto px-4 md:px-12 lg:px-32 my-12">
-    {prevProject && (
-      <a href={`/projects/${prevProject.slug}`} class="c-btn c-btn--secondary">
-        &larr; {prevProject.data.title}
-      </a>
-    )}
-    {nextProject && (
-      <a href={`/projects/${nextProject.slug}`} class="c-btn c-btn--secondary">
-        {nextProject.data.title} &rarr;
-      </a>
-    )}
-  </nav>
-
-  <div class="text-center mb-24">
-    <a href="/projects/" class="c-btn c-btn--secondary">
-      Back to Projects
-    </a>
-  </div>
 </Layout>
