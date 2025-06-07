@@ -8,7 +8,7 @@
 <div class="relative w-full h-full overflow-hidden select-none">
   <!-- ▼ Mobile horizontal strip -->
   <div class="absolute inset-0 flex md:hidden items-center">
-    <ul class="flex gap-8 animate-carousel-x">
+    <ul class="flex gap-4 animate-carousel-x">
       {[
         '/assets/images/Blake-O-scaled.jpg',
         '/assets/images/china-profile-picture.jpg',
@@ -30,24 +30,24 @@
   </div>
 
   <!-- ▼ Desktop twin columns -->
-  <div class="absolute inset-0 hidden md:flex gap-12">
+  <div class="absolute inset-0 hidden md:flex gap-4 w-full h-full">
     <!-- Column A – up -->
-    <ul class="flex flex-col gap-12 animate-carousel-up shrink-0">
+    <ul class="flex flex-col gap-4 animate-carousel-up flex-1">
       {['/assets/images/Blake-O-scaled.jpg','/assets/images/china-profile-picture.jpg','/assets/images/og-image.jpg']
         .flatMap(src => [src, src]) /* duplicate for loop */
         .map(src => (
-          <li class="w-72 aspect-square">
+          <li class="w-full aspect-square max-w-xl mx-auto">
             <img src={src} alt="" class="h-full w-full rounded-2xl object-cover shadow-xl" />
           </li>
         ))}
     </ul>
 
     <!-- Column B – down -->
-    <ul class="flex flex-col gap-12 animate-carousel-down shrink-0">
+    <ul class="flex flex-col gap-4 animate-carousel-down flex-1">
       {['/assets/images/LI-In-Bug.png','/assets/images/github-mark.png','/assets/images/Blake-O-scaled.jpg']
         .flatMap(src => [src, src])
         .map(src => (
-          <li class="w-72 aspect-square">
+          <li class="w-full aspect-square max-w-xl mx-auto">
             <img src={src} alt="" class="h-full w-full rounded-2xl object-cover shadow-xl" />
           </li>
         ))}

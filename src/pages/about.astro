@@ -134,7 +134,7 @@ const socialLinksHtml = socialLinks.map(link => {
                    bg-gradient-to-br from-background via-accent/5 to-background
                    dark:from-background-dark dark:via-accent/10 dark:to-background-dark"
           >
-            <div class="relative w-full h-full grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="relative w-full h-full grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- left column – intro -->
               <div class="order-1 flex flex-col justify-center max-w-3xl mx-auto px-4">
                 <div class="prose lg:prose-xl dark:prose-invert">
@@ -144,7 +144,7 @@ const socialLinksHtml = socialLinks.map(link => {
                 </div>
               </div>
               <!-- right column – carousel -->
-              <div class="order-2 flex items-center">
+              <div class="order-2 flex flex-1 items-stretch w-full h-full">
                 <PhotoCarousel class="w-full h-full" />
               </div>
             </div>
