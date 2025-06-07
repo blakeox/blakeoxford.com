@@ -147,15 +147,21 @@ const timelineItems: TimelineItem[] = [
           <!-- Hero -->
           <section
             id="about-me"
-            class="relative flex items-center h-screen overflow-hidden
+            class="relative flex items-center h-[60vh] md:h-screen overflow-hidden
                    bg-gradient-to-br from-background via-accent/5 to-background
                    dark:from-background-dark dark:via-accent/10 dark:to-background-dark"
             role="region"
             aria-labelledby="about-me-title"
           >
-            <div class="relative w-full h-full grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Background decorative elements -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+              <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+              <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+            </div>
+
+            <div class="relative w-full h-full grid grid-cols-1 md:grid-cols-2">
               <!-- left column – intro -->
-              <div class="order-1 flex flex-col justify-center max-w-3xl mx-auto px-4">
+              <div class="order-1 flex flex-col justify-center max-w-3xl mx-auto px-4 md:px-8">
                 <div class="prose lg:prose-xl dark:prose-invert">
                   <h1
                     id="about-me-title"
@@ -407,21 +413,21 @@ const timelineItems: TimelineItem[] = [
               <!-- Desktop Timeline (vertical) -->
               <div class="hidden md:block relative">
                 <!-- Timeline center line with gradient animation -->
-                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#10b981] via-purple-500 to-blue-500 animate-gradient-shift"></div>
+                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#10b981] via-purple-500 to-[#10b981] animate-gradient-shift"></div>
                 <div class="space-y-0">
                   {timelineItems.map((item, index) => (
                     <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'} group`}>
                       <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
                         <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
-                          <div class={`bg-gray-800/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-${index % 2 === 0 ? 'accent' : 'purple-500'}/10 group-hover:bg-gray-800/95 relative overflow-hidden`}>
+                          <div class={`bg-gray-800/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-[#10b981]/10 group-hover:bg-gray-800/95 relative overflow-hidden`}>
                             {/* Background gradient effect */}
-                            <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-[#10b981]/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             
                             <div class="flex items-center mb-6 gap-4 relative">
                               <div class={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${item.color} text-2xl group-hover:scale-110 transition-transform duration-300 relative`}>
                                 {/* Multiple gradient layers for depth */}
-                                <div class="absolute inset-0 rounded-full bg-gradient-to-br from-accent/20 to-purple-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                <div class="absolute inset-0 rounded-full bg-gradient-to-br from-accent/30 to-purple-500/30 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                <div class="absolute inset-0 rounded-full bg-gradient-to-br from-[#10b981]/20 to-purple-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div class="absolute inset-0 rounded-full bg-gradient-to-br from-[#10b981]/30 to-purple-500/30 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
                                 {/* Enhanced icon container */}
                                 <div class="relative z-10 w-8 h-8">
                                   {item.icon === "🔄" && (
@@ -447,14 +453,14 @@ const timelineItems: TimelineItem[] = [
                                 </div>
                               </div>
                               <div class="flex-1">
-                                <h3 class="text-2xl font-bold text-white group-hover:text-accent transition-colors duration-300">{item.year}</h3>
-                                <p class="text-accent group-hover:text-accent-light transition-colors duration-300">{item.title}</p>
+                                <h3 class="text-2xl font-bold text-white group-hover:text-[#10b981] transition-colors duration-300">{item.year}</h3>
+                                <p class="text-[#10b981] group-hover:text-[#10b981]/80 transition-colors duration-300">{item.title}</p>
                               </div>
                             </div>
-                            <div class="space-y-3 pl-4 border-l-2 border-gray-700 group-hover:border-accent/50 transition-colors duration-300 relative">
+                            <div class="space-y-3 pl-4 border-l-2 border-gray-700 group-hover:border-[#10b981]/50 transition-colors duration-300 relative">
                               {item.achievements.map((achievement, idx) => (
-                                <p class="text-gray-300 group-hover:text-gray-200 transition-colors duration-300 flex items-start transform hover:translate-x-1 transition-transform duration-200" style={`transition-delay: ${idx * 50}ms`}>
-                                  <svg class="w-4 h-4 text-accent mt-1 mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <p class="text-gray-300 group-hover:text-gray-200 transition-colors duration-300 flex items-start transform hover:translate-x-1 transition-transform duration-200 hover:bg-gray-700/30 rounded-lg p-2" style={`transition-delay: ${idx * 50}ms`}>
+                                  <svg class="w-4 h-4 text-[#10b981] mt-1 mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                   </svg>
                                   {achievement}
@@ -462,13 +468,13 @@ const timelineItems: TimelineItem[] = [
                               ))}
                             </div>
                             {/* Bottom gradient line */}
-                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
+                            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#10b981]/0 via-[#10b981]/50 to-[#10b981]/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
                           </div>
                         </div>
                       </div>
                       {/* Timeline dot with pulse animation */}
-                      <div class="absolute left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full border-4 border-gray-900 bg-accent group-hover:scale-125 transition-transform duration-300">
-                        <div class="absolute inset-0 rounded-full bg-accent animate-ping opacity-75"></div>
+                      <div class="absolute left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full border-4 border-gray-900 bg-[#10b981] group-hover:scale-125 transition-transform duration-300">
+                        <div class="absolute inset-0 rounded-full bg-[#10b981] animate-ping opacity-75"></div>
                       </div>
                     </div>
                   ))}
@@ -479,15 +485,15 @@ const timelineItems: TimelineItem[] = [
               <div class="md:hidden overflow-x-auto pb-8 timeline-scroll-container">
                 <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
                   {timelineItems.map((item) => (
-                    <div class="flex-none w-80 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-accent/10 transition-all group relative overflow-hidden">
+                    <div class="flex-none w-80 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-[#10b981]/10 transition-all group relative overflow-hidden">
                       {/* Background gradient effect */}
-                      <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div class="absolute inset-0 bg-gradient-to-r from-[#10b981]/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       
                       <div class="flex items-center mb-6 relative">
                         <div class={`w-14 h-14 flex items-center justify-center rounded-full text-xl bg-gradient-to-br ${item.color} group-hover:scale-110 transition-transform duration-300 relative`}>
                           {/* Multiple gradient layers for depth */}
-                          <div class="absolute inset-0 rounded-full bg-gradient-to-br from-accent/20 to-purple-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          <div class="absolute inset-0 rounded-full bg-gradient-to-br from-accent/30 to-purple-500/30 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+                          <div class="absolute inset-0 rounded-full bg-gradient-to-br from-[#10b981]/20 to-purple-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          <div class="absolute inset-0 rounded-full bg-gradient-to-br from-[#10b981]/30 to-purple-500/30 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
                           {/* Enhanced icon container */}
                           <div class="relative z-10 w-7 h-7">
                             {item.icon === "🔄" && (
@@ -513,14 +519,14 @@ const timelineItems: TimelineItem[] = [
                           </div>
                         </div>
                         <div class="ml-4 flex-1">
-                          <h3 class="font-bold text-xl group-hover:text-accent transition-colors duration-300">{item.year}</h3>
-                          <p class="text-accent group-hover:text-accent-light transition-colors duration-300">{item.title}</p>
+                          <h3 class="font-bold text-xl group-hover:text-[#10b981] transition-colors duration-300">{item.year}</h3>
+                          <p class="text-[#10b981] group-hover:text-[#10b981]/80 transition-colors duration-300">{item.title}</p>
                         </div>
                       </div>
-                      <div class="pl-2 border-l-2 border-gray-700 group-hover:border-accent/50 transition-colors duration-300 space-y-2 relative">
+                      <div class="pl-2 border-l-2 border-gray-700 group-hover:border-[#10b981]/50 transition-colors duration-300 space-y-2 relative">
                         {item.achievements.map((achievement, idx) => (
-                          <p class="text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300 flex items-start transform hover:translate-x-1 transition-transform duration-200" style={`transition-delay: ${idx * 50}ms`}>
-                            <svg class="w-3 h-3 text-accent mt-1 mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <p class="text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300 flex items-start transform hover:translate-x-1 transition-transform duration-200 hover:bg-gray-700/30 rounded-lg p-2" style={`transition-delay: ${idx * 50}ms`}>
+                            <svg class="w-3 h-3 text-[#10b981] mt-1 mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             {achievement}
@@ -528,7 +534,7 @@ const timelineItems: TimelineItem[] = [
                         ))}
                       </div>
                       {/* Bottom gradient line */}
-                      <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
+                      <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#10b981]/0 via-[#10b981]/50 to-[#10b981]/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
                     </div>
                   ))}
                 </div>
@@ -543,6 +549,20 @@ const timelineItems: TimelineItem[] = [
                 .animate-gradient-shift {
                   background-size: 100% 200%;
                   animation: gradient-shift 8s ease infinite;
+                }
+                .timeline-scroll-container::-webkit-scrollbar {
+                  height: 8px;
+                }
+                .timeline-scroll-container::-webkit-scrollbar-track {
+                  background: rgba(31, 41, 55, 0.3);
+                  border-radius: 4px;
+                }
+                .timeline-scroll-container::-webkit-scrollbar-thumb {
+                  background: rgba(16, 185, 129, 0.5);
+                  border-radius: 4px;
+                }
+                .timeline-scroll-container::-webkit-scrollbar-thumb:hover {
+                  background: rgba(16, 185, 129, 0.7);
                 }
               </style>
             </div>
