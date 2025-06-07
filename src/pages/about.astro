@@ -483,14 +483,14 @@ const timelineItems: TimelineItem[] = [
               <div class="testimonials-wrapper">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {testimonials.map((testimonial) => (
-                    <div class="bg-surface dark:bg-gray-800 rounded-xl p-8 shadow-xl dark:shadow-gray-900/30 border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="bg-surface dark:bg-gray-800 rounded-xl p-8 shadow-xl dark:shadow-gray-900/30 border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
                       <div class="flex items-center mb-6">
                         <div class="relative">
-                          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-[#10b981] to-purple-500 blur-sm opacity-70"></div>
+                          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-[#10b981] to-purple-500 blur-sm opacity-70 group-hover:opacity-100 transition-opacity duration-300"></div>
                           <img 
                             src={testimonial.image} 
                             alt={`${testimonial.name}, ${testimonial.title}`}
-                            class="w-14 h-14 rounded-full object-cover border-2 border-white dark:border-gray-800 relative z-10"
+                            class="w-14 h-14 rounded-full object-cover border-2 border-white dark:border-gray-800 relative z-10 group-hover:scale-105 transition-transform duration-300"
                             loading="lazy"
                             width="56"
                             height="56"
@@ -499,16 +499,17 @@ const timelineItems: TimelineItem[] = [
                           />
                         </div>
                         <div class="ml-4">
-                          <h3 class="font-bold text-lg">{testimonial.name}</h3>
-                          <p class="text-sm text-gray-500 dark:text-gray-400">{testimonial.title}</p>
+                          <h3 class="font-bold text-lg group-hover:text-accent transition-colors duration-300">{testimonial.name}</h3>
+                          <p class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">{testimonial.title}</p>
                         </div>
                       </div>
                       <div class="relative">
-                        <svg class="w-10 h-10 text-accent/10 absolute -top-4 -left-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-10 h-10 text-accent/10 absolute -top-4 -left-4 group-hover:text-accent/20 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                         </svg>
-                        <p class="text-gray-700 dark:text-gray-300 mb-4 italic relative z-10">{testimonial.quote}</p>
+                        <p class="text-gray-700 dark:text-gray-300 mb-4 italic relative z-10 pl-6 pt-2 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors duration-300 leading-relaxed">{testimonial.quote}</p>
                       </div>
+                      <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-accent to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                     </div>
                   ))}
                 </div>
@@ -542,22 +543,30 @@ const timelineItems: TimelineItem[] = [
                     <ul class="space-y-2 ml-6">
                       <li class="flex items-start">
                         <!-- Architecture Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 9V7a5 5 0 0110 0v2" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
                         System architecture and workflow design
                       </li>
                       <li class="flex items-start">
                         <!-- Document Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h10M7 11h10M7 15h6" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
                         Comprehensive SOP development and documentation
                       </li>
                       <li class="flex items-start">
                         <!-- Team/Training Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-4a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-4a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
                         Cross-functional team training and certification
                       </li>
                       <li class="flex items-start">
                         <!-- Compliance/Check Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
                         Revenue cycle optimization and compliance assurance
                       </li>
                     </ul>
@@ -567,7 +576,7 @@ const timelineItems: TimelineItem[] = [
                 <div class="bg-surface dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                   <div class="flex items-center mb-4">
                     <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
                     </div>
                     <h3 class="text-xl font-bold">Cloud & SaaS</h3>
                   </div>
@@ -576,22 +585,30 @@ const timelineItems: TimelineItem[] = [
                     <ul class="space-y-2 ml-6">
                       <li class="flex items-start">
                         <!-- Migration Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
                         Google Workspace → Microsoft 365 migration for 180 users
                       </li>
                       <li class="flex items-start">
                         <!-- Finance Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.21 0-4 1.343-4 3s1.79 3 4 3 4-1.343 4-3-1.79-3-4-3zm0 0V4m0 10v4" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                         Sage Intacct financial platform implementation
                       </li>
                       <li class="flex items-start">
                         <!-- Cloud/Device Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999A5.002 5.002 0 0012 4a5 5 0 00-4.9 6.001A4.001 4.001 0 003 15z" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                        </svg>
                         Azure/Intune endpoint management deployment
                       </li>
                       <li class="flex items-start">
                         <!-- People/Learning Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-4a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
                         ADP Workforce Now and Cornerstone LMS integration
                       </li>
                     </ul>
@@ -601,7 +618,7 @@ const timelineItems: TimelineItem[] = [
                 <div class="bg-surface dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                   <div class="flex items-center mb-4">
                     <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
                     </div>
                     <h3 class="text-xl font-bold">Automation & Savings</h3>
                   </div>
@@ -610,22 +627,32 @@ const timelineItems: TimelineItem[] = [
                     <ul class="space-y-2 ml-6">
                       <li class="flex items-start">
                         <!-- Cloud Optimization Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999A5.002 5.002 0 0012 4a5 5 0 00-4.9 6.001A4.001 4.001 0 003 15z" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
                         <span class="text-sm">Azure cloud infrastructure optimization</span>
                       </li>
                       <li class="flex items-start">
                         <!-- Analytics Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
                         <span class="text-sm">Power BI analytics and real-time dashboarding</span>
                       </li>
                       <li class="flex items-start">
                         <!-- Workflow/AI Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m4 4h-1v-4h-1M12 8v4l3 3" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
                         <span class="text-sm">Custom OpenAI workflow integrations</span>
                       </li>
                       <li class="flex items-start">
                         <!-- Integration Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8v4l3 3m4-7v4l-3 3" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
                         <span class="text-sm">Enterprise system consolidations and integrations</span>
                       </li>
                     </ul>
@@ -635,7 +662,7 @@ const timelineItems: TimelineItem[] = [
                 <div class="bg-surface dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                   <div class="flex items-center mb-4">
                     <div class="rounded-full bg-gradient-to-r from-[#10b981] to-purple-600 p-3 mr-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                     </div>
                     <h3 class="text-xl font-bold">Data Analytics</h3>
                   </div>
@@ -644,22 +671,32 @@ const timelineItems: TimelineItem[] = [
                     <ul class="space-y-2 ml-6">
                       <li class="flex items-start">
                         <!-- Dashboard Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 13h8V3H3v10zm10 8h8v-6h-8v6zm0-8h8V3h-8v10zm-10 8h8v-6H3v6z" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                        </svg>
                         Real-time SQL/Power BI dashboards
                       </li>
                       <li class="flex items-start">
                         <!-- Predictive/Chart Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19V6a1 1 0 012 0v13m-7-7h4a1 1 0 010 2H6a1 1 0 010-2zm8 0h4a1 1 0 010 2h-4a1 1 0 010-2z" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
                         Predictive financial modeling systems
                       </li>
                       <li class="flex items-start">
                         <!-- Decision/Support Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12l2 2 4-4" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
                         C-suite executive decision support frameworks
                       </li>
                       <li class="flex items-start">
                         <!-- KPI/Performance Icon -->
-                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m4 4h-1v-4h-1" /></svg>
+                        <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
                         Automated KPI tracking and performance visualization
                       </li>
                     </ul>
