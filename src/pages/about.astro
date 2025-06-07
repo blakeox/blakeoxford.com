@@ -147,7 +147,7 @@ const timelineItems: TimelineItem[] = [
           <!-- Hero -->
           <section
             id="about-me"
-            class="relative flex items-center h-[60vh] md:h-screen overflow-hidden
+            class="relative flex items-center h-[60vh] md:h-[calc(100vh-4rem)] overflow-hidden
                    bg-gradient-to-br from-background via-accent/5 to-background
                    dark:from-background-dark dark:via-accent/10 dark:to-background-dark"
             role="region"
@@ -155,18 +155,22 @@ const timelineItems: TimelineItem[] = [
           >
             <!-- Background decorative elements -->
             <div class="absolute inset-0 overflow-hidden pointer-events-none">
-              <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
-              <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+              <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse-glow"></div>
+              <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-glow" style="animation-delay: -2s"></div>
+              <!-- Subtle grid pattern -->
+              <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]">
+                <div class="absolute inset-0" style="background-image: linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px); background-size: 24px 24px;"></div>
+              </div>
             </div>
 
             <div class="relative w-full h-full grid grid-cols-1 md:grid-cols-2">
               <!-- left column – intro -->
-              <div class="order-1 flex flex-col justify-center max-w-3xl mx-auto px-4 md:px-8">
+              <div class="order-1 flex flex-col justify-center max-w-3xl mx-auto px-4 md:px-8 relative z-10">
                 <div class="prose lg:prose-xl dark:prose-invert">
                   <h1
                     id="about-me-title"
                     class="font-heading font-bold text-h1 md:text-h1 text-gradient 
-                          bg-gradient-to-r from-accent to-accent-dark mb-6 
+                          bg-gradient-to-r from-accent via-accent-dark to-accent bg-clip-text text-transparent mb-6 
                           animate-fadeInUp m-0"
                   >
                     If I'm not wondering, I'm building—and if I'm not building, I'm wondering.
@@ -175,7 +179,21 @@ const timelineItems: TimelineItem[] = [
               </div>
               <!-- right column – carousel -->
               <div class="order-2 flex flex-1 items-stretch w-full h-full" role="complementary" aria-label="Photo gallery">
-                <PhotoCarousel class="w-full h-full" />
+                <div class="relative w-full h-full">
+                  <PhotoCarousel class="w-full h-full" />
+                  <!-- Subtle gradient overlay -->
+                  <div class="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent dark:from-background-dark/20 pointer-events-none"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scroll indicator -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block z-10">
+              <div class="flex flex-col items-center gap-2">
+                <span class="text-sm font-medium text-accent dark:text-accent-light">Scroll to explore</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
               </div>
             </div>
           </section>
@@ -362,30 +380,6 @@ const timelineItems: TimelineItem[] = [
                           <p class="text-gray-700 dark:text-gray-300">
                             Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects.
                           </p>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Certifications -->
-                    <div class="bg-surface dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-border dark:border-gray-700 hover:shadow-xl transition-all duration-300">
-                      <div class="flex items-start">
-                        <div class="flex-shrink-0 bg-purple-500/10 p-3 rounded-lg">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                          </svg>
-                        </div>
-                        <div class="ml-4">
-                          <h4 class="font-bold text-lg">Professional Certifications</h4>
-                          <div class="space-y-3 mt-4">
-                            <div class="flex items-center gap-3">
-                              <div class="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                                <span class="font-semibold text-purple-600 dark:text-purple-400">PY</span>
-                              </div>
-                              <div>
-                                <div class="font-medium">Python for Data Science</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-400">Issued 2021</div>
-                              </div>
-                            </div>
-                          </div>
                         </div>
                       </div>
                     </div>
