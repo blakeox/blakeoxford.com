@@ -209,12 +209,12 @@
 
 /* --- Navbar Animations (moved from NavBar.astro) --- */
 @keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.95) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from { opacity: 1; transform: none; }
+  to { opacity: 1; transform: none; }
 }
 @keyframes fadeOutScale {
-  from { opacity: 1; transform: scale(1) translateY(0); }
-  to { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  from { opacity: 1; transform: none; }
+  to { opacity: 1; transform: none; }
 }
 @keyframes pulseGlow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(var(--color-accent), 0.4); }
@@ -298,7 +298,7 @@
 }
 #nav-cmdk-modal.active, #nav-help-modal.active {
   opacity: 1;
-  pointer-events: auto;
+  pointer-index: auto;
 }
 #nav-cmdk-modal .bg-background, #nav-help-modal .bg-background {
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
@@ -457,20 +457,30 @@
 
 /* Advanced animations */
 .animate-fadeIn {
-  animation: fadeIn 1s ease-in-out forwards;
+  animation: none;
+  opacity: 1;
 }
 .animate-fadeInUp {
-  animation: fadeInUp 1s ease-out forwards;
-  opacity: 0;
+  animation: none;
+  opacity: 1;
 }
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+.animate-fade-in {
+  animation: none;
+  opacity: 1;
 }
 
+/* Text accent color */
+.text-accent {
+  color: var(--color-accent) !important;
+}
+
+.text-accent-dark {
+  color: var(--color-accent-dark) !important;
+}
+
+/* Remove text gradient effects but keep accent color */
 .text-gradient {
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-accent) !important;
 }
 
 /* Skill progress bar animation */
@@ -480,22 +490,12 @@
 
 /* Scroll animations */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 1; }
+  to { opacity: 1; }
 }
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 1; transform: none; }
+  to { opacity: 1; transform: none; }
 }
 @keyframes float {
   0% {
@@ -563,7 +563,7 @@ html::-webkit-scrollbar-thumb {
   margin-bottom: 1.25rem;
 }
 .prose h1 { font-size: var(--fs-7xl, 2.5rem); }
-.prose h2 { font-size: var(--fs-5xl, 2rem); }
+.prose h2 { font-size: var(--fs-5xl); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); font-weight: var(--fw-bold); }
 .prose h3 { font-size: var(--fs-3xl, 1.5rem); }
 .prose h4 { font-size: var(--fs-xl, 1.25rem); }
 .prose h5 { font-size: var(--fs-lg, 1.125rem); }
@@ -638,21 +638,14 @@ html::-webkit-scrollbar-thumb {
   }
 }
 
-/* vertical mask helper */
-.mask-fade-y {
-  --fade-size: 18%;             /* adjust once, affects all uses */
-  -webkit-mask-image: linear-gradient(
-    transparent 0%,
-    #000 var(--fade-size),
-    #000 calc(100% - var(--fade-size)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    transparent 0%,
-    #000 var(--fade-size),
-    #000 calc(100% - var(--fade-size)),
-    transparent 100%
-  );
+/* Heading styles */
+h2 {
+  font-size: var(--fs-5xl);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
+  font-weight: var(--fw-bold);
 }
+
+/* End of file */
 
 
