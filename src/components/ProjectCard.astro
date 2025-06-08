@@ -2,9 +2,8 @@
 // ProjectCard.astro
 // import type { Project } from 'astro:content';
 // TODO: Use correct type from astro:content when available
-const { project, featured = false } = Astro.props as {
+const { project } = Astro.props as {
   project: any; // fallback to any due to type issues
-  featured?: boolean;
 };
 const { slug, data } = project;
 ---
@@ -22,11 +21,11 @@ const { slug, data } = project;
     </a>
   </div>
   <div class="flex flex-col flex-1 p-6 gap-2">
-    <h2 class="text-2xl font-bold mb-1 text-accent-dark dark:text-accent-light leading-tight">
+    <h3 class="text-2xl font-bold mb-1 text-accent-dark dark:text-accent-light leading-tight">
       <a href={`/projects/${slug}/`} class="hover:underline flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={`Project: ${data.title}`}>
         {data.title}
       </a>
-    </h2>
+    </h3>
     {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
       <ul class="flex flex-wrap gap-2 mb-1" aria-label="Project tags">
         {data.tags.map((tag: string) => (
