@@ -1,29 +1,104 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 /*  PhotoCarousel.astro
     • Desktop (md+): twin vertical columns scrolling opposite ways
     • Mobile:   single horizontal strip scrolling left
 */
+
+// Import all images from the carousel directory
+const imageFiles = await import.meta.glob<{ default: ImageMetadata }>('@/assets/images/carousel/*.{jpg,jpeg,png,webp}', { eager: true });
+const images = Object.values(imageFiles).map(image => image.default);
+
+// Configuration
+const CONFIG = {
+  mobile: {
+    count: 5,
+    animationDuration: 30,
+    imageSize: { width: 224, height: 224 }
+  },
+  desktop: {
+    animationDuration: 35,
+    imageSize: { width: 640, height: 640 }
+  }
+};
+
+// Improved Fisher-Yates shuffle with type safety
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Enhanced function to create a seamless loop without consecutive duplicates
+function createSeamlessLoop(images: ImageMetadata[]): ImageMetadata[] {
+  if (images.length < 2) return images;
+  
+  // Create two shuffled arrays
+  const firstHalf = shuffleArray(images);
+  let secondHalf = shuffleArray(images);
+  
+  // Ensure no consecutive duplicates at the loop point
+  while (firstHalf[firstHalf.length - 1] === secondHalf[0]) {
+    secondHalf = shuffleArray(images);
+  }
+  
+  // Ensure no consecutive duplicates within each half
+  for (let i = 0; i < firstHalf.length - 1; i++) {
+    if (firstHalf[i] === firstHalf[i + 1]) {
+      const temp = firstHalf[i];
+      firstHalf[i] = firstHalf[i + 1];
+      firstHalf[i + 1] = temp;
+    }
+  }
+  
+  for (let i = 0; i < secondHalf.length - 1; i++) {
+    if (secondHalf[i] === secondHalf[i + 1]) {
+      const temp = secondHalf[i];
+      secondHalf[i] = secondHalf[i + 1];
+      secondHalf[i + 1] = temp;
+    }
+  }
+  
+  return [...firstHalf, ...secondHalf];
+}
+
+// Get random images for mobile view
+const mobileImages = shuffleArray(images).slice(0, CONFIG.mobile.count);
+
+// Split images between columns A and B
+const allImages = shuffleArray(images);
+const halfLength = Math.ceil(allImages.length / 2);
+const columnAImages = allImages.slice(0, halfLength);
+const columnBImages = allImages.slice(halfLength);
+
+// Create seamless loops for each column
+const columnALoop = createSeamlessLoop(columnAImages);
+const columnBLoop = createSeamlessLoop(columnBImages);
 ---
 
-<div class="relative w-full h-full overflow-hidden select-none">
+<div class="relative w-full h-full overflow-hidden select-none" role="region" aria-label="Photo carousel">
   <!-- ▼ Mobile horizontal strip -->
   <div class="absolute inset-0 flex md:hidden items-center">
-    <ul class="flex gap-4 animate-carousel-x">
-      {[
-        '/assets/images/Blake-O-scaled.jpg',
-        '/assets/images/china-profile-picture.jpg',
-        '/assets/images/og-image.jpg',
-        '/assets/images/LI-In-Bug.png',
-        '/assets/images/github-mark.png',
-        // duplicate the set for seamless loop
-        '/assets/images/Blake-O-scaled.jpg',
-        '/assets/images/china-profile-picture.jpg',
-        '/assets/images/og-image.jpg',
-        '/assets/images/LI-In-Bug.png',
-        '/assets/images/github-mark.png',
-      ].map(src => (
-        <li class="h-56 w-56 flex-shrink-0">
-          <img src={src} alt="Portfolio photo" class="h-full w-full rounded-xl object-cover shadow-lg" />
+    <ul class="flex gap-4 animate-carousel-x" role="list">
+      {createSeamlessLoop(mobileImages).map((image, index) => (
+        <li class="h-56 w-56 flex-shrink-0" role="listitem">
+          <div class="relative w-full h-full overflow-hidden rounded-xl shadow-lg">
+            <Image 
+              src={image} 
+              alt={`Carousel photo ${index + 1}`} 
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
+              width={CONFIG.mobile.imageSize.width}
+              height={CONFIG.mobile.imageSize.height}
+              loading="lazy"
+              decoding="async"
+              fetchpriority={index < 2 ? "high" : "low"}
+            />
+          </div>
         </li>
       ))}
     </ul>
@@ -32,25 +107,43 @@
   <!-- ▼ Desktop twin columns -->
   <div class="absolute inset-0 hidden md:flex gap-4 w-full h-full">
     <!-- Column A – up -->
-    <ul class="flex flex-col gap-4 animate-carousel-up flex-1">
-      {['/assets/images/Blake-O-scaled.jpg','/assets/images/china-profile-picture.jpg','/assets/images/og-image.jpg']
-        .flatMap(src => [src, src]) /* duplicate for loop */
-        .map(src => (
-          <li class="w-full aspect-square max-w-xl mx-auto">
-            <img src={src} alt="" class="h-full w-full rounded-2xl object-cover shadow-xl" />
-          </li>
-        ))}
+    <ul class="flex flex-col gap-4 animate-carousel-up flex-1" role="list">
+      {columnALoop.map((image, index) => (
+        <li class="w-full aspect-square max-w-xl mx-auto" role="listitem">
+          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
+            <Image 
+              src={image} 
+              alt={`Carousel photo ${index + 1}`} 
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
+              width={CONFIG.desktop.imageSize.width}
+              height={CONFIG.desktop.imageSize.height}
+              loading="lazy"
+              decoding="async"
+              fetchpriority={index < 2 ? "high" : "low"}
+            />
+          </div>
+        </li>
+      ))}
     </ul>
 
     <!-- Column B – down -->
-    <ul class="flex flex-col gap-4 animate-carousel-down flex-1">
-      {['/assets/images/LI-In-Bug.png','/assets/images/github-mark.png','/assets/images/Blake-O-scaled.jpg']
-        .flatMap(src => [src, src])
-        .map(src => (
-          <li class="w-full aspect-square max-w-xl mx-auto">
-            <img src={src} alt="" class="h-full w-full rounded-2xl object-cover shadow-xl" />
-          </li>
-        ))}
+    <ul class="flex flex-col gap-4 animate-carousel-down flex-1" role="list">
+      {columnBLoop.map((image, index) => (
+        <li class="w-full aspect-square max-w-xl mx-auto" role="listitem">
+          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
+            <Image 
+              src={image} 
+              alt={`Carousel photo ${index + 1}`} 
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
+              width={CONFIG.desktop.imageSize.width}
+              height={CONFIG.desktop.imageSize.height}
+              loading="lazy"
+              decoding="async"
+              fetchpriority={index < 2 ? "high" : "low"}
+            />
+          </div>
+        </li>
+      ))}
     </ul>
   </div>
 
@@ -59,12 +152,49 @@
 
 <style is:global>
 /* vertical loop */
-@keyframes carousel-up   { from {transform: translateY(0)}     to {transform: translateY(-100%)} }
-@keyframes carousel-down { from {transform: translateY(-100%)} to {transform: translateY(0)}     }
-.animate-carousel-up   { animation: carousel-up   28s linear infinite }
-.animate-carousel-down { animation: carousel-down 28s linear infinite }
+@keyframes carousel-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes carousel-down {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+.animate-carousel-up {
+  animation: carousel-up 35s linear infinite;
+}
+
+.animate-carousel-down {
+  animation: carousel-down 35s linear infinite;
+}
 
 /* horizontal loop (mobile) */
-@keyframes carousel-x { from {transform: translateX(0)} to {transform: translateX(-50%)} }
-.animate-carousel-x   { animation: carousel-x 24s linear infinite }
+@keyframes carousel-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-carousel-x {
+  animation: carousel-x 30s linear infinite;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-carousel-up,
+  .animate-carousel-down,
+  .animate-carousel-x {
+    animation: none;
+  }
+}
+
+/* Optimize performance */
+.animate-carousel-up,
+.animate-carousel-down,
+.animate-carousel-x {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
 </style>
