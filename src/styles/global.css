@@ -498,15 +498,8 @@
   to { opacity: 1; transform: none; }
 }
 @keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 /* Smooth scrolling & custom scrollbars */
@@ -644,6 +637,56 @@ h2 {
   line-height: var(--lh-heading);
   letter-spacing: var(--ls-heading);
   font-weight: var(--fw-bold);
+}
+
+/* Enhanced animations for home page */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+}
+
+@keyframes slideInFromBottom {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-slide-in {
+  animation: slideInFromBottom 0.6s ease-out forwards;
+}
+
+/* Enhanced hover effects */
+.hover-lift {
+  transition: transform 0.3s var(--ease-emphasized);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s var(--ease-emphasized);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s var(--ease-emphasized);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 /* End of file */
