@@ -81,6 +81,18 @@ class SearchOverlayEnhancer {
       // Focus management
       this.searchInput.addEventListener('focus', () => {
         this.trackEvent('search_input_focused');
+        if (this.currentResults.length > 0) {
+          this.searchResults.classList.add('active');
+          this.searchInput.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      this.searchInput.addEventListener('blur', () => {
+        // Delay hiding results to allow for clicking on them
+        setTimeout(() => {
+          this.searchResults.classList.remove('active');
+          this.searchInput.setAttribute('aria-expanded', 'false');
+        }, 200);
       });
     }
   }
@@ -166,11 +178,6 @@ class SearchOverlayEnhancer {
     this.isOpen = true;
     this.searchOverlay.classList.add('active');
     
-    // Trigger animation
-    requestAnimationFrame(() => {
-      // Already active
-    });
-    
     // Focus search input
     setTimeout(() => {
       this.searchInput?.focus();
@@ -185,11 +192,6 @@ class SearchOverlayEnhancer {
   closeSearch() {
     this.isOpen = false;
     this.searchOverlay.classList.remove('active');
-    
-    // Hide overlay after animation
-    setTimeout(() => {
-      // Remains in DOM but not visible
-    }, 300);
     
     // Restore body scroll
     document.body.style.overflow = '';
@@ -227,6 +229,10 @@ class SearchOverlayEnhancer {
     this.selectedIndex = -1;
     this.renderResults(results);
     
+    // Update ARIA attributes
+    this.searchInput.setAttribute('aria-expanded', results.length > 0 ? 'true' : 'false');
+    this.searchResults.classList.toggle('active', results.length > 0);
+    
     this.trackEvent('search_performed', {
       query: query,
       results_count: results.length
@@ -248,7 +254,7 @@ class SearchOverlayEnhancer {
           score += 100;
         }
         
-        // Calculate fuzzy match score
+        // Partial title match
         searchTerms.forEach(term => {
           if (title.includes(term)) {
             score += 50;
@@ -256,60 +262,69 @@ class SearchOverlayEnhancer {
           if (excerpt.includes(term)) {
             score += 25;
           }
-          
-          // Bonus for word start matches
-          if (title.split(' ').some(word => word.startsWith(term))) {
-            score += 30;
-          }
         });
         
         return { ...item, score };
       })
       .filter(item => item.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 8); // Limit to 8 results
+      .slice(0, 10); // Limit to top 10 results
   }
 
   renderResults(results) {
     if (!this.searchResults) return;
+    
+    this.searchResults.innerHTML = '';
+    
     if (results.length === 0) {
       this.showNoResults();
       return;
     }
-    const resultsHTML = results.map((result, index) => {
-      const iconHTML = this.getIconHTML(result.icon);
+    
+    const fragment = document.createDocumentFragment();
+    
+    results.forEach((result, index) => {
+      const item = document.createElement('div');
+      item.className = 'search-result-item';
+      item.setAttribute('role', 'option');
+      item.setAttribute('id', `search-result-${index}`);
+      item.setAttribute('aria-selected', 'false');
+      
+      const icon = this.getIconHTML(result.icon);
       const typeLabel = this.getTypeLabel(result.type);
-      // Only render image if result.image exists
-      const imageHTML = result.image
-        ? `<img src="${result.image}" alt="" class="search-result-image" loading="lazy" />`
-        : '';
-      return `
-        <a href="${result.url}" class="search-result-item" data-index="${index}">
-          ${imageHTML}
-          <div class="search-result-icon">
-            ${iconHTML}
+      
+      item.innerHTML = `
+        <div class="flex items-center gap-3">
+          <div class="text-neutral-500">${icon}</div>
+          <div class="flex-1">
+            <div class="font-medium">${this.highlightMatch(result.title)}</div>
+            <div class="text-sm text-neutral-500">${typeLabel}</div>
           </div>
-          <div class="search-result-content">
-            <div class="search-result-type">${typeLabel}</div>
-            <h3 class="search-result-title">${this.highlightMatch(result.title)}</h3>
-            <p class="search-result-excerpt">${this.highlightMatch(result.excerpt || '')}</p>
-          </div>
-        </a>
+        </div>
       `;
-    }).join('');
-    this.searchResults.innerHTML = resultsHTML;
-    // Add click listeners to results
+      
+      item.addEventListener('click', () => {
+        window.location.href = result.url;
+      });
+      
+      item.addEventListener('mouseenter', () => {
+        this.setSelectedIndex(index);
+      });
+      
+      fragment.appendChild(item);
+    });
+    
+    this.searchResults.appendChild(fragment);
     this.setupResultListeners();
   }
 
   getIconHTML(iconType) {
     const icons = {
-      article: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>',
-      folder: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>',
-      person: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>',
-      mail: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>'
+      article: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>',
+      folder: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+      person: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+      mail: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>'
     };
-    
     return icons[iconType] || icons.article;
   }
 
@@ -319,34 +334,22 @@ class SearchOverlayEnhancer {
       project: 'Project',
       page: 'Page'
     };
-    
-    return labels[type] || 'Content';
+    return labels[type] || type;
   }
 
   highlightMatch(text) {
-    if (!this.searchInput || !text) return text;
+    if (!this.searchInput.value) return text;
     
-    const query = this.searchInput.value.trim();
-    if (!query) return text;
-    
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const query = this.searchInput.value.toLowerCase();
+    const regex = new RegExp(`(${query})`, 'gi');
     return text.replace(regex, '<mark>$1</mark>');
   }
 
   setupResultListeners() {
-    const resultItems = this.searchResults.querySelectorAll('.search-result-item');
-    
-    resultItems.forEach((item, index) => {
-      item.addEventListener('click', (e) => {
-        this.trackEvent('search_result_clicked', {
-          position: index,
-          url: item.href,
-          title: this.currentResults[index]?.title
-        });
-      });
-      
-      item.addEventListener('mouseenter', () => {
-        this.setSelectedIndex(index);
+    const items = this.searchResults.querySelectorAll('.search-result-item');
+    items.forEach((item, index) => {
+      item.addEventListener('click', () => {
+        window.location.href = this.currentResults[index].url;
       });
     });
   }
@@ -373,15 +376,10 @@ class SearchOverlayEnhancer {
   }
 
   moveSelection(direction) {
-    const maxIndex = this.currentResults.length - 1;
-    
-    if (direction > 0) {
-      this.selectedIndex = this.selectedIndex < maxIndex ? this.selectedIndex + 1 : 0;
-    } else {
-      this.selectedIndex = this.selectedIndex > 0 ? this.selectedIndex - 1 : maxIndex;
+    const newIndex = this.selectedIndex + direction;
+    if (newIndex >= -1 && newIndex < this.currentResults.length) {
+      this.setSelectedIndex(newIndex);
     }
-    
-    this.updateSelectionDisplay();
   }
 
   setSelectedIndex(index) {
@@ -390,85 +388,61 @@ class SearchOverlayEnhancer {
   }
 
   updateSelectionDisplay() {
-    const resultItems = this.searchResults.querySelectorAll('.search-result-item');
-    
-    resultItems.forEach((item, index) => {
-      if (index === this.selectedIndex) {
-        item.classList.add('highlighted');
+    const items = this.searchResults.querySelectorAll('.search-result-item');
+    items.forEach((item, index) => {
+      const isSelected = index === this.selectedIndex;
+      item.setAttribute('aria-selected', isSelected);
+      item.classList.toggle('bg-surface-subtle', isSelected);
+      
+      if (isSelected) {
+        this.searchInput.setAttribute('aria-activedescendant', `search-result-${index}`);
         item.scrollIntoView({ block: 'nearest' });
-      } else {
-        item.classList.remove('highlighted');
       }
     });
   }
 
   selectResult() {
-    if (this.selectedIndex >= 0 && this.currentResults[this.selectedIndex]) {
-      const result = this.currentResults[this.selectedIndex];
-      
-      this.trackEvent('search_result_selected', {
-        position: this.selectedIndex,
-        url: result.url,
-        title: result.title,
-        method: 'keyboard'
-      });
-      
-      window.location.href = result.url;
+    if (this.selectedIndex >= 0 && this.selectedIndex < this.currentResults.length) {
+      window.location.href = this.currentResults[this.selectedIndex].url;
     }
   }
 
   showLoadingState() {
     if (!this.searchResults) return;
-    
     this.searchResults.innerHTML = `
-      <div class="search-empty-state">
-        <div class="search-loading">
-          <div class="loading-spinner"></div>
-        </div>
-        <h3>Searching...</h3>
+      <div class="p-4 text-center text-neutral-500">
+        <div class="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent rounded-full"></div>
+        <div class="mt-2">Searching...</div>
       </div>
     `;
+    this.searchResults.classList.add('active');
   }
 
   showNoResults() {
     if (!this.searchResults) return;
-    
     this.searchResults.innerHTML = `
-      <div class="search-empty-state">
-        <div class="empty-state-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </div>
-        <h3>No results found</h3>
-        <p>Try adjusting your search terms</p>
+      <div class="p-4 text-center text-neutral-500">
+        <div class="text-lg">No results found</div>
+        <div class="text-sm mt-1">Try different keywords</div>
       </div>
     `;
+    this.searchResults.classList.add('active');
   }
 
   clearResults() {
     if (!this.searchResults) return;
-    
-    this.searchResults.innerHTML = `
-      <div class="search-empty-state">
-        <div class="empty-state-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-        <h3>Start typing to search</h3>
-        <p>Search through blog posts, projects, and pages</p>
-      </div>
-    `;
-    
-    this.currentResults = [];
+    this.searchResults.innerHTML = '';
+    this.searchResults.classList.remove('active');
+    this.searchInput.setAttribute('aria-expanded', 'false');
+    this.searchInput.setAttribute('aria-activedescendant', '');
   }
 
   setupAccessibility() {
-    if (this.searchOverlay) {
-      this.searchOverlay.setAttribute('role', 'dialog');
-      this.searchOverlay.setAttribute('aria-modal', 'true');
-      this.searchOverlay.setAttribute('aria-label', 'Search');
+    // Ensure proper ARIA attributes
+    if (this.searchInput) {
+      this.searchInput.setAttribute('aria-expanded', 'false');
+      this.searchInput.setAttribute('aria-controls', 'search-results');
+      this.searchInput.setAttribute('aria-activedescendant', '');
     }
     
     if (this.searchResults) {
@@ -478,49 +452,34 @@ class SearchOverlayEnhancer {
   }
 
   isInputFocused() {
-    const activeElement = document.activeElement;
-    return activeElement && (
-      activeElement.tagName === 'INPUT' ||
-      activeElement.tagName === 'TEXTAREA' ||
-      activeElement.contentEditable === 'true'
-    );
+    return document.activeElement === this.searchInput;
   }
 
   trackEvent(eventName, eventData = {}) {
-    // Support multiple analytics providers
-    if (typeof gtag === 'function') {
-      gtag('event', eventName, eventData);
-    } else if (typeof plausible === 'function') {
-      plausible(eventName, { props: eventData });
-    } else if (typeof fathom === 'object' && typeof fathom.trackEvent === 'function') {
-      fathom.trackEvent(eventName, eventData);
-    } else {
-      console.debug('[Search Analytics]', eventName, eventData);
-    }
+    // Implement analytics tracking here
+    console.log('Search event:', eventName, eventData);
   }
 
-  // Public API
   refresh() {
     this.loadSearchIndex();
   }
 
   destroy() {
     // Clean up event listeners
-    document.body.style.overflow = '';
-    clearTimeout(this.searchTimeout);
+    if (this.searchToggle) {
+      this.searchToggle.removeEventListener('click', this.openSearch);
+    }
+    if (this.closeButton) {
+      this.closeButton.removeEventListener('click', this.closeSearch);
+    }
+    if (this.searchInput) {
+      this.searchInput.removeEventListener('input', this.handleSearchInput);
+      this.searchInput.removeEventListener('keydown', this.handleSearchKeydown);
+    }
   }
 }
 
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.searchOverlayEnhancer = new SearchOverlayEnhancer();
-  });
-} else {
-  window.searchOverlayEnhancer = new SearchOverlayEnhancer();
-}
-
-// Export for module systems
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = SearchOverlayEnhancer;
-}
+// Initialize the search overlay
+document.addEventListener('DOMContentLoaded', () => {
+  window.searchOverlay = new SearchOverlayEnhancer();
+});

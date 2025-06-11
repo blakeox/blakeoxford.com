@@ -691,4 +691,18 @@ h2 {
 
 /* End of file */
 
+/* Ensure search input text and placeholder are white in dark mode */
+.dark .search-input,
+.dark input.search-input,
+.dark input[type="text"].search-input {
+  color: #fff !important;
+}
+
+.dark .search-input::placeholder,
+.dark input.search-input::placeholder,
+.dark input[type="text"].search-input::placeholder {
+  color: #fff !important;
+  opacity: 1;
+}
+
 
