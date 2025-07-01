@@ -23,7 +23,7 @@ describe('ProjectCard.astro file', () => {
 
   it('should include project title link', () => {
     expect(content).toContain('aria-label={`Project: ${data.title}`}');
-    expect(content).toContain('<h2');
+    expect(content).toContain('<h3');
   });
 
   it('should render tags list with aria-label', () => {

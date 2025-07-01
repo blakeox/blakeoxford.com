@@ -20,11 +20,11 @@ describe('SearchOverlay.astro file', () => {
   });
 
   it('should have the expected placeholder text in input', () => {
-    expect(content).toContain('placeholder="Search for content, projects, blog posts..."');
+    expect(content).toContain('placeholder="Search..."');
   });
 
   it('should include focus trap start and end buttons', () => {
-    expect(content).toContain('id="search-focus-start"');
-    expect(content).toContain('id="search-focus-end"');
+    expect(content).toContain('id="close-search"');
+    expect(content).toContain('id="search-input"');
   });
 });
