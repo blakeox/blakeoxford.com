@@ -13,15 +13,38 @@ link: "https://www.advancedmd.com/"
 
 ### Background
 
-In 2018, I led the implementation of **AdvancedMD**, a comprehensive Electronic Health Record (EHR) system, to replace outdated paper-based workflows. This transformation streamlined operations and improved efficiency across multiple disciplines.
+In 2018, I led the implementation of **AdvancedMD**, a comprehensive Electronic Health Record (EHR) system, to replace outdated paper-based workflows. The transition unified clinical and administrative operations across departments, bringing critical functions like scheduling, documentation, and billing into a single digital platform.
+
+This project began under urgent conditions: the prior billing system had failed, and insurance claims could no longer be processed externally. We had to act quickly to stand up AdvancedMD’s billing and documentation modules in-house—under intense pressure—to ensure operational continuity and revenue flow.
 
 ### Key Achievements
 
-- **Unified System:** Built a system capable of handling Applied Behavior Analysis (ABA), Physical Therapy (PT), Occupational Therapy (OT), Speech Therapy (ST), and medical appointments within a single platform.
-- **Electronic Billing:** Configured the system to integrate with all major insurance providers, enabling seamless electronic billing and reducing claim processing times.
-- **Operational Efficiency:** Eliminated manual record-keeping, improving data accuracy and accessibility for staff and patients.
-- **Scalability:** Positioned the organization for future growth by adopting a scalable, cloud-based solution.
+- **Unified EHR Platform:** Deployed a scalable cloud-based system to manage Applied Behavior Analysis (ABA), Physical Therapy (PT), Occupational Therapy (OT), Speech Therapy (ST), and medical appointments within one cohesive platform.
+- **Electronic Billing Integration:** Configured billing workflows to connect with all major insurance payers, ensuring compliant claim submissions and reducing delays in reimbursement.
+- **Process Automation:** Streamlined documentation and claims workflows, eliminating manual record-keeping and reducing human error.
+- **Emergency Recovery & Internalization:** Rapidly migrated billing operations in-house when the outsourced provider failed, restoring functionality under tight timelines.
+- **Long-Term Evolution:** As the organization’s core operational platform, AdvancedMD evolved continuously post-launch with new workflows, user roles, and clinical modules rolled out incrementally.
 
 ### Impact
 
-This project revolutionized the way the organization managed patient records and appointments, saving time, reducing errors, and enhancing the overall patient experience. The integration of electronic billing further streamlined financial operations, ensuring faster reimbursements and improved cash flow.
+The implementation fundamentally transformed the organization’s operations. Staff could now document sessions, manage appointments, and process insurance claims digitally—leading to faster, more accurate service. It also enabled robust compliance tracking, better audit readiness, and improved data access for reporting and decision-making.
+
+Most importantly, the project rescued the billing function during a mission-critical period, preserving cash flow and enabling uninterrupted care. As the central hub for patient engagement, scheduling, and revenue cycle management, AdvancedMD remains a foundational system that continues to grow with the organization.
+
+### Challenges
+
+One of the most difficult aspects was identifying a single EHR that could effectively serve **medical**, **outpatient PT/OT/ST**, and **ABA therapy**—each of which has fundamentally different documentation structures and billing rules. **ABA** in particular introduced significant complexity: the same service could require **multiple billing codes depending on the insurance provider**, and the documentation requirements were often far more granular.
+
+At the time, **ABA data collection tools** (for in-session behavioral tracking) were not natively integrated with EHR platforms, which meant we had to operate **two separate systems** with minimal interoperability. This created duplication, potential for data gaps, and complicated workflows across teams.
+
+Coordinating **EDI (Electronic Data Interchange)** between AdvancedMD, the clearinghouse, and insurance providers—especially **Blue Cross Blue Shield (BCBS)**—required relentless troubleshooting. Information from BCBS varied depending on which department you reached. It wasn’t until we connected with their **specialized EDI team** that we discovered the root cause: files were being submitted but not properly routed due to unmet internal formatting requirements.
+
+### Lessons Learned
+
+This was my **first major implementation project out of college**, and it shaped how I approach every system rollout today.
+
+Midway through the project, as timelines slipped and miscommunications grew, I realized we lacked a shared understanding of how each process was supposed to work. I taught myself **BPMN (Business Process Model and Notation)** and used it to **map out every step of the workflow**, across all departments and systems. That quickly revealed where breakdowns were occurring—typically during **handoffs between teams**. These are often the weakest links in any workflow, not because people don’t know their jobs, but because assumptions go unspoken.
+
+Another lesson I learned the hard way was to **map out the capabilities and limitations of each team member upfront**. It’s never a good situation to find out mid-project that someone assigned to a critical task lacks the skills or tools to succeed. That’s not their fault—it’s a planning failure. In this case, that responsibility was mine. It taught me the importance of **setting clear expectations**, assessing readiness, and aligning the right people to the right responsibilities before project kickoff.
+
+Looking back, **this process and capability mapping should have happened before the sales conversation even began**. Ever since, I’ve made it a rule to **define the stakeholders, the full process, the real problems we're solving, and the actual capabilities of the team** before any software decision is made. It's become a foundational principle in how I lead systems work: start with the process, know your team, then choose the tool.
