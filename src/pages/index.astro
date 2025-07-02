@@ -296,8 +296,8 @@ const featuredProjects = featuredSlugs
     </section>
 
     <!-- Featured Projects Section -->
-    <section id="featured-projects" class="c-featured-projects container mx-auto px-4" aria-labelledby="featured-projects">
-      <h2 id="featured-projects" class="text-h2 font-bold mb-8 text-accent-dark animate-fade-in text-center">Featured Projects</h2>
+    <section id="featured-projects" class="c-featured-projects container mx-auto px-4" aria-labelledby="featured-projects-title">
+      <h2 id="featured-projects-title" class="text-h2 font-bold mb-8 text-accent-dark animate-fade-in text-center">Featured Projects</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {featuredProjects.map((project: any) => (
           <ProjectCard project={project} featured={true} />
