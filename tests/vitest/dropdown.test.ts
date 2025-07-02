@@ -133,8 +133,8 @@ describe('Dropdown Module', () => {
       // Focus on outside element
       outsideElement.focus();
 
-      // Fast-forward the setTimeout in blur handler
-      vi.advanceTimersByTime(10);
+      // Fast-forward the setTimeout in blur handler (blur handler uses 100ms timeout)
+      vi.advanceTimersByTime(100);
 
       expect(triggerLink.getAttribute('aria-expanded')).toBe('false');
       expect(dropdownMenu.classList.contains('invisible')).toBe(true);

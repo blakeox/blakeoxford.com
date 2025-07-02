@@ -1,4 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/// <reference types="jsdom" />
+/// <reference lib="dom" />
+
+// Declare globals for TypeScript
+declare global {
+  const window: Window & typeof globalThis;
+  const document: Document;
+  const Event: typeof window.Event;
+  const HTMLElement: typeof window.HTMLElement;
+}
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { setupScrollEffects, setupScrollBehavior, setupPageTransitions, debounce } from '../../public/assets/js/scroll.js';
 
@@ -11,6 +22,14 @@ describe('Scroll Module', () => {
     // Reset window scroll position
     Object.defineProperty(window, 'scrollY', {
       writable: true,
+      configurable: true,
+      value: 0
+    });
+
+    // Reset document scroll position
+    Object.defineProperty(document.documentElement, 'scrollTop', {
+      writable: true,
+      configurable: true,
       value: 0
     });
 
@@ -161,18 +180,27 @@ describe('Scroll Module', () => {
       
       setupScrollBehavior(navbar);
 
-      // Simulate scroll up (from higher position to lower)
-      Object.defineProperty(window, 'scrollY', { value: 50, configurable: true });
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 50, configurable: true });
+      // Mock scroll position to simulate scroll up 
+      // Store original values to restore later
+      const originalScrollY = (window as any).scrollY;
+      const originalScrollTop = (document.documentElement as any).scrollTop;
+      
+      // Set scroll position that will trigger navbar show
+      (window as any).scrollY = 50;
+      (document.documentElement as any).scrollTop = 50;
 
       const scrollEvent = new Event('scroll');
-      window.dispatchEvent(scrollEvent);
+      (window as any).dispatchEvent(scrollEvent);
 
       // Fast-forward debounce time
       vi.advanceTimersByTime(50);
 
       expect(navbar.classList.contains('nav-visible')).toBe(true);
       expect(navbar.classList.contains('nav-hidden')).toBe(false);
+
+      // Restore original values
+      (window as any).scrollY = originalScrollY;
+      (document.documentElement as any).scrollTop = originalScrollTop;
 
       vi.useRealTimers();
     });
@@ -201,11 +229,8 @@ describe('Scroll Module', () => {
 
   describe('setupPageTransitions', () => {
     it('should not setup page transitions if Navigation API is not supported', () => {
-      // Mock Navigation API as not available
-      Object.defineProperty(window, 'navigation', {
-        value: undefined,
-        writable: true
-      });
+      // Mock Navigation API as not available by deleting the property entirely
+      delete (window as any).navigation;
 
       // Reset any previous createElement calls
       vi.clearAllMocks();

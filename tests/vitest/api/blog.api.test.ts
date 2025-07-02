@@ -77,7 +77,16 @@ describe('Blog API endpoint logic', () => {
       const result = await get();
       const posts = JSON.parse(result.body);
 
-      expect(posts[0]).toEqual(mockPost);
+      // Note: Date objects become strings when serialized to JSON
+      const expectedPost = {
+        ...mockPost,
+        data: {
+          ...mockPost.data,
+          pubDate: mockPost.data.pubDate.toISOString()
+        }
+      };
+
+      expect(posts[0]).toEqual(expectedPost);
       expect(posts[0].data.title).toBe('Test Post');
       expect(posts[0].data.tags).toEqual(['test', 'blog']);
     });
