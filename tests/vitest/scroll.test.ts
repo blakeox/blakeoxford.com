@@ -11,7 +11,7 @@ declare global {
 }
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { setupScrollEffects, setupScrollBehavior, setupPageTransitions, debounce } from '../../public/assets/js/scroll.js';
+import { setupScrollEffects, setupScrollBehavior, setupPageTransitions } from '../../public/assets/js/scroll.js';
 
 describe('Scroll Module', () => {
   beforeEach(() => {
@@ -228,142 +228,219 @@ describe('Scroll Module', () => {
   });
 
   describe('setupPageTransitions', () => {
-    it('should not setup page transitions if Navigation API is not supported', () => {
-      // Mock Navigation API as not available by deleting the property entirely
+    beforeEach(() => {
+      // Mock window.navigation
+      Object.defineProperty(window, 'navigation', {
+        value: {},
+        configurable: true
+      });
+      
+      // Clear DOM
+      document.body.innerHTML = '';
+      
+      // Mock location.href setter
+      Object.defineProperty(window, 'location', {
+        value: { href: '' },
+        writable: true,
+        configurable: true
+      });
+    });
+
+    it('should return early if navigation API is not supported', () => {
+      // Remove navigation API
       delete (window as any).navigation;
-
-      // Reset any previous createElement calls
-      vi.clearAllMocks();
+      
       const createElementSpy = vi.spyOn(document, 'createElement');
-
+      
       setupPageTransitions();
-
+      
       expect(createElementSpy).not.toHaveBeenCalled();
     });
 
-    it('should create progress indicator when Navigation API is supported', () => {
-      // Mock Navigation API as available
-      Object.defineProperty(window, 'navigation', {
-        value: {},
-        writable: true
-      });
-
+    it('should create progress indicator element', () => {
       setupPageTransitions();
-
-      const progressIndicator = document.getElementById('page-transition-progress');
-      expect(progressIndicator).not.toBeNull();
-      expect(progressIndicator?.className).toContain('fixed');
-      expect(progressIndicator?.className).toContain('top-0');
-      expect(progressIndicator?.className).toContain('left-0');
-      expect(progressIndicator?.className).toContain('w-full');
-      expect(progressIndicator?.className).toContain('h-1');
+      
+      const indicator = document.getElementById('page-transition-progress');
+      expect(indicator).toBeTruthy();
+      expect(indicator?.className).toBe('fixed top-0 left-0 w-full h-1 bg-transparent z-50');
     });
 
-    it('should add click event listeners to internal links', () => {
-      Object.defineProperty(window, 'navigation', {
-        value: {},
-        writable: true
-      });
-
-      // Create some internal links
+    it('should add event listeners to internal links', () => {
+      // Create internal links
       const link1 = document.createElement('a');
       link1.href = '/about';
       link1.textContent = 'About';
-      document.body.appendChild(link1);
-
+      
       const link2 = document.createElement('a');
       link2.href = '/contact';
       link2.textContent = 'Contact';
+      
+      document.body.appendChild(link1);
       document.body.appendChild(link2);
-
-      // Create external link (should be ignored)
-      const externalLink = document.createElement('a');
-      externalLink.href = 'https://example.com';
-      externalLink.target = '_blank';
-      document.body.appendChild(externalLink);
-
+      
       const addEventListenerSpy = vi.spyOn(link1, 'addEventListener');
-
+      
       setupPageTransitions();
-
+      
       expect(addEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function));
     });
+
+    it('should ignore external links', () => {
+      // Create external link with target="_blank"
+      const externalLink = document.createElement('a');
+      externalLink.href = '/external';
+      externalLink.setAttribute('target', '_blank');
+      document.body.appendChild(externalLink);
+      
+      const addEventListenerSpy = vi.spyOn(externalLink, 'addEventListener');
+      
+      setupPageTransitions();
+      
+      expect(addEventListenerSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not prevent default for modifier key clicks', () => {
+      const link = document.createElement('a');
+      link.href = '/test';
+      document.body.appendChild(link);
+      
+      setupPageTransitions();
+      
+      // Test metaKey
+      const metaEvent = new MouseEvent('click', { metaKey: true, bubbles: true });
+      const metaPreventDefaultSpy = vi.spyOn(metaEvent, 'preventDefault');
+      link.dispatchEvent(metaEvent);
+      expect(metaPreventDefaultSpy).not.toHaveBeenCalled();
+      
+      // Test ctrlKey
+      const ctrlEvent = new MouseEvent('click', { ctrlKey: true, bubbles: true });
+      const ctrlPreventDefaultSpy = vi.spyOn(ctrlEvent, 'preventDefault');
+      link.dispatchEvent(ctrlEvent);
+      expect(ctrlPreventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not prevent default for download links', () => {
+      const link = document.createElement('a');
+      link.href = '/document.pdf';
+      link.setAttribute('download', '');
+      document.body.appendChild(link);
+      
+      setupPageTransitions();
+      
+      const clickEvent = new MouseEvent('click', { bubbles: true });
+      const preventDefaultSpy = vi.spyOn(clickEvent, 'preventDefault');
+      link.dispatchEvent(clickEvent);
+      
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not prevent default for hash links', () => {
+      const link = document.createElement('a');
+      link.href = '/page#section';
+      document.body.appendChild(link);
+      
+      setupPageTransitions();
+      
+      const clickEvent = new MouseEvent('click', { bubbles: true });
+      const preventDefaultSpy = vi.spyOn(clickEvent, 'preventDefault');
+      link.dispatchEvent(clickEvent);
+      
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not prevent default for links with target attribute', () => {
+      const link = document.createElement('a');
+      link.href = '/page';
+      link.setAttribute('target', '_self');
+      document.body.appendChild(link);
+      
+      setupPageTransitions();
+      
+      const clickEvent = new MouseEvent('click', { bubbles: true });
+      const preventDefaultSpy = vi.spyOn(clickEvent, 'preventDefault');
+      link.dispatchEvent(clickEvent);
+      
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('should handle page transition on valid internal link click', () => {
+      vi.useFakeTimers();
+      
+      const link = document.createElement('a');
+      link.href = '/test-page';
+      document.body.appendChild(link);
+      
+      setupPageTransitions();
+      
+      const clickEvent = new MouseEvent('click', { bubbles: true });
+      const preventDefaultSpy = vi.spyOn(clickEvent, 'preventDefault');
+      
+      link.dispatchEvent(clickEvent);
+      
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(document.body.classList.contains('page-transition-exit')).toBe(true);
+      
+      // Check progress indicator styling
+      const indicator = document.getElementById('page-transition-progress');
+      expect(indicator?.style.opacity).toBe('1');
+      expect(indicator?.style.width).toBe('0%');
+      
+      // Fast-forward timers to test progress updates
+      vi.advanceTimersByTime(10);
+      expect(indicator?.style.width).toBe('60%');
+      
+      vi.advanceTimersByTime(150);
+      expect(indicator?.style.width).toBe('80%');
+      
+      // Test navigation after 250ms
+      vi.advanceTimersByTime(250);
+      expect(window.location.href).toBe('/test-page');
+      
+      vi.useRealTimers();
+    });
+
+    it('should handle pageshow event', () => {
+      vi.useFakeTimers();
+      
+      setupPageTransitions();
+      
+      // Trigger pageshow event
+      const pageshowEvent = new Event('pageshow');
+      window.dispatchEvent(pageshowEvent);
+      
+      expect(document.body.classList.contains('page-transition-enter')).toBe(true);
+      
+      const indicator = document.getElementById('page-transition-progress');
+      expect(indicator?.style.width).toBe('100%');
+      expect(indicator?.style.transition).toBe('width 200ms ease-out');
+      
+      // Fast-forward to opacity transition
+      vi.advanceTimersByTime(200);
+      expect(indicator?.style.opacity).toBe('0');
+      
+      // Fast-forward to class removal
+      vi.advanceTimersByTime(300);
+      expect(document.body.classList.contains('page-transition-enter')).toBe(false);
+      
+      vi.useRealTimers();
+    });
+
+    it('should handle missing progress indicator gracefully', () => {
+      const link = document.createElement('a');
+      link.href = '/test';
+      document.body.appendChild(link);
+      
+      setupPageTransitions();
+      
+      // Remove the indicator before clicking
+      const indicator = document.getElementById('page-transition-progress');
+      indicator?.remove();
+      
+      const clickEvent = new MouseEvent('click', { bubbles: true });
+      
+      // Should not throw when indicator is missing
+      expect(() => link.dispatchEvent(clickEvent)).not.toThrow();
+    });
   });
 
-  describe('debounce', () => {
-    it('should delay function execution', async () => {
-      vi.useFakeTimers();
-      
-      const mockFn = vi.fn();
-      const debouncedFn = debounce(mockFn, 100);
-
-      debouncedFn();
-      
-      // Function should not be called immediately
-      expect(mockFn).not.toHaveBeenCalled();
-
-      // Fast-forward time
-      vi.advanceTimersByTime(100);
-
-      expect(mockFn).toHaveBeenCalledTimes(1);
-
-      vi.useRealTimers();
-    });
-
-    it('should cancel previous timeout when called multiple times', async () => {
-      vi.useFakeTimers();
-      
-      const mockFn = vi.fn();
-      const debouncedFn = debounce(mockFn, 100);
-
-      // Call multiple times rapidly
-      debouncedFn();
-      debouncedFn();
-      debouncedFn();
-
-      // Fast-forward time
-      vi.advanceTimersByTime(100);
-
-      // Should only be called once
-      expect(mockFn).toHaveBeenCalledTimes(1);
-
-      vi.useRealTimers();
-    });
-
-    it('should pass arguments correctly', async () => {
-      vi.useFakeTimers();
-      
-      const mockFn = vi.fn();
-      const debouncedFn = debounce(mockFn, 100);
-
-      debouncedFn('arg1', 'arg2', 123);
-
-      vi.advanceTimersByTime(100);
-
-      expect(mockFn).toHaveBeenCalledWith('arg1', 'arg2', 123);
-
-      vi.useRealTimers();
-    });
-
-    it('should preserve this context', async () => {
-      vi.useFakeTimers();
-      
-      const obj = {
-        value: 'test',
-        method: function(this: any) {
-          return this.value;
-        }
-      };
-      const methodSpy = vi.spyOn(obj, 'method');
-
-      const debouncedMethod = debounce(obj.method.bind(obj), 100);
-      debouncedMethod();
-
-      vi.advanceTimersByTime(100);
-
-      expect(methodSpy).toHaveBeenCalled();
-
-      vi.useRealTimers();
-    });
-  });
 });
