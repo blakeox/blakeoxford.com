@@ -193,6 +193,7 @@ export default [
     files: ['**/*.astro'],
     plugins: {
       astro,
+      '@typescript-eslint': tseslint,
     },
     languageOptions: {
       parser: astroParser,
@@ -213,6 +214,15 @@ export default [
         {
           selector: "Literal[value][raw=/\\d+(px|rem|em)/]",
           message: 'Use Tailwind token classes for spacing/sizing, not hardcoded units.'
+        }
+      ],
+      // Allow destructured but unused variables in Astro components
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { 
+          varsIgnorePattern: '^_',
+          argsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_'
         }
       ]
     },
@@ -255,6 +265,8 @@ export default [
       '**/dropdown.test 2.ts', // Exclude duplicate test files
       // Exclude coverage reports
       'coverage/',
+      // Exclude content MDX files (they have frontmatter that breaks parsing)
+      'src/content/**/*.mdx',
     ],
   },
 ];
