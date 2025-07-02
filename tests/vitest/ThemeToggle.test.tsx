@@ -18,6 +18,28 @@ describe('ThemeToggle component', () => {
     expect(localStorage.getItem('theme')).toBeNull();
   });
 
+  it('should initialize with light theme when localStorage has "light" theme', () => {
+    // Set localStorage to 'light' explicitly
+    localStorage.setItem('theme', 'light');
+    
+    render(<ThemeToggle />);
+    
+    // Should start in light mode
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+    expect(document.documentElement.dataset.theme).toBe('light');
+  });
+
+  it('should initialize with dark theme when localStorage has "dark" theme', () => {
+    // Set localStorage to 'dark' explicitly  
+    localStorage.setItem('theme', 'dark');
+    
+    render(<ThemeToggle />);
+    
+    // Should start in dark mode
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(document.documentElement.dataset.theme).toBe('dark');
+  });
+
   it('should toggle theme on button click', () => {
     const { getByRole } = render(<ThemeToggle />);
     const button = getByRole('button', { name: /toggle between dark and light mode/i });
