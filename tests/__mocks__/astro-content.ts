@@ -1,4 +1,5 @@
 // CommonJS mock for astro:content
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { z } = require('zod');
 
 const mockCollections = {

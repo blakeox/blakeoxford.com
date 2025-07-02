@@ -18,10 +18,12 @@ test.describe('Homepage', () => {
 });
 
 test.describe('Search functionality', () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   test.skip('should open search overlay with keyboard shortcut', async ({ page }) => {
     /* Script not loaded; skipping search open/close tests */
   });
   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   test.skip('should close search overlay with escape key', async ({ page }) => {
     /* Script not loaded; skipping search open/close tests */
   });

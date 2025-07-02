@@ -108,9 +108,11 @@ describe('generate-search-index helpers', () => {
 
     it('should handle missing frontmatter values', () => {
       // Setup mocks for a file with no title or description
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (matter as any).mockImplementation(() => ({
         data: {}
       }));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(fs.readFileSync).mockReturnValue('---\n---\nContent' as any);
       vi.mocked(path.basename).mockReturnValueOnce('file.mdx').mockReturnValueOnce('file.mdx');
       
@@ -140,11 +142,14 @@ describe('generate-search-index helpers', () => {
   describe('buildIndex function', () => {
     it('should build index array using parseMDXFile', () => {
       // Reset mocks with specific return values for this test
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(fs.readdirSync).mockReturnValue(['a.mdx', 'b.mdx'] as any);
       
       // Mock matter to return different values for different files
       vi.mocked(matter)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .mockReturnValueOnce({ data: { title: 'Title A', description: 'Desc A' }, content: '' } as any)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .mockReturnValueOnce({ data: { title: 'Title B', description: 'Desc B' }, content: '' } as any);
       
       // Define mock getFiles and parseMDXFile functions

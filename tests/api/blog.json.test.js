@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { get } from '../../src/pages/api/blog.json.js';
 
 // Mock the getCollection function

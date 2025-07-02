@@ -1,10 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { JSDOM } from 'jsdom';
-import fs from 'fs';
-import path from 'path';
 
 describe('SearchOverlayEnhanced interactive behavior', () => {
   let dom: JSDOM;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let window: any; // Changed to "any" type to avoid TypeScript errors with custom properties
   let document: Document;
   let script: HTMLScriptElement;

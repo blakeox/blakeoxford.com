@@ -20,11 +20,14 @@ describe('Blog frontmatter schema', () => {
 
   it('throws on missing required fields', () => {
     const invalid = { description: 'Missing title and pubDate' } as unknown;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(() => blog.schema.parse(invalid as any)).toThrow();
   });
 
   it('throws on invalid types', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const invalidType = { ...(validBlog as any), pubDate: 'not-a-date' };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(() => blog.schema.parse(invalidType as any)).toThrow();
   });
 });
@@ -45,12 +48,16 @@ describe('Projects frontmatter schema', () => {
   });
 
   it('throws on missing date field', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { date, ...withoutDate } = validProject;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(() => projects.schema.parse(withoutDate as any)).toThrow();
   });
 
   it('throws on invalid link type', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const invalidLink = { ...(validProject as any), link: 123 };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(() => projects.schema.parse(invalidLink as any)).toThrow();
   });
 });

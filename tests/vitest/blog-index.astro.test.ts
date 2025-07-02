@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import path from 'path';
+import { describe, it, expect, vi } from 'vitest';
 
 // Mock astro:content to provide sample blog posts
 globalThis['astroContentMock'] = [
@@ -34,9 +33,11 @@ describe('Blog Index Page', () => {
   it('filters out draft posts from the blog collection', async () => {
     // Simulate the logic from index.astro
     const posts = globalThis['astroContentMock'];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const publishedPosts = posts.filter((p: any) => !p.data.draft);
     expect(publishedPosts.length).toBe(1);
     expect(publishedPosts[0].data.title).toBe('Hello World');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(publishedPosts.some((p: any) => p.data.title === 'Draft Post')).toBe(false);
   });
 });
