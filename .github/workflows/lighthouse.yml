@@ -28,23 +28,71 @@ jobs:
       - name: Build site
         run: pnpm run build
 
-      - name: Serve site
-        run: pnpm exec serve dist --listen 0.0.0.0:4321 &
+      - name: Start static server
+        run: |
+          echo "Starting static server..."
+          pnpm exec serve dist -l 4321 -n &
+          SERVER_PID=$!
+          echo "Server PID: $SERVER_PID"
+          echo $SERVER_PID > server.pid
+          
+          # Give the server a moment to start
+          sleep 3
+          
+          # Fallback: if serve fails, try Astro preview
+          if ! ps -p $SERVER_PID > /dev/null 2>&1; then
+            echo "⚠️  Serve command failed, trying Astro preview as fallback..."
+            rm -f server.pid
+            pnpm run preview --port 4321 &
+            SERVER_PID=$!
+            echo "Astro preview PID: $SERVER_PID"
+            echo $SERVER_PID > server.pid
+          else
+            echo "✅ Static server started successfully"
+          fi
 
       - name: Wait for site to be available
         run: |
-          for i in {1..10}; do
-            if curl -sSf http://localhost:4321 > /dev/null; then
-              echo "Site is up!"
+          echo "Waiting for site to start..."
+          for i in {1..30}; do
+            if curl -sSf -I http://localhost:4321/ > /dev/null 2>&1; then
+              echo "Site is available at http://localhost:4321"
+              curl -s http://localhost:4321/ | head -20
               exit 0
             fi
-            echo "Waiting for site... ($i)"
+            echo "Attempt $i: Site not ready, waiting 2 seconds..."
             sleep 2
           done
-          echo "Site did not start in time" >&2
+          echo "Site failed to start after 60 seconds" >&2
+          echo "Checking if server process is running..."
+          if [ -f server.pid ]; then
+            if ps -p $(cat server.pid) > /dev/null; then
+              echo "Server process is still running"
+            else
+              echo "Server process died"
+            fi
+          fi
+          echo "Checking port 4321..."
+          netstat -tuln | grep 4321 || echo "Port 4321 not in use"
           exit 1
+
+      - name: Stop server on failure
+        if: failure()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+            rm server.pid
+          fi
 
       - name: Run Lighthouse CI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm run lh:ci
+
+      - name: Cleanup server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+            rm server.pid
+          fi
