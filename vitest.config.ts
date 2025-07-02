@@ -22,12 +22,21 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/**',
-        'tests/__mocks__/**',
+        'tests/**', // Exclude all test files from coverage
+        'playwright/**', // Exclude Playwright test files
+        'src/mocks/**', // Exclude mock files
         'dist/**',
         '.astro/**',
         'public/**',
+        '!public/assets/js/**/*.js', // Include all JS files in public/assets/js for coverage
+        'public/assets/js/**/debug*.js', // But exclude debug files
+        'public/assets/js/**/theme-*debugger.js', // Exclude theme debugger files
+        'functions/**', // Exclude Cloudflare functions
         'src/**/*.astro', // Exclude Astro components from coverage
         'src/pages/**', // Exclude Astro pages from coverage
+        '!src/pages/api/**/*.js', // But include API endpoints
+        '!src/config/**/*.js', // Include config files
+        '!src/content/config.ts', // Include content config
         'src/layouts/**', // Exclude Astro layouts from coverage
         '**/debug-*.js', // Exclude debug files
         'test-*.js', // Exclude test utilities
