@@ -3,7 +3,7 @@ import Layout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import BlogPostRow from '../../components/BlogPostRow.astro';
 const posts = (await getCollection('blog')) as any[];
-const title = "Blog";
+const title = "Blake Oxford's Blog";
 const description = "Explore my latest thoughts, tutorials, and insights on web development, design, and technology.";
 const canonicalUrl = "https://blakeoxford.com/blog/";
 ---

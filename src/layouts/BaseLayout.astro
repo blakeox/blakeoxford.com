@@ -52,18 +52,16 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
     <meta property="og:image:height" content="630" />
     <meta property="og:url" content={url} />
     <meta property="og:type" content="website" />
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="/assets/images/og-image.jpg" />
     <!-- Apple mobile web app support -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="robots" content="index, follow" />
     <!-- eslint-disable-next-line no-restricted-syntax -->
-    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
-    <!-- eslint-disable-next-line no-restricted-syntax -->
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#ffffff" />
     <!-- Manifest -->
     <link rel="manifest" href="/manifest.webmanifest" />
     <!-- Preconnect & Preload Google Fonts -->
@@ -79,7 +77,9 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
     <script src="/assets/js/analytics.js" defer></script>
     <!-- <script src="/assets/js/theme.js" defer></script> -->
     <!-- <script src="/assets/js/image-lazyload.js" defer></script> -->
-    <!-- <script src="/assets/js/search-overlay.js" defer></script> -->
+    <!-- Fuse.js for fuzzy search -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js" defer></script>
+    <script src="/assets/js/search-overlay.js" defer></script>
     <!-- <script src="/assets/js/search-enhancements.js" defer></script> -->
     <!-- Theme toggle debugger script - REMOVE IN PRODUCTION -->
     <script is:inline src="/assets/js/theme-toggle-debugger.js"></script>
