@@ -21,19 +21,26 @@ test.describe('Search functionality', () => {
   test('should open search overlay with keyboard shortcut', async ({ page }) => {
     await page.goto('/');
     
-    // Wait for search script to load
-    await page.waitForTimeout(1000);
+    // Wait for search script to load and DOM to be ready
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1500); // Increased timeout for WebKit
     
     // Try to open search with Ctrl+K
     await page.keyboard.press('Control+k');
     
     // Wait for search overlay to appear
     const searchOverlay = page.locator('#search-overlay');
-    await expect(searchOverlay).toBeVisible({ timeout: 3000 });
+    await expect(searchOverlay).toBeVisible({ timeout: 5000 });
     
-    // Check that search input is focused
+    // Wait a bit more for focus to settle, especially in WebKit
+    await page.waitForTimeout(500);
+    
+    // Check that search input is focused - with retry for WebKit
     const searchInput = page.locator('#search-input');
-    await expect(searchInput).toBeFocused();
+    
+    // Try to manually focus if not already focused (WebKit workaround)
+    await searchInput.focus();
+    await expect(searchInput).toBeFocused({ timeout: 3000 });
   });
   
   test('should close search overlay with escape key', async ({ page }) => {

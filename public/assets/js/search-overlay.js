@@ -174,13 +174,25 @@ class SearchOverlay {
     this.overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     
-    // Focus search input after animation
-    setTimeout(() => {
+    // Focus search input after animation with WebKit compatibility
+    const focusInput = () => {
       if (this.searchInput) {
         this.searchInput.focus();
         this.searchInput.select();
+        
+        // Double-check focus worked (WebKit workaround)
+        setTimeout(() => {
+          if (document.activeElement !== this.searchInput) {
+            this.searchInput.focus();
+          }
+        }, 50);
       }
-    }, 100);
+    };
+    
+    setTimeout(focusInput, 100);
+    
+    // Additional focus attempt for WebKit
+    setTimeout(focusInput, 300);
 
     // Update ARIA
     this.searchInput?.setAttribute('aria-expanded', 'true');
