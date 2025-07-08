@@ -92,7 +92,7 @@ export function setupDropdownKeyboardNavigation(triggerSelector = '.nav-link[ari
 /**
  * Close all open dropdowns
  */
-function closeAllDropdowns() {
+export function closeAllDropdowns() {
   document.querySelectorAll('.nav-link[aria-haspopup="true"]').forEach(trigger => {
     trigger.setAttribute('aria-expanded', 'false');
     const menu = trigger.parentElement.querySelector('ul[role="menu"]');
