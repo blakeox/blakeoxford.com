@@ -20,8 +20,8 @@
 
 /* Custom gradient utility for from-accent (workaround for Tailwind v4+ bug) */
 .from-accent {
-  --tw-gradient-from: #10b981;
-  --tw-gradient-to: rgb(16 185 129 / 0);
+  --tw-gradient-from: #047857;
+  --tw-gradient-to: rgb(4 120 87 / 0);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -395,12 +395,12 @@
 }
 .btn-primary {
   background: var(--color-accent);
-  color: var(--color-background);
-  box-shadow: 0 2px 8px 0 rgba(16,185,129,0.08);
+  color: white;
+  box-shadow: 0 2px 8px 0 rgba(4,120,87,0.12);
 }
 .btn-primary:hover, .btn-primary:focus-visible {
   background: var(--color-accent-dark);
-  color: var(--color-background);
+  color: white;
 }
 .btn-secondary {
   background: transparent;

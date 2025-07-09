@@ -20,9 +20,9 @@ export default /** @type {import('tailwindcss').Config} */ {
         'primary-dark':     'var(--color-primary-dark)',
 
         // 'accent' is a static hex for gradient utilities (e.g., from-accent). If you want dynamic gradients, use a CSS variable and add a custom utility in global.css.
-        accent:             '#10b981',
-        'accent-light':     '#6ee7b7',
-        'accent-dark':      '#047857',
+        accent:             '#047857',
+        'accent-light':     '#065f46',
+        'accent-dark':      '#064e3b',
 
         surface:            'var(--color-surface)',
         'surface-dark':     'var(--color-surface-dark)',
@@ -237,17 +237,17 @@ export default /** @type {import('tailwindcss').Config} */ {
               letterSpacing: theme('letterSpacing.wide'),
             },
             a: {
-              color: theme('colors.accent.DEFAULT', '#10b981'),
+              color: theme('colors.accent.DEFAULT', '#047857'),
               textDecoration: 'underline',
               textUnderlineOffset: '2px',
               fontWeight: theme('fontWeight.medium'),
               transition: 'color 0.2s',
               '&:hover': {
-                color: theme('colors.accent.dark', '#047857'),
+                color: theme('colors.accent.dark', '#064e3b'),
               },
               '&:focus': {
                 outline: '2px solid',
-                outlineColor: theme('colors.accent.DEFAULT', '#10b981'),
+                outlineColor: theme('colors.accent.DEFAULT', '#047857'),
                 outlineOffset: '2px',
               },
             },
@@ -260,21 +260,21 @@ export default /** @type {import('tailwindcss').Config} */ {
               marginBottom: '1em',
             },
             'ul > li::marker': {
-              color: theme('colors.accent.DEFAULT', '#10b981'),
+              color: theme('colors.accent.DEFAULT', '#047857'),
             },
             'ol > li::marker': {
-              color: theme('colors.accent.DEFAULT', '#10b981'),
+              color: theme('colors.accent.DEFAULT', '#047857'),
             },
             blockquote: {
               fontStyle: 'italic',
               color: theme('colors.neutral.dark', '#334155'),
-              borderLeft: `4px solid ${theme('colors.accent.DEFAULT', '#10b981')}`,
+              borderLeft: `4px solid ${theme('colors.accent.DEFAULT', '#047857')}`,
               paddingLeft: '1em',
               margin: '1.5em 0',
             },
             code: {
               backgroundColor: theme('colors.neutral.light', '#cbd5e1'),
-              color: theme('colors.accent.dark', '#047857'),
+              color: theme('colors.accent.dark', '#064e3b'),
               borderRadius: theme('borderRadius.md'),
               padding: '0.2em 0.4em',
               fontSize: '0.95em',
