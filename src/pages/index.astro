@@ -74,11 +74,11 @@ const featuredProjects = featuredSlugs
               <!-- Decorative elements around the image -->
               <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-purple-500/30 blur-xl opacity-70 animate-pulse"></div>
               <div class="relative rounded-full p-1 bg-gradient-to-r from-accent to-purple-500">
-                <CoinFlipImage 
-                  frontSrc="/assets/images/Blake-O-scaled.jpg" 
-                  backSrc="/assets/images/china-profile-picture.jpg" 
-                  alt="Blake Oxford" 
-                  size={280} 
+                <CoinFlipImage
+                  frontSrc="/assets/images/Blake-O-scaled.jpg"
+                  backSrc="/assets/images/china-profile-picture.jpg"
+                  alt="Blake Oxford"
+                  size={280}
                   flipMultipleTimes
                   role="img"
                   aria-label="Photo of Blake Oxford"
@@ -253,7 +253,7 @@ const featuredProjects = featuredSlugs
                 <li class="flex items-start">
                   <!-- Predictive/Chart Icon -->
                   <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   Predictive financial modeling systems
@@ -284,12 +284,26 @@ const featuredProjects = featuredSlugs
     <section id="technologies" class="w-full py-16 text-center animate-fade-in bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
       <h2 class="text-h2 font-bold mb-8 text-accent-dark">Technologies I Excel At</h2>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
-        {['Python Automation', 'OpenAI API', 'Microsoft Intune', 'SQL', 'Google Cloud', 'Firebase', 'Azure', 'Cloudflare', 'Microsoft Fabric'].map((tech) => (
+        {[
+          { name: 'Python Automation', img: '/assets/images/proficiencies/python_logo.png', alt: 'Python Logo' },
+          { name: 'OpenAI API', img: '/assets/images/proficiencies/OpenAI-black-monoblossom.png', alt: 'OpenAI Logo' },
+          { name: 'Microsoft Intune', img: '/assets/images/proficiencies/Intune_logo_final.png', alt: 'Microsoft Intune Logo' },
+          { name: 'SQL', img: '/assets/images/proficiencies/Azure_SQL_logo.png', alt: 'Azure SQL Logo' },
+          { name: 'Google Cloud', img: '/assets/images/proficiencies/google_cloud_logo.png', alt: 'Google Cloud Logo' },
+          { name: 'Firebase', img: '/assets/images/proficiencies/Firebase_Logomark_Full%20Color.png', alt: 'Firebase Logo' },
+          { name: 'Azure', img: '/assets/images/proficiencies/Azure_SQL_logo.png', alt: 'Azure Logo' },
+          { name: 'Cloudflare', img: '/assets/images/proficiencies/cloudflare_logo.png', alt: 'Cloudflare Logo' },
+          { name: 'Microsoft Fabric', img: '/assets/images/proficiencies/fabric_32_color.png', alt: 'Microsoft Fabric Logo' },
+        ].map((tech) => (
           <li class="flex flex-col items-center group">
-            <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform">
-              <img src={`/assets/images/${tech.toLowerCase().replace(/ /g, '-')}-logo.png`} alt={`${tech} Logo`} class="w-full h-full object-contain" />
+            <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center">
+              {tech.img ? (
+                <img src={tech.img} alt={tech.alt} class="w-full h-full object-contain" />
+              ) : (
+                <span class="text-2xl" aria-label={tech.name}>?</span>
+              )}
             </div>
-            <span class="group-hover:text-accent transition-colors">{tech}</span>
+            <span class="group-hover:text-accent transition-colors">{tech.name}</span>
           </li>
         ))}
       </ul>
