@@ -7,32 +7,31 @@
   <div class="search-container minimalist">
     <button
       id="close-search"
-      class="search-close-button"
+      class="search-close-button absolute top-4 right-5 min-w-11 min-h-11 flex items-center justify-center bg-transparent z-2"
       aria-label="Close search"
-      style="position:absolute;top:1rem;right:1.25rem;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;background:transparent;z-index:2;"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" style="width:var(--icon-lg);height:var(--icon-lg);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
-    <form class="search-form" autocomplete="off" style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:20vh;">
+    <form class="search-form w-full flex flex-col items-center justify-center min-h-[20vh]" autocomplete="off">
       <h2 id="search-title" class="sr-only">Search</h2>
       <label for="search-input" class="sr-only">Search</label>
-      <div class="search-input-wrapper" style="position:relative;width:100%;max-width:420px;">
+      <div class="search-input-wrapper relative w-full max-w-md">
         <input
           id="search-input"
           type="text"
           placeholder="Search..."
-          class="search-input minimalist"
+          class="search-input minimalist w-full text-xl py-4 px-6 rounded-full border border-neutral-300 outline-none"
           aria-label="Search"
           autocomplete="off"
           spellcheck="false"
           aria-expanded="false"
           aria-controls="search-results"
           role="combobox"
-          style="width:100%;font-size:1.35rem;padding:1.1rem 1.5rem;border-radius:999px;border:1.5px solid var(--color-neutral-light);background:var(--glass-surface-bg);color:var(--color-foreground);box-shadow:none;outline:none;"
+          style="background:var(--glass-surface-bg);color:var(--color-foreground);box-shadow:none;"
         />
-        <div id="search-results" class="search-results" role="listbox" aria-label="Search results" style="position:absolute;top:100%;left:0;right:0;margin-top:0.5rem;background:var(--glass-surface-bg);border-radius:var(--radius-xl);border:1.5px solid var(--glass-border);box-shadow:var(--shadow-lg);max-height:60vh;overflow-y:auto;display:none;z-index:10;">
+        <div id="search-results" class="search-results absolute top-full left-0 right-0 mt-2 rounded-xl border max-h-[60vh] overflow-y-auto hidden z-10" role="listbox" aria-label="Search results" style="background:var(--glass-surface-bg);border-color:var(--glass-border);box-shadow:var(--shadow-lg);">
           <!-- Search results will be dynamically inserted here -->
         </div>
       </div>

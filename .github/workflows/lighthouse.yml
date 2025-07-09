@@ -2,9 +2,9 @@ name: Lighthouse CI
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
   pull_request:
-    branches: [main]
+    branches: ["**"]
 
 jobs:
   lighthouse:
@@ -35,10 +35,10 @@ jobs:
           SERVER_PID=$!
           echo "Server PID: $SERVER_PID"
           echo $SERVER_PID > server.pid
-          
+
           # Give the server a moment to start
           sleep 3
-          
+
           # Fallback: if serve fails, try Astro preview
           if ! ps -p $SERVER_PID > /dev/null 2>&1; then
             echo "⚠️  Serve command failed, trying Astro preview as fallback..."
