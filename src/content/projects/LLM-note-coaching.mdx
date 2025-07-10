@@ -14,11 +14,11 @@ image: "/assets/images/openai-doc-quality.png"
 link: ""
 ---
 
-### Background
+## Background
 
 To further elevate clinical documentation and streamline compliance efforts, I architected a solution leveraging the OpenAI API to automatically review de-identified patient notes. By integrating with existing data pipelines, this system pulled encrypted, PHI-stripped records from our SQL Server repository, forwarded them to the OpenAI Playground with a custom prompt tailored to Blue Cross Blue Shield (BCBS) audit criteria, and returned granular, role-based feedback. The result was a near real-time mechanism for technicians and providers to iteratively refine their notes—significantly reducing audit exceptions and rework.
 
-### Key Achievements
+## Key Achievements
 
 - **Automated Note Ingestion & De-Identification:** Designed a secure ETL process using Python and SQL Server that extracted patient notes, applied deterministic de-identification routines (redacting names, dates, and identifiers), and staged content for API consumption—all within HIPAA-compliant guardrails.
 - **Custom BCBS Audit Prompt Engineering:** Collaborated with clinical auditors to craft a specialized prompt that instructed OpenAI’s GPT-4 model to evaluate each note against BCBS documentation guidelines, identifying missing elements (e.g., medical necessity language, precise CPT justification, signature line) and highlighting potential risk areas (e.g., ambiguous phrasing, unsupported treatment rationale).
@@ -28,7 +28,7 @@ To further elevate clinical documentation and streamline compliance efforts, I a
 - **Integrated Review Dashboard:** Built a Power BI integration that consumed the OpenAI feedback JSON, rendering a column-level view of audit readiness metrics. Providers could filter by date range, note author, or patient cohort—making it trivial to identify systemic documentation gaps and monitor improvement over time.
 - **API-Driven Continuous Improvement:** Deployed a serverless function in Azure Functions that orchestrated nightly batch processing of new notes. If the model flagged more than 5 notes with critical omissions, the system automatically triggered an email alert to compliance leads, ensuring proactive remediation.
 
-### Impact
+## Impact
 
 By embedding AI-driven review directly into our clinical workflow, we achieved:
 
