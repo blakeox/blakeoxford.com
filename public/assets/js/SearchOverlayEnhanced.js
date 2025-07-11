@@ -1,6 +1,9 @@
 // SearchOverlayEnhanced.js: Advanced search functionality with fuzzy search and AI-powered suggestions
 // Features: Real-time search, keyboard navigation, analytics, and progressive enhancement
 
+// Import focus trap functionality
+import { createFocusTrap } from './focus-trap.js';
+
 class SearchOverlayEnhancer {
   constructor() {
     this.searchOverlay = null;
@@ -13,6 +16,7 @@ class SearchOverlayEnhancer {
     this.currentResults = [];
     this.selectedIndex = -1;
     this.searchTimeout = null;
+    this.focusTrap = null; // Add focus trap
     
     // Search index for fast searching
     this.searchIndex = null;
@@ -27,6 +31,13 @@ class SearchOverlayEnhancer {
     this.setupKeyboardShortcuts();
     await this.loadSearchIndex();
     this.setupAccessibility();
+    this.setupFocusTrap(); // Initialize focus trap
+  }
+
+  setupFocusTrap() {
+    if (this.searchOverlay) {
+      this.focusTrap = createFocusTrap(this.searchOverlay);
+    }
   }
 
   cacheElements() {
@@ -177,6 +188,12 @@ class SearchOverlayEnhancer {
   openSearch() {
     this.isOpen = true;
     this.searchOverlay.classList.add('active');
+    this.searchOverlay.setAttribute('aria-hidden', 'false');
+    
+    // Activate focus trap
+    if (this.focusTrap) {
+      this.focusTrap.activate();
+    }
     
     // Focus search input
     setTimeout(() => {
@@ -192,6 +209,12 @@ class SearchOverlayEnhancer {
   closeSearch() {
     this.isOpen = false;
     this.searchOverlay.classList.remove('active');
+    this.searchOverlay.setAttribute('aria-hidden', 'true');
+    
+    // Deactivate focus trap
+    if (this.focusTrap) {
+      this.focusTrap.deactivate();
+    }
     
     // Restore body scroll
     document.body.style.overflow = '';
