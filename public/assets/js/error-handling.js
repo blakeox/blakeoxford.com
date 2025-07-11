@@ -125,12 +125,16 @@ export class ErrorHandlingSystem {
     
     let message = 'Failed to load resource';
     let userMessage = 'Some content failed to load';
+    let shouldShowError = true;
     
     switch (tagName) {
       case 'img':
         message = `Failed to load image: ${src}`;
         userMessage = 'An image failed to load';
         this.handleImageError(element);
+        // Don't show popup errors for missing images - just handle gracefully
+        shouldShowError = false;
+        console.warn('Image failed to load:', src);
         break;
       case 'script':
         message = `Failed to load script: ${src}`;
@@ -142,23 +146,50 @@ export class ErrorHandlingSystem {
         break;
     }
 
-    this.handleError({
-      type: 'resource',
-      message: userMessage,
-      details: message,
-      severity: 'warning'
-    });
+    // Only show error popups for critical resources (scripts, stylesheets)
+    if (shouldShowError) {
+      this.handleError({
+        type: 'resource',
+        message: userMessage,
+        details: message,
+        severity: 'warning'
+      });
+    }
   }
 
   handleImageError(img) {
-    // Replace with placeholder or hide
+    // Try fallback image first
+    const currentSrc = img.src;
+    const fallbackImage = '/assets/images/blake-logo-fallback.png';
+    
+    // If we're not already trying the fallback and this isn't the fallback failing
+    if (!currentSrc.includes('blake-logo-fallback.png') && !img.hasAttribute('data-fallback-tried')) {
+      img.setAttribute('data-fallback-tried', 'true');
+      img.src = fallbackImage;
+      return;
+    }
+    
+    // If fallback also failed, create a graceful placeholder
     img.style.display = 'none';
     
-    // Add accessible alternative
-    const altText = img.alt || 'Image';
+    // Add accessible alternative with branded styling
+    const altText = img.alt || 'Project image';
     const placeholder = document.createElement('div');
-    placeholder.className = 'image-error-placeholder';
-    placeholder.textContent = `${altText} (failed to load)`;
+    placeholder.className = 'image-error-placeholder bg-white dark:bg-gray-800 rounded-lg flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 text-sm border-2 border-gray-200 dark:border-gray-600';
+    placeholder.style.width = img.style.width || '100%';
+    placeholder.style.height = img.style.height || '200px';
+    placeholder.style.minHeight = '150px';
+    
+    // Create branded placeholder content
+    const logoIcon = document.createElement('div');
+    logoIcon.className = 'text-4xl font-bold text-blue-600 mb-2';
+    logoIcon.textContent = 'B';
+    
+    const text = document.createElement('div');
+    text.textContent = 'Blake Oxford Portfolio';
+    
+    placeholder.appendChild(logoIcon);
+    placeholder.appendChild(text);
     placeholder.setAttribute('role', 'img');
     placeholder.setAttribute('aria-label', altText);
     
