@@ -2,7 +2,16 @@
 /**
  * NavBar.astro
  * Modern, accessible, and theme-aware navigation bar for the site.
- * - Semantic HTML, ARIA, and keyboard accessibility
+ * - Semantic HTML, ARIA, and keyboa    <button
+      id="nav-toggle"
+      type="button"
+      class="nav-button text-navbar-text dark:text-navbar-textDark md:hidden p-3 rounded-md transition-colors duration-200 relative z-[1010] min-w-12 min-h-12"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+      aria-controls="nav-mobile-links"
+      style="touch-action: manipulation;"
+      tabindex="0"
+    >ibility
  * - Responsive mobile/desktop layout
  * - Theme toggle and search overlay
  * - Hydrated by NavBarMenu.js for dynamic features
@@ -12,15 +21,15 @@ import ThemeToggle from './ThemeToggle';
 import SearchOverlay from './SearchOverlay.astro';
 import navLinks from '../config/navLinks.js';
 ---
-<!-- Add at the top of the nav for scroll progress bar -->
+<!-- Scroll progress bar - fixed styling to prevent green square -->
 <div
-  class="nav-scroll-progress fixed top-0 left-0 w-full h-1 z-[999] bg-transparent"
+  class="nav-scroll-progress fixed top-0 left-0 w-full h-0.5 z-[999] bg-transparent"
   style="pointer-events: none !important;"
 >
   <div
     id="nav-scroll-progress-bar"
-    class="h-full bg-accent transition-all duration-200"
-    style="width:0%; pointer-events: none !important;"
+    class="h-full transition-all duration-200"
+    style="width: 0%; background: var(--color-accent); pointer-events: none !important; transform-origin: left; transform: scaleX(0);"
   ></div>
 </div>
 
@@ -73,28 +82,6 @@ import navLinks from '../config/navLinks.js';
       animation: fadeOutScale 0.3s var(--ease-emphasized) forwards;
     }
 
-    /* Enhanced focus styles (not applied by default) */
-    .nav-focus {
-      outline: none;
-      position: relative;
-    }
-    .nav-focus::after {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: var(--focus-ring-color);
-      border-radius: inherit;
-      opacity: 0;
-      z-index: -1;
-      transition: opacity 0.2s var(--ease-standard);
-    }
-    .nav-focus:focus::after {
-      opacity: 0.2;
-    }
-
     .pulse-glow {
       animation: pulseGlow 2s infinite;
     }
@@ -113,15 +100,15 @@ import navLinks from '../config/navLinks.js';
       transition: transform 0.3s var(--ease-emphasized);
     }
 
-    /* Override any focus/hover outline, shadow, or background inside the navbar */
+    /* Override any focus/hover outline, shadow, or background inside the navbar for sound elements only */
     nav [data-sound]:focus,
-    nav [data-sound]:hover,
-    nav button:focus,
-    nav a:focus {
+    nav [data-sound]:hover {
       outline: none;
       box-shadow: none;
       background-color: transparent;
     }
+
+    /* Remove focus style override - let global.css handle button focus */
   </style>
 
   <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
@@ -242,9 +229,6 @@ import navLinks from '../config/navLinks.js';
       ))}
     </ul>
   </div>
-
-  <!-- Scroll Progress Indicator -->
-  <div class="scroll-progress" id="scroll-progress"></div>
 
   <!-- Load the navigation JavaScript -->
   <script type="module" src="/assets/js/NavBarMenu.js"></script>

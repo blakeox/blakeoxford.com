@@ -165,17 +165,6 @@
   transition: all 0.3s cubic-bezier(.4,0,.2,1);
   transform-origin: center;
 }
-.scroll-progress {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 2px;
-  background: var(--gradient-accent);
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: transform 0.1s linear;
-  z-index: 1;
-}
 /* Responsive improvements */
 @media (max-width: 768px) {
   .mobile-menu {
@@ -184,14 +173,95 @@
     left: 0.5rem;
     right: 0.5rem;
   }
-  
+
   /* Apply overscroll-behavior only when supported */
   @supports (overscroll-behavior: contain) {
     .mobile-menu {
       overscroll-behavior: contain;
     }
   }
+
+  /* Ensure adequate touch targets for mobile */
+  button,
+  a,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"] {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 12px;
+  }
+
+  /* Exception for decorative or inline elements */
+  .sr-only,
+  [aria-hidden="true"],
+  .inline {
+    min-width: unset;
+    min-height: unset;
+    padding: initial;
+  }
+
+  /* But still ensure skip links are accessible when focused */
+  .sr-only:focus {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+
+  /* Ensure all interactive nav elements meet touch targets */
+  .nav-button,
+  .search-button,
+  .mobile-tap-effect {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  /* Mobile hamburger button should be larger */
+  #nav-toggle {
+    min-width: 56px;
+    min-height: 56px;
+    padding: 16px;
+  }
 }
+
+/* Force minimum touch targets - highest specificity */
+@media (max-width: 768px) {
+  button, .btn, [type="button"], [role="button"] {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+  
+  /* Navigation specific elements */
+  #nav-toggle,
+  .nav-button,
+  .search-button,
+  #search-toggle,
+  #theme-toggle {
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 12px !important;
+  }
+  
+  /* Links should also meet touch targets */
+  a:not(.sr-only) {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 12px !important;
+  }
+  
+  /* Project cards and other interactive elements */
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline {
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 12px 16px !important;
+  }
+}
+
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .navbar-container,
@@ -298,7 +368,7 @@
 }
 #nav-cmdk-modal.active, #nav-help-modal.active {
   opacity: 1;
-  pointer-index: auto;
+  pointer-events: auto;
 }
 #nav-cmdk-modal .bg-background, #nav-help-modal .bg-background {
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
@@ -390,6 +460,13 @@
   outline-offset: 2px;
   box-shadow: 0 0 0 2px var(--focus-ring, var(--color-accent));
 }
+
+/* Ensure all buttons are focusable in all browsers */
+.btn:focus {
+  outline: 2px solid var(--focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+
 .btn:active, .mobile-tap-effect:active {
   transform: scale(0.97);
 }
@@ -559,8 +636,6 @@ button:disabled::after {
   }
 }
 
-/* ...existing code... */
-
 /* Ensure search input text and placeholder are white in dark mode */
 .dark .search-input,
 .dark input.search-input,
@@ -578,13 +653,20 @@ button:disabled::after {
 /* Skip link touch target improvements */
 .sr-only:focus,
 .sr-only.focus:not(.sr-only) {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 12px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  clip: auto !important;
+  clip-path: none !important;
+  overflow: visible !important;
+  position: absolute !important;
+  white-space: nowrap !important;
+  width: auto !important;
+  height: auto !important;
 }
 
 /* Ensure adequate touch targets for mobile */
@@ -593,26 +675,196 @@ button:disabled::after {
   a,
   [role="button"],
   input[type="submit"],
-  input[type="button"] {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 8px 12px;
+  input[type="button"],
+  .btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 8px 12px !important;
   }
   
   /* Exception for decorative or inline elements */
   .sr-only,
   [aria-hidden="true"],
   .inline {
-    min-width: unset;
-    min-height: unset;
-    padding: initial;
+    min-width: unset !important;
+    min-height: unset !important;
+    padding: initial !important;
   }
   
   /* But still ensure skip links are accessible when focused */
   .sr-only:focus {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 12px 16px;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 12px 16px !important;
+  }
+  
+  /* Ensure all interactive nav elements meet touch targets */
+  .nav-button,
+  .search-button,
+  .mobile-tap-effect {
+    min-width: 48px !important;
+    min-height: 48px !important;
+  }
+  
+  /* Mobile hamburger button should be larger */
+  #nav-toggle {
+    min-width: 56px !important;
+    min-height: 56px !important;
+    padding: 16px !important;
+  }
+  
+  /* Theme toggle button */
+  .theme-toggle button {
+    min-width: 48px !important;
+    min-height: 48px !important;
+  }
+  
+  /* Back to top button */
+  .fixed .bg-accent {
+    min-width: 48px !important;
+    min-height: 48px !important;
+  }
+}
+
+/* Enhanced Keyboard Navigation */
+.focus-trap-active {
+  position: relative;
+}
+
+/* Better focus indicators for all interactive elements */
+a:focus,
+button:focus,
+input:focus,
+textarea:focus,
+select:focus,
+[tabindex]:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Ensure proper focus indicators for mobile hamburger */
+.nav-button:focus {
+  outline: 2px solid var(--color-accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* Better modal focus styles */
+[role="dialog"]:focus-within {
+  outline: none;
+}
+
+/* Ensure search input is focusable */
+.search-input:focus {
+  outline: 2px solid var(--color-accent) !important;
+  outline-offset: 2px !important;
+  border-color: var(--color-accent) !important;
+}
+
+/* Better button focus management for keyboard accessibility */
+button:focus,
+[role="button"]:focus,
+input[type="button"]:focus,
+input[type="submit"]:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  z-index: 10;
+  position: relative;
+}
+
+/* Enhanced focus for navigation buttons */
+.nav-button:focus,
+.search-button:focus {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+  background: var(--color-accent-light);
+  transform: scale(1.05);
+}
+
+/* Mobile hamburger button focus enhancement */
+#nav-toggle:focus {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 4px;
+  background: rgba(var(--color-accent-rgb), 0.1);
+}
+
+/* Focus trap for modals and overlays */
+.modal:focus-within,
+.overlay:focus-within {
+  outline: 2px solid var(--color-accent);
+}
+
+/* Improved skip link visibility and focus */
+.sr-only:focus {
+  position: fixed !important;
+  top: 1rem !important;
+  left: 1rem !important;
+  z-index: 9999 !important;
+  background: var(--color-accent) !important;
+  color: var(--color-background) !important;
+  font-weight: 600 !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Hero section images need proper focus and contrast */
+.coin-flip-front img,
+.coin-flip-back img {
+  outline: none;
+}
+
+.coin-flip-front img:focus,
+.coin-flip-back img:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Enhanced mobile touch targets (WCAG 2.1 AA requirement: 44x44px) */
+@media (max-width: 768px) {
+  /* Ensure all interactive elements have minimum 44px touch targets */
+  button,
+  [role="button"],
+  a,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  .nav-button,
+  .search-button,
+  #nav-toggle,
+  #search-toggle,
+  .theme-toggle {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 0.75rem !important;
+  }
+  
+  /* Special handling for small icon buttons */
+  .nav-button,
+  .search-button,
+  #nav-toggle,
+  #search-toggle {
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Ensure nav links in mobile menu have proper touch targets */
+  .mobile-menu a,
+  .nav-link {
+    min-height: 44px !important;
+    padding: 0.75rem 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  /* Search close button */
+  .search-close-button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 0.75rem !important;
   }
 }
 

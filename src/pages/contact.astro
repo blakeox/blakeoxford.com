@@ -18,7 +18,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
           </div>
           <div class="flex justify-center md:justify-end">
             <div class="relative">
-              <CoinFlipImage frontSrc="/assets/images/Blake-O-scaled.jpg" backSrc="/assets/images/china-profile-picture.jpg" alt="Blake Oxford" size={260} flipMultipleTimes />
+              <CoinFlipImage frontSrc="/assets/images/Blake-O-scaled.jpg" backSrc="/assets/images/china-profile-picture.jpg" alt="Blake Oxford" altBack="Blake Oxford in China" size={260} flipMultipleTimes />
               <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-background animate-float">💡</div>
             </div>
           </div>
@@ -101,7 +101,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
                 placeholder="you@email.com"
               />
               <small id="email-help" class="text-sm text-neutral">I'll never share your email.</small>
-              <div id="email-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite"></div>
+              <div id="email-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
             </div>
             <div class="flex flex-col gap-2">
               <label for="message" class="font-semibold text-lg">Message <span class="text-accent">*</span></label>
@@ -116,7 +116,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
                 placeholder="How can I help you?"
               ></textarea>
               <small id="message-help" class="text-sm text-neutral">Minimum 10 characters required.</small>
-              <div id="message-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite"></div>
+              <div id="message-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
             </div>
 
             <!-- Cloudflare Turnstile widget -->

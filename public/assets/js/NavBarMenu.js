@@ -502,8 +502,9 @@ class NavBarMenu {
     const update = () => {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const percent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      bar.style.width = percent + '%';
+      const percent = docHeight > 0 ? scrollTop / docHeight : 0;
+      // Use transform instead of width to prevent visual artifacts
+      bar.style.transform = `scaleX(${percent})`;
     };
     window.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);

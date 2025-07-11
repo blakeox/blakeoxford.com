@@ -29,7 +29,6 @@
           aria-expanded="false"
           aria-controls="search-results"
           role="combobox"
-          style="background:var(--glass-surface-bg);color:var(--color-foreground);box-shadow:none;"
         />
         <div id="search-results" class="search-results absolute top-full left-0 right-0 mt-2 rounded-xl border max-h-[60vh] overflow-y-auto hidden z-10" role="listbox" aria-label="Search results" style="background:var(--glass-surface-bg);border-color:var(--glass-border);box-shadow:var(--shadow-lg);">
           <!-- Search results will be dynamically inserted here -->
@@ -102,33 +101,35 @@
     padding: 1.25rem 2rem;
     border-radius: 999px;
     border: 2px solid var(--color-neutral-light);
-    background: var(--glass-surface-bg);
-    color: var(--color-foreground);
+    background: #ffffff;
+    color: #111827;
     box-shadow: none;
     outline: none;
     transition: border-color 0.2s, background 0.2s, color 0.2s;
   }
   .search-input.minimalist:focus {
     border-color: var(--color-accent);
-    background: var(--color-surface-subtle);
+    background: #ffffff;
+    color: #111827;
   }
   .search-input.minimalist::placeholder {
-    color: var(--color-neutral);
-    opacity: 0.8;
+    color: #374151;
+    opacity: 1;
     font-size: 1.5rem;
     transition: color 0.2s, opacity 0.2s;
   }
   .dark .search-input.minimalist {
-    background: var(--glass-surface-bg-dark);
-    color: #fff !important;
-    border-color: #e5e7eb;
+    background: #1f2937;
+    color: #f9fafb;
+    border-color: #374151;
   }
   .dark .search-input.minimalist:focus {
     border-color: var(--color-accent-light);
-    background: rgba(255, 255, 255, 0.05);
+    background: #1f2937;
+    color: #f9fafb;
   }
   .dark .search-input.minimalist::placeholder {
-    color: #fff !important;
+    color: #9ca3af;
     opacity: 1;
   }
   .search-close-button {
