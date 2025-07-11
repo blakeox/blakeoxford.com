@@ -359,8 +359,9 @@ test.describe('Enhanced Accessibility Testing', () => {
     });
 
     test('form validation should be accessible', async ({ page }) => {
-      await page.goto('/contact');
-      await page.waitForLoadState('networkidle');
+      await page.goto('http://localhost:4326/contact');
+      // Remove networkidle wait which can cause timeouts
+      await page.waitForLoadState('domcontentloaded');
       
       const form = page.locator('#contact-form');
       await expect(form).toBeVisible();
@@ -368,20 +369,58 @@ test.describe('Enhanced Accessibility Testing', () => {
       const submitButton = form.locator('button[type="submit"]').first();
       await expect(submitButton).toBeVisible();
       
-      // Try to submit empty form
-      await submitButton.click();
+      // Try to submit empty form by triggering submit event directly
+      await form.evaluate(form => {
+        const event = new Event('submit', { bubbles: true, cancelable: true });
+        form.dispatchEvent(event);
+      });
+      
+      // Wait for validation to process
+      await page.waitForTimeout(500);
       
       // Check for accessible error messages
       const errorMessages = page.locator('[role="alert"], .error, [aria-invalid="true"]');
       const errorCount = await errorMessages.count();
       
+      console.log(`Found ${errorCount} error elements`);
+      
       if (errorCount > 0) {
         for (let i = 0; i < errorCount; i++) {
           const error = errorMessages.nth(i);
           const errorText = await error.textContent();
+          const tagName = await error.evaluate(el => el.tagName);
+          const className = await error.evaluate(el => el.className);
+          const ariaInvalid = await error.getAttribute('aria-invalid');
+          console.log(`Error ${i + 1}: tagName="${tagName}", class="${className}", aria-invalid="${ariaInvalid}", text="${errorText?.trim()}"`);
           
-          // Error messages should be meaningful
-          expect(errorText?.trim().length || 0).toBeGreaterThan(3);
+          // Only check error message length for actual error containers, not form fields
+          if (tagName !== 'INPUT' && tagName !== 'TEXTAREA') {
+            // Error messages should be meaningful
+            expect(errorText?.trim().length || 0).toBeGreaterThan(3);
+          }
+        }
+      } else {
+        // If no individual error messages, check for form-level validation summary
+        const formStatus = page.locator('#form-status');
+        const statusVisible = await formStatus.isVisible();
+        const statusText = await formStatus.textContent();
+        
+        console.log(`Form status visible: ${statusVisible}, text: "${statusText?.trim()}"`);
+        
+        if (statusVisible && statusText?.trim()) {
+          expect(statusText.trim().length).toBeGreaterThan(3);
+        } else {
+          // Check if any fields have aria-invalid="true"
+          const invalidFields = page.locator('[aria-invalid="true"]');
+          const invalidCount = await invalidFields.count();
+          console.log(`Found ${invalidCount} fields with aria-invalid="true"`);
+          
+          if (invalidCount > 0) {
+            // At least the validation state is being set properly
+            expect(invalidCount).toBeGreaterThan(0);
+          } else {
+            throw new Error('No validation feedback found - neither error messages nor aria-invalid states');
+          }
         }
       }
     });

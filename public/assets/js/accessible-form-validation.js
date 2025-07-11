@@ -63,19 +63,27 @@ export class AccessibleFormValidation {
 
     // Required field validation
     if (field.hasAttribute('required') && !value) {
-      errorMessage = `${this.getFieldLabel(field)} is required.`;
+      errorMessage = `${this.getFieldLabel(field)} is required and cannot be empty.`;
     }
     // Email validation
     else if (field.type === 'email' && value && !this.isValidEmail(value)) {
-      errorMessage = 'Please enter a valid email address.';
+      errorMessage = 'Please enter a valid email address (e.g., name@domain.com).';
     }
     // Minimum length validation
-    else if (field.minLength && value.length < field.minLength) {
-      errorMessage = `${this.getFieldLabel(field)} must be at least ${field.minLength} characters.`;
+    else if (field.minLength && value.length > 0 && value.length < field.minLength) {
+      errorMessage = `${this.getFieldLabel(field)} must be at least ${field.minLength} characters long.`;
     }
     // Maximum length validation
     else if (field.maxLength && value.length > field.maxLength) {
-      errorMessage = `${this.getFieldLabel(field)} must be no more than ${field.maxLength} characters.`;
+      errorMessage = `${this.getFieldLabel(field)} must be no more than ${field.maxLength} characters long.`;
+    }
+    // Custom validation for message content
+    else if (field.name === 'message' && value.length > 0 && value.length < 10) {
+      errorMessage = 'Please provide a more detailed message (at least 10 characters).';
+    }
+    // Custom validation for name field
+    else if (field.name === 'name' && value.length > 0 && value.length < 2) {
+      errorMessage = 'Name must be at least 2 characters long.';
     }
 
     if (errorMessage) {
@@ -135,6 +143,14 @@ export class AccessibleFormValidation {
           firstInvalidField.focus();
         }
 
+        // Show form-level error summary
+        const statusContainer = document.getElementById('form-status');
+        if (statusContainer) {
+          statusContainer.textContent = `Please correct ${invalidFields.length} error${invalidFields.length > 1 ? 's' : ''}: ${invalidFields.join(', ')}`;
+          statusContainer.className = 'text-red-600 bg-red-50 border border-red-200 rounded-lg p-4 text-center font-semibold mb-4';
+          statusContainer.classList.remove('hidden');
+        }
+
         // Announce validation summary
         if (window.srAnnouncer) {
           window.srAnnouncer.announce(
@@ -152,6 +168,8 @@ export class AccessibleFormValidation {
   }
 
   handleFormSubmission(form) {
+    // This method is overridden by custom form handlers
+    // but provides default behavior for forms without custom logic
     const submitButton = form.querySelector('button[type="submit"]');
     const statusContainer = document.getElementById('form-status');
     
@@ -170,7 +188,7 @@ export class AccessibleFormValidation {
       window.srAnnouncer.announce('Sending message, please wait...', 'polite');
     }
 
-    // Simulate form submission (replace with actual submission logic)
+    // Default success simulation (should be replaced by actual logic)
     setTimeout(() => {
       this.showSubmissionSuccess(form);
     }, 2000);
