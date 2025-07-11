@@ -198,10 +198,22 @@ export class ErrorHandlingSystem {
 
   handleNetworkError(response) {
     let message = 'Network error occurred';
+    const url = response.url || 'unknown resource';
     
     switch (response.status) {
       case 404:
-        message = 'The requested content was not found';
+        // Be more specific about what wasn't found
+        if (url.includes('/assets/images/')) {
+          message = `Image not found: ${url.split('/').pop()}`;
+        } else if (url.includes('/api/')) {
+          message = 'API endpoint not found';
+        } else {
+          message = 'The requested content was not found';
+        }
+        // Only show error for non-image 404s to avoid spamming users
+        if (!url.includes('/assets/images/')) {
+          console.warn('404 Error:', url);
+        }
         break;
       case 500:
         message = 'Server error occurred. Please try again later.';
@@ -211,6 +223,12 @@ export class ErrorHandlingSystem {
         break;
       default:
         message = `Network error (${response.status}): ${response.statusText}`;
+    }
+
+    // Only show critical errors to users, log others
+    if (response.status === 404 && url.includes('/assets/images/')) {
+      console.warn('Image not found:', url);
+      return; // Don't show popup for missing images
     }
 
     this.handleError({
