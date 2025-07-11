@@ -59,6 +59,7 @@ test.describe('Enhanced Accessibility Testing', () => {
   test.describe('Advanced Keyboard Navigation', () => {
     test('should support comprehensive keyboard navigation patterns', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
       
       const focusableElements: Array<{ element: string; role: string }> = [];
       
@@ -66,16 +67,34 @@ test.describe('Enhanced Accessibility Testing', () => {
       for (let i = 0; i < 30; i++) {
         await page.keyboard.press('Tab');
         
+        // Handle multiple focused elements (e.g., Astro dev toolbar)
         const focused = page.locator(':focus');
-        if (await focused.count() > 0) {
-          const tagName = await focused.evaluate(el => el.tagName.toLowerCase());
-          const role = await focused.getAttribute('role') || 'none';
-          const ariaLabel = await focused.getAttribute('aria-label') || '';
+        const focusedCount = await focused.count();
+        
+        if (focusedCount > 0) {
+          // Get the first focused element that's not the dev toolbar
+          let targetElement = focused.first();
+          for (let j = 0; j < focusedCount; j++) {
+            const element = focused.nth(j);
+            const tagName = await element.evaluate(el => el.tagName.toLowerCase()).catch(() => 'unknown');
+            if (tagName !== 'astro-dev-toolbar') {
+              targetElement = element;
+              break;
+            }
+          }
           
-          focusableElements.push({ 
-            element: `${tagName}${role !== 'none' ? `:${role}` : ''}`,
-            role: ariaLabel
-          });
+          try {
+            const tagName = await targetElement.evaluate(el => el.tagName.toLowerCase());
+            const role = await targetElement.getAttribute('role') || 'none';
+            const ariaLabel = await targetElement.getAttribute('aria-label') || '';
+            
+            focusableElements.push({ 
+              element: `${tagName}${role !== 'none' ? `:${role}` : ''}`,
+              role: ariaLabel
+            });
+          } catch {
+            // Skip if element can't be evaluated
+          }
         }
         
         await page.waitForTimeout(100);
@@ -251,8 +270,10 @@ test.describe('Enhanced Accessibility Testing', () => {
   test.describe('Form Accessibility', () => {
     test('contact form should be fully accessible', async ({ page }) => {
       await page.goto('/contact');
+      await page.waitForLoadState('networkidle');
       
-      const form = page.locator('#contact-form, form').first();
+      // Specifically target the contact form, not search forms
+      const form = page.locator('#contact-form');
       await expect(form).toBeVisible();
       
       // Check all form fields
@@ -294,9 +315,13 @@ test.describe('Enhanced Accessibility Testing', () => {
 
     test('form validation should be accessible', async ({ page }) => {
       await page.goto('/contact');
+      await page.waitForLoadState('networkidle');
       
-      const form = page.locator('#contact-form, form').first();
+      const form = page.locator('#contact-form');
+      await expect(form).toBeVisible();
+      
       const submitButton = form.locator('button[type="submit"]').first();
+      await expect(submitButton).toBeVisible();
       
       // Try to submit empty form
       await submitButton.click();

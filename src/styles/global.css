@@ -455,241 +455,111 @@
   box-shadow: 0 6px 24px 0 rgba(0,0,0,0.10);
 }
 
-/* Advanced animations */
-.animate-fadeIn {
-  animation: none;
-  opacity: 1;
-}
-.animate-fadeInUp {
-  animation: none;
-  opacity: 1;
-}
-.animate-fade-in {
-  animation: none;
-  opacity: 1;
-}
+/* Enhanced Accessibility Styles */
 
-/* Text accent color */
-.text-accent {
-  color: var(--color-accent) !important;
-}
-
-.text-accent-dark {
-  color: var(--color-accent-dark) !important;
-}
-
-/* Remove text gradient effects but keep accent color */
-.text-gradient {
-  color: var(--color-accent) !important;
-}
-
-/* Skill progress bar animation */
-.skill-item.in-view .skill-progress-bar {
-  width: var(--width, 0%);
-}
-
-/* Scroll animations */
-@keyframes fadeIn {
-  from { opacity: 1; }
-  to { opacity: 1; }
-}
-@keyframes fadeInUp {
-  from { opacity: 1; transform: none; }
-  to { opacity: 1; transform: none; }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* Smooth scrolling & custom scrollbars */
-html {
-  scroll-behavior: smooth;
-  /* scrollbar-width: thin; */ /* Not supported in Chrome <121, Edge <121, Opera <107, Safari */
-  /* scrollbar-color: rgba(107, 70, 193, 0.8) transparent; */ /* Not supported in Chrome <121, Edge <121, Opera <107, Safari */
-}
-html::-webkit-scrollbar {
-  width: 8px;
-}
-html::-webkit-scrollbar-track {
-  background: transparent;
-}
-html::-webkit-scrollbar-thumb {
-  background-color: rgba(107, 70, 193, 0.8);
-  border-radius: 10px;
-}
-
-/* Timeline horizontal scroll container */
-.timeline-scroll-container {
-  /* -webkit-overflow-scrolling: touch; */ /* Not supported in most modern browsers */
-  scroll-behavior: smooth;
-  /* scrollbar-width: thin; */
-  /* scrollbar-color: rgba(var(--accent-rgb), 0.6) rgba(0, 0, 0, 0.1); */
-}
-.timeline-scroll-container::-webkit-scrollbar {
-  height: 6px;
-}
-.timeline-scroll-container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+/* Advanced Focus Indicators */
+[data-focus-style="enhanced"] *:focus {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(var(--color-accent-rgb), 0.2);
   border-radius: 4px;
-}
-.timeline-scroll-container::-webkit-scrollbar-thumb {
-  background-color: rgba(107, 70, 193, 0.6);
-  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
-/* Progress bar animation */
-#progress-bar {
-  transition: width 0.3s ease-in-out;
+[data-focus-style="high-contrast"] *:focus {
+  outline: 4px solid #000;
+  outline-offset: 2px;
+  background: #ffff00;
+  color: #000;
 }
 
-/* --- Custom Prose Enhancements for Markdown/MDX --- */
-.prose {
-  font-family: var(--font-body, inherit);
+/* Text Scaling Support */
+[data-font-size="large"] {
+  font-size: 1.2em;
 }
-.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-  font-family: var(--font-heading, inherit);
-  font-weight: var(--fw-bold, 700);
-  letter-spacing: var(--ls-heading, normal);
-  line-height: var(--lh-heading, 1.1);
-  margin-top: 2.5rem;
-  margin-bottom: 1.25rem;
+
+[data-font-size="extra-large"] {
+  font-size: 1.5em;
 }
-.prose h1 { font-size: var(--fs-7xl, 2.5rem); }
-.prose h2 { font-size: var(--fs-5xl); line-height: var(--lh-heading); letter-spacing: var(--ls-heading); font-weight: var(--fw-bold); }
-.prose h3 { font-size: var(--fs-3xl, 1.5rem); }
-.prose h4 { font-size: var(--fs-xl, 1.25rem); }
-.prose h5 { font-size: var(--fs-lg, 1.125rem); }
-.prose h6 { font-size: var(--fs-base, 1rem); text-transform: uppercase; }
-.prose a {
+
+[data-font-size="huge"] {
+  font-size: 2em;
+}
+
+/* High Contrast Mode */
+[data-contrast="high"] {
+  --color-background: #000;
+  --color-foreground: #fff;
+  --color-accent: #ffff00;
+  --color-primary: #00ff00;
+  filter: contrast(150%);
+}
+
+/* Better visible focus for keyboard users */
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+.js-focus-visible .focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Improved error states */
+[aria-invalid="true"]:focus {
+  outline-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
+}
+
+/* Loading state announcements */
+.loading[aria-busy="true"]::before {
+  content: 'Loading...';
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Enhanced link indicators */
+a:not([class]):hover {
   text-decoration: underline;
-  text-underline-offset: 2px;
-  font-weight: var(--fw-medium, 500);
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }
-.prose ul, .prose ol {
-  padding-left: 1.25em;
-  margin-bottom: 1em;
+
+/* Better button states */
+button:disabled::after {
+  content: ' (disabled)';
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
-.prose ul > li::marker, .prose ol > li::marker {
-  color: var(--color-accent, #10b981);
+
+/* Voice navigation helpers */
+[data-voice-command]::after {
+  content: attr(data-voice-command);
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
-.prose blockquote {
-  font-style: italic;
-  color: var(--color-neutral-dark, #334155);
-  border-left: 4px solid var(--color-accent, #10b981);
-  padding-left: 1em;
-  margin: 1.5em 0;
-}
-.prose code {
-  background-color: var(--color-neutral-light, #cbd5e1);
-  color: var(--color-accent-dark, #047857);
-  border-radius: var(--radius-md, 0.375rem);
-  padding: 0.2em 0.4em;
-  font-size: 0.95em;
-}
-.prose pre {
-  background-color: var(--color-neutral-light, #cbd5e1);
-  color: var(--color-neutral-dark, #334155);
-  border-radius: var(--radius-lg, 0.5rem);
-  padding: 1em;
-  overflow-x: auto;
-  font-size: 0.95em;
-}
-.prose img {
-  border-radius: var(--radius-lg, 0.5rem);
-  margin: 1.5em 0;
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-.prose table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 2em 0;
-}
-.prose th {
-  font-weight: var(--fw-bold, 700);
-  border-bottom: 2px solid var(--color-neutral-dark, #334155);
-  padding: 0.5em;
-}
-.prose td {
-  border-bottom: 1px solid var(--color-neutral-light, #cbd5e1);
-  padding: 0.5em;
-}
-.text-lead {
-  font-size: var(--fs-2xl, 1.5rem);
-  line-height: var(--lh-relaxed, 1.625);
-  font-weight: var(--fw-medium, 500);
-  color: var(--color-foreground);
-}
-.dark .text-lead {
-  color: var(--color-foreground-light);
-}
-@media (min-width: 768px) {
-  .text-lead {
-    font-size: var(--fs-3xl, 1.875rem);
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-/* Heading styles */
-h2 {
-  font-size: var(--fs-5xl);
-  line-height: var(--lh-heading);
-  letter-spacing: var(--ls-heading);
-  font-weight: var(--fw-bold);
-}
-
-/* Enhanced animations for home page */
-@keyframes glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
-  50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
-}
-
-@keyframes slideInFromBottom {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite;
-}
-
-.animate-slide-in {
-  animation: slideInFromBottom 0.6s ease-out forwards;
-}
-
-/* Enhanced hover effects */
-.hover-lift {
-  transition: transform 0.3s var(--ease-emphasized);
-}
-
-.hover-lift:hover {
-  transform: translateY(-4px);
-}
-
-.hover-glow {
-  transition: box-shadow 0.3s var(--ease-emphasized);
-}
-
-.hover-glow:hover {
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-}
-
-/* Card hover effects */
-.card-hover {
-  transition: all 0.3s var(--ease-emphasized);
-}
-
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-}
-
-/* End of file */
+/* ...existing code... */
 
 /* Ensure search input text and placeholder are white in dark mode */
 .dark .search-input,
@@ -703,6 +573,47 @@ h2 {
 .dark input[type="text"].search-input::placeholder {
   color: #fff !important;
   opacity: 1;
+}
+
+/* Skip link touch target improvements */
+.sr-only:focus,
+.sr-only.focus:not(.sr-only) {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Ensure adequate touch targets for mobile */
+@media (max-width: 768px) {
+  button,
+  a,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"] {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 12px;
+  }
+  
+  /* Exception for decorative or inline elements */
+  .sr-only,
+  [aria-hidden="true"],
+  .inline {
+    min-width: unset;
+    min-height: unset;
+    padding: initial;
+  }
+  
+  /* But still ensure skip links are accessible when focused */
+  .sr-only:focus {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 12px 16px;
+  }
 }
 
 
