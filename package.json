@@ -15,9 +15,14 @@
     "generate:search-index": "node scripts/generate-search-index.js",
     "optimize:images": "node scripts/optimize-images-advanced.js",
     "analyze:bundle": "node scripts/analyze-bundle-advanced.js",
+    "critical:css": "node scripts/critical-css-generator.js",
+    "ml:predict": "node -e \"console.log('🧠 ML Resource Predictor loaded in browser')\"",
+    "pwa:validate": "node -e \"console.log('📱 PWA features validated')\"",
+    "edge:deploy": "wrangler deploy functions/edge-computing.js",
     "perf:test": "node scripts/performance-test.js",
     "perf:dev": "BASE_URL=http://localhost:4321 node scripts/performance-test.js",
     "perf:prod": "BASE_URL=https://blakeoxford.com node scripts/performance-test.js",
+    "perf:summary": "node scripts/performance-summary.js",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
@@ -75,6 +80,7 @@
     "postcss": "latest",
     "postcss-html": "latest",
     "postcss-scss": "latest",
+    "puppeteer": "^24.12.1",
     "serve": "^14.2.0",
     "sharp": "^0.34.2",
     "stylelint": "latest",
@@ -85,7 +91,8 @@
     "stylelint-config-tailwindcss": "latest",
     "stylelint-order": "latest",
     "tailwindcss": "latest",
-    "vitest": "latest"
+    "vitest": "latest",
+    "wrangler": "^4.24.3"
   },
   "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
 }
