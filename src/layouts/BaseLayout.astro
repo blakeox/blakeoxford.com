@@ -71,22 +71,13 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
     </noscript>
     <!-- Custom CSS (if needed) -->
     <!-- <link rel="stylesheet" href="/assets/css/main.css" /> -->
-    <!-- Analytics, Theme, Lazyload, Search scripts (optional) -->
-    <script src="/assets/js/analytics.js" defer></script>
-    <!-- <script src="/assets/js/theme.js" defer></script> -->
-    <!-- <script src="/assets/js/image-lazyload.js" defer></script> -->
-    <!-- Fuse.js for fuzzy search -->
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js" defer></script>
-    <script src="/assets/js/search-overlay.js" defer></script>
+    <!-- Optimized JavaScript Bundles -->
+    <script src="/assets/js/critical.min.js" defer></script>
+    <script src="/assets/js/lazy-loader.min.js" defer></script>
     
-    <!-- Enhanced Accessibility & User Experience Scripts -->
-    <script src="/assets/js/focus-trap.js" type="module" defer></script>
-    <script src="/assets/js/progressive-enhancement.js" type="module" defer></script>
-    <script src="/assets/js/error-handling.js" type="module" defer></script>
-    <script src="/assets/js/accessibility-center.js" type="module" defer></script>
+    <!-- Fuse.js loaded conditionally by search functionality -->
+    <!-- External CDN will be loaded only when search is activated -->
     <!-- <script src="/assets/js/search-enhancements.js" defer></script> -->
-    <!-- Theme toggle debugger script - REMOVE IN PRODUCTION -->
-    <script is:inline src="/assets/js/theme-toggle-debugger.js"></script>
     <!-- JSON-LD Person Schema -->
     <script type="application/ld+json">
     {

@@ -140,6 +140,11 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
 
   <!-- Enhanced Contact Form with Error Handling -->
   <script type="module">
+    // Load form validation bundle for enhanced validation
+    if (window.LazyBundleLoader) {
+      window.LazyBundleLoader.loadFormFeatures();
+    }
+    
     // Enhanced contact form integration with error handling system
     document.addEventListener('DOMContentLoaded', () => {
       // Get form and error handling system
