@@ -1,0 +1,48 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  quality?: number;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  class: className = '',
+  loading = 'lazy',
+  priority = false,
+  quality = 80
+} = Astro.props;
+
+// Set loading to eager for priority images
+const imageLoading = priority ? 'eager' : loading;
+---
+
+<Image
+  src={src}
+  alt={alt}
+  width={width}
+  height={height}
+  format="avif"
+  quality={quality}
+  loading={imageLoading}
+  class={className}
+/>
+
+{priority && (
+  <link
+    rel="preload"
+    as="image"
+    href={src}
+    type="image/avif"
+  />
+)}

@@ -20,6 +20,15 @@ export default defineConfig({
     compress(),
     react({ ssr: false }),      // No SSR
   ],
+  image: {
+    // Enhanced image optimization
+    domains: ['blakeoxford.com'],
+    formats: ['avif', 'webp', 'jpeg'],
+    remotePatterns: [{
+      protocol: 'https',
+      hostname: '**.blakeoxford.com'
+    }]
+  },
   vite: {
     plugins: [tailwindcss()],
     resolve: {
