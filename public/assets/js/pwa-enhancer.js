@@ -8,7 +8,7 @@ class PWAEnhancer {
     this.installPrompt = null;
     this.isInstalled = false;
     this.updateAvailable = false;
-    
+
     this.init();
   }
 
@@ -19,7 +19,7 @@ class PWAEnhancer {
     this.setupOfflineIndicator();
     this.setupPushNotifications();
     this.setupBackgroundSync();
-    
+
     console.log('📱 PWA Enhancement initialized');
   }
 
@@ -61,7 +61,7 @@ class PWAEnhancer {
       installBtn = this.createInstallButton();
       document.body.appendChild(installBtn);
     }
-    
+
     installBtn.style.display = 'flex';
     installBtn.addEventListener('click', () => this.promptInstall());
   }
@@ -107,34 +107,34 @@ class PWAEnhancer {
         max-width: 300px;
         animation: slideInUp 0.3s ease-out;
       }
-      
+
       .pwa-install-content {
         display: flex;
         align-items: center;
         padding: 16px;
         gap: 12px;
       }
-      
+
       .pwa-install-icon {
         font-size: 24px;
         flex-shrink: 0;
       }
-      
+
       .pwa-install-text {
         flex: 1;
       }
-      
+
       .pwa-install-title {
         font-weight: 600;
         font-size: 14px;
         margin-bottom: 2px;
       }
-      
+
       .pwa-install-subtitle {
         font-size: 12px;
         opacity: 0.9;
       }
-      
+
       .pwa-install-action, .pwa-install-close {
         background: rgba(255,255,255,0.2);
         border: none;
@@ -145,15 +145,15 @@ class PWAEnhancer {
         transition: background 0.2s ease;
         flex-shrink: 0;
       }
-      
+
       .pwa-install-action:hover, .pwa-install-close:hover {
         background: rgba(255,255,255,0.3);
       }
-      
+
       .pwa-install-close {
         margin-left: 4px;
       }
-      
+
       @keyframes slideInUp {
         from {
           transform: translateY(100%);
@@ -183,16 +183,16 @@ class PWAEnhancer {
     try {
       const result = await this.installPrompt.prompt();
       console.log('📱 Install prompt result:', result.outcome);
-      
+
       if (result.outcome === 'accepted') {
         this.trackInstallation('accepted');
       } else {
         this.trackInstallation('declined');
       }
-      
+
       this.installPrompt = null;
       this.hideInstallUI();
-      
+
     } catch (error) {
       console.error('Install prompt error:', error);
     }
@@ -264,34 +264,34 @@ class PWAEnhancer {
         max-width: 300px;
         animation: slideInDown 0.3s ease-out;
       }
-      
+
       .pwa-update-content {
         display: flex;
         align-items: center;
         padding: 16px;
         gap: 12px;
       }
-      
+
       .pwa-update-icon {
         font-size: 24px;
         flex-shrink: 0;
       }
-      
+
       .pwa-update-text {
         flex: 1;
       }
-      
+
       .pwa-update-title {
         font-weight: 600;
         font-size: 14px;
         margin-bottom: 2px;
       }
-      
+
       .pwa-update-subtitle {
         font-size: 12px;
         opacity: 0.9;
       }
-      
+
       .pwa-update-action {
         background: rgba(255,255,255,0.2);
         border: none;
@@ -303,11 +303,11 @@ class PWAEnhancer {
         font-weight: 600;
         transition: background 0.2s ease;
       }
-      
+
       .pwa-update-action:hover {
         background: rgba(255,255,255,0.3);
       }
-      
+
       @keyframes slideInDown {
         from {
           transform: translateY(-100%);
@@ -367,26 +367,26 @@ class PWAEnhancer {
         color: white;
         animation: slideInDown 0.3s ease-out;
       }
-      
+
       .pwa-connection-online {
         background: #10b981;
       }
-      
+
       .pwa-connection-offline {
         background: #ef4444;
       }
-      
+
       .pwa-connection-content {
         display: flex;
         align-items: center;
         padding: 8px 16px;
         gap: 8px;
       }
-      
+
       .pwa-connection-icon {
         font-size: 12px;
       }
-      
+
       .pwa-connection-text {
         font-size: 12px;
         font-weight: 600;
@@ -414,7 +414,7 @@ class PWAEnhancer {
     if (Notification.permission === 'default') {
       const permission = await Notification.requestPermission();
       console.log('📢 Notification permission:', permission);
-      
+
       if (permission === 'granted') {
         this.subscribeToNotifications();
       }
@@ -429,7 +429,7 @@ class PWAEnhancer {
           userVisibleOnly: true,
           applicationServerKey: this.urlBase64ToUint8Array('your-vapid-public-key')
         });
-        
+
         console.log('📢 Push subscription created:', subscription);
         // Send subscription to server
         this.sendSubscriptionToServer(subscription);
@@ -443,7 +443,7 @@ class PWAEnhancer {
   setupBackgroundSync() {
     if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
       console.log('🔄 Background sync supported');
-      
+
       // Register for background sync on form submissions
       this.setupFormSync();
     }
@@ -454,20 +454,20 @@ class PWAEnhancer {
       const form = e.target;
       if (form.dataset.sync === 'true') {
         e.preventDefault();
-        
+
         // Store form data for background sync
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
-        
+
         // Store in IndexedDB for background sync
         await this.storeForSync('form-submission', data);
-        
+
         // Register background sync
         const registration = await navigator.serviceWorker.getRegistration();
         if (registration) {
           registration.sync.register('form-submission');
         }
-        
+
         this.showSyncNotification();
       }
     });

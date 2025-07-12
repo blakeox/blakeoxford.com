@@ -39,8 +39,8 @@ self.addEventListener('activate', (event) => {
     caches.keys().then(cacheNames =>
       Promise.all(
         cacheNames
-          .filter(cacheName => 
-            cacheName !== STATIC_CACHE_NAME && 
+          .filter(cacheName =>
+            cacheName !== STATIC_CACHE_NAME &&
             cacheName !== DYNAMIC_CACHE_NAME
           )
           .map(cacheName => caches.delete(cacheName))

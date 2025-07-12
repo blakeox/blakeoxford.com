@@ -37,28 +37,28 @@ async function ensureDirectory(dir) {
 async function optimizeImage(inputPath, filename) {
   const nameWithoutExt = path.parse(filename).name;
   const ext = path.parse(filename).ext.toLowerCase();
-  
+
   // Skip if already optimized
   if (filename.includes('.optimized.') || filename.includes('@')) {
     return;
   }
-  
+
   console.log(`🖼️  Processing: ${filename}`);
-  
+
   try {
     const image = sharp(inputPath);
     const metadata = await image.metadata();
     const originalWidth = metadata.width;
-    
+
     // Generate responsive sizes for each format
     for (const format of Object.keys(FORMATS)) {
       const formatDir = path.join(OUTPUT_DIR, format);
       await ensureDirectory(formatDir);
-      
+
       // Original size in new format
       const originalOutputPath = path.join(formatDir, `${nameWithoutExt}.${format}`);
       await image.clone()[format](FORMATS[format]).toFile(originalOutputPath);
-      
+
       // Responsive sizes (only if image is large enough)
       if (originalWidth > 640) {
         for (const width of RESPONSIVE_SIZES) {
@@ -72,7 +72,7 @@ async function optimizeImage(inputPath, filename) {
         }
       }
     }
-    
+
     // Generate srcset manifest
     const srcsetData = {
       original: filename,
@@ -81,12 +81,12 @@ async function optimizeImage(inputPath, filename) {
       width: originalWidth,
       height: metadata.height
     };
-    
+
     const manifestPath = path.join(OUTPUT_DIR, `${nameWithoutExt}.json`);
     await fs.writeFile(manifestPath, JSON.stringify(srcsetData, null, 2));
-    
+
     console.log(`   ✅ Generated ${Object.keys(FORMATS).length} formats with responsive variants`);
-    
+
   } catch (error) {
     console.error(`   ❌ Error processing ${filename}:`, error.message);
   }
@@ -94,30 +94,30 @@ async function optimizeImage(inputPath, filename) {
 
 async function generateOptimizedImages() {
   console.log('🚀 AUTOMATED IMAGE OPTIMIZATION PIPELINE\n');
-  
+
   await ensureDirectory(OUTPUT_DIR);
-  
+
   try {
     const files = await fs.readdir(INPUT_DIR);
-    const imageFiles = files.filter(file => 
-      /\.(jpg|jpeg|png|webp)$/i.test(file) && 
+    const imageFiles = files.filter(file =>
+      /\.(jpg|jpeg|png|webp)$/i.test(file) &&
       !file.includes('.optimized.')
     );
-    
+
     console.log(`📂 Found ${imageFiles.length} images to process\n`);
-    
+
     for (const file of imageFiles) {
       const inputPath = path.join(INPUT_DIR, file);
       await optimizeImage(inputPath, file);
     }
-    
+
     // Generate usage instructions
     const usageInstructions = `
 # Optimized Images Usage
 
 ## Generated Files
 - \`avif/\` - Modern AVIF format (best compression)
-- \`webp/\` - WebP format (good compression, wide support)  
+- \`webp/\` - WebP format (good compression, wide support)
 - \`jpeg/\` - Optimized JPEG (fallback)
 - \`png/\` - Optimized PNG (for images requiring transparency)
 
@@ -128,18 +128,18 @@ Images larger than 640px include responsive variants:
 ## Usage in HTML
 \`\`\`html
 <picture>
-  <source srcset="/assets/images/optimized/avif/image@320w.avif 320w, 
+  <source srcset="/assets/images/optimized/avif/image@320w.avif 320w,
                   /assets/images/optimized/avif/image@640w.avif 640w,
                   /assets/images/optimized/avif/image@1024w.avif 1024w"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           type="image/avif">
   <source srcset="/assets/images/optimized/webp/image@320w.webp 320w,
-                  /assets/images/optimized/webp/image@640w.webp 640w, 
+                  /assets/images/optimized/webp/image@640w.webp 640w,
                   /assets/images/optimized/webp/image@1024w.webp 1024w"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           type="image/webp">
-  <img src="/assets/images/optimized/jpeg/image.jpeg" 
-       alt="Description" 
+  <img src="/assets/images/optimized/jpeg/image.jpeg"
+       alt="Description"
        loading="lazy">
 </picture>
 \`\`\`
@@ -147,14 +147,14 @@ Images larger than 640px include responsive variants:
 ## Astro Component Usage
 Use the generated JSON manifests to automate picture element generation.
 `;
-    
+
     await fs.writeFile(path.join(OUTPUT_DIR, 'README.md'), usageInstructions);
-    
+
     console.log(`\n🎉 Image optimization complete!`);
     console.log(`   Output directory: ${OUTPUT_DIR}`);
     console.log(`   Formats generated: ${Object.keys(FORMATS).join(', ')}`);
     console.log(`   Responsive breakpoints: ${RESPONSIVE_SIZES.join(', ')}`);
-    
+
   } catch (error) {
     console.error('❌ Error during image optimization:', error);
   }

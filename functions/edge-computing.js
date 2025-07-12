@@ -63,10 +63,10 @@ class EdgePersonalization {
   getABTestVariant() {
     const userId = this.cookies.user_id || this.generateUserId();
     const hash = this.hashCode(userId);
-    
+
     // Simple A/B test: 50/50 split
     const variant = (hash % 100) < 50 ? 'A' : 'B';
-    
+
     return {
       variant,
       userId,
@@ -179,7 +179,7 @@ class EdgePerformanceOptimizer {
   // Apply optimal compression
   async applyCompression(response) {
     const acceptEncoding = this.request.headers.get('accept-encoding') || '';
-    
+
     // Prefer Brotli, fallback to gzip
     if (acceptEncoding.includes('br')) {
       // Brotli compression would be handled by Cloudflare automatically
@@ -205,7 +205,7 @@ class EdgePerformanceOptimizer {
 
     // Connection optimization
     headers.set('Connection', 'keep-alive');
-    
+
     // HTTP/3 indication
     headers.set('Alt-Svc', 'h3=":443"; ma=86400');
 
@@ -270,24 +270,24 @@ class EdgePerformanceOptimizer {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    
+
     // Initialize edge services
     const personalization = new EdgePersonalization(request, env);
     const cacheManager = new EdgeCacheManager(request, env);
-    
+
     // Get user segmentation
     const userSegments = personalization.getUserSegment();
     const abTest = personalization.getABTestVariant();
-    
+
     // Generate cache key with personalization
     const cacheKey = cacheManager.getCacheKey(userSegments);
     const cacheStrategy = cacheManager.getCacheStrategy();
-    
+
     // Try to get from edge cache first
     const cacheResponse = await caches.default.match(request, {
       ignoreMethod: false
     });
-    
+
     if (cacheResponse) {
       console.log('✅ Edge cache hit:', cacheKey);
       return cacheResponse;
@@ -296,7 +296,7 @@ export default {
     try {
       // Fetch from origin
       const originResponse = await fetch(request);
-      
+
       if (!originResponse.ok) {
         return originResponse;
       }
@@ -333,7 +333,7 @@ export default {
 
     } catch (error) {
       console.error('Edge processing error:', error);
-      
+
       // Return cached stale content if available
       const staleResponse = await caches.default.match(request);
       if (staleResponse) {
@@ -354,7 +354,7 @@ export default {
   // Apply personalization to HTML content
   async applyPersonalization(response, userSegments, abTest) {
     const html = await response.text();
-    
+
     // Simple personalization examples
     let personalizedHTML = html;
 

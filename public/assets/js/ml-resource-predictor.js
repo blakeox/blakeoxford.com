@@ -28,7 +28,7 @@ class MLResourcePredictor {
         y: e.clientY / window.innerHeight,
         timestamp: Date.now()
       });
-      
+
       // Keep only last 50 points
       if (mouseData.length > 50) mouseData.shift();
     });
@@ -42,7 +42,7 @@ class MLResourcePredictor {
         timestamp: Date.now(),
         velocity: this.calculateScrollVelocity()
       });
-      
+
       if (scrollData.length > 20) scrollData.shift();
     });
 
@@ -79,7 +79,7 @@ class MLResourcePredictor {
     const now = Date.now();
     const recent = this.scrollHistory?.filter(s => now - s.timestamp < 100) || [];
     if (recent.length < 2) return 0;
-    
+
     const deltaY = recent[recent.length - 1].y - recent[0].y;
     const deltaTime = recent[recent.length - 1].timestamp - recent[0].timestamp;
     return deltaTime > 0 ? deltaY / deltaTime : 0;
@@ -88,7 +88,7 @@ class MLResourcePredictor {
   // Record user interactions for ML training
   recordInteraction(interaction) {
     this.userBehaviorData.push(interaction);
-    
+
     // Send to analytics for model training
     if (window.gtag) {
       window.gtag('event', 'user_behavior', {
@@ -133,14 +133,14 @@ class MLResourcePredictor {
         '/projects': ['/about', '/contact'],
         '/blog': ['/projects', '/about']
       },
-      
+
       // Time-based predictions
       timeBasedRules: {
         quickBounce: 1000,     // < 1s likely to leave
         engaged: 10000,        // > 10s likely to navigate
         deepEngagement: 30000  // > 30s likely to explore more
       },
-      
+
       // Behavioral triggers
       behaviorTriggers: {
         hoverDuration: 200,    // ms hover before preload
@@ -157,16 +157,16 @@ class MLResourcePredictor {
     }
 
     const confidence = this.calculatePredictionConfidence(href, trigger);
-    
+
     if (confidence > 0.6) {
       console.log(`🔮 Predicting navigation to ${href} (confidence: ${confidence.toFixed(2)}, trigger: ${trigger})`);
-      
+
       // Preload the page
       this.preloadPage(href);
-      
+
       // Preload associated resources
       this.preloadPageResources(href);
-      
+
       // Track prediction for model improvement
       this.trackPrediction(href, confidence, trigger);
     }
@@ -175,7 +175,7 @@ class MLResourcePredictor {
   // Calculate prediction confidence score
   calculatePredictionConfidence(href, trigger) {
     let baseConfidence = 0.3;
-    
+
     // Trigger-based confidence
     switch (trigger) {
       case 'hover-intent':
@@ -227,7 +227,7 @@ class MLResourcePredictor {
     // Extract likely resource paths
     const pathSegments = href.split('/').filter(Boolean);
     const pageType = pathSegments[0] || 'home';
-    
+
     const resourceMap = {
       'projects': [
         '/api/projects.json',
@@ -265,7 +265,7 @@ class MLResourcePredictor {
     // Store for later analysis
     const predictions = JSON.parse(localStorage.getItem('ml-predictions') || '[]');
     predictions.push(prediction);
-    
+
     // Keep only recent predictions
     const recent = predictions.filter(p => Date.now() - p.timestamp < 86400000); // 24 hours
     localStorage.setItem('ml-predictions', JSON.stringify(recent));
@@ -296,7 +296,7 @@ class MLResourcePredictor {
   // Setup engagement-based predictive preloading
   setupPredictivePreloading() {
     this.pageLoadTime = Date.now();
-    
+
     // Time-based predictions
     setTimeout(() => {
       if (document.hasFocus()) {
@@ -321,7 +321,7 @@ class MLResourcePredictor {
   predictBasedOnEngagement() {
     const currentPath = window.location.pathname;
     const likelyPages = this.predictionModel.navigationRules[currentPath] || [];
-    
+
     likelyPages.forEach(page => {
       this.predictAndPreload(page, 'time-engagement');
     });
@@ -339,7 +339,7 @@ class MLResourcePredictor {
 
   aggressivePreload() {
     console.log('🎯 Return visitor detected - aggressive preloading');
-    
+
     // Preload all main navigation pages
     ['/about', '/projects', '/blog', '/contact'].forEach(page => {
       this.predictAndPreload(page, 'return-visitor');
@@ -350,7 +350,7 @@ class MLResourcePredictor {
   getAnalytics() {
     const predictions = JSON.parse(localStorage.getItem('ml-predictions') || '[]');
     const accuracy = this.calculateAccuracy(predictions);
-    
+
     return {
       totalPredictions: predictions.length,
       accuracy: accuracy,

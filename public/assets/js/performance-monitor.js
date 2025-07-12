@@ -8,7 +8,7 @@ class PerformanceMonitor {
     this.metrics = new Map();
     this.observers = new Map();
     this.initialized = false;
-    
+
     // Initialize monitoring when DOM is ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.init());
@@ -19,13 +19,13 @@ class PerformanceMonitor {
 
   init() {
     if (this.initialized) return;
-    
+
     this.setupCoreWebVitals();
     this.setupResourceTiming();
     this.setupNavigationTiming();
     this.setupLayoutShiftTracking();
     this.setupLongTaskTracking();
-    
+
     this.initialized = true;
     console.log('🎯 Performance monitoring initialized');
   }
@@ -37,16 +37,16 @@ class PerformanceMonitor {
       const lcpObserver = new PerformanceObserver((entryList) => {
         const entries = entryList.getEntries();
         const lastEntry = entries[entries.length - 1];
-        
+
         this.metrics.set('LCP', {
           value: lastEntry.startTime,
           timestamp: Date.now(),
           element: lastEntry.element?.tagName || 'unknown'
         });
-        
+
         this.reportMetric('LCP', lastEntry.startTime);
       });
-      
+
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.set('lcp', lcpObserver);
     }
@@ -55,16 +55,16 @@ class PerformanceMonitor {
     if ('PerformanceObserver' in window) {
       const fidObserver = new PerformanceObserver((entryList) => {
         const firstInput = entryList.getEntries()[0];
-        
+
         this.metrics.set('FID', {
           value: firstInput.processingStart - firstInput.startTime,
           timestamp: Date.now(),
           eventType: firstInput.name
         });
-        
+
         this.reportMetric('FID', firstInput.processingStart - firstInput.startTime);
       });
-      
+
       fidObserver.observe({ entryTypes: ['first-input'] });
       this.observers.set('fid', fidObserver);
     }
@@ -78,15 +78,15 @@ class PerformanceMonitor {
             clsValue += entry.value;
           }
         }
-        
+
         this.metrics.set('CLS', {
           value: clsValue,
           timestamp: Date.now()
         });
-        
+
         this.reportMetric('CLS', clsValue);
       });
-      
+
       clsObserver.observe({ entryTypes: ['layout-shift'] });
       this.observers.set('cls', clsObserver);
     }
@@ -96,14 +96,14 @@ class PerformanceMonitor {
   setupResourceTiming() {
     const observer = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
-      
+
       entries.forEach(entry => {
         if (entry.name.includes('.js') || entry.name.includes('.css')) {
           this.analyzeResourcePerformance(entry);
         }
       });
     });
-    
+
     observer.observe({ entryTypes: ['resource'] });
     this.observers.set('resource', observer);
   }
@@ -112,14 +112,14 @@ class PerformanceMonitor {
   setupNavigationTiming() {
     window.addEventListener('load', () => {
       const navigation = performance.getEntriesByType('navigation')[0];
-      
+
       this.metrics.set('Navigation', {
         domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
         loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
         firstByte: navigation.responseStart - navigation.requestStart,
         domInteractive: navigation.domInteractive - navigation.navigationStart
       });
-      
+
       this.reportNavigationMetrics(navigation);
     });
   }
@@ -141,7 +141,7 @@ class PerformanceMonitor {
           }
         }
       });
-      
+
       observer.observe({ entryTypes: ['layout-shift'] });
     }
   }
@@ -156,12 +156,12 @@ class PerformanceMonitor {
             startTime: entry.startTime,
             name: entry.name
           });
-          
+
           // Track long tasks for performance budgets
           this.reportLongTask(entry);
         }
       });
-      
+
       observer.observe({ entryTypes: ['longtask'] });
     }
   }
@@ -188,7 +188,7 @@ class PerformanceMonitor {
   reportMetric(name, value) {
     // Grade metrics according to Core Web Vitals thresholds
     let grade = 'good';
-    
+
     switch (name) {
       case 'LCP':
         grade = value <= 2500 ? 'good' : value <= 4000 ? 'needs-improvement' : 'poor';
@@ -202,7 +202,7 @@ class PerformanceMonitor {
     }
 
     console.log(`📊 ${name}: ${value.toFixed(2)}ms (${grade})`);
-    
+
     // Send to analytics if configured
     if (window.gtag) {
       window.gtag('event', 'core_web_vital', {

@@ -9,7 +9,7 @@ class ResourcePreloader {
     this.prefetchQueue = new Map();
     this.intersectionObserver = null;
     this.idleCallback = null;
-    
+
     this.init();
   }
 
@@ -18,7 +18,7 @@ class ResourcePreloader {
     this.preloadCriticalResources();
     this.setupIdlePreloading();
     this.optimizeImageLoading();
-    
+
     console.log('🚀 Advanced resource preloader initialized');
   }
 
@@ -29,15 +29,15 @@ class ResourcePreloader {
       { url: '/assets/images/hero-bg-320.avif', as: 'image', type: 'image/avif', media: '(max-width: 640px)' },
       { url: '/assets/images/hero-bg-768.avif', as: 'image', type: 'image/avif', media: '(min-width: 641px) and (max-width: 1024px)' },
       { url: '/assets/images/hero-bg-1920.avif', as: 'image', type: 'image/avif', media: '(min-width: 1025px)' },
-      
+
       // WebP fallbacks
       { url: '/assets/images/hero-bg-320.webp', as: 'image', type: 'image/webp', media: '(max-width: 640px)' },
       { url: '/assets/images/hero-bg-768.webp', as: 'image', type: 'image/webp', media: '(min-width: 641px) and (max-width: 1024px)' },
       { url: '/assets/images/hero-bg-1920.webp', as: 'image', type: 'image/webp', media: '(min-width: 1025px)' },
-      
+
       // Critical CSS is already inlined, but preload the full stylesheet
       { url: '/assets/css/main.css', as: 'style' },
-      
+
       // Essential JavaScript
       { url: '/assets/js/main.js', as: 'script' },
       { url: '/assets/js/theme-toggle.js', as: 'script' }
@@ -57,14 +57,14 @@ class ResourcePreloader {
     link.rel = 'preload';
     link.href = resource.url;
     link.as = resource.as;
-    
+
     if (resource.type) link.type = resource.type;
     if (resource.media) link.media = resource.media;
     if (resource.crossorigin) link.crossOrigin = resource.crossorigin;
-    
+
     // Add to head immediately for critical resources
     document.head.appendChild(link);
-    
+
     console.log(`🔗 Preloaded: ${resource.url} (${resource.as})`);
   }
 
@@ -218,10 +218,10 @@ class ResourcePreloader {
     // Preload responsive images based on viewport
     const viewportWidth = window.innerWidth;
     const devicePixelRatio = window.devicePixelRatio || 1;
-    
+
     // Calculate optimal image size
     let optimalWidth = viewportWidth * devicePixelRatio;
-    
+
     // Round up to next breakpoint for better caching
     const breakpoints = [320, 640, 768, 1024, 1280, 1536, 1920];
     optimalWidth = breakpoints.find(bp => bp >= optimalWidth) || 1920;
@@ -256,7 +256,7 @@ class ResourcePreloader {
   // Feature detection for modern image formats
   supportsAVIF() {
     if (typeof this._avifSupport !== 'undefined') return this._avifSupport;
-    
+
     const canvas = document.createElement('canvas');
     canvas.width = 1;
     canvas.height = 1;
@@ -266,7 +266,7 @@ class ResourcePreloader {
 
   supportsWebP() {
     if (typeof this._webpSupport !== 'undefined') return this._webpSupport;
-    
+
     const canvas = document.createElement('canvas');
     canvas.width = 1;
     canvas.height = 1;

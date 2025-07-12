@@ -31,10 +31,10 @@ class CriticalCSSGenerator {
 
   async generateAllCriticalCSS() {
     console.log('🎨 Starting per-page critical CSS generation...');
-    
+
     // Ensure output directory exists
     await fs.mkdir(this.outputDir, { recursive: true });
-    
+
     const browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -43,10 +43,10 @@ class CriticalCSSGenerator {
     try {
       for (const page of this.pages) {
         console.log(`\n📄 Processing: ${page.name} (${page.url})`);
-        
+
         const criticalCSS = await this.generatePageCriticalCSS(browser, page);
         await this.saveCriticalCSS(page.name, criticalCSS);
-        
+
         // Generate responsive variants
         for (const viewport of this.viewports) {
           const responsiveCSS = await this.generateResponsiveCriticalCSS(browser, page, viewport);
@@ -56,9 +56,9 @@ class CriticalCSSGenerator {
 
       // Generate master critical CSS file
       await this.generateMasterCriticalCSS();
-      
+
       console.log('\n✅ Critical CSS generation completed!');
-      
+
     } finally {
       await browser.close();
     }
@@ -66,11 +66,11 @@ class CriticalCSSGenerator {
 
   async generatePageCriticalCSS(browser, pageConfig) {
     const page = await browser.newPage();
-    
+
     try {
       // Set viewport to desktop by default
       await page.setViewport({ width: 1440, height: 900 });
-      
+
       // Navigate to page
       await page.goto(`${this.baseUrl}${pageConfig.url}`, {
         waitUntil: 'networkidle0',
@@ -79,7 +79,7 @@ class CriticalCSSGenerator {
 
       // Extract critical CSS using Puppeteer's coverage API
       await page.coverage.startCSSCoverage();
-      
+
       // Scroll to trigger any lazy-loaded content
       await page.evaluate(() => {
         return new Promise((resolve) => {
@@ -101,12 +101,12 @@ class CriticalCSSGenerator {
 
       // Get CSS coverage
       const cssCoverage = await page.coverage.stopCSSCoverage();
-      
+
       // Extract critical CSS (above-the-fold)
       const criticalCSS = await this.extractCriticalRules(page, cssCoverage);
-      
+
       return criticalCSS;
-      
+
     } finally {
       await page.close();
     }
@@ -114,10 +114,10 @@ class CriticalCSSGenerator {
 
   async generateResponsiveCriticalCSS(browser, pageConfig, viewport) {
     const page = await browser.newPage();
-    
+
     try {
       await page.setViewport(viewport);
-      
+
       await page.goto(`${this.baseUrl}${pageConfig.url}`, {
         waitUntil: 'networkidle0',
         timeout: 30000
@@ -140,9 +140,9 @@ class CriticalCSSGenerator {
 
       // Extract critical styles for these elements
       const criticalCSS = await this.extractElementStyles(page, aboveFoldElements);
-      
+
       return criticalCSS;
-      
+
     } finally {
       await page.close();
     }
@@ -150,14 +150,14 @@ class CriticalCSSGenerator {
 
   async extractCriticalRules(page, cssCoverage) {
     const usedCSS = [];
-    
+
     for (const coverage of cssCoverage) {
       const cssText = coverage.text;
       const usedBytes = coverage.ranges
         .filter(range => range.start < 50000) // Focus on early CSS
         .map(range => cssText.slice(range.start, range.end))
         .join('');
-      
+
       if (usedBytes) {
         usedCSS.push(usedBytes);
       }
@@ -171,7 +171,7 @@ class CriticalCSSGenerator {
   async extractElementStyles(page, elements) {
     const styles = await page.evaluate((elementList) => {
       const criticalStyles = [];
-      
+
       elementList.forEach(elementInfo => {
         // Find matching elements
         let selector = elementInfo.tagName;
@@ -239,17 +239,17 @@ class CriticalCSSGenerator {
   async saveCriticalCSS(pageName, css) {
     const filePath = path.join(this.outputDir, `${pageName}.css`);
     await fs.writeFile(filePath, css);
-    
+
     console.log(`   ✓ Saved critical CSS: ${filePath} (${css.length} bytes)`);
   }
 
   async generateMasterCriticalCSS() {
     console.log('\n📋 Generating master critical CSS file...');
-    
+
     // Read all generated critical CSS files
     const files = await fs.readdir(this.outputDir);
     const cssFiles = files.filter(f => f.endsWith('.css'));
-    
+
     const masterCSS = {
       common: '',
       pages: {}
@@ -276,18 +276,18 @@ class CriticalCSSGenerator {
 
     // Generate TypeScript interface for critical CSS
     await this.generateCriticalCSSInterface(masterCSS);
-    
+
     // Save master file
     const masterPath = path.join(this.outputDir, 'master.json');
     await fs.writeFile(masterPath, JSON.stringify(masterCSS, null, 2));
-    
+
     console.log(`✓ Master critical CSS saved: ${masterPath}`);
   }
 
   extractCommonRules(allCSS) {
     // Simple implementation - find rules that appear in all files
     const ruleCounts = new Map();
-    
+
     allCSS.forEach(({ content }) => {
       const rules = content.split('}').filter(rule => rule.trim());
       rules.forEach(rule => {
@@ -299,7 +299,7 @@ class CriticalCSSGenerator {
     // Return rules that appear in most files
     const threshold = Math.ceil(allCSS.length * 0.7); // 70% threshold
     const commonRules = [];
-    
+
     ruleCounts.forEach((count, rule) => {
       if (count >= threshold) {
         commonRules.push(rule);
@@ -333,7 +333,7 @@ export function getCriticalCSS(pageName: string): string {
 
     const interfacePath = path.join(this.outputDir, 'critical-css.ts');
     await fs.writeFile(interfacePath, interfaceContent);
-    
+
     console.log(`✓ TypeScript interface generated: ${interfacePath}`);
   }
 }

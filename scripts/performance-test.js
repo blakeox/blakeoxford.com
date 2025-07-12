@@ -32,13 +32,13 @@ class PerformanceTestRunner {
       'largest-contentful-paint': 2500,
       'first-input-delay': 100,
       'cumulative-layout-shift': 0.1,
-      
+
       // Other key metrics
       'first-contentful-paint': 1800,
       'speed-index': 3000,
       'time-to-interactive': 3800,
       'total-blocking-time': 200,
-      
+
       // Resource budgets
       'total-byte-weight': 512000, // 512KB
       'dom-size': 1500,
@@ -94,10 +94,10 @@ class PerformanceTestRunner {
 
   async runTests() {
     console.log('🚀 Starting performance test suite...');
-    
+
     // Ensure output directory exists
     await fs.mkdir(this.outputDir, { recursive: true });
-    
+
     const testPages = [
       { url: `${this.baseUrl}/`, name: 'homepage' },
       { url: `${this.baseUrl}/about`, name: 'about' },
@@ -107,20 +107,20 @@ class PerformanceTestRunner {
     ];
 
     const results = [];
-    
+
     for (const page of testPages) {
       console.log(`\n📊 Testing: ${page.name} (${page.url})`);
-      
+
       try {
         const result = await this.runLighthouseTest(page);
         results.push(result);
-        
+
         // Generate individual report
         await this.generateReport(result, page.name);
-        
+
         // Check budgets
         this.checkBudgets(result, page.name);
-        
+
       } catch (error) {
         console.error(`❌ Failed to test ${page.name}:`, error.message);
         results.push({ page: page.name, error: error.message });
@@ -129,7 +129,7 @@ class PerformanceTestRunner {
 
     // Generate summary report
     await this.generateSummaryReport(results);
-    
+
     console.log('\n✅ Performance testing completed!');
     return results;
   }
@@ -149,7 +149,7 @@ class PerformanceTestRunner {
 
       const config = this.getLighthouseConfig();
       const runnerResult = await lighthouse(page.url, options, config);
-      
+
       return {
         page: page.name,
         url: page.url,
@@ -158,7 +158,7 @@ class PerformanceTestRunner {
         timing: runnerResult.lhr.timing,
         report: runnerResult.report
       };
-      
+
     } finally {
       await chrome.kill();
     }
@@ -200,13 +200,13 @@ class PerformanceTestRunner {
   async generateReport(result, pageName) {
     const reportPath = path.join(this.outputDir, `${pageName}-report.json`);
     const htmlPath = path.join(this.outputDir, `${pageName}-report.html`);
-    
+
     // Save JSON report
     await fs.writeFile(reportPath, JSON.stringify(result, null, 2));
-    
+
     // Save HTML report
     await fs.writeFile(htmlPath, result.report);
-    
+
     console.log(`📋 Report saved: ${reportPath}`);
   }
 
@@ -223,7 +223,7 @@ class PerformanceTestRunner {
 
         const budgetCheck = this.checkBudgets(result, result.page);
         const status = budgetCheck.passed ? 'passed' : 'failed';
-        
+
         if (status === 'passed') this.passed++;
         else this.failed++;
 
@@ -265,11 +265,11 @@ class PerformanceTestRunner {
     markdown += `**Failed:** ${summary.failed}\n\n`;
 
     markdown += `## Results by Page\n\n`;
-    
+
     summary.results.forEach(result => {
       const status = result.status === 'passed' ? '✅' : result.status === 'failed' ? '❌' : '⚠️';
       markdown += `### ${status} ${result.page}\n\n`;
-      
+
       if (result.error) {
         markdown += `**Error:** ${result.error}\n\n`;
         return;
