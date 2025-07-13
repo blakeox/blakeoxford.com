@@ -1,93 +1,172 @@
-# Copilot Instructions for Blake Oxford’s Portfolio
+# Copilot Instructions for Blake Oxford's Portfolio
 
-These guidelines apply to all Copilot Chat and code-generation prompts within this repository (`.github/copilot-instructions.md`). They describe our conventions for file structure, styling, naming, accessibility, and component patterns. Follow them when generating new pages, components, or styling rules.
-
----
-
-## 1. Project Overview
-
-- **Framework**: Astro (“.astro” files for pages and components).  
-- **Styling**: Tailwind CSS v4.1 with the Typography (prose) plugin; no inline CSS outside of utility classes.  
-- **Language**: Prefer TypeScript for component logic (`.ts` or `.tsx` when using React inside Astro); use JavaScript in `.astro` frontmatter as needed.  
-- **Content**: Markdown/MDX under `src/content`, rendered with `<Content {...body} />` and styled using Tailwind’s `prose` classes.  
-
-Whenever you generate or modify code, assume this baseline. Do not deviate from these tools or add unrelated dependencies.
+These guidelines apply to all Copilot Chat and code-generation prompts within this repository (`.github/copilot-instructions.md`). They describe our conventions for file structure, styling, naming, accessibility, component patterns, and critical developer workflows.
 
 ---
 
-## 2. File Structure & Naming
+## 1. Architecture Overview
 
-1. **Pages:**  
-   - Stored in `src/pages/`.  
-   - File names are kebab-case (e.g., `about.astro`, `contact.astro`, `projects/[slug].astro`).  
-   - Each page begins with frontmatter:
-     ```astro
-     ---
-     import Layout from '../layouts/BaseLayout.astro';
-     const title = "About Me";
-     const description = "Learn about Blake Oxford, Systems Architect...";
-     const canonicalUrl = "https://blakeoxford.com/about/";
-     ---
-     ```
-   - Always include `Layout` with `title`, `description`, and `url` props.
+This is a **performance-first Astro SSG** built for Cloudflare Pages with comprehensive optimization tooling:
 
-2. **Layouts:**  
-   - Stored in `src/layouts/` (e.g., `BaseLayout.astro`).  
-   - Wrap pages with consistent header, footer, and metadata.  
-   - Use Tailwind classes for grid or flex-based layout; avoid hardcoded pixel values outside of Tailwind’s scales.
+- **Framework**: Astro static site generator (`output: 'static'`)
+- **Styling**: Tailwind CSS v4.1 with Typography plugin; CSS variables for theming (`src/styles/global.css`)
+- **Content**: Type-safe content collections (`src/content/config.ts`) for blog posts and projects
+- **Testing**: Vitest (unit/component) + Playwright (e2e) + accessibility testing with axe-core
+- **Performance**: Custom optimization scripts, critical CSS inlining, image optimization, bundle analysis
+- **Edge**: Cloudflare Workers/Pages with KV storage for forms and edge computing
 
-3. **Components:**  
-   - Stored in `src/components/`.  
-   - File names are PascalCase (e.g., `CoinFlipImage.astro`, `ProjectCard.astro`).  
-   - If a component requires logic or state, use a `.tsx` file inside `src/components/` or a paired `.ts` file exporting bindings.  
-   - Keep each component focused on a single responsibility (e.g., card rendering, image flip, contact form).
-
-4. **Styles & Theme:**  
-   - Do not write CSS other than utility classes in `global.css` or theme variables in `theme.css`.  
-   - If custom utility classes are needed—such as `.bg-primary`—add them in `src/styles/global.css` under the existing Tailwind imports.
-   - Always use Tailwind’s `prose`, `prose-sm`, `prose-lg`, etc., for Markdown content. Do not override prose styles with inline CSS.
-   - For responsive breakpoints, always follow the default Tailwind pattern (`sm:`, `md:`, `lg:`, `xl:`).
+**Key architectural principle**: Ship minimal JavaScript, optimize everything, maintain 100% accessibility.
 
 ---
 
-## 3. Tailwind & Typography
+## 2. Critical Developer Workflows
 
-- **Use the Typography Plugin** for any block of Markdown/MDX:
-  ```html
-  <article class="prose mx-auto max-w-3xl">
-    <Content {...body} />
-  </article>
-  ```
+### Build & Development
+
+```bash
+pnpm dev                    # Development server
+pnpm build                  # Full build with search index generation
+pnpm preview                # Preview built site
+pnpm lint                   # ESLint all files (.js,.ts,.astro,.mdx)
+pnpm test                   # Vitest unit tests
+pnpm test:e2e              # Playwright e2e tests
+pnpm test:ci               # Run both test suites (CI)
+```
+
+### Performance & Optimization
+
+```bash
+pnpm optimize:advanced      # Run full optimization suite
+pnpm perf:test             # Performance testing with Lighthouse
+pnpm critical:css          # Generate critical CSS
+pnpm optimize:images       # Advanced image optimization
+pnpm analyze:bundle        # Bundle analysis and recommendations
+```
+
+### Cloudflare Edge
+
+```bash
+pnpm edge:deploy           # Deploy edge functions
+wrangler pages deploy dist # Manual pages deployment
+```
+
+**Important**: Always run `pnpm generate:search-index` before build. The build script does this automatically.
+
+---
+
+## 3. File Structure & Naming Conventions
+
+### Pages & Routing
+
+- `src/pages/` - Astro file-based routing (kebab-case filenames)
+- `src/pages/api/` - API endpoints for forms/contact
+- Always include proper frontmatter with Layout, title, description, canonicalUrl
+
+### Components & Assets
+
+- `src/components/` - PascalCase component files (.astro or .tsx for React)
+- `src/layouts/BaseLayout.astro` - Main layout with critical CSS inlining
+- `src/content/` - Type-safe collections (blog/, projects/) with Zod schemas
+- `src/styles/global.css` - Theme variables and Tailwind imports
+
+### Testing & Scripts
+
+- `tests/vitest/` - Component and unit tests
+- `tests/playwright/` - E2E and accessibility tests  
+- `scripts/` - Build optimization and performance tooling
+- `functions/` - Cloudflare Workers (edge-computing.js, send-email.js)
 
 ---
 
-## 4. Accessibility (a11y)
+## 4. Content & Styling Patterns
 
-- All generated code must meet WCAG AA color contrast (⩾ 4.5:1 for text). Use Tailwind or design tokens for all colors—never hard-code color values.
-- Use semantic HTML elements (`<nav>`, `<main>`, `<button>`, etc.) as the default. Only add ARIA roles/attributes when necessary for clarity or screen reader support.
-- Always provide descriptive `alt` text for images and icons. Decorative images should use `alt=""`.
-- All interactive elements (links, buttons, toggles, menus) must be fully keyboard accessible (Tab, Shift+Tab, Enter, Space, Esc, Arrow keys as appropriate).
-- Use a visible focus ring for all focusable elements. The focus ring should use the `--focus-ring` token (2px, brand color) or Tailwind's `ring` utilities.
-- Include a skip link to main content at the top of every page (see NavBar.astro and a11y.js for implementation).
-- For dropdowns, overlays, and modals: trap focus when open, restore focus when closed, and use ARIA attributes (`aria-modal`, `aria-expanded`, `aria-label`, etc.) as needed.
-- Test all components with screen readers and keyboard navigation. Avoid relying solely on hover or mouse events for critical actions.
-- Reference the Accessibility section in `STYLEGUIDE.md` for further details and commit checklist.
+### Content Collections
+
+Always use the defined Zod schemas in `src/content/config.ts`:
+
+```typescript
+// Blog posts: title, description, pubDate, author?, tags?, draft?
+// Projects: title, description?, date, image?, tags?, link?, draft?
+```
+
+### Styling with Tailwind
+
+- Use CSS variables mapped to Tailwind (see `tailwind.config.js` color extensions)
+- Typography: Always wrap Markdown with `prose` classes
+- Dark mode: `class` strategy with `dark:` variants
+- Glass morphism: Pre-defined CSS variables for glass surfaces and borders
+- **Never** write custom CSS - extend Tailwind or use CSS variables
+
+### Component Patterns
+
+- **OptimizedImage.astro**: Use for all images with automatic format conversion
+- **CoinFlipImage.astro**: Interactive image flipper with proper accessibility
+- **SearchOverlay.astro**: Client-side search with Fuse.js
+- **ThemeToggle.jsx**: React component for dark/light mode switching
+
+---
+
+## 5. Accessibility & Performance Requirements
+
+### Accessibility (WCAG AA)
+
+- 4.5:1 color contrast minimum
+- Full keyboard navigation (Tab, Enter, Esc, Arrows)
+- Screen reader support with proper ARIA attributes
+- Focus management in modals/overlays
+- Skip links on every page
+- **Test with**: `@axe-core/playwright` in e2e tests
+
+### Performance Optimizations
+
+- Critical CSS inlined in `BaseLayout.astro`
+- Resource preloading for key assets
+- Advanced image optimization with multiple formats (AVIF, WebP, JPEG)
+- Bundle analysis and tree shaking
+- Search index pre-generation
+- **Target**: 95+ Lighthouse scores across all metrics
 
 ---
 
-## 5. Third-Party Libraries
+## 6. Linting & Code Quality
 
-- Do not add new dependencies or third-party libraries unless explicitly discussed and approved. The stack must remain focused on Astro, Tailwind CSS, and the documented plugins (e.g., Typography, Lucide/Iconify for icons, Fuse.js for search, Framer Motion for React animations).
-- Any exceptions must be justified and documented in the README and/or discussed in a pull request.
+### ESLint Configuration
+
+The project uses a complex ESLint setup with environment-specific rules:
+
+- **Browser files**: `assets-source/`, `public/`, `src/assets/` - include DOM globals
+- **Node files**: `scripts/`, `functions/`, config files - include Node globals  
+- **Test files**: Vitest + DOM testing environment
+
+### Common Patterns
+
+- TypeScript for logic, JavaScript acceptable in Astro frontmatter
+- React components only when client-side interactivity needed
+- Comprehensive testing coverage with property-based testing
+- Performance budgets enforced through automation
 
 ---
 
-## 6. Cloud & Hosting (Cloudflare)
+## 7. Integration Points & Dependencies
 
-- All serverless, API, or hosting-related code must be compatible with Cloudflare Pages and Cloudflare Workers.
-- When implementing features such as Edge Functions, KV storage, Turnstile CAPTCHA, or Durable Objects, follow Cloudflare’s best practices and reference the README for supported enhancements.
-- Do not use Node.js-only APIs or features not supported by the Cloudflare runtime.
-- Ensure all deployment, CI/CD, and CDN configurations are designed for Cloudflare’s global edge network.
-- If you need to add or modify cloud/hosting features, document the change and ensure it does not break Cloudflare compatibility.
+### Cloudflare Services
 
----
+- **Pages**: Static hosting with preview deployments
+- **KV**: Contact form storage and rate limiting
+- **Workers**: Edge functions for form processing
+- **Web Analytics**: Privacy-friendly analytics
+
+### External APIs
+
+- **Resend**: Email delivery service (contact forms)
+- **Fuse.js**: Client-side fuzzy search
+- **Lighthouse CI**: Automated performance testing
+
+### Build Pipeline
+
+- **Astro**: Static site generation with MDX support
+- **Vite**: Build tool with React plugin for client components
+- **Sharp**: Image optimization
+- **PostCSS**: CSS processing with Tailwind
+
+**Do not add new dependencies** without explicit discussion - the stack is intentionally minimal.

@@ -222,8 +222,8 @@ export default [
   // Node.js environment files
   {
     files: [
-      'functions/**/*.js', 
-      'scripts/**/*.js', 
+      'functions/**/*.js',
+      'scripts/**/*.js',
       'playwright.config.ts',
       'vitest.config.ts',
       'astro.config.mjs',
@@ -360,7 +360,7 @@ export default [
       // Allow destructured but unused variables in Astro components
       '@typescript-eslint/no-unused-vars': [
         'warn',
-        { 
+        {
           varsIgnorePattern: '^_',
           argsIgnorePattern: '^_',
           destructuredArrayIgnorePattern: '^_'
