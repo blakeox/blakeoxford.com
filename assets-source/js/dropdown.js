@@ -23,7 +23,7 @@ export function setupDropdowns(triggerSelector = '.nav-link[aria-haspopup="true"
       }
     });
     // Close dropdown on blur (if focus leaves menu)
-    trigger.addEventListener('blur', (e) => {
+    trigger.addEventListener('blur', () => {
       setTimeout(() => {
         if (!menu.contains(document.activeElement) && document.activeElement !== trigger) {
           trigger.setAttribute('aria-expanded', 'false');

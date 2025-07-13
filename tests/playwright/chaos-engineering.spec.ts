@@ -262,7 +262,6 @@ test.describe('Chaos Engineering Tests', () => {
       // Simulate high CPU load
       await page.evaluate(() => {
         // Create CPU-intensive computation directly
-        const startTime = Date.now();
         let result = 0;
         
         // Run CPU-intensive operation for 2 seconds

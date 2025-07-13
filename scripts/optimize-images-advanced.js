@@ -36,7 +36,6 @@ async function ensureDirectory(dir) {
 
 async function optimizeImage(inputPath, filename) {
   const nameWithoutExt = path.parse(filename).name;
-  const ext = path.parse(filename).ext.toLowerCase();
 
   // Skip if already optimized
   if (filename.includes('.optimized.') || filename.includes('@')) {
@@ -66,6 +65,7 @@ async function optimizeImage(inputPath, filename) {
             const responsiveOutputPath = path.join(formatDir, `${nameWithoutExt}@${width}w.${format}`);
             await image.clone()
               .resize(width, null, { withoutEnlargement: true })
+              // eslint-disable-next-line no-unexpected-multiline
               [format](FORMATS[format])
               .toFile(responsiveOutputPath);
           }

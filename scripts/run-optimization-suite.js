@@ -136,18 +136,18 @@ async function runLighthouseAudit() {
       audit: 'Lighthouse audit completed',
       output: result.slice(-500) // Get last 500 chars
     };
-  } catch (error) {
+  } catch {
     // Fallback to basic lighthouse if lhci not available
     try {
       execSync('which lighthouse', { stdio: 'ignore' });
-      const result = execSync('lighthouse http://localhost:4321 --output=json --quiet',
+      execSync('lighthouse http://localhost:4321 --output=json --quiet',
         { encoding: 'utf8', timeout: 60000 });
 
       return {
         audit: 'Basic lighthouse audit completed',
         output: 'Lighthouse audit successful'
       };
-    } catch (fallbackError) {
+    } catch {
       throw new Error('Lighthouse not available for performance audit');
     }
   }
@@ -344,7 +344,7 @@ ${Object.entries(results.performanceMetrics?.result?.optimizations || {})
 ## 🔧 Execution Times
 
 ${Object.entries(results)
-  .filter(([key, value]) => value.duration)
+  .filter(([, value]) => value.duration)
   .map(([key, value]) => `- **${key}**: ${value.duration}ms`)
   .join('\n')}
 

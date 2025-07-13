@@ -134,7 +134,7 @@ class VoiceNavigationEnhancer {
     );
 
     let node;
-    while (node = walker.nextNode()) {
+    while ((node = walker.nextNode())) {
       text += node.textContent + ' ';
     }
 

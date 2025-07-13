@@ -58,7 +58,6 @@ export class AccessibleFormValidation {
 
   validateField(field) {
     const value = field.value.trim();
-    const errorContainer = document.getElementById(`${field.id}-error`);
     let errorMessage = '';
 
     // Required field validation
@@ -171,7 +170,6 @@ export class AccessibleFormValidation {
     // This method is overridden by custom form handlers
     // but provides default behavior for forms without custom logic
     const submitButton = form.querySelector('button[type="submit"]');
-    const statusContainer = document.getElementById('form-status');
     
     // Show loading state
     if (submitButton) {

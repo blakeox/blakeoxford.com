@@ -5,12 +5,9 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { parse } from '@babel/parser';
 import traverse from '@babel/traverse';
 import generate from '@babel/generator';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 class AdvancedTreeShaker {
   constructor(options = {}) {
@@ -110,7 +107,7 @@ class AdvancedTreeShaker {
           }
         },
 
-        ExportDefaultDeclaration: (nodePath) => {
+        ExportDefaultDeclaration: () => {
           fileAnalysis.exports.add('default');
         },
 
@@ -183,7 +180,6 @@ class AdvancedTreeShaker {
   }
 
   parseCode(content, filePath) {
-    const isTypeScript = /\.tsx?$/.test(filePath);
     const isAstro = /\.astro$/.test(filePath);
 
     // Extract JavaScript from Astro files
@@ -281,7 +277,9 @@ class AdvancedTreeShaker {
         try {
           await fs.access(withExt);
           return withExt;
-        } catch {}
+        } catch {
+          // File doesn't exist with this extension, try next
+        }
       }
     }
 
@@ -291,7 +289,9 @@ class AdvancedTreeShaker {
       try {
         await fs.access(srcPath);
         return srcPath;
-      } catch {}
+      } catch {
+        // Path doesn't exist in src directory
+      }
     }
 
     return null; // External dependency
@@ -450,7 +450,7 @@ class AdvancedTreeShaker {
     const filesWithUnusedExports = Array.from(this.deadCode.values()).filter(d => d.type === 'unused-exports').length;
 
     let totalDeadSize = 0;
-    for (const [filePath, deadInfo] of this.deadCode) {
+    for (const [, deadInfo] of this.deadCode) {
       if (deadInfo.type === 'entire-file') {
         totalDeadSize += deadInfo.size;
       }

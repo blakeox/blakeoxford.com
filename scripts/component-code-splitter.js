@@ -70,7 +70,7 @@ class ComponentCodeSplitter {
           files.push(path.join(this.componentsDir, entry.name));
         }
       }
-    } catch (error) {
+    } catch {
       console.warn('⚠️ Components directory not found:', this.componentsDir);
     }
     return files;
@@ -91,7 +91,7 @@ class ComponentCodeSplitter {
         }
       };
       await getAllFiles(this.pagesDir);
-    } catch (error) {
+    } catch {
       console.warn('⚠️ Pages directory not found:', this.pagesDir);
     }
     return files;
@@ -200,7 +200,7 @@ class ComponentCodeSplitter {
     const content = await fs.readFile(pageFile, 'utf8');
 
     // Extract component imports and usage
-    for (const [componentPath, component] of this.components) {
+    for (const [, component] of this.components) {
       const componentName = component.name;
 
       // Check if component is imported and used
@@ -327,7 +327,7 @@ class ComponentCodeSplitter {
     const lazyDir = path.join(this.outputDir, 'lazy-components');
     await fs.mkdir(lazyDir, { recursive: true });
 
-    for (const [componentPath, component] of this.components) {
+    for (const [, component] of this.components) {
       if (component.isLazyLoadable && component.priority !== 'critical') {
         const lazyWrapper = this.createLazyWrapper(component);
         const wrapperPath = path.join(lazyDir, `Lazy${component.name}.astro`);

@@ -269,8 +269,6 @@ class EdgePerformanceOptimizer {
 // Main Cloudflare Worker
 export default {
   async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-
     // Initialize edge services
     const personalization = new EdgePersonalization(request, env);
     const cacheManager = new EdgeCacheManager(request, env);

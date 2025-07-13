@@ -21,7 +21,7 @@ export class EnhancedKeyboardNavigation {
         if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
         
         e.preventDefault();
-        const currentIndex = Array.from(items).indexOf(e.target as Element);
+        const currentIndex = Array.from(items).indexOf(e.target);
         let nextIndex = currentIndex;
         
         switch (e.key) {
@@ -39,7 +39,7 @@ export class EnhancedKeyboardNavigation {
             break;
         }
         
-        (items[nextIndex] as HTMLElement)?.focus();
+        items[nextIndex]?.focus();
       });
     });
   }
@@ -55,7 +55,7 @@ export class EnhancedKeyboardNavigation {
           // Close the topmost modal
           const modal = openModals[openModals.length - 1];
           const closeButton = modal.querySelector('[data-close], .close-button, .search-close-button');
-          (closeButton as HTMLElement)?.click();
+          closeButton?.click();
         } else if (openOverlays.length > 0) {
           // Close overlays
           openOverlays.forEach(overlay => {

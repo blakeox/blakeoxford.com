@@ -337,7 +337,7 @@ class NavBarMenu {
   setupAnalytics() {
     const navLinks = this.navbar.querySelectorAll('a[data-analytics]');
     navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
+      link.addEventListener('click', () => {
         const analyticsId = link.dataset.analytics;
         trackEvent('navigation_click', {
           link_id: analyticsId,

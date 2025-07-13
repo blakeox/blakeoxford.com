@@ -14,7 +14,6 @@ const __dirname = path.dirname(__filename);
 
 // Analyze all JavaScript files for usage patterns
 async function analyzeCodeUsage() {
-  const jsDir = path.join(__dirname, '../public/assets/js');
   const sourceDir = path.join(__dirname, '../assets-source/js');
 
   console.log('🔍 ADVANCED BUNDLE ANALYSIS\n');

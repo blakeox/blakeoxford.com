@@ -7,6 +7,88 @@ import astroParser from 'astro-eslint-parser';
 
 export default [
   js.configs.recommended,
+  // Browser environment files (client-side JavaScript)
+  {
+    files: [
+      'assets-source/**/*.js',
+      'archived-js/**/*.js',
+      'public/**/*.js',
+      'src/assets/**/*.js'
+    ],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        Element: 'readonly',
+        HTMLElement: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLFormElement: 'readonly',
+        HTMLTextAreaElement: 'readonly',
+        HTMLScriptElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        Event: 'readonly',
+        MouseEvent: 'readonly',
+        KeyboardEvent: 'readonly',
+        FocusEvent: 'readonly',
+        TouchEvent: 'readonly',
+        CustomEvent: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        requestAnimationFrame: 'readonly',
+        fetch: 'readonly',
+        navigator: 'readonly',
+        location: 'readonly',
+        history: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        FormData: 'readonly',
+        Headers: 'readonly',
+        Response: 'readonly',
+        Request: 'readonly',
+        getComputedStyle: 'readonly',
+        confirm: 'readonly',
+        alert: 'readonly',
+        prompt: 'readonly',
+        // Web APIs
+        IntersectionObserver: 'readonly',
+        ResizeObserver: 'readonly',
+        MutationObserver: 'readonly',
+        NodeFilter: 'readonly',
+        // Speech APIs
+        SpeechSynthesisUtterance: 'readonly',
+        speechSynthesis: 'readonly',
+        webkitSpeechRecognition: 'readonly',
+        // Analytics globals (external scripts)
+        gtag: 'readonly',
+        plausible: 'readonly',
+        fathom: 'readonly',
+        clarity: 'readonly',
+        // Search library
+        Fuse: 'readonly',
+        // Service Worker APIs
+        caches: 'readonly',
+        // Performance API
+        Performance: 'readonly',
+        // Node.js compatibility for some files
+        module: 'readonly',
+        require: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': 'warn',
+      'no-undef': 'error',
+      'no-cond-assign': 'warn',
+      'no-empty': 'warn',
+    },
+  },
   // Test files with DOM and Vitest globals
   {
     files: ['tests/**/*.ts', 'tests/**/*.tsx', 'vitest.setup.ts'],
@@ -69,7 +151,7 @@ export default [
   },
   // Playwright test files
   {
-    files: ['tests/playwright/**/*.ts'],
+    files: ['tests/playwright/**/*.ts', 'tests/playwright/**/*.js', 'playwright/**/*.ts'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -80,6 +162,11 @@ export default [
         // Playwright globals
         test: 'readonly',
         expect: 'readonly',
+        // Browser globals (for page.evaluate contexts)
+        window: 'readonly',
+        document: 'readonly',
+        console: 'readonly',
+        Performance: 'readonly',
         // Node.js globals
         process: 'readonly',
         __dirname: 'readonly',
@@ -93,6 +180,44 @@ export default [
     rules: {
       ...tseslint.configs.recommended.rules,
       '@typescript-eslint/no-unused-vars': 'warn',
+      'no-unused-vars': 'warn',
+      'no-undef': 'error',
+    },
+  },
+  // Scripts that contain browser code alongside Node.js code
+  {
+    files: [
+      'scripts/critical-css-generator.js',
+    ],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        // Node.js globals
+        process: 'readonly',
+        console: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        global: 'readonly',
+        Buffer: 'readonly',
+        // Browser globals (for puppeteer/browser context)
+        window: 'readonly',
+        document: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly',
+        // Web APIs
+        fetch: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': 'warn',
+      'no-empty': 'warn',
     },
   },
   // Node.js environment files
@@ -106,26 +231,43 @@ export default [
       'tailwind.config.js',
       'postcss.config.cjs',
       '.stylelintrc.cjs',
-      'tests/__mocks__/**/*.ts'
+      'tests/__mocks__/**/*.ts',
+      'check-headings.js',
+      'form-validation-test.cjs',
+      'form-validation-test.js'
     ],
     languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
         // Node.js globals
         process: 'readonly',
         console: 'readonly',
         __dirname: 'readonly',
+        __filename: 'readonly',
         module: 'readonly',
         require: 'readonly',
         global: 'readonly',
+        Buffer: 'readonly',
         // Web APIs available in Node.js
         fetch: 'readonly',
         crypto: 'readonly',
         Response: 'readonly',
+        Request: 'readonly',
+        Headers: 'readonly',
+        URL: 'readonly',
         URLSearchParams: 'readonly',
+        FormData: 'readonly',
+        // Cloudflare Workers globals
+        caches: 'readonly',
+        // Performance API
+        Performance: 'readonly',
       },
     },
     rules: {
       '@typescript-eslint/no-require-imports': 'off', // Allow require in Node.js files
+      'no-unused-vars': 'warn',
+      'no-empty': 'warn',
     },
   },
   // Type-aware linting for main TS source files only
@@ -267,6 +409,24 @@ export default [
       'coverage/',
       // Exclude content MDX files (they have frontmatter that breaks parsing)
       'src/content/**/*.mdx',
+      // Exclude test HTML files
+      'test-mobile-hamburger.html',
+      'test-hamburger-simple.html',
+      'debug-test.html',
+      // Exclude production test files
+      'test-production.js',
+      'test-mobile-navbar.js',
+      'test-button-focus.js',
+      // Exclude broken lock file
+      'pnpm-lock.yaml.broken',
+      // Exclude lighthouse reports
+      'lighthouse-*.html',
+      // Exclude test results
+      'test-results/',
+      'test-results 2/',
+      'playwright-report/',
+      // Exclude problematic test files
+      'tests/playwright/test-button-focus.spec.js', // Has browser globals without proper setup
     ],
   },
 ];

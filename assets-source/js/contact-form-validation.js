@@ -1,7 +1,6 @@
 // Validation functions
 function validateField(field) {
   const value = field.value.trim();
-  const errorContainer = document.getElementById(`${field.id}-error`);
   let errorMessage = '';
 
   // Required field validation
@@ -192,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         status.className = 'text-red-600 bg-red-50 border border-red-200 rounded-lg p-4 text-center font-semibold mb-4';
         status.classList.remove('hidden');
       }
-    } catch (error) {
+    } catch {
       status.textContent = '❌ Server error. Please check your connection and try again.';
       status.className = 'text-red-600 bg-red-50 border border-red-200 rounded-lg p-4 text-center font-semibold mb-4';
       status.classList.remove('hidden');

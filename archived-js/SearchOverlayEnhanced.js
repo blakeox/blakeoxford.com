@@ -145,7 +145,7 @@ class SearchOverlayEnhancer {
       try {
         const projectResponse = await fetch('/api/projects.json');
         projectData = await projectResponse.json();
-      } catch (e) {
+      } catch {
         console.log('Projects API not available, skipping...');
       }
       
@@ -270,7 +270,6 @@ class SearchOverlayEnhancer {
         let score = 0;
         const title = item.title.toLowerCase();
         const excerpt = (item.excerpt || '').toLowerCase();
-        const content = `${title} ${excerpt}`;
         
         // Exact title match gets highest score
         if (title.includes(query.toLowerCase())) {

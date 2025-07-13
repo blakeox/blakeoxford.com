@@ -52,24 +52,8 @@ function generatePreloadHTML() {
   return html;
 }
 
-// Generate HTTP/2 Server Push headers
-function generatePushHeaders() {
-  let headers = '# HTTP/2 Server Push for critical resources\n';
-  
-  criticalResources.scripts.forEach(script => {
-    headers += `  Link: <${script}>; rel=preload; as=script\n`;
-  });
-  
-  criticalResources.fonts.forEach(font => {
-    headers += `  Link: <${font}>; rel=preload; as=font; type=font/woff2; crossorigin\n`;
-  });
-  
-  return headers;
-}
-
 // Write outputs
 const preloadHTML = generatePreloadHTML();
-const pushHeaders = generatePushHeaders();
 
 const htmlOutputPath = path.join(__dirname, '../src/components/PreloadTags.astro');
 const htmlContent = `---
