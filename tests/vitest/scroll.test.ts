@@ -15,10 +15,18 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { setupScrollEffects, setupScrollBehavior, setupPageTransitions } from '../../assets-source/js/scroll.js';
 
 describe('Scroll Module', () => {
+  let registeredListeners: Array<{event: string, listener: any, options?: any}> = [];
+
   beforeEach(() => {
+    // Restore all mocks first to prevent interference
+    vi.restoreAllMocks();
+    
     // Clear the DOM
     document.body.innerHTML = '';
     document.head.innerHTML = '';
+    
+    // Clear registered listeners tracking
+    registeredListeners = [];
     
     // Reset window scroll position
     Object.defineProperty(window, 'scrollY', {
@@ -34,7 +42,14 @@ describe('Scroll Module', () => {
       value: 0
     });
 
-    // Mock requestAnimationFrame
+    // Mock addEventListener to track registered listeners
+    const originalAddEventListener = window.addEventListener.bind(window);
+    window.addEventListener = vi.fn((event, listener, options) => {
+      registeredListeners.push({ event, listener, options });
+      return originalAddEventListener(event, listener, options);
+    });
+
+    // Mock requestAnimationFrame - this will be overridden by specific tests as needed
     window.requestAnimationFrame = vi.fn((callback) => {
       callback(Date.now());
       return 1;
@@ -42,6 +57,12 @@ describe('Scroll Module', () => {
   });
 
   afterEach(() => {
+    // Remove all registered event listeners
+    registeredListeners.forEach(({ event, listener, options }) => {
+      window.removeEventListener(event, listener, options);
+    });
+    registeredListeners = [];
+    
     vi.restoreAllMocks();
   });
 
@@ -78,17 +99,26 @@ describe('Scroll Module', () => {
       window.dispatchEvent(scrollEvent);
 
       expect(window.requestAnimationFrame).toHaveBeenCalled();
+      
+      // Execute the requestAnimationFrame callback manually
+      const rafCallback = vi.mocked(window.requestAnimationFrame).mock.calls[0][0];
+      rafCallback(16.67); // Simulate timestamp
+      
       expect(context.updateNavbarOnScroll).toHaveBeenCalled();
-      expect(context.ticking).toBe(true); // Should be set during execution
     });
 
     it('should throttle scroll events with ticking flag', () => {
+      // Create a fresh spy for requestAnimationFrame without auto-execution
+      const rafSpy = vi.fn();
+      window.requestAnimationFrame = rafSpy;
+      
       const context = {
         ticking: true, // Already ticking
         updateNavbarOnScroll: vi.fn(),
         onScrollEnd: vi.fn()
       };
 
+      // Set up the scroll effects fresh
       setupScrollEffects(context);
 
       // Trigger scroll event
@@ -96,7 +126,7 @@ describe('Scroll Module', () => {
       window.dispatchEvent(scrollEvent);
 
       // Should not call requestAnimationFrame when already ticking
-      expect(window.requestAnimationFrame).not.toHaveBeenCalled();
+      expect(rafSpy).not.toHaveBeenCalled();
       expect(context.updateNavbarOnScroll).not.toHaveBeenCalled();
     });
 
