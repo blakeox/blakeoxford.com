@@ -123,7 +123,7 @@ class VoiceNavigationEnhancer {
       {
         acceptNode: (node) => {
           const parent = node.parentElement;
-          if (parent.style.display === 'none' || 
+          if (parent.style.display === 'none' ||
               parent.classList.contains('sr-only') ||
               parent.hasAttribute('aria-hidden')) {
             return NodeFilter.FILTER_REJECT;
@@ -169,7 +169,7 @@ class VoiceNavigationEnhancer {
 // Initialize voice navigation
 if ('webkitSpeechRecognition' in window) {
   window.voiceNavigation = new VoiceNavigationEnhancer();
-  
+
   // Add voice activation shortcut (Ctrl+Shift+V)
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && e.key === 'V') {

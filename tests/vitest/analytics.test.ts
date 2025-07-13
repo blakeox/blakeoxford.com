@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { trackEvent, trackEventLegacy, trackPageView } from '../../public/assets/js/analytics.js';
+import { trackEvent, trackEventLegacy, trackPageView } from '../../assets-source/js/analytics.js';
 
 describe('Analytics Module', () => {
   beforeEach(() => {
@@ -293,7 +293,7 @@ describe('Analytics Module', () => {
         event_category: 'Navigation',
         event_action: 'Click',
         event_label: 'nav-home',
-        value: 1
+        value: 1 as any
       });
     });
 
@@ -388,7 +388,7 @@ describe('Analytics Module', () => {
         event_category: 123,
         event_action: 456,
         event_label: 'test',
-        value: 789
+        value: 789 as any
       });
     });
   });

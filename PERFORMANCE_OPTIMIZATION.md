@@ -64,11 +64,12 @@ public/assets/js/bundles/
 ├── forms.min.js            # Form validation (conditional)
 └── lazy-loader.min.js      # Loading orchestration
 
-archived-js/                 # Moved unused files
-├── SearchOverlayEnhanced.js # Duplicate functionality
-├── theme-*-debugger.js     # Development tools
-├── voice-navigation.js     # Advanced feature
-└── scroll.js              # Unused functionality
+assets-source/js/            # Source JavaScript modules
+├── a11y.js                 # Accessibility utilities
+├── analytics.js            # Analytics tracking
+├── dropdown.js             # Dropdown interactions
+├── scroll.js               # Scroll behaviors
+└── search-overlay.js       # Search functionality
 ```
 
 ### Minification & Compression

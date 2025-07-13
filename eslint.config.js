@@ -11,7 +11,6 @@ export default [
   {
     files: [
       'assets-source/**/*.js',
-      'archived-js/**/*.js',
       'public/**/*.js',
       'src/assets/**/*.js'
     ],

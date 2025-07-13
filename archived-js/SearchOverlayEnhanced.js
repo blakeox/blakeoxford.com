@@ -11,17 +11,17 @@ class SearchOverlayEnhancer {
     this.searchResults = null;
     this.closeButton = null;
     this.searchToggle = null;
-    
+
     this.isOpen = false;
     this.currentResults = [];
     this.selectedIndex = -1;
     this.searchTimeout = null;
     this.focusTrap = null; // Add focus trap
-    
+
     // Search index for fast searching
     this.searchIndex = null;
     this.contentData = [];
-    
+
     this.init();
   }
 
@@ -46,7 +46,7 @@ class SearchOverlayEnhancer {
     this.searchResults = document.getElementById('search-results');
     this.closeButton = document.getElementById('close-search');
     this.searchToggle = document.getElementById('search-toggle');
-    
+
     if (!this.searchOverlay) {
       console.warn('Search overlay elements not found');
       return;
@@ -115,13 +115,13 @@ class SearchOverlayEnhancer {
         e.preventDefault();
         this.openSearch();
       }
-      
+
       // Close search with Escape
       if (e.key === 'Escape' && this.isOpen) {
         e.preventDefault();
         this.closeSearch();
       }
-      
+
       // Command/Ctrl + K shortcut
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
@@ -139,7 +139,7 @@ class SearchOverlayEnhancer {
       // Load blog posts
       const blogResponse = await fetch('/api/blog.json');
       const blogData = await blogResponse.json();
-      
+
       // Load projects (assuming similar API structure)
       let projectData = [];
       try {
@@ -148,7 +148,7 @@ class SearchOverlayEnhancer {
       } catch {
         console.log('Projects API not available, skipping...');
       }
-      
+
       // Combine all searchable content
       this.contentData = [
         ...blogData.map(item => ({
@@ -177,7 +177,7 @@ class SearchOverlayEnhancer {
           icon: 'mail'
         }
       ];
-      
+
       console.log(`Search index loaded with ${this.contentData.length} items`);
     } catch (error) {
       console.error('Failed to load search index:', error);
@@ -189,20 +189,20 @@ class SearchOverlayEnhancer {
     this.isOpen = true;
     this.searchOverlay.classList.add('active');
     this.searchOverlay.setAttribute('aria-hidden', 'false');
-    
+
     // Activate focus trap
     if (this.focusTrap) {
       this.focusTrap.activate();
     }
-    
+
     // Focus search input
     setTimeout(() => {
       this.searchInput?.focus();
     }, 100);
-    
+
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
-    
+
     this.trackEvent('search_opened');
   }
 
@@ -210,36 +210,36 @@ class SearchOverlayEnhancer {
     this.isOpen = false;
     this.searchOverlay.classList.remove('active');
     this.searchOverlay.setAttribute('aria-hidden', 'true');
-    
+
     // Deactivate focus trap
     if (this.focusTrap) {
       this.focusTrap.deactivate();
     }
-    
+
     // Restore body scroll
     document.body.style.overflow = '';
-    
+
     // Clear search
     if (this.searchInput) {
       this.searchInput.value = '';
     }
     this.clearResults();
     this.selectedIndex = -1;
-    
+
     this.trackEvent('search_closed');
   }
 
   handleSearchInput(query) {
     clearTimeout(this.searchTimeout);
-    
+
     if (!query.trim()) {
       this.clearResults();
       return;
     }
-    
+
     // Show loading state
     this.showLoadingState();
-    
+
     // Debounce search
     this.searchTimeout = setTimeout(() => {
       this.performSearch(query);
@@ -251,11 +251,11 @@ class SearchOverlayEnhancer {
     this.currentResults = results;
     this.selectedIndex = -1;
     this.renderResults(results);
-    
+
     // Update ARIA attributes
     this.searchInput.setAttribute('aria-expanded', results.length > 0 ? 'true' : 'false');
     this.searchResults.classList.toggle('active', results.length > 0);
-    
+
     this.trackEvent('search_performed', {
       query: query,
       results_count: results.length
@@ -264,18 +264,18 @@ class SearchOverlayEnhancer {
 
   fuzzySearch(query) {
     const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
-    
+
     return this.contentData
       .map(item => {
         let score = 0;
         const title = item.title.toLowerCase();
         const excerpt = (item.excerpt || '').toLowerCase();
-        
+
         // Exact title match gets highest score
         if (title.includes(query.toLowerCase())) {
           score += 100;
         }
-        
+
         // Partial title match
         searchTerms.forEach(term => {
           if (title.includes(term)) {
@@ -285,7 +285,7 @@ class SearchOverlayEnhancer {
             score += 25;
           }
         });
-        
+
         return { ...item, score };
       })
       .filter(item => item.score > 0)
@@ -295,26 +295,26 @@ class SearchOverlayEnhancer {
 
   renderResults(results) {
     if (!this.searchResults) return;
-    
+
     this.searchResults.innerHTML = '';
-    
+
     if (results.length === 0) {
       this.showNoResults();
       return;
     }
-    
+
     const fragment = document.createDocumentFragment();
-    
+
     results.forEach((result, index) => {
       const item = document.createElement('div');
       item.className = 'search-result-item';
       item.setAttribute('role', 'option');
       item.setAttribute('id', `search-result-${index}`);
       item.setAttribute('aria-selected', 'false');
-      
+
       const icon = this.getIconHTML(result.icon);
       const typeLabel = this.getTypeLabel(result.type);
-      
+
       item.innerHTML = `
         <div class="flex items-center gap-3">
           <div class="text-neutral-500">${icon}</div>
@@ -324,18 +324,18 @@ class SearchOverlayEnhancer {
           </div>
         </div>
       `;
-      
+
       item.addEventListener('click', () => {
         window.location.href = result.url;
       });
-      
+
       item.addEventListener('mouseenter', () => {
         this.setSelectedIndex(index);
       });
-      
+
       fragment.appendChild(item);
     });
-    
+
     this.searchResults.appendChild(fragment);
     this.setupResultListeners();
   }
@@ -361,7 +361,7 @@ class SearchOverlayEnhancer {
 
   highlightMatch(text) {
     if (!this.searchInput.value) return text;
-    
+
     const query = this.searchInput.value.toLowerCase();
     const regex = new RegExp(`(${query})`, 'gi');
     return text.replace(regex, '<mark>$1</mark>');
@@ -415,7 +415,7 @@ class SearchOverlayEnhancer {
       const isSelected = index === this.selectedIndex;
       item.setAttribute('aria-selected', isSelected);
       item.classList.toggle('bg-surface-subtle', isSelected);
-      
+
       if (isSelected) {
         this.searchInput.setAttribute('aria-activedescendant', `search-result-${index}`);
         item.scrollIntoView({ block: 'nearest' });
@@ -466,7 +466,7 @@ class SearchOverlayEnhancer {
       this.searchInput.setAttribute('aria-controls', 'search-results');
       this.searchInput.setAttribute('aria-activedescendant', '');
     }
-    
+
     if (this.searchResults) {
       this.searchResults.setAttribute('role', 'listbox');
       this.searchResults.setAttribute('aria-label', 'Search results');

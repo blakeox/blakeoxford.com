@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { addSkipToContentLink, enhanceFocusManagement } from '../../public/assets/js/a11y.js';
+import { addSkipToContentLink, enhanceFocusManagement } from '../../assets-source/js/a11y.js';
 
 describe('Accessibility Module', () => {
   beforeEach(() => {

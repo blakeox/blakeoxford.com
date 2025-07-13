@@ -12,7 +12,7 @@ declare global {
 }
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { setupScrollEffects, setupScrollBehavior, setupPageTransitions } from '../../public/assets/js/scroll.js';
+import { setupScrollEffects, setupScrollBehavior, setupPageTransitions } from '../../assets-source/js/scroll.js';
 
 describe('Scroll Module', () => {
   beforeEach(() => {

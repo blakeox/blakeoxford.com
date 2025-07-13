@@ -28,9 +28,9 @@ export default defineConfig({
         'dist/**',
         '.astro/**',
         'public/**', // Start by excluding all public files
-        '!public/assets/js/analytics.js', // Include specific utility JS files
-        '!public/assets/js/a11y.js',
-        '!public/assets/js/scroll.js',
+        '!assets-source/js/analytics.js', // Include specific utility JS files
+        '!assets-source/js/a11y.js',
+        '!assets-source/js/scroll.js',
         // Note: dropdown.js is excluded from Vitest coverage as it's tested via Playwright E2E
         'functions/**', // Exclude Cloudflare functions
         'src/**/*.astro', // Exclude Astro components from coverage

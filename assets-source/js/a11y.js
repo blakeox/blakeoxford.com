@@ -4,8 +4,20 @@
  * Add a skip to content link for accessibility
  */
 export function addSkipToContentLink() {
-  // Skip link is already provided in BaseLayout.astro, no need to add another
-  return;
+  // Check if skip link already exists
+  if (document.getElementById('skip-to-content')) {
+    return;
+  }
+  
+  // Create skip link
+  const skipLink = document.createElement('a');
+  skipLink.id = 'skip-to-content';
+  skipLink.href = '#main';
+  skipLink.textContent = 'Skip to main content';
+  skipLink.className = 'sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-accent focus:text-white focus:rounded';
+  
+  // Insert at the beginning of body
+  document.body.insertBefore(skipLink, document.body.firstChild);
 }
 
 /**
