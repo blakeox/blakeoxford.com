@@ -1,9 +1,5 @@
 // NavBarMenu.js: Modular enhancement for navigation (ARIA, scroll, keyboard, analytics, accessibility, dropdowns, etc.)
-// Imports analytics, accessibility, scroll, and dropdown utilities
-import { trackEvent } from './analytics.js';
-import { addSkipToContentLink, enhanceFocusManagement } from './a11y.js';
-import { setupScrollEffects, setupScrollBehavior, setupPageTransitions } from './scroll.js';
-import { setupDropdowns, setupDropdownKeyboardNavigation } from './dropdown.js';
+// Assumes global availability of: trackEvent, addSkipToContentLink, enhanceFocusManagement, setupScrollEffects, setupScrollBehavior, setupPageTransitions, setupDropdowns, setupDropdownKeyboardNavigation
 // Features: Navigation hydration, ARIA, analytics, scroll effects, theme integration, accessibility, keyboard shortcuts, progressive enhancement
 
 /**
@@ -38,14 +34,19 @@ class NavBarMenu {
 
   init() {
     this.cacheElements();
-    addSkipToContentLink();
+    
+    // Initialize features if available
+    if (window.addSkipToContentLink) window.addSkipToContentLink();
+    
     // Use modular scroll utilities
-    setupScrollEffects(this);
-    setupScrollBehavior(this.navbar);
-    setupPageTransitions();
+    if (window.setupScrollEffects) window.setupScrollEffects(this);
+    if (window.setupScrollBehavior) window.setupScrollBehavior(this.navbar);
+    if (window.setupPageTransitions) window.setupPageTransitions();
+    
     // Enable interactive dropdowns and keyboard navigation
-    setupDropdowns();
-    setupDropdownKeyboardNavigation();
+    if (window.setupDropdowns) window.setupDropdowns();
+    if (window.setupDropdownKeyboardNavigation) window.setupDropdownKeyboardNavigation();
+    
     this.setupMobileMenu();
     this.setupSearchToggle(); // Add search toggle setup
     this.setupKeyboardShortcuts();
@@ -339,33 +340,41 @@ class NavBarMenu {
     navLinks.forEach(link => {
       link.addEventListener('click', () => {
         const analyticsId = link.dataset.analytics;
-        trackEvent('navigation_click', {
-          link_id: analyticsId,
-          link_url: link.href,
-          link_text: link.textContent.trim()
-        });
+        if (window.trackEvent) {
+          window.trackEvent('navigation_click', {
+            link_id: analyticsId,
+            link_url: link.href,
+            link_text: link.textContent.trim()
+          });
+        }
       });
     });
     if (this.navToggle) {
       this.navToggle.addEventListener('click', () => {
-        trackEvent('mobile_menu_toggle', {
-          action: this.isMenuOpen ? 'close' : 'open'
-        });
+        if (window.trackEvent) {
+          window.trackEvent('mobile_menu_toggle', {
+            action: this.isMenuOpen ? 'close' : 'open'
+          });
+        }
       });
     }
     if (this.searchToggle) {
       this.searchToggle.addEventListener('click', () => {
-        trackEvent('search_opened', {
-          trigger: 'button_click'
-        });
+        if (window.trackEvent) {
+          window.trackEvent('search_opened', {
+            trigger: 'button_click'
+          });
+        }
       });
     }
   }
 
   // --- Accessibility ---
   setupAccessibilityEnhancements() {
-    addSkipToContentLink();
-    enhanceFocusManagement(this.navbar, this.trapFocus.bind(this), () => this.isMenuOpen);
+    if (window.addSkipToContentLink) window.addSkipToContentLink();
+    if (window.enhanceFocusManagement) {
+      window.enhanceFocusManagement(this.navbar, this.trapFocus.bind(this), () => this.isMenuOpen);
+    }
     this.addLandmarkRoles();
   }
 

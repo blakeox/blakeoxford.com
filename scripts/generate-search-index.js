@@ -10,27 +10,50 @@ function getFiles(dir) {
   return fs.readdirSync(dir).filter(f => f.endsWith('.mdx'));
 }
 
-function parseMDXFile(filePath, baseUrl) {
+function parseMDXFile(filePath, baseUrl, contentType) {
   const raw = fs.readFileSync(filePath, 'utf-8');
   const { data } = matter(raw);
-  return {
-    title: data.title || '',
-    excerpt: data.description || '',
-    url: `${baseUrl}/${path.basename(filePath, '.mdx')}`
-  };
+  const slug = path.basename(filePath, '.mdx').toLowerCase(); // Convert to lowercase to match Astro behavior
+  
+  if (contentType === 'blog') {
+    return {
+      slug: slug,
+      title: data.title || '',
+      description: data.description || '',
+      publishedAt: data.pubDate?.toISOString ? data.pubDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      tags: data.tags || [],
+      author: data.author,
+      featured: data.featured || false,
+      draft: data.draft || false,
+      excerpt: data.description || ''
+    };
+  } else {
+    return {
+      slug: slug,
+      title: data.title || '',
+      description: data.description || '',
+      publishedAt: data.date?.toISOString ? data.date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      tags: data.tags || [],
+      featured: data.featured || false,
+      draft: data.draft || false,
+      technologies: data.technologies || [],
+      github: data.github,
+      demo: data.link || data.demo
+    };
+  }
 }
 
-function buildIndex(contentDir, baseUrl) {
+function buildIndex(contentDir, baseUrl, contentType) {
   const dir = path.join(__dirname, '..', contentDir);
-  return getFiles(dir).map(f => parseMDXFile(path.join(dir, f), baseUrl));
+  return getFiles(dir).map(f => parseMDXFile(path.join(dir, f), baseUrl, contentType));
 }
 
 function writeJSON(outPath, data) {
   fs.writeFileSync(outPath, JSON.stringify(data, null, 2));
 }
 
-const blogIndex = buildIndex('src/content/blog', '/blog');
-const projectsIndex = buildIndex('src/content/projects', '/projects');
+const blogIndex = buildIndex('src/content/blog', '/blog', 'blog');
+const projectsIndex = buildIndex('src/content/projects', '/projects', 'projects');
 
 writeJSON(path.join(__dirname, '../public/api/blog.json'), blogIndex);
 writeJSON(path.join(__dirname, '../public/api/projects.json'), projectsIndex);

@@ -5,7 +5,7 @@
  * @param {string} triggerSelector - Selector for dropdown trigger links
  * @param {string} menuSelector - Selector for dropdown menus
  */
-export function setupDropdowns(triggerSelector = '.nav-link[aria-haspopup="true"]', menuSelector = 'ul[role="menu"]') {
+window.setupDropdowns = function setupDropdowns(triggerSelector = '.nav-link[aria-haspopup="true"]', menuSelector = 'ul[role="menu"]') {
   const triggers = document.querySelectorAll(triggerSelector);
   triggers.forEach(trigger => {
     const menu = trigger.parentElement.querySelector(menuSelector);
@@ -14,7 +14,7 @@ export function setupDropdowns(triggerSelector = '.nav-link[aria-haspopup="true"
     trigger.addEventListener('click', (e) => {
       e.preventDefault();
       const expanded = trigger.getAttribute('aria-expanded') === 'true';
-      closeAllDropdowns();
+      window.closeAllDropdowns();
       if (!expanded) {
         trigger.setAttribute('aria-expanded', 'true');
         menu.classList.remove('invisible', 'opacity-0');
@@ -48,7 +48,7 @@ export function setupDropdowns(triggerSelector = '.nav-link[aria-haspopup="true"
  * @param {string} triggerSelector - Selector for dropdown trigger links
  * @param {string} menuSelector - Selector for dropdown menus
  */
-export function setupDropdownKeyboardNavigation(triggerSelector = '.nav-link[aria-haspopup="true"]', menuSelector = 'ul[role="menu"]') {
+window.setupDropdownKeyboardNavigation = function setupDropdownKeyboardNavigation(triggerSelector = '.nav-link[aria-haspopup="true"]', menuSelector = 'ul[role="menu"]') {
   const triggers = document.querySelectorAll(triggerSelector);
   triggers.forEach(trigger => {
     const menu = trigger.parentElement.querySelector(menuSelector);
@@ -92,7 +92,7 @@ export function setupDropdownKeyboardNavigation(triggerSelector = '.nav-link[ari
 /**
  * Close all open dropdowns
  */
-export function closeAllDropdowns() {
+window.closeAllDropdowns = function closeAllDropdowns() {
   document.querySelectorAll('.nav-link[aria-haspopup="true"]').forEach(trigger => {
     trigger.setAttribute('aria-expanded', 'false');
     const menu = trigger.parentElement.querySelector('ul[role="menu"]');

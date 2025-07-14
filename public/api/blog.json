@@ -1,7 +1,16 @@
 [
   {
+    "slug": "hello-world",
     "title": "Hello World",
-    "excerpt": "My first blog post using Astro Content Collections and MDX.",
-    "url": "/blog/hello-world"
+    "description": "My first blog post using Astro Content Collections and MDX.",
+    "publishedAt": "2025-05-19",
+    "tags": [
+      "intro",
+      "hello"
+    ],
+    "author": "Blake Oxford",
+    "featured": false,
+    "draft": false,
+    "excerpt": "My first blog post using Astro Content Collections and MDX."
   }
 ]

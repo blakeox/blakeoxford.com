@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  output: 'static',             // Fully static output
+  output: 'static',             // Keep as static 
   envPrefix: 'PUBLIC_',
   site: 'https://blakeoxford.com',
   integrations: [

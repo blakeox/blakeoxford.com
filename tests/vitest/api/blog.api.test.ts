@@ -77,18 +77,22 @@ describe('Blog API endpoint logic', () => {
       const result = await get();
       const posts = JSON.parse(result.body);
 
-      // Note: Date objects become strings when serialized to JSON
+      // New transformed structure
       const expectedPost = {
-        ...mockPost,
-        data: {
-          ...mockPost.data,
-          pubDate: mockPost.data.pubDate.toISOString()
-        }
+        slug: 'test-post',
+        title: 'Test Post',
+        description: 'Test description',
+        publishedAt: '2024-01-01',
+        tags: ['test', 'blog'],
+        author: 'Test Author',
+        featured: undefined,
+        draft: false,
+        excerpt: 'Test description'
       };
 
       expect(posts[0]).toEqual(expectedPost);
-      expect(posts[0].data.title).toBe('Test Post');
-      expect(posts[0].data.tags).toEqual(['test', 'blog']);
+      expect(posts[0].title).toBe('Test Post');
+      expect(posts[0].tags).toEqual(['test', 'blog']);
     });
   });
 
@@ -119,7 +123,21 @@ describe('Blog API endpoint logic', () => {
       
       expect(typeof result.body).toBe('string');
       const parsed = JSON.parse(result.body);
-      expect(parsed).toEqual(mockPosts);
+      
+      // Expect transformed structure
+      const expectedTransformed = [{
+        slug: 'test',
+        title: 'Test',
+        description: undefined,
+        publishedAt: undefined,
+        tags: [],
+        author: undefined,
+        featured: undefined,
+        draft: false,
+        excerpt: undefined
+      }];
+      
+      expect(parsed).toEqual(expectedTransformed);
     });
   });
 });

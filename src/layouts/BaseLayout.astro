@@ -91,7 +91,12 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
     <!-- <link rel="stylesheet" href="/assets/css/main.css" /> -->
     <!-- Optimized JavaScript Bundles -->
     <script src="/assets/js/critical.min.js" defer></script>
+    <!-- Load standalone SearchOverlay (production-ready) -->
+    <script src="/assets/js/search-overlay-standalone.min.js" defer></script>
     <script src="/assets/js/lazy-loader.min.js" defer></script>
+    
+    <!-- Debug script for search overlay testing (development only) -->
+    <script src="/search-debug-comprehensive.js" defer></script>
 
     <!-- Load advanced performance monitoring and resource preloading -->
     <script src="/assets/js/performance-monitor.js" defer></script>

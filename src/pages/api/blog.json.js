@@ -8,7 +8,7 @@ export async function get() {
     slug: post.slug,
     title: post.data.title,
     description: post.data.description,
-    publishedAt: post.data.pubDate?.toISOString().split('T')[0] || post.data.date?.toISOString().split('T')[0],
+    publishedAt: post.data.pubDate?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0],
     tags: post.data.tags || [],
     author: post.data.author,
     featured: post.data.featured,

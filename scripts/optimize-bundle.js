@@ -55,11 +55,57 @@ if (!fs.existsSync(outputDir)) {
 }
 
 /**
- * Simple minification function
+ * Simple minification function with ES6 module compatibility
  */
 function minifyJS(code) {
-  return code
-    // Remove comments
+  // Store URLs to prevent malformation during minification
+  const urlMap = new Map();
+  let urlCounter = 0;
+  
+  // Extract and store URLs
+  const urlRegex = /(["'])(https?:\/\/[^"']+)\1/g;
+  code = code.replace(urlRegex, (match) => {
+    const placeholder = `__URL_PLACEHOLDER_${urlCounter++}__`;
+    urlMap.set(placeholder, match);
+    return placeholder;
+  });
+
+  // Comprehensive ES6 module to browser compatibility conversion
+  
+  // Handle 'export default class/function'
+  code = code.replace(/^export\s+default\s+(class|function)\s+(\w+)/gm, 'window.$2 = $1 $2');
+  
+  // Handle 'export class/function'
+  code = code.replace(/^export\s+(class|function)\s+(\w+)/gm, (match, type, name) => {
+    return `${type} ${name}`;
+  });
+  
+  // Handle 'export const/let/var'
+  code = code.replace(/^export\s+(const|let|var)\s+(\w+)/gm, '$1 $2');
+  
+  // Handle named exports at the end: export { name1, name2 }
+  code = code.replace(/^export\s+\{([^}]+)\}/gm, (match, exports) => {
+    const exportList = exports.split(',').map(e => e.trim());
+    return exportList.map(exp => {
+      const parts = exp.split(/\s+as\s+/);
+      const localName = parts[0].trim();
+      const exportName = parts.length > 1 ? parts[1].trim() : localName;
+      return `window.${exportName} = ${localName};`;
+    }).join('\n');
+  });
+  
+  // Handle default exports at the end: export default something
+  code = code.replace(/^export\s+default\s+(\w+);?$/gm, 'window.default = $1; window.$1 = $1;');
+  
+  // Remove all import statements (assume globals or previously loaded)
+  code = code.replace(/^import\s+.+?;?$/gm, '');
+  
+  // Remove any remaining export keywords
+  code = code.replace(/^export\s+/gm, '');
+
+  // Minify the code
+  let minified = code
+    // Remove comments (but preserve comment-like patterns in strings)
     .replace(/\/\*[\s\S]*?\*\//g, '')
     .replace(/\/\/.*$/gm, '')
     // Remove extra whitespace
@@ -71,6 +117,13 @@ function minifyJS(code) {
     .replace(/:\s*/g, ':')
     .replace(/;\s*/g, ';')
     .trim();
+
+  // Restore URLs
+  urlMap.forEach((original, placeholder) => {
+    minified = minified.replace(placeholder, original);
+  });
+
+  return minified;
 }
 
 /**

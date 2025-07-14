@@ -1,9 +1,13 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import ProjectCard from '../components/ProjectCard.astro';
 import CoinFlipImage from '../components/CoinFlipImage.astro';
+import pythonLogo from '../assets/images/proficiencies/python_logo.webp';
+
 const projects = (await getCollection('projects')) as any[];
+const blogPosts = (await getCollection('blog')) as any[];
 const featuredSlugs = [
   "enterprise-digital-transformation",
   "advancedmd-implementation",
@@ -12,6 +16,9 @@ const featuredSlugs = [
 const featuredProjects = featuredSlugs
   .map((slug) => projects.find((p: any) => p.slug === slug))
   .filter((p): p is any => !!p);
+
+// Get the latest blog post if available
+const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
 ---
 <Layout title="Welcome to My Portfolio" description="Explore my projects, blog posts, and get in touch with me." wide={true}>
   <!-- Decorative background shapes -->
@@ -286,7 +293,7 @@ const featuredProjects = featuredSlugs
       <h2 class="text-h2 font-bold mb-8 text-accent-dark">Technologies I Excel At</h2>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
         {[
-          { name: 'Python Automation', img: '/assets/images/proficiencies/python_logo.png', alt: 'Python Logo' },
+          { name: 'Python Automation', img: pythonLogo, alt: 'Python Logo', optimized: true },
           { name: 'OpenAI API', img: '/assets/images/proficiencies/OpenAI-black-monoblossom.png', alt: 'OpenAI Logo' },
           { name: 'Microsoft Intune', img: '/assets/images/proficiencies/Intune_logo_final.png', alt: 'Microsoft Intune Logo' },
           { name: 'SQL', img: '/assets/images/proficiencies/Azure_SQL_logo.png', alt: 'Azure SQL Logo' },
@@ -298,8 +305,17 @@ const featuredProjects = featuredSlugs
         ].map((tech) => (
           <li class="flex flex-col items-center group">
             <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center">
-              {tech.img ? (
-                <img src={tech.img} alt={tech.alt} class="w-full h-full object-contain" />
+              {tech.optimized ? (
+                <Image 
+                  src={tech.img} 
+                  alt={tech.alt} 
+                  width={64} 
+                  height={64}
+                  class="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              ) : tech.img ? (
+                <img src={tech.img as string} alt={tech.alt} class="w-full h-full object-contain" />
               ) : (
                 <span class="text-2xl" aria-label={tech.name}>?</span>
               )}
@@ -317,10 +333,9 @@ const featuredProjects = featuredSlugs
         {featuredProjects.map((project: any) => (
           <ProjectCard project={project} featured={true} />
         ))}
-      </div>
-      <div class="mt-8 text-center animate-fade-in">
-        <a href="/projects/" class="btn btn-secondary">View All Projects</a>
-      </div>
+      </div>        <div class="mt-8 text-center animate-fade-in">
+          <a href="/projects/" class="btn btn-secondary" aria-label="View all projects">View All Projects</a>
+        </div>
     </section>
 
     <!-- Latest Blog Posts Section -->
@@ -328,18 +343,32 @@ const featuredProjects = featuredSlugs
       <div class="container mx-auto px-4">
         <h2 id="latest-blog-posts" class="text-h2 font-bold mb-8 text-accent-dark">Latest Blog Posts</h2>
         <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <!-- Example Blog Item -->
-          <li class="bg-surface dark:bg-gray-800 rounded-2xl shadow-xl p-6 animate-slide-up">
-            <a href="#" class="block hover:scale-105 transition-transform duration-200">
-              <h3 class="text-h3 font-semibold mb-2">Blog Post Title</h3>
-              <time class="text-sm text-neutral">May 21, 2025</time>
-              <p class="mt-2 text-neutral">A short excerpt or summary of the blog post goes here to entice the reader to click through and read more.</p>
-            </a>
-          </li>
-          <!-- More blog items can be dynamically rendered here -->
+          {latestBlogPost ? (
+            <li class="bg-surface dark:bg-gray-800 rounded-2xl shadow-xl p-6 animate-slide-up">
+              <a href={`/blog/${latestBlogPost.slug}`} class="block hover:scale-105 transition-transform duration-200" aria-label={`Read blog post: ${latestBlogPost.data.title}`}>
+                <h3 class="text-h3 font-semibold mb-2">{latestBlogPost.data.title}</h3>
+                <time class="text-sm text-neutral" datetime={latestBlogPost.data.pubDate?.toISOString()}>
+                  {latestBlogPost.data.pubDate?.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </time>
+                <p class="mt-2 text-neutral">{latestBlogPost.data.description || 'Read this blog post to learn more.'}</p>
+              </a>
+            </li>
+          ) : (
+            <li class="bg-surface dark:bg-gray-800 rounded-2xl shadow-xl p-6 animate-slide-up">
+              <div class="block">
+                <h3 class="text-h3 font-semibold mb-2">Blog Post Title May</h3>
+                <time class="text-sm text-neutral" datetime="2025-05-21">May 21, 2025</time>
+                <p class="mt-2 text-neutral">A short excerpt or summary of the blog post goes here to entice the reader to click through and read more.</p>
+              </div>
+            </li>
+          )}
         </ul>
         <div class="mt-8 text-center animate-fade-in">
-          <a href="/blog/" class="btn btn-primary">View All Blog Posts</a>
+          <a href="/blog/" class="btn btn-primary" aria-label="View all blog posts">View All Blog Posts</a>
         </div>
       </div>
     </section>

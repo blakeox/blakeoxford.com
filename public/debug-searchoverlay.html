@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SearchOverlay Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        #search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #search-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+        }
+        #search-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        #search-results {
+            margin-top: 10px;
+            display: none;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 SearchOverlay Test Environment</h1>
+        
+        <div id="status-container">
+            <div class="status info">
+                🧪 Initializing test environment...
+            </div>
+        </div>
+
+        <div class="log" id="console-log"></div>
+
+        <div style="margin: 20px 0;">
+            <button onclick="testSearchOverlayClass()">Test SearchOverlay Class</button>
+            <button onclick="testGlobalAccess()">Test Global Access</button>
+            <button onclick="testKeyboardShortcuts()">Test Ctrl+K</button>
+            <button onclick="testCreateInstance()">Create Instance</button>
+            <button onclick="testOpenSearch()">Open Search</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h3>📊 Test Results:</h3>
+            <div id="test-results"></div>
+        </div>
+    </div>
+
+    <!-- Search Overlay HTML -->
+    <div id="search-overlay">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search...">
+            <div id="search-results"></div>
+            <button id="close-search" style="margin-top: 10px;">Close</button>
+        </div>
+    </div>
+
+    <!-- Load the interactive bundle -->
+    <script src="/assets/js/interactive.min.js"></script>
+
+    <script>
+        // Enhanced console logging
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        
+        function addToLog(message, type = 'log') {
+            const logElement = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = {
+                log: '#333',
+                error: '#dc3545',
+                warn: '#ffc107',
+                info: '#17a2b8'
+            }[type] || '#333';
+            
+            logElement.innerHTML += `<div style="color: ${color}; margin: 2px 0;">[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            addToLog(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            addToLog('ERROR: ' + args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalConsoleWarn.apply(console, args);
+            addToLog('WARN: ' + args.join(' '), 'warn');
+        };
+
+        function updateStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            const statusClass = {
+                success: 'success',
+                error: 'error',
+                warning: 'warning',
+                info: 'info'
+            }[type];
+            
+            container.innerHTML = `<div class="status ${statusClass}">${message}</div>`;
+        }
+
+        function addTestResult(test, result, details = '') {
+            const container = document.getElementById('test-results');
+            const icon = result ? '✅' : '❌';
+            const color = result ? '#155724' : '#721c24';
+            
+            container.innerHTML += `
+                <div style="color: ${color}; margin: 5px 0;">
+                    ${icon} ${test} ${details ? `(${details})` : ''}
+                </div>
+            `;
+        }
+
+        function clearLog() {
+            document.getElementById('console-log').innerHTML = '';
+            document.getElementById('test-results').innerHTML = '';
+        }
+
+        function testSearchOverlayClass() {
+            console.log('🧪 Testing SearchOverlay class availability...');
+            
+            try {
+                const hasClass = typeof SearchOverlay !== 'undefined';
+                const hasWindowClass = typeof window.SearchOverlay !== 'undefined';
+                
+                addTestResult('SearchOverlay class defined', hasClass, typeof SearchOverlay);
+                addTestResult('window.SearchOverlay defined', hasWindowClass, typeof window.SearchOverlay);
+                
+                if (hasClass || hasWindowClass) {
+                    updateStatus('✅ SearchOverlay class is available!', 'success');
+                } else {
+                    updateStatus('❌ SearchOverlay class not found', 'error');
+                }
+            } catch (error) {
+                console.error('Test failed:', error);
+                updateStatus('❌ Test failed: ' + error.message, 'error');
+            }
+        }
+
+        function testGlobalAccess() {
+            console.log('🧪 Testing global access patterns...');
+            
+            const tests = [
+                { name: 'window.SearchOverlay', check: () => typeof window.SearchOverlay },
+                { name: 'global SearchOverlay', check: () => typeof SearchOverlay },
+                { name: 'window.searchOverlay', check: () => typeof window.searchOverlay },
+                { name: 'globalThis.SearchOverlay', check: () => typeof globalThis.SearchOverlay }
+            ];
+            
+            tests.forEach(test => {
+                try {
+                    const result = test.check();
+                    addTestResult(test.name, result !== 'undefined', result);
+                } catch (error) {
+                    addTestResult(test.name, false, 'error');
+                }
+            });
+        }
+
+        function testCreateInstance() {
+            console.log('🧪 Testing SearchOverlay instance creation...');
+            
+            try {
+                let SearchOverlayClass = window.SearchOverlay || SearchOverlay;
+                
+                if (typeof SearchOverlayClass === 'function') {
+                    console.log('Creating SearchOverlay instance...');
+                    const instance = new SearchOverlayClass();
+                    
+                    addTestResult('Instance creation', true, 'success');
+                    addTestResult('Instance has open method', typeof instance.open === 'function');
+                    addTestResult('Instance has close method', typeof instance.close === 'function');
+                    
+                    updateStatus('✅ SearchOverlay instance created successfully!', 'success');
+                    
+                    // Store for other tests
+                    window.testSearchOverlay = instance;
+                } else {
+                    addTestResult('Instance creation', false, 'class not available');
+                    updateStatus('❌ Cannot create instance - class not available', 'error');
+                }
+            } catch (error) {
+                console.error('Instance creation failed:', error);
+                addTestResult('Instance creation', false, error.message);
+                updateStatus('❌ Instance creation failed: ' + error.message, 'error');
+            }
+        }
+
+        function testOpenSearch() {
+            console.log('🧪 Testing search overlay opening...');
+            
+            try {
+                if (window.testSearchOverlay) {
+                    window.testSearchOverlay.open();
+                    addTestResult('Open search overlay', true, 'using test instance');
+                    updateStatus('✅ Search overlay opened via test instance', 'success');
+                } else if (window.searchOverlay) {
+                    window.searchOverlay.open();
+                    addTestResult('Open search overlay', true, 'using global instance');
+                    updateStatus('✅ Search overlay opened via global instance', 'success');
+                } else {
+                    addTestResult('Open search overlay', false, 'no instance available');
+                    updateStatus('❌ No SearchOverlay instance available', 'error');
+                }
+            } catch (error) {
+                console.error('Open search failed:', error);
+                addTestResult('Open search overlay', false, error.message);
+                updateStatus('❌ Open search failed: ' + error.message, 'error');
+            }
+        }
+
+        function testKeyboardShortcuts() {
+            console.log('🧪 Testing keyboard shortcuts...');
+            
+            // Simulate Ctrl+K
+            const event = new KeyboardEvent('keydown', {
+                key: 'k',
+                ctrlKey: true,
+                bubbles: true
+            });
+            
+            document.dispatchEvent(event);
+            addTestResult('Ctrl+K keyboard shortcut', true, 'event dispatched');
+            updateStatus('🎹 Ctrl+K keyboard shortcut triggered', 'info');
+        }
+
+        // Auto-run initial tests when page loads
+        window.addEventListener('load', () => {
+            console.log('🚀 Page loaded, running initial tests...');
+            
+            setTimeout(() => {
+                testSearchOverlayClass();
+                testGlobalAccess();
+            }, 1000);
+            
+            setTimeout(() => {
+                testCreateInstance();
+            }, 2000);
+        });
+
+        // Listen for search overlay events
+        document.addEventListener('openSearch', () => {
+            console.log('📢 openSearch event detected');
+            updateStatus('📢 openSearch event received', 'info');
+        });
+
+        // Add keyboard shortcut handler for testing
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                console.log('🎹 Ctrl+K detected in test page');
+                addTestResult('Keyboard shortcut detection', true, 'Ctrl+K in test environment');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@
 
 class SearchOverlay {
   constructor() {
+    console.log('SearchOverlay constructor called');
     this.overlay = null;
     this.searchInput = null;
     this.searchResults = null;
@@ -13,19 +14,18 @@ class SearchOverlay {
     this.fuse = null;
     
     this.init();
-  }
-
-  async init() {
+  }async init() {
     this.overlay = document.getElementById('search-overlay');
     this.searchInput = document.getElementById('search-input');
     this.searchResults = document.getElementById('search-results');
-    
+
     if (!this.overlay || !this.searchInput || !this.searchResults) {
       console.warn('Search overlay elements not found');
       return;
     }
 
     await this.loadSearchData();
+    await this.loadFuseJS();
     this.setupFuzzySearch();
     this.bindEvents();
     this.setupKeyboardShortcuts();
@@ -36,11 +36,11 @@ class SearchOverlay {
       // Load blog posts
       const blogResponse = await fetch('/api/blog.json');
       const blogData = await blogResponse.json();
-      
+
       // Load projects
       const projectsResponse = await fetch('/api/projects.json');
       const projectsData = await projectsResponse.json();
-      
+
       // Combine and format search data
       this.searchData = [
         ...blogData.map(post => ({
@@ -57,7 +57,7 @@ class SearchOverlay {
           description: project.description || '',
           url: `/projects/${project.slug}`,
           tags: project.tags || [],
-          date: project.date
+          date: project.publishedAt
         })),
         // Add static pages
         {
@@ -81,6 +81,29 @@ class SearchOverlay {
       console.error('Failed to load search data:', error);
       this.searchData = [];
     }
+  }
+
+  async loadFuseJS() {
+    // Check if Fuse.js is already loaded
+    if (typeof Fuse !== 'undefined') {
+      return Promise.resolve();
+    }
+
+    // Load Fuse.js from CDN
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js';
+      script.async = true;
+      script.onload = () => {
+        console.log('Fuse.js loaded successfully');
+        resolve();
+      };
+      script.onerror = () => {
+        console.error('Failed to load Fuse.js');
+        reject(new Error('Failed to load Fuse.js'));
+      };
+      document.head.appendChild(script);
+    });
   }
 
   setupFuzzySearch() {
@@ -143,15 +166,18 @@ class SearchOverlay {
   }
 
   setupKeyboardShortcuts() {
+    console.log('Setting up keyboard shortcuts');
     document.addEventListener('keydown', (e) => {
       // Ctrl+K or Cmd+K to open search
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        console.log('Control+K detected, opening search overlay');
         e.preventDefault();
         this.open();
       }
 
       // Forward slash to open search (if not in input)
       if (e.key === '/' && !this.isInputFocused()) {
+        console.log('/ key detected, opening search overlay');
         e.preventDefault();
         this.open();
       }
@@ -161,25 +187,30 @@ class SearchOverlay {
   isInputFocused() {
     const activeElement = document.activeElement;
     return activeElement && (
-      activeElement.tagName === 'INPUT' || 
-      activeElement.tagName === 'TEXTAREA' || 
+      activeElement.tagName === 'INPUT' ||
+      activeElement.tagName === 'TEXTAREA' ||
       activeElement.contentEditable === 'true'
     );
   }
 
   open() {
-    if (!this.overlay) return;
+    console.log('SearchOverlay.open() called');
+    if (!this.overlay) {
+      console.error('Search overlay element not found');
+      return;
+    }
 
+    console.log('Opening search overlay');
     this.isOpen = true;
-    this.overlay.style.display = 'flex';
+    this.overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
-    
+
     // Focus search input after animation with WebKit compatibility
     const focusInput = () => {
       if (this.searchInput) {
         this.searchInput.focus();
         this.searchInput.select();
-        
+
         // Double-check focus worked (WebKit workaround)
         setTimeout(() => {
           if (document.activeElement !== this.searchInput) {
@@ -188,9 +219,9 @@ class SearchOverlay {
         }, 50);
       }
     };
-    
+
     setTimeout(focusInput, 100);
-    
+
     // Additional focus attempt for WebKit
     setTimeout(focusInput, 300);
 
@@ -202,9 +233,9 @@ class SearchOverlay {
     if (!this.overlay) return;
 
     this.isOpen = false;
-    this.overlay.style.display = 'none';
+    this.overlay.classList.remove('active');
     document.body.style.overflow = '';
-    
+
     // Clear search
     if (this.searchInput) {
       this.searchInput.value = '';
@@ -234,7 +265,7 @@ class SearchOverlay {
     } else {
       // Fallback to basic search
       const lowerQuery = query.toLowerCase();
-      return this.searchData.filter(item => 
+      return this.searchData.filter(item =>
         item.title.toLowerCase().includes(lowerQuery) ||
         item.description.toLowerCase().includes(lowerQuery) ||
         item.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
@@ -256,8 +287,8 @@ class SearchOverlay {
     }
 
     const resultHTML = results.slice(0, 8).map((item, index) => `
-      <a 
-        href="${item.url}" 
+      <a
+        href="${item.url}"
         class="search-result-item block p-3 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
         data-index="${index}"
         role="option"
@@ -303,7 +334,7 @@ class SearchOverlay {
 
   highlightQuery(text, query) {
     if (!query.trim()) return text;
-    
+
     const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     return text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>');
   }
@@ -338,7 +369,7 @@ class SearchOverlay {
   updateSelection(results, index) {
     // Clear previous selection
     results.forEach(result => result.setAttribute('aria-selected', 'false'));
-    
+
     // Set new selection
     if (results[index]) {
       results[index].setAttribute('aria-selected', 'true');
@@ -354,11 +385,65 @@ class SearchOverlay {
   }
 }
 
-// Initialize search overlay when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.searchOverlay = new SearchOverlay();
-  });
-} else {
-  window.searchOverlay = new SearchOverlay();
-}
+// Expose SearchOverlay class globally
+window.SearchOverlay = SearchOverlay;
+
+// Initialize search overlay when DOM is ready with comprehensive error handling
+(function initializeSearchOverlay() {
+  console.log('🔍 Initializing SearchOverlay...');
+  
+  function createSearchOverlay() {
+    try {
+      if (window.searchOverlay) {
+        console.log('SearchOverlay already exists, skipping creation');
+        return;
+      }
+      
+      console.log('Creating new SearchOverlay instance');
+      window.searchOverlay = new SearchOverlay();
+      console.log('✅ SearchOverlay instance created successfully');
+      
+      // Add a test button for debugging (development only)
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        setTimeout(() => {
+          const testButton = document.createElement('button');
+          testButton.innerHTML = 'TEST SEARCH';
+          testButton.style.cssText = `
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 9999;
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+          `;
+          testButton.onclick = () => {
+            console.log('🧪 Test button clicked, trying to open search');
+            if (window.searchOverlay) {
+              window.searchOverlay.open();
+            } else {
+              console.error('❌ searchOverlay not found on window object');
+            }
+          };
+          document.body.appendChild(testButton);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('❌ Failed to create SearchOverlay:', error);
+    }
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM loaded, creating SearchOverlay');
+      createSearchOverlay();
+    });
+  } else {
+    console.log('DOM already loaded, creating SearchOverlay immediately');
+    createSearchOverlay();
+  }
+})();

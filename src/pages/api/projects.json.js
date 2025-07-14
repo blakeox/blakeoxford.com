@@ -8,9 +8,9 @@ export async function get() {
     slug: project.slug,
     title: project.data.title,
     description: project.data.description,
-    publishedAt: project.data.date?.toISOString().split('T')[0] || project.data.pubDate?.toISOString().split('T')[0],
+    publishedAt: project.data.date?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0],
     tags: project.data.tags || [],
-    featured: project.data.featured,
+    featured: project.data.featured || false, // Default to false if not specified
     draft: project.data.draft || false,
     technologies: project.data.technologies || [],
     github: project.data.github,

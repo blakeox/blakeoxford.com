@@ -1,42 +1,135 @@
 [
   {
+    "slug": "llm-note-coaching",
     "title": "OpenAI-Powered Documentation Quality Feedback System",
-    "excerpt": "Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.",
-    "url": "/projects/LLM-note-coaching"
+    "description": "Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.",
+    "publishedAt": "2023-11-01",
+    "tags": [
+      "OpenAI",
+      "Natural Language Processing",
+      "Healthcare IT",
+      "Compliance",
+      "Blue Cross Blue Shield",
+      "Documentation Quality",
+      "Python"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": []
   },
   {
+    "slug": "microsoft-fabric",
     "title": "Microsoft Fabric Reporting & Compliance Intelligence System",
-    "excerpt": "Architected a robust Microsoft Fabric solution combining Power BI, SQL-based pipelines, and NLP-driven compliance checks to transform documentation quality and operational visibility in healthcare.",
-    "url": "/projects/Microsoft-Fabric"
+    "description": "Architected a robust Microsoft Fabric solution combining Power BI, SQL-based pipelines, and NLP-driven compliance checks to transform documentation quality and operational visibility in healthcare.",
+    "publishedAt": "2023-10-01",
+    "tags": [
+      "Microsoft Fabric",
+      "Power BI",
+      "Data Engineering",
+      "Compliance",
+      "Natural Language Processing",
+      "Healthcare IT",
+      "SQL Server"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": []
   },
   {
+    "slug": "adp-workforcenow",
     "title": "ADP Workforce Now Implementation",
-    "excerpt": "Implemented ADP Workforce Now to unify HR, recruiting, and finance operations through automation and real-time reporting.",
-    "url": "/projects/adp-workforcenow"
+    "description": "Implemented ADP Workforce Now to unify HR, recruiting, and finance operations through automation and real-time reporting.",
+    "publishedAt": "2021-01-01",
+    "tags": [
+      "HCM",
+      "Recruiting",
+      "ADP Workforce Now",
+      "Sage Intacct",
+      "PowerBI"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [],
+    "demo": "https://www.adp.com/workforcenow"
   },
   {
+    "slug": "advancedmd-implementation",
     "title": "AdvancedMD Implementation",
-    "excerpt": "Transitioned from paper records to a unified digital EHR system, integrating ABA, PT, OT, ST, and medical appointments with electronic billing.",
-    "url": "/projects/advancedmd-implementation"
+    "description": "Transitioned from paper records to a unified digital EHR system, integrating ABA, PT, OT, ST, and medical appointments with electronic billing.",
+    "publishedAt": "2018-01-01",
+    "tags": [
+      "EHR",
+      "Digital Transformation",
+      "Automation",
+      "Healthcare"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [],
+    "demo": "https://www.advancedmd.com/"
   },
   {
+    "slug": "bank-projections-modeling",
     "title": "Bank Projections and Financial Modeling",
-    "excerpt": "Developed detailed financial models and projections to secure a $10M loan for a 36,000 sq. ft facility.",
-    "url": "/projects/bank-projections-modeling"
+    "description": "Developed detailed financial models and projections to secure a $10M loan for a 36,000 sq. ft facility.",
+    "publishedAt": "2022-01-01",
+    "tags": [
+      "Financial Modeling",
+      "Bank Projections",
+      "Commercial Real Estate",
+      "Loan",
+      "Financial Analysis"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": []
   },
   {
+    "slug": "enterprise-digital-transformation",
     "title": "Enterprise Digital Transformation",
-    "excerpt": "Transitioned from paper-based workflows to cloud-based SaaS solutions, saving over $250K+ annually.",
-    "url": "/projects/enterprise-digital-transformation"
+    "description": "Transitioned from paper-based workflows to cloud-based SaaS solutions, saving over $250K+ annually.",
+    "publishedAt": "2024-01-15",
+    "tags": [
+      "Cloud",
+      "SaaS",
+      "Automation"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": []
   },
   {
+    "slug": "ferment-app",
     "title": "FermentApp: Fermentation Tracking & Task Scheduler",
-    "excerpt": "Designed and developed FermentApp, an iOS application to track fermentation processes, schedule essential tasks, and visualize historical data for optimal batch outcomes.",
-    "url": "/projects/ferment-app"
+    "description": "Designed and developed FermentApp, an iOS application to track fermentation processes, schedule essential tasks, and visualize historical data for optimal batch outcomes.",
+    "publishedAt": "2024-09-06",
+    "tags": [
+      "iOS Development",
+      "SwiftUI",
+      "Firebase Firestore",
+      "Fermentation",
+      "Task Scheduling",
+      "Data Visualization"
+    ],
+    "featured": true,
+    "draft": false,
+    "technologies": []
   },
   {
+    "slug": "sage-intacct-integration-with-square-pos",
     "title": "Sage Intacct Integration with Square POS",
-    "excerpt": "Implemented Sage Intacct and integrated it with Square POS through Shogo, building custom reports for seamless accounting reconciliation.",
-    "url": "/projects/sage-intacct-integration-with-square-pos"
+    "description": "Implemented Sage Intacct and integrated it with Square POS through Shogo, building custom reports for seamless accounting reconciliation.",
+    "publishedAt": "2020-01-01",
+    "tags": [
+      "Accounting",
+      "Sage Intacct",
+      "Square POS",
+      "Integration",
+      "Reporting"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [],
+    "demo": "https://www.sageintacct.com/"
   }
 ]
