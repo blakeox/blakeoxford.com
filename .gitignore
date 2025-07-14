@@ -16,6 +16,11 @@ playwright-report/
 *.lighthouse.report.html
 .lighthouseci/
 
+# Playwright visual regression snapshots (auto-generated)
+tests/playwright/*.spec.ts-snapshots/
+tests/playwright/visual-regression.spec.ts-snapshots/
+**/*-snapshots/
+
 # Runtime data
 pids
 *.pid

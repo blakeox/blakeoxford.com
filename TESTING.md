@@ -58,6 +58,29 @@ npm run test:e2e
 npm test
 ```
 
+## Visual Regression Testing
+
+Visual regression tests capture screenshots of key UI components across browsers to detect unexpected changes. These tests are part of the Playwright E2E suite.
+
+### Snapshot Management
+
+- **Location**: Tests generate snapshots in `tests/playwright/*.spec.ts-snapshots/` directories
+- **Git Handling**: Snapshots are **excluded from Git** repository to avoid bloating the codebase with binary files
+- **Regeneration**: Snapshots are automatically generated when tests run locally or in CI
+- **Storage**: Developers and CI systems generate snapshots on-demand rather than storing them in the repository
+
+### Running Visual Regression Tests
+
+```bash
+# Run all visual tests
+pnpm test:e2e --grep "visual regression"
+
+# Update baselines when UI changes are intentional
+pnpm test:e2e --grep "visual regression" --update-snapshots
+```
+
+**Note**: The first time you run visual tests on a new machine, Playwright will automatically generate baseline snapshots. Subsequent runs will compare against these baselines.
+
 ## Coverage Thresholds
 
 - **Statements**: 80%
