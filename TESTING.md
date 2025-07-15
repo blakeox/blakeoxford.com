@@ -81,6 +81,16 @@ pnpm test:e2e --grep "visual regression" --update-snapshots
 
 **Note**: The first time you run visual tests on a new machine, Playwright will automatically generate baseline snapshots. Subsequent runs will compare against these baselines.
 
+### Performance Test Considerations
+
+Performance tests in CI environments face unique challenges due to resource constraints and timing variability. Our approach:
+
+- **Functional over Timing**: Tests verify that interactions complete successfully rather than measuring precise milliseconds
+- **CI-Aware Thresholds**: Where timing is measured, thresholds are relaxed for CI environments (e.g., 500ms vs 100ms for production)
+- **Graceful Degradation**: Tests focus on user experience completion rather than absolute performance numbers
+
+This ensures tests remain stable across different environments while still validating performance characteristics.
+
 ## Coverage Thresholds
 
 - **Statements**: 80%
