@@ -477,8 +477,13 @@ class RobustSearchOverlay {
   highlightQuery(text, query) {
     if (!query.trim()) return text;
 
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(\`(\${escapedQuery})\`, 'gi');
+    // Escape special regex characters
+    let escapedQuery = query;
+    const specialChars = ['.', '*', '+', '?', '^', '$', '{', '}', '(', ')', '|', '[', ']', '\\'];
+    for (const char of specialChars) {
+      escapedQuery = escapedQuery.replace(new RegExp('\\' + char, 'g'), '\\' + char);
+    }
+    const regex = new RegExp('(' + escapedQuery + ')', 'gi');
     return text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>');
   }
 
