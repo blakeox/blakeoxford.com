@@ -26,21 +26,22 @@ class ResourcePreloader {
   preloadCriticalResources() {
     const criticalResources = [
       // Hero images
-      { url: '/assets/images/hero-bg-320.avif', as: 'image', type: 'image/avif', media: '(max-width: 640px)' },
-      { url: '/assets/images/hero-bg-768.avif', as: 'image', type: 'image/avif', media: '(min-width: 641px) and (max-width: 1024px)' },
-      { url: '/assets/images/hero-bg-1920.avif', as: 'image', type: 'image/avif', media: '(min-width: 1025px)' },
+      // AVIF images (modern browsers) - commented out as files don't exist
+      // { url: '/assets/images/hero-bg-320.avif', as: 'image', type: 'image/avif', media: '(max-width: 640px)' },
+      // { url: '/assets/images/hero-bg-768.avif', as: 'image', type: 'image/avif', media: '(min-width: 641px) and (max-width: 1024px)' },
+      // { url: '/assets/images/hero-bg-1920.avif', as: 'image', type: 'image/avif', media: '(min-width: 1025px)' },
 
-      // WebP fallbacks
-      { url: '/assets/images/hero-bg-320.webp', as: 'image', type: 'image/webp', media: '(max-width: 640px)' },
-      { url: '/assets/images/hero-bg-768.webp', as: 'image', type: 'image/webp', media: '(min-width: 641px) and (max-width: 1024px)' },
-      { url: '/assets/images/hero-bg-1920.webp', as: 'image', type: 'image/webp', media: '(min-width: 1025px)' },
+      // WebP fallbacks - commented out as files don't exist
+      // { url: '/assets/images/hero-bg-320.webp', as: 'image', type: 'image/webp', media: '(max-width: 640px)' },
+      // { url: '/assets/images/hero-bg-768.webp', as: 'image', type: 'image/webp', media: '(min-width: 641px) and (max-width: 1024px)' },
+      // { url: '/assets/images/hero-bg-1920.webp', as: 'image', type: 'image/webp', media: '(min-width: 1025px)' },
 
       // Critical CSS is already inlined, but preload the full stylesheet
-      { url: '/assets/css/main.css', as: 'style' },
+      // { url: '/assets/css/main.css', as: 'style' }, // Commented out - file doesn't exist
 
       // Essential JavaScript
-      { url: '/assets/js/main.js', as: 'script' },
-      { url: '/assets/js/theme-toggle.js', as: 'script' }
+      // { url: '/assets/js/main.js', as: 'script' }, // Commented out - file doesn't exist
+      // { url: '/assets/js/theme-toggle.js', as: 'script' } // Commented out - file doesn't exist
     ];
 
     criticalResources.forEach(resource => {
@@ -175,19 +176,19 @@ class ResourcePreloader {
     switch (path) {
       case '/projects':
         resources.push(
-          { url: '/api/projects.json', as: 'fetch' },
-          { url: '/assets/images/project-placeholder-640.avif', as: 'image' }
+          { url: '/api/projects.json', as: 'fetch' }
+          // { url: '/assets/images/project-placeholder-640.avif', as: 'image' } // Commented out - file doesn't exist
         );
         break;
       case '/blog':
         resources.push(
-          { url: '/api/blog.json', as: 'fetch' },
-          { url: '/assets/images/blog-placeholder-640.avif', as: 'image' }
+          { url: '/api/blog.json', as: 'fetch' }
+          // { url: '/assets/images/blog-placeholder-640.avif', as: 'image' } // Commented out - file doesn't exist
         );
         break;
       case '/about':
         resources.push(
-          { url: '/assets/images/profile-640.avif', as: 'image' },
+          // { url: '/assets/images/profile-640.avif', as: 'image' }, // Commented out - file doesn't exist
           { url: '/assets/Resume.pdf', as: 'document' }
         );
         break;

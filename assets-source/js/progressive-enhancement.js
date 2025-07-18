@@ -123,7 +123,17 @@ export class ProgressiveEnhancement {
       liveRegion.setAttribute('aria-live', 'polite');
       liveRegion.setAttribute('aria-atomic', 'true');
       liveRegion.className = 'sr-only';
+      // Check if document.body is available
+    if (document.body) {
       document.body.appendChild(liveRegion);
+    } else {
+      console.warn('ProgressiveEnhancement: document.body not available, deferring live region creation');
+      setTimeout(() => {
+        if (document.body) {
+          document.body.appendChild(liveRegion);
+        }
+      }, 100);
+    }
     }
 
     // Enhanced form announcements

@@ -142,7 +142,12 @@ class NavBarMenu {
     this.mobileMenu.classList.add('open');
     this.navToggle.classList.add('hamburger-open');
     this.navToggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
+    
+    // Check if document.body is available
+    if (document.body) {
+      document.body.style.overflow = 'hidden';
+    }
+    
     if (this.overlay) this.overlay.style.display = 'block';
     const focusable = this.mobileMenu.querySelectorAll('a, button');
     if (focusable.length) {
@@ -168,7 +173,11 @@ class NavBarMenu {
       }
     };
     document.addEventListener('keydown', this.focusTrapHandler, true);
-    document.body.classList.add('mobile-menu-open');
+    
+    // Check if document.body is available
+    if (document.body) {
+      document.body.classList.add('mobile-menu-open');
+    }
   }
 
   closeMobileMenu() {
@@ -176,13 +185,18 @@ class NavBarMenu {
     this.mobileMenu.classList.remove('open');
     this.navToggle.classList.remove('hamburger-open');
     this.navToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    
+    // Check if document.body is available
+    if (document.body) {
+      document.body.style.overflow = '';
+      document.body.classList.remove('mobile-menu-open');
+    }
+    
     if (this.overlay) this.overlay.style.display = 'none';
     document.removeEventListener('keydown', this.focusTrapHandler, true);
-    document.body.classList.remove('mobile-menu-open');
   }
 
-  // --- Search Toggle ---
+      // --- Search Toggle ---
   setupSearchToggle() {
     if (!this.searchToggle) {
       console.warn('NavBar: Search toggle not found');
@@ -195,10 +209,9 @@ class NavBarMenu {
       e.stopPropagation();
       console.log('Search toggle triggered');
       
-      // Trigger the search overlay (handled by SearchOverlayEnhanced.js)
-      const searchOverlay = document.getElementById('search-overlay');
-      if (searchOverlay && window.searchOverlayEnhancer) {
-        window.searchOverlayEnhancer.openSearch();
+      // Trigger the search overlay using the global SearchOverlay instance
+      if (window.searchOverlay && typeof window.searchOverlay.open === 'function') {
+        window.searchOverlay.open();
       } else {
         // Fallback: dispatch a custom event
         document.dispatchEvent(new CustomEvent('openSearch'));
@@ -214,9 +227,9 @@ class NavBarMenu {
     document.addEventListener('keydown', (e) => {
       if (e.key === '/' && !this.isInputFocused()) {
         e.preventDefault();
-        // Trigger search through the search overlay enhancer
-        if (window.searchOverlayEnhancer) {
-          window.searchOverlayEnhancer.openSearch();
+        // Trigger search through the global SearchOverlay instance
+        if (window.searchOverlay && typeof window.searchOverlay.open === 'function') {
+          window.searchOverlay.open();
         } else {
           this.searchToggle?.click();
         }
@@ -259,7 +272,11 @@ class NavBarMenu {
   }
 
   navigateToPage(url) {
-    document.body.classList.add('page-transition-exit');
+    // Check if document.body is available
+    if (document.body) {
+      document.body.classList.add('page-transition-exit');
+    }
+    
     setTimeout(() => {
       window.location.href = url;
     }, 150);
@@ -303,7 +320,10 @@ class NavBarMenu {
         }
       });
     });
-    this.resizeObserver.observe(document.body);
+    // Check if document.body is available
+    if (document.body) {
+      this.resizeObserver.observe(document.body);
+    }
   }
 
   // --- Theme Integration ---

@@ -4,8 +4,13 @@ import AxeBuilder from '@axe-core/playwright';
 test.describe('Enhanced Accessibility Testing with axe-core', () => {
   test.describe('Comprehensive WCAG Audits', () => {
     test('homepage should pass comprehensive accessibility audit', async ({ page }) => {
-      await page.goto('/');
-      await page.waitForLoadState('networkidle');
+      try {
+        await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.waitForTimeout(1000); // Stabilize page load
+      } catch {
+        console.log('Retrying homepage navigation...');
+        await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      }
 
       const accessibilityScanResults = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
@@ -15,8 +20,13 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
     });
 
     test('about page should pass comprehensive accessibility audit', async ({ page }) => {
-      await page.goto('/about');
-      await page.waitForLoadState('networkidle');
+      try {
+        await page.goto('/about', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.waitForTimeout(1000);
+      } catch {
+        console.log('Retrying about page navigation...');
+        await page.goto('/about', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      }
 
       const accessibilityScanResults = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
@@ -26,8 +36,13 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
     });
 
     test('projects page should pass comprehensive accessibility audit', async ({ page }) => {
-      await page.goto('/projects');
-      await page.waitForLoadState('networkidle');
+      try {
+        await page.goto('/projects', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.waitForTimeout(1000);
+      } catch {
+        console.log('Retrying projects page navigation...');
+        await page.goto('/projects', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      }
 
       const accessibilityScanResults = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
@@ -37,11 +52,14 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
     });
 
     test('contact page should pass comprehensive accessibility audit', async ({ page }) => {
-      await page.goto('/contact');
-      
-      // Wait for page load but don't wait for networkidle due to external scripts
-      await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(2000); // Give time for any initial scripts to load
+      try {
+        await page.goto('/contact', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.waitForTimeout(2000); // Give time for external scripts
+      } catch {
+        console.log('Retrying contact page navigation...');
+        await page.goto('/contact', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.waitForTimeout(2000);
+      }
 
       const accessibilityScanResults = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

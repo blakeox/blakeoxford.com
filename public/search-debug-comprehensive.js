@@ -45,29 +45,28 @@ if (overlay) {
 console.log('Test 4: Manual trigger test');
 if (window.searchOverlay && typeof window.searchOverlay.open === 'function') {
   console.log('✅ SearchOverlay.open method exists');
-  
-  // Add debug attribute for CSS debugging
-  if (overlay) {
-    overlay.setAttribute('data-debug', 'true');
-  }
-  
-  // Test opening
-  setTimeout(() => {
-    console.log('🔓 Attempting to open search overlay...');
-    try {
-      window.searchOverlay.open();
-      
-      setTimeout(() => {
-        console.log('   After open attempt:');
-        console.log('     isOpen:', window.searchOverlay.isOpen);
-        console.log('     overlay classes:', overlay?.className);
-        console.log('     overlay visibility:', getComputedStyle(overlay || {}).visibility);
-        console.log('     overlay opacity:', getComputedStyle(overlay || {}).opacity);
-      }, 500);
-    } catch (error) {
-      console.error('❌ Failed to open search overlay:', error);
+  // Only auto-open overlay in dev/test environments
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    // Add debug attribute for CSS debugging
+    if (overlay) {
+      overlay.setAttribute('data-debug', 'true');
     }
-  }, 2000);
+    setTimeout(() => {
+      console.log('🔓 Attempting to open search overlay...');
+      try {
+        window.searchOverlay.open();
+        setTimeout(() => {
+          console.log('   After open attempt:');
+          console.log('     isOpen:', window.searchOverlay.isOpen);
+          console.log('     overlay classes:', overlay?.className);
+          console.log('     overlay visibility:', getComputedStyle(overlay || {}).visibility);
+          console.log('     overlay opacity:', getComputedStyle(overlay || {}).opacity);
+        }, 500);
+      } catch (error) {
+        console.error('❌ Failed to open search overlay:', error);
+      }
+    }, 2000);
+  }
 } else {
   console.log('❌ SearchOverlay.open method not available');
 }

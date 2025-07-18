@@ -203,7 +203,11 @@ class SearchOverlay {
     console.log('Opening search overlay');
     this.isOpen = true;
     this.overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    
+    // Check if document.body is available
+    if (document.body) {
+      document.body.style.overflow = 'hidden';
+    }
 
     // Focus search input after animation with WebKit compatibility
     const focusInput = () => {
@@ -234,7 +238,11 @@ class SearchOverlay {
 
     this.isOpen = false;
     this.overlay.classList.remove('active');
-    document.body.style.overflow = '';
+    
+    // Check if document.body is available
+    if (document.body) {
+      document.body.style.overflow = '';
+    }
 
     // Clear search
     if (this.searchInput) {

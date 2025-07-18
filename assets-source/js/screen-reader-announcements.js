@@ -18,7 +18,17 @@ export class ScreenReaderAnnouncements {
       politeRegion.setAttribute('aria-live', 'polite');
       politeRegion.setAttribute('aria-atomic', 'true');
       politeRegion.className = 'sr-only';
+      // Check if document.body is available
+    if (document.body) {
       document.body.appendChild(politeRegion);
+    } else {
+      console.warn('ScreenReaderAnnouncements: document.body not available, deferring region creation');
+      setTimeout(() => {
+        if (document.body) {
+          document.body.appendChild(politeRegion);
+        }
+      }, 100);
+    }
     }
 
     // Create assertive announcements region for urgent messages
@@ -28,7 +38,17 @@ export class ScreenReaderAnnouncements {
       assertiveRegion.setAttribute('aria-live', 'assertive');
       assertiveRegion.setAttribute('aria-atomic', 'true');
       assertiveRegion.className = 'sr-only';
+      // Check if document.body is available
+    if (document.body) {
       document.body.appendChild(assertiveRegion);
+    } else {
+      console.warn('ScreenReaderAnnouncements: document.body not available, deferring region creation');
+      setTimeout(() => {
+        if (document.body) {
+          document.body.appendChild(assertiveRegion);
+        }
+      }, 100);
+    }
     }
   }
 

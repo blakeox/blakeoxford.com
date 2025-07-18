@@ -73,20 +73,26 @@
             margin-top: 10px;
             display: none;
         }
-        .log {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-    </style>
-</head>
-<body>
+            try {
+                const hasClass = typeof SearchOverlay !== 'undefined';
+                const hasWindowClass = typeof window.SearchOverlay !== 'undefined';
+                addTestResult('SearchOverlay class defined', hasClass, typeof SearchOverlay);
+                addTestResult('window.SearchOverlay defined', hasWindowClass, typeof window.SearchOverlay);
+                if (hasClass || hasWindowClass) {
+                    updateStatus('✅ SearchOverlay class is available!', 'success');
+                    // Only auto-open overlay in dev/test environments
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        if (window.searchOverlay && typeof window.searchOverlay.open === 'function') {
+                            window.searchOverlay.open();
+                        }
+                    }
+                } else {
+                    updateStatus('❌ SearchOverlay class not found', 'error');
+                }
+            } catch (error) {
+                console.error('Test failed:', error);
+                updateStatus('❌ Test failed: ' + error.message, 'error');
+            }
     <div class="test-container">
         <h1>🔍 SearchOverlay Test Environment</h1>
         

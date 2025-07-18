@@ -53,7 +53,17 @@ export class AccessibilityCenter {
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
       </svg>
     `;
-    document.body.appendChild(button);
+    // Check if document.body is available
+    if (document.body) {
+      document.body.appendChild(button);
+    } else {
+      console.warn('AccessibilityCenter: document.body not available, deferring button creation');
+      setTimeout(() => {
+        if (document.body) {
+          document.body.appendChild(button);
+        }
+      }, 100);
+    }
 
     // Create accessibility panel
     const panel = document.createElement('div');
@@ -206,7 +216,17 @@ export class AccessibilityCenter {
       </div>
     `;
     
-    document.body.appendChild(panel);
+    // Check if document.body is available
+    if (document.body) {
+      document.body.appendChild(panel);
+    } else {
+      console.warn('AccessibilityCenter: document.body not available, deferring panel creation');
+      setTimeout(() => {
+        if (document.body) {
+          document.body.appendChild(panel);
+        }
+      }, 100);
+    }
     this.setupPanelEvents(button, panel);
   }
 
@@ -467,7 +487,17 @@ export class AccessibilityCenter {
     region.className = 'sr-only';
     region.setAttribute('aria-live', 'polite');
     region.setAttribute('aria-atomic', 'true');
-    document.body.appendChild(region);
+    // Check if document.body is available
+    if (document.body) {
+      document.body.appendChild(region);
+    } else {
+      console.warn('AccessibilityCenter: document.body not available, deferring region creation');
+      setTimeout(() => {
+        if (document.body) {
+          document.body.appendChild(region);
+        }
+      }, 100);
+    }
     return region;
   }
 

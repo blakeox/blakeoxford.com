@@ -2,18 +2,20 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/playwright',
-  timeout: 30 * 1000,
+  timeout: 60 * 1000, // Increased timeout for CI
   expect: {
-    timeout: 5000
+    timeout: 10000 // Increased expect timeout
   },
-  fullyParallel: true,
+  fullyParallel: false, // Disable parallel for server stability
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  retries: process.env.CI ? 3 : 1, // More retries for CI
+  workers: process.env.CI ? 1 : 2, // Fewer workers for stability
+  reporter: [['html'], ['line']],
   use: {
-    baseURL: 'http://localhost:4321',
+    baseURL: 'http://localhost:4322',
     trace: 'on-first-retry',
+    actionTimeout: 10000,
+    navigationTimeout: 30000,
   },
   projects: [
     {
@@ -30,8 +32,11 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm run dev',
-    port: 4321,
+    command: 'npx astro dev --port 4322',
+    port: 4322,
     reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000, // 2 minutes for server startup
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
 });

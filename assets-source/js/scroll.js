@@ -86,7 +86,17 @@ export function setupPageTransitions() {
   const progressIndicator = document.createElement('div');
   progressIndicator.className = 'fixed top-0 left-0 w-full h-1 bg-transparent z-50';
   progressIndicator.id = 'page-transition-progress';
-  document.body.appendChild(progressIndicator);
+      // Check if document.body is available
+    if (document.body) {
+      document.body.appendChild(progressIndicator);
+    } else {
+      console.warn('ScrollEffects: document.body not available, deferring progress indicator creation');
+      setTimeout(() => {
+        if (document.body) {
+          document.body.appendChild(progressIndicator);
+        }
+      }, 100);
+    }
   
   // Setup click handlers for internal links
   const internalLinks = document.querySelectorAll('a[href^="/"]:not([target="_blank"])');

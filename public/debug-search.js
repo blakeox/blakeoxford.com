@@ -28,20 +28,22 @@ window.addEventListener('error', (e) => {
   console.error('JavaScript error:', e.error);
 });
 
-// Try manual keyboard event
-console.log('Testing manual Control+K event...');
-document.dispatchEvent(new KeyboardEvent('keydown', {
-  key: 'k',
-  ctrlKey: true,
-  bubbles: true
-}));
+// Only trigger search overlay open in development/test environments
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  console.log('Testing manual Control+K event...');
+  document.dispatchEvent(new KeyboardEvent('keydown', {
+    key: 'k',
+    ctrlKey: true,
+    bubbles: true
+  }));
 
-setTimeout(() => {
-  if (searchOverlay) {
-    console.log('Search overlay after manual trigger:', {
-      display: searchOverlay.style.display,
-      opacity: getComputedStyle(searchOverlay).opacity,
-      visibility: getComputedStyle(searchOverlay).visibility
-    });
-  }
-}, 1000);
+  setTimeout(() => {
+    if (searchOverlay) {
+      console.log('Search overlay after manual trigger:', {
+        display: searchOverlay.style.display,
+        opacity: getComputedStyle(searchOverlay).opacity,
+        visibility: getComputedStyle(searchOverlay).visibility
+      });
+    }
+  }, 1000);
+}

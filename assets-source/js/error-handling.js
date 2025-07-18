@@ -125,7 +125,7 @@ export class ErrorHandlingSystem {
     
     let message = 'Failed to load resource';
     let userMessage = 'Some content failed to load';
-    let shouldShowError = true;
+    let shouldShowError = false; // Default to false to reduce intrusive alerts
     
     switch (tagName) {
       case 'img':
@@ -139,14 +139,18 @@ export class ErrorHandlingSystem {
       case 'script':
         message = `Failed to load script: ${src}`;
         userMessage = 'A feature may not work properly due to a loading error';
+        // Only show errors for critical scripts, not missing ones
+        shouldShowError = !src.includes('main.js') && !src.includes('theme-toggle.js');
         break;
       case 'link':
         message = `Failed to load stylesheet: ${src}`;
         userMessage = 'Some styling may not display correctly';
+        // Only show errors for critical stylesheets, not missing ones
+        shouldShowError = !src.includes('main.css');
         break;
     }
 
-    // Only show error popups for critical resources (scripts, stylesheets)
+    // Only show error popups for critical resources that actually exist
     if (shouldShowError) {
       this.handleError({
         type: 'resource',
@@ -226,9 +230,15 @@ export class ErrorHandlingSystem {
     }
 
     // Only show critical errors to users, log others
-    if (response.status === 404 && url.includes('/assets/images/')) {
-      console.warn('Image not found:', url);
-      return; // Don't show popup for missing images
+    // Don't show popup for missing images or non-critical resources
+    if (response.status === 404 && (
+      url.includes('/assets/images/') || 
+      url.includes('main.css') || 
+      url.includes('main.js') || 
+      url.includes('theme-toggle.js')
+    )) {
+      console.warn('Resource not found (non-critical):', url);
+      return; // Don't show popup for missing non-critical resources
     }
 
     this.handleError({
@@ -361,6 +371,19 @@ export class ErrorHandlingSystem {
   }
 
   createErrorDisplay() {
+    // Check if document.body is available
+    if (!document.body) {
+      console.warn('ErrorHandlingSystem: document.body not available, deferring error display creation');
+      setTimeout(() => this.createErrorDisplay(), 100);
+      return;
+    }
+    
+    // Check if error display already exists
+    if (document.getElementById('error-display')) {
+      console.log('ErrorHandlingSystem: Error display already exists');
+      return;
+    }
+    
     const errorDisplay = document.createElement('div');
     errorDisplay.id = 'error-display';
     errorDisplay.className = 'error-display';
@@ -480,6 +503,13 @@ export class ErrorHandlingSystem {
   }
 
   showLoading(message) {
+    // Check if document.body is available
+    if (!document.body) {
+      console.warn('ErrorHandlingSystem: document.body not available, deferring loading indicator');
+      setTimeout(() => this.showLoading(message), 100);
+      return;
+    }
+    
     const loader = document.createElement('div');
     loader.id = 'loading-indicator';
     loader.className = 'loading-indicator';
@@ -519,6 +549,13 @@ export class ErrorHandlingSystem {
   }
 
   showNotification(notification) {
+    // Check if document.body is available
+    if (!document.body) {
+      console.warn('ErrorHandlingSystem: document.body not available, deferring notification');
+      setTimeout(() => this.showNotification(notification), 100);
+      return;
+    }
+    
     document.body.appendChild(notification);
     
     // Auto-remove after 5 seconds
@@ -562,9 +599,16 @@ export class ErrorHandlingSystem {
   }
 }
 
-// Initialize error handling system
-if (typeof document !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => {
-    new ErrorHandlingSystem();
-  });
-}
+// Initialize error handling system - DISABLED FOR NOW
+// if (typeof document !== 'undefined') {
+//   // Prevent multiple instances
+//   if (window.errorHandlingSystem) {
+//     console.log('ErrorHandlingSystem: Already initialized');
+//   } else {
+//     document.addEventListener('DOMContentLoaded', () => {
+//       if (!window.errorHandlingSystem) {
+//         window.errorHandlingSystem = new ErrorHandlingSystem();
+//       }
+//     });
+//   }
+// }
