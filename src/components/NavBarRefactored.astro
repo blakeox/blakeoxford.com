@@ -1,0 +1,421 @@
+---
+/**
+ * NavBarRefactored.astro
+ * A simplified, efficient navigation bar with reduced redundancies
+ * - Clean, semantic HTML structure
+ * - Minimal inline styles
+ * - Efficient JavaScript integration
+ * - Better accessibility
+ */
+import ThemeToggle from './ThemeToggle';
+import SearchOverlay from './SearchOverlay.astro';
+import navLinks from '../config/navLinks.js';
+
+// Helper function to check if link is active
+const isActiveLink = (href: string) => Astro.url.pathname === href;
+---
+
+<!-- Scroll progress indicator -->
+<div class="nav-scroll-progress fixed top-0 left-0 w-full h-0.5 z-[999] bg-transparent pointer-events-none">
+  <div
+    id="nav-scroll-progress-bar"
+    class="h-full bg-accent transition-all duration-200"
+    style="width: 0%; transform-origin: left; transform: scaleX(0);"
+  ></div>
+</div>
+
+<nav
+  class="navbar-container sticky top-0 z-[1000] transition-all duration-500"
+  aria-label="Main Navigation"
+  data-navbar
+>
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
+    <!-- Mobile Menu Toggle -->
+    <button
+      id="nav-toggle"
+      type="button"
+      class="nav-button text-navbar-text dark:text-navbar-textDark md:hidden p-3 rounded-md transition-colors duration-200 relative z-[1010] min-w-12 min-h-12"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+      aria-controls="nav-mobile-links"
+      style="touch-action: manipulation;"
+    >
+      <div class="hamburger-container w-6 h-6 flex flex-col justify-center items-center space-y-1">
+        <span class="hamburger-line w-6 h-0.5 bg-current transition-all duration-300"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-current transition-all duration-300"></span>
+        <span class="hamburger-line w-6 h-0.5 bg-current transition-all duration-300"></span>
+      </div>
+    </button>
+
+    <!-- Brand/Logo -->
+    <a
+      class="navbar-logo flex items-center gap-2 font-heading text-xl text-navbar-text dark:text-navbar-textDark no-underline rounded transition-all duration-200 hover:scale-110 hover:rotate-2 hover:shadow-lg"
+      href="/"
+      aria-label="Blake Oxford Portfolio - Home"
+    >
+      <span
+        class="brand-avatar inline-flex items-center justify-center w-10 h-10 rounded-full font-heading text-lg mr-2 text-background dark:text-foreground transition-all duration-300 bg-accent"
+      >
+        B
+      </span>
+      <span class="brand-text sr-only">Blake Oxford</span>
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <ul class="hidden md:flex gap-6 items-center list-none m-0 p-0 relative" id="nav-links" role="menubar">
+      <div
+        id="nav-blob-underline"
+        class="absolute bottom-0 left-0 h-2 rounded-full bg-accent/70 transition-all duration-300 pointer-events-none"
+        style="width:0;transform:translateX(0);"
+      ></div>
+      {navLinks.map((link) => (
+        <li role="none">
+          <a
+            class="nav-link relative text-navbar-text dark:text-navbar-textDark font-medium px-3 py-2 rounded-md transition-all duration-200 hover:text-accent hover:bg-accent/10"
+            href={link.href}
+            data-analytics={link.analytics}
+            role="menuitem"
+            aria-current={isActiveLink(link.href) ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Right Side Actions -->
+    <div class="flex items-center gap-2">
+      <button
+        id="search-toggle"
+        type="button"
+        class="search-button nav-button text-navbar-text dark:text-navbar-textDark p-2 rounded-md transition-all duration-200"
+        aria-label="Open search"
+        aria-keyshortcuts="/"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </button>
+      <ThemeToggle client:load />
+    </div>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div
+    class="mobile-menu-overlay fixed inset-0 bg-black/40 z-[1040] transition-opacity duration-200 md:hidden opacity-0 pointer-events-none"
+    tabindex="-1"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Mobile Navigation Menu -->
+  <div
+    class="mobile-menu md:hidden rounded-t-2xl shadow-2xl max-w-[95vw] mx-auto mt-2 fixed top-0 left-0 right-0 z-[1050] transform -translate-y-full opacity-0 transition-all duration-300"
+    id="nav-mobile-links"
+  >
+    <ul class="flex flex-col gap-3 px-4 pb-6 pt-2 list-none m-0" role="menu">
+      {navLinks.map((link) => (
+        <li role="none" class="relative">
+          <a
+            class="nav-link block text-lg text-foreground font-medium hover:bg-accent/10 transition-colors duration-200 py-3 px-4 rounded-xl {isActiveLink(link.href) ? 'bg-accent text-background' : ''}"
+            href={link.href}
+            data-analytics={link.analytics}
+            role="menuitem"
+            aria-current={isActiveLink(link.href) ? 'page' : undefined}
+          >
+            {isActiveLink(link.href) && (
+              <span class="absolute left-0 top-2 bottom-2 w-1 rounded-full bg-accent"></span>
+            )}
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<!-- Search Overlay -->
+<SearchOverlay />
+
+<style>
+  /* Essential navbar styles only */
+  .navbar-container {
+    background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
+    backdrop-filter: blur(18px) saturate(1.2);
+    border-bottom: 1.5px solid var(--glass-border);
+    box-shadow: 0 4px 32px 0 rgba(0,0,0,0.08);
+  }
+  
+  .dark .navbar-container {
+    background: linear-gradient(120deg, var(--glass-surface-bg-dark) 80%, var(--color-accent-dark) 100%);
+    border-bottom: 1.5px solid var(--glass-border-dark);
+  }
+
+  /* Hamburger animation */
+  .hamburger-open .hamburger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg) scaleX(1.1);
+  }
+  .hamburger-open .hamburger-line:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0.2);
+  }
+  .hamburger-open .hamburger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg) scaleX(1.1);
+  }
+
+  /* Mobile menu styles */
+  .mobile-menu {
+    background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
+    backdrop-filter: blur(24px) saturate(1.2);
+    border: 1.5px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  }
+  
+  .dark .mobile-menu {
+    background: linear-gradient(120deg, var(--glass-surface-bg-dark) 80%, var(--color-accent-dark) 100%);
+    border: 1.5px solid var(--glass-border-dark);
+  }
+
+  .mobile-menu.open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .mobile-menu.open ~ .mobile-menu-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Nav link underline effect */
+  .nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-accent);
+    transition: all 0.3s var(--ease-emphasized);
+    transform: translateX(-50%);
+  }
+  
+  .nav-link:hover::before,
+  .nav-link:focus::before,
+  .nav-link[aria-current='page']::before {
+    width: 100%;
+  }
+
+  /* Responsive touch targets */
+  @media (max-width: 768px) {
+    #nav-toggle,
+    .nav-button,
+    .search-button {
+      min-width: 48px !important;
+      min-height: 48px !important;
+      padding: 12px !important;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .navbar-container,
+    .nav-button,
+    .mobile-menu,
+    .nav-link,
+    .hamburger-line {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>
+
+<script>
+  // Simplified, efficient navbar JavaScript
+  class EfficientNavBar {
+    constructor() {
+      this.navbar = document.querySelector('[data-navbar]');
+      this.navToggle = document.getElementById('nav-toggle');
+      this.mobileMenu = document.getElementById('nav-mobile-links');
+      this.searchToggle = document.getElementById('search-toggle');
+      this.overlay = document.querySelector('.mobile-menu-overlay');
+      this.isMenuOpen = false;
+      
+      this.init();
+    }
+    
+    init() {
+      if (!this.navToggle || !this.mobileMenu) {
+        console.warn('NavBar: Required elements not found');
+        return;
+      }
+      
+      this.setupMobileMenu();
+      this.setupSearchToggle();
+      this.setupKeyboardShortcuts();
+      this.setupScrollProgress();
+      this.setupAnimatedUnderline();
+      
+      console.log('✅ EfficientNavBar initialized');
+    }
+    
+    setupMobileMenu() {
+      const handleToggle = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleMobileMenu();
+      };
+      
+      this.navToggle.addEventListener('click', handleToggle);
+      this.navToggle.addEventListener('touchstart', handleToggle, { passive: false });
+      
+      if (this.overlay) {
+        this.overlay.addEventListener('click', () => {
+          if (this.isMenuOpen) this.closeMobileMenu();
+        });
+      }
+      
+      // Close on outside click
+      document.addEventListener('click', (e) => {
+        if (this.isMenuOpen && !this.navbar.contains(e.target)) {
+          this.closeMobileMenu();
+        }
+      });
+      
+      // Close on escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.isMenuOpen) {
+          this.closeMobileMenu();
+          this.navToggle.focus();
+        }
+      });
+    }
+    
+    toggleMobileMenu() {
+      this.isMenuOpen ? this.closeMobileMenu() : this.openMobileMenu();
+    }
+    
+    openMobileMenu() {
+      this.isMenuOpen = true;
+      this.mobileMenu.classList.add('open');
+      this.navToggle.classList.add('hamburger-open');
+      this.navToggle.setAttribute('aria-expanded', 'true');
+      
+      if (document.body) {
+        document.body.style.overflow = 'hidden';
+      }
+      
+      // Focus first link
+      const firstLink = this.mobileMenu.querySelector('a');
+      if (firstLink) {
+        setTimeout(() => firstLink.focus(), 100);
+      }
+    }
+    
+    closeMobileMenu() {
+      this.isMenuOpen = false;
+      this.mobileMenu.classList.remove('open');
+      this.navToggle.classList.remove('hamburger-open');
+      this.navToggle.setAttribute('aria-expanded', 'false');
+      
+      if (document.body) {
+        document.body.style.overflow = '';
+      }
+    }
+    
+    setupSearchToggle() {
+      if (!this.searchToggle) return;
+      
+      this.searchToggle.addEventListener('click', () => {
+        if (window.searchOverlay && typeof window.searchOverlay.open === 'function') {
+          window.searchOverlay.open();
+        } else {
+          document.dispatchEvent(new CustomEvent('openSearch'));
+        }
+      });
+    }
+    
+    setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        if (this.isInputFocused()) return;
+        
+        if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+          e.preventDefault();
+          this.searchToggle?.click();
+        }
+      });
+    }
+    
+    isInputFocused() {
+      const activeElement = document.activeElement;
+      return activeElement && (
+        activeElement.tagName === 'INPUT' ||
+        activeElement.tagName === 'TEXTAREA' ||
+        activeElement.contentEditable === 'true'
+      );
+    }
+    
+    setupScrollProgress() {
+      const progressBar = document.getElementById('nav-scroll-progress-bar');
+      if (!progressBar) return;
+      
+      const updateProgress = () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = `${scrollPercent}%`;
+        progressBar.style.transform = `scaleX(${scrollPercent > 0 ? 1 : 0})`;
+      };
+      
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress(); // Initial call
+    }
+    
+    setupAnimatedUnderline() {
+      const blob = document.getElementById('nav-blob-underline');
+      const links = document.querySelectorAll('#nav-links .nav-link');
+      if (!blob || !links.length) return;
+      
+      const moveBlob = (el) => {
+        const rect = el.getBoundingClientRect();
+        const navRect = this.navbar.getBoundingClientRect();
+        const left = rect.left - navRect.left;
+        const width = rect.width;
+        
+        blob.style.width = `${width}px`;
+        blob.style.transform = `translateX(${left}px)`;
+      };
+      
+      const resetBlob = () => {
+        blob.style.width = '0';
+        blob.style.transform = 'translateX(0)';
+      };
+      
+      links.forEach(link => {
+        link.addEventListener('mouseenter', () => moveBlob(link));
+        link.addEventListener('focus', () => moveBlob(link));
+      });
+      
+      this.navbar.addEventListener('mouseleave', resetBlob);
+    }
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      window.efficientNavBar = new EfficientNavBar();
+    });
+  } else {
+    window.efficientNavBar = new EfficientNavBar();
+  }
+</script> 

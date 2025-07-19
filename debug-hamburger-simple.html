@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hamburger Menu Debug</title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .navbar {
+            background: #f0f0f0;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        .mobile-menu {
+            display: none;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .mobile-menu.open {
+            display: block;
+        }
+        .hamburger-line {
+            width: 25px;
+            height: 3px;
+            background: #333;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+        .hamburger-open .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger-open .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger-open .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: block;
+            }
+        }
+    </style>
+    </head>
+    <body>
+        <nav class="navbar">
+            <button id="nav-toggle" class="nav-toggle"
+                aria-label="Toggle navigation">
+                <div class="hamburger-container">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </div>
+            </button>
+            <div class="nav-content">
+                <h1>Test Navbar</h1>
+            </div>
+        </nav>
+
+        <div id="nav-mobile-links" class="mobile-menu">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+
+        <div style="height: 200vh; padding: 2rem;">
+            <h2>Scroll down to test sticky navbar</h2>
+            <p>This is a simple test to debug the hamburger menu
+                functionality.</p>
+        </div>
+
+        <script>
+        // Simple hamburger menu implementation
+        class SimpleNavBar {
+            constructor() {
+                this.navToggle = document.getElementById('nav-toggle');
+                this.mobileMenu = document.getElementById('nav-mobile-links');
+                this.isMenuOpen = false;
+                
+                this.init();
+            }
+            
+            init() {
+                if (this.navToggle && this.mobileMenu) {
+                    this.navToggle.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.toggleMenu();
+                    });
+                    
+                    // Close menu when clicking outside
+                    document.addEventListener('click', (e) => {
+                        if (this.isMenuOpen && !this.navToggle.contains(e.target) && !this.mobileMenu.contains(e.target)) {
+                            this.closeMenu();
+                        }
+                    });
+                    
+                    // Close menu with Escape key
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && this.isMenuOpen) {
+                            this.closeMenu();
+                        }
+                    });
+                    
+                    console.log('✅ SimpleNavBar initialized successfully');
+                } else {
+                    console.error('❌ Required elements not found:', {
+                        navToggle: !!this.navToggle,
+                        mobileMenu: !!this.mobileMenu
+                    });
+                }
+            }
+            
+            toggleMenu() {
+                if (this.isMenuOpen) {
+                    this.closeMenu();
+                } else {
+                    this.openMenu();
+                }
+            }
+            
+            openMenu() {
+                this.isMenuOpen = true;
+                this.mobileMenu.classList.add('open');
+                this.navToggle.classList.add('hamburger-open');
+                this.navToggle.setAttribute('aria-expanded', 'true');
+                console.log('✅ Menu opened');
+            }
+            
+            closeMenu() {
+                this.isMenuOpen = false;
+                this.mobileMenu.classList.remove('open');
+                this.navToggle.classList.remove('hamburger-open');
+                this.navToggle.setAttribute('aria-expanded', 'false');
+                console.log('✅ Menu closed');
+            }
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                new SimpleNavBar();
+            });
+        } else {
+            new SimpleNavBar();
+        }
+    </script>
+    </body>
+</html>
