@@ -1,113 +1,81 @@
 ---
-title: "Microsoft Fabric - Power BI Compliance Intelligence"
-description: "Developed a comprehensive compliance intelligence solution using Microsoft Fabric and Power BI to automate regulatory reporting and risk assessment for financial institutions."
+title: "Microsoft Fabric – Operational Intelligence & Workflow Automation"
+description: "Built the operational backbone for a 200-person healthcare organization—uniting workflows, performance tracking, and automation across 10+ departments using Microsoft Fabric and Power Platform."
 image: "/assets/images/default-project.png"
 date: 2024-02-20T00:00:00.000Z
-tags: ["Microsoft Fabric", "Power BI", "Compliance", "Data Analytics", "Financial Services"]
+tags: ["Microsoft Fabric", "Power Platform", "Healthcare", "Workflow Automation", "Operational Intelligence", "Power BI", "Microsoft Dynamics"]
 ---
 
-A comprehensive compliance intelligence solution built on Microsoft Fabric that automates regulatory reporting and risk assessment for financial institutions, providing real-time insights into compliance status and potential risks.
+Built the operational backbone for a 200-person healthcare organization—uniting workflows, performance tracking, and automation across 10+ departments using Microsoft Fabric and Power Platform.
 
-## 🎯 Project Overview
+## 🔍 Project Overview
 
-This project leverages Microsoft Fabric's unified analytics platform to create a sophisticated compliance monitoring system that helps financial institutions meet regulatory requirements while reducing manual reporting overhead.
+What began as a simple audit meeting quickly evolved into a full-scale operational transformation. I led a cross-functional initiative to map undocumented workflows, bridge gaps between departments, and build a real-time operational intelligence platform using Microsoft Fabric, Power BI, and the Power Platform.
 
-## 🛠️ Technical Stack
+By the end of the project, we had deployed performance dashboards across 10+ departments, automated critical task workflows in Microsoft Dynamics CRM, and began integrating quarterly goals through Microsoft Goals to align with the Entrepreneurial Operating System (EOS).
 
-- **Platform**: Microsoft Fabric
-- **Data Warehouse**: OneLake with Delta Lake format
-- **Data Engineering**: Data Factory and Synapse Data Engineering
-- **Real-time Analytics**: Synapse Real-Time Analytics
-- **Business Intelligence**: Power BI with DAX
-- **Data Science**: Synapse Data Science with Python
-- **Integration**: Power Platform (Power Apps, Power Automate)
+## 👔 Leadership Highlights
 
-## 🚀 Key Features
+- Directed multi-department transformation strategy across ABA, PT, OT, Speech, Sales, Intake, Billing, Admin, Medical, and Compliance
+- Conducted stakeholder interviews and BPMN process mapping to uncover undocumented workflows
+- Facilitated change management across 200 staff and patients, prioritizing quality-of-care outcomes
+- Led strategic planning sessions to align department KPIs with EOS Rocks and company-wide goals
 
-### Automated Data Ingestion
+## 🛠️ Technical Execution
 
-- Real-time data pipelines from multiple sources
-- Automated data quality checks and validation
-- Incremental data processing for efficiency
-- Error handling and retry mechanisms
+- Built an Azure SQL staging layer using ODBC from our Practice Management System
+- Developed Dataflow Gen2 pipelines in Microsoft Fabric for scalable data transformation
+- Implemented SQL + Python logic for task audits, note quality checks, and KPI tracking
+- Created Power BI dashboards with views tailored to staff, team leads, and executives
+- Connected Power Platform workflows to Microsoft Dynamics CRM to automate patient lifecycle tasks
+- Expanded the framework to cover PT, OT, and Speech along with indirect support across 10+ departments
+- Initiated integration with Sage Intacct for financial forecasting and cash flow modeling
 
-### Compliance Monitoring Dashboard
+## 🧱 Architecture Overview
 
-- Real-time compliance status tracking
-- Automated alert generation for violations
-- Historical trend analysis
-- Regulatory requirement mapping
+- **Source**: Practice Management System (ODBC → Azure SQL)
+- **Transformation & Storage**: Microsoft Fabric + OneLake (Delta format)
+- **Audit & Logic Layer**: SQL + Python
+- **BI & Workflow**: Power BI, Power Automate, Power Apps, Microsoft Dynamics
+- **ERP Integration Planning**: Sage Intacct
 
-### Risk Assessment Engine
+## 🔄 Project Lifecycle
 
-- Machine learning models for risk prediction
-- Automated risk scoring and categorization
-- Scenario analysis and stress testing
-- Risk trend visualization
-
-### Regulatory Reporting
-
-- Automated report generation for various regulators
-- Customizable report templates
-- Audit trail and version control
-- Export capabilities in multiple formats
-
-## 📊 Data Architecture
-
-### Data Sources Integration
-
-- **Transaction Systems**: Real-time transaction monitoring
-- **Customer Data**: KYC and customer risk profiles
-- **Market Data**: External market feeds and indices
-- **Regulatory Feeds**: Direct integration with regulatory APIs
-
-### Data Processing Pipeline
-
-1. **Ingestion**: Real-time data capture from multiple sources
-2. **Validation**: Automated data quality checks
-3. **Transformation**: Business logic application and data enrichment
-4. **Storage**: Optimized storage in OneLake with Delta format
-5. **Analysis**: Real-time analytics and ML model execution
-6. **Visualization**: Power BI dashboards and reports
-
-## 🔧 Development Challenges
-
-### Data Volume and Performance
-
-- Processed terabytes of financial data daily
-- Implemented efficient partitioning strategies
-- Optimized query performance with proper indexing
-- Used incremental processing to handle large datasets
-
-### Real-time Processing
-
-- Built real-time data pipelines with minimal latency
-- Implemented event-driven architecture for immediate alerts
-- Used streaming analytics for live compliance monitoring
-- Ensured data consistency across multiple systems
-
-### Regulatory Compliance
-
-- Mapped complex regulatory requirements to data models
-- Implemented audit trails for all data changes
-- Created flexible reporting templates for different regulators
-- Built version control for regulatory rule changes
+1. Stakeholder Discovery & Workflow Mapping
+2. BPMN Swim Lane Analysis
+3. Data Infrastructure Build
+4. KPI Dashboards & Note Auditing
+5. CRM Task Automation via Power Platform
+6. EOS Goal Integration (Microsoft Goals – in progress)
+7. ERP Financial Forecasting Planning (Sage Intacct)
 
 ## 📈 Results
 
-- **Processing Speed**: 95% reduction in report generation time
-- **Accuracy**: 99.9% data accuracy through automated validation
-- **Compliance**: 100% regulatory requirement coverage
-- **Cost Savings**: 60% reduction in manual compliance costs
-- **Risk Detection**: 40% improvement in early risk identification
+- 95% faster reporting cycles
+- 60% reduction in manual oversight and status check-ins
+- Automated lifecycle task workflows from patient scheduling through billing
+- Performance dashboards live across 10+ departments
+- Foundation built for EOS goal alignment and financial modeling
 
-## 🎉 Impact
+## ⚙️ Adoption & Change Management
 
-The Microsoft Fabric compliance intelligence solution has transformed how the financial institution manages regulatory compliance. The automated system provides real-time insights, reduces manual effort, and ensures consistent compliance across all business units. The platform's scalability and flexibility make it adaptable to changing regulatory requirements.
+The most complex challenge wasn't building the system—it was getting 200 people to use it.
 
-## 🔮 Future Enhancements
+We:
 
-- **AI-Powered Insights**: Advanced machine learning for predictive compliance
-- **Natural Language Processing**: Automated regulatory document analysis
-- **Blockchain Integration**: Immutable audit trails using blockchain technology
-- **Mobile Access**: Mobile dashboards for on-the-go compliance monitoring
+- Trained and onboarded cross-functional staff through walkthroughs and 1:1 support
+- Communicated around improved care quality, not just system upgrades
+- Earned buy-in by making teams more efficient and less reliant on memory or spreadsheets
+- Made data visible and valuable to the people doing the work—not just leadership
+
+## 🔮 What's Next
+
+While I transitioned out before full EOS + ERP integration, we had already:
+
+- Rolled out Microsoft Goals for department-wide Rocks tracking
+- Prototyped crosswalks from KPIs to long-term strategic outcomes
+- Begun mapping Sage Intacct data into Fabric to bridge clinical ops with cash flow forecasting
+
+## 💬 Final Reflection
+
+This was the capstone project of my time with the organization—bringing together process clarity, technical depth, and mission-driven change. It was about more than automation or analytics—it was about building trust and transparency into how care gets delivered, how teams stay aligned, and how strategy becomes action. I left proud of what we accomplished, and excited for what would come next.
