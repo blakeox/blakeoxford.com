@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import navLinks from '../../../src/config/navLinks.js';
+import navLinks from '../../../src/config/navLinks';
 
 describe('navLinks utility functions', () => {
   describe('Configuration validation', () => {

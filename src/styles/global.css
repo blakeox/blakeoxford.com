@@ -27,160 +27,10 @@
 
 /* Add more as needed for other tokens */
 
-/* --- Navbar Styles (moved from NavBar.astro) --- */
-.navbar-container {
-  background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  backdrop-filter: blur(18px) saturate(1.2);
-  border-bottom: 1.5px solid var(--glass-border);
-  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.08);
-  position: sticky;
-  top: 0;
-  z-index: var(--z-50);
-  transition: all 0.3s var(--ease-emphasized);
-}
-.dark .navbar-container {
-  background: linear-gradient(120deg, var(--glass-surface-bg-dark) 80%, var(--color-accent-dark) 100%);
-  border-bottom: 1.5px solid var(--glass-border-dark);
-}
-.nav-link {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s var(--ease-emphasized);
-}
-.nav-link[aria-current="page"] {
-  color: var(--color-accent);
-  font-weight: var(--fw-semibold);
-}
-.nav-button {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s var(--ease-standard);
-  /* Ensure buttons are properly clickable on mobile */
-  -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none;
-  user-select: none;
-  /* Minimum touch target size for accessibility */
-  min-width: 44px;
-  min-height: 44px;
-}
-.brand-avatar {
-  position: relative;
-  overflow: hidden;
-  background: var(--color-accent);
-  color: var(--color-background);
-  border: 2px solid transparent;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
-  transition: background 0.3s var(--ease-emphasized);
-}
-.dark .brand-avatar {
-  background: var(--color-accent-light);
-  color: var(--color-foreground);
-}
-.mobile-menu {
-  background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  backdrop-filter: blur(24px) saturate(1.2);
-  border: 1.5px solid var(--glass-border);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  border-radius: 1.25rem 1.25rem 0 0;
-  margin: 0 0.5rem;
-  top: 0.5rem;
-  left: 0;
-  right: 0;
-  position: fixed;
-  z-index: 1050;
-  max-width: 95vw;
-  transform: translateY(-100%);
-  opacity: 0;
-  transition: transform 0.35s var(--ease-emphasized), opacity 0.3s var(--ease-emphasized);
-  will-change: transform, opacity;
-}
-.dark .mobile-menu {
-  background: linear-gradient(120deg, var(--glass-surface-bg-dark) 80%, var(--color-accent-dark) 100%);
-  border: 1.5px solid var(--glass-border-dark);
-}
-.dark .mobile-menu,
-.dark .mobile-menu .nav-link {
-  color: #fff !important;
-}
-.dark .mobile-menu .nav-link[aria-current="page"] {
-  background: var(--color-accent);
-  color: var(--color-background) !important;
-}
-.mobile-menu.open {
-  transform: translateY(0);
-  opacity: 1;
-}
-.mobile-menu .nav-link {
-  font-size: 1.15rem;
-  padding: 1rem 1.5rem;
-  border-radius: 0.75rem;
-  margin-bottom: 0.25rem;
-  background: transparent;
-  transition: background 0.2s, color 0.2s;
-}
-.mobile-menu .nav-link.active,
-.mobile-menu .nav-link[aria-current="page"] {
-  background: var(--color-accent);
-  color: var(--color-background);
-}
-.mobile-menu-close {
-  position: absolute;
-  top: 1rem;
-  right: 1.25rem;
-  background: none;
-  border: none;
-  font-size: 2rem;
-  color: var(--color-foreground);
-  z-index: 1100;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-.mobile-menu-close:focus,
-.mobile-menu-close:hover {
-  background: var(--color-accent-light);
-  color: var(--color-background);
-}
-.mobile-menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  z-index: 1040;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
-.mobile-menu.open ~ .mobile-menu-overlay {
-  opacity: 1;
-  pointer-events: auto;
-}
-.hamburger-line {
-  transition: all 0.3s cubic-bezier(.4,0,.2,1);
-  transform-origin: center;
-}
-/* Responsive improvements */
+/* --- Navbar Styles REMOVED - Now handled in NavBar.astro component --- */
+/* Mobile menu responsive improvements REMOVED - Now handled in NavBar.astro component */
+
 @media (max-width: 768px) {
-  .mobile-menu {
-    max-height: calc(100vh - 4rem);
-    overflow-y: auto;
-    left: 0.5rem;
-    right: 0.5rem;
-  }
-
-  /* Apply overscroll-behavior only when supported */
-  @supports (overscroll-behavior: contain) {
-    .mobile-menu {
-      overscroll-behavior: contain;
-    }
-  }
-
   /* Ensure adequate touch targets for mobile */
   button,
   a,
@@ -264,10 +114,8 @@
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .navbar-container,
   .nav-button,
   .navbar-logo,
-  .mobile-menu,
   .nav-link {
     transition: none !important;
     animation: none !important;
@@ -291,26 +139,7 @@
   50% { box-shadow: 0 0 0 10px rgba(var(--color-accent), 0); }
 }
 
-/* Mobile menu active link indicator */
-.mobile-menu li .nav-link {
-  position: relative;
-}
-.mobile-menu li .nav-link .active-indicator,
-.mobile-menu li .nav-link > span.bg-accent {
-  position: absolute;
-  left: 0.5rem;
-  top: 0.5rem;
-  bottom: 0.5rem;
-  width: 0.25rem;
-  border-radius: 9999px;
-  background: var(--color-accent);
-  content: '';
-  display: block;
-}
-.mobile-menu li .nav-link[aria-current="page"] > .active-indicator,
-.mobile-menu li .nav-link[aria-current="page"] > span.bg-accent {
-  display: block;
-}
+/* Mobile menu active link indicator REMOVED - Now handled in NavBar.astro component */
 /* Micro-interaction: scale on tap/click */
 .mobile-tap-effect {
   transition: transform 0.12s cubic-bezier(0.4,0,0.2,1);
@@ -320,46 +149,13 @@
 }
 
 /* Glassmorphism enhancements */
-.navbar-container {
-  background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  backdrop-filter: blur(18px) saturate(1.2);
-  border-bottom: 1.5px solid var(--glass-border);
-  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.08);
-}
-.dark .navbar-container {
-  background: linear-gradient(120deg, var(--glass-surface-bg-dark) 80%, var(--color-accent-dark) 100%);
-  border-bottom: 1.5px solid var(--glass-border-dark);
-}
-.mobile-menu {
-  background: linear-gradient(120deg, var(--glass-surface-bg) 80%, var(--color-accent-light) 100%);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  backdrop-filter: blur(24px) saturate(1.2);
-  border: 1.5px solid var(--glass-border);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-}
-.dark .mobile-menu {
-  background: linear-gradient(120deg, var(--glass-surface-bg-dark) 80%, var(--color-accent-dark) 100%);
-  border: 1.5px solid var(--glass-border-dark);
-}
+/* Additional navbar styles REMOVED - Now handled in NavBar.astro component */
 /* Scroll progress bar */
 .nav-scroll-progress { pointer-events: none; }
 #nav-scroll-progress-bar { height: 100%; background: var(--color-accent); border-radius: 2px; transition: width 0.2s; }
-/* Animated underline/blob for desktop nav */
-#nav-blob-underline {
-  height: 0.35rem;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, var(--color-accent) 60%, var(--color-accent-light) 100%);
-  box-shadow: 0 2px 8px 0 var(--color-accent-light);
-  transition: all 0.3s cubic-bezier(.4,0,.2,1);
-  z-index: 1;
-}
+/* Animated underline/blob for desktop nav REMOVED - Now handled in NavBar.astro component */
 /* Animated hamburger icon */
-.hamburger-container { transition: transform 0.3s cubic-bezier(.4,0,.2,1); }
-.hamburger-open .hamburger-line:nth-child(1) { transform: translateY(8px) rotate(45deg) scaleX(1.1); }
-.hamburger-open .hamburger-line:nth-child(2) { opacity: 0; transform: scaleX(0.2); }
-.hamburger-open .hamburger-line:nth-child(3) { transform: translateY(-8px) rotate(-45deg) scaleX(1.1); }
-.hamburger-line { transition: all 0.3s cubic-bezier(.4,0,.2,1); }
+/* Hamburger styles REMOVED - Now handled in NavBar.astro component */
 /* Command palette & help modals */
 #nav-cmdk-modal, #nav-help-modal {
   opacity: 0;
@@ -383,12 +179,7 @@
 #nav-cmdk-modal input:focus {
   border-color: var(--color-accent-dark);
 }
-/* Logo/avatar hover animation */
-.navbar-logo:hover .brand-avatar {
-  transform: scale(1.12) rotate(-6deg);
-  box-shadow: 0 2px 16px 0 var(--color-accent-light);
-  transition: transform 0.25s, box-shadow 0.25s;
-}
+/* Logo/avatar hover animation REMOVED - Now handled in NavBar.astro component */
 /* Contextual nav classes (future use) */
 .nav-context-blog { --color-accent: #3b82f6; }
 .nav-context-projects { --color-accent: #10b981; }
@@ -398,17 +189,7 @@
   outline: 2px solid var(--color-accent-light);
   box-shadow: 0 0 0 2px var(--color-accent-light);
 }
-/* Sticky/auto-hiding nav polish */
-.navbar-container.nav-hidden {
-  transform: translateY(-110%);
-  opacity: 0.7;
-  transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s;
-}
-.navbar-container.nav-visible {
-  transform: translateY(0);
-  opacity: 1;
-  transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s;
-}
+/* Navbar visibility styles REMOVED - Now handled in NavBar.astro component */
 
 /* Hero Section Enhancements */
 @keyframes spin-slow {
@@ -889,8 +670,7 @@ input[type="submit"]:focus {
     justify-content: center !important;
   }
   
-  /* Ensure nav links in mobile menu have proper touch targets */
-  .mobile-menu a,
+  /* Ensure nav links have proper touch targets */
   .nav-link {
     min-height: 44px !important;
     padding: 0.75rem 1rem !important;

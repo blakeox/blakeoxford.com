@@ -108,18 +108,7 @@
   --color-backdrop: rgba(0,0,0,0.6);
   --color-backdrop-light: rgba(255,255,255,0.6);
 
-  /* Navbar */
-  --navbar-bg: #fff;
-  --navbar-bg-dark: #1a1a1e;
-  --navbar-text: #18181b;
-  --navbar-text-dark: #f9fafb;
-  --navbar-hover-bg: #f1f5f9;
-  --navbar-hover-bg-dark: #2a2a2a;
-  --navbar-active-bg: #eff6ff;
-  --navbar-active-bg-dark: #27272a;
-  --navbar-active-text: #2563eb;
-  --navbar-border: #e2e8f0;
-  --navbar-border-dark: #3f3f46;
+  /* Navbar styles removed - now handled in NavBar.astro component */
 
   /* ---------- Typography ---------- */
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -393,9 +382,7 @@
   --shadow-chroma-light: var(--shadow-chroma-dark);
 
   /* Surfaces & navigation */
-  --navbar-bg: var(--color-surface-dark);
-  --navbar-hover-bg: var(--color-surface-dark-subtle);
-  --navbar-border: #3f3f46;
+  /* Navbar styles removed - now handled in NavBar.astro component */
 
   /* Glass surfaces in dark */
   --glass-surface-bg: var(--glass-surface-bg-dark);
