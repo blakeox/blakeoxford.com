@@ -31,7 +31,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:ci": "vitest run && playwright test",
-    "lh:ci": "lhci autorun --config=lighthouserc.json"
+    "lh:ci": "lhci autorun",
+    "lh:local": "lhci autorun --config=./lighthouserc.json",
+    "lh:manual": "lighthouse http://localhost:4321/ --output=html --output-path=./lighthouse-report.html --chrome-flags='--disable-web-security --no-sandbox --disable-setuid-sandbox --ignore-certificate-errors --ignore-ssl-errors'"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

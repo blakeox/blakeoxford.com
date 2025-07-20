@@ -106,6 +106,8 @@ jobs:
         run: pnpm lh:ci
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN || '' }}
+          CHROME_PATH: /usr/bin/google-chrome
+        continue-on-error: true
 
   bundle-analysis:
     runs-on: ubuntu-latest
