@@ -5,6 +5,7 @@
 
 /* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
    class (or any of its descendants) is in the selector chain.   */
+/* @custom-variant is a Tailwind v4 feature - valid but not recognized by all linters */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Import your consolidated design tokens as a theme */
@@ -1451,8 +1452,8 @@ select.error {
   height: 100% !important;
   z-index: var(--z-modal, 9999) !important;
   background: var(--overlay-40) !important;
-  backdrop-filter: blur(var(--blur-lg)) !important;
   -webkit-backdrop-filter: blur(var(--blur-lg)) !important;
+  backdrop-filter: blur(var(--blur-lg)) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
