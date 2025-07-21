@@ -10,8 +10,9 @@ const canonicalUrl = "https://blakeoxford.com/projects/";
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <section class="c-projects-list w-full py-20 md:py-32 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background animate-fade-in" role="region" aria-labelledby="projects-title">
-    <!-- Animated SVG background pattern -->
+  <!-- Projects Header Section -->
+  <section class="w-full py-16 md:py-24 px-4 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="projects-title">
+    <!-- Background pattern -->
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -22,14 +23,166 @@ const canonicalUrl = "https://blakeoxford.com/projects/";
         <rect width="100%" height="100%" fill="url(#projects-grid)" />
       </svg>
     </div>
-    <!-- Blurred/floating shapes -->
+    <!-- Floating shapes -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto text-center">
+      <h1 id="projects-title" class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-accent mb-6 animate-fade-in">Projects</h1>
+      <p class="text-lead text-foreground-light dark:text-foreground animate-fade-in mb-8">
+        Explore a curated collection of projects showcasing key skills in process automation, finance, and more.
+      </p>
+      <p class="text-lg text-foreground-light animate-fade-in">
+        Below you'll find my methodology and approach, followed by detailed case studies of my work.
+      </p>
+    </div>
+  </section>
+
+  <!-- Transition Section -->
+  <section class="w-full py-8 md:py-12 px-4 relative" role="region">
+    <!-- Curved transition -->
+    <div class="absolute inset-0 bg-gradient-to-b from-background via-accent/5 to-background"></div>
+    <div class="relative z-10 max-w-6xl mx-auto">
+      <div class="text-center">
+        <div class="inline-block w-24 h-1 bg-gradient-to-r from-transparent via-accent to-transparent rounded-full mb-8"></div>
+        <h2 class="text-2xl md:text-3xl font-semibold text-accent mb-4">My Approach</h2>
+        <p class="text-lg text-foreground-light max-w-3xl mx-auto">
+          I tackle projects through a holistic lens: process, people, and technology. Here's the structured methodology I follow to ensure success.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Methodology Section -->
+  <section class="c-methodology w-full py-16 md:py-24 px-4 max-w-6xl mx-auto" role="region" aria-labelledby="methodology-title">
+    <div class="grid gap-8 md:gap-10 lg:gap-12">
+      <!-- Discovery & Empathy -->
+      <div class="group bg-gradient-to-br from-background to-accent/5 border border-accent/10 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-all duration-300 hover:shadow-lg">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-300">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl md:text-2xl font-semibold text-accent mb-3">Discovery & Empathy</h3>
+            <p class="text-foreground-light leading-relaxed">
+              Conduct stakeholder interviews and shadow frontline staff to uncover true pain points and human factors that drive successful implementations.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Process Mapping -->
+      <div class="group bg-gradient-to-br from-background to-accent/5 border border-accent/10 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-all duration-300 hover:shadow-lg">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-300">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl md:text-2xl font-semibold text-accent mb-3">Process Mapping</h3>
+            <p class="text-foreground-light leading-relaxed">
+              Use BPMN and workshops to document workflows, handoffs, and responsibilities before selecting tools. This ensures technology serves the process, not the other way around.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pre-Sales Preparation -->
+      <div class="group bg-gradient-to-br from-background to-accent/5 border border-accent/10 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-all duration-300 hover:shadow-lg">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-300">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl md:text-2xl font-semibold text-accent mb-3">Pre-Sales Preparation</h3>
+            <p class="text-foreground-light leading-relaxed">
+              Prepare detailed SOPs, workflows, and risk assessments to align vendor evaluations with organizational needs and ensure successful procurement decisions.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Design Thinking & Iteration -->
+      <div class="group bg-gradient-to-br from-background to-accent/5 border border-accent/10 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-all duration-300 hover:shadow-lg">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-300">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl md:text-2xl font-semibold text-accent mb-3">Design Thinking & Iteration</h3>
+            <p class="text-foreground-light leading-relaxed">
+              Prototype solutions rapidly, gather user feedback, and refine in agile sprints to balance critique with encouragement and drive continuous improvement.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technical Implementation -->
+      <div class="group bg-gradient-to-br from-background to-accent/5 border border-accent/10 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-all duration-300 hover:shadow-lg">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-300">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl md:text-2xl font-semibold text-accent mb-3">Technical Implementation</h3>
+            <p class="text-foreground-light leading-relaxed">
+              Integrate best-in-class platforms and custom scripts—leveraging SQL, Python, or LLMs—to build scalable, compliant systems that grow with your organization.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Governance & Continuous Improvement -->
+      <div class="group bg-gradient-to-br from-background to-accent/5 border border-accent/10 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-all duration-300 hover:shadow-lg">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-300">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl md:text-2xl font-semibold text-accent mb-3">Governance & Continuous Improvement</h3>
+            <p class="text-foreground-light leading-relaxed">
+              Establish reviews, training, and documentation to evolve solutions over years and empower teams to maintain and enhance systems independently.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects List Section -->
+  <section class="c-projects-list w-full py-20 md:py-32 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="projects-list-title">
+    <!-- Background pattern -->
+    <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+      <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="projects-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M0 40L40 0M20 40L40 20M0 20L20 0" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.12" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#projects-grid)" />
+      </svg>
+    </div>
+    <!-- Floating shapes -->
     <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
     
     <div class="relative z-10 px-4">
-      <div class="max-w-4xl mx-auto mb-12">
-        <h1 id="projects-title" class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-accent mb-6 text-center animate-fade-in">Projects</h1>
-        <p class="text-lead text-center text-foreground-light dark:text-foreground animate-fade-in">Explore a curated collection of projects showcasing key skills in process automation, finance, and more. Use the filters to narrow your interests.</p>
+      <div class="max-w-4xl mx-auto mb-12 text-center">
+        <h2 id="projects-list-title" class="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-accent mb-6 animate-fade-in">Case Studies</h2>
+        <p class="text-lead text-foreground-light dark:text-foreground animate-fade-in">
+          Explore detailed case studies of my work, showcasing the methodology in action across various industries and challenges.
+        </p>
       </div>
       
       <!-- Decorative SVG divider -->
@@ -76,5 +229,36 @@ const canonicalUrl = "https://blakeoxford.com/projects/";
   .projects-masonry {
     grid-template-rows: masonry;
   }
+}
+
+/* Focus styles for better accessibility */
+.group:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .group {
+    transition: none;
+  }
+}
+
+/* Smooth transitions between sections */
+.c-methodology,
+.c-projects-list {
+  position: relative;
+}
+
+/* Enhanced visual flow */
+.c-methodology::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  opacity: 0.3;
 }
 </style>

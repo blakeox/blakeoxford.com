@@ -14,27 +14,89 @@ image: "/assets/images/default-project.png"
 link: ""
 ---
 
-## Background
+## Background & Challenge
 
-To further elevate clinical documentation and streamline compliance efforts, I architected a solution leveraging the OpenAI API to automatically review de-identified patient notes. By integrating with existing data pipelines, this system pulled encrypted, PHI-stripped records from our SQL Server repository, forwarded them to the OpenAI Playground with a custom prompt tailored to Blue Cross Blue Shield (BCBS) audit criteria, and returned granular, role-based feedback. The result was a near real-time mechanism for technicians and providers to iteratively refine their notes—significantly reducing audit exceptions and rework.
+In our clinical setting, **hourly technicians—many with only a high school diploma—were expected to produce medical documentation** that would withstand scrutiny from payers, physicians, and regulators. Turnover was high and provider time for coaching was limited. While we had Power BI dashboards to flag missing signatures or CPT mismatches, nothing assessed whether the narrative truly conveyed medical necessity, complexity, or a coherent story of the visit.
 
-## Key Achievements
+I shadowed technicians on the floor and ran quick interviews, uncovering that no one had ever built a tool to teach *why* notes failed audits—only *that* they failed. It became clear: we didn’t just need another report. We needed **scalable coaching**.
 
-- **Automated Note Ingestion & De-Identification:** Designed a secure ETL process using Python and SQL Server that extracted patient notes, applied deterministic de-identification routines (redacting names, dates, and identifiers), and staged content for API consumption—all within HIPAA-compliant guardrails.
-- **Custom BCBS Audit Prompt Engineering:** Collaborated with clinical auditors to craft a specialized prompt that instructed OpenAI’s GPT-4 model to evaluate each note against BCBS documentation guidelines, identifying missing elements (e.g., medical necessity language, precise CPT justification, signature line) and highlighting potential risk areas (e.g., ambiguous phrasing, unsupported treatment rationale).
-- **Role-Specific Feedback Generation:** Implemented logic to parse the model’s response and categorize feedback by audience type:
-  - **Technicians/Assistants:** Action items on capturing intervention details, including units of service and clinician credentials.
-  - **Providers/BCBAs:** Recommendations on enhancing clinical rationale, aligning treatment goals with evaluative criteria, and ensuring consistency with state therapy regulations.
-- **Integrated Review Dashboard:** Built a Power BI integration that consumed the OpenAI feedback JSON, rendering a column-level view of audit readiness metrics. Providers could filter by date range, note author, or patient cohort—making it trivial to identify systemic documentation gaps and monitor improvement over time.
-- **API-Driven Continuous Improvement:** Deployed a serverless function in Azure Functions that orchestrated nightly batch processing of new notes. If the model flagged more than 5 notes with critical omissions, the system automatically triggered an email alert to compliance leads, ensuring proactive remediation.
+---
 
-## Impact
+## How I Discovered the Real Pain Point
 
-By embedding AI-driven review directly into our clinical workflow, we achieved:
+- Spent days shadowing frontline staff, observing their note-writing struggles.  
+- Conducted brief “What’s the hardest part of writing notes?” interviews—all pointed to lack of feedback on *narrative quality*.  
+- Realized the opportunity: use an LLM not for transcription or billing checks, but to coach users on crafting a clear, compliant clinical story.
 
-- **50% Reduction in Audit Exceptions:** Providers received immediate, contextual feedback, leading to more compliant notes on the first pass and lowering secondary review cycles.
-- **Consistent Audit Preparedness:** Technicians adopted a standardized documentation style guided by the AI’s recommendations—minimizing variability across therapists and sites.
-- **Resource Optimization:** Compliance teams reallocated 20 hours/week from manual note reviews to higher-value tasks (e.g., targeted training, process refinement).
-- **Scalable Architecture:** The modular design supports onboarding additional payers (e.g., Aetna, UnitedHealthcare) by swapping in new prompt templates—paving the way for multi-payer audit readiness.
+---
 
-This OpenAI-powered system transformed passive documentation checks into an active, data-driven coaching tool—ensuring our providers and technicians consistently meet BCBS requirements and drive better patient care.
+## Technical Highlights
+
+- **Secure ETL Pipeline:** Python + SQL Server extracted and de-identified notes (redacting names, dates, identifiers) under HIPAA guardrails.  
+- **Prompt Engineering for BCBS:** Rapid sprints with auditors and BCBAs to craft a GPT-4 prompt that evaluates medical necessity, CPT justification, narrative clarity, and treatment rationale.  
+- **Role-Based Feedback:** Technicians received guidance on structure, intervention details, and credentials; providers got recommendations on clinical rationale, goal alignment, and regulatory consistency.  
+- **Power BI Dashboard:** Visualized audit-readiness metrics by author, location, and time—enabling targeted coaching.  
+- **Azure Automation:** Nightly batch processing via Azure Functions, with Teams notifications through Microsoft Graph; alerts triggered when systemic risks emerged.
+
+---
+
+## Design Thinking & Iteration
+
+I led **three rapid prompt-tuning sprints** in one week with cross-functional partners (technicians, auditors, BCBAs):  
+
+1. **Draft Prompt** → tested on sample notes → gathered user reactions  
+2. **Tone Adjust** → balanced critique with encouragement → measured “feedback acknowledged” rates  
+3. **Final Prompt** → pilot rollout → monitored adoption and morale  
+
+This cycle ensured the LLM’s voice felt supportive, not punitive.
+
+---
+
+## Data-Driven Refinement
+
+Beyond tracking audit exceptions, I monitored:  
+
+- **Teams Message Opens:** +40% after shifting to a balanced tone  
+- **Revision Turnaround Time:** –30% once feedback highlighted both strengths and gaps  
+
+These KPIs guided each iteration toward both compliance and learning.
+
+---
+
+## Before vs. After: Audit Enforcer → Coaching Engine
+
+| 🔍 **Old: Audit Enforcer**                | 🌱 **New: Skill Developer**            |
+|-------------------------------------------|----------------------------------------|
+| Flagged only what was missing             | Highlighted strengths *and* gaps       |
+| Delivered blunt, clinical feedback        | Delivered empathetic, balanced feedback|
+| Focused on passing audits                 | Focused on building documentation skill|
+| Seen as punitive by technicians           | Seen as a collaborative mentor         |
+| Treated the model like a grader           | Treated the model like a coach         |
+| Designed for outcomes                     | Designed for *growth*                  |
+
+---
+
+## Human Touch
+
+Technicians said, *“It’s really helpful to see **why** good notes matter.”* Providers noted the AI surfaced details they sometimes overlooked—boosting both efficiency and care continuity. This validated that **the tool’s true power lies in human–AI collaboration**.
+
+---
+
+## Impact & Results
+
+- **50% reduction** in audit exceptions  
+- **20+ hours/week saved** for compliance reviewers  
+- Improved technician confidence and skill development  
+- Modular, payer-agnostic architecture ready for Aetna, UnitedHealthcare, and beyond  
+
+---
+
+## Novelty & Transferability
+
+This pattern—**identify a manual compliance pain point, reframe it as a coaching challenge, then build an LLM-driven mentor**—can be applied across healthcare (e.g., imaging protocols, pharmacy reviews, discharge summaries) and beyond. Wherever passive checks exist, there’s opportunity to teach and uplift.
+
+---
+
+## Takeaway
+
+I refuse to accept “that’s just the way it is.” By combining **empathy**, **rapid iteration**, and **LLM expertise**, I transformed a routine compliance complaint into a scalable learning engine—demonstrating that the right technology, aligned with human needs, can continuously improve complex workflows.  
