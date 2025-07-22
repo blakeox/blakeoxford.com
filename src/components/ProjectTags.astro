@@ -1,0 +1,24 @@
+---
+export interface Props {
+  tags: string[];
+}
+
+const { tags } = Astro.props;
+---
+
+<aside class="bg-gray-50 dark:bg-gray-800 py-16">
+  <div class="w-full px-6 lg:px-12 xl:px-16">
+    <h2 class="font-heading font-bold text-3xl mb-8 text-gray-900 dark:text-white">Related Technologies</h2>
+    <div class="flex flex-wrap gap-4">
+      {tags.map((tag: string) => (
+        <a
+          href={`/projects/?filter=${tag.toLowerCase().replace(/ /g, '-')}`}
+          class="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-accent hover:text-white hover:border-accent transition-all duration-200 font-medium text-base"
+          aria-label={`Filter projects by ${tag}`}
+        >
+          {tag}
+        </a>
+      ))}
+    </div>
+  </div>
+</aside> 

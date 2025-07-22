@@ -21,8 +21,8 @@ const { slug, data } = project;
     </a>
   </div>
   <div class="flex flex-col flex-1 p-6 gap-2">
-    <h3 class="text-2xl font-bold mb-1 text-accent-dark dark:text-accent-light leading-tight">
-      <a href={`/projects/${slug}/`} class="hover:underline flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={`Project: ${data.title}`}>
+    <h3 class="text-2xl font-bold mb-1 text-gray-900 dark:text-white leading-tight">
+      <a href={`/projects/${slug}/`} class="text-gray-900 dark:text-white hover:text-accent dark:hover:text-accent-light hover:underline flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={`Project: ${data.title}`}>
         {data.title}
       </a>
     </h3>
@@ -30,7 +30,7 @@ const { slug, data } = project;
       <ul class="flex flex-wrap gap-2 mb-1" aria-label="Project tags">
         {data.tags.map((tag: string) => (
           <li>
-            <span class="bg-accent-light/40 text-accent-dark text-xs font-medium px-2 py-0.5 rounded-full">{tag}</span>
+            <span class="bg-accent/10 dark:bg-accent/20 text-accent dark:text-accent-light text-xs font-medium px-2 py-0.5 rounded-full">{tag}</span>
           </li>
         ))}
       </ul>
@@ -39,14 +39,14 @@ const { slug, data } = project;
       <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">
         {data.description.length > 160 ? `${data.description.slice(0, 157)}...` : data.description}
         {data.description.length > 160 && (
-          <a href={`/projects/${slug}/`} class="ml-1 text-accent underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={`Read more about ${data.title}`}>Read more</a>
+          <a href={`/projects/${slug}/`} class="ml-1 text-accent dark:text-accent-light underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={`Read more about ${data.title}`}>Read more</a>
         )}
       </p>
     )}
     <div class="mt-auto flex justify-end">
       <a
         href={`/projects/${slug}/`}
-        class="inline-flex items-center gap-1 text-accent font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors duration-200 text-base"
+        class="inline-flex items-center gap-1 text-accent dark:text-accent-light font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors duration-200 text-base"
         aria-label={`View ${data.title}`}
       >
         View Project

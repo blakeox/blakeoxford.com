@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { collections } from '../../src/content/config';
 
-const { blog, projects } = collections;
+const { blog } = collections;
 
 describe('Blog frontmatter schema', () => {
   const validBlog = {
-    title: 'My First Post',
-    description: 'A short description',
-    pubDate: new Date(),
-    author: 'Author Name',
-    tags: ['tag1', 'tag2'],
+    title: 'Test Blog Post',
+    description: 'A test blog post description',
+    pubDate: new Date('2024-01-01'),
+    author: 'Blake Oxford',
+    tags: ['test', 'blog'],
     draft: false,
   };
 
@@ -19,45 +19,29 @@ describe('Blog frontmatter schema', () => {
   });
 
   it('throws on missing required fields', () => {
-    const invalid = { description: 'Missing title and pubDate' } as unknown;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(() => blog.schema.parse(invalid as any)).toThrow();
+    const invalidBlog = {
+      title: 'Test Blog Post',
+      // Missing description and pubDate
+    };
+
+    expect(() => blog.schema.parse(invalidBlog)).toThrow();
   });
 
   it('throws on invalid types', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const invalidType = { ...(validBlog as any), pubDate: 'not-a-date' };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(() => blog.schema.parse(invalidType as any)).toThrow();
+    const invalidBlog = {
+      title: 123, // Should be string
+      description: 'A test blog post description',
+      pubDate: new Date('2024-01-01'),
+    };
+
+    expect(() => blog.schema.parse(invalidBlog)).toThrow();
   });
 });
 
-describe('Projects frontmatter schema', () => {
-  const validProject = {
-    title: 'Project X',
-    date: new Date(),
-    image: '/img/project.png',
-    tags: ['alpha'],
-    link: 'https://example.com',
-    draft: true,
-  };
-
-  it('parses valid project frontmatter', () => {
-    const parsed = projects.schema.parse(validProject);
-    expect(parsed).toMatchObject(validProject);
-  });
-
-  it('throws on missing date field', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { date, ...withoutDate } = validProject;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(() => projects.schema.parse(withoutDate as any)).toThrow();
-  });
-
-  it('throws on invalid link type', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const invalidLink = { ...(validProject as any), link: 123 };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(() => projects.schema.parse(invalidLink as any)).toThrow();
+// Note: Projects are now individual Astro pages, not MDX files with frontmatter
+describe('Projects', () => {
+  it('projects are now individual Astro pages, not MDX files', () => {
+    // This test confirms that projects are no longer part of the content collection
+    expect(collections).not.toHaveProperty('projects');
   });
 });

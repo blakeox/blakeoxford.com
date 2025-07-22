@@ -94,7 +94,7 @@
   }
   
   /* Links should also meet touch targets */
-  a:not(.sr-only) {
+  a:not(.sr-only):not([href*="/projects/"]):not([href*="/blog/"]) {
     min-width: 44px !important;
     min-height: 44px !important;
     display: inline-flex !important;

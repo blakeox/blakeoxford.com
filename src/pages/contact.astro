@@ -13,7 +13,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
       <div class="container mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div class="space-y-6">
-            <h1 class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-accent animate-fade-in">Let's Connect</h1>
+            <h1 class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-accent dark:text-accent-light animate-fade-in">Let's Connect</h1>
             <p class="text-lead text-foreground-light dark:text-foreground animate-fade-in">Have a project in mind or just want to say hello? I'm all ears—whether it's a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can't wait to build something great together!</p>
           </div>
           <div class="flex justify-center md:justify-end">
@@ -63,7 +63,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
 
       <!-- Contact Form -->
       <div class="container mx-auto">
-        <h2 id="message-form" class="font-heading font-bold text-3xl md:text-4xl text-accent text-center mb-8">Or Send Me a Message</h2>
+        <h2 id="message-form" class="font-heading font-bold text-3xl md:text-4xl text-accent dark:text-accent-light text-center mb-8">Or Send Me a Message</h2>
 
         <!-- Form status banner -->
         <div id="form-status" aria-live="polite" class="hidden text-center font-semibold mb-4"></div>
@@ -74,7 +74,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
             <p class="hidden"><label>Don't fill this out: <input name="bot-field" /></label></p>
 
             <div class="flex flex-col gap-2">
-              <label for="name" class="font-semibold text-lg">Name <span class="text-accent">*</span></label>
+              <label for="name" class="font-semibold text-lg">Name <span class="text-accent dark:text-accent-light">*</span></label>
               <input
                 id="name"
                 name="name"
@@ -90,7 +90,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
               <div id="name-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite"></div>
             </div>
             <div class="flex flex-col gap-2">
-              <label for="email" class="font-semibold text-lg">Email <span class="text-accent">*</span></label>
+              <label for="email" class="font-semibold text-lg">Email <span class="text-accent dark:text-accent-light">*</span></label>
               <input
                 id="email"
                 name="email"
@@ -107,7 +107,7 @@ const canonicalUrl = "https://blakeoxford.com/contact/";
               <div id="email-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
             </div>
             <div class="flex flex-col gap-2">
-              <label for="message" class="font-semibold text-lg">Message <span class="text-accent">*</span></label>
+              <label for="message" class="font-semibold text-lg">Message <span class="text-accent dark:text-accent-light">*</span></label>
               <textarea
                 id="message"
                 name="message"
