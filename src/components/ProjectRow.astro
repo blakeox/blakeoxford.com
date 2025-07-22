@@ -21,8 +21,8 @@ const { slug, data } = project;
     />
   </a>
   <div class="flex flex-col flex-1 px-4 md:px-6 lg:px-12 py-4 gap-4 w-full min-w-0">
-    <h2 class="font-heading text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-tight mb-2">
-      <a href={`/projects/${slug}/`} class="project-title-link text-gray-900 dark:text-white hover:text-accent dark:hover:text-accent-light hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={`Project: ${data.title}`}>{data.title}</a>
+    <h2 class="font-heading text-2xl md:text-3xl font-bold text-accent dark:text-accent-light leading-tight mb-2">
+      <a href={`/projects/${slug}/`} class="project-title-link text-accent dark:text-accent-light hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={`Project: ${data.title}`}>{data.title}</a>
       { featured && (
         <span class="ml-3 align-middle bg-accent text-white dark:text-white text-xs font-bold px-3 py-1 rounded-full shadow-md border border-accent/20 dark:border-accent/30">Featured</span>
       )}
@@ -57,32 +57,6 @@ const { slug, data } = project;
   </div>
 </section>
 
-<style>
-  /* Force project title links to be visible in both light and dark modes with maximum specificity */
-  a.project-title-link {
-    color: rgb(17 24 39) !important; /* text-gray-900 */
-  }
-  
-  .dark a.project-title-link {
-    color: rgb(255 255 255) !important; /* text-white */
-  }
-  
-  a.project-title-link:hover {
-    color: rgb(5 150 105) !important; /* text-accent */
-  }
-  
-  .dark a.project-title-link:hover {
-    color: rgb(16 185 129) !important; /* text-accent-light */
-  }
-  
-  /* Override any CSS custom properties that might be interfering */
-  a.project-title-link {
-    color: rgb(17 24 39) !important; /* text-gray-900 */
-  }
-  
-  .dark a.project-title-link {
-    color: rgb(255 255 255) !important; /* text-white */
-  }
-</style>
+<!-- No custom style needed; Tailwind classes handle color and hover states for accessibility and visibility. -->
 
 
