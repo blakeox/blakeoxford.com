@@ -1,43 +1,28 @@
-import { describe, it, expect, vi } from 'vitest';
-
-// Mock astro:content to provide sample blog posts
-globalThis['astroContentMock'] = [
-  {
-    slug: 'hello-world',
-    data: {
-      title: 'Hello World',
-      pubDate: new Date('2024-01-01'),
-      draft: false,
-    },
-  },
-  {
-    slug: 'draft-post',
-    data: {
-      title: 'Draft Post',
-      pubDate: new Date('2024-02-01'),
-      draft: true,
-    },
-  },
-];
-
-vi.mock('astro:content', () => ({
-  getCollection: vi.fn(async (collection) => {
-    if (collection === 'blog') {
-      return globalThis['astroContentMock'];
-    }
-    return [];
-  }),
-}));
+import { describe, it, expect, beforeAll } from 'vitest';
+import { readFileSync } from 'fs';
+import path from 'path';
 
 describe('Blog Index Page', () => {
-  it('filters out draft posts from the blog collection', async () => {
-    // Simulate the logic from index.astro
-    const posts = globalThis['astroContentMock'];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const publishedPosts = posts.filter((p: any) => !p.data.draft);
-    expect(publishedPosts.length).toBe(1);
-    expect(publishedPosts[0].data.title).toBe('Hello World');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(publishedPosts.some((p: any) => p.data.title === 'Draft Post')).toBe(false);
+  let fileContent: string;
+  
+  beforeAll(() => {
+    const filePath = path.resolve(__dirname, '../../src/pages/blog/index.astro');
+    fileContent = readFileSync(filePath, 'utf-8');
+  });
+
+  it('should contain the Blog heading', () => {
+    expect(fileContent).toContain('Blog');
+  });
+
+  it('should contain BlogPostRow component', () => {
+    expect(fileContent).toContain('BlogPostRow');
+  });
+
+  it('should not use getCollection for blog since they are now individual Astro pages', () => {
+    expect(fileContent).not.toContain("getCollection('blog')");
+  });
+
+  it('should define blog posts as static data', () => {
+    expect(fileContent).toContain('// Define blog posts data manually');
   });
 });

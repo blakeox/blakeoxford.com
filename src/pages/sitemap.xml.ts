@@ -1,5 +1,3 @@
-import { getCollection } from 'astro:content';
-
 export async function GET() {
   const site = 'https://blakeoxford.com';
   const staticUrls = [
@@ -22,9 +20,10 @@ export async function GET() {
     { loc: '/projects/sage-intacct-integration-with-square-pos/', changefreq: 'monthly', priority: 0.6 },
   ];
 
-  type BlogPost = { slug: string; data: { draft?: boolean } };
-  const blogPosts = (await getCollection('blog')) as BlogPost[];
-  const publishedBlogPosts = blogPosts.filter((post) => !post.data.draft);
+  // Individual blog post pages (since they're now Astro pages, not MDX)
+  const blogPages = [
+    { loc: '/blog/hello-world/', changefreq: 'monthly', priority: 0.7 },
+  ];
 
   const urls = [
     ...staticUrls.map((u) => ({
@@ -35,10 +34,9 @@ export async function GET() {
       ...u,
       loc: site + u.loc,
     })),
-    ...publishedBlogPosts.map((post) => ({
-      loc: `${site}/blog/${post.slug}`,
-      changefreq: 'monthly',
-      priority: 0.7,
+    ...blogPages.map((u) => ({
+      ...u,
+      loc: site + u.loc,
     })),
   ];
 
