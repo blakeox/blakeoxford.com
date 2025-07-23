@@ -54,7 +54,7 @@
     "@axe-core/playwright": "^4.10.2",
     "@eslint/js": "latest",
     "@lhci/cli": "latest",
-    "@playwright/test": "^1.52.0",
+    "@playwright/test": "^1.54.1",
     "@tailwindcss/container-queries": "latest",
     "@tailwindcss/postcss": "latest",
     "@tailwindcss/typography": "latest",
