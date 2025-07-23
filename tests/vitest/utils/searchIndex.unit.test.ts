@@ -1,223 +1,115 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
 
 // Mock the dependencies
 vi.mock('fs');
-vi.mock('gray-matter');
 vi.mock('path');
 
 const mockFs = vi.mocked(fs);
-const mockMatter = vi.mocked(matter);
 const mockPath = vi.mocked(path);
 
-interface MockFile {
-  data: Record<string, unknown>;
-  content: string;
-}
-
 interface SearchEntry {
-  slug: string;
   title: string;
-  description: string;
+  excerpt: string;
   url: string;
-  tags: string[];
-  content: string;
 }
 
-describe('Search Index Generation Logic', () => {
+describe('Search Index Generation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('File processing utilities', () => {
-    it('should extract frontmatter from markdown files', () => {
-      const mockFileContent = `---
-title: "Test Post"
-description: "Test description"
-pubDate: 2024-01-01
-tags: ["test", "markdown"]
----
+  describe('file parsing', () => {
+    it('should handle basic file content parsing', () => {
+      const mockFileContent = 'Sample file content for testing';
+      mockFs.readFileSync.mockReturnValue(mockFileContent as any);
 
-# Test Post Content
-
-This is the body of the test post.`;
-
-      const mockParsedResult = {
-        data: {
-          title: "Test Post",
-          description: "Test description",
-          pubDate: new Date('2024-01-01'),
-          tags: ["test", "markdown"]
-        },
-        content: "# Test Post Content\n\nThis is the body of the test post.",
-        orig: mockFileContent,
-        language: '',
-        matter: '',
-        stringify: vi.fn()
-      };
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockMatter.mockReturnValue(mockParsedResult as any);
-
-      const result = matter(mockFileContent);
-
-      expect(result.data.title).toBe("Test Post");
-      expect(result.data.description).toBe("Test description");
-      expect(result.data.tags).toEqual(["test", "markdown"]);
-      expect(result.content).toContain("Test Post Content");
+      const content = fs.readFileSync('/test/file.astro', 'utf-8');
+      
+      expect(content).toBe(mockFileContent);
+      expect(mockFs.readFileSync).toHaveBeenCalledWith('/test/file.astro', 'utf-8');
     });
 
-    it('should handle files without frontmatter', () => {
-      const mockFileContent = `# Regular Markdown
+    it('should handle file path operations', () => {
+      mockPath.basename.mockReturnValue('file.astro');
+      mockPath.join.mockReturnValue('/test/content/file.astro');
 
-This is just markdown content without frontmatter.`;
+      const basename = path.basename('/test/content/file.astro');
+      const fullPath = path.join('/test', 'content', 'file.astro');
 
-      const mockParsedResult = {
-        data: {},
-        content: mockFileContent,
-        orig: mockFileContent,
-        language: '',
-        matter: '',
-        stringify: vi.fn()
-      };
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockMatter.mockReturnValue(mockParsedResult as any);
-
-      const result = matter(mockFileContent);
-
-      expect(result.data).toEqual({});
-      expect(result.content).toBe(mockFileContent);
+      expect(basename).toBe('file.astro');
+      expect(fullPath).toBe('/test/content/file.astro');
     });
   });
 
-  describe('Path utilities', () => {
-    it('should correctly resolve relative paths', () => {
-      mockPath.resolve.mockReturnValue('/resolved/path/to/file.md');
-      mockPath.basename.mockReturnValue('file.md');
-      mockPath.extname.mockReturnValue('.md');
+  describe('search entry creation', () => {
+    it('should create valid search entries', () => {
+      const entry: SearchEntry = {
+        title: 'Test Title',
+        excerpt: 'Test excerpt',
+        url: '/test-url'
+      };
 
-      expect(path.resolve('./content/blog/file.md')).toBe('/resolved/path/to/file.md');
-      expect(path.basename('/path/to/file.md')).toBe('file.md');
-      expect(path.extname('file.md')).toBe('.md');
+      expect(entry.title).toBe('Test Title');
+      expect(entry.excerpt).toBe('Test excerpt');
+      expect(entry.url).toBe('/test-url');
     });
 
-    it('should handle directory operations', () => {
-      mockFs.existsSync.mockReturnValue(true);
-      mockFs.statSync.mockReturnValue({ isDirectory: () => true } as fs.Stats);
+    it('should handle empty values', () => {
+      const entry: SearchEntry = {
+        title: '',
+        excerpt: '',
+        url: ''
+      };
 
-      expect(fs.existsSync('/some/path')).toBe(true);
-      expect(fs.statSync('/some/path').isDirectory()).toBe(true);
+      expect(entry.title).toBe('');
+      expect(entry.excerpt).toBe('');
+      expect(entry.url).toBe('');
     });
   });
 
-  describe('Search index structure', () => {
-    it('should create valid search index entries', () => {
-      const createSearchEntry = (file: MockFile, baseUrl: string): SearchEntry => {
-        const slug = path.basename(file.toString(), path.extname(file.toString()));
-        return {
-          slug,
-          title: (file.data?.title as string) || 'Untitled',
-          description: (file.data?.description as string) || '',
-          url: `${baseUrl}/${slug}/`,
-          tags: (file.data?.tags as string[]) || [],
-          content: file.content?.substring(0, 200) || ''
-        };
-      };
+  describe('directory operations', () => {
+    it('should read directory contents', () => {
+      const mockFiles = ['file1.astro', 'file2.astro', 'other.txt'];
+      mockFs.readdirSync.mockReturnValue(mockFiles as any);
 
-      const mockFile: MockFile = {
-        data: {
-          title: "Test Blog Post",
-          description: "A test blog post",
-          tags: ["test", "blog"]
-        },
-        content: "This is the content of the blog post that should be truncated if it's too long for the search index."
-      };
+      const files = fs.readdirSync('/test/dir');
+      const astroFiles = files.filter((f: string) => f.endsWith('.astro'));
 
-      mockPath.basename.mockReturnValue('test-post');
-      mockPath.extname.mockReturnValue('.md');
+      expect(files).toEqual(mockFiles);
+      expect(astroFiles).toEqual(['file1.astro', 'file2.astro']);
+    });
+  });
 
-      const entry = createSearchEntry(mockFile, '/blog');
-
-      expect(entry).toEqual({
-        slug: 'test-post',
-        title: 'Test Blog Post',
-        description: 'A test blog post',
-        url: '/blog/test-post/',
-        tags: ['test', 'blog'],
-        content: 'This is the content of the blog post that should be truncated if it\'s too long for the search index.'
+  describe('index building', () => {
+    it('should build search index from files', () => {
+      const mockFiles = ['post1.astro', 'post2.astro'];
+      mockFs.readdirSync.mockReturnValue(mockFiles as any);
+      mockFs.readFileSync.mockReturnValue('Sample content' as any);
+      mockPath.basename.mockImplementation((p: string, ext?: string) => {
+        const name = p.split('/').pop() || '';
+        return ext ? name.replace(ext, '') : name;
       });
-    });
+      mockPath.join.mockImplementation((...args: string[]) => args.join('/'));
 
-    it('should handle missing frontmatter gracefully', () => {
-      const createSearchEntry = (file: MockFile, baseUrl: string): SearchEntry => {
-        const slug = path.basename(file.toString(), path.extname(file.toString()));
-        return {
-          slug,
-          title: (file.data?.title as string) || 'Untitled',
-          description: (file.data?.description as string) || '',
-          url: `${baseUrl}/${slug}/`,
-          tags: (file.data?.tags as string[]) || [],
-          content: file.content?.substring(0, 200) || ''
-        };
+      // Mock index building logic
+      const buildIndexMock = (dir: string, baseUrl: string) => {
+        const files = fs.readdirSync(dir).filter((f: string) => f.endsWith('.astro'));
+        return files.map((file: string) => ({
+          title: `Title for ${path.basename(file, '.astro')}`,
+          excerpt: 'Sample excerpt',
+          url: `${baseUrl}/${path.basename(file, '.astro')}`
+        }));
       };
 
-      const mockFile: MockFile = {
-        data: {},
-        content: "Content without frontmatter"
-      };
+      const index = buildIndexMock('/content/blog', '/blog');
 
-      mockPath.basename.mockReturnValue('no-frontmatter');
-      mockPath.extname.mockReturnValue('.md');
-
-      const entry = createSearchEntry(mockFile, '/blog');
-
-      expect(entry).toEqual({
-        slug: 'no-frontmatter',
-        title: 'Untitled',
-        description: '',
-        url: '/blog/no-frontmatter/',
-        tags: [],
-        content: 'Content without frontmatter'
-      });
-    });
-  });
-
-  describe('Content filtering', () => {
-    it('should filter out draft content', () => {
-      const filterPublished = (items: MockFile[]) => 
-        items.filter(item => !item.data?.draft);
-
-      const mockItems: MockFile[] = [
-        { data: { title: 'Published Post', draft: false }, content: '' },
-        { data: { title: 'Draft Post', draft: true }, content: '' },
-        { data: { title: 'Also Published' }, content: '' }, // No draft field should be published
-      ];
-
-      const published = filterPublished(mockItems);
-
-      expect(published).toHaveLength(2);
-      expect(published[0].data.title).toBe('Published Post');
-      expect(published[1].data.title).toBe('Also Published');
-    });
-
-    it('should sort by publication date', () => {
-      const sortByDate = (items: MockFile[]) => 
-        items.sort((a, b) => new Date((b.data?.pubDate as string) || 0).getTime() - new Date((a.data?.pubDate as string) || 0).getTime());
-
-      const mockItems: MockFile[] = [
-        { data: { title: 'Old Post', pubDate: '2023-01-01' }, content: '' },
-        { data: { title: 'New Post', pubDate: '2024-01-01' }, content: '' },
-        { data: { title: 'Middle Post', pubDate: '2023-06-01' }, content: '' },
-      ];
-
-      const sorted = sortByDate([...mockItems]); // Create copy to avoid mutation
-
-      expect(sorted[0].data.title).toBe('New Post');
-      expect(sorted[1].data.title).toBe('Middle Post');
-      expect(sorted[2].data.title).toBe('Old Post');
+      expect(index).toHaveLength(2);
+      expect(index[0].title).toBe('Title for post1');
+      expect(index[0].url).toBe('/blog/post1');
+      expect(index[1].title).toBe('Title for post2');
+      expect(index[1].url).toBe('/blog/post2');
     });
   });
 });
