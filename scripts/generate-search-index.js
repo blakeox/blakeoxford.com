@@ -1,64 +1,164 @@
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function getFiles(dir) {
-  return fs.readdirSync(dir).filter(f => f.endsWith('.mdx'));
-}
-
-function parseMDXFile(filePath, baseUrl, contentType) {
-  const raw = fs.readFileSync(filePath, 'utf-8');
-  const { data } = matter(raw);
-  const slug = path.basename(filePath, '.mdx').toLowerCase(); // Convert to lowercase to match Astro behavior
-  
-  if (contentType === 'blog') {
-    return {
-      slug: slug,
-      title: data.title || '',
-      description: data.description || '',
-      publishedAt: data.pubDate?.toISOString ? data.pubDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      tags: data.tags || [],
-      author: data.author,
-      featured: data.featured || false,
-      draft: data.draft || false,
-      excerpt: data.description || ''
-    };
-  } else {
-    return {
-      slug: slug,
-      title: data.title || '',
-      description: data.description || '',
-      publishedAt: data.date?.toISOString ? data.date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      tags: data.tags || [],
-      featured: data.featured || false,
-      draft: data.draft || false,
-      technologies: data.technologies || [],
-      github: data.github,
-      demo: data.link || data.demo
-    };
+// Static projects data (matching the data in src/pages/projects/index.astro)
+const projects = [
+  {
+    slug: 'google-workspace-migration',
+    data: {
+      title: 'Google Workspace → Microsoft 365 Migration & Endpoint Management',
+      description: 'Led the transition from Google Workspace to Microsoft 365 and deployed modern device management via Intune/Endpoint Manager during early 2020, ensuring business continuity through COVID-19 disruptions.',
+      date: new Date('2020-01-15T00:00:00.000Z'),
+      tags: ['Microsoft 365', 'Google Workspace', 'Endpoint Manager', 'Intune', 'MDM', 'COVID-19 Response'],
+      image: '/assets/projects/google-to-microsoft.png',
+      draft: false
+    }
+  },
+  {
+    slug: 'Microsoft-Fabric',
+    data: {
+      title: 'Microsoft Fabric – Operational Intelligence & Workflow Automation',
+      description: 'Built the operational backbone for a 200-person healthcare organization—uniting workflows, performance tracking, and automation across 10+ departments using Microsoft Fabric and Power Platform.',
+      date: new Date('2024-02-20T00:00:00.000Z'),
+      tags: ['Microsoft Fabric', 'Power BI', 'Power Platform', 'Process Automation', 'EOS', 'Data Engineering', 'Leadership'],
+      image: '/assets/projects/operational-and-workflow-automation.png',
+      draft: false
+    }
+  },
+  {
+    slug: 'LLM-note-coaching',
+    data: {
+      title: 'OpenAI-Powered Documentation Quality Feedback System',
+      description: 'Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.',
+      date: new Date('2023-11-01T00:00:00.000Z'),
+      tags: ['OpenAI', 'Natural Language Processing', 'Healthcare IT', 'Compliance', 'Blue Cross Blue Shield', 'Documentation Quality', 'Python'],
+      image: '/assets/projects/openai-automated-audit.png',
+      draft: false
+    }
+  },
+  {
+    slug: 'sage-intacct-integration-with-square-pos',
+    data: {
+      title: 'Sage Intacct Integration with Square POS',
+      description: 'Developed a comprehensive integration solution between Sage Intacct accounting software and Square POS system to automate financial data synchronization and streamline business operations.',
+      date: new Date('2024-03-10T00:00:00.000Z'),
+      tags: ['API Integration', 'Sage Intacct', 'Square POS', 'Financial Systems', 'Automation'],
+      image: '/assets/projects/square-sage-integration.png',
+      draft: false
+    }
+  },
+  {
+    slug: 'advancedmd-implementation',
+    data: {
+      title: 'AdvancedMD Implementation & Evolution',
+      description: 'Led the selection, implementation, and continuous enhancement of AdvancedMD, transforming paper workflows into a robust, data-driven EHR ecosystem with custom SQL tools.',
+      date: new Date('2017-12-01T00:00:00.000Z'),
+      tags: ['EHR', 'Digital Transformation', 'Automation', 'Healthcare IT', 'SQL'],
+      image: '/assets/projects/advancedMD-project.png',
+      draft: false
+    }
+  },
+  {
+    slug: 'ferment-app',
+    data: {
+      title: 'Ferment App – Mobile Recipe Management',
+      description: 'A native iOS application for managing fermentation recipes, tracking progress, and automating task reminders — built with SwiftUI and Firebase.',
+      date: new Date('2024-01-15T00:00:00.000Z'),
+      tags: ['Swift', 'SwiftUI', 'Firebase', 'SwiftData', 'Mobile Development', 'Fermentation'],
+      image: '/assets/projects/ferment-app-design.png',
+      draft: false
+    }
+  },
+  {
+    slug: 'bank-projections-modeling',
+    data: {
+      title: 'Bank Projections and Financial Modeling',
+      description: 'Developed detailed financial models and projections to secure multiple loans—including $2M, $10M, PPP, and disaster relief—supporting facility expansion and operational resilience.',
+      date: new Date('2020-01-01T00:00:00.000Z'),
+      tags: ['Financial Modeling', 'Bank Projections', 'Commercial Real Estate', 'Loan', 'Financial Analysis'],
+      image: '/assets/projects/bank-projections.png',
+      draft: false
+    }
+  },
+  {
+    slug: 'adp-workforcenow',
+    data: {
+      title: 'ADP Workforce Now Implementation',
+      description: 'Implemented ADP Workforce Now to unify HR, recruiting, and finance operations through automation and real-time reporting.',
+      date: new Date('2021-01-01T00:00:00.000Z'),
+      tags: ['HCM', 'Recruiting', 'ADP Workforce Now', 'Sage Intacct', 'PowerBI'],
+      image: '/assets/projects/adp-automation.png',
+      draft: false
+    }
   }
+];
+
+// Static blog data (matching the data in src/pages/blog/index.astro)
+const blogPosts = [
+  {
+    slug: 'hello-world',
+    data: {
+      title: 'Hello World',
+      description: 'Welcome to my blog! This is where I\'ll share insights about systems architecture, digital transformation, and the latest in technology.',
+      pubDate: new Date('2024-01-01T00:00:00.000Z'),
+      tags: ['Welcome', 'Introduction'],
+      draft: false
+    }
+  }
+];
+
+function formatProjectsForSearch(projects) {
+  return projects
+    .filter(p => !p.data.draft)
+    .map(project => ({
+      slug: project.slug,
+      title: project.data.title,
+      description: project.data.description,
+      publishedAt: project.data.date?.toISOString ? project.data.date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      tags: project.data.tags || [],
+      featured: false,
+      draft: project.data.draft || false,
+      technologies: project.data.tags || [],
+      image: project.data.image
+    }));
 }
 
-function buildIndex(contentDir, baseUrl, contentType) {
-  const dir = path.join(__dirname, '..', contentDir);
-  return getFiles(dir).map(f => parseMDXFile(path.join(dir, f), baseUrl, contentType));
+function formatBlogForSearch(blogPosts) {
+  return blogPosts
+    .filter(p => !p.data.draft)
+    .map(post => ({
+      slug: post.slug,
+      title: post.data.title,
+      description: post.data.description,
+      publishedAt: post.data.pubDate?.toISOString ? post.data.pubDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      tags: post.data.tags || [],
+      author: 'Blake Oxford',
+      featured: post.data.featured || false,
+      draft: post.data.draft || false,
+      excerpt: post.data.description || ''
+    }));
 }
 
 function writeJSON(outPath, data) {
+  // Ensure the directory exists
+  const dir = path.dirname(outPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
   fs.writeFileSync(outPath, JSON.stringify(data, null, 2));
 }
 
-const blogIndex = buildIndex('src/content/blog', '/blog', 'blog');
-const projectsIndex = buildIndex('src/content/projects', '/projects', 'projects');
+const blogIndex = formatBlogForSearch(blogPosts);
+const projectsIndex = formatProjectsForSearch(projects);
 
-writeJSON(path.join(__dirname, '../public/api/blog.json'), blogIndex);
-writeJSON(path.join(__dirname, '../public/api/projects.json'), projectsIndex);
+writeJSON(path.join(__dirname, '../public/search/blog.json'), blogIndex);
+writeJSON(path.join(__dirname, '../public/search/projects.json'), projectsIndex);
 
 console.log('Search indexes generated: blog.json, projects.json');
 
 // Export functions for testing
-export { parseMDXFile, buildIndex, getFiles };
+export { formatProjectsForSearch, formatBlogForSearch };

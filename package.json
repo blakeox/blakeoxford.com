@@ -41,7 +41,6 @@
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
     "astro": "latest",
-    "gray-matter": "^4.0.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "resend": "^4.5.1",
