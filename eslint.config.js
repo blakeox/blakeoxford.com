@@ -1,4 +1,5 @@
-import js from '@eslint/js';
+// ESLint flat config for modern setup
+import eslint from 'eslint';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
 import astro from 'eslint-plugin-astro';
@@ -6,7 +7,20 @@ import * as mdx from 'eslint-plugin-mdx';
 import astroParser from 'astro-eslint-parser';
 
 export default [
-  js.configs.recommended,
+  // Base ESLint recommended rules
+  {
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
+    rules: {
+      // Essential rules from eslint:recommended
+      'no-unused-vars': 'warn',
+      'no-undef': 'error',
+      'semi': ['error', 'always'],
+      'quotes': ['error', 'single'],
+    },
+  },
   // Browser environment files (client-side JavaScript)
   {
     files: [

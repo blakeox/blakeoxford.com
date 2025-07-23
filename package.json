@@ -76,14 +76,12 @@
     "eslint": "latest",
     "eslint-plugin-astro": "latest",
     "eslint-plugin-mdx": "latest",
-    "imagemin": "^9.0.1",
-    "imagemin-mozjpeg": "^10.0.0",
-    "imagemin-pngquant": "^10.0.0",
+
     "jsdom": "^26.1.0",
     "lighthouse": "^12.8.0",
     "postcss": "latest",
     "postcss-html": "latest",
-    "postcss-scss": "latest",
+
     "puppeteer": "^24.12.1",
     "serve": "^14.2.0",
     "sharp": "^0.34.2",
@@ -91,7 +89,7 @@
     "stylelint-config-recess-order": "latest",
     "stylelint-config-recommended": "latest",
     "stylelint-config-standard": "latest",
-    "stylelint-config-standard-scss": "latest",
+
     "stylelint-config-tailwindcss": "latest",
     "stylelint-order": "latest",
     "tailwindcss": "latest",
