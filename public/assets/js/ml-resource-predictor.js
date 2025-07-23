@@ -237,10 +237,9 @@ class MLResourcePredictor {
         '/api/blog.json',
         '/assets/images/blog-hero-640.avif'
       ],
-      'about': [
-        '/assets/images/profile-640.avif',
-        '/assets/Resume.pdf'
-      ]
+              'about': [
+          '/assets/images/profile-640.avif'
+        ]
     };
 
     const resources = resourceMap[pageType] || [];
