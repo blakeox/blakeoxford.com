@@ -84,7 +84,7 @@
     "postcss": "latest",
     "postcss-html": "latest",
     "postcss-scss": "latest",
-    "puppeteer": "^24.12.1",
+    "puppeteer": "^24.15.0",
     "serve": "^14.2.0",
     "sharp": "^0.34.2",
     "stylelint": "latest",
