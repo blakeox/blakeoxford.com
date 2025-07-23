@@ -88,7 +88,7 @@ describe('generate-search-index helpers', () => {
       expect(fs.readFileSync).toHaveBeenCalledWith('/base/path/file.astro', 'utf-8');
       expect(result).toEqual({
         title: 'Sample Title',
-        excerpt: 'Sample excerpt from content',
+        excerpt: 'Sample content...',
         url: '/blog/file'
       });
     });
