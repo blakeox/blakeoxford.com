@@ -16,16 +16,14 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
       :root{--color-primary:#065f46;--color-accent:#059669;--color-accent-light:#10b981;--color-accent-dark:#047857;--glass-surface-bg:rgba(255,255,255,0.85);--glass-surface-bg-dark:rgba(17,24,39,0.85);--glass-border:rgba(255,255,255,0.2);--glass-border-dark:rgba(75,85,99,0.2);--z-50:50;--ease-emphasized:cubic-bezier(0.4,0,0.2,1)}html{scroll-behavior:smooth}body{margin:0;font-family:'Open Sans',system-ui,-apple-system,sans-serif;line-height:1.6;transition:background-color 0.3s ease,color 0.3s ease}.dark{color-scheme:dark}.skip-link{position:absolute;top:-40px;left:6px;background:var(--color-primary);color:white;padding:8px;text-decoration:none;z-index:1000;border-radius:4px;transition:top 0.3s ease}.skip-link:focus{top:6px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.navbar-container{background:linear-gradient(120deg,var(--glass-surface-bg) 80%,var(--color-accent-light) 100%);backdrop-filter:blur(18px) saturate(1.2);border-bottom:1.5px solid var(--glass-border);box-shadow:0 4px 32px 0 rgba(0,0,0,0.08);position:sticky;top:0;z-index:var(--z-50);transition:all 0.3s var(--ease-emphasized)}.dark .navbar-container{background:linear-gradient(120deg,var(--glass-surface-bg-dark) 80%,var(--color-accent-dark) 100%);border-bottom:1.5px solid var(--glass-border-dark)}.max-w-3xl{max-width:48rem}.mx-auto{margin-left:auto;margin-right:auto}.p-4{padding:1rem}.transition-colors{transition-property:color,background-color,border-color;transition-duration:0.3s;transition-timing-function:cubic-bezier(0.4,0,0.2,1)}.bg-white{background-color:rgb(255 255 255)}.text-gray-900{color:rgb(17 24 39)}.dark .dark\:bg-gray-900{background-color:rgb(17 24 39)}.dark .dark\:text-gray-100{color:rgb(243 244 246)}.nav-menu{opacity:0;transition:opacity 0.3s ease}.nav-menu.loaded{opacity:1}
     </style>
 
-    <!-- Resource Preloading for key assets -->
-    <!-- <link rel="preload" href="/assets/js/critical.min.js" as="script" /> -->
+    <!-- Resource Preloading for critical assets -->
     <link rel="preload" href="/assets/js/lazy-loader.min.js" as="script" />
     <link rel="preload" href="/assets/images/Blake-O-scaled.jpg" as="image" type="image/jpeg" />
-
+    
     <!-- DNS Prefetch for external resources -->
     <link rel="dns-prefetch" href="//fonts.googleapis.com" />
     <link rel="dns-prefetch" href="//fonts.gstatic.com" />
     <link rel="dns-prefetch" href="//www.googletagmanager.com" />
-    <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
 
     <!-- Prevent flash of unstyled content - Must be as early as possible in head -->
     <script is:inline>
@@ -59,25 +57,48 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
     <meta name="description" content={description} />
     <!-- SEO Keywords -->
     {keywords && <meta name="keywords" content={keywords} />}
+    <meta name="author" content="Blake Oxford" />
+    <meta name="creator" content="Blake Oxford" />
+    <meta name="publisher" content="Blake Oxford" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href={url} />
-    <!-- Open Graph & Twitter -->
+    
+    <!-- Enhanced Open Graph & Twitter -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content="/assets/images/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Blake Oxford Portfolio Screenshot" />
     <meta property="og:url" content={url} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Blake Oxford Portfolio" />
+    <meta property="og:locale" content="en_US" />
+    
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="/assets/images/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Blake Oxford Portfolio Screenshot" />
+    <meta name="twitter:creator" content="@blakeoxford" />
+    <meta name="twitter:site" content="@blakeoxford" />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="application-name" content="Blake Oxford Portfolio" />
     <!-- Apple mobile web app support -->
     <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="white" />
-    <!-- Manifest -->
+    <meta name="apple-mobile-web-app-title" content="Blake Oxford" />
+    
+    <!-- Theme colors -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#2563eb" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e40af" />
+    
+    <!-- Manifest and Icons -->
     <link rel="manifest" href="/manifest.webmanifest" />
     <!-- Preconnect & Preload Google Fonts with optimized loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -87,30 +108,11 @@ const { title = 'Your Site', description = 'A modern Astro site', url = 'https:/
     <noscript>
       <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
     </noscript>
-    <!-- Custom CSS (if needed) -->
-    <!-- <link rel="stylesheet" href="/assets/css/main.css" /> -->
-    <!-- Optimized JavaScript Bundles -->
-    <!-- <script src="/assets/js/critical.min.js" defer></script> -->
-    <!-- Load standalone SearchOverlay (production-ready) -->
-    <!-- <script src="/assets/js/search-overlay-standalone.min.js" defer></script> -->
+    <!-- Essential JavaScript Bundles (production-optimized) -->
     <script src="/assets/js/lazy-loader.min.js" defer></script>
-    
-    <!-- Debug script for search overlay testing (development only) -->
-    <!-- <script src="/search-debug-comprehensive.js" defer></script> -->
-
-    <!-- Load advanced performance monitoring and resource preloading -->
     <script src="/assets/js/performance-monitor.js" defer></script>
     <script src="/assets/js/resource-preloader.js" defer></script>
-    <script src="/assets/js/ml-resource-predictor.js" defer></script>
     <script src="/assets/js/pwa-enhancer.js" defer></script>
-    
-    <!-- Debug script for navbar testing -->
-    <script src="/debug-navbar.js" defer></script>
-
-    <!-- Load cutting-edge optimization systems -->
-    <script src="/assets/js/ab-testing-framework.js" defer></script>
-    <script src="/assets/js/user-journey-optimizer.js" defer></script>
-    <script src="/assets/js/graphql-optimizer.js" defer></script>
 
     <!-- Register Service Worker for offline functionality -->
     <script is:inline>
