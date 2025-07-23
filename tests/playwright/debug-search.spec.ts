@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { test, expect } from '@playwright/test';
 
 test('debug search overlay manually', async ({ page }) => {

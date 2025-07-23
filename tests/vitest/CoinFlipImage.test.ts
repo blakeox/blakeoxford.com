@@ -39,8 +39,8 @@ describe('CoinFlipImage.astro file', () => {
   });
 
   it('should attach keyboard and click event listeners in script', () => {
-    expect(content).toContain("root.addEventListener('keydown'");
-    expect(content).toContain("root.addEventListener('click'");
-    expect(content).toContain("root.addEventListener('blur'");
+    expect(content).toContain('root.addEventListener(\'keydown\'');
+    expect(content).toContain('root.addEventListener(\'click\'');
+    expect(content).toContain('root.addEventListener(\'blur\'');
   });
 });

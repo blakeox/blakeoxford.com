@@ -18,6 +18,6 @@ describe('projects/index.astro', () => {
   });
 
   it('should not use getCollection for projects since they are now individual Astro pages', () => {
-    expect(fileContent).not.toContain("getCollection('projects')");
+    expect(fileContent).not.toContain('getCollection(\'projects\')');
   });
 });

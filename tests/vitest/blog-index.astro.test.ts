@@ -19,7 +19,7 @@ describe('Blog Index Page', () => {
   });
 
   it('should not use getCollection for blog since they are now individual Astro pages', () => {
-    expect(fileContent).not.toContain("getCollection('blog')");
+    expect(fileContent).not.toContain('getCollection(\'blog\')');
   });
 
   it('should define blog posts as static data', () => {

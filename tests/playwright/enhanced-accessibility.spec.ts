@@ -127,7 +127,7 @@ test.describe('Enhanced Accessibility Testing', () => {
       }
       
       // Log debug info for analysis
-      console.log(`\nComprehensive Navigation Debug:`);
+      console.log('\nComprehensive Navigation Debug:');
       console.log(`Browser: ${browserName}, Viewport: ${viewport?.width}x${viewport?.height}`);
       console.log(`Found ${focusableElements.length} focusable elements:`);
       focusableElements.forEach((el, i) => console.log(`  ${i + 1}. ${el.element} (${el.role})`));
@@ -557,7 +557,7 @@ test.describe('Enhanced Accessibility Testing', () => {
                 className: el.className
               }));
               
-              console.warn(`Small touch target detected:`, elementInfo, boundingBox);
+              console.warn('Small touch target detected:', elementInfo, boundingBox);
             }
           }
         }

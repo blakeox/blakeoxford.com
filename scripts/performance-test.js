@@ -258,13 +258,13 @@ class PerformanceTestRunner {
   }
 
   generateMarkdownSummary(summary) {
-    let markdown = `# Performance Test Report\n\n`;
+    let markdown = '# Performance Test Report\n\n';
     markdown += `**Generated:** ${summary.timestamp}\n`;
     markdown += `**Pages Tested:** ${summary.totalPages}\n`;
     markdown += `**Passed:** ${summary.passed}\n`;
     markdown += `**Failed:** ${summary.failed}\n\n`;
 
-    markdown += `## Results by Page\n\n`;
+    markdown += '## Results by Page\n\n';
 
     summary.results.forEach(result => {
       const status = result.status === 'passed' ? '✅' : result.status === 'failed' ? '❌' : '⚠️';
@@ -275,24 +275,24 @@ class PerformanceTestRunner {
         return;
       }
 
-      markdown += `| Category | Score |\n`;
-      markdown += `|----------|-------|\n`;
+      markdown += '| Category | Score |\n';
+      markdown += '|----------|-------|\n';
       Object.entries(result.scores).forEach(([category, score]) => {
         markdown += `| ${category} | ${score.toFixed(1)} |\n`;
       });
-      markdown += `\n`;
+      markdown += '\n';
 
-      markdown += `**Core Web Vitals:**\n`;
+      markdown += '**Core Web Vitals:**\n';
       markdown += `- LCP: ${result.coreWebVitals.LCP?.toFixed(1) || 'N/A'}ms\n`;
       markdown += `- FID: ${result.coreWebVitals.FID?.toFixed(1) || 'N/A'}ms\n`;
       markdown += `- CLS: ${result.coreWebVitals.CLS?.toFixed(3) || 'N/A'}\n\n`;
 
       if (result.budgetFailures?.length > 0) {
-        markdown += `**Budget Failures:**\n`;
+        markdown += '**Budget Failures:**\n';
         result.budgetFailures.forEach(failure => {
           markdown += `- ${failure}\n`;
         });
-        markdown += `\n`;
+        markdown += '\n';
       }
     });
 

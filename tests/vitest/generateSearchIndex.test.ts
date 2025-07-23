@@ -73,10 +73,10 @@ describe('generate-search-index helpers', () => {
     it('should read file and construct URL', () => {      
       // Define a mock parseFile function that matches the behavior we're testing
       const parseFileMock = (filePath: string, baseUrl: string) => {
-        const raw = fs.readFileSync(filePath, 'utf-8');
+        const content = fs.readFileSync(filePath, 'utf-8');
         return {
           title: 'Sample Title',
-          excerpt: 'Sample excerpt from content',
+          excerpt: content.substring(0, 50) + '...', // Use content for excerpt
           url: `${baseUrl}/${path.basename(filePath, '.astro')}`
         };
       };

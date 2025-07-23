@@ -17,8 +17,8 @@ describe('ProjectCard.astro file', () => {
   });
 
   it('should include image with default src or dynamic src', () => {
-    expect(content).toContain("src={data.image || '/assets/images/default-project.png'}");
-    expect(content).toContain("'/assets/images/default-project.png'");
+    expect(content).toContain('src={data.image || \'/assets/images/default-project.png\'}');
+    expect(content).toContain('\'/assets/images/default-project.png\'');
   });
 
   it('should include project title link', () => {

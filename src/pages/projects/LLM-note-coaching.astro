@@ -5,33 +5,33 @@ import AchievementCard from '../../components/AchievementCard.astro';
 import MetricsTable from '../../components/MetricsTable.astro';
 import ProjectTags from '../../components/ProjectTags.astro';
 
-const title = "OpenAI-Powered Documentation Quality Feedback System";
-const description = "Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.";
+const title = 'OpenAI-Powered Documentation Quality Feedback System';
+const description = 'Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.';
 const date = new Date('2023-11-01T00:00:00.000Z');
-const tags = ["OpenAI", "Natural Language Processing", "Healthcare IT", "Compliance", "Blue Cross Blue Shield", "Documentation Quality", "Python"];
-const image = "/assets/images/default-project.png";
-const canonicalUrl = "https://blakeoxford.com/projects/LLM-note-coaching/";
+const tags = ['OpenAI', 'Natural Language Processing', 'Healthcare IT', 'Compliance', 'Blue Cross Blue Shield', 'Documentation Quality', 'Python'];
+const image = '/assets/images/default-project.png';
+const canonicalUrl = 'https://blakeoxford.com/projects/LLM-note-coaching/';
 
 const metrics = [
   {
-    metric: "Audit Exceptions",
-    result: "50% reduction",
-    timeline: "Post-implementation"
+    metric: 'Audit Exceptions',
+    result: '50% reduction',
+    timeline: 'Post-implementation'
   },
   {
-    metric: "Compliance Review Time",
-    result: "20+ hours/week saved",
-    timeline: "Automated processing"
+    metric: 'Compliance Review Time',
+    result: '20+ hours/week saved',
+    timeline: 'Automated processing'
   },
   {
-    metric: "Teams Message Engagement",
-    result: "+40% after tone adjustment",
-    timeline: "Balanced feedback approach"
+    metric: 'Teams Message Engagement',
+    result: '+40% after tone adjustment',
+    timeline: 'Balanced feedback approach'
   },
   {
-    metric: "Revision Turnaround",
-    result: "-30% improvement",
-    timeline: "Strengths-focused feedback"
+    metric: 'Revision Turnaround',
+    result: '-30% improvement',
+    timeline: 'Strengths-focused feedback'
   }
 ];
 ---
@@ -103,35 +103,35 @@ const metrics = [
             <AchievementCard 
               title="Secure ETL Pipeline"
               achievements={[
-                "Python + SQL Server extracted and de-identified notes (redacting names, dates, identifiers) under HIPAA guardrails."
+                'Python + SQL Server extracted and de-identified notes (redacting names, dates, identifiers) under HIPAA guardrails.'
               ]}
             />
 
             <AchievementCard 
               title="Prompt Engineering for BCBS"
               achievements={[
-                "Rapid sprints with auditors and BCBAs to craft a GPT-4 prompt that evaluates medical necessity, CPT justification, narrative clarity, and treatment rationale."
+                'Rapid sprints with auditors and BCBAs to craft a GPT-4 prompt that evaluates medical necessity, CPT justification, narrative clarity, and treatment rationale.'
               ]}
             />
 
             <AchievementCard 
               title="Role-Based Feedback"
               achievements={[
-                "Technicians received guidance on structure, intervention details, and credentials; providers got recommendations on clinical rationale, goal alignment, and regulatory consistency."
+                'Technicians received guidance on structure, intervention details, and credentials; providers got recommendations on clinical rationale, goal alignment, and regulatory consistency.'
               ]}
             />
 
             <AchievementCard 
               title="Power BI Dashboard"
               achievements={[
-                "Visualized audit-readiness metrics by author, location, and time—enabling targeted coaching."
+                'Visualized audit-readiness metrics by author, location, and time—enabling targeted coaching.'
               ]}
             />
 
             <AchievementCard 
               title="Azure Automation"
               achievements={[
-                "Nightly batch processing via Azure Functions, with Teams notifications through Microsoft Graph; alerts triggered when systemic risks emerged."
+                'Nightly batch processing via Azure Functions, with Teams notifications through Microsoft Graph; alerts triggered when systemic risks emerged.'
               ]}
             />
           </div>

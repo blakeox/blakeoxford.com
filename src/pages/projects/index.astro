@@ -94,9 +94,9 @@ const projects = [
   }
 ];
 
-const title = "Blake Oxford's Projects";
-const description = "Explore my portfolio of systems architecture, digital transformation, and development projects.";
-const canonicalUrl = "https://blakeoxford.com/projects/";
+const title = 'Blake Oxford\'s Projects';
+const description = 'Explore my portfolio of systems architecture, digital transformation, and development projects.';
+const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
@@ -294,7 +294,7 @@ const canonicalUrl = "https://blakeoxford.com/projects/";
           .map((project, idx) => (
             <ProjectRow
               project={project}
-              featured={["advancedmd-implementation","bank-projections-modeling","Microsoft-Fabric"].includes(project.slug)}
+              featured={['advancedmd-implementation','bank-projections-modeling','Microsoft-Fabric'].includes(project.slug)}
               align={idx % 2 === 0 ? 'left' : 'right'}
             />
           ))}

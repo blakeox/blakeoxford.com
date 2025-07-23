@@ -42,10 +42,10 @@ Object.defineProperty(window, 'localStorage', {
 
 // --- Mock requestAnimationFrame & cancelAnimationFrame (animation timing) ---
 window.requestAnimationFrame = ((callback: FrameRequestCallback) =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   setTimeout(() => callback(Date.now()), 0)) as any;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 window.cancelAnimationFrame = ((id: number) => clearTimeout(id)) as any;
 
 // --- Optional: Mock IntersectionObserver (for lazy loading, scroll tracking) ---

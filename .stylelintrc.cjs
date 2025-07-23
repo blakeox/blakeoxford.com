@@ -31,8 +31,8 @@ module.exports = {
       {
         // Disallow hex and px/rem/em values for non-custom properties only
         '/^((?!^--).)*$/': [
-          "#[0-9a-fA-F]{3,6}",
-          "\\b\\d+(px|rem|em)\\b"
+          '#[0-9a-fA-F]{3,6}',
+          '\\b\\d+(px|rem|em)\\b'
         ]
       }
     ],

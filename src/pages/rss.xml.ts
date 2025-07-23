@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 
@@ -26,6 +26,6 @@ export async function GET(context: APIContext) {
       description: post.data.description,
       link: `/blog/${post.slug}/`,
     })),
-    customData: `<language>en-us</language>`,
+    customData: '<language>en-us</language>',
   });
 }

@@ -23,96 +23,96 @@ interface TimelineItem {
   color: string;
 }
 
-const title = "About Blake Oxford";
-const description = "Learn about Blake Oxford, Systems Architect and Workflow Strategist. Explore key skills, career highlights, and collaboration opportunities.";
-const canonicalUrl = "https://blakeoxford.com/about/";
+const title = 'About Blake Oxford';
+const description = 'Learn about Blake Oxford, Systems Architect and Workflow Strategist. Explore key skills, career highlights, and collaboration opportunities.';
+const canonicalUrl = 'https://blakeoxford.com/about/';
 
 // Social Media Links
 const socialLinks: SocialLink[] = [
-  { name: "LinkedIn", url: "https://www.linkedin.com/in/blakeoxford/", icon: "linkedin" },
-  { name: "GitHub", url: "https://github.com/blakeoxford", icon: "github" },
-  { name: "Microsoft Learn", url: "https://learn.microsoft.com/users/BlakeOxford-1002", icon: "microsoft-learn" }
+  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/blakeoxford/', icon: 'linkedin' },
+  { name: 'GitHub', url: 'https://github.com/blakeoxford', icon: 'github' },
+  { name: 'Microsoft Learn', url: 'https://learn.microsoft.com/users/BlakeOxford-1002', icon: 'microsoft-learn' }
 ];
 
 // Structured data for Person
 const personSchema = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Blake Oxford",
-  "url": "https://blakeoxford.com",
-  "jobTitle": "Systems Architect",
-  "sameAs": socialLinks.map(link => link.url),
-  "description": description,
-  "image": "/assets/images/Blake-O-scaled.jpg"
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  'name': 'Blake Oxford',
+  'url': 'https://blakeoxford.com',
+  'jobTitle': 'Systems Architect',
+  'sameAs': socialLinks.map(link => link.url),
+  'description': description,
+  'image': '/assets/images/Blake-O-scaled.jpg'
 };
 
 // Testimonials
 const testimonials: Testimonial[] = [
   {
-    name: "Michael Johnson",
-    title: "CEO, InnovaTech",
-    image: "/assets/images/placeholder-avatar-1.jpg",
-    quote: "Blake's strategic vision transformed our business operations. His implementation of AI-driven workflows resulted in 30% cost reduction while increasing productivity."
+    name: 'Michael Johnson',
+    title: 'CEO, InnovaTech',
+    image: '/assets/images/placeholder-avatar-1.jpg',
+    quote: 'Blake\'s strategic vision transformed our business operations. His implementation of AI-driven workflows resulted in 30% cost reduction while increasing productivity.'
   },
   {
-    name: "Sarah Williams",
-    title: "CTO, HealthTech Solutions",
-    image: "/assets/images/placeholder-avatar-2.jpg",
-    quote: "Working with Blake on our cloud migration was seamless. His technical knowledge combined with business acumen is rare and incredibly valuable."
+    name: 'Sarah Williams',
+    title: 'CTO, HealthTech Solutions',
+    image: '/assets/images/placeholder-avatar-2.jpg',
+    quote: 'Working with Blake on our cloud migration was seamless. His technical knowledge combined with business acumen is rare and incredibly valuable.'
   },
   {
-    name: "David Chen",
-    title: "Director of Finance, Global Systems",
-    image: "/assets/images/placeholder-avatar-3.jpg",
-    quote: "Blake's financial modeling expertise helped us make critical decisions with confidence. His Power BI dashboards are now essential tools for our executive team."
+    name: 'David Chen',
+    title: 'Director of Finance, Global Systems',
+    image: '/assets/images/placeholder-avatar-3.jpg',
+    quote: 'Blake\'s financial modeling expertise helped us make critical decisions with confidence. His Power BI dashboards are now essential tools for our executive team.'
   }
 ];
 
 // Timeline Data
 const timelineItems: TimelineItem[] = [
   {
-    year: "2019",
-    icon: "🔄",
-    title: "System Integration & Optimization",
+    year: '2019',
+    icon: '🔄',
+    title: 'System Integration & Optimization',
     achievements: [
-      "Streamlined cross-departmental workflows through integration of Sage Intacct and ADP",
-      "Reduced manual data entry by 80% through custom API integrations",
-      "Implemented automated reconciliation processes, reducing month-end close by 3 days"
+      'Streamlined cross-departmental workflows through integration of Sage Intacct and ADP',
+      'Reduced manual data entry by 80% through custom API integrations',
+      'Implemented automated reconciliation processes, reducing month-end close by 3 days'
     ],
-    color: "from-emerald-500 to-purple-500"
+    color: 'from-emerald-500 to-purple-500'
   },
   {
-    year: "2020",
-    icon: "☁️",
-    title: "Cloud Migration & Digital Transformation",
+    year: '2020',
+    icon: '☁️',
+    title: 'Cloud Migration & Digital Transformation',
     achievements: [
-      "Led Google Workspace to Microsoft 365 migration for 180 staff with zero downtime",
-      "Implemented Sage Intacct and ADP Workforce Now, consolidating 5 legacy systems",
-      "Designed disaster recovery protocols reducing potential data loss window by 90%"
+      'Led Google Workspace to Microsoft 365 migration for 180 staff with zero downtime',
+      'Implemented Sage Intacct and ADP Workforce Now, consolidating 5 legacy systems',
+      'Designed disaster recovery protocols reducing potential data loss window by 90%'
     ],
-    color: "from-emerald-500 to-purple-500"
+    color: 'from-emerald-500 to-purple-500'
   },
   {
-    year: "2023",
-    icon: "💡",
-    title: "Analytics & Process Innovation",
+    year: '2023',
+    icon: '💡',
+    title: 'Analytics & Process Innovation',
     achievements: [
-      "Developed Power BI dashboards for real-time financial forecasting",
-      "Authored SOPs and trained team on AdvancedMD RCM",
-      "$1.2M in unbilled services surfaced via SQL-based reporting suite"
+      'Developed Power BI dashboards for real-time financial forecasting',
+      'Authored SOPs and trained team on AdvancedMD RCM',
+      '$1.2M in unbilled services surfaced via SQL-based reporting suite'
     ],
-    color: "from-emerald-500 to-purple-500"
+    color: 'from-emerald-500 to-purple-500'
   },
   {
-    year: "2024",
-    icon: "🤖",
-    title: "AI-Powered Compliance & Workflow Enhancement",
+    year: '2024',
+    icon: '🤖',
+    title: 'AI-Powered Compliance & Workflow Enhancement',
     achievements: [
-      "Developed and launched a real-time Azure OpenAI auditing system for clinical notes, ensuring insurance compliance before submission",
-      "Enabled automated coaching for providers and technicians, improving documentation quality and reducing claim denials",
-      "Integrated AI into daily workflows for tasks like insurance appeals and internal process optimization, saving hours across departments"
+      'Developed and launched a real-time Azure OpenAI auditing system for clinical notes, ensuring insurance compliance before submission',
+      'Enabled automated coaching for providers and technicians, improving documentation quality and reducing claim denials',
+      'Integrated AI into daily workflows for tasks like insurance appeals and internal process optimization, saving hours across departments'
     ],
-    color: "from-emerald-500 to-purple-500"
+    color: 'from-emerald-500 to-purple-500'
   }
 ];
 ---
@@ -409,7 +409,7 @@ const timelineItems: TimelineItem[] = [
                     <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'} group`}>
                       <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
                         <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
-                          <div class={`bg-gray-800/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-emerald-500/10 group-hover:bg-gray-800/95 relative overflow-hidden`}>
+                          <div class={'bg-gray-800/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-emerald-500/10 group-hover:bg-gray-800/95 relative overflow-hidden'}>
                             {/* Background gradient effect */}
                             <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             
@@ -420,22 +420,22 @@ const timelineItems: TimelineItem[] = [
                                 <div class="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-500/30 to-purple-500/30 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
                                 {/* Enhanced icon container */}
                                 <div class="relative z-10 w-8 h-8">
-                                  {item.icon === "🔄" && (
+                                  {item.icon === '🔄' && (
                                     <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                     </svg>
                                   )}
-                                  {item.icon === "☁️" && (
+                                  {item.icon === '☁️' && (
                                     <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
                                     </svg>
                                   )}
-                                  {item.icon === "💡" && (
+                                  {item.icon === '💡' && (
                                     <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                                     </svg>
                                   )}
-                                  {item.icon === "🤖" && (
+                                  {item.icon === '🤖' && (
                                     <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                                     </svg>
@@ -486,22 +486,22 @@ const timelineItems: TimelineItem[] = [
                           <div class="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-500/30 to-purple-500/30 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
                           {/* Enhanced icon container */}
                           <div class="relative z-10 w-7 h-7">
-                            {item.icon === "🔄" && (
+                            {item.icon === '🔄' && (
                               <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                               </svg>
                             )}
-                            {item.icon === "☁️" && (
+                            {item.icon === '☁️' && (
                               <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
                               </svg>
                             )}
-                            {item.icon === "💡" && (
+                            {item.icon === '💡' && (
                               <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                               </svg>
                             )}
-                            {item.icon === "🤖" && (
+                            {item.icon === '🤖' && (
                               <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                               </svg>
