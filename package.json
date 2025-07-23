@@ -40,7 +40,7 @@
     "@astrojs/react": "^4.3.0",
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
-    "astro": "latest",
+    "astro": "^5.12.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "resend": "^4.5.1",
@@ -48,9 +48,9 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
-    "@astrojs/mdx": "latest",
-    "@astrojs/rss": "latest",
-    "@astrojs/sitemap": "latest",
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/rss": "^4.0.9",
+    "@astrojs/sitemap": "^3.3.0",
     "@axe-core/playwright": "^4.10.2",
     "@eslint/js": "latest",
     "@lhci/cli": "latest",
@@ -73,7 +73,7 @@
     "axe-playwright": "^2.1.0",
     "chrome-launcher": "^1.2.0",
     "cssnano": "^7.0.7",
-    "eslint": "latest",
+    "eslint": "^9.31.0",
     "eslint-plugin-astro": "latest",
     "eslint-plugin-mdx": "latest",
 
@@ -92,8 +92,8 @@
 
     "stylelint-config-tailwindcss": "latest",
     "stylelint-order": "latest",
-    "tailwindcss": "latest",
-    "vitest": "latest",
+    "tailwindcss": "^4.1.11",
+    "vitest": "^3.2.4",
     "wrangler": "^4.24.3"
   },
   "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
