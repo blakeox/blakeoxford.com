@@ -165,7 +165,7 @@ jobs:
         run: pnpm optimize:images
 
       - name: Commit optimized images
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: '🖼️ Optimize images [skip ci]'
           file_pattern: 'public/assets/images/**'
