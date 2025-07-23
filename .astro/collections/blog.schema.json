@@ -44,7 +44,6 @@
       },
       "required": [
         "title",
-        "description",
         "pubDate"
       ],
       "additionalProperties": false
