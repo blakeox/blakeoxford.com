@@ -6,25 +6,108 @@
   "display": "standalone",
   "background_color": "#18181b",
   "theme_color": "#2563eb",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "description": "Portfolio of Blake Oxford – Systems Architect, Workflow Strategist, and Action-Oriented Leader.",
   "lang": "en",
-  "icons": [
+  "categories": ["portfolio", "professional", "business"],
+  "screenshots": [
     {
-      "src": "/assets/images/favicon-32x32.png",
-      "sizes": "32x32",
-      "type": "image/png"
+      "src": "/assets/images/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
     },
+    {
+      "src": "/assets/images/screenshot-mobile.png", 
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "icons": [
     {
       "src": "/assets/images/favicon-16x16.png",
       "sizes": "16x16",
       "type": "image/png"
     },
     {
+      "src": "/assets/images/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
       "src": "/assets/images/favicon.png",
       "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-512x512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "About",
+      "short_name": "About",
+      "description": "Learn more about Blake Oxford",
+      "url": "/about/",
+      "icons": [{ "src": "/assets/images/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Projects",
+      "short_name": "Projects",
+      "description": "View Blake's projects and case studies",
+      "url": "/projects/",
+      "icons": [{ "src": "/assets/images/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Contact",
+      "short_name": "Contact",
+      "description": "Get in touch with Blake Oxford",
+      "url": "/contact/",
+      "icons": [{ "src": "/assets/images/favicon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 480
+  }
 }
