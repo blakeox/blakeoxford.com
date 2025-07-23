@@ -1,8 +1,22 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
 import BlogPostRow from '../../components/BlogPostRow.astro';
-const posts = (await getCollection('blog')) as any[];
+
+// Define blog posts data manually since we're no longer using MDX content
+const posts = [
+  {
+    slug: 'hello-world',
+    data: {
+      title: 'Hello World',
+      description: 'My first blog post using Astro Content Collections and MDX.',
+      pubDate: new Date('2025-05-19'),
+      author: 'Blake Oxford',
+      tags: ['intro', 'hello'],
+      draft: false
+    }
+  }
+];
+
 const title = "Blake Oxford's Blog";
 const description = "Explore my latest thoughts, tutorials, and insights on web development, design, and technology.";
 const canonicalUrl = "https://blakeoxford.com/blog/";

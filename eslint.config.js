@@ -183,6 +183,87 @@ export default [
       'no-undef': 'error',
     },
   },
+  // TypeScript files with browser globals (client-side code)
+  {
+    files: [
+      'src/scripts/**/*.ts',
+      'src/config/**/*.ts'
+    ],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        Element: 'readonly',
+        HTMLElement: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLFormElement: 'readonly',
+        HTMLTextAreaElement: 'readonly',
+        HTMLScriptElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        Event: 'readonly',
+        MouseEvent: 'readonly',
+        KeyboardEvent: 'readonly',
+        FocusEvent: 'readonly',
+        TouchEvent: 'readonly',
+        CustomEvent: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        requestAnimationFrame: 'readonly',
+        fetch: 'readonly',
+        navigator: 'readonly',
+        location: 'readonly',
+        history: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        FormData: 'readonly',
+        Headers: 'readonly',
+        Response: 'readonly',
+        Request: 'readonly',
+        getComputedStyle: 'readonly',
+        confirm: 'readonly',
+        alert: 'readonly',
+        prompt: 'readonly',
+        // Web APIs
+        IntersectionObserver: 'readonly',
+        ResizeObserver: 'readonly',
+        MutationObserver: 'readonly',
+        NodeFilter: 'readonly',
+        // Performance API
+        Performance: 'readonly',
+        performance: 'readonly',
+        // Service Worker APIs
+        caches: 'readonly',
+        // Analytics globals
+        gtag: 'readonly',
+        plausible: 'readonly',
+        fathom: 'readonly',
+        clarity: 'readonly',
+        // Search library
+        Fuse: 'readonly',
+        // Node.js types for browser compatibility
+        NodeJS: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+    },
+  },
   // Scripts that contain browser code alongside Node.js code
   {
     files: [

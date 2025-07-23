@@ -187,10 +187,9 @@ class ResourcePreloader {
         );
         break;
       case '/about':
-        resources.push(
-          // { url: '/assets/images/profile-640.avif', as: 'image' }, // Commented out - file doesn't exist
-          { url: '/assets/Resume.pdf', as: 'document' }
-        );
+                  resources.push(
+            // { url: '/assets/images/profile-640.avif', as: 'image' }, // Commented out - file doesn't exist
+          );
         break;
     }
 

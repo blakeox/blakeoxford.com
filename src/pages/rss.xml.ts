@@ -1,10 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
 
 export async function GET(context: APIContext) {
-  const blog = await getCollection('blog') as any[];
+  // Define blog posts data manually since we're no longer using MDX content
+  const blog = [
+    {
+      slug: 'hello-world',
+      data: {
+        title: 'Hello World',
+        description: 'My first blog post using Astro Content Collections and MDX.',
+        pubDate: new Date('2025-05-19'),
+        draft: false
+      }
+    }
+  ];
   
   return rss({
     title: 'Blake Oxford - Blog',
@@ -12,7 +22,7 @@ export async function GET(context: APIContext) {
     site: context.site!,
     items: blog.map((post: any) => ({
       title: post.data.title,
-      pubDate: post.data.publishedAt,
+      pubDate: post.data.pubDate,
       description: post.data.description,
       link: `/blog/${post.slug}/`,
     })),

@@ -1,42 +1,198 @@
 [
   {
+    "slug": "google-workspace-migration",
+    "title": "Google Workspace → Microsoft 365 Migration & Endpoint Management",
+    "description": "Led the transition from Google Workspace to Microsoft 365 and deployed modern device management via Intune/Endpoint Manager during early 2020, ensuring business continuity through COVID-19 disruptions.",
+    "publishedAt": "2020-01-15",
+    "tags": [
+      "Microsoft 365",
+      "Google Workspace",
+      "Endpoint Manager",
+      "Intune",
+      "MDM",
+      "COVID-19 Response"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "Microsoft 365",
+      "Google Workspace",
+      "Endpoint Manager",
+      "Intune",
+      "MDM",
+      "COVID-19 Response"
+    ],
+    "image": "/assets/projects/google-to-microsoft.png"
+  },
+  {
+    "slug": "Microsoft-Fabric",
+    "title": "Microsoft Fabric – Operational Intelligence & Workflow Automation",
+    "description": "Built the operational backbone for a 200-person healthcare organization—uniting workflows, performance tracking, and automation across 10+ departments using Microsoft Fabric and Power Platform.",
+    "publishedAt": "2024-02-20",
+    "tags": [
+      "Microsoft Fabric",
+      "Power BI",
+      "Power Platform",
+      "Process Automation",
+      "EOS",
+      "Data Engineering",
+      "Leadership"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "Microsoft Fabric",
+      "Power BI",
+      "Power Platform",
+      "Process Automation",
+      "EOS",
+      "Data Engineering",
+      "Leadership"
+    ],
+    "image": "/assets/projects/operational-and-workflow-automation.png"
+  },
+  {
+    "slug": "LLM-note-coaching",
     "title": "OpenAI-Powered Documentation Quality Feedback System",
-    "excerpt": "Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.",
-    "url": "/projects/LLM-note-coaching"
+    "description": "Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.",
+    "publishedAt": "2023-11-01",
+    "tags": [
+      "OpenAI",
+      "Natural Language Processing",
+      "Healthcare IT",
+      "Compliance",
+      "Blue Cross Blue Shield",
+      "Documentation Quality",
+      "Python"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "OpenAI",
+      "Natural Language Processing",
+      "Healthcare IT",
+      "Compliance",
+      "Blue Cross Blue Shield",
+      "Documentation Quality",
+      "Python"
+    ],
+    "image": "/assets/projects/openai-automated-audit.png"
   },
   {
-    "title": "Microsoft Fabric Reporting & Compliance Intelligence System",
-    "excerpt": "Architected a robust Microsoft Fabric solution combining Power BI, SQL-based pipelines, and NLP-driven compliance checks to transform documentation quality and operational visibility in healthcare.",
-    "url": "/projects/Microsoft-Fabric"
-  },
-  {
-    "title": "ADP Workforce Now Implementation",
-    "excerpt": "Implemented ADP Workforce Now to unify HR, recruiting, and finance operations through automation and real-time reporting.",
-    "url": "/projects/adp-workforcenow"
-  },
-  {
-    "title": "AdvancedMD Implementation",
-    "excerpt": "Transitioned from paper records to a unified digital EHR system, integrating ABA, PT, OT, ST, and medical appointments with electronic billing.",
-    "url": "/projects/advancedmd-implementation"
-  },
-  {
-    "title": "Bank Projections and Financial Modeling",
-    "excerpt": "Developed detailed financial models and projections to secure a $10M loan for a 36,000 sq. ft facility.",
-    "url": "/projects/bank-projections-modeling"
-  },
-  {
-    "title": "Enterprise Digital Transformation",
-    "excerpt": "Transitioned from paper-based workflows to cloud-based SaaS solutions, saving over $250K+ annually.",
-    "url": "/projects/enterprise-digital-transformation"
-  },
-  {
-    "title": "FermentApp: Fermentation Tracking & Task Scheduler",
-    "excerpt": "Designed and developed FermentApp, an iOS application to track fermentation processes, schedule essential tasks, and visualize historical data for optimal batch outcomes.",
-    "url": "/projects/ferment-app"
-  },
-  {
+    "slug": "sage-intacct-integration-with-square-pos",
     "title": "Sage Intacct Integration with Square POS",
-    "excerpt": "Implemented Sage Intacct and integrated it with Square POS through Shogo, building custom reports for seamless accounting reconciliation.",
-    "url": "/projects/sage-intacct-integration-with-square-pos"
+    "description": "Developed a comprehensive integration solution between Sage Intacct accounting software and Square POS system to automate financial data synchronization and streamline business operations.",
+    "publishedAt": "2024-03-10",
+    "tags": [
+      "API Integration",
+      "Sage Intacct",
+      "Square POS",
+      "Financial Systems",
+      "Automation"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "API Integration",
+      "Sage Intacct",
+      "Square POS",
+      "Financial Systems",
+      "Automation"
+    ],
+    "image": "/assets/projects/square-sage-integration.png"
+  },
+  {
+    "slug": "advancedmd-implementation",
+    "title": "AdvancedMD Implementation & Evolution",
+    "description": "Led the selection, implementation, and continuous enhancement of AdvancedMD, transforming paper workflows into a robust, data-driven EHR ecosystem with custom SQL tools.",
+    "publishedAt": "2017-12-01",
+    "tags": [
+      "EHR",
+      "Digital Transformation",
+      "Automation",
+      "Healthcare IT",
+      "SQL"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "EHR",
+      "Digital Transformation",
+      "Automation",
+      "Healthcare IT",
+      "SQL"
+    ],
+    "image": "/assets/projects/advancedMD-project.png"
+  },
+  {
+    "slug": "ferment-app",
+    "title": "Ferment App – Mobile Recipe Management",
+    "description": "A native iOS application for managing fermentation recipes, tracking progress, and automating task reminders — built with SwiftUI and Firebase.",
+    "publishedAt": "2024-01-15",
+    "tags": [
+      "Swift",
+      "SwiftUI",
+      "Firebase",
+      "SwiftData",
+      "Mobile Development",
+      "Fermentation"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "Swift",
+      "SwiftUI",
+      "Firebase",
+      "SwiftData",
+      "Mobile Development",
+      "Fermentation"
+    ],
+    "image": "/assets/projects/ferment-app-design.png"
+  },
+  {
+    "slug": "bank-projections-modeling",
+    "title": "Bank Projections and Financial Modeling",
+    "description": "Developed detailed financial models and projections to secure multiple loans—including $2M, $10M, PPP, and disaster relief—supporting facility expansion and operational resilience.",
+    "publishedAt": "2020-01-01",
+    "tags": [
+      "Financial Modeling",
+      "Bank Projections",
+      "Commercial Real Estate",
+      "Loan",
+      "Financial Analysis"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "Financial Modeling",
+      "Bank Projections",
+      "Commercial Real Estate",
+      "Loan",
+      "Financial Analysis"
+    ],
+    "image": "/assets/projects/bank-projections.png"
+  },
+  {
+    "slug": "adp-workforcenow",
+    "title": "ADP Workforce Now Implementation",
+    "description": "Implemented ADP Workforce Now to unify HR, recruiting, and finance operations through automation and real-time reporting.",
+    "publishedAt": "2021-01-01",
+    "tags": [
+      "HCM",
+      "Recruiting",
+      "ADP Workforce Now",
+      "Sage Intacct",
+      "PowerBI"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "HCM",
+      "Recruiting",
+      "ADP Workforce Now",
+      "Sage Intacct",
+      "PowerBI"
+    ],
+    "image": "/assets/projects/adp-automation.png"
   }
 ]

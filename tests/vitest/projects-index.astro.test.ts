@@ -1,39 +1,6 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync } from 'fs';
 import path from 'path';
-
-// Mock astro:content getCollection
-vi.mock('astro:content', () => ({
-  getCollection: vi.fn(async (collection) => {
-    if (collection === 'projects') {
-      return [
-        {
-          slug: 'test-project-1',
-          data: {
-            title: 'Test Project 1',
-            date: new Date('2024-01-01'),
-            draft: false,
-            tags: ['Tag1'],
-            image: '/assets/images/test1.png',
-            description: 'Description 1',
-          },
-        },
-        {
-          slug: 'test-project-2',
-          data: {
-            title: 'Test Project 2',
-            date: new Date('2024-02-01'),
-            draft: false,
-            tags: ['Tag2'],
-            image: '/assets/images/test2.png',
-            description: 'Description 2',
-          },
-        },
-      ];
-    }
-    return [];
-  }),
-}));
 
 describe('projects/index.astro', () => {
   let fileContent: string;
@@ -50,7 +17,7 @@ describe('projects/index.astro', () => {
     expect(fileContent).toContain('ProjectRow');
   });
 
-  it('should use getCollection for projects', () => {
-    expect(fileContent).toContain("getCollection('projects')");
+  it('should not use getCollection for projects since they are now individual Astro pages', () => {
+    expect(fileContent).not.toContain("getCollection('projects')");
   });
 });

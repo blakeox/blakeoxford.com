@@ -1,5 +1,3 @@
-import { getCollection } from 'astro:content';
-
 export async function GET() {
   const site = 'https://blakeoxford.com';
   const staticUrls = [
@@ -10,27 +8,35 @@ export async function GET() {
     { loc: '/contact/', changefreq: 'yearly', priority: 0.5 },
   ];
 
-  type BlogPost = { slug: string; data: { draft?: boolean } };
-  type Project = { slug: string; data: { draft?: boolean } };
-  const blogPosts = (await getCollection('blog')) as BlogPost[];
-  const publishedBlogPosts = blogPosts.filter((post) => !post.data.draft);
-  const projectPosts = (await getCollection('projects')) as Project[];
-  const publishedProjects = projectPosts.filter((project) => !project.data.draft);
+  // Individual project pages (since they're now Astro pages, not MDX)
+  const projectPages = [
+    { loc: '/projects/adp-workforcenow/', changefreq: 'monthly', priority: 0.6 },
+    { loc: '/projects/advancedmd-implementation/', changefreq: 'monthly', priority: 0.6 },
+    { loc: '/projects/bank-projections-modeling/', changefreq: 'monthly', priority: 0.6 },
+    { loc: '/projects/ferment-app/', changefreq: 'monthly', priority: 0.6 },
+    { loc: '/projects/google-workspace-migration/', changefreq: 'monthly', priority: 0.6 },
+    { loc: '/projects/LLM-note-coaching/', changefreq: 'monthly', priority: 0.6 },
+    { loc: '/projects/Microsoft-Fabric/', changefreq: 'monthly', priority: 0.6 },
+    { loc: '/projects/sage-intacct-integration-with-square-pos/', changefreq: 'monthly', priority: 0.6 },
+  ];
+
+  // Individual blog post pages (since they're now Astro pages, not MDX)
+  const blogPages = [
+    { loc: '/blog/hello-world/', changefreq: 'monthly', priority: 0.7 },
+  ];
 
   const urls = [
     ...staticUrls.map((u) => ({
       ...u,
       loc: site + u.loc,
     })),
-    ...publishedBlogPosts.map((post) => ({
-      loc: `${site}/blog/${post.slug}`,
-      changefreq: 'monthly',
-      priority: 0.7,
+    ...projectPages.map((u) => ({
+      ...u,
+      loc: site + u.loc,
     })),
-    ...publishedProjects.map((project) => ({
-      loc: `${site}/projects/${project.slug}`,
-      changefreq: 'monthly',
-      priority: 0.6,
+    ...blogPages.map((u) => ({
+      ...u,
+      loc: site + u.loc,
     })),
   ];
 
