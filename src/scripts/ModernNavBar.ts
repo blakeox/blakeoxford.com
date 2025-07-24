@@ -11,6 +11,7 @@ export class ModernNavBar {
   private searchToggle: HTMLElement | null;
   private searchOverlay: HTMLElement | null;
   private navbar: HTMLElement | null;
+  private focusTrapListener: ((e: KeyboardEvent) => void) | null;
 
   constructor() {
     console.log('🔧 ModernNavBar constructor called');
@@ -21,6 +22,7 @@ export class ModernNavBar {
     this.searchToggle = document.getElementById('search-toggle');
     this.searchOverlay = document.getElementById('search-overlay');
     this.navbar = document.querySelector('nav');
+    this.focusTrapListener = null;
     
     console.log('🔧 Elements found:', {
       burgerButton: this.burgerButton,
@@ -75,7 +77,14 @@ export class ModernNavBar {
     // Burger button click handler
     this.burgerButton.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       console.log('🍔 Burger button clicked!');
+      
+      // Close search overlay if open
+      if (this.searchOverlay?.classList.contains('active')) {
+        this.closeSearchOverlay();
+      }
+      
       this.toggleMobileMenu();
     });
 
@@ -83,6 +92,7 @@ export class ModernNavBar {
     if (this.closeMobileButton) {
       this.closeMobileButton.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         console.log('❌ Close button clicked!');
         this.closeMobileMenu();
       });
@@ -91,14 +101,16 @@ export class ModernNavBar {
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!this.burgerButton?.contains(e.target as Node) && 
-          !this.mobileMenu?.contains(e.target as Node)) {
+          !this.mobileMenu?.contains(e.target as Node) &&
+          this.mobileMenu?.classList.contains('active')) {
         this.closeMobileMenu();
       }
     });
 
     // Close menu on escape key
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && this.mobileMenu?.classList.contains('active')) {
+        e.preventDefault();
         this.closeMobileMenu();
       }
     });
@@ -138,14 +150,21 @@ export class ModernNavBar {
     console.log('📱 Mobile menu classes after:', this.mobileMenu.className);
     console.log('📱 Mobile menu computed right after:', window.getComputedStyle(this.mobileMenu).right);
     
-    // Prevent body scroll
+    // Prevent body scroll with proper handling for iOS
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
     
-    // Focus first link in mobile menu
-    const firstLink = this.mobileMenu.querySelector('.mobile-nav-link');
-    if (firstLink) {
-      setTimeout(() => (firstLink as HTMLElement).focus(), 100);
-    }
+    // Focus management with delay for animation
+    setTimeout(() => {
+      const firstFocusable = this.mobileMenu.querySelector('.mobile-nav-link, .mobile-close-button') as HTMLElement;
+      if (firstFocusable) {
+        firstFocusable.focus();
+      }
+    }, 150);
+    
+    // Setup focus trapping
+    this.setupFocusTrap();
     
     this.announceToScreenReader('Mobile navigation menu opened');
   }
@@ -159,11 +178,18 @@ export class ModernNavBar {
     this.burgerButton.setAttribute('aria-expanded', 'false');
     this.mobileMenu.classList.remove('active');
     
-    // Restore body scroll
+    // Restore body scroll with proper iOS handling
     document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    
+    // Remove focus trap
+    this.removeFocusTrap();
     
     // Focus back to burger button
-    this.burgerButton.focus();
+    setTimeout(() => {
+      this.burgerButton?.focus();
+    }, 50);
     
     this.announceToScreenReader('Mobile navigation menu closed');
   }
@@ -222,17 +248,25 @@ export class ModernNavBar {
 
     this.searchToggle.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
+      
+      // Close mobile menu if open
+      if (this.mobileMenu?.classList.contains('active')) {
+        this.closeMobileMenu();
+      }
+      
       this.openSearchOverlay();
     });
 
     // Close search overlay on escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.searchOverlay?.classList.contains('active')) {
+        e.preventDefault();
         this.closeSearchOverlay();
       }
     });
 
-    // Close search overlay when clicking outside
+    // Close search overlay when clicking backdrop
     this.searchOverlay?.addEventListener('click', (e) => {
       if (e.target === this.searchOverlay) {
         this.closeSearchOverlay();
@@ -332,6 +366,43 @@ export class ModernNavBar {
         link.classList.add('active');
       }
     });
+  }
+
+  setupFocusTrap() {
+    if (!this.mobileMenu) return;
+
+    const focusableElements = this.mobileMenu.querySelectorAll(
+      'a, button, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0] as HTMLElement;
+    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+    this.focusTrapListener = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) {
+        // Shift + Tab
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', this.focusTrapListener);
+  }
+
+  removeFocusTrap() {
+    if (this.focusTrapListener) {
+      document.removeEventListener('keydown', this.focusTrapListener);
+      this.focusTrapListener = null;
+    }
   }
 }
 
