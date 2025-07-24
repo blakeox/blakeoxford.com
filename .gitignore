@@ -149,3 +149,23 @@ dist
 
 # Ignore .DS_Store (macOS)
 .DS_Store
+
+# Build and optimization artifacts
+bundle-analysis.json
+lighthouse-reports/
+server.pid
+*.report.html
+*.lighthouse.report.html
+
+# Temporary CI files
+.tmp/
+temp/
+
+# Performance test outputs
+performance-*.json
+
+# Wrangler outputs
+.wrangler/
+
+# Cloudflare functions
+functions/.cache/

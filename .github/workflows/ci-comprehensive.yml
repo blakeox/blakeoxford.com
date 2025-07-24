@@ -1,0 +1,173 @@
+name: Comprehensive CI
+
+# This workflow runs the full test suite on main branch and provides complete coverage
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Run comprehensive tests nightly at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    # Allow manual triggering for comprehensive testing
+
+# Add permissions for the workflow
+permissions:
+  contents: write
+  pull-requests: write
+  checks: write
+
+jobs:
+  comprehensive-tests:
+    name: Full Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run linting
+        run: pnpm run lint
+
+      - name: Build the application
+        run: pnpm run build
+
+      - name: Run unit tests with coverage
+        run: pnpm run test:coverage
+
+      - name: Run comprehensive E2E tests
+        run: pnpm exec playwright test
+        env:
+          COMPREHENSIVE_TESTS: "true"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 30
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: comprehensive-playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  performance-suite:
+    name: Performance Testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build site
+        run: pnpm build
+
+      - name: Start preview server
+        run: pnpm preview &
+
+      - name: Wait for server
+        run: npx wait-on http://localhost:4321 --timeout 60000
+
+      - name: Run performance tests
+        run: pnpm perf:dev
+        env:
+          BASE_URL: http://localhost:4321
+
+      - name: Run Lighthouse CI
+        run: pnpm lh:ci
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN || '' }}
+          CHROME_PATH: /usr/bin/google-chrome
+        continue-on-error: true
+
+      - name: Analyze bundle
+        run: pnpm analyze:bundle
+
+      - name: Upload performance reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-reports-${{ github.sha }}
+          path: lighthouse-reports/
+          retention-days: 30
+
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis-${{ github.sha }}
+          path: bundle-analysis.json
+          retention-days: 30
+
+  optimization-tasks:
+    name: Optimization Tasks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Optimize images
+        run: pnpm optimize:images
+
+      - name: Run advanced optimizations
+        run: pnpm optimize:advanced
+
+      - name: Commit optimized assets
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: '🚀 Automated optimizations [skip ci]'
+          file_pattern: 'public/assets/images/** src/assets/**'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

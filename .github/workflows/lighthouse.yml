@@ -1,14 +1,20 @@
-name: Lighthouse CI
+name: Legacy Lighthouse CI (Deprecated)
 
+# This workflow is being phased out in favor of ci-comprehensive.yml
+# Only runs on explicit request to avoid conflicts
 on:
-  push:
-    branches: ["**"]
-  pull_request:
-    branches: ["**"]
+  workflow_dispatch:
+    inputs:
+      run_legacy_lighthouse:
+        description: 'Run legacy Lighthouse tests'
+        required: true
+        default: 'false'
+        type: boolean
 
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
+    if: github.event.inputs.run_legacy_lighthouse == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
