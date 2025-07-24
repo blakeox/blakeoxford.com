@@ -342,6 +342,20 @@
     background: var(--color-surface-dark);
     border-color: var(--color-neutral-dark);
   }
+
+  /* Search result highlighting */
+  .search-result-item mark {
+    background: rgba(var(--color-accent-rgb), 0.2);
+    color: var(--color-accent);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+  }
+
+  .dark .search-result-item mark {
+    background: rgba(var(--color-accent-light-rgb), 0.2);
+    color: var(--color-accent-light);
+  }
   
   /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
