@@ -1,16 +1,22 @@
-name: Test Suite
+name: Legacy Test Suite (Deprecated)
 
+# This workflow is being phased out in favor of ci-fast.yml and ci-comprehensive.yml
+# Only runs on explicit request to avoid conflicts
 on:
-  push:
-    branches: ["**"]
-  pull_request:
-    branches: ["**"]
+  workflow_dispatch:
+    inputs:
+      run_legacy_tests:
+        description: 'Run legacy test suite'
+        required: true
+        default: 'false'
+        type: boolean
 
 jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    if: github.event.inputs.run_legacy_tests == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -51,6 +57,7 @@ jobs:
     name: Lint Code
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    if: github.event.inputs.run_legacy_tests == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

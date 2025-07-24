@@ -14,10 +14,17 @@ permissions:
   pull-requests: write
   checks: write
 
-jobs:
-  performance-test:
-    runs-on: ubuntu-latest
+# Cancel in-progress runs for the same workflow on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
+jobs:
+  # Build once and share artifacts across all performance jobs
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      build-hash: ${{ steps.build-hash.outputs.hash }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +43,45 @@ jobs:
 
       - name: Build site
         run: pnpm build
+
+      - name: Generate build hash
+        id: build-hash
+        run: echo "hash=${{ hashFiles('dist/**/*') }}" >> $GITHUB_OUTPUT
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: dist/
+          retention-days: 1
+
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: build
+    # Only run performance tests on main branch or PRs to main
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: dist/
 
       - name: Start preview server
         run: pnpm preview &
@@ -82,6 +128,9 @@ jobs:
 
   lighthouse-ci:
     runs-on: ubuntu-latest
+    needs: build
+    # Only run on main branch or PRs to main
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
 
     steps:
       - name: Checkout
@@ -99,8 +148,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build site
-        run: pnpm build
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: dist/
 
       - name: Run Lighthouse CI
         run: pnpm lh:ci
@@ -111,6 +163,9 @@ jobs:
 
   bundle-analysis:
     runs-on: ubuntu-latest
+    needs: build
+    # Only run on main branch - this is expensive and not needed for every PR
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
@@ -128,8 +183,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build site
-        run: pnpm build
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: dist/
 
       - name: Analyze bundle
         run: pnpm analyze:bundle
@@ -143,6 +201,8 @@ jobs:
 
   image-optimization:
     runs-on: ubuntu-latest
+    needs: build
+    # Only run on main branch pushes
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:

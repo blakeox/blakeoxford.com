@@ -1,16 +1,22 @@
-name: E2E Tests
+name: Legacy E2E Tests (Deprecated)
 
+# This workflow is being phased out in favor of ci-fast.yml and ci-comprehensive.yml
+# Only runs on explicit request to avoid conflicts
 on:
-  push:
-    branches: ["**"]
-  pull_request:
-    branches: ["**"]
+  workflow_dispatch:
+    inputs:
+      run_legacy_e2e:
+        description: 'Run legacy E2E tests'
+        required: true
+        default: 'false'
+        type: boolean
 
 jobs:
   e2e-test:
     name: Run E2E Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    if: github.event.inputs.run_legacy_e2e == 'true'
     steps:
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -45,11 +51,13 @@ jobs:
 
       - name: Run Playwright tests
         run: pnpm exec playwright test
+        env:
+          COMPREHENSIVE_TESTS: "true"
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: legacy-playwright-report
           path: playwright-report/
           retention-days: 30
