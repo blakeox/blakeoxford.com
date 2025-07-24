@@ -6,7 +6,6 @@ export default defineConfig({
     // Temporarily exclude large problematic test files
     '**/accessibility-enhanced.spec.ts', // 545 lines - needs review
     '**/advanced-scenarios.spec.ts', // 539 lines - needs review
-    '**/bundle-analysis.spec.ts', // 404 lines - breaking up due to timeouts
   ],
   timeout: 60 * 1000, // Increased timeout for CI
   expect: {
