@@ -49,15 +49,30 @@ export class EnhancedSearchOverlay {
     this.setupCategories();
     this.setupKeyboardNavigation();
     this.setupCloseButton();
+    this.setupBackdropClick();
     this.loadSearchHistory();
     
-    console.log('✅ Enhanced SearchOverlay initialized');
+    // Set default active category
+    this.setActiveCategory('all');
+    
+    console.log('✅ Enhanced SearchOverlay initialized with new design');
   }
   
   setupCloseButton() {
     if (!this.closeButton) return;
     
     this.closeButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.closeSearchOverlay();
+    });
+  }
+  
+  setupBackdropClick() {
+    const backdrop = document.querySelector('.search-backdrop');
+    if (!backdrop) return;
+    
+    backdrop.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       this.closeSearchOverlay();
@@ -327,35 +342,42 @@ export class EnhancedSearchOverlay {
     
     if (results.length === 0) {
       this.searchResults.innerHTML = `
-        <div class="p-4 text-center text-neutral dark:text-neutral-light">
-          <p>No results found for "${query}"</p>
-          <p class="mt-2 text-sm">Try different keywords or browse categories</p>
+        <div class="search-no-results">
+          <div class="search-no-results-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <h3>No results found</h3>
+          <p>Try different keywords or browse categories</p>
         </div>
       `;
     } else {
-      this.searchResults.innerHTML = results.map((result, index) => `
-        <div class="search-result-item" role="option" tabindex="0" data-url="${result.url}" data-index="${index}">
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 rounded-full bg-accent/10 flex items-center justify-center">
-              <span class="text-accent text-xs md:text-sm">${this.getResultIcon(result.type)}</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-medium text-foreground dark:text-foreground-light text-sm md:text-base">${this.highlightMatches(result.title, query)}</h3>
-              <p class="text-xs md:text-sm text-neutral dark:text-neutral-light mt-1">${this.highlightMatches(result.description, query)}</p>
-              <div class="flex items-center gap-2 mt-1">
-                <p class="text-xs text-accent">${result.category}</p>
-                ${result.score ? `<span class="text-xs text-neutral dark:text-neutral-light opacity-50">·</span>
-                <span class="text-xs text-neutral dark:text-neutral-light opacity-70">${Math.round((1 - result.score) * 100)}% match</span>` : ''}
+      this.searchResults.innerHTML = `
+        <div class="space-y-2 max-h-96 overflow-y-auto">
+          ${results.map((result, index) => `
+            <div class="search-result-item" role="option" tabindex="0" data-url="${result.url}" data-index="${index}">
+              <div class="search-result-icon">
+                ${this.getResultIconSvg(result.type)}
+              </div>
+              <div class="search-result-content">
+                <h3 class="search-result-title">${this.highlightMatches(result.title, query)}</h3>
+                <p class="search-result-description">${this.highlightMatches(result.description, query)}</p>
+                <div class="search-result-meta">
+                  <span>${result.category}</span>
+                  ${result.score ? `<span> • ${Math.round((1 - result.score) * 100)}% match</span>` : ''}
+                </div>
               </div>
             </div>
-          </div>
+          `).join('')}
         </div>
-      `).join('');
+      `;
       
       // Add click handlers for search results
       this.addResultClickHandlers();
     }
     
+    this.searchResults.classList.remove('hidden');
     this.searchResults.classList.add('active');
   }
 
@@ -365,6 +387,27 @@ export class EnhancedSearchOverlay {
       case 'blog': return '📝';
       case 'page': return '📄';
       default: return '📄';
+    }
+  }
+
+  private getResultIconSvg(type: string): string {
+    switch (type) {
+      case 'project':
+        return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>`;
+      case 'blog':
+        return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>`;
+      case 'page':
+        return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>`;
+      default:
+        return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>`;
     }
   }
 
@@ -419,19 +462,26 @@ export class EnhancedSearchOverlay {
     ];
     
     this.searchResults.innerHTML = `
-      <div class="p-4">
-        <h3 class="font-medium text-foreground dark:text-foreground-light mb-3 text-sm md:text-base">Search Suggestions</h3>
-        ${suggestions.map(suggestion => `
-          <div class="search-result-item" role="option" tabindex="0">
-            <div class="flex items-center gap-2">
-              <span class="text-accent">💡</span>
-              <span class="text-sm md:text-base">${suggestion.text}</span>
+      <div class="p-6">
+        <h3 class="font-medium text-gray-900 dark:text-white mb-4">Search Suggestions</h3>
+        <div class="space-y-2">
+          ${suggestions.map(suggestion => `
+            <div class="search-result-item cursor-pointer" role="option" tabindex="0">
+              <div class="search-result-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <div class="search-result-content">
+                <p class="search-result-title">${suggestion.text}</p>
+              </div>
             </div>
-          </div>
-        `).join('')}
+          `).join('')}
+        </div>
       </div>
     `;
     
+    this.searchResults.classList.remove('hidden');
     this.searchResults.classList.add('active');
   }
   
@@ -439,12 +489,13 @@ export class EnhancedSearchOverlay {
     if (!this.searchResults) return;
     
     this.searchResults.innerHTML = `
-      <div class="p-4 text-center">
-        <div class="inline-block animate-spin rounded-full h-5 w-5 md:h-6 md:w-6 border-b-2 border-accent"></div>
-        <p class="mt-2 text-neutral dark:text-neutral-light text-sm md:text-base">Searching...</p>
+      <div class="search-loading">
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+        <p class="mt-2">Searching...</p>
       </div>
     `;
     
+    this.searchResults.classList.remove('hidden');
     this.searchResults.classList.add('active');
   }
   
@@ -452,12 +503,18 @@ export class EnhancedSearchOverlay {
     if (!this.searchResults) return;
     
     this.searchResults.innerHTML = `
-      <div class="p-4 text-center text-red-600 dark:text-red-400">
-        <p class="text-sm md:text-base">❌ Search failed</p>
-        <p class="mt-1 text-xs md:text-sm">Please try again</p>
+      <div class="p-6 text-center text-red-600 dark:text-red-400">
+        <div class="w-12 h-12 mx-auto mb-3">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-full h-full">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <p class="font-medium">Search failed</p>
+        <p class="mt-1 text-sm">Please try again</p>
       </div>
     `;
     
+    this.searchResults.classList.remove('hidden');
     this.searchResults.classList.add('active');
   }
   
@@ -540,11 +597,13 @@ export class EnhancedSearchOverlay {
     // Clear search input
     if (this.searchInput) {
       this.searchInput.value = '';
+      this.searchInput.setAttribute('aria-expanded', 'false');
     }
     
     // Hide results
     if (this.searchResults) {
       this.searchResults.classList.remove('active');
+      this.searchResults.classList.add('hidden');
     }
     
     // Restore body scroll only if mobile menu is not open

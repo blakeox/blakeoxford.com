@@ -1,94 +1,121 @@
 ---
-// Enhanced SearchOverlay.astro component
+// Modern SearchOverlay.astro component - Redesigned for accessibility and mobile experience
 ---
 
 <div id="search-overlay" class="search-overlay fixed inset-0 z-[1200]" role="dialog" aria-modal="true" aria-labelledby="search-title">
-  <div class="search-backdrop"></div>
-  <div class="search-container minimalist">
-    <button
-      id="close-search"
-      class="search-close-button absolute top-3 right-3 md:top-4 md:right-5 min-w-10 min-h-10 md:min-w-11 md:min-h-11 flex items-center justify-center bg-transparent z-2 hover:scale-105 active:scale-95 transition-transform duration-200"
-      aria-label="Close search"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-    
-    <form class="search-form w-full flex flex-col items-center justify-center min-h-[20vh]" autocomplete="off">
-      <div id="search-title" class="sr-only" role="heading" aria-level="1">Search</div>
-      <label for="search-input" class="sr-only">Search</label>
+  <!-- Backdrop -->
+  <div class="search-backdrop absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+  
+  <!-- Search Container -->
+  <div class="search-container relative flex items-start justify-center min-h-full px-4 pt-16 pb-8 md:pt-24">
+    <div class="search-card w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       
-      <!-- Search Categories -->
-      <div class="search-categories mb-4 md:mb-6 flex gap-1.5 md:gap-2 flex-wrap justify-center">
-        <button type="button" class="search-category px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95" data-category="all">
-          All
-        </button>
-        <button type="button" class="search-category px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95" data-category="projects">
-          Projects
-        </button>
-        <button type="button" class="search-category px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95" data-category="blog">
-          Blog
-        </button>
-        <button type="button" class="search-category px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95" data-category="pages">
-          Pages
-        </button>
-      </div>
-      
-      <div class="search-input-wrapper relative w-full max-w-sm md:max-w-md">
-        <input
-          id="search-input"
-          type="text"
-          placeholder="Search projects, blog posts, and more..."
-          class="search-input minimalist w-full text-base md:text-xl py-3 md:py-4 px-4 md:px-6 pr-10 md:pr-12 rounded-full border border-neutral-300 outline-none transition-all duration-300"
-          aria-label="Search"
-          autocomplete="off"
-          spellcheck="false"
-          aria-expanded="false"
-          aria-controls="search-results"
-          role="combobox"
-        />
-        
-        <!-- Voice Search Button -->
+      <!-- Header with Close Button -->
+      <div class="search-header flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 id="search-title" class="text-lg font-semibold text-gray-900 dark:text-white">Search</h2>
         <button
-          type="button"
-          id="voice-search"
-          class="voice-search-btn absolute right-2.5 md:right-3 top-1/2 transform -translate-y-1/2 p-1.5 md:p-2 rounded-full transition-all duration-200 hover:bg-surface-subtle dark:hover:bg-surface-dark-subtle hover:scale-110 active:scale-95"
-          aria-label="Voice search"
-          title="Voice search (click to start)"
+          id="close-search"
+          class="search-close-btn p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 transition-colors"
+          aria-label="Close search"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        
-        <!-- Search Results -->
-        <div id="search-results" class="search-results absolute top-full left-0 right-0 mt-2 rounded-xl border max-h-[50vh] md:max-h-[60vh] overflow-y-auto hidden z-10" role="listbox" aria-label="Search results">
-          <!-- Search suggestions will be dynamically inserted here -->
-        </div>
       </div>
-      
-      <!-- Search Tips -->
-      <div class="search-tips mt-4 md:mt-6 text-center text-xs md:text-sm text-neutral dark:text-neutral-light opacity-60 px-4">
-        <p>💡 Try searching for: "projects", "blog", "contact", or use voice search</p>
-        <p class="mt-1">⌨️ Press <kbd class="px-1.5 py-0.5 md:px-2 md:py-1 bg-surface dark:bg-surface-dark rounded text-xs">/</kbd> to open search anytime</p>
+
+      <!-- Search Form -->
+      <div class="search-body p-6">
+        <form class="search-form space-y-6" autocomplete="off">
+          
+          <!-- Search Categories -->
+          <div class="search-categories">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Search in:</label>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="search-category px-4 py-2 text-sm font-medium rounded-full border transition-colors" data-category="all">
+                All
+              </button>
+              <button type="button" class="search-category px-4 py-2 text-sm font-medium rounded-full border transition-colors" data-category="projects">
+                Projects
+              </button>
+              <button type="button" class="search-category px-4 py-2 text-sm font-medium rounded-full border transition-colors" data-category="blog">
+                Blog
+              </button>
+              <button type="button" class="search-category px-4 py-2 text-sm font-medium rounded-full border transition-colors" data-category="pages">
+                Pages
+              </button>
+            </div>
+          </div>
+          
+          <!-- Search Input -->
+          <div class="search-input-container">
+            <label for="search-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              What are you looking for?
+            </label>
+            <div class="relative">
+              <input
+                id="search-input"
+                type="text"
+                placeholder="Type to search..."
+                class="search-input w-full px-4 py-3 pr-20 text-base bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                aria-label="Search input"
+                autocomplete="off"
+                spellcheck="false"
+                aria-expanded="false"
+                aria-controls="search-results"
+                role="combobox"
+              />
+              
+              <!-- Voice Search Button -->
+              <button
+                type="button"
+                id="voice-search"
+                class="voice-search-btn absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 transition-colors rounded-lg"
+                aria-label="Voice search"
+                title="Voice search"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Search Results -->
+          <div id="search-results" class="search-results hidden" role="listbox" aria-label="Search results">
+            <div class="space-y-2 max-h-96 overflow-y-auto">
+              <!-- Results will be inserted here -->
+            </div>
+          </div>
+          
+          <!-- Search Tips -->
+          <div class="search-tips text-center text-sm text-gray-500 dark:text-gray-400">
+            <p class="flex items-center justify-center gap-2">
+              <span>💡</span>
+              <span>Try: "projects", "blog", "contact" or use voice search</span>
+            </p>
+            <p class="mt-2 flex items-center justify-center gap-2">
+              <span>⌨️</span>
+              <span>Press <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono">/</kbd> to search anytime</span>
+            </p>
+          </div>
+          
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 </div>
 
 <style>
+  /* Modern Search Overlay Styles */
   .search-overlay {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 1rem;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 1rem;
   }
   
   .search-overlay.active {
@@ -97,157 +124,78 @@
   }
   
   .search-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    opacity: 0.7;
-    pointer-events: auto;
-    z-index: 0;
+    cursor: pointer;
   }
   
-  .dark .search-backdrop {
-    background: rgba(17, 24, 39, 0.85);
-    opacity: 0.85;
+  /* Search Card */
+  .search-card {
+    transform: translateY(-20px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  .search-container.minimalist {
-    position: relative;
-    width: 100%;
-    max-width: 28rem;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 1rem;
-    box-shadow: 0 4px 32px 0 rgba(0,0,0,0.10);
-    padding: 1.5rem 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 0;
-    border: 1.5px solid rgba(0, 0, 0, 0.1);
-    transition: background 0.3s, box-shadow 0.3s;
-  }
-  
-  .dark .search-container.minimalist {
-    background: rgba(17, 24, 39, 0.95);
-    border: 1.5px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .search-form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  .search-overlay.active .search-card {
+    transform: translateY(0);
   }
   
   /* Search Categories */
-  .search-categories {
-    opacity: 0.8;
-  }
-  
   .search-category {
-    background: var(--color-surface-subtle);
-    color: var(--color-foreground);
-    border: 1px solid var(--color-neutral-light);
+    background: #f3f4f6;
+    color: #374151;
+    border-color: #d1d5db;
+    cursor: pointer;
   }
   
-  .dark .search-category {
-    background: var(--color-surface-dark-subtle);
-    color: var(--color-foreground-light);
-    border-color: var(--color-neutral-dark);
+  .search-category:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
   }
   
   .search-category.active {
-    background: var(--color-accent);
-    color: var(--color-background);
-    border-color: var(--color-accent);
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+  }
+  
+  .dark .search-category {
+    background: #374151;
+    color: #d1d5db;
+    border-color: #4b5563;
+  }
+  
+  .dark .search-category:hover {
+    background: #4b5563;
+    border-color: #6b7280;
   }
   
   .dark .search-category.active {
-    background: var(--color-accent-light);
-    color: var(--color-foreground);
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
   }
   
-  .search-category:hover:not(.active) {
-    background: var(--color-surface);
-    border-color: var(--color-accent);
+  /* Search Input */
+  .search-input {
+    font-size: 16px; /* Prevent iOS zoom */
+    transition: all 0.2s ease;
   }
   
-  .dark .search-category:hover:not(.active) {
-    background: var(--color-surface-dark);
-    border-color: var(--color-accent-light);
-  }
-  
-  .search-input.minimalist {
-    width: 100%;
-    height: 2.75rem;
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-    padding-right: 2.5rem; /* Make room for voice button */
-    border-radius: 999px;
-    border: 2px solid var(--color-neutral-light);
-    background: #ffffff;
-    color: #111827;
-    box-shadow: none;
+  .search-input:focus {
     outline: none;
-    transition: border-color 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s;
-  }
-  
-  .search-input.minimalist:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(6, 95, 70, 0.1);
-  }
-  
-  .search-input.minimalist::placeholder {
-    color: #6b7280;
-    opacity: 1;
-    font-size: 1rem;
-    transition: color 0.2s, opacity 0.2s;
-  }
-  
-  .dark .search-input.minimalist {
-    background: #1f2937;
-    color: #f9fafb;
-    border-color: #374151;
-  }
-  
-  .dark .search-input.minimalist:focus {
-    border-color: var(--color-accent-light);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-  }
-  
-  .dark .search-input.minimalist::placeholder {
-    color: #9ca3af;
-    opacity: 1;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
   
   /* Voice Search Button */
   .voice-search-btn {
-    color: var(--color-neutral);
-    background: transparent;
-    border: none;
-    transition: all 0.2s var(--ease-standard);
+    cursor: pointer;
   }
   
   .voice-search-btn:hover {
-    color: var(--color-accent);
+    background: rgba(59, 130, 246, 0.1);
   }
   
   .voice-search-btn.listening {
-    color: var(--color-accent);
+    color: #ef4444;
     animation: pulse 1.5s infinite;
-  }
-  
-  .dark .voice-search-btn {
-    color: var(--color-neutral-light);
-  }
-  
-  .dark .voice-search-btn:hover {
-    color: var(--color-accent-light);
-  }
-  
-  .dark .voice-search-btn.listening {
-    color: var(--color-accent-light);
   }
   
   @keyframes pulse {
@@ -255,42 +203,25 @@
     50% { opacity: 0.5; }
   }
   
-  .search-close-button {
-    color: var(--color-neutral);
-    background: transparent;
-    border: none;
-    border-radius: 50%;
+  /* Close Button */
+  .search-close-btn {
     cursor: pointer;
-    transition: color 0.2s, background 0.2s;
-    outline: none;
+    position: relative;
+    min-width: 40px;
+    min-height: 40px;
   }
   
-  .search-close-button:focus,
-  .search-close-button:hover {
-    background: var(--color-accent-light);
-    color: var(--color-background);
+  .search-close-btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
   }
   
-  .dark .search-close-button {
-    color: var(--color-neutral-light);
-  }
-  
-  .dark .search-close-button:focus,
-  .dark .search-close-button:hover {
-    background: var(--color-accent-dark);
-    color: var(--color-background);
-  }
-  
+  /* Search Results */
   .search-results {
-    display: none;
-    width: 100%;
-    max-height: 50vh;
-    overflow-y: auto;
-    background: var(--glass-surface-bg);
-    border-radius: var(--radius-xl);
-    border: 1.5px solid var(--glass-border);
-    box-shadow: var(--shadow-lg);
-    margin-top: 0.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
   
   .search-results.active {
@@ -298,15 +229,18 @@
   }
   
   .dark .search-results {
-    background: var(--glass-surface-bg-dark);
-    border-color: var(--glass-border-dark);
+    background: #1f2937;
+    border-color: #374151;
   }
   
   .search-result-item {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--color-neutral-light);
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
     cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: start;
+    gap: 12px;
   }
   
   .search-result-item:last-child {
@@ -315,140 +249,247 @@
   
   .search-result-item:hover,
   .search-result-item[aria-selected="true"] {
-    background: var(--color-surface-subtle);
-    transform: translateX(4px);
+    background: #f9fafb;
   }
   
   .dark .search-result-item {
-    border-color: var(--color-neutral-dark);
+    border-color: #374151;
   }
   
   .dark .search-result-item:hover,
   .dark .search-result-item[aria-selected="true"] {
-    background: var(--color-surface-dark-subtle);
+    background: #374151;
   }
   
-  /* Search Tips */
-  .search-tips kbd {
-    font-family: monospace;
-    background: var(--color-surface);
-    border: 1px solid var(--color-neutral-light);
+  .search-result-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
   }
   
-  .dark .search-tips kbd {
-    background: var(--color-surface-dark);
-    border-color: var(--color-neutral-dark);
+  .search-result-content {
+    flex: 1;
+    min-width: 0;
   }
-
-  /* Search result highlighting */
+  
+  .search-result-title {
+    font-weight: 500;
+    color: #111827;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0 0 4px 0;
+  }
+  
+  .dark .search-result-title {
+    color: #f9fafb;
+  }
+  
+  .search-result-description {
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .dark .search-result-description {
+    color: #9ca3af;
+  }
+  
+  .search-result-meta {
+    color: #9ca3af;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  
+  .dark .search-result-meta {
+    color: #6b7280;
+  }
+  
+  /* Search highlighting */
   .search-result-item mark {
-    background: rgba(var(--color-accent-rgb), 0.2);
-    color: var(--color-accent);
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.25rem;
+    background: rgba(59, 130, 246, 0.2);
+    color: #1e40af;
+    padding: 0;
+    border-radius: 2px;
     font-weight: 500;
   }
-
+  
   .dark .search-result-item mark {
-    background: rgba(var(--color-accent-light-rgb), 0.2);
-    color: var(--color-accent-light);
+    background: rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
   }
   
-  /* Reduced motion support */
+  /* Loading and Empty States */
+  .search-loading {
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
+  }
+  
+  .search-empty {
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
+  }
+  
+  .dark .search-loading,
+  .dark .search-empty {
+    color: #9ca3af;
+  }
+  
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .search-overlay {
+      padding: 0.5rem;
+    }
+    
+    .search-container {
+      padding-top: 80px; /* Account for mobile navbar */
+    }
+    
+    .search-card {
+      margin: 0;
+      border-radius: 16px;
+    }
+    
+    .search-header {
+      padding: 16px;
+    }
+    
+    .search-body {
+      padding: 20px;
+    }
+    
+    .search-categories {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .search-category {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    
+    .search-input {
+      padding: 12px 16px;
+      padding-right: 48px;
+    }
+    
+    .voice-search-btn {
+      right: 12px;
+    }
+    
+    .search-results {
+      max-height: 60vh;
+    }
+    
+    .search-result-item {
+      padding: 16px;
+    }
+    
+    .search-tips {
+      font-size: 13px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .search-container {
+      padding-top: 60px;
+    }
+    
+    .search-header h2 {
+      font-size: 18px;
+    }
+    
+    .search-categories {
+      gap: 6px;
+    }
+    
+    .search-category {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    
+    .search-input {
+      padding: 10px 14px;
+      padding-right: 44px;
+      font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    .search-tips {
+      font-size: 12px;
+    }
+    
+    .search-tips kbd {
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+  }
+  
+  /* Focus and Accessibility */
+  .search-category:focus,
+  .search-input:focus,
+  .voice-search-btn:focus,
+  .search-close-btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+  
+  .search-result-item:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: -2px;
+  }
+  
+  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .search-overlay,
-    .search-input,
+    .search-card,
     .search-category,
+    .search-input,
     .voice-search-btn,
     .search-result-item {
       transition: none !important;
       animation: none !important;
     }
-    
-    .search-result-item:hover {
-      transform: none !important;
-    }
   }
   
-  /* Mobile-specific improvements */
-  @media (max-width: 768px) {
-    .search-overlay {
-      padding: 0.5rem;
-      align-items: flex-start;
-      padding-top: 2rem;
-    }
-    
-    .search-container.minimalist {
-      max-width: 100%;
-      padding: 1rem 0.75rem;
-      border-radius: var(--radius-xl);
-      margin-top: 64px; /* Account for fixed navbar */
-    }
-    
-    .search-input.minimalist {
-      height: 2.5rem;
-      font-size: 0.95rem;
-      padding: 0.625rem 0.875rem;
-    }
-    
-    .search-close-button {
-      top: 0.5rem !important;
-      right: 0.75rem !important;
-    }
-    
-    .search-categories {
-      gap: 0.375rem;
-    }
-    
-    .search-category {
-      font-size: 0.75rem;
-      padding: 0.375rem 0.75rem;
-    }
-    
-    .search-results {
-      max-height: 40vh;
-    }
-    
-    .search-result-item {
-      padding: 0.625rem 0.875rem;
-      font-size: 0.9rem;
-    }
-    
-    /* Prevent viewport zoom on input focus */
-    .search-input.minimalist {
-      font-size: 16px;
-    }
+  /* No results state */
+  .search-no-results {
+    text-align: center;
+    padding: 24px;
+    color: #6b7280;
   }
   
-  @media (max-width: 480px) {
-    .search-overlay {
-      padding: 0.25rem;
-      padding-top: 1.5rem;
-    }
-    
-    .search-container.minimalist {
-      padding: 0.875rem 0.5rem;
-      margin-top: 60px;
-    }
-    
-    .search-input.minimalist {
-      height: 2.375rem;
-      font-size: 16px; /* Prevent zoom on iOS */
-      padding: 0.5rem 2.5rem 0.5rem 0.75rem; /* Extra padding-right for voice button */
-    }
-    
-    .search-category {
-      font-size: 0.7rem;
-      padding: 0.25rem 0.625rem;
-    }
-    
-    .search-tips {
-      font-size: 0.75rem;
-    }
-    
-    .voice-search-btn {
-      right: 0.625rem !important;
-    }
+  .dark .search-no-results {
+    color: #9ca3af;
+  }
+  
+  .search-no-results-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 12px;
+    opacity: 0.5;
+  }
+  
+  .search-no-results h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 8px 0;
+    color: #374151;
+  }
+  
+  .dark .search-no-results h3 {
+    color: #d1d5db;
+  }
+  
+  .search-no-results p {
+    font-size: 14px;
+    margin: 0;
   }
 </style>
 
