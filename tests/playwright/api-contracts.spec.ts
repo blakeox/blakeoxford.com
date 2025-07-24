@@ -88,7 +88,7 @@ test.describe('API Contract Testing', () => {
       expect(data1).toEqual(data2);
       expect(data2).toEqual(data3);
       
-      console.log(`✅ Blog API consistency validated across 3 calls`);
+      console.log('✅ Blog API consistency validated across 3 calls');
     });
   });
 
@@ -236,7 +236,7 @@ test.describe('API Contract Testing', () => {
       // Should return 404
       expect(response.status()).toBe(404);
       
-      console.log(`✅ 404 handling validated`);
+      console.log('✅ 404 handling validated');
     });
 
     test('malformed requests should be handled gracefully', async ({ request }) => {
@@ -251,7 +251,7 @@ test.describe('API Contract Testing', () => {
         expect(Array.isArray(data)).toBe(true);
       }
       
-      console.log(`✅ Malformed request handling validated`);
+      console.log('✅ Malformed request handling validated');
     });
   });
 
@@ -303,7 +303,7 @@ test.describe('API Contract Testing', () => {
         });
       }
       
-      console.log(`🔒 Sensitive data leak prevention validated`);
+      console.log('🔒 Sensitive data leak prevention validated');
     });
   });
 });

@@ -23,7 +23,7 @@ const { metrics } = Astro.props;
     </thead>
     <tbody>
       {metrics.map((metric, index) => (
-        <tr class={index % 2 === 1 ? "bg-gray-50 dark:bg-gray-800" : ""}>
+        <tr class={index % 2 === 1 ? 'bg-gray-50 dark:bg-gray-800' : ''}>
           <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-gray-900 dark:text-white">{metric.metric}</td>
           <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">{metric.result}</td>
           <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">{metric.timeline}</td>

@@ -385,7 +385,7 @@ export class ErrorHandlingSystem {
 
   private createErrorElement(error: ErrorInfo): HTMLElement {
     const element = document.createElement('div');
-    element.className = `error-item bg-white dark:bg-gray-800 border-l-4 border-red-500 p-4 rounded shadow-lg`;
+    element.className = 'error-item bg-white dark:bg-gray-800 border-l-4 border-red-500 p-4 rounded shadow-lg';
     
     const severityColors = {
       error: 'border-red-500',
@@ -466,7 +466,7 @@ export class ErrorHandlingSystem {
 
   private createNotification(notification: Notification): HTMLElement {
     const element = document.createElement('div');
-    element.className = `notification bg-white dark:bg-gray-800 border-l-4 p-4 rounded shadow-lg`;
+    element.className = 'notification bg-white dark:bg-gray-800 border-l-4 p-4 rounded shadow-lg';
     
     const typeColors = {
       success: 'border-green-500',

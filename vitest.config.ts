@@ -24,6 +24,9 @@ export default defineConfig({
         'node_modules/**',
         'tests/**', // Exclude all test files from coverage
         'playwright/**', // Exclude Playwright test files
+        'playwright-report/**', // Exclude Playwright reports
+        'test-results/**', // Exclude test results
+        'coverage/**', // Exclude coverage reports
         'src/mocks/**', // Exclude mock files
         'dist/**',
         '.astro/**',
@@ -44,6 +47,7 @@ export default defineConfig({
         '**/debug-*.js', // Exclude debug files
         'test-*.js', // Exclude test utilities
         'scripts/**', // Exclude build scripts
+        'src/scripts/**', // Exclude client-side scripts (these are tested via E2E)
         'playwright.config.ts',
         'vitest.config.ts',
         'astro.config.mjs',

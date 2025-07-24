@@ -345,7 +345,7 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
       }
       
       // Log debug info for analysis
-      console.log(`\nKeyboard Navigation Debug:`);
+      console.log('\nKeyboard Navigation Debug:');
       console.log(`Browser: ${browserName}, Viewport: ${viewport?.width}x${viewport?.height}`);
       console.log(`Found ${focusableElements.length} focusable elements:`);
       focusableElements.forEach((el, i) => console.log(`  ${i + 1}. ${el}`));
@@ -481,7 +481,7 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
             try {
               expect(alt?.trim().length).toBeGreaterThan(0);
             } catch {
-              console.log(`Image missing alt text:`, { src, alt, imageInfo });
+              console.log('Image missing alt text:', { src, alt, imageInfo });
               // For now, just log but don't fail
               // throw error;
             }
@@ -532,7 +532,7 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
               expect(boundingBox.width).toBeGreaterThanOrEqual(40); // Slightly relaxed
               expect(boundingBox.height).toBeGreaterThanOrEqual(40);
             } catch {
-              console.log(`Touch target too small for element:`, elementInfo);
+              console.log('Touch target too small for element:', elementInfo);
               console.log(`Size: ${boundingBox.width}x${boundingBox.height}px`);
               // For now, just log the error but don't fail the test
               // throw error;

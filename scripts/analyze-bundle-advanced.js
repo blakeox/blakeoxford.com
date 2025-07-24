@@ -66,7 +66,7 @@ async function analyzeCodeUsage() {
   console.log('\n🎯 OPTIMIZATION RECOMMENDATIONS:');
 
   const totalSize = Array.from(usageMap.values()).reduce((sum, data) => sum + data.size, 0);
-  console.log(`\n📦 Current bundle metrics:`);
+  console.log('\n📦 Current bundle metrics:');
   console.log(`   Total source size: ${(totalSize / 1024).toFixed(2)}KB`);
   console.log(`   Average file size: ${(totalSize / usageMap.size / 1024).toFixed(2)}KB`);
 
@@ -76,7 +76,7 @@ async function analyzeCodeUsage() {
     .sort((a, b) => b[1].size - a[1].size);
 
   if (largeFiles.length > 0) {
-    console.log(`\n🔍 Large files to review:`);
+    console.log('\n🔍 Large files to review:');
     largeFiles.forEach(([file, data]) => {
       console.log(`   ${file}: ${(data.size / 1024).toFixed(2)}KB`);
     });

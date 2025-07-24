@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { test, expect } from '@playwright/test';
 
 test('debug search overlay manually', async ({ page }) => {
   console.log('Starting search debug test...');
   
-  await page.goto('http://localhost:4323/');
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(3000);
+  await page.goto('/'); // Use relative URL
+  await page.waitForLoadState('domcontentloaded'); // Less strict than networkidle
+  await page.waitForTimeout(1000); // Reduced timeout
   
   // Check what's in the page
   const pageInfo = await page.evaluate(() => {

@@ -3,7 +3,7 @@ import { JSDOM } from 'jsdom';
 
 describe('SearchOverlayEnhanced interactive behavior', () => {
   let dom: JSDOM;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   let window: any; // Changed to "any" type to avoid TypeScript errors with custom properties
   let document: Document;
   let script: HTMLScriptElement;

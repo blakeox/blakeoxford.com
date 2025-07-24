@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-undef, @typescript-eslint/no-unused-vars */
+ 
 import { test } from '@playwright/test';
 
 test.describe('SearchOverlay Manual Test', () => {

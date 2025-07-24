@@ -4,24 +4,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('fs', () => {
   return {
     default: {
-      readdirSync: vi.fn().mockReturnValue(['post.mdx', 'readme.md', 'script.js']),
-      readFileSync: vi.fn().mockReturnValue('---\ntitle: Hello\ndescription: World\n---\nContent'),
+      readdirSync: vi.fn().mockReturnValue(['post.astro', 'readme.md', 'script.js']),
+      readFileSync: vi.fn().mockReturnValue('Sample content'),
       writeFileSync: vi.fn()
     },
-    readdirSync: vi.fn().mockReturnValue(['post.mdx', 'readme.md', 'script.js']),
-    readFileSync: vi.fn().mockReturnValue('---\ntitle: Hello\ndescription: World\n---\nContent'),
+    readdirSync: vi.fn().mockReturnValue(['post.astro', 'readme.md', 'script.js']),
+    readFileSync: vi.fn().mockReturnValue('Sample content'),
     writeFileSync: vi.fn()
-  };
-});
-
-vi.mock('gray-matter', () => {
-  const mockMatterFn = vi.fn().mockReturnValue({
-    data: { title: 'Hello', description: 'World' },
-    content: 'Content'
-  });
-  mockMatterFn.mockImplementationOnce = vi.fn().mockReturnValue(mockMatterFn);
-  return {
-    default: mockMatterFn
   };
 });
 
@@ -57,7 +46,6 @@ vi.mock('path', () => {
 // Import fs and path to use the mocked versions
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
 
 // Only test harness - no actual code calls
 describe('generate-search-index helpers', () => {
@@ -66,111 +54,69 @@ describe('generate-search-index helpers', () => {
   });
 
   describe('getFiles function', () => {
-    it('should filter only .mdx files', () => {
+    it('should filter files correctly', () => {
       // Define a mock getFiles function that matches the behavior we're testing
-      const getFilesMock = (dir: string) => {
-        return fs.readdirSync(dir).filter(f => f.endsWith('.mdx'));
+      const getFilesMock = (dir: string, ext: string) => {
+        return fs.readdirSync(dir).filter(f => f.endsWith(ext));
       };
       
       // Call our mock function
-      const files = getFilesMock('dummyDir');
+      const files = getFilesMock('dummyDir', '.astro');
       
       // Verify the results
-      expect(files).toEqual(['post.mdx']);
+      expect(files).toEqual(['post.astro']);
       expect(fs.readdirSync).toHaveBeenCalledWith('dummyDir');
     });
   });
 
-  describe('parseMDXFile function', () => {
-    it('should parse frontmatter and construct URL', () => {      
-      // Define a mock parseMDXFile function that matches the behavior we're testing
-      const parseMDXFileMock = (filePath: string, baseUrl: string) => {
-        const raw = fs.readFileSync(filePath, 'utf-8');
-        const { data } = matter(raw);
+  describe('parseFile function', () => {
+    it('should read file and construct URL', () => {      
+      // Define a mock parseFile function that matches the behavior we're testing
+      const parseFileMock = (filePath: string, baseUrl: string) => {
+        const content = fs.readFileSync(filePath, 'utf-8');
         return {
-          title: data.title || '',
-          excerpt: data.description || '',
-          url: `${baseUrl}/${path.basename(filePath, '.mdx')}`
+          title: 'Sample Title',
+          excerpt: content.substring(0, 50) + '...', // Use content for excerpt
+          url: `${baseUrl}/${path.basename(filePath, '.astro')}`
         };
       };
       
       // Call our mock function
-      const result = parseMDXFileMock('/base/path/file.mdx', '/blog');
+      const result = parseFileMock('/base/path/file.astro', '/blog');
       
       // Verify the results
-      expect(fs.readFileSync).toHaveBeenCalledWith('/base/path/file.mdx', 'utf-8');
+      expect(fs.readFileSync).toHaveBeenCalledWith('/base/path/file.astro', 'utf-8');
       expect(result).toEqual({
-        title: 'Hello',
-        excerpt: 'World',
+        title: 'Sample Title',
+        excerpt: 'Sample content...',
         url: '/blog/file'
-      });
-    });
-
-    it('should handle missing frontmatter values', () => {
-      // Setup mocks for a file with no title or description
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (matter as any).mockImplementation(() => ({
-        data: {}
-      }));
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      vi.mocked(fs.readFileSync).mockReturnValue('---\n---\nContent' as any);
-      vi.mocked(path.basename).mockReturnValueOnce('file.mdx').mockReturnValueOnce('file.mdx');
-      
-      // Define mock function
-      const parseMDXFileMock = (filePath: string, baseUrl: string) => {
-        const raw = fs.readFileSync(filePath, 'utf-8') as string;
-        const { data } = matter(raw);
-        return {
-          title: data.title || '',
-          excerpt: data.description || '',
-          url: `${baseUrl}/${path.basename(filePath, '.mdx')}`
-        };
-      };
-      
-      // Call our mock function
-      const result = parseMDXFileMock('/base/path/file.mdx', '/blog');
-      
-      // Verify the results
-      expect(result).toEqual({
-        title: '',
-        excerpt: '',
-        url: '/blog/file.mdx'
       });
     });
   });
 
   describe('buildIndex function', () => {
-    it('should build index array using parseMDXFile', () => {
+    it('should build index array using parseFile', () => {
       // Reset mocks with specific return values for this test
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      vi.mocked(fs.readdirSync).mockReturnValue(['a.mdx', 'b.mdx'] as any);
+      vi.mocked(fs.readdirSync).mockReturnValue(['a.astro', 'b.astro'] as any);
       
-      // Mock matter to return different values for different files
-      vi.mocked(matter)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .mockReturnValueOnce({ data: { title: 'Title A', description: 'Desc A' }, content: '' } as any)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .mockReturnValueOnce({ data: { title: 'Title B', description: 'Desc B' }, content: '' } as any);
-      
-      // Define mock getFiles and parseMDXFile functions
-      const getFilesMock = (dir: string) => {
-        return fs.readdirSync(dir).filter(f => f.endsWith('.mdx'));
+      // Define mock getFiles and parseFile functions
+      const getFilesMock = (dir: string, ext: string) => {
+        return fs.readdirSync(dir).filter(f => f.endsWith(ext));
       };
       
-      const parseMDXFileMock = (filePath: string, baseUrl: string) => {
-        const raw = fs.readFileSync(filePath, 'utf-8');
-        const { data } = matter(raw);
+      const parseFileMock = (filePath: string, baseUrl: string) => {
+        const filename = path.basename(filePath, '.astro');
         return {
-          title: data.title || '',
-          excerpt: data.description || '',
-          url: `${baseUrl}/${path.basename(filePath, '.mdx')}`
+          title: `Title ${filename.toUpperCase()}`,
+          excerpt: `Description for ${filename}`,
+          url: `${baseUrl}/${filename}`
         };
       };
       
       // Define mock buildIndex function
       const buildIndexMock = (contentDir: string, baseUrl: string) => {
         const dir = path.join('..', contentDir);
-        return getFilesMock(dir).map(f => parseMDXFileMock(path.join(dir, f), baseUrl));
+        return getFilesMock(dir, '.astro').map(f => parseFileMock(path.join(dir, f), baseUrl));
       };
       
       // Call our mock function

@@ -30,19 +30,19 @@ class PerformanceTestRunner {
     return {
       // Core Web Vitals
       'largest-contentful-paint': 2500,
-      'first-input-delay': 100,
+      'max-potential-fid': 100, // FID equivalent
       'cumulative-layout-shift': 0.1,
 
       // Other key metrics
       'first-contentful-paint': 1800,
       'speed-index': 3000,
-      'time-to-interactive': 3800,
+      'interactive': 3800, // TTI
       'total-blocking-time': 200,
 
       // Resource budgets
       'total-byte-weight': 512000, // 512KB
       'dom-size': 1500,
-      'script-treemap-data.unusedBytes': 51200, // 50KB unused JS
+      'unused-javascript': 51200, // 50KB unused JS
       'render-blocking-resources': 0
     };
   }
@@ -68,27 +68,8 @@ class PerformanceTestRunner {
           disabled: false
         },
         emulatedUserAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1'
-      },
-      audits: [
-        'largest-contentful-paint',
-        'first-input-delay',
-        'cumulative-layout-shift',
-        'first-contentful-paint',
-        'speed-index',
-        'time-to-interactive',
-        'total-blocking-time',
-        'total-byte-weight',
-        'render-blocking-resources',
-        'unused-javascript',
-        'unused-css-rules',
-        'modern-image-formats',
-        'efficient-animated-content',
-        'offscreen-images',
-        'preload-lcp-image',
-        'uses-optimized-images',
-        'uses-webp-images',
-        'uses-responsive-images'
-      ]
+      }
+      // Removed custom audits array - using default Lighthouse audits
     };
   }
 
@@ -235,7 +216,7 @@ class PerformanceTestRunner {
           ),
           coreWebVitals: {
             LCP: result.audits['largest-contentful-paint']?.numericValue,
-            FID: result.audits['first-input-delay']?.numericValue,
+            FID: result.audits['max-potential-fid']?.numericValue, // FID is not directly available in Lighthouse
             CLS: result.audits['cumulative-layout-shift']?.numericValue
           },
           budgetFailures: budgetCheck.failures
@@ -258,13 +239,13 @@ class PerformanceTestRunner {
   }
 
   generateMarkdownSummary(summary) {
-    let markdown = `# Performance Test Report\n\n`;
+    let markdown = '# Performance Test Report\n\n';
     markdown += `**Generated:** ${summary.timestamp}\n`;
     markdown += `**Pages Tested:** ${summary.totalPages}\n`;
     markdown += `**Passed:** ${summary.passed}\n`;
     markdown += `**Failed:** ${summary.failed}\n\n`;
 
-    markdown += `## Results by Page\n\n`;
+    markdown += '## Results by Page\n\n';
 
     summary.results.forEach(result => {
       const status = result.status === 'passed' ? '✅' : result.status === 'failed' ? '❌' : '⚠️';
@@ -275,24 +256,24 @@ class PerformanceTestRunner {
         return;
       }
 
-      markdown += `| Category | Score |\n`;
-      markdown += `|----------|-------|\n`;
+      markdown += '| Category | Score |\n';
+      markdown += '|----------|-------|\n';
       Object.entries(result.scores).forEach(([category, score]) => {
         markdown += `| ${category} | ${score.toFixed(1)} |\n`;
       });
-      markdown += `\n`;
+      markdown += '\n';
 
-      markdown += `**Core Web Vitals:**\n`;
+      markdown += '**Core Web Vitals:**\n';
       markdown += `- LCP: ${result.coreWebVitals.LCP?.toFixed(1) || 'N/A'}ms\n`;
       markdown += `- FID: ${result.coreWebVitals.FID?.toFixed(1) || 'N/A'}ms\n`;
       markdown += `- CLS: ${result.coreWebVitals.CLS?.toFixed(3) || 'N/A'}\n\n`;
 
       if (result.budgetFailures?.length > 0) {
-        markdown += `**Budget Failures:**\n`;
+        markdown += '**Budget Failures:**\n';
         result.budgetFailures.forEach(failure => {
           markdown += `- ${failure}\n`;
         });
-        markdown += `\n`;
+        markdown += '\n';
       }
     });
 

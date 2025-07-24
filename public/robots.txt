@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /search/
 
 Sitemap: https://blakeoxford.com/sitemap.xml

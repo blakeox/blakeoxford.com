@@ -253,7 +253,7 @@ export class ProgressiveEnhancement {
   private setupPerformanceEnhancements(): void {
     // Connection-aware loading
     if (this.featureDetection.networkAPI) {
-      const connection = (navigator as Navigator & { connection?: any }).connection; // eslint-disable-line @typescript-eslint/no-explicit-any
+      const connection = (navigator as Navigator & { connection?: any }).connection;  
       if (connection) {
         this.performanceMetrics.connectionType = connection.effectiveType;
         this.performanceMetrics.effectiveType = connection.effectiveType;
@@ -269,7 +269,7 @@ export class ProgressiveEnhancement {
 
     // Battery API consideration
     if (this.featureDetection.batteryAPI) {
-      (navigator as Navigator & { getBattery?: () => Promise<any> }).getBattery?.().then((battery: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+      (navigator as Navigator & { getBattery?: () => Promise<any> }).getBattery?.().then((battery: any) => {  
         this.performanceMetrics.batteryLevel = battery.level;
         this.performanceMetrics.batteryCharging = battery.charging;
         

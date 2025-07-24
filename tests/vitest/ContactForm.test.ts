@@ -140,7 +140,7 @@ describe('Contact form validation', () => {
 
   describe('Form submission', () => {
     let originalSubmit: typeof HTMLFormElement.prototype.submit;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     let submitSpy: any;
     
     beforeEach(() => {

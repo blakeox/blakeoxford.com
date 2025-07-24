@@ -150,7 +150,7 @@ Use the generated JSON manifests to automate picture element generation.
 
     await fs.writeFile(path.join(OUTPUT_DIR, 'README.md'), usageInstructions);
 
-    console.log(`\n🎉 Image optimization complete!`);
+    console.log('\n🎉 Image optimization complete!');
     console.log(`   Output directory: ${OUTPUT_DIR}`);
     console.log(`   Formats generated: ${Object.keys(FORMATS).join(', ')}`);
     console.log(`   Responsive breakpoints: ${RESPONSIVE_SIZES.join(', ')}`);

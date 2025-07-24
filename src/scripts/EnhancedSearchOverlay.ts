@@ -23,7 +23,7 @@ export class EnhancedSearchOverlay {
   private closeButton: HTMLElement | null;
   private currentCategory: string;
   private searchTimeout: number | null;
-  private recognition: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  private recognition: any;  
   private isListening: boolean;
 
   constructor() {
@@ -67,7 +67,7 @@ export class EnhancedSearchOverlay {
         this.announceToScreenReader('Voice search started. Please speak now.');
       };
       
-      this.recognition.onresult = (event: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+      this.recognition.onresult = (event: any) => {  
         const transcript = event.results[0][0].transcript;
         if (this.searchInput) {
           this.searchInput.value = transcript;
@@ -81,7 +81,7 @@ export class EnhancedSearchOverlay {
         this.voiceSearchBtn?.setAttribute('aria-label', 'Voice search (click to start)');
       };
       
-      this.recognition.onerror = (event: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+      this.recognition.onerror = (event: any) => {  
         const errorEvent = event;
         console.error('Speech recognition error:', errorEvent.error);
         this.announceToScreenReader(`Voice search error: ${errorEvent.error}`);

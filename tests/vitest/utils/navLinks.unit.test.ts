@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import navLinks from '../../../src/config/navLinks';
+import navLinks, { 
+  navConfig, 
+  getNavLinkByHref, 
+  getNavLinkByAnalytics, 
+  isCurrentPage, 
+  getActiveNavLink 
+} from '../../../src/config/navLinks';
 
 describe('navLinks utility functions', () => {
   describe('Configuration validation', () => {
@@ -44,36 +50,106 @@ describe('navLinks utility functions', () => {
   });
 
   describe('Utility functions', () => {
-    it('should find link by href', () => {
-      const findLinkByHref = (href: string) => navLinks.find(link => link.href === href);
-      
-      const homeLink = findLinkByHref('/');
+    it('should test navConfig export', () => {
+      expect(navConfig).toBeDefined();
+      expect(navConfig.links).toEqual(navLinks);
+      expect(Array.isArray(navConfig.socialLinks)).toBe(true);
+      expect(navConfig.socialLinks?.length).toBe(0);
+    });
+
+    it('should find link by href using exported function', () => {
+      const homeLink = getNavLinkByHref('/');
       expect(homeLink).toBeDefined();
       expect(homeLink?.label).toBe('Home');
       
-      const aboutLink = findLinkByHref('/about/');
+      const aboutLink = getNavLinkByHref('/about/');
       expect(aboutLink).toBeDefined();
       expect(aboutLink?.label).toBe('About');
+      
+      const nonExistentLink = getNavLinkByHref('/nonexistent/');
+      expect(nonExistentLink).toBeUndefined();
     });
 
-    it('should find link by analytics id', () => {
-      const findLinkByAnalytics = (analytics: string) => navLinks.find(link => link.analytics === analytics);
-      
-      const homeLink = findLinkByAnalytics('nav-home');
+    it('should find link by analytics id using exported function', () => {
+      const homeLink = getNavLinkByAnalytics('nav-home');
       expect(homeLink).toBeDefined();
       expect(homeLink?.href).toBe('/');
       
-      const projectsLink = findLinkByAnalytics('nav-projects');
+      const projectsLink = getNavLinkByAnalytics('nav-projects');
       expect(projectsLink).toBeDefined();
       expect(projectsLink?.href).toBe('/projects/');
+      
+      const nonExistentLink = getNavLinkByAnalytics('nav-nonexistent');
+      expect(nonExistentLink).toBeUndefined();
     });
 
-    it('should filter external vs internal links', () => {
-      const internalLinks = navLinks.filter(link => link.href.startsWith('/'));
-      const externalLinks = navLinks.filter(link => !link.href.startsWith('/'));
+    it('should check if current page using exported function', () => {
+      // Mock window.location for SSR environment
+      const mockLocation = { pathname: '/about/' };
+      Object.defineProperty(window, 'location', {
+        value: mockLocation,
+        writable: true,
+        configurable: true
+      });
       
-      expect(internalLinks.length).toBe(navLinks.length); // All should be internal for this project
-      expect(externalLinks.length).toBe(0);
+      expect(isCurrentPage('/about/')).toBe(true);
+      expect(isCurrentPage('/projects/')).toBe(false);
+      
+      // Test edge case with root path
+      mockLocation.pathname = '/';
+      expect(isCurrentPage('/')).toBe(true);
+      expect(isCurrentPage('/about/')).toBe(false);
+    });
+
+    it('should handle undefined window.location in isCurrentPage', () => {
+      // Test case where window exists but window.location is undefined
+      const originalLocation = window.location;
+      // @ts-expect-error - intentionally setting to undefined for testing
+      delete window.location;
+      
+      expect(isCurrentPage('/any-page/')).toBe(false);
+      
+      // Restore window.location
+      Object.defineProperty(window, 'location', {
+        value: originalLocation,
+        writable: true,
+        configurable: true
+      });
+    });
+
+    it('should get active nav link using exported function', () => {
+      const mockLocation = { pathname: '/projects/' };
+      Object.defineProperty(window, 'location', {
+        value: mockLocation,
+        writable: true,
+        configurable: true
+      });
+      
+      const activeLink = getActiveNavLink();
+      expect(activeLink).toBeDefined();
+      expect(activeLink?.href).toBe('/projects/');
+      expect(activeLink?.label).toBe('Projects');
+      
+      // Test with non-nav page
+      mockLocation.pathname = '/some-random-page/';
+      const noActiveLink = getActiveNavLink();
+      expect(noActiveLink).toBeUndefined();
+    });
+
+    it('should handle undefined window.location in getActiveNavLink', () => {
+      // Test case where window exists but window.location is undefined
+      const originalLocation = window.location;
+      // @ts-expect-error - intentionally setting to undefined for testing
+      delete window.location;
+      
+      expect(getActiveNavLink()).toBeUndefined();
+      
+      // Restore window.location
+      Object.defineProperty(window, 'location', {
+        value: originalLocation,
+        writable: true,
+        configurable: true
+      });
     });
   });
 });

@@ -15,7 +15,7 @@ test('debug form validation', async ({ page }) => {
     console.log(`Page error: ${err.message}`);
   });
 
-  await page.goto('http://localhost:4326/contact');
+  await page.goto('/contact'); // Use relative URL
   await page.waitForLoadState('domcontentloaded');
 
   console.log('\n=== JavaScript Errors Check ===');
