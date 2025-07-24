@@ -101,7 +101,7 @@ export class ModernNavBar {
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!this.burgerButton?.contains(e.target as Node) && 
-          !this.mobileMenu?.contains(e.target as Node) &&
+          !this.mobileMenu?.querySelector('.mobile-menu-content')?.contains(e.target as Node) &&
           this.mobileMenu?.classList.contains('active')) {
         this.closeMobileMenu();
       }
