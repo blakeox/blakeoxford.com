@@ -2,7 +2,7 @@
 // Enhanced SearchOverlay.astro component
 ---
 
-<div id="search-overlay" class="search-overlay fixed inset-0 z-[1100]" role="dialog" aria-modal="true" aria-labelledby="search-title">
+<div id="search-overlay" class="search-overlay fixed inset-0 z-[1200]" role="dialog" aria-modal="true" aria-labelledby="search-title">
   <div class="search-backdrop"></div>
   <div class="search-container minimalist">
     <button
@@ -363,12 +363,15 @@
   @media (max-width: 768px) {
     .search-overlay {
       padding: 0.5rem;
+      align-items: flex-start;
+      padding-top: 2rem;
     }
     
     .search-container.minimalist {
       max-width: 100%;
       padding: 1rem 0.75rem;
       border-radius: var(--radius-xl);
+      margin-top: 64px; /* Account for fixed navbar */
     }
     
     .search-input.minimalist {
@@ -399,16 +402,27 @@
       padding: 0.625rem 0.875rem;
       font-size: 0.9rem;
     }
+    
+    /* Prevent viewport zoom on input focus */
+    .search-input.minimalist {
+      font-size: 16px;
+    }
   }
   
   @media (max-width: 480px) {
+    .search-overlay {
+      padding: 0.25rem;
+      padding-top: 1.5rem;
+    }
+    
     .search-container.minimalist {
       padding: 0.875rem 0.5rem;
+      margin-top: 60px;
     }
     
     .search-input.minimalist {
       height: 2.375rem;
-      font-size: 0.9rem;
+      font-size: 16px; /* Prevent zoom on iOS */
       padding: 0.5rem 0.75rem;
     }
     
@@ -419,6 +433,10 @@
     
     .search-tips {
       font-size: 0.75rem;
+    }
+    
+    .voice-search-btn {
+      right: 0.625rem !important;
     }
   }
 </style>

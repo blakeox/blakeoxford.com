@@ -45,9 +45,20 @@ export class EnhancedSearchOverlay {
     this.setupSearchInput();
     this.setupCategories();
     this.setupKeyboardNavigation();
+    this.setupCloseButton();
     this.loadSearchHistory();
     
     console.log('✅ Enhanced SearchOverlay initialized');
+  }
+  
+  setupCloseButton() {
+    if (!this.closeButton) return;
+    
+    this.closeButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.closeSearchOverlay();
+    });
   }
   
   setupVoiceSearch() {
@@ -355,8 +366,6 @@ export class EnhancedSearchOverlay {
     
     // Close the overlay
     searchOverlay.classList.remove('active');
-    searchOverlay.style.visibility = 'hidden';
-    searchOverlay.style.opacity = '0';
     
     // Clear search input
     if (this.searchInput) {
@@ -368,12 +377,19 @@ export class EnhancedSearchOverlay {
       this.searchResults.classList.remove('active');
     }
     
-    // Restore body scroll
-    document.body.style.overflow = '';
+    // Restore body scroll only if mobile menu is not open
+    const mobileMenu = document.getElementById('nav-mobile-links');
+    if (!mobileMenu?.classList.contains('active')) {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
     
     // Focus back to search toggle
     const searchToggle = document.getElementById('search-toggle');
-    searchToggle?.focus();
+    setTimeout(() => {
+      searchToggle?.focus();
+    }, 50);
     
     this.announceToScreenReader('Search overlay closed');
   }
