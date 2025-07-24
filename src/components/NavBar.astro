@@ -93,36 +93,39 @@ import navLinks from '../config/navLinks';
 
   <!-- Mobile Menu -->
   <div id="nav-mobile-links" class="mobile-menu" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title">
-    <div class="mobile-menu-header">
-      <h2 id="mobile-menu-title" class="sr-only">Mobile navigation menu</h2>
-      <button
-        id="close-mobile-menu"
-        type="button"
-        class="mobile-close-button"
-        aria-label="Close navigation menu"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+    <div class="mobile-menu-backdrop"></div>
+    <div class="mobile-menu-content">
+      <div class="mobile-menu-header">
+        <h2 id="mobile-menu-title" class="sr-only">Mobile navigation menu</h2>
+        <button
+          id="close-mobile-menu"
+          type="button"
+          class="mobile-close-button"
+          aria-label="Close navigation menu"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
+        <ul class="mobile-nav-links" role="menubar">
+        {navLinks.map((link) => (
+            <li class="mobile-nav-item" role="none">
+            <a
+              href={link.href}
+                class="mobile-nav-link"
+              role="menuitem"
+              aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      </nav>
     </div>
-    
-    <nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
-      <ul class="mobile-nav-links" role="menubar">
-      {navLinks.map((link) => (
-          <li class="mobile-nav-item" role="none">
-          <a
-            href={link.href}
-              class="mobile-nav-link"
-            role="menuitem"
-            aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
-          >
-            {link.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-    </nav>
   </div>
 </nav>
 
@@ -133,7 +136,7 @@ import navLinks from '../config/navLinks';
     top: 0;
     left: 0;
     right: 0;
-    z-index: 50;
+    z-index: 1000;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -269,6 +272,8 @@ import navLinks from '../config/navLinks';
     justify-content: center;
     width: 36px;
     height: 36px;
+    min-width: 36px;
+    min-height: 36px;
     border: none;
     border-radius: 8px;
     background: transparent;
@@ -276,6 +281,9 @@ import navLinks from '../config/navLinks';
     cursor: pointer;
     transition: all 0.2s ease;
     outline: none;
+    /* Improve touch targets */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   
   .dark .action-button {
@@ -308,6 +316,8 @@ import navLinks from '../config/navLinks';
     position: relative;
     width: 36px;
     height: 36px;
+    min-width: 36px;
+    min-height: 36px;
     border: none;
     background: transparent;
     cursor: pointer;
@@ -316,6 +326,9 @@ import navLinks from '../config/navLinks';
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    /* Improve touch targets */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   
   .burger-menu-button:hover {
@@ -367,25 +380,53 @@ import navLinks from '../config/navLinks';
   .mobile-menu {
     position: fixed;
     top: 0;
-    right: -300px;
-    width: 300px;
+    right: -100vw;
+    width: min(300px, 85vw);
     height: 100vh;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1010;
+    overflow: hidden;
+  }
+  
+  .mobile-menu-backdrop {
+    position: absolute;
+    top: 0;
+    left: -100vw;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+  
+  .dark .mobile-menu-backdrop {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  
+  .mobile-menu-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-left: 1px solid rgba(0, 0, 0, 0.06);
-    transition: right 0.3s ease;
-    z-index: 60;
     overflow-y: auto;
   }
   
-  .dark .mobile-menu {
+  .dark .mobile-menu-content {
     background: rgba(0, 0, 0, 0.95);
     border-left-color: rgba(255, 255, 255, 0.06);
   }
   
   .mobile-menu.active {
     right: 0;
+  }
+  
+  .mobile-menu.active .mobile-menu-backdrop {
+    opacity: 1;
+    pointer-events: auto;
   }
   
   .mobile-menu-header {
@@ -480,7 +521,7 @@ import navLinks from '../config/navLinks';
     background: rgba(255, 255, 255, 0.05);
   }
   
-  /* Responsive Design */
+  /* Mobile-specific improvements */
   @media (max-width: 768px) {
     .desktop-nav {
       display: none;
@@ -497,6 +538,48 @@ import navLinks from '../config/navLinks';
     .brand-avatar-container {
       width: 28px;
       height: 28px;
+    }
+    
+    .mobile-menu {
+      width: min(280px, 80vw);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .navbar-content {
+      padding: 0 12px;
+    }
+    
+    .brand-text {
+      font-size: 13px;
+    }
+    
+    .brand-avatar-container {
+      width: 26px;
+      height: 26px;
+    }
+    
+    .mobile-menu {
+      width: min(260px, 85vw);
+    }
+    
+    .action-buttons {
+      gap: 4px;
+    }
+    
+    .action-button {
+      width: 32px;
+      height: 32px;
+    }
+  }
+  
+  @media (max-width: 320px) {
+    .mobile-menu {
+      width: 90vw;
+    }
+    
+    .navbar-content {
+      padding: 0 8px;
     }
   }
   
