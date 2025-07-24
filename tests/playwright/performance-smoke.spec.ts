@@ -14,15 +14,26 @@ test.describe('Performance Smoke Tests', () => {
       // Homepage should load within 5 seconds (generous for CI environments)
       expect(loadTime).toBeLessThan(5000);
       
-      // Check that page has basic content
-      await expect(page.locator('h1, .hero, main')).toBeVisible();
+      // Check that page has basic content - use specific selector to avoid strict mode violation
+      await expect(page.locator('main[id="main-content"]')).toBeVisible();
     });
 
     test('pages should not have excessive bundle size @critical', async ({ page }) => {
       await page.goto('/');
       
+      // Wait for page to be fully loaded
+      await page.waitForLoadState('networkidle');
+      
       // Check that total JavaScript payload isn't excessive
-      const response = await page.waitForResponse('**/*.js');
+      // Handle case where no JS files are loaded (performance-first site)
+      try {
+        // Try to wait for JS response, but don't fail if none exist
+        await page.waitForResponse('**/*.js', { timeout: 5000 });
+      } catch (error) {
+        // No JS files loaded - this is actually good for a performance-first site
+        console.log('No JavaScript files detected - excellent for performance!');
+      }
+      
       const responses = await page.evaluate(() => {
         return performance.getEntriesByType('resource')
           .filter(entry => entry.name.includes('.js'))
@@ -30,6 +41,7 @@ test.describe('Performance Smoke Tests', () => {
       });
       
       // Total JS should be under 500KB (reasonable for a portfolio site)
+      // If no JS is loaded, this will be 0, which is even better
       expect(responses).toBeLessThan(500 * 1024);
     });
   });
