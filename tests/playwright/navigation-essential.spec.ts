@@ -9,23 +9,23 @@ test.describe('Essential Navigation Tests', () => {
       await expect(page).toHaveTitle(/Blake Oxford/);
       
       // Navigate to About
-      await page.click('nav a[href="/about"], a[href="/about"]');
-      await expect(page).toHaveURL(/.*\/about/);
+      await page.click('nav a[href="/about/"]');
+      await expect(page).toHaveURL(/.*\/about\//);
       
       // Navigate to Projects
-      await page.click('nav a[href="/projects"], a[href="/projects"]');
-      await expect(page).toHaveURL(/.*\/projects/);
+      await page.click('nav a[href="/projects/"]');
+      await expect(page).toHaveURL(/.*\/projects\//);
       
       // Navigate back to Home
-      await page.click('nav a[href="/"], a[href="/"]');
-      await expect(page).toHaveURL(/.*\//);
+      await page.click('nav a[href="/"]');
+      await expect(page).toHaveURL(/.*\/$/);
     });
 
     test('should have working logo/home link @essential', async ({ page }) => {
       await page.goto('/about');
       
-      // Click logo or site title to return home
-      const homeLink = page.locator('header a[href="/"], .logo a, h1 a, .site-title a').first();
+      // Click brand/logo link to return home - use specific selector from NavBar.astro
+      const homeLink = page.locator('.brand-link[href="/"]');
       await homeLink.click();
       
       await expect(page).toHaveURL(/.*\/$/);
@@ -34,21 +34,27 @@ test.describe('Essential Navigation Tests', () => {
     test('main navigation should be visible and accessible @essential', async ({ page }) => {
       await page.goto('/');
       
-      // Check main navigation exists
-      const mainNav = page.locator('nav, [role="navigation"]').first();
+      // Check main navigation exists using specific selector from NavBar
+      const mainNav = page.locator('nav[role="navigation"]#navbar');
       await expect(mainNav).toBeVisible();
       
-      // Check for essential navigation links
-      await expect(page.locator('nav a[href="/"], nav a[href="/about"], nav a[href="/projects"]')).toHaveCount(3, { timeout: 10000 });
+      // Check for essential navigation links - update to match actual hrefs
+      const aboutLink = page.locator('nav a[href="/about/"]');
+      const projectsLink = page.locator('nav a[href="/projects/"]');
+      const homeLink = page.locator('nav a[href="/"]');
+      
+      await expect(aboutLink).toBeVisible();
+      await expect(projectsLink).toBeVisible();
+      await expect(homeLink).toBeVisible();
     });
   });
 
   test.describe('Page Load Tests @smoke', () => {
     const criticalPages = [
       { path: '/', title: /Blake Oxford|Home/ },
-      { path: '/about', title: /About|Blake Oxford/ },
-      { path: '/projects', title: /Projects|Blake Oxford/ },
-      { path: '/contact', title: /Contact|Blake Oxford/ },
+      { path: '/about/', title: /About|Blake Oxford/ },
+      { path: '/projects/', title: /Projects|Blake Oxford/ },
+      { path: '/contact/', title: /Contact|Blake Oxford/ },
     ];
 
     for (const { path, title } of criticalPages) {
@@ -56,8 +62,8 @@ test.describe('Essential Navigation Tests', () => {
         await page.goto(path);
         await expect(page).toHaveTitle(title);
         
-        // Check page has main content
-        const main = page.locator('main, [role="main"], .main-content').first();
+        // Check page has main content using specific selector
+        const main = page.locator('main#main-content');
         await expect(main).toBeVisible();
       });
     }
@@ -69,14 +75,14 @@ test.describe('Essential Navigation Tests', () => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto('/');
       
-      // Look for mobile menu toggle
-      const mobileToggle = page.locator('.mobile-menu-toggle, .menu-toggle, button[aria-label*="menu"], button[aria-label*="Menu"]').first();
+      // Look for mobile menu toggle using specific selector from NavBar
+      const mobileToggle = page.locator('#nav-toggle.burger-menu-button');
       
       if (await mobileToggle.count() > 0) {
         await mobileToggle.click();
         
-        // Check if mobile menu is visible
-        const mobileMenu = page.locator('.mobile-menu, .menu-mobile, nav[aria-expanded="true"]').first();
+        // Check if mobile menu is visible using specific selector
+        const mobileMenu = page.locator('#nav-mobile-links.mobile-menu');
         await expect(mobileMenu).toBeVisible();
       }
     });
