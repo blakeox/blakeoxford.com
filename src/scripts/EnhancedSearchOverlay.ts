@@ -1,6 +1,7 @@
 /**
  * Enhanced search overlay with voice search, categories, and suggestions
  */
+import Fuse from 'fuse.js';
 
 interface SearchResult {
   title: string;
@@ -9,7 +10,7 @@ interface SearchResult {
   category: string;
   type: 'project' | 'blog' | 'page';
   score?: number;
-  matches?: any[];
+  matches?: readonly any[];
 }
 
 interface SearchSuggestion {
@@ -201,7 +202,7 @@ export class EnhancedSearchOverlay {
       this.trackSearchInteraction('error', { 
         query, 
         category: this.currentCategory,
-        error: error.message 
+        error: (error as Error)?.message || 'Unknown error' 
       });
       this.showErrorState();
     }
@@ -234,7 +235,7 @@ export class EnhancedSearchOverlay {
       }
 
       // Use Fuse.js for fuzzy search
-      const fuse = new (await import('fuse.js')).default(searchData, {
+      const fuse = new Fuse(searchData, {
         keys: [
           { name: 'title', weight: 0.4 },
           { name: 'description', weight: 0.3 },
