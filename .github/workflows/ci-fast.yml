@@ -11,6 +11,11 @@ on:
       - ".github/dependabot.yml"
       - "assets-source/**"
 
+# Cancel in-progress runs for the same workflow on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # Quick validation that code builds and basic tests pass
   quick-validation:
@@ -55,6 +60,7 @@ jobs:
     name: Essential E2E Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: quick-validation # Wait for basic validation to pass first
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -88,7 +94,7 @@ jobs:
         run: pnpm run build
 
       - name: Run essential Playwright tests
-        run: pnpm exec playwright test tests/playwright/navigation-essential.spec.ts tests/playwright/accessibility-basic.spec.ts tests/playwright/performance-smoke.spec.ts
+        run: pnpm run test:e2e:essential
         env:
           COMPREHENSIVE_TESTS: "false"
 
@@ -100,43 +106,3 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # Basic accessibility check
-  accessibility-check:
-    name: Accessibility Check
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install chromium --with-deps
-
-      - name: Build the application
-        run: pnpm run build
-
-      - name: Run basic accessibility tests
-        run: pnpm exec playwright test tests/playwright/accessibility-basic.spec.ts
-        env:
-          COMPREHENSIVE_TESTS: "false"
-        continue-on-error: true

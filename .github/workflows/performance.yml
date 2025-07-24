@@ -14,6 +14,11 @@ permissions:
   pull-requests: write
   checks: write
 
+# Cancel in-progress runs for the same workflow on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # Build once and share artifacts across all performance jobs
   build:

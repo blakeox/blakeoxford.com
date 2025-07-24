@@ -18,12 +18,20 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1, // Reduced retries
   workers: process.env.CI ? 2 : 3, // Optimized workers for CI
-  reporter: [['html'], ['line']],
+  reporter: [
+    ['html'], 
+    ['line'],
+    // Add JUnit reporter for CI systems
+    ['junit', { outputFile: 'test-results/junit.xml' }]
+  ],
   use: {
     baseURL: 'http://localhost:4322',
     trace: 'on-first-retry',
     actionTimeout: 10000,
     navigationTimeout: 30000,
+    // Optimize for CI performance
+    video: process.env.CI ? 'retain-on-failure' : 'off',
+    screenshot: process.env.CI ? 'only-on-failure' : 'off',
   },
   projects: [
     {

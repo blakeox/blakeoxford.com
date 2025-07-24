@@ -15,6 +15,7 @@ test-results/
 playwright-report/
 *.lighthouse.report.html
 .lighthouseci/
+junit.xml
 
 # Playwright visual regression snapshots (auto-generated)
 tests/playwright/*.spec.ts-snapshots/
