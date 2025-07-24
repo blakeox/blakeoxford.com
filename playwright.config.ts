@@ -7,35 +7,48 @@ export default defineConfig({
     '**/accessibility-enhanced.spec.ts', // 545 lines - needs review
     '**/advanced-scenarios.spec.ts', // 539 lines - needs review
     '**/bundle-analysis.spec.ts', // 404 lines - breaking up due to timeouts
+    '**/performance-monitoring.spec.ts', // 516 lines - run separately
+    '**/chaos-engineering.spec.ts', // 423 lines - run separately
   ],
   timeout: 60 * 1000, // Increased timeout for CI
   expect: {
     timeout: 10000 // Increased expect timeout
   },
-  fullyParallel: false, // Disable parallel for server stability
+  fullyParallel: true, // Re-enable parallel for faster execution
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 3 : 1, // More retries for CI
-  workers: process.env.CI ? 1 : 2, // Fewer workers for stability
-  reporter: [['html'], ['line']],
+  retries: process.env.CI ? 2 : 1, // Reduced retries
+  workers: process.env.CI ? 2 : 3, // Optimized workers for CI
+  reporter: [
+    ['html'], 
+    ['line'],
+    // Add JUnit reporter for CI systems
+    ['junit', { outputFile: 'test-results/junit.xml' }]
+  ],
   use: {
     baseURL: 'http://localhost:4322',
     trace: 'on-first-retry',
     actionTimeout: 10000,
     navigationTimeout: 30000,
+    // Optimize for CI performance
+    video: process.env.CI ? 'retain-on-failure' : 'off',
+    screenshot: process.env.CI ? 'only-on-failure' : 'off',
   },
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // Only run Firefox and Safari on main branch or for comprehensive testing
+    ...(process.env.COMPREHENSIVE_TESTS === 'true' || process.env.GITHUB_REF === 'refs/heads/main' ? [
+      {
+        name: 'firefox',
+        use: { ...devices['Desktop Firefox'] },
+      },
+      {
+        name: 'webkit',
+        use: { ...devices['Desktop Safari'] },
+      },
+    ] : []),
   ],
   webServer: {
     command: 'npx astro dev --port 4322',
