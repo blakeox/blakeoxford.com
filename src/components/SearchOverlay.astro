@@ -218,29 +218,42 @@
   
   /* Search Results */
   .search-results {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
   }
   
   .search-results.active {
     display: block;
   }
-  
-  .dark .search-results {
+
+  .search-results-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .dark .search-results-container {
     background: #1f2937;
     border-color: #374151;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
   }
   
   .search-result-item {
-    padding: 12px 16px;
+    padding: 16px;
     border-bottom: 1px solid #f3f4f6;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
     display: flex;
-    align-items: start;
+    align-items: flex-start;
     gap: 12px;
+    background: white;
   }
   
   .search-result-item:last-child {
@@ -248,17 +261,22 @@
   }
   
   .search-result-item:hover,
-  .search-result-item[aria-selected="true"] {
-    background: #f9fafb;
+  .search-result-item[aria-selected="true"],
+  .search-result-item:focus {
+    background: #f8fafc;
+    border-color: #e2e8f0;
   }
   
   .dark .search-result-item {
+    background: #1f2937;
     border-color: #374151;
   }
   
   .dark .search-result-item:hover,
-  .dark .search-result-item[aria-selected="true"] {
-    background: #374151;
+  .dark .search-result-item[aria-selected="true"],
+  .dark .search-result-item:focus {
+    background: #293649;
+    border-color: #4b5563;
   }
   
   .search-result-icon {
@@ -266,6 +284,11 @@
     width: 20px;
     height: 20px;
     margin-top: 2px;
+    color: #6b7280;
+  }
+
+  .dark .search-result-icon {
+    color: #9ca3af;
   }
   
   .search-result-content {
@@ -274,11 +297,11 @@
   }
   
   .search-result-title {
-    font-weight: 500;
+    font-weight: 600;
     color: #111827;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.4;
-    margin: 0 0 4px 0;
+    margin: 0 0 6px 0;
   }
   
   .dark .search-result-title {
@@ -287,9 +310,9 @@
   
   .search-result-description {
     color: #6b7280;
-    font-size: 13px;
-    line-height: 1.4;
-    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 8px 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -297,48 +320,145 @@
   }
   
   .dark .search-result-description {
-    color: #9ca3af;
+    color: #d1d5db;
   }
   
   .search-result-meta {
-    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 12px;
-    margin-top: 4px;
+    color: #9ca3af;
   }
   
   .dark .search-result-meta {
     color: #6b7280;
   }
+
+  .search-result-category {
+    background: #f3f4f6;
+    color: #374151;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .dark .search-result-category {
+    background: #374151;
+    color: #d1d5db;
+  }
+
+  .search-result-score {
+    color: #059669;
+    font-weight: 500;
+  }
+
+  .dark .search-result-score {
+    color: #10b981;
+  }
   
   /* Search highlighting */
   .search-result-item mark {
-    background: rgba(59, 130, 246, 0.2);
+    background: #dbeafe;
     color: #1e40af;
-    padding: 0;
+    padding: 1px 2px;
     border-radius: 2px;
-    font-weight: 500;
+    font-weight: 600;
   }
   
   .dark .search-result-item mark {
-    background: rgba(59, 130, 246, 0.3);
-    color: #60a5fa;
+    background: #1e3a8a;
+    color: #93c5fd;
   }
   
   /* Loading and Empty States */
   .search-loading {
-    padding: 20px;
+    padding: 32px 24px;
     text-align: center;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
     color: #6b7280;
   }
   
-  .search-empty {
-    padding: 20px;
+  .search-error {
+    padding: 32px 24px;
     text-align: center;
-    color: #6b7280;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
   }
   
+  /* Search Suggestions */
+  .search-suggestions {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .dark .search-suggestions {
+    background: #1f2937;
+    border-color: #374151;
+  }
+
+  .search-suggestions-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 16px 0;
+  }
+
+  .dark .search-suggestions-title {
+    color: #f9fafb;
+  }
+
+  .search-suggestions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .search-suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f8fafc;
+  }
+
+  .search-suggestion-item:hover,
+  .search-suggestion-item:focus {
+    background: #e2e8f0;
+  }
+
+  .dark .search-suggestion-item {
+    background: #293649;
+  }
+
+  .dark .search-suggestion-item:hover,
+  .dark .search-suggestion-item:focus {
+    background: #374151;
+  }
+
+  .search-suggestion-text {
+    font-size: 14px;
+    color: #374151;
+    margin: 0;
+  }
+
+  .dark .search-suggestion-text {
+    color: #d1d5db;
+  }
+
   .dark .search-loading,
-  .dark .search-empty {
+  .dark .search-error {
+    background: #1f2937;
+    border-color: #374151;
     color: #9ca3af;
   }
   
@@ -461,35 +581,47 @@
   /* No results state */
   .search-no-results {
     text-align: center;
-    padding: 24px;
+    padding: 32px 24px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
     color: #6b7280;
   }
   
   .dark .search-no-results {
+    background: #1f2937;
+    border-color: #374151;
     color: #9ca3af;
   }
   
   .search-no-results-icon {
-    width: 48px;
-    height: 48px;
-    margin: 0 auto 12px;
-    opacity: 0.5;
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .search-no-results h3 {
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     margin: 0 0 8px 0;
     color: #374151;
   }
   
   .dark .search-no-results h3 {
-    color: #d1d5db;
+    color: #f3f4f6;
   }
   
   .search-no-results p {
     font-size: 14px;
     margin: 0;
+    color: #6b7280;
+  }
+
+  .dark .search-no-results p {
+    color: #9ca3af;
   }
 </style>
 

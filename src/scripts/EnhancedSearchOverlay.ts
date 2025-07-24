@@ -344,17 +344,17 @@ export class EnhancedSearchOverlay {
       this.searchResults.innerHTML = `
         <div class="search-no-results">
           <div class="search-no-results-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-8 h-8 text-gray-400 dark:text-gray-500">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <h3>No results found</h3>
+          <h3>No results found for "${query}"</h3>
           <p>Try different keywords or browse categories</p>
         </div>
       `;
     } else {
       this.searchResults.innerHTML = `
-        <div class="space-y-2 max-h-96 overflow-y-auto">
+        <div class="search-results-container">
           ${results.map((result, index) => `
             <div class="search-result-item" role="option" tabindex="0" data-url="${result.url}" data-index="${index}">
               <div class="search-result-icon">
@@ -364,8 +364,8 @@ export class EnhancedSearchOverlay {
                 <h3 class="search-result-title">${this.highlightMatches(result.title, query)}</h3>
                 <p class="search-result-description">${this.highlightMatches(result.description, query)}</p>
                 <div class="search-result-meta">
-                  <span>${result.category}</span>
-                  ${result.score ? `<span> • ${Math.round((1 - result.score) * 100)}% match</span>` : ''}
+                  <span class="search-result-category">${this.getCategoryDisplayName(result.category)}</span>
+                  ${result.score ? `<span class="search-result-score">${Math.round((1 - result.score) * 100)}% match</span>` : ''}
                 </div>
               </div>
             </div>
@@ -387,6 +387,15 @@ export class EnhancedSearchOverlay {
       case 'blog': return '📝';
       case 'page': return '📄';
       default: return '📄';
+    }
+  }
+
+  private getCategoryDisplayName(category: string): string {
+    switch (category) {
+      case 'projects': return 'Project';
+      case 'blog': return 'Blog Post';
+      case 'pages': return 'Page';
+      default: return category;
     }
   }
 
@@ -415,7 +424,7 @@ export class EnhancedSearchOverlay {
     if (!query || query.length < 2) return text;
     
     const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    return text.replace(regex, '<mark class="bg-accent/20 text-accent">$1</mark>');
+    return text.replace(regex, '<mark>$1</mark>');
   }
 
   private addResultClickHandlers() {
@@ -462,18 +471,18 @@ export class EnhancedSearchOverlay {
     ];
     
     this.searchResults.innerHTML = `
-      <div class="p-6">
-        <h3 class="font-medium text-gray-900 dark:text-white mb-4">Search Suggestions</h3>
-        <div class="space-y-2">
+      <div class="search-suggestions">
+        <h3 class="search-suggestions-title">Search Suggestions</h3>
+        <div class="search-suggestions-list">
           ${suggestions.map(suggestion => `
-            <div class="search-result-item cursor-pointer" role="option" tabindex="0">
+            <div class="search-suggestion-item" role="option" tabindex="0">
               <div class="search-result-icon">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
               <div class="search-result-content">
-                <p class="search-result-title">${suggestion.text}</p>
+                <p class="search-suggestion-text">${suggestion.text}</p>
               </div>
             </div>
           `).join('')}
@@ -490,8 +499,8 @@ export class EnhancedSearchOverlay {
     
     this.searchResults.innerHTML = `
       <div class="search-loading">
-        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-        <p class="mt-2">Searching...</p>
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mb-3"></div>
+        <p class="text-sm font-medium">Searching...</p>
       </div>
     `;
     
@@ -503,14 +512,14 @@ export class EnhancedSearchOverlay {
     if (!this.searchResults) return;
     
     this.searchResults.innerHTML = `
-      <div class="p-6 text-center text-red-600 dark:text-red-400">
-        <div class="w-12 h-12 mx-auto mb-3">
+      <div class="search-error">
+        <div class="w-8 h-8 mx-auto mb-3 text-red-500 dark:text-red-400">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-full h-full">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p class="font-medium">Search failed</p>
-        <p class="mt-1 text-sm">Please try again</p>
+        <p class="font-medium text-red-600 dark:text-red-400">Search failed</p>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Please try again</p>
       </div>
     `;
     
