@@ -277,6 +277,9 @@ export class ModernNavBar {
   openSearchOverlay() {
     if (!this.searchOverlay) return;
     
+    // Track analytics
+    this.trackSearchInteraction('opened');
+    
     this.searchOverlay.classList.add('active');
     this.searchOverlay.style.visibility = 'visible';
     this.searchOverlay.style.opacity = '1';
@@ -291,6 +294,14 @@ export class ModernNavBar {
     document.body.style.overflow = 'hidden';
     
     this.announceToScreenReader('Search overlay opened');
+  }
+
+  private trackSearchInteraction(action: string, data: any = {}) {
+    // Analytics tracking for search interactions
+    if (typeof window !== 'undefined' && (window as any).analytics) {
+      (window as any).analytics.track(`search_${action}`, data);
+    }
+    console.log(`[Search Analytics] search_${action}`, data);
   }
 
   closeSearchOverlay() {
