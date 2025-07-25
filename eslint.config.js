@@ -61,7 +61,7 @@ export default [
       'public/**/*.js',
       'src/assets/**/*.js',
       'src/scripts/**/*.ts',
-      'scripts/critical-css-generator.js',
+      'scripts/build/critical-css-generator.js',
       'tests/playwright/**/*.js',
     ],
     languageOptions: {
