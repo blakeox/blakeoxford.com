@@ -1,6 +1,7 @@
 ---
 import CoinFlipImage from '../ui/CoinFlipImage.astro';
 import ParticleBackground from '../animations/ParticleBackground.astro';
+import ParallaxScroll from '../animations/ParallaxScroll.astro';
 import TypingAnimation from '../animations/TypingAnimation.astro';
 import ScrollAnimation from '../animations/ScrollAnimation.astro';
 import { siteConfig } from '../../config/data';
@@ -10,16 +11,22 @@ import { siteConfig } from '../../config/data';
   <!-- Enhanced Particle Background -->
   <ParticleBackground density={30} color="rgba(6, 95, 70, 0.15)" speed={0.8} />
   
-  <!-- Animated Grid Pattern Background -->
-  <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.08]" aria-hidden="true">
-    <div class="absolute inset-0 bg-grid-pattern animate-grid-float"></div>
-  </div>
+  <!-- Animated Grid Pattern Background with Parallax -->
+  <ParallaxScroll speed={0.3} direction="up" className="absolute inset-0 opacity-[0.03] dark:opacity-[0.08]">
+    <div class="absolute inset-0 bg-grid-pattern animate-grid-float" aria-hidden="true"></div>
+  </ParallaxScroll>
 
-  <!-- Floating Geometric Shapes -->
+  <!-- Floating Geometric Shapes with Parallax -->
   <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-    <div class="absolute top-20 left-10 w-24 h-24 bg-accent/10 rounded-full blur-xl animate-float-slow"></div>
-    <div class="absolute top-40 right-20 w-16 h-16 bg-purple-500/10 rounded-full blur-xl animate-float-reverse"></div>
-    <div class="absolute bottom-40 left-1/4 w-20 h-20 bg-blue-500/10 rounded-full blur-xl animate-float-slow" style="animation-delay: 1s;"></div>
+    <ParallaxScroll speed={0.4} direction="down">
+      <div class="absolute top-20 left-10 w-24 h-24 bg-accent/10 rounded-full blur-xl animate-float-slow"></div>
+    </ParallaxScroll>
+    <ParallaxScroll speed={0.6} direction="up">
+      <div class="absolute top-40 right-20 w-16 h-16 bg-purple-500/10 rounded-full blur-xl animate-float-reverse"></div>
+    </ParallaxScroll>
+    <ParallaxScroll speed={0.5} direction="left">
+      <div class="absolute bottom-40 left-1/4 w-20 h-20 bg-blue-500/10 rounded-full blur-xl animate-float-slow" style="animation-delay: 1s;"></div>
+    </ParallaxScroll>
   </div>
 
   <!-- Curved divider at bottom -->

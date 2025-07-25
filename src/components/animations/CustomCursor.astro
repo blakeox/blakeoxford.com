@@ -1,0 +1,237 @@
+---
+// Custom cursor component for enhanced desktop interactions
+---
+
+<div id="custom-cursor" class="custom-cursor" aria-hidden="true">
+  <div class="cursor-dot"></div>
+  <div class="cursor-outline"></div>
+</div>
+
+<style>
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+  }
+
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
+  }
+
+  .cursor-outline {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--color-accent);
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
+    opacity: 0.5;
+  }
+
+  /* Hover states */
+  .custom-cursor.hover-link .cursor-dot {
+    width: 16px;
+    height: 16px;
+    background: var(--color-accent-dark);
+  }
+
+  .custom-cursor.hover-link .cursor-outline {
+    width: 48px;
+    height: 48px;
+    border-color: var(--color-accent-dark);
+    opacity: 0.8;
+  }
+
+  .custom-cursor.hover-button .cursor-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--color-primary);
+  }
+
+  .custom-cursor.hover-button .cursor-outline {
+    width: 40px;
+    height: 40px;
+    border-color: var(--color-primary);
+    opacity: 1;
+  }
+
+  .custom-cursor.click .cursor-dot {
+    width: 20px;
+    height: 20px;
+    background: var(--color-accent-light);
+  }
+
+  .custom-cursor.click .cursor-outline {
+    width: 60px;
+    height: 60px;
+    opacity: 0.3;
+  }
+
+  /* Hide on mobile/touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    .custom-cursor {
+      display: none;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-dot,
+    .cursor-outline {
+      transition: none !important;
+    }
+  }
+
+  /* Hide default cursor on interactive elements when custom cursor is active */
+  .custom-cursor-active {
+    cursor: none !important;
+  }
+
+  .custom-cursor-active a,
+  .custom-cursor-active button,
+  .custom-cursor-active [role="button"],
+  .custom-cursor-active input,
+  .custom-cursor-active textarea {
+    cursor: none !important;
+  }
+</style>
+
+<script>
+  class CustomCursor {
+    private cursor: HTMLElement | null = null;
+    private cursorDot: HTMLElement | null = null;
+    private cursorOutline: HTMLElement | null = null;
+    private isVisible: boolean = false;
+
+    constructor() {
+      this.init();
+    }
+
+    private init() {
+      // Only initialize on desktop devices with mouse
+      if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+        return;
+      }
+
+      this.cursor = document.getElementById('custom-cursor');
+      if (!this.cursor) return;
+
+      this.cursorDot = this.cursor.querySelector('.cursor-dot');
+      this.cursorOutline = this.cursor.querySelector('.cursor-outline');
+
+      this.bindEvents();
+      document.body.classList.add('custom-cursor-active');
+    }
+
+    private bindEvents() {
+      if (!this.cursor) return;
+
+      // Mouse movement
+      document.addEventListener('mousemove', (e) => {
+        this.updatePosition(e.clientX, e.clientY);
+        if (!this.isVisible) {
+          this.show();
+        }
+      });
+
+      // Mouse enter/leave window
+      document.addEventListener('mouseenter', () => this.show());
+      document.addEventListener('mouseleave', () => this.hide());
+
+      // Interactive element hover
+      const interactiveSelector = 'a, button, [role="button"], input, textarea, .btn, .clickable';
+      const interactiveElements = document.querySelectorAll(interactiveSelector);
+
+      interactiveElements.forEach(element => {
+        element.addEventListener('mouseenter', () => {
+          if (element.tagName === 'A') {
+            this.setHoverState('link');
+          } else {
+            this.setHoverState('button');
+          }
+        });
+
+        element.addEventListener('mouseleave', () => {
+          this.removeHoverState();
+        });
+
+        // Click effect
+        element.addEventListener('mousedown', () => {
+          this.setClickState();
+        });
+
+        element.addEventListener('mouseup', () => {
+          this.removeClickState();
+        });
+      });
+
+      // Global click effect
+      document.addEventListener('mousedown', () => {
+        this.setClickState();
+      });
+
+      document.addEventListener('mouseup', () => {
+        this.removeClickState();
+      });
+    }
+
+    private updatePosition(x: number, y: number) {
+      if (!this.cursor) return;
+
+      // Use transform for better performance
+      this.cursor.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    private show() {
+      if (!this.cursor) return;
+      this.cursor.style.opacity = '1';
+      this.isVisible = true;
+    }
+
+    private hide() {
+      if (!this.cursor) return;
+      this.cursor.style.opacity = '0';
+      this.isVisible = false;
+    }
+
+    private setHoverState(type: 'link' | 'button') {
+      if (!this.cursor) return;
+      this.cursor.classList.add(`hover-${type}`);
+    }
+
+    private removeHoverState() {
+      if (!this.cursor) return;
+      this.cursor.classList.remove('hover-link', 'hover-button');
+    }
+
+    private setClickState() {
+      if (!this.cursor) return;
+      this.cursor.classList.add('click');
+    }
+
+    private removeClickState() {
+      if (!this.cursor) return;
+      this.cursor.classList.remove('click');
+    }
+  }
+
+  // Initialize custom cursor when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    new CustomCursor();
+  });
+
+  // Handle dynamic content (for client-side routing)
+  document.addEventListener('astro:page-load', () => {
+    new CustomCursor();
+  });
+</script>

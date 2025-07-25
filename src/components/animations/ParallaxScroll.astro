@@ -1,0 +1,124 @@
+---
+interface Props {
+  speed?: number;
+  direction?: 'up' | 'down' | 'left' | 'right';
+  className?: string;
+}
+
+const { speed = 0.5, direction = 'up', className = '' } = Astro.props;
+---
+
+<div 
+  class={`parallax-element ${className}`}
+  data-parallax-speed={speed}
+  data-parallax-direction={direction}
+>
+  <slot />
+</div>
+
+<style>
+  .parallax-element {
+    will-change: transform;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .parallax-element {
+      transform: none !important;
+    }
+  }
+</style>
+
+<script>
+  class ParallaxController {
+    private elements: NodeListOf<Element>;
+    private isScrolling: boolean = false;
+
+    constructor() {
+      this.elements = document.querySelectorAll('.parallax-element');
+      this.init();
+    }
+
+    private init() {
+      // Check for reduced motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+      }
+
+      this.bindEvents();
+      this.updateElements(); // Initial position
+    }
+
+    private bindEvents() {
+      let ticking = false;
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.updateElements();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+
+      // Handle resize
+      window.addEventListener('resize', () => {
+        this.updateElements();
+      });
+    }
+
+    private updateElements() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+
+      this.elements.forEach((element: Element) => {
+        const htmlElement = element as HTMLElement;
+        const rect = htmlElement.getBoundingClientRect();
+        const elementTop = rect.top + scrollTop;
+        const elementHeight = rect.height;
+        
+        // Check if element is in viewport (with some buffer)
+        const buffer = windowHeight * 0.1;
+        if (rect.bottom < -buffer || rect.top > windowHeight + buffer) {
+          return; // Skip elements that are far off-screen
+        }
+
+        const speed = parseFloat(htmlElement.dataset.parallaxSpeed || '0.5');
+        const direction = htmlElement.dataset.parallaxDirection || 'up';
+        
+        // Calculate how much the element should move
+        const scrollProgress = (scrollTop - elementTop + windowHeight) / (windowHeight + elementHeight);
+        const movement = scrollProgress * speed * 100;
+
+        let transform = '';
+        switch (direction) {
+          case 'up':
+            transform = `translate3d(0, ${-movement}px, 0)`;
+            break;
+          case 'down':
+            transform = `translate3d(0, ${movement}px, 0)`;
+            break;
+          case 'left':
+            transform = `translate3d(${-movement}px, 0, 0)`;
+            break;
+          case 'right':
+            transform = `translate3d(${movement}px, 0, 0)`;
+            break;
+        }
+
+        htmlElement.style.transform = transform;
+      });
+    }
+  }
+
+  // Initialize parallax controller when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    new ParallaxController();
+  });
+
+  // Handle dynamic content (for client-side routing)
+  document.addEventListener('astro:page-load', () => {
+    new ParallaxController();
+  });
+</script>
