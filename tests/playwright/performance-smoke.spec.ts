@@ -29,7 +29,7 @@ test.describe('Performance Smoke Tests', () => {
       try {
         // Try to wait for JS response, but don't fail if none exist
         await page.waitForResponse('**/*.js', { timeout: 5000 });
-      } catch (error) {
+      } catch {
         // No JS files loaded - this is actually good for a performance-first site
         console.log('No JavaScript files detected - excellent for performance!');
       }

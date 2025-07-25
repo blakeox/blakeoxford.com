@@ -2,109 +2,15 @@
 import Layout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import ProjectCard from '../components/ProjectCard.astro';
-import CoinFlipImage from '../components/CoinFlipImage.astro';
+import ProjectCard from '../components/features/projects/ProjectCard.astro';
+import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
+import { getFeaturedProjects, technologies, siteConfig } from '../config/data';
 import pythonLogo from '../assets/images/proficiencies/python_logo.webp';
 
 const blogPosts = (await getCollection('blog')) as any[];
 
-// Import the projects data from the projects index page
-const projects = [
-  {
-    slug: 'google-workspace-migration',
-    data: {
-      title: 'Google Workspace → Microsoft 365 Migration & Endpoint Management',
-      description: 'Led the transition from Google Workspace to Microsoft 365 and deployed modern device management via Intune/Endpoint Manager during early 2020, ensuring business continuity through COVID-19 disruptions.',
-      date: new Date('2020-01-15T00:00:00.000Z'),
-      tags: ['Microsoft 365', 'Google Workspace', 'Endpoint Manager', 'Intune', 'MDM', 'COVID-19 Response'],
-      image: '/assets/projects/google-to-microsoft.png',
-      draft: false
-    }
-  },
-  {
-    slug: 'Microsoft-Fabric',
-    data: {
-      title: 'Microsoft Fabric – Operational Intelligence & Workflow Automation',
-      description: 'Built the operational backbone for a 200-person healthcare organization—uniting workflows, performance tracking, and automation across 10+ departments using Microsoft Fabric and Power Platform.',
-      date: new Date('2024-02-20T00:00:00.000Z'),
-      tags: ['Microsoft Fabric', 'Power BI', 'Power Platform', 'Process Automation', 'EOS', 'Data Engineering', 'Leadership'],
-      image: '/assets/projects/operational-and-workflow-automation.png',
-      draft: false
-    }
-  },
-  {
-    slug: 'LLM-note-coaching',
-    data: {
-      title: 'OpenAI-Powered Documentation Quality Feedback System',
-      description: 'Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.',
-      date: new Date('2023-11-01T00:00:00.000Z'),
-      tags: ['OpenAI', 'Natural Language Processing', 'Healthcare IT', 'Compliance', 'Blue Cross Blue Shield', 'Documentation Quality', 'Python'],
-      image: '/assets/projects/openai-automated-audit.png',
-      draft: false
-    }
-  },
-  {
-    slug: 'sage-intacct-integration-with-square-pos',
-    data: {
-      title: 'Sage Intacct Integration with Square POS',
-      description: 'Developed a comprehensive integration solution between Sage Intacct accounting software and Square POS system to automate financial data synchronization and streamline business operations.',
-      date: new Date('2024-03-10T00:00:00.000Z'),
-      tags: ['API Integration', 'Sage Intacct', 'Square POS', 'Financial Systems', 'Automation'],
-      image: '/assets/projects/square-sage-integration.png',
-      draft: false
-    }
-  },
-  {
-    slug: 'advancedmd-implementation',
-    data: {
-      title: 'AdvancedMD Implementation & Evolution',
-      description: 'Led the selection, implementation, and continuous enhancement of AdvancedMD, transforming paper workflows into a robust, data-driven EHR ecosystem with custom SQL tools.',
-      date: new Date('2017-12-01T00:00:00.000Z'),
-      tags: ['EHR', 'Digital Transformation', 'Automation', 'Healthcare IT', 'SQL'],
-      image: '/assets/projects/advancedMD-project.png',
-      draft: false
-    }
-  },
-  {
-    slug: 'ferment-app',
-    data: {
-      title: 'Ferment App – Mobile Recipe Management',
-      description: 'A native iOS application for managing fermentation recipes, tracking progress, and automating task reminders — built with SwiftUI and Firebase.',
-      date: new Date('2024-01-15T00:00:00.000Z'),
-      tags: ['Swift', 'SwiftUI', 'Firebase', 'SwiftData', 'Mobile Development', 'Fermentation'],
-      image: '/assets/projects/ferment-app-design.png',
-      draft: false
-    }
-  },
-  {
-    slug: 'bank-projections-modeling',
-    data: {
-      title: 'Bank Projections and Financial Modeling',
-      description: 'Developed detailed financial models and projections to secure multiple loans—including $2M, $10M, PPP, and disaster relief—supporting facility expansion and operational resilience.',
-      date: new Date('2020-01-01T00:00:00.000Z'),
-      tags: ['Financial Modeling', 'Bank Projections', 'Commercial Real Estate', 'Loan', 'Financial Analysis'],
-      image: '/assets/projects/bank-projections.png',
-      draft: false
-    }
-  },
-  {
-    slug: 'adp-workforcenow',
-    data: {
-      title: 'ADP Workforce Now Implementation',
-      description: 'Implemented ADP Workforce Now to unify HR, recruiting, and finance operations through automation and real-time reporting.',
-      date: new Date('2021-01-01T00:00:00.000Z'),
-      tags: ['HCM', 'Recruiting', 'ADP Workforce Now', 'Sage Intacct', 'PowerBI'],
-      image: '/assets/projects/adp-automation.png',
-      draft: false
-    }
-  }
-];
-
-// Get the 3 most recent non-draft projects for featured section
-const featuredProjects = projects
-  .filter((p) => !p.data.draft)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
+// Use centralized data management
+const featuredProjects = getFeaturedProjects(3);
 
 // Get the latest blog post if available
 const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
@@ -133,13 +39,13 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
           <div class="order-2 md:order-1 animate-fadeIn">
             <div class="prose lg:prose-xl dark:prose-invert">
               <h1 class="font-heading font-bold text-h1 md:text-6xl text-accent mb-6">
-                <span class="block">Blake Oxford</span>
+                <span class="block">{siteConfig.author}</span>
               </h1>
               <p class="block text-lead mt-2 animate-fadeInUp text-foreground dark:text-foreground-light font-medium" style="animation-delay: 0.5s;">
-                Systems Architect · Workflow Strategist · Action-Oriented Leader
+                {siteConfig.description}
               </p>
               <p class="animate-fadeInUp text-body dark:text-foreground-light pl-4 border-l-4 border-accent dark:border-accent-dark border-solid">
-                I turn complexity into opportunity—designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results.
+                {siteConfig.tagline}
               </p>
             </div>
             <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6 animate-fadeInUp" style="animation-delay: 1.1s;">
@@ -381,22 +287,12 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
     <section id="technologies" class="w-full py-16 text-center animate-fade-in bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
       <h2 class="text-h2 font-bold mb-8 text-accent-dark">Technologies I Excel At</h2>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
-        {[
-          { name: 'Python Automation', img: pythonLogo, alt: 'Python Logo', optimized: true },
-          { name: 'OpenAI API', img: '/assets/images/proficiencies/OpenAI-black-monoblossom.png', alt: 'OpenAI Logo' },
-          { name: 'Microsoft Intune', img: '/assets/images/proficiencies/Intune_logo_final.png', alt: 'Microsoft Intune Logo' },
-          { name: 'SQL', img: '/assets/images/proficiencies/Azure_SQL_logo.png', alt: 'Azure SQL Logo' },
-          { name: 'Google Cloud', img: '/assets/images/proficiencies/google_cloud_logo.png', alt: 'Google Cloud Logo' },
-          { name: 'Firebase', img: '/assets/images/proficiencies/Firebase_Logomark_Full%20Color.png', alt: 'Firebase Logo' },
-          { name: 'Azure', img: '/assets/images/proficiencies/Azure_SQL_logo.png', alt: 'Azure Logo' },
-          { name: 'Cloudflare', img: '/assets/images/proficiencies/cloudflare_logo.png', alt: 'Cloudflare Logo' },
-          { name: 'Microsoft Fabric', img: '/assets/images/proficiencies/fabric_32_color.png', alt: 'Microsoft Fabric Logo' },
-        ].map((tech) => (
+        {technologies.map((tech) => (
           <li class="flex flex-col items-center group">
             <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center">
-              {tech.optimized ? (
+              {tech.optimized && tech.name === 'Python Automation' ? (
                 <Image 
-                  src={tech.img} 
+                  src={pythonLogo} 
                   alt={tech.alt} 
                   width={64} 
                   height={64}

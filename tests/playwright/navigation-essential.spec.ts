@@ -32,16 +32,24 @@ test.describe('Essential Navigation Tests', () => {
     });
 
     test('main navigation should be visible and accessible @essential', async ({ page }) => {
+      // Set desktop viewport to ensure desktop navigation is visible
+      await page.setViewportSize({ width: 1200, height: 800 });
       await page.goto('/');
+      
+      // Wait for navigation to be present
+      await page.waitForSelector('nav[role="navigation"]#navbar');
       
       // Check main navigation exists using specific selector from NavBar
       const mainNav = page.locator('nav[role="navigation"]#navbar');
       await expect(mainNav).toBeVisible();
       
-      // Check for essential navigation links - update to match actual hrefs
-      const aboutLink = page.locator('nav a[href="/about/"]');
-      const projectsLink = page.locator('nav a[href="/projects/"]');
-      const homeLink = page.locator('nav a[href="/"]');
+      // Wait for desktop navigation to be visible 
+      await page.waitForSelector('.desktop-nav', { state: 'visible' });
+      
+      // Check for essential navigation links using the exact selectors from the rendered HTML
+      const aboutLink = page.locator('.desktop-nav a.nav-link[href="/about/"]');
+      const projectsLink = page.locator('.desktop-nav a.nav-link[href="/projects/"]');
+      const homeLink = page.locator('.brand-link[href="/"]'); // Home link is the brand/logo link
       
       await expect(aboutLink).toBeVisible();
       await expect(projectsLink).toBeVisible();
