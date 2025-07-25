@@ -1,0 +1,397 @@
+---
+import ScrollAnimation from '../animations/ScrollAnimation.astro';
+import AnimatedCounter from '../animations/AnimatedCounter.astro';
+
+// Define achievement metrics
+const achievements = [
+  {
+    icon: '💰',
+    title: 'Cost Savings',
+    value: 2.5,
+    suffix: 'M+',
+    prefix: '$',
+    description: 'Multi-million dollar overhead reduction',
+    color: 'from-green-500 to-emerald-600'
+  },
+  {
+    icon: '👥',
+    title: 'Users Migrated',
+    value: 180,
+    suffix: '+',
+    description: 'Google Workspace to Microsoft 365',
+    color: 'from-blue-500 to-cyan-600'
+  },
+  {
+    icon: '🏥',
+    title: 'Departments',
+    value: 10,
+    suffix: '+',
+    description: 'Operational workflows optimized',
+    color: 'from-purple-500 to-indigo-600'
+  },
+  {
+    icon: '⚡',
+    title: 'Efficiency Gain',
+    value: 85,
+    suffix: '%',
+    description: 'Process automation improvement',
+    color: 'from-orange-500 to-red-600'
+  }
+];
+
+// Core expertise areas
+const expertiseAreas = [
+  {
+    title: 'Practice Management & RCM',
+    icon: '📋',
+    gradient: 'from-emerald-500 to-teal-600',
+    description: 'End-to-end AdvancedMD implementation, including:',
+    items: [
+      'System architecture and workflow design',
+      'Comprehensive SOP development and documentation',
+      'Cross-functional team training and certification',
+      'Revenue cycle optimization and compliance assurance'
+    ]
+  },
+  {
+    title: 'Cloud & SaaS',
+    icon: '☁️',
+    gradient: 'from-blue-500 to-indigo-600',
+    description: 'Comprehensive enterprise technology transformation:',
+    items: [
+      'Google Workspace → Microsoft 365 migration for 180 users',
+      'Sage Intacct financial platform implementation',
+      'Azure/Intune endpoint management deployment',
+      'ADP Workforce Now and Cornerstone LMS integration'
+    ]
+  },
+  {
+    title: 'Automation & Savings',
+    icon: '🔧',
+    gradient: 'from-purple-500 to-pink-600',
+    description: 'Multi-million-dollar overhead reduction via:',
+    items: [
+      'Azure cloud infrastructure optimization',
+      'Power BI analytics and real-time dashboarding',
+      'Custom OpenAI workflow integrations',
+      'Enterprise system consolidations and integrations'
+    ]
+  },
+  {
+    title: 'Data Analytics',
+    icon: '📊',
+    gradient: 'from-orange-500 to-amber-600',
+    description: 'Comprehensive business intelligence solutions:',
+    items: [
+      'Real-time SQL/Power BI dashboards',
+      'Predictive financial modeling systems',
+      'C-suite executive decision support frameworks',
+      'Automated KPI tracking and performance visualization'
+    ]
+  }
+];
+---
+
+<section id="achievements" class="achievements-section py-24 relative bg-gradient-to-br from-accent/5 to-background overflow-hidden">
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-5" aria-hidden="true">
+    <div class="absolute inset-0 bg-circuit-pattern"></div>
+  </div>
+
+  <!-- Curved divider at top -->
+  <div class="absolute top-0 left-0 w-full overflow-hidden">
+    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-16 w-full fill-background dark:fill-background-dark">
+      <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"></path>
+    </svg>
+  </div>
+
+  <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10 pt-16">
+    <!-- Section Header -->
+    <ScrollAnimation animation="fadeIn" delay={100}>
+      <div class="max-w-3xl mx-auto mb-20 text-center">
+        <h2 class="text-h2 font-bold mb-6 text-accent-dark bg-gradient-to-r from-accent to-accent-dark bg-clip-text text-transparent">
+          Core Expertise & Significant Achievements
+        </h2>
+        <p class="text-lg text-neutral leading-relaxed">
+          Transforming complex business challenges into streamlined solutions with measurable impact
+        </p>
+      </div>
+    </ScrollAnimation>
+
+    <!-- Achievement Metrics -->
+    <ScrollAnimation animation="slideUp" delay={200}>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
+        {achievements.map((achievement, index) => (
+          <div class="achievement-card group">
+            <div class={`achievement-icon bg-gradient-to-r ${achievement.color}`}>
+              <span class="text-2xl" role="img" aria-label={achievement.title}>
+                {achievement.icon}
+              </span>
+            </div>
+            <div class="achievement-content">
+              <div class="achievement-value">
+                <AnimatedCounter 
+                  endValue={achievement.value}
+                  prefix={achievement.prefix}
+                  suffix={achievement.suffix}
+                  duration={2000}
+                  delay={index * 200}
+                  className="text-2xl font-bold text-accent-dark"
+                />
+              </div>
+              <h3 class="achievement-title">{achievement.title}</h3>
+              <p class="achievement-description">{achievement.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </ScrollAnimation>
+
+    <!-- Expertise Areas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+      {expertiseAreas.map((area, index) => (
+        <ScrollAnimation animation="slideUp" delay={300 + (index * 100)}>
+          <div class="expertise-card group">
+            <div class="expertise-header">
+              <div class={`expertise-icon bg-gradient-to-r ${area.gradient}`}>
+                <span class="text-2xl" role="img" aria-label={area.title}>
+                  {area.icon}
+                </span>
+              </div>
+              <h3 class="expertise-title">{area.title}</h3>
+            </div>
+            
+            <div class="expertise-content">
+              <p class="expertise-description">{area.description}</p>
+              <ul class="expertise-list">
+                {area.items.map((item) => (
+                  <li class="expertise-item">
+                    <div class="item-icon">
+                      <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <!-- Hover Effect Overlay -->
+            <div class="expertise-overlay"></div>
+          </div>
+        </ScrollAnimation>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Background Pattern */
+  .bg-circuit-pattern {
+    background-image: 
+      radial-gradient(circle at 25px 25px, var(--color-accent) 2px, transparent 2px),
+      radial-gradient(circle at 75px 75px, var(--color-accent) 2px, transparent 2px);
+    background-size: 100px 100px;
+    background-position: 0 0, 50px 50px;
+  }
+
+  /* Achievement Cards */
+  .achievement-card {
+    background: var(--color-surface);
+    @apply rounded-2xl p-6 text-center;
+    @apply transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2;
+    @apply border border-gray-200 dark:border-gray-700;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .dark .achievement-card {
+    background: var(--color-surface-dark);
+  }
+
+  .achievement-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .achievement-card:hover::before {
+    left: 100%;
+  }
+
+  .achievement-icon {
+    @apply w-16 h-16 rounded-full mx-auto mb-4;
+    @apply flex items-center justify-center text-white shadow-lg;
+    @apply transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12;
+  }
+
+  .achievement-content {
+    @apply space-y-2;
+  }
+
+  .achievement-value {
+    @apply text-3xl font-bold text-accent-dark;
+  }
+
+  .achievement-title {
+    @apply text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide;
+  }
+
+  .achievement-description {
+    @apply text-xs text-gray-500 dark:text-gray-400;
+  }
+
+  /* Expertise Cards */
+  .expertise-card {
+    background: var(--color-surface);
+    @apply rounded-2xl shadow-xl p-8;
+    @apply transform transition-all duration-500 hover:shadow-2xl hover:-translate-y-1;
+    @apply border border-gray-200 dark:border-gray-700;
+    @apply flex flex-col h-full;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .dark .expertise-card {
+    background: var(--color-surface-dark);
+  }
+
+  .expertise-header {
+    @apply flex items-center mb-6;
+  }
+
+  .expertise-icon {
+    @apply w-14 h-14 rounded-xl mr-4 flex items-center justify-center text-white shadow-lg;
+    @apply transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-6;
+  }
+
+  .expertise-title {
+    @apply text-xl font-bold text-gray-900 dark:text-white;
+  }
+
+  .expertise-content {
+    @apply flex-1 space-y-4;
+  }
+
+  .expertise-description {
+    @apply text-gray-600 dark:text-gray-300 font-medium;
+  }
+
+  .expertise-list {
+    @apply space-y-3;
+  }
+
+  .expertise-item {
+    @apply flex items-start space-x-3;
+    @apply transform transition-transform duration-200 hover:translate-x-2;
+  }
+
+  .item-icon {
+    @apply flex-shrink-0 mt-0.5;
+  }
+
+  .expertise-overlay {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(6, 95, 70, 0.05), transparent);
+    transition: left 0.6s ease;
+    pointer-events: none;
+  }
+
+  .expertise-card:hover .expertise-overlay {
+    left: 100%;
+  }
+
+  /* Enhanced Hover Effects */
+  .expertise-card:hover {
+    background: linear-gradient(135deg, var(--color-surface), rgba(6, 95, 70, 0.02));
+  }
+
+  .dark .expertise-card:hover {
+    background: linear-gradient(135deg, var(--color-surface-dark), rgba(6, 95, 70, 0.05));
+  }
+
+  /* Glass Morphism Effect */
+  @supports (backdrop-filter: blur(10px)) {
+    .achievement-card,
+    .expertise-card {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .dark .achievement-card,
+    .dark .expertise-card {
+      background: rgba(31, 41, 55, 0.8);
+      border: 1px solid rgba(75, 85, 99, 0.3);
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .achievement-card {
+      @apply p-4;
+    }
+
+    .achievement-icon {
+      @apply w-12 h-12 mb-3;
+    }
+
+    .achievement-value {
+      @apply text-2xl;
+    }
+
+    .expertise-card {
+      @apply p-6;
+    }
+
+    .expertise-icon {
+      @apply w-12 h-12;
+    }
+
+    .expertise-title {
+      @apply text-lg;
+    }
+  }
+
+  /* Accessibility Enhancements */
+  @media (prefers-reduced-motion: reduce) {
+    .achievement-card,
+    .expertise-card,
+    .achievement-icon,
+    .expertise-icon,
+    .expertise-item,
+    .expertise-overlay {
+      transition: none !important;
+      transform: none !important;
+    }
+
+    .achievement-card::before,
+    .expertise-overlay {
+      display: none;
+    }
+  }
+
+  /* High Contrast Mode */
+  @media (prefers-contrast: high) {
+    .achievement-card,
+    .expertise-card {
+      border-width: 2px;
+      border-color: var(--color-accent);
+    }
+
+    .achievement-icon,
+    .expertise-icon {
+      outline: 2px solid var(--color-accent);
+    }
+  }
+</style>

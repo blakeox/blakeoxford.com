@@ -1,0 +1,252 @@
+---
+interface Props {
+  text: string;
+  speed?: number;
+  delay?: number;
+  cursor?: boolean;
+  className?: string;
+  element?: 'span' | 'div' | 'p' | 'h1' | 'h2' | 'h3';
+}
+
+const { 
+  text, 
+  speed = 50, 
+  delay = 0, 
+  cursor = true, 
+  className = '',
+  element = 'span'
+} = Astro.props;
+
+const uniqueId = `typing-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+{element === 'span' && (
+  <span 
+    id={uniqueId}
+    class={`typing-text ${className}`}
+    data-text={text}
+    data-speed={speed}
+    data-delay={delay}
+    data-cursor={cursor}
+  ></span>
+)}
+
+{element === 'div' && (
+  <div 
+    id={uniqueId}
+    class={`typing-text ${className}`}
+    data-text={text}
+    data-speed={speed}
+    data-delay={delay}
+    data-cursor={cursor}
+  ></div>
+)}
+
+{element === 'p' && (
+  <p 
+    id={uniqueId}
+    class={`typing-text ${className}`}
+    data-text={text}
+    data-speed={speed}
+    data-delay={delay}
+    data-cursor={cursor}
+  ></p>
+)}
+
+{element === 'h1' && (
+  <h1 
+    id={uniqueId}
+    class={`typing-text ${className}`}
+    data-text={text}
+    data-speed={speed}
+    data-delay={delay}
+    data-cursor={cursor}
+  ></h1>
+)}
+
+{element === 'h2' && (
+  <h2 
+    id={uniqueId}
+    class={`typing-text ${className}`}
+    data-text={text}
+    data-speed={speed}
+    data-delay={delay}
+    data-cursor={cursor}
+  ></h2>
+)}
+
+{element === 'h3' && (
+  <h3 
+    id={uniqueId}
+    class={`typing-text ${className}`}
+    data-text={text}
+    data-speed={speed}
+    data-delay={delay}
+    data-cursor={cursor}
+  ></h3>
+)}
+
+<style>
+  .typing-text {
+    position: relative;
+    display: inline-block;
+  }
+
+  .typing-cursor {
+    display: inline-block;
+    background-color: currentColor;
+    width: 2px;
+    height: 1em;
+    margin-left: 2px;
+    animation: blink 1.2s infinite;
+    vertical-align: baseline;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .typing-text {
+      animation: none !important;
+    }
+    .typing-cursor {
+      animation: none !important;
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  interface TypingAnimationOptions {
+    text: string;
+    speed: number;
+    delay: number;
+    cursor: boolean;
+  }
+
+  class TypingAnimation {
+    private element: HTMLElement;
+    private options: TypingAnimationOptions;
+    private currentIndex: number = 0;
+    private timeoutId: number | null = null;
+    private cursorElement: HTMLElement | null = null;
+    private observer: IntersectionObserver | null = null;
+
+    constructor(element: HTMLElement) {
+      this.element = element;
+      this.options = {
+        text: element.dataset.text || '',
+        speed: parseInt(element.dataset.speed || '50'),
+        delay: parseInt(element.dataset.delay || '0'),
+        cursor: element.dataset.cursor === 'true'
+      };
+
+      this.init();
+    }
+
+    private init() {
+      // Check for reduced motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.element.textContent = this.options.text;
+        return;
+      }
+
+      // Set up intersection observer to trigger animation when element comes into view
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              this.startTyping();
+              this.observer?.unobserve(this.element);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      this.observer.observe(this.element);
+    }
+
+    private startTyping() {
+      // Clear any existing content
+      this.element.textContent = '';
+      
+      // Add cursor if enabled
+      if (this.options.cursor) {
+        this.cursorElement = document.createElement('span');
+        this.cursorElement.className = 'typing-cursor';
+        this.element.appendChild(this.cursorElement);
+      }
+
+      // Start typing after delay
+      this.timeoutId = window.setTimeout(() => {
+        this.typeCharacter();
+      }, this.options.delay);
+    }
+
+    private typeCharacter() {
+      if (this.currentIndex < this.options.text.length) {
+        const char = this.options.text.charAt(this.currentIndex);
+        
+        // Insert character before cursor
+        if (this.cursorElement) {
+          this.element.insertBefore(
+            document.createTextNode(char),
+            this.cursorElement
+          );
+        } else {
+          this.element.textContent += char;
+        }
+
+        this.currentIndex++;
+        
+        // Schedule next character
+        this.timeoutId = window.setTimeout(() => {
+          this.typeCharacter();
+        }, this.options.speed);
+      } else {
+        // Animation complete
+        this.onComplete();
+      }
+    }
+
+    private onComplete() {
+      // Optionally remove cursor after completion
+      // For now, keep it blinking
+      
+      // Dispatch custom event
+      this.element.dispatchEvent(new CustomEvent('typingComplete', {
+        detail: { text: this.options.text }
+      }));
+    }
+
+    public destroy() {
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId);
+      }
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+    }
+  }
+
+  // Initialize typing animations when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const typingElements = document.querySelectorAll('.typing-text');
+    typingElements.forEach(element => {
+      new TypingAnimation(element as HTMLElement);
+    });
+  });
+
+  // Handle dynamic content (for client-side routing)
+  document.addEventListener('astro:page-load', () => {
+    const typingElements = document.querySelectorAll('.typing-text');
+    typingElements.forEach(element => {
+      if (!(element as any).__typingAnimation) {
+        (element as any).__typingAnimation = new TypingAnimation(element as HTMLElement);
+      }
+    });
+  });
+</script>

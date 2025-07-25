@@ -1,0 +1,504 @@
+---
+import ScrollAnimation from '../animations/ScrollAnimation.astro';
+import { technologies } from '../../config/data';
+import { Image } from 'astro:assets';
+import pythonLogo from '../../assets/images/proficiencies/python_logo.webp';
+---
+
+<section id="technologies" class="technologies-section w-full py-20 relative bg-gradient-to-r from-gray-50 via-gray-100 to-gray-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 overflow-hidden">
+  <!-- Animated Background Pattern -->
+  <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.08]" aria-hidden="true">
+    <div class="absolute inset-0 bg-tech-pattern animate-tech-flow"></div>
+  </div>
+
+  <!-- Floating Tech Icons Background -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+    <div class="floating-tech-icon floating-tech-1">⚡</div>
+    <div class="floating-tech-icon floating-tech-2">🚀</div>
+    <div class="floating-tech-icon floating-tech-3">☁️</div>
+    <div class="floating-tech-icon floating-tech-4">🔧</div>
+    <div class="floating-tech-icon floating-tech-5">📊</div>
+    <div class="floating-tech-icon floating-tech-6">🔐</div>
+  </div>
+
+  <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+    <!-- Section Header -->
+    <ScrollAnimation animation="fadeIn" delay={100}>
+      <div class="text-center mb-16">
+        <h2 class="section-title text-h2 font-bold mb-6">
+          <span class="title-text">Technologies I Excel At</span>
+          <span class="title-underline"></span>
+        </h2>
+        <p class="text-lg text-neutral max-w-2xl mx-auto leading-relaxed">
+          Leveraging cutting-edge technologies to build scalable, efficient, and innovative solutions
+        </p>
+      </div>
+    </ScrollAnimation>
+
+    <!-- Technologies Grid -->
+    <div class="technologies-grid">
+      {technologies.map((tech, index) => (
+        <ScrollAnimation animation="scaleIn" delay={200 + (index * 50)}>
+          <div class="tech-card group" data-tech={tech.name}>
+            <div class="tech-card-inner">
+              <!-- Front of card -->
+              <div class="tech-card-front">
+                <div class="tech-icon-container">
+                  {tech.optimized && tech.name === 'Python Automation' ? (
+                    <Image 
+                      src={pythonLogo} 
+                      alt={tech.alt} 
+                      width={48} 
+                      height={48}
+                      class="tech-icon-image"
+                      loading="lazy"
+                    />
+                  ) : tech.img ? (
+                    <img 
+                      src={tech.img as string} 
+                      alt={tech.alt} 
+                      class="tech-icon-image"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span class="tech-icon-placeholder" aria-label={tech.name}>
+                      🔧
+                    </span>
+                  )}
+                  <div class="tech-glow"></div>
+                </div>
+                <h3 class="tech-name">{tech.name}</h3>
+                <div class="tech-level-indicator">
+                  <div class="level-bars">
+                    <div class="level-bar active"></div>
+                    <div class="level-bar active"></div>
+                    <div class="level-bar active"></div>
+                    <div class="level-bar active"></div>
+                    <div class="level-bar active"></div>
+                  </div>
+                  <span class="level-text">Expert</span>
+                </div>
+              </div>
+
+              <!-- Back of card (hover state) -->
+              <div class="tech-card-back">
+                <div class="tech-details">
+                  <h4 class="detail-title">{tech.name}</h4>
+                  <p class="detail-description">
+                    {tech.name === 'Python Automation' && 'Advanced scripting, data analysis, and automation workflows'}
+                    {tech.name === 'OpenAI API' && 'AI integration, workflow automation, and intelligent data processing'}
+                    {tech.name === 'Microsoft Intune' && 'Enterprise device management and security policy deployment'}
+                    {tech.name === 'SQL' && 'Database design, optimization, and advanced analytics queries'}
+                    {tech.name === 'Google Cloud' && 'Cloud architecture, serverless computing, and data analytics'}
+                    {tech.name === 'Firebase' && 'Real-time databases, authentication, and cloud functions'}
+                    {tech.name === 'Azure' && 'Enterprise cloud solutions, infrastructure, and DevOps'}
+                    {tech.name === 'Cloudflare' && 'CDN optimization, security, and edge computing'}
+                    {tech.name === 'Microsoft Fabric' && 'Data engineering, analytics, and business intelligence'}
+                    {!['Python Automation', 'OpenAI API', 'Microsoft Intune', 'SQL', 'Google Cloud', 'Firebase', 'Azure', 'Cloudflare', 'Microsoft Fabric'].includes(tech.name) && 'Professional expertise and hands-on experience'}
+                  </p>
+                  <div class="detail-features">
+                    <span class="feature-tag">Production Ready</span>
+                    <span class="feature-tag">Scalable</span>
+                    <span class="feature-tag">Optimized</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Interactions -->
+            <div class="card-interactions">
+              <div class="interaction-ripple"></div>
+            </div>
+          </div>
+        </ScrollAnimation>
+      ))}
+    </div>
+
+    <!-- Call to Action -->
+    <ScrollAnimation animation="slideUp" delay={800}>
+      <div class="text-center mt-16">
+        <p class="text-lg text-neutral mb-6">
+          Interested in leveraging these technologies for your project?
+        </p>
+        <a 
+          href="/contact/" 
+          class="btn btn-primary btn-lg tech-cta-button"
+          aria-label="Contact Blake Oxford about technology consultation"
+        >
+          <span class="flex items-center gap-2">
+            💬 <span>Let's Discuss Your Tech Needs</span>
+          </span>
+        </a>
+      </div>
+    </ScrollAnimation>
+  </div>
+</section>
+
+<style>
+  /* Background Patterns */
+  .bg-tech-pattern {
+    background-image: 
+      linear-gradient(45deg, var(--color-accent) 1px, transparent 1px),
+      linear-gradient(-45deg, var(--color-accent) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: 0.1;
+  }
+
+  @keyframes tech-flow {
+    0% { background-position: 0 0, 0 0; }
+    100% { background-position: 30px 30px, -30px -30px; }
+  }
+
+  .animate-tech-flow {
+    animation: tech-flow 20s linear infinite;
+  }
+
+  /* Floating Tech Icons */
+  .floating-tech-icon {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.1;
+    animation: float-tech 10s ease-in-out infinite;
+    color: var(--color-accent);
+  }
+
+  .floating-tech-1 { top: 10%; left: 10%; animation-delay: 0s; }
+  .floating-tech-2 { top: 20%; right: 15%; animation-delay: 2s; }
+  .floating-tech-3 { bottom: 30%; left: 20%; animation-delay: 4s; }
+  .floating-tech-4 { top: 60%; right: 10%; animation-delay: 6s; }
+  .floating-tech-5 { bottom: 10%; right: 30%; animation-delay: 8s; }
+  .floating-tech-6 { top: 40%; left: 5%; animation-delay: 10s; }
+
+  @keyframes float-tech {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-20px) rotate(5deg); }
+    66% { transform: translateY(10px) rotate(-5deg); }
+  }
+
+  /* Section Title */
+  .section-title {
+    position: relative;
+    display: inline-block;
+  }
+
+  .title-text {
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark), #8b5cf6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: gradient-flow 3s ease-in-out infinite;
+  }
+
+  .title-underline {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+    border-radius: 2px;
+    animation: underline-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes gradient-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes underline-pulse {
+    0%, 100% { transform: translateX(-50%) scaleX(1); }
+    50% { transform: translateX(-50%) scaleX(1.2); }
+  }
+
+  /* Technologies Grid */
+  .technologies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* Tech Cards */
+  .tech-card {
+    position: relative;
+    height: 240px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+
+  .tech-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+
+  .tech-card:hover .tech-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .tech-card-front,
+  .tech-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(6, 95, 70, 0.1);
+    box-shadow: 0 8px 32px rgba(6, 95, 70, 0.1);
+  }
+
+  .dark .tech-card-front,
+  .dark .tech-card-back {
+    background: rgba(31, 41, 55, 0.9);
+    border-color: rgba(6, 95, 70, 0.2);
+  }
+
+  .tech-card-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));
+    color: white;
+    border: none;
+  }
+
+  /* Front Card Content */
+  .tech-icon-container {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .tech-icon-image {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  .tech-icon-placeholder {
+    font-size: 3rem;
+    transition: transform 0.3s ease;
+  }
+
+  .tech-glow {
+    position: absolute;
+    inset: -8px;
+    background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 50%;
+    z-index: -1;
+  }
+
+  .tech-card:hover .tech-glow {
+    opacity: 0.3;
+  }
+
+  .tech-card:hover .tech-icon-image,
+  .tech-card:hover .tech-icon-placeholder {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  .tech-name {
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--color-foreground);
+    line-height: 1.2;
+  }
+
+  /* Skill Level Indicator */
+  .tech-level-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .level-bars {
+    display: flex;
+    gap: 3px;
+  }
+
+  .level-bar {
+    width: 12px;
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    transition: background 0.3s ease;
+  }
+
+  .level-bar.active {
+    background: var(--color-accent);
+  }
+
+  .level-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Back Card Content */
+  .tech-details {
+    text-align: center;
+  }
+
+  .detail-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: white;
+  }
+
+  .detail-description {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .detail-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .feature-tag {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  /* Card Interactions */
+  .card-interactions {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: 1.5rem;
+    overflow: hidden;
+  }
+
+  .interaction-ripple {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+  }
+
+  .tech-card:active .interaction-ripple {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+
+  /* CTA Button */
+  .tech-cta-button {
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));
+    box-shadow: 0 8px 32px rgba(6, 95, 70, 0.25);
+    transition: all 0.3s ease;
+  }
+
+  .tech-cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(6, 95, 70, 0.3);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .technologies-grid {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .tech-card {
+      height: 200px;
+    }
+
+    .tech-card-front,
+    .tech-card-back {
+      padding: 1.5rem;
+    }
+
+    .tech-icon-image {
+      width: 40px;
+      height: 40px;
+    }
+
+    .tech-icon-placeholder {
+      font-size: 2.5rem;
+    }
+
+    .floating-tech-icon {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* Accessibility and Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .tech-card-inner,
+    .tech-icon-image,
+    .tech-icon-placeholder,
+    .floating-tech-icon,
+    .animate-tech-flow,
+    .title-text,
+    .title-underline {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .tech-card:hover .tech-card-inner {
+      transform: none;
+    }
+
+    .tech-card-back {
+      display: none;
+    }
+  }
+
+  /* High Contrast Mode */
+  @media (prefers-contrast: high) {
+    .tech-card-front,
+    .tech-card-back {
+      border-width: 2px;
+      border-color: var(--color-accent);
+    }
+
+    .level-bar.active {
+      background: #000;
+    }
+
+    .dark .level-bar.active {
+      background: #fff;
+    }
+  }
+
+  /* Glass Morphism Support */
+  @supports (backdrop-filter: blur(10px)) {
+    .tech-card-front {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .dark .tech-card-front {
+      backdrop-filter: blur(10px);
+      background: rgba(31, 41, 55, 0.8);
+    }
+  }
+</style>

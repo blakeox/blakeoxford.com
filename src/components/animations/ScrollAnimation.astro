@@ -1,0 +1,251 @@
+---
+interface Props {
+  animation?: 'fadeIn' | 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'scaleIn' | 'rotateIn';
+  delay?: number;
+  duration?: number;
+  threshold?: number;
+  once?: boolean;
+  className?: string;
+}
+
+const { 
+  animation = 'fadeIn',
+  delay = 0,
+  duration = 600,
+  threshold = 0.1,
+  once = true,
+  className = ''
+} = Astro.props;
+
+const uniqueId = `scroll-anim-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div 
+  id={uniqueId}
+  class={`scroll-animated scroll-animated-${animation} ${className}`}
+  data-animation={animation}
+  data-delay={delay}
+  data-duration={duration}
+  data-threshold={threshold}
+  data-once={once}
+>
+  <slot />
+</div>
+
+<style>
+  .scroll-animated {
+    transition-property: opacity, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
+  }
+
+  /* Initial states */
+  .scroll-animated-fadeIn {
+    opacity: 0;
+  }
+
+  .scroll-animated-slideUp {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  .scroll-animated-slideDown {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+
+  .scroll-animated-slideLeft {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  .scroll-animated-slideRight {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+
+  .scroll-animated-scaleIn {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .scroll-animated-rotateIn {
+    opacity: 0;
+    transform: rotate(-10deg) scale(0.8);
+  }
+
+  /* Active states */
+  .scroll-animated.animate {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-animated {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  interface ScrollAnimationOptions {
+    animation: string;
+    delay: number;
+    duration: number;
+    threshold: number;
+    once: boolean;
+  }
+
+  class ScrollAnimation {
+    private element: HTMLElement;
+    private options: ScrollAnimationOptions;
+    private observer: IntersectionObserver | null = null;
+    private hasAnimated: boolean = false;
+
+    constructor(element: HTMLElement) {
+      this.element = element;
+      this.options = {
+        animation: element.dataset.animation || 'fadeIn',
+        delay: parseInt(element.dataset.delay || '0'),
+        duration: parseInt(element.dataset.duration || '600'),
+        threshold: parseFloat(element.dataset.threshold || '0.1'),
+        once: element.dataset.once === 'true'
+      };
+
+      this.init();
+    }
+
+    private init() {
+      // Check for reduced motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.element.classList.add('animate');
+        return;
+      }
+
+      // Set transition duration
+      this.element.style.transitionDuration = `${this.options.duration}ms`;
+
+      // Set up intersection observer
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              this.triggerAnimation();
+              
+              // If once is true, stop observing after first animation
+              if (this.options.once) {
+                this.observer?.unobserve(this.element);
+              }
+            } else if (!this.options.once && this.hasAnimated) {
+              // Reset animation if element goes out of view and once is false
+              this.resetAnimation();
+            }
+          });
+        },
+        { 
+          threshold: this.options.threshold,
+          rootMargin: '50px'
+        }
+      );
+
+      this.observer.observe(this.element);
+    }
+
+    private triggerAnimation() {
+      if (this.options.delay > 0) {
+        setTimeout(() => {
+          this.animate();
+        }, this.options.delay);
+      } else {
+        this.animate();
+      }
+    }
+
+    private animate() {
+      this.element.classList.add('animate');
+      this.hasAnimated = true;
+
+      // Dispatch custom event
+      this.element.dispatchEvent(new CustomEvent('scrollAnimationStart', {
+        detail: { 
+          animation: this.options.animation,
+          duration: this.options.duration 
+        }
+      }));
+
+      // Listen for animation end
+      const handleTransitionEnd = () => {
+        this.element.dispatchEvent(new CustomEvent('scrollAnimationComplete', {
+          detail: { 
+            animation: this.options.animation,
+            duration: this.options.duration 
+          }
+        }));
+        this.element.removeEventListener('transitionend', handleTransitionEnd);
+      };
+
+      this.element.addEventListener('transitionend', handleTransitionEnd);
+    }
+
+    private resetAnimation() {
+      this.element.classList.remove('animate');
+    }
+
+    public destroy() {
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+    }
+  }
+
+  // Utility function to create scroll animations programmatically
+  function createScrollAnimation(
+    element: HTMLElement, 
+    options: Partial<ScrollAnimationOptions> = {}
+  ) {
+    const defaults: ScrollAnimationOptions = {
+      animation: 'fadeIn',
+      delay: 0,
+      duration: 600,
+      threshold: 0.1,
+      once: true
+    };
+
+    const mergedOptions = { ...defaults, ...options };
+
+    // Set data attributes
+    Object.keys(mergedOptions).forEach(key => {
+      element.dataset[key] = String(mergedOptions[key as keyof ScrollAnimationOptions]);
+    });
+
+    // Add classes
+    element.classList.add('scroll-animated', `scroll-animated-${mergedOptions.animation}`);
+
+    // Initialize animation
+    return new ScrollAnimation(element);
+  }
+
+  // Initialize scroll animations when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const animatedElements = document.querySelectorAll('.scroll-animated');
+    animatedElements.forEach(element => {
+      new ScrollAnimation(element as HTMLElement);
+    });
+  });
+
+  // Handle dynamic content (for client-side routing)
+  document.addEventListener('astro:page-load', () => {
+    const animatedElements = document.querySelectorAll('.scroll-animated');
+    animatedElements.forEach(element => {
+      if (!(element as any).__scrollAnimation) {
+        (element as any).__scrollAnimation = new ScrollAnimation(element as HTMLElement);
+      }
+    });
+  });
+
+  // Export for programmatic use
+  (window as any).createScrollAnimation = createScrollAnimation;
+</script>

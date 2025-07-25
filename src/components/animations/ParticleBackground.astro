@@ -1,0 +1,166 @@
+---
+interface Props {
+  density?: number;
+  color?: string;
+  speed?: number;
+}
+
+const { density = 50, color = "rgba(6, 95, 70, 0.1)", speed = 1 } = Astro.props;
+---
+
+<div class="particle-container" data-particle-density={density} data-particle-color={color} data-particle-speed={speed}></div>
+
+<style>
+  .particle-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float-particle var(--duration, 20s) linear infinite;
+    opacity: var(--opacity, 0.6);
+  }
+
+  @keyframes float-particle {
+    0% {
+      transform: translateY(100vh) translateX(var(--start-x)) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: var(--opacity, 0.6);
+    }
+    90% {
+      opacity: var(--opacity, 0.6);
+    }
+    100% {
+      transform: translateY(-10vh) translateX(var(--end-x)) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .particle {
+      animation: none !important;
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  class ParticleBackground {
+    private container: HTMLElement;
+    private particles: HTMLElement[] = [];
+    private density: number;
+    private color: string;
+    private speed: number;
+    private animationId: number | null = null;
+
+    constructor(container: HTMLElement) {
+      this.container = container;
+      this.density = parseInt(container.dataset.particleDensity || '50');
+      this.color = container.dataset.particleColor || 'rgba(6, 95, 70, 0.1)';
+      this.speed = parseFloat(container.dataset.particleSpeed || '1');
+      
+      this.init();
+    }
+
+    private init() {
+      // Check for reduced motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+      }
+
+      this.createParticles();
+      this.startAnimation();
+    }
+
+    private createParticles() {
+      for (let i = 0; i < this.density; i++) {
+        this.createParticle();
+      }
+    }
+
+    private createParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      
+      // Random size between 2px and 8px
+      const size = Math.random() * 6 + 2;
+      
+      // Random opacity between 0.2 and 0.8
+      const opacity = Math.random() * 0.6 + 0.2;
+      
+      // Random animation duration between 15s and 25s
+      const duration = Math.random() * 10 + 15;
+      
+      // Random horizontal movement
+      const startX = Math.random() * 100 - 50; // -50px to 50px
+      const endX = Math.random() * 100 - 50;
+      
+      particle.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        background: ${this.color};
+        left: ${Math.random() * 100}%;
+        --duration: ${duration / this.speed}s;
+        --opacity: ${opacity};
+        --start-x: ${startX}px;
+        --end-x: ${endX}px;
+        animation-delay: ${Math.random() * duration}s;
+      `;
+      
+      this.container.appendChild(particle);
+      this.particles.push(particle);
+      
+      // Remove particle after animation completes
+      setTimeout(() => {
+        if (particle.parentNode) {
+          particle.parentNode.removeChild(particle);
+          const index = this.particles.indexOf(particle);
+          if (index > -1) {
+            this.particles.splice(index, 1);
+          }
+        }
+      }, (duration / this.speed + Math.random() * duration) * 1000);
+    }
+
+    private startAnimation() {
+      const animate = () => {
+        // Occasionally add new particles
+        if (Math.random() < 0.02 && this.particles.length < this.density * 2) {
+          this.createParticle();
+        }
+        
+        this.animationId = requestAnimationFrame(animate);
+      };
+      
+      animate();
+    }
+
+    public destroy() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+      this.particles.forEach(particle => {
+        if (particle.parentNode) {
+          particle.parentNode.removeChild(particle);
+        }
+      });
+      this.particles = [];
+    }
+  }
+
+  // Initialize particle backgrounds
+  document.addEventListener('DOMContentLoaded', () => {
+    const containers = document.querySelectorAll('.particle-container');
+    containers.forEach(container => {
+      new ParticleBackground(container as HTMLElement);
+    });
+  });
+</script>

@@ -1,0 +1,210 @@
+---
+interface Props {
+  startValue?: number;
+  endValue: number;
+  duration?: number;
+  delay?: number;
+  suffix?: string;
+  prefix?: string;
+  decimals?: number;
+  separator?: string;
+  className?: string;
+}
+
+const { 
+  startValue = 0,
+  endValue,
+  duration = 2000,
+  delay = 0,
+  suffix = '',
+  prefix = '',
+  decimals = 0,
+  separator = '',
+  className = ''
+} = Astro.props;
+
+const uniqueId = `counter-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<span 
+  id={uniqueId}
+  class={`animated-counter ${className}`}
+  data-start={startValue}
+  data-end={endValue}
+  data-duration={duration}
+  data-delay={delay}
+  data-suffix={suffix}
+  data-prefix={prefix}
+  data-decimals={decimals}
+  data-separator={separator}
+>
+  {prefix}{startValue.toLocaleString()}{suffix}
+</span>
+
+<style>
+  .animated-counter {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+    min-width: 1ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animated-counter {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  interface CounterOptions {
+    startValue: number;
+    endValue: number;
+    duration: number;
+    delay: number;
+    suffix: string;
+    prefix: string;
+    decimals: number;
+    separator: string;
+  }
+
+  class AnimatedCounter {
+    private element: HTMLElement;
+    private options: CounterOptions;
+    private observer: IntersectionObserver | null = null;
+    private animationId: number | null = null;
+    private startTime: number | null = null;
+
+    constructor(element: HTMLElement) {
+      this.element = element;
+      this.options = {
+        startValue: parseFloat(element.dataset.start || '0'),
+        endValue: parseFloat(element.dataset.end || '0'),
+        duration: parseInt(element.dataset.duration || '2000'),
+        delay: parseInt(element.dataset.delay || '0'),
+        suffix: element.dataset.suffix || '',
+        prefix: element.dataset.prefix || '',
+        decimals: parseInt(element.dataset.decimals || '0'),
+        separator: element.dataset.separator || ''
+      };
+
+      this.init();
+    }
+
+    private init() {
+      // Check for reduced motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.element.textContent = this.formatNumber(this.options.endValue);
+        return;
+      }
+
+      // Set up intersection observer to trigger animation when element comes into view
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              this.startAnimation();
+              this.observer?.unobserve(this.element);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      this.observer.observe(this.element);
+    }
+
+    private startAnimation() {
+      // Start animation after delay
+      setTimeout(() => {
+        this.startTime = null;
+        this.animate();
+      }, this.options.delay);
+    }
+
+    private animate() {
+      const animateStep = (timestamp: number) => {
+        if (!this.startTime) {
+          this.startTime = timestamp;
+        }
+
+        const elapsed = timestamp - this.startTime;
+        const progress = Math.min(elapsed / this.options.duration, 1);
+
+        // Use easing function for smooth animation
+        const easedProgress = this.easeOutCubic(progress);
+
+        // Calculate current value
+        const currentValue = this.options.startValue + 
+          (this.options.endValue - this.options.startValue) * easedProgress;
+
+        // Update display
+        this.element.textContent = this.formatNumber(currentValue);
+
+        if (progress < 1) {
+          this.animationId = requestAnimationFrame(animateStep);
+        } else {
+          // Animation complete
+          this.element.textContent = this.formatNumber(this.options.endValue);
+          this.onComplete();
+        }
+      };
+
+      this.animationId = requestAnimationFrame(animateStep);
+    }
+
+    private easeOutCubic(t: number): number {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    private formatNumber(value: number): string {
+      let formattedValue = value.toFixed(this.options.decimals);
+      
+      // Add thousands separator if specified
+      if (this.options.separator) {
+        const parts = formattedValue.split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, this.options.separator);
+        formattedValue = parts.join('.');
+      }
+
+      return `${this.options.prefix}${formattedValue}${this.options.suffix}`;
+    }
+
+    private onComplete() {
+      // Dispatch custom event
+      this.element.dispatchEvent(new CustomEvent('counterComplete', {
+        detail: { 
+          startValue: this.options.startValue,
+          endValue: this.options.endValue,
+          duration: this.options.duration 
+        }
+      }));
+    }
+
+    public destroy() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+    }
+  }
+
+  // Initialize counters when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const counterElements = document.querySelectorAll('.animated-counter');
+    counterElements.forEach(element => {
+      new AnimatedCounter(element as HTMLElement);
+    });
+  });
+
+  // Handle dynamic content (for client-side routing)
+  document.addEventListener('astro:page-load', () => {
+    const counterElements = document.querySelectorAll('.animated-counter');
+    counterElements.forEach(element => {
+      if (!(element as any).__animatedCounter) {
+        (element as any).__animatedCounter = new AnimatedCounter(element as HTMLElement);
+      }
+    });
+  });
+</script>
