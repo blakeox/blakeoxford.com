@@ -1,0 +1,16 @@
+/* Style Index - Organized CSS Architecture
+   ========================================= */
+
+/* Base styles - foundational styles that apply globally */
+@import "./base/reset.css";
+@import "./base/typography.css";
+
+/* Layout styles - grid, flexbox, spacing utilities */
+@import "./layout/grid.css";
+
+/* Component styles - reusable component styles */
+@import "./components/buttons.css";
+@import "./components/cards.css";
+
+/* Utility styles - helper classes and animations */
+@import "./utilities/animations.css";

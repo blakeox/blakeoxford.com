@@ -1,4 +1,4 @@
-/* src/styles/global.css */
+/* src/styles/global.css - Main stylesheet entry point */
 
 /* Import Tailwind's base styles and utilities */
 @import "tailwindcss";
@@ -8,8 +8,21 @@
 /* @custom-variant is a Tailwind v4 feature - valid but not recognized by all linters */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Import your consolidated design tokens as a theme */
+/* Import consolidated design tokens as a theme */
 @import "./theme.css";
+
+/* Import organized component and utility styles */
+@import "./index.css";
+
+/* Custom gradient utility for from-accent (workaround for Tailwind v4+ bug) */
+.from-accent {
+  --tw-gradient-from: #065f46;
+  --tw-gradient-to: rgb(6 95 70 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+/* Legacy styles - will be gradually moved to organized files */
+/* TODO: Migrate these styles to appropriate component/utility files */
 
 /* Theme toggle spin animation */
 @keyframes theme-toggle-spin {
