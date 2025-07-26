@@ -46,6 +46,7 @@
     "ci:full": "npm run typecheck && npm run lint && npm run test:ci && npm run perf:test && npm run security:audit",
     "pr:check": "npm run typecheck && npm run lint && npm run test",
     "health:check": "node -e \"console.log('✅ All systems operational')\"",
+    "health:workflow": "./scripts/optimization/workflow-health-monitor.sh",
     "clean": "rm -rf dist .astro node_modules/.cache coverage test-results lighthouse-reports optimization-reports",
     "clean:cache": "rm -rf .astro node_modules/.cache",
     "clean:reports": "rm -rf lighthouse-reports optimization-reports coverage test-results"

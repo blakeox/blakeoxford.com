@@ -1,0 +1,145 @@
+name: Deployment Status Check
+
+# Ultra-lightweight status check for branch protection
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Minimal permissions
+permissions:
+  contents: read
+  checks: write
+
+# High priority, fast execution
+concurrency:
+  group: status-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deployment-gate:
+    name: Deployment Ready
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      deployment-ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # Minimal fetch
+
+      - name: Quick deployment readiness check
+        id: check
+        run: |
+          echo "🚀 Quick deployment readiness validation..."
+          
+          # Check essential files exist
+          MISSING_FILES=0
+          
+          for file in "package.json" "astro.config.mjs" "src/pages/index.astro"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing: $file"
+              MISSING_FILES=$((MISSING_FILES + 1))
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+          
+          # Check package.json has required scripts
+          if [ -f "package.json" ]; then
+            if grep -q '"build"' package.json && grep -q '"dev"' package.json; then
+              echo "✅ Required scripts found in package.json"
+            else
+              echo "❌ Missing required scripts in package.json"
+              MISSING_FILES=$((MISSING_FILES + 1))
+            fi
+          fi
+          
+          # Check for TypeScript config
+          if [ -f "tsconfig.json" ]; then
+            echo "✅ TypeScript configuration found"
+          else
+            echo "⚠️ No TypeScript configuration (acceptable)"
+          fi
+          
+          # Final determination
+          if [ $MISSING_FILES -eq 0 ]; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+            echo "🎉 Deployment readiness: PASSED"
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "❌ Deployment readiness: FAILED ($MISSING_FILES issues)"
+            exit 1
+          fi
+
+  # Super fast syntax validation
+  syntax-check:
+    name: Syntax Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Validate critical file syntax
+        run: |
+          echo "🔍 Quick syntax validation..."
+          
+          # Check JSON files
+          for json_file in package.json tsconfig.json; do
+            if [ -f "$json_file" ]; then
+              if python3 -m json.tool "$json_file" > /dev/null 2>&1; then
+                echo "✅ $json_file syntax valid"
+              else
+                echo "❌ $json_file syntax invalid"
+                exit 1
+              fi
+            fi
+          done
+          
+          # Check YAML files (basic)
+          for yaml_file in .github/workflows/*.yml; do
+            if [ -f "$yaml_file" ]; then
+              # Basic YAML structure check
+              if python3 -c "import yaml; yaml.safe_load(open('$yaml_file'))" 2>/dev/null; then
+                echo "✅ $(basename "$yaml_file") syntax valid"
+              else
+                echo "❌ $(basename "$yaml_file") syntax invalid"
+                exit 1
+              fi
+            fi
+          done
+          
+          echo "🎉 All syntax checks passed!"
+
+  # Report final status
+  status-summary:
+    name: Status Summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    needs: [deployment-gate, syntax-check]
+    if: always()
+    steps:
+      - name: Report status
+        run: |
+          echo "📋 Deployment Status Check Summary"
+          echo "================================="
+          
+          DEPLOYMENT_STATUS="${{ needs.deployment-gate.result }}"
+          SYNTAX_STATUS="${{ needs.syntax-check.result }}"
+          
+          echo "🚀 Deployment Gate: $DEPLOYMENT_STATUS"
+          echo "🔍 Syntax Check: $SYNTAX_STATUS"
+          
+          if [ "$DEPLOYMENT_STATUS" = "success" ] && [ "$SYNTAX_STATUS" = "success" ]; then
+            echo "✅ All checks passed - Ready for deployment!"
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Some checks failed - Deployment blocked"
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi

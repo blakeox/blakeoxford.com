@@ -125,7 +125,7 @@ jobs:
         if: matrix.test-group == 'performance'
         run: pnpm lh:ci
         env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN || '' }}
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
         continue-on-error: true
 
       - name: Upload coverage report
