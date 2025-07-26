@@ -7,13 +7,17 @@ import lighthouse from 'lighthouse';
 import * as chromeLauncher from 'chrome-launcher';
 import fs from 'fs/promises';
 import path from 'path';
+import { spawn } from 'child_process';
+import http from 'http';
 
 class PerformanceTestRunner {
   constructor(options = {}) {
-    this.baseUrl = options.baseUrl || 'http://localhost:4321';
+    this.baseUrl = options.baseUrl || process.env.BASE_URL || 'http://localhost:4321';
     this.outputDir = options.outputDir || './lighthouse-reports';
     this.budgets = options.budgets || this.getDefaultBudgets();
     this.thresholds = options.thresholds || this.getDefaultThresholds();
+    this.serverProcess = null;
+    this.isExternalServer = !!process.env.BASE_URL;
   }
 
   getDefaultBudgets() {
@@ -73,46 +77,116 @@ class PerformanceTestRunner {
     };
   }
 
+  async waitForServer(url, maxRetries = 30, delay = 1000) {
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        await new Promise((resolve, reject) => {
+          const request = http.get(url, (response) => {
+            if (response.statusCode >= 200 && response.statusCode < 400) {
+              resolve();
+            } else {
+              reject(new Error(`Server returned ${response.statusCode}`));
+            }
+          });
+          request.on('error', reject);
+          request.setTimeout(2000, () => {
+            request.destroy();
+            reject(new Error('Request timeout'));
+          });
+        });
+        
+        console.log('✅ Server is ready');
+        return true;
+      } catch {
+        // Server not ready yet
+      }
+      
+      console.log(`⏳ Waiting for server... (${i + 1}/${maxRetries})`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    
+    throw new Error(`Server at ${url} did not become ready within ${maxRetries * delay / 1000} seconds`);
+  }
+
+  async startDevServer() {
+    if (this.isExternalServer) {
+      console.log(`🌐 Using external server: ${this.baseUrl}`);
+      await this.waitForServer(this.baseUrl);
+      return;
+    }
+
+    console.log('🚀 Starting local dev server...');
+    
+    // Start the Astro dev server
+    this.serverProcess = spawn('npm', ['run', 'dev'], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: { ...process.env, PORT: '4321' }
+    });
+
+    // Wait for server to be ready
+    await this.waitForServer(this.baseUrl);
+  }
+
+  async stopDevServer() {
+    if (this.serverProcess && !this.isExternalServer) {
+      console.log('🛑 Stopping dev server...');
+      this.serverProcess.kill('SIGTERM');
+      this.serverProcess = null;
+    }
+  }
+
   async runTests() {
     console.log('🚀 Starting performance test suite...');
 
-    // Ensure output directory exists
-    await fs.mkdir(this.outputDir, { recursive: true });
+    try {
+      // Start dev server if needed
+      await this.startDevServer();
 
-    const testPages = [
-      { url: `${this.baseUrl}/`, name: 'homepage' },
-      { url: `${this.baseUrl}/about`, name: 'about' },
-      { url: `${this.baseUrl}/projects`, name: 'projects' },
-      { url: `${this.baseUrl}/blog`, name: 'blog' },
-      { url: `${this.baseUrl}/contact`, name: 'contact' }
-    ];
+      // Ensure output directory exists
+      await fs.mkdir(this.outputDir, { recursive: true });
 
-    const results = [];
+      const testPages = [
+        { url: `${this.baseUrl}/`, name: 'homepage' },
+        { url: `${this.baseUrl}/about`, name: 'about' },
+        { url: `${this.baseUrl}/projects`, name: 'projects' },
+        { url: `${this.baseUrl}/blog`, name: 'blog' },
+        { url: `${this.baseUrl}/contact`, name: 'contact' }
+      ];
 
-    for (const page of testPages) {
-      console.log(`\n📊 Testing: ${page.name} (${page.url})`);
+      const results = [];
 
-      try {
-        const result = await this.runLighthouseTest(page);
-        results.push(result);
+      for (const page of testPages) {
+        console.log(`\n📊 Testing: ${page.name} (${page.url})`);
 
-        // Generate individual report
-        await this.generateReport(result, page.name);
+        try {
+          const result = await this.runLighthouseTest(page);
+          results.push(result);
 
-        // Check budgets
-        this.checkBudgets(result, page.name);
+          // Generate individual report
+          await this.generateReport(result, page.name);
 
-      } catch (error) {
-        console.error(`❌ Failed to test ${page.name}:`, error.message);
-        results.push({ page: page.name, error: error.message });
+          // Check budgets
+          this.checkBudgets(result, page.name);
+
+        } catch (error) {
+          console.error(`❌ Failed to test ${page.name}:`, error.message);
+          results.push({ page: page.name, error: error.message });
+        }
       }
+
+      // Generate summary report
+      await this.generateSummaryReport(results);
+
+      console.log('\n✅ Performance testing completed!');
+      return results;
+
+    } catch (error) {
+      console.error('❌ Performance testing failed:', error.message);
+      throw error;
+    } finally {
+      // Always stop the dev server
+      await this.stopDevServer();
     }
-
-    // Generate summary report
-    await this.generateSummaryReport(results);
-
-    console.log('\n✅ Performance testing completed!');
-    return results;
   }
 
   async runLighthouseTest(page) {

@@ -157,7 +157,7 @@ export class ModernNavBar {
     
     // Focus management with delay for animation
     setTimeout(() => {
-      const firstFocusable = this.mobileMenu.querySelector('.mobile-nav-link, .mobile-close-button') as HTMLElement;
+      const firstFocusable = this.mobileMenu?.querySelector('.mobile-nav-link, .mobile-close-button') as HTMLElement;
       if (firstFocusable) {
         firstFocusable.focus();
       }

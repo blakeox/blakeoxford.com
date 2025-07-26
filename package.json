@@ -10,6 +10,7 @@
     "astro": "astro",
     "lint": "eslint . --ext .js,.ts,.astro,.mdx",
     "lint:fix": "eslint . --ext .js,.ts,.astro,.mdx --fix",
+    "typecheck": "astro check",
     "lint:css": "stylelint 'src/styles/**/*.css'",
     "lint:css:fix": "stylelint 'src/styles/**/*.css' --fix",
     "generate:search-index": "node scripts/content/generate-search-index.js",

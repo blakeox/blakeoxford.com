@@ -15,7 +15,7 @@ const featuredProjects = getFeaturedProjects(3);
 // Get the latest blog post if available
 const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
 ---
-<Layout title="Welcome to My Portfolio" description="Explore my projects, blog posts, and get in touch with me." wide={true}>
+<Layout title="Blake Oxford - Leadership & Portfolio" description="Explore my projects, blog posts, and get in touch with me." wide={true}>
   <!-- Decorative background shapes -->
   <div class="fixed inset-0 -z-10 pointer-events-none">
     <div class="absolute top-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -291,10 +291,10 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
           <li class="flex flex-col items-center group">
             <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center">
               {tech.optimized && tech.name === 'Python Automation' ? (
-                <Image 
-                  src={pythonLogo} 
-                  alt={tech.alt} 
-                  width={64} 
+                <Image
+                  src={pythonLogo}
+                  alt={tech.alt}
+                  width={64}
                   height={64}
                   class="w-full h-full object-contain"
                   loading="lazy"
@@ -333,10 +333,10 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
               <a href={`/blog/${latestBlogPost.slug}`} class="block hover:scale-105 transition-transform duration-200" aria-label={`Read blog post: ${latestBlogPost.data.title}`}>
                 <h3 class="text-h3 font-semibold mb-2">{latestBlogPost.data.title}</h3>
                 <time class="text-sm text-neutral" datetime={latestBlogPost.data.pubDate?.toISOString()}>
-                  {latestBlogPost.data.pubDate?.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+                  {latestBlogPost.data.pubDate?.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
                   })}
                 </time>
                 <p class="mt-2 text-neutral">{latestBlogPost.data.description || 'Read this blog post to learn more.'}</p>

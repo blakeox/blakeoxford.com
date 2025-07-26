@@ -142,7 +142,7 @@ export class ErrorHandlingSystem {
     this.errorQueue.push({
       ...errorInfo,
       timestamp: new Date().toISOString(),
-      id: Math.random().toString(36).substr(2, 9)
+      id: Math.random().toString(36).substring(2, 11)
     });
 
     // Show error if not already showing one
@@ -449,7 +449,7 @@ export class ErrorHandlingSystem {
 
   public showSuccess(message: string): void {
     this.showNotification({
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 11),
       message,
       type: 'success',
       duration: 3000

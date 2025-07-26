@@ -6,12 +6,12 @@ declare module 'astro/components';
 // Browser globals for TypeScript
 declare global {
   interface Window {
-    LazyBundleLoader?: import('./scripts/LazyLoader').LazyBundleLoader;
-    AccessibilityModule?: typeof import('./scripts/AccessibilityModule').AccessibilityModule;
-    initAccessibilityModule?: typeof import('./scripts/AccessibilityModule').initAccessibilityModule;
-    accessibilityModule?: import('./scripts/AccessibilityModule').AccessibilityModule;
-    analyticsModule?: import('./scripts/AnalyticsModule').AnalyticsModule;
-    scrollEffects?: import('./scripts/ScrollEffects').ScrollEffects;
+    LazyBundleLoader?: import('./scripts/utils/LazyLoader').LazyBundleLoader;
+    AccessibilityModule?: typeof import('./scripts/modules/AccessibilityModule').AccessibilityModule;
+    initAccessibilityModule?: typeof import('./scripts/modules/AccessibilityModule').initAccessibilityModule;
+    accessibilityModule?: import('./scripts/modules/AccessibilityModule').AccessibilityModule;
+    analyticsModule?: import('./scripts/modules/AnalyticsModule').AnalyticsModule;
+    scrollEffects?: import('./scripts/utils/ScrollEffects').ScrollEffects;
     SpeechRecognition?: typeof SpeechRecognition;
     webkitSpeechRecognition?: typeof SpeechRecognition;
     gtag?: (...args: unknown[]) => void;

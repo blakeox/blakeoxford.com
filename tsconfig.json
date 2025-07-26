@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "strict": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
@@ -13,7 +13,8 @@
     "noEmit": true,
     "types": ["astro/client", "node"],
     "forceConsistentCasingInFileNames": true,
-    "jsxImportSource": "react"
+    "jsxImportSource": "react",
+    "skipLibCheck": true
   },
   "include": [
     "src",
