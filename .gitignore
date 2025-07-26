@@ -154,6 +154,7 @@ dist
 # Build and optimization artifacts
 bundle-analysis.json
 lighthouse-reports/
+optimization-reports/
 server.pid
 *.report.html
 *.lighthouse.report.html
