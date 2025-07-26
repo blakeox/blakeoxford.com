@@ -1,0 +1,13 @@
+# VS Code workspace exclusions
+lighthouse-reports/
+test-results/
+coverage/
+optimization-reports/
+playwright-report/
+dist/
+node_modules/
+.astro/
+*.log
+*.html.report
+*.json.report
+chromewebdata_*.report.html

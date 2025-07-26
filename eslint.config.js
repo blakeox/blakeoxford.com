@@ -227,6 +227,8 @@ export default [
       'coverage/',
       'playwright-report/',
       'test-results/',
+      'lighthouse-reports/',
+      'optimization-reports/',
       '*.css',
       '*.scss',
       '*.md',

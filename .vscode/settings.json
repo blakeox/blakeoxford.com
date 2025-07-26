@@ -11,8 +11,20 @@
   "files.exclude": {
     "**/.DS_Store": true,
     "**/node_modules": true,
-    "**/dist": true
+    "**/dist": true,
+    "lighthouse-reports/": true,
+    "test-results/": true,
+    "coverage/": true,
+    "optimization-reports/": true,
+    "playwright-report/": true
   },
+  "edge-tools.exclude": [
+    "lighthouse-reports/**",
+    "test-results/**",
+    "coverage/**",
+    "optimization-reports/**",
+    "playwright-report/**"
+  ],
   "files.associations": {
     "*.astro": "astro",
     "*.mdx": "markdown"
@@ -26,8 +38,8 @@
   "[css]": { "editor.formatOnSave": true },
   "stylelint.enable": true,
   "tailwindCSS.experimental.classRegex": [
-    "class\\s*[:=]\\s*['`]([^'"]*)['`]",
-    "class(Name)?\\s*=\\s*{?['`]([^'"]*)['`]}?"
+    "class\\s*[:=]\\s*['\"`]([^'\"`]*)['\"`]",
+    "class(Name)?\\s*=\\s*\\{?['\"`]([^'\"`]*)['\"`]\\}?"
   ],
   "editor.quickSuggestions": {
     "other": true,
@@ -49,5 +61,8 @@
   "editor.minimap.enabled": true,
   "editor.renderWhitespace": "all",
   "typescript.validate.enable": true,
-  "javascript.validate.enable": true
+  "javascript.validate.enable": true,
+  "html.validate.enabled": false,
+  "webhint.enable": false,
+  "microsoft-edge-tools.enable": false
 }
