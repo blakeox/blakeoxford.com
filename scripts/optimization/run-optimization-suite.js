@@ -5,9 +5,9 @@
  * Executes all optimization tools and generates comprehensive reports
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
 
 console.log('🚀 Blake Oxford Portfolio - Advanced Performance Optimization Suite');
 console.log('==================================================================\n');
@@ -418,7 +418,7 @@ async function main() {
 }
 
 // Run if called directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(error => {
     console.error('💥 Optimization suite failed:', error.message);
     if (config.verbose) {
@@ -428,7 +428,7 @@ if (require.main === module) {
   });
 }
 
-module.exports = {
+export {
   runBundleAnalysis,
   runTreeShaking,
   runComponentSplitting,

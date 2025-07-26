@@ -10,7 +10,7 @@ describe('SearchOverlay.astro file', () => {
   let content: string;
 
   beforeAll(() => {
-    const filePath = path.resolve(__dirname, '../../src/components/SearchOverlay.astro');
+    const filePath = path.resolve(__dirname, '../../src/components/features/search/SearchOverlay.astro');
     content = readFileSync(filePath, 'utf-8');
   });
 
