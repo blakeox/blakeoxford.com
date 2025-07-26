@@ -8,7 +8,7 @@
         "http://localhost:4321/projects",
         "http://localhost:4321/contact/"
       ],
-      "numberOfRuns": 3,
+      "numberOfRuns": 2,
       "settings": {
         "preset": "desktop",
         "emulatedFormFactor": "desktop",

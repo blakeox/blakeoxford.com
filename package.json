@@ -24,6 +24,7 @@
     "optimize:components": "node scripts/optimization/component-code-splitter.js src",
     "edge:deploy": "wrangler deploy functions/edge-computing.js",
     "perf:test": "node scripts/build/performance-test.js",
+    "perf:budget": "./scripts/build/performance-budget.sh",
     "perf:dev": "BASE_URL=http://localhost:4321 node scripts/build/performance-test.js",
     "perf:prod": "BASE_URL=https://blakeoxford.com node scripts/build/performance-test.js",
     "perf:summary": "node scripts/build/performance-summary.js",

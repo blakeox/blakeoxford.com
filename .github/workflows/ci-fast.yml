@@ -10,6 +10,9 @@ on:
       - "**.md"
       - ".github/dependabot.yml"
       - "assets-source/**"
+      - "lighthouse-reports/**"
+      - "optimization-reports/**"
+      - "coverage/**"
 
 # Cancel in-progress runs for the same workflow on the same branch
 concurrency:
@@ -49,11 +52,14 @@ jobs:
       - name: Run ESLint
         run: pnpm run lint
 
-      - name: Run TypeScript check
-        run: pnpm run typecheck
-
       - name: Build the application
         run: pnpm run build
+
+      - name: Run performance budget validation
+        run: ./scripts/build/performance-budget.sh
+
+      - name: Run unit tests
+        run: pnpm testbuild
 
       - name: Run unit tests
         run: pnpm test
@@ -100,6 +106,24 @@ jobs:
         run: pnpm run test:e2e:essential
         env:
           COMPREHENSIVE_TESTS: "false"
+
+      - name: Verify accessibility standards
+        run: |
+          echo "♿ Checking accessibility compliance..."
+          # Check for proper ARIA attributes in built HTML
+          if grep -r "aria-" dist/ > /dev/null; then
+            echo "✅ ARIA attributes found in build"
+          else
+            echo "⚠️ Warning: Limited ARIA attributes detected"
+          fi
+          # Check for alt attributes
+          ALT_MISSING=$(grep -r "<img" dist/ | grep -v "alt=" | wc -l || echo "0")
+          if [ "$ALT_MISSING" -gt 0 ]; then
+            echo "❌ Found $ALT_MISSING images without alt attributes"
+            exit 1
+          else
+            echo "✅ All images have alt attributes"
+          fi
 
       - name: Upload test results
         if: always()

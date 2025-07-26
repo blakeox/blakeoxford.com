@@ -5,8 +5,8 @@ on:
   push:
     branches: [main]
   schedule:
-    # Run comprehensive tests nightly at 2 AM UTC
-    - cron: '0 2 * * *'
+    # Run comprehensive tests weekly on Sunday at 2 AM UTC (reduced from nightly)
+    - cron: '0 2 * * 0'
   workflow_dispatch:
     # Allow manual triggering for comprehensive testing
 
@@ -61,6 +61,18 @@ jobs:
 
       - name: Build the application
         run: pnpm run build
+
+      - name: Run deployment readiness check
+        run: ./scripts/build/deployment-check.sh
+
+      - name: Validate critical CSS implementation
+        run: |
+          echo "🎨 Validating critical CSS inlining..."
+          if ! grep -r "critical-css" dist/ > /dev/null 2>&1; then
+            echo "⚠️ Warning: No critical CSS detected in build output"
+          else
+            echo "✅ Critical CSS validation passed"
+          fi
 
       - name: Run unit tests with coverage
         run: pnpm run test:coverage
@@ -120,6 +132,29 @@ jobs:
       - name: Run performance tests
         run: pnpm perf:test
 
+      - name: Validate Astro SSG principles
+        run: |
+          echo "🚀 Validating Astro static site generation..."
+          
+          # Check for hydration directives (should be minimal)
+          HYDRATION_COUNT=$(grep -r "client:" src/ | wc -l || echo "0")
+          echo "Client-side hydration directives found: $HYDRATION_COUNT"
+          
+          # Check for proper image optimization
+          if [ -d "dist/_astro" ]; then
+            echo "✅ Astro asset optimization detected"
+          else
+            echo "⚠️ Warning: Astro asset optimization may not be working"
+          fi
+          
+          # Verify static output
+          if [ -f "dist/index.html" ]; then
+            echo "✅ Static HTML generation confirmed"
+          else
+            echo "❌ Static HTML generation failed"
+            exit 1
+          fi
+
       - name: Run Lighthouse CI (essential pages only)
         run: pnpm lh:ci
         env:
@@ -144,8 +179,8 @@ jobs:
   optimization-tasks:
     name: Optimization Tasks
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    timeout-minutes: 15  # Reduced from 20
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event_name != 'schedule'  # Skip on scheduled runs
 
     steps:
       - name: Checkout
@@ -157,17 +192,27 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
-
-      - name: Optimize images
-        run: pnpm optimize:images
+        run: pnpm install --frozen-lockfile
 
       - name: Run advanced optimizations
         run: pnpm optimize:advanced
+
+      - name: Validate Cloudflare Functions
+        run: |
+          echo "☁️ Validating Cloudflare Edge Functions..."
+          if [ -f "functions/edge-computing.js" ] && [ -f "functions/send-email.js" ]; then
+            echo "✅ Edge functions found and ready for deployment"
+            # Basic syntax check
+            node -c functions/edge-computing.js
+            node -c functions/send-email.js
+            echo "✅ Edge functions syntax validation passed"
+          else
+            echo "⚠️ Warning: Some edge functions may be missing"
+          fi
 
       - name: Commit optimized assets
         uses: stefanzweifel/git-auto-commit-action@v6
