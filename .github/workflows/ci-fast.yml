@@ -37,6 +37,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
+      - name: Cache Astro build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .astro/
+            dist/
+            node_modules/.astro/
+          key: astro-build-${{ runner.os }}-${{ hashFiles('src/**/*', 'public/**/*', 'astro.config.mjs') }}
+          restore-keys: |
+            astro-build-${{ runner.os }}-
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
@@ -57,6 +68,9 @@ jobs:
 
       - name: Run performance budget validation
         run: ./scripts/build/performance-budget.sh
+
+      - name: Check for performance regressions
+        run: ./scripts/build/performance-regression.sh
 
       - name: Run unit tests
         run: pnpm testbuild

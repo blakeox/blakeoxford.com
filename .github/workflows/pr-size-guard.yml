@@ -1,0 +1,90 @@
+name: PR Size Guard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-size-check:
+    name: PR Size Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check PR size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            
+            const additions = pr.additions || 0;
+            const deletions = pr.deletions || 0;
+            const changedFiles = pr.changed_files || 0;
+            
+            console.log(`PR Statistics:
+              📊 Additions: ${additions}
+              📉 Deletions: ${deletions}
+              📁 Changed files: ${changedFiles}
+              📏 Net change: ${additions - deletions}`);
+            
+            // Set reasonable limits for a performance-first project
+            const MAX_ADDITIONS = 500;
+            const MAX_FILES = 15;
+            const MAX_NET_CHANGE = 800;
+            
+            let warningMessages = [];
+            let errorMessages = [];
+            
+            if (additions > MAX_ADDITIONS) {
+              errorMessages.push(`🚨 Too many additions: ${additions} (limit: ${MAX_ADDITIONS})`);
+            }
+            
+            if (changedFiles > MAX_FILES) {
+              warningMessages.push(`⚠️ Many files changed: ${changedFiles} (recommended: <${MAX_FILES})`);
+            }
+            
+            if ((additions - deletions) > MAX_NET_CHANGE) {
+              warningMessages.push(`⚠️ Large net change: ${additions - deletions} (recommended: <${MAX_NET_CHANGE})`);
+            }
+            
+            if (errorMessages.length > 0) {
+              const comment = `## 🚨 PR Size Alert
+              
+              ${errorMessages.join('\n')}
+              
+              **This PR is too large and may be difficult to review effectively.**
+              
+              Please consider:
+              - Breaking this into smaller, focused PRs
+              - Removing auto-generated files from the PR
+              - Splitting feature work from refactoring
+              
+              For a performance-first codebase, smaller PRs ensure better code quality and easier maintenance.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+              
+              core.setFailed('PR exceeds size limits');
+            } else if (warningMessages.length > 0) {
+              const comment = `## ⚠️ PR Size Notice
+              
+              ${warningMessages.join('\n')}
+              
+              This PR is on the larger side but within acceptable limits. Consider whether it could be split into smaller, more focused changes for easier review.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            } else {
+              console.log('✅ PR size is appropriate for effective review');
+            }
