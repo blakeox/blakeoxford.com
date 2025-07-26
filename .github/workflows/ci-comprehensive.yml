@@ -88,10 +88,19 @@ jobs:
   performance-suite:
     name: Performance Testing
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
+    needs: comprehensive-tests # Only run if tests pass
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -99,35 +108,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build site
         run: pnpm build
 
-      - name: Start preview server
-        run: pnpm preview &
-
-      - name: Wait for server
-        run: npx wait-on http://localhost:4321 --timeout 60000
-
       - name: Run performance tests
-        run: pnpm perf:dev
-        env:
-          BASE_URL: http://localhost:4321
+        run: pnpm perf:test
 
-      - name: Run Lighthouse CI
+      - name: Run Lighthouse CI (essential pages only)
         run: pnpm lh:ci
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN || '' }}
-          CHROME_PATH: /usr/bin/google-chrome
         continue-on-error: true
-
-      - name: Analyze bundle
-        run: pnpm analyze:bundle
 
       - name: Upload performance reports
         uses: actions/upload-artifact@v4
@@ -135,7 +132,7 @@ jobs:
         with:
           name: performance-reports-${{ github.sha }}
           path: lighthouse-reports/
-          retention-days: 30
+          retention-days: 14  # Reduced from 30 days
 
       - name: Upload bundle analysis
         uses: actions/upload-artifact@v4
