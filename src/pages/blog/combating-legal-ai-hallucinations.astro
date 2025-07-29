@@ -1,0 +1,98 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+
+const title = 'Combating Legal AI Hallucinations: How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research';
+const description = 'Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener.';
+const canonicalUrl = 'https://blakeoxford.com/blog/combating-legal-ai-hallucinations/';
+---
+
+<Layout title={title} description={description} url={canonicalUrl}>
+  <article class="prose prose-lg mx-auto py-16 px-4 dark:prose-invert">
+    <header class="mb-12">
+      <h1 class="text-4xl font-bold mb-4">{title}</h1>
+      <p class="text-xl text-muted-foreground">{description}</p>
+      <div class="flex gap-2 mt-4">
+        <span class="px-3 py-1 text-sm bg-accent/10 text-accent rounded-full">AI</span>
+        <span class="px-3 py-1 text-sm bg-accent/10 text-accent rounded-full">Legal Tech</span>
+        <span class="px-3 py-1 text-sm bg-accent/10 text-accent rounded-full">Open Source</span>
+      </div>
+    </header>
+
+    <p>Artificial intelligence is revolutionizing the legal sector, but it comes with a unique set of challenges—none bigger than the problem of <strong>"hallucinations."</strong> When AI models generate plausible-sounding but entirely fictitious case law or citations, the consequences can be severe: court sanctions, ethical violations, and erosion of professional trust.</p>
+
+    <p>To address this risk, I developed <a href="https://github.com/blakeox/courtlistener-mcp" target="_blank" rel="noopener">courtlistener-mcp</a>, an open-source MCP (Model Context Protocol) server. Its mission is simple but powerful: ensure that AI-generated legal insights are grounded in real, queryable court data, not conjecture.</p>
+
+    <h2>The Hallucination Dilemma in Legal Practice</h2>
+    
+    <ul>
+      <li><strong>Sanctions and Discipline:</strong> Across the globe, attorneys have faced fines and even disqualification from cases after submitting briefs containing AI-invented citations. Examples include the widely publicized <a href="https://en.wikipedia.org/wiki/Mata_v._Avianca,_Inc." target="_blank" rel="noopener">Mata v. Avianca</a> case and the recent Butler Snow disqualification (<a href="https://www.reuters.com/legal/government/judge-disqualifies-three-butler-snow-attorneys-case-over-ai-citations-2025-07-24/?utm_source=chatgpt.com" target="_blank" rel="noopener">Reuters</a>).</li>
+      <li><strong>Trust and Ethics:</strong> Inaccurate citations undermine client trust and can constitute professional misconduct.</li>
+      <li><strong>Prevalence:</strong> Empirical studies show that even advanced AI legal research tools hallucinate as much as 17–33% of the time—much higher for general-purpose LLMs.</li>
+    </ul>
+
+    <h2>Introducing courtlistener-mcp: Raising the Bar for AI Reliability</h2>
+    
+    <p><a href="https://github.com/blakeox/courtlistener-mcp" target="_blank" rel="noopener">courtlistener-mcp</a> is designed to serve as a robust safeguard in legal-AI workflows. Here's how it works:</p>
+
+    <ol>
+      <li><strong>Real-Time Legal Queries:</strong> Every user query is relayed by the MCP server directly to <a href="https://www.courtlistener.com/" target="_blank" rel="noopener">CourtListener's API</a>, sourcing only authentic, up-to-date opinions, statutes, and dockets.</li>
+      <li><strong>Context-Restricted AI Responses:</strong> The AI model receives only the data returned by CourtListener. If there are no matches, it simply responds with "No relevant cases found," instead of generating non-existent precedent.</li>
+      <li><strong>Transparent and Auditable:</strong> Every response can be traced back to a verifiable, public source. No more mystery citations—just real, reviewable law.</li>
+    </ol>
+
+    <h2>Technical and Practical Benefits</h2>
+
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse border border-border">
+        <thead>
+          <tr class="bg-muted">
+            <th class="border border-border p-3 text-left">Issue</th>
+            <th class="border border-border p-3 text-left">Conventional AI Risk</th>
+            <th class="border border-border p-3 text-left">Solution with courtlistener-mcp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-border p-3">Hallucinated legal citations</td>
+            <td class="border border-border p-3">Sanctions, reputational damage, lost cases</td>
+            <td class="border border-border p-3">Only authentic, queryable results allowed</td>
+          </tr>
+          <tr class="bg-muted/50">
+            <td class="border border-border p-3">Misleading legal reasoning</td>
+            <td class="border border-border p-3">Client harm, ethical violations</td>
+            <td class="border border-border p-3">Answers based on verifiable primary sources</td>
+          </tr>
+          <tr>
+            <td class="border border-border p-3">Loss of trust and transparency</td>
+            <td class="border border-border p-3">Difficulty auditing AI output</td>
+            <td class="border border-border p-3">Full traceability to original court records</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="my-8 p-6 bg-accent/10 border-l-4 border-accent rounded-r-lg">
+      <p class="font-semibold mb-2">Substantially Reduced Hallucination Risk:</p>
+      <p class="mb-0">While no solution can guarantee zero hallucinations—AI models can still misinterpret content—the opportunity for outright fabrication is dramatically reduced. The system is intentionally designed so that, if the authoritative source is silent, so is the AI.</p>
+    </div>
+
+    <div class="my-8 p-6 bg-accent/10 border-l-4 border-accent rounded-r-lg">
+      <p class="font-semibold mb-2">Broad Applicability:</p>
+      <p class="mb-0">Though developed for legal research, this approach is applicable to any domain where factual accuracy is paramount, such as compliance, medicine, and finance.</p>
+    </div>
+
+    <h2>How to Get Started</h2>
+
+    <ul>
+      <li><strong>Visit the Repository:</strong> <a href="https://github.com/blakeox/courtlistener-mcp" target="_blank" rel="noopener">courtlistener-mcp on GitHub</a> includes setup instructions, sample queries, and integration notes.</li>
+      <li><strong>Plug and Play:</strong> Configuration is straightforward; you can adapt the server for your preferred AI stack, ensuring your legal workflows remain grounded in verifiable reality.</li>
+      <li><strong>Contribute or Extend:</strong> The project welcomes forks, extensions, and contributions to support a broader range of legal sources and future protocols.</li>
+    </ul>
+
+    <h2>Final Thoughts</h2>
+
+    <p>Hallucinations in legal AI are a present and growing risk, but they are not inevitable. By integrating context-restricted protocols like courtlistener-mcp, legal professionals can confidently leverage AI while maintaining the highest standards of accuracy, transparency, and trust.</p>
+
+    <p>If you're interested in a demo, wish to discuss integration best practices, or have suggestions for new features, feel free to reach out or open an issue on GitHub. Let's work together to make AI a reliable partner in the pursuit of justice.</p>
+  </article>
+</Layout>

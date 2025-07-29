@@ -6,6 +6,15 @@ export async function GET(context: APIContext) {
   // Define blog posts data manually since we're no longer using MDX content
   const blog = [
     {
+      slug: 'combating-legal-ai-hallucinations',
+      data: {
+        title: 'Combating Legal AI Hallucinations: How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research',
+        description: 'Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener.',
+        pubDate: new Date('2025-07-28'),
+        draft: false
+      }
+    },
+    {
       slug: 'hello-world',
       data: {
         title: 'Hello World',

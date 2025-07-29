@@ -1,13 +1,35 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import { getFeaturedProjects, technologies, siteConfig } from '../config/data';
 import pythonLogo from '../assets/images/proficiencies/python_logo.webp';
 
-const blogPosts = (await getCollection('blog')) as any[];
+// Manual blog post definitions (matching blog/index.astro)
+const blogPosts = [
+  {
+    slug: 'combating-legal-ai-hallucinations',
+    data: {
+      title: 'Combating Legal AI Hallucinations: How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research',
+      description: 'Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener.',
+      pubDate: new Date('2025-07-28'),
+      tags: ['AI', 'Legal Tech', 'Open Source'],
+      draft: false
+    }
+  },
+  {
+    slug: 'hello-world',
+    data: {
+      title: 'Hello World',
+      description: 'My first blog post using Astro Content Collections and MDX.',
+      pubDate: new Date('2025-05-19'),
+      tags: ['Blog', 'Astro'],
+      draft: false
+    }
+  }
+].filter(post => !post.data.draft)
+ .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Use centralized data management
 const featuredProjects = getFeaturedProjects(3);
