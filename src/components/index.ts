@@ -1,30 +1,114 @@
-// Components - Organized by feature and purpose
+// Components - Organized by feature and purpose with dynamic loading support
 // This provides a clean API for importing components
 
-// Layout Components
+/**
+ * STATIC IMPORTS - Critical components loaded immediately
+ * These are essential components needed for initial page render
+ */
+
+// Layout Components (Critical - Always needed)
 export * from './layout/index.js';
 
-// UI Components  
+// Core UI Components (Critical - Above the fold)
 export * from './ui/index.js';
 
-// Feature Components
-export * from './features/projects/index.js';
-export * from './features/blog/index.js';
-export * from './features/search/index.js';
+/**
+ * DYNAMIC LOADING EXPORTS - Non-critical components loaded on demand
+ * These components are loaded dynamically to optimize initial bundle size
+ */
 
-// Common Components
-export * from './common/index.js';
+// Dynamic component loader utilities
+export const loadProjectComponents = () => import('./features/projects/index.js');
+export const loadBlogComponents = () => import('./features/blog/index.js');
+export const loadSearchComponents = () => import('./features/search/index.js');
+export const loadCommonComponents = () => import('./common/index.js');
 
-// Legacy exports for backwards compatibility (to be removed after migration)
-export { default as NavBar } from './layout/NavBar.astro';
-export { default as Footer } from './layout/Footer.astro';
-export { default as SearchOverlay } from './features/search/SearchOverlay.astro';
-export { default as ProjectCard } from './features/projects/ProjectCard.astro';
-export { default as ProjectRow } from './features/projects/ProjectRow.astro';
-export { default as ProjectHero } from './features/projects/ProjectHero.astro';
-export { default as ProjectTags } from './features/projects/ProjectTags.astro';
-export { default as BlogPostRow } from './features/blog/BlogPostRow.astro';
-export { default as OptimizedImage } from './ui/OptimizedImage.astro';
-export { default as CoinFlipImage } from './ui/CoinFlipImage.astro';
-export { default as ThemeToggle } from './ui/ThemeToggle.jsx';
-export { default as PhotoCarousel } from './ui/PhotoCarousel.astro';
+/**
+ * COMPONENT COMPOSITION PATTERNS - Always available for better DX
+ */
+export * from './composite/index.js';
+
+/**
+ * LAZY LOADING HELPERS - Utilities for component-level lazy loading
+ */
+
+// Async component wrapper for lazy loading
+export async function loadComponentAsync<T>(
+  loader: () => Promise<{ [key: string]: T }>,
+  componentName: string
+): Promise<T | null> {
+  try {
+    const module = await loader();
+    return module[componentName] || module.default || null;
+  } catch (error) {
+    console.error(`Failed to load component ${componentName}:`, error);
+    return null;
+  }
+}
+
+// Preload components for better UX
+export function preloadComponents(loaders: Array<() => Promise<any>>): void {
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(() => {
+      loaders.forEach(loader => {
+        loader().catch(error => {
+          console.warn('Component preload failed:', error);
+        });
+      });
+    });
+  } else {
+    setTimeout(() => {
+      loaders.forEach(loader => {
+        loader().catch(error => {
+          console.warn('Component preload failed:', error);
+        });
+      });
+    }, 2000);
+  }
+}
+
+// Setup intersection observer for visibility-based component loading
+export function setupVisibilityBasedLoading(): void {
+  if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const componentType = entry.target.getAttribute('data-component-load');
+        if (componentType) {
+          switch (componentType) {
+            case 'projects':
+              loadProjectComponents();
+              break;
+            case 'blog':
+              loadBlogComponents();
+              break;
+            case 'search':
+              loadSearchComponents();
+              break;
+            case 'common':
+              loadCommonComponents();
+              break;
+          }
+          observer.unobserve(entry.target);
+        }
+      }
+    });
+  }, { rootMargin: '100px' });
+
+  // Observe elements that should trigger component loading
+  document.querySelectorAll('[data-component-load]').forEach(element => {
+    observer.observe(element);
+  });
+}
+
+// Auto-setup visibility-based loading
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupVisibilityBasedLoading);
+  } else {
+    setupVisibilityBasedLoading();
+  }
+}

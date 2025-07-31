@@ -2,6 +2,7 @@
  * Enhanced search overlay with voice search, categories, and suggestions
  */
 import Fuse from 'fuse.js';
+import { createModuleError, handleError } from '../../utils/AppError';
 
 interface SearchResult {
   title: string;
@@ -112,7 +113,12 @@ export class EnhancedSearchOverlay {
       
       this.recognition.onerror = (event: any) => {  
         const errorEvent = event;
-        console.error('Speech recognition error:', errorEvent.error);
+        const error = createModuleError('SearchOverlay', 'VOICE_SEARCH_ERROR', `Speech recognition error: ${errorEvent.error}`, {
+          component: 'VoiceSearch',
+          action: 'recognition',
+          additionalData: { errorType: errorEvent.error }
+        });
+        handleError(error);
         this.announceToScreenReader(`Voice search error: ${errorEvent.error}`);
       };
       
@@ -213,7 +219,14 @@ export class EnhancedSearchOverlay {
       this.saveToSearchHistory(query);
       
     } catch (error) {
-      console.error('Search error:', error);
+      const appError = createModuleError('SearchOverlay', 'SEARCH_EXECUTION_ERROR', 
+        `Search execution failed: ${(error as Error)?.message || 'Unknown error'}`, {
+          component: 'SearchExecution',
+          action: 'search',
+          additionalData: { query, category: this.currentCategory }
+        });
+      handleError(appError);
+      
       this.trackSearchInteraction('error', { 
         query, 
         category: this.currentCategory,
@@ -278,7 +291,12 @@ export class EnhancedSearchOverlay {
 
       return results.slice(0, 10); // Limit to top 10 results
     } catch (error) {
-      console.error('Search error:', error);
+      const appError = createModuleError('SearchOverlay', 'FUZZY_SEARCH_ERROR', 
+        `Fuzzy search failed: ${(error as Error)?.message || 'Unknown error'}`, {
+          component: 'FuzzySearch',
+          action: 'performFuzzySearch'
+        });
+      handleError(appError);
       throw error;
     }
   }
@@ -291,7 +309,13 @@ export class EnhancedSearchOverlay {
       }
       return await response.json();
     } catch (error) {
-      console.error(`Error loading search index from ${url}:`, error);
+      const appError = createModuleError('SearchOverlay', 'SEARCH_INDEX_LOAD_ERROR', 
+        `Failed to load search index from ${url}: ${(error as Error)?.message || 'Unknown error'}`, {
+          component: 'SearchIndexLoader',
+          action: 'loadSearchIndex',
+          additionalData: { url }
+        });
+      handleError(appError);
       return [];
     }
   }
@@ -571,7 +595,12 @@ export class EnhancedSearchOverlay {
       const newHistory = [query, ...history.filter((item: string) => item !== query)].slice(0, 10);
       localStorage.setItem('searchHistory', JSON.stringify(newHistory));
     } catch (error) {
-      console.error('Failed to save search history:', error);
+      const appError = createModuleError('SearchOverlay', 'SEARCH_HISTORY_SAVE_ERROR', 
+        `Failed to save search history: ${(error as Error)?.message || 'Unknown error'}`, {
+          component: 'SearchHistory',
+          action: 'save'
+        });
+      handleError(appError);
     }
   }
   
@@ -583,7 +612,12 @@ export class EnhancedSearchOverlay {
         console.log('Search history loaded:', history);
       }
     } catch (error) {
-      console.error('Failed to load search history:', error);
+      const appError = createModuleError('SearchOverlay', 'SEARCH_HISTORY_LOAD_ERROR', 
+        `Failed to load search history: ${(error as Error)?.message || 'Unknown error'}`, {
+          component: 'SearchHistory',
+          action: 'load'
+        });
+      handleError(appError);
     }
   }
   

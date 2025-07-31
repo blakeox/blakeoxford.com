@@ -1,7 +1,7 @@
 /**
- * Modern NavBar functionality
- * Handles mobile menu toggle, theme toggle, and search overlay
+ * Modern Navigation Bar with Mobile Menu and Theme Toggle
  */
+import { createModuleErrorReporter } from '../../utils/ModuleErrorHandling';
 
 export class ModernNavBar {
   private burgerButton: HTMLElement | null;
@@ -12,6 +12,7 @@ export class ModernNavBar {
   private searchOverlay: HTMLElement | null;
   private navbar: HTMLElement | null;
   private focusTrapListener: ((e: KeyboardEvent) => void) | null;
+  private errorReporter = createModuleErrorReporter('ModernNavBar');
 
   constructor() {
     console.log('🔧 ModernNavBar constructor called');
@@ -67,7 +68,18 @@ export class ModernNavBar {
 
   setupMobileMenu() {
     if (!this.burgerButton || !this.mobileMenu) {
-      console.error('❌ Mobile menu elements not found');
+      this.errorReporter.reportError(
+        'MOBILE_MENU_ELEMENTS_NOT_FOUND',
+        'Required mobile menu elements not found in DOM',
+        'medium' as any,
+        { 
+          component: 'MobileMenu',
+          additionalData: { 
+            burgerButtonExists: !!this.burgerButton,
+            mobileMenuExists: !!this.mobileMenu
+          }
+        }
+      );
       return;
     }
 
@@ -119,7 +131,15 @@ export class ModernNavBar {
   toggleMobileMenu() {
     console.log('🔄 Toggling mobile menu...');
     if (!this.burgerButton || !this.mobileMenu) {
-      console.error('❌ Elements not found for toggle');
+      this.errorReporter.reportError(
+        'TOGGLE_ELEMENTS_NOT_FOUND',
+        'Required elements not found for mobile menu toggle',
+        'medium' as any,
+        { 
+          component: 'MobileMenuToggle',
+          action: 'toggle'
+        }
+      );
       return;
     }
     
