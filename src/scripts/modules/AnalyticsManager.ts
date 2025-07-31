@@ -3,39 +3,12 @@
  * Handles analytics tracking with privacy considerations and performance optimization
  */
 
-interface AnalyticsConfig {
-  enableTracking?: boolean;
-  respectDNT?: boolean;
-  anonymizeIP?: boolean;
-  trackPerformance?: boolean;
-  trackErrors?: boolean;
-  trackUserJourney?: boolean;
-  debugMode?: boolean;
-}
-
-interface TrackingEvent {
-  category: string;
-  action: string;
-  label?: string;
-  value?: number;
-  timestamp: number;
-  sessionId: string;
-  userId?: string;
-}
-
-interface PerformanceMetric {
-  name: string;
-  value: number;
-  unit: string;
-  timestamp: number;
-}
-
-interface UserJourney {
-  pageViews: string[];
-  interactions: TrackingEvent[];
-  sessionDuration: number;
-  startTime: number;
-}
+import type { 
+  AnalyticsConfig, 
+  TrackingEvent, 
+  UserJourney, 
+  PerformanceMetric 
+} from '../../types/analytics';
 
 export class AnalyticsManager {
   private config: AnalyticsConfig;

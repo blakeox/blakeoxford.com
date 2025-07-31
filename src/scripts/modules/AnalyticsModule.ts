@@ -3,55 +3,14 @@
  * Provides comprehensive analytics tracking for navigation and general event tracking
  */
 
-interface EventData {
-  category?: string;
-  action?: string;
-  label?: string;
-  value?: number;
-  custom?: Record<string, unknown>;
-  [key: string]: unknown;
-}
-
-interface AnalyticsConfig {
-  debug?: boolean;
-  trackPageViews?: boolean;
-  trackClicks?: boolean;
-  trackScroll?: boolean;
-  excludeSelectors?: string[];
-  providers?: string[];
-}
-
-interface NavigationData {
-  from: string;
-  to: string;
-  method?: string;
-  duration?: number;
-  [key: string]: unknown;
-}
-
-interface ScrollData {
-  depth: number;
-  direction: 'up' | 'down';
-  speed?: number;
-  [key: string]: unknown;
-}
-
-interface FormData {
-  formName: string;
-  fields?: string[];
-  validationErrors?: string[];
-  submissionTime?: number;
-  [key: string]: unknown;
-}
-
-interface SearchData {
-  query: string;
-  source?: string;
-  results?: number;
-  filters?: string[];
-  query_length?: number;
-  [key: string]: unknown;
-}
+import type { 
+  AnalyticsConfig,
+  EventData,
+  NavigationData,
+  ScrollData,
+  FormData,
+  SearchData
+} from '../../types/analytics';
 
 export class AnalyticsModule {
   private config: AnalyticsConfig;
@@ -210,7 +169,7 @@ export class AnalyticsModule {
   /**
    * Track search query
    */
-  public trackSearch(query: string, source: string = 'general'): void {
+  public trackSearch(query: string, source: 'search-bar' | 'voice' | 'suggestion' = 'search-bar'): void {
     const searchData: SearchData = {
       query,
       source,
@@ -223,7 +182,7 @@ export class AnalyticsModule {
   /**
    * Track navigation event
    */
-  public trackNavigation(from: string, to: string, method: string = 'click'): void {
+  public trackNavigation(from: string, to: string, method: 'click' | 'keyboard' | 'programmatic' = 'click'): void {
     const navigationData: NavigationData = {
       from,
       to,
@@ -283,7 +242,7 @@ export class AnalyticsModule {
     
     const observer = new MutationObserver(() => {
       if (window.location.pathname !== currentPath) {
-        this.trackNavigation(currentPath, window.location.pathname, 'navigation');
+        this.trackNavigation(currentPath, window.location.pathname, 'programmatic');
         currentPath = window.location.pathname;
         this.trackPageView();
       }

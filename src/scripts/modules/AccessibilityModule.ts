@@ -3,35 +3,15 @@
  * Provides comprehensive accessibility features with full type safety
  */
 
-export interface AccessibilityPreferences {
-  fontSize: 'small' | 'medium' | 'large' | 'extra-large';
-  fontFamily: 'default' | 'sans-serif' | 'serif' | 'monospace' | 'dyslexic';
-  lineHeight: 'tight' | 'normal' | 'relaxed' | 'loose';
-  letterSpacing: 'normal' | 'wide' | 'extra-wide';
-  colorScheme: 'auto' | 'light' | 'dark';
-  highContrast: boolean;
-  reducedMotion: boolean;
-  soundEnabled: boolean;
-  voiceAnnouncements: boolean;
-  focusIndicator: 'default' | 'enhanced' | 'high-visibility';
-  cursorSize: 'default' | 'large' | 'extra-large';
-  underlineLinks: boolean;
-  hideImages: boolean;
-  simplifyLayout: boolean;
-}
+import type { 
+  AccessibilityPreferences, 
+  AccessibilityConfig,
+  FocusTrap 
+} from '../../types/accessibility';
 
-export interface FocusTrap {
-  activate: () => void;
-  deactivate: () => void;
-  handleKeyDown: (event: KeyboardEvent) => void;
-}
-
-export interface AccessibilityModuleConfig {
-  enableLiveRegion?: boolean;
-  enableSkipLink?: boolean;
-  enableKeyboardShortcuts?: boolean;
-  enableFocusManagement?: boolean;
-  enableLandmarkRoles?: boolean;
+// Extend the base config for module-specific needs
+export interface AccessibilityModuleConfig extends AccessibilityConfig {
+  autoInit?: boolean;
 }
 
 export class AccessibilityModule {

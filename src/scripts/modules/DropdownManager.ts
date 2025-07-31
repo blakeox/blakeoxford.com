@@ -3,25 +3,8 @@
  * Handles dropdown menus with keyboard navigation and ARIA support
  */
 
-interface DropdownConfig {
-  triggerSelector: string;
-  menuSelector: string;
-  autoClose?: boolean;
-  keyboardNavigation?: boolean;
-}
-
-interface DropdownState {
-  isOpen: boolean;
-  trigger: HTMLElement;
-  menu: HTMLElement;
-  focusTrap: FocusTrap | null;
-}
-
-interface FocusTrap {
-  activate: () => void;
-  deactivate: () => void;
-  handleKeyDown: (e: KeyboardEvent) => void;
-}
+import type { FocusTrap } from '../../types/core';
+import type { DropdownConfig, DropdownState } from '../../types/dropdown';
 
 export class DropdownManager {
   private dropdowns: Map<HTMLElement, DropdownState> = new Map();
@@ -33,7 +16,8 @@ export class DropdownManager {
     triggerSelector: '.nav-link[aria-haspopup="true"]',
     menuSelector: 'ul[role="menu"]',
     autoClose: true,
-    keyboardNavigation: true
+    keyboardNavigation: true,
+    enabled: true
   }) {
     this.config = config;
     this.init();
