@@ -53,7 +53,7 @@ export class ModernNavBar {
     }
     
     // Initialize analytics if available
-    if (window.analyticsModule) {
+    if (window.analytics) {
       this.setupAnalytics();
     }
     
@@ -341,19 +341,19 @@ export class ModernNavBar {
   }
 
   setupAnalytics() {
-    if (!window.analyticsModule) return;
+    if (!window.analytics) return;
     
     // Track navigation events
     const navLinks = this.navbar?.querySelectorAll('a');
     navLinks?.forEach(link => {
       link.addEventListener('click', () => {
         const href = link.getAttribute('href');
-        if (href && window.analyticsModule) {
-          window.analyticsModule.trackNavigation(
-            window.location.pathname,
-            href,
-            'click'
-          );
+        if (href && window.analytics) {
+          window.analytics.trackNavigation({
+            from: window.location.pathname,
+            to: href,
+            method: 'click'
+          });
         }
       });
     });

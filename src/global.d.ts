@@ -10,7 +10,10 @@ declare global {
     AccessibilityModule?: typeof import('./scripts/modules/AccessibilityModule').AccessibilityModule;
     initAccessibilityModule?: typeof import('./scripts/modules/AccessibilityModule').initAccessibilityModule;
     accessibilityModule?: import('./scripts/modules/AccessibilityModule').AccessibilityModule;
-    analyticsModule?: import('./scripts/modules/AnalyticsModule').AnalyticsModule;
+    
+    // Consolidated Analytics
+    analytics?: import('./scripts/modules/Analytics').Analytics;
+    
     scrollEffects?: import('./scripts/utils/ScrollEffects').ScrollEffects;
     SpeechRecognition?: typeof SpeechRecognition;
     webkitSpeechRecognition?: typeof SpeechRecognition;
