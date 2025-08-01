@@ -43,7 +43,7 @@ const personSchema = {
   'jobTitle': 'Systems Architect',
   'sameAs': socialLinks.map(link => link.url),
   'description': description,
-  'image': '/assets/images/Blake-O-scaled.jpg'
+    'image': '~/assets/images/Blake-O-scaled.jpg'
 };
 
 // Testimonials
@@ -51,19 +51,19 @@ const testimonials: Testimonial[] = [
   {
     name: 'Michael Johnson',
     title: 'CEO, InnovaTech',
-    image: '/assets/images/placeholder-avatar-1.jpg',
+        image: '~/assets/images/placeholder-avatar-1.jpg',
     quote: 'Blake\'s strategic vision transformed our business operations. His implementation of AI-driven workflows resulted in 30% cost reduction while increasing productivity.'
   },
   {
     name: 'Sarah Williams',
     title: 'CTO, HealthTech Solutions',
-    image: '/assets/images/placeholder-avatar-2.jpg',
+        image: '~/assets/images/placeholder-avatar-2.jpg',
     quote: 'Working with Blake on our cloud migration was seamless. His technical knowledge combined with business acumen is rare and incredibly valuable.'
   },
   {
     name: 'David Chen',
     title: 'Director of Finance, Global Systems',
-    image: '/assets/images/placeholder-avatar-3.jpg',
+        image: '~/assets/images/placeholder-avatar-3.jpg',
     quote: 'Blake\'s financial modeling expertise helped us make critical decisions with confidence. His Power BI dashboards are now essential tools for our executive team.'
   }
 ];
@@ -120,7 +120,7 @@ const timelineItems: TimelineItem[] = [
 <Layout 
   title={title} 
   description={description} 
-  image="/assets/images/Blake-O-scaled.jpg" 
+    image="~/assets/images/Blake-O-scaled.jpg" 
   url={canonicalUrl} 
   wide={true}
 >
@@ -591,7 +591,7 @@ const timelineItems: TimelineItem[] = [
                             width="56"
                             height="56"
                             decoding="async"
-                            onerror="this.onerror=null; this.src='/assets/images/placeholder-avatar.jpg';"
+                                                        onerror="this.onerror=null; this.src='~/assets/images/placeholder-avatar.jpg';"
                           />
                         </div>
                         <div class="ml-4">
