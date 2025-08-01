@@ -33,6 +33,8 @@
     "test:e2e": "playwright test",
     "test:e2e:essential": "playwright test tests/playwright/navigation-essential.spec.ts tests/playwright/accessibility-basic.spec.ts tests/playwright/performance-smoke.spec.ts",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:visual": "playwright test --update-snapshots",
+    "test:e2e:visual:ci": "playwright test",
     "test:ci": "vitest run && playwright test",
     "test:ci:fast": "vitest run && pnpm test:e2e:essential",
     "lh:ci": "lhci autorun",

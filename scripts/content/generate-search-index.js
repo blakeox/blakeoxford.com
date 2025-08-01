@@ -158,7 +158,16 @@ const projectsIndex = formatProjectsForSearch(projects);
 writeJSON(path.join(__dirname, '../public/search/blog.json'), blogIndex);
 writeJSON(path.join(__dirname, '../public/search/projects.json'), projectsIndex);
 
+const searchIndex = [...projects.map(p => ({ ...p.data, type: 'project', slug: p.slug })), ...blogPosts.map(p => ({ ...p.data, type: 'blog', slug: p.slug }))];
+
+const outputDir = path.resolve(__dirname, '../../../dist');
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
+fs.writeFileSync(path.join(outputDir, 'search-index.json'), JSON.stringify(searchIndex, null, 2));
+
 console.log('Search indexes generated: blog.json, projects.json');
+console.log('Search index generated successfully at dist/search-index.json');
 
 // Export functions for testing
 export { formatProjectsForSearch, formatBlogForSearch };

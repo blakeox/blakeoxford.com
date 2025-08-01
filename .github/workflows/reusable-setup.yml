@@ -1,0 +1,37 @@
+name: Reusable CI Setup
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '22'
+    outputs:
+      install-cache-hit:
+        description: 'Whether the pnpm install cache was hit'
+        value: ${{ jobs.setup.outputs.install-cache-hit }}
+
+jobs:
+  setup:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+    outputs:
+      install-cache-hit: ${{ steps.install.outputs.cache-hit }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        id: install
+        run: pnpm install --frozen-lockfile

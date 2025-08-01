@@ -1,3 +1,6 @@
+/// <reference types="astro/client" />
+/// <reference types="@cloudflare/workers-types" />
+
 // Suppress TypeScript errors for Astro virtual modules
 declare module 'astro:content';
 
@@ -99,6 +102,16 @@ declare global {
     chargingTime: number;
     dischargingTime: number;
     level: number;
+  }
+}
+
+declare namespace App {
+  interface Locals extends Runtime<Env> {
+    abTestGroup: 'A' | 'B';
+    user?: {
+      name: string;
+      email: string;
+    };
   }
 }
 

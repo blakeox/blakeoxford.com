@@ -152,6 +152,10 @@ jobs:
           path: lighthouse-reports/
           retention-days: 14
 
+      - name: Run visual regression tests
+        if: matrix.test-group == 'e2e'
+        run: pnpm test:e2e:visual:ci
+
   optimization-tasks:
     name: Optimization Tasks
     runs-on: ubuntu-latest
