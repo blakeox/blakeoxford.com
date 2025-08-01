@@ -122,15 +122,16 @@ jobs:
         run: |
           echo "♿ Checking accessibility compliance..."
           # Check for proper ARIA attributes in built HTML
-          if grep -r "aria-" dist/ > /dev/null; then
+          if grep -r "aria-" dist/ --include="*.html" > /dev/null; then
             echo "✅ ARIA attributes found in build"
           else
             echo "⚠️ Warning: Limited ARIA attributes detected"
           fi
-          # Check for alt attributes
-          ALT_MISSING=$(grep -r "<img" dist/ | grep -v "alt=" | wc -l || echo "0")
+          # Check for alt attributes in HTML files only (exclude README.md and other docs)
+          ALT_MISSING=$(grep -r "<img" dist/ --include="*.html" | grep -v "alt=" | wc -l || echo "0")
           if [ "$ALT_MISSING" -gt 0 ]; then
-            echo "❌ Found $ALT_MISSING images without alt attributes"
+            echo "❌ Found $ALT_MISSING images without alt attributes in HTML files"
+            grep -r "<img" dist/ --include="*.html" | grep -v "alt=" || true
             exit 1
           else
             echo "✅ All images have alt attributes"
