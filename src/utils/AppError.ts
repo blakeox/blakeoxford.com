@@ -31,6 +31,7 @@ export interface ErrorContext {
   url?: string;
   userAgent?: string;
   timestamp?: string;
+  correlationId?: string; // For tracking across monitoring systems
   additionalData?: Record<string, unknown>;
 }
 
@@ -221,11 +222,17 @@ export class ErrorFactory {
 }
 
 /**
- * Centralized Error Handler
+ * Centralized Error Handler with Enhanced Monitoring Integration
  */
 export class ErrorHandler {
   private static instance: ErrorHandler;
   private errorDisplay?: any; // Reference to existing ErrorHandlingSystem
+  private monitoringIntegration: {
+    securityMonitor?: any;
+    performanceMonitor?: any;
+    analyticsManager?: any;
+  } = {};
+  private correlationIdCounter = 0;
 
   static getInstance(): ErrorHandler {
     if (!ErrorHandler.instance) {
@@ -235,14 +242,28 @@ export class ErrorHandler {
   }
 
   /**
-   * Initialize with existing error display system
+   * Initialize with existing error display system and monitoring integration
    */
-  public initialize(errorDisplay: any): void {
+  public initialize(errorDisplay: any, monitoringIntegration?: {
+    securityMonitor?: any;
+    performanceMonitor?: any;
+    analyticsManager?: any;
+  }): void {
     this.errorDisplay = errorDisplay;
+    if (monitoringIntegration) {
+      this.monitoringIntegration = monitoringIntegration;
+    }
   }
 
   /**
-   * Handle application errors with consistent logging and reporting
+   * Generate correlation ID for tracking errors across systems
+   */
+  private generateCorrelationId(): string {
+    return `err_${Date.now()}_${++this.correlationIdCounter}`;
+  }
+
+  /**
+   * Handle application errors with enhanced monitoring integration
    */
   public handle(error: AppError | Error): void {
     let appError: AppError;
@@ -255,14 +276,36 @@ export class ErrorHandler {
         error.message,
         undefined,
         ErrorSeverity.MEDIUM,
-        { additionalData: { originalError: error.name } }
+        { 
+          additionalData: { originalError: error.name },
+          correlationId: this.generateCorrelationId()
+        }
       );
     } else {
       appError = error;
+      // Add correlation ID if not present
+      if (!appError.context.correlationId) {
+        appError.context.correlationId = this.generateCorrelationId();
+      }
     }
 
-    // Always log to console with structured format
+    // Enhanced structured logging with correlation
     this.logError(appError);
+
+    // Integrate with security monitoring for security-related errors
+    if (this.monitoringIntegration.securityMonitor && this.isSecurityRelated(appError)) {
+      this.reportToSecurityMonitor(appError);
+    }
+
+    // Integrate with performance monitoring for performance-related errors
+    if (this.monitoringIntegration.performanceMonitor && this.isPerformanceRelated(appError)) {
+      this.reportToPerformanceMonitor(appError);
+    }
+
+    // Integrate with analytics for user behavior analysis
+    if (this.monitoringIntegration.analyticsManager && appError.shouldReport()) {
+      this.reportToAnalytics(appError);
+    }
 
     // Report critical errors to external services if needed
     if (appError.shouldReport()) {
@@ -275,16 +318,101 @@ export class ErrorHandler {
     }
   }
 
+  /**
+   * Check if error is security-related
+   */
+  private isSecurityRelated(error: AppError): boolean {
+    return error.code.includes('CSRF') || 
+           error.code.includes('XSS') || 
+           error.code.includes('SECURITY') ||
+           error.type === ErrorType.VALIDATION && error.severity === ErrorSeverity.HIGH;
+  }
+
+  /**
+   * Check if error is performance-related
+   */
+  private isPerformanceRelated(error: AppError): boolean {
+    return error.code.includes('PERFORMANCE') ||
+           error.code.includes('TIMEOUT') ||
+           error.code.includes('MEMORY') ||
+           error.type === ErrorType.RESOURCE && error.context.component === 'PerformanceMonitor';
+  }
+
+  /**
+   * Report to security monitoring system
+   */
+  private reportToSecurityMonitor(error: AppError): void {
+    try {
+      this.monitoringIntegration.securityMonitor?.recordSecurityEvent?.({
+        type: 'suspicious_pattern',
+        severity: error.severity === ErrorSeverity.CRITICAL ? 'critical' : 'medium',
+        timestamp: Date.now(),
+        url: error.context.url,
+        data: {
+          errorCode: error.code,
+          errorType: error.type,
+          correlationId: error.context.correlationId,
+          context: error.context
+        },
+        blocked: false
+      });
+    } catch (integrationError) {
+      console.warn('Failed to report to security monitor:', integrationError);
+    }
+  }
+
+  /**
+   * Report to performance monitoring system
+   */
+  private reportToPerformanceMonitor(error: AppError): void {
+    try {
+      this.monitoringIntegration.performanceMonitor?.recordMetric?.(
+        'error_performance_impact',
+        1,
+        {
+          errorCode: error.code,
+          errorType: error.type,
+          correlationId: error.context.correlationId,
+          severity: error.severity
+        }
+      );
+    } catch (integrationError) {
+      console.warn('Failed to report to performance monitor:', integrationError);
+    }
+  }
+
+  /**
+   * Report to analytics system
+   */
+  private reportToAnalytics(error: AppError): void {
+    try {
+      this.monitoringIntegration.analyticsManager?.trackError?.({
+        errorType: error.type,
+        errorMessage: error.technicalMessage,
+        stackTrace: error.stack,
+        url: error.context.url,
+        correlationId: error.context.correlationId,
+        severity: error.severity,
+        context: error.context
+      });
+    } catch (integrationError) {
+      console.warn('Failed to report to analytics:', integrationError);
+    }
+  }
+
   private logError(error: AppError): void {
     const logData = {
       id: error.id,
+      correlationId: error.context.correlationId,
       type: error.type,
       code: error.code,
       severity: error.severity,
       message: error.technicalMessage,
-      context: error.context
+      context: error.context,
+      timestamp: error.timestamp
     };
 
+    // Enhanced structured logging with correlation ID
     switch (error.severity) {
       case ErrorSeverity.CRITICAL:
         console.error('🚨 CRITICAL ERROR:', logData);
@@ -298,6 +426,14 @@ export class ErrorHandler {
       case ErrorSeverity.LOW:
         console.info('ℹ️ LOW SEVERITY ERROR:', logData);
         break;
+    }
+
+    // Log correlation info for debugging
+    if (error.context.correlationId) {
+      console.groupCollapsed(`🔍 Error Trace: ${error.context.correlationId}`);
+      console.log('Stack Trace:', error.stack);
+      console.log('Full Context:', error.context);
+      console.groupEnd();
     }
   }
 

@@ -1,9 +1,12 @@
 /**
- * Centralized Application Configuration
+ * Centralized Application Configuration with Runtime Updates
  * Single source of truth for all application configuration
  */
 
 import { z } from 'zod';
+
+// Configuration change callback type
+export type ConfigChangeCallback = (newConfig: AppConfig, changedKeys: string[]) => void;
 
 // Zod schemas for runtime validation
 const AccessibilityConfigSchema = z.object({
@@ -110,82 +113,146 @@ export const createConfig = (overrides: Partial<AppConfig> = {}): AppConfig => {
     
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       envOverrides.environment = 'development';
-      envOverrides.accessibility = { ...baseConfig.accessibility, debug: true };
       envOverrides.analytics = { ...baseConfig.analytics, debug: true };
-    } else if (hostname.includes('staging')) {
+      envOverrides.performance = { ...baseConfig.performance, debug: true };
+    } else if (hostname.includes('staging') || hostname.includes('preview')) {
       envOverrides.environment = 'staging';
     } else {
       envOverrides.environment = 'production';
-      envOverrides.accessibility = { ...baseConfig.accessibility, debug: false };
       envOverrides.analytics = { ...baseConfig.analytics, debug: false };
+      envOverrides.performance = { ...baseConfig.performance, debug: false };
     }
   }
   
-  // Merge configurations: base <- environment <- user overrides
-  const mergedConfig = {
+  return AppConfigSchema.parse({
     ...baseConfig,
     ...envOverrides,
-    ...overrides,
-    // Deep merge for nested objects
-    accessibility: {
-      ...baseConfig.accessibility,
-      ...envOverrides.accessibility,
-      ...overrides.accessibility,
-    },
-    analytics: {
-      ...baseConfig.analytics,
-      ...envOverrides.analytics,
-      ...overrides.analytics,
-    },
-    dropdown: {
-      ...baseConfig.dropdown,
-      ...envOverrides.dropdown,
-      ...overrides.dropdown,
-    },
-    search: {
-      ...baseConfig.search,
-      ...envOverrides.search,
-      ...overrides.search,
-    },
-    performance: {
-      ...baseConfig.performance,
-      ...envOverrides.performance,
-      ...overrides.performance,
-    },
-    features: {
-      ...baseConfig.features,
-      ...envOverrides.features,
-      ...overrides.features,
-    },
-  };
-  
-  return validateConfig(mergedConfig);
+    ...overrides
+  });
 };
 
-// Configuration manager singleton
-class ConfigManager {
+/**
+ * Enhanced Configuration Manager with Runtime Updates
+ */
+export class ConfigManager {
   private static instance: ConfigManager;
   private config: AppConfig;
-  
+  private changeCallbacks: ConfigChangeCallback[] = [];
+
   private constructor(initialConfig?: Partial<AppConfig>) {
     this.config = createConfig(initialConfig);
   }
-  
+
   static getInstance(initialConfig?: Partial<AppConfig>): ConfigManager {
     if (!ConfigManager.instance) {
       ConfigManager.instance = new ConfigManager(initialConfig);
     }
     return ConfigManager.instance;
   }
-  
+
+  /**
+   * Get current configuration
+   */
   getConfig(): AppConfig {
     return { ...this.config };
   }
-  
+
+  /**
+   * Update configuration at runtime with change notifications
+   */
   updateConfig(updates: Partial<AppConfig>): void {
-    this.config = createConfig({ ...this.config, ...updates });
+    const oldConfig = { ...this.config };
+    
+    try {
+      const newConfig = createConfig({
+        ...this.config,
+        ...updates
+      });
+      
+      // Find changed keys
+      const changedKeys = this.findChangedKeys(oldConfig, newConfig);
+      
+      if (changedKeys.length > 0) {
+        this.config = newConfig;
+        
+        // Notify all callbacks
+        this.changeCallbacks.forEach(callback => {
+          try {
+            callback(newConfig, changedKeys);
+          } catch (error) {
+            console.error('Error in config change callback:', error);
+          }
+        });
+
+        console.log('📊 Configuration updated:', {
+          changedKeys,
+          environment: newConfig.environment
+        });
+      }
+    } catch (error) {
+      console.error('Invalid configuration update:', error);
+      throw error;
+    }
   }
-  
+
+  /**
+   * Subscribe to configuration changes
+   */
+  onChange(callback: ConfigChangeCallback): () => void {
+    this.changeCallbacks.push(callback);
+    
+    return () => {
+      const index = this.changeCallbacks.indexOf(callback);
+      if (index > -1) {
+        this.changeCallbacks.splice(index, 1);
+      }
+    };
+  }
+
+  /**
+   * Get environment-optimized configuration
+   */
+  getOptimizedConfig(): AppConfig {
+    const config = this.getConfig();
+    
+    if (config.environment === 'production') {
+      return {
+        ...config,
+        analytics: {
+          ...config.analytics,
+          debug: false,
+          trackPerformance: true,
+          trackErrors: true
+        },
+        performance: {
+          ...config.performance,
+          debug: false,
+          monitorCoreWebVitals: true,
+          reportingInterval: 60000
+        }
+      };
+    }
+    
+    if (config.environment === 'development') {
+      return {
+        ...config,
+        analytics: {
+          ...config.analytics,
+          debug: true,
+          trackPerformance: true
+        },
+        performance: {
+          ...config.performance,
+          debug: true,
+          reportingInterval: 10000
+        }
+      };
+    }
+    
+    return config;
+  }
+
+  // Legacy methods for backward compatibility
   getAccessibilityConfig(): AccessibilityConfig {
     return this.config.accessibility;
   }
@@ -205,9 +272,35 @@ class ConfigManager {
   getPerformanceConfig(): PerformanceConfig {
     return this.config.performance;
   }
+
+  private findChangedKeys(oldConfig: AppConfig, newConfig: AppConfig): string[] {
+    const changedKeys: string[] = [];
+    
+    const compareObjects = (old: any, current: any, prefix = ''): void => {
+      for (const key in current) {
+        const fullKey = prefix ? `${prefix}.${key}` : key;
+        
+        if (typeof current[key] === 'object' && current[key] !== null && !Array.isArray(current[key])) {
+          if (typeof old[key] === 'object' && old[key] !== null) {
+            compareObjects(old[key], current[key], fullKey);
+          } else {
+            changedKeys.push(fullKey);
+          }
+        } else if (old[key] !== current[key]) {
+          changedKeys.push(fullKey);
+        }
+      }
+    };
+    
+    compareObjects(oldConfig, newConfig);
+    return changedKeys;
+  }
 }
 
-export { ConfigManager };
+// Global configuration manager instance
+export const getConfigManager = (initialConfig?: Partial<AppConfig>): ConfigManager => {
+  return ConfigManager.getInstance(initialConfig);
+};
 
 // Export convenience function
-export const getConfig = () => ConfigManager.getInstance().getConfig();
+export const getConfig = () => getConfigManager().getConfig();

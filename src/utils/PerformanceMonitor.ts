@@ -5,6 +5,7 @@
 
 import { getDynamicModuleLoader } from './DynamicModuleLoader';
 import { getFeatureBundleManager } from './FeatureBundleManager';
+import { getPerformanceObserverManager } from './PerformanceObserverManager';
 
 export interface PerformanceMetrics {
   // Loading metrics
@@ -43,49 +44,94 @@ export interface OptimizationReport {
 }
 
 export class PerformanceMonitor {
-  private startTime = performance.now();
-  private interactionStartTimes = new Map<string, number>();
+  private startTime = 0;
   private loadMetrics = new Map<string, number>();
+  private bundleMetrics = new Map<string, number>();
   private errorCount = 0;
-  private cacheHits = 0;
+  private isMonitoring = false;
+  private observerManager = getPerformanceObserverManager();
+  private observerSubscriptions: string[] = [];
+  private interactionStartTimes = new Map<string, number>();
   private totalRequests = 0;
+  private cacheHits = 0;
 
   constructor() {
     this.setupPerformanceObserver();
-    this.trackUserInteractions();
   }
 
-  /**
-   * Setup Performance Observer for Core Web Vitals
+    /**
+   * Setup Performance Observer using consolidated observer manager
    */
   private setupPerformanceObserver(): void {
-    if (typeof window === 'undefined' || !('PerformanceObserver' in window)) {
+    if (!this.observerManager.isAvailable()) {
+      console.warn('PerformanceObserver not available in this environment');
       return;
     }
 
     try {
-      // Observe paint metrics
-      const paintObserver = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          if (entry.name === 'first-contentful-paint') {
-            this.loadMetrics.set('fcp', entry.startTime);
-          }
-        });
-      });
-      paintObserver.observe({ entryTypes: ['paint'] });
+      // Subscribe to paint metrics
+      const paintSubscription = this.observerManager.subscribe(
+        ['paint'],
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.name === 'first-contentful-paint') {
+              this.loadMetrics.set('fcp', entry.startTime);
+            }
+          });
+        },
+        'PerformanceMonitor',
+        { buffered: true }
+      );
 
-      // Observe navigation metrics
-      const navigationObserver = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          if ('loadEventEnd' in entry) {
-            this.loadMetrics.set('loadComplete', (entry as any).loadEventEnd);
-          }
-        });
-      });
-      navigationObserver.observe({ entryTypes: ['navigation'] });
+      // Subscribe to navigation metrics
+      const navigationSubscription = this.observerManager.subscribe(
+        ['navigation'],
+        (entries) => {
+          entries.forEach((entry) => {
+            if ('loadEventEnd' in entry) {
+              this.loadMetrics.set('loadComplete', (entry as PerformanceNavigationTiming).loadEventEnd);
+            }
+          });
+        },
+        'PerformanceMonitor'
+      );
+
+      // Subscribe to resource metrics
+      const resourceSubscription = this.observerManager.subscribe(
+        ['resource'],
+        (entries) => {
+          entries.forEach((entry) => {
+            this.trackResourceLoad(entry as PerformanceResourceTiming);
+          });
+        },
+        'PerformanceMonitor'
+      );
+
+      // Track subscriptions for cleanup
+      this.observerSubscriptions.push(paintSubscription, navigationSubscription, resourceSubscription);
 
     } catch (error) {
-      console.warn('Performance Observer setup failed:', error);
+      console.warn('Failed to setup performance monitoring:', error);
+    }
+  }
+
+  /**
+   * Track resource loading performance
+   */
+  private trackResourceLoad(entry: PerformanceResourceTiming): void {
+    this.totalRequests++;
+    
+    const resourceName = entry.name.split('/').pop() || entry.name;
+    this.loadMetrics.set(`resource-${resourceName}`, entry.duration);
+    
+    // Check for cached resources
+    if (entry.transferSize === 0 && entry.decodedBodySize > 0) {
+      this.cacheHits++;
+    }
+
+    // Track bundle-specific resources
+    if (entry.name.includes('bundle') || entry.name.includes('.js')) {
+      this.bundleMetrics.set(resourceName, entry.duration);
     }
   }
 
