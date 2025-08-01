@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
+    "@astrojs/cloudflare": "^12.6.1",
     "@astrojs/react": "^4.3.0",
     "@rollup/rollup-linux-x64-gnu": "^4.45.1",
     "@types/react": "^19.1.5",
