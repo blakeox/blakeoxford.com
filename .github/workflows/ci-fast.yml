@@ -73,10 +73,7 @@ jobs:
         run: ./scripts/build/performance-regression.sh
 
       - name: Run unit tests
-        run: pnpm testbuild
-
-      - name: Run unit tests
-        run: pnpm test
+        run: pnpm test -- --run
 
   # Essential E2E tests - just the critical user paths
   essential-e2e:
