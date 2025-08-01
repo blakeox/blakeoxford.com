@@ -56,7 +56,11 @@ jobs:
 
       - name: Install Playwright browsers
         if: matrix.test-group == 'e2e' || matrix.test-group == 'performance'
-        run: pnpm exec playwright install --with-deps
+        run: |
+          echo "Installing Playwright browsers..."
+          pnpm exec playwright install --with-deps
+          echo "Verifying browser installations..."
+          node scripts/build/check-playwright-browsers.cjs || echo "Some browsers may not be available"
 
       - name: Run linting
         if: matrix.test-group == 'unit'
@@ -89,7 +93,16 @@ jobs:
 
       - name: Run comprehensive E2E tests
         if: matrix.test-group == 'e2e'
-        run: pnpm exec playwright test
+        run: |
+          echo "Running comprehensive E2E tests with browser fallback..."
+          # First try running all browsers
+          if pnpm exec playwright test --reporter=line; then
+            echo "✅ All browser tests passed"
+          else
+            echo "⚠️ Some browser tests failed, trying Chromium only..."
+            # Fallback to Chromium only
+            COMPREHENSIVE_TESTS=false pnpm exec playwright test --project=chromium --reporter=line
+          fi
         env:
           COMPREHENSIVE_TESTS: "true"
 

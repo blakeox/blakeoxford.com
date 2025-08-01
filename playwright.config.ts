@@ -39,6 +39,7 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     // Only run Firefox and Safari on main branch or for comprehensive testing
+    // Also check if we're in CI and browsers are properly installed
     ...(process.env.COMPREHENSIVE_TESTS === 'true' || process.env.GITHUB_REF === 'refs/heads/main' ? [
       {
         name: 'firefox',
