@@ -1,3 +1,4 @@
+/// <reference types="../global.d.ts" />
 import { defineMiddleware } from 'astro:middleware';
 
 export const onRequest = defineMiddleware((context, next) => {
@@ -9,7 +10,7 @@ export const onRequest = defineMiddleware((context, next) => {
   const abTestGroup = context.cookies.get('ab-test-group')?.value;
 
   if (!abTestGroup) {
-    // Assign user to a group
+    // Randomly assign user to group A or B (50/50 split)
     const group = Math.random() < 0.5 ? 'A' : 'B';
     context.cookies.set('ab-test-group', group, {
       path: '/',
@@ -18,9 +19,11 @@ export const onRequest = defineMiddleware((context, next) => {
       secure: import.meta.env.PROD, // Only send cookie over HTTPS in production
       sameSite: 'lax',
     });
-    context.locals.abTestGroup = group;
+    // Type assertion to work around TypeScript issue
+    (context.locals as any).abTestGroup = group;
   } else {
-    context.locals.abTestGroup = abTestGroup as 'A' | 'B';
+    // Type assertion to work around TypeScript issue  
+    (context.locals as any).abTestGroup = abTestGroup as 'A' | 'B';
   }
 
   return next();
