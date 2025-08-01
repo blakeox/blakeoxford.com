@@ -6,9 +6,9 @@ import Footer from '../components/layout/Footer.astro';
 
 // wide: when true, disable the default max-width wrapper for full-width layouts
 const {
-  title = 'Your Site',
-  description = 'A modern Astro site',
-  url = 'https://yourdomain.com',
+  title = 'Blake Oxford Portfolio',
+  description = 'Welcome to my portfolio! I\'m Blake Oxford',
+  url = 'https://blakeoxford.com',
   wide = false,
   keywords = '',
 } = Astro.props;
@@ -33,7 +33,7 @@ const {
     <!-- Resource Preloading for critical assets -->
     <link rel="preload" href="/assets/js/lazy-loader.min.js" as="script" />
     <link rel="preload" href="/assets/images/Blake-O-scaled.jpg" as="image" type="image/jpeg" />
-    
+
     <!-- DNS Prefetch for external resources -->
     <link rel="dns-prefetch" href="//fonts.googleapis.com" />
     <link rel="dns-prefetch" href="//fonts.gstatic.com" />
@@ -74,7 +74,7 @@ const {
     <meta name="publisher" content="Blake Oxford" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href={url} />
-    
+
     <!-- Enhanced Open Graph & Twitter -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -86,7 +86,7 @@ const {
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Blake Oxford Portfolio" />
     <meta property="og:locale" content="en_US" />
-    
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -94,7 +94,7 @@ const {
     <meta name="twitter:image:alt" content="Blake Oxford Portfolio Screenshot" />
     <meta name="twitter:creator" content="@blakeoxford" />
     <meta name="twitter:site" content="@blakeoxford" />
-    
+
     <!-- Additional SEO Meta Tags -->
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-TileColor" content="#2563eb" />
@@ -104,12 +104,12 @@ const {
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Blake Oxford" />
-    
+
     <!-- Theme colors -->
     <meta name="theme-color" content="#2563eb" />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#2563eb" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e40af" />
-    
+
     <!-- Manifest and Icons -->
     <link rel="manifest" href="/manifest.webmanifest" />
     <!-- Preconnect & Preload Google Fonts with optimized loading -->

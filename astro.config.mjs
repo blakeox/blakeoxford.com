@@ -6,21 +6,12 @@ import compress from 'astro-compress';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-import cloudflare from '@astrojs/cloudflare';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  output: 'server',
-  adapter: cloudflare({
-    mode: 'directory',
-    runtime: {
-      mode: 'local',
-      persistTo: '.wrangler/state',
-    },
-    wasmModuleImports: true,
-  }),
+  output: 'static',
   envPrefix: 'PUBLIC_',
   site: 'https://blakeoxford.com',
   integrations: [
@@ -30,9 +21,6 @@ export default defineConfig({
     react(),
   ],
   image: {
-    service: {
-      entry: '@astrojs/cloudflare/image-service',
-    },
     // Enhanced image optimization
     domains: ['blakeoxford.com'],
     formats: ['avif', 'webp', 'jpeg'],
@@ -43,7 +31,7 @@ export default defineConfig({
   },
   vite: {
     build: {
-      minify: false,
+      minify: true,
     },
     plugins: [tailwindcss()],
     resolve: {
