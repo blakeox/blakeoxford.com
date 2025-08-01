@@ -18,7 +18,8 @@ describe('Blog Index Page', () => {
     expect(fileContent).toContain('BlogPostRow');
   });
 
-  it('should use content collections for blog posts', () => {
-    expect(fileContent).toContain('getCollection(\'blog\'');
+  it('should use manual blog post definitions', () => {
+    expect(fileContent).toContain('Manual blog post definitions');
+    expect(fileContent).toContain('const posts = [');
   });
 });
