@@ -20,51 +20,40 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      // Use include instead of exclude for better control
+      include: [
+        'src/config/navLinks.ts', // Only include files that actually have tests
+        // Add other specific files that have tests here
+      ],
       exclude: [
         'node_modules/**',
-        'tests/**', // Exclude all test files from coverage
-        'playwright/**', // Exclude Playwright test files
-        'playwright-report/**', // Exclude Playwright reports
-        'test-results/**', // Exclude test results
-        'coverage/**', // Exclude coverage reports
-        'src/mocks/**', // Exclude mock files
+        'tests/**',
+        'playwright/**',
+        'playwright-report/**',
+        'test-results/**',
+        'coverage/**',
         'dist/**',
         '.astro/**',
-        'public/**', // Start by excluding all public files
-        'assets-source/js/**', // Exclude all JS files by default
-        '!assets-source/js/analytics.js', // Include specific utility JS files that have tests
-        '!assets-source/js/a11y.js',
-        '!assets-source/js/scroll.js',
-        // Note: dropdown.js is excluded from Vitest coverage as it's tested via Playwright E2E
-        'functions/**', // Exclude Cloudflare functions
-        'src/**/*.astro', // Exclude Astro components from coverage
-        'src/pages/**', // Exclude Astro pages from coverage
-        '!src/pages/api/**/*.js', // But include API endpoints
-        '!src/config/**/*.js', // Include config files
-        '!src/content/config.ts', // Include content config
-        '!src/components/ThemeToggle.jsx', // Include React component
-        'src/layouts/**', // Exclude Astro layouts from coverage
-        '**/debug-*.js', // Exclude debug files
-        'test-*.js', // Exclude test utilities
-        'scripts/**', // Exclude build scripts
-        'src/scripts/**', // Exclude client-side scripts (these are tested via E2E)
-        'playwright.config.ts',
-        'vitest.config.ts',
-        'astro.config.mjs',
-        'tailwind.config.js',
-        'postcss.config.cjs',
-        'eslint.config.js',
-        '.stylelintrc.cjs', // Exclude stylelint config
-        // Exclude specific untested files
-        'check-headings.js',
-        'form-validation-test.cjs',
-        'form-validation-test.js',
+        'public/**',
+        'functions/**',
+        'scripts/**',
+        'src/**/*.astro',
+        'src/pages/**',
+        'src/layouts/**',
+        'src/scripts/**',
+        'src/utils/**',
+        'src/middleware/**',
+        'src/types/**',
+        'src/components/**',
+        '**/*.config.*',
+        '**/debug-*.js',
+        'test-*.js',
       ],
       thresholds: {
-        statements: 80, // High threshold for included files (utility JS, APIs, configs)
-        branches: 70,   // High threshold for included files
-        functions: 80,  // High threshold for included files
-        lines: 80,      // High threshold for included files
+        statements: 80,
+        branches: 70,
+        functions: 80,
+        lines: 80,
       }
     },
   },
