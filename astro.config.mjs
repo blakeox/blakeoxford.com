@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
@@ -18,7 +17,6 @@ export default defineConfig({
     mdx(),
     sitemap(),
     compress(),
-    react(),
   ],
   image: {
     // Enhanced image optimization

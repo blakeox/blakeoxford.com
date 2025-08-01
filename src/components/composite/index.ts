@@ -33,13 +33,11 @@ export const Layout = {
 // UI Components Collection
 import OptimizedImage from '../ui/OptimizedImage.astro';
 import CoinFlipImage from '../ui/CoinFlipImage.astro';
-import ThemeToggle from '../ui/ThemeToggle.jsx';
 import PhotoCarousel from '../ui/PhotoCarousel.astro';
 
 export const UI = {
   OptimizedImage,
   CoinFlipImage, 
-  ThemeToggle,
   PhotoCarousel
 } as const;
 
