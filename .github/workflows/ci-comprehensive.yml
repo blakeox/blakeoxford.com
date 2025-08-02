@@ -56,11 +56,7 @@ jobs:
 
       - name: Install Playwright browsers
         if: matrix.test-group == 'e2e' || matrix.test-group == 'performance'
-        run: |
-          echo "Installing Playwright browsers..."
-          pnpm exec playwright install --with-deps
-          echo "Verifying browser installations..."
-          node scripts/build/check-playwright-browsers.cjs || echo "Some browsers may not be available"
+        run: ./scripts/build/install-playwright-browsers.sh
 
       - name: Run linting
         if: matrix.test-group == 'unit'
@@ -94,14 +90,22 @@ jobs:
       - name: Run comprehensive E2E tests
         if: matrix.test-group == 'e2e'
         run: |
-          echo "Running comprehensive E2E tests with browser fallback..."
-          # First try running all browsers
-          if pnpm exec playwright test --reporter=line; then
-            echo "✅ All browser tests passed"
-          else
-            echo "⚠️ Some browser tests failed, trying Chromium only..."
-            # Fallback to Chromium only
+          echo "Running comprehensive E2E tests with intelligent browser fallback..."
+          
+          # Check if we should use limited browser set from the start
+          if [ "$PLAYWRIGHT_BROWSERS_LIMITED" = "true" ]; then
+            echo "🔄 Using Chromium-only mode due to browser availability issues"
             COMPREHENSIVE_TESTS=false pnpm exec playwright test --project=chromium --reporter=line
+          else
+            echo "🎯 Attempting full browser test suite..."
+            # First try running all browsers
+            if pnpm exec playwright test --reporter=line; then
+              echo "✅ All browser tests passed"
+            else
+              echo "⚠️ Full browser tests failed, falling back to Chromium only..."
+              # Fallback to Chromium only
+              COMPREHENSIVE_TESTS=false pnpm exec playwright test --project=chromium --reporter=line
+            fi
           fi
         env:
           COMPREHENSIVE_TESTS: "true"

@@ -30,6 +30,7 @@
     "perf:summary": "node scripts/build/performance-summary.js",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:e2e:install": "./scripts/build/install-playwright-browsers.sh",
     "test:e2e:check": "node scripts/build/check-playwright-browsers.cjs",
     "test:e2e": "playwright test",
     "test:e2e:essential": "playwright test tests/playwright/navigation-essential.spec.ts tests/playwright/accessibility-basic.spec.ts tests/playwright/performance-smoke.spec.ts",
