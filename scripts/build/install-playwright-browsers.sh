@@ -13,12 +13,25 @@ is_ci() {
     [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ] || [ -n "$GITLAB_CI" ] || [ -n "$JENKINS_URL" ]
 }
 
+# Function to detect operating system
+get_os() {
+    case "$(uname -s)" in
+        Linux*)     echo "linux";;
+        Darwin*)    echo "macos";;
+        CYGWIN*)    echo "windows";;
+        MINGW*)     echo "windows";;
+        MSYS*)      echo "windows";;
+        *)          echo "unknown";;
+    esac
+}
+
 # Function to check available system dependencies
 check_system_deps() {
-    echo "🔍 Checking system dependencies..."
+    local os=$(get_os)
+    echo "🔍 Checking system dependencies for $os..."
     
-    if command -v apt-get >/dev/null 2>&1; then
-        echo "📦 APT package manager detected"
+    if [ "$os" = "linux" ] && command -v apt-get >/dev/null 2>&1; then
+        echo "📦 APT package manager detected (Linux)"
         # Update package list
         sudo apt-get update -qq
         
@@ -67,6 +80,12 @@ check_system_deps() {
             libxtst6 \
             lsb-release \
             xdg-utils
+    elif [ "$os" = "macos" ]; then
+        echo "🍎 macOS detected - system dependencies managed by Playwright"
+        # On macOS, Playwright handles dependencies automatically
+        # No additional system packages needed
+    else
+        echo "ℹ️  Unknown or unsupported OS: $os - proceeding with Playwright installation"
     fi
 }
 
@@ -124,9 +143,17 @@ verify_browsers() {
 
 # Main installation flow
 main() {
+    local os=$(get_os)
+    
     if is_ci; then
-        echo "🏗️ CI environment detected, installing system dependencies..."
+        echo "🏗️ CI environment detected on $os, installing system dependencies..."
         check_system_deps
+    else
+        echo "🖥️  Local development environment detected on $os"
+        if [ "$os" = "linux" ]; then
+            echo "ℹ️  For Linux systems, you may need to install browser dependencies manually"
+            echo "   Run: sudo apt-get install $(echo 'libnss3 libatk-bridge2.0-0 libdrm2 libgtk-3-0 libgbm1' | tr ' ' '\n' | sort -u | tr '\n' ' ')"
+        fi
     fi
     
     echo "📥 Starting browser installation..."
@@ -135,7 +162,9 @@ main() {
         echo "🎉 Full browser installation completed"
     elif install_chromium_only; then
         echo "⚠️ Fallback to Chromium-only installation completed"
-        echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> "$GITHUB_ENV"
+        if [ -n "$GITHUB_ENV" ]; then
+            echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> "$GITHUB_ENV"
+        fi
     else
         echo "❌ All browser installation methods failed"
         exit 1
