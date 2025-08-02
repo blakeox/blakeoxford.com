@@ -36,6 +36,7 @@ check_system_deps() {
         sudo apt-get update -qq
         
         # Install essential dependencies for browser installation
+        # Updated package names for modern Ubuntu versions
         sudo apt-get install -y \
             libnss3-dev \
             libatk-bridge2.0-dev \
@@ -48,7 +49,7 @@ check_system_deps() {
             wget \
             ca-certificates \
             fonts-liberation \
-            libasound2 \
+            libasound2t64 \
             libatk1.0-0 \
             libc6 \
             libcairo2 \
@@ -56,8 +57,7 @@ check_system_deps() {
             libdbus-1-3 \
             libexpat1 \
             libfontconfig1 \
-            libgcc1 \
-            libgconf-2-4 \
+            libgcc-s1 \
             libgdk-pixbuf2.0-0 \
             libglib2.0-0 \
             libgtk-3-0 \
@@ -79,7 +79,14 @@ check_system_deps() {
             libxss1 \
             libxtst6 \
             lsb-release \
-            xdg-utils
+            xdg-utils || {
+            # Fallback: try with alternative package names for different Ubuntu versions
+            echo "⚠️ Some packages failed, trying alternatives..."
+            sudo apt-get install -y \
+                libasound2 \
+                libgcc1 \
+                libgconf-2-4 2>/dev/null || echo "ℹ️ Some legacy packages unavailable (normal for newer Ubuntu)"
+        }
     elif [ "$os" = "macos" ]; then
         echo "🍎 macOS detected - system dependencies managed by Playwright"
         # On macOS, Playwright handles dependencies automatically
