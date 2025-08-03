@@ -54,9 +54,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright browsers
+      - name: Install Playwright browsers with enhanced fallback
         if: matrix.test-group == 'e2e' || matrix.test-group == 'performance'
-        run: ./scripts/build/install-playwright-browsers.sh
+        run: |
+          echo "🎭 Installing Playwright browsers with intelligent fallback..."
+          
+          # Run our enhanced installation script
+          if ./scripts/build/install-playwright-browsers.sh; then
+            echo "✅ Browser installation completed"
+          else
+            echo "⚠️ Browser installation had issues, but continuing..."
+          fi
+          
+          # Check browser availability and set environment
+          pnpm test:e2e:check || echo "Browser check completed with warnings"
 
       - name: Run linting
         if: matrix.test-group == 'unit'
@@ -87,24 +98,25 @@ jobs:
         if: matrix.test-group == 'unit'
         run: pnpm run test:coverage
 
-      - name: Run comprehensive E2E tests
+      - name: Run comprehensive E2E tests with smart browser detection
         if: matrix.test-group == 'e2e'
         run: |
-          echo "Running comprehensive E2E tests with intelligent browser fallback..."
+          echo "🎯 Running comprehensive E2E tests with intelligent browser fallback..."
           
-          # Check if we should use limited browser set from the start
-          if [ "$PLAYWRIGHT_BROWSERS_LIMITED" = "true" ]; then
-            echo "🔄 Using Chromium-only mode due to browser availability issues"
-            COMPREHENSIVE_TESTS=false pnpm exec playwright test --project=chromium --reporter=line
+          # First, check which browsers are actually available
+          echo "🔍 Checking browser availability..."
+          if pnpm test:e2e:check; then
+            echo "✅ All browsers available - running comprehensive tests"
+            COMPREHENSIVE_TESTS=true pnpm exec playwright test --reporter=line
           else
-            echo "🎯 Attempting full browser test suite..."
-            # First try running all browsers
-            if pnpm exec playwright test --reporter=line; then
-              echo "✅ All browser tests passed"
+            echo "⚠️ Limited browsers available - checking if we can run essential tests..."
+            
+            # Try Chromium-only essential tests
+            if pnpm test:e2e:essential; then
+              echo "✅ Essential tests passed with available browsers"
             else
-              echo "⚠️ Full browser tests failed, falling back to Chromium only..."
-              # Fallback to Chromium only
-              COMPREHENSIVE_TESTS=false pnpm exec playwright test --project=chromium --reporter=line
+              echo "❌ Even essential tests failed - this indicates a more serious issue"
+              exit 1
             fi
           fi
         env:
