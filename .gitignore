@@ -147,6 +147,7 @@ dist
 
 # Astro build output
 /dist
+.astro/
 
 # Ignore .DS_Store (macOS)
 .DS_Store
