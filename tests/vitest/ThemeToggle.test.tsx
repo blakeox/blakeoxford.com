@@ -15,14 +15,34 @@ describe('Theme Toggle Logic', () => {
 
   beforeEach(() => {
     // Create a fresh DOM for each test
-    dom = new JSDOM('<!DOCTYPE html><html><head></head><body><button id="theme-toggle"></button></body></html>');
+    dom = new JSDOM('<!DOCTYPE html><html><head></head><body><button id="theme-toggle"></button></body></html>', {
+      url: 'http://localhost', // Provide a proper origin to avoid opaque origin issues
+    });
     document = dom.window.document;
-    localStorage = dom.window.localStorage;
-
+    
+    // Create a proper localStorage mock that works in CI
+    const localStorageMock = {
+      store: {} as Record<string, string>,
+      getItem: vi.fn((key: string) => localStorageMock.store[key] || null),
+      setItem: vi.fn((key: string, value: string) => {
+        localStorageMock.store[key] = value;
+      }),
+      removeItem: vi.fn((key: string) => {
+        delete localStorageMock.store[key];
+      }),
+      clear: vi.fn(() => {
+        localStorageMock.store = {};
+      }),
+      length: 0,
+      key: vi.fn(() => null),
+    };
+    
+    localStorage = localStorageMock as unknown as Storage;
+    
     // Mock global objects
     global.document = document;
     global.localStorage = localStorage;
-
+    
     // Clear localStorage
     localStorage.clear();
     // Reset document class
