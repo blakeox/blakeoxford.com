@@ -112,7 +112,10 @@ describe('NavBarMenu', () => {
           <main id="main">Main content</main>
         </body>
       </html>
-    `, { url: 'http://localhost' });
+    `, { 
+      url: 'http://localhost:3000',
+      pretendToBeVisual: true,
+    });
 
     window = dom.window as Window & typeof globalThis;
     document = window.document;

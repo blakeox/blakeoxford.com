@@ -27,7 +27,10 @@ describe('PhotoCarousel Component', () => {
           </div>
         </body>
       </html>
-    `);
+    `, {
+      url: 'http://localhost:3000',
+      pretendToBeVisual: true,
+    });
     document = dom.window.document;
     global.document = document;
     global.window = dom.window as Window & typeof globalThis;

@@ -161,7 +161,10 @@ describe('SearchOverlay Class', () => {
           <button id="search-toggle">Search</button>
         </body>
       </html>
-    `, { url: 'http://localhost' });
+    `, { 
+      url: 'http://localhost:3000',
+      pretendToBeVisual: true,
+    });
 
     window = dom.window as Window & typeof globalThis;
     document = window.document;

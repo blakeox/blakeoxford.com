@@ -16,7 +16,8 @@ describe('Theme Toggle Logic', () => {
   beforeEach(() => {
     // Create a fresh DOM for each test
     dom = new JSDOM('<!DOCTYPE html><html><head></head><body><button id="theme-toggle"></button></body></html>', {
-      url: 'http://localhost', // Provide a proper origin to avoid opaque origin issues
+      url: 'http://localhost:3000',
+      pretendToBeVisual: true,
     });
     document = dom.window.document;
     
