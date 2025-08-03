@@ -48,6 +48,7 @@
     "deploy:ready": "npm run build && npm run deploy:quality-gate",
     "ci:fast": "npm run typecheck && npm run lint && npm run test:ci:fast && npm run perf:budget",
     "ci:full": "npm run typecheck && npm run lint && npm run test:ci && npm run perf:test && npm run security:audit",
+    "ci:verify": "./scripts/ci/pre-deployment-verification.sh",
     "pr:check": "npm run typecheck && npm run lint && npm run test",
     "health:check": "node -e \"console.log('✅ All systems operational')\"",
     "health:workflow": "./scripts/optimization/workflow-health-monitor.sh",
