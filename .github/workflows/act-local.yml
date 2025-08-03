@@ -1,0 +1,125 @@
+name: Act Local Testing
+
+# This workflow is optimized for local testing with act
+# It handles the preview server startup more reliably for local development
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  local-test:
+    name: Local E2E Test Debug
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers (act-optimized)
+        run: |
+          echo "🎭 Installing Playwright browsers for act..."
+          # Use system browsers when available (act containers often have them)
+          export PLAYWRIGHT_BROWSERS_PATH=/usr/bin
+          
+          # Try to install browsers, but don't fail if it doesn't work
+          pnpm exec playwright install chromium --with-deps || echo "Using system browsers"
+          pnpm exec playwright install firefox --with-deps || echo "Firefox not available"
+          pnpm exec playwright install webkit --with-deps || echo "WebKit not available"
+
+      - name: Build the application
+        run: |
+          echo "🔨 Building application..."
+          pnpm run build
+          
+          # Verify build output
+          if [ -f "dist/index.html" ]; then
+            echo "✅ Build successful - index.html found"
+            ls -la dist/
+          else
+            echo "❌ Build failed - no index.html found"
+            exit 1
+          fi
+
+      - name: Start preview server and run tests
+        run: |
+          echo "🚀 Starting preview server and running E2E tests..."
+          
+          # Start the preview server in background
+          pnpm run preview &
+          SERVER_PID=$!
+          
+          # Wait for server to be ready (with timeout)
+          echo "⏳ Waiting for server to start..."
+          for i in {1..30}; do
+            if curl -f http://localhost:4322 >/dev/null 2>&1; then
+              echo "✅ Server is ready after ${i} seconds"
+              break
+            fi
+            echo "Waiting... (${i}/30)"
+            sleep 1
+          done
+          
+          # Verify server is actually responding
+          if ! curl -f http://localhost:4322 >/dev/null 2>&1; then
+            echo "❌ Server failed to start or is not responding"
+            echo "Server logs:"
+            jobs
+            kill $SERVER_PID 2>/dev/null || true
+            exit 1
+          fi
+          
+          # Show what's actually being served
+          echo "🔍 Server response test:"
+          curl -I http://localhost:4322 || true
+          
+          # Run the failing tests with detailed output
+          echo "🎯 Running E2E tests with comprehensive logging..."
+          
+          # Set environment for better debugging
+          export DEBUG=pw:api
+          export PLAYWRIGHT_DEBUG=1
+          
+          # Run just the essential tests first
+          if pnpm exec playwright test --project=chromium tests/playwright/accessibility-basic.spec.ts --reporter=line --verbose; then
+            echo "✅ Accessibility tests passed"
+          else
+            echo "❌ Accessibility tests failed - checking server status"
+            curl -f http://localhost:4322 || echo "Server is down"
+          fi
+          
+          # Run navigation tests
+          if pnpm exec playwright test --project=chromium tests/playwright/navigation-essential.spec.ts --reporter=line --verbose; then
+            echo "✅ Navigation tests passed"
+          else
+            echo "❌ Navigation tests failed"
+          fi
+          
+          # Cleanup
+          kill $SERVER_PID 2>/dev/null || true
+          
+        env:
+          CI: true
+
+      - name: Upload test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-test-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
