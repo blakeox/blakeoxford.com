@@ -63,10 +63,10 @@ export default defineConfig({
     ]),
   ],
   webServer: {
-    command: 'npx astro preview',
+    command: 'pnpm run preview',
     port: 4321,
-    reuseExistingServer: true, // Always reuse existing server (CI starts it manually)
-    timeout: 30 * 1000, // Reduced timeout since server should already be running
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
     stdout: 'pipe',
     stderr: 'pipe',
   },
