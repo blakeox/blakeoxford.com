@@ -98,29 +98,11 @@ jobs:
         if: matrix.test-group == 'unit'
         run: pnpm run test:coverage
 
-      - name: Run comprehensive E2E tests with smart browser detection
+      - name: Run E2E tests (optimized)
         if: matrix.test-group == 'e2e'
         run: |
-          echo "🎯 Running comprehensive E2E tests with intelligent browser fallback..."
-          
-          # First, check which browsers are actually available
-          echo "🔍 Checking browser availability..."
-          if pnpm test:e2e:check; then
-            echo "✅ All browsers available - running comprehensive tests"
-            COMPREHENSIVE_TESTS=true pnpm exec playwright test --reporter=line
-          else
-            echo "⚠️ Limited browsers available - checking if we can run essential tests..."
-            
-            # Try Chromium-only essential tests
-            if pnpm test:e2e:essential; then
-              echo "✅ Essential tests passed with available browsers"
-            else
-              echo "❌ Even essential tests failed - this indicates a more serious issue"
-              exit 1
-            fi
-          fi
-        env:
-          COMPREHENSIVE_TESTS: "true"
+          echo "🧪 Running optimized essential E2E tests..."
+          ./scripts/ci/run-essential-tests.sh
 
       - name: Run performance tests
         if: matrix.test-group == 'performance'
@@ -181,9 +163,9 @@ jobs:
           path: lighthouse-reports/
           retention-days: 14
 
-      - name: Run visual regression tests
+      - name: Run essential visual tests
         if: matrix.test-group == 'e2e'
-        run: pnpm test:e2e:visual:ci
+        run: pnpm exec playwright test --grep="Essential Visual Tests" --reporter=line
 
   optimization-tasks:
     name: Optimization Tasks

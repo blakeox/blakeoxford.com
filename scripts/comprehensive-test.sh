@@ -65,16 +65,20 @@ SERVER_PID=$!
 
 # Wait for server to be ready
 echo "⏳ Waiting for server to start..."
+sleep 2  # Give server time to initialize
 for i in {1..30}; do
-    if curl -f http://localhost:4321 >/dev/null 2>&1; then
-        echo "✅ Server is ready after ${i} seconds"
+    if curl -f -s -o /dev/null http://localhost:4321 >/dev/null 2>&1; then
+        echo "✅ Server is ready after ${i} attempts"
         break
     fi
     if [ $i -eq 30 ]; then
-        echo "❌ Server failed to start within 30 seconds"
+        echo "❌ Server failed to start or is not responding"
+        echo "Server logs:"
+        jobs
         kill $SERVER_PID 2>/dev/null || true
         exit 1
     fi
+    echo "Waiting... ($i/30)"
     sleep 1
 done
 
