@@ -59,15 +59,14 @@ jobs:
         run: |
           echo "🎭 Installing Playwright browsers with intelligent fallback..."
           
-          # Run our enhanced installation script
-          if ./scripts/build/install-playwright-browsers.sh; then
-            echo "✅ Browser installation completed"
+          # Try installing all browsers first
+          if pnpm exec playwright install; then
+            echo "✅ All browsers installed successfully"
           else
-            echo "⚠️ Browser installation had issues, but continuing..."
+            echo "⚠️ Full browser installation failed, installing Chromium only..."
+            pnpm exec playwright install chromium || echo "Chromium installation completed with warnings"
+            export BROWSER_INSTALL_FAILED=true
           fi
-          
-          # Check browser availability and set environment
-          pnpm test:e2e:check || echo "Browser check completed with warnings"
 
       - name: Run linting
         if: matrix.test-group == 'unit'

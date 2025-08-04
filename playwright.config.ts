@@ -49,9 +49,9 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    // Only run Firefox and Safari on main branch or for comprehensive testing
-    // Also check if we're in CI and browsers are properly installed
-    ...(process.env.COMPREHENSIVE_TESTS === 'true' || process.env.GITHUB_REF === 'refs/heads/main' ? [
+    // Only run Firefox and Safari when browsers are properly installed
+    // Skip in CI if browser installation failed to avoid webkit/firefox errors
+    ...(process.env.CI && process.env.BROWSER_INSTALL_FAILED === 'true' ? [] : [
       {
         name: 'firefox',
         use: { ...devices['Desktop Firefox'] },
@@ -60,13 +60,13 @@ export default defineConfig({
         name: 'webkit',
         use: { ...devices['Desktop Safari'] },
       },
-    ] : []),
+    ]),
   ],
   webServer: {
-    command: 'npx astro dev --port 4321',
+    command: 'npx astro preview',
     port: 4321,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000, // 2 minutes for server startup
+    reuseExistingServer: true, // Always reuse existing server (CI starts it manually)
+    timeout: 30 * 1000, // Reduced timeout since server should already be running
     stdout: 'pipe',
     stderr: 'pipe',
   },
