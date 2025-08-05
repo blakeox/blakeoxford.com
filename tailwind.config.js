@@ -6,10 +6,6 @@ export default /** @type {import('tailwindcss').Config} */ {
   darkMode: 'class',
   content: [
     './src/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
-    './tests/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
-    './playwright/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
-    './public/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
-    './*.{astro,html,js,jsx,ts,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -333,22 +329,12 @@ export default /** @type {import('tailwindcss').Config} */ {
     containerQueries,
   ],
   safelist: [
+    // Essential gradient classes only
     'from-accent',
     'to-accent',
-    'from-accent-dark',
-    'to-accent-dark',
-    'from-accent-light',
-    'to-accent-light',
     'from-purple-600',
     'to-purple-600',
-    'from-purple-500',
-    'to-purple-500',
     'from-blue-500',
     'to-blue-500',
-    'from-cyan-400',
-    'to-cyan-400',
-    'from-pink-500',
-    'to-pink-500',
-    // add more if you use other gradient stops
   ],
 };

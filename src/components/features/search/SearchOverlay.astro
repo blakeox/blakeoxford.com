@@ -626,18 +626,25 @@
 </style>
 
 <script>
-  import { initEnhancedSearchOverlay } from '../../../scripts/features/EnhancedSearchOverlay';
+  import { initEnhancedSearchOverlay, EnhancedSearchOverlay } from '../../../scripts/features/EnhancedSearchOverlay';
   
   console.log('🎯 SearchOverlay script tag loaded!');
+  
+  // Export SearchOverlay class to global scope for testing
+  (window as any).SearchOverlay = EnhancedSearchOverlay;
   
   // Initialize search overlay when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       console.log('🚀 Initializing EnhancedSearchOverlay...');
-      (window as any).enhancedSearchOverlay = initEnhancedSearchOverlay();
+      const instance = initEnhancedSearchOverlay();
+      (window as any).enhancedSearchOverlay = instance;
+      (window as any).searchOverlay = instance; // Additional alias for tests
     });
   } else {
     console.log('🚀 Initializing EnhancedSearchOverlay...');
-    (window as any).enhancedSearchOverlay = initEnhancedSearchOverlay();
+    const instance = initEnhancedSearchOverlay();
+    (window as any).enhancedSearchOverlay = instance;
+    (window as any).searchOverlay = instance; // Additional alias for tests
   }
 </script>
