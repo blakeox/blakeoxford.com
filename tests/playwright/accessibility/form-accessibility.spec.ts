@@ -41,7 +41,7 @@ test.describe('Form Accessibility Tests', () => {
     // Check error handling
     const submitButton = form.locator('button[type="submit"], input[type="submit"]').first();
     if (await submitButton.isVisible()) {
-      // Try to submit form without filling required fields
+      // First, try to submit form without filling required fields to test validation
       await submitButton.click();
       
       // Wait a moment for validation
@@ -58,6 +58,33 @@ test.describe('Form Accessibility Tests', () => {
         const role = await firstError.getAttribute('role');
         
         expect(ariaLive || role).toBeTruthy();
+      }
+      
+      // Now fill out the form properly to test successful submission flow
+      const nameInput = form.locator('input[name="name"], input#name').first();
+      const emailInput = form.locator('input[name="email"], input#email').first();
+      const messageInput = form.locator('textarea[name="message"], textarea#message').first();
+      
+      if (await nameInput.isVisible()) {
+        await nameInput.fill('Test User');
+      }
+      if (await emailInput.isVisible()) {
+        await emailInput.fill('test@example.com');
+      }
+      if (await messageInput.isVisible()) {
+        await messageInput.fill('This is a test message for accessibility testing.');
+      }
+      
+      // The form should now be ready for submission (though we won't actually submit in tests)
+      // Just verify the fields are properly filled and accessible
+      if (await nameInput.isVisible()) {
+        expect(await nameInput.inputValue()).toBe('Test User');
+      }
+      if (await emailInput.isVisible()) {
+        expect(await emailInput.inputValue()).toBe('test@example.com');
+      }
+      if (await messageInput.isVisible()) {
+        expect(await messageInput.inputValue()).toBe('This is a test message for accessibility testing.');
       }
     }
   });
