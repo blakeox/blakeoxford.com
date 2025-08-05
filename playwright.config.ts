@@ -50,7 +50,7 @@ export default defineConfig({
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        // Use system Chrome instead of downloading Playwright browsers
+        // Always try to use system Chrome first for better CI compatibility
         channel: 'chrome',
       },
     },

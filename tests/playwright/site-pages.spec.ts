@@ -4,7 +4,7 @@ test.describe('Homepage', () => {
   test('should display the site title and navigation', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { name: /blake oxford/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /about/i, exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'About', exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Blog', exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Projects', exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Contact', exact: true })).toBeVisible();

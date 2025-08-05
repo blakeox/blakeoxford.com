@@ -44,6 +44,35 @@ export class EnhancedSearchOverlay {
     this.init();
   }
   
+  /**
+   * Open the search overlay programmatically
+   */
+  open() {
+    const searchOverlay = document.getElementById('search-overlay');
+    if (!searchOverlay) return false;
+    
+    searchOverlay.classList.add('active');
+    searchOverlay.style.visibility = 'visible';
+    searchOverlay.style.opacity = '1';
+    
+    // Focus search input
+    if (this.searchInput) {
+      setTimeout(() => {
+        this.searchInput?.focus();
+      }, 100);
+    }
+    
+    // Disable body scroll for mobile
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    
+    this.announceToScreenReader('Search overlay opened');
+    this.trackSearchInteraction('opened');
+    
+    return true;
+  }
+  
   init() {
     this.setupVoiceSearch();
     this.setupSearchInput();
@@ -688,4 +717,4 @@ export class EnhancedSearchOverlay {
 export function initEnhancedSearchOverlay(): EnhancedSearchOverlay {
   console.log('🚀 Initializing EnhancedSearchOverlay...');
   return new EnhancedSearchOverlay();
-} 
+}

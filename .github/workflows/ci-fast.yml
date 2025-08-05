@@ -110,14 +110,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install chromium --with-deps  # Only chromium for speed
+      - name: Install Playwright dependencies
+        run: |
+          echo "🎭 Installing Playwright system dependencies..."
+          # Install system dependencies for browsers, but don't download browsers
+          sudo npx playwright install-deps
+          echo "✅ System dependencies installed"
 
       - name: Build the application
         run: pnpm run build
 
       - name: Run essential Playwright tests
-        run: pnpm run test:e2e:essential
+        run: pnpm run test:e2e:essential:chromium
         env:
           COMPREHENSIVE_TESTS: "false"
 

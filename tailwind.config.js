@@ -6,10 +6,6 @@ export default /** @type {import('tailwindcss').Config} */ {
   darkMode: 'class',
   content: [
     './src/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
-    './tests/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
-    './playwright/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
-    './public/**/*.{astro,html,js,jsx,ts,tsx,mdx}',
-    './*.{astro,html,js,jsx,ts,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -69,11 +65,6 @@ export default /** @type {import('tailwindcss').Config} */ {
       spacing: {
         18: 'var(--space-18)',
         22: 'var(--space-22)',
-        26: 'var(--space-26)',
-        30: 'var(--space-30)',
-        34: 'var(--space-34)',
-        38: 'var(--space-38)',
-        42: 'var(--space-42)',
       },
       borderRadius: {
         none: 'var(--radius-none)',
@@ -158,13 +149,9 @@ export default /** @type {import('tailwindcss').Config} */ {
         30: '30',
         40: '40',
         50: '50',
-        max: '9999',
       },
       opacity: {
         0: '0',
-        5: '0.05',
-        10: '0.1',
-        20: '0.2',
         25: '0.25',
         50: '0.5',
         75: '0.75',
@@ -197,132 +184,17 @@ export default /** @type {import('tailwindcss').Config} */ {
       typography: (theme) => ({
         DEFAULT: {
           css: {
-            h1: {
-              fontSize: theme('fontSize.7xl'),
-              fontWeight: theme('fontWeight.extrabold'),
-              marginTop: '2.5em',
-              marginBottom: '0.75em',
-              lineHeight: theme('lineHeight.tight'),
-            },
-            h2: {
-              fontSize: theme('fontSize.6xl'),
-              fontWeight: theme('fontWeight.bold'),
-              marginTop: '2em',
-              marginBottom: '0.5em',
-            },
-            h3: {
-              fontSize: theme('fontSize.4xl'),
-              fontWeight: theme('fontWeight.semibold'),
-              marginTop: '1.5em',
-              marginBottom: '0.5em',
-            },
-            h4: {
-              fontSize: theme('fontSize.2xl'),
-              fontWeight: theme('fontWeight.semibold'),
-              marginTop: '1.25em',
-              marginBottom: '0.4em',
-            },
-            h5: {
-              fontSize: theme('fontSize.xl'),
-              fontWeight: theme('fontWeight.medium'),
-              marginTop: '1em',
-              marginBottom: '0.3em',
-            },
-            h6: {
-              fontSize: theme('fontSize.lg'),
-              fontWeight: theme('fontWeight.medium'),
-              marginTop: '0.8em',
-              marginBottom: '0.2em',
-              textTransform: 'uppercase',
-              letterSpacing: theme('letterSpacing.wide'),
-            },
+            maxWidth: 'none',
             a: {
               color: theme('colors.accent.DEFAULT', '#047857'),
               textDecoration: 'underline',
-              textUnderlineOffset: '2px',
-              fontWeight: theme('fontWeight.medium'),
-              transition: 'color 0.2s',
               '&:hover': {
                 color: theme('colors.accent.dark', '#064e3b'),
               },
-              '&:focus': {
-                outline: '2px solid',
-                outlineColor: theme('colors.accent.DEFAULT', '#047857'),
-                outlineOffset: '2px',
-              },
             },
-            ul: {
-              paddingLeft: '1.25em',
-              marginBottom: '1em',
-            },
-            ol: {
-              paddingLeft: '1.25em',
-              marginBottom: '1em',
-            },
-            'ul > li::marker': {
-              color: theme('colors.accent.DEFAULT', '#047857'),
-            },
-            'ol > li::marker': {
-              color: theme('colors.accent.DEFAULT', '#047857'),
-            },
-            blockquote: {
-              fontStyle: 'italic',
-              color: theme('colors.neutral.dark', '#334155'),
-              borderLeft: `4px solid ${theme('colors.accent.DEFAULT', '#047857')}`,
-              paddingLeft: '1em',
-              margin: '1.5em 0',
-            },
-            code: {
-              backgroundColor: theme('colors.neutral.light', '#cbd5e1'),
-              color: theme('colors.accent.dark', '#064e3b'),
-              borderRadius: theme('borderRadius.md'),
-              padding: '0.2em 0.4em',
-              fontSize: '0.95em',
-            },
-            'pre code': {
-              backgroundColor: 'transparent',
-              color: 'inherit',
-              padding: 0,
-            },
-            pre: {
-              backgroundColor: theme('colors.neutral.light', '#cbd5e1'),
-              color: theme('colors.neutral.dark', '#334155'),
-              borderRadius: theme('borderRadius.lg'),
-              padding: '1em',
-              overflowX: 'auto',
-              fontSize: '0.95em',
-            },
-            img: {
-              borderRadius: theme('borderRadius.lg'),
-              margin: '1.5em 0',
-              display: 'block',
-              maxWidth: '100%',
-              height: 'auto',
-            },
-            table: {
-              width: '100%',
-              borderCollapse: 'collapse',
-              margin: '2em 0',
-            },
-            th: {
-              fontWeight: theme('fontWeight.bold'),
-              borderBottom: `2px solid ${theme('colors.neutral.dark', '#334155')}`,
-              padding: '0.5em',
-            },
-            td: {
-              borderBottom: `1px solid ${theme('colors.neutral.light', '#cbd5e1')}`,
-              padding: '0.5em',
-            },
-            '@screen lg': {
-              h1: { fontSize: theme('fontSize.8xl') },
-              h2: { fontSize: theme('fontSize.7xl') },
-              h3: { fontSize: theme('fontSize.5xl') },
-            },
-          },
-        },
-        dark: {
-          css: {
-            color: theme('colors.gray.300'),
+            h1: { fontSize: theme('fontSize.2xl'), fontWeight: theme('fontWeight.bold') },
+            h2: { fontSize: theme('fontSize.xl'), fontWeight: theme('fontWeight.semibold') },
+            h3: { fontSize: theme('fontSize.lg'), fontWeight: theme('fontWeight.medium') },
           },
         },
       }),
@@ -333,22 +205,8 @@ export default /** @type {import('tailwindcss').Config} */ {
     containerQueries,
   ],
   safelist: [
+    // Core navigation and button classes only
     'from-accent',
     'to-accent',
-    'from-accent-dark',
-    'to-accent-dark',
-    'from-accent-light',
-    'to-accent-light',
-    'from-purple-600',
-    'to-purple-600',
-    'from-purple-500',
-    'to-purple-500',
-    'from-blue-500',
-    'to-blue-500',
-    'from-cyan-400',
-    'to-cyan-400',
-    'from-pink-500',
-    'to-pink-500',
-    // add more if you use other gradient stops
   ],
 };
