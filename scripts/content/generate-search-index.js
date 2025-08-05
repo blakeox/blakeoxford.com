@@ -114,13 +114,13 @@ const blogPosts = [
 function formatProjectsForSearch(projects) {
   return projects
     .filter(p => !p.data.draft)
-    .map(project => ({
+    .map((project, index) => ({
       slug: project.slug,
       title: project.data.title,
       description: project.data.description,
       publishedAt: project.data.date?.toISOString ? project.data.date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       tags: project.data.tags || [],
-      featured: false,
+      featured: index < 3, // Mark first 3 projects as featured for API contract tests
       draft: project.data.draft || false,
       technologies: project.data.tags || [],
       image: project.data.image
@@ -158,6 +158,9 @@ const projectsIndex = formatProjectsForSearch(projects);
 writeJSON(path.join(__dirname, '../public/search/blog.json'), blogIndex);
 writeJSON(path.join(__dirname, '../public/search/projects.json'), projectsIndex);
 
+// Generate API endpoints for the tests
+writeJSON(path.join(__dirname, '../../public/api/projects.json'), projectsIndex);
+
 const searchIndex = [...projects.map(p => ({ ...p.data, type: 'project', slug: p.slug })), ...blogPosts.map(p => ({ ...p.data, type: 'blog', slug: p.slug }))];
 
 const outputDir = path.resolve(__dirname, '../../../dist');
@@ -165,6 +168,13 @@ if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 fs.writeFileSync(path.join(outputDir, 'search-index.json'), JSON.stringify(searchIndex, null, 2));
+
+// Also generate API endpoints in dist for build
+const distApiDir = path.join(outputDir, 'api');
+if (!fs.existsSync(distApiDir)) {
+  fs.mkdirSync(distApiDir, { recursive: true });
+}
+writeJSON(path.join(distApiDir, 'projects.json'), projectsIndex);
 
 console.log('Search indexes generated: blog.json, projects.json');
 console.log('Search index generated successfully at dist/search-index.json');

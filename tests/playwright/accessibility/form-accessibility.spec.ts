@@ -5,12 +5,26 @@ test.describe('Form Accessibility Tests', () => {
     await page.goto('/contact');
     await page.waitForLoadState('domcontentloaded');
     
-    // Check form exists
-    const form = page.locator('form').first();
-    await expect(form).toBeVisible();
+    // Find the contact form specifically (not the search form)
+    // Look for forms that contain contact-related fields
+    const form = page.locator('form').filter({ 
+      has: page.locator('input[name="name"], input[name="email"], textarea[name="message"]')
+    }).first();
+    
+    // If the above doesn't work, try to find the main content form (not in search overlay)
+    if (await form.count() === 0) {
+      await expect(page.locator('main form, .contact-form form, [id*="contact"] form').first()).toBeVisible();
+      const contactForm = page.locator('main form, .contact-form form, [id*="contact"] form').first();
+      await expect(contactForm).toBeVisible();
+    } else {
+      await expect(form).toBeVisible();
+    }
+    
+    // Get the actual contact form for the rest of the test
+    const contactForm = await form.count() > 0 ? form : page.locator('main form, .contact-form form, [id*="contact"] form').first();
     
     // Check all form inputs have labels
-    const inputs = await form.locator('input, textarea, select').all();
+    const inputs = await contactForm.locator('input, textarea, select').all();
     
     for (const input of inputs) {
       const id = await input.getAttribute('id');
@@ -28,7 +42,7 @@ test.describe('Form Accessibility Tests', () => {
     }
     
     // Check required fields are properly marked
-    const requiredInputs = await form.locator('input[required], textarea[required]').all();
+    const requiredInputs = await contactForm.locator('input[required], textarea[required]').all();
     
     for (const input of requiredInputs) {
       const ariaRequired = await input.getAttribute('aria-required');
@@ -39,7 +53,7 @@ test.describe('Form Accessibility Tests', () => {
     }
     
     // Check error handling
-    const submitButton = form.locator('button[type="submit"], input[type="submit"]').first();
+    const submitButton = contactForm.locator('button[type="submit"], input[type="submit"]').first();
     if (await submitButton.isVisible()) {
       // First, try to submit form without filling required fields to test validation
       await submitButton.click();
@@ -61,9 +75,9 @@ test.describe('Form Accessibility Tests', () => {
       }
       
       // Now fill out the form properly to test successful submission flow
-      const nameInput = form.locator('input[name="name"], input#name').first();
-      const emailInput = form.locator('input[name="email"], input#email').first();
-      const messageInput = form.locator('textarea[name="message"], textarea#message').first();
+      const nameInput = contactForm.locator('input[name="name"], input#name').first();
+      const emailInput = contactForm.locator('input[name="email"], input#email').first();
+      const messageInput = contactForm.locator('textarea[name="message"], textarea#message').first();
       
       if (await nameInput.isVisible()) {
         await nameInput.fill('Test User');
