@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/playwright',
+  outputDir: './test-results',
   testIgnore: [
     // Temporarily exclude large problematic test files
     '**/accessibility-enhanced.spec.ts', // 545 lines - needs review
@@ -30,24 +31,28 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 1, // Reduced retries
   workers: process.env.CI ? 2 : 3, // Optimized workers for CI
   reporter: [
-    ['html'], 
+    ['html', { outputFolder: 'playwright-report' }], 
     ['line'],
     // Add JUnit reporter for CI systems
     ['junit', { outputFile: 'test-results/junit.xml' }]
   ],
   use: {
     baseURL: 'http://localhost:4321',
-    trace: 'on-first-retry',
+    trace: 'off', // Disable tracing to avoid ffmpeg dependency
     actionTimeout: 5000, // Reduced for faster failure detection
     navigationTimeout: 15000, // Reduced navigation timeout
-    // Optimize for CI performance
-    video: process.env.CI ? 'retain-on-failure' : 'off',
-    screenshot: process.env.CI ? 'only-on-failure' : 'off',
+    // Disable video and screenshot to avoid ffmpeg requirement
+    video: 'off',
+    screenshot: 'off',
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        // Use system Chrome instead of downloading Playwright browsers
+        channel: 'chrome',
+      },
     },
     // Only run Firefox and Safari when browsers are properly installed
     // Skip in CI if browser installation failed to avoid webkit/firefox errors
