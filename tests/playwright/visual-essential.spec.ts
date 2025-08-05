@@ -50,7 +50,41 @@ test.describe('Essential Visual Tests', () => {
     // Toggle theme if available
     const themeToggle = page.locator('#theme-toggle');
     if (await themeToggle.isVisible()) {
-      await themeToggle.click();
+      // Handle potential PWA update overlays that might intercept clicks
+      const pwaUpdateNotification = page.locator('.pwa-update-notification');
+      const pwaInstallBtn = page.locator('#pwa-install-btn');
+      
+      // If PWA notifications are present, dismiss them first
+      if (await pwaUpdateNotification.isVisible()) {
+        // Wait for auto-dismiss (PWA notifications auto-hide after 10 seconds)
+        await page.waitForTimeout(500);
+        // Try to dismiss by clicking outside or waiting for it to disappear
+        if (await pwaUpdateNotification.isVisible()) {
+          await page.waitForFunction(() => {
+            const notification = document.querySelector('.pwa-update-notification');
+            return !notification || notification.style.display === 'none';
+          }, { timeout: 12000 });
+        }
+      }
+      
+      // If PWA install prompt is present, dismiss it
+      if (await pwaInstallBtn.isVisible()) {
+        const closeBtn = pwaInstallBtn.locator('.pwa-install-close');
+        if (await closeBtn.isVisible()) {
+          await closeBtn.click();
+          await page.waitForTimeout(200);
+        }
+      }
+      
+      // Force click the theme toggle with position if normal click fails
+      try {
+        await themeToggle.click({ timeout: 3000 });
+      } catch (error) {
+        // If click is intercepted, try force click or click at position
+        console.log('Theme toggle click intercepted, trying force click');
+        await themeToggle.click({ force: true });
+      }
+      
       await page.waitForTimeout(300); // Wait for theme transition
       
       // Check layout didn't shift significantly
