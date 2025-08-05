@@ -76,13 +76,23 @@ test.describe('Essential Visual Tests', () => {
         }
       }
       
-      // Force click the theme toggle with position if normal click fails
+      // Try to click the theme toggle with multiple strategies
       try {
+        // First attempt: normal click
         await themeToggle.click({ timeout: 3000 });
       } catch (error) {
-        // If click is intercepted, try force click or click at position
-        console.log('Theme toggle click intercepted, trying force click');
-        await themeToggle.click({ force: true });
+        console.log('Normal click failed, trying force click');
+        try {
+          // Second attempt: force click to bypass any overlays
+          await themeToggle.click({ force: true, timeout: 3000 });
+        } catch (error2) {
+          console.log('Force click failed, trying click at position');
+          // Third attempt: click at the element's position
+          const box = await themeToggle.boundingBox();
+          if (box) {
+            await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+          }
+        }
       }
       
       await page.waitForTimeout(300); // Wait for theme transition
