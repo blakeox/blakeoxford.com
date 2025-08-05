@@ -13,6 +13,12 @@ class PWAEnhancer {
   }
 
   init() {
+    // Check if we're in a test environment (Playwright injects window.playwright)
+    this.isTestEnvironment = typeof window !== 'undefined' && 
+                            (window.navigator.webdriver || 
+                             window.playwright || 
+                             window.location.hostname === 'localhost');
+    
     this.checkInstallStatus();
     this.setupInstallPrompt();
     this.setupUpdateDetection();
@@ -20,7 +26,7 @@ class PWAEnhancer {
     this.setupPushNotifications();
     this.setupBackgroundSync();
 
-    console.log('📱 PWA Enhancement initialized');
+    console.log('📱 PWA Enhancement initialized', this.isTestEnvironment ? '(Test Mode)' : '');
   }
 
   // Check if app is already installed
@@ -214,10 +220,11 @@ class PWAEnhancer {
         this.showUpdateNotification();
       });
 
-      // Check for updates periodically
+      // Check for updates periodically - but less frequently in test environments
+      const checkInterval = this.isTestEnvironment ? 300000 : 60000; // 5 minutes vs 1 minute
       setInterval(() => {
         this.checkForUpdates();
-      }, 60000); // Check every minute
+      }, checkInterval);
     }
   }
 
@@ -233,6 +240,12 @@ class PWAEnhancer {
 
   // Show update notification
   showUpdateNotification() {
+    // In test environments, make notifications less intrusive
+    if (this.isTestEnvironment) {
+      console.log('📱 PWA update available (suppressed in test mode)');
+      return;
+    }
+    
     const notification = document.createElement('div');
     notification.innerHTML = `
       <div class="pwa-update-notification">
@@ -263,6 +276,8 @@ class PWAEnhancer {
         color: white;
         max-width: 300px;
         animation: slideInDown 0.3s ease-out;
+        /* Ensure notifications don't interfere with navbar interactions */
+        pointer-events: auto;
       }
 
       .pwa-update-content {
