@@ -633,6 +633,9 @@ export class MonitoringOrchestrator {
     };
   }
 
+  // Note: currently this method returns static pattern/correlation analysis.
+  // Parameter kept for future dynamic analysis generation.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private generateDataAnalysis(_data: any): ComprehensiveReport['dataAnalysis'] {
     return {
       patterns: [
