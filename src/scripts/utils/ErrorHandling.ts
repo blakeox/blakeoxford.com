@@ -202,34 +202,44 @@ export class ErrorHandlingSystem {
     const currentSrc = img.src;
     const fallbackImage = '/assets/images/blake-logo-fallback.png';
     
+    // Try fallback image first (if not already tried)
     if (!currentSrc.includes('blake-logo-fallback.png') && !img.hasAttribute('data-fallback-tried')) {
       img.setAttribute('data-fallback-tried', 'true');
       img.src = fallbackImage;
       return;
     }
     
+    // If fallback also failed, create placeholder
     img.style.display = 'none';
     
-    const altText = img.alt || 'Project image';
+    const altText = img.alt || 'Image';
     const placeholder = document.createElement('div');
-    placeholder.className = 'image-error-placeholder bg-white dark:bg-gray-800 rounded-lg flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 text-sm border-2 border-gray-200 dark:border-gray-600';
-    placeholder.style.width = img.style.width || 'var(--placeholder-width)';
-    placeholder.style.height = img.style.height || 'var(--placeholder-height)';
-    placeholder.style.minHeight = 'var(--placeholder-min-height)';
+    placeholder.className = 'image-error-placeholder bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 text-sm border border-gray-200 dark:border-gray-600';
     
+    // Maintain aspect ratio using img dimensions or reasonable defaults
+    const width = img.width || img.naturalWidth || 300;
+    const height = img.height || img.naturalHeight || 200;
+    placeholder.style.width = `${width}px`;
+    placeholder.style.height = `${height}px`;
+    placeholder.style.minHeight = '120px';
+    
+    // Add branded logo placeholder
     const logoIcon = document.createElement('div');
-    logoIcon.className = 'text-4xl font-bold text-blue-600 mb-2';
+    logoIcon.className = 'text-2xl font-bold text-accent mb-2';
     logoIcon.textContent = 'B';
     
     const text = document.createElement('div');
-    text.textContent = 'Blake Oxford Portfolio';
+    text.className = 'text-xs text-center px-2';
+    text.textContent = altText.includes('Blake') ? 'Blake Oxford Portfolio' : 'Image not available';
     
     placeholder.appendChild(logoIcon);
     placeholder.appendChild(text);
     placeholder.setAttribute('role', 'img');
     placeholder.setAttribute('aria-label', altText);
     
+    // Insert placeholder where image was
     img.parentNode?.insertBefore(placeholder, img);
+    img.remove(); // Remove broken image element completely
   }
 
   private handleNetworkError(response: Response): void {

@@ -177,19 +177,20 @@ class ResourcePreloader {
       case '/projects':
         resources.push(
           { url: '/api/projects.json', as: 'fetch' }
-          // { url: '/assets/images/project-placeholder-640.avif', as: 'image' } // Commented out - file doesn't exist
+          // Placeholder images removed - using dynamic fallbacks instead
         );
         break;
       case '/blog':
         resources.push(
           { url: '/api/blog.json', as: 'fetch' }
-          // { url: '/assets/images/blog-placeholder-640.avif', as: 'image' } // Commented out - file doesn't exist
+          // Placeholder images removed - using dynamic fallbacks instead
         );
         break;
       case '/about':
-                  resources.push(
-            // { url: '/assets/images/profile-640.avif', as: 'image' }, // Commented out - file doesn't exist
-          );
+        resources.push(
+          // Profile images handled by component fallback system
+          { url: '/assets/images/Blake-O-scaled.jpg', as: 'image' }
+        );
         break;
     }
 
