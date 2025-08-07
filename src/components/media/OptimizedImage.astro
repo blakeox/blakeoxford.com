@@ -1,0 +1,51 @@
+---
+interface Props {
+  name: string; // base filename without extension
+  alt: string;
+  class?: string;
+  sizes?: string; // sizes attribute for responsive loading
+  loading?: 'lazy' | 'eager';
+  decoding?: 'auto' | 'async' | 'sync';
+  width?: number;
+  height?: number;
+}
+
+const {
+  name,
+  alt,
+  class: className = '',
+  sizes = '(max-width: 768px) 100vw, 33vw',
+  loading = 'lazy',
+  decoding = 'async',
+  width,
+  height
+} = Astro.props as Props;
+
+// Generated manifests live in /public/assets/images/optimized/*.json (written by optimize-images script)
+// Because Astro builds statically, we attempt a dynamic import with a relative path known at build time.
+let manifest: any = null;
+try {
+  manifest = await import(`../../../public/assets/images/optimized/${name}.json`).then(m => m.default || m);
+} catch {
+  // Fallback: leave manifest null so we gracefully use original image path.
+}
+
+// Helper to build a srcset for a format
+function buildSrcSet(format: string) {
+  if (!manifest || !manifest.sizes) return '';
+  return manifest.sizes.map((w: number) => `/assets/images/optimized/${format}/${name}@${w}w.${format} ${w}w`).join(', ');
+}
+
+const avifSet = buildSrcSet('avif');
+const webpSet = buildSrcSet('webp');
+const jpegPath = manifest ? `/assets/images/optimized/jpeg/${name}.jpeg` : `/assets/images/${name}.jpg`;
+---
+<picture>
+  {avifSet && (
+    <source srcset={avifSet} sizes={sizes} type="image/avif" />
+  )}
+  {webpSet && (
+    <source srcset={webpSet} sizes={sizes} type="image/webp" />
+  )}
+  <img src={jpegPath} alt={alt} loading={loading} decoding={decoding} class={className} width={width} height={height} />
+</picture>

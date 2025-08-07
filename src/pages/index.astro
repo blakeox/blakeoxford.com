@@ -1,10 +1,9 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
-import { Image } from 'astro:assets';
+import OptimizedImage from '../components/media/OptimizedImage.astro';
 import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import { getFeaturedProjects, technologies, siteConfig } from '../config/data';
-import pythonLogo from '../assets/images/proficiencies/python_logo.webp';
 
 // Manual blog post definitions (matching blog/index.astro)
 const blogPosts = [
@@ -313,8 +312,8 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
           <li class="flex flex-col items-center group">
             <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center">
               {tech.optimized && tech.name === 'Python Automation' ? (
-                <Image
-                  src={pythonLogo}
+                <OptimizedImage
+                  name="proficiencies/python_logo" 
                   alt={tech.alt}
                   width={64}
                   height={64}
