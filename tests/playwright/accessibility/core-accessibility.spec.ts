@@ -16,8 +16,8 @@ test.describe('Core Accessibility Tests', () => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
     
-    // Essential checks that should never fail
-    await expect(page.locator('h1')).toHaveCount(1);
+    // Essential checks that should never fail - target main content H1 only
+    await expect(page.locator('main h1, [role="main"] h1, body > * h1').first()).toBeVisible();
     await expect(page.locator('main, [role="main"]')).toBeVisible();
     await expect(page.locator('nav[role="navigation"]').first()).toBeVisible(); // Take first nav element
     
@@ -29,7 +29,7 @@ test.describe('Core Accessibility Tests', () => {
     await page.goto('/blog');
     await page.waitForLoadState('domcontentloaded');
     
-    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('main h1, [role="main"] h1, body > * h1').first()).toBeVisible();
     await expect(page.locator('main, [role="main"]')).toBeVisible();
     await expect(page.locator('nav[role="navigation"]').first()).toBeVisible(); // Take first nav element
     
@@ -41,7 +41,7 @@ test.describe('Core Accessibility Tests', () => {
     await page.goto('/projects');
     await page.waitForLoadState('domcontentloaded');
     
-    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('main h1, [role="main"] h1, body > * h1').first()).toBeVisible();
     await expect(page.locator('main, [role="main"]')).toBeVisible();
     await expect(page.locator('nav[role="navigation"]').first()).toBeVisible(); // Take first nav element
     

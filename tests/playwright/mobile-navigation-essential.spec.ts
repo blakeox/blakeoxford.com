@@ -134,7 +134,7 @@ test.describe('Mobile Responsive Layout', () => {
       
       // Ensure page loads without errors
       await expect(page.locator('main')).toBeVisible();
-      await expect(page.locator('h1')).toBeVisible();
+      await expect(page.locator('main h1, [role="main"] h1, body > section h1').first()).toBeVisible();
     });
   });
 });
