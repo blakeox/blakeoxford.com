@@ -322,7 +322,7 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
                   loading="lazy"
                 />
               ) : tech.img ? (
-                <img src={tech.img as string} alt={tech.alt} class="w-full h-full object-contain" />
+                <img src={tech.img as string} alt={tech.alt} width="64" height="64" loading="lazy" decoding="async" class="w-full h-full object-contain" />
               ) : (
                 <span class="text-2xl" aria-label={tech.name}>?</span>
               )}
