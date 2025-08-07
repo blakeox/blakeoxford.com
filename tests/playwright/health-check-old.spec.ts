@@ -93,14 +93,32 @@ test.describe('Server Health Check', () => {
         }
       }
     }
+        
+        // Basic content check
+        const content = await page.textContent('body');
+        if (!content || content.length < 100) {
+          failures.push({ 
+            path: pagePath, 
+            status,
+            error: `Insufficient content: ${content?.length || 0} characters` 
+          });
+        }
+        
+      } catch (error) {
+        console.error(`Failed to check ${pagePath}:`, error);
+        failures.push({ 
+          path: pagePath, 
+          error: `Navigation failed: ${error}` 
+        });
+      }
+    }
     
-    // Report all failures at once
     if (failures.length > 0) {
       const failureDetails = failures.map(f => 
-        `${f.path}: ${f.error || `status ${f.status}`}`
+        `${f.path}: ${f.error || `Status ${f.status}`}`
       ).join('\n');
       
-      throw new Error(`Page accessibility failures:\n${failureDetails}`);
+      throw new Error(`Health check failures:\n${failureDetails}`);
     }
   });
 });

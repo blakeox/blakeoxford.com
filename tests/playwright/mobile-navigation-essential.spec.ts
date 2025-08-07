@@ -67,11 +67,24 @@ test.describe('Mobile Navigation Essential', () => {
     ];
 
     keyDevices.forEach((deviceName) => {
-      test(`should work on ${deviceName} @smoke`, async ({ browser }) => {
+      test(`should work on ${deviceName} @smoke`, async ({ browser, browserName }) => {
         const device = devices[deviceName];
         if (!device) return; // Skip if device not available
         
-        const context = await browser.newContext(device);
+        // Firefox doesn't support isMobile option, so we'll simulate it differently
+        let contextOptions;
+        if (browserName === 'firefox' && device.isMobile) {
+          // For Firefox, use just viewport and userAgent, skip isMobile
+          contextOptions = {
+            viewport: device.viewport,
+            userAgent: device.userAgent,
+            // Skip isMobile and hasTouch for Firefox
+          };
+        } else {
+          contextOptions = device;
+        }
+        
+        const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
         
         try {
@@ -121,7 +134,7 @@ test.describe('Mobile Responsive Layout', () => {
       
       // Ensure page loads without errors
       await expect(page.locator('main')).toBeVisible();
-      await expect(page.locator('h1')).toBeVisible();
+      await expect(page.locator('main h1, [role="main"] h1, body > section h1').first()).toBeVisible();
     });
   });
 });

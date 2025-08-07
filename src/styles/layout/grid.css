@@ -5,17 +5,17 @@
 .container {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
   padding: 0 1rem;
+  margin: 0 auto;
 }
 
-@media (min-width: 640px) {
+@media (width >= 640px) {
   .container {
     padding: 0 1.5rem;
   }
 }
 
-@media (min-width: 1024px) {
+@media (width >= 1024px) {
   .container {
     padding: 0 2rem;
   }
@@ -26,13 +26,13 @@
   padding: 4rem 0;
 }
 
-@media (min-width: 768px) {
+@media (width >= 768px) {
   .section {
     padding: 6rem 0;
   }
 }
 
-@media (min-width: 1024px) {
+@media (width >= 1024px) {
   .section {
     padding: 8rem 0;
   }

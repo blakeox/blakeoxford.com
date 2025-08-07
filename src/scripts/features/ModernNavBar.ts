@@ -162,6 +162,9 @@ export class ModernNavBar {
     console.log('📱 Mobile menu element:', this.mobileMenu);
     console.log('📱 Mobile menu computed right before:', window.getComputedStyle(this.mobileMenu).right);
     
+    // Reset visibility for opening
+    this.mobileMenu.style.visibility = '';
+    
     this.burgerButton.classList.add('active');
     this.burgerButton.setAttribute('aria-expanded', 'true');
     this.mobileMenu.classList.add('active');
@@ -197,6 +200,13 @@ export class ModernNavBar {
     this.burgerButton.classList.remove('active');
     this.burgerButton.setAttribute('aria-expanded', 'false');
     this.mobileMenu.classList.remove('active');
+    
+    // Add explicit visibility handling for tests
+    setTimeout(() => {
+      if (this.mobileMenu && !this.mobileMenu.classList.contains('active')) {
+        this.mobileMenu.style.visibility = 'hidden';
+      }
+    }, 300); // Match CSS transition duration
     
     // Restore body scroll with proper iOS handling
     document.body.style.overflow = '';

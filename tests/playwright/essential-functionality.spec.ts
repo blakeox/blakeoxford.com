@@ -5,8 +5,8 @@ test.describe('Core Site Functionality', () => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
     
-    // Quick essential checks
-    await expect(page.locator('h1')).toBeVisible();
+    // Quick essential checks - target main content H1 only
+    await expect(page.locator('main h1, [role="main"] h1, body > section h1').first()).toBeVisible();
     await expect(page.locator('nav#navbar')).toBeVisible();
     await expect(page.locator('main')).toBeVisible();
     
@@ -25,7 +25,7 @@ test.describe('Core Site Functionality', () => {
     
     await aboutLink.click();
     await page.waitForLoadState('domcontentloaded');
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('main h1, [role="main"] h1, body > section h1').first()).toBeVisible();
     
     // Verify we're on about page
     expect(page.url()).toContain('/about');
@@ -58,8 +58,8 @@ test.describe('Page Load Performance', () => {
       
       const loadTime = Date.now() - startTime;
       
-      // Basic functionality check
-      await expect(page.locator('h1')).toBeVisible();
+      // Basic functionality check - target main content H1 only
+      await expect(page.locator('main h1, [role="main"] h1, body > section h1').first()).toBeVisible();
       await expect(page.locator('main')).toBeVisible();
       
       // Performance assertion (should load under 5 seconds)
