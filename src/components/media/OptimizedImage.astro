@@ -1,6 +1,6 @@
 ---
 interface Props {
-  name: string; // base filename without extension
+  name: string; // path relative to /assets/images without extension (e.g. 'proficiencies/python_logo')
   alt: string;
   class?: string;
   sizes?: string; // sizes attribute for responsive loading
@@ -8,6 +8,7 @@ interface Props {
   decoding?: 'auto' | 'async' | 'sync';
   width?: number;
   height?: number;
+  ext?: string; // original source extension used as fallback if no optimized manifest (default: webp)
 }
 
 const {
@@ -18,7 +19,8 @@ const {
   loading = 'lazy',
   decoding = 'async',
   width,
-  height
+  height,
+  ext = 'webp'
 } = Astro.props as Props;
 
 // Generated manifests live in /public/assets/images/optimized/*.json (written by optimize-images script)
@@ -38,7 +40,10 @@ function buildSrcSet(format: string) {
 
 const avifSet = buildSrcSet('avif');
 const webpSet = buildSrcSet('webp');
-const jpegPath = manifest ? `/assets/images/optimized/jpeg/${name}.jpeg` : `/assets/images/${name}.jpg`;
+// Primary fallback source (non-optimized) uses provided extension (default webp)
+const fallbackSrc = `/assets/images/${name}.${ext}`;
+// If optimization manifest exists, prefer optimized JPEG baseline (AVIF/WebP sources already defined above)
+const jpegPath = manifest ? `/assets/images/optimized/jpeg/${name}.jpeg` : fallbackSrc;
 ---
 <picture>
   {avifSet && (

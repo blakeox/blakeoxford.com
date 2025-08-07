@@ -319,6 +319,7 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
                   height={64}
                   class="w-full h-full object-contain"
                   loading="lazy"
+                  ext="webp"
                 />
               ) : tech.img ? (
                 <img src={tech.img as string} alt={tech.alt} width="64" height="64" loading="lazy" decoding="async" class="w-full h-full object-contain" />
