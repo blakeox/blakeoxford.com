@@ -262,8 +262,8 @@ test.describe('Performance Budget Enforcement', () => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
 
-      // Font Budget: 200KB total fonts
-      const FONT_BUDGET = 200 * 1024; // 200KB total
+      // Font Budget: 250KB total fonts (adjusted for Open Sans 3 weights)
+      const FONT_BUDGET = 250 * 1024; // 250KB total
       
       const totalFontSize = fontRequests.reduce((sum, font) => sum + font.size, 0);
       

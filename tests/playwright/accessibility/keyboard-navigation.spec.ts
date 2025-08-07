@@ -55,32 +55,42 @@ test.describe('Keyboard Navigation Tests', () => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
     
-    // Look for elements that can open dialogs
-    const searchButton = page.locator('button[aria-label*="search"], button:has-text("search")').first();
-    const mobileMenuButton = page.locator('button[aria-label*="menu"], .mobile-menu-toggle').first();
+    // Look for elements that can open dialogs - use more specific selectors
+    const searchButton = page.locator('#search-toggle, button[aria-label*="search"]').first();
+    const mobileMenuButton = page.locator('#nav-toggle, button[aria-label*="menu"], .burger-menu-button').first();
     
     // Test search overlay if exists
     if (await searchButton.isVisible()) {
       await searchButton.click();
       await page.waitForTimeout(500); // Give dialog time to open
       
-      const searchOverlay = page.locator('[role="dialog"], .search-overlay').first();
+      const searchOverlay = page.locator('#search-overlay, .search-overlay').first();
       if (await searchOverlay.isVisible()) {
         await page.keyboard.press('Escape');
         await expect(searchOverlay).not.toBeVisible({ timeout: 5000 });
       }
     }
     
-    // Test mobile menu if exists
+    // Test mobile menu if exists - need to set mobile viewport for mobile menu to be visible
+    const currentViewport = page.viewportSize();
+    if (currentViewport && currentViewport.width > 768) {
+      await page.setViewportSize({ width: 375, height: 667 });
+    }
+    
     if (await mobileMenuButton.isVisible()) {
       await mobileMenuButton.click();
       await page.waitForTimeout(500); // Give dialog time to open
       
-      const mobileMenu = page.locator('[role="dialog"], .mobile-menu').first();
+      const mobileMenu = page.locator('#nav-mobile-links, .mobile-menu').first();
       if (await mobileMenu.isVisible()) {
+        // Check that mobile menu has active class
+        await expect(mobileMenu).toHaveClass(/active/);
+        
         await page.keyboard.press('Escape');
-        // Note: Some mobile menus might not close on escape, so we use a longer timeout
-        await expect(mobileMenu).not.toBeVisible({ timeout: 2000 });
+        await page.waitForTimeout(500); // Wait for event handling
+        
+        // Check that active class was removed (which indicates the escape key worked)
+        await expect(mobileMenu).not.toHaveClass(/active/, { timeout: 2000 });
       }
     }
   });

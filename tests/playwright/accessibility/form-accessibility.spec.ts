@@ -23,13 +23,20 @@ test.describe('Form Accessibility Tests', () => {
     // Get the actual contact form for the rest of the test
     const contactForm = await form.count() > 0 ? form : page.locator('main form, .contact-form form, [id*="contact"] form').first();
     
-    // Check all form inputs have labels
-    const inputs = await contactForm.locator('input, textarea, select').all();
+    // Check all visible form inputs have labels (excluding hidden fields, bot fields, etc.)
+    const inputs = await contactForm.locator('input:not([type="hidden"]):not([name="bot-field"]):not([name*="turnstile"]):not([name*="cf-"]), textarea, select').all();
     
     for (const input of inputs) {
       const id = await input.getAttribute('id');
       const ariaLabel = await input.getAttribute('aria-label');
       const ariaLabelledby = await input.getAttribute('aria-labelledby');
+      const type = await input.getAttribute('type');
+      const name = await input.getAttribute('name');
+      
+      // Skip hidden fields and bot protection fields
+      if (type === 'hidden' || name === 'bot-field' || name?.includes('turnstile') || name?.includes('cf-')) {
+        continue;
+      }
       
       if (id) {
         // Check for associated label
@@ -38,6 +45,9 @@ test.describe('Form Accessibility Tests', () => {
         
         // Input should have either a label, aria-label, or aria-labelledby
         expect(hasLabel || ariaLabel || ariaLabelledby).toBeTruthy();
+      } else {
+        // If no id, must have aria-label or aria-labelledby
+        expect(ariaLabel || ariaLabelledby).toBeTruthy();
       }
     }
     
