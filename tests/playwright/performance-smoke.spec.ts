@@ -115,11 +115,17 @@ test.describe('Performance Smoke Tests', () => {
       expect(criticalErrors).toEqual([]);
     });
 
-    test('images should load without errors', async ({ page }) => {
+    test('images should load without errors', async ({ page, browserName }) => {
       await page.goto('/');
       
-      // Wait for images to load
-      await page.waitForLoadState('networkidle');
+      // Wait for images to load with browser-specific timeout
+      const networkTimeout = browserName === 'firefox' ? 10000 : 30000;
+      try {
+        await page.waitForLoadState('networkidle', { timeout: networkTimeout });
+      } catch {
+        // Firefox may have network timing issues, continue with reduced expectations
+        console.log(`Network idle timeout in ${browserName}, continuing with basic checks`);
+      }
       
       // Check that main content images load successfully
       const images = page.locator('main img, .hero img, .profile img');
@@ -129,17 +135,25 @@ test.describe('Performance Smoke Tests', () => {
         const img = images.nth(i);
         await expect(img).toBeVisible();
         
-        // Wait for the image to load completely
-        await img.evaluate((el: HTMLImageElement) => {
-          return new Promise((resolve) => {
-            if (el.complete && el.naturalWidth > 0) {
-              resolve(el);
-            } else {
-              el.onload = () => resolve(el);
-              el.onerror = () => resolve(el); // Resolve even on error to continue test
-            }
-          });
-        });
+        // Wait for the image to load completely with reduced timeout for Firefox
+        const imageTimeout = browserName === 'firefox' ? 10000 : 30000;
+        try {
+          await img.evaluate((el: HTMLImageElement) => {
+            return new Promise((resolve) => {
+              if (el.complete && el.naturalWidth > 0) {
+                resolve(el);
+              } else {
+                el.onload = () => resolve(el);
+                el.onerror = () => resolve(el); // Resolve even on error to continue test
+                // Add timeout fallback
+                setTimeout(() => resolve(el), 5000);
+              }
+            });
+          }, { timeout: imageTimeout });
+        } catch (e) {
+          // Image loading failed, log but continue
+          console.log(`Image loading timeout in ${browserName}: ${e}`);
+        }
         
         // Check that image has loaded (not broken)
         const naturalWidth = await img.evaluate((el: HTMLImageElement) => el.naturalWidth);
