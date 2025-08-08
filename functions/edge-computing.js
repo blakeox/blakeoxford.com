@@ -2,6 +2,7 @@
  * Cloudflare Workers Edge Computing Enhancement
  * Advanced edge-side processing for maximum performance
  */
+import { onRequestPost as handleSendEmail } from './send-email.js';
 
 // Edge-side A/B testing and personalization
 class EdgePersonalization {
@@ -235,6 +236,7 @@ class EdgePerformanceOptimizer {
     headers.set('X-Content-Type-Options', 'nosniff');
     headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     headers.set('Permissions-Policy', 'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()');
+    headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
     return new Response(response.body, {
       status: response.status,
@@ -269,6 +271,35 @@ class EdgePerformanceOptimizer {
 // Main Cloudflare Worker
 export default {
   async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+
+    // Enforce HTTPS and canonical host (www -> apex) for production domain
+    try {
+      const host = url.hostname;
+      const isGetLike = request.method === 'GET' || request.method === 'HEAD';
+      const isProdDomain = host.endsWith('blakeoxford.com');
+
+      // Force HTTPS
+      if (isProdDomain && url.protocol === 'http:' && isGetLike) {
+        url.protocol = 'https:';
+        return Response.redirect(url.toString(), 308);
+      }
+
+      // Canonicalize host: www -> apex
+      if (isProdDomain && host.startsWith('www.') && isGetLike) {
+        url.hostname = host.replace(/^www\./, '');
+        return Response.redirect(url.toString(), 308);
+      }
+  } catch {
+      // Non-fatal; continue if redirect logic fails
+    }
+
+    // Route: Contact form submission handled by existing function
+    if (url.pathname === '/send-email' && request.method === 'POST') {
+      // Bridge Pages Function signature to Worker
+      return handleSendEmail({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+
     // Initialize edge services
     const personalization = new EdgePersonalization(request, env);
     const cacheManager = new EdgeCacheManager(request, env);
@@ -281,7 +312,7 @@ export default {
     const cacheKey = cacheManager.getCacheKey(userSegments);
     const cacheStrategy = cacheManager.getCacheStrategy();
 
-    // Try to get from edge cache first
+  // Try to get from edge cache first
     const cacheResponse = await caches.default.match(request, {
       ignoreMethod: false
     });
@@ -292,8 +323,15 @@ export default {
     }
 
     try {
-      // Fetch from origin
-      const originResponse = await fetch(request);
+      // Fetch from static assets (dist) via binding
+      let originResponse = await env.ASSETS.fetch(request);
+
+      // If asset not found and requesting a clean URL without extension, try adding trailing index.html
+      if (originResponse.status === 404 && !url.pathname.includes('.') && !url.pathname.endsWith('/index.html')) {
+        const altUrl = new URL(url);
+        altUrl.pathname = url.pathname.replace(/\/$/, '') + '/index.html';
+        originResponse = await env.ASSETS.fetch(new Request(altUrl.toString(), request));
+      }
 
       if (!originResponse.ok) {
         return originResponse;
@@ -308,7 +346,7 @@ export default {
         optimizedResponse = await this.applyPersonalization(optimizedResponse, userSegments, abTest);
       }
 
-      // Cache the response
+  // Cache the response
       if (cacheStrategy.ttl > 0) {
         const cacheHeaders = new Headers(optimizedResponse.headers);
         Object.entries(cacheStrategy.headers).forEach(([key, value]) => {
