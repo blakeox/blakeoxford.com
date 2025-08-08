@@ -323,7 +323,10 @@ function deriveImageData(imgPath?: string) {
       <h2 class="text-h2 font-bold mb-8 text-accent-dark">Technologies I Excel At</h2>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
         {technologies.map((tech) => {
-          const data = deriveImageData(tech.img as string | undefined);
+          const raw = tech.img as any;
+          const srcStr: string | undefined = typeof raw === 'string' ? raw : raw?.src;
+          const canOptimize = typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
+          const data = canOptimize ? deriveImageData(srcStr) : null;
           return (
             <li class="flex flex-col items-center group">
               <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center">
@@ -337,6 +340,8 @@ function deriveImageData(imgPath?: string) {
                     loading="lazy"
                     ext={data.ext}
                   />
+                ) : srcStr ? (
+                  <img src={srcStr} alt={tech.alt} width={64} height={64} class="w-full h-full object-contain" loading="lazy" />
                 ) : (
                   <span class="text-2xl" aria-label={tech.name}>?</span>
                 )}
