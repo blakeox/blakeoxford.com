@@ -68,7 +68,8 @@ export default defineConfig({
     ]),
   ],
   webServer: {
-    command: 'npm run preview',
+    // Bind preview to the same port as baseURL to ensure tests hit the correct site
+    command: 'npm run preview -- --port 4330',
   port: 4330,
   // Always start a fresh preview server to avoid colliding with other local servers on the same port
   reuseExistingServer: false,
