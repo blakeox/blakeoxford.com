@@ -2,6 +2,15 @@
 // Centralized data management for the portfolio
 
 import type { ProjectData, TechnologyItem, SiteConfig } from '../types/index';
+// Proficiency/technology logos (import for Astro asset pipeline)
+import pythonLogo from '../assets/images/proficiencies/python_logo.webp';
+import openAiLogo from '../assets/images/proficiencies/OpenAI-black-monoblossom.png';
+import intuneLogo from '../assets/images/proficiencies/Intune_logo_final.png';
+import azureSqlLogo from '../assets/images/proficiencies/Azure_SQL_logo.png';
+import googleCloudLogo from '../assets/images/proficiencies/google_cloud_logo.png';
+import firebaseLogo from '../assets/images/proficiencies/Firebase_Logomark_Full Color.png';
+import cloudflareLogo from '../assets/images/proficiencies/cloudflare_logo.png';
+import fabricLogo from '../assets/images/proficiencies/fabric_32_color.png';
 
 // Featured projects data - this should eventually come from content collections
 export const featuredProjectsData: ProjectData[] = [
@@ -105,52 +114,15 @@ export const getFeaturedProjects = (limit: number = 3): ProjectData[] => {
 
 // Technology stack data
 export const technologies: TechnologyItem[] = [
-  { 
-    name: 'Python Automation', 
-    img: '/assets/images/proficiencies/python_logo.webp', // Will be replaced with proper import
-    alt: 'Python Logo', 
-    optimized: true 
-  },
-  { 
-    name: 'OpenAI API', 
-    img: '/assets/images/proficiencies/OpenAI-black-monoblossom.png', 
-    alt: 'OpenAI Logo' 
-  },
-  { 
-    name: 'Microsoft Intune', 
-    img: '/assets/images/proficiencies/Intune_logo_final.png', 
-    alt: 'Microsoft Intune Logo' 
-  },
-  { 
-    name: 'SQL', 
-    img: '/assets/images/proficiencies/Azure_SQL_logo.png', 
-    alt: 'Azure SQL Logo' 
-  },
-  { 
-    name: 'Google Cloud', 
-    img: '/assets/images/proficiencies/google_cloud_logo.png', 
-    alt: 'Google Cloud Logo' 
-  },
-  { 
-    name: 'Firebase', 
-    img: '/assets/images/proficiencies/Firebase_Logomark_Full%20Color.png', 
-    alt: 'Firebase Logo' 
-  },
-  { 
-    name: 'Azure', 
-    img: '/assets/images/proficiencies/Azure_SQL_logo.png', 
-    alt: 'Azure Logo' 
-  },
-  { 
-    name: 'Cloudflare', 
-    img: '/assets/images/proficiencies/cloudflare_logo.png', 
-    alt: 'Cloudflare Logo' 
-  },
-  { 
-    name: 'Microsoft Fabric', 
-    img: '/assets/images/proficiencies/fabric_32_color.png', 
-    alt: 'Microsoft Fabric Logo' 
-  },
+  { name: 'Python Automation', img: pythonLogo, alt: 'Python Logo', optimized: true },
+  { name: 'OpenAI API', img: openAiLogo, alt: 'OpenAI Logo' },
+  { name: 'Microsoft Intune', img: intuneLogo, alt: 'Microsoft Intune Logo' },
+  { name: 'SQL', img: azureSqlLogo, alt: 'Azure SQL Logo' },
+  { name: 'Google Cloud', img: googleCloudLogo, alt: 'Google Cloud Logo' },
+  { name: 'Firebase', img: firebaseLogo, alt: 'Firebase Logo' },
+  { name: 'Azure', img: azureSqlLogo, alt: 'Azure Logo' },
+  { name: 'Cloudflare', img: cloudflareLogo, alt: 'Cloudflare Logo' },
+  { name: 'Microsoft Fabric', img: fabricLogo, alt: 'Microsoft Fabric Logo' }
 ];
 
 // Site metadata and configuration

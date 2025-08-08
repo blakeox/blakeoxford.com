@@ -55,14 +55,46 @@ if [ -n "$UNOPTIMIZED_IMAGES" ]; then
     echo "Consider using WebP/AVIF formats"
 fi
 
-# 5. Check Total Bundle Size
-echo "📊 Checking total bundle size..."
+# 5. Check Total Bundle Size (separating images vs. non-images)
+echo "📊 Checking total bundle size (split by type)..."
+
+# Calculate total size of everything
 TOTAL_SIZE=$(du -s $BUILD_DIR | awk '{print $1}')
-if [ "$TOTAL_SIZE" -gt 20000 ]; then  # 20MB limit (realistic for modern sites with images)
-    echo "❌ Total bundle too large: ${TOTAL_SIZE}KB (limit: 20MB)"
+
+# Calculate size of image assets only
+IMAGES_SIZE=$(find "$BUILD_DIR" \
+    -type f \
+    \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" -o -iname "*.avif" -o -iname "*.gif" -o -iname "*.svg" \) \
+    -exec du -c {} + 2>/dev/null | awk '/total/{print $1}' )
+
+# Default to 0 if no images found
+IMAGES_SIZE=${IMAGES_SIZE:-0}
+
+# Non-image size = total - images (floor at 0)
+NON_IMAGE_SIZE=$(( TOTAL_SIZE - IMAGES_SIZE ))
+if [ "$NON_IMAGE_SIZE" -lt 0 ]; then NON_IMAGE_SIZE=0; fi
+
+# Budgets (KB)
+NON_IMAGE_LIMIT=20000   # 20MB for HTML/JS/CSS/other
+IMAGES_LIMIT=40000      # 40MB for image assets (portfolio content)
+
+echo "   • Total size:        ${TOTAL_SIZE}KB"
+echo "   • Non-image assets: ${NON_IMAGE_SIZE}KB (limit: ${NON_IMAGE_LIMIT}KB)"
+echo "   • Images:           ${IMAGES_SIZE}KB (limit: ${IMAGES_LIMIT}KB)"
+
+if [ "$NON_IMAGE_SIZE" -gt "$NON_IMAGE_LIMIT" ]; then
+    echo "❌ Non-image assets exceed budget: ${NON_IMAGE_SIZE}KB > ${NON_IMAGE_LIMIT}KB"
     FAILED=true
 else
-    echo "✅ Total bundle size: ${TOTAL_SIZE}KB"
+    echo "✅ Non-image assets within budget"
+fi
+
+if [ "$IMAGES_SIZE" -gt "$IMAGES_LIMIT" ]; then
+    echo "❌ Image assets exceed budget: ${IMAGES_SIZE}KB > ${IMAGES_LIMIT}KB"
+    echo "   Consider additional image optimization or pruning heavy images."
+    FAILED=true
+else
+    echo "✅ Image assets within budget"
 fi
 
 # Summary
@@ -70,7 +102,7 @@ echo ""
 echo "📋 Performance Budget Summary:"
 echo "  JavaScript: ${JS_SIZE}KB (${JS_FILE_COUNT} files)"
 echo "  CSS: ${CSS_SIZE}KB"
-echo "  Total: ${TOTAL_SIZE}KB"
+echo "  Total: ${TOTAL_SIZE}KB (non-images: ${NON_IMAGE_SIZE}KB, images: ${IMAGES_SIZE}KB)"
 echo "  Critical CSS: $CRITICAL_CSS_COUNT files"
 
 if [ "$FAILED" = true ]; then

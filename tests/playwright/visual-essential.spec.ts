@@ -81,12 +81,12 @@ test.describe('Essential Visual Tests', () => {
         // First attempt: normal click
         await themeToggle.click({ timeout: 3000 });
       } catch (error) {
-        console.log('Normal click failed, trying force click');
+        console.log('Normal click failed, trying force click', error);
         try {
           // Second attempt: force click to bypass any overlays
           await themeToggle.click({ force: true, timeout: 3000 });
-        } catch (error2) {
-          console.log('Force click failed, trying click at position');
+        } catch (forceError) {
+          console.log('Force click failed, trying click at position', forceError);
           // Third attempt: click at the element's position
           const box = await themeToggle.boundingBox();
           if (box) {

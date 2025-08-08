@@ -37,7 +37,7 @@ export default defineConfig({
     ['junit', { outputFile: 'test-results/junit.xml' }]
   ],
   use: {
-    baseURL: 'http://localhost:4321',
+  baseURL: 'http://localhost:4330',
     trace: 'off', // Disable tracing to avoid ffmpeg dependency
     actionTimeout: 5000, // Reduced for faster failure detection
     navigationTimeout: 15000, // Reduced navigation timeout
@@ -68,9 +68,11 @@ export default defineConfig({
     ]),
   ],
   webServer: {
-    command: 'npm run preview',
-    port: 4321,
-    reuseExistingServer: !process.env.CI,
+    // Bind preview to the same port as baseURL to ensure tests hit the correct site
+    command: 'npm run preview -- --port 4330',
+  port: 4330,
+  // Always start a fresh preview server to avoid colliding with other local servers on the same port
+  reuseExistingServer: false,
     timeout: 120 * 1000,
     stdout: 'pipe',
     stderr: 'pipe',
