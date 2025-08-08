@@ -16,7 +16,9 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap(),
-    compress(),
+  // Gate astro-compress to avoid long hooks in CI builds
+  // Enable only when explicitly requested via env
+  ...(process.env.ENABLE_ASTRO_COMPRESS === 'true' ? [compress()] : []),
   ],
   image: {
     // Enhanced image optimization
