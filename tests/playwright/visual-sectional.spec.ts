@@ -33,7 +33,6 @@ const PAGE_SECTIONS: Record<string, { path: string; sections: { name: string; se
       { name: 'hero-title', selector: 'section#about-me h1, section#about-me h2' },
       { name: 'achievements-title', selector: 'section#achievements h2' },
       { name: 'timeline-title', selector: 'section#about-timeline h2' },
-      { name: 'testimonials-title', selector: 'section#testimonials h2' },
       { name: 'footer', selector: 'footer' }
     ]
   },
