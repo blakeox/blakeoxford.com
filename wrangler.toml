@@ -12,11 +12,6 @@ run_worker_first = true
 
 
 
-[env.production]
-kv_namespaces = [
-  { binding = "CONTACT_MESSAGES", id = "65439bda285f486f9b07fc2a30bc5099" },
-  { binding = "RATE_LIMIT_KV", id = "65439bda285f486f9b07fc2a30bc5099" }
-]
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"

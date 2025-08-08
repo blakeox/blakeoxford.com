@@ -269,7 +269,7 @@ class EdgePerformanceOptimizer {
 }
 
 // Main Cloudflare Worker
-export default {
+const WorkerApp = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
@@ -343,7 +343,7 @@ export default {
 
       // Apply personalization for HTML responses
       if (optimizedResponse.headers.get('content-type')?.includes('text/html')) {
-        optimizedResponse = await this.applyPersonalization(optimizedResponse, userSegments, abTest);
+        optimizedResponse = await WorkerApp.applyPersonalization(optimizedResponse, userSegments, abTest);
       }
 
   // Cache the response
@@ -363,7 +363,7 @@ export default {
       }
 
       // Add analytics tracking
-      ctx.waitUntil(this.trackEdgeAnalytics(request, userSegments, abTest, env));
+  ctx.waitUntil(WorkerApp.trackEdgeAnalytics(request, userSegments, abTest, env));
 
       return optimizedResponse;
 
@@ -473,3 +473,5 @@ export default {
     }
   }
 };
+
+export default WorkerApp;
