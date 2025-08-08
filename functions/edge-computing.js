@@ -274,7 +274,7 @@ const WorkerApp = {
     const url = new URL(request.url);
 
     // Enforce HTTPS and canonical host (www -> apex) for production domain
-    try {
+  try {
       const host = url.hostname;
       const isGetLike = request.method === 'GET' || request.method === 'HEAD';
       const isProdDomain = host.endsWith('blakeoxford.com');
@@ -294,7 +294,7 @@ const WorkerApp = {
       // Non-fatal; continue if redirect logic fails
     }
 
-    // Route: Contact form submission handled by existing function
+  // Route: Contact form submission handled by existing function
     if (url.pathname === '/send-email' && request.method === 'POST') {
       // Bridge Pages Function signature to Worker
       return handleSendEmail({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
@@ -337,25 +337,57 @@ const WorkerApp = {
         return originResponse;
       }
 
-      // Apply edge-side optimizations
-      const optimizer = new EdgePerformanceOptimizer(originResponse, request);
-      let optimizedResponse = await optimizer.optimizeResponse();
+      // Determine content type once
+      const contentType = originResponse.headers.get('content-type') || '';
 
-      // Apply personalization for HTML responses
-      if (optimizedResponse.headers.get('content-type')?.includes('text/html')) {
-        optimizedResponse = await WorkerApp.applyPersonalization(optimizedResponse, userSegments, abTest);
+      // Ensure correct content-type for common static assets if missing
+      if (!contentType) {
+        const path = url.pathname.toLowerCase();
+        const guess = path.endsWith('.css')
+          ? 'text/css; charset=utf-8'
+          : path.endsWith('.js')
+            ? 'application/javascript; charset=utf-8'
+            : path.endsWith('.json')
+              ? 'application/json; charset=utf-8'
+              : path.endsWith('.svg')
+                ? 'image/svg+xml'
+                : path.endsWith('.xml')
+                  ? 'application/xml; charset=utf-8'
+                  : path.endsWith('.ico')
+                    ? 'image/x-icon'
+                    : '';
+        if (guess) {
+          const fixedHeaders = new Headers(originResponse.headers);
+          fixedHeaders.set('content-type', guess);
+          originResponse = new Response(originResponse.body, {
+            status: originResponse.status,
+            statusText: originResponse.statusText,
+            headers: fixedHeaders
+          });
+        }
+      }
+
+      let finalResponse = originResponse;
+
+      // Apply edge-side optimizations ONLY for HTML responses to avoid interfering with assets like CSS/JS
+      if (originResponse.headers.get('content-type')?.includes('text/html')) {
+        const optimizer = new EdgePerformanceOptimizer(originResponse, request);
+        finalResponse = await optimizer.optimizeResponse();
+
+        // Apply personalization for HTML responses
+        finalResponse = await WorkerApp.applyPersonalization(finalResponse, userSegments, abTest);
       }
 
   // Cache the response
       if (cacheStrategy.ttl > 0) {
-        const cacheHeaders = new Headers(optimizedResponse.headers);
+        const cacheHeaders = new Headers(finalResponse.headers);
         Object.entries(cacheStrategy.headers).forEach(([key, value]) => {
           cacheHeaders.set(key, value);
         });
 
-        const cacheResponse = new Response(optimizedResponse.body.tee()[0], {
-          status: optimizedResponse.status,
-          statusText: optimizedResponse.statusText,
+        const cacheResponse = new Response(finalResponse.body.tee()[0], {
+          status: finalResponse.status,
+          statusText: finalResponse.statusText,
           headers: cacheHeaders
         });
 
@@ -365,7 +397,7 @@ const WorkerApp = {
       // Add analytics tracking
   ctx.waitUntil(WorkerApp.trackEdgeAnalytics(request, userSegments, abTest, env));
 
-      return optimizedResponse;
+      return finalResponse;
 
     } catch (error) {
       console.error('Edge processing error:', error);

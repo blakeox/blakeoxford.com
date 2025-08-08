@@ -20,3 +20,6 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 [[kv_namespaces]]
 binding = "CONTACT_MESSAGES"
 id      = "65439bda285f486f9b07fc2a30bc5099"
+
+[observability.logs]
+enabled = true
