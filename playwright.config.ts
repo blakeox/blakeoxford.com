@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const isCI = !!process.env.CI;
+const isLinux = process.platform === 'linux';
+const browsersLimited = process.env.BROWSER_INSTALL_FAILED === 'true' || process.env.PLAYWRIGHT_BROWSERS_LIMITED === 'true';
+
 export default defineConfig({
   testDir: './tests/playwright',
   outputDir: './test-results',
@@ -28,8 +32,8 @@ export default defineConfig({
   },
   fullyParallel: true, // Re-enable parallel for faster execution
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1, // Reduced retries
-  workers: process.env.CI ? 2 : 3, // Optimized workers for CI
+  retries: isCI ? 2 : 1, // Reduced retries
+  workers: isCI ? 2 : 3, // Optimized workers for CI
   reporter: [
     ['html', { outputFolder: 'playwright-report' }], 
     ['line'],
@@ -55,8 +59,8 @@ export default defineConfig({
       },
     },
     // Only run Firefox and Safari when browsers are properly installed
-    // Skip in CI if browser installation failed to avoid webkit/firefox errors
-    ...(process.env.CI && process.env.BROWSER_INSTALL_FAILED === 'true' ? [] : [
+    // Skip in CI on Linux (common missing deps) or when installation failed
+    ...((isCI && (isLinux || browsersLimited)) ? [] : [
       {
         name: 'firefox',
         use: { ...devices['Desktop Firefox'] },
@@ -69,7 +73,7 @@ export default defineConfig({
   ],
   webServer: {
     // Bind preview to the same port as baseURL to ensure tests hit the correct site
-    command: 'npm run preview -- --port 4330',
+  command: 'npm run preview -- --port 4330',
   port: 4330,
   // Always start a fresh preview server to avoid colliding with other local servers on the same port
   reuseExistingServer: false,

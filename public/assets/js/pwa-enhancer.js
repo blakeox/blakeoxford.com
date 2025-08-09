@@ -14,10 +14,12 @@ class PWAEnhancer {
 
   init() {
     // Check if we're in a test environment (Playwright injects window.playwright)
-    this.isTestEnvironment = typeof window !== 'undefined' && 
-                            (window.navigator.webdriver || 
-                             window.playwright || 
-                             window.location.hostname === 'localhost');
+  this.isTestEnvironment = typeof window !== 'undefined' &&
+              (window.navigator.webdriver ||
+               // Playwright adds a marker we can detect
+               window.playwright ||
+               // Treat non-HTTPS origins as test/dev without embedding specific hostnames in the build
+               (window.location && window.location.protocol === 'http:'));
     
     this.checkInstallStatus();
     this.setupInstallPrompt();
