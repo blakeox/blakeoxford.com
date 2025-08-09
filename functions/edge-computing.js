@@ -272,6 +272,7 @@ class EdgePerformanceOptimizer {
 const WorkerApp = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+  const method = request.method || 'GET';
 
     // Enforce HTTPS and canonical host (www -> apex) for production domain
   try {
@@ -304,22 +305,23 @@ const WorkerApp = {
     const personalization = new EdgePersonalization(request, env);
     const cacheManager = new EdgeCacheManager(request, env);
 
-    // Get user segmentation
+    // Compute segments/AB test (used only for GET personalization)
     const userSegments = personalization.getUserSegment();
     const abTest = personalization.getABTestVariant();
 
-    // Generate cache key with personalization
-    const cacheKey = cacheManager.getCacheKey(userSegments);
+    // Cache strategy for this path
     const cacheStrategy = cacheManager.getCacheStrategy();
 
-  // Try to get from edge cache first
-    const cacheResponse = await caches.default.match(request, {
-      ignoreMethod: false
-    });
-
-    if (cacheResponse) {
-      console.log('✅ Edge cache hit:', cacheKey);
-      return cacheResponse;
+    // GET-only cache lookup
+    if (method === 'GET') {
+      const cacheKey = cacheManager.getCacheKey(userSegments);
+      const cacheResponse = await caches.default.match(request, {
+        ignoreMethod: false
+      });
+      if (cacheResponse) {
+        console.log('✅ Edge cache hit:', cacheKey);
+        return cacheResponse;
+      }
     }
 
     try {
@@ -337,7 +339,7 @@ const WorkerApp = {
         return originResponse;
       }
 
-      // Determine content type once
+  // Determine content type once
       const contentType = originResponse.headers.get('content-type') || '';
 
       // Ensure correct content-type for common static assets if missing
@@ -369,32 +371,36 @@ const WorkerApp = {
 
       let finalResponse = originResponse;
 
-      // Apply edge-side optimizations ONLY for HTML responses to avoid interfering with assets like CSS/JS
-      if (originResponse.headers.get('content-type')?.includes('text/html')) {
+      // Only optimize/personalize for GET HTML responses
+      if (method === 'GET' && originResponse.headers.get('content-type')?.includes('text/html')) {
         const optimizer = new EdgePerformanceOptimizer(originResponse, request);
         finalResponse = await optimizer.optimizeResponse();
-
-        // Apply personalization for HTML responses
         finalResponse = await WorkerApp.applyPersonalization(finalResponse, userSegments, abTest);
       }
 
-  // Cache the response
-      if (cacheStrategy.ttl > 0) {
+      // Cache GET responses with a readable body only
+      if (method === 'GET' && cacheStrategy.ttl > 0 && finalResponse.body) {
         const cacheHeaders = new Headers(finalResponse.headers);
         Object.entries(cacheStrategy.headers).forEach(([key, value]) => {
           cacheHeaders.set(key, value);
         });
 
-        const cacheResponse = new Response(finalResponse.body.tee()[0], {
+        const [forCache, forReturn] = finalResponse.body.tee();
+        const cacheResponse = new Response(forCache, {
           status: finalResponse.status,
           statusText: finalResponse.statusText,
           headers: cacheHeaders
         });
 
         ctx.waitUntil(caches.default.put(request, cacheResponse));
+        finalResponse = new Response(forReturn, {
+          status: finalResponse.status,
+          statusText: finalResponse.statusText,
+          headers: finalResponse.headers
+        });
       }
 
-      // Add analytics tracking
+  // Add analytics tracking (best-effort)
   ctx.waitUntil(WorkerApp.trackEdgeAnalytics(request, userSegments, abTest, env));
 
       return finalResponse;
