@@ -3,6 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 const isCI = !!process.env.CI;
 const isLinux = process.platform === 'linux';
 const browsersLimited = process.env.BROWSER_INSTALL_FAILED === 'true' || process.env.PLAYWRIGHT_BROWSERS_LIMITED === 'true';
+// Only prefer system Chrome when explicitly requested and environment supports it
+const preferSystemChrome = process.env.USE_SYSTEM_CHROME === 'true' && !process.env.ACT && !isLinux && !browsersLimited;
 
 export default defineConfig({
   testDir: './tests/playwright',
@@ -52,11 +54,16 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { 
-        ...devices['Desktop Chrome'],
-        // Always try to use system Chrome first for better CI compatibility
-        channel: 'chrome',
-      },
+      use: preferSystemChrome
+        ? {
+            ...devices['Desktop Chrome'],
+            // Use system Chrome when explicitly enabled
+            channel: 'chrome',
+          }
+        : {
+            // Default to bundled Chromium for maximum portability
+            ...devices['Desktop Chrome'],
+          },
     },
     // Only run Firefox and Safari when browsers are properly installed
     // Skip in CI on Linux (common missing deps) or when installation failed

@@ -65,7 +65,8 @@ jobs:
           else
             echo "⚠️ Full browser installation failed, installing Chromium only..."
             pnpm exec playwright install chromium || echo "Chromium installation completed with warnings"
-            export BROWSER_INSTALL_FAILED=true
+            echo "BROWSER_INSTALL_FAILED=true" >> $GITHUB_ENV
+            echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> $GITHUB_ENV
           fi
 
       - name: Run linting
@@ -97,7 +98,7 @@ jobs:
         if: matrix.test-group == 'unit'
         run: pnpm run test:coverage
 
-      - name: Run E2E tests (optimized)
+      - name: Run E2E tests (optimized, Chromium only on Linux)
         if: matrix.test-group == 'e2e'
         run: |
           echo "🧪 Running optimized essential E2E tests..."
@@ -162,9 +163,9 @@ jobs:
           path: lighthouse-reports/
           retention-days: 14
 
-      - name: Run essential visual tests
+      - name: Run essential visual tests (Chromium only on Linux)
         if: matrix.test-group == 'e2e'
-        run: pnpm exec playwright test --grep="Essential Visual Tests" --reporter=line
+        run: pnpm exec playwright test --grep="Essential Visual Tests" --reporter=line --project=chromium
 
   optimization-tasks:
     name: Optimization Tasks

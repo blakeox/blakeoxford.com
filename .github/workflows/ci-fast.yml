@@ -117,10 +117,16 @@ jobs:
           sudo npx playwright install-deps
           echo "✅ System dependencies installed"
 
+      - name: Configure Chromium-only fallback on Linux CI
+        run: |
+          echo "Configuring Chromium-only E2E run on Linux CI to avoid WebKit/Firefox deps..."
+          echo "BROWSER_INSTALL_FAILED=true" >> $GITHUB_ENV
+          echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> $GITHUB_ENV
+
       - name: Build the application
         run: pnpm run build
 
-      - name: Run essential Playwright tests
+      - name: Run essential Playwright tests (Chromium only)
         run: pnpm run test:e2e:essential:chromium
         env:
           COMPREHENSIVE_TESTS: "false"

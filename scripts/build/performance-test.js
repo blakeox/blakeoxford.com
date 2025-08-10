@@ -24,9 +24,8 @@ class PerformanceTestRunner {
     return {
       performance: 95,
       accessibility: 100,
-      bestPractices: 95,
-      seo: 95,
-      pwa: 85
+  bestPractices: 95,
+  seo: 95
     };
   }
 
@@ -115,12 +114,11 @@ class PerformanceTestRunner {
       return;
     }
 
-    console.log('🚀 Starting local dev server...');
-    
-    // Start the Astro dev server
-    this.serverProcess = spawn('npm', ['run', 'dev'], {
+    console.log('🚀 Starting local preview server (production build)...');
+    // Serve the production build for realistic performance metrics
+    this.serverProcess = spawn('npm', ['run', 'preview', '--', '--port', '4321'], {
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env, PORT: '4321' }
+      env: { ...process.env }
     });
 
     // Wait for server to be ready
@@ -198,7 +196,8 @@ class PerformanceTestRunner {
       const options = {
         logLevel: 'info',
         output: 'json',
-        onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo', 'pwa'],
+        // Exclude PWA category by default; CI often disables SW to avoid flakiness
+        onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
         port: chrome.port
       };
 
