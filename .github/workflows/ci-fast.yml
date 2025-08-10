@@ -117,6 +117,17 @@ jobs:
           sudo npx playwright install-deps
           echo "✅ System dependencies installed"
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-
+
+      - name: Install Chromium browser for Playwright
+        run: pnpm exec playwright install chromium
+
       - name: Configure Chromium-only fallback on Linux CI
         run: |
           echo "Configuring Chromium-only E2E run on Linux CI to avoid WebKit/Firefox deps..."
