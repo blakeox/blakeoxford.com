@@ -58,7 +58,8 @@
 
 /* Ensure sufficient contrast for secondary buttons in dark mode */
 .dark .btn-secondary {
-  color: var(--color-on-dark); /* tokenized for stylelint compliance */
+  /* Use a lighter accent for sufficient contrast on dark backgrounds */
+  color: var(--color-accent-light);
   border-color: var(--color-accent);
 }
 

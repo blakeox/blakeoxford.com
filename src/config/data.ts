@@ -4,13 +4,13 @@
 import type { ProjectData, TechnologyItem, SiteConfig } from '../types/index';
 // Proficiency/technology logos (import for Astro asset pipeline)
 import pythonLogo from '../assets/images/proficiencies/python_logo.webp';
-import openAiLogo from '../assets/images/proficiencies/OpenAI-black-monoblossom.png';
-import intuneLogo from '../assets/images/proficiencies/Intune_logo_final.png';
-import azureSqlLogo from '../assets/images/proficiencies/Azure_SQL_logo.png';
-import googleCloudLogo from '../assets/images/proficiencies/google_cloud_logo.png';
-import firebaseLogo from '../assets/images/proficiencies/Firebase_Logomark_Full Color.png';
-import cloudflareLogo from '../assets/images/proficiencies/cloudflare_logo.png';
-import fabricLogo from '../assets/images/proficiencies/fabric_32_color.png';
+import openAiLogo from '../assets/images/proficiencies/OpenAI-black-monoblossom.webp';
+import intuneLogo from '../assets/images/proficiencies/Intune_logo_final.webp';
+import azureSqlLogo from '../assets/images/proficiencies/Azure_SQL_logo.webp';
+import googleCloudLogo from '../assets/images/proficiencies/google_cloud_logo.webp';
+import firebaseLogo from '../assets/images/proficiencies/Firebase_Logomark_Full Color.webp';
+import cloudflareLogo from '../assets/images/proficiencies/cloudflare_logo.webp';
+import fabricLogo from '../assets/images/proficiencies/fabric_32_color.webp';
 
 // Featured projects data - this should eventually come from content collections
 export const featuredProjectsData: ProjectData[] = [

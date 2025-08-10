@@ -279,6 +279,10 @@
   border: 2px solid var(--color-accent);
   color: var(--color-accent);
 }
+.dark .btn-secondary {
+  /* Ensure sufficient contrast on dark backgrounds */
+  color: var(--color-on-dark);
+}
 .btn-secondary:hover, .btn-secondary:focus-visible {
   background: var(--color-accent);
   color: var(--color-background);
