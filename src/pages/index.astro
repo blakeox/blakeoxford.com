@@ -88,14 +88,12 @@ function deriveImageData(imgPath?: string) {
                 href="/contact/"
                 class="btn btn-primary mobile-tap-effect"
                 data-analytics="hero-cta"
-                aria-label="Start a conversation with Blake Oxford"
               >
                 🤝 Let's Connect
               </a>
               <a
                 href="/assets/Resume.pdf"
                 class="btn btn-secondary mobile-tap-effect"
-                aria-label="Download Blake Oxford's resume as PDF"
                 download
               >
                 📄 Download Resume
@@ -361,7 +359,7 @@ function deriveImageData(imgPath?: string) {
           <ProjectCard project={project} featured={true} />
         ))}
       </div>        <div class="mt-8 text-center animate-fade-in">
-          <a href="/projects/" class="btn btn-secondary" aria-label="View all projects">View All Projects</a>
+          <a href="/projects/" class="btn btn-secondary">View All Projects</a>
         </div>
     </section>
 
@@ -372,7 +370,7 @@ function deriveImageData(imgPath?: string) {
         <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
           {latestBlogPost ? (
             <li class="bg-surface dark:bg-gray-800 rounded-2xl shadow-xl p-6 animate-slide-up">
-              <a href={`/blog/${latestBlogPost.slug}`} class="block hover:scale-105 transition-transform duration-200" aria-label={`Read blog post: ${latestBlogPost.data.title}`}>
+              <a href={`/blog/${latestBlogPost.slug}`} class="block hover:scale-105 transition-transform duration-200">
                 <h3 class="text-h3 font-semibold mb-2">{latestBlogPost.data.title}</h3>
                 <time class="text-sm text-neutral" datetime={latestBlogPost.data.pubDate?.toISOString()}>
                   {latestBlogPost.data.pubDate?.toLocaleDateString('en-US', {
@@ -395,7 +393,7 @@ function deriveImageData(imgPath?: string) {
           )}
         </ul>
         <div class="mt-8 text-center animate-fade-in">
-          <a href="/blog/" class="btn btn-primary" aria-label="View all blog posts">View All Blog Posts</a>
+          <a href="/blog/" class="btn btn-primary">View All Blog Posts</a>
         </div>
       </div>
     </section>

@@ -11,7 +11,8 @@ import navLinks from '../../config/navLinks';
         <div class="brand-avatar-container">
           <img
             src="/assets/images/Blake-O-scaled.jpg"
-            alt="Blake Oxford"
+            alt=""
+            aria-hidden="true"
             class="brand-avatar"
             width={32}
             height={32}
@@ -227,8 +228,12 @@ import navLinks from '../../config/navLinks';
   }
   
   .nav-link {
-    display: block;
-    padding: 8px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Ensure adequate tap target size per Lighthouse (48x48) */
+  min-height: 48px;
+  padding: 0 12px;
     color: #000;
     text-decoration: none;
     font-weight: 500;
@@ -270,10 +275,11 @@ import navLinks from '../../config/navLinks';
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+  /* Increase to 48px to meet mobile tap target guidance */
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
     border: none;
     border-radius: 8px;
     background: transparent;
@@ -314,10 +320,11 @@ import navLinks from '../../config/navLinks';
   /* Burger Menu */
   .burger-menu-button {
     position: relative;
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+  /* Increase to 48px to meet mobile tap target guidance */
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
     border: none;
     background: transparent;
     cursor: pointer;

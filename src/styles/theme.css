@@ -19,6 +19,7 @@
   --color-accent-dark: #064e3b;
   --color-foreground: #18181b;
   --color-foreground-light: #f9fafb;
+  --color-on-dark: #f9fafb; /* text on dark surfaces */
   --color-background: #f9fafb;
   --color-background-dark: #18181b;
   --color-neutral: #64748b;

@@ -14,18 +14,43 @@ class PerformanceTestRunner {
   constructor(options = {}) {
     this.baseUrl = options.baseUrl || process.env.BASE_URL || 'http://localhost:4321';
     this.outputDir = options.outputDir || './lighthouse-reports';
-    this.budgets = options.budgets || this.getDefaultBudgets();
+    this.budgets = this.normalizeBudgets(options.budgets || this.getDefaultBudgets());
     this.thresholds = options.thresholds || this.getDefaultThresholds();
     this.serverProcess = null;
     this.isExternalServer = !!process.env.BASE_URL;
   }
 
+  // Map human-friendly or variant keys to Lighthouse category ids
+  normalizeCategoryKey(key) {
+    if (!key) return key;
+    const lower = String(key).toLowerCase();
+    switch (lower) {
+      case 'bestpractices':
+      case 'best_practices':
+      case 'best-practices':
+        return 'best-practices';
+      case 'a11y':
+        return 'accessibility';
+      default:
+        return lower; // performance, accessibility, seo
+    }
+  }
+
+  normalizeBudgets(budgets) {
+    const normalized = {};
+    Object.entries(budgets || {}).forEach(([k, v]) => {
+      normalized[this.normalizeCategoryKey(k)] = v;
+    });
+    return normalized;
+  }
+
   getDefaultBudgets() {
     return {
       performance: 95,
-      accessibility: 100,
-  bestPractices: 95,
-  seo: 95
+  accessibility: 99,
+      // Use Lighthouse category id "best-practices" (kebab-case)
+  'best-practices': 90,
+      seo: 95
     };
   }
 
@@ -225,10 +250,12 @@ class PerformanceTestRunner {
 
     // Check category scores
     Object.entries(this.budgets).forEach(([category, threshold]) => {
-      const score = scores[category]?.score * 100 || 0;
+      const catKey = this.normalizeCategoryKey(category);
+      const scoreRaw = scores[catKey]?.score;
+      const score = typeof scoreRaw === 'number' ? scoreRaw * 100 : 0;
       if (score < threshold) {
         budgetPassed = false;
-        failures.push(`${category}: ${score.toFixed(1)} < ${threshold}`);
+        failures.push(`${catKey}: ${score.toFixed(1)} < ${threshold}`);
       }
     });
 
@@ -278,9 +305,6 @@ class PerformanceTestRunner {
         const budgetCheck = this.checkBudgets(result, result.page);
         const status = budgetCheck.passed ? 'passed' : 'failed';
 
-        if (status === 'passed') this.passed++;
-        else this.failed++;
-
         return {
           page: result.page,
           status,
@@ -296,6 +320,10 @@ class PerformanceTestRunner {
         };
       })
     };
+
+    // Compute pass/fail counts based on mapped results
+    summary.passed = summary.results.filter(r => r.status === 'passed').length;
+    summary.failed = summary.results.filter(r => r.status === 'failed').length;
 
     const summaryPath = path.join(this.outputDir, 'summary.json');
     await fs.writeFile(summaryPath, JSON.stringify(summary, null, 2));

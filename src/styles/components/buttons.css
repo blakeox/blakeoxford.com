@@ -56,6 +56,17 @@
   outline-offset: 2px;
 }
 
+/* Ensure sufficient contrast for secondary buttons in dark mode */
+.dark .btn-secondary {
+  color: var(--color-on-dark); /* tokenized for stylelint compliance */
+  border-color: var(--color-accent);
+}
+
+.dark .btn-secondary:hover {
+  color: var(--color-foreground-light);
+  background: var(--color-accent);
+}
+
 /* Ghost button */
 .btn-ghost {
   color: var(--color-foreground);
