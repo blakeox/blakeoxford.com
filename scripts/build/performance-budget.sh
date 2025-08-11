@@ -64,7 +64,8 @@ fi
 echo "🖼️ Checking image optimization..."
 # Find jpg/png, exclude known required icons, and skip files with webp/avif siblings
 IMAGE_CANDIDATES=$(find "$BUILD_DIR/assets/images" -type f \( -iname "*.jpg" -o -iname "*.png" \) \
-    | grep -vE "/favicons/|/favicon(.*)\\.png$|/apple-touch-icon\\.png$|/icon-[0-9]+x[0-9]+\\.png$" )
+    | grep -vE "/favicons/|/favicon(.*)\\.png$|/apple-touch-icon\\.png$|/icon-[0-9]+x[0-9]+\\.png$" \
+    | grep -vE "/optimized/.*\\.png$" )
 
 UNOPTIMIZED_LIST=""
 COUNT=0

@@ -127,7 +127,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
 
             <!-- Cloudflare Turnstile widget -->
             <div class="cf-turnstile" data-sitekey="0x4AAAAAABeu0PfX8oWvQvjR" role="group" aria-label="Human verification challenge"></div>
-            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
             <button type="submit" class="btn btn-primary mx-auto w-full md:w-auto">
               🚀 <span id="btn-label">Send Message</span>
@@ -140,7 +140,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
   </section>
 
   <!-- Enhanced Contact Form with Error Handling -->
-  <script type="module">
+  <script is:inline type="module">
     // Load form validation bundle for enhanced validation
     if (window.LazyBundleLoader) {
       window.LazyBundleLoader.loadFormFeatures();

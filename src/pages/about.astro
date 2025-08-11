@@ -97,7 +97,7 @@ const timelineItems: TimelineItem[] = [
   url={canonicalUrl} 
   wide={true}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)} />
   <div>
     <!-- Progress Indicator -->
     <div class="fixed left-0 top-0 h-1 z-50 bg-gradient-to-r from-accent to-accent-dark" id="progress-bar"></div>

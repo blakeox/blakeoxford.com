@@ -190,10 +190,12 @@ export default defineConfig({
 
 ## 🛡 Security & Performance
 
-- All requests served via Cloudflare's global CDN
 
-- Zero JS by default unless needed
+### Performance budgets and image pipeline
 
+- The performance budget script validates bundle sizes and computes totals from referenced assets only. It scans built HTML/JS/CSS for references to /_astro and /assets files, then sums sizes for those exact files plus HTML. This avoids counting unreferenced hashed artifacts.
+- Images are optimized prebuild. Scripts generate AVIF/WebP for carousel, proficiencies, projects, and public images. Runtime components prefer AVIF > WebP > JPEG/PNG, with PNG originals excluded from imports where possible.
+- The budget warns on PNG/JPG without modern siblings, ignoring favicons/app icons and allowlisting optimized PNG derivatives under public/assets/images/optimized.
 - CSP, X-Frame-Options, and other headers enforced
 
 - Optional rate limiting and Turnstile CAPTCHA on sensitive endpoints

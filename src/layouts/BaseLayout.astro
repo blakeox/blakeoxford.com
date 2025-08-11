@@ -121,10 +121,10 @@ const {
       <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
     </noscript>
     <!-- Essential JavaScript Bundles (performance-optimized) -->
-    <script src="/assets/js/lazy-loader.min.js" defer></script>
-    <script src="/assets/js/performance-monitor.js" async></script>
-    <script src="/assets/js/resource-preloader.js" async></script>
-    <script src="/assets/js/pwa-enhancer.js" async></script>
+  <script is:inline src="/assets/js/lazy-loader.min.js" defer></script>
+  <script is:inline src="/assets/js/performance-monitor.js" async></script>
+  <script is:inline src="/assets/js/resource-preloader.js" async></script>
+  <script is:inline src="/assets/js/pwa-enhancer.js" async></script>
 
     <!-- Register Service Worker for offline functionality -->
     <script is:inline>
@@ -143,7 +143,7 @@ const {
 
     <!-- End Google Tag Manager -->
     <!-- Google Analytics (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CS4BH1K3HG"></script>
+  <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-CS4BH1K3HG"></script>
     <script is:inline>{`
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
