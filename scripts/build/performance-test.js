@@ -139,12 +139,20 @@ class PerformanceTestRunner {
       return;
     }
 
-    console.log('🚀 Starting local preview server (production build)...');
-    // Serve the production build for realistic performance metrics
-    this.serverProcess = spawn('npm', ['run', 'preview', '--', '--port', '4321'], {
-      stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env }
-    });
+    console.log('🚀 Starting local static server (serving dist)...');
+    // Use a lightweight static server to avoid nested child processes from astro preview
+    // Requires devDependency "serve" (present in this repo)
+    this.serverProcess = spawn(
+      process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
+      ['exec', 'serve', '-s', 'dist', '-l', '4321'],
+      {
+        detached: true, // start in its own process group
+        stdio: 'ignore', // prevent stdio pipes from keeping this process alive
+        env: { ...process.env },
+      }
+    );
+    // Detach so our process can exit independently
+    this.serverProcess.unref?.();
 
     // Wait for server to be ready
     await this.waitForServer(this.baseUrl);
@@ -153,8 +161,23 @@ class PerformanceTestRunner {
   async stopDevServer() {
     if (this.serverProcess && !this.isExternalServer) {
       console.log('🛑 Stopping dev server...');
-      this.serverProcess.kill('SIGTERM');
-      this.serverProcess = null;
+      try {
+        if (process.platform === 'win32') {
+          // Force kill the process tree on Windows
+          spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], { stdio: 'ignore' });
+        } else {
+          // Kill the entire process group we created with detached: true
+          try {
+            process.kill(-this.serverProcess.pid, 'SIGTERM');
+          } catch {
+            // If group kill fails (e.g., already exited), ignore
+          }
+        }
+      } finally {
+        // Best-effort small delay to let the OS reap the process
+        await new Promise((r) => setTimeout(r, 200));
+        this.serverProcess = null;
+      }
     }
   }
 
