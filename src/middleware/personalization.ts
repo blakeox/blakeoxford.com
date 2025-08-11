@@ -4,6 +4,11 @@
 import { defineMiddleware } from 'astro:middleware';
 
 export const onRequest = defineMiddleware((context, next) => {
+  // Skip all middleware logic during static prerender
+  if (import.meta.env.PRERENDER) {
+    return next();
+  }
+
   // Skip middleware for API routes
   if (context.url.pathname.startsWith('/api/')) {
     return next();

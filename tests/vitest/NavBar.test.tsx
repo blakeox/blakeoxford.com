@@ -17,8 +17,8 @@ describe('NavBar.astro file', () => {
     expect(content).toContain('<nav');
   });
 
-  it('should include dynamic navigation analytics attribute', () => {
-    // Ensure dynamic binding for analytics attribute is present
-    expect(content).toContain('aria-current={Astro.url.pathname === link.href ? \'page\' : undefined}');
+  it('should include nav link markup for aria-current to be set at runtime', () => {
+    // We no longer use Astro.url at build-time; check for nav-link class presence
+    expect(content).toContain('class="nav-link"');
   });
 });

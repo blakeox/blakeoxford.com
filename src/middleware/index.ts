@@ -2,6 +2,11 @@
 import { defineMiddleware } from 'astro:middleware';
 
 export const onRequest = defineMiddleware((context, next) => {
+  // Skip all middleware logic during static prerender to avoid accessing request headers/cookies
+  if (import.meta.env.PRERENDER) {
+    return next();
+  }
+
   // Skip middleware for API routes and static assets to prevent interference
   if (context.url.pathname.startsWith('/api/') || context.url.pathname.includes('.')) {
     return next();

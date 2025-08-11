@@ -32,7 +32,6 @@ import navLinks from '../../config/navLinks';
               href={link.href}
             class="nav-link"
             role="menuitem"
-            aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
           >
             {link.label}
           </a>
@@ -118,7 +117,6 @@ import navLinks from '../../config/navLinks';
               href={link.href}
                 class="mobile-nav-link"
               role="menuitem"
-              aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
             >
               {link.label}
             </a>
@@ -129,6 +127,23 @@ import navLinks from '../../config/navLinks';
     </div>
   </div>
 </nav>
+
+<script is:inline>
+  (function() {
+    try {
+      var path = window.location && window.location.pathname;
+      if (!path) return;
+      var links = document.querySelectorAll('.nav-link, .mobile-nav-link');
+      links.forEach(function(a) {
+        if (a.getAttribute('href') === path) {
+          a.setAttribute('aria-current', 'page');
+        } else {
+          a.removeAttribute('aria-current');
+        }
+      });
+    } catch (_) { /* no-op */ }
+  })();
+  </script>
 
 <style is:inline>
   /* Modern Navbar Container - Hiro-inspired design */
@@ -628,36 +643,26 @@ import navLinks from '../../config/navLinks';
 <script is:inline>
   import { initModernNavBar } from '../../scripts/features/ModernNavBar';
   
-  console.log('🎯 NavBar script tag loaded!');
-  
-  // Initialize navbar when DOM is ready
-  console.log('🚀 NavBar script starting...');
-  
   function initializeNavBar() {
-    console.log('📄 Initializing navbar...');
+    if (!document || !document.body) return;
     
     try {
       // Prevent conflicting NavBarMenu from interfering
-      if (typeof window !== 'undefined' && window.navBarMenu) {
-        console.log('⚠️ Conflicting NavBarMenu detected, disabling it...');
+  if (typeof window !== 'undefined' && window.navBarMenu) {
         window.navBarMenu = null;
       }
       
       // Create the navbar instance using the modular approach
-      console.log('🔧 Creating ModernNavBar instance...');
-      
       let modernNavBar;
       try {
         modernNavBar = initModernNavBar();
-        console.log('✅ ModernNavBar instance created:', modernNavBar);
       } catch (error) {
         console.error('❌ Error creating ModernNavBar:', error);
       }
       
       // Store it globally for debugging
       if (typeof window !== 'undefined' && modernNavBar) {
-        window.modernNavBar = modernNavBar;
-        console.log('🌐 Stored modernNavBar globally');
+  window.modernNavBar = modernNavBar;
       }
       
     } catch (error) {
@@ -666,13 +671,10 @@ import navLinks from '../../config/navLinks';
   }
   
   if (document.readyState === 'loading') {
-    console.log('📄 Document still loading, waiting for DOMContentLoaded...');
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('📄 DOMContentLoaded fired, initializing navbar...');
       initializeNavBar();
     });
   } else {
-    console.log('📄 Document already loaded, initializing navbar immediately...');
     // Wait a bit to ensure DOM is fully ready
     setTimeout(() => {
       initializeNavBar();

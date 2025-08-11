@@ -18,10 +18,11 @@ const {
 } = Astro.props as Props;
 
 // Glob all relevant formats from src/assets/images for build-time URL resolution
-const avifMap = import.meta.glob('../../assets/images/**/*.avif', { eager: true, as: 'url' });
-const webpMap = import.meta.glob('../../assets/images/**/*.webp', { eager: true, as: 'url' });
-const pngMap  = import.meta.glob('../../assets/images/**/*.png',  { eager: true, as: 'url' });
-const jpgMap  = import.meta.glob('../../assets/images/**/*.{jpg,jpeg}', { eager: true, as: 'url' });
+// Vite 5: replace deprecated `as: 'url'` with `query: '?url', import: 'default'`
+const avifMap = import.meta.glob('../../assets/images/**/*.avif', { eager: true, query: '?url', import: 'default' });
+const webpMap = import.meta.glob('../../assets/images/**/*.webp', { eager: true, query: '?url', import: 'default' });
+const pngMap  = import.meta.glob('../../assets/images/**/*.png',  { eager: true, query: '?url', import: 'default' });
+const jpgMap  = import.meta.glob('../../assets/images/**/*.{jpg,jpeg}', { eager: true, query: '?url', import: 'default' });
 
 // Helper to build the absolute import key used by the globs above
 function keyFor(relativePath: string) {
