@@ -1,4 +1,4 @@
-import { cpSync, existsSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, writeFileSync, readdirSync, statSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { readFileSync, mkdirSync } from 'node:fs';
 
@@ -37,4 +37,25 @@ try {
   }
 } catch {
   // non-blocking; skip if search files not present
+}
+
+// Remove any oversized PNG artifacts that could exceed Cloudflare's 25 MiB asset limit
+try {
+  const astroDir = join(dist, '_astro');
+  if (existsSync(astroDir)) {
+    const entries = readdirSync(astroDir);
+    for (const name of entries) {
+      if (name.toLowerCase().endsWith('.png')) {
+        const filePath = join(astroDir, name);
+        const sizeBytes = statSync(filePath).size;
+        const sizeMiB = sizeBytes / (1024 * 1024);
+        if (sizeMiB > 10) { // conservative threshold below Workers 25 MiB limit
+          unlinkSync(filePath);
+          console.log(`Removed oversized PNG asset: ${name} (${sizeMiB.toFixed(1)} MiB)`);
+        }
+      }
+    }
+  }
+} catch {
+  // ignore cleanup errors
 }

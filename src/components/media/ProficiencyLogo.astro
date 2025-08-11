@@ -17,16 +17,16 @@ const {
   loading = 'lazy'
 } = Astro.props as Props;
 
-// Glob all relevant formats from src/assets/images for build-time URL resolution
+// Glob only the proficiencies directory to avoid bundling unrelated large assets (e.g., carousel PNGs)
 // Vite 5: replace deprecated `as: 'url'` with `query: '?url', import: 'default'`
-const avifMap = import.meta.glob('../../assets/images/**/*.avif', { eager: true, query: '?url', import: 'default' });
-const webpMap = import.meta.glob('../../assets/images/**/*.webp', { eager: true, query: '?url', import: 'default' });
-const pngMap  = import.meta.glob('../../assets/images/**/*.png',  { eager: true, query: '?url', import: 'default' });
-const jpgMap  = import.meta.glob('../../assets/images/**/*.{jpg,jpeg}', { eager: true, query: '?url', import: 'default' });
+const avifMap = import.meta.glob('../../assets/images/proficiencies/**/*.avif', { eager: true, query: '?url', import: 'default' });
+const webpMap = import.meta.glob('../../assets/images/proficiencies/**/*.webp', { eager: true, query: '?url', import: 'default' });
+const pngMap  = import.meta.glob('../../assets/images/proficiencies/**/*.png',  { eager: true, query: '?url', import: 'default' });
+const jpgMap  = import.meta.glob('../../assets/images/proficiencies/**/*.{jpg,jpeg}', { eager: true, query: '?url', import: 'default' });
 
 // Helper to build the absolute import key used by the globs above
 function keyFor(relativePath: string) {
-  // Our globs are relative to this file at src/components/media/
+  // Constrain lookups to proficiencies directory
   return `../../assets/images/${relativePath}`;
 }
 
