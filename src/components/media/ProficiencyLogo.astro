@@ -1,0 +1,54 @@
+---
+interface Props {
+  base: string; // path relative to src/assets/images (without extension), e.g. 'proficiencies/python_logo'
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const {
+  base,
+  alt,
+  width = 64,
+  height = 64,
+  class: className = 'object-contain',
+  loading = 'lazy'
+} = Astro.props as Props;
+
+// Glob all relevant formats from src/assets/images for build-time URL resolution
+const avifMap = import.meta.glob('../../assets/images/**/*.avif', { eager: true, as: 'url' });
+const webpMap = import.meta.glob('../../assets/images/**/*.webp', { eager: true, as: 'url' });
+const pngMap  = import.meta.glob('../../assets/images/**/*.png',  { eager: true, as: 'url' });
+const jpgMap  = import.meta.glob('../../assets/images/**/*.{jpg,jpeg}', { eager: true, as: 'url' });
+
+// Helper to build the absolute import key used by the globs above
+function keyFor(relativePath: string) {
+  // Our globs are relative to this file at src/components/media/
+  return `../../assets/images/${relativePath}`;
+}
+
+const rel = base; // e.g., 'proficiencies/python_logo'
+const avifKey = keyFor(`${rel}.avif`);
+const webpKey = keyFor(`${rel}.webp`);
+const pngKey  = keyFor(`${rel}.png`);
+const jpgKey  = keyFor(`${rel}.jpg`);
+const jpegKey = keyFor(`${rel}.jpeg`);
+
+const avifUrl: string | undefined = (avifMap as any)[avifKey];
+const webpUrl: string | undefined = (webpMap as any)[webpKey];
+const pngUrl:  string | undefined = (pngMap  as any)[pngKey];
+const jpgUrl:  string | undefined = (jpgMap  as any)[jpgKey] || (jpgMap as any)[jpegKey];
+
+// Choose the <img> fallback preference: PNG/JPG > WebP > AVIF
+const imgFallback = pngUrl || jpgUrl || webpUrl || avifUrl || '';
+---
+<picture>
+  {avifUrl && (<source srcset={avifUrl} type="image/avif" />)}
+  {webpUrl && (<source srcset={webpUrl} type="image/webp" />)}
+  <img src={imgFallback} alt={alt} width={width} height={height} loading={loading} class={className} />
+  {!imgFallback && (
+    <span class="sr-only">{alt}</span>
+  )}
+</picture>
