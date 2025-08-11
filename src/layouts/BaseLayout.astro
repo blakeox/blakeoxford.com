@@ -141,6 +141,21 @@ const {
       }
     </script>
 
+    <!-- Lightweight client-side A/B test cookie initializer (replaces server middleware) -->
+    <script is:inline>
+      (function(){
+        try {
+          var name = 'ab-test-group';
+          if (document.cookie.indexOf(name + '=') === -1) {
+            var group = Math.random() < 0.5 ? 'A' : 'B';
+            var maxAge = 60 * 60 * 24 * 30; // 30 days
+            var secure = location.protocol === 'https:' ? '; Secure' : '';
+            document.cookie = name + '=' + group + '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax' + secure;
+          }
+        } catch (_) { /* no-op */ }
+      })();
+    </script>
+
     <!-- End Google Tag Manager -->
     <!-- Google Analytics (gtag.js) -->
   <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-CS4BH1K3HG"></script>
@@ -167,7 +182,7 @@ const {
     <header role="banner" style="display: block;">
       <NavBar />
     </header>
-    <SearchOverlay />
+  <SearchOverlay />
     <main id="main-content" tabindex="-1" aria-label="Main Content" class={
       wide
         ? 'max-w-none px-0'
