@@ -21,17 +21,17 @@ done
 
 # 2. Security headers check
 echo "🔒 Checking security configurations..."
-if [ -f "_headers" ]; then
+if [ -f "$BUILD_DIR/_headers" ]; then
     echo "✅ Security headers file found"
 else
-    echo "⚠️ Warning: _headers file not found"
+    echo "⚠️ Warning: dist/_headers file not found"
 fi
 
 # 3. Cloudflare configuration
-if [ -f "_redirects" ]; then
+if [ -f "$BUILD_DIR/_redirects" ]; then
     echo "✅ Redirects configuration found"
 else
-    echo "⚠️ Warning: _redirects file not found"
+    echo "⚠️ Warning: dist/_redirects file not found"
 fi
 
 # 4. Check for common issues
@@ -52,6 +52,15 @@ if [ "$SOURCE_MAPS" -gt 0 ]; then
     echo "⚠️ Warning: Found $SOURCE_MAPS source map files (consider removing for production)"
 else
     echo "✅ No source maps found"
+fi
+
+# 5. Fail on unexpected external CDNs (e.g., jsdelivr) that can affect Best Practices/CSP
+CDN_JSDELIVR=$(grep -R "https://cdn.jsdelivr.net" "$BUILD_DIR" --include="*.html" --include="*.js" | wc -l || echo "0")
+if [ "$CDN_JSDELIVR" -gt 0 ]; then
+    echo "❌ Found $CDN_JSDELIVR references to jsDelivr CDN in build (should be vendored)"
+    FAILED=true
+else
+    echo "✅ No jsDelivr references found"
 fi
 
 # Summary

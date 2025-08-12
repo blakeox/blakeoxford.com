@@ -29,6 +29,32 @@ const axis = flipAxis === 'x' ? 'X' : 'Y';
 const ease = flipEase;
 const multiEase = multiFlipEase;
 const uniqueId = simpleId();
+
+// Derive image key names (relative to /public/assets/images) for optimized manifests
+function toImageKey(src: string) {
+  return src.replace(/^\/?assets\/images\//, '').replace(/^\/?public\/assets\/images\//, '').replace(/\.(jpg|jpeg|png|webp|avif)$/i, '');
+}
+
+const frontKey = toImageKey(frontSrc);
+const backKey = toImageKey(backSrc);
+
+// Build responsive srcsets using standardized optimized variants
+const BREAKPOINTS = [320, 640, 768];
+function buildSrcSet(name: string, format: string) {
+  return BREAKPOINTS.map((w: number) => `/assets/images/optimized/${format}/${name}@${w}w.${format} ${w}w`).join(', ');
+}
+
+const frontAvifSet = buildSrcSet(frontKey, 'avif');
+const frontWebpSet = buildSrcSet(frontKey, 'webp');
+const backAvifSet = buildSrcSet(backKey, 'avif');
+const backWebpSet = buildSrcSet(backKey, 'webp');
+
+// Choose a reasonable default src for the <img> tag to match requested size
+function pickDefaultSrc(name: string) {
+  // Pick the smallest breakpoint that is >= requested size, else largest available
+  const candidate = BREAKPOINTS.find(w => w >= size) || BREAKPOINTS[BREAKPOINTS.length - 1];
+  return `/assets/images/optimized/avif/${name}@${candidate}w.avif`;
+}
 ---
 <noscript>
   <img src={frontSrc} alt={alt} style={`width:${size}px;height:${size}px;`} class={`coin-flip-front ${customClass}`} />
@@ -51,18 +77,18 @@ const uniqueId = simpleId();
   >
     <div class="coin-flip-face coin-flip-front-face">
       <picture>
-        <source srcset={frontSrc.replace(/\.(jpg|jpeg|png)$/i, '.avif')} type="image/avif" />
-        <source srcset={frontSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
-        <img src={frontSrc} alt={alt} class="coin-flip-front" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+        {frontAvifSet && (<source srcset={frontAvifSet} sizes={`${size}px`} type="image/avif" />)}
+        {frontWebpSet && (<source srcset={frontWebpSet} sizes={`${size}px`} type="image/webp" />)}
+  <img src={pickDefaultSrc(frontKey)} alt={alt} class="coin-flip-front" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
       </picture>
       <div class="coin-flip-highlight"></div>
     </div>
     <div class="coin-flip-edge"></div>
     <div class="coin-flip-face coin-flip-back-face">
       <picture>
-        <source srcset={backSrc.replace(/\.(jpg|jpeg|png)$/i, '.avif')} type="image/avif" />
-        <source srcset={backSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
-        <img src={backSrc} alt={altBack} class="coin-flip-back" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+        {backAvifSet && (<source srcset={backAvifSet} sizes={`${size}px`} type="image/avif" />)}
+        {backWebpSet && (<source srcset={backWebpSet} sizes={`${size}px`} type="image/webp" />)}
+  <img src={pickDefaultSrc(backKey)} alt={altBack} class="coin-flip-back" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
       </picture>
       <div class="coin-flip-highlight"></div>
     </div>

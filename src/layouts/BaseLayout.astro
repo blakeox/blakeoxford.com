@@ -54,7 +54,7 @@ try {
 
     <!-- Resource Preloading for critical assets -->
   <link rel="preload" href="/assets/js/lazy-loader.min.js" as="script" />
-  <link rel="preload" href="/assets/images/Blake-O-scaled.avif" as="image" type="image/avif" imagesrcset="/assets/images/Blake-O-scaled.avif 1x, /assets/images/Blake-O-scaled.webp 1x, /assets/images/Blake-O-scaled.jpg 1x" />
+
 
   <!-- DNS Prefetch for external resources -->
     <link rel="dns-prefetch" href="//www.googletagmanager.com" />
@@ -179,7 +179,7 @@ try {
       window.dataLayer = window.dataLayer || [];
       window.gtag = function() { queue.push(arguments); };
 
-      function loadGA() {
+    function loadGA() {
         if (loaded) return;
         loaded = true;
         var s = document.createElement('script');
@@ -189,7 +189,9 @@ try {
           // Replace stub with real gtag
           window.gtag = function(){ dataLayer.push(arguments); };
           window.gtag('js', new Date());
-          window.gtag('config', GA_ID, { send_page_view: true });
+      // Set conservative defaults to avoid ads audiences calls
+      window.gtag('consent', 'default', { ad_storage: 'denied', analytics_storage: 'granted', functionality_storage: 'granted', security_storage: 'granted' });
+      window.gtag('config', GA_ID, { send_page_view: true, allow_google_signals: false, allow_ad_personalization_signals: false });
           // Flush any queued events
           if (queue.length) {
             queue.forEach(function(args){ window.gtag.apply(null, args); });

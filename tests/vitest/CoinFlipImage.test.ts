@@ -13,10 +13,17 @@ describe('CoinFlipImage.astro file', () => {
     content = fs.readFileSync(filePath, 'utf-8');
   });
 
-  it('should render dynamic front and back image src and alt bindings', () => {
-    expect(content).toContain('src={frontSrc}');
+  it('should render responsive front/back images with srcsets and alt bindings', () => {
+    // Picture sources for AVIF/WebP
+    expect(content).toContain('srcset={frontAvifSet}');
+    expect(content).toContain('srcset={frontWebpSet}');
+    expect(content).toContain('srcset={backAvifSet}');
+    expect(content).toContain('srcset={backWebpSet}');
+    // Default <img> src chosen via helper for front/back
+    expect(content).toContain('src={pickDefaultSrc(frontKey)}');
+    expect(content).toContain('src={pickDefaultSrc(backKey)}');
+    // Alt text bindings
     expect(content).toContain('alt={alt}');
-    expect(content).toContain('src={backSrc}');
     expect(content).toContain('alt={altBack}');
   });
 

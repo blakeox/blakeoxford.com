@@ -15,7 +15,7 @@ const STATIC_ASSETS = [
   '/assets/js/performance-monitor.js',
   '/assets/js/resource-preloader.js',
   '/assets/js/pwa-enhancer.js',
-  '/assets/images/Blake-O-scaled.jpg',
+  '/assets/images/optimized/avif/Blake-O-scaled@320w.avif',
   '/manifest.webmanifest'
 ];
 

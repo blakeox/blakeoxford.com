@@ -161,6 +161,35 @@ check_security_headers() {
     fi
 }
 
+# Run Lighthouse-based performance gate (strict budgets)
+run_lighthouse_gate() {
+    print_status $BLUE "\u2728 Enforcing Lighthouse budgets (perf >= ${REQUIRED_LIGHTHOUSE_SCORE}, CLS <= 0.1)..."
+
+    if command -v node >/dev/null 2>&1; then
+        # Run custom performance harness which spins up preview as needed and enforces budgets
+        if node scripts/build/performance-test.js; then
+            print_status $GREEN "\u2705 Lighthouse budgets passed"
+        else
+            print_status $RED "\u274c Lighthouse budgets failed"
+            exit 1
+        fi
+
+        # Optionally enforce bundle-level budgets (file counts/weights)
+        if [ -f "scripts/build/performance-budget.sh" ]; then
+            chmod +x "scripts/build/performance-budget.sh"
+            if ./scripts/build/performance-budget.sh; then
+                print_status $GREEN "\u2705 Bundle budgets passed"
+            else
+                print_status $RED "\u274c Bundle budgets failed"
+                exit 1
+            fi
+        fi
+    else
+        print_status $RED "\u274c Node.js not available to run Lighthouse gate"
+        exit 1
+    fi
+}
+
 # Performance regression check
 check_performance_regression() {
     print_status $BLUE "⚡ Running performance regression check..."
@@ -205,6 +234,7 @@ main() {
     check_critical_css
     check_search_index
     check_security_headers
+    run_lighthouse_gate
     check_performance_regression
     run_deployment_checks
     
