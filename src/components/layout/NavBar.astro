@@ -4,9 +4,9 @@ import navLinks from '../../config/navLinks';
 ---
 
 <nav id="navbar" class="navbar-container" role="navigation" aria-label="Main navigation">
-  <div class="navbar-content">
+  <div class="navbar-content" style="max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between">
     <!-- Brand Section -->
-    <div class="brand-section">
+  <div class="brand-section" style="min-width:160px;flex-shrink:0">
       <a href="/" class="brand-link">
         <div class="brand-avatar-container">
           <img
@@ -24,7 +24,7 @@ import navLinks from '../../config/navLinks';
     </div>
 
     <!-- Desktop Navigation -->
-    <div class="desktop-nav">
+  <div class="desktop-nav">
       <ul class="nav-links" role="menubar">
       {navLinks.map((link) => (
           <li class="nav-item" role="none">
@@ -41,17 +41,18 @@ import navLinks from '../../config/navLinks';
     </div>
 
     <!-- Action Buttons -->
-    <div class="action-buttons">
+  <div class="action-buttons" style="display:flex;align-items:center;gap:8px;min-width:160px;height:48px;white-space:nowrap">
       <!-- Search Toggle -->
       <button
         id="search-toggle"
         type="button"
         class="action-button search-toggle"
+        style="width:48px;height:48px"
         aria-label="Open search"
         aria-expanded="false"
         aria-controls="search-overlay"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </button>
@@ -61,12 +62,13 @@ import navLinks from '../../config/navLinks';
         id="theme-toggle"
         type="button"
         class="action-button theme-toggle"
+        style="width:48px;height:48px"
         aria-label="Toggle dark mode"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sun-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sun-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 moon-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 moon-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
         </svg>
       </button>
@@ -76,6 +78,7 @@ import navLinks from '../../config/navLinks';
         id="nav-toggle"
         type="button"
         class="burger-menu-button"
+        style="width:48px;height:48px"
         aria-label="Toggle navigation menu"
         aria-expanded="false"
         aria-controls="nav-mobile-links"
@@ -178,7 +181,9 @@ import navLinks from '../../config/navLinks';
   
   /* Brand Section */
   .brand-section {
-    flex-shrink: 0;
+  flex-shrink: 0;
+  /* Reserve space to avoid brand text reflow on font metric changes */
+  min-width: 160px;
   }
   
   .brand-link {
@@ -190,6 +195,9 @@ import navLinks from '../../config/navLinks';
     font-weight: 600;
     font-size: 16px;
     transition: opacity 0.2s ease;
+  font-synthesis-weight: none;
+  font-synthesis-style: none;
+  text-rendering: optimizeLegibility;
   }
   
   .dark .brand-link {
@@ -270,12 +278,16 @@ import navLinks from '../../config/navLinks';
   }
   
   .nav-link[aria-current="page"] {
-    color: #000;
-    font-weight: 600;
+  color: #000;
+  /* Avoid font-weight changes that can cause layout shift; use underline instead */
+  text-decoration: underline;
+  text-underline-offset: 6px;
   }
   
   .dark .nav-link[aria-current="page"] {
-    color: #fff;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 6px;
   }
   
   /* Action Buttons */
@@ -284,6 +296,10 @@ import navLinks from '../../config/navLinks';
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
+  /* Reserve stable width for 3 buttons at 48px each plus 2 gaps of 8px: 3*48 + 2*8 = 160px */
+  min-width: 160px;
+  height: 48px;
+  white-space: nowrap;
   }
   
   .action-button {

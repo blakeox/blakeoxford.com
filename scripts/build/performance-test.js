@@ -9,15 +9,34 @@ import fs from 'fs/promises';
 import path from 'path';
 import { spawn } from 'child_process';
 import http from 'http';
+import net from 'net';
 
 class PerformanceTestRunner {
   constructor(options = {}) {
-    this.baseUrl = options.baseUrl || process.env.BASE_URL || 'http://localhost:4321';
+  this.baseUrl = options.baseUrl || process.env.BASE_URL || 'http://127.0.0.1:4321';
     this.outputDir = options.outputDir || './lighthouse-reports';
     this.budgets = this.normalizeBudgets(options.budgets || this.getDefaultBudgets());
     this.thresholds = options.thresholds || this.getDefaultThresholds();
     this.serverProcess = null;
+  this.serverPort = null;
     this.isExternalServer = !!process.env.BASE_URL;
+  }
+
+  async findAvailablePort(start = 4321, attempts = 10) {
+    const tryPort = (port) => new Promise((resolve) => {
+      const server = net.createServer();
+      server.unref();
+      server.on('error', () => resolve(null));
+      server.listen(port, '127.0.0.1', () => {
+        server.close(() => resolve(port));
+      });
+    });
+    for (let i = 0; i < attempts; i++) {
+      const port = start + i;
+      const open = await tryPort(port);
+      if (open) return port;
+    }
+    return null;
   }
 
   // Map human-friendly or variant keys to Lighthouse category ids
@@ -139,23 +158,59 @@ class PerformanceTestRunner {
       return;
     }
 
-    console.log('🚀 Starting local static server (serving dist)...');
-    // Use a lightweight static server to avoid nested child processes from astro preview
-    // Requires devDependency "serve" (present in this repo)
+  console.log('🚀 Starting local static server (serving dist)...');
+  const pnpmCmd = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+  // Pick a free port and update baseUrl to match
+  const chosen = await this.findAvailablePort(4321, 10);
+  const port = chosen || 4321;
+  this.serverPort = port;
+  this.baseUrl = `http://127.0.0.1:${port}`;
+  console.log(`🔌 Using port ${port} for preview server`);
+
+    // Try using `serve` first
     this.serverProcess = spawn(
-      process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-      ['exec', 'serve', '-s', 'dist', '-l', '4321'],
+      pnpmCmd,
+  ['exec', 'serve', '-s', 'dist', '-l', String(port)],
       {
-        detached: true, // start in its own process group
-        stdio: 'ignore', // prevent stdio pipes from keeping this process alive
+        detached: true,
+        stdio: 'ignore',
         env: { ...process.env },
       }
     );
-    // Detach so our process can exit independently
-    this.serverProcess.unref?.();
+    // Allow parent to exit independently of child if needed
+    try { this.serverProcess.unref(); } catch { /* ignore */ }
 
-    // Wait for server to be ready
-    await this.waitForServer(this.baseUrl);
+    try {
+      // Try a shorter wait first; if it doesn't come up, fall back
+  await this.waitForServer(this.baseUrl, 10, 1000);
+  } catch {
+      console.warn('⚠️ `serve` did not become ready, falling back to `astro preview`...');
+      // Stop previous attempt if still around
+      try {
+        if (this.serverProcess?.pid) {
+          if (process.platform === 'win32') {
+            spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], { stdio: 'ignore' });
+          } else {
+      try { process.kill(-this.serverProcess.pid, 'SIGTERM'); } catch { /* ignore */ }
+          }
+        }
+    } catch { /* ignore */ }
+
+      // Fallback to astro preview which serves the built dist
+      this.serverProcess = spawn(
+        pnpmCmd,
+        ['preview', '--host', '127.0.0.1', '--port', String(port)],
+        {
+          detached: true,
+          stdio: 'ignore',
+          env: { ...process.env },
+        }
+      );
+      try { this.serverProcess.unref(); } catch { /* ignore */ }
+
+      // Wait full window for preview to come up
+      await this.waitForServer(this.baseUrl, 30, 1000);
+    }
   }
 
   async stopDevServer() {
@@ -166,17 +221,32 @@ class PerformanceTestRunner {
           // Force kill the process tree on Windows
           spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], { stdio: 'ignore' });
         } else {
-          // Kill the entire process group we created with detached: true
-          try {
-            process.kill(-this.serverProcess.pid, 'SIGTERM');
-          } catch {
-            // If group kill fails (e.g., already exited), ignore
+          // Gracefully terminate the process group
+          const pgid = -this.serverProcess.pid;
+          try { process.kill(pgid, 'SIGTERM'); } catch { /* ignore */ }
+
+          // Wait briefly for clean shutdown
+          const wait = (ms) => new Promise(r => setTimeout(r, ms));
+          const isAlive = (pid) => {
+            try { process.kill(pid, 0); return true; } catch { return false; }
+          };
+          let attempts = 0;
+          while (attempts < 10 && isAlive(this.serverProcess.pid)) {
+            await wait(100);
+            attempts++;
+          }
+
+          // Force kill if still alive
+          if (isAlive(this.serverProcess.pid)) {
+            try { process.kill(pgid, 'SIGKILL'); } catch { /* ignore */ }
+            try { process.kill(this.serverProcess.pid, 'SIGKILL'); } catch { /* ignore */ }
           }
         }
       } finally {
         // Best-effort small delay to let the OS reap the process
         await new Promise((r) => setTimeout(r, 200));
         this.serverProcess = null;
+  console.log('✅ Dev server stopped');
       }
     }
   }
