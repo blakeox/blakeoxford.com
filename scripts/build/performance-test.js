@@ -9,6 +9,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { spawn } from 'child_process';
 import http from 'http';
+import https from 'https';
+import { URL } from 'node:url';
 import net from 'net';
 
 class PerformanceTestRunner {
@@ -121,10 +123,13 @@ class PerformanceTestRunner {
   }
 
   async waitForServer(url, maxRetries = 30, delay = 1000) {
+    const u = new URL(url);
+    const isHttps = u.protocol === 'https:';
+    const client = isHttps ? https : http;
     for (let i = 0; i < maxRetries; i++) {
       try {
         await new Promise((resolve, reject) => {
-          const request = http.get(url, (response) => {
+          const request = client.get(url, (response) => {
             if (response.statusCode >= 200 && response.statusCode < 400) {
               resolve();
             } else {

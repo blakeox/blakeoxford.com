@@ -321,6 +321,23 @@ const WorkerApp = {
     }
 
     // Special route: robots.txt (serve as strict text; avoid any HTML optimizations)
+    // Serve a favicon.ico even if only PNGs exist; rewrite to local 32x32 PNG
+    if (url.pathname === '/favicon.ico') {
+      try {
+        const pngUrl = new URL('/assets/images/favicon-32x32.png', url.origin);
+        const pngReq = new Request(pngUrl.toString(), request);
+        let icon = await env.ASSETS.fetch(pngReq);
+        if (!icon.ok) return icon;
+        const headers = new Headers(icon.headers);
+        headers.set('content-type', 'image/x-icon');
+        headers.set('cache-control', 'public, max-age=31536000, immutable');
+        return new Response(icon.body, { status: icon.status, statusText: icon.statusText, headers });
+      } catch {
+        return new Response(null, { status: 404 });
+      }
+    }
+
+    // Special route: robots.txt (serve as strict text; avoid any HTML optimizations)
     if (url.pathname === '/robots.txt') {
       try {
         let robots = await env.ASSETS.fetch(request);

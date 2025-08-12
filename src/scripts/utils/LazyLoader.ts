@@ -120,8 +120,9 @@ export class LazyBundleLoader {
   async loadInteractiveFeatures(): Promise<void> {
     // Only load external libraries, not the old interactive bundle
     // since we're using modular TypeScript components now
+    // Load Fuse.js from local assets to comply with CSP and avoid third-party fetches
     await Promise.all([
-      this.loadExternalLibrary('fuse', 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js')
+      this.loadBundle('fuse')
     ]);
   }
 
