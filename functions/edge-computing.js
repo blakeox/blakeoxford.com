@@ -197,12 +197,8 @@ class EdgePerformanceOptimizer {
   addPerformanceHeaders(response) {
     const headers = new Headers(response.headers);
 
-    // Early hints for critical resources
-    headers.set('Link', [
-      '</assets/css/critical.css>; rel=preload; as=style',
-      '</assets/js/main.js>; rel=preload; as=script',
-      '</assets/fonts/OpenSans-Regular.woff2>; rel=preload; as=font; type=font/woff2; crossorigin'
-    ].join(', '));
+  // Early hints for critical resources
+  headers.set('Link', '</assets/css/critical.css>; rel=preload; as=style');
 
     // Connection optimization
     headers.set('Connection', 'keep-alive');
@@ -224,11 +220,16 @@ class EdgePerformanceOptimizer {
     // Content Security Policy
     headers.set('Content-Security-Policy', [
       'default-src \'self\'',
-      'script-src \'self\' \'unsafe-inline\' https://www.googletagmanager.com https://www.google-analytics.com',
+      // Allow GA and GTM scripts; Cloudflare Insights (if injected) to avoid console CSP errors
+      'script-src \'self\' \'unsafe-inline\' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com',
       'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com',
       'font-src \'self\' https://fonts.gstatic.com',
       'img-src \'self\' data: https:',
-      'connect-src \'self\' https://www.google-analytics.com'
+      // Permit GA and DoubleClick beacons; keep tight otherwise
+      'connect-src \'self\' https://www.google-analytics.com https://stats.g.doubleclick.net',
+      // Align with static headers
+      'manifest-src \'self\'',
+      'worker-src \'self\''
     ].join('; '));
 
     // Other security headers

@@ -131,6 +131,10 @@ import navLinks from '../../config/navLinks';
   </div>
 </nav>
 
+<script>
+  import '../../scripts/entry/init-modern-navbar.ts';
+</script>
+
 <script is:inline>
   (function() {
     try {
@@ -660,44 +664,3 @@ import navLinks from '../../config/navLinks';
     }
   }
 </style>
-
-<script>
-  import { initModernNavBar } from '../../scripts/features/ModernNavBar';
-
-  function initializeNavBar() {
-    if (!document || !document.body) return;
-
-    try {
-      // Prevent conflicting NavBarMenu from interfering
-      if (typeof window !== 'undefined' && (window as any).navBarMenu) {
-        (window as any).navBarMenu = null;
-      }
-
-      // Create the navbar instance using the modular approach
-      let modernNavBar: any;
-      try {
-        modernNavBar = initModernNavBar();
-      } catch (error) {
-        console.error('❌ Error creating ModernNavBar:', error);
-      }
-
-      // Store it globally for debugging
-      if (typeof window !== 'undefined' && modernNavBar) {
-        (window as any).modernNavBar = modernNavBar;
-      }
-    } catch (error) {
-      console.error('❌ Error initializing navbar:', error);
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      initializeNavBar();
-    });
-  } else {
-    // Wait a bit to ensure DOM is fully ready
-    setTimeout(() => {
-      initializeNavBar();
-    }, 100);
-  }
-</script>

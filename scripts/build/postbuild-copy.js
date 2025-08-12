@@ -59,3 +59,18 @@ try {
 } catch {
   // ignore cleanup errors
 }
+
+// Ensure the final build includes the full Fuse.js distribution for search (override placeholder)
+try {
+  const fuseSrc = join(process.cwd(), 'node_modules', 'fuse.js', 'dist', 'fuse.min.js');
+  const fuseDestDir = join(dist, 'assets', 'js');
+  if (existsSync(fuseSrc)) {
+    mkdirSync(fuseDestDir, { recursive: true });
+    cpSync(fuseSrc, join(fuseDestDir, 'fuse.min.js'));
+    console.log('Copied Fuse.js -> dist/assets/js/fuse.min.js');
+  } else {
+    console.warn('Fuse.js distribution not found, skipping copy');
+  }
+} catch {
+  // non-blocking; search overlay has a lightweight fallback
+}
