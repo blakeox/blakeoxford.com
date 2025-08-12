@@ -306,7 +306,6 @@ class PWAEnhancer {
 
       .pwa-update-subtitle {
         font-size: 12px;
-        opacity: 0.9;
       }
 
       .pwa-update-action {
@@ -346,6 +345,42 @@ class PWAEnhancer {
     document.head.appendChild(style);
 
     document.body.appendChild(notification);
+
+    // Ensure accessible contrast for text against the notification background
+    try {
+      const root = notification.querySelector('.pwa-update-notification');
+      const getRGB = (str) => {
+        const m = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+        return m ? [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10)] : [17, 24, 39];
+      };
+      const luminance = (r, g, b) => {
+        const srgb = [r, g, b].map((v) => {
+          v /= 255;
+          return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+      };
+      const bg = getComputedStyle(root).backgroundColor;
+      const [r, g, b] = getRGB(bg);
+      const L = luminance(r, g, b);
+      const highContrast = L > 0.5 ? '#111827' : '#ffffff';
+      const titleEl = notification.querySelector('.pwa-update-title');
+      const subtitleEl = notification.querySelector('.pwa-update-subtitle');
+      const iconEl = notification.querySelector('.pwa-update-icon');
+      const contentEl = notification.querySelector('.pwa-update-content');
+      if (titleEl) titleEl.style.color = highContrast;
+      if (subtitleEl) subtitleEl.style.color = highContrast;
+      if (iconEl) iconEl.style.color = highContrast;
+      if (contentEl) {
+        // Add an overlay to bolster contrast regardless of accent tone
+        contentEl.style.background = highContrast === '#ffffff'
+          ? 'rgba(0,0,0,0.35)'
+          : 'rgba(255,255,255,0.35)';
+        contentEl.style.borderRadius = '12px';
+      }
+    } catch (e) {
+      // Non-fatal; leave defaults
+    }
 
     // Auto-hide after 10 seconds
     setTimeout(() => {
