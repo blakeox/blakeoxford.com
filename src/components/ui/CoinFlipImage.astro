@@ -45,12 +45,12 @@ const uniqueId = simpleId();
       : `transition-duration:${duration}ms;transition-timing-function:${ease};`}
   >
     <div class="coin-flip-face coin-flip-front-face">
-      <img src={frontSrc} alt={alt} class="coin-flip-front" loading="lazy" draggable="false" />
+      <img src={frontSrc} alt={alt} class="coin-flip-front" loading="lazy" draggable="false" width={size} height={size} fetchpriority="low" decoding="async" />
       <div class="coin-flip-highlight"></div>
     </div>
     <div class="coin-flip-edge"></div>
     <div class="coin-flip-face coin-flip-back-face">
-      <img src={backSrc} alt={altBack} class="coin-flip-back" loading="lazy" draggable="false" />
+      <img src={backSrc} alt={altBack} class="coin-flip-back" loading="lazy" draggable="false" width={size} height={size} fetchpriority="low" decoding="async" />
       <div class="coin-flip-highlight"></div>
     </div>
   </div>
