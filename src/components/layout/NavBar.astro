@@ -661,36 +661,35 @@ import navLinks from '../../config/navLinks';
   }
 </style>
 
-<script is:inline>
+<script>
   import { initModernNavBar } from '../../scripts/features/ModernNavBar';
-  
+
   function initializeNavBar() {
     if (!document || !document.body) return;
-    
+
     try {
       // Prevent conflicting NavBarMenu from interfering
-  if (typeof window !== 'undefined' && window.navBarMenu) {
-        window.navBarMenu = null;
+      if (typeof window !== 'undefined' && (window as any).navBarMenu) {
+        (window as any).navBarMenu = null;
       }
-      
+
       // Create the navbar instance using the modular approach
-      let modernNavBar;
+      let modernNavBar: any;
       try {
         modernNavBar = initModernNavBar();
       } catch (error) {
         console.error('❌ Error creating ModernNavBar:', error);
       }
-      
+
       // Store it globally for debugging
       if (typeof window !== 'undefined' && modernNavBar) {
-  window.modernNavBar = modernNavBar;
+        (window as any).modernNavBar = modernNavBar;
       }
-      
     } catch (error) {
       console.error('❌ Error initializing navbar:', error);
     }
   }
-  
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       initializeNavBar();
@@ -701,4 +700,4 @@ import navLinks from '../../config/navLinks';
       initializeNavBar();
     }, 100);
   }
-</script> 
+</script>

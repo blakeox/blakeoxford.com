@@ -51,6 +51,9 @@ export class EnhancedSearchOverlay {
     const searchOverlay = document.getElementById('search-overlay');
     if (!searchOverlay) return false;
     
+  // Make overlay interactive
+  (searchOverlay as any).inert = false;
+
     searchOverlay.classList.add('active');
     searchOverlay.style.visibility = 'visible';
     searchOverlay.style.opacity = '1';
@@ -665,6 +668,7 @@ export class EnhancedSearchOverlay {
     
     // Close the overlay
     searchOverlay.classList.remove('active');
+  (searchOverlay as any).inert = true;
     
     // Clear search input
     if (this.searchInput) {

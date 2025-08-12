@@ -310,9 +310,18 @@ export class ModernNavBar {
   openSearchOverlay() {
     if (!this.searchOverlay) return;
     
+    // Prefer the enhanced overlay controller if available
+    const enhanced = (window as any).enhancedSearchOverlay;
+    if (enhanced && typeof enhanced.open === 'function') {
+      enhanced.open();
+      return;
+    }
+
     // Track analytics
     this.trackSearchInteraction('opened');
-    
+
+    // Fallback: manually open overlay
+    (this.searchOverlay as any).inert = false;
     this.searchOverlay.classList.add('active');
     this.searchOverlay.style.visibility = 'visible';
     this.searchOverlay.style.opacity = '1';
@@ -323,8 +332,8 @@ export class ModernNavBar {
       setTimeout(() => (searchInput as HTMLInputElement).focus(), 100);
     }
     
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
     
     this.announceToScreenReader('Search overlay opened');
   }
@@ -340,12 +349,20 @@ export class ModernNavBar {
   closeSearchOverlay() {
     if (!this.searchOverlay) return;
     
-    this.searchOverlay.classList.remove('active');
-    this.searchOverlay.style.visibility = 'hidden';
-    this.searchOverlay.style.opacity = '0';
-    
-    // Restore body scroll
-    document.body.style.overflow = '';
+    // Prefer the enhanced overlay controller if available
+    const enhanced = (window as any).enhancedSearchOverlay;
+    if (enhanced && typeof enhanced.closeSearchOverlay === 'function') {
+      enhanced.closeSearchOverlay();
+    } else {
+      // Fallback: manually close overlay
+      this.searchOverlay.classList.remove('active');
+      this.searchOverlay.style.visibility = 'hidden';
+      this.searchOverlay.style.opacity = '0';
+      (this.searchOverlay as any).inert = true;
+      
+      // Restore body scroll
+      document.body.style.overflow = '';
+    }
     
     // Focus back to search toggle
     if (this.searchToggle) {
