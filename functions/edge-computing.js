@@ -143,6 +143,18 @@ class EdgeCacheManager {
       };
     }
 
+    // Cloudflare Zaraz beacon/script path (if present)
+    if (path.startsWith('/cdn-cgi/zaraz/')) {
+      return {
+        ttl: 86400, // 1 day
+        strategy: 'immutable',
+        headers: {
+          'Cache-Control': 'public, max-age=86400',
+          'CDN-Cache-Control': 'max-age=86400'
+        }
+      };
+    }
+
     // HTML pages - edge-side includes
     return {
       ttl: 3600, // 1 hour

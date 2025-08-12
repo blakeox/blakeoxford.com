@@ -9,15 +9,21 @@ import navLinks from '../../config/navLinks';
   <div class="brand-section" style="min-width:160px;flex-shrink:0">
       <a href="/" class="brand-link">
         <div class="brand-avatar-container">
-          <img
-            src="/assets/images/Blake-O-scaled.jpg"
-            alt=""
-            aria-hidden="true"
-            class="brand-avatar"
-            width={32}
-            height={32}
-            loading="eager"
-          />
+          <picture>
+            <source srcset="/assets/images/Blake-O-scaled.avif" type="image/avif" />
+            <source srcset="/assets/images/Blake-O-scaled.webp" type="image/webp" />
+            <img
+              src="/assets/images/Blake-O-scaled.jpg"
+              alt=""
+              aria-hidden="true"
+              class="brand-avatar"
+              width={32}
+              height={32}
+              loading="eager"
+              decoding="async"
+              fetchpriority="low"
+            />
+          </picture>
       </div>
         <span class="brand-text">Blake Oxford</span>
       </a>

@@ -50,12 +50,20 @@ const uniqueId = simpleId();
       : `transition-duration:${duration}ms;transition-timing-function:${ease};`}
   >
     <div class="coin-flip-face coin-flip-front-face">
-  <img src={frontSrc} alt={alt} class="coin-flip-front" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+      <picture>
+        <source srcset={frontSrc.replace(/\.(jpg|jpeg|png)$/i, '.avif')} type="image/avif" />
+        <source srcset={frontSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+        <img src={frontSrc} alt={alt} class="coin-flip-front" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+      </picture>
       <div class="coin-flip-highlight"></div>
     </div>
     <div class="coin-flip-edge"></div>
     <div class="coin-flip-face coin-flip-back-face">
-  <img src={backSrc} alt={altBack} class="coin-flip-back" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+      <picture>
+        <source srcset={backSrc.replace(/\.(jpg|jpeg|png)$/i, '.avif')} type="image/avif" />
+        <source srcset={backSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+        <img src={backSrc} alt={altBack} class="coin-flip-back" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+      </picture>
       <div class="coin-flip-highlight"></div>
     </div>
   </div>
