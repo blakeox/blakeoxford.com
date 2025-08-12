@@ -1,6 +1,7 @@
 ---
 // CoinFlipImage.astro
 // Props: frontSrc, backSrc, altFront, altBack, size (optional), flipMultipleTimes (optional), class (optional), duration (optional), flipOnClick (optional), flipAxis (optional), flipEase (optional), multiFlipDuration (optional), multiFlipEase (optional)
+// Performance knobs: loading (default 'lazy'), fetchPriority (default 'low'), decoding (default 'async')
 function simpleId() {
   return 'coin-flip-' + Math.random().toString(36).slice(2, 10);
 }
@@ -19,6 +20,10 @@ const {
   multiFlipDuration = 2000, // ms, slower for multi-flip
   multiFlipEase = 'cubic-bezier(.68,-0.55,.27,1.55)' // springy for multi-flip
 } = Astro.props;
+// Optional performance-related props (with safe defaults)
+const loading: 'eager' | 'lazy' = (Astro.props.loading as any) || 'lazy';
+const fetchPriority: 'high' | 'low' | 'auto' = (Astro.props.fetchPriority as any) || 'low';
+const decoding: 'async' | 'auto' | 'sync' = (Astro.props.decoding as any) || 'async';
 // Compute axis and easing values
 const axis = flipAxis === 'x' ? 'X' : 'Y';
 const ease = flipEase;
@@ -45,12 +50,12 @@ const uniqueId = simpleId();
       : `transition-duration:${duration}ms;transition-timing-function:${ease};`}
   >
     <div class="coin-flip-face coin-flip-front-face">
-      <img src={frontSrc} alt={alt} class="coin-flip-front" loading="lazy" draggable="false" width={size} height={size} fetchpriority="low" decoding="async" />
+  <img src={frontSrc} alt={alt} class="coin-flip-front" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
       <div class="coin-flip-highlight"></div>
     </div>
     <div class="coin-flip-edge"></div>
     <div class="coin-flip-face coin-flip-back-face">
-      <img src={backSrc} alt={altBack} class="coin-flip-back" loading="lazy" draggable="false" width={size} height={size} fetchpriority="low" decoding="async" />
+  <img src={backSrc} alt={altBack} class="coin-flip-back" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
       <div class="coin-flip-highlight"></div>
     </div>
   </div>
