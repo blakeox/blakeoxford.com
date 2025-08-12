@@ -395,6 +395,17 @@ const WorkerApp = {
       }
 
       if (!originResponse.ok) {
+        // For 5xx, try to serve cache or a graceful fallback to avoid console errors
+        if (originResponse.status >= 500) {
+          const cached = await caches.default.match(request);
+          if (cached) return cached;
+
+          const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
+          if (isHtmlRoute) {
+            const offlineHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0b1020;color:#e5e7eb}.card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.25)}h1{font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:#cbd5e1}a.btn{display:inline-block;background:#ffffff;color:#111827;font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}</style></head><body><div class="card"><h1>We\'re updating things</h1><p>Please try again in a moment. If this persists, contact me via LinkedIn below.</p><a class="btn" href="/">Go home</a></div></body></html>';
+            return new Response(offlineHtml, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8' } });
+          }
+        }
         return originResponse;
       }
 
@@ -434,9 +445,23 @@ const WorkerApp = {
 
       // Only optimize/personalize for GET HTML responses
       if (method === 'GET' && originResponse.headers.get('content-type')?.includes('text/html')) {
-        const optimizer = new EdgePerformanceOptimizer(originResponse, request);
-        finalResponse = await optimizer.optimizeResponse();
-        finalResponse = await WorkerApp.applyPersonalization(finalResponse, userSegments, abTest);
+        try {
+          const optimizer = new EdgePerformanceOptimizer(originResponse, request);
+          finalResponse = await optimizer.optimizeResponse();
+          try {
+            finalResponse = await WorkerApp.applyPersonalization(finalResponse, userSegments, abTest);
+          } catch (e) {
+            console.error('Personalization failed, returning optimized response only:', e);
+            finalResponse = new Response(await finalResponse.text(), {
+              status: finalResponse.status,
+              statusText: finalResponse.statusText,
+              headers: finalResponse.headers
+            });
+          }
+        } catch (e) {
+          console.error('Optimization failed, returning origin response:', e);
+          finalResponse = originResponse;
+        }
       }
 
       // Cache GET responses with a readable body only
@@ -475,14 +500,13 @@ const WorkerApp = {
         return staleResponse;
       }
 
-      // Fallback error response
-      return new Response('Service temporarily unavailable', {
-        status: 503,
-        headers: {
-          'Content-Type': 'text/plain',
-          'Retry-After': '60'
-        }
-      });
+      // Fallback: try serving a minimal offline page for HTML routes, otherwise a 404 for assets
+      const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
+      if (isHtmlRoute) {
+        const offlineHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0b1020;color:#e5e7eb}.card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.25)}h1{font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:#cbd5e1}a.btn{display:inline-block;background:#ffffff;color:#111827;font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}</style></head><body><div class="card"><h1>We\'re updating things</h1><p>Please try again in a moment. If this persists, contact me via LinkedIn below.</p><a class="btn" href="/">Go home</a></div></body></html>';
+        return new Response(offlineHtml, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8' } });
+      }
+      return new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' } });
     }
   },
 

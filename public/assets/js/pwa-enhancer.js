@@ -310,19 +310,26 @@ class PWAEnhancer {
       }
 
       .pwa-update-action {
-        background: rgba(255,255,255,0.2);
-        border: none;
+        /* High-contrast button for AA compliance on accent background */
+        background: #ffffff;
+        color: #111827; /* slate-800 */
+        border: 1px solid rgba(0,0,0,0.08);
         border-radius: 8px;
-        color: white;
         cursor: pointer;
         padding: 8px 16px;
         font-size: 12px;
-        font-weight: 600;
-        transition: background 0.2s ease;
+        font-weight: 700;
+        transition: background 0.2s ease, box-shadow 0.2s ease;
       }
 
       .pwa-update-action:hover {
-        background: rgba(255,255,255,0.3);
+        background: #f3f4f6; /* gray-100 */
+      }
+
+      .pwa-update-action:focus-visible {
+        outline: 2px solid #111827;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.9);
       }
 
       @keyframes slideInDown {
