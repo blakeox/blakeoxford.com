@@ -1,4 +1,5 @@
 name = "blakeoxford-com"
+account_id = "cc3bb24ae3c87cff38c2be85df3dab29"
 compatibility_date = "2025-08-08"
 
 # Switch to Workers: serve static assets from ./dist via an assets binding,

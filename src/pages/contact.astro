@@ -125,11 +125,13 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
               <div id="message-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
             </div>
 
-            <!-- Cloudflare Turnstile widget (reserve space to avoid CLS) -->
+            <!-- Cloudflare Turnstile placeholder (reserve space to avoid CLS) -->
             <div class="w-full min-h-[72px] flex items-center justify-center">
-              <div class="cf-turnstile w-full" data-sitekey="0x4AAAAAABeu0PfX8oWvQvjR" data-size="compact" role="group" aria-label="Human verification challenge"></div>
+              <div id="turnstile-container" class="w-full" role="group" aria-label="Human verification challenge">
+                <!-- Facade placeholder; real widget injected on-demand -->
+                <div class="text-center text-sm text-neutral">Human verification will appear when needed.</div>
+              </div>
             </div>
-            <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
             <button type="submit" class="btn btn-primary mx-auto w-full md:w-auto">
               🚀 <span id="btn-label">Send Message</span>
@@ -149,7 +151,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
     }
     
     // Enhanced contact form integration with error handling system
-    document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
       // Get form and error handling system
       const form = document.getElementById('contact-form');
       const statusElement = document.getElementById('form-status');
@@ -285,7 +287,50 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
       return emailRegex.test(email);
     }
 
-    // Fallback form handling (if enhanced error handling is not available)
+      // Lazy-load Turnstile only when needed (visible or user interacts)
+      (function setupTurnstileLazyLoad(){
+        var siteKey = '0x4AAAAAABeu0PfX8oWvQvjR';
+        var injected = false;
+        var container = document.getElementById('turnstile-container');
+        if (!container) return;
+        function injectScript(){
+          if (injected) return; injected = true;
+          var s = document.createElement('script');
+          s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+          s.async = true; s.defer = true;
+          s.onload = function(){
+            try {
+              if (window.turnstile) {
+                // Render widget inside container
+                window.turnstile.render(container, { sitekey: siteKey, size: 'compact' });
+              }
+            } catch(_){}
+          };
+          document.head.appendChild(s);
+        }
+        // Load when visible
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function(entries){
+            entries.forEach(function(e){ if (e.isIntersecting) { injectScript(); io.disconnect(); } });
+          });
+          io.observe(container);
+        }
+        // Or on form interaction
+        var form = document.getElementById('contact-form');
+        if (form) {
+          ['focusin','click','keydown','pointerdown','touchstart','submit'].forEach(function(ev){
+            form.addEventListener(ev, injectScript, { passive: true, once: true });
+          });
+        }
+        // Idle fallback
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(function(){ injectScript(); }, { timeout: 15000 });
+        } else {
+          setTimeout(injectScript, 15000);
+        }
+      })();
+
+      // Fallback form handling (if enhanced error handling is not available)
     if (!window.ErrorHandlingSystem && form) {
       console.log('Using fallback form validation');
       

@@ -5,7 +5,7 @@
 
 # AI Agent Coding Guide for blakeoxford.com
 
-This project is a **performance-obsessed Astro SSG** for Cloudflare Pages, with strict conventions and advanced optimization. Follow these rules to be productive and avoid common pitfalls:
+This project is a **performance-obsessed Astro SSG** deployed via Cloudflare Workers, with strict conventions and advanced optimization. Follow these rules to be productive and avoid common pitfalls:
 
 ## 1. Architecture & Structure
 - **Astro SSG** (`output: 'static'`), minimal client JS, all routing in `src/pages/` (Astro file-based, kebab-case).
@@ -22,7 +22,7 @@ This project is a **performance-obsessed Astro SSG** for Cloudflare Pages, with 
 - **Test**: `pnpm test` (unit), `pnpm test:e2e` (e2e), `pnpm test:ci` (all tests, CI).
 - **Lint**: `pnpm lint` (ESLint for .js/.ts/.astro/.mdx).
 - **Performance**: `pnpm optimize:advanced`, `pnpm perf:test`, `pnpm critical:css`, `pnpm optimize:images`, `pnpm analyze:bundle`.
-- **Edge Deploy**: `pnpm edge:deploy` (Cloudflare Workers), `wrangler pages deploy dist` (manual Pages deploy).
+- **Edge Deploy**: `pnpm edge:deploy` (Cloudflare Workers). Pages deploys are deprecated for this project.
 - **Always** run `pnpm generate:search-index` before build (auto-run by build script).
 
 ## 3. Project-Specific Patterns

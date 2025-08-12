@@ -1,6 +1,6 @@
 # 🌐 Personal Portfolio Site
 
-A blazing-fast, modern portfolio site built with [Astro](https://astro.build), designed to be deployed on [Cloudflare Pages](https://pages.cloudflare.com/). This project emphasizes performance, clean design, edge delivery, privacy, and minimal client-side JavaScript.
+A blazing-fast, modern portfolio site built with [Astro](https://astro.build), deployed on [Cloudflare Workers](https://developers.cloudflare.com/workers/). This project emphasizes performance, clean design, edge delivery, privacy, and minimal client-side JavaScript.
 
 ---
 
@@ -14,7 +14,7 @@ A blazing-fast, modern portfolio site built with [Astro](https://astro.build), d
 
 - Achieve excellent Lighthouse scores (performance, SEO, a11y)
 
-- Deploy using Cloudflare Pages for edge-speed delivery
+- Deploy using Cloudflare Workers for edge-speed delivery
 
 - Keep it free, fast, privacy-friendly, and beautiful
 
@@ -57,7 +57,7 @@ A blazing-fast, modern portfolio site built with [Astro](https://astro.build), d
 
 ### Hosting & CDN
 
-- [Cloudflare Pages](https://pages.cloudflare.com/)
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/)
   - Custom domain with free SSL
   - Deploy previews for every pull request
   - Global edge delivery
@@ -132,18 +132,11 @@ npx serve dist/
 
 ---
 
-## 🛰️ Deployment (Cloudflare Pages)
+## 🛰️ Deployment (Cloudflare Workers)
 
-1. Push this repo to GitHub
-
-2. Go to [Cloudflare Pages](https://pages.cloudflare.com/)
-
-3. Connect your repo
-
-4. Use these build settings:
-   - **Framework preset**: None
-   - **Build command**: `pnpm build`
-   - **Output directory**: `dist`
+1. Build: `pnpm build`
+2. Deploy the Worker: `pnpm deploy:worker` (or `pnpm edge:deploy`)
+3. Verify: static assets via ASSETS binding, CSP/headers, and edge routes
 
 ---
 

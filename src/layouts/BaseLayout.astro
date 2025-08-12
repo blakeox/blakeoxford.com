@@ -170,22 +170,57 @@ try {
       })();
     </script>
 
-    <!-- End Google Tag Manager -->
-    <!-- Google Analytics (gtag.js) -->
+    <!-- Analytics facade: load GA only after user interaction or idle -->
   <script is:inline>{`
-    // Defer GA until after load to avoid impacting LCP/TBT
-    window.addEventListener('load', function() {
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-CS4BH1K3HG';
-      s.onload = function() {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);} 
-        gtag('js', new Date());
-        gtag('config', 'G-CS4BH1K3HG');
-      };
-      document.head.appendChild(s);
-    });
+    (function() {
+      var GA_ID = 'G-CS4BH1K3HG';
+      var loaded = false;
+      var queue = [];
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function() { queue.push(arguments); };
+
+      function loadGA() {
+        if (loaded) return;
+        loaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        s.onload = function() {
+          // Replace stub with real gtag
+          window.gtag = function(){ dataLayer.push(arguments); };
+          window.gtag('js', new Date());
+          window.gtag('config', GA_ID, { send_page_view: true });
+          // Flush any queued events
+          if (queue.length) {
+            queue.forEach(function(args){ window.gtag.apply(null, args); });
+            queue = [];
+          }
+        };
+        document.head.appendChild(s);
+      }
+
+      // Activate on first user interaction
+      var activated = false;
+      function activate() {
+        if (activated) return; activated = true;
+        ['click','keydown','pointerdown','touchstart','scroll'].forEach(function(type){
+          window.removeEventListener(type, activate, { passive: true });
+        });
+        loadGA();
+      }
+      ['click','keydown','pointerdown','touchstart','scroll'].forEach(function(type){
+        window.addEventListener(type, activate, { passive: true, once: true });
+      });
+
+      // Fallback: load after idle time post-load
+      window.addEventListener('load', function() {
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(function(){ loadGA(); }, { timeout: 10000 });
+        } else {
+          setTimeout(loadGA, 10000);
+        }
+      });
+    })();
   `}</script>
   </head>
   <body id="top" class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
@@ -197,10 +232,7 @@ try {
     <!-- Global live region for announcements -->
     <div id="live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MDX5DR6Q"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+  <!-- Google Tag Manager (noscript) removed to avoid third-party request when JS disabled -->
     <header role="banner" style="display: block;">
       <NavBar />
     </header>
