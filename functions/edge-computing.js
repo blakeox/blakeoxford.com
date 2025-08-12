@@ -107,6 +107,18 @@ class EdgeCacheManager {
     const path = this.url.pathname;
     const extension = path.split('.').pop();
 
+    // Robots.txt and other plain text directives - short cache and no-transform
+    if (path.endsWith('/robots.txt')) {
+      return {
+        ttl: 300, // 5 minutes
+        strategy: 'no-transform',
+        headers: {
+          'Cache-Control': 'public, max-age=300, no-transform',
+          'CDN-Cache-Control': 'max-age=300'
+        }
+      };
+    }
+
     // Static assets - long cache
     if (['js', 'css', 'png', 'jpg', 'jpeg', 'webp', 'avif', 'ico', 'woff2'].includes(extension)) {
       return {
@@ -296,7 +308,24 @@ const WorkerApp = {
       // Non-fatal; continue if redirect logic fails
     }
 
-  // Route: Contact form submission handled by existing function
+    // Special route: robots.txt (serve as strict text; avoid any HTML optimizations)
+    if (url.pathname === '/robots.txt') {
+      try {
+        let robots = await env.ASSETS.fetch(request);
+        if (!robots.ok) return robots;
+        const headers = new Headers(robots.headers);
+        headers.set('content-type', 'text/plain; charset=utf-8');
+        headers.set('cache-control', 'public, max-age=300, no-transform');
+        return new Response(robots.body, { status: robots.status, statusText: robots.statusText, headers });
+  } catch {
+        return new Response('User-agent: *\nAllow: /\n', {
+          status: 200,
+          headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300, no-transform' }
+        });
+      }
+    }
+
+    // Route: Contact form submission handled by existing function
     if (url.pathname === '/send-email' && request.method === 'POST') {
       // Bridge Pages Function signature to Worker
       return handleSendEmail({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
@@ -356,6 +385,8 @@ const WorkerApp = {
                 ? 'image/svg+xml'
                 : path.endsWith('.xml')
                   ? 'application/xml; charset=utf-8'
+                  : path.endsWith('.txt')
+                    ? 'text/plain; charset=utf-8'
                   : path.endsWith('.ico')
                     ? 'image/x-icon'
                     : '';
