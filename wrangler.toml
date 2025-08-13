@@ -12,6 +12,14 @@ directory = "./dist"
 run_worker_first = true
 
 
+[[routes]]
+pattern = "blakeoxford.com/*"
+zone_name = "blakeoxford.com"
+
+[[routes]]
+pattern = "www.blakeoxford.com/*"
+zone_name = "blakeoxford.com"
+
 
 
 [[kv_namespaces]]

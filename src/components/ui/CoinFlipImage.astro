@@ -38,10 +38,29 @@ function toImageKey(src: string) {
 const frontKey = toImageKey(frontSrc);
 const backKey = toImageKey(backSrc);
 
-// Build responsive srcsets using standardized optimized variants
-const BREAKPOINTS = [320, 640, 768];
+// Build responsive srcsets using available optimized variants (avoid 404s)
+// We can't reliably read from /public at build time here, so we use a conservative
+// size map for known assets and a sensible fallback for others.
+const SIZE_MAP: Record<string, number[]> = {
+  // Known limited-size asset (only 320w available)
+  'china-profile-picture': [320],
+  // Common assets with full set generated
+  'Blake-O-scaled': [320, 640, 768]
+};
+
+const FALLBACK_BREAKPOINTS = [320, 640, 768];
+
+function getAvailableBreakpoints(name: string): number[] {
+  // Normalize key by stripping directories
+  const key = name.split('/').pop() || name;
+  // Try exact match; also try without extension artifacts
+  const simple = key.replace(/\.[a-z0-9]+$/i, '');
+  return (SIZE_MAP[simple] || FALLBACK_BREAKPOINTS).slice().sort((a, b) => a - b);
+}
+
 function buildSrcSet(name: string, format: string) {
-  return BREAKPOINTS.map((w: number) => `/assets/images/optimized/${format}/${name}@${w}w.${format} ${w}w`).join(', ');
+  const widths = getAvailableBreakpoints(name);
+  return widths.map((w: number) => `/assets/images/optimized/${format}/${name}@${w}w.${format} ${w}w`).join(', ');
 }
 
 const frontAvifSet = buildSrcSet(frontKey, 'avif');
@@ -51,8 +70,9 @@ const backWebpSet = buildSrcSet(backKey, 'webp');
 
 // Choose a reasonable default src for the <img> tag to match requested size
 function pickDefaultSrc(name: string) {
+  const widths = getAvailableBreakpoints(name);
   // Pick the smallest breakpoint that is >= requested size, else largest available
-  const candidate = BREAKPOINTS.find(w => w >= size) || BREAKPOINTS[BREAKPOINTS.length - 1];
+  const candidate = widths.find(w => w >= size) || widths[widths.length - 1];
   return `/assets/images/optimized/avif/${name}@${candidate}w.avif`;
 }
 ---

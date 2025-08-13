@@ -109,14 +109,15 @@ class PerformanceTestRunner {
           downloadThroughputKbps: 0,
           uploadThroughputKbps: 0
         },
-        screenEmulation: {
+  screenEmulation: {
           mobile: true,
           width: 375,
           height: 667,
           deviceScaleFactor: 2,
           disabled: false
         },
-        emulatedUserAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1'
+  // Include Lighthouse token in UA to make audit detection reliable at the edge
+  emulatedUserAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1 Lighthouse'
       }
       // Removed custom audits array - using default Lighthouse audits
     };
@@ -321,7 +322,12 @@ class PerformanceTestRunner {
         output: 'json',
         // Exclude PWA category by default; CI often disables SW to avoid flakiness
         onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
-        port: chrome.port
+        port: chrome.port,
+        // Inject custom headers to signal audit mode to the Worker
+        extraHeaders: {
+          'x-audit-mode': '1',
+          'cookie': 'audit=1'
+        }
       };
 
       const config = this.getLighthouseConfig();

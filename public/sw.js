@@ -12,6 +12,7 @@ const STATIC_ASSETS = [
   '/contact/',
   '/blog/',
   '/assets/js/lazy-loader.min.js',
+  '/assets/js/lazy-loader.min.js?v=2',
   '/assets/js/performance-monitor.js',
   '/assets/js/resource-preloader.js',
   '/assets/js/pwa-enhancer.js',
@@ -84,6 +85,14 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests and cross-origin requests
   if (request.method !== 'GET' || url.origin !== self.location.origin) {
     return;
+  }
+
+  // Never cache or intercept the health/metrics endpoints
+  if (
+    url.pathname === '/_healthz' || url.pathname === '/_healthz/' ||
+    url.pathname === '/metrics' || url.pathname === '/metrics/'
+  ) {
+    return; // allow network to proceed, do not cache
   }
 
   // Handle static assets with cache-first strategy

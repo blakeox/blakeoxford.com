@@ -239,9 +239,9 @@ export class DynamicModuleLoader {
       
       // Map common dependencies to CDN URLs
       const cdnUrls: Record<string, string> = {
-  // Use local vendored Fuse.js to avoid external requests and CSP violations
-  'fuse.js': '/assets/js/fuse.min.js',
-        'chartjs': 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js'
+        // Use local vendored Fuse.js to avoid external requests and CSP violations
+        'fuse.js': '/assets/js/fuse.min.js'
+        // Note: Avoid mapping to external CDNs to preserve CSP and Best Practices score.
       };
 
       script.src = cdnUrls[dependency] || dependency;

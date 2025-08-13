@@ -47,14 +47,22 @@ test.describe('Keyboard Navigation Tests', () => {
     await page.waitForLoadState('domcontentloaded');
     
     // Test skip link functionality with browser-specific handling
-    await page.keyboard.press('Tab');
-    const skipLink = page.locator('a[href*="#main"]').first();
-    
+    // Ensure skip link exists
+    const skipLink = page.locator('a[href*="#main"], a[href="#main-content"]').first();
+    await expect(skipLink).toHaveCount(1);
+
     if (browserName === 'webkit') {
-      // WebKit has focus detection issues, just verify the element exists and continue
+      // WebKit: Programmatically focus the skip link to trigger visibility
+      await skipLink.evaluate(el => (el as HTMLElement).focus());
+      await page.waitForTimeout(50); // allow focus-visible styles to apply
       await expect(skipLink).toBeVisible();
-      await page.waitForTimeout(100); // Give time for focus to settle
+      // Don't assert focus state strictly on WebKit due to known quirks
     } else {
+      // Non-WebKit: Tab into the document and expect the skip link to receive focus
+      await page.evaluate(() => document.body.focus());
+      await page.keyboard.press('Tab');
+      await page.waitForTimeout(100); // allow focus-visible styles to apply
+      await expect(skipLink).toBeVisible();
       await expect(skipLink).toBeFocused();
     }
     
@@ -62,7 +70,7 @@ test.describe('Keyboard Navigation Tests', () => {
     await page.keyboard.press('Enter');
     
     // Verify focus moved to main content (with relaxed expectations for WebKit)
-    const mainContent = page.locator('#main, #main-content, main').first();
+  const mainContent = page.locator('#main, #main-content, main').first();
     await expect(mainContent).toBeVisible();
     
     if (browserName !== 'webkit') {

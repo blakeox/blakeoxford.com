@@ -53,7 +53,7 @@ try {
   <style is:inline set:html={inlineCriticalCSS ?? fallbackCriticalCSS}></style>
 
     <!-- Resource Preloading for critical assets -->
-  <link rel="preload" href="/assets/js/lazy-loader.min.js" as="script" />
+  <link rel="preload" href="/assets/js/lazy-loader.min.js?v=2" as="script" />
 
 
   <!-- DNS Prefetch for external resources -->
@@ -135,7 +135,7 @@ try {
     <link rel="manifest" href="/manifest.webmanifest" />
   <!-- Removed webfont loads to eliminate font-driven CLS; using system font stack in critical CSS -->
     <!-- Essential JavaScript Bundles (performance-optimized) -->
-  <script is:inline src="/assets/js/lazy-loader.min.js" defer></script>
+  <script is:inline src="/assets/js/lazy-loader.min.js?v=2" defer></script>
   <script is:inline src="/assets/js/performance-monitor.js" async></script>
   <script is:inline src="/assets/js/resource-preloader.js" async></script>
   <script is:inline src="/assets/js/pwa-enhancer.js" async></script>
