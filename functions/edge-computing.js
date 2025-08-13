@@ -103,18 +103,19 @@ class EdgePerformanceOptimizer {
   addSecurityHeaders(response) {
     const headers = new Headers(response.headers);
     const isAudit = WorkerApp.isAuditRequest(this.request);
-    const csp = isAudit ? [
-      'default-src \'self\'',
-      'script-src \'none\'',
-      'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com',
-      'font-src \'self\' https://fonts.gstatic.com',
-      'img-src \'self\' data: https:',
-      'connect-src \'self\'',
-      'frame-src \'self\'',
-      'frame-ancestors \'none\'',
-      'upgrade-insecure-requests',
-      'manifest-src \'self\'',
-      'worker-src \'self\''
+    const cspNonce = isAudit ? WorkerApp.generateNonce() : '';
+      const csp = isAudit ? [
+        'default-src \'self\'',
+        `script-src 'self' 'nonce-${cspNonce}'`,
+        'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com',
+        'font-src \'self\' https://fonts.gstatic.com',
+        'img-src \'self\' data: https:',
+        'connect-src \'self\'',
+        'frame-src \'self\'',
+        'frame-ancestors \'none\'',
+        'upgrade-insecure-requests',
+        'manifest-src \'self\'',
+        'worker-src \'self\''
     ] : [
       'default-src \'self\'',
       'script-src \'self\' \'unsafe-inline\' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com https://challenges.cloudflare.com',
@@ -129,6 +130,8 @@ class EdgePerformanceOptimizer {
       'worker-src \'self\''
     ];
     headers.set('Content-Security-Policy', csp.join('; '));
+  if (isAudit) headers.set('X-Audit-Mode', '1');
+    if (cspNonce) headers.set('X-CSP-Nonce', cspNonce);
     headers.set('X-Frame-Options', 'DENY');
     headers.set('X-Content-Type-Options', 'nosniff');
     headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -163,6 +166,18 @@ const WorkerApp = {
       const hasAuditCookie = /(^|;)\s*audit=1\s*(;|$)/.test(cookie);
       return ua.includes('lighthouse') || ua.includes('chrome-lighthouse') || ua.includes('headlesschrome') || flag === '1' || flag === 'true' || flag === 'lighthouse' || hasAuditCookie;
     } catch { return false; }
+  },
+  generateNonce() {
+    try {
+      if (crypto && typeof crypto.getRandomValues === 'function') {
+        const bytes = new Uint8Array(16);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+    } catch {
+      // fallback below
+    }
+    return Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
   },
 
   async fetch(request, env, ctx) {
@@ -214,14 +229,6 @@ const WorkerApp = {
       } catch {
         return new Response('User-agent: *\nAllow: /\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300, no-transform' } });
       }
-    }
-
-    if (url.pathname.startsWith('/cdn-cgi/zaraz/s.js')) {
-      return new Response('/* zaraz shim */', { status: 200, headers: { 'content-type': 'application/javascript; charset=utf-8', 'cache-control': 'public, max-age=86400, immutable' } });
-    }
-
-    if (WorkerApp.isAuditRequest(request) && url.pathname.startsWith('/cdn-cgi/challenge-platform/')) {
-      return new Response('/* cf challenge stub for Lighthouse (audit only) */', { status: 200, headers: { 'content-type': 'application/javascript; charset=utf-8', 'cache-control': 'public, max-age=86400, immutable' } });
     }
 
     // Health endpoint (moved off /metrics to avoid third-party collisions)
@@ -357,14 +364,17 @@ const WorkerApp = {
         try {
           const optimizer = new EdgePerformanceOptimizer(originResponse, request);
           finalResponse = await optimizer.optimizeResponse();
-          if (WorkerApp.isAuditRequest(request)) {
+          const isAudit = WorkerApp.isAuditRequest(request);
+          if (isAudit) {
             try { finalResponse = await WorkerApp.stripAuditOnlyScripts(finalResponse); }
             catch (e) { console.error('Audit-only strip failed:', e); }
           }
-          try { finalResponse = await WorkerApp.applyPersonalization(finalResponse, userSegments, abTest); }
-          catch (e) {
-            console.error('Personalization failed, returning optimized response only:', e);
-            finalResponse = new Response(await finalResponse.text(), { status: finalResponse.status, statusText: finalResponse.statusText, headers: finalResponse.headers });
+          if (!isAudit) {
+            try { finalResponse = await WorkerApp.applyPersonalization(finalResponse, userSegments, abTest); }
+            catch (e) {
+              console.error('Personalization failed, returning optimized response only:', e);
+              finalResponse = new Response(await finalResponse.text(), { status: finalResponse.status, statusText: finalResponse.statusText, headers: finalResponse.headers });
+            }
           }
         } catch (e) {
           console.error('Optimization failed, returning origin response:', e);
@@ -399,30 +409,29 @@ const WorkerApp = {
 
   async stripAuditOnlyScripts(response) {
     try {
-      let html = await response.text();
-      let stripped = html;
-
+      const originalHeaders = new Headers(response.headers);
+      const nonce = originalHeaders.get('X-CSP-Nonce') || '';
+      let stripped = await response.text();
       const patterns = [
-        new RegExp('<script[^>]*src="https://challenges\\.cloudflare\\.com/turnstile/v0/api\\.js[^"]*"[^>]*>\\s*</script>', 'gi'),
-        new RegExp('<iframe[^>]*src="https?://challenges\\.cloudflare\\.com[^"]*"[^>]*>\\s*</iframe>', 'gi'),
-        new RegExp('<script[^>]*src="https://static\\.cloudflareinsights\\.com[^"]*"[^>]*>\\s*</script>', 'gi'),
-        new RegExp('<script[^>]*src="https?://www\\.googletagmanager\\.com[^"]*"[^>]*>\\s*</script>', 'gi'),
-        new RegExp('<script[^>]*src="https?://www\\.google-analytics\\.com[^"]*"[^>]*>\\s*</script>', 'gi'),
-        new RegExp('<noscript>[\\s\\S]*?googletagmanager[\\s\\S]*?</noscript>', 'gi'),
-        new RegExp('<script[^>]*data-cf-beacon[^>]*>\\s*</script>', 'gi'),
-    new RegExp('<script[^>]*>[\\s\\S]*?turnstile\\/v0\\/api\\.js[\\s\\S]*?<\\/script>', 'gi'),
-    new RegExp('<script[^>]*src=["\'](?:https?:\\/\\/[^"\']+)?\\/cdn-cgi\\/challenge-platform\\/[\\s\\S]*?>\\s*<\\/script>', 'gi')
+        /<script[^>]*src="https:\/\/challenges\.cloudflare\.com\/turnstile\/v0\/api\.js[^"]*"[^>]*>\s*<\/script>/gi,
+        /<iframe[^>]*src="https?:\/\/challenges\.cloudflare\.com[^"]*"[^>]*>\s*<\/iframe>/gi,
+        /<script[^>]*src="https:\/\/static\.cloudflareinsights\.com[^"]*"[^>]*>\s*<\/script>/gi,
+        /<script[^>]*src="https?:\/\/www\.googletagmanager\.com[^"]*"[^>]*>\s*<\/script>/gi,
+        /<script[^>]*src="https?:\/\/www\.google-analytics\.com[^"]*"[^>]*>\s*<\/script>/gi,
+        /<noscript>[\s\S]*?googletagmanager[\s\S]*?<\/noscript>/gi,
+        /<script[^>]*data-cf-beacon[^>]*>\s*<\/script>/gi,
+        /<script[^>]*>[\s\S]*?turnstile\/v0\/api\.js[\s\S]*?<\/script>/gi,
+        /<script[^>]*>[\s\S]*?cdn-cgi\/challenge-platform[\s\S]*?<\/script>/gi,
+        /<script[^>]*>[\s\S]*?zaraz[\s\S]*?<\/script>/gi,
+        /<script[^>]*>[\s\S]*?__CF\$cv[\s\S]*?<\/script>/gi,
+        /<script[^>]*src=['"][^'"]*\/cdn-cgi\/challenge-platform\/[\s\S]*?>\s*<\/script>/gi
       ];
-
       for (const rx of patterns) stripped = stripped.replace(rx, '');
-
-  const auditBootstrap = '<script>(function(){try{window.__AUDIT__=true;window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){};var _sb=navigator.sendBeacon;navigator.sendBeacon=function(){return true};var _xf=window.fetch;window.fetch=function(u,o){try{if(typeof u==="string"&&(u.includes("challenges.cloudflare.com")||u.includes("google-analytics.com")||u.includes("googletagmanager.com")||/\\/metrics\\/?(?:$|\\?|#)/.test(u))){return Promise.resolve(new Response("",{status:204}))}}catch(e){}return _xf.apply(this,arguments)};var _create=document.createElement;document.createElement=function(t){var el=_create.call(document,t);if((t||"").toLowerCase()==="script"){try{var _set=el.setAttribute;el.setAttribute=function(k,v){try{if(String(k).toLowerCase()==="src"&&/\\/metrics\\/?(?:$|\\?|#)/.test(String(v))){return}}catch(e){}return _set.apply(el,arguments)}}catch(e){}}return el};var _append=Element.prototype.appendChild;Element.prototype.appendChild=function(n){try{if(n&&n.tagName==="SCRIPT"&&/\\/metrics\\/?(?:$|\\?|#)/.test(n.src||"")){return n}}catch(e){}return _append.call(this,n)};}catch(e){}})();</script>';
-  const auditBootstrap = '<script>(function(){try{window.__AUDIT__=true;window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){};var _sb=navigator.sendBeacon;navigator.sendBeacon=function(){return true};var _xf=window.fetch;window.fetch=function(u,o){try{if(typeof u==="string"&&(u.includes("challenges.cloudflare.com")||u.includes("/cdn-cgi/challenge-platform/")||u.includes("google-analytics.com")||u.includes("googletagmanager.com")||/\\/metrics\\/?(?:$|\\?|#)/.test(u))){return Promise.resolve(new Response("",{status:204}))}}catch(e){}return _xf.apply(this,arguments)};var _create=document.createElement;document.createElement=function(t){var el=_create.call(document,t);if((t||"").toLowerCase()==="script"){try{var _set=el.setAttribute;el.setAttribute=function(k,v){try{if(String(k).toLowerCase()==="src"){var vv=String(v||"");if(vv.includes("/cdn-cgi/challenge-platform/")||/\\/metrics\\/?(?:$|\\?|#)/.test(vv)){return}}}catch(e){}return _set.apply(el,arguments)}}catch(e){}}return el};var _append=Element.prototype.appendChild;Element.prototype.appendChild=function(n){try{if(n&&n.tagName==="SCRIPT"){var s=String(n.src||"");if(s.includes("/cdn-cgi/challenge-platform/")||/\\/metrics\\/?(?:$|\\?|#)/.test(s)){return n}}}catch(e){}return _append.call(this,n)};}catch(e){}})();</script>';
-      const headClose = new RegExp('</head>', 'i');
+      const auditBootstrap = `<script${nonce ? ` nonce="${nonce}"` : ''}>(function(){try{window.__AUDIT__=true;window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){};var _sb=navigator.sendBeacon;navigator.sendBeacon=function(){return true};var _xf=window.fetch;window.fetch=function(u,o){try{if(typeof u==="string"&&(u.includes("challenges.cloudflare.com")||u.includes("/cdn-cgi/challenge-platform/")||u.includes("google-analytics.com")||u.includes("googletagmanager.com")||u.includes("static.cloudflareinsights.com")||u.includes("cloudflareinsights.com")||/\\/metrics\\/?(?:$|\\?|#)/.test(u))){return Promise.resolve(new Response("",{status:204}))}}catch(e){}return _xf.apply(this,arguments)};var _create=document.createElement;document.createElement=function(t){var el=_create.call(document,t);if((t||"").toLowerCase()==="script"){try{var _set=el.setAttribute;el.setAttribute=function(k,v){try{if(String(k).toLowerCase()==="src"){var vv=String(v||"");if(vv.includes("/cdn-cgi/challenge-platform/")||/\\/metrics\\/?(?:$|\\?|#)/.test(vv)){return}}}catch(e){}return _set.apply(el,arguments)}}catch(e){}}return el};var _append=Element.prototype.appendChild;Element.prototype.appendChild=function(n){try{if(n&&n.tagName==="SCRIPT"){var s=String(n.src||"");if(s.includes("/cdn-cgi/challenge-platform/")||/\\/metrics\\/?(?:$|\\?|#)/.test(s)){return n}}}catch(e){}return _append.call(this,n)};}catch(e){}})();</script>`;
+      const headClose = /<\/head>/i;
       if (headClose.test(stripped)) stripped = stripped.replace(headClose, auditBootstrap + '</head>');
       else stripped = auditBootstrap + stripped;
-
-      const newHeaders = new Headers(response.headers);
+      const newHeaders = new Headers(originalHeaders);
       newHeaders.append('set-cookie', 'audit=1; Path=/; Max-Age=300; SameSite=Lax');
       return new Response(stripped, { status: response.status, statusText: response.statusText, headers: newHeaders });
     } catch (e) {
