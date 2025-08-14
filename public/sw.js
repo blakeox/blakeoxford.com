@@ -13,9 +13,7 @@ const STATIC_ASSETS = [
   '/blog/',
   '/assets/js/lazy-loader.min.js',
   '/assets/js/lazy-loader.min.js?v=2',
-  '/assets/js/performance-monitor.js',
-  '/assets/js/resource-preloader.js',
-  '/assets/js/pwa-enhancer.js',
+  '/assets/js/core-boot.js',
   '/assets/images/optimized/avif/Blake-O-scaled@320w.avif',
   '/manifest.webmanifest'
 ];

@@ -32,6 +32,15 @@ export default defineConfig({
   vite: {
     build: {
       minify: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            // Put all node_modules into a single vendor chunk
+            if (id.includes('node_modules')) return 'vendor';
+            return undefined;
+          }
+        }
+      }
     },
     plugins: [tailwindcss()],
     resolve: {

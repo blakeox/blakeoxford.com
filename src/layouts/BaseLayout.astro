@@ -136,9 +136,7 @@ try {
   <!-- Removed webfont loads to eliminate font-driven CLS; using system font stack in critical CSS -->
     <!-- Essential JavaScript Bundles (performance-optimized) -->
   <script is:inline src="/assets/js/lazy-loader.min.js?v=2" defer></script>
-  <script is:inline src="/assets/js/performance-monitor.js" async></script>
-  <script is:inline src="/assets/js/resource-preloader.js" async></script>
-  <script is:inline src="/assets/js/pwa-enhancer.js" async></script>
+  <script is:inline src="/assets/js/core-boot.js" async></script>
 
     <!-- Register Service Worker for offline functionality (skip during audits) -->
     <script is:inline>

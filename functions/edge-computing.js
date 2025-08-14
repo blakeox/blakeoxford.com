@@ -323,6 +323,29 @@ const WorkerApp = {
             const offlineHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0b1020;color:#e5e7eb}.card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.25)}h1{font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:#cbd5e1}a.btn{display:inline-block;background:#ffffff;color:#111827;font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}</style></head><body><div class="card"><h1>We\'re updating things</h1><p>Please try again in a moment. If this persists, contact me via LinkedIn below.</p><a class="btn" href="/">Go home</a></div></body></html>';
             return new Response(offlineHtml, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8' } });
           }
+          // Graceful fallbacks for non-HTML requests during transient failures
+          const pathname = url.pathname;
+          // API endpoints: return empty array/object to avoid UI hard-fail during outages
+          if (pathname.startsWith('/api/')) {
+            const empty = pathname.endsWith('.json') ? '[]' : '';
+            return new Response(empty, { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+          }
+          // Images: serve a lightweight placeholder if possible
+          if (/^\/assets\/images\//.test(pathname)) {
+            try {
+              const placeholderUrl = new URL('/assets/images/placeholder-avatar.webp', url.origin);
+              const placeholderReq = new Request(placeholderUrl.toString(), request);
+              const phRes = await env.ASSETS.fetch(placeholderReq);
+              if (phRes && phRes.ok) {
+                const headers = new Headers(phRes.headers);
+                headers.set('content-type', 'image/webp');
+                headers.set('cache-control', 'public, max-age=86400');
+                return new Response(phRes.body, { status: 200, headers });
+              }
+            } catch { /* ignore and fall through */ }
+            // As last resort, return 204 to prevent noisy console errors
+            return new Response(null, { status: 204 });
+          }
         }
         return originResponse;
       }

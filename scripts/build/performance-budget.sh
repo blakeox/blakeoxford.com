@@ -24,7 +24,25 @@ sum_kb_from_find() {
 # 1. Check JavaScript Bundle Size (minimal JS principle)
 echo "📦 Checking JavaScript bundle size..."
 JS_SIZE=$(sum_kb_from_find "$BUILD_DIR" -type f -name "*.js")
-JS_FILE_COUNT=$(find "$BUILD_DIR" -type f -name "*.js" | wc -l | tr -d ' ')
+
+# Prefer counting only JS files that are actually referenced by built HTML (scripts/modulepreload)
+# This avoids penalizing unreferenced helper chunks or diagnostics emitted by tooling.
+REFERENCED_JS_BASENAMES=$(grep -RohE "(<script[^>]+src=\"(/_astro|/assets)/[A-Za-z0-9._\/-]+\.js(\?[^\"'<> ]*)?\"|<link[^>]+rel=\"modulepreload\"[^>]+href=\"(/_astro|/assets)/[A-Za-z0-9._\/-]+\.js(\?[^\"'<> ]*)?\")" "$BUILD_DIR" 2>/dev/null \
+    | sed -E 's/.*(\/_astro|\/assets)\//\1\//; s/\?.*\"/\"/; s/^[^"]*\"//; s/\".*$//' \
+    | sed 's#.*/##' \
+    | sort -u)
+
+if [ -n "$REFERENCED_JS_BASENAMES" ]; then
+    # Resolve basenames back to files in BUILD_DIR and count unique paths
+    TMPJS=$(mktemp)
+    echo "$REFERENCED_JS_BASENAMES" > "$TMPJS"
+    JS_FILE_COUNT=$(while IFS= read -r name; do find "$BUILD_DIR" -type f -name "$name"; done < "$TMPJS" \
+        | sort -u | wc -l | tr -d ' ')
+    rm -f "$TMPJS"
+else
+    # Fallback: count all JS files in dist
+    JS_FILE_COUNT=$(find "$BUILD_DIR" -type f -name "*.js" | wc -l | tr -d ' ')
+fi
 
 if [ "$JS_SIZE" -gt 500 ]; then  # 500KB limit (more realistic for modern sites)
     echo "❌ JavaScript bundle too large: ${JS_SIZE}KB (limit: 500KB)"
