@@ -79,29 +79,6 @@
     "image": "~/assets/images/projects/openai-automated-audit.png"
   },
   {
-    "slug": "sage-intacct-integration-with-square-pos",
-    "title": "Sage Intacct Integration with Square POS",
-    "description": "Developed a comprehensive integration solution between Sage Intacct accounting software and Square POS system to automate financial data synchronization and streamline business operations.",
-    "publishedAt": "2024-03-10",
-    "tags": [
-      "API Integration",
-      "Sage Intacct",
-      "Square POS",
-      "Financial Systems",
-      "Automation"
-    ],
-    "featured": false,
-    "draft": false,
-    "technologies": [
-      "API Integration",
-      "Sage Intacct",
-      "Square POS",
-      "Financial Systems",
-      "Automation"
-    ],
-    "image": "~/assets/images/projects/square-sage-integration.png"
-  },
-  {
     "slug": "advancedmd-implementation",
     "title": "AdvancedMD Implementation & Evolution",
     "description": "Led the selection, implementation, and continuous enhancement of AdvancedMD, transforming paper workflows into a robust, data-driven EHR ecosystem with custom SQL tools.",

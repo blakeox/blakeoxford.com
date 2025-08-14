@@ -37,17 +37,7 @@ const projects = [
       draft: false
     }
   },
-  {
-    slug: 'sage-intacct-integration-with-square-pos',
-    data: {
-      title: 'Sage Intacct Integration with Square POS',
-      description: 'Developed a comprehensive integration solution between Sage Intacct accounting software and Square POS system to automate financial data synchronization and streamline business operations.',
-      date: new Date('2024-03-10T00:00:00.000Z'),
-      tags: ['API Integration', 'Sage Intacct', 'Square POS', 'Financial Systems', 'Automation'],
-            image: '~/assets/images/projects/square-sage-integration.png',
-      draft: false
-    }
-  },
+  
   {
     slug: 'advancedmd-implementation',
     data: {
