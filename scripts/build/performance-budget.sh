@@ -26,9 +26,9 @@ echo "📦 Checking JavaScript bundle size..."
 JS_SIZE=$(sum_kb_from_find "$BUILD_DIR" -type f -name "*.js")
 
 # Prefer counting only JS files that are actually referenced by built HTML (scripts/modulepreload)
-# This avoids penalizing unreferenced helper chunks or diagnostics emitted by tooling.
-REFERENCED_JS_BASENAMES=$(grep -RohE "(<script[^>]+src=\"(/_astro|/assets)/[A-Za-z0-9._\/-]+\.js(\?[^\"'<> ]*)?\"|<link[^>]+rel=\"modulepreload\"[^>]+href=\"(/_astro|/assets)/[A-Za-z0-9._\/-]+\.js(\?[^\"'<> ]*)?\")" "$BUILD_DIR" 2>/dev/null \
-    | sed -E 's/.*(\/_astro|\/assets)\//\1\//; s/\?.*\"/\"/; s/^[^"]*\"//; s/\".*$//' \
+# Supports both single and double quotes in attributes to avoid falling back to counting all JS files.
+REFERENCED_JS_BASENAMES=$(grep -RohE "(<script[^>]+src=['\"][^'\"]*(\/_astro|\/assets)\/[A-Za-z0-9._\/\-]+\.js[^'\"]*['\"]|<link[^>]+rel=['\"]modulepreload['\"][^>]+href=['\"][^'\"]*(\/_astro|\/assets)\/[A-Za-z0-9._\/\-]+\.js[^'\"]*['\"])" "$BUILD_DIR" 2>/dev/null \
+    | sed -E 's/.*(\/_astro|\/assets)\//\1\//; s/\.js.*/.js/' \
     | sed 's#.*/##' \
     | sort -u)
 
