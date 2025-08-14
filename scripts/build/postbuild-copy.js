@@ -19,6 +19,22 @@ try {
   console.log('Created dist/.assetsignore');
 } catch { /* noop */ }
 
+// Remove any test-only debug artifacts that should never ship
+try {
+  const testOnlyFiles = [
+    'search-debug-manual.js',
+  ];
+  for (const rel of testOnlyFiles) {
+    const p = join(dist, rel);
+    if (existsSync(p)) {
+      unlinkSync(p);
+      console.log(`Removed test-only artifact: dist/${rel}`);
+    }
+  }
+} catch {
+  // non-blocking cleanup
+}
+
 // Build a combined search index at dist/search/index.json for quality gate
 try {
   const searchDir = join(dist, 'search');
