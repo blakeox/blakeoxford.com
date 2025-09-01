@@ -223,7 +223,8 @@ export default [
       'dist/',
       'node_modules/',
       '.astro/',
-      'public/',
+  // Don't ignore public JS so we can lint SW and utility scripts
+  // 'public/',
       'coverage/',
       'playwright-report/',
       'test-results/',

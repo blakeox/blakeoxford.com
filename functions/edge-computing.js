@@ -112,6 +112,8 @@ class EdgePerformanceOptimizer {
         'img-src \'self\' data: https:',
         'connect-src \'self\'',
         'frame-src \'self\'',
+        'base-uri \'none\'',
+        'object-src \'none\'',
         'frame-ancestors \'none\'',
         'upgrade-insecure-requests',
         'manifest-src \'self\'',
@@ -124,6 +126,8 @@ class EdgePerformanceOptimizer {
       'img-src \'self\' data: https:',
       'connect-src \'self\' https://www.google-analytics.com https://stats.g.doubleclick.net https://challenges.cloudflare.com',
       'frame-src \'self\' https://challenges.cloudflare.com',
+      'base-uri \'none\'',
+      'object-src \'none\'',
       'frame-ancestors \'none\'',
       'upgrade-insecure-requests',
       'manifest-src \'self\'',
@@ -136,8 +140,12 @@ class EdgePerformanceOptimizer {
     headers.set('X-Content-Type-Options', 'nosniff');
     headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     headers.set('Permissions-Policy', 'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()');
-    headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    // Align HSTS with static headers policy (2 years)
+    headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
     headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+    // Strengthen cross-origin isolation hints
+    headers.set('Cross-Origin-Embedder-Policy', 'credentialless');
+    headers.set('Cross-Origin-Resource-Policy', 'same-site');
     headers.set('Origin-Agent-Cluster', '?1');
     headers.set('X-Permitted-Cross-Domain-Policies', 'none');
     return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
@@ -245,7 +253,7 @@ const WorkerApp = {
       return handleSendEmail({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
     }
 
-    // Back-compat asset rewrites
+    // Back-compat asset rewrite: maintain existing path if older HTML referenced it
     if (url.pathname === '/assets/js/lazy-loader.min.js' && !url.search) {
       try {
         const v2Url = new URL('/assets/js/lazy-loader.min.js?v=2', url.origin);
@@ -256,9 +264,9 @@ const WorkerApp = {
           headers.set('cache-control', 'public, max-age=300');
           return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
         }
-      } catch {
-        // ignore rewrite failures; fall through to default handling
-      }
+      } catch { /* fall through */ }
+      // If v2 is missing (e.g., inlined in templates), return 204 to avoid error spam
+      return new Response(null, { status: 204, headers: { 'cache-control': 'no-store' } });
     }
 
     // Image path remaps

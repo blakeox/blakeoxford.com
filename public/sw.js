@@ -10,11 +10,12 @@ const STATIC_ASSETS = [
   '/about/',
   '/projects/',
   '/contact/',
-  '/blog/',
+  '/blog',
   '/assets/js/lazy-loader.min.js',
   '/assets/js/lazy-loader.min.js?v=2',
   '/assets/js/core-boot.js',
-  '/assets/images/optimized/avif/Blake-O-scaled@320w.avif',
+  // Use a more generic placeholder that exists in repo
+  '/assets/images/placeholder-avatar.webp',
   '/manifest.webmanifest'
 ];
 
