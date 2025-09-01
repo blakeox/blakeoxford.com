@@ -52,5 +52,16 @@ Current interim structure will be migrated incrementally.
 
 - Increment thresholds by +5% once stable for two releases
 
+## Phase 1 Additions
+
+Implemented in this phase:
+
+- contracts/api/projects.contract.test.ts & blog.contract.test.ts (Zod validation of public JSON outputs)
+- integration/searchIndex.integration.test.ts (executes real generation script)
+- playwright/accessibility/axe-core.spec.ts (automated WCAG A/AA scan)
+- playwright/functional/navigation-search.journey.spec.ts (merged core nav + search actions)
+
+These lay groundwork for removing older redundant navigation/search specs in a later cleanup PR.
+
 ---
 This README will evolve with each phase. See project roadmap for full plan.
