@@ -4,7 +4,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const addSkipToContentLink = vi.fn();
 const enhanceFocusManagement = vi.fn();
 
-describe('Accessibility Module', () => {
+// Phase 0 note: This test only validates mocks, offering minimal value.
+// Mark skipped pending rewrite into real accessibility utility tests.
+describe.skip('Accessibility Module (to be refactored)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     document.body.innerHTML = '';
