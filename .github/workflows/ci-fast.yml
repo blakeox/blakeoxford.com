@@ -19,6 +19,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Flakiness thresholds (adjust as project stabilizes)
+  FLAKINESS_MAX_CURRENT_FLAKY: 0
+  FLAKINESS_MAX_RETRY_INTENSITY: 0.05
+  # Set to 1 later if you want absence of history to fail early
+  FLAKINESS_STRICT: ''
+
 jobs:
   # Quick validation that code builds and basic tests pass
   quick-validation:
@@ -226,11 +233,10 @@ jobs:
       - name: Enforce flakiness thresholds (optional)
         if: always()
         run: |
-          # Fail if any flaky tests (current) or retry intensity above 0.05 (can be adjusted per repo maturity)
           if [ -f flakiness-history.json ]; then
-            FLAKINESS_MAX_CURRENT_FLAKY=0 FLAKINESS_MAX_RETRY_INTENSITY=0.05 pnpm flakiness:check || exit 1
+            pnpm flakiness:check || exit 1
           else
-            echo "No flakiness history present; skipping enforcement"
+            echo "No flakiness history present; skipping flakiness:check"
           fi
 
       - name: Verify accessibility standards

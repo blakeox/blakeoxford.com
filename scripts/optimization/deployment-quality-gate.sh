@@ -223,6 +223,33 @@ run_deployment_checks() {
     fi
 }
 
+# Flakiness quality gate (optional)
+check_flakiness_gate() {
+    print_status $BLUE "🔁 Evaluating test flakiness gate..."
+    if [ -f "flakiness-history.json" ]; then
+        # Use thresholds from env or provide relaxed defaults
+        local max_flaky="${FLAKINESS_MAX_CURRENT_FLAKY:-0}" # default: zero flaky tests
+        local max_intensity="${FLAKINESS_MAX_RETRY_INTENSITY:-0.05}" # default: light tolerance
+        if command -v node >/dev/null 2>&1; then
+            if FLAKINESS_MAX_CURRENT_FLAKY="$max_flaky" FLAKINESS_MAX_RETRY_INTENSITY="$max_intensity" node scripts/quality/check-flakiness-threshold.js; then
+                print_status $GREEN "✅ Flakiness thresholds satisfied (flaky <= $max_flaky, intensity <= $max_intensity)"
+            else
+                print_status $RED "❌ Flakiness thresholds violated"
+                exit 1
+            fi
+        else
+            print_status $YELLOW "⚠️ Node not available to run flakiness gate"
+        fi
+    else
+        if [ -n "${FLAKINESS_STRICT:-}" ]; then
+            print_status $RED "❌ Flakiness history missing in strict mode"
+            exit 1
+        else
+            print_status $YELLOW "⚠️ No flakiness-history.json present; skipping flakiness gate"
+        fi
+    fi
+}
+
 # Main execution
 main() {
     print_status $BLUE "🚀 Starting Deployment Quality Gate..."
@@ -237,6 +264,7 @@ main() {
     run_lighthouse_gate
     check_performance_regression
     run_deployment_checks
+    check_flakiness_gate
     
     echo "======================================"
     print_status $GREEN "🎉 All quality gates passed! Ready for deployment."

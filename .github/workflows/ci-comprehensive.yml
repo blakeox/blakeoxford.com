@@ -21,6 +21,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Global flakiness thresholds (stricter for comprehensive runs)
+  FLAKINESS_MAX_CURRENT_FLAKY: 0
+  FLAKINESS_MAX_RETRY_INTENSITY: 0.03
+  FLAKINESS_STRICT: ''
+
 jobs:
   comprehensive-tests:
     name: Full Test Suite
@@ -224,10 +230,9 @@ jobs:
         if: always() && matrix.test-group == 'e2e'
         run: |
           if [ -f flakiness-history.json ]; then
-            # Slightly stricter in comprehensive run; allow 0 flaky tests, low retry intensity
-            FLAKINESS_MAX_CURRENT_FLAKY=0 FLAKINESS_MAX_RETRY_INTENSITY=0.03 pnpm flakiness:check || exit 1
+            pnpm flakiness:check || exit 1
           else
-            echo "No flakiness history found; skipping enforcement"
+            echo "No flakiness history found; skipping flakiness:check"
           fi
 
       - name: Upload performance reports
