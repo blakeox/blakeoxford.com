@@ -63,10 +63,31 @@ function summarizePerformance() {
     const loadSeries = routeHistory.map(r => r.load);
     const { slope, direction } = calcTrend(loadSeries);
     const pctSlope = loadSeries.length ? (slope / (loadSeries.reduce((a,b)=>a+b,0)/loadSeries.length)) * 100 : 0;
-    const emoji = direction === 'improving' ? '✅' : direction === 'regressing' ? '⚠️' : '➖';
+    // Classify severity (regression if upward; improvements negative slope)
+    // Thresholds (pctSlope is percent slope vs mean): >1.5% mild, >3% moderate, >5% severe
+    let classification = 'stable';
+    if (direction === 'regressing') {
+      const abs = pctSlope;
+      if (abs > 5) classification = 'severe-regression';
+      else if (abs > 3) classification = 'moderate-regression';
+      else if (abs > 1.5) classification = 'mild-regression';
+      else classification = 'noise';
+    } else if (direction === 'improving') {
+      classification = 'improving';
+    }
+    const emojiMap = {
+      'improving': '✅',
+      'noise': '➖',
+      'stable': '➖',
+      'mild-regression': '⚠️',
+      'moderate-regression': '🚨',
+      'severe-regression': '🛑'
+    };
+    const emoji = emojiMap[classification] || '➖';
     const sl = isFinite(pctSlope) ? pctSlope.toFixed(2) + '%' : 'n/a';
+    const note = classification !== 'stable' && classification !== 'noise' ? ` (${classification})` : '';
     const seriesSpark = sparkline(loadSeries);
-    lines.push(`- ${route}: load=${metrics.load}ms trend=${sl} ${emoji} ${seriesSpark}`);
+    lines.push(`- ${route}: load=${metrics.load}ms trend=${sl} ${emoji}${note} ${seriesSpark}`);
   }
   return lines.join('\n');
 }
