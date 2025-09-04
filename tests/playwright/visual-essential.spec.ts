@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { waitForIdle, waitForTheme, waitForLayoutStability, waitForCondition } from '../utils/waits';
 
 test.describe('Essential Visual Tests', () => {
   // Only test critical visual elements, not full page screenshots
   test('homepage key components should be visually stable @essential', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  await page.goto('/');
+  await waitForIdle(page);
     
     // Test specific components instead of full page
     const navigation = page.locator('nav#navbar');
@@ -24,9 +25,9 @@ test.describe('Essential Visual Tests', () => {
   });
 
   test('mobile layout should be stable @essential', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto('/');
+  await waitForIdle(page);
     
     // Check mobile navigation
     const burgerButton = page.locator('#nav-toggle');
@@ -40,8 +41,8 @@ test.describe('Essential Visual Tests', () => {
   });
 
   test('theme switching should maintain layout @smoke', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  await page.goto('/');
+  await waitForIdle(page);
     
     // Get initial layout
     const hero = page.locator('main h1').first();
@@ -56,15 +57,11 @@ test.describe('Essential Visual Tests', () => {
       
       // If PWA notifications are present, dismiss them first
       if (await pwaUpdateNotification.isVisible()) {
-        // Wait for auto-dismiss (PWA notifications auto-hide after 10 seconds)
-        await page.waitForTimeout(500);
-        // Try to dismiss by clicking outside or waiting for it to disappear
-        if (await pwaUpdateNotification.isVisible()) {
-          await page.waitForFunction(() => {
-            const notification = document.querySelector('.pwa-update-notification');
-            return !notification || notification.style.display === 'none';
-          }, { timeout: 12000 });
-        }
+        // Wait for auto-dismiss deterministically (poll for hidden)
+        await page.waitForFunction(() => {
+          const el = document.querySelector('.pwa-update-notification');
+          return !el || (window.getComputedStyle(el as HTMLElement).display === 'none' || (el as HTMLElement).style.opacity === '0');
+        }, { timeout: 12000 });
       }
       
       // If PWA install prompt is present, dismiss it
@@ -72,7 +69,8 @@ test.describe('Essential Visual Tests', () => {
         const closeBtn = pwaInstallBtn.locator('.pwa-install-close');
         if (await closeBtn.isVisible()) {
           await closeBtn.click();
-          await page.waitForTimeout(200);
+          // Wait until prompt gone
+          await waitForCondition(page, async () => !(await pwaInstallBtn.isVisible()), 2000, 50);
         }
       }
       
@@ -95,7 +93,10 @@ test.describe('Essential Visual Tests', () => {
         }
       }
       
-      await page.waitForTimeout(300); // Wait for theme transition
+  // Wait for theme attribute to change (toggle) and layout to stabilize
+  const initialTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+  await waitForTheme(page, initialTheme === 'dark' ? 'light' : 'dark');
+  await waitForLayoutStability(page, 2, 2000);
       
       // Check layout didn't shift significantly
       const afterBox = await hero.boundingBox();

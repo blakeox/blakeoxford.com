@@ -1,5 +1,6 @@
  
 import { test, expect } from '@playwright/test';
+import { waitForIdle, waitForSearchOverlay, waitForCondition } from '../utils/waits';
 
 interface ConsoleMessage {
   type: string;
@@ -10,10 +11,8 @@ interface ConsoleMessage {
 test.describe('SearchOverlay Comprehensive Diagnostics', () => {
   test('should diagnose all SearchOverlay issues comprehensively', async ({ page }) => {
     // Navigate to the homepage
-    await page.goto('/');
-
-    // Wait for the page to fully load
-    await page.waitForLoadState('networkidle');
+  await page.goto('/');
+  await waitForIdle(page);
 
     console.log('🔍 Starting comprehensive SearchOverlay diagnostics...');
 
@@ -87,7 +86,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
     // 5. Check console errors
     const consoleMessages: ConsoleMessage[] = [];
     page.on('console', msg => {
-      if (msg.type() === 'error' || msg.type() === 'warn') {
+      if (msg.type() === 'error' || msg.type() === 'warning') {
         consoleMessages.push({
           type: msg.type(),
           text: msg.text(),
@@ -96,8 +95,8 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
       }
     });
 
-    // Wait a bit for any async loading
-    await page.waitForTimeout(2000);
+  // Allow lazy bundles a chance to register (poll for searchOverlay or LazyBundleLoader presence)
+  await waitForCondition(page, () => page.evaluate(() => !!(window as any).searchOverlay || !!(window as any).LazyBundleLoader), 2000, 100);
 
     // 6. Try to trigger search overlay via JavaScript
     const jsActivation = await page.evaluate(() => {
@@ -133,8 +132,9 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
     console.log('7. Visibility After JS:', visibilityAfterJS);
 
     // 8. Try keyboard shortcut activation
-    await page.keyboard.press('Control+k');
-    await page.waitForTimeout(500);
+  await page.keyboard.press('Control+k');
+  // Wait for overlay to become active if possible
+  await waitForSearchOverlay(page).catch(() => {});
 
     const visibilityAfterKeyboard = await page.evaluate(() => {
       const overlay = document.getElementById('search-overlay');
