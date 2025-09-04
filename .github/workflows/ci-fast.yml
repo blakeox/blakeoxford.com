@@ -223,6 +223,16 @@ jobs:
           path: flakiness-history.json
           retention-days: 14
 
+      - name: Enforce flakiness thresholds (optional)
+        if: always()
+        run: |
+          # Fail if any flaky tests (current) or retry intensity above 0.05 (can be adjusted per repo maturity)
+          if [ -f flakiness-history.json ]; then
+            FLAKINESS_MAX_CURRENT_FLAKY=0 FLAKINESS_MAX_RETRY_INTENSITY=0.05 pnpm flakiness:check || exit 1
+          else
+            echo "No flakiness history present; skipping enforcement"
+          fi
+
       - name: Verify accessibility standards
         run: |
           echo "♿ Checking accessibility compliance..."

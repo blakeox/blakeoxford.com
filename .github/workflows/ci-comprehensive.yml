@@ -220,6 +220,16 @@ jobs:
           path: flakiness-history.json
           retention-days: 30
 
+      - name: Enforce flakiness thresholds (E2E)
+        if: always() && matrix.test-group == 'e2e'
+        run: |
+          if [ -f flakiness-history.json ]; then
+            # Slightly stricter in comprehensive run; allow 0 flaky tests, low retry intensity
+            FLAKINESS_MAX_CURRENT_FLAKY=0 FLAKINESS_MAX_RETRY_INTENSITY=0.03 pnpm flakiness:check || exit 1
+          else
+            echo "No flakiness history found; skipping enforcement"
+          fi
+
       - name: Upload performance reports
         if: always() && matrix.test-group == 'performance'
         uses: actions/upload-artifact@v4
