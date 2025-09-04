@@ -16,6 +16,7 @@ const mutationHistoryPath = path.join(root, 'mutation-history.json');
 const mutationReportSummaryPath = path.join(root, 'mutation-report', 'report.json'); // primary Stryker json
 const mutationAltPath = path.join(root, 'reports', 'mutation', 'report.json'); // fallback
 const mutationBaselineFile = path.join(root, '.mutation-baseline.json');
+const flakinessHistoryPath = path.join(root, 'flakiness-history.json');
 
 function loadJSON(p) { return JSON.parse(fs.readFileSync(p, 'utf-8')); }
 
@@ -105,6 +106,53 @@ function summarizeMutationHistory() {
   } catch { return null; }
 }
 
+function summarizeFlakiness() {
+  if (!fs.existsSync(flakinessHistoryPath)) return null;
+  try {
+    const hist = loadJSON(flakinessHistoryPath);
+    if (!Array.isArray(hist) || !hist.length) return null;
+    // Aggregate by recent N runs (based on lastRun timestamp ordering descending)
+    const sorted = [...hist].sort((a,b)=> (a.lastRun||'').localeCompare(b.lastRun||''));
+    // We'll derive per-run aggregates by grouping entries with identical lastRun timestamps – but tracker overwrites per test each run.
+    // Instead compute rolling metrics from test-level cumulative stats.
+    const totalTests = sorted.length;
+    const flakyNow = sorted.filter(t => t.flaky).length;
+    const failedNow = sorted.filter(t => t.failed).length;
+    const avgRetriesPerRun = sorted.reduce((a,t)=> a + (t.totalRetries || 0),0) / (sorted.reduce((a,t)=> a + (t.runs || 1),0) || 1);
+    // Build a mini-series representing relative retry intensity: use totalRetries/runs for each test and take last 12 highest to show pressure.
+    const intensitySeries = sorted.map(t => (t.totalRetries || 0)/(t.runs || 1)).sort((a,b)=> b-a).slice(0,12).reverse();
+    const { slope, direction } = calcTrend(intensitySeries);
+    const pctSlope = intensitySeries.length ? (slope / ((intensitySeries.reduce((a,b)=>a+b,0)/intensitySeries.length)||1)) * 100 : 0;
+    let classification = 'stable';
+    if (direction === 'regressing') { // more retries over time
+      if (pctSlope > 25) classification = 'severe-increase';
+      else if (pctSlope > 15) classification = 'moderate-increase';
+      else if (pctSlope > 5) classification = 'mild-increase';
+      else classification = 'noise';
+    } else if (direction === 'improving') {
+      classification = 'improving';
+    }
+    const emojiMap = {
+      'improving': '✅',
+      'noise': '➖',
+      'stable': '➖',
+      'mild-increase': '⚠️',
+      'moderate-increase': '🚨',
+      'severe-increase': '🛑'
+    };
+    const emoji = emojiMap[classification] || '➖';
+    const series = sparkline(intensitySeries);
+    const topFlaky = sorted.filter(t => t.flaky).sort((a,b)=> (b.totalRetries||0)-(a.totalRetries||0)).slice(0,5)
+      .map(t => `  - ${t.id} (retries:${t.totalRetries||0}/runs:${t.runs||1})`).join('\n');
+    const lines = ['### Flakiness', '', `- Tracked tests: ${totalTests}`, `- Currently flaky (last run): ${flakyNow}`, `- Currently failed (last run): ${failedNow}`, `- Avg retries per test-run (cumulative): ${avgRetriesPerRun.toFixed(2)}`, `- Retry intensity trend: ${isFinite(pctSlope)?pctSlope.toFixed(2)+'%':'n/a'} ${emoji} (${classification}) ${series}`];
+    if (topFlaky) {
+      lines.push('- Top flaky tests:', topFlaky);
+    }
+    lines.push('');
+    return lines.join('\n');
+  } catch { return null; }
+}
+
 function main() {
   const parts = ['# Quality Summary', '', `Generated: ${new Date().toISOString()}`, ''];
   const perf = summarizePerformance();
@@ -145,6 +193,8 @@ function main() {
     }
   }
   if (!diffs.length) parts.push('### API Diff Reports', '', '_No API baseline changes detected._', '');
+  const flakiness = summarizeFlakiness();
+  if (flakiness) parts.push(flakiness);
   const output = parts.join('\n');
   fs.writeFileSync(path.join(root, 'quality-summary.md'), output);
   process.stdout.write(output + '\n');

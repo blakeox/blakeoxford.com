@@ -73,6 +73,7 @@
   "audit:contrast": "node scripts/quality/contrast-token-audit.js",
   "test:mutants": "stryker run || true",
   "flakiness:track": "node scripts/quality/flakiness-tracker.js",
+  "flakiness:check": "node scripts/quality/check-flakiness-threshold.js",
   "mutation:check": "node scripts/quality/mutation-threshold-check.js",
   "mutation:history:log": "node scripts/quality/mutation-history-log.js",
   "clean": "(rm -rf dist .astro node_modules/.cache coverage test-results lighthouse-reports optimization-reports || true) && sleep 0.1 && (rm -rf dist .astro node_modules/.cache coverage test-results lighthouse-reports optimization-reports || true)",
