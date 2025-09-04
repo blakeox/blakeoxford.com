@@ -53,7 +53,14 @@ function main() {
       const killed = mr.killed || mr.metrics?.killed || 0;
       const total = mr.totalMutants || mr.metrics?.total || 0;
       const score = mr.mutationScore ?? mr.metrics?.mutationScore ?? (total ? (killed/total*100).toFixed(2) : '0');
-      parts.push('### Mutation Testing', '', `- Mutation Score: ${score}% (${killed}/${total} killed)`, '');
+      let section = ['### Mutation Testing', '', `- Mutation Score: ${score}% (${killed}/${total} killed)`];
+      const min = process.env.MUTATION_MIN_SCORE ? parseFloat(process.env.MUTATION_MIN_SCORE) : null;
+      if (min !== null && !Number.isNaN(min)) {
+        const status = parseFloat(score) >= min ? '✅ Meets' : '⚠️ Below';
+        section.push(`- Threshold (${min}%): ${status}`);
+      }
+      section.push('');
+      parts.push(...section);
     } catch {
       parts.push('### Mutation Testing', '', '_Mutation report unreadable_', '');
     }
