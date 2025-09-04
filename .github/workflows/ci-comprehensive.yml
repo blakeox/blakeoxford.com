@@ -208,6 +208,18 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
+      - name: Track flakiness (JSON)
+        if: always() && matrix.test-group == 'e2e'
+        run: pnpm flakiness:track || true
+
+      - name: Upload flakiness history
+        if: always() && matrix.test-group == 'e2e'
+        uses: actions/upload-artifact@v4
+        with:
+          name: flakiness-history-${{ github.sha }}
+          path: flakiness-history.json
+          retention-days: 30
+
       - name: Upload performance reports
         if: always() && matrix.test-group == 'performance'
         uses: actions/upload-artifact@v4

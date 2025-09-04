@@ -42,7 +42,9 @@ export default defineConfig({
     ['html', { outputFolder: 'playwright-report' }], 
     ['line'],
     // Add JUnit reporter for CI systems
-    ['junit', { outputFile: 'test-results/junit.xml' }]
+  ['junit', { outputFile: 'test-results/junit.xml' }],
+  // JSON reporter for flakiness tracking consumption
+  ['json', { outputFile: 'playwright-report/test-results.json' }]
   ],
   use: {
   baseURL: 'http://localhost:4330',

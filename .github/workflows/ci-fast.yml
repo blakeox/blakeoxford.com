@@ -211,6 +211,18 @@ jobs:
         env:
           COMPREHENSIVE_TESTS: "false"
 
+      - name: Track flakiness (Playwright JSON)
+        if: always()
+        run: pnpm flakiness:track || true
+
+      - name: Upload flakiness history
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flakiness-history
+          path: flakiness-history.json
+          retention-days: 14
+
       - name: Verify accessibility standards
         run: |
           echo "♿ Checking accessibility compliance..."
