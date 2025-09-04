@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 // DEPRECATED: Covered by functional/navigation-search.journey.spec.ts and other focused specs.
 // Will be removed after stabilization.
-import { waitForIdle } from '../utils/waits';
+import { waitForIdle, waitForSearchOverlay, waitForSearchResults, waitForSearchResultItem } from '../utils/waits';
 test.describe.skip('Deprecated basic.spec.ts', () => {
 // ...existing code...
 
@@ -36,79 +36,43 @@ test.describe('Search functionality', () => {
   
   test('should close search overlay with escape key', async ({ page }) => {
     await page.goto('/');
-    
-    // Wait for search script to load
-    await page.waitForTimeout(1000);
-    
-    // Open search overlay
+    await waitForIdle(page);
     await page.keyboard.press('Control+k');
-    const searchOverlay = page.locator('#search-overlay');
-    await expect(searchOverlay).toBeVisible({ timeout: 3000 });
-    
-    // Close with escape key
+    const searchOverlay = await waitForSearchOverlay(page);
+    await expect(searchOverlay).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(searchOverlay).not.toBeVisible();
   });
 
   test('should perform search and show results', async ({ page }) => {
     await page.goto('/');
-    
-    // Wait for search script to load
-    await page.waitForTimeout(1000);
-    
-    // Open search overlay
+    await waitForIdle(page);
     await page.keyboard.press('Control+k');
-    const searchOverlay = page.locator('#search-overlay');
-    await expect(searchOverlay).toBeVisible({ timeout: 3000 });
-    
-    // Type search query
+    const searchOverlay = await waitForSearchOverlay(page);
+    await expect(searchOverlay).toBeVisible();
     const searchInput = page.locator('#search-input');
     await searchInput.fill('project');
-    
-    // Wait for search results
-    await page.waitForTimeout(500);
-    
-    // Check if results are displayed - results container should exist
-    const searchResults = page.locator('#search-results');
-    await expect(searchResults).toBeAttached();
-    
-    // This test verifies the search functionality doesn't crash
+    await waitForSearchResults(page);
     await expect(searchInput).toHaveValue('project');
   });
 
   test('should navigate using search results', async ({ page }) => {
     await page.goto('/');
-    
-    // Wait for search script to load
-    await page.waitForTimeout(1000);
-    
-    // Open search overlay
+    await waitForIdle(page);
     await page.keyboard.press('Control+k');
-    const searchOverlay = page.locator('#search-overlay');
-    await expect(searchOverlay).toBeVisible({ timeout: 3000 });
-    
-    // Search for 'about'
+    const searchOverlay = await waitForSearchOverlay(page);
+    await expect(searchOverlay).toBeVisible();
     const searchInput = page.locator('#search-input');
     await searchInput.fill('about');
-    
-    // Wait for potential results
-    await page.waitForTimeout(500);
-    
-    // Look for search result items
-    const resultItems = page.locator('.search-result-item');
-    const resultCount = await resultItems.count();
-    
-    if (resultCount > 0) {
-      // Click first result
-      await resultItems.first().click();
-      
-      // Should navigate to result page
+    const firstResult = await waitForSearchResultItem(page);
+    if (await firstResult.isVisible()) {
+      await Promise.all([
+        page.waitForLoadState('domcontentloaded'),
+        firstResult.click()
+      ]);
       await expect(page.locator('main').first()).toBeVisible();
     } else {
-      // If no results, verify search still functions
       await expect(searchInput).toHaveValue('about');
-      
-      // Close search
       await page.keyboard.press('Escape');
       await expect(searchOverlay).not.toBeVisible();
     }
