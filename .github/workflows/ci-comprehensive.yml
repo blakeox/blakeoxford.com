@@ -103,9 +103,9 @@ jobs:
         run: pnpm test:mutants
         continue-on-error: true
 
-      - name: Mutation score threshold check (soft)
+      - name: Mutation score threshold check (hard)
         if: matrix.test-group == 'unit'
-  run: MUTATION_MIN_SCORE=60 pnpm mutation:check || true # set MUTATION_HARD_FAIL=1 for enforcement later
+        run: MUTATION_MIN_SCORE=60 MUTATION_HARD_FAIL=1 pnpm mutation:check # raise MUTATION_MIN_SCORE (e.g. 75) as baseline improves
 
       - name: Upload mutation report
         if: always() && matrix.test-group == 'unit'
@@ -114,6 +114,22 @@ jobs:
           name: mutation-report-${{ github.sha }}
           path: mutation-report
           retention-days: 14
+
+      - name: Update mutation baseline (ratchet)
+        if: github.ref == 'refs/heads/main' && matrix.test-group == 'unit' && success()
+        run: |
+          echo "🔧 Running ratchet-only baseline update (no threshold enforcement)"
+          MUTATION_RATCHET_ONLY=1 MUTATION_UPDATE_BASELINE=1 pnpm mutation:check || true
+          if git diff --quiet .mutation-baseline.json; then
+            echo "Baseline unchanged; no commit required"
+          else
+            echo "Baseline improved; committing update"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .mutation-baseline.json
+            git commit -m "chore(ci): ratchet mutation baseline [skip ci]" || true
+            git push || echo "⚠️ Push failed (possibly due to race); safe to ignore"
+          fi
 
       - name: Contrast token audit
         if: matrix.test-group == 'unit'

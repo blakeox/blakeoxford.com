@@ -167,7 +167,7 @@ Progressive multi-phase modernization delivers layered quality gates:
 - Search & Fuzzing: Substring fuzz tests to ensure resilient indexing.
 - Reporting: `scripts/quality/generate-quality-summary.js` aggregates performance deltas & API diffs into a single review artifact.
 - Color Token Audit: `scripts/quality/contrast-token-audit.js` warns on low-contrast Tailwind tokens (light theme assumption).
-- Upcoming (Planned): Targeted mutation testing (see `MUTATION_TESTING_PLAN.md`).
+- Mutation Testing: Targeted Stryker suite (core utility & performance logic). Fast CI: non-blocking with badge. Comprehensive CI: hard-gated at 60% (`MUTATION_MIN_SCORE`), baseline ratchet auto-updates on `main` only when improved.
 
 Environment Flags:
 
@@ -175,6 +175,10 @@ Environment Flags:
 - `UPDATE_PERF_BASELINES=1` updates performance baselines only when metrics improve.
 - `PERF_HISTORY=1` records longitudinal performance JSON history enabling drift analysis.
 - `PERF_TREND_STRICT=1` causes trend regression test to fail (not just warn) on adverse slope & delta.
+- `MUTATION_MIN_SCORE` minimum required score (hard gate in comprehensive workflow).
+- `MUTATION_HARD_FAIL=1` enable threshold enforcement (active in comprehensive).
+- `MUTATION_UPDATE_BASELINE=1` allow baseline file to update when improved.
+- `MUTATION_RATCHET_ONLY=1` run baseline update logic without enforcing threshold (used post-gate commit on main).
 
 These layers create early, low-noise detection for regressions across functionality, performance, accessibility, and UI fidelity while keeping runtime lean.
 
