@@ -63,6 +63,8 @@ Implemented in this phase:
 
 These lay groundwork for removing older redundant navigation/search specs in a later cleanup PR.
 
+> Note: Deterministic wait utilities originally listed as a Phase 1 goal were intentionally deferred for stability and landed at the start of Phase 2 (`tests/utils/waits.ts`). This avoids retrofitting brittle legacy specs mid‑phase and ensured the helper design reflected early lessons from the merged navigation/search journey.
+
 ### Deprecations
 
 The following legacy specs are now skipped pending removal:
