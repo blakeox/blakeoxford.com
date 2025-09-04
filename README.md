@@ -156,6 +156,34 @@ npx serve dist/
 
 ---
 
+## 🧪 Test Architecture (Phase 6 Overview)
+
+Progressive multi-phase modernization delivers layered quality gates:
+
+- Contract & Schema: Zod-backed API snapshot tests with markdown diff reports.
+- Accessibility: Axe baseline, keyboard navigation, contrast ratio heuristic.
+- Performance: Budgets, baseline improvements auto-update, historical trend test (linear regression) with optional strict mode via `PERF_TREND_STRICT=1`.
+- Visual Regression: Segmented full-page groups (content vs app) plus granular component snapshots (navbar, footer, search overlay) with tuned diff thresholds.
+- Search & Fuzzing: Substring fuzz tests to ensure resilient indexing.
+- Reporting: `scripts/quality/generate-quality-summary.js` aggregates performance deltas & API diffs into a single review artifact.
+- Color Token Audit: `scripts/quality/contrast-token-audit.js` warns on low-contrast Tailwind tokens (light theme assumption).
+- Mutation Testing: Targeted Stryker suite (core utility & performance logic). Fast CI: non-blocking with badge. Comprehensive CI: hard-gated at 60% (`MUTATION_MIN_SCORE`), baseline ratchet auto-updates on `main` only when improved.
+
+Environment Flags:
+
+- `UPDATE_API_BASELINES=1` auto-refreshes API snapshots (writes diff markdown).
+- `UPDATE_PERF_BASELINES=1` updates performance baselines only when metrics improve.
+- `PERF_HISTORY=1` records longitudinal performance JSON history enabling drift analysis.
+- `PERF_TREND_STRICT=1` causes trend regression test to fail (not just warn) on adverse slope & delta.
+- `MUTATION_MIN_SCORE` minimum required score (hard gate in comprehensive workflow).
+- `MUTATION_HARD_FAIL=1` enable threshold enforcement (active in comprehensive).
+- `MUTATION_UPDATE_BASELINE=1` allow baseline file to update when improved.
+- `MUTATION_RATCHET_ONLY=1` run baseline update logic without enforcing threshold (used post-gate commit on main).
+
+These layers create early, low-noise detection for regressions across functionality, performance, accessibility, and UI fidelity while keeping runtime lean.
+
+---
+
 ## 📡 RSS Feed
 
 Your blog RSS feed is available at `/rss.xml`. Subscribe here:

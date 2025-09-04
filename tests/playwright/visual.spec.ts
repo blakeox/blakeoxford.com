@@ -6,6 +6,8 @@ import {
   disableAnimationsComprehensive, 
   waitForStability 
 } from './utils/test-helpers';
+// DEPRECATED: Replaced by visual-routes.spec.ts consolidated coverage.
+test.describe.skip('Deprecated visual.spec.ts', () => {
 
 async function disableAnimations(page: Page): Promise<void> {
   try {
@@ -90,3 +92,4 @@ for (const page of pages) {
     }
   });
 }
+});

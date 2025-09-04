@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+// DEPRECATED: Routes covered by navigation-search.journey.spec.ts & visual-routes.spec.ts
+test.describe.skip('Deprecated pages.spec.ts', () => {
+// ...existing code...
 
 // Blog pages
 test.describe('Blog pages', () => {
@@ -18,6 +21,7 @@ test.describe('Blog pages', () => {
     await expect(page.locator('article.prose')).toBeVisible();
   });
 });
+}); // end deprecated wrapper
 
 // Projects pages
 test.describe('Projects pages', () => {

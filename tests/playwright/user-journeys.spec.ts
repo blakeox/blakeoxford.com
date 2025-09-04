@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+// DEPRECATED: Replaced by focused journey specs.
+test.describe.skip('Deprecated user-journeys.spec.ts', () => {
+// ...existing code...
 
 test.describe('User Journey Tests', () => {
   test.describe('First-time Visitor Journey', () => {
@@ -388,3 +391,4 @@ test.describe('User Journey Tests', () => {
     });
   });
 });
+}); // end deprecated wrapper

@@ -48,7 +48,9 @@ import fs from 'fs';
 import path from 'path';
 
 // Only test harness - no actual code calls
-describe('generate-search-index helpers', () => {
+// Phase 0 note: This suite tests only inlined mock functions mirroring implementation.
+// It will be replaced by an integration test executing the real script against fixtures.
+describe.skip('generate-search-index helpers (to be replaced with integration test)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

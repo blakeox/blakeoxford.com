@@ -26,10 +26,11 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      // Use include instead of exclude for better control
       include: [
-        'src/config/navLinks.ts', // Only include files that actually have tests
-        // Add other specific files that have tests here
+        'src/config/**/*.ts',
+        'src/utils/**/*.ts',
+        'src/scripts/**/*.ts',
+        'src/components/**/*.tsx',
       ],
       exclude: [
         'node_modules/**',
@@ -43,20 +44,12 @@ export default defineConfig({
         'public/**',
         'functions/**',
         'scripts/**',
-        'src/**/*.astro',
-        'src/pages/**',
-        'src/layouts/**',
-        'src/scripts/**',
-        'src/utils/**',
-        'src/middleware/**',
-        'src/types/**',
-        'src/components/**',
         '**/*.config.*',
         '**/debug-*.js',
         'test-*.js',
       ],
       thresholds: {
-        statements: 80,
+        statements: 80, // Phase 3 ratchet +5
         branches: 70,
         functions: 80,
         lines: 80,

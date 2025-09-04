@@ -11,7 +11,7 @@ import { test, expect } from '@playwright/test';
  * - form-accessibility.spec.ts
  */
 
-test.describe('Core Accessibility Tests', () => {
+test.describe('@essential @smoke Core Accessibility Tests', () => {
   test('homepage should be accessible', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
