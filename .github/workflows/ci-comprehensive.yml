@@ -98,6 +98,35 @@ jobs:
         if: matrix.test-group == 'unit'
         run: pnpm run test:coverage
 
+      - name: Run mutation tests (non-blocking)
+        if: matrix.test-group == 'unit'
+        run: pnpm test:mutants
+        continue-on-error: true
+
+      - name: Upload mutation report
+        if: always() && matrix.test-group == 'unit'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report-${{ github.sha }}
+          path: mutation-report
+          retention-days: 14
+
+      - name: Contrast token audit
+        if: matrix.test-group == 'unit'
+        run: pnpm audit:contrast # fails only if low-contrast tokens used
+
+      - name: Generate quality summary
+        if: matrix.test-group == 'unit'
+        run: pnpm quality:summary || true # non-blocking
+
+      - name: Upload quality summary
+        if: always() && matrix.test-group == 'unit'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-summary-${{ github.sha }}
+          path: quality-summary.md
+          retention-days: 30
+
       - name: Run E2E tests (optimized, Chromium only on Linux)
         if: matrix.test-group == 'e2e'
         run: |
