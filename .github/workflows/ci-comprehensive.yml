@@ -135,6 +135,10 @@ jobs:
         if: matrix.test-group == 'unit'
         run: pnpm audit:contrast # fails only if low-contrast tokens used
 
+      - name: Log mutation history
+        if: matrix.test-group == 'unit'
+        run: pnpm mutation:history:log || true
+
       - name: Generate quality summary
         if: matrix.test-group == 'unit'
         run: pnpm quality:summary || true # non-blocking
