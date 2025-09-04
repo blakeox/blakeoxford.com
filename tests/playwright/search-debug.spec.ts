@@ -9,6 +9,7 @@ declare global {
   }
 }
 
+// @debug
 test.describe('SearchOverlay Debug', () => {
   test('should debug SearchOverlay loading with manual script', async ({ page }) => {
     // Inject our debug script (test-only asset)

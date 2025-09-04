@@ -1,0 +1,62 @@
+#!/usr/bin/env node
+/**
+ * Lightweight flakiness tracker.
+ * Appends or updates entries in flakiness-history.json recording retry counts and failures.
+ * Intended to be called after a Playwright run where results JSON is available.
+ * Non-blocking: never throws hard.
+ */
+import fs from 'fs';
+import path from 'path';
+
+const root = path.resolve(process.cwd());
+const historyFile = path.join(root, 'flakiness-history.json');
+const pwReport = process.env.PW_JSON_REPORT || path.join(root, 'playwright-report', 'test-results.json');
+
+function loadJSONSafe(p, fallback) {
+  try { return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf-8')) : fallback; } catch { return fallback; }
+}
+
+function saveJSON(p, data) { fs.writeFileSync(p, JSON.stringify(data, null, 2)); }
+
+function normalizeTestId(titlePathArr) {
+  return titlePathArr.join(' > ');
+}
+
+function main() {
+  const history = loadJSONSafe(historyFile, []);
+  const index = new Map(history.map((h, i) => [h.id, i]));
+  const report = loadJSONSafe(pwReport, null);
+  if (!report || !report.suites) {
+    console.warn('[flakiness] No Playwright JSON report found, skipping');
+    return;
+  }
+  const now = new Date().toISOString();
+  const updates = [];
+  function walkSuite(suite) {
+    for (const spec of suite.specs || []) {
+      for (const test of spec.tests || []) {
+        const id = normalizeTestId(test.titlePath || []);
+        const retries = test.results?.length ? test.results.length - 1 : 0; // initial + retries
+        const failed = test.results?.some(r => r.status === 'failed') || false;
+        const flaky = retries > 0 && !failed;
+        const entry = { id, lastRun: now, retries, failed, flaky };
+        if (index.has(id)) {
+          const i = index.get(id);
+          const existing = history[i];
+          history[i] = { ...existing, ...entry, runs: (existing.runs || 0) + 1, totalRetries: (existing.totalRetries || 0) + retries, failures: (existing.failures || 0) + (failed ? 1 : 0) };
+        } else {
+          history.push({ ...entry, runs: 1, totalRetries: retries, failures: failed ? 1 : 0 });
+        }
+        updates.push(entry);
+      }
+    }
+    for (const child of suite.suites || []) walkSuite(child);
+  }
+  for (const s of report.suites) walkSuite(s);
+  // Cap history length (just safety)
+  if (history.length > 5000) history.splice(0, history.length - 5000);
+  saveJSON(historyFile, history);
+  console.log(`[flakiness] Updated ${updates.length} tests. Total tracked: ${history.length}`);
+}
+
+main();

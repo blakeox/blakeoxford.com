@@ -28,6 +28,8 @@ export default defineConfig({
     '**/pages.spec.ts', // Inconsistent performance
     '**/user-journeys.spec.ts', // Some slow tests
   ],
+  // Exclude debug-tagged specs (marked with // @debug) from default runs; can be included manually via CLI pattern
+  grepInvert: /@debug/,
   timeout: 30 * 1000, // Reduced timeout for faster failure detection
   expect: {
     timeout: 5000 // Reduced expect timeout for faster feedback
