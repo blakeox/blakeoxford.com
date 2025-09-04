@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { waitForIdle } from '../../utils/waits';
 
 test.describe('Keyboard Navigation Tests', () => {
   test('should support comprehensive keyboard navigation patterns', async ({ page, browserName }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  await page.goto('/');
+  await waitForIdle(page);
     
     // Get all focusable elements
     const focusableElements = await page.locator(
@@ -30,21 +31,15 @@ test.describe('Keyboard Navigation Tests', () => {
     const maxTabs = browserName === 'webkit' ? 3 : 5; // WebKit has focus detection issues
     for (let i = 0; i < Math.min(maxTabs, focusableElements.length); i++) {
       await page.keyboard.press('Tab');
-      
-      if (browserName === 'webkit') {
-        // For WebKit, just wait a moment and check that we can continue
-        await page.waitForTimeout(100);
-        // Skip the strict focus check that WebKit has trouble with
-      } else {
-        const focused = page.locator(':focus');
-        await expect(focused).toBeVisible();
+      if (browserName !== 'webkit') {
+        await expect(page.locator(':focus')).toBeVisible();
       }
     }
   });
 
   test('should handle skip links properly', async ({ page, browserName }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  await page.goto('/');
+  await waitForIdle(page);
     
     // Test skip link functionality with browser-specific handling
     // Ensure skip link exists
@@ -52,16 +47,11 @@ test.describe('Keyboard Navigation Tests', () => {
     await expect(skipLink).toHaveCount(1);
 
     if (browserName === 'webkit') {
-      // WebKit: Programmatically focus the skip link to trigger visibility
       await skipLink.evaluate(el => (el as HTMLElement).focus());
-      await page.waitForTimeout(50); // allow focus-visible styles to apply
       await expect(skipLink).toBeVisible();
-      // Don't assert focus state strictly on WebKit due to known quirks
     } else {
-      // Non-WebKit: Tab into the document and expect the skip link to receive focus
       await page.evaluate(() => document.body.focus());
       await page.keyboard.press('Tab');
-      await page.waitForTimeout(100); // allow focus-visible styles to apply
       await expect(skipLink).toBeVisible();
       await expect(skipLink).toBeFocused();
     }
@@ -80,8 +70,8 @@ test.describe('Keyboard Navigation Tests', () => {
   });
 
   test('should handle escape key for modal dialogs', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  await page.goto('/');
+  await waitForIdle(page);
     
     // Look for elements that can open dialogs - use more specific selectors
     const searchButton = page.locator('#search-toggle, button[aria-label*="search"]').first();
@@ -90,7 +80,6 @@ test.describe('Keyboard Navigation Tests', () => {
     // Test search overlay if exists
     if (await searchButton.isVisible()) {
       await searchButton.click();
-      await page.waitForTimeout(500); // Give dialog time to open
       
       const searchOverlay = page.locator('#search-overlay, .search-overlay').first();
       if (await searchOverlay.isVisible()) {
@@ -107,7 +96,6 @@ test.describe('Keyboard Navigation Tests', () => {
     
     if (await mobileMenuButton.isVisible()) {
       await mobileMenuButton.click();
-      await page.waitForTimeout(500); // Give dialog time to open
       
       // Use comprehensive selector strategy for mobile menu
       const mobileMenu = page.locator('#nav-mobile-links, .mobile-menu, [role="dialog"][aria-label*="Mobile"], [role="dialog"][aria-modal="true"]').first();
@@ -126,7 +114,6 @@ test.describe('Keyboard Navigation Tests', () => {
       
       if (isMenuVisible) {
         await page.keyboard.press('Escape');
-        await page.waitForTimeout(500); // Wait for event handling
         
         // Verify menu is closed by checking active class removal or visibility change
         const isMenuClosed = await mobileMenu.evaluate(el => {
@@ -138,7 +125,7 @@ test.describe('Keyboard Navigation Tests', () => {
         });
         
         expect(isMenuClosed).toBe(true);
-      } else {
+        // Removed explicit waitForTimeout call
         console.warn('Mobile menu found but not visible - skipping escape test');
         
         // Log debug info for troubleshooting
