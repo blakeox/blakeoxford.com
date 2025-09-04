@@ -85,6 +85,10 @@ jobs:
         run: pnpm test:mutants
         continue-on-error: true
 
+      - name: Log mutation history (main repo only)
+        if: github.repository_owner == 'blakeox'
+        run: pnpm mutation:history:log || true
+
       - name: Generate quality summary
         run: pnpm quality:summary || true # summary generation should never fail pipeline
 
