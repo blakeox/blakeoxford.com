@@ -14,6 +14,7 @@ const perfBaselinePath = path.join(root, 'tests/performance/baselines.json');
 const perfHistoryPath = path.join(root, 'tests/performance/baselines-history.json');
 const mutationReportSummaryPath = path.join(root, 'mutation-report', 'report.json'); // primary Stryker json
 const mutationAltPath = path.join(root, 'reports', 'mutation', 'report.json'); // fallback
+const mutationBaselineFile = path.join(root, '.mutation-baseline.json');
 
 function loadJSON(p) { return JSON.parse(fs.readFileSync(p, 'utf-8')); }
 
@@ -54,6 +55,13 @@ function main() {
       const total = mr.totalMutants || mr.metrics?.total || 0;
       const score = mr.mutationScore ?? mr.metrics?.mutationScore ?? (total ? (killed/total*100).toFixed(2) : '0');
       let section = ['### Mutation Testing', '', `- Mutation Score: ${score}% (${killed}/${total} killed)`];
+      if (fs.existsSync(mutationBaselineFile)) {
+        try {
+          const b = JSON.parse(fs.readFileSync(mutationBaselineFile, 'utf-8')).baseline;
+          const delta = (parseFloat(score) - b).toFixed(2);
+            section.push(`- Baseline: ${b}% (Δ ${delta}%)`);
+        } catch { /* ignore */ }
+      }
       const min = process.env.MUTATION_MIN_SCORE ? parseFloat(process.env.MUTATION_MIN_SCORE) : null;
       if (min !== null && !Number.isNaN(min)) {
         const status = parseFloat(score) >= min ? '✅ Meets' : '⚠️ Below';

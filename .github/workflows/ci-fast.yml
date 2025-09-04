@@ -115,7 +115,16 @@ jobs:
               issue_number: prNumber
             });
             const existing = comments.data.find(c => c.body && c.body.includes(header));
-            const finalBody = `${header}\n${body}`;
+            // Extract mutation score line
+            let badge = '';
+            const scoreMatch = body.match(/Mutation Score: (\d+(?:\.\d+)?)%/);
+            if (scoreMatch) {
+              const s = parseFloat(scoreMatch[1]);
+              let emoji = '🧬';
+              if (s >= 80) emoji = '💎'; else if (s >= 70) emoji = '✅'; else if (s >= 60) emoji = '⚠️'; else emoji = '❌';
+              badge = `${emoji} Mutation: ${s}%`;
+            }
+            const finalBody = `${header}\n${badge ? badge + '\n\n' : ''}${body}`;
             if (existing) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,

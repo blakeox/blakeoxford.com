@@ -49,10 +49,10 @@ export default defineConfig({
         'test-*.js',
       ],
       thresholds: {
-        statements: 75, // Phase 0 baseline; will ratchet up
-        branches: 65,
-        functions: 75,
-        lines: 75,
+        statements: 80, // Phase 3 ratchet +5
+        branches: 70,
+        functions: 80,
+        lines: 80,
       }
     },
   },

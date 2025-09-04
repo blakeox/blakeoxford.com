@@ -1,4 +1,9 @@
 import { test, expect } from '@playwright/test';
+// DEPRECATED: Covered by functional/navigation-search.journey.spec.ts and other focused specs.
+// Will be removed after stabilization.
+import { waitForIdle } from '../utils/waits';
+test.describe.skip('Deprecated basic.spec.ts', () => {
+// ...existing code...
 
 test.describe('Homepage', () => {
   test('should load the homepage successfully', async ({ page }) => {
@@ -18,29 +23,15 @@ test.describe('Homepage', () => {
 });
 
 test.describe('Search functionality', () => {
-  test('should open search overlay with keyboard shortcut', async ({ page }) => {
+  test('should open search overlay with keyboard shortcut (refactored waits)', async ({ page }) => {
     await page.goto('/');
-    
-    // Wait for search script to load and DOM to be ready
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1500); // Increased timeout for WebKit
-    
-    // Try to open search with Ctrl+K
+    await waitForIdle(page);
     await page.keyboard.press('Control+k');
-    
-    // Wait for search overlay to appear
     const searchOverlay = page.locator('#search-overlay');
-    await expect(searchOverlay).toBeVisible({ timeout: 5000 });
-    
-    // Wait a bit more for focus to settle, especially in WebKit
-    await page.waitForTimeout(500);
-    
-    // Check that search input is focused - with retry for WebKit
+    await expect(searchOverlay).toBeVisible();
     const searchInput = page.locator('#search-input');
-    
-    // Try to manually focus if not already focused (WebKit workaround)
     await searchInput.focus();
-    await expect(searchInput).toBeFocused({ timeout: 3000 });
+    await expect(searchInput).toBeFocused();
   });
   
   test('should close search overlay with escape key', async ({ page }) => {
@@ -156,3 +147,5 @@ test.describe('Contact form', () => {
     expect(isValid).toBeFalsy();
   });
 });
+
+}); // end skipped deprecated wrapper

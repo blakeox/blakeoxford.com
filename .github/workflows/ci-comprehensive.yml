@@ -105,7 +105,7 @@ jobs:
 
       - name: Mutation score threshold check (soft)
         if: matrix.test-group == 'unit'
-        run: MUTATION_MIN_SCORE=60 pnpm mutation:check || true
+  run: MUTATION_MIN_SCORE=60 pnpm mutation:check || true # set MUTATION_HARD_FAIL=1 for enforcement later
 
       - name: Upload mutation report
         if: always() && matrix.test-group == 'unit'

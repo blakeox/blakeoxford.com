@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+// DEPRECATED: Consolidated into functional/navigation-search.journey.spec.ts
+test.describe.skip('Deprecated search-functionality.spec.ts', () => {
+// ...existing code...
 
 test.describe('Search Functionality', () => {
   test.beforeEach(async ({ page }) => {
@@ -218,3 +221,4 @@ test.describe('Search Functionality', () => {
     await expect(resultOptions.first()).toHaveAttribute('role', 'option');
   });
 });
+}); // end deprecated wrapper
