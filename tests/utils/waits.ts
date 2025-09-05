@@ -116,3 +116,60 @@ export async function waitForMenuState(page: Page, selector: string, open: boole
 export async function waitForAriaExpanded(locator: Locator, value: 'true' | 'false') {
   await expect(locator).toHaveAttribute('aria-expanded', value);
 }
+
+// Wait for scroll completion by monitoring scroll position stability
+export async function waitForScrollSettled(page: Page, timeout = 2000, interval = 50) {
+  const start = Date.now();
+  let lastPos = -1;
+  let stable = 0;
+  while (Date.now() - start < timeout) {
+    const y = await page.evaluate(() => window.scrollY);
+    if (y === lastPos) {
+      stable += 1;
+      if (stable >= 3) return true; // three consecutive stable samples
+    } else {
+      stable = 0;
+    }
+    lastPos = y;
+    await page.waitForTimeout(interval);
+  }
+  return false;
+}
+
+// Wait until a selector's child count stops changing (e.g., dynamic results lists)
+export async function waitForDynamicListSettled(page: Page, selector: string, timeout = 3000, interval = 100, stableCycles = 3) {
+  const start = Date.now();
+  let lastCount = -1;
+  let stable = 0;
+  while (Date.now() - start < timeout) {
+    const count = await page.evaluate(sel => {
+      const el = document.querySelector(sel);
+      return el ? el.children.length : -1;
+    }, selector);
+    if (count === lastCount && count !== -1) {
+      stable++;
+      if (stable >= stableCycles) return true;
+    } else {
+      stable = 0;
+    }
+    lastCount = count;
+    await page.waitForTimeout(interval);
+  }
+  return false;
+}
+
+// After performing an interaction, wait for a brief network idle window
+export async function waitForPostInteractionNetworkIdle(page: Page, idleMs = 300, timeout = 3000) {
+  // Track network activity in page context
+  const end = Date.now() + timeout;
+  let lastActivity = Date.now();
+  const listeners: any[] = [];
+  const record = () => { lastActivity = Date.now(); };
+  listeners.push(page.on('request', record));
+  listeners.push(page.on('response', record));
+  while (Date.now() < end) {
+    if (Date.now() - lastActivity >= idleMs) break;
+    await page.waitForTimeout(50);
+  }
+  // remove listeners (Playwright doesn't expose off on Page directly; events auto cleaned on close)
+}

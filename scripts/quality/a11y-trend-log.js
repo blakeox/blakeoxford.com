@@ -15,10 +15,11 @@ const failOnViolation = process.env.A11Y_FAIL === 'true';
 
 (async () => {
   const browser = await chromium.launch();
-  const page = await browser.newPage();
   const entry = { timestamp: new Date().toISOString(), pages: [] };
   for (const r of routes) {
     const pageRecord = { route: r, violations: -1 };
+    const context = await browser.newContext();
+    const page = await context.newPage();
     try {
       await page.goto(base + r, { waitUntil: 'domcontentloaded', timeout: 20000 });
       await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(()=>{});
@@ -29,6 +30,8 @@ const failOnViolation = process.env.A11Y_FAIL === 'true';
     } catch (e) {
       pageRecord.error = e.message;
       console.warn('[a11y:trend] route failed', r, e.message);
+    } finally {
+      await context.close();
     }
     entry.pages.push(pageRecord);
   }

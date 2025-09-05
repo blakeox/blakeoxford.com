@@ -85,6 +85,12 @@ jobs:
       - name: Check for performance regressions
         run: ./scripts/build/performance-regression.sh
 
+      - name: Security headers static check
+        run: pnpm security:headers || exit 1
+
+      - name: Prohibit raw waitForTimeout usage
+        run: pnpm quality:timeouts
+
       - name: Run unit tests
         run: pnpm test -- --run
 

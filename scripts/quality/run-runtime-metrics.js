@@ -62,6 +62,19 @@ async function waitForOk(url, timeoutMs = 10000) {
     await step('search relevance', async () => {
       if (fs.existsSync('scripts/quality/search-relevance-golden.js')) await run('node', ['scripts/quality/search-relevance-golden.js']);
     });
+    // Evaluate gate if results exist
+    let relevanceGatePassed = true;
+    if (fs.existsSync('search-relevance-results.json')) {
+      try {
+        const data = JSON.parse(fs.readFileSync('search-relevance-results.json','utf-8'));
+        if (data.minTopNRequired > 0 && !data.gatePassed) {
+          relevanceGatePassed = false;
+          console.warn('[runtime] search relevance gate failed');
+        }
+      } catch (e) {
+        console.warn('[runtime] unable to parse search relevance results', e.message);
+      }
+    }
     await step('a11y trend', async () => {
       if (fs.existsSync('scripts/quality/a11y-trend-log.js')) await run('node', ['scripts/quality/a11y-trend-log.js']);
     });
@@ -75,6 +88,7 @@ async function waitForOk(url, timeoutMs = 10000) {
     await step('snapshot', async () => { await run('pnpm', ['quality:snapshot']).catch(()=>{}); });
 
     console.log('[runtime] complete');
+    if (!relevanceGatePassed) process.exitCode = 1;
   } catch (e) {
     console.error('[runtime] failed', e.message);
     process.exitCode = 1;

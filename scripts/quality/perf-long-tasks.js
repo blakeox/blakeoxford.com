@@ -7,13 +7,14 @@ import { chromium } from '@playwright/test';
 import fs from 'fs';
 
 const routes = ['/', '/about', '/projects'];
+const base = process.env.BASE_URL || 'http://localhost:4321';
 
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
   const report = [];
   for (const route of routes) {
-    await page.goto('http://localhost:4321' + route, { waitUntil: 'domcontentloaded' }).catch(()=>{});
+  await page.goto(base + route, { waitUntil: 'domcontentloaded' }).catch(()=>{});
     // Inject observer
     await page.addInitScript(() => {
       // eslint-disable-next-line no-undef

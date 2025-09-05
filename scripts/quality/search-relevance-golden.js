@@ -69,13 +69,16 @@ function main(){
   });
   const total = golden.length;
   const summary = { total, strictPass, topNPass, strictPassRate: +(strictPass/total*100).toFixed(1), topNPassRate: +((strictPass+topNPass)/total*100).toFixed(1), topN: TOP_N, results };
+  const minTopN = parseFloat(process.env.MIN_TOPN_PASS_RATE || '0');
+  summary.minTopNRequired = minTopN;
+  summary.gatePassed = summary.topNPassRate >= minTopN;
   fs.writeFileSync('search-relevance-results.json', JSON.stringify(summary,null,2));
   console.log('# Search Relevance');
   console.log(`- Strict Pass: ${summary.strictPassRate}% (${strictPass}/${total})`);
   console.log(`- Top-${TOP_N} Pass: ${summary.topNPassRate}% (${strictPass+topNPass}/${total})`);
+  if (minTopN > 0) console.log(`- Gate: require >= ${minTopN}% top-${TOP_N} => ${summary.gatePassed ? 'PASSED' : 'FAILED'}`);
   results.slice(0,10).forEach(r=> console.log(`  - ${r.query}: ${r.strict?'✅ strict': r.inTopN?'🟡 topN':'❌'} expected=${r.expected} top=${r.actualTop}` + (r.expectedExists?'':' (missing)')));
-  // Non-zero exit only if zero topN passes to avoid hard failing early in tuning phase
-  if (strictPass + topNPass === 0) process.exitCode = 1;
+  if (!summary.gatePassed) process.exitCode = 1;
 }
 
 main();
