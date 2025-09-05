@@ -79,7 +79,10 @@
   "clean": "(rm -rf dist .astro node_modules/.cache coverage test-results lighthouse-reports optimization-reports || true) && sleep 0.1 && (rm -rf dist .astro node_modules/.cache coverage test-results lighthouse-reports optimization-reports || true)",
     "clean:cache": "rm -rf .astro node_modules/.cache",
     "clean:reports": "rm -rf lighthouse-reports optimization-reports coverage test-results",
-    "pages:deploy": "node -e \"console.error('❌ Deprecated: Use `pnpm deploy:worker` or `pnpm edge:deploy` (Workers) instead of Pages.'); process.exit(1)\""
+    "pages:deploy": "node -e \"console.error('❌ Deprecated: Use `pnpm deploy:worker` or `pnpm edge:deploy` (Workers) instead of Pages.'); process.exit(1)\"",
+    "quality:snapshot": "node scripts/quality/snapshot-quality-baseline.js",
+    "quality:badges": "node scripts/quality/generate-badges.js",
+    "design:lint": "node scripts/quality/design-lint.js"
   },
   "dependencies": {
   "@astrojs/react": "^4.3.0",

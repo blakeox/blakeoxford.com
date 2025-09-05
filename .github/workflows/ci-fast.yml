@@ -70,6 +70,9 @@ jobs:
       - name: Run ESLint
         run: pnpm run lint
 
+      - name: Design lint (tokens & spacing)
+        run: pnpm design:lint || true # non-blocking in fast CI
+
       - name: Run TypeScript type checking
         run: pnpm run typecheck
 
@@ -98,6 +101,17 @@ jobs:
 
       - name: Generate quality summary
         run: pnpm quality:summary || true # summary generation should never fail pipeline
+
+      - name: Generate quality badges (mutation/flakiness)
+        run: pnpm quality:badges || true
+
+      - name: Upload quality badges
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-badges
+          path: badges/
+          retention-days: 14
 
       - name: Upload quality summary artifact
         if: always()

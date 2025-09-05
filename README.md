@@ -202,6 +202,19 @@ Add these gates once the history has at least a few runs to avoid failing on col
 
 ---
 
+## 🎨 Design System & Best Practices
+
+A consolidated guide covering spacing scale, typography ramp, color token governance, contrast enforcement, motion/interaction principles, component composition, and future opportunities lives in `DESIGN_BEST_PRACTICES.md`.
+
+Key expectations:
+
+- No ad-hoc hex colors; extend tokens in Tailwind config.
+- Leverage deterministic wait utilities for any interactive test flows.
+- Maintain accessible contrast in both light and dark themes (see guide audit section).
+- Prefer compositional variants over multiple boolean props in components.
+
+---
+
 ## 📡 RSS Feed
 
 Your blog RSS feed is available at `/rss.xml`. Subscribe here:
