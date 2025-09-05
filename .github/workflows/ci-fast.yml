@@ -238,6 +238,11 @@ jobs:
         env:
           COMPREHENSIVE_TESTS: "false"
 
+      - name: Run runtime quality gate (search/a11y/long-tasks)
+        run: pnpm quality:runtime
+        env:
+          MIN_TOPN_PASS_RATE: "80"
+
       - name: Track flakiness (Playwright JSON)
         if: always()
         run: pnpm flakiness:track || true
