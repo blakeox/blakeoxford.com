@@ -158,6 +158,8 @@ npx serve dist/
 
 ## 🧪 Test Architecture (Phase 6 Overview)
 
+![Mutation Badge](badges/mutation.svg) ![Flakiness Badge](badges/flakiness.svg)
+
 Progressive multi-phase modernization delivers layered quality gates:
 
 

@@ -55,7 +55,9 @@ if (mutationScore != null){
   fs.writeFileSync(path.join(outDir,'mutation.svg'), svg, 'utf8');
   console.log(`[badges] mutation=${mutationScore.toFixed(1)}%`);
 } else {
-  console.log('[badges] mutation score not found');
+  const svg = svgBadge('mutation','n/a','#6c757d');
+  fs.writeFileSync(path.join(outDir,'mutation.svg'), svg, 'utf8');
+  console.log('[badges] mutation score not found (emitted n/a)');
 }
 
 // Flakiness (retry intensity)
@@ -75,5 +77,7 @@ if (retryIntensity != null){
   fs.writeFileSync(path.join(outDir,'flakiness.svg'), svg, 'utf8');
   console.log(`[badges] flakiness retryIntensity=${labelVal}`);
 } else {
-  console.log('[badges] flakiness retry intensity not available');
+  const svg = svgBadge('flakiness','n/a','#6c757d');
+  fs.writeFileSync(path.join(outDir,'flakiness.svg'), svg, 'utf8');
+  console.log('[badges] flakiness retry intensity not available (emitted n/a)');
 }
