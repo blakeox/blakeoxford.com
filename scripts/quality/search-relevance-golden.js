@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 /**
  * Search Relevance Golden Tests
- * Loads static search index (public/search/*.json) and a golden queries file.
- * For each query, runs basic Fuse.js search and checks expected top slug.
- * Outputs summary JSON and console markdown snippet.
+ * Weighted Fuse.js search with top-N acceptance and expected presence validation.
  */
 import fs from 'fs';
 import path from 'path';
@@ -13,11 +11,29 @@ const root = process.cwd();
 const goldenPath = path.join(root, 'tests/search/golden-queries.json');
 const blogIndexPath = path.join(root, 'public/search/blog.json');
 const projectsIndexPath = path.join(root, 'public/search/projects.json');
+const TOP_N = parseInt(process.env.SEARCH_TOP_N || '3', 10); // Accept if expected inside top N
 
 function load(p){ return JSON.parse(fs.readFileSync(p,'utf-8')); }
 
 function buildFuse(data) {
-  return new Fuse(data, { keys: ['title','slug','summary','tags'], threshold: 0.4, ignoreLocation: true });
+  return new Fuse(data, { 
+    keys: [
+      { name: 'title', weight: 0.5 },
+      { name: 'tags', weight: 0.2 },
+      { name: 'summary', weight: 0.15 },
+      { name: 'slug', weight: 0.15 }
+    ],
+    threshold: 0.3,
+    ignoreLocation: true,
+    minMatchCharLength: 3,
+    includeScore: true,
+    useExtendedSearch: true
+  });
+}
+
+function normalizeSlug(s){
+  if (!s) return s;
+  return s.replace(/^\/?/, '').replace(/index$/,'').replace(/\/+/g, '/');
 }
 
 function main(){
@@ -28,20 +44,38 @@ function main(){
   const golden = load(goldenPath);
   const blog = fs.existsSync(blogIndexPath) ? load(blogIndexPath) : [];
   const projects = fs.existsSync(projectsIndexPath) ? load(projectsIndexPath) : [];
-  const fuseAll = buildFuse([...blog, ...projects]);
-  let passed = 0;
+  const corpus = [...blog, ...projects];
+  const availableSlugs = new Set(corpus.map(i => normalizeSlug(i.slug)));
+  const fuseAll = buildFuse(corpus);
+  let strictPass = 0;
+  let topNPass = 0;
   const results = golden.map(g => {
-    const hits = fuseAll.search(g.query);
-    const top = hits[0]?.item?.slug || null;
-    const ok = top === g.expectedTopSlug;
-    if (ok) passed++;
-    return { query: g.query, expected: g.expectedTopSlug, actual: top, pass: ok };
+    const expectedNorm = normalizeSlug(g.expectedTopSlug);
+    const expectedExists = availableSlugs.has(expectedNorm);
+    const hits = fuseAll.search(g.query).slice(0, TOP_N);
+    const topSlug = hits[0]?.item?.slug ? normalizeSlug(hits[0].item.slug) : null;
+    const inTopN = hits.some(h => normalizeSlug(h.item.slug) === expectedNorm);
+    const strict = topSlug === expectedNorm;
+    if (strict) strictPass++; else if (inTopN) topNPass++;
+    return { 
+      query: g.query,
+      expected: g.expectedTopSlug,
+      expectedExists,
+      actualTop: topSlug,
+      inTopN,
+      strict,
+      hits: hits.map(h => ({ slug: normalizeSlug(h.item.slug), score: h.score }))
+    };
   });
-  const passRate = golden.length ? (passed / golden.length * 100).toFixed(1) : '0.0';
-  const summary = { total: golden.length, passed, passRate: parseFloat(passRate), results };
+  const total = golden.length;
+  const summary = { total, strictPass, topNPass, strictPassRate: +(strictPass/total*100).toFixed(1), topNPassRate: +((strictPass+topNPass)/total*100).toFixed(1), topN: TOP_N, results };
   fs.writeFileSync('search-relevance-results.json', JSON.stringify(summary,null,2));
-  console.log(`# Search Relevance\n- Pass Rate: ${passRate}% (${passed}/${golden.length})`);
-  results.slice(0,10).forEach(r=> console.log(`  - ${r.query}: ${r.pass?'✅':'❌'} expected=${r.expected} actual=${r.actual}`));
+  console.log('# Search Relevance');
+  console.log(`- Strict Pass: ${summary.strictPassRate}% (${strictPass}/${total})`);
+  console.log(`- Top-${TOP_N} Pass: ${summary.topNPassRate}% (${strictPass+topNPass}/${total})`);
+  results.slice(0,10).forEach(r=> console.log(`  - ${r.query}: ${r.strict?'✅ strict': r.inTopN?'🟡 topN':'❌'} expected=${r.expected} top=${r.actualTop}` + (r.expectedExists?'':' (missing)')));
+  // Non-zero exit only if zero topN passes to avoid hard failing early in tuning phase
+  if (strictPass + topNPass === 0) process.exitCode = 1;
 }
 
 main();

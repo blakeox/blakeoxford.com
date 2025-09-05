@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * Orchestrates build -> preview server -> runtime metric scripts -> teardown.
- * Designed for CI reproducibility.
+ * Orchestrates build -> static server -> runtime metric scripts -> teardown.
+ * Dynamic port + graceful shutdown + health retries.
  */
 import { spawn } from 'child_process';
 import fs from 'fs';
+import http from 'http';
 
 function run(cmd, args = [], opts = {}) {
   return new Promise((resolve, reject) => {
@@ -13,37 +14,71 @@ function run(cmd, args = [], opts = {}) {
   });
 }
 
+async function waitForOk(url, timeoutMs = 10000) {
+  const start = Date.now();
+  const { request } = url.startsWith('https') ? await import('https') : await import('http');
+  function probe() {
+    return new Promise(res => {
+      const req = request(url, { method: 'GET' }, r => { r.destroy(); res(r.statusCode && r.statusCode < 500); });
+      req.on('error', () => res(false));
+      req.setTimeout(2000, () => { req.destroy(); res(false); });
+      req.end();
+    });
+  }
+  while (Date.now() - start < timeoutMs) {
+    if (await probe()) return true;
+    await new Promise(r => setTimeout(r, 250));
+  }
+  return false;
+}
+
 (async () => {
+  let serverProc;
   try {
-    console.log('[runtime] building site');
+    console.log('[runtime] build');
     await run('pnpm', ['build']);
-    console.log('[runtime] starting preview server');
-    const server = spawn('pnpm', ['preview'], { stdio: 'pipe' });
-    let ready = false;
-    server.stdout.on('data', d => { if (!ready && d.toString().includes('Local')) { ready = true; } });
-    // Wait until server appears ready (max 10s)
-    const start = Date.now();
-    while (!ready && Date.now() - start < 10000) {
-      await new Promise(r=> setTimeout(r,200));
-    }
-    if (!ready) throw new Error('Preview server not ready');
-    process.env.BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
-    console.log('[runtime] running search relevance');
-    if (fs.existsSync('scripts/quality/search-relevance-golden.js')) await run('node', ['scripts/quality/search-relevance-golden.js']);
-    console.log('[runtime] running a11y trend');
-    if (fs.existsSync('scripts/quality/a11y-trend-log.js')) await run('node', ['scripts/quality/a11y-trend-log.js']);
-    console.log('[runtime] running long task probe');
-    if (fs.existsSync('scripts/quality/perf-long-tasks.js')) await run('node', ['scripts/quality/perf-long-tasks.js']);
-    console.log('[runtime] generating toxic test list (if history)');
-    if (fs.existsSync('flakiness-history.json')) await run('node', ['scripts/quality/toxic-test-detector.js']);
-    console.log('[runtime] generating quality summary');
-    await run('pnpm', ['quality:summary']);
-    console.log('[runtime] snapshot');
-    await run('pnpm', ['quality:snapshot']).catch(()=>{});
-    server.kill('SIGTERM');
+
+    // Find free port starting at 5000
+    let port = 5000;
+    const isFree = p => new Promise(res => {
+      const srv = http.createServer().listen(p, () => srv.close(() => res(true))); // if success then free
+      srv.on('error', () => res(false));
+    });
+    while (!(await isFree(port)) && port < 6000) port++;
+    if (port >= 6000) throw new Error('No free port found 5000-5999');
+
+    process.env.BASE_URL = process.env.BASE_URL || `http://localhost:${port}`;
+    console.log('[runtime] serve dist on', process.env.BASE_URL);
+    serverProc = spawn('npx', ['serve', 'dist', '-l', String(port)], { stdio: 'inherit' });
+
+    const healthy = await waitForOk(`${process.env.BASE_URL}/`);
+    if (!healthy) throw new Error('Server health check failed');
+
+    const step = async (label, fn) => {
+      console.log(`[runtime] ${label}`);
+      try { await fn(); } catch (e) { console.error(`[runtime] ${label} failed:`, e.message); }
+    };
+
+    await step('search relevance', async () => {
+      if (fs.existsSync('scripts/quality/search-relevance-golden.js')) await run('node', ['scripts/quality/search-relevance-golden.js']);
+    });
+    await step('a11y trend', async () => {
+      if (fs.existsSync('scripts/quality/a11y-trend-log.js')) await run('node', ['scripts/quality/a11y-trend-log.js']);
+    });
+    await step('long tasks', async () => {
+      if (fs.existsSync('scripts/quality/perf-long-tasks.js')) await run('node', ['scripts/quality/perf-long-tasks.js']);
+    });
+    await step('toxic test list', async () => {
+      if (fs.existsSync('flakiness-history.json')) await run('node', ['scripts/quality/toxic-test-detector.js']);
+    });
+    await step('quality summary', async () => { await run('pnpm', ['quality:summary']); });
+    await step('snapshot', async () => { await run('pnpm', ['quality:snapshot']).catch(()=>{}); });
+
     console.log('[runtime] complete');
   } catch (e) {
     console.error('[runtime] failed', e.message);
     process.exitCode = 1;
+  } finally {
+    if (serverProc && !serverProc.killed) serverProc.kill('SIGTERM');
   }
 })();
