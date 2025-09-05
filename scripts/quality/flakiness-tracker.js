@@ -36,16 +36,18 @@ function main() {
     for (const spec of suite.specs || []) {
       for (const test of spec.tests || []) {
         const id = normalizeTestId(test.titlePath || []);
-        const retries = test.results?.length ? test.results.length - 1 : 0; // initial + retries
-        const failed = test.results?.some(r => r.status === 'failed') || false;
-        const flaky = retries > 0 && !failed;
-        const entry = { id, lastRun: now, retries, failed, flaky };
+  const retries = test.results?.length ? test.results.length - 1 : 0; // initial + retries
+  const duration = test.results?.reduce((a,r)=> a + (r.duration || 0),0) || 0; // ms aggregate
+  const failed = test.results?.some(r => r.status === 'failed') || false;
+  const flaky = retries > 0 && !failed;
+  const quarantine = (test.title || '').includes('@quarantine') || (spec.title || '').includes('@quarantine') || id.includes('@quarantine');
+  const entry = { id, lastRun: now, retries, failed, flaky, quarantine, duration };
         if (index.has(id)) {
           const i = index.get(id);
           const existing = history[i];
-          history[i] = { ...existing, ...entry, runs: (existing.runs || 0) + 1, totalRetries: (existing.totalRetries || 0) + retries, failures: (existing.failures || 0) + (failed ? 1 : 0) };
+          history[i] = { ...existing, ...entry, runs: (existing.runs || 0) + 1, totalRetries: (existing.totalRetries || 0) + retries, failures: (existing.failures || 0) + (failed ? 1 : 0), totalDuration: (existing.totalDuration || 0) + duration };
         } else {
-          history.push({ ...entry, runs: 1, totalRetries: retries, failures: failed ? 1 : 0 });
+          history.push({ ...entry, runs: 1, totalRetries: retries, failures: failed ? 1 : 0, totalDuration: duration });
         }
         updates.push(entry);
       }

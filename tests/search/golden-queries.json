@@ -1,0 +1,5 @@
+[
+  { "query": "astro", "expectedTopSlug": "blog/astro-performance-optimization" },
+  { "query": "performance", "expectedTopSlug": "blog/performance-budget" },
+  { "query": "projects", "expectedTopSlug": "projects" }
+]

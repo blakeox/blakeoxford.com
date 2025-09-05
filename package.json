@@ -83,6 +83,15 @@
     "quality:snapshot": "node scripts/quality/snapshot-quality-baseline.js",
     "quality:badges": "node scripts/quality/generate-badges.js",
     "design:lint": "node scripts/quality/design-lint.js"
+  ,"quality:timeouts": "node scripts/quality/check-raw-timeouts.js"
+  ,"security:headers": "node scripts/quality/check-security-headers.js"
+  ,"quality:contrast:themes": "node scripts/quality/contrast-theme-diff.js"
+  ,"deps:age": "node scripts/quality/dependency-age-monitor.js"
+  ,"search:relevance": "node scripts/quality/search-relevance-golden.js"
+  ,"a11y:trend": "node scripts/quality/a11y-trend-log.js"
+  ,"perf:longtasks": "node scripts/quality/perf-long-tasks.js"
+  ,"tests:toxic": "node scripts/quality/toxic-test-detector.js"
+  ,"edge:validate": "node scripts/quality/edge-validate.js"
   },
   "dependencies": {
   "@astrojs/react": "^4.3.0",

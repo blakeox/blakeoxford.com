@@ -1,0 +1,12 @@
+---
+import ProjectCard from '../../components/features/projects/ProjectCard.astro';
+const sample = { title: 'Sample Project', slug: 'sample-project', description: 'Preview card for baseline visual test.', url: '#', tags: ['demo'] };
+---
+<html lang="en">
+  <head><meta charset="utf-8" /><title>Project Card Preview</title></head>
+  <body class="min-h-screen p-6">
+    <div class="max-w-sm">
+      <ProjectCard project={sample} />
+    </div>
+  </body>
+</html>
