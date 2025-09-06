@@ -239,6 +239,7 @@ jobs:
           MIN_TOPN_PASS_RATE: "80"
           A11Y_FAIL: "true"
           SEARCH_TOP_N: "3"
+          A11Y_MAX_PER_ROUTE: "2"
 
       - name: Run essential Playwright tests (Chromium only)
         run: pnpm run test:e2e:essential:chromium

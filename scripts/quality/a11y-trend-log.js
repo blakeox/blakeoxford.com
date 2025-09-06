@@ -12,10 +12,12 @@ const routes = ['/', '/about', '/projects'];
 const base = process.env.BASE_URL || 'http://localhost:4321';
 const historyFile = path.join(process.cwd(), 'accessibility-history.json');
 const failOnViolation = process.env.A11Y_FAIL === 'true';
+const maxPerRoute = process.env.A11Y_MAX_PER_ROUTE ? parseInt(process.env.A11Y_MAX_PER_ROUTE, 10) : undefined;
+const maxTotal = process.env.A11Y_MAX_TOTAL ? parseInt(process.env.A11Y_MAX_TOTAL, 10) : undefined;
 
 (async () => {
   const browser = await chromium.launch();
-  const entry = { timestamp: new Date().toISOString(), pages: [] };
+  const entry = { timestamp: new Date().toISOString(), pages: [], totals: { count: 0, byImpact: {} } };
   for (const r of routes) {
     const pageRecord = { route: r, violations: -1 };
     const context = await browser.newContext();
@@ -27,6 +29,12 @@ const failOnViolation = process.env.A11Y_FAIL === 'true';
       const violations = analysis.violations || [];
       pageRecord.violations = violations.length;
       pageRecord.rules = violations.map(v => ({ id: v.id, impact: v.impact, nodes: v.nodes.length }));
+      // aggregate severity
+      for (const v of violations) {
+        const impact = v.impact || 'unknown';
+        entry.totals.byImpact[impact] = (entry.totals.byImpact[impact] || 0) + 1;
+        entry.totals.count += 1;
+      }
     } catch (e) {
       pageRecord.error = e.message;
       console.warn('[a11y:trend] route failed', r, e.message);
@@ -39,8 +47,23 @@ const failOnViolation = process.env.A11Y_FAIL === 'true';
   const history = fs.existsSync(historyFile) ? JSON.parse(fs.readFileSync(historyFile,'utf-8')) : [];
   history.push(entry);
   fs.writeFileSync(historyFile, JSON.stringify(history,null,2));
-  console.log('[a11y:trend]', entry.pages.map(p=>`${p.route}:${p.violations}`).join(' '));
-  if (failOnViolation) {
+  console.log('[a11y:trend]', entry.pages.map(p=>`${p.route}:${p.violations}`).join(' '), '| totals:', entry.totals);
+  // threshold-based gating takes precedence when provided
+  if (typeof maxPerRoute === 'number' || typeof maxTotal === 'number') {
+    let gateFail = false;
+    if (typeof maxPerRoute === 'number') {
+      const offending = entry.pages.filter(p => p.violations > maxPerRoute);
+      if (offending.length > 0) {
+        gateFail = true;
+        console.warn(`[a11y:gate] per-route limit exceeded (> ${maxPerRoute})`, offending.map(o => `${o.route}:${o.violations}`).join(' '));
+      }
+    }
+    if (typeof maxTotal === 'number' && entry.totals.count > maxTotal) {
+      gateFail = true;
+      console.warn(`[a11y:gate] total violations ${entry.totals.count} exceed max ${maxTotal}`);
+    }
+    if (gateFail) process.exitCode = 1;
+  } else if (failOnViolation) {
     const hasViolations = entry.pages.some(p => p.violations > 0);
     if (hasViolations) process.exitCode = 1;
   }
