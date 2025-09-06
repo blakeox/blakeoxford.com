@@ -158,14 +158,27 @@ npx serve dist/
 
 ## 🧪 Test Architecture (Phase 6 Overview)
 
-![Mutation Score Badge showing current mutation test coverage level](badges/mutation.svg) ![Flakiness Badge showing average retry intensity health](badges/flakiness.svg)
+![Mutation Score Badge showing current mutation test coverage level](badges/mutation.svg) ![Flakiness Badge showing average retry intensity health](badges/flakiness.svg) ![Accessibility Badge showing latest total a11y violations](badges/a11y.svg)
 
 See the Phase 2 completion summary in `PHASE2_COMPLETION.md` for delivered reliability & governance foundations. New contributors: consult `CONTRIBUTING.md` for deterministic test & design token rules.
 
 Progressive multi-phase modernization delivers layered quality gates:
 
 
-Environment Flags:
+Environment Flags (runtime gates):
+
+- MIN_TOPN_PASS_RATE: Minimum acceptable top-N search relevance pass rate (percentage). Example: 80
+- SEARCH_TOP_N: N for top-N acceptance in relevance tests. Example: 3
+- A11Y_FAIL: If true, fail when any violations are detected (fallback when no caps set)
+- A11Y_MAX_PER_ROUTE: Per-route violation cap; gate fails if any route exceeds this count
+- A11Y_MAX_TOTAL: Total violations cap across all routes
+- A11Y_MAX_BY_ROUTE: JSON map of route->cap that takes precedence over A11Y_MAX_PER_ROUTE
+
+Local run with gates:
+
+```bash
+MIN_TOPN_PASS_RATE=80 SEARCH_TOP_N=3 A11Y_FAIL=true A11Y_MAX_PER_ROUTE=2 pnpm quality:runtime
+```
 
 
 These layers create early, low-noise detection for regressions across functionality, performance, accessibility, and UI fidelity while keeping runtime lean.

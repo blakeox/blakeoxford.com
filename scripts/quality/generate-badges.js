@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Generate simple flat SVG badges for mutation score & flakiness reliability.
- * Output: badges/mutation.svg, badges/flakiness.svg
+ * Output: badges/mutation.svg, badges/flakiness.svg, badges/a11y.svg
  */
 import fs from 'fs';
 import path from 'path';
@@ -25,6 +25,13 @@ function colorScaleFlakiness(intensity){
   if (intensity <= 0.02) return '#558b2f';
   if (intensity <= 0.04) return '#f9a825';
   if (intensity <= 0.06) return '#fb8c00';
+  return '#c62828';
+}
+function colorScaleA11y(total){
+  if (total === 0) return '#2e7d32';
+  if (total <= 2) return '#558b2f';
+  if (total <= 5) return '#f9a825';
+  if (total <= 8) return '#fb8c00';
   return '#c62828';
 }
 
@@ -80,4 +87,34 @@ if (retryIntensity != null){
   const svg = svgBadge('flakiness','n/a','#6c757d');
   fs.writeFileSync(path.join(outDir,'flakiness.svg'), svg, 'utf8');
   console.log('[badges] flakiness retry intensity not available (emitted n/a)');
+}
+
+// Accessibility (total violations from latest run)
+try {
+  const a11yRaw = read('accessibility-history.json');
+  let total = null;
+  if (a11yRaw){
+    const history = JSON.parse(a11yRaw);
+    const last = Array.isArray(history) && history.length ? history[history.length-1] : null;
+    if (last){
+      if (last.totals && typeof last.totals.count === 'number') {
+        total = last.totals.count;
+      } else if (Array.isArray(last.pages)) {
+        total = last.pages.reduce((acc,p)=> acc + (typeof p.violations==='number' && p.violations>0 ? p.violations : 0), 0);
+      }
+    }
+  }
+  if (total != null){
+    const svg = svgBadge('a11y', String(total), colorScaleA11y(total));
+    fs.writeFileSync(path.join(outDir,'a11y.svg'), svg, 'utf8');
+    console.log(`[badges] a11y total=${total}`);
+  } else {
+    const svg = svgBadge('a11y','n/a','#6c757d');
+    fs.writeFileSync(path.join(outDir,'a11y.svg'), svg, 'utf8');
+    console.log('[badges] a11y not available (emitted n/a)');
+  }
+} catch {
+  const svg = svgBadge('a11y','n/a','#6c757d');
+  fs.writeFileSync(path.join(outDir,'a11y.svg'), svg, 'utf8');
+  console.log('[badges] a11y parse error (emitted n/a)');
 }
