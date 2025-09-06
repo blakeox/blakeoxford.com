@@ -14,6 +14,14 @@ const historyFile = path.join(process.cwd(), 'accessibility-history.json');
 const failOnViolation = process.env.A11Y_FAIL === 'true';
 const maxPerRoute = process.env.A11Y_MAX_PER_ROUTE ? parseInt(process.env.A11Y_MAX_PER_ROUTE, 10) : undefined;
 const maxTotal = process.env.A11Y_MAX_TOTAL ? parseInt(process.env.A11Y_MAX_TOTAL, 10) : undefined;
+let maxByRoute;
+if (process.env.A11Y_MAX_BY_ROUTE) {
+  try {
+    maxByRoute = JSON.parse(process.env.A11Y_MAX_BY_ROUTE);
+  } catch (e) {
+    console.warn('[a11y:gate] invalid A11Y_MAX_BY_ROUTE JSON, ignoring:', e.message);
+  }
+}
 
 (async () => {
   const browser = await chromium.launch();
@@ -49,9 +57,24 @@ const maxTotal = process.env.A11Y_MAX_TOTAL ? parseInt(process.env.A11Y_MAX_TOTA
   fs.writeFileSync(historyFile, JSON.stringify(history,null,2));
   console.log('[a11y:trend]', entry.pages.map(p=>`${p.route}:${p.violations}`).join(' '), '| totals:', entry.totals);
   // threshold-based gating takes precedence when provided
-  if (typeof maxPerRoute === 'number' || typeof maxTotal === 'number') {
+  if (maxByRoute || typeof maxPerRoute === 'number' || typeof maxTotal === 'number') {
     let gateFail = false;
-    if (typeof maxPerRoute === 'number') {
+    // per-route map takes precedence
+    if (maxByRoute && typeof maxByRoute === 'object') {
+      const offenders = [];
+      for (const p of entry.pages) {
+        const routeCap = maxByRoute[p.route];
+        if (typeof routeCap === 'number' && p.violations > routeCap) {
+          offenders.push(`${p.route}:${p.violations}(cap=${routeCap})`);
+        }
+      }
+      if (offenders.length) {
+        gateFail = true;
+        console.warn('[a11y:gate] route caps exceeded', offenders.join(' '));
+      }
+    }
+    // fallback to global per-route cap when present
+    if (!gateFail && typeof maxPerRoute === 'number') {
       const offending = entry.pages.filter(p => p.violations > maxPerRoute);
       if (offending.length > 0) {
         gateFail = true;
