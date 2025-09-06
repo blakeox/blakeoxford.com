@@ -233,15 +233,17 @@ jobs:
       - name: Build the application
         run: pnpm run build
 
-      - name: Run essential Playwright tests (Chromium only)
-        run: pnpm run test:e2e:essential:chromium
-        env:
-          COMPREHENSIVE_TESTS: "false"
-
       - name: Run runtime quality gate (search/a11y/long-tasks)
         run: pnpm quality:runtime
         env:
           MIN_TOPN_PASS_RATE: "80"
+          A11Y_FAIL: "true"
+          SEARCH_TOP_N: "3"
+
+      - name: Run essential Playwright tests (Chromium only)
+        run: pnpm run test:e2e:essential:chromium
+        env:
+          COMPREHENSIVE_TESTS: "false"
 
       - name: Track flakiness (Playwright JSON)
         if: always()
@@ -290,4 +292,16 @@ jobs:
           name: essential-playwright-report
           path: playwright-report/
           retention-days: 7
+
+      - name: Upload runtime quality artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-quality-artifacts
+          path: |
+            search-relevance-results.json
+            accessibility-history.json
+            long-tasks-report.json
+            quality-snapshots/
+          retention-days: 14
 
