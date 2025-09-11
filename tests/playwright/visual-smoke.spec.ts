@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForLayoutStability } from './utils/deterministic-waits';
 
 // Tag with @visual-smoke for selective execution
 // Minimal set of high-value pages for early layout/render regressions.
@@ -14,8 +15,7 @@ for (const r of routes) {
     await page.goto(r.path);
     // Wait for primary content landmark to exist
     await page.waitForSelector('main');
-    // Basic layout stability heuristic
-    await page.waitForTimeout(50); // short pause; consider replacing with waitForLayoutStability util if exported
+    await waitForLayoutStability(page);
     const screenshot = await page.screenshot();
     expect(screenshot).toMatchSnapshot(`${r.name}.png`, { maxDiffPixelRatio: 0.02 });
   });

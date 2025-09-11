@@ -1,0 +1,20 @@
+[
+  {
+    "route": "/",
+    "total": 0,
+    "over50": 0,
+    "max": 0
+  },
+  {
+    "route": "/about",
+    "total": 0,
+    "over50": 0,
+    "max": 0
+  },
+  {
+    "route": "/projects",
+    "total": 0,
+    "over50": 0,
+    "max": 0
+  }
+]

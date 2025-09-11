@@ -197,6 +197,19 @@ jobs:
           A11Y_MAX_PER_ROUTE: "2"
           DEADLINK_FAIL: "true"
 
+      - name: Upload runtime quality artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-quality-artifacts
+          path: |
+            search-relevance-results.json
+            accessibility-history.json
+            long-tasks-report.json
+            quality-snapshots/
+            dead-links-report.json
+          retention-days: 14
+
       - name: Run essential Playwright tests (Chromium only)
         run: pnpm run test:e2e:essential:chromium
         env:
@@ -249,6 +262,18 @@ jobs:
           name: essential-playwright-report
           path: playwright-report/
           retention-days: 7
+
+      - name: Regenerate quality badges (post-runtime)
+        if: always()
+        run: pnpm quality:badges || true
+
+      - name: Upload quality badges (post-runtime)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-badges-post-runtime
+          path: badges/
+          retention-days: 14
 
   post-quality-comment:
     name: Post PR Quality Summary
@@ -358,16 +383,5 @@ jobs:
               core.info('Created new quality summary comment.');
             }
 
-      - name: Upload runtime quality artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: runtime-quality-artifacts
-          path: |
-            search-relevance-results.json
-            accessibility-history.json
-            long-tasks-report.json
-            quality-snapshots/
-            dead-links-report.json
-          retention-days: 14
+      
 

@@ -56,14 +56,15 @@ async function waitForOk(url, timeoutMs = 10000) {
 
     const step = async (label, fn) => {
       console.log(`[runtime] ${label}`);
-      try { await fn(); } catch (e) { console.error(`[runtime] ${label} failed:`, e.message); }
+      try { await fn(); return true; } catch (e) { console.error(`[runtime] ${label} failed:`, e.message); return false; }
     };
 
-    await step('search relevance', async () => {
+    const searchOk = await step('search relevance', async () => {
       if (fs.existsSync('scripts/quality/search-relevance-golden.js')) await run('node', ['scripts/quality/search-relevance-golden.js']);
     });
     // Evaluate gate if results exist
     let relevanceGatePassed = true;
+    const minTopNEnv = parseFloat(process.env.MIN_TOPN_PASS_RATE || '0');
     if (fs.existsSync('search-relevance-results.json')) {
       try {
         const data = JSON.parse(fs.readFileSync('search-relevance-results.json','utf-8'));
@@ -74,11 +75,14 @@ async function waitForOk(url, timeoutMs = 10000) {
       } catch (e) {
         console.warn('[runtime] unable to parse search relevance results', e.message);
       }
+    } else if (minTopNEnv > 0 && searchOk === false) {
+      // Missing results and the step failed while a gate is required => treat as failure
+      relevanceGatePassed = false;
     }
-    await step('a11y trend', async () => {
+    const a11yOk = await step('a11y trend', async () => {
       if (fs.existsSync('scripts/quality/a11y-trend-log.js')) await run('node', ['scripts/quality/a11y-trend-log.js']);
     });
-    await step('dead links', async () => {
+    const deadOk = await step('dead links', async () => {
       if (fs.existsSync('scripts/quality/check-dead-links.js')) await run('node', ['scripts/quality/check-dead-links.js']);
     });
     await step('long tasks', async () => {
@@ -90,8 +94,9 @@ async function waitForOk(url, timeoutMs = 10000) {
     await step('quality summary', async () => { await run('pnpm', ['quality:summary']); });
     await step('snapshot', async () => { await run('pnpm', ['quality:snapshot']).catch(()=>{}); });
 
-    console.log('[runtime] complete');
-    if (!relevanceGatePassed) process.exitCode = 1;
+  console.log('[runtime] complete');
+  // If any gate failed (search/a11y/dead-links), mark overall failure
+  if (!relevanceGatePassed || a11yOk === false || deadOk === false) process.exitCode = 1;
   } catch (e) {
     console.error('[runtime] failed', e.message);
     process.exitCode = 1;

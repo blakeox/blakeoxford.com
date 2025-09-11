@@ -249,7 +249,9 @@ function main() {
   if (fs.existsSync(searchRelevancePath)) {
     try {
       const sr = loadJSON(searchRelevancePath);
-      parts.push('### Search Relevance', '', `- Pass Rate: ${sr.passRate?.toFixed ? sr.passRate.toFixed(1) : sr.passRate}% (${sr.passed}/${sr.total})`, '');
+      const topRate = (typeof sr.topNPassRate === 'number') ? sr.topNPassRate.toFixed(1) : sr.topNPassRate;
+      const strictRate = (typeof sr.strictPassRate === 'number') ? sr.strictPassRate.toFixed(1) : sr.strictPassRate;
+      parts.push('### Search Relevance', '', `- Strict Pass: ${strictRate}%`, `- Top-${sr.topN} Pass: ${topRate}%`, sr.minTopNRequired ? `- Gate: require >= ${sr.minTopNRequired}% => ${sr.gatePassed ? 'PASSED' : 'FAILED'}` : '', '');
     } catch { /* ignore */ }
   }
   // Accessibility trend

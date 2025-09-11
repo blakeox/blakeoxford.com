@@ -48,6 +48,10 @@ const SIZE_MAP: Record<string, number[]> = {
   'Blake-O-scaled': [320, 640, 768]
 };
 
+// Some optimized assets are emitted without @width suffix (single-variant only).
+// For these, prefer the unsuffixed file to avoid 404s.
+const NO_SUFFIX = new Set(['china-profile-picture']);
+
 const FALLBACK_BREAKPOINTS = [320, 640, 768];
 
 function getAvailableBreakpoints(name: string): number[] {
@@ -60,6 +64,12 @@ function getAvailableBreakpoints(name: string): number[] {
 
 function buildSrcSet(name: string, format: string) {
   const widths = getAvailableBreakpoints(name);
+  const key = (name.split('/').pop() || name).replace(/\.[a-z0-9]+$/i, '');
+  if (NO_SUFFIX.has(key)) {
+    // Single-variant, unsuffixed file only
+    const w = widths[0] || 320;
+    return `/assets/images/optimized/${format}/${key}.${format} ${w}w`;
+  }
   return widths.map((w: number) => `/assets/images/optimized/${format}/${name}@${w}w.${format} ${w}w`).join(', ');
 }
 
@@ -71,8 +81,12 @@ const backWebpSet = buildSrcSet(backKey, 'webp');
 // Choose a reasonable default src for the <img> tag to match requested size
 function pickDefaultSrc(name: string) {
   const widths = getAvailableBreakpoints(name);
+  const key = (name.split('/').pop() || name).replace(/\.[a-z0-9]+$/i, '');
   // Pick the smallest breakpoint that is >= requested size, else largest available
-  const candidate = widths.find(w => w >= size) || widths[widths.length - 1];
+  const candidate = widths.find(w => w >= size) || widths[widths.length - 1] || 320;
+  if (NO_SUFFIX.has(key)) {
+    return `/assets/images/optimized/avif/${key}.avif`;
+  }
   return `/assets/images/optimized/avif/${name}@${candidate}w.avif`;
 }
 ---
