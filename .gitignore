@@ -147,6 +147,7 @@ dist
 
 # Astro build output
 /dist
+.astro/
 
 # Ignore .DS_Store (macOS)
 .DS_Store
@@ -170,6 +171,9 @@ performance-*.json
 workflow-health-report.json
 deployment-summary.json
 performance-baseline.json
+tests/performance/baselines-history.json
+tests/contracts/baselines/diff-reports/
+mutation-report/
 
 # Wrangler outputs
 .wrangler/

@@ -53,8 +53,9 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
         </body>
       </html>
     `, {
-      url: 'https://localhost',
-      runScripts: 'dangerously'
+      url: 'http://localhost:3000',
+      runScripts: 'dangerously',
+      pretendToBeVisual: true,
     });
     
     // Get references to the DOM

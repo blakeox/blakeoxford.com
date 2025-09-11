@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Navigation', () => {
+test.describe('@essential @smoke Navigation', () => {
   test('should navigate between main pages', async ({ page }) => {
     await page.goto('/');
     await page.click('a[href="/about/"]');

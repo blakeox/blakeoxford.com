@@ -1,11 +1,26 @@
-name = "blakeoxford"
-compatibility_date = "2025-05-29"
-pages_build_output_dir = "./dist"
+name = "blakeoxford-com"
+account_id = "cc3bb24ae3c87cff38c2be85df3dab29"
+compatibility_date = "2025-08-08"
 
-[env.production]
-kv_namespaces = [
-  { binding = "CONTACT_MESSAGES", id = "65439bda285f486f9b07fc2a30bc5099" }
-]
+# Switch to Workers: serve static assets from ./dist via an assets binding,
+# and use a single Worker entry (functions/edge-computing.js).
+main = "functions/edge-computing.js"
+
+[assets]
+binding = "ASSETS"
+directory = "./dist"
+run_worker_first = true
+
+
+[[routes]]
+pattern = "blakeoxford.com/*"
+zone_name = "blakeoxford.com"
+
+[[routes]]
+pattern = "www.blakeoxford.com/*"
+zone_name = "blakeoxford.com"
+
+
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
@@ -14,3 +29,6 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 [[kv_namespaces]]
 binding = "CONTACT_MESSAGES"
 id      = "65439bda285f486f9b07fc2a30bc5099"
+
+[observability.logs]
+enabled = true

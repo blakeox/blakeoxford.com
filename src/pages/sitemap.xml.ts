@@ -17,7 +17,6 @@ export async function GET() {
     { loc: '/projects/google-workspace-migration/', changefreq: 'monthly', priority: 0.6 },
     { loc: '/projects/LLM-note-coaching/', changefreq: 'monthly', priority: 0.6 },
     { loc: '/projects/Microsoft-Fabric/', changefreq: 'monthly', priority: 0.6 },
-    { loc: '/projects/sage-intacct-integration-with-square-pos/', changefreq: 'monthly', priority: 0.6 },
   ];
 
   // Individual blog post pages (since they're now Astro pages, not MDX)

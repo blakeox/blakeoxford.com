@@ -115,7 +115,10 @@ describe('Dropdown Menu Functionality', () => {
 
   beforeEach(() => {
     // Create a clean DOM environment using JSDOM
-    const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+    const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+      url: 'http://localhost:3000',
+      pretendToBeVisual: true,
+    });
     global.window = dom.window as unknown as Window & typeof globalThis;
     global.document = dom.window.document;
     document = global.document;

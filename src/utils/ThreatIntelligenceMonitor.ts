@@ -560,7 +560,7 @@ export class ThreatIntelligenceMonitor {
   private getSessionId(): string {
     let sessionId = sessionStorage.getItem('threat_session_id');
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
       sessionStorage.setItem('threat_session_id', sessionId);
     }
     return sessionId;
@@ -570,14 +570,14 @@ export class ThreatIntelligenceMonitor {
    * Generate unique threat ID
    */
   private generateThreatId(): string {
-    return `threat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `threat_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 
   /**
    * Generate unique alert ID
    */
   private generateAlertId(): string {
-    return `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `alert_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 
   /**

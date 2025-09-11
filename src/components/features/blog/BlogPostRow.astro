@@ -45,11 +45,10 @@ const { slug, data } = post;
     <footer class="flex items-center justify-between">
       <a
         href={`/blog/${slug}/`}
-        class="inline-flex items-center px-6 py-3 text-base font-semibold text-white bg-accent hover:bg-accent-dark dark:hover:bg-accent-light rounded-xl shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background group/btn"
-        aria-label={`Read more about ${data.title}`}
+        class="group inline-flex items-center px-6 py-3 text-base font-semibold text-white bg-accent hover:bg-accent-dark dark:hover:bg-accent-light rounded-xl shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        Read Article
-        <svg class="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        Read Article: {data.title}
+        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>
       </a>

@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "maxEntries": 200,
+  "runs": [
+    {
+      "timestamp": "2025-09-11T20:28:45.644Z",
+      "totalTests": 211,
+      "failedTests": 0,
+      "flakyTests": 0,
+      "retryIntensity": 0,
+      "passRate": 1
+    },
+    {
+      "timestamp": "2025-09-11T20:56:22.467Z",
+      "totalTests": 211,
+      "failedTests": 0,
+      "flakyTests": 0,
+      "retryIntensity": 0,
+      "passRate": 1
+    },
+    {
+      "timestamp": "2025-09-11T21:08:38.909Z",
+      "totalTests": 211,
+      "failedTests": 0,
+      "flakyTests": 0,
+      "retryIntensity": 0,
+      "passRate": 1
+    },
+    {
+      "timestamp": "2025-09-11T21:08:38.949Z",
+      "totalTests": 211,
+      "failedTests": 0,
+      "flakyTests": 0,
+      "retryIntensity": 0,
+      "passRate": 1
+    }
+  ]
+}

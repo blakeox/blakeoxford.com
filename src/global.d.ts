@@ -105,6 +105,7 @@ declare global {
   }
 }
 
+// Reference the App namespace in a no-op type to prevent unused warnings from tooling
 declare namespace App {
   interface Locals extends Runtime<Env> {
     abTestGroup: 'A' | 'B';
@@ -114,5 +115,9 @@ declare namespace App {
     };
   }
 }
+
+// Dummy usage to ensure the namespace is treated as used for tooling that flags unused declarations
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type __AppNamespaceUsage = App.Locals | undefined;
 
 export {};

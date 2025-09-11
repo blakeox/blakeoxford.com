@@ -35,7 +35,7 @@ export async function POST({ request }: { request: Request }) {
     return new Response(JSON.stringify({ 
       success: true, 
       message: 'CSP violation recorded',
-      reportId: `csp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      reportId: `csp-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
     }), {
       status: 200,
       headers: {

@@ -1,9 +1,19 @@
 import { test } from '@playwright/test';
 
+// Extend window typing for test-only globals
+declare global {
+  interface Window {
+    searchOverlay?: unknown;
+    TestSearchOverlay?: any;
+    testSearchInstance?: any;
+  }
+}
+
+// @debug
 test.describe('SearchOverlay Debug', () => {
   test('should debug SearchOverlay loading with manual script', async ({ page }) => {
-    // Inject our debug script
-    await page.addInitScript({ path: './public/search-debug-manual.js' });
+    // Inject our debug script (test-only asset)
+    await page.addInitScript({ path: './tests/assets/search-debug-manual.js' });
     
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -19,7 +29,7 @@ test.describe('SearchOverlay Debug', () => {
         originalSearchOverlay: typeof window.searchOverlay,
         testSearchOverlay: typeof window.TestSearchOverlay,
         testInstance: typeof window.testSearchInstance,
-        searchOverlayGlobal: typeof SearchOverlay,
+        searchOverlayGlobal: typeof (window as any).SearchOverlay,
         canOpenTest: typeof window.testSearchInstance?.open === 'function'
       };
     });
@@ -29,7 +39,7 @@ test.describe('SearchOverlay Debug', () => {
     // Try to open the test overlay
     if (result.canOpenTest) {
       await page.evaluate(() => {
-        window.testSearchInstance.open();
+        window.testSearchInstance!.open();
       });
       
       await page.waitForTimeout(500);

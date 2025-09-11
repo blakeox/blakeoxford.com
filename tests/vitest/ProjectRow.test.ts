@@ -22,7 +22,10 @@ describe('ProjectRow.astro file', () => {
   });
 
   it('should include aria-label for project title', () => {
-    expect(content).toContain('aria-label={`Project: ${data.title}`}');
+  // Link should rely on visible text for accessible name; no aria-label
+  expect(content).toContain('class="project-title-link');
+  expect(content).toContain('>{data.title}</a>');
+  expect(content).not.toContain('aria-label={`Project: ${data.title}`}');
   });
 
   it('should render tags list with correct aria-label', () => {

@@ -1,6 +1,7 @@
 ---
 // CoinFlipImage.astro
 // Props: frontSrc, backSrc, altFront, altBack, size (optional), flipMultipleTimes (optional), class (optional), duration (optional), flipOnClick (optional), flipAxis (optional), flipEase (optional), multiFlipDuration (optional), multiFlipEase (optional)
+// Performance knobs: loading (default 'lazy'), fetchPriority (default 'low'), decoding (default 'async')
 function simpleId() {
   return 'coin-flip-' + Math.random().toString(36).slice(2, 10);
 }
@@ -19,11 +20,75 @@ const {
   multiFlipDuration = 2000, // ms, slower for multi-flip
   multiFlipEase = 'cubic-bezier(.68,-0.55,.27,1.55)' // springy for multi-flip
 } = Astro.props;
+// Optional performance-related props (with safe defaults)
+const loading: 'eager' | 'lazy' = (Astro.props.loading as any) || 'lazy';
+const fetchPriority: 'high' | 'low' | 'auto' = (Astro.props.fetchPriority as any) || 'low';
+const decoding: 'async' | 'auto' | 'sync' = (Astro.props.decoding as any) || 'async';
 // Compute axis and easing values
 const axis = flipAxis === 'x' ? 'X' : 'Y';
 const ease = flipEase;
 const multiEase = multiFlipEase;
 const uniqueId = simpleId();
+
+// Derive image key names (relative to /public/assets/images) for optimized manifests
+function toImageKey(src: string) {
+  return src.replace(/^\/?assets\/images\//, '').replace(/^\/?public\/assets\/images\//, '').replace(/\.(jpg|jpeg|png|webp|avif)$/i, '');
+}
+
+const frontKey = toImageKey(frontSrc);
+const backKey = toImageKey(backSrc);
+
+// Build responsive srcsets using available optimized variants (avoid 404s)
+// We can't reliably read from /public at build time here, so we use a conservative
+// size map for known assets and a sensible fallback for others.
+const SIZE_MAP: Record<string, number[]> = {
+  // Known limited-size asset (only 320w available)
+  'china-profile-picture': [320],
+  // Common assets with full set generated
+  'Blake-O-scaled': [320, 640, 768]
+};
+
+// Some optimized assets are emitted without @width suffix (single-variant only).
+// For these, prefer the unsuffixed file to avoid 404s.
+const NO_SUFFIX = new Set(['china-profile-picture']);
+
+const FALLBACK_BREAKPOINTS = [320, 640, 768];
+
+function getAvailableBreakpoints(name: string): number[] {
+  // Normalize key by stripping directories
+  const key = name.split('/').pop() || name;
+  // Try exact match; also try without extension artifacts
+  const simple = key.replace(/\.[a-z0-9]+$/i, '');
+  return (SIZE_MAP[simple] || FALLBACK_BREAKPOINTS).slice().sort((a, b) => a - b);
+}
+
+function buildSrcSet(name: string, format: string) {
+  const widths = getAvailableBreakpoints(name);
+  const key = (name.split('/').pop() || name).replace(/\.[a-z0-9]+$/i, '');
+  if (NO_SUFFIX.has(key)) {
+    // Single-variant, unsuffixed file only
+    const w = widths[0] || 320;
+    return `/assets/images/optimized/${format}/${key}.${format} ${w}w`;
+  }
+  return widths.map((w: number) => `/assets/images/optimized/${format}/${name}@${w}w.${format} ${w}w`).join(', ');
+}
+
+const frontAvifSet = buildSrcSet(frontKey, 'avif');
+const frontWebpSet = buildSrcSet(frontKey, 'webp');
+const backAvifSet = buildSrcSet(backKey, 'avif');
+const backWebpSet = buildSrcSet(backKey, 'webp');
+
+// Choose a reasonable default src for the <img> tag to match requested size
+function pickDefaultSrc(name: string) {
+  const widths = getAvailableBreakpoints(name);
+  const key = (name.split('/').pop() || name).replace(/\.[a-z0-9]+$/i, '');
+  // Pick the smallest breakpoint that is >= requested size, else largest available
+  const candidate = widths.find(w => w >= size) || widths[widths.length - 1] || 320;
+  if (NO_SUFFIX.has(key)) {
+    return `/assets/images/optimized/avif/${key}.avif`;
+  }
+  return `/assets/images/optimized/avif/${name}@${candidate}w.avif`;
+}
 ---
 <noscript>
   <img src={frontSrc} alt={alt} style={`width:${size}px;height:${size}px;`} class={`coin-flip-front ${customClass}`} />
@@ -31,7 +96,7 @@ const uniqueId = simpleId();
 <button
   type="button"
   class={`coin-flip ${customClass}`}
-  style={`width:${size}px;height:${size}px;`}
+  style={`width:${size}px;height:${size}px;aspect-ratio:1/1;`}
   aria-pressed="false"
   aria-label="Flip image; shows front/back of a coin."
   id={uniqueId + '-root'}
@@ -45,12 +110,20 @@ const uniqueId = simpleId();
       : `transition-duration:${duration}ms;transition-timing-function:${ease};`}
   >
     <div class="coin-flip-face coin-flip-front-face">
-      <img src={frontSrc} alt={alt} class="coin-flip-front" loading="lazy" draggable="false" />
+      <picture>
+        {frontAvifSet && (<source srcset={frontAvifSet} sizes={`${size}px`} type="image/avif" />)}
+        {frontWebpSet && (<source srcset={frontWebpSet} sizes={`${size}px`} type="image/webp" />)}
+  <img src={pickDefaultSrc(frontKey)} alt={alt} class="coin-flip-front" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+      </picture>
       <div class="coin-flip-highlight"></div>
     </div>
     <div class="coin-flip-edge"></div>
     <div class="coin-flip-face coin-flip-back-face">
-      <img src={backSrc} alt={altBack} class="coin-flip-back" loading="lazy" draggable="false" />
+      <picture>
+        {backAvifSet && (<source srcset={backAvifSet} sizes={`${size}px`} type="image/avif" />)}
+        {backWebpSet && (<source srcset={backWebpSet} sizes={`${size}px`} type="image/webp" />)}
+  <img src={pickDefaultSrc(backKey)} alt={altBack} class="coin-flip-back" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+      </picture>
       <div class="coin-flip-highlight"></div>
     </div>
   </div>
