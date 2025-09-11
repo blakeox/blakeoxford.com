@@ -173,11 +173,12 @@ Environment Flags (runtime gates):
 - A11Y_MAX_PER_ROUTE: Per-route violation cap; gate fails if any route exceeds this count
 - A11Y_MAX_TOTAL: Total violations cap across all routes
 - A11Y_MAX_BY_ROUTE: JSON map of route->cap that takes precedence over A11Y_MAX_PER_ROUTE
+- DEADLINK_FAIL: Fail the runtime gate if any internal links/assets return 404
 
 Local run with gates:
 
 ```bash
-MIN_TOPN_PASS_RATE=80 SEARCH_TOP_N=3 A11Y_FAIL=true A11Y_MAX_PER_ROUTE=2 pnpm quality:runtime
+MIN_TOPN_PASS_RATE=80 SEARCH_TOP_N=3 A11Y_FAIL=true A11Y_MAX_PER_ROUTE=2 DEADLINK_FAIL=true pnpm quality:runtime
 ```
 
 

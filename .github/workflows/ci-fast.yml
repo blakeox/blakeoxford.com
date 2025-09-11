@@ -195,6 +195,7 @@ jobs:
           A11Y_FAIL: "true"
           SEARCH_TOP_N: "3"
           A11Y_MAX_PER_ROUTE: "2"
+          DEADLINK_FAIL: "true"
 
       - name: Run essential Playwright tests (Chromium only)
         run: pnpm run test:e2e:essential:chromium
@@ -319,7 +320,18 @@ jobs:
               }
             } catch {}
 
-            const lines = [badge, a11yLine, searchLine].filter(Boolean).join('\n');
+            // Dead links summary
+            let deadLinksLine = '';
+            try {
+              const dlPath = path.join('artifacts','dead-links-report.json');
+              if (fs.existsSync(dlPath)){
+                const dl = JSON.parse(fs.readFileSync(dlPath,'utf-8'));
+                const status = (dl.dead || 0) === 0 ? '✅' : '❌';
+                deadLinksLine = `🔗 Dead links: ${dl.dead}/${dl.total} ${status}`;
+              }
+            } catch {}
+
+            const lines = [badge, a11yLine, searchLine, deadLinksLine].filter(Boolean).join('\n');
             const finalBody = `${header}\n${lines ? lines + '\n\n' : ''}${body}`;
 
             const comments = await github.rest.issues.listComments({
@@ -356,5 +368,6 @@ jobs:
             accessibility-history.json
             long-tasks-report.json
             quality-snapshots/
+            dead-links-report.json
           retention-days: 14
 

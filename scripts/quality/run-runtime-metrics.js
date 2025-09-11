@@ -78,6 +78,9 @@ async function waitForOk(url, timeoutMs = 10000) {
     await step('a11y trend', async () => {
       if (fs.existsSync('scripts/quality/a11y-trend-log.js')) await run('node', ['scripts/quality/a11y-trend-log.js']);
     });
+    await step('dead links', async () => {
+      if (fs.existsSync('scripts/quality/check-dead-links.js')) await run('node', ['scripts/quality/check-dead-links.js']);
+    });
     await step('long tasks', async () => {
       if (fs.existsSync('scripts/quality/perf-long-tasks.js')) await run('node', ['scripts/quality/perf-long-tasks.js']);
     });
