@@ -23,6 +23,7 @@ export default defineConfig({
     globals: true,
     setupFiles: './vitest.setup.ts',
   include: ['tests/**/*.test.{ts,tsx}'],
+  retry: 1, // enable single retry to surface flaky tests (tracked by custom reporter)
   reporters: [ 'default', './tests/reporters/flakinessReporter.ts' ],
     coverage: {
       provider: 'v8',

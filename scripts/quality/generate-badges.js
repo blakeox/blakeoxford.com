@@ -67,15 +67,18 @@ if (mutationScore != null){
   console.log('[badges] mutation score not found (emitted n/a)');
 }
 
-// Flakiness (retry intensity)
+// Flakiness (retry intensity) & Reliability (pass rate)
 let retryIntensity = null;
+let passRateLabel = null;
 try {
-  const fhRaw = read('flakiness-history.json');
+  const fhRaw = read('flakiness-history.json') || read('.cache/quality/flakiness-history.json');
   if (fhRaw){
     const fh = JSON.parse(fhRaw);
-    let totalRetries=0,totalRuns=0;
-    fh.forEach(r=>{ totalRetries += r.totalRetries||0; totalRuns += r.runs||0; });
-    if (totalRuns>0) retryIntensity = totalRetries/totalRuns;
+    if (fh && Array.isArray(fh.runs) && fh.runs.length){
+      const latest = fh.runs[fh.runs.length -1];
+      if (typeof latest.retryIntensity === 'number') retryIntensity = latest.retryIntensity;
+      if (typeof latest.passRate === 'number') passRateLabel = (latest.passRate * 100).toFixed(1) + '%';
+    }
   }
 } catch { /* ignore parse errors */ }
 if (retryIntensity != null){
@@ -87,6 +90,20 @@ if (retryIntensity != null){
   const svg = svgBadge('flakiness','n/a','#6c757d');
   fs.writeFileSync(path.join(outDir,'flakiness.svg'), svg, 'utf8');
   console.log('[badges] flakiness retry intensity not available (emitted n/a)');
+}
+
+if (passRateLabel){
+  const reliabilityColor = (p => {
+    const val = parseFloat(p);
+    if (val >= 99.5) return '#2e7d32';
+    if (val >= 98.0) return '#558b2f';
+    if (val >= 95.0) return '#f9a825';
+    if (val >= 90.0) return '#fb8c00';
+    return '#c62828';
+  })(passRateLabel);
+  const svg = svgBadge('reliability', passRateLabel, reliabilityColor);
+  fs.writeFileSync(path.join(outDir,'reliability.svg'), svg, 'utf8');
+  console.log(`[badges] reliability passRate=${passRateLabel}`);
 }
 
 // Accessibility (total violations from latest run)

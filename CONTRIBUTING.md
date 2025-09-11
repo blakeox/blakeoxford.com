@@ -54,6 +54,21 @@ Environment variables (CI set):
 - `FLAKINESS_MAX_CURRENT_FLAKY` – Hard cap on flaky tests.
 - `FLAKINESS_MAX_RETRY_INTENSITY` – Average retries/test-run ceiling.
 - `FLAKINESS_STRICT` – Fail if history absent.
+- `FLAKINESS_MIN_PASS_RATE` – Minimum acceptable latest run pass rate (0-1 float) enabling reliability gating.
+
+Artifacts & Scripts:
+
+- Run-level history: `flakiness-history.json` (mirrored to `.cache/quality/flakiness-history.json` for continuity across clean operations).
+- Per-test flake history (opt-in): enable with `FLAKY_HISTORY=1 node scripts/quality/report-flaky-tests.js` → persists to `.cache/quality/flaky-tests-history.json`.
+- Flaky test inspection: `node scripts/quality/report-flaky-tests.js` lists retry-assisted passes and current failures.
+- Threshold gate: `pnpm flakiness:check` now also supports reliability via `FLAKINESS_MIN_PASS_RATE`.
+- Badges: `pnpm quality:badges` generates `badges/reliability.svg` (pass rate) & `badges/flakiness.svg` (retry intensity).
+
+Guidance:
+
+- Keep `retry: 1` (Vitest) — raise only with justification; excessive retries mask instability.
+- Treat any non-zero retry-assisted pass as a candidate for root cause investigation before growing test surface.
+- When pruning history (automatic for zero-test placeholders), do not manually edit history files—allow scripts to manage integrity.
 
 Quality summary + badges surface trends early; address red metrics before adding new surface area.
 

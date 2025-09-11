@@ -158,7 +158,7 @@ npx serve dist/
 
 ## 🧪 Test Architecture (Phase 6 Overview)
 
-![Mutation Score Badge showing current mutation test coverage level](badges/mutation.svg) ![Flakiness Badge showing average retry intensity health](badges/flakiness.svg) ![Accessibility Badge showing latest total a11y violations](badges/a11y.svg)
+![Mutation Score Badge showing current mutation test coverage level](badges/mutation.svg) ![Reliability Badge showing latest pass rate](badges/reliability.svg) ![Flakiness Badge showing average retry intensity health](badges/flakiness.svg) ![Accessibility Badge showing latest total a11y violations](badges/a11y.svg)
 
 See the Phase 2 completion summary in `PHASE2_COMPLETION.md` for delivered reliability & governance foundations. New contributors: consult `CONTRIBUTING.md` for deterministic test & design token rules.
 

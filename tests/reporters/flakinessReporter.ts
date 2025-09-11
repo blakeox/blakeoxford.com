@@ -38,14 +38,17 @@ export default class FlakinessReporter implements Reporter {
         if (task.type === 'test') {
           const anyTask: any = task as any;
           const result = anyTask.result || {};
+            const baseStatus = (task as any).mode === 'skip' ? 'skip' : (task as any).mode === 'todo' ? 'todo' : (result.state || 'unknown');
+            const retryCount = result.retryCount || 0;
+            const status = (retryCount > 0 && baseStatus === 'pass') ? 'pass' : baseStatus; // keep pass but flag flaky separately
             this.records.push({
               id: task.id,
               file: file.filepath,
               name: task.name,
               fullName: (task as any).suite ? `${(task as any).suite.name} > ${task.name}` : task.name,
-              status: (task as any).mode === 'skip' ? 'skip' : (task as any).mode === 'todo' ? 'todo' : (result.state || 'unknown'),
+              status,
               duration: result.duration,
-              retry: result.retryCount,
+              retry: retryCount,
               errors: Array.isArray(result.errors) ? result.errors.map((e: any) => (e?.message || String(e))).slice(0,3) : undefined
             });
         }

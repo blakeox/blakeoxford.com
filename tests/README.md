@@ -224,5 +224,20 @@ Next Candidates (Phase 6+):
 - Theming/contrast token audit ensuring all design tokens meet WCAG in both light/dark contexts.
 - Visual component-level snapshotting (mount + per-component diff) to catch isolated regressions earlier.
 
+## Reliability & Flakiness (Addendum)
+
+Run-level reliability now surfaced via:
+
+- `flakiness-history.json` (and cached mirror `.cache/quality/flakiness-history.json`) capturing `{ totalTests, failedTests, flakyTests, retryIntensity, passRate }` per run.
+- `scripts/quality/report-flaky-tests.js` (optional per-test focus) enumerates retry-assisted passes and fails; enable persistence with `FLAKY_HISTORY=1` to build `.cache/quality/flaky-tests-history.json`.
+- Gate script `scripts/quality/check-flakiness-threshold.js` supports `FLAKINESS_MIN_PASS_RATE` (0-1), in addition to `FLAKINESS_MAX_CURRENT_FLAKY` and `FLAKINESS_MAX_RETRY_INTENSITY`.
+- Badges: `reliability.svg` (pass rate) & `flakiness.svg` (retry intensity) generated via `pnpm quality:badges`.
+
+Heuristics:
+
+- Treat any non-zero retry on a passing test as an instability signal—investigate root causes early.
+- Avoid raising global retries above 1; prefer deterministic utilities (`tests/utils/waits.ts`) to reduce variance.
+- History automatically prunes zero-test placeholder runs to keep signal clean.
+
 
 
