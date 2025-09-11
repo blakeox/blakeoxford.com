@@ -110,6 +110,8 @@ Added systems & improvements:
 - Deterministic visual snapshots: `playwright/visual-routes.spec.ts` now asserts full-page screenshots with animation disabling.
 - Coverage thresholds ratcheted (+5% across statements/branches/functions/lines) in `vitest.config.ts`.
 - Edge function negative-path & success tests: `tests/vitest/edge/send-email.edge.test.ts` covering validation, rate limit, Turnstile failure, resend failure, and success.
+- Run-level flakiness tracking groundwork: `scripts/quality/update-flakiness-history.js` + integration in deployment quality gate (captures aggregate passRate / flakyTests / retryIntensity for future per-test expansion).
+- Vitest flakiness reporter: `tests/reporters/flakinessReporter.ts` writing `test-results.json` to supply real counts to history updater.
 
 Removed (deleted) deprecated redundant specs after consolidation:
 
@@ -221,6 +223,21 @@ Next Candidates (Phase 6+):
 - Performance trend regression detector (identify upward drift across last N history points before tolerance exceeded).
 - Theming/contrast token audit ensuring all design tokens meet WCAG in both light/dark contexts.
 - Visual component-level snapshotting (mount + per-component diff) to catch isolated regressions earlier.
+
+## Reliability & Flakiness (Addendum)
+
+Run-level reliability now surfaced via:
+
+- `flakiness-history.json` (and cached mirror `.cache/quality/flakiness-history.json`) capturing `{ totalTests, failedTests, flakyTests, retryIntensity, passRate }` per run.
+- `scripts/quality/report-flaky-tests.js` (optional per-test focus) enumerates retry-assisted passes and fails; enable persistence with `FLAKY_HISTORY=1` to build `.cache/quality/flaky-tests-history.json`.
+- Gate script `scripts/quality/check-flakiness-threshold.js` supports `FLAKINESS_MIN_PASS_RATE` (0-1), in addition to `FLAKINESS_MAX_CURRENT_FLAKY` and `FLAKINESS_MAX_RETRY_INTENSITY`.
+- Badges: `reliability.svg` (pass rate) & `flakiness.svg` (retry intensity) generated via `pnpm quality:badges`.
+
+Heuristics:
+
+- Treat any non-zero retry on a passing test as an instability signal—investigate root causes early.
+- Avoid raising global retries above 1; prefer deterministic utilities (`tests/utils/waits.ts`) to reduce variance.
+- History automatically prunes zero-test placeholder runs to keep signal clean.
 
 
 

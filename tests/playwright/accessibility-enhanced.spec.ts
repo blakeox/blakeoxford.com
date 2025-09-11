@@ -1,15 +1,22 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import {
+  waitForIdle,
+  waitForLayoutStability,
+  waitForPostInteractionNetworkIdle,
+  waitForDynamicListSettled,
+} from '../utils/waits';
 
 test.describe('Enhanced Accessibility Testing with axe-core', () => {
   test.describe('Comprehensive WCAG Audits', () => {
     test('homepage should pass comprehensive accessibility audit', async ({ page }) => {
       try {
         await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await page.waitForTimeout(1000); // Stabilize page load
+        await waitForLayoutStability(page, 2, 2000);
       } catch {
         console.log('Retrying homepage navigation...');
         await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await waitForIdle(page);
       }
 
       const accessibilityScanResults = await new AxeBuilder({ page })
@@ -22,10 +29,11 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
     test('about page should pass comprehensive accessibility audit', async ({ page }) => {
       try {
         await page.goto('/about', { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await page.waitForTimeout(1000);
+        await waitForLayoutStability(page, 2, 2000);
       } catch {
         console.log('Retrying about page navigation...');
         await page.goto('/about', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await waitForIdle(page);
       }
 
       const accessibilityScanResults = await new AxeBuilder({ page })
@@ -38,10 +46,11 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
     test('projects page should pass comprehensive accessibility audit', async ({ page }) => {
       try {
         await page.goto('/projects', { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await page.waitForTimeout(1000);
+        await waitForLayoutStability(page, 2, 2000);
       } catch {
         console.log('Retrying projects page navigation...');
         await page.goto('/projects', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await waitForIdle(page);
       }
 
       const accessibilityScanResults = await new AxeBuilder({ page })
@@ -54,11 +63,12 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
     test('contact page should pass comprehensive accessibility audit', async ({ page }) => {
       try {
         await page.goto('/contact', { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await page.waitForTimeout(2000); // Give time for external scripts
+        await waitForPostInteractionNetworkIdle(page, 400, 3500);
+        await waitForLayoutStability(page, 2, 1500);
       } catch {
         console.log('Retrying contact page navigation...');
         await page.goto('/contact', { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await page.waitForTimeout(2000);
+        await waitForPostInteractionNetworkIdle(page, 400, 3500);
       }
 
       const accessibilityScanResults = await new AxeBuilder({ page })
@@ -114,10 +124,8 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
 
     test('contact form should be fully accessible', async ({ page }) => {
       await page.goto('/contact');
-      
-      // Wait for DOM content but not network idle due to external scripts
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(2000);
+      await waitForPostInteractionNetworkIdle(page, 400, 3500);
 
       const accessibilityScanResults = await new AxeBuilder({ page })
         .include('#contact-form')
@@ -204,10 +212,8 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
 
     test('form inputs should have proper labels and descriptions', async ({ page }) => {
       await page.goto('/contact');
-      
-      // Wait for DOM content but not network idle due to external scripts
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(2000);
+      await waitForPostInteractionNetworkIdle(page, 400, 3500);
 
       const inputs = page.locator('input:not([type="hidden"]), textarea, select');
       const inputCount = await inputs.count();
@@ -291,24 +297,21 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
 
       // Tab through elements and track focus path
       for (let i = 0; i < 25; i++) {
+        const before = await page.evaluate(() => {
+          const el = document.activeElement as HTMLElement | null; return el ? el.id || el.tagName : '';
+        });
         await page.keyboard.press('Tab');
-        await page.waitForTimeout(75); // Slightly longer delay for WebKit
-        
+        await page.waitForFunction(prev => {
+          const el = document.activeElement as HTMLElement | null; if (!el) return false; const idOrTag = el.id || el.tagName; return idOrTag !== prev; 
+        }, before, { timeout: 250 }).catch(() => {});
         try {
           const focusedElement = page.locator(':focus');
           if (await focusedElement.count() > 0) {
-            // Check if element is visible and actually focusable
             const isElementVisible = await focusedElement.evaluate(el => {
               const rect = el.getBoundingClientRect();
               const style = window.getComputedStyle(el);
-              return rect.width > 0 && rect.height > 0 && 
-                     style.visibility !== 'hidden' && 
-                     style.display !== 'none' &&
-                     style.opacity !== '0' &&
-                     !el.hasAttribute('disabled') &&
-                     !el.hasAttribute('aria-hidden');
+              return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none' && style.opacity !== '0' && !el.hasAttribute('disabled') && !el.hasAttribute('aria-hidden');
             });
-            
             if (isElementVisible) {
               const tagName = await focusedElement.evaluate(el => el.tagName);
               const role = await focusedElement.getAttribute('role');
@@ -316,9 +319,7 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
               const elementId = await focusedElement.getAttribute('id');
               const className = await focusedElement.getAttribute('class') || '';
               const textContent = (await focusedElement.textContent() || '').trim().substring(0, 20);
-              
               const identifier = `${tagName}${role ? `:${role}` : ''}${ariaLabel ? `[${ariaLabel}]` : ''}${elementId ? `#${elementId}` : ''}${textContent ? `{${textContent}}` : ''}${className.includes('sr-only') ? '[sr-only]' : ''}`;
-              
               if (identifier !== previousElement && identifier !== '') {
                 focusableElements.push(identifier);
                 previousElement = identifier;
@@ -326,8 +327,7 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
             }
           }
         } catch (error) {
-          // Focus may have moved to iframe or out of page, continue
-          console.log(`Tab ${i}: Focus error:`, error.message);
+          console.log(`Tab ${i}: Focus error:`, (error as Error).message);
           continue;
         }
       }
@@ -360,8 +360,9 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
       // Test reverse tabbing only if we found enough elements
       if (focusableElements.length > 1) {
         for (let i = 0; i < Math.min(3, focusableElements.length - 1); i++) {
+          const prev = await page.evaluate(() => { const el = document.activeElement as HTMLElement | null; return el ? el.id || el.tagName : ''; });
           await page.keyboard.press('Shift+Tab');
-          await page.waitForTimeout(100);
+          await page.waitForFunction(p => { const el = document.activeElement as HTMLElement | null; if (!el) return false; const idOrTag = el.id || el.tagName; return idOrTag !== p; }, prev, { timeout: 250 }).catch(() => {});
         }
       }
     });
@@ -392,13 +393,15 @@ test.describe('Enhanced Accessibility Testing with axe-core', () => {
       if (await searchOverlay.isVisible({ timeout: 3000 })) {
         const searchInput = page.locator('#search-input');
         await searchInput.fill('project');
-        await page.waitForTimeout(500);
+        await waitForDynamicListSettled(page, '#search-results').catch(async () => {
+          await waitForPostInteractionNetworkIdle(page, 200, 1500);
+        });
 
         // Test down arrow navigation through results
+        const prev = await page.evaluate(() => { const el = document.activeElement as HTMLElement | null; return el ? el.id || el.tagName : ''; });
         await page.keyboard.press('ArrowDown');
-        await page.waitForTimeout(100);
-        
-        // Should have proper focus management
+        await page.waitForFunction(p => { const el = document.activeElement as HTMLElement | null; if (!el) return false; const idOrTag = el.id || el.tagName; return idOrTag !== p; }, prev, { timeout: 300 }).catch(() => {});
+
         const focusedElement = page.locator(':focus');
         if (await focusedElement.count() > 0) {
           await expect(focusedElement).toBeVisible();

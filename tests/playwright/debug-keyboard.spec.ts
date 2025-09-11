@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 
+// @debug
 test.describe('Keyboard Navigation Debug', () => {
   test('debug modal dialogs', async ({ page }) => {
     // Set mobile viewport to make mobile menu visible

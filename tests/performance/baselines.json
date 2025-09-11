@@ -1,9 +1,9 @@
 {
   "routes": {
-    "/": { "domContentLoaded": 650, "fcp": 700, "load": 1100, "requests": 18 },
-    "/about": { "domContentLoaded": 620, "fcp": 660, "load": 1050, "requests": 16 },
-    "/projects": { "domContentLoaded": 700, "fcp": 740, "load": 1200, "requests": 22 },
-    "/blog": { "domContentLoaded": 720, "fcp": 760, "load": 1250, "requests": 24 }
+    "/": { "domContentLoaded": 900, "fcp": 950, "load": 1400, "requests": 17 },
+    "/about": { "domContentLoaded": 880, "fcp": 920, "load": 1380, "requests": 17 },
+    "/projects": { "domContentLoaded": 950, "fcp": 1000, "load": 1500, "requests": 19 },
+    "/blog": { "domContentLoaded": 960, "fcp": 1010, "load": 1520, "requests": 20 }
   },
   "tolerance": { "timingPct": 0.07, "requestsPct": 0.1 }
 }

@@ -28,6 +28,8 @@ export default defineConfig({
     '**/pages.spec.ts', // Inconsistent performance
     '**/user-journeys.spec.ts', // Some slow tests
   ],
+  // Exclude debug-tagged specs (marked with // @debug) from default runs; can be included manually via CLI pattern
+  grepInvert: /@debug/,
   timeout: 30 * 1000, // Reduced timeout for faster failure detection
   expect: {
     timeout: 5000 // Reduced expect timeout for faster feedback
@@ -40,7 +42,9 @@ export default defineConfig({
     ['html', { outputFolder: 'playwright-report' }], 
     ['line'],
     // Add JUnit reporter for CI systems
-    ['junit', { outputFile: 'test-results/junit.xml' }]
+  ['junit', { outputFile: 'test-results/junit.xml' }],
+  // JSON reporter for flakiness tracking consumption
+  ['json', { outputFile: 'playwright-report/test-results.json' }]
   ],
   use: {
   baseURL: 'http://localhost:4330',

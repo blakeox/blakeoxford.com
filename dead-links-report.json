@@ -1,0 +1,26 @@
+{
+  "total": 112,
+  "dead": 5,
+  "items": [
+    {
+      "url": "//www.googletagmanager.com",
+      "status": 404
+    },
+    {
+      "url": "/favicon.ico",
+      "status": 404
+    },
+    {
+      "url": "/projects/sample-project/",
+      "status": 404
+    },
+    {
+      "url": "/assets/images/optimized/avif/china-profile-picture@320w.avif",
+      "status": 404
+    },
+    {
+      "url": "/projects/adp-workforcenow/~/assets/images/default-project.png",
+      "status": 404
+    }
+  ]
+}

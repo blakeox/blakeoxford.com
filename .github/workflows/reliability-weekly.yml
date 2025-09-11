@@ -1,0 +1,49 @@
+name: Weekly Cross-Browser Reliability
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  reliability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - name: Install pnpm
+        run: corepack enable
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: Build site
+        run: pnpm build
+      - name: Install Playwright Browsers
+        run: pnpm test:e2e:install
+      - name: Run essential tests (Chromium)
+        run: npx playwright test --grep "@essential" --project=chromium --reporter=line,json --output=test-results/chromium
+      - name: Run essential tests (Firefox)
+        run: npx playwright test --grep "@essential" --project=firefox --reporter=line,json --output=test-results/firefox
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-reliability-artifacts
+          path: |
+            playwright-report
+            test-results
+      - name: Post flakiness tracking
+        run: |
+          export PW_JSON_REPORT=playwright-report/test-results.json || true
+          node scripts/quality/flakiness-tracker.js || true
+      - name: Generate quality summary
+        run: pnpm quality:summary || true
+      - name: Upload quality summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-summary
+          path: quality-summary.md

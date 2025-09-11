@@ -1,4 +1,5 @@
 import { test, expect, devices } from '@playwright/test';
+import { waitForMenuState } from '../utils/waits';
 
 // Test mobile navigation specifically
 test.describe('Mobile Navigation', () => {
@@ -43,7 +44,7 @@ test.describe('Mobile Navigation', () => {
     
     // Open mobile menu
     await burgerButton.click();
-    await page.waitForTimeout(350); // Wait for animation
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
     
     // Menu should be active and visible - use robust checking
     const isMenuOpen = await mobileMenu.evaluate(el => {
@@ -64,7 +65,7 @@ test.describe('Mobile Navigation', () => {
     
     // Close menu using close button
     await closeButton.click();
-    await page.waitForTimeout(350); // Wait for animation
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
     
     // Menu should be closed - use robust checking
     const isMenuClosed = await mobileMenu.evaluate(el => {
@@ -89,7 +90,7 @@ test.describe('Mobile Navigation', () => {
     
     // Open mobile menu
     await burgerButton.click();
-    await page.waitForTimeout(350);
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
     
     // Verify menu is open
     const isMenuOpen = await mobileMenu.evaluate(el => {
@@ -104,7 +105,7 @@ test.describe('Mobile Navigation', () => {
     
     // Close with escape key
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(350);
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
     
     // Menu should be closed - verify both class and visual state
     const isMenuClosed = await mobileMenu.evaluate(el => {
@@ -131,12 +132,12 @@ test.describe('Mobile Navigation', () => {
     // Open search overlay first
     if (await searchToggle.isVisible()) {
       await searchToggle.click();
-      await page.waitForTimeout(350);
+    await waitForMenuState(page, '#search-overlay', true, 1500);
       await expect(searchOverlay).toHaveClass(/active/);
       
       // Open mobile menu - should close search overlay
       await burgerButton.click();
-      await page.waitForTimeout(350);
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
       
       // Mobile menu should be open, search overlay should be closed
       await expect(mobileMenu).toHaveClass(/active/);
@@ -144,7 +145,7 @@ test.describe('Mobile Navigation', () => {
       
       // Close mobile menu
       await page.keyboard.press('Escape');
-      await page.waitForTimeout(350);
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
       await expect(mobileMenu).not.toHaveClass(/active/);
     }
   });
@@ -158,7 +159,7 @@ test.describe('Mobile Navigation', () => {
     
     // Open mobile menu
     await burgerButton.click();
-    await page.waitForTimeout(350);
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
     
     // Verify menu is open
     const isMenuOpen = await mobileMenu.evaluate(el => {
@@ -204,7 +205,7 @@ test.describe('Mobile Navigation', () => {
     
     // Open mobile menu
     await burgerButton.click();
-    await page.waitForTimeout(350);
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
     
     // Check if mobile menu is active/visible with fallback selectors
     const isMenuActive = await mobileMenu.evaluate(el => {
@@ -230,7 +231,7 @@ test.describe('Mobile Navigation', () => {
     
     // Close menu and focus should return to burger button
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(350);
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
     await expect(burgerButton).toBeFocused();
   });
 
@@ -248,7 +249,7 @@ test.describe('Mobile Navigation', () => {
     
     // Open mobile menu
     await burgerButton.click();
-    await page.waitForTimeout(350);
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
     await expect(mobileMenu).toHaveClass(/active/);
     
     // Menu should not overflow viewport
@@ -259,7 +260,7 @@ test.describe('Mobile Navigation', () => {
     
     // Close menu
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(350);
+    await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
     await expect(mobileMenu).not.toHaveClass(/active/);
   });
 });

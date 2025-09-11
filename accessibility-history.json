@@ -1,0 +1,205 @@
+[
+  {
+    "timestamp": "2025-09-05T14:58:05.082Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": -1,
+        "error": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:4321/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "route": "/about",
+        "violations": -1,
+        "error": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:4321/about\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "route": "/projects",
+        "violations": -1,
+        "error": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:4321/projects\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-09-05T16:08:28.809Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": -1,
+        "error": "axe.run is not a function"
+      },
+      {
+        "route": "/about",
+        "violations": -1,
+        "error": "axe.run is not a function"
+      },
+      {
+        "route": "/projects",
+        "violations": -1,
+        "error": "axe.run is not a function"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-09-05T19:43:21.686Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": -1,
+        "error": "Please use browser.newContext()\n Please check out https://github.com/dequelabs/axe-core-npm/blob/develop/packages/playwright/error-handling.md"
+      },
+      {
+        "route": "/about",
+        "violations": -1,
+        "error": "Please use browser.newContext()\n Please check out https://github.com/dequelabs/axe-core-npm/blob/develop/packages/playwright/error-handling.md"
+      },
+      {
+        "route": "/projects",
+        "violations": -1,
+        "error": "Please use browser.newContext()\n Please check out https://github.com/dequelabs/axe-core-npm/blob/develop/packages/playwright/error-handling.md"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-09-05T20:02:00.099Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-09-06T00:25:48.416Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "count": 4,
+      "byImpact": {
+        "moderate": 3,
+        "minor": 1
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-11T13:29:56.841Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "count": 4,
+      "byImpact": {
+        "moderate": 3,
+        "minor": 1
+      }
+    }
+  }
+]
