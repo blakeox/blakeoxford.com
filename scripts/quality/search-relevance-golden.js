@@ -6,6 +6,7 @@
 import fs from 'fs';
 import path from 'path';
 import Fuse from 'fuse.js';
+import { normalizeSlug } from '../../src/utils/slug.js';
 
 const root = process.cwd();
 const goldenPath = path.join(root, 'tests/search/golden-queries.json');
@@ -31,10 +32,7 @@ function buildFuse(data) {
   });
 }
 
-function normalizeSlug(s){
-  if (!s) return s;
-  return s.replace(/^\/?/, '').replace(/index$/,'').replace(/\/+/g, '/');
-}
+// slug normalization moved to src/utils/slug.ts for reuse & testability
 
 function main(){
   if (!fs.existsSync(goldenPath)) {

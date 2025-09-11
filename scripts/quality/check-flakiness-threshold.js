@@ -23,17 +23,35 @@ if (!fs.existsSync(historyFile)) {
   process.exit(0);
 }
 
-let hist; try { hist = JSON.parse(fs.readFileSync(historyFile,'utf-8')); } catch { fail('Unable to parse flakiness-history.json'); }
-if (!Array.isArray(hist) || !hist.length) {
-  info('Empty history; skipping');
+let parsed; try { parsed = JSON.parse(fs.readFileSync(historyFile,'utf-8')); } catch { fail('Unable to parse flakiness-history.json'); }
+
+let currentFlaky = 0;
+let avgRetryIntensity = 0;
+
+// Backward compatibility: legacy format was an array of per-test objects
+if (Array.isArray(parsed)) {
+  if (!parsed.length) { info('Empty history (legacy array); skipping'); process.exit(0); }
+  currentFlaky = parsed.filter(t => t.flaky).length;
+  const totalRetries = parsed.reduce((a,t)=> a + (t.totalRetries||0),0);
+  const totalRuns = parsed.reduce((a,t)=> a + (t.runs||1),0) || 1;
+  avgRetryIntensity = totalRetries / totalRuns;
+} else if (parsed && Array.isArray(parsed.runs)) {
+  // New run-level aggregate format { version, runs: [ { flakyTests, retryIntensity, ... } ] }
+  if (!parsed.runs.length) { info('Empty history (run-level); skipping'); process.exit(0); }
+  const latest = parsed.runs[parsed.runs.length - 1];
+  currentFlaky = latest.flakyTests ?? 0;
+  // Prefer explicit retryIntensity if present; else derive from flaky / total
+  if (typeof latest.retryIntensity === 'number') {
+    avgRetryIntensity = latest.retryIntensity;
+  } else if (latest.totalTests) {
+    avgRetryIntensity = latest.flakyTests / latest.totalTests;
+  } else {
+    avgRetryIntensity = 0;
+  }
+} else {
+  info('Unrecognized flakiness history shape; skipping');
   process.exit(0);
 }
-
-// Current snapshot metrics (use latest lastRun value per test — entries already consolidated per test).
-const currentFlaky = hist.filter(t => t.flaky).length;
-const totalRetries = hist.reduce((a,t)=> a + (t.totalRetries||0),0);
-const totalRuns = hist.reduce((a,t)=> a + (t.runs||1),0) || 1;
-const avgRetryIntensity = totalRetries / totalRuns;
 
 const maxFlaky = process.env.FLAKINESS_MAX_CURRENT_FLAKY ? parseInt(process.env.FLAKINESS_MAX_CURRENT_FLAKY,10) : null;
 const maxIntensity = process.env.FLAKINESS_MAX_RETRY_INTENSITY ? parseFloat(process.env.FLAKINESS_MAX_RETRY_INTENSITY) : null;
@@ -43,7 +61,7 @@ if (maxFlaky !== null && currentFlaky > maxFlaky) {
   violated = true; fail(`Currently flaky tests (${currentFlaky}) exceed limit (${maxFlaky})`);
 }
 if (maxIntensity !== null && avgRetryIntensity > maxIntensity) {
-  violated = true; fail(`Avg retry intensity (${avgRetryIntensity.toFixed(2)}) exceeds limit (${maxIntensity})`);
+  violated = true; fail(`Avg retry intensity (${avgRetryIntensity.toFixed(4)}) exceeds limit (${maxIntensity})`);
 }
-if (!violated) info(`PASS (flaky:${currentFlaky}${maxFlaky!==null?`<=${maxFlaky}`:''}, intensity:${avgRetryIntensity.toFixed(2)}${maxIntensity!==null?`<=${maxIntensity}`:''})`);
+if (!violated) info(`PASS (flaky:${currentFlaky}${maxFlaky!==null?`<=${maxFlaky}`:''}, intensity:${avgRetryIntensity.toFixed(4)}${maxIntensity!==null?`<=${maxIntensity}`:''})`);
 process.exit(0);

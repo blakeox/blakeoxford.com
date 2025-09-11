@@ -8,44 +8,26 @@ import fs from 'fs';
 import path from 'path';
 import http from 'node:http';
 import https from 'node:https';
+import { collectHtmlFiles, buildLinkTasks, runPool, buildAllowlist } from '../../src/utils/links/deadLinkCore.js';
 
 const root = process.cwd();
 const distDir = path.join(root, 'dist');
 const base = process.env.BASE_URL || 'http://localhost:4321';
 const fail = process.env.DEADLINK_FAIL === 'true';
+const includeExternal = process.env.DEADLINK_EXTERNAL === 'true';
+const allowlistPattern = process.env.DEADLINK_ALLOWLIST || '';
+const maxConcurrency = parseInt(process.env.DEADLINK_MAX_CONCURRENCY || '10', 10);
 const reportPath = path.join(root, 'dead-links-report.json');
+const allowlisted = buildAllowlist(allowlistPattern);
 
-function walk(dir){
-  const out = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })){
-    const p = path.join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...walk(p));
-    else if (entry.isFile() && entry.name.endsWith('.html')) out.push(p);
-  }
-  return out;
-}
-
-function extractUrls(html, filePath){
-  const urls = new Set();
-  const add = (u)=>{ if (u) urls.add(u); };
-  // href and src attributes
-  const re = /(href|src)=["']([^"']+)["']/gi;
-  let m;
-  while ((m = re.exec(html))) {
-    const url = m[2];
-    // skip anchors, mailto, tel, data URIs
-    if (!url || url.startsWith('#') || url.startsWith('mailto:') || url.startsWith('tel:') || url.startsWith('data:')) continue;
-    // external skip
-    if (url.startsWith('http://') || url.startsWith('https://')) continue;
-    // normalize relative to root
-    if (url.startsWith('/')) add(url);
-    else {
-      // Construct absolute path from file location
-      const rel = path.posix.normalize(path.posix.join('/' + path.posix.relative(distDir, path.dirname(filePath)), url));
-      add(rel.replace(/\\/g,'/'));
-    }
-  }
-  return Array.from(urls);
+function classify(status){
+  if (status === 0) return 'error';
+  if (status >= 200 && status < 300) return 'ok';
+  if (status === 404) return 'missing';
+  if (status >= 300 && status < 400) return 'redirect';
+  if (status >= 400 && status < 500) return 'client';
+  if (status >= 500) return 'server';
+  return 'other';
 }
 
 (async () => {
@@ -53,28 +35,28 @@ function extractUrls(html, filePath){
     console.warn('[deadlinks] dist not found, skipping');
     process.exit(0);
   }
-  const htmlFiles = walk(distDir);
-  const checks = [];
-  for (const f of htmlFiles){
-    const html = fs.readFileSync(f, 'utf-8');
-    const urls = extractUrls(html, f);
-    for (const u of urls){
-      checks.push({ url: u, ref: path.relative(root, f) });
+  const htmlFiles = collectHtmlFiles(distDir);
+  const tasks = buildLinkTasks(htmlFiles, distDir, { includeExternal });
+  const results = await runPool(tasks, Math.max(1, maxConcurrency), async (t) => {
+    const isInternal = !t.isExternal;
+    const full = t.isExternal ? t.urlPath : base.replace(/\/$/, '') + t.urlPath;
+    if (allowlisted(full) || allowlisted(t.urlPath)) {
+      return { url: t.urlPath, full, status: 200, skipped: 'allowlist' };
     }
-  }
-  // de-dup by url
-  const byUrl = new Map();
-  for (const c of checks){ if (!byUrl.has(c.url)) byUrl.set(c.url, c); }
-  const uniqueChecks = Array.from(byUrl.values());
-  const results = [];
-  for (const c of uniqueChecks){
-    const full = base.replace(/\/$/,'') + c.url;
-  const status = await getStatus(full);
-  results.push({ url: c.url, status });
-  }
-  const dead = results.filter(r => r.status === 404 || r.status === 0);
-  fs.writeFileSync(reportPath, JSON.stringify({ total: results.length, dead: dead.length, items: results.filter(r=>r.status===404 || r.status===0) }, null, 2));
-  console.log(`[deadlinks] checked=${results.length} dead=${dead.length}`);
+    const status = await getStatus(full);
+    return { url: t.urlPath, full, status, isExternal: t.isExternal, isInternal, classification: classify(status) };
+  });
+  const dead = results.filter(r => !r.skipped && (r.status === 404 || r.status === 0));
+  const payload = {
+    total: results.length,
+    dead: dead.length,
+    includeExternal,
+    maxConcurrency,
+    allowlist: allowlistPattern,
+    items: results.filter(r => !r.skipped && (r.status === 404 || r.status === 0))
+  };
+  fs.writeFileSync(reportPath, JSON.stringify(payload, null, 2));
+  console.log(`[deadlinks] checked=${results.length} dead=${dead.length} external=${includeExternal}`);
   if (fail && dead.length > 0) process.exitCode = 1;
 })();
 

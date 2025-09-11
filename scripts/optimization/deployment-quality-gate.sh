@@ -226,6 +226,12 @@ run_deployment_checks() {
 # Flakiness quality gate (optional)
 check_flakiness_gate() {
     print_status $BLUE "🔁 Evaluating test flakiness gate..."
+    # Ensure we have an updated history snapshot before evaluating thresholds
+    if command -v node >/dev/null 2>&1; then
+        if [ -f "scripts/quality/update-flakiness-history.js" ]; then
+            node scripts/quality/update-flakiness-history.js || print_status $YELLOW "⚠️ Failed to update flakiness history (continuing)"
+        fi
+    fi
     if [ -f "flakiness-history.json" ]; then
         # Use thresholds from env or provide relaxed defaults
         local max_flaky="${FLAKINESS_MAX_CURRENT_FLAKY:-0}" # default: zero flaky tests
@@ -264,6 +270,10 @@ main() {
     run_lighthouse_gate
     check_performance_regression
     run_deployment_checks
+    # Pre-populate / update flakiness history before evaluating gate to ensure file presence even after clean
+    if command -v node >/dev/null 2>&1 && [ -f "scripts/quality/update-flakiness-history.js" ]; then
+        node scripts/quality/update-flakiness-history.js || print_status $YELLOW "⚠️ Failed to pre-update flakiness history (continuing)"
+    fi
     check_flakiness_gate
     
     echo "======================================"

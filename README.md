@@ -165,20 +165,45 @@ See the Phase 2 completion summary in `PHASE2_COMPLETION.md` for delivered relia
 Progressive multi-phase modernization delivers layered quality gates:
 
 
-Environment Flags (runtime gates):
+Environment Flags (runtime gates & quality controls):
 
-- MIN_TOPN_PASS_RATE: Minimum acceptable top-N search relevance pass rate (percentage). Example: 80
-- SEARCH_TOP_N: N for top-N acceptance in relevance tests. Example: 3
-- A11Y_FAIL: If true, fail when any violations are detected (fallback when no caps set)
-- A11Y_MAX_PER_ROUTE: Per-route violation cap; gate fails if any route exceeds this count
-- A11Y_MAX_TOTAL: Total violations cap across all routes
-- A11Y_MAX_BY_ROUTE: JSON map of route->cap that takes precedence over A11Y_MAX_PER_ROUTE
-- DEADLINK_FAIL: Fail the runtime gate if any internal links/assets return 404
+| Variable | Purpose | Notes |
+|----------|---------|-------|
+| `MIN_TOPN_PASS_RATE` | Minimum acceptable top-N search relevance pass rate (percent) | Gate fails if `topNPassRate < value` |
+| `SEARCH_TOP_N` | N for top-N acceptance in relevance tests | Default 3 |
+| `A11Y_FAIL` | Fail if any violations (fallback) | Used only when no caps configured |
+| `A11Y_MAX_PER_ROUTE` | Uniform per-route violation cap | Evaluated after per-route map |
+| `A11Y_MAX_TOTAL` | Global total violations cap | Applies after per-route checks |
+| `A11Y_MAX_BY_ROUTE` | JSON map route->cap overriding uniform cap | Highest precedence among per-route thresholds |
+| `A11Y_BLOCK_IMPACTS` | Comma list of Axe impact levels to block immediately | E.g. `serious,critical` |
+| `A11Y_HISTORY_MAX` | Max entries retained in `accessibility-history.json` | Default 50 (rotation) |
+| `A11Y_ROUTES` | Explicit comma/JSON list of routes to scan | Otherwise auto-discovered from build |
+| `DEADLINK_FAIL` | Fail if any dead (404/0) internal/external (if enabled) links | Works with enhanced checker |
+| `DEADLINK_EXTERNAL` | Include external links in dead link scan | Default false |
+| `DEADLINK_ALLOWLIST` | Regex (comma-separated) allowlist to skip links | Tested against full or path value |
+| `DEADLINK_MAX_CONCURRENCY` | Parallel HTTP validation limit | Default 10 |
+| `FLAKINESS_MAX_CURRENT_FLAKY` | Max flaky tests allowed | Optional gate |
+| `FLAKINESS_MAX_RETRY_INTENSITY` | Max average retries per run | Optional gate |
+| `FLAKINESS_STRICT` | Fail if flakiness history missing | Bootstrapping risk |
 
-Local run with gates:
+Gating Precedence (accessibility):
+ 
+1. Block impacts (`A11Y_BLOCK_IMPACTS`)
+2. Per-route map (`A11Y_MAX_BY_ROUTE`)
+3. Uniform per-route cap (`A11Y_MAX_PER_ROUTE`)
+4. Global total (`A11Y_MAX_TOTAL`)
+5. Fallback boolean (`A11Y_FAIL`)
+
+### Dead Link Checker Notes
+
+- Only internal links by default; enable external scanning with `DEADLINK_EXTERNAL=true`.
+- Allowlist accepts multiple comma-separated regex patterns; matched links are treated as OK and excluded from dead counts.
+- Concurrency tuned via `DEADLINK_MAX_CONCURRENCY`; keep conservative (<=10) to avoid rate limiting.
+
+Local run with gates (example):
 
 ```bash
-MIN_TOPN_PASS_RATE=80 SEARCH_TOP_N=3 A11Y_FAIL=true A11Y_MAX_PER_ROUTE=2 DEADLINK_FAIL=true pnpm quality:runtime
+MIN_TOPN_PASS_RATE=80 SEARCH_TOP_N=3 A11Y_MAX_PER_ROUTE=2 A11Y_BLOCK_IMPACTS=serious,critical DEADLINK_FAIL=true DEADLINK_MAX_CONCURRENCY=8 pnpm quality:runtime
 ```
 
 
@@ -186,37 +211,37 @@ These layers create early, low-noise detection for regressions across functional
 
 ### 🔁 Flakiness Metrics & Reliability (Phase 2 Add-on)
 
-The test system now tracks per-test flakiness to highlight unstable areas before they degrade confidence:
+The test system now tracks run-level reliability metrics (aggregate view) and can evolve to per-test granularity later.
 
-- History File: `flakiness-history.json` (per test: id, runs, totalRetries, failures, flaky flag, lastRun)
-- Tracker: `pnpm flakiness:track` (auto in CI after Playwright JSON reporter output)
-- Quality Summary: Adds a Flakiness section with retry intensity sparkline & classification
-- Threshold Gate: `pnpm flakiness:check` (optional in quality gate scripts)
+- History File: `flakiness-history.json` (structure: `{ version, maxEntries, runs:[{ timestamp, totalTests, failedTests, flakyTests, retryIntensity, passRate }] }`)
+- Updater Script: `node scripts/quality/update-flakiness-history.js` (auto-invoked in deployment quality gate before thresholds)
+- Threshold Gate: `pnpm flakiness:check` (optional; enforces flaky count & retry intensity) – currently expects legacy per-test format but remains backward compatible (will skip gracefully until migrated)
+- Vitest Reporter: `./tests/reporters/flakinessReporter.ts` auto-writes `test-results.json` (run with `pnpm test`) feeding the updater real totals instead of placeholders.
 
 Environment Variables:
 
 | Variable | Purpose |
 |----------|---------|
-| `FLAKINESS_MAX_CURRENT_FLAKY` | Hard cap on number of currently flaky tests (default unset = no cap) |
-| `FLAKINESS_MAX_RETRY_INTENSITY` | Max average retries per test-run (totalRetries / totalRuns) |
+| `FLAKINESS_MAX_CURRENT_FLAKY` | Hard cap on number of currently flaky tests (default 0 in gate) |
+| `FLAKINESS_MAX_RETRY_INTENSITY` | Max proportion of flaky vs total tests in latest run (default 0.05) |
 | `FLAKINESS_STRICT` | Fail if history file missing (default: skip gracefully) |
 
-Trend Classification (retry intensity slope vs mean, last 12 values):
-
-- 5%–15% increase: mild (⚠️)
-- 15%–25% increase: moderate (🚨)
-- >25% increase: severe (🛑)
-- Negative slope: improving (✅) / near-zero: stable or noise (➖)
-
-Example enforcement snippet (CI env):
+Usage Patterns:
 
 ```bash
-FLAKINESS_MAX_CURRENT_FLAKY=0 \
-FLAKINESS_MAX_RETRY_INTENSITY=0.05 \
-pnpm flakiness:check
+# Manual update after a local test run
+node scripts/quality/update-flakiness-history.js
+
+# Run gate with stricter thresholds
+FLAKINESS_MAX_CURRENT_FLAKY=0 FLAKINESS_MAX_RETRY_INTENSITY=0.02 pnpm flakiness:check
 ```
 
-Add these gates once the history has at least a few runs to avoid failing on cold start.
+Planned Enhancements (non-breaking roadmap):
+
+- Per-test consolidation & retry tracking integration.
+- Automatic detection of newly flaky tests.
+- Trend slope & volatility classification over last N runs.
+- Badge generation (`scripts/quality/generate-badges.js`) extension for reliability.
 
 ---
 

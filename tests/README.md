@@ -110,6 +110,8 @@ Added systems & improvements:
 - Deterministic visual snapshots: `playwright/visual-routes.spec.ts` now asserts full-page screenshots with animation disabling.
 - Coverage thresholds ratcheted (+5% across statements/branches/functions/lines) in `vitest.config.ts`.
 - Edge function negative-path & success tests: `tests/vitest/edge/send-email.edge.test.ts` covering validation, rate limit, Turnstile failure, resend failure, and success.
+- Run-level flakiness tracking groundwork: `scripts/quality/update-flakiness-history.js` + integration in deployment quality gate (captures aggregate passRate / flakyTests / retryIntensity for future per-test expansion).
+- Vitest flakiness reporter: `tests/reporters/flakinessReporter.ts` writing `test-results.json` to supply real counts to history updater.
 
 Removed (deleted) deprecated redundant specs after consolidation:
 
