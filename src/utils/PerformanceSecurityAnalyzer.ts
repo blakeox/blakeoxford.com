@@ -636,15 +636,15 @@ export class PerformanceSecurityAnalyzer {
   }
 
   private generateCorrelationId(): string {
-    return `corr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `corr_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 
   private generateAnomalyId(): string {
-    return `anom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `anom_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 
   private generatePatternId(): string {
-    return `patt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `patt_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 
   /**

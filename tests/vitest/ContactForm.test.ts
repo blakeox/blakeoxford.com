@@ -30,8 +30,9 @@ describe('Contact form validation', () => {
         </body>
       </html>
     `, {
-      url: 'https://localhost',
-      runScripts: 'dangerously'
+      url: 'http://localhost:3000',
+      runScripts: 'dangerously',
+      pretendToBeVisual: true,
     });
     
     document = dom.window.document;

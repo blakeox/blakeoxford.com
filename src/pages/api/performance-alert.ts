@@ -32,7 +32,7 @@ export async function POST({ request }: { request: Request }) {
     return new Response(JSON.stringify({ 
       success: true, 
       message: 'Performance alert recorded',
-      alertId: `perf-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      alertId: `perf-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
     }), {
       status: 200,
       headers: {

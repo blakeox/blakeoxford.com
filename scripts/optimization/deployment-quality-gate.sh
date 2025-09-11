@@ -161,6 +161,35 @@ check_security_headers() {
     fi
 }
 
+# Run Lighthouse-based performance gate (strict budgets)
+run_lighthouse_gate() {
+    print_status $BLUE "\u2728 Enforcing Lighthouse budgets (perf >= ${REQUIRED_LIGHTHOUSE_SCORE}, CLS <= 0.1)..."
+
+    if command -v node >/dev/null 2>&1; then
+        # Run custom performance harness which spins up preview as needed and enforces budgets
+        if node scripts/build/performance-test.js; then
+            print_status $GREEN "\u2705 Lighthouse budgets passed"
+        else
+            print_status $RED "\u274c Lighthouse budgets failed"
+            exit 1
+        fi
+
+        # Optionally enforce bundle-level budgets (file counts/weights)
+        if [ -f "scripts/build/performance-budget.sh" ]; then
+            chmod +x "scripts/build/performance-budget.sh"
+            if ./scripts/build/performance-budget.sh; then
+                print_status $GREEN "\u2705 Bundle budgets passed"
+            else
+                print_status $RED "\u274c Bundle budgets failed"
+                exit 1
+            fi
+        fi
+    else
+        print_status $RED "\u274c Node.js not available to run Lighthouse gate"
+        exit 1
+    fi
+}
+
 # Performance regression check
 check_performance_regression() {
     print_status $BLUE "⚡ Running performance regression check..."
@@ -194,6 +223,39 @@ run_deployment_checks() {
     fi
 }
 
+# Flakiness quality gate (optional)
+check_flakiness_gate() {
+    print_status $BLUE "🔁 Evaluating test flakiness gate..."
+    # Ensure we have an updated history snapshot before evaluating thresholds
+    if command -v node >/dev/null 2>&1; then
+        if [ -f "scripts/quality/update-flakiness-history.js" ]; then
+            node scripts/quality/update-flakiness-history.js || print_status $YELLOW "⚠️ Failed to update flakiness history (continuing)"
+        fi
+    fi
+    if [ -f "flakiness-history.json" ]; then
+        # Use thresholds from env or provide relaxed defaults
+        local max_flaky="${FLAKINESS_MAX_CURRENT_FLAKY:-0}" # default: zero flaky tests
+        local max_intensity="${FLAKINESS_MAX_RETRY_INTENSITY:-0.05}" # default: light tolerance
+        if command -v node >/dev/null 2>&1; then
+            if FLAKINESS_MAX_CURRENT_FLAKY="$max_flaky" FLAKINESS_MAX_RETRY_INTENSITY="$max_intensity" node scripts/quality/check-flakiness-threshold.js; then
+                print_status $GREEN "✅ Flakiness thresholds satisfied (flaky <= $max_flaky, intensity <= $max_intensity)"
+            else
+                print_status $RED "❌ Flakiness thresholds violated"
+                exit 1
+            fi
+        else
+            print_status $YELLOW "⚠️ Node not available to run flakiness gate"
+        fi
+    else
+        if [ -n "${FLAKINESS_STRICT:-}" ]; then
+            print_status $RED "❌ Flakiness history missing in strict mode"
+            exit 1
+        else
+            print_status $YELLOW "⚠️ No flakiness-history.json present; skipping flakiness gate"
+        fi
+    fi
+}
+
 # Main execution
 main() {
     print_status $BLUE "🚀 Starting Deployment Quality Gate..."
@@ -205,8 +267,14 @@ main() {
     check_critical_css
     check_search_index
     check_security_headers
+    run_lighthouse_gate
     check_performance_regression
     run_deployment_checks
+    # Pre-populate / update flakiness history before evaluating gate to ensure file presence even after clean
+    if command -v node >/dev/null 2>&1 && [ -f "scripts/quality/update-flakiness-history.js" ]; then
+        node scripts/quality/update-flakiness-history.js || print_status $YELLOW "⚠️ Failed to pre-update flakiness history (continuing)"
+    fi
+    check_flakiness_gate
     
     echo "======================================"
     print_status $GREEN "🎉 All quality gates passed! Ready for deployment."

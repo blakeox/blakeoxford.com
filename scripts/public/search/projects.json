@@ -12,7 +12,7 @@
       "MDM",
       "COVID-19 Response"
     ],
-    "featured": false,
+    "featured": true,
     "draft": false,
     "technologies": [
       "Microsoft 365",
@@ -38,7 +38,7 @@
       "Data Engineering",
       "Leadership"
     ],
-    "featured": false,
+    "featured": true,
     "draft": false,
     "technologies": [
       "Microsoft Fabric",
@@ -65,7 +65,7 @@
       "Documentation Quality",
       "Python"
     ],
-    "featured": false,
+    "featured": true,
     "draft": false,
     "technologies": [
       "OpenAI",
@@ -78,29 +78,7 @@
     ],
     "image": "~/assets/images/projects/openai-automated-audit.png"
   },
-  {
-    "slug": "sage-intacct-integration-with-square-pos",
-    "title": "Sage Intacct Integration with Square POS",
-    "description": "Developed a comprehensive integration solution between Sage Intacct accounting software and Square POS system to automate financial data synchronization and streamline business operations.",
-    "publishedAt": "2024-03-10",
-    "tags": [
-      "API Integration",
-      "Sage Intacct",
-      "Square POS",
-      "Financial Systems",
-      "Automation"
-    ],
-    "featured": false,
-    "draft": false,
-    "technologies": [
-      "API Integration",
-      "Sage Intacct",
-      "Square POS",
-      "Financial Systems",
-      "Automation"
-    ],
-    "image": "~/assets/images/projects/square-sage-integration.png"
-  },
+  
   {
     "slug": "advancedmd-implementation",
     "title": "AdvancedMD Implementation & Evolution",

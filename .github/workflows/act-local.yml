@@ -1,0 +1,112 @@
+name: Act Local Testing
+
+# This workflow is optimized for local testing with act
+# It handles the preview server startup more reliably for local development
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  local-test:
+    name: Local E2E Test Debug
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ACT: true
+      CI: true
+      BROWSER_INSTALL_FAILED: true
+      PLAYWRIGHT_BROWSERS_LIMITED: true
+      TZ: UTC
+      LANG: C.UTF-8
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install rsync (for workspace sync)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y rsync
+
+      - name: Prepare isolated workspace (avoid host node_modules)
+        run: |
+          set -euxo pipefail
+          WORKDIR=/tmp/act-ws
+          rm -rf "$WORKDIR"
+          mkdir -p "$WORKDIR"
+          rsync -a --delete \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            --exclude 'dist' \
+            ./ "$WORKDIR"/
+          echo "WORKDIR=$WORKDIR" >> "$GITHUB_ENV"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Disable Service Worker to prevent PWA update popups
+        run: |
+          echo "Disabling service worker for testing..."
+          rm -f public/sw.js
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Install Playwright browsers (Chromium only)
+        run: pnpm exec playwright install chromium --with-deps
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Verify Playwright environment
+        run: |
+          pnpm exec playwright --version
+          node scripts/build/check-playwright-browsers.cjs || true
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Install common system fonts for stable screenshots
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y --no-install-recommends \
+            fonts-liberation \
+            fonts-dejavu-core \
+            fonts-noto-color-emoji \
+            fontconfig
+          fc-cache -f -v
+
+      - name: Build the application
+        run: pnpm run build
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: (Optional) Run performance tests (non-blocking)
+        if: ${{ env.ACT != 'true' }}
+        continue-on-error: true
+        run: pnpm perf:test
+        env:
+          # Let the script start and manage preview server itself
+          CI: true
+          ACT: true
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Run Essential E2E tests (Chromium)
+        run: pnpm run test:e2e:essential:chromium
+        env:
+          CI: true
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Upload test results on failure
+        if: ${{ failure() && env.ACT != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-test-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

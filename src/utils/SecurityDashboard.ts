@@ -620,7 +620,7 @@ export class SecurityDashboard {
    */
   createIncident(incidentData: Omit<SecurityIncident, 'id' | 'timestamp' | 'status' | 'timeline'>): SecurityIncident {
     const incident: SecurityIncident = {
-      id: `incident_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+  id: `incident_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
       timestamp: Date.now(),
       status: 'open',
       ...incidentData,

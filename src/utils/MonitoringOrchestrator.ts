@@ -499,7 +499,7 @@ export class MonitoringOrchestrator {
   async generateComprehensiveReport(): Promise<ComprehensiveReport> {
     console.log('📊 Generating comprehensive monitoring report...');
 
-    const reportId = `report_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+  const reportId = `report_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     const endTime = Date.now();
     const startTime = endTime - (24 * 60 * 60 * 1000); // Last 24 hours
 
@@ -633,6 +633,9 @@ export class MonitoringOrchestrator {
     };
   }
 
+  // Note: currently this method returns static pattern/correlation analysis.
+  // Parameter kept for future dynamic analysis generation.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private generateDataAnalysis(_data: any): ComprehensiveReport['dataAnalysis'] {
     return {
       patterns: [

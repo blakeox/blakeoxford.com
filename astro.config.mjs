@@ -16,7 +16,9 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap(),
-    compress(),
+  // Gate astro-compress to avoid long hooks in CI builds
+  // Enable only when explicitly requested via env
+  ...(process.env.ENABLE_ASTRO_COMPRESS === 'true' ? [compress()] : []),
   ],
   image: {
     // Enhanced image optimization
@@ -30,6 +32,15 @@ export default defineConfig({
   vite: {
     build: {
       minify: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            // Put all node_modules into a single vendor chunk
+            if (id.includes('node_modules')) return 'vendor';
+            return undefined;
+          }
+        }
+      }
     },
     plugins: [tailwindcss()],
     resolve: {

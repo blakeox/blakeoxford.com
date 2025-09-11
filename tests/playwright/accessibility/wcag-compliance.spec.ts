@@ -44,9 +44,13 @@ test.describe('WCAG Compliance Tests', () => {
       const title = await page.title();
       expect(title.length).toBeGreaterThan(3);
       
-      // Check for skip link
-      const skipLink = page.locator('a[href="#main"], a[href="#main-content"]').first();
-      await expect(skipLink).toBeVisible();
+  // Check skip link exists and becomes visible on focus
+  const skipLink = page.locator('a[href="#main"], a[href="#main-content"]').first();
+  await expect(skipLink).toHaveCount(1);
+  await skipLink.focus();
+  // Allow a moment for :focus styles to apply across engines
+  await page.waitForTimeout(100);
+  await expect(skipLink).toBeVisible();
     }
   });
 });

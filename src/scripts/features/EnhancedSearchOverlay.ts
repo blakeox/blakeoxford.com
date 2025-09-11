@@ -1,7 +1,7 @@
 /**
  * Enhanced search overlay with voice search, categories, and suggestions
  */
-import Fuse from 'fuse.js';
+// Load vendored Fuse.js on demand to avoid bundling it into main JS
 import { createModuleError, handleError } from '../../utils/AppError';
 
 interface SearchResult {
@@ -42,6 +42,38 @@ export class EnhancedSearchOverlay {
     this.isListening = false;
     
     this.init();
+  }
+  
+  /**
+   * Open the search overlay programmatically
+   */
+  open() {
+    const searchOverlay = document.getElementById('search-overlay');
+    if (!searchOverlay) return false;
+    
+  // Make overlay interactive
+  (searchOverlay as any).inert = false;
+
+    searchOverlay.classList.add('active');
+    searchOverlay.style.visibility = 'visible';
+    searchOverlay.style.opacity = '1';
+    
+    // Focus search input
+    if (this.searchInput) {
+      setTimeout(() => {
+        this.searchInput?.focus();
+      }, 100);
+    }
+    
+    // Disable body scroll for mobile
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    
+    this.announceToScreenReader('Search overlay opened');
+    this.trackSearchInteraction('opened');
+    
+    return true;
   }
   
   init() {
@@ -238,6 +270,8 @@ export class EnhancedSearchOverlay {
   
   async searchContent(query: string, category: string): Promise<SearchResult[]> {
     try {
+  // Ensure Fuse is available (lazy-load vendored script if needed)
+  const FuseCtor = await this.ensureFuse();
       // Load search indices
       const [projectsData, blogData, pagesData] = await Promise.all([
         this.loadSearchIndex('/search/projects.json'),
@@ -262,8 +296,8 @@ export class EnhancedSearchOverlay {
         searchData = pagesData.map((item: any) => ({ ...item, category: 'pages', type: 'page' }));
       }
 
-      // Use Fuse.js for fuzzy search
-      const fuse = new Fuse(searchData, {
+  // Use Fuse.js for fuzzy search
+  const fuse = new FuseCtor(searchData, {
         keys: [
           { name: 'title', weight: 0.4 },
           { name: 'description', weight: 0.3 },
@@ -279,7 +313,7 @@ export class EnhancedSearchOverlay {
       const fuseResults = fuse.search(query);
       
       // Convert Fuse results to SearchResult format
-      const results: SearchResult[] = fuseResults.map(result => ({
+  const results: SearchResult[] = fuseResults.map((result: any) => ({
         title: result.item.title,
         description: result.item.description,
         url: this.getResultUrl(result.item),
@@ -299,6 +333,33 @@ export class EnhancedSearchOverlay {
       handleError(appError);
       throw error;
     }
+  }
+
+  private ensureFuse(): Promise<any> {
+    if (typeof window !== 'undefined' && (window as any).Fuse) {
+      return Promise.resolve((window as any).Fuse);
+    }
+    // Load vendored Fuse from local assets via LazyBundleLoader if present, otherwise inject script tag
+    return new Promise((resolve, reject) => {
+      try {
+        const done = () => {
+          if ((window as any).Fuse) resolve((window as any).Fuse);
+          else reject(new Error('Fuse failed to initialize'));
+        };
+        if (typeof window !== 'undefined' && (window as any).LazyBundleLoader) {
+          (window as any).LazyBundleLoader.loadBundle('fuse').then(done).catch(reject);
+        } else {
+          const s = document.createElement('script');
+          s.src = '/assets/js/fuse.min.js';
+          s.async = true;
+          s.onload = done;
+          s.onerror = () => reject(new Error('Failed to load Fuse'));
+          document.head.appendChild(s);
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   private async loadSearchIndex(url: string): Promise<any[]> {
@@ -636,6 +697,7 @@ export class EnhancedSearchOverlay {
     
     // Close the overlay
     searchOverlay.classList.remove('active');
+  (searchOverlay as any).inert = true;
     
     // Clear search input
     if (this.searchInput) {
@@ -688,4 +750,4 @@ export class EnhancedSearchOverlay {
 export function initEnhancedSearchOverlay(): EnhancedSearchOverlay {
   console.log('🚀 Initializing EnhancedSearchOverlay...');
   return new EnhancedSearchOverlay();
-} 
+}

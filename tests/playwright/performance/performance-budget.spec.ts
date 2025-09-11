@@ -1,4 +1,9 @@
 import { test, expect } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
+
+const budgetsPath = path.join(process.cwd(), 'tests/config/performance-budgets.json');
+const budgets = JSON.parse(fs.readFileSync(budgetsPath, 'utf-8'));
 
 test.describe('Performance Budget', () => {
   // Shorter timeout for CI
@@ -34,11 +39,10 @@ test.describe('Performance Budget', () => {
     
     // Basic thresholds
     if (performanceMetrics.domContentLoaded) {
-      expect(performanceMetrics.domContentLoaded).toBeLessThan(2000); // 2s DOM ready
+      expect(performanceMetrics.domContentLoaded).toBeLessThan(budgets.timings.domContentLoaded);
     }
-    
     if (performanceMetrics.fcp) {
-      expect(performanceMetrics.fcp).toBeLessThan(3000); // 3s FCP
+      expect(performanceMetrics.fcp).toBeLessThan(budgets.timings.fcp);
     }
   });
 
@@ -56,7 +60,7 @@ test.describe('Performance Budget', () => {
       loadTimes.push({ page: pagePath, loadTime });
       
       // Each page should load within reasonable time
-      expect(loadTime).toBeLessThan(5000); // 5 seconds (relaxed for CI)
+  expect(loadTime).toBeLessThan(budgets.pageLoad.default);
     }
     
     console.log('Page Load Times:', loadTimes.map(p => `${p.page}: ${p.loadTime}ms`));
@@ -90,9 +94,9 @@ test.describe('Performance Budget', () => {
     await page.waitForLoadState('domcontentloaded');
     
     // Resource count budgets (relaxed for CI)
-    expect(resourceCounts.total).toBeLessThan(200); // Total requests
-    expect(resourceCounts.js).toBeLessThan(100);    // JS files
-    expect(resourceCounts.css).toBeLessThan(30);    // CSS files
+  expect(resourceCounts.total).toBeLessThan(budgets.resources.total);
+  expect(resourceCounts.js).toBeLessThan(budgets.resources.js);
+  expect(resourceCounts.css).toBeLessThan(budgets.resources.css);
     
     console.log('Resource Counts:', resourceCounts);
   });

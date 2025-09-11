@@ -1,0 +1,23 @@
+# Act configuration for local GitHub Actions testing
+# Use Ubuntu 24.04 for better compatibility with our Node.js 22 requirement
+-P ubuntu-latest=catthehacker/ubuntu:act-24.04
+
+# Platform-specific configurations
+-P ubuntu-22.04=catthehacker/ubuntu:act-22.04
+-P ubuntu-20.04=catthehacker/ubuntu:act-20.04
+
+# Set container architecture (useful for M1/M2 Macs)
+--container-architecture linux/amd64
+
+# Respect .gitignore when copying files (reduces payload and avoids tar issues)
+# (Default is true; line kept for clarity)
+--use-gitignore
+
+# Verbose logging
+-v
+
+# Bind the workspace into the container to avoid archive/tar copy issues on macOS
+--bind
+
+# Improve localhost networking from containers (best-effort on macOS)
+--container-options '--network=host'

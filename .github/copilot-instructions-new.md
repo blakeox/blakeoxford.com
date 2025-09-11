@@ -6,7 +6,7 @@ These guidelines apply to all Copilot Chat and code-generation prompts within th
 
 ## 1. Architecture Overview
 
-This is a **performance-first Astro SSG** built for Cloudflare Pages with comprehensive optimization tooling:
+This is a **performance-first Astro SSG** deployed on Cloudflare Workers with comprehensive optimization tooling:
 
 - **Framework**: Astro static site generator (`output: 'static'`)
 - **Styling**: Tailwind CSS v4.1 with Typography plugin; CSS variables for theming (`src/styles/global.css`)
@@ -22,6 +22,7 @@ This is a **performance-first Astro SSG** built for Cloudflare Pages with compre
 ## 2. Critical Developer Workflows
 
 ### Build & Development
+
 ```bash
 pnpm dev                    # Development server
 pnpm build                  # Full build with search index generation
@@ -33,6 +34,7 @@ pnpm test:ci               # Run both test suites (CI)
 ```
 
 ### Performance & Optimization
+
 ```bash
 pnpm optimize:advanced      # Run full optimization suite
 pnpm perf:test             # Performance testing with Lighthouse
@@ -41,10 +43,12 @@ pnpm optimize:images       # Advanced image optimization
 pnpm analyze:bundle        # Bundle analysis and recommendations
 ```
 
-### Cloudflare Edge
+### Cloudflare Edge (Workers-only)
+
 ```bash
-pnpm edge:deploy           # Deploy edge functions
-wrangler pages deploy dist # Manual pages deployment
+pnpm edge:deploy           # Deploy Worker (preferred)
+# Optional direct deploy
+# wrangler deploy           # Uses wrangler.toml (Workers service)
 ```
 
 **Important**: Always run `pnpm generate:search-index` before build. The build script does this automatically.
@@ -54,17 +58,20 @@ wrangler pages deploy dist # Manual pages deployment
 ## 3. File Structure & Naming Conventions
 
 ### Pages & Routing
+
 - `src/pages/` - Astro file-based routing (kebab-case filenames)
 - `src/pages/api/` - API endpoints for forms/contact
 - Always include proper frontmatter with Layout, title, description, canonicalUrl
 
 ### Components & Assets
+
 - `src/components/` - PascalCase component files (.astro or .tsx for React)
 - `src/layouts/BaseLayout.astro` - Main layout with critical CSS inlining
 - `src/content/` - Type-safe collections (blog/, projects/) with Zod schemas
 - `src/styles/global.css` - Theme variables and Tailwind imports
 
 ### Testing & Scripts
+
 - `tests/vitest/` - Component and unit tests
 - `tests/playwright/` - E2E and accessibility tests  
 - `scripts/` - Build optimization and performance tooling
@@ -75,13 +82,16 @@ wrangler pages deploy dist # Manual pages deployment
 ## 4. Content & Styling Patterns
 
 ### Content Collections
+
 Always use the defined Zod schemas in `src/content/config.ts`:
+
 ```typescript
 // Blog posts: title, description, pubDate, author?, tags?, draft?
 // Projects: title, description?, date, image?, tags?, link?, draft?
 ```
 
 ### Styling with Tailwind
+
 - Use CSS variables mapped to Tailwind (see `tailwind.config.js` color extensions)
 - Typography: Always wrap Markdown with `prose` classes
 - Dark mode: `class` strategy with `dark:` variants
@@ -89,6 +99,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 - **Never** write custom CSS - extend Tailwind or use CSS variables
 
 ### Component Patterns
+
 - **OptimizedImage.astro**: Use for all images with automatic format conversion
 - **CoinFlipImage.astro**: Interactive image flipper with proper accessibility
 - **SearchOverlay.astro**: Client-side search with Fuse.js
@@ -99,6 +110,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 ## 5. Accessibility & Performance Requirements
 
 ### Accessibility (WCAG AA)
+
 - 4.5:1 color contrast minimum
 - Full keyboard navigation (Tab, Enter, Esc, Arrows)
 - Screen reader support with proper ARIA attributes
@@ -107,6 +119,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 - **Test with**: `@axe-core/playwright` in e2e tests
 
 ### Performance Optimizations
+
 - Critical CSS inlined in `BaseLayout.astro`
 - Resource preloading for key assets
 - Advanced image optimization with multiple formats (AVIF, WebP, JPEG)
@@ -119,13 +132,16 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 ## 6. Linting & Code Quality
 
 ### ESLint Configuration
+
 The project uses a complex ESLint setup with environment-specific rules:
+
 - **Browser files**: `assets-source/`, `public/`, `src/assets/` - include DOM globals
 - **Node files**: `scripts/`, `functions/`, config files - include Node globals  
 - **Test files**: Vitest + DOM testing environment
 - **Archived files**: Files in `archived-js/` may need manual environment fixes
 
 ### Common Patterns
+
 - TypeScript for logic, JavaScript acceptable in Astro frontmatter
 - React components only when client-side interactivity needed
 - Comprehensive testing coverage with property-based testing
@@ -136,17 +152,22 @@ The project uses a complex ESLint setup with environment-specific rules:
 ## 7. Integration Points & Dependencies
 
 ### Cloudflare Services
-- **Pages**: Static hosting with preview deployments
+
+- **Workers**: Edge runtime for routing, CSP, and form processing (functions/edge-computing.js)
+- **ASSETS binding**: Serves the static build (dist/) from Workers
 - **KV**: Contact form storage and rate limiting
-- **Workers**: Edge functions for form processing
-- **Web Analytics**: Privacy-friendly analytics
+- **Web Analytics**: Privacy-friendly analytics (optional)
+
+Note: Cloudflare Pages is deprecated for this project. Do not use `wrangler pages ...`; use the Workers deploy flow instead.
 
 ### External APIs
+
 - **Resend**: Email delivery service (contact forms)
 - **Fuse.js**: Client-side fuzzy search
 - **Lighthouse CI**: Automated performance testing
 
 ### Build Pipeline
+
 - **Astro**: Static site generation with MDX support
 - **Vite**: Build tool with React plugin for client components
 - **Sharp**: Image optimization

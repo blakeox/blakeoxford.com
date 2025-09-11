@@ -7,9 +7,28 @@ import type { ImageMetadata } from 'astro';
     • Mobile:   single horizontal strip scrolling left
 */
 
-// Import all images from the carousel directory
-const imageFiles = await import.meta.glob<{ default: ImageMetadata }>('@/assets/images/carousel/*.{jpg,jpeg,png,webp}', { eager: true });
-const images = Object.values(imageFiles).map(image => image.default);
+// Import all images from the carousel directory (prefer modern formats too)
+const imageFiles = await import.meta.glob<{ default: ImageMetadata }>(
+  '@/assets/images/carousel/*.{avif,webp,jpg,jpeg}',
+  { eager: true }
+);
+
+// Group by base filename and prefer modern formats: avif > webp > jpg > jpeg > png
+const byBase = new Map<string, { ext: string; data: ImageMetadata }>();
+for (const [key, mod] of Object.entries(imageFiles)) {
+  const meta = mod.default;
+  const filename = key.split('/').pop() || '';
+  const dot = filename.lastIndexOf('.');
+  const base = dot > 0 ? filename.slice(0, dot) : filename;
+  const ext = dot > 0 ? filename.slice(dot + 1).toLowerCase() : '';
+  const rank = (e: string) => ({ avif: 1, webp: 2, jpg: 3, jpeg: 3, png: 4 }[e] ?? 99);
+  const current = byBase.get(base);
+  if (!current || rank(ext) < rank(current.ext)) {
+    byBase.set(base, { ext, data: meta });
+  }
+}
+
+const images = Array.from(byBase.values()).map(v => v.data);
 
 // Configuration
 const CONFIG = {

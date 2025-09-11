@@ -246,25 +246,48 @@ export class Analytics implements ModuleInitializer<AnalyticsConfig> {
   }
   
   private trackNavigationTiming(): void {
-    if ('performance' in window && performance.timing) {
-      const timing = performance.timing;
-      const navigationStart = timing.navigationStart;
-      
-      this.recordPerformanceMetric({
-        name: 'dom_content_loaded',
-        value: timing.domContentLoadedEventEnd - navigationStart,
-        unit: 'ms',
-        timestamp: Date.now(),
-        category: 'navigation'
-      });
-      
-      this.recordPerformanceMetric({
-        name: 'page_load_complete',
-        value: timing.loadEventEnd - navigationStart,
-        unit: 'ms',
-        timestamp: Date.now(),
-        category: 'navigation'
-      });
+    if ('performance' in window) {
+      const nav = performance.getEntriesByType?.('navigation')?.[0] as PerformanceNavigationTiming | undefined;
+      if (nav) {
+        this.recordPerformanceMetric({
+          name: 'dom_content_loaded',
+          value: nav.domContentLoadedEventEnd - nav.startTime,
+          unit: 'ms',
+          timestamp: Date.now(),
+          category: 'navigation'
+        });
+
+        this.recordPerformanceMetric({
+          name: 'page_load_complete',
+          value: nav.loadEventEnd - nav.startTime,
+          unit: 'ms',
+          timestamp: Date.now(),
+          category: 'navigation'
+        });
+        return;
+      }
+      // Fallback for older browsers without PerformanceNavigationTiming
+      // Intentionally avoid referencing deprecated types in modern browsers
+  const anyPerf = performance as any;
+  const timing = anyPerf.timing as any | undefined;
+      if (timing) {
+        const navigationStart = timing.navigationStart;
+        this.recordPerformanceMetric({
+          name: 'dom_content_loaded',
+          value: timing.domContentLoadedEventEnd - navigationStart,
+          unit: 'ms',
+          timestamp: Date.now(),
+          category: 'navigation'
+        });
+
+        this.recordPerformanceMetric({
+          name: 'page_load_complete',
+          value: timing.loadEventEnd - navigationStart,
+          unit: 'ms',
+          timestamp: Date.now(),
+          category: 'navigation'
+        });
+      }
     }
   }
   
@@ -445,7 +468,7 @@ export class Analytics implements ModuleInitializer<AnalyticsConfig> {
   }
   
   private generateSessionId(): string {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
   }
   
   private sendToProviders(event: TrackingEvent): void {

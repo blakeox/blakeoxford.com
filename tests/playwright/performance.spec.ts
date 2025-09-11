@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForScrollSettled } from '../utils/waits';
 
 // Performance and load tests for homepage and API
 
@@ -247,8 +248,8 @@ test.describe('Enhanced Performance Monitoring', () => {
       const scrollStart = Date.now();
 
       // Simulate mobile scroll gestures using Playwright methods
-      await page.mouse.wheel(0, 500);
-      await page.waitForTimeout(500); // Wait for scroll to complete
+  await page.mouse.wheel(0, 500);
+  await waitForScrollSettled(page);
 
       const scrollTime = Date.now() - scrollStart;
 

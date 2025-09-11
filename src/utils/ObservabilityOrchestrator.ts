@@ -425,7 +425,7 @@ export class ObservabilityOrchestrator {
   }
 
   private generateSessionId(): string {
-    return `obs_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `obs_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 
   private getPerformanceStatus(metrics: any): 'healthy' | 'degraded' | 'critical' {

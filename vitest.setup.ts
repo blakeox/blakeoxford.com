@@ -69,4 +69,10 @@ beforeAll(() => {
 // --- Reset all mocks between tests ---
 afterEach(() => {
   vi.clearAllMocks();
+  // Clear localStorage between tests to avoid test pollution (only if available)
+  try {
+    window.localStorage.clear();
+  } catch {
+    // Silent fail if localStorage is not available
+  }
 });

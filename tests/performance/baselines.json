@@ -1,0 +1,9 @@
+{
+  "routes": {
+    "/": { "domContentLoaded": 900, "fcp": 950, "load": 1400, "requests": 17 },
+    "/about": { "domContentLoaded": 880, "fcp": 920, "load": 1380, "requests": 17 },
+    "/projects": { "domContentLoaded": 950, "fcp": 1000, "load": 1500, "requests": 19 },
+    "/blog": { "domContentLoaded": 960, "fcp": 1010, "load": 1520, "requests": 20 }
+  },
+  "tolerance": { "timingPct": 0.07, "requestsPct": 0.1 }
+}

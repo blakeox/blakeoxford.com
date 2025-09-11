@@ -22,8 +22,11 @@ describe('ProjectCard.astro file', () => {
   });
 
   it('should include project title link', () => {
-    expect(content).toContain('aria-label={`Project: ${data.title}`}');
-    expect(content).toContain('<h3');
+  // Link should use visible text for accessible name (no aria-label)
+  expect(content).toContain('<h3');
+  expect(content).toContain('href={`/projects/${slug}/`}');
+  expect(content).toContain('{data.title}');
+  expect(content).not.toContain('aria-label={`Project: ${data.title}`}');
   });
 
   it('should render tags list with aria-label', () => {
@@ -32,7 +35,8 @@ describe('ProjectCard.astro file', () => {
   });
 
   it('should have View Project button', () => {
-    expect(content).toContain('View Project');
-    expect(content).toContain('aria-label={`View ${data.title}`}');
+  // Visible CTA text should include the project title; no aria-label
+  expect(content).toContain('View Project: {data.title}');
+  expect(content).not.toContain('aria-label={`View ${data.title}`}');
   });
 });

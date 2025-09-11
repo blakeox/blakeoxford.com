@@ -1,10 +1,9 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
-import { Image } from 'astro:assets';
+import ProficiencyLogo from '../components/media/ProficiencyLogo.astro';
 import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import { getFeaturedProjects, technologies, siteConfig } from '../config/data';
-import pythonLogo from '../assets/images/proficiencies/python_logo.webp';
 
 // Manual blog post definitions (matching blog/index.astro)
 const blogPosts = [
@@ -36,6 +35,20 @@ const featuredProjects = getFeaturedProjects(3);
 
 // Get the latest blog post if available
 const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
+
+// Helper to derive optimized image component props from a full /assets/images path
+function deriveImageData(imgPath?: string) {
+  if (!imgPath) return null;
+  // Expect path like /assets/images/proficiencies/python_logo.webp
+  const prefix = '/assets/images/';
+  if (!imgPath.startsWith(prefix)) return null;
+  const relative = imgPath.slice(prefix.length); // proficiencies/python_logo.webp
+  const lastDot = relative.lastIndexOf('.');
+  if (lastDot === -1) return null;
+  const name = relative.slice(0, lastDot); // proficiencies/python_logo
+  const ext = relative.slice(lastDot + 1).toLowerCase();
+  return { name, ext };
+}
 ---
 <Layout title="Blake Oxford - Leadership & Portfolio" description="Explore my projects, blog posts, and get in touch with me." wide={true}>
   <!-- Decorative background shapes -->
@@ -75,14 +88,12 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
                 href="/contact/"
                 class="btn btn-primary mobile-tap-effect"
                 data-analytics="hero-cta"
-                aria-label="Start a conversation with Blake Oxford"
               >
                 🤝 Let's Connect
               </a>
               <a
                 href="/assets/Resume.pdf"
                 class="btn btn-secondary mobile-tap-effect"
-                aria-label="Download Blake Oxford's resume as PDF"
                 download
               >
                 📄 Download Resume
@@ -102,6 +113,9 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
                   altBack="Blake Oxford in China"
                   size={280}
                   flipMultipleTimes
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="auto"
                   role="img"
                   aria-label="Photo of Blake Oxford"
                 />
@@ -309,27 +323,33 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
     <section id="technologies" class="w-full py-16 text-center animate-fade-in bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
       <h2 class="text-h2 font-bold mb-8 text-accent-dark">Technologies I Excel At</h2>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
-        {technologies.map((tech) => (
-          <li class="flex flex-col items-center group">
-            <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center">
-              {tech.optimized && tech.name === 'Python Automation' ? (
-                <Image
-                  src={pythonLogo}
-                  alt={tech.alt}
-                  width={64}
-                  height={64}
-                  class="w-full h-full object-contain"
-                  loading="lazy"
-                />
-              ) : tech.img ? (
-                <img src={tech.img as string} alt={tech.alt} class="w-full h-full object-contain" />
-              ) : (
-                <span class="text-2xl" aria-label={tech.name}>?</span>
-              )}
-            </div>
-            <span class="group-hover:text-accent transition-colors">{tech.name}</span>
-          </li>
-        ))}
+        {technologies.map((tech) => {
+          const raw = tech.img as any;
+          const srcStr: string | undefined = typeof raw === 'string' ? raw : raw?.src;
+          const canOptimize = typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
+          const data = canOptimize ? deriveImageData(srcStr) : null;
+          return (
+            <li class="flex flex-col items-center group">
+              <div class="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center">
+                {data ? (
+                  <ProficiencyLogo
+                    base={data.name}
+                    alt={tech.alt}
+                    width={64}
+                    height={64}
+                    class="w-full h-full object-contain"
+                    loading="lazy"
+                  />
+                ) : srcStr ? (
+                  <img src={srcStr} alt={tech.alt} width={64} height={64} class="w-full h-full object-contain" loading="lazy" />
+                ) : (
+                  <span class="text-2xl" aria-label={tech.name}>?</span>
+                )}
+              </div>
+              <span class="group-hover:text-accent transition-colors">{tech.name}</span>
+            </li>
+          );
+        })}
       </ul>
     </section>
 
@@ -341,7 +361,7 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
           <ProjectCard project={project} featured={true} />
         ))}
       </div>        <div class="mt-8 text-center animate-fade-in">
-          <a href="/projects/" class="btn btn-secondary" aria-label="View all projects">View All Projects</a>
+          <a href="/projects/" class="btn btn-secondary">View All Projects</a>
         </div>
     </section>
 
@@ -352,7 +372,7 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
         <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
           {latestBlogPost ? (
             <li class="bg-surface dark:bg-gray-800 rounded-2xl shadow-xl p-6 animate-slide-up">
-              <a href={`/blog/${latestBlogPost.slug}`} class="block hover:scale-105 transition-transform duration-200" aria-label={`Read blog post: ${latestBlogPost.data.title}`}>
+              <a href={`/blog/${latestBlogPost.slug}`} class="block hover:scale-105 transition-transform duration-200">
                 <h3 class="text-h3 font-semibold mb-2">{latestBlogPost.data.title}</h3>
                 <time class="text-sm text-neutral" datetime={latestBlogPost.data.pubDate?.toISOString()}>
                   {latestBlogPost.data.pubDate?.toLocaleDateString('en-US', {
@@ -375,7 +395,7 @@ const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
           )}
         </ul>
         <div class="mt-8 text-center animate-fade-in">
-          <a href="/blog/" class="btn btn-primary" aria-label="View all blog posts">View All Blog Posts</a>
+          <a href="/blog/" class="btn btn-primary">View All Blog Posts</a>
         </div>
       </div>
     </section>

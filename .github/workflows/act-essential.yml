@@ -1,0 +1,54 @@
+name: Act Essential Tests
+
+# Minimal workflow for testing our essential E2E optimizations with act
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  essential-test:
+    name: Essential Tests (Act)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers (Chromium only)
+        run: |
+          echo "🎭 Installing Chromium browser for act testing..."
+          pnpm exec playwright install chromium --with-deps
+
+      - name: Build the application
+        run: pnpm run build
+
+      - name: Run essential tests
+        run: |
+          echo "🧪 Running essential E2E tests (Chromium only)..."
+          ./scripts/ci/run-essential-tests.sh
+        env:
+          CI: true
+          BROWSER_INSTALL_FAILED: true  # Force Chromium-only mode
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: essential-test-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 3
