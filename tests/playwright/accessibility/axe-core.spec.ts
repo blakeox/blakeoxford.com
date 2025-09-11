@@ -1,12 +1,13 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import fs from 'fs';
-import path from 'path';
+import { resolveFrom } from '../../utils/esmPath.js';
 
 // Core automated accessibility scan across key routes
 // Tagged as essential but can be split later if performance issues arise.
 
-const baselinePath = path.resolve(__dirname, '../../accessibility-baseline.json');
+// In ESM there is no __dirname; use resolveFrom helper. Baseline at tests/accessibility-baseline.json
+const baselinePath = resolveFrom(import.meta, '..', '..', 'accessibility-baseline.json');
 
 interface AxeViolationSummary { id: string; impact: string | null; nodes: number; }
 interface AccessibilityBaseline { [route: string]: AxeViolationSummary[]; }
