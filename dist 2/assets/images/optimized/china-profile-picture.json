@@ -1,0 +1,14 @@
+{
+  "original": "china-profile-picture.webp",
+  "formats": [
+    "avif",
+    "webp",
+    "jpeg",
+    "png"
+  ],
+  "sizes": [
+    320
+  ],
+  "width": 600,
+  "height": 800
+}

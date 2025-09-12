@@ -164,8 +164,9 @@ server.pid
 .tmp/
 temp/
 
-# Performance test outputs
+# Performance test outputs (keep generic perf artifacts ignored, but allow config budgets file)
 performance-*.json
+!tests/config/performance-budgets.json
 
 # CI/CD health and status reports (generated files)
 workflow-health-report.json

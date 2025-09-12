@@ -1,0 +1,85 @@
+name: Contrast PR Summary
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  contrast-pr:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-contrast') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: Run contrast test (json emission)
+        id: contrast
+        run: |
+          set -e
+          pnpm contrast:history || true
+        env:
+          CONTRAST_ALERT_THRESHOLD: 9999 # effectively disable alert noise for PR runs
+          CONTRAST_JSON: 1
+      - name: Generate markdown report (7 days)
+        run: pnpm contrast:report -- --markdown --limit 7 > pr-contrast.md || true
+      - name: Build PR comment body
+        id: body
+        run: |
+          echo 'body<<EOF' >> $GITHUB_OUTPUT
+          echo '### Accessibility Contrast Summary' >> $GITHUB_OUTPUT
+          echo '' >> $GITHUB_OUTPUT
+          trend_line=""
+          if [ -f quality-snapshots/contrast-history.json ]; then
+            latest=$(jq -r 'last' quality-snapshots/contrast-history.json 2>/dev/null || true)
+            slope=$(echo "$latest" | jq -r '.metrics.slope7Borderline // empty')
+            if [ -n "$slope" ]; then
+              awkTrend=$(node -e "import { classifyTrend } from './scripts/quality/lib/contrastMetrics.js'; console.log(classifyTrend($slope));" 2>/dev/null || true)
+              arrow="⭮"
+              if [ "$awkTrend" = "worsening" ]; then arrow="▲"; fi
+              if [ "$awkTrend" = "improving" ]; then arrow="▼"; fi
+              trend_line="Latest trend: $awkTrend ($slope) $arrow"
+              echo "$trend_line" >> $GITHUB_OUTPUT
+              echo '' >> $GITHUB_OUTPUT
+            fi
+          fi
+          if [ -f pr-contrast.md ]; then
+            echo 'Last 7 days (including this run):' >> $GITHUB_OUTPUT
+            sed 's/^/| /' pr-contrast.md | sed '1s/^| //' >> $GITHUB_OUTPUT
+          else
+            echo '_No contrast history available yet._' >> $GITHUB_OUTPUT
+          fi
+          echo '' >> $GITHUB_OUTPUT
+          echo '> This PR run emits sampled borderline contrast stats for awareness. Nightly workflow enforces alerts.' >> $GITHUB_OUTPUT
+          echo '' >> $GITHUB_OUTPUT
+          echo '<!-- contrast-pr-summary-marker -->' >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+      - name: Create or update comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -e
+          body_file=pr-comment-body.txt
+          echo "${{ steps.body.outputs.body }}" > "$body_file"
+          existing_id=$(gh api repos/${{ github.repository }}/issues/$PR_NUMBER/comments --jq '.[] | select(.body | contains("<!-- contrast-pr-summary-marker -->")) | .id' | head -n 1 || true)
+          if [ -n "$existing_id" ]; then
+            echo "Updating existing contrast summary comment ($existing_id)"
+            gh api repos/${{ github.repository }}/issues/comments/$existing_id -X PATCH -f body@"$body_file"
+          else
+            echo "Creating new contrast summary comment"
+            gh api repos/${{ github.repository }}/issues/$PR_NUMBER/comments -X POST -f body@"$body_file"
+          fi

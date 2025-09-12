@@ -1,0 +1,14 @@
+{
+  "original": "screenshot-mobile.png",
+  "formats": [
+    "avif",
+    "webp",
+    "jpeg",
+    "png"
+  ],
+  "sizes": [
+    320
+  ],
+  "width": 375,
+  "height": 667
+}
