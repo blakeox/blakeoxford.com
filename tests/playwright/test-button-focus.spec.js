@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForKeyboardResponse } from './utils/test-helpers';
 
 test('nav-toggle button focus test', async ({ page }) => {
   // Set mobile viewport to make nav-toggle visible
@@ -37,7 +38,7 @@ test('nav-toggle button focus test', async ({ page }) => {
   await navToggle.focus();
 
   // Wait a bit
-  await page.waitForTimeout(100);
+  await waitForKeyboardResponse(page);
 
   // Check if focused
   const isFocused = await navToggle.evaluate(el => document.activeElement === el);
@@ -59,7 +60,7 @@ test('nav-toggle button focus test', async ({ page }) => {
 
   // Try clicking and then checking focus
   await navToggle.click();
-  await page.waitForTimeout(100);
+  await waitForKeyboardResponse(page);
 
   const isFocusedAfterClick = await navToggle.evaluate(el => document.activeElement === el);
   console.log('Is focused after click:', isFocusedAfterClick);

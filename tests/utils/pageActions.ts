@@ -1,6 +1,7 @@
 // Shared Playwright page action helpers (Phase 0 minimal)
 // Will be imported in future consolidated specs.
 import { Page, expect } from '@playwright/test';
+import { waitForSearchResults } from '../playwright/utils/test-helpers';
 
 export async function openSearchOverlay(page: Page) {
   const overlay = page.locator('#search-overlay');
@@ -11,7 +12,7 @@ export async function openSearchOverlay(page: Page) {
   await page.keyboard.press(combo);
 
   // If overlay not visible quickly, try alternative triggers
-  await page.waitForTimeout(50);
+  await waitForSearchResults(page);
   if (!(await overlay.isVisible())) {
     // Attempt to click a known trigger if present
     const trigger = page.locator('[data-search-trigger], button[aria-label*="Search" i], button[id*="search" i]');

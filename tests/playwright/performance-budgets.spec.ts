@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForAsyncOperation } from '../utils/test-helpers';
 
 test.describe('Performance Budget Enforcement', () => {
   test.describe('Bundle Size Budgets', () => {
@@ -167,7 +168,7 @@ test.describe('Performance Budget Enforcement', () => {
       await page.waitForLoadState('networkidle');
       
       // Wait for any heavy JavaScript to complete
-      await page.waitForTimeout(1000);
+      await waitForAsyncOperation(page);
       
       try {
         const startTime = performance.now();
@@ -302,7 +303,7 @@ test.describe('Performance Budget Enforcement', () => {
       // Interact with the page to trigger JS execution
       await page.click('nav a');
       await page.goBack();
-      await page.waitForTimeout(1000);
+      await waitForAsyncOperation(page);
 
       const memoryInfo = await page.evaluate(() => {
         interface ExtendedPerformance extends Performance {

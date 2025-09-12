@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForKeyboardResponse } from '../utils/test-helpers';
 
 test.describe('Enhanced Accessibility Testing', () => {
   test.describe('WCAG Compliance', () => {
@@ -152,7 +153,7 @@ test.describe('Enhanced Accessibility Testing', () => {
       // Tab through first 15 focusable elements
       for (let i = 0; i < 15; i++) {
         await page.keyboard.press('Tab');
-        await page.waitForTimeout(50); // Reduced timeout for efficiency
+        await waitForKeyboardResponse(page); // Reduced timeout for efficiency
         
         try {
           const focusedElement = page.locator(':focus');
@@ -260,7 +261,7 @@ test.describe('Enhanced Accessibility Testing', () => {
           const searchOverlay = page.locator('[data-testid="search-overlay"], .search-overlay, [role="dialog"]');
           
           // Wait briefly to see if search opens
-          await page.waitForTimeout(500);
+          await waitForKeyboardResponse(page);
           
           if (await searchOverlay.isVisible()) {
             // Search opened successfully

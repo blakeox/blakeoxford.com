@@ -1,12 +1,13 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { waitForAsyncOperation } from './utils/test-helpers';
 
 // Essential accessibility tests - run in fast CI
 test.describe('Essential Accessibility Tests', () => {
   test.describe('Critical WCAG Checks @essential', () => {
     test('homepage should pass basic accessibility audit', async ({ page }) => {
       await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await page.waitForTimeout(500); // Minimal stabilization
+      await waitForAsyncOperation(page); // Minimal stabilization
 
       const accessibilityScanResults = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa']) // Core WCAG only

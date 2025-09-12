@@ -1,5 +1,6 @@
  
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { waitForKeyboardResponse } from '../utils/test-helpers';
 
 test.describe('SearchOverlay Manual Test', () => {
   test('should manually create and test SearchOverlay', async ({ page }) => {
@@ -77,10 +78,10 @@ test.describe('SearchOverlay Manual Test', () => {
       // If it worked, test keyboard shortcut
       if (functionalTest.opened) {
         await page.keyboard.press('Escape'); // Close it first
-        await page.waitForTimeout(100);
+        await waitForKeyboardResponse(page);
         
         await page.keyboard.press('Control+k'); // Try to open with shortcut
-        await page.waitForTimeout(500);
+        await waitForKeyboardResponse(page);
         
         const keyboardTest = await page.evaluate(() => {
           const overlay = document.getElementById('search-overlay');

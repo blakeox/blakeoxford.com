@@ -1,4 +1,14 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+i        await page.waitForTimeout(500); // Wait for immediate response
+        await waitForKeyboardResponse(page);
+        
+        let stillVisible = await mobileMenu.isVisible();
+        console.log(`Mobile menu visible after keyboard response: ${stillVisible}`);
+        
+        await waitForAsyncOperation(page); // Wait longer for setTimeout
+        
+        stillVisible = await mobileMenu.isVisible();
+        console.log(`Mobile menu visible after async operation: ${stillVisible}`);aitForKeyboardResponse, waitForAsyncOperation } from '../utils/test-helpers';
 
 // @debug
 test.describe('Keyboard Navigation Debug', () => {
@@ -16,7 +26,7 @@ test.describe('Keyboard Navigation Debug', () => {
     if (await mobileMenuButton.isVisible()) {
       console.log('Clicking mobile menu button...');
       await mobileMenuButton.click();
-      await page.waitForTimeout(1000);
+      await waitForKeyboardResponse(page);
       
       // Check all possible dialog selectors
       const allDialogs = await page.locator('[role="dialog"]').all();
@@ -47,12 +57,12 @@ test.describe('Keyboard Navigation Debug', () => {
         // Check console messages for debug info
         page.on('console', msg => console.log('PAGE LOG:', msg.text()));
         
-        await page.waitForTimeout(500); // Wait for immediate response
+        await waitForKeyboardResponse(page); // Wait for immediate response
         
         let stillVisible = await mobileMenu.isVisible();
-        console.log(`Mobile menu visible after 0.5s: ${stillVisible}`);
+        console.log(`Mobile menu visible after keyboard response: ${stillVisible}`);
         
-        await page.waitForTimeout(1500); // Wait longer for setTimeout
+        await waitForAsyncOperation(page); // Wait longer for setTimeout
         
         stillVisible = await mobileMenu.isVisible();
         console.log(`Mobile menu visible after 2s total: ${stillVisible}`);

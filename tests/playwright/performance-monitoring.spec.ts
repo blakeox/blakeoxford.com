@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Performance and Monitoring', () => {
   test.describe('Core Web Vitals', () => {
@@ -35,7 +36,7 @@ test.describe('Performance and Monitoring', () => {
       await page.goto('/');
       
       // Wait for initial load
-      await page.waitForTimeout(1000);
+      await waitForAsyncOperation(page);
       
       // Measure CLS
       const clsScore = await page.evaluate(() => {
@@ -252,7 +253,7 @@ test.describe('Performance and Monitoring', () => {
       });
       
       await page.goto('/');
-      await page.waitForTimeout(2000);
+      await waitForAsyncOperation(page); // Wait for page load and error collection
       
       // Should have minimal console errors
       expect(consoleErrors.length).toBeLessThan(30); // Relaxed for test environment

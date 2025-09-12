@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForKeyboardResponse } from '../utils/test-helpers';
 
 test.describe('WCAG Compliance Tests', () => {
   test('homepage should pass all accessibility audits', async ({ page }) => {
@@ -49,7 +50,7 @@ test.describe('WCAG Compliance Tests', () => {
   await expect(skipLink).toHaveCount(1);
   await skipLink.focus();
   // Allow a moment for :focus styles to apply across engines
-  await page.waitForTimeout(100);
+  await waitForKeyboardResponse(page);
   await expect(skipLink).toBeVisible();
     }
   });

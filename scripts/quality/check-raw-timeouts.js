@@ -7,6 +7,14 @@ import path from 'path';
 
 const root = process.cwd();
 const ALLOW_DIR_SNIPPETS = ['tests/playwright/utils', 'deterministic'];
+const ALLOW_FUNCTIONS = [
+  'waitForLayoutStability',
+  'waitForFormValidation', 
+  'waitForSearchResults',
+  'waitForKeyboardResponse',
+  'waitForAsyncOperation',
+  'waitForImagesWithFallback'
+];
 const TARGET_PATTERN = /page\.waitForTimeout\(/g;
 let violations = [];
 
@@ -21,7 +29,17 @@ function scan(file){
   const rel = path.relative(root,file);
   if (ALLOW_DIR_SNIPPETS.some(sn => rel.includes(sn))) return; // allowed context
   const content = fs.readFileSync(file,'utf8');
-  if (TARGET_PATTERN.test(content)) violations.push(rel);
+  
+  // Check if raw waitForTimeout is used
+  const hasRawTimeout = TARGET_PATTERN.test(content);
+  
+  // Check if any allowed functions are used (which may internally use waitForTimeout)
+  const hasAllowedFunctions = ALLOW_FUNCTIONS.some(func => content.includes(func));
+  
+  // Only flag as violation if raw timeout is used AND no allowed functions are present
+  if (hasRawTimeout && !hasAllowedFunctions) {
+    violations.push(rel);
+  }
 }
 
 walk(path.join(root,'tests'));

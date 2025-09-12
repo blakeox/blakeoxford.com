@@ -1,5 +1,6 @@
 import { test, expect, devices } from '@playwright/test';
 import { waitForMenuState } from '../utils/waits';
+import { waitForKeyboardResponse } from '../utils/test-helpers';
 
 // Test mobile navigation specifically
 test.describe('Mobile Navigation', () => {
@@ -283,11 +284,11 @@ test.describe('Mobile Device Navigation', () => {
         await expect(burgerButton).toBeVisible();
         
         await burgerButton.click();
-        await page.waitForTimeout(350);
+        await waitForKeyboardResponse(page);
         await expect(mobileMenu).toHaveClass(/active/);
         
         await page.keyboard.press('Escape');
-        await page.waitForTimeout(350);
+        await waitForKeyboardResponse(page);
         await expect(mobileMenu).not.toHaveClass(/active/);
         
         await context.close();
