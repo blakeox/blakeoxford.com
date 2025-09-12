@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForKeyboardResponse } from '../utils/test-helpers';
+import { waitForKeyboardResponse } from './utils/test-helpers';
 
 test.describe('Enhanced Accessibility Testing', () => {
   test.describe('WCAG Compliance', () => {

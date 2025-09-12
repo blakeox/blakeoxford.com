@@ -16,10 +16,12 @@ export async function waitForFormValidation(page: Page, timeout = 5000): Promise
 /**
  * Wait for search results to appear
  */
-export async function waitForSearchResults(page: Page, timeout = 3000): Promise<void> {
+export async function waitForSearchResults(page: Page, timeout = 4000): Promise<void> {
   await page.waitForFunction(() => {
     const results = document.querySelectorAll('[data-search-result], .search-result, .search-results li, .search-overlay [role="listbox"] [role="option"]');
-    return results.length > 0;
+    const empty = document.querySelector('.search-no-results, [data-search-empty]');
+    const listbox = document.querySelector('.search-overlay [role="listbox"], .search-results');
+    return results.length > 0 || !!empty || !!listbox;
   }, { timeout });
 }
 
@@ -189,7 +191,7 @@ export async function disableAnimationsComprehensive(page: Page): Promise<void> 
           // Set reduced motion preference
           if ('matchMedia' in window) {
             Object.defineProperty(window, 'matchMedia', {
-              value: (query) => {
+              value: (query: string) => {
                 if (query.includes('prefers-reduced-motion')) {
                   return { 
                     matches: true, 

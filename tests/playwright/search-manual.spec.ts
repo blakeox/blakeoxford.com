@@ -1,6 +1,6 @@
  
 import { test, expect } from '@playwright/test';
-import { waitForKeyboardResponse } from '../utils/test-helpers';
+import { waitForKeyboardResponse } from './utils/test-helpers';
 
 test.describe('SearchOverlay Manual Test', () => {
   test('should manually create and test SearchOverlay', async ({ page }) => {

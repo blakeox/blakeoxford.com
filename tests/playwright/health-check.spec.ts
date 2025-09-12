@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForAsyncOperation } from '../utils/test-helpers';
+import { waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Server Health Check', () => {
   test('server should be accessible and return homepage', async ({ page }) => {

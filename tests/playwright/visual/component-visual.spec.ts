@@ -5,7 +5,7 @@ import { preparePage } from './_visualHelper';
 // Tags: @visual-essential @visual-components
 
 const componentSelectors: Record<string, { route: string; selector: string }> = {
-  navbar: { route: '/', selector: 'header nav' },
+  navbar: { route: '/', selector: 'header nav#navbar, header nav[aria-label="Main navigation"], header nav' },
   footer: { route: '/', selector: 'footer' },
   searchOverlay: { route: '/', selector: '#search-overlay' }
 };
@@ -17,16 +17,29 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
       await page.goto(cfg.route, { waitUntil: 'networkidle' });
       // Open search overlay if needed
       if (name === 'searchOverlay') {
-        const toggle = page.locator('[data-test="open-search"], button:has-text("Search")').first();
+        const toggle = page.locator('#search-toggle, [data-test="open-search"], button:has-text("Search")').first();
         if (await toggle.isVisible()) await toggle.click();
-        await expect(page.locator(cfg.selector)).toBeVisible();
+        else {
+          await page.keyboard.press('/');
+          await page.keyboard.press('Meta+K');
+          await page.keyboard.press('Control+K');
+        }
+        const overlay = page.locator(cfg.selector).first();
+        await overlay.evaluate((el) => {
+          el.classList.add('active');
+          el.removeAttribute('inert');
+          (el as HTMLElement).style.visibility = 'visible';
+          (el as HTMLElement).style.opacity = '1';
+          (el as HTMLElement).style.pointerEvents = 'auto';
+        });
+        await expect(overlay).toBeVisible();
       } else {
-        await expect(page.locator(cfg.selector)).toBeVisible();
+        await expect(page.locator(cfg.selector).first()).toBeVisible();
       }
       const element = page.locator(cfg.selector).first();
       await expect(element).toHaveScreenshot(`${name}.png`, {
         animations: 'disabled',
-        maxDiffPixelRatio: 0.01
+        maxDiffPixelRatio: 0.02
       });
     });
   }

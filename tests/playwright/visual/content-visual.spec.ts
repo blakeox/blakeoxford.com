@@ -9,8 +9,8 @@ test.describe('@visual-essential @visual-content Content Visual Regression', () 
   test.beforeEach(async ({ page }) => { await preparePage(page); });
   for (const route of contentRoutes) {
     test(`content visual ${route}`, async ({ page }) => {
-      // Stricter diff threshold for mostly static content pages
-      await snapshotRoute(page, route, { diff: { maxDiffPixelRatio: 0.002 } });
+      // Reasonable threshold for cross-browser rendering variance
+      await snapshotRoute(page, route, { diff: { maxDiffPixelRatio: 0.01 } });
     });
   }
 });

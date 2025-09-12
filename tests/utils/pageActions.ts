@@ -8,33 +8,52 @@ export async function openSearchOverlay(page: Page) {
   // Clear any initial focus oddities
   await page.evaluate(() => document.activeElement instanceof HTMLElement && (document.activeElement as HTMLElement).blur());
 
-  const combo = process.platform === 'darwin' ? 'Meta+K' : 'Control+K';
-  await page.keyboard.press(combo);
-
-  // If overlay not visible quickly, try alternative triggers
-  await waitForSearchResults(page);
-  if (!(await overlay.isVisible())) {
-    // Attempt to click a known trigger if present
-    const trigger = page.locator('[data-search-trigger], button[aria-label*="Search" i], button[id*="search" i]');
-    if (await trigger.first().isVisible()) {
-      await trigger.first().click();
-    } else {
-      // Dispatch custom event if site listens for it
-      await page.evaluate(() => {
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }));
-        window.dispatchEvent(new CustomEvent('open-search'));
-      });
-    }
+  // Prefer clicking the explicit toggle if present
+  const toggle = page.locator('#search-toggle');
+  if (await toggle.isVisible().catch(() => false)) {
+    await toggle.click();
+  } else {
+    // Fallback shortcuts: '/' is wired in component script; Meta+K for convenience
+    await page.keyboard.press('/').catch(() => {});
+    const combo = process.platform === 'darwin' ? 'Meta+K' : 'Control+K';
+    await page.keyboard.press(combo).catch(() => {});
   }
 
-  // Wait for overlay to lose inert and become visible
-  await page.waitForFunction(() => {
-    const el = document.querySelector('#search-overlay');
+  // Wait for overlay activation (class + style + inert removed)
+  const activated = await page.waitForFunction(() => {
+    const el = document.querySelector('#search-overlay') as HTMLElement | null;
     if (!el) return false;
-    const inert = (el as HTMLElement).hasAttribute('inert');
-    const style = window.getComputedStyle(el as HTMLElement);
-    return !inert && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0 && (el as HTMLElement).getBoundingClientRect().height > 0;
-  }, { timeout: 3000 });
+    const inert = el.hasAttribute('inert');
+    const style = el ? window.getComputedStyle(el) : null;
+    const visible = !!style && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0;
+    return !inert && el.classList.contains('active') && visible;
+  }, { timeout: 3000 }).catch(() => false as const);
+
+  // If still not active, attempt to force init + open via page script
+  if (!activated) {
+    await page.evaluate(async () => {
+      try {
+        const ensure = async () => {
+          const g: any = window as any;
+          if (!g.enhancedSearchOverlay && g.EnhancedSearchOverlay && typeof g.initEnhancedSearchOverlay === 'function') {
+            g.enhancedSearchOverlay = g.initEnhancedSearchOverlay();
+          }
+          return g.enhancedSearchOverlay || g.searchOverlay || null;
+        };
+        const inst = await ensure();
+        if (inst && typeof inst.open === 'function') inst.open();
+      } catch { /* noop */ }
+    });
+
+    await page.waitForFunction(() => {
+      const el = document.querySelector('#search-overlay') as HTMLElement | null;
+      if (!el) return false;
+      const inert = el.hasAttribute('inert');
+      const style = el ? window.getComputedStyle(el) : null;
+      const visible = !!style && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0;
+      return !inert && el.classList.contains('active') && visible;
+    }, { timeout: 3000 }).catch(() => {});
+  }
 
   await expect(overlay).toBeVisible();
   return overlay;
@@ -43,6 +62,8 @@ export async function openSearchOverlay(page: Page) {
 export async function fillSearch(page: Page, query: string) {
   const input = page.locator('#search-input');
   await input.fill(query);
+  // Wait for results to appear after typing
+  await waitForSearchResults(page, 5000);
   return input;
 }
 

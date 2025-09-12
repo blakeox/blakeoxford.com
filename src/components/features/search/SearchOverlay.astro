@@ -650,5 +650,15 @@
       if ('requestIdleCallback' in window) requestIdleCallback(() => { ensureInit(); }, { timeout: 20000 });
       else setTimeout(() => { ensureInit(); }, 20000);
     }
+
+    // Always support closing with Escape regardless of focus target
+    document.addEventListener('keydown', async (e) => {
+      if (e.key === 'Escape') {
+        try {
+          const inst = await ensureInit();
+          if (inst && typeof inst.closeSearchOverlay === 'function') inst.closeSearchOverlay();
+        } catch { /* no-op */ }
+      }
+    }, { passive: true });
   })();
 </script>

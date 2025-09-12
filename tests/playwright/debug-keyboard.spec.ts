@@ -1,14 +1,5 @@
 import { test, expect } from '@playwright/test';
-i        await page.waitForTimeout(500); // Wait for immediate response
-        await waitForKeyboardResponse(page);
-        
-        let stillVisible = await mobileMenu.isVisible();
-        console.log(`Mobile menu visible after keyboard response: ${stillVisible}`);
-        
-        await waitForAsyncOperation(page); // Wait longer for setTimeout
-        
-        stillVisible = await mobileMenu.isVisible();
-        console.log(`Mobile menu visible after async operation: ${stillVisible}`);aitForKeyboardResponse, waitForAsyncOperation } from '../utils/test-helpers';
+import { waitForKeyboardResponse, waitForAsyncOperation } from './utils/test-helpers';
 
 // @debug
 test.describe('Keyboard Navigation Debug', () => {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForAsyncOperation } from '../utils/test-helpers';
+import { waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Performance Budget Enforcement', () => {
   test.describe('Bundle Size Budgets', () => {

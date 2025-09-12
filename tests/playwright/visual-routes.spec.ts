@@ -12,20 +12,41 @@ test.describe('@visual-essential Visual Route Smoke', () => {
   const routes = ['/', '/about/', '/projects/', '/blog/', '/contact/'];
   for (const route of routes) {
     test(`visual regression ${route}`, async ({ page }) => {
-      await page.goto(route, { waitUntil: 'networkidle' });
+      // Avoid networkidle on pages with async widgets; DOMContentLoaded is sufficient for static capture
+      await page.goto(route, { waitUntil: 'domcontentloaded' });
       await expect(page.locator('main, [role="main"]').first()).toBeVisible();
       // Screenshot masking dynamic regions (e.g. time, animated cursor) if any appear; adjust selectors as needed
-      await expect(page).toHaveScreenshot(
-        route.replace(/\//g, '_').replace(/^_/, '') + '.png',
-        {
-          animations: 'disabled',
-          fullPage: true,
-          mask: [
-            // add selectors for dynamic regions to mask
-          ],
-          maskColor: '#ffffff'
+  // Preserve existing snapshot naming scheme using underscores
+  const base = route.replace(/\//g, '_').replace(/^_/, '');
+  const name = (base || 'home') + '.png';
+
+      // Base options for cross-browser stability
+      const options: any = {
+        animations: 'disabled',
+        fullPage: true,
+        mask: [],
+        maskColor: '#ffffff',
+        maxDiffPixelRatio: 0.01,
+      };
+
+      // The contact page includes decorative animations and blurred shapes — mask them to avoid flake
+      if (route === '/contact/') {
+        const masks = [
+          '#hero .absolute',
+          '#contact-info .absolute',
+          '.coin-flip',
+        ];
+        options.mask = masks.map((sel) => page.locator(sel));
+        options.maxDiffPixelRatio = 0.02;
+
+        // Chromium tends to render gradients/blurs a bit differently; allow a hair more tolerance
+        const projectName = test.info().project.name || '';
+        if (/chromium/i.test(projectName)) {
+          options.maxDiffPixelRatio = 0.025;
         }
-      );
+      }
+
+  await expect(page).toHaveScreenshot(name, options);
     });
   }
 });

@@ -1,6 +1,6 @@
 import { test, expect, devices } from '@playwright/test';
 import { waitForMenuState } from '../utils/waits';
-import { waitForKeyboardResponse } from '../utils/test-helpers';
+import { waitForKeyboardResponse } from './utils/test-helpers';
 
 // Test mobile navigation specifically
 test.describe('Mobile Navigation', () => {
