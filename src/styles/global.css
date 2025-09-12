@@ -21,8 +21,39 @@
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
+/* Base document styles adjustments for improved contrast */
+body {
+  /* Ensure base body text uses strongest foreground for minimum 4.5:1 on white */
+  color: var(--color-foreground-strong, var(--color-foreground));
+}
+
+/* Tailwind Typography sets --tw-prose-body and uses it for paragraphs & list text.
+   Override it globally so we don't rely solely on selector specificity battles. */
+:root {
+  --tw-prose-body: var(--color-foreground-strong, #111827);
+}
+
+/* Override opacity-based foreground utilities that reduce contrast (diagnostic hardening) */
+p[class*="text-foreground/"], p[class*="text-neutral"], .prose p[class*="text-foreground/"] {
+  color: var(--color-foreground-strong, #111827) !important;
+}
+
+/* Enforce high-contrast paragraph text inside Tailwind Typography `.prose` blocks */
+.prose p, .prose li, .prose span, .prose blockquote, .prose figcaption {
+  color: var(--color-foreground-strong, #111827);
+}
+/* Ensure dark mode still uses a light foreground */
+.dark .prose p, .dark .prose li, .dark .prose span, .dark .prose blockquote, .dark .prose figcaption {
+  color: var(--color-foreground-light, #f9fafb);
+}
+
 /* Legacy styles - will be gradually moved to organized files */
 /* TODO: Migrate these styles to appropriate component/utility files */
+
+/* Generic button baseline (applies before specific component classes). Ensure readable text */
+button, .btn, .btn-primary, .btn-secondary, .btn-outline {
+  color: var(--color-foreground-strong, #111827);
+}
 
 /* Theme toggle spin animation */
 @keyframes theme-toggle-spin {
@@ -266,18 +297,19 @@
   transform: scale(0.97);
 }
 .btn-primary {
-  background: var(--color-accent);
-  color: var(--color-background);
-  box-shadow: 0 2px 8px 0 rgba(6,95,70,0.12);
+  /* Use darker accent variant for higher contrast against white background */
+  background: var(--color-accent-dark);
+  color: var(--color-foreground-light);
+  box-shadow: 0 2px 8px 0 rgba(6,95,70,0.18);
 }
 .btn-primary:hover, .btn-primary:focus-visible {
-  background: var(--color-accent-dark);
-  color: var(--color-background);
+  background: var(--color-accent);
+  color: var(--color-foreground-light);
 }
 .btn-secondary {
   background: transparent;
-  border: 2px solid var(--color-accent);
-  color: var(--color-accent);
+  border: 2px solid var(--color-accent-dark);
+  color: var(--color-accent-dark);
 }
 .dark .btn-secondary {
   /* Ensure sufficient contrast on dark backgrounds */
@@ -289,12 +321,12 @@
 }
 .btn-outline {
   background: transparent;
-  border: 2px solid var(--color-accent);
-  color: var(--color-accent);
+  border: 2px solid var(--color-accent-dark);
+  color: var(--color-accent-dark);
 }
 .btn-outline:hover, .btn-outline:focus-visible {
-  background: var(--color-accent-light);
-  color: var(--color-background);
+  background: var(--color-accent-dark);
+  color: var(--color-foreground-light);
 }
 .btn-lg {
   font-size: 1.125rem;

@@ -1,0 +1,33 @@
+name: Contrast Maintenance
+
+on:
+  schedule:
+    - cron: '30 4 * * *' # after nightly contrast run
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  auto-close:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+      - name: Install deps
+        run: pnpm install --frozen-lockfile --prod=false
+      - name: Auto-close stable contrast issues
+        env:
+            CONTRAST_AUTO_CLOSE_DAYS: 3
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/quality/contrast-auto-close.js

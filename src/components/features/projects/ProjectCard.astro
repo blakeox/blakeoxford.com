@@ -24,8 +24,8 @@ const cardClasses = featured
     </a>
   </div>
   <div class="flex flex-col flex-1 p-6 gap-2">
-    <h3 class="text-2xl font-bold mb-1 text-gray-900 dark:text-white leading-tight">
-  <a href={`/projects/${slug}/`} class="text-gray-900 dark:text-white hover:text-accent dark:hover:text-accent-light hover:underline flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+    <h3 class="text-2xl font-bold mb-1 text-foreground leading-tight">
+  <a href={`/projects/${slug}/`} class="text-foreground hover:text-accent dark:hover:text-accent-light hover:underline flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
         {data.title}
       </a>
     </h3>
@@ -39,7 +39,7 @@ const cardClasses = featured
       </ul>
     )}
     {data.description && (
-      <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">
+  <p class="text-foreground/80 mb-4 line-clamp-3">
         {data.description.length > 160 ? `${data.description.slice(0, 157)}...` : data.description}
         {data.description.length > 160 && (
           <a

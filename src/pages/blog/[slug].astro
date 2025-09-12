@@ -30,9 +30,9 @@ const post = posts.find((p: any) => p.slug === slug);
     <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="flex flex-col items-center text-center">
         <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl text-accent mb-4">{post.data.title}</h1>
-        <p class="text-lg text-gray-700 dark:text-gray-300 mb-2 animate-fade-in">{post.data.description}</p>
+  <p class="text-lg text-foreground dark:text-foreground-light mb-2 animate-fade-in">{post.data.description}</p>
         {post.data.pubDate && (
-          <time class="text-sm text-gray-500 dark:text-gray-400 mb-2" datetime={new Date(post.data.pubDate).toISOString()}>
+          <time class="text-sm text-foreground/70 dark:text-foreground-light/70 mb-2" datetime={new Date(post.data.pubDate).toISOString()}>
             {new Date(post.data.pubDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
           </time>
         )}
@@ -47,7 +47,7 @@ const post = posts.find((p: any) => p.slug === slug);
   </section>
   <article class="prose c-blog-detail px-4 md:px-12 lg:px-32 py-12">
     <h2 class="font-heading font-bold text-3xl md:text-4xl text-accent mb-4">Blog Post</h2>
-    <p class="mb-6 text-gray-600 dark:text-gray-400">{post.data.description}</p>
+  <p class="mb-6 text-foreground dark:text-foreground-light">{post.data.description}</p>
     <div class="prose dark:prose-invert">
       <div set:html={post.body} />
     </div>

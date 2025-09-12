@@ -15,9 +15,12 @@
   --color-secondary-light: #fbbf24;
   --color-secondary-dark: #b45309;
   --color-accent: #047857;
+  /* Stronger foreground variant for improved contrast on light backgrounds (WCAG ≥4.5) */
+  --color-foreground-strong: #111827; /* slate-900 */
   --color-accent-light: #065f46;
   --color-accent-dark: #064e3b;
-  --color-foreground: #18181b;
+  /* Darken foreground slightly for stronger contrast on near-white backgrounds */
+  --color-foreground: #111827; /* slate-900 */
   --color-foreground-light: #f9fafb;
   --color-on-dark: #f9fafb; /* text on dark surfaces */
   --color-background: #f9fafb;
@@ -283,7 +286,8 @@
   --color-link: var(--color-accent);
   --color-link-hover: var(--color-accent-dark);
   --color-heading: var(--color-foreground);
-  --color-body: var(--color-neutral-dark);
+  /* Body text semantic color now aligns with strong foreground for WCAG AA */
+  --color-body: var(--color-foreground-strong);
   --color-border-input: var(--border-color);
   --color-border-focus: var(--color-primary);
   --color-disabled: #a1a1aa;
@@ -313,6 +317,20 @@
   --transition-fast: all 150ms var(--ease-standard);
   --transition: all 250ms var(--ease-standard);
   --transition-slow: all 400ms var(--ease-standard);
+}
+
+/* Dark theme overrides */
+.dark :root, :root.dark {
+  /* In dark mode prefer light foreground; do not override strong token so specific components can still opt-in if needed */
+  --color-foreground-strong: var(--color-foreground-light);
+  /* Override key colors for proper dark mode */
+  --color-foreground: var(--color-foreground-light); /* #f9fafb */
+  --color-background: var(--color-background-dark); /* #18181b */
+  --color-surface: var(--color-surface-dark); /* #1f1f1f */
+  --color-surface-subtle: var(--color-surface-dark-subtle); /* #27272a */
+  --color-neutral: var(--color-neutral-light); /* #cbd5e1 */
+  --color-neutral-dark: var(--color-neutral); /* #64748b */
+  --color-border-input: var(--border-color-dark); /* #374151 */
 }
 
 /* Keyframes */
@@ -381,6 +399,17 @@
 .dark:root {
   /* Activate dark shadow chroma */
   --shadow-chroma-light: var(--shadow-chroma-dark);
+
+  /* Color overrides for dark mode */
+  --color-foreground: #f9fafb; /* Light text on dark backgrounds */
+  --color-foreground-strong: #f9fafb; /* Strong light text */
+  --color-background: #0f172a; /* Dark background */
+  --color-surface: #1e293b; /* Dark surface for cards */
+  --color-surface-subtle: #334155; /* Dark subtle surface */
+  --color-neutral: #94a3b8; /* Light neutral text */
+  --color-neutral-light: #cbd5e1; /* Lighter neutral */
+  --color-neutral-dark: #64748b; /* Darker neutral */
+  --color-border-input: #475569; /* Dark border color */
 
   /* Surfaces & navigation */
   /* Navbar styles removed - now handled in NavBar.astro component */

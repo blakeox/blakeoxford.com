@@ -214,7 +214,7 @@ export class ErrorHandlingSystem {
     
     const altText = img.alt || 'Image';
     const placeholder = document.createElement('div');
-    placeholder.className = 'image-error-placeholder bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 text-sm border border-gray-200 dark:border-gray-600';
+    placeholder.className = 'image-error-placeholder bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg flex flex-col items-center justify-center text-foreground/80 dark:text-gray-400 text-sm border border-gray-200 dark:border-gray-600';
     
     // Maintain aspect ratio using img dimensions or reasonable defaults
     const width = img.width || img.naturalWidth || 300;
@@ -408,19 +408,19 @@ export class ErrorHandlingSystem {
     element.innerHTML = `
       <div class="flex items-start">
         <div class="flex-1">
-          <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">${error.message}</h3>
-          ${error.details ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${error.details}</p>` : ''}
+          <h3 class="text-sm font-medium text-foreground">${error.message}</h3>
+          ${error.details ? `<p class="text-sm text-foreground/80 mt-1">${error.details}</p>` : ''}
           ${error.actions ? `
             <div class="mt-3 space-x-2">
               ${error.actions.map(action => `
-                <button class="text-xs px-2 py-1 rounded ${action.primary ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700'}">
+                <button class="text-xs px-2 py-1 rounded ${action.primary ? 'bg-red-600 text-white' : 'bg-surface-alt text-foreground/80 border border-border'}">
                   ${action.label}
                 </button>
               `).join('')}
             </div>
           ` : ''}
         </div>
-        <button class="ml-4 text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.remove()">
+  <button class="ml-4 text-foreground/60 hover:text-foreground" onclick="this.parentElement.parentElement.remove()">
           ×
         </button>
       </div>
@@ -490,9 +490,9 @@ export class ErrorHandlingSystem {
     element.innerHTML = `
       <div class="flex items-start">
         <div class="flex-1">
-          <p class="text-sm text-gray-900 dark:text-gray-100">${notification.message}</p>
+          <p class="text-sm text-foreground">${notification.message}</p>
         </div>
-        <button class="ml-4 text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.remove()">
+  <button class="ml-4 text-foreground/60 hover:text-foreground" onclick="this.parentElement.parentElement.remove()">
           ×
         </button>
       </div>

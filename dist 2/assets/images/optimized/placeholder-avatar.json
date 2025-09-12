@@ -1,0 +1,12 @@
+{
+  "original": "placeholder-avatar.jpg",
+  "formats": [
+    "avif",
+    "webp",
+    "jpeg",
+    "png"
+  ],
+  "sizes": [],
+  "width": 150,
+  "height": 150
+}

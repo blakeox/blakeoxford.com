@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "hello-world",
+    "title": "Hello World",
+    "description": "Welcome to my blog! This is where I'll share insights about systems architecture, digital transformation, and the latest in technology.",
+    "publishedAt": "2024-01-01",
+    "tags": [
+      "Welcome",
+      "Introduction"
+    ],
+    "author": "Blake Oxford",
+    "featured": false,
+    "draft": false,
+    "excerpt": "Welcome to my blog! This is where I'll share insights about systems architecture, digital transformation, and the latest in technology."
+  }
+]
