@@ -1,0 +1,14 @@
+{
+  "original": "icon-384x384.png",
+  "formats": [
+    "avif",
+    "webp",
+    "jpeg",
+    "png"
+  ],
+  "sizes": [
+    320
+  ],
+  "width": 384,
+  "height": 384
+}

@@ -92,7 +92,11 @@
     "perf:longtasks": "node scripts/quality/perf-long-tasks.js",
     "tests:toxic": "node scripts/quality/toxic-test-detector.js",
     "edge:validate": "node scripts/quality/edge-validate.js",
-    "quality:runtime": "node scripts/quality/run-runtime-metrics.js"
+    "quality:runtime": "node scripts/quality/run-runtime-metrics.js",
+    "contrast:history": "CONTRAST_JSON=1 playwright test tests/playwright/accessibility/contrast-ratio.spec.ts --project=chromium | node scripts/quality/contrast-history-aggregator.js",
+    "contrast:badge": "node scripts/quality/contrast-sparkline-badge.js",
+    "contrast:check": "node scripts/quality/contrast-alert-check.js",
+    "contrast:report": "node scripts/quality/contrast-report.js --limit 10"
   },
   "dependencies": {
     "@astrojs/react": "^4.3.0",

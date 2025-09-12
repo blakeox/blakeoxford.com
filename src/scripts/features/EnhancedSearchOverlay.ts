@@ -27,7 +27,7 @@ export class EnhancedSearchOverlay {
   private closeButton: HTMLElement | null;
   private currentCategory: string;
   private searchTimeout: number | null;
-  private recognition: any;  
+  private recognition: any;
   private isListening: boolean;
 
   constructor() {
@@ -40,42 +40,42 @@ export class EnhancedSearchOverlay {
     this.searchTimeout = null;
     this.recognition = null;
     this.isListening = false;
-    
+
     this.init();
   }
-  
+
   /**
    * Open the search overlay programmatically
    */
   open() {
     const searchOverlay = document.getElementById('search-overlay');
     if (!searchOverlay) return false;
-    
+
   // Make overlay interactive
   (searchOverlay as any).inert = false;
 
     searchOverlay.classList.add('active');
     searchOverlay.style.visibility = 'visible';
     searchOverlay.style.opacity = '1';
-    
+
     // Focus search input
     if (this.searchInput) {
       setTimeout(() => {
         this.searchInput?.focus();
       }, 100);
     }
-    
+
     // Disable body scroll for mobile
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
-    
+
     this.announceToScreenReader('Search overlay opened');
     this.trackSearchInteraction('opened');
-    
+
     return true;
   }
-  
+
   init() {
     this.setupVoiceSearch();
     this.setupSearchInput();
@@ -84,66 +84,66 @@ export class EnhancedSearchOverlay {
     this.setupCloseButton();
     this.setupBackdropClick();
     this.loadSearchHistory();
-    
+
     // Set default active category
     this.setActiveCategory('all');
-    
+
     console.log('✅ Enhanced SearchOverlay initialized with new design');
   }
-  
+
   setupCloseButton() {
     if (!this.closeButton) return;
-    
+
     this.closeButton.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       this.closeSearchOverlay();
     });
   }
-  
+
   setupBackdropClick() {
     const backdrop = document.querySelector('.search-backdrop');
     if (!backdrop) return;
-    
+
     backdrop.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       this.closeSearchOverlay();
     });
   }
-  
+
   setupVoiceSearch() {
     if (!this.voiceSearchBtn) return;
-    
+
     // Check if speech recognition is supported
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       this.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
       this.recognition.continuous = false;
       this.recognition.interimResults = false;
       this.recognition.lang = 'en-US';
-      
+
       this.recognition.onstart = () => {
         this.isListening = true;
         this.voiceSearchBtn?.classList.add('listening');
         this.voiceSearchBtn?.setAttribute('aria-label', 'Listening... Click to stop');
         this.announceToScreenReader('Voice search started. Please speak now.');
       };
-      
-      this.recognition.onresult = (event: any) => {  
+
+      this.recognition.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
         if (this.searchInput) {
           this.searchInput.value = transcript;
           this.performSearch(transcript);
         }
       };
-      
+
       this.recognition.onend = () => {
         this.isListening = false;
         this.voiceSearchBtn?.classList.remove('listening');
         this.voiceSearchBtn?.setAttribute('aria-label', 'Voice search (click to start)');
       };
-      
-      this.recognition.onerror = (event: any) => {  
+
+      this.recognition.onerror = (event: any) => {
         const errorEvent = event;
         const error = createModuleError('SearchOverlay', 'VOICE_SEARCH_ERROR', `Speech recognition error: ${errorEvent.error}`, {
           component: 'VoiceSearch',
@@ -153,7 +153,7 @@ export class EnhancedSearchOverlay {
         handleError(error);
         this.announceToScreenReader(`Voice search error: ${errorEvent.error}`);
       };
-      
+
       this.voiceSearchBtn.addEventListener('click', () => {
         if (this.isListening) {
           this.recognition.stop();
@@ -166,36 +166,36 @@ export class EnhancedSearchOverlay {
       this.voiceSearchBtn.style.display = 'none';
     }
   }
-  
+
   setupSearchInput() {
     if (!this.searchInput) return;
-    
+
     this.searchInput.addEventListener('focus', () => {
       this.trackSearchInteraction('input_focused');
     });
-    
+
     this.searchInput.addEventListener('input', (e: Event) => {
       const target = e.target as HTMLInputElement;
       const query = target.value.trim();
-      
+
       // Clear previous timeout
       if (this.searchTimeout) {
         clearTimeout(this.searchTimeout);
       }
-      
+
       // Debounce search
       this.searchTimeout = window.setTimeout(() => {
         this.performSearch(query);
       }, 300);
     });
-    
+
     this.searchInput.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         this.closeSearchOverlay();
       }
     });
   }
-  
+
   setupCategories() {
     this.categoryButtons.forEach((button: Element) => {
       button.addEventListener('click', () => {
@@ -207,10 +207,10 @@ export class EnhancedSearchOverlay {
       });
     });
   }
-  
+
   setActiveCategory(category: string) {
     this.currentCategory = category;
-    
+
     this.categoryButtons.forEach((button: Element) => {
       const btn = button as HTMLElement;
       if (btn.dataset.category === category) {
@@ -220,54 +220,54 @@ export class EnhancedSearchOverlay {
       }
     });
   }
-  
+
   async performSearch(query: string) {
     if (!query) {
       this.showSearchSuggestions();
       return;
     }
-    
+
     try {
       // Show loading state
       this.showLoadingState();
-      
+
       // Track search analytics
-      this.trackSearchInteraction('performed', { 
-        query, 
-        category: this.currentCategory 
+      this.trackSearchInteraction('performed', {
+        query,
+        category: this.currentCategory
       });
-      
+
       // Perform search
       const results = await this.searchContent(query, this.currentCategory);
-      
+
       // Track results
-      this.trackSearchInteraction('results_shown', { 
-        query, 
+      this.trackSearchInteraction('results_shown', {
+        query,
         category: this.currentCategory,
-        results_count: results.length 
+        results_count: results.length
       });
-      
+
       this.displayResults(results, query);
       this.saveToSearchHistory(query);
-      
+
     } catch (error) {
-      const appError = createModuleError('SearchOverlay', 'SEARCH_EXECUTION_ERROR', 
+      const appError = createModuleError('SearchOverlay', 'SEARCH_EXECUTION_ERROR',
         `Search execution failed: ${(error as Error)?.message || 'Unknown error'}`, {
           component: 'SearchExecution',
           action: 'search',
           additionalData: { query, category: this.currentCategory }
         });
       handleError(appError);
-      
-      this.trackSearchInteraction('error', { 
-        query, 
+
+      this.trackSearchInteraction('error', {
+        query,
         category: this.currentCategory,
-        error: (error as Error)?.message || 'Unknown error' 
+        error: (error as Error)?.message || 'Unknown error'
       });
       this.showErrorState();
     }
   }
-  
+
   async searchContent(query: string, category: string): Promise<SearchResult[]> {
     try {
   // Ensure Fuse is available (lazy-load vendored script if needed)
@@ -281,7 +281,7 @@ export class EnhancedSearchOverlay {
 
       // Combine all search data based on category
       let searchData: any[] = [];
-      
+
       if (category === 'all') {
         searchData = [
           ...projectsData.map((item: any) => ({ ...item, category: 'projects', type: 'project' })),
@@ -311,7 +311,7 @@ export class EnhancedSearchOverlay {
       });
 
       const fuseResults = fuse.search(query);
-      
+
       // Convert Fuse results to SearchResult format
   const results: SearchResult[] = fuseResults.map((result: any) => ({
         title: result.item.title,
@@ -325,7 +325,7 @@ export class EnhancedSearchOverlay {
 
       return results.slice(0, 10); // Limit to top 10 results
     } catch (error) {
-      const appError = createModuleError('SearchOverlay', 'FUZZY_SEARCH_ERROR', 
+      const appError = createModuleError('SearchOverlay', 'FUZZY_SEARCH_ERROR',
         `Fuzzy search failed: ${(error as Error)?.message || 'Unknown error'}`, {
           component: 'FuzzySearch',
           action: 'performFuzzySearch'
@@ -370,7 +370,7 @@ export class EnhancedSearchOverlay {
       }
       return await response.json();
     } catch (error) {
-      const appError = createModuleError('SearchOverlay', 'SEARCH_INDEX_LOAD_ERROR', 
+      const appError = createModuleError('SearchOverlay', 'SEARCH_INDEX_LOAD_ERROR',
         `Failed to load search index from ${url}: ${(error as Error)?.message || 'Unknown error'}`, {
           component: 'SearchIndexLoader',
           action: 'loadSearchIndex',
@@ -421,15 +421,15 @@ export class EnhancedSearchOverlay {
     }
     return '/';
   }
-  
+
   displayResults(results: SearchResult[], query: string) {
     if (!this.searchResults) return;
-    
+
     if (results.length === 0) {
       this.searchResults.innerHTML = `
         <div class="search-no-results">
           <div class="search-no-results-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-8 h-8 text-gray-400 dark:text-gray-500">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-8 h-8 text-foreground/60 dark:text-foreground/60">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
@@ -457,11 +457,11 @@ export class EnhancedSearchOverlay {
           `).join('')}
         </div>
       `;
-      
+
       // Add click handlers for search results
       this.addResultClickHandlers();
     }
-    
+
     this.searchResults.classList.remove('hidden');
     this.searchResults.classList.add('active');
   }
@@ -507,14 +507,14 @@ export class EnhancedSearchOverlay {
 
   private highlightMatches(text: string, query: string): string {
     if (!query || query.length < 2) return text;
-    
+
     const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     return text.replace(regex, '<mark>$1</mark>');
   }
 
   private addResultClickHandlers() {
     if (!this.searchResults) return;
-    
+
     const resultItems = this.searchResults.querySelectorAll('.search-result-item');
     resultItems.forEach((item) => {
       item.addEventListener('click', (e) => {
@@ -530,10 +530,10 @@ export class EnhancedSearchOverlay {
   private navigateToResult(url: string) {
     // Track analytics
     this.trackSearchInteraction('result_clicked', { url });
-    
+
     // Close search overlay
     this.closeSearchOverlay();
-    
+
     // Navigate to result
     window.location.href = url;
   }
@@ -545,16 +545,16 @@ export class EnhancedSearchOverlay {
     }
     console.log(`[Search Analytics] search_${action}`, data);
   }
-  
+
   showSearchSuggestions() {
     if (!this.searchResults) return;
-    
+
     const suggestions: SearchSuggestion[] = [
       { text: 'Search for "projects"', category: 'projects' },
       { text: 'Search for "blog posts"', category: 'blog' },
       { text: 'Search for "contact"', category: 'pages' }
     ];
-    
+
     this.searchResults.innerHTML = `
       <div class="search-suggestions">
         <h3 class="search-suggestions-title">Search Suggestions</h3>
@@ -574,28 +574,28 @@ export class EnhancedSearchOverlay {
         </div>
       </div>
     `;
-    
+
     this.searchResults.classList.remove('hidden');
     this.searchResults.classList.add('active');
   }
-  
+
   showLoadingState() {
     if (!this.searchResults) return;
-    
+
     this.searchResults.innerHTML = `
       <div class="search-loading">
         <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mb-3"></div>
         <p class="text-sm font-medium">Searching...</p>
       </div>
     `;
-    
+
     this.searchResults.classList.remove('hidden');
     this.searchResults.classList.add('active');
   }
-  
+
   showErrorState() {
     if (!this.searchResults) return;
-    
+
     this.searchResults.innerHTML = `
       <div class="search-error">
         <div class="w-8 h-8 mx-auto mb-3 text-red-500 dark:text-red-400">
@@ -604,22 +604,22 @@ export class EnhancedSearchOverlay {
           </svg>
         </div>
         <p class="font-medium text-red-600 dark:text-red-400">Search failed</p>
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Please try again</p>
+        <p class="mt-1 text-sm text-foreground/80 dark:text-gray-400">Please try again</p>
       </div>
     `;
-    
+
     this.searchResults.classList.remove('hidden');
     this.searchResults.classList.add('active');
   }
-  
+
   setupKeyboardNavigation() {
     if (!this.searchResults) return;
-    
+
     this.searchResults.addEventListener('keydown', (e: KeyboardEvent) => {
       const items = this.searchResults?.querySelectorAll('.search-result-item');
       if (!items) return;
       const currentIndex = Array.from(items).findIndex(item => item === document.activeElement);
-      
+
       switch (e.key) {
         case 'ArrowDown': {
           e.preventDefault();
@@ -647,16 +647,16 @@ export class EnhancedSearchOverlay {
       }
     });
   }
-  
+
   saveToSearchHistory(query: string) {
     if (!query) return;
-    
+
     try {
       const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
       const newHistory = [query, ...history.filter((item: string) => item !== query)].slice(0, 10);
       localStorage.setItem('searchHistory', JSON.stringify(newHistory));
     } catch (error) {
-      const appError = createModuleError('SearchOverlay', 'SEARCH_HISTORY_SAVE_ERROR', 
+      const appError = createModuleError('SearchOverlay', 'SEARCH_HISTORY_SAVE_ERROR',
         `Failed to save search history: ${(error as Error)?.message || 'Unknown error'}`, {
           component: 'SearchHistory',
           action: 'save'
@@ -664,7 +664,7 @@ export class EnhancedSearchOverlay {
       handleError(appError);
     }
   }
-  
+
   loadSearchHistory() {
     try {
       const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
@@ -673,7 +673,7 @@ export class EnhancedSearchOverlay {
         console.log('Search history loaded:', history);
       }
     } catch (error) {
-      const appError = createModuleError('SearchOverlay', 'SEARCH_HISTORY_LOAD_ERROR', 
+      const appError = createModuleError('SearchOverlay', 'SEARCH_HISTORY_LOAD_ERROR',
         `Failed to load search history: ${(error as Error)?.message || 'Unknown error'}`, {
           component: 'SearchHistory',
           action: 'load'
@@ -681,36 +681,36 @@ export class EnhancedSearchOverlay {
       handleError(appError);
     }
   }
-  
+
   closeSearchOverlay() {
     const searchOverlay = document.getElementById('search-overlay');
-    
+
     if (!searchOverlay) return;
-    
+
     // Track analytics
     this.trackSearchInteraction('closed');
-    
+
     // Stop voice recognition if active
     if (this.isListening && this.recognition) {
       this.recognition.stop();
     }
-    
+
     // Close the overlay
     searchOverlay.classList.remove('active');
   (searchOverlay as any).inert = true;
-    
+
     // Clear search input
     if (this.searchInput) {
       this.searchInput.value = '';
       this.searchInput.setAttribute('aria-expanded', 'false');
     }
-    
+
     // Hide results
     if (this.searchResults) {
       this.searchResults.classList.remove('active');
       this.searchResults.classList.add('hidden');
     }
-    
+
     // Restore body scroll only if mobile menu is not open
     const mobileMenu = document.getElementById('nav-mobile-links');
     if (!mobileMenu?.classList.contains('active')) {
@@ -718,16 +718,16 @@ export class EnhancedSearchOverlay {
       document.body.style.position = '';
       document.body.style.width = '';
     }
-    
+
     // Focus back to search toggle
     const searchToggle = document.getElementById('search-toggle');
     setTimeout(() => {
       searchToggle?.focus();
     }, 50);
-    
+
     this.announceToScreenReader('Search overlay closed');
   }
-  
+
   announceToScreenReader(message: string) {
     let liveRegion = document.getElementById('live-region');
     if (!liveRegion) {
@@ -738,9 +738,9 @@ export class EnhancedSearchOverlay {
       liveRegion.setAttribute('aria-atomic', 'true');
       document.body.appendChild(liveRegion);
     }
-    
+
     liveRegion.textContent = message;
-    
+
     setTimeout(() => {
       liveRegion.textContent = '';
     }, 1000);

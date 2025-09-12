@@ -37,6 +37,52 @@ Guidelines:
 - Gradients: store as CSS var if reused (`--gradient-primary`), apply with `bg-gradient-to-*` utilities.
 - Reserve high-chroma accent sparingly (CTAs, interactive focus) to reinforce visual hierarchy.
 
+### 3.1 Semantic Color Tokens (Policy)
+
+To ensure global theming agility and hardened accessibility, direct Tailwind grayscale utilities for body or heading text (e.g., `text-gray-600/700/800/900` and dark variants) are deprecated. Always express textual color via semantic tokens:
+
+| Intent | Utility Pattern | Backed Token |
+|--------|-----------------|--------------|
+| Primary text | `text-foreground` | `--color-foreground` |
+| Muted / secondary | `text-foreground/80` (or /70) | same + opacity layer |
+| Strong emphasis | `text-foreground` with font-weight change | `--color-foreground` |
+| Inverse (on dark surface) | `.dark:text-foreground` | dark token variant |
+| Surface background | `bg-surface` / `dark:bg-surface-dark` | `--color-surface*` |
+| Page background | `bg-background` / `dark:bg-background` | `--color-background*` |
+| Border | `border-border` / `dark:border-border-dark` | `--color-border*` |
+
+Rules:
+
+- Never reintroduce raw `text-gray-*` for prose or headings. Exception: temporary experimental component prototypes (remove before merge).
+- Prefer opacity suffixes (`/90`, `/80`, `/70`) over inventing new near-identical tokens for hierarchy.
+- If a new semantic meaning (e.g., `success`, `warning`) emerges, add a token + Tailwind mapping; do not approximate with a random green/yellow hex.
+- Background layers should use `background` (page), `surface` (cards/sections), and `surface-alt` (if introduced) instead of arbitrary gray steps.
+- Contrast drift monitoring is enforced via the Playwright contrast spec with a non-failing sentinel (see `tests/playwright/accessibility/contrast-ratio.spec.ts`).
+
+Migration Guidance:
+
+1. Replace `text-gray-*` with `text-foreground` plus optional opacity.
+2. Replace `dark:text-gray-*` with `.dark:text-foreground` (or opacity variant if muted).
+3. Replace gray backgrounds (`bg-gray-50`, `dark:bg-gray-800`) with `bg-surface` / `dark:bg-surface-dark` (or `bg-background` variants when representing the base page layer).
+4. Adjust perceived hierarchy with weight/size/spacing first; only then apply an opacity tweak if required.
+
+Review Process:
+
+- PRs adding prohibited utilities should fail design lint once a rule is added (planned enhancement).
+- During code review, flag any raw hex / gray utilities touching text contexts.
+
+Rationale:
+
+- Centralized control allows global color palette evolution (e.g., shifting hue or luminance) without multi-file refactors.
+- Reduces risk of subtle contrast regressions when balancing light/dark palettes.
+- Enables future algorithmic theme adjustments (e.g., adaptive contrast in high-ambient-light conditions) by editing tokens only.
+
+### 3.2 Dynamic Contrast Monitoring
+
+Nightly CI randomly augments the fixed contrast audit route set with sampled project & blog pages (script: `scripts/quality/contrast-route-rotator.js`). These are injected through the `CONTRAST_EXTRA_ROUTES` env var consumed by the Playwright contrast spec. A sentinel captures “near miss” ratios within a configurable band (`CONTRAST_SENTINEL_BAND`, default +0.10 over the WCAG AA threshold) to flag drift early without red builds. Trend data accumulates in `contrast-history.json` (with 7‑day rolling average + slope fields) and is visualized via `badges/contrast.svg` (now includes rolling overlay + slope arrow). Optional slope gating via `CONTRAST_SLOPE_ALERT` can escalate accelerating regression before counts breach absolute threshold.
+
+Designer / reviewer action: If sentinel counts rise or badge slope trends upward for borderline elements, prefer adjusting token luminance (single-point change) over ad-hoc per-component overrides.
+
 ## 4. Typography
 
 - Pair semantic HTML with semantic size tokens rather than arbitrary utility jumps (`text-4xl`).

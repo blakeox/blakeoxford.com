@@ -57,12 +57,12 @@ const metrics = [
         
         <!-- Background & Challenge -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Background & Challenge</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Background & Challenge</h2>
           <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
               In our clinical setting, <strong>hourly technicians—many with only a high school diploma—were expected to produce medical documentation</strong> that would withstand scrutiny from payers, physicians, and regulators. Turnover was high and provider time for coaching was limited. While we had Power BI dashboards to flag missing signatures or CPT mismatches, nothing assessed whether the narrative truly conveyed medical necessity, complexity, or a coherent story of the visit.
             </p>
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
               I shadowed technicians on the floor and ran quick interviews, uncovering that no one had ever built a tool to teach <em>why</em> notes failed audits—only <em>that</em> they failed. It became clear: we didn't just need another report. We needed <strong>scalable coaching</strong>.
             </p>
           </div>
@@ -70,24 +70,24 @@ const metrics = [
 
         <!-- How I Discovered the Real Pain Point -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">How I Discovered the Real Pain Point</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">How I Discovered the Real Pain Point</h2>
           <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
             <ul class="space-y-4">
               <li class="flex items-start gap-3">
                 <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-gray-700 dark:text-gray-300">
+                <span class="text-lg text-foreground/85 dark:text-gray-300">
                   Spent days shadowing frontline staff, observing their note-writing struggles.
                 </span>
               </li>
               <li class="flex items-start gap-3">
                 <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-gray-700 dark:text-gray-300">
+                <span class="text-lg text-foreground/85 dark:text-gray-300">
                   Conducted brief "What's the hardest part of writing notes?" interviews—all pointed to lack of feedback on <em>narrative quality</em>.
                 </span>
               </li>
               <li class="flex items-start gap-3">
                 <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-gray-700 dark:text-gray-300">
+                <span class="text-lg text-foreground/85 dark:text-gray-300">
                   Realized the opportunity: use an LLM not for transcription or billing checks, but to coach users on crafting a clear, compliant clinical story.
                 </span>
               </li>
@@ -97,7 +97,7 @@ const metrics = [
 
         <!-- Technical Highlights -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Technical Highlights</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Technical Highlights</h2>
           
           <div class="grid md:grid-cols-1 gap-8">
             <AchievementCard 
@@ -139,23 +139,23 @@ const metrics = [
 
         <!-- Design Thinking & Iteration -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Design Thinking & Iteration</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Design Thinking & Iteration</h2>
           <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
               I led <strong>three rapid prompt-tuning sprints</strong> in one week with cross-functional partners (technicians, auditors, BCBAs):
             </p>
             <ol class="space-y-4 mb-6 list-decimal list-inside">
-              <li class="text-lg text-gray-700 dark:text-gray-300">
+              <li class="text-lg text-foreground/85 dark:text-gray-300">
                 <strong>Draft Prompt</strong> → tested on sample notes → gathered user reactions
               </li>
-              <li class="text-lg text-gray-700 dark:text-gray-300">
+              <li class="text-lg text-foreground/85 dark:text-gray-300">
                 <strong>Tone Adjust</strong> → balanced critique with encouragement → measured "feedback acknowledged" rates
               </li>
-              <li class="text-lg text-gray-700 dark:text-gray-300">
+              <li class="text-lg text-foreground/85 dark:text-gray-300">
                 <strong>Final Prompt</strong> → pilot rollout → monitored adoption and morale
               </li>
             </ol>
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
               This cycle ensured the LLM's voice felt supportive, not punitive.
             </p>
           </div>
@@ -163,26 +163,26 @@ const metrics = [
 
         <!-- Data-Driven Refinement -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Data-Driven Refinement</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Data-Driven Refinement</h2>
           <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
               Beyond tracking audit exceptions, I monitored:
             </p>
             <ul class="space-y-4 mb-6">
               <li class="flex items-start gap-3">
                 <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-gray-700 dark:text-gray-300">
+                <span class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Teams Message Opens:</strong> +40% after shifting to a balanced tone
                 </span>
               </li>
               <li class="flex items-start gap-3">
                 <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-gray-700 dark:text-gray-300">
+                <span class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Revision Turnaround Time:</strong> –30% once feedback highlighted both strengths and gaps
                 </span>
               </li>
             </ul>
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
               These KPIs guided each iteration toward both compliance and learning.
             </p>
           </div>
@@ -190,40 +190,40 @@ const metrics = [
 
         <!-- Before vs. After -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Before vs. After: Audit Enforcer → Coaching Engine</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Before vs. After: Audit Enforcer → Coaching Engine</h2>
           
           <div class="overflow-x-auto">
             <table class="w-full border-collapse border border-gray-300 dark:border-gray-600 my-8">
               <thead>
                 <tr class="bg-gray-50 dark:bg-gray-800">
-                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-gray-900 dark:text-white">🔍 Old: Audit Enforcer</th>
-                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-gray-900 dark:text-white">🌱 New: Skill Developer</th>
+                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">🔍 Old: Audit Enforcer</th>
+                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">🌱 New: Skill Developer</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Flagged only what was missing</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Highlighted strengths <em>and</em> gaps</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Flagged only what was missing</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Highlighted strengths <em>and</em> gaps</td>
                 </tr>
                 <tr class="bg-gray-50 dark:bg-gray-800">
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Delivered blunt, clinical feedback</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Delivered empathetic, balanced feedback</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Delivered blunt, clinical feedback</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Delivered empathetic, balanced feedback</td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Focused on passing audits</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Focused on building documentation skill</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Focused on passing audits</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Focused on building documentation skill</td>
                 </tr>
                 <tr class="bg-gray-50 dark:bg-gray-800">
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Seen as punitive by technicians</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Seen as a collaborative mentor</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Seen as punitive by technicians</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Seen as a collaborative mentor</td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Treated the model like a grader</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Treated the model like a coach</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Treated the model like a grader</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Treated the model like a coach</td>
                 </tr>
                 <tr class="bg-gray-50 dark:bg-gray-800">
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Designed for outcomes</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Designed for <em>growth</em></td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Designed for outcomes</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Designed for <em>growth</em></td>
                 </tr>
               </tbody>
             </table>
@@ -232,9 +232,9 @@ const metrics = [
 
         <!-- Human Touch -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Human Touch</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Human Touch</h2>
           <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
               Technicians said, <em>"It's really helpful to see <strong>why</strong> good notes matter."</em> Providers noted the AI surfaced details they sometimes overlooked—boosting both efficiency and care continuity. This validated that <strong>the tool's true power lies in human–AI collaboration</strong>.
             </p>
           </div>
@@ -242,19 +242,19 @@ const metrics = [
 
         <!-- Impact & Results -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Impact & Results</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Impact & Results</h2>
           <MetricsTable metrics={metrics} />
           <div class="mt-6">
             <ul class="space-y-4">
               <li class="flex items-start gap-3">
                 <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-gray-700 dark:text-gray-300">
+                <span class="text-lg text-foreground/85 dark:text-gray-300">
                   Improved technician confidence and skill development
                 </span>
               </li>
               <li class="flex items-start gap-3">
                 <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-gray-700 dark:text-gray-300">
+                <span class="text-lg text-foreground/85 dark:text-gray-300">
                   Modular, payer-agnostic architecture ready for Aetna, UnitedHealthcare, and beyond
                 </span>
               </li>
@@ -264,9 +264,9 @@ const metrics = [
 
         <!-- Novelty & Transferability -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Novelty & Transferability</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Novelty & Transferability</h2>
           <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
               This pattern—<strong>identify a manual compliance pain point, reframe it as a coaching challenge, then build an LLM-driven mentor</strong>—can be applied across healthcare (e.g., imaging protocols, pharmacy reviews, discharge summaries) and beyond. Wherever passive checks exist, there's opportunity to teach and uplift.
             </p>
           </div>
@@ -274,9 +274,9 @@ const metrics = [
 
         <!-- Takeaway -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Takeaway</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Takeaway</h2>
           <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
               I refuse to accept "that's just the way it is." By combining <strong>empathy</strong>, <strong>rapid iteration</strong>, and <strong>LLM expertise</strong>, I transformed a routine compliance complaint into a scalable learning engine—demonstrating that the right technology, aligned with human needs, can continuously improve complex workflows.
             </p>
           </div>
