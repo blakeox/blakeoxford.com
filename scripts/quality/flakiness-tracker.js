@@ -23,7 +23,12 @@ function normalizeTestId(titlePathArr) {
 }
 
 function main() {
-  const history = loadJSONSafe(historyFile, []);
+  const historyData = loadJSONSafe(historyFile, { version: 1, maxEntries: 200, runs: [] });
+  const history = Array.isArray(historyData) ? historyData : (historyData.runs || []);
+  
+  // If we loaded an object structure, we'll need to save it back that way
+  const isObjectStructure = !Array.isArray(historyData);
+  
   const index = new Map(history.map((h, i) => [h.id, i]));
   const report = loadJSONSafe(pwReport, null);
   if (!report || !report.suites) {
@@ -57,7 +62,15 @@ function main() {
   for (const s of report.suites) walkSuite(s);
   // Cap history length (just safety)
   if (history.length > 5000) history.splice(0, history.length - 5000);
-  saveJSON(historyFile, history);
+  
+  // Save in the appropriate format
+  if (isObjectStructure) {
+    const updatedData = { ...historyData, runs: history };
+    saveJSON(historyFile, updatedData);
+  } else {
+    saveJSON(historyFile, history);
+  }
+  
   console.log(`[flakiness] Updated ${updates.length} tests. Total tracked: ${history.length}`);
 }
 

@@ -470,7 +470,9 @@ class PWAEnhancer {
       const bg = getComputedStyle(root).backgroundColor; const [r, g, b] = getRGB(bg); const L = luminance(r, g, b); const highContrast = L > 0.5 ? '#111827' : '#ffffff';
       const titleEl = notification.querySelector('.pwa-update-title'); const subtitleEl = notification.querySelector('.pwa-update-subtitle'); const iconEl = notification.querySelector('.pwa-update-icon'); const contentEl = notification.querySelector('.pwa-update-content');
       if (titleEl) titleEl.style.color = highContrast; if (subtitleEl) subtitleEl.style.color = highContrast; if (iconEl) iconEl.style.color = highContrast; if (contentEl) { contentEl.style.background = highContrast === '#ffffff' ? 'rgba(0,0,0,0.35)' : 'rgba(255,255,255,0.35)'; contentEl.style.borderRadius = '12px'; }
-    } catch (e) { }
+    } catch (e) {
+      // Intentionally ignore PWA styling errors
+    }
     setTimeout(() => { notification.remove(); }, 10000);
   }
   setupOfflineIndicator() { window.addEventListener('online', () => { this.showConnectionStatus('online'); }); window.addEventListener('offline', () => { this.showConnectionStatus('offline'); }); }

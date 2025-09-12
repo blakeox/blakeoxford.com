@@ -39,7 +39,7 @@ export default defineConfig({
   retries: isCI ? 2 : 1, // Reduced retries
   workers: isCI ? 2 : 3, // Optimized workers for CI
   reporter: [
-    ['html', { outputFolder: 'playwright-report' }], 
+    ['html', { outputFolder: 'playwright-report' }],
     ['line'],
     // Add JUnit reporter for CI systems
   ['junit', { outputFile: 'test-results/junit.xml' }],
