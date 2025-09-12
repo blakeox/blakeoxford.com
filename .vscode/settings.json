@@ -64,5 +64,7 @@
   "javascript.validate.enable": true,
   "html.validate.enabled": false,
   "webhint.enable": false,
-  "microsoft-edge-tools.enable": false
+  "microsoft-edge-tools.enable": false,
+  // Prefer pnpm for this workspace to avoid multiple lockfile warnings
+  "npm.packageManager": "pnpm"
 }
