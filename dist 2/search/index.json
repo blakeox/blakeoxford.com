@@ -1,0 +1,197 @@
+[
+  {
+    "slug": "google-workspace-migration",
+    "title": "Google Workspace → Microsoft 365 Migration & Endpoint Management",
+    "description": "Led the transition from Google Workspace to Microsoft 365 and deployed modern device management via Intune/Endpoint Manager during early 2020, ensuring business continuity through COVID-19 disruptions.",
+    "publishedAt": "2020-01-15",
+    "tags": [
+      "Microsoft 365",
+      "Google Workspace",
+      "Endpoint Manager",
+      "Intune",
+      "MDM",
+      "COVID-19 Response"
+    ],
+    "featured": true,
+    "draft": false,
+    "technologies": [
+      "Microsoft 365",
+      "Google Workspace",
+      "Endpoint Manager",
+      "Intune",
+      "MDM",
+      "COVID-19 Response"
+    ],
+    "image": "~/assets/images/projects/google-to-microsoft.png",
+    "type": "project"
+  },
+  {
+    "slug": "Microsoft-Fabric",
+    "title": "Microsoft Fabric – Operational Intelligence & Workflow Automation",
+    "description": "Built the operational backbone for a 200-person healthcare organization—uniting workflows, performance tracking, and automation across 10+ departments using Microsoft Fabric and Power Platform.",
+    "publishedAt": "2024-02-20",
+    "tags": [
+      "Microsoft Fabric",
+      "Power BI",
+      "Power Platform",
+      "Process Automation",
+      "EOS",
+      "Data Engineering",
+      "Leadership"
+    ],
+    "featured": true,
+    "draft": false,
+    "technologies": [
+      "Microsoft Fabric",
+      "Power BI",
+      "Power Platform",
+      "Process Automation",
+      "EOS",
+      "Data Engineering",
+      "Leadership"
+    ],
+    "image": "~/assets/images/projects/operational-and-workflow-automation.png",
+    "type": "project"
+  },
+  {
+    "slug": "LLM-note-coaching",
+    "title": "OpenAI-Powered Documentation Quality Feedback System",
+    "description": "Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.",
+    "publishedAt": "2023-11-01",
+    "tags": [
+      "OpenAI",
+      "Natural Language Processing",
+      "Healthcare IT",
+      "Compliance",
+      "Blue Cross Blue Shield",
+      "Documentation Quality",
+      "Python"
+    ],
+    "featured": true,
+    "draft": false,
+    "technologies": [
+      "OpenAI",
+      "Natural Language Processing",
+      "Healthcare IT",
+      "Compliance",
+      "Blue Cross Blue Shield",
+      "Documentation Quality",
+      "Python"
+    ],
+    "image": "~/assets/images/projects/openai-automated-audit.png",
+    "type": "project"
+  },
+  {
+    "slug": "advancedmd-implementation",
+    "title": "AdvancedMD Implementation & Evolution",
+    "description": "Led the selection, implementation, and continuous enhancement of AdvancedMD, transforming paper workflows into a robust, data-driven EHR ecosystem with custom SQL tools.",
+    "publishedAt": "2017-12-01",
+    "tags": [
+      "EHR",
+      "Digital Transformation",
+      "Automation",
+      "Healthcare IT",
+      "SQL"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "EHR",
+      "Digital Transformation",
+      "Automation",
+      "Healthcare IT",
+      "SQL"
+    ],
+    "image": "~/assets/images/projects/advancedMD-project.png",
+    "type": "project"
+  },
+  {
+    "slug": "ferment-app",
+    "title": "Ferment App – Mobile Recipe Management",
+    "description": "A native iOS application for managing fermentation recipes, tracking progress, and automating task reminders — built with SwiftUI and Firebase.",
+    "publishedAt": "2024-01-15",
+    "tags": [
+      "Swift",
+      "SwiftUI",
+      "Firebase",
+      "SwiftData",
+      "Mobile Development",
+      "Fermentation"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "Swift",
+      "SwiftUI",
+      "Firebase",
+      "SwiftData",
+      "Mobile Development",
+      "Fermentation"
+    ],
+    "image": "~/assets/images/projects/ferment-app-design.png",
+    "type": "project"
+  },
+  {
+    "slug": "bank-projections-modeling",
+    "title": "Bank Projections and Financial Modeling",
+    "description": "Developed detailed financial models and projections to secure multiple loans—including $2M, $10M, PPP, and disaster relief—supporting facility expansion and operational resilience.",
+    "publishedAt": "2020-01-01",
+    "tags": [
+      "Financial Modeling",
+      "Bank Projections",
+      "Commercial Real Estate",
+      "Loan",
+      "Financial Analysis"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "Financial Modeling",
+      "Bank Projections",
+      "Commercial Real Estate",
+      "Loan",
+      "Financial Analysis"
+    ],
+    "image": "~/assets/images/projects/bank-projections.png",
+    "type": "project"
+  },
+  {
+    "slug": "adp-workforcenow",
+    "title": "ADP Workforce Now Implementation",
+    "description": "Implemented ADP Workforce Now to unify HR, recruiting, and finance operations through automation and real-time reporting.",
+    "publishedAt": "2021-01-01",
+    "tags": [
+      "HCM",
+      "Recruiting",
+      "ADP Workforce Now",
+      "Sage Intacct",
+      "PowerBI"
+    ],
+    "featured": false,
+    "draft": false,
+    "technologies": [
+      "HCM",
+      "Recruiting",
+      "ADP Workforce Now",
+      "Sage Intacct",
+      "PowerBI"
+    ],
+    "image": "~/assets/images/projects/adp-automation.png",
+    "type": "project"
+  },
+  {
+    "slug": "hello-world",
+    "title": "Hello World",
+    "description": "Welcome to my blog! This is where I'll share insights about systems architecture, digital transformation, and the latest in technology.",
+    "publishedAt": "2024-01-01",
+    "tags": [
+      "Welcome",
+      "Introduction"
+    ],
+    "author": "Blake Oxford",
+    "featured": false,
+    "draft": false,
+    "excerpt": "Welcome to my blog! This is where I'll share insights about systems architecture, digital transformation, and the latest in technology.",
+    "type": "blog"
+  }
+]

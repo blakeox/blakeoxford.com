@@ -158,7 +158,7 @@ npx serve dist/
 
 ## 🧪 Test Architecture (Phase 6 Overview)
 
-![Mutation Score Badge showing current mutation test coverage level](badges/mutation.svg) ![Reliability Badge showing latest pass rate](badges/reliability.svg) ![Flakiness Badge showing average retry intensity health](badges/flakiness.svg) ![Accessibility Badge showing latest total a11y violations](badges/a11y.svg)
+![Mutation Score Badge showing current mutation test coverage level](badges/mutation.svg) ![Reliability Badge showing latest pass rate](badges/reliability.svg) ![Flakiness Badge showing average retry intensity health](badges/flakiness.svg) ![Accessibility Badge showing latest total a11y violations](badges/a11y.svg) ![Contrast Badge showing sampled text contrast trend](badges/contrast.svg)
 
 See the Phase 2 completion summary in `PHASE2_COMPLETION.md` for delivered reliability & governance foundations. New contributors: consult `CONTRIBUTING.md` for deterministic test & design token rules.
 
@@ -187,7 +187,7 @@ Environment Flags (runtime gates & quality controls):
 | `FLAKINESS_STRICT` | Fail if flakiness history missing | Bootstrapping risk |
 
 Gating Precedence (accessibility):
- 
+
 1. Block impacts (`A11Y_BLOCK_IMPACTS`)
 2. Per-route map (`A11Y_MAX_BY_ROUTE`)
 3. Uniform per-route cap (`A11Y_MAX_PER_ROUTE`)
@@ -208,6 +208,20 @@ MIN_TOPN_PASS_RATE=80 SEARCH_TOP_N=3 A11Y_MAX_PER_ROUTE=2 A11Y_BLOCK_IMPACTS=ser
 
 
 These layers create early, low-noise detection for regressions across functionality, performance, accessibility, and UI fidelity while keeping runtime lean.
+
+Contrast Oversight:
+
+- Nightly job randomly samples additional project & blog routes (via `contrast-route-rotator.js`) and injects them using `CONTRAST_EXTRA_ROUTES`.
+- A configurable near-threshold sentinel (band = `CONTRAST_SENTINEL_BAND`, default `0.10`) logs potential drift without failing the build; data lands in `contrast-history.json`.
+- Rolling 7‑day borderline average & localized 7‑point slope recorded (`metrics.rolling7Borderline`, `metrics.slope7Borderline`) to detect directional change early.
+- Optional slope alert (`CONTRAST_SLOPE_ALERT`) triggers governance if slope7 > threshold (indicates accelerating regression risk).
+- Badge (`badges/contrast.svg`) now overlays: sampled (green), borderline (red), rolling7 (dashed blue) + slope arrow (▲ worsening / ▼ improving / ⭮ flat).
+- Local inspection helper: `pnpm contrast:report` (use `-- --limit 5` to restrict rows or append `-- --json` for machine-readable output) prints recent borderline trend with rolling & slope metrics.
+- Add `-- --markdown` to emit a PR-ready table (CI stores `contrast-report.md` artifact nightly).
+- Pull Request visibility: a lightweight `Contrast PR Summary` workflow runs on each PR, executes the contrast sampler with alerts disabled (high threshold), and posts/updates a single comment (marker `<!-- contrast-pr-summary-marker -->`) containing a 7-day markdown table so reviewers see drift early. Add a `skip-contrast` label to a PR to suppress this comment.
+  - The PR comment also surfaces a qualitative trend classification (improving / worsening / flat) with an arrow derived from the latest 7-point slope.
+  - Auto-close policy: a `Contrast Maintenance` workflow runs daily after the nightly sampler; if the last `CONTRAST_AUTO_CLOSE_DAYS` (default 3) days show zero borderline counts it automatically closes any open contrast alert issues with a resolution note.
+- Nightly workflow captures history + alert logs; on alert it auto-appends a 3‑day markdown trend table into the created issue.
 
 ### 🔁 Flakiness Metrics & Reliability (Phase 2 Add-on)
 
@@ -299,7 +313,7 @@ export default defineConfig({
 
 ## 🧑‍💻 Author
 
-Blake Oxford  
+Blake Oxford
 Built with ❤️ using Astro, pnpm, and Cloudflare.
 
 ---

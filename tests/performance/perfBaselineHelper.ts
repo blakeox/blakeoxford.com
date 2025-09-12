@@ -1,15 +1,15 @@
 import { expect, Page } from '@playwright/test';
 import fs from 'fs';
-import path from 'path';
+import { resolveFrom } from '../utils/esmPath.js';
 
 interface RouteBaseline { domContentLoaded: number; fcp: number; load: number; requests: number; }
 interface BaselineFile { routes: Record<string, RouteBaseline>; tolerance: { timingPct: number; requestsPct: number }; }
 interface HistoryEntry extends RouteBaseline { route: string; ts: string; }
 
-const historyPath = path.resolve(__dirname, 'baselines-history.json');
+const historyPath = resolveFrom(import.meta, 'baselines-history.json');
 const MAX_HISTORY = 200; // cap to prevent unbounded growth
 
-const baselinePath = path.resolve(__dirname, 'baselines.json');
+const baselinePath = resolveFrom(import.meta, 'baselines.json');
 let baselines: BaselineFile | null = null;
 let dirty = false;
 

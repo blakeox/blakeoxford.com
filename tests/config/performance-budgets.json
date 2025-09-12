@@ -1,0 +1,15 @@
+{
+  "timings": {
+    "domContentLoaded": 1200,
+    "fcp": 1200
+  },
+  "pageLoad": {
+    "default": 1800
+  },
+  "resources": {
+    "total": 120,
+    "js": 30,
+    "css": 12,
+    "images": 70
+  }
+}

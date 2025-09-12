@@ -26,21 +26,21 @@ const { slug, data } = project;
     <h2 class="font-heading text-2xl md:text-3xl font-bold text-accent dark:text-accent-light leading-tight mb-2">
   <a href={`/projects/${slug}/`} class="project-title-link text-accent dark:text-accent-light hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">{data.title}</a>
       { featured && (
-        <span class="ml-3 align-middle bg-accent text-white dark:text-white text-xs font-bold px-3 py-1 rounded-full shadow-md border border-accent/20 dark:border-accent/30">Featured</span>
+  <span class="ml-3 align-middle bg-accent-dark dark:bg-accent text-white dark:text-white text-xs font-bold px-3 py-1 rounded-full shadow-md border border-accent/30 dark:border-accent/40">Featured</span>
       )}
     </h2>
     {data.date && (
-      <time class="text-xs text-gray-500 dark:text-gray-400 mb-1" datetime={data.date.toISOString()}>{data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+      <time class="text-xs text-foreground/70 dark:text-foreground-light/70 mb-1" datetime={data.date.toISOString()}>{data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
     )}
     {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
       <ul class="flex flex-wrap gap-2 mb-1" aria-label="Project tags">
         {data.tags.map((tag: string) => (
-          <li><span class="bg-accent/10 dark:bg-accent/20 text-accent dark:text-accent-light text-xs font-medium px-2 py-0.5 rounded-full">{tag}</span></li>
+          <li><span class="bg-accent/10 dark:bg-accent/20 text-foreground dark:text-foreground-light border border-accent/20 text-xs font-medium px-2 py-0.5 rounded-full">{tag}</span></li>
         ))}
       </ul>
     )}
     {data.description && (
-      <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-4">
+      <p class="text-foreground dark:text-foreground-light mb-4 line-clamp-4">
         {data.description.length > 220 ? `${data.description.slice(0, 217)}...` : data.description}
         {data.description.length > 220 && (
           <a href={`/projects/${slug}/`} class="ml-1 text-accent dark:text-accent-light underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
