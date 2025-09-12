@@ -294,7 +294,7 @@ jobs:
           name: runtime-quality-artifacts
           path: ./artifacts
       - name: Post / Update PR Quality Summary Comment
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
