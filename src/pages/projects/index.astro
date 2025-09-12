@@ -18,11 +18,12 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <pattern id="projects-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <!-- Use unique ID to avoid duplicate-id issues -->
+          <pattern id="projects-grid-hero" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M0 40L40 0M20 40L40 20M0 20L20 0" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.12" />
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill="url(#projects-grid)" />
+        <rect width="100%" height="100%" fill="url(#projects-grid-hero)" />
       </svg>
     </div>
     <!-- Floating shapes -->
@@ -41,13 +42,13 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   </section>
 
   <!-- Transition Section -->
-  <section class="w-full py-8 md:py-12 px-4 relative" role="region">
+  <section class="w-full py-8 md:py-12 px-4 relative" role="region" aria-labelledby="approach-title">
     <!-- Curved transition -->
     <div class="absolute inset-0 bg-gradient-to-b from-background via-accent/5 to-background"></div>
     <div class="relative z-10 max-w-6xl mx-auto">
       <div class="text-center">
         <div class="inline-block w-24 h-1 bg-gradient-to-r from-transparent via-accent to-transparent rounded-full mb-8"></div>
-        <h2 class="text-2xl md:text-3xl font-semibold text-accent dark:text-accent-light mb-4">My Approach</h2>
+        <h2 id="approach-title" class="text-2xl md:text-3xl font-semibold text-accent dark:text-accent-light mb-4">My Approach</h2>
         <p class="text-lg text-foreground dark:text-foreground-light max-w-3xl mx-auto">
           I tackle projects through a holistic lens: process, people, and technology. Here's the structured methodology I follow to ensure success.
         </p>
@@ -74,6 +75,8 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 
   <!-- Methodology Section -->
   <section class="c-methodology w-full py-16 md:py-24 px-4 max-w-6xl mx-auto" role="region" aria-labelledby="methodology-title" data-a11y-allow-color-contrast>
+    <!-- Provide an accessible name for this region -->
+    <h2 id="methodology-title" class="sr-only">Methodology</h2>
     <div class="relative flex flex-col items-center">
       <!-- Accent timeline line -->
       <div class="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-accent/40 via-accent/20 to-accent/0 rounded-full pointer-events-none" style="transform: translateX(-50%);"></div>
@@ -173,11 +176,12 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <pattern id="projects-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <!-- Use unique ID to avoid duplicate-id issues -->
+          <pattern id="projects-grid-list" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M0 40L40 0M20 40L40 20M0 20L20 0" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.12" />
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill="url(#projects-grid)" />
+        <rect width="100%" height="100%" fill="url(#projects-grid-list)" />
       </svg>
     </div>
     <!-- Floating shapes -->
