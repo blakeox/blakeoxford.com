@@ -90,11 +90,11 @@ const timelineItems: TimelineItem[] = [
 ];
 ---
 
-<Layout 
-  title={title} 
-  description={description} 
-  image="/assets/images/Blake-O-scaled.jpg" 
-  url={canonicalUrl} 
+<Layout
+  title={title}
+  description={description}
+  image="/assets/images/Blake-O-scaled.jpg"
+  url={canonicalUrl}
   wide={true}
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)} />
@@ -330,7 +330,7 @@ const timelineItems: TimelineItem[] = [
                           <div class={'bg-gray-800/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-emerald-500/10 group-hover:bg-gray-800/95 relative overflow-hidden'}>
                             {/* Background gradient effect */}
                             <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            
+
                             <div class="flex items-center mb-6 gap-4 relative">
                               <div class={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${item.color} text-2xl group-hover:scale-110 transition-transform duration-300 relative`}>
                                 {/* Multiple gradient layers for depth */}
@@ -396,7 +396,7 @@ const timelineItems: TimelineItem[] = [
                     <div class="flex-none w-80 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-emerald-500/10 transition-all group relative overflow-hidden">
                       {/* Background gradient effect */}
                       <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      
+
                       <div class="flex items-center mb-6 relative">
                         <div class={`w-14 h-14 flex items-center justify-center rounded-full text-xl bg-gradient-to-br ${item.color} group-hover:scale-110 transition-transform duration-300 relative`}>
                           {/* Multiple gradient layers for depth */}
@@ -476,7 +476,7 @@ const timelineItems: TimelineItem[] = [
             </div>
           </section>
 
-          
+
         </div>
       </div>
     </div>

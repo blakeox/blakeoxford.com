@@ -163,7 +163,7 @@ test.describe('@essential @accessibility-core Axe Accessibility Scan', () => {
                     const conv = [c.r,c.g,c.b].map(v=>{const x=v/255;return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4);});
                     return 0.2126*conv[0]+0.7152*conv[1]+0.0722*conv[2];
                   }
-                  function contrast(fg:any,bg:any){const L1=relLum(fg);const L2=relLum(bg);const lighter=Math.max(L1,L2);const darker=Math.min(L1,L2);return (lighter+0.05)/(darker+0.05);}  
+                  function contrast(fg:any,bg:any){const L1=relLum(fg);const L2=relLum(bg);const lighter=Math.max(L1,L2);const darker=Math.min(L1,L2);return (lighter+0.05)/(darker+0.05);}
                   function effectiveBg(el: HTMLElement | null){
                     while(el){const cs=getComputedStyle(el);const m=parseRGB(cs.backgroundColor);if(m && m.a>0 && !(m.r===0&&m.g===0&&m.b===0&&m.a===0)) return m; el=el.parentElement; }
                     return {r:255,g:255,b:255,a:1};

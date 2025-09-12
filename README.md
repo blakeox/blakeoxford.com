@@ -187,7 +187,7 @@ Environment Flags (runtime gates & quality controls):
 | `FLAKINESS_STRICT` | Fail if flakiness history missing | Bootstrapping risk |
 
 Gating Precedence (accessibility):
- 
+
 1. Block impacts (`A11Y_BLOCK_IMPACTS`)
 2. Per-route map (`A11Y_MAX_BY_ROUTE`)
 3. Uniform per-route cap (`A11Y_MAX_PER_ROUTE`)
@@ -313,7 +313,7 @@ export default defineConfig({
 
 ## 🧑‍💻 Author
 
-Blake Oxford  
+Blake Oxford
 Built with ❤️ using Astro, pnpm, and Cloudflare.
 
 ---

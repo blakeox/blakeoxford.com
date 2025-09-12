@@ -6,7 +6,7 @@ const { project, featured = false } = Astro.props as ProjectCardProps;
 const { slug, data } = project;
 
 // Use featured prop for conditional styling
-const cardClasses = featured 
+const cardClasses = featured
   ? 'bg-white dark:bg-gray-900 p-0 rounded-2xl shadow-xl flex flex-col group hover:scale-[1.03] hover:shadow-2xl transition-all duration-200 animate-slide-up featured-card'
   : 'bg-white dark:bg-gray-900 p-0 rounded-2xl shadow-xl flex flex-col group hover:scale-[1.03] hover:shadow-2xl transition-all duration-200 animate-slide-up';
 ---
