@@ -31,8 +31,8 @@ if (!fs.existsSync(headersPath)) {
 }
 
 const raw = fs.readFileSync(headersPath, 'utf8');
-const missing = REQUIRED.filter(h => !new RegExp('^\t?'+h+':', 'mi').test(raw));
-const advisoryMissing = ADVISORY.filter(h => !new RegExp('^\t?'+h+':', 'mi').test(raw));
+const missing = REQUIRED.filter(h => !new RegExp('^[\t ]*'+h+':', 'mi').test(raw));
+const advisoryMissing = ADVISORY.filter(h => !new RegExp('^[\t ]*'+h+':', 'mi').test(raw));
 
 if (missing.length) {
   console.error('❌ Missing required security headers:');
