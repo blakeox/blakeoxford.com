@@ -133,7 +133,24 @@ class EdgePerformanceOptimizer {
       'manifest-src \'self\'',
       'worker-src \'self\''
     ];
+    // Primary enforcing CSP
     headers.set('Content-Security-Policy', csp.join('; '));
+
+    // Report-Only CSP rollout (matched to current policy for baseline; can be tightened later)
+    const reportEndpoint = (() => {
+      try { return new URL('/csp-report', this.url).toString(); } catch { return '/csp-report'; }
+    })();
+    const cspReportOnly = [
+      ...csp,
+      `report-uri ${reportEndpoint}`,
+      'report-to csp'
+    ];
+    // Modern reporting headers
+    try {
+      headers.set('Reporting-Endpoints', `csp="${reportEndpoint}"`);
+      headers.set('Report-To', JSON.stringify({ group: 'csp', max_age: 60 * 60 * 24 * 30, endpoints: [{ url: reportEndpoint }], include_subdomains: true }));
+    } catch { /* ignore header json errors */ }
+    headers.set('Content-Security-Policy-Report-Only', cspReportOnly.join('; '));
   if (isAudit) headers.set('X-Audit-Mode', '1');
     if (cspNonce) headers.set('X-CSP-Nonce', cspNonce);
     headers.set('X-Frame-Options', 'DENY');
@@ -237,6 +254,44 @@ const WorkerApp = {
       } catch {
         return new Response('User-agent: *\nAllow: /\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300, no-transform' } });
       }
+    }
+
+    // CSP violation report collection endpoint
+    if (url.pathname === '/csp-report') {
+      if (request.method !== 'POST') {
+        return new Response(null, { status: 405, headers: { 'allow': 'POST', 'cache-control': 'no-store' } });
+      }
+      try {
+        const ct = (request.headers.get('content-type') || '').toLowerCase();
+        let bodyText = await request.text();
+        let payload;
+        try {
+          payload = JSON.parse(bodyText);
+        } catch {
+          payload = { raw: bodyText };
+        }
+        // Normalize legacy report format
+        const report = payload?.['csp-report'] ? { type: 'csp-report', ...payload['csp-report'] } : payload;
+        const record = {
+          t: Date.now(),
+          url: request.url,
+          ip: request.headers.get('cf-connecting-ip') || null,
+          ua: request.headers.get('user-agent') || null,
+          ct,
+          report
+        };
+        console.warn('🔐 CSP violation report:', record);
+        const key = `csp:${record.t}:${Math.random().toString(36).slice(2, 8)}`;
+        if (env.CSP_REPORTS && typeof env.CSP_REPORTS.put === 'function') {
+          await env.CSP_REPORTS.put(key, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 7 });
+        } else if (env.RATE_LIMIT_KV && typeof env.RATE_LIMIT_KV.put === 'function') {
+          // Fallback storage if dedicated KV is not bound
+          await env.RATE_LIMIT_KV.put(key, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 3 });
+        }
+      } catch (e) {
+        console.error('Failed to store CSP report:', e);
+      }
+      return new Response(null, { status: 204, headers: { 'cache-control': 'no-store' } });
     }
 
     // Health endpoint (moved off /metrics to avoid third-party collisions)
