@@ -144,16 +144,91 @@ import navLinks from '../../config/navLinks';
 <script is:inline>
   (function() {
     try {
+      // 1) Set aria-current on matching nav links
       var path = window.location && window.location.pathname;
-      if (!path) return;
-      var links = document.querySelectorAll('.nav-link, .mobile-nav-link');
-      links.forEach(function(a) {
-        if (a.getAttribute('href') === path) {
-          a.setAttribute('aria-current', 'page');
-        } else {
-          a.removeAttribute('aria-current');
-        }
-      });
+      if (path) {
+        var links = document.querySelectorAll('.nav-link, .mobile-nav-link');
+        links.forEach(function(a) {
+          if (a.getAttribute('href') === path) {
+            a.setAttribute('aria-current', 'page');
+          } else {
+            a.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      // 2) Defensive fallback: ensure basic interactivity even if main module fails or is skipped
+      // Only attach if window.modernNavBar is not present shortly after DOM is ready
+      var attachFallback = function() {
+        try {
+          if (window.modernNavBar) return; // enhanced controller present, skip fallback
+
+          var burger = document.getElementById('nav-toggle');
+          var menu = document.getElementById('nav-mobile-links');
+          var closeBtn = document.getElementById('close-mobile-menu');
+          var searchToggle = document.getElementById('search-toggle');
+          var overlay = document.getElementById('search-overlay');
+
+          function openMenu(){
+            if (!menu) return;
+            menu.classList.add('active');
+            menu.style.visibility = '';
+            try { menu.inert = false; } catch { menu.removeAttribute('inert'); }
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+          }
+          function closeMenu(){
+            if (!menu) return;
+            menu.classList.remove('active');
+            setTimeout(function(){
+              if (!menu.classList.contains('active')) {
+                menu.style.visibility = 'hidden';
+                try { menu.inert = true; } catch { menu.setAttribute('inert',''); }
+              }
+            }, 300);
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+          }
+          function openOverlay(){
+            var enhanced = window && window.enhancedSearchOverlay;
+            if (enhanced && typeof enhanced.open === 'function') { enhanced.open(); return; }
+            if (!overlay) return;
+            overlay.classList.add('active');
+            overlay.style.visibility = 'visible';
+            overlay.style.opacity = '1';
+            try { overlay.inert = false; } catch { overlay.removeAttribute('inert'); }
+            var input = document.getElementById('search-input');
+            if (input) setTimeout(function(){ input.focus(); }, 50);
+            document.body.style.overflow = 'hidden';
+          }
+          function closeOverlay(){
+            var enhanced = window && window.enhancedSearchOverlay;
+            if (enhanced && typeof enhanced.closeSearchOverlay === 'function') { enhanced.closeSearchOverlay(); return; }
+            if (!overlay) return;
+            overlay.classList.remove('active');
+            overlay.style.visibility = 'hidden';
+            overlay.style.opacity = '0';
+            try { overlay.inert = true; } catch { overlay.setAttribute('inert',''); }
+            document.body.style.overflow = '';
+          }
+
+          if (burger && menu) {
+            burger.addEventListener('click', function(e){ e.preventDefault(); menu.classList.contains('active') ? closeMenu() : openMenu(); });
+          }
+          if (closeBtn) closeBtn.addEventListener('click', function(e){ e.preventDefault(); closeMenu(); });
+          document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { closeMenu(); closeOverlay(); } }, { passive: true });
+          if (searchToggle) searchToggle.addEventListener('click', function(e){ e.preventDefault(); openOverlay(); }, { passive: true });
+          if (overlay) overlay.addEventListener('click', function(e){ if (e.target === overlay) closeOverlay(); }, { passive: true });
+        } catch (_) { /* no-op */ }
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function(){ setTimeout(attachFallback, 0); });
+      } else {
+        setTimeout(attachFallback, 0);
+      }
     } catch (_) { /* no-op */ }
   })();
   </script>

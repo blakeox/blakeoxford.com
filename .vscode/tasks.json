@@ -21,6 +21,12 @@
 			"type": "shell",
 			"command": "pnpm clean && pnpm install --frozen-lockfile && pnpm build && pnpm deploy:quality-gate",
 			"group": "build"
+		},
+		{
+			"label": "Build site and run quality gate",
+			"type": "shell",
+			"command": "pnpm clean && pnpm install --frozen-lockfile && pnpm build && pnpm deploy:quality-gate",
+			"group": "build"
 		}
 	]
 }

@@ -167,7 +167,7 @@ export class ModernNavBar {
     
   this.burgerButton.classList.add('active');
     this.burgerButton.setAttribute('aria-expanded', 'true');
-  this.mobileMenu.inert = false as any;
+  try { (this.mobileMenu as any).inert = false; } catch { this.mobileMenu.removeAttribute('inert'); }
   this.mobileMenu.classList.add('active');
     
     console.log('🍔 Burger button classes after:', this.burgerButton.className);
@@ -205,9 +205,9 @@ export class ModernNavBar {
     // Add explicit visibility handling for tests
   setTimeout(() => {
       if (this.mobileMenu && !this.mobileMenu.classList.contains('active')) {
-    this.mobileMenu.style.visibility = 'hidden';
-    // Set inert when closed so it doesn't participate in focus/interaction
-    (this.mobileMenu as any).inert = true;
+  this.mobileMenu.style.visibility = 'hidden';
+  // Set inert when closed so it doesn't participate in focus/interaction
+  try { (this.mobileMenu as any).inert = true; } catch { this.mobileMenu.setAttribute('inert',''); }
       }
     }, 300); // Match CSS transition duration
     

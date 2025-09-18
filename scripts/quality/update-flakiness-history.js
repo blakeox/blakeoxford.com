@@ -84,13 +84,17 @@ function fallbackScan() {
 function prune(history) {
   if (!history || !Array.isArray(history.runs)) return history;
   // Remove any early placeholder entries (totalTests === 0) except if ALL are zero keep latest only
-  const meaningful = history.runs.filter(r => r.totalTests > 0);
-  if (meaningful.length === 0) {
-    // keep only the last (most recent) zero-test entry to avoid clutter
+  const meaningful = history.runs.filter(r => typeof r.totalTests === 'number' && r.totalTests > 0);
+  // Also drop any entries that do not contain recognized timestamp fields and vitals
+  const cleaned = (meaningful.length ? meaningful : history.runs).filter(r => (
+    typeof r.totalTests === 'number' && typeof r.failedTests === 'number' && typeof r.flakyTests === 'number'
+  ));
+  if (cleaned.length === 0) {
+    // keep only the last (most recent) zero-test metrics-like entry if present
     if (history.runs.length > 1) history.runs = [history.runs[history.runs.length -1]];
     return history;
   }
-  history.runs = meaningful;
+  history.runs = cleaned;
   return history;
 }
 
@@ -103,12 +107,22 @@ function mergeCached(history) {
   if (!cached || !Array.isArray(cached.runs)) return history;
   if (!history || !Array.isArray(history.runs)) return cached;
   // Merge by timestamp uniqueness
-  const existingTs = new Set(history.runs.map(r=>r.timestamp));
+  const existingKeys = new Set(
+    history.runs.map(r => (typeof r.timestamp === 'string' && r.timestamp) || (typeof r.lastRun === 'string' && r.lastRun) || '')
+  );
   for (const run of cached.runs) {
-    if (!existingTs.has(run.timestamp)) history.runs.push(run);
+    const key = (typeof run.timestamp === 'string' && run.timestamp) || (typeof run.lastRun === 'string' && run.lastRun) || '';
+    if (key && !existingKeys.has(key)) history.runs.push(run);
   }
-  // Sort ascending by timestamp
-  history.runs.sort((a,b)=> a.timestamp.localeCompare(b.timestamp));
+  // Sort ascending by best-effort timestamp (fallback to lastRun); place entries without any timestamp at the start
+  history.runs.sort((a,b)=> {
+    const ta = (typeof a.timestamp === 'string' && a.timestamp) || (typeof a.lastRun === 'string' && a.lastRun) || '';
+    const tb = (typeof b.timestamp === 'string' && b.timestamp) || (typeof b.lastRun === 'string' && b.lastRun) || '';
+    if (!ta && !tb) return 0;
+    if (!ta) return -1;
+    if (!tb) return 1;
+    return ta.localeCompare(tb);
+  });
   return history;
 }
 
