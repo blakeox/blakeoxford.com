@@ -30,5 +30,10 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 binding = "CONTACT_MESSAGES"
 id      = "65439bda285f486f9b07fc2a30bc5099"
 
+# To enable CSP report persistence, create a KV namespace and add it here:
+# [[kv_namespaces]]
+# binding = "CSP_REPORTS"
+# id      = "<your-kv-namespace-id>"
+
 [observability.logs]
 enabled = true
