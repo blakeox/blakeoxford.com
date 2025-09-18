@@ -14,11 +14,12 @@
   --color-secondary: #f59e42;
   --color-secondary-light: #fbbf24;
   --color-secondary-dark: #b45309;
-  --color-accent: #047857;
+  /* Accent palette updated (2025-09-18) for WCAG AA contrast on both light (#f9fafb) and dark (#0f172a) backgrounds */
+  --color-accent: #0d9488;        /* teal-600 */
   /* Stronger foreground variant for improved contrast on light backgrounds (WCAG ≥4.5) */
   --color-foreground-strong: #111827; /* slate-900 */
-  --color-accent-light: #065f46;
-  --color-accent-dark: #064e3b;
+  --color-accent-light: #2dd4bf;  /* teal-400 (used as text on dark backgrounds) */
+  --color-accent-dark: #0f766e;   /* teal-700 (hover / stronger emphasis) */
   /* Darken foreground slightly for stronger contrast on near-white backgrounds */
   --color-foreground: #111827; /* slate-900 */
   --color-foreground-light: #f9fafb;
@@ -255,7 +256,7 @@
 
   /* ---------- Button & Component States ---------- */
   --color-primary-hover: #1e40af;
-  --color-accent-hover: #059669;
+  --color-accent-hover: #0f766e; /* align hover with dark accent token */
   --color-error-bg: #fee2e2;
   --color-success-bg: #dcfce7;
   --color-warning-bg: #fef9c3;
@@ -296,7 +297,7 @@
   --color-active: #2563eb; /* Example: same as primary, adjust as needed */
   --color-selected: #fbbf24; /* Example: same as secondary-light, adjust as needed */
   --color-visited: #6d28d9; /* Example: purple-800, adjust as needed */
-  --color-pressed: #047857; /* Example: same as accent-dark, adjust as needed */
+  --color-pressed: #0f766e; /* aligned with accent-dark */
   --color-drag-over: #fde047; /* Example: same as warning-light, adjust as needed */
 
   /* ---------- Icon Sizes ---------- */
