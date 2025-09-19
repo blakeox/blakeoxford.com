@@ -409,7 +409,7 @@ const WorkerApp = {
     const abTest = personalization.getABTestVariant();
     const cacheStrategy = cacheManager.getCacheStrategy();
 
-    if (method === 'GET') {
+      if (method === 'GET') {
       const cacheResponse = await caches.default.match(request, { ignoreMethod: false });
       if (cacheResponse) return cacheResponse;
     }
@@ -479,6 +479,11 @@ const WorkerApp = {
       }
 
       const pathLower = url.pathname.toLowerCase();
+      const routeKind = (() => {
+        if (pathLower.startsWith('/api/')) return 'api';
+        if (pathLower.endsWith('.js') || pathLower.endsWith('.css') || pathLower.startsWith('/_astro/') || pathLower.startsWith('/assets/')) return 'asset';
+        return 'html';
+      })();
       if (method === 'GET') {
         const isHtml = originResponse.headers.get('content-type')?.includes('text/html');
         const isAssetExt = /\.(?:js|css|png|jpg|jpeg|webp|avif|svg|ico|woff2|pdf)$/.test(pathLower) || pathLower.startsWith('/assets/') || pathLower.startsWith('/_astro/');
@@ -542,13 +547,14 @@ const WorkerApp = {
       try {
         const h = new Headers(finalResponse.headers);
         h.set('x-request-id', reqId);
+        h.set('x-route-kind', routeKind);
         const cc = h.get('cache-control');
         if (cc) h.set('x-cache-policy', cc);
         finalResponse = new Response(finalResponse.body, { status: finalResponse.status, statusText: finalResponse.statusText, headers: h });
       } catch { /* no-op */ }
       const dur = Date.now() - startTs;
       const cachePolicy = finalResponse.headers.get('cache-control') || undefined;
-      console.log('✅ Request done', JSON.stringify({ id: reqId, status: finalResponse.status, path: url.pathname, dur, cachePolicy }));
+      console.log('✅ Request done', JSON.stringify({ id: reqId, status: finalResponse.status, path: url.pathname, routeKind, dur, cachePolicy }));
   return finalResponse;
 
     } catch (error) {
