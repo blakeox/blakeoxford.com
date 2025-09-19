@@ -56,6 +56,7 @@
     "perf:bake:webkit": "UPDATE_PERF_BASELINES=1 playwright test tests/playwright/performance-regression.spec.ts --project=webkit",
     "perf:bake:all": "UPDATE_PERF_BASELINES=1 playwright test tests/playwright/performance-regression.spec.ts",
     "perf:bake:history": "PERF_HISTORY=1 UPDATE_PERF_BASELINES=1 playwright test tests/playwright/performance-regression.spec.ts",
+  "perf:bake:all:built": "pnpm build && pnpm perf:bake:all",
     "lh:local": "lhci autorun --config=./lighthouserc.json",
     "lh:manual": "lighthouse http://localhost:4321/ --output=html --output-path=./lighthouse-report.html --chrome-flags='--disable-web-security --no-sandbox --disable-setuid-sandbox --ignore-certificate-errors --ignore-ssl-errors'",
   "security:audit": "pnpm audit --audit-level=moderate --prod",
