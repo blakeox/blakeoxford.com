@@ -1,0 +1,208 @@
+/* Accessibility Toggle & Panel (extracted from global.css) */
+
+/* Accessibility toggle button */
+.accessibility-toggle {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 11000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  color: white;
+  background: var(--color-accent);
+  box-shadow: -2px 0 8px rgb(0 0 0 / 20%);
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+}
+
+.accessibility-toggle:hover {
+  transform: translateY(-50%) translateX(-4px);
+}
+
+.accessibility-toggle:focus {
+  outline: 3px solid var(--color-accent-light);
+  outline-offset: 2px;
+}
+
+/* Accessibility panel */
+.accessibility-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 11001;
+  width: 100%;
+  max-width: 400px;
+  height: 100vh;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-border);
+  background: var(--color-background);
+  box-shadow: -4px 0 20px rgb(0 0 0 / 15%);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.accessibility-panel.open {
+  transform: translateX(0);
+}
+
+.accessibility-panel[aria-hidden="true"] {
+  visibility: hidden;
+}
+
+.accessibility-panel[aria-hidden="false"] {
+  visibility: visible;
+}
+
+.accessibility-panel-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+.accessibility-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding: 1.5rem;
+  color: white;
+  background: var(--color-accent);
+}
+
+.accessibility-panel-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+#accessibility-close {
+  cursor: pointer;
+  border: none;
+  padding: 0.25rem;
+  border-radius: 4px;
+  color: white;
+  background: none;
+  line-height: 1;
+  font-size: 1.5rem;
+}
+
+#accessibility-close:hover {
+  background: rgb(255 255 255 / 20%);
+}
+
+.accessibility-panel-body {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.accessibility-panel-body section {
+  margin-bottom: 2rem;
+}
+
+.accessibility-panel-body h3 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.preference-group {
+  margin-bottom: 1rem;
+}
+
+.preference-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-foreground);
+}
+
+.preference-group input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.preference-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  border-radius: 4px;
+  color: var(--color-foreground);
+  background: var(--color-background);
+}
+
+.preference-group select:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-color: var(--color-accent);
+}
+
+.accessibility-panel-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+  background: var(--color-background-secondary);
+}
+
+.accessibility-panel .btn-primary, .accessibility-panel .btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.accessibility-panel .btn-primary {
+  background: var(--color-accent);
+  color: white;
+  border: none;
+}
+
+.accessibility-panel .btn-primary:hover {
+  background: var(--color-accent-dark);
+}
+
+.accessibility-panel .btn-secondary {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+}
+
+.accessibility-panel .btn-secondary:hover {
+  background: var(--color-accent);
+  color: white;
+}
+
+/* Mobile responsive */
+@media (width <= 768px) {
+  .accessibility-panel {
+    width: 100%;
+    max-width: none;
+  }
+
+  .accessibility-toggle {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Print styles for accessibility panel */
+@media print {
+  .accessibility-toggle,
+  .accessibility-panel {
+    display: none !important;
+  }
+}

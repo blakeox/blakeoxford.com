@@ -76,7 +76,7 @@
     "flakiness:check": "node scripts/quality/check-flakiness-threshold.js",
     "mutation:check": "node scripts/quality/mutation-threshold-check.js",
     "mutation:history:log": "node scripts/quality/mutation-history-log.js",
-    "clean": "(rm -rf dist .astro node_modules/.cache coverage test-results lighthouse-reports optimization-reports || true) && sleep 0.1 && (rm -rf dist .astro node_modules/.cache coverage test-results lighthouse-reports optimization-reports || true)",
+  "clean": "(rm -rf dist 'dist 2' .astro node_modules/.cache coverage test-results lighthouse-reports optimization-reports || true) && sleep 0.1 && (rm -rf dist 'dist 2' .astro node_modules/.cache coverage test-results lighthouse-reports optimization-reports || true)",
     "clean:cache": "rm -rf .astro node_modules/.cache",
     "clean:reports": "rm -rf lighthouse-reports optimization-reports coverage test-results",
     "pages:deploy": "node -e \"console.error('❌ Deprecated: Use `pnpm deploy:worker` or `pnpm edge:deploy` (Workers) instead of Pages.'); process.exit(1)\"",

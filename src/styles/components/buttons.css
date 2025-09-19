@@ -23,11 +23,14 @@
 /* Primary button */
 .btn-primary {
   color: white;
-  background: var(--color-accent);
+  
+  /* Use darker accent by default for stronger contrast vs white text */
+  background: var(--color-accent-dark);
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);
 }
 
 .btn-primary:hover {
+  /* Keep hover at least as dark to preserve contrast */
   background: var(--color-accent-dark);
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 10%);
   transform: translateY(-1px);

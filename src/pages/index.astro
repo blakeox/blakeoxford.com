@@ -73,13 +73,13 @@ function deriveImageData(imgPath?: string) {
           <!-- Left: Text -->
           <div class="order-2 md:order-1 animate-fadeIn">
             <div class="prose lg:prose-xl dark:prose-invert">
-              <h1 class="font-heading font-bold text-h1 md:text-6xl text-accent mb-6">
+              <h1 class="font-heading font-bold text-h1 md:text-6xl text-foreground dark:text-foreground-light mb-6">
                 <span class="block">{siteConfig.author}</span>
               </h1>
               <p class="block text-lead mt-2 animate-fadeInUp text-foreground dark:text-foreground-light font-medium" style="animation-delay: 0.5s;">
                 {siteConfig.description}
               </p>
-              <p class="animate-fadeInUp text-body dark:text-foreground-light pl-4 border-l-4 border-accent dark:border-accent-dark border-solid">
+              <p class="animate-fadeInUp text-body text-foreground dark:text-foreground-light pl-4 border-l-4 border-accent dark:border-accent-dark border-solid">
                 {siteConfig.tagline}
               </p>
             </div>

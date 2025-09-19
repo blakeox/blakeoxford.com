@@ -10,6 +10,7 @@
 
 /* Component styles - reusable component styles */
 @import url("./components/buttons.css");
+@import url("./components/accessibility-panel.css");
 @import url("./components/cards.css");
 
 /* Utility styles - helper classes and animations */

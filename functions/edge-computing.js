@@ -65,17 +65,50 @@ class EdgeCacheManager {
   }
   getCacheStrategy() {
     const path = this.url.pathname;
-    const extension = path.split('.').pop();
-    if (path.endsWith('/robots.txt')) {
-      return { ttl: 300, headers: { 'Cache-Control': 'public, max-age=300, no-transform', 'CDN-Cache-Control': 'max-age=300' } };
+    const lower = path.toLowerCase();
+    const extension = lower.split('.').pop();
+
+    const isHashed = (p) => {
+      // Treat Astro’s hashed chunk paths and common fingerprint patterns as immutable
+      if (p.startsWith('/_astro/')) return true;
+      // e.g., core-boot.ab12cd34.js or image.1234567890abcdef.webp
+      return /\.[a-f0-9]{8,}\.(?:js|css|png|jpg|jpeg|webp|avif|svg|ico|woff2|pdf)$/.test(p);
+    };
+
+    // Text files with special semantics
+    if (lower === '/robots.txt') {
+      return { ttl: 300, headers: { 'Cache-Control': 'public, max-age=300, no-transform' } };
     }
-    if (['js', 'css', 'png', 'jpg', 'jpeg', 'webp', 'avif', 'ico', 'woff2', 'pdf'].includes(extension)) {
-      return { ttl: 31536000, headers: { 'Cache-Control': 'public, max-age=31536000, immutable', 'CDN-Cache-Control': 'max-age=31536000' } };
+    if (lower === '/sw.js' || lower === '/service-worker.js') {
+      // Ensure clients revalidate on each navigation to pick up new SW quickly
+      return { ttl: 0, headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' } };
     }
-    if (path.startsWith('/api/')) {
-      return { ttl: 300, headers: { 'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600', 'CDN-Cache-Control': 'max-age=3600' } };
+    if (lower.endsWith('/manifest.webmanifest') || lower === '/manifest.webmanifest') {
+      return { ttl: 3600, headers: { 'Cache-Control': 'public, max-age=3600' } };
     }
-    return { ttl: 300, headers: { 'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600', 'CDN-Cache-Control': 'max-age=3600' } };
+    if (lower.endsWith('/sitemap.xml') || lower.endsWith('/sitemap-index.xml') || /\/sitemap-\d+\.xml$/.test(lower) || lower.endsWith('/rss.xml') || lower.endsWith('/feed.xml')) {
+      return { ttl: 300, headers: { 'Cache-Control': 'public, max-age=300, no-transform' } };
+    }
+    if (lower.endsWith('/search-index.json')) {
+      return { ttl: 600, headers: { 'Cache-Control': 'public, max-age=600, stale-while-revalidate=3600' } };
+    }
+
+    // APIs
+    if (lower.startsWith('/api/')) {
+      return { ttl: 300, headers: { 'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600' } };
+    }
+
+    // Static assets
+    if (['js', 'css', 'png', 'jpg', 'jpeg', 'webp', 'avif', 'svg', 'ico', 'woff2', 'pdf'].includes(extension)) {
+      if (isHashed(lower)) {
+        return { ttl: 31536000, headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } };
+      }
+      // Non-hashed assets: cache, but allow periodic refresh
+      return { ttl: 86400, headers: { 'Cache-Control': 'public, max-age=86400' } };
+    }
+
+    // HTML and everything else: prefer freshness at the browser with CDN leeway
+    return { ttl: 300, headers: { 'Cache-Control': 'public, max-age=0, must-revalidate, stale-while-revalidate=3600' } };
   }
 }
 
@@ -433,14 +466,27 @@ const WorkerApp = {
 
       const pathLower = url.pathname.toLowerCase();
       if (method === 'GET') {
-        const isAsset = /\.(?:js|css|png|jpg|jpeg|webp|avif|svg|ico|woff2|pdf)$/.test(pathLower) || pathLower.startsWith('/assets/');
         const isHtml = originResponse.headers.get('content-type')?.includes('text/html');
+        const isAssetExt = /\.(?:js|css|png|jpg|jpeg|webp|avif|svg|ico|woff2|pdf)$/.test(pathLower) || pathLower.startsWith('/assets/') || pathLower.startsWith('/_astro/');
+        const isHashed = pathLower.startsWith('/_astro/') || /\.[a-f0-9]{8,}\.(?:js|css|png|jpg|jpeg|webp|avif|svg|ico|woff2|pdf)$/.test(pathLower);
         const headers = new Headers(originResponse.headers);
-        if (isAsset) {
-          headers.set('cache-control', 'public, max-age=31536000, immutable');
+
+        // Add a conservative Vary header for encoding differences
+        const existingVary = headers.get('vary');
+        headers.set('vary', existingVary ? `${existingVary}, Accept-Encoding` : 'Accept-Encoding');
+
+        if (pathLower === '/sw.js' || pathLower === '/service-worker.js') {
+          headers.set('cache-control', 'no-cache, no-store, must-revalidate');
+          originResponse = new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers });
+        } else if (pathLower.endsWith('/manifest.webmanifest') || pathLower === '/manifest.webmanifest') {
+          headers.set('cache-control', 'public, max-age=3600');
+          originResponse = new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers });
+        } else if (isAssetExt) {
+          headers.set('cache-control', isHashed ? 'public, max-age=31536000, immutable' : 'public, max-age=86400');
           originResponse = new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers });
         } else if (isHtml) {
-          headers.set('cache-control', 'public, max-age=300, stale-while-revalidate=3600');
+          // Keep HTML fresh on clients; CDN can still keep for short periods
+          headers.set('cache-control', 'public, max-age=0, must-revalidate, stale-while-revalidate=3600');
           originResponse = new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers });
         }
       }

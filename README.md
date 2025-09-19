@@ -309,6 +309,14 @@ export default defineConfig({
 
 - Optional rate limiting and Turnstile CAPTCHA on sensitive endpoints
 
+### Caching Policy
+
+Runtime caching headers are enforced by the Cloudflare Worker; local preview may differ. See `docs/caching.md` for the full policy and environment nuances. To run the targeted caching tests locally:
+
+```bash
+pnpm -s test:e2e -- tests/playwright/performance/caching-strategy.spec.ts
+```
+
 ---
 
 ## 🧑‍💻 Author
