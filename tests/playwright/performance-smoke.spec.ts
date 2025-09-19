@@ -95,7 +95,9 @@ test.describe('Performance Smoke Tests', () => {
       const resourceErrors: string[] = [];
       
       page.on('response', response => {
-        if (!response.ok() && response.status() !== 404) {
+        // Treat only 4xx (except 404) and 5xx as errors; ignore cache hits like 304
+        const status = response.status();
+        if ((status >= 400 && status !== 404)) {
           resourceErrors.push(`${response.status()} - ${response.url()}`);
         }
       });
