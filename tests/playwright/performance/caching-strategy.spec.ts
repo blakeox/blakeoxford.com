@@ -71,18 +71,18 @@ test.describe('Caching Strategy', () => {
     // First visit
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
-    
+
     // Verify page loads
     const main = page.locator('main, h1, body').first();
     await expect(main).toBeVisible();
-    
+
     // Reload (cache test)
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
-    
+
     // Should still work
     await expect(main).toBeVisible();
-    
+
     console.log('Cache reload test passed');
   });
 });

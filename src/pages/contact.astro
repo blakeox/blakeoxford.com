@@ -149,7 +149,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
     if (window.LazyBundleLoader) {
       window.LazyBundleLoader.loadFormFeatures();
     }
-    
+
     // Enhanced contact form integration with error handling system
   document.addEventListener('DOMContentLoaded', () => {
       // Detect audit mode (server-injected flag, cookie, or UA)
@@ -162,12 +162,12 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
       // Get form and error handling system
       const form = document.getElementById('contact-form');
       const statusElement = document.getElementById('form-status');
-      
+
       // Show success banner if redirected
       if (new URLSearchParams(location.search).get('success') === 'true') {
         if (statusElement) {
           statusElement.textContent = '✅ Thank you for your message! I\'ll get back to you soon. 🎉';
-          statusElement.classList.remove('hidden', 'text-red-600'); 
+          statusElement.classList.remove('hidden', 'text-red-600');
           statusElement.classList.add('text-green-600', 'bg-green-50', 'border', 'border-green-200', 'rounded-lg', 'p-4');
         }
       }
@@ -198,7 +198,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
             const submitBtn = form.querySelector('button[type="submit"]');
             const btnLabel = document.getElementById('btn-label');
             const spinner = document.getElementById('spinner');
-            
+
             if (submitBtn) submitBtn.disabled = true;
             if (btnLabel) btnLabel.textContent = 'Sending...';
             if (spinner) spinner.classList.remove('hidden');
@@ -208,7 +208,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
             const submitBtn = form.querySelector('button[type="submit"]');
             const btnLabel = document.getElementById('btn-label');
             const spinner = document.getElementById('spinner');
-            
+
             if (submitBtn) submitBtn.disabled = false;
             if (btnLabel) btnLabel.textContent = 'Send Message';
             if (spinner) spinner.classList.add('hidden');
@@ -219,10 +219,10 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
       // Fallback validation functions (progressive enhancement)
       function validateField(field) {
         if (!field) return false;
-        
+
         const value = field.value.trim();
         const errorContainer = document.getElementById(field.id + '-error');
-      
+
       let errorMessage = '';
 
       // Required field validation
@@ -257,7 +257,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
 
     function showFieldError(field, message) {
       if (!field) return;
-      
+
       const errorContainer = document.getElementById(field.id + '-error');
       if (errorContainer) {
         errorContainer.textContent = message;
@@ -269,7 +269,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
 
     function clearFieldError(field) {
       if (!field) return;
-      
+
       const errorContainer = document.getElementById(field.id + '-error');
       if (errorContainer) {
         errorContainer.textContent = '';
@@ -281,7 +281,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
 
     function getFieldLabel(field) {
       if (!field) return 'Field';
-      
+
       const label = field.labels && field.labels[0];
       if (label) {
         return label.textContent.replace('*', '').trim();
@@ -350,7 +350,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
       // Fallback form handling (if enhanced error handling is not available)
     if (!window.ErrorHandlingSystem && form) {
       console.log('Using fallback form validation');
-      
+
       const btn = form.querySelector('button[type="submit"]');
       const label = document.getElementById('btn-label');
       const spinner = document.getElementById('spinner');
@@ -365,12 +365,12 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
       // Custom form submission with validation
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         // Validate all required fields
         const nameField = document.getElementById('name');
         const emailField = document.getElementById('email');
         const messageField = document.getElementById('message');
-        
+
         let isValid = true;
         const invalidFields = [];
 
@@ -406,11 +406,11 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
 
         // Clear any previous status messages
         if (statusElement) statusElement.classList.add('hidden');
-        
+
         // Show loading state
         if (btn && label && spinner) {
-          btn.disabled = true; 
-          label.textContent = 'Sending…'; 
+          btn.disabled = true;
+          label.textContent = 'Sending…';
           spinner.classList.remove('hidden');
         }
 
@@ -439,9 +439,9 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
             statusElement.textContent = '✅ Thank you for your message! I\'ll get back to you soon. 🎉';
             statusElement.className = 'text-green-600 bg-green-50 border border-green-200 rounded-lg p-4 text-center font-semibold mb-4';
             statusElement.classList.remove('hidden');
-            
+
             form.reset();
-            
+
             // Clear all validation states
             [nameField, emailField, messageField].forEach(function(input) {
               if (input) {
@@ -467,8 +467,8 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
           }
         }).finally(function() {
           if (btn && label && spinner) {
-            btn.disabled = false; 
-            label.textContent = 'Send Message'; 
+            btn.disabled = false;
+            label.textContent = 'Send Message';
             spinner.classList.add('hidden');
           }
         });
