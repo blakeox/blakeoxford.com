@@ -43,48 +43,20 @@ try {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  
+    <!-- Critical CSS Inline for immediate rendering (generated per-page if available) -->
+    <style is:inline set:html={inlineCriticalCSS ?? fallbackCriticalCSS}></style>
 
-  <!-- Critical CSS Inline for immediate rendering (generated per-page if available) -->
-  <style is:inline set:html={inlineCriticalCSS ?? fallbackCriticalCSS}></style>
+    <!-- Avoid unconditional DNS-prefetch; GA/gtm are loaded lazily and only after interaction/idle -->
+    <!-- Removed: <link rel="dns-prefetch" href="//www.googletagmanager.com" /> -->
 
-    <!-- Removed external preload for lazy-loader; inlined below to reduce JS file count -->
-
-
-  <!-- DNS Prefetch for external resources -->
-    <link rel="dns-prefetch" href="//www.googletagmanager.com" />
-
-    <!-- Prevent flash of unstyled content - Must be as early as possible in head -->
-    <script is:inline>
-      (function() {
-        // Check for dark mode preference at the browser level
-        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        // Check for theme stored in local storage
-        const storedTheme = localStorage.getItem('theme');
-
-        // Apply theme immediately to avoid flash
-        if (storedTheme === 'dark' || (!storedTheme && prefersDarkMode)) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-
-        // Also add a data attribute for additional selector options
-        document.documentElement.dataset.theme = (storedTheme === 'dark' || (!storedTheme && prefersDarkMode)) ? 'dark' : 'light';
-
-        // Log theme state for debugging
-        console.log('Initial theme:', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-      })();
-    </script>
-  <!-- Favicon and touch icons (consolidated) -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icon-192x192.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Favicon and touch icons (consolidated) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <!-- SEO Keywords -->
     {keywords && <meta name="keywords" content={keywords} />}
     <meta name="author" content="Blake Oxford" />
     <meta name="creator" content="Blake Oxford" />
@@ -169,9 +141,9 @@ try {
     </script>
 
     <!-- Analytics facade: load GA only after user interaction or idle -->
-  <script is:inline>{`
+  <script is:inline>
     (function() {
-      var isAudit = !!(window).__AUDIT__ || /(^|;)\\s*audit=1(;$|;|\\s|$)/.test(document.cookie||'') || /lighthouse|headlesschrome/i.test(navigator.userAgent||'');
+      var isAudit = !!(window).__AUDIT__ || /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie||'') || /lighthouse|headlesschrome/i.test(navigator.userAgent||'');
       if (isAudit) { window.dataLayer = window.dataLayer || []; window.gtag = window.gtag || function(){}; return; }
       var GA_ID = 'G-CS4BH1K3HG';
       var loaded = false;
@@ -214,7 +186,7 @@ try {
         }
       });
     })();
-  `}</script>
+  </script>
   </head>
   <body id="top" class="bg-white text-foreground dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Skip link for keyboard users -->
@@ -246,11 +218,6 @@ try {
         </svg>
       </a>
     </div>
-    <style>
-      .fixed.bottom-6.right-6.z-50 {
-        /* Ensures the button is always visible and styled */
-      }
-    </style>
     <!-- Improve skip-link behavior: ensure focus lands on main content -->
     <script is:inline>
       (function(){

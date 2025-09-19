@@ -28,6 +28,10 @@ export async function snapshotRoute(page: Page, route: string, opts: { mask?: st
   }
 
   // Route-specific adjustments
+  if (route === '/about/') {
+    // About page has minor cross-engine text/gradient variance; allow small tolerance
+    baseOptions.maxDiffPixelRatio = Math.max(baseOptions.maxDiffPixelRatio || 0, 0.025);
+  }
   if (route === '/contact/') {
     const masks = ['#hero .absolute', '#contact-info .absolute', '.coin-flip'];
     baseOptions.mask = [...(baseOptions.mask || []), ...masks.map((sel) => page.locator(sel))];

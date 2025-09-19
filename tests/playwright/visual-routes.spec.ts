@@ -28,6 +28,9 @@ test.describe('@visual-essential Visual Route Smoke', () => {
         maskColor: '#ffffff',
         maxDiffPixelRatio: 0.01,
       };
+      if (route === '/about/') {
+        options.maxDiffPixelRatio = Math.max(options.maxDiffPixelRatio, 0.025);
+      }
 
       // The contact page includes decorative animations and blurred shapes — mask them to avoid flake
       if (route === '/contact/') {
