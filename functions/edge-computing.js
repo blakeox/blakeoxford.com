@@ -241,6 +241,17 @@ const WorkerApp = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const method = request.method || 'GET';
+    const reqId = (() => {
+      try {
+        const h = request.headers.get('cf-request-id') || request.headers.get('x-request-id');
+        if (h) return h;
+  } catch { /* no-op */ }
+      try {
+        const bytes = new Uint8Array(8);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
+      } catch { return Math.random().toString(36).slice(2, 10); }
+    })();
 
     // HTTPS + apex canonicalization
     try {
@@ -330,7 +341,7 @@ const WorkerApp = {
 
     // Health endpoint (moved off /metrics to avoid third-party collisions)
     if (url.pathname === '/_healthz' || url.pathname === '/_healthz/') {
-      return new Response(null, { status: 204, headers: { 'cache-control': 'no-store, no-cache, must-revalidate', 'content-type': 'text/plain; charset=utf-8', 'content-length': '0', 'x-content-type-options': 'nosniff' } });
+      return new Response(null, { status: 204, headers: { 'cache-control': 'no-store, no-cache, must-revalidate', 'content-type': 'text/plain; charset=utf-8', 'content-length': '0', 'x-content-type-options': 'nosniff', 'x-request-id': reqId } });
     }
 
     // Legacy no-op for previous metrics path
@@ -339,7 +350,8 @@ const WorkerApp = {
     }
 
     if (url.pathname === '/send-email' && request.method === 'POST') {
-      return handleSendEmail({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
+      const res = await handleSendEmail({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
+      try { const h = new Headers(res.headers); h.set('x-request-id', reqId); return new Response(res.body, { status: res.status, statusText: res.statusText, headers: h }); } catch { return res; }
     }
 
     // Back-compat asset rewrite: maintain existing path if older HTML referenced it
@@ -403,7 +415,9 @@ const WorkerApp = {
     }
 
     try {
-      let originResponse = await env.ASSETS.fetch(request);
+  const startTs = Date.now();
+  console.log('➡️ Request start', JSON.stringify({ id: reqId, method, path: url.pathname }));
+  let originResponse = await env.ASSETS.fetch(request);
 
       if (originResponse.status === 404 && !url.pathname.includes('.') && !url.pathname.endsWith('/index.html')) {
         const altUrl = new URL(url);
@@ -417,8 +431,8 @@ const WorkerApp = {
           if (cached) return cached;
           const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
           if (isHtmlRoute) {
-            const offlineHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0b1020;color:#e5e7eb}.card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.25)}h1{font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:#cbd5e1}a.btn{display:inline-block;background:#ffffff;color:#111827;font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}</style></head><body><div class="card"><h1>We\'re updating things</h1><p>Please try again in a moment. If this persists, contact me via LinkedIn below.</p><a class="btn" href="/">Go home</a></div></body></html>';
-            return new Response(offlineHtml, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8' } });
+            const offlineHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0b1020;color:#e5e7eb}.card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.25)}h1{font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:#cbd5e1}a.btn{display:inline-block;background:#ffffff;color:#111827;font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}.meta{margin-top:8px;font-size:12px;color:#94a3b8}</style></head><body><div class="card"><h1>We\'re updating things</h1><p>Please try again in a moment. If this persists, contact me via LinkedIn below.</p><a class="btn" href="/">Go home</a><div class="meta">Correlation ID: '+reqId+'</div></div></body></html>';
+            return new Response(offlineHtml, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'x-request-id': reqId } });
           }
           // Graceful fallbacks for non-HTML requests during transient failures
           const pathname = url.pathname;
@@ -524,19 +538,29 @@ const WorkerApp = {
         finalResponse = new Response(forReturn, { status: finalResponse.status, statusText: finalResponse.statusText, headers: finalResponse.headers });
       }
 
-      ctx.waitUntil(WorkerApp.trackEdgeAnalytics(request, userSegments, abTest, env));
-      return finalResponse;
+      ctx.waitUntil(WorkerApp.trackEdgeAnalytics(request, userSegments, abTest, env, reqId));
+      try {
+        const h = new Headers(finalResponse.headers);
+        h.set('x-request-id', reqId);
+        const cc = h.get('cache-control');
+        if (cc) h.set('x-cache-policy', cc);
+        finalResponse = new Response(finalResponse.body, { status: finalResponse.status, statusText: finalResponse.statusText, headers: h });
+      } catch { /* no-op */ }
+      const dur = Date.now() - startTs;
+      const cachePolicy = finalResponse.headers.get('cache-control') || undefined;
+      console.log('✅ Request done', JSON.stringify({ id: reqId, status: finalResponse.status, path: url.pathname, dur, cachePolicy }));
+  return finalResponse;
 
     } catch (error) {
-      console.error('Edge processing error:', error);
+      console.error('Edge processing error:', JSON.stringify({ id: reqId, error: String(error) }));
       const staleResponse = await caches.default.match(request);
       if (staleResponse) return staleResponse;
       const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
       if (isHtmlRoute) {
-        const offlineHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0b1020;color:#e5e7eb}.card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.25)}h1{font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:#cbd5e1}a.btn{display:inline-block;background:#ffffff;color:#111827;font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}</style></head><body><div class="card"><h1>We\'re updating things</h1><p>Please try again in a moment. If this persists, contact me via LinkedIn below.</p><a class="btn" href="/">Go home</a></div></body></html>';
-        return new Response(offlineHtml, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8' } });
+        const offlineHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0b1020;color:#e5e7eb}.card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.25)}h1{font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:#cbd5e1}a.btn{display:inline-block;background:#ffffff;color:#111827;font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}.meta{margin-top:8px;font-size:12px;color:#94a3b8}</style></head><body><div class="card"><h1>We\'re updating things</h1><p>Please try again in a moment. If this persists, contact me via LinkedIn below.</p><a class="btn" href="/">Go home</a><div class="meta">Correlation ID: '+reqId+'</div></div></body></html>';
+        return new Response(offlineHtml, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'x-request-id': reqId } });
       }
-      return new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' } });
+      return new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8', 'x-request-id': reqId } });
     }
   },
 
@@ -585,9 +609,9 @@ const WorkerApp = {
     return new Response(personalizedHTML, { status: response.status, statusText: response.statusText, headers: response.headers });
   },
 
-  async trackEdgeAnalytics(request, userSegments, abTest, env) {
-    const analytics = { timestamp: Date.now(), url: request.url, userAgent: request.headers.get('user-agent'), country: request.cf?.country, userSegments, abTest, colo: request.cf?.colo, asn: request.cf?.asn };
-    console.log('📊 Edge analytics:', analytics);
+  async trackEdgeAnalytics(request, userSegments, abTest, env, reqId) {
+    const analytics = { id: reqId, timestamp: Date.now(), url: request.url, userAgent: request.headers.get('user-agent'), country: request.cf?.country, userSegments, abTest, colo: request.cf?.colo, asn: request.cf?.asn };
+    console.log('📊 Edge analytics:', JSON.stringify(analytics));
     if (env.ANALYTICS_ENGINE) {
       await env.ANALYTICS_ENGINE.writeDataPoint({ blobs: [ analytics.url, analytics.country, abTest.variant ], doubles: [ Date.now() ], indexes: [ analytics.country ] });
     }

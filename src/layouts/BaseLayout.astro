@@ -43,11 +43,7 @@ try {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Favicon and touch icons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icon-192x192.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
-  <link rel="manifest" href="/manifest.webmanifest">
+  
 
   <!-- Critical CSS Inline for immediate rendering (generated per-page if available) -->
   <style is:inline set:html={inlineCriticalCSS ?? fallbackCriticalCSS}></style>
@@ -85,6 +81,7 @@ try {
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="manifest" href="/manifest.webmanifest" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <!-- SEO Keywords -->
@@ -130,8 +127,7 @@ try {
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#2563eb" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e40af" />
 
-    <!-- Manifest and Icons -->
-    <link rel="manifest" href="/manifest.webmanifest" />
+  <!-- Manifest included above -->
   <!-- Removed webfont loads to eliminate font-driven CLS; using system font stack in critical CSS -->
     <!-- Essential JavaScript Bundles (performance-optimized) -->
   <script is:inline>
@@ -234,7 +230,7 @@ try {
       <NavBar />
     </header>
   <SearchOverlay />
-    <main id="main-content" tabindex="-1" aria-label="Main Content" class={
+    <main id="main-content" role="main" tabindex="-1" aria-label="Main Content" class={
       wide
         ? 'max-w-none px-0'
         : 'prose prose-gray dark:prose-invert max-w-3xl mx-auto p-4'
@@ -255,5 +251,18 @@ try {
         /* Ensures the button is always visible and styled */
       }
     </style>
+    <!-- Improve skip-link behavior: ensure focus lands on main content -->
+    <script is:inline>
+      (function(){
+        try {
+          var skip = document.querySelector('a.skip-link[href="#main-content"]');
+          var main = document.getElementById('main-content');
+          if (skip && main) {
+            skip.addEventListener('click', function(){ setTimeout(function(){ main.focus(); }, 0); });
+            if (location.hash === '#main-content') { setTimeout(function(){ main.focus(); }, 0); }
+          }
+        } catch(_) {}
+      })();
+    </script>
   </body>
 </html>
