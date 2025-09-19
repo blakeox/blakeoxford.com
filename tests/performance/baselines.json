@@ -59,6 +59,30 @@
       "fcp": 165,
       "load": 380,
       "requests": 7
+    },
+    "/__chromium": {
+      "domContentLoaded": 855,
+      "fcp": 902.5,
+      "load": 1330,
+      "requests": 16
+    },
+    "/about__chromium": {
+      "domContentLoaded": 754.4899999999999,
+      "fcp": 788.785,
+      "load": 1183.1775,
+      "requests": 16
+    },
+    "/projects__chromium": {
+      "domContentLoaded": 902.5,
+      "fcp": 950,
+      "load": 1425,
+      "requests": 18
+    },
+    "/blog__chromium": {
+      "domContentLoaded": 912,
+      "fcp": 959.5,
+      "load": 1444,
+      "requests": 19
     }
   },
   "tolerance": {

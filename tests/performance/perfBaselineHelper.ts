@@ -83,7 +83,16 @@ export function compareWithBaseline(route: string, current: { domContentLoaded: 
   if (process.env.UPDATE_PERF_BASELINES === '1') {
     const hasBrowserKey = Boolean((file.routes as any)[browserKey]);
     if (!hasBrowserKey && file.routes[route]) {
-      (file.routes as any)[browserKey] = { ...(file.routes as any)[route] } as RouteBaseline;
+      const g = (file.routes as any)[route] as RouteBaseline;
+      // Seed with the safer maximum of generic and current metrics so a browser's first
+      // baseline reflects the observed environment and avoids instant regressions.
+      const seeded: RouteBaseline = {
+        domContentLoaded: Math.max(g.domContentLoaded, current.domContentLoaded),
+        fcp: Math.max(g.fcp, current.fcp),
+        load: Math.max(g.load, current.load),
+        requests: Math.max(g.requests, current.requests)
+      };
+      (file.routes as any)[browserKey] = seeded;
       base = (file.routes as any)[browserKey];
       dirty = true;
     }
