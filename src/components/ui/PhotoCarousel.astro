@@ -100,12 +100,12 @@ const columnALoop = createSeamlessLoop(columnAImages);
 const columnBLoop = createSeamlessLoop(columnBImages);
 ---
 
-<div class="relative w-full h-full overflow-hidden select-none" role="region" aria-label="Photo carousel">
-  <!-- ▼ Mobile horizontal strip -->
+<div class="relative w-full h-full min-h-[40vh] md:min-h-[60vh] overflow-hidden select-none" role="region" aria-label="Photo carousel">
+  <!-- ▼ Mobile single vertical column (no horizontal drift) -->
   <div class="absolute inset-0 flex md:hidden items-center">
-    <ul class="flex gap-4 animate-carousel-x" role="list">
+    <ul class="flex flex-col gap-4 animate-carousel-up w-full" role="list">
       {createSeamlessLoop(mobileImages).map((image, index) => (
-        <li class="h-[40vh] w-[80vw] flex-shrink-0" role="listitem">
+        <li class="w-full aspect-square" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-xl shadow-lg">
             <Image
               src={image}
@@ -128,7 +128,7 @@ const columnBLoop = createSeamlessLoop(columnBImages);
     <!-- Column A – up -->
     <ul class="flex flex-col gap-4 animate-carousel-up flex-1" role="list">
       {columnALoop.map((image, index) => (
-        <li class="w-full aspect-square max-w-xl mx-auto" role="listitem">
+        <li class="w-full aspect-square mx-auto" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
             <Image
               src={image}
@@ -148,7 +148,7 @@ const columnBLoop = createSeamlessLoop(columnBImages);
     <!-- Column B – down -->
     <ul class="flex flex-col gap-4 animate-carousel-down flex-1" role="list">
       {columnBLoop.map((image, index) => (
-        <li class="w-full aspect-square max-w-xl mx-auto" role="listitem">
+        <li class="w-full aspect-square mx-auto" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
             <Image
               src={image}
@@ -189,15 +189,7 @@ const columnBLoop = createSeamlessLoop(columnBImages);
   animation: carousel-down 35s linear infinite;
 }
 
-/* horizontal loop (mobile) */
-@keyframes carousel-x {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-.animate-carousel-x {
-  animation: carousel-x 30s linear infinite;
-}
+/* horizontal loop removed - mobile uses vertical to avoid drift */
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
