@@ -37,27 +37,27 @@
       "requests": 9
     },
     "/__webkit": {
-      "domContentLoaded": 36.00000000000001,
-      "fcp": 34,
-      "load": 38,
+      "domContentLoaded": 33.25,
+      "fcp": 31.349999999999998,
+      "load": 35.15,
       "requests": 8
     },
     "/about__webkit": {
-      "domContentLoaded": 30.4,
-      "fcp": 30,
-      "load": 34,
+      "domContentLoaded": 122,
+      "fcp": 121,
+      "load": 124,
       "requests": 10
     },
     "/projects__firefox": {
-      "domContentLoaded": 383,
-      "fcp": 365,
-      "load": 394,
+      "domContentLoaded": 363.84999999999997,
+      "fcp": 346.75,
+      "load": 374.29999999999995,
       "requests": 7
     },
     "/blog__firefox": {
-      "domContentLoaded": 368,
-      "fcp": 165,
-      "load": 380,
+      "domContentLoaded": 349.59999999999997,
+      "fcp": 156.75,
+      "load": 361,
       "requests": 7
     },
     "/__chromium": {

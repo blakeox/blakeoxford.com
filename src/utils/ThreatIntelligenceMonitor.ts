@@ -3,7 +3,7 @@
  * Advanced threat detection and behavioral analysis system
  */
 import { getSecurityMonitor } from './SecurityMonitor';
-import { createModuleErrorReporter } from './ModuleErrorHandling';
+// import removed: error reporter not used here
 
 export interface ThreatIntelligence {
   id: string;
@@ -58,7 +58,6 @@ export class ThreatIntelligenceMonitor {
   private activityPatterns: Map<string, ActivityPattern> = new Map();
   private userProfiles: Map<string, UserBehaviorProfile> = new Map();
   private alerts: RealTimeAlert[] = [];
-  private errorReporter = createModuleErrorReporter('ThreatIntelligenceMonitor');
   private isMonitoring = false;
   private analysisInterval?: number;
 

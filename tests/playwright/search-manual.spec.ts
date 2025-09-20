@@ -1,5 +1,5 @@
  
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { waitForKeyboardResponse } from './utils/test-helpers';
 
 test.describe('SearchOverlay Manual Test', () => {
@@ -98,7 +98,7 @@ test.describe('SearchOverlay Manual Test', () => {
     // Check console messages for any errors
     const consoleMessages: string[] = [];
     page.on('console', msg => {
-      if (msg.type() === 'error' || msg.type() === 'warn' || msg.text().includes('SearchOverlay')) {
+      if (msg.type() === 'error' || msg.type() === 'warning' || msg.text().includes('SearchOverlay')) {
         consoleMessages.push(`${msg.type()}: ${msg.text()}`);
       }
     });

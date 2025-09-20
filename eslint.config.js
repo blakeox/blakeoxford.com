@@ -257,6 +257,9 @@ export default [
       '.astro 2/',
   // Don't ignore public JS so we can lint SW and utility scripts
   // 'public/',
+      // Ignore vendor/minified JS under public, but keep service worker linted
+      'public/assets/**/*.js',
+      'public/**/*.min.js',
       'coverage/',
       'playwright-report/',
       'test-results/',

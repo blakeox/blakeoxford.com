@@ -44,11 +44,9 @@ export interface OptimizationReport {
 }
 
 export class PerformanceMonitor {
-  private startTime = 0;
   private loadMetrics = new Map<string, number>();
   private bundleMetrics = new Map<string, number>();
   private errorCount = 0;
-  private isMonitoring = false;
   private observerManager = getPerformanceObserverManager();
   private observerSubscriptions: string[] = [];
   private interactionStartTimes = new Map<string, number>();
@@ -135,30 +133,7 @@ export class PerformanceMonitor {
     }
   }
 
-  /**
-   * Track user interactions for response time measurement
-   */
-  private trackUserInteractions(): void {
-    if (typeof document === 'undefined') return;
-
-    const interactionEvents = ['click', 'keydown', 'touchstart'];
-    
-    interactionEvents.forEach(eventType => {
-      document.addEventListener(eventType, () => {
-        const interactionId = `${eventType}-${Date.now()}`;
-        this.interactionStartTimes.set(interactionId, performance.now());
-
-        // Clean up old interaction times (keep only last 10)
-        if (this.interactionStartTimes.size > 10) {
-          const keys = Array.from(this.interactionStartTimes.keys());
-          const oldestKey = keys[0];
-          if (oldestKey) {
-            this.interactionStartTimes.delete(oldestKey);
-          }
-        }
-      });
-    });
-  }
+  // Removed unused tracking toggles and interaction listeners to reduce overhead
 
   /**
    * Record bundle load completion
@@ -347,7 +322,6 @@ export class PerformanceMonitor {
    * Start monitoring session
    */
   startMonitoring(): void {
-    this.startTime = performance.now();
     console.log('🔍 Performance monitoring started');
 
     // Log report after 5 seconds

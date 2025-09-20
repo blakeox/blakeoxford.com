@@ -98,8 +98,6 @@ export class SecurityAuditor {
   private auditResults: SecurityAuditResult[] = [];
   private healthChecks: HealthCheckResult[] = [];
   private errorReporter = createModuleErrorReporter('SecurityAuditor');
-  private isAuditing = false;
-  private auditInterval?: number;
 
   constructor() {
     this.scheduleRegularAudits();

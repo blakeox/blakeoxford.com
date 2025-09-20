@@ -115,7 +115,7 @@ export class AdvancedPerformanceMonitor {
   private pageViews = 0;
   private interactions = 0;
   private maxScrollDepth = 0;
-  private memoryObserver?: PerformanceObserver;
+  // Note: memoryObserver was not used; remove to keep class minimal
   
   private constructor(config?: Partial<AdvancedPerformanceConfig>) {
     this.config = {

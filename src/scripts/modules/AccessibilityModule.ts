@@ -17,7 +17,7 @@ export interface AccessibilityModuleConfig extends AccessibilityConfig {
 export class AccessibilityModule {
   private preferences: AccessibilityPreferences;
   private liveRegion: HTMLElement | null = null;
-  private focusTrap: FocusTrap | null = null;
+  // focusTrap storage not needed; traps are returned to callers when created
   private config: AccessibilityModuleConfig;
 
   constructor(config: AccessibilityModuleConfig = {}) {

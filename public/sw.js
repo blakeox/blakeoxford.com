@@ -1,5 +1,4 @@
 // Enhanced Service Worker for PWA optimization
-const CACHE_NAME = 'blakeoxford-v2';
 const STATIC_CACHE_NAME = 'static-v2';
 const DYNAMIC_CACHE_NAME = 'dynamic-v2';
 const RUNTIME_CACHE_NAME = 'runtime-v2';
@@ -33,12 +32,7 @@ const STATIC_CACHE_PATTERNS = [
   /\.(?:png|jpg|jpeg|svg|webp|avif|css|js|woff|woff2|pdf)$/
 ];
 
-// Cache duration for different content types
-const CACHE_DURATIONS = {
-  static: 30 * 24 * 60 * 60 * 1000, // 30 days
-  dynamic: 7 * 24 * 60 * 60 * 1000, // 7 days
-  runtime: 24 * 60 * 60 * 1000       // 1 day
-};
+// Note: durations were defined previously but not used by any strategy; removed to keep SW lean
 
 self.addEventListener('install', (event) => {
   console.log('🔧 Service Worker installing...');

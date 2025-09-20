@@ -5,7 +5,7 @@
 import { PerformanceMonitor } from './PerformanceMonitor';
 import { getSecurityMonitor } from './SecurityMonitor';
 import { threatIntelligenceMonitor } from './ThreatIntelligenceMonitor';
-import { createModuleErrorReporter } from './ModuleErrorHandling';
+// import removed: error reporter not used in this module
 
 export interface PerformanceSecurityCorrelation {
   id: string;
@@ -68,7 +68,7 @@ export class PerformanceSecurityAnalyzer {
   private anomalies: Map<string, PerformanceAnomalyDetection> = new Map();
   private resourcePatterns: Map<string, ResourceAbusePat> = new Map();
   private baselineMetrics: Map<string, number[]> = new Map();
-  private errorReporter = createModuleErrorReporter('PerformanceSecurityAnalyzer');
+  // Removed unused errorReporter to reduce TS hints
   private isAnalyzing = false;
   private analysisInterval?: number;
   private performanceMonitor?: PerformanceMonitor;

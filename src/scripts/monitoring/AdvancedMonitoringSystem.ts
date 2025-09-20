@@ -113,12 +113,7 @@ export class MonitoringSystem {
     }
   }
 
-  /**
-   * Get default sampling rate based on environment and monitor type
-   */
-  private getDefaultSampling(type: 'security' | 'performance'): number {
-    return MonitoringSystem.getDefaultSamplingStatic(this.config.environment, type);
-  }
+  // Instance-level getDefaultSampling was unused; static helper is sufficient.
   
   /**
    * Initialize all monitoring systems

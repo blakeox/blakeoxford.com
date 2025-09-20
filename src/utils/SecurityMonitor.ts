@@ -73,8 +73,6 @@ export class SecurityMonitor {
   private config: SecurityConfig;
   private metrics: SecurityMetrics;
   private events: SecurityEvent[] = [];
-  private requestCounts = new Map<string, number[]>();
-  private suspiciousIPs = new Set<string>();
   private csrfTokens = new Map<string, { token: string; timestamp: number }>();
   
   private constructor(config?: Partial<SecurityConfig>) {
