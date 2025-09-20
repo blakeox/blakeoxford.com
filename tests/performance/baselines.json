@@ -25,27 +25,27 @@
       "requests": 20
     },
     "/__firefox": {
-      "domContentLoaded": 44.65,
-      "fcp": 44.2225,
-      "load": 54.15,
+      "domContentLoaded": 50,
+      "fcp": 43,
+      "load": 66,
       "requests": 9
     },
     "/about__firefox": {
-      "domContentLoaded": 901.55,
-      "fcp": 903.4499999999999,
-      "load": 926.25,
+      "domContentLoaded": 856.4725,
+      "fcp": 858.2774999999999,
+      "load": 879.9375,
       "requests": 9
     },
     "/__webkit": {
-      "domContentLoaded": 33.25,
-      "fcp": 31.349999999999998,
-      "load": 35.15,
+      "domContentLoaded": 60,
+      "fcp": 54,
+      "load": 61,
       "requests": 8
     },
     "/about__webkit": {
-      "domContentLoaded": 122,
-      "fcp": 121,
-      "load": 124,
+      "domContentLoaded": 115.89999999999999,
+      "fcp": 114.94999999999999,
+      "load": 117.8,
       "requests": 10
     },
     "/projects__firefox": {

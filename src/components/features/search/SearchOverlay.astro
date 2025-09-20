@@ -8,14 +8,14 @@
 
   <!-- Search Container -->
   <div class="search-container relative flex items-start justify-center min-h-full px-4 pt-16 pb-8 md:pt-24">
-    <div class="search-card w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+  <div class="search-card w-full max-w-2xl bg-surface dark:bg-surface rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
 
       <!-- Header with Close Button -->
       <div class="search-header flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
   <div id="search-title" class="text-lg font-semibold text-foreground dark:text-foreground-light">Search</div>
         <button
           id="close-search"
-          class="search-close-btn p-2 rounded-lg text-foreground/70 hover:text-foreground hover:bg-gray-100 dark:text-foreground-light/60 dark:hover:text-foreground-light dark:hover:bg-gray-800 transition-colors"
+          class="search-close-btn p-2 rounded-lg text-foreground/70 hover:text-foreground hover:bg-surface dark:text-foreground-light/60 dark:hover:text-foreground-light dark:hover:bg-surface transition-colors"
           aria-label="Close search"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,7 +57,7 @@
                 id="search-input"
                 type="text"
                 placeholder="Type to search..."
-                class="search-input w-full px-4 py-3 pr-20 text-base bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-foreground dark:text-foreground-light placeholder-foreground/50 dark:placeholder-foreground-light/50"
+                class="search-input w-full px-4 py-3 pr-20 text-base bg-surface dark:bg-surface-dark border border-neutral-light dark:border-neutral-dark rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-foreground dark:text-foreground-light placeholder-foreground/50 dark:placeholder-foreground-light/50"
                 aria-label="Search input"
                 autocomplete="off"
                 spellcheck="false"
@@ -96,7 +96,7 @@
             </p>
             <p class="mt-2 flex items-center justify-center gap-2">
               <span>⌨️</span>
-              <span>Press <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono">/</kbd> to search anytime</span>
+              <span>Press <kbd class="px-2 py-1 bg-surface dark:bg-surface-dark rounded text-xs font-mono">/</kbd> to search anytime</span>
             </p>
           </div>
 
@@ -230,8 +230,8 @@
   }
 
   .search-results-container {
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: var(--color-surface);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     max-height: 400px;
@@ -240,8 +240,8 @@
   }
 
   .dark .search-results-container {
-    background: #1f2937;
-    border-color: #374151;
+    background: var(--color-surface-dark);
+    border-color: var(--border-color-dark);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
   }
 
@@ -253,7 +253,7 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    background: white;
+  background: var(--color-surface);
   }
 
   .search-result-item:last-child {
@@ -263,20 +263,20 @@
   .search-result-item:hover,
   .search-result-item[aria-selected="true"],
   .search-result-item:focus {
-    background: #f8fafc;
-    border-color: #e2e8f0;
+  background: var(--color-surface-subtle);
+  border-color: var(--border-color);
   }
 
   .dark .search-result-item {
-    background: #1f2937;
-    border-color: #374151;
+    background: var(--color-surface-dark);
+    border-color: var(--border-color-dark);
   }
 
   .dark .search-result-item:hover,
   .dark .search-result-item[aria-selected="true"],
   .dark .search-result-item:focus {
-    background: #293649;
-    border-color: #4b5563;
+  background: var(--color-surface-dark-subtle);
+  border-color: var(--border-color-dark);
   }
 
   .search-result-icon {
@@ -376,8 +376,8 @@
   .search-loading {
     padding: 32px 24px;
     text-align: center;
-    background: white;
-    border: 1px solid #e5e7eb;
+  background: var(--color-surface);
+  border: 1px solid var(--border-color);
     border-radius: 12px;
     color: #6b7280;
   }
@@ -385,22 +385,22 @@
   .search-error {
     padding: 32px 24px;
     text-align: center;
-    background: white;
-    border: 1px solid #e5e7eb;
+  background: var(--color-surface);
+  border: 1px solid var(--border-color);
     border-radius: 12px;
   }
 
   /* Search Suggestions */
   .search-suggestions {
-    background: white;
-    border: 1px solid #e5e7eb;
+  background: var(--color-surface);
+  border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
   }
 
   .dark .search-suggestions {
-    background: #1f2937;
-    border-color: #374151;
+    background: var(--color-surface-dark);
+    border-color: var(--border-color-dark);
   }
 
   .search-suggestions-title {
@@ -428,21 +428,21 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: #f8fafc;
+  background: var(--color-surface-subtle);
   }
 
   .search-suggestion-item:hover,
   .search-suggestion-item:focus {
-    background: #e2e8f0;
+  background: var(--color-surface);
   }
 
   .dark .search-suggestion-item {
-    background: #293649;
+    background: var(--color-surface-dark-subtle);
   }
 
   .dark .search-suggestion-item:hover,
   .dark .search-suggestion-item:focus {
-    background: #374151;
+  background: var(--color-surface-dark);
   }
 
   .search-suggestion-text {
@@ -457,9 +457,9 @@
 
   .dark .search-loading,
   .dark .search-error {
-    background: #1f2937;
-    border-color: #374151;
-    color: #9ca3af;
+    background: var(--color-surface-dark);
+    border-color: var(--border-color-dark);
+    color: var(--color-foreground-light);
   }
 
   /* Mobile Responsive */
@@ -582,8 +582,8 @@
   .search-no-results {
     text-align: center;
     padding: 32px 24px;
-    background: white;
-    border: 1px solid #e5e7eb;
+  background: var(--color-surface);
+  border: 1px solid var(--border-color);
     border-radius: 12px;
     color: #6b7280;
   }

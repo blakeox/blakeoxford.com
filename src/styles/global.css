@@ -1,13 +1,16 @@
 /* src/styles/global.css - Main stylesheet entry point */
 
-/* Import Tailwind's base styles and utilities */
-@import "tailwindcss";
-
-/* Import consolidated design tokens as a theme */
+/* All @import directives must come before any other rules for PostCSS */
+/* Import individual partials directly to avoid nested @import ordering issues */
+@import url("./base/reset.css");
+@import url("./base/typography.css");
+@import url("./layout/grid.css");
+@import url("./components/buttons.css");
+@import url("./components/accessibility-panel.css");
+@import url("./components/cards.css");
+@import url("./utilities/animations.css");
 @import "./theme.css";
-
-/* Import organized component and utility styles */
-@import "./index.css";
+@import "tailwindcss";
 
 /* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
   class (or any of its descendants) is in the selector chain.   */
@@ -25,6 +28,14 @@
 body {
   /* Ensure base body text uses strongest foreground for minimum 4.5:1 on white */
   color: var(--color-foreground-strong, var(--color-foreground));
+}
+
+/* Always paint a background using theme tokens so computed styles are non-transparent.
+   Colors flip automatically because :root.dark updates the CSS variables. */
+html, body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  min-height: 100%;
 }
 
 /* Tailwind Typography sets --tw-prose-body and uses it for paragraphs & list text.

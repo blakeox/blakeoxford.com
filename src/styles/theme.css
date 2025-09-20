@@ -25,7 +25,8 @@
   --color-foreground-light: #f9fafb;
   --color-on-dark: #f9fafb; /* text on dark surfaces */
   --color-background: #f9fafb;
-  --color-background-dark: #18181b;
+  /* Slightly lighter, low-glare dark background for improved readability */
+  --color-background-dark: #111827;
   --color-neutral: #64748b;
   --color-neutral-light: #cbd5e1;
   --color-neutral-dark: #334155;
@@ -321,12 +322,13 @@
 }
 
 /* Dark theme overrides */
-.dark :root, :root.dark {
+/* Ensure overrides apply when the root element (html) has the .dark class */
+:root.dark {
   /* In dark mode prefer light foreground; do not override strong token so specific components can still opt-in if needed */
   --color-foreground-strong: var(--color-foreground-light);
   /* Override key colors for proper dark mode */
   --color-foreground: var(--color-foreground-light); /* #f9fafb */
-  --color-background: var(--color-background-dark); /* #18181b */
+  --color-background: var(--color-background-dark); /* resolves to #111827 */
   --color-surface: var(--color-surface-dark); /* #1f1f1f */
   --color-surface-subtle: var(--color-surface-dark-subtle); /* #27272a */
   --color-neutral: var(--color-neutral-light); /* #cbd5e1 */
@@ -396,15 +398,16 @@
     background: var(--selection-bg-dark);
   }
 }
-/* ---------- Dark‑mode variable overrides driven by `.dark` class ---------- */
-.dark:root {
+/* ---------- Dark‑mode variable overrides driven by `.dark` class (redundant explicit values, kept for specificity) ---------- */
+:root.dark {
   /* Activate dark shadow chroma */
   --shadow-chroma-light: var(--shadow-chroma-dark);
 
   /* Color overrides for dark mode */
   --color-foreground: #f9fafb; /* Light text on dark backgrounds */
   --color-foreground-strong: #f9fafb; /* Strong light text */
-  --color-background: #0f172a; /* Dark background */
+  /* Use token so a single place controls dark background shade */
+  --color-background: var(--color-background-dark);
   --color-surface: #1e293b; /* Dark surface for cards */
   --color-surface-subtle: #334155; /* Dark subtle surface */
   --color-neutral: #94a3b8; /* Light neutral text */
@@ -421,6 +424,6 @@
 }
 
 /* Ensure text‑selection color also responds to `.dark` class */
-.dark ::selection {
+:root.dark ::selection {
   background: var(--selection-bg-dark);
 }

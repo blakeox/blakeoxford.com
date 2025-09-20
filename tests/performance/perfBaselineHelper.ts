@@ -122,11 +122,12 @@ export function compareWithBaseline(route: string, current: { domContentLoaded: 
   if (!base) throw new Error(`No baseline for route ${route}`);
   const { timingPct, requestsPct } = file.tolerance;
 
+  // For 'requests', budgets must be integer-aware to avoid fractional off-by-one failures
   const checks: Array<{ name: keyof RouteBaseline; value: number; base: number; allowed: number }> = [
     { name: 'domContentLoaded', value: current.domContentLoaded, base: base.domContentLoaded, allowed: base.domContentLoaded * (1 + timingPct) },
     { name: 'fcp', value: current.fcp, base: base.fcp, allowed: base.fcp * (1 + timingPct) },
     { name: 'load', value: current.load, base: base.load, allowed: base.load * (1 + timingPct) },
-    { name: 'requests', value: current.requests, base: base.requests, allowed: base.requests * (1 + requestsPct) }
+    { name: 'requests', value: current.requests, base: base.requests, allowed: Math.ceil(base.requests * (1 + requestsPct)) }
   ];
 
   for (const c of checks) {

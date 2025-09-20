@@ -71,7 +71,12 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
         <div class="c-contact-page__form-container scroll-animate bg-surface dark:bg-surface-dark rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30 hover:border-accent/50 transition-colors">
           <form id="contact-form" method="POST" action="/send-email" class="space-y-6" aria-describedby="contact-form-help">
             <input type="hidden" name="form-name" value="contact" aria-hidden="true" />
-            <p class="sr-only" aria-hidden="true"><label>Don&#39;t fill this out: <input name="bot-field" tabindex="-1" aria-hidden="true" /></label></p>
+            <p class="sr-only" aria-hidden="true">
+              <label>
+                Don&#39;t fill this out:
+                <input name="bot-field" type="hidden" aria-hidden="true" tabindex="-1" />
+              </label>
+            </p>
             <p id="contact-form-help" class="sr-only">All fields marked with an asterisk are required.</p>
 
             <div class="flex flex-col gap-2">

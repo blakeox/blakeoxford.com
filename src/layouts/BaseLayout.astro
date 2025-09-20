@@ -38,10 +38,31 @@ try {
 }
 ---
 
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth bg-background text-foreground dark:bg-background dark:text-foreground">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Early theme initialization (no flash of incorrect theme) -->
+    <script is:inline>
+      (function() {
+        try {
+          var ls = null;
+          try { ls = localStorage.getItem('theme'); } catch(_) {}
+          var prefersDark = false;
+          try { prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; } catch(_) {}
+          var theme = ls || (prefersDark ? 'dark' : 'light');
+          var html = document.documentElement;
+          if (theme === 'dark') {
+            html.classList.add('dark');
+            html.setAttribute('data-theme','dark');
+          } else {
+            html.classList.remove('dark');
+            html.setAttribute('data-theme','light');
+          }
+        } catch(_) { /* no-op */ }
+      })();
+    </script>
 
     <!-- Critical CSS Inline for immediate rendering (generated per-page if available) -->
     <style is:inline set:html={inlineCriticalCSS ?? fallbackCriticalCSS}></style>
@@ -188,7 +209,7 @@ try {
     })();
   </script>
   </head>
-  <body id="top" class="bg-white text-foreground dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <body id="top" class="min-h-screen bg-background text-foreground dark:bg-background dark:text-foreground transition-colors duration-300">
     <!-- Skip link for keyboard users -->
     <a href="#main-content" class="skip-link" aria-label="Skip to main content">
       Skip to main content
@@ -205,7 +226,7 @@ try {
     <main id="main-content" role="main" tabindex="-1" aria-label="Main Content" class={
       wide
         ? 'max-w-none px-0'
-        : 'prose prose-gray dark:prose-invert max-w-3xl mx-auto p-4'
+  : 'prose dark:prose-invert max-w-3xl mx-auto p-4'
     }>
       <slot />
     </main>

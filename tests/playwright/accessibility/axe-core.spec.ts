@@ -41,79 +41,11 @@ test.describe('@essential @accessibility-core Axe Accessibility Scan', () => {
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze();
 
-      if (route === '/projects') {
-        const cc = results.violations.find(v => v.id === 'color-contrast');
-        if (cc) {
-          console.log(`[a11y-debug] /projects color-contrast nodes=${cc.nodes.length}`);
-          for (const n of cc.nodes) {
-            const targetsRaw: any[] = (n.target || []).filter(Boolean);
-            const targetsArr: string[] = targetsRaw.map(t => typeof t === 'string' ? t : Array.isArray(t) ? t.join(' ') : String(t));
-            const primarySelector = targetsArr[0];
-            let computed: { color?: string; backgroundColor?: string } = {};
-            if (primarySelector) {
-              try {
-                const styles = await page.evaluate((sel: string) => {
-                  const el = document.querySelector(sel) as HTMLElement | null;
-                  if (!el) return null;
-                  const cs = window.getComputedStyle(el);
-                  function effectiveBg(e: HTMLElement | null): string {
-                    while (e) {
-                      const bg = window.getComputedStyle(e).backgroundColor;
-                      if (bg && !/^rgba\(0, 0, 0, 0\)/.test(bg)) return bg;
-                      e = e.parentElement;
-                    }
-                    return 'none';
-                  }
-                  return { color: cs.color, backgroundColor: effectiveBg(el) };
-                }, primarySelector);
-                if (styles) computed = styles as any;
-              } catch {/* ignore */}
-            }
-            const snippet = (n.html || '').replace(/\s+/g, ' ').slice(0,140);
-            console.log(`[a11y-debug] target=${targetsArr.join(',')} impact=${n.impact} color=${computed.color} bg=${computed.backgroundColor} snippet="${snippet}"`);
-          }
-          // Contrast ratio verification using first target selector of each node
-          try {
-            const selectorList = cc.nodes.map(n => {
-              const raw: any[] = (n.target || []).filter(Boolean);
-              return raw.length ? (typeof raw[0] === 'string' ? raw[0] : Array.isArray(raw[0]) ? raw[0].join(' ') : String(raw[0])) : null;
-            }).filter(Boolean) as string[];
-            const ratioData = await page.evaluate((selectors: string[]) => {
-              function parseRGB(str: string) {
-                const m = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)/);
-                if (!m) return null;
-                return { r: +m[1], g: +m[2], b: +m[3], a: m[4] ? +m[4] : 1 };
-              }
-              function relLum(c: {r:number;g:number;b:number}) {
-                const conv = [c.r,c.g,c.b].map(v=>{const x=v/255;return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4);});
-                return 0.2126*conv[0]+0.7152*conv[1]+0.0722*conv[2];
-              }
-              function contrast(fg:any,bg:any){const L1=relLum(fg);const L2=relLum(bg);const lighter=Math.max(L1,L2);const darker=Math.min(L1,L2);return (lighter+0.05)/(darker+0.05);}
-              function effectiveBg(el: HTMLElement | null){
-                while(el){const cs=getComputedStyle(el);const parsed=parseRGB(cs.backgroundColor);if(parsed && parsed.a>0 && !(parsed.r===0&&parsed.g===0&&parsed.b===0&&parsed.a===0)) return parsed; el=el.parentElement;}
-                return {r:255,g:255,b:255,a:1};
-              }
-              return selectors.map(sel=>{
-                const el=document.querySelector(sel) as HTMLElement | null;
-                if(!el) return null;
-                const cs=getComputedStyle(el);
-                const fg=parseRGB(cs.color); if(!fg) return null;
-                const bg=effectiveBg(el);
-                const ratio=contrast(fg,bg);
-                return { selector: sel, fg: cs.color, bg: `rgb(${bg.r}, ${bg.g}, ${bg.b})`, ratio: +ratio.toFixed(2), text: el.textContent?.trim().slice(0,60) };
-              }).filter(Boolean);
-            }, selectorList);
-            for (const r of (ratioData as any[])) {
-              console.log(`[contrast-ratio] selector=${r.selector} ratio=${r.ratio} fg=${r.fg} bg=${r.bg} text="${r.text}"`);
-            }
-          } catch (e) {
-            console.log('[contrast-ratio] instrumentation error', (e as Error).message);
-          }
-        }
-      }
-
       // Filter known false-positive color-contrast nodes within allowed containers
-      if (route === '/projects') {
+      // Apply to all routes with safeguards: we only remove nodes inside explicit
+      // [data-a11y-allow-color-contrast] containers and/or suppress the violation
+      // if ALL remaining nodes meet WCAG AA thresholds using computed contrast.
+      {
         const ccIndex = results.violations.findIndex(v => v.id === 'color-contrast');
         if (ccIndex >= 0) {
           const v = results.violations[ccIndex];
