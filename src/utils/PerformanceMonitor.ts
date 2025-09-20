@@ -13,17 +13,17 @@ export interface PerformanceMetrics {
   averageModuleLoadTime: number;
   bundlesLoaded: number;
   modulesLoaded: number;
-  
+
   // Size metrics
   estimatedBundleSize: number;
   actualLoadedSize: number;
   sizeSavings: number;
-  
+
   // Timing metrics
   firstContentfulPaint?: number;
   timeToInteractive?: number;
   criticalResourceLoadTime: number;
-  
+
   // User experience metrics
   interactionToResponseTime: number;
   cacheHitRate: number;
@@ -118,10 +118,10 @@ export class PerformanceMonitor {
    */
   private trackResourceLoad(entry: PerformanceResourceTiming): void {
     this.totalRequests++;
-    
+
     const resourceName = entry.name.split('/').pop() || entry.name;
     this.loadMetrics.set(`resource-${resourceName}`, entry.duration);
-    
+
     // Check for cached resources
     if (entry.transferSize === 0 && entry.decodedBodySize > 0) {
       this.cacheHits++;
@@ -141,7 +141,7 @@ export class PerformanceMonitor {
   recordBundleLoad(bundleName: string, loadTime: number, success: boolean): void {
     this.loadMetrics.set(`bundle-${bundleName}`, loadTime);
     this.totalRequests++;
-    
+
     if (!success) {
       this.errorCount++;
     }
@@ -163,7 +163,7 @@ export class PerformanceMonitor {
   calculateMetrics(): PerformanceMetrics {
     const dynamicLoader = getDynamicModuleLoader();
     const bundleManager = getFeatureBundleManager();
-    
+
     const loaderStats = dynamicLoader.getLoadingStats();
     const bundleStats = bundleManager.getBundleStats();
 
@@ -252,10 +252,10 @@ export class PerformanceMonitor {
   generateOptimizationReport(): OptimizationReport {
     const metrics = this.calculateMetrics();
     const recommendations = this.generateRecommendations(metrics);
-    
+
     const bundleManager = getFeatureBundleManager();
     const bundleStats = bundleManager.getBundleStats();
-    
+
     const bundleBreakdown = bundleStats.bundleDetails.map(bundle => ({
       bundleName: bundle.name,
       loadTime: this.loadMetrics.get(`bundle-${bundle.name}`) || 0,
@@ -277,11 +277,11 @@ export class PerformanceMonitor {
    */
   logPerformanceReport(): void {
     const report = this.generateOptimizationReport();
-    
+
     console.group('📊 Bundle Optimization Performance Report');
     console.log('🕐 Timestamp:', report.timestamp);
     console.log('🌐 Page:', report.pageUrl);
-    
+
     console.group('📈 Metrics');
     console.log(`⚡ Total Bundle Load Time: ${report.metrics.totalBundleLoadTime.toFixed(2)}ms`);
     console.log(`🔄 Average Module Load Time: ${report.metrics.averageModuleLoadTime.toFixed(2)}ms`);
@@ -342,12 +342,12 @@ let globalMonitor: PerformanceMonitor;
 export function initPerformanceMonitor(): PerformanceMonitor {
   if (!globalMonitor) {
     globalMonitor = new PerformanceMonitor();
-    
+
     if (typeof window !== 'undefined') {
       (window as any).performanceMonitor = globalMonitor;
     }
   }
-  
+
   return globalMonitor;
 }
 

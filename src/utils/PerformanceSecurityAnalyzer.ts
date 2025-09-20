@@ -146,8 +146,8 @@ export class PerformanceSecurityAnalyzer {
         });
       });
 
-      observer.observe({ 
-        entryTypes: ['largest-contentful-paint', 'layout-shift', 'first-input'] 
+      observer.observe({
+        entryTypes: ['largest-contentful-paint', 'layout-shift', 'first-input']
       });
     }
 
@@ -193,7 +193,7 @@ export class PerformanceSecurityAnalyzer {
 
     correlations.forEach(correlation => {
       this.correlations.set(correlation.id, correlation);
-      
+
       if (correlation.severity === 'high' || correlation.severity === 'critical') {
         console.warn('🔍 Performance-Security Correlation Detected:', correlation);
       }
@@ -307,7 +307,7 @@ export class PerformanceSecurityAnalyzer {
         const baseline = this.getBaseline(metric);
         if (baseline > 0) {
           const deviation = ((value - baseline) / baseline) * 100;
-          
+
           if (Math.abs(deviation) > 50) { // 50% deviation threshold
             const anomaly: PerformanceAnomalyDetection = {
               id: this.generateAnomalyId(),
@@ -320,14 +320,14 @@ export class PerformanceSecurityAnalyzer {
                 deviation
               }],
               duration: 0, // Would need time series data
-              severity: Math.abs(deviation) > 100 ? 'critical' : 
+              severity: Math.abs(deviation) > 100 ? 'critical' :
                        Math.abs(deviation) > 75 ? 'high' : 'medium',
               suspectedCause: this.determineSuspectedCause(metric, deviation),
               securityImplications: this.getSecurityImplications(metric, deviation)
             };
 
             this.anomalies.set(anomaly.id, anomaly);
-            
+
             if (anomaly.severity === 'critical') {
               console.error('🚨 Critical Performance Anomaly:', anomaly);
             }
@@ -342,7 +342,7 @@ export class PerformanceSecurityAnalyzer {
    */
   private analyzeResourceAbuse(): void {
     const threatSummary = threatIntelligenceMonitor.getThreatSummary();
-    
+
     // Check for potential DDoS patterns
     if (threatSummary.recentThreats > 10) {
       const resourcePattern: ResourceAbusePat = {
@@ -367,7 +367,7 @@ export class PerformanceSecurityAnalyzer {
     if ('memory' in performance) {
       const memory = (performance as any).memory;
       const memoryUsage = (memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100;
-      
+
       if (memoryUsage > 80) {
         const resourcePattern: ResourceAbusePat = {
           id: this.generatePatternId(),
@@ -397,12 +397,12 @@ export class PerformanceSecurityAnalyzer {
     if (baseline === 0) return;
 
     const change = ((value - baseline) / baseline) * 100;
-    
+
     if (Math.abs(change) > 30) { // 30% threshold for immediate analysis
       // Check if this correlates with recent security events
       const securityMonitor = getSecurityMonitor();
       const recentEvents = securityMonitor.getEvents(5);
-      
+
       if (recentEvents.length > 0) {
         const correlation: PerformanceSecurityCorrelation = {
           id: this.generateCorrelationId(),
@@ -539,7 +539,7 @@ export class PerformanceSecurityAnalyzer {
       };
 
       this.anomalies.set(anomaly.id, anomaly);
-      
+
       if (entry.duration > 5000) {
         console.error('🚨 Suspicious Long Task Detected:', anomaly);
       }
@@ -552,7 +552,7 @@ export class PerformanceSecurityAnalyzer {
   private getBaseline(metric: string): number {
     const values = this.baselineMetrics.get(metric) || [];
     if (values.length === 0) return 0;
-    
+
     return values.reduce((sum, val) => sum + val, 0) / values.length;
   }
 
@@ -560,17 +560,17 @@ export class PerformanceSecurityAnalyzer {
     if (!this.performanceMonitor) return;
 
     const currentMetrics = this.performanceMonitor.calculateMetrics();
-    
+
     Object.entries(currentMetrics).forEach(([metric, value]) => {
       if (typeof value === 'number' && value > 0) {
         const baseline = this.baselineMetrics.get(metric) || [];
         baseline.push(value);
-        
+
         // Keep only last 10 values for rolling average
         if (baseline.length > 10) {
           baseline.shift();
         }
-        
+
         this.baselineMetrics.set(metric, baseline);
       }
     });
@@ -605,22 +605,22 @@ export class PerformanceSecurityAnalyzer {
 
   private getSecurityImplications(metric: string, deviation: number): string[] {
     const implications: string[] = [];
-    
+
     if (deviation > 50) {
       implications.push('Potential system compromise');
       implications.push('Resource exhaustion attack');
     }
-    
+
     if (metric.includes('network') || metric.includes('load')) {
       implications.push('DDoS attack possibility');
       implications.push('Network-based attack');
     }
-    
+
     if (metric.includes('memory')) {
       implications.push('Memory exhaustion attack');
       implications.push('Potential cryptojacking');
     }
-    
+
     return implications;
   }
 
@@ -658,7 +658,7 @@ export class PerformanceSecurityAnalyzer {
     overallRiskScore: number;
   } {
     const correlations = Array.from(this.correlations.values());
-    const recentCorrelations = correlations.filter(c => 
+    const recentCorrelations = correlations.filter(c =>
       Date.now() - c.timestamp < 3600000 // Last hour
     );
 

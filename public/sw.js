@@ -179,7 +179,7 @@ self.addEventListener('push', (event) => {
       badge: '/assets/images/favicon-96x96.png',
       vibrate: [100, 50, 100]
     };
-    
+
     event.waitUntil(
       self.registration.showNotification('Blake Oxford Portfolio', options)
     );

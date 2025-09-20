@@ -13,7 +13,7 @@ export interface AdvancedPerformanceMetrics {
     limit: number;
     percentage: number;
   };
-  
+
   // Network metrics
   networkTiming: {
     connectionType: string;
@@ -21,7 +21,7 @@ export interface AdvancedPerformanceMetrics {
     downlink: number;
     rtt: number;
   };
-  
+
   // User experience metrics
   userEngagement: {
     sessionDuration: number;
@@ -30,7 +30,7 @@ export interface AdvancedPerformanceMetrics {
     scrollDepth: number;
     bounceRate: number;
   };
-  
+
   // Performance budget compliance
   budgetCompliance: {
     totalScore: number;
@@ -41,7 +41,7 @@ export interface AdvancedPerformanceMetrics {
       accessibility: number;
     };
   };
-  
+
   // Resource efficiency
   resourceEfficiency: {
     unusedCSS: number;
@@ -50,7 +50,7 @@ export interface AdvancedPerformanceMetrics {
     compressedResources: number;
     cachedResources: number;
   };
-  
+
   // Real User Monitoring (RUM)
   realUserMetrics: {
     averageLoadTime: number;
@@ -116,7 +116,7 @@ export class AdvancedPerformanceMonitor {
   private interactions = 0;
   private maxScrollDepth = 0;
   // Note: memoryObserver was not used; remove to keep class minimal
-  
+
   private constructor(config?: Partial<AdvancedPerformanceConfig>) {
     this.config = {
       enabled: true,
@@ -150,7 +150,7 @@ export class AdvancedPerformanceMonitor {
       debugMode: true,
       ...config
     };
-    
+
     if (typeof window !== 'undefined' && this.config.enabled) {
       // Only monitor a percentage of sessions to reduce overhead
       if (Math.random() <= this.config.samplingRate || this.config.debugMode) {
@@ -158,14 +158,14 @@ export class AdvancedPerformanceMonitor {
       }
     }
   }
-  
+
   static getInstance(config?: Partial<AdvancedPerformanceConfig>): AdvancedPerformanceMonitor {
     if (!AdvancedPerformanceMonitor.instance) {
       AdvancedPerformanceMonitor.instance = new AdvancedPerformanceMonitor(config);
     }
     return AdvancedPerformanceMonitor.instance;
   }
-  
+
   /**
    * Initialize advanced performance monitoring
    */
@@ -175,23 +175,23 @@ export class AdvancedPerformanceMonitor {
     this.setupBudgetMonitoring();
     this.setupRealUserMonitoring();
     this.setupPerformanceAlerts();
-    
+
     if (this.config.debugMode) {
       console.log('📈 Advanced performance monitoring initialized');
     }
   }
-  
+
   /**
    * Setup memory usage monitoring
    */
   private setupMemoryMonitoring(): void {
     if (!('memory' in performance)) return;
-    
+
     // Monitor memory usage every 30 seconds
     setInterval(() => {
       const memory = (performance as any).memory;
       const memoryUsage = memory.usedJSHeapSize / (1024 * 1024); // MB
-      
+
       if (memoryUsage > this.config.alertThresholds.memoryUsage) {
         this.createAlert({
           type: 'memory_leak',
@@ -206,21 +206,21 @@ export class AdvancedPerformanceMonitor {
       }
     }, 30000);
   }
-  
+
   /**
    * Setup user engagement tracking
    */
   private setupUserEngagementTracking(): void {
     // Track page views
     this.pageViews++;
-    
+
     // Track interactions
     ['click', 'keydown', 'scroll', 'touchstart'].forEach(eventType => {
       document.addEventListener(eventType, () => {
         this.interactions++;
       }, { passive: true });
     });
-    
+
     // Track scroll depth
     let maxScroll = 0;
     document.addEventListener('scroll', () => {
@@ -230,20 +230,20 @@ export class AdvancedPerformanceMonitor {
         this.maxScrollDepth = Math.min(100, Math.max(0, scrollPercent));
       }
     }, { passive: true });
-    
+
     // Track session duration on page unload
     window.addEventListener('beforeunload', () => {
       const sessionDuration = performance.now() - this.sessionStartTime;
       this.recordUserMetric('sessionDuration', sessionDuration);
     });
   }
-  
+
   /**
    * Setup performance budget monitoring
    */
   private setupBudgetMonitoring(): void {
     if (!this.config.budget.enabled) return;
-    
+
     // Monitor Core Web Vitals against budget
     if ('PerformanceObserver' in window) {
       const observer = new PerformanceObserver((list) => {
@@ -251,22 +251,22 @@ export class AdvancedPerformanceMonitor {
           this.checkBudgetCompliance(entry);
         });
       });
-      
+
       observer.observe({ entryTypes: ['paint', 'largest-contentful-paint', 'first-input', 'layout-shift'] });
     }
-    
+
     // Monitor resource sizes
     window.addEventListener('load', () => {
       setTimeout(() => this.checkResourceBudget(), 1000);
     });
   }
-  
+
   /**
    * Setup Real User Monitoring (RUM)
    */
   private setupRealUserMonitoring(): void {
     if (!this.config.realUserMonitoring) return;
-    
+
     // Collect real user metrics
     window.addEventListener('load', () => {
       const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
@@ -275,12 +275,12 @@ export class AdvancedPerformanceMonitor {
         this.recordUserMetric('loadTime', loadTime);
       }
     });
-    
+
     // Track errors
     window.addEventListener('error', () => {
       this.recordUserMetric('errors', 1);
     });
-    
+
     // Track conversions (customize based on your conversion events)
     document.addEventListener('submit', (event) => {
       const form = event.target as HTMLFormElement;
@@ -289,7 +289,7 @@ export class AdvancedPerformanceMonitor {
       }
     });
   }
-  
+
   /**
    * Setup performance alerts
    */
@@ -313,10 +313,10 @@ export class AdvancedPerformanceMonitor {
           }
         });
       });
-      
+
       observer.observe({ entryTypes: ['first-input'] });
     }
-    
+
     // Monitor layout shifts
     if ('PerformanceObserver' in window) {
       let cumulativeShift = 0;
@@ -324,7 +324,7 @@ export class AdvancedPerformanceMonitor {
         list.getEntries().forEach((entry: any) => {
           if (!entry.hadRecentInput) {
             cumulativeShift += entry.value;
-            
+
             if (cumulativeShift > this.config.alertThresholds.layoutShiftScore) {
               this.createAlert({
                 type: 'large_layout_shift',
@@ -340,11 +340,11 @@ export class AdvancedPerformanceMonitor {
           }
         });
       });
-      
+
       observer.observe({ entryTypes: ['layout-shift'] });
     }
   }
-  
+
   /**
    * Check budget compliance for performance entry
    */
@@ -354,7 +354,7 @@ export class AdvancedPerformanceMonitor {
     let metric = '';
     let value = 0;
     let threshold = 0;
-    
+
     switch (entry.entryType) {
       case 'paint':
         if (entry.name === 'first-contentful-paint' && entry.startTime > budget.firstContentfulPaint) {
@@ -364,7 +364,7 @@ export class AdvancedPerformanceMonitor {
           threshold = budget.firstContentfulPaint;
         }
         break;
-        
+
       case 'largest-contentful-paint':
         if (entry.startTime > budget.largestContentfulPaint) {
           exceeded = true;
@@ -373,7 +373,7 @@ export class AdvancedPerformanceMonitor {
           threshold = budget.largestContentfulPaint;
         }
         break;
-        
+
       case 'first-input': {
         const fid = (entry as any).processingStart - entry.startTime;
         if (fid > budget.firstInputDelay) {
@@ -385,7 +385,7 @@ export class AdvancedPerformanceMonitor {
         break;
       }
     }
-    
+
     if (exceeded) {
       this.createAlert({
         type: 'budget_exceeded',
@@ -399,24 +399,24 @@ export class AdvancedPerformanceMonitor {
       });
     }
   }
-  
+
   /**
    * Check resource budget compliance
    */
   private checkResourceBudget(): void {
     const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
     const budget = this.config.budget.resources;
-    
+
     let totalSize = 0;
     let jsSize = 0;
     let cssSize = 0;
     let imageSize = 0;
     let fontSize = 0;
-    
+
     resources.forEach(resource => {
       const size = resource.transferSize || 0;
       totalSize += size;
-      
+
       if (resource.name.includes('.js')) {
         jsSize += size;
       } else if (resource.name.includes('.css')) {
@@ -427,7 +427,7 @@ export class AdvancedPerformanceMonitor {
         fontSize += size;
       }
     });
-    
+
     // Check each budget category
     const checks = [
       { type: 'total', size: totalSize, budget: budget.totalSize },
@@ -436,7 +436,7 @@ export class AdvancedPerformanceMonitor {
       { type: 'image', size: imageSize, budget: budget.imageSize },
       { type: 'font', size: fontSize, budget: budget.fontSize }
     ];
-    
+
     checks.forEach(check => {
       if (check.size > check.budget) {
         this.createAlert({
@@ -452,7 +452,7 @@ export class AdvancedPerformanceMonitor {
       }
     });
   }
-  
+
   /**
    * Record user metric
    */
@@ -462,27 +462,27 @@ export class AdvancedPerformanceMonitor {
     }
     this.userMetrics.get(metric)!.push(value);
   }
-  
+
   /**
    * Create performance alert
    */
   private createAlert(alert: PerformanceAlert): void {
     this.alerts.push(alert);
-    
+
     // Keep only last 100 alerts
     if (this.alerts.length > 100) {
       this.alerts = this.alerts.slice(-100);
     }
-    
+
     if (this.config.debugMode) {
       console.warn(`⚠️ Performance Alert: ${alert.message}`, alert);
     }
-    
+
     if (this.config.automaticReporting) {
       this.reportAlert(alert);
     }
   }
-  
+
   /**
    * Report alert to server
    */
@@ -501,29 +501,29 @@ export class AdvancedPerformanceMonitor {
       }
     }
   }
-  
+
   /**
    * Get advanced performance metrics
    */
   getAdvancedMetrics(): AdvancedPerformanceMetrics {
     const memory = (performance as any).memory;
     const connection = (navigator as any).connection;
-    
+
     // Calculate user metrics
     const sessionDuration = performance.now() - this.sessionStartTime;
     const loadTimes = this.userMetrics.get('loadTime') || [];
     const errors = this.userMetrics.get('errors') || [];
     const conversions = this.userMetrics.get('conversions') || [];
-    
+
     const averageLoadTime = loadTimes.length > 0 ? loadTimes.reduce((a, b) => a + b, 0) / loadTimes.length : 0;
     const p95LoadTime = loadTimes.length > 0 ? loadTimes.sort((a, b) => a - b)[Math.floor(loadTimes.length * 0.95)] : 0;
     const errorRate = (errors.length / this.pageViews) * 100;
     const conversionRate = (conversions.length / this.pageViews) * 100;
-    
+
     // Calculate budget compliance
     const baseMetrics = this.baseMonitor.calculateMetrics();
     const budget = this.config.budget.metrics;
-    
+
     const budgetScores = {
       loading: this.calculateBudgetScore([
         { value: baseMetrics.firstContentfulPaint || 0, budget: budget.firstContentfulPaint },
@@ -537,9 +537,9 @@ export class AdvancedPerformanceMonitor {
       ]),
       accessibility: 100 // Would integrate with accessibility monitoring
     };
-    
+
     const totalScore = Object.values(budgetScores).reduce((a, b) => a + b, 0) / 4;
-    
+
     return {
       memoryUsage: memory ? {
         used: memory.usedJSHeapSize,
@@ -547,14 +547,14 @@ export class AdvancedPerformanceMonitor {
         limit: memory.jsHeapSizeLimit,
         percentage: (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100
       } : { used: 0, total: 0, limit: 0, percentage: 0 },
-      
+
       networkTiming: connection ? {
         connectionType: connection.type || 'unknown',
         effectiveType: connection.effectiveType || 'unknown',
         downlink: connection.downlink || 0,
         rtt: connection.rtt || 0
       } : { connectionType: 'unknown', effectiveType: 'unknown', downlink: 0, rtt: 0 },
-      
+
       userEngagement: {
         sessionDuration,
         pageViews: this.pageViews,
@@ -562,24 +562,24 @@ export class AdvancedPerformanceMonitor {
         scrollDepth: this.maxScrollDepth,
         bounceRate: this.interactions === 0 ? 100 : 0
       },
-      
+
       budgetCompliance: {
         totalScore,
         categoryScores: budgetScores
       },
-      
+
       resourceEfficiency: {
         unusedCSS: 0, // Would need additional analysis
         unusedJS: 0, // Would need additional analysis
         totalResources: performance.getEntriesByType('resource').length,
-        compressedResources: performance.getEntriesByType('resource').filter(r => 
+        compressedResources: performance.getEntriesByType('resource').filter(r =>
           (r as PerformanceResourceTiming).responseStart - (r as PerformanceResourceTiming).requestStart < 100
         ).length,
-        cachedResources: performance.getEntriesByType('resource').filter(r => 
+        cachedResources: performance.getEntriesByType('resource').filter(r =>
           (r as PerformanceResourceTiming).transferSize === 0
         ).length
       },
-      
+
       realUserMetrics: {
         averageLoadTime,
         p95LoadTime,
@@ -588,7 +588,7 @@ export class AdvancedPerformanceMonitor {
       }
     };
   }
-  
+
   /**
    * Calculate budget compliance score
    */
@@ -598,17 +598,17 @@ export class AdvancedPerformanceMonitor {
       if (value <= budget * 1.5) return Math.max(0, 100 - ((value - budget) / budget) * 100);
       return 0;
     });
-    
+
     return scores.reduce((a, b) => a + b, 0) / scores.length;
   }
-  
+
   /**
    * Get performance alerts
    */
   getAlerts(limit = 50): PerformanceAlert[] {
     return this.alerts.slice(-limit);
   }
-  
+
   /**
    * Generate comprehensive performance report
    */
@@ -622,26 +622,26 @@ export class AdvancedPerformanceMonitor {
     const baseMetrics = this.baseMonitor.generateOptimizationReport();
     const advancedMetrics = this.getAdvancedMetrics();
     const alerts = this.getAlerts(20);
-    
+
     const recommendations: string[] = [];
-    
+
     // Generate recommendations based on metrics
     if (advancedMetrics.memoryUsage.percentage > 80) {
       recommendations.push('High memory usage detected - consider optimizing memory-intensive operations');
     }
-    
+
     if (advancedMetrics.userEngagement.bounceRate > 50) {
       recommendations.push('High bounce rate - improve initial page load experience');
     }
-    
+
     if (advancedMetrics.budgetCompliance.totalScore < 80) {
       recommendations.push('Performance budget not met - review and optimize critical resources');
     }
-    
+
     if (advancedMetrics.realUserMetrics.errorRate > 2) {
       recommendations.push('High error rate detected - review error logs and implement error handling');
     }
-    
+
     return {
       timestamp: new Date().toISOString(),
       baseMetrics,
@@ -650,7 +650,7 @@ export class AdvancedPerformanceMonitor {
       recommendations
     };
   }
-  
+
   /**
    * Export advanced performance data
    */
@@ -658,14 +658,14 @@ export class AdvancedPerformanceMonitor {
     const report = this.generateAdvancedReport();
     return JSON.stringify(report, null, 2);
   }
-  
+
   /**
    * Start advanced monitoring session
    */
   startAdvancedMonitoring(): void {
     if (this.config.debugMode) {
       console.log('📈 Advanced performance monitoring started');
-      
+
       // Log advanced report every 2 minutes in debug mode
       setInterval(() => {
         console.group('📈 Advanced Performance Report');

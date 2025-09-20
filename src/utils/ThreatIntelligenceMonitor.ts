@@ -251,7 +251,7 @@ export class ThreatIntelligenceMonitor {
     ];
 
     const isSuspicious = suspiciousUrls.some(pattern => url.includes(pattern));
-    
+
     if (isSuspicious) {
       const threat = this.createThreatIntelligence({
         threatType: 'suspicious_pattern',
@@ -270,7 +270,7 @@ export class ThreatIntelligenceMonitor {
     if (options?.headers) {
       const headers = new Headers(options.headers);
       const userAgent = headers.get('user-agent') || '';
-      
+
       if (this.isSuspiciousUserAgent(userAgent)) {
         const threat = this.createThreatIntelligence({
           threatType: 'bot_activity',
@@ -296,14 +296,14 @@ export class ThreatIntelligenceMonitor {
     // Check for rapid navigation (potential bot behavior)
     const sessionId = this.getSessionId();
     const profile = this.userProfiles.get(sessionId);
-    
+
     if (profile) {
       profile.pageViews++;
-      
+
       // Calculate navigation rate
       const timeSpent = Date.now() - profile.startTime;
       const navigationRate = profile.pageViews / (timeSpent / 1000); // pages per second
-      
+
       if (navigationRate > 2) { // More than 2 pages per second
         const threat = this.createThreatIntelligence({
           threatType: 'anomalous_behavior',
@@ -369,9 +369,9 @@ export class ThreatIntelligenceMonitor {
   private performThreatAnalysis(): void {
     const securityMonitor = getSecurityMonitor();
     const securityEvents = securityMonitor.getEvents(50);
-    
+
     // Analyze recent security events for threat patterns
-    const recentThreats = securityEvents.filter(event => 
+    const recentThreats = securityEvents.filter(event =>
       Date.now() - event.timestamp < 300000 // Last 5 minutes
     );
 
@@ -408,7 +408,7 @@ export class ThreatIntelligenceMonitor {
     this.userProfiles.forEach((profile) => {
       const timeSpentMinutes = profile.timeSpent / (1000 * 60);
       const interactionRate = timeSpentMinutes > 0 ? profile.interactions / timeSpentMinutes : 0;
-      
+
       // Detect anomalous behavior
       let anomalies = 0;
       const anomalyReasons: string[] = [];
@@ -494,7 +494,7 @@ export class ThreatIntelligenceMonitor {
       id: this.generateAlertId(),
       timestamp: Date.now(),
       alertType: 'threat_detected',
-      severity: threat.severity === 'critical' ? 'critical' : 
+      severity: threat.severity === 'critical' ? 'critical' :
                 threat.severity === 'high' ? 'high' : 'medium',
       title: `${threat.threatType.replace('_', ' ').toUpperCase()} Detected`,
       description: threat.description,
@@ -592,7 +592,7 @@ export class ThreatIntelligenceMonitor {
   } {
     const threats = Array.from(this.threats.values());
     const recentThreats = threats.filter(t => Date.now() - t.timestamp < 3600000); // Last hour
-    
+
     const threatTypes = new Map<string, number>();
     threats.forEach(threat => {
       const count = threatTypes.get(threat.threatType) || 0;
@@ -606,11 +606,11 @@ export class ThreatIntelligenceMonitor {
 
     const criticalCount = threats.filter(t => t.severity === 'critical').length;
     const highCount = threats.filter(t => t.severity === 'high').length;
-    
+
     // Calculate overall risk score
-    const riskScore = Math.min(100, 
-      (criticalCount * 20) + 
-      (highCount * 10) + 
+    const riskScore = Math.min(100,
+      (criticalCount * 20) +
+      (highCount * 10) +
       (recentThreats.length * 2)
     );
 

@@ -108,7 +108,7 @@ export class SecurityAuditor {
    */
   async performSecurityAudit(): Promise<SecurityAuditResult> {
     console.log('🔍 Starting comprehensive security audit...');
-    
+
     const timestamp = Date.now();
     const auditId = this.generateAuditId();
 
@@ -152,7 +152,7 @@ export class SecurityAuditor {
       };
 
       this.auditResults.push(auditResult);
-      
+
       // Keep only last 10 audits
       if (this.auditResults.length > 10) {
         this.auditResults = this.auditResults.slice(-10);
@@ -204,7 +204,7 @@ export class SecurityAuditor {
     try {
       const response = await fetch(window.location.href, { method: 'HEAD' });
       const headers = Object.fromEntries(response.headers.entries());
-      
+
       const securityHeaders = [
         'content-security-policy',
         'strict-transport-security',
@@ -262,7 +262,7 @@ export class SecurityAuditor {
     // Check for potential XSS vulnerabilities
     const forms = document.querySelectorAll('form');
     let unsafeFormsCount = 0;
-    
+
     forms.forEach(form => {
       const hasCSRFToken = form.querySelector('input[name="csrf_token"], input[name="_token"]');
       if (!hasCSRFToken) {
@@ -316,7 +316,7 @@ export class SecurityAuditor {
     // Check for client-side storage of sensitive data
     const localStorageKeys = Object.keys(localStorage);
     const sensitivePatterns = ['password', 'token', 'key', 'secret', 'auth'];
-    const suspiciousKeys = localStorageKeys.filter(key => 
+    const suspiciousKeys = localStorageKeys.filter(key =>
       sensitivePatterns.some(pattern => key.toLowerCase().includes(pattern))
     );
 
@@ -506,7 +506,7 @@ export class SecurityAuditor {
     // Critical infrastructure recommendations
     const infraFindings = categories.infrastructure.findings;
     const criticalInfraFindings = infraFindings.filter(f => f.severity === 'critical');
-    
+
     if (criticalInfraFindings.length > 0) {
       recommendations.push({
         id: 'rec-implement-https',
@@ -531,7 +531,7 @@ export class SecurityAuditor {
     // Application security recommendations
     const appFindings = categories.application.findings;
     const csrfIssues = appFindings.filter(f => f.id.includes('csrf'));
-    
+
     if (csrfIssues.length > 0) {
       recommendations.push({
         id: 'rec-implement-csrf',
@@ -608,7 +608,7 @@ export class SecurityAuditor {
    */
   async performHealthCheck(): Promise<HealthCheckResult> {
     const timestamp = Date.now();
-    
+
     // Check core system components
     const services = [
       await this.checkServiceHealth('security-monitor', () => getSecurityMonitor().getMetrics()),
@@ -620,16 +620,16 @@ export class SecurityAuditor {
     // Calculate system health metrics
     const healthyServices = services.filter(s => s.status === 'healthy').length;
     const availability = (healthyServices / services.length) * 100;
-    
+
     const securityMetrics = getSecurityMonitor().getMetrics();
     const security = Math.max(0, 100 - (securityMetrics.suspiciousPatterns * 5));
-    
+
     const avgResponseTime = services.reduce((sum, s) => sum + s.responseTime, 0) / services.length;
     const performance = Math.max(0, 100 - (avgResponseTime / 10));
-    
+
     const avgErrorRate = services.reduce((sum, s) => sum + s.errorRate, 0) / services.length;
     const reliability = Math.max(0, 100 - (avgErrorRate * 10));
-    
+
     const overall = (availability + security + performance + reliability) / 4;
 
     // Count alerts by severity
@@ -672,7 +672,7 @@ export class SecurityAuditor {
    * Helper methods
    */
   private async checkServiceHealth(
-    name: string, 
+    name: string,
     healthCheck: () => any
   ): Promise<HealthCheckResult['services'][0]> {
     const startTime = Date.now();
@@ -744,7 +744,7 @@ export class SecurityAuditor {
 
   private calculateCategoryScore(findings: SecurityFinding[], baseScore: number): number {
     let score = baseScore;
-    
+
     findings.forEach(finding => {
       switch (finding.severity) {
         case 'critical':
@@ -778,7 +778,7 @@ export class SecurityAuditor {
 
   private collectCriticalFindings(categories: SecurityAuditResult['categories']): SecurityFinding[] {
     const criticalFindings: SecurityFinding[] = [];
-    
+
     Object.values(categories).forEach(category => {
       category.findings.forEach(finding => {
         if (finding.severity === 'critical' || finding.severity === 'high') {
@@ -796,7 +796,7 @@ export class SecurityAuditor {
   private calculateTrends(currentScore: number): SecurityAuditResult['trends'] {
     const previousAudit = this.auditResults[this.auditResults.length - 1];
     const previousScore = previousAudit?.overallScore || 0;
-    
+
     const improvement = Math.max(0, currentScore - previousScore);
     const deterioration = Math.max(0, previousScore - currentScore);
 

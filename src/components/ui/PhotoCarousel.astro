@@ -56,16 +56,16 @@ function shuffleArray<T>(array: T[]): T[] {
 // Enhanced function to create a seamless loop without consecutive duplicates
 function createSeamlessLoop(images: ImageMetadata[]): ImageMetadata[] {
   if (images.length < 2) return images;
-  
+
   // Create two shuffled arrays
   const firstHalf = shuffleArray(images);
   let secondHalf = shuffleArray(images);
-  
+
   // Ensure no consecutive duplicates at the loop point
   while (firstHalf[firstHalf.length - 1] === secondHalf[0]) {
     secondHalf = shuffleArray(images);
   }
-  
+
   // Ensure no consecutive duplicates within each half
   for (let i = 0; i < firstHalf.length - 1; i++) {
     if (firstHalf[i] === firstHalf[i + 1]) {
@@ -74,7 +74,7 @@ function createSeamlessLoop(images: ImageMetadata[]): ImageMetadata[] {
       firstHalf[i + 1] = temp;
     }
   }
-  
+
   for (let i = 0; i < secondHalf.length - 1; i++) {
     if (secondHalf[i] === secondHalf[i + 1]) {
       const temp = secondHalf[i];
@@ -82,7 +82,7 @@ function createSeamlessLoop(images: ImageMetadata[]): ImageMetadata[] {
       secondHalf[i + 1] = temp;
     }
   }
-  
+
   return [...firstHalf, ...secondHalf];
 }
 
@@ -107,10 +107,10 @@ const columnBLoop = createSeamlessLoop(columnBImages);
       {createSeamlessLoop(mobileImages).map((image, index) => (
         <li class="h-[40vh] w-[80vw] flex-shrink-0" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-xl shadow-lg">
-            <Image 
-              src={image} 
-              alt={`Carousel photo ${index + 1}`} 
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
+            <Image
+              src={image}
+              alt={`Carousel photo ${index + 1}`}
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               width={CONFIG.mobile.imageSize.width}
               height={CONFIG.mobile.imageSize.height}
               loading="lazy"
@@ -130,10 +130,10 @@ const columnBLoop = createSeamlessLoop(columnBImages);
       {columnALoop.map((image, index) => (
         <li class="w-full aspect-square max-w-xl mx-auto" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
-            <Image 
-              src={image} 
-              alt={`Carousel photo ${index + 1}`} 
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
+            <Image
+              src={image}
+              alt={`Carousel photo ${index + 1}`}
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               width={CONFIG.desktop.imageSize.width}
               height={CONFIG.desktop.imageSize.height}
               loading="lazy"
@@ -150,10 +150,10 @@ const columnBLoop = createSeamlessLoop(columnBImages);
       {columnBLoop.map((image, index) => (
         <li class="w-full aspect-square max-w-xl mx-auto" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
-            <Image 
-              src={image} 
-              alt={`Carousel photo ${index + 1}`} 
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
+            <Image
+              src={image}
+              alt={`Carousel photo ${index + 1}`}
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               width={CONFIG.desktop.imageSize.width}
               height={CONFIG.desktop.imageSize.height}
               loading="lazy"

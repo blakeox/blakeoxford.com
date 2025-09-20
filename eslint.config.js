@@ -8,7 +8,7 @@ import astroPlugin from 'eslint-plugin-astro';
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
-  
+
   // JavaScript and Node.js files
   {
     files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
