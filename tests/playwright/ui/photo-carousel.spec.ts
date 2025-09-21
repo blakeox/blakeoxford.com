@@ -28,10 +28,10 @@ function matrixTy(transform: string): number | null {
   return null;
 }
 
-// Mobile & tablet: horizontal slow scroll visible; desktop columns hidden
+// Mobile: horizontal slow scroll visible; desktop columns hidden
 test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
-  test('mobile/tablet (<lg): horizontal slow strip animates', async ({ page }) => {
-    await page.setViewportSize({ width: 768, height: 900 }); // tablet width (<lg)
+  test('mobile (<md): horizontal slow strip animates', async ({ page }) => {
+    await page.setViewportSize({ width: 600, height: 900 }); // mobile width (<md: <768px)
     await page.goto('/about');
 
     const region = page.getByRole('region', { name: /photo carousel/i });
@@ -59,8 +59,8 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     }
   });
 
-  test('desktop (>=lg): two vertical slow columns animate', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 900 }); // desktop
+  test('desktop (>=md): two vertical slow columns animate', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 }); // desktop (>=md: >=768px)
     await page.goto('/about');
 
     const region = page.getByRole('region', { name: /photo carousel/i });
@@ -103,5 +103,22 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
         expect(Math.sign(upDelta)).not.toEqual(Math.sign(dnDelta));
       }
     }
+  });
+
+  test('tablet (exactly md breakpoint): desktop columns show at 768px', async ({ page }) => {
+    await page.setViewportSize({ width: 768, height: 900 }); // exactly at md breakpoint
+    await page.goto('/about');
+
+    const region = page.getByRole('region', { name: /photo carousel/i });
+    await expect(region).toBeVisible();
+
+    const horizontal = page.locator('ul.animate-carousel-x-slow');
+    const upCol = page.locator('ul.animate-carousel-up-slow');
+    const downCol = page.locator('ul.animate-carousel-down-slow');
+
+    // At 768px, should show desktop twin columns
+    await expect(horizontal).toBeHidden();
+    await expect(upCol).toBeVisible();
+    await expect(downCol).toBeVisible();
   });
 });
