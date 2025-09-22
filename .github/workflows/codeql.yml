@@ -1,10 +1,7 @@
-name: CodeQL
+name: CodeQL (custom disabled-by-default)
 
 on:
-  push:
-    branches: [ main, development, testing ]
-  pull_request:
-    branches: [ main, development, testing ]
+  workflow_dispatch:
   schedule:
     - cron: '0 5 * * 1'
 
@@ -20,6 +17,10 @@ concurrency:
 jobs:
   analyze:
     name: CodeQL/Analyze
+    # Only run this custom CodeQL when explicitly enabled via repo variable.
+    # Default GitHub "Code scanning default setup" is enabled on this repo,
+    # and running both causes: "advanced configurations cannot be processed when default setup is enabled".
+    if: ${{ vars.USE_CUSTOM_CODEQL == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
