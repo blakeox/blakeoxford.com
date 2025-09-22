@@ -275,6 +275,65 @@ jobs:
           path: badges/
           retention-days: 14
 
+  # Cross-browser essential E2E (Firefox + WebKit) on macOS to keep Linux fast
+  essential-e2e-crossbrowser:
+    name: Essential E2E (Firefox/WebKit on macOS)
+    runs-on: macos-latest
+    timeout-minutes: 20
+    needs: quick-validation
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: package.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Playwright browsers (macOS)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-
+
+      - name: Install Firefox and WebKit browsers
+        run: pnpm exec playwright install firefox webkit
+
+      - name: Build the application
+        run: pnpm run build
+
+      - name: Run essential tests on Firefox/WebKit
+        run: pnpm exec playwright test --grep="@essential" --project=firefox --project=webkit
+        env:
+          COMPREHENSIVE_TESTS: "false"
+
+      - name: Upload cross-browser report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: essential-playwright-report-macos
+          path: playwright-report/
+          retention-days: 7
+
   post-quality-comment:
     name: Post PR Quality Summary
     runs-on: ubuntu-latest

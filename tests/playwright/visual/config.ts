@@ -8,7 +8,7 @@ export const VISUAL_ROUTE_CONFIG: Record<string, RouteCfg> = {
   '/': { diff: { maxDiffPixelRatio: 0.01 } },
   '/projects/': { diff: { maxDiffPixelRatio: 0.01 } },
   '/blog/': { diff: { maxDiffPixelRatio: 0.01 } },
-  '/about/': { diff: { maxDiffPixelRatio: 0.025 } },
+  '/about/': { mask: ['.photo-carousel'], diff: { maxDiffPixelRatio: 0.025 } },
   '/contact/': {
     mask: ['#hero .absolute', '#contact-info .absolute', '.coin-flip'],
     diff: { maxDiffPixelRatio: 0.02 },

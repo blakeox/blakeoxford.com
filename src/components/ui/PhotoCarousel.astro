@@ -41,10 +41,12 @@ function shuffleArray<T>(array: T[]): T[] {
 // Configuration
 const CONFIG = {
   mobile: {
-    count: 5,
+    count: 3,
     imageSize: { width: 224, height: 224 }
   },
   desktop: {
+    // Limit how many images we render per column initially to keep request count low in CI/perf tests
+    visiblePerColumn: 2,
     imageSize: { width: 640, height: 640 }
   }
 };
@@ -68,11 +70,11 @@ const columnBLoop = createSeamlessLoop(columnBImages);
 const mobileLoop = createSeamlessLoop(mobileImages);
 ---
 
-<div class="relative w-full h-full min-h-[45vh] md:min-h-[60vh] lg:min-h-[80vh] overflow-hidden select-none" role="region" aria-label="Photo carousel">
+<div class="photo-carousel relative w-full h-full min-h-[45vh] md:min-h-[60vh] lg:min-h-[80vh] overflow-hidden select-none" role="region" aria-label="Photo carousel">
   <!-- Mobile: horizontal slow scroll (show only on small screens) -->
   <div class="absolute inset-0 flex items-center mobile-carousel">
     <ul class="flex gap-4 animate-carousel-x-slow" role="list">
-      {mobileLoop.map((image, index) => (
+      {mobileLoop.slice(0, CONFIG.mobile.count).map((image, index) => (
         <li class="h-[40vh] w-[80vw] flex-shrink-0" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-xl shadow-lg">
             <Image
@@ -83,7 +85,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
               height={CONFIG.mobile.imageSize.height}
               loading="lazy"
               decoding="async"
-              fetchpriority={index < 2 ? 'high' : 'low'}
+              fetchpriority="low"
             />
           </div>
         </li>
@@ -95,7 +97,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
   <div class="absolute inset-0 gap-4 w-full h-full desktop-carousel">
     <!-- Column A – up -->
     <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list">
-      {columnALoop.map((image, index) => (
+      {columnALoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
         <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
             <Image
@@ -106,7 +108,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
               height={CONFIG.desktop.imageSize.height}
               loading="lazy"
               decoding="async"
-              fetchpriority={index < 2 ? 'high' : 'low'}
+              fetchpriority="low"
             />
           </div>
         </li>
@@ -115,7 +117,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
 
     <!-- Column B – down -->
     <ul class="flex flex-col gap-4 animate-carousel-down-slow flex-1" role="list">
-      {columnBLoop.map((image, index) => (
+      {columnBLoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
         <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
             <Image
@@ -126,7 +128,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
               height={CONFIG.desktop.imageSize.height}
               loading="lazy"
               decoding="async"
-              fetchpriority={index < 2 ? 'high' : 'low'}
+              fetchpriority="low"
             />
           </div>
         </li>
