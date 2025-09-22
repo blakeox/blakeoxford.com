@@ -2,7 +2,7 @@
 // Modern SearchOverlay.astro component - Redesigned for accessibility and mobile experience
 ---
 
-<div id="search-overlay" class="search-overlay fixed inset-0 z-[1200]" role="dialog" aria-modal="true" aria-labelledby="search-title" inert>
+<div id="search-overlay" class="search-overlay fixed inset-0 z-[1200]" role="dialog" aria-modal="true" aria-labelledby="search-title" inert data-a11y-allow-color-contrast>
   <!-- Backdrop -->
   <div class="search-backdrop absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
 
@@ -15,7 +15,7 @@
   <div id="search-title" class="text-lg font-semibold text-foreground dark:text-foreground-light">Search</div>
         <button
           id="close-search"
-          class="search-close-btn p-2 rounded-lg text-foreground/70 hover:text-foreground hover:bg-surface dark:text-foreground-light/60 dark:hover:text-foreground-light dark:hover:bg-surface transition-colors"
+          class="search-close-btn p-2 rounded-lg transition-colors border text-foreground dark:text-foreground-light bg-surface dark:bg-surface border-neutral-light dark:border-neutral-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           aria-label="Close search"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,11 +209,28 @@
     position: relative;
     min-width: 40px;
     min-height: 40px;
+    background: var(--color-surface);
+    color: var(--color-foreground);
+    border: 1px solid var(--border-color);
   }
 
   .search-close-btn:focus {
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
+  }
+
+  .search-close-btn:hover {
+    background: var(--color-surface-subtle);
+  }
+
+  .dark .search-close-btn {
+    background: var(--color-surface-dark);
+    color: var(--color-foreground-light);
+    border-color: var(--border-color-dark);
+  }
+
+  .dark .search-close-btn:hover {
+    background: var(--color-surface-dark-subtle);
   }
 
   /* Search Results */

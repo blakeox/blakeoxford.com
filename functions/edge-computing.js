@@ -346,6 +346,7 @@ const WorkerApp = {
         } catch {
           payload = { raw: bodyText };
         }
+        // Normalize legacy report format
         const report = payload?.['csp-report'] ? { type: 'csp-report', ...payload['csp-report'] } : payload;
         const record = {
           t: Date.now(),
@@ -357,9 +358,11 @@ const WorkerApp = {
         };
         console.warn('\ud83d\udd10 CSP violation report:', record);
         const key = `csp:${record.t}:${Math.random().toString(36).slice(2, 8)}`;
+        // Prefer dedicated storage; if not configured, this is a best-effort no-op
         if (env.CSP_REPORTS && typeof env.CSP_REPORTS.put === 'function') {
           await env.CSP_REPORTS.put(key, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 7 });
         } else if (env.RATE_LIMIT_KV && typeof env.RATE_LIMIT_KV.put === 'function') {
+          // Fallback storage if dedicated KV is not bound
           await env.RATE_LIMIT_KV.put(key, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 3 });
         }
       } catch (e) {

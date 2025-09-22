@@ -275,10 +275,81 @@ jobs:
           path: badges/
           retention-days: 14
 
+  # Cross-browser essential E2E (Firefox + WebKit) on macOS to keep Linux fast
+  essential-e2e-crossbrowser:
+    name: Essential E2E (Firefox/WebKit on macOS)
+    runs-on: macos-latest
+    timeout-minutes: 20
+    needs: quick-validation
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: package.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Playwright browsers (macOS)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-
+
+      - name: Install Firefox and WebKit browsers
+        run: pnpm exec playwright install firefox webkit
+
+      - name: Build the application
+        run: pnpm run build
+
+      - name: Run essential tests on Firefox/WebKit
+        run: pnpm exec playwright test --grep="@essential" --project=firefox --project=webkit
+        env:
+          COMPREHENSIVE_TESTS: "false"
+
+      - name: Track flakiness (Playwright JSON)
+        if: always()
+        run: pnpm flakiness:track || true
+
+      - name: Upload flakiness history (macOS)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flakiness-history-macos
+          path: flakiness-history.json
+          retention-days: 14
+
+      - name: Upload cross-browser report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: essential-playwright-report-macos
+          path: playwright-report/
+          retention-days: 7
+
   post-quality-comment:
     name: Post PR Quality Summary
     runs-on: ubuntu-latest
-    needs: [quick-validation, essential-e2e]
+    needs: [quick-validation, essential-e2e, essential-e2e-crossbrowser]
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout repository
@@ -293,6 +364,18 @@ jobs:
         with:
           name: runtime-quality-artifacts
           path: ./artifacts
+      - name: Download Linux essential E2E report
+        uses: actions/download-artifact@v4
+        with:
+          name: essential-playwright-report
+          path: ./artifacts/linux
+        continue-on-error: true
+      - name: Download macOS essential E2E report
+        uses: actions/download-artifact@v4
+        with:
+          name: essential-playwright-report-macos
+          path: ./artifacts/macos
+        continue-on-error: true
       - name: Post / Update PR Quality Summary Comment
         uses: actions/github-script@v8
         with:
@@ -356,7 +439,48 @@ jobs:
               }
             } catch {}
 
-            const lines = [badge, a11yLine, searchLine, deadLinksLine].filter(Boolean).join('\n');
+            // Helper to count Playwright test results from JSON reporter
+            function summarizePlaywrightReport(jsonPath) {
+              if (!fs.existsSync(jsonPath)) return null;
+              const data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+              let total = 0, failed = 0, passed = 0, skipped = 0;
+              function walkSuite(suite) {
+                if (!suite) return;
+                if (suite.suites) suite.suites.forEach(walkSuite);
+                if (suite.tests) {
+                  for (const t of suite.tests) {
+                    total += 1;
+                    const last = (t.results || []).slice(-1)[0];
+                    const status = last?.status || t.outcome || t.status || 'unknown';
+                    if (status === 'passed') passed += 1;
+                    else if (status === 'skipped' || status === 'timedOut' && (last?.status === 'skipped')) skipped += 1;
+                    else failed += 1;
+                  }
+                }
+              }
+              if (Array.isArray(data.suites)) data.suites.forEach(walkSuite);
+              return { total, passed, failed, skipped };
+            }
+
+            // Summaries for Linux (Chromium) and macOS (FF/WebKit)
+            let e2eLinuxLine = '';
+            let e2eMacLine = '';
+            try {
+              const linuxJson = path.join('artifacts','linux','playwright-report','test-results.json');
+              const macJson = path.join('artifacts','macos','playwright-report','test-results.json');
+              const linux = summarizePlaywrightReport(linuxJson);
+              const mac = summarizePlaywrightReport(macJson);
+              if (linux) {
+                const ok = linux.failed === 0 ? '✅' : '❌';
+                e2eLinuxLine = `🧪 Essential E2E (Linux • Chromium): ${ok} ${linux.passed}/${linux.total} passed`;
+              }
+              if (mac) {
+                const ok = mac.failed === 0 ? '✅' : '❌';
+                e2eMacLine = `🍎 Essential E2E (macOS • FF/WebKit): ${ok} ${mac.passed}/${mac.total} passed`;
+              }
+            } catch {}
+
+            const lines = [badge, a11yLine, searchLine, deadLinksLine, e2eLinuxLine, e2eMacLine].filter(Boolean).join('\n');
             const finalBody = `${header}\n${lines ? lines + '\n\n' : ''}${body}`;
 
             const comments = await github.rest.issues.listComments({
@@ -383,5 +507,5 @@ jobs:
               core.info('Created new quality summary comment.');
             }
 
-      
+
 
