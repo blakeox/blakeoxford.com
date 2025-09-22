@@ -163,7 +163,7 @@
     "stylelint-order": "^7.0.0",
     "tailwindcss": "^4.1.13",
     "vitest": "^3.2.4",
-    "wrangler": "^4.29.0",
+    "wrangler": "^4.38.0",
     "@stryker-mutator/core": "^8.5.0",
     "@stryker-mutator/vitest-runner": "^8.5.0"
   },
