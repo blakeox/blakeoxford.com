@@ -36,14 +36,14 @@ jobs:
           echo "🕵️ Scanning for exposed secrets..."
           # Basic patterns to avoid committing secrets
           SECRETS_FOUND=0
-          
+
           # Check for common secret patterns
           if grep -r "AKIA[0-9A-Z]{16}" . --exclude-dir=.git || \
              grep -r "ghp_[a-zA-Z0-9]{36}" . --exclude-dir=.git || \
              grep -r "sk-[a-zA-Z0-9]{48}" . --exclude-dir=.git; then
             SECRETS_FOUND=1
           fi
-          
+
           if [ $SECRETS_FOUND -eq 1 ]; then
             echo "❌ Potential secrets found in codebase!"
             exit 1
@@ -57,17 +57,17 @@ jobs:
           if [ -f "_headers" ]; then
             # Check for essential security headers
             HEADERS_OK=true
-            
+
             if ! grep -q "X-Frame-Options" _headers; then
               echo "⚠️ Missing X-Frame-Options header"
               HEADERS_OK=false
             fi
-            
+
             if ! grep -q "Content-Security-Policy" _headers; then
               echo "⚠️ Missing Content-Security-Policy header"
               HEADERS_OK=false
             fi
-            
+
             if [ "$HEADERS_OK" = true ]; then
               echo "✅ Security headers configuration looks good"
             else
@@ -82,6 +82,6 @@ jobs:
           echo "📦 Checking dependencies..."
           # List outdated packages
           npm outdated || echo "Some packages may be outdated"
-          
+
           # Check for deprecated packages
           npm ls --depth=0 | grep WARN || echo "✅ No deprecated package warnings"
