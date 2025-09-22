@@ -2,9 +2,9 @@ name: Security & Dependency Scan
 
 on:
   push:
-    branches: [main, Dev]
+    branches: [ main, development, testing ]
   pull_request:
-    branches: [main]
+    branches: [ main, development, testing ]
   schedule:
     # Run security scans weekly
     - cron: '0 3 * * 1'
