@@ -114,7 +114,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/cloudflare": "^12.6.6",
+    "@astrojs/cloudflare": "^12.6.9",
     "@rollup/rollup-linux-x64-gnu": "^4.50.1",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.5",
