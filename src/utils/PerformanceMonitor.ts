@@ -13,17 +13,17 @@ export interface PerformanceMetrics {
   averageModuleLoadTime: number;
   bundlesLoaded: number;
   modulesLoaded: number;
-  
+
   // Size metrics
   estimatedBundleSize: number;
   actualLoadedSize: number;
   sizeSavings: number;
-  
+
   // Timing metrics
   firstContentfulPaint?: number;
   timeToInteractive?: number;
   criticalResourceLoadTime: number;
-  
+
   // User experience metrics
   interactionToResponseTime: number;
   cacheHitRate: number;
@@ -44,11 +44,9 @@ export interface OptimizationReport {
 }
 
 export class PerformanceMonitor {
-  private startTime = 0;
   private loadMetrics = new Map<string, number>();
   private bundleMetrics = new Map<string, number>();
   private errorCount = 0;
-  private isMonitoring = false;
   private observerManager = getPerformanceObserverManager();
   private observerSubscriptions: string[] = [];
   private interactionStartTimes = new Map<string, number>();
@@ -120,10 +118,10 @@ export class PerformanceMonitor {
    */
   private trackResourceLoad(entry: PerformanceResourceTiming): void {
     this.totalRequests++;
-    
+
     const resourceName = entry.name.split('/').pop() || entry.name;
     this.loadMetrics.set(`resource-${resourceName}`, entry.duration);
-    
+
     // Check for cached resources
     if (entry.transferSize === 0 && entry.decodedBodySize > 0) {
       this.cacheHits++;
@@ -135,30 +133,7 @@ export class PerformanceMonitor {
     }
   }
 
-  /**
-   * Track user interactions for response time measurement
-   */
-  private trackUserInteractions(): void {
-    if (typeof document === 'undefined') return;
-
-    const interactionEvents = ['click', 'keydown', 'touchstart'];
-    
-    interactionEvents.forEach(eventType => {
-      document.addEventListener(eventType, () => {
-        const interactionId = `${eventType}-${Date.now()}`;
-        this.interactionStartTimes.set(interactionId, performance.now());
-
-        // Clean up old interaction times (keep only last 10)
-        if (this.interactionStartTimes.size > 10) {
-          const keys = Array.from(this.interactionStartTimes.keys());
-          const oldestKey = keys[0];
-          if (oldestKey) {
-            this.interactionStartTimes.delete(oldestKey);
-          }
-        }
-      });
-    });
-  }
+  // Removed unused tracking toggles and interaction listeners to reduce overhead
 
   /**
    * Record bundle load completion
@@ -166,7 +141,7 @@ export class PerformanceMonitor {
   recordBundleLoad(bundleName: string, loadTime: number, success: boolean): void {
     this.loadMetrics.set(`bundle-${bundleName}`, loadTime);
     this.totalRequests++;
-    
+
     if (!success) {
       this.errorCount++;
     }
@@ -188,7 +163,7 @@ export class PerformanceMonitor {
   calculateMetrics(): PerformanceMetrics {
     const dynamicLoader = getDynamicModuleLoader();
     const bundleManager = getFeatureBundleManager();
-    
+
     const loaderStats = dynamicLoader.getLoadingStats();
     const bundleStats = bundleManager.getBundleStats();
 
@@ -277,10 +252,10 @@ export class PerformanceMonitor {
   generateOptimizationReport(): OptimizationReport {
     const metrics = this.calculateMetrics();
     const recommendations = this.generateRecommendations(metrics);
-    
+
     const bundleManager = getFeatureBundleManager();
     const bundleStats = bundleManager.getBundleStats();
-    
+
     const bundleBreakdown = bundleStats.bundleDetails.map(bundle => ({
       bundleName: bundle.name,
       loadTime: this.loadMetrics.get(`bundle-${bundle.name}`) || 0,
@@ -302,11 +277,11 @@ export class PerformanceMonitor {
    */
   logPerformanceReport(): void {
     const report = this.generateOptimizationReport();
-    
+
     console.group('📊 Bundle Optimization Performance Report');
     console.log('🕐 Timestamp:', report.timestamp);
     console.log('🌐 Page:', report.pageUrl);
-    
+
     console.group('📈 Metrics');
     console.log(`⚡ Total Bundle Load Time: ${report.metrics.totalBundleLoadTime.toFixed(2)}ms`);
     console.log(`🔄 Average Module Load Time: ${report.metrics.averageModuleLoadTime.toFixed(2)}ms`);
@@ -347,7 +322,6 @@ export class PerformanceMonitor {
    * Start monitoring session
    */
   startMonitoring(): void {
-    this.startTime = performance.now();
     console.log('🔍 Performance monitoring started');
 
     // Log report after 5 seconds
@@ -368,12 +342,12 @@ let globalMonitor: PerformanceMonitor;
 export function initPerformanceMonitor(): PerformanceMonitor {
   if (!globalMonitor) {
     globalMonitor = new PerformanceMonitor();
-    
+
     if (typeof window !== 'undefined') {
       (window as any).performanceMonitor = globalMonitor;
     }
   }
-  
+
   return globalMonitor;
 }
 

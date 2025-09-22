@@ -1,9 +1,92 @@
 {
   "routes": {
-    "/": { "domContentLoaded": 900, "fcp": 950, "load": 1400, "requests": 17 },
-    "/about": { "domContentLoaded": 880, "fcp": 920, "load": 1380, "requests": 17 },
-    "/projects": { "domContentLoaded": 950, "fcp": 1000, "load": 1500, "requests": 19 },
-    "/blog": { "domContentLoaded": 960, "fcp": 1010, "load": 1520, "requests": 20 }
+    "/": {
+      "domContentLoaded": 900,
+      "fcp": 950,
+      "load": 1400,
+      "requests": 17
+    },
+    "/about": {
+      "domContentLoaded": 880,
+      "fcp": 920,
+      "load": 1380,
+      "requests": 17
+    },
+    "/projects": {
+      "domContentLoaded": 950,
+      "fcp": 1000,
+      "load": 1500,
+      "requests": 19
+    },
+    "/blog": {
+      "domContentLoaded": 960,
+      "fcp": 1010,
+      "load": 1520,
+      "requests": 20
+    },
+    "/__firefox": {
+      "domContentLoaded": 50,
+      "fcp": 43,
+      "load": 66,
+      "requests": 9
+    },
+    "/about__firefox": {
+      "domContentLoaded": 856.4725,
+      "fcp": 858.2774999999999,
+      "load": 879.9375,
+      "requests": 9
+    },
+    "/__webkit": {
+      "domContentLoaded": 60,
+      "fcp": 54,
+      "load": 61,
+      "requests": 8
+    },
+    "/about__webkit": {
+      "domContentLoaded": 115.89999999999999,
+      "fcp": 114.94999999999999,
+      "load": 117.8,
+      "requests": 10
+    },
+    "/projects__firefox": {
+      "domContentLoaded": 363.84999999999997,
+      "fcp": 346.75,
+      "load": 374.29999999999995,
+      "requests": 7
+    },
+    "/blog__firefox": {
+      "domContentLoaded": 349.59999999999997,
+      "fcp": 156.75,
+      "load": 361,
+      "requests": 7
+    },
+    "/__chromium": {
+      "domContentLoaded": 855,
+      "fcp": 902.5,
+      "load": 1330,
+      "requests": 16
+    },
+    "/about__chromium": {
+      "domContentLoaded": 754.4899999999999,
+      "fcp": 788.785,
+      "load": 1183.1775,
+      "requests": 16
+    },
+    "/projects__chromium": {
+      "domContentLoaded": 902.5,
+      "fcp": 950,
+      "load": 1425,
+      "requests": 18
+    },
+    "/blog__chromium": {
+      "domContentLoaded": 912,
+      "fcp": 959.5,
+      "load": 1444,
+      "requests": 19
+    }
   },
-  "tolerance": { "timingPct": 0.07, "requestsPct": 0.1 }
+  "tolerance": {
+    "timingPct": 0.07,
+    "requestsPct": 0.1
+  }
 }

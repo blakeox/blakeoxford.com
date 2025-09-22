@@ -1,6 +1,6 @@
-import { cpSync, existsSync, writeFileSync, readdirSync, statSync, unlinkSync } from 'node:fs';
-import { join } from 'node:path';
-import { readFileSync, mkdirSync } from 'node:fs';
+import { cpSync, existsSync, writeFileSync, readdirSync, statSync, unlinkSync, mkdirSync } from 'node:fs';
+import { join, extname } from 'node:path';
+import { readFileSync } from 'node:fs';
 
 const dist = join(process.cwd(), 'dist');
 
@@ -71,6 +71,29 @@ try {
   }
 } catch {
   // non-blocking; skip if search files not present
+}
+
+// Ensure WebP/AVIF siblings for proficiency logos exist alongside PNGs in dist
+try {
+  const srcProfs = join(process.cwd(), 'src', 'assets', 'images', 'proficiencies');
+  const distProfs = join(dist, 'assets', 'images', 'proficiencies');
+  if (existsSync(srcProfs) && existsSync(distProfs)) {
+    const srcEntries = readdirSync(srcProfs);
+    // Copy over any .webp or .avif from src if not present in dist
+    for (const name of srcEntries) {
+      const ext = extname(name).toLowerCase();
+      if (ext === '.webp' || ext === '.avif') {
+        const srcPath = join(srcProfs, name);
+        const destPath = join(distProfs, name);
+        if (!existsSync(destPath)) {
+          cpSync(srcPath, destPath);
+          console.log(`Copied optimized logo format: assets/images/proficiencies/${name}`);
+        }
+      }
+    }
+  }
+} catch {
+  // ignore if copying optimized logo formats fails
 }
 
 // Remove any oversized PNG artifacts that could exceed Cloudflare's 25 MiB asset limit

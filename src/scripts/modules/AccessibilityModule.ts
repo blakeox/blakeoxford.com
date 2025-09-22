@@ -3,10 +3,10 @@
  * Provides comprehensive accessibility features with full type safety
  */
 
-import type { 
-  AccessibilityPreferences, 
+import type {
+  AccessibilityPreferences,
   AccessibilityConfig,
-  FocusTrap 
+  FocusTrap
 } from '../../types/accessibility';
 
 // Extend the base config for module-specific needs
@@ -17,7 +17,7 @@ export interface AccessibilityModuleConfig extends AccessibilityConfig {
 export class AccessibilityModule {
   private preferences: AccessibilityPreferences;
   private liveRegion: HTMLElement | null = null;
-  private focusTrap: FocusTrap | null = null;
+  // focusTrap storage not needed; traps are returned to callers when created
   private config: AccessibilityModuleConfig;
 
   constructor(config: AccessibilityModuleConfig = {}) {
@@ -29,7 +29,7 @@ export class AccessibilityModule {
       enableLandmarkRoles: true,
       ...config
     };
-    
+
     this.preferences = this.loadPreferences();
     this.init();
   }
@@ -38,21 +38,21 @@ export class AccessibilityModule {
     if (this.config.enableLiveRegion) {
       this.createLiveRegion();
     }
-    
+
     if (this.config.enableSkipLink) {
       this.addSkipToContentLink();
     }
-    
+
     if (this.config.enableKeyboardShortcuts) {
       this.setupKeyboardShortcuts();
     }
-    
+
     if (this.config.enableLandmarkRoles) {
       this.addLandmarkRoles();
     }
-    
+
     this.applyPreferences();
-    
+
     // Mark as loaded in lazy loader
     if (typeof window !== 'undefined' && window.LazyBundleLoader) {
       window.LazyBundleLoader.markModuleLoaded('accessibility');
@@ -81,7 +81,7 @@ export class AccessibilityModule {
       const saved = localStorage.getItem('accessibility-preferences');
       return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
     }
-    
+
     return defaults;
   }
 
@@ -93,19 +93,19 @@ export class AccessibilityModule {
 
   private addSkipToContentLink(): void {
     if (typeof document === 'undefined') return;
-    
+
     // Check if skip link already exists
     if (document.getElementById('skip-to-content')) {
       return;
     }
-    
+
     // Create skip link
     const skipLink = document.createElement('a');
     skipLink.id = 'skip-to-content';
     skipLink.href = '#main';
     skipLink.textContent = 'Skip to main content';
     skipLink.className = 'sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-accent focus:text-white focus:rounded';
-    
+
     // Insert at the beginning of body
     if (document.body) {
       document.body.insertBefore(skipLink, document.body.firstChild);
@@ -114,13 +114,13 @@ export class AccessibilityModule {
 
   private createLiveRegion(): void {
     if (typeof document === 'undefined') return;
-    
+
     this.liveRegion = document.createElement('div');
     this.liveRegion.id = 'live-region';
     this.liveRegion.className = 'sr-only';
     this.liveRegion.setAttribute('aria-live', 'polite');
     this.liveRegion.setAttribute('aria-atomic', 'true');
-    
+
     if (document.body) {
       document.body.appendChild(this.liveRegion);
     }
@@ -130,11 +130,11 @@ export class AccessibilityModule {
     if (!this.liveRegion) {
       this.createLiveRegion();
     }
-    
+
     if (this.liveRegion) {
       this.liveRegion.setAttribute('aria-live', priority);
       this.liveRegion.textContent = message;
-      
+
       setTimeout(() => {
         if (this.liveRegion) {
           this.liveRegion.textContent = '';
@@ -144,12 +144,12 @@ export class AccessibilityModule {
   }
 
   public enhanceFocusManagement(
-    element: HTMLElement, 
-    trapFocus: (event: KeyboardEvent) => void, 
+    element: HTMLElement,
+    trapFocus: (event: KeyboardEvent) => void,
     isMenuOpen: () => boolean
   ): void {
     if (!element) return;
-    
+
     element.addEventListener('keydown', (e) => {
       if (isMenuOpen() && e.key === 'Tab') {
         trapFocus(e);
@@ -159,19 +159,19 @@ export class AccessibilityModule {
 
   public createFocusTrap(element: HTMLElement): FocusTrap | null {
     if (!element) return null;
-    
+
     const focusableElements = element.querySelectorAll(
       'a[href], button:not([disabled]), textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
     );
-    
+
     if (focusableElements.length === 0) return null;
-    
+
     const firstElement = focusableElements[0] as HTMLElement;
     const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-    
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
-      
+
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
           e.preventDefault();
@@ -184,9 +184,9 @@ export class AccessibilityModule {
         }
       }
     };
-    
+
     element.addEventListener('keydown', handleKeyDown);
-    
+
     return {
       activate: () => firstElement.focus(),
       deactivate: () => element.removeEventListener('keydown', handleKeyDown),
@@ -196,20 +196,20 @@ export class AccessibilityModule {
 
   private setupKeyboardShortcuts(): void {
     if (typeof document === 'undefined') return;
-    
+
     document.addEventListener('keydown', (e) => {
       // Alt + A: Toggle accessibility panel
       if (e.altKey && e.key === 'a') {
         e.preventDefault();
         this.toggleAccessibilityPanel();
       }
-      
+
       // Alt + T: Toggle theme
       if (e.altKey && e.key === 't') {
         e.preventDefault();
         this.toggleTheme();
       }
-      
+
       // Alt + F: Cycle font size
       if (e.altKey && e.key === 'f') {
         e.preventDefault();
@@ -226,9 +226,9 @@ export class AccessibilityModule {
 
   private applyPreference(key: keyof AccessibilityPreferences, value: AccessibilityPreferences[keyof AccessibilityPreferences]): void {
     if (typeof document === 'undefined') return;
-    
+
     const root = document.documentElement;
-    
+
     switch (key) {
       case 'fontSize':
         if (typeof value === 'string') {
@@ -325,10 +325,10 @@ export class AccessibilityModule {
 
   public toggleTheme(): void {
     if (typeof document === 'undefined') return;
-    
+
     const root = document.documentElement;
     const isDark = root.classList.contains('dark');
-    
+
     if (isDark) {
       root.classList.remove('dark');
       this.announce('Switched to light theme');
@@ -342,36 +342,36 @@ export class AccessibilityModule {
     const sizes: AccessibilityPreferences['fontSize'][] = ['small', 'medium', 'large', 'extra-large'];
     const currentIndex = sizes.indexOf(this.preferences.fontSize);
     const nextIndex = (currentIndex + 1) % sizes.length;
-    
+
     this.updatePreference('fontSize', sizes[nextIndex]);
     this.announce(`Font size changed to ${sizes[nextIndex]}`);
   }
 
   private detectReducedMotion(): boolean {
     if (typeof window === 'undefined') return false;
-    
+
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
   private addLandmarkRoles(): void {
     if (typeof document === 'undefined') return;
-    
+
     // Add landmark roles to main sections
     const main = document.querySelector('main');
     if (main && !main.getAttribute('role')) {
       main.setAttribute('role', 'main');
     }
-    
+
     const nav = document.querySelector('nav');
     if (nav && !nav.getAttribute('role')) {
       nav.setAttribute('role', 'navigation');
     }
-    
+
     const header = document.querySelector('header');
     if (header && !header.getAttribute('role')) {
       header.setAttribute('role', 'banner');
     }
-    
+
     const footer = document.querySelector('footer');
     if (footer && !footer.getAttribute('role')) {
       footer.setAttribute('role', 'contentinfo');
@@ -380,10 +380,10 @@ export class AccessibilityModule {
 
   public highlightActiveLink(): void {
     if (typeof document === 'undefined') return;
-    
+
     const currentPath = window.location.pathname;
     const links = document.querySelectorAll('nav a[href]');
-    
+
     links.forEach(link => {
       const href = (link as HTMLAnchorElement).getAttribute('href');
       if (href === currentPath) {
@@ -399,7 +399,7 @@ export class AccessibilityModule {
   }
 
   public updatePreference<K extends keyof AccessibilityPreferences>(
-    key: K, 
+    key: K,
     value: AccessibilityPreferences[K]
   ): void {
     this.preferences[key] = value;
@@ -417,4 +417,4 @@ export function initAccessibilityModule(config?: AccessibilityModuleConfig): Acc
 if (typeof window !== 'undefined') {
   (window as Window & { AccessibilityModule?: typeof AccessibilityModule; initAccessibilityModule?: typeof initAccessibilityModule }).AccessibilityModule = AccessibilityModule;
   (window as Window & { AccessibilityModule?: typeof AccessibilityModule; initAccessibilityModule?: typeof initAccessibilityModule }).initAccessibilityModule = initAccessibilityModule;
-} 
+}

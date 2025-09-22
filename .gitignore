@@ -149,6 +149,9 @@ dist
 /dist
 .astro/
 
+# Stray macOS duplicate build folders (prevent committing)
+dist 2/
+
 # Ignore .DS_Store (macOS)
 .DS_Store
 

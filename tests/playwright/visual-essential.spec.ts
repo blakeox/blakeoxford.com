@@ -14,7 +14,8 @@ test.describe('Essential Visual Tests', () => {
     const hero = page.locator('main h1').first();
     await expect(hero).toBeVisible();
     
-    const footer = page.locator('footer');
+  // Prefer role-based locator to avoid ambiguity with any nested footers in widgets/panels
+  const footer = page.getByRole('contentinfo', { name: 'Site footer' });
     await expect(footer).toBeVisible();
     
     // Quick visual check - ensure no layout shift

@@ -70,6 +70,40 @@ test.describe('@accessibility-extended Contrast Ratios', () => {
         });
       }
 
+      // Extra guard: directly assert the homepage hero CTA maintains sufficient contrast
+      if (route === '/') {
+  const cta = page.locator('a.btn.btn-primary', { hasText: 'Let\'s Connect' }).first();
+        await expect(cta).toBeVisible();
+        const colors = await cta.evaluate((node:any) => {
+          const cs = window.getComputedStyle(node);
+          const normalize = (raw:string) => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return raw;
+            ctx.fillStyle = '#000';
+            ctx.fillStyle = raw;
+            return ctx.fillStyle as string;
+          };
+          return { fg: normalize(cs.color), bg: normalize(cs.backgroundColor), size: cs.fontSize, weight: cs.fontWeight };
+        });
+        const toRGB = (raw:string) => {
+          const m = raw.match(/rgb[a]?\(\s*(\d+)\s*(?:,|\s)\s*(\d+)\s*(?:,|\s|\/)\s*(\d+)/i);
+          if (m) return [parseInt(m[1],10), parseInt(m[2],10), parseInt(m[3],10)];
+          const hex = raw.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+          if (hex) {
+            let h = hex[1];
+            if (h.length === 3) h = h.split('').map(c => c + c).join('');
+            return [parseInt(h.substring(0,2),16), parseInt(h.substring(2,4),16), parseInt(h.substring(4,6),16)];
+          }
+          return [0,0,0];
+        };
+        const fg = toRGB(colors.fg);
+        const bg = toRGB(colors.bg);
+        const L = (r:number,g:number,b:number) => { const a=[r,g,b].map(v=>{v/=255;return v<=0.03928? v/12.92: Math.pow((v+0.055)/1.055,2.4);}); return 0.2126*a[0]+0.7152*a[1]+0.0722*a[2]; };
+        const ratio = (() => { const L1=L(fg[0],fg[1],fg[2]); const L2=L(bg[0],bg[1],bg[2]); const light=Math.max(L1,L2), dark=Math.min(L1,L2); return (light+0.05)/(dark+0.05); })();
+        expect(ratio, `Hero CTA contrast ${ratio.toFixed(2)} < 4.5`).toBeGreaterThanOrEqual(4.5);
+      }
+
       const sentinelBand = parseFloat(process.env.CONTRAST_SENTINEL_BAND || '0.10');
 
       const borderline: Array<{ sel: string; ratio: number; min: number; text: string; classes: string; route: string; large: boolean; }> = [];

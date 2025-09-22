@@ -31,3 +31,7 @@ _No API baseline changes detected._
 ### Long Task Probe
 
 - Routes: / max:0.0 over50:0 | /about max:0.0 over50:0 | /projects max:0.0 over50:0
+
+### Visual Stability Notes
+
+- 2025-09-19: Stabilized Firefox full-page visuals on /blog and /about by waiting for `document.fonts.ready`, waiting for `load` on content routes, and increasing the screenshot expectation timeout. Kept existing baselines; updated /about Firefox snapshot once after verified stability.

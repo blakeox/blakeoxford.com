@@ -87,7 +87,9 @@ IMAGE_CANDIDATES=$(find "$BUILD_DIR/assets/images" -type f \( -iname "*.jpg" -o 
 
 UNOPTIMIZED_LIST=""
 COUNT=0
-for img in $IMAGE_CANDIDATES; do
+# Iterate over candidates line-by-line to support spaces in filenames
+while IFS= read -r img; do
+    [ -z "$img" ] && continue
     base_no_ext="${img%.*}"
     if [ -f "${base_no_ext}.webp" ] || [ -f "${base_no_ext}.avif" ]; then
         continue
@@ -95,7 +97,9 @@ for img in $IMAGE_CANDIDATES; do
     UNOPTIMIZED_LIST+="$img\n"
     COUNT=$((COUNT+1))
     if [ $COUNT -ge 5 ]; then break; fi
-done
+done <<EOF
+$IMAGE_CANDIDATES
+EOF
 
 if [ $COUNT -gt 0 ]; then
     echo "⚠️ Warning: Found potentially unoptimized images (no WebP/AVIF sibling):"

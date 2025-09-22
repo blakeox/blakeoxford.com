@@ -106,6 +106,25 @@ This README will evolve with each phase. See project roadmap for full plan.
 Added systems & improvements:
 
 - Performance regression baseline: `tests/performance/baselines.json` + helper `tests/performance/perfBaselineHelper.ts` with spec `playwright/performance-regression.spec.ts` comparing current metrics to baseline within tolerance.
+  - Multi-browser support: helper will look for a browser-specific key first, in the form `"/route"__chromium|firefox|webkit`. If missing, it falls back to the generic route key. When `UPDATE_PERF_BASELINES=1` is set, improvements are persisted to the browser-specific key when present.
+  - Conservative ratcheting: to avoid over-tightening from a single lucky run, improvements are only persisted when >2% better than baseline, and any single update caps the drop to 5% for that metric. Requests are normalized to integers.
+  - Suspect baseline reseed: if an existing browser-specific baseline is unrealistically low (e.g., <20% of the generic route baseline) and the current run exceeds even a doubled tolerance window, the helper will reseed that browser-specific baseline from the current run when `UPDATE_PERF_BASELINES=1` is set. This corrects accidental too-low baselines that cause persistent false regressions.
+
+### Quick commands: bake perf baselines
+
+Use these package scripts to update baselines safely (only improvements are written):
+
+- `pnpm perf:bake:chromium`  bake only Chromium baselines
+- `pnpm perf:bake:firefox`  bake only Firefox baselines
+- `pnpm perf:bake:webkit`  bake only WebKit baselines
+- `pnpm perf:bake:all`  bake across all available browsers
+- `pnpm perf:bake:history`  also writes `tests/performance/baselines-history.json`
+
+Notes:
+
+- Prerequisite: run `pnpm build` first so `astro preview` can serve `dist/` (Playwright starts `npm run preview` automatically via `playwright.config.ts`).
+- These scripts target only `tests/playwright/performance-regression.spec.ts`.
+- Browser project names match those in `playwright.config.ts` (`chromium`, `firefox`, `webkit`).
 - Accessibility baseline capture: first run of `playwright/accessibility/axe-core.spec.ts` writes `tests/accessibility-baseline.json`, subsequent runs fail on new violations.
 - Deterministic visual snapshots: `playwright/visual-routes.spec.ts` now asserts full-page screenshots with animation disabling.
 - Coverage thresholds ratcheted (+5% across statements/branches/functions/lines) in `vitest.config.ts`.

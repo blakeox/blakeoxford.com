@@ -200,6 +200,19 @@ Gating Precedence (accessibility):
 - Allowlist accepts multiple comma-separated regex patterns; matched links are treated as OK and excluded from dead counts.
 - Concurrency tuned via `DEADLINK_MAX_CONCURRENCY`; keep conservative (<=10) to avoid rate limiting.
 
+### Performance baselines quick start
+
+For per-browser performance regression baselines and history tracking:
+
+- Bake Chromium only: `pnpm perf:bake:chromium`
+- Bake Firefox only: `pnpm perf:bake:firefox`
+- Bake WebKit only: `pnpm perf:bake:webkit`
+- Bake all available browsers: `pnpm perf:bake:all`
+- Bake with history capture: `pnpm perf:bake:history`
+- Build then bake all: `pnpm perf:bake:all:built`
+
+See `tests/README.md` for details on conservative ratcheting, reseed safeguards, and multi-browser keying.
+
 Local run with gates (example):
 
 ```bash
@@ -308,6 +321,14 @@ export default defineConfig({
 - CSP, X-Frame-Options, and other headers enforced
 
 - Optional rate limiting and Turnstile CAPTCHA on sensitive endpoints
+
+### Caching Policy
+
+Runtime caching headers are enforced by the Cloudflare Worker; local preview may differ. See `docs/caching.md` for the full policy and environment nuances. To run the targeted caching tests locally:
+
+```bash
+pnpm -s test:e2e -- tests/playwright/performance/caching-strategy.spec.ts
+```
 
 ---
 
