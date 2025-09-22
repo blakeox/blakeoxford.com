@@ -219,9 +219,6 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
   transition: opacity 0.2s;
 }
 #nav-cmdk-modal.active, #nav-help-modal.active {
-  opacity: 1;
-  pointer-events: auto;
-}
 #nav-cmdk-modal .bg-background, #nav-help-modal .bg-background {
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
