@@ -375,12 +375,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
       - name: Download quality summary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: quality-summary
           path: ./artifacts
       - name: Download runtime quality artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: runtime-quality-artifacts
           path: ./artifacts
