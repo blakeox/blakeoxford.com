@@ -1,4 +1,5 @@
 import { expect, Page } from '@playwright/test';
+import { waitForLayoutStability } from '../utils/deterministic-waits';
 import { VISUAL_ROUTE_CONFIG, type RouteCfg, type DiffCfg, MAX_ALLOWED_TOLERANCE } from './config';
 
 export async function preparePage(page: Page) {
@@ -6,27 +7,7 @@ export async function preparePage(page: Page) {
   await page.addStyleTag({ content: '* { transition: none !important; animation: none !important; }' });
 }
 
-// Waits for the page's scroll height to remain stable for a short period.
-async function waitForStableLayout(page: Page, opts: { timeoutMs?: number; stableForMs?: number } = {}) {
-  const timeoutMs = opts.timeoutMs ?? 4000;
-  const stableForMs = opts.stableForMs ?? 250;
-
-  const start = Date.now();
-  let lastH = await page.evaluate(() => document.scrollingElement?.scrollHeight || document.body.scrollHeight || 0);
-  let lastChange = Date.now();
-
-  // Poll for stability
-  while (Date.now() - start < timeoutMs) {
-    await page.waitForTimeout(50);
-    const h = await page.evaluate(() => document.scrollingElement?.scrollHeight || document.body.scrollHeight || 0);
-    if (h !== lastH) {
-      lastH = h;
-      lastChange = Date.now();
-      continue;
-    }
-    if (Date.now() - lastChange >= stableForMs) return; // stable long enough
-  }
-}
+// Reuse deterministic wait from utils to avoid raw timeouts inside tests
 
 export async function snapshotRoute(
   page: Page,
@@ -52,13 +33,10 @@ export async function snapshotRoute(
     }
   });
   // In all cases, wait briefly for layout height to stabilize to avoid full-page height drift
-  const stableOpts =
-    route === '/contact/'
-      ? { timeoutMs: 6000, stableForMs: 400 }
-      : route === '/blog/'
-      ? { timeoutMs: 6000, stableForMs: 400 }
-      : undefined;
-  await waitForStableLayout(page, stableOpts);
+  // Wait for layout stability using shared util (polling viewport/scroll metrics)
+    // Generic stability wait; routes like contact/blog tend to have more async layout changes,
+    // but the shared util samples multiple times which is sufficient here.
+  await waitForLayoutStability(page, { interval: 50, samples: 5 });
   await expect(page.locator('main, [role="main"]').first()).toBeVisible();
 
   // Derive route-specific config with safe defaults

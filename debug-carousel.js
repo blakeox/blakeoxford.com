@@ -1,3 +1,5 @@
+/* eslint-env browser */
+/* global window, document, getComputedStyle */
 // Debug script to check carousel responsiveness
 // Run this in the browser console to see which elements are visible
 
