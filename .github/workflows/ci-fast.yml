@@ -390,7 +390,6 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const core = require('@actions/core');
             const path = require('path');
             const prNumber = context.payload.pull_request.number;
             const header = '<!-- quality-summary -->';
