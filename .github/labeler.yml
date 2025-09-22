@@ -1,0 +1,26 @@
+area:about:
+  - 'src/pages/about.astro'
+  - 'src/components/**/PhotoCarousel.*'
+
+area:functions:
+  - 'functions/**'
+
+area:tests-e2e:
+  - 'playwright/**'
+  - 'tests/playwright/**'
+
+area:tests-unit:
+  - 'tests/vitest/**'
+
+area:ci:
+  - '.github/workflows/**'
+
+area:content:
+  - 'src/content/**'
+
+type:docs:
+  - '**/*.md'
+
+type:chore:
+  - 'scripts/**'
+  - '.github/**'

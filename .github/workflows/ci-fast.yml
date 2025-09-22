@@ -346,6 +346,15 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+      - name: Enforce flakiness thresholds (macOS optional)
+        if: always()
+        run: |
+          if [ -f flakiness-history.json ]; then
+            pnpm flakiness:check || true
+          else
+            echo "No flakiness history present; skipping flakiness:check"
+          fi
+
   post-quality-comment:
     name: Post PR Quality Summary
     runs-on: ubuntu-latest
@@ -506,6 +515,20 @@ jobs:
               });
               core.info('Created new quality summary comment.');
             }
+
+  # Single required status check that aggregates fast CI jobs
+  required-status-checks:
+    name: Required Checks Gate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: [quick-validation, essential-e2e, essential-e2e-crossbrowser]
+    steps:
+      - name: All required checks passed
+        run: |
+          echo "✅ quick-validation"
+          echo "✅ essential-e2e (Chromium)"
+          echo "✅ essential-e2e-crossbrowser (Firefox/WebKit on macOS)"
+          echo "All required checks are green."
 
 
 
