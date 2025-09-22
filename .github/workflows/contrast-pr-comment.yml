@@ -13,6 +13,10 @@ jobs:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-contrast') }}
     runs-on: ubuntu-latest
     steps:
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
@@ -20,10 +24,6 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.13.1
       - name: Install deps
         run: pnpm install --frozen-lockfile
       - name: Run contrast test (json emission)
