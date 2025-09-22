@@ -1,18 +1,18 @@
 /* eslint-env browser */
-/* global window, document, getComputedStyle */
+/* global window, document, getComputedStyle, console */
 // Debug script to check carousel responsiveness
 // Run this in the browser console to see which elements are visible
 
 function debugCarousel() {
   console.log('=== PhotoCarousel Debug ===');
-  
+
   const horizontal = document.querySelector('ul.animate-carousel-x-slow');
   const upCol = document.querySelector('ul.animate-carousel-up-slow');
   const downCol = document.querySelector('ul.animate-carousel-down-slow');
-  
+
   console.log('Window width:', window.innerWidth);
   console.log('Window height:', window.innerHeight);
-  
+
   console.log('\nHorizontal carousel (mobile/tablet):');
   console.log('- Element found:', !!horizontal);
   if (horizontal) {
@@ -23,7 +23,7 @@ function debugCarousel() {
     console.log('- Parent container display:', getComputedStyle(horizontal.parentElement).display);
     console.log('- Parent container classes:', horizontal.parentElement.className);
   }
-  
+
   console.log('\nVertical up column (desktop):');
   console.log('- Element found:', !!upCol);
   if (upCol) {
@@ -34,7 +34,7 @@ function debugCarousel() {
     console.log('- Parent container display:', getComputedStyle(upCol.parentElement).display);
     console.log('- Parent container classes:', upCol.parentElement.className);
   }
-  
+
   console.log('\nVertical down column (desktop):');
   console.log('- Element found:', !!downCol);
   if (downCol) {
@@ -43,7 +43,7 @@ function debugCarousel() {
     console.log('- Visibility:', styles.visibility);
     console.log('- Opacity:', styles.opacity);
   }
-  
+
   // Check Tailwind breakpoint classes
   console.log('\n=== Tailwind Breakpoint Check ===');
   const testEl = document.createElement('div');
@@ -53,10 +53,10 @@ function debugCarousel() {
   testEl.className = 'hidden lg:flex';
   const hiddenLgFlexDisplay = getComputedStyle(testEl).display;
   document.body.removeChild(testEl);
-  
+
   console.log('lg:hidden test element display:', lgHiddenDisplay);
   console.log('hidden lg:flex test element display:', hiddenLgFlexDisplay);
-  
+
   // Check media query
   const lgMediaQuery = window.matchMedia('(min-width: 1024px)');
   console.log('lg breakpoint (min-width: 1024px) matches:', lgMediaQuery.matches);
