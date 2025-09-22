@@ -9,8 +9,15 @@
 # Set container architecture (useful for M1/M2 Macs)
 --container-architecture linux/amd64
 
-# Use Docker's buildkit for better performance
---use-gitignore=false
+# Respect .gitignore when copying files (reduces payload and avoids tar issues)
+# (Default is true; line kept for clarity)
+--use-gitignore
 
-# Container options for better debugging
+# Verbose logging
 -v
+
+# Bind the workspace into the container to avoid archive/tar copy issues on macOS
+--bind
+
+# Improve localhost networking from containers (best-effort on macOS)
+--container-options '--network=host'

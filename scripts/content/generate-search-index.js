@@ -1,9 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const projectRoot = process.cwd();
 
 // Static projects data (matching the data in src/pages/projects/index.astro)
 const projects = [
@@ -40,17 +37,7 @@ const projects = [
       draft: false
     }
   },
-  {
-    slug: 'sage-intacct-integration-with-square-pos',
-    data: {
-      title: 'Sage Intacct Integration with Square POS',
-      description: 'Developed a comprehensive integration solution between Sage Intacct accounting software and Square POS system to automate financial data synchronization and streamline business operations.',
-      date: new Date('2024-03-10T00:00:00.000Z'),
-      tags: ['API Integration', 'Sage Intacct', 'Square POS', 'Financial Systems', 'Automation'],
-            image: '~/assets/images/projects/square-sage-integration.png',
-      draft: false
-    }
-  },
+  
   {
     slug: 'advancedmd-implementation',
     data: {
@@ -155,19 +142,26 @@ function writeJSON(outPath, data) {
 const blogIndex = formatBlogForSearch(blogPosts);
 const projectsIndex = formatProjectsForSearch(projects);
 
-writeJSON(path.join(__dirname, '../public/search/blog.json'), blogIndex);
-writeJSON(path.join(__dirname, '../public/search/projects.json'), projectsIndex);
+writeJSON(path.join(projectRoot, 'public/search/blog.json'), blogIndex);
+writeJSON(path.join(projectRoot, 'public/search/projects.json'), projectsIndex);
 
 // Generate API endpoints for the tests
-writeJSON(path.join(__dirname, '../../public/api/projects.json'), projectsIndex);
+writeJSON(path.join(projectRoot, 'public/api/projects.json'), projectsIndex);
 
 const searchIndex = [...projects.map(p => ({ ...p.data, type: 'project', slug: p.slug })), ...blogPosts.map(p => ({ ...p.data, type: 'blog', slug: p.slug }))];
 
-const outputDir = path.resolve(__dirname, '../../../dist');
+const outputDir = path.join(projectRoot, 'dist');
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 fs.writeFileSync(path.join(outputDir, 'search-index.json'), JSON.stringify(searchIndex, null, 2));
+
+// Also write combined index to dist/search/index.json to satisfy quality gate
+const distSearchDir = path.join(outputDir, 'search');
+if (!fs.existsSync(distSearchDir)) {
+  fs.mkdirSync(distSearchDir, { recursive: true });
+}
+fs.writeFileSync(path.join(distSearchDir, 'index.json'), JSON.stringify(searchIndex, null, 2));
 
 // Also generate API endpoints in dist for build
 const distApiDir = path.join(outputDir, 'api');

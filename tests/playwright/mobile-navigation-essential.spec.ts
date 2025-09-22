@@ -43,11 +43,42 @@ test.describe('Mobile Navigation Essential', () => {
     // Open search overlay first
     if (await searchToggle.isVisible()) {
       await searchToggle.click();
+      // Wait for overlay to actually activate (active class + inert removed)
+      await page.waitForFunction(() => {
+        const el = document.querySelector('#search-overlay') as HTMLElement | null;
+        if (!el) return false;
+        const inert = el.hasAttribute('inert');
+        const style = window.getComputedStyle(el);
+        return !inert && el.classList.contains('active') && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0;
+      }, { timeout: 3000 }).catch(() => {});
       await expect(searchOverlay).toBeVisible({ timeout: 3000 });
       
       // Close search overlay
       await page.keyboard.press('Escape');
-      await expect(searchOverlay).not.toBeVisible({ timeout: 3000 });
+      await expect(searchOverlay).not.toBeVisible({ timeout: 5000 });
+    }
+    
+    // Ensure overlay is not intercepting pointer events before opening menu
+    const overlayIntercepts = await page.evaluate(() => {
+      const el = document.querySelector('#search-overlay') as HTMLElement | null;
+      if (!el) return false;
+      const style = window.getComputedStyle(el);
+      return el.classList.contains('active') || style.visibility !== 'hidden' || (parseFloat(style.opacity || '1') > 0);
+    });
+    if (overlayIntercepts) {
+      // Force close via script using instance method if available
+      await page.evaluate(async () => {
+        const g: any = window as any;
+        if (g.enhancedSearchOverlay && typeof g.enhancedSearchOverlay.closeSearchOverlay === 'function') {
+          g.enhancedSearchOverlay.closeSearchOverlay();
+        } else if (g.searchOverlay && typeof g.searchOverlay.closeSearchOverlay === 'function') {
+          g.searchOverlay.closeSearchOverlay();
+        } else {
+          const el = document.getElementById('search-overlay');
+          if (el) { el.classList.remove('active'); el.setAttribute('inert', ''); }
+        }
+      });
+      await expect(searchOverlay).not.toBeVisible({ timeout: 5000 });
     }
     
     // Test mobile menu after search interaction

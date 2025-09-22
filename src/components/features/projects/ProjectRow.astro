@@ -10,48 +10,52 @@ const { project, featured = false, align = 'left' } = Astro.props as {
 const { slug, data } = project;
 ---
 <section class={`flex flex-col md:flex-row items-center w-full gap-8 md:gap-16 min-h-[340px] ${align === 'right' ? 'md:flex-row-reverse' : ''}`}>
-  <a href={`/projects/${slug}/`} class="block flex-shrink-0 flex-grow-0 flex-basis-0 md:basis-2/5 w-full md:w-2/5 aspect-[16/9] rounded-2xl overflow-hidden shadow-lg group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl" aria-label="Project image">
+  <a href={`/projects/${slug}/`} aria-label={`View Project: ${data.title}`} class="block flex-shrink-0 flex-grow-0 flex-basis-0 md:basis-2/5 w-full md:w-2/5 rounded-2xl overflow-hidden shadow-lg group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
     <img
       src={data.image || '/assets/images/blake-logo-fallback.png'}
-      alt={`${data.title} project screenshot`}
+      alt=""
+      aria-hidden="true"
       width="640"
       height="360"
-      class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+      class="w-full h-auto aspect-[16/9] object-cover transition-transform duration-200 group-hover:scale-105"
       loading="lazy"
+      fetchpriority="low"
+      decoding="async"
     />
   </a>
   <div class="flex flex-col flex-1 px-4 md:px-6 lg:px-12 py-4 gap-4 w-full min-w-0">
     <h2 class="font-heading text-2xl md:text-3xl font-bold text-accent dark:text-accent-light leading-tight mb-2">
-      <a href={`/projects/${slug}/`} class="project-title-link text-accent dark:text-accent-light hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={`Project: ${data.title}`}>{data.title}</a>
+  <a href={`/projects/${slug}/`} class="project-title-link inline-block py-2 min-h-[44px] underline text-accent dark:text-accent-light hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">{data.title}</a>
       { featured && (
-        <span class="ml-3 align-middle bg-accent text-white dark:text-white text-xs font-bold px-3 py-1 rounded-full shadow-md border border-accent/20 dark:border-accent/30">Featured</span>
+  <span class="ml-3 align-middle bg-accent-dark dark:bg-accent text-white dark:text-white text-xs font-bold px-3 py-1 rounded-full shadow-md border border-accent/30 dark:border-accent/40">Featured</span>
       )}
     </h2>
     {data.date && (
-      <time class="text-xs text-gray-500 dark:text-gray-400 mb-1" datetime={data.date.toISOString()}>{data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+      <time class="text-xs text-foreground/70 dark:text-foreground-light/70 mb-1" datetime={data.date.toISOString()}>{data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
     )}
     {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
       <ul class="flex flex-wrap gap-2 mb-1" aria-label="Project tags">
         {data.tags.map((tag: string) => (
-          <li><span class="bg-accent/10 dark:bg-accent/20 text-accent dark:text-accent-light text-xs font-medium px-2 py-0.5 rounded-full">{tag}</span></li>
+          <li><span class="bg-accent/10 dark:bg-accent/20 text-foreground dark:text-foreground-light border border-accent/20 text-xs font-medium px-2 py-0.5 rounded-full">{tag}</span></li>
         ))}
       </ul>
     )}
     {data.description && (
-      <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-4">
+      <p class="text-foreground dark:text-foreground-light mb-4 line-clamp-4">
         {data.description.length > 220 ? `${data.description.slice(0, 217)}...` : data.description}
         {data.description.length > 220 && (
-          <a href={`/projects/${slug}/`} class="ml-1 text-accent dark:text-accent-light underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">Read more</a>
+          <a href={`/projects/${slug}/`} class="ml-1 inline-block min-h-[44px] text-accent dark:text-accent-light underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+            Read more about {data.title}
+          </a>
         )}
       </p>
     )}
     <div class="mt-auto flex justify-start">
       <a
         href={`/projects/${slug}/`}
-        class="c-btn bg-accent text-white dark:text-white font-semibold px-5 py-2 rounded-lg shadow hover:bg-accent-dark dark:hover:bg-accent-light transition-all duration-200 text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        aria-label="View Project"
+        class="c-btn bg-accent text-white dark:text-white font-semibold px-5 py-3 min-h-[44px] min-w-[44px] rounded-lg shadow hover:bg-accent-dark dark:hover:bg-accent-light transition-all duration-200 text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
-        View Project
+        View Project: {data.title}
       </a>
     </div>
   </div>

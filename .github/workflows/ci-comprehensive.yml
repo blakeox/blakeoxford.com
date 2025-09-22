@@ -21,6 +21,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Global flakiness thresholds (stricter for comprehensive runs)
+  FLAKINESS_MAX_CURRENT_FLAKY: 0
+  FLAKINESS_MAX_RETRY_INTENSITY: 0.03
+  FLAKINESS_STRICT: ''
+
 jobs:
   comprehensive-tests:
     name: Full Test Suite
@@ -32,7 +38,7 @@ jobs:
         test-group: [unit, e2e, performance]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -46,7 +52,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -65,12 +71,17 @@ jobs:
           else
             echo "⚠️ Full browser installation failed, installing Chromium only..."
             pnpm exec playwright install chromium || echo "Chromium installation completed with warnings"
-            export BROWSER_INSTALL_FAILED=true
+            echo "BROWSER_INSTALL_FAILED=true" >> $GITHUB_ENV
+            echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> $GITHUB_ENV
           fi
 
       - name: Run linting
         if: matrix.test-group == 'unit'
         run: pnpm run lint
+
+      - name: Design lint (tokens & spacing)
+        if: matrix.test-group == 'unit'
+        run: pnpm design:lint || true
 
       - name: Run TypeScript check
         if: matrix.test-group == 'unit'
@@ -97,11 +108,81 @@ jobs:
         if: matrix.test-group == 'unit'
         run: pnpm run test:coverage
 
-      - name: Run E2E tests (optimized)
+      - name: Run mutation tests (non-blocking)
+        if: matrix.test-group == 'unit'
+        run: pnpm test:mutants
+        continue-on-error: true
+
+      - name: Mutation score threshold check (hard)
+        if: matrix.test-group == 'unit'
+        run: MUTATION_MIN_SCORE=60 MUTATION_HARD_FAIL=1 pnpm mutation:check # raise MUTATION_MIN_SCORE (e.g. 75) as baseline improves
+
+      - name: Upload mutation report
+        if: always() && matrix.test-group == 'unit'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report-${{ github.sha }}
+          path: mutation-report
+          retention-days: 14
+
+      - name: Update mutation baseline (ratchet)
+        if: github.ref == 'refs/heads/main' && matrix.test-group == 'unit' && success()
+        run: |
+          echo "🔧 Running ratchet-only baseline update (no threshold enforcement)"
+          MUTATION_RATCHET_ONLY=1 MUTATION_UPDATE_BASELINE=1 pnpm mutation:check || true
+          if git diff --quiet .mutation-baseline.json; then
+            echo "Baseline unchanged; no commit required"
+          else
+            echo "Baseline improved; committing update"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .mutation-baseline.json
+            git commit -m "chore(ci): ratchet mutation baseline [skip ci]" || true
+            git push || echo "⚠️ Push failed (possibly due to race); safe to ignore"
+          fi
+
+      - name: Contrast token audit
+        if: matrix.test-group == 'unit'
+        run: pnpm audit:contrast # fails only if low-contrast tokens used
+
+      - name: Log mutation history
+        if: matrix.test-group == 'unit'
+        run: pnpm mutation:history:log || true
+
+      - name: Generate quality summary
+        if: matrix.test-group == 'unit'
+        run: pnpm quality:summary || true # non-blocking
+
+      - name: Generate quality badges
+        if: matrix.test-group == 'unit'
+        run: pnpm quality:badges || true
+
+      - name: Upload quality badges
+        if: always() && matrix.test-group == 'unit'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-badges-${{ github.sha }}
+          path: badges/
+          retention-days: 30
+
+      - name: Upload quality summary
+        if: always() && matrix.test-group == 'unit'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-summary-${{ github.sha }}
+          path: quality-summary.md
+          retention-days: 30
+
+      - name: Run E2E tests (optimized, Chromium only on Linux)
         if: matrix.test-group == 'e2e'
         run: |
           echo "🧪 Running optimized essential E2E tests..."
           ./scripts/ci/run-essential-tests.sh
+
+      - name: Run visual smoke tests
+        if: matrix.test-group == 'e2e'
+        run: pnpm exec playwright test --grep "@visual-smoke" --project=chromium || true
+        # Currently non-blocking; tighten once baseline established
 
       - name: Run performance tests
         if: matrix.test-group == 'performance'
@@ -131,12 +212,32 @@ jobs:
             exit 1
           fi
 
+      - name: Start dev server for Lighthouse CI
+        if: matrix.test-group == 'performance'
+        run: |
+          echo "🚀 Starting dev server for Lighthouse CI..."
+          pnpm dev &
+          SERVER_PID=$!
+          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
+          # Wait for server to be ready
+          timeout 60 bash -c 'until curl -f http://localhost:4321/ > /dev/null 2>&1; do sleep 2; done' || (echo "Server failed to start" && kill $SERVER_PID && exit 1)
+          echo "✅ Dev server ready on http://localhost:4321/"
+
       - name: Run Lighthouse CI (essential pages only)
         if: matrix.test-group == 'performance'
         run: pnpm lh:ci
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
         continue-on-error: true
+
+      - name: Stop dev server
+        if: always() && matrix.test-group == 'performance'
+        run: |
+          if [ -n "$SERVER_PID" ]; then
+            echo "🛑 Stopping dev server (PID: $SERVER_PID)..."
+            kill $SERVER_PID || true
+            echo "✅ Dev server stopped"
+          fi
 
       - name: Upload coverage report
         if: matrix.test-group == 'unit'
@@ -154,6 +255,27 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
+      - name: Track flakiness (JSON)
+        if: always() && matrix.test-group == 'e2e'
+        run: pnpm flakiness:track || true
+
+      - name: Upload flakiness history
+        if: always() && matrix.test-group == 'e2e'
+        uses: actions/upload-artifact@v4
+        with:
+          name: flakiness-history-${{ github.sha }}
+          path: flakiness-history.json
+          retention-days: 30
+
+      - name: Enforce flakiness thresholds (E2E)
+        if: always() && matrix.test-group == 'e2e'
+        run: |
+          if [ -f flakiness-history.json ]; then
+            pnpm flakiness:check || exit 1
+          else
+            echo "No flakiness history found; skipping flakiness:check"
+          fi
+
       - name: Upload performance reports
         if: always() && matrix.test-group == 'performance'
         uses: actions/upload-artifact@v4
@@ -162,9 +284,9 @@ jobs:
           path: lighthouse-reports/
           retention-days: 14
 
-      - name: Run essential visual tests
+      - name: Run essential visual tests (Chromium only on Linux)
         if: matrix.test-group == 'e2e'
-        run: pnpm exec playwright test --grep="Essential Visual Tests" --reporter=line
+        run: pnpm exec playwright test --grep="Essential Visual Tests" --reporter=line --project=chromium
 
   optimization-tasks:
     name: Optimization Tasks
@@ -175,13 +297,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -191,6 +313,23 @@ jobs:
 
       - name: Run advanced optimizations
         run: pnpm optimize:advanced
+
+      - name: Snapshot quality baseline (main only)
+        run: pnpm quality:snapshot || true
+        if: github.ref == 'refs/heads/main'
+
+      - name: Commit quality snapshot index (if changed)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if git diff --quiet quality-snapshots/INDEX.md; then
+            echo "No snapshot index changes"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add quality-snapshots/INDEX.md
+            git commit -m "chore(ci): update quality snapshot index [skip ci]" || true
+            git push || echo "Snapshot push race condition; safe to ignore"
+          fi
 
       - name: Validate Cloudflare Functions
         run: |

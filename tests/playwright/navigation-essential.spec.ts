@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test';
+// DEPRECATED: Consolidated by tests/playwright/functional/navigation-search.journey.spec.ts
+// This spec will be removed once new journey spec is stable.
+test.describe.skip('Deprecated navigation-essential', () => {
+// ...existing code...
 
 // Essential navigation tests - run in fast CI
 test.describe('Essential Navigation Tests', () => {
@@ -96,3 +100,4 @@ test.describe('Essential Navigation Tests', () => {
     });
   });
 });
+}); // end deprecated wrapper

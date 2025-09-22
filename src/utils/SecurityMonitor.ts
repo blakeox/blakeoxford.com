@@ -8,26 +8,26 @@ export interface SecurityMetrics {
   requestsPerMinute: number;
   uniqueIPsPerHour: number;
   suspiciousPatterns: number;
-  
+
   // Authentication attempts
   failedLoginAttempts: number;
   successfulLogins: number;
-  
+
   // Content Security Policy violations
   cspViolations: number;
-  
+
   // Form submission monitoring
   formSubmissions: number;
   suspiciousFormData: number;
-  
+
   // Bot detection
   botRequests: number;
   humanRequests: number;
-  
+
   // Error patterns
   clientErrors: number;
   serverErrors: number;
-  
+
   // Resource access patterns
   sensitiveResourceAccess: number;
   blockedRequests: number;
@@ -73,10 +73,8 @@ export class SecurityMonitor {
   private config: SecurityConfig;
   private metrics: SecurityMetrics;
   private events: SecurityEvent[] = [];
-  private requestCounts = new Map<string, number[]>();
-  private suspiciousIPs = new Set<string>();
   private csrfTokens = new Map<string, { token: string; timestamp: number }>();
-  
+
   private constructor(config?: Partial<SecurityConfig>) {
     this.config = {
       enabled: true,
@@ -105,7 +103,7 @@ export class SecurityMonitor {
       debugMode: false,
       ...config
     };
-    
+
     this.metrics = {
       requestsPerMinute: 0,
       uniqueIPsPerHour: 0,
@@ -122,19 +120,19 @@ export class SecurityMonitor {
       sensitiveResourceAccess: 0,
       blockedRequests: 0
     };
-    
+
     if (typeof window !== 'undefined' && this.config.enabled) {
       this.initializeBrowserSecurity();
     }
   }
-  
+
   static getInstance(config?: Partial<SecurityConfig>): SecurityMonitor {
     if (!SecurityMonitor.instance) {
       SecurityMonitor.instance = new SecurityMonitor(config);
     }
     return SecurityMonitor.instance;
   }
-  
+
   /**
    * Initialize browser-side security monitoring
    */
@@ -144,21 +142,21 @@ export class SecurityMonitor {
     this.setupNetworkSecurityMonitoring();
     this.setupErrorSecurityMonitoring();
     this.generateCSRFToken();
-    
+
     if (this.config.debugMode) {
       console.log('🔒 Security monitoring initialized');
     }
   }
-  
+
   /**
    * Setup Content Security Policy violation reporting
    */
   private setupCSPViolationReporting(): void {
     if (!this.config.contentSecurityPolicy.enabled) return;
-    
+
     document.addEventListener('securitypolicyviolation', (event) => {
       this.metrics.cspViolations++;
-      
+
       const securityEvent: SecurityEvent = {
         type: 'csp_violation',
         severity: 'medium',
@@ -172,15 +170,15 @@ export class SecurityMonitor {
         },
         blocked: event.disposition === 'enforce'
       };
-      
+
       this.recordSecurityEvent(securityEvent);
-      
+
       if (this.config.contentSecurityPolicy.reportUri) {
         this.reportCSPViolation(event);
       }
     });
   }
-  
+
   /**
    * Setup form security monitoring
    */
@@ -188,23 +186,23 @@ export class SecurityMonitor {
     document.addEventListener('submit', (event) => {
       const form = event.target as HTMLFormElement;
       if (!form) return;
-      
+
       this.metrics.formSubmissions++;
-      
+
       // Check for honeypot fields (bot detection)
       const formData = new FormData(form);
       let suspiciousFields = 0;
-      
+
       for (const fieldName of this.config.botDetection.honeypotFields) {
         if (formData.get(fieldName)) {
           suspiciousFields++;
         }
       }
-      
+
       if (suspiciousFields > 0) {
         this.metrics.suspiciousFormData++;
         this.metrics.botRequests++;
-        
+
         const securityEvent: SecurityEvent = {
           type: 'form_spam',
           severity: 'high',
@@ -217,9 +215,9 @@ export class SecurityMonitor {
           },
           blocked: false
         };
-        
+
         this.recordSecurityEvent(securityEvent);
-        
+
         // Optionally block the submission
         if (suspiciousFields >= this.config.botDetection.honeypotFields.length / 2) {
           event.preventDefault();
@@ -229,14 +227,14 @@ export class SecurityMonitor {
       } else {
         this.metrics.humanRequests++;
       }
-      
+
       // Validate CSRF token
       if (this.config.csrfProtection.enabled) {
         this.validateCSRFToken(formData);
       }
     });
   }
-  
+
   /**
    * Setup network security monitoring
    */
@@ -245,7 +243,7 @@ export class SecurityMonitor {
     const originalFetch = window.fetch;
     window.fetch = async (...args) => {
       const response = await originalFetch(...args);
-      
+
       // Monitor for suspicious response patterns
       if (response.status >= 400) {
         if (response.status < 500) {
@@ -253,17 +251,17 @@ export class SecurityMonitor {
         } else {
           this.metrics.serverErrors++;
         }
-        
+
         // Check for potential security issues
         if (response.status === 401 || response.status === 403) {
           this.metrics.failedLoginAttempts++;
         }
       }
-      
+
       return response;
     };
   }
-  
+
   /**
    * Setup error security monitoring
    */
@@ -283,27 +281,27 @@ export class SecurityMonitor {
           },
           blocked: false
         };
-        
+
         this.recordSecurityEvent(securityEvent);
         this.metrics.suspiciousPatterns++;
       }
     });
   }
-  
+
   /**
    * Generate CSRF token for forms
    */
   generateCSRFToken(): string {
     if (!this.config.csrfProtection.enabled) return '';
-    
+
     const sessionId = this.getSessionId();
     const token = this.generateRandomToken(this.config.csrfProtection.tokenLength);
-    
+
     this.csrfTokens.set(sessionId, {
       token,
       timestamp: Date.now()
     });
-    
+
     // Store in meta tag for JavaScript access
     let metaTag = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement;
     if (!metaTag) {
@@ -312,21 +310,21 @@ export class SecurityMonitor {
       document.head.appendChild(metaTag);
     }
     metaTag.content = token;
-    
+
     return token;
   }
-  
+
   /**
    * Validate CSRF token
    */
   private validateCSRFToken(formData: FormData): boolean {
     if (!this.config.csrfProtection.enabled) return true;
-    
+
     const submittedToken = formData.get('csrf_token') as string;
     const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     const sessionId = this.getSessionId();
     const storedTokenData = this.csrfTokens.get(sessionId);
-    
+
     if (!submittedToken || !storedTokenData) {
       this.recordSecurityEvent({
         type: 'suspicious_pattern',
@@ -338,11 +336,11 @@ export class SecurityMonitor {
       });
       return false;
     }
-    
+
     // Check token validity (not expired, matches stored token)
     const tokenAge = Date.now() - storedTokenData.timestamp;
     const maxAge = 30 * 60 * 1000; // 30 minutes
-    
+
     if (tokenAge > maxAge || submittedToken !== storedTokenData.token || submittedToken !== metaToken) {
       this.recordSecurityEvent({
         type: 'suspicious_pattern',
@@ -354,31 +352,31 @@ export class SecurityMonitor {
       });
       return false;
     }
-    
+
     return true;
   }
-  
+
   /**
    * Record security event
    */
   private recordSecurityEvent(event: SecurityEvent): void {
     this.events.push(event);
-    
+
     // Keep only last 1000 events
     if (this.events.length > 1000) {
       this.events = this.events.slice(-1000);
     }
-    
+
     if (this.config.debugMode) {
       console.warn(`🚨 Security Event: ${event.type}`, event);
     }
-    
+
     // Report critical events immediately
     if (event.severity === 'critical') {
       this.reportSecurityEvent(event);
     }
   }
-  
+
   /**
    * Check for suspicious content patterns
    */
@@ -397,10 +395,10 @@ export class SecurityMonitor {
       /eval\(/i,
       /Function\(/i
     ];
-    
+
     return suspiciousPatterns.some(pattern => pattern.test(content));
   }
-  
+
   /**
    * Generate random token
    */
@@ -408,7 +406,7 @@ export class SecurityMonitor {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const cryptoObj = window.crypto || (window as any).msCrypto;
-    
+
     if (cryptoObj && cryptoObj.getRandomValues) {
       const array = new Uint8Array(length);
       cryptoObj.getRandomValues(array);
@@ -421,10 +419,10 @@ export class SecurityMonitor {
         result += chars[Math.floor(Math.random() * chars.length)];
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Get session ID
    */
@@ -436,13 +434,13 @@ export class SecurityMonitor {
     }
     return sessionId;
   }
-  
+
   /**
    * Report CSP violation to server
    */
   private async reportCSPViolation(event: SecurityPolicyViolationEvent): Promise<void> {
     if (!this.config.contentSecurityPolicy.reportUri) return;
-    
+
     try {
       await fetch(this.config.contentSecurityPolicy.reportUri, {
         method: 'POST',
@@ -471,7 +469,7 @@ export class SecurityMonitor {
       }
     }
   }
-  
+
   /**
    * Report security event to server
    */
@@ -490,21 +488,21 @@ export class SecurityMonitor {
       }
     }
   }
-  
+
   /**
    * Get current security metrics
    */
   getMetrics(): SecurityMetrics {
     return { ...this.metrics };
   }
-  
+
   /**
    * Get recent security events
    */
   getEvents(limit = 100): SecurityEvent[] {
     return this.events.slice(-limit);
   }
-  
+
   /**
    * Get security report
    */
@@ -515,23 +513,23 @@ export class SecurityMonitor {
     recommendations: string[];
   } {
     const recommendations: string[] = [];
-    
+
     if (this.metrics.cspViolations > 10) {
       recommendations.push('High number of CSP violations detected - review and update Content Security Policy');
     }
-    
+
     if (this.metrics.botRequests > this.metrics.humanRequests * 0.5) {
       recommendations.push('High bot activity detected - consider implementing additional bot protection');
     }
-    
+
     if (this.metrics.suspiciousPatterns > 5) {
       recommendations.push('Suspicious patterns detected - review error logs and implement additional input validation');
     }
-    
+
     if (this.metrics.failedLoginAttempts > 20) {
       recommendations.push('High number of failed login attempts - consider implementing account lockout protection');
     }
-    
+
     return {
       timestamp: new Date().toISOString(),
       metrics: this.getMetrics(),
@@ -539,7 +537,7 @@ export class SecurityMonitor {
       recommendations
     };
   }
-  
+
   /**
    * Export security data for analysis
    */
@@ -547,14 +545,14 @@ export class SecurityMonitor {
     const report = this.generateSecurityReport();
     return JSON.stringify(report, null, 2);
   }
-  
+
   /**
    * Start security monitoring session
    */
   startMonitoring(): void {
     if (this.config.debugMode) {
       console.log('🔒 Security monitoring started');
-      
+
       // Log security report every 5 minutes in debug mode
       setInterval(() => {
         console.group('🔒 Security Report');

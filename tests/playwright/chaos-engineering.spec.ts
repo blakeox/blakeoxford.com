@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForKeyboardResponse, waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Chaos Engineering Tests', () => {
   test.describe('Network Resilience', () => {
@@ -166,11 +167,11 @@ test.describe('Chaos Engineering Tests', () => {
       for (let i = 0; i < Math.min(linkCount, 5); i++) {
         // Rapid fire clicks
         await navLinks.nth(i).click();
-        await page.waitForTimeout(100);
+        await waitForKeyboardResponse(page); // Brief pause between rapid clicks
         
         if (i % 2 === 0) {
           await page.goBack();
-          await page.waitForTimeout(100);
+          await waitForKeyboardResponse(page); // Brief pause between rapid navigation
         }
       }
       
@@ -215,7 +216,7 @@ test.describe('Chaos Engineering Tests', () => {
           const submitButton = page.locator('button[type="submit"]');
           if (await submitButton.isVisible()) {
             await submitButton.click();
-            await page.waitForTimeout(500);
+            await waitForAsyncOperation(page); // Wait for form submission
           }
           
           // Form should handle invalid input gracefully
@@ -241,7 +242,7 @@ test.describe('Chaos Engineering Tests', () => {
       for (let i = 0; i < 20; i++) {
         const randomKey = chaosKeys[Math.floor(Math.random() * chaosKeys.length)];
         await page.keyboard.press(randomKey);
-        await page.waitForTimeout(50);
+        await waitForKeyboardResponse(page); // Brief pause between keyboard chaos
       }
       
       // Page should still be functional
@@ -279,7 +280,7 @@ test.describe('Chaos Engineering Tests', () => {
       });
       
       // Page should remain responsive
-      await page.waitForTimeout(1000);
+      await waitForAsyncOperation(page); // Wait during heavy computation
       
       // Basic interactions should still work
       const aboutLink = page.getByRole('link', { name: /about/i });
@@ -308,7 +309,7 @@ test.describe('Chaos Engineering Tests', () => {
         }, 3000);
       });
       
-      await page.waitForTimeout(1000);
+      await waitForAsyncOperation(page); // Wait during memory pressure test
       
       // Navigation should still work
       await page.getByRole('link', { name: /projects/i }).click();
@@ -334,7 +335,7 @@ test.describe('Chaos Engineering Tests', () => {
       for (let i = 0; i < 10; i++) {
         const randomViewport = viewports[Math.floor(Math.random() * viewports.length)];
         await page.setViewportSize(randomViewport);
-        await page.waitForTimeout(200);
+        await waitForKeyboardResponse(page); // Brief pause between viewport changes
         
         // Content should remain accessible
         await expect(page.locator('main')).toBeVisible();
@@ -356,7 +357,7 @@ test.describe('Chaos Engineering Tests', () => {
       
       for (const zoom of zoomLevels) {
         await page.setViewportSize(zoom);
-        await page.waitForTimeout(500);
+        await waitForAsyncOperation(page); // Wait for zoom level change
         
         // Content should remain usable
         await expect(page.locator('main')).toBeVisible();

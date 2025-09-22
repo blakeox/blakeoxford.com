@@ -1,93 +1,18 @@
 /*
-  # Enhanced Security Headers for Best Practices Score
-  Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; media-src 'self' https:; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com; manifest-src 'self'; worker-src 'self';
+  Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com https://stats.g.doubleclick.net; worker-src 'self'; manifest-src 'self'
   X-Content-Type-Options: nosniff
-  X-Frame-Options: DENY  
-  X-XSS-Protection: 1; mode=block
+  X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   Cross-Origin-Embedder-Policy: credentialless
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-site
-  Alt-Svc: h3=":443"; ma=86400
-  Accept-Encoding: br, gzip, deflate
-  X-Early-Hints: Link
   Service-Worker-Allowed: /
-
-# Advanced compression for text assets
-*.html
-  Content-Encoding: br
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
-*.css
-  Content-Encoding: br
+  Cache-Control: public, max-age=300
+/_astro/*
   Cache-Control: public, max-age=31536000, immutable
-*.js
-  Content-Encoding: br
-  Cache-Control: public, max-age=31536000, immutable
-
-# Critical assets - preload hints
-/*.html
-  Link: </assets/js/critical.min.js>; rel=preload; as=script
-  Link: </assets/js/lazy-loader.min.js>; rel=preload; as=script
-  Link: <https://fonts.googleapis.com>; rel=preconnect
-  Link: <https://fonts.gstatic.com>; rel=preconnect; crossorigin
-
-# Cache static assets for 1 year with strong ETags
 /assets/*
-  Cache-Control: public, max-age=31536000, immutable
-  X-Content-Type-Options: nosniff
-
-# Cache images with modern format hints
-*.png
-  Cache-Control: public, max-age=15552000
-  Accept: image/avif,image/webp,image/*,*/*;q=0.8
-*.jpg
-  Cache-Control: public, max-age=15552000
-  Accept: image/avif,image/webp,image/*,*/*;q=0.8
-*.jpeg
-  Cache-Control: public, max-age=15552000
-  Accept: image/avif,image/webp,image/*,*/*;q=0.8
-*.webp
-  Cache-Control: public, max-age=31536000, immutable
-*.avif
-  Cache-Control: public, max-age=31536000, immutable
-
-# Cache bundled assets with versioning
-*.min.js
-  Cache-Control: public, max-age=31536000, immutable
-  X-Content-Type-Options: nosniff
-*.min.css
-  Cache-Control: public, max-age=31536000, immutable
-  X-Content-Type-Options: nosniff
-
-# Cache CSS and JS for 1 year
-*.css
-  Cache-Control: public, max-age=31536000, immutable
-*.js
-  Cache-Control: public, max-age=31536000, immutable
-
-# Cache fonts for 1 year
-*.woff
-  Cache-Control: public, max-age=31536000, immutable
-  Access-Control-Allow-Origin: *
-*.woff2
-  Cache-Control: public, max-age=31536000, immutable
-  Access-Control-Allow-Origin: *
-
-# HTML pages - optimized cache with revalidation
-*.html
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
-/
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
-
-# API endpoints
-/api/*
-  Cache-Control: public, max-age=300, stale-while-revalidate=600
-  Content-Type: application/json
-
-# Sitemap and RSS
-/sitemap*.xml
-  Cache-Control: public, max-age=3600
-/rss.xml
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=2592000, immutable
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate

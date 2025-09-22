@@ -1,0 +1,601 @@
+[
+  {
+    "timestamp": "2025-09-05T14:58:05.082Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": -1,
+        "error": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:4321/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "route": "/about",
+        "violations": -1,
+        "error": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:4321/about\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      },
+      {
+        "route": "/projects",
+        "violations": -1,
+        "error": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:4321/projects\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-09-05T16:08:28.809Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": -1,
+        "error": "axe.run is not a function"
+      },
+      {
+        "route": "/about",
+        "violations": -1,
+        "error": "axe.run is not a function"
+      },
+      {
+        "route": "/projects",
+        "violations": -1,
+        "error": "axe.run is not a function"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-09-05T19:43:21.686Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": -1,
+        "error": "Please use browser.newContext()\n Please check out https://github.com/dequelabs/axe-core-npm/blob/develop/packages/playwright/error-handling.md"
+      },
+      {
+        "route": "/about",
+        "violations": -1,
+        "error": "Please use browser.newContext()\n Please check out https://github.com/dequelabs/axe-core-npm/blob/develop/packages/playwright/error-handling.md"
+      },
+      {
+        "route": "/projects",
+        "violations": -1,
+        "error": "Please use browser.newContext()\n Please check out https://github.com/dequelabs/axe-core-npm/blob/develop/packages/playwright/error-handling.md"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-09-05T20:02:00.099Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-09-06T00:25:48.416Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "count": 4,
+      "byImpact": {
+        "moderate": 3,
+        "minor": 1
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-11T13:29:56.841Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "count": 4,
+      "byImpact": {
+        "moderate": 3,
+        "minor": 1
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-22T15:41:35.315Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": 1
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/blog",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 1
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/contact",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/google-workspace-migration",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/ferment-app",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/bank-projections-modeling",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/advancedmd-implementation",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/adp-workforcenow",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/Microsoft-Fabric",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/LLM-note-coaching",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/components/project-card-preview",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/components/nav-preview",
+        "violations": 0,
+        "rules": []
+      },
+      {
+        "route": "/blog/hello-world",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/blog/combating-legal-ai-hallucinations",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "count": 18,
+      "byImpact": {
+        "serious": 2,
+        "moderate": 15,
+        "minor": 1
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-22T15:52:48.350Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": 1
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/blog",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 1
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/contact",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/google-workspace-migration",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/ferment-app",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/bank-projections-modeling",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/advancedmd-implementation",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/adp-workforcenow",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/Microsoft-Fabric",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/LLM-note-coaching",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/components/project-card-preview",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/components/nav-preview",
+        "violations": 0,
+        "rules": []
+      },
+      {
+        "route": "/blog/hello-world",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/blog/combating-legal-ai-hallucinations",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "count": 18,
+      "byImpact": {
+        "serious": 2,
+        "moderate": 15,
+        "minor": 1
+      }
+    }
+  }
+]

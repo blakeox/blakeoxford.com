@@ -61,18 +61,18 @@ const metrics = [
   />
 
   <!-- Full-Width Content Section -->
-  <article class="py-20 bg-white dark:bg-gray-900">
+  <article class="py-20 bg-background dark:bg-background">
     <div class="w-full px-6 lg:px-12 xl:px-16">
       <div class="max-w-none mx-auto">
         
         <!-- Project Introduction -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">🍃 Project Introduction</h2>
-          <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🍃 Project Introduction</h2>
+          <div class="prose prose-lg dark:prose-invert max-w-none">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
               Ferment App is a native iOS application built with SwiftUI that enables users to manage fermentation recipes, track progress, and automate critical tasks — all within a clean, mobile-first interface. Currently in private beta via TestFlight, the app is designed to support home brewers and fermentation enthusiasts across a wide range of recipes and workflows.
             </p>
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
               Built for kombucha brewers, kimchi fermenters, and mead makers alike, Ferment App provides a structured and intuitive platform for logging fermentation activities, monitoring variables, and scheduling recurring steps for consistent, repeatable results.
             </p>
           </div>
@@ -80,52 +80,52 @@ const metrics = [
 
         <!-- Technical Architecture -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">🛠️ Technical Architecture</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🛠️ Technical Architecture</h2>
           
           <div class="overflow-x-auto">
             <table class="w-full border-collapse border border-gray-300 dark:border-gray-600 my-8">
               <thead>
-                <tr class="bg-gray-50 dark:bg-gray-800">
-                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-gray-900 dark:text-white">Component</th>
-                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-gray-900 dark:text-white">Technology</th>
-                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-gray-900 dark:text-white">Purpose</th>
+                <tr class="bg-surface dark:bg-surface-dark">
+                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">Component</th>
+                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">Technology</th>
+                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">Purpose</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-gray-900 dark:text-white">Language & UI</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Swift with SwiftUI</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Modern, fluid iOS experience</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Language & UI</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Swift with SwiftUI</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Modern, fluid iOS experience</td>
                 </tr>
-                <tr class="bg-gray-50 dark:bg-gray-800">
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-gray-900 dark:text-white">State Management</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Combine with ObservableObject</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Reactive data flow</td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-gray-900 dark:text-white">Local Persistence</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Core Data (migrating to SwiftData)</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Offline-first data storage</td>
-                </tr>
-                <tr class="bg-gray-50 dark:bg-gray-800">
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-gray-900 dark:text-white">Cloud Sync & Auth</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Firebase Firestore, Firebase Auth</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Cross-device synchronization</td>
+                <tr class="bg-surface dark:bg-surface-dark">
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">State Management</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Combine with ObservableObject</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Reactive data flow</td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-gray-900 dark:text-white">Storage & Media</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Firebase Storage</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Recipe images and media</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Local Persistence</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Core Data (migrating to SwiftData)</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Offline-first data storage</td>
                 </tr>
-                <tr class="bg-gray-50 dark:bg-gray-800">
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-gray-900 dark:text-white">Charting & Visualization</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Swift Charts</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Data visualization</td>
+                <tr class="bg-surface dark:bg-surface-dark">
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Cloud Sync & Auth</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Firebase Firestore, Firebase Auth</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Cross-device synchronization</td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-gray-900 dark:text-white">Deployment</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Xcode, TestFlight</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-gray-700 dark:text-gray-300">Pre-release distribution</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Storage & Media</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Firebase Storage</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Recipe images and media</td>
+                </tr>
+                <tr class="bg-surface dark:bg-surface-dark">
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Charting & Visualization</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Swift Charts</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Data visualization</td>
+                </tr>
+                <tr>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Deployment</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Xcode, TestFlight</td>
+                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Pre-release distribution</td>
                 </tr>
               </tbody>
             </table>
@@ -134,7 +134,7 @@ const metrics = [
 
         <!-- Core Features -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">🚀 Core Features</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🚀 Core Features</h2>
           
           <div class="grid md:grid-cols-1 gap-8">
             <AchievementCard 
@@ -176,25 +176,25 @@ const metrics = [
 
         <!-- User Experience Highlights -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">📱 User Experience Highlights</h2>
-          <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-gray-50 dark:bg-gray-800 rounded-r-lg my-6">
-              <p class="text-lg text-gray-700 dark:text-gray-300">
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">📱 User Experience Highlights</h2>
+          <div class="prose prose-lg dark:prose-invert max-w-none">
+            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-6">
+              <p class="text-lg text-foreground/85 dark:text-gray-300">
                 <strong>Built with SwiftUI</strong> for a modern, fluid iOS experience that feels native
               </p>
             </blockquote>
-            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-gray-50 dark:bg-gray-800 rounded-r-lg my-6">
-              <p class="text-lg text-gray-700 dark:text-gray-300">
+            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-6">
+              <p class="text-lg text-foreground/85 dark:text-gray-300">
                 <strong>Accessibility First</strong> with Dark Mode, VoiceOver, and Dynamic Type support
               </p>
             </blockquote>
-            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-gray-50 dark:bg-gray-800 rounded-r-lg my-6">
-              <p class="text-lg text-gray-700 dark:text-gray-300">
+            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-6">
+              <p class="text-lg text-foreground/85 dark:text-gray-300">
                 <strong>Offline-first architecture</strong> with seamless local/cloud fallback for reliability
               </p>
             </blockquote>
-            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-gray-50 dark:bg-gray-800 rounded-r-lg my-6">
-              <p class="text-lg text-gray-700 dark:text-gray-300">
+            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-6">
+              <p class="text-lg text-foreground/85 dark:text-gray-300">
                 <strong>Modular design</strong> built for scalability and fermentation type-specific logic
               </p>
             </blockquote>
@@ -203,49 +203,49 @@ const metrics = [
 
         <!-- Development Deep Dive -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">🔧 Development Deep Dive</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🔧 Development Deep Dive</h2>
           
           <div class="space-y-8">
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Core Data → SwiftData Migration</h3>
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Core Data → SwiftData Migration</h3>
               <ul class="space-y-2 ml-6">
-                <li class="text-lg text-gray-700 dark:text-gray-300">
+                <li class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Starting migration to SwiftData</strong> for better SwiftUI integration and reduced boilerplate
                 </li>
-                <li class="text-lg text-gray-700 dark:text-gray-300">
+                <li class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Version-safe persistence layer</strong> designed to ease future upgrades and migrations
                 </li>
-                <li class="text-lg text-gray-700 dark:text-gray-300">
+                <li class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Improved performance</strong> with modern Swift concurrency patterns
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Dynamic Configuration Engine</h3>
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Dynamic Configuration Engine</h3>
               <ul class="space-y-2 ml-6">
-                <li class="text-lg text-gray-700 dark:text-gray-300">
+                <li class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Type-driven UI and behavior</strong> using enums and protocols (e.g., kombucha vs. kimchi workflows)
                 </li>
-                <li class="text-lg text-gray-700 dark:text-gray-300">
+                <li class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Auto-generates default ingredients and task templates</strong> by recipe type
                 </li>
-                <li class="text-lg text-gray-700 dark:text-gray-300">
+                <li class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Extensible architecture</strong> for adding new fermentation types
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Timeline & Data Visualization</h3>
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Timeline & Data Visualization</h3>
               <ul class="space-y-2 ml-6">
-                <li class="text-lg text-gray-700 dark:text-gray-300">
+                <li class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Custom SwiftUI timeline view</strong> with historical events and measurements
                 </li>
-                <li class="text-lg text-gray-700 dark:text-gray-300">
+                <li class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Swift Charts integration</strong> to visualize pH, temperature, and gravity trends over time
                 </li>
-                <li class="text-lg text-gray-700 dark:text-gray-300">
+                <li class="text-lg text-foreground/85 dark:text-gray-300">
                   <strong>Interactive filtering</strong> by fermentation phase and data type
                 </li>
               </ul>
@@ -255,18 +255,18 @@ const metrics = [
 
         <!-- Development Status -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">🧪 Development Status</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🧪 Development Status</h2>
           <MetricsTable metrics={metrics} />
         </section>
 
         <!-- Impact & Vision -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">🎉 Impact & Vision</h2>
-          <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🎉 Impact & Vision</h2>
+          <div class="prose prose-lg dark:prose-invert max-w-none">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
               Ferment App bridges the gap between paper logs and overcomplicated brewing software. It offers both structure and flexibility, helping fermentation enthusiasts make better, more consistent batches — while tracking their learnings over time.
             </p>
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
               <strong>The Vision:</strong> Make fermentation accessible, enjoyable, and scientific for everyone. Turn the humble process of home fermentation into a guided, satisfying experience that connects people with ancient traditions through modern technology.
             </p>
           </div>
@@ -274,43 +274,43 @@ const metrics = [
 
         <!-- The Story Behind It -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">📚 The Story Behind It</h2>
-          <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">📚 The Story Behind It</h2>
+          <div class="prose prose-lg dark:prose-invert max-w-none">
+            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
               This app began as a side project — a way to blend my personal passion for healthy living, gardening, and fermentation with a deeper dive into mobile development and modern iOS technologies.
             </p>
             
             <div class="space-y-6">
               <div>
-                <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Why Fermentation?</h3>
-                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+                <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Why Fermentation?</h3>
+                <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
                   Fermentation has always fascinated me: it's ancient, hands-on, and yet deeply scientific. I believe more people could benefit from its health rewards if the process felt more accessible and fun. The U.S. doesn't consume nearly as many fermented foods as other cultures, and I wanted to change that by lowering the barrier and even <strong>gamifying the experience</strong> — turning something as humble as a home-fermented cabbage into a satisfying, guided process.
                 </p>
               </div>
 
               <div>
-                <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Technical Growth</h3>
-                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+                <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Technical Growth</h3>
+                <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-4">
                   Building Ferment App gave me the chance to explore:
                 </p>
                 <ul class="space-y-2 ml-6">
-                  <li class="text-lg text-gray-700 dark:text-gray-300">
+                  <li class="text-lg text-foreground/85 dark:text-gray-300">
                     <strong>SwiftUI</strong> for modern iOS development
                   </li>
-                  <li class="text-lg text-gray-700 dark:text-gray-300">
+                  <li class="text-lg text-foreground/85 dark:text-gray-300">
                     <strong>Firebase</strong> for cloud integration
                   </li>
-                  <li class="text-lg text-gray-700 dark:text-gray-300">
+                  <li class="text-lg text-foreground/85 dark:text-gray-300">
                     <strong>Core Data & SwiftData</strong> for persistence
                   </li>
-                  <li class="text-lg text-gray-700 dark:text-gray-300">
+                  <li class="text-lg text-foreground/85 dark:text-gray-300">
                     <strong>IoT integration</strong> concepts with temperature sensors
                   </li>
-                  <li class="text-lg text-gray-700 dark:text-gray-300">
+                  <li class="text-lg text-foreground/85 dark:text-gray-300">
                     <strong>Swift Charts</strong> for data visualization
                   </li>
                 </ul>
-                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mt-4">
+                <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mt-4">
                   It's been more than just an app — it's a learning lab where I connect <strong>technology with tradition</strong>, and a space where I can grow both as a developer and a lifelong experimenter.
                 </p>
               </div>
@@ -319,8 +319,8 @@ const metrics = [
         </section>
 
         <!-- Quote -->
-        <blockquote class="border-l-4 border-accent pl-6 py-4 bg-gray-50 dark:bg-gray-800 rounded-r-lg my-12">
-          <p class="text-lg italic text-gray-700 dark:text-gray-300">
+  <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-12">
+          <p class="text-lg italic text-foreground/85 dark:text-gray-300">
             This project is still in development and actively evolving. If you're interested in collaborating, testing, or advising, feel free to reach out.
           </p>
         </blockquote>

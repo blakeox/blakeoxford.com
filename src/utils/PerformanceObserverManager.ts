@@ -51,7 +51,7 @@ export class PerformanceObserverManager {
       return '';
     }
 
-    const subscriptionId = `${system}_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+  const subscriptionId = `${system}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
     
     // Register subscription
     this.subscriptions.set(subscriptionId, {

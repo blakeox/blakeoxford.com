@@ -24,7 +24,7 @@ export class ModernNavBar {
     this.searchOverlay = document.getElementById('search-overlay');
     this.navbar = document.querySelector('nav');
     this.focusTrapListener = null;
-    
+
     console.log('🔧 Elements found:', {
       burgerButton: this.burgerButton,
       mobileMenu: this.mobileMenu,
@@ -33,7 +33,7 @@ export class ModernNavBar {
       searchToggle: this.searchToggle,
       searchOverlay: this.searchOverlay
     });
-    
+
     this.init();
     this.initializeTheme();
   }
@@ -41,28 +41,28 @@ export class ModernNavBar {
   init() {
     console.log('🔍 Setting up mobile menu...');
     this.setupMobileMenu();
-    
+
     console.log('🎨 Setting up theme toggle...');
     this.setupThemeToggle();
-    
+
     console.log('🔍 Setting up search overlay...');
     this.setupSearchOverlay();
-    
+
     // Initialize scroll effects if available
     if (window.scrollEffects && this.navbar) {
       window.scrollEffects.setupScrollBehavior(this.navbar);
     }
-    
+
     // Initialize analytics if available
     if (window.analytics) {
       this.setupAnalytics();
     }
-    
+
     // Initialize accessibility if available
     if (window.accessibilityModule) {
       this.setupAccessibility();
     }
-    
+
     console.log('✅ ModernNavBar initialized');
   }
 
@@ -72,9 +72,9 @@ export class ModernNavBar {
         'MOBILE_MENU_ELEMENTS_NOT_FOUND',
         'Required mobile menu elements not found in DOM',
         'medium' as any,
-        { 
+        {
           component: 'MobileMenu',
-          additionalData: { 
+          additionalData: {
             burgerButtonExists: !!this.burgerButton,
             mobileMenuExists: !!this.mobileMenu
           }
@@ -91,12 +91,12 @@ export class ModernNavBar {
       e.preventDefault();
       e.stopPropagation();
       console.log('🍔 Burger button clicked!');
-      
+
       // Close search overlay if open
       if (this.searchOverlay?.classList.contains('active')) {
         this.closeSearchOverlay();
       }
-      
+
       this.toggleMobileMenu();
     });
 
@@ -112,7 +112,7 @@ export class ModernNavBar {
 
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
-      if (!this.burgerButton?.contains(e.target as Node) && 
+      if (!this.burgerButton?.contains(e.target as Node) &&
           !this.mobileMenu?.querySelector('.mobile-menu-content')?.contains(e.target as Node) &&
           this.mobileMenu?.classList.contains('active')) {
         this.closeMobileMenu();
@@ -135,19 +135,19 @@ export class ModernNavBar {
         'TOGGLE_ELEMENTS_NOT_FOUND',
         'Required elements not found for mobile menu toggle',
         'medium' as any,
-        { 
+        {
           component: 'MobileMenuToggle',
           action: 'toggle'
         }
       );
       return;
     }
-    
+
     const isOpen = this.mobileMenu.classList.contains('active');
     console.log('📱 Menu is open:', isOpen);
     console.log('🍔 Burger button classes before:', this.burgerButton.className);
     console.log('📱 Mobile menu classes before:', this.mobileMenu.className);
-    
+
     if (isOpen) {
       this.closeMobileMenu();
     } else {
@@ -157,27 +157,28 @@ export class ModernNavBar {
 
   openMobileMenu() {
     if (!this.burgerButton || !this.mobileMenu) return;
-    
+
     console.log('Opening mobile menu...');
     console.log('📱 Mobile menu element:', this.mobileMenu);
     console.log('📱 Mobile menu computed right before:', window.getComputedStyle(this.mobileMenu).right);
-    
+
     // Reset visibility for opening
     this.mobileMenu.style.visibility = '';
-    
-    this.burgerButton.classList.add('active');
+
+  this.burgerButton.classList.add('active');
     this.burgerButton.setAttribute('aria-expanded', 'true');
-    this.mobileMenu.classList.add('active');
-    
+  try { (this.mobileMenu as any).inert = false; } catch { this.mobileMenu.removeAttribute('inert'); }
+  this.mobileMenu.classList.add('active');
+
     console.log('🍔 Burger button classes after:', this.burgerButton.className);
     console.log('📱 Mobile menu classes after:', this.mobileMenu.className);
     console.log('📱 Mobile menu computed right after:', window.getComputedStyle(this.mobileMenu).right);
-    
+
     // Prevent body scroll with proper handling for iOS
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
-    
+
     // Focus management with delay for animation
     setTimeout(() => {
       const firstFocusable = this.mobileMenu?.querySelector('.mobile-nav-link, .mobile-close-button') as HTMLElement;
@@ -185,42 +186,44 @@ export class ModernNavBar {
         firstFocusable.focus();
       }
     }, 150);
-    
+
     // Setup focus trapping
     this.setupFocusTrap();
-    
+
     this.announceToScreenReader('Mobile navigation menu opened');
   }
 
   closeMobileMenu() {
     if (!this.burgerButton || !this.mobileMenu) return;
-    
+
     console.log('Closing mobile menu...');
-    
+
     this.burgerButton.classList.remove('active');
     this.burgerButton.setAttribute('aria-expanded', 'false');
-    this.mobileMenu.classList.remove('active');
-    
+  this.mobileMenu.classList.remove('active');
+
     // Add explicit visibility handling for tests
-    setTimeout(() => {
+  setTimeout(() => {
       if (this.mobileMenu && !this.mobileMenu.classList.contains('active')) {
-        this.mobileMenu.style.visibility = 'hidden';
+  this.mobileMenu.style.visibility = 'hidden';
+  // Set inert when closed so it doesn't participate in focus/interaction
+  try { (this.mobileMenu as any).inert = true; } catch { this.mobileMenu.setAttribute('inert',''); }
       }
     }, 300); // Match CSS transition duration
-    
+
     // Restore body scroll with proper iOS handling
     document.body.style.overflow = '';
     document.body.style.position = '';
     document.body.style.width = '';
-    
+
     // Remove focus trap
     this.removeFocusTrap();
-    
+
     // Focus back to burger button
     setTimeout(() => {
       this.burgerButton?.focus();
     }, 50);
-    
+
     this.announceToScreenReader('Mobile navigation menu closed');
   }
 
@@ -228,16 +231,21 @@ export class ModernNavBar {
     // BaseLayout already handles theme initialization
     // We just need to update the toggle button icon
     this.updateThemeToggleIcon();
+    // Reflect state for assistive tech
+    if (this.themeToggle) {
+      const isDark = document.documentElement.classList.contains('dark');
+      this.themeToggle.setAttribute('aria-pressed', String(isDark));
+    }
   }
 
   updateThemeToggleIcon() {
     if (!this.themeToggle) return;
-    
+
     const isDark = document.documentElement.classList.contains('dark');
     const icon = this.themeToggle.querySelector('svg');
-    
+
     if (icon) {
-      icon.innerHTML = isDark 
+      icon.innerHTML = isDark
         ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />'
         : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
     }
@@ -256,7 +264,7 @@ export class ModernNavBar {
     const html = document.documentElement;
     const isDark = html.classList.contains('dark');
     const newTheme = isDark ? 'light' : 'dark';
-    
+
     if (newTheme === 'dark') {
       html.classList.add('dark');
       html.dataset.theme = 'dark';
@@ -264,12 +272,17 @@ export class ModernNavBar {
       html.classList.remove('dark');
       html.dataset.theme = 'light';
     }
-    
+
     localStorage.setItem('theme', newTheme);
-    
+
     // Update theme toggle button icon
     this.updateThemeToggleIcon();
-    
+
+    // Update aria-pressed for accessibility
+    if (this.themeToggle) {
+      this.themeToggle.setAttribute('aria-pressed', String(newTheme === 'dark'));
+    }
+
     this.announceToScreenReader(`Theme switched to ${newTheme} mode`);
   }
 
@@ -279,12 +292,12 @@ export class ModernNavBar {
     this.searchToggle.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      
+
       // Close mobile menu if open
       if (this.mobileMenu?.classList.contains('active')) {
         this.closeMobileMenu();
       }
-      
+
       this.openSearchOverlay();
     });
 
@@ -306,23 +319,32 @@ export class ModernNavBar {
 
   openSearchOverlay() {
     if (!this.searchOverlay) return;
-    
+
+    // Prefer the enhanced overlay controller if available
+    const enhanced = (window as any).enhancedSearchOverlay;
+    if (enhanced && typeof enhanced.open === 'function') {
+      enhanced.open();
+      return;
+    }
+
     // Track analytics
     this.trackSearchInteraction('opened');
-    
+
+    // Fallback: manually open overlay
+    (this.searchOverlay as any).inert = false;
     this.searchOverlay.classList.add('active');
     this.searchOverlay.style.visibility = 'visible';
     this.searchOverlay.style.opacity = '1';
-    
+
     // Focus search input
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
       setTimeout(() => (searchInput as HTMLInputElement).focus(), 100);
     }
-    
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
-    
+
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+
     this.announceToScreenReader('Search overlay opened');
   }
 
@@ -336,19 +358,27 @@ export class ModernNavBar {
 
   closeSearchOverlay() {
     if (!this.searchOverlay) return;
-    
-    this.searchOverlay.classList.remove('active');
-    this.searchOverlay.style.visibility = 'hidden';
-    this.searchOverlay.style.opacity = '0';
-    
-    // Restore body scroll
-    document.body.style.overflow = '';
-    
+
+    // Prefer the enhanced overlay controller if available
+    const enhanced = (window as any).enhancedSearchOverlay;
+    if (enhanced && typeof enhanced.closeSearchOverlay === 'function') {
+      enhanced.closeSearchOverlay();
+    } else {
+      // Fallback: manually close overlay
+      this.searchOverlay.classList.remove('active');
+      this.searchOverlay.style.visibility = 'hidden';
+      this.searchOverlay.style.opacity = '0';
+      (this.searchOverlay as any).inert = true;
+
+      // Restore body scroll
+      document.body.style.overflow = '';
+    }
+
     // Focus back to search toggle
     if (this.searchToggle) {
       this.searchToggle.focus();
     }
-    
+
     this.announceToScreenReader('Search overlay closed');
   }
 
@@ -362,9 +392,9 @@ export class ModernNavBar {
       liveRegion.setAttribute('aria-atomic', 'true');
       document.body.appendChild(liveRegion);
     }
-    
+
     liveRegion.textContent = message;
-    
+
     setTimeout(() => {
       liveRegion.textContent = '';
     }, 1000);
@@ -372,7 +402,7 @@ export class ModernNavBar {
 
   setupAnalytics() {
     if (!window.analytics) return;
-    
+
     // Track navigation events
     const navLinks = this.navbar?.querySelectorAll('a');
     navLinks?.forEach(link => {
@@ -391,13 +421,13 @@ export class ModernNavBar {
 
   setupAccessibility() {
     if (!window.accessibilityModule) return;
-    
+
     // Add landmark roles
     if (this.navbar) {
       this.navbar.setAttribute('role', 'navigation');
       this.navbar.setAttribute('aria-label', 'Main navigation');
     }
-    
+
     // Highlight active link
     const currentPath = window.location.pathname;
     const navLinks = this.navbar?.querySelectorAll('a');
@@ -450,4 +480,4 @@ export class ModernNavBar {
 export function initModernNavBar(): ModernNavBar {
   console.log('🚀 Initializing ModernNavBar...');
   return new ModernNavBar();
-} 
+}

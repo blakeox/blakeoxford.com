@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 
+// @debug
 test.describe('Form Accessibility Debug', () => {
   test('debug contact form fields', async ({ page }) => {
     await page.goto('/contact');

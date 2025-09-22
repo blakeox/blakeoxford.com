@@ -8,7 +8,7 @@ import astroPlugin from 'eslint-plugin-astro';
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
-  
+
   // JavaScript and Node.js files
   {
     files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
@@ -78,7 +78,37 @@ export default [
         clearInterval: 'readonly',
         performance: 'readonly',
         requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        requestIdleCallback: 'readonly',
+        cancelIdleCallback: 'readonly',
+        IntersectionObserver: 'readonly',
+        MutationObserver: 'readonly',
+        PerformanceObserver: 'readonly',
+        ResizeObserver: 'readonly',
+        CustomEvent: 'readonly',
+        Event: 'readonly',
+        FormData: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        Headers: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        XMLHttpRequest: 'readonly',
+        Notification: 'readonly',
+        getComputedStyle: 'readonly',
         console: 'readonly',
+        self: 'readonly',
+        caches: 'readonly',
+        addEventListener: 'readonly',
+        removeEventListener: 'readonly',
+        postMessage: 'readonly',
+        gtag: 'readonly',
+        plausible: 'readonly',
+        fathom: 'readonly',
+        clarity: 'readonly',
+        Fuse: 'readonly',
+        define: 'readonly',
+        confirm: 'readonly',
       },
     },
   },
@@ -221,9 +251,15 @@ export default [
   {
     ignores: [
       'dist/',
+      'dist 2/',
       'node_modules/',
       '.astro/',
-      'public/',
+      '.astro 2/',
+  // Don't ignore public JS so we can lint SW and utility scripts
+  // 'public/',
+      // Ignore vendor/minified JS under public, but keep service worker linted
+      'public/assets/**/*.js',
+      'public/**/*.min.js',
       'coverage/',
       'playwright-report/',
       'test-results/',

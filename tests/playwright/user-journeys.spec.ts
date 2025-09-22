@@ -1,4 +1,14 @@
 import { test, expect } from '@playwright/test';
+import {
+  waitForScrollSettled,
+  waitForDynamicListSettled,
+  waitForPostInteractionNetworkIdle,
+  waitForTheme,
+  waitForLayoutStability,
+} from '../utils/waits';
+// DEPRECATED: Replaced by focused journey specs.
+test.describe.skip('Deprecated user-journeys.spec.ts', () => {
+// ...existing code...
 
 test.describe('User Journey Tests', () => {
   test.describe('First-time Visitor Journey', () => {
@@ -82,8 +92,13 @@ test.describe('User Journey Tests', () => {
           if (await searchInput.count() > 0) {
             await searchInput.fill('project');
 
-            // Wait for search results
-            await page.waitForTimeout(500);
+            // Prefer deterministic result list stability over fixed timeout
+            try {
+              await waitForDynamicListSettled(page, '#search-results');
+            } catch {
+              // fallback: minimal idle wait if container absent
+              await waitForPostInteractionNetworkIdle(page, 200, 1500);
+            }
 
             // Close search overlay
             await page.keyboard.press('Escape');
@@ -114,8 +129,8 @@ test.describe('User Journey Tests', () => {
         await expect(page.locator('main, article')).toBeVisible();
 
         // Test reading experience
-        await page.mouse.wheel(0, 300);
-        await page.waitForTimeout(500);
+  await page.mouse.wheel(0, 300);
+  await waitForScrollSettled(page);
 
         // Back to blog index
         const backLink = page.locator('a[href*="/blog"]').first();
@@ -146,7 +161,7 @@ test.describe('User Journey Tests', () => {
 
           // Scroll through project content
           await page.mouse.wheel(0, 200);
-          await page.waitForTimeout(300);
+          await waitForScrollSettled(page);
 
           // Navigate back to projects
           await page.goBack();
@@ -172,12 +187,11 @@ test.describe('User Journey Tests', () => {
       await page.locator('#email').fill('test@example.com');
       await page.locator('#message').fill('This is a test message for the contact form.');
 
-      // Submit form
-      await submitButton.click();
+  // Submit form
+  await submitButton.click();
 
-      // Form should either submit successfully or show validation
-      // We can't test actual submission in E2E without a real backend
-      await page.waitForTimeout(1000);
+  // Wait for any network / UI post-submit settling (optimistic)
+  await waitForPostInteractionNetworkIdle(page, 400, 2500);
     });
 
     test('should handle theme toggle functionality', async ({ page }) => {
@@ -188,15 +202,18 @@ test.describe('User Journey Tests', () => {
 
       if (await themeToggle.isVisible()) {
         // Test theme switching
+        const initialTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
         await themeToggle.click();
-        await page.waitForTimeout(500);
+        const target1 = initialTheme === 'dark' ? 'light' : 'dark';
+        await waitForTheme(page, (target1 as 'light' | 'dark'));
 
-        // Check if theme changed (look for dark/light class changes)
-        await page.waitForTimeout(500);
-
-        // Toggle again
+        // Toggle again back to original (best effort)
         await themeToggle.click();
-        await page.waitForTimeout(500);
+        if (initialTheme === 'light' || initialTheme === 'dark') {
+          await waitForTheme(page, initialTheme as 'light' | 'dark');
+        } else {
+          await waitForPostInteractionNetworkIdle(page, 200, 1500);
+        }
 
         // Theme should toggle successfully
         await expect(themeToggle).toBeVisible();
@@ -227,8 +244,8 @@ test.describe('User Journey Tests', () => {
       }
 
       // Test mobile scrolling and interaction
-      await page.mouse.wheel(0, 200);
-      await page.waitForTimeout(300);
+  await page.mouse.wheel(0, 200);
+  await waitForScrollSettled(page);
 
       // Test touch interactions on mobile
       await page.goto('/projects');
@@ -269,8 +286,8 @@ test.describe('User Journey Tests', () => {
           }
         });
 
-        // Allow page to settle
-        await page.waitForTimeout(1000);
+  // Allow page to settle deterministically
+  await waitForLayoutStability(page, 2, 2000);
       }
     });
 
@@ -285,7 +302,7 @@ test.describe('User Journey Tests', () => {
         // Quick navigation test
         for (let i = 0; i < Math.min(3, linkCount); i++) {
           await navLinks.nth(i).click();
-          await page.waitForTimeout(200);
+          await waitForPostInteractionNetworkIdle(page, 150, 1500);
           await expect(page.locator('main, h1').first()).toBeVisible();
         }
       }
@@ -300,22 +317,30 @@ test.describe('User Journey Tests', () => {
       const focusableElements: string[] = [];
 
       // Tab through focusable elements
+      let lastActiveIdOrTag: string | null = null;
       for (let i = 0; i < 20; i++) {
         await page.keyboard.press('Tab');
+
+        // Wait for focus to change or settle
+        await page.waitForFunction(prev => {
+          const el = document.activeElement as HTMLElement | null;
+          if (!el) return false;
+          const idOrTag = el.id || el.tagName;
+          return idOrTag !== prev;
+        }, lastActiveIdOrTag, { timeout: 300 }).catch(() => {});
 
         const focused = page.locator(':focus');
         try {
           if (await focused.count() > 0) {
-            const tagName = await focused.evaluate(el => el.tagName);
+            const tagName = await focused.evaluate(el => (el as HTMLElement).tagName);
             const role = await focused.getAttribute('role');
+            const id = await focused.getAttribute('id');
+            lastActiveIdOrTag = id || tagName;
             focusableElements.push(`${tagName}${role ? `:${role}` : ''}`);
           }
         } catch {
-          // Navigation may have destroyed context
-          break;
+          break; // context lost
         }
-
-        await page.waitForTimeout(100);
       }
 
       // Should have found focusable elements
@@ -388,3 +413,4 @@ test.describe('User Journey Tests', () => {
     });
   });
 });
+}); // end deprecated wrapper

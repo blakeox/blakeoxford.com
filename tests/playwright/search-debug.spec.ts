@@ -1,9 +1,20 @@
 import { test } from '@playwright/test';
+import { waitForAsyncOperation, waitForSearchResults } from './utils/test-helpers';
 
+// Extend window typing for test-only globals
+declare global {
+  interface Window {
+    searchOverlay?: unknown;
+    TestSearchOverlay?: any;
+    testSearchInstance?: any;
+  }
+}
+
+// @debug
 test.describe('SearchOverlay Debug', () => {
   test('should debug SearchOverlay loading with manual script', async ({ page }) => {
-    // Inject our debug script
-    await page.addInitScript({ path: './public/search-debug-manual.js' });
+    // Inject our debug script (test-only asset)
+    await page.addInitScript({ path: './tests/assets/search-debug-manual.js' });
     
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -11,7 +22,7 @@ test.describe('SearchOverlay Debug', () => {
     console.log('🔍 Debugging SearchOverlay with manual script...');
     
     // Wait for the debug script to complete
-    await page.waitForTimeout(3000);
+    await waitForAsyncOperation(page);
     
     // Check the result
     const result = await page.evaluate(() => {
@@ -19,7 +30,7 @@ test.describe('SearchOverlay Debug', () => {
         originalSearchOverlay: typeof window.searchOverlay,
         testSearchOverlay: typeof window.TestSearchOverlay,
         testInstance: typeof window.testSearchInstance,
-        searchOverlayGlobal: typeof SearchOverlay,
+        searchOverlayGlobal: typeof (window as any).SearchOverlay,
         canOpenTest: typeof window.testSearchInstance?.open === 'function'
       };
     });
@@ -29,10 +40,10 @@ test.describe('SearchOverlay Debug', () => {
     // Try to open the test overlay
     if (result.canOpenTest) {
       await page.evaluate(() => {
-        window.testSearchInstance.open();
+        window.testSearchInstance!.open();
       });
       
-      await page.waitForTimeout(500);
+      await waitForSearchResults(page); // Wait for overlay to open
       
       const overlayTest = await page.evaluate(() => {
         const overlay = document.getElementById('search-overlay');
@@ -54,7 +65,7 @@ test.describe('SearchOverlay Debug', () => {
         });
         
         await page.keyboard.press('Control+k');
-        await page.waitForTimeout(500);
+        await waitForSearchResults(page); // Wait for keyboard-triggered overlay
         
         const keyboardTest = await page.evaluate(() => {
           const overlay = document.getElementById('search-overlay');

@@ -1,0 +1,82 @@
+name: Contrast Nightly
+
+on:
+  schedule:
+    - cron: '15 3 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  contrast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: Select extra contrast routes
+        id: rotate
+        run: |
+          EXTRA=$(node scripts/quality/contrast-route-rotator.js --projects 3 --blogs 2)
+          echo "extra_routes=$EXTRA" >> $GITHUB_OUTPUT
+          echo "Selected extra routes: $EXTRA"
+      - name: Run contrast history (resilient)
+        id: history
+        run: |
+          set +e
+          pnpm contrast:history | tee contrast_history.log
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+          set -e
+        env:
+          CONTRAST_ALERT_THRESHOLD: 3
+          CONTRAST_EXTRA_ROUTES: ${{ steps.rotate.outputs.extra_routes }}
+      - name: Generate badge
+        run: pnpm contrast:badge
+      - name: Generate markdown report
+        run: pnpm contrast:report -- --markdown --limit 14 > contrast-report.md || true
+      - name: Alert check
+        id: alert
+        run: pnpm contrast:check | tee contrast_alert.log
+      - name: Parse alert output & markdown snippet
+        id: parse
+        run: |
+          issue=$(grep '^CONTRAST_ISSUE::' contrast_alert.log || true)
+          snippet=$(grep -A20 '^\[contrast-alert-markdown\]' contrast_history.log || true)
+          if [ -n "$issue" ]; then
+            body=${issue#CONTRAST_ISSUE::}
+            if [ -n "$snippet" ]; then
+              body="$body\n\n## Recent Contrast Trend (last up to 3 days)\n$(echo "$snippet" | sed '1d')"
+            fi
+            echo "issue_body<<EOF" >> $GITHUB_OUTPUT
+            echo "$body" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+      - name: Write combined issue body
+        if: steps.parse.outputs.issue_body
+        run: |
+          echo "${{ steps.parse.outputs.issue_body }}" > contrast_issue_body.md
+      - name: Create issue if needed
+        if: steps.parse.outputs.issue_body
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+            title: 'Contrast borderline threshold exceeded'
+            content-filepath: contrast_issue_body.md
+            labels: a11y, contrast
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: contrast-assets
+          path: |
+            quality-snapshots/contrast-history.json
+            badges/contrast.svg
+            contrast-report.md
+            contrast_history.log
+            contrast_alert.log

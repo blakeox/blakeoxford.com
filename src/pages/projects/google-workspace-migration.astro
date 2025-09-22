@@ -48,7 +48,7 @@ const metrics = [
   url={canonicalUrl}
   wide={true}
 >
-  <ProjectHero 
+  <ProjectHero
     title={title}
     description={description}
     date={date}
@@ -56,18 +56,18 @@ const metrics = [
   />
 
   <!-- Full-Width Content Section -->
-  <article class="py-20 bg-white dark:bg-gray-900">
+  <article class="py-20 bg-background">
     <div class="w-full px-6 lg:px-12 xl:px-16">
       <div class="max-w-none mx-auto">
-        
+
         <!-- Project Overview -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">🏥 Project Overview</h2>
-          <div class="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">🏥 Project Overview</h2>
+          <div class="prose prose-lg dark:prose-invert max-w-none">
+            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90 mb-6">
               In late 2019, our mid-sized healthcare organization ran both Google Workspace and Microsoft platforms—creating support headaches and interoperability issues, especially in our EHR workflows that depended on Excel and Word. As we worked with our MSP, it became clear we needed a unified solution.
             </p>
-            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
               The project formally kicked off in January 2020, but in March COVID-19 forced an accelerated timeline. Our challenge: migrate email, identity, and collaboration tools while standing up modern device management to support remote and onsite essential staff without disrupting patient care.
             </p>
           </div>
@@ -75,10 +75,10 @@ const metrics = [
 
         <!-- Key Achievements -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">🎯 Key Achievements</h2>
-          
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">🎯 Key Achievements</h2>
+
           <div class="grid md:grid-cols-1 gap-8">
-            <AchievementCard 
+            <AchievementCard
               title="Platform Consolidation"
               achievements={[
                 '<strong>Seamlessly migrated 100+ mailboxes</strong> from Gmail to Exchange Online, preserving folder structures, shared drives, and user settings',
@@ -86,7 +86,7 @@ const metrics = [
               ]}
             />
 
-            <AchievementCard 
+            <AchievementCard
               title="Endpoint Management Deployment"
               achievements={[
                 '<strong>Pre-COVID device onboarding</strong> - All Windows and Mac devices into Microsoft Endpoint Manager/Intune for policy enforcement and remote provisioning',
@@ -94,7 +94,7 @@ const metrics = [
               ]}
             />
 
-            <AchievementCard 
+            <AchievementCard
               title="EHR Interoperability & Business Continuity"
               achievements={[
                 '<strong>EHR interoperability improvements</strong> - Ensured Excel and Word documents linked to our EHR functioned natively on devices, reducing errors and user frustration',
@@ -107,40 +107,40 @@ const metrics = [
 
         <!-- Journey & Growth -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">🚀 Journey & Growth</h2>
-          
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">🚀 Journey & Growth</h2>
+
           <div class="space-y-8">
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Strategic Onboarding Amid Turnover</h3>
-              <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Strategic Onboarding Amid Turnover</h3>
+              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
                 At the pandemic's outset, rapid staff departures became an opportunity. We prioritized hiring and trained new team members exclusively on Microsoft 365 workflows—creating a cohort fluent in Teams and SharePoint that naturally influenced remaining staff.
               </p>
             </div>
 
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Immersive Training Blitz</h3>
-              <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Immersive Training Blitz</h3>
+              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
                 With reduced day-to-day work, we held intensive virtual workshops, deep-diving into Teams, Intune, and SharePoint features. This hands-on training—conducted in the first few months of COVID—built internal expertise and confidence.
               </p>
             </div>
 
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Phased Migration Plan</h3>
-              <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Phased Migration Plan</h3>
+              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
                 Designed a four-phase approach—Discovery, Pilot, Bulk Migration, Optimization—balancing speed with minimal disruption.
               </p>
             </div>
 
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Proactive Communication</h3>
-              <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Proactive Communication</h3>
+              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
                 Implemented regular stakeholder updates, user training sessions, and a support ticket triage system to handle increased queries.
               </p>
             </div>
 
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Continuous Optimization</h3>
-              <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Continuous Optimization</h3>
+              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
                 Post-migration, I led monthly governance meetings to refine policies, drive adoption, and integrate new features (e.g., Conditional Access, MFA).
               </p>
             </div>
@@ -149,32 +149,32 @@ const metrics = [
 
         <!-- Impact & Results -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">📊 Impact & Results</h2>
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">📊 Impact & Results</h2>
           <MetricsTable metrics={metrics} />
         </section>
 
         <!-- Lessons & Takeaways -->
         <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">💡 Lessons & Takeaways</h2>
-          
+          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">💡 Lessons & Takeaways</h2>
+
           <div class="space-y-8">
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Plan for the Unexpected</h3>
-              <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Plan for the Unexpected</h3>
+              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
                 Early work on Endpoint Manager paid dividends when COVID-19 struck—showing the value of building flexible infrastructure ahead of crises.
               </p>
             </div>
 
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Stakeholder Alignment is Key</h3>
-              <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Stakeholder Alignment is Key</h3>
+              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
                 Broad workshops and clear communication channels mitigate resistance and boost adoption.
               </p>
             </div>
 
             <div>
-              <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Iterate & Optimize</h3>
-              <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Iterate & Optimize</h3>
+              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
                 A phased rollout with feedback loops ensures continual improvement and user satisfaction.
               </p>
             </div>
@@ -182,8 +182,8 @@ const metrics = [
         </section>
 
         <!-- Quote -->
-        <blockquote class="border-l-4 border-accent pl-6 py-4 bg-gray-50 dark:bg-gray-800 rounded-r-lg my-12">
-          <p class="text-lg italic text-gray-700 dark:text-gray-300">
+  <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-12">
+          <p class="text-lg italic text-foreground/80 dark:text-foreground-light/90">
             This migration not only streamlined our technology stack but also built a robust platform for secure collaboration and device management, laying the groundwork for future digital initiatives.
           </p>
         </blockquote>
@@ -193,4 +193,4 @@ const metrics = [
   </article>
 
   <ProjectTags tags={tags} />
-</Layout> 
+</Layout>

@@ -1,5 +1,4 @@
 // Enhanced Service Worker for PWA optimization
-const CACHE_NAME = 'blakeoxford-v2';
 const STATIC_CACHE_NAME = 'static-v2';
 const DYNAMIC_CACHE_NAME = 'dynamic-v2';
 const RUNTIME_CACHE_NAME = 'runtime-v2';
@@ -10,12 +9,12 @@ const STATIC_ASSETS = [
   '/about/',
   '/projects/',
   '/contact/',
-  '/blog/',
+  '/blog',
   '/assets/js/lazy-loader.min.js',
-  '/assets/js/performance-monitor.js',
-  '/assets/js/resource-preloader.js',
-  '/assets/js/pwa-enhancer.js',
-  '/assets/images/Blake-O-scaled.jpg',
+  '/assets/js/lazy-loader.min.js?v=2',
+  '/assets/js/core-boot.js',
+  // Use a more generic placeholder that exists in repo
+  '/assets/images/placeholder-avatar.webp',
   '/manifest.webmanifest'
 ];
 
@@ -33,12 +32,7 @@ const STATIC_CACHE_PATTERNS = [
   /\.(?:png|jpg|jpeg|svg|webp|avif|css|js|woff|woff2|pdf)$/
 ];
 
-// Cache duration for different content types
-const CACHE_DURATIONS = {
-  static: 30 * 24 * 60 * 60 * 1000, // 30 days
-  dynamic: 7 * 24 * 60 * 60 * 1000, // 7 days
-  runtime: 24 * 60 * 60 * 1000       // 1 day
-};
+// Note: durations were defined previously but not used by any strategy; removed to keep SW lean
 
 self.addEventListener('install', (event) => {
   console.log('🔧 Service Worker installing...');
@@ -84,6 +78,14 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests and cross-origin requests
   if (request.method !== 'GET' || url.origin !== self.location.origin) {
     return;
+  }
+
+  // Never cache or intercept the health/metrics endpoints
+  if (
+    url.pathname === '/_healthz' || url.pathname === '/_healthz/' ||
+    url.pathname === '/metrics' || url.pathname === '/metrics/'
+  ) {
+    return; // allow network to proceed, do not cache
   }
 
   // Handle static assets with cache-first strategy
@@ -177,7 +179,7 @@ self.addEventListener('push', (event) => {
       badge: '/assets/images/favicon-96x96.png',
       vibrate: [100, 50, 100]
     };
-    
+
     event.waitUntil(
       self.registration.showNotification('Blake Oxford Portfolio', options)
     );

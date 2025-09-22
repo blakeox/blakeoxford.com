@@ -227,9 +227,7 @@ async function collectPerformanceMetrics() {
   // Check optimization files exist
   const optimizationFiles = [
     'ml-resource-predictor.js',
-    'pwa-enhancer.js',
-    'performance-monitor.js',
-    'resource-preloader.js',
+  // Removed legacy standalone scripts: consolidated into core-boot.js
     'ab-testing-framework.js',
     'user-journey-optimizer.js',
     'graphql-optimizer.js'

@@ -14,13 +14,19 @@
   --color-secondary: #f59e42;
   --color-secondary-light: #fbbf24;
   --color-secondary-dark: #b45309;
-  --color-accent: #047857;
-  --color-accent-light: #065f46;
-  --color-accent-dark: #064e3b;
-  --color-foreground: #18181b;
+  /* Accent palette updated (2025-09-18) for WCAG AA contrast on both light (#f9fafb) and dark (#0f172a) backgrounds */
+  --color-accent: #0d9488;        /* teal-600 */
+  /* Stronger foreground variant for improved contrast on light backgrounds (WCAG ≥4.5) */
+  --color-foreground-strong: #111827; /* slate-900 */
+  --color-accent-light: #2dd4bf;  /* teal-400 (used as text on dark backgrounds) */
+  --color-accent-dark: #0f766e;   /* teal-700 (hover / stronger emphasis) */
+  /* Darken foreground slightly for stronger contrast on near-white backgrounds */
+  --color-foreground: #111827; /* slate-900 */
   --color-foreground-light: #f9fafb;
+  --color-on-dark: #f9fafb; /* text on dark surfaces */
   --color-background: #f9fafb;
-  --color-background-dark: #18181b;
+  /* Slightly lighter, low-glare dark background for improved readability */
+  --color-background-dark: #111827;
   --color-neutral: #64748b;
   --color-neutral-light: #cbd5e1;
   --color-neutral-dark: #334155;
@@ -251,7 +257,7 @@
 
   /* ---------- Button & Component States ---------- */
   --color-primary-hover: #1e40af;
-  --color-accent-hover: #059669;
+  --color-accent-hover: #0f766e; /* align hover with dark accent token */
   --color-error-bg: #fee2e2;
   --color-success-bg: #dcfce7;
   --color-warning-bg: #fef9c3;
@@ -282,7 +288,8 @@
   --color-link: var(--color-accent);
   --color-link-hover: var(--color-accent-dark);
   --color-heading: var(--color-foreground);
-  --color-body: var(--color-neutral-dark);
+  /* Body text semantic color now aligns with strong foreground for WCAG AA */
+  --color-body: var(--color-foreground-strong);
   --color-border-input: var(--border-color);
   --color-border-focus: var(--color-primary);
   --color-disabled: #a1a1aa;
@@ -291,7 +298,7 @@
   --color-active: #2563eb; /* Example: same as primary, adjust as needed */
   --color-selected: #fbbf24; /* Example: same as secondary-light, adjust as needed */
   --color-visited: #6d28d9; /* Example: purple-800, adjust as needed */
-  --color-pressed: #047857; /* Example: same as accent-dark, adjust as needed */
+  --color-pressed: #0f766e; /* aligned with accent-dark */
   --color-drag-over: #fde047; /* Example: same as warning-light, adjust as needed */
 
   /* ---------- Icon Sizes ---------- */
@@ -312,6 +319,21 @@
   --transition-fast: all 150ms var(--ease-standard);
   --transition: all 250ms var(--ease-standard);
   --transition-slow: all 400ms var(--ease-standard);
+}
+
+/* Dark theme overrides */
+/* Ensure overrides apply when the root element (html) has the .dark class */
+:root.dark {
+  /* In dark mode prefer light foreground; do not override strong token so specific components can still opt-in if needed */
+  --color-foreground-strong: var(--color-foreground-light);
+  /* Override key colors for proper dark mode */
+  --color-foreground: var(--color-foreground-light); /* #f9fafb */
+  --color-background: var(--color-background-dark); /* resolves to #111827 */
+  --color-surface: var(--color-surface-dark); /* #1f1f1f */
+  --color-surface-subtle: var(--color-surface-dark-subtle); /* #27272a */
+  --color-neutral: var(--color-neutral-light); /* #cbd5e1 */
+  --color-neutral-dark: var(--color-neutral); /* #64748b */
+  --color-border-input: var(--border-color-dark); /* #374151 */
 }
 
 /* Keyframes */
@@ -376,10 +398,22 @@
     background: var(--selection-bg-dark);
   }
 }
-/* ---------- Dark‑mode variable overrides driven by `.dark` class ---------- */
-.dark:root {
+/* ---------- Dark‑mode variable overrides driven by `.dark` class (redundant explicit values, kept for specificity) ---------- */
+:root.dark {
   /* Activate dark shadow chroma */
   --shadow-chroma-light: var(--shadow-chroma-dark);
+
+  /* Color overrides for dark mode */
+  --color-foreground: #f9fafb; /* Light text on dark backgrounds */
+  --color-foreground-strong: #f9fafb; /* Strong light text */
+  /* Use token so a single place controls dark background shade */
+  --color-background: var(--color-background-dark);
+  --color-surface: #1e293b; /* Dark surface for cards */
+  --color-surface-subtle: #334155; /* Dark subtle surface */
+  --color-neutral: #94a3b8; /* Light neutral text */
+  --color-neutral-light: #cbd5e1; /* Lighter neutral */
+  --color-neutral-dark: #64748b; /* Darker neutral */
+  --color-border-input: #475569; /* Dark border color */
 
   /* Surfaces & navigation */
   /* Navbar styles removed - now handled in NavBar.astro component */
@@ -390,6 +424,6 @@
 }
 
 /* Ensure text‑selection color also responds to `.dark` class */
-.dark ::selection {
+:root.dark ::selection {
   background: var(--selection-bg-dark);
 }

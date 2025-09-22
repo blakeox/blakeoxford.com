@@ -4,6 +4,42 @@ import { Page } from '@playwright/test';
 import { ensureImagesReady } from './image-helpers';
 
 /**
+ * Wait for form validation messages to appear after form submission
+ */
+export async function waitForFormValidation(page: Page, timeout = 5000): Promise<void> {
+  await page.waitForFunction(() => {
+    const errorElements = document.querySelectorAll('[role="alert"], .error, [aria-invalid="true"], .invalid-feedback');
+    return errorElements.length > 0 || document.querySelector('input[aria-invalid="true"], textarea[aria-invalid="true"]');
+  }, { timeout });
+}
+
+/**
+ * Wait for search results to appear
+ */
+export async function waitForSearchResults(page: Page, timeout = 4000): Promise<void> {
+  await page.waitForFunction(() => {
+    const results = document.querySelectorAll('[data-search-result], .search-result, .search-results li, .search-overlay [role="listbox"] [role="option"]');
+    const empty = document.querySelector('.search-no-results, [data-search-empty]');
+    const listbox = document.querySelector('.search-overlay [role="listbox"], .search-results');
+    return results.length > 0 || !!empty || !!listbox;
+  }, { timeout });
+}
+
+/**
+ * Wait for keyboard event handling (debounced inputs, etc.)
+ */
+export async function waitForKeyboardResponse(page: Page, timeout = 1000): Promise<void> {
+  await page.waitForTimeout(Math.min(timeout, 500)); // Use short timeout for immediate responses
+}
+
+/**
+ * Wait for async operations like setTimeout callbacks
+ */
+export async function waitForAsyncOperation(page: Page, timeout = 1500): Promise<void> {
+  await page.waitForTimeout(Math.min(timeout, 1000)); // Reasonable timeout for async ops
+}
+
+/**
  * Wait for images to load with error handling
  */
 export async function waitForImagesWithFallback(page: Page, timeout = 10000): Promise<void> {
@@ -155,7 +191,7 @@ export async function disableAnimationsComprehensive(page: Page): Promise<void> 
           // Set reduced motion preference
           if ('matchMedia' in window) {
             Object.defineProperty(window, 'matchMedia', {
-              value: (query) => {
+              value: (query: string) => {
                 if (query.includes('prefers-reduced-motion')) {
                   return { 
                     matches: true, 

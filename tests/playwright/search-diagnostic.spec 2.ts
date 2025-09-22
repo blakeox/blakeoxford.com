@@ -1,5 +1,6 @@
  
 import { test, expect } from '@playwright/test';
+import { waitForAsyncOperation, waitForSearchResults } from './utils/test-helpers';
 
 interface ConsoleMessage {
   type: string;
@@ -97,7 +98,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
     });
     
     // Wait a bit for any async loading
-    await page.waitForTimeout(2000);
+    await waitForAsyncOperation(page);
     
     // 6. Try to trigger search overlay via JavaScript
     const jsActivation = await page.evaluate(() => {
@@ -134,7 +135,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
     
     // 8. Try keyboard shortcut activation
     await page.keyboard.press('Control+k');
-    await page.waitForTimeout(500);
+    await waitForSearchResults(page); // Wait for keyboard-triggered overlay
     
     const visibilityAfterKeyboard = await page.evaluate(() => {
       const overlay = document.getElementById('search-overlay');

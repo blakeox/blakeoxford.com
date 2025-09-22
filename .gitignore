@@ -149,6 +149,9 @@ dist
 /dist
 .astro/
 
+# Stray macOS duplicate build folders (prevent committing)
+dist 2/
+
 # Ignore .DS_Store (macOS)
 .DS_Store
 
@@ -164,13 +167,17 @@ server.pid
 .tmp/
 temp/
 
-# Performance test outputs
+# Performance test outputs (keep generic perf artifacts ignored, but allow config budgets file)
 performance-*.json
+!tests/config/performance-budgets.json
 
 # CI/CD health and status reports (generated files)
 workflow-health-report.json
 deployment-summary.json
 performance-baseline.json
+tests/performance/baselines-history.json
+tests/contracts/baselines/diff-reports/
+mutation-report/
 
 # Wrangler outputs
 .wrangler/

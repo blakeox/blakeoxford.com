@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Server Health Check', () => {
   test('server should be accessible and return homepage', async ({ page }) => {
@@ -27,7 +28,7 @@ test.describe('Server Health Check', () => {
         }
         
         // Wait before retry
-        await page.waitForTimeout(2000);
+        await waitForAsyncOperation(page);
       }
     }
     
@@ -88,7 +89,7 @@ test.describe('Server Health Check', () => {
             });
           } else {
             // Wait before retry
-            await page.waitForTimeout(1000);
+            await waitForAsyncOperation(page);
           }
         }
       }

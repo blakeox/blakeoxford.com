@@ -15,10 +15,11 @@ export default /** @type {import('tailwindcss').Config} */ {
         'primary-light':    'var(--color-primary-light)',
         'primary-dark':     'var(--color-primary-dark)',
 
-        // 'accent' is a static hex for gradient utilities (e.g., from-accent). If you want dynamic gradients, use a CSS variable and add a custom utility in global.css.
-        accent:             '#047857',
-        'accent-light':     '#065f46',
-        'accent-dark':      '#064e3b',
+        // Accent palette now sourced from CSS variables (updated for WCAG contrast)
+        // Use semantic tokens defined in theme.css: --color-accent, --color-accent-light, --color-accent-dark
+        accent:              'var(--color-accent)',
+        'accent-light':      'var(--color-accent-light)',
+        'accent-dark':       'var(--color-accent-dark)',
 
         surface:            'var(--color-surface)',
         'surface-dark':     'var(--color-surface-dark)',
@@ -34,7 +35,7 @@ export default /** @type {import('tailwindcss').Config} */ {
         'neutral-dark':     'var(--color-neutral-dark)',
 
         // keep any ad-hoc colors you still need:
-        customBlue: '#1fb6ff',
+  // Removed customBlue (unused & failed dark contrast) to satisfy contrast audit.
         tertiary:           'var(--color-tertiary)',
         'tertiary-light':   'var(--color-tertiary-light)',
         'tertiary-dark':    'var(--color-tertiary-dark)',
@@ -186,10 +187,10 @@ export default /** @type {import('tailwindcss').Config} */ {
           css: {
             maxWidth: 'none',
             a: {
-              color: theme('colors.accent.DEFAULT', '#047857'),
+              color: theme('colors.accent', 'var(--color-accent)'),
               textDecoration: 'underline',
               '&:hover': {
-                color: theme('colors.accent.dark', '#064e3b'),
+                color: theme('colors.accent-dark', 'var(--color-accent-dark)'),
               },
             },
             h1: { fontSize: theme('fontSize.2xl'), fontWeight: theme('fontWeight.bold') },

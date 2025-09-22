@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForFormValidation } from '../utils/test-helpers';
 
 test.describe('Form Accessibility Tests', () => {
   test('contact form should be fully accessible', async ({ page }) => {
@@ -68,8 +69,8 @@ test.describe('Form Accessibility Tests', () => {
       // First, try to submit form without filling required fields to test validation
       await submitButton.click();
       
-      // Wait a moment for validation
-      await page.waitForTimeout(1000);
+      // Wait for validation messages to appear
+      await waitForFormValidation(page);
       
       // Check if error messages are accessible
       const errorMessages = page.locator('[role="alert"], .error, [aria-invalid="true"]');

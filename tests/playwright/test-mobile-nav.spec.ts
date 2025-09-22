@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForKeyboardResponse } from './utils/test-helpers';
 
 test.describe('Mobile Navigation Visual Test', () => {
   test('should capture mobile navigation state', async ({ page }) => {
@@ -268,7 +269,7 @@ test.describe('Mobile Navigation Visual Test', () => {
     
     // Open mobile menu
     await page.click('#nav-toggle');
-    await page.waitForTimeout(400); // Wait for animation
+    await waitForKeyboardResponse(page); // Wait for animation
     
     // Take screenshot of open menu
     await page.screenshot({ 
@@ -282,7 +283,7 @@ test.describe('Mobile Navigation Visual Test', () => {
     
     // Test close functionality
     await page.click('#close-mobile-menu');
-    await page.waitForTimeout(400);
+    await waitForKeyboardResponse(page); // Wait for animation
     
     // Take screenshot of closed state
     await page.screenshot({ 
@@ -450,7 +451,7 @@ test.describe('Mobile Navigation Visual Test', () => {
     
     // Open menu on small screen
     await page.click('#nav-toggle');
-    await page.waitForTimeout(400);
+    await waitForKeyboardResponse(page); // Wait for animation
     
     await page.screenshot({ 
       path: '/tmp/mobile-nav-320px-open.png',

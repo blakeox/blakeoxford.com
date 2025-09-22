@@ -4,26 +4,33 @@ import navLinks from '../../config/navLinks';
 ---
 
 <nav id="navbar" class="navbar-container" role="navigation" aria-label="Main navigation">
-  <div class="navbar-content">
+  <div class="navbar-content" style="max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between">
     <!-- Brand Section -->
-    <div class="brand-section">
-      <a href="/" class="brand-link" aria-label="Home">
+  <div class="brand-section" style="min-width:160px;flex-shrink:0">
+      <a href="/" class="brand-link">
         <div class="brand-avatar-container">
-          <img
-            src="/assets/images/Blake-O-scaled.jpg"
-            alt="Blake Oxford"
-            class="brand-avatar"
-            width={32}
-            height={32}
-            loading="eager"
-          />
+          <picture>
+            <source srcset="/assets/images/optimized/avif/Blake-O-scaled@320w.avif 320w, /assets/images/optimized/avif/Blake-O-scaled@640w.avif 640w, /assets/images/optimized/avif/Blake-O-scaled@768w.avif 768w" sizes="32px" type="image/avif" />
+            <source srcset="/assets/images/optimized/webp/Blake-O-scaled@320w.webp 320w, /assets/images/optimized/webp/Blake-O-scaled@640w.webp 640w, /assets/images/optimized/webp/Blake-O-scaled@768w.webp 768w" sizes="32px" type="image/webp" />
+            <img
+              src="/assets/images/Blake-O-scaled.jpg"
+              alt=""
+              aria-hidden="true"
+              class="brand-avatar"
+              width={32}
+              height={32}
+              loading="eager"
+              decoding="async"
+              fetchpriority="low"
+            />
+          </picture>
       </div>
         <span class="brand-text">Blake Oxford</span>
       </a>
     </div>
 
     <!-- Desktop Navigation -->
-    <div class="desktop-nav">
+  <div class="desktop-nav">
       <ul class="nav-links" role="menubar">
       {navLinks.map((link) => (
           <li class="nav-item" role="none">
@@ -31,7 +38,6 @@ import navLinks from '../../config/navLinks';
               href={link.href}
             class="nav-link"
             role="menuitem"
-            aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
           >
             {link.label}
           </a>
@@ -41,17 +47,18 @@ import navLinks from '../../config/navLinks';
     </div>
 
     <!-- Action Buttons -->
-    <div class="action-buttons">
+  <div class="action-buttons" style="display:flex;align-items:center;gap:8px;min-width:160px;height:48px;white-space:nowrap">
       <!-- Search Toggle -->
       <button
         id="search-toggle"
         type="button"
         class="action-button search-toggle"
+        style="width:48px;height:48px"
         aria-label="Open search"
         aria-expanded="false"
         aria-controls="search-overlay"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </button>
@@ -61,12 +68,13 @@ import navLinks from '../../config/navLinks';
         id="theme-toggle"
         type="button"
         class="action-button theme-toggle"
+        style="width:48px;height:48px"
         aria-label="Toggle dark mode"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sun-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sun-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 moon-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 moon-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
         </svg>
       </button>
@@ -76,6 +84,7 @@ import navLinks from '../../config/navLinks';
         id="nav-toggle"
         type="button"
         class="burger-menu-button"
+        style="width:48px;height:48px"
         aria-label="Toggle navigation menu"
         aria-expanded="false"
         aria-controls="nav-mobile-links"
@@ -92,7 +101,7 @@ import navLinks from '../../config/navLinks';
   </div>
 
   <!-- Mobile Menu -->
-  <div id="nav-mobile-links" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Mobile navigation menu">
+  <div id="nav-mobile-links" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Mobile navigation menu" inert>
     <div class="mobile-menu-backdrop"></div>
     <div class="mobile-menu-content">
       <div class="mobile-menu-header">
@@ -108,7 +117,7 @@ import navLinks from '../../config/navLinks';
           </svg>
         </button>
       </div>
-      
+
       <nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
         <ul class="mobile-nav-links" role="menubar">
         {navLinks.map((link) => (
@@ -117,7 +126,6 @@ import navLinks from '../../config/navLinks';
               href={link.href}
                 class="mobile-nav-link"
               role="menuitem"
-              aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
             >
               {link.label}
             </a>
@@ -129,7 +137,103 @@ import navLinks from '../../config/navLinks';
   </div>
 </nav>
 
-<style>
+<script>
+  import '../../scripts/entry/init-modern-navbar.ts';
+</script>
+
+<script is:inline>
+  (function() {
+    try {
+      // 1) Set aria-current on matching nav links
+      var path = window.location && window.location.pathname;
+      if (path) {
+        var links = document.querySelectorAll('.nav-link, .mobile-nav-link');
+        links.forEach(function(a) {
+          if (a.getAttribute('href') === path) {
+            a.setAttribute('aria-current', 'page');
+          } else {
+            a.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      // 2) Defensive fallback: ensure basic interactivity even if main module fails or is skipped
+      // Only attach if window.modernNavBar is not present shortly after DOM is ready
+      var attachFallback = function() {
+        try {
+          if (window.modernNavBar) return; // enhanced controller present, skip fallback
+
+          var burger = document.getElementById('nav-toggle');
+          var menu = document.getElementById('nav-mobile-links');
+          var closeBtn = document.getElementById('close-mobile-menu');
+          var searchToggle = document.getElementById('search-toggle');
+          var overlay = document.getElementById('search-overlay');
+
+          function openMenu(){
+            if (!menu) return;
+            menu.classList.add('active');
+            menu.style.visibility = '';
+            try { menu.inert = false; } catch { menu.removeAttribute('inert'); }
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+          }
+          function closeMenu(){
+            if (!menu) return;
+            menu.classList.remove('active');
+            setTimeout(function(){
+              if (!menu.classList.contains('active')) {
+                menu.style.visibility = 'hidden';
+                try { menu.inert = true; } catch { menu.setAttribute('inert',''); }
+              }
+            }, 300);
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+          }
+          function openOverlay(){
+            var enhanced = window && window.enhancedSearchOverlay;
+            if (enhanced && typeof enhanced.open === 'function') { enhanced.open(); return; }
+            if (!overlay) return;
+            overlay.classList.add('active');
+            overlay.style.visibility = 'visible';
+            overlay.style.opacity = '1';
+            try { overlay.inert = false; } catch { overlay.removeAttribute('inert'); }
+            var input = document.getElementById('search-input');
+            if (input) setTimeout(function(){ input.focus(); }, 50);
+            document.body.style.overflow = 'hidden';
+          }
+          function closeOverlay(){
+            var enhanced = window && window.enhancedSearchOverlay;
+            if (enhanced && typeof enhanced.closeSearchOverlay === 'function') { enhanced.closeSearchOverlay(); return; }
+            if (!overlay) return;
+            overlay.classList.remove('active');
+            overlay.style.visibility = 'hidden';
+            overlay.style.opacity = '0';
+            try { overlay.inert = true; } catch { overlay.setAttribute('inert',''); }
+            document.body.style.overflow = '';
+          }
+
+          if (burger && menu) {
+            burger.addEventListener('click', function(e){ e.preventDefault(); menu.classList.contains('active') ? closeMenu() : openMenu(); });
+          }
+          if (closeBtn) closeBtn.addEventListener('click', function(e){ e.preventDefault(); closeMenu(); });
+          document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { closeMenu(); closeOverlay(); } }, { passive: true });
+          if (searchToggle) searchToggle.addEventListener('click', function(e){ e.preventDefault(); openOverlay(); }, { passive: true });
+          if (overlay) overlay.addEventListener('click', function(e){ if (e.target === overlay) closeOverlay(); }, { passive: true });
+        } catch (_) { /* no-op */ }
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function(){ setTimeout(attachFallback, 0); });
+      } else {
+        setTimeout(attachFallback, 0);
+      }
+    } catch (_) { /* no-op */ }
+  })();
+  </script>
+
+<style is:inline>
   /* Modern Navbar Container - Hiro-inspired design */
   .navbar-container {
     position: fixed;
@@ -143,12 +247,12 @@ import navLinks from '../../config/navLinks';
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     transition: all 0.2s ease;
   }
-  
+
   .dark .navbar-container {
     background: rgba(0, 0, 0, 0.8);
     border-bottom-color: rgba(255, 255, 255, 0.06);
   }
-  
+
   /* Navbar Content */
   .navbar-content {
     max-width: 1200px;
@@ -159,12 +263,14 @@ import navLinks from '../../config/navLinks';
     align-items: center;
     justify-content: space-between;
   }
-  
+
   /* Brand Section */
   .brand-section {
-    flex-shrink: 0;
+  flex-shrink: 0;
+  /* Reserve space to avoid brand text reflow on font metric changes */
+  min-width: 160px;
   }
-  
+
   .brand-link {
     display: flex;
     align-items: center;
@@ -174,16 +280,19 @@ import navLinks from '../../config/navLinks';
     font-weight: 600;
     font-size: 16px;
     transition: opacity 0.2s ease;
+  font-synthesis-weight: none;
+  font-synthesis-style: none;
+  text-rendering: optimizeLegibility;
   }
-  
+
   .dark .brand-link {
     color: #fff;
   }
-  
+
   .brand-link:hover {
     opacity: 0.7;
   }
-  
+
   .brand-avatar-container {
     width: 32px;
     height: 32px;
@@ -191,28 +300,28 @@ import navLinks from '../../config/navLinks';
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.1);
   }
-  
+
   .dark .brand-avatar-container {
     border-color: rgba(255, 255, 255, 0.1);
   }
-  
+
   .brand-avatar {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  
+
   .brand-text {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol', sans-serif;
     letter-spacing: -0.01em;
   }
-  
+
   /* Desktop Navigation */
   .desktop-nav {
     display: flex;
     align-items: center;
   }
-  
+
   .nav-links {
     display: flex;
     align-items: center;
@@ -221,14 +330,18 @@ import navLinks from '../../config/navLinks';
     margin: 0;
     padding: 0;
   }
-  
+
   .nav-item {
     position: relative;
   }
-  
+
   .nav-link {
-    display: block;
-    padding: 8px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Ensure adequate tap target size per Lighthouse (48x48) */
+  min-height: 48px;
+  padding: 0 12px;
     color: #000;
     text-decoration: none;
     font-weight: 500;
@@ -236,44 +349,53 @@ import navLinks from '../../config/navLinks';
     transition: color 0.2s ease;
     white-space: nowrap;
   }
-  
+
   .dark .nav-link {
     color: #fff;
   }
-  
+
   .nav-link:hover {
     color: #666;
   }
-  
+
   .dark .nav-link:hover {
     color: #ccc;
   }
-  
+
   .nav-link[aria-current="page"] {
-    color: #000;
-    font-weight: 600;
+  color: #000;
+  /* Avoid font-weight changes that can cause layout shift; use underline instead */
+  text-decoration: underline;
+  text-underline-offset: 6px;
   }
-  
+
   .dark .nav-link[aria-current="page"] {
-    color: #fff;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 6px;
   }
-  
+
   /* Action Buttons */
   .action-buttons {
     display: flex;
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
+  /* Reserve stable width for 3 buttons at 48px each plus 2 gaps of 8px: 3*48 + 2*8 = 160px */
+  min-width: 160px;
+  height: 48px;
+  white-space: nowrap;
   }
-  
+
   .action-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+  /* Increase to 48px to meet mobile tap target guidance */
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
     border: none;
     border-radius: 8px;
     background: transparent;
@@ -284,40 +406,43 @@ import navLinks from '../../config/navLinks';
     /* Improve touch targets */
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+  /* Stabilize icon area to avoid reflow when icons change */
+  line-height: 0;
   }
-  
+
   .dark .action-button {
     color: #fff;
   }
-  
+
   .action-button:hover {
     background: rgba(0, 0, 0, 0.05);
   }
-  
+
   .dark .action-button:hover {
     background: rgba(255, 255, 255, 0.05);
   }
-  
+
   /* Theme Toggle */
   .theme-toggle .moon-icon {
     display: none;
   }
-  
+
   .dark .theme-toggle .sun-icon {
     display: none;
   }
-  
+
   .dark .theme-toggle .moon-icon {
     display: block;
   }
-  
+
   /* Burger Menu */
   .burger-menu-button {
     position: relative;
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+  /* Increase to 48px to meet mobile tap target guidance */
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
     border: none;
     background: transparent;
     cursor: pointer;
@@ -330,25 +455,25 @@ import navLinks from '../../config/navLinks';
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   .burger-menu-button:hover {
     background: rgba(0, 0, 0, 0.05);
     border-radius: 8px;
   }
-  
+
   .dark .burger-menu-button:hover {
     background: rgba(255, 255, 255, 0.05);
   }
-  
+
   .burger-container {
-    position: relative;
+  position: relative;
     width: 18px;
     height: 14px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
-  
+
   .burger-piece {
     width: 100%;
     height: 2px;
@@ -357,60 +482,63 @@ import navLinks from '../../config/navLinks';
     transition: all 0.3s ease;
     transform-origin: center;
   }
-  
+
   .dark .burger-piece {
-    background: #fff;
+  background: var(--color-surface);
   }
-  
+
   /* Burger Animation */
   .burger-menu-button.active .top-bun {
     transform: rotate(45deg) translate(2px, 2px);
   }
-  
+
   .burger-menu-button.active .middle {
     opacity: 0;
     transform: scaleX(0);
   }
-  
+
   .burger-menu-button.active .bottom-bun {
     transform: rotate(-45deg) translate(2px, -2px);
   }
-  
+
   /* Mobile Menu */
   .mobile-menu {
     position: fixed;
-    top: 0;
-    right: -100vw;
-    width: min(300px, 85vw);
+  top: 0;
+  right: 0;
+  width: min(300px, 85vw);
     height: 100vh;
-    visibility: hidden;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s;
+  /* Keep it out of view with transform so it doesn't affect layout/CLS */
+  transform: translateX(100%);
+  visibility: hidden;
+  will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s;
     z-index: 1010;
     overflow: hidden;
   }
-  
+
   .mobile-menu.active {
-    right: 0;
+  transform: translateX(0);
     visibility: visible;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
+
   .mobile-menu-backdrop {
     position: absolute;
     top: 0;
-    left: -100vw;
-    width: 100vw;
+  left: 0;
+  width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     opacity: 0;
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
   }
-  
+
   .dark .mobile-menu-backdrop {
     background: rgba(0, 0, 0, 0.7);
   }
-  
+
   .mobile-menu-content {
     position: relative;
     width: 100%;
@@ -421,18 +549,18 @@ import navLinks from '../../config/navLinks';
     border-left: 1px solid rgba(0, 0, 0, 0.06);
     overflow-y: auto;
   }
-  
+
   .dark .mobile-menu-content {
     background: rgba(0, 0, 0, 0.95);
     border-left-color: rgba(255, 255, 255, 0.06);
   }
-  
-  
+
+
   .mobile-menu.active .mobile-menu-backdrop {
     opacity: 1;
     pointer-events: auto;
   }
-  
+
   .mobile-menu-header {
     display: flex;
     align-items: center;
@@ -440,11 +568,11 @@ import navLinks from '../../config/navLinks';
     padding: 16px 24px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
-  
+
   .dark .mobile-menu-header {
     border-bottom-color: rgba(255, 255, 255, 0.06);
   }
-  
+
   .mobile-close-button {
     display: flex;
     align-items: center;
@@ -459,41 +587,41 @@ import navLinks from '../../config/navLinks';
     transition: all 0.2s ease;
     outline: none;
   }
-  
+
   .dark .mobile-close-button {
     color: #fff;
   }
-  
+
   .mobile-close-button:hover {
     background: rgba(0, 0, 0, 0.05);
   }
-  
+
   .dark .mobile-close-button:hover {
     background: rgba(255, 255, 255, 0.05);
   }
-  
+
   .mobile-nav {
     padding: 24px 0;
   }
-  
+
   .mobile-nav-links {
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  
+
   .mobile-nav-item {
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
-  
+
   .dark .mobile-nav-item {
     border-bottom-color: rgba(255, 255, 255, 0.06);
   }
-  
+
   .mobile-nav-item:last-child {
     border-bottom: none;
   }
-  
+
   .mobile-nav-link {
     display: block;
     padding: 16px 24px;
@@ -503,98 +631,98 @@ import navLinks from '../../config/navLinks';
     font-size: 16px;
     transition: all 0.2s ease;
   }
-  
+
   .dark .mobile-nav-link {
     color: #fff;
   }
-  
+
   .mobile-nav-link:hover {
     background: rgba(0, 0, 0, 0.05);
   }
-  
+
   .dark .mobile-nav-link:hover {
     background: rgba(255, 255, 255, 0.05);
   }
-  
+
   .mobile-nav-link[aria-current="page"] {
     background: rgba(0, 0, 0, 0.05);
     font-weight: 600;
   }
-  
+
   .dark .mobile-nav-link[aria-current="page"] {
     background: rgba(255, 255, 255, 0.05);
   }
-  
+
   /* Mobile-specific improvements */
   @media (max-width: 768px) {
     .desktop-nav {
       display: none;
     }
-    
+
     .navbar-content {
       padding: 0 16px;
     }
-    
+
     .brand-text {
       font-size: 14px;
     }
-    
+
     .brand-avatar-container {
       width: 28px;
       height: 28px;
     }
-    
+
     .mobile-menu {
       width: min(280px, 80vw);
     }
   }
-  
+
   @media (max-width: 480px) {
     .navbar-content {
       padding: 0 12px;
     }
-    
+
     .brand-text {
       font-size: 13px;
     }
-    
+
     .brand-avatar-container {
       width: 26px;
       height: 26px;
     }
-    
+
     .mobile-menu {
       width: min(260px, 85vw);
     }
-    
+
     .action-buttons {
       gap: 4px;
     }
-    
+
     .action-button {
       width: 32px;
       height: 32px;
     }
   }
-  
+
   @media (max-width: 320px) {
     .mobile-menu {
       width: 90vw;
     }
-    
+
     .navbar-content {
       padding: 0 8px;
     }
   }
-  
+
   @media (min-width: 769px) {
     .burger-menu-button {
       display: none !important;
     }
   }
-  
 
-  
+
+
   /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
     .navbar-container,
@@ -606,69 +734,14 @@ import navLinks from '../../config/navLinks';
       transition: none !important;
       animation: none !important;
     }
-    
+
     .burger-menu-button.active .top-bun,
     .burger-menu-button.active .bottom-bun {
       transform: rotate(45deg) !important;
     }
-    
+
     .burger-menu-button.active .middle {
       opacity: 0 !important;
     }
   }
 </style>
-
-<script>
-  import { initModernNavBar } from '../../scripts/features/ModernNavBar';
-  
-  console.log('🎯 NavBar script tag loaded!');
-  
-  // Initialize navbar when DOM is ready
-  console.log('🚀 NavBar script starting...');
-  
-  function initializeNavBar() {
-    console.log('📄 Initializing navbar...');
-    
-    try {
-      // Prevent conflicting NavBarMenu from interfering
-      if (typeof window !== 'undefined' && (window as any).navBarMenu) {
-        console.log('⚠️ Conflicting NavBarMenu detected, disabling it...');
-        (window as any).navBarMenu = null;
-      }
-      
-      // Create the navbar instance using the modular approach
-      console.log('🔧 Creating ModernNavBar instance...');
-      
-      let modernNavBar;
-      try {
-        modernNavBar = initModernNavBar();
-        console.log('✅ ModernNavBar instance created:', modernNavBar);
-      } catch (error) {
-        console.error('❌ Error creating ModernNavBar:', error);
-      }
-      
-      // Store it globally for debugging
-      if (typeof window !== 'undefined' && modernNavBar) {
-        (window as any).modernNavBar = modernNavBar;
-        console.log('🌐 Stored modernNavBar globally');
-      }
-      
-    } catch (error) {
-      console.error('❌ Error initializing navbar:', error);
-    }
-  }
-  
-  if (document.readyState === 'loading') {
-    console.log('📄 Document still loading, waiting for DOMContentLoaded...');
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('📄 DOMContentLoaded fired, initializing navbar...');
-      initializeNavBar();
-    });
-  } else {
-    console.log('📄 Document already loaded, initializing navbar immediately...');
-    // Wait a bit to ensure DOM is fully ready
-    setTimeout(() => {
-      initializeNavBar();
-    }, 100);
-  }
-</script> 

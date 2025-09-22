@@ -14,10 +14,23 @@ on:
       - "optimization-reports/**"
       - "coverage/**"
 
+# Explicit token permissions: default org policy is read-only; we need write to comment on PRs
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 # Cancel in-progress runs for the same workflow on the same branch
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  # Flakiness thresholds (adjust as project stabilizes)
+  FLAKINESS_MAX_CURRENT_FLAKY: 0
+  FLAKINESS_MAX_RETRY_INTENSITY: 0.05
+  # Set to 1 later if you want absence of history to fail early
+  FLAKINESS_STRICT: ''
 
 jobs:
   # Quick validation that code builds and basic tests pass
@@ -27,7 +40,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -52,7 +65,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -62,6 +75,9 @@ jobs:
 
       - name: Run ESLint
         run: pnpm run lint
+
+      - name: Design lint (tokens & spacing)
+        run: pnpm design:lint || true # non-blocking in fast CI
 
       - name: Run TypeScript type checking
         run: pnpm run typecheck
@@ -75,8 +91,49 @@ jobs:
       - name: Check for performance regressions
         run: ./scripts/build/performance-regression.sh
 
+      - name: Security headers static check
+        run: pnpm security:headers || exit 1
+
+      - name: Prohibit raw waitForTimeout usage
+        run: pnpm quality:timeouts
+
       - name: Run unit tests
         run: pnpm test -- --run
+
+      - name: Contrast token audit
+        run: pnpm audit:contrast # fails only if failing tokens are actually used in build
+
+      - name: Run mutation tests (non-blocking)
+        run: pnpm test:mutants
+        continue-on-error: true
+
+      - name: Log mutation history (main repo only)
+        if: github.repository_owner == 'blakeox'
+        run: pnpm mutation:history:log || true
+
+      - name: Generate quality summary
+        run: pnpm quality:summary || true # summary generation should never fail pipeline
+
+      - name: Generate quality badges (mutation/flakiness)
+        run: pnpm quality:badges || true
+
+      - name: Upload quality badges
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-badges
+          path: badges/
+          retention-days: 14
+
+      - name: Upload quality summary artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-summary
+          path: quality-summary.md
+          retention-days: 14
+
+
 
   # Essential E2E tests - just the critical user paths
   essential-e2e:
@@ -86,7 +143,7 @@ jobs:
     needs: quick-validation # Wait for basic validation to pass first
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -102,7 +159,7 @@ jobs:
           package_json_file: package.json
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -117,13 +174,73 @@ jobs:
           sudo npx playwright install-deps
           echo "✅ System dependencies installed"
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-
+
+      - name: Install Chromium browser for Playwright
+        run: pnpm exec playwright install chromium
+
+      - name: Configure Chromium-only fallback on Linux CI
+        run: |
+          echo "Configuring Chromium-only E2E run on Linux CI to avoid WebKit/Firefox deps..."
+          echo "BROWSER_INSTALL_FAILED=true" >> $GITHUB_ENV
+          echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> $GITHUB_ENV
+
       - name: Build the application
         run: pnpm run build
 
-      - name: Run essential Playwright tests
+      - name: Run runtime quality gate (search/a11y/long-tasks)
+        run: pnpm quality:runtime
+        env:
+          MIN_TOPN_PASS_RATE: "80"
+          A11Y_FAIL: "true"
+          SEARCH_TOP_N: "3"
+          A11Y_MAX_PER_ROUTE: "2"
+          DEADLINK_FAIL: "true"
+
+      - name: Upload runtime quality artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-quality-artifacts
+          path: |
+            search-relevance-results.json
+            accessibility-history.json
+            long-tasks-report.json
+            quality-snapshots/
+            dead-links-report.json
+          retention-days: 14
+
+      - name: Run essential Playwright tests (Chromium only)
         run: pnpm run test:e2e:essential:chromium
         env:
           COMPREHENSIVE_TESTS: "false"
+
+      - name: Track flakiness (Playwright JSON)
+        if: always()
+        run: pnpm flakiness:track || true
+
+      - name: Upload flakiness history
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flakiness-history
+          path: flakiness-history.json
+          retention-days: 14
+
+      - name: Enforce flakiness thresholds (optional)
+        if: always()
+        run: |
+          if [ -f flakiness-history.json ]; then
+            pnpm flakiness:check || exit 1
+          else
+            echo "No flakiness history present; skipping flakiness:check"
+          fi
 
       - name: Verify accessibility standards
         run: |
@@ -151,4 +268,284 @@ jobs:
           name: essential-playwright-report
           path: playwright-report/
           retention-days: 7
+
+      - name: Regenerate quality badges (post-runtime)
+        if: always()
+        run: pnpm quality:badges || true
+
+      - name: Upload quality badges (post-runtime)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-badges-post-runtime
+          path: badges/
+          retention-days: 14
+
+  # Cross-browser essential E2E (Firefox + WebKit) on macOS to keep Linux fast
+  essential-e2e-crossbrowser:
+    name: Essential E2E (Firefox/WebKit on macOS)
+    runs-on: macos-latest
+    timeout-minutes: 20
+    needs: quick-validation
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: package.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Playwright browsers (macOS)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-
+
+      - name: Install Firefox and WebKit browsers
+        run: pnpm exec playwright install firefox webkit
+
+      - name: Build the application
+        run: pnpm run build
+
+      - name: Run essential tests on Firefox/WebKit
+        run: pnpm exec playwright test --grep="@essential" --project=firefox --project=webkit
+        env:
+          COMPREHENSIVE_TESTS: "false"
+
+      - name: Track flakiness (Playwright JSON)
+        if: always()
+        run: pnpm flakiness:track || true
+
+      - name: Upload flakiness history (macOS)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flakiness-history-macos
+          path: flakiness-history.json
+          retention-days: 14
+
+      - name: Upload cross-browser report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: essential-playwright-report-macos
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Enforce flakiness thresholds (macOS optional)
+        if: always()
+        run: |
+          if [ -f flakiness-history.json ]; then
+            pnpm flakiness:check || true
+          else
+            echo "No flakiness history present; skipping flakiness:check"
+          fi
+
+  post-quality-comment:
+    name: Post PR Quality Summary
+    runs-on: ubuntu-latest
+    needs: [quick-validation, essential-e2e, essential-e2e-crossbrowser]
+    # Only attempt to comment for PRs from this repository (not forks)
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Download quality summary
+        uses: actions/download-artifact@v5
+        with:
+          name: quality-summary
+          path: ./artifacts
+      - name: Download runtime quality artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: runtime-quality-artifacts
+          path: ./artifacts
+      - name: Download Linux essential E2E report
+        uses: actions/download-artifact@v4
+        with:
+          name: essential-playwright-report
+          path: ./artifacts/linux
+        continue-on-error: true
+      - name: Download macOS essential E2E report
+        uses: actions/download-artifact@v4
+        with:
+          name: essential-playwright-report-macos
+          path: ./artifacts/macos
+        continue-on-error: true
+      - name: Post / Update PR Quality Summary Comment
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const prNumber = context.payload.pull_request.number;
+            const header = '<!-- quality-summary -->';
+
+            // Base body from quality-summary.md
+            let body = 'Quality summary not generated';
+            const summaryPath = path.join('artifacts','quality-summary.md');
+            if (fs.existsSync(summaryPath)) {
+              body = fs.readFileSync(summaryPath, 'utf-8');
+            }
+
+            // Mutation badge line
+            let badge = '';
+            const scoreMatch = body.match(/Mutation Score: (\d+(?:\.\d+)?)%/);
+            if (scoreMatch) {
+              const s = parseFloat(scoreMatch[1]);
+              let emoji = '🧬';
+              if (s >= 80) emoji = '💎'; else if (s >= 70) emoji = '✅'; else if (s >= 60) emoji = '⚠️'; else emoji = '❌';
+              badge = `${emoji} Mutation: ${s}%`;
+            }
+
+            // A11y totals
+            let a11yLine = '';
+            try {
+              const a11yPath = path.join('artifacts','accessibility-history.json');
+              if (fs.existsSync(a11yPath)){
+                const hist = JSON.parse(fs.readFileSync(a11yPath,'utf-8'));
+                const last = Array.isArray(hist) && hist.length ? hist[hist.length-1] : null;
+                if (last){
+                  const total = last.totals?.count ?? (Array.isArray(last.pages) ? last.pages.reduce((acc,p)=> acc + (p.violations>0?p.violations:0),0) : 0);
+                  a11yLine = `♿ A11y violations (latest): ${total}`;
+                }
+              }
+            } catch {}
+
+            // Search relevance gate
+            let searchLine = '';
+            try {
+              const srPath = path.join('artifacts','search-relevance-results.json');
+              if (fs.existsSync(srPath)){
+                const sr = JSON.parse(fs.readFileSync(srPath,'utf-8'));
+                const status = sr.gatePassed ? '✅' : '❌';
+                searchLine = `🔎 Search Top-${sr.topN} pass: ${sr.topNPassRate}% (gate ${sr.minTopNRequired || 0}% ${status})`;
+              }
+            } catch {}
+
+            // Dead links summary
+            let deadLinksLine = '';
+            try {
+              const dlPath = path.join('artifacts','dead-links-report.json');
+              if (fs.existsSync(dlPath)){
+                const dl = JSON.parse(fs.readFileSync(dlPath,'utf-8'));
+                const status = (dl.dead || 0) === 0 ? '✅' : '❌';
+                deadLinksLine = `🔗 Dead links: ${dl.dead}/${dl.total} ${status}`;
+              }
+            } catch {}
+
+            // Helper to count Playwright test results from JSON reporter
+            function summarizePlaywrightReport(jsonPath) {
+              if (!fs.existsSync(jsonPath)) return null;
+              const data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+              let total = 0, failed = 0, passed = 0, skipped = 0;
+              function walkSuite(suite) {
+                if (!suite) return;
+                if (suite.suites) suite.suites.forEach(walkSuite);
+                if (suite.tests) {
+                  for (const t of suite.tests) {
+                    total += 1;
+                    const last = (t.results || []).slice(-1)[0];
+                    const status = last?.status || t.outcome || t.status || 'unknown';
+                    if (status === 'passed') passed += 1;
+                    else if (status === 'skipped' || status === 'timedOut' && (last?.status === 'skipped')) skipped += 1;
+                    else failed += 1;
+                  }
+                }
+              }
+              if (Array.isArray(data.suites)) data.suites.forEach(walkSuite);
+              return { total, passed, failed, skipped };
+            }
+
+            // Summaries for Linux (Chromium) and macOS (FF/WebKit)
+            let e2eLinuxLine = '';
+            let e2eMacLine = '';
+            try {
+              const linuxJson = path.join('artifacts','linux','playwright-report','test-results.json');
+              const macJson = path.join('artifacts','macos','playwright-report','test-results.json');
+              const linux = summarizePlaywrightReport(linuxJson);
+              const mac = summarizePlaywrightReport(macJson);
+              if (linux) {
+                const ok = linux.failed === 0 ? '✅' : '❌';
+                e2eLinuxLine = `🧪 Essential E2E (Linux • Chromium): ${ok} ${linux.passed}/${linux.total} passed`;
+              }
+              if (mac) {
+                const ok = mac.failed === 0 ? '✅' : '❌';
+                e2eMacLine = `🍎 Essential E2E (macOS • FF/WebKit): ${ok} ${mac.passed}/${mac.total} passed`;
+              }
+            } catch {}
+
+            const lines = [badge, a11yLine, searchLine, deadLinksLine, e2eLinuxLine, e2eMacLine].filter(Boolean).join('\n');
+            const finalBody = `${header}\n${lines ? lines + '\n\n' : ''}${body}`;
+
+            try {
+              const comments = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber
+              });
+              const existing = comments.data.find(c => c.body && c.body.includes(header));
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body: finalBody
+                });
+                core.info('Updated existing quality summary comment.');
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body: finalBody
+                });
+                core.info('Created new quality summary comment.');
+              }
+            } catch (err) {
+              // Do not fail the job if we lack permissions (e.g., GITHUB_TOKEN read-only)
+              core.warning(`Skipping PR comment due to error: ${err?.message || err}`);
+              core.info('Writing quality summary to step summary instead.');
+              core.summary.addRaw(finalBody).write();
+            }
+
+  # Single required status check that aggregates fast CI jobs
+  required-status-checks:
+    name: Required Checks Gate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: [quick-validation, essential-e2e, essential-e2e-crossbrowser]
+    steps:
+      - name: All required checks passed
+        run: |
+          echo "✅ quick-validation"
+          echo "✅ essential-e2e (Chromium)"
+          echo "✅ essential-e2e-crossbrowser (Firefox/WebKit on macOS)"
+          echo "All required checks are green."
+
+
 

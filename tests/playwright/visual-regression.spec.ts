@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { disableAnimationsComprehensive, waitForStability } from './utils/test-helpers';
+import { waitForIdle, waitForTheme, waitForMenuState, waitForLayoutStability } from '../utils/waits';
 
 test.describe('Visual Regression Testing', () => {
   // Configure for consistent screenshots
@@ -137,8 +138,7 @@ test.describe('Visual Regression Testing', () => {
 
     test('search overlay should match design', async ({ page }) => {
       await page.goto('/');
-      await page.waitForLoadState('networkidle');
-      await page.waitForTimeout(1000); // Wait for search to initialize
+      await waitForIdle(page);
       
       // Open search overlay
       await page.keyboard.press('Control+k');
@@ -162,7 +162,7 @@ test.describe('Visual Regression Testing', () => {
       const themeToggle = page.locator('[data-testid="theme-toggle"], button[aria-label*="theme"]');
       if (await themeToggle.isVisible()) {
         await themeToggle.click();
-        await page.waitForTimeout(500);
+        await waitForTheme(page, 'dark', 1500);
         
         // Dark theme screenshot
         await expect(page.locator('header, nav').first()).toHaveScreenshot('theme-dark.png');
@@ -189,7 +189,7 @@ test.describe('Visual Regression Testing', () => {
       await expect(form).toHaveScreenshot('form-focused.png');
     });
 
-    test('mobile menu states should be consistent', async ({ page }) => {
+  test('mobile menu states should be consistent', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto('/');
       
@@ -201,7 +201,7 @@ test.describe('Visual Regression Testing', () => {
       const hamburgerButton = page.locator('button[aria-label*="menu"], .hamburger, [data-mobile-menu-toggle]');
       if (await hamburgerButton.isVisible()) {
         await hamburgerButton.click();
-        await page.waitForTimeout(300);
+        await waitForMenuState(page, 'nav, .mobile-menu', true, 1500);
         
         // Open mobile menu state
         await expect(mobileMenu).toHaveScreenshot('mobile-menu-open.png');
@@ -224,7 +224,7 @@ test.describe('Visual Regression Testing', () => {
         // Wait for content and fonts to stabilize
         await page.waitForLoadState('domcontentloaded');
         await page.waitForFunction(() => document.fonts.ready);
-        await page.waitForTimeout(500); // Brief wait for layout stabilization
+  await waitForLayoutStability(page, 2, 1200); // replacing arbitrary stabilization
         
         // Screenshot main content area for each breakpoint
         await expect(page.locator('main').first()).toHaveScreenshot(`homepage-${breakpoint.name}.png`, {
@@ -256,8 +256,8 @@ test.describe('Visual Regression Testing', () => {
     test('404 page should match design', async ({ page }) => {
       await page.goto('/non-existent-page', { waitUntil: 'domcontentloaded' });
       
-      // Wait for 404 content to load
-      await page.waitForTimeout(1000);
+  // Wait for 404 content to load deterministically by ensuring main present
+  await expect(page.locator('main').first()).toBeVisible();
       
       await expect(page.locator('main').first()).toHaveScreenshot('404-page.png', {
         threshold: 0.2,
@@ -265,9 +265,8 @@ test.describe('Visual Regression Testing', () => {
     });
 
     test('empty search results should be consistent', async ({ page }) => {
-      await page.goto('/');
-      await page.waitForLoadState('networkidle');
-      await page.waitForTimeout(1000);
+  await page.goto('/');
+  await waitForIdle(page);
       
       // Open search and enter query that won't match anything
       await page.keyboard.press('Control+k');
@@ -275,8 +274,8 @@ test.describe('Visual Regression Testing', () => {
       
       if (await searchOverlay.isVisible()) {
         const searchInput = page.locator('#search-input');
-        await searchInput.fill('xyznonexistentquery123');
-        await page.waitForTimeout(500);
+  await searchInput.fill('xyznonexistentquery123');
+  await waitForLayoutStability(page, 2, 1500);
         
         const searchResults = page.locator('#search-results');
         if (await searchResults.isVisible()) {
