@@ -4,7 +4,13 @@ Thank you for investing time in improving this project. This guide covers workfl
 
 ## Branch & Commit Hygiene
 
-- Use feature branches; prefix with area if helpful (e.g. `feat/search-index`, `quality/flakiness-metrics`).
+- Branching model (long-lived):
+  - `development` → integration from feature/sprint branches
+  - `testing` → pre-release verification and cross-browser checks
+  - `main` → production
+  - Hotfixes: `hotfix/*` → PR to `main`, then back-merge to `development` and `testing`
+
+- Use feature branches; prefix with area if helpful (e.g. `feat/search-index`, `quality/flakiness-metrics`). Create from `development` unless it is a hotfix.
 - Conventional commits: `feat:`, `fix:`, `docs:`, `test:`, `ci:`, `refactor:`, `chore:`.
 - Keep commits atomic; separate logic, tests, and large refactors where possible.
 
@@ -107,6 +113,11 @@ Before requesting review:
 - [ ] Flakiness gating passes locally if modified test flows.
 - [ ] No new large dependencies without discussion.
 - [ ] README or relevant docs updated if behavior or architecture changed.
+- [ ] Source/target branches follow the required flow:
+	- feature/* or sprint/* → development
+	- development → testing
+	- testing → main
+	- hotfix/* → main (then back-merge to development/testing)
 
 ## Issue Labels (Suggested)
 

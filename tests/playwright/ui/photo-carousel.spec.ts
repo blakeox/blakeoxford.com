@@ -53,7 +53,17 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     const mqlReduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
     if (!mqlReduced) {
       const t0 = await getTransform(page, 'ul.animate-carousel-x-slow');
-      await page.waitForTimeout(500);
+      // Wait until transform changes instead of a raw timeout
+      await page.waitForFunction(
+        ({ selector, initial }) => {
+          const el = document.querySelector(selector) as HTMLElement | null;
+          if (!el) return false;
+          const style = getComputedStyle(el);
+          return style.transform !== initial;
+        },
+        { selector: 'ul.animate-carousel-x-slow', initial: t0 },
+        { timeout: 3000 }
+      );
       const t1 = await getTransform(page, 'ul.animate-carousel-x-slow');
       expect(t0).not.toEqual(t1);
     }
@@ -85,7 +95,24 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     if (!reduced) {
       const upT0 = await getTransform(page, 'ul.animate-carousel-up-slow');
       const downT0 = await getTransform(page, 'ul.animate-carousel-down-slow');
-      await page.waitForTimeout(800);
+      // Wait until either column's transform changes instead of a raw timeout
+      await page.waitForFunction(
+        ({ upSel, dnSel, upInitial, dnInitial }) => {
+          const up = document.querySelector(upSel) as HTMLElement | null;
+          const dn = document.querySelector(dnSel) as HTMLElement | null;
+          if (!up || !dn) return false;
+          const upT = getComputedStyle(up).transform;
+          const dnT = getComputedStyle(dn).transform;
+          return upT !== upInitial || dnT !== dnInitial;
+        },
+        {
+          upSel: 'ul.animate-carousel-up-slow',
+          dnSel: 'ul.animate-carousel-down-slow',
+          upInitial: upT0,
+          dnInitial: downT0,
+        },
+        { timeout: 4000 }
+      );
       const upT1 = await getTransform(page, 'ul.animate-carousel-up-slow');
       const downT1 = await getTransform(page, 'ul.animate-carousel-down-slow');
       expect(upT0).not.toEqual(upT1);

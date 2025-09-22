@@ -15,14 +15,18 @@ const SKIP_PROTOCOLS = ['mailto:', 'tel:', 'data:'];
  */
 export function extractLinks(html, { includeExternal = false } = {}) {
   const links = new Map();
+  // Strip HTML comments to avoid catching commented-out attrs (e.g., //www.googletagmanager.com)
+  const withoutComments = html.replace(/<!--([\s\S]*?)-->/g, '');
   const attrRe = /(href|src)=["']([^"']+)["']/gi;
   let m;
-  while ((m = attrRe.exec(html))) {
+  while ((m = attrRe.exec(withoutComments))) {
     const url = m[2];
     if (!url) continue;
     if (url.startsWith('#')) continue;
     if (SKIP_PROTOCOLS.some(p => url.startsWith(p))) continue;
-    const isHttp = url.startsWith('http://') || url.startsWith('https://');
+    // Protocol-relative URLs '//' should be considered external
+    const isProtocolRelative = url.startsWith('//');
+    const isHttp = url.startsWith('http://') || url.startsWith('https://') || isProtocolRelative;
     if (isHttp && !includeExternal) continue;
     if (isHttp || url.startsWith('/') || !url.includes('://')) {
       // treat bare relative paths (no protocol, no leading slash) as internal candidates
