@@ -110,7 +110,7 @@ const timelineItems: TimelineItem[] = [
             <a href="#about-me" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">About Me</a>
             <a href="#achievements" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Achievements</a>
             <a href="#education-skills" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Education & Skills</a>
-            <a href="#about-timeline" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Career Highlights</a>
+            <a href="#about-timeline" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Professional Journey</a>
             <!-- Testimonials nav link temporarily removed -->
             <a href="#about-social" class="nav-link px-3 py-2 rounded-md hover:text-accent hover:bg-accent/10 transition-all">Connect</a>
           </div>
@@ -276,7 +276,7 @@ const timelineItems: TimelineItem[] = [
                 </p>
               </div>
               <!-- Two column layout -->
-              <div class="grid grid-cols-1 gap-0 lg:gap-0">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
                 <!-- Education Column -->
                 <div>
                   <h2 class="text-2xl font-bold border-l-4 border-accent pl-4 mb-6">Education</h2>
@@ -297,6 +297,24 @@ const timelineItems: TimelineItem[] = [
                         </p>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <!-- Skills Column -->
+                <div>
+                  <h2 class="text-2xl font-bold border-l-4 border-accent pl-4 mb-6">Skills</h2>
+                  <div class="bg-surface dark:bg-surface p-6 rounded-xl shadow-lg border border-border dark:border-gray-700">
+                    <p class="text-foreground/85 mb-4">A blend of systems thinking, finance, and hands-on engineering. I focus on shipping reliable, human-centered automation that delivers measurable outcomes.</p>
+                    <ul class="flex flex-wrap gap-3" role="list">
+                      <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Systems Architecture</li>
+                      <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Process Automation</li>
+                      <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Cloud: Azure / M365</li>
+                      <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Data Analytics (Power BI)</li>
+                      <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">APIs & Integrations</li>
+                      <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">AI-Assisted Workflows</li>
+                      <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Financial Operations</li>
+                      <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Security & Compliance</li>
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -473,6 +491,47 @@ const timelineItems: TimelineItem[] = [
                   background: rgba(16, 185, 129, 0.7);
                 }
               </style>
+            </div>
+          </section>
+
+          <!-- Connect / Social Links -->
+          <section id="about-social" class="py-16 bg-gradient-to-b from-surface to-background dark:from-surface-dark dark:to-background-dark">
+            <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+              <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-h2 font-bold mb-4">Let’s Connect</h2>
+                <p class="text-neutral mb-8">Open to collaborating on systems architecture, data platforms, and automation initiatives.</p>
+                <ul class="flex flex-wrap items-center justify-center gap-4" role="list">
+                  {socialLinks.map((link) => (
+                    <li>
+                      <a
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border dark:border-border-dark hover:bg-accent/10 hover:border-accent transition-colors"
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Open ${link.name} profile in a new tab`}
+                      >
+                        {link.icon === 'linkedin' && (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" class="text-foreground/80">
+                            <path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.83v1.98h.05c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1V23h-4v-6.5c0-1.55-.03-3.54-2.16-3.54-2.16 0-2.49 1.68-2.49 3.43V23h-4V8.5z" />
+                          </svg>
+                        )}
+                        {link.icon === 'github' && (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" class="text-foreground/80">
+                            <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1.01.07 1.54 1.06 1.54 1.06.89 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.15-4.56-5.12 0-1.13.39-2.06 1.03-2.79-.1-.26-.45-1.31.1-2.73 0 0 .85-.28 2.79 1.06A9.41 9.41 0 0 1 12 7.06c.86 0 1.73.12 2.54.34 1.94-1.34 2.78-1.06 2.78-1.06.56 1.42.21 2.47.1 2.73.64.73 1.03 1.66 1.03 2.79 0 3.98-2.34 4.86-4.57 5.12.36.33.69.97.69 1.96 0 1.41-.01 2.55-.01 2.9 0 .27.18.6.69.49A10.06 10.06 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z" clip-rule="evenodd" />
+                          </svg>
+                        )}
+                        {link.icon === 'microsoft-learn' && (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" class="text-foreground/80">
+                            <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4zm-1 6H7v2h4V8zm2 0h4v2h-4V8z" />
+                          </svg>
+                        )}
+                        <span class="font-medium">{link.name}</span>
+                        <span class="sr-only">(opens in a new tab)</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </section>
 
