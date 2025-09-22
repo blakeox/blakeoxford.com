@@ -1,12 +1,22 @@
 # Quality Summary
 
-Generated: 2025-09-11T13:30:02.979Z
+Generated: 2025-09-22T15:53:07.025Z
 
 ### Performance Baselines
-- /: load=1100ms trend=0.00% ➖ 
-- /about: load=1050ms trend=0.00% ➖ 
-- /projects: load=1200ms trend=0.00% ➖ 
-- /blog: load=1250ms trend=0.00% ➖ 
+- /: load=1400ms trend=0.00% ➖ 
+- /about: load=1380ms trend=0.00% ➖ 
+- /projects: load=1500ms trend=0.00% ➖ 
+- /blog: load=1520ms trend=0.00% ➖ 
+- /__firefox: load=66ms trend=0.00% ➖ 
+- /about__firefox: load=879.9375ms trend=0.00% ➖ 
+- /__webkit: load=61ms trend=0.00% ➖ 
+- /about__webkit: load=117.8ms trend=0.00% ➖ 
+- /projects__firefox: load=374.29999999999995ms trend=0.00% ➖ 
+- /blog__firefox: load=361ms trend=0.00% ➖ 
+- /__chromium: load=1330ms trend=0.00% ➖ 
+- /about__chromium: load=1183.1775ms trend=0.00% ➖ 
+- /projects__chromium: load=1425ms trend=0.00% ➖ 
+- /blog__chromium: load=1444ms trend=0.00% ➖ 
 
 ### API Diff Reports
 
@@ -25,13 +35,9 @@ _No API baseline changes detected._
 
 ### Accessibility Trend
 
-- Recent totals: -3, -3, -3, 4, 4, 4
-- Trend slope: 1.80 (regressing) ▁▁▁███
+- Recent totals: -3, -3, -3, 4, 4, 4, 18, 18
+- Trend slope: 3.25 (regressing) ▁▁▁▃▃▃██
 
 ### Long Task Probe
 
 - Routes: / max:0.0 over50:0 | /about max:0.0 over50:0 | /projects max:0.0 over50:0
-
-### Visual Stability Notes
-
-- 2025-09-19: Stabilized Firefox full-page visuals on /blog and /about by waiting for `document.fonts.ready`, waiting for `load` on content routes, and increasing the screenshot expectation timeout. Kept existing baselines; updated /about Firefox snapshot once after verified stability.

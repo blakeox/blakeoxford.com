@@ -49,15 +49,15 @@
       "requests": 10
     },
     "/projects__firefox": {
-      "domContentLoaded": 363.84999999999997,
-      "fcp": 346.75,
-      "load": 374.29999999999995,
+      "domContentLoaded": 345.65749999999997,
+      "fcp": 329.41249999999997,
+      "load": 355.5849999999999,
       "requests": 7
     },
     "/blog__firefox": {
-      "domContentLoaded": 349.59999999999997,
-      "fcp": 156.75,
-      "load": 361,
+      "domContentLoaded": 332.11999999999995,
+      "fcp": 148.9125,
+      "load": 342.95,
       "requests": 7
     },
     "/__chromium": {
