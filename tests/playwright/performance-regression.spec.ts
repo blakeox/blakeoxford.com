@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import { capturePerformance, compareWithBaseline, maybePersistUpdatedBaselines } from '../performance/perfBaselineHelper';
+import { waitForLayoutStability } from './utils/deterministic-waits';
 
 const routes = ['/', '/about', '/projects', '/blog'];
 
@@ -16,9 +17,9 @@ for (const route of routes) {
     // Take two stabilized measurements and use the best (lowest) values to reduce variance
     await page.reload({ waitUntil: 'load' });
     const m1 = await capturePerformance(page);
-    // Short settle then second run
+    // Short deterministic settle (layout stability) then second run
+    await waitForLayoutStability(page, { interval: 50, samples: 3 });
     try {
-      await page.waitForTimeout(100);
       await page.waitForLoadState('networkidle', { timeout: 1000 });
     } catch {
       // best-effort settle; safe to continue
