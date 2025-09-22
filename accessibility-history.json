@@ -201,5 +201,401 @@
         "minor": 1
       }
     }
+  },
+  {
+    "timestamp": "2025-09-22T15:41:35.315Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": 1
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/blog",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 1
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/contact",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/google-workspace-migration",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/ferment-app",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/bank-projections-modeling",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/advancedmd-implementation",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/adp-workforcenow",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/Microsoft-Fabric",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/LLM-note-coaching",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/components/project-card-preview",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/components/nav-preview",
+        "violations": 0,
+        "rules": []
+      },
+      {
+        "route": "/blog/hello-world",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/blog/combating-legal-ai-hallucinations",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "count": 18,
+      "byImpact": {
+        "serious": 2,
+        "moderate": 15,
+        "minor": 1
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-22T15:52:48.350Z",
+    "pages": [
+      {
+        "route": "/",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": 1
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/about",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/blog",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "aria-allowed-role",
+            "impact": "minor",
+            "nodes": 1
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/contact",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/google-workspace-migration",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/ferment-app",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/bank-projections-modeling",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/advancedmd-implementation",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/adp-workforcenow",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/Microsoft-Fabric",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/projects/LLM-note-coaching",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/components/project-card-preview",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/components/nav-preview",
+        "violations": 0,
+        "rules": []
+      },
+      {
+        "route": "/blog/hello-world",
+        "violations": 1,
+        "rules": [
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "route": "/blog/combating-legal-ai-hallucinations",
+        "violations": 2,
+        "rules": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": 2
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "nodes": 1
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "count": 18,
+      "byImpact": {
+        "serious": 2,
+        "moderate": 15,
+        "minor": 1
+      }
+    }
   }
 ]

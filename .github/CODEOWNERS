@@ -1,0 +1,9 @@
+# Default code owners
+* @blakeox
+
+# Key areas
+/functions/* @blakeox
+/src/pages/about.astro @blakeox
+/src/components/ui/PhotoCarousel.astro @blakeox
+/tests/playwright/** @blakeox
+/scripts/** @blakeox
