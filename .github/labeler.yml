@@ -1,0 +1,67 @@
+# Labeler configuration for actions/labeler@v5
+# Each label maps to an ARRAY of rule objects. See:
+# https://github.com/actions/labeler#configuration
+
+"area:about":
+  - changed-files:
+      - any-glob-to-any-file: [
+          "src/pages/about.astro",
+          "src/components/ui/PhotoCarousel.astro"
+        ]
+
+"area:projects":
+  - changed-files:
+      - any-glob-to-any-file: [
+          "src/pages/projects/**",
+          "src/pages/components/project-card-preview.astro"
+        ]
+
+"area:blog":
+  - changed-files:
+      - any-glob-to-any-file: [
+          "src/pages/blog/**",
+          "src/content/blog/**"
+        ]
+
+"area:tests":
+  - changed-files:
+      - any-glob-to-any-file: [
+          "tests/**",
+          "playwright/**"
+        ]
+
+"area:styles":
+  - changed-files:
+      - any-glob-to-any-file: [
+          "src/styles/**",
+          "tailwind.config.js",
+          "postcss.config.cjs"
+        ]
+
+"area:edge":
+  - changed-files:
+      - any-glob-to-any-file: [
+          "functions/**",
+          "wrangler.toml"
+        ]
+
+"area:infra":
+  - changed-files:
+      - any-glob-to-any-file: [
+          ".github/**",
+          "scripts/**"
+        ]
+
+"type:docs":
+  - changed-files:
+      - any-glob-to-any-file: [
+          "docs/**",
+          "**/*.md"
+        ]
+
+"type:deps":
+  - changed-files:
+      - any-glob-to-any-file: [
+          "package.json",
+          "pnpm-lock.yaml"
+        ]
