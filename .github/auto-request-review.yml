@@ -1,0 +1,6 @@
+use_codeowners_file: true
+max_reviewers: 2
+request_review_teams: true
+fallback_reviewers: []
+skip_draft: true
+ignore_contributors: []

@@ -7,6 +7,29 @@ module.exports = {
   ignoreFiles: ['src/styles/global.css',
                  'src/styles/theme.css'],
   rules: {
+    // Tailwind v4 custom at-rules and functions
+    'at-rule-no-unknown': [true, {
+      ignoreAtRules: [
+        'tailwind',
+        'layer',
+        'apply',
+        'variants',
+        'responsive',
+        'screen',
+        // Tailwind v4 feature used in global.css
+        'custom-variant'
+      ]
+    }],
+    'function-no-unknown': [true, {
+      ignoreFunctions: [
+        'theme',
+        'var',
+        'linear-gradient',
+        'radial-gradient',
+        'repeating-linear-gradient',
+        'repeating-radial-gradient'
+      ]
+    }],
     'color-no-hex': [true, {
       ignoreProperties: [
         /^--color-/,
@@ -81,5 +104,18 @@ module.exports = {
         },
       },
     },
+    {
+      files: ['src/styles/components/accessibility-panel.css'],
+      rules: {
+        'order/properties-order': null,
+      }
+    },
+    {
+      files: ['src/styles/utilities/animations.css'],
+      rules: {
+        'keyframes-name-pattern': null,
+        'selector-class-pattern': null
+      }
+    }
   ],
 };

@@ -466,14 +466,7 @@ export class EnhancedSearchOverlay {
     this.searchResults.classList.add('active');
   }
 
-  private getResultIcon(type: string): string {
-    switch (type) {
-      case 'project': return '📁';
-      case 'blog': return '📝';
-      case 'page': return '📄';
-      default: return '📄';
-    }
-  }
+  // Removed unused getResultIcon helper; use SVG variant below for consistent visuals.
 
   private getCategoryDisplayName(category: string): string {
     switch (category) {

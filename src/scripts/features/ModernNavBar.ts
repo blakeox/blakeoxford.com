@@ -231,6 +231,11 @@ export class ModernNavBar {
     // BaseLayout already handles theme initialization
     // We just need to update the toggle button icon
     this.updateThemeToggleIcon();
+    // Reflect state for assistive tech
+    if (this.themeToggle) {
+      const isDark = document.documentElement.classList.contains('dark');
+      this.themeToggle.setAttribute('aria-pressed', String(isDark));
+    }
   }
 
   updateThemeToggleIcon() {
@@ -272,6 +277,11 @@ export class ModernNavBar {
 
     // Update theme toggle button icon
     this.updateThemeToggleIcon();
+
+    // Update aria-pressed for accessibility
+    if (this.themeToggle) {
+      this.themeToggle.setAttribute('aria-pressed', String(newTheme === 'dark'));
+    }
 
     this.announceToScreenReader(`Theme switched to ${newTheme} mode`);
   }

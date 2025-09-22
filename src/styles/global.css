@@ -1,18 +1,21 @@
 /* src/styles/global.css - Main stylesheet entry point */
 
-/* Import Tailwind's base styles and utilities */
+/* All @import directives must come before any other rules for PostCSS */
+/* Import individual partials directly to avoid nested @import ordering issues */
+@import url("./base/reset.css");
+@import url("./base/typography.css");
+@import url("./layout/grid.css");
+@import url("./components/buttons.css");
+@import url("./components/accessibility-panel.css");
+@import url("./components/cards.css");
+@import url("./utilities/animations.css");
+@import "./theme.css";
 @import "tailwindcss";
 
 /* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
-   class (or any of its descendants) is in the selector chain.   */
+  class (or any of its descendants) is in the selector chain.   */
 /* @custom-variant is a Tailwind v4 feature - valid but not recognized by all linters */
 @custom-variant dark (&:where(.dark, .dark *));
-
-/* Import consolidated design tokens as a theme */
-@import "./theme.css";
-
-/* Import organized component and utility styles */
-@import "./index.css";
 
 /* Custom gradient utility for from-accent (workaround for Tailwind v4+ bug) */
 .from-accent {
@@ -25,6 +28,14 @@
 body {
   /* Ensure base body text uses strongest foreground for minimum 4.5:1 on white */
   color: var(--color-foreground-strong, var(--color-foreground));
+}
+
+/* Always paint a background using theme tokens so computed styles are non-transparent.
+   Colors flip automatically because :root.dark updates the CSS variables. */
+html, body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  min-height: 100%;
 }
 
 /* Tailwind Typography sets --tw-prose-body and uses it for paragraphs & list text.
@@ -147,13 +158,13 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
     padding: 8px 12px !important;
   }
 
-  /* Project cards and other interactive elements */
+  /* Project cards and other interactive elements: keep touch targets only; all visual styles live in components/buttons.css */
+  .btn,
   .btn-primary,
   .btn-secondary,
   .btn-outline {
     min-width: 48px !important;
     min-height: 48px !important;
-    padding: 12px 16px !important;
   }
 }
 
@@ -303,7 +314,8 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
   box-shadow: 0 2px 8px 0 rgba(6,95,70,0.18);
 }
 .btn-primary:hover, .btn-primary:focus-visible {
-  background: var(--color-accent);
+  /* Keep hover/focus at least as dark to preserve contrast */
+  background: var(--color-accent-dark);
   color: var(--color-foreground-light);
 }
 .btn-secondary {
@@ -809,205 +821,6 @@ blockquote[role="banner"]:focus-within {
 
 /* ===== Advanced Accessibility Center Styles ===== */
 
-/* Accessibility toggle button */
-.accessibility-toggle {
-  position: fixed;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  z-index: 11000;
-  width: 48px;
-  height: 48px;
-  background: var(--color-accent);
-  color: white;
-  border: none;
-  border-radius: 8px 0 0 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-}
-
-.accessibility-toggle:hover {
-  transform: translateY(-50%) translateX(-4px);
-}
-
-.accessibility-toggle:focus {
-  outline: 3px solid var(--color-accent-light);
-  outline-offset: 2px;
-}
-
-/* Accessibility panel */
-.accessibility-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  max-width: 400px;
-  height: 100vh;
-  background: var(--color-background);
-  border-left: 1px solid var(--color-border);
-  z-index: 11001;
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
-  overflow-y: auto;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-}
-
-.accessibility-panel.open {
-  transform: translateX(0);
-}
-
-.accessibility-panel[aria-hidden="true"] {
-  visibility: hidden;
-}
-
-.accessibility-panel[aria-hidden="false"] {
-  visibility: visible;
-}
-
-.accessibility-panel-content {
-  padding: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.accessibility-panel-header {
-  padding: 1.5rem;
-  background: var(--color-accent);
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.accessibility-panel-header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-#accessibility-close {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 4px;
-  line-height: 1;
-}
-
-#accessibility-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.accessibility-panel-body {
-  flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-}
-
-.accessibility-panel-body section {
-  margin-bottom: 2rem;
-}
-
-.accessibility-panel-body h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-accent);
-  border-bottom: 2px solid var(--color-accent);
-  padding-bottom: 0.5rem;
-}
-
-.preference-group {
-  margin-bottom: 1rem;
-}
-
-.preference-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--color-foreground);
-}
-
-.preference-group input[type="checkbox"] {
-  margin-right: 0.5rem;
-}
-
-.preference-group select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: var(--color-background);
-  color: var(--color-foreground);
-  font-size: 0.9rem;
-}
-
-.preference-group select:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-color: var(--color-accent);
-}
-
-.accessibility-panel-footer {
-  padding: 1.5rem;
-  border-top: 1px solid var(--color-border);
-  display: flex;
-  gap: 1rem;
-  flex-shrink: 0;
-  background: var(--color-background-secondary);
-}
-
-.btn-primary, .btn-secondary {
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex: 1;
-}
-
-.btn-primary {
-  background: var(--color-accent);
-  color: white;
-  border: none;
-}
-
-.btn-primary:hover {
-  background: var(--color-accent-dark);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--color-accent);
-  border: 1px solid var(--color-accent);
-}
-
-.btn-secondary:hover {
-  background: var(--color-accent);
-  color: white;
-}
-
-/* Mobile responsive */
-@media (max-width: 768px) {
-  .accessibility-panel {
-    width: 100%;
-    max-width: none;
-  }
-
-  .accessibility-toggle {
-    width: 44px;
-    height: 44px;
-  }
-}
-
 /* ===== Accessibility Preference Styles ===== */
 
 /* Font size preferences */
@@ -1140,13 +953,7 @@ blockquote[role="banner"]:focus-within {
   transform: none !important;
 }
 
-/* Print styles for accessibility panel */
-@media print {
-  .accessibility-toggle,
-  .accessibility-panel {
-    display: none !important;
-  }
-}
+/* Print styles for accessibility panel moved to components/accessibility-panel.css */
 
 /* ===== Enhanced Error Handling & User Feedback Styles ===== */
 
@@ -1235,23 +1042,6 @@ blockquote[role="banner"]:focus-within {
 
 .error-close:hover {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.1);
-}
-
-/* Form error styles */
-.form-error-summary {
-  background: #fee2e2;
-  border: 1px solid #fca5a5;
-  border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.form-error-summary h3 {
-  margin: 0 0 0.5rem 0;
-  color: #dc2626;
-  font-size: 1rem;
-  font-weight: 600;
 }
 
 .error-list {
