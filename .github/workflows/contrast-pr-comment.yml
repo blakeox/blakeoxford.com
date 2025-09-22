@@ -13,6 +13,10 @@ jobs:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-contrast') }}
     runs-on: ubuntu-latest
     steps:
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
@@ -20,10 +24,6 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.13.1
       - name: Install deps
         run: pnpm install --frozen-lockfile
       - name: Run contrast test (json emission)
@@ -35,7 +35,7 @@ jobs:
           CONTRAST_ALERT_THRESHOLD: 9999 # effectively disable alert noise for PR runs
           CONTRAST_JSON: 1
       - name: Generate markdown report (7 days)
-        run: pnpm contrast:report -- --markdown --limit 7 > pr-contrast.md || true
+        run: pnpm contrast:report -- --markdown --limit 7 > pr-contrast.md 2>&1 || true
       - name: Build PR comment body
         id: body
         run: |
@@ -78,8 +78,8 @@ jobs:
           existing_id=$(gh api repos/${{ github.repository }}/issues/$PR_NUMBER/comments --jq '.[] | select(.body | contains("<!-- contrast-pr-summary-marker -->")) | .id' | head -n 1 || true)
           if [ -n "$existing_id" ]; then
             echo "Updating existing contrast summary comment ($existing_id)"
-            gh api repos/${{ github.repository }}/issues/comments/$existing_id -X PATCH -f body@"$body_file"
+            gh api repos/${{ github.repository }}/issues/comments/$existing_id -X PATCH -f body="$(cat "$body_file")"
           else
             echo "Creating new contrast summary comment"
-            gh api repos/${{ github.repository }}/issues/$PR_NUMBER/comments -X POST -f body@"$body_file"
+            gh api repos/${{ github.repository }}/issues/$PR_NUMBER/comments -X POST -f body="$(cat "$body_file")"
           fi
