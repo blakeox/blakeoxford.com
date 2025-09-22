@@ -16,7 +16,12 @@ const SKIP_PROTOCOLS = ['mailto:', 'tel:', 'data:'];
 export function extractLinks(html, { includeExternal = false } = {}) {
   const links = new Map();
   // Strip HTML comments to avoid catching commented-out attrs (e.g., //www.googletagmanager.com)
-  const withoutComments = html.replace(/<!--([\s\S]*?)-->/g, '');
+  let withoutComments = html;
+  let previous;
+  do {
+    previous = withoutComments;
+    withoutComments = withoutComments.replace(/<!--([\s\S]*?)-->/g, '');
+  } while (withoutComments !== previous);
   const attrRe = /(href|src)=["']([^"']+)["']/gi;
   let m;
   while ((m = attrRe.exec(withoutComments))) {
