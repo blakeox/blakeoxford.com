@@ -337,7 +337,7 @@ const timelineItems: TimelineItem[] = [
                 </p>
               </div>
               <!-- Desktop Timeline (vertical) -->
-              <div class="hidden md:block relative">
+              <div class="hidden md:block relative timeline-desktop">
                 <!-- Timeline center line with gradient animation -->
                 <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-emerald-500 via-purple-500 to-emerald-500 animate-gradient-shift"></div>
                 <div class="space-y-0">
@@ -345,7 +345,7 @@ const timelineItems: TimelineItem[] = [
                     <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'} group`}>
                       <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
                         <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
-                          <div class={'bg-surface/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-emerald-500/10 group-hover:bg-surface/95 relative overflow-hidden'}>
+                          <div data-testid="timeline-card" class={'bg-surface/90 backdrop-blur-sm border border-gray-700 p-6 rounded-xl hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-emerald-500/10 group-hover:bg-surface/95 relative overflow-hidden'}>
                             {/* Background gradient effect */}
                             <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
@@ -399,7 +399,7 @@ const timelineItems: TimelineItem[] = [
                         </div>
                       </div>
                       {/* Timeline dot with pulse animation */}
-                      <div class="absolute left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full border-4 border-gray-900 bg-emerald-500 group-hover:scale-125 transition-transform duration-300">
+                      <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-gray-900 bg-emerald-500 group-hover:scale-125 transition-transform duration-300">
                         <div class="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-75"></div>
                       </div>
                     </div>
@@ -408,10 +408,10 @@ const timelineItems: TimelineItem[] = [
               </div>
 
               <!-- Mobile Timeline (horizontal scroll) -->
-              <div class="md:hidden overflow-x-auto pb-8 timeline-scroll-container">
+              <div class="md:hidden overflow-x-auto pb-8 timeline-scroll-container timeline-mobile focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-offset-surface-dark" role="region" aria-label="Timeline events" tabindex="0">
                 <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
                   {timelineItems.map((item) => (
-                    <div class="flex-none w-80 bg-surface/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-emerald-500/10 transition-all group relative overflow-hidden">
+                    <div data-testid="timeline-card" class="flex-none w-80 bg-surface/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:shadow-lg hover:shadow-emerald-500/10 transition-all group relative overflow-hidden">
                       {/* Background gradient effect */}
                       <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
@@ -475,6 +475,15 @@ const timelineItems: TimelineItem[] = [
                 .animate-gradient-shift {
                   background-size: 100% 200%;
                   animation: gradient-shift 8s ease infinite;
+                }
+                /* Fallback display rules to ensure correct variant renders regardless of Tailwind purge/variant issues */
+                @media (min-width: 768px) {
+                  #about-timeline .timeline-desktop { display: block !important; }
+                  #about-timeline .timeline-mobile { display: none !important; }
+                }
+                @media (max-width: 767.98px) {
+                  #about-timeline .timeline-desktop { display: none !important; }
+                  #about-timeline .timeline-mobile { display: block !important; }
                 }
                 .timeline-scroll-container::-webkit-scrollbar {
                   height: 8px;
