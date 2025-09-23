@@ -18,6 +18,7 @@
 @import url("./utilities/focus-management.css");
 @import url("./accessibility/skip-links.css");
 @import url("./accessibility/preferences.css");
+@import url("./accessibility/aria.css");
 @import "./theme.css";
 @import "tailwindcss";
 
@@ -188,42 +189,12 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
   pointer-events: none;
 }
 
-/* Loading state announcements */
-.loading[aria-busy="true"]::before {
-  content: 'Loading...';
-  position: absolute;
-  left: -10000px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
 /* Enhanced link indicators */
 a:not([class]):hover {
   text-decoration: underline;
   text-decoration-color: var(--color-accent);
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
-}
-
-/* Better button states */
-button:disabled::after {
-  content: ' (disabled)';
-  position: absolute;
-  left: -10000px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-/* Voice navigation helpers */
-[data-voice-command]::after {
-  content: attr(data-voice-command);
-  position: absolute;
-  left: -10000px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
 }
 
 /* Reduced motion preferences */

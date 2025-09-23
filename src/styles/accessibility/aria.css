@@ -1,0 +1,29 @@
+/* ARIA helper utilities
+   ------------------------------------- */
+
+.loading[aria-busy="true"]::before {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  content: 'Loading...';
+}
+
+button:disabled::after {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  content: ' (disabled)';
+}
+
+[data-voice-command]::after {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  content: attr(data-voice-command);
+}
