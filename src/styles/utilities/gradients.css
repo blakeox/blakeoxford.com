@@ -1,11 +1,13 @@
 /* Gradient helpers
    ------------------------------------- */
 
-/* Workaround for Tailwind v4+ gradient token bug */
-.from-accent {
-  --tw-gradient-from: rgb(6 95 70);
-  --tw-gradient-to: rgb(6 95 70 / 0%);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
+@layer utilities {
+  /* Workaround for Tailwind v4+ gradient token bug */
+  .from-accent {
+    --tw-gradient-from: rgb(6 95 70);
+    --tw-gradient-to: rgb(6 95 70 / 0%);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
 
-/* Add additional custom gradient utilities here as needed */
+  /* Add additional custom gradient utilities here as needed */
+}
