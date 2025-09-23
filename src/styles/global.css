@@ -8,6 +8,8 @@
 @import url("./components/buttons.css");
 @import url("./components/accessibility-panel.css");
 @import url("./components/cards.css");
+@import url("./components/navigation.css");
+@import url("./components/search-overlay.css");
 @import url("./utilities/animations.css");
 @import "./theme.css";
 @import "tailwindcss";
@@ -114,20 +116,6 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
     padding: 12px 16px;
   }
 
-  /* Ensure all interactive nav elements meet touch targets */
-  .nav-button,
-  .search-button,
-  .mobile-tap-effect {
-    min-width: 48px;
-    min-height: 48px;
-  }
-
-  /* Mobile hamburger button should be larger */
-  #nav-toggle {
-    min-width: 56px;
-    min-height: 56px;
-    padding: 16px;
-  }
 }
 
 /* Force minimum touch targets - highest specificity */
@@ -135,17 +123,6 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
   button, .btn, [type="button"], [role="button"] {
     min-width: 44px !important;
     min-height: 44px !important;
-  }
-
-  /* Navigation specific elements */
-  #nav-toggle,
-  .nav-button,
-  .search-button,
-  #search-toggle,
-  #theme-toggle {
-    min-width: 48px !important;
-    min-height: 48px !important;
-    padding: 12px !important;
   }
 
   /* Links should also meet touch targets */
@@ -167,85 +144,6 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
     min-height: 48px !important;
   }
 }
-
-/* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .nav-button,
-  .navbar-logo,
-  .nav-link {
-    transition: none !important;
-    animation: none !important;
-  }
-  .brand-avatar::before {
-    animation: none !important;
-  }
-}
-
-/* --- Navbar Animations (moved from NavBar.astro) --- */
-@keyframes fadeInScale {
-  from { opacity: 1; transform: none; }
-  to { opacity: 1; transform: none; }
-}
-@keyframes fadeOutScale {
-  from { opacity: 1; transform: none; }
-  to { opacity: 1; transform: none; }
-}
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--color-accent), 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(var(--color-accent), 0); }
-}
-
-/* Mobile menu active link indicator REMOVED - Now handled in NavBar.astro component */
-/* Micro-interaction: scale on tap/click */
-.mobile-tap-effect {
-  transition: transform 0.12s cubic-bezier(0.4,0,0.2,1);
-}
-.mobile-tap-effect:active {
-  transform: scale(0.96);
-}
-
-/* Glassmorphism enhancements */
-/* Additional navbar styles REMOVED - Now handled in NavBar.astro component */
-/* Scroll progress bar */
-.nav-scroll-progress { pointer-events: none; }
-#nav-scroll-progress-bar { height: 100%; background: var(--color-accent); border-radius: 2px; transition: width 0.2s; }
-/* Animated underline/blob for desktop nav REMOVED - Now handled in NavBar.astro component */
-/* Animated hamburger icon */
-/* Hamburger styles REMOVED - Now handled in NavBar.astro component */
-/* Command palette & help modals */
-#nav-cmdk-modal, #nav-help-modal {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
-#nav-cmdk-modal.active, #nav-help-modal.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-#nav-cmdk-modal .bg-background, #nav-help-modal .bg-background {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-}
-#nav-cmdk-modal input {
-  outline: none;
-  border: 1.5px solid var(--color-accent);
-  background: var(--color-background);
-  color: var(--color-foreground);
-  transition: border 0.2s;
-}
-#nav-cmdk-modal input:focus {
-  border-color: var(--color-accent-dark);
-}
-/* Logo/avatar hover animation REMOVED - Now handled in NavBar.astro component */
-/* Contextual nav classes (future use) */
-.nav-context-blog { --color-accent: #3b82f6; }
-.nav-context-projects { --color-accent: #10b981; }
-.nav-context-contact { --color-accent: #f59e42; }
-/* Sound effect cues */
-[data-sound]:focus, [data-sound]:hover {
-  outline: 2px solid var(--color-accent-light);
-  box-shadow: 0 0 0 2px var(--color-accent-light);
-}
-/* Navbar visibility styles REMOVED - Now handled in NavBar.astro component */
 
 /* Hero Section Enhancements */
 @keyframes spin-slow {
@@ -479,20 +377,6 @@ button:disabled::after {
   }
 }
 
-/* Ensure search input text and placeholder are white in dark mode */
-.dark .search-input,
-.dark input.search-input,
-.dark input[type="text"].search-input {
-  color: #fff !important;
-}
-
-.dark .search-input::placeholder,
-.dark input.search-input::placeholder,
-.dark input[type="text"].search-input::placeholder {
-  color: #fff !important;
-  opacity: 1;
-}
-
 /* Skip link touch target improvements */
 /* Override Tailwind's sr-only for skip links to avoid tiny touch targets */
 .skip-link {
@@ -579,27 +463,6 @@ button:disabled::after {
     padding: 12px 16px !important;
   }
 
-  /* Ensure all interactive nav elements meet touch targets */
-  .nav-button,
-  .search-button,
-  .mobile-tap-effect {
-    min-width: 48px !important;
-    min-height: 48px !important;
-  }
-
-  /* Mobile hamburger button should be larger */
-  #nav-toggle {
-    min-width: 56px !important;
-    min-height: 56px !important;
-    padding: 16px !important;
-  }
-
-  /* Theme toggle button */
-  .theme-toggle button {
-    min-width: 48px !important;
-    min-height: 48px !important;
-  }
-
   /* Back to top button */
   .fixed .bg-accent {
     min-width: 48px !important;
@@ -624,22 +487,9 @@ select:focus,
   border-radius: 4px;
 }
 
-/* Ensure proper focus indicators for mobile hamburger */
-.nav-button:focus {
-  outline: 2px solid var(--color-accent) !important;
-  outline-offset: 2px !important;
-}
-
 /* Better modal focus styles */
 [role="dialog"]:focus-within {
   outline: none;
-}
-
-/* Ensure search input is focusable */
-.search-input:focus {
-  outline: 2px solid var(--color-accent) !important;
-  outline-offset: 2px !important;
-  border-color: var(--color-accent) !important;
 }
 
 /* Better button focus management for keyboard accessibility */
@@ -651,22 +501,6 @@ input[type="submit"]:focus {
   outline-offset: 2px;
   z-index: 10;
   position: relative;
-}
-
-/* Enhanced focus for navigation buttons */
-.nav-button:focus,
-.search-button:focus {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 3px;
-  background: var(--color-accent-light);
-  transform: scale(1.05);
-}
-
-/* Mobile hamburger button focus enhancement */
-#nav-toggle:focus {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 4px;
-  background: rgba(var(--color-accent-rgb), 0.1);
 }
 
 /* Focus trap for modals and overlays */
@@ -708,44 +542,10 @@ input[type="submit"]:focus {
   a,
   input[type="button"],
   input[type="submit"],
-  input[type="reset"],
-  .nav-button,
-  .search-button,
-  #nav-toggle,
-  #search-toggle,
-  .theme-toggle {
+  input[type="reset"] {
     min-width: 44px !important;
     min-height: 44px !important;
     padding: 0.75rem !important;
-  }
-
-  /* Special handling for small icon buttons */
-  .nav-button,
-  .search-button,
-  #nav-toggle,
-  #search-toggle {
-    min-width: 48px !important;
-    min-height: 48px !important;
-    padding: 1rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  /* Ensure nav links have proper touch targets */
-  .nav-link {
-    min-height: 44px !important;
-    padding: 0.75rem 1rem !important;
-    display: flex !important;
-    align-items: center !important;
-  }
-
-  /* Search close button */
-  .search-close-button {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    padding: 0.75rem !important;
-    transition: color 0.2s, background 0.2s !important;
   }
 }
 
@@ -1278,50 +1078,4 @@ select.error {
   .loading-indicator {
     padding: 1.5rem;
   }
-}
-
-
-
-/* Search Overlay Comprehensive Fixes */
-.search-overlay {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  z-index: var(--z-modal, 9999) !important;
-  background: var(--overlay-40) !important;
-  -webkit-backdrop-filter: blur(var(--blur-lg)) !important;
-  backdrop-filter: blur(var(--blur-lg)) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  transition: all 0.3s var(--ease-emphasized) !important;
-}
-
-.search-overlay.active {
-  opacity: 1 !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-}
-
-/* Debug styles for development */
-.search-overlay[data-debug="true"] {
-  background: rgba(255, 0, 0, 0.3) !important;
-  border: 2px solid red !important;
-}
-
-.search-overlay[data-debug="true"].active {
-  background: rgba(0, 255, 0, 0.3) !important;
-  border: 2px solid green !important;
-}
-
-/* Ensure search container is properly positioned */
-.search-container.minimalist {
-  position: relative !important;
-  z-index: 2 !important;
 }
