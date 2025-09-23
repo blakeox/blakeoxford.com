@@ -1,208 +1,170 @@
-/* Accessibility Toggle & Panel (extracted from global.css) */
+/* Accessibility toggle & panel */
 
-/* Accessibility toggle button */
-.accessibility-toggle {
-  position: fixed;
-  top: 50%;
-  right: 0;
-  z-index: 11000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  color: white;
-  cursor: pointer;
-  background: var(--color-accent);
-  border: none;
-  border-radius: 8px 0 0 8px;
-  box-shadow: -2px 0 8px rgb(0 0 0 / 20%);
-  transform: translateY(-50%);
-  transition: transform 0.3s ease;
-}
-
-.accessibility-toggle:hover {
-  transform: translateY(-50%) translateX(-4px);
-}
-
-.accessibility-toggle:focus {
-  outline: 3px solid var(--color-accent-light);
-  outline-offset: 2px;
-}
-
-/* Accessibility panel */
-.accessibility-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 11001;
-  width: 100%;
-  max-width: 400px;
-  height: 100vh;
-  overflow-y: auto;
-  background: var(--color-background);
-  border-left: 1px solid var(--color-border);
-  box-shadow: -4px 0 20px rgb(0 0 0 / 15%);
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
-}
-
-.accessibility-panel.open {
-  transform: translateX(0);
-}
-
-.accessibility-panel[aria-hidden="true"] {
-  visibility: hidden;
-}
-
-.accessibility-panel[aria-hidden="false"] {
-  visibility: visible;
-}
-
-.accessibility-panel-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 0;
-}
-
-.accessibility-panel-header {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem;
-  color: white;
-  background: var(--color-accent);
-}
-
-.accessibility-panel-header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-#accessibility-close {
-  padding: 0.25rem;
-  font-size: 1.5rem;
-  line-height: 1;
-  color: white;
-  cursor: pointer;
-  background: none;
-  border: none;
-  border-radius: 4px;
-}
-
-#accessibility-close:hover {
-  background: rgb(255 255 255 / 20%);
-}
-
-.accessibility-panel-body {
-  flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-}
-
-.accessibility-panel-body section {
-  margin-bottom: 2rem;
-}
-
-.accessibility-panel-body h3 {
-  padding-bottom: 0.5rem;
-  margin: 0 0 1rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-accent);
-  border-bottom: 2px solid var(--color-accent);
-}
-
-.preference-group {
-  margin-bottom: 1rem;
-}
-
-.preference-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--color-foreground);
-}
-
-.preference-group input[type="checkbox"] {
-  margin-right: 0.5rem;
-}
-
-.preference-group select {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 0.9rem;
-  color: var(--color-foreground);
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-}
-
-.preference-group select:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-color: var(--color-accent);
-}
-
-.accessibility-panel-footer {
-  display: flex;
-  flex-shrink: 0;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: var(--color-background-secondary);
-  border-top: 1px solid var(--color-border);
-}
-
-.accessibility-panel .btn-primary, .accessibility-panel .btn-secondary {
-  flex: 1;
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.accessibility-panel .btn-primary {
-  color: white;
-  background: var(--color-accent);
-  border: none;
-}
-
-.accessibility-panel .btn-primary:hover {
-  background: var(--color-accent-dark);
-}
-
-.accessibility-panel .btn-secondary {
-  color: var(--color-accent);
-  background: transparent;
-  border: 1px solid var(--color-accent);
-}
-
-.accessibility-panel .btn-secondary:hover {
-  color: white;
-  background: var(--color-accent);
-}
-
-/* Mobile responsive */
-@media (width <= 768px) {
-  .accessibility-panel {
-    width: 100%;
-    max-width: none;
-  }
-
+@layer components {
   .accessibility-toggle {
-    width: 44px;
-    height: 44px;
+    position: fixed;
+    top: 50%;
+    right: 0;
+    z-index: 11000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--color-foreground-light);
+    cursor: pointer;
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+    box-shadow: -2px 0 12px rgb(15 23 42 / 0.24);
+    transform: translateY(-50%);
+    transition: var(--transition, all 250ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
   }
-}
 
-/* Print styles for accessibility panel */
-@media print {
-  .accessibility-toggle,
+  .accessibility-toggle:hover {
+    transform: translateY(-50%) translateX(-4px);
+  }
+
+  .accessibility-toggle:focus-visible {
+    outline: 3px solid var(--color-accent-light);
+    outline-offset: 3px;
+  }
+
   .accessibility-panel {
-    display: none !important;
+    position: fixed;
+    inset: 0 0 0 auto;
+    z-index: 11001;
+    width: min(100%, 400px);
+    height: 100vh;
+    background: var(--color-background);
+    border-left: 1px solid var(--color-border, rgb(var(--color-background-dark) / 12%));
+    box-shadow: -12px 0 32px rgb(var(--color-background-dark) / 18%);
+    transform: translateX(100%);
+    transition: var(--transition, all 250ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+  }
+
+  .accessibility-panel.open {
+    transform: translateX(0);
+  }
+
+  .accessibility-panel[aria-hidden="true"] {
+    visibility: hidden;
+  }
+
+  .accessibility-panel[aria-hidden="false"] {
+    visibility: visible;
+  }
+
+  .accessibility-panel-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .accessibility-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem;
+    color: var(--color-foreground-light);
+    background: var(--color-accent);
+  }
+
+  .accessibility-panel-header h2 {
+    margin: 0;
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-semibold);
+  }
+
+  #accessibility-close {
+    padding: 0.25rem;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: currentColor;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast, all 150ms var(--ease-standard));
+  }
+
+  #accessibility-close:hover,
+  #accessibility-close:focus-visible {
+    background: rgb(var(--color-foreground-light) / 18%);
+  }
+
+  .accessibility-panel-body {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+
+  .accessibility-panel-body section {
+    margin-bottom: 2rem;
+  }
+
+  .accessibility-panel-body h3 {
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
+  }
+
+  .preference-group {
+    margin-bottom: 1rem;
+  }
+
+  .preference-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: var(--fw-medium);
+    color: var(--color-foreground);
+  }
+
+  .preference-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+  }
+
+  .preference-group select {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: var(--fs-sm);
+    color: var(--color-foreground);
+    background: var(--color-background);
+    border: 1px solid var(--color-border, rgb(var(--color-background-dark) / 12%));
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast, border-color 150ms var(--ease-standard));
+  }
+
+  .preference-group select:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-color: var(--color-accent);
+  }
+
+  .accessibility-panel-footer {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--color-surface-subtle);
+    border-top: 1px solid var(--color-border, rgb(var(--color-background-dark) / 12%));
+  }
+
+  .accessibility-panel-footer .btn {
+    flex: 1;
+  }
+
+  @media (width <= 768px) {
+    .accessibility-panel {
+      width: 100%;
+      max-width: none;
+    }
+
+    .accessibility-toggle {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
   }
 }

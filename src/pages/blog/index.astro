@@ -115,14 +115,14 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
 .glass-card {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgb(var(--color-foreground-light) / 80%);
+  border: 1px solid rgb(var(--color-foreground-light) / 20%);
 }
 
 @media (prefers-color-scheme: dark) {
   .glass-card {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgb(var(--color-background-dark) / 40%);
+    border: 1px solid rgb(var(--color-foreground-light) / 10%);
   }
 }
 
@@ -170,7 +170,7 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
 /* Hover effects for interactive elements */
 .group:hover .glass-card {
   transform: translateY(-2px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgb(var(--color-background-dark) / 10%), 0 10px 10px -5px rgb(var(--color-background-dark) / 4%);
 }
 
 /* Enhanced button states */

@@ -24,6 +24,39 @@ export default /** @type {import('tailwindcss').Config} */ {
       },
     },
     extend: {
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(40px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        pulseGlow: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' },
+        },
+        themeToggleSpin: {
+          '100%': { transform: 'rotate(360deg)' },
+        },
+      },
+      animation: {
+        fadeIn: 'fadeIn var(--duration, 250ms) var(--ease-standard, cubic-bezier(0.4,0,0.2,1)) both',
+        fadeInUp: 'fadeInUp var(--duration, 250ms) var(--ease-standard, cubic-bezier(0.4,0,0.2,1)) both',
+        slideUp: 'slideUp var(--duration, 250ms) var(--ease-emphasized, cubic-bezier(0.2,0,0,1)) both',
+        float: 'float 3s var(--ease-standard, cubic-bezier(0.4,0,0.2,1)) infinite',
+        pulseGlow: 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        themeToggleSpin: 'themeToggleSpin var(--duration-fast, 150ms) var(--ease-standard, cubic-bezier(0.4,0,0.2,1))',
+      },
       colors: {
         // map your design-token CSS vars into Tailwind colors:
         primary:            'var(--color-primary)',
@@ -179,6 +212,36 @@ export default /** @type {import('tailwindcss').Config} */ {
         2: '2px',
         4: '4px',
         8: '8px',
+      },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-accent': 'var(--gradient-accent)',
+        'gradient-secondary': 'var(--gradient-secondary)',
+        'gradient-info': 'var(--gradient-info)',
+        'gradient-success': 'var(--gradient-success)',
+        'gradient-warning': 'var(--gradient-warning)',
+        'gradient-error': 'var(--gradient-error)',
+      },
+      blur: {
+        sm: 'var(--blur-sm)',
+        DEFAULT: 'var(--blur)',
+        lg: 'var(--blur-lg)',
+      },
+      backdropBlur: {
+        sm: 'var(--blur-sm)',
+        DEFAULT: 'var(--blur)',
+        lg: 'var(--blur-lg)',
+      },
+      transitionDuration: {
+        fast: 'var(--duration-fast)',
+        DEFAULT: 'var(--duration)',
+        slow: 'var(--duration-slow)',
+      },
+      transitionTimingFunction: {
+        standard: 'var(--ease-standard)',
+        emphasized: 'var(--ease-emphasized)',
+        decelerate: 'var(--ease-decelerate)',
+        accelerate: 'var(--ease-accelerate)',
       },
       boxShadow: {
         sm: 'var(--shadow-sm)',

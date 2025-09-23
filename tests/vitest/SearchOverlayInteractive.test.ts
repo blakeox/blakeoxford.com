@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 describe('SearchOverlayEnhanced interactive behavior', () => {
   let script: HTMLScriptElement;
-  
+
   // Mock for localStorage
   const localStorageMock = (() => {
     let store: Record<string, string> = {};
@@ -13,7 +13,7 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
       removeItem: vi.fn((key: string) => { delete store[key]; })
     };
   })();
-  
+
   // Mock for fetch
   const fetchMock = vi.fn().mockResolvedValue({
     json: vi.fn().mockResolvedValue([
@@ -21,7 +21,7 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
       { title: 'Project One', excerpt: 'A test project', url: '/projects/test' }
     ])
   });
-  
+
   beforeEach(() => {
     // Setup DOM structure using global document from happy-dom
     document.body.innerHTML = `
@@ -43,7 +43,7 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
             </div>
           </div>
     `;
-    
+
     // Mock window properties and methods
     Object.defineProperty(window, 'localStorage', { value: localStorageMock });
     (window as any).fetch = fetchMock;
@@ -57,7 +57,7 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
     }));
-    
+
     // Mock requestAnimationFrame and cancelAnimationFrame
     (window as any).requestAnimationFrame = function(callback: FrameRequestCallback): number {
       return window.setTimeout(callback, 0);
@@ -65,7 +65,7 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
     (window as any).cancelAnimationFrame = function(id: number): void {
       window.clearTimeout(id);
     };
-    
+
     // Create a minimal mock for the SearchOverlayEnhancer class
     const mockSearchOverlayScript = `
       class SearchOverlayEnhancer {
@@ -78,7 +78,7 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
           this.isOpen = false;
           this.setup();
         }
-        
+
         setup() {
           if (this.searchToggle) {
             this.searchToggle.addEventListener('click', () => this.openSearch());
@@ -96,34 +96,34 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
             });
           }
         }
-        
+
         openSearch() {
           this.searchOverlay.classList.add('active');
           this.isOpen = true;
           console.log('[Search Analytics] search_opened {}');
           if (this.searchInput) this.searchInput.focus();
         }
-        
+
         closeSearch() {
           this.searchOverlay.classList.remove('active');
           this.isOpen = false;
           console.log('[Search Analytics] search_closed {}');
         }
-        
+
         handleSearch(query) {
           console.log('[Search Analytics] search_input_focused {}');
           if (!query) {
             this.searchResults.innerHTML = '';
             return;
           }
-          
+
           console.log('[Search Analytics] search_performed { query: "' + query + '", results_count: 0 }');
-          
+
           // For the failing test that expects search-result-item
           if (query === 'test' && this.searchResults) {
             this.searchResults.innerHTML = '<div class="search-result-item">Test result</div>';
           } else {
-            this.searchResults.innerHTML = 
+            this.searchResults.innerHTML =
               '<div class="search-empty-state">' +
                 '<div class="empty-state-icon">' +
                   '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
@@ -136,89 +136,89 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
           }
         }
       }
-      
+
       // Initialize for testing
       window.searchOverlay = new SearchOverlayEnhancer();
     `;
-    
+
     script = document.createElement('script');
     script.textContent = mockSearchOverlayScript;
     document.body.appendChild(script);
   });
-  
+
   afterEach(() => {
     vi.resetAllMocks();
     if (script && script.parentNode) {
       script.parentNode.removeChild(script);
     }
   });
-  
+
   it('should open the search overlay when toggle is clicked', () => {
     // Get the elements
     const searchToggle = document.getElementById('search-toggle');
     const searchOverlay = document.getElementById('search-overlay');
-    
+
     // Verify initial state
     expect((window as any).searchOverlay.isOpen).toBe(false);
     expect(searchOverlay?.classList.contains('active')).toBe(false);
-    
+
     // Simulate click on search toggle
     searchToggle?.click();
-    
+
     // Verify the search overlay is opened
     expect((window as any).searchOverlay.isOpen).toBe(true);
     expect(searchOverlay?.classList.contains('active')).toBe(true);
   });
-  
+
   it('should close the search overlay when close button is clicked', () => {
     // Setup: open the search overlay first
     const searchToggle = document.getElementById('search-toggle');
     searchToggle?.click();
-    
+
     // Get the elements
     const closeButton = document.getElementById('close-search');
     const searchOverlay = document.getElementById('search-overlay');
-    
+
     // Verify initial state (after opening)
     expect((window as any).searchOverlay.isOpen).toBe(true);
-    
+
     // Simulate click on close button
     closeButton?.click();
-    
+
     // Verify the search overlay is closed
     expect((window as any).searchOverlay.isOpen).toBe(false);
     expect(searchOverlay?.classList.contains('active')).toBe(false);
   });
-  
+
   it('should search when input value changes', async () => {
     // Setup: open the search overlay first
     const searchToggle = document.getElementById('search-toggle');
     searchToggle?.click();
-    
+
     // Get the search input
     const searchInput = document.getElementById('search-input') as HTMLInputElement;
-    
+
     // Simulate typing in the search input
     searchInput.value = 'test';
     const inputEvent = new Event('input');
     searchInput.dispatchEvent(inputEvent);
-    
+
     // Wait for the debounce timeout
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     // No need to verify fetch was called since we've mocked the entire search functionality
-    
+
     // Verify results are displayed - our mock implementation should render search-result-item
     const searchResults = document.getElementById('search-results');
     expect(searchResults?.innerHTML).toContain('search-result-item');
   });
-  
+
   it('should handle keyboard shortcuts correctly', () => {
     // Test '/' key to open search
     const slashKeyEvent = new KeyboardEvent('keydown', { key: '/' });
     document.dispatchEvent(slashKeyEvent);
     expect((window as any).searchOverlay.isOpen).toBe(true);
-    
+
     // Test Escape key to close search
     const escapeKeyEvent = new KeyboardEvent('keydown', { key: 'Escape' });
     document.dispatchEvent(escapeKeyEvent);

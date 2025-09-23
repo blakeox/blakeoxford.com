@@ -1,17 +1,6 @@
 /* Navigation component styles
    ------------------------------------- */
 
-@keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 40%, transparent);
-  }
-
-  50% {
-    box-shadow: 0 0 0 10px transparent;
-  }
-}
-
 @layer components {
   .mobile-tap-effect {
     transition: var(--transition-fast, transform 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));

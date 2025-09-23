@@ -1,24 +1,28 @@
-/* About timeline enhancements
-   ------------------------------------- */
+/* About timeline enhancements */
 
-.timeline-item {
-  transition: box-shadow 0.3s, transform 0.3s;
-}
+@layer components {
+  .timeline-item {
+    transition: var(--transition, box-shadow 250ms var(--ease-standard)),
+      transform var(--duration-fast, 150ms) var(--ease-standard, cubic-bezier(0.4,0,0.2,1));
+  }
 
-.timeline-dot {
-  transition: transform 0.2s, box-shadow 0.2s;
-}
+  .timeline-dot {
+    transition: transform var(--duration-fast, 150ms) var(--ease-standard),
+      box-shadow var(--duration-fast, 150ms) var(--ease-standard);
+  }
 
-.timeline-item:hover .timeline-dot {
-  box-shadow: 0 8px 24px 0 rgb(0 0 0 / 18%);
-  transform: scale(1.15) rotate(-6deg);
-}
+  .timeline-item:hover .timeline-dot {
+    box-shadow: var(--shadow-xl);
+    transform: scale(1.15) rotate(-6deg);
+  }
 
-.timeline-content {
-  transition: background 0.3s, box-shadow 0.3s;
-}
+  .timeline-content {
+    transition: background var(--duration, 250ms) var(--ease-standard),
+      box-shadow var(--duration, 250ms) var(--ease-standard);
+  }
 
-.timeline-content:hover {
-  background: var(--color-accent-light, rgb(243 244 246));
-  box-shadow: 0 6px 24px 0 rgb(0 0 0 / 10%);
+  .timeline-content:hover {
+    background: var(--color-accent-light);
+    box-shadow: var(--shadow-lg);
+  }
 }

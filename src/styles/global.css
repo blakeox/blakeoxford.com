@@ -11,7 +11,6 @@
 @import url("./components/search-overlay.css");
 @import url("./components/forms.css");
 @import url("./components/timeline.css");
-@import url("./utilities/animations.css");
 @import url("./utilities/gradients.css");
 @import url("./utilities/touch-targets.css");
 @import url("./utilities/focus-management.css");
@@ -63,14 +62,6 @@ p[class*="text-foreground/"], p[class*="text-neutral"], .prose p[class*="text-fo
 /* Legacy styles - will be gradually moved to organized files */
 /* TODO: Migrate these styles to appropriate component/utility files */
 
-/* Theme toggle spin animation */
-@keyframes theme-toggle-spin {
-  100% { transform: rotate(360deg); }
-}
-.theme-toggle-spin {
-  animation: theme-toggle-spin 0.6s cubic-bezier(0.4,0,0.2,1);
-}
-
 /* --- Navbar Styles REMOVED - Now handled in NavBar.astro component --- */
 /* Mobile menu responsive improvements REMOVED - Now handled in NavBar.astro component */
 
@@ -80,18 +71,13 @@ p[class*="text-foreground/"], p[class*="text-neutral"], .prose p[class*="text-fo
   100% { transform: rotate(360deg); }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 66, 0.4); }
-  50% { box-shadow: 0 0 32px 8px rgba(245, 158, 66, 0.18); }
-}
-
 @layer utilities {
   .animate-spin-slow {
     animation: spin-slow 18s linear infinite;
   }
 
   .animate-pulse-glow {
-    animation: pulse-glow 2.5s infinite;
+    @apply animate-pulseGlow;
   }
 }
 
