@@ -1,0 +1,187 @@
+/* Accessibility preference toggles
+   ------------------------------------- */
+
+/* Font size preferences */
+[data-font-size="small"] {
+  font-size: 0.875rem;
+}
+
+[data-font-size="medium"] {
+  font-size: 1rem;
+}
+
+[data-font-size="large"] {
+  font-size: 1.125rem;
+}
+
+[data-font-size="extra-large"] {
+  font-size: 1.25rem;
+}
+
+[data-font-size="huge"] {
+  font-size: 2em;
+}
+
+/* Font family preferences */
+[data-font-family="sans-serif"] {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+[data-font-family="serif"] {
+  font-family: "Times New Roman", Times, serif;
+}
+
+[data-font-family="monospace"] {
+  font-family: "Courier New", Monaco, monospace;
+}
+
+[data-font-family="dyslexic"] {
+  font-family: OpenDyslexic, "Comic Sans MS", cursive;
+}
+
+/* Line height preferences */
+[data-line-height="tight"] {
+  line-height: 1.25;
+}
+
+[data-line-height="normal"] {
+  line-height: 1.5;
+}
+
+[data-line-height="relaxed"] {
+  line-height: 1.75;
+}
+
+[data-line-height="loose"] {
+  line-height: 2;
+}
+
+/* High contrast mode */
+[data-contrast="high"] {
+  --color-background: rgb(0 0 0);
+  --color-foreground: rgb(255 255 255);
+  --color-accent: rgb(255 255 0);
+  --color-primary: rgb(0 255 0);
+
+  filter: contrast(150%);
+}
+
+[data-high-contrast="true"] {
+  filter: contrast(150%) brightness(1.2);
+}
+
+[data-high-contrast="true"] * {
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Cursor size preferences */
+[data-cursor-size="large"] {
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA9TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIi8+Cjwvc3ZnPgo=') 12 12, auto;
+}
+
+[data-cursor-size="extra-large"] {
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0iIzAwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDNMMTcuNDUgMTEuMDFMMjYgMTJMMTcuNDUgMjAuOTlMMTYgMjlMMTQuNTUgMjAuOTlMNiAxMkwxNC41NSAxMS4wMUwxNiAzWiIvPgo8L3N2Zz4K') 16 16, auto;
+}
+
+/* Link decoration preference */
+[data-underline-links="true"] a {
+  text-decoration: underline !important;
+}
+
+/* Image visibility preference */
+[data-hide-images="true"] img:not([alt], [role="presentation"]) {
+  display: none;
+}
+
+[data-hide-images="true"] img[src*="decorative"],
+[data-hide-images="true"] img[src*="background"] {
+  display: none;
+}
+
+/* Reduced motion preference */
+[data-reduced-motion="true"] *,
+[data-reduced-motion="true"] *::before,
+[data-reduced-motion="true"] *::after {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+}
+
+[data-reduced-motion="true"] .parallax {
+  transform: none !important;
+}
+
+/* Focus indicator preferences */
+[data-focus-style="enhanced"] *:focus {
+  outline: 3px solid var(--color-accent) !important;
+  outline-offset: 3px !important;
+}
+
+[data-focus-style="high-visibility"] *:focus {
+  outline: 4px solid rgb(255 255 0) !important;
+  outline-offset: 4px !important;
+  background: rgb(255 255 0 / 20%) !important;
+}
+
+/* Quote accessibility baseline */
+blockquote[role="banner"] {
+  padding: 0;
+  margin: 0;
+  color: var(--color-foreground);
+  background: transparent;
+  border: none;
+}
+
+blockquote[role="banner"] [aria-hidden="true"] {
+  pointer-events: none;
+  user-select: none;
+}
+
+blockquote[role="banner"]:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* Quote preference adjustments */
+[data-high-contrast="true"] blockquote[role="banner"] h1 {
+  color: var(--color-foreground) !important;
+  text-shadow: 1px 1px 2px rgb(0 0 0 / 30%);
+}
+
+[data-high-contrast="true"] blockquote[role="banner"] cite {
+  font-weight: bold;
+  color: var(--color-foreground) !important;
+}
+
+[data-font-size="large"] blockquote[role="banner"] h1 {
+  font-size: clamp(2.5rem, 8vw, 5rem) !important;
+}
+
+[data-font-size="extra-large"] blockquote[role="banner"] h1 {
+  font-size: clamp(3rem, 10vw, 6rem) !important;
+}
+
+[data-reduced-motion="true"] blockquote[role="banner"],
+[data-reduced-motion="true"] blockquote[role="banner"] * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Layout simplification preference */
+[data-simplify-layout="true"] .hero-section {
+  padding: 2rem 0 !important;
+  background: none !important;
+}
+
+[data-simplify-layout="true"] .decorative,
+[data-simplify-layout="true"] [aria-hidden="true"]:not(.sr-only) {
+  display: none !important;
+}
+
+[data-simplify-layout="true"] .grid,
+[data-simplify-layout="true"] .flex {
+  display: block !important;
+}
