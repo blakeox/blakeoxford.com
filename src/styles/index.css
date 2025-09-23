@@ -14,6 +14,8 @@
 @import url("./components/cards.css");
 @import url("./components/navigation.css");
 @import url("./components/search-overlay.css");
+@import url("./components/forms.css");
+@import url("./components/timeline.css");
 
 /* Utility styles - helper classes and animations */
 @import url("./utilities/animations.css");
