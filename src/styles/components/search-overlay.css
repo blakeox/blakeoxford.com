@@ -5,14 +5,14 @@
   .dark :where(.search-input,
     input.search-input,
     input[type="text"].search-input) {
-    color: rgb(255 255 255);
+    color: var(--color-foreground-light);
   }
 
   .dark :where(.search-input,
     input.search-input,
     input[type="text"].search-input)::placeholder {
-    color: rgb(255 255 255);
-    opacity: 1;
+    color: var(--color-foreground-light);
+    opacity: var(--opacity-100);
   }
 
   .search-input:focus {
@@ -24,7 +24,7 @@
   .search-overlay {
     position: fixed;
     inset: 0;
-    z-index: var(--z-modal, 9999);
+    z-index: var(--z-modal);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,7 +36,7 @@
     background: var(--overlay-40);
     opacity: 0;
     backdrop-filter: blur(var(--blur-lg));
-    transition: var(--transition, all 250ms var(--ease-emphasized, cubic-bezier(0.2, 0, 0, 1)));
+    transition: var(--transition-emphasized);
   }
 
   .search-overlay.active {
@@ -46,12 +46,12 @@
   }
 
   .search-overlay[data-debug="true"] {
-    background: rgb(255 0 0 / 0.3);
+    background: rgb(from var(--color-red-500) r g b / 30%);
     border: 2px solid red;
   }
 
   .search-overlay[data-debug="true"].active {
-    background: rgb(0 255 0 / 0.3);
+    background: rgb(from var(--color-green-500) r g b / 30%);
     border-color: green;
   }
 
@@ -64,6 +64,6 @@
     min-width: 44px;
     min-height: 44px;
     padding: 0.75rem;
-    transition: var(--transition-fast, color 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+    transition: var(--transition-fast);
   }
 }

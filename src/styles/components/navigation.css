@@ -3,7 +3,7 @@
 
 @layer components {
   .mobile-tap-effect {
-    transition: var(--transition-fast, transform 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+    transition: var(--transition-fast);
   }
 
   .mobile-tap-effect:active {
@@ -18,8 +18,8 @@
   #nav-scroll-progress-bar {
     height: 100%;
     background: var(--color-accent);
-    border-radius: 2px;
-    transition: var(--transition-fast, width 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+    border-radius: var(--radius-xs);
+    transition: var(--transition-fast);
   }
 
   /* Command palette & help modals triggered from the nav */
@@ -27,7 +27,7 @@
   #nav-help-modal {
     pointer-events: none;
     opacity: 0;
-    transition: var(--transition-fast, opacity 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+    transition: var(--transition-fast);
   }
 
   #nav-cmdk-modal.active,
@@ -46,7 +46,7 @@
     outline: none;
     background: var(--color-background);
     border: 1.5px solid var(--color-accent);
-    transition: var(--transition-fast, border 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+    transition: var(--transition-fast);
   }
 
   #nav-cmdk-modal input:focus {
@@ -55,15 +55,15 @@
 
   /* Contextual accent overrides based on active section */
   .nav-context-blog {
-    --color-accent: rgb(59 130 246);
+    --color-accent: var(--color-blue-500);
   }
 
   .nav-context-projects {
-    --color-accent: rgb(16 185 129);
+    --color-accent: var(--color-emerald-500);
   }
 
   .nav-context-contact {
-    --color-accent: rgb(245 158 66);
+    --color-accent: var(--color-amber-500);
   }
 
   /* Feedback for interactive nav elements */
@@ -105,7 +105,7 @@
     :where(#nav-toggle) {
       min-width: 56px;
       min-height: 56px;
-      padding: 16px;
+      padding: 1rem;
     }
 
     :where(.theme-toggle button) {
