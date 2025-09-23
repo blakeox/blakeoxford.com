@@ -24,8 +24,8 @@ body {
 
 /* Focus styles */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: var(--border-width-lg) solid var(--color-accent);
+  outline-offset: var(--border-width-lg);
 }
 
 /* Selection styles */
@@ -73,9 +73,9 @@ body {
   [role="button"],
   input[type="submit"],
   input[type="button"] {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 8px 12px;
+    min-width: var(--size-11);
+    min-height: var(--size-11);
+    padding: var(--space-2) var(--space-3);
   }
 
   /* Exception for decorative or inline elements */

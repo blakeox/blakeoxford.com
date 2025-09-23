@@ -10,9 +10,9 @@
       input[type="reset"],
       input[type="button"],
       .btn) {
-      min-width: 44px;
-      min-height: 44px;
-      padding: 0.75rem;
+      min-width: var(--size-11);
+      min-height: var(--size-11);
+      padding: var(--space-3);
     }
 
     :where(.btn,
@@ -20,17 +20,17 @@
       .btn-secondary,
       .btn-outline,
       .fixed .bg-accent) {
-      min-width: 48px;
-      min-height: 48px;
+      min-width: var(--size-12);
+      min-height: var(--size-12);
     }
 
     :where(a):not(.sr-only, [href*="/projects/"], [href*="/blog/"]) {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 44px;
-      min-height: 44px;
-      padding: 0.5rem 0.75rem;
+      min-width: var(--size-11);
+      min-height: var(--size-11);
+      padding: var(--space-2) var(--space-3);
     }
 
     :where(.sr-only,
@@ -42,9 +42,9 @@
     }
 
     :where(.sr-only:focus) {
-      min-width: 44px;
-      min-height: 44px;
-      padding: 0.75rem 1rem;
+      min-width: var(--size-11);
+      min-height: var(--size-11);
+      padding: var(--space-3) var(--space-4);
     }
   }
 }

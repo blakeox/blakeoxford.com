@@ -3,61 +3,85 @@
 
 /* Typography Scale */
 .text-h1 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-size: var(--text-5xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+@media (width >= 768px) {
+  .text-h1 {
+    font-size: var(--text-6xl);
+  }
 }
 
 .text-h2 {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+@media (width >= 768px) {
+  .text-h2 {
+    font-size: var(--text-4xl);
+  }
 }
 
 .text-h3 {
-  font-size: clamp(1.25rem, 3vw, 1.875rem);
-  font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+}
+
+@media (width >= 768px) {
+  .text-h3 {
+    font-size: var(--text-2xl);
+  }
 }
 
 .text-lead {
-  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
-  font-weight: 500;
-  line-height: 1.5;
+  font-size: var(--text-lg);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+}
+
+@media (width >= 768px) {
+  .text-lead {
+    font-size: var(--text-xl);
+  }
 }
 
 .text-body {
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.6;
+  font-size: var(--text-base);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-relaxed);
 }
 
 .text-small {
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.5;
+  font-size: var(--text-sm);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-normal);
 }
 
 /* Font weights */
-.font-light { font-weight: 300; }
-.font-normal { font-weight: 400; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
-.font-extrabold { font-weight: 800; }
+.font-light { font-weight: var(--font-light); }
+.font-normal { font-weight: var(--font-normal); }
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold { font-weight: var(--font-bold); }
+.font-extrabold { font-weight: var(--font-extrabold); }
 
 /* Font families */
 .font-heading {
-  font-family: 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .font-body {
-  font-family: 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .font-mono {
-  font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
+  font-family: var(--font-mono);
 }

@@ -15,27 +15,27 @@
 
   .skip-link:focus {
     position: absolute !important;
-    top: 1rem !important;
-    left: 1rem !important;
-    z-index: 9999 !important;
+    top: var(--space-4) !important;
+    left: var(--space-4) !important;
+    z-index: var(--z-overlay) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     width: auto !important;
-    min-width: 44px !important;
+    min-width: var(--size-11) !important;
     height: auto !important;
-    min-height: 44px !important;
-    padding: 12px 16px !important;
+    min-height: var(--size-11) !important;
+    padding: var(--space-3) var(--space-4) !important;
     overflow: visible !important;
-    font-weight: 600 !important;
-    color: rgb(255 255 255) !important;
+    font-weight: var(--font-semibold) !important;
+    color: var(--color-foreground-light) !important;
     text-align: center !important;
     white-space: nowrap !important;
     text-decoration: none !important;
     pointer-events: auto !important;
-    background-color: rgb(31 41 55) !important;
-    border-radius: 0.5rem !important;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%) !important;
+    background-color: var(--color-background-dark) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-lg) !important;
     opacity: 1 !important;
   }
 
@@ -54,25 +54,25 @@
   .sr-only:focus,
   .sr-only.focus:not(.sr-only) {
     position: fixed !important;
-    top: 1rem !important;
-    left: 1rem !important;
-    z-index: 9999 !important;
+    top: var(--space-4) !important;
+    left: var(--space-4) !important;
+    z-index: var(--z-overlay) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     width: auto !important;
-    min-width: 44px !important;
+    min-width: var(--size-11) !important;
     height: auto !important;
-    min-height: 44px !important;
-    padding: 12px 16px !important;
+    min-height: var(--size-11) !important;
+    padding: var(--space-3) var(--space-4) !important;
     overflow: visible !important;
-    font-weight: 600 !important;
+    font-weight: var(--font-semibold) !important;
     color: var(--color-background) !important;
     text-align: center !important;
     white-space: nowrap !important;
     background: var(--color-accent) !important;
-    border-radius: 0.5rem !important;
-    box-shadow: 0 4px 16px rgb(0 0 0 / 20%) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-xl) !important;
     clip-path: none !important;
   }
 }

@@ -59,10 +59,11 @@
   }
 
   :where([data-contrast="high"], [data-high-contrast="true"]) {
-    --color-background: #000;
-    --color-foreground: #fff;
-    --color-accent: #ff0;
-    --color-primary: #0f0;
+    --color-background: var(--color-neutral-950);
+    --color-foreground: var(--color-neutral-50);
+    --color-accent: var(--color-yellow-400);
+    --color-primary: var(--color-green-400);
+
     filter: contrast(1.4);
   }
 
@@ -76,19 +77,46 @@
     display: none;
   }
 
-  :where([data-reduced-motion="true"]) *,
-  :where([data-reduced-motion="true"]) *::before,
-  :where([data-reduced-motion="true"]) *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
+@layer base {
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      background-attachment: initial !important;
+      scroll-behavior: auto !important;
+      transition-delay: 0s !important;
+      transition-duration: 0s !important;
+      animation-duration: 1ms !important;
+      animation-delay: -1ms !important;
+      animation-iteration-count: 1 !important;
+    }
   }
 
-  :where([data-focus-style="enhanced"]) :where(:focus-visible) {
-    outline-width: 3px;
-    outline-offset: 3px;
+  /* Respect user typography preferences */
+  @media (prefers-contrast: more) {
+    :root {
+      --color-foreground: var(--color-text-contrast);
+      --color-background: var(--color-bg-contrast);
+    }
   }
+
+  /* Large text preference support */
+  .text-large-pref {
+    font-size: var(--text-xl);
+    line-height: var(--leading-relaxed);
+  }
+
+  .heading-large-pref {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    line-height: var(--leading-tight);
+  }
+}
+
+:where([data-focus-style="enhanced"]) :where(:focus-visible) {
+  outline-width: var(--border-width-xl);
+  outline-offset: var(--border-width-xl);
+}
 
   :where([data-focus-style="high-visibility"]) :where(:focus-visible) {
     outline: 4px solid rgb(255 255 0);

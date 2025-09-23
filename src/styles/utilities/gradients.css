@@ -2,10 +2,10 @@
    ------------------------------------- */
 
 @layer utilities {
-  /* Workaround for Tailwind v4+ gradient token bug */
+  /* Gradient from accent token for Tailwind v4+ compatibility */
   .from-accent {
-    --tw-gradient-from: rgb(6 95 70);
-    --tw-gradient-to: rgb(6 95 70 / 0%);
+    --tw-gradient-from: var(--color-accent);
+    --tw-gradient-to: rgb(from var(--color-accent) r g b / 0%);
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
   }
 

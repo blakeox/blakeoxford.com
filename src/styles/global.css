@@ -71,13 +71,24 @@ p[class*="text-foreground/"], p[class*="text-neutral"], .prose p[class*="text-fo
   100% { transform: rotate(360deg); }
 }
 
+@keyframes pulse-glow {
+  0% { 
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
 @layer utilities {
   .animate-spin-slow {
     animation: spin-slow 18s linear infinite;
   }
 
   .animate-pulse-glow {
-    @apply animate-pulseGlow;
+    animation: pulse-glow 2s ease-in-out infinite alternate;
   }
 }
 
