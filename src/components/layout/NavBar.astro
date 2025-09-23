@@ -4,9 +4,9 @@ import navLinks from '../../config/navLinks';
 ---
 
 <nav id="navbar" class="navbar-container" role="navigation" aria-label="Main navigation">
-  <div class="navbar-content" style="max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between">
+  <div class="navbar-content" style="max-width:var(--width-screen-xl);margin:0 auto;padding:0 var(--space-6);height:var(--size-16);display:flex;align-items:center;justify-content:space-between">
     <!-- Brand Section -->
-  <div class="brand-section" style="min-width:160px;flex-shrink:0">
+  <div class="brand-section" style="min-width:var(--size-40);flex-shrink:0">
       <a href="/" class="brand-link">
         <div class="brand-avatar-container">
           <picture>
@@ -47,13 +47,13 @@ import navLinks from '../../config/navLinks';
     </div>
 
     <!-- Action Buttons -->
-  <div class="action-buttons" style="display:flex;align-items:center;gap:8px;min-width:160px;height:48px;white-space:nowrap">
+  <div class="action-buttons" style="display:flex;align-items:center;gap:var(--space-2);min-width:var(--size-40);height:var(--size-12);white-space:nowrap">
       <!-- Search Toggle -->
       <button
         id="search-toggle"
         type="button"
         class="action-button search-toggle"
-        style="width:48px;height:48px"
+        style="width:var(--size-12);height:var(--size-12)"
         aria-label="Open search"
         aria-expanded="false"
         aria-controls="search-overlay"
@@ -68,7 +68,7 @@ import navLinks from '../../config/navLinks';
         id="theme-toggle"
         type="button"
         class="action-button theme-toggle"
-        style="width:48px;height:48px"
+        style="width:var(--size-12);height:var(--size-12)"
         aria-label="Toggle dark mode"
       >
   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sun-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
@@ -240,25 +240,25 @@ import navLinks from '../../config/navLinks';
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    transition: all 0.2s ease;
+    z-index: var(--z-overlay);
+    background: var(--glass-surface-bg);
+    backdrop-filter: blur(var(--blur-md));
+    -webkit-backdrop-filter: blur(var(--blur-md));
+    border-bottom: var(--border-width-sm) solid var(--glass-border);
+    transition: all var(--duration-fast) var(--ease-out);
   }
 
   .dark .navbar-container {
-    background: rgba(0, 0, 0, 0.8);
-    border-bottom-color: rgba(255, 255, 255, 0.06);
+    background: var(--glass-surface-bg-dark);
+    border-bottom-color: var(--glass-border-dark);
   }
 
   /* Navbar Content */
   .navbar-content {
-    max-width: 1200px;
+    max-width: var(--width-screen-xl);
     margin: 0 auto;
-    padding: 0 24px;
-    height: 64px;
+    padding: 0 var(--space-6);
+    height: var(--size-16);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -268,25 +268,25 @@ import navLinks from '../../config/navLinks';
   .brand-section {
   flex-shrink: 0;
   /* Reserve space to avoid brand text reflow on font metric changes */
-  min-width: 160px;
+  min-width: var(--size-40);
   }
 
   .brand-link {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     text-decoration: none;
-    color: #000;
-    font-weight: 600;
-    font-size: 16px;
-    transition: opacity 0.2s ease;
+    color: var(--color-foreground);
+    font-weight: var(--font-semibold);
+    font-size: var(--text-base);
+    transition: opacity var(--duration-fast) var(--ease-out);
   font-synthesis-weight: none;
   font-synthesis-style: none;
   text-rendering: optimizeLegibility;
   }
 
   .dark .brand-link {
-    color: #fff;
+    color: var(--color-foreground-light);
   }
 
   .brand-link:hover {
@@ -294,9 +294,9 @@ import navLinks from '../../config/navLinks';
   }
 
   .brand-avatar-container {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: var(--size-8);
+    height: var(--size-8);
+    border-radius: var(--radius-md);
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.1);
   }
