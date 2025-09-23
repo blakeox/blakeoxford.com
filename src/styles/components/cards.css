@@ -1,79 +1,63 @@
 /* Card Component Styles
    ===================== */
 
-.card {
-  overflow: hidden;
-  background: var(--color-surface);
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);
-  transition: all 0.3s ease;
-}
+@layer components {
+  .card {
+    overflow: hidden;
+    background: var(--color-surface);
+    border-radius: var(--radius-xl, 0.75rem);
+    box-shadow: var(--shadow-level-2, var(--shadow));
+    transition: var(--transition, all 250ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+  }
 
-.card:hover {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%);
-  transform: translateY(-2px);
-}
+  .card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
 
-.card-body {
-  padding: 1.5rem;
-}
+  .card-body {
+    padding: 1.5rem;
+  }
 
-.card-header {
-  padding: 1.5rem 1.5rem 0;
-}
+  .card-header {
+    padding: 1.5rem 1.5rem 0;
+  }
 
-.card-footer {
-  padding: 0 1.5rem 1.5rem;
-}
+  .card-footer {
+    padding: 0 1.5rem 1.5rem;
+  }
 
-/* Card variants */
-.card-elevated {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 10%);
-}
+  /* Card variants */
+  .card-elevated {
+    box-shadow: var(--shadow-level-3, var(--shadow-md));
+  }
 
-.card-elevated:hover {
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 8px 10px -6px rgb(0 0 0 / 10%);
-  transform: translateY(-4px);
-}
+  .card-elevated:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+  }
 
-.card-interactive {
-  cursor: pointer;
-}
+  .card-interactive {
+    cursor: pointer;
+  }
 
-.card-interactive:hover {
-  transform: scale(1.02);
-}
+  .card-interactive:hover {
+    transform: scale(1.02);
+  }
 
-/* Featured card styling */
-.featured-card {
-  position: relative;
-  border: 2px solid var(--color-accent-light);
-}
+  /* Featured card styling */
+  .featured-card {
+    position: relative;
+    border: 2px solid var(--color-accent-light);
+  }
 
-.featured-card::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 4px;
-  content: '';
-  background: var(--gradient-accent);
-}
-
-/* Dark mode card styles */
-.dark .card {
-  background: var(--color-surface-dark);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 30%), 0 1px 2px -1px rgb(0 0 0 / 30%);
-}
-
-.dark .card:hover {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 30%), 0 4px 6px -4px rgb(0 0 0 / 30%);
-}
-
-.dark .card-elevated {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 30%), 0 2px 4px -2px rgb(0 0 0 / 30%);
-}
-
-.dark .card-elevated:hover {
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 30%), 0 8px 10px -6px rgb(0 0 0 / 30%);
+  .featured-card::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 4px;
+    content: '';
+    background: var(--gradient-accent);
+  }
 }

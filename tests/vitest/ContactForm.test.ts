@@ -1,11 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { JSDOM } from 'jsdom';
 import fs from 'fs';
 import path from 'path';
 
 describe('Contact form validation', () => {
-  let dom: JSDOM;
-  let document: Document;
   let form: HTMLFormElement;
   
   beforeEach(() => {
@@ -18,24 +15,14 @@ describe('Contact form validation', () => {
     const formMatch = contactPage.match(formRegex);
     const formHTML = formMatch ? formMatch[0] : '<form></form>';
     
-    // Create a new JSDOM instance with the form
-    dom = new JSDOM(`
-      <!DOCTYPE html>
-      <html>
-        <body>
-          <div id="form-container">
-            ${formHTML}
-          </div>
-          <div id="form-status" aria-live="polite" class="hidden"></div>
-        </body>
-      </html>
-    `, {
-      url: 'http://localhost:3000',
-      runScripts: 'dangerously',
-      pretendToBeVisual: true,
-    });
+    // Use the global document from happy-dom environment
+    document.body.innerHTML = `
+      <div id="form-container">
+        ${formHTML}
+      </div>
+      <div id="form-status" aria-live="polite" class="hidden"></div>
+    `;
     
-    document = dom.window.document;
     form = document.querySelector('form') as HTMLFormElement;
   });
   

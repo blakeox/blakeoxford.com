@@ -1,15 +1,10 @@
 // Enhanced Service Worker for PWA optimization
-const STATIC_CACHE_NAME = 'static-v2';
-const DYNAMIC_CACHE_NAME = 'dynamic-v2';
-const RUNTIME_CACHE_NAME = 'runtime-v2';
+const STATIC_CACHE_NAME = 'static-v3';
+const DYNAMIC_CACHE_NAME = 'dynamic-v3';
+const RUNTIME_CACHE_NAME = 'runtime-v3';
 
 // Critical assets to cache immediately for offline functionality
 const STATIC_ASSETS = [
-  '/',
-  '/about/',
-  '/projects/',
-  '/contact/',
-  '/blog',
   '/assets/js/lazy-loader.min.js',
   '/assets/js/lazy-loader.min.js?v=2',
   '/assets/js/core-boot.js',

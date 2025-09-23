@@ -1,31 +1,6 @@
 /* Navigation component styles
    ------------------------------------- */
 
-/* Micro-interactions for navigation controls */
-@keyframes fade-in-scale {
-  from {
-    opacity: 1;
-    transform: none;
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes fade-out-scale {
-  from {
-    opacity: 1;
-    transform: none;
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 @keyframes pulse-glow {
   0%,
   100% {
@@ -37,75 +12,142 @@
   }
 }
 
-.mobile-tap-effect {
-  transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1);
-}
+@layer components {
+  .mobile-tap-effect {
+    transition: var(--transition-fast, transform 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+  }
 
-.mobile-tap-effect:active {
-  transform: scale(0.96);
-}
+  .mobile-tap-effect:active {
+    transform: scale(0.96);
+  }
 
-/* Scroll progress indicator for the navbar */
-.nav-scroll-progress {
-  pointer-events: none;
-}
+  /* Scroll progress indicator for the navbar */
+  .nav-scroll-progress {
+    pointer-events: none;
+  }
 
-#nav-scroll-progress-bar {
-  height: 100%;
-  background: var(--color-accent);
-  border-radius: 2px;
-  transition: width 0.2s;
-}
+  #nav-scroll-progress-bar {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+    transition: var(--transition-fast, width 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+  }
 
-/* Command palette & help modals triggered from the nav */
-#nav-cmdk-modal,
-#nav-help-modal {
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
+  /* Command palette & help modals triggered from the nav */
+  #nav-cmdk-modal,
+  #nav-help-modal {
+    pointer-events: none;
+    opacity: 0;
+    transition: var(--transition-fast, opacity 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+  }
 
-#nav-cmdk-modal.active,
-#nav-help-modal.active {
-  pointer-events: auto;
-  opacity: 1;
-}
+  #nav-cmdk-modal.active,
+  #nav-help-modal.active {
+    pointer-events: auto;
+    opacity: 1;
+  }
 
-#nav-cmdk-modal .bg-background,
-#nav-help-modal .bg-background {
-  box-shadow: 0 8px 32px rgb(0 0 0 / 18%);
-}
+  #nav-cmdk-modal .bg-background,
+  #nav-help-modal .bg-background {
+    box-shadow: var(--shadow-xl);
+  }
 
-#nav-cmdk-modal input {
-  color: var(--color-foreground);
-  outline: none;
-  background: var(--color-background);
-  border: 1.5px solid var(--color-accent);
-  transition: border 0.2s;
-}
+  #nav-cmdk-modal input {
+    color: var(--color-foreground);
+    outline: none;
+    background: var(--color-background);
+    border: 1.5px solid var(--color-accent);
+    transition: var(--transition-fast, border 150ms var(--ease-standard, cubic-bezier(0.4,0,0.2,1)));
+  }
 
-#nav-cmdk-modal input:focus {
-  border-color: var(--color-accent-dark);
-}
+  #nav-cmdk-modal input:focus {
+    border-color: var(--color-accent-dark);
+  }
 
-/* Contextual accent overrides based on active section */
-.nav-context-blog {
-  --color-accent: rgb(59 130 246);
-}
+  /* Contextual accent overrides based on active section */
+  .nav-context-blog {
+    --color-accent: rgb(59 130 246);
+  }
 
-.nav-context-projects {
-  --color-accent: rgb(16 185 129);
-}
+  .nav-context-projects {
+    --color-accent: rgb(16 185 129);
+  }
 
-.nav-context-contact {
-  --color-accent: rgb(245 158 66);
-}
+  .nav-context-contact {
+    --color-accent: rgb(245 158 66);
+  }
 
-/* Feedback for interactive nav elements */
-[data-sound]:focus,
-[data-sound]:hover {
-  outline: 2px solid var(--color-accent-light);
-  box-shadow: 0 0 0 2px var(--color-accent-light);
+  /* Feedback for interactive nav elements */
+  [data-sound]:focus,
+  [data-sound]:hover {
+    outline: 2px solid var(--color-accent-light);
+    box-shadow: 0 0 0 2px var(--color-accent-light);
+  }
+
+  /* Navigation focus treatments */
+  .nav-button:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .nav-button:focus,
+  .search-button:focus {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+    background: var(--color-accent-light);
+    transform: scale(1.05);
+  }
+
+  #nav-toggle:focus {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 4px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+
+  /* Mobile navigation sizing adjustments */
+  @media (width <= 768px) {
+    :where(.nav-button,
+    .search-button,
+    .mobile-tap-effect) {
+      min-width: 48px;
+      min-height: 48px;
+    }
+
+    :where(#nav-toggle) {
+      min-width: 56px;
+      min-height: 56px;
+      padding: 16px;
+    }
+
+    :where(.theme-toggle button) {
+      min-width: 48px;
+      min-height: 48px;
+    }
+
+    :where(.fixed .bg-accent) {
+      min-width: 48px;
+      min-height: 48px;
+    }
+
+    :where(.nav-button,
+    .search-button,
+    #nav-toggle,
+    #search-toggle) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      min-height: 48px;
+      padding: 1rem;
+    }
+
+    :where(.nav-link) {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0.75rem 1rem;
+    }
+  }
 }
 
 /* Reduced motion support for nav chrome */
@@ -119,70 +161,5 @@
 
   .brand-avatar::before {
     animation: none !important;
-  }
-}
-
-/* Navigation focus treatments */
-.nav-button:focus {
-  outline: 2px solid var(--color-accent) !important;
-  outline-offset: 2px !important;
-}
-
-.nav-button:focus,
-.search-button:focus {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 3px;
-  background: var(--color-accent-light);
-  transform: scale(1.05);
-}
-
-#nav-toggle:focus {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 4px;
-  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
-}
-
-/* Mobile navigation sizing adjustments */
-@media (width <= 768px) {
-  .nav-button,
-  .search-button,
-  .mobile-tap-effect {
-    min-width: 48px;
-    min-height: 48px;
-  }
-
-  #nav-toggle {
-    min-width: 56px;
-    min-height: 56px;
-    padding: 16px;
-  }
-
-  .theme-toggle button {
-    min-width: 48px;
-    min-height: 48px;
-  }
-
-  .fixed .bg-accent {
-    min-width: 48px;
-    min-height: 48px;
-  }
-
-  .nav-button,
-  .search-button,
-  #nav-toggle,
-  #search-toggle {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 48px !important;
-    min-height: 48px !important;
-    padding: 1rem !important;
-  }
-
-  .nav-link {
-    display: flex !important;
-    align-items: center !important;
-    min-height: 44px !important;
-    padding: 0.75rem 1rem !important;
   }
 }

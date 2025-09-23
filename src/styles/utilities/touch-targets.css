@@ -3,58 +3,48 @@
 
 @layer utilities {
   @media (width <= 768px) {
-    /* Ensure adequate touch targets for interactive elements */
-    button,
-    a,
-    [role="button"],
-    input[type="submit"],
-    input[type="reset"],
-    input[type="button"],
-    .btn {
-      min-width: 44px !important;
-      min-height: 44px !important;
-      padding: 0.75rem !important;
+    :where(button,
+      a,
+      [role="button"],
+      input[type="submit"],
+      input[type="reset"],
+      input[type="button"],
+      .btn) {
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0.75rem;
     }
 
-    /* Exception for decorative or inline elements */
-    .sr-only,
-    [aria-hidden="true"],
-    .inline {
-      min-width: unset !important;
-      min-height: unset !important;
-      padding: initial !important;
+    :where(.btn,
+      .btn-primary,
+      .btn-secondary,
+      .btn-outline,
+      .fixed .bg-accent) {
+      min-width: 48px;
+      min-height: 48px;
     }
 
-    /* But still ensure skip links are accessible when focused */
-    .sr-only:focus {
-      min-width: 44px !important;
-      min-height: 44px !important;
-      padding: 12px 16px !important;
+    :where(a):not(.sr-only, [href*="/projects/"], [href*="/blog/"]) {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0.5rem 0.75rem;
     }
 
-    /* Links should also meet touch targets */
-    a:not(.sr-only, [href*="/projects/"], [href*="/blog/"]) {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      min-width: 44px !important;
-      min-height: 44px !important;
-      padding: 8px 12px !important;
+    :where(.sr-only,
+      [aria-hidden="true"],
+      .inline) {
+      min-width: unset;
+      min-height: unset;
+      padding: initial;
     }
 
-    /* Project cards and other interactive elements: keep touch targets only; all visual styles live in components/buttons.css */
-    .btn,
-    .btn-primary,
-    .btn-secondary,
-    .btn-outline {
-      min-width: 48px !important;
-      min-height: 48px !important;
-    }
-
-    /* Back to top button */
-    .fixed .bg-accent {
-      min-width: 48px !important;
-      min-height: 48px !important;
+    :where(.sr-only:focus) {
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0.75rem 1rem;
     }
   }
 }

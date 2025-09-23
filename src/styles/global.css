@@ -4,7 +4,6 @@
 /* Import individual partials directly to avoid nested @import ordering issues */
 @import url("./base/reset.css");
 @import url("./base/typography.css");
-@import url("./layout/grid.css");
 @import url("./components/buttons.css");
 @import url("./components/accessibility-panel.css");
 @import url("./components/cards.css");
@@ -64,11 +63,6 @@ p[class*="text-foreground/"], p[class*="text-neutral"], .prose p[class*="text-fo
 /* Legacy styles - will be gradually moved to organized files */
 /* TODO: Migrate these styles to appropriate component/utility files */
 
-/* Generic button baseline (applies before specific component classes). Ensure readable text */
-button, .btn, .btn-primary, .btn-secondary, .btn-outline {
-  color: var(--color-foreground-strong, #111827);
-}
-
 /* Theme toggle spin animation */
 @keyframes theme-toggle-spin {
   100% { transform: rotate(360deg); }
@@ -85,108 +79,20 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-.animate-spin-slow {
-  animation: spin-slow 18s linear infinite;
-}
+
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 66, 0.4); }
   50% { box-shadow: 0 0 32px 8px rgba(245, 158, 66, 0.18); }
 }
-.animate-pulse-glow {
-  animation: pulse-glow 2.5s infinite;
-}
 
-/*
-  Button System Standardization
-  -----------------------------------
-  Use .btn plus a variant (.btn-primary, .btn-secondary, .btn-outline, .btn-lg, .btn-sm) for all buttons.
-  Do not add extra utility classes for padding, border, radius, or focus ring to buttons in markup.
-  All button variants are accessible, have visible focus, and meet color contrast.
-*/
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 1rem;
-  line-height: 1.5;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  background: none;
-  box-shadow: none;
-  transition: transform 0.12s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s, background 0.2s, color 0.2s;
-  position: relative;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.btn:focus-visible {
-  outline: 2px solid var(--focus-ring, var(--color-accent));
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px var(--focus-ring, var(--color-accent));
-}
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin-slow 18s linear infinite;
+  }
 
-/* Ensure all buttons are focusable in all browsers */
-.btn:focus {
-  outline: 2px solid var(--focus-ring, var(--color-accent));
-  outline-offset: 2px;
-}
-
-.btn:active, .mobile-tap-effect:active {
-  transform: scale(0.97);
-}
-.btn-primary {
-  /* Use darker accent variant for higher contrast against white background */
-  background: var(--color-accent-dark);
-  color: var(--color-foreground-light);
-  box-shadow: 0 2px 8px 0 rgba(6,95,70,0.18);
-}
-.btn-primary:hover, .btn-primary:focus-visible {
-  /* Keep hover/focus at least as dark to preserve contrast */
-  background: var(--color-accent-dark);
-  color: var(--color-foreground-light);
-}
-.btn-secondary {
-  background: transparent;
-  border: 2px solid var(--color-accent-dark);
-  color: var(--color-accent-dark);
-}
-.dark .btn-secondary {
-  /* Ensure sufficient contrast on dark backgrounds */
-  color: var(--color-on-dark);
-}
-.btn-secondary:hover, .btn-secondary:focus-visible {
-  background: var(--color-accent);
-  color: var(--color-background);
-}
-.btn-outline {
-  background: transparent;
-  border: 2px solid var(--color-accent-dark);
-  color: var(--color-accent-dark);
-}
-.btn-outline:hover, .btn-outline:focus-visible {
-  background: var(--color-accent-dark);
-  color: var(--color-foreground-light);
-}
-.btn-lg {
-  font-size: 1.125rem;
-  padding: 1rem 2.25rem;
-  border-radius: 1rem;
-}
-.btn-sm {
-  font-size: 0.95rem;
-  padding: 0.5rem 1.25rem;
-  border-radius: 0.5rem;
-}
-.btn[disabled], .btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
+  .animate-pulse-glow {
+    animation: pulse-glow 2.5s infinite;
+  }
 }
 
 /* Enhanced link indicators */

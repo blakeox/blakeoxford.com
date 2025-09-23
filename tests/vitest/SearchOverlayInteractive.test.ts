@@ -1,11 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { JSDOM } from 'jsdom';
 
 describe('SearchOverlayEnhanced interactive behavior', () => {
-  let dom: JSDOM;
-   
-  let window: any; // Changed to "any" type to avoid TypeScript errors with custom properties
-  let document: Document;
   let script: HTMLScriptElement;
   
   // Mock for localStorage
@@ -28,11 +23,8 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
   });
   
   beforeEach(() => {
-    // Create a new JSDOM instance before each test
-    dom = new JSDOM(`
-      <!DOCTYPE html>
-      <html>
-        <body>
+    // Setup DOM structure using global document from happy-dom
+    document.body.innerHTML = `
           <button id="search-toggle">Search</button>
           <div id="search-overlay" class="search-overlay">
             <div class="search-backdrop" id="search-backdrop"></div>
@@ -50,22 +42,12 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
               <div id="search-results"></div>
             </div>
           </div>
-        </body>
-      </html>
-    `, {
-      url: 'http://localhost:3000',
-      runScripts: 'dangerously',
-      pretendToBeVisual: true,
-    });
-    
-    // Get references to the DOM
-    window = dom.window;
-    document = window.document;
+    `;
     
     // Mock window properties and methods
     Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-    window.fetch = fetchMock;
-    window.matchMedia = vi.fn().mockImplementation(query => ({
+    (window as any).fetch = fetchMock;
+    (window as any).matchMedia = vi.fn().mockImplementation(query => ({
       matches: false,
       media: query,
       onchange: null,
@@ -77,10 +59,10 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
     }));
     
     // Mock requestAnimationFrame and cancelAnimationFrame
-    window.requestAnimationFrame = function(callback: FrameRequestCallback): number {
+    (window as any).requestAnimationFrame = function(callback: FrameRequestCallback): number {
       return window.setTimeout(callback, 0);
     };
-    window.cancelAnimationFrame = function(id: number): void {
+    (window as any).cancelAnimationFrame = function(id: number): void {
       window.clearTimeout(id);
     };
     
@@ -141,17 +123,16 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
           if (query === 'test' && this.searchResults) {
             this.searchResults.innerHTML = '<div class="search-result-item">Test result</div>';
           } else {
-            this.searchResults.innerHTML = \`
-              <div class="search-empty-state">
-                <div class="empty-state-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                </div>
-                <h3>No results found</h3>
-                <p>Try adjusting your search terms</p>
-              </div>
-            \`;
+            this.searchResults.innerHTML = 
+              '<div class="search-empty-state">' +
+                '<div class="empty-state-icon">' +
+                  '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 515.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
+                  '</svg>' +
+                '</div>' +
+                '<h3>No results found</h3>' +
+                '<p>Try adjusting your search terms</p>' +
+              '</div>';
           }
         }
       }
@@ -178,14 +159,14 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
     const searchOverlay = document.getElementById('search-overlay');
     
     // Verify initial state
-    expect(window.searchOverlay.isOpen).toBe(false);
+    expect((window as any).searchOverlay.isOpen).toBe(false);
     expect(searchOverlay?.classList.contains('active')).toBe(false);
     
     // Simulate click on search toggle
     searchToggle?.click();
     
     // Verify the search overlay is opened
-    expect(window.searchOverlay.isOpen).toBe(true);
+    expect((window as any).searchOverlay.isOpen).toBe(true);
     expect(searchOverlay?.classList.contains('active')).toBe(true);
   });
   
@@ -199,13 +180,13 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
     const searchOverlay = document.getElementById('search-overlay');
     
     // Verify initial state (after opening)
-    expect(window.searchOverlay.isOpen).toBe(true);
+    expect((window as any).searchOverlay.isOpen).toBe(true);
     
     // Simulate click on close button
     closeButton?.click();
     
     // Verify the search overlay is closed
-    expect(window.searchOverlay.isOpen).toBe(false);
+    expect((window as any).searchOverlay.isOpen).toBe(false);
     expect(searchOverlay?.classList.contains('active')).toBe(false);
   });
   
@@ -236,11 +217,11 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
     // Test '/' key to open search
     const slashKeyEvent = new KeyboardEvent('keydown', { key: '/' });
     document.dispatchEvent(slashKeyEvent);
-    expect(window.searchOverlay.isOpen).toBe(true);
+    expect((window as any).searchOverlay.isOpen).toBe(true);
     
     // Test Escape key to close search
     const escapeKeyEvent = new KeyboardEvent('keydown', { key: 'Escape' });
     document.dispatchEvent(escapeKeyEvent);
-    expect(window.searchOverlay.isOpen).toBe(false);
+    expect((window as any).searchOverlay.isOpen).toBe(false);
   });
 });
