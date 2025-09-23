@@ -20,6 +20,11 @@ select.error {
   box-shadow: 0 0 0 3px rgb(220 38 38 / 10%) !important;
 }
 
+[aria-invalid="true"]:focus {
+  outline-color: rgb(220 38 38);
+  box-shadow: 0 0 0 3px rgb(220 38 38 / 30%);
+}
+
 /* Form-level notification banners */
 .error-display {
   position: fixed;

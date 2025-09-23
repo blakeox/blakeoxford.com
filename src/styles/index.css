@@ -19,3 +19,6 @@
 
 /* Utility styles - helper classes and animations */
 @import url("./utilities/animations.css");
+@import url("./utilities/gradients.css");
+@import url("./utilities/touch-targets.css");
+@import url("./utilities/focus-management.css");

@@ -13,6 +13,9 @@
 @import url("./components/forms.css");
 @import url("./components/timeline.css");
 @import url("./utilities/animations.css");
+@import url("./utilities/gradients.css");
+@import url("./utilities/touch-targets.css");
+@import url("./utilities/focus-management.css");
 @import "./theme.css";
 @import "tailwindcss";
 
@@ -20,13 +23,6 @@
   class (or any of its descendants) is in the selector chain.   */
 /* @custom-variant is a Tailwind v4 feature - valid but not recognized by all linters */
 @custom-variant dark (&:where(.dark, .dark *));
-
-/* Custom gradient utility for from-accent (workaround for Tailwind v4+ bug) */
-.from-accent {
-  --tw-gradient-from: #065f46;
-  --tw-gradient-to: rgb(6 95 70 / 0);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
 
 /* Base document styles adjustments for improved contrast */
 body {
@@ -78,74 +74,8 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
   animation: theme-toggle-spin 0.6s cubic-bezier(0.4,0,0.2,1);
 }
 
-/* Custom gradient utility for from-accent (workaround for Tailwind v4+ bug) */
-.from-accent {
-  --tw-gradient-from: #065f46;
-  --tw-gradient-to: rgb(6 95 70 / 0);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
-/* Add more as needed for other tokens */
-
 /* --- Navbar Styles REMOVED - Now handled in NavBar.astro component --- */
 /* Mobile menu responsive improvements REMOVED - Now handled in NavBar.astro component */
-
-@media (max-width: 768px) {
-  /* Ensure adequate touch targets for mobile */
-  button,
-  a,
-  [role="button"],
-  input[type="submit"],
-  input[type="button"] {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 8px 12px;
-  }
-
-  /* Exception for decorative or inline elements */
-  .sr-only,
-  [aria-hidden="true"],
-  .inline {
-    min-width: unset;
-    min-height: unset;
-    padding: initial;
-  }
-
-  /* But still ensure skip links are accessible when focused */
-  .sr-only:focus {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 12px 16px;
-  }
-
-}
-
-/* Force minimum touch targets - highest specificity */
-@media (max-width: 768px) {
-  button, .btn, [type="button"], [role="button"] {
-    min-width: 44px !important;
-    min-height: 44px !important;
-  }
-
-  /* Links should also meet touch targets */
-  a:not(.sr-only):not([href*="/projects/"]):not([href*="/blog/"]) {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 8px 12px !important;
-  }
-
-  /* Project cards and other interactive elements: keep touch targets only; all visual styles live in components/buttons.css */
-  .btn,
-  .btn-primary,
-  .btn-secondary,
-  .btn-outline {
-    min-width: 48px !important;
-    min-height: 48px !important;
-  }
-}
 
 /* Hero Section Enhancements */
 @keyframes spin-slow {
@@ -296,22 +226,6 @@ button, .btn, .btn-primary, .btn-secondary, .btn-outline {
   filter: contrast(150%);
 }
 
-/* Better visible focus for keyboard users */
-.js-focus-visible :focus:not(.focus-visible) {
-  outline: none;
-}
-
-.js-focus-visible .focus-visible {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-/* Improved error states */
-[aria-invalid="true"]:focus {
-  outline-color: #dc2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
-}
-
 /* Loading state announcements */
 .loading[aria-busy="true"]::before {
   content: 'Loading...';
@@ -417,81 +331,6 @@ button:disabled::after {
   height: auto !important;
 }
 
-/* Ensure adequate touch targets for mobile */
-@media (max-width: 768px) {
-  button,
-  a,
-  [role="button"],
-  input[type="submit"],
-  input[type="button"],
-  .btn {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    padding: 8px 12px !important;
-  }
-
-  /* Exception for decorative or inline elements */
-  .sr-only,
-  [aria-hidden="true"],
-  .inline {
-    min-width: unset !important;
-    min-height: unset !important;
-    padding: initial !important;
-  }
-
-  /* But still ensure skip links are accessible when focused */
-  .sr-only:focus {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    padding: 12px 16px !important;
-  }
-
-  /* Back to top button */
-  .fixed .bg-accent {
-    min-width: 48px !important;
-    min-height: 48px !important;
-  }
-}
-
-/* Enhanced Keyboard Navigation */
-.focus-trap-active {
-  position: relative;
-}
-
-/* Better focus indicators for all interactive elements */
-a:focus,
-button:focus,
-input:focus,
-textarea:focus,
-select:focus,
-[tabindex]:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Better modal focus styles */
-[role="dialog"]:focus-within {
-  outline: none;
-}
-
-/* Better button focus management for keyboard accessibility */
-button:focus,
-[role="button"]:focus,
-input[type="button"]:focus,
-input[type="submit"]:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  z-index: 10;
-  position: relative;
-}
-
-/* Focus trap for modals and overlays */
-.modal:focus-within,
-.overlay:focus-within {
-  outline: 2px solid var(--color-accent);
-}
-
 /* Improved skip link visibility and focus */
 .sr-only:focus {
   position: fixed !important;
@@ -515,21 +354,6 @@ input[type="submit"]:focus {
 .coin-flip-back img:focus {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-}
-
-/* Enhanced mobile touch targets (WCAG 2.1 AA requirement: 44x44px) */
-@media (max-width: 768px) {
-  /* Ensure all interactive elements have minimum 44px touch targets */
-  button,
-  [role="button"],
-  a,
-  input[type="button"],
-  input[type="submit"],
-  input[type="reset"] {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    padding: 0.75rem !important;
-  }
 }
 
 /* ===== Quote Accessibility Styles ===== */
