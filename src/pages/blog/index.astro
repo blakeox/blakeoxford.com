@@ -73,7 +73,7 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
   </div>
 
   <!-- Blog Posts List Section -->
-  <section class="c-blog-list w-full py-20 md:py-32 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="blog-list-title">
+  <section class="before-gradient-line w-full py-20 md:py-32 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="blog-list-title">
     <!-- Background pattern -->
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -91,9 +91,12 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
 
     <div class="relative z-10 px-4">
       <div class="flex flex-col gap-8 md:gap-6 w-full">
-        {sortedPosts.map((post: any, idx: number) => (
-            <BlogPostRow post={post} align={idx % 2 === 0 ? 'left' : 'right'} />
-          ))}
+        {sortedPosts.map((post: any, idx: number) => {
+            const delayClass = ['stagger-delay-1', 'stagger-delay-2', 'stagger-delay-3'][idx % 3];
+            return (
+              <BlogPostRow post={post} align={idx % 2 === 0 ? 'left' : 'right'} delayClass={delayClass} />
+            );
+          })}
       </div>
     </div>
   </section>
@@ -142,30 +145,7 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
   }
 }
 
-/* Smooth transitions between sections */
-.c-blog-list {
-  position: relative;
-}
 
-/* Enhanced visual flow */
-.c-blog-list::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
-  opacity: 0.3;
-}
-
-/* Line clamp utility for consistent text truncation */
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 
 /* Hover effects for interactive elements */
 .group:hover .glass-card {
@@ -173,23 +153,7 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
   box-shadow: 0 20px 25px -5px rgb(var(--color-background-dark) / 10%), 0 10px 10px -5px rgb(var(--color-background-dark) / 4%);
 }
 
-/* Enhanced button states */
-.group:hover {
-  transform: translateY(-1px);
-}
-
-.group:active {
-  transform: translateY(0);
-}
-
-/* Improved spacing for staggered layout */
-.group:nth-child(odd) {
-  animation-delay: 0.1s;
-}
-
-.group:nth-child(even) {
-  animation-delay: 0.2s;
-}
+/* Blog post card enhancements - using interaction utilities */
 
 /* Enhanced responsiveness */
 @media (max-width: 768px) {

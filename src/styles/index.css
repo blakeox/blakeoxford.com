@@ -19,6 +19,10 @@
 
 /* Utility styles - helper classes and animations */
 @import url("./utilities/animations.css");
+@import url("./utilities/animation-delays.css");
+@import url("./utilities/decorative-lines.css");
+@import url("./utilities/text-utilities.css");
+@import url("./utilities/interaction-effects.css");
 @import url("./utilities/gradients.css");
 @import url("./utilities/touch-targets.css");
 @import url("./utilities/focus-management.css");

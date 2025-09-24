@@ -76,14 +76,14 @@ function deriveImageData(imgPath?: string) {
               <h1 class="not-prose font-heading font-bold text-h1 md:text-6xl text-foreground dark:text-foreground-light mb-6">
                 <span class="block">{siteConfig.author}</span>
               </h1>
-              <p class="block text-lead mt-2 animate-fadeInUp text-foreground dark:text-foreground-light font-medium" style="animation-delay: 0.5s;">
+              <p class="block text-lead mt-2 animate-fadeInUp delay-500 text-foreground dark:text-foreground-light font-medium">
                 {siteConfig.description}
               </p>
               <p class="animate-fadeInUp text-body text-foreground dark:text-foreground-light pl-4 border-l-4 border-accent dark:border-accent-dark border-solid">
                 {siteConfig.tagline}
               </p>
             </div>
-            <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6 animate-fadeInUp" style="animation-delay: 1.1s;">
+            <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6 animate-fadeInUp delay-1100">
               <a
                 href="/contact/"
                 class="btn btn-primary mobile-tap-effect"
@@ -101,7 +101,7 @@ function deriveImageData(imgPath?: string) {
             </div>
           </div>
           <!-- Right: Animated Profile Image -->
-          <div class="flex justify-center md:justify-end order-1 md:order-2 animate-fadeIn" style="animation-delay: 0.5s;">
+          <div class="flex justify-center md:justify-end order-1 md:order-2 animate-fadeIn delay-500">
             <div class="relative">
               <!-- Decorative elements around the image -->
               <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-purple-500/30 blur-xl opacity-70 animate-pulse"></div>
@@ -121,9 +121,9 @@ function deriveImageData(imgPath?: string) {
                 />
               </div>
               <!-- Floating elements -->
-              <div class="absolute -top-4 -right-4 w-10 h-10 bg-accent rounded-full flex items-center justify-center text-background text-lg animate-float" style="animation-delay: 0.2s;">💡</div>
-              <div class="absolute -bottom-2 -left-4 w-8 h-8 bg-accent-dark rounded-full flex items-center justify-center text-background text-lg animate-float" style="animation-delay: 0.8s;">🚀</div>
-              <div class="absolute top-1/2 -right-9 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-background text-base animate-float" style="animation-delay: 1.4s;">☁️</div>
+              <div class="absolute -top-4 -right-4 w-10 h-10 bg-accent rounded-full flex items-center justify-center text-background text-lg animate-float delay-200">💡</div>
+              <div class="absolute -bottom-2 -left-4 w-8 h-8 bg-accent-dark rounded-full flex items-center justify-center text-background text-lg animate-float delay-800">🚀</div>
+              <div class="absolute top-1/2 -right-9 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-background text-base animate-float delay-1400">☁️</div>
             </div>
           </div>
         </div>
@@ -141,7 +141,7 @@ function deriveImageData(imgPath?: string) {
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           <!-- Practice Management & RCM -->
-          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center mb-4">
               <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-2.5 mr-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-label="Calendar icon for Practice Management">
@@ -182,7 +182,7 @@ function deriveImageData(imgPath?: string) {
             </div>
           </div>
           <!-- Cloud & SaaS -->
-          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center mb-4">
               <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-2.5 mr-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
@@ -220,7 +220,7 @@ function deriveImageData(imgPath?: string) {
             </div>
           </div>
           <!-- Automation & Savings -->
-          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center mb-4">
               <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-2.5 mr-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
@@ -260,7 +260,7 @@ function deriveImageData(imgPath?: string) {
             </div>
           </div>
           <!-- Data Analytics -->
-          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center mb-4">
               <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-2.5 mr-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
@@ -338,7 +338,7 @@ function deriveImageData(imgPath?: string) {
     </section>
 
     <!-- Featured Projects Section -->
-    <section id="featured-projects" class="c-featured-projects container mx-auto px-4" aria-labelledby="featured-projects-title">
+    <section id="featured-projects" class="container mx-auto px-4" aria-labelledby="featured-projects-title">
   <h2 id="featured-projects-title" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light animate-fade-in text-center">Featured Projects</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {featuredProjects.map((project: any) => (

@@ -28,7 +28,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
   </section>
 
   <!-- Main contact section -->
-  <section id="contact-info" class="c-contact-page w-full py-20 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background animate-fade-in" aria-labelledby="message-form">
+  <section id="contact-info" class="w-full py-20 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background animate-fade-in" aria-labelledby="message-form">
     <!-- Animated SVG background pattern -->
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -46,7 +46,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
 
     <div class="relative z-10 px-4">
       <!-- Contact Information -->
-      <div class="c-contact-page__info scroll-animate flex flex-col md:flex-row items-center justify-center gap-8 mb-16">
+      <div class="scroll-animate flex flex-col md:flex-row items-center justify-center gap-8 mb-16">
         <a href="mailto:blakepoxford@outlook.com" class="flex flex-col items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent p-4 rounded-xl hover:bg-accent/5 transition-colors" aria-label="Email Blake Oxford" title="Email">
           <span class="text-accent text-3xl group-hover:scale-110 transition">✉️</span>
           <span class="font-medium text-primary group-hover:text-accent transition-colors">blakepoxford@outlook.com</span>
@@ -68,7 +68,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
         <!-- Form status banner -->
   <div id="form-status" aria-live="polite" class="hidden text-center font-semibold mb-4 min-h-[56px]"></div>
 
-        <div class="c-contact-page__form-container scroll-animate bg-surface dark:bg-surface-dark rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30 hover:border-accent/50 transition-colors">
+        <div class="scroll-animate bg-surface dark:bg-surface-dark rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30 hover:border-accent/50 transition-colors">
           <form id="contact-form" method="POST" action="/send-email" class="space-y-6" aria-describedby="contact-form-help">
             <input type="hidden" name="form-name" value="contact" aria-hidden="true" />
             <p class="sr-only" aria-hidden="true">

@@ -63,6 +63,7 @@
     --color-foreground: var(--color-neutral-50);
     --color-accent: var(--color-yellow-400);
     --color-primary: var(--color-green-400);
+    --color-on-accent: var(--color-neutral-950);
 
     filter: contrast(1.4);
   }

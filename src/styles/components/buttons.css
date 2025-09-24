@@ -50,23 +50,28 @@
   }
 
   /* Primary button - main call-to-action */
-  .btn-primary {
-    color: white;
+  .btn.btn-primary,
+  .btn.btn-primary:link,
+  .btn.btn-primary:visited {
+    color: var(--color-on-accent);
     background: var(--color-accent-dark);
     box-shadow: var(--shadow-md);
   }
 
-  .btn-primary:hover {
+  .btn.btn-primary:hover {
+    color: var(--color-on-accent);
     background: var(--color-accent-dark);
     box-shadow: var(--shadow-lg);
     transform: translateY(-1px);
   }
 
-  .btn-primary:focus-visible {
+  .btn.btn-primary:focus-visible {
+    color: var(--color-on-accent);
     outline-color: var(--color-accent);
   }
 
-  .btn-primary:active {
+  .btn.btn-primary:active {
+    color: var(--color-on-accent);
     box-shadow: var(--shadow-sm);
     transform: translateY(0);
   }

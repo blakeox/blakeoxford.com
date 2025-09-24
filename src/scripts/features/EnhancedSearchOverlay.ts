@@ -29,6 +29,8 @@ export class EnhancedSearchOverlay {
   private searchTimeout: number | null;
   private recognition: any;
   private isListening: boolean;
+  private isOverlayActive: boolean;
+  private handleGlobalKeydown: (event: KeyboardEvent) => void;
 
   constructor() {
     this.searchInput = document.getElementById('search-input') as HTMLInputElement;
@@ -40,6 +42,8 @@ export class EnhancedSearchOverlay {
     this.searchTimeout = null;
     this.recognition = null;
     this.isListening = false;
+    this.isOverlayActive = false;
+    this.handleGlobalKeydown = this.onGlobalKeydown.bind(this);
 
     this.init();
   }
@@ -51,8 +55,13 @@ export class EnhancedSearchOverlay {
     const searchOverlay = document.getElementById('search-overlay');
     if (!searchOverlay) return false;
 
-  // Make overlay interactive
-  (searchOverlay as any).inert = false;
+    if (!this.isOverlayActive) {
+      document.addEventListener('keydown', this.handleGlobalKeydown);
+    }
+    this.isOverlayActive = true;
+
+    // Make overlay interactive
+    (searchOverlay as any).inert = false;
 
     searchOverlay.classList.add('active');
     searchOverlay.style.visibility = 'visible';
@@ -63,6 +72,7 @@ export class EnhancedSearchOverlay {
       setTimeout(() => {
         this.searchInput?.focus();
       }, 100);
+      this.searchInput.setAttribute('aria-expanded', 'true');
     }
 
     // Disable body scroll for mobile
@@ -680,6 +690,11 @@ export class EnhancedSearchOverlay {
 
     if (!searchOverlay) return;
 
+    if (this.isOverlayActive) {
+      document.removeEventListener('keydown', this.handleGlobalKeydown);
+      this.isOverlayActive = false;
+    }
+
     // Track analytics
     this.trackSearchInteraction('closed');
 
@@ -690,7 +705,9 @@ export class EnhancedSearchOverlay {
 
     // Close the overlay
     searchOverlay.classList.remove('active');
-  (searchOverlay as any).inert = true;
+    searchOverlay.style.visibility = 'hidden';
+    searchOverlay.style.opacity = '0';
+    (searchOverlay as any).inert = true;
 
     // Clear search input
     if (this.searchInput) {
@@ -719,6 +736,22 @@ export class EnhancedSearchOverlay {
     }, 50);
 
     this.announceToScreenReader('Search overlay closed');
+  }
+
+  private onGlobalKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Escape') return;
+
+    if (!this.isOverlayActive) return;
+
+    const searchOverlay = document.getElementById('search-overlay');
+    if (!searchOverlay || !searchOverlay.classList.contains('active')) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.closeSearchOverlay();
   }
 
   announceToScreenReader(message: string) {

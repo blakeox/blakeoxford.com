@@ -24,6 +24,7 @@
   --color-foreground: #111827; /* slate-900 */
   --color-foreground-light: #f9fafb;
   --color-on-dark: #f9fafb; /* text on dark surfaces */
+  --color-on-accent: #f9fafb; /* primary accent foreground */
   --color-background: #f9fafb;
   /* Slightly lighter, low-glare dark background for improved readability */
   --color-background-dark: #111827;
@@ -334,6 +335,7 @@
   --color-neutral: var(--color-neutral-light); /* #cbd5e1 */
   --color-neutral-dark: var(--color-neutral); /* #64748b */
   --color-border-input: var(--border-color-dark); /* #374151 */
+  --color-on-accent: #f9fafb;
 }
 
 /* Keyframes */
@@ -406,6 +408,7 @@
   /* Color overrides for dark mode */
   --color-foreground: #f9fafb; /* Light text on dark backgrounds */
   --color-foreground-strong: #f9fafb; /* Strong light text */
+  --color-on-accent: #f9fafb;
   /* Use token so a single place controls dark background shade */
   --color-background: var(--color-background-dark);
   --color-surface: #1e293b; /* Dark surface for cards */

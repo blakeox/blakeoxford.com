@@ -74,12 +74,12 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   </div>
 
   <!-- Methodology Section -->
-  <section class="c-methodology w-full py-16 md:py-24 px-4 max-w-6xl mx-auto" role="region" aria-labelledby="methodology-title" data-a11y-allow-color-contrast>
+  <section class="before-gradient-line w-full py-16 md:py-24 px-4 max-w-6xl mx-auto" role="region" aria-labelledby="methodology-title" data-a11y-allow-color-contrast>
     <!-- Provide an accessible name for this region -->
     <h2 id="methodology-title" class="sr-only">Methodology</h2>
     <div class="relative flex flex-col items-center">
       <!-- Accent timeline line -->
-      <div class="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-accent/40 via-accent/20 to-accent/0 rounded-full pointer-events-none" style="transform: translateX(-50%);"></div>
+  <div class="absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2 bg-gradient-to-b from-accent/40 via-accent/20 to-accent/0 rounded-full pointer-events-none"></div>
       <!-- Timeline steps -->
       <div class="w-full max-w-3xl mx-auto flex flex-col gap-12">
         <!-- Step 1 -->
@@ -171,7 +171,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   </section>
 
   <!-- Projects List Section -->
-  <section class="c-projects-list w-full py-20 md:py-32 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="projects-list-title">
+  <section class="before-gradient-line w-full py-20 md:py-32 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="projects-list-title">
     <!-- Background pattern -->
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -263,21 +263,5 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   }
 }
 
-/* Smooth transitions between sections */
-.c-methodology,
-.c-projects-list {
-  position: relative;
-}
 
-/* Enhanced visual flow */
-.c-methodology::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
-  opacity: 0.3;
-}
 </style>

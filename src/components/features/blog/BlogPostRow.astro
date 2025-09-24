@@ -1,12 +1,13 @@
 ---
 // BlogPostRow.astro
-const { post, align = 'left' } = Astro.props as {
+const { post, align = 'left', delayClass = '' } = Astro.props as {
   post: any;
   align?: 'left' | 'right';
+  delayClass?: string;
 };
 const { slug, data } = post;
 ---
-<article class={`group flex flex-col md:flex-row items-center w-full gap-8 md:gap-12 lg:gap-16 min-h-[380px] ${align === 'right' ? 'md:flex-row-reverse' : ''} animate-fade-in`}>
+<article class={`group hover-lift-sm flex flex-col md:flex-row items-center w-full gap-8 md:gap-12 lg:gap-16 min-h-[380px] ${align === 'right' ? 'md:flex-row-reverse' : ''} animate-fade-in ${delayClass}`}>
   <!-- Content Section -->
   <div class="flex-1 glass-card bg-background/80 border border-accent/10 rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg hover:border-accent/30 transition-all duration-300 w-full min-w-0">
     <header class="mb-6">
