@@ -13,23 +13,25 @@ describe('ProjectRow.astro file', () => {
     content = fs.readFileSync(filePath, 'utf-8');
   });
 
-  it('should have a section element', () => {
-    expect(content).toContain('<section');
+  it('should use modern article element with semantic structure', () => {
+    expect(content).toContain('<article');
+    expect(content).toContain('project-row group relative');
   });
 
   it('should include dynamic project link href', () => {
     expect(content).toContain('href={`/projects/${slug}/`}');
   });
 
-  it('should include aria-label for project title', () => {
-  // Link should rely on visible text for accessible name; no aria-label
-  expect(content).toContain('class="project-title-link');
-  expect(content).toContain('>{data.title}</a>');
-  expect(content).not.toContain('aria-label={`Project: ${data.title}`}');
+  it('should have proper accessibility attributes', () => {
+    // Should have descriptive aria-labels for case study links
+    expect(content).toContain('aria-label={`View detailed case study: ${data.title}`}');
+    expect(content).toContain('aria-label={`View detailed case study for ${data.title}`}');
   });
 
-  it('should render tags list with correct aria-label', () => {
-    expect(content).toContain('aria-label="Project tags"');
-    expect(content).toContain('<ul');
+  it('should render tags with proper semantic structure', () => {
+    expect(content).toContain('role="group"');
+    expect(content).toContain('aria-label="Project technologies"');
+    // Uses div with spans instead of ul/li for better modern styling
+    expect(content).toContain('<div class="project-tags"');
   });
 });
