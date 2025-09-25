@@ -11,16 +11,17 @@ export default /** @type {import('tailwindcss').Config} */ {
     container: {
       center: true,
       padding: {
-        DEFAULT: '1rem',
-        sm: '1.5rem',
-        lg: '2rem',
+        DEFAULT: 'clamp(var(--container-padding, 1rem), 4vw, var(--container-padding-lg, 4rem))',
+        sm: 'clamp(var(--container-padding-sm, 2rem), 5vw, var(--container-padding-lg, 4rem))',
+        lg: 'clamp(var(--container-padding-lg, 4rem), 6vw, var(--container-padding-xl, 5rem))',
+        xl: 'clamp(var(--container-padding-xl, 5rem), 7vw, var(--container-padding-2xl, 6rem))',
       },
       screens: {
         sm: '640px',
         md: '768px',
         lg: '1024px',
         xl: '1280px',
-        '2xl': '1536px',
+        '2xl': '1440px',
       },
     },
     extend: {

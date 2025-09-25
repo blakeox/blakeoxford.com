@@ -23,7 +23,9 @@
 /* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
   class (or any of its descendants) is in the selector chain.   */
 /* @custom-variant is a Tailwind v4 feature - valid but not recognized by all linters */
+/* stylelint-disable at-rule-no-unknown */
 @custom-variant dark (&:where(.dark, .dark *));
+/* stylelint-enable at-rule-no-unknown */
 
 /* Base document styles adjustments for improved contrast */
 body {
@@ -43,6 +45,7 @@ html, body {
    Override it globally so we don't rely solely on selector specificity battles. */
 :root {
   --tw-prose-body: var(--color-foreground-strong, #111827);
+  --layout-top-offset: clamp(4.5rem, 8vw, 6rem);
 }
 
 /* Override opacity-based foreground utilities that reduce contrast (diagnostic hardening) */
@@ -75,6 +78,7 @@ p[class*="text-foreground/"], p[class*="text-neutral"], .prose p[class*="text-fo
   0% { 
     opacity: 0.6;
     transform: scale(1);
+    padding-top: var(--layout-top-offset, 4.5rem);
   }
   100% { 
     opacity: 1;
@@ -82,14 +86,41 @@ p[class*="text-foreground/"], p[class*="text-neutral"], .prose p[class*="text-fo
   }
 }
 
-@layer utilities {
-  .animate-spin-slow {
-    animation: spin-slow 18s linear infinite;
-  }
+.animate-spin-slow {
+    scroll-padding-top: var(--layout-top-offset, 4.5rem);
+  animation: spin-slow 18s linear infinite;
+}
 
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite alternate;
-  }
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+}
+
+.layout-shell {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--container-xl, 80rem);
+  margin-inline: auto;
+  padding-inline: clamp(var(--container-padding-sm, 2rem), 5vw, var(--container-padding-xl, 5rem));
+}
+
+.layout-shell-tight {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--container-md, 48rem);
+  margin-inline: auto;
+  padding-inline: clamp(var(--container-padding, 1rem), 4vw, var(--container-padding-sm, 2rem));
+}
+
+.layout-shell-wide {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--container-2xl, 96rem);
+  margin-inline: auto;
+  padding-inline: clamp(var(--container-padding-sm, 2rem), 6vw, var(--container-padding-2xl, 6rem));
+}
+
+.layout-offset-top {
+  padding-top: var(--layout-top-offset, 4.5rem);
 }
 
 /* Enhanced link indicators */

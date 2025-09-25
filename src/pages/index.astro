@@ -68,7 +68,7 @@ function deriveImageData(imgPath?: string) {
         <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
         </svg>
       </div>
-      <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+  <div class="layout-shell-wide relative z-10">
         <div class="grid md:grid-cols-2 gap-12 items-center">
           <!-- Left: Text -->
           <div class="order-2 md:order-1 animate-fadeIn">
@@ -135,7 +135,7 @@ function deriveImageData(imgPath?: string) {
       <!-- Curved divider at top -->
       <div class="absolute top-0 left-0 w-full overflow-hidden">
       </div>
-      <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10 pt-10">
+  <div class="layout-shell-wide relative z-10 pt-10">
         <div class="max-w-2xl mx-auto mb-14">
           <h2 class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light text-center">Core expertise and significant achievements</h2>
         </div>
@@ -338,7 +338,7 @@ function deriveImageData(imgPath?: string) {
     </section>
 
     <!-- Featured Projects Section -->
-    <section id="featured-projects" class="container mx-auto px-4" aria-labelledby="featured-projects-title">
+  <section id="featured-projects" class="layout-shell" aria-labelledby="featured-projects-title">
   <h2 id="featured-projects-title" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light animate-fade-in text-center">Featured Projects</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {featuredProjects.map((project: any) => (
@@ -351,7 +351,7 @@ function deriveImageData(imgPath?: string) {
 
     <!-- Latest Blog Posts Section -->
   <section class="w-full py-20 text-center animate-fade-in bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark" aria-labelledby="latest-blog-posts">
-      <div class="container mx-auto px-4">
+  <div class="layout-shell">
   <h2 id="latest-blog-posts" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light">Latest Blog Posts</h2>
         <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
           {latestBlogPost ? (
@@ -385,7 +385,7 @@ function deriveImageData(imgPath?: string) {
     </section>
 
     <!-- Call-to-Action Section -->
-    <section class="call-to-action container mx-auto px-4 text-center py-16 animate-fade-in">
+  <section class="call-to-action layout-shell text-center py-16 animate-fade-in">
   <h2 class="text-h2 font-bold mb-4 text-foreground dark:text-foreground-light flex items-center justify-center gap-2"><span>🤝</span> Want to Work Together?</h2>
       <p class="text-lg mb-6 text-neutral">I'm always open to exciting new opportunities and collaborations. Let's create something amazing together!</p>
       <a href="/contact/" class="btn btn-primary">Contact Me</a>

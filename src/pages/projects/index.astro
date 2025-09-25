@@ -13,7 +13,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
   <!-- Projects Header Section -->
-  <section class="w-full py-16 md:py-24 px-4 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="projects-title">
+  <section class="w-full pt-24 md:pt-32 pb-16 md:pb-24 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="projects-title">
     <!-- Background pattern -->
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -30,23 +30,25 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
-    <div class="relative z-10 max-w-4xl mx-auto text-center">
-      <h1 id="projects-title" class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-foreground dark:text-foreground-light mb-6 animate-fade-in">Projects</h1>
-      <p class="text-lead text-foreground dark:text-foreground-light animate-fade-in mb-8">
-        Explore a curated collection of projects showcasing key skills in process automation, finance, and more.
-      </p>
-      <p class="text-lg text-foreground dark:text-foreground-light animate-fade-in">
-        Below you'll find my methodology and approach, followed by detailed case studies of my work.
-      </p>
+    <div class="layout-shell-wide relative z-10">
+      <div class="max-w-4xl mx-auto text-center">
+        <h1 id="projects-title" class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-foreground dark:text-foreground-light mb-6 animate-fade-in">Projects</h1>
+        <p class="text-lead text-foreground dark:text-foreground-light animate-fade-in mb-8">
+          Explore a curated collection of projects showcasing key skills in process automation, finance, and more.
+        </p>
+        <p class="text-lg text-foreground dark:text-foreground-light animate-fade-in">
+          Below you'll find my methodology and approach, followed by detailed case studies of my work.
+        </p>
+      </div>
     </div>
   </section>
 
   <!-- Transition Section -->
-  <section class="w-full py-8 md:py-12 px-4 relative" role="region" aria-labelledby="approach-title">
+  <section class="w-full py-8 md:py-12 relative" role="region" aria-labelledby="approach-title">
     <!-- Curved transition -->
     <div class="absolute inset-0 bg-gradient-to-b from-background via-accent/5 to-background"></div>
-    <div class="relative z-10 max-w-6xl mx-auto">
-      <div class="text-center">
+    <div class="layout-shell-wide relative z-10">
+      <div class="max-w-6xl mx-auto text-center">
         <div class="inline-block w-24 h-1 bg-gradient-to-r from-transparent via-accent to-transparent rounded-full mb-8"></div>
         <h2 id="approach-title" class="text-2xl md:text-3xl font-semibold text-foreground dark:text-foreground-light mb-4">My Approach</h2>
         <p class="text-lg text-foreground dark:text-foreground-light max-w-3xl mx-auto">
@@ -57,7 +59,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   </section>
 
   <!-- Transition Divider & Contextual Text -->
-  <div class="w-full flex flex-col items-center my-12">
+  <div class="layout-shell flex flex-col items-center my-12">
     <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 md:h-20 lg:h-24">
       <path fill="currentColor" fill-opacity="0.10" d="M0,32 C360,80 1080,0 1440,48 L1440,80 L0,80 Z" />
     </svg>
@@ -74,10 +76,10 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   </div>
 
   <!-- Methodology Section -->
-  <section class="before-gradient-line w-full py-16 md:py-24 px-4 max-w-6xl mx-auto" role="region" aria-labelledby="methodology-title" data-a11y-allow-color-contrast>
+  <section class="before-gradient-line w-full py-16 md:py-24" role="region" aria-labelledby="methodology-title" data-a11y-allow-color-contrast>
     <!-- Provide an accessible name for this region -->
     <h2 id="methodology-title" class="sr-only">Methodology</h2>
-    <div class="relative flex flex-col items-center">
+    <div class="layout-shell relative flex flex-col items-center">
       <!-- Accent timeline line -->
   <div class="absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2 bg-gradient-to-b from-accent/40 via-accent/20 to-accent/0 rounded-full pointer-events-none"></div>
       <!-- Timeline steps -->
@@ -188,7 +190,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
-    <div class="relative z-10 px-4">
+    <div class="layout-shell-wide relative z-10">
       <div class="max-w-4xl mx-auto mb-12 text-center">
         <h2 id="projects-list-title" class="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-foreground dark:text-foreground-light mb-6 animate-fade-in">Case Studies</h2>
         <p class="text-lead text-foreground dark:text-foreground-light animate-fade-in">
