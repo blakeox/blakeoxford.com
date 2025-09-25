@@ -9,15 +9,32 @@ describe('projects/index.astro', () => {
     fileContent = readFileSync(filePath, 'utf-8');
   });
 
-  it('should contain the Projects heading', () => {
-    expect(fileContent).toContain('Projects');
+  it('should use modern layout shell patterns', () => {
+    expect(fileContent).toContain('layout-shell-wide');
   });
 
-  it('should contain ProjectRow component', () => {
-    expect(fileContent).toContain('ProjectRow');
+  it('should contain semantic HTML structure with proper roles', () => {
+    expect(fileContent).toContain('role="region"');
+    expect(fileContent).toContain('aria-labelledby');
   });
 
-  it('should not use getCollection for projects since they are now individual Astro pages', () => {
+  it('should use ProjectDetailSection component for better composition', () => {
+    expect(fileContent).toContain('ProjectDetailSection');
+  });
+
+  it('should contain proper responsive breakpoints and spacing', () => {
+    expect(fileContent).toContain('sm:');
+    expect(fileContent).toContain('md:');
+    expect(fileContent).toContain('lg:');
+  });
+
+  it('should have enhanced accessibility features', () => {
+    expect(fileContent).toContain('role="list"');
+    expect(fileContent).toContain('aria-label');
+    expect(fileContent).toContain('focus-visible:');
+  });
+
+  it('should not use deprecated getCollection pattern', () => {
     expect(fileContent).not.toContain('getCollection(\'projects\')');
   });
 });
