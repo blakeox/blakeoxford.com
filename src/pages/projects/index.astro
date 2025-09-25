@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/features/projects/ProjectCard.astro';
 import ProjectRow from '../../components/features/projects/ProjectRow.astro';
 import { featuredProjectsData } from '../../config/data';
 
@@ -35,8 +36,6 @@ const [featuredProject, ...otherProjects] = sortedProjects;
 // Show a smaller subset to keep the page lighter while still representative (reduce network bytes)
 const limitedProjects = otherProjects.slice(0, 5);
 
-const featuredDescription = featuredProject?.data?.description ?? '';
-const heroFeaturedSummary = featuredDescription.length > 160 ? `${featuredDescription.slice(0, 157)}…` : featuredDescription;
 const heroHighlights = methodology.slice(0, 3);
 const remainingMethodology = methodology.slice(3);
 
@@ -49,169 +48,159 @@ const proofPoints = [
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <section class="relative isolate overflow-hidden py-24 sm:py-32" role="region" aria-labelledby="projects-title">
-    <div class="absolute inset-0 -z-10">
-      <div class="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-surface/75"></div>
-      <div class="absolute inset-0 bg-glow-hero opacity-80"></div>
-      <div class="absolute inset-0 bg-glow-accent opacity-60"></div>
-      <div class="absolute inset-0 bg-grid-overlay opacity-[0.08] [background-size:220px_220px]"></div>
-    </div>
-    <div class="layout-shell-wide relative grid gap-16 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)] lg:items-start">
-      <div class="space-y-10 text-pretty">
-        <span class="inline-flex items-center gap-2 rounded-full bg-background/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-accent ring-1 ring-accent/30">
+  <section class="relative isolate overflow-hidden bg-gradient-to-br from-background via-surface-subtle/60 to-background-dark/80 py-28" role="region" aria-labelledby="projects-title">
+    <div class="pointer-events-none absolute inset-0 bg-grid-overlay/40 [background-size:220px_220px]" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute left-[-6rem] top-[-4rem] h-64 w-64 rounded-full bg-accent/20 blur-3xl" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute right-[-5rem] bottom-[-4rem] h-72 w-72 rounded-full bg-accent/15 blur-[110px]" aria-hidden="true"></div>
+    <div class="layout-shell-wide relative grid gap-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-start">
+      <div class="flex flex-col gap-10 text-pretty">
+        <span class="inline-flex items-center gap-2 rounded-full bg-background/92 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.32em] text-accent ring-1 ring-accent/30">
           <span class="h-2 w-2 rounded-full bg-accent"></span>
           Signature work
         </span>
         <div class="space-y-6">
-          <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground dark:text-foreground-light">Systems built to keep decisions, delivery, and adoption in lockstep</h1>
-          <p class="max-w-2xl text-base sm:text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/80">Explore engagements where automation, financial intelligence, and change leadership shape durable operating models—not just demos.</p>
+          <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl lg:text-6xl font-semibold text-foreground dark:text-foreground-light">
+            Systems built to keep decisions, delivery, and adoption in lockstep
+          </h1>
+          <p class="max-w-2xl text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/80">
+            Explore engagements where automation, financial intelligence, and change leadership shape durable operating models—not just demos.
+          </p>
         </div>
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-foreground/65 dark:text-foreground-light/65">
           {focus.map((f) => (
-            <span class="inline-flex items-center gap-2 rounded-full bg-background/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground/70 ring-1 ring-border/30 dark:text-foreground-light/70">
-              <span class="h-1.5 w-1.5 rounded-full bg-accent/70"></span>
+            <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 dark:bg-surface-dark-subtle">
+              <span class="h-1.5 w-1.5 rounded-full bg-accent/80"></span>
               {f}
             </span>
           ))}
         </div>
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {stats.map((s) => (
-            <div class="flex h-full flex-col justify-between rounded-[1.5rem] bg-background/85 px-5 py-6 ring-1 ring-border/30 shadow-sm shadow-black/5">
-              <span class="text-sm font-medium text-foreground/65 dark:text-foreground-light/70">{s.label}</span>
-              <span class="mt-3 text-2xl font-semibold text-foreground dark:text-foreground-light">{s.value}</span>
+            <div class="rounded-[1.5rem] bg-background/95 px-5 py-6 ring-1 ring-border/25 shadow-card">
+              <span class="text-xs font-semibold uppercase tracking-[0.28em] text-foreground/60 dark:text-foreground-light/65">{s.label}</span>
+              <span class="mt-4 text-2xl font-semibold text-foreground dark:text-foreground-light">{s.value}</span>
             </div>
           ))}
         </div>
         <div class="flex flex-wrap gap-3">
-          <a href="/contact/" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-accent px-7 py-3 text-sm font-semibold text-white shadow-accent-glow transition hover:bg-accent-dark focus-visible:ring-2 focus-visible:ring-accent/70">Start a project conversation</a>
-          <a href="/about/" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-semibold text-accent ring-1 ring-accent/40 transition hover:ring-accent hover:text-accent-dark focus-visible:ring-2 focus-visible:ring-accent/70">See how I work</a>
+          <a href="/contact/" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-accent px-7 py-3 text-sm font-semibold text-on-accent shadow-accent-glow transition hover:bg-accent-dark focus-visible:ring-2 focus-visible:ring-accent/65">
+            Start a project conversation
+          </a>
+          <a href="/about/" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-semibold text-accent ring-1 ring-accent/40 transition hover:ring-accent hover:text-accent-dark focus-visible:ring-2 focus-visible:ring-accent/60">
+            See how I work
+          </a>
         </div>
       </div>
-      <div class="grid gap-6">
-        {featuredProject && (
-          <a href={`/projects/${featuredProject.slug}/`} class="group relative overflow-hidden rounded-[2.25rem] bg-gradient-to-br from-background/95 via-surface/85 to-background/80 p-7 ring-1 ring-border/35 shadow-soft-glow transition-transform duration-300 hover:-translate-y-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60">
-            <div class="pointer-events-none absolute inset-0 opacity-70 mix-blend-screen">
-              <div class="h-full w-full bg-grid-overlay [background-size:180px_180px]"></div>
-            </div>
-            <div class="relative space-y-5 text-pretty">
-              <span class="inline-flex items-center gap-2 rounded-full bg-accent/15 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-accent ring-1 ring-accent/40">
-                Featured case study
-              </span>
-              <div class="space-y-3">
-                <h2 class="text-2xl font-semibold text-foreground dark:text-foreground-light">{featuredProject.data.title}</h2>
-                {heroFeaturedSummary && (
-                  <p class="text-sm leading-relaxed text-foreground/70 dark:text-foreground-light/75">{heroFeaturedSummary}</p>
-                )}
-              </div>
-              {Array.isArray(featuredProject.data.tags) && featuredProject.data.tags.length > 0 && (
-                <div class="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65">
-                  {featuredProject.data.tags.slice(0, 4).map((tag: string) => (
-                    <span class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/30">{tag}</span>
-                  ))}
-                </div>
-              )}
-              <div class="relative overflow-hidden rounded-2xl border border-border/30 bg-background/80">
-                <img
-                  src={featuredProject.data.image || '/assets/images/blake-logo-fallback.png'}
-                  alt=""
-                  aria-hidden="true"
-                  width="960"
-                  height="540"
-                  class="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <span class="inline-flex items-center gap-2 text-sm font-semibold text-accent">
-                View the project
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
-                </svg>
-              </span>
-            </div>
-          </a>
-        )}
-        <div class="rounded-[2.25rem] bg-background/90 p-7 ring-1 ring-border/35 shadow-sm shadow-black/5">
-          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/60">
+
+      <div class="flex flex-col gap-8">
+        {featuredProject && <ProjectCard project={featuredProject} featured />}
+        <div class="rounded-[2.25rem] bg-background/92 p-8 ring-1 ring-border/30 shadow-card">
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-foreground/60 dark:text-foreground-light/65">
             <span class="h-2 w-2 rounded-full bg-accent"></span>
             Operating rhythm
           </div>
-          <div class="mt-5 space-y-4">
+          <ol class="mt-6 space-y-4 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
             {heroHighlights.map((step, index) => (
-              <div class="flex gap-4 rounded-2xl bg-surface/80 px-4 py-3 ring-1 ring-border/25">
-                <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent/15 text-xs font-semibold uppercase tracking-wide text-accent">{String(index + 1).padStart(2, '0')}</span>
-                <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{step}</p>
-              </div>
+              <li class="flex items-start gap-4 rounded-2xl bg-surface-subtle px-4 py-3 ring-1 ring-border/25 transition-colors duration-200 group-hover:ring-border/40 dark:bg-surface-dark-subtle">
+                <span class="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-accent/15 text-xs font-semibold uppercase tracking-[0.28em] text-accent">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span>{step}</span>
+              </li>
             ))}
-          </div>
+          </ol>
           {remainingMethodology.length > 0 && (
-            <p class="mt-5 text-xs uppercase tracking-wide text-foreground/55 dark:text-foreground-light/60">...and {remainingMethodology.length} more stages carried through launch.</p>
+            <p class="mt-6 text-xs uppercase tracking-[0.32em] text-foreground/55 dark:text-foreground-light/60">
+              …and {remainingMethodology.length} more stages carried through launch.
+            </p>
           )}
         </div>
       </div>
     </div>
   </section>
 
-  <section class="border-y border-border/30 bg-background py-20 sm:py-28" role="region" aria-labelledby="methodology-heading" data-a11y-allow-color-contrast>
-    <div class="layout-shell space-y-16">
-      <div class="grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-center">
-        <div class="space-y-7 text-pretty">
-          <span class="inline-flex items-center gap-2 rounded-full bg-background/90 px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-wide text-foreground/70 ring-1 ring-border/40">Playbook in motion</span>
-          <h2 id="methodology-heading" class="font-heading text-3xl sm:text-4xl font-bold text-foreground dark:text-foreground-light">Transformation that stays anchored in outcomes</h2>
-          <p class="text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">Each engagement moves through a measurable rhythm—from discovery to adoption—keeping leaders informed, coaching teams, and proving value every sprint.</p>
-          <div class="space-y-4">
-            {proofPoints.map((point) => (
-              <div class="flex items-start gap-4 rounded-2xl bg-background/90 px-4 py-4 ring-1 ring-border/30">
-                <span class="mt-1 h-2 w-2 rounded-full bg-accent"></span>
-                <div class="space-y-1">
-                  <p class="text-sm font-semibold text-foreground dark:text-foreground-light">{point.title}</p>
-                  <p class="text-sm leading-relaxed text-foreground/70 dark:text-foreground-light/70">{point.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+  <section class="border-y border-border/30 bg-background/98 py-24" role="region" aria-labelledby="methodology-heading" data-a11y-allow-color-contrast>
+    <div class="layout-shell-wide grid gap-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start">
+      <div class="space-y-8 text-pretty">
+        <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-foreground/70 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+          Playbook in motion
+        </span>
         <div class="space-y-5">
-          <div class="rounded-[2.5rem] bg-gradient-to-br from-surface/80 via-background/90 to-surface/70 p-8 ring-1 ring-border/35 shadow-soft-glow">
-            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/60">What leaders notice</p>
-            <p class="mt-4 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">"We knew the change would stick because we could see capability, adoption, and ROI trending in the same dashboard every week."</p>
-            <p class="mt-6 text-xs uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65">Global finance executive · change program</p>
-          </div>
-          <div class="rounded-[2.5rem] bg-background/90 p-8 ring-1 ring-border/35 shadow-sm shadow-black/5">
-            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/60">Signals of progress</p>
-            <ul class="mt-4 space-y-3 text-sm leading-relaxed text-foreground/70 dark:text-foreground-light/70">
-              <li class="flex items-start gap-3"><span class="mt-1 h-1.5 w-1.5 rounded-full bg-accent"></span><span>Visibility into automation ROI and capacity gains</span></li>
-              <li class="flex items-start gap-3"><span class="mt-1 h-1.5 w-1.5 rounded-full bg-accent"></span><span>Adoption baked into every release plan and playbook</span></li>
-              <li class="flex items-start gap-3"><span class="mt-1 h-1.5 w-1.5 rounded-full bg-accent"></span><span>Feedback loops connecting product, finance, and operations</span></li>
-            </ul>
-          </div>
+          <h2 id="methodology-heading" class="font-heading text-3xl sm:text-4xl font-semibold text-foreground dark:text-foreground-light">
+            Transformation that stays anchored in outcomes
+          </h2>
+          <p class="text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+            Each engagement moves through a measurable rhythm—from discovery to adoption—keeping leaders informed, coaching teams, and proving value every sprint.
+          </p>
+        </div>
+        <div class="space-y-4">
+          {proofPoints.map((point) => (
+            <div class="flex items-start gap-4 rounded-[1.75rem] bg-background/95 px-5 py-5 ring-1 ring-border/30 shadow-card">
+              <span class="mt-1 h-2 w-2 rounded-full bg-accent"></span>
+              <div class="space-y-1">
+                <p class="text-sm font-semibold text-foreground dark:text-foreground-light">{point.title}</p>
+                <p class="text-sm leading-relaxed text-foreground/70 dark:text-foreground-light/70">{point.detail}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
-      <ol class="relative grid gap-5 md:grid-cols-5">
-        {methodology.map((m, index) => (
-          <li class="group relative flex flex-col gap-5 rounded-[1.75rem] bg-surface/80 p-6 ring-1 ring-border/35">
-            <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-accent/15 text-xs font-semibold uppercase tracking-wide text-accent">{String(index + 1).padStart(2, '0')}</span>
-            <p class="text-sm font-medium leading-relaxed text-foreground/75 dark:text-foreground-light/75">{m}</p>
-            {index < methodology.length - 1 && (
-              <span class="absolute right-[-1.6rem] top-1/2 hidden h-px w-12 -translate-y-1/2 bg-border/35 md:block" aria-hidden="true"></span>
-            )}
-          </li>
-        ))}
-        <span class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-transparent via-white/5 to-transparent mix-blend-overlay md:block" aria-hidden="true"></span>
-      </ol>
+      <div class="flex flex-col gap-6">
+        <div class="rounded-[2.5rem] bg-gradient-to-br from-surface/80 via-background/90 to-surface/70 p-8 ring-1 ring-border/30 shadow-accent-glow">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-foreground/55 dark:text-foreground-light/60">What leaders notice</p>
+          <p class="mt-4 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+            "We knew the change would stick because we could see capability, adoption, and ROI trending in the same dashboard every week."
+          </p>
+          <p class="mt-6 text-xs uppercase tracking-[0.3em] text-foreground/60 dark:text-foreground-light/65">Global finance executive · change program</p>
+        </div>
+        <div class="rounded-[2.5rem] bg-background/94 p-8 ring-1 ring-border/30 shadow-card">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-foreground/55 dark:text-foreground-light/60">Signals of progress</p>
+          <ul class="mt-5 space-y-3 text-sm leading-relaxed text-foreground/70 dark:text-foreground-light/70">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 h-1.5 w-1.5 rounded-full bg-accent"></span>
+              <span>Visibility into automation ROI and capacity gains</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 h-1.5 w-1.5 rounded-full bg-accent"></span>
+              <span>Adoption baked into every release plan and playbook</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 h-1.5 w-1.5 rounded-full bg-accent"></span>
+              <span>Feedback loops connecting product, finance, and operations</span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
+
+    <ol class="layout-shell-wide mt-16 grid gap-5 md:grid-cols-5">
+      {methodology.map((m, index) => (
+        <li class="group relative flex flex-col gap-5 rounded-[1.75rem] bg-surface-subtle p-6 ring-1 ring-border/35 transition-transform duration-200 hover:-translate-y-1 dark:bg-surface-dark-subtle">
+          <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-accent/15 text-xs font-semibold uppercase tracking-[0.28em] text-accent">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <p class="text-sm font-medium leading-relaxed text-foreground/75 dark:text-foreground-light/75">{m}</p>
+        </li>
+      ))}
+    </ol>
   </section>
 
-  <section class="bg-gradient-to-b from-surface/35 via-background to-background py-24 sm:py-28" role="region" aria-labelledby="case-studies-heading">
-    <div class="layout-shell-wide space-y-16">
+  <section class="relative isolate overflow-hidden bg-gradient-to-b from-surface/35 via-background to-background py-24 sm:py-28" role="region" aria-labelledby="case-studies-heading">
+    <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
+    <div class="layout-shell-wide relative space-y-16">
       <div class="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end">
         <div class="space-y-5 text-pretty">
-          <span class="inline-flex items-center gap-2 rounded-full bg-background/85 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-foreground/70 ring-1 ring-border/40">Case study library</span>
-          <h2 id="case-studies-heading" class="font-heading text-3xl sm:text-4xl font-bold text-foreground dark:text-foreground-light">Projects that pair strategy with execution</h2>
-          <p class="text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">Real stories across healthcare, finance, and product—illustrating how operational rigor, platform expertise, and change leadership come together.</p>
+          <span class="inline-flex items-center gap-2 rounded-full bg-background/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-foreground/70 ring-1 ring-border/35">
+            Case study library
+          </span>
+          <h2 id="case-studies-heading" class="font-heading text-3xl sm:text-4xl font-semibold text-foreground dark:text-foreground-light">
+            Projects that pair strategy with execution
+          </h2>
+          <p class="text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+            Real stories across healthcare, finance, and product—illustrating how operational rigor, platform expertise, and change leadership come together.
+          </p>
         </div>
-        <div class="flex flex-wrap justify-end gap-2 text-xs font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65">
+        <div class="flex flex-wrap justify-end gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-foreground/60 dark:text-foreground-light/65">
           <span class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/40">Automation</span>
           <span class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/40">Analytics</span>
           <span class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/40">Change enablement</span>
@@ -220,69 +209,42 @@ const proofPoints = [
       </div>
 
       {featuredProject && (
-        <article class="relative overflow-hidden rounded-[2.75rem] bg-gradient-to-br from-background/95 via-surface/85 to-background/75 p-8 ring-1 ring-border/35 shadow-soft-glow">
-          <div class="pointer-events-none absolute inset-0 opacity-[0.35]">
-            <div class="absolute inset-0 bg-grid-overlay [background-size:200px_200px]"></div>
-            <div class="absolute -left-32 top-32 h-64 w-64 rounded-full bg-accent/15 blur-3xl"></div>
-            <div class="absolute right-[-20%] bottom-[-15%] h-72 w-72 rounded-full bg-accent/12 blur-3xl"></div>
-          </div>
-          <div class="relative grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:items-center">
-            <div class="space-y-6 text-pretty">
-              <span class="inline-flex items-center gap-2 rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent ring-1 ring-accent/40">Featured case study</span>
-              <div class="space-y-4">
-                <h3 class="text-2xl sm:text-3xl font-semibold text-foreground dark:text-foreground-light">{featuredProject.data.title}</h3>
-                {featuredProject.data.description && (
-                  <p class="text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">{featuredProject.data.description}</p>
-                )}
-              </div>
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-center">
+          <ProjectCard project={featuredProject} featured />
+          <div class="rounded-[2.5rem] bg-background/94 p-8 ring-1 ring-border/30 shadow-card">
+            <div class="space-y-4">
+              <h3 class="text-2xl font-semibold text-foreground dark:text-foreground-light">{featuredProject.data.title}</h3>
+              {featuredProject.data.description && (
+                <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{featuredProject.data.description}</p>
+              )}
               {Array.isArray(featuredProject.data.tags) && featuredProject.data.tags.length > 0 && (
-                <div class="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65">
+                <div class="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-foreground/60 dark:text-foreground-light/65">
                   {featuredProject.data.tags.map((tag: string) => (
-                    <span class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/30">{tag}</span>
+                    <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 dark:bg-surface-dark-subtle">{tag}</span>
                   ))}
                 </div>
               )}
-              <div class="flex flex-wrap gap-3">
-                <a
-                  href={`/projects/${featuredProject.slug}/`}
-                  aria-label={`View project: ${featuredProject.data.title}`}
-                  class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-dark focus-visible:ring-2 focus-visible:ring-accent/70"
-                >
-                  <span>View the project</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
-                  </svg>
-                </a>
-                <a
-                  href="/contact/"
-                  class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-accent ring-1 ring-accent/30 transition hover:text-accent-dark focus-visible:ring-2 focus-visible:ring-accent/70"
-                >
-                  <span>Discuss a similar build</span>
-                </a>
-              </div>
             </div>
-            <div class="relative overflow-hidden rounded-[2rem] border border-border/30 bg-background/80">
-              <img
-                src={featuredProject.data.image || '/assets/images/blake-logo-fallback.png'}
-                alt=""
-                aria-hidden="true"
-                width="960"
-                height="540"
-                class="h-full w-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-              <div class="absolute inset-x-6 bottom-6 flex flex-wrap gap-3 rounded-2xl bg-background/90 px-5 py-4 ring-1 ring-border/30">
-                {stats.slice(0, 2).map((s) => (
-                  <div class="flex flex-col">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-foreground/55 dark:text-foreground-light/60">{s.label}</span>
-                    <span class="text-lg font-semibold text-accent">{s.value}</span>
-                  </div>
-                ))}
-              </div>
+            <div class="mt-8 grid gap-4 sm:grid-cols-2">
+              {stats.slice(0, 2).map((s) => (
+                <div class="rounded-2xl bg-surface-subtle px-4 py-4 ring-1 ring-border/25 dark:bg-surface-dark-subtle">
+                  <span class="text-xs font-semibold uppercase tracking-[0.28em] text-foreground/55 dark:text-foreground-light/60">{s.label}</span>
+                  <span class="mt-2 text-lg font-semibold text-accent">{s.value}</span>
+                </div>
+              ))}
             </div>
+            <a
+              href={`/projects/${featuredProject.slug}/`}
+              aria-label={`View project: ${featuredProject.data.title}`}
+              class="mt-8 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-accent px-5 py-2 text-sm font-semibold text-on-accent transition hover:bg-accent-dark focus-visible:ring-2 focus-visible:ring-accent/60"
+            >
+              View the project
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14m-6-6 6 6-6 6" />
+              </svg>
+            </a>
           </div>
-        </article>
+        </div>
       )}
 
       <div class="space-y-8">
@@ -291,7 +253,9 @@ const proofPoints = [
             <h3 class="font-heading text-2xl font-semibold text-foreground dark:text-foreground-light">Selected engagements</h3>
             <p class="text-sm leading-relaxed text-foreground/70 dark:text-foreground-light/70">A snapshot of the work closing gaps between insight, enablement, and delivery velocity.</p>
           </div>
-          <a href="/contact/" class="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wide text-accent ring-1 ring-accent/30 transition hover:text-accent-dark focus-visible:ring-2 focus-visible:ring-accent/70">Request full portfolio</a>
+          <a href="/contact/" class="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-accent ring-1 ring-accent/30 transition hover:text-accent-dark focus-visible:ring-2 focus-visible:ring-accent/60">
+            Request full portfolio
+          </a>
         </div>
         <div class="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
           {limitedProjects.map((project) => (
@@ -302,46 +266,50 @@ const proofPoints = [
     </div>
   </section>
 
-  <section class="relative isolate overflow-hidden py-24 sm:py-28">
-    <div class="absolute inset-0 -z-10">
-      <div class="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-surface/75"></div>
-      <div class="absolute left-[-8rem] top-10 h-80 w-80 rounded-full bg-accent/18 blur-3xl"></div>
-      <div class="absolute right-[-6rem] bottom-[-4rem] h-[22rem] w-[22rem] rounded-full bg-accent/12 blur-3xl"></div>
-      <div class="absolute inset-0 bg-grid-overlay opacity-[0.07] [background-size:200px_200px]"></div>
-    </div>
-    <div class="layout-shell">
-      <div class="relative overflow-hidden rounded-[2.75rem] bg-gradient-to-br from-background/98 via-surface/85 to-background/75 p-8 sm:p-12 ring-1 ring-border/35 shadow-accent-glow">
-        <div class="pointer-events-none absolute inset-y-0 right-0 hidden w-48 bg-gradient-to-l from-accent/20 to-transparent lg:block" aria-hidden="true"></div>
-        <div class="relative grid gap-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] lg:items-center">
-          <div class="space-y-6 text-pretty">
-            <span class="inline-flex items-center gap-2 rounded-full bg-accent/15 px-4 py-1.5 text-[0.75rem] font-semibold uppercase tracking-wide text-accent ring-1 ring-accent/30">Ready to move from idea to deployment?</span>
-            <h2 class="font-heading text-2xl sm:text-3xl lg:text-[2.3rem] font-bold text-foreground dark:text-foreground-light">Let’s architect the next leap forward together</h2>
-            <p class="text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">Bring a problem space and we’ll map the operational backbone—automation, analytics, and change enablement—without losing momentum or clarity for stakeholders.</p>
-            <div class="flex flex-wrap items-center gap-3">
-              <a href="/contact/" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-accent-glow transition hover:bg-accent-dark focus-visible:ring-2 focus-visible:ring-accent/70">Start a project conversation</a>
-              <a href="/about/" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-accent ring-1 ring-accent/40 transition hover:ring-accent hover:text-accent-dark focus-visible:ring-2 focus-visible:ring-accent/70">See how I work</a>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              {focus.map((f) => (
-                <span class="inline-flex items-center gap-2 rounded-full bg-background/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground/70 ring-1 ring-border/30 dark:text-foreground-light/70">
-                  <span class="h-1.5 w-1.5 rounded-full bg-accent/70"></span>
-                  {f}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div class="rounded-[2.25rem] bg-background/92 p-8 ring-1 ring-border/30 shadow-sm shadow-black/5">
-            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/60">Kickoff path</p>
-            <ol class="mt-6 space-y-4 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
-              {methodology.map((m, i) => (
-                <li class="flex gap-4 rounded-2xl bg-surface/80 px-4 py-3 ring-1 ring-border/25">
-                  <span class="flex h-9 w-9 items-center justify-center rounded-2xl bg-accent/15 text-xs font-semibold uppercase tracking-wide text-accent">{String(i + 1).padStart(2, '0')}</span>
-                  <span>{m}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
+  <section class="relative isolate overflow-hidden bg-gradient-to-br from-background/98 via-surface-subtle to-background/85 py-24 sm:py-28">
+    <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute left-[-8rem] top-4 h-72 w-72 rounded-full bg-accent/15 blur-[110px]" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute right-[-6rem] bottom-[-4rem] h-72 w-72 rounded-full bg-accent/12 blur-[120px]" aria-hidden="true"></div>
+    <div class="layout-shell-wide relative grid gap-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] lg:items-center">
+      <div class="space-y-6 text-pretty">
+        <span class="inline-flex items-center gap-2 rounded-full bg-accent/15 px-4 py-1.5 text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-accent ring-1 ring-accent/30">
+          Ready to move from idea to deployment?
+        </span>
+        <h2 class="font-heading text-2xl sm:text-3xl lg:text-[2.3rem] font-semibold text-foreground dark:text-foreground-light">
+          Let’s architect the next leap forward together
+        </h2>
+        <p class="text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+          Bring a problem space and we’ll map the operational backbone—automation, analytics, and change enablement—without losing momentum or clarity for stakeholders.
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <a href="/contact/" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-on-accent shadow-accent-glow transition hover:bg-accent-dark focus-visible:ring-2 focus-visible:ring-accent/60">
+            Start a project conversation
+          </a>
+          <a href="/about/" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-accent ring-1 ring-accent/35 transition hover:ring-accent hover:text-accent-dark focus-visible:ring-2 focus-visible:ring-accent/60">
+            See how I work
+          </a>
         </div>
+        <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-foreground/65 dark:text-foreground-light/65">
+          {focus.map((f) => (
+            <span class="inline-flex items-center gap-2 rounded-full bg-background/92 px-3 py-1 ring-1 ring-border/30">
+              <span class="h-1.5 w-1.5 rounded-full bg-accent/70"></span>
+              {f}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div class="rounded-[2.5rem] bg-background/94 p-8 ring-1 ring-border/30 shadow-card">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-foreground/55 dark:text-foreground-light/60">Kickoff path</p>
+        <ol class="mt-6 space-y-4 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+          {methodology.map((m, i) => (
+            <li class="flex gap-4 rounded-2xl bg-surface-subtle px-4 py-3 ring-1 ring-border/25 dark:bg-surface-dark-subtle">
+              <span class="flex h-9 w-9 items-center justify-center rounded-2xl bg-accent/15 text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span>{m}</span>
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   </section>

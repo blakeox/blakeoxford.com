@@ -2,6 +2,7 @@
 import Layout from '../../layouts/BaseLayout.astro';
 import ProjectHero from '../../components/features/projects/ProjectHero.astro';
 import AchievementCard from '../../components/common/AchievementCard.astro';
+import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
 import ProjectTags from '../../components/features/projects/ProjectTags.astro';
 
 const title = 'Bank Projections and Financial Modeling';
@@ -26,168 +27,136 @@ const canonicalUrl = 'https://blakeoxford.com/projects/bank-projections-modeling
     image={image}
   />
 
-  <!-- Full-Width Content Section -->
-  <article class="py-20 bg-background">
-    <div class="w-full px-4 sm:px-6 lg:px-8">
-      <div class="max-w-none mx-auto">
+  <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
+    <div
+      class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]"
+      aria-hidden="true"
+    ></div>
+    <div class="layout-shell-wide relative flex flex-col gap-14">
+      <ProjectDetailSection title="Background" eyebrow="Context">
+        <div class="space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <p>
+            From 2018 through 2022, I led financial modeling and projection efforts for several critical funding initiatives:
+          </p>
+          <ul class="space-y-3">
+            <li class="flex gap-4">
+              <span class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+              <span><strong>2018:</strong> Secured a $2M loan to renovate 30,000 sq. ft (18K billable, 12K warehouse) of existing space.</span>
+            </li>
+            <li class="flex gap-4">
+              <span class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+              <span><strong>2020:</strong> Obtained PPP funding and a Disaster Relief Loan to sustain operations during COVID-19 disruptions.</span>
+            </li>
+            <li class="flex gap-4">
+              <span class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+              <span><strong>2022:</strong> Built comprehensive models for a $10M loan to construct a 36,000 sq. ft autism center.</span>
+            </li>
+          </ul>
+          <p>
+            The objective: present lenders with clear, data-driven insight into revenue potential, expense structures, and cash-flow viability across varied market conditions.
+          </p>
+        </div>
+      </ProjectDetailSection>
 
-        <!-- Background -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Background</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90 mb-6">
-              From 2018 through 2022, I led the financial modeling and projection efforts for several critical funding initiatives:
-            </p>
-            <ul class="space-y-4 mb-6">
-              <li class="flex items-start gap-3">
-                <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                  <strong>2018:</strong> Secured a $2M loan to renovate 30,000 sq. ft (18K billable, 12K warehouse) of existing space.
-                </span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                  <strong>2020:</strong> Assisted in obtaining PPP funding and a Disaster Relief Loan to sustain operations during COVID-19 disruptions.
-                </span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                  <strong>2022:</strong> Developed comprehensive models for a $10M loan to build a 36,000 sq. ft cutting-edge autism center.
-                </span>
-              </li>
-            </ul>
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-              The objective was to present lenders with clear, data-driven insights into revenue potential, expense structures, and cash flow viability across varied market conditions.
-            </p>
-          </div>
-        </section>
+      <ProjectDetailSection title="Key Achievements" eyebrow="Highlights" layout="surface">
+        <div class="grid gap-8 md:grid-cols-1">
+          <AchievementCard
+            title="Comprehensive Scenario Analysis"
+            achievements={[
+              'Built dynamic Excel models incorporating best-case, base-case, and worst-case assumptions, enabling stakeholders to understand risks and opportunities.'
+            ]}
+          />
 
-        <!-- Key Achievements -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Key Achievements</h2>
+          <AchievementCard
+            title="Multi-Loan Experience"
+            achievements={[
+              'Tailored projections for differing project scales—from renovation financing to large-scale facility construction and pandemic relief funding requirements.'
+            ]}
+          />
 
-          <div class="grid md:grid-cols-1 gap-8">
-            <AchievementCard
-              title="Comprehensive Scenario Analysis"
-              achievements={[
-                'Built dynamic Excel models incorporating best-case, base-case, and worst-case assumptions, enabling stakeholders to understand risks and opportunities.'
-              ]}
-            />
+          <AchievementCard
+            title="Sensitivity &amp; Stress Testing"
+            achievements={[
+              'Integrated sensitivity tables and stress tests for key variables (occupancy rates, reimbursement changes, operating costs) to demonstrate model robustness.'
+            ]}
+          />
 
-            <AchievementCard
-              title="Multi-Loan Experience"
-              achievements={[
-                'Tailored projections for differing project scales—from renovation financing to large-scale facility construction and pandemic relief funding requirements.'
-              ]}
-            />
+          <AchievementCard
+            title="Lender-Aligned Reporting"
+            achievements={[
+              'Crafted bank-friendly projection reports aligned with underwriting standards and supporting documentation (monthly P&L, cash-flow statements, balance-sheet forecasts).'
+            ]}
+          />
 
-            <AchievementCard
-              title="Sensitivity & Stress Testing"
-              achievements={[
-                'Integrated sensitivity tables and stress tests for key variables (occupancy rates, reimbursement changes, operating costs) to demonstrate model robustness.'
-              ]}
-            />
+          <AchievementCard
+            title="Strategic Narrative Development"
+            achievements={[
+              'Paired quantitative models with executive summaries—framing the financial story to match lender priorities.'
+            ]}
+          />
+        </div>
+      </ProjectDetailSection>
 
-            <AchievementCard
-              title="Lender-Aligned Reporting"
-              achievements={[
-                'Crafted bank-friendly projection reports, aligning with underwriting standards and supporting documentation (monthly P&L, cash flow statements, balance sheet forecasts).'
-              ]}
-            />
-
-            <AchievementCard
-              title="Strategic Narrative Development"
-              achievements={[
-                'Complemented quantitative models with qualitative narratives and executive summaries—framing the financial story to match lender priorities.'
-              ]}
-            />
-          </div>
-        </section>
-
-        <!-- Impact -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Impact</h2>
-
-          <div class="grid md:grid-cols-1 gap-8">
-            <div class="bg-surface dark:bg-surface-dark rounded-xl p-8">
-              <h3 class="text-2xl font-semibold mb-6 text-foreground dark:text-foreground-light">$2M Renovation Loan (2018)</h3>
-              <p class="text-lg text-foreground/80 dark:text-foreground-light/90">
+      <ProjectDetailSection title="Impact" eyebrow="Outcomes">
+        <div class="space-y-8">
+          <div class="grid gap-6 lg:grid-cols-3">
+            <div class="rounded-3xl bg-surface/95 p-8 ring-1 ring-border/25 shadow-card dark:bg-surface-dark/95">
+              <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">$2M Renovation Loan (2018)</h3>
+              <p class="mt-3 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
                 Enabled critical facility upgrades, increasing billable space and operational efficiency.
               </p>
             </div>
-
-            <div class="bg-surface dark:bg-surface-dark rounded-xl p-8">
-              <h3 class="text-2xl font-semibold mb-6 text-foreground dark:text-foreground-light">PPP & Disaster Relief (2020)</h3>
-              <p class="text-lg text-foreground/80 dark:text-foreground-light/90">
+            <div class="rounded-3xl bg-surface/95 p-8 ring-1 ring-border/25 shadow-card dark:bg-surface-dark/95">
+              <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">PPP &amp; Disaster Relief (2020)</h3>
+              <p class="mt-3 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
                 Secured lifeline funding that preserved jobs and stabilized cash flow during unprecedented downturns.
               </p>
             </div>
-
-            <div class="bg-surface dark:bg-surface-dark rounded-xl p-8">
-              <h3 class="text-2xl font-semibold mb-6 text-foreground dark:text-foreground-light">$10M Center Loan (2022)</h3>
-              <p class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                Provided capital for state-of-the-art autism care facility, supporting long-term growth and community impact.
+            <div class="rounded-3xl bg-surface/95 p-8 ring-1 ring-border/25 shadow-card dark:bg-surface-dark/95">
+              <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">$10M Center Loan (2022)</h3>
+              <p class="mt-3 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+                Provided capital for a state-of-the-art autism care facility, supporting long-term growth and community impact.
               </p>
             </div>
           </div>
-
-          <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90 mt-8">
-            These successes not only demonstrated financial feasibility but also established a template for future funding rounds and strategic planning.
+          <p class="text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+            These wins showcased financial feasibility and established a reusable template for future funding rounds and strategic planning.
           </p>
-        </section>
+        </div>
+      </ProjectDetailSection>
 
-        <!-- Lessons & Takeaways -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Lessons & Takeaways</h2>
-
-          <div class="space-y-8">
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Adapt to Scale</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Financial models must flex to project size—renovation vs. new build vs. emergency relief all demand different assumptions and presentation styles.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Align with Lenders</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Understanding bank underwriting criteria upfront streamlines the approval process.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Combine Numbers with Narrative</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                A compelling executive summary can be as persuasive as the numbers themselves.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Build Reusable Frameworks</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Templates and standardized models accelerate subsequent funding efforts, reducing turnaround time.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Operations-Driven Modeling</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Projections become far more accurate when grounded in operational realities. By collaborating closely with department heads, I mapped key drivers—revenue per client, staffing ratios, and overhead allocation—enabling dynamic scenario planning. Early models lacked this depth and were less predictive; by 2025, with robust data systems in place, we could instantly adjust variables—like client volume, staffing levels, and reimbursement rates—and see forward-looking profitability, shifting discussions from "how will we pay?" to "where should we invest for maximum impact?"
-              </p>
-            </div>
+      <ProjectDetailSection title="Lessons &amp; Takeaways" eyebrow="What stuck" layout="surface">
+        <div class="space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Adapt to scale.</h3>
+            <p>Financial models must flex to project size—renovation, new build, and emergency relief all demand unique assumptions and storytelling.</p>
           </div>
-        </section>
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Align with lenders.</h3>
+            <p>Understanding bank underwriting criteria upfront streamlines approvals and reduces revision cycles.</p>
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Numbers need narrative.</h3>
+            <p>A compelling executive summary can be as persuasive as the spreadsheets themselves.</p>
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Build reusable frameworks.</h3>
+            <p>Templates and standardized models accelerate future funding efforts and ensure consistency.</p>
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Make it operations-driven.</h3>
+            <p>
+              Accuracy skyrocketed when projections tied to operational realities. By collaborating with department heads, I mapped key drivers—revenue per client, staffing ratios, overhead—enabling dynamic scenario planning. By 2025, robust data systems let us adjust variables (client volume, staffing, reimbursement rates) and immediately see forward-looking profitability, shifting conversations from "Can we afford this?" to "Where should we invest for maximum impact?"
+            </p>
+          </div>
+        </div>
+      </ProjectDetailSection>
 
-        <!-- Quote -->
-  <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-12">
-          <p class="text-lg italic text-foreground/80 dark:text-foreground-light/90">
-            By evolving from surface-level forecasts to operations-driven projections with real-time variable manipulation, I transformed financial modeling into a strategic dialogue—empowering leaders with clarity, confidence, and actionable insights.
-          </p>
-        </blockquote>
-
-      </div>
+      <ProjectDetailSection title="Reflection" eyebrow="Personal note">
+        <p class="text-base italic leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          By evolving from surface-level forecasts to operations-driven projections with real-time variable manipulation, financial modeling became a strategic dialogue—giving leaders clarity, confidence, and actionable insight.
+        </p>
+      </ProjectDetailSection>
     </div>
   </article>
 

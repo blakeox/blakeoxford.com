@@ -3,6 +3,7 @@ import Layout from '../../layouts/BaseLayout.astro';
 import ProjectHero from '../../components/features/projects/ProjectHero.astro';
 import AchievementCard from '../../components/common/AchievementCard.astro';
 import MetricsTable from '../../components/common/MetricsTable.astro';
+import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
 import ProjectTags from '../../components/features/projects/ProjectTags.astro';
 
 const title = 'Ferment App – Mobile Recipe Management';
@@ -60,272 +61,212 @@ const metrics = [
     image={image}
   />
 
-  <!-- Full-Width Content Section -->
-  <article class="py-20 bg-background dark:bg-background">
-    <div class="w-full px-4 sm:px-6 lg:px-8">
-      <div class="max-w-none mx-auto">
-        
-        <!-- Project Introduction -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🍃 Project Introduction</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
-              Ferment App is a native iOS application built with SwiftUI that enables users to manage fermentation recipes, track progress, and automate critical tasks — all within a clean, mobile-first interface. Currently in private beta via TestFlight, the app is designed to support home brewers and fermentation enthusiasts across a wide range of recipes and workflows.
-            </p>
-            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
-              Built for kombucha brewers, kimchi fermenters, and mead makers alike, Ferment App provides a structured and intuitive platform for logging fermentation activities, monitoring variables, and scheduling recurring steps for consistent, repeatable results.
-            </p>
-          </div>
-        </section>
+  <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
+    <div
+      class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]"
+      aria-hidden="true"
+    ></div>
+    <div class="layout-shell-wide relative flex flex-col gap-14">
+      <ProjectDetailSection title="Project Introduction" eyebrow="🍃 Overview">
+        <div class="space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <p>
+            Ferment App is a native iOS experience built with SwiftUI that helps fermentation enthusiasts manage recipes, track progress, and automate critical tasks within a clean, mobile-first interface. It is currently in private TestFlight, shaped by feedback from home brewers and fermentation hobbyists.
+          </p>
+          <p>
+            Designed for kombucha brewers, kimchi makers, and mead experimenters alike, the app offers structured logging, variable monitoring, and recurring schedule management so every batch is consistent and repeatable.
+          </p>
+        </div>
+      </ProjectDetailSection>
 
-        <!-- Technical Architecture -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🛠️ Technical Architecture</h2>
-          
+      <ProjectDetailSection title="Technical Architecture" eyebrow="🛠️ Systems map" layout="surface">
+        <div class="overflow-hidden rounded-[2rem] ring-1 ring-border/25">
           <div class="overflow-x-auto">
-            <table class="w-full border-collapse border border-gray-300 dark:border-gray-600 my-8">
-              <thead>
-                <tr class="bg-surface dark:bg-surface-dark">
-                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">Component</th>
-                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">Technology</th>
-                  <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">Purpose</th>
+            <table class="w-full min-w-[640px] border-collapse text-left">
+              <thead class="bg-surface-subtle/80 text-sm font-semibold uppercase tracking-wide text-foreground/70 dark:bg-surface-dark-subtle">
+                <tr>
+                  <th class="px-6 py-4">Component</th>
+                  <th class="px-6 py-4">Technology</th>
+                  <th class="px-6 py-4">Purpose</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="divide-y divide-border/20 text-sm text-foreground/80 dark:text-foreground-light/78">
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Language & UI</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Swift with SwiftUI</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Modern, fluid iOS experience</td>
+                  <td class="px-6 py-4 font-semibold text-foreground dark:text-foreground-light">Language &amp; UI</td>
+                  <td class="px-6 py-4">Swift + SwiftUI</td>
+                  <td class="px-6 py-4">Modern, fluid native experience</td>
                 </tr>
-                <tr class="bg-surface dark:bg-surface-dark">
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">State Management</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Combine with ObservableObject</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Reactive data flow</td>
-                </tr>
-                <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Local Persistence</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Core Data (migrating to SwiftData)</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Offline-first data storage</td>
-                </tr>
-                <tr class="bg-surface dark:bg-surface-dark">
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Cloud Sync & Auth</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Firebase Firestore, Firebase Auth</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Cross-device synchronization</td>
+                <tr class="bg-background/70">
+                  <td class="px-6 py-4 font-semibold text-foreground dark:text-foreground-light">State Management</td>
+                  <td class="px-6 py-4">Combine with ObservableObject</td>
+                  <td class="px-6 py-4">Reactive data flow</td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Storage & Media</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Firebase Storage</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Recipe images and media</td>
+                  <td class="px-6 py-4 font-semibold text-foreground dark:text-foreground-light">Local Persistence</td>
+                  <td class="px-6 py-4">Core Data → SwiftData</td>
+                  <td class="px-6 py-4">Offline-first storage</td>
                 </tr>
-                <tr class="bg-surface dark:bg-surface-dark">
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Charting & Visualization</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Swift Charts</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Data visualization</td>
+                <tr class="bg-background/70">
+                  <td class="px-6 py-4 font-semibold text-foreground dark:text-foreground-light">Cloud Sync &amp; Auth</td>
+                  <td class="px-6 py-4">Firebase Firestore, Firebase Auth</td>
+                  <td class="px-6 py-4">Cross-device continuity</td>
                 </tr>
                 <tr>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">Deployment</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Xcode, TestFlight</td>
-                  <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">Pre-release distribution</td>
+                  <td class="px-6 py-4 font-semibold text-foreground dark:text-foreground-light">Storage &amp; Media</td>
+                  <td class="px-6 py-4">Firebase Storage</td>
+                  <td class="px-6 py-4">Recipe imagery and assets</td>
+                </tr>
+                <tr class="bg-background/70">
+                  <td class="px-6 py-4 font-semibold text-foreground dark:text-foreground-light">Charting &amp; Visualization</td>
+                  <td class="px-6 py-4">Swift Charts</td>
+                  <td class="px-6 py-4">Trend analysis</td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 font-semibold text-foreground dark:text-foreground-light">Deployment</td>
+                  <td class="px-6 py-4">Xcode + TestFlight</td>
+                  <td class="px-6 py-4">Pre-release distribution</td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </section>
+        </div>
+      </ProjectDetailSection>
 
-        <!-- Core Features -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🚀 Core Features</h2>
-          
-          <div class="grid md:grid-cols-1 gap-8">
-            <AchievementCard 
-              title="🧾 Recipe Management System"
-              achievements={[
-                'Create and edit fermentation recipes by type (kombucha, kimchi, sauerkraut, vinegar, mead, and more)',
-                'Add ingredients, instructions, measurements, and media with structured data entry',
-                'Type-driven UI that adapts based on fermentation category'
-              ]}
-            />
+      <ProjectDetailSection title="Core Features" eyebrow="🚀 Highlights">
+        <div class="grid gap-8 md:grid-cols-1">
+          <AchievementCard
+            title="Recipe management system"
+            achievements={[
+              'Create and edit fermentation recipes by type (kombucha, kimchi, sauerkraut, vinegar, mead, and more)',
+              'Structured ingredient, instruction, and media entry tuned to each fermentation style',
+              'Type-driven UI that adapts based on the fermentation category'
+            ]}
+          />
+          <AchievementCard
+            title="Intelligent task scheduling"
+            achievements={[
+              'Auto-generates task lists based on recipe type and fermentation phase',
+              'Schedules critical activities like tasting, pH checks, burping, and bottling',
+              'Custom reminder cadence per fermentation process'
+            ]}
+          />
+          <AchievementCard
+            title="Advanced timeline & tracking"
+            achievements={[
+              'Log temperature, gravity, pH, notes, and photos in one timeline',
+              'Filter by fermentation phase for focused review',
+              'Interactive Swift Charts visualizations to spot trends'
+            ]}
+          />
+          <AchievementCard
+            title="Cloud integration (in progress)"
+            achievements={[
+              'Firebase-backed syncing for cross-device access',
+              'Foundational work for public recipe sharing and community libraries'
+            ]}
+          />
+        </div>
+      </ProjectDetailSection>
 
-            <AchievementCard 
-              title="📆 Intelligent Task Scheduling"
-              achievements={[
-                'Auto-generates task lists based on recipe type and fermentation phase',
-                'Schedule critical activities like tasting, pH checks, burping, bottling, etc.',
-                'Custom reminders and frequencies for different fermentation processes'
-              ]}
-            />
+      <ProjectDetailSection title="User experience focus" eyebrow="📱 Experience" layout="surface">
+        <ul class="space-y-4 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <li class="flex gap-4">
+            <span class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+            <span><strong>SwiftUI foundation</strong> delivers a modern, fluid interface that feels unmistakably native.</span>
+          </li>
+          <li class="flex gap-4">
+            <span class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+            <span><strong>Accessibility-first</strong> support for Dark Mode, VoiceOver, and Dynamic Type keeps inclusivity baked in.</span>
+          </li>
+          <li class="flex gap-4">
+            <span class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+            <span><strong>Offline-first architecture</strong> balances local persistence with cloud synchronization for reliability.</span>
+          </li>
+          <li class="flex gap-4">
+            <span class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+            <span><strong>Modular systems</strong> make it easy to tailor logic per fermentation type and add new categories over time.</span>
+          </li>
+        </ul>
+      </ProjectDetailSection>
 
-            <AchievementCard 
-              title="📈 Advanced Timeline & Tracking"
-              achievements={[
-                'Log fermentation data including temperature, gravity, pH, notes, and photos',
-                'Custom timeline view with filtering by fermentation phase',
-                'Interactive charts for trend analysis over time using Swift Charts'
-              ]}
-            />
-
-            <AchievementCard 
-              title="☁️ Cloud Integration (In Progress)"
-              achievements={[
-                'Recipe syncing via Firebase Firestore for cross-device access',
-                'Future community features including public recipe sharing and community libraries'
-              ]}
-            />
+      <ProjectDetailSection title="Development deep dive" eyebrow="🔧 Under the hood">
+        <div class="space-y-8 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <div class="space-y-3">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Core Data → SwiftData migration</h3>
+            <ul class="space-y-2 pl-5">
+              <li class="marker:text-foreground/45"><strong>SwiftData adoption</strong> reduces boilerplate and aligns beautifully with SwiftUI.</li>
+              <li class="marker:text-foreground/45"><strong>Version-safe persistence</strong> strategy simplifies future upgrades and migrations.</li>
+              <li class="marker:text-foreground/45"><strong>Modern concurrency</strong> patterns improve responsiveness while heavy operations run.</li>
+            </ul>
           </div>
-        </section>
-
-        <!-- User Experience Highlights -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">📱 User Experience Highlights</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-6">
-              <p class="text-lg text-foreground/85 dark:text-gray-300">
-                <strong>Built with SwiftUI</strong> for a modern, fluid iOS experience that feels native
-              </p>
-            </blockquote>
-            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-6">
-              <p class="text-lg text-foreground/85 dark:text-gray-300">
-                <strong>Accessibility First</strong> with Dark Mode, VoiceOver, and Dynamic Type support
-              </p>
-            </blockquote>
-            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-6">
-              <p class="text-lg text-foreground/85 dark:text-gray-300">
-                <strong>Offline-first architecture</strong> with seamless local/cloud fallback for reliability
-              </p>
-            </blockquote>
-            <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-6">
-              <p class="text-lg text-foreground/85 dark:text-gray-300">
-                <strong>Modular design</strong> built for scalability and fermentation type-specific logic
-              </p>
-            </blockquote>
+          <div class="space-y-3">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Dynamic configuration engine</h3>
+            <ul class="space-y-2 pl-5">
+              <li class="marker:text-foreground/45"><strong>Type-driven UI</strong> uses enums and protocols to adjust flows for kombucha, kimchi, sauerkraut, and more.</li>
+              <li class="marker:text-foreground/45"><strong>Auto-generated defaults</strong> populate templates for ingredients and tasks by recipe type.</li>
+              <li class="marker:text-foreground/45"><strong>Extensible architecture</strong> keeps new fermentation types a single configuration away.</li>
+            </ul>
           </div>
-        </section>
-
-        <!-- Development Deep Dive -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🔧 Development Deep Dive</h2>
-          
-          <div class="space-y-8">
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Core Data → SwiftData Migration</h3>
-              <ul class="space-y-2 ml-6">
-                <li class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Starting migration to SwiftData</strong> for better SwiftUI integration and reduced boilerplate
-                </li>
-                <li class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Version-safe persistence layer</strong> designed to ease future upgrades and migrations
-                </li>
-                <li class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Improved performance</strong> with modern Swift concurrency patterns
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Dynamic Configuration Engine</h3>
-              <ul class="space-y-2 ml-6">
-                <li class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Type-driven UI and behavior</strong> using enums and protocols (e.g., kombucha vs. kimchi workflows)
-                </li>
-                <li class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Auto-generates default ingredients and task templates</strong> by recipe type
-                </li>
-                <li class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Extensible architecture</strong> for adding new fermentation types
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Timeline & Data Visualization</h3>
-              <ul class="space-y-2 ml-6">
-                <li class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Custom SwiftUI timeline view</strong> with historical events and measurements
-                </li>
-                <li class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Swift Charts integration</strong> to visualize pH, temperature, and gravity trends over time
-                </li>
-                <li class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Interactive filtering</strong> by fermentation phase and data type
-                </li>
-              </ul>
-            </div>
+          <div class="space-y-3">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Timeline &amp; visualization</h3>
+            <ul class="space-y-2 pl-5">
+              <li class="marker:text-foreground/45"><strong>Custom timeline view</strong> captures events, measurements, and notes in chronological context.</li>
+              <li class="marker:text-foreground/45"><strong>Swift Charts</strong> surfaces pH, temperature, and gravity trends at a glance.</li>
+              <li class="marker:text-foreground/45"><strong>Interactive filters</strong> narrow the lens by fermentation phase or datapoint category.</li>
+            </ul>
           </div>
-        </section>
+        </div>
+      </ProjectDetailSection>
 
-        <!-- Development Status -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🧪 Development Status</h2>
-          <MetricsTable metrics={metrics} />
-        </section>
+      <ProjectDetailSection title="Development status" eyebrow="🧪 Progress tracker" layout="surface">
+        <MetricsTable metrics={metrics} />
+      </ProjectDetailSection>
 
-        <!-- Impact & Vision -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">🎉 Impact & Vision</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
-              Ferment App bridges the gap between paper logs and overcomplicated brewing software. It offers both structure and flexibility, helping fermentation enthusiasts make better, more consistent batches — while tracking their learnings over time.
-            </p>
-            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
-              <strong>The Vision:</strong> Make fermentation accessible, enjoyable, and scientific for everyone. Turn the humble process of home fermentation into a guided, satisfying experience that connects people with ancient traditions through modern technology.
-            </p>
-          </div>
-        </section>
-
-        <!-- The Story Behind It -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">📚 The Story Behind It</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
-              This app began as a side project — a way to blend my personal passion for healthy living, gardening, and fermentation with a deeper dive into mobile development and modern iOS technologies.
-            </p>
-            
-            <div class="space-y-6">
-              <div>
-                <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Why Fermentation?</h3>
-                <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
-                  Fermentation has always fascinated me: it's ancient, hands-on, and yet deeply scientific. I believe more people could benefit from its health rewards if the process felt more accessible and fun. The U.S. doesn't consume nearly as many fermented foods as other cultures, and I wanted to change that by lowering the barrier and even <strong>gamifying the experience</strong> — turning something as humble as a home-fermented cabbage into a satisfying, guided process.
-                </p>
-              </div>
-
-              <div>
-                <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Technical Growth</h3>
-                <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-4">
-                  Building Ferment App gave me the chance to explore:
-                </p>
-                <ul class="space-y-2 ml-6">
-                  <li class="text-lg text-foreground/85 dark:text-gray-300">
-                    <strong>SwiftUI</strong> for modern iOS development
-                  </li>
-                  <li class="text-lg text-foreground/85 dark:text-gray-300">
-                    <strong>Firebase</strong> for cloud integration
-                  </li>
-                  <li class="text-lg text-foreground/85 dark:text-gray-300">
-                    <strong>Core Data & SwiftData</strong> for persistence
-                  </li>
-                  <li class="text-lg text-foreground/85 dark:text-gray-300">
-                    <strong>IoT integration</strong> concepts with temperature sensors
-                  </li>
-                  <li class="text-lg text-foreground/85 dark:text-gray-300">
-                    <strong>Swift Charts</strong> for data visualization
-                  </li>
-                </ul>
-                <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mt-4">
-                  It's been more than just an app — it's a learning lab where I connect <strong>technology with tradition</strong>, and a space where I can grow both as a developer and a lifelong experimenter.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Quote -->
-  <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-12">
-          <p class="text-lg italic text-foreground/85 dark:text-gray-300">
-            This project is still in development and actively evolving. If you're interested in collaborating, testing, or advising, feel free to reach out.
+      <ProjectDetailSection title="Impact &amp; vision" eyebrow="🎉 Why it matters">
+        <div class="space-y-4 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <p>
+            Ferment App bridges the gap between paper logs and overcomplicated brewing software, providing structure without sacrificing creativity. Enthusiasts gain a repeatable process, richer insights, and a living history of their experiments.
           </p>
-        </blockquote>
+          <p>
+            <strong>The vision:</strong> make fermentation accessible, enjoyable, and scientific for everyone—turning humble home experiments into guided experiences that merge ancient tradition with modern tooling.
+          </p>
+        </div>
+      </ProjectDetailSection>
 
-      </div>
+      <ProjectDetailSection title="The story behind it" eyebrow="📚 Origin story" layout="surface">
+        <div class="space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <p>
+            Ferment App started as a side project that fused my love for healthy living, gardening, and fermentation with a deeper dive into modern iOS development.
+          </p>
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Why fermentation?</h3>
+              <p>
+                Fermentation is ancient, hands-on, and deeply scientific. Lowering the barrier—and even gamifying the experience—helps more people enjoy its rewards. In the U.S. especially, there is room to normalize fermented foods by making the process approachable and fun.
+              </p>
+            </div>
+            <div class="space-y-2">
+              <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Technical growth</h3>
+              <p>Building the app has been a learning lab across:</p>
+              <ul class="space-y-2 pl-5">
+                <li class="marker:text-foreground/45"><strong>SwiftUI</strong> for delightful interfaces</li>
+                <li class="marker:text-foreground/45"><strong>Firebase</strong> for real-time sync</li>
+                <li class="marker:text-foreground/45"><strong>Core Data &amp; SwiftData</strong> for persistence strategies</li>
+                <li class="marker:text-foreground/45"><strong>IoT exploration</strong> with temperature sensors</li>
+                <li class="marker:text-foreground/45"><strong>Swift Charts</strong> for immersive visualizations</li>
+              </ul>
+              <p>
+                It connects technology with tradition, growing me as both a developer and a lifelong experimenter.
+              </p>
+            </div>
+          </div>
+        </div>
+      </ProjectDetailSection>
+
+      <ProjectDetailSection title="Reflection" eyebrow="Leave a note">
+        <p class="text-base italic leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          The project is still evolving. If you are interested in collaborating, testing, or advising, I would love to connect.
+        </p>
+      </ProjectDetailSection>
     </div>
   </article>
 

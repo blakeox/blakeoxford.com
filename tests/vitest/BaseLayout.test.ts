@@ -33,9 +33,7 @@ describe('BaseLayout.astro file', () => {
   });
 
   it('should include both wide and default layout classes', () => {
-    // Verify the wide-layout branch
-    expect(content).toContain('max-w-none px-0');
-    // Verify the default-layout branch
-    expect(content).toContain('max-w-3xl mx-auto p-4');
+    expect(content).toMatch(/wide\s*\?\s*'layout-shell-wide layout-offset-top w-full'/);
+    expect(content).toMatch(/:\s*'prose dark:prose-invert layout-shell-tight layout-offset-top'/);
   });
 });

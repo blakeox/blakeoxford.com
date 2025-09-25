@@ -3,6 +3,7 @@ import Layout from '../../layouts/BaseLayout.astro';
 import ProjectHero from '../../components/features/projects/ProjectHero.astro';
 import AchievementCard from '../../components/common/AchievementCard.astro';
 import MetricsTable from '../../components/common/MetricsTable.astro';
+import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
 import ProjectTags from '../../components/features/projects/ProjectTags.astro';
 
 const title = 'AdvancedMD Implementation & Evolution';
@@ -50,166 +51,136 @@ const metrics = [
     image={image}
   />
 
-  <!-- Full-Width Content Section -->
-  <article class="py-20 bg-background dark:bg-background">
-    <div class="w-full px-4 sm:px-6 lg:px-8">
-      <div class="max-w-none mx-auto">
-        
-        <!-- Background & Challenge -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Background & Challenge</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
-              In late 2017, fresh out of college at a 12-person startup, I was thrust into a billing meltdown: our revenue cycle partner collapsed, leaving us with paper records, unprocessed claims approaching $100K, and no internal billing expertise. We urgently needed to select and configure an EHR/Practice Management (PM) platform that could serve three critical services—medical, Physical Therapy (PT), and Applied Behavior Analysis (ABA)—without disrupting daily operations.
-            </p>
-            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
-              It was a true dumpster fire. Our initial rush to go-live, without comprehensive process mapping or stakeholder alignment, led to misconfigured workflows, a mounting backlog, and frustrated providers. Payroll hung in the balance, and I had no formal training in healthcare IT.
-            </p>
-          </div>
-        </section>
-
-        <!-- Key Achievements -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Key Achievements</h2>
-          
-          <div class="grid md:grid-cols-1 gap-8">
-            <AchievementCard 
-              title="Strategic Vendor Selection"
-              achievements={[
-                'Orchestrated multi-day workshops with clinicians, PT therapists, and ABA staff to define critical requirements, ultimately selecting AdvancedMD for its modularity and payer integrations.'
-              ]}
-            />
-
-            <AchievementCard 
-              title="Emergency Billing Continuity"
-              achievements={[
-                'Designed and deployed interim billing workflows in under 72 hours, training a contract biller on-the-fly to handle live claims.'
-              ]}
-            />
-
-            <AchievementCard 
-              title="Deep Process Analysis"
-              achievements={[
-                'Self-taught BPMN to map end-to-end flows for medical, PT, and ABA services, uncovering 15+ handoff failures that were silently sabotaging operations.'
-              ]}
-            />
-
-            <AchievementCard 
-              title="EDI & Payer Integration"
-              achievements={[
-                'Proactively engaged Blue Cross Blue Shield EDI specialists to diagnose and fix legacy PIN and taxonomy mapping issues blocking claim submissions.'
-              ]}
-            />
-
-            <AchievementCard 
-              title="Custom SQL Toolkit & Automation"
-              achievements={[
-                'Developed SQL stored procedures and automation scripts to extract, transform, and load AdvancedMD data into a reporting database. Automated exception alerts and drove real-time KPIs in Power BI dashboards.'
-              ]}
-            />
-
-            <AchievementCard 
-              title="Continuous Governance & Evolution"
-              achievements={[
-                'Established quarterly governance reviews to align platform updates, schema migrations, and user-role refinements with evolving clinical and regulatory needs.'
-              ]}
-            />
-          </div>
-        </section>
-
-        <!-- Journey & Growth -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Journey & Growth</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300 mb-6">
-              <em>Note: the core implementation was completed within the first six months, and I then led continuous enhancements and optimizations for eight years, making AdvancedMD a true business-critical platform.</em>
-            </p>
-            <ol class="space-y-4 mb-6 list-decimal list-inside">
-              <li class="text-lg text-foreground/85 dark:text-gray-300">
-                <strong>Immersive Learning:</strong> With the project spiraling, I dove into healthcare IT texts—BPMN guides, FHIR specifications, revenue cycle management books—and spent nights on message boards and in cold-emailing veteran implementers for best practices.
-              </li>
-              <li class="text-lg text-foreground/85 dark:text-gray-300">
-                <strong>Owning Mistakes:</strong> Our initial go-live missed essential scenarios for PT multi-code billing and ABA session documentation, forcing daily firefighting. I captured each failure in a "Lessons Learned" log and used it to drive our next sprint.
-              </li>
-              <li class="text-lg text-foreground/85 dark:text-gray-300">
-                <strong>Agile Iteration:</strong> Adopted bi-weekly configuration sprints—deploying process tweaks, updating workflows, and refining SQL tools based on direct user feedback—turning frustration into forward momentum.
-              </li>
-              <li class="text-lg text-foreground/85 dark:text-gray-300">
-                <strong>SME Development:</strong> Over eight years, I became the go-to expert for AdvancedMD—leading integrations, managing schema upgrades, and creating bespoke extensions that became core to our operations.
-              </li>
-              <li class="text-lg text-foreground/85 dark:text-gray-300">
-                <strong>Knowledge Sharing:</strong> Curated a library of over 50 internal knowledge articles, conducted regular training workshops, and maintained a living wiki of best practices—reducing AdvancedMD onboarding time from 4 weeks to 1.
-              </li>
-            </ol>
-          </div>
-        </section>
-
-        <!-- Impact & Results -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Impact & Results</h2>
-          <MetricsTable metrics={metrics} />
-          <div class="mt-6">
-            <ul class="space-y-4">
-              <li class="flex items-start gap-3">
-                <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-foreground/85 dark:text-gray-300">
-                  <strong>Scalable Framework:</strong> The process-first governance model and custom tooling now underpin all digital transformations across the organization.
-                </span>
-              </li>
-            </ul>
-          </div>
-        </section>
-
-        <!-- Lessons & Takeaways -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-white">Lessons & Takeaways</h2>
-          
-          <div class="space-y-8">
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Deep Curiosity Wins</h3>
-              <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
-                When you lack expertise, immerse yourself—books, forums, mentors—to build domain knowledge rapidly.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Process Comes First</h3>
-              <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
-                Skipping detailed workflow mapping leads to costly rework; invest time upfront to clarify handoffs.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Iterate Fearlessly</h3>
-              <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
-                Treat failures as data; rapid sprints maintain momentum and build trust.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Share Your Knowledge</h3>
-              <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
-                Document and teach relentlessly to build organizational resilience.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-gray-100">Pre-Sales Preparation</h3>
-              <p class="text-lg leading-relaxed text-foreground/85 dark:text-gray-300">
-                Before any new implementation or sales meeting, I create foundational documentation—process maps, stakeholder interviews, and workflow analyses—to accurately scope projects, align expectations, and identify potential risks or requirements.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Quote -->
-  <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-12">
-          <p class="text-lg italic text-foreground/85 dark:text-gray-300">
-            This project was my crucible—transforming chaos into a structured, evolving system and shaping my philosophy: never accept limits as given, and always strive for continual improvement.
+  <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
+    <div
+      class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]"
+      aria-hidden="true"
+    ></div>
+    <div class="layout-shell-wide relative flex flex-col gap-14">
+      <ProjectDetailSection title="Background &amp; Challenge" eyebrow="Context">
+        <div class="space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <p>
+            In late 2017, fresh out of college at a 12-person startup, I was thrust into a billing meltdown: our revenue cycle partner collapsed, leaving us with paper records, unprocessed claims approaching $100K, and no internal billing expertise. We urgently needed to select and configure an EHR/Practice Management (PM) platform that could serve medical, Physical Therapy (PT), and Applied Behavior Analysis (ABA) services without disrupting daily operations.
           </p>
-        </blockquote>
+          <p>
+            It was a true dumpster fire. Our initial rush to go-live—without comprehensive process mapping or stakeholder alignment—led to misconfigured workflows, a mounting backlog, and frustrated providers. Payroll hung in the balance, and I had no formal training in healthcare IT.
+          </p>
+        </div>
+      </ProjectDetailSection>
 
-      </div>
+      <ProjectDetailSection title="Key Achievements" eyebrow="Highlights" layout="surface">
+        <div class="grid gap-8 md:grid-cols-1">
+          <AchievementCard
+            title="Strategic Vendor Selection"
+            achievements={[
+              'Orchestrated multi-day workshops with clinicians, PT therapists, and ABA staff to define critical requirements, ultimately selecting AdvancedMD for its modularity and payer integrations.'
+            ]}
+          />
+
+          <AchievementCard
+            title="Emergency Billing Continuity"
+            achievements={[
+              'Designed and deployed interim billing workflows in under 72 hours, training a contract biller on-the-fly to handle live claims.'
+            ]}
+          />
+
+          <AchievementCard
+            title="Deep Process Analysis"
+            achievements={[
+              'Self-taught BPMN to map end-to-end flows for medical, PT, and ABA services, uncovering 15+ handoff failures that were silently sabotaging operations.'
+            ]}
+          />
+
+          <AchievementCard
+            title="EDI &amp; Payer Integration"
+            achievements={[
+              'Proactively engaged Blue Cross Blue Shield EDI specialists to diagnose and fix legacy PIN and taxonomy mapping issues blocking claim submissions.'
+            ]}
+          />
+
+          <AchievementCard
+            title="Custom SQL Toolkit &amp; Automation"
+            achievements={[
+              'Developed SQL stored procedures and automation scripts to extract, transform, and load AdvancedMD data into a reporting database. Automated exception alerts and drove real-time KPIs in Power BI dashboards.'
+            ]}
+          />
+
+          <AchievementCard
+            title="Continuous Governance &amp; Evolution"
+            achievements={[
+              'Established quarterly governance reviews to align platform updates, schema migrations, and user-role refinements with evolving clinical and regulatory needs.'
+            ]}
+          />
+        </div>
+      </ProjectDetailSection>
+
+      <ProjectDetailSection title="Journey &amp; Growth" eyebrow="How it unfolded">
+        <div class="space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <p>
+            <em>The core implementation landed within six months, but I continued leading enhancements for eight years—turning AdvancedMD into a business-critical platform.</em>
+          </p>
+          <ol class="space-y-3 pl-5">
+            <li class="marker:text-foreground/45">
+              <strong>Immersive learning:</strong> I lived in healthcare IT texts—BPMN guides, FHIR specs, revenue cycle books—and cold-emailed veteran implementers for playbooks.
+            </li>
+            <li class="marker:text-foreground/45">
+              <strong>Owning mistakes:</strong> Missed scenarios for PT multi-code billing and ABA documentation forced daily firefighting; every failure fueled the next sprint backlog.
+            </li>
+            <li class="marker:text-foreground/45">
+              <strong>Agile iteration:</strong> Bi-weekly configuration sprints deployed workflow tweaks and SQL refinements based on real-time user feedback.
+            </li>
+            <li class="marker:text-foreground/45">
+              <strong>SME development:</strong> Over eight years I became the AdvancedMD subject-matter expert, leading integrations, schema upgrades, and bespoke extensions.
+            </li>
+            <li class="marker:text-foreground/45">
+              <strong>Knowledge sharing:</strong> Built a 50+ article knowledge base, hosted trainings, and reduced onboarding time from four weeks to one.
+            </li>
+          </ol>
+        </div>
+      </ProjectDetailSection>
+
+      <ProjectDetailSection title="Impact &amp; Results" eyebrow="Outcomes" layout="surface">
+        <div class="flex flex-col gap-6">
+          <MetricsTable metrics={metrics} />
+          <ul class="space-y-3 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+            <li class="flex gap-4">
+              <span class="mt-1 inline-flex h-2 w-2 shrink-0 rounded-full bg-accent"></span>
+              <span><strong>Scalable framework:</strong> The process-first governance model and custom tooling now underpin every digital transformation across the organization.</span>
+            </li>
+          </ul>
+        </div>
+      </ProjectDetailSection>
+
+      <ProjectDetailSection title="Lessons &amp; Takeaways" eyebrow="What stuck" layout="surface">
+        <div class="space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Deep curiosity wins.</h3>
+            <p>When you lack expertise, immerse yourself—books, forums, mentors—to build domain knowledge rapidly.</p>
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Process comes first.</h3>
+            <p>Skipping detailed workflow mapping leads to costly rework; invest upfront to clarify handoffs.</p>
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Iterate fearlessly.</h3>
+            <p>Treat failures as data; rapid sprints build trust and momentum.</p>
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Share your knowledge.</h3>
+            <p>Document and teach relentlessly to build organizational resilience.</p>
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Prep before pre-sales.</h3>
+            <p>Every new initiative starts with process maps, stakeholder interviews, and workflow analyses to scope accurately and de-risk delivery.</p>
+          </div>
+        </div>
+      </ProjectDetailSection>
+
+      <ProjectDetailSection title="Reflection" eyebrow="Personal note">
+        <p class="text-base italic leading-relaxed text-foreground/78 dark:text-foreground-light/82">
+          This project became my crucible—transforming chaos into a structured, evolving system and shaping my philosophy: never accept limits as given, and always strive for continual improvement.
+        </p>
+      </ProjectDetailSection>
     </div>
   </article>
 
