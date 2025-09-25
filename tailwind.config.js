@@ -222,6 +222,9 @@ export default /** @type {import('tailwindcss').Config} */ {
         'gradient-success': 'var(--gradient-success)',
         'gradient-warning': 'var(--gradient-warning)',
         'gradient-error': 'var(--gradient-error)',
+        'glow-hero': 'radial-gradient(circle at top, rgba(56, 189, 248, 0.2), transparent 62%)',
+        'glow-accent': 'radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.18), transparent 60%)',
+        'grid-overlay': 'linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px)',
       },
       blur: {
         sm: 'var(--blur-sm)',
@@ -253,6 +256,8 @@ export default /** @type {import('tailwindcss').Config} */ {
         '2xl': 'var(--shadow-2xl)',
         inner: 'var(--shadow-inner)',
         none: 'var(--shadow-none)',
+        'soft-glow': '0 40px 120px -45px rgba(15, 23, 42, 0.55)',
+        'accent-glow': '0 24px 65px -35px rgba(56, 189, 248, 0.55)',
       },
       ringWidth: {
         DEFAULT: '2px',

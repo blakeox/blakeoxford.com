@@ -78,7 +78,8 @@
 
   /* Secondary button - alternative actions */
   .btn-secondary {
-    color: var(--color-accent-dark);
+    /* Use strongest foreground for AA contrast on light backgrounds */
+    color: var(--color-foreground-strong);
     background: transparent;
     border: 2px solid var(--color-accent-dark);
   }
@@ -94,7 +95,8 @@
   }
 
   .dark .btn-secondary {
-    color: var(--color-accent-light);
+    /* On dark backgrounds, keep high-contrast light text */
+    color: var(--color-foreground-light);
     border-color: var(--color-accent);
   }
 
