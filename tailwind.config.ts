@@ -1,6 +1,5 @@
 import type { Config } from 'tailwindcss';
 import { join } from 'path';
-import typography from '@tailwindcss/typography';
 import containerQueries from '@tailwindcss/container-queries';
 
 const config: Config = {
@@ -103,7 +102,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [typography, containerQueries],
+  plugins: [containerQueries],
 };
 
 export default config;

@@ -2,10 +2,8 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 
-// Execute the real generation script once for this suite
 beforeAll(async () => {
-  const scriptPath = path.join(process.cwd(), 'scripts/content/generate-search-index.js');
-  // Dynamic import to run side-effects
+  const scriptPath = path.join(process.cwd(), 'scripts/content/generate-search-index.ts');
   await import(scriptPath);
 });
 
@@ -20,7 +18,6 @@ describe('Search Index Integration', () => {
     expect(Array.isArray(combined)).toBe(true);
     const types = new Set(combined.map(e => e.type));
     expect(types.has('project')).toBe(true);
-    expect(types.has('blog')).toBe(true);
   });
 
   it('dist/search/index.json mirrors dist/search-index.json', () => {

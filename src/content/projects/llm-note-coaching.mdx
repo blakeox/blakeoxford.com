@@ -1,3 +1,5 @@
+import heroImage from '../../assets/images/projects/openai-automated-audit.png';
+
 ---
 name: OpenAI-Powered Documentation Quality Feedback System
 slug: llm-note-coaching
@@ -14,15 +16,44 @@ tags:
 categories:
   - AI & Data
   - Healthcare IT
-heroImage: "../assets/images/projects/openai-automated-audit.png"
+heroImage: heroImage
 highlights:
   - "Built a secure pipeline that de-identified PHI before it entered the LLM workflow."
   - "Delivered feedback within 30 seconds, prioritizing severity and remediation guidance."
   - "Integrated with existing EHR workflows so technicians saw coaching inside their daily tooling."
+  - "Crafted role-specific prompts so technicians, providers, and compliance leads received tailored guidance."
 impact:
-  - "45% reduction in audit findings within the first quarter"
-  - "Automated feedback loop scaled across 12 provider teams"
-featured: false
+  - "45% reduction in audit findings within the first quarter."
+  - "Automated feedback loop scaled across 12 provider teams."
+  - "30% faster revision turnaround thanks to balanced coaching."
+  - "Teams message engagement rose 40% after tone adjustments."
+metrics:
+  - metric: Audit exceptions
+    result: "Down 45%"
+    timeline: "First 90 days"
+  - metric: Review time saved
+    result: "20+ hours/week"
+    timeline: "Automated triage"
+  - metric: Feedback adoption
+    result: "+40% message opens"
+    timeline: "Tone-tuned prompts"
+  - metric: Revision speed
+    result: "30% faster"
+    timeline: "Strengths-first coaching"
+journey:
+  - "**Field discovery:** Shadowed technicians to observe note-writing friction and ran lightning interviews about coaching needs."
+  - "**Secure data plumbing:** De-identified PHI via Python + SQL pipelines before passing notes to the OpenAI API."
+  - "**Prompt co-design:** Co-created blueprints with auditors and BCBAs so the model assessed medical necessity, clarity, and compliance."
+  - "**Tone iteration:** Ran rapid feedback loops to soften language, spotlight wins, and keep morale high."
+  - "**Operational launch:** Embedded coaching inside Teams alerts, dashboards, and compliance workflows."
+lessons:
+  - title: Empathy scales adoption
+    description: AI feedback lands when tone and framing feel supportive, not punitive.
+  - title: Humans plus AI win
+    description: LLM insights paired with clinical oversight created better coaching than either alone.
+  - title: Measure and iterate
+    description: Tracking opens, revisions, and audit outcomes kept the system improving week over week.
+reflection: Documentation quality became a coaching conversation instead of an audit firefight—freeing technicians to learn faster and giving leadership real-time confidence in compliance.
 ---
 
 The system ingested patient notes, removed PHI, and fed the content into OpenAI to score compliance against Blue Cross Blue Shield criteria. Feedback returned with severity rankings, remediation steps, and direct references to the relevant standards. Technician dashboards tracked progress, while compliance leads saw trendlines.

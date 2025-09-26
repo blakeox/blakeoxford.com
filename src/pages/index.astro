@@ -72,16 +72,42 @@ function deriveImageData(imgPath?: string) {
         <div class="grid md:grid-cols-2 gap-12 items-center">
           <!-- Left: Text -->
           <div class="order-2 md:order-1">
-            <div class="prose lg:prose-xl dark:prose-invert">
-              <h1 class="not-prose font-heading font-bold text-h1 md:text-6xl text-foreground dark:text-foreground-light mb-6">
-                <span class="block">{siteConfig.author}</span>
-              </h1>
-              <p class="block text-lead mt-2 text-foreground dark:text-foreground-light font-medium">
-                {siteConfig.description}
-              </p>
-              <p class="text-body text-foreground dark:text-foreground-light pl-4 border-l-4 border-accent dark:border-accent-dark border-solid">
-                {siteConfig.tagline}
-              </p>
+            <div class="max-w-2xl space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+              <div class="space-y-3">
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-foreground/60 dark:text-foreground-light/60">
+                  Systems Architecture · Automation · Change Enablement
+                </p>
+                <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold text-foreground dark:text-foreground-light">
+                  {siteConfig.author}
+                </h1>
+                <p class="text-lg font-semibold text-foreground/85 dark:text-foreground-light/85">
+                  {siteConfig.description}
+                </p>
+              </div>
+
+              <div class="space-y-4 rounded-2xl border border-border/40 bg-background/95 p-4 sm:p-5 dark:bg-background-dark/80">
+                <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+                  {siteConfig.tagline}
+                </p>
+                <ul class="grid gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/55 sm:grid-cols-2">
+                  <li class="flex items-center gap-2">
+                    <span class="inline-flex size-1.5 rounded-full bg-accent"></span>
+                    Full-funnel transformation
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="inline-flex size-1.5 rounded-full bg-accent"></span>
+                    Analytics with adoption built-in
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="inline-flex size-1.5 rounded-full bg-accent"></span>
+                    Change enablement that sticks
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="inline-flex size-1.5 rounded-full bg-accent"></span>
+                    Cloud, automation, and governance
+                  </li>
+                </ul>
+              </div>
             </div>
             <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6">
               <a

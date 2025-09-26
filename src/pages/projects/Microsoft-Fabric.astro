@@ -27,7 +27,7 @@ const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
     <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
     <div class="relative mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
       <ProjectDetailSection title="Program overview" eyebrow="Why it mattered" description={data.subtitle}>
-        <div class="space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82" set:html={body} />
+        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82" set:html={body} />
       </ProjectDetailSection>
 
       {data.highlights?.length ? (

@@ -1,9 +1,13 @@
 ---
+import OptimizedImage from '../../ui/OptimizedImage.astro';
+
+type StaticImage = ImageMetadata;
+
 export interface Props {
   title: string;
   description: string;
   date: Date;
-  image: string;
+  image: string | StaticImage;
   link?: string;
 }
 
@@ -87,13 +91,11 @@ const dateISO = date.toISOString();
 
     <figure class="relative flex flex-1 justify-center">
       <div class="relative w-full max-w-[28rem] overflow-hidden rounded-[2.5rem] bg-surface/90 ring-1 ring-border/30 shadow-lg">
-        <img
+        <OptimizedImage
           src={image}
           alt={title}
-          width="960"
-          height="960"
-          loading="lazy"
-          decoding="async"
+          width={960}
+          height={960}
           class="h-full w-full object-cover"
         />
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-background/70 via-transparent to-background/40"></div>

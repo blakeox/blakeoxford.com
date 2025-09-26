@@ -1,3 +1,5 @@
+import heroImage from '../../assets/images/projects/ferment-app-design.png';
+
 ---
 name: Ferment App – Mobile Recipe Management
 slug: ferment-app
@@ -12,15 +14,41 @@ tags:
   - Fermentation
 categories:
   - Mobile & Product
-heroImage: "../assets/images/projects/ferment-app-design.png"
+heroImage: heroImage
 highlights:
   - "Implemented SwiftUI interfaces with SwiftData persistence for offline access."
   - "Firebase functions automated batch reminders, ingredient scaling, and shared notes."
   - "Users tracked fermentation cycles with real-time notifications and analytics."
+  - "Designed community sharing with moderation tools and seasonal recipe spotlights."
 impact:
-  - "Average session length increased 60% after automation features" 
-  - "Community sharing drove 2x recipe retention month over month"
-featured: false
+  - "Average session length increased 60% after automation features."
+  - "Community sharing drove 2x recipe retention month over month."
+  - "Push notification engagement hit 75% during active batches."
+  - "Batch logging accuracy improved 40% with guided workflows."
+metrics:
+  - metric: Session length
+    result: "Up 60%"
+    timeline: "Post-automation launch"
+  - metric: Recipe retention
+    result: "2× month-over-month"
+    timeline: "Community release"
+  - metric: Notification engagement
+    result: "75% open rate"
+    timeline: "During active batches"
+journey:
+  - "**User interviews:** Talked with hobbyists and professional brewers to map scheduling pain points."
+  - "**Prototype loops:** Built SwiftUI prototypes and ran TestFlight sessions to fine-tune batch tracking."
+  - "**Automation design:** Used Firebase Functions to trigger reminders, ingredient scaling, and collaborative notes."
+  - "**Social layer:** Added shared batches with moderation controls and seasonal highlights."
+  - "**Analytics feedback:** Instrumented SwiftData models to surface insights on completion rates and recipe popularity."
+lessons:
+  - title: Design for downtime
+    description: Offline-first SwiftData storage kept the app usable during cellar sessions.
+  - title: Automations need trust
+    description: Clear explanations and manual overrides made reminders feel helpful, not nagging.
+  - title: Community accelerates retention
+    description: Sharing batches and notes doubled recipe stickiness.
+reflection: Ferment App showed how thoughtful automation, community design, and delightful UI can turn a niche hobby into a repeatable, data-backed ritual.
 ---
 
 Ferment App helps hobbyists and professionals manage recipes, schedules, and tasting notes from one native experience. SwiftUI components handle recipe creation and visualization, while SwiftData keeps entries consistent offline.
