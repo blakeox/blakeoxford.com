@@ -1,4 +1,15 @@
 import { useEffect } from 'react';
+import {
+  clearError,
+  clearStatusMessage,
+  defaultErrorFormatter,
+  FormValidationConfig,
+  hydrateFields,
+  setSubmittingState,
+  showError,
+  showStatusMessage,
+  validateField,
+} from './form/FormHelpers';
 
 declare global {
   interface Window {
@@ -6,41 +17,62 @@ declare global {
       render: (container: HTMLElement, options: Record<string, unknown>) => void;
     };
     __AUDIT__?: boolean;
+    analytics?: {
+      track?: (event: { category: string; action: string; label?: string; [key: string]: unknown }) => void;
+    };
   }
 }
 
 const SITE_KEY = '0x4AAAAAABeu0PfX8oWvQvjR';
 
+const FORM_VALIDATION_CONFIG: FormValidationConfig = {
+  fields: [
+    {
+      id: 'name',
+      metadata: {
+        label: 'Name',
+        required: true,
+        minLength: 2,
+        transform: (value) => value.trim(),
+      },
+    },
+    {
+      id: 'email',
+      metadata: {
+        label: 'Email',
+        required: true,
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        transform: (value) => value.trim(),
+      },
+    },
+    {
+      id: 'message',
+      metadata: {
+        label: 'Message',
+        required: true,
+        minLength: 10,
+        maxLength: 2000,
+        transform: (value) => value.trim(),
+      },
+    },
+  ],
+  statusElementSelector: '#form-status',
+};
+
 type CleanupFn = () => void;
 
-function showStatusBanner(element: HTMLElement | null, message: string, type: 'success' | 'error') {
-  if (!element) return;
-  element.textContent = message;
-  element.classList.remove('hidden', type === 'error' ? 'text-green-600' : 'text-red-600');
-  element.classList.add(
-    type === 'success' ? 'text-green-600' : 'text-red-600',
-    'bg-green-50',
-    'border',
-    'border-green-200',
-    'rounded-lg',
-    'p-4'
-  );
-}
+type AnalyticsPayload = {
+  category: string;
+  action: string;
+  label?: string;
+  [key: string]: unknown;
+};
 
-function setSubmitState(form: HTMLFormElement | null, state: 'idle' | 'loading') {
-  if (!form) return;
-  const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-  const btnLabel = document.getElementById('btn-label');
-  const spinner = document.getElementById('spinner');
-
-  if (state === 'loading') {
-    if (submitBtn) submitBtn.disabled = true;
-    if (btnLabel) btnLabel.textContent = 'Sending...';
-    spinner?.classList.remove('hidden');
-  } else {
-    if (submitBtn) submitBtn.disabled = false;
-    if (btnLabel) btnLabel.textContent = 'Send Message';
-    spinner?.classList.add('hidden');
+function trackAnalytics(event: AnalyticsPayload): void {
+  try {
+    window.analytics?.track?.(event);
+  } catch (error) {
+    console.warn('Analytics tracking failed', error);
   }
 }
 
@@ -60,6 +92,7 @@ function setupTurnstile(isAudit: boolean): CleanupFn | void {
     if (window.turnstile) {
       window.turnstile.render(container, { sitekey: SITE_KEY, size: 'compact' });
       injected = true;
+      trackAnalytics({ category: 'form', action: 'turnstile_rendered' });
       return;
     }
 
@@ -71,9 +104,15 @@ function setupTurnstile(isAudit: boolean): CleanupFn | void {
     script.onload = () => {
       try {
         window.turnstile?.render(container, { sitekey: SITE_KEY, size: 'compact' });
+        trackAnalytics({ category: 'form', action: 'turnstile_rendered' });
       } catch (error) {
         console.warn('Turnstile render failed', error);
+        trackAnalytics({ category: 'form', action: 'turnstile_render_failed', label: (error as Error)?.message });
       }
+    };
+    script.onerror = () => {
+      console.warn('Turnstile script failed to load');
+      trackAnalytics({ category: 'form', action: 'turnstile_script_failed' });
     };
     document.head.appendChild(script);
   };
@@ -123,111 +162,123 @@ function setupContactForm(): CleanupFn | void {
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
   if (!form) return;
 
-  const statusElement = document.getElementById('form-status');
-  if (new URLSearchParams(window.location.search).get('success') === 'true') {
-    showStatusBanner(statusElement, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
-  }
+  const fields = hydrateFields(form, FORM_VALIDATION_CONFIG);
+  const statusElement = document.querySelector<HTMLElement>(FORM_VALIDATION_CONFIG.statusElementSelector ?? '');
 
   const cleanupFns: CleanupFn[] = [];
 
-  const inputs = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea'));
-
-  const validateField = (field: HTMLInputElement | HTMLTextAreaElement) => {
-    const value = field.value.trim();
-    const errorContainer = document.getElementById(field.id + '-error');
-    const label = field.labels?.[0]?.textContent?.replace('*', '').trim() || field.getAttribute('aria-label') || field.name || 'Field';
-
-    let errorMessage = '';
-    if (field.hasAttribute('required') && !value) {
-      errorMessage = `${label} is required and cannot be empty.`;
-    } else if (field.type === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      errorMessage = 'Please enter a valid email address (e.g., name@domain.com).';
-    } else if (field.hasAttribute('minlength') && value.length > 0 && value.length < Number(field.getAttribute('minlength'))) {
-      errorMessage = `${label} must be at least ${field.getAttribute('minlength')} characters long.`;
-    } else if (field.name === 'message' && value.length > 0 && value.length < 10) {
-      errorMessage = 'Please provide a more detailed message (at least 10 characters).';
-    } else if (field.name === 'name' && value.length > 0 && value.length < 2) {
-      errorMessage = 'Name must be at least 2 characters long.';
-    }
-
-    if (errorContainer) {
-      if (errorMessage) {
-        errorContainer.textContent = errorMessage;
-        errorContainer.classList.remove('hidden');
-        field.setAttribute('aria-invalid', 'true');
-        field.classList.add('border-red-500');
-        return false;
+  const validateAllFields = () => {
+    const errors: Record<string, string> = {};
+    FORM_VALIDATION_CONFIG.fields.forEach(({ id, metadata }) => {
+      const field = fields[id] as HTMLInputElement | HTMLTextAreaElement | null;
+      if (!field) return;
+      const message = validateField(field, metadata);
+      if (message) {
+        errors[id] = defaultErrorFormatter(metadata.label, message);
+        showError(field, errors[id]);
+      } else {
+        clearError(field);
       }
-      errorContainer.textContent = '';
-      errorContainer.classList.add('hidden');
-      field.setAttribute('aria-invalid', 'false');
-      field.classList.remove('border-red-500');
-    }
-    return true;
+    });
+    return errors;
   };
 
-  const onSubmit = async (event: Event) => {
-    event.preventDefault();
-    setSubmitState(form, 'loading');
+  const handleBlur = (id: string) => () => {
+    const fieldConfig = FORM_VALIDATION_CONFIG.fields.find((field) => field.id === id);
+    const field = fields[id] as HTMLInputElement | HTMLTextAreaElement | null;
+    if (!field || !fieldConfig) return;
 
-    const isValid = inputs.every((input) => validateField(input));
-    if (!isValid) {
-      setSubmitState(form, 'idle');
+    const message = validateField(field, fieldConfig.metadata);
+    if (message) {
+      showError(field, defaultErrorFormatter(fieldConfig.metadata.label, message));
+    } else {
+      clearError(field);
+    }
+  };
+
+  const handleInput = (id: string) => () => {
+    const field = fields[id] as HTMLElement | null;
+    if (!field) return;
+    clearError(field);
+  };
+
+  FORM_VALIDATION_CONFIG.fields.forEach(({ id }) => {
+    const field = fields[id];
+    if (!field) return;
+
+    const onBlur = handleBlur(id);
+    const onInput = handleInput(id);
+
+    field.addEventListener('blur', onBlur);
+    field.addEventListener('input', onInput);
+
+    cleanupFns.push(() => {
+      field.removeEventListener('blur', onBlur);
+      field.removeEventListener('input', onInput);
+    });
+  });
+
+  const handleSubmit = async (event: Event) => {
+    event.preventDefault();
+
+    clearStatusMessage(statusElement ?? null);
+
+    const errors = validateAllFields();
+    const hasErrors = Object.keys(errors).length > 0;
+
+    if (hasErrors) {
+      trackAnalytics({ category: 'form', action: 'validation_failed', ...errors });
+      const firstErrorField = FORM_VALIDATION_CONFIG.fields.find(({ id }) => errors[id]);
+      if (firstErrorField) {
+        const field = fields[firstErrorField.id] as HTMLElement | null;
+        field?.focus();
+      }
       return;
     }
 
+    const formData = new FormData(form);
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+
     try {
-      const controller = new AbortController();
-      const timeoutId = window.setTimeout(() => controller.abort(), 10000);
-      const formData = new FormData(form);
+      setSubmittingState(form, true);
+      trackAnalytics({ category: 'form', action: 'submit_attempt' });
 
       const response = await fetch(form.action || '/api/contact/submit', {
         method: 'POST',
         body: formData,
-        signal: controller.signal
+        signal: controller.signal,
       });
+
       window.clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`Submission failed (${response.status})`);
       }
 
-      showStatusBanner(statusElement, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+      showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
       form.reset();
+      trackAnalytics({ category: 'form', action: 'submit_success' });
     } catch (error) {
       console.error('Form submission failed', error);
-      showStatusBanner(
-        statusElement,
+      showStatusMessage(
+        statusElement ?? null,
         '❌ Something went wrong. Please try again later or email me directly at contact@blakeoxford.com.',
-        'error'
+        'error',
       );
+      trackAnalytics({ category: 'form', action: 'submit_failed', label: (error as Error)?.message });
     } finally {
-      setSubmitState(form, 'idle');
+      window.clearTimeout(timeoutId);
+      setSubmittingState(form, false);
     }
   };
 
-  inputs.forEach((input) => {
-    const onBlur = () => validateField(input);
-    const onInput = () => {
-      const errorContainer = document.getElementById(input.id + '-error');
-      if (errorContainer) {
-        errorContainer.textContent = '';
-        errorContainer.classList.add('hidden');
-        input.setAttribute('aria-invalid', 'false');
-        input.classList.remove('border-red-500');
-      }
-    };
+  form.addEventListener('submit', handleSubmit);
+  cleanupFns.push(() => form.removeEventListener('submit', handleSubmit));
 
-    input.addEventListener('blur', onBlur);
-    input.addEventListener('input', onInput);
-    cleanupFns.push(() => {
-      input.removeEventListener('blur', onBlur);
-      input.removeEventListener('input', onInput);
-    });
-  });
-
-  form?.addEventListener('submit', onSubmit);
-  cleanupFns.push(() => form?.removeEventListener('submit', onSubmit));
+  if (new URLSearchParams(window.location.search).get('success') === 'true') {
+    showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+  }
 
   return () => {
     cleanupFns.forEach((fn) => fn());
@@ -239,7 +290,7 @@ export default function ContactFormIsland() {
     const isAudit = Boolean(
       window.__AUDIT__ ||
       /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie || '') ||
-      /lighthouse|headlesschrome/i.test(navigator.userAgent || '')
+      /lighthouse|headlesschrome/i.test(navigator.userAgent || ''),
     );
 
     const cleanupFns: Array<CleanupFn | void> = [

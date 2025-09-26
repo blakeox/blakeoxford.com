@@ -59,7 +59,6 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
 
       return {
         allScripts: scripts,
-        lazyLoader: scripts.find(s => s.src.includes('lazy-loader')),
         interactive: scripts.find(s => s.src.includes('interactive')),
         hasErrors: scriptElements.some(s => s.hasAttribute('data-error'))
       };
@@ -73,8 +72,6 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
       return {
         searchOverlay: typeof win.searchOverlay,
         searchOverlayInstance: !!win.searchOverlay,
-        LazyBundleLoader: typeof win.LazyBundleLoader,
-        lazyLoaderInstance: !!win.LazyBundleLoader,
         fuseJS: typeof win.Fuse,
         searchOverlayConstructor: typeof win.SearchOverlay,
         errorLog: window.console ? 'available' : 'not available'
@@ -95,7 +92,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
       }
     });
 
-  // Allow lazy bundles a chance to register (poll for searchOverlay or LazyBundleLoader presence)
+  // Allow client bundles to register search overlay instance
   await waitForCondition(page, () => page.evaluate(() => !!(window as any).searchOverlay), 2000, 100);
 
     // 6. Try to trigger search overlay via JavaScript
@@ -265,32 +262,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
 
     // If SearchOverlay is not working, try to manually load and initialize it
     if (!jsState.searchOverlayInstance) {
-      console.log('🔧 Attempting manual initialization...');
-
-      const manualInit = await page.evaluate(async () => {
-        try {
-          const win = window as any;
-          // First, try to load the interactive bundle if not loaded
-          if (!win.searchOverlay && win.LazyBundleLoader) {
-            await win.LazyBundleLoader.loadInteractiveFeatures();
-
-            // Wait a bit for loading
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            return {
-              success: !!win.searchOverlay,
-              method: 'LazyBundleLoader',
-              searchOverlayExists: !!win.searchOverlay
-            };
-          }
-
-          return { success: false, method: 'none', error: 'No loading method available' };
-        } catch (error: any) {
-          return { success: false, error: error.message, method: 'failed' };
-        }
-      });
-
-      console.log('Manual Initialization Result:', manualInit);
+      console.log('⚠️ Search overlay failed to initialize automatically.');
     }
   });
 });

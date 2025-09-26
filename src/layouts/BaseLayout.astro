@@ -6,8 +6,7 @@ import Footer from '../components/layout/Footer.astro';
 import ThemeInitIsland from '../components/islands/ThemeInitIsland';
 import ServiceWorkerIsland from '../components/islands/ServiceWorkerIsland';
 import ExperimentsCookieIsland from '../components/islands/ExperimentsCookieIsland';
-import AnalyticsIsland from '../components/islands/AnalyticsIsland';
-import SkipLinkFocusIsland from '../components/islands/SkipLinkFocusIsland';
+import AccessibilityEnhancementsIsland from '../components/islands/AccessibilityEnhancementsIsland';
 
 // wide: when true, disable the default max-width wrapper for full-width layouts
 const {
@@ -85,10 +84,8 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#2563eb" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e40af" />
 
-    <script type="module" src="/assets/js/lazy-loader.min.js" async></script>
-    <AnalyticsIsland client:load />
     <ExperimentsCookieIsland client:load />
-    <SkipLinkFocusIsland client:load />
+    <AccessibilityEnhancementsIsland client:load />
   </head>
   <body id="top" class="min-h-screen bg-background text-foreground dark:bg-background dark:text-foreground transition-colors duration-300">
     <ServiceWorkerIsland client:load />

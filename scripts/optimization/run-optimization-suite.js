@@ -226,10 +226,7 @@ async function collectPerformanceMetrics() {
 
   // Check optimization files exist
   const optimizationFiles = [
-    'ml-resource-predictor.js',
-    'ab-testing-framework.js',
-    'user-journey-optimizer.js',
-    'graphql-optimizer.js'
+    
   ];
 
   for (const file of optimizationFiles) {

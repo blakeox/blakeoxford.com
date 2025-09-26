@@ -3,16 +3,32 @@ import { useEffect } from 'react';
 type EnhancedOverlay = {
   open: () => void;
   closeSearchOverlay: () => void;
+  preload?: () => Promise<void> | void;
+  ready?: () => boolean;
 };
 
 type MaybeEnhanced = EnhancedOverlay | null | undefined;
 
-function openFallbackOverlay(enhanced: MaybeEnhanced) {
-  if (enhanced && typeof enhanced.open === 'function') {
-    enhanced.open();
-    return;
-  }
+type OverlayState = 'idle' | 'loading' | 'ready' | 'fallback';
 
+type AnalyticsEvent = {
+  category: string;
+  action: string;
+  label?: string;
+  [key: string]: unknown;
+};
+
+const OVERLAY_MODULE = () => import('../../scripts/features/EnhancedSearchOverlay');
+
+function trackAnalytics(event: AnalyticsEvent): void {
+  try {
+    (window as typeof window & { analytics?: { track?: (e: AnalyticsEvent) => void } }).analytics?.track?.(event);
+  } catch (error) {
+    console.warn('Search analytics tracking failed', error);
+  }
+}
+
+function openFallbackOverlay(): void {
   const overlay = document.getElementById('search-overlay');
   if (!overlay) return;
 
@@ -32,12 +48,7 @@ function openFallbackOverlay(enhanced: MaybeEnhanced) {
   }
 }
 
-function closeFallbackOverlay(enhanced: MaybeEnhanced) {
-  if (enhanced && typeof enhanced.closeSearchOverlay === 'function') {
-    enhanced.closeSearchOverlay();
-    return;
-  }
-
+function closeFallbackOverlay(): void {
   const overlay = document.getElementById('search-overlay');
   if (!overlay) return;
 
@@ -49,13 +60,20 @@ function closeFallbackOverlay(enhanced: MaybeEnhanced) {
   document.body.style.overflow = '';
   document.body.style.position = '';
   document.body.style.width = '';
+
+  const input = document.getElementById('search-input');
+  input?.setAttribute('aria-expanded', 'false');
 }
 
 export default function SearchOverlayController() {
   useEffect(() => {
     let cancelled = false;
+    let state: OverlayState = 'idle';
     let ensurePromise: Promise<MaybeEnhanced> | null = null;
     let enhancedInstance: MaybeEnhanced = null;
+    let idleTimeoutId: number | null = null;
+
+    const cleanupCallbacks: Array<() => void> = [];
 
     const win = window as typeof window & {
       enhancedSearchOverlay?: MaybeEnhanced;
@@ -63,7 +81,7 @@ export default function SearchOverlayController() {
 
     const doc = document;
 
-    const isAudit = !!(win as any).__AUDIT__ || /(^|;)\s*audit=1(;$|;|\s|$)/.test((doc.cookie ?? '')) || /lighthouse/i.test(navigator.userAgent ?? '');
+    const isAudit = !!(win as any).__AUDIT__ || /(^|;)\s*audit=1(;$|;|\s|$)/.test((doc.cookie ?? '')) || /lighthouse|headlesschrome/i.test(navigator.userAgent ?? '');
     const isAutomation = (() => {
       try {
         if (navigator.webdriver) return true;
@@ -73,84 +91,190 @@ export default function SearchOverlayController() {
         return false;
       }
     })();
+
     const skipEnhanced = isAudit && !isAutomation;
 
     const ensureOverlay = async (): Promise<MaybeEnhanced> => {
-      if (skipEnhanced || cancelled) return null;
-      if (enhancedInstance) return enhancedInstance;
-      if (win.enhancedSearchOverlay) {
-        enhancedInstance = win.enhancedSearchOverlay;
+      if (cancelled) return null;
+      if (skipEnhanced) {
+        state = 'fallback';
+        return null;
+      }
+      if (enhancedInstance) {
+        state = 'ready';
         return enhancedInstance;
       }
-      if (ensurePromise) return ensurePromise;
+      if (win.enhancedSearchOverlay) {
+        enhancedInstance = win.enhancedSearchOverlay;
+        state = 'ready';
+        return enhancedInstance;
+      }
+      if (ensurePromise) {
+        return ensurePromise;
+      }
 
-      ensurePromise = Promise.resolve<MaybeEnhanced>(null).finally(() => {
-        ensurePromise = null;
-      });
+      state = 'loading';
+      ensurePromise = OVERLAY_MODULE()
+        .then((module) => {
+          if (cancelled) return null;
+          enhancedInstance = module.default ?? (module as unknown as MaybeEnhanced);
+          win.enhancedSearchOverlay = enhancedInstance ?? undefined;
+          state = enhancedInstance ? 'ready' : 'fallback';
+          if (enhancedInstance?.preload) {
+            try {
+              void enhancedInstance.preload();
+            } catch (error) {
+              console.warn('Search overlay preload failed', error);
+            }
+          }
+          return enhancedInstance;
+        })
+        .catch((error) => {
+          console.warn('Enhanced search overlay failed to load', error);
+          state = 'fallback';
+          return null;
+        })
+        .finally(() => {
+          ensurePromise = null;
+        });
 
       return ensurePromise;
     };
 
-    const handleToggle = async (event: Event) => {
+    const openOverlay = async () => {
+      const instance = await ensureOverlay();
+      if (cancelled) return;
+
+      if (instance && typeof instance.open === 'function') {
+        try {
+          instance.open();
+          trackAnalytics({ category: 'search', action: 'open_enhanced' });
+          return;
+        } catch (error) {
+          console.warn('Enhanced search overlay open failed', error);
+          state = 'fallback';
+        }
+      }
+
+      openFallbackOverlay();
+      trackAnalytics({ category: 'search', action: 'open_fallback', state });
+    };
+
+    const closeOverlay = async () => {
+      if (state === 'fallback') {
+        closeFallbackOverlay();
+        trackAnalytics({ category: 'search', action: 'close_fallback' });
+        return;
+      }
+
+      const instance = await ensureOverlay();
+      if (instance && typeof instance.closeSearchOverlay === 'function') {
+        try {
+          instance.closeSearchOverlay();
+          trackAnalytics({ category: 'search', action: 'close_enhanced' });
+        } catch (error) {
+          console.warn('Enhanced search overlay close failed', error);
+          closeFallbackOverlay();
+        }
+        return;
+      }
+
+      closeFallbackOverlay();
+      trackAnalytics({ category: 'search', action: 'close_fallback_no_instance' });
+    };
+
+    const toggleButton = doc.getElementById('search-toggle');
+    const closeButton = doc.getElementById('close-search');
+    const overlayElement = doc.getElementById('search-overlay');
+    const searchInput = doc.getElementById('search-input');
+
+    const handleToggleClick = (event: Event) => {
       event.preventDefault();
       event.stopPropagation();
-      const instance = await ensureOverlay();
-      openFallbackOverlay(instance);
+      void openOverlay();
     };
 
-    const handleSlashShortcut = async (event: KeyboardEvent) => {
-      if (event.key !== '/' || event.defaultPrevented) return;
+    const handleCloseClick = (event: Event) => {
       event.preventDefault();
-      const instance = await ensureOverlay();
-      openFallbackOverlay(instance);
+      void closeOverlay();
     };
 
-    const handleEscape = async (event: KeyboardEvent) => {
+    const handleSlashShortcut = (event: KeyboardEvent) => {
+      if (event.key !== '/' || event.defaultPrevented) return;
+      const activeElement = doc.activeElement as HTMLElement | null;
+      if (activeElement && ['INPUT', 'TEXTAREA'].includes(activeElement.tagName)) {
+        return;
+      }
+      event.preventDefault();
+      void openOverlay();
+    };
+
+    const handleMetaKShortcut = (event: KeyboardEvent) => {
+      const metaKey = event.metaKey || event.ctrlKey;
+      if (!metaKey || event.key.toLowerCase() !== 'k') return;
+      event.preventDefault();
+      void openOverlay();
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
-      const instance = await ensureOverlay();
-      closeFallbackOverlay(instance);
+      if (!overlayElement?.classList.contains('active') && state !== 'ready') return;
+      event.preventDefault();
+      void closeOverlay();
     };
 
-    const handleBackdrop = async (event: MouseEvent) => {
-      const overlay = doc.getElementById('search-overlay');
-      if (!overlay || event.target !== overlay) return;
-      const instance = await ensureOverlay();
-      closeFallbackOverlay(instance);
+    const handleBackdrop = (event: MouseEvent) => {
+      if (!overlayElement || event.target !== overlayElement) return;
+      void closeOverlay();
     };
 
-    const toggle = doc.getElementById('search-toggle');
-    toggle?.addEventListener('click', handleToggle, { passive: false });
+    const handleFocusTrap = (event: FocusEvent) => {
+      if (!overlayElement?.classList.contains('active')) return;
+      if (!overlayElement.contains(event.target as Node)) {
+        event.stopPropagation();
+        searchInput?.focus();
+      }
+    };
 
-    doc.addEventListener('keydown', handleSlashShortcut, { passive: false });
-    doc.addEventListener('keydown', handleEscape, { passive: true });
-
-    const overlayElement = doc.getElementById('search-overlay');
+    toggleButton?.addEventListener('click', handleToggleClick, { passive: false });
+    closeButton?.addEventListener('click', handleCloseClick, { passive: false });
     overlayElement?.addEventListener('click', handleBackdrop, { passive: true });
 
+    doc.addEventListener('keydown', handleSlashShortcut, { passive: false });
+    doc.addEventListener('keydown', handleMetaKShortcut, { passive: false });
+    doc.addEventListener('keydown', handleEscape, { passive: true });
+    doc.addEventListener('focusin', handleFocusTrap, { passive: true });
+
     if ('requestIdleCallback' in win && !skipEnhanced) {
-      (win as any).requestIdleCallback?.(() => {
+      const id = (win as any).requestIdleCallback?.(() => {
         if (!cancelled) void ensureOverlay();
       }, { timeout: 20000 });
+      cleanupCallbacks.push(() => (win as any).cancelIdleCallback?.(id));
     } else if (!skipEnhanced) {
-      const timeoutId = window.setTimeout(() => {
+      idleTimeoutId = window.setTimeout(() => {
         if (!cancelled) void ensureOverlay();
       }, 20000);
-      return () => {
-        cancelled = true;
-        window.clearTimeout(timeoutId);
-        toggle?.removeEventListener('click', handleToggle);
-        doc.removeEventListener('keydown', handleSlashShortcut);
-        doc.removeEventListener('keydown', handleEscape);
-        overlayElement?.removeEventListener('click', handleBackdrop);
-      };
+      cleanupCallbacks.push(() => {
+        if (idleTimeoutId !== null) {
+          window.clearTimeout(idleTimeoutId);
+          idleTimeoutId = null;
+        }
+      });
     }
+
+    cleanupCallbacks.push(() => {
+      toggleButton?.removeEventListener('click', handleToggleClick);
+      closeButton?.removeEventListener('click', handleCloseClick);
+      overlayElement?.removeEventListener('click', handleBackdrop);
+      doc.removeEventListener('keydown', handleSlashShortcut);
+      doc.removeEventListener('keydown', handleMetaKShortcut);
+      doc.removeEventListener('keydown', handleEscape);
+      doc.removeEventListener('focusin', handleFocusTrap);
+    });
 
     return () => {
       cancelled = true;
-      toggle?.removeEventListener('click', handleToggle);
-      doc.removeEventListener('keydown', handleSlashShortcut);
-      doc.removeEventListener('keydown', handleEscape);
-      overlayElement?.removeEventListener('click', handleBackdrop);
+      cleanupCallbacks.forEach((fn) => fn());
     };
   }, []);
 

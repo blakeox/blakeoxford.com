@@ -370,31 +370,6 @@ html[data-theme="dark"] body {
   background: var(--selection-bg-dark);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --color-foreground: var(--color-foreground-light);
-    --color-foreground-strong: var(--color-foreground-light);
-    --color-background: var(--color-background-dark);
-    --color-surface: var(--color-surface-dark);
-    --color-surface-subtle: var(--color-surface-dark-subtle);
-    --color-neutral: var(--color-neutral-light);
-    --color-neutral-dark: var(--color-neutral);
-    --shadow-chroma: 0 0 0 / 0.6;
-    color-scheme: dark;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
 @media (forced-colors: active) {
   * {
     forced-color-adjust: auto;
