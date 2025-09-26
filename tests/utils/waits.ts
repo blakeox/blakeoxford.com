@@ -24,12 +24,6 @@ export async function waitForTransitionEnd(page: Page, selector: string, timeout
   }, { sel: selector, to: timeout });
 }
 
-export async function waitForSearchResults(page: Page) {
-  const container = page.locator('#search-results');
-  await container.first().waitFor({ state: 'attached' });
-  return container;
-}
-
 // Wait for the search overlay/input logic to be ready by probing for the input after triggering
 export async function waitForSearchOverlay(page: Page) {
   const overlay = page.locator('#search-overlay');

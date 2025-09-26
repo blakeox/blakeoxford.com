@@ -5,26 +5,23 @@ test.describe('Projects page layout', () => {
     await page.goto('/projects/');
 
     await page.waitForSelector('main#main-content');
-    await page.waitForSelector('section:nth-of-type(1) .layout-shell-wide, section:nth-of-type(1) .layout-shell');
-  await page.waitForSelector('section[data-a11y-allow-color-contrast] .layout-shell, section[data-a11y-allow-color-contrast] .layout-shell-wide');
-
-    const heading = page.getByRole('heading', { name: 'Projects' });
-    await expect(heading).toBeVisible();
+    await page.waitForSelector('section:nth-of-type(1) [class*="max-w-6xl"], section:nth-of-type(1) [class*="max-w-4xl"]');
+  const heroHeading = page.locator('h1').first();
+  await expect(heroHeading).toBeVisible();
 
     const metrics = await page.evaluate(() => {
-      const header = document.querySelector('header');
-      const heroSection = Array.from(document.querySelectorAll('section')).find((section) => {
-        const sectionHeading = section.querySelector('h1, h2');
-        return sectionHeading?.textContent?.trim() === 'Projects';
-      });
-  const methodologySection = document.querySelector('section[data-a11y-allow-color-contrast]');
-      const heroContainer = heroSection?.querySelector('.layout-shell-wide, .layout-shell');
-  const methodologyContainer = methodologySection?.querySelector('.layout-shell, .layout-shell-wide');
+  const header = document.querySelector('header');
+  const heroHeadingEl = document.querySelector('h1');
+      const heroSection = heroHeadingEl ? heroHeadingEl.closest('section') : null;
+  const journeyHeading = document.querySelector('#journey-heading');
+  const journeySection = journeyHeading ? journeyHeading.closest('section') : null;
+      const heroContainer = heroSection?.querySelector('[class*="max-w-6xl"], [class*="max-w-4xl"]');
+      const journeyContainer = journeySection?.querySelector('[class*="max-w-6xl"], [class*="max-w-4xl"]');
 
       const navRect = header?.getBoundingClientRect() ?? null;
       const heroRect = heroSection?.getBoundingClientRect() ?? null;
       const heroShellRect = heroContainer ? (heroContainer as HTMLElement).getBoundingClientRect() : null;
-      const methodologyShellRect = methodologyContainer ? (methodologyContainer as HTMLElement).getBoundingClientRect() : null;
+      const journeyShellRect = journeyContainer ? (journeyContainer as HTMLElement).getBoundingClientRect() : null;
       const main = document.querySelector('main#main-content');
       const mainStyles = main ? window.getComputedStyle(main) : null;
 
@@ -32,7 +29,7 @@ test.describe('Projects page layout', () => {
         hasHeader: Boolean(header),
         hasHeroSection: Boolean(heroSection),
         hasHeroShell: Boolean(heroContainer),
-        hasMethodologyShell: Boolean(methodologyContainer),
+        hasJourneyShell: Boolean(journeyContainer),
         navBottom: navRect?.bottom ?? null,
         heroTop: heroRect?.top ?? null,
         mainPaddingTop: mainStyles ? parseFloat(mainStyles.paddingTop || '0') : null,
@@ -42,19 +39,23 @@ test.describe('Projects page layout', () => {
               right: window.innerWidth - heroShellRect.right,
             }
           : null,
-        methodologyShell: methodologyShellRect
+        journeyShell: journeyShellRect
           ? {
-              left: methodologyShellRect.left,
-              right: window.innerWidth - methodologyShellRect.right,
+              left: journeyShellRect.left,
+              right: window.innerWidth - journeyShellRect.right,
             }
           : null,
+        heroHeadingText: heroHeadingEl?.textContent?.trim() ?? null,
       };
     });
 
-    expect(metrics.hasHeader).toBeTruthy();
+  expect(metrics.hasHeader).toBeTruthy();
     expect(metrics.hasHeroSection).toBeTruthy();
     expect(metrics.hasHeroShell).toBeTruthy();
-    expect(metrics.hasMethodologyShell).toBeTruthy();
+    expect(metrics.hasJourneyShell).toBeTruthy();
+
+  expect(metrics.heroHeadingText).not.toBeNull();
+  expect(metrics.heroHeadingText?.toLowerCase()).toContain('operational intelligence');
 
     expect(metrics.mainPaddingTop).not.toBeNull();
     expect(metrics.mainPaddingTop!).toBeGreaterThanOrEqual(48);
@@ -69,11 +70,11 @@ test.describe('Projects page layout', () => {
       expect(heroGapDifference).toBeLessThanOrEqual(6);
     }
 
-    expect(metrics.methodologyShell).not.toBeNull();
-    if (metrics.methodologyShell) {
-      const methodologyGapDifference = Math.abs(metrics.methodologyShell.left - metrics.methodologyShell.right);
-      expect(metrics.methodologyShell.left).toBeGreaterThanOrEqual(24);
-      expect(methodologyGapDifference).toBeLessThanOrEqual(6);
+    expect(metrics.journeyShell).not.toBeNull();
+    if (metrics.journeyShell) {
+      const journeyGapDifference = Math.abs(metrics.journeyShell.left - metrics.journeyShell.right);
+      expect(metrics.journeyShell.left).toBeGreaterThanOrEqual(24);
+      expect(journeyGapDifference).toBeLessThanOrEqual(6);
     }
   });
 });

@@ -35,23 +35,7 @@ try {
   // non-blocking cleanup
 }
 
-// Remove legacy standalone JS files that were consolidated into core-boot.js
-try {
-  const legacyJs = [
-    'assets/js/performance-monitor.js',
-    'assets/js/pwa-enhancer.js',
-    'assets/js/resource-preloader.js',
-  ];
-  for (const rel of legacyJs) {
-    const p = join(dist, rel);
-    if (existsSync(p)) {
-      unlinkSync(p);
-      console.log(`Removed legacy JS: dist/${rel}`);
-    }
-  }
-} catch {
-  // ignore cleanup errors
-}
+// No legacy monolithic bundles remain; islands handle progressive enhancements
 
 // Build a combined search index at dist/search/index.json for quality gate
 try {
@@ -117,17 +101,4 @@ try {
   // ignore cleanup errors
 }
 
-// Ensure the final build includes the full Fuse.js distribution for search (override placeholder)
-try {
-  const fuseSrc = join(process.cwd(), 'node_modules', 'fuse.js', 'dist', 'fuse.min.js');
-  const fuseDestDir = join(dist, 'assets', 'js');
-  if (existsSync(fuseSrc)) {
-    mkdirSync(fuseDestDir, { recursive: true });
-    cpSync(fuseSrc, join(fuseDestDir, 'fuse.min.js'));
-    console.log('Copied Fuse.js -> dist/assets/js/fuse.min.js');
-  } else {
-    console.warn('Fuse.js distribution not found, skipping copy');
-  }
-} catch {
-  // non-blocking; search overlay has a lightweight fallback
-}
+// Fuse.js is no longer bundled; search overlay lazy-loads a module via CDN

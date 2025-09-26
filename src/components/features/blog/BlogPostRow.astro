@@ -1,15 +1,16 @@
 ---
 // BlogPostRow.astro
-const { post, align = 'left', delayClass = '' } = Astro.props as {
+interface BlogPostRowProps {
   post: any;
   align?: 'left' | 'right';
-  delayClass?: string;
-};
+}
+
+const { post, align = 'left' } = Astro.props as BlogPostRowProps;
 const { slug, data } = post;
 ---
-<article class={`group hover-lift-sm flex flex-col md:flex-row items-center w-full gap-8 md:gap-12 lg:gap-16 min-h-[380px] ${align === 'right' ? 'md:flex-row-reverse' : ''} animate-fade-in ${delayClass}`}>
+<article class={`group flex flex-col md:flex-row items-center w-full gap-8 md:gap-12 lg:gap-16 min-h-[380px] transition-transform duration-200 ${align === 'right' ? 'md:flex-row-reverse' : ''}`}>
   <!-- Content Section -->
-  <div class="flex-1 glass-card bg-background/80 border border-accent/10 rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg hover:border-accent/30 transition-all duration-300 w-full min-w-0">
+  <div class="flex-1 rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg border border-border/30 bg-background/95 dark:bg-surface/80 dark:border-border-dark/30 transition-transform duration-200 group-hover:-translate-y-1">
     <header class="mb-6">
   <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground dark:text-foreground-light leading-tight mb-4 group-hover:text-accent dark:group-hover:text-accent-light transition-colors duration-300">
         <a href={`/blog/${slug}/`} class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
@@ -38,7 +39,7 @@ const { slug, data } = post;
     </header>
 
     {data.description && (
-      <p class="text-lg text-foreground-light dark:text-foreground leading-relaxed mb-6 line-clamp-3">
+      <p class="text-lg text-foreground-light dark:text-foreground leading-relaxed mb-6 [display:-webkit-box] [-webkit-line-clamp:3] [-webkit-box-orient:vertical] overflow-hidden">
         {data.description.length > 240 ? `${data.description.slice(0, 237)}...` : data.description}
       </p>
     )}

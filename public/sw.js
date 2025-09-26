@@ -7,7 +7,6 @@ const RUNTIME_CACHE_NAME = 'runtime-v3';
 const STATIC_ASSETS = [
   '/assets/js/lazy-loader.min.js',
   '/assets/js/lazy-loader.min.js?v=2',
-  '/assets/js/core-boot.js',
   // Use a more generic placeholder that exists in repo
   '/assets/images/placeholder-avatar.webp',
   '/manifest.webmanifest'

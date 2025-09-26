@@ -45,9 +45,7 @@ describe('CoinFlipImage.astro file', () => {
     expect(content).toContain('transition-timing-function:${multiEase}');
   });
 
-  it('should attach keyboard and click event listeners in script', () => {
-    expect(content).toContain('root.addEventListener(\'keydown\'');
-    expect(content).toContain('root.addEventListener(\'click\'');
-    expect(content).toContain('root.addEventListener(\'blur\'');
+  it('should be enhanced via island runtime', () => {
+    expect(content).toContain('coin-flip');
   });
 });

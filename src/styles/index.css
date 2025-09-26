@@ -12,20 +12,6 @@
 @import url("./components/buttons.css");
 @import url("./components/accessibility-panel.css");
 @import url("./components/cards.css");
-@import url("./components/navigation.css");
-@import url("./components/search-overlay.css");
-@import url("./components/forms.css");
-@import url("./components/timeline.css");
 
 /* Utility styles - helper classes and animations */
 @import url("./utilities/animations.css");
-@import url("./utilities/animation-delays.css");
-@import url("./utilities/decorative-lines.css");
-@import url("./utilities/text-utilities.css");
-@import url("./utilities/interaction-effects.css");
-@import url("./utilities/gradients.css");
-@import url("./utilities/touch-targets.css");
-@import url("./utilities/focus-management.css");
-@import url("./accessibility/skip-links.css");
-@import url("./accessibility/preferences.css");
-@import url("./accessibility/aria.css");

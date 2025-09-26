@@ -71,7 +71,7 @@ class EdgeCacheManager {
     const isHashed = (p) => {
       // Treat Astro’s hashed chunk paths and common fingerprint patterns as immutable
       if (p.startsWith('/_astro/')) return true;
-      // e.g., core-boot.ab12cd34.js or image.1234567890abcdef.webp
+      // e.g., analytics.ab12cd34.js or image.1234567890abcdef.webp
       return /\.[a-f0-9]{8,}\.(?:js|css|png|jpg|jpeg|webp|avif|svg|ico|woff2|pdf)$/.test(p);
     };
 

@@ -9,8 +9,8 @@ describe('projects/index.astro', () => {
     fileContent = readFileSync(filePath, 'utf-8');
   });
 
-  it('should use modern layout shell patterns', () => {
-    expect(fileContent).toContain('layout-shell-wide');
+  it('should use modern container spacing utilities', () => {
+    expect(fileContent).toContain('max-w-6xl');
   });
 
   it('should contain semantic HTML structure with proper roles', () => {

@@ -24,7 +24,7 @@ const canonicalUrl = 'https://blakeoxford.com/blog/hello-world/';
     <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="flex flex-col items-center text-center">
         <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl text-accent dark:text-accent-light mb-4">{title}</h1>
-        <p class="text-lg text-foreground/85 dark:text-gray-300 mb-2 animate-fade-in">{description}</p>
+        <p class="text-lg text-foreground/85 dark:text-gray-300 mb-2">{description}</p>
         <time class="text-sm text-foreground/70 dark:text-gray-400 mb-2" datetime={pubDate.toISOString()}>
           {pubDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
         </time>

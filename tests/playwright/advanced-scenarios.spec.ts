@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForAsyncOperation, waitForSearchResults } from './utils/test-helpers';
+import { waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Advanced Test Scenarios', () => {
   test.describe('API Error Handling', () => {
@@ -106,7 +106,7 @@ test.describe('Advanced Test Scenarios', () => {
           await searchInput.fill('test');
           
           // Should handle search gracefully even with API failures
-          await waitForSearchResults(page);
+          await page.waitForSelector('[data-search-result], .search-result', { timeout: 4000 });
           await expect(searchOverlay).toBeVisible();
         }
       } catch {

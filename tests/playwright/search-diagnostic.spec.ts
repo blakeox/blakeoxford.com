@@ -1,6 +1,6 @@
  
 import { test, expect } from '@playwright/test';
-import { waitForIdle, waitForSearchOverlay, waitForCondition } from '../utils/waits';
+import { waitForIdle, waitForCondition } from '../utils/waits';
 
 interface ConsoleMessage {
   type: string;
@@ -96,7 +96,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
     });
 
   // Allow lazy bundles a chance to register (poll for searchOverlay or LazyBundleLoader presence)
-  await waitForCondition(page, () => page.evaluate(() => !!(window as any).searchOverlay || !!(window as any).LazyBundleLoader), 2000, 100);
+  await waitForCondition(page, () => page.evaluate(() => !!(window as any).searchOverlay), 2000, 100);
 
     // 6. Try to trigger search overlay via JavaScript
     const jsActivation = await page.evaluate(() => {
@@ -134,7 +134,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
     // 8. Try keyboard shortcut activation
   await page.keyboard.press('Control+k');
   // Wait for overlay to become active if possible
-  await waitForSearchOverlay(page).catch(() => {});
+  await page.waitForSelector('[data-search-result], .search-result', { timeout: 4000 });
 
     const visibilityAfterKeyboard = await page.evaluate(() => {
       const overlay = document.getElementById('search-overlay');

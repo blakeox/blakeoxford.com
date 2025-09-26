@@ -86,26 +86,7 @@ test.describe('Caching Strategy', () => {
     console.log('Cache reload test passed');
   });
 
-  test('non-hashed core-boot.js should be cached ~24h in Worker', async ({ request }) => {
-    const res = await request.get('/assets/js/core-boot.js');
-    if (res.status() !== 200) {
-      test.skip(true, 'core-boot.js not available');
-      return;
-    }
-    const cc = res.headers()['cache-control'] || '';
-    const xcp = res.headers()['x-cache-policy'] || '';
-    const xrk = res.headers()['x-route-kind'] || '';
-
-    // If Worker headers are present, enforce exact policy
-    if (xcp || xrk) {
-      // route-kind should be asset and cache policy should be 86400
-      if (xrk) expect(xrk).toBe('asset');
-      const policy = xcp || cc;
-      expect(/max-age=\s*86400/.test(policy)).toBeTruthy();
-      return;
-    }
-
-    // In local preview, don’t assert strict policy—just log what we saw.
-    console.log('core-boot.js cache-control (preview):', cc || '<none>');
+  test.skip('legacy core-boot.js bundle removed in favor of modular islands', async () => {
+    test.skip(true, 'core-boot.js no longer exists; enhancements now load via islands.');
   });
 });

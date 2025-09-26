@@ -68,32 +68,32 @@ function deriveImageData(imgPath?: string) {
         <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
         </svg>
       </div>
-  <div class="layout-shell-wide relative z-10">
+  <div class="container mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         <div class="grid md:grid-cols-2 gap-12 items-center">
           <!-- Left: Text -->
-          <div class="order-2 md:order-1 animate-fadeIn">
+          <div class="order-2 md:order-1">
             <div class="prose lg:prose-xl dark:prose-invert">
               <h1 class="not-prose font-heading font-bold text-h1 md:text-6xl text-foreground dark:text-foreground-light mb-6">
                 <span class="block">{siteConfig.author}</span>
               </h1>
-              <p class="block text-lead mt-2 animate-fadeInUp delay-500 text-foreground dark:text-foreground-light font-medium">
+              <p class="block text-lead mt-2 text-foreground dark:text-foreground-light font-medium">
                 {siteConfig.description}
               </p>
-              <p class="animate-fadeInUp text-body text-foreground dark:text-foreground-light pl-4 border-l-4 border-accent dark:border-accent-dark border-solid">
+              <p class="text-body text-foreground dark:text-foreground-light pl-4 border-l-4 border-accent dark:border-accent-dark border-solid">
                 {siteConfig.tagline}
               </p>
             </div>
-            <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6 animate-fadeInUp delay-1100">
+            <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6">
               <a
                 href="/contact/"
-                class="btn btn-primary mobile-tap-effect"
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
                 data-analytics="hero-cta"
               >
                 🤝 Let's Connect
               </a>
               <a
                 href="/assets/Resume.pdf"
-                class="btn btn-secondary mobile-tap-effect"
+                class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:text-accent-dark hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
                 download
               >
                 📄 Download Resume
@@ -101,7 +101,7 @@ function deriveImageData(imgPath?: string) {
             </div>
           </div>
           <!-- Right: Animated Profile Image -->
-          <div class="flex justify-center md:justify-end order-1 md:order-2 animate-fadeIn delay-500">
+          <div class="flex justify-center md:justify-end order-1 md:order-2">
             <div class="relative">
               <!-- Decorative elements around the image -->
               <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-purple-500/30 blur-xl opacity-70 animate-pulse"></div>
@@ -121,9 +121,9 @@ function deriveImageData(imgPath?: string) {
                 />
               </div>
               <!-- Floating elements -->
-              <div class="absolute -top-4 -right-4 w-10 h-10 bg-accent rounded-full flex items-center justify-center text-background text-lg animate-float delay-200">💡</div>
-              <div class="absolute -bottom-2 -left-4 w-8 h-8 bg-accent-dark rounded-full flex items-center justify-center text-background text-lg animate-float delay-800">🚀</div>
-              <div class="absolute top-1/2 -right-9 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-background text-base animate-float delay-1400">☁️</div>
+              <div class="absolute -top-4 -right-4 w-10 h-10 bg-accent rounded-full flex items-center justify-center text-background text-lg animate-float">💡</div>
+              <div class="absolute -bottom-2 -left-4 w-8 h-8 bg-accent-dark rounded-full flex items-center justify-center text-background text-lg animate-float">🚀</div>
+              <div class="absolute top-1/2 -right-9 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-background text-base animate-float">☁️</div>
             </div>
           </div>
         </div>
@@ -135,7 +135,7 @@ function deriveImageData(imgPath?: string) {
       <!-- Curved divider at top -->
       <div class="absolute top-0 left-0 w-full overflow-hidden">
       </div>
-  <div class="layout-shell-wide relative z-10 pt-10">
+  <div class="container mx-auto px-6 sm:px-8 lg:px-12 relative z-10 pt-10">
         <div class="max-w-2xl mx-auto mb-14">
           <h2 class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light text-center">Core expertise and significant achievements</h2>
         </div>
@@ -304,7 +304,7 @@ function deriveImageData(imgPath?: string) {
     </section>
 
     <!-- Technologies I Excel At Section -->
-  <section id="technologies" class="w-full py-16 text-center animate-fade-in bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark">
+  <section id="technologies" class="w-full py-16 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark">
       <h2 class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light">Technologies I Excel At</h2>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
         {technologies.map((tech) => {
@@ -338,20 +338,20 @@ function deriveImageData(imgPath?: string) {
     </section>
 
     <!-- Featured Projects Section -->
-  <section id="featured-projects" class="layout-shell" aria-labelledby="featured-projects-title">
-  <h2 id="featured-projects-title" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light animate-fade-in text-center">Featured Projects</h2>
+  <section id="featured-projects" class="container mx-auto px-6 sm:px-8 lg:px-12" aria-labelledby="featured-projects-title">
+  <h2 id="featured-projects-title" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light text-center">Featured Projects</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {featuredProjects.map((project: any) => (
           <ProjectCard project={project} featured={true} />
         ))}
-      </div>        <div class="mt-8 text-center animate-fade-in">
-          <a href="/projects/" class="btn btn-secondary">View All Projects</a>
+      </div>        <div class="mt-8 text-center">
+          <a href="/projects/" class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:text-accent-dark hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2">View All Projects</a>
         </div>
     </section>
 
     <!-- Latest Blog Posts Section -->
-  <section class="w-full py-20 text-center animate-fade-in bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark" aria-labelledby="latest-blog-posts">
-  <div class="layout-shell">
+  <section class="w-full py-20 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark" aria-labelledby="latest-blog-posts">
+  <div class="container mx-auto px-6 sm:px-8 lg:px-12">
   <h2 id="latest-blog-posts" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light">Latest Blog Posts</h2>
         <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
           {latestBlogPost ? (
@@ -378,17 +378,17 @@ function deriveImageData(imgPath?: string) {
             </li>
           )}
         </ul>
-        <div class="mt-8 text-center animate-fade-in">
-          <a href="/blog/" class="btn btn-primary">View All Blog Posts</a>
+        <div class="mt-8 text-center">
+          <a href="/blog/" class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">View All Blog Posts</a>
         </div>
       </div>
     </section>
 
     <!-- Call-to-Action Section -->
-  <section class="call-to-action layout-shell text-center py-16 animate-fade-in">
+  <section class="container mx-auto px-6 sm:px-8 lg:px-12 text-center py-16">
   <h2 class="text-h2 font-bold mb-4 text-foreground dark:text-foreground-light flex items-center justify-center gap-2"><span>🤝</span> Want to Work Together?</h2>
       <p class="text-lg mb-6 text-neutral">I'm always open to exciting new opportunities and collaborations. Let's create something amazing together!</p>
-      <a href="/contact/" class="btn btn-primary">Contact Me</a>
+      <a href="/contact/" class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">Contact Me</a>
     </section>
   </div>
 </Layout>

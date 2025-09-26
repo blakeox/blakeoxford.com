@@ -55,11 +55,11 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
     <div class="relative z-10 max-w-4xl mx-auto text-center">
-      <h1 id="blog-title" class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-foreground dark:text-foreground-light mb-6 animate-fade-in">Blog</h1>
-      <p class="text-lead text-foreground dark:text-foreground-light animate-fade-in mb-8">
+      <h1 id="blog-title" class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-foreground dark:text-foreground-light mb-6">Blog</h1>
+      <p class="text-lead text-foreground dark:text-foreground-light mb-8">
         Explore my latest thoughts, tutorials, and insights on web development, design, and technology.
       </p>
-      <p class="text-lg text-foreground dark:text-foreground-light animate-fade-in">
+      <p class="text-lg text-foreground dark:text-foreground-light">
         From technical deep-dives to industry trends, discover content that bridges theory and practice.
       </p>
     </div>
@@ -91,44 +91,16 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
 
     <div class="relative z-10 px-4">
       <div class="flex flex-col gap-8 md:gap-6 w-full">
-        {sortedPosts.map((post: any, idx: number) => {
-            const delayClass = ['stagger-delay-1', 'stagger-delay-2', 'stagger-delay-3'][idx % 3];
-            return (
-              <BlogPostRow post={post} align={idx % 2 === 0 ? 'left' : 'right'} delayClass={delayClass} />
-            );
-          })}
+        {sortedPosts.map((post: any, idx: number) => (
+          <BlogPostRow post={post} align={idx % 2 === 0 ? 'left' : 'right'} />
+        ))}
       </div>
     </div>
   </section>
 </Layout>
 
 <style>
-/* Animation styles */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: none; }
-}
-
-.animate-fade-in {
-  opacity: 1;
-  animation: fadeIn 1s cubic-bezier(0.4,0,0.2,1) both;
-}
-
 /* Enhanced glass morphism */
-.glass-card {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgb(var(--color-foreground-light) / 80%);
-  border: 1px solid rgb(var(--color-foreground-light) / 20%);
-}
-
-@media (prefers-color-scheme: dark) {
-  .glass-card {
-    background: rgb(var(--color-background-dark) / 40%);
-    border: 1px solid rgb(var(--color-foreground-light) / 10%);
-  }
-}
-
 /* Focus styles for better accessibility */
 .group:focus-within {
   outline: 2px solid var(--color-accent);
@@ -137,9 +109,7 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  .group,
-  .animate-fade-in,
-  .animate-bounce {
+  .group {
     animation: none;
     transition: none;
   }
@@ -148,19 +118,8 @@ const canonicalUrl = 'https://blakeoxford.com/blog/';
 
 
 /* Hover effects for interactive elements */
-.group:hover .glass-card {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 25px -5px rgb(var(--color-background-dark) / 10%), 0 10px 10px -5px rgb(var(--color-background-dark) / 4%);
-}
-
-/* Blog post card enhancements - using interaction utilities */
-
 /* Enhanced responsiveness */
 @media (max-width: 768px) {
-  .glass-card {
-    padding: 1.5rem;
-  }
-
   .group {
     min-height: 320px;
   }

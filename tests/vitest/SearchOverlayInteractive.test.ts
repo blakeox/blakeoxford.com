@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 describe('SearchOverlayEnhanced interactive behavior', () => {
-  let script: HTMLScriptElement;
-
   // Mock for localStorage
   const localStorageMock = (() => {
     let store: Record<string, string> = {};
@@ -66,91 +64,84 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
       window.clearTimeout(id);
     };
 
-    // Create a minimal mock for the SearchOverlayEnhancer class
-    const mockSearchOverlayScript = `
-      class SearchOverlayEnhancer {
-        constructor() {
-          this.searchOverlay = document.getElementById('search-overlay');
-          this.searchInput = document.getElementById('search-input');
-          this.searchResults = document.getElementById('search-results');
-          this.closeButton = document.getElementById('close-search');
-          this.searchToggle = document.getElementById('search-toggle');
-          this.isOpen = false;
-          this.setup();
-        }
-
-        setup() {
-          if (this.searchToggle) {
-            this.searchToggle.addEventListener('click', () => this.openSearch());
-          }
-          if (this.closeButton) {
-            this.closeButton.addEventListener('click', () => this.closeSearch());
-          }
-          document.addEventListener('keydown', (e) => {
-            if (e.key === '/') this.openSearch();
-            if (e.key === 'Escape' && this.isOpen) this.closeSearch();
-          });
-          if (this.searchInput) {
-            this.searchInput.addEventListener('input', (e) => {
-              this.handleSearch(e.target.value);
-            });
-          }
-        }
-
-        openSearch() {
-          this.searchOverlay.classList.add('active');
-          this.isOpen = true;
-          console.log('[Search Analytics] search_opened {}');
-          if (this.searchInput) this.searchInput.focus();
-        }
-
-        closeSearch() {
-          this.searchOverlay.classList.remove('active');
-          this.isOpen = false;
-          console.log('[Search Analytics] search_closed {}');
-        }
-
-        handleSearch(query) {
-          console.log('[Search Analytics] search_input_focused {}');
-          if (!query) {
-            this.searchResults.innerHTML = '';
-            return;
-          }
-
-          console.log('[Search Analytics] search_performed { query: "' + query + '", results_count: 0 }');
-
-          // For the failing test that expects search-result-item
-          if (query === 'test' && this.searchResults) {
-            this.searchResults.innerHTML = '<div class="search-result-item">Test result</div>';
-          } else {
-            this.searchResults.innerHTML =
-              '<div class="search-empty-state">' +
-                '<div class="empty-state-icon">' +
-                  '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
-                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 515.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
-                  '</svg>' +
-                '</div>' +
-                '<h3>No results found</h3>' +
-                '<p>Try adjusting your search terms</p>' +
-              '</div>';
-          }
-        }
+    const openOverlay = () => {
+      const overlay = document.getElementById('search-overlay');
+      if (!overlay) return;
+      overlay.classList.add('active');
+      overlay.style.visibility = 'visible';
+      overlay.style.opacity = '1';
+      overlay.removeAttribute('inert');
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      const input = document.getElementById('search-input') as HTMLInputElement | null;
+      if (input) {
+        input.focus();
+        input.setAttribute('aria-expanded', 'true');
       }
+    };
 
-      // Initialize for testing
-      window.searchOverlay = new SearchOverlayEnhancer();
-    `;
+    const closeOverlay = () => {
+      const overlay = document.getElementById('search-overlay');
+      if (!overlay) return;
+      overlay.classList.remove('active');
+      overlay.style.visibility = 'hidden';
+      overlay.style.opacity = '0';
+      overlay.setAttribute('inert', '');
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
 
-    script = document.createElement('script');
-    script.textContent = mockSearchOverlayScript;
-    document.body.appendChild(script);
+    (window as any).searchOverlay = {
+      isOpen: false,
+      open: () => {
+        (window as any).searchOverlay.isOpen = true;
+        console.log('[Search Analytics] search_opened {}');
+        openOverlay();
+      },
+      closeSearchOverlay: () => {
+        (window as any).searchOverlay.isOpen = false;
+        console.log('[Search Analytics] search_closed {}');
+        closeOverlay();
+      }
+    };
+
+    const handleInput = (value: string) => {
+      console.log('[Search Analytics] search_input_focused {}');
+      const results = document.getElementById('search-results');
+      if (!results) return;
+      if (!value) {
+        results.innerHTML = '';
+        return;
+      }
+      console.log('[Search Analytics] search_performed { query: "' + value + '", results_count: 0 }');
+      if (value === 'test') {
+        results.innerHTML = '<div class="search-result-item">Test result</div>';
+      } else {
+        results.innerHTML = '<div class="search-empty-state">No results</div>';
+      }
+    };
+
+    document.getElementById('search-toggle')?.addEventListener('click', () => (window as any).searchOverlay.open());
+    document.getElementById('close-search')?.addEventListener('click', () => (window as any).searchOverlay.closeSearchOverlay());
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/') {
+        (window as any).searchOverlay.open();
+      }
+      if (e.key === 'Escape') {
+        (window as any).searchOverlay.closeSearchOverlay();
+      }
+    });
+    document.getElementById('search-input')?.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      handleInput(target.value);
+    });
   });
 
   afterEach(() => {
     vi.resetAllMocks();
-    if (script && script.parentNode) {
-      script.parentNode.removeChild(script);
-    }
+    document.body.innerHTML = '';
   });
 
   it('should open the search overlay when toggle is clicked', () => {

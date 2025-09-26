@@ -84,13 +84,13 @@ const articleSchema = {
         </time>
       </div>
 
-      <h1 id="article-title" class="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-accent dark:text-accent-light mb-6 animate-fade-in leading-tight">
+      <h1 id="article-title" class="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-accent dark:text-accent-light mb-6 leading-tight">
         Combating Legal AI Hallucinations
       </h1>
-      <p class="text-xl md:text-2xl text-foreground-light dark:text-foreground animate-fade-in mb-8 leading-relaxed">
+      <p class="text-xl md:text-2xl text-foreground-light dark:text-foreground mb-8 leading-relaxed">
         How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research
       </p>
-      <p class="text-lg text-foreground-light dark:text-foreground-light/80 animate-fade-in max-w-3xl mx-auto">
+      <p class="text-lg text-foreground-light dark:text-foreground-light/80 max-w-3xl mx-auto">
         Introducing an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener.
       </p>
     </div>
@@ -353,17 +353,6 @@ const articleSchema = {
 </Layout>
 
 <style>
-/* Animation styles */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: none; }
-}
-
-.animate-fade-in {
-  opacity: 1;
-  animation: fadeIn 1s cubic-bezier(0.4,0,0.2,1) both;
-}
-
 /* Enhanced prose styles */
 .prose {
   line-height: 1.75;
@@ -389,11 +378,10 @@ a:focus {
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-in,
-  a.inline-flex:hover {
-    animation: none;
-    transform: none;
-    transition: none;
+  .animate-pulse,
+  .animate-bounce {
+    animation: var(--motion-original-animation, none) !important;
+    transition-duration: var(--motion-original-transition-duration, 0s) !important;
   }
 }
 

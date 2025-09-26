@@ -72,24 +72,16 @@ export default /** @type {import('tailwindcss').Config} */ {
 
         surface:            'var(--color-surface)',
         'surface-dark':     'var(--color-surface-dark)',
-  'surface-subtle':   'var(--color-surface-subtle)',
-  'surface-dark-subtle': 'var(--color-surface-dark-subtle)',
 
         background:         'var(--color-background)',
         'background-dark':  'var(--color-background-dark)',
 
         foreground:         'var(--color-foreground)',
-  'foreground-strong':'var(--color-foreground-strong)',
         'foreground-light': 'var(--color-foreground-light)',
-  'on-accent':        'var(--color-on-accent)',
-  'on-dark':          'var(--color-on-dark)',
 
         neutral:            'var(--color-neutral)',
         'neutral-light':    'var(--color-neutral-light)',
         'neutral-dark':     'var(--color-neutral-dark)',
-
-  border:             'var(--border-color)',
-  'border-dark':      'var(--border-color-dark)',
 
         // keep any ad-hoc colors you still need:
   // Removed customBlue (unused & failed dark contrast) to satisfy contrast audit.
@@ -123,11 +115,6 @@ export default /** @type {import('tailwindcss').Config} */ {
       spacing: {
         18: 'var(--space-18)',
         22: 'var(--space-22)',
-        26: 'var(--space-26)',
-        30: 'var(--space-30)',
-        34: 'var(--space-34)',
-        38: 'var(--space-38)',
-        42: 'var(--space-42)',
       },
       borderRadius: {
         none: 'var(--radius-none)',
@@ -138,7 +125,6 @@ export default /** @type {import('tailwindcss').Config} */ {
         xl: 'var(--radius-xl)',
         '2xl': 'var(--radius-2xl)',
         '3xl': 'var(--radius-3xl)',
-        '4xl': '2rem',
         full: 'var(--radius-full)',
       },
       fontSize: {
@@ -236,9 +222,6 @@ export default /** @type {import('tailwindcss').Config} */ {
         'gradient-success': 'var(--gradient-success)',
         'gradient-warning': 'var(--gradient-warning)',
         'gradient-error': 'var(--gradient-error)',
-        'glow-hero': 'radial-gradient(circle at top, rgba(56, 189, 248, 0.2), transparent 62%)',
-        'glow-accent': 'radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.18), transparent 60%)',
-        'grid-overlay': 'linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px)',
       },
       blur: {
         sm: 'var(--blur-sm)',
@@ -270,10 +253,6 @@ export default /** @type {import('tailwindcss').Config} */ {
         '2xl': 'var(--shadow-2xl)',
         inner: 'var(--shadow-inner)',
         none: 'var(--shadow-none)',
-        card: '0 40px 90px -55px rgba(15, 23, 42, 0.55)',
-        'card-strong': '0 55px 120px -60px rgba(15, 23, 42, 0.6)',
-        'soft-glow': '0 40px 120px -45px rgba(15, 23, 42, 0.55)',
-        'accent-glow': '0 24px 65px -35px rgba(56, 189, 248, 0.55)',
       },
       ringWidth: {
         DEFAULT: '2px',

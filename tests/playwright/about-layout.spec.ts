@@ -5,16 +5,16 @@ test.describe('About page layout', () => {
     await page.goto('/about/');
 
     await page.waitForSelector('main#main-content');
-    await page.waitForSelector('#about-me .layout-shell-wide, #about-me .layout-shell');
-    await page.waitForSelector('#about-social .layout-shell-wide, #about-social .layout-shell');
+    await page.waitForSelector('#about-me [class*="max-w-"]');
+    await page.waitForSelector('#about-social [class*="max-w-"]');
 
     const metrics = await page.evaluate(() => {
       const header = document.querySelector('header');
       const main = document.querySelector('main#main-content');
       const heroSection = document.getElementById('about-me');
-      const heroShell = heroSection?.querySelector('.layout-shell-wide, .layout-shell') ?? null;
+      const heroShell = heroSection?.querySelector('[class*="max-w-"]') ?? null;
       const connectSection = document.getElementById('about-social');
-      const connectShell = connectSection?.querySelector('.layout-shell-wide, .layout-shell') ?? null;
+      const connectShell = connectSection?.querySelector('[class*="max-w-"]') ?? null;
 
       const mainStyles = main ? window.getComputedStyle(main) : null;
       const heroShellRect = heroShell ? heroShell.getBoundingClientRect() : null;

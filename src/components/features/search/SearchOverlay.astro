@@ -1,5 +1,5 @@
 ---
-// Modern SearchOverlay.astro component - Redesigned for accessibility and mobile experience
+import SearchOverlayController from '../../islands/SearchOverlayController';
 ---
 
 <div id="search-overlay" class="search-overlay fixed inset-0 z-[1200]" role="dialog" aria-modal="true" aria-labelledby="search-title" inert data-a11y-allow-color-contrast>
@@ -8,11 +8,10 @@
 
   <!-- Search Container -->
   <div class="search-container relative flex items-start justify-center min-h-full px-4 pt-16 pb-8 md:pt-24">
-  <div class="search-card w-full max-w-2xl bg-surface dark:bg-surface rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-
+    <div class="search-card w-full max-w-2xl bg-surface dark:bg-surface rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       <!-- Header with Close Button -->
       <div class="search-header flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-  <div id="search-title" class="text-lg font-semibold text-foreground dark:text-foreground-light">Search</div>
+        <div id="search-title" class="text-lg font-semibold text-foreground dark:text-foreground-light">Search</div>
         <button
           id="close-search"
           class="search-close-btn p-2 rounded-lg transition-colors border text-foreground dark:text-foreground-light bg-surface dark:bg-surface border-neutral-light dark:border-neutral-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -105,6 +104,8 @@
     </div>
   </div>
 </div>
+
+<SearchOverlayController client:load />
 
 <style>
   /* Modern Search Overlay Styles */
@@ -641,92 +642,3 @@
     color: #9ca3af;
   }
 </style>
-
-<script>
-  console.log('🎯 SearchOverlay script registered');
-  // Lazy initialize search overlay on first open; in true audit contexts skip heavy dynamic import but keep basic behavior
-  (function(){
-    const isAudit = !!(window as any).__AUDIT__ || /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie||'') || /lighthouse/i.test(navigator.userAgent||'');
-    const isAutomation = (() => {
-      try {
-        if (typeof navigator !== 'undefined' && navigator.webdriver) return true;
-        const win = window as any;
-        return !!(win && (win.__PLAYWRIGHT__ || win.__PW_PRELOAD__));
-      } catch (_) {
-        return false;
-      }
-    })();
-    const skipEnhanced = isAudit && !isAutomation;
-    if (isAudit) {
-      console.log(skipEnhanced
-        ? '⏭️ Audit/CI mode: will use basic overlay behavior'
-        : '🧪 Audit heuristics matched, but automation detected—loading enhanced overlay for testing');
-    }
-    const toggle = document.getElementById('search-toggle');
-    async function ensureInit() {
-      try {
-        if (skipEnhanced) return null; // skip dynamic import during audits
-        if ((window as any).enhancedSearchOverlay) return (window as any).enhancedSearchOverlay;
-  const mod = await import('../../../scripts/features/EnhancedSearchOverlay');
-  const instance = (mod as any).initEnhancedSearchOverlay();
-  (window as any).EnhancedSearchOverlay = (mod as any).EnhancedSearchOverlay;
-  (window as any).SearchOverlay = (mod as any).EnhancedSearchOverlay;
-  (window as any).initEnhancedSearchOverlay = (mod as any).initEnhancedSearchOverlay;
-  (window as any).enhancedSearchOverlay = instance;
-  (window as any).searchOverlay = instance;
-        return instance;
-      } catch (err) {
-        console.warn('EnhancedSearchOverlay dynamic import failed, falling back to basic overlay controls', err);
-        return null;
-      }
-    }
-    if (toggle) {
-      const handler = async () => {
-        const inst = await ensureInit();
-        if (inst && typeof inst.open === 'function') {
-          inst.open();
-        } else {
-          // Fallback: basic open behavior
-          const overlay = document.getElementById('search-overlay');
-          if (overlay) {
-            overlay.classList.add('active');
-            overlay.style.visibility = 'visible';
-            overlay.style.opacity = '1';
-            overlay.removeAttribute('inert');
-            const input = document.getElementById('search-input');
-            if (input) setTimeout(() => input.focus(), 50);
-            document.body.style.overflow = 'hidden';
-          }
-        }
-      };
-      toggle.addEventListener('click', handler, { passive: true });
-      document.addEventListener('keydown', (e) => { if (e.key === '/') { e.preventDefault(); handler(); } }, { passive: false });
-    } else {
-      // fallback: defer to idle
-      if ('requestIdleCallback' in window) requestIdleCallback(() => { ensureInit(); }, { timeout: 20000 });
-      else setTimeout(() => { ensureInit(); }, 20000);
-    }
-
-    // Always support closing with Escape regardless of focus target
-    document.addEventListener('keydown', async (e) => {
-      if (e.key === 'Escape') {
-        try {
-          const inst = await ensureInit();
-          if (inst && typeof inst.closeSearchOverlay === 'function') {
-            inst.closeSearchOverlay();
-          } else {
-            // Fallback: basic close behavior
-            const overlay = document.getElementById('search-overlay');
-            if (overlay) {
-              overlay.classList.remove('active');
-              overlay.style.visibility = 'hidden';
-              overlay.style.opacity = '0';
-              overlay.setAttribute('inert', '');
-              document.body.style.overflow = '';
-            }
-          }
-        } catch { /* no-op */ }
-      }
-    }, { passive: true });
-  })();
-</script>

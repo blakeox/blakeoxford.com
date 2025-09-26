@@ -25,7 +25,7 @@ const dateLabel = data?.date
   ? data.date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
   : undefined;
 ---
-<article class="group relative isolate flex overflow-hidden rounded-[2.25rem] bg-surface/95 ring-1 ring-border/35 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-strong focus-within:outline-none focus-within:ring-2 focus-within:ring-accent/55">
+<article class="group relative isolate flex overflow-hidden rounded-[2.25rem] bg-surface/95 ring-1 ring-border/35 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-within:outline-none focus-within:ring-2 focus-within:ring-accent/55">
   <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-background/40 via-surface/50 to-background/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden="true"></div>
   <div class="grid w-full gap-0 lg:grid-cols-[min(22rem,45%),1fr]">
     <a
@@ -78,7 +78,7 @@ const dateLabel = data?.date
             </a>
           </h3>
           {hasDescription && (
-            <p class="line-clamp-4 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+            <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75 [display:-webkit-box] [-webkit-line-clamp:4] [-webkit-box-orient:vertical] overflow-hidden">
               {description}
             </p>
           )}

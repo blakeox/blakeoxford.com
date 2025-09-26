@@ -264,7 +264,6 @@ export class MotionAccessibility {
         }
         
         .animate-float,
-        .animate-fade-in,
         .animate-bounce {
           animation: none !important;
         }
@@ -296,14 +295,3 @@ export function initMotionAccessibility(): MotionAccessibility {
   
   return motionAccessibility;
 }
-
-// Auto-initialize if not in module context
-if (typeof window !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      (window as Window & { motionAccessibility?: MotionAccessibility }).motionAccessibility = initMotionAccessibility();
-    });
-  } else {
-    (window as Window & { motionAccessibility?: MotionAccessibility }).motionAccessibility = initMotionAccessibility();
-  }
-} 

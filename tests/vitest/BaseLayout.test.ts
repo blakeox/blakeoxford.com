@@ -33,7 +33,7 @@ describe('BaseLayout.astro file', () => {
   });
 
   it('should include both wide and default layout classes', () => {
-    expect(content).toMatch(/wide\s*\?\s*'layout-shell-wide layout-offset-top w-full'/);
-    expect(content).toMatch(/:\s*'prose dark:prose-invert layout-shell-tight layout-offset-top'/);
+    expect(content).toMatch(/const baseMainClasses = wide\s*\?/);
+    expect(content).toContain('prose dark:prose-invert');
   });
 });

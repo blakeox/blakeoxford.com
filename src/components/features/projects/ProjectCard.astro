@@ -21,7 +21,7 @@ const dateLabel = data?.date
 <article class="group relative flex h-full flex-col">
   <a
     href={`/projects/${slug}/`}
-    class="relative flex h-full flex-col overflow-hidden rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-card transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 hover:-translate-y-1 hover:shadow-card-strong"
+    class="relative flex h-full flex-col overflow-hidden rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 hover:-translate-y-1 hover:shadow-xl"
     aria-labelledby={`project-card-${slug}`}
   >
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-background/70 via-surface/85 to-background/65 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
@@ -63,7 +63,7 @@ const dateLabel = data?.date
         </h3>
 
         {hasDescription && (
-          <p class="line-clamp-4 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+          <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75 [display:-webkit-box] [-webkit-line-clamp:4] [-webkit-box-orient:vertical] overflow-hidden">
             {description}
           </p>
         )}
