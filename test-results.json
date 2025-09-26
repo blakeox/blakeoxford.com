@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2025-09-26T15:05:48.309Z",
-  "total": 225,
-  "passed": 218,
-  "failed": 0,
-  "skipped": 7,
+  "generatedAt": "2025-09-26T16:35:45.507Z",
+  "total": 205,
+  "passed": 198,
+  "failed": 1,
+  "skipped": 6,
   "todo": 0,
-  "durationMs": 4924,
+  "durationMs": 4510,
   "tests": [
     {
       "id": "291280948_0_0",
@@ -13,7 +13,7 @@
       "name": "dist/search-index.json exists and has combined entries",
       "fullName": "Search Index Integration > dist/search-index.json exists and has combined entries",
       "status": "pass",
-      "duration": 1.2484170000000177,
+      "duration": 0.7590410000000247,
       "retry": 0
     },
     {
@@ -22,7 +22,7 @@
       "name": "dist/search/index.json mirrors dist/search-index.json",
       "fullName": "Search Index Integration > dist/search/index.json mirrors dist/search-index.json",
       "status": "pass",
-      "duration": 0.7873330000001033,
+      "duration": 0.32208300000002055,
       "retry": 0
     },
     {
@@ -31,7 +31,7 @@
       "name": "public/search/projects.json has featured first 3 entries",
       "fullName": "Search Index Integration > public/search/projects.json has featured first 3 entries",
       "status": "pass",
-      "duration": 0.28408300000000963,
+      "duration": 0.2085419999999658,
       "retry": 0
     },
     {
@@ -40,60 +40,7 @@
       "name": "project records include required fields",
       "fullName": "Search Index Integration > project records include required fields",
       "status": "pass",
-      "duration": 0.4395829999999705,
-      "retry": 0
-    },
-    {
-      "id": "350290452_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/performance/perfTrend.test.ts",
-      "name": "insufficient history for trend analysis",
-      "fullName": "Performance Trend (Drift Detection) > insufficient history for trend analysis",
-      "status": "skip",
-      "retry": 0
-    },
-    {
-      "id": "1751681206_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/contracts/api/api.snapshot.test.ts",
-      "name": "blog snapshot stable",
-      "fullName": "API Snapshot Baselines > blog snapshot stable",
-      "status": "pass",
-      "duration": 1.8464999999999918,
-      "retry": 0
-    },
-    {
-      "id": "1751681206_0_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/contracts/api/api.snapshot.test.ts",
-      "name": "projects snapshot stable",
-      "fullName": "API Snapshot Baselines > projects snapshot stable",
-      "status": "pass",
-      "duration": 7.2054580000000215,
-      "retry": 0
-    },
-    {
-      "id": "1665812282_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/contracts/api/blog.contract.test.ts",
-      "name": "public/search/blog.json matches contract",
-      "fullName": "Blog API Contract > public/search/blog.json matches contract",
-      "status": "pass",
-      "duration": 1.8998340000000553,
-      "retry": 0
-    },
-    {
-      "id": "-658990622_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/contracts/api/projects.contract.test.ts",
-      "name": "public/api/projects.json matches contract",
-      "fullName": "Projects API Contract > public/api/projects.json matches contract",
-      "status": "pass",
-      "duration": 3.265083000000004,
-      "retry": 0
-    },
-    {
-      "id": "-658990622_0_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/contracts/api/projects.contract.test.ts",
-      "name": "search/projects.json matches contract",
-      "fullName": "Projects API Contract > search/projects.json matches contract",
-      "status": "pass",
-      "duration": 0.9756250000000364,
+      "duration": 0.35874999999998636,
       "retry": 0
     },
     {
@@ -102,7 +49,7 @@
       "name": "should include NavBar and Footer components",
       "fullName": "BaseLayout.astro file > should include NavBar and Footer components",
       "status": "pass",
-      "duration": 0.5945000000000391,
+      "duration": 0.5620420000000195,
       "retry": 0
     },
     {
@@ -111,7 +58,7 @@
       "name": "should have meta description and viewport meta tags",
       "fullName": "BaseLayout.astro file > should have meta description and viewport meta tags",
       "status": "pass",
-      "duration": 0.20754199999998946,
+      "duration": 0.16387500000001864,
       "retry": 0
     },
     {
@@ -120,7 +67,7 @@
       "name": "should include a <main> element with slot",
       "fullName": "BaseLayout.astro file > should include a <main> element with slot",
       "status": "pass",
-      "duration": 0.13208399999996345,
+      "duration": 0.11712499999998727,
       "retry": 0
     },
     {
@@ -129,7 +76,7 @@
       "name": "should use dynamic title prop in <title>",
       "fullName": "BaseLayout.astro file > should use dynamic title prop in <title>",
       "status": "pass",
-      "duration": 0.1421659999999747,
+      "duration": 0.1289579999999546,
       "retry": 0
     },
     {
@@ -138,43 +85,7 @@
       "name": "should include both wide and default layout classes",
       "fullName": "BaseLayout.astro file > should include both wide and default layout classes",
       "status": "pass",
-      "duration": 0.11570900000003803,
-      "retry": 0
-    },
-    {
-      "id": "337078729_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/BlogPostRow.test.ts",
-      "name": "renders the blog post title and link",
-      "fullName": "BlogPostRow.astro > renders the blog post title and link",
-      "status": "pass",
-      "duration": 0.6057500000000573,
-      "retry": 0
-    },
-    {
-      "id": "337078729_0_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/BlogPostRow.test.ts",
-      "name": "renders tags if present",
-      "fullName": "BlogPostRow.astro > renders tags if present",
-      "status": "pass",
-      "duration": 0.15516700000000583,
-      "retry": 0
-    },
-    {
-      "id": "337078729_0_2",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/BlogPostRow.test.ts",
-      "name": "truncates long descriptions to 220 chars",
-      "fullName": "BlogPostRow.astro > truncates long descriptions to 220 chars",
-      "status": "pass",
-      "duration": 0.0837500000000091,
-      "retry": 0
-    },
-    {
-      "id": "337078729_0_3",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/BlogPostRow.test.ts",
-      "name": "formats the pubDate correctly",
-      "fullName": "BlogPostRow.astro > formats the pubDate correctly",
-      "status": "pass",
-      "duration": 9.588458999999943,
+      "duration": 0.11304100000000972,
       "retry": 0
     },
     {
@@ -183,7 +94,7 @@
       "name": "should render responsive front/back images with srcsets and alt bindings",
       "fullName": "CoinFlipImage.astro file > should render responsive front/back images with srcsets and alt bindings",
       "status": "pass",
-      "duration": 1.9378750000000764,
+      "duration": 0.7584580000000187,
       "retry": 0
     },
     {
@@ -192,7 +103,7 @@
       "name": "should include aria-pressed and live region for accessibility",
       "fullName": "CoinFlipImage.astro file > should include aria-pressed and live region for accessibility",
       "status": "pass",
-      "duration": 0.46974999999997635,
+      "duration": 0.15250000000003183,
       "retry": 0
     },
     {
@@ -201,7 +112,7 @@
       "name": "should bind flip axis and click behavior",
       "fullName": "CoinFlipImage.astro file > should bind flip axis and click behavior",
       "status": "pass",
-      "duration": 0.256458000000066,
+      "duration": 0.11291599999998425,
       "retry": 0
     },
     {
@@ -210,7 +121,7 @@
       "name": "should apply inline styles for transition duration and timing function",
       "fullName": "CoinFlipImage.astro file > should apply inline styles for transition duration and timing function",
       "status": "pass",
-      "duration": 0.3721659999999929,
+      "duration": 0.1468749999999659,
       "retry": 0
     },
     {
@@ -219,7 +130,7 @@
       "name": "should be enhanced via island runtime",
       "fullName": "CoinFlipImage.astro file > should be enhanced via island runtime",
       "status": "pass",
-      "duration": 0.1389159999999947,
+      "duration": 0.05245899999999892,
       "retry": 0
     },
     {
@@ -228,7 +139,7 @@
       "name": "should have required attributes on name field",
       "fullName": "Contact form validation > should have required attributes on name field",
       "status": "pass",
-      "duration": 9.836708999999928,
+      "duration": 8.633500000000026,
       "retry": 0
     },
     {
@@ -237,7 +148,7 @@
       "name": "should have required attributes on email field",
       "fullName": "Contact form validation > should have required attributes on email field",
       "status": "pass",
-      "duration": 2.9639590000000453,
+      "duration": 1.8964579999999387,
       "retry": 0
     },
     {
@@ -246,7 +157,7 @@
       "name": "should have required attributes on message field",
       "fullName": "Contact form validation > should have required attributes on message field",
       "status": "pass",
-      "duration": 2.7997500000000173,
+      "duration": 1.5804170000000113,
       "retry": 0
     },
     {
@@ -255,7 +166,7 @@
       "name": "should validate a valid form submission",
       "fullName": "Form validation > should validate a valid form submission",
       "status": "pass",
-      "duration": 2.862082999999984,
+      "duration": 2.826417000000106,
       "retry": 0
     },
     {
@@ -264,7 +175,7 @@
       "name": "should invalidate form with empty name",
       "fullName": "Form validation > should invalidate form with empty name",
       "status": "pass",
-      "duration": 2.5146250000000236,
+      "duration": 2.876125000000002,
       "retry": 0
     },
     {
@@ -273,7 +184,7 @@
       "name": "should invalidate form with invalid email format",
       "fullName": "Form validation > should invalidate form with invalid email format",
       "status": "pass",
-      "duration": 4.863542000000052,
+      "duration": 1.8318329999999605,
       "retry": 0
     },
     {
@@ -282,7 +193,7 @@
       "name": "should invalidate form with empty message",
       "fullName": "Form validation > should invalidate form with empty message",
       "status": "pass",
-      "duration": 5.4585420000000795,
+      "duration": 10.217457999999965,
       "retry": 0
     },
     {
@@ -291,7 +202,7 @@
       "name": "should submit the form with valid data",
       "fullName": "Form submission > should submit the form with valid data",
       "status": "pass",
-      "duration": 2.251708000000008,
+      "duration": 12.651707999999985,
       "retry": 0
     },
     {
@@ -300,7 +211,7 @@
       "name": "should contain a <footer> element",
       "fullName": "Footer.astro file > should contain a <footer> element",
       "status": "pass",
-      "duration": 0.8305420000000368,
+      "duration": 0.5165000000000077,
       "retry": 0
     },
     {
@@ -309,7 +220,7 @@
       "name": "should have a navigation section with aria-label \"Footer Quick Links\"",
       "fullName": "Footer.astro file > should have a navigation section with aria-label \"Footer Quick Links\"",
       "status": "pass",
-      "duration": 0.1770410000000311,
+      "duration": 0.15816699999999173,
       "retry": 0
     },
     {
@@ -318,7 +229,7 @@
       "name": "should include LinkedIn and GitHub social links",
       "fullName": "Footer.astro file > should include LinkedIn and GitHub social links",
       "status": "pass",
-      "duration": 0.15925000000004275,
+      "duration": 0.12529099999994742,
       "retry": 0
     },
     {
@@ -327,7 +238,7 @@
       "name": "should include copyright notice with dynamic year",
       "fullName": "Footer.astro file > should include copyright notice with dynamic year",
       "status": "pass",
-      "duration": 0.1297500000000582,
+      "duration": 0.1253749999999627,
       "retry": 0
     },
     {
@@ -336,7 +247,7 @@
       "name": "should include a back-to-top link with aria-label",
       "fullName": "Footer.astro file > should include a back-to-top link with aria-label",
       "status": "pass",
-      "duration": 0.07500000000004547,
+      "duration": 0.06933399999996936,
       "retry": 0
     },
     {
@@ -345,7 +256,7 @@
       "name": "should render a <nav> element",
       "fullName": "NavBar island template > should render a <nav> element",
       "status": "pass",
-      "duration": 1.084791999999993,
+      "duration": 0.8682909999999993,
       "retry": 0
     },
     {
@@ -354,7 +265,7 @@
       "name": "should include nav link markup for aria-current to be set at runtime",
       "fullName": "NavBar island template > should include nav link markup for aria-current to be set at runtime",
       "status": "pass",
-      "duration": 0.1617909999999938,
+      "duration": 0.13762499999995725,
       "retry": 0
     },
     {
@@ -363,7 +274,7 @@
       "name": "should initialize with correct default properties",
       "fullName": "Initialization > should initialize with correct default properties",
       "status": "pass",
-      "duration": 73.93304200000011,
+      "duration": 105.94229199999995,
       "retry": 0
     },
     {
@@ -372,7 +283,7 @@
       "name": "should find required DOM elements",
       "fullName": "Initialization > should find required DOM elements",
       "status": "pass",
-      "duration": 6.431833999999981,
+      "duration": 7.032375000000002,
       "retry": 0
     },
     {
@@ -381,7 +292,7 @@
       "name": "should handle missing DOM elements gracefully",
       "fullName": "Initialization > should handle missing DOM elements gracefully",
       "status": "pass",
-      "duration": 22.839249999999993,
+      "duration": 6.569583000000193,
       "retry": 0
     },
     {
@@ -390,7 +301,7 @@
       "name": "should toggle menu open state",
       "fullName": "Menu Toggle Functionality > should toggle menu open state",
       "status": "pass",
-      "duration": 5.36933299999987,
+      "duration": 5.011792000000014,
       "retry": 0
     },
     {
@@ -399,7 +310,7 @@
       "name": "should toggle menu closed state",
       "fullName": "Menu Toggle Functionality > should toggle menu closed state",
       "status": "pass",
-      "duration": 65.40412500000002,
+      "duration": 5.08504199999993,
       "retry": 0
     },
     {
@@ -408,7 +319,7 @@
       "name": "should close menu explicitly",
       "fullName": "Menu Toggle Functionality > should close menu explicitly",
       "status": "pass",
-      "duration": 5.248874999999998,
+      "duration": 4.614334000000099,
       "retry": 0
     },
     {
@@ -417,7 +328,7 @@
       "name": "should open search overlay",
       "fullName": "Search Functionality > should open search overlay",
       "status": "pass",
-      "duration": 4.114374999999882,
+      "duration": 6.836999999999989,
       "retry": 0
     },
     {
@@ -426,7 +337,7 @@
       "name": "should handle nav toggle click",
       "fullName": "Click Events > should handle nav toggle click",
       "status": "pass",
-      "duration": 28.73608400000012,
+      "duration": 5.076959000000215,
       "retry": 0
     },
     {
@@ -435,7 +346,7 @@
       "name": "should handle search toggle click",
       "fullName": "Click Events > should handle search toggle click",
       "status": "pass",
-      "duration": 52.32300000000009,
+      "duration": 10.423041000000012,
       "retry": 0
     },
     {
@@ -444,7 +355,7 @@
       "name": "should have proper ARIA attributes",
       "fullName": "Accessibility > should have proper ARIA attributes",
       "status": "pass",
-      "duration": 54.514207999999826,
+      "duration": 6.415000000000191,
       "retry": 0
     },
     {
@@ -453,7 +364,7 @@
       "name": "should update ARIA attributes when menu state changes",
       "fullName": "Accessibility > should update ARIA attributes when menu state changes",
       "status": "pass",
-      "duration": 4.947667000000138,
+      "duration": 6.033666999999923,
       "retry": 0
     },
     {
@@ -462,7 +373,7 @@
       "name": "should have correct navigation links structure",
       "fullName": "Navigation Links > should have correct navigation links structure",
       "status": "pass",
-      "duration": 31.048958000000084,
+      "duration": 7.500709000000143,
       "retry": 0
     },
     {
@@ -471,7 +382,7 @@
       "name": "should have proper link text content",
       "fullName": "Navigation Links > should have proper link text content",
       "status": "pass",
-      "duration": 19.57920899999999,
+      "duration": 4.5626250000000255,
       "retry": 0
     },
     {
@@ -480,7 +391,7 @@
       "name": "should have proper navbar HTML structure",
       "fullName": "Component Structure > should have proper navbar HTML structure",
       "status": "pass",
-      "duration": 8.928124999999909,
+      "duration": 8.76804200000015,
       "retry": 0
     },
     {
@@ -489,7 +400,7 @@
       "name": "should have hamburger menu structure",
       "fullName": "Component Structure > should have hamburger menu structure",
       "status": "pass",
-      "duration": 5.948499999999967,
+      "duration": 3.5225000000000364,
       "retry": 0
     },
     {
@@ -498,7 +409,7 @@
       "name": "should pass a basic test",
       "fullName": "PhotoCarousel Component > should pass a basic test",
       "status": "pass",
-      "duration": 132.73775,
+      "duration": 148.59195799999998,
       "retry": 0
     },
     {
@@ -507,7 +418,7 @@
       "name": "should access DOM elements",
       "fullName": "PhotoCarousel Component > should access DOM elements",
       "status": "pass",
-      "duration": 10.636334000000033,
+      "duration": 6.549250000000029,
       "retry": 0
     },
     {
@@ -516,7 +427,7 @@
       "name": "should find carousel images",
       "fullName": "PhotoCarousel Component > should find carousel images",
       "status": "pass",
-      "duration": 39.462999999999965,
+      "duration": 30.552625000000035,
       "retry": 0
     },
     {
@@ -525,7 +436,7 @@
       "name": "should have proper carousel HTML structure",
       "fullName": "Component Structure > should have proper carousel HTML structure",
       "status": "pass",
-      "duration": 45.77404200000001,
+      "duration": 14.068125000000009,
       "retry": 0
     },
     {
@@ -534,7 +445,7 @@
       "name": "should have accessibility attributes",
       "fullName": "Component Structure > should have accessibility attributes",
       "status": "pass",
-      "duration": 7.141708000000108,
+      "duration": 5.866458000000193,
       "retry": 0
     },
     {
@@ -543,7 +454,7 @@
       "name": "should have proper image alt attributes",
       "fullName": "Component Structure > should have proper image alt attributes",
       "status": "pass",
-      "duration": 43.109500000000025,
+      "duration": 4.945249999999987,
       "retry": 0
     },
     {
@@ -552,7 +463,7 @@
       "name": "should have carousel indicators",
       "fullName": "Component Structure > should have carousel indicators",
       "status": "pass",
-      "duration": 16.318708000000015,
+      "duration": 6.738999999999805,
       "retry": 0
     },
     {
@@ -561,7 +472,7 @@
       "name": "should show first image by default",
       "fullName": "Image Display > should show first image by default",
       "status": "pass",
-      "duration": 22.347957999999835,
+      "duration": 4.411207999999988,
       "retry": 0
     },
     {
@@ -570,7 +481,7 @@
       "name": "should have correct image sources",
       "fullName": "Image Display > should have correct image sources",
       "status": "pass",
-      "duration": 38.207375000000184,
+      "duration": 13.581540999999788,
       "retry": 0
     },
     {
@@ -579,7 +490,7 @@
       "name": "should calculate navigation indices correctly",
       "fullName": "Navigation Logic > should calculate navigation indices correctly",
       "status": "pass",
-      "duration": 24.853458000000046,
+      "duration": 6.532958000000008,
       "retry": 0
     },
     {
@@ -588,7 +499,7 @@
       "name": "should handle keyboard events",
       "fullName": "Event Handling > should handle keyboard events",
       "status": "pass",
-      "duration": 4.481500000000096,
+      "duration": 4.903333999999859,
       "retry": 0
     },
     {
@@ -597,7 +508,7 @@
       "name": "should handle timer creation and cleanup",
       "fullName": "Timer Operations > should handle timer creation and cleanup",
       "status": "pass",
-      "duration": 3.3601670000000468,
+      "duration": 3.0661250000000564,
       "retry": 0
     },
     {
@@ -606,7 +517,7 @@
       "name": "should handle missing carousel gracefully",
       "fullName": "Error Handling > should handle missing carousel gracefully",
       "status": "pass",
-      "duration": 21.814374999999927,
+      "duration": 2.8222920000000613,
       "retry": 0
     },
     {
@@ -615,7 +526,7 @@
       "name": "should handle empty image collections",
       "fullName": "Error Handling > should handle empty image collections",
       "status": "pass",
-      "duration": 4.697334000000183,
+      "duration": 6.386624999999867,
       "retry": 0
     },
     {
@@ -624,7 +535,7 @@
       "name": "should have an article element",
       "fullName": "ProjectCard.astro file > should have an article element",
       "status": "pass",
-      "duration": 0.5940830000000688,
+      "duration": 0.5215840000000185,
       "retry": 0
     },
     {
@@ -633,7 +544,7 @@
       "name": "should configure image fallback and metadata",
       "fullName": "ProjectCard.astro file > should configure image fallback and metadata",
       "status": "pass",
-      "duration": 0.20529199999998582,
+      "duration": 0.160000000000025,
       "retry": 0
     },
     {
@@ -642,7 +553,7 @@
       "name": "should include project title link with aria-labelledby pattern",
       "fullName": "ProjectCard.astro file > should include project title link with aria-labelledby pattern",
       "status": "pass",
-      "duration": 0.1439579999999978,
+      "duration": 0.1321659999999838,
       "retry": 0
     },
     {
@@ -651,7 +562,7 @@
       "name": "should render tags list with descriptive aria-label",
       "fullName": "ProjectCard.astro file > should render tags list with descriptive aria-label",
       "status": "pass",
-      "duration": 0.1635830000000169,
+      "duration": 0.15912500000001728,
       "retry": 0
     },
     {
@@ -660,7 +571,7 @@
       "name": "should expose a visible CTA without extra aria-label",
       "fullName": "ProjectCard.astro file > should expose a visible CTA without extra aria-label",
       "status": "pass",
-      "duration": 0.15412500000002183,
+      "duration": 0.14587500000004638,
       "retry": 0
     },
     {
@@ -669,7 +580,7 @@
       "name": "should render as an article container",
       "fullName": "ProjectRow.astro file > should render as an article container",
       "status": "pass",
-      "duration": 3.6504589999999553,
+      "duration": 0.5720830000000205,
       "retry": 0
     },
     {
@@ -678,7 +589,7 @@
       "name": "should include dynamic project link href",
       "fullName": "ProjectRow.astro file > should include dynamic project link href",
       "status": "pass",
-      "duration": 1.1097919999999704,
+      "duration": 0.16525000000001455,
       "retry": 0
     },
     {
@@ -687,7 +598,7 @@
       "name": "should include accessible project link targeting title",
       "fullName": "ProjectRow.astro file > should include accessible project link targeting title",
       "status": "pass",
-      "duration": 1.8360420000000204,
+      "duration": 0.14416599999998425,
       "retry": 0
     },
     {
@@ -696,7 +607,7 @@
       "name": "should render tags list with correct aria-label",
       "fullName": "ProjectRow.astro file > should render tags list with correct aria-label",
       "status": "pass",
-      "duration": 0.5713329999999814,
+      "duration": 0.14145899999999756,
       "retry": 0
     },
     {
@@ -705,7 +616,7 @@
       "name": "should include dialog role and modal attributes",
       "fullName": "SearchOverlay.astro file > should include dialog role and modal attributes",
       "status": "pass",
-      "duration": 0.7012919999999667,
+      "duration": 0.6954999999999814,
       "retry": 0
     },
     {
@@ -714,7 +625,7 @@
       "name": "should have the expected placeholder text in input",
       "fullName": "SearchOverlay.astro file > should have the expected placeholder text in input",
       "status": "pass",
-      "duration": 0.15516599999989467,
+      "duration": 0.13479200000000446,
       "retry": 0
     },
     {
@@ -723,7 +634,7 @@
       "name": "should include focus trap start and end buttons",
       "fullName": "SearchOverlay.astro file > should include focus trap start and end buttons",
       "status": "pass",
-      "duration": 0.13470799999993233,
+      "duration": 0.12854099999998425,
       "retry": 0
     },
     {
@@ -732,7 +643,7 @@
       "name": "should open the search overlay when toggle is clicked",
       "fullName": "SearchOverlayEnhanced interactive behavior > should open the search overlay when toggle is clicked",
       "status": "pass",
-      "duration": 16.46033399999999,
+      "duration": 5.785041999999976,
       "retry": 0
     },
     {
@@ -741,7 +652,7 @@
       "name": "should close the search overlay when close button is clicked",
       "fullName": "SearchOverlayEnhanced interactive behavior > should close the search overlay when close button is clicked",
       "status": "pass",
-      "duration": 2.9417909999999665,
+      "duration": 1.95637499999998,
       "retry": 0
     },
     {
@@ -750,7 +661,7 @@
       "name": "should search when input value changes",
       "fullName": "SearchOverlayEnhanced interactive behavior > should search when input value changes",
       "status": "pass",
-      "duration": 307.17216600000006,
+      "duration": 304.15862500000003,
       "retry": 0
     },
     {
@@ -759,7 +670,7 @@
       "name": "should handle keyboard shortcuts correctly",
       "fullName": "SearchOverlayEnhanced interactive behavior > should handle keyboard shortcuts correctly",
       "status": "pass",
-      "duration": 1.9414589999998952,
+      "duration": 2.034375000000068,
       "retry": 0
     },
     {
@@ -768,7 +679,7 @@
       "name": "should initialize with light theme by default",
       "fullName": "Theme Toggle Logic > should initialize with light theme by default",
       "status": "pass",
-      "duration": 90.85870900000009,
+      "duration": 121.94274999999993,
       "retry": 0
     },
     {
@@ -777,7 +688,7 @@
       "name": "should apply dark theme when set in localStorage",
       "fullName": "Theme Toggle Logic > should apply dark theme when set in localStorage",
       "status": "pass",
-      "duration": 4.123667000000069,
+      "duration": 7.1316249999999854,
       "retry": 0
     },
     {
@@ -786,7 +697,7 @@
       "name": "should toggle theme from light to dark",
       "fullName": "Theme Toggle Logic > should toggle theme from light to dark",
       "status": "pass",
-      "duration": 3.5832920000000286,
+      "duration": 12.485750000000053,
       "retry": 0
     },
     {
@@ -795,7 +706,7 @@
       "name": "should toggle theme from dark to light",
       "fullName": "Theme Toggle Logic > should toggle theme from dark to light",
       "status": "pass",
-      "duration": 3.4459170000000086,
+      "duration": 9.171041999999943,
       "retry": 0
     },
     {
@@ -804,7 +715,7 @@
       "name": "should handle theme button click simulation",
       "fullName": "Theme Toggle Logic > should handle theme button click simulation",
       "status": "pass",
-      "duration": 3.3958330000000387,
+      "duration": 11.418542000000116,
       "retry": 0
     },
     {
@@ -832,111 +743,12 @@
       "retry": 0
     },
     {
-      "id": "979281239_0_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/analytics.test.ts",
-      "name": "should be mockable",
-      "fullName": "trackEvent > should be mockable",
-      "status": "pass",
-      "duration": 1.161375000000021,
-      "retry": 0
-    },
-    {
-      "id": "979281239_0_0_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/analytics.test.ts",
-      "name": "should handle multiple calls",
-      "fullName": "trackEvent > should handle multiple calls",
-      "status": "pass",
-      "duration": 0.12150000000008276,
-      "retry": 0
-    },
-    {
-      "id": "979281239_0_0_2",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/analytics.test.ts",
-      "name": "should handle events without data",
-      "fullName": "trackEvent > should handle events without data",
-      "status": "pass",
-      "duration": 0.17520899999999529,
-      "retry": 0
-    },
-    {
-      "id": "979281239_0_1_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/analytics.test.ts",
-      "name": "should be mockable",
-      "fullName": "trackEventLegacy > should be mockable",
-      "status": "pass",
-      "duration": 0.1881670000000213,
-      "retry": 0
-    },
-    {
-      "id": "979281239_0_1_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/analytics.test.ts",
-      "name": "should handle different event types",
-      "fullName": "trackEventLegacy > should handle different event types",
-      "status": "pass",
-      "duration": 0.1627089999999498,
-      "retry": 0
-    },
-    {
-      "id": "979281239_0_2_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/analytics.test.ts",
-      "name": "should be mockable",
-      "fullName": "trackPageView > should be mockable",
-      "status": "pass",
-      "duration": 0.06570800000008603,
-      "retry": 0
-    },
-    {
-      "id": "979281239_0_2_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/analytics.test.ts",
-      "name": "should handle different page paths",
-      "fullName": "trackPageView > should handle different page paths",
-      "status": "pass",
-      "duration": 0.05620900000008078,
-      "retry": 0
-    },
-    {
-      "id": "979281239_0_2_2",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/analytics.test.ts",
-      "name": "should handle root path",
-      "fullName": "trackPageView > should handle root path",
-      "status": "pass",
-      "duration": 0.13066599999990558,
-      "retry": 0
-    },
-    {
-      "id": "1356704001_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/blog-index.astro.test.ts",
-      "name": "should contain the Blog heading",
-      "fullName": "Blog Index Page > should contain the Blog heading",
-      "status": "pass",
-      "duration": 0.6497080000000324,
-      "retry": 0
-    },
-    {
-      "id": "1356704001_0_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/blog-index.astro.test.ts",
-      "name": "should contain BlogPostRow component",
-      "fullName": "Blog Index Page > should contain BlogPostRow component",
-      "status": "pass",
-      "duration": 0.07425000000000637,
-      "retry": 0
-    },
-    {
-      "id": "1356704001_0_2",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/blog-index.astro.test.ts",
-      "name": "should use manual blog post definitions",
-      "fullName": "Blog Index Page > should use manual blog post definitions",
-      "status": "pass",
-      "duration": 0.14941699999997127,
-      "retry": 0
-    },
-    {
       "id": "-1043143886_0_0",
       "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/contrastMetrics.test.ts",
       "name": "rollingAverage handles fewer points than window",
       "fullName": "contrastMetrics > rollingAverage handles fewer points than window",
       "status": "pass",
-      "duration": 0.648166999999944,
+      "duration": 0.7578750000000127,
       "retry": 0
     },
     {
@@ -945,7 +757,7 @@
       "name": "rollingAverage computes correct average with window constraint",
       "fullName": "contrastMetrics > rollingAverage computes correct average with window constraint",
       "status": "pass",
-      "duration": 0.16299999999989723,
+      "duration": 0.20291700000001356,
       "retry": 0
     },
     {
@@ -954,7 +766,7 @@
       "name": "slope returns null for <2 values",
       "fullName": "contrastMetrics > slope returns null for <2 values",
       "status": "pass",
-      "duration": 0.09162500000002183,
+      "duration": 0.0979159999999979,
       "retry": 0
     },
     {
@@ -963,7 +775,7 @@
       "name": "slope detects upward trend",
       "fullName": "contrastMetrics > slope detects upward trend",
       "status": "pass",
-      "duration": 0.2286660000000893,
+      "duration": 0.22187500000001137,
       "retry": 0
     },
     {
@@ -972,7 +784,7 @@
       "name": "deriveMetrics returns both fields",
       "fullName": "contrastMetrics > deriveMetrics returns both fields",
       "status": "pass",
-      "duration": 0.12429200000008223,
+      "duration": 0.12920900000000302,
       "retry": 0
     },
     {
@@ -981,7 +793,7 @@
       "name": "classifyTrend categorizes slopes",
       "fullName": "contrastMetrics > classifyTrend categorizes slopes",
       "status": "pass",
-      "duration": 0.14791700000000674,
+      "duration": 0.14774999999997362,
       "retry": 0
     },
     {
@@ -990,7 +802,7 @@
       "name": "stdDev returns null for <2 values",
       "fullName": "contrastMetrics > stdDev returns null for <2 values",
       "status": "pass",
-      "duration": 0.05679099999997561,
+      "duration": 0.056290999999987434,
       "retry": 0
     },
     {
@@ -999,7 +811,7 @@
       "name": "stdDev computes expected population std dev",
       "fullName": "contrastMetrics > stdDev computes expected population std dev",
       "status": "pass",
-      "duration": 0.10854100000005928,
+      "duration": 0.10954199999997627,
       "retry": 0
     },
     {
@@ -1008,7 +820,7 @@
       "name": "should set up dropdown functionality on click",
       "fullName": "setupDropdowns() Function > should set up dropdown functionality on click",
       "status": "pass",
-      "duration": 7.560666999999967,
+      "duration": 7.312125000000037,
       "retry": 0
     },
     {
@@ -1017,7 +829,7 @@
       "name": "should close dropdown when clicking again",
       "fullName": "setupDropdowns() Function > should close dropdown when clicking again",
       "status": "pass",
-      "duration": 10.061874999999986,
+      "duration": 2.8183749999999463,
       "retry": 0
     },
     {
@@ -1026,7 +838,7 @@
       "name": "should handle ARIA states correctly",
       "fullName": "setupDropdowns() Function > should handle ARIA states correctly",
       "status": "pass",
-      "duration": 1.4400419999999485,
+      "duration": 1.2552919999999403,
       "retry": 0
     },
     {
@@ -1035,7 +847,7 @@
       "name": "should handle custom selectors",
       "fullName": "setupDropdowns() Function > should handle custom selectors",
       "status": "pass",
-      "duration": 1.0564580000000205,
+      "duration": 0.9949169999999867,
       "retry": 0
     },
     {
@@ -1044,7 +856,7 @@
       "name": "should handle triggers without menus gracefully",
       "fullName": "setupDropdowns() Function > should handle triggers without menus gracefully",
       "status": "pass",
-      "duration": 1.6988750000000437,
+      "duration": 1.2083749999999327,
       "retry": 0
     },
     {
@@ -1053,7 +865,7 @@
       "name": "should close other dropdowns when opening a new one",
       "fullName": "setupDropdowns() Function > should close other dropdowns when opening a new one",
       "status": "pass",
-      "duration": 1.3167079999999487,
+      "duration": 1.1553330000000415,
       "retry": 0
     },
     {
@@ -1062,7 +874,7 @@
       "name": "should open dropdown with ArrowDown key",
       "fullName": "setupDropdownKeyboardNavigation() Function > should open dropdown with ArrowDown key",
       "status": "pass",
-      "duration": 1.877540999999951,
+      "duration": 1.310624999999959,
       "retry": 0
     },
     {
@@ -1071,7 +883,7 @@
       "name": "should open dropdown with Enter key",
       "fullName": "setupDropdownKeyboardNavigation() Function > should open dropdown with Enter key",
       "status": "pass",
-      "duration": 1.020167000000015,
+      "duration": 1.4095419999999876,
       "retry": 0
     },
     {
@@ -1080,7 +892,7 @@
       "name": "should open dropdown with Space key",
       "fullName": "setupDropdownKeyboardNavigation() Function > should open dropdown with Space key",
       "status": "pass",
-      "duration": 0.7933749999999691,
+      "duration": 0.9711670000000368,
       "retry": 0
     },
     {
@@ -1089,7 +901,7 @@
       "name": "should close dropdown with Escape key",
       "fullName": "setupDropdownKeyboardNavigation() Function > should close dropdown with Escape key",
       "status": "pass",
-      "duration": 0.7216670000000249,
+      "duration": 1.373207999999977,
       "retry": 0
     },
     {
@@ -1098,7 +910,7 @@
       "name": "should navigate menu items with arrow keys",
       "fullName": "setupDropdownKeyboardNavigation() Function > should navigate menu items with arrow keys",
       "status": "pass",
-      "duration": 0.6300420000000031,
+      "duration": 8.132875000000013,
       "retry": 0
     },
     {
@@ -1107,7 +919,7 @@
       "name": "should handle Escape key from menu items",
       "fullName": "setupDropdownKeyboardNavigation() Function > should handle Escape key from menu items",
       "status": "pass",
-      "duration": 0.8444580000000315,
+      "duration": 2.475541000000021,
       "retry": 0
     },
     {
@@ -1116,7 +928,7 @@
       "name": "should handle triggers without matching elements",
       "fullName": "setupDropdownKeyboardNavigation() Function > should handle triggers without matching elements",
       "status": "pass",
-      "duration": 0.8456250000000409,
+      "duration": 2.608292000000006,
       "retry": 0
     },
     {
@@ -1125,7 +937,7 @@
       "name": "should close all open dropdowns",
       "fullName": "closeAllDropdowns() Function > should close all open dropdowns",
       "status": "pass",
-      "duration": 1.307459000000108,
+      "duration": 10.99012499999992,
       "retry": 0
     },
     {
@@ -1134,7 +946,7 @@
       "name": "should handle triggers without menus gracefully",
       "fullName": "closeAllDropdowns() Function > should handle triggers without menus gracefully",
       "status": "pass",
-      "duration": 0.9254580000000487,
+      "duration": 3.4209170000000313,
       "retry": 0
     },
     {
@@ -1143,7 +955,7 @@
       "name": "should work when no dropdowns are open",
       "fullName": "closeAllDropdowns() Function > should work when no dropdowns are open",
       "status": "pass",
-      "duration": 1.0512499999999818,
+      "duration": 2.5893330000000105,
       "retry": 0
     },
     {
@@ -1152,7 +964,7 @@
       "name": "should work with both functions together",
       "fullName": "Integration Tests > should work with both functions together",
       "status": "pass",
-      "duration": 1.0320410000000493,
+      "duration": 2.998540999999932,
       "retry": 0
     },
     {
@@ -1161,7 +973,7 @@
       "name": "should handle invalid selectors gracefully",
       "fullName": "Integration Tests > should handle invalid selectors gracefully",
       "status": "pass",
-      "duration": 0.7359579999999823,
+      "duration": 1.854541999999924,
       "retry": 0
     },
     {
@@ -1194,7 +1006,7 @@
       "name": "filters out draft projects and includes featured projects",
       "fullName": "Main Index Page > filters out draft projects and includes featured projects",
       "status": "pass",
-      "duration": 1.1116670000000113,
+      "duration": 0.8413330000000201,
       "retry": 0
     },
     {
@@ -1203,7 +1015,7 @@
       "name": "should contain the correct number of links",
       "fullName": "navLinks configuration > should contain the correct number of links",
       "status": "pass",
-      "duration": 0.9102909999999156,
+      "duration": 1.9413749999999936,
       "retry": 0
     },
     {
@@ -1212,16 +1024,16 @@
       "name": "should have expected link properties",
       "fullName": "navLinks configuration > should have expected link properties",
       "status": "pass",
-      "duration": 0.45100000000002183,
+      "duration": 0.49066599999997607,
       "retry": 0
     },
     {
       "id": "-999408417_0_2",
       "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/navLinks.test.ts",
-      "name": "each link should have href, label, and analytics properties",
-      "fullName": "navLinks configuration > each link should have href, label, and analytics properties",
+      "name": "each link should have href and label properties",
+      "fullName": "navLinks configuration > each link should have href and label properties",
       "status": "pass",
-      "duration": 0.3897079999999278,
+      "duration": 0.2517909999999688,
       "retry": 0
     },
     {
@@ -1230,7 +1042,7 @@
       "name": "should use modern container spacing utilities",
       "fullName": "projects/index.astro > should use modern container spacing utilities",
       "status": "pass",
-      "duration": 0.8767500000000155,
+      "duration": 0.5699579999999855,
       "retry": 0
     },
     {
@@ -1239,7 +1051,7 @@
       "name": "should contain semantic HTML structure with proper roles",
       "fullName": "projects/index.astro > should contain semantic HTML structure with proper roles",
       "status": "pass",
-      "duration": 0.47833399999990434,
+      "duration": 0.17349999999999,
       "retry": 0
     },
     {
@@ -1248,7 +1060,7 @@
       "name": "should use ProjectDetailSection component for better composition",
       "fullName": "projects/index.astro > should use ProjectDetailSection component for better composition",
       "status": "pass",
-      "duration": 0.31191599999999653,
+      "duration": 0.1846659999999929,
       "retry": 0
     },
     {
@@ -1257,7 +1069,7 @@
       "name": "should contain proper responsive breakpoints and spacing",
       "fullName": "projects/index.astro > should contain proper responsive breakpoints and spacing",
       "status": "pass",
-      "duration": 0.3503329999999778,
+      "duration": 0.197166999999979,
       "retry": 0
     },
     {
@@ -1266,7 +1078,7 @@
       "name": "should have enhanced accessibility features",
       "fullName": "projects/index.astro > should have enhanced accessibility features",
       "status": "pass",
-      "duration": 0.20166699999992943,
+      "duration": 0.09654100000000199,
       "retry": 0
     },
     {
@@ -1275,7 +1087,7 @@
       "name": "should not use deprecated getCollection pattern",
       "fullName": "projects/index.astro > should not use deprecated getCollection pattern",
       "status": "pass",
-      "duration": 0.2124589999999671,
+      "duration": 0.08391699999998536,
       "retry": 0
     },
     {
@@ -1284,7 +1096,7 @@
       "name": "should handle random search queries without crashing",
       "fullName": "Search functionality with random inputs > should handle random search queries without crashing",
       "status": "pass",
-      "duration": 2.9112089999999853,
+      "duration": 3.4852500000000077,
       "retry": 0
     },
     {
@@ -1293,7 +1105,7 @@
       "name": "should handle edge case search inputs",
       "fullName": "Search functionality with random inputs > should handle edge case search inputs",
       "status": "pass",
-      "duration": 0.4144579999999678,
+      "duration": 0.41537500000004,
       "retry": 0
     },
     {
@@ -1302,7 +1114,7 @@
       "name": "should validate random email addresses",
       "fullName": "Contact form with random inputs > should validate random email addresses",
       "status": "pass",
-      "duration": 0.6925420000000031,
+      "duration": 0.7592500000000086,
       "retry": 0
     },
     {
@@ -1311,7 +1123,7 @@
       "name": "should handle malformed contact data",
       "fullName": "Contact form with random inputs > should handle malformed contact data",
       "status": "pass",
-      "duration": 0.3156669999999622,
+      "duration": 0.3542500000000359,
       "retry": 0
     },
     {
@@ -1320,7 +1132,7 @@
       "name": "should handle random URL paths safely",
       "fullName": "URL and routing with random inputs > should handle random URL paths safely",
       "status": "pass",
-      "duration": 0.18866700000000947,
+      "duration": 0.20845900000000483,
       "retry": 0
     },
     {
@@ -1329,7 +1141,7 @@
       "name": "should track events with various data shapes",
       "fullName": "Analytics with random data > should track events with various data shapes",
       "status": "pass",
-      "duration": 0.32166700000004766,
+      "duration": 0.45150000000001,
       "retry": 0
     },
     {
@@ -1338,7 +1150,7 @@
       "name": "should handle theme switching under various states",
       "fullName": "Theme system with random conditions > should handle theme switching under various states",
       "status": "pass",
-      "duration": 0.3253750000000082,
+      "duration": 0.355083000000036,
       "retry": 0
     },
     {
@@ -1347,7 +1159,7 @@
       "name": "should maintain blog post structure integrity",
       "fullName": "Data structure invariants > should maintain blog post structure integrity",
       "status": "pass",
-      "duration": 1.0460410000000593,
+      "duration": 1.0235420000000204,
       "retry": 0
     },
     {
@@ -1356,7 +1168,7 @@
       "name": "should be mockable",
       "fullName": "setupScrollEffects > should be mockable",
       "status": "pass",
-      "duration": 1.5759579999999573,
+      "duration": 1.0531669999999735,
       "retry": 0
     },
     {
@@ -1365,7 +1177,7 @@
       "name": "should handle multiple calls",
       "fullName": "setupScrollEffects > should handle multiple calls",
       "status": "pass",
-      "duration": 0.2201249999999959,
+      "duration": 0.1915000000000191,
       "retry": 0
     },
     {
@@ -1374,7 +1186,7 @@
       "name": "should accept configuration options",
       "fullName": "setupScrollEffects > should accept configuration options",
       "status": "pass",
-      "duration": 0.6803329999999619,
+      "duration": 1.1295000000000073,
       "retry": 0
     },
     {
@@ -1383,7 +1195,7 @@
       "name": "should be mockable",
       "fullName": "setupScrollBehavior > should be mockable",
       "status": "pass",
-      "duration": 0.20204100000000835,
+      "duration": 0.25337500000000546,
       "retry": 0
     },
     {
@@ -1392,7 +1204,7 @@
       "name": "should handle different behavior types",
       "fullName": "setupScrollBehavior > should handle different behavior types",
       "status": "pass",
-      "duration": 0.15575000000001182,
+      "duration": 0.18983300000002146,
       "retry": 0
     },
     {
@@ -1401,7 +1213,7 @@
       "name": "should be mockable",
       "fullName": "setupPageTransitions > should be mockable",
       "status": "pass",
-      "duration": 0.12962500000003274,
+      "duration": 0.1412920000000213,
       "retry": 0
     },
     {
@@ -1410,7 +1222,7 @@
       "name": "should handle transition options",
       "fullName": "setupPageTransitions > should handle transition options",
       "status": "pass",
-      "duration": 0.10212500000000091,
+      "duration": 0.11979199999996126,
       "retry": 0
     },
     {
@@ -1419,7 +1231,7 @@
       "name": "should handle multiple transition types",
       "fullName": "setupPageTransitions > should handle multiple transition types",
       "status": "pass",
-      "duration": 0.08970799999997325,
+      "duration": 0.10079200000001265,
       "retry": 0
     },
     {
@@ -1428,7 +1240,7 @@
       "name": "should handle scroll position tracking",
       "fullName": "scroll utilities > should handle scroll position tracking",
       "status": "pass",
-      "duration": 0.21862499999997453,
+      "duration": 0.24329199999999673,
       "retry": 0
     },
     {
@@ -1437,7 +1249,7 @@
       "name": "should handle viewport calculations",
       "fullName": "scroll utilities > should handle viewport calculations",
       "status": "pass",
-      "duration": 0.19420900000000074,
+      "duration": 0.21454199999999446,
       "retry": 0
     },
     {
@@ -1446,7 +1258,7 @@
       "name": "should initialize with correct default properties",
       "fullName": "Initialization > should initialize with correct default properties",
       "status": "pass",
-      "duration": 181.76712500000008,
+      "duration": 229.07779200000004,
       "retry": 0
     },
     {
@@ -1455,7 +1267,7 @@
       "name": "should find required DOM elements",
       "fullName": "Initialization > should find required DOM elements",
       "status": "pass",
-      "duration": 120.28141600000004,
+      "duration": 107.4446660000001,
       "retry": 0
     },
     {
@@ -1464,7 +1276,7 @@
       "name": "should handle missing DOM elements gracefully",
       "fullName": "Initialization > should handle missing DOM elements gracefully",
       "status": "pass",
-      "duration": 110.97304199999985,
+      "duration": 110.05795899999998,
       "retry": 0
     },
     {
@@ -1473,7 +1285,7 @@
       "name": "should load and format search data correctly",
       "fullName": "Search Data Loading > should load and format search data correctly",
       "status": "pass",
-      "duration": 206.32666599999993,
+      "duration": 206.46470899999986,
       "retry": 0
     },
     {
@@ -1482,7 +1294,7 @@
       "name": "should handle API fetch errors gracefully",
       "fullName": "Search Data Loading > should handle API fetch errors gracefully",
       "status": "pass",
-      "duration": 409.6471670000001,
+      "duration": 410.23020799999995,
       "retry": 0
     },
     {
@@ -1491,7 +1303,7 @@
       "name": "should perform fuzzy search when Fuse is available",
       "fullName": "Search Functionality > should perform fuzzy search when Fuse is available",
       "status": "pass",
-      "duration": 207.28383299999996,
+      "duration": 206.02954200000022,
       "retry": 0
     },
     {
@@ -1500,7 +1312,7 @@
       "name": "should fall back to basic search when Fuse is not available",
       "fullName": "Search Functionality > should fall back to basic search when Fuse is not available",
       "status": "pass",
-      "duration": 206.38500000000022,
+      "duration": 204.71787499999982,
       "retry": 0
     },
     {
@@ -1509,7 +1321,7 @@
       "name": "should clear results when query is empty",
       "fullName": "Search Functionality > should clear results when query is empty",
       "status": "pass",
-      "duration": 206.98541699999987,
+      "duration": 205.84604200000012,
       "retry": 0
     },
     {
@@ -1518,7 +1330,7 @@
       "name": "should open search overlay correctly",
       "fullName": "UI Interactions > should open search overlay correctly",
       "status": "pass",
-      "duration": 213.6801660000001,
+      "duration": 211.63179199999968,
       "retry": 0
     },
     {
@@ -1527,7 +1339,7 @@
       "name": "should close search overlay correctly",
       "fullName": "UI Interactions > should close search overlay correctly",
       "status": "pass",
-      "duration": 208.56258300000036,
+      "duration": 208.2278339999998,
       "retry": 0
     },
     {
@@ -1536,7 +1348,7 @@
       "name": "should display no results message when no results found",
       "fullName": "Result Display > should display no results message when no results found",
       "status": "pass",
-      "duration": 210.53283299999975,
+      "duration": 206.2371250000001,
       "retry": 0
     },
     {
@@ -1545,7 +1357,7 @@
       "name": "should display results with proper HTML structure",
       "fullName": "Result Display > should display results with proper HTML structure",
       "status": "pass",
-      "duration": 207.49516600000015,
+      "duration": 206.54708299999993,
       "retry": 0
     },
     {
@@ -1554,7 +1366,7 @@
       "name": "should limit results to 8 items",
       "fullName": "Result Display > should limit results to 8 items",
       "status": "pass",
-      "duration": 211.98112500000025,
+      "duration": 207.2409160000002,
       "retry": 0
     },
     {
@@ -1563,7 +1375,7 @@
       "name": "should return correct icons for different content types",
       "fullName": "Type Icons > should return correct icons for different content types",
       "status": "pass",
-      "duration": 209.1894999999995,
+      "duration": 208.01891700000033,
       "retry": 0
     },
     {
@@ -1572,7 +1384,7 @@
       "name": "should set correct ARIA attributes when opening",
       "fullName": "Accessibility > should set correct ARIA attributes when opening",
       "status": "pass",
-      "duration": 210.0515000000005,
+      "duration": 204.10550000000012,
       "retry": 0
     },
     {
@@ -1581,7 +1393,7 @@
       "name": "should set correct ARIA attributes when closing",
       "fullName": "Accessibility > should set correct ARIA attributes when closing",
       "status": "pass",
-      "duration": 204.73416699999962,
+      "duration": 205.13379199999963,
       "retry": 0
     },
     {
@@ -1590,7 +1402,7 @@
       "name": "should load blog search index",
       "fullName": "Search Index Loading > should load blog search index",
       "status": "pass",
-      "duration": 1.580000000000041,
+      "duration": 1.6898749999999723,
       "retry": 0
     },
     {
@@ -1599,7 +1411,7 @@
       "name": "should load projects search index",
       "fullName": "Search Index Loading > should load projects search index",
       "status": "pass",
-      "duration": 0.31491699999992306,
+      "duration": 0.31995799999998553,
       "retry": 0
     },
     {
@@ -1608,7 +1420,7 @@
       "name": "should handle fetch errors gracefully",
       "fullName": "Search Index Loading > should handle fetch errors gracefully",
       "status": "pass",
-      "duration": 0.40762500000005275,
+      "duration": 0.7243749999999523,
       "retry": 0
     },
     {
@@ -1617,7 +1429,7 @@
       "name": "should normalize search queries",
       "fullName": "Search Query Processing > should normalize search queries",
       "status": "pass",
-      "duration": 0.19058300000006057,
+      "duration": 0.2503330000000119,
       "retry": 0
     },
     {
@@ -1626,7 +1438,7 @@
       "name": "should extract search terms",
       "fullName": "Search Query Processing > should extract search terms",
       "status": "pass",
-      "duration": 0.25787500000001273,
+      "duration": 0.2728339999999889,
       "retry": 0
     },
     {
@@ -1635,7 +1447,7 @@
       "name": "should filter results by search terms",
       "fullName": "Search Query Processing > should filter results by search terms",
       "status": "pass",
-      "duration": 0.49233299999991686,
+      "duration": 0.46054199999997536,
       "retry": 0
     },
     {
@@ -1644,7 +1456,7 @@
       "name": "should create search overlay structure",
       "fullName": "Search UI Interactions > should create search overlay structure",
       "status": "pass",
-      "duration": 1.243832999999995,
+      "duration": 1.489417000000003,
       "retry": 0
     },
     {
@@ -1653,7 +1465,7 @@
       "name": "should handle search input events",
       "fullName": "Search UI Interactions > should handle search input events",
       "status": "pass",
-      "duration": 0.7042500000000018,
+      "duration": 1.048249999999996,
       "retry": 0
     },
     {
@@ -1662,7 +1474,7 @@
       "name": "should handle keyboard navigation in search results",
       "fullName": "Search UI Interactions > should handle keyboard navigation in search results",
       "status": "pass",
-      "duration": 1.0534169999999676,
+      "duration": 1.0750420000000531,
       "retry": 0
     },
     {
@@ -1671,7 +1483,7 @@
       "name": "should format search results correctly",
       "fullName": "Search Result Formatting > should format search results correctly",
       "status": "pass",
-      "duration": 0.26499999999998636,
+      "duration": 0.2795419999999922,
       "retry": 0
     },
     {
@@ -1680,7 +1492,7 @@
       "name": "should highlight search terms in results",
       "fullName": "Search Result Formatting > should highlight search terms in results",
       "status": "pass",
-      "duration": 0.18316700000002584,
+      "duration": 0.18795900000003485,
       "retry": 0
     },
     {
@@ -1689,7 +1501,7 @@
       "name": "should debounce search input",
       "fullName": "Performance Considerations > should debounce search input",
       "status": "pass",
-      "duration": 1.0388749999999618,
+      "duration": 1.023334000000034,
       "retry": 0
     },
     {
@@ -1698,7 +1510,7 @@
       "name": "should limit number of search results",
       "fullName": "Performance Considerations > should limit number of search results",
       "status": "pass",
-      "duration": 0.2215840000000071,
+      "duration": 0.2047080000000392,
       "retry": 0
     },
     {
@@ -1707,7 +1519,7 @@
       "name": "removes leading slash and trailing index",
       "fullName": "slug normalization > removes leading slash and trailing index",
       "status": "pass",
-      "duration": 0.8255829999999378,
+      "duration": 0.5907500000000141,
       "retry": 0
     },
     {
@@ -1716,7 +1528,7 @@
       "name": "collapses multiple slashes",
       "fullName": "slug normalization > collapses multiple slashes",
       "status": "pass",
-      "duration": 0.11587499999995998,
+      "duration": 0.10116599999997788,
       "retry": 0
     },
     {
@@ -1725,7 +1537,7 @@
       "name": "returns undefined for null/undefined",
       "fullName": "slug normalization > returns undefined for null/undefined",
       "status": "pass",
-      "duration": 0.16020900000000893,
+      "duration": 0.13675000000000637,
       "retry": 0
     },
     {
@@ -1734,7 +1546,7 @@
       "name": "adds leading slash when missing",
       "fullName": "withLeadingSlash > adds leading slash when missing",
       "status": "pass",
-      "duration": 0.20433300000001964,
+      "duration": 0.18137500000000273,
       "retry": 0
     },
     {
@@ -1743,7 +1555,34 @@
       "name": "keeps leading slash",
       "fullName": "withLeadingSlash > keeps leading slash",
       "status": "pass",
-      "duration": 0.06787499999995816,
+      "duration": 0.06091700000001765,
+      "retry": 0
+    },
+    {
+      "id": "1751681206_0_0",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/contracts/api/api.snapshot.test.ts",
+      "name": "projects snapshot stable",
+      "fullName": "API Snapshot Baselines > projects snapshot stable",
+      "status": "pass",
+      "duration": 7.052750000000003,
+      "retry": 0
+    },
+    {
+      "id": "-658990622_0_0",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/contracts/api/projects.contract.test.ts",
+      "name": "public/api/projects.json matches contract",
+      "fullName": "Projects API Contract > public/api/projects.json matches contract",
+      "status": "pass",
+      "duration": 1.500583000000006,
+      "retry": 0
+    },
+    {
+      "id": "-658990622_0_1",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/contracts/api/projects.contract.test.ts",
+      "name": "search/projects.json matches contract",
+      "fullName": "Projects API Contract > search/projects.json matches contract",
+      "status": "pass",
+      "duration": 0.3011250000000132,
       "retry": 0
     },
     {
@@ -1752,7 +1591,7 @@
       "name": "extractLinks internal only",
       "fullName": "deadLinkCore > extractLinks internal only",
       "status": "pass",
-      "duration": 1.245584000000008,
+      "duration": 2.303958000000023,
       "retry": 0
     },
     {
@@ -1761,7 +1600,7 @@
       "name": "extractLinks with external",
       "fullName": "deadLinkCore > extractLinks with external",
       "status": "pass",
-      "duration": 0.18991700000003675,
+      "duration": 0.4454579999999737,
       "retry": 0
     },
     {
@@ -1770,7 +1609,7 @@
       "name": "buildLinkTasks normalizes relative paths",
       "fullName": "deadLinkCore > buildLinkTasks normalizes relative paths",
       "status": "pass",
-      "duration": 4.101916999999958,
+      "duration": 7.201750000000004,
       "retry": 0
     },
     {
@@ -1779,7 +1618,7 @@
       "name": "allowlist pattern matches",
       "fullName": "deadLinkCore > allowlist pattern matches",
       "status": "pass",
-      "duration": 0.3915000000000646,
+      "duration": 0.5770839999999566,
       "retry": 0
     },
     {
@@ -1788,7 +1627,7 @@
       "name": "rejects missing fields",
       "fullName": "send-email edge function > rejects missing fields",
       "status": "pass",
-      "duration": 1.989417000000003,
+      "duration": 2.647083000000009,
       "retry": 0
     },
     {
@@ -1797,7 +1636,7 @@
       "name": "enforces rate limit",
       "fullName": "send-email edge function > enforces rate limit",
       "status": "pass",
-      "duration": 0.3435420000000704,
+      "duration": 0.401834000000008,
       "retry": 0
     },
     {
@@ -1806,7 +1645,7 @@
       "name": "blocks failed turnstile",
       "fullName": "send-email edge function > blocks failed turnstile",
       "status": "pass",
-      "duration": 0.3550000000000182,
+      "duration": 0.6956250000000068,
       "retry": 0
     },
     {
@@ -1815,7 +1654,7 @@
       "name": "handles resend error",
       "fullName": "send-email edge function > handles resend error",
       "status": "pass",
-      "duration": 0.3884580000000142,
+      "duration": 0.5163340000000289,
       "retry": 0
     },
     {
@@ -1824,187 +1663,7 @@
       "name": "succeeds happy path",
       "fullName": "send-email edge function > succeeds happy path",
       "status": "pass",
-      "duration": 0.48012499999992997,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should have valid structure for all links",
-      "fullName": "Configuration validation > should have valid structure for all links",
-      "status": "pass",
-      "duration": 1.3294590000000426,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_0_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should have unique hrefs",
-      "fullName": "Configuration validation > should have unique hrefs",
-      "status": "pass",
-      "duration": 0.07937500000002728,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_0_2",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should have unique analytics ids",
-      "fullName": "Configuration validation > should have unique analytics ids",
-      "status": "pass",
-      "duration": 0.11308300000007421,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_0_3",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should include essential navigation items",
-      "fullName": "Configuration validation > should include essential navigation items",
-      "status": "pass",
-      "duration": 0.3957500000000209,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_1_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should test navConfig export",
-      "fullName": "Utility functions > should test navConfig export",
-      "status": "pass",
-      "duration": 0.3038329999999405,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_1_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should find link by href using exported function",
-      "fullName": "Utility functions > should find link by href using exported function",
-      "status": "pass",
-      "duration": 0.10024999999995998,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_1_2",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should find link by analytics id using exported function",
-      "fullName": "Utility functions > should find link by analytics id using exported function",
-      "status": "pass",
-      "duration": 0.08570799999995415,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_1_3",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should check if current page using exported function",
-      "fullName": "Utility functions > should check if current page using exported function",
-      "status": "pass",
-      "duration": 0.13220800000010513,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_1_4",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should handle undefined window.location in isCurrentPage",
-      "fullName": "Utility functions > should handle undefined window.location in isCurrentPage",
-      "status": "pass",
-      "duration": 0.05458299999997962,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_1_5",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should get active nav link using exported function",
-      "fullName": "Utility functions > should get active nav link using exported function",
-      "status": "pass",
-      "duration": 0.1928330000000642,
-      "retry": 0
-    },
-    {
-      "id": "-2089020401_0_1_6",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
-      "name": "should handle undefined window.location in getActiveNavLink",
-      "fullName": "Utility functions > should handle undefined window.location in getActiveNavLink",
-      "status": "pass",
-      "duration": 0.04383400000006077,
-      "retry": 0
-    },
-    {
-      "id": "-1584599537_0_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
-      "name": "should handle basic file content parsing",
-      "fullName": "file parsing > should handle basic file content parsing",
-      "status": "pass",
-      "duration": 1.3947500000000446,
-      "retry": 0
-    },
-    {
-      "id": "-1584599537_0_0_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
-      "name": "should handle file path operations",
-      "fullName": "file parsing > should handle file path operations",
-      "status": "pass",
-      "duration": 0.24979100000007293,
-      "retry": 0
-    },
-    {
-      "id": "-1584599537_0_1_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
-      "name": "should create valid search entries",
-      "fullName": "search entry creation > should create valid search entries",
-      "status": "pass",
-      "duration": 0.3100419999999531,
-      "retry": 0
-    },
-    {
-      "id": "-1584599537_0_1_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
-      "name": "should handle empty values",
-      "fullName": "search entry creation > should handle empty values",
-      "status": "pass",
-      "duration": 0.6177920000000086,
-      "retry": 0
-    },
-    {
-      "id": "-1584599537_0_2_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
-      "name": "should read directory contents",
-      "fullName": "directory operations > should read directory contents",
-      "status": "pass",
-      "duration": 0.30262500000003456,
-      "retry": 0
-    },
-    {
-      "id": "-1584599537_0_3_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
-      "name": "should build search index from files",
-      "fullName": "index building > should build search index from files",
-      "status": "pass",
-      "duration": 0.529666999999904,
-      "retry": 0
-    },
-    {
-      "id": "-1067068990_0_0",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/visual/config.test.ts",
-      "name": "defines core routes with sane defaults",
-      "fullName": "visual route config > defines core routes with sane defaults",
-      "status": "pass",
-      "duration": 1.0502500000000055,
-      "retry": 0
-    },
-    {
-      "id": "-1067068990_0_1",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/visual/config.test.ts",
-      "name": "keeps tolerances within the global guardrail",
-      "fullName": "visual route config > keeps tolerances within the global guardrail",
-      "status": "pass",
-      "duration": 0.14945799999998144,
-      "retry": 0
-    },
-    {
-      "id": "-1067068990_0_2",
-      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/visual/config.test.ts",
-      "name": "contact has viewport-only capture and masks",
-      "fullName": "visual route config > contact has viewport-only capture and masks",
-      "status": "pass",
-      "duration": 0.19716600000003837,
+      "duration": 0.8397909999999911,
       "retry": 0
     },
     {
@@ -2013,7 +1672,7 @@
       "name": "handles random substrings without throwing",
       "fullName": "Search Fuzz > handles random substrings without throwing",
       "status": "pass",
-      "duration": 2.7794170000000804,
+      "duration": 2.6747909999999706,
       "retry": 0
     },
     {
@@ -2022,7 +1681,173 @@
       "name": "returns empty array for gibberish queries",
       "fullName": "Search Fuzz > returns empty array for gibberish queries",
       "status": "pass",
-      "duration": 0.1803340000000162,
+      "duration": 0.17250000000001364,
+      "retry": 0
+    },
+    {
+      "id": "-2089020401_0_0_0",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
+      "name": "should have valid structure for all links",
+      "fullName": "Configuration validation > should have valid structure for all links",
+      "status": "pass",
+      "duration": 1.4848749999999882,
+      "retry": 0
+    },
+    {
+      "id": "-2089020401_0_0_1",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
+      "name": "should have unique hrefs",
+      "fullName": "Configuration validation > should have unique hrefs",
+      "status": "pass",
+      "duration": 0.07974999999999,
+      "retry": 0
+    },
+    {
+      "id": "-2089020401_0_0_2",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
+      "name": "should include essential navigation items",
+      "fullName": "Configuration validation > should include essential navigation items",
+      "status": "pass",
+      "duration": 0.23008299999997917,
+      "retry": 0
+    },
+    {
+      "id": "-2089020401_0_1_0",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
+      "name": "should test navConfig export",
+      "fullName": "Utility functions > should test navConfig export",
+      "status": "pass",
+      "duration": 0.24991699999998218,
+      "retry": 0
+    },
+    {
+      "id": "-2089020401_0_1_1",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
+      "name": "should find link by href using exported function",
+      "fullName": "Utility functions > should find link by href using exported function",
+      "status": "pass",
+      "duration": 0.15625,
+      "retry": 0
+    },
+    {
+      "id": "-2089020401_0_1_2",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
+      "name": "should check if current page using exported function",
+      "fullName": "Utility functions > should check if current page using exported function",
+      "status": "pass",
+      "duration": 0.09016600000001063,
+      "retry": 0
+    },
+    {
+      "id": "-2089020401_0_1_3",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
+      "name": "should handle undefined window.location in isCurrentPage",
+      "fullName": "Utility functions > should handle undefined window.location in isCurrentPage",
+      "status": "pass",
+      "duration": 0.04929199999997991,
+      "retry": 0
+    },
+    {
+      "id": "-2089020401_0_1_4",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
+      "name": "should get active nav link using exported function",
+      "fullName": "Utility functions > should get active nav link using exported function",
+      "status": "pass",
+      "duration": 0.12558400000000347,
+      "retry": 0
+    },
+    {
+      "id": "-2089020401_0_1_5",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/navLinks.unit.test.ts",
+      "name": "should handle undefined window.location in getActiveNavLink",
+      "fullName": "Utility functions > should handle undefined window.location in getActiveNavLink",
+      "status": "pass",
+      "duration": 0.09816699999998946,
+      "retry": 0
+    },
+    {
+      "id": "-1584599537_0_0_0",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
+      "name": "should handle basic file content parsing",
+      "fullName": "file parsing > should handle basic file content parsing",
+      "status": "pass",
+      "duration": 1.465332999999987,
+      "retry": 0
+    },
+    {
+      "id": "-1584599537_0_0_1",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
+      "name": "should handle file path operations",
+      "fullName": "file parsing > should handle file path operations",
+      "status": "pass",
+      "duration": 0.250500000000045,
+      "retry": 0
+    },
+    {
+      "id": "-1584599537_0_1_0",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
+      "name": "should create valid search entries",
+      "fullName": "search entry creation > should create valid search entries",
+      "status": "pass",
+      "duration": 0.2826249999999959,
+      "retry": 0
+    },
+    {
+      "id": "-1584599537_0_1_1",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
+      "name": "should handle empty values",
+      "fullName": "search entry creation > should handle empty values",
+      "status": "pass",
+      "duration": 0.41237499999999727,
+      "retry": 0
+    },
+    {
+      "id": "-1584599537_0_2_0",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
+      "name": "should read directory contents",
+      "fullName": "directory operations > should read directory contents",
+      "status": "pass",
+      "duration": 0.4765830000000051,
+      "retry": 0
+    },
+    {
+      "id": "-1584599537_0_3_0",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/utils/searchIndex.unit.test.ts",
+      "name": "should build search index from files",
+      "fullName": "index building > should build search index from files",
+      "status": "pass",
+      "duration": 0.9510840000000371,
+      "retry": 0
+    },
+    {
+      "id": "-1067068990_0_0",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/visual/config.test.ts",
+      "name": "defines core routes with sane defaults",
+      "fullName": "visual route config > defines core routes with sane defaults",
+      "status": "fail",
+      "duration": 11.408999999999992,
+      "retry": 1,
+      "errors": [
+        "expected [ '/', '/projects/', '/about/', …(1) ] to include '/blog/'",
+        "expected [ '/', '/projects/', '/about/', …(1) ] to include '/blog/'"
+      ]
+    },
+    {
+      "id": "-1067068990_0_1",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/visual/config.test.ts",
+      "name": "keeps tolerances within the global guardrail",
+      "fullName": "visual route config > keeps tolerances within the global guardrail",
+      "status": "pass",
+      "duration": 0.24416599999995015,
+      "retry": 0
+    },
+    {
+      "id": "-1067068990_0_2",
+      "file": "/Users/blakepowell/Documents/GitHub/blakeoxford.com/tests/vitest/visual/config.test.ts",
+      "name": "contact has viewport-only capture and masks",
+      "fullName": "visual route config > contact has viewport-only capture and masks",
+      "status": "pass",
+      "duration": 0.19783399999994344,
       "retry": 0
     }
   ]

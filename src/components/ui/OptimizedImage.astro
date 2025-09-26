@@ -1,7 +1,15 @@
 ---
 import { Image } from 'astro:assets';
 
-interface Props {
+type StaticImage = {
+  src: ImageMetadata;
+  alt: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+};
+
+type ExternalImage = {
   src: string;
   alt: string;
   width?: number;
@@ -10,34 +18,46 @@ interface Props {
   loading?: 'lazy' | 'eager';
   priority?: boolean;
   quality?: number;
-}
+};
 
+type Props = StaticImage | ExternalImage;
+
+const props = Astro.props as Props;
 const {
-  src,
   alt,
-  width,
-  height,
   class: className = '',
   loading = 'lazy',
   priority = false,
-  quality = 80
-} = Astro.props;
+} = props;
+
+const width = 'width' in props ? props.width : undefined;
+const height = 'height' in props ? props.height : undefined;
+const quality = 'quality' in props ? props.quality ?? 80 : 80;
 
 // Set loading to eager for priority images
 const imageLoading = priority ? 'eager' : loading;
 ---
 
-<Image
-  src={src}
-  alt={alt}
-  width={width}
-  height={height}
-  format="avif"
-  quality={quality}
-  loading={imageLoading}
-  class={className}
-  inferSize={true}
-/>
+{typeof props.src === 'object' ? (
+  <Image
+    src={props.src}
+    alt={alt}
+    class={className}
+    loading={imageLoading}
+  />
+) : (
+  <Image
+    src={props.src}
+    alt={alt}
+    width={width}
+    height={height}
+    format="avif"
+    quality={quality}
+    loading={imageLoading}
+    class={className}
+    inferSize={true}
+  />
+)}
 
 {priority && (
   <link

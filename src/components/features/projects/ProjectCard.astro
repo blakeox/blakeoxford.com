@@ -1,21 +1,27 @@
 ---
-// ProjectCard.astro — Elevated project showcase tile leveraging Tailwind v4 tokens
-import type { ProjectCardProps } from '../../../types/index';
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import OptimizedImage from '../../ui/OptimizedImage.astro';
+
+interface ProjectCardProps {
+  project: CollectionEntry<'projects'>;
+  featured?: boolean;
+}
 
 const { project, featured = false } = Astro.props as ProjectCardProps;
 const { slug, data } = project;
 
-const title = data?.title ?? 'Case study';
-const image = data?.image ?? '/assets/images/blake-logo-fallback.png';
-const description = data?.description ?? '';
-const tags = Array.isArray(data?.tags) ? data.tags.filter(Boolean) : [];
+const title = data.title ?? 'Case study';
+const image = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
+const description = data.subtitle ?? data.description ?? '';
+const tags = Array.isArray(data.tags) ? data.tags.filter(Boolean) : [];
 const visibleTags = tags.slice(0, 3);
 const extraTagCount = Math.max(tags.length - visibleTags.length, 0);
 const hasDescription = Boolean(description.trim());
 
-const dateISO = data?.date ? data.date.toISOString() : undefined;
-const dateLabel = data?.date
-  ? data.date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
+const dateISO = project.data.date ? new Date(project.data.date).toISOString() : undefined;
+const dateLabel = project.data.date
+  ? new Date(project.data.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
   : undefined;
 ---
 <article class="group relative flex h-full flex-col">
@@ -27,14 +33,13 @@ const dateLabel = data?.date
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-background/70 via-surface/85 to-background/65 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
 
     <figure class="relative aspect-[16/10] overflow-hidden">
-      <img
+      <OptimizedImage
         src={image}
         alt={`${title} preview`}
-        width="960"
-        height="540"
-        loading="lazy"
-        decoding="async"
+        width={960}
+        height={540}
         class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+        quality={80}
       />
       <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/95 via-background/75 to-transparent"></div>
       {featured && (

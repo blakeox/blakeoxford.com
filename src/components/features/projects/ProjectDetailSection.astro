@@ -4,10 +4,11 @@ export interface Props {
   eyebrow?: string;
   id?: string;
   description?: string;
+  subtitle?: string;
   layout?: 'default' | 'surface';
 }
 
-const { title, eyebrow, id, description, layout = 'default' } = Astro.props;
+const { title, eyebrow, id, description, subtitle, layout = 'default' } = Astro.props;
 
 const containerClasses =
   layout === 'surface'
@@ -25,6 +26,11 @@ const containerClasses =
     <h2 class="font-heading text-3xl font-semibold text-foreground dark:text-foreground-light">
       {title}
     </h2>
+    {subtitle && (
+      <p class="max-w-3xl text-sm font-semibold uppercase tracking-[0.28em] text-foreground/65 dark:text-foreground-light/65">
+        {subtitle}
+      </p>
+    )}
     {description && (
       <p class="max-w-3xl text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
         {description}

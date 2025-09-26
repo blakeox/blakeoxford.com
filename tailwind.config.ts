@@ -92,7 +92,14 @@ const config: Config = {
       backgroundImage: {
         'btn-primary': 'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%)',
       },
-layer: {
+      data: {
+        open: 'state=open',
+        closed: 'state=closed',
+      },
+      extend: {
+        screens: {
+          'supports-backdrop': { raw: '(backdrop-filter: blur(0))' },
+        },
       },
     },
   },

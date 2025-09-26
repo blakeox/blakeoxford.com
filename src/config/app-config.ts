@@ -83,12 +83,11 @@ export const createConfig = (overrides: Partial<AppConfig> = {}): AppConfig => {
     
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       envOverrides.environment = 'development';
-      envOverrides.performance = { ...baseConfig.performance, debug: true };
+      
     } else if (hostname.includes('staging') || hostname.includes('preview')) {
       envOverrides.environment = 'staging';
     } else {
       envOverrides.environment = 'production';
-      envOverrides.performance = { ...baseConfig.performance, debug: false };
     }
   }
   
@@ -182,40 +181,6 @@ export class ConfigManager {
    */
   getOptimizedConfig(): AppConfig {
     const config = this.getConfig();
-    
-    if (config.environment === 'production') {
-      return {
-        ...config,
-        analytics: {
-          ...config.analytics,
-          debug: false,
-          trackPerformance: true,
-          trackErrors: true
-        },
-        performance: {
-          ...config.performance,
-          debug: false,
-          monitorCoreWebVitals: true,
-          reportingInterval: 60000
-        }
-      };
-    }
-    
-    if (config.environment === 'development') {
-      return {
-        ...config,
-        analytics: {
-          ...config.analytics,
-          debug: true,
-          trackPerformance: true
-        },
-        performance: {
-          ...config.performance,
-          debug: true,
-          reportingInterval: 10000
-        }
-      };
-    }
     
     return config;
   }

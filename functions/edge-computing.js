@@ -223,22 +223,8 @@ const WorkerApp = {
     }
 
     // Back-compat asset rewrite: maintain existing path if older HTML referenced it
-    if (url.pathname === '/assets/js/search-overlay-standalone.min.js' && !url.search) {
-      try {
-        const v2Url = new URL('/assets/js/search-overlay-standalone.min.js?v=2', url.origin);
-        const v2Req = new Request(v2Url.toString(), request);
-        const res = await env.ASSETS.fetch(v2Req);
-        if (res.ok) {
-          const headers = new Headers(res.headers);
-          headers.set('cache-control', 'public, max-age=300');
-          headers.set('x-request-id', reqId);
-          headers.set('x-route-kind', 'asset');
-          headers.set('x-cache-policy', headers.get('cache-control') || '');
-          return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
-        }
-      } catch { /* fall through */ }
-      // If v2 is missing (e.g., inlined in templates), return 204 to avoid error spam
-      return new Response(null, { status: 204, headers: { 'cache-control': 'no-store', 'x-request-id': reqId, 'x-route-kind': 'asset', 'x-cache-policy': 'no-store' } });
+    if (url.pathname === '/assets/js/search-overlay-standalone.min.js' && url.search === '?v=2') {
+      return env.ASSETS.fetch(request);
     }
 
     // Image path remaps

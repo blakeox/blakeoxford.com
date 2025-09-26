@@ -20,11 +20,14 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    date: z.date().optional(),
+    date: z.date(),
     tags: z.array(z.string()).default([]),
-    url: z.string().url().optional(),
-    repo: z.string().url().optional(),
-    image: z.string().optional(),
+    heroImage: z.string(),
+    highlights: z.array(z.string()).default([]),
+    categories: z.array(z.string()).default([]),
+    impact: z.array(z.string()).default([]),
+    link: z.string().url().optional(),
+    external: z.string().url().optional(),
     featured: z.boolean().default(false),
   }),
 });

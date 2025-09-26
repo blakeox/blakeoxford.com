@@ -207,32 +207,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
 
     console.log('10. Constructor Check:', constructorCheck);
 
-    // 11. Check bundle contents
-    const bundleCheck = await page.evaluate(async () => {
-      try {
-        const response = await fetch('/assets/js/interactive.min.js');
-        const content = await response.text();
-
-        return {
-          bundleExists: response.ok,
-          bundleSize: content.length,
-          containsSearchOverlay: content.includes('SearchOverlay'),
-          containsConstructor: content.includes('constructor'),
-          containsOpen: content.includes('open'),
-          containsInit: content.includes('init'),
-          firstHundredChars: content.substring(0, 100)
-        };
-      } catch (error: any) {
-        return {
-          bundleExists: false,
-          error: error.message
-        };
-      }
-    });
-
-    console.log('11. Bundle Check:', bundleCheck);
-
-    // 12. Check for initialization code
+    // 11. Check for initialization code
     const initCheck = await page.evaluate(() => {
       const scripts = document.querySelectorAll('script');
       let hasInitCode = false;

@@ -40,7 +40,10 @@ const dateISO = date.toISOString();
           </svg>
           Back to projects
         </a>
-  <time datetime={dateISO}>{formattedDate}</time>
+        <time datetime={dateISO} class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-4 py-2 text-foreground/70 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+          <span class="h-1.5 w-1.5 rounded-full bg-accent/80"></span>
+          {formattedDate}
+        </time>
       </div>
 
       <div class="space-y-6">

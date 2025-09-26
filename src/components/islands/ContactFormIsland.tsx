@@ -17,9 +17,6 @@ declare global {
       render: (container: HTMLElement, options: Record<string, unknown>) => void;
     };
     __AUDIT__?: boolean;
-    analytics?: {
-      track?: (event: { category: string; action: string; label?: string; [key: string]: unknown }) => void;
-    };
   }
 }
 
@@ -61,21 +58,6 @@ const FORM_VALIDATION_CONFIG: FormValidationConfig = {
 
 type CleanupFn = () => void;
 
-type AnalyticsPayload = {
-  category: string;
-  action: string;
-  label?: string;
-  [key: string]: unknown;
-};
-
-function trackAnalytics(event: AnalyticsPayload): void {
-  try {
-    window.analytics?.track?.(event);
-  } catch (error) {
-    console.warn('Analytics tracking failed', error);
-  }
-}
-
 function setupTurnstile(isAudit: boolean): CleanupFn | void {
   const container = document.getElementById('turnstile-container');
   if (!container) return;
@@ -92,7 +74,7 @@ function setupTurnstile(isAudit: boolean): CleanupFn | void {
     if (window.turnstile) {
       window.turnstile.render(container, { sitekey: SITE_KEY, size: 'compact' });
       injected = true;
-      trackAnalytics({ category: 'form', action: 'turnstile_rendered' });
+      // analytics removed; no-op
       return;
     }
 
@@ -104,15 +86,15 @@ function setupTurnstile(isAudit: boolean): CleanupFn | void {
     script.onload = () => {
       try {
         window.turnstile?.render(container, { sitekey: SITE_KEY, size: 'compact' });
-        trackAnalytics({ category: 'form', action: 'turnstile_rendered' });
+        // analytics removed; no-op
       } catch (error) {
         console.warn('Turnstile render failed', error);
-        trackAnalytics({ category: 'form', action: 'turnstile_render_failed', label: (error as Error)?.message });
+        // analytics removed; no-op
       }
     };
     script.onerror = () => {
       console.warn('Turnstile script failed to load');
-      trackAnalytics({ category: 'form', action: 'turnstile_script_failed' });
+      // analytics removed; no-op
     };
     document.head.appendChild(script);
   };
@@ -227,7 +209,7 @@ function setupContactForm(): CleanupFn | void {
     const hasErrors = Object.keys(errors).length > 0;
 
     if (hasErrors) {
-      trackAnalytics({ category: 'form', action: 'validation_failed', ...errors });
+      // analytics removed; no-op
       const firstErrorField = FORM_VALIDATION_CONFIG.fields.find(({ id }) => errors[id]);
       if (firstErrorField) {
         const field = fields[firstErrorField.id] as HTMLElement | null;
@@ -242,7 +224,7 @@ function setupContactForm(): CleanupFn | void {
 
     try {
       setSubmittingState(form, true);
-      trackAnalytics({ category: 'form', action: 'submit_attempt' });
+      // analytics removed; no-op
 
       const response = await fetch(form.action || '/api/contact/submit', {
         method: 'POST',
@@ -258,7 +240,7 @@ function setupContactForm(): CleanupFn | void {
 
       showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
       form.reset();
-      trackAnalytics({ category: 'form', action: 'submit_success' });
+      // analytics removed; no-op
     } catch (error) {
       console.error('Form submission failed', error);
       showStatusMessage(
@@ -266,7 +248,7 @@ function setupContactForm(): CleanupFn | void {
         '❌ Something went wrong. Please try again later or email me directly at contact@blakeoxford.com.',
         'error',
       );
-      trackAnalytics({ category: 'form', action: 'submit_failed', label: (error as Error)?.message });
+      // analytics removed; no-op
     } finally {
       window.clearTimeout(timeoutId);
       setSubmittingState(form, false);
