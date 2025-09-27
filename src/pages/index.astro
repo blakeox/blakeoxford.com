@@ -3,38 +3,18 @@ import Layout from '../layouts/BaseLayout.astro';
 import ProficiencyLogo from '../components/media/ProficiencyLogo.astro';
 import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
+import { getCollection } from 'astro:content';
 import { getFeaturedProjects, technologies, siteConfig } from '../config/data';
 
-// Manual blog post definitions (matching blog/index.astro)
-const blogPosts = [
-  {
-    slug: 'combating-legal-ai-hallucinations',
-    data: {
-      title: 'Combating Legal AI Hallucinations: How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research',
-      description: 'Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener.',
-      pubDate: new Date('2025-07-28'),
-      tags: ['AI', 'Legal Tech', 'Open Source'],
-      draft: false
-    }
-  },
-  {
-    slug: 'hello-world',
-    data: {
-      title: 'Hello World',
-      description: 'My first blog post using Astro Content Collections and MDX.',
-      pubDate: new Date('2025-05-19'),
-      tags: ['Blog', 'Astro'],
-      draft: false
-    }
-  }
-].filter(post => !post.data.draft)
- .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const blogPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .slice()
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Use centralized data management
-const featuredProjects = getFeaturedProjects(3);
+const featuredProjects = await getFeaturedProjects(3);
 
-// Get the latest blog post if available
-const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
+// Select the most recent posts for homepage feature
+const recentBlogPosts = blogPosts.slice(0, 3);
 
 // Helper to derive optimized image component props from a full /assets/images path
 function deriveImageData(imgPath?: string) {
@@ -379,28 +359,60 @@ function deriveImageData(imgPath?: string) {
   <section class="w-full py-20 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark" aria-labelledby="latest-blog-posts">
   <div class="container mx-auto px-6 sm:px-8 lg:px-12">
   <h2 id="latest-blog-posts" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light">Latest Blog Posts</h2>
-        <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {latestBlogPost ? (
-            <li class="bg-surface dark:bg-surface rounded-2xl shadow-xl p-6 animate-slide-up">
-              <a href={`/blog/${latestBlogPost.slug}`} class="block hover:scale-105 transition-transform duration-200">
-                <h3 class="text-h3 font-semibold mb-2">{latestBlogPost.data.title}</h3>
-                <time class="text-sm text-neutral" datetime={latestBlogPost.data.pubDate?.toISOString()}>
-                  {latestBlogPost.data.pubDate?.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </time>
-                <p class="mt-2 text-neutral">{latestBlogPost.data.description || 'Read this blog post to learn more.'}</p>
-              </a>
-            </li>
+        <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
+          {recentBlogPosts.length > 0 ? (
+            recentBlogPosts.map((post) => (
+              <li class="group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-6 shadow-xl transition-transform duration-200 hover:-translate-y-1 hover:shadow-2xl dark:bg-surface/80 dark:border-border-dark/40" role="listitem">
+                <a href={`/blog/${post.slug}/`} class="flex h-full flex-col gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">
+                  <header class="space-y-2">
+                    <time class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-foreground/55 dark:text-foreground-light/60" datetime={post.data.pubDate.toISOString()}>
+                      <span class="inline-flex h-1.5 w-1.5 rounded-full bg-accent"></span>
+                      {post.data.pubDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </time>
+                    <h3 class="text-xl font-semibold leading-snug text-foreground transition-colors duration-200 group-hover:text-accent dark:text-foreground-light">
+                      {post.data.title}
+                    </h3>
+                  </header>
+
+                  {post.data.description && (
+                    <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+                      {post.data.description}
+                    </p>
+                  )}
+
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <ul class="mt-auto flex flex-wrap gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/60" aria-label="Post tags" role="list">
+                      {post.data.tags.slice(0, 3).map((tag) => (
+                        <li class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/30 dark:bg-background-dark/70" role="listitem">
+                          {tag}
+                        </li>
+                      ))}
+                      {post.data.tags.length > 3 && (
+                        <li class="rounded-full bg-background/80 px-3 py-1 ring-1 ring-border/20 text-foreground/50 dark:bg-background-dark/60 dark:text-foreground-light/55" role="listitem">
+                          +{post.data.tags.length - 3}
+                        </li>
+                      )}
+                    </ul>
+                  )}
+
+                  <span class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-transform duration-200 group-hover:translate-x-1">
+                    Read article
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M5 12h14m-6-6 6 6-6 6" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+            ))
           ) : (
-            <li class="bg-surface dark:bg-surface rounded-2xl shadow-xl p-6 animate-slide-up">
-              <div class="block">
-                <h3 class="text-h3 font-semibold mb-2">Blog Post Title May</h3>
-                <time class="text-sm text-neutral" datetime="2025-05-21">May 21, 2025</time>
-                <p class="mt-2 text-neutral">A short excerpt or summary of the blog post goes here to entice the reader to click through and read more.</p>
-              </div>
+            <li class="rounded-2xl border border-dashed border-border/40 bg-background/90 p-6 text-center shadow-md dark:bg-background-dark/80">
+              <p class="text-sm text-foreground/70 dark:text-foreground-light/70">
+                Blog posts are on the way—check back soon for new case studies and playbooks.
+              </p>
             </li>
           )}
         </ul>
