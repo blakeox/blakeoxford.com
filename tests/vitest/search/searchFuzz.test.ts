@@ -3,9 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 const root = path.resolve(__dirname, '../../..');
-const blog = JSON.parse(fs.readFileSync(path.join(root, 'public/search/blog.json'), 'utf-8'));
 const projects = JSON.parse(fs.readFileSync(path.join(root, 'public/search/projects.json'), 'utf-8'));
-const corpus = [...blog, ...projects];
+const corpus = [...projects];
 
 function randomInt(max: number) { return Math.floor(Math.random() * max); }
 function sample<T>(arr: T[]) { return arr[randomInt(arr.length)]; }

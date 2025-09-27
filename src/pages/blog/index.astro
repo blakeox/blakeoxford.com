@@ -1,204 +1,45 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
-import BlogPostRow from '../../components/features/blog/BlogPostRow.astro';
+import { BlogPostRow } from '../../components/features/blog';
+import { getCollection } from 'astro:content';
 
-// Manual blog post definitions (since we're using page-based routing instead of content collections)
-const posts = [
-  {
-    slug: 'combating-legal-ai-hallucinations',
-    data: {
-      title: 'Combating Legal AI Hallucinations: How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research',
-      description: 'Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener.',
-      pubDate: new Date('2025-07-28'),
-      tags: ['AI', 'Legal Tech', 'Open Source'],
-      draft: false
-    }
-  },
-  {
-    slug: 'hello-world',
-    data: {
-      title: 'Hello World',
-      description: 'My first blog post using Astro Content Collections and MDX.',
-      pubDate: new Date('2025-05-19'),
-      tags: ['Blog', 'Astro'],
-      draft: false
-    }
-  }
-];
-
-// Filter out draft posts and sort by publication date (newest first)
+const posts = await getCollection('blog', ({ data }) => !data.draft);
 const sortedPosts = posts
-  .filter(post => !post.data.draft)
+  .slice()
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-const title = 'Blake Oxford\'s Blog';
-const description = 'Explore my latest thoughts, tutorials, and insights on web development, design, and technology.';
-const canonicalUrl = 'https://blakeoxford.com/blog/';
 ---
-
-<Layout title={title} description={description} url={canonicalUrl} wide>
-  <!-- Blog Header Section -->
-  <section class="w-full py-16 md:py-24 px-4 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="blog-title">
-    <!-- Background pattern -->
-    <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
-      <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="blog-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M0 40L40 0M20 40L40 20M0 20L20 0" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.12" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#blog-grid)" />
-      </svg>
-    </div>
-    <!-- Floating shapes -->
-    <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
-
-    <div class="relative z-10 max-w-4xl mx-auto text-center">
-      <h1 id="blog-title" class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-foreground dark:text-foreground-light mb-6 animate-fade-in">Blog</h1>
-      <p class="text-lead text-foreground dark:text-foreground-light animate-fade-in mb-8">
-        Explore my latest thoughts, tutorials, and insights on web development, design, and technology.
+<Layout
+  title="Insights & Updates"
+  description="Thoughts on automation, analytics, and leadership—grounded in hands-on work and delivered with practical takeaways."
+>
+  <section class="border-b border-border/60 bg-background/95 py-24 dark:bg-background-dark/85">
+    <div class="container mx-auto max-w-4xl px-6 sm:px-8">
+      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-foreground/60 dark:text-foreground-light/60">
+        Blog
       </p>
-      <p class="text-lg text-foreground dark:text-foreground-light animate-fade-in">
-        From technical deep-dives to industry trends, discover content that bridges theory and practice.
+      <h1 class="mt-6 text-4xl font-bold text-foreground dark:text-foreground-light sm:text-5xl">
+        Fresh thinking, built on shipped work
+      </h1>
+      <p class="mt-6 text-lg text-foreground/80 dark:text-foreground-light/80">
+        Every article explores real-world systems leadership—translating complex automation, data, and change programs into momentum you can measure.
       </p>
     </div>
   </section>
 
-  <!-- Transition Divider -->
-  <div class="w-full flex flex-col items-center my-16">
-    <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-16 md:h-20 lg:h-24">
-      <path fill="currentColor" fill-opacity="0.10" d="M0,32 C360,80 1080,0 1440,48 L1440,80 L0,80 Z" />
-    </svg>
-  </div>
-
-  <!-- Blog Posts List Section -->
-  <section class="c-blog-list w-full py-20 md:py-32 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" role="region" aria-labelledby="blog-list-title">
-    <!-- Background pattern -->
-    <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
-      <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="blog-posts-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M0 40L40 0M20 40L40 20M0 20L20 0" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.12" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#blog-posts-grid)" />
-      </svg>
-    </div>
-    <!-- Floating shapes -->
-    <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
-
-    <div class="relative z-10 px-4">
-      <div class="flex flex-col gap-8 md:gap-6 w-full">
-        {sortedPosts.map((post: any, idx: number) => (
-            <BlogPostRow post={post} align={idx % 2 === 0 ? 'left' : 'right'} />
-          ))}
-      </div>
+  <section class="bg-gradient-to-b from-background via-background/95 to-background py-20 dark:from-background-dark dark:via-background-dark/95 dark:to-background-dark">
+    <div class="container mx-auto flex max-w-5xl flex-col gap-16 px-6 sm:px-8">
+      {sortedPosts.length > 0 ? (
+        sortedPosts.map((post, index) => (
+          <BlogPostRow post={post} align={index % 2 === 0 ? 'left' : 'right'} />
+        ))
+      ) : (
+        <div class="rounded-2xl border border-border/40 bg-background/80 p-12 text-center shadow-lg dark:border-border-dark/40 dark:bg-background-dark/80">
+          <h2 class="text-2xl font-semibold text-foreground dark:text-foreground-light">Posts are on the way</h2>
+          <p class="mt-4 text-foreground/75 dark:text-foreground-light/75">
+            Check back soon for breakdowns of recent programs, playbooks, and technical deep dives.
+          </p>
+        </div>
+      )}
     </div>
   </section>
 </Layout>
-
-<style>
-/* Animation styles */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: none; }
-}
-
-.animate-fade-in {
-  opacity: 1;
-  animation: fadeIn 1s cubic-bezier(0.4,0,0.2,1) both;
-}
-
-/* Enhanced glass morphism */
-.glass-card {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-@media (prefers-color-scheme: dark) {
-  .glass-card {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-}
-
-/* Focus styles for better accessibility */
-.group:focus-within {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .group,
-  .animate-fade-in,
-  .animate-bounce {
-    animation: none;
-    transition: none;
-  }
-}
-
-/* Smooth transitions between sections */
-.c-blog-list {
-  position: relative;
-}
-
-/* Enhanced visual flow */
-.c-blog-list::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
-  opacity: 0.3;
-}
-
-/* Line clamp utility for consistent text truncation */
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Hover effects for interactive elements */
-.group:hover .glass-card {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-/* Enhanced button states */
-.group:hover {
-  transform: translateY(-1px);
-}
-
-.group:active {
-  transform: translateY(0);
-}
-
-/* Improved spacing for staggered layout */
-.group:nth-child(odd) {
-  animation-delay: 0.1s;
-}
-
-.group:nth-child(even) {
-  animation-delay: 0.2s;
-}
-
-/* Enhanced responsiveness */
-@media (max-width: 768px) {
-  .glass-card {
-    padding: 1.5rem;
-  }
-
-  .group {
-    min-height: 320px;
-  }
-}
-</style>

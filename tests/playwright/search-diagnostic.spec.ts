@@ -1,6 +1,6 @@
  
 import { test, expect } from '@playwright/test';
-import { waitForIdle, waitForSearchOverlay, waitForCondition } from '../utils/waits';
+import { waitForIdle, waitForCondition } from '../utils/waits';
 
 interface ConsoleMessage {
   type: string;
@@ -59,7 +59,6 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
 
       return {
         allScripts: scripts,
-        lazyLoader: scripts.find(s => s.src.includes('lazy-loader')),
         interactive: scripts.find(s => s.src.includes('interactive')),
         hasErrors: scriptElements.some(s => s.hasAttribute('data-error'))
       };
@@ -73,8 +72,6 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
       return {
         searchOverlay: typeof win.searchOverlay,
         searchOverlayInstance: !!win.searchOverlay,
-        LazyBundleLoader: typeof win.LazyBundleLoader,
-        lazyLoaderInstance: !!win.LazyBundleLoader,
         fuseJS: typeof win.Fuse,
         searchOverlayConstructor: typeof win.SearchOverlay,
         errorLog: window.console ? 'available' : 'not available'
@@ -95,8 +92,8 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
       }
     });
 
-  // Allow lazy bundles a chance to register (poll for searchOverlay or LazyBundleLoader presence)
-  await waitForCondition(page, () => page.evaluate(() => !!(window as any).searchOverlay || !!(window as any).LazyBundleLoader), 2000, 100);
+  // Allow client bundles to register search overlay instance
+  await waitForCondition(page, () => page.evaluate(() => !!(window as any).searchOverlay), 2000, 100);
 
     // 6. Try to trigger search overlay via JavaScript
     const jsActivation = await page.evaluate(() => {
@@ -134,7 +131,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
     // 8. Try keyboard shortcut activation
   await page.keyboard.press('Control+k');
   // Wait for overlay to become active if possible
-  await waitForSearchOverlay(page).catch(() => {});
+  await page.waitForSelector('[data-search-result], .search-result', { timeout: 4000 });
 
     const visibilityAfterKeyboard = await page.evaluate(() => {
       const overlay = document.getElementById('search-overlay');
@@ -210,32 +207,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
 
     console.log('10. Constructor Check:', constructorCheck);
 
-    // 11. Check bundle contents
-    const bundleCheck = await page.evaluate(async () => {
-      try {
-        const response = await fetch('/assets/js/interactive.min.js');
-        const content = await response.text();
-
-        return {
-          bundleExists: response.ok,
-          bundleSize: content.length,
-          containsSearchOverlay: content.includes('SearchOverlay'),
-          containsConstructor: content.includes('constructor'),
-          containsOpen: content.includes('open'),
-          containsInit: content.includes('init'),
-          firstHundredChars: content.substring(0, 100)
-        };
-      } catch (error: any) {
-        return {
-          bundleExists: false,
-          error: error.message
-        };
-      }
-    });
-
-    console.log('11. Bundle Check:', bundleCheck);
-
-    // 12. Check for initialization code
+    // 11. Check for initialization code
     const initCheck = await page.evaluate(() => {
       const scripts = document.querySelectorAll('script');
       let hasInitCode = false;
@@ -265,32 +237,7 @@ test.describe('SearchOverlay Comprehensive Diagnostics', () => {
 
     // If SearchOverlay is not working, try to manually load and initialize it
     if (!jsState.searchOverlayInstance) {
-      console.log('🔧 Attempting manual initialization...');
-
-      const manualInit = await page.evaluate(async () => {
-        try {
-          const win = window as any;
-          // First, try to load the interactive bundle if not loaded
-          if (!win.searchOverlay && win.LazyBundleLoader) {
-            await win.LazyBundleLoader.loadInteractiveFeatures();
-
-            // Wait a bit for loading
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            return {
-              success: !!win.searchOverlay,
-              method: 'LazyBundleLoader',
-              searchOverlayExists: !!win.searchOverlay
-            };
-          }
-
-          return { success: false, method: 'none', error: 'No loading method available' };
-        } catch (error: any) {
-          return { success: false, error: error.message, method: 'failed' };
-        }
-      });
-
-      console.log('Manual Initialization Result:', manualInit);
+      console.log('⚠️ Search overlay failed to initialize automatically.');
     }
   });
 });

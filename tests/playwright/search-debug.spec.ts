@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { waitForAsyncOperation, waitForSearchResults } from './utils/test-helpers';
+import { waitForAsyncOperation } from './utils/test-helpers';
 
 // Extend window typing for test-only globals
 declare global {
@@ -43,7 +43,7 @@ test.describe('SearchOverlay Debug', () => {
         window.testSearchInstance!.open();
       });
       
-      await waitForSearchResults(page); // Wait for overlay to open
+      await page.waitForSelector('[data-search-result], .search-result', { timeout: 4000 });
       
       const overlayTest = await page.evaluate(() => {
         const overlay = document.getElementById('search-overlay');
@@ -65,7 +65,7 @@ test.describe('SearchOverlay Debug', () => {
         });
         
         await page.keyboard.press('Control+k');
-        await waitForSearchResults(page); // Wait for keyboard-triggered overlay
+        await page.waitForSelector('[data-search-result], .search-result', { timeout: 4000 });
         
         const keyboardTest = await page.evaluate(() => {
           const overlay = document.getElementById('search-overlay');

@@ -1,0 +1,62 @@
+---
+title: "Combating Legal AI Hallucinations: How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research"
+description: "Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener."
+pubDate: 2025-07-28
+tags:
+  - AI
+  - Legal Tech
+  - Open Source
+heroImage: "/assets/images/og-image.jpg"
+draft: false
+---
+
+AI-assisted research unlocks new possibilities for faster case reviews and deeper insights. Yet trusting an answer produced by a language model is risky when the response is not backed by the underlying record. I created **courtlistener-mcp** to solve that problem by wiring CourtListener's open court data directly into the Model Context Protocol (MCP).
+
+## Why hallucinations are so dangerous in legal work
+
+Legal research is a high-stakes workflow. A confident but incorrect citation can:
+
+- Mislead attorneys and clerks on precedent.
+- Introduce professional liability when incorrect advice is sent to a client.
+- Erode trust in every AI-powered workflow that follows.
+
+Recent headline cases have already shown lawyers sanctioned for citing hallucinated opinions. Those errors are rarely malicious—they happen because the model has no verified source for its answer.
+
+## Grounding AI answers with real court data
+
+**courtlistener-mcp** connects MCP-aware tools (like Claude, ChatGPT, or custom agents) to [CourtListener](https://www.courtlistener.com/)'s API. Every answer comes with:
+
+- **Grounded citations.** Responses include the CourtListener ID and link for each cited document.
+- **Verified source documents.** The server can deliver the full opinion, docket, or audio transcript so humans can review the original content.
+- **Real-time search.** Queries flow through CourtListener's search endpoint, so newly uploaded opinions are available immediately.
+- **Tamper-resistant auditing.** All interactions are logged with timestamps and query parameters to satisfy compliance teams.
+
+## Architecture at a glance
+
+1. An MCP client sends a query such as “Show the latest Ninth Circuit rulings on data privacy.”
+2. `courtlistener-mcp` transforms the prompt into a CourtListener search request.
+3. Results are normalized into MCP "tool" responses that include metadata, snippets, and URLs.
+4. The LLM uses the payload to compose an answer and returns citations linked to the original documents.
+
+This loop keeps human reviewers in control—AI can summarize or highlight, but the answer is always grounded in verifiable evidence.
+
+## Getting started
+
+The project is fully open source and MIT licensed. To test it locally:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Then point your MCP-compatible client at the `courtlistener-mcp` endpoint. The README includes instructions for configuring API keys, selecting jurisdictions, and extending the toolset.
+
+## What’s next
+
+I'm actively collaborating with compliance teams and legal technologists to expand coverage beyond U.S. courts. Planned enhancements include:
+
+- Bulk export utilities for litigation knowledge bases.
+- Analytics that flag conflicting authorities across jurisdictions.
+- Optional rate limiting and caching layers for large research teams.
+
+If you want to help shape the roadmap—or bring **courtlistener-mcp** into your own legal stack—reach out via [GitHub](https://github.com/blakeox/courtlistener-mcp) or [contact me directly](/contact/).

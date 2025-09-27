@@ -31,9 +31,9 @@
 ### 4. **Bundle Optimization** ✅
 - **Status**: COMPLETED
 - **Implementation**:
-  - Created `DynamicModuleLoader.ts` for intelligent dynamic imports
-  - Implemented `FeatureBundleManager.ts` for feature-based bundling
-  - Added `PerformanceMonitor.ts` for optimization tracking
+  - ~~Created `DynamicModuleLoader.ts` for intelligent dynamic imports~~ (removed)
+  - ~~Implemented `FeatureBundleManager.ts` for feature-based bundling~~ (removed)
+  - ~~Added `PerformanceMonitor.ts` for optimization tracking~~ (removed during legacy cleanup)
   - Updated `src/components/index.ts` with dynamic loading patterns
   - Configured priority-based loading: critical → high → medium → low
   - Added intersection observer for visibility-based loading
@@ -96,7 +96,7 @@ export * from './features/projects/index.js';
 export * from './features/blog/index.js';
 
 // After: Dynamic imports with lazy loading
-export const loadProjectComponents = () => import('./features/projects/index.js');
+~~export const loadProjectComponents = () => import('./features/projects/index.js');~~
 export const loadBlogComponents = () => import('./features/blog/index.js');
 
 // With intelligent loading triggers
@@ -107,8 +107,6 @@ setupInteractionBasedLoading(); // Load on user interaction
 ### **Performance Monitoring**
 ```typescript
 // Real-time bundle optimization tracking
-const monitor = getPerformanceMonitor();
-monitor.logPerformanceReport();
 // Output: Bundle load times, size savings, cache hit rates, recommendations
 ```
 
@@ -150,7 +148,7 @@ The codebase now has:
 
 ## 🔄 **Next Steps** (Future Iterations)
 
-1. **Monitor Performance**: Use PerformanceMonitor to track real-world benefits
+1. ~~**Monitor Performance**: Use PerformanceMonitor to track real-world benefits~~
 2. **Iterate on Bundle Strategy**: Adjust loading triggers based on usage data
 3. **Extend Error Analytics**: Connect AppError system to external monitoring
 4. **Component Preloading**: Fine-tune preloading strategies for better UX

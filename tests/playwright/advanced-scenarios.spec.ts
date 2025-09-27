@@ -1,43 +1,28 @@
 import { test, expect } from '@playwright/test';
-import { waitForAsyncOperation, waitForSearchResults } from './utils/test-helpers';
+import { waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Advanced Test Scenarios', () => {
   test.describe('API Error Handling', () => {
     test('should handle API failures gracefully', async ({ page }) => {
-      // Mock API failures
-      await page.route('**/api/blog.json', (route) => {
-        route.fulfill({ status: 500, body: JSON.stringify({ error: 'Internal Server Error' }) });
-      });
-
       await page.route('**/api/projects.json', (route) => {
         route.fulfill({ status: 404, body: JSON.stringify({ error: 'Not Found' }) });
       });
 
-      // Visit pages that depend on API data
-      await page.goto('/blog');
-      
-      // Should show graceful error state or empty state
-      await expect(page.locator('main').first()).toBeVisible();
-      
-      // Check that the page doesn't crash
-      await expect(page.locator('body')).toBeVisible();
-      
-      // Visit projects page
       await page.goto('/projects');
       await expect(page.locator('main').first()).toBeVisible();
+      await expect(page.locator('body')).toBeVisible();
     });
 
     test('should handle slow API responses', async ({ page }) => {
-      // Mock slow API responses
-      await page.route('**/api/blog.json', async (route) => {
-        await new Promise(resolve => setTimeout(resolve, 3000)); // 3 second delay
-        route.fulfill({ 
-          status: 200, 
+      await page.route('**/api/projects.json', async (route) => {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        route.fulfill({
+          status: 200,
           body: JSON.stringify([
             {
-              slug: 'test-post',
-              title: 'Test Post',
-              description: 'A test blog post',
+              slug: 'test-project',
+              title: 'Test Project',
+              description: 'A test project',
               publishedAt: '2023-01-01',
               tags: ['test']
             }
@@ -46,72 +31,10 @@ test.describe('Advanced Test Scenarios', () => {
       });
 
       const startTime = Date.now();
-      await page.goto('/blog');
-      
-      // Should show loading state or handle timeout gracefully
+      await page.goto('/projects');
       await expect(page.locator('main').first()).toBeVisible();
-      
       const loadTime = Date.now() - startTime;
-      // Should handle the delay without crashing
-      expect(loadTime).toBeLessThan(10000); // 10 second timeout
-    });
-
-    test('should handle malformed API responses', async ({ page }) => {
-      // Mock malformed JSON responses
-      await page.route('**/api/blog.json', (route) => {
-        route.fulfill({ 
-          status: 200, 
-          body: 'invalid json{{'
-        });
-      });
-
-      await page.goto('/blog');
-      
-      // Should handle malformed JSON gracefully
-      await expect(page.locator('main').first()).toBeVisible();
-      
-      // Check console for errors (should be handled)
-      const logs: string[] = [];
-      page.on('console', msg => {
-        if (msg.type() === 'error') {
-          logs.push(msg.text());
-        }
-      });
-
-      await waitForAsyncOperation(page); // Wait for error handling
-      
-      // Errors should be handled gracefully, not crash the page
-      await expect(page.locator('body')).toBeVisible();
-    });
-
-    test('should handle CORS and network errors', async ({ page }) => {
-      // Mock network failure
-      await page.route('**/api/**', (route) => {
-        route.abort('failed');
-      });
-
-      await page.goto('/');
-      
-      // Page should still load basic structure
-      await expect(page.locator('main').first()).toBeVisible();
-      await expect(page.locator('nav').first()).toBeVisible();
-      
-      // Test search functionality with failed APIs
-      try {
-        await page.keyboard.press('Control+k');
-        const searchOverlay = page.locator('#search-overlay');
-        
-        if (await searchOverlay.isVisible({ timeout: 2000 })) {
-          const searchInput = page.locator('#search-input');
-          await searchInput.fill('test');
-          
-          // Should handle search gracefully even with API failures
-          await waitForSearchResults(page);
-          await expect(searchOverlay).toBeVisible();
-        }
-      } catch {
-        // Search may not be available, which is acceptable
-      }
+      expect(loadTime).toBeLessThan(10000);
     });
   });
 

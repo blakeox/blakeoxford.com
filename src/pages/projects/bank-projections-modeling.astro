@@ -1,195 +1,118 @@
 ---
+import { getEntry } from 'astro:content';
 import Layout from '../../layouts/BaseLayout.astro';
 import ProjectHero from '../../components/features/projects/ProjectHero.astro';
+import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
 import AchievementCard from '../../components/common/AchievementCard.astro';
 import ProjectTags from '../../components/features/projects/ProjectTags.astro';
+import MetricsTable from '../../components/common/MetricsTable.astro';
 
-const title = 'Bank Projections and Financial Modeling';
-const description = 'Developed detailed financial models and projections to secure multiple loans—including $2M, $10M, PPP, and disaster relief—supporting facility expansion and operational resilience.';
-const date = new Date('2020-01-01T00:00:00.000Z');
-const tags = ['Financial Modeling', 'Bank Projections', 'Commercial Real Estate', 'Loan', 'Financial Analysis'];
-const image = '/assets/projects/bank-projections.png';
-const canonicalUrl = 'https://blakeoxford.com/projects/bank-projections-modeling/';
+const entry = await getEntry('projects', 'bank-projections-modeling');
+
+const { data, body } = entry;
+const title = data.title;
+const description = data.subtitle ?? data.description ?? '';
+const date = new Date(data.date);
+const canonicalUrl = `https://blakeoxford.com/projects/${entry.slug}/`;
+const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
 ---
 
-<Layout
-  title={title}
-  description={description}
-  image={image}
-  url={canonicalUrl}
-  wide={true}
->
-  <ProjectHero
-    title={title}
-    description={description}
-    date={date}
-    image={image}
-  />
+<Layout title={title} description={description} url={canonicalUrl} image={heroImage} wide>
+  <ProjectHero title={title} description={description} date={date} image={heroImage} />
 
-  <!-- Full-Width Content Section -->
-  <article class="py-20 bg-background">
-    <div class="w-full px-6 lg:px-12 xl:px-16">
-      <div class="max-w-none mx-auto">
+  <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
+    <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
+    <div class="relative mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
+      <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.subtitle}>
+        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/82" set:html={body} />
+      </ProjectDetailSection>
 
-        <!-- Background -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Background</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90 mb-6">
-              From 2018 through 2022, I led the financial modeling and projection efforts for several critical funding initiatives:
+      {data.highlights?.length ? (
+        <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
+          <AchievementCard title="Program outcomes" achievements={data.highlights} />
+        </ProjectDetailSection>
+      ) : null}
+
+      {(data.metrics?.length || data.impact?.length) ? (
+        <ProjectDetailSection title="Impact signals" eyebrow="Proof of traction" layout="surface">
+          <div class="flex flex-col gap-6">
+            {data.metrics?.length ? <MetricsTable metrics={data.metrics} /> : null}
+            {data.impact?.length ? (
+              <ul class="flex flex-col gap-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
+                {data.impact.map((item) => (
+                  <li class="flex items-start gap-3">
+                    <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        </ProjectDetailSection>
+      ) : null}
+
+      {data.journey?.length ? (
+        <ProjectDetailSection title="Journey" eyebrow="How it unfolded">
+          <ul class="space-y-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
+            {data.journey.map((item) => (
+              <li class="flex items-start gap-3">
+                <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+                <span set:html={item} />
+              </li>
+            ))}
+          </ul>
+        </ProjectDetailSection>
+      ) : null}
+
+      {data.lessons?.length ? (
+        <ProjectDetailSection title="Lessons" eyebrow="What stuck" layout="surface">
+          <div class="grid gap-4 sm:grid-cols-2">
+            {data.lessons.map((lesson) => (
+              <article class="flex flex-col gap-2 rounded-2xl border border-border/25 bg-background/95 p-4 shadow-sm">
+                <h3 class="text-lg font-semibold text-foreground dark:text-foreground-light">{lesson.title}</h3>
+                <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{lesson.description}</p>
+              </article>
+            ))}
+          </div>
+        </ProjectDetailSection>
+      ) : null}
+
+      {data.reflection ? (
+        <ProjectDetailSection title="Reflection" eyebrow="Personal note">
+          <blockquote class="border-l-4 border-accent/80 bg-surface-subtle/80 p-6 text-base italic leading-relaxed text-foreground/78 dark:bg-surface-dark-subtle dark:text-foreground-light/82">
+            {data.reflection}
+          </blockquote>
+        </ProjectDetailSection>
+      ) : null}
+
+      <ProjectDetailSection title="Next steps" eyebrow="Ready to explore?" layout="surface">
+        <div class="grid gap-4 items-start lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <div class="space-y-4">
+            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">
+              Need models that get lenders to yes?
+            </h3>
+            <p class="text-sm sm:text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+              Bring your expansion or refinancing goals—we'll pressure-test the numbers, build the story, and prep leadership for the diligence room.
             </p>
-            <ul class="space-y-4 mb-6">
-              <li class="flex items-start gap-3">
-                <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                  <strong>2018:</strong> Secured a $2M loan to renovate 30,000 sq. ft (18K billable, 12K warehouse) of existing space.
-                </span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                  <strong>2020:</strong> Assisted in obtaining PPP funding and a Disaster Relief Loan to sustain operations during COVID-19 disruptions.
-                </span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="text-accent dark:text-accent-light font-bold">•</span>
-                <span class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                  <strong>2022:</strong> Developed comprehensive models for a $10M loan to build a 36,000 sq. ft cutting-edge autism center.
-                </span>
-              </li>
-            </ul>
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-              The objective was to present lenders with clear, data-driven insights into revenue potential, expense structures, and cash flow viability across varied market conditions.
-            </p>
           </div>
-        </section>
-
-        <!-- Key Achievements -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Key Achievements</h2>
-
-          <div class="grid md:grid-cols-1 gap-8">
-            <AchievementCard
-              title="Comprehensive Scenario Analysis"
-              achievements={[
-                'Built dynamic Excel models incorporating best-case, base-case, and worst-case assumptions, enabling stakeholders to understand risks and opportunities.'
-              ]}
-            />
-
-            <AchievementCard
-              title="Multi-Loan Experience"
-              achievements={[
-                'Tailored projections for differing project scales—from renovation financing to large-scale facility construction and pandemic relief funding requirements.'
-              ]}
-            />
-
-            <AchievementCard
-              title="Sensitivity & Stress Testing"
-              achievements={[
-                'Integrated sensitivity tables and stress tests for key variables (occupancy rates, reimbursement changes, operating costs) to demonstrate model robustness.'
-              ]}
-            />
-
-            <AchievementCard
-              title="Lender-Aligned Reporting"
-              achievements={[
-                'Crafted bank-friendly projection reports, aligning with underwriting standards and supporting documentation (monthly P&L, cash flow statements, balance sheet forecasts).'
-              ]}
-            />
-
-            <AchievementCard
-              title="Strategic Narrative Development"
-              achievements={[
-                'Complemented quantitative models with qualitative narratives and executive summaries—framing the financial story to match lender priorities.'
-              ]}
-            />
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-4">
+            <a
+              href="/contact/"
+              class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-accent-glow transition-colors hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+            >
+              Book a working session
+            </a>
+            <a
+              href="/about/"
+              class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
+            >
+              Review how I partner
+            </a>
           </div>
-        </section>
-
-        <!-- Impact -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Impact</h2>
-
-          <div class="grid md:grid-cols-1 gap-8">
-            <div class="bg-surface dark:bg-surface-dark rounded-xl p-8">
-              <h3 class="text-2xl font-semibold mb-6 text-foreground dark:text-foreground-light">$2M Renovation Loan (2018)</h3>
-              <p class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                Enabled critical facility upgrades, increasing billable space and operational efficiency.
-              </p>
-            </div>
-
-            <div class="bg-surface dark:bg-surface-dark rounded-xl p-8">
-              <h3 class="text-2xl font-semibold mb-6 text-foreground dark:text-foreground-light">PPP & Disaster Relief (2020)</h3>
-              <p class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                Secured lifeline funding that preserved jobs and stabilized cash flow during unprecedented downturns.
-              </p>
-            </div>
-
-            <div class="bg-surface dark:bg-surface-dark rounded-xl p-8">
-              <h3 class="text-2xl font-semibold mb-6 text-foreground dark:text-foreground-light">$10M Center Loan (2022)</h3>
-              <p class="text-lg text-foreground/80 dark:text-foreground-light/90">
-                Provided capital for state-of-the-art autism care facility, supporting long-term growth and community impact.
-              </p>
-            </div>
-          </div>
-
-          <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90 mt-8">
-            These successes not only demonstrated financial feasibility but also established a template for future funding rounds and strategic planning.
-          </p>
-        </section>
-
-        <!-- Lessons & Takeaways -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Lessons & Takeaways</h2>
-
-          <div class="space-y-8">
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Adapt to Scale</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Financial models must flex to project size—renovation vs. new build vs. emergency relief all demand different assumptions and presentation styles.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Align with Lenders</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Understanding bank underwriting criteria upfront streamlines the approval process.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Combine Numbers with Narrative</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                A compelling executive summary can be as persuasive as the numbers themselves.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Build Reusable Frameworks</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Templates and standardized models accelerate subsequent funding efforts, reducing turnaround time.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Operations-Driven Modeling</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Projections become far more accurate when grounded in operational realities. By collaborating closely with department heads, I mapped key drivers—revenue per client, staffing ratios, and overhead allocation—enabling dynamic scenario planning. Early models lacked this depth and were less predictive; by 2025, with robust data systems in place, we could instantly adjust variables—like client volume, staffing levels, and reimbursement rates—and see forward-looking profitability, shifting discussions from "how will we pay?" to "where should we invest for maximum impact?"
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Quote -->
-  <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-12">
-          <p class="text-lg italic text-foreground/80 dark:text-foreground-light/90">
-            By evolving from surface-level forecasts to operations-driven projections with real-time variable manipulation, I transformed financial modeling into a strategic dialogue—empowering leaders with clarity, confidence, and actionable insights.
-          </p>
-        </blockquote>
-
-      </div>
+        </div>
+      </ProjectDetailSection>
     </div>
   </article>
 
-  <ProjectTags tags={tags} />
+  <ProjectTags tags={data.tags ?? []} />
 </Layout>

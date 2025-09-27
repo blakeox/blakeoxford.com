@@ -1,131 +1,143 @@
+export { };
 /**
  * Motion and Animation Accessibility Module
  * Respects user preferences for reduced motion and provides alternatives
  */
 
-interface AnimationOptions {
-  duration?: number;
-  easing?: string;
-  onComplete?: () => void;
-  onCancel?: () => void;
-}
+const DEFAULT_TOGGLE_SELECTOR = 'input[data-motion-toggle], #motion-toggle';
+const DEFAULT_LIVE_REGION_ID = 'motion-accessibility-status';
+const STORAGE_KEY = 'motion-preference';
 
-interface MotionPreferences {
+export type MotionPreference = 'system' | 'reduce' | 'allow';
+
+export interface MotionPreferences {
   respectsReducedMotion: boolean;
   userOverride?: boolean;
 }
 
-export class MotionAccessibility {
-  private respectsReducedMotion: boolean;
+export interface MotionAccessibilityOptions {
+  toggleSelector?: string;
+  liveRegionId?: string;
+}
+
+export interface MotionAccessibilityController {
+  getPreference(): MotionPreference;
+  setPreference(preference: MotionPreference, options?: { announce?: boolean }): void;
+  isMotionReduced(): boolean;
+  getMotionPreferences(): MotionPreferences;
+  setMotionPreferences(preferences: Partial<MotionPreferences>): void;
+  safeAnimate(element: HTMLElement, keyframes: Keyframe[], options?: KeyframeAnimationOptions & { onComplete?: () => void; onCancel?: () => void }): void;
+  safeFadeIn(element: HTMLElement, duration?: number): void;
+  safeFadeOut(element: HTMLElement, duration?: number): Promise<void>;
+  safeSlideIn(element: HTMLElement, direction: 'left' | 'right' | 'up' | 'down', duration?: number): void;
+  safeScale(element: HTMLElement, from?: number, to?: number, duration?: number): void;
+  registerToggles(selector?: string): void;
+  destroy(): void;
+}
+
+class MotionAccessibility implements MotionAccessibilityController {
+  private preference: MotionPreference;
+  private reduced: boolean;
+  private options: MotionAccessibilityOptions;
   private mediaQuery: MediaQueryList | null = null;
-  private motionToggle: HTMLInputElement | null = null;
+  private mediaQueryHandler: ((event: MediaQueryListEvent) => void) | null = null;
+  private liveRegion: HTMLElement | null = null;
+  private toggles = new Map<HTMLInputElement, (event: Event) => void>();
+  private observer: MutationObserver | null = null;
+  private destroyed = false;
 
-  constructor() {
-    this.respectsReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    this.initializeMotionPreferences();
-    this.setupMotionToggle();
+  constructor(options: MotionAccessibilityOptions = {}) {
+    this.options = options;
+    this.preference = this.resolveInitialPreference();
+    this.reduced = this.computeEffectiveReduction(this.preference);
+    this.applyPreference({ announce: false });
+    this.setupLiveRegion();
+    this.setupMediaQuery();
+    this.registerToggles();
+    this.setupToggleObserver();
+    this.injectCSS();
   }
 
-  private initializeMotionPreferences(): void {
-    // Listen for changes in motion preference
-    this.mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    this.mediaQuery.addEventListener('change', (e: MediaQueryListEvent) => {
-      this.respectsReducedMotion = e.matches;
-      this.updateAnimations();
-    });
-
-    // Initial setup
-    this.updateAnimations();
+  getPreference(): MotionPreference {
+    return this.preference;
   }
 
-  private updateAnimations(): void {
-    const root = document.documentElement;
-    
-    if (this.respectsReducedMotion) {
-      // Disable animations and transitions
-      root.style.setProperty('--animation-duration', '0.01ms');
-      root.style.setProperty('--transition-duration', '0.01ms');
-      
-      // Add class for CSS targeting
-      document.body.classList.add('reduced-motion');
-      
-      // Stop any running animations
-      const animatedElements = document.querySelectorAll('[data-animate]');
-      animatedElements.forEach((el: Element) => {
-        const element = el as HTMLElement;
-        element.style.animation = 'none';
-        element.style.transition = 'none';
-      });
-    } else {
-      // Restore normal animations
-      root.style.removeProperty('--animation-duration');
-      root.style.removeProperty('--transition-duration');
-      document.body.classList.remove('reduced-motion');
-    }
-  }
+  setPreference(preference: MotionPreference, { announce = true }: { announce?: boolean } = {}): void {
+    if (this.destroyed) return;
 
-  private setupMotionToggle(): void {
-    // Add a user toggle for motion preferences
-    this.motionToggle = document.getElementById('motion-toggle') as HTMLInputElement;
-    if (this.motionToggle) {
-      this.motionToggle.addEventListener('change', (e: Event) => {
-        const target = e.target as HTMLInputElement;
-        this.respectsReducedMotion = !target.checked;
-        this.updateAnimations();
-        
-        // Announce change to screen readers
-        this.announceMotionChange();
-      });
-    }
-  }
-
-  private announceMotionChange(): void {
-    const message = this.respectsReducedMotion 
-      ? 'Animations disabled for better accessibility'
-      : 'Animations enabled';
-    
-    if (window.accessibilityModule) {
-      window.accessibilityModule.announce(message, 'polite');
-    }
-  }
-
-  // Safe animation method that respects preferences
-  public safeAnimate(element: HTMLElement, animation: Keyframe[], options: AnimationOptions = {}): void {
-    if (this.respectsReducedMotion) {
-      // Provide instant completion for reduced motion users
-      if (options.onComplete) {
-        options.onComplete();
+    if (this.preference === preference) {
+      if (preference === 'system') {
+        this.reduced = this.computeEffectiveReduction(preference);
+        this.applyPreference({ announce });
+        this.syncToggleStates();
       }
       return;
     }
 
-    // Proceed with normal animation
-    if (element.animate) {
-      const anim = element.animate(animation, {
-        duration: options.duration || 300,
-        easing: options.easing || 'ease-out',
-        ...options
-      });
-      
-      if (options.onComplete) {
-        anim.addEventListener('finish', options.onComplete);
-      }
-      
-      if (options.onCancel) {
-        anim.addEventListener('cancel', options.onCancel);
-      }
+    this.preference = preference;
+    this.reduced = this.computeEffectiveReduction(preference);
+    this.persistPreference();
+    this.applyPreference({ announce });
+    this.syncToggleStates();
+  }
+
+  isMotionReduced(): boolean {
+    return this.reduced;
+  }
+
+  getMotionPreferences(): MotionPreferences {
+    return {
+      respectsReducedMotion: this.reduced,
+      userOverride: this.preference === 'system' ? undefined : this.preference === 'allow'
+    };
+  }
+
+  setMotionPreferences(preferences: Partial<MotionPreferences>): void {
+    if (preferences.respectsReducedMotion !== undefined) {
+      this.setPreference(preferences.respectsReducedMotion ? 'reduce' : 'allow');
+    }
+
+    if (preferences.userOverride !== undefined) {
+      const preference = preferences.userOverride ? 'allow' : 'reduce';
+      this.setPreference(preference, { announce: false });
     }
   }
 
-  // Fade in with respect to motion preferences
-  public safeFadeIn(element: HTMLElement, duration: number = 300): void {
-    if (this.respectsReducedMotion) {
+  safeAnimate(
+    element: HTMLElement,
+    keyframes: Keyframe[],
+    options: KeyframeAnimationOptions & { onComplete?: () => void; onCancel?: () => void } = {}
+  ): void {
+    if (this.reduced) {
+      options.onComplete?.();
+      return;
+    }
+
+    if (!element.animate) {
+      options.onComplete?.();
+      return;
+    }
+
+    const animation = element.animate(keyframes, options);
+      
+      if (options.onComplete) {
+      animation.addEventListener('finish', options.onComplete);
+      }
+      
+      if (options.onCancel) {
+      animation.addEventListener('cancel', options.onCancel);
+    }
+  }
+
+  safeFadeIn(element: HTMLElement, duration: number = 300): void {
+    if (this.reduced) {
       element.style.opacity = '1';
       return;
     }
 
     element.style.opacity = '0';
-    this.safeAnimate(element, 
+    this.safeAnimate(
+      element,
       [{ opacity: 0 }, { opacity: 1 }], 
       { 
         duration,
@@ -137,16 +149,16 @@ export class MotionAccessibility {
     );
   }
 
-  // Fade out with respect to motion preferences
-  public safeFadeOut(element: HTMLElement, duration: number = 300): Promise<void> {
+  safeFadeOut(element: HTMLElement, duration: number = 300): Promise<void> {
     return new Promise((resolve) => {
-      if (this.respectsReducedMotion) {
+      if (this.reduced) {
         element.style.opacity = '0';
         resolve();
         return;
       }
 
-      this.safeAnimate(element,
+      this.safeAnimate(
+        element,
         [{ opacity: 1 }, { opacity: 0 }],
         {
           duration,
@@ -154,21 +166,21 @@ export class MotionAccessibility {
           onComplete: () => {
             element.style.opacity = '0';
             resolve();
-          }
+          },
+          onCancel: () => resolve()
         }
       );
     });
   }
 
-  // Slide in from direction
-  public safeSlideIn(element: HTMLElement, direction: 'left' | 'right' | 'up' | 'down', duration: number = 300): void {
-    if (this.respectsReducedMotion) {
+  safeSlideIn(element: HTMLElement, direction: 'left' | 'right' | 'up' | 'down', duration: number = 300): void {
+    if (this.reduced) {
       element.style.transform = 'none';
       element.style.opacity = '1';
       return;
     }
 
-    const transforms = {
+    const transforms: Record<typeof direction, { from: string; to: string }> = {
       left: { from: 'translateX(-100%)', to: 'translateX(0)' },
       right: { from: 'translateX(100%)', to: 'translateX(0)' },
       up: { from: 'translateY(-100%)', to: 'translateY(0)' },
@@ -179,7 +191,8 @@ export class MotionAccessibility {
     element.style.transform = transform.from;
     element.style.opacity = '0';
 
-    this.safeAnimate(element,
+    this.safeAnimate(
+      element,
       [
         { transform: transform.from, opacity: 0 },
         { transform: transform.to, opacity: 1 }
@@ -195,16 +208,15 @@ export class MotionAccessibility {
     );
   }
 
-  // Scale animation
-  public safeScale(element: HTMLElement, from: number = 0, to: number = 1, duration: number = 300): void {
-    if (this.respectsReducedMotion) {
+  safeScale(element: HTMLElement, from: number = 0, to: number = 1, duration: number = 300): void {
+    if (this.reduced) {
       element.style.transform = `scale(${to})`;
       return;
     }
 
     element.style.transform = `scale(${from})`;
-
-    this.safeAnimate(element,
+    this.safeAnimate(
+      element,
       [
         { transform: `scale(${from})` },
         { transform: `scale(${to})` }
@@ -219,58 +231,235 @@ export class MotionAccessibility {
     );
   }
 
-  // Get current motion preferences
-  public getMotionPreferences(): MotionPreferences {
-    return {
-      respectsReducedMotion: this.respectsReducedMotion,
-      userOverride: this.motionToggle?.checked || undefined
+  registerToggles(selector?: string): void {
+    if (this.destroyed || typeof document === 'undefined') return;
+
+    const selectorString = selector ?? this.options.toggleSelector ?? DEFAULT_TOGGLE_SELECTOR;
+    if (!selectorString) return;
+
+    const toggles = Array.from(document.querySelectorAll<HTMLInputElement>(selectorString));
+    toggles.forEach((toggle) => this.attachToggle(toggle));
+  }
+
+  destroy(): void {
+    if (this.destroyed) return;
+    this.destroyed = true;
+
+    if (this.mediaQuery && this.mediaQueryHandler) {
+      if ('removeEventListener' in this.mediaQuery) {
+        this.mediaQuery.removeEventListener('change', this.mediaQueryHandler);
+      } else if ('removeListener' in this.mediaQuery) {
+        // @ts-expect-error older browsers
+        this.mediaQuery.removeListener(this.mediaQueryHandler);
+      }
+    }
+
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
+    }
+
+    this.toggles.forEach((handler, toggle) => {
+      toggle.removeEventListener('change', handler);
+    });
+    this.toggles.clear();
+
+    const root = document.documentElement;
+    const body = document.body;
+    root.style.removeProperty('--animation-duration');
+    root.style.removeProperty('--transition-duration');
+    delete root.dataset.motionPreference;
+    delete root.dataset.motionEffective;
+    body.classList.remove('reduced-motion');
+  }
+
+  private resolveInitialPreference(): MotionPreference {
+    if (typeof window === 'undefined') {
+      return 'system';
+    }
+
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY) as MotionPreference | null;
+      if (stored === 'reduce' || stored === 'allow') {
+        return stored;
+      }
+    } catch (error) {
+      console.warn('Unable to read saved motion preference', error);
+    }
+
+    return 'system';
+  }
+
+  private computeEffectiveReduction(preference: MotionPreference): boolean {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+
+    if (preference === 'reduce') {
+      return true;
+    }
+
+    if (preference === 'allow') {
+      return false;
+    }
+
+    if (!this.mediaQuery) {
+      this.mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    }
+
+    return this.mediaQuery?.matches ?? false;
+  }
+
+  private applyPreference({ announce = true }: { announce?: boolean } = {}): void {
+    if (typeof document === 'undefined') return;
+
+    const root = document.documentElement;
+    const body = document.body;
+    const reduce = this.reduced;
+
+    root.dataset.motionPreference = this.preference;
+    root.dataset.motionEffective = reduce ? 'reduce' : 'allow';
+
+    if (reduce) {
+      root.style.setProperty('--animation-duration', '0.01ms');
+      root.style.setProperty('--transition-duration', '0.01ms');
+      body.classList.add('reduced-motion');
+    } else {
+      root.style.removeProperty('--animation-duration');
+      root.style.removeProperty('--transition-duration');
+      body.classList.remove('reduced-motion');
+    }
+
+    if (announce) {
+      this.announce(
+        reduce
+          ? 'Animations disabled for better accessibility'
+          : 'Animations enabled'
+      );
+    }
+  }
+
+  private setupLiveRegion(): void {
+    if (typeof document === 'undefined') return;
+
+    const id = this.options.liveRegionId ?? DEFAULT_LIVE_REGION_ID;
+    let region = document.getElementById(id);
+
+    if (!region) {
+      region = document.createElement('div');
+      region.id = id;
+      region.setAttribute('role', 'status');
+      region.setAttribute('aria-live', 'polite');
+      region.setAttribute('aria-atomic', 'true');
+      region.className = 'sr-only';
+      document.body.appendChild(region);
+    }
+
+    this.liveRegion = region;
+  }
+
+  private announce(message: string): void {
+    if (!this.liveRegion) {
+      this.setupLiveRegion();
+    }
+
+    try {
+      if (this.liveRegion) {
+        this.liveRegion.textContent = message;
+      }
+    } catch (error) {
+      console.warn('Motion accessibility announcement failed', error);
+    }
+  }
+
+  private setupMediaQuery(): void {
+    if (typeof window === 'undefined' || !('matchMedia' in window)) {
+      return;
+    }
+
+    this.mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handler = (event: MediaQueryListEvent) => {
+      if (this.preference !== 'system') return;
+      this.reduced = event.matches;
+      this.applyPreference();
+      this.syncToggleStates();
     };
-  }
 
-  // Set motion preferences programmatically
-  public setMotionPreferences(preferences: Partial<MotionPreferences>): void {
-    if (preferences.respectsReducedMotion !== undefined) {
-      this.respectsReducedMotion = preferences.respectsReducedMotion;
-      this.updateAnimations();
+    if ('addEventListener' in this.mediaQuery) {
+      this.mediaQuery.addEventListener('change', handler);
+    } else if ('addListener' in this.mediaQuery) {
+      // @ts-expect-error older browsers
+      this.mediaQuery.addListener(handler);
     }
 
-    if (preferences.userOverride !== undefined && this.motionToggle) {
-      this.motionToggle.checked = !preferences.userOverride;
+    this.mediaQueryHandler = handler;
+  }
+
+  private setupToggleObserver(): void {
+    if (typeof MutationObserver === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
+    this.observer = new MutationObserver(() => {
+      this.registerToggles();
+    });
+
+    this.observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  private attachToggle(toggle: HTMLInputElement): void {
+    if (this.toggles.has(toggle)) return;
+
+    const handler = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      const preference: MotionPreference = target.checked ? 'allow' : 'reduce';
+      this.setPreference(preference);
+    };
+
+    toggle.checked = !this.reduced;
+    toggle.setAttribute('data-motion-state', this.reduced ? 'reduced' : 'allowed');
+    toggle.addEventListener('change', handler);
+    this.toggles.set(toggle, handler);
+  }
+
+  private syncToggleStates(): void {
+    this.toggles.forEach((handler, toggle) => {
+      toggle.checked = !this.reduced;
+      toggle.setAttribute('data-motion-state', this.reduced ? 'reduced' : 'allowed');
+    });
+  }
+
+  private persistPreference(): void {
+    if (typeof window === 'undefined') return;
+
+    try {
+      if (this.preference === 'system') {
+        window.localStorage.removeItem(STORAGE_KEY);
+      } else {
+        window.localStorage.setItem(STORAGE_KEY, this.preference);
+      }
+    } catch (error) {
+      console.warn('Failed to persist motion preference', error);
     }
   }
 
-  // Check if motion is currently reduced
-  public isMotionReduced(): boolean {
-    return this.respectsReducedMotion;
-  }
+  private injectCSS(): void {
+    if (typeof document === 'undefined') return;
+    const existing = document.getElementById('motion-accessibility-styles');
+    if (existing) return;
 
-  // Add CSS for reduced motion support
-  private injectMotionCSS(): void {
-    const motionCSS = `
-      /* Respect user's motion preferences */
+    const style = document.createElement('style');
+    style.id = 'motion-accessibility-styles';
+    style.textContent = `
       @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
+        *, *::before, *::after {
           animation-duration: 0.01ms !important;
           animation-iteration-count: 1 !important;
           transition-duration: 0.01ms !important;
           scroll-behavior: auto !important;
         }
-        
-        /* Disable parallax and transform animations */
-        .parallax {
-          transform: none !important;
-        }
-        
-        .animate-float,
-        .animate-fade-in,
-        .animate-bounce {
-          animation: none !important;
-        }
       }
 
-      /* For users who have explicitly enabled reduced motion */
       .reduced-motion *,
       .reduced-motion *::before,
       .reduced-motion *::after {
@@ -280,30 +469,27 @@ export class MotionAccessibility {
       }
     `;
 
-    const style = document.createElement('style');
-    style.textContent = motionCSS;
     document.head.appendChild(style);
   }
 }
 
-// Initialize motion accessibility
-export function initMotionAccessibility(): MotionAccessibility {
-  console.log('🚀 Initializing MotionAccessibility...');
-  const motionAccessibility = new MotionAccessibility();
-  
-  // Inject CSS
-  motionAccessibility['injectMotionCSS']();
-  
-  return motionAccessibility;
+let singletonController: MotionAccessibility | null = null;
+
+export function initMotionAccessibility(options: MotionAccessibilityOptions = {}): MotionAccessibilityController {
+  if (typeof window === 'undefined') {
+    throw new Error('initMotionAccessibility must be called in the browser');
+  }
+
+  if (singletonController) {
+    singletonController.registerToggles(options.toggleSelector);
+    return singletonController;
+  }
+
+  singletonController = new MotionAccessibility(options);
+  return singletonController;
 }
 
-// Auto-initialize if not in module context
-if (typeof window !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      (window as Window & { motionAccessibility?: MotionAccessibility }).motionAccessibility = initMotionAccessibility();
-    });
-  } else {
-    (window as Window & { motionAccessibility?: MotionAccessibility }).motionAccessibility = initMotionAccessibility();
-  }
-} 
+export function destroyMotionAccessibility(): void {
+  singletonController?.destroy();
+  singletonController = null;
+}

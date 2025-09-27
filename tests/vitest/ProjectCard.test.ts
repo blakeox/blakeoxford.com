@@ -16,27 +16,27 @@ describe('ProjectCard.astro file', () => {
     expect(content).toContain('<article');
   });
 
-  it('should include image with default src or dynamic src', () => {
-    expect(content).toContain('src={data.image || \'/assets/images/default-project.png\'}');
-    expect(content).toContain('\'/assets/images/default-project.png\'');
+  it('should configure image fallback and metadata', () => {
+  expect(content).toContain('const image = data?.image ?? \'/assets/images/blake-logo-fallback.png\';');
+    expect(content).toContain('alt={`${title} preview`}');
+    expect(content).toContain('loading="lazy"');
   });
 
-  it('should include project title link', () => {
-  // Link should use visible text for accessible name (no aria-label)
-  expect(content).toContain('<h3');
-  expect(content).toContain('href={`/projects/${slug}/`}');
-  expect(content).toContain('{data.title}');
-  expect(content).not.toContain('aria-label={`Project: ${data.title}`}');
+  it('should include project title link with aria-labelledby pattern', () => {
+    expect(content).toContain('<h3 id={`project-card-${slug}`}');
+    expect(content).toContain('href={`/projects/${slug}/`}');
+    expect(content).toContain('{title}');
+    expect(content).toContain('aria-labelledby={`project-card-${slug}`}');
   });
 
-  it('should render tags list with aria-label', () => {
-    expect(content).toContain('aria-label="Project tags"');
-    expect(content).toContain('<ul');
+  it('should render tags list with descriptive aria-label', () => {
+    expect(content).toContain('aria-label="Project focus areas"');
+    expect(content).toContain('<ul class="flex flex-wrap items-center');
   });
 
-  it('should have View Project button', () => {
-  // Visible CTA text should include the project title; no aria-label
-  expect(content).toContain('View Project: {data.title}');
-  expect(content).not.toContain('aria-label={`View ${data.title}`}');
+  it('should expose a visible CTA without extra aria-label', () => {
+    expect(content).toContain('<span class="inline-flex items-center gap-2 rounded-full bg-accent');
+    expect(content).toContain('Explore');
+    expect(content).not.toContain('aria-label={`View ${data.title}`}');
   });
 });

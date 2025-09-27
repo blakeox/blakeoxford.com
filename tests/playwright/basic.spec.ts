@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 // DEPRECATED: Covered by functional/navigation-search.journey.spec.ts and other focused specs.
 // Will be removed after stabilization.
-import { waitForIdle, waitForSearchOverlay, waitForSearchResults, waitForSearchResultItem } from '../utils/waits';
+import { waitForIdle, waitForSearchOverlay, waitForSearchResultItem } from '../utils/waits';
 test.describe.skip('Deprecated basic.spec.ts', () => {
 // ...existing code...
 
@@ -52,7 +52,7 @@ test.describe('Search functionality', () => {
     await expect(searchOverlay).toBeVisible();
     const searchInput = page.locator('#search-input');
     await searchInput.fill('project');
-    await waitForSearchResults(page);
+    await page.waitForSelector('[data-search-result], .search-result', { timeout: 4000 });
     await expect(searchInput).toHaveValue('project');
   });
 

@@ -199,18 +199,6 @@ export const loadFeature = async (feature: string) => {
 
 ```typescript
 // src/utils/performance.ts
-export class PerformanceMonitor {
-  private static metrics: Map<string, number> = new Map();
-  
-  static mark(name: string) {
-    performance.mark(`${name}-start`);
-  }
-  
-  static measure(name: string) {
-    performance.mark(`${name}-end`);
-    performance.measure(name, `${name}-start`, `${name}-end`);
-  }
-}
 ```
 
 ### 8. **CSS Architecture**

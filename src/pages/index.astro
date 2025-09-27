@@ -3,38 +3,18 @@ import Layout from '../layouts/BaseLayout.astro';
 import ProficiencyLogo from '../components/media/ProficiencyLogo.astro';
 import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
+import { getCollection } from 'astro:content';
 import { getFeaturedProjects, technologies, siteConfig } from '../config/data';
 
-// Manual blog post definitions (matching blog/index.astro)
-const blogPosts = [
-  {
-    slug: 'combating-legal-ai-hallucinations',
-    data: {
-      title: 'Combating Legal AI Hallucinations: How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research',
-      description: 'Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener.',
-      pubDate: new Date('2025-07-28'),
-      tags: ['AI', 'Legal Tech', 'Open Source'],
-      draft: false
-    }
-  },
-  {
-    slug: 'hello-world',
-    data: {
-      title: 'Hello World',
-      description: 'My first blog post using Astro Content Collections and MDX.',
-      pubDate: new Date('2025-05-19'),
-      tags: ['Blog', 'Astro'],
-      draft: false
-    }
-  }
-].filter(post => !post.data.draft)
- .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const blogPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .slice()
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Use centralized data management
-const featuredProjects = getFeaturedProjects(3);
+const featuredProjects = await getFeaturedProjects(3);
 
-// Get the latest blog post if available
-const latestBlogPost = blogPosts.length > 0 ? blogPosts[0] : null;
+// Select the most recent posts for homepage feature
+const recentBlogPosts = blogPosts.slice(0, 3);
 
 // Helper to derive optimized image component props from a full /assets/images path
 function deriveImageData(imgPath?: string) {
@@ -68,32 +48,58 @@ function deriveImageData(imgPath?: string) {
         <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
         </svg>
       </div>
-      <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10">
+  <div class="container mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         <div class="grid md:grid-cols-2 gap-12 items-center">
           <!-- Left: Text -->
-          <div class="order-2 md:order-1 animate-fadeIn">
-            <div class="prose lg:prose-xl dark:prose-invert">
-              <h1 class="not-prose font-heading font-bold text-h1 md:text-6xl text-foreground dark:text-foreground-light mb-6">
-                <span class="block">{siteConfig.author}</span>
-              </h1>
-              <p class="block text-lead mt-2 animate-fadeInUp text-foreground dark:text-foreground-light font-medium" style="animation-delay: 0.5s;">
-                {siteConfig.description}
-              </p>
-              <p class="animate-fadeInUp text-body text-foreground dark:text-foreground-light pl-4 border-l-4 border-accent dark:border-accent-dark border-solid">
-                {siteConfig.tagline}
-              </p>
+          <div class="order-2 md:order-1">
+            <div class="max-w-2xl space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+              <div class="space-y-3">
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-foreground/60 dark:text-foreground-light/60">
+                  Systems Architecture · Automation · Change Enablement
+                </p>
+                <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold text-foreground dark:text-foreground-light">
+                  {siteConfig.author}
+                </h1>
+                <p class="text-lg font-semibold text-foreground/85 dark:text-foreground-light/85">
+                  {siteConfig.description}
+                </p>
+              </div>
+
+              <div class="space-y-4 rounded-2xl border border-border/40 bg-background/95 p-4 sm:p-5 dark:bg-background-dark/80">
+                <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+                  {siteConfig.tagline}
+                </p>
+                <ul class="grid gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/55 sm:grid-cols-2">
+                  <li class="flex items-center gap-2">
+                    <span class="inline-flex size-1.5 rounded-full bg-accent"></span>
+                    Full-funnel transformation
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="inline-flex size-1.5 rounded-full bg-accent"></span>
+                    Analytics with adoption built-in
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="inline-flex size-1.5 rounded-full bg-accent"></span>
+                    Change enablement that sticks
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="inline-flex size-1.5 rounded-full bg-accent"></span>
+                    Cloud, automation, and governance
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6 animate-fadeInUp" style="animation-delay: 1.1s;">
+            <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6">
               <a
                 href="/contact/"
-                class="btn btn-primary mobile-tap-effect"
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
                 data-analytics="hero-cta"
               >
                 🤝 Let's Connect
               </a>
               <a
                 href="/assets/Resume.pdf"
-                class="btn btn-secondary mobile-tap-effect"
+                class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:text-accent-dark hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
                 download
               >
                 📄 Download Resume
@@ -101,7 +107,7 @@ function deriveImageData(imgPath?: string) {
             </div>
           </div>
           <!-- Right: Animated Profile Image -->
-          <div class="flex justify-center md:justify-end order-1 md:order-2 animate-fadeIn" style="animation-delay: 0.5s;">
+          <div class="flex justify-center md:justify-end order-1 md:order-2">
             <div class="relative">
               <!-- Decorative elements around the image -->
               <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-purple-500/30 blur-xl opacity-70 animate-pulse"></div>
@@ -121,9 +127,9 @@ function deriveImageData(imgPath?: string) {
                 />
               </div>
               <!-- Floating elements -->
-              <div class="absolute -top-4 -right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-background text-xl animate-float" style="animation-delay: 0.2s;">💡</div>
-              <div class="absolute -bottom-2 -left-4 w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-background text-xl animate-float" style="animation-delay: 0.8s;">🚀</div>
-              <div class="absolute top-1/2 -right-10 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-background text-lg animate-float" style="animation-delay: 1.4s;">☁️</div>
+              <div class="absolute -top-4 -right-4 w-10 h-10 bg-accent rounded-full flex items-center justify-center text-background text-lg animate-float">💡</div>
+              <div class="absolute -bottom-2 -left-4 w-8 h-8 bg-accent-dark rounded-full flex items-center justify-center text-background text-lg animate-float">🚀</div>
+              <div class="absolute top-1/2 -right-9 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-background text-base animate-float">☁️</div>
             </div>
           </div>
         </div>
@@ -131,53 +137,49 @@ function deriveImageData(imgPath?: string) {
     </section>
 
     <!-- Core expertise and significant achievements -->
-    <section id="resume-highlights" class="py-24 relative bg-gradient-to-br from-accent/5 to-background overflow-hidden">
+    <section id="resume-highlights" class="py-16 relative bg-gradient-to-br from-accent/5 to-background overflow-hidden">
       <!-- Curved divider at top -->
       <div class="absolute top-0 left-0 w-full overflow-hidden">
       </div>
-      <div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 relative z-10 pt-16">
-        <div class="max-w-2xl mx-auto mb-16">
+  <div class="container mx-auto px-6 sm:px-8 lg:px-12 relative z-10 pt-10">
+        <div class="max-w-2xl mx-auto mb-14">
           <h2 class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light text-center">Core expertise and significant achievements</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           <!-- Practice Management & RCM -->
-          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center mb-4">
-              <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-3 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-label="Calendar icon for Practice Management">
+              <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-2.5 mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-label="Calendar icon for Practice Management">
                   <title>Practice Management Calendar</title>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 class="text-xl font-bold">Practice Management & RCM</h3>
+              <h3 class="text-xl font-bold">Practice Management &amp; RCM</h3>
             </div>
             <div>
               <p class="text-foreground dark:text-foreground-light mb-2">End-to-end AdvancedMD implementation, including:</p>
-              <ul class="space-y-2 ml-6">
+              <ul class="space-y-2 ml-5">
                 <li class="flex items-start">
-                  <!-- Architecture Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                   System architecture and workflow design
                 </li>
                 <li class="flex items-start">
-                  <!-- Document Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   Comprehensive SOP development and documentation
                 </li>
                 <li class="flex items-start">
-                  <!-- Team/Training Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-4a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                   Cross-functional team training and certification
                 </li>
                 <li class="flex items-start">
-                  <!-- Compliance/Check Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                   Revenue cycle optimization and compliance assurance
@@ -186,41 +188,37 @@ function deriveImageData(imgPath?: string) {
             </div>
           </div>
           <!-- Cloud & SaaS -->
-          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center mb-4">
-              <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-3 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
+              <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-2.5 mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
               </div>
-              <h3 class="text-xl font-bold">Cloud & SaaS</h3>
+              <h3 class="text-xl font-bold">Cloud &amp; SaaS</h3>
             </div>
             <div>
               <p class="text-foreground dark:text-foreground-light mb-2">Comprehensive enterprise technology transformation:</p>
-              <ul class="space-y-2 ml-6">
+              <ul class="space-y-2 ml-5">
                 <li class="flex items-start">
-                  <!-- Migration Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4.5 h-4.5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                   </svg>
                   Google Workspace → Microsoft 365 migration for 180 users
                 </li>
                 <li class="flex items-start">
-                  <!-- Finance Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4.5 h-4.5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Sage Intacct financial platform implementation
                 </li>
                 <li class="flex items-start">
-                  <!-- Cloud/Device Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4.5 h-4.5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
                   </svg>
                   Azure/Intune endpoint management deployment
                 </li>
                 <li class="flex items-start">
-                  <!-- People/Learning Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  <svg class="w-4.5 h-4.5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                   </svg>
                   ADP Workforce Now and Cornerstone LMS integration
                 </li>
@@ -228,41 +226,37 @@ function deriveImageData(imgPath?: string) {
             </div>
           </div>
           <!-- Automation & Savings -->
-          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center mb-4">
-              <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-3 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+              <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-2.5 mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
               </div>
-              <h3 class="text-xl font-bold">Automation & Savings</h3>
+              <h3 class="text-xl font-bold">Automation &amp; Savings</h3>
             </div>
             <div>
               <p class="text-foreground dark:text-foreground-light mb-2">Multi-million-dollar overhead reduction via:</p>
-              <ul class="space-y-2 ml-6">
+              <ul class="space-y-2 ml-5">
                 <li class="flex items-start">
-                  <!-- Cloud Optimization Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   <span class="text-sm">Azure cloud infrastructure optimization</span>
                 </li>
                 <li class="flex items-start">
-                  <!-- Analytics Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                   <span class="text-sm">Power BI analytics and real-time dashboarding</span>
                 </li>
                 <li class="flex items-start">
-                  <!-- Workflow/AI Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
                   <span class="text-sm">Custom OpenAI workflow integrations</span>
                 </li>
                 <li class="flex items-start">
-                  <!-- Integration Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
@@ -272,41 +266,37 @@ function deriveImageData(imgPath?: string) {
             </div>
           </div>
           <!-- Data Analytics -->
-          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+          <div class="bg-surface dark:bg-surface rounded-xl shadow-xl p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl">
             <div class="flex items-center mb-4">
-              <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-3 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+              <div class="rounded-full bg-gradient-to-r from-emerald-500 to-purple-600 p-2.5 mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
               </div>
               <h3 class="text-xl font-bold">Data Analytics</h3>
             </div>
             <div>
               <p class="text-foreground dark:text-foreground-light mb-2">Comprehensive business intelligence solutions:</p>
-              <ul class="space-y-2 ml-6">
+              <ul class="space-y-2 ml-5">
                 <li class="flex items-start">
-                  <!-- Dashboard Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
                   </svg>
                   Real-time SQL/Power BI dashboards
                 </li>
                 <li class="flex items-start">
-                  <!-- Predictive/Chart Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   Predictive financial modeling systems
                 </li>
                 <li class="flex items-start">
-                  <!-- Decision/Support Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                   C-suite executive decision support frameworks
                 </li>
                 <li class="flex items-start">
-                  <!-- KPI/Performance Icon -->
-                  <svg class="w-5 h-5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
@@ -320,7 +310,7 @@ function deriveImageData(imgPath?: string) {
     </section>
 
     <!-- Technologies I Excel At Section -->
-  <section id="technologies" class="w-full py-16 text-center animate-fade-in bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark">
+  <section id="technologies" class="w-full py-16 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark">
       <h2 class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light">Technologies I Excel At</h2>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
         {technologies.map((tech) => {
@@ -354,57 +344,89 @@ function deriveImageData(imgPath?: string) {
     </section>
 
     <!-- Featured Projects Section -->
-    <section id="featured-projects" class="c-featured-projects container mx-auto px-4" aria-labelledby="featured-projects-title">
-  <h2 id="featured-projects-title" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light animate-fade-in text-center">Featured Projects</h2>
+  <section id="featured-projects" class="container mx-auto px-6 sm:px-8 lg:px-12" aria-labelledby="featured-projects-title">
+  <h2 id="featured-projects-title" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light text-center">Featured Projects</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {featuredProjects.map((project: any) => (
           <ProjectCard project={project} featured={true} />
         ))}
-      </div>        <div class="mt-8 text-center animate-fade-in">
-          <a href="/projects/" class="btn btn-secondary">View All Projects</a>
+      </div>        <div class="mt-8 text-center">
+          <a href="/projects/" class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:text-accent-dark hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2">View All Projects</a>
         </div>
     </section>
 
     <!-- Latest Blog Posts Section -->
-  <section class="w-full py-20 text-center animate-fade-in bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark" aria-labelledby="latest-blog-posts">
-      <div class="container mx-auto px-4">
+  <section class="w-full py-20 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark" aria-labelledby="latest-blog-posts">
+  <div class="container mx-auto px-6 sm:px-8 lg:px-12">
   <h2 id="latest-blog-posts" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light">Latest Blog Posts</h2>
-        <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {latestBlogPost ? (
-            <li class="bg-surface dark:bg-surface rounded-2xl shadow-xl p-6 animate-slide-up">
-              <a href={`/blog/${latestBlogPost.slug}`} class="block hover:scale-105 transition-transform duration-200">
-                <h3 class="text-h3 font-semibold mb-2">{latestBlogPost.data.title}</h3>
-                <time class="text-sm text-neutral" datetime={latestBlogPost.data.pubDate?.toISOString()}>
-                  {latestBlogPost.data.pubDate?.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </time>
-                <p class="mt-2 text-neutral">{latestBlogPost.data.description || 'Read this blog post to learn more.'}</p>
-              </a>
-            </li>
+        <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
+          {recentBlogPosts.length > 0 ? (
+            recentBlogPosts.map((post) => (
+              <li class="group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-6 shadow-xl transition-transform duration-200 hover:-translate-y-1 hover:shadow-2xl dark:bg-surface/80 dark:border-border-dark/40" role="listitem">
+                <a href={`/blog/${post.slug}/`} class="flex h-full flex-col gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">
+                  <header class="space-y-2">
+                    <time class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-foreground/55 dark:text-foreground-light/60" datetime={post.data.pubDate.toISOString()}>
+                      <span class="inline-flex h-1.5 w-1.5 rounded-full bg-accent"></span>
+                      {post.data.pubDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </time>
+                    <h3 class="text-xl font-semibold leading-snug text-foreground transition-colors duration-200 group-hover:text-accent dark:text-foreground-light">
+                      {post.data.title}
+                    </h3>
+                  </header>
+
+                  {post.data.description && (
+                    <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+                      {post.data.description}
+                    </p>
+                  )}
+
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <ul class="mt-auto flex flex-wrap gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/60" aria-label="Post tags" role="list">
+                      {post.data.tags.slice(0, 3).map((tag) => (
+                        <li class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/30 dark:bg-background-dark/70" role="listitem">
+                          {tag}
+                        </li>
+                      ))}
+                      {post.data.tags.length > 3 && (
+                        <li class="rounded-full bg-background/80 px-3 py-1 ring-1 ring-border/20 text-foreground/50 dark:bg-background-dark/60 dark:text-foreground-light/55" role="listitem">
+                          +{post.data.tags.length - 3}
+                        </li>
+                      )}
+                    </ul>
+                  )}
+
+                  <span class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-transform duration-200 group-hover:translate-x-1">
+                    Read article
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M5 12h14m-6-6 6 6-6 6" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+            ))
           ) : (
-            <li class="bg-surface dark:bg-surface rounded-2xl shadow-xl p-6 animate-slide-up">
-              <div class="block">
-                <h3 class="text-h3 font-semibold mb-2">Blog Post Title May</h3>
-                <time class="text-sm text-neutral" datetime="2025-05-21">May 21, 2025</time>
-                <p class="mt-2 text-neutral">A short excerpt or summary of the blog post goes here to entice the reader to click through and read more.</p>
-              </div>
+            <li class="rounded-2xl border border-dashed border-border/40 bg-background/90 p-6 text-center shadow-md dark:bg-background-dark/80">
+              <p class="text-sm text-foreground/70 dark:text-foreground-light/70">
+                Blog posts are on the way—check back soon for new case studies and playbooks.
+              </p>
             </li>
           )}
         </ul>
-        <div class="mt-8 text-center animate-fade-in">
-          <a href="/blog/" class="btn btn-primary">View All Blog Posts</a>
+        <div class="mt-8 text-center">
+          <a href="/blog/" class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">View All Blog Posts</a>
         </div>
       </div>
     </section>
 
     <!-- Call-to-Action Section -->
-    <section class="call-to-action container mx-auto px-4 text-center py-16 animate-fade-in">
+  <section class="container mx-auto px-6 sm:px-8 lg:px-12 text-center py-16">
   <h2 class="text-h2 font-bold mb-4 text-foreground dark:text-foreground-light flex items-center justify-center gap-2"><span>🤝</span> Want to Work Together?</h2>
       <p class="text-lg mb-6 text-neutral">I'm always open to exciting new opportunities and collaborations. Let's create something amazing together!</p>
-      <a href="/contact/" class="btn btn-primary">Contact Me</a>
+      <a href="/contact/" class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">Contact Me</a>
     </section>
   </div>
 </Layout>
