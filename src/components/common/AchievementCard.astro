@@ -6,15 +6,18 @@ export interface Props {
 
 const { title, achievements } = Astro.props;
 ---
-
-<div class="bg-surface-alt dark:bg-surface-alt-dark rounded-xl p-8">
-  <h3 class="text-2xl font-semibold mb-6 text-foreground">{title}</h3>
-  <ul class="space-y-4">
+<section class="flex flex-col gap-4 rounded-3xl border border-border/25 bg-surface/95 p-6 sm:p-7 shadow-sm">
+  <header class="space-y-2">
+    <p class="text-xs font-semibold uppercase tracking-[0.28em] text-foreground/55 dark:text-foreground-light/60">
+      Outcome thread
+    </p>
+    <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">
+      {title}
+    </h3>
+  </header>
+  <ul class="space-y-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
     {achievements.map((achievement) => (
-      <li class="flex items-start gap-3">
-        <span class="text-accent dark:text-accent-light font-bold">•</span>
-  <span class="text-lg text-foreground/80" set:html={achievement} />
-      </li>
+      <li class="flex items-start gap-3" set:html={'<span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent"></span>' + achievement}></li>
     ))}
   </ul>
-</div>
+</section>

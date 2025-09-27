@@ -3,7 +3,6 @@
 // Re-export all consolidated types from domain-specific files
 export * from './core';
 export * from './accessibility';
-export * from './analytics';
 export * from './dropdown';
 
 export interface ProjectData {

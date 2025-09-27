@@ -96,10 +96,10 @@ describe('NavBarMenu', () => {
             </button>
             <div id="mobile-menu" class="mobile-menu" style="display: none;">
               <ul class="nav-list">
-                <li><a href="/about" data-analytics="nav_about">About</a></li>
-                <li><a href="/projects" data-analytics="nav_projects">Projects</a></li>
-                <li><a href="/blog" data-analytics="nav_blog">Blog</a></li>
-                <li><a href="/contact" data-analytics="nav_contact">Contact</a></li>
+                <li><a href="/" data-analytics="nav_home">Home</a></li>
+                <li><a href="/about/" data-analytics="nav_about">About</a></li>
+                <li><a href="/projects/" data-analytics="nav_projects">Projects</a></li>
+                <li><a href="/contact/" data-analytics="nav_contact">Contact</a></li>
               </ul>
             </div>
             <button id="search-toggle" class="search-toggle" aria-label="Open search">
@@ -245,22 +245,22 @@ describe('NavBarMenu', () => {
       const navLinks = document.querySelectorAll('.nav-list a');
       
       expect(navLinks).toHaveLength(4);
-      expect(navLinks[0].getAttribute('href')).toBe('/about');
-      expect(navLinks[0].getAttribute('data-analytics')).toBe('nav_about');
-      expect(navLinks[1].getAttribute('href')).toBe('/projects');
-      expect(navLinks[1].getAttribute('data-analytics')).toBe('nav_projects');
-      expect(navLinks[2].getAttribute('href')).toBe('/blog');
-      expect(navLinks[2].getAttribute('data-analytics')).toBe('nav_blog');
-      expect(navLinks[3].getAttribute('href')).toBe('/contact');
+      expect(navLinks[0].getAttribute('href')).toBe('/');
+      expect(navLinks[0].getAttribute('data-analytics')).toBe('nav_home');
+      expect(navLinks[1].getAttribute('href')).toBe('/about/');
+      expect(navLinks[1].getAttribute('data-analytics')).toBe('nav_about');
+      expect(navLinks[2].getAttribute('href')).toBe('/projects/');
+      expect(navLinks[2].getAttribute('data-analytics')).toBe('nav_projects');
+      expect(navLinks[3].getAttribute('href')).toBe('/contact/');
       expect(navLinks[3].getAttribute('data-analytics')).toBe('nav_contact');
     });
 
     it('should have proper link text content', () => {
       const navLinks = document.querySelectorAll('.nav-list a');
       
-      expect(navLinks[0].textContent).toBe('About');
-      expect(navLinks[1].textContent).toBe('Projects');
-      expect(navLinks[2].textContent).toBe('Blog');
+      expect(navLinks[0].textContent).toBe('Home');
+      expect(navLinks[1].textContent).toBe('About');
+      expect(navLinks[2].textContent).toBe('Projects');
       expect(navLinks[3].textContent).toBe('Contact');
     });
   });

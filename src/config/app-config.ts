@@ -21,23 +21,6 @@ const AccessibilityConfigSchema = z.object({
   savePreferences: z.boolean().default(true),
 });
 
-const AnalyticsConfigSchema = z.object({
-  enabled: z.boolean().default(true), 
-  debug: z.boolean().default(false),
-  enableTracking: z.boolean().default(true),
-  respectDNT: z.boolean().default(true),
-  anonymizeIP: z.boolean().default(true),
-  trackPerformance: z.boolean().default(true),
-  trackErrors: z.boolean().default(true),
-  trackUserJourney: z.boolean().default(true),
-  trackPageViews: z.boolean().default(true),
-  trackClicks: z.boolean().default(true),
-  trackScroll: z.boolean().default(false),
-  excludeSelectors: z.array(z.string()).default([]),
-  providers: z.array(z.enum(['gtag', 'plausible', 'fathom', 'clarity'])).default([]),
-  debugMode: z.boolean().default(false),
-});
-
 const DropdownConfigSchema = z.object({
   enabled: z.boolean().default(true),
   debug: z.boolean().default(false),  
@@ -57,22 +40,11 @@ const SearchConfigSchema = z.object({
   keys: z.array(z.string()).default(['title', 'content', 'tags']),
 });
 
-const PerformanceConfigSchema = z.object({
-  enabled: z.boolean().default(true),
-  debug: z.boolean().default(false),
-  monitorCoreWebVitals: z.boolean().default(true),
-  monitorResources: z.boolean().default(true),
-  monitorJavaScript: z.boolean().default(true),
-  reportingInterval: z.number().default(30000), // 30 seconds
-});
-
 // Main application configuration schema
 const AppConfigSchema = z.object({
   accessibility: AccessibilityConfigSchema,
-  analytics: AnalyticsConfigSchema,
   dropdown: DropdownConfigSchema,
   search: SearchConfigSchema,
-  performance: PerformanceConfigSchema,
   
   // Global settings
   environment: z.enum(['development', 'staging', 'production']).default('development'),
@@ -87,10 +59,8 @@ const AppConfigSchema = z.object({
 // Type inference from Zod schemas
 export type AppConfig = z.infer<typeof AppConfigSchema>;
 export type AccessibilityConfig = z.infer<typeof AccessibilityConfigSchema>;
-export type AnalyticsConfig = z.infer<typeof AnalyticsConfigSchema>;
 export type DropdownConfig = z.infer<typeof DropdownConfigSchema>;
 export type SearchConfig = z.infer<typeof SearchConfigSchema>;
-export type PerformanceConfig = z.infer<typeof PerformanceConfigSchema>;
 
 // Configuration validation
 export const validateConfig = (config: unknown): AppConfig => {
@@ -113,14 +83,11 @@ export const createConfig = (overrides: Partial<AppConfig> = {}): AppConfig => {
     
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       envOverrides.environment = 'development';
-      envOverrides.analytics = { ...baseConfig.analytics, debug: true };
-      envOverrides.performance = { ...baseConfig.performance, debug: true };
+      
     } else if (hostname.includes('staging') || hostname.includes('preview')) {
       envOverrides.environment = 'staging';
     } else {
       envOverrides.environment = 'production';
-      envOverrides.analytics = { ...baseConfig.analytics, debug: false };
-      envOverrides.performance = { ...baseConfig.performance, debug: false };
     }
   }
   
@@ -215,40 +182,6 @@ export class ConfigManager {
   getOptimizedConfig(): AppConfig {
     const config = this.getConfig();
     
-    if (config.environment === 'production') {
-      return {
-        ...config,
-        analytics: {
-          ...config.analytics,
-          debug: false,
-          trackPerformance: true,
-          trackErrors: true
-        },
-        performance: {
-          ...config.performance,
-          debug: false,
-          monitorCoreWebVitals: true,
-          reportingInterval: 60000
-        }
-      };
-    }
-    
-    if (config.environment === 'development') {
-      return {
-        ...config,
-        analytics: {
-          ...config.analytics,
-          debug: true,
-          trackPerformance: true
-        },
-        performance: {
-          ...config.performance,
-          debug: true,
-          reportingInterval: 10000
-        }
-      };
-    }
-    
     return config;
   }
 
@@ -257,20 +190,12 @@ export class ConfigManager {
     return this.config.accessibility;
   }
   
-  getAnalyticsConfig(): AnalyticsConfig {
-    return this.config.analytics;
-  }
-  
   getDropdownConfig(): DropdownConfig {
     return this.config.dropdown;
   }
   
   getSearchConfig(): SearchConfig {
     return this.config.search;
-  }
-  
-  getPerformanceConfig(): PerformanceConfig {
-    return this.config.performance;
   }
 
   private findChangedKeys(oldConfig: AppConfig, newConfig: AppConfig): string[] {

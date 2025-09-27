@@ -13,13 +13,7 @@ export default defineConfig({
   },
   plugins: [react()],
   test: {
-    environment: 'jsdom',
-    environmentOptions: {
-      jsdom: {
-        url: 'http://localhost:3000',
-        pretendToBeVisual: true,
-      },
-    },
+    environment: 'happy-dom',
     globals: true,
     setupFiles: './vitest.setup.ts',
   include: ['tests/**/*.test.{ts,tsx}'],

@@ -1,8 +1,8 @@
 import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
-import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 
@@ -14,6 +14,7 @@ export default defineConfig({
   envPrefix: 'PUBLIC_',
   site: 'https://blakeoxford.com',
   integrations: [
+    react(),
     mdx(),
     sitemap(),
   // Gate astro-compress to avoid long hooks in CI builds
@@ -31,18 +32,15 @@ export default defineConfig({
   },
   vite: {
     build: {
-      minify: true,
       rollupOptions: {
         output: {
           manualChunks(id) {
-            // Put all node_modules into a single vendor chunk
             if (id.includes('node_modules')) return 'vendor';
             return undefined;
           }
         }
       }
     },
-    plugins: [tailwindcss()],
     resolve: {
       alias: {
         '@': resolve(__dirname, './src')

@@ -86,6 +86,7 @@ test.describe('@accessibility-extended Contrast Ratios', () => {
           };
           return { fg: normalize(cs.color), bg: normalize(cs.backgroundColor), size: cs.fontSize, weight: cs.fontWeight };
         });
+        console.log(`[hero-cta] route=${route} fg=${colors.fg} bg=${colors.bg} size=${colors.size} weight=${colors.weight}`);
         const toRGB = (raw:string) => {
           const m = raw.match(/rgb[a]?\(\s*(\d+)\s*(?:,|\s)\s*(\d+)\s*(?:,|\s|\/)\s*(\d+)/i);
           if (m) return [parseInt(m[1],10), parseInt(m[2],10), parseInt(m[3],10)];

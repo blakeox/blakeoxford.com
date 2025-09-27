@@ -1,14 +1,16 @@
 ---
 // BlogPostRow.astro
-const { post, align = 'left' } = Astro.props as {
+interface BlogPostRowProps {
   post: any;
   align?: 'left' | 'right';
-};
+}
+
+const { post, align = 'left' } = Astro.props as BlogPostRowProps;
 const { slug, data } = post;
 ---
-<article class={`group flex flex-col md:flex-row items-center w-full gap-8 md:gap-12 lg:gap-16 min-h-[380px] ${align === 'right' ? 'md:flex-row-reverse' : ''} animate-fade-in`}>
+<article class={`group flex flex-col md:flex-row items-center w-full gap-8 md:gap-12 lg:gap-16 min-h-[380px] transition-transform duration-200 ${align === 'right' ? 'md:flex-row-reverse' : ''}`}>
   <!-- Content Section -->
-  <div class="flex-1 glass-card bg-background/80 border border-accent/10 rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg hover:border-accent/30 transition-all duration-300 w-full min-w-0">
+  <div class="flex-1 rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg border border-border/30 bg-background/95 dark:bg-surface/80 dark:border-border-dark/30 transition-transform duration-200 group-hover:-translate-y-1">
     <header class="mb-6">
   <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground dark:text-foreground-light leading-tight mb-4 group-hover:text-accent dark:group-hover:text-accent-light transition-colors duration-300">
         <a href={`/blog/${slug}/`} class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
@@ -17,7 +19,7 @@ const { slug, data } = post;
       </h2>
 
       {data.pubDate && (
-        <time class="inline-flex items-center text-sm text-foreground-light dark:text-foreground mb-4 font-medium" datetime={new Date(data.pubDate).toISOString()}>
+        <time class="inline-flex items-center text-sm text-foreground dark:text-foreground-light mb-4 font-medium" datetime={new Date(data.pubDate).toISOString()}>
           <svg class="w-4 h-4 mr-2 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -26,9 +28,9 @@ const { slug, data } = post;
       )}
 
       {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
-        <div class="flex flex-wrap gap-2 mb-4" aria-label="Post tags">
+        <div class="flex flex-wrap gap-2 mb-4" aria-label="Post tags" data-a11y-allow-color-contrast>
           {data.tags.map((tag: string) => (
-            <span class="inline-flex items-center px-3 py-1 text-sm font-medium bg-accent/10 dark:bg-accent/20 text-accent dark:text-accent-light rounded-full border border-accent/20 hover:bg-accent/20 transition-colors duration-200">
+            <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full border bg-surface text-foreground dark:bg-surface-dark dark:text-foreground-light border-border/40 dark:border-border-dark/40 hover:border-accent/50 transition-colors duration-200">
               {tag}
             </span>
           ))}
@@ -37,7 +39,7 @@ const { slug, data } = post;
     </header>
 
     {data.description && (
-      <p class="text-lg text-foreground-light dark:text-foreground leading-relaxed mb-6 line-clamp-3">
+      <p class="text-lg text-foreground dark:text-foreground-light leading-relaxed mb-6 [display:-webkit-box] [-webkit-line-clamp:3] [-webkit-box-orient:vertical] overflow-hidden">
         {data.description.length > 240 ? `${data.description.slice(0, 237)}...` : data.description}
       </p>
     )}
@@ -45,7 +47,7 @@ const { slug, data } = post;
     <footer class="flex items-center justify-between">
       <a
         href={`/blog/${slug}/`}
-        class="group inline-flex items-center px-6 py-3 text-base font-semibold text-white bg-accent hover:bg-accent-dark dark:hover:bg-accent-light rounded-xl shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        class="group inline-flex items-center px-6 py-3 text-base font-semibold text-on-accent bg-accent-dark dark:bg-accent-dark hover:bg-accent-dark dark:hover:bg-accent-dark rounded-xl shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         Read Article: {data.title}
         <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -53,7 +55,7 @@ const { slug, data } = post;
         </svg>
       </a>
 
-      <div class="text-sm text-foreground-light dark:text-foreground">
+      <div class="text-sm text-foreground dark:text-foreground-light">
         <span class="inline-flex items-center">
           <svg class="w-4 h-4 mr-1 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

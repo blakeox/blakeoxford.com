@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import { BlogApiSchemaArray, ProjectsApiSchema } from '../../../src/config/apiSchemas.ts';
+import { ProjectsApiSchema } from '../../../src/config/apiSchemas.ts';
 
 interface Baseline { source: string; schemaVersion: number; entries: any[] }
 
@@ -60,7 +60,6 @@ function normalizeEntries(entries: any[]) {
 
 describe('API Snapshot Baselines', () => {
   const cases = [
-    { name: 'blog', rel: 'public/api/blog.json', schema: BlogApiSchemaArray },
     { name: 'projects', rel: 'public/api/projects.json', schema: ProjectsApiSchema }
   ];
 
@@ -71,14 +70,8 @@ describe('API Snapshot Baselines', () => {
   const normalized = normalizeEntries(parsed);
       const baseline = loadBaseline(c.name);
       if (!baseline || !baseline.entries.length) {
-        // Allow empty initial dataset (e.g., blog may have zero posts during early content stages).
         writeBaseline(c.name, { source: c.rel, schemaVersion: 1, entries: normalized });
-        // Only enforce > 0 for collections that are expected to exist (projects typically non-empty).
-        if (c.name !== 'blog') {
-          expect(normalized.length).toBeGreaterThan(0);
-        } else {
-          expect(normalized.length).toBeGreaterThanOrEqual(0);
-        }
+        expect(normalized.length).toBeGreaterThan(0);
         return;
       }
       if (process.env.UPDATE_API_BASELINES === '1') {

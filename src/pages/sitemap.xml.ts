@@ -1,10 +1,13 @@
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
 export async function GET() {
   const site = 'https://blakeoxford.com';
   const staticUrls = [
     { loc: '/', changefreq: 'weekly', priority: 1.0 },
     { loc: '/about/', changefreq: 'monthly', priority: 0.8 },
-    { loc: '/blog', changefreq: 'weekly', priority: 0.9 },
-    { loc: '/projects', changefreq: 'monthly', priority: 0.7 },
+    { loc: '/blog/', changefreq: 'weekly', priority: 0.9 },
+    { loc: '/projects/', changefreq: 'monthly', priority: 0.7 },
     { loc: '/contact/', changefreq: 'yearly', priority: 0.5 },
   ];
 
@@ -19,10 +22,13 @@ export async function GET() {
     { loc: '/projects/Microsoft-Fabric/', changefreq: 'monthly', priority: 0.6 },
   ];
 
-  // Individual blog post pages (since they're now Astro pages, not MDX)
-  const blogPages = [
-    { loc: '/blog/hello-world/', changefreq: 'monthly', priority: 0.7 },
-  ];
+  // Individual blog post pages from content collection
+  const blogEntries = await getCollection('blog', ({ data }) => !data.draft);
+  const blogPages = blogEntries.map((post: CollectionEntry<'blog'>) => ({
+    loc: `/blog/${post.slug}/`,
+    changefreq: 'monthly',
+    priority: 0.7,
+  }));
 
   const urls = [
     ...staticUrls.map((u) => ({

@@ -1,6 +1,5 @@
 import { cpSync, existsSync, writeFileSync, readdirSync, statSync, unlinkSync, mkdirSync } from 'node:fs';
 import { join, extname } from 'node:path';
-import { readFileSync } from 'node:fs';
 
 const dist = join(process.cwd(), 'dist');
 
@@ -35,43 +34,9 @@ try {
   // non-blocking cleanup
 }
 
-// Remove legacy standalone JS files that were consolidated into core-boot.js
-try {
-  const legacyJs = [
-    'assets/js/performance-monitor.js',
-    'assets/js/pwa-enhancer.js',
-    'assets/js/resource-preloader.js',
-  ];
-  for (const rel of legacyJs) {
-    const p = join(dist, rel);
-    if (existsSync(p)) {
-      unlinkSync(p);
-      console.log(`Removed legacy JS: dist/${rel}`);
-    }
-  }
-} catch {
-  // ignore cleanup errors
-}
+// No legacy monolithic bundles remain; islands handle progressive enhancements
 
-// Build a combined search index at dist/search/index.json for quality gate
-try {
-  const searchDir = join(dist, 'search');
-  const blogPath = join(searchDir, 'blog.json');
-  const projectsPath = join(searchDir, 'projects.json');
-  if (existsSync(blogPath) && existsSync(projectsPath)) {
-    const blog = JSON.parse(readFileSync(blogPath, 'utf8'));
-    const projects = JSON.parse(readFileSync(projectsPath, 'utf8'));
-    const combined = [
-      ...projects.map((p) => ({ ...p, type: 'project' })),
-      ...blog.map((b) => ({ ...b, type: 'blog' })),
-    ];
-    mkdirSync(searchDir, { recursive: true });
-    writeFileSync(join(searchDir, 'index.json'), JSON.stringify(combined, null, 2));
-    console.log('Created dist/search/index.json');
-  }
-} catch {
-  // non-blocking; skip if search files not present
-}
+// Combined search index built via content generator; nothing else to do here.
 
 // Ensure WebP/AVIF siblings for proficiency logos exist alongside PNGs in dist
 try {
@@ -117,17 +82,4 @@ try {
   // ignore cleanup errors
 }
 
-// Ensure the final build includes the full Fuse.js distribution for search (override placeholder)
-try {
-  const fuseSrc = join(process.cwd(), 'node_modules', 'fuse.js', 'dist', 'fuse.min.js');
-  const fuseDestDir = join(dist, 'assets', 'js');
-  if (existsSync(fuseSrc)) {
-    mkdirSync(fuseDestDir, { recursive: true });
-    cpSync(fuseSrc, join(fuseDestDir, 'fuse.min.js'));
-    console.log('Copied Fuse.js -> dist/assets/js/fuse.min.js');
-  } else {
-    console.warn('Fuse.js distribution not found, skipping copy');
-  }
-} catch {
-  // non-blocking; search overlay has a lightweight fallback
-}
+// Fuse.js is no longer bundled; search overlay lazy-loads a module via CDN
