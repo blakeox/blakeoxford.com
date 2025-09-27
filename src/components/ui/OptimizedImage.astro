@@ -2,19 +2,8 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
-type StaticImage = {
-  src: ImageMetadata;
-  alt: string;
-  class?: string;
-  loading?: 'lazy' | 'eager';
-  priority?: boolean;
-  width?: number;
-  height?: number;
-  quality?: number;
-};
-
-type ExternalImage = {
-  src: string;
+export type Props = {
+  src: string | ImageMetadata;
   alt: string;
   width?: number;
   height?: number;
@@ -23,8 +12,6 @@ type ExternalImage = {
   priority?: boolean;
   quality?: number;
 };
-
-type Props = StaticImage | ExternalImage;
 
 const props = Astro.props as Props;
 const {

@@ -8,13 +8,24 @@ import ProjectTags from '../../components/features/projects/ProjectTags.astro';
 import MetricsTable from '../../components/common/MetricsTable.astro';
 
 const entry = await getEntry('projects', 'advancedmd-implementation');
-
-const { data, body } = entry;
+if (!entry) {
+  throw new Error('Project not found: advancedmd-implementation');
+}
+const { data } = entry;
 const title = data.title;
-const description = data.subtitle ?? data.description ?? '';
-const date = new Date(data.date);
+const description = data.description ?? '';
+const date = data.date ? new Date(data.date) : new Date();
 const canonicalUrl = `https://blakeoxford.com/projects/${entry.slug}/`;
-const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
+const heroImage = (data as any).heroImage ?? '/assets/images/blake-logo-fallback.png';
+// Optional fields with runtime guards to satisfy strict typing and schema evolution
+const hasMetrics = 'metrics' in data && Array.isArray((data as any).metrics) && (data as any).metrics.length > 0;
+const metrics = hasMetrics ? ((data as any).metrics as Array<{ metric: string; result: string; timeline: string }>) : [];
+const hasJourney = 'journey' in data && Array.isArray((data as any).journey) && (data as any).journey.length > 0;
+const journey = hasJourney ? ((data as any).journey as string[]) : [];
+const hasLessons = 'lessons' in data && Array.isArray((data as any).lessons) && (data as any).lessons.length > 0;
+const lessons = hasLessons ? ((data as any).lessons as Array<{ title: string; description: string }>) : [];
+const reflection = 'reflection' in data ? ((data as any).reflection as string | undefined) : undefined;
+const { Content } = await entry.render();
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} image={heroImage} wide>
@@ -23,8 +34,10 @@ const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
   <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
     <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
     <div class="relative mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
-      <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.subtitle}>
-        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/82" set:html={body} />
+      <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.description}>
+        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/82">
+          <Content />
+        </div>
       </ProjectDetailSection>
 
       {data.highlights?.length ? (
@@ -33,13 +46,13 @@ const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
         </ProjectDetailSection>
       ) : null}
 
-      {(data.metrics?.length || data.impact?.length) ? (
+      {(hasMetrics || data.impact?.length) ? (
         <ProjectDetailSection title="Impact signals" eyebrow="Proof of traction" layout="surface">
           <div class="flex flex-col gap-6">
-            {data.metrics?.length ? <MetricsTable metrics={data.metrics} /> : null}
+            {hasMetrics ? <MetricsTable metrics={metrics} /> : null}
             {data.impact?.length ? (
               <ul class="flex flex-col gap-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
-                {data.impact.map((item) => (
+                {(data.impact ?? []).map((item: string) => (
                   <li class="flex items-start gap-3">
                     <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
                     <span>{item}</span>
@@ -51,10 +64,10 @@ const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
         </ProjectDetailSection>
       ) : null}
 
-      {data.journey?.length ? (
+      {hasJourney ? (
         <ProjectDetailSection title="Journey" eyebrow="How it unfolded">
           <ul class="space-y-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
-            {data.journey.map((item) => (
+            {journey.map((item: string) => (
               <li class="flex items-start gap-3">
                 <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
                 <span set:html={item} />
@@ -64,10 +77,10 @@ const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
         </ProjectDetailSection>
       ) : null}
 
-      {data.lessons?.length ? (
+      {hasLessons ? (
         <ProjectDetailSection title="Lessons" eyebrow="What stuck" layout="surface">
           <div class="grid gap-4 sm:grid-cols-2">
-            {data.lessons.map((lesson) => (
+            {lessons.map((lesson: { title: string; description: string }) => (
               <article class="flex flex-col gap-2 rounded-2xl border border-border/25 bg-background/95 p-4 shadow-sm">
                 <h3 class="text-lg font-semibold text-foreground dark:text-foreground-light">{lesson.title}</h3>
                 <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{lesson.description}</p>
@@ -77,10 +90,10 @@ const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
         </ProjectDetailSection>
       ) : null}
 
-      {data.reflection ? (
+      {reflection ? (
         <ProjectDetailSection title="Reflection" eyebrow="Personal note">
           <blockquote class="border-l-4 border-accent/80 bg-surface-subtle/80 p-6 text-base italic leading-relaxed text-foreground/78 dark:bg-surface-dark-subtle dark:text-foreground-light/82">
-            {data.reflection}
+            {reflection}
           </blockquote>
         </ProjectDetailSection>
       ) : null}

@@ -10,6 +10,7 @@ export default function ThemeInitIsland() {
     const theme = stored || (prefersDark ? 'dark' : 'light');
     const root = document.documentElement;
     root.dataset.theme = theme;
+  if (theme === 'dark') { root.classList.add('dark'); } else { root.classList.remove('dark'); }
     root.style.colorScheme = theme;
     localStorage.setItem(key, theme);
   } catch (error) {

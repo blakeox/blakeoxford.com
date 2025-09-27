@@ -98,7 +98,8 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         id="navbar"
         ref={navRef}
         className="mx-auto flex h-16 w-full max-w-[110rem] items-center justify-between px-4 sm:px-6 lg:px-8"
-        aria-label="Main navigation"
+        role="navigation"
+        aria-label="Main Navigation"
       >
         <div className="brand-section flex items-center gap-2">
           <a
@@ -110,7 +111,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
               {logo.avatar.avif && <source srcSet={logo.avatar.avif} type="image/avif" />}
               {logo.avatar.webp && <source srcSet={logo.avatar.webp} type="image/webp" />}
               <img
-                src={logo.avatar.jpg}
+                src={logo.avatar.avif || logo.avatar.webp || logo.avatar.jpg}
                 alt=""
                 aria-hidden="true"
                 className="brand-avatar size-9"

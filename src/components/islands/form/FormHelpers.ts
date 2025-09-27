@@ -40,9 +40,12 @@ export function defaultErrorFormatter(label: string, message: string): string {
 }
 
 export function getFieldLabel(field: HTMLElement, fallback: string): string {
-  const labels = 'labels' in field ? Array.from(field.labels ?? []) : [];
-  if (labels.length > 0) {
-    return labels[0]?.textContent?.replace('*', '').trim() ?? fallback;
+  const labels: HTMLCollectionOf<HTMLLabelElement> | [] =
+    'labels' in field ? ((field as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).labels ?? ([] as any)) : [];
+  const labelArray = Array.from(labels as unknown as HTMLLabelElement[]);
+  if (labelArray.length > 0) {
+    const raw = labelArray[0]?.textContent ?? '';
+    return raw.replace('*', '').trim() || fallback;
   }
   const ariaLabel = field.getAttribute('aria-label');
   if (ariaLabel) return ariaLabel.trim();

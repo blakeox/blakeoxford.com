@@ -19,7 +19,7 @@ const {
 
 const baseMainClasses = wide
   ? 'w-full px-4 sm:px-6 lg:px-8'
-  : 'mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 text-base leading-relaxed text-foreground dark:text-foreground-light';
+  : 'mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 text-base leading-relaxed text-foreground dark:text-foreground-light prose dark:prose-invert';
 
 const mainClasses = `${baseMainClasses} pt-24`;
 ---
@@ -89,6 +89,9 @@ const mainClasses = `${baseMainClasses} pt-24`;
   </head>
   <body id="top" class="min-h-screen bg-background text-foreground dark:bg-background dark:text-foreground transition-colors duration-300">
     <ServiceWorkerIsland client:load />
+    <a href="#main-content" class="skip-link sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[1000] focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-on-accent focus:shadow-lg">
+      Skip to main content
+    </a>
   <header role="banner">
       <NavBar />
     </header>

@@ -25,7 +25,32 @@ const projects = defineCollection({
     url: z.string().url().optional(),
     repo: z.string().url().optional(),
     image: z.string().optional(),
+    heroImage: z.string().optional(),
     featured: z.boolean().default(false),
+    highlights: z.array(z.string()).default([]),
+    categories: z.array(z.string()).default([]),
+    impact: z.array(z.string()).default([]),
+    metrics: z
+      .array(
+        z.object({
+          metric: z.string(),
+          result: z.string(),
+          timeline: z.string(),
+        })
+      )
+      .default([]),
+    journey: z.array(z.string()).default([]),
+    lessons: z
+      .array(
+        z.object({
+          title: z.string(),
+          description: z.string(),
+        })
+      )
+      .default([]),
+    reflection: z.string().optional(),
+    link: z.string().url().optional(),
+    external: z.string().url().optional(),
   }),
 });
 

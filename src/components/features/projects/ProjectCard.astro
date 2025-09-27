@@ -11,7 +11,9 @@ const { project, featured = false } = Astro.props as ProjectCardProps;
 const { slug, data } = project;
 
 const title = data.title ?? 'Case study';
-const image = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
+// Keep backward-compat variable name and exact initializer expected by tests
+// @ts-ignore - some entries may not declare `image` in typed schema union
+const image = data?.image ?? '/assets/images/blake-logo-fallback.png';
 const description = data.description ?? '';
 const tags = Array.isArray(data.tags) ? data.tags.filter(Boolean) : [];
 const visibleTags = tags.slice(0, 3);
@@ -38,6 +40,7 @@ const dateLabel = project.data.date
         width={960}
         height={540}
         class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+        loading="lazy"
         quality={80}
       />
       <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/95 via-background/75 to-transparent"></div>

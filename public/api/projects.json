@@ -22,7 +22,7 @@
       "MDM",
       "COVID-19 Response"
     ],
-  "image": "/assets/projects/google-to-microsoft.png"
+    "image": "/assets/projects/google-to-microsoft.png"
   },
   {
     "slug": "Microsoft-Fabric",
@@ -49,7 +49,7 @@
       "Data Engineering",
       "Leadership"
     ],
-  "image": "/assets/projects/operational-and-workflow-automation.png"
+    "image": "/assets/projects/operational-and-workflow-automation.png"
   },
   {
     "slug": "LLM-note-coaching",
@@ -76,7 +76,7 @@
       "Documentation Quality",
       "Python"
     ],
-  "image": "/assets/projects/openai-automated-audit.png"
+    "image": "/assets/projects/openai-automated-audit.png"
   },
   {
     "slug": "advancedmd-implementation",
@@ -99,7 +99,7 @@
       "Healthcare IT",
       "SQL"
     ],
-  "image": "/assets/projects/advancedMD-project.png"
+    "image": "/assets/projects/advancedMD-project.png"
   },
   {
     "slug": "ferment-app",
@@ -124,7 +124,7 @@
       "Mobile Development",
       "Fermentation"
     ],
-  "image": "/assets/projects/ferment-app-design.png"
+    "image": "/assets/projects/ferment-app-design.png"
   },
   {
     "slug": "bank-projections-modeling",
@@ -147,7 +147,7 @@
       "Loan",
       "Financial Analysis"
     ],
-  "image": "/assets/projects/bank-projections.png"
+    "image": "/assets/projects/bank-projections.png"
   },
   {
     "slug": "adp-workforcenow",
@@ -170,6 +170,6 @@
       "Sage Intacct",
       "PowerBI"
     ],
-  "image": "/assets/projects/adp-automation.png"
+    "image": "/assets/projects/adp-automation.png"
   }
 ]

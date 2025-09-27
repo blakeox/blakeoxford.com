@@ -1,5 +1,3 @@
-/// <reference types="../global.d.ts" />
-/// <reference types="../global.d.ts" />
 // src/middleware/personalization.ts
 import { defineMiddleware } from 'astro:middleware';
 

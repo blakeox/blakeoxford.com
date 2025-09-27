@@ -70,8 +70,13 @@ export async function openSearchOverlay(page: Page) {
 export async function fillSearch(page: Page, query: string) {
   const input = page.locator('#search-input');
   await input.fill(query);
-  await expect(page.locator('[data-search-result], .search-result, .search-overlay [role="listbox"] [role="option"]'))
-    .toBeVisible({ timeout: 4000 });
+  const results = page.locator('[data-search-result], .search-result, .search-overlay [role="listbox"] [role="option"]');
+  // Wait for at least one visible result to avoid strict mode multiple element error
+  await page.waitForFunction(() => {
+    const nodes = Array.from(document.querySelectorAll('[data-search-result], .search-result, .search-overlay [role="listbox"] [role="option"]')) as HTMLElement[];
+    return nodes.some(n => !!n && n.offsetParent !== null);
+  }, { timeout: 4000 });
+  await expect(results.first()).toBeVisible({ timeout: 1000 });
   return input;
 }
 

@@ -7,13 +7,17 @@ import AchievementCard from '../../components/common/AchievementCard.astro';
 import ProjectTags from '../../components/features/projects/ProjectTags.astro';
 
 const entry = await getEntry('projects', 'google-workspace-migration');
+if (!entry) {
+  throw new Error('Project not found: google-workspace-migration');
+}
 
-const { data, body } = entry;
+const { data } = entry;
 const title = data.title;
-const description = data.subtitle ?? data.description ?? '';
-const date = new Date(data.date);
+const description = data.description ?? '';
+const date = data.date ? new Date(data.date) : new Date();
 const canonicalUrl = `https://blakeoxford.com/projects/${entry.slug}/`;
-const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
+const heroImage = (data as any).heroImage ?? '/assets/images/blake-logo-fallback.png';
+const { Content } = await entry.render();
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} image={heroImage} wide>
@@ -22,8 +26,10 @@ const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
   <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
     <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
     <div class="relative mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
-      <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.subtitle}>
-        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/82" set:html={body} />
+      <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.description}>
+        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/82">
+          <Content />
+        </div>
       </ProjectDetailSection>
 
       {data.highlights?.length ? (
@@ -35,7 +41,7 @@ const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
       {data.impact?.length ? (
         <ProjectDetailSection title="Impact signals" eyebrow="Proof of traction">
           <ul class="flex flex-col gap-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
-            {data.impact.map((item) => (
+            {(data.impact ?? []).map((item: string) => (
               <li class="flex items-start gap-3">
                 <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
                 <span>{item}</span>
