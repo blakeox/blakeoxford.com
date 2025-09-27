@@ -2,7 +2,7 @@
 import Layout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/features/projects/ProjectCard.astro';
 import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
-import { getCollection } from 'astro:content';
+import { getProjectsSorted } from '../../content/projects/getProjects';
 
 const meta = (await import('../../content/projects/_meta.json')).default;
 const hero = meta.hero;
@@ -10,8 +10,7 @@ const approach = meta.approach;
 const featuredContent = meta.featured;
 const grid = meta.grid;
 
-const projects = (await getCollection('projects'))
-  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const projects = await getProjectsSorted();
 
 const [featuredProject, ...otherProjects] = projects;
 

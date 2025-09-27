@@ -124,15 +124,15 @@ function setupTurnstile(isAudit: boolean): CleanupFn | void {
     cleanupFns.push(() => observer.disconnect());
   }
 
-  let timeoutId: number | undefined;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
   let idleId: number | undefined;
 
   if ('requestIdleCallback' in window) {
     idleId = (window as any).requestIdleCallback?.(() => injectScript(), { timeout: 15000 });
     cleanupFns.push(() => (window as any).cancelIdleCallback?.(idleId));
   } else {
-    timeoutId = window.setTimeout(injectScript, 15000);
-    cleanupFns.push(() => window.clearTimeout(timeoutId));
+    timeoutId = globalThis.setTimeout(injectScript, 15000);
+    cleanupFns.push(() => globalThis.clearTimeout(timeoutId));
   }
 
   return () => {
@@ -219,8 +219,8 @@ function setupContactForm(): CleanupFn | void {
     }
 
     const formData = new FormData(form);
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+  const controller = new AbortController();
+  const timeoutId: ReturnType<typeof setTimeout> = globalThis.setTimeout(() => controller.abort(), 10000);
 
     try {
       setSubmittingState(form, true);
@@ -232,7 +232,7 @@ function setupContactForm(): CleanupFn | void {
         signal: controller.signal,
       });
 
-      window.clearTimeout(timeoutId);
+  globalThis.clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`Submission failed (${response.status})`);
@@ -250,7 +250,7 @@ function setupContactForm(): CleanupFn | void {
       );
       // analytics removed; no-op
     } finally {
-      window.clearTimeout(timeoutId);
+  globalThis.clearTimeout(timeoutId);
       setSubmittingState(form, false);
     }
   };

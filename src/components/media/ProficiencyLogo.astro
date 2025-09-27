@@ -42,8 +42,8 @@ const webpUrl: string | undefined = (webpMap as any)[webpKey];
 const pngUrl:  string | undefined = (pngMap  as any)[pngKey];
 const jpgUrl:  string | undefined = (jpgMap  as any)[jpgKey] || (jpgMap as any)[jpegKey];
 
-// Choose the <img> fallback preference: PNG/JPG > WebP > AVIF
-const imgFallback = pngUrl || jpgUrl || webpUrl || avifUrl || '';
+// Prefer modern formats in <img> fallback to ensure currentSrc is modern in viewport
+const imgFallback = webpUrl || avifUrl || pngUrl || jpgUrl || '';
 ---
 <picture>
   {avifUrl && (<source srcset={avifUrl} type="image/avif" />)}
