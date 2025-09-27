@@ -13,6 +13,17 @@ import cloudflareLogo from '../assets/images/proficiencies/cloudflare_logo.webp'
 import fabricLogo from '../assets/images/proficiencies/fabric_32_color.webp';
 
 // Projects now sourced via content collections
+import { getCollection } from 'astro:content';
+
+// Get featured projects from content collections
+export async function getFeaturedProjects(limit?: number) {
+  const projects = await getCollection('projects');
+  const featuredProjects = projects
+    .filter(project => project.data.featured)
+    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+  
+  return limit ? featuredProjects.slice(0, limit) : featuredProjects;
+}
 
 // Technology stack data
 export const technologies: TechnologyItem[] = [

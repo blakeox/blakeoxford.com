@@ -265,6 +265,7 @@ export default [
       'test-results/',
       'lighthouse-reports/',
       'optimization-reports/',
+  'src/content/**/*',
       '*.css',
       '*.scss',
       '*.md',

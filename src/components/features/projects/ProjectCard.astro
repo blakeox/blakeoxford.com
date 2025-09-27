@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { Image } from 'astro:assets';
 import OptimizedImage from '../../ui/OptimizedImage.astro';
 
 interface ProjectCardProps {
@@ -13,7 +12,7 @@ const { slug, data } = project;
 
 const title = data.title ?? 'Case study';
 const image = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
-const description = data.subtitle ?? data.description ?? '';
+const description = data.description ?? '';
 const tags = Array.isArray(data.tags) ? data.tags.filter(Boolean) : [];
 const visibleTags = tags.slice(0, 3);
 const extraTagCount = Math.max(tags.length - visibleTags.length, 0);

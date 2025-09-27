@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 
 type StaticImage = {
   src: ImageMetadata;
@@ -7,6 +8,9 @@ type StaticImage = {
   class?: string;
   loading?: 'lazy' | 'eager';
   priority?: boolean;
+  width?: number;
+  height?: number;
+  quality?: number;
 };
 
 type ExternalImage = {
@@ -36,6 +40,9 @@ const quality = 'quality' in props ? props.quality ?? 80 : 80;
 
 // Set loading to eager for priority images
 const imageLoading = priority ? 'eager' : loading;
+
+// Check if src is a local path (starts with /, ../, or ./)
+const isLocalPath = typeof props.src === 'string' && (props.src.startsWith('/') || props.src.startsWith('../') || props.src.startsWith('./'));
 ---
 
 {typeof props.src === 'object' ? (
@@ -44,6 +51,16 @@ const imageLoading = priority ? 'eager' : loading;
     alt={alt}
     class={className}
     loading={imageLoading}
+  />
+) : isLocalPath ? (
+  <img
+    src={props.src}
+    alt={alt}
+    width={width}
+    height={height}
+    class={className}
+    loading={imageLoading}
+    decoding="async"
   />
 ) : (
   <Image
@@ -59,11 +76,11 @@ const imageLoading = priority ? 'eager' : loading;
   />
 )}
 
-{priority && (
+{priority && typeof props.src === 'string' && (
   <link
     rel="preload"
     as="image"
-    href={src}
+    href={props.src}
     type="image/avif"
   />
 )}

@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+import { BlogPostRow } from '../../components/features/blog';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = posts
+  .slice()
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<Layout
+  title="Insights & Updates"
+  description="Thoughts on automation, analytics, and leadership—grounded in hands-on work and delivered with practical takeaways."
+>
+  <section class="border-b border-border/60 bg-background/95 py-24 dark:bg-background-dark/85">
+    <div class="container mx-auto max-w-4xl px-6 sm:px-8">
+      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-foreground/60 dark:text-foreground-light/60">
+        Blog
+      </p>
+      <h1 class="mt-6 text-4xl font-bold text-foreground dark:text-foreground-light sm:text-5xl">
+        Fresh thinking, built on shipped work
+      </h1>
+      <p class="mt-6 text-lg text-foreground/80 dark:text-foreground-light/80">
+        Every article explores real-world systems leadership—translating complex automation, data, and change programs into momentum you can measure.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-gradient-to-b from-background via-background/95 to-background py-20 dark:from-background-dark dark:via-background-dark/95 dark:to-background-dark">
+    <div class="container mx-auto flex max-w-5xl flex-col gap-16 px-6 sm:px-8">
+      {sortedPosts.length > 0 ? (
+        sortedPosts.map((post, index) => (
+          <BlogPostRow post={post} align={index % 2 === 0 ? 'left' : 'right'} />
+        ))
+      ) : (
+        <div class="rounded-2xl border border-border/40 bg-background/80 p-12 text-center shadow-lg dark:border-border-dark/40 dark:bg-background-dark/80">
+          <h2 class="text-2xl font-semibold text-foreground dark:text-foreground-light">Posts are on the way</h2>
+          <p class="mt-4 text-foreground/75 dark:text-foreground-light/75">
+            Check back soon for breakdowns of recent programs, playbooks, and technical deep dives.
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
