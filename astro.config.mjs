@@ -32,6 +32,9 @@ export default defineConfig({
   },
   vite: {
     build: {
+      // Use Lightning CSS for minification; it's more tolerant of modern selectors
+      // and avoids false-positive errors like &:is(role="button") during minify.
+      cssMinify: 'lightningcss',
       rollupOptions: {
         output: {
           manualChunks(id) {
@@ -44,7 +47,10 @@ export default defineConfig({
     resolve: {
       alias: {
         '@': resolve(__dirname, './src')
-      }
+      },
+      // Ensure a single React instance across SSR and client builds
+      // to avoid "Invalid hook call" errors caused by duplicate React copies
+      dedupe: ['react', 'react-dom']
     }
   },
 });

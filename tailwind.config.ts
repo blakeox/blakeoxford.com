@@ -84,6 +84,9 @@ const config: Config = {
         'neutral-dark': 'var(--color-neutral-dark)',
         border: 'var(--border-color)',
         'border-dark': 'var(--border-color-dark)',
+        // Semantic aliases for clarity (no behavior change)
+        'on-surface': 'var(--color-foreground) ',
+        'on-surface-strong': 'var(--color-foreground-strong)',
       },
       screens: {
         'sm-md': { raw: '(min-width: 651px) and (max-width: 767px)' },

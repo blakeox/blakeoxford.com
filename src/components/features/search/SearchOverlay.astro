@@ -1,5 +1,5 @@
 ---
-import SearchOverlayController from '../../islands/SearchOverlayController';
+import SearchOverlayClient from '../../islands/SearchOverlayClient';
 ---
 
 <div
@@ -28,7 +28,7 @@ import SearchOverlayController from '../../islands/SearchOverlayController';
           </svg>
         </button>
       </div>
- 
+
       <div class="px-6 py-6">
         <form class="flex flex-col gap-6" autocomplete="off" data-search-form>
           <div class="flex flex-col gap-3">
@@ -85,5 +85,5 @@ import SearchOverlayController from '../../islands/SearchOverlayController';
     </div>
   </div>
 </div>
- 
-<SearchOverlayController client:load />
+
+<SearchOverlayClient client:load />
