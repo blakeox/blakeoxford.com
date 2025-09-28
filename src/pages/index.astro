@@ -29,6 +29,12 @@ function deriveImageData(imgPath?: string) {
   const ext = relative.slice(lastDot + 1).toLowerCase();
   return { name, ext };
 }
+
+// Prevent duplicate hero copy: only show tagline if different from description
+const heroDescription: string | undefined = siteConfig?.description;
+const heroTagline: string | undefined = siteConfig?.tagline;
+const normalize = (s?: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+const shouldShowTagline = normalize(heroTagline) !== '' && normalize(heroTagline) !== normalize(heroDescription);
 ---
 <Layout title="Blake Oxford - Leadership & Portfolio" description="Explore my projects, blog posts, and get in touch with me." wide={true}>
   <!-- Decorative background shapes -->
@@ -61,14 +67,16 @@ function deriveImageData(imgPath?: string) {
                   {siteConfig.author}
                 </h1>
                 <p class="text-lg font-semibold text-foreground/85 dark:text-foreground-light/85">
-                  {siteConfig.description}
+                  {heroDescription}
                 </p>
               </div>
 
               <div class="space-y-4 rounded-2xl border border-border/40 bg-background/95 p-4 sm:p-5 dark:bg-background-dark/80">
-                <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-                  {siteConfig.tagline}
-                </p>
+                {shouldShowTagline && (
+                  <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+                    {heroTagline}
+                  </p>
+                )}
                 <ul class="grid gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/55 sm:grid-cols-2">
                   <li class="flex items-center gap-2">
                     <span class="inline-flex size-1.5 rounded-full bg-accent"></span>
