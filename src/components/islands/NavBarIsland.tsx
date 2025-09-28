@@ -37,52 +37,75 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   const [activePath, setActivePath] = useState(() => normalizePath(currentPath));
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
       return;
     }
 
-    setActivePath(normalizePath(window.location.pathname));
+    try {
+      // Mark hydration success as early as possible
+      (window as typeof window & { __navHydrated?: boolean }).__navHydrated = true;
 
-    if (mobileMenuRef.current) {
-      mobileMenuRef.current.setAttribute('inert', '');
+      setActivePath(normalizePath(window.location.pathname));
+
+      if (mobileMenuRef.current) {
+        mobileMenuRef.current.setAttribute('inert', '');
+        // Hide until opened to avoid accidental focus
+        (mobileMenuRef.current as HTMLElement).style.visibility = 'hidden';
+        // Ensure the mobile menu is portaled to the document body to avoid header stacking context conflicts
+        try {
+          const menuEl = mobileMenuRef.current as HTMLElement;
+          if (menuEl && menuEl.parentElement && menuEl.parentElement.tagName.toLowerCase() !== 'body') {
+            document.body.appendChild(menuEl);
+            menuEl.dataset.portaled = 'true';
+          }
+        } catch (e) {
+          // no-op: if portal fails, we keep the menu in place
+          if (typeof console !== 'undefined') {
+            console.debug('[NavBarIsland] mobile menu portal skipped', e);
+          }
+        }
+      }
+
+      const cleanupNav = registerModernNavBar({
+        navBar: navRef.current,
+        mobileMenu: mobileMenuRef.current,
+        burgerButton: burgerButtonRef.current,
+        closeButton: closeButtonRef.current,
+        themeToggle: themeToggleRef.current,
+        searchToggle: searchToggleRef.current,
+        searchOverlay: document.getElementById('search-overlay')
+      });
+
+      if (!(window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit) {
+        initMotionAccessibility();
+        (window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit = true;
+      }
+
+      const navEl = navRef.current;
+      const handleScroll = () => {
+        if (!navEl) return;
+        navEl.classList.toggle('has-background', window.scrollY > 80);
+      };
+      handleScroll();
+      window.addEventListener('scroll', handleScroll, { passive: true });
+
+      if (themeToggleRef.current) {
+        const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        themeToggleRef.current.setAttribute('aria-pressed', String(currentTheme === 'dark'));
+        const sunIcon = themeToggleRef.current.querySelector<SVGElement>('.sun-icon');
+        const moonIcon = themeToggleRef.current.querySelector<SVGElement>('.moon-icon');
+        sunIcon?.classList.toggle('hidden', currentTheme === 'dark');
+        moonIcon?.classList.toggle('hidden', currentTheme !== 'dark');
+      }
+
+      return () => {
+        cleanupNav?.();
+        window.removeEventListener('scroll', handleScroll);
+      };
+    } catch (err) {
+      // Swallow errors to keep SSR markup visible; fallback script can attach behavior
+      console.error('[NavBarIsland] hydration error', err);
     }
-
-    const cleanupNav = registerModernNavBar({
-      navBar: navRef.current,
-      mobileMenu: mobileMenuRef.current,
-      burgerButton: burgerButtonRef.current,
-      closeButton: closeButtonRef.current,
-      themeToggle: themeToggleRef.current,
-      searchToggle: searchToggleRef.current,
-      searchOverlay: document.getElementById('search-overlay')
-    });
-
-    if (!(window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit) {
-      initMotionAccessibility();
-      (window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit = true;
-    }
-
-    const navEl = navRef.current;
-    const handleScroll = () => {
-      if (!navEl) return;
-      navEl.classList.toggle('has-background', window.scrollY > 80);
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    if (themeToggleRef.current) {
-      const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-      themeToggleRef.current.setAttribute('aria-pressed', String(currentTheme === 'dark'));
-      const sunIcon = themeToggleRef.current.querySelector<SVGElement>('.sun-icon');
-      const moonIcon = themeToggleRef.current.querySelector<SVGElement>('.moon-icon');
-      sunIcon?.classList.toggle('hidden', currentTheme === 'dark');
-      moonIcon?.classList.toggle('hidden', currentTheme !== 'dark');
-    }
-
-    return () => {
-      cleanupNav?.();
-      window.removeEventListener('scroll', handleScroll);
-    };
   }, []);
 
   const isActive = (href: string): boolean => {
@@ -97,7 +120,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       <nav
         id="navbar"
         ref={navRef}
-        className="mx-auto flex h-16 w-full max-w-[110rem] items-center justify-between px-4 sm:px-6 lg:px-8"
+        className="relative z-10 mx-auto flex h-16 w-full max-w-[110rem] items-center justify-between px-4 sm:px-6 lg:px-8"
         role="navigation"
         aria-label="Main Navigation"
       >
@@ -196,26 +219,38 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       <div
         ref={mobileMenuRef}
         id="nav-mobile-links"
-        className="mobile-menu md:hidden"
+        className="mobile-menu fixed inset-0 md:hidden pointer-events-auto z-[2147483646]"
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation menu"
       >
-        <div className="mobile-menu-backdrop fixed inset-0 bg-black/40" />
-        <div className="mobile-menu-content fixed inset-y-0 right-0 flex w-80 max-w-[85vw] flex-col gap-6 bg-background px-5 py-6 shadow-2xl">
+  <div
+    className="mobile-menu-backdrop fixed inset-0 bg-black/40 z-[2147483646] pointer-events-auto"
+    onClick={() => {
+      // Let outside click handler close via document listener; don't stop propagation.
+    }}
+  />
+  <div
+    className="mobile-menu-content fixed inset-y-0 right-0 z-[2147483647] flex w-80 max-w-[85vw] flex-col gap-6 bg-background px-5 py-6 shadow-2xl pointer-events-auto"
+    onClick={(e) => {
+      // Prevent clicks inside the panel from being treated as outside clicks.
+      e.stopPropagation();
+    }}
+  >
           <div className="mobile-menu-header flex items-center justify-between">
-            <span className="text-sm font-semibold tracking-wide text-foreground/75">Menu</span>
             <button
               id="close-mobile-menu"
               ref={closeButtonRef}
               type="button"
-              className="mobile-close-button inline-flex size-10 items-center justify-center rounded-full border border-border/50 text-foreground/70 transition hover:border-border hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="mobile-close-button inline-flex size-10 items-center justify-center rounded-full border border-border/50 text-foreground/70 transition hover:border-border hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent pointer-events-auto touch-manipulation"
+              onClickCapture={(e) => { e.stopPropagation(); }}
               aria-label="Close navigation menu"
             >
               <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="m6 18 12-12M6 6l12 12" />
               </svg>
             </button>
+            <span className="text-sm font-semibold tracking-wide text-foreground/75">Menu</span>
           </div>
           <ul className="mobile-nav flex flex-col gap-1" role="menubar">
             {links.map((link) => (

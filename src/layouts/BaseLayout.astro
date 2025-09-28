@@ -11,11 +11,22 @@ import AccessibilityEnhancementsIsland from '../components/islands/Accessibility
 // wide: when true, disable the default max-width wrapper for full-width layouts
 const {
   title = 'Blake Oxford Portfolio',
-  description = 'Welcome to my portfolio! I\'m Blake Oxford',
-  url = 'https://blakeoxford.com',
+  // Provide a fuller default description to satisfy SEO description length guidance (50–160 chars)
+  description = 'Systems architect and workflow strategist. Explore shipped projects, implementation guides, and practical articles across cloud, automation, and analytics—plus ways to get in touch.',
+  // "url" may be passed in to override canonical; when omitted, compute from Astro.site + Astro.url
+  url,
   wide = false,
   keywords = '',
 } = Astro.props;
+
+// Compute base site href from astro.config.mjs or fallback (string only)
+const siteHref = (Astro.site?.href ?? 'https://blakeoxford.com').replace(/\/$/, '');
+// Compute canonical URL: prefer explicit url prop; else use Astro.url (absolute when site is set)
+const canonicalUrl = (typeof url === 'string' && url.length > 0)
+  ? url
+  : (Astro.url?.href ?? `${siteHref}${Astro.url.pathname}`);
+// Build absolute asset URL for social image
+const ogImage = `${siteHref}/assets/images/og-image.jpg`;
 
 const baseMainClasses = wide
   ? 'w-full px-4 sm:px-6 lg:px-8'
@@ -29,7 +40,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <ThemeInitIsland client:load />
+  <ThemeInitIsland client:load />
 
     <!-- Avoid unconditional DNS-prefetch; GA/gtm are loaded lazily and only after interaction/idle -->
     <!-- Removed: <link rel="dns-prefetch" href="//www.googletagmanager.com" /> -->
@@ -39,7 +50,8 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="alternate" type="application/rss+xml" title="Blake Oxford RSS" href="/rss.xml" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {keywords && <meta name="keywords" content={keywords} />}
@@ -47,16 +59,16 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <meta name="creator" content="Blake Oxford" />
     <meta name="publisher" content="Blake Oxford" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <link rel="canonical" href={url} />
+  <link rel="canonical" href={canonicalUrl} />
 
     <!-- Enhanced Open Graph & Twitter -->
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content="/assets/images/og-image.jpg" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Blake Oxford Portfolio Screenshot" />
-    <meta property="og:url" content={url} />
+  <meta property="og:url" content={canonicalUrl} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Blake Oxford Portfolio" />
     <meta property="og:locale" content="en_US" />
@@ -64,7 +76,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="/assets/images/og-image.jpg" />
+  <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:image:alt" content="Blake Oxford Portfolio Screenshot" />
     <meta name="twitter:creator" content="@blakeoxford" />
     <meta name="twitter:site" content="@blakeoxford" />
@@ -84,11 +96,39 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#2563eb" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e40af" />
 
-    <ExperimentsCookieIsland client:load />
-    <AccessibilityEnhancementsIsland client:load />
+    <!-- Structured Data: Website & Person (minimal, merged safely with page-specific schemas) -->
+    <script type="application/ld+json">
+      {JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'WebSite',
+            'url': siteHref,
+            'name': 'Blake Oxford Portfolio',
+            'description': description,
+            'inLanguage': 'en-US',
+            'publisher': {
+              '@type': 'Person',
+              'name': 'Blake Oxford',
+              'url': siteHref
+            }
+          },
+          {
+            '@type': 'Person',
+            'name': 'Blake Oxford',
+            'url': siteHref,
+            'image': ogImage,
+            'description': description
+          }
+        ]
+      })}
+    </script>
+
+  <ExperimentsCookieIsland client:only="react" />
+  <AccessibilityEnhancementsIsland client:only="react" />
   </head>
   <body id="top" class="min-h-screen bg-background text-foreground dark:bg-background dark:text-foreground transition-colors duration-300">
-    <ServiceWorkerIsland client:load />
+    <ServiceWorkerIsland client:only="react" />
     <a href="#main-content" class="skip-link sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[1000] focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-on-accent focus:shadow-lg">
       Skip to main content
     </a>

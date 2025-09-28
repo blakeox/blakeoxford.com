@@ -1,5 +1,5 @@
 ---
-import CoinFlipInteraction from '../islands/CoinFlipInteraction';
+import CoinFlipClient from '../islands/CoinFlipClient';
 // CoinFlipImage.astro
 // Props: frontSrc, backSrc, altFront, altBack, size (optional), flipMultipleTimes (optional), class (optional), duration (optional), flipOnClick (optional), flipAxis (optional), flipEase (optional), multiFlipDuration (optional), multiFlipEase (optional)
 // Performance knobs: loading (default 'lazy'), fetchPriority (default 'low'), decoding (default 'async')
@@ -104,7 +104,7 @@ function pickDefaultSrc(name: string) {
   data-flip-on-click={flipOnClick}
   data-flip-axis={axis}
 >
-   <div class={'coin-flip-inner' + (flipMultipleTimes ? ' coin-flip-multi' : '')} 
+   <div class={'coin-flip-inner' + (flipMultipleTimes ? ' coin-flip-multi' : '')}
      id={uniqueId + '-inner'}
      style={flipMultipleTimes
       ? `transition-duration:${multiFlipDuration}ms;transition-timing-function:${multiEase};`
@@ -131,7 +131,7 @@ function pickDefaultSrc(name: string) {
   <span id={uniqueId + '-live'} class="sr-only" aria-live="polite"></span>
 </button>
 
-<CoinFlipInteraction client:load rootId={uniqueId + '-root'} innerId={uniqueId + '-inner'} liveRegionId={uniqueId + '-live'} flipOnClick={flipOnClick} />
+<CoinFlipClient client:load rootId={uniqueId + '-root'} innerId={uniqueId + '-inner'} liveRegionId={uniqueId + '-live'} flipOnClick={flipOnClick} />
 
 <style>
 .coin-flip {

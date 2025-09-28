@@ -5,9 +5,15 @@ import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map(({ slug }) => ({
-    params: { slug },
-  }));
+  // Exclude slugs that are implemented as a static .astro page to prevent route conflicts
+  const STATIC_SLUGS = new Set([
+    'combating-legal-ai-hallucinations',
+  ]);
+  return posts
+    .filter(({ slug }) => !STATIC_SLUGS.has(slug))
+    .map(({ slug }) => ({
+      params: { slug },
+    }));
 }
 
 const { slug } = Astro.params;

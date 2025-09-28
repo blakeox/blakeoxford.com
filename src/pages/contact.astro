@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
-import ContactFormIsland from '../components/islands/ContactFormIsland';
+import ContactFormClient from '../components/islands/ContactFormClient';
 const title = 'Contact Blake';
 const description = 'Get in touch with Blake Oxford for collaboration, inquiries, or just to say hello!';
 const canonicalUrl = 'https://blakeoxford.com/contact/';
@@ -147,5 +147,5 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
     </div>
   </section>
 
-  <ContactFormIsland client:load />
+  <ContactFormClient client:load />
 </Layout>

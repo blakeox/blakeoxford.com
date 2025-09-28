@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2025-09-27T21:42:17.942Z",
+  "generatedAt": "2025-09-27T23:17:59.290Z",
   "total": 195,
   "passed": 189,
   "failed": 0,
   "skipped": 6,
   "todo": 0,
-  "durationMs": 5092,
+  "durationMs": 5127,
   "tests": [
     {
       "id": "291280948_0_0",
@@ -13,7 +13,7 @@
       "name": "dist/search-index.json exists and has combined entries",
       "fullName": "Search Index Integration > dist/search-index.json exists and has combined entries",
       "status": "pass",
-      "duration": 0.8767500000000155,
+      "duration": 0.8187500000000227,
       "retry": 0
     },
     {
@@ -22,7 +22,7 @@
       "name": "dist/search/index.json mirrors dist/search-index.json",
       "fullName": "Search Index Integration > dist/search/index.json mirrors dist/search-index.json",
       "status": "pass",
-      "duration": 0.3357500000000755,
+      "duration": 0.3584579999999278,
       "retry": 0
     },
     {
@@ -31,7 +31,7 @@
       "name": "public/search/projects.json has featured first 3 entries",
       "fullName": "Search Index Integration > public/search/projects.json has featured first 3 entries",
       "status": "pass",
-      "duration": 0.35008300000004056,
+      "duration": 0.3897499999999354,
       "retry": 0
     },
     {
@@ -40,7 +40,7 @@
       "name": "project records include required fields",
       "fullName": "Search Index Integration > project records include required fields",
       "status": "pass",
-      "duration": 0.44937500000003183,
+      "duration": 0.530208000000016,
       "retry": 0
     },
     {
@@ -49,7 +49,7 @@
       "name": "projects snapshot stable",
       "fullName": "API Snapshot Baselines > projects snapshot stable",
       "status": "pass",
-      "duration": 9.564875000000029,
+      "duration": 9.058625000000006,
       "retry": 0
     },
     {
@@ -58,7 +58,7 @@
       "name": "public/api/projects.json matches contract",
       "fullName": "Projects API Contract > public/api/projects.json matches contract",
       "status": "pass",
-      "duration": 2.267125000000078,
+      "duration": 2.7986250000000155,
       "retry": 0
     },
     {
@@ -67,7 +67,7 @@
       "name": "search/projects.json matches contract",
       "fullName": "Projects API Contract > search/projects.json matches contract",
       "status": "pass",
-      "duration": 0.33795899999995527,
+      "duration": 0.4921669999999949,
       "retry": 0
     },
     {
@@ -76,7 +76,7 @@
       "name": "should include NavBar and Footer components",
       "fullName": "BaseLayout.astro file > should include NavBar and Footer components",
       "status": "pass",
-      "duration": 0.6234170000000177,
+      "duration": 1.2571249999999736,
       "retry": 0
     },
     {
@@ -85,7 +85,7 @@
       "name": "should have meta description and viewport meta tags",
       "fullName": "BaseLayout.astro file > should have meta description and viewport meta tags",
       "status": "pass",
-      "duration": 0.18620899999996254,
+      "duration": 0.18341699999996308,
       "retry": 0
     },
     {
@@ -94,7 +94,7 @@
       "name": "should include a <main> element with slot",
       "fullName": "BaseLayout.astro file > should include a <main> element with slot",
       "status": "pass",
-      "duration": 0.12237499999991996,
+      "duration": 0.13108299999998962,
       "retry": 0
     },
     {
@@ -103,7 +103,7 @@
       "name": "should use dynamic title prop in <title>",
       "fullName": "BaseLayout.astro file > should use dynamic title prop in <title>",
       "status": "pass",
-      "duration": 0.13408300000003237,
+      "duration": 0.13854200000002947,
       "retry": 0
     },
     {
@@ -112,7 +112,7 @@
       "name": "should include both wide and default layout classes",
       "fullName": "BaseLayout.astro file > should include both wide and default layout classes",
       "status": "pass",
-      "duration": 0.11804200000005949,
+      "duration": 0.12095899999997073,
       "retry": 0
     },
     {
@@ -121,7 +121,7 @@
       "name": "should render responsive front/back images with srcsets and alt bindings",
       "fullName": "CoinFlipImage.astro file > should render responsive front/back images with srcsets and alt bindings",
       "status": "pass",
-      "duration": 1.0026249999999663,
+      "duration": 0.713916999999924,
       "retry": 0
     },
     {
@@ -130,7 +130,7 @@
       "name": "should include aria-pressed and live region for accessibility",
       "fullName": "CoinFlipImage.astro file > should include aria-pressed and live region for accessibility",
       "status": "pass",
-      "duration": 0.16962499999999636,
+      "duration": 0.15583300000002964,
       "retry": 0
     },
     {
@@ -139,7 +139,7 @@
       "name": "should bind flip axis and click behavior",
       "fullName": "CoinFlipImage.astro file > should bind flip axis and click behavior",
       "status": "pass",
-      "duration": 0.12241699999992761,
+      "duration": 0.10483299999998508,
       "retry": 0
     },
     {
@@ -148,7 +148,7 @@
       "name": "should apply inline styles for transition duration and timing function",
       "fullName": "CoinFlipImage.astro file > should apply inline styles for transition duration and timing function",
       "status": "pass",
-      "duration": 0.14795900000001438,
+      "duration": 0.14266699999996035,
       "retry": 0
     },
     {
@@ -157,7 +157,7 @@
       "name": "should be enhanced via island runtime",
       "fullName": "CoinFlipImage.astro file > should be enhanced via island runtime",
       "status": "pass",
-      "duration": 0.06104200000004312,
+      "duration": 0.05591599999991104,
       "retry": 0
     },
     {
@@ -166,7 +166,7 @@
       "name": "should have required attributes on name field",
       "fullName": "Contact form validation > should have required attributes on name field",
       "status": "pass",
-      "duration": 6.3188749999999345,
+      "duration": 7.489500000000021,
       "retry": 0
     },
     {
@@ -175,7 +175,7 @@
       "name": "should have required attributes on email field",
       "fullName": "Contact form validation > should have required attributes on email field",
       "status": "pass",
-      "duration": 2.0855419999999185,
+      "duration": 2.5024579999999332,
       "retry": 0
     },
     {
@@ -184,7 +184,7 @@
       "name": "should have required attributes on message field",
       "fullName": "Contact form validation > should have required attributes on message field",
       "status": "pass",
-      "duration": 2.4139580000000933,
+      "duration": 6.848708999999985,
       "retry": 0
     },
     {
@@ -193,7 +193,7 @@
       "name": "should validate a valid form submission",
       "fullName": "Form validation > should validate a valid form submission",
       "status": "pass",
-      "duration": 3.913667000000032,
+      "duration": 3.7859580000000506,
       "retry": 0
     },
     {
@@ -202,7 +202,7 @@
       "name": "should invalidate form with empty name",
       "fullName": "Form validation > should invalidate form with empty name",
       "status": "pass",
-      "duration": 3.1234170000000177,
+      "duration": 2.533333999999968,
       "retry": 0
     },
     {
@@ -211,7 +211,7 @@
       "name": "should invalidate form with invalid email format",
       "fullName": "Form validation > should invalidate form with invalid email format",
       "status": "pass",
-      "duration": 3.2519170000000486,
+      "duration": 1.8128750000000764,
       "retry": 0
     },
     {
@@ -220,7 +220,7 @@
       "name": "should invalidate form with empty message",
       "fullName": "Form validation > should invalidate form with empty message",
       "status": "pass",
-      "duration": 2.100041000000033,
+      "duration": 2.8921659999999747,
       "retry": 0
     },
     {
@@ -229,7 +229,7 @@
       "name": "should submit the form with valid data",
       "fullName": "Form submission > should submit the form with valid data",
       "status": "pass",
-      "duration": 3.6759170000000267,
+      "duration": 13.661166999999978,
       "retry": 0
     },
     {
@@ -238,7 +238,7 @@
       "name": "should contain a <footer> element",
       "fullName": "Footer.astro file > should contain a <footer> element",
       "status": "pass",
-      "duration": 0.6569160000000238,
+      "duration": 0.6044170000000122,
       "retry": 0
     },
     {
@@ -247,7 +247,7 @@
       "name": "should have a navigation section with aria-label \"Footer Quick Links\"",
       "fullName": "Footer.astro file > should have a navigation section with aria-label \"Footer Quick Links\"",
       "status": "pass",
-      "duration": 0.1691249999998945,
+      "duration": 0.18670799999995324,
       "retry": 0
     },
     {
@@ -256,7 +256,7 @@
       "name": "should include LinkedIn and GitHub social links",
       "fullName": "Footer.astro file > should include LinkedIn and GitHub social links",
       "status": "pass",
-      "duration": 0.142832999999996,
+      "duration": 0.12983299999996234,
       "retry": 0
     },
     {
@@ -265,7 +265,7 @@
       "name": "should include copyright notice with dynamic year",
       "fullName": "Footer.astro file > should include copyright notice with dynamic year",
       "status": "pass",
-      "duration": 0.13979200000005676,
+      "duration": 0.12920800000006238,
       "retry": 0
     },
     {
@@ -274,7 +274,7 @@
       "name": "should include a back-to-top link with aria-label",
       "fullName": "Footer.astro file > should include a back-to-top link with aria-label",
       "status": "pass",
-      "duration": 0.07416699999998855,
+      "duration": 0.06929100000002109,
       "retry": 0
     },
     {
@@ -283,7 +283,7 @@
       "name": "should render a <nav> element",
       "fullName": "NavBar island template > should render a <nav> element",
       "status": "pass",
-      "duration": 0.7039579999999432,
+      "duration": 0.6818749999999909,
       "retry": 0
     },
     {
@@ -292,7 +292,7 @@
       "name": "should include nav link markup for aria-current to be set at runtime",
       "fullName": "NavBar island template > should include nav link markup for aria-current to be set at runtime",
       "status": "pass",
-      "duration": 0.13983300000006693,
+      "duration": 1.6395419999998921,
       "retry": 0
     },
     {
@@ -301,7 +301,7 @@
       "name": "should initialize with correct default properties",
       "fullName": "Initialization > should initialize with correct default properties",
       "status": "pass",
-      "duration": 45.210000000000036,
+      "duration": 39.86195900000007,
       "retry": 0
     },
     {
@@ -310,7 +310,7 @@
       "name": "should find required DOM elements",
       "fullName": "Initialization > should find required DOM elements",
       "status": "pass",
-      "duration": 20.383000000000038,
+      "duration": 13.94379099999992,
       "retry": 0
     },
     {
@@ -319,7 +319,7 @@
       "name": "should handle missing DOM elements gracefully",
       "fullName": "Initialization > should handle missing DOM elements gracefully",
       "status": "pass",
-      "duration": 5.071250000000191,
+      "duration": 10.455832999999984,
       "retry": 0
     },
     {
@@ -328,7 +328,7 @@
       "name": "should toggle menu open state",
       "fullName": "Menu Toggle Functionality > should toggle menu open state",
       "status": "pass",
-      "duration": 4.853207999999995,
+      "duration": 14.360750000000053,
       "retry": 0
     },
     {
@@ -337,7 +337,7 @@
       "name": "should toggle menu closed state",
       "fullName": "Menu Toggle Functionality > should toggle menu closed state",
       "status": "pass",
-      "duration": 4.601625000000013,
+      "duration": 6.367917000000034,
       "retry": 0
     },
     {
@@ -346,7 +346,7 @@
       "name": "should close menu explicitly",
       "fullName": "Menu Toggle Functionality > should close menu explicitly",
       "status": "pass",
-      "duration": 54.0227910000001,
+      "duration": 8.890957999999955,
       "retry": 0
     },
     {
@@ -355,7 +355,7 @@
       "name": "should open search overlay",
       "fullName": "Search Functionality > should open search overlay",
       "status": "pass",
-      "duration": 9.940166999999974,
+      "duration": 5.889499999999998,
       "retry": 0
     },
     {
@@ -364,7 +364,7 @@
       "name": "should handle nav toggle click",
       "fullName": "Click Events > should handle nav toggle click",
       "status": "pass",
-      "duration": 5.442999999999984,
+      "duration": 5.506417000000056,
       "retry": 0
     },
     {
@@ -373,7 +373,7 @@
       "name": "should handle search toggle click",
       "fullName": "Click Events > should handle search toggle click",
       "status": "pass",
-      "duration": 23.565832999999884,
+      "duration": 16.14191699999992,
       "retry": 0
     },
     {
@@ -382,7 +382,7 @@
       "name": "should have proper ARIA attributes",
       "fullName": "Accessibility > should have proper ARIA attributes",
       "status": "pass",
-      "duration": 17.641374999999925,
+      "duration": 8.27741600000013,
       "retry": 0
     },
     {
@@ -391,7 +391,7 @@
       "name": "should update ARIA attributes when menu state changes",
       "fullName": "Accessibility > should update ARIA attributes when menu state changes",
       "status": "pass",
-      "duration": 4.711666999999807,
+      "duration": 5.328958999999941,
       "retry": 0
     },
     {
@@ -400,7 +400,7 @@
       "name": "should have correct navigation links structure",
       "fullName": "Navigation Links > should have correct navigation links structure",
       "status": "pass",
-      "duration": 15.996291999999812,
+      "duration": 8.604415999999901,
       "retry": 0
     },
     {
@@ -409,7 +409,7 @@
       "name": "should have proper link text content",
       "fullName": "Navigation Links > should have proper link text content",
       "status": "pass",
-      "duration": 8.69900000000007,
+      "duration": 6.904167000000143,
       "retry": 0
     },
     {
@@ -418,7 +418,7 @@
       "name": "should have proper navbar HTML structure",
       "fullName": "Component Structure > should have proper navbar HTML structure",
       "status": "pass",
-      "duration": 19.358916000000136,
+      "duration": 6.535499999999956,
       "retry": 0
     },
     {
@@ -427,7 +427,7 @@
       "name": "should have hamburger menu structure",
       "fullName": "Component Structure > should have hamburger menu structure",
       "status": "pass",
-      "duration": 4.470207999999957,
+      "duration": 4.449041999999963,
       "retry": 0
     },
     {
@@ -436,7 +436,7 @@
       "name": "should pass a basic test",
       "fullName": "PhotoCarousel Component > should pass a basic test",
       "status": "pass",
-      "duration": 41.44600000000014,
+      "duration": 45.866084,
       "retry": 0
     },
     {
@@ -445,7 +445,7 @@
       "name": "should access DOM elements",
       "fullName": "PhotoCarousel Component > should access DOM elements",
       "status": "pass",
-      "duration": 6.189375000000155,
+      "duration": 15.397542000000158,
       "retry": 0
     },
     {
@@ -454,7 +454,7 @@
       "name": "should find carousel images",
       "fullName": "PhotoCarousel Component > should find carousel images",
       "status": "pass",
-      "duration": 22.31170800000018,
+      "duration": 16.905708000000004,
       "retry": 0
     },
     {
@@ -463,7 +463,7 @@
       "name": "should have proper carousel HTML structure",
       "fullName": "Component Structure > should have proper carousel HTML structure",
       "status": "pass",
-      "duration": 6.920208000000002,
+      "duration": 10.625917000000072,
       "retry": 0
     },
     {
@@ -472,7 +472,7 @@
       "name": "should have accessibility attributes",
       "fullName": "Component Structure > should have accessibility attributes",
       "status": "pass",
-      "duration": 5.014042000000018,
+      "duration": 9.40604200000007,
       "retry": 0
     },
     {
@@ -481,7 +481,7 @@
       "name": "should have proper image alt attributes",
       "fullName": "Component Structure > should have proper image alt attributes",
       "status": "pass",
-      "duration": 34.26129199999991,
+      "duration": 7.76179100000013,
       "retry": 0
     },
     {
@@ -490,7 +490,7 @@
       "name": "should have carousel indicators",
       "fullName": "Component Structure > should have carousel indicators",
       "status": "pass",
-      "duration": 4.324624999999969,
+      "duration": 5.058834000000161,
       "retry": 0
     },
     {
@@ -499,7 +499,7 @@
       "name": "should show first image by default",
       "fullName": "Image Display > should show first image by default",
       "status": "pass",
-      "duration": 3.6022080000000187,
+      "duration": 6.149583000000121,
       "retry": 0
     },
     {
@@ -508,7 +508,7 @@
       "name": "should have correct image sources",
       "fullName": "Image Display > should have correct image sources",
       "status": "pass",
-      "duration": 23.60612500000002,
+      "duration": 11.355999999999995,
       "retry": 0
     },
     {
@@ -517,7 +517,7 @@
       "name": "should calculate navigation indices correctly",
       "fullName": "Navigation Logic > should calculate navigation indices correctly",
       "status": "pass",
-      "duration": 33.40745900000002,
+      "duration": 12.344041000000061,
       "retry": 0
     },
     {
@@ -526,7 +526,7 @@
       "name": "should handle keyboard events",
       "fullName": "Event Handling > should handle keyboard events",
       "status": "pass",
-      "duration": 4.357124999999996,
+      "duration": 6.029083000000128,
       "retry": 0
     },
     {
@@ -535,7 +535,7 @@
       "name": "should handle timer creation and cleanup",
       "fullName": "Timer Operations > should handle timer creation and cleanup",
       "status": "pass",
-      "duration": 9.450917000000118,
+      "duration": 3.748792000000094,
       "retry": 0
     },
     {
@@ -544,7 +544,7 @@
       "name": "should handle missing carousel gracefully",
       "fullName": "Error Handling > should handle missing carousel gracefully",
       "status": "pass",
-      "duration": 6.841083000000026,
+      "duration": 4.711624999999913,
       "retry": 0
     },
     {
@@ -553,7 +553,7 @@
       "name": "should handle empty image collections",
       "fullName": "Error Handling > should handle empty image collections",
       "status": "pass",
-      "duration": 3.7618750000001455,
+      "duration": 4.046374999999898,
       "retry": 0
     },
     {
@@ -562,7 +562,7 @@
       "name": "should have an article element",
       "fullName": "ProjectCard.astro file > should have an article element",
       "status": "pass",
-      "duration": 0.9892909999999802,
+      "duration": 0.59537499999999,
       "retry": 0
     },
     {
@@ -571,7 +571,7 @@
       "name": "should configure image fallback and metadata",
       "fullName": "ProjectCard.astro file > should configure image fallback and metadata",
       "status": "pass",
-      "duration": 0.3337089999999989,
+      "duration": 0.18304200000000037,
       "retry": 0
     },
     {
@@ -580,7 +580,7 @@
       "name": "should include project title link with aria-labelledby pattern",
       "fullName": "ProjectCard.astro file > should include project title link with aria-labelledby pattern",
       "status": "pass",
-      "duration": 0.17745899999999892,
+      "duration": 0.14770899999996345,
       "retry": 0
     },
     {
@@ -589,7 +589,7 @@
       "name": "should render tags list with descriptive aria-label",
       "fullName": "ProjectCard.astro file > should render tags list with descriptive aria-label",
       "status": "pass",
-      "duration": 0.17879100000004655,
+      "duration": 0.5506249999999682,
       "retry": 0
     },
     {
@@ -598,7 +598,7 @@
       "name": "should expose a visible CTA without extra aria-label",
       "fullName": "ProjectCard.astro file > should expose a visible CTA without extra aria-label",
       "status": "pass",
-      "duration": 0.1634159999999838,
+      "duration": 0.22808299999996962,
       "retry": 0
     },
     {
@@ -607,7 +607,7 @@
       "name": "should include dialog role and modal attributes",
       "fullName": "SearchOverlay.astro file > should include dialog role and modal attributes",
       "status": "pass",
-      "duration": 0.6657910000000129,
+      "duration": 1.5031660000000784,
       "retry": 0
     },
     {
@@ -616,7 +616,7 @@
       "name": "should have the expected placeholder text in input",
       "fullName": "SearchOverlay.astro file > should have the expected placeholder text in input",
       "status": "pass",
-      "duration": 0.17329099999994924,
+      "duration": 0.2685420000000249,
       "retry": 0
     },
     {
@@ -625,7 +625,7 @@
       "name": "should include focus trap start and end buttons",
       "fullName": "SearchOverlay.astro file > should include focus trap start and end buttons",
       "status": "pass",
-      "duration": 0.14991699999995944,
+      "duration": 0.398166999999944,
       "retry": 0
     },
     {
@@ -634,7 +634,7 @@
       "name": "should open the search overlay when toggle is clicked",
       "fullName": "SearchOverlayEnhanced interactive behavior > should open the search overlay when toggle is clicked",
       "status": "pass",
-      "duration": 6.14204200000006,
+      "duration": 6.2113330000000815,
       "retry": 0
     },
     {
@@ -643,7 +643,7 @@
       "name": "should close the search overlay when close button is clicked",
       "fullName": "SearchOverlayEnhanced interactive behavior > should close the search overlay when close button is clicked",
       "status": "pass",
-      "duration": 2.09212500000001,
+      "duration": 2.195416000000023,
       "retry": 0
     },
     {
@@ -652,7 +652,7 @@
       "name": "should search when input value changes",
       "fullName": "SearchOverlayEnhanced interactive behavior > should search when input value changes",
       "status": "pass",
-      "duration": 307.714375,
+      "duration": 303.07845900000007,
       "retry": 0
     },
     {
@@ -661,7 +661,7 @@
       "name": "should handle keyboard shortcuts correctly",
       "fullName": "SearchOverlayEnhanced interactive behavior > should handle keyboard shortcuts correctly",
       "status": "pass",
-      "duration": 2.5699999999999363,
+      "duration": 2.144792000000052,
       "retry": 0
     },
     {
@@ -670,7 +670,7 @@
       "name": "should initialize with light theme by default",
       "fullName": "Theme Toggle Logic > should initialize with light theme by default",
       "status": "pass",
-      "duration": 23.43183299999987,
+      "duration": 66.75354100000004,
       "retry": 0
     },
     {
@@ -679,7 +679,7 @@
       "name": "should apply dark theme when set in localStorage",
       "fullName": "Theme Toggle Logic > should apply dark theme when set in localStorage",
       "status": "pass",
-      "duration": 13.404665999999906,
+      "duration": 5.111167000000023,
       "retry": 0
     },
     {
@@ -688,7 +688,7 @@
       "name": "should toggle theme from light to dark",
       "fullName": "Theme Toggle Logic > should toggle theme from light to dark",
       "status": "pass",
-      "duration": 3.67512499999998,
+      "duration": 3.5383750000000873,
       "retry": 0
     },
     {
@@ -697,7 +697,7 @@
       "name": "should toggle theme from dark to light",
       "fullName": "Theme Toggle Logic > should toggle theme from dark to light",
       "status": "pass",
-      "duration": 3.9158340000001317,
+      "duration": 3.273209000000179,
       "retry": 0
     },
     {
@@ -706,7 +706,7 @@
       "name": "should handle theme button click simulation",
       "fullName": "Theme Toggle Logic > should handle theme button click simulation",
       "status": "pass",
-      "duration": 3.7780420000001413,
+      "duration": 15.06354199999987,
       "retry": 0
     },
     {
@@ -739,7 +739,7 @@
       "name": "rollingAverage handles fewer points than window",
       "fullName": "contrastMetrics > rollingAverage handles fewer points than window",
       "status": "pass",
-      "duration": 0.6149169999999913,
+      "duration": 0.6166249999999991,
       "retry": 0
     },
     {
@@ -748,7 +748,7 @@
       "name": "rollingAverage computes correct average with window constraint",
       "fullName": "contrastMetrics > rollingAverage computes correct average with window constraint",
       "status": "pass",
-      "duration": 0.15399999999999636,
+      "duration": 0.15695800000003146,
       "retry": 0
     },
     {
@@ -757,7 +757,7 @@
       "name": "slope returns null for <2 values",
       "fullName": "contrastMetrics > slope returns null for <2 values",
       "status": "pass",
-      "duration": 0.09287499999993543,
+      "duration": 0.09037499999999454,
       "retry": 0
     },
     {
@@ -766,7 +766,7 @@
       "name": "slope detects upward trend",
       "fullName": "contrastMetrics > slope detects upward trend",
       "status": "pass",
-      "duration": 0.21712500000001,
+      "duration": 0.2277080000000069,
       "retry": 0
     },
     {
@@ -775,7 +775,7 @@
       "name": "deriveMetrics returns both fields",
       "fullName": "contrastMetrics > deriveMetrics returns both fields",
       "status": "pass",
-      "duration": 0.11995899999999438,
+      "duration": 0.17291599999998652,
       "retry": 0
     },
     {
@@ -784,7 +784,7 @@
       "name": "classifyTrend categorizes slopes",
       "fullName": "contrastMetrics > classifyTrend categorizes slopes",
       "status": "pass",
-      "duration": 0.14612499999998363,
+      "duration": 0.20299999999997453,
       "retry": 0
     },
     {
@@ -793,7 +793,7 @@
       "name": "stdDev returns null for <2 values",
       "fullName": "contrastMetrics > stdDev returns null for <2 values",
       "status": "pass",
-      "duration": 0.05629199999998491,
+      "duration": 0.07699999999999818,
       "retry": 0
     },
     {
@@ -802,7 +802,7 @@
       "name": "stdDev computes expected population std dev",
       "fullName": "contrastMetrics > stdDev computes expected population std dev",
       "status": "pass",
-      "duration": 0.10870799999997871,
+      "duration": 0.12529099999994742,
       "retry": 0
     },
     {
@@ -811,7 +811,7 @@
       "name": "should set up dropdown functionality on click",
       "fullName": "setupDropdowns() Function > should set up dropdown functionality on click",
       "status": "pass",
-      "duration": 6.73108400000001,
+      "duration": 6.8231669999998985,
       "retry": 0
     },
     {
@@ -820,7 +820,7 @@
       "name": "should close dropdown when clicking again",
       "fullName": "setupDropdowns() Function > should close dropdown when clicking again",
       "status": "pass",
-      "duration": 2.067500000000109,
+      "duration": 5.927666000000045,
       "retry": 0
     },
     {
@@ -829,7 +829,7 @@
       "name": "should handle ARIA states correctly",
       "fullName": "setupDropdowns() Function > should handle ARIA states correctly",
       "status": "pass",
-      "duration": 1.1629590000000007,
+      "duration": 1.3070000000000164,
       "retry": 0
     },
     {
@@ -838,7 +838,7 @@
       "name": "should handle custom selectors",
       "fullName": "setupDropdowns() Function > should handle custom selectors",
       "status": "pass",
-      "duration": 0.9499590000000353,
+      "duration": 0.9932919999999967,
       "retry": 0
     },
     {
@@ -847,7 +847,7 @@
       "name": "should handle triggers without menus gracefully",
       "fullName": "setupDropdowns() Function > should handle triggers without menus gracefully",
       "status": "pass",
-      "duration": 1.4812499999999318,
+      "duration": 1.1685420000000022,
       "retry": 0
     },
     {
@@ -856,7 +856,7 @@
       "name": "should close other dropdowns when opening a new one",
       "fullName": "setupDropdowns() Function > should close other dropdowns when opening a new one",
       "status": "pass",
-      "duration": 1.1657920000000104,
+      "duration": 1.0919999999999845,
       "retry": 0
     },
     {
@@ -865,7 +865,7 @@
       "name": "should open dropdown with ArrowDown key",
       "fullName": "setupDropdownKeyboardNavigation() Function > should open dropdown with ArrowDown key",
       "status": "pass",
-      "duration": 1.0668329999999742,
+      "duration": 1.1715000000000373,
       "retry": 0
     },
     {
@@ -874,7 +874,7 @@
       "name": "should open dropdown with Enter key",
       "fullName": "setupDropdownKeyboardNavigation() Function > should open dropdown with Enter key",
       "status": "pass",
-      "duration": 0.8087919999999258,
+      "duration": 0.7987080000000333,
       "retry": 0
     },
     {
@@ -883,7 +883,7 @@
       "name": "should open dropdown with Space key",
       "fullName": "setupDropdownKeyboardNavigation() Function > should open dropdown with Space key",
       "status": "pass",
-      "duration": 0.7630419999999276,
+      "duration": 0.7940419999999904,
       "retry": 0
     },
     {
@@ -892,7 +892,7 @@
       "name": "should close dropdown with Escape key",
       "fullName": "setupDropdownKeyboardNavigation() Function > should close dropdown with Escape key",
       "status": "pass",
-      "duration": 0.8093749999999318,
+      "duration": 0.7261249999999109,
       "retry": 0
     },
     {
@@ -901,7 +901,7 @@
       "name": "should navigate menu items with arrow keys",
       "fullName": "setupDropdownKeyboardNavigation() Function > should navigate menu items with arrow keys",
       "status": "pass",
-      "duration": 0.6936670000000049,
+      "duration": 0.6433749999999918,
       "retry": 0
     },
     {
@@ -910,7 +910,7 @@
       "name": "should handle Escape key from menu items",
       "fullName": "setupDropdownKeyboardNavigation() Function > should handle Escape key from menu items",
       "status": "pass",
-      "duration": 0.8337920000000167,
+      "duration": 0.7857079999999996,
       "retry": 0
     },
     {
@@ -919,7 +919,7 @@
       "name": "should handle triggers without matching elements",
       "fullName": "setupDropdownKeyboardNavigation() Function > should handle triggers without matching elements",
       "status": "pass",
-      "duration": 0.600832999999966,
+      "duration": 0.5743330000000242,
       "retry": 0
     },
     {
@@ -928,7 +928,7 @@
       "name": "should close all open dropdowns",
       "fullName": "closeAllDropdowns() Function > should close all open dropdowns",
       "status": "pass",
-      "duration": 0.9565000000000055,
+      "duration": 2.967667000000006,
       "retry": 0
     },
     {
@@ -937,7 +937,7 @@
       "name": "should handle triggers without menus gracefully",
       "fullName": "closeAllDropdowns() Function > should handle triggers without menus gracefully",
       "status": "pass",
-      "duration": 0.7285830000000715,
+      "duration": 0.8182079999999132,
       "retry": 0
     },
     {
@@ -946,7 +946,7 @@
       "name": "should work when no dropdowns are open",
       "fullName": "closeAllDropdowns() Function > should work when no dropdowns are open",
       "status": "pass",
-      "duration": 1.819582999999966,
+      "duration": 2.7684169999999995,
       "retry": 0
     },
     {
@@ -955,7 +955,7 @@
       "name": "should work with both functions together",
       "fullName": "Integration Tests > should work with both functions together",
       "status": "pass",
-      "duration": 0.9909169999999676,
+      "duration": 0.9674169999999549,
       "retry": 0
     },
     {
@@ -964,7 +964,7 @@
       "name": "should handle invalid selectors gracefully",
       "fullName": "Integration Tests > should handle invalid selectors gracefully",
       "status": "pass",
-      "duration": 0.6929169999999658,
+      "duration": 0.6076659999999947,
       "retry": 0
     },
     {
@@ -997,7 +997,7 @@
       "name": "filters out draft projects and includes featured projects",
       "fullName": "Main Index Page > filters out draft projects and includes featured projects",
       "status": "pass",
-      "duration": 0.8620000000000232,
+      "duration": 0.913417000000095,
       "retry": 0
     },
     {
@@ -1006,7 +1006,7 @@
       "name": "should contain the correct number of links",
       "fullName": "navLinks configuration > should contain the correct number of links",
       "status": "pass",
-      "duration": 0.9335419999999885,
+      "duration": 0.8785420000000386,
       "retry": 0
     },
     {
@@ -1015,7 +1015,7 @@
       "name": "should have expected link properties",
       "fullName": "navLinks configuration > should have expected link properties",
       "status": "pass",
-      "duration": 0.5009170000000722,
+      "duration": 0.447667000000024,
       "retry": 0
     },
     {
@@ -1024,7 +1024,7 @@
       "name": "each link should have href and label properties",
       "fullName": "navLinks configuration > each link should have href and label properties",
       "status": "pass",
-      "duration": 0.24466700000004948,
+      "duration": 0.23529099999996106,
       "retry": 0
     },
     {
@@ -1033,7 +1033,7 @@
       "name": "should use modern container spacing utilities",
       "fullName": "projects/index.astro > should use modern container spacing utilities",
       "status": "pass",
-      "duration": 0.7876659999999447,
+      "duration": 0.6262499999999136,
       "retry": 0
     },
     {
@@ -1042,7 +1042,7 @@
       "name": "should contain semantic HTML structure with proper roles",
       "fullName": "projects/index.astro > should contain semantic HTML structure with proper roles",
       "status": "pass",
-      "duration": 0.18962499999997817,
+      "duration": 0.17287499999997635,
       "retry": 0
     },
     {
@@ -1051,7 +1051,7 @@
       "name": "should use ProjectDetailSection component for better composition",
       "fullName": "projects/index.astro > should use ProjectDetailSection component for better composition",
       "status": "pass",
-      "duration": 0.11916699999994762,
+      "duration": 0.11741700000004585,
       "retry": 0
     },
     {
@@ -1060,7 +1060,7 @@
       "name": "should contain proper responsive breakpoints and spacing",
       "fullName": "projects/index.astro > should contain proper responsive breakpoints and spacing",
       "status": "pass",
-      "duration": 0.1626250000000482,
+      "duration": 0.16687500000000455,
       "retry": 0
     },
     {
@@ -1069,7 +1069,7 @@
       "name": "should have enhanced accessibility features",
       "fullName": "projects/index.astro > should have enhanced accessibility features",
       "status": "pass",
-      "duration": 0.08854199999996126,
+      "duration": 0.0831670000000031,
       "retry": 0
     },
     {
@@ -1078,7 +1078,7 @@
       "name": "should not use deprecated getCollection pattern",
       "fullName": "projects/index.astro > should not use deprecated getCollection pattern",
       "status": "pass",
-      "duration": 0.0724999999999909,
+      "duration": 0.07029199999999491,
       "retry": 0
     },
     {
@@ -1087,7 +1087,7 @@
       "name": "should handle random search queries without crashing",
       "fullName": "Search functionality with random inputs > should handle random search queries without crashing",
       "status": "pass",
-      "duration": 3.461334000000079,
+      "duration": 3.538583000000017,
       "retry": 0
     },
     {
@@ -1096,7 +1096,7 @@
       "name": "should handle edge case search inputs",
       "fullName": "Search functionality with random inputs > should handle edge case search inputs",
       "status": "pass",
-      "duration": 0.32979100000000017,
+      "duration": 0.3424169999999549,
       "retry": 0
     },
     {
@@ -1105,7 +1105,7 @@
       "name": "should validate random email addresses",
       "fullName": "Contact form with random inputs > should validate random email addresses",
       "status": "pass",
-      "duration": 0.6536250000000337,
+      "duration": 0.6514590000000453,
       "retry": 0
     },
     {
@@ -1114,7 +1114,7 @@
       "name": "should handle malformed contact data",
       "fullName": "Contact form with random inputs > should handle malformed contact data",
       "status": "pass",
-      "duration": 0.2975829999999178,
+      "duration": 0.29591599999992013,
       "retry": 0
     },
     {
@@ -1123,7 +1123,7 @@
       "name": "should handle random URL paths safely",
       "fullName": "URL and routing with random inputs > should handle random URL paths safely",
       "status": "pass",
-      "duration": 0.18554100000005747,
+      "duration": 0.1840420000000904,
       "retry": 0
     },
     {
@@ -1132,7 +1132,7 @@
       "name": "should track events with various data shapes",
       "fullName": "Analytics with random data > should track events with various data shapes",
       "status": "pass",
-      "duration": 0.26079200000003766,
+      "duration": 0.6198749999999791,
       "retry": 0
     },
     {
@@ -1141,7 +1141,7 @@
       "name": "should handle theme switching under various states",
       "fullName": "Theme system with random conditions > should handle theme switching under various states",
       "status": "pass",
-      "duration": 0.627791000000002,
+      "duration": 0.5728330000000597,
       "retry": 0
     },
     {
@@ -1150,7 +1150,7 @@
       "name": "should maintain blog post structure integrity",
       "fullName": "Data structure invariants > should maintain blog post structure integrity",
       "status": "pass",
-      "duration": 1.3715419999999767,
+      "duration": 1.1647919999999203,
       "retry": 0
     },
     {
@@ -1159,7 +1159,7 @@
       "name": "should be mockable",
       "fullName": "setupScrollEffects > should be mockable",
       "status": "pass",
-      "duration": 0.9354170000000295,
+      "duration": 1.0174579999999196,
       "retry": 0
     },
     {
@@ -1168,7 +1168,7 @@
       "name": "should handle multiple calls",
       "fullName": "setupScrollEffects > should handle multiple calls",
       "status": "pass",
-      "duration": 0.16895799999997507,
+      "duration": 0.18425000000002,
       "retry": 0
     },
     {
@@ -1177,7 +1177,7 @@
       "name": "should accept configuration options",
       "fullName": "setupScrollEffects > should accept configuration options",
       "status": "pass",
-      "duration": 0.6248329999999669,
+      "duration": 0.6298329999999623,
       "retry": 0
     },
     {
@@ -1186,7 +1186,7 @@
       "name": "should be mockable",
       "fullName": "setupScrollBehavior > should be mockable",
       "status": "pass",
-      "duration": 0.22116700000003675,
+      "duration": 0.1874159999999847,
       "retry": 0
     },
     {
@@ -1195,7 +1195,7 @@
       "name": "should handle different behavior types",
       "fullName": "setupScrollBehavior > should handle different behavior types",
       "status": "pass",
-      "duration": 0.15212500000006912,
+      "duration": 0.155791000000022,
       "retry": 0
     },
     {
@@ -1204,7 +1204,7 @@
       "name": "should be mockable",
       "fullName": "setupPageTransitions > should be mockable",
       "status": "pass",
-      "duration": 0.12320799999997689,
+      "duration": 0.128832999999986,
       "retry": 0
     },
     {
@@ -1213,7 +1213,7 @@
       "name": "should handle transition options",
       "fullName": "setupPageTransitions > should handle transition options",
       "status": "pass",
-      "duration": 0.10283400000002985,
+      "duration": 0.1037499999999909,
       "retry": 0
     },
     {
@@ -1222,7 +1222,7 @@
       "name": "should handle multiple transition types",
       "fullName": "setupPageTransitions > should handle multiple transition types",
       "status": "pass",
-      "duration": 0.08845900000005713,
+      "duration": 0.09766700000000128,
       "retry": 0
     },
     {
@@ -1231,7 +1231,7 @@
       "name": "should handle scroll position tracking",
       "fullName": "scroll utilities > should handle scroll position tracking",
       "status": "pass",
-      "duration": 0.2204590000000053,
+      "duration": 0.5577080000000478,
       "retry": 0
     },
     {
@@ -1240,7 +1240,7 @@
       "name": "should handle viewport calculations",
       "fullName": "scroll utilities > should handle viewport calculations",
       "status": "pass",
-      "duration": 0.18270799999993415,
+      "duration": 0.38570899999990615,
       "retry": 0
     },
     {
@@ -1249,7 +1249,7 @@
       "name": "should initialize with correct default properties",
       "fullName": "Initialization > should initialize with correct default properties",
       "status": "pass",
-      "duration": 144.55708400000003,
+      "duration": 181.35041699999988,
       "retry": 0
     },
     {
@@ -1258,7 +1258,7 @@
       "name": "should find required DOM elements",
       "fullName": "Initialization > should find required DOM elements",
       "status": "pass",
-      "duration": 109.08079199999997,
+      "duration": 107.64262499999973,
       "retry": 0
     },
     {
@@ -1267,7 +1267,7 @@
       "name": "should handle missing DOM elements gracefully",
       "fullName": "Initialization > should handle missing DOM elements gracefully",
       "status": "pass",
-      "duration": 110.37129199999981,
+      "duration": 110.36787499999991,
       "retry": 0
     },
     {
@@ -1276,7 +1276,7 @@
       "name": "should load and format search data correctly",
       "fullName": "Search Data Loading > should load and format search data correctly",
       "status": "pass",
-      "duration": 206.45425000000023,
+      "duration": 206.79216600000018,
       "retry": 0
     },
     {
@@ -1285,7 +1285,7 @@
       "name": "should handle API fetch errors gracefully",
       "fullName": "Search Data Loading > should handle API fetch errors gracefully",
       "status": "pass",
-      "duration": 409.78716600000007,
+      "duration": 406.35604200000034,
       "retry": 0
     },
     {
@@ -1294,7 +1294,7 @@
       "name": "should perform fuzzy search when Fuse is available",
       "fullName": "Search Functionality > should perform fuzzy search when Fuse is available",
       "status": "pass",
-      "duration": 208.4941670000003,
+      "duration": 206.48741599999994,
       "retry": 0
     },
     {
@@ -1303,7 +1303,7 @@
       "name": "should fall back to basic search when Fuse is not available",
       "fullName": "Search Functionality > should fall back to basic search when Fuse is not available",
       "status": "pass",
-      "duration": 209.01925000000028,
+      "duration": 205.78654099999994,
       "retry": 0
     },
     {
@@ -1312,7 +1312,7 @@
       "name": "should clear results when query is empty",
       "fullName": "Search Functionality > should clear results when query is empty",
       "status": "pass",
-      "duration": 210.3327079999999,
+      "duration": 204.861625,
       "retry": 0
     },
     {
@@ -1321,7 +1321,7 @@
       "name": "should open search overlay correctly",
       "fullName": "UI Interactions > should open search overlay correctly",
       "status": "pass",
-      "duration": 215.87862499999983,
+      "duration": 210.03412500000013,
       "retry": 0
     },
     {
@@ -1330,7 +1330,7 @@
       "name": "should close search overlay correctly",
       "fullName": "UI Interactions > should close search overlay correctly",
       "status": "pass",
-      "duration": 207.09416599999986,
+      "duration": 206.8140830000002,
       "retry": 0
     },
     {
@@ -1339,7 +1339,7 @@
       "name": "should display no results message when no results found",
       "fullName": "Result Display > should display no results message when no results found",
       "status": "pass",
-      "duration": 207.89112499999965,
+      "duration": 206.795208,
       "retry": 0
     },
     {
@@ -1348,7 +1348,7 @@
       "name": "should display results with proper HTML structure",
       "fullName": "Result Display > should display results with proper HTML structure",
       "status": "pass",
-      "duration": 211.73716600000034,
+      "duration": 206.93254099999967,
       "retry": 0
     },
     {
@@ -1357,7 +1357,7 @@
       "name": "should limit results to 8 items",
       "fullName": "Result Display > should limit results to 8 items",
       "status": "pass",
-      "duration": 213.05958399999963,
+      "duration": 205.55141600000024,
       "retry": 0
     },
     {
@@ -1366,7 +1366,7 @@
       "name": "should return correct icons for different content types",
       "fullName": "Type Icons > should return correct icons for different content types",
       "status": "pass",
-      "duration": 206.29458299999988,
+      "duration": 205.68904199999997,
       "retry": 0
     },
     {
@@ -1375,7 +1375,7 @@
       "name": "should set correct ARIA attributes when opening",
       "fullName": "Accessibility > should set correct ARIA attributes when opening",
       "status": "pass",
-      "duration": 205.97941700000047,
+      "duration": 204.5733339999997,
       "retry": 0
     },
     {
@@ -1384,7 +1384,7 @@
       "name": "should set correct ARIA attributes when closing",
       "fullName": "Accessibility > should set correct ARIA attributes when closing",
       "status": "pass",
-      "duration": 209.79991700000028,
+      "duration": 205.3440410000003,
       "retry": 0
     },
     {
@@ -1393,7 +1393,7 @@
       "name": "should load projects search index",
       "fullName": "Search Index Loading > should load projects search index",
       "status": "pass",
-      "duration": 1.533333999999968,
+      "duration": 1.4982919999999922,
       "retry": 0
     },
     {
@@ -1402,7 +1402,7 @@
       "name": "should handle fetch errors gracefully",
       "fullName": "Search Index Loading > should handle fetch errors gracefully",
       "status": "pass",
-      "duration": 0.784958999999958,
+      "duration": 0.7366250000000036,
       "retry": 0
     },
     {
@@ -1411,7 +1411,7 @@
       "name": "should normalize search queries",
       "fullName": "Search Query Processing > should normalize search queries",
       "status": "pass",
-      "duration": 0.3047080000000051,
+      "duration": 0.29408300000000054,
       "retry": 0
     },
     {
@@ -1420,7 +1420,7 @@
       "name": "should extract search terms",
       "fullName": "Search Query Processing > should extract search terms",
       "status": "pass",
-      "duration": 0.19479200000000674,
+      "duration": 0.19041600000002745,
       "retry": 0
     },
     {
@@ -1429,7 +1429,7 @@
       "name": "should filter results by search terms",
       "fullName": "Search Query Processing > should filter results by search terms",
       "status": "pass",
-      "duration": 0.455791999999974,
+      "duration": 0.4501669999999649,
       "retry": 0
     },
     {
@@ -1438,7 +1438,7 @@
       "name": "should debounce search input",
       "fullName": "Performance Considerations > should debounce search input",
       "status": "pass",
-      "duration": 1.0631659999999101,
+      "duration": 1.0342920000000504,
       "retry": 0
     },
     {
@@ -1447,7 +1447,7 @@
       "name": "should limit number of search results",
       "fullName": "Performance Considerations > should limit number of search results",
       "status": "pass",
-      "duration": 0.16324999999994816,
+      "duration": 0.15274999999996908,
       "retry": 0
     },
     {
@@ -1456,7 +1456,7 @@
       "name": "removes leading slash and trailing index",
       "fullName": "slug normalization > removes leading slash and trailing index",
       "status": "pass",
-      "duration": 0.6305409999999938,
+      "duration": 0.6710829999999532,
       "retry": 0
     },
     {
@@ -1465,7 +1465,7 @@
       "name": "collapses multiple slashes",
       "fullName": "slug normalization > collapses multiple slashes",
       "status": "pass",
-      "duration": 0.10687500000005912,
+      "duration": 0.11200000000008004,
       "retry": 0
     },
     {
@@ -1474,7 +1474,7 @@
       "name": "returns undefined for null/undefined",
       "fullName": "slug normalization > returns undefined for null/undefined",
       "status": "pass",
-      "duration": 0.13195900000005167,
+      "duration": 0.14079100000003564,
       "retry": 0
     },
     {
@@ -1483,7 +1483,7 @@
       "name": "adds leading slash when missing",
       "fullName": "withLeadingSlash > adds leading slash when missing",
       "status": "pass",
-      "duration": 0.17812500000002274,
+      "duration": 0.2001670000000786,
       "retry": 0
     },
     {
@@ -1492,7 +1492,7 @@
       "name": "keeps leading slash",
       "fullName": "withLeadingSlash > keeps leading slash",
       "status": "pass",
-      "duration": 0.06362500000000182,
+      "duration": 0.08483300000000327,
       "retry": 0
     },
     {
@@ -1501,7 +1501,7 @@
       "name": "extractLinks internal only",
       "fullName": "deadLinkCore > extractLinks internal only",
       "status": "pass",
-      "duration": 1.091583999999898,
+      "duration": 1.2368749999999409,
       "retry": 0
     },
     {
@@ -1510,7 +1510,7 @@
       "name": "extractLinks with external",
       "fullName": "deadLinkCore > extractLinks with external",
       "status": "pass",
-      "duration": 0.17875000000003638,
+      "duration": 0.20479100000000017,
       "retry": 0
     },
     {
@@ -1519,7 +1519,7 @@
       "name": "buildLinkTasks normalizes relative paths",
       "fullName": "deadLinkCore > buildLinkTasks normalizes relative paths",
       "status": "pass",
-      "duration": 8.410041999999976,
+      "duration": 5.032791999999972,
       "retry": 0
     },
     {
@@ -1528,7 +1528,7 @@
       "name": "allowlist pattern matches",
       "fullName": "deadLinkCore > allowlist pattern matches",
       "status": "pass",
-      "duration": 0.6521250000000691,
+      "duration": 0.39037500000006276,
       "retry": 0
     },
     {
@@ -1537,7 +1537,7 @@
       "name": "rejects missing fields",
       "fullName": "send-email edge function > rejects missing fields",
       "status": "pass",
-      "duration": 3.1200830000000224,
+      "duration": 2.3359159999999974,
       "retry": 0
     },
     {
@@ -1546,7 +1546,7 @@
       "name": "enforces rate limit",
       "fullName": "send-email edge function > enforces rate limit",
       "status": "pass",
-      "duration": 0.43162499999994,
+      "duration": 0.4008330000000342,
       "retry": 0
     },
     {
@@ -1555,7 +1555,7 @@
       "name": "blocks failed turnstile",
       "fullName": "send-email edge function > blocks failed turnstile",
       "status": "pass",
-      "duration": 0.42687499999999545,
+      "duration": 0.38770800000008876,
       "retry": 0
     },
     {
@@ -1564,7 +1564,7 @@
       "name": "handles resend error",
       "fullName": "send-email edge function > handles resend error",
       "status": "pass",
-      "duration": 0.47450000000003456,
+      "duration": 0.39974999999992633,
       "retry": 0
     },
     {
@@ -1573,7 +1573,7 @@
       "name": "succeeds happy path",
       "fullName": "send-email edge function > succeeds happy path",
       "status": "pass",
-      "duration": 0.49937500000010004,
+      "duration": 0.6378330000000005,
       "retry": 0
     },
     {
@@ -1582,7 +1582,7 @@
       "name": "handles random substrings without throwing",
       "fullName": "Search Fuzz > handles random substrings without throwing",
       "status": "pass",
-      "duration": 3.688541999999984,
+      "duration": 2.6268749999999272,
       "retry": 0
     },
     {
@@ -1591,7 +1591,7 @@
       "name": "returns empty array for gibberish queries",
       "fullName": "Search Fuzz > returns empty array for gibberish queries",
       "status": "pass",
-      "duration": 0.4849169999999958,
+      "duration": 0.1776670000000422,
       "retry": 0
     },
     {
@@ -1600,7 +1600,7 @@
       "name": "defines core routes with sane defaults",
       "fullName": "visual route config > defines core routes with sane defaults",
       "status": "pass",
-      "duration": 1.2794159999999692,
+      "duration": 1.2182080000000042,
       "retry": 0
     },
     {
@@ -1609,7 +1609,7 @@
       "name": "keeps tolerances within the global guardrail",
       "fullName": "visual route config > keeps tolerances within the global guardrail",
       "status": "pass",
-      "duration": 0.1639589999999771,
+      "duration": 0.159958999999958,
       "retry": 0
     },
     {
@@ -1618,7 +1618,7 @@
       "name": "contact has viewport-only capture and masks",
       "fullName": "visual route config > contact has viewport-only capture and masks",
       "status": "pass",
-      "duration": 0.21100000000001273,
+      "duration": 0.19762500000001637,
       "retry": 0
     },
     {
@@ -1627,7 +1627,7 @@
       "name": "should have valid structure for all links",
       "fullName": "Configuration validation > should have valid structure for all links",
       "status": "pass",
-      "duration": 1.5048329999999623,
+      "duration": 1.4215000000000373,
       "retry": 0
     },
     {
@@ -1636,7 +1636,7 @@
       "name": "should have unique hrefs",
       "fullName": "Configuration validation > should have unique hrefs",
       "status": "pass",
-      "duration": 0.08087499999999181,
+      "duration": 0.497916000000032,
       "retry": 0
     },
     {
@@ -1645,7 +1645,7 @@
       "name": "should include essential navigation items",
       "fullName": "Configuration validation > should include essential navigation items",
       "status": "pass",
-      "duration": 0.23016699999993762,
+      "duration": 0.6152920000000677,
       "retry": 0
     },
     {
@@ -1654,7 +1654,7 @@
       "name": "should test navConfig export",
       "fullName": "Utility functions > should test navConfig export",
       "status": "pass",
-      "duration": 0.25337500000000546,
+      "duration": 0.3144999999999527,
       "retry": 0
     },
     {
@@ -1663,7 +1663,7 @@
       "name": "should find link by href using exported function",
       "fullName": "Utility functions > should find link by href using exported function",
       "status": "pass",
-      "duration": 0.15941600000007838,
+      "duration": 0.18183400000009442,
       "retry": 0
     },
     {
@@ -1672,7 +1672,7 @@
       "name": "should check if current page using exported function",
       "fullName": "Utility functions > should check if current page using exported function",
       "status": "pass",
-      "duration": 0.09012499999994361,
+      "duration": 0.09929199999999128,
       "retry": 0
     },
     {
@@ -1681,7 +1681,7 @@
       "name": "should handle undefined window.location in isCurrentPage",
       "fullName": "Utility functions > should handle undefined window.location in isCurrentPage",
       "status": "pass",
-      "duration": 0.05012499999997999,
+      "duration": 0.05662499999993997,
       "retry": 0
     },
     {
@@ -1690,7 +1690,7 @@
       "name": "should get active nav link using exported function",
       "fullName": "Utility functions > should get active nav link using exported function",
       "status": "pass",
-      "duration": 0.12312500000007276,
+      "duration": 0.13387499999998909,
       "retry": 0
     },
     {
@@ -1699,7 +1699,7 @@
       "name": "should handle undefined window.location in getActiveNavLink",
       "fullName": "Utility functions > should handle undefined window.location in getActiveNavLink",
       "status": "pass",
-      "duration": 0.09645899999998164,
+      "duration": 0.10495900000000802,
       "retry": 0
     },
     {
@@ -1708,7 +1708,7 @@
       "name": "should handle basic file content parsing",
       "fullName": "file parsing > should handle basic file content parsing",
       "status": "pass",
-      "duration": 1.3927500000000919,
+      "duration": 1.4735419999999522,
       "retry": 0
     },
     {
@@ -1717,7 +1717,7 @@
       "name": "should handle file path operations",
       "fullName": "file parsing > should handle file path operations",
       "status": "pass",
-      "duration": 0.2512090000000171,
+      "duration": 0.2618330000000242,
       "retry": 0
     },
     {
@@ -1726,7 +1726,7 @@
       "name": "should create valid search entries",
       "fullName": "search entry creation > should create valid search entries",
       "status": "pass",
-      "duration": 0.2797920000000431,
+      "duration": 0.3467910000000529,
       "retry": 0
     },
     {
@@ -1735,7 +1735,7 @@
       "name": "should handle empty values",
       "fullName": "search entry creation > should handle empty values",
       "status": "pass",
-      "duration": 8.559041999999977,
+      "duration": 0.22325000000000728,
       "retry": 0
     },
     {
@@ -1744,7 +1744,7 @@
       "name": "should read directory contents",
       "fullName": "directory operations > should read directory contents",
       "status": "pass",
-      "duration": 0.3121250000000373,
+      "duration": 0.236582999999996,
       "retry": 0
     },
     {
@@ -1753,7 +1753,7 @@
       "name": "should build search index from files",
       "fullName": "index building > should build search index from files",
       "status": "pass",
-      "duration": 0.5139580000000024,
+      "duration": 0.46145899999999074,
       "retry": 0
     }
   ]
