@@ -4,14 +4,15 @@ import ProficiencyLogo from '../components/media/ProficiencyLogo.astro';
 import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import { getCollection } from 'astro:content';
-import { getFeaturedProjects, technologies, siteConfig } from '../config/data';
+import { getProjectsSorted } from '../content/projects/getProjects';
+import { technologies, siteConfig } from '../config/data';
 
 const blogPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .slice()
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// Use centralized data management
-const featuredProjects = await getFeaturedProjects(3);
+// Get most recent projects instead of featured projects
+const recentProjects = (await getProjectsSorted()).slice(0, 3);
 
 // Select the most recent posts for homepage feature
 const recentBlogPosts = blogPosts.slice(0, 3);
@@ -338,12 +339,12 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
       </ul>
     </section>
 
-    <!-- Featured Projects Section -->
-  <section id="featured-projects" class="container mx-auto px-6 sm:px-8 lg:px-12" aria-labelledby="featured-projects-title">
-  <h2 id="featured-projects-title" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light text-center">Featured Projects</h2>
+    <!-- Recent Projects Section -->
+  <section id="recent-projects" class="container mx-auto px-6 sm:px-8 lg:px-12" aria-labelledby="recent-projects-title">
+  <h2 id="recent-projects-title" class="text-h2 font-bold mb-8 text-foreground dark:text-foreground-light text-center">Recent Projects</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {featuredProjects.map((project: any) => (
-          <ProjectCard project={project} featured={true} />
+        {recentProjects.map((project: any) => (
+          <ProjectCard project={project} />
         ))}
       </div>        <div class="mt-8 text-center">
           <a href="/projects/" class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:text-accent-dark hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2">View All Projects</a>

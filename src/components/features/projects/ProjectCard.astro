@@ -4,16 +4,15 @@ import OptimizedImage from '../../ui/OptimizedImage.astro';
 
 interface ProjectCardProps {
   project: CollectionEntry<'projects'>;
-  featured?: boolean;
 }
 
-const { project, featured = false } = Astro.props as ProjectCardProps;
+const { project } = Astro.props as ProjectCardProps;
 const { slug, data } = project;
 
 const title = data.title ?? 'Case study';
 // Keep backward-compat variable name and exact initializer expected by tests
-// @ts-ignore - some entries may not declare `image` in typed schema union
-const image = data?.image ?? '/assets/images/blake-logo-fallback.png';
+// Use heroImage field from the project schema
+const image = data?.heroImage ?? '/assets/images/blake-logo-fallback.png';
 const description = data.description ?? '';
 const tags = Array.isArray(data.tags) ? data.tags.filter(Boolean) : [];
 const visibleTags = tags.slice(0, 3);
@@ -44,12 +43,6 @@ const dateLabel = project.data.date
         quality={80}
       />
       <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/95 via-background/75 to-transparent"></div>
-      {featured && (
-        <span class="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent ring-1 ring-accent/30">
-          <span class="h-1.5 w-1.5 rounded-full bg-accent"></span>
-          Featured
-        </span>
-      )}
     </figure>
 
     <div class="relative z-[1] flex flex-1 flex-col gap-6 px-7 pb-8 pt-7 sm:px-8">
