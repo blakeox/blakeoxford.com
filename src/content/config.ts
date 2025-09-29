@@ -26,7 +26,6 @@ const projects = defineCollection({
     repo: z.string().url().optional(),
     image: z.string().optional(),
     heroImage: z.string().optional(),
-    featured: z.boolean().default(false),
     highlights: z.array(z.string()).default([]),
     categories: z.array(z.string()).default([]),
     impact: z.array(z.string()).default([]),
@@ -54,4 +53,23 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { blog, projects };
+// Navigation collection schema
+const navigation = defineCollection({
+  type: 'data',
+  schema: z.object({
+    links: z.array(z.object({
+      href: z.string(),
+      label: z.string(),
+      external: z.boolean().optional(),
+      target: z.string().optional(),
+    })),
+    socialLinks: z.array(z.object({
+      href: z.string(),
+      label: z.string(),
+      external: z.boolean().optional(),
+      target: z.string().optional(),
+    })).optional(),
+  }),
+});
+
+export const collections = { blog, projects, navigation };

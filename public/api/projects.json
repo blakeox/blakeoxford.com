@@ -12,7 +12,6 @@
       "MDM",
       "COVID-19 Response"
     ],
-    "featured": true,
     "draft": false,
     "technologies": [
       "Microsoft 365",
@@ -38,7 +37,6 @@
       "Data Engineering",
       "Leadership"
     ],
-    "featured": true,
     "draft": false,
     "technologies": [
       "Microsoft Fabric",
@@ -65,7 +63,6 @@
       "Documentation Quality",
       "Python"
     ],
-    "featured": true,
     "draft": false,
     "technologies": [
       "OpenAI",
@@ -90,7 +87,6 @@
       "Healthcare IT",
       "SQL"
     ],
-    "featured": false,
     "draft": false,
     "technologies": [
       "EHR",
@@ -114,7 +110,6 @@
       "Mobile Development",
       "Fermentation"
     ],
-    "featured": false,
     "draft": false,
     "technologies": [
       "Swift",
@@ -138,7 +133,6 @@
       "Loan",
       "Financial Analysis"
     ],
-    "featured": false,
     "draft": false,
     "technologies": [
       "Financial Modeling",
@@ -161,7 +155,6 @@
       "Sage Intacct",
       "PowerBI"
     ],
-    "featured": false,
     "draft": false,
     "technologies": [
       "HCM",

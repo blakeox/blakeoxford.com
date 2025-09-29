@@ -27,7 +27,6 @@ async function loadProjects() {
         publishedAt: project.data.date?.toISOString?.().split('T')[0] ?? '',
         tags: project.data.tags ?? [],
         categories: project.data.categories ?? [],
-        featured: Boolean(project.data.featured),
         draft: Boolean(project.data.draft),
         technologies: project.data.tags ?? [],
         image: (project as any).data?.heroImage?.src ?? null,
@@ -49,7 +48,6 @@ async function loadProjects() {
         publishedAt: p.publishedAt ?? '',
         tags: p.tags ?? [],
         categories: p.categories ?? [],
-        featured: Boolean(p.featured),
         draft: Boolean(p.draft),
         technologies: p.technologies ?? p.tags ?? [],
         image: p.image ?? null,
@@ -66,13 +64,12 @@ async function loadProjects() {
 async function build() {
   const projects = await loadProjects();
 
-  const searchProjects = projects.map((project: any, index: number) => ({
+  const searchProjects = projects.map((project: any) => ({
     slug: project.slug,
     title: project.title,
     description: project.description,
     publishedAt: project.publishedAt,
     tags: project.tags,
-    featured: index < 3,
     draft: project.draft,
     technologies: project.technologies,
     image: project.image

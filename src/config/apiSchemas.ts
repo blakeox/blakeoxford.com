@@ -7,7 +7,6 @@ export const ProjectApiSchema = z.object({
   description: z.string(),
   publishedAt: z.string().regex(/\d{4}-\d{2}-\d{2}/),
   tags: z.array(z.string()),
-  featured: z.boolean(),
   draft: z.boolean().optional(),
   technologies: z.array(z.string()).optional(),
   image: z.string().optional(),
