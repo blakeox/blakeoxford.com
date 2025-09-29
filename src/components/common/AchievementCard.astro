@@ -15,7 +15,7 @@ const { title, achievements } = Astro.props;
       {title}
     </h3>
   </header>
-  <ul class="space-y-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+  <ul class="space-y-3 text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
     {achievements.map((achievement) => (
       <li class="flex items-start gap-3" set:html={'<span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent"></span>' + achievement}></li>
     ))}

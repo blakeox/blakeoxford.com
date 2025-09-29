@@ -9,12 +9,12 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
 
 <Layout title={title} description={description} url={canonicalUrl} wide={true}>
   <!-- Hero section -->
-  <section id="hero" class="py-24 md:py-36 bg-gradient-to-br from-background via-accent/5 to-background relative overflow-hidden">
-    <div class="relative z-10 container mx-auto px-6 sm:px-8 lg:px-12">
+  <section id="hero" class="py-20 sm:py-24 md:py-32 bg-gradient-to-br from-background via-accent/5 to-background relative overflow-hidden">
+    <div class="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 gap-12 items-center md:grid-cols-2">
-          <div class="space-y-6">
-            <h1 class="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-foreground dark:text-foreground-light">Let's Connect</h1>
-            <p class="text-lead text-foreground dark:text-foreground-light">Have a project in mind or just want to say hello? I'm all ears—whether it's a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can't wait to build something great together!</p>
+          <div class="@container space-y-6">
+            <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light">Let's Connect</h1>
+            <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80 max-w-2xl">Have a project in mind or just want to say hello? I'm all ears—whether it's a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can't wait to build something great together!</p>
           </div>
           <div class="flex justify-center md:justify-end">
             <div class="relative">
@@ -27,7 +27,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
   </section>
 
   <!-- Main contact section -->
-  <section id="contact-info" class="w-full py-20 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" aria-labelledby="message-form">
+  <section id="contact-info" class="w-full py-16 sm:py-20 lg:py-24 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" aria-labelledby="message-form">
     <!-- Animated SVG background pattern -->
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -43,9 +43,9 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
     <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
-    <div class="relative z-10 container mx-auto px-6 sm:px-8 lg:px-12">
+    <div class="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
       <!-- Contact Information -->
-      <div class="scroll-animate flex flex-col md:flex-row items-center justify-center gap-8 mb-16">
+      <div class="scroll-animate flex flex-col md:flex-row items-center justify-center gap-8 mb-12 sm:mb-14 lg:mb-16">
         <a href="mailto:blakepoxford@outlook.com" class="flex flex-col items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent p-4 rounded-xl hover:bg-accent/5 transition-colors" aria-label="Email Blake Oxford" title="Email">
           <span class="text-accent text-3xl group-hover:scale-110 transition">✉️</span>
           <span class="font-medium text-primary group-hover:text-accent transition-colors">blakepoxford@outlook.com</span>
@@ -61,8 +61,8 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
       </div>
 
       <!-- Contact Form -->
-      <div class="mx-auto w-full max-w-3xl px-4">
-  <h2 id="message-form" class="font-heading font-bold text-3xl md:text-4xl text-foreground dark:text-foreground-light text-center mb-8">Or Send Me a Message</h2>
+      <div class="mx-auto w-full max-w-3xl">
+  <h2 id="message-form" class="font-heading font-bold text-2xl sm:text-3xl md:text-4xl text-foreground dark:text-foreground-light text-center mb-8">Or Send Me a Message</h2>
 
         <!-- Form status banner -->
   <div id="form-status" aria-live="polite" class="hidden text-center font-semibold mb-4 min-h-[56px]"></div>

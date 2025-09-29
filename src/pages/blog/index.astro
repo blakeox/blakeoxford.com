@@ -13,17 +13,17 @@ const sortedPosts = posts
   description="Thoughts on automation, analytics, and leadership—grounded in hands-on work and delivered with practical takeaways."
   wide
 >
-  <section class="bg-background py-20 sm:py-24 md:py-28" role="region" aria-labelledby="blog-title">
-    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 lg:gap-14 text-pretty">
+  <section class="bg-gradient-to-b from-background via-accent/5 to-background py-20 sm:py-24 md:py-28" role="region" aria-labelledby="blog-title">
+    <div class="@container mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 lg:gap-14 text-pretty">
       <div class="max-w-3xl space-y-6 sm:space-y-7">
-        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-foreground/65 ring-1 ring-border/40 dark:bg-surface-dark-subtle">
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-foreground/65 ring-1 ring-border/40 dark:bg-surface-dark-subtle backdrop-blur-sm">
           Blog
         </span>
         <header class="space-y-4 sm:space-y-5">
-          <h1 id="blog-title" class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight text-foreground dark:text-foreground-light">
+          <h1 id="blog-title" class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
             Fresh thinking, built on shipped work
           </h1>
-          <p class="text-base sm:text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/80">
+          <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
             Every article explores real-world systems leadership—translating complex automation, data, and change programs into momentum you can measure.
           </p>
         </header>
@@ -40,7 +40,7 @@ const sortedPosts = posts
             <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
               {sortedPosts.length} {sortedPosts.length === 1 ? 'Article' : 'Articles'}
             </span>
-            <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+            <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
               Latest insights and deep dives
             </p>
           </div>
@@ -71,7 +71,7 @@ const sortedPosts = posts
           <h2 id="blog-posts-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
             Latest Insights
           </h2>
-          <p class="text-sm sm:text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+          <p class="text-sm sm:text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
             Practical takeaways from real-world implementations and strategic initiatives.
           </p>
         </header>
@@ -84,7 +84,7 @@ const sortedPosts = posts
         ) : (
           <div class="rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg p-12 text-center">
             <h2 class="font-heading text-2xl font-semibold text-foreground dark:text-foreground-light mb-4">Articles are on the way</h2>
-            <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+            <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
               Check back soon for breakdowns of recent programs, playbooks, and technical deep dives.
             </p>
           </div>
