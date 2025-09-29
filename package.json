@@ -105,7 +105,7 @@
     "contrast:report": "node scripts/quality/contrast-report.js --limit 10"
   },
   "dependencies": {
-    "@astrojs/react": "^4.3.1",
+    "@astrojs/react": "^4.4.0",
     "fuse.js": "^7.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
