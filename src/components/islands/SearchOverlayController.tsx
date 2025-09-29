@@ -13,6 +13,15 @@ type SearchRecord = {
   featured?: boolean;
 };
 
+// API response type for project data
+interface ProjectAPIItem {
+  slug: string;
+  title: string;
+  description?: string;
+  tags?: string[];
+  featured?: boolean;
+}
+
 function openFallbackOverlay(): void {
   const overlay = document.getElementById('search-overlay');
   if (!overlay) return;
@@ -252,7 +261,7 @@ export default function SearchOverlayController() {
         description.appendChild(createHighlightedFragment(record.description, currentQuery));
 
         const metaRow = doc.createElement('div');
-        metaRow.className = 'flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-foreground/60 dark:text-foreground-light/60';
+        metaRow.className = 'flex items-center gap-2 text-xxs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60';
 
         const typeBadge = doc.createElement('span');
         typeBadge.className = 'inline-flex items-center gap-1 rounded-full bg-surface-subtle px-2 py-1 ring-1 ring-border/30 dark:bg-surface-dark-subtle';
@@ -268,7 +277,7 @@ export default function SearchOverlayController() {
 
         if (record.tags.length) {
           const tags = doc.createElement('div');
-          tags.className = 'flex flex-wrap gap-1 text-[0.6rem] uppercase tracking-[0.25em] text-foreground/45 dark:text-foreground-light/45';
+          tags.className = 'flex flex-wrap gap-1 text-xxs uppercase tracking-label text-foreground/45 dark:text-foreground-light/45';
           record.tags.slice(0, 4).forEach(tag => {
             const pill = doc.createElement('span');
             pill.className = 'rounded-full bg-surface px-2 py-0.5 ring-1 ring-border/25 dark:bg-surface-dark';
@@ -395,7 +404,7 @@ export default function SearchOverlayController() {
         }
         const json = await response.json();
         projectRecords = Array.isArray(json)
-          ? json.map((item: any) => ({
+          ? json.map((item: ProjectAPIItem) => ({
               type: 'project' as const,
               title: item.title ?? 'Untitled project',
               description: item.description ?? '',

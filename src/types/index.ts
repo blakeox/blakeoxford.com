@@ -32,9 +32,17 @@ export interface BlogPost {
 
 export interface TechnologyItem {
   name: string;
-  img: string | any; // Can be imported image or string path
+  img: string | ImageMetadata; // Can be imported image or string path
   alt: string;
   optimized?: boolean;
+}
+
+// ImageMetadata type for Astro image imports
+export interface ImageMetadata {
+  src: string;
+  width: number;
+  height: number;
+  format: string;
 }
 
 export interface NavLink {
