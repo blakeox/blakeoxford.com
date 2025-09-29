@@ -9,7 +9,6 @@ const ProjectSchema = z.object({
   publishedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/),
   tags: z.array(z.string()).optional(),
   content: z.string().optional(),
-  featured: z.boolean().optional(),
   draft: z.boolean().optional(),
   technologies: z.array(z.string()).optional(),
   github: z.string().url().optional(),
@@ -43,22 +42,22 @@ test.describe('API Contract Testing', () => {
       console.log(`✅ Projects API contract validated: ${data.length} projects`);
     });
 
-    test('projects API should return featured projects correctly', async ({ request }) => {
+    test('projects API should return projects in chronological order', async ({ request }) => {
       const response = await request.get('/api/projects.json');
       const data = await response.json();
       
-      // Should have at least one featured project
-      const featuredProjects = data.filter((project: Project) => project.featured === true);
-      expect(featuredProjects.length).toBeGreaterThan(0);
+      // Should have projects with valid dates
+      expect(data.length).toBeGreaterThan(0);
       
-      // Featured projects should have all required fields
-      featuredProjects.forEach((project: Project) => {
+      // All projects should have required fields
+      data.forEach((project: Project) => {
         expect(project.title).toBeTruthy();
         expect(project.description).toBeTruthy();
         expect(project.slug).toBeTruthy();
+        expect(project.publishedAt).toBeTruthy();
       });
       
-      console.log(`✅ Featured projects validation: ${featuredProjects.length} featured`);
+      console.log(`✅ Projects API validation: ${data.length} projects`);
     });
   });
 

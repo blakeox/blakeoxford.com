@@ -7,23 +7,23 @@ test.describe('Mobile Navigation Essential', () => {
     await page.setViewportSize({ width: 375, height: 667 }); // iPhone 8 size
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
-    
+
     const burgerButton = page.locator('#nav-toggle');
     const mobileMenu = page.locator('#nav-mobile-links');
-    
+
     // Verify mobile menu is present
     await expect(burgerButton).toBeVisible();
     await expect(mobileMenu).not.toHaveClass(/active/);
-    
+
     // Open mobile menu
     await burgerButton.click();
     await expect(mobileMenu).toHaveClass(/active/, { timeout: 3000 });
     await expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
-    
+
     // Test navigation links
     const homeLink = mobileMenu.locator('a[href="/"]');
     await expect(homeLink).toBeVisible();
-    
+
     // Close with escape key
     await page.keyboard.press('Escape');
     await expect(mobileMenu).not.toHaveClass(/active/, { timeout: 3000 });
@@ -34,12 +34,12 @@ test.describe('Mobile Navigation Essential', () => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
-    
+
     const searchToggle = page.locator('#search-toggle');
     const searchOverlay = page.locator('#search-overlay');
     const burgerButton = page.locator('#nav-toggle');
     const mobileMenu = page.locator('#nav-mobile-links');
-    
+
     // Open search overlay first
     if (await searchToggle.isVisible()) {
       await searchToggle.click();
@@ -52,12 +52,12 @@ test.describe('Mobile Navigation Essential', () => {
         return !inert && el.classList.contains('active') && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0;
       }, { timeout: 3000 }).catch(() => {});
       await expect(searchOverlay).toBeVisible({ timeout: 3000 });
-      
+
       // Close search overlay
       await page.keyboard.press('Escape');
       await expect(searchOverlay).not.toBeVisible({ timeout: 5000 });
     }
-    
+
     // Ensure overlay is not intercepting pointer events before opening menu
     const overlayIntercepts = await page.evaluate(() => {
       const el = document.querySelector('#search-overlay') as HTMLElement | null;
@@ -80,11 +80,11 @@ test.describe('Mobile Navigation Essential', () => {
       });
       await expect(searchOverlay).not.toBeVisible({ timeout: 5000 });
     }
-    
+
     // Test mobile menu after search interaction
     await burgerButton.click();
     await expect(mobileMenu).toHaveClass(/active/, { timeout: 3000 });
-    
+
     // Close mobile menu
     await page.keyboard.press('Escape');
     await expect(mobileMenu).not.toHaveClass(/active/, { timeout: 3000 });
@@ -101,7 +101,7 @@ test.describe('Mobile Navigation Essential', () => {
       test(`should work on ${deviceName} @smoke`, async ({ browser, browserName }) => {
         const device = devices[deviceName];
         if (!device) return; // Skip if device not available
-        
+
         // Firefox doesn't support isMobile option, so we'll simulate it differently
         let contextOptions;
         if (browserName === 'firefox' && device.isMobile) {
@@ -114,26 +114,26 @@ test.describe('Mobile Navigation Essential', () => {
         } else {
           contextOptions = device;
         }
-        
+
         const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
-        
+
         try {
           await page.goto('/');
           await page.waitForLoadState('domcontentloaded');
-          
+
           const burgerButton = page.locator('#nav-toggle');
           const mobileMenu = page.locator('#nav-mobile-links');
-          
+
           await expect(burgerButton).toBeVisible();
-          
+
           // Quick functionality test
           await burgerButton.click();
           await expect(mobileMenu).toHaveClass(/active/, { timeout: 3000 });
-          
+
           await page.keyboard.press('Escape');
           await expect(mobileMenu).not.toHaveClass(/active/, { timeout: 3000 });
-          
+
         } finally {
           await context.close();
         }
@@ -154,15 +154,15 @@ test.describe('Mobile Responsive Layout', () => {
       await page.setViewportSize({ width, height });
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
-      
+
       // Check if mobile menu appears at mobile breakpoints
       const burgerButton = page.locator('#nav-toggle');
-      
+
       if (width < 768) {
         // Mobile breakpoint - burger menu should be visible
         await expect(burgerButton).toBeVisible();
       }
-      
+
       // Ensure page loads without errors
       await expect(page.locator('main')).toBeVisible();
       await expect(page.locator('main h1, [role="main"] h1, body > section h1').first()).toBeVisible();

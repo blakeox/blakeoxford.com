@@ -21,7 +21,7 @@ const PAGE_SECTIONS: Record<string, { path: string; sections: { name: string; se
     sections: [
       { name: 'hero-heading', selector: 'section#about-me h1' },
       { name: 'technologies-heading', selector: 'section#technologies h2' },
-      { name: 'featured-projects-grid', selector: 'section#featured-projects .grid' },
+      { name: 'recent-projects-grid', selector: 'section#recent-projects .grid' },
       { name: 'latest-blog-heading', selector: 'h2#latest-blog-posts' },
       { name: 'call-to-action-heading', selector: 'section.call-to-action h2' },
       { name: 'footer', selector: 'footer' }
