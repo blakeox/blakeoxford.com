@@ -15,7 +15,7 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 
 ## 2. Design Tokens (Source of Truth)
 
-Use CSS variables defined in `theme.css` and mapped through Tailwind in `tailwind.config.js`:
+Use CSS variables defined in `theme.css` and mapped through Tailwind in `tailwind.config.ts`:
 
 - Color: `--color-*` groups (primary, accent, surface, background, foreground, semantic states).
 - Typography: size (`--fs-*` / semantic `--fs-h1`…), weight (`--fw-*`), line-height (`--lh-*`), letter-spacing (`--ls-*`).
