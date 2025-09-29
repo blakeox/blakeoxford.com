@@ -10,4 +10,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 /* stylelint-enable at-rule-no-unknown */
 
+/* Line clamp utilities for text truncation */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 

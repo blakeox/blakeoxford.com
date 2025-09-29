@@ -43,17 +43,18 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
   title={post.data.title}
   description={post.data.description ?? post.data.title}
   url={canonicalUrl}
+  wide={true}
 >
-  <article class="space-y-12 py-16">
-    <header class="space-y-6 text-center">
-      <div class="flex flex-wrap justify-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-foreground/60 dark:text-foreground-light/60">
+  <article class="container mx-auto space-y-12 py-16 px-6 sm:px-8 lg:px-12 xl:px-16">
+    <header class="space-y-6">
+      <div class="flex flex-wrap gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-foreground/60 dark:text-foreground-light/60">
         {post.data.tags?.map((tag: string) => (
           <span class="rounded-full border border-border px-3 py-1 text-xs font-medium">
             {tag}
           </span>
         ))}
       </div>
-      <h1 class="text-4xl font-bold text-foreground dark:text-foreground-light">
+      <h1 class="text-4xl font-bold text-foreground dark:text-foreground-light lg:text-5xl xl:text-6xl">
         {post.data.title}
       </h1>
       <time datetime={post.data.pubDate.toISOString()} class="block text-sm text-foreground/70 dark:text-foreground-light/70">
@@ -63,14 +64,14 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
         <OptimizedImage
           src={heroImage}
           alt={`Hero image for ${post.data.title}`}
-          class="mx-auto max-h-96 w-full rounded-2xl object-cover"
+          class="w-full max-h-[500px] lg:max-h-[600px] rounded-2xl object-cover"
           loading="eager"
           priority={true}
         />
       </div>
     </header>
 
-    <div class="prose prose-lg max-w-none text-foreground/90 dark:prose-invert">
+    <div class="prose prose-lg lg:prose-xl max-w-none text-foreground/90 dark:prose-invert">
       <Content />
     </div>
   </article>

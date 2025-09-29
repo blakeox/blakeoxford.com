@@ -11,35 +11,85 @@ const sortedPosts = posts
 <Layout
   title="Insights & Updates"
   description="Thoughts on automation, analytics, and leadership—grounded in hands-on work and delivered with practical takeaways."
+  wide
 >
-  <section class="border-b border-border/60 bg-background/95 py-24 dark:bg-background-dark/85">
-    <div class="container mx-auto max-w-4xl px-6 sm:px-8">
-      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-foreground dark:text-foreground-light">
-        Blog
-      </p>
-      <h1 class="mt-6 text-4xl font-extrabold text-foreground dark:text-foreground-light sm:text-5xl">
-        Fresh thinking, built on shipped work
-      </h1>
-      <p class="mt-6 text-lg text-foreground dark:text-foreground-light/95">
-        Every article explores real-world systems leadership—translating complex automation, data, and change programs into momentum you can measure.
-      </p>
+  <section class="bg-background py-20 sm:py-24 md:py-28" role="region" aria-labelledby="blog-title">
+    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 lg:gap-14 text-pretty">
+      <div class="max-w-3xl space-y-6 sm:space-y-7">
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-foreground/65 ring-1 ring-border/40 dark:bg-surface-dark-subtle">
+          Blog
+        </span>
+        <header class="space-y-4 sm:space-y-5">
+          <h1 id="blog-title" class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight text-foreground dark:text-foreground-light">
+            Fresh thinking, built on shipped work
+          </h1>
+          <p class="text-base sm:text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/80">
+            Every article explores real-world systems leadership—translating complex automation, data, and change programs into momentum you can measure.
+          </p>
+        </header>
+      </div>
     </div>
   </section>
 
-  <section class="bg-gradient-to-b from-background via-background/95 to-background py-20 dark:from-background-dark dark:via-background-dark/95 dark:to-background-dark">
-    <div class="container mx-auto flex max-w-5xl flex-col gap-16 px-6 sm:px-8">
-      {sortedPosts.length > 0 ? (
-        sortedPosts.map((post, index) => (
-          <BlogPostRow post={post} align={index % 2 === 0 ? 'left' : 'right'} />
-        ))
-      ) : (
-        <div class="rounded-2xl border border-border/40 bg-background/80 p-12 text-center shadow-lg dark:border-border-dark/40 dark:bg-background-dark/80">
-          <h2 class="text-2xl font-semibold text-foreground dark:text-foreground-light">Posts are on the way</h2>
-          <p class="mt-4 text-foreground/75 dark:text-foreground-light/75">
-            Check back soon for breakdowns of recent programs, playbooks, and technical deep dives.
-          </p>
+  <!-- Blog Filter/Search Section -->
+  {sortedPosts.length > 0 && (
+    <section class="border-t border-border/20 bg-surface-subtle/40 py-8 sm:py-10">
+      <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+              {sortedPosts.length} {sortedPosts.length === 1 ? 'Article' : 'Articles'}
+            </span>
+            <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+              Latest insights and deep dives
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button 
+              onclick="document.getElementById('search-overlay')?.setAttribute('data-state', 'open'); document.getElementById('search-overlay')?.removeAttribute('inert'); document.getElementById('search-input')?.focus();"
+              class="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-full px-6 py-2 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
+              </svg>
+              Search articles
+            </button>
+          </div>
         </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Blog Posts Section -->
+  <section class="border-t border-border/20 bg-background py-16 sm:py-20" role="region" aria-labelledby="blog-posts-heading">
+    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-10 text-pretty">
+      {sortedPosts.length > 0 && (
+        <header class="max-w-3xl space-y-3 sm:space-y-4">
+          <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+            Recent Articles
+          </span>
+          <h2 id="blog-posts-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
+            Latest Insights
+          </h2>
+          <p class="text-sm sm:text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+            Practical takeaways from real-world implementations and strategic initiatives.
+          </p>
+        </header>
       )}
+      <div class="flex flex-col gap-8 sm:gap-10">
+        {sortedPosts.length > 0 ? (
+          sortedPosts.map((post, index) => (
+            <BlogPostRow post={post} align={index % 2 === 0 ? 'left' : 'right'} />
+          ))
+        ) : (
+          <div class="rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg p-12 text-center">
+            <h2 class="font-heading text-2xl font-semibold text-foreground dark:text-foreground-light mb-4">Articles are on the way</h2>
+            <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+              Check back soon for breakdowns of recent programs, playbooks, and technical deep dives.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   </section>
 </Layout>
