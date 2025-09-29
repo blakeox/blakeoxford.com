@@ -3,7 +3,7 @@ import navLinks from '../../src/config/navLinks';
 
 describe('navLinks configuration', () => {
   it('should contain the correct number of links', () => {
-    expect(navLinks).toHaveLength(4);
+    expect(navLinks).toHaveLength(5);
   });
 
   it('should have expected link properties', () => {

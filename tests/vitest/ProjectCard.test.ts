@@ -17,7 +17,7 @@ describe('ProjectCard.astro file', () => {
   });
 
   it('should configure image fallback and metadata', () => {
-  expect(content).toContain('const image = data?.image ?? \'/assets/images/blake-logo-fallback.png\';');
+  expect(content).toContain('const image = data?.heroImage ?? \'/assets/images/blake-logo-fallback.png\';');
     expect(content).toContain('alt={`${title} preview`}');
     expect(content).toContain('loading="lazy"');
   });

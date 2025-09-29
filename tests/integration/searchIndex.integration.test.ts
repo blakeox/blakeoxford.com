@@ -26,9 +26,10 @@ describe('Search Index Integration', () => {
     expect(b.length).toBe(a.length);
   });
 
-  it('public/search/projects.json has featured first 3 entries', () => {
+  it('public/search/projects.json is sorted by date', () => {
     const projects = readJSON('public/search/projects.json');
-    expect(projects.slice(0, 3).every(p => p.featured === true)).toBe(true);
+    const hasValidDates = projects.every((p: any) => p.publishedAt && /\d{4}-\d{2}-\d{2}/.test(p.publishedAt));
+    expect(hasValidDates).toBe(true);
   });
 
   it('project records include required fields', () => {

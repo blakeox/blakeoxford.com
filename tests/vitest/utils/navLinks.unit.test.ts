@@ -21,7 +21,7 @@ describe('navLinks utility functions', () => {
         
         expect(link.href).toMatch(/^\/.*$/); // Should start with /
         expect(link.label.length).toBeGreaterThan(0);
-        expect(['Home', 'About', 'Projects', 'Contact']).toContain(link.label);
+        expect(['Home', 'About', 'Projects', 'Blog', 'Contact']).toContain(link.label);
       });
     });
 
