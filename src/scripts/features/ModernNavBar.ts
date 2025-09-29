@@ -98,30 +98,14 @@ function closeOverlay(overlay: HTMLElement | null) {
   }, 200);
 }
 
-function openMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null, navBar?: HTMLElement | null) {
+function openMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
   if (!menu || !toggle) return;
-  const headerEl = (navBar?.closest('header') as HTMLElement | null) ?? null;
   menu.inert = false;
   menu.style.visibility = '';
   menu.classList.add('active');
   toggle.setAttribute('aria-expanded', 'true');
   toggle.classList.add('active');
-  // Prevent header/nav controls from intercepting clicks while menu is open
-  if (navBar) {
-    (navBar as HTMLElement).style.pointerEvents = 'none';
-    (navBar as HTMLElement).style.visibility = 'hidden';
-    (navBar as HTMLElement).style.display = 'none';
-    (navBar as HTMLElement).classList.add('pointer-events-none');
-  }
-  if (headerEl) {
-    headerEl.style.pointerEvents = 'none';
-    headerEl.style.visibility = 'hidden';
-    headerEl.style.display = 'none';
-    headerEl.classList.add('pointer-events-none');
-  }
-  // Also disable pointer events on the toggle button itself to avoid it capturing events above the panel
-  (toggle as HTMLElement).style.pointerEvents = 'none';
-  (toggle as HTMLElement).classList.add('pointer-events-none');
+  // Prevent body scroll while menu is open
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
@@ -132,9 +116,8 @@ function openMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null, na
   }
 }
 
-function closeMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null, navBar?: HTMLElement | null) {
+function closeMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
   if (!menu || !toggle) return;
-  const headerEl = (navBar?.closest('header') as HTMLElement | null) ?? null;
   menu.classList.remove('active');
   toggle.setAttribute('aria-expanded', 'false');
   toggle.classList.remove('active');
@@ -146,22 +129,7 @@ function closeMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null, n
     }
   }, 250);
 
-  // Restore pointer events on the nav
-  if (navBar) {
-    (navBar as HTMLElement).style.pointerEvents = '';
-    (navBar as HTMLElement).style.visibility = '';
-    (navBar as HTMLElement).style.display = '';
-    (navBar as HTMLElement).classList.remove('pointer-events-none');
-  }
-  if (headerEl) {
-    headerEl.style.pointerEvents = '';
-    headerEl.style.visibility = '';
-    headerEl.style.display = '';
-    headerEl.classList.remove('pointer-events-none');
-  }
-  // Restore pointer events on the toggle button
-  (toggle as HTMLElement).style.pointerEvents = '';
-  (toggle as HTMLElement).classList.remove('pointer-events-none');
+  // Restore body scroll
     document.body.style.overflow = '';
     document.body.style.position = '';
     document.body.style.width = '';
@@ -208,33 +176,55 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
   if (burgerButton && mobileMenu) {
     const openHandler = (event: Event) => {
       event.preventDefault();
-      openMobileMenu(mobileMenu, burgerButton, navBar);
+  openMobileMenu(mobileMenu, burgerButton);
     };
 
     const closeHandler = (event: Event) => {
       event.preventDefault();
-      closeMobileMenu(mobileMenu, burgerButton, navBar);
+  closeMobileMenu(mobileMenu, burgerButton);
     };
 
     burgerButton.addEventListener('click', openHandler);
     cleanupFns.push(() => burgerButton.removeEventListener('click', openHandler));
 
-    if (closeButton) {
-      const closeCapture = (event: Event) => {
-        // Prevent outside-click handlers from intercepting this event
+    // Delegated capture-phase handler on the menu container to catch any clicks on the close button
+    const delegatedMenuClickCapture = (event: Event) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      const isClose = target.id === 'close-mobile-menu' || !!target.closest('#close-mobile-menu');
+      if (isClose) {
+        event.preventDefault();
         event.stopPropagation();
-      };
-      closeButton.addEventListener('click', closeCapture, { capture: true });
+  closeMobileMenu(mobileMenu, burgerButton);
+      }
+    };
+    mobileMenu.addEventListener('click', delegatedMenuClickCapture, { capture: true });
+    cleanupFns.push(() => mobileMenu.removeEventListener('click', delegatedMenuClickCapture, { capture: true } as EventListenerOptions));
+
+    if (closeButton) {
+      // Primary: bubble-phase handler on the button itself
       closeButton.addEventListener('click', closeHandler);
+      // Fallback: capture-phase document listener in case any bubbling is prevented by framework handlers
+      const docCapture = (event: Event) => {
+        const target = event.target as Node | null;
+        if (!target) return;
+        if (target === closeButton || (closeButton as HTMLElement).contains(target)) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeHandler(event);
+        }
+      };
+      document.addEventListener('click', docCapture, { capture: true });
+
       cleanupFns.push(() => {
-        closeButton.removeEventListener('click', closeCapture, { capture: true } as EventListenerOptions);
         closeButton.removeEventListener('click', closeHandler);
+        document.removeEventListener('click', docCapture, { capture: true } as EventListenerOptions);
       });
     }
 
     const escapeHandler = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && mobileMenu.classList.contains('active')) {
-        closeMobileMenu(mobileMenu, burgerButton, navBar);
+        closeMobileMenu(mobileMenu, burgerButton);
       }
     };
     document.addEventListener('keydown', escapeHandler);
@@ -247,7 +237,7 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
       }
       if (!mobileMenu.contains(event.target as Node) && !burgerButton.contains(event.target as Node)) {
         if (mobileMenu.classList.contains('active')) {
-          closeMobileMenu(mobileMenu, burgerButton, navBar);
+          closeMobileMenu(mobileMenu, burgerButton);
         }
       }
     };

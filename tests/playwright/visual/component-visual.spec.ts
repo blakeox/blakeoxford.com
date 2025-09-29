@@ -26,6 +26,8 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
         }
         const overlay = page.locator(cfg.selector).first();
         await overlay.evaluate((el) => {
+          // Ensure the overlay is in an open state consistent with CSS selectors
+          el.setAttribute('data-state', 'open');
           el.classList.add('active');
           el.removeAttribute('inert');
           (el as HTMLElement).style.visibility = 'visible';

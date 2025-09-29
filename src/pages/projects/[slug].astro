@@ -1,0 +1,157 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '../../layouts/BaseLayout.astro';
+import ProjectHero from '../../components/features/projects/ProjectHero.astro';
+import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
+import AchievementCard from '../../components/common/AchievementCard.astro';
+import MetricsTable from '../../components/common/MetricsTable.astro';
+import ProjectTags from '../../components/features/projects/ProjectTags.astro';
+import { ActionBanner, FeatureList } from '../../components/ui';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/projects/');
+}
+
+const entry = await getEntry('projects', slug);
+
+if (!entry) {
+  return Astro.redirect('/projects/');
+}
+
+const { data } = entry;
+const { Content } = await entry.render();
+
+const title = data.title;
+const description = data.description ?? '';
+const date = data.date ? new Date(data.date) : new Date();
+const canonicalUrl = `https://blakeoxford.com/projects/${entry.slug}/`;
+const heroImage = data.heroImage ?? '/assets/images/blake-logo-fallback.png';
+
+// Helper variables for conditional rendering
+const hasHighlights = Array.isArray(data.highlights) && data.highlights.length > 0;
+const hasMetrics = Array.isArray(data.metrics) && data.metrics.length > 0;
+const hasImpact = Array.isArray(data.impact) && data.impact.length > 0;
+const hasJourney = Array.isArray(data.journey) && data.journey.length > 0;
+const hasLessons = Array.isArray(data.lessons) && data.lessons.length > 0;
+const hasCategories = Array.isArray(data.categories) && data.categories.length > 0;
+
+// CTA variables
+const primaryCta = data.cta?.primary;
+const secondaryCta = data.cta?.secondary;
+
+export async function getStaticPaths() {
+  // Temporarily disable dynamic project routes since projects are individual .astro files
+  return [];
+}
+---
+
+const hasHighlights = Array.isArray(data.highlights) && data.highlights.length > 0;
+const hasImpact = Array.isArray(data.impact) && data.impact.length > 0;
+const hasMetrics = Array.isArray(data.metrics) && data.metrics.length > 0;
+const hasJourney = Array.isArray(data.journey) && data.journey.length > 0;
+const hasLessons = Array.isArray(data.lessons) && data.lessons.length > 0;
+const hasCategories = Array.isArray(data.categories) && data.categories.length > 0;
+
+const primaryCta = data.cta?.primaryCta;
+const secondaryCta = data.cta?.secondaryCta;
+
+---
+
+<Layout title={title} description={description} url={canonicalUrl} image={heroImage} wide>
+  <ProjectHero title={title} description={description} date={date} image={heroImage} />
+
+  <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
+    <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
+    <div class="relative mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
+      <ProjectDetailSection title="Program overview" eyebrow="Context" description={description}>
+        <div class="prose prose-invert max-w-none text-base leading-relaxed text-foreground/80 dark:text-foreground-light/82">
+          <Content />
+        </div>
+      </ProjectDetailSection>
+
+      {hasHighlights && (
+        <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
+          <AchievementCard title="Program outcomes" achievements={data.highlights ?? []} />
+        </ProjectDetailSection>
+      )}
+
+      {(hasMetrics || hasImpact) && (
+        <ProjectDetailSection title="Impact signals" eyebrow="Proof of traction" layout="surface">
+          <div class="flex flex-col gap-6">
+            {hasMetrics && <MetricsTable metrics={data.metrics ?? []} />}
+            {hasImpact && (
+              <ul class="flex flex-col gap-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
+                {data.impact!.map((item) => (
+                  <li class="flex items-start gap-3">
+                    <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </ProjectDetailSection>
+      )}
+
+      {hasJourney && (
+        <ProjectDetailSection title="Journey" eyebrow="How it unfolded">
+          <ul class="space-y-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
+            {data.journey!.map((item) => (
+              <li class="flex items-start gap-3">
+                <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+                <span set:html={item} />
+              </li>
+            ))}
+          </ul>
+        </ProjectDetailSection>
+      )}
+
+      {hasLessons && (
+        <ProjectDetailSection title="Lessons" eyebrow="What stuck" layout="surface">
+          <div class="grid gap-4 sm:grid-cols-2">
+            {data.lessons!.map((lesson) => (
+              <article class="flex h-full flex-col gap-2 rounded-2xl border border-border/25 bg-background/95 p-4 shadow-sm">
+                <h3 class="text-lg font-semibold text-foreground dark:text-foreground-light">{lesson.title}</h3>
+                <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{lesson.description}</p>
+              </article>
+            ))}
+          </div>
+        </ProjectDetailSection>
+      )}
+
+      {data.reflection && (
+        <ProjectDetailSection title="Reflection" eyebrow="Personal note">
+          <blockquote class="border-l-4 border-accent/80 bg-surface-subtle/80 p-6 text-base italic leading-relaxed text-foreground/78 dark:bg-surface-dark-subtle dark:text-foreground-light/82">
+            {data.reflection}
+          </blockquote>
+        </ProjectDetailSection>
+      )}
+
+      {hasCategories && (
+        <ProjectDetailSection title="Program pillars" eyebrow="Where it delivered" layout="surface">
+          <FeatureList columns="two" items={data.categories ?? []} />
+        </ProjectDetailSection>
+      )}
+
+      {data.cta && (primaryCta || secondaryCta) && (
+        <ActionBanner
+          kicker={data.cta.kicker}
+          title={data.cta.title}
+          description={data.cta.description}
+          icon={data.cta.icon}
+          primaryCta={primaryCta}
+          secondaryCta={secondaryCta}
+          variant={data.cta.variant ?? 'background'}
+          class="mt-4"
+        />
+      )}
+    </div>
+  </article>
+
+  <ProjectTags tags={data.tags ?? []} />
+</Layout>
+
+
+

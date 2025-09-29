@@ -30,12 +30,12 @@ const ogImage = `${siteHref}/assets/images/og-image.jpg`;
 
 const baseMainClasses = wide
   ? 'w-full px-4 sm:px-6 lg:px-8'
-  : 'mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 text-base leading-relaxed text-foreground dark:text-foreground-light prose dark:prose-invert';
+  : 'mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 text-base leading-relaxed text-[--fg] prose dark:prose-invert';
 
 const mainClasses = `${baseMainClasses} pt-24`;
 ---
 
-<html lang="en" class="scroll-smooth bg-background text-foreground dark:bg-background dark:text-foreground">
+<html lang="en" class="scroll-smooth bg-[--bg] text-[--fg]">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -96,7 +96,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#2563eb" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e40af" />
 
-    <!-- Structured Data: Website & Person (minimal, merged safely with page-specific schemas) -->
+  <!-- Structured Data: Website & Person (enriched; merged safely with page-specific schemas) -->
     <script type="application/ld+json">
       {JSON.stringify({
         '@context': 'https://schema.org',
@@ -118,7 +118,11 @@ const mainClasses = `${baseMainClasses} pt-24`;
             'name': 'Blake Oxford',
             'url': siteHref,
             'image': ogImage,
-            'description': description
+            'description': description,
+            'sameAs': [
+              'https://www.linkedin.com/in/blake-oxford',
+              'https://github.com/blakeox'
+            ]
           }
         ]
       })}
@@ -127,9 +131,9 @@ const mainClasses = `${baseMainClasses} pt-24`;
   <ExperimentsCookieIsland client:only="react" />
   <AccessibilityEnhancementsIsland client:only="react" />
   </head>
-  <body id="top" class="min-h-screen bg-background text-foreground dark:bg-background dark:text-foreground transition-colors duration-300">
+  <body id="top" class="min-h-screen bg-[--bg] text-[--fg] transition-colors duration-300">
     <ServiceWorkerIsland client:only="react" />
-    <a href="#main-content" class="skip-link sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[1000] focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-on-accent focus:shadow-lg">
+    <a href="#main-content" class="skip-link sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[1000] focus:rounded-md focus:bg-[--accent] focus:px-4 focus:py-2 focus:text-[--on-accent] focus:shadow-lg">
       Skip to main content
     </a>
   <header role="banner">

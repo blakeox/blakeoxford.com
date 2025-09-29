@@ -114,7 +114,9 @@ test.describe('Accessibility Smoke Tests @smoke', () => {
       
       // Quick checks for essential accessibility features
       await expect(page.locator('html')).toHaveAttribute('lang');
-      await expect(page.locator('head > title')).toHaveCount(1);
+      // Use page.title() for cross-browser reliability (WebKit can virtualize head rendering)
+      const docTitle = await page.title();
+      expect(docTitle && docTitle.trim().length).toBeGreaterThan(0);
       
       // Check for main landmark using specific selector
       const main = page.locator('main#main-content');

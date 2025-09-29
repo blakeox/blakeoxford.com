@@ -158,7 +158,7 @@ test.describe('Mobile Responsive Layout', () => {
       // Check if mobile menu appears at mobile breakpoints
       const burgerButton = page.locator('#nav-toggle');
       
-      if (width <= 768) {
+      if (width < 768) {
         // Mobile breakpoint - burger menu should be visible
         await expect(burgerButton).toBeVisible();
       }

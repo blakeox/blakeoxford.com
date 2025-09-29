@@ -19,7 +19,7 @@
   /* Stronger foreground variant for improved contrast on light backgrounds (WCAG ≥4.5) */
   --color-foreground-strong: #111827; /* slate-900 */
   --color-accent-light: #2dd4bf;  /* teal-400 (used as text on dark backgrounds) */
-  --color-accent-dark: #0f766e;   /* teal-700 (hover / stronger emphasis) */
+  --color-accent-dark: #115e59;   /* teal-800 (WCAG AA base for on-accent text) */
   /* Darken foreground slightly for stronger contrast on near-white backgrounds */
   --color-foreground: #111827; /* slate-900 */
   --color-foreground-light: #f9fafb;
@@ -115,6 +115,22 @@
   /* ---------- Utility Colors ---------- */
   --color-backdrop: rgba(0,0,0,0.6);
   --color-backdrop-light: rgba(255,255,255,0.6);
+
+  /* ---------- Semantic Alias Tokens (Phase 2) ---------- */
+  /* These aliases provide concise, purpose-driven names for components to consume via Tailwind arbitrary values, e.g. text-[--fg] */
+  --bg: var(--color-background);
+  --fg: var(--color-foreground);
+  --fg-strong: var(--color-foreground-strong);
+  --surface: var(--color-surface);
+  --surface-subtle: var(--color-surface-subtle);
+  --border: var(--border-color);
+  --border-subtle: var(--border-color-subtle);
+  --ring: var(--focus-ring-color);
+  --accent: var(--color-accent);
+  --accent-strong: var(--color-accent-dark);
+  --on-accent: var(--color-on-accent);
+  --on-primary: var(--color-on-primary);
+  --on-dark: var(--color-on-dark);
 
   /* ---------- Typography ---------- */
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -290,6 +306,42 @@
   --glass-surface-bg: var(--glass-surface-bg-dark);
   --glass-border: var(--glass-border-dark);
   color-scheme: dark;
+
+  /* Update semantic aliases for dark mode */
+  --bg: var(--color-background-dark);
+  --fg: var(--color-foreground-light);
+  --fg-strong: var(--color-foreground-light);
+  --surface: var(--color-surface-dark);
+  --surface-subtle: var(--color-surface-dark-subtle);
+  --border: var(--border-color-dark);
+  --border-subtle: var(--border-color-dark);
+  --ring: var(--color-primary-dark);
+}
+
+/* Support dark mode via class as used by theme toggle scripts */
+html.dark, :root.dark {
+  --color-foreground-strong: var(--color-foreground-light);
+  --color-foreground: var(--color-foreground-light);
+  --color-background: var(--color-background-dark);
+  --color-surface: var(--color-surface-dark);
+  --color-surface-subtle: var(--color-surface-dark-subtle);
+  --color-neutral: var(--color-neutral-light);
+  --color-neutral-dark: var(--color-neutral);
+  --color-on-accent: #f9fafb;
+  --shadow-chroma: 0 0 0 / 0.6;
+  --glass-surface-bg: var(--glass-surface-bg-dark);
+  --glass-border: var(--glass-border-dark);
+  color-scheme: dark;
+
+  /* Semantic aliases under dark class */
+  --bg: var(--color-background-dark);
+  --fg: var(--color-foreground-light);
+  --fg-strong: var(--color-foreground-light);
+  --surface: var(--color-surface-dark);
+  --surface-subtle: var(--color-surface-dark-subtle);
+  --border: var(--border-color-dark);
+  --border-subtle: var(--border-color-dark);
+  --ring: var(--color-primary-dark);
 }
 
 html {
@@ -371,7 +423,9 @@ html[data-theme="dark"] body {
 }
 
 @media (forced-colors: active) {
-  * {
-    forced-color-adjust: auto;
+  @supports (forced-color-adjust: auto) {
+    * {
+      forced-color-adjust: auto;
+    }
   }
 }

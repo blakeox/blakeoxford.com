@@ -360,7 +360,8 @@ test.describe('Enhanced Accessibility Testing', () => {
         { path: '/about', expectedTitlePattern: /about|your site/i },
         { path: '/projects', expectedTitlePattern: /projects|your site/i },
         { path: '/contact', expectedTitlePattern: /contact|your site/i },
-        { path: '/blog', expectedTitlePattern: /blog|your site/i }
+        // Accept updated blog index title copy
+        { path: '/blog', expectedTitlePattern: /blog|insights|updates|your site/i }
       ];
       
       for (const { path, expectedTitlePattern } of pages) {

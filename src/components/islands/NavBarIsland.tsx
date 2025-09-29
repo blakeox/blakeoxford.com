@@ -116,11 +116,11 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/65">
-      <nav
+    <div className="sticky top-0 z-50 border-b border-[--border]/40 bg-[--bg]/90 backdrop-blur supports-[backdrop-filter]:bg-[--bg]/65">
+  <nav
         id="navbar"
         ref={navRef}
-        className="relative z-10 mx-auto flex h-16 w-full max-w-[110rem] items-center justify-between px-4 sm:px-6 lg:px-8"
+  className="relative z-10 mx-auto flex h-[65px] w-full max-w-[110rem] items-center justify-between px-4 sm:px-6 lg:px-8 text-[--fg]"
         role="navigation"
         aria-label="Main Navigation"
       >
@@ -144,7 +144,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
                 decoding="async"
               />
             </picture>
-            <span className="brand-text text-sm font-semibold tracking-tight text-foreground dark:text-foreground-light">
+            <span className="brand-text text-sm font-semibold tracking-tight text-[--fg]">
               {logo.name}
             </span>
           </a>
@@ -156,10 +156,10 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
               <a
                 href={link.href}
                 role="menuitem"
-                className={`nav-link inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 ${
+                className={`nav-link inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]/60 focus-visible:ring-offset-2 ${
                   isActive(link.href)
                     ? 'text-accent'
-                    : 'text-foreground/75 dark:text-foreground-light/80'
+                    : 'text-[--fg]/75'
                 }`}
                 aria-current={isActive(link.href) ? 'page' : undefined}
               >
@@ -174,7 +174,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             id="search-toggle"
             ref={searchToggleRef}
             type="button"
-            className="search-toggle inline-flex size-11 items-center justify-center rounded-full border border-border/50 text-foreground/70 transition hover:border-border hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="search-toggle inline-flex size-11 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
             aria-label="Open search"
             aria-controls="search-overlay"
             aria-expanded="false"
@@ -188,7 +188,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             id="theme-toggle"
             ref={themeToggleRef}
             type="button"
-            className="theme-toggle inline-flex size-11 items-center justify-center rounded-full border border-border/50 text-foreground/70 transition hover:border-border hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="theme-toggle inline-flex size-11 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
             aria-label="Toggle dark mode"
             aria-pressed="false"
           >
@@ -204,7 +204,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             id="nav-toggle"
             ref={burgerButtonRef}
             type="button"
-            className="burger-menu-button inline-flex size-11 items-center justify-center rounded-full border border-border/50 text-foreground/80 transition hover:border-border hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:hidden"
+            className="burger-menu-button inline-flex size-11 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/80 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] md:hidden"
             aria-label="Toggle navigation menu"
             aria-controls="nav-mobile-links"
             aria-expanded="false"
@@ -225,13 +225,13 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         aria-label="Mobile navigation menu"
       >
   <div
-    className="mobile-menu-backdrop fixed inset-0 bg-black/40 z-[2147483646] pointer-events-auto"
+  className="mobile-menu-backdrop fixed inset-0 bg-[color:rgb(0_0_0_/_0.4)] z-[2147483646] pointer-events-auto"
     onClick={() => {
       // Let outside click handler close via document listener; don't stop propagation.
     }}
   />
   <div
-    className="mobile-menu-content fixed inset-y-0 right-0 z-[2147483647] flex w-80 max-w-[85vw] flex-col gap-6 bg-background px-5 py-6 shadow-2xl pointer-events-auto"
+  className="mobile-menu-content fixed inset-y-0 right-0 z-[2147483647] flex w-80 max-w-[85vw] flex-col gap-6 bg-[--surface] text-[--fg] px-5 py-6 shadow-2xl pointer-events-auto"
     onClick={(e) => {
       // Prevent clicks inside the panel from being treated as outside clicks.
       e.stopPropagation();
@@ -242,9 +242,30 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
               id="close-mobile-menu"
               ref={closeButtonRef}
               type="button"
-              className="mobile-close-button inline-flex size-10 items-center justify-center rounded-full border border-border/50 text-foreground/70 transition hover:border-border hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent pointer-events-auto touch-manipulation"
-              onClickCapture={(e) => { e.stopPropagation(); }}
+              className="mobile-close-button inline-flex size-10 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] pointer-events-auto touch-manipulation"
               aria-label="Close navigation menu"
+              onClick={() => {
+                try {
+                  const menu = document.getElementById('nav-mobile-links');
+                  const burger = document.getElementById('nav-toggle');
+                  if (menu) {
+                    menu.classList.remove('active');
+                    (menu as any).style.visibility = 'hidden';
+                    (menu as any).inert = true;
+                  }
+                  if (burger) {
+                    burger.setAttribute('aria-expanded', 'false');
+                    burger.classList.remove('active');
+                    (burger as any).style.pointerEvents = '';
+                  }
+                  // Restore body scroll just in case
+                  document.body.style.overflow = '';
+                  document.body.style.position = '';
+                  document.body.style.width = '';
+                } catch {
+                  // no-op
+                }
+              }}
             >
               <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="m6 18 12-12M6 6l12 12" />
@@ -258,7 +279,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
                 <a
                   href={link.href}
                   role="menuitem"
-                  className="mobile-nav-link block rounded-xl px-3 py-2 text-base font-semibold text-foreground/80 transition hover:bg-background/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="mobile-nav-link block rounded-xl px-3 py-2 text-base font-semibold text-[--fg]/80 transition hover:bg-[--bg]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
                   aria-current={isActive(link.href) ? 'page' : undefined}
                 >
                   {link.label}
@@ -268,7 +289,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
           </ul>
         </div>
       </div>
-    </header>
+    </div>
   );
 }
 

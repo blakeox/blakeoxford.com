@@ -86,7 +86,8 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
             <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6">
               <a
                 href="/contact/"
-                class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--accent-strong)] px-6 sm:px-7 py-3 text-sm font-semibold text-[var(--on-accent)] shadow-lg transition-colors duration-200 hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+                data-test="home-cta-connect"
                 data-analytics="hero-cta"
               >
                 🤝 Let's Connect

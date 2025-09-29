@@ -72,7 +72,7 @@ test.describe('@accessibility-extended Contrast Ratios', () => {
 
       // Extra guard: directly assert the homepage hero CTA maintains sufficient contrast
       if (route === '/') {
-  const cta = page.locator('a.btn.btn-primary', { hasText: 'Let\'s Connect' }).first();
+        const cta = page.locator('[data-test="home-cta-connect"]').first();
         await expect(cta).toBeVisible();
         const colors = await cta.evaluate((node:any) => {
           const cs = window.getComputedStyle(node);
