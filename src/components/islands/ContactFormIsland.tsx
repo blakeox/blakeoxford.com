@@ -128,8 +128,10 @@ function setupTurnstile(isAudit: boolean): CleanupFn | void {
   let idleId: number | undefined;
 
   if ('requestIdleCallback' in window) {
-    idleId = (window as any).requestIdleCallback?.(() => injectScript(), { timeout: 15000 });
-    cleanupFns.push(() => (window as any).cancelIdleCallback?.(idleId));
+    idleId = window.requestIdleCallback?.(() => injectScript(), { timeout: 15000 });
+    cleanupFns.push(() => {
+      if (idleId !== undefined) window.cancelIdleCallback?.(idleId);
+    });
   } else {
     timeoutId = globalThis.setTimeout(injectScript, 15000);
     cleanupFns.push(() => globalThis.clearTimeout(timeoutId));

@@ -1,9 +1,16 @@
 import { useEffect } from 'react';
 
+// Extend Window interface for audit detection
+declare global {
+  interface Window {
+    __AUDIT__?: boolean;
+  }
+}
+
 export default function ServiceWorkerIsland() {
   useEffect(() => {
     const isAudit = Boolean(
-      (window as any).__AUDIT__ ||
+      window.__AUDIT__ ||
       /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie || '') ||
       /lighthouse|headlesschrome/i.test(navigator.userAgent || '')
     );
