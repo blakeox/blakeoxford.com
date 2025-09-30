@@ -201,13 +201,13 @@ export class ConfigManager {
   private findChangedKeys(oldConfig: AppConfig, newConfig: AppConfig): string[] {
     const changedKeys: string[] = [];
     
-    const compareObjects = (old: any, current: any, prefix = ''): void => {
+    const compareObjects = (old: Record<string, unknown>, current: Record<string, unknown>, prefix = ''): void => {
       for (const key in current) {
         const fullKey = prefix ? `${prefix}.${key}` : key;
         
         if (typeof current[key] === 'object' && current[key] !== null && !Array.isArray(current[key])) {
           if (typeof old[key] === 'object' && old[key] !== null) {
-            compareObjects(old[key], current[key], fullKey);
+            compareObjects(old[key] as Record<string, unknown>, current[key] as Record<string, unknown>, fullKey);
           } else {
             changedKeys.push(fullKey);
           }

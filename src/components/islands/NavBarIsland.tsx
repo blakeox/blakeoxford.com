@@ -250,13 +250,13 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
                   const burger = document.getElementById('nav-toggle');
                   if (menu) {
                     menu.classList.remove('active');
-                    (menu as any).style.visibility = 'hidden';
-                    (menu as any).inert = true;
+                    menu.style.visibility = 'hidden';
+                    (menu as HTMLElement).inert = true;
                   }
                   if (burger) {
                     burger.setAttribute('aria-expanded', 'false');
                     burger.classList.remove('active');
-                    (burger as any).style.pointerEvents = '';
+                    burger.style.pointerEvents = '';
                   }
                   // Restore body scroll just in case
                   document.body.style.overflow = '';

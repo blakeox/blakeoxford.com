@@ -40,9 +40,9 @@ export function defaultErrorFormatter(label: string, message: string): string {
 }
 
 export function getFieldLabel(field: HTMLElement, fallback: string): string {
-  const labels: HTMLCollectionOf<HTMLLabelElement> | [] =
-    'labels' in field ? ((field as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).labels ?? ([] as any)) : [];
-  const labelArray = Array.from(labels as unknown as HTMLLabelElement[]);
+  const labels =
+    'labels' in field ? ((field as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).labels ?? []) : [];
+  const labelArray = Array.from(labels);
   if (labelArray.length > 0) {
     const raw = labelArray[0]?.textContent ?? '';
     return raw.replace('*', '').trim() || fallback;
