@@ -14,7 +14,6 @@
         "Sage Intacct",
         "PowerBI"
       ],
-      "featured": false,
       "draft": false,
       "technologies": [
         "HCM",
@@ -23,7 +22,7 @@
         "Sage Intacct",
         "PowerBI"
       ],
-  "image": "/assets/projects/adp-automation.png"
+      "image": "/assets/projects/adp-automation.png"
     },
     {
       "slug": "advancedmd-implementation",
@@ -37,7 +36,6 @@
         "Healthcare IT",
         "SQL"
       ],
-      "featured": false,
       "draft": false,
       "technologies": [
         "EHR",
@@ -46,7 +44,7 @@
         "Healthcare IT",
         "SQL"
       ],
-  "image": "/assets/projects/advancedMD-project.png"
+      "image": "/assets/projects/advancedMD-project.png"
     },
     {
       "slug": "bank-projections-modeling",
@@ -60,7 +58,6 @@
         "Loan",
         "Financial Analysis"
       ],
-      "featured": false,
       "draft": false,
       "technologies": [
         "Financial Modeling",
@@ -69,7 +66,7 @@
         "Loan",
         "Financial Analysis"
       ],
-  "image": "/assets/projects/bank-projections.png"
+      "image": "/assets/projects/bank-projections.png"
     },
     {
       "slug": "ferment-app",
@@ -84,7 +81,6 @@
         "Mobile Development",
         "Fermentation"
       ],
-      "featured": false,
       "draft": false,
       "technologies": [
         "Swift",
@@ -94,7 +90,7 @@
         "Mobile Development",
         "Fermentation"
       ],
-  "image": "/assets/projects/ferment-app-design.png"
+      "image": "/assets/projects/ferment-app-design.png"
     },
     {
       "slug": "google-workspace-migration",
@@ -109,7 +105,6 @@
         "MDM",
         "COVID-19 Response"
       ],
-      "featured": true,
       "draft": false,
       "technologies": [
         "Microsoft 365",
@@ -119,7 +114,7 @@
         "MDM",
         "COVID-19 Response"
       ],
-  "image": "/assets/projects/google-to-microsoft.png"
+      "image": "/assets/projects/google-to-microsoft.png"
     },
     {
       "slug": "LLM-note-coaching",
@@ -135,7 +130,6 @@
         "Documentation Quality",
         "Python"
       ],
-      "featured": true,
       "draft": false,
       "technologies": [
         "OpenAI",
@@ -146,7 +140,7 @@
         "Documentation Quality",
         "Python"
       ],
-  "image": "/assets/projects/openai-automated-audit.png"
+      "image": "/assets/projects/openai-automated-audit.png"
     },
     {
       "slug": "Microsoft-Fabric",
@@ -162,7 +156,6 @@
         "Data Engineering",
         "Leadership"
       ],
-      "featured": true,
       "draft": false,
       "technologies": [
         "Microsoft Fabric",
@@ -173,7 +166,7 @@
         "Data Engineering",
         "Leadership"
       ],
-  "image": "/assets/projects/operational-and-workflow-automation.png"
+      "image": "/assets/projects/operational-and-workflow-automation.png"
     }
   ]
 }

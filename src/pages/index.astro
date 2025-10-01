@@ -44,6 +44,9 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
   : (shouldShowTagline ? heroTagline : undefined);
 ---
 <Layout title="Blake Oxford - Leadership & Portfolio" description="Systems architect and workflow strategist turning complexity into opportunity—designing scalable systems, streamlining operations, and leading high‑stakes transformations that deliver lasting results." wide={true}>
+  <!-- Preload hero LCP image variants to improve LCP -->
+  <link slot="head" rel="preload" as="image" href="/assets/images/optimized/avif/Blake-O-scaled@640w.avif" imagesrcset="/assets/images/optimized/avif/Blake-O-scaled@320w.avif 320w, /assets/images/optimized/avif/Blake-O-scaled@640w.avif 640w, /assets/images/optimized/avif/Blake-O-scaled@768w.avif 768w" imagesizes="280px" type="image/avif" fetchpriority="high" />
+  <link slot="head" rel="preload" as="image" href="/assets/images/optimized/webp/Blake-O-scaled@640w.webp" imagesrcset="/assets/images/optimized/webp/Blake-O-scaled@320w.webp 320w, /assets/images/optimized/webp/Blake-O-scaled@640w.webp 640w, /assets/images/optimized/webp/Blake-O-scaled@768w.webp 768w" imagesizes="280px" type="image/webp" fetchpriority="high" />
   <!-- Decorative background shapes -->
   <div class="fixed inset-0 -z-10 pointer-events-none">
     <div class="absolute top-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
@@ -87,7 +90,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
             <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6">
               <a
                 href="/contact/"
-                class="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--accent-strong)] px-6 sm:px-7 py-3 text-sm font-semibold text-[var(--on-accent)] shadow-lg transition-colors duration-200 hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-accent-dark px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg transition-colors duration-200 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
                 data-test="home-cta-connect"
                 data-analytics="hero-cta"
               >
@@ -361,7 +364,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
               <li class="group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-6 shadow-xl transition-transform duration-200 hover:-translate-y-1 hover:shadow-2xl dark:bg-surface/80 dark:border-border-dark/40" role="listitem">
                 <a href={`/blog/${post.slug}/`} class="flex h-full flex-col gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">
                   <header class="space-y-2">
-                    <time class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-foreground/55 dark:text-foreground-light/60" datetime={post.data.pubDate.toISOString()}>
+                    <time class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-smallcaps text-foreground/55 dark:text-foreground-light/60" datetime={post.data.pubDate.toISOString()}>
                       <span class="inline-flex h-1.5 w-1.5 rounded-full bg-accent"></span>
                       {post.data.pubDate.toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -381,7 +384,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
                   )}
 
                   {post.data.tags && post.data.tags.length > 0 && (
-                    <ul class="mt-auto flex flex-wrap gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/60" aria-label="Post tags" role="list">
+                    <ul class="mt-auto flex flex-wrap gap-2 text-xxs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60" aria-label="Post tags" role="list">
                       {post.data.tags.slice(0, 3).map((tag) => (
                         <li class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/30 dark:bg-background-dark/70" role="listitem">
                           {tag}

@@ -130,6 +130,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
 
   <ExperimentsCookieIsland client:only="react" />
   <AccessibilityEnhancementsIsland client:only="react" />
+  <slot name="head" />
   </head>
   <body id="top" class="min-h-screen bg-[--bg] text-[--fg] transition-colors duration-300">
     <ServiceWorkerIsland client:only="react" />

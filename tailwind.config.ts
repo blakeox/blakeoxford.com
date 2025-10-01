@@ -130,6 +130,7 @@ const config: Config = {
         ui: 'var(--font-ui)',
       },
       fontSize: {
+        xxs: 'var(--fs-xxs)',
         xs: 'var(--fs-xs)',
         sm: 'var(--fs-sm)',
         base: 'var(--fs-base)',
@@ -189,6 +190,8 @@ const config: Config = {
         wide: 'var(--ls-wide)',
         wider: 'var(--ls-wider)',
         widest: 'var(--ls-widest)',
+        label: 'var(--ls-label)',
+        smallcaps: 'var(--ls-smallcaps)',
         heading: 'var(--ls-heading)',
         body: 'var(--ls-body)',
       },

@@ -6,9 +6,9 @@
 import fs from 'fs';
 import path from 'path';
 
-const tailwindConfigPath = path.join(process.cwd(), 'tailwind.config.js');
+const tailwindConfigPath = path.join(process.cwd(), 'tailwind.config.ts');
 if (!fs.existsSync(tailwindConfigPath)) {
-  console.error('tailwind.config.js not found');
+  console.error('tailwind.config.ts not found');
   process.exit(0);
 }
 // Dynamic import (ESM)

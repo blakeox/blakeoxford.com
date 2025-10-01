@@ -31,7 +31,7 @@ const { slug, data } = post;
   <!-- Content Section -->
   <div class={`relative z-[1] flex flex-1 flex-col gap-6 px-7 pb-8 pt-7 sm:px-8 ${!data.heroImage ? 'w-full' : ''}`}>
     <div class="space-y-4">
-      <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/65">
+      <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
         {data.pubDate && (
           <time class="inline-flex items-center" datetime={new Date(data.pubDate).toISOString()}>
             {new Date(data.pubDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
@@ -53,7 +53,7 @@ const { slug, data } = post;
     </div>
 
     {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
-      <ul class="flex flex-wrap items-center gap-2 text-[0.7rem] font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65" aria-label="Post tags">
+      <ul class="flex flex-wrap items-center gap-2 text-xxs font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65" aria-label="Post tags">
         {data.tags.slice(0, 3).map((tag: string) => (
           <li class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/30 dark:bg-surface-dark-subtle">
             <span>{tag}</span>
@@ -68,7 +68,7 @@ const { slug, data } = post;
     )}
 
     <div class="mt-auto flex items-center justify-between gap-4">
-      <span class="text-xs font-semibold uppercase tracking-[0.25em] text-foreground/55 dark:text-foreground-light/65">
+      <span class="text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
         Read article
       </span>
       <a

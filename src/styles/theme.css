@@ -146,6 +146,7 @@
   --fs-h5: var(--fs-5xl); /* 3rem, 48px */
   --fs-h6: var(--fs-3xl); /* 1.875rem, 30px */
   --fs-ui: var(--fs-base); /* 1rem, 16px */
+  --fs-xxs: 0.65rem;      /* 10.4px - for ultra-compact labels */
   --fs-xs: 0.75rem;       /* 12px */
   --fs-sm: 0.875rem;      /* 14px */
   --fs-base: 1rem;        /* 16px */
@@ -174,6 +175,8 @@
   --ls-wide: 0.025em;
   --ls-wider: 0.05em;
   --ls-widest: 0.1em;
+  --ls-label: 0.28em;     /* Extended spacing for badge/filter labels */
+  --ls-smallcaps: 0.35em; /* Emphasized spacing for stage/section labels */
   --lh-none: 1;
   --lh-tight: 1.25;
   --lh-snug: 1.375;

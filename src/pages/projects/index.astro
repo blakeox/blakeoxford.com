@@ -21,7 +21,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   <section class="bg-gradient-to-b from-background via-accent/5 to-background py-20 sm:py-24 md:py-28" role="region" aria-labelledby="projects-title">
     <div class="@container mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 lg:gap-14 text-pretty">
       <div class="max-w-3xl space-y-6 sm:space-y-7">
-        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-foreground/65 ring-1 ring-border/40 dark:bg-surface-dark-subtle backdrop-blur-sm">
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-4 py-1.5 text-xs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/40 dark:bg-surface-dark-subtle backdrop-blur-sm">
           {hero.kicker}
         </span>
         <header class="space-y-4 sm:space-y-5">
@@ -37,7 +37,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
         </header>
       </div>
 
-      <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-foreground/60 dark:text-foreground-light/60" role="list" aria-label="Focus areas">
+      <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60" role="list" aria-label="Focus areas">
         {hero.focusAreas.map((area) => (
           <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/35 dark:bg-surface-dark-subtle" role="listitem">
             <span class="h-1.5 w-1.5 rounded-full bg-accent/70" aria-hidden="true"></span>
@@ -49,7 +49,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {hero.stats.map((stat) => (
           <div class="rounded-2xl bg-background px-4 py-5 sm:px-5 sm:py-6 ring-1 ring-border/30 shadow-lg">
-            <p class="mb-3 sm:mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-foreground/55 dark:text-foreground-light/60">{stat.label}</p>
+            <p class="mb-3 sm:mb-4 text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">{stat.label}</p>
             <p class="text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">{stat.value}</p>
           </div>
         ))}
@@ -91,7 +91,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
             {approach.stages.map((stage) => (
               <article class="flex h-full flex-col gap-4 rounded-3xl border border-border/25 bg-background/95 p-4 sm:p-5 shadow-sm">
                 <header class="space-y-1.5">
-                  <p class="text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-foreground/55 dark:text-foreground-light/55">
+                  <p class="text-xxs font-semibold uppercase tracking-smallcaps text-foreground/55 dark:text-foreground-light/55">
                     Stage
                   </p>
                   <h3 class="text-base font-semibold text-foreground dark:text-foreground-light">{stage.title}</h3>
@@ -114,7 +114,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
           <div class="grid gap-4 sm:gap-5 lg:grid-cols-3">
             {approach.signals.map((signal) => (
               <div class="flex flex-col gap-3 rounded-3xl border border-dashed border-border/45 bg-surface-subtle/65 p-4 sm:p-6">
-                <h3 class="text-xs font-semibold uppercase tracking-[0.4em] text-foreground/60 dark:text-foreground-light/60">
+                <h3 class="text-xs font-semibold uppercase tracking-smallcaps text-foreground/60 dark:text-foreground-light/60">
                   Signal of success
                 </h3>
                 <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{signal}</p>
@@ -156,7 +156,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   <section class="border-t border-border/20 bg-background py-16 sm:py-20" role="region" aria-labelledby="projects-grid-heading">
     <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-10 text-pretty">
       <header class="max-w-3xl space-y-3 sm:space-y-4">
-        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
           {grid.kicker}
         </span>
         <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">

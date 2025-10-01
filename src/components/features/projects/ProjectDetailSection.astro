@@ -18,7 +18,7 @@ const containerClasses =
 <section class={`relative flex flex-col gap-6 ${containerClasses}`}>
   <div class="space-y-3 max-w-6xl w-full mx-auto">
     {eyebrow && (
-      <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-foreground/65 ring-1 ring-border/30 dark:bg-surface-dark-subtle dark:text-foreground-light/70">
+      <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-4 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/30 dark:bg-surface-dark-subtle dark:text-foreground-light/70">
         <span class="h-1.5 w-1.5 rounded-full bg-accent"></span>
         {eyebrow}
       </span>
@@ -27,7 +27,7 @@ const containerClasses =
       {title}
     </h2>
     {subtitle && (
-      <p class="max-w-3xl text-sm font-semibold uppercase tracking-[0.28em] text-foreground/65 dark:text-foreground-light/65">
+      <p class="max-w-3xl text-sm font-semibold uppercase tracking-label text-foreground/65 dark:text-foreground-light/65">
         {subtitle}
       </p>
     )}
