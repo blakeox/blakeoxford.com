@@ -1,12 +1,24 @@
 import { Resend } from 'resend';
+import { initEdgeSentry, addEdgeBreadcrumb } from '../sentry.edge.config.js';
 
 const WINDOW_SECONDS = 30;    // logical window duration
 const MAX_PER_WINDOW  = 2;    // allowed submissions per window
 const KV_TTL          = 60;   // Cloudflare KV minimum TTL in seconds
 
 export async function onRequestPost(context) {
+  // Initialize Sentry for error tracking in edge function
+  const Sentry = initEdgeSentry(context.env);
+  
   const ct     = context.request.headers.get('content-type') || '';
   const isJson = ct.includes('application/json');
+
+  // Add breadcrumb to track email processing
+  addEdgeBreadcrumb({
+    category: 'email',
+    message: 'Processing contact form submission',
+    level: 'info',
+    data: { contentType: ct, isJson }
+  });
 
   try {
     // ─── Parse incoming data ─────────────────────────
@@ -101,6 +113,19 @@ export async function onRequestPost(context) {
     return jsonOrRedirect({ success: true }, isJson);
 
   } catch (err) {
+    // Capture error to Sentry with context
+    Sentry.captureException(err, {
+      tags: { 
+        function: 'send-email',
+        contentType: ct
+      },
+      extra: { 
+        hasBody: !!context.request.body,
+        isJson
+      }
+    });
+    
+    // Keep existing console.error for Cloudflare logs
     console.error('💥 send-email error:', err);
     return errorResponse(500, 'Internal server error.', isJson);
   }

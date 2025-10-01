@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "npm run generate:search-index && astro build",
+    "build:prod": "GIT_COMMIT=$(git rev-parse HEAD) PUBLIC_GIT_COMMIT=$(git rev-parse HEAD) NODE_ENV=production npm run build",
+    "preview:prod": "npm run build:prod && npm run preview",
     "prebuild": "node scripts/optimization/convert-proficiency-logos.js && node scripts/optimization/optimize-project-images.js && node scripts/optimization/optimize-carousel-images.js && node scripts/optimization/optimize-public-images.js",
     "postbuild": "node scripts/build/postbuild-copy.js",
     "preview": "astro preview",
@@ -21,6 +23,7 @@
     "deploy:worker": "pnpm exec wrangler deploy",
     "deploy:worker:latest": "pnpm dlx wrangler@4.28.1 deploy",
     "wrangler:version": "pnpm exec wrangler --version && pnpm dlx wrangler@4.28.1 --version",
+    "sentry:sourcemaps": "sentry-cli sourcemaps upload --org ${SENTRY_ORG} --project ${SENTRY_PROJECT} ./dist",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e:install": "./scripts/build/install-playwright-browsers.sh",
@@ -80,6 +83,8 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.4.0",
+    "@sentry/astro": "^8.47.0",
+    "@sentry/cloudflare": "^8.47.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "resend": "^6.1.0",
@@ -96,6 +101,7 @@
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.55.0",
     "@rollup/rollup-linux-x64-gnu": "^4.52.0",
+    "@sentry/cli": "^2.42.0",
     "@stryker-mutator/core": "^9.1.1",
     "@stryker-mutator/vitest-runner": "^9.1.1",
     "@tailwindcss/cli": "^4.1.13",

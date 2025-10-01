@@ -2,6 +2,9 @@ name = "blakeoxford-com"
 account_id = "cc3bb24ae3c87cff38c2be85df3dab29"
 compatibility_date = "2025-08-08"
 
+# Enable Node.js compatibility for dependencies that rely on Node built-ins (e.g., @sentry/cloudflare)
+compatibility_flags = ["nodejs_compat"]
+
 # Switch to Workers: serve static assets from ./dist via an assets binding,
 # and use a single Worker entry (functions/edge-computing.js).
 main = "functions/edge-computing.js"
@@ -34,6 +37,18 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 # [[kv_namespaces]]
 # binding = "CSP_REPORTS"
 # id      = "<your-kv-namespace-id>"
+
+# Sentry Configuration
+# Set these secrets via: wrangler secret put <NAME>
+# SENTRY_DSN_EDGE       - DSN for edge function errors (from Sentry dashboard)
+# SENTRY_AUTH_TOKEN     - Auth token for source map uploads (optional)
+# GIT_COMMIT            - Current git commit SHA (set in CI/CD)
+# ENVIRONMENT           - Deployment environment (production/staging)
+
+[vars]
+# Public variables (not sensitive)
+# Add ENVIRONMENT variable for Sentry context
+# ENVIRONMENT = "production"
 
 [observability.logs]
 enabled = true

@@ -3,6 +3,7 @@
  * Cloudflare Worker: Edge app with asset serving, security headers, caching, audit-mode, and utilities
  */
 import { onRequestPost as handleSendEmail } from './send-email.js';
+import { initEdgeSentry, addEdgeBreadcrumb } from '../sentry.edge.config.js';
 
 class EdgeCacheManager {
   constructor(request, env) {
@@ -83,6 +84,9 @@ const WorkerApp = {
   },
 
   async fetch(request, env, ctx) {
+    // Initialize Sentry for error tracking in edge function
+    const Sentry = initEdgeSentry(env);
+    
     const url = new URL(request.url);
     const method = request.method || 'GET';
     const reqId = (() => {
@@ -204,6 +208,36 @@ const WorkerApp = {
       return new Response(null, { status: 204, headers: { 'cache-control': 'no-store, no-cache, must-revalidate', 'content-type': 'text/plain; charset=utf-8', 'content-length': '0', 'x-content-type-options': 'nosniff', 'x-request-id': reqId, 'x-route-kind': 'health', 'x-cache-policy': 'no-store, no-cache, must-revalidate' } });
     }
 
+    // Debug route: intentionally trigger a test error to verify Sentry (edge)
+    if (url.pathname === '/debug/edge-sentry-test') {
+      try {
+        addEdgeBreadcrumb({
+          category: 'debug',
+          message: 'Triggering Sentry edge test error',
+          level: 'info',
+          data: { reqId }
+        });
+        throw new Error('Sentry Edge Test: manual trigger from /debug/edge-sentry-test');
+      } catch (err) {
+        try {
+          Sentry.captureException(err, {
+            tags: { route: 'debug-edge-sentry-test' },
+            extra: { reqId, path: url.pathname, method }
+          });
+        } catch { /* swallow */ }
+        return new Response('Edge test error captured. Check Sentry project for an event.', {
+          status: 200,
+          headers: {
+            'content-type': 'text/plain; charset=utf-8',
+            'cache-control': 'no-store',
+            'x-request-id': reqId,
+            'x-route-kind': 'debug',
+            'x-cache-policy': 'no-store'
+          }
+        });
+      }
+    }
+
     // Legacy no-op for previous metrics path
     if (url.pathname === '/metrics/' || url.pathname === '/metrics') {
       return new Response(null, { status: 204, headers: { 'cache-control': 'no-store, no-cache, must-revalidate', 'content-type': 'text/plain; charset=utf-8', 'content-length': '0', 'x-content-type-options': 'nosniff', 'x-request-id': reqId, 'x-route-kind': 'health', 'x-cache-policy': 'no-store, no-cache, must-revalidate' } });
@@ -277,6 +311,15 @@ const WorkerApp = {
     try {
       const startTs = Date.now();
       console.log('\u27a1\ufe0f Request start', JSON.stringify({ id: reqId, method, path: url.pathname }));
+      
+      // Add breadcrumb for request tracking
+      addEdgeBreadcrumb({
+        category: 'http',
+        message: `${method} ${url.pathname}`,
+        level: 'info',
+        data: { reqId, method, path: url.pathname }
+      });
+      
       let originResponse = await env.ASSETS.fetch(request);
 
       if (originResponse.status === 404 && !url.pathname.includes('.') && !url.pathname.endsWith('/index.html')) {
@@ -416,7 +459,23 @@ const WorkerApp = {
 
     } catch (error) {
       const errStart = Date.now();
+      
+      // Capture error to Sentry with context
+      Sentry.captureException(error, {
+        tags: {
+          function: 'edge-computing',
+          method: request.method,
+          path: url.pathname,
+        },
+        extra: {
+          reqId,
+          url: request.url,
+        },
+      });
+      
+      // Keep existing console.error for Cloudflare logs
       console.error('Edge processing error:', JSON.stringify({ id: reqId, error: String(error), path: url.pathname }));
+      
       const staleResponse = await caches.default.match(request);
       if (staleResponse) return staleResponse;
       const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
