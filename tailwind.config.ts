@@ -158,7 +158,7 @@ const config: Config = {
       },
       backgroundImage: {
         'btn-primary':
-          'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%)',
+          'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
         'gradient-primary': 'var(--gradient-primary)',
         'gradient-accent': 'var(--gradient-accent)',
         'gradient-secondary': 'var(--gradient-secondary)',
@@ -236,9 +236,9 @@ const config: Config = {
           css: {
             maxWidth: 'none',
             a: {
-              color: theme('colors.accent', 'var(--color-accent)'),
+              color: theme('colors.primary', 'var(--color-primary)'),
               textDecoration: 'underline',
-              '&:hover': { color: theme('colors.accent-dark', 'var(--color-accent-dark)') },
+              '&:hover': { color: theme('colors["primary-dark"]', 'var(--color-primary-dark)') },
             },
             h1: { fontSize: theme('fontSize.2xl'), fontWeight: theme('fontWeight.bold') },
             h2: { fontSize: theme('fontSize.xl'), fontWeight: theme('fontWeight.semibold') },
