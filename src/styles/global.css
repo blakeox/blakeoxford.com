@@ -1,7 +1,7 @@
 /* src/styles/global.css - Main stylesheet entry point */
 
-@import "tailwindcss";
 @import url("./theme.css");
+@import "tailwindcss";
 
 /* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
   class (or any of its descendants) is in the selector chain.   */

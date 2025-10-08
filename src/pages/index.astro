@@ -90,7 +90,8 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
             <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6">
               <a
                 href="/contact/"
-                class="inline-flex items-center justify-center gap-2 rounded-full bg-accent-dark px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg transition-colors duration-200 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+                class="inline-flex items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold shadow-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+                style="background-color: var(--color-accent); color: var(--color-on-accent)"
                 data-test="home-cta-connect"
                 data-analytics="hero-cta"
               >
@@ -416,7 +417,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
           )}
         </ul>
         <div class="mt-8 text-center">
-          <a href="/blog/" class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">View All Blog Posts</a>
+          <a href="/blog/" class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-light dark:hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">View All Blog Posts</a>
         </div>
       </div>
     </section>
@@ -425,7 +426,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
   <section class="container mx-auto px-6 sm:px-8 lg:px-12 text-center py-16">
   <h2 class="text-h2 font-bold mb-4 text-foreground dark:text-foreground-light flex items-center justify-center gap-2"><span>🤝</span> Want to Work Together?</h2>
       <p class="text-lg mb-6 text-neutral">I'm always open to exciting new opportunities and collaborations. Let's create something amazing together!</p>
-      <a href="/contact/" class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">Contact Me</a>
+  <a href="/contact/" class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/30 transition-colors duration-200 hover:bg-accent-light dark:hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">Contact Me</a>
     </section>
   </div>
 </Layout>
