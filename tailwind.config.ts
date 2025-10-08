@@ -172,7 +172,7 @@ const config: Config = {
         open: 'state=open',
         closed: 'state=closed',
       },
-      
+
       fontWeight: {
         thin: 'var(--fw-thin)',
         extralight: 'var(--fw-extralight)',
@@ -216,7 +216,7 @@ const config: Config = {
       zIndex: { auto: 'auto', 0: '0', 10: '10', 20: '20', 30: '30', 40: '40', 50: '50' },
       opacity: { 0: '0', 25: '0.25', 50: '0.5', 75: '0.75', 100: '1' },
       borderWidth: { 0: '0px', 1: '1px', 2: '2px', 4: '4px', 8: '8px' },
-      
+
       blur: { sm: 'var(--blur-sm)', DEFAULT: 'var(--blur)', lg: 'var(--blur-lg)' },
       backdropBlur: { sm: 'var(--blur-sm)', DEFAULT: 'var(--blur)', lg: 'var(--blur-lg)' },
       transitionDuration: {
@@ -230,7 +230,7 @@ const config: Config = {
         decelerate: 'var(--ease-decelerate)',
         accelerate: 'var(--ease-accelerate)',
       },
-      
+
       ringWidth: { DEFAULT: '2px', 0: '0px', 1: '1px', 2: '2px', 4: '4px' },
       typography: ({ theme }: { theme: (path: string, fallback?: any) => any }) => ({
         DEFAULT: {

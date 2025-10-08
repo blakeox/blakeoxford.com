@@ -164,7 +164,6 @@ See the Phase 2 completion summary in `PHASE2_COMPLETION.md` for delivered relia
 
 Progressive multi-phase modernization delivers layered quality gates:
 
-
 Environment Flags (runtime gates & quality controls):
 
 | Variable | Purpose | Notes |
@@ -230,7 +229,6 @@ SITEMAP_MAX_PAGES=20 pnpm test:e2e --grep "@sitemap-sweep" --project=chromium
 # Or use the convenience script
 pnpm contrast:sitemap
 ```
-
 
 These layers create early, low-noise detection for regressions across functionality, performance, accessibility, and UI fidelity while keeping runtime lean.
 
@@ -324,7 +322,6 @@ export default defineConfig({
 ---
 
 ## 🛡 Security & Performance
-
 
 ### Performance budgets and image pipeline
 
