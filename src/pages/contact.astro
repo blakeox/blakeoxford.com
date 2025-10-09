@@ -9,7 +9,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
 
 <Layout title={title} description={description} url={canonicalUrl} wide={true}>
   <!-- Hero section -->
-  <section id="hero" class="py-20 sm:py-24 md:py-32 bg-gradient-to-br from-background via-accent/5 to-background relative overflow-hidden">
+  <section id="hero" class="pb-20 sm:pb-24 md:pb-32 bg-gradient-to-br from-background via-accent/5 to-background relative overflow-hidden">
     <div class="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 gap-12 items-center md:grid-cols-2">
           <div class="@container space-y-6">
@@ -92,7 +92,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
                 class="w-full p-3 rounded-lg border-2 border-accent/30 focus:border-accent focus:ring-2 focus:ring-accent/20 dark:border-accent-dark dark:bg-surface-dark bg-surface transition-colors"
                 placeholder="Your Name"
               />
-              <div id="name-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite"></div>
+              <div id="name-error" class="text-error dark:text-error-light text-sm hidden" role="alert" aria-live="polite"></div>
             </div>
             <div class="flex flex-col gap-2">
               <label for="email" class="font-semibold text-lg">Email <span class="text-accent dark:text-accent-light">*</span></label>
@@ -109,7 +109,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
                 placeholder="you@email.com"
               />
               <small id="email-help" class="text-sm text-neutral">I'll never share your email.</small>
-              <div id="email-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
+              <div id="email-error" class="text-error dark:text-error-light text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
             </div>
             <div class="flex flex-col gap-2">
               <label for="message" class="font-semibold text-lg">Message <span class="text-accent dark:text-accent-light">*</span></label>
@@ -126,7 +126,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
                 placeholder="How can I help you?"
               ></textarea>
               <small id="message-help" class="text-sm text-neutral">Please provide at least 10 characters (maximum 2000).</small>
-              <div id="message-error" class="text-red-600 text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
+              <div id="message-error" class="text-error dark:text-error-light text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
             </div>
 
             <!-- Cloudflare Turnstile placeholder (reserve space to avoid CLS) -->
@@ -137,7 +137,7 @@ const canonicalUrl = 'https://blakeoxford.com/contact/';
               </div>
             </div>
 
-            <button type="submit" class="mx-auto flex w-full md:w-auto items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/25 transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">
+            <button type="submit" class="mx-auto flex w-full md:w-auto items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent shadow-lg shadow-accent/25 transition-colors duration-200 hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">
               🚀 <span id="btn-label">Send Message</span>
               <svg id="spinner" class="hidden animate-spin h-5 w-5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/></svg>
             </button>

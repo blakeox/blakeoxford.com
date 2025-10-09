@@ -179,7 +179,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             aria-controls="search-overlay"
             aria-expanded="false"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
             </svg>
           </button>
@@ -192,10 +192,10 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             aria-label="Toggle dark mode"
             aria-pressed="false"
           >
-            <svg className="sun-icon size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+            <svg className="sun-icon size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4V2m0 20v-2m8-8h2M2 12h2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M5.6 18.4 4.2 19.8m15.6-15.6-1.4 1.4M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
             </svg>
-            <svg className="moon-icon hidden size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+            <svg className="moon-icon hidden size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79Z" />
             </svg>
           </button>

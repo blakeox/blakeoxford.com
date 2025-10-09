@@ -79,7 +79,8 @@
     "contrast:history": "CONTRAST_JSON=1 playwright test tests/playwright/accessibility/contrast-ratio.spec.ts --project=chromium | node scripts/quality/contrast-history-aggregator.js",
     "contrast:badge": "node scripts/quality/contrast-sparkline-badge.js",
     "contrast:check": "node scripts/quality/contrast-alert-check.js",
-    "contrast:report": "node scripts/quality/contrast-report.js --limit 10"
+    "contrast:report": "node scripts/quality/contrast-report.js --limit 10",
+    "contrast:sitemap": "playwright test tests/playwright/accessibility/contrast-sitemap.spec.ts --project=chromium"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.0",
@@ -99,7 +100,7 @@
     "@axe-core/playwright": "^4.10.2",
     "@eslint/js": "^9.36.0",
     "@lhci/cli": "^0.15.1",
-    "@playwright/test": "^1.55.0",
+    "@playwright/test": "^1.56.0",
     "@rollup/rollup-linux-x64-gnu": "^4.52.0",
     "@sentry/cli": "^2.42.0",
     "@stryker-mutator/core": "^9.1.1",

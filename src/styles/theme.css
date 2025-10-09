@@ -8,27 +8,28 @@
   /* color-no-hex, declaration-property-value-disallowed-list */
 
   /* ---------- Colors ---------- */
-  --color-primary: #2563eb;
-  --color-primary-light: #3b82f6;
-  --color-primary-dark: #1e40af;
-  --color-secondary: #f59e42;
-  --color-secondary-light: #fbbf24;
-  --color-secondary-dark: #b45309;
-  /* Accent palette updated (2025-09-18) for WCAG AA contrast on both light (#f9fafb) and dark (#0f172a) backgrounds */
-  --color-accent: #0d9488;        /* teal-600 */
+  /* Tech-forward consulting palette: Indigo primary + Cyan accent */
+  --color-primary: #4f46e5; /* indigo-600 */
+  --color-primary-light: #6366f1; /* indigo-500 */
+  --color-primary-dark: #3730a3; /* indigo-800 */
+  --color-secondary: #0ea5e9; /* sky-500 as supportive secondary */
+  --color-secondary-light: #38bdf8; /* sky-400 */
+  --color-secondary-dark: #0369a1; /* sky-700 */
+  /* Cyan accent for highlights and interactive emphasis */
+  --color-accent: #06b6d4;        /* cyan-500 */
   /* Stronger foreground variant for improved contrast on light backgrounds (WCAG ≥4.5) */
-  --color-foreground-strong: #111827; /* slate-900 */
-  --color-accent-light: #2dd4bf;  /* teal-400 (used as text on dark backgrounds) */
-  --color-accent-dark: #115e59;   /* teal-800 (WCAG AA base for on-accent text) */
+  --color-foreground-strong: #0f172a; /* slate-900 slightly deeper */
+  --color-accent-light: #22d3ee;  /* cyan-400 */
+  --color-accent-dark: #0e7490;   /* cyan-700 (AA base for on-accent text) */
   /* Darken foreground slightly for stronger contrast on near-white backgrounds */
   --color-foreground: #111827; /* slate-900 */
   --color-foreground-light: #f9fafb;
   --color-on-dark: #f9fafb; /* text on dark surfaces */
-  --color-on-accent: #f9fafb; /* primary accent foreground */
-  --color-on-primary: #f9fafb;
-  --color-on-secondary: #1f2933;
-  --color-background: #f9fafb;
-  --color-background-dark: #111827;
+  --color-on-accent: #051b2a; /* deeper on-cyan for AA on light */
+  --color-on-primary: #ffffff; /* on indigo */
+  --color-on-secondary: #062433; /* on sky */
+  --color-background: #f8fafc; /* slate-50 */
+  --color-background-dark: #0b1220; /* near-slate-950, cooler dark */
   --color-neutral: #64748b;
   --color-neutral-light: #cbd5e1;
   --color-neutral-dark: #334155;
@@ -46,17 +47,17 @@
   --color-info-dark: #0369a1;
   /* ---------- Surfaces & Overlays ---------- */
   --color-surface: #ffffff;                /* Card & sheet background (light)   */
-  --color-surface-subtle: #f3f4f6;         /* Subtle surface (light)            */
-  --color-surface-dark: #1e293b;
-  --color-surface-dark-subtle: #334155;
+  --color-surface-subtle: #eef2ff;         /* subtle indigo-tinted surface */
+  --color-surface-dark: #0f172a;           /* slate-900 */
+  --color-surface-dark-subtle: #111827;
 
   /* Shadow chroma – referenced by all shadow tokens for theme switching */
   --shadow-chroma: 0 0 0 / 0.08;
 
   /* ---------- Gradients ---------- */
-  --gradient-primary: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
-  --gradient-accent:  linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent) 50%, var(--color-accent-dark) 100%);
-  --gradient-secondary: linear-gradient(135deg, var(--color-secondary-light) 0%, var(--color-secondary) 50%, var(--color-secondary-dark) 100%);
+  --gradient-primary: linear-gradient(135deg, color-mix(in oklch, var(--color-primary-light) 85%, white) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
+  --gradient-accent:  linear-gradient(135deg, color-mix(in oklch, var(--color-accent-light) 85%, white) 0%, var(--color-accent) 50%, var(--color-accent-dark) 100%);
+  --gradient-secondary: linear-gradient(135deg, color-mix(in oklch, var(--color-secondary-light) 85%, white) 0%, var(--color-secondary) 50%, var(--color-secondary-dark) 100%);
   --gradient-info: linear-gradient(135deg, var(--color-info-light) 0%, var(--color-info) 50%, var(--color-info-dark) 100%);
   --gradient-success: linear-gradient(135deg, var(--color-success-light) 0%, var(--color-success) 50%, var(--color-success-dark) 100%);
   --gradient-warning: linear-gradient(135deg, var(--color-warning-light) 0%, var(--color-warning) 50%, var(--color-warning-dark) 100%);
@@ -304,7 +305,7 @@
   --color-surface-subtle: var(--color-surface-dark-subtle);
   --color-neutral: var(--color-neutral-light);
   --color-neutral-dark: var(--color-neutral);
-  --color-on-accent: #f9fafb;
+  --color-on-accent: #e6faff; /* lighter on-cyan for dark */
   --shadow-chroma: 0 0 0 / 0.6;
   --glass-surface-bg: var(--glass-surface-bg-dark);
   --glass-border: var(--glass-border-dark);
@@ -318,7 +319,7 @@
   --surface-subtle: var(--color-surface-dark-subtle);
   --border: var(--border-color-dark);
   --border-subtle: var(--border-color-dark);
-  --ring: var(--color-primary-dark);
+  --ring: var(--color-accent);
 }
 
 /* Support dark mode via class as used by theme toggle scripts */
@@ -330,7 +331,7 @@ html.dark, :root.dark {
   --color-surface-subtle: var(--color-surface-dark-subtle);
   --color-neutral: var(--color-neutral-light);
   --color-neutral-dark: var(--color-neutral);
-  --color-on-accent: #f9fafb;
+  --color-on-accent: #e6faff;
   --shadow-chroma: 0 0 0 / 0.6;
   --glass-surface-bg: var(--glass-surface-bg-dark);
   --glass-border: var(--glass-border-dark);
@@ -344,7 +345,7 @@ html.dark, :root.dark {
   --surface-subtle: var(--color-surface-dark-subtle);
   --border: var(--border-color-dark);
   --border-subtle: var(--border-color-dark);
-  --ring: var(--color-primary-dark);
+  --ring: var(--color-accent);
 }
 
 html {

@@ -62,31 +62,32 @@ const config: Config = {
           'themeToggleSpin var(--duration-fast, 150ms) var(--ease-standard, cubic-bezier(0.4,0,0.2,1))',
       },
       colors: {
-        primary: 'var(--color-primary)',
-        'primary-light': 'var(--color-primary-light)',
-        'primary-dark': 'var(--color-primary-dark)',
-        accent: 'var(--color-accent)',
-        'accent-light': 'var(--color-accent-light)',
-        'accent-dark': 'var(--color-accent-dark)',
-        surface: 'var(--color-surface)',
-        'surface-dark': 'var(--color-surface-dark)',
-        'surface-subtle': 'var(--color-surface-subtle)',
-        'surface-dark-subtle': 'var(--color-surface-dark-subtle)',
-        background: 'var(--color-background)',
-        'background-dark': 'var(--color-background-dark)',
-        foreground: 'var(--color-foreground)',
-        'foreground-strong': 'var(--color-foreground-strong)',
-        'foreground-light': 'var(--color-foreground-light)',
-        'on-accent': 'var(--color-on-accent)',
-        'on-dark': 'var(--color-on-dark)',
-        neutral: 'var(--color-neutral)',
-        'neutral-light': 'var(--color-neutral-light)',
-        'neutral-dark': 'var(--color-neutral-dark)',
-        border: 'var(--border-color)',
-        'border-dark': 'var(--border-color-dark)',
+        // Provide safe fallbacks to prevent white/transparent rendering if CSS vars are missing early in the cascade.
+        primary: 'var(--color-primary, #4f46e5)',
+        'primary-light': 'var(--color-primary-light, #6366f1)',
+        'primary-dark': 'var(--color-primary-dark, #3730a3)',
+        accent: 'var(--color-accent, #06b6d4)',
+        'accent-light': 'var(--color-accent-light, #22d3ee)',
+        'accent-dark': 'var(--color-accent-dark, #0e7490)',
+        surface: 'var(--color-surface, #ffffff)',
+        'surface-dark': 'var(--color-surface-dark, #0f172a)',
+        'surface-subtle': 'var(--color-surface-subtle, #eef2ff)',
+        'surface-dark-subtle': 'var(--color-surface-dark-subtle, #111827)',
+        background: 'var(--color-background, #f8fafc)',
+        'background-dark': 'var(--color-background-dark, #0b1220)',
+        foreground: 'var(--color-foreground, #111827)',
+        'foreground-strong': 'var(--color-foreground-strong, #0f172a)',
+        'foreground-light': 'var(--color-foreground-light, #f9fafb)',
+        'on-accent': 'var(--color-on-accent, #051b2a)',
+        'on-dark': 'var(--color-on-dark, #f9fafb)',
+        neutral: 'var(--color-neutral, #64748b)',
+        'neutral-light': 'var(--color-neutral-light, #cbd5e1)',
+        'neutral-dark': 'var(--color-neutral-dark, #334155)',
+        border: 'var(--border-color, rgba(15, 23, 42, 0.08))',
+        'border-dark': 'var(--border-color-dark, rgba(148, 163, 184, 0.2))',
         // Semantic aliases for clarity (no behavior change)
-        'on-surface': 'var(--color-foreground) ',
-        'on-surface-strong': 'var(--color-foreground-strong)',
+        'on-surface': 'var(--color-foreground, #111827) ',
+        'on-surface-strong': 'var(--color-foreground-strong, #0f172a)',
       },
       screens: {
         'sm-md': { raw: '(min-width: 651px) and (max-width: 767px)' },
@@ -158,7 +159,7 @@ const config: Config = {
       },
       backgroundImage: {
         'btn-primary':
-          'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%)',
+          'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
         'gradient-primary': 'var(--gradient-primary)',
         'gradient-accent': 'var(--gradient-accent)',
         'gradient-secondary': 'var(--gradient-secondary)',
@@ -171,7 +172,7 @@ const config: Config = {
         open: 'state=open',
         closed: 'state=closed',
       },
-      
+
       fontWeight: {
         thin: 'var(--fw-thin)',
         extralight: 'var(--fw-extralight)',
@@ -215,7 +216,7 @@ const config: Config = {
       zIndex: { auto: 'auto', 0: '0', 10: '10', 20: '20', 30: '30', 40: '40', 50: '50' },
       opacity: { 0: '0', 25: '0.25', 50: '0.5', 75: '0.75', 100: '1' },
       borderWidth: { 0: '0px', 1: '1px', 2: '2px', 4: '4px', 8: '8px' },
-      
+
       blur: { sm: 'var(--blur-sm)', DEFAULT: 'var(--blur)', lg: 'var(--blur-lg)' },
       backdropBlur: { sm: 'var(--blur-sm)', DEFAULT: 'var(--blur)', lg: 'var(--blur-lg)' },
       transitionDuration: {
@@ -229,16 +230,16 @@ const config: Config = {
         decelerate: 'var(--ease-decelerate)',
         accelerate: 'var(--ease-accelerate)',
       },
-      
+
       ringWidth: { DEFAULT: '2px', 0: '0px', 1: '1px', 2: '2px', 4: '4px' },
       typography: ({ theme }: { theme: (path: string, fallback?: any) => any }) => ({
         DEFAULT: {
           css: {
             maxWidth: 'none',
             a: {
-              color: theme('colors.accent', 'var(--color-accent)'),
+              color: theme('colors.primary', 'var(--color-primary)'),
               textDecoration: 'underline',
-              '&:hover': { color: theme('colors.accent-dark', 'var(--color-accent-dark)') },
+              '&:hover': { color: theme('colors["primary-dark"]', 'var(--color-primary-dark)') },
             },
             h1: { fontSize: theme('fontSize.2xl'), fontWeight: theme('fontWeight.bold') },
             h2: { fontSize: theme('fontSize.xl'), fontWeight: theme('fontWeight.semibold') },

@@ -34,6 +34,13 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
           (el as HTMLElement).style.opacity = '1';
           (el as HTMLElement).style.pointerEvents = 'auto';
         });
+        // Blur any focused element inside the overlay to avoid focus ring diff
+        await page.evaluate(() => {
+          const overlay = document.querySelector('#search-overlay');
+          if (overlay && overlay.contains(document.activeElement)) {
+            (document.activeElement as HTMLElement).blur();
+          }
+        });
         await expect(overlay).toBeVisible();
       } else {
         await expect(page.locator(cfg.selector).first()).toBeVisible();

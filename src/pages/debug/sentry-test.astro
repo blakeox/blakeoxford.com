@@ -8,16 +8,16 @@ const description = 'Debug page to manually trigger a test error for Sentry veri
 <BaseLayout title={title} description={description} wide>
   <section class="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 py-12 prose dark:prose-invert">
     <h1>{title}</h1>
-    <p>
+    <p class="!text-gray-900 dark:!text-gray-100">
       This page intentionally throws an error when you click the button below, so you can verify
       that browser events reach your Sentry project. In development, the event is suppressed.
     </p>
 
-    <button id="trigger" class="inline-flex items-center rounded-md bg-[--accent] text-[--on-accent] px-3 py-2 font-semibold shadow hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--accent]">
+    <button id="trigger" class="inline-flex items-center rounded-md border-2 border-accent/60 text-accent px-3 py-2 font-semibold shadow hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
       Throw test error
     </button>
 
-    <p id="status" class="mt-3 text-green-600 hidden">Test error thrown. Check Sentry in a few seconds.</p>
+    <p id="status" class="mt-3 text-green-600 dark:text-green-400 hidden">Test error thrown. Check Sentry in a few seconds.</p>
 
     <script is:inline>
       const btn = document.getElementById('trigger');

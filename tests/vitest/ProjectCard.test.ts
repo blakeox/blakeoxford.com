@@ -35,7 +35,7 @@ describe('ProjectCard.astro file', () => {
   });
 
   it('should expose a visible CTA without extra aria-label', () => {
-    expect(content).toContain('<span class="inline-flex items-center gap-2 rounded-full bg-accent');
+    expect(content).toContain('<span class="inline-flex items-center gap-2 rounded-full border-2 border-accent/60');
     expect(content).toContain('Explore');
     expect(content).not.toContain('aria-label={`View ${data.title}`}');
   });
