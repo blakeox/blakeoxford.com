@@ -1,10 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import navLinks, { 
-  navConfig, 
-  getNavLinkByHref, 
-  getNavLinkByAnalytics, 
-  isCurrentPage, 
-  getActiveNavLink 
+import navLinks, {
+  navConfig,
+  getNavLinkByHref,
+  isCurrentPage,
+  getActiveNavLink,
 } from '../../../src/config/navLinks';
 
 describe('navLinks utility functions', () => {
@@ -16,15 +15,13 @@ describe('navLinks utility functions', () => {
       navLinks.forEach((link) => {
         expect(link).toHaveProperty('href');
         expect(link).toHaveProperty('label');
-        expect(link).toHaveProperty('analytics');
         
         expect(typeof link.href).toBe('string');
         expect(typeof link.label).toBe('string');
-        expect(typeof link.analytics).toBe('string');
         
         expect(link.href).toMatch(/^\/.*$/); // Should start with /
         expect(link.label.length).toBeGreaterThan(0);
-        expect(link.analytics).toMatch(/^nav-/); // Should start with nav-
+        expect(['Home', 'About', 'Projects', 'Blog', 'Contact']).toContain(link.label);
       });
     });
 
@@ -32,12 +29,6 @@ describe('navLinks utility functions', () => {
       const hrefs = navLinks.map(link => link.href);
       const uniqueHrefs = new Set(hrefs);
       expect(uniqueHrefs.size).toBe(hrefs.length);
-    });
-
-    it('should have unique analytics ids', () => {
-      const analyticsIds = navLinks.map(link => link.analytics);
-      const uniqueAnalyticsIds = new Set(analyticsIds);
-      expect(uniqueAnalyticsIds.size).toBe(analyticsIds.length);
     });
 
     it('should include essential navigation items', () => {
@@ -67,19 +58,6 @@ describe('navLinks utility functions', () => {
       expect(aboutLink?.label).toBe('About');
       
       const nonExistentLink = getNavLinkByHref('/nonexistent/');
-      expect(nonExistentLink).toBeUndefined();
-    });
-
-    it('should find link by analytics id using exported function', () => {
-      const homeLink = getNavLinkByAnalytics('nav-home');
-      expect(homeLink).toBeDefined();
-      expect(homeLink?.href).toBe('/');
-      
-      const projectsLink = getNavLinkByAnalytics('nav-projects');
-      expect(projectsLink).toBeDefined();
-      expect(projectsLink?.href).toBe('/projects/');
-      
-      const nonExistentLink = getNavLinkByAnalytics('nav-nonexistent');
       expect(nonExistentLink).toBeUndefined();
     });
 

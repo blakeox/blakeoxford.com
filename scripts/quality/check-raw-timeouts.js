@@ -9,8 +9,7 @@ const root = process.cwd();
 const ALLOW_DIR_SNIPPETS = ['tests/playwright/utils', 'deterministic'];
 const ALLOW_FUNCTIONS = [
   'waitForLayoutStability',
-  'waitForFormValidation', 
-  'waitForSearchResults',
+  'waitForFormValidation',
   'waitForKeyboardResponse',
   'waitForAsyncOperation',
   'waitForImagesWithFallback'

@@ -13,23 +13,22 @@ describe('ProjectRow.astro file', () => {
     content = fs.readFileSync(filePath, 'utf-8');
   });
 
-  it('should have a section element', () => {
-    expect(content).toContain('<section');
+  it('should render as an article container', () => {
+    expect(content).toContain('<article');
   });
 
   it('should include dynamic project link href', () => {
     expect(content).toContain('href={`/projects/${slug}/`}');
   });
 
-  it('should include aria-label for project title', () => {
-  // Link should rely on visible text for accessible name; no aria-label
-  expect(content).toContain('class="project-title-link');
-  expect(content).toContain('>{data.title}</a>');
-  expect(content).not.toContain('aria-label={`Project: ${data.title}`}');
+  it('should include accessible project link targeting title', () => {
+    expect(content).toContain('aria-label={`View project ${title}`}');
+    expect(content).toContain('<h3 class="text-pretty');
+    expect(content).toContain('{title}');
   });
 
   it('should render tags list with correct aria-label', () => {
-    expect(content).toContain('aria-label="Project tags"');
-    expect(content).toContain('<ul');
+    expect(content).toContain('aria-label="Project capabilities"');
+    expect(content).toContain('<ul class="flex flex-wrap items-center');
   });
 });

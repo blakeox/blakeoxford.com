@@ -18,7 +18,6 @@ const {
 } = Astro.props as Props;
 
 // Glob only the proficiencies directory to avoid bundling unrelated large assets (e.g., carousel PNGs)
-// Vite 5: replace deprecated `as: 'url'` with `query: '?url', import: 'default'`
 const avifMap = import.meta.glob('../../assets/images/proficiencies/**/*.avif', { eager: true, query: '?url', import: 'default' });
 const webpMap = import.meta.glob('../../assets/images/proficiencies/**/*.webp', { eager: true, query: '?url', import: 'default' });
 const pngMap  = import.meta.glob('../../assets/images/proficiencies/**/*.png',  { eager: true, query: '?url', import: 'default' });
@@ -42,8 +41,8 @@ const webpUrl: string | undefined = (webpMap as any)[webpKey];
 const pngUrl:  string | undefined = (pngMap  as any)[pngKey];
 const jpgUrl:  string | undefined = (jpgMap  as any)[jpgKey] || (jpgMap as any)[jpegKey];
 
-// Choose the <img> fallback preference: PNG/JPG > WebP > AVIF
-const imgFallback = pngUrl || jpgUrl || webpUrl || avifUrl || '';
+// Prefer modern formats in <img> fallback to ensure currentSrc is modern in viewport
+const imgFallback = webpUrl || avifUrl || pngUrl || jpgUrl || '';
 ---
 <picture>
   {avifUrl && (<source srcset={avifUrl} type="image/avif" />)}

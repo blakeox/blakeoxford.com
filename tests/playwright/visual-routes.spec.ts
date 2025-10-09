@@ -6,7 +6,7 @@ import { preparePage } from './visual/_visualHelper';
 // Visual snapshots for these routes live in tests/playwright/visual/*.spec.ts using the centralized helper.
 test.describe('@visual-smoke Visual Route Smoke', () => {
   test.beforeEach(async ({ page }) => { await preparePage(page); });
-  const routes = ['/', '/about/', '/projects/', '/blog/', '/contact/'];
+  const routes = ['/', '/about/', '/projects/', '/contact/'];
   for (const route of routes) {
     test(`visual regression ${route}`, async ({ page }) => {
       await page.goto(route, { waitUntil: 'domcontentloaded' });

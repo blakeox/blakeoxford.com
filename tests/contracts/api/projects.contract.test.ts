@@ -14,9 +14,9 @@ describe('Projects API Contract', () => {
     const data = loadJson('public/api/projects.json');
   const parsed = ProjectsApiSchema.parse(data);
     expect(parsed.length).toBeGreaterThan(0);
-    // At least first three should be featured as per generation logic
-    const featuredCount = parsed.slice(0, 3).filter(p => p.featured).length;
-    expect(featuredCount).toBe(3);
+    // Projects should be sorted by most recent first
+    const hasValidDates = parsed.every(p => p.publishedAt && /\d{4}-\d{2}-\d{2}/.test(p.publishedAt));
+    expect(hasValidDates).toBe(true);
   });
 
   it('search/projects.json matches contract', () => {

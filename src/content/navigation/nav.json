@@ -1,0 +1,59 @@
+{
+  "links": [
+    {
+      "href": "/",
+      "label": "Home"
+    },
+    {
+      "href": "/about/",
+      "label": "About"
+    },
+    {
+      "href": "/projects/",
+      "label": "Projects"
+    },
+    {
+      "href": "/blog/",
+      "label": "Blog"
+    },
+    {
+      "href": "/contact/",
+      "label": "Contact"
+    }
+  ],
+  "quickLinks": [
+    {
+      "href": "/about/",
+      "label": "About"
+    },
+    {
+      "href": "/projects/",
+      "label": "Projects"
+    },
+    {
+      "href": "/blog/",
+      "label": "Blog"
+    },
+    {
+      "href": "/contact/",
+      "label": "Contact"
+    }
+  ],
+  "socialLinks": [
+    {
+      "href": "https://github.com/blakeox",
+      "label": "GitHub",
+      "icon": "github"
+    },
+    {
+      "href": "https://linkedin.com/in/blakeoxford",
+      "label": "LinkedIn",
+      "icon": "linkedin"
+    },
+    {
+      "href": "mailto:hello@blakeoxford.com",
+      "label": "Email",
+      "icon": "email"
+    }
+  ]
+}

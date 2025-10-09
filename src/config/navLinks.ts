@@ -6,7 +6,6 @@
 export interface NavLink {
   href: string;
   label: string;
-  analytics: string;
   external?: boolean;
   target?: string;
 }
@@ -17,12 +16,11 @@ export interface NavConfig {
 }
 
 const navLinks: NavLink[] = [
-  { href: '/', label: 'Home', analytics: 'nav-home' },
-  { href: '/about/', label: 'About', analytics: 'nav-about' },
-  { href: '/projects/', label: 'Projects', analytics: 'nav-projects' },
-  { href: '/blog/', label: 'Blog', analytics: 'nav-blog' },
-  { href: '/contact/', label: 'Contact', analytics: 'nav-contact' },
-  // No social links in header
+  { href: '/', label: 'Home' },
+  { href: '/about/', label: 'About' },
+  { href: '/projects/', label: 'Projects' },
+  { href: '/blog/', label: 'Blog' },
+  { href: '/contact/', label: 'Contact' },
 ];
 
 export default navLinks;
@@ -36,10 +34,6 @@ export const navConfig: NavConfig = {
 // Utility functions for navigation
 export function getNavLinkByHref(href: string): NavLink | undefined {
   return navLinks.find(link => link.href === href);
-}
-
-export function getNavLinkByAnalytics(analytics: string): NavLink | undefined {
-  return navLinks.find(link => link.analytics === analytics);
 }
 
 export function isCurrentPage(href: string): boolean {

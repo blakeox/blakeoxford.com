@@ -51,10 +51,10 @@ export class MonitoringSystem {
     advancedPerformance: null as any,
     dashboard: null as any
   };
-
+  
   private constructor(config?: Partial<MonitoringSystemConfig>) {
     const environment = (process.env.NODE_ENV as any) || 'production';
-
+    
     this.config = {
       enabled: true,
       environment,
@@ -89,14 +89,14 @@ export class MonitoringSystem {
       ...config
     };
   }
-
+  
   static getInstance(config?: Partial<MonitoringSystemConfig>): MonitoringSystem {
     if (!MonitoringSystem.instance) {
       MonitoringSystem.instance = new MonitoringSystem(config);
     }
     return MonitoringSystem.instance;
   }
-
+  
   /**
    * Get default sampling rate based on environment and monitor type
    */
@@ -113,8 +113,13 @@ export class MonitoringSystem {
     }
   }
 
-  // Instance-level getDefaultSampling was unused; static helper is sufficient.
-
+  /**
+   * Get default sampling rate based on environment and monitor type
+   */
+  private getDefaultSampling(type: 'security' | 'performance'): number {
+    return MonitoringSystem.getDefaultSamplingStatic(this.config.environment, type);
+  }
+  
   /**
    * Initialize all monitoring systems
    */
@@ -122,18 +127,18 @@ export class MonitoringSystem {
     if (this.initialized || !this.config.enabled) {
       return;
     }
-
+    
     if (typeof window === 'undefined') {
       console.warn('Monitoring system can only be initialized in browser environment');
       return;
     }
-
+    
     try {
       console.log('🔍 Initializing Advanced Monitoring System...');
-
+      
       // Initialize base performance monitor (always enabled)
       this.monitors.performance = initPerformanceMonitor();
-
+      
       // Initialize security monitoring
       if (this.config.features.securityMonitoring && this.shouldSample('security')) {
         this.monitors.security = initSecurityMonitor({
@@ -146,10 +151,10 @@ export class MonitoringSystem {
             reportUri: this.config.alerting.endpoints.security
           }
         });
-
+        
         console.log('🔒 Security monitoring initialized');
       }
-
+      
       // Initialize advanced performance monitoring
       if (this.config.features.advancedPerformanceMonitoring && this.shouldSample('performance')) {
         this.monitors.advancedPerformance = initAdvancedPerformanceMonitor({
@@ -164,10 +169,10 @@ export class MonitoringSystem {
             errorRate: this.config.environment === 'production' ? 2 : 5 // %
           }
         });
-
+        
         console.log('📈 Advanced performance monitoring initialized');
       }
-
+      
       // Initialize monitoring dashboard
       if (this.config.features.dashboard) {
         this.monitors.dashboard = initMonitoringDashboard({
@@ -180,9 +185,9 @@ export class MonitoringSystem {
             sound: this.config.environment === 'development'
           }
         });
-
+        
         console.log(`📊 Monitoring dashboard initialized - Press ${this.config.dashboard.hotkey} to toggle`);
-
+        
         // Auto-show dashboard in development
         if (this.config.dashboard.autoShow) {
           setTimeout(() => {
@@ -190,33 +195,33 @@ export class MonitoringSystem {
           }, 2000);
         }
       }
-
+      
       // Setup global error handling
       this.setupGlobalErrorHandling();
-
+      
       // Setup periodic health checks
       this.setupHealthChecks();
-
+      
       // Setup performance budgets
       this.setupPerformanceBudgets();
-
+      
       this.initialized = true;
-
+      
       console.log('✅ Advanced Monitoring System fully initialized');
       this.logSystemStatus();
-
+      
     } catch (error) {
       console.error('Failed to initialize monitoring system:', error);
     }
   }
-
+  
   /**
    * Check if we should sample this session
    */
   private shouldSample(type: 'security' | 'performance'): boolean {
     return Math.random() <= this.config.sampling[type];
   }
-
+  
   /**
    * Setup global error handling
    */
@@ -233,15 +238,15 @@ export class MonitoringSystem {
         userAgent: navigator.userAgent,
         url: window.location.href
       };
-
+      
       if (this.config.debug) {
         console.error('🚨 JavaScript Error:', errorInfo);
       }
-
+      
       // Report to monitoring system
       this.reportError('javascript_error', errorInfo);
     });
-
+    
     // Enhanced promise rejection handling
     window.addEventListener('unhandledrejection', (event) => {
       const errorInfo = {
@@ -251,16 +256,16 @@ export class MonitoringSystem {
         userAgent: navigator.userAgent,
         url: window.location.href
       };
-
+      
       if (this.config.debug) {
         console.error('🚨 Unhandled Promise Rejection:', errorInfo);
       }
-
+      
       // Report to monitoring system
       this.reportError('promise_rejection', errorInfo);
     });
   }
-
+  
   /**
    * Setup periodic health checks
    */
@@ -270,7 +275,7 @@ export class MonitoringSystem {
       setInterval(() => {
         const memory = (performance as any).memory;
         const memoryUsage = memory.usedJSHeapSize / (1024 * 1024); // MB
-
+        
         if (memoryUsage > 200) { // 200MB threshold
           this.reportAlert('memory_warning', {
             type: 'memory_usage',
@@ -281,13 +286,13 @@ export class MonitoringSystem {
         }
       }, 60000); // Check every minute
     }
-
+    
     // Performance degradation check
     let lastPerformanceCheck = performance.now();
     setInterval(() => {
       const now = performance.now();
       const timeDiff = now - lastPerformanceCheck;
-
+      
       // If interval is significantly delayed, main thread might be blocked
       if (timeDiff > 35000) { // 5 seconds longer than expected
         this.reportAlert('performance_warning', {
@@ -297,11 +302,11 @@ export class MonitoringSystem {
           message: `Main thread blocking detected: ${(timeDiff - 30000).toFixed(0)}ms delay`
         });
       }
-
+      
       lastPerformanceCheck = now;
     }, 30000); // Check every 30 seconds
   }
-
+  
   /**
    * Setup performance budgets
    */
@@ -310,10 +315,10 @@ export class MonitoringSystem {
     window.addEventListener('load', () => {
       setTimeout(() => {
         const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
-
+        
         resources.forEach(resource => {
           const loadTime = resource.responseEnd - resource.startTime;
-
+          
           // Check for slow critical resources
           if (resource.name.includes('critical') && loadTime > 1000) {
             this.reportAlert('budget_exceeded', {
@@ -323,7 +328,7 @@ export class MonitoringSystem {
               message: `Critical resource loaded slowly: ${resource.name} (${loadTime.toFixed(0)}ms)`
             });
           }
-
+          
           // Check for large resources
           if (resource.transferSize > 500000) { // 500KB
             this.reportAlert('budget_exceeded', {
@@ -337,13 +342,13 @@ export class MonitoringSystem {
       }, 2000);
     });
   }
-
+  
   /**
    * Report error to monitoring system
    */
   private async reportError(type: string, data: any): Promise<void> {
     if (!this.config.features.automaticReporting) return;
-
+    
     try {
       await fetch('/api/error-report', {
         method: 'POST',
@@ -363,13 +368,13 @@ export class MonitoringSystem {
       }
     }
   }
-
+  
   /**
    * Report alert to monitoring system
    */
   private async reportAlert(category: string, data: any): Promise<void> {
     if (!this.config.alerting.enabled) return;
-
+    
     try {
       await fetch('/api/monitoring-alert', {
         method: 'POST',
@@ -389,13 +394,13 @@ export class MonitoringSystem {
       }
     }
   }
-
+  
   /**
    * Log system status
    */
   private logSystemStatus(): void {
     if (!this.config.debug) return;
-
+    
     console.group('🔍 Monitoring System Status');
     console.log('Environment:', this.config.environment);
     console.log('Sampling Rates:', this.config.sampling);
@@ -406,7 +411,7 @@ export class MonitoringSystem {
     console.log('Debug Mode:', this.config.debug);
     console.groupEnd();
   }
-
+  
   /**
    * Get monitoring system status
    */
@@ -427,7 +432,7 @@ export class MonitoringSystem {
       errors: 0 // Would track errors over time
     };
   }
-
+  
   /**
    * Generate comprehensive monitoring report
    */
@@ -436,22 +441,22 @@ export class MonitoringSystem {
       timestamp: new Date().toISOString(),
       system: this.getStatus()
     };
-
+    
     if (this.monitors.security) {
       reports.security = this.monitors.security.generateSecurityReport();
     }
-
+    
     if (this.monitors.advancedPerformance) {
       reports.performance = this.monitors.advancedPerformance.generateAdvancedReport();
     }
-
+    
     if (this.monitors.dashboard) {
       reports.dashboard = this.monitors.dashboard.getHistory();
     }
-
+    
     return reports;
   }
-
+  
   /**
    * Export all monitoring data
    */
@@ -459,22 +464,22 @@ export class MonitoringSystem {
     const report = this.generateReport();
     return JSON.stringify(report, null, 2);
   }
-
+  
   /**
    * Shutdown monitoring system
    */
   shutdown(): void {
     if (!this.initialized) return;
-
+    
     console.log('🔻 Shutting down monitoring system...');
-
+    
     // Clean up monitors
     Object.values(this.monitors).forEach(monitor => {
       if (monitor && typeof monitor.disconnect === 'function') {
         monitor.disconnect();
       }
     });
-
+    
     this.initialized = false;
     console.log('✅ Monitoring system shutdown complete');
   }
@@ -508,7 +513,7 @@ if (typeof document !== 'undefined') {
     const system = initMonitoringSystem();
     system.initialize();
   }
-
+  
   // Shutdown on page unload
   window.addEventListener('beforeunload', () => {
     if (globalMonitoringSystem) {

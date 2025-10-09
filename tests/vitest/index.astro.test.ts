@@ -50,22 +50,21 @@ vi.mock('astro:content', () => ({
 }));
 
 describe('Main Index Page', () => {
-  it('filters out draft projects and includes featured projects', async () => {
-    // Simulate the logic from index.astro
-    const featuredSlugs = [
-      'enterprise-digital-transformation',
-      'advancedmd-implementation',
-      'bank-projections-modeling',
-    ];
+  it('filters out draft projects and shows recent projects', async () => {
+    // Simulate the logic from index.astro (now using getProjectsSorted().slice(0, 3))
     const projects = mockProjects;
-    const featuredProjects = featuredSlugs
-      .map((slug) => projects.find((p) => p.slug === slug))
-      .filter((p) => !!p);
     const publishedProjects = projects.filter((p) => !p.data.draft);
+    const sortedProjects = publishedProjects.sort((a, b) => {
+      const ad = a.data.date ? new Date(a.data.date).getTime() : 0;
+      const bd = b.data.date ? new Date(b.data.date).getTime() : 0;
+      return bd - ad;
+    });
+    const recentProjects = sortedProjects.slice(0, 3);
 
-    // Check that all featured projects are present and not drafts
-    expect(featuredProjects.length).toBe(3);
-    expect(featuredProjects.map((p) => p.slug)).toEqual(featuredSlugs);
+    // Check that we get the most recent projects and no drafts
+    expect(recentProjects.length).toBe(3);
     expect(publishedProjects.some((p) => p.slug === 'draft-project')).toBe(false);
+    // Verify chronological ordering (most recent first)
+    expect(recentProjects[0].data.date.getTime()).toBeGreaterThanOrEqual(recentProjects[1].data.date.getTime());
   });
 });

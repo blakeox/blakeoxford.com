@@ -41,12 +41,12 @@ function shuffleArray<T>(array: T[]): T[] {
 // Configuration
 const CONFIG = {
   mobile: {
-    count: 3,
+    count: 5,
     imageSize: { width: 224, height: 224 }
   },
   desktop: {
-    // Limit how many images we render per column initially to keep request count low in CI/perf tests
-    visiblePerColumn: 2,
+    // Increased count for full viewport height - show more photos per column
+    visiblePerColumn: 4,
     imageSize: { width: 640, height: 640 }
   }
 };
@@ -70,9 +70,9 @@ const columnBLoop = createSeamlessLoop(columnBImages);
 const mobileLoop = createSeamlessLoop(mobileImages);
 ---
 
-<div class="photo-carousel relative w-full h-full min-h-[45vh] md:min-h-[60vh] lg:min-h-[80vh] overflow-hidden select-none" role="region" aria-label="Photo carousel">
+<div class="photo-carousel relative w-full h-full min-h-[280px] md:min-h-[320px] lg:min-h-[400px] overflow-hidden select-none" role="region" aria-label="Photo carousel">
   <!-- Mobile: horizontal slow scroll (show only on small screens) -->
-  <div class="absolute inset-0 flex items-center mobile-carousel">
+  <div class="absolute inset-0 flex items-center mobile-carousel pt-16 md:pt-0">
     <ul class="flex gap-4 animate-carousel-x-slow" role="list">
       {mobileLoop.slice(0, CONFIG.mobile.count).map((image, index) => (
         <li class="h-[40vh] w-[80vw] flex-shrink-0" role="listitem">
@@ -94,7 +94,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
   </div>
 
   <!-- Desktop: twin vertical slow columns (show on larger screens) -->
-  <div class="absolute inset-0 gap-4 w-full h-full desktop-carousel">
+  <div class="absolute inset-0 gap-4 w-full h-full desktop-carousel pt-16 md:pt-8">
     <!-- Column A – up -->
     <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list">
       {columnALoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
@@ -185,6 +185,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
   from { transform: translateY(-50%); }
   to { transform: translateY(0); }
 }
+
 
 .animate-carousel-up-slow {
   animation: carousel-up-slow 90s linear infinite;

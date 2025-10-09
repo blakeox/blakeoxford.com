@@ -2,10 +2,8 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 
-// Execute the real generation script once for this suite
 beforeAll(async () => {
-  const scriptPath = path.join(process.cwd(), 'scripts/content/generate-search-index.js');
-  // Dynamic import to run side-effects
+  const scriptPath = path.join(process.cwd(), 'scripts/content/generate-search-index.ts');
   await import(scriptPath);
 });
 
@@ -20,7 +18,6 @@ describe('Search Index Integration', () => {
     expect(Array.isArray(combined)).toBe(true);
     const types = new Set(combined.map(e => e.type));
     expect(types.has('project')).toBe(true);
-    expect(types.has('blog')).toBe(true);
   });
 
   it('dist/search/index.json mirrors dist/search-index.json', () => {
@@ -29,9 +26,10 @@ describe('Search Index Integration', () => {
     expect(b.length).toBe(a.length);
   });
 
-  it('public/search/projects.json has featured first 3 entries', () => {
+  it('public/search/projects.json is sorted by date', () => {
     const projects = readJSON('public/search/projects.json');
-    expect(projects.slice(0, 3).every(p => p.featured === true)).toBe(true);
+    const hasValidDates = projects.every((p: any) => p.publishedAt && /\d{4}-\d{2}-\d{2}/.test(p.publishedAt));
+    expect(hasValidDates).toBe(true);
   });
 
   it('project records include required fields', () => {

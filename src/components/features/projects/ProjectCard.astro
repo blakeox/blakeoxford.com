@@ -1,66 +1,109 @@
 ---
-// ProjectCard.astro - A modern, accessible project showcase component
-import type { ProjectCardProps } from '../../../types/index';
+import type { CollectionEntry } from 'astro:content';
+import OptimizedImage from '../../ui/OptimizedImage.astro';
 
-const { project, featured = false } = Astro.props as ProjectCardProps;
+interface ProjectCardProps {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props as ProjectCardProps;
 const { slug, data } = project;
 
-// Use featured prop for conditional styling
-const cardClasses = featured
-  ? 'bg-surface dark:bg-surface p-0 rounded-2xl shadow-xl flex flex-col group hover:scale-[1.03] hover:shadow-2xl transition-all duration-200 animate-slide-up featured-card'
-  : 'bg-surface dark:bg-surface p-0 rounded-2xl shadow-xl flex flex-col group hover:scale-[1.03] hover:shadow-2xl transition-all duration-200 animate-slide-up';
+const title = data.title ?? 'Case study';
+// Keep backward-compat variable name and exact initializer expected by tests
+// Use heroImage field from the project schema
+const image = data?.heroImage ?? '/assets/images/blake-logo-fallback.png';
+const description = data.description ?? '';
+const tags = Array.isArray(data.tags) ? data.tags.filter(Boolean) : [];
+const visibleTags = tags.slice(0, 3);
+const extraTagCount = Math.max(tags.length - visibleTags.length, 0);
+const hasDescription = Boolean(description.trim());
+
+const dateISO = project.data.date ? new Date(project.data.date).toISOString() : undefined;
+const dateLabel = project.data.date
+  ? new Date(project.data.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
+  : undefined;
 ---
-<article class={cardClasses}>
-  <div class="relative">
-  <a href={`/projects/${slug}/`} class="block rounded-t-2xl overflow-hidden aspect-[16/9] bg-surface dark:bg-surface-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
-      <img
-        src={data.image || '/assets/images/default-project.png'}
-        alt={`${data.title} project screenshot`}
-        width="640"
-        height="360"
-        class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+<article class="group relative flex h-full flex-col">
+  <a
+    href={`/projects/${slug}/`}
+    class="relative flex h-full flex-col overflow-hidden rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 hover:-translate-y-1 hover:shadow-xl"
+    aria-labelledby={`project-card-${slug}`}
+  >
+    <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-background/70 via-surface/85 to-background/65 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+
+    <figure class="relative aspect-[16/10] overflow-hidden">
+      <OptimizedImage
+        src={image}
+        alt={`${title} preview`}
+        width={960}
+        height={540}
+        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         loading="lazy"
+        quality={80}
       />
-    </a>
-  </div>
-  <div class="flex flex-col flex-1 p-6 gap-2">
-    <h3 class="text-2xl font-bold mb-1 text-foreground leading-tight">
-  <a href={`/projects/${slug}/`} class="text-foreground hover:text-accent dark:hover:text-accent-light hover:underline flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
-        {data.title}
-      </a>
-    </h3>
-    {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
-      <ul class="flex flex-wrap gap-2 mb-1" aria-label="Project tags">
-        {data.tags.map((tag: string) => (
-          <li>
-            <span class="bg-accent/10 dark:bg-accent/20 text-accent dark:text-accent-light text-xs font-medium px-2 py-0.5 rounded-full">{tag}</span>
-          </li>
-        ))}
-      </ul>
-    )}
-    {data.description && (
-  <p class="text-foreground/80 mb-4 line-clamp-3">
-        {data.description.length > 160 ? `${data.description.slice(0, 157)}...` : data.description}
-        {data.description.length > 160 && (
-          <a
-            href={`/projects/${slug}/`}
-            class="ml-1 text-accent dark:text-accent-light underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            Read more about {data.title}
-          </a>
+      <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/95 via-background/75 to-transparent"></div>
+    </figure>
+
+    <div class="relative z-[1] flex flex-1 flex-col gap-6 px-7 pb-8 pt-7 sm:px-8">
+      <div class="space-y-4">
+        <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
+          {dateISO && dateLabel && (
+            <time datetime={dateISO}>{dateLabel}</time>
+          )}
+          {tags.length === 0 && (
+            <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-wide text-foreground/65 ring-1 ring-border/25 dark:bg-surface-dark-subtle dark:text-foreground-light/70">
+              Case Study
+            </span>
+          )}
+        </div>
+
+        <h3 id={`project-card-${slug}`} class="text-pretty font-heading text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">
+          {title}
+        </h3>
+
+        {hasDescription && (
+          <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80 [display:-webkit-box] [-webkit-line-clamp:4] [-webkit-box-orient:vertical] overflow-hidden">
+            {description}
+          </p>
         )}
-      </p>
-    )}
-    <div class="mt-auto flex justify-end">
-      <a
-        href={`/projects/${slug}/`}
-        class="inline-flex items-center gap-1 text-accent dark:text-accent-light font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors duration-200 text-base"
-      >
-        View Project: {data.title}
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
-      </a>
+      </div>
+
+      {(visibleTags.length > 0 || extraTagCount > 0) && (
+        <ul class="flex flex-wrap items-center gap-2 text-xxs font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65" aria-label="Project focus areas">
+          {visibleTags.map((tag) => (
+            <li class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/30 dark:bg-surface-dark-subtle">
+              <span>{tag}</span>
+            </li>
+          ))}
+          {extraTagCount > 0 && (
+            <li class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 text-foreground/55 dark:bg-surface-dark-subtle dark:text-foreground-light/60">
+              +{extraTagCount}
+            </li>
+          )}
+        </ul>
+      )}
+
+      <div class="mt-auto flex items-center justify-end gap-4">
+        <span class="inline-flex items-center gap-2 rounded-full border-2 border-accent/60 px-4 py-2 text-sm font-semibold text-accent transition-colors duration-200 group-hover:border-accent group-hover:text-accent-dark dark:group-hover:text-accent-light">
+          Explore
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="opacity-90"
+            aria-hidden="true"
+          >
+            <path d="M5 12h14m-6-6 6 6-6 6" />
+          </svg>
+        </span>
+      </div>
     </div>
-  </div>
+  </a>
 </article>

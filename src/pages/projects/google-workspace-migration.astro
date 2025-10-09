@@ -1,196 +1,84 @@
 ---
+import { getEntry } from 'astro:content';
 import Layout from '../../layouts/BaseLayout.astro';
 import ProjectHero from '../../components/features/projects/ProjectHero.astro';
+import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
 import AchievementCard from '../../components/common/AchievementCard.astro';
-import MetricsTable from '../../components/common/MetricsTable.astro';
 import ProjectTags from '../../components/features/projects/ProjectTags.astro';
 
-const title = 'Google Workspace → Microsoft 365 Migration & Endpoint Management';
-const description = 'Led the transition from Google Workspace to Microsoft 365 and deployed modern device management via Intune/Endpoint Manager during early 2020, ensuring business continuity through COVID-19 disruptions.';
-const date = new Date('2020-01-15T00:00:00.000Z');
-const tags = ['Microsoft 365', 'Google Workspace', 'Endpoint Manager', 'Intune', 'MDM', 'COVID-19 Response'];
-const image = '/assets/images/default-project.png';
-const canonicalUrl = 'https://blakeoxford.com/projects/google-workspace-migration/';
+const entry = await getEntry('projects', 'google-workspace-migration');
+if (!entry) {
+  throw new Error('Project not found: google-workspace-migration');
+}
 
-const metrics = [
-  {
-    metric: 'Downtime Minimization',
-    result: '<1% net user impact',
-    timeline: 'Completed outside business hours'
-  },
-  {
-    metric: 'Support Efficiency',
-    result: '45% reduction in cross-platform tickets',
-    timeline: 'Within 3 months'
-  },
-  {
-    metric: 'Enhanced Security',
-    result: '60% reduction in compliance incidents',
-    timeline: 'Uniform Intune policies'
-  },
-  {
-    metric: 'Collaboration Growth',
-    result: '100% active Teams usage',
-    timeline: 'Replaced fragmented workflows'
-  },
-  {
-    metric: 'COVID-19 Resilience',
-    result: 'Continuous patient care enabled',
-    timeline: 'Safe remote/on-site work'
-  }
-];
+const { data } = entry;
+const title = data.title;
+const description = data.description ?? '';
+const date = data.date ? new Date(data.date) : new Date();
+const canonicalUrl = `https://blakeoxford.com/projects/${entry.slug}/`;
+const heroImage = (data as any).heroImage ?? '/assets/images/blake-logo-fallback.png';
+const { Content } = await entry.render();
 ---
 
-<Layout
-  title={title}
-  description={description}
-  image={image}
-  url={canonicalUrl}
-  wide={true}
->
-  <ProjectHero
-    title={title}
-    description={description}
-    date={date}
-    image={image}
-  />
+<Layout title={title} description={description} url={canonicalUrl} image={heroImage} wide>
+  <ProjectHero title={title} description={description} date={date} image={heroImage} />
 
-  <!-- Full-Width Content Section -->
-  <article class="py-20 bg-background">
-    <div class="w-full px-6 lg:px-12 xl:px-16">
-      <div class="max-w-none mx-auto">
+  <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
+    <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
+    <div class="relative mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
+      <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.description}>
+        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/82">
+          <Content />
+        </div>
+      </ProjectDetailSection>
 
-        <!-- Project Overview -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">🏥 Project Overview</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90 mb-6">
-              In late 2019, our mid-sized healthcare organization ran both Google Workspace and Microsoft platforms—creating support headaches and interoperability issues, especially in our EHR workflows that depended on Excel and Word. As we worked with our MSP, it became clear we needed a unified solution.
+      {data.highlights?.length ? (
+        <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
+          <AchievementCard title="Program outcomes" achievements={data.highlights} />
+        </ProjectDetailSection>
+      ) : null}
+
+      {data.impact?.length ? (
+        <ProjectDetailSection title="Impact signals" eyebrow="Proof of traction">
+          <ul class="flex flex-col gap-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
+            {(data.impact ?? []).map((item: string) => (
+              <li class="flex items-start gap-3">
+                <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </ProjectDetailSection>
+      ) : null}
+
+      <ProjectDetailSection title="Next steps" eyebrow="Ready to explore?" layout="surface">
+        <div class="grid gap-4 items-start lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <div class="space-y-4">
+            <h3 class="text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">
+              Need the same resilience for your teams?
+            </h3>
+            <p class="text-sm sm:text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+              Let’s identify the identity, collaboration, and endpoint gaps slowing your operators down—and map the path to a cohesive Microsoft 365 backbone.
             </p>
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-              The project formally kicked off in January 2020, but in March COVID-19 forced an accelerated timeline. Our challenge: migrate email, identity, and collaboration tools while standing up modern device management to support remote and onsite essential staff without disrupting patient care.
-            </p>
           </div>
-        </section>
-
-        <!-- Key Achievements -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">🎯 Key Achievements</h2>
-
-          <div class="grid md:grid-cols-1 gap-8">
-            <AchievementCard
-              title="Platform Consolidation"
-              achievements={[
-                '<strong>Seamlessly migrated 100+ mailboxes</strong> from Gmail to Exchange Online, preserving folder structures, shared drives, and user settings',
-                '<strong>Turnover-driven onboarding</strong> leveraged early-COVID staff turnover to onboard new hires directly onto Microsoft 365, minimizing resistance and creating organic peer pressure for adoption'
-              ]}
-            />
-
-            <AchievementCard
-              title="Endpoint Management Deployment"
-              achievements={[
-                '<strong>Pre-COVID device onboarding</strong> - All Windows and Mac devices into Microsoft Endpoint Manager/Intune for policy enforcement and remote provisioning',
-                '<strong>Teams & Collaboration Framework</strong> - Designed comprehensive Teams architecture with channels, teams, and integrated SharePoint sites to standardize collaboration and automate EHR workflows'
-              ]}
-            />
-
-            <AchievementCard
-              title="EHR Interoperability & Business Continuity"
-              achievements={[
-                '<strong>EHR interoperability improvements</strong> - Ensured Excel and Word documents linked to our EHR functioned natively on devices, reducing errors and user frustration',
-                '<strong>COVID-19 business continuity</strong> - Leveraged Intune to manage remote device policies, deploy VPN clients, and secure remote access, allowing essential services to continue without interruption',
-                '<strong>Electronic data collection alignment</strong> - Coincided with the rollout of an MDM-backed mobile data collection app for ABA, ensuring devices were secure and compliant'
-              ]}
-            />
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-4">
+            <a
+              href="/contact/"
+              class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent shadow-accent-glow transition-colors hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+            >
+              Book a working session
+            </a>
+            <a
+              href="/about/"
+              class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
+            >
+              Review how I partner
+            </a>
           </div>
-        </section>
-
-        <!-- Journey & Growth -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">🚀 Journey & Growth</h2>
-
-          <div class="space-y-8">
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Strategic Onboarding Amid Turnover</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                At the pandemic's outset, rapid staff departures became an opportunity. We prioritized hiring and trained new team members exclusively on Microsoft 365 workflows—creating a cohort fluent in Teams and SharePoint that naturally influenced remaining staff.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Immersive Training Blitz</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                With reduced day-to-day work, we held intensive virtual workshops, deep-diving into Teams, Intune, and SharePoint features. This hands-on training—conducted in the first few months of COVID—built internal expertise and confidence.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Phased Migration Plan</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Designed a four-phase approach—Discovery, Pilot, Bulk Migration, Optimization—balancing speed with minimal disruption.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Proactive Communication</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Implemented regular stakeholder updates, user training sessions, and a support ticket triage system to handle increased queries.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Continuous Optimization</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Post-migration, I led monthly governance meetings to refine policies, drive adoption, and integrate new features (e.g., Conditional Access, MFA).
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Impact & Results -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">📊 Impact & Results</h2>
-          <MetricsTable metrics={metrics} />
-        </section>
-
-        <!-- Lessons & Takeaways -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">💡 Lessons & Takeaways</h2>
-
-          <div class="space-y-8">
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Plan for the Unexpected</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Early work on Endpoint Manager paid dividends when COVID-19 struck—showing the value of building flexible infrastructure ahead of crises.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Stakeholder Alignment is Key</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Broad workshops and clear communication channels mitigate resistance and boost adoption.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Iterate & Optimize</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                A phased rollout with feedback loops ensures continual improvement and user satisfaction.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Quote -->
-  <blockquote class="border-l-4 border-accent pl-6 py-4 bg-surface dark:bg-surface-dark rounded-r-lg my-12">
-          <p class="text-lg italic text-foreground/80 dark:text-foreground-light/90">
-            This migration not only streamlined our technology stack but also built a robust platform for secure collaboration and device management, laying the groundwork for future digital initiatives.
-          </p>
-        </blockquote>
-
-      </div>
+        </div>
+      </ProjectDetailSection>
     </div>
   </article>
 
-  <ProjectTags tags={tags} />
+  <ProjectTags tags={data.tags ?? []} />
 </Layout>

@@ -1,6 +1,9 @@
 ---
 interface Props {
-  name: string; // path relative to /assets/images without extension (e.g. 'proficiencies/python_logo')
+  // Either provide `name` (path relative to /assets/images without extension)
+  // or full `src` (absolute path like '/assets/images/foo/bar.jpg').
+  name?: string;
+  src?: string;
   alt: string;
   class?: string;
   sizes?: string; // sizes attribute for responsive loading
@@ -13,6 +16,7 @@ interface Props {
 
 const {
   name,
+  src,
   alt,
   class: className = '',
   sizes = '(max-width: 768px) 100vw, 33vw',
@@ -23,27 +27,42 @@ const {
   ext = 'webp'
 } = Astro.props as Props;
 
+// Derive base image name (relative to /assets/images without extension)
+function deriveName(): string | null {
+  if (name) return name.replace(/^\/?assets\/images\//, '').replace(/\.(png|jpe?g|webp|avif)$/i, '');
+  if (src) {
+    const prefix = '/assets/images/';
+    const s = src.startsWith(prefix) ? src.slice(prefix.length) : src;
+    return s.replace(/\.(png|jpe?g|webp|avif)$/i, '');
+  }
+  return null;
+}
+
+const base = deriveName();
+
 // Generated manifests live in /public/assets/images/optimized/*.json (written by optimize-images script)
 // Because Astro builds statically, we attempt a dynamic import with a relative path known at build time.
 let manifest: any = null;
 try {
-  manifest = await import(`../../../public/assets/images/optimized/${name}.json`).then(m => m.default || m);
+  if (base) {
+    manifest = await import(`../../../public/assets/images/optimized/${base}.json`).then(m => m.default || m);
+  }
 } catch {
   // Fallback: leave manifest null so we gracefully use original image path.
 }
 
 // Helper to build a srcset for a format
 function buildSrcSet(format: string) {
-  if (!manifest || !manifest.sizes) return '';
-  return manifest.sizes.map((w: number) => `/assets/images/optimized/${format}/${name}@${w}w.${format} ${w}w`).join(', ');
+  if (!base || !manifest || !manifest.sizes) return '';
+  return manifest.sizes.map((w: number) => `/assets/images/optimized/${format}/${base}@${w}w.${format} ${w}w`).join(', ');
 }
 
 const avifSet = buildSrcSet('avif');
 const webpSet = buildSrcSet('webp');
-// Primary fallback source (non-optimized) uses provided extension (default webp)
-const fallbackSrc = `/assets/images/${name}.${ext}`;
-// If optimization manifest exists, prefer optimized JPEG baseline (AVIF/WebP sources already defined above)
-const jpegPath = manifest ? `/assets/images/optimized/jpeg/${name}.jpeg` : fallbackSrc;
+// Primary fallback source (non-optimized) uses provided extension (default webp) or original src
+const fallbackSrc = base ? `/assets/images/${base}.${ext}` : (src || '');
+// If optimization manifest exists, prefer optimized AVIF baseline for modern currentSrc
+const finalImgSrc = manifest && base ? `/assets/images/optimized/avif/${base}.avif` : fallbackSrc;
 ---
 <picture>
   {avifSet && (
@@ -52,5 +71,5 @@ const jpegPath = manifest ? `/assets/images/optimized/jpeg/${name}.jpeg` : fallb
   {webpSet && (
     <source srcset={webpSet} sizes={sizes} type="image/webp" />
   )}
-  <img src={jpegPath} alt={alt} loading={loading} decoding={decoding} class={className} width={width} height={height} />
+  <img src={finalImgSrc} alt={alt} loading={loading} decoding={decoding} class={className} width={width} height={height} />
 </picture>

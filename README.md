@@ -164,7 +164,6 @@ See the Phase 2 completion summary in `PHASE2_COMPLETION.md` for delivered relia
 
 Progressive multi-phase modernization delivers layered quality gates:
 
-
 Environment Flags (runtime gates & quality controls):
 
 | Variable | Purpose | Notes |
@@ -185,6 +184,8 @@ Environment Flags (runtime gates & quality controls):
 | `FLAKINESS_MAX_CURRENT_FLAKY` | Max flaky tests allowed | Optional gate |
 | `FLAKINESS_MAX_RETRY_INTENSITY` | Max average retries per run | Optional gate |
 | `FLAKINESS_STRICT` | Fail if flakiness history missing | Bootstrapping risk |
+| `SITEMAP_MAX_PAGES` | Max pages to test in sitemap contrast sweep | Default 16 |
+| `CONTRAST_SENTINEL_BAND` | Near-threshold band for borderline logging | Default 0.10 |
 
 Gating Precedence (accessibility):
 
@@ -219,12 +220,22 @@ Local run with gates (example):
 MIN_TOPN_PASS_RATE=80 SEARCH_TOP_N=3 A11Y_MAX_PER_ROUTE=2 A11Y_BLOCK_IMPACTS=serious,critical DEADLINK_FAIL=true DEADLINK_MAX_CONCURRENCY=8 pnpm quality:runtime
 ```
 
+Sitemap contrast sweep (example):
+
+```bash
+# Run sitemap-driven contrast test with custom page limit
+SITEMAP_MAX_PAGES=20 pnpm test:e2e --grep "@sitemap-sweep" --project=chromium
+
+# Or use the convenience script
+pnpm contrast:sitemap
+```
 
 These layers create early, low-noise detection for regressions across functionality, performance, accessibility, and UI fidelity while keeping runtime lean.
 
 Contrast Oversight:
 
 - Nightly job randomly samples additional project & blog routes (via `contrast-route-rotator.js`) and injects them using `CONTRAST_EXTRA_ROUTES`.
+- A lightweight sitemap-driven sweep test (`tests/playwright/accessibility/contrast-sitemap.spec.ts`) auto-discovers up to `SITEMAP_MAX_PAGES` routes (default 16) from `sitemap-index.xml`/`sitemap.xml` and applies the same heuristic contrast checks. This broadens coverage beyond the curated base list without significantly impacting test runtime.
 - A configurable near-threshold sentinel (band = `CONTRAST_SENTINEL_BAND`, default `0.10`) logs potential drift without failing the build; data lands in `contrast-history.json`.
 - Rolling 7‑day borderline average & localized 7‑point slope recorded (`metrics.rolling7Borderline`, `metrics.slope7Borderline`) to detect directional change early.
 - Optional slope alert (`CONTRAST_SLOPE_ALERT`) triggers governance if slope7 > threshold (indicates accelerating regression risk).
@@ -311,7 +322,6 @@ export default defineConfig({
 ---
 
 ## 🛡 Security & Performance
-
 
 ### Performance budgets and image pipeline
 

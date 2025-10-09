@@ -1,7 +1,6 @@
 // Shared Playwright page action helpers (Phase 0 minimal)
 // Will be imported in future consolidated specs.
 import { Page, expect } from '@playwright/test';
-import { waitForSearchResults } from '../playwright/utils/test-helpers';
 
 export async function openSearchOverlay(page: Page) {
   const overlay = page.locator('#search-overlay');
@@ -31,26 +30,35 @@ export async function openSearchOverlay(page: Page) {
 
   // If still not active, attempt to force init + open via page script
   if (!activated) {
-    await page.evaluate(async () => {
-      try {
-        const ensure = async () => {
-          const g: any = window as any;
-          if (!g.enhancedSearchOverlay && g.EnhancedSearchOverlay && typeof g.initEnhancedSearchOverlay === 'function') {
-            g.enhancedSearchOverlay = g.initEnhancedSearchOverlay();
-          }
-          return g.enhancedSearchOverlay || g.searchOverlay || null;
-        };
-        const inst = await ensure();
-        if (inst && typeof inst.open === 'function') inst.open();
-      } catch { /* noop */ }
+    await page.evaluate(() => {
+      const g = window as any;
+      const inst = g.enhancedSearchOverlay || g.searchOverlay;
+      if (inst && typeof inst.open === 'function') {
+        inst.open();
+        return;
+      }
+      const overlay = document.getElementById('search-overlay') as HTMLElement | null;
+      if (!overlay) return;
+      overlay.classList.add('active');
+      overlay.style.visibility = 'visible';
+      overlay.style.opacity = '1';
+      overlay.removeAttribute('inert');
+      const input = document.getElementById('search-input') as HTMLInputElement | null;
+      if (input) {
+        input.focus();
+        input.setAttribute('aria-expanded', 'true');
+      }
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
     });
 
     await page.waitForFunction(() => {
       const el = document.querySelector('#search-overlay') as HTMLElement | null;
       if (!el) return false;
       const inert = el.hasAttribute('inert');
-      const style = el ? window.getComputedStyle(el) : null;
-      const visible = !!style && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0;
+      const style = window.getComputedStyle(el);
+      const visible = style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0;
       return !inert && el.classList.contains('active') && visible;
     }, { timeout: 3000 }).catch(() => {});
   }
@@ -62,8 +70,13 @@ export async function openSearchOverlay(page: Page) {
 export async function fillSearch(page: Page, query: string) {
   const input = page.locator('#search-input');
   await input.fill(query);
-  // Wait for results to appear after typing
-  await waitForSearchResults(page, 5000);
+  const results = page.locator('[data-search-result], .search-result, .search-overlay [role="listbox"] [role="option"]');
+  // Wait for at least one visible result to avoid strict mode multiple element error
+  await page.waitForFunction(() => {
+    const nodes = Array.from(document.querySelectorAll('[data-search-result], .search-result, .search-overlay [role="listbox"] [role="option"]')) as HTMLElement[];
+    return nodes.some(n => !!n && n.offsetParent !== null);
+  }, { timeout: 4000 });
+  await expect(results.first()).toBeVisible({ timeout: 1000 });
   return input;
 }
 

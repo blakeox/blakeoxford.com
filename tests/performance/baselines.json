@@ -25,40 +25,40 @@
       "requests": 20
     },
     "/__firefox": {
-      "domContentLoaded": 50,
-      "fcp": 43,
-      "load": 66,
-      "requests": 9
+      "domContentLoaded": 150,
+      "fcp": 170,
+      "load": 185,
+      "requests": 13
     },
     "/about__firefox": {
       "domContentLoaded": 856.4725,
       "fcp": 858.2774999999999,
       "load": 879.9375,
-      "requests": 9
+      "requests": 14
     },
     "/__webkit": {
       "domContentLoaded": 60,
       "fcp": 54,
       "load": 61,
-      "requests": 8
+      "requests": 13
     },
     "/about__webkit": {
       "domContentLoaded": 115.89999999999999,
       "fcp": 114.94999999999999,
       "load": 117.8,
-      "requests": 10
+      "requests": 19
     },
     "/projects__firefox": {
       "domContentLoaded": 345.65749999999997,
       "fcp": 329.41249999999997,
       "load": 355.5849999999999,
-      "requests": 7
+      "requests": 11
     },
     "/blog__firefox": {
       "domContentLoaded": 332.11999999999995,
-      "fcp": 148.9125,
+      "fcp": 175,
       "load": 342.95,
-      "requests": 7
+      "requests": 12
     },
     "/__chromium": {
       "domContentLoaded": 855,

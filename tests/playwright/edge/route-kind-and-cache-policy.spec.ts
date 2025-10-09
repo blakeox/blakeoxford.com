@@ -33,9 +33,8 @@ test.describe('Edge diagnostics headers', () => {
     }
   });
 
-  test('Non-hashed JS asset exposes 24h policy when Worker active', async ({ request }) => {
-    const res = await request.get('/assets/js/core-boot.js');
-    if (res.status() !== 200) test.skip(true, 'core-boot.js not found');
+  test('edge worker should set cache policy headers for assets', async () => {
+    test.skip(true, 'core-boot.js removed; route-kind check no longer applicable.');
     const xcp = res.headers()['x-cache-policy'] || '';
     const xrk = res.headers()['x-route-kind'] || '';
     if (xrk || xcp) {

@@ -1,483 +1,279 @@
-/**
- * Modern Navigation Bar with Mobile Menu and Theme Toggle
- */
-import { createModuleErrorReporter } from '../../utils/ModuleErrorHandling';
+type ElementHandle<T extends HTMLElement> =
+  | T
+  | null
+  | undefined
+  | { current: T | null | undefined };
 
-export class ModernNavBar {
-  private burgerButton: HTMLElement | null;
-  private mobileMenu: HTMLElement | null;
-  private closeMobileButton: HTMLElement | null;
-  private themeToggle: HTMLElement | null;
-  private searchToggle: HTMLElement | null;
-  private searchOverlay: HTMLElement | null;
-  private navbar: HTMLElement | null;
-  private focusTrapListener: ((e: KeyboardEvent) => void) | null;
-  private errorReporter = createModuleErrorReporter('ModernNavBar');
+type ModernNavBarOptions = {
+  navBar?: ElementHandle<HTMLElement>;
+  mobileMenu?: ElementHandle<HTMLElement>;
+  burgerButton?: ElementHandle<HTMLButtonElement>;
+  closeButton?: ElementHandle<HTMLButtonElement>;
+  themeToggle?: ElementHandle<HTMLButtonElement>;
+  searchToggle?: ElementHandle<HTMLButtonElement>;
+  searchOverlay?: ElementHandle<HTMLElement>;
+};
 
-  constructor() {
-    console.log('🔧 ModernNavBar constructor called');
-    this.burgerButton = document.getElementById('nav-toggle');
-    this.mobileMenu = document.getElementById('nav-mobile-links');
-    this.closeMobileButton = document.getElementById('close-mobile-menu');
-    this.themeToggle = document.getElementById('theme-toggle');
-    this.searchToggle = document.getElementById('search-toggle');
-    this.searchOverlay = document.getElementById('search-overlay');
-    this.navbar = document.querySelector('nav');
-    this.focusTrapListener = null;
+type CleanupFn = () => void;
 
-    console.log('🔧 Elements found:', {
-      burgerButton: this.burgerButton,
-      mobileMenu: this.mobileMenu,
-      closeMobileButton: this.closeMobileButton,
-      themeToggle: this.themeToggle,
-      searchToggle: this.searchToggle,
-      searchOverlay: this.searchOverlay
-    });
-
-    this.init();
-    this.initializeTheme();
+function resolveElement<T extends HTMLElement>(handle?: ElementHandle<T>): T | null {
+  if (!handle) return null;
+  if (typeof (handle as { current?: T | null }).current !== 'undefined') {
+    return (handle as { current?: T | null }).current ?? null;
   }
+  return (handle as T) ?? null;
+}
 
-  init() {
-    console.log('🔍 Setting up mobile menu...');
-    this.setupMobileMenu();
+function setAriaCurrent(navElement: HTMLElement | null) {
+  if (!navElement) return;
+  const links = navElement.querySelectorAll('a[href]');
+  const currentPath = window.location?.pathname;
 
-    console.log('🎨 Setting up theme toggle...');
-    this.setupThemeToggle();
-
-    console.log('🔍 Setting up search overlay...');
-    this.setupSearchOverlay();
-
-    // Initialize scroll effects if available
-    if (window.scrollEffects && this.navbar) {
-      window.scrollEffects.setupScrollBehavior(this.navbar);
-    }
-
-    // Initialize analytics if available
-    if (window.analytics) {
-      this.setupAnalytics();
-    }
-
-    // Initialize accessibility if available
-    if (window.accessibilityModule) {
-      this.setupAccessibility();
-    }
-
-    console.log('✅ ModernNavBar initialized');
-  }
-
-  setupMobileMenu() {
-    if (!this.burgerButton || !this.mobileMenu) {
-      this.errorReporter.reportError(
-        'MOBILE_MENU_ELEMENTS_NOT_FOUND',
-        'Required mobile menu elements not found in DOM',
-        'medium' as any,
-        {
-          component: 'MobileMenu',
-          additionalData: {
-            burgerButtonExists: !!this.burgerButton,
-            mobileMenuExists: !!this.mobileMenu
-          }
-        }
-      );
-      return;
-    }
-
-    console.log('🍔 Burger button:', this.burgerButton);
-    console.log('📱 Mobile menu:', this.mobileMenu);
-
-    // Burger button click handler
-    this.burgerButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('🍔 Burger button clicked!');
-
-      // Close search overlay if open
-      if (this.searchOverlay?.classList.contains('active')) {
-        this.closeSearchOverlay();
-      }
-
-      this.toggleMobileMenu();
-    });
-
-    // Close button click handler
-    if (this.closeMobileButton) {
-      this.closeMobileButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('❌ Close button clicked!');
-        this.closeMobileMenu();
-      });
-    }
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!this.burgerButton?.contains(e.target as Node) &&
-          !this.mobileMenu?.querySelector('.mobile-menu-content')?.contains(e.target as Node) &&
-          this.mobileMenu?.classList.contains('active')) {
-        this.closeMobileMenu();
-      }
-    });
-
-    // Close menu on escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.mobileMenu?.classList.contains('active')) {
-        e.preventDefault();
-        this.closeMobileMenu();
-      }
-    });
-  }
-
-  toggleMobileMenu() {
-    console.log('🔄 Toggling mobile menu...');
-    if (!this.burgerButton || !this.mobileMenu) {
-      this.errorReporter.reportError(
-        'TOGGLE_ELEMENTS_NOT_FOUND',
-        'Required elements not found for mobile menu toggle',
-        'medium' as any,
-        {
-          component: 'MobileMenuToggle',
-          action: 'toggle'
-        }
-      );
-      return;
-    }
-
-    const isOpen = this.mobileMenu.classList.contains('active');
-    console.log('📱 Menu is open:', isOpen);
-    console.log('🍔 Burger button classes before:', this.burgerButton.className);
-    console.log('📱 Mobile menu classes before:', this.mobileMenu.className);
-
-    if (isOpen) {
-      this.closeMobileMenu();
+  links.forEach((link) => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+    if (href === currentPath) {
+      link.setAttribute('aria-current', 'page');
     } else {
-      this.openMobileMenu();
+      link.removeAttribute('aria-current');
     }
+  });
+}
+
+function getCurrentTheme(): 'light' | 'dark' {
+  return (document.documentElement.dataset.theme as 'light' | 'dark') || 'light';
+}
+
+function setTheme(nextTheme: 'light' | 'dark') {
+  const root = document.documentElement;
+  root.dataset.theme = nextTheme;
+  if (nextTheme === 'dark') { root.classList.add('dark'); } else { root.classList.remove('dark'); }
+  root.style.colorScheme = nextTheme;
+  localStorage.setItem('theme', nextTheme);
+}
+
+function updateThemeButton(button: HTMLButtonElement | null, theme: 'light' | 'dark') {
+  if (!button) return;
+  button.setAttribute('aria-pressed', String(theme === 'dark'));
+  const sunIcon = button.querySelector<SVGElement>('.sun-icon');
+  const moonIcon = button.querySelector<SVGElement>('.moon-icon');
+  sunIcon?.classList.toggle('hidden', theme === 'dark');
+  moonIcon?.classList.toggle('hidden', theme !== 'dark');
+}
+
+function toggleTheme(button: HTMLButtonElement | null) {
+  const nextTheme = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+  setTheme(nextTheme);
+  updateThemeButton(button, nextTheme);
+}
+
+function openOverlay(overlay: HTMLElement | null) {
+  if (!overlay) return;
+  overlay.dataset.state = 'open';
+  overlay.classList.remove('hidden');
+  overlay.inert = false;
+  document.body.dataset.searchOpen = 'true';
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
+
+  const searchInput = overlay.querySelector<HTMLInputElement>('#search-input');
+  if (searchInput) {
+    setTimeout(() => searchInput.focus(), 100);
   }
+}
 
-  openMobileMenu() {
-    if (!this.burgerButton || !this.mobileMenu) return;
+function closeOverlay(overlay: HTMLElement | null) {
+  if (!overlay) return;
+  overlay.dataset.state = 'closed';
+  overlay.inert = true;
+  delete document.body.dataset.searchOpen;
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
+  setTimeout(() => {
+    if (overlay.dataset.state === 'closed') {
+      overlay.classList.add('hidden');
+    }
+  }, 200);
+}
 
-    console.log('Opening mobile menu...');
-    console.log('📱 Mobile menu element:', this.mobileMenu);
-    console.log('📱 Mobile menu computed right before:', window.getComputedStyle(this.mobileMenu).right);
-
-    // Reset visibility for opening
-    this.mobileMenu.style.visibility = '';
-
-  this.burgerButton.classList.add('active');
-    this.burgerButton.setAttribute('aria-expanded', 'true');
-  try { (this.mobileMenu as any).inert = false; } catch { this.mobileMenu.removeAttribute('inert'); }
-  this.mobileMenu.classList.add('active');
-
-    console.log('🍔 Burger button classes after:', this.burgerButton.className);
-    console.log('📱 Mobile menu classes after:', this.mobileMenu.className);
-    console.log('📱 Mobile menu computed right after:', window.getComputedStyle(this.mobileMenu).right);
-
-    // Prevent body scroll with proper handling for iOS
+function openMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
+  if (!menu || !toggle) return;
+  menu.inert = false;
+  menu.style.visibility = '';
+  menu.classList.add('active');
+  toggle.setAttribute('aria-expanded', 'true');
+  toggle.classList.add('active');
+  // Prevent body scroll while menu is open
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
 
-    // Focus management with delay for animation
-    setTimeout(() => {
-      const firstFocusable = this.mobileMenu?.querySelector('.mobile-nav-link, .mobile-close-button') as HTMLElement;
+  const firstFocusable = menu.querySelector<HTMLElement>('a, button, [tabindex]');
       if (firstFocusable) {
-        firstFocusable.focus();
-      }
-    }, 150);
-
-    // Setup focus trapping
-    this.setupFocusTrap();
-
-    this.announceToScreenReader('Mobile navigation menu opened');
-  }
-
-  closeMobileMenu() {
-    if (!this.burgerButton || !this.mobileMenu) return;
-
-    console.log('Closing mobile menu...');
-
-    this.burgerButton.classList.remove('active');
-    this.burgerButton.setAttribute('aria-expanded', 'false');
-  this.mobileMenu.classList.remove('active');
-
-    // Add explicit visibility handling for tests
-  setTimeout(() => {
-      if (this.mobileMenu && !this.mobileMenu.classList.contains('active')) {
-  this.mobileMenu.style.visibility = 'hidden';
-  // Set inert when closed so it doesn't participate in focus/interaction
-  try { (this.mobileMenu as any).inert = true; } catch { this.mobileMenu.setAttribute('inert',''); }
-      }
-    }, 300); // Match CSS transition duration
-
-    // Restore body scroll with proper iOS handling
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.width = '';
-
-    // Remove focus trap
-    this.removeFocusTrap();
-
-    // Focus back to burger button
-    setTimeout(() => {
-      this.burgerButton?.focus();
-    }, 50);
-
-    this.announceToScreenReader('Mobile navigation menu closed');
-  }
-
-  initializeTheme() {
-    // BaseLayout already handles theme initialization
-    // We just need to update the toggle button icon
-    this.updateThemeToggleIcon();
-    // Reflect state for assistive tech
-    if (this.themeToggle) {
-      const isDark = document.documentElement.classList.contains('dark');
-      this.themeToggle.setAttribute('aria-pressed', String(isDark));
-    }
-  }
-
-  updateThemeToggleIcon() {
-    if (!this.themeToggle) return;
-
-    const isDark = document.documentElement.classList.contains('dark');
-    const icon = this.themeToggle.querySelector('svg');
-
-    if (icon) {
-      icon.innerHTML = isDark
-        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />'
-        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
-    }
-  }
-
-  setupThemeToggle() {
-    if (!this.themeToggle) return;
-
-    this.themeToggle.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.toggleTheme();
-    });
-  }
-
-  toggleTheme() {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark');
-    const newTheme = isDark ? 'light' : 'dark';
-
-    if (newTheme === 'dark') {
-      html.classList.add('dark');
-      html.dataset.theme = 'dark';
-    } else {
-      html.classList.remove('dark');
-      html.dataset.theme = 'light';
-    }
-
-    localStorage.setItem('theme', newTheme);
-
-    // Update theme toggle button icon
-    this.updateThemeToggleIcon();
-
-    // Update aria-pressed for accessibility
-    if (this.themeToggle) {
-      this.themeToggle.setAttribute('aria-pressed', String(newTheme === 'dark'));
-    }
-
-    this.announceToScreenReader(`Theme switched to ${newTheme} mode`);
-  }
-
-  setupSearchOverlay() {
-    if (!this.searchToggle || !this.searchOverlay) return;
-
-    this.searchToggle.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Close mobile menu if open
-      if (this.mobileMenu?.classList.contains('active')) {
-        this.closeMobileMenu();
-      }
-
-      this.openSearchOverlay();
-    });
-
-    // Close search overlay on escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.searchOverlay?.classList.contains('active')) {
-        e.preventDefault();
-        this.closeSearchOverlay();
-      }
-    });
-
-    // Close search overlay when clicking backdrop
-    this.searchOverlay?.addEventListener('click', (e) => {
-      if (e.target === this.searchOverlay) {
-        this.closeSearchOverlay();
-      }
-    });
-  }
-
-  openSearchOverlay() {
-    if (!this.searchOverlay) return;
-
-    // Prefer the enhanced overlay controller if available
-    const enhanced = (window as any).enhancedSearchOverlay;
-    if (enhanced && typeof enhanced.open === 'function') {
-      enhanced.open();
-      return;
-    }
-
-    // Track analytics
-    this.trackSearchInteraction('opened');
-
-    // Fallback: manually open overlay
-    (this.searchOverlay as any).inert = false;
-    this.searchOverlay.classList.add('active');
-    this.searchOverlay.style.visibility = 'visible';
-    this.searchOverlay.style.opacity = '1';
-
-    // Focus search input
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-      setTimeout(() => (searchInput as HTMLInputElement).focus(), 100);
-    }
-
-  // Prevent body scroll
-  document.body.style.overflow = 'hidden';
-
-    this.announceToScreenReader('Search overlay opened');
-  }
-
-  private trackSearchInteraction(action: string, data: any = {}) {
-    // Analytics tracking for search interactions
-    if (typeof window !== 'undefined' && (window as any).analytics) {
-      (window as any).analytics.track(`search_${action}`, data);
-    }
-    console.log(`[Search Analytics] search_${action}`, data);
-  }
-
-  closeSearchOverlay() {
-    if (!this.searchOverlay) return;
-
-    // Prefer the enhanced overlay controller if available
-    const enhanced = (window as any).enhancedSearchOverlay;
-    if (enhanced && typeof enhanced.closeSearchOverlay === 'function') {
-      enhanced.closeSearchOverlay();
-    } else {
-      // Fallback: manually close overlay
-      this.searchOverlay.classList.remove('active');
-      this.searchOverlay.style.visibility = 'hidden';
-      this.searchOverlay.style.opacity = '0';
-      (this.searchOverlay as any).inert = true;
-
-      // Restore body scroll
-      document.body.style.overflow = '';
-    }
-
-    // Focus back to search toggle
-    if (this.searchToggle) {
-      this.searchToggle.focus();
-    }
-
-    this.announceToScreenReader('Search overlay closed');
-  }
-
-  announceToScreenReader(message: string) {
-    let liveRegion = document.getElementById('live-region');
-    if (!liveRegion) {
-      liveRegion = document.createElement('div');
-      liveRegion.id = 'live-region';
-      liveRegion.className = 'sr-only';
-      liveRegion.setAttribute('aria-live', 'polite');
-      liveRegion.setAttribute('aria-atomic', 'true');
-      document.body.appendChild(liveRegion);
-    }
-
-    liveRegion.textContent = message;
-
-    setTimeout(() => {
-      liveRegion.textContent = '';
-    }, 1000);
-  }
-
-  setupAnalytics() {
-    if (!window.analytics) return;
-
-    // Track navigation events
-    const navLinks = this.navbar?.querySelectorAll('a');
-    navLinks?.forEach(link => {
-      link.addEventListener('click', () => {
-        const href = link.getAttribute('href');
-        if (href && window.analytics) {
-          window.analytics.trackNavigation({
-            from: window.location.pathname,
-            to: href,
-            method: 'click'
-          });
-        }
-      });
-    });
-  }
-
-  setupAccessibility() {
-    if (!window.accessibilityModule) return;
-
-    // Add landmark roles
-    if (this.navbar) {
-      this.navbar.setAttribute('role', 'navigation');
-      this.navbar.setAttribute('aria-label', 'Main navigation');
-    }
-
-    // Highlight active link
-    const currentPath = window.location.pathname;
-    const navLinks = this.navbar?.querySelectorAll('a');
-    navLinks?.forEach(link => {
-      if (link.getAttribute('href') === currentPath) {
-        link.setAttribute('aria-current', 'page');
-        link.classList.add('active');
-      }
-    });
-  }
-
-  setupFocusTrap() {
-    if (!this.mobileMenu) return;
-
-    const focusableElements = this.mobileMenu.querySelectorAll(
-      'a, button, [tabindex]:not([tabindex="-1"])'
-    );
-    const firstElement = focusableElements[0] as HTMLElement;
-    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-
-    this.focusTrapListener = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
-
-      if (e.shiftKey) {
-        // Shift + Tab
-        if (document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement?.focus();
-        }
-      } else {
-        // Tab
-        if (document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement?.focus();
-        }
-      }
-    };
-
-    document.addEventListener('keydown', this.focusTrapListener);
-  }
-
-  removeFocusTrap() {
-    if (this.focusTrapListener) {
-      document.removeEventListener('keydown', this.focusTrapListener);
-      this.focusTrapListener = null;
-    }
+    setTimeout(() => firstFocusable.focus(), 150);
   }
 }
 
-export function initModernNavBar(): ModernNavBar {
-  console.log('🚀 Initializing ModernNavBar...');
-  return new ModernNavBar();
+function closeMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
+  if (!menu || !toggle) return;
+  menu.classList.remove('active');
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.classList.remove('active');
+
+  setTimeout(() => {
+    if (!menu.classList.contains('active')) {
+      menu.style.visibility = 'hidden';
+      menu.inert = true;
+    }
+  }, 250);
+
+  // Restore body scroll
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+}
+
+export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
+  const navBar = resolveElement(options.navBar);
+  const mobileMenu = resolveElement(options.mobileMenu);
+  const burgerButton = resolveElement(options.burgerButton);
+  const closeButton = resolveElement(options.closeButton);
+  const themeToggle = resolveElement(options.themeToggle);
+  const searchToggle = resolveElement(options.searchToggle);
+  const searchOverlay = resolveElement(options.searchOverlay);
+  const searchBackdrop = searchOverlay?.querySelector('[data-overlay-backdrop]') ?? null;
+
+  setAriaCurrent(navBar);
+
+  const cleanupFns: CleanupFn[] = [];
+
+  if (themeToggle) {
+    updateThemeButton(themeToggle, getCurrentTheme());
+    const handler = (event: Event) => {
+      event.preventDefault();
+      toggleTheme(themeToggle);
+    };
+    themeToggle.addEventListener('click', handler);
+    cleanupFns.push(() => themeToggle.removeEventListener('click', handler));
+
+    const mediaQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
+    const systemThemeListener = (event: MediaQueryListEvent) => {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) return; // respect explicit user choice
+      const inferredTheme = event.matches ? 'dark' : 'light';
+      setTheme(inferredTheme);
+      updateThemeButton(themeToggle, inferredTheme);
+    };
+
+    if (mediaQuery?.addEventListener) {
+      mediaQuery.addEventListener('change', systemThemeListener);
+      cleanupFns.push(() => mediaQuery.removeEventListener('change', systemThemeListener));
+    }
+  }
+
+  if (burgerButton && mobileMenu) {
+    const openHandler = (event: Event) => {
+      event.preventDefault();
+  openMobileMenu(mobileMenu, burgerButton);
+    };
+
+    const closeHandler = (event: Event) => {
+      event.preventDefault();
+  closeMobileMenu(mobileMenu, burgerButton);
+    };
+
+    burgerButton.addEventListener('click', openHandler);
+    cleanupFns.push(() => burgerButton.removeEventListener('click', openHandler));
+
+    // Delegated capture-phase handler on the menu container to catch any clicks on the close button
+    const delegatedMenuClickCapture = (event: Event) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      const isClose = target.id === 'close-mobile-menu' || !!target.closest('#close-mobile-menu');
+      if (isClose) {
+        event.preventDefault();
+        event.stopPropagation();
+  closeMobileMenu(mobileMenu, burgerButton);
+      }
+    };
+    mobileMenu.addEventListener('click', delegatedMenuClickCapture, { capture: true });
+    cleanupFns.push(() => mobileMenu.removeEventListener('click', delegatedMenuClickCapture, { capture: true } as EventListenerOptions));
+
+    if (closeButton) {
+      // Primary: bubble-phase handler on the button itself
+      closeButton.addEventListener('click', closeHandler);
+      // Fallback: capture-phase document listener in case any bubbling is prevented by framework handlers
+      const docCapture = (event: Event) => {
+        const target = event.target as Node | null;
+        if (!target) return;
+        if (target === closeButton || (closeButton as HTMLElement).contains(target)) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeHandler(event);
+        }
+      };
+      document.addEventListener('click', docCapture, { capture: true });
+
+      cleanupFns.push(() => {
+        closeButton.removeEventListener('click', closeHandler);
+        document.removeEventListener('click', docCapture, { capture: true } as EventListenerOptions);
+      });
+    }
+
+    const escapeHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && mobileMenu.classList.contains('active')) {
+        closeMobileMenu(mobileMenu, burgerButton);
+      }
+    };
+    document.addEventListener('keydown', escapeHandler);
+    cleanupFns.push(() => document.removeEventListener('keydown', escapeHandler));
+
+    const outsideClickHandler = (event: MouseEvent) => {
+      // Ignore clicks originating from the close button to avoid premature interception
+      if (closeButton && (event.target === closeButton || (closeButton as HTMLElement).contains(event.target as Node))) {
+        return;
+      }
+      if (!mobileMenu.contains(event.target as Node) && !burgerButton.contains(event.target as Node)) {
+        if (mobileMenu.classList.contains('active')) {
+          closeMobileMenu(mobileMenu, burgerButton);
+        }
+      }
+    };
+    document.addEventListener('click', outsideClickHandler);
+    cleanupFns.push(() => document.removeEventListener('click', outsideClickHandler));
+  }
+
+  if (searchToggle && searchOverlay) {
+    const openHandler = (event: Event) => {
+      event.preventDefault();
+      openOverlay(searchOverlay);
+    };
+
+    searchToggle.addEventListener('click', openHandler);
+    cleanupFns.push(() => searchToggle.removeEventListener('click', openHandler));
+
+    if (searchBackdrop instanceof HTMLElement) {
+      const overlayClickHandler = (event: MouseEvent) => {
+        if (event.target === searchBackdrop) {
+          closeOverlay(searchOverlay);
+        }
+      };
+      searchBackdrop.addEventListener('click', overlayClickHandler);
+      cleanupFns.push(() => searchBackdrop.removeEventListener('click', overlayClickHandler));
+    }
+
+    const escapeHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && searchOverlay.dataset.state === 'open') {
+        closeOverlay(searchOverlay);
+      }
+    };
+    document.addEventListener('keydown', escapeHandler);
+    cleanupFns.push(() => document.removeEventListener('keydown', escapeHandler));
+  }
+
+  return () => {
+    cleanupFns.forEach((fn) => fn());
+  };
 }

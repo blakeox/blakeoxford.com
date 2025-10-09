@@ -3,59 +3,7 @@
  * Cloudflare Worker: Edge app with asset serving, security headers, caching, audit-mode, and utilities
  */
 import { onRequestPost as handleSendEmail } from './send-email.js';
-
-class EdgePersonalization {
-  constructor(request, env) {
-    this.request = request;
-    this.env = env;
-    this.country = request.cf?.country || 'US';
-    this.userAgent = request.headers.get('user-agent') || '';
-    this.acceptLanguage = request.headers.get('accept-language') || '';
-    this.cookies = this.parseCookies(request.headers.get('cookie') || '');
-  }
-  parseCookies(cookieHeader) {
-    const out = {};
-    if (!cookieHeader) return out;
-    cookieHeader.split(';').forEach(part => {
-      const [k, ...rest] = part.split('=');
-      const key = (k || '').trim();
-      if (!key) return;
-      const val = rest.join('=');
-      try { out[key] = decodeURIComponent((val || '').trim()); }
-      catch { out[key] = (val || '').trim(); }
-    });
-    return out;
-  }
-  getUserSegment() {
-    const segments = [];
-    if (this.cookies.user_id || this.cookies.last_visit) segments.push('returning-visitor');
-    else segments.push('new-visitor');
-    if (/^en\b/i.test(this.acceptLanguage)) segments.push('english-primary');
-    const hour = new Date().getUTCHours();
-    segments.push(hour >= 9 && hour <= 17 ? 'business-hours' : 'after-hours');
-    return segments;
-  }
-  getABTestVariant() {
-    const userId = this.cookies.user_id || this.generateUserId();
-    const hash = this.hashCode(userId);
-    const variant = (hash % 100) < 50 ? 'A' : 'B';
-    return { variant, userId, testName: 'hero-optimization-v1' };
-  }
-  generateUserId() {
-    const ip = this.request.headers.get('cf-connecting-ip') || 'unknown';
-    const ua = this.userAgent.slice(0, 50);
-    return this.hashCode(ip + ua).toString();
-  }
-  hashCode(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return Math.abs(hash);
-  }
-}
+import { initEdgeSentry, addEdgeBreadcrumb } from '../sentry.edge.config.js';
 
 class EdgeCacheManager {
   constructor(request, env) {
@@ -71,7 +19,7 @@ class EdgeCacheManager {
     const isHashed = (p) => {
       // Treat Astro’s hashed chunk paths and common fingerprint patterns as immutable
       if (p.startsWith('/_astro/')) return true;
-      // e.g., core-boot.ab12cd34.js or image.1234567890abcdef.webp
+      // e.g., analytics.ab12cd34.js or image.1234567890abcdef.webp
       return /\.[a-f0-9]{8,}\.(?:js|css|png|jpg|jpeg|webp|avif|svg|ico|woff2|pdf)$/.test(p);
     };
 
@@ -112,125 +60,6 @@ class EdgeCacheManager {
   }
 }
 
-class EdgePerformanceOptimizer {
-  constructor(response, request) {
-    this.response = response;
-    this.request = request;
-    this.url = new URL(request.url);
-  }
-  async optimizeResponse() {
-    let res = this.response;
-    res = await this.applyCompression(res);
-    res = this.addPerformanceHeaders(res);
-    res = this.addSecurityHeaders(res);
-    res = this.addResourceHints(res);
-    return res;
-  }
-  async applyCompression(response) { return response; }
-  addPerformanceHeaders(response) {
-    const headers = new Headers(response.headers);
-    headers.set('Connection', 'keep-alive');
-    headers.set('Alt-Svc', 'h3=":443"; ma=86400');
-    return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
-  }
-  addSecurityHeaders(response) {
-    const headers = new Headers(response.headers);
-    const isAudit = WorkerApp.isAuditRequest(this.request);
-    const cspNonce = isAudit ? WorkerApp.generateNonce() : '';
-      const csp = isAudit ? [
-        'default-src \'self\'',
-        `script-src 'self' 'nonce-${cspNonce}'`,
-        'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com',
-        'font-src \'self\' https://fonts.gstatic.com',
-        'img-src \'self\' data: https:',
-        'connect-src \'self\'',
-        'frame-src \'self\'',
-        'base-uri \'none\'',
-        'object-src \'none\'',
-        'frame-ancestors \'none\'',
-        'upgrade-insecure-requests',
-        'manifest-src \'self\'',
-        'worker-src \'self\''
-    ] : [
-      'default-src \'self\'',
-      'script-src \'self\' \'unsafe-inline\' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com https://challenges.cloudflare.com',
-      'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com',
-      'font-src \'self\' https://fonts.gstatic.com',
-      'img-src \'self\' data: https:',
-      'connect-src \'self\' https://www.google-analytics.com https://stats.g.doubleclick.net https://challenges.cloudflare.com',
-      'frame-src \'self\' https://challenges.cloudflare.com',
-      'base-uri \'none\'',
-      'object-src \'none\'',
-      'frame-ancestors \'none\'',
-      'upgrade-insecure-requests',
-      'manifest-src \'self\'',
-      'worker-src \'self\''
-    ];
-    // Primary enforcing CSP
-    headers.set('Content-Security-Policy', csp.join('; '));
-
-    // Report-Only CSP rollout (matched to current policy for baseline; can be tightened later)
-    const reportEndpoint = (() => {
-      try { return new URL('/csp-report', this.url).toString(); } catch { return '/csp-report'; }
-    })();
-    const cspReportOnly = [
-      ...csp,
-      `report-uri ${reportEndpoint}`,
-      'report-to csp'
-    ];
-    // Modern reporting headers
-    try {
-      headers.set('Reporting-Endpoints', `csp="${reportEndpoint}"`);
-      headers.set('Report-To', JSON.stringify({ group: 'csp', max_age: 60 * 60 * 24 * 30, endpoints: [{ url: reportEndpoint }], include_subdomains: true }));
-    } catch { /* ignore header json errors */ }
-    headers.set('Content-Security-Policy-Report-Only', cspReportOnly.join('; '));
-  if (isAudit) headers.set('X-Audit-Mode', '1');
-    if (cspNonce) headers.set('X-CSP-Nonce', cspNonce);
-    headers.set('X-Frame-Options', 'DENY');
-    headers.set('X-Content-Type-Options', 'nosniff');
-    headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    headers.set('Permissions-Policy', 'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()');
-    // Align HSTS with static headers policy (2 years)
-    headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
-    headers.set('Cross-Origin-Opener-Policy', 'same-origin');
-    // Strengthen cross-origin isolation hints
-    headers.set('Cross-Origin-Embedder-Policy', 'credentialless');
-    headers.set('Cross-Origin-Resource-Policy', 'same-site');
-    headers.set('Origin-Agent-Cluster', '?1');
-    headers.set('X-Permitted-Cross-Domain-Policies', 'none');
-    return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
-  }
-  addResourceHints(response) {
-    const headers = new Headers(response.headers);
-    const path = this.url.pathname;
-    // Be conservative with hints to avoid Lighthouse "unused prefetch" warnings.
-    // Only emit route-specific hints for real navigations and likely-needed resources.
-    // Skip in audit mode, bots, or when the client indicates reduced data.
-    const isAudit = WorkerApp.isAuditRequest(this.request);
-    const reqHeaders = this.request.headers;
-    const ua = (reqHeaders.get('user-agent') || '').toLowerCase();
-    const isBot = /bot|crawler|spider|crawling|lighthouse|headlesschrome/.test(ua);
-    const secFetchDest = (reqHeaders.get('sec-fetch-dest') || '').toLowerCase();
-    const secFetchMode = (reqHeaders.get('sec-fetch-mode') || '').toLowerCase();
-    const isNavigation = secFetchDest === 'document' || secFetchMode === 'navigate';
-    const saveDataOn = (reqHeaders.get('save-data') || '').toLowerCase() === 'on';
-    const prefersReducedData = /reduce/.test((reqHeaders.get('sec-ch-prefers-reduced-data') || '').toLowerCase());
-    const downlinkHeader = reqHeaders.get('downlink') || reqHeaders.get('sec-ch-downlink') || '';
-    const downlink = parseFloat(downlinkHeader);
-    const ect = (reqHeaders.get('ect') || '').toLowerCase(); // e.g., slow-2g, 2g, 3g, 4g
-    const isSlow = (!Number.isNaN(downlink) && downlink < 1.0) || ['slow-2g', '2g', '3g'].includes(ect);
-
-    if (!isAudit && !isBot && isNavigation && !saveDataOn && !prefersReducedData && !isSlow) {
-      if (path === '/projects') {
-        headers.append('Link', '</api/projects.json>; rel=preload; as=fetch; crossorigin');
-      } else if (path === '/blog') {
-        headers.append('Link', '</api/blog.json>; rel=preload; as=fetch; crossorigin');
-      }
-    }
-    return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
-  }
-}
-
 const WorkerApp = {
   isAuditRequest(req) {
     try {
@@ -255,6 +84,9 @@ const WorkerApp = {
   },
 
   async fetch(request, env, ctx) {
+    // Initialize Sentry for error tracking in edge function
+    const Sentry = initEdgeSentry(env);
+    
     const url = new URL(request.url);
     const method = request.method || 'GET';
     const reqId = (() => {
@@ -376,6 +208,36 @@ const WorkerApp = {
       return new Response(null, { status: 204, headers: { 'cache-control': 'no-store, no-cache, must-revalidate', 'content-type': 'text/plain; charset=utf-8', 'content-length': '0', 'x-content-type-options': 'nosniff', 'x-request-id': reqId, 'x-route-kind': 'health', 'x-cache-policy': 'no-store, no-cache, must-revalidate' } });
     }
 
+    // Debug route: intentionally trigger a test error to verify Sentry (edge)
+    if (url.pathname === '/debug/edge-sentry-test') {
+      try {
+        addEdgeBreadcrumb({
+          category: 'debug',
+          message: 'Triggering Sentry edge test error',
+          level: 'info',
+          data: { reqId }
+        });
+        throw new Error('Sentry Edge Test: manual trigger from /debug/edge-sentry-test');
+      } catch (err) {
+        try {
+          Sentry.captureException(err, {
+            tags: { route: 'debug-edge-sentry-test' },
+            extra: { reqId, path: url.pathname, method }
+          });
+        } catch { /* swallow */ }
+        return new Response('Edge test error captured. Check Sentry project for an event.', {
+          status: 200,
+          headers: {
+            'content-type': 'text/plain; charset=utf-8',
+            'cache-control': 'no-store',
+            'x-request-id': reqId,
+            'x-route-kind': 'debug',
+            'x-cache-policy': 'no-store'
+          }
+        });
+      }
+    }
+
     // Legacy no-op for previous metrics path
     if (url.pathname === '/metrics/' || url.pathname === '/metrics') {
       return new Response(null, { status: 204, headers: { 'cache-control': 'no-store, no-cache, must-revalidate', 'content-type': 'text/plain; charset=utf-8', 'content-length': '0', 'x-content-type-options': 'nosniff', 'x-request-id': reqId, 'x-route-kind': 'health', 'x-cache-policy': 'no-store, no-cache, must-revalidate' } });
@@ -395,22 +257,8 @@ const WorkerApp = {
     }
 
     // Back-compat asset rewrite: maintain existing path if older HTML referenced it
-    if (url.pathname === '/assets/js/lazy-loader.min.js' && !url.search) {
-      try {
-        const v2Url = new URL('/assets/js/lazy-loader.min.js?v=2', url.origin);
-        const v2Req = new Request(v2Url.toString(), request);
-        const res = await env.ASSETS.fetch(v2Req);
-        if (res.ok) {
-          const headers = new Headers(res.headers);
-          headers.set('cache-control', 'public, max-age=300');
-          headers.set('x-request-id', reqId);
-          headers.set('x-route-kind', 'asset');
-          headers.set('x-cache-policy', headers.get('cache-control') || '');
-          return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
-        }
-      } catch { /* fall through */ }
-      // If v2 is missing (e.g., inlined in templates), return 204 to avoid error spam
-      return new Response(null, { status: 204, headers: { 'cache-control': 'no-store', 'x-request-id': reqId, 'x-route-kind': 'asset', 'x-cache-policy': 'no-store' } });
+    if (url.pathname === '/assets/js/search-overlay-standalone.min.js' && url.search === '?v=2') {
+      return env.ASSETS.fetch(request);
     }
 
     // Image path remaps
@@ -452,10 +300,7 @@ const WorkerApp = {
     }
 
     // Serve from ASSETS
-    const personalization = new EdgePersonalization(request, env);
     const cacheManager = new EdgeCacheManager(request, env);
-    const userSegments = personalization.getUserSegment();
-    const abTest = personalization.getABTestVariant();
     const cacheStrategy = cacheManager.getCacheStrategy();
 
     if (method === 'GET') {
@@ -466,6 +311,15 @@ const WorkerApp = {
     try {
       const startTs = Date.now();
       console.log('\u27a1\ufe0f Request start', JSON.stringify({ id: reqId, method, path: url.pathname }));
+      
+      // Add breadcrumb for request tracking
+      addEdgeBreadcrumb({
+        category: 'http',
+        message: `${method} ${url.pathname}`,
+        level: 'info',
+        data: { reqId, method, path: url.pathname }
+      });
+      
       let originResponse = await env.ASSETS.fetch(request);
 
       if (originResponse.status === 404 && !url.pathname.includes('.') && !url.pathname.endsWith('/index.html')) {
@@ -577,29 +431,8 @@ const WorkerApp = {
         }
       }
 
+      // Removed legacy edge optimization and personalization
       let finalResponse = originResponse;
-
-      if (method === 'GET' && originResponse.headers.get('content-type')?.includes('text/html')) {
-        try {
-          const optimizer = new EdgePerformanceOptimizer(originResponse, request);
-          finalResponse = await optimizer.optimizeResponse();
-          const isAudit = WorkerApp.isAuditRequest(request);
-          if (isAudit) {
-            try { finalResponse = await WorkerApp.stripAuditOnlyScripts(finalResponse); }
-            catch (e) { console.error('Audit-only strip failed:', e); }
-          }
-          if (!isAudit) {
-            try { finalResponse = await WorkerApp.applyPersonalization(finalResponse, userSegments, abTest); }
-            catch (e) {
-              console.error('Personalization failed, returning optimized response only:', e);
-              finalResponse = new Response(await finalResponse.text(), { status: finalResponse.status, statusText: finalResponse.statusText, headers: finalResponse.headers });
-            }
-          }
-        } catch (e) {
-          console.error('Optimization failed, returning origin response:', e);
-          finalResponse = originResponse;
-        }
-      }
 
       if (method === 'GET' && cacheStrategy.ttl > 0 && finalResponse.body) {
         const cacheHeaders = new Headers(finalResponse.headers);
@@ -610,7 +443,7 @@ const WorkerApp = {
         finalResponse = new Response(forReturn, { status: finalResponse.status, statusText: finalResponse.statusText, headers: finalResponse.headers });
       }
 
-      ctx.waitUntil(WorkerApp.trackEdgeAnalytics(request, userSegments, abTest, env, reqId));
+      // Edge analytics disabled
       try {
         const h = new Headers(finalResponse.headers);
         h.set('x-request-id', reqId);
@@ -626,7 +459,23 @@ const WorkerApp = {
 
     } catch (error) {
       const errStart = Date.now();
+      
+      // Capture error to Sentry with context
+      Sentry.captureException(error, {
+        tags: {
+          function: 'edge-computing',
+          method: request.method,
+          path: url.pathname,
+        },
+        extra: {
+          reqId,
+          url: request.url,
+        },
+      });
+      
+      // Keep existing console.error for Cloudflare logs
       console.error('Edge processing error:', JSON.stringify({ id: reqId, error: String(error), path: url.pathname }));
+      
       const staleResponse = await caches.default.match(request);
       if (staleResponse) return staleResponse;
       const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
@@ -675,23 +524,12 @@ const WorkerApp = {
     }
   },
 
-  async applyPersonalization(response, userSegments, abTest) {
-    const html = await response.text();
-    let personalizedHTML = html;
-    if (abTest.variant === 'B') personalizedHTML = personalizedHTML.replace('<h1 class="hero-title">', '<h1 class="hero-title hero-variant-b">');
-    if (userSegments.includes('returning-visitor')) personalizedHTML = personalizedHTML.replace('{{welcome_message}}', 'Welcome back!');
-    else personalizedHTML = personalizedHTML.replace('{{welcome_message}}', 'Welcome to Blake Oxford\'s Portfolio!');
-    if (userSegments.includes('english-primary')) personalizedHTML = personalizedHTML.replace('{{contact_cta}}', 'Get in touch');
-    personalizedHTML = personalizedHTML.replace('</head>', `<script>window.abTest=${JSON.stringify(abTest)};window.userSegments=${JSON.stringify(userSegments)};</script></head>`);
-    return new Response(personalizedHTML, { status: response.status, statusText: response.statusText, headers: response.headers });
+  async applyPersonalization(response) {
+    return response;
   },
 
-  async trackEdgeAnalytics(request, userSegments, abTest, env, reqId) {
-    const analytics = { id: reqId, timestamp: Date.now(), url: request.url, userAgent: request.headers.get('user-agent'), country: request.cf?.country, userSegments, abTest, colo: request.cf?.colo, asn: request.cf?.asn };
-    console.log('📊 Edge analytics:', JSON.stringify(analytics));
-    if (env.ANALYTICS_ENGINE) {
-      await env.ANALYTICS_ENGINE.writeDataPoint({ blobs: [ analytics.url, analytics.country, abTest.variant ], doubles: [ Date.now() ], indexes: [ analytics.country ] });
-    }
+  async trackEdgeAnalytics() {
+    // no-op
   }
 };
 

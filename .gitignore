@@ -179,6 +179,13 @@ tests/performance/baselines-history.json
 tests/contracts/baselines/diff-reports/
 mutation-report/
 
+# Test and monitoring artifacts (generated files)
+*-history.json
+dead-links-report.json
+search-relevance-results.json
+test-results.json
+toxic-tests.json
+
 # Wrangler outputs
 .wrangler/
 

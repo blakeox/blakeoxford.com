@@ -1,187 +1,83 @@
 ---
+import { getEntry } from 'astro:content';
 import Layout from '../../layouts/BaseLayout.astro';
 import ProjectHero from '../../components/features/projects/ProjectHero.astro';
+import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
 import AchievementCard from '../../components/common/AchievementCard.astro';
 import ProjectTags from '../../components/features/projects/ProjectTags.astro';
 
-const title = 'ADP Workforce Now Implementation';
-const description = 'Implemented ADP Workforce Now to unify HR, recruiting, and finance operations through automation and real-time reporting.';
-const date = new Date('2021-01-01T00:00:00.000Z');
-const tags = ['HCM', 'Recruiting', 'ADP Workforce Now', 'Sage Intacct', 'PowerBI'];
-const image = '/assets/images/default-project.png';
-const canonicalUrl = 'https://blakeoxford.com/projects/adp-workforcenow/';
+const entry = await getEntry('projects', 'adp-workforcenow');
+if (!entry) {
+  throw new Error('Project not found: adp-workforcenow');
+}
+const { data } = entry;
+const title = data.title;
+const description = data.description ?? '';
+const date = data.date ? new Date(data.date) : new Date();
+const canonicalUrl = `https://blakeoxford.com/projects/${entry.slug}/`;
+const heroImage = (data as any).heroImage ?? '/assets/images/blake-logo-fallback.png';
+const { Content } = await entry.render();
 ---
 
-<Layout
-  title={title}
-  description={description}
-  image={image}
-  url={canonicalUrl}
-  wide={true}
->
-  <ProjectHero
-    title={title}
-    description={description}
-    date={date}
-    image={image}
-  />
+<Layout title={title} description={description} url={canonicalUrl} image={heroImage} wide>
+  <ProjectHero title={title} description={description} date={date} image={heroImage} />
 
-  <!-- Full-Width Content Section -->
-  <article class="py-20 bg-background">
-    <div class="w-full px-6 lg:px-12 xl:px-16">
-      <div class="max-w-none mx-auto">
+  <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
+    <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
+    <div class="relative mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
+      <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.description}>
+        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/82">
+          <Content />
+        </div>
+      </ProjectDetailSection>
 
-        <!-- Background -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Background</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90 mb-6">
-              To modernize HR operations and improve financial alignment, I led the implementation of <strong>ADP Workforce Now</strong>. This initiative unified HR, recruiting, and general ledger processes by integrating ADP with <strong>Sage Intacct</strong>, ensuring consistent and accurate financial data flow.
-            </p>
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90 mb-6">
-              We enhanced our talent acquisition strategy through a full rollout of <strong>ADP's Applicant Tracking System (ATS)</strong>. I configured the ATS to integrate directly with <strong>Indeed</strong>, enabling automated job postings and centralized candidate tracking. Additionally, I designed a <strong>custom landing page</strong> featuring our organization's core values to create a more engaging and mission-aligned experience for applicants before entering the ATS portal.
-            </p>
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90 mb-6">
-              ADP's standard and custom reporting capabilities allowed us to monitor payroll trends and assess staffing needs over time. Automation played a key role—portions of the open enrollment process and <strong>401(k) payroll submissions</strong> were streamlined, reducing administrative burden and improving compliance.
-            </p>
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-              While we successfully deployed the core systems, the final phase—which would have provided even greater strategic value—was not completed. This involved integrating data from our <strong>Electronic Health Record (EHR)</strong> system, <strong>AdvancedMD</strong>, via an ODBC connector into a SQL database, and combining it with API outputs from ADP. The goal was to develop advanced productivity dashboards to evaluate departmental billing output against provider and technician hours, helping forecast staffing needs based on utilization metrics.
-            </p>
-          </div>
-        </section>
+      {data.highlights?.length ? (
+        <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
+          <AchievementCard title="Program outcomes" achievements={data.highlights} />
+        </ProjectDetailSection>
+      ) : null}
 
-        <!-- Key Achievements -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Key Achievements</h2>
+      {data.impact?.length ? (
+        <ProjectDetailSection title="Impact signals" eyebrow="Proof of traction">
+          <ul class="flex flex-col gap-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
+            {(data.impact ?? []).map((item: string) => (
+              <li class="flex items-start gap-3">
+                <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </ProjectDetailSection>
+      ) : null}
 
-          <div class="grid md:grid-cols-1 gap-8">
-            <AchievementCard
-              title="ADP Workforce Now Implementation"
-              achievements={[
-                'Deployed a centralized HCM system to manage HR functions efficiently.'
-              ]}
-            />
-
-            <AchievementCard
-              title="Sage Intacct Integration"
-              achievements={[
-                'Achieved seamless general ledger synchronization between ADP and Sage Intacct.'
-              ]}
-            />
-
-            <AchievementCard
-              title="ATS Rollout & Indeed Integration"
-              achievements={[
-                'Implemented ADP\'s recruiting module with direct Indeed integration and a custom core values landing page to improve candidate experience.'
-              ]}
-            />
-
-            <AchievementCard
-              title="Advanced HCM Configuration"
-              achievements={[
-                'Built out modules for employee management, payroll, benefits, and compliance.'
-              ]}
-            />
-
-            <AchievementCard
-              title="PowerBI Reporting"
-              achievements={[
-                'Developed real-time dashboards to visualize HR and payroll data across departments.'
-              ]}
-            />
-
-            <AchievementCard
-              title="Process Automation"
-              achievements={[
-                'Automated open enrollment and 401(k) payroll submissions to reduce manual processing.'
-              ]}
-            />
-          </div>
-        </section>
-
-        <!-- Impact -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Impact</h2>
-          <div class="prose prose-lg dark:prose-invert max-w-none">
-            <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-              The project significantly improved operational efficiency by centralizing HR and finance processes, automating routine tasks, and enhancing data visibility. These improvements enabled faster decision-making, reduced errors, and provided leadership with insights to support workforce planning and financial forecasting.
+      <ProjectDetailSection title="Next steps" eyebrow="Ready to explore?" layout="surface">
+        <div class="grid gap-4 items-start lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <div class="space-y-4">
+            <h3 class="text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">
+              Want to map the same backbone at your org?
+            </h3>
+            <p class="text-sm sm:text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+              In 30 minutes we can identify the friction points keeping HR, finance, and operations out of sync—and sketch the automation and enablement needed to bring them together.
             </p>
           </div>
-        </section>
-
-        <!-- Implementation Plan -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Implementation Plan</h2>
-
-          <div class="space-y-8">
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">System Evaluation & Decision-Making</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                We began with Paycor, but after a year of use, it became clear it didn't meet critical requirements—particularly the inability to separate managerial and time/attendance responsibilities. Non-scheduled employees like owners also had limited access to time tracking. We re-evaluated our options and conducted vendor comparisons. ADP emerged as the most cost-effective and reliable choice.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Stakeholder Alignment</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                A project team was formed, including the Accounting Manager, HR Manager, CPA, IT Manager, and myself. We established project goals, scoped out requirements, and set deadlines.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Vendor Collaboration & Data Preparation</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                We coordinated closely with ADP's implementation team to ensure all legacy data was prepared and transferred correctly.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Training & Go-Live Support</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Due to the aggressive January 1st go-live timeline and holiday staffing challenges, we conducted one-on-one onboarding for technicians and providers. IT staff, including myself, worked directly with employees to ensure successful adoption despite limited availability for group training.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Timeline Execution</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Despite the condensed schedule, we completed the core implementation in just two months—well ahead of ADP's projected timeline. This was made possible by daily collaboration, fast decision-making, and close internal coordination.
-              </p>
-            </div>
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-4">
+            <a
+              href="/contact/"
+              class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent shadow-accent-glow transition-colors hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+            >
+              Book a working session
+            </a>
+            <a
+              href="/about/"
+              class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
+            >
+              Review how I partner
+            </a>
           </div>
-        </section>
-
-        <!-- Lessons Learned -->
-        <section class="mb-16">
-          <h2 class="text-3xl font-bold mb-8 text-foreground dark:text-foreground">Lessons Learned</h2>
-
-          <div class="space-y-8">
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Requirements Gathering is Crucial</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Our initial misstep with Paycor highlighted the importance of thoroughly documenting system requirements before entering a scoping phase.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Holiday Rollouts Require Cross-Team Support</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Training during holiday periods proved difficult. In future rollouts, planning for broader involvement is essential to ensure smooth adoption.
-              </p>
-            </div>
-
-            <div>
-              <h3 class="text-2xl font-semibold mb-4 text-foreground dark:text-foreground-light">Candidate Experience Matters</h3>
-              <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/90">
-                Providing a landing page that clearly communicated our mission and values helped set expectations and attract candidates aligned with our organizational culture.
-              </p>
-            </div>
-          </div>
-        </section>
-
-      </div>
+        </div>
+      </ProjectDetailSection>
     </div>
   </article>
 
-  <ProjectTags tags={tags} />
+  <ProjectTags tags={data.tags ?? []} />
 </Layout>

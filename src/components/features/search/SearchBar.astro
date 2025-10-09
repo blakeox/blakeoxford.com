@@ -1,0 +1,28 @@
+---
+import type { NavLink } from '../../config/types';
+
+const pages = [
+  { href: '/', label: 'Home' },
+  { href: '/about/', label: 'About' },
+  { href: '/projects/', label: 'Projects' },
+  { href: '/blog/', label: 'Blog' },
+  { href: '/contact/', label: 'Contact' }
+] as NavLink[];
+const projects: any[] = []; // (await import('../../content/projects/_meta.json')).default?.showcase?.cards ?? [];
+---
+
+<form class="rounded-2xl border border-border/50 bg-background/95 px-4 py-3 text-sm shadow focus-within:ring-2 focus-within:ring-accent/40" role="search" action="/projects/" method="get">
+  <label for="site-search" class="sr-only">Search site</label>
+  <input
+    id="site-search"
+    name="q"
+    type="search"
+    class="w-full bg-transparent text-foreground placeholder:text-foreground/50 focus:outline-none"
+    placeholder="Search pages or featured projects"
+    list="search-suggestions"
+  />
+  <datalist id="search-suggestions">
+    {pages.map((page) => <option value={page.label} />)}
+    {projects?.map((card: any) => <option value={card.title} />)}
+  </datalist>
+</form>

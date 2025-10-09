@@ -106,11 +106,11 @@ export class ErrorHandlingSystem {
     window.fetch = async (...args: Parameters<typeof fetch>): Promise<Response> => {
       try {
         const response = await originalFetch(...args);
-
+        
         if (!response.ok) {
           this.handleNetworkError(response);
         }
-
+        
         return response;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -137,7 +137,7 @@ export class ErrorHandlingSystem {
 
   public handleError(errorInfo: ErrorInfo): void {
     console.error('Error handled:', errorInfo);
-
+    
     // Add to queue
     this.errorQueue.push({
       ...errorInfo,
@@ -157,17 +157,17 @@ export class ErrorHandlingSystem {
   private handleResourceError(element: HTMLElement): void {
     const tagName = element.tagName.toLowerCase();
     let src: string | undefined;
-
+    
     if (element instanceof HTMLImageElement || element instanceof HTMLScriptElement) {
       src = element.src;
     } else if (element instanceof HTMLLinkElement) {
       src = element.href;
     }
-
+    
     let message = 'Failed to load resource';
     let userMessage = 'Some content failed to load';
     let shouldShowError = false;
-
+    
     switch (tagName) {
       case 'img':
         message = `Failed to load image: ${src}`;
@@ -201,42 +201,42 @@ export class ErrorHandlingSystem {
   private handleImageError(img: HTMLImageElement): void {
     const currentSrc = img.src;
     const fallbackImage = '/assets/images/blake-logo-fallback.png';
-
+    
     // Try fallback image first (if not already tried)
     if (!currentSrc.includes('blake-logo-fallback.png') && !img.hasAttribute('data-fallback-tried')) {
       img.setAttribute('data-fallback-tried', 'true');
       img.src = fallbackImage;
       return;
     }
-
+    
     // If fallback also failed, create placeholder
     img.style.display = 'none';
-
+    
     const altText = img.alt || 'Image';
     const placeholder = document.createElement('div');
-    placeholder.className = 'image-error-placeholder bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg flex flex-col items-center justify-center text-foreground/80 dark:text-gray-400 text-sm border border-gray-200 dark:border-gray-600';
-
+    placeholder.className = 'image-error-placeholder bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 text-sm border border-gray-200 dark:border-gray-600';
+    
     // Maintain aspect ratio using img dimensions or reasonable defaults
     const width = img.width || img.naturalWidth || 300;
     const height = img.height || img.naturalHeight || 200;
     placeholder.style.width = `${width}px`;
     placeholder.style.height = `${height}px`;
     placeholder.style.minHeight = '120px';
-
+    
     // Add branded logo placeholder
     const logoIcon = document.createElement('div');
     logoIcon.className = 'text-2xl font-bold text-accent mb-2';
     logoIcon.textContent = 'B';
-
+    
     const text = document.createElement('div');
     text.className = 'text-xs text-center px-2';
     text.textContent = altText.includes('Blake') ? 'Blake Oxford Portfolio' : 'Image not available';
-
+    
     placeholder.appendChild(logoIcon);
     placeholder.appendChild(text);
     placeholder.setAttribute('role', 'img');
     placeholder.setAttribute('aria-label', altText);
-
+    
     // Insert placeholder where image was
     img.parentNode?.insertBefore(placeholder, img);
     img.remove(); // Remove broken image element completely
@@ -281,7 +281,7 @@ export class ErrorHandlingSystem {
   private validateForm(form: HTMLFormElement): void {
     const errors: ValidationError[] = [];
     const fields = form.querySelectorAll('input, textarea, select');
-
+    
     fields.forEach((field) => {
       const element = field as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
       if (!element.checkValidity()) {
@@ -301,19 +301,19 @@ export class ErrorHandlingSystem {
   private showFieldError(field: HTMLFormElement, message: string): void {
     // Remove existing error
     this.clearFieldError(field);
-
+    
     // Add error styling
     field.classList.add('error');
     field.setAttribute('aria-invalid', 'true');
-
+    
     // Create error message
     const errorElement = document.createElement('div');
     errorElement.className = 'field-error text-red-600 text-sm mt-1';
     errorElement.textContent = message;
     errorElement.setAttribute('role', 'alert');
-
+    
     field.parentNode?.appendChild(errorElement);
-
+    
     // Focus field for accessibility
     field.focus();
   }
@@ -321,7 +321,7 @@ export class ErrorHandlingSystem {
   private clearFieldError(field: HTMLFormElement): void {
     field.classList.remove('error');
     field.removeAttribute('aria-invalid');
-
+    
     const existingError = field.parentNode?.querySelector('.field-error');
     if (existingError) {
       existingError.remove();
@@ -351,26 +351,26 @@ export class ErrorHandlingSystem {
     this.errorDisplay = document.createElement('div');
     this.errorDisplay.id = 'error-display';
     this.errorDisplay.className = 'fixed top-4 right-4 z-50 max-w-md';
-
+    
     this.notificationContainer = document.createElement('div');
     this.notificationContainer.id = 'notification-container';
     this.notificationContainer.className = 'fixed bottom-4 right-4 z-50 space-y-2';
-
+    
     document.body.appendChild(this.errorDisplay);
     document.body.appendChild(this.notificationContainer);
   }
 
   private showNextError(): void {
     if (this.errorQueue.length === 0 || !this.errorDisplay) return;
-
+    
     const error = this.errorQueue.shift();
     if (!error) return;
-
+    
     this.isShowingError = true;
-
+    
     const errorElement = this.createErrorElement(error);
     this.errorDisplay.appendChild(errorElement);
-
+    
     // Auto-hide after 5 seconds
     setTimeout(() => {
       this.hideError();
@@ -379,14 +379,14 @@ export class ErrorHandlingSystem {
 
   private hideError(): void {
     if (!this.errorDisplay) return;
-
+    
     const errorElement = this.errorDisplay.querySelector('.error-item');
     if (errorElement) {
       errorElement.remove();
     }
-
+    
     this.isShowingError = false;
-
+    
     // Show next error if any
     if (this.errorQueue.length > 0) {
       this.showNextError();
@@ -395,37 +395,37 @@ export class ErrorHandlingSystem {
 
   private createErrorElement(error: ErrorInfo): HTMLElement {
     const element = document.createElement('div');
-  element.className = 'error-item bg-surface dark:bg-surface-dark border-l-4 border-error p-4 rounded shadow-lg';
-
+    element.className = 'error-item bg-white dark:bg-gray-800 border-l-4 border-red-500 p-4 rounded shadow-lg';
+    
     const severityColors = {
       error: 'border-red-500',
       warning: 'border-yellow-500',
       info: 'border-blue-500'
     };
-
-  element.className = `error-item bg-surface dark:bg-surface-dark border-l-4 ${severityColors[error.severity]} p-4 rounded shadow-lg`;
-
+    
+    element.className = `error-item bg-white dark:bg-gray-800 border-l-4 ${severityColors[error.severity]} p-4 rounded shadow-lg`;
+    
     element.innerHTML = `
       <div class="flex items-start">
         <div class="flex-1">
-          <h3 class="text-sm font-medium text-foreground">${error.message}</h3>
-          ${error.details ? `<p class="text-sm text-foreground/80 mt-1">${error.details}</p>` : ''}
+          <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">${error.message}</h3>
+          ${error.details ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${error.details}</p>` : ''}
           ${error.actions ? `
             <div class="mt-3 space-x-2">
               ${error.actions.map(action => `
-                <button class="text-xs px-2 py-1 rounded ${action.primary ? 'bg-red-600 text-white' : 'bg-surface-alt text-foreground/80 border border-border'}">
+                <button class="text-xs px-2 py-1 rounded ${action.primary ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700'}">
                   ${action.label}
                 </button>
               `).join('')}
             </div>
           ` : ''}
         </div>
-  <button class="ml-4 text-foreground/60 hover:text-foreground" onclick="this.parentElement.parentElement.remove()">
+        <button class="ml-4 text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.remove()">
           ×
         </button>
       </div>
     `;
-
+    
     // Add action handlers
     if (error.actions) {
       const buttons = element.querySelectorAll('button');
@@ -435,7 +435,7 @@ export class ErrorHandlingSystem {
         }
       });
     }
-
+    
     return element;
   }
 
@@ -476,37 +476,37 @@ export class ErrorHandlingSystem {
 
   private createNotification(notification: Notification): HTMLElement {
     const element = document.createElement('div');
-  element.className = 'notification bg-surface dark:bg-surface-dark border-l-4 p-4 rounded shadow-lg';
-
+    element.className = 'notification bg-white dark:bg-gray-800 border-l-4 p-4 rounded shadow-lg';
+    
     const typeColors = {
       success: 'border-green-500',
       error: 'border-red-500',
       warning: 'border-yellow-500',
       info: 'border-blue-500'
     };
-
-  element.className = `notification bg-surface dark:bg-surface-dark border-l-4 ${typeColors[notification.type]} p-4 rounded shadow-lg`;
-
+    
+    element.className = `notification bg-white dark:bg-gray-800 border-l-4 ${typeColors[notification.type]} p-4 rounded shadow-lg`;
+    
     element.innerHTML = `
       <div class="flex items-start">
         <div class="flex-1">
-          <p class="text-sm text-foreground">${notification.message}</p>
+          <p class="text-sm text-gray-900 dark:text-gray-100">${notification.message}</p>
         </div>
-  <button class="ml-4 text-foreground/60 hover:text-foreground" onclick="this.parentElement.parentElement.remove()">
+        <button class="ml-4 text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.remove()">
           ×
         </button>
       </div>
     `;
-
+    
     return element;
   }
 
   private showNotification(notification: Notification): void {
     if (!this.notificationContainer) return;
-
+    
     const element = this.createNotification(notification);
     this.notificationContainer.appendChild(element);
-
+    
     if (notification.duration) {
       setTimeout(() => {
         element.remove();
@@ -519,17 +519,17 @@ export class ErrorHandlingSystem {
     const placeholder = field.getAttribute('placeholder');
     const ariaLabel = field.getAttribute('aria-label');
     const name = field.name || field.id;
-
+    
     return label || placeholder || ariaLabel || name || 'Field';
   }
 
   private getFieldErrorMessage(field: HTMLFormElement): string {
     const label = this.getFieldLabel(field);
-
+    
     if (field.validity.valueMissing) {
       return `${label} is required`;
     }
-
+    
     if (field.validity.typeMismatch) {
       if (field.type === 'email') {
         return `${label} must be a valid email address`;
@@ -538,19 +538,19 @@ export class ErrorHandlingSystem {
         return `${label} must be a valid URL`;
       }
     }
-
+    
     if (field.validity.tooShort) {
       return `${label} must be at least ${field.minLength} characters`;
     }
-
+    
     if (field.validity.tooLong) {
       return `${label} must be no more than ${field.maxLength} characters`;
     }
-
+    
     if (field.validity.patternMismatch) {
       return `${label} format is invalid`;
     }
-
+    
     return field.validationMessage || `${label} is invalid`;
   }
 }
@@ -570,4 +570,4 @@ if (typeof window !== 'undefined') {
   } else {
     (window as Window & { errorHandlingSystem?: ErrorHandlingSystem }).errorHandlingSystem = initErrorHandlingSystem();
   }
-}
+} 

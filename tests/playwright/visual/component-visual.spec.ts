@@ -26,11 +26,20 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
         }
         const overlay = page.locator(cfg.selector).first();
         await overlay.evaluate((el) => {
+          // Ensure the overlay is in an open state consistent with CSS selectors
+          el.setAttribute('data-state', 'open');
           el.classList.add('active');
           el.removeAttribute('inert');
           (el as HTMLElement).style.visibility = 'visible';
           (el as HTMLElement).style.opacity = '1';
           (el as HTMLElement).style.pointerEvents = 'auto';
+        });
+        // Blur any focused element inside the overlay to avoid focus ring diff
+        await page.evaluate(() => {
+          const overlay = document.querySelector('#search-overlay');
+          if (overlay && overlay.contains(document.activeElement)) {
+            (document.activeElement as HTMLElement).blur();
+          }
         });
         await expect(overlay).toBeVisible();
       } else {
