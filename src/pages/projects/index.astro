@@ -1,13 +1,10 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/features/projects/ProjectCard.astro';
-import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
 import { getProjectsSorted } from '../../content/projects/getProjects';
 
 const meta = (await import('../../content/projects/_meta.json')).default;
 const hero = meta.hero;
-const approach = meta.approach;
-const grid = meta.grid;
 
 const projects = await getProjectsSorted();
 
@@ -18,159 +15,105 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <section class="bg-gradient-to-b from-background via-accent/5 to-background pb-20 sm:pb-24 md:pb-28" role="region" aria-labelledby="projects-title">
-    <div class="@container mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 lg:gap-14 text-pretty">
-      <div class="max-w-3xl space-y-6 sm:space-y-7">
-        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-4 py-1.5 text-xs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/40 dark:bg-surface-dark-subtle backdrop-blur-sm">
-          {hero.kicker}
-        </span>
-        <header class="space-y-4 sm:space-y-5">
-          <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
-            {hero.title}
-          </h1>
-          <p class="text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">
-            {hero.subtitle}
-          </p>
-          <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-            {hero.description}
+  <section class="bg-gradient-to-b from-background via-accent/3 to-background/95 pb-24 sm:pb-32 md:pb-40" role="region" aria-labelledby="projects-title">
+    <div class="@container mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col gap-12 sm:gap-16 lg:gap-20 text-pretty">
+      <div class="max-w-5xl space-y-8 sm:space-y-10">
+        <header class="space-y-6 sm:space-y-8 text-center">
+          <div class="space-y-4">
+            <span class="inline-flex w-fit items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-accent border border-accent/20">
+              Portfolio Showcase
+            </span>
+            <h1 id="projects-title" class="font-heading text-5xl sm:text-6xl md:text-7xl font-bold leading-[0.9] tracking-tight text-foreground dark:text-foreground-light">
+              Selected Projects
+            </h1>
+          </div>
+          <p class="text-xl sm:text-2xl font-medium leading-relaxed text-foreground/80 dark:text-foreground-light/80 max-w-4xl mx-auto">
+            Systems architecture, automation, and digital transformation work that delivered measurable results
           </p>
         </header>
+
+        <!-- Quick Navigation -->
+        <div class="flex flex-wrap justify-center gap-3 pt-4" role="list" aria-label="Project categories">
+          {hero.focusAreas.map((area) => (
+            <button class="group inline-flex items-center gap-2 rounded-full bg-surface-subtle/80 hover:bg-accent/10 px-4 py-2.5 text-sm font-medium text-foreground/70 hover:text-accent ring-1 ring-border/30 hover:ring-accent/30 transition-all duration-200" role="listitem">
+              <span class="h-2 w-2 rounded-full bg-current opacity-60 group-hover:opacity-100" aria-hidden="true"></span>
+              {area}
+            </button>
+          ))}
+          <button class="inline-flex items-center gap-2 rounded-full bg-background px-4 py-2.5 text-sm font-medium text-foreground ring-1 ring-border/40 hover:ring-accent/30 transition-all duration-200">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            View All
+          </button>
+        </div>
       </div>
 
-      <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60" role="list" aria-label="Focus areas">
-        {hero.focusAreas.map((area) => (
-          <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/35 dark:bg-surface-dark-subtle" role="listitem">
-            <span class="h-1.5 w-1.5 rounded-full bg-accent/70" aria-hidden="true"></span>
-            {area}
-          </span>
+
+    </div>
+  </section>
+
+  <!-- Projects Grid - Priority Content -->
+  <section class="bg-background py-16 sm:py-20" role="region" aria-labelledby="projects-grid-heading">
+    <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 text-pretty">
+      <div class="grid gap-8 sm:gap-10 md:grid-cols-2 xl:grid-cols-3">
+        {projects.map((project) => (
+          <ProjectCard project={project} />
         ))}
-      </div>
-
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {hero.stats.map((stat) => (
-          <div class="rounded-2xl bg-background px-4 py-5 sm:px-5 sm:py-6 ring-1 ring-border/30 shadow-lg">
-            <p class="mb-3 sm:mb-4 text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">{stat.label}</p>
-            <p class="text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">{stat.value}</p>
-          </div>
-        ))}
-      </div>
-
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-        {hero.primaryCta && (
-          <a
-            href={hero.primaryCta.href}
-            class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent shadow-accent-glow transition-colors hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
-          >
-            {hero.primaryCta.label}
-          </a>
-        )}
-        {hero.secondaryCta && (
-          <a
-            href={hero.secondaryCta.href}
-            class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
-          >
-            {hero.secondaryCta.label}
-          </a>
-        )}
       </div>
     </div>
   </section>
 
-  {approach && (
-    <section class="border-t border-border/20 bg-surface-subtle/40 py-16 sm:py-20" role="region" aria-labelledby="journey-heading">
-      <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 text-pretty">
-        <ProjectDetailSection
-          id="journey-heading"
-          eyebrow={approach.kicker}
-          title={approach.title}
-          description={approach.description}
-          subtitle={approach.subtitle}
-          layout="surface"
-        >
-          <div class="grid gap-4 sm:gap-6 lg:grid-cols-5">
-            {approach.stages.map((stage) => (
-              <article class="flex h-full flex-col gap-4 rounded-3xl border border-border/25 bg-background/95 p-4 sm:p-5 shadow-sm">
-                <header class="space-y-1.5">
-                  <p class="text-xxs font-semibold uppercase tracking-smallcaps text-foreground/55 dark:text-foreground-light/55">
-                    Stage
-                  </p>
-                  <h3 class="text-base font-semibold text-foreground dark:text-foreground-light">{stage.title}</h3>
-                </header>
-                <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{stage.summary}</p>
-                {Array.isArray(stage.proof) && stage.proof.length > 0 && (
-                  <ul class="mt-auto flex flex-col gap-2 text-xs leading-relaxed text-foreground/65 dark:text-foreground-light/70" role="list">
-                    {stage.proof.map((item) => (
-                      <li class="flex items-start gap-2">
-                        <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </article>
-            ))}
-          </div>
-
-          <div class="grid gap-4 sm:gap-5 lg:grid-cols-3">
-            {approach.signals.map((signal) => (
-              <div class="flex flex-col gap-3 rounded-3xl border border-dashed border-border/45 bg-surface-subtle/65 p-4 sm:p-6">
-                <h3 class="text-xs font-semibold uppercase tracking-smallcaps text-foreground/60 dark:text-foreground-light/60">
-                  Signal of success
-                </h3>
-                <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{signal}</p>
-              </div>
-            ))}
-          </div>
-
-          {approach.cta && (
-            <div class="grid gap-4 rounded-3xl border border-border/25 bg-background/95 p-6 sm:p-8 lg:p-10 lg:grid-cols-[2fr_minmax(0,1fr)] lg:items-center">
-              <div class="space-y-4">
-                <h3 class="text-2xl font-semibold text-foreground dark:text-foreground-light">{approach.cta.title}</h3>
-                <p class="text-sm sm:text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">{approach.cta.description}</p>
-              </div>
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-4">
-                {approach.cta.primaryCta && (
-                  <a
-                    href={approach.cta.primaryCta.href}
-                    class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent shadow-accent-glow transition-colors hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
-                  >
-                    {approach.cta.primaryCta.label}
-                  </a>
-                )}
-                {approach.cta.secondaryCta && (
-                  <a
-                    href={approach.cta.secondaryCta.href}
-                    class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
-                  >
-                    {approach.cta.secondaryCta.label}
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
-        </ProjectDetailSection>
-      </div>
-    </section>
-  )}
-
-  <section class="border-t border-border/20 bg-background py-16 sm:py-20" role="region" aria-labelledby="projects-grid-heading">
-    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-10 text-pretty">
-      <header class="max-w-3xl space-y-3 sm:space-y-4">
-        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
-          {grid.kicker}
+  <!-- Results & Testimonials Section -->
+  <section class="border-t border-border/10 bg-surface-subtle/30 py-16 sm:py-20" role="region" aria-labelledby="results-heading">
+    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 text-pretty">
+      <header class="max-w-3xl space-y-4 text-center mx-auto">
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-accent border border-accent/20">
+          Impact
         </span>
-        <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
-          {grid.title}
+        <h2 id="results-heading" class="font-heading text-3xl sm:text-4xl font-bold leading-tight text-foreground dark:text-foreground-light">
+          Results that matter
         </h2>
-        <p class="text-sm sm:text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
-          {grid.description}
+        <p class="text-base sm:text-lg leading-relaxed text-foreground/70 dark:text-foreground-light/70">
+          Measurable outcomes from real implementations
         </p>
       </header>
 
-      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {projects.map((project) => (
-          <ProjectCard project={project} />
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {hero.stats.map((stat) => (
+          <div class="group rounded-2xl bg-background/80 backdrop-blur-sm px-6 py-6 sm:px-7 sm:py-7 ring-1 ring-border/20 shadow-sm hover:shadow-md hover:ring-border/30 transition-all duration-300 text-center">
+            <p class="text-3xl sm:text-4xl font-bold text-accent dark:text-accent-light group-hover:scale-105 transition-transform duration-300 mb-3">{stat.value}</p>
+            <p class="text-sm font-medium text-foreground/70 dark:text-foreground-light/70">{stat.label}</p>
+          </div>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="border-t border-border/10 bg-background py-16 sm:py-20" role="region" aria-labelledby="cta-heading">
+    <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+      <div class="space-y-6 sm:space-y-8">
+        <h2 id="cta-heading" class="font-heading text-3xl sm:text-4xl font-bold leading-tight text-foreground dark:text-foreground-light">
+          Ready to discuss your next project?
+        </h2>
+        <p class="text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/75 max-w-2xl mx-auto">
+          Let's explore how systems thinking and automation can accelerate your business objectives.
+        </p>
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center sm:gap-6 pt-4">
+          <a
+            href="/contact/"
+            class="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-8 py-4 text-base font-semibold text-accent shadow-accent-glow transition-colors hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+          >
+            Start a conversation
+          </a>
+          <a
+            href="/about/"
+            class="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-medium text-foreground/80 ring-1 ring-border/40 hover:ring-accent/30 hover:text-foreground transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
+          >
+            Learn about my approach
+          </a>
+        </div>
       </div>
     </div>
   </section>
