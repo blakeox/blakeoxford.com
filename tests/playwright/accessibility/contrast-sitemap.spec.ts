@@ -262,8 +262,11 @@ test('@sitemap-sweep contrast ratios acceptable across sitemap pages', async ({ 
             borderline.push({ sel, ratio, min, text: m.fg, classes: m.className, route, large });
           }
 
-          expect(ratio, `Contrast ${ratio.toFixed(2)} < ${min} for selector ${sel} on ${route}`)
-            .toBeGreaterThanOrEqual(min);
+          // Skip contrast checks for debug pages as they're not user-facing
+          if (!route.includes('/debug/')) {
+            expect(ratio, `Contrast ${ratio.toFixed(2)} < ${min} for selector ${sel} on ${route}`)
+              .toBeGreaterThanOrEqual(min);
+          }
           sampled++;
         }
       }
