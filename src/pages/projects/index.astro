@@ -15,48 +15,45 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <section class="bg-gradient-to-b from-background via-accent/3 to-background/95 pb-24 sm:pb-32 md:pb-40" role="region" aria-labelledby="projects-title">
-    <div class="@container mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col gap-12 sm:gap-16 lg:gap-20 text-pretty">
-      <div class="max-w-5xl space-y-8 sm:space-y-10">
-        <header class="space-y-6 sm:space-y-8 text-center">
-          <div class="space-y-4">
-            <span class="inline-flex w-fit items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-accent border border-accent/20">
-              Portfolio Showcase
-            </span>
-            <h1 id="projects-title" class="font-heading text-5xl sm:text-6xl md:text-7xl font-bold leading-[0.9] tracking-tight text-foreground dark:text-foreground-light">
-              Selected Projects
-            </h1>
-          </div>
-          <p class="text-xl sm:text-2xl font-medium leading-relaxed text-foreground/80 dark:text-foreground-light/80 max-w-4xl mx-auto">
-            Systems architecture, automation, and digital transformation work that delivered measurable results
+  <section class="bg-gradient-to-b from-background via-accent/5 to-background pb-20 sm:pb-24 md:pb-28" role="region" aria-labelledby="projects-title">
+    <div class="@container mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 lg:gap-14 text-pretty">
+      <div class="max-w-3xl">
+        <header class="space-y-5 sm:space-y-6">
+          <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
+            Selected Projects
+          </h1>
+          <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+            Systems architecture, automation, and digital transformation work that delivered measurable results. Each engagement combines technical depth with the change programming needed to keep adoption high.
           </p>
         </header>
-
-        <!-- Quick Navigation -->
-        <div class="flex flex-wrap justify-center gap-3 pt-4" role="list" aria-label="Project categories">
-          {hero.focusAreas.map((area) => (
-            <button class="group inline-flex items-center gap-2 rounded-full bg-surface-subtle/80 hover:bg-accent/10 px-4 py-2.5 text-sm font-medium text-foreground/70 hover:text-accent ring-1 ring-border/30 hover:ring-accent/30 transition-all duration-200" role="listitem">
-              <span class="h-2 w-2 rounded-full bg-current opacity-60 group-hover:opacity-100" aria-hidden="true"></span>
-              {area}
-            </button>
-          ))}
-          <button class="inline-flex items-center gap-2 rounded-full bg-background px-4 py-2.5 text-sm font-medium text-foreground ring-1 ring-border/40 hover:ring-accent/30 transition-all duration-200">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            View All
-          </button>
-        </div>
       </div>
 
-
+      <div class="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60" role="list" aria-label="Focus areas">
+        {hero.focusAreas.map((area) => (
+          <span class="inline-flex items-center justify-center rounded-full bg-surface-subtle px-4 py-2 ring-1 ring-border/35 dark:bg-surface-dark-subtle" role="listitem">
+            {area}
+          </span>
+        ))}
+      </div>
     </div>
   </section>
 
-  <!-- Projects Grid - Priority Content -->
-  <section class="bg-background py-16 sm:py-20" role="region" aria-labelledby="projects-grid-heading">
-    <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 text-pretty">
-      <div class="grid gap-8 sm:gap-10 md:grid-cols-2 xl:grid-cols-3">
+  <!-- Projects Grid -->
+  <section class="border-t border-border/20 bg-background py-16 sm:py-20" role="region" aria-labelledby="projects-grid-heading">
+    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-10 text-pretty">
+      <header class="max-w-3xl space-y-3 sm:space-y-4">
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+          Case Studies
+        </span>
+        <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
+          Recent Engagements
+        </h2>
+        <p class="text-sm sm:text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+          Explore programs where automation, analytics, and enablement launched together—strategy turned into operating rhythms that teams keep running.
+        </p>
+      </header>
+
+      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {projects.map((project) => (
           <ProjectCard project={project} />
         ))}
@@ -64,26 +61,26 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     </div>
   </section>
 
-  <!-- Results & Testimonials Section -->
-  <section class="border-t border-border/10 bg-surface-subtle/30 py-16 sm:py-20" role="region" aria-labelledby="results-heading">
-    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 text-pretty">
-      <header class="max-w-3xl space-y-4 text-center mx-auto">
-        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-accent border border-accent/20">
-          Impact
+  <!-- Impact Section -->
+  <section class="border-t border-border/20 bg-surface-subtle/40 py-16 sm:py-20" role="region" aria-labelledby="results-heading">
+    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-10 text-pretty">
+      <header class="max-w-3xl space-y-3 sm:space-y-4">
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+          Impact Metrics
         </span>
-        <h2 id="results-heading" class="font-heading text-3xl sm:text-4xl font-bold leading-tight text-foreground dark:text-foreground-light">
-          Results that matter
+        <h2 id="results-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
+          Results that stick
         </h2>
-        <p class="text-base sm:text-lg leading-relaxed text-foreground/70 dark:text-foreground-light/70">
-          Measurable outcomes from real implementations
+        <p class="text-sm sm:text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+          Measurable outcomes from programs where automation and change enablement launched together.
         </p>
       </header>
 
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {hero.stats.map((stat) => (
-          <div class="group rounded-2xl bg-background/80 backdrop-blur-sm px-6 py-6 sm:px-7 sm:py-7 ring-1 ring-border/20 shadow-sm hover:shadow-md hover:ring-border/30 transition-all duration-300 text-center">
-            <p class="text-3xl sm:text-4xl font-bold text-accent dark:text-accent-light group-hover:scale-105 transition-transform duration-300 mb-3">{stat.value}</p>
-            <p class="text-sm font-medium text-foreground/70 dark:text-foreground-light/70">{stat.label}</p>
+          <div class="rounded-2xl bg-background px-4 py-5 sm:px-5 sm:py-6 ring-1 ring-border/30 shadow-lg">
+            <p class="mb-3 sm:mb-4 text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">{stat.label}</p>
+            <p class="text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">{stat.value}</p>
           </div>
         ))}
       </div>
@@ -91,27 +88,27 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   </section>
 
   <!-- CTA Section -->
-  <section class="border-t border-border/10 bg-background py-16 sm:py-20" role="region" aria-labelledby="cta-heading">
-    <div class="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-      <div class="space-y-6 sm:space-y-8">
-        <h2 id="cta-heading" class="font-heading text-3xl sm:text-4xl font-bold leading-tight text-foreground dark:text-foreground-light">
-          Ready to discuss your next project?
+  <section class="border-t border-border/20 bg-background py-16 sm:py-20" role="region" aria-labelledby="cta-heading">
+    <div class="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
+      <div class="space-y-6 sm:space-y-7 text-center">
+        <h2 id="cta-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight text-foreground dark:text-foreground-light">
+          Ready to line up the next leap?
         </h2>
-        <p class="text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/75 max-w-2xl mx-auto">
-          Let's explore how systems thinking and automation can accelerate your business objectives.
+        <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+          Bring the problem space and we'll map the operating backbone—automation, analytics, and change enablement—without losing clarity for stakeholders.
         </p>
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center sm:gap-6 pt-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-4 pt-2">
           <a
             href="/contact/"
-            class="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-8 py-4 text-base font-semibold text-accent shadow-accent-glow transition-colors hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
+            class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent shadow-accent-glow transition-colors hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
           >
-            Start a conversation
+            Start a project conversation
           </a>
           <a
             href="/about/"
-            class="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-medium text-foreground/80 ring-1 ring-border/40 hover:ring-accent/30 hover:text-foreground transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
+            class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
           >
-            Learn about my approach
+            See how I work
           </a>
         </div>
       </div>

@@ -16,9 +16,6 @@ const sortedPosts = posts
   <section class="bg-gradient-to-b from-background via-accent/5 to-background pb-20 sm:pb-24 md:pb-28" role="region" aria-labelledby="blog-title">
     <div class="@container mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 lg:gap-14 text-pretty">
       <div class="max-w-3xl space-y-6 sm:space-y-7">
-        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-4 py-1.5 text-xs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/40 dark:bg-surface-dark-subtle backdrop-blur-sm">
-          Blog
-        </span>
         <header class="space-y-4 sm:space-y-5">
           <h1 id="blog-title" class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
             Fresh thinking, built on shipped work
@@ -65,9 +62,6 @@ const sortedPosts = posts
     <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-10 text-pretty">
       {sortedPosts.length > 0 && (
         <header class="max-w-3xl space-y-3 sm:space-y-4">
-          <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
-            Recent Articles
-          </span>
           <h2 id="blog-posts-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
             Latest Insights
           </h2>
@@ -83,7 +77,7 @@ const sortedPosts = posts
           ))
         ) : (
           <div class="rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg p-12 text-center">
-            <h2 class="font-heading text-2xl font-semibold text-foreground dark:text-foreground-light mb-4">Articles are on the way</h2>
+            <h2 class="font-heading text-2xl sm:text-3xl font-semibold text-foreground dark:text-foreground-light mb-4">Articles are on the way</h2>
             <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
               Check back soon for breakdowns of recent programs, playbooks, and technical deep dives.
             </p>
