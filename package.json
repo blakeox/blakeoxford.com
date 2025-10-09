@@ -86,7 +86,7 @@
     "@astrojs/react": "^4.4.0",
     "@sentry/astro": "^8.47.0",
     "@sentry/cloudflare": "^8.47.0",
-    "react": "^19.1.1",
+    "react": "^19.2.0",
     "react-dom": "^19.1.1",
     "resend": "^6.1.0",
     "zod": "^4.1.11"
@@ -113,7 +113,7 @@
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^24.5.2",
-    "@types/react": "^19.1.13",
+    "@types/react": "^19.2.2",
     "@types/react-dom": "^19.1.9",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
