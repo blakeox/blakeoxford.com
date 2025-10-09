@@ -88,7 +88,7 @@
     "@sentry/cloudflare": "^8.47.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "resend": "^6.1.0",
+    "resend": "^6.1.2",
     "zod": "^4.1.11"
   },
   "devDependencies": {
