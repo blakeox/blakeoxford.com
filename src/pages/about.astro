@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
 import PhotoCarousel from '../components/ui/PhotoCarousel.astro';
+import { CANONICAL_URLS } from '../config/constants';
 
 interface SocialLink {
   name: string;
@@ -18,8 +19,8 @@ interface TimelineItem {
 }
 
 const title = 'About Blake Oxford';
-const description = 'Learn about Blake Oxford, Systems Architect and Workflow Strategist. Explore key skills, career highlights, and collaboration opportunities.';
-const canonicalUrl = 'https://blakeoxford.com/about/';
+const description = 'Product designer and full-stack developer specializing in AI-driven user experiences, creative direction, and modern web applications.';
+const canonicalUrl = CANONICAL_URLS.about;
 
 // Social Media Links
 const socialLinks: SocialLink[] = [

@@ -2,9 +2,10 @@
 import Layout from '../layouts/BaseLayout.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import ContactFormClient from '../components/islands/ContactFormClient';
+import { CANONICAL_URLS } from '../config/constants';
 const title = 'Contact Blake';
-const description = 'Get in touch with Blake Oxford for collaboration, inquiries, or just to say hello!';
-const canonicalUrl = 'https://blakeoxford.com/contact/';
+const description = 'Get in touch with Blake Oxford for design and development opportunities.';
+const canonicalUrl = CANONICAL_URLS.contact;
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide={true}>
