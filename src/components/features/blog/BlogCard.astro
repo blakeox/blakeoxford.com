@@ -1,6 +1,7 @@
 ---
 // BlogCard.astro - Compact card for grid layouts
 import OptimizedImage from '../../ui/OptimizedImage.astro';
+import { formatDateISO, formatDateBlog, truncate } from '../../../utils/index.js';
 
 interface BlogCardProps {
   post: any;
@@ -45,11 +46,12 @@ const { slug, data } = post;
 
       <!-- Date -->
       {data.pubDate && (
-        <time class="inline-flex items-center text-sm text-foreground/70 dark:text-foreground-light/70 font-medium" datetime={new Date(data.pubDate).toISOString()}>
-          <svg class="w-4 h-4 mr-2 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <time class="inline-flex items-center text-sm text-foreground/70 dark:text-foreground-light/70 font-medium" datetime={formatDateISO(data.pubDate)}>
+          <svg class="mr-1.5" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
-          {new Date(data.pubDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+          {formatDateBlog(data.pubDate)}
         </time>
       )}
     </header>
@@ -57,7 +59,9 @@ const { slug, data } = post;
     <!-- Description -->
     {data.description && (
       <p class="text-foreground/80 dark:text-foreground-light/80 leading-relaxed flex-1 mb-4 line-clamp-3">
-        {data.description.length > 120 ? `${data.description.slice(0, 117)}...` : data.description}
+              <p class="text-base text-foreground/80 dark:text-foreground-light/80 leading-relaxed">
+        {truncate(data.description, 120)}
+      </p>
       </p>
     )}
 

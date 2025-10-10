@@ -6,16 +6,17 @@ import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import { getCollection } from 'astro:content';
 import { getProjectsSorted } from '../content/projects/getProjects';
 import { technologies, siteConfig } from '../config/data';
+import { formatDateISO, take } from '../utils/index.js';
 
 const blogPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .slice()
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Get most recent projects instead of featured projects
-const recentProjects = (await getProjectsSorted()).slice(0, 3);
+const recentProjects = take(await getProjectsSorted(), 3);
 
 // Select the most recent posts for homepage feature
-const recentBlogPosts = blogPosts.slice(0, 3);
+const recentBlogPosts = take(blogPosts, 3);
 
 // Helper to derive optimized image component props from a full /assets/images path
 function deriveImageData(imgPath?: string) {
@@ -369,7 +370,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
               <li class="group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-6 shadow-xl transition-transform duration-200 hover:-translate-y-1 hover:shadow-2xl dark:bg-surface/80 dark:border-border-dark/40" role="listitem">
                 <a href={`/blog/${post.slug}/`} class="flex h-full flex-col gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">
                   <header class="space-y-2">
-                    <time class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-smallcaps text-foreground/55 dark:text-foreground-light/60" datetime={post.data.pubDate.toISOString()}>
+                    <time class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-smallcaps text-foreground/55 dark:text-foreground-light/60" datetime={formatDateISO(post.data.pubDate)}>
                       <span class="inline-flex h-1.5 w-1.5 rounded-full bg-accent"></span>
                       {post.data.pubDate.toLocaleDateString('en-US', {
                         year: 'numeric',

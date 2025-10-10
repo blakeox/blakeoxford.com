@@ -121,6 +121,24 @@ export const SEO = {
   type: 'website',
 } as const;
 
+// ─── Animation & Transition Constants ────────────────────────────
+// Note: Tailwind duration classes map to these values
+// Use Tailwind utility classes (e.g., duration-200, duration-300, duration-500)
+// CSS variables available: var(--transition-fast), var(--transition), var(--transition-slow)
+export const ANIMATION = {
+  durations: {
+    fast: 200,             // Quick interactions (hover, focus)
+    normal: 300,           // Standard transitions
+    slow: 500,             // Dramatic effects (modal, overlay)
+  },
+  easings: {
+    standard: 'cubic-bezier(0.4, 0, 0.2, 1)',  // Material Design standard
+    decelerate: 'cubic-bezier(0, 0, 0.2, 1)',  // Decelerate
+    accelerate: 'cubic-bezier(0.4, 0, 1, 1)',  // Accelerate
+    sharp: 'cubic-bezier(0.4, 0, 0.6, 1)',     // Sharp
+  },
+} as const;
+
 // ─── External Services ───────────────────────────────────────────
 export const SERVICES = {
   turnstileVerifyUrl: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
