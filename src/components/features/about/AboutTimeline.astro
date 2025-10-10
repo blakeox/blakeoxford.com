@@ -58,7 +58,7 @@ function Icon({ name }: IconProps) {
                     </div>
                   </header>
                   <ul class="space-y-3 pl-4 border-l-2 border-border/60 group-hover:border-accent/50 transition-colors duration-300" role="list">
-                    {item.achievements.map((achievement, idx) => (
+                    {item.achievements.map((achievement) => (
                       <li class="text-sm text-foreground/75 dark:text-foreground-light/75 flex items-start gap-2">
                         <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-accent/80"></span>
                         <span>{achievement}</span>

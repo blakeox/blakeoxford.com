@@ -11,7 +11,7 @@ Sentry.init({
   integrations: [
     Sentry.browserTracingIntegration({
       // Track navigation and interactions
-      tracingOrigins: ['blakeoxford.com', /^\//],
+      tracePropagationTargets: ['blakeoxford.com', /^\//],
     }),
     Sentry.replayIntegration({
       // Privacy-first session replay
@@ -27,7 +27,7 @@ Sentry.init({
   replaysOnErrorSampleRate: 0.5, // 50% of sessions with errors (prioritize errors)
   
   // Privacy & Security
-  beforeSend(event, hint) {
+  beforeSend(event) {
     // Don't send events in development
     if (import.meta.env.DEV) {
       console.log('Sentry event (dev only):', event);
