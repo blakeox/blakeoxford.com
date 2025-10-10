@@ -1,4 +1,6 @@
 ---
+import BaseCard from '../primitives/BaseCard.astro';
+
 export interface Props {
   title: string;
   achievements: string[];
@@ -6,8 +8,9 @@ export interface Props {
 
 const { title, achievements } = Astro.props;
 ---
-<section class="flex flex-col gap-4 rounded-3xl border border-border/25 bg-surface/95 p-6 sm:p-7 shadow-sm">
-  <header class="space-y-2">
+
+<BaseCard variant="subtle" hover="none" rounded="3xl" padding="lg" as="section">
+  <header class="space-y-2 mb-4">
     <p class="text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">
       Outcome thread
     </p>
@@ -20,4 +23,4 @@ const { title, achievements } = Astro.props;
       <li class="flex items-start gap-3" set:html={'<span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent"></span>' + achievement}></li>
     ))}
   </ul>
-</section>
+</BaseCard>

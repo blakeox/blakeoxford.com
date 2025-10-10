@@ -1,0 +1,78 @@
+---
+/**
+ * Button - Reusable button/link component
+ * 
+ * Provides consistent button styling with support for different variants,
+ * sizes, and states. Can render as button or link.
+ * 
+ * @example
+ * <Button variant="primary" href="/projects">View Projects</Button>
+ * <Button variant="outline" size="sm">Learn More</Button>
+ */
+
+export interface Props {
+  /** Button visual variant */
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
+  /** Button size */
+  size?: 'sm' | 'md' | 'lg';
+  /** Render as link (when href provided) or button */
+  href?: string;
+  /** Button type (when rendered as button) */
+  type?: 'button' | 'submit' | 'reset';
+  /** Disabled state */
+  disabled?: boolean;
+  /** Full width button */
+  fullWidth?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+  /** ARIA label */
+  'aria-label'?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  fullWidth = false,
+  class: className = '',
+  'aria-label': ariaLabel,
+} = Astro.props;
+
+// Variant styles
+const variantStyles = {
+  primary: 'bg-accent text-on-accent border-2 border-accent hover:bg-accent-dark focus-visible:ring-accent/60',
+  secondary: 'bg-surface text-foreground border-2 border-border hover:bg-surface-subtle dark:bg-surface-dark dark:border-border-dark dark:hover:bg-surface-dark-subtle',
+  outline: 'bg-transparent text-accent border-2 border-accent/60 hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:ring-accent/60',
+  ghost: 'bg-transparent text-foreground hover:bg-surface/60 dark:hover:bg-surface-dark/60',
+  link: 'bg-transparent text-accent hover:text-accent-dark hover:underline dark:hover:text-accent-light',
+};
+
+// Size styles
+const sizeStyles = {
+  sm: 'px-4 py-2 text-sm',
+  md: 'px-6 py-3 text-sm',
+  lg: 'px-8 py-4 text-base',
+};
+
+const baseClasses = 'inline-flex items-center justify-center gap-2 font-semibold rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
+
+const classes = [
+  baseClasses,
+  variantStyles[variant],
+  sizeStyles[size],
+  fullWidth && 'w-full',
+  disabled && 'opacity-50 cursor-not-allowed',
+  className,
+].filter(Boolean).join(' ');
+
+const Element = href ? 'a' : 'button';
+const elementProps = href
+  ? { href, 'aria-label': ariaLabel }
+  : { type, disabled, 'aria-label': ariaLabel };
+---
+
+<Element class={classes} {...elementProps}>
+  <slot />
+</Element>

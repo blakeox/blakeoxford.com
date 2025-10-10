@@ -1,7 +1,9 @@
 ---
-// BlogCard.astro - Compact card for grid layouts
+// BlogCard.astro - Compact card for grid layouts using primitives
 import OptimizedImage from '../../ui/OptimizedImage.astro';
-import { formatDateISO, formatDateBlog, truncate } from '../../../utils/index.js';
+import Badge from '../../primitives/Badge.astro';
+import DateDisplay from '../../primitives/DateDisplay.astro';
+import { truncate, take } from '../../../utils/index.js';
 
 interface BlogCardProps {
   post: any;
@@ -9,8 +11,10 @@ interface BlogCardProps {
 
 const { post } = Astro.props as BlogCardProps;
 const { slug, data } = post;
+const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as string[], 2) : [];
 ---
-<article class="group flex flex-col h-full rounded-2xl border border-border/30 bg-background/95 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-xl dark:border-border-dark/30 dark:bg-surface/80">
+
+<article class="group flex flex-col h-full rounded-2xl border border-border/30 bg-background/95 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-border-dark/30 dark:bg-surface/80">
   <!-- Hero Image -->
   {data.heroImage && (
     <div class="aspect-[16/10] overflow-hidden rounded-t-2xl">
@@ -27,12 +31,10 @@ const { slug, data } = post;
   <div class="flex flex-1 flex-col p-6">
     <header class="mb-4">
       <!-- Tags -->
-      {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
+      {visibleTags.length > 0 && (
         <div class="flex flex-wrap gap-2 mb-3">
-          {data.tags.slice(0, 2).map((tag: string) => (
-            <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full border bg-surface text-foreground dark:bg-surface-dark dark:text-foreground-light border-border/40 dark:border-border-dark/40">
-              {tag}
-            </span>
+          {visibleTags.map((tag: string) => (
+            <Badge variant="secondary">{tag}</Badge>
           ))}
         </div>
       )}
@@ -45,23 +47,13 @@ const { slug, data } = post;
       </h3>
 
       <!-- Date -->
-      {data.pubDate && (
-                <time class="inline-flex items-center text-sm text-foreground/70 dark:text-foreground-light/70 font-medium" datetime={formatDateISO(data.pubDate)}>
-          <svg class="mr-1.5" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-          {formatDateBlog(data.pubDate)}
-        </time>
-      )}
+      {data.pubDate && <DateDisplay date={data.pubDate} format="blog" />}
     </header>
 
     <!-- Description -->
     {data.description && (
-      <p class="text-foreground/80 dark:text-foreground-light/80 leading-relaxed flex-1 mb-4 line-clamp-3">
-              <p class="text-base text-foreground/80 dark:text-foreground-light/80 leading-relaxed">
+      <p class="text-base text-foreground/80 dark:text-foreground-light/80 leading-relaxed flex-1 mb-4 line-clamp-3">
         {truncate(data.description, 120)}
-      </p>
       </p>
     )}
 

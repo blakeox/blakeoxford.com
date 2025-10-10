@@ -3,6 +3,7 @@ import Layout from '../layouts/BaseLayout.astro';
 import ProficiencyLogo from '../components/media/ProficiencyLogo.astro';
 import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
+import Button from '../components/primitives/Button.astro';
 import { getCollection } from 'astro:content';
 import { getProjectsSorted } from '../content/projects/getProjects';
 import { technologies, siteConfig } from '../config/data';
@@ -356,7 +357,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
           <ProjectCard project={project} />
         ))}
       </div>        <div class="mt-8 text-center">
-          <a href="/projects/" class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:text-accent-dark hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2">View All Projects</a>
+          <Button variant="outline" href="/projects/">View All Projects</Button>
         </div>
     </section>
 

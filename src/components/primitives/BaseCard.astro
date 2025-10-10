@@ -1,0 +1,114 @@
+---
+/**
+ * BaseCard - Reusable card primitive component
+ * 
+ * Provides consistent card styling with support for:
+ * - Different visual variants (default, glass, elevated)
+ * - Hover effects
+ * - Dark mode
+ * - Flexible content slots
+ * 
+ * @example
+ * <BaseCard variant="elevated" hover="lift">
+ *   <div slot="header">Card Header</div>
+ *   <div>Card Content</div>
+ *   <div slot="footer">Card Footer</div>
+ * </BaseCard>
+ */
+
+export interface Props {
+  /** Card visual variant */
+  variant?: 'default' | 'glass' | 'elevated' | 'subtle';
+  /** Hover effect type */
+  hover?: 'none' | 'lift' | 'scale' | 'glow';
+  /** Border radius size */
+  rounded?: 'lg' | 'xl' | '2xl' | '3xl';
+  /** Padding size */
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** HTML element type */
+  as?: 'article' | 'div' | 'section';
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  variant = 'default',
+  hover = 'lift',
+  rounded = '2xl',
+  padding = 'md',
+  as: Element = 'div',
+  class: className = '',
+} = Astro.props;
+
+// Variant styles
+const variantStyles = {
+  default: 'border border-border/30 bg-background/95 shadow-lg dark:border-border-dark/30 dark:bg-surface/80',
+  glass: 'border border-border/40 bg-surface/95 backdrop-blur-sm shadow-xl dark:border-border-dark/40 dark:bg-surface-dark/95',
+  elevated: 'ring-1 ring-border/30 bg-surface/95 shadow-lg dark:bg-surface-dark/95',
+  subtle: 'border border-border/25 bg-surface/95 shadow-sm dark:border-border-dark/25 dark:bg-surface-dark/95',
+};
+
+// Hover effect styles
+const hoverStyles = {
+  none: '',
+  lift: 'hover:-translate-y-1 hover:shadow-xl',
+  scale: 'hover:scale-[1.02]',
+  glow: 'hover:shadow-2xl hover:ring-2 hover:ring-accent/20',
+};
+
+// Rounded styles
+const roundedStyles = {
+  lg: 'rounded-lg',
+  xl: 'rounded-xl',
+  '2xl': 'rounded-2xl',
+  '3xl': 'rounded-3xl',
+};
+
+// Padding styles
+const paddingStyles = {
+  none: 'p-0',
+  sm: 'p-4',
+  md: 'p-6',
+  lg: 'p-8',
+};
+
+const classes = [
+  'group flex flex-col',
+  variantStyles[variant],
+  hoverStyles[hover],
+  roundedStyles[rounded],
+  'transition-all duration-300',
+  className,
+].filter(Boolean).join(' ');
+---
+
+<Element class={classes}>
+  {Astro.slots.has('header') && (
+    <header class={paddingStyles[padding]}>
+      <slot name="header" />
+    </header>
+  )}
+  
+  {Astro.slots.has('image') && (
+    <div class="overflow-hidden">
+      <slot name="image" />
+    </div>
+  )}
+  
+  <div class:list={[
+    'flex flex-1 flex-col',
+    paddingStyles[padding],
+    Astro.slots.has('header') && 'pt-0',
+  ]}>
+    <slot />
+  </div>
+  
+  {Astro.slots.has('footer') && (
+    <footer class:list={[
+      paddingStyles[padding],
+      'pt-4 border-t border-border/20 dark:border-border-dark/20',
+    ]}>
+      <slot name="footer" />
+    </footer>
+  )}
+</Element>
