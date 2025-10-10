@@ -1,0 +1,54 @@
+---
+/**
+ * Container - Responsive container with consistent padding and max-width
+ * 
+ * Provides standard container patterns used throughout the site.
+ * 
+ * @example
+ * <Container size="lg">
+ *   <h1>Page Content</h1>
+ * </Container>
+ */
+
+export interface Props {
+  /** Container max-width */
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  /** Apply padding */
+  padding?: boolean;
+  /** Center content */
+  center?: boolean;
+  /** HTML element type */
+  as?: 'div' | 'section' | 'article' | 'main' | 'aside';
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  size = 'lg',
+  padding = true,
+  center = false,
+  as: Element = 'div',
+  class: className = '',
+} = Astro.props;
+
+// Size styles (matching common patterns in codebase)
+const sizeStyles = {
+  sm: 'max-w-2xl',
+  md: 'max-w-4xl',
+  lg: 'max-w-6xl',
+  xl: 'max-w-7xl',
+  full: 'max-w-none',
+};
+
+const classes = [
+  center && 'mx-auto',
+  size !== 'full' && 'w-full',
+  sizeStyles[size],
+  padding && 'px-4 sm:px-6 lg:px-8',
+  className,
+].filter(Boolean).join(' ');
+---
+
+<Element class={classes}>
+  <slot />
+</Element>

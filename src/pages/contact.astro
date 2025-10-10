@@ -2,6 +2,7 @@
 import Layout from '../layouts/BaseLayout.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import ContactFormClient from '../components/islands/ContactFormClient';
+import FormField from '../components/primitives/FormField.astro';
 import { CANONICAL_URLS } from '../config/constants';
 const title = 'Contact Blake';
 const description = 'Get in touch with Blake Oxford for design and development opportunities.';
@@ -70,7 +71,7 @@ const canonicalUrl = CANONICAL_URLS.contact;
 
         <div class="scroll-animate bg-surface dark:bg-surface-dark rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30 hover:border-accent/50 transition-colors">
           <form id="contact-form" method="POST" action="/send-email" class="space-y-6" aria-describedby="contact-form-help">
-            <input type="hidden" name="form-name" value="contact" aria-hidden="true" />
+            <FormField id="form-name" type="hidden" label="" value="contact" />
             <p class="sr-only" aria-hidden="true">
               <label>
                 Don&#39;t fill this out:
@@ -79,56 +80,39 @@ const canonicalUrl = CANONICAL_URLS.contact;
             </p>
             <p id="contact-form-help" class="sr-only">All fields marked with an asterisk are required.</p>
 
-            <div class="flex flex-col gap-2">
-              <label for="name" class="font-semibold text-lg">Name <span class="text-accent dark:text-accent-light">*</span></label>
-              <input
-                id="name"
-                name="name"
-                autocomplete="name"
-                required
-                aria-required="true"
-                aria-describedby="name-error"
-                minlength="2"
-                maxlength="100"
-                class="w-full p-3 rounded-lg border-2 border-accent/30 focus:border-accent focus:ring-2 focus:ring-accent/20 dark:border-accent-dark dark:bg-surface-dark bg-surface transition-colors"
-                placeholder="Your Name"
-              />
-              <div id="name-error" class="text-error dark:text-error-light text-sm hidden" role="alert" aria-live="polite"></div>
-            </div>
-            <div class="flex flex-col gap-2">
-              <label for="email" class="font-semibold text-lg">Email <span class="text-accent dark:text-accent-light">*</span></label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autocomplete="email"
-                required
-                aria-required="true"
-                aria-describedby="email-help email-error"
-                maxlength="254"
-                class="w-full p-3 rounded-lg border-2 border-accent/30 focus:border-accent focus:ring-2 focus:ring-accent/20 dark:border-accent-dark dark:bg-surface-dark bg-surface transition-colors"
-                placeholder="you@email.com"
-              />
-              <small id="email-help" class="text-sm text-neutral">I'll never share your email.</small>
-              <div id="email-error" class="text-error dark:text-error-light text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
-            </div>
-            <div class="flex flex-col gap-2">
-              <label for="message" class="font-semibold text-lg">Message <span class="text-accent dark:text-accent-light">*</span></label>
-              <textarea
-                id="message"
-                name="message"
-                rows="5"
-                required
-                aria-required="true"
-                aria-describedby="message-error message-help"
-                minlength="10"
-                maxlength="2000"
-                class="w-full p-3 rounded-lg border-2 border-accent/30 focus:border-accent focus:ring-2 focus:ring-accent/20 dark:border-accent-dark dark:bg-surface-dark bg-surface transition-colors"
-                placeholder="How can I help you?"
-              ></textarea>
-              <small id="message-help" class="text-sm text-neutral">Please provide at least 10 characters (maximum 2000).</small>
-              <div id="message-error" class="text-error dark:text-error-light text-sm hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
-            </div>
+            <FormField
+              id="name"
+              label="Name"
+              type="text"
+              required
+              autocomplete="name"
+              minlength={2}
+              maxlength={100}
+              placeholder="Your Name"
+            />
+            
+            <FormField
+              id="email"
+              label="Email"
+              type="email"
+              required
+              autocomplete="email"
+              maxlength={254}
+              placeholder="you@email.com"
+              helpText="I'll never share your email."
+            />
+            
+            <FormField
+              id="message"
+              label="Message"
+              type="textarea"
+              required
+              rows={5}
+              minlength={10}
+              maxlength={2000}
+              placeholder="How can I help you?"
+              helpText="Please provide at least 10 characters (maximum 2000)."
+            />
 
             <!-- Cloudflare Turnstile placeholder (reserve space to avoid CLS) -->
             <div class="w-full min-h-[72px] flex items-center justify-center">
