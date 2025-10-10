@@ -1,9 +1,127 @@
 import { Resend } from 'resend';
 import { initEdgeSentry, addEdgeBreadcrumb } from '../sentry.edge.config.js';
 
-const WINDOW_SECONDS = 30;    // logical window duration
-const MAX_PER_WINDOW  = 2;    // allowed submissions per window
-const KV_TTL          = 60;   // Cloudflare KV minimum TTL in seconds
+// ─── Configuration ──────────────────────────────────────────────
+const CONFIG = {
+  rateLimit: {
+    windowSeconds: 30,
+    maxPerWindow: 2,
+    kvTtl: 60,
+  },
+  email: {
+    from: 'Contact Form <noreply@blakeoxford.com>',
+    to: ['blakepoxford@outlook.com'],
+  },
+  storage: {
+    messageTtl: 60 * 60 * 24 * 365, // 1 year
+  },
+  turnstile: {
+    verifyUrl: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+  },
+};
+
+const ERROR_MESSAGES = {
+  missingFields: 'Missing required fields or Turnstile token.',
+  rateLimited: 'Too many requests. Please wait a bit.',
+  botVerificationFailed: 'Bot verification failed.',
+  emailSendFailed: 'Failed to send email.',
+};
+
+// ─── Helper Functions ───────────────────────────────────────────
+
+/**
+ * Check rate limit for IP address
+ * @returns {Promise<boolean>} true if rate limit exceeded
+ */
+async function checkRateLimit(env, ip) {
+  try {
+    const key = `ip:${ip}`;
+    const hits = await env.RATE_LIMIT_KV.get(key);
+    if (hits && parseInt(hits) >= CONFIG.rateLimit.maxPerWindow) {
+      return true;
+    }
+    await env.RATE_LIMIT_KV.put(
+      key,
+      hits ? (parseInt(hits) + 1).toString() : '1',
+      { expirationTtl: CONFIG.rateLimit.kvTtl }
+    );
+    return false;
+  } catch (e) {
+    console.warn('⚠️ Rate-limit KV error (continuing):', e);
+    return false; // Fail open on KV errors
+  }
+}
+
+/**
+ * Verify Turnstile token
+ */
+async function verifyTurnstile(secret, token, ip) {
+  const response = await fetch(CONFIG.turnstile.verifyUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ secret, response: token, remoteip: ip }),
+  });
+  const result = await response.json();
+  return result.success;
+}
+
+/**
+ * Format email HTML
+ */
+function formatEmailHtml(name, email, message) {
+  return `<h2>New Message from ${name}</h2>
+             <p><strong>Email:</strong> ${email}</p>
+             <p>${message.replace(/\n/g, '<br>')}</p>`;
+}
+
+/**
+ * Format email text
+ */
+function formatEmailText(name, email, message) {
+  return `Name: ${name}\nEmail: ${email}\n\n${message}`;
+}
+
+/**
+ * Store message in KV for audit trail
+ */
+async function storeMessage(env, { ip, name, email, message }) {
+  try {
+    const id = `${Date.now()}_${crypto.randomUUID()}`;
+    await env.CONTACT_MESSAGES.put(
+      `msg:${id}`,
+      JSON.stringify({ id, timestamp: new Date().toISOString(), ip, name, email, message }),
+      { expirationTtl: CONFIG.storage.messageTtl }
+    );
+  } catch (e) {
+    console.warn('⚠️ Submission KV write failed:', e);
+  }
+}
+
+// ─── Error Response Helpers ─────────────────────────────────────
+
+function errorResponse(status, message, isJson) {
+  if (isJson) {
+    return new Response(JSON.stringify({ success: false, error: message }), {
+      status,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  return new Response(message, { status, headers: { 'Content-Type': 'text/plain' } });
+}
+
+function jsonOrRedirect(data, isJson) {
+  if (isJson) {
+    return new Response(JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  return new Response(null, {
+    status: 303,
+    headers: { Location: '/contact/?success=true' },
+  });
+}
+
+// ─── Main Handler ───────────────────────────────────────────────
 
 export async function onRequestPost(context) {
   // Initialize Sentry for error tracking in edge function
@@ -34,8 +152,7 @@ export async function onRequestPost(context) {
       botField = fd.get('bot-field');
     }
 
-    const ip  = context.request.headers.get('CF-Connecting-IP') ?? 'unknown';
-    const now = new Date().toISOString();
+    const ip = context.request.headers.get('CF-Connecting-IP') ?? 'unknown';
 
     // ─── Honeypot: silently succeed ───────────────────
     if (botField) {
@@ -44,70 +161,37 @@ export async function onRequestPost(context) {
 
     // ─── Validate required fields & token ────────────
     if (!name || !email || !message || !token) {
-      return errorResponse(400, 'Missing required fields or Turnstile token.', isJson);
+      return errorResponse(400, ERROR_MESSAGES.missingFields, isJson);
     }
 
     // ─── Rate‐limit per IP via KV ────────────────────
-    try {
-      const key  = `ip:${ip}`;
-      const hits = await context.env.RATE_LIMIT_KV.get(key);
-      if (hits && parseInt(hits) >= MAX_PER_WINDOW) {
-        return errorResponse(429, 'Too many requests. Please wait a bit.', isJson);
-      }
-      await context.env.RATE_LIMIT_KV.put(
-        key,
-        hits ? (parseInt(hits) + 1).toString() : '1',
-        { expirationTtl: KV_TTL }
-      );
-    } catch (e) {
-      console.warn('⚠️ Rate-limit KV error (continuing):', e);
+    const isRateLimited = await checkRateLimit(context.env, ip);
+    if (isRateLimited) {
+      return errorResponse(429, ERROR_MESSAGES.rateLimited, isJson);
     }
 
     // ─── Verify Turnstile ────────────────────────────
-    const verify = await fetch(
-      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          secret:   context.env.TURNSTILE_SECRET_KEY,
-          response: token,
-          remoteip: ip,
-        }),
-      }
-    ).then(r => r.json());
-
-    if (!verify.success) {
-      return errorResponse(403, 'Bot verification failed.', isJson);
+    const isVerified = await verifyTurnstile(context.env.TURNSTILE_SECRET_KEY, token, ip);
+    if (!isVerified) {
+      return errorResponse(403, ERROR_MESSAGES.botVerificationFailed, isJson);
     }
 
     // ─── Send email via Resend ───────────────────────
     const resend = new Resend(context.env.RESEND_API_KEY);
     const { error } = await resend.emails.send({
-      from:     'Contact Form <noreply@blakeoxford.com>',
-      to:       ['blakepoxford@outlook.com'],
-      subject:  `New Message from ${name}`,
+      from: CONFIG.email.from,
+      to: CONFIG.email.to,
+      subject: `New Message from ${name}`,
       reply_to: email,
-      text:     `Name: ${name}\nEmail: ${email}\n\n${message}`,
-      html: `<h2>New Message from ${name}</h2>
-             <p><strong>Email:</strong> ${email}</p>
-             <p>${message.replace(/\n/g,'<br>')}</p>`
+      text: formatEmailText(name, email, message),
+      html: formatEmailHtml(name, email, message),
     });
     if (error) {
-      return errorResponse(500, 'Failed to send email.', isJson);
+      return errorResponse(500, ERROR_MESSAGES.emailSendFailed, isJson);
     }
 
     // ─── Log submission in KV ────────────────────────
-    try {
-      const id = `${Date.now()}_${crypto.randomUUID()}`;
-      await context.env.CONTACT_MESSAGES.put(
-        `msg:${id}`,
-        JSON.stringify({ id, now, ip, name, email, message }),
-        { expirationTtl: 60 * 60 * 24 * 365 }
-      );
-    } catch (e) {
-      console.warn('⚠️ Submission KV write failed:', e);
-    }
+    await storeMessage(context.env, { ip, name, email, message });
 
     // ─── Success response ────────────────────────────
     return jsonOrRedirect({ success: true }, isJson);
@@ -129,27 +213,4 @@ export async function onRequestPost(context) {
     console.error('💥 send-email error:', err);
     return errorResponse(500, 'Internal server error.', isJson);
   }
-}
-
-/* ─── Helpers ───────────────────────────────────── */
-
-// AJAX → 200 JSON, Non-JS form → 303 redirect
-function jsonOrRedirect(body, isJson) {
-  if (isJson) {
-    return new Response(JSON.stringify(body), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-  return Response.redirect('/contact/?success=true', 303);
-}
-
-// JSON error with Retry-After (429) or redirect for form
-function errorResponse(status, msg, isJson) {
-  if (!isJson) {
-    return Response.redirect(`/contact/?error=${encodeURIComponent(msg)}`, 303);
-  }
-  const headers = { 'Content-Type': 'application/json' };
-  if (status === 429) headers['Retry-After'] = WINDOW_SECONDS.toString();
-  return new Response(JSON.stringify({ error: msg }), { status, headers });
 }
