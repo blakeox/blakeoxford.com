@@ -27,6 +27,8 @@ export interface Props {
   class?: string;
   /** ARIA label */
   'aria-label'?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
 }
 
 const {
@@ -38,6 +40,7 @@ const {
   fullWidth = false,
   class: className = '',
   'aria-label': ariaLabel,
+  ...rest
 } = Astro.props;
 
 // Variant styles
@@ -69,8 +72,8 @@ const classes = [
 
 const Element = href ? 'a' : 'button';
 const elementProps = href
-  ? { href, 'aria-label': ariaLabel }
-  : { type, disabled, 'aria-label': ariaLabel };
+  ? { href, 'aria-label': ariaLabel, ...rest }
+  : { type, disabled, 'aria-label': ariaLabel, ...rest };
 ---
 
 <Element class={classes} {...elementProps}>

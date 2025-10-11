@@ -4,6 +4,7 @@ import ProficiencyLogo from '../components/media/ProficiencyLogo.astro';
 import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import Button from '../components/primitives/Button.astro';
+import ButtonGroup from '../components/composites/ButtonGroup.astro';
 import { getCollection } from 'astro:content';
 import { getProjectsSorted } from '../content/projects/getProjects';
 import { technologies, siteConfig } from '../config/data';
@@ -89,24 +90,23 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
                 )}
               </div>
             </div>
-            <div class="flex flex-col sm:flex-row gap-4 justify-start items-center mt-6">
-              <a
+            <ButtonGroup align="start" responsive class="mt-6">
+              <Button
+                variant="primary"
                 href="/contact/"
-                class="inline-flex items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold shadow-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
-                style="background-color: var(--color-accent); color: var(--color-on-accent)"
                 data-test="home-cta-connect"
                 data-analytics="hero-cta"
               >
                 🤝 Let's Connect
-              </a>
-              <a
+              </Button>
+              <Button
+                variant="outline"
                 href="/assets/Resume.pdf"
-                class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:text-accent-dark hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
                 download
               >
                 📄 Download Resume
-              </a>
-            </div>
+              </Button>
+            </ButtonGroup>
           </div>
           <!-- Right: Animated Profile Image -->
           <div class="flex justify-center md:justify-end order-1 md:order-2">
