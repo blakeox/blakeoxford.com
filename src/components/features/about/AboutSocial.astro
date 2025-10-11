@@ -1,4 +1,5 @@
 ---
+import Flex from '../../primitives/Flex.astro';
 import type { SocialSection } from './types';
 
 const { social } = Astro.props as { social: SocialSection };
@@ -28,7 +29,7 @@ function Icon({ name }: IconProps) {
     <div class="max-w-3xl mx-auto text-center">
       <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground dark:text-foreground-light">{social.title}</h2>
       <p class="text-neutral mb-8">{social.description}</p>
-      <ul class="flex flex-wrap items-center justify-center gap-4" role="list">
+      <Flex as="ul" wrap align="center" justify="center" gap="md" role="list">
         {social.links.map((link) => (
           <li>
             <a
@@ -44,7 +45,7 @@ function Icon({ name }: IconProps) {
             </a>
           </li>
         ))}
-      </ul>
+      </Flex>
     </div>
   </div>
 </section>

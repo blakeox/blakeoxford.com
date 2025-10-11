@@ -1,4 +1,5 @@
 ---
+import Flex from '../../primitives/Flex.astro';
 import SearchOverlayClient from '../../islands/SearchOverlayClient';
 ---
 
@@ -33,11 +34,11 @@ import SearchOverlayClient from '../../islands/SearchOverlayClient';
         <form class="flex flex-col gap-6" autocomplete="off" data-search-form>
           <div class="flex flex-col gap-3">
             <label class="text-sm font-medium text-foreground/80 dark:text-foreground-light/70">Search in</label>
-            <div class="flex flex-wrap gap-2" data-search-category-group>
+            <Flex wrap gap="xs" data-search-category-group>
               <button type="button" class="search-pill" data-category="all" data-active>All</button>
               <button type="button" class="search-pill" data-category="projects">Projects</button>
               <button type="button" class="search-pill" data-category="pages">Pages</button>
-            </div>
+            </Flex>
           </div>
 
           <div class="flex flex-col gap-2" data-search-input-group>

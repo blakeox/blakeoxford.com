@@ -1,5 +1,6 @@
 ---
 import OptimizedImage, { type Props as OptimizedImageProps } from '../../ui/OptimizedImage.astro';
+import Flex from '../../primitives/Flex.astro';
 
 export interface Props {
   title: string;
@@ -57,7 +58,7 @@ const dateISO = date.toISOString();
         </p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-4">
+      <Flex wrap align="center" gap="md">
         <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-4 py-2 text-xs font-semibold uppercase tracking-smallcaps text-foreground/60 ring-1 ring-border/35 dark:bg-surface-dark-subtle dark:text-foreground-light/65">
           Case study
         </span>
@@ -84,7 +85,7 @@ const dateISO = date.toISOString();
             </svg>
           </a>
         )}
-      </div>
+      </Flex>
     </div>
 
     <figure class="relative flex flex-1 justify-center">
