@@ -5,6 +5,7 @@ import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import Button from '../components/primitives/Button.astro';
 import ButtonGroup from '../components/composites/ButtonGroup.astro';
+import Grid from '../components/primitives/Grid.astro';
 import { getCollection } from 'astro:content';
 import { getProjectsSorted } from '../content/projects/getProjects';
 import { technologies, siteConfig } from '../config/data';
@@ -147,7 +148,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
         <div class="max-w-3xl mx-auto mb-12 sm:mb-14 lg:mb-16">
           <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-foreground dark:text-foreground-light text-center">Core expertise and significant achievements</h2>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+        <Grid cols="2" gap="lg" alignItems="stretch">
           <!-- Practice Management & RCM -->
           <div class="bg-surface dark:bg-surface-dark rounded-xl shadow-xl border border-border/50 dark:border-border-dark/50 p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 relative overflow-hidden group">
             <div class="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -311,7 +312,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
               </ul>
             </div>
           </div>
-        </div>
+        </Grid>
       </div>
     </section>
 
