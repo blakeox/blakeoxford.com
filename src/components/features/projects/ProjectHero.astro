@@ -1,6 +1,7 @@
 ---
 import OptimizedImage, { type Props as OptimizedImageProps } from '../../ui/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';
+import Button from '../../primitives/Button.astro';
 
 export interface Props {
   title: string;
@@ -63,12 +64,7 @@ const dateISO = date.toISOString();
           Case study
         </span>
         {link && (
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex min-h-[44px] items-center gap-2 rounded-full border-2 border-accent/60 px-5 text-sm font-semibold text-accent transition-colors duration-200 hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/55"
-          >
+          <Button variant="outline" href={link} target="_blank" rel="noopener noreferrer">
             Visit project
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +79,7 @@ const dateISO = date.toISOString();
             >
               <path d="M7 17 17 7m0 0h-7m7 0v7" />
             </svg>
-          </a>
+          </Button>
         )}
       </Flex>
     </div>

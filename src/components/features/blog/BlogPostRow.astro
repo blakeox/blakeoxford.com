@@ -2,6 +2,7 @@
 // BlogPostRow.astro
 import OptimizedImage from '../../ui/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';
+import Button from '../../primitives/Button.astro';
 import { formatDateISO, formatDateShort } from '../../../utils/index.js';
 
 interface BlogPostRowProps {
@@ -73,10 +74,7 @@ const { slug, data } = post;
       <span class="text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
         Read article
       </span>
-      <a
-        href={`/blog/${slug}/`}
-        class="inline-flex items-center gap-2 rounded-full border-2 border-accent/60 px-6 py-3 text-sm font-semibold text-accent transition-colors duration-200 hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-      >
+      <Button variant="outline" href={`/blog/${slug}/`}>
         Explore
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +91,7 @@ const { slug, data } = post;
         >
           <path d="M5 12h14m-6-6 6 6-6 6" />
         </svg>
-      </a>
+      </Button>
     </div>
   </div>
 </article>

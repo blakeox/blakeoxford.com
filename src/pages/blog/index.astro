@@ -4,6 +4,7 @@ import { BlogPostRow } from '../../components/features/blog';
 import Stack from '../../components/primitives/Stack.astro';
 import Section from '../../components/primitives/Section.astro';
 import Flex from '../../components/primitives/Flex.astro';
+import Button from '../../components/primitives/Button.astro';
 import Hero from '../../components/composites/Hero.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
@@ -41,15 +42,16 @@ const sortedPosts = posts
             </p>
           </Flex>
           <Flex gap="sm" align="center">
-            <button
+            <Button
+              variant="ghost"
+              as="button"
               onclick="document.getElementById('search-overlay')?.setAttribute('data-state', 'open'); document.getElementById('search-overlay')?.removeAttribute('inert'); document.getElementById('search-input')?.focus();"
-              class="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-full px-6 py-2 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
               </svg>
               Search articles
-            </button>
+            </Button>
           </Flex>
         </Flex>
     </Section>
