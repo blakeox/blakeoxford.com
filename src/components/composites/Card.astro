@@ -1,0 +1,91 @@
+---
+/**
+ * Card - Enhanced Card Composite Component
+ * 
+ * An enhanced card component built on BaseCard with additional variants and effects.
+ * Provides consistent card styling across the site with interactive hover states.
+ * 
+ * @example Interactive project card
+ * <Card variant="interactive" hover="lift-lg">
+ *   <h3>Project Title</h3>
+ *   <p>Description...</p>
+ * </Card>
+ * 
+ * @example Glass morphism card
+ * <Card variant="glass" padding="lg">
+ *   <Stack space="md">
+ *     <h3>Title</h3>
+ *     <p>Content</p>
+ *   </Stack>
+ * </Card>
+ */
+
+import BaseCard from '../primitives/BaseCard.astro';
+
+interface Props {
+  /** Card variant */
+  variant?: 'default' | 'outline' | 'elevated' | 'glass' | 'interactive';
+  /** Hover effect */
+  hover?: 'none' | 'lift-sm' | 'lift' | 'lift-lg' | 'scale' | 'glow';
+  /** Padding size */
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  /** HTML element tag to render */
+  as?: 'div' | 'article' | 'section';
+  /** Additional CSS classes */
+  class?: string;
+  /** Full height card */
+  fullHeight?: boolean;
+}
+
+const {
+  variant = 'default',
+  hover = 'lift-sm',
+  padding = 'md',
+  as = 'div',
+  class: className = '',
+  fullHeight = false,
+  ...rest
+} = Astro.props;
+
+// Enhanced interactive variant with stronger hover effects
+const interactiveClasses = variant === 'interactive'
+  ? 'hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 relative overflow-hidden group transition-all duration-300'
+  : '';
+
+// Full height helper
+const heightClasses = fullHeight ? 'h-full flex flex-col' : '';
+
+const combinedClasses = `${interactiveClasses} ${heightClasses} ${className}`.trim();
+
+// Map hover effects to BaseCard hover prop
+const hoverMap: Record<string, 'none' | 'lift' | 'scale' | 'glow'> = {
+  'none': 'none',
+  'lift-sm': 'lift',
+  'lift': 'lift',
+  'lift-lg': 'lift',
+  'scale': 'scale',
+  'glow': 'glow',
+};
+
+const baseCardHover = hoverMap[hover] || 'lift';
+
+// Add additional lift intensity via class
+const liftClasses = hover === 'lift-sm' 
+  ? 'hover-lift-sm' 
+  : hover === 'lift-lg' 
+    ? 'hover-lift-lg' 
+    : '';
+
+const finalClasses = `${combinedClasses} ${liftClasses}`.trim();
+---
+
+<BaseCard 
+  variant={variant === 'interactive' ? 'elevated' : variant}
+  hover={baseCardHover}
+  padding={padding}
+  as={as}
+  class={finalClasses}
+  {...rest}
+>
+  <slot />
+</BaseCard>
