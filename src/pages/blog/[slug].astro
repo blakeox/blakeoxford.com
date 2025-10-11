@@ -1,17 +1,21 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
 import OptimizedImage from '../../components/ui/OptimizedImage.astro';
+import Container from '../../components/primitives/Container.astro';
+import Stack from '../../components/primitives/Stack.astro';
+import Flex from '../../components/primitives/Flex.astro';
 import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const posts = await getCollection('blog', ({ data }: { data: any }) => !data.draft);
   // Exclude slugs that are implemented as a static .astro page to prevent route conflicts
   const STATIC_SLUGS = new Set([
     'combating-legal-ai-hallucinations',
   ]);
   return posts
-    .filter(({ slug }) => !STATIC_SLUGS.has(slug))
-    .map(({ slug }) => ({
+    .filter(({ slug }: { slug: string }) => !STATIC_SLUGS.has(slug))
+    .map(({ slug }: { slug: string }) => ({
       params: { slug },
     }));
 }
@@ -22,8 +26,8 @@ if (!slug) {
   return Astro.redirect('/blog');
 }
 
-const posts = await getCollection('blog', ({ data }) => !data.draft);
-const post = posts.find((entry) => entry.slug === slug);
+const posts = await getCollection('blog', ({ data }: { data: any }) => !data.draft);
+const post = posts.find((entry: CollectionEntry<'blog'>) => entry.slug === slug);
 
 if (!post) {
   return Astro.redirect('/blog');
@@ -45,15 +49,16 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
   url={canonicalUrl}
   wide={true}
 >
-  <article class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12 py-16 sm:py-20 lg:py-24">
-    <header class="space-y-6">
-      <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60">
+  <Container size="lg" class="py-16 sm:py-20 lg:py-24">
+    <Stack space="3xl">
+      <Stack space="lg" as="header">
+      <Flex wrap gap="xs" class="text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60">
         {post.data.tags?.map((tag: string) => (
           <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
             {tag}
           </span>
         ))}
-      </div>
+      </Flex>
       <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
         {post.data.title}
       </h1>
@@ -69,10 +74,11 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
           priority={true}
         />
       </div>
-    </header>
+      </Stack>
 
-    <div class="@container prose prose-lg lg:prose-xl max-w-none text-foreground/90 dark:prose-invert [@media(min-width:640px)]:prose-xl [@media(min-width:1024px)]:prose-2xl">
-      <Content />
-    </div>
-  </article>
+      <div class="@container prose prose-lg lg:prose-xl max-w-none text-foreground/90 dark:prose-invert [@media(min-width:640px)]:prose-xl [@media(min-width:1024px)]:prose-2xl">
+        <Content />
+      </div>
+    </Stack>
+  </Container>
 </Layout>

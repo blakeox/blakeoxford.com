@@ -1,6 +1,12 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/features/projects/ProjectCard.astro';
+import Stack from '../../components/primitives/Stack.astro';
+import Section from '../../components/primitives/Section.astro';
+import Grid from '../../components/primitives/Grid.astro';
+import Flex from '../../components/primitives/Flex.astro';
+import ButtonGroup from '../../components/composites/ButtonGroup.astro';
+import StatsCard from '../../components/composites/StatsCard.astro';
 import { getProjectsSorted } from '../../content/projects/getProjects';
 
 const meta = (await import('../../content/projects/_meta.json')).default;
@@ -15,33 +21,31 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <section class="bg-gradient-to-b from-background via-accent/5 to-background pb-20 sm:pb-24 md:pb-28" role="region" aria-labelledby="projects-title">
-    <div class="@container mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 lg:gap-14 text-pretty">
-      <div class="max-w-3xl">
-        <header class="space-y-5 sm:space-y-6">
+  <Section padding="xl" container="lg" background="gradient" role="region" aria-labelledby="projects-title">
+    <Stack space="2xl" class="@container text-pretty">
+      <Stack space="lg" class="max-w-3xl" as="header">
           <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
             Selected Projects
           </h1>
           <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
             Systems architecture, automation, and digital transformation work that delivered measurable results. Each engagement combines technical depth with the change programming needed to keep adoption high.
           </p>
-        </header>
-      </div>
+      </Stack>
 
-      <div class="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60" role="list" aria-label="Focus areas">
+      <Flex wrap gap="sm" class="text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60" role="list" aria-label="Focus areas">
         {hero.focusAreas.map((area) => (
           <span class="inline-flex items-center justify-center rounded-full bg-surface-subtle px-4 py-2 ring-1 ring-border/35 dark:bg-surface-dark-subtle" role="listitem">
             {area}
           </span>
         ))}
-      </div>
-    </div>
-  </section>
+      </Flex>
+    </Stack>
+  </Section>
 
   <!-- Projects Grid -->
-  <section class="border-t border-border/20 bg-background py-16 sm:py-20" role="region" aria-labelledby="projects-grid-heading">
-    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-10 text-pretty">
-      <header class="max-w-3xl space-y-3 sm:space-y-4">
+  <Section padding="lg" container="lg" class="border-t border-border/20 bg-background" role="region" aria-labelledby="projects-grid-heading">
+    <Stack space="xl" class="text-pretty">
+      <Stack space="md" class="max-w-3xl">
         <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
           Case Studies
         </span>
@@ -51,20 +55,20 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
         <p class="text-sm sm:text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
           Explore programs where automation, analytics, and enablement launched together—strategy turned into operating rhythms that teams keep running.
         </p>
-      </header>
+      </Stack>
 
-      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <Grid cols="3" gap="lg">
         {projects.map((project) => (
           <ProjectCard project={project} />
         ))}
-      </div>
-    </div>
-  </section>
+      </Grid>
+    </Stack>
+  </Section>
 
   <!-- Impact Section -->
-  <section class="border-t border-border/20 bg-surface-subtle/40 py-16 sm:py-20" role="region" aria-labelledby="results-heading">
-    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-10 text-pretty">
-      <header class="max-w-3xl space-y-3 sm:space-y-4">
+  <Section padding="lg" container="lg" class="border-t border-border/20 bg-surface-subtle/40" role="region" aria-labelledby="results-heading">
+    <Stack space="xl" class="text-pretty">
+      <Stack space="md" class="max-w-3xl">
         <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
           Impact Metrics
         </span>
@@ -74,30 +78,26 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
         <p class="text-sm sm:text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
           Measurable outcomes from programs where automation and change enablement launched together.
         </p>
-      </header>
+      </Stack>
 
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <Grid cols="3" gap="md">
         {hero.stats.map((stat) => (
-          <div class="rounded-2xl bg-background px-4 py-5 sm:px-5 sm:py-6 ring-1 ring-border/30 shadow-lg">
-            <p class="mb-3 sm:mb-4 text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">{stat.label}</p>
-            <p class="text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">{stat.value}</p>
-          </div>
+          <StatsCard label={stat.label} value={stat.value} variant="default" size="md" />
         ))}
-      </div>
-    </div>
-  </section>
+      </Grid>
+    </Stack>
+  </Section>
 
   <!-- CTA Section -->
-  <section class="border-t border-border/20 bg-background py-16 sm:py-20" role="region" aria-labelledby="cta-heading">
-    <div class="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
-      <div class="space-y-6 sm:space-y-7 text-center">
+  <Section padding="lg" container="md" class="border-t border-border/20 bg-background" role="region" aria-labelledby="cta-heading">
+    <Stack space="lg" class="text-center">
         <h2 id="cta-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight text-foreground dark:text-foreground-light">
           Ready to line up the next leap?
         </h2>
         <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
           Bring the problem space and we'll map the operating backbone—automation, analytics, and change enablement—without losing clarity for stakeholders.
         </p>
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-4 pt-2">
+        <ButtonGroup align="center" responsive>
           <a
             href="/contact/"
             class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent shadow-accent-glow transition-colors hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
@@ -110,8 +110,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
           >
             See how I work
           </a>
-        </div>
-      </div>
-    </div>
-  </section>
+        </ButtonGroup>
+    </Stack>
+  </Section>
 </Layout>

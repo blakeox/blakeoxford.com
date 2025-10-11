@@ -1,6 +1,11 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
 import PhotoCarousel from '../components/ui/PhotoCarousel.astro';
+import Container from '../components/primitives/Container.astro';
+import Stack from '../components/primitives/Stack.astro';
+import Section from '../components/primitives/Section.astro';
+import Flex from '../components/primitives/Flex.astro';
+import Grid from '../components/primitives/Grid.astro';
 import { CANONICAL_URLS } from '../config/constants';
 
 interface SocialLink {
@@ -110,9 +115,9 @@ const timelineItems: TimelineItem[] = [
       <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
         <div class="absolute inset-0"></div>
       </div>
-      <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 h-full min-h-screen flex items-center">
-        <div class="grid md:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center w-full">
-          <div class="space-y-6">
+      <Container size="xl" class="relative z-10 h-full min-h-screen flex items-center">
+        <Grid cols="2" gap="xl" class="items-center w-full">
+          <Stack space="lg">
             <h1 id="about-me-title" class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light leading-tight">
               Systems Architect & Workflow Strategist
             </h1>
@@ -135,24 +140,22 @@ const timelineItems: TimelineItem[] = [
                 </li>
               </ul>
             </div>
-          </div>
+          </Stack>
           <div class="w-full h-screen" role="complementary" aria-label="Photo gallery">
             <div class="relative w-full h-full">
               <PhotoCarousel class="w-full h-full" />
               <div class="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent dark:from-background-dark/20 pointer-events-none"></div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Achievements -->
-    <section id="achievements" class="py-16 sm:py-20 lg:py-24 relative overflow-hidden bg-surface dark:bg-surface-dark">
+        </Grid>
+      </Container>
+  </section>    <!-- Achievements -->
+    <Section padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
             <!-- Background pattern -->
             <div class="absolute inset-0 z-0 opacity-5">
               <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
             </div>
-            <div class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="relative z-10">
               <div class="grid grid-cols-1 gap-8 lg:gap-12">
                 <div>
                                   <div class="text-center mb-12">
@@ -275,22 +278,22 @@ const timelineItems: TimelineItem[] = [
                 </div>
               </div>
             </div>
-          </section>
+          </Section>
 
           <!-- Education & Skills -->
-          <section id="education-skills" class="py-16 bg-gradient-to-b from-background to-surface dark:from-background-dark dark:to-surface-dark relative overflow-hidden">
+          <Section padding="lg" container="lg" class="bg-gradient-to-b from-background to-surface dark:from-background-dark dark:to-surface-dark relative overflow-hidden">
             <!-- Background geometric shapes -->
             <div class="absolute inset-0 z-0 opacity-20 overflow-hidden">
               <div class="absolute top-1/4 left-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl"></div>
               <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/20 rounded-full blur-3xl"></div>
             </div>
-            <div class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="relative z-10">
               <div class="max-w-3xl mx-auto text-center mb-12">
                 <p class="text-lg text-neutral">
                 </p>
               </div>
               <!-- Two column layout -->
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+              <Grid cols="2" gap="xl">
                 <!-- Education Column -->
                 <div>
                   <h2 class="text-2xl sm:text-3xl font-bold border-l-4 border-accent pl-4 mb-6">Education</h2>
@@ -319,7 +322,7 @@ const timelineItems: TimelineItem[] = [
                   <h2 class="text-2xl sm:text-3xl font-bold border-l-4 border-accent pl-4 mb-6">Skills</h2>
                   <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark">
                     <p class="text-foreground/85 mb-4">A blend of systems thinking, finance, and hands-on engineering. I focus on shipping reliable, human-centered automation that delivers measurable outcomes.</p>
-                    <ul class="flex flex-wrap gap-3" role="list">
+                    <Flex as="ul" wrap gap="sm" role="list">
                       <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Systems Architecture</li>
                       <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Process Automation</li>
                       <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Cloud: Azure / M365</li>
@@ -328,15 +331,15 @@ const timelineItems: TimelineItem[] = [
                       <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">AI-Assisted Workflows</li>
                       <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Financial Operations</li>
                       <li class="px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 dark:text-foreground-light/90">Security & Compliance</li>
-                    </ul>
+                    </Flex>
                   </div>
                 </div>
-              </div>
+              </Grid>
             </div>
-          </section>
+          </Section>
 
           <!-- Career Timeline -->
-          <section id="about-timeline" class="py-16 relative overflow-hidden bg-surface dark:bg-surface-dark">
+          <Section padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
             <!-- Overlay dots pattern -->
             <div class="absolute inset-0 z-0 opacity-10">
               <div class="absolute inset-0" aria-hidden="true">
@@ -344,7 +347,7 @@ const timelineItems: TimelineItem[] = [
                 </svg>
               </div>
             </div>
-            <div class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="relative z-10">
               <div class="max-w-3xl mx-auto text-center mb-16">
                 <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground dark:text-foreground-light">Professional Journey</h2>
                 <p class="text-lg text-neutral-light">
@@ -515,15 +518,14 @@ const timelineItems: TimelineItem[] = [
                 }
               </style>
             </div>
-          </section>
+          </Section>
 
           <!-- Connect / Social Links -->
-          <section id="about-social" class="py-16 bg-gradient-to-b from-surface to-background dark:from-surface-dark dark:to-background-dark">
-            <div class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
+          <Section padding="lg" container="lg" class="bg-gradient-to-b from-surface to-background dark:from-surface-dark dark:to-background-dark">
               <div class="max-w-3xl mx-auto text-center">
                 <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Let's Connect</h2>
                 <p class="text-neutral mb-8">Open to collaborating on systems architecture, data platforms, and automation initiatives.</p>
-                <ul class="flex flex-wrap items-center justify-center gap-4" role="list">
+                <Flex as="ul" wrap justify="center" align="center" gap="md" role="list">
                   {socialLinks.map((link) => (
                     <li>
                       <a
@@ -553,8 +555,7 @@ const timelineItems: TimelineItem[] = [
                       </a>
                     </li>
                   ))}
-                </ul>
+                </Flex>
               </div>
-            </div>
-    </section>
+          </Section>
 </Layout>
