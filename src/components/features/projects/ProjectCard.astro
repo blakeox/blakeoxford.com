@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import OptimizedImage from '../../ui/OptimizedImage.astro';
+import Flex from '../../primitives/Flex.astro';
 import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
 
 interface ProjectCardProps {
@@ -46,7 +47,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
 
     <div class="relative z-[1] flex flex-1 flex-col gap-6 px-7 pb-8 pt-7 sm:px-8">
       <div class="space-y-4">
-        <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
+        <Flex wrap align="center" gap="sm" class="text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
           {dateISO && dateLabel && (
             <time datetime={dateISO}>{dateLabel}</time>
           )}
@@ -55,7 +56,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
               Case Study
             </span>
           )}
-        </div>
+        </Flex>
 
         <h3 id={`project-card-${slug}`} class="text-pretty font-heading text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">
           {title}
@@ -69,7 +70,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
       </div>
 
       {(visibleTags.length > 0 || extraTagCount > 0) && (
-        <ul class="flex flex-wrap items-center gap-2 text-xxs font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65" aria-label="Project focus areas">
+        <Flex as="ul" wrap align="center" gap="xs" class="text-xxs font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65" aria-label="Project focus areas">
           {visibleTags.map((tag) => (
             <li class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/30 dark:bg-surface-dark-subtle">
               <span>{tag}</span>
@@ -80,7 +81,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
               +{extraTagCount}
             </li>
           )}
-        </ul>
+        </Flex>
       )}
 
       <div class="mt-auto flex items-center justify-end gap-4">

@@ -5,6 +5,7 @@ import ProjectHero from '../../components/features/projects/ProjectHero.astro';
 import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
 import AchievementCard from '../../components/common/AchievementCard.astro';
 import ProjectTags from '../../components/features/projects/ProjectTags.astro';
+import Flex from '../../components/primitives/Flex.astro';
 
 const entry = (await getCollection('projects')).find((project) => project.slug === 'microsoft-fabric');
 
@@ -54,11 +55,11 @@ const { Content } = await entry.render();
 
       {data.categories?.length ? (
         <ProjectDetailSection title="Program pillars" eyebrow="Where it delivered" layout="surface">
-          <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/65">
+          <Flex wrap gap="xs" class="text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/65">
             {data.categories.map((category) => (
               <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 dark:bg-surface-dark-subtle">{category}</span>
             ))}
-          </div>
+          </Flex>
         </ProjectDetailSection>
       ) : null}
     </div>

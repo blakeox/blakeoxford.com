@@ -1,6 +1,7 @@
 ---
 // BlogPostRow.astro
 import OptimizedImage from '../../ui/OptimizedImage.astro';
+import Flex from '../../primitives/Flex.astro';
 import { formatDateISO, formatDateShort } from '../../../utils/index.js';
 
 interface BlogPostRowProps {
@@ -32,13 +33,13 @@ const { slug, data } = post;
   <!-- Content Section -->
   <div class={`relative z-[1] flex flex-1 flex-col gap-6 px-7 pb-8 pt-7 sm:px-8 ${!data.heroImage ? 'w-full' : ''}`}>
     <div class="space-y-4">
-      <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
+      <Flex wrap align="center" gap="sm" class="text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
         {data.pubDate && (
           <time class="inline-flex items-center" datetime={formatDateISO(data.pubDate)}>
             {formatDateShort(data.pubDate)}
           </time>
         )}
-      </div>
+      </Flex>
 
       <h2 class="text-pretty font-heading text-2xl sm:text-3xl lg:text-4xl font-semibold text-foreground dark:text-foreground-light leading-tight group-hover:text-accent dark:group-hover:text-accent-light transition-colors duration-300">
         <a href={`/blog/${slug}/`} class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
@@ -54,7 +55,7 @@ const { slug, data } = post;
     </div>
 
     {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
-      <ul class="flex flex-wrap items-center gap-2 text-xxs font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65" aria-label="Post tags">
+      <Flex as="ul" wrap align="center" gap="xs" class="text-xxs font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65" aria-label="Post tags">
         {data.tags.slice(0, 3).map((tag: string) => (
           <li class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/30 dark:bg-surface-dark-subtle">
             <span>{tag}</span>
@@ -65,7 +66,7 @@ const { slug, data } = post;
             +{data.tags.length - 3}
           </li>
         )}
-      </ul>
+      </Flex>
     )}
 
     <div class="mt-auto flex items-center justify-between gap-4">

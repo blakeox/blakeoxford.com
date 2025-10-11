@@ -3,6 +3,7 @@
 import OptimizedImage from '../../ui/OptimizedImage.astro';
 import Badge from '../../primitives/Badge.astro';
 import DateDisplay from '../../primitives/DateDisplay.astro';
+import Flex from '../../primitives/Flex.astro';
 import { truncate, take } from '../../../utils/index.js';
 
 interface BlogCardProps {
@@ -32,11 +33,11 @@ const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as st
     <header class="mb-4">
       <!-- Tags -->
       {visibleTags.length > 0 && (
-        <div class="flex flex-wrap gap-2 mb-3">
+        <Flex wrap gap="xs" class="mb-3">
           {visibleTags.map((tag: string) => (
             <Badge variant="secondary">{tag}</Badge>
           ))}
-        </div>
+        </Flex>
       )}
       
       <!-- Title -->

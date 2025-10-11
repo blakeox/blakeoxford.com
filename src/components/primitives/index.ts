@@ -13,11 +13,17 @@
  * import { BaseCard, Badge, Button, DateDisplay, FormField, Container, Stack, Section } from '../primitives';
  */
 
-// UI Components
+// Primitive Components Barrel Export
 export { default as BaseCard } from './BaseCard.astro';
 export { default as Badge } from './Badge.astro';
 export { default as Button } from './Button.astro';
+export { default as Container } from './Container.astro';
 export { default as DateDisplay } from './DateDisplay.astro';
+export { default as Flex } from './Flex.astro';
+export { default as FormField } from './FormField.astro';
+export { default as Grid } from './Grid.astro';
+export { default as Section } from './Section.astro';
+export { default as Stack } from './Stack.astro';
 
 // Form Components
 export { default as FormField } from './FormField.astro';

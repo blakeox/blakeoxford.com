@@ -3,7 +3,12 @@ import Layout from '../layouts/BaseLayout.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import ContactFormClient from '../components/islands/ContactFormClient';
 import FormField from '../components/primitives/FormField.astro';
+import Stack from '../components/primitives/Stack.astro';
+import Section from '../components/primitives/Section.astro';
+import Grid from '../components/primitives/Grid.astro';
+import Flex from '../components/primitives/Flex.astro';
 import { CANONICAL_URLS } from '../config/constants';
+
 const title = 'Contact Blake';
 const description = 'Get in touch with Blake Oxford for design and development opportunities.';
 const canonicalUrl = CANONICAL_URLS.contact;
@@ -11,25 +16,25 @@ const canonicalUrl = CANONICAL_URLS.contact;
 
 <Layout title={title} description={description} url={canonicalUrl} wide={true}>
   <!-- Hero section -->
-  <section id="hero" class="pb-20 sm:pb-24 md:pb-32 bg-gradient-to-br from-background via-accent/5 to-background relative overflow-hidden">
-    <div class="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 gap-12 items-center md:grid-cols-2">
-          <div class="@container space-y-6">
+  <Section padding="xl" container="lg" background="gradient" class="relative overflow-hidden">
+    <div class="relative z-10">
+      <Grid cols="2" gap="xl" alignItems="center">
+          <Stack space="lg" class="@container">
             <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light">Let's Connect</h1>
             <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80 max-w-2xl">Have a project in mind or just want to say hello? I'm all ears—whether it's a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can't wait to build something great together!</p>
-          </div>
+          </Stack>
           <div class="flex justify-center md:justify-end">
             <div class="relative">
               <CoinFlipImage frontSrc="/assets/images/Blake-O-scaled.jpg" backSrc="/assets/images/china-profile-picture.jpg" alt="Blake Oxford" altBack="Blake Oxford in China" size={280} flipMultipleTimes loading="eager" fetchPriority="high" decoding="auto" />
             <div class="absolute -top-4 -right-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-background animate-float">💡</div>
           </div>
         </div>
-      </div>
+      </Grid>
     </div>
-  </section>
+  </Section>
 
   <!-- Main contact section -->
-  <section id="contact-info" class="w-full py-16 sm:py-20 lg:py-24 relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background" aria-labelledby="message-form">
+  <Section padding="lg" container="lg" background="gradient" class="relative overflow-hidden" aria-labelledby="message-form">
     <!-- Animated SVG background pattern -->
     <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
       <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -45,9 +50,9 @@ const canonicalUrl = CANONICAL_URLS.contact;
     <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
-    <div class="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="relative z-10">
       <!-- Contact Information -->
-      <div class="scroll-animate flex flex-col md:flex-row items-center justify-center gap-8 mb-12 sm:mb-14 lg:mb-16">
+      <Flex responsive="md" align="center" justify="center" gap="lg" class="scroll-animate mb-12 sm:mb-14 lg:mb-16">
         <a href="mailto:blakepoxford@outlook.com" class="flex flex-col items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent p-4 rounded-xl hover:bg-accent/5 transition-colors" aria-label="Email Blake Oxford" title="Email">
           <span class="text-accent text-3xl group-hover:scale-110 transition">✉️</span>
           <span class="font-medium text-primary group-hover:text-accent transition-colors">blakepoxford@outlook.com</span>
@@ -60,7 +65,7 @@ const canonicalUrl = CANONICAL_URLS.contact;
           <span class="text-accent text-3xl group-hover:scale-110 transition">💼</span>
           <span class="font-medium text-primary group-hover:text-accent transition-colors">linkedin.com/in/blake-oxford</span>
         </a>
-      </div>
+      </Flex>
 
       <!-- Contact Form -->
       <div class="mx-auto w-full max-w-3xl">
@@ -130,7 +135,7 @@ const canonicalUrl = CANONICAL_URLS.contact;
         </div>
       </div>
     </div>
-  </section>
+  </Section>
 
   <ContactFormClient client:load />
 </Layout>

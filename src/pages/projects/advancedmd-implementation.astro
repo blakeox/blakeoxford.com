@@ -6,6 +6,7 @@ import ProjectDetailSection from '../../components/features/projects/ProjectDeta
 import AchievementCard from '../../components/common/AchievementCard.astro';
 import ProjectTags from '../../components/features/projects/ProjectTags.astro';
 import MetricsTable from '../../components/common/MetricsTable.astro';
+import Grid from '../../components/primitives/Grid.astro';
 
 const entry = await getEntry('projects', 'advancedmd-implementation');
 if (!entry) {
@@ -79,14 +80,14 @@ const { Content } = await entry.render();
 
       {hasLessons ? (
         <ProjectDetailSection title="Lessons" eyebrow="What stuck" layout="surface">
-          <div class="grid gap-4 sm:grid-cols-2">
+          <Grid cols="2" gap="md">
             {lessons.map((lesson: { title: string; description: string }) => (
               <article class="flex flex-col gap-2 rounded-2xl border border-border/25 bg-background/95 p-4 shadow-sm">
                 <h3 class="text-lg font-semibold text-foreground dark:text-foreground-light">{lesson.title}</h3>
                 <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{lesson.description}</p>
               </article>
             ))}
-          </div>
+          </Grid>
         </ProjectDetailSection>
       ) : null}
 

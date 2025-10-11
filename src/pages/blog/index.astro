@@ -1,47 +1,46 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
 import { BlogPostRow } from '../../components/features/blog';
+import Stack from '../../components/primitives/Stack.astro';
+import Section from '../../components/primitives/Section.astro';
+import Flex from '../../components/primitives/Flex.astro';
+import Hero from '../../components/composites/Hero.astro';
 import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 
-const posts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = await getCollection('blog', ({ data }: { data: any }) => !data.draft);
 const sortedPosts = posts
   .slice()
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 <Layout
   title="Insights & Updates"
   description="Thoughts on automation, analytics, and leadership—grounded in hands-on work and delivered with practical takeaways."
   wide
 >
-  <section class="bg-gradient-to-b from-background via-accent/5 to-background pb-20 sm:pb-24 md:pb-28" role="region" aria-labelledby="blog-title">
-    <div class="@container mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-10 sm:gap-12 lg:gap-14 text-pretty">
-      <div class="max-w-3xl space-y-6 sm:space-y-7">
-        <header class="space-y-4 sm:space-y-5">
-          <h1 id="blog-title" class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
-            Fresh thinking, built on shipped work
-          </h1>
-          <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-            Every article explores real-world systems leadership—translating complex automation, data, and change programs into momentum you can measure.
-          </p>
-        </header>
-      </div>
-    </div>
-  </section>
+  <Hero 
+    title="Fresh thinking, built on shipped work"
+    subtitle="Every article explores real-world systems leadership—translating complex automation, data, and change programs into momentum you can measure."
+    background="gradient"
+    size="lg"
+    padding="xl"
+    spacing="2xl"
+    align="left"
+  />
 
   <!-- Blog Filter/Search Section -->
   {sortedPosts.length > 0 && (
-    <section class="border-t border-border/20 bg-surface-subtle/40 py-8 sm:py-10">
-      <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div class="flex flex-wrap items-center gap-3">
+    <Section padding="md" container="lg" class="border-t border-border/20 bg-surface-subtle/40">
+        <Flex responsive="sm" gap="md" justify="between" align="center">
+          <Flex wrap gap="sm" align="center">
             <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
               {sortedPosts.length} {sortedPosts.length === 1 ? 'Article' : 'Articles'}
             </span>
             <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
               Latest insights and deep dives
             </p>
-          </div>
-          <div class="flex items-center gap-3">
+          </Flex>
+          <Flex gap="sm" align="center">
             <button
               onclick="document.getElementById('search-overlay')?.setAttribute('data-state', 'open'); document.getElementById('search-overlay')?.removeAttribute('inert'); document.getElementById('search-input')?.focus();"
               class="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-full px-6 py-2 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
@@ -51,28 +50,27 @@ const sortedPosts = posts
               </svg>
               Search articles
             </button>
-          </div>
-        </div>
-      </div>
-    </section>
+          </Flex>
+        </Flex>
+    </Section>
   )}
 
   <!-- Blog Posts Section -->
-  <section class="border-t border-border/20 bg-background py-16 sm:py-20" role="region" aria-labelledby="blog-posts-heading">
-    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-10 text-pretty">
+  <Section padding="lg" container="lg" class="border-t border-border/20 bg-background" role="region" aria-labelledby="blog-posts-heading">
+    <Stack space="xl" class="text-pretty">
       {sortedPosts.length > 0 && (
-        <header class="max-w-3xl space-y-3 sm:space-y-4">
+        <Stack space="md" class="max-w-3xl">
           <h2 id="blog-posts-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
             Latest Insights
           </h2>
           <p class="text-sm sm:text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
             Practical takeaways from real-world implementations and strategic initiatives.
           </p>
-        </header>
+        </Stack>
       )}
-      <div class="flex flex-col gap-8 sm:gap-10">
+      <Stack space="xl">
         {sortedPosts.length > 0 ? (
-          sortedPosts.map((post, index) => (
+          sortedPosts.map((post: CollectionEntry<'blog'>, index: number) => (
             <BlogPostRow post={post} align={index % 2 === 0 ? 'left' : 'right'} />
           ))
         ) : (
@@ -83,7 +81,7 @@ const sortedPosts = posts
             </p>
           </div>
         )}
-      </div>
-    </div>
-  </section>
+      </Stack>
+    </Stack>
+  </Section>
 </Layout>

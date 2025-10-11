@@ -1,4 +1,6 @@
 ---
+import Flex from '../../primitives/Flex.astro';
+
 export interface Props {
   tags: string[];
 }
@@ -24,7 +26,7 @@ const normalizedTags = Array.isArray(tags)
         </p>
       </div>
 
-      <div class="flex flex-wrap gap-3" role="list">
+      <Flex wrap gap="sm" role="list">
         {normalizedTags.map((tag) => {
           const filterParam = tag.toLowerCase().replace(/\s+/g, '-');
 
@@ -40,7 +42,7 @@ const normalizedTags = Array.isArray(tags)
             </a>
           );
         })}
-      </div>
+      </Flex>
     </div>
   </aside>
 )}
