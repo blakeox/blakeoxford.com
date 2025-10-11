@@ -1,0 +1,115 @@
+---
+/**
+ * Flex - Flexible Flexbox Layout Primitive
+ * 
+ * A versatile flex container with configurable direction, gap, alignment, and wrapping.
+ * Simplifies common flex patterns like button groups, navigation bars, and responsive layouts.
+ * 
+ * @example Horizontal button group
+ * <Flex gap="md" align="center" justify="start">
+ *   <Button>Primary</Button>
+ *   <Button variant="outline">Secondary</Button>
+ * </Flex>
+ * 
+ * @example Responsive vertical/horizontal stack
+ * <Flex direction="col" gap="lg" responsive="md">
+ *   <Card>...</Card>
+ *   <Card>...</Card>
+ * </Flex>
+ */
+
+interface Props {
+  /** Flex direction */
+  direction?: 'row' | 'col' | 'row-reverse' | 'col-reverse';
+  /** Responsive breakpoint where direction changes from col to row */
+  responsive?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Gap between flex items */
+  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+  /** Justify content alignment */
+  justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
+  /** Align items alignment */
+  align?: 'start' | 'center' | 'end' | 'baseline' | 'stretch';
+  /** Allow wrapping */
+  wrap?: boolean;
+  /** HTML element tag to render */
+  as?: 'div' | 'ul' | 'ol' | 'nav' | 'section' | 'header' | 'footer';
+  /** Additional CSS classes */
+  class?: string;
+  /** ARIA role */
+  role?: string;
+}
+
+const {
+  direction = 'row',
+  responsive,
+  gap = 'md',
+  justify = 'start',
+  align = 'stretch',
+  wrap = false,
+  as: Element = 'div',
+  class: className = '',
+  role,
+  ...rest
+} = Astro.props;
+
+// Direction classes with responsive support
+const directionMap = {
+  row: 'flex-row',
+  col: 'flex-col',
+  'row-reverse': 'flex-row-reverse',
+  'col-reverse': 'flex-col-reverse',
+};
+
+// Responsive direction: col → row at breakpoint
+const responsiveMap = {
+  sm: 'flex-col sm:flex-row',
+  md: 'flex-col md:flex-row',
+  lg: 'flex-col lg:flex-row',
+  xl: 'flex-col xl:flex-row',
+};
+
+const directionClasses = responsive 
+  ? responsiveMap[responsive]
+  : directionMap[direction];
+
+// Gap sizes matching Stack and Grid primitives
+const gapMap = {
+  xs: 'gap-2',     // 0.5rem
+  sm: 'gap-3',     // 0.75rem
+  md: 'gap-4',     // 1rem
+  lg: 'gap-6',     // 1.5rem
+  xl: 'gap-8',     // 2rem
+  '2xl': 'gap-12', // 3rem
+  '3xl': 'gap-16', // 4rem
+};
+
+// Justify content options
+const justifyMap = {
+  start: 'justify-start',
+  center: 'justify-center',
+  end: 'justify-end',
+  between: 'justify-between',
+  around: 'justify-around',
+  evenly: 'justify-evenly',
+};
+
+// Align items options
+const alignMap = {
+  start: 'items-start',
+  center: 'items-center',
+  end: 'items-end',
+  baseline: 'items-baseline',
+  stretch: 'items-stretch',
+};
+
+const gapClasses = gapMap[gap];
+const justifyClasses = justifyMap[justify];
+const alignClasses = alignMap[align];
+const wrapClasses = wrap ? 'flex-wrap' : '';
+
+const classes = `flex ${directionClasses} ${gapClasses} ${justifyClasses} ${alignClasses} ${wrapClasses} ${className}`.trim();
+---
+
+<Element class={classes} role={role} {...rest}>
+  <slot />
+</Element>
