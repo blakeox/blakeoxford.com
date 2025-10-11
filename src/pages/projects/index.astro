@@ -5,6 +5,7 @@ import Stack from '../../components/primitives/Stack.astro';
 import Section from '../../components/primitives/Section.astro';
 import Grid from '../../components/primitives/Grid.astro';
 import Flex from '../../components/primitives/Flex.astro';
+import Button from '../../components/primitives/Button.astro';
 import ButtonGroup from '../../components/composites/ButtonGroup.astro';
 import StatsCard from '../../components/composites/StatsCard.astro';
 import { getProjectsSorted } from '../../content/projects/getProjects';
@@ -98,18 +99,18 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
           Bring the problem space and we'll map the operating backbone—automation, analytics, and change enablement—without losing clarity for stakeholders.
         </p>
         <ButtonGroup align="center" responsive>
-          <a
+          <Button
+            variant="outline"
             href="/contact/"
-            class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent shadow-accent-glow transition-colors hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
           >
             Start a project conversation
-          </a>
-          <a
+          </Button>
+          <Button
+            variant="ghost"
             href="/about/"
-            class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold text-accent ring-1 ring-accent/40 transition-all hover:text-accent-dark hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
           >
             See how I work
-          </a>
+          </Button>
         </ButtonGroup>
     </Stack>
   </Section>
