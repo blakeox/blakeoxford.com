@@ -1,0 +1,35 @@
+---
+import ProficiencyLogo from '../../media/ProficiencyLogo.astro';
+
+interface Props {
+  tech: {
+    name: string;
+    img: string | { src: string };
+    alt: string;
+  };
+  data: { name: string } | null;
+  srcStr: string | undefined;
+}
+
+const { tech, data, srcStr } = Astro.props;
+---
+
+<li class='flex flex-col items-center group'>
+  <div class='w-16 h-16 bg-surface dark:bg-surface-dark rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center'>
+    {data ? (
+      <ProficiencyLogo
+        base={data.name}
+        alt={tech.alt}
+        width={64}
+        height={64}
+        class='w-full h-full object-contain'
+        loading='lazy'
+      />
+    ) : srcStr ? (
+      <img src={srcStr} alt={tech.alt} width={64} height={64} class='w-full h-full object-contain' loading='lazy' />
+    ) : (
+      <span class='text-2xl' aria-label={tech.name}>?</span>
+    )}
+  </div>
+  <span class='group-hover:text-accent transition-colors'>{tech.name}</span>
+</li>
