@@ -11,6 +11,7 @@ import FloatingBlur from '../components/primitives/FloatingBlur.astro';
 import TimelineCard from '../components/features/about/TimelineCard.astro';
 import TimelineCardMobile from '../components/features/about/TimelineCardMobile.astro';
 import AchievementCard from '../components/features/about/AchievementCard.astro';
+import EducationCard from '../components/features/about/EducationCard.astro';
 import SkillBadge from '../components/primitives/SkillBadge.astro';
 import SocialLink from '../components/primitives/SocialLink.astro';
 import { CANONICAL_URLS } from '../config/constants';
@@ -227,24 +228,11 @@ const timelineItems: TimelineItem[] = [
                 <!-- Education Column -->
                 <div>
                   <h2 class="text-2xl sm:text-3xl font-bold border-l-4 border-accent pl-4 mb-6">Education</h2>
-                  <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-xl transition-all duration-300 group">
-                    <div class="flex items-start">
-                      <div class="flex-shrink-0 bg-accent/10 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                          <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                        </svg>
-                      </div>
-                      <div class="ml-4">
-                        <h3 class="font-bold text-xl sm:text-2xl text-foreground dark:text-foreground-light group-hover:text-accent transition-colors duration-300">Calvin College</h3>
-                        <div class="text-sm text-foreground/80 dark:text-gray-400 mb-2">Bachelor of Arts in Finance</div>
-                        <p class="text-foreground/85">
-                          Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <EducationCard
+                    institution="Calvin College"
+                    degree="Bachelor of Arts in Finance"
+                    description="Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects."
+                  />
                 </div>
 
                 <!-- Skills Column -->
