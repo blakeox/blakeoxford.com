@@ -2,6 +2,12 @@
 import OptimizedImage, { type Props as OptimizedImageProps } from '../../ui/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';
 import Button from '../../primitives/Button.astro';
+import BadgePill from '../../primitives/BadgePill.astro';
+import GradientOverlay from '../../primitives/GradientOverlay.astro';
+import BackgroundGrid from '../../primitives/BackgroundGrid.astro';
+import FloatingBlur from '../../primitives/FloatingBlur.astro';
+import ArrowLeftIcon from '../../primitives/icons/ArrowLeftIcon.astro';
+import ExternalLinkIcon from '../../primitives/icons/ExternalLinkIcon.astro';
 
 export interface Props {
   title: string;
@@ -20,34 +26,21 @@ const formattedDate = date.toLocaleDateString(undefined, {
 const dateISO = date.toISOString();
 ---
 <section class="relative isolate overflow-hidden bg-gradient-to-br from-background via-surface-subtle to-background-dark/80 py-20">
-  <div class="pointer-events-none absolute inset-0 bg-grid-overlay/40 [background-size:180px_180px]" aria-hidden="true"></div>
+  <BackgroundGrid opacity={40} size="180px" />
   <div class="container relative z-[1] mx-auto flex max-w-6xl flex-col gap-12 px-6 lg:flex-row lg:items-center lg:gap-16">
     <div class="flex flex-1 flex-col gap-8">
       <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-smallcaps text-foreground/60 dark:text-foreground-light/60">
-        <a
-          href="/projects/"
-          class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-4 py-2 text-foreground/70 ring-1 ring-border/35 transition-colors duration-200 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 dark:bg-surface-dark-subtle dark:text-foreground-light/70"
-          aria-label="Back to all projects"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="m15 19-7-7 7-7" />
-          </svg>
-          Back to projects
-        </a>
-        <time datetime={dateISO} class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-4 py-2 text-foreground/70 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
-          <span class="h-1.5 w-1.5 rounded-full bg-accent/80"></span>
-          {formattedDate}
-        </time>
+        <BadgePill size="sm" class="transition-colors duration-200 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50">
+          <a href="/projects/" class="inline-flex items-center gap-2" aria-label="Back to all projects">
+            <ArrowLeftIcon />
+            Back to projects
+          </a>
+        </BadgePill>
+        <BadgePill size="sm" showDot>
+          <time datetime={dateISO}>
+            {formattedDate}
+          </time>
+        </BadgePill>
       </div>
 
       <div class="space-y-6">
@@ -60,25 +53,13 @@ const dateISO = date.toISOString();
       </div>
 
       <Flex wrap align="center" gap="md">
-        <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-4 py-2 text-xs font-semibold uppercase tracking-smallcaps text-foreground/60 ring-1 ring-border/35 dark:bg-surface-dark-subtle dark:text-foreground-light/65">
+        <BadgePill size="sm">
           Case study
-        </span>
+        </BadgePill>
         {link && (
           <Button variant="outline" href={link} target="_blank" rel="noopener noreferrer">
             Visit project
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M7 17 17 7m0 0h-7m7 0v7" />
-            </svg>
+            <ExternalLinkIcon />
           </Button>
         )}
       </Flex>
@@ -93,10 +74,10 @@ const dateISO = date.toISOString();
           height={960}
           class="h-full w-full object-cover"
         />
-        <div class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-background/70 via-transparent to-background/40"></div>
+        <GradientOverlay variant='background' direction='tr' class='from-background/70 via-transparent to-background/40 dark:from-background-dark/70 dark:via-transparent dark:to-background-dark/40' />
       </div>
-      <div class="pointer-events-none absolute -left-10 top-12 h-24 w-24 rounded-full bg-accent/20 blur-3xl" aria-hidden="true"></div>
-      <div class="pointer-events-none absolute -right-12 bottom-8 h-28 w-28 rounded-full bg-sky-500/25 blur-[120px]" aria-hidden="true"></div>
+      <FloatingBlur size="sm" color="accent-light" position="custom" class="-left-10 top-12 w-24 h-24" />
+      <FloatingBlur size="sm" color="sky" position="custom" blur="custom" class="-right-12 bottom-8 w-28 h-28" />
     </figure>
   </div>
 </section>

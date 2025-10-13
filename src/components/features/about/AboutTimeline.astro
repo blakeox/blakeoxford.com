@@ -1,5 +1,6 @@
 ---
 import type { TimelineSection } from './types';
+import GradientOverlay from '../../primitives/GradientOverlay.astro';
 
 const { timeline } = Astro.props as { timeline: TimelineSection };
 
@@ -43,7 +44,7 @@ function Icon({ name }: IconProps) {
             <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
               <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
                 <article class="bg-surface/90 backdrop-blur-sm border border-border dark:border-border-dark p-6 rounded-xl hover:shadow-lg hover-lift-sm transition-all duration-300 relative overflow-hidden">
-                  <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <GradientOverlay variant='hover-subtle' direction='r' />
                   <header class="flex items-center mb-6 gap-4 relative">
                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-accent to-primary text-2xl group-hover:scale-110 transition-transform duration-300 relative">
                       <span set:html={Icon({ name: item.icon })}></span>
@@ -78,7 +79,7 @@ function Icon({ name }: IconProps) {
       <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
         {timeline.items.map((item) => (
           <article class="flex-none w-80 bg-surface/50 backdrop-blur-sm border border-border dark:border-border-dark rounded-xl p-6 hover:shadow-lg transition-all relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <GradientOverlay variant='hover-subtle' direction='r' />
             <header class="flex items-center mb-6 relative">
               <div class="w-14 h-14 flex items-center justify-center rounded-full text-xl bg-gradient-to-br from-accent to-primary">
                 <span set:html={Icon({ name: item.icon })}></span>

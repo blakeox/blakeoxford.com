@@ -1,4 +1,6 @@
 ---
+import BadgePill from '../../primitives/BadgePill.astro';
+
 export interface Props {
   title: string;
   eyebrow?: string;
@@ -18,10 +20,9 @@ const containerClasses =
 <section class={`relative flex flex-col gap-6 ${containerClasses}`}>
   <div class="space-y-3 max-w-6xl w-full mx-auto">
     {eyebrow && (
-      <span class="inline-flex items-center gap-2 rounded-full bg-surface-subtle px-4 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/30 dark:bg-surface-dark-subtle dark:text-foreground-light/70">
-        <span class="h-1.5 w-1.5 rounded-full bg-accent"></span>
+      <BadgePill size="xs" showDot>
         {eyebrow}
-      </span>
+      </BadgePill>
     )}
     <h2 id={id} class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
       {title}
