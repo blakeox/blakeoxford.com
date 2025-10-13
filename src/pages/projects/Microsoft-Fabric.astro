@@ -1,69 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../../layouts/BaseLayout.astro';
-import ProjectHero from '../../components/features/projects/ProjectHero.astro';
-import ProjectDetailSection from '../../components/features/projects/ProjectDetailSection.astro';
-import AchievementCard from '../../components/common/AchievementCard.astro';
-import ProjectTags from '../../components/features/projects/ProjectTags.astro';
-import Flex from '../../components/primitives/Flex.astro';
-
-const entry = (await getCollection('projects')).find((project) => project.slug === 'microsoft-fabric');
-
-if (!entry) {
-  throw new Error('Microsoft Fabric project not found in content collection.');
-}
-
-const { data } = entry;
-const title = data.title;
-const description = data.description ?? '';
-const date = data.date ? new Date(data.date) : new Date();
-const canonicalUrl = `https://blakeoxford.com/projects/${entry.slug}/`;
-const heroImage = (data as any).heroImage ?? '/assets/images/blake-logo-fallback.png';
-const { Content } = await entry.render();
+import ProjectDetailLayout from '../../layouts/ProjectDetailLayout.astro';
+import CTASection from '../../components/common/CTASection.astro';
 ---
 
-<Layout title={title} description={description} url={canonicalUrl} image={heroImage} wide>
-  <ProjectHero title={title} description={description} date={date} image={heroImage} />
-
-  <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
-    <div class="pointer-events-none absolute inset-0 bg-grid-overlay/35 [background-size:200px_200px]" aria-hidden="true"></div>
-    <div class="relative mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
-      <ProjectDetailSection title="Program overview" eyebrow="Why it mattered" description={data.description}>
-        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/78 dark:text-foreground-light/82">
-          <Content />
-        </div>
-      </ProjectDetailSection>
-
-      {data.highlights?.length ? (
-        <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
-          <AchievementCard title="Program outcomes" achievements={data.highlights} />
-        </ProjectDetailSection>
-      ) : null}
-
-      {data.impact?.length ? (
-        <ProjectDetailSection title="Impact signals" eyebrow="Proof of traction">
-          <ul class="flex flex-col gap-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
-            {data.impact.map((item) => (
-              <li class="flex items-start gap-3">
-                <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </ProjectDetailSection>
-      ) : null}
-
-      {data.categories?.length ? (
-        <ProjectDetailSection title="Program pillars" eyebrow="Where it delivered" layout="surface">
-          <Flex wrap gap="xs" class="text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/65">
-            {data.categories.map((category) => (
-              <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 dark:bg-surface-dark-subtle">{category}</span>
-            ))}
-          </Flex>
-        </ProjectDetailSection>
-      ) : null}
-    </div>
-  </article>
-
-  <ProjectTags tags={data.tags ?? []} />
-</Layout>
+<ProjectDetailLayout slug="microsoft-fabric">
+  <CTASection
+    slot="cta"
+    heading="Ready to scale your data platform?"
+    description="Let's discuss how to build a unified analytics foundation that empowers your teams with real-time insights and self-service capabilities."
+  />
+</ProjectDetailLayout>
