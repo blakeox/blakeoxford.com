@@ -1,0 +1,24 @@
+---
+import SocialIcon from './SocialIcon.astro';
+
+interface Props {
+  href: string;
+  icon: 'linkedin' | 'github' | 'microsoft-learn';
+  label: string;
+  class?: string;
+}
+
+const { href, icon, label, class: className = '' } = Astro.props;
+---
+
+<a
+  class={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border dark:border-border-dark hover:bg-accent/10 hover:border-accent transition-colors ${className}`}
+  href={href}
+  target='_blank'
+  rel='noopener noreferrer'
+  aria-label={`Open ${label} profile in a new tab`}
+>
+  <SocialIcon icon={icon} />
+  <span class='font-medium'>{label}</span>
+  <span class='sr-only'>(opens in a new tab)</span>
+</a>

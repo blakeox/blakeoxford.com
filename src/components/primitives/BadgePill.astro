@@ -1,0 +1,61 @@
+---
+/**
+ * BadgePill - Styled pill-shaped badge with optional icon dot
+ * 
+ * Used for subtle informational tags like "Case Study", category labels, and status indicators.
+ * Distinguished from Badge component by its specific surface-subtle styling and ring border.
+ * 
+ * @example Basic usage
+ * <BadgePill>Case Study</BadgePill>
+ * 
+ * @example With icon dot
+ * <BadgePill showDot>Latest insights</BadgePill>
+ * 
+ * @example Custom size
+ * <BadgePill size="md">Enterprise Project</BadgePill>
+ */
+
+export interface Props {
+  /** Size variant */
+  size?: 'xs' | 'sm' | 'md';
+  /** Show decorative dot icon */
+  showDot?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  size = 'sm',
+  showDot = false,
+  class: className = '',
+} = Astro.props;
+
+// Size-specific styles
+const sizeStyles = {
+  xs: {
+    container: 'px-3 py-1 text-xxs',
+    dot: 'h-1 w-1',
+  },
+  sm: {
+    container: 'px-4 py-2 text-xs',
+    dot: 'h-1.5 w-1.5',
+  },
+  md: {
+    container: 'px-5 py-2 text-sm',
+    dot: 'h-2 w-2',
+  },
+};
+
+const classes = [
+  'inline-flex items-center gap-2 rounded-full bg-surface-subtle ring-1 ring-border/35 font-semibold uppercase tracking-smallcaps text-foreground/60 dark:bg-surface-dark-subtle dark:text-foreground-light/65',
+  sizeStyles[size].container,
+  className,
+].filter(Boolean).join(' ');
+---
+
+<span class={classes}>
+  {showDot && (
+    <span class={`rounded-full bg-accent ${sizeStyles[size].dot}`} aria-hidden="true"></span>
+  )}
+  <slot />
+</span>
