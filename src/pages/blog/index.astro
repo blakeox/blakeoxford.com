@@ -6,6 +6,7 @@ import Section from '../../components/primitives/Section.astro';
 import Flex from '../../components/primitives/Flex.astro';
 import Button from '../../components/primitives/Button.astro';
 import Hero from '../../components/composites/Hero.astro';
+import BadgePill from '../../components/primitives/BadgePill.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
@@ -34,9 +35,9 @@ const sortedPosts = posts
     <Section padding="md" container="lg" class="border-t border-border/20 bg-surface-subtle/40">
         <Flex responsive="sm" gap="md" justify="between" align="center">
           <Flex wrap gap="sm" align="center">
-            <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+            <BadgePill size="xs" class="w-fit">
               {sortedPosts.length} {sortedPosts.length === 1 ? 'Article' : 'Articles'}
-            </span>
+            </BadgePill>
             <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80">
               Latest insights and deep dives
             </p>

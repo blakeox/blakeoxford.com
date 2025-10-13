@@ -8,6 +8,7 @@ import Flex from '../../components/primitives/Flex.astro';
 import Button from '../../components/primitives/Button.astro';
 import ButtonGroup from '../../components/composites/ButtonGroup.astro';
 import StatsCard from '../../components/composites/StatsCard.astro';
+import BadgePill from '../../components/primitives/BadgePill.astro';
 import { getProjectsSorted } from '../../content/projects/getProjects';
 
 const meta = (await import('../../content/projects/_meta.json')).default;
@@ -35,8 +36,10 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 
       <Flex wrap gap="sm" class="text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60" role="list" aria-label="Focus areas">
         {hero.focusAreas.map((area) => (
-          <span class="inline-flex items-center justify-center rounded-full bg-surface-subtle px-4 py-2 ring-1 ring-border/35 dark:bg-surface-dark-subtle" role="listitem">
-            {area}
+          <span role="listitem">
+            <BadgePill size="sm">
+              {area}
+            </BadgePill>
           </span>
         ))}
       </Flex>
@@ -47,9 +50,9 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   <Section padding="lg" container="lg" class="border-t border-border/20 bg-background" role="region" aria-labelledby="projects-grid-heading">
     <Stack space="xl" class="text-pretty">
       <Stack space="md" class="max-w-3xl">
-        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+        <BadgePill size="xs" class="w-fit">
           Case Studies
-        </span>
+        </BadgePill>
         <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
           Recent Engagements
         </h2>
@@ -70,9 +73,9 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   <Section padding="lg" container="lg" class="border-t border-border/20 bg-surface-subtle/40" role="region" aria-labelledby="results-heading">
     <Stack space="xl" class="text-pretty">
       <Stack space="md" class="max-w-3xl">
-        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-surface-subtle px-3 py-1 text-xxs font-semibold uppercase tracking-label text-foreground/65 ring-1 ring-border/35 dark:bg-surface-dark-subtle">
+        <BadgePill size="xs" class="w-fit">
           Impact Metrics
-        </span>
+        </BadgePill>
         <h2 id="results-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
           Results that stick
         </h2>

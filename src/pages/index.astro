@@ -1,25 +1,45 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
-import ProficiencyLogo from '../components/media/ProficiencyLogo.astro';
 import ProjectCard from '../components/features/projects/ProjectCard.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import Button from '../components/primitives/Button.astro';
 import ButtonGroup from '../components/composites/ButtonGroup.astro';
+import ResumeHighlightCard from '../components/features/home/ResumeHighlightCard.astro';
+import ResumeHighlightItem from '../components/features/home/ResumeHighlightItem.astro';
+import TechnologyItem from '../components/features/home/TechnologyItem.astro';
+import SectionHeading from '../components/primitives/SectionHeading.astro';
+import FloatingEmoji from '../components/primitives/FloatingEmoji.astro';
+import FloatingBlur from '../components/primitives/FloatingBlur.astro';
 import Grid from '../components/primitives/Grid.astro';
 import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import { getProjectsSorted } from '../content/projects/getProjects';
 import { technologies, siteConfig } from '../config/data';
 import { formatDateISO, take } from '../utils/index.js';
 
-const blogPosts = (await getCollection('blog', ({ data }) => !data.draft))
+const allBlogPosts: CollectionEntry<'blog'>[] = await getCollection('blog');
+const blogPosts = allBlogPosts
+  .filter((entry: CollectionEntry<'blog'>) => !entry.data.draft)
   .slice()
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Get most recent projects instead of featured projects
 const recentProjects = take(await getProjectsSorted(), 3);
 
 // Select the most recent posts for homepage feature
-const recentBlogPosts = take(blogPosts, 3);
+const recentBlogPosts: CollectionEntry<'blog'>[] = take(blogPosts, 3);
+
+// Prevent duplicate hero copy: only show tagline if different from description
+const heroDescription: string | undefined = siteConfig?.description;
+const heroTagline: string | undefined = siteConfig?.tagline;
+const normalize = (s?: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+const shouldShowTagline = normalize(heroTagline) !== '' && normalize(heroTagline) !== normalize(heroDescription);
+// Preferred default subtitle used previously on the site
+const defaultTagline = 'Systems Architect · Workflow Strategist · Action-Oriented Leader';
+// Show default when no tagline is set; otherwise show tagline only when not duplicative
+const taglineToShow: string | undefined = normalize(heroTagline) === ''
+  ? defaultTagline
+  : (shouldShowTagline ? heroTagline : undefined);
 
 // Helper to derive optimized image component props from a full /assets/images path
 function deriveImageData(imgPath?: string) {
@@ -34,18 +54,6 @@ function deriveImageData(imgPath?: string) {
   const ext = relative.slice(lastDot + 1).toLowerCase();
   return { name, ext };
 }
-
-// Prevent duplicate hero copy: only show tagline if different from description
-const heroDescription: string | undefined = siteConfig?.description;
-const heroTagline: string | undefined = siteConfig?.tagline;
-const normalize = (s?: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-const shouldShowTagline = normalize(heroTagline) !== '' && normalize(heroTagline) !== normalize(heroDescription);
-// Preferred default subtitle used previously on the site
-const defaultTagline = 'Systems Architect · Workflow Strategist · Action-Oriented Leader';
-// Show default when no tagline is set; otherwise show tagline only when not duplicative
-const taglineToShow: string | undefined = normalize(heroTagline) === ''
-  ? defaultTagline
-  : (shouldShowTagline ? heroTagline : undefined);
 ---
 <Layout title="Blake Oxford - Leadership & Portfolio" description="Systems architect and workflow strategist turning complexity into opportunity—designing scalable systems, streamlining operations, and leading high‑stakes transformations that deliver lasting results." wide={true}>
   <!-- Preload hero LCP image variants to improve LCP -->
@@ -53,8 +61,8 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
   <link slot="head" rel="preload" as="image" href="/assets/images/optimized/webp/Blake-O-scaled@640w.webp" imagesrcset="/assets/images/optimized/webp/Blake-O-scaled@320w.webp 320w, /assets/images/optimized/webp/Blake-O-scaled@640w.webp 640w, /assets/images/optimized/webp/Blake-O-scaled@768w.webp 768w" imagesizes="280px" type="image/webp" fetchpriority="high" />
   <!-- Decorative background shapes -->
   <div class="fixed inset-0 -z-10 pointer-events-none">
-    <div class="absolute top-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-    <div class="absolute bottom-0 right-0 w-80 h-80 bg-accent/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+    <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
+    <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
   </div>
   <div class="space-y-16 sm:space-y-20 lg:space-y-24">
     <!-- Hero Section -->
@@ -68,7 +76,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
         <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
         </svg>
       </div>
-  <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid md:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
           <!-- Left: Text -->
           <div class="order-2 md:order-1">
@@ -130,195 +138,146 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
                 />
               </div>
               <!-- Floating elements -->
-              <div class="absolute -top-4 -right-4 w-10 h-10 bg-accent rounded-full flex items-center justify-center text-background text-lg animate-float">💡</div>
-              <div class="absolute -bottom-2 -left-4 w-8 h-8 bg-accent-dark rounded-full flex items-center justify-center text-background text-lg animate-float">🚀</div>
-              <div class="absolute top-1/2 -right-9 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-background text-base animate-float">☁️</div>
+              <FloatingEmoji emoji='💡' position='top-right' size='md' />
+              <FloatingEmoji emoji='🚀' position='bottom-left' size='sm' color='accent-dark' />
+              <FloatingEmoji emoji='☁️' position='center-right' size='sm' color='primary' />
             </div>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- Core expertise and significant achievements -->
-    <section id="resume-highlights" class="py-16 sm:py-20 lg:py-24 relative bg-gradient-to-br from-accent/5 to-background overflow-hidden">
-      <!-- Curved divider at top -->
-      <div class="absolute top-0 left-0 w-full overflow-hidden">
-      </div>
-  <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 relative z-10 pt-10">
-        <div class="max-w-3xl mx-auto mb-12 sm:mb-14 lg:mb-16">
-          <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-foreground dark:text-foreground-light text-center">Core expertise and significant achievements</h2>
+    
+    <!-- Resume Highlights Section -->
+    <section id="resume-highlights" class="py-16 sm:py-20 lg:py-24">
+      <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <div class="text-center space-y-4">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground dark:text-foreground-light">Resume Highlights</h2>
+          <p class="mx-auto max-w-3xl text-lg text-foreground/80 dark:text-foreground-light/80">
+            Impact snapshots from enterprise migrations, automation programs, and data strategy initiatives.
+          </p>
         </div>
-        <Grid cols="2" gap="lg" alignItems="stretch">
-          <!-- Practice Management & RCM -->
-          <div class="bg-surface dark:bg-surface-dark rounded-xl shadow-xl border border-border/50 dark:border-border-dark/50 p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div class="flex items-center mb-4 relative z-10">
-              <div class="rounded-full bg-gradient-to-r from-accent to-primary p-2.5 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-on-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-label="Calendar icon for Practice Management">
-                  <title>Practice Management Calendar</title>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 class="text-xl sm:text-2xl font-bold text-foreground dark:text-foreground-light">Practice Management &amp; RCM</h3>
-            </div>
-            <div class="relative z-10">
-              <p class="text-foreground dark:text-foreground-light mb-2">End-to-end AdvancedMD implementation, including:</p>
-              <ul class="space-y-2 ml-5">
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                  System architecture and workflow design
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Comprehensive SOP development and documentation
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-4a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  Cross-functional team training and certification
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                  Revenue cycle optimization and compliance assurance
-                </li>
-              </ul>
-            </div>
-          </div>
-          <!-- Cloud & SaaS -->
-          <div class="bg-surface dark:bg-surface-dark rounded-xl shadow-xl border border-border/50 dark:border-border-dark/50 p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div class="flex items-center mb-4 relative z-10">
-              <div class="rounded-full bg-gradient-to-r from-accent to-primary p-2.5 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-on-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
-              </div>
-              <h3 class="text-xl sm:text-2xl font-bold text-foreground dark:text-foreground-light">Cloud &amp; SaaS</h3>
-            </div>
-            <div class="relative z-10">
-              <p class="text-foreground dark:text-foreground-light mb-2">Comprehensive enterprise technology transformation:</p>
-              <ul class="space-y-2 ml-5">
-                <li class="flex items-start">
-                  <svg class="w-4.5 h-4.5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                  </svg>
-                  Google Workspace → Microsoft 365 migration for 180 users
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4.5 h-4.5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Sage Intacct financial platform implementation
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4.5 h-4.5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                  </svg>
-                  Azure/Intune endpoint management deployment
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4.5 h-4.5 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                  </svg>
-                  ADP Workforce Now and Cornerstone LMS integration
-                </li>
-              </ul>
-            </div>
-          </div>
-          <!-- Automation & Savings -->
-          <div class="bg-surface dark:bg-surface-dark rounded-xl shadow-xl border border-border/50 dark:border-border-dark/50 p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div class="flex items-center mb-4 relative z-10">
-              <div class="rounded-full bg-gradient-to-r from-accent to-primary p-2.5 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-on-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
-              </div>
-              <h3 class="text-xl sm:text-2xl font-bold text-foreground dark:text-foreground-light">Automation &amp; Savings</h3>
-            </div>
-            <div class="relative z-10">
-              <p class="text-foreground dark:text-foreground-light mb-2">Multi-million-dollar overhead reduction via:</p>
-              <ul class="space-y-2 ml-5">
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Azure cloud infrastructure optimization
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                  Power BI analytics and real-time dashboarding
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                  Custom OpenAI workflow integrations
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Enterprise system consolidations and integrations
-                </li>
-              </ul>
-            </div>
-          </div>
-          <!-- Data Analytics -->
-          <div class="bg-surface dark:bg-surface-dark rounded-xl shadow-xl border border-border/50 dark:border-border-dark/50 p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div class="flex items-center mb-4 relative z-10">
-              <div class="rounded-full bg-gradient-to-r from-accent to-primary p-2.5 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-on-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-              </div>
-              <h3 class="text-xl sm:text-2xl font-bold text-foreground dark:text-foreground-light">Data Analytics</h3>
-            </div>
-            <div class="relative z-10">
-              <p class="text-foreground dark:text-foreground-light mb-2">Comprehensive business intelligence solutions:</p>
-              <ul class="space-y-2 ml-5">
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-                  </svg>
-                  Real-time SQL/Power BI dashboards
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Predictive financial modeling systems
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                  C-suite executive decision support frameworks
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-accent mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Automated KPI tracking and performance visualization
-                </li>
-              </ul>
-            </div>
-          </div>
+        <Grid cols="3" gap="lg" alignItems="stretch">
+          <ResumeHighlightCard title="Cloud &amp; SaaS Transformations" description="Complex platform rollouts delivered end-to-end with strong adoption and governance controls.">
+            <svg
+              slot="icon"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-on-primary"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+            </svg>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4.5 h-4.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              Google Workspace → Microsoft 365 migration for 180 users
+            </ResumeHighlightItem>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4.5 h-4.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Sage Intacct financial platform implementation
+            </ResumeHighlightItem>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4.5 h-4.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+              </svg>
+              Azure/Intune endpoint management deployment
+            </ResumeHighlightItem>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4.5 h-4.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+              </svg>
+              ADP Workforce Now and Cornerstone LMS integration
+            </ResumeHighlightItem>
+          </ResumeHighlightCard>
+
+          <ResumeHighlightCard title="Automation &amp; Savings" description="Multi-million-dollar overhead reduction via coordinated automation, analytics, and consolidation initiatives.">
+            <svg
+              slot="icon"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-on-primary"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Azure cloud infrastructure optimization
+            </ResumeHighlightItem>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Power BI analytics and real-time dashboarding
+            </ResumeHighlightItem>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              Custom OpenAI workflow integrations
+            </ResumeHighlightItem>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Enterprise system consolidations and integrations
+            </ResumeHighlightItem>
+          </ResumeHighlightCard>
+
+          <ResumeHighlightCard title="Data Analytics" description="Comprehensive business intelligence solutions that keep decision-makers informed in real time.">
+            <svg
+              slot="icon"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-on-primary"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+              </svg>
+              Real-time SQL/Power BI dashboards
+            </ResumeHighlightItem>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Predictive financial modeling systems
+            </ResumeHighlightItem>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              C-suite executive decision support frameworks
+            </ResumeHighlightItem>
+            <ResumeHighlightItem>
+              <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Automated KPI tracking and performance visualization
+            </ResumeHighlightItem>
+          </ResumeHighlightCard>
         </Grid>
       </div>
     </section>
 
     <!-- Technologies I Excel At Section -->
   <section id="technologies" class="w-full py-16 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark">
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-foreground dark:text-foreground-light">Technologies I Excel At</h2>
+      <SectionHeading size='4xl' class='mb-8'>Technologies I Excel At</SectionHeading>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
         {technologies.map((tech) => {
           const raw = tech.img as any;
@@ -326,25 +285,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
           const canOptimize = typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
           const data = canOptimize ? deriveImageData(srcStr) : null;
           return (
-            <li class="flex flex-col items-center group">
-              <div class="w-16 h-16 bg-surface dark:bg-surface-dark rounded-full mb-2 group-hover:scale-110 transition-transform flex items-center justify-center">
-                {data ? (
-                  <ProficiencyLogo
-                    base={data.name}
-                    alt={tech.alt}
-                    width={64}
-                    height={64}
-                    class="w-full h-full object-contain"
-                    loading="lazy"
-                  />
-                ) : srcStr ? (
-                  <img src={srcStr} alt={tech.alt} width={64} height={64} class="w-full h-full object-contain" loading="lazy" />
-                ) : (
-                  <span class="text-2xl" aria-label={tech.name}>?</span>
-                )}
-              </div>
-              <span class="group-hover:text-accent transition-colors">{tech.name}</span>
-            </li>
+            <TechnologyItem tech={tech} data={data} srcStr={srcStr} />
           );
         })}
       </ul>
@@ -352,7 +293,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
 
     <!-- Recent Projects Section -->
   <section id="recent-projects" class="container mx-auto px-6 sm:px-8 lg:px-12" aria-labelledby="recent-projects-title">
-  <h2 id="recent-projects-title" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-foreground dark:text-foreground-light text-center">Recent Projects</h2>
+  <SectionHeading id='recent-projects-title' size='4xl' class='mb-8 text-center'>Recent Projects</SectionHeading>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {recentProjects.map((project: any) => (
           <ProjectCard project={project} />
@@ -365,7 +306,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
     <!-- Latest Blog Posts Section -->
   <section class="w-full py-20 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark" aria-labelledby="latest-blog-posts">
   <div class="container mx-auto px-6 sm:px-8 lg:px-12">
-  <h2 id="latest-blog-posts" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-foreground dark:text-foreground-light">Latest Blog Posts</h2>
+  <SectionHeading id='latest-blog-posts' size='4xl' class='mb-8'>Latest Blog Posts</SectionHeading>
         <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
           {recentBlogPosts.length > 0 ? (
             recentBlogPosts.map((post) => (
@@ -393,7 +334,7 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
 
                   {post.data.tags && post.data.tags.length > 0 && (
                     <ul class="mt-auto flex flex-wrap gap-2 text-xxs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60" aria-label="Post tags" role="list">
-                      {post.data.tags.slice(0, 3).map((tag) => (
+                      {post.data.tags.slice(0, 3).map((tag: string) => (
                         <li class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/30 dark:bg-background-dark/70" role="listitem">
                           {tag}
                         </li>
@@ -430,10 +371,10 @@ const taglineToShow: string | undefined = normalize(heroTagline) === ''
     </section>
 
     <!-- Call-to-Action Section -->
-  <section class="container mx-auto px-6 sm:px-8 lg:px-12 text-center py-16">
-  <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground dark:text-foreground-light flex items-center justify-center gap-2"><span>🤝</span> Want to Work Together?</h2>
+    <section class="container mx-auto px-6 sm:px-8 lg:px-12 text-center py-16">
+      <SectionHeading size='3xl' class='mb-4 flex items-center justify-center gap-2'><span>🤝</span> Want to Work Together?</SectionHeading>
       <p class="text-lg mb-6 text-neutral">I'm always open to exciting new opportunities and collaborations. Let's create something amazing together!</p>
-  <Button variant="outline" href="/contact/">Contact Me</Button>
+      <Button variant="outline" href="/contact/">Contact Me</Button>
     </section>
   </div>
 </Layout>

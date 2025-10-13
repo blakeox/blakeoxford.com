@@ -3,6 +3,8 @@ import Layout from '../layouts/BaseLayout.astro';
 import CoinFlipImage from '../components/ui/CoinFlipImage.astro';
 import ContactFormClient from '../components/islands/ContactFormClient';
 import FormField from '../components/primitives/FormField.astro';
+import FloatingEmoji from '../components/primitives/FloatingEmoji.astro';
+import FloatingBlur from '../components/primitives/FloatingBlur.astro';
 import Stack from '../components/primitives/Stack.astro';
 import Section from '../components/primitives/Section.astro';
 import Grid from '../components/primitives/Grid.astro';
@@ -26,7 +28,7 @@ const canonicalUrl = CANONICAL_URLS.contact;
           <div class="flex justify-center md:justify-end">
             <div class="relative">
               <CoinFlipImage frontSrc="/assets/images/Blake-O-scaled.jpg" backSrc="/assets/images/china-profile-picture.jpg" alt="Blake Oxford" altBack="Blake Oxford in China" size={280} flipMultipleTimes loading="eager" fetchPriority="high" decoding="auto" />
-            <div class="absolute -top-4 -right-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-background animate-float">💡</div>
+              <FloatingEmoji emoji='💡' position='top-right' size='lg' />
           </div>
         </div>
       </Grid>
@@ -47,10 +49,11 @@ const canonicalUrl = CANONICAL_URLS.contact;
       </svg>
     </div>
     <!-- Blurred/floating shapes -->
-    <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
-
-    <div class="relative z-10">
+  <!-- Decorative blurs -->
+  <div class="fixed inset-0 -z-10 pointer-events-none">
+    <FloatingBlur size="md" color="accent-light" position="top-right" translate="translate-x-1/2 -translate-y-1/2" />
+    <FloatingBlur size="sm" color="accent-light" position="bottom-left" translate="-translate-x-1/2 translate-y-1/2" />
+  </div>    <div class="relative z-10">
       <!-- Contact Information -->
       <Flex responsive="md" align="center" justify="center" gap="lg" class="scroll-animate mb-12 sm:mb-14 lg:mb-16">
         <a href="mailto:blakepoxford@outlook.com" class="flex flex-col items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent p-4 rounded-xl hover:bg-accent/5 transition-colors" aria-label="Email Blake Oxford" title="Email">
