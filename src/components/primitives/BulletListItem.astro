@@ -1,0 +1,23 @@
+---
+/**
+ * BulletListItem - Reusable bullet list item with accent dot
+ * 
+ * Used for impact signals, achievements, and feature lists across project pages
+ * 
+ * @prop {string} text - Optional text content (can also use slot)
+ * @prop {string} class - Optional additional classes for the list item
+ */
+interface Props {
+  text?: string;
+  class?: string;
+}
+
+const { text, class: className = '' } = Astro.props;
+---
+
+<li class={`flex items-start gap-3 ${className}`}>
+  <span class="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+  <span>
+    {text ? text : <slot />}
+  </span>
+</li>
