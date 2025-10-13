@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Advanced Test Scenarios', () => {
   test.describe('API Error Handling', () => {

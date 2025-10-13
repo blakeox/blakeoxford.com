@@ -15,8 +15,6 @@ const { project } = Astro.props as ProjectCardProps;
 const { slug, data } = project;
 
 const title = data.title ?? 'Case study';
-// Keep backward-compat variable name and exact initializer expected by tests
-// Use heroImage field from the project schema
 const image = data?.heroImage ?? '/assets/images/blake-logo-fallback.png';
 const description = data.description ?? '';
 const tags = Array.isArray(data.tags) ? data.tags.filter(Boolean) : [];

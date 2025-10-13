@@ -1,4 +1,4 @@
-import { cpSync, existsSync, writeFileSync, readdirSync, statSync, unlinkSync, mkdirSync } from 'node:fs';
+import { cpSync, existsSync, writeFileSync, readdirSync, statSync, unlinkSync } from 'node:fs';
 import { join, extname } from 'node:path';
 
 const dist = join(process.cwd(), 'dist');
