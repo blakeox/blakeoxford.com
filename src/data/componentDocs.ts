@@ -315,7 +315,7 @@ export const componentDocs: ComponentDoc[] = [
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
       { name: 'duration', type: 'number', required: false, default: '700', description: 'Flip animation duration in ms' },
       { name: 'flipOnClick', type: 'boolean', required: false, default: 'true', description: 'Enable click-to-flip' },
-      { name: 'flipAxis', type: "'x'|'y'", required: false, default: "'y'", description: 'Flip axis (horizontal or vertical)' },
+      { name: 'flipAxis', type: '\'x\'|\'y\'', required: false, default: '\'y\'', description: 'Flip axis (horizontal or vertical)' },
     ],
     examples: [
       {
@@ -351,7 +351,7 @@ export const componentDocs: ComponentDoc[] = [
       { name: 'width', type: 'number', required: false, description: 'Image width in pixels' },
       { name: 'height', type: 'number', required: false, description: 'Image height in pixels' },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
-      { name: 'loading', type: "'lazy' | 'eager'", required: false, default: "'lazy'", description: 'Loading strategy' },
+      { name: 'loading', type: '\'lazy\' | \'eager\'', required: false, default: '\'lazy\'', description: 'Loading strategy' },
       { name: 'priority', type: 'boolean', required: false, default: 'false', description: 'Priority loading (sets eager + fetchpriority)' },
       { name: 'quality', type: 'number', required: false, default: '80', description: 'Image quality (1-100)' },
     ],
@@ -425,7 +425,7 @@ export const componentDocs: ComponentDoc[] = [
     description: 'Flexible button component with variants and states',
     filePath: 'src/components/primitives/Button.astro',
     props: [
-      { name: 'type', type: "'button'|'submit'|'reset'", required: false, default: "'button'", description: 'Button type' },
+      { name: 'type', type: '\'button\'|\'submit\'|\'reset\'', required: false, default: '\'button\'', description: 'Button type' },
       { name: 'variant', type: 'string', required: false, description: 'Button variant (primary, secondary, etc.)' },
       { name: 'disabled', type: 'boolean', required: false, default: 'false', description: 'Disabled state' },
       { name: 'href', type: 'string', required: false, description: 'If provided, renders as link' },
@@ -473,7 +473,7 @@ export const componentDocs: ComponentDoc[] = [
       { name: 'align', type: 'string', required: false, description: 'Align items' },
       { name: 'justify', type: 'string', required: false, description: 'Justify content' },
       { name: 'wrap', type: 'boolean', required: false, description: 'Flex wrap' },
-      { name: 'as', type: 'string', required: false, default: "'div'", description: 'HTML element to render' },
+      { name: 'as', type: 'string', required: false, default: '\'div\'', description: 'HTML element to render' },
       { name: 'role', type: 'string', required: false, description: 'ARIA role' },
     ],
     examples: [
@@ -492,7 +492,7 @@ export const componentDocs: ComponentDoc[] = [
     props: [
       { name: 'cols', type: 'string', required: false, description: 'Grid columns' },
       { name: 'gap', type: 'string', required: false, description: 'Gap between items' },
-      { name: 'as', type: 'string', required: false, default: "'div'", description: 'HTML element to render' },
+      { name: 'as', type: 'string', required: false, default: '\'div\'', description: 'HTML element to render' },
       { name: 'role', type: 'string', required: false, description: 'ARIA role' },
     ],
     examples: [
@@ -509,7 +509,7 @@ export const componentDocs: ComponentDoc[] = [
     description: 'Semantic section wrapper with optional styling',
     filePath: 'src/components/primitives/Section.astro',
     props: [
-      { name: 'as', type: 'string', required: false, default: "'section'", description: 'HTML element to render' },
+      { name: 'as', type: 'string', required: false, default: '\'section\'', description: 'HTML element to render' },
       { name: 'ariaLabelledby', type: 'string', required: false, description: 'ARIA labelledby ID' },
     ],
     examples: [
@@ -528,7 +528,7 @@ export const componentDocs: ComponentDoc[] = [
     props: [
       { name: 'label', type: 'string', required: true, description: 'Field label' },
       { name: 'name', type: 'string', required: true, description: 'Field name' },
-      { name: 'type', type: 'string', required: false, default: "'text'", description: 'Input type' },
+      { name: 'type', type: 'string', required: false, default: '\'text\'', description: 'Input type' },
       { name: 'required', type: 'boolean', required: false, default: 'false', description: 'Required field' },
       { name: 'error', type: 'string', required: false, description: 'Error message' },
       { name: 'helperText', type: 'string', required: false, description: 'Helper text' },
