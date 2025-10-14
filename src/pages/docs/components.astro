@@ -1,0 +1,329 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/primitives/Container.astro';
+import Section from '../../components/primitives/Section.astro';
+import Badge from '../../components/primitives/Badge.astro';
+import { componentDocs, getCategories, getAllTags, type ComponentDoc } from '../../data/componentDocs';
+
+const title = 'Component Documentation';
+const description = 'Comprehensive documentation for all Blake Oxford Portfolio components';
+const canonicalUrl = 'https://blakeoxford.com/docs/components/';
+
+// Group components by category
+const categories = getCategories();
+const componentsByCategory = categories.map((category) => ({
+  category,
+  components: componentDocs.filter((doc) => doc.category === category),
+}));
+
+const allTags = getAllTags();
+---
+
+<BaseLayout title={title} description={description} canonicalUrl={canonicalUrl}>
+  <Container>
+    <Section class="py-16">
+      <!-- Header -->
+      <header class="mb-12 text-center">
+        <h1 class="text-4xl font-bold text-foreground dark:text-foreground-light sm:text-5xl lg:text-6xl">
+          Component Documentation
+        </h1>
+        <p class="mt-4 text-lg text-foreground/70 dark:text-foreground-light/70 max-w-3xl mx-auto">
+          Comprehensive API documentation for all components in the Blake Oxford Portfolio.
+          Built with accessibility, performance, and developer experience in mind.
+        </p>
+      </header>
+
+      <!-- Search Input -->
+      <div class="mb-12">
+        <label for="component-search" class="sr-only">Search components</label>
+        <input
+          type="search"
+          id="component-search"
+          placeholder="Search components by name, description, or tag..."
+          class="w-full rounded-xl border border-border px-6 py-4 text-lg transition focus:outline-none focus:ring-2 focus:ring-accent dark:border-border-dark dark:bg-surface-dark"
+        />
+      </div>
+
+      <!-- Tag Filter -->
+      <div class="mb-12">
+        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/60">
+          Filter by Tag
+        </h2>
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent/10 dark:border-border-dark"
+            data-tag="all"
+          >
+            All
+          </button>
+          {allTags.map((tag) => (
+            <button
+              class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent/10 dark:border-border-dark"
+              data-tag={tag}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Component Documentation -->
+      {componentsByCategory.map(({ category, components }) => (
+        <section class="mb-16">
+          <h2 class="mb-8 text-3xl font-bold text-foreground dark:text-foreground-light">
+            {category} Components
+            <span class="ml-2 text-base font-normal text-foreground/60">({components.length})</span>
+          </h2>
+          
+          <div class="space-y-8">
+            {components.map((component: ComponentDoc) => (
+              <article
+                class="component-card rounded-2xl border border-border bg-surface/50 p-8 shadow-lg transition hover:shadow-xl dark:border-border-dark dark:bg-surface-dark/50"
+                data-component-name={component.name.toLowerCase()}
+                data-component-tags={component.tags?.join(',') || ''}
+              >
+                {/* Component Header */}
+                <header class="mb-6">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 class="text-2xl font-bold text-foreground dark:text-foreground-light">
+                        {component.name}
+                      </h3>
+                      {component.subcategory && (
+                        <p class="mt-1 text-sm text-foreground/60 dark:text-foreground-light/60">
+                          {component.category} › {component.subcategory}
+                        </p>
+                      )}
+                    </div>
+                    <a
+                      href={`https://github.com/blakeox/blakeoxford.com/blob/main/${component.filePath}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent/10 dark:border-border-dark"
+                    >
+                      View Source
+                    </a>
+                  </div>
+                  
+                  <p class="mt-4 text-foreground/80 dark:text-foreground-light/80">
+                    {component.description}
+                  </p>
+
+                  {/* Tags */}
+                  {component.tags && component.tags.length > 0 && (
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      {component.tags.map((tag) => (
+                        <Badge class="bg-accent/10 text-accent text-xs">{tag}</Badge>
+                      ))}
+                    </div>
+                  )}
+                </header>
+
+                {/* Props */}
+                {component.props && component.props.length > 0 && (
+                  <div class="mb-6">
+                    <h4 class="mb-3 text-lg font-semibold text-foreground dark:text-foreground-light">
+                      Props
+                    </h4>
+                    <div class="overflow-x-auto">
+                      <table class="w-full text-sm">
+                        <thead class="border-b border-border dark:border-border-dark">
+                          <tr class="text-left">
+                            <th class="pb-2 pr-4 font-semibold">Name</th>
+                            <th class="pb-2 pr-4 font-semibold">Type</th>
+                            <th class="pb-2 pr-4 font-semibold">Default</th>
+                            <th class="pb-2 font-semibold">Description</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border dark:divide-border-dark">
+                          {component.props.map((prop) => (
+                            <tr>
+                              <td class="py-3 pr-4">
+                                <code class="rounded bg-accent/10 px-2 py-1 text-accent">
+                                  {prop.name}
+                                  {prop.required && <span class="text-red-500">*</span>}
+                                </code>
+                              </td>
+                              <td class="py-3 pr-4">
+                                <code class="text-foreground/70 dark:text-foreground-light/70">
+                                  {prop.type}
+                                </code>
+                              </td>
+                              <td class="py-3 pr-4">
+                                {prop.default ? (
+                                  <code class="text-foreground/70 dark:text-foreground-light/70">
+                                    {prop.default}
+                                  </code>
+                                ) : (
+                                  <span class="text-foreground/40">—</span>
+                                )}
+                              </td>
+                              <td class="py-3 text-foreground/80 dark:text-foreground-light/80">
+                                {prop.description}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* Examples */}
+                {component.examples && component.examples.length > 0 && (
+                  <div class="mb-6">
+                    <h4 class="mb-3 text-lg font-semibold text-foreground dark:text-foreground-light">
+                      Examples
+                    </h4>
+                    <div class="space-y-4">
+                      {component.examples.map((example) => (
+                        <div>
+                          {example.title && (
+                            <p class="mb-2 text-sm font-medium text-foreground/70 dark:text-foreground-light/70">
+                              {example.title}
+                            </p>
+                          )}
+                          {example.description && (
+                            <p class="mb-2 text-sm text-foreground/60 dark:text-foreground-light/60">
+                              {example.description}
+                            </p>
+                          )}
+                          <pre class="overflow-x-auto rounded-xl bg-surface-dark p-4 text-sm text-foreground-light dark:bg-background-dark"><code>{example.code}</code></pre>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Accessibility */}
+                {component.accessibility && component.accessibility.length > 0 && (
+                  <div class="mb-6">
+                    <h4 class="mb-3 text-lg font-semibold text-foreground dark:text-foreground-light">
+                      Accessibility
+                    </h4>
+                    <ul class="space-y-2">
+                      {component.accessibility.map((feature) => (
+                        <li class="flex items-start gap-2 text-sm text-foreground/80 dark:text-foreground-light/80">
+                          <span class="mt-1 text-green-500">✓</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Performance */}
+                {component.performance && component.performance.length > 0 && (
+                  <div>
+                    <h4 class="mb-3 text-lg font-semibold text-foreground dark:text-foreground-light">
+                      Performance
+                    </h4>
+                    <ul class="space-y-2">
+                      {component.performance.map((feature) => (
+                        <li class="flex items-start gap-2 text-sm text-foreground/80 dark:text-foreground-light/80">
+                          <span class="mt-1 text-blue-500">⚡</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      <!-- Stats Footer -->
+      <footer class="mt-16 rounded-2xl border border-border bg-surface/50 p-8 text-center dark:border-border-dark dark:bg-surface-dark/50">
+        <h2 class="mb-4 text-2xl font-bold text-foreground dark:text-foreground-light">
+          Documentation Statistics
+        </h2>
+        <div class="grid gap-6 sm:grid-cols-3">
+          <div>
+            <p class="text-4xl font-bold text-accent">{componentDocs.length}</p>
+            <p class="mt-1 text-sm text-foreground/60 dark:text-foreground-light/60">
+              Components Documented
+            </p>
+          </div>
+          <div>
+            <p class="text-4xl font-bold text-accent">{categories.length}</p>
+            <p class="mt-1 text-sm text-foreground/60 dark:text-foreground-light/60">
+              Categories
+            </p>
+          </div>
+          <div>
+            <p class="text-4xl font-bold text-accent">{allTags.length}</p>
+            <p class="mt-1 text-sm text-foreground/60 dark:text-foreground-light/60">
+              Unique Tags
+            </p>
+          </div>
+        </div>
+      </footer>
+    </Section>
+  </Container>
+</BaseLayout>
+
+<script>
+  // Search functionality
+  const searchInput = document.getElementById('component-search') as HTMLInputElement;
+  const componentCards = document.querySelectorAll('.component-card');
+  const tagFilters = document.querySelectorAll('.tag-filter');
+  
+  let currentTag = 'all';
+
+  function filterComponents() {
+    const searchTerm = searchInput?.value.toLowerCase() || '';
+    
+    componentCards.forEach((card) => {
+      const name = card.getAttribute('data-component-name') || '';
+      const tags = card.getAttribute('data-component-tags') || '';
+      const text = card.textContent?.toLowerCase() || '';
+      
+      const matchesSearch = text.includes(searchTerm);
+      const matchesTag = currentTag === 'all' || tags.includes(currentTag);
+      
+      if (matchesSearch && matchesTag) {
+        (card as HTMLElement).style.display = 'block';
+      } else {
+        (card as HTMLElement).style.display = 'none';
+      }
+    });
+  }
+
+  searchInput?.addEventListener('input', filterComponents);
+
+  tagFilters.forEach((button) => {
+    button.addEventListener('click', () => {
+      tagFilters.forEach((btn) => btn.classList.remove('bg-accent', 'text-white', 'border-accent'));
+      button.classList.add('bg-accent', 'text-white', 'border-accent');
+      
+      currentTag = button.getAttribute('data-tag') || 'all';
+      filterComponents();
+    });
+  });
+
+  // Set initial "All" button as active
+  const allButton = document.querySelector('[data-tag="all"]');
+  allButton?.classList.add('bg-accent', 'text-white', 'border-accent');
+</script>
+
+<style>
+  /* Syntax highlighting for code blocks */
+  pre code {
+    font-family: 'Monaco', 'Courier New', monospace;
+    line-height: 1.6;
+  }
+  
+  /* Smooth transitions */
+  .component-card {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  
+  /* Table responsiveness */
+  @media (max-width: 768px) {
+    table {
+      font-size: 0.875rem;
+    }
+  }
+</style>
