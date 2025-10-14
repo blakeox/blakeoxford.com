@@ -3,9 +3,11 @@
  * Handles performance alert reporting from advanced performance monitor
  */
 
-export async function POST({ request }: { request: Request }) {
+import type { PerformanceAlert } from '../../types/api';
+
+export async function POST({ request }: { request: Request }): Promise<Response> {
   try {
-    const performanceAlert = await request.json();
+    const performanceAlert = await request.json() as PerformanceAlert;
     
     // Log performance alert
     console.warn('⚡ Performance Alert Reported:', {

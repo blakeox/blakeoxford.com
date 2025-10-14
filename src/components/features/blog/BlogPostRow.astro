@@ -1,16 +1,12 @@
 ---
 // BlogPostRow.astro
+import type { BlogPostRowProps } from '../../../types/components';
 import OptimizedImage from '../../ui/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';
 import Button from '../../primitives/Button.astro';
 import GradientOverlay from '../../primitives/GradientOverlay.astro';
 import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
 import { formatDateISO, formatDateShort } from '../../../utils/index.js';
-
-interface BlogPostRowProps {
-  post: any;
-  align?: 'left' | 'right';
-}
 
 const { post, align = 'left' } = Astro.props as BlogPostRowProps;
 const { slug, data } = post;

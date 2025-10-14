@@ -1,10 +1,32 @@
-// Core type definitions for the portfolio site
+/**
+ * Core Type Definitions - Central Export Hub
+ * Re-exports all type definitions from domain-specific modules
+ * 
+ * Type Organization:
+ * - core.ts: Base interfaces and shared types
+ * - accessibility.ts: Accessibility-related types
+ * - dropdown.ts: Dropdown component types
+ * - content.ts: Content collection types (blog, projects)
+ * - components.ts: Component prop interfaces
+ * - api.ts: API endpoint types
+ */
 
 // Re-export all consolidated types from domain-specific files
 export * from './core';
 export * from './accessibility';
 export * from './dropdown';
+export * from './content';
+export * from './components';
+export * from './api';
 
+// ============================================================================
+// Legacy Types (Kept for backward compatibility)
+// ============================================================================
+// TODO: Migrate usages to new types from content.ts and components.ts
+
+/**
+ * @deprecated Use Project from './content' instead
+ */
 export interface ProjectData {
   slug: string;
   data: {
@@ -18,6 +40,9 @@ export interface ProjectData {
   };
 }
 
+/**
+ * @deprecated Use BlogPost from './content' instead
+ */
 export interface BlogPost {
   slug: string;
   data: {
@@ -30,14 +55,13 @@ export interface BlogPost {
   };
 }
 
-export interface TechnologyItem {
-  name: string;
-  img: string | ImageMetadata; // Can be imported image or string path
-  alt: string;
-  optimized?: boolean;
-}
+// ============================================================================
+// Utility Types (Kept for general use)
+// ============================================================================
 
-// ImageMetadata type for Astro image imports
+/**
+ * ImageMetadata type for Astro image imports
+ */
 export interface ImageMetadata {
   src: string;
   width: number;
@@ -45,12 +69,9 @@ export interface ImageMetadata {
   format: string;
 }
 
-export interface NavLink {
-  href: string;
-  label: string;
-  external?: boolean;
-}
-
+/**
+ * Site configuration
+ */
 export interface SiteConfig {
   name: string;
   domain: string;
@@ -63,37 +84,4 @@ export interface SiteConfig {
     github: string;
     linkedin: string;
   };
-}
-
-// Component Props Types
-export interface ProjectCardProps {
-  project: ProjectData;
-  featured?: boolean;
-}
-
-export interface OptimizedImageProps {
-  src: string;
-  alt: string;
-  width?: number;
-  height?: number;
-  class?: string;
-  loading?: 'lazy' | 'eager';
-}
-
-export interface CoinFlipImageProps {
-  frontSrc: string;
-  backSrc: string;
-  alt: string;
-  altBack: string;
-  size?: number;
-  flipMultipleTimes?: boolean;
-}
-
-// Layout Props
-export interface BaseLayoutProps {
-  title?: string;
-  description?: string;
-  url?: string;
-  wide?: boolean;
-  keywords?: string;
 }

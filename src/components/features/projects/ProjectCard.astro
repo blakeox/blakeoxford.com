@@ -1,15 +1,11 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import type { ProjectCardProps } from '../../../types/components';
 import OptimizedImage from '../../ui/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';
 import BadgePill from '../../primitives/BadgePill.astro';
 import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
 import GradientOverlay from '../../primitives/GradientOverlay.astro';
 import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
-
-interface ProjectCardProps {
-  project: CollectionEntry<'projects'>;
-}
 
 const { project } = Astro.props as ProjectCardProps;
 const { slug, data } = project;
