@@ -1,3 +1,33 @@
+/**
+ * NavBarIsland - React island for site navigation
+ * 
+ * Interactive navigation bar with mobile menu, logo, and responsive design.
+ * Integrates ModernNavBar and MotionAccessibility for enhanced UX.
+ * 
+ * @component
+ * @category Islands
+ * 
+ * @example
+ * ```tsx
+ * <NavBarIsland
+ *   client:load
+ *   links={navLinks}
+ *   currentPath={Astro.url.pathname}
+ *   logo={logoConfig}
+ * />
+ * ```
+ * 
+ * @prop {NavLink[]} links - Navigation links configuration
+ * @prop {LogoConfig} logo - Logo configuration with name and avatar
+ * @prop {string} [currentPath] - Current page path for active link highlighting
+ * 
+ * @accessibility
+ * - Semantic nav element
+ * - Mobile menu with ARIA attributes
+ * - Keyboard navigation (Tab, Enter, Escape)
+ * - Focus management for menu toggle
+ * - Screen reader announcements
+ */
 import { useEffect, useRef, useState } from 'react';
 
 import type { NavLink } from '../../config/navLinks';

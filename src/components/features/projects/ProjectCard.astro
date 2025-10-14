@@ -1,4 +1,28 @@
 ---
+/**
+ * ProjectCard - Interactive project card for project listings
+ * 
+ * Displays a project with hero image, title, description, date, tags, and link.
+ * Features hover effects with gradient overlay and shadow animations.
+ * 
+ * @component
+ * @category Features
+ * @subcategory Projects
+ * 
+ * @example Basic usage
+ * ```astro
+ * <ProjectCard project={projectEntry} />
+ * ```
+ * 
+ * @prop {CollectionEntry<'projects'>} project - Project content collection entry
+ * 
+ * @accessibility
+ * - Semantic article element
+ * - aria-labelledby linking to project title
+ * - Proper heading hierarchy (h3)
+ * - Focus-visible styles for keyboard navigation
+ * - Alt text required for images
+ */
 import type { ProjectCardProps } from '../../../types/components';
 import OptimizedImage from '../../ui/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';

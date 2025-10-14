@@ -1,4 +1,31 @@
 ---
+/**
+ * AboutTimeline - Interactive timeline display
+ * 
+ * Displays a horizontal scrollable timeline with events, achievements,
+ * and milestones. Features gradient overlays, decorative elements,
+ * and responsive design.
+ * 
+ * @component
+ * @category Features
+ * @subcategory About
+ * 
+ * @example Timeline display
+ * ```astro
+ * <AboutTimeline timeline={timelineData} />
+ * ```
+ * 
+ * @prop {TimelineSection} timeline - Timeline data with year, title, icon, achievements
+ * 
+ * @accessibility
+ * - role="listitem" for timeline entries
+ * - aria-label descriptive labels ("{year} – {title}")
+ * - Nested lists with proper roles
+ * - aria-hidden for decorative backgrounds
+ * - role="region" for scrollable container
+ * - tabindex="0" for keyboard scrolling
+ * - focus-visible styles for keyboard navigation
+ */
 import type { TimelineSection } from './types';
 import GradientOverlay from '../../primitives/GradientOverlay.astro';
 
