@@ -85,7 +85,7 @@
   "dependencies": {
     "@astrojs/react": "^4.4.0",
     "@sentry/astro": "^10.19.0",
-    "@sentry/cloudflare": "^8.55.0",
+    "@sentry/cloudflare": "^10.19.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "resend": "^6.1.2",
