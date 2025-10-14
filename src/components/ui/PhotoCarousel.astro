@@ -64,7 +64,8 @@ function shuffleArray<T>(array: T[]): T[] {
 const CONFIG = {
   mobile: {
     count: 5,
-    imageSize: { width: 224, height: 224 }
+    // Increased for high-DPI mobile screens (Retina, etc.)
+    imageSize: { width: 800, height: 800 }
   },
   desktop: {
     // Increased count for full viewport height - show more photos per column
