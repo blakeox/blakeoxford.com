@@ -1,4 +1,29 @@
 ---
+/**
+ * SearchOverlay - Modal search interface
+ * 
+ * Full-screen modal overlay with fuzzy search functionality.
+ * Uses Fuse.js for client-side search across blog posts and projects.
+ * Includes keyboard shortcuts (Cmd+K, Escape) and focus management.
+ * 
+ * @component
+ * @category Features
+ * @subcategory Search
+ * 
+ * @example Search overlay
+ * ```astro
+ * <SearchOverlay />
+ * ```
+ * 
+ * @accessibility
+ * - role="dialog" with aria-modal="true"
+ * - aria-labelledby linking to search title
+ * - Proper focus trap when open
+ * - Escape key to close
+ * - ARIA combobox pattern for search input
+ * - role="listbox" for results
+ * - Keyboard navigation (Arrow keys, Enter)
+ */
 import Flex from '../../primitives/Flex.astro';
 import SearchOverlayClient from '../../islands/SearchOverlayClient';
 ---

@@ -1,4 +1,26 @@
 ---
+/**
+ * PhotoCarousel - Responsive photo carousel with navigation
+ * 
+ * Displays a collection of photos in a carousel with prev/next navigation,
+ * autoplay, and responsive image loading. Includes accessibility features
+ * for screen readers and keyboard navigation.
+ * 
+ * @component
+ * @category UI
+ * 
+ * @example Default carousel
+ * ```astro
+ * <PhotoCarousel />
+ * ```
+ * 
+ * @accessibility
+ * - role="region" with aria-label="Photo carousel"
+ * - Semantic list structure (ul/li)
+ * - Alt text for all images
+ * - Keyboard navigation support (prev/next buttons)
+ * - ARIA labels on navigation buttons
+ */
 import { Image } from 'astro:assets';
 
 // Import carousel images directly

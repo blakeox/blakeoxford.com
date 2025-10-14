@@ -1,8 +1,61 @@
 ---
+/**
+ * CoinFlipImage - Interactive 3D coin flip image component
+ * 
+ * Displays two images with a 3D flip animation effect.
+ * Supports click-to-flip, auto-flip, and customizable animation parameters.
+ * Optimized for performance with lazy loading.
+ * 
+ * @component
+ * @category UI
+ * 
+ * @example Basic coin flip
+ * ```astro
+ * <CoinFlipImage
+ *   frontSrc="/front.jpg"
+ *   backSrc="/back.jpg"
+ *   alt="Front image"
+ *   altBack="Back image"
+ * />
+ * ```
+ * 
+ * @example Auto-flip with custom duration
+ * ```astro
+ * <CoinFlipImage
+ *   frontSrc="/front.jpg"
+ *   backSrc="/back.jpg"
+ *   alt="Front"
+ *   altBack="Back"
+ *   flipMultipleTimes={true}
+ *   duration={1000}
+ * />
+ * ```
+ * 
+ * @prop {string} frontSrc - Front image source URL
+ * @prop {string} backSrc - Back image source URL
+ * @prop {string} alt - Front image alt text
+ * @prop {string} altBack - Back image alt text
+ * @prop {number} [size=144] - Image size in pixels
+ * @prop {boolean} [flipMultipleTimes=false] - Enable auto-flip animation
+ * @prop {string} [class] - Additional CSS classes
+ * @prop {number} [duration=700] - Flip animation duration in ms
+ * @prop {boolean} [flipOnClick=true] - Enable click-to-flip
+ * @prop {'x'|'y'} [flipAxis='y'] - Flip axis (horizontal or vertical)
+ * @prop {string} [flipEase='cubic-bezier(0.22,1,0.36,1)'] - Animation easing
+ * @prop {number} [multiFlipDuration=2000] - Auto-flip interval in ms
+ * @prop {string} [multiFlipEase='ease-in-out'] - Auto-flip easing
+ * @prop {'lazy'|'eager'} [loading='lazy'] - Image loading strategy
+ * @prop {'low'|'high'|'auto'} [fetchPriority='low'] - Fetch priority hint
+ * @prop {'async'|'sync'|'auto'} [decoding='async'] - Image decoding mode
+ * 
+ * @accessibility
+ * - Button with descriptive aria-label
+ * - Alt text for both images
+ * - Keyboard accessible (Enter/Space)
+ * - Focus-visible styles
+ */
 import CoinFlipClient from '../islands/CoinFlipClient';
-// CoinFlipImage.astro
-// Props: frontSrc, backSrc, altFront, altBack, size (optional), flipMultipleTimes (optional), class (optional), duration (optional), flipOnClick (optional), flipAxis (optional), flipEase (optional), multiFlipDuration (optional), multiFlipEase (optional)
-// Performance knobs: loading (default 'lazy'), fetchPriority (default 'low'), decoding (default 'async')
+
 function simpleId() {
   return 'coin-flip-' + Math.random().toString(36).slice(2, 10);
 }

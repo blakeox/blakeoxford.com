@@ -3,9 +3,11 @@
  * Handles security event reporting and CSP violation reporting
  */
 
-export async function POST({ request }: { request: Request }) {
+import type { SecurityReport } from '../../types/api';
+
+export async function POST({ request }: { request: Request }): Promise<Response> {
   try {
-    const securityEvent = await request.json();
+    const securityEvent = await request.json() as SecurityReport;
     
     // Log security event
     console.warn('🚨 Security Event Reported:', {

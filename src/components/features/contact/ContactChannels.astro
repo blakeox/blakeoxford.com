@@ -1,4 +1,33 @@
 ---
+/**
+ * ContactChannels - Contact channel links display
+ * 
+ * Displays available contact channels (email, phone, LinkedIn)
+ * with icons and interactive cards. Features hover effects and
+ * glass morphism design.
+ * 
+ * @component
+ * @category Features
+ * @subcategory Contact
+ * 
+ * @example Contact channels
+ * ```astro
+ * <ContactChannels channels={contactData} />
+ * ```
+ * 
+ * @prop {ContactChannels} channels - Array of contact channel objects
+ * @prop {string} channels[].icon - Icon name (email, phone, linkedin)
+ * @prop {string} channels[].label - Display label
+ * @prop {string} channels[].value - Contact value/URL
+ * @prop {string} channels[].href - Link URL
+ * 
+ * @accessibility
+ * - section with aria-labelledby
+ * - Semantic list structure (ul/li)
+ * - Links with descriptive aria-label
+ * - Icons hidden with aria-hidden (text provides context)
+ * - Decorative elements excluded from accessibility tree
+ */
 import type { ContactChannels } from './types';
 import Container from '../../primitives/Container.astro';
 

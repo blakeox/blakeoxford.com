@@ -1,4 +1,24 @@
 ---
+/**
+ * NavBar - Main site navigation wrapper
+ * 
+ * Wraps the NavBarIsland React component with Astro props.
+ * Provides site-wide navigation with mobile menu, logo, and theme toggle.
+ * 
+ * @component
+ * @category Layout
+ * 
+ * @example Default navigation
+ * ```astro
+ * <NavBar />
+ * ```
+ * 
+ * @accessibility
+ * - Semantic nav element (handled by island)
+ * - Keyboard navigation support
+ * - Mobile menu with proper ARIA attributes
+ * - Focus management for menu toggle
+ */
 import NavBarIsland from '../islands/NavBarIsland';
 import navLinks from '../../config/navLinks';
 ---
