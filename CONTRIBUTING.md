@@ -91,6 +91,154 @@ Refer to `DESIGN_BEST_PRACTICES.md` for:
 
 Design lint (`pnpm design:lint`) flags raw hex & suspicious spacing to prevent drift.
 
+## Component Development
+
+### Creating New Components
+
+Follow the documented standards in `docs/COMPONENT_DOCUMENTATION_GUIDE.md`:
+
+1. **Choose the Right Category**:
+   - **Primitives** (`src/components/primitives/`): Low-level building blocks (Button, Badge, Flex, Grid)
+   - **Composites** (`src/components/composites/`): Mid-level composed components (Card, Hero, FeatureGrid)
+   - **Features** (`src/components/features/`): Domain-specific components (BlogPostCard, ProjectCard)
+   - **UI** (`src/components/ui/`): Specialized interactive components (SearchOverlay, PhotoCarousel)
+
+2. **Component Structure**:
+   ```astro
+   ---
+   /**
+    * ComponentName - One-line description
+    * 
+    * Detailed description with usage notes.
+    * 
+    * @example
+    * <ComponentName variant="primary" size="md">
+    *   Content
+    * </ComponentName>
+    * 
+    * @accessibility
+    * - Keyboard navigation support
+    * - Screen reader compatible
+    * - Focus management included
+    */
+   
+   export interface Props {
+     /** Prop description with type and default */
+     variant?: 'default' | 'primary' | 'secondary';
+     size?: 'sm' | 'md' | 'lg';
+   }
+   
+   const { variant = 'default', size = 'md' } = Astro.props;
+   ---
+   
+   <!-- Component implementation -->
+   ```
+
+3. **Documentation Requirements**:
+   - [ ] JSDoc header comment with description and examples
+   - [ ] TypeScript Props interface with JSDoc for each prop
+   - [ ] Accessibility notes documenting keyboard, screen reader, focus
+   - [ ] At least 2 usage examples (basic + advanced)
+   - [ ] Related components linked
+
+4. **Testing Requirements**:
+   - [ ] Create test file in `tests/vitest/ComponentName.test.ts`
+   - [ ] Test structure, props, accessibility, styling
+   - [ ] Verify TypeScript types and interfaces
+   - [ ] Document interactive behavior
+   - [ ] 100% pass rate before committing
+
+### Type System
+
+Use centralized types from `src/types/` (see `docs/TYPE_SYSTEM.md`):
+
+```typescript
+// ✅ Good - Centralized types
+import type { BlogPost, Project, APIResponse } from '@/types';
+
+// ❌ Avoid - Inline type definitions
+import type { CollectionEntry } from 'astro:content';
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+```
+
+**Available Type Modules**:
+- `@/types/core` - Configuration, events, performance, UI state
+- `@/types/content` - Blog posts, projects, search, tags
+- `@/types/api` - API responses, forms, validation, email
+
+### Component Best Practices
+
+1. **Props Design**:
+   - Use TypeScript interfaces with JSDoc comments
+   - Provide sensible defaults
+   - Use union types for variants (`'default' | 'primary'`)
+   - Avoid boolean prop explosion (use variants instead)
+
+2. **Composition Over Complexity**:
+   - Build composites from primitives
+   - Use slots for flexible content
+   - Keep components focused (single responsibility)
+   - Extract shared patterns into reusable primitives
+
+3. **Styling**:
+   - Use Tailwind utilities only (no custom CSS)
+   - Follow design token system (`src/styles/global.css`)
+   - Support dark mode with `dark:` variants
+   - Include responsive breakpoints (`sm:`, `md:`, `lg:`)
+   - Add focus-visible styles for accessibility
+
+4. **Accessibility**:
+   - Use semantic HTML elements
+   - Include ARIA attributes when needed
+   - Support keyboard navigation (Tab, Enter, Escape)
+   - Provide focus-visible styles
+   - Test with screen readers and axe DevTools
+
+5. **Performance**:
+   - Prefer static Astro components
+   - Use client-side JavaScript only when necessary
+   - Optimize images with OptimizedImage component
+   - Minimize bundle size (tree-shakeable exports)
+
+### Component Barrel Exports
+
+Add new components to appropriate index files:
+
+```typescript
+// src/components/primitives/index.ts
+export { default as NewPrimitive } from './NewPrimitive.astro';
+
+// src/components/composites/index.ts
+export { default as NewComposite } from './NewComposite.astro';
+```
+
+### Component Documentation
+
+After creating a component:
+
+1. Ensure JSDoc comments are complete
+2. Add usage examples to component header
+3. Document in `docs/COMPONENT_DOCUMENTATION_GUIDE.md` if it's a commonly used pattern
+4. Create tests validating documented behavior
+
+### Component Checklist
+
+Before committing a new component:
+
+- [ ] Component placed in correct directory (primitives/composites/features/ui)
+- [ ] JSDoc header with description and examples
+- [ ] TypeScript Props interface fully documented
+- [ ] Accessibility section complete
+- [ ] Tests created with 100% pass rate
+- [ ] Added to appropriate index.ts barrel export
+- [ ] Uses centralized types from `@/types`
+- [ ] Follows design token system
+- [ ] No ESLint errors
+- [ ] Build succeeds (`pnpm build`)
+- [ ] Documentation reviewed
+
 ## Performance & Budgets
 
 - Budgets enforced during build; investigate increases immediately.
