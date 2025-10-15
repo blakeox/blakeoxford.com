@@ -238,13 +238,13 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       <div
         ref={mobileMenuRef}
         id="nav-mobile-links"
-        className="mobile-menu absolute left-0 right-0 top-full md:hidden pointer-events-none z-[2147483646] shadow-lg"
+        className="mobile-menu absolute left-0 right-0 top-full md:hidden pointer-events-none z-[2147483646] shadow-lg bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700"
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation menu"
       >
   <div
-  className="mobile-menu-content flex w-full flex-col gap-2 bg-[--surface] text-[--fg] px-5 py-4 border-t border-[--border]/40"
+  className="mobile-menu-content flex w-full flex-col gap-2 px-5 py-4 text-slate-900 dark:text-slate-100"
     onClick={(e) => {
       // Prevent clicks inside the panel from being treated as outside clicks.
       e.stopPropagation();

@@ -176,9 +176,14 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
   }
 
   if (burgerButton && mobileMenu) {
-    const openHandler = (event: Event) => {
+    const toggleHandler = (event: Event) => {
       event.preventDefault();
-  openMobileMenu(mobileMenu, burgerButton);
+      // Toggle: if menu is active, close it; otherwise, open it
+      if (mobileMenu.classList.contains('active')) {
+        closeMobileMenu(mobileMenu, burgerButton);
+      } else {
+        openMobileMenu(mobileMenu, burgerButton);
+      }
     };
 
     const closeHandler = (event: Event) => {
@@ -186,8 +191,8 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
   closeMobileMenu(mobileMenu, burgerButton);
     };
 
-    burgerButton.addEventListener('click', openHandler);
-    cleanupFns.push(() => burgerButton.removeEventListener('click', openHandler));
+    burgerButton.addEventListener('click', toggleHandler);
+    cleanupFns.push(() => burgerButton.removeEventListener('click', toggleHandler));
 
     // Delegated capture-phase handler on the menu container to catch any clicks on the close button
     const delegatedMenuClickCapture = (event: Event) => {
