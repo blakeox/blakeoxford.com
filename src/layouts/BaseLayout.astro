@@ -19,6 +19,13 @@ const {
   keywords = '',
 } = Astro.props;
 
+// Sanitize description: remove extra whitespace, replace Unicode with ASCII for Lighthouse compatibility
+const metaDescription = String(description || '')
+  .replace(/\s+/g, ' ')
+  .replace(/—/g, '-')  // em dash to hyphen
+  .replace(/‑/g, '-')  // non-breaking hyphen to hyphen
+  .trim();
+
 // Compute base site href from astro.config.mjs or fallback (string only)
 const siteHref = (Astro.site?.href ?? 'https://blakeoxford.com').replace(/\/$/, '');
 // Compute canonical URL: prefer explicit url prop; else use Astro.url (absolute when site is set)
@@ -53,7 +60,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="alternate" type="application/rss+xml" title="Blake Oxford RSS" href="/rss.xml" />
     <title>{title}</title>
-    <meta name="description" content={description?.replace(/\s+/g, ' ').trim() || description} />
+    <meta name="description" content={metaDescription} />
     {keywords && <meta name="keywords" content={keywords} />}
     <meta name="author" content="Blake Oxford" />
     <meta name="creator" content="Blake Oxford" />
