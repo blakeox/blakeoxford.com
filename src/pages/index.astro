@@ -57,9 +57,8 @@ function deriveImageData(imgPath?: string) {
 }
 ---
 <Layout title="Blake Oxford - Leadership & Portfolio" description="Systems architect and workflow strategist turning complexity into opportunity—designing scalable systems, streamlining operations, and leading high‑stakes transformations that deliver lasting results." wide={true}>
-  <!-- Preload hero LCP image variants to improve LCP -->
-  <link slot="head" rel="preload" as="image" href="/assets/images/optimized/avif/Blake-O-scaled@640w.avif" imagesrcset="/assets/images/optimized/avif/Blake-O-scaled@320w.avif 320w, /assets/images/optimized/avif/Blake-O-scaled@640w.avif 640w, /assets/images/optimized/avif/Blake-O-scaled@768w.avif 768w" imagesizes="280px" type="image/avif" fetchpriority="high" />
-  <link slot="head" rel="preload" as="image" href="/assets/images/optimized/webp/Blake-O-scaled@640w.webp" imagesrcset="/assets/images/optimized/webp/Blake-O-scaled@320w.webp 320w, /assets/images/optimized/webp/Blake-O-scaled@640w.webp 640w, /assets/images/optimized/webp/Blake-O-scaled@768w.webp 768w" imagesizes="280px" type="image/webp" fetchpriority="high" />
+  <!-- Preload hero LCP image (single optimal size) -->
+  <link slot="head" rel="preload" as="image" href="/assets/images/optimized/avif/Blake-O-scaled@640w.avif" type="image/avif" fetchpriority="high" />
   <!-- Decorative background shapes -->
   <div class="fixed inset-0 -z-10 pointer-events-none">
     <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />

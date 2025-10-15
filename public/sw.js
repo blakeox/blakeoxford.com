@@ -63,6 +63,10 @@ function cacheFirst(request) {
         caches.open(STATIC_CACHE).then((cache) => cache.put(request, copy));
       }
       return response;
+    }).catch((error) => {
+      // Fail silently for fetch errors (network issues, CORS, etc.)
+      console.warn('Fetch failed for:', request.url, error);
+      return new Response('', { status: 404, statusText: 'Not Found' });
     });
   });
 }
