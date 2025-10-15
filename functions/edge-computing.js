@@ -88,9 +88,10 @@ const WorkerApp = {
     
     const url = new URL(request.url);
     
-    // Let Cloudflare's special /cdn-cgi/ paths pass through (Zaraz, challenge-platform, etc.)
+    // Let Cloudflare's special /cdn-cgi/ paths pass through to origin (Zaraz, challenge-platform, etc.)
+    // These are handled by Cloudflare's edge infrastructure, not our Worker
     if (url.pathname.startsWith('/cdn-cgi/')) {
-      return env.ASSETS.fetch(request);
+      return fetch(request);
     }
     
     const method = request.method || 'GET';
