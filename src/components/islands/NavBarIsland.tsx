@@ -249,60 +249,47 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       <div
         ref={mobileMenuRef}
         id="nav-mobile-links"
-        className="mobile-menu fixed inset-0 md:hidden pointer-events-auto z-[2147483646]"
+        className="mobile-menu absolute left-0 right-0 top-full md:hidden pointer-events-auto z-[2147483646] shadow-lg"
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation menu"
       >
   <div
-  className="mobile-menu-backdrop fixed inset-0 bg-[color:rgb(0_0_0_/_0.4)] z-[2147483646] pointer-events-auto"
-    onClick={() => {
-      // Let outside click handler close via document listener; don't stop propagation.
-    }}
-  />
-  <div
-  className="mobile-menu-content fixed inset-y-0 right-0 z-[2147483647] flex w-80 max-w-[85vw] flex-col gap-6 bg-[--surface] text-[--fg] px-5 py-6 shadow-2xl pointer-events-auto"
+  className="mobile-menu-content flex w-full flex-col gap-2 bg-[--surface] text-[--fg] px-5 py-4 border-t border-[--border]/40 pointer-events-auto"
     onClick={(e) => {
       // Prevent clicks inside the panel from being treated as outside clicks.
       e.stopPropagation();
     }}
   >
-          <div className="mobile-menu-header flex items-center justify-between">
-            <button
-              id="close-mobile-menu"
-              ref={closeButtonRef}
-              type="button"
-              className="mobile-close-button inline-flex size-10 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] pointer-events-auto touch-manipulation"
-              aria-label="Close navigation menu"
-              onClick={() => {
-                try {
-                  const menu = document.getElementById('nav-mobile-links');
-                  const burger = document.getElementById('nav-toggle');
-                  if (menu) {
-                    menu.classList.remove('active');
-                    menu.style.visibility = 'hidden';
-                    (menu as HTMLElement).inert = true;
-                  }
-                  if (burger) {
-                    burger.setAttribute('aria-expanded', 'false');
-                    burger.classList.remove('active');
-                    burger.style.pointerEvents = '';
-                  }
-                  // Restore body scroll just in case
-                  document.body.style.overflow = '';
-                  document.body.style.position = '';
-                  document.body.style.width = '';
-                } catch {
-                  // no-op
+          <button
+            id="close-mobile-menu"
+            ref={closeButtonRef}
+            type="button"
+            className="mobile-close-button sr-only"
+            aria-label="Close navigation menu"
+            onClick={() => {
+              try {
+                const menu = document.getElementById('nav-mobile-links');
+                const burger = document.getElementById('nav-toggle');
+                if (menu) {
+                  menu.classList.remove('active');
+                  menu.style.visibility = 'hidden';
+                  (menu as HTMLElement).inert = true;
                 }
-              }}
-            >
-              <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="m6 18 12-12M6 6l12 12" />
-              </svg>
-            </button>
-            <span className="text-sm font-semibold tracking-wide text-foreground/75">Menu</span>
-          </div>
+                if (burger) {
+                  burger.setAttribute('aria-expanded', 'false');
+                  burger.classList.remove('active');
+                  burger.style.pointerEvents = '';
+                }
+                // Restore body scroll just in case
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+              } catch {
+                // no-op
+              }
+            }}
+          />
           <ul className="mobile-nav flex flex-col gap-1" role="menubar">
             {links.map((link) => (
               <li className="mobile-nav-item" role="none" key={`mobile-${link.href}`}>
