@@ -167,9 +167,9 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
                 src={logo.avatar.avif || logo.avatar.webp || logo.avatar.jpg}
                 alt=""
                 aria-hidden="true"
-                className="brand-avatar size-9"
-                width={36}
-                height={36}
+                className="brand-avatar size-9 object-cover"
+                width={640}
+                height={640}
                 loading="lazy"
                 decoding="async"
               />
