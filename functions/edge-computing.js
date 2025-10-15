@@ -87,6 +87,12 @@ const WorkerApp = {
     const Sentry = initEdgeSentry(env);
     
     const url = new URL(request.url);
+    
+    // Let Cloudflare's special /cdn-cgi/ paths pass through (Zaraz, challenge-platform, etc.)
+    if (url.pathname.startsWith('/cdn-cgi/')) {
+      return env.ASSETS.fetch(request);
+    }
+    
     const method = request.method || 'GET';
     const reqId = (() => {
       try {
