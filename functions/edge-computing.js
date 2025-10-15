@@ -149,6 +149,7 @@ const WorkerApp = {
 
     if (url.pathname === '/robots.txt') {
       // Serve hardcoded robots.txt to prevent Cloudflare managed content injection
+      // Note: Cloudflare may still inject managed content via Bot Fight Mode at edge
       const robotsTxt = `User-agent: *
 Allow: /
 Disallow: /api/
@@ -161,6 +162,8 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         headers: {
           'content-type': 'text/plain; charset=utf-8',
           'cache-control': 'public, max-age=300, no-transform',
+          'cf-robots-txt': 'bypass',  // Attempt to bypass Cloudflare injection
+          'x-robots-tag': 'none',     // Prevent additional bot control
           'x-request-id': reqId,
           'x-route-kind': 'asset',
           'x-cache-policy': 'public, max-age=300, no-transform'
