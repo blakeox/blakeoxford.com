@@ -148,19 +148,24 @@ const WorkerApp = {
     }
 
     if (url.pathname === '/robots.txt') {
-      try {
-        let robots = await env.ASSETS.fetch(request);
-        if (!robots.ok) return robots;
-        const headers = new Headers(robots.headers);
-        headers.set('content-type', 'text/plain; charset=utf-8');
-        headers.set('cache-control', 'public, max-age=300, no-transform');
-        headers.set('x-request-id', reqId);
-        headers.set('x-route-kind', 'asset');
-        headers.set('x-cache-policy', headers.get('cache-control') || '');
-        return new Response(robots.body, { status: robots.status, statusText: robots.statusText, headers });
-      } catch {
-        return new Response('User-agent: *\nAllow: /\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300, no-transform', 'x-request-id': reqId, 'x-route-kind': 'asset', 'x-cache-policy': 'public, max-age=300, no-transform' } });
-      }
+      // Serve hardcoded robots.txt to prevent Cloudflare managed content injection
+      const robotsTxt = `User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /search/
+
+Sitemap: https://blakeoxford.com/sitemap.xml`;
+      
+      return new Response(robotsTxt, {
+        status: 200,
+        headers: {
+          'content-type': 'text/plain; charset=utf-8',
+          'cache-control': 'public, max-age=300, no-transform',
+          'x-request-id': reqId,
+          'x-route-kind': 'asset',
+          'x-cache-policy': 'public, max-age=300, no-transform'
+        }
+      });
     }
 
     // CSP violation report collection endpoint
