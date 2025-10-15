@@ -135,7 +135,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   };
 
   return (
-    <div className="sticky top-0 z-50 border-b border-[--border]/40 bg-[--bg]/90 backdrop-blur supports-[backdrop-filter]:bg-[--bg]/65">
+  <div className="sticky top-0 z-50 border-b border-[--border]/40 bg-[color:var(--glass-surface-bg)] dark:bg-[color:var(--glass-surface-bg-dark)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)] dark:supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-dark-xl)]">
   <nav
         id="navbar"
         ref={navRef}
@@ -285,7 +285,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
                 <a
                   href={link.href}
                   role="menuitem"
-                  className="mobile-nav-link block rounded-xl px-3 py-2 text-base font-semibold text-[--fg]/80 transition hover:bg-[--bg]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
+                  className="mobile-nav-link block rounded-xl px-3 py-2 text-base font-semibold text-[--fg]/80 transition hover:bg-[color:var(--glass-surface-bg)] dark:hover:bg-[color:var(--glass-surface-bg-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
                   aria-current={isActive(link.href) ? 'page' : undefined}
                 >
                   {link.label}
