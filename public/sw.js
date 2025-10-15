@@ -36,6 +36,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip Cloudflare infrastructure paths (Zaraz, challenges, etc.)
+  if (url.pathname.startsWith('/cdn-cgi/')) {
+    return;
+  }
+
   if (url.pathname === '/_healthz' || url.pathname === '/metrics') {
     return;
   }
