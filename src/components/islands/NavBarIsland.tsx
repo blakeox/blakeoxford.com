@@ -79,21 +79,10 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
 
       if (mobileMenuRef.current) {
         mobileMenuRef.current.setAttribute('inert', '');
-        // Hide until opened to avoid accidental focus
-        (mobileMenuRef.current as HTMLElement).style.visibility = 'hidden';
-        // Ensure the mobile menu is portaled to the document body to avoid header stacking context conflicts
-        try {
-          const menuEl = mobileMenuRef.current as HTMLElement;
-          if (menuEl && menuEl.parentElement && menuEl.parentElement.tagName.toLowerCase() !== 'body') {
-            document.body.appendChild(menuEl);
-            menuEl.dataset.portaled = 'true';
-          }
-        } catch (e) {
-          // no-op: if portal fails, we keep the menu in place
-          if (typeof console !== 'undefined') {
-            console.debug('[NavBarIsland] mobile menu portal skipped', e);
-          }
-        }
+        // Hide until opened to avoid accidental focus and pointer interference
+        const menuEl = mobileMenuRef.current as HTMLElement;
+        menuEl.style.visibility = 'hidden';
+        menuEl.style.pointerEvents = 'none';
       }
 
       const cleanupNav = registerModernNavBar({
@@ -249,13 +238,13 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       <div
         ref={mobileMenuRef}
         id="nav-mobile-links"
-        className="mobile-menu absolute left-0 right-0 top-full md:hidden pointer-events-auto z-[2147483646] shadow-lg"
+        className="mobile-menu absolute left-0 right-0 top-full md:hidden pointer-events-none z-[2147483646] shadow-lg"
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation menu"
       >
   <div
-  className="mobile-menu-content flex w-full flex-col gap-2 bg-[--surface] text-[--fg] px-5 py-4 border-t border-[--border]/40 pointer-events-auto"
+  className="mobile-menu-content flex w-full flex-col gap-2 bg-[--surface] text-[--fg] px-5 py-4 border-t border-[--border]/40"
     onClick={(e) => {
       // Prevent clicks inside the panel from being treated as outside clicks.
       e.stopPropagation();

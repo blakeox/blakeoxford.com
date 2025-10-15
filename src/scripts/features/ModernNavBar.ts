@@ -102,6 +102,7 @@ function openMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
   if (!menu || !toggle) return;
   menu.inert = false;
   menu.style.visibility = '';
+  menu.style.pointerEvents = 'auto';
   menu.classList.add('active');
   toggle.setAttribute('aria-expanded', 'true');
   toggle.classList.add('active');
@@ -125,6 +126,7 @@ function closeMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
   setTimeout(() => {
     if (!menu.classList.contains('active')) {
       menu.style.visibility = 'hidden';
+      menu.style.pointerEvents = 'none';
       menu.inert = true;
     }
   }, 250);
