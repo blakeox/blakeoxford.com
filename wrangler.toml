@@ -49,6 +49,7 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 # Public variables (not sensitive)
 # Add ENVIRONMENT variable for Sentry context
 # ENVIRONMENT = "production"
+AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/autorag/rags/bold-heart-18e4/ai-search"
 
 [observability.logs]
 enabled = true

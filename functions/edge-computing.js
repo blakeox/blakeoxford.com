@@ -59,6 +59,79 @@ class EdgeCacheManager {
   }
 }
 
+const SOURCE_CATEGORY_ICONS = {
+  'Project': '🛠️',
+  'Case Study': '📊',
+  'Blog Post': '📝',
+  'Page': '📎'
+};
+
+function normalizeDateToIso(value) {
+  if (!value || (typeof value !== 'string' && typeof value !== 'number')) return undefined;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date.toISOString();
+}
+
+function inferCollectionFromPath(pathname) {
+  if (!pathname) return 'Page';
+  const lower = pathname.toLowerCase();
+  if (lower.startsWith('/projects') || lower.includes('/project')) return 'Project';
+  if (lower.includes('case-study')) return 'Case Study';
+  if (lower.startsWith('/blog') || lower.startsWith('/posts')) return 'Blog Post';
+  if (lower.includes('/docs') || lower.includes('/guides')) return 'Guide';
+  return 'Page';
+}
+
+function pickSummaryCandidate(entry, attributes, metadata) {
+  const candidates = [
+    attributes?.summary,
+    metadata?.summary,
+    metadata?.description,
+    metadata?.excerpt,
+    attributes?.description,
+    entry?.summary,
+    entry?.description,
+    entry?.headline
+  ];
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+  return undefined;
+}
+
+function buildSourceMetadata(rawUrl, entry) {
+  try {
+    const url = new URL(rawUrl, 'https://blakeoxford.com');
+    const attributes = entry?.attributes && typeof entry.attributes === 'object' ? entry.attributes : {};
+    const metadata = attributes?.metadata && typeof attributes.metadata === 'object' ? attributes.metadata : {};
+    const fileMeta = attributes?.file && typeof attributes.file === 'object' ? attributes.file : {};
+    const publishedCandidate =
+      metadata?.publishedAt ||
+      metadata?.published_at ||
+      metadata?.date ||
+      fileMeta?.publishedAt ||
+      fileMeta?.published_at ||
+      fileMeta?.date ||
+      entry?.published_at ||
+      entry?.created_at ||
+      entry?.date;
+    const summary = pickSummaryCandidate(entry, attributes, metadata);
+    const collection = metadata?.collection || attributes?.collection || inferCollectionFromPath(url.pathname);
+    const icon = SOURCE_CATEGORY_ICONS[collection] || SOURCE_CATEGORY_ICONS[inferCollectionFromPath(url.pathname)] || '📎';
+    return {
+      collection,
+      icon,
+      publishedAt: normalizeDateToIso(publishedCandidate),
+      summary
+    };
+  } catch {
+    return { collection: 'Page', icon: '📎', publishedAt: undefined, summary: undefined };
+  }
+}
+
 const WorkerApp = {
   isAuditRequest(req) {
     try {
@@ -268,6 +341,272 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         h.set('x-cache-policy', cc);
         return new Response(res.body, { status: res.status, statusText: res.statusText, headers: h });
       } catch { return res; }
+    }
+
+    if (url.pathname === '/api/ai-search') {
+      const origin = request.headers.get('origin') || '*';
+      const baseCorsHeaders = {
+        'access-control-allow-origin': origin,
+        'access-control-allow-credentials': 'true',
+        'access-control-allow-methods': 'POST, OPTIONS',
+        'access-control-allow-headers': 'content-type, authorization',
+        'vary': 'Origin',
+        'cache-control': 'no-store',
+        'content-type': 'application/json; charset=utf-8',
+        'x-request-id': reqId,
+        'x-route-kind': 'api',
+        'x-cache-policy': 'no-store'
+      };
+
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: baseCorsHeaders });
+      }
+
+      if (request.method !== 'POST') {
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: baseCorsHeaders });
+      }
+
+      let payload;
+      try {
+        payload = await request.json();
+      } catch {
+        return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), { status: 400, headers: baseCorsHeaders });
+      }
+
+      const query = typeof payload?.query === 'string'
+        ? payload.query.trim()
+        : typeof payload?.prompt === 'string'
+          ? payload.prompt.trim()
+          : typeof payload?.question === 'string'
+            ? payload.question.trim()
+            : '';
+      if (!query) {
+        return new Response(JSON.stringify({ error: 'Query is required' }), { status: 400, headers: baseCorsHeaders });
+      }
+
+      const history = Array.isArray(payload?.history)
+        ? payload.history
+            .filter((entry) => entry && typeof entry === 'object' && typeof entry.role === 'string' && typeof entry.content === 'string')
+            .slice(-10)
+        : [];
+
+      const upstreamEndpoint = env.AI_SEARCH_API_ENDPOINT;
+      const upstreamToken = env.AI_SEARCH_API_TOKEN;
+
+      const wantsStream = payload?.stream === true || ((request.headers.get('accept') || '')
+        .toLowerCase()
+        .includes('text/event-stream'));
+
+      if (!upstreamEndpoint || !upstreamToken) {
+        return new Response(JSON.stringify({ error: 'AI search service not configured' }), { status: 503, headers: baseCorsHeaders });
+      }
+
+      try {
+        const requestBody = { query, history };
+        const upstreamResponse = await fetch(upstreamEndpoint, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'authorization': `Bearer ${upstreamToken}`
+          },
+          body: JSON.stringify(requestBody),
+          cf: { cacheTtl: 0, cacheEverything: false }
+        });
+
+        if (!upstreamResponse.ok) {
+          let errorDetail = 'Upstream service error';
+          try {
+            const upstreamError = await upstreamResponse.json();
+            if (typeof upstreamError?.error === 'string') {
+              errorDetail = upstreamError.error;
+            }
+          } catch {
+            const upstreamText = await upstreamResponse.text();
+            if (upstreamText) errorDetail = upstreamText.slice(0, 200);
+          }
+          return new Response(JSON.stringify({ error: errorDetail }), { status: upstreamResponse.status, headers: baseCorsHeaders });
+        }
+
+        let upstreamData;
+        try {
+          upstreamData = await upstreamResponse.json();
+        } catch {
+          return new Response(JSON.stringify({ error: 'Invalid response from AI service' }), { status: 502, headers: baseCorsHeaders });
+        }
+
+        if (upstreamData && typeof upstreamData === 'object' && upstreamData.success === false) {
+          const upstreamError = typeof upstreamData?.errors?.[0]?.message === 'string' ? upstreamData.errors[0].message : 'AI search service reported an error';
+          return new Response(JSON.stringify({ error: upstreamError }), { status: 502, headers: baseCorsHeaders });
+        }
+
+        const result = upstreamData?.result && typeof upstreamData.result === 'object' ? upstreamData.result : upstreamData;
+        const message = typeof result?.response === 'string'
+          ? result.response.trim()
+          : typeof upstreamData?.response === 'string'
+            ? upstreamData.response.trim()
+            : '';
+
+        const sources = Array.isArray(result?.data)
+          ? result.data
+              .map((entry, index) => {
+                if (!entry || typeof entry !== 'object') return null;
+                const attributes = entry.attributes && typeof entry.attributes === 'object' ? entry.attributes : {};
+                const fileMeta = attributes.file && typeof attributes.file === 'object' ? attributes.file : {};
+                const rawUrl = typeof entry.filename === 'string' && entry.filename
+                  ? entry.filename
+                  : typeof attributes.folder === 'string'
+                    ? attributes.folder
+                    : '';
+                if (!rawUrl) return null;
+                const titleCandidate = typeof fileMeta.title === 'string' && fileMeta.title.trim()
+                  ? fileMeta.title.trim()
+                  : typeof attributes.folder === 'string' && attributes.folder.trim()
+                    ? attributes.folder.trim()
+                    : `Source ${index + 1}`;
+                let snippet;
+                if (Array.isArray(entry.content)) {
+                  const contentItem = entry.content.find((item) => item && typeof item === 'object' && typeof item.text === 'string' && item.text.trim());
+                  if (contentItem && typeof contentItem.text === 'string') {
+                    snippet = contentItem.text.trim().slice(0, 320);
+                  }
+                }
+                const score = typeof entry.score === 'number' ? entry.score : undefined;
+                const metadata = buildSourceMetadata(rawUrl, entry);
+                const sourcePayload = {
+                  title: titleCandidate,
+                  url: rawUrl,
+                };
+                if (snippet) {
+                  sourcePayload.snippet = snippet;
+                }
+                if (typeof score === 'number') {
+                  sourcePayload.score = score;
+                }
+                if (metadata.collection) {
+                  sourcePayload.collection = metadata.collection;
+                }
+                if (metadata.icon) {
+                  sourcePayload.icon = metadata.icon;
+                }
+                if (metadata.publishedAt) {
+                  sourcePayload.publishedAt = metadata.publishedAt;
+                }
+                if (metadata.summary) {
+                  sourcePayload.summary = metadata.summary;
+                }
+                return sourcePayload;
+              })
+              .filter((value) => Boolean(value))
+          : [];
+
+        if (!message) {
+          return new Response(JSON.stringify({ error: 'AI service returned no message' }), { status: 502, headers: baseCorsHeaders });
+        }
+
+        if (wantsStream) {
+          const streamHeaders = new Headers(baseCorsHeaders);
+          streamHeaders.set('content-type', 'text/event-stream; charset=utf-8');
+          streamHeaders.set('cache-control', 'no-store');
+          const encoder = new globalThis.TextEncoder();
+          const sleep = (ms) => (typeof globalThis.setTimeout === 'function'
+            ? new Promise((resolve) => globalThis.setTimeout(resolve, ms))
+            : Promise.resolve());
+          const stream = new globalThis.ReadableStream({
+            async start(controller) {
+              const send = (eventName, data) => {
+                const payloadString = data !== undefined ? JSON.stringify(data) : '';
+                const chunk = `event: ${eventName}\n${payloadString ? `data: ${payloadString}\n` : ''}\n`;
+                controller.enqueue(encoder.encode(chunk));
+              };
+              send('ready');
+              const tokens = message.split(/(\s+)/).filter((part) => Boolean(part));
+              for (const token of tokens) {
+                send('token', { text: token });
+                await sleep(Math.min(120, 18 + token.length * 6));
+              }
+              if (Array.isArray(sources) && sources.length > 0) {
+                send('sources', sources);
+              }
+              send('done', { message });
+              controller.close();
+            },
+            cancel() {
+              return undefined;
+            }
+          });
+          return new Response(stream, { status: 200, headers: streamHeaders });
+        }
+
+        const responsePayload = JSON.stringify({ message, sources });
+        return new Response(responsePayload, { status: 200, headers: baseCorsHeaders });
+      } catch (error) {
+        let errorMessage = 'AI search request failed';
+        if (error instanceof Error && error.name === 'AbortError') {
+          errorMessage = 'AI search request timed out';
+        }
+        return new Response(JSON.stringify({ error: errorMessage }), { status: 504, headers: baseCorsHeaders });
+      }
+    }
+
+    if (url.pathname === '/api/ai-feedback') {
+      const origin = request.headers.get('origin') || '*';
+      const corsHeaders = {
+        'access-control-allow-origin': origin,
+        'access-control-allow-credentials': 'true',
+        'access-control-allow-methods': 'POST, OPTIONS',
+        'access-control-allow-headers': 'content-type',
+        'vary': 'Origin',
+        'cache-control': 'no-store',
+        'content-type': 'application/json; charset=utf-8',
+        'x-request-id': reqId,
+        'x-route-kind': 'api',
+        'x-cache-policy': 'no-store'
+      };
+
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: corsHeaders });
+      }
+
+      if (request.method !== 'POST') {
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders });
+      }
+
+      let payload;
+      try {
+        payload = await request.json();
+      } catch {
+        return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), { status: 400, headers: corsHeaders });
+      }
+
+      const messageId = typeof payload?.messageId === 'string' ? payload.messageId.trim() : '';
+      const sentiment = payload?.sentiment === 'positive' || payload?.sentiment === 'negative' ? payload.sentiment : undefined;
+      const query = typeof payload?.query === 'string' ? payload.query.slice(0, 500) : undefined;
+      const metadata = payload?.metadata && typeof payload.metadata === 'object' ? payload.metadata : {};
+
+      if (!messageId || !sentiment) {
+        return new Response(JSON.stringify({ error: 'Feedback submission missing data' }), { status: 400, headers: corsHeaders });
+      }
+
+      const record = {
+        id: messageId,
+        sentiment,
+        query,
+        metadata,
+        ts: Date.now()
+      };
+
+      try {
+        if (env.AI_FEEDBACK_KV && typeof env.AI_FEEDBACK_KV.put === 'function') {
+          const key = `feedback:${record.ts}:${record.id}`;
+          await env.AI_FEEDBACK_KV.put(key, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 30 });
+        } else {
+          console.log('AI feedback event', JSON.stringify(record));
+        }
+      } catch (error) {
+        console.error('AI feedback storage failed', error);
+      }
+
+      return new Response(JSON.stringify({ status: 'ok' }), { status: 200, headers: corsHeaders });
     }
 
     // Back-compat asset rewrite: maintain existing path if older HTML referenced it
