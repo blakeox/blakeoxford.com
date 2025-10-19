@@ -11,16 +11,22 @@ const GUIDED_PROMPTS = [
 	{
 		id: 'recent-work',
 		label: 'Latest case study',
+		description: 'See what shipped most recently and the impact it created.',
+		icon: '🆕',
 		prompt: 'What is Blake\'s latest case study and what were the key results?',
 	},
 	{
 		id: 'skills',
 		label: 'Technical stack',
+		description: 'Get a quick overview of systems, frameworks, and specialties.',
+		icon: '🛠️',
 		prompt: 'Summarize Blake\'s core technical skills and current focus areas.',
 	},
 	{
 		id: 'collaboration',
 		label: 'Ways to collaborate',
+		description: 'Explore engagement models and how to start a project together.',
+		icon: '🤝',
 		prompt: 'How can I collaborate with Blake on a new project?',
 	},
 ];
@@ -233,6 +239,12 @@ export default function AIChatIsland() {
 	const [isListening, setIsListening] = useState(false);
 	const [interimTranscript, setInterimTranscript] = useState('');
 	const [fallbackResults, setFallbackResults] = useState<SearchFallback[]>([]);
+	const siteHostname = useMemo(() => {
+		if (typeof window !== 'undefined') {
+			return window.location.hostname;
+		}
+		return 'blakeoxford.com';
+	}, []);
 
 	const panelRef = useRef<HTMLDivElement | null>(null);
 	const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -983,7 +995,7 @@ export default function AIChatIsland() {
 
 			<div
 				ref={panelRef}
-				className={`ai-chat-panel pointer-events-auto w-[min(90vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/40 bg-[color:var(--surface)]/95 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/90 transition-transform duration-200 ease-out ${
+				className={`ai-chat-panel pointer-events-auto w-[min(90vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 shadow-[0_18px_45px_-18px_rgba(15,23,42,0.65)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/80 transition-transform duration-200 ease-out ${
 					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
 				}`}
 				role="dialog"
@@ -1037,14 +1049,18 @@ export default function AIChatIsland() {
 					</div>
 				</div>
 
-				{showAdvancedControls && (
-					<div className="border-b border-[color:var(--border)]/30 bg-[color:var(--surface-subtle)]/35 px-4 py-3 text-xs text-[color:var(--fg)]/70">
+				<div
+					className={`border-b border-[color:var(--border)]/30 bg-[color:var(--surface-subtle)]/35 px-4 py-0 text-xs text-[color:var(--fg)]/70 transition-[max-height,opacity,padding] duration-300 ease-out ${
+						showAdvancedControls ? 'max-h-[24rem] py-3 opacity-100' : 'max-h-0 opacity-0'
+					}`}
+				>
+					<div className={`flex flex-col gap-3 ${showAdvancedControls ? 'pointer-events-auto' : 'pointer-events-none'}`}>
 						<div className="flex flex-wrap items-center gap-2">
 							<button
 								type="button"
 								className={`inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50 ${
-									useMemory ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : ''
-								}`}
+								useMemory ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : ''
+							}`}
 								aria-label={useMemory ? 'Disable conversation memory' : 'Enable conversation memory'}
 								onClick={toggleMemory}
 							>
@@ -1053,8 +1069,8 @@ export default function AIChatIsland() {
 							<button
 								type="button"
 								className={`inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50 ${
-									showDigest ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : ''
-								}`}
+								showDigest ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : ''
+							}`}
 								aria-label={showDigest ? 'Hide conversation digest' : 'Show conversation digest'}
 								onClick={toggleDigest}
 							>
@@ -1063,8 +1079,8 @@ export default function AIChatIsland() {
 							<button
 								type="button"
 								className={`inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50 ${
-									showAnalytics ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : ''
-								}`}
+								showAnalytics ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : ''
+							}`}
 								aria-label={showAnalytics ? 'Hide insights' : 'Show insights'}
 								onClick={toggleAnalytics}
 							>
@@ -1079,7 +1095,7 @@ export default function AIChatIsland() {
 							</button>
 						</div>
 						{feedbackAnalytics.totalAssistant > 0 && (
-							<div className="mt-3 flex flex-wrap items-center gap-3">
+							<div className="grid w-full gap-2 sm:grid-cols-2">
 								<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 									<span className="block text-[color:var(--fg)]/45">Assistant replies</span>
 									<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.totalAssistant}</span>
@@ -1101,22 +1117,31 @@ export default function AIChatIsland() {
 							</div>
 						)}
 					</div>
-				)}
+				</div>
 
 				{guidedPromptVisible && (
-					<div className="flex flex-wrap items-center gap-2 border-b border-[color:var(--border)]/20 bg-[color:var(--surface-subtle)]/20 px-4 py-2 text-[0.7rem] text-[color:var(--fg)]/65">
-						<span className="uppercase tracking-wide text-[color:var(--fg)]/45">Try asking</span>
-						{GUIDED_PROMPTS.map((prompt) => (
-							<button
-								key={prompt.id}
-								type="button"
-								className="truncate rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
-								onClick={() => handleGuidedPrompt(prompt.prompt)}
-								title={prompt.prompt}
-							>
-								{prompt.label}
-							</button>
-						))}
+					<div className="border-b border-[color:var(--border)]/20 bg-[color:var(--surface-subtle)]/20 px-4 py-3 text-[0.75rem] text-[color:var(--fg)]/70">
+						<div className="flex flex-col gap-0.5">
+							<span className="uppercase tracking-wide text-[0.7rem] text-[color:var(--fg)]/45">Jump in</span>
+							<span className="text-[color:var(--fg)]/60">Choose a suggested prompt to get a rich, sourced answer.</span>
+						</div>
+						<div className="mt-3 grid gap-2 sm:grid-cols-2">
+							{GUIDED_PROMPTS.map((prompt) => (
+								<button
+									key={prompt.id}
+									type="button"
+									className="group flex h-full flex-col items-start gap-2 rounded-2xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/70 px-3 py-3 text-left transition hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--surface)]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+									onClick={() => handleGuidedPrompt(prompt.prompt)}
+									title={prompt.prompt}
+								>
+									<span className="inline-flex size-8 items-center justify-center rounded-full bg-[color:var(--accent)]/10 text-base">
+										{prompt.icon}
+									</span>
+									<span className="text-sm font-semibold text-[color:var(--fg)] group-hover:text-[color:var(--accent-strong)]">{prompt.label}</span>
+									<span className="text-[0.7rem] text-[color:var(--fg)]/65">{prompt.description}</span>
+								</button>
+							))}
+						</div>
 					</div>
 				)}
 
@@ -1201,12 +1226,13 @@ export default function AIChatIsland() {
 						const primarySource = isAssistant && message.sources && message.sources[0] ? message.sources[0] : null;
 						const isHelpful = message.feedback === 'positive';
 						const isNotHelpful = message.feedback === 'negative';
+						const messageTextClasses = isAssistant ? 'text-[0.95rem] leading-relaxed' : 'text-[0.9rem] leading-snug';
 
 						return (
 							<div key={message.id} className={`flex flex-col gap-2 ${alignment}`}>
 								<div className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm shadow-sm ring-1 ring-[color:var(--border)]/20 dark:ring-[color:var(--border)]/30 ${bubbleClasses}`}>
 									<div className="flex flex-col gap-2">
-										<span className="whitespace-pre-wrap break-words">{bubbleContent || (isAssistant ? 'Thinking…' : '')}</span>
+										<span className={`whitespace-pre-wrap break-words ${messageTextClasses}`}>{bubbleContent || (isAssistant ? 'Thinking…' : '')}</span>
 										{isAssistant && message.sources && message.sources.length > 0 && (
 											<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
 												<span className="uppercase tracking-wide text-[color:var(--fg)]/45">Cited</span>
@@ -1235,6 +1261,17 @@ export default function AIChatIsland() {
 												const snippetSource = source.summary || source.snippet || '';
 												const snippet = snippetSource ? cleanSnippet(snippetSource) : '';
 												const publishedLabel = formatPublishedDate(source.publishedAt ?? undefined);
+												let isExternalLink = false;
+												try {
+													const parsed = source.url.startsWith('http')
+														? new URL(source.url)
+														: new URL(source.url, `https://${siteHostname}`);
+													isExternalLink = parsed.hostname !== siteHostname;
+												} catch {
+													isExternalLink = !source.url.startsWith('/');
+												}
+												const linkTarget = isExternalLink ? '_blank' : undefined;
+												const linkRel = isExternalLink ? 'noreferrer' : undefined;
 												return (
 													<li
 														key={`${message.id}-source-${index}`}
@@ -1249,12 +1286,22 @@ export default function AIChatIsland() {
 																}}
 																href={source.url}
 																tabIndex={0}
+																target={linkTarget}
+																rel={linkRel}
 																className="block max-w-full truncate text-[color:var(--accent)] underline decoration-dotted underline-offset-2 transition group-hover:text-[color:var(--accent-strong)]"
 															>
 																{displayTitle}
 															</a>
 															{source.collection && (
 																<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 text-[0.65rem] font-medium text-[color:var(--accent-strong)]">{source.collection}</span>
+															)}
+															{isExternalLink && (
+																<span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-2 py-0.5 text-[0.65rem] text-[color:var(--fg)]/60">
+																	External
+																	<svg className="size-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+																		<path strokeLinecap="round" strokeLinejoin="round" d="M7.5 5h7.06m0 0v7.06m0-7.06-8.12 8.12" />
+																	</svg>
+																</span>
 															)}
 															{publishedLabel && (
 																<time className="text-[0.65rem] text-[color:var(--fg)]/60" dateTime={source.publishedAt ?? undefined}>
@@ -1388,27 +1435,42 @@ export default function AIChatIsland() {
 					<label htmlFor="ai-chat-input" className="sr-only">
 						Ask the assistant
 					</label>
-					<textarea
-						id="ai-chat-input"
-						ref={inputRef}
-						className="h-20 w-full resize-none rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface)]/70 px-3 py-2 text-sm text-[color:var(--fg)] outline-none transition focus:border-[color:var(--accent)] focus:ring-2 focus:ring-[color:var(--accent)]/40"
-						placeholder="Ask about projects, case studies, or posts…"
-						value={inputValue}
-						onChange={(event) => setInputValue(event.target.value)}
-						onKeyDown={handleTextareaKeyDown}
-						disabled={chatState === 'loading'}
-						required
-						rows={3}
-					/>
-					<div className="mt-2 flex items-center justify-between text-xs text-[color:var(--fg)]/60">
-						<span>Press ⌘K / Ctrl+K or / to reopen quickly</span>
+					<div className="relative">
+						<textarea
+							id="ai-chat-input"
+							ref={inputRef}
+							className="h-24 w-full resize-none rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface)]/70 px-4 pb-3 pr-12 pt-3 text-sm text-[color:var(--fg)] outline-none transition focus:border-[color:var(--accent)] focus:ring-2 focus:ring-[color:var(--accent)]/40"
+							placeholder="Ask about projects, case studies, or posts…"
+							value={inputValue}
+							onChange={(event) => setInputValue(event.target.value)}
+							onKeyDown={handleTextareaKeyDown}
+							disabled={chatState === 'loading'}
+							required
+							rows={3}
+						/>
 						<button
 							type="submit"
-							className="inline-flex items-center gap-2 rounded-full bg-[color:var(--accent)] px-4 py-2 text-xs font-semibold text-[color:var(--on-accent)] transition hover:bg-[color:var(--accent-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/60 disabled:opacity-50"
+							className="absolute bottom-3 right-3 inline-flex size-9 items-center justify-center rounded-full bg-[color:var(--accent)] text-[color:var(--on-accent)] shadow-sm transition hover:bg-[color:var(--accent-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/60 disabled:opacity-50"
+							aria-label={chatState === 'loading' ? 'Sending message' : 'Send message'}
 							disabled={chatState === 'loading'}
 						>
-							{chatState === 'loading' ? 'Sending…' : 'Send'}
+							{chatState === 'loading' ? (
+								<svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+									<path strokeLinecap="round" strokeLinejoin="round" d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364 6.364-2.121-2.121M8.757 8.757 6.636 6.636m12.728 0-2.121 2.121M8.757 15.243l-2.121 2.121" />
+								</svg>
+							) : (
+								<svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+									<path strokeLinecap="round" strokeLinejoin="round" d="m5 12 4.5 3m0-6L5 12m13.5-7.5-13 7a1 1 0 0 0 0 1.8l13 7A1 1 0 0 0 20 20.5v-17a1 1 0 0 0-1.5-.9Z" />
+								</svg>
+							)}
 						</button>
+					</div>
+					<div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
+						<span>Shift+Enter for a new line</span>
+						<span className="flex gap-2">
+							<span className="whitespace-nowrap">⌘K / Ctrl+K reopens</span>
+							<span className="whitespace-nowrap">/ focuses input</span>
+						</span>
 					</div>
 				</form>
 			</div>

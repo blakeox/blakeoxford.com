@@ -158,15 +158,15 @@ const WorkerApp = {
   async fetch(request, env, ctx) {
     // Initialize Sentry for error tracking in edge function
     const Sentry = initEdgeSentry(env);
-    
+
     const url = new URL(request.url);
-    
+
     // Let Cloudflare's special /cdn-cgi/ paths pass through to origin (Zaraz, challenge-platform, etc.)
     // These are handled by Cloudflare's edge infrastructure, not our Worker
     if (url.pathname.startsWith('/cdn-cgi/')) {
       return fetch(request);
     }
-    
+
     const method = request.method || 'GET';
     const reqId = (() => {
       try {
@@ -236,7 +236,7 @@ Disallow: /api/
 Disallow: /search/
 
 Sitemap: https://blakeoxford.com/sitemap.xml`;
-      
+
       return new Response(robotsTxt, {
         status: 200,
         headers: {
@@ -664,7 +664,7 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
     try {
       const startTs = Date.now();
       console.log('\u27a1\ufe0f Request start', JSON.stringify({ id: reqId, method, path: url.pathname }));
-      
+
       // Add breadcrumb for request tracking
       addEdgeBreadcrumb({
         category: 'http',
@@ -672,7 +672,7 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         level: 'info',
         data: { reqId, method, path: url.pathname }
       });
-      
+
       let originResponse = await env.ASSETS.fetch(request);
 
       if (originResponse.status === 404 && !url.pathname.includes('.') && !url.pathname.endsWith('/index.html')) {
@@ -813,7 +813,7 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
 
     } catch (error) {
       const errStart = Date.now();
-      
+
       // Capture error to Sentry with context
       Sentry.captureException(error, {
         tags: {
@@ -826,10 +826,10 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           url: request.url,
         },
       });
-      
+
       // Keep existing console.error for Cloudflare logs
       console.error('Edge processing error:', JSON.stringify({ id: reqId, error: String(error), path: url.pathname }));
-      
+
       const staleResponse = await caches.default.match(request);
       if (staleResponse) return staleResponse;
       const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');

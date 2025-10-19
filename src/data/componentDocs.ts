@@ -1,6 +1,6 @@
 /**
  * Component Documentation Data
- * 
+ *
  * Centralized component documentation extracted from JSDoc comments.
  * Used by the component documentation page for searchable component library.
  */
@@ -77,7 +77,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['footer', 'navigation', 'social-links', 'layout'],
   },
-  
+
   // Feature Components
   {
     name: 'ProjectCard',
@@ -270,7 +270,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['education', 'card', 'about'],
   },
-  
+
   // UI Components
   {
     name: 'PhotoCarousel',
@@ -370,7 +370,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['image', 'optimization', 'performance', 'responsive'],
   },
-  
+
   // Island Components
   {
     name: 'NavBarIsland',
@@ -397,7 +397,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['react', 'island', 'navigation', 'interactive'],
   },
-  
+
   // Primitive Components
   {
     name: 'Badge',
