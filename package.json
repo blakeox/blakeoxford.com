@@ -105,7 +105,7 @@
     "@eslint/js": "^9.37.0",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.56.0",
-    "@rollup/rollup-linux-x64-gnu": "^4.52.4",
+    "@rollup/rollup-linux-x64-gnu": "^4.52.5",
     "@sentry/cli": "^2.56.1",
     "@stryker-mutator/core": "^9.2.0",
     "@stryker-mutator/vitest-runner": "^9.2.0",
