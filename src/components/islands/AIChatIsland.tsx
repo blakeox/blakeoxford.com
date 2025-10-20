@@ -239,6 +239,8 @@ export default function AIChatIsland() {
 	const [isListening, setIsListening] = useState(false);
 	const [interimTranscript, setInterimTranscript] = useState('');
 	const [fallbackResults, setFallbackResults] = useState<SearchFallback[]>([]);
+	const [showFallbackSuggestions, setShowFallbackSuggestions] = useState(false);
+	const [showScrollToLatest, setShowScrollToLatest] = useState(false);
 	const siteHostname = useMemo(() => {
 		if (typeof window !== 'undefined') {
 			return window.location.hostname;
@@ -263,6 +265,10 @@ export default function AIChatIsland() {
 	useEffect(() => {
 		messagesRef.current = messages;
 	}, [messages]);
+
+	useEffect(() => {
+		setShowFallbackSuggestions(false);
+	}, [fallbackResults]);
 
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
@@ -797,6 +803,15 @@ export default function AIChatIsland() {
 		[focusInput, openChat],
 	);
 
+	const scrollToLatest = useCallback(() => {
+		if (!scrollContainerRef.current) return;
+		scrollContainerRef.current.scrollTo({
+			top: scrollContainerRef.current.scrollHeight,
+			behavior: 'smooth',
+		});
+		setShowScrollToLatest(false);
+	}, []);
+
 	const retryLastQuery = useCallback(async () => {
 		if (!lastQueryRef.current || chatState === 'loading') return;
 		await sendQuery(lastQueryRef.current);
@@ -896,9 +911,25 @@ export default function AIChatIsland() {
 	}, [closeChat, isOpen, openChat]);
 
 	useEffect(() => {
-		if (!scrollContainerRef.current) return;
-		scrollContainerRef.current.scrollTo({ top: scrollContainerRef.current.scrollHeight });
-	}, [messages]);
+		const container = scrollContainerRef.current;
+		if (!container) return;
+		if (showScrollToLatest) return;
+		container.scrollTo({ top: container.scrollHeight });
+	}, [messages, showScrollToLatest]);
+
+	useEffect(() => {
+		const container = scrollContainerRef.current;
+		if (!container) return;
+		const updateVisibility = () => {
+			const distance = container.scrollHeight - (container.scrollTop + container.clientHeight);
+			setShowScrollToLatest(distance > 48);
+		};
+		updateVisibility();
+		container.addEventListener('scroll', updateVisibility);
+		return () => {
+			container.removeEventListener('scroll', updateVisibility);
+		};
+	}, [isOpen, messages]);
 
 	const recentQueries = useMemo(() => {
 		return messages
@@ -968,6 +999,9 @@ export default function AIChatIsland() {
 	sourceRefs.current = [];
 	const lastQueryValue = lastQueryRef.current;
 	const canRetry = Boolean(lastQueryValue) && chatState !== 'loading';
+	const fallbackPreviewLimit = 2;
+	const visibleFallbackResults = showFallbackSuggestions ? fallbackResults : fallbackResults.slice(0, fallbackPreviewLimit);
+	const hasMoreFallbackResults = fallbackResults.length > visibleFallbackResults.length;
 
 	return (
 		<div className="ai-chat-wrapper pointer-events-none fixed bottom-4 right-4 z-[1050] flex flex-col-reverse items-end gap-3 sm:bottom-6 sm:right-6">
@@ -1215,8 +1249,9 @@ export default function AIChatIsland() {
 					</div>
 				)}
 
-				<div ref={scrollContainerRef} className="flex max-h-80 flex-col gap-4 overflow-y-auto px-4 py-4" aria-live="polite">
-					{messages.map((message) => {
+				<div className="relative">
+					<div ref={scrollContainerRef} className="flex max-h-80 flex-col gap-4 overflow-y-auto px-4 py-4" aria-live="polite">
+						{messages.map((message) => {
 						const alignment = message.role === 'user' ? 'items-end text-right' : 'items-start text-left';
 						const bubbleClasses = message.role === 'user'
 							? 'bg-[color:var(--accent)] text-[color:var(--on-accent)]'
@@ -1275,44 +1310,46 @@ export default function AIChatIsland() {
 												return (
 													<li
 														key={`${message.id}-source-${index}`}
-														className="group rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/40 px-3 py-2 text-left text-[color:var(--fg)]/80 transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--surface)]/60"
+														className="group w-full rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/40 px-3 py-2 text-left text-[color:var(--fg)]/80 transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--surface)]/60"
 													>
-														<div className="flex min-w-0 flex-wrap items-center gap-2">
-															<span className="inline-flex size-5 items-center justify-center rounded-full bg-[color:var(--accent)]/10 font-semibold text-[color:var(--accent)]">{index + 1}</span>
-															{source.icon && <span className="text-base" aria-hidden="true">{source.icon}</span>}
+														<div className="flex items-center gap-2">
+															<span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[color:var(--accent)]/10 font-semibold text-[color:var(--accent)]">{index + 1}</span>
+															{source.icon && <span className="shrink-0 text-base" aria-hidden="true">{source.icon}</span>}
 															<a
 																ref={(element) => {
-																	if (element) sourceRefs.current.push(element);
+																if (element) sourceRefs.current.push(element);
 																}}
 																href={source.url}
 																tabIndex={0}
 																target={linkTarget}
 																rel={linkRel}
-																className="block max-w-full truncate text-[color:var(--accent)] underline decoration-dotted underline-offset-2 transition group-hover:text-[color:var(--accent-strong)]"
+																className="flex-1 truncate text-[color:var(--accent)] underline decoration-dotted underline-offset-2 transition group-hover:text-[color:var(--accent-strong)]"
 															>
 																{displayTitle}
 															</a>
+														</div>
+														<div className="mt-1 flex flex-wrap items-center gap-1 text-[0.6rem] text-[color:var(--fg)]/60">
 															{source.collection && (
-																<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 text-[0.65rem] font-medium text-[color:var(--accent-strong)]">{source.collection}</span>
+																<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 font-medium text-[color:var(--accent-strong)]">{source.collection}</span>
 															)}
 															{isExternalLink && (
-																<span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-2 py-0.5 text-[0.65rem] text-[color:var(--fg)]/60">
+																<span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-2 py-0.5">
 																	External
-																	<svg className="size-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+																	<svg className="size-2" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">
 																		<path strokeLinecap="round" strokeLinejoin="round" d="M7.5 5h7.06m0 0v7.06m0-7.06-8.12 8.12" />
 																	</svg>
 																</span>
 															)}
 															{publishedLabel && (
-																<time className="text-[0.65rem] text-[color:var(--fg)]/60" dateTime={source.publishedAt ?? undefined}>
+																<time className="rounded-full bg-[color:var(--surface)]/60 px-2 py-0.5" dateTime={source.publishedAt ?? undefined}>
 																	{publishedLabel}
 																</time>
 															)}
 															{relevance !== null && (
-																<span className="ml-auto inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 text-[0.65rem] font-medium text-[color:var(--accent-strong)]">{relevance}% match</span>
+																<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 font-medium text-[color:var(--accent-strong)]">{relevance}% match</span>
 															)}
 														</div>
-														{snippet && <p className="mt-1 min-w-0 break-words line-clamp-3 text-[color:var(--fg)]/65">{snippet}</p>}
+														{snippet && <p className="mt-1 line-clamp-3 break-words text-[color:var(--fg)]/65">{snippet}</p>}
 													</li>
 												);
 											})}
@@ -1363,73 +1400,109 @@ export default function AIChatIsland() {
 								)}
 							</div>
 						);
-					})}
-
-					{chatState === 'loading' && (
-						<div className="flex items-center gap-2 text-sm text-[color:var(--fg)]/70">
-							<svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-								<path strokeLinecap="round" strokeLinejoin="round" d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364 6.364-2.121-2.121M8.757 8.757 6.636 6.636m12.728 0-2.121 2.121M8.757 15.243l-2.121 2.121" />
+						})}
+					</div>
+					{showScrollToLatest && (
+						<button
+							type="button"
+							onClick={scrollToLatest}
+							className="pointer-events-auto absolute bottom-5 right-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 bg-[color:var(--surface)]/80 px-3 py-1.5 text-xs font-medium text-[color:var(--fg)]/70 shadow-sm backdrop-blur transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+							aria-label="Jump to latest message"
+						>
+							<svg className="size-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+								<path strokeLinecap="round" strokeLinejoin="round" d="m5 8 5 5 5-5" />
 							</svg>
-							Thinking through the best answer…
-						</div>
-					)}
-
-					{isListening && (
-						<div className="flex items-center gap-2 text-xs text-[color:var(--accent-strong)]">
-							<span className="inline-flex size-2 rounded-full bg-[color:var(--accent-strong)]" aria-hidden="true" />
-							Listening{interimTranscript ? `: ${interimTranscript}` : ''}
-						</div>
-					)}
-
-					{error && (
-						<div className="rounded-xl border border-red-400/60 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-500/60 dark:bg-red-900/30 dark:text-red-200">
-							<p>{error}</p>
-							{lastQueryValue && (
-								<p className="mt-1 text-[color:var(--fg)]/60 dark:text-red-200/80">
-									Last question: <span className="font-medium text-[color:var(--fg)]">{lastQueryValue}</span>
-								</p>
-							)}
-							<div className="mt-2 flex flex-wrap gap-2">
-								<button
-									type="button"
-									className="inline-flex items-center gap-2 rounded-full border border-red-400/60 px-3 py-1 font-medium transition hover:border-red-500 hover:text-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60 disabled:opacity-60 dark:hover:border-red-400 dark:hover:text-red-100"
-									onClick={retryLastQuery}
-									disabled={!canRetry}
-								>
-									Try again
-								</button>
-								<a
-									href="/projects"
-									className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
-								>
-									Browse projects
-								</a>
-								<a
-									href="/contact"
-									className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
-								>
-									Contact Blake
-								</a>
-							</div>
-						</div>
-					)}
-
-					{fallbackResults.length > 0 && (
-						<div className="min-w-0 rounded-2xl border border-[color:var(--border)]/30 bg-[color:var(--surface-subtle)]/30 p-3 text-xs text-[color:var(--fg)]/70">
-							<span className="uppercase tracking-wide text-[color:var(--fg)]/50">Related suggestions</span>
-							<ul className="mt-2 space-y-2">
-								{fallbackResults.map((result, index) => (
-									<li key={`fallback-${index}`} className="flex min-w-0 flex-col gap-1 rounded-xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 p-2 transition hover:border-[color:var(--accent)]/50">
-										<a href={result.url} className="block max-w-full truncate text-[color:var(--accent)] underline decoration-dotted underline-offset-2" target="_blank" rel="noreferrer">
-											{result.title}
-										</a>
-										{result.excerpt && <p className="line-clamp-2 break-words text-[color:var(--fg)]/60">{result.excerpt}</p>}
-									</li>
-								))}
-							</ul>
-						</div>
+							<span>Jump to latest</span>
+						</button>
 					)}
 				</div>
+
+				{chatState === 'loading' && (
+					<div className="flex items-center gap-2 text-sm text-[color:var(--fg)]/70">
+						<svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+							<path strokeLinecap="round" strokeLinejoin="round" d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364 6.364-2.121-2.121M8.757 8.757 6.636 6.636m12.728 0-2.121 2.121M8.757 15.243l-2.121 2.121" />
+						</svg>
+						Thinking through the best answer…
+					</div>
+				)}
+
+				{isListening && (
+					<div className="flex items-center gap-2 text-xs text-[color:var(--accent-strong)]">
+						<span className="inline-flex size-2 rounded-full bg-[color:var(--accent-strong)]" aria-hidden="true" />
+						Listening{interimTranscript ? `: ${interimTranscript}` : ''}
+					</div>
+				)}
+
+				{error && (
+					<div className="rounded-xl border border-red-400/60 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-500/60 dark:bg-red-900/30 dark:text-red-200">
+						<p>{error}</p>
+						{lastQueryValue && (
+							<p className="mt-1 text-[color:var(--fg)]/60 dark:text-red-200/80">
+								Last question: <span className="font-medium text-[color:var(--fg)]">{lastQueryValue}</span>
+							</p>
+						)}
+						<div className="mt-2 flex flex-wrap gap-2">
+							<button
+								type="button"
+								className="inline-flex items-center gap-2 rounded-full border border-red-400/60 px-3 py-1 font-medium transition hover:border-red-500 hover:text-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60 disabled:opacity-60 dark:hover:border-red-400 dark:hover:text-red-100"
+								onClick={retryLastQuery}
+								disabled={!canRetry}
+							>
+								Try again
+							</button>
+							<a
+								href="/projects"
+								className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+							>
+								Browse projects
+							</a>
+							<a
+								href="/contact"
+								className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+							>
+								Contact Blake
+							</a>
+						</div>
+					</div>
+				)}
+
+				{fallbackResults.length > 0 && (
+					<div className="min-w-0 rounded-2xl border border-[color:var(--border)]/30 bg-[color:var(--surface-subtle)]/30 p-3 text-xs text-[color:var(--fg)]/70">
+						<div className="flex items-center justify-between gap-2">
+							<span className="uppercase tracking-wide text-[color:var(--fg)]/50">Related suggestions</span>
+							<button
+								type="button"
+								className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-2.5 py-1 text-[0.625rem] font-medium text-[color:var(--fg)]/65 transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/40"
+								onClick={() => setShowFallbackSuggestions((previous) => !previous)}
+							>
+								{showFallbackSuggestions ? 'Hide' : `Show all (${fallbackResults.length})`}
+							</button>
+						</div>
+						<ul className="mt-2 flex flex-wrap gap-2">
+							{visibleFallbackResults.map((result, index) => (
+								<li
+									key={`fallback-${index}`}
+									className="group flex min-w-0 max-w-full flex-1 flex-col gap-1 rounded-2xl border border-[color:var(--border)]/35 bg-[color:var(--surface)]/70 px-3 py-2 transition hover:border-[color:var(--accent)]/40"
+								>
+									<a
+										href={result.url}
+										className="truncate text-[color:var(--accent)] underline decoration-dotted underline-offset-2 group-hover:text-[color:var(--accent-strong)]"
+										target="_blank"
+										rel="noreferrer"
+									>
+										{result.title}
+									</a>
+									{showFallbackSuggestions && result.excerpt && (
+										<p className="line-clamp-2 break-words text-[color:var(--fg)]/60">{result.excerpt}</p>
+									)}
+								</li>
+							))}
+						</ul>
+						{hasMoreFallbackResults && !showFallbackSuggestions && (
+							<p className="mt-1 text-[0.6rem] text-[color:var(--fg)]/50">Showing top {visibleFallbackResults.length} of {fallbackResults.length} matches.</p>
+						)}
+					</div>
+				)}
 
 				<form className="border-t border-[color:var(--border)]/40 bg-[color:var(--surface)]/50 px-4 py-3" onSubmit={handleSubmit}>
 					<label htmlFor="ai-chat-input" className="sr-only">
