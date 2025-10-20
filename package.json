@@ -138,7 +138,7 @@
     "lighthouse": "^13.0.0",
     "postcss": "^8.5.6",
     "postcss-html": "^1.8.0",
-    "puppeteer": "^24.24.1",
+    "puppeteer": "^24.25.0",
     "serve": "^14.2.5",
     "sharp": "^0.34.4",
     "stylelint": "^16.25.0",
