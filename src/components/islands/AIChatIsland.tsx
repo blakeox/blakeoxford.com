@@ -240,6 +240,8 @@ export default function AIChatIsland() {
 	const [interimTranscript, setInterimTranscript] = useState('');
 	const [fallbackResults, setFallbackResults] = useState<SearchFallback[]>([]);
 	const [showFallbackSuggestions, setShowFallbackSuggestions] = useState(false);
+	const [composerFocused, setComposerFocused] = useState(false);
+	const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
 	const [showScrollToLatest, setShowScrollToLatest] = useState(false);
 	const siteHostname = useMemo(() => {
 		if (typeof window !== 'undefined') {
@@ -580,6 +582,12 @@ export default function AIChatIsland() {
 		setFallbackResults([]);
 		setShowDigest(false);
 		setShowAnalytics(false);
+		setShowFallbackSuggestions(false);
+		setExpandedSources({});
+		setComposerFocused(false);
+		setInputValue('');
+		setInterimTranscript('');
+		setShowScrollToLatest(false);
 		lastQueryRef.current = null;
 		if (typeof window !== 'undefined') {
 			try {
@@ -588,7 +596,14 @@ export default function AIChatIsland() {
 				/* ignore clear failures */
 			}
 		}
-	}, []);
+		requestAnimationFrame(() => {
+			focusInput();
+		});
+	}, [focusInput]);
+
+	const startNewChat = useCallback(() => {
+		clearConversation();
+	}, [clearConversation]);
 
 	const toggleMemory = useCallback(() => {
 		setUseMemory((prev) => !prev);
@@ -604,6 +619,13 @@ export default function AIChatIsland() {
 
 	const toggleAdvancedControls = useCallback(() => {
 		setShowAdvancedControls((prev) => !prev);
+	}, []);
+
+	const toggleExpandedSourcesForMessage = useCallback((messageId: string) => {
+		setExpandedSources((previous) => ({
+			...previous,
+			[messageId]: !previous[messageId],
+		}));
 	}, []);
 
 	const handleCopyMessage = useCallback(async (message: ChatMessage) => {
@@ -1002,6 +1024,9 @@ export default function AIChatIsland() {
 	const fallbackPreviewLimit = 2;
 	const visibleFallbackResults = showFallbackSuggestions ? fallbackResults : fallbackResults.slice(0, fallbackPreviewLimit);
 	const hasMoreFallbackResults = fallbackResults.length > visibleFallbackResults.length;
+	const composerHasValue = inputValue.trim().length > 0 || interimTranscript.length > 0;
+	const floatingLabelActive = composerFocused || composerHasValue;
+	const canStartNewChat = messages.length > 1;
 
 	return (
 		<div className="ai-chat-wrapper pointer-events-none fixed bottom-4 right-4 z-[1050] flex flex-col-reverse items-end gap-3 sm:bottom-6 sm:right-6">
@@ -1047,8 +1072,8 @@ export default function AIChatIsland() {
 						{voiceSupported && (
 							<button
 								type="button"
-								className={`inline-flex size-8 items-center justify-center rounded-full border border-[color:var(--border)]/50 transition hover:border-[color:var(--accent)]/60 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] ${
-									isListening ? 'bg-[color:var(--accent)]/15 text-[color:var(--accent-strong)]' : 'text-[color:var(--fg)]/70'
+								className={`inline-flex size-8 items-center justify-center rounded-full border border-[color:var(--border)]/50 text-[color:var(--fg)]/70 transition-transform duration-150 hover:scale-105 hover:border-[color:var(--accent)]/60 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] active:scale-95 ${
+									isListening ? 'bg-[color:var(--accent)]/15 text-[color:var(--accent-strong)]' : ''
 								}`}
 								aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
 								onClick={toggleVoiceInput}
@@ -1060,9 +1085,9 @@ export default function AIChatIsland() {
 						)}
 						<button
 							type="button"
-							className={`inline-flex size-8 items-center justify-center rounded-full border border-[color:var(--border)]/50 text-[color:var(--fg)]/70 transition hover:border-[color:var(--accent)]/60 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] ${
-								showAdvancedControls ? 'bg-[color:var(--accent)]/15 text-[color:var(--accent-strong)]' : ''
-							}`}
+							className={`inline-flex size-8 items-center justify-center rounded-full border border-[color:var(--border)]/50 text-[color:var(--fg)]/70 transition-transform duration-150 hover:scale-105 hover:border-[color:var(--accent)]/60 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] active:scale-95 ${
+							showAdvancedControls ? 'bg-[color:var(--accent)]/15 text-[color:var(--accent-strong)]' : ''
+						}`}
 							aria-label={showAdvancedControls ? 'Hide advanced controls' : 'Show advanced controls'}
 							onClick={toggleAdvancedControls}
 						>
@@ -1072,7 +1097,7 @@ export default function AIChatIsland() {
 						</button>
 						<button
 							type="button"
-							className="inline-flex size-8 items-center justify-center rounded-full border border-[color:var(--border)]/50 text-[color:var(--fg)]/70 transition hover:border-[color:var(--border)] hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]"
+							className="inline-flex size-8 items-center justify-center rounded-full border border-[color:var(--border)]/50 text-[color:var(--fg)]/70 transition-transform duration-150 hover:scale-105 hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] active:scale-95"
 							aria-label="Close assistant"
 							onClick={closeChat}
 						>
@@ -1088,13 +1113,15 @@ export default function AIChatIsland() {
 						showAdvancedControls ? 'max-h-[24rem] py-3 opacity-100' : 'max-h-0 opacity-0'
 					}`}
 				>
-					<div className={`flex flex-col gap-3 ${showAdvancedControls ? 'pointer-events-auto' : 'pointer-events-none'}`}>
-						<div className="flex flex-wrap items-center gap-2">
+					<div
+						className={`${showAdvancedControls ? 'pointer-events-auto' : 'pointer-events-none'} grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]`}
+					>
+						<div className="flex flex-wrap items-center gap-2 rounded-2xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/70 px-3 py-2">
 							<button
 								type="button"
-								className={`inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50 ${
-								useMemory ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : ''
-							}`}
+								className={`inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 px-2.5 py-1 text-[0.65rem] font-medium transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/45 ${
+									useMemory ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : 'text-[color:var(--fg)]/70'
+								}`}
 								aria-label={useMemory ? 'Disable conversation memory' : 'Enable conversation memory'}
 								onClick={toggleMemory}
 							>
@@ -1102,9 +1129,9 @@ export default function AIChatIsland() {
 							</button>
 							<button
 								type="button"
-								className={`inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50 ${
-								showDigest ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : ''
-							}`}
+								className={`inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 px-2.5 py-1 text-[0.65rem] font-medium transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/45 ${
+									showDigest ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : 'text-[color:var(--fg)]/70'
+								}`}
 								aria-label={showDigest ? 'Hide conversation digest' : 'Show conversation digest'}
 								onClick={toggleDigest}
 							>
@@ -1112,9 +1139,9 @@ export default function AIChatIsland() {
 							</button>
 							<button
 								type="button"
-								className={`inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50 ${
-								showAnalytics ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : ''
-							}`}
+								className={`inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 px-2.5 py-1 text-[0.65rem] font-medium transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/45 ${
+									showAnalytics ? 'bg-[color:var(--accent)]/10 text-[color:var(--accent-strong)]' : 'text-[color:var(--fg)]/70'
+								}`}
 								aria-label={showAnalytics ? 'Hide insights' : 'Show insights'}
 								onClick={toggleAnalytics}
 							>
@@ -1122,32 +1149,35 @@ export default function AIChatIsland() {
 							</button>
 							<button
 								type="button"
-								className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+								className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--fg)]/70 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/45"
 								onClick={clearConversation}
 							>
 								Clear
 							</button>
 						</div>
 						{feedbackAnalytics.totalAssistant > 0 && (
-							<div className="grid w-full gap-2 sm:grid-cols-2">
-								<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-									<span className="block text-[color:var(--fg)]/45">Assistant replies</span>
-									<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.totalAssistant}</span>
-								</div>
-								<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-									<span className="block text-[color:var(--fg)]/45">Helpful</span>
-									<span className="text-sm font-semibold text-[color:var(--accent-strong)]">{feedbackAnalytics.positive}</span>
-								</div>
-								<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-									<span className="block text-[color:var(--fg)]/45">Needs work</span>
-									<span className="text-sm font-semibold text-red-500 dark:text-red-300">{feedbackAnalytics.negative}</span>
-								</div>
-								{feedbackAnalytics.positiveRate !== null && (
-									<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-										<span className="block text-[color:var(--fg)]/45">Positive rate</span>
-										<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.positiveRate}%</span>
+							<div className="flex flex-col gap-2 rounded-2xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/60 px-3 py-2">
+								<span className="text-[0.65rem] uppercase tracking-wide text-[color:var(--fg)]/45">Session insights</span>
+								<div className="grid grid-cols-2 gap-2">
+									<div className="rounded-xl border border-[color:var(--border)]/30 px-2.5 py-2">
+										<span className="block text-[0.6rem] text-[color:var(--fg)]/50">Replies</span>
+										<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.totalAssistant}</span>
 									</div>
-								)}
+									<div className="rounded-xl border border-[color:var(--border)]/30 px-2.5 py-2">
+										<span className="block text-[0.6rem] text-[color:var(--fg)]/50">Helpful</span>
+										<span className="text-sm font-semibold text-[color:var(--accent-strong)]">{feedbackAnalytics.positive}</span>
+									</div>
+									<div className="rounded-xl border border-[color:var(--border)]/30 px-2.5 py-2">
+										<span className="block text-[0.6rem] text-[color:var(--fg)]/50">Needs work</span>
+										<span className="text-sm font-semibold text-red-500 dark:text-red-300">{feedbackAnalytics.negative}</span>
+									</div>
+									{feedbackAnalytics.positiveRate !== null && (
+										<div className="rounded-xl border border-[color:var(--border)]/30 px-2.5 py-2">
+											<span className="block text-[0.6rem] text-[color:var(--fg)]/50">Positive rate</span>
+											<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.positiveRate}%</span>
+										</div>
+									)}
+								</div>
 							</div>
 						)}
 					</div>
@@ -1257,8 +1287,26 @@ export default function AIChatIsland() {
 							? 'bg-[color:var(--accent)] text-[color:var(--on-accent)]'
 							: 'bg-[color:var(--surface)]/95 text-[color:var(--fg)] dark:bg-[color:var(--surface)]/90';
 						const isAssistant = message.role === 'assistant';
-						const bubbleContent = message.content || (streamingMessageId === message.id ? '…' : '');
-						const primarySource = isAssistant && message.sources && message.sources[0] ? message.sources[0] : null;
+						const isStreaming = streamingMessageId === message.id;
+						const bubbleContent = message.content;
+						const sources = isAssistant && message.sources ? message.sources : [];
+						const totalSources = sources.length;
+						const showAllSources = isAssistant ? Boolean(expandedSources[message.id]) : false;
+						const primarySource = sources[0] ?? null;
+						const primarySourceTitle = primarySource ? decodeHtmlEntities(primarySource.title || primarySource.url) : null;
+						let primarySourceIsExternal = false;
+						if (primarySource) {
+							try {
+								const parsed = primarySource.url.startsWith('http')
+									? new URL(primarySource.url)
+									: new URL(primarySource.url, `https://${siteHostname}`);
+								primarySourceIsExternal = parsed.hostname !== siteHostname;
+							} catch {
+								primarySourceIsExternal = !primarySource.url.startsWith('/');
+							}
+						}
+						const primaryLinkTarget = primarySourceIsExternal ? '_blank' : undefined;
+						const primaryLinkRel = primarySourceIsExternal ? 'noreferrer' : undefined;
 						const isHelpful = message.feedback === 'positive';
 						const isNotHelpful = message.feedback === 'negative';
 						const messageTextClasses = isAssistant ? 'text-[0.95rem] leading-relaxed' : 'text-[0.9rem] leading-snug';
@@ -1267,11 +1315,25 @@ export default function AIChatIsland() {
 							<div key={message.id} className={`flex flex-col gap-2 ${alignment}`}>
 								<div className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm shadow-sm ring-1 ring-[color:var(--border)]/20 dark:ring-[color:var(--border)]/30 ${bubbleClasses}`}>
 									<div className="flex flex-col gap-2">
-										<span className={`whitespace-pre-wrap break-words ${messageTextClasses}`}>{bubbleContent || (isAssistant ? 'Thinking…' : '')}</span>
-										{isAssistant && message.sources && message.sources.length > 0 && (
+										{bubbleContent ? (
+											<span className={`whitespace-pre-wrap break-words ${messageTextClasses}`}>{bubbleContent}</span>
+										) : (
+											isAssistant && !isStreaming ? (
+												<span className={`whitespace-pre-wrap break-words ${messageTextClasses}`}>Thinking…</span>
+											) : null
+										)}
+										{isAssistant && isStreaming && (
+											<span className="flex items-center gap-1 text-[0.75rem] text-[color:var(--fg)]/60" aria-live="assertive">
+												<span className="sr-only">Assistant is responding</span>
+												<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse" />
+												<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:150ms]" />
+												<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:300ms]" />
+											</span>
+										)}
+										{isAssistant && totalSources > 0 && (
 											<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
 												<span className="uppercase tracking-wide text-[color:var(--fg)]/45">Cited</span>
-												{message.sources.map((source, index) => (
+												{sources.map((source, index) => (
 													<button
 														key={`${message.id}-citation-${index}`}
 														type="button"
@@ -1285,11 +1347,34 @@ export default function AIChatIsland() {
 										)}
 									</div>
 								</div>
-								{isAssistant && message.sources && message.sources.length > 0 && (
+								{isAssistant && totalSources > 0 && (
 									<div className="mt-1 flex flex-col gap-2 text-xs" aria-label="Referenced sources">
-										<span className="uppercase tracking-wide text-[color:var(--fg)]/50">Sources</span>
-										<ul className="flex flex-col gap-2">
-											{message.sources.map((source, index) => {
+										<div className="flex flex-wrap items-center gap-2">
+											<span className="uppercase tracking-wide text-[color:var(--fg)]/50">Sources</span>
+											{primarySource && primarySourceTitle && (
+												<a
+													href={primarySource.url}
+													target={primaryLinkTarget}
+													rel={primaryLinkRel}
+													className="max-w-full min-w-0 break-words whitespace-normal rounded-full border border-[color:var(--border)]/40 px-2.5 py-0.5 text-left text-[0.65rem] leading-tight text-[color:var(--accent)] transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent-strong)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--accent)]"
+												>
+													{primarySourceTitle}
+												</a>
+											)}
+											{totalSources > 1 && !showAllSources && (
+												<span className="text-[color:var(--fg)]/50">+{totalSources - 1} more</span>
+											)}
+											<button
+												type="button"
+												className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-2.5 py-0.5 text-[0.65rem] text-[color:var(--fg)]/65 transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--accent)]/40"
+												onClick={() => toggleExpandedSourcesForMessage(message.id)}
+											>
+												{showAllSources ? 'Hide details' : totalSources > 1 ? `Show all (${totalSources})` : 'Show details'}
+											</button>
+										</div>
+										{showAllSources && (
+											<ul className="flex flex-col gap-2">
+												{sources.map((source, index) => {
 												const relevance = typeof source.score === 'number' ? Math.round(Math.min(Math.max(source.score, 0), 1) * 100) : null;
 												const title = decodeHtmlEntities(source.title || '');
 												const displayTitle = title || decodeHtmlEntities(source.url);
@@ -1354,7 +1439,8 @@ export default function AIChatIsland() {
 												);
 											})}
 										</ul>
-									</div>
+									)}
+								</div>
 								)}
 								{isAssistant && (
 									<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
@@ -1504,26 +1590,49 @@ export default function AIChatIsland() {
 					</div>
 				)}
 
+				{canStartNewChat && (
+					<div className="flex items-center justify-between gap-2 border-t border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/35 px-4 py-2 text-[0.7rem] text-[color:var(--fg)]/65">
+						<span className="truncate pr-2">Want to start fresh?</span>
+						<button
+							type="button"
+							className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 px-3 py-1 text-[0.65rem] font-medium text-[color:var(--fg)]/70 transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/45"
+							onClick={startNewChat}
+						>
+							<span>Start new chat</span>
+							<svg className="size-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">
+								<path strokeLinecap="round" strokeLinejoin="round" d="M4 10h12m-6-6 6 6-6 6" />
+							</svg>
+						</button>
+					</div>
+				)}
+
 				<form className="border-t border-[color:var(--border)]/40 bg-[color:var(--surface)]/50 px-4 py-3" onSubmit={handleSubmit}>
-					<label htmlFor="ai-chat-input" className="sr-only">
-						Ask the assistant
-					</label>
 					<div className="relative">
 						<textarea
 							id="ai-chat-input"
 							ref={inputRef}
-							className="h-24 w-full resize-none rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface)]/70 px-4 pb-3 pr-12 pt-3 text-sm text-[color:var(--fg)] outline-none transition focus:border-[color:var(--accent)] focus:ring-2 focus:ring-[color:var(--accent)]/40"
-							placeholder="Ask about projects, case studies, or posts…"
+							className="h-24 w-full resize-none rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface)]/70 px-4 pb-3 pr-12 pt-6 text-sm text-[color:var(--fg)] outline-none transition focus:border-[color:var(--accent)] focus:ring-2 focus:ring-[color:var(--accent)]/40"
+							placeholder=""
 							value={inputValue}
 							onChange={(event) => setInputValue(event.target.value)}
 							onKeyDown={handleTextareaKeyDown}
+							onFocus={() => setComposerFocused(true)}
+							onBlur={() => setComposerFocused(false)}
 							disabled={chatState === 'loading'}
 							required
 							rows={3}
 						/>
+						<label
+							htmlFor="ai-chat-input"
+							className={`pointer-events-none absolute left-4 font-medium text-[color:var(--fg)]/60 transition-all duration-150 ease-out ${
+								floatingLabelActive ? 'top-2 text-[0.7rem] opacity-85' : 'top-4 text-sm opacity-70'
+							}`}
+						>
+							Ask about projects, case studies, or posts…
+						</label>
 						<button
 							type="submit"
-							className="absolute bottom-3 right-3 inline-flex size-9 items-center justify-center rounded-full bg-[color:var(--accent)] text-[color:var(--on-accent)] shadow-sm transition hover:bg-[color:var(--accent-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/60 disabled:opacity-50"
+							className="absolute bottom-3 right-3 inline-flex size-9 items-center justify-center rounded-full bg-[color:var(--accent)] text-[color:var(--on-accent)] shadow-sm transition-transform duration-150 hover:scale-105 hover:bg-[color:var(--accent-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/60 active:scale-95 disabled:opacity-50"
 							aria-label={chatState === 'loading' ? 'Sending message' : 'Send message'}
 							disabled={chatState === 'loading'}
 						>
