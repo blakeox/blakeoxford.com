@@ -31,6 +31,54 @@ const GUIDED_PROMPTS = [
 	},
 ];
 
+interface ContextualCTA {
+	condition: (query: string, sources: AIChatSource[]) => boolean;
+	message: string;
+	ctaText: string;
+	ctaLink: string;
+	icon: string;
+}
+
+const CONTEXTUAL_CTAS: ContextualCTA[] = [
+	{
+		condition: (query, sources) =>
+			query.toLowerCase().includes('project') ||
+			query.toLowerCase().includes('portfolio') ||
+			sources.some((s) => s.collection === 'projects'),
+		message: 'Interested in working together on a similar project?',
+		ctaText: 'Schedule a consultation',
+		ctaLink: '/contact?ref=autorag&topic=project-inquiry',
+		icon: '📅',
+	},
+	{
+		condition: (query) =>
+			query.toLowerCase().includes('experience') ||
+			query.toLowerCase().includes('skills') ||
+			query.toLowerCase().includes('expertise'),
+		message: 'Want to discuss how my experience fits your needs?',
+		ctaText: 'Let\'s chat',
+		ctaLink: '/contact?ref=autorag&topic=expertise-inquiry',
+		icon: '💬',
+	},
+	{
+		condition: (_query, sources) => sources.some((s) => s.collection === 'blog'),
+		message: 'Found this helpful? Get more insights delivered to your inbox.',
+		ctaText: 'Subscribe to newsletter',
+		ctaLink: '#newsletter-signup',
+		icon: '📧',
+	},
+	{
+		condition: (query) =>
+			query.toLowerCase().includes('hire') ||
+			query.toLowerCase().includes('available') ||
+			query.toLowerCase().includes('freelance'),
+		message: 'I\'m currently available for new opportunities!',
+		ctaText: 'View availability & rates',
+		ctaLink: '/contact?ref=autorag&topic=hiring',
+		icon: '✨',
+	},
+];
+
 type ChatState = 'idle' | 'loading' | 'ready';
 
 type LoadingPhase = 'searching' | 'analyzing' | 'crafting' | null;
@@ -1609,6 +1657,48 @@ export default function AIChatIsland() {
 									)}
 								</div>
 								)}
+								{isAssistant && sources.length > 0 && (() => {
+									const messageIndex = messages.findIndex((m) => m.id === message.id);
+									const userQuery = messageIndex > 0 ? messages[messageIndex - 1]?.content || '' : '';
+									const matchedCTA = CONTEXTUAL_CTAS.find((cta) => cta.condition(userQuery, sources));
+									
+									if (matchedCTA) {
+										return (
+											<div className="mt-4 rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50 p-4 dark:border-blue-800 dark:from-blue-950/30 dark:to-purple-950/30">
+												<div className="flex items-start gap-3">
+													<span className="shrink-0 text-2xl" aria-hidden="true">
+														{matchedCTA.icon}
+													</span>
+													<div className="flex-1">
+														<p className="mb-2 text-sm text-gray-700 dark:text-gray-300">{matchedCTA.message}</p>
+														<a
+															href={matchedCTA.ctaLink}
+															className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-900"
+															onClick={() => {
+																if (typeof window !== 'undefined' && (window as any).plausible) {
+																	(window as any).plausible('AutoRAG CTA Click', {
+																		props: { cta: matchedCTA.ctaText, query: userQuery },
+																	});
+																}
+															}}
+														>
+															{matchedCTA.ctaText}
+															<svg
+																className="size-4"
+																fill="none"
+																stroke="currentColor"
+																viewBox="0 0 24 24"
+															>
+																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+															</svg>
+														</a>
+													</div>
+												</div>
+											</div>
+										);
+									}
+									return null;
+								})()}
 								{isAssistant && (
 									<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
 										<button
