@@ -1,12 +1,12 @@
 /**
  * NavBarIsland - React island for site navigation
- * 
+ *
  * Interactive navigation bar with mobile menu, logo, and responsive design.
  * Integrates ModernNavBar and MotionAccessibility for enhanced UX.
- * 
+ *
  * @component
  * @category Islands
- * 
+ *
  * @example
  * ```tsx
  * <NavBarIsland
@@ -16,11 +16,11 @@
  *   logo={logoConfig}
  * />
  * ```
- * 
+ *
  * @prop {NavLink[]} links - Navigation links configuration
  * @prop {LogoConfig} logo - Logo configuration with name and avatar
  * @prop {string} [currentPath] - Current page path for active link highlighting
- * 
+ *
  * @accessibility
  * - Semantic nav element
  * - Mobile menu with ARIA attributes
@@ -90,9 +90,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         mobileMenu: mobileMenuRef.current,
         burgerButton: burgerButtonRef.current,
         closeButton: closeButtonRef.current,
-        themeToggle: themeToggleRef.current,
-        searchToggle: searchToggleRef.current,
-        searchOverlay: document.getElementById('search-overlay')
+        themeToggle: themeToggleRef.current
       });
 
       if (!(window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit) {
@@ -194,9 +192,11 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             ref={searchToggleRef}
             type="button"
             className="search-toggle inline-flex size-11 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
-            aria-label="Open search"
-            aria-controls="search-overlay"
+            aria-label="Open AI search assistant"
+            aria-haspopup="dialog"
             aria-expanded="false"
+            data-ai-launcher
+            data-ai-action="open"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />

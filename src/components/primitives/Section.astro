@@ -1,10 +1,12 @@
 ---
+import type { HTMLAttributes } from 'astro/types';
+
 /**
  * Section - Semantic section component with consistent spacing
- * 
+ *
  * Provides standard section patterns with vertical padding.
  * Combines Container for width control with Stack for content spacing.
- * 
+ *
  * @example
  * <Section padding="lg" container="lg">
  *   <h2>Section Title</h2>
@@ -12,7 +14,7 @@
  * </Section>
  */
 
-export interface Props {
+export interface Props extends HTMLAttributes<'section'> {
   /** Vertical padding size */
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   /** Container size (false for full width) */
@@ -34,7 +36,8 @@ const {
   as: Element = 'section',
   class: className = '',
   'aria-labelledby': ariaLabelledby,
-} = Astro.props;
+  ...rest
+} = Astro.props as Props;
 
 // Padding styles
 const paddingStyles = {
@@ -60,7 +63,7 @@ const classes = [
 ].filter(Boolean).join(' ');
 ---
 
-<Element class={classes} aria-labelledby={ariaLabelledby}>
+<Element class={classes} aria-labelledby={ariaLabelledby} {...rest}>
   {container ? (
     <div class={`${container !== 'full' ? 'max-w-' + container : 'max-w-none'} w-full mx-auto px-4 sm:px-6 lg:px-8`}>
       <slot />

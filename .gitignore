@@ -191,3 +191,4 @@ toxic-tests.json
 
 # Cloudflare functions
 functions/.cache/
+.vectorize-temp-input.json

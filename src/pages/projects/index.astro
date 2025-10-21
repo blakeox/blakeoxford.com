@@ -23,8 +23,16 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <Section padding="xl" container="lg" background="gradient" role="region" aria-labelledby="projects-title">
-    <Stack space="2xl" class="@container text-pretty">
+  <Section
+    id="projects-hero"
+    padding="xl"
+    container="lg"
+    background="gradient"
+    role="region"
+    aria-labelledby="projects-title"
+    data-layout-section="projects-hero"
+  >
+    <Stack space="2xl" class="@container text-pretty" data-layout-shell="projects-hero-inner">
       <Stack space="lg" class="max-w-3xl" as="header">
           <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
             Selected Projects
@@ -47,8 +55,15 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   </Section>
 
   <!-- Projects Grid -->
-  <Section padding="lg" container="lg" class="border-t border-border/20 bg-background" role="region" aria-labelledby="projects-grid-heading">
-    <Stack space="xl" class="text-pretty">
+  <Section
+    padding="lg"
+    container="lg"
+    class="border-t border-border/20 bg-background"
+    role="region"
+    aria-labelledby="projects-grid-heading"
+    data-layout-section="projects-grid"
+  >
+    <Stack space="xl" class="text-pretty" data-layout-shell="projects-grid-inner">
       <Stack space="md" class="max-w-3xl">
         <BadgePill size="xs" class="w-fit">
           Case Studies
@@ -70,8 +85,15 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   </Section>
 
   <!-- Impact Section -->
-  <Section padding="lg" container="lg" class="border-t border-border/20 bg-surface-subtle/40" role="region" aria-labelledby="results-heading">
-    <Stack space="xl" class="text-pretty">
+  <Section
+    padding="lg"
+    container="lg"
+    class="border-t border-border/20 bg-surface-subtle/40"
+    role="region"
+    aria-labelledby="results-heading"
+    data-layout-section="projects-impact"
+  >
+    <Stack space="xl" class="text-pretty" data-layout-shell="projects-impact-inner">
       <Stack space="md" class="max-w-3xl">
         <BadgePill size="xs" class="w-fit">
           Impact Metrics
@@ -93,8 +115,15 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   </Section>
 
   <!-- CTA Section -->
-  <Section padding="lg" container="md" class="border-t border-border/20 bg-background" role="region" aria-labelledby="cta-heading">
-    <Stack space="lg" class="text-center">
+  <Section
+    padding="lg"
+    container="md"
+    class="border-t border-border/20 bg-background"
+    role="region"
+    aria-labelledby="cta-heading"
+    data-layout-section="projects-cta"
+  >
+    <Stack space="lg" class="text-center" data-layout-shell="projects-cta-inner">
         <h2 id="cta-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight text-foreground dark:text-foreground-light">
           Ready to line up the next leap?
         </h2>
