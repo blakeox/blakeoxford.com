@@ -1,6 +1,6 @@
 # Enable Cloudflare Workers Analytics Engine
 
-**Date**: October 20, 2025  
+**Date**: October 20, 2025
 **Status**: ⚠️ Required before deployment
 
 ## Issue
@@ -53,11 +53,11 @@ Workers Analytics Engine is a **FREE** feature (included in your Workers Paid pl
 
 Once enabled, your deployment will include:
 
-✅ **AI_ANALYTICS** dataset binding  
-✅ Real-time query tracking  
-✅ Cache hit/miss metrics  
-✅ Response time monitoring  
-✅ Query pattern analysis  
+✅ **AI_ANALYTICS** dataset binding
+✅ Real-time query tracking
+✅ Cache hit/miss metrics
+✅ Response time monitoring
+✅ Query pattern analysis
 
 ## Deployment Command
 

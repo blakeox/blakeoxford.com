@@ -45,8 +45,8 @@ AI_GATEWAY_ENDPOINT = "https://gateway.ai.cloudflare.com/v1/<account-id>/blakeox
 #### Step 3: Modify `functions/edge-computing.js`:
 ```javascript
 // In /api/ai-search handler, replace direct AutoRAG call with AI Gateway
-const upstreamEndpoint = env.AI_GATEWAY_ENDPOINT 
-  ? env.AI_GATEWAY_ENDPOINT 
+const upstreamEndpoint = env.AI_GATEWAY_ENDPOINT
+  ? env.AI_GATEWAY_ENDPOINT
   : env.AI_SEARCH_API_ENDPOINT;
 
 const upstreamResponse = await fetch(upstreamEndpoint, {
@@ -76,7 +76,7 @@ const cacheKey = normalizeQueryForCache(query);
 // Include in request metadata
 ```
 
-**Expected Impact**: 
+**Expected Impact**:
 - 50-70% reduction in AutoRAG API costs from caching
 - Real-time analytics on most asked questions
 - Better rate limiting per user/session
@@ -176,7 +176,7 @@ export class ConversationSession {
   async fetch(request) {
     const url = new URL(request.url);
     const sessionId = url.searchParams.get('sessionId');
-    
+
     if (request.method === 'POST') {
       // Save conversation state
       const { messages, preferences } = await request.json();
@@ -187,13 +187,13 @@ export class ConversationSession {
       });
       return new Response(JSON.stringify({ saved: true }));
     }
-    
+
     if (request.method === 'GET') {
       // Retrieve conversation state
       const data = await this.state.storage.get(`conversation:${sessionId}`);
       return new Response(JSON.stringify(data || {}));
     }
-    
+
     if (request.method === 'DELETE') {
       // Clear conversation
       await this.state.storage.delete(`conversation:${sessionId}`);
@@ -307,7 +307,7 @@ if (env.AI_DB) {
 ```javascript
 // New endpoint: /api/ai-insights
 const topQueries = await env.AI_DB.prepare(`
-  SELECT 
+  SELECT
     query,
     COUNT(*) as count,
     AVG(response_time_ms) as avg_time,
@@ -358,9 +358,9 @@ if (env.AI_RESPONSE_CACHE) {
   if (cached && Date.now() - cached.timestamp < 7*24*60*60*1000) { // 7 days
     // Return cached response with metadata
     cached.fromCache = true;
-    return new Response(JSON.stringify(cached), { 
-      status: 200, 
-      headers: { ...baseCorsHeaders, 'x-cache-status': 'HIT' } 
+    return new Response(JSON.stringify(cached), {
+      status: 200,
+      headers: { ...baseCorsHeaders, 'x-cache-status': 'HIT' }
     });
   }
 }
@@ -421,61 +421,61 @@ for (const query of commonQueries) {
 async function checkRateLimit(env, clientIp, sessionId) {
   const now = Date.now();
   const window = 60 * 1000; // 1 minute
-  
+
   // Per-IP limit: 10 requests per minute
   const ipKey = `ratelimit:ip:${clientIp}`;
   const ipCount = await env.RATE_LIMIT_KV.get(ipKey, 'json') || { count: 0, reset: now + window };
-  
+
   if (now > ipCount.reset) {
     ipCount.count = 0;
     ipCount.reset = now + window;
   }
-  
+
   ipCount.count++;
   await env.RATE_LIMIT_KV.put(ipKey, JSON.stringify(ipCount), { expirationTtl: 120 });
-  
+
   if (ipCount.count > 10) {
     return { limited: true, reason: 'ip', resetIn: ipCount.reset - now };
   }
-  
+
   // Per-session limit: 30 requests per minute (more generous for legitimate users)
   if (sessionId) {
     const sessionKey = `ratelimit:session:${sessionId}`;
     const sessionCount = await env.RATE_LIMIT_KV.get(sessionKey, 'json') || { count: 0, reset: now + window };
-    
+
     if (now > sessionCount.reset) {
       sessionCount.count = 0;
       sessionCount.reset = now + window;
     }
-    
+
     sessionCount.count++;
     await env.RATE_LIMIT_KV.put(sessionKey, JSON.stringify(sessionCount), { expirationTtl: 120 });
-    
+
     if (sessionCount.count > 30) {
       return { limited: true, reason: 'session', resetIn: sessionCount.reset - now };
     }
   }
-  
+
   return { limited: false };
 }
 
 // Use in handler
 const rateLimit = await checkRateLimit(
-  env, 
+  env,
   request.headers.get('cf-connecting-ip'),
   request.headers.get('x-session-id')
 );
 
 if (rateLimit.limited) {
-  return new Response(JSON.stringify({ 
+  return new Response(JSON.stringify({
     error: 'Rate limit exceeded',
-    resetIn: rateLimit.resetIn 
-  }), { 
-    status: 429, 
-    headers: { 
+    resetIn: rateLimit.resetIn
+  }), {
+    status: 429,
+    headers: {
       ...baseCorsHeaders,
       'retry-after': Math.ceil(rateLimit.resetIn / 1000)
-    } 
+    }
   });
 }
 ```
@@ -504,19 +504,19 @@ async function enhanceQueryWithEdgeIntelligence(query, env) {
   // Check if this query type historically gets poor responses
   if (env.AI_DB) {
     const similar = await env.AI_DB.prepare(`
-      SELECT 
+      SELECT
         AVG(CASE WHEN f.sentiment = 'positive' THEN 1 ELSE 0 END) as satisfaction
       FROM queries q
       LEFT JOIN feedback f ON q.id = f.query_id
       WHERE q.query LIKE ?
     `).bind(`%${query.split(' ').slice(0, 3).join('%')}%`).first();
-    
+
     // If satisfaction < 50%, add extra context
     if (similar && similar.satisfaction < 0.5) {
       return `${query} (Please provide detailed, specific examples with measurable outcomes.)`;
     }
   }
-  
+
   return query;
 }
 
@@ -587,7 +587,7 @@ const enhancedQuery = await enhanceQueryWithEdgeIntelligence(query, env);
 3. **Custom D1 Dashboard**:
    ```sql
    -- Daily summary query
-   SELECT 
+   SELECT
      DATE(created_at/1000, 'unixepoch') as date,
      COUNT(*) as total_queries,
      AVG(response_time_ms) as avg_response_time,

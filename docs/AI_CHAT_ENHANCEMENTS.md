@@ -67,7 +67,7 @@ The function **skips enhancement** when:
 **Integration**: The query enhancement is **only applied when conversation memory is enabled**:
 
 ```typescript
-const enhancedQuery = useMemory 
+const enhancedQuery = useMemory
   ? enhanceQuery(query, historyPayload.length > 0)
   : query;
 ```
@@ -160,7 +160,7 @@ Display to User
 ```typescript
 // In sendQuery callback
 const historyPayload = buildHistoryForRequest();
-const enhancedQuery = useMemory 
+const enhancedQuery = useMemory
   ? enhanceQuery(query, historyPayload.length > 0)
   : query;
 
