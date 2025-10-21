@@ -875,6 +875,72 @@ export default function AIChatIsland() {
 		[],
 	);
 
+	const handleExportConversation = useCallback(() => {
+		if (messages.length === 0) return;
+		
+		// Generate Markdown content
+		const timestamp = new Date().toLocaleString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+		});
+		
+		let markdown = '# AI Conversation with Blake Oxford\n\n';
+		markdown += `**Exported**: ${timestamp}  \n`;
+		markdown += `**Messages**: ${messages.length}  \n`;
+		markdown += `**URL**: ${window.location.href}\n\n`;
+		markdown += '---\n\n';
+		
+		messages.forEach((message, index) => {
+			const role = message.role === 'user' ? '👤 You' : '🤖 AI Assistant';
+			markdown += `## ${role}\n\n`;
+			markdown += `${message.content}\n\n`;
+			
+			// Add sources for assistant messages
+			if (message.role === 'assistant' && message.sources && message.sources.length > 0) {
+				markdown += '### 📚 Sources\n\n';
+				message.sources.forEach((source, sourceIndex) => {
+					const title = decodeMimeEncodedWords(decodeHtmlEntities(source.title || source.url));
+					const score = source.score ? ` (${Math.round(source.score * 100)}% relevant)` : '';
+					const collection = source.collection ? ` [${source.collection}]` : '';
+					markdown += `${sourceIndex + 1}. [${title}](${source.url})${score}${collection}\n`;
+					if (source.snippet) {
+						markdown += `   > ${source.snippet}\n\n`;
+					}
+				});
+				markdown += '\n';
+			}
+			
+			if (index < messages.length - 1) {
+				markdown += '---\n\n';
+			}
+		});
+		
+		markdown += '\n---\n\n';
+		markdown += `*Conversation exported from [blakeoxford.com](${window.location.origin})*\n`;
+		
+		// Create and download file
+		const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		const filename = `ai-conversation-${Date.now()}.md`;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		URL.revokeObjectURL(url);
+		
+		// Track export
+		if ((window as any).plausible) {
+			(window as any).plausible('AutoRAG Export', {
+				props: { format: 'markdown', messages: messages.length },
+			});
+		}
+	}, [messages]);
+
 	const toggleVoiceInput = useCallback(() => {
 		if (!voiceSupported) return;
 		const recognition = recognitionRef.current;
@@ -1381,6 +1447,18 @@ export default function AIChatIsland() {
 								onClick={clearConversation}
 							>
 								Clear
+							</button>
+							<button
+								type="button"
+								className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--fg)]/70 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/45 disabled:opacity-50 disabled:cursor-not-allowed"
+								onClick={handleExportConversation}
+								disabled={messages.length === 0}
+								title="Download conversation as Markdown"
+							>
+								<svg className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+								</svg>
+								Export
 							</button>
 						</div>
 						{feedbackAnalytics.totalAssistant > 0 && (
