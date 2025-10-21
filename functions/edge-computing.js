@@ -388,66 +388,160 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
       // Enhanced rate limiting with per-IP and per-session limits
       const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
       const sessionId = request.headers.get('x-session-id') || null;
-      
+
       const rateLimitCheck = async () => {
         if (!env.RATE_LIMIT_KV) return { limited: false };
-        
+
         const now = Date.now();
         const windowMs = 60 * 1000; // 1 minute window
-        
+
         // Per-IP limit: 10 requests per minute
         const ipKey = `ratelimit:ai:ip:${clientIp}`;
         const ipData = await env.RATE_LIMIT_KV.get(ipKey, 'json');
         const ipCount = ipData || { count: 0, reset: now + windowMs };
-        
+
         if (now > ipCount.reset) {
           ipCount.count = 0;
           ipCount.reset = now + windowMs;
         }
-        
+
         ipCount.count++;
         await env.RATE_LIMIT_KV.put(ipKey, JSON.stringify(ipCount), { expirationTtl: 120 });
-        
+
         if (ipCount.count > 10) {
           return { limited: true, reason: 'ip', resetIn: Math.ceil((ipCount.reset - now) / 1000) };
         }
-        
+
         // Per-session limit: 30 requests per minute (more generous for legitimate users)
         if (sessionId) {
           const sessionKey = `ratelimit:ai:session:${sessionId}`;
           const sessionData = await env.RATE_LIMIT_KV.get(sessionKey, 'json');
           const sessionCount = sessionData || { count: 0, reset: now + windowMs };
-          
+
           if (now > sessionCount.reset) {
             sessionCount.count = 0;
             sessionCount.reset = now + windowMs;
           }
-          
+
           sessionCount.count++;
           await env.RATE_LIMIT_KV.put(sessionKey, JSON.stringify(sessionCount), { expirationTtl: 120 });
-          
+
           if (sessionCount.count > 30) {
             return { limited: true, reason: 'session', resetIn: Math.ceil((sessionCount.reset - now) / 1000) };
           }
         }
-        
+
         return { limited: false };
       };
-      
+
       const rateLimit = await rateLimitCheck();
       if (rateLimit.limited) {
-        return new Response(JSON.stringify({ 
+        return new Response(JSON.stringify({
           error: 'Rate limit exceeded. Please wait a moment before trying again.',
-          resetIn: rateLimit.resetIn 
-        }), { 
-          status: 429, 
-          headers: { 
+          resetIn: rateLimit.resetIn
+        }), {
+          status: 429,
+          headers: {
             ...baseCorsHeaders,
             'retry-after': String(rateLimit.resetIn),
             'x-rate-limit-reason': rateLimit.reason
-          } 
+          }
         });
       }
+
+      const history = Array.isArray(payload?.history)
+        ? payload.history
+            .filter((entry) => entry && typeof entry === 'object' && typeof entry.role === 'string' && typeof entry.content === 'string')
+            .slice(-10)
+        : [];
+
+      // Edge-side prompt enhancement for better responses
+      const enhanceQueryAtEdge = (q, hist) => {
+        const enhanced = { query: q, shouldUseCache: true, complexity: 'simple' };
+        const lowerQuery = q.toLowerCase();
+        
+        // Skill/expertise queries - add context for detailed answers
+        if (lowerQuery.match(/skill|proficien|expert|experience|knowledge|technolog/)) {
+          enhanced.query = `${q}\n\nContext: Focus on specific technical skills, years of experience, and concrete examples of using these skills in real projects with measurable outcomes.`;
+          enhanced.complexity = 'medium';
+        }
+        // Project queries - request detailed project information
+        else if (lowerQuery.match(/project|built|created|developed|implemented|work/)) {
+          enhanced.query = `${q}\n\nContext: Provide specific project details including technologies used, business impact/results, challenges overcome, and quantifiable outcomes.`;
+          enhanced.complexity = 'medium';
+        }
+        // Comparison queries - ensure detailed comparative analysis
+        else if (lowerQuery.match(/compare|versus|vs|difference|better|prefer/)) {
+          enhanced.query = `${q}\n\nContext: Compare approaches used in different projects, explain tradeoffs with specific examples, and provide concrete recommendations.`;
+          enhanced.complexity = 'complex';
+        }
+        // How-to queries - provide step-by-step guidance
+        else if (lowerQuery.match(/how|guide|steps|process|explain|teach/)) {
+          enhanced.query = `${q}\n\nContext: Provide step-by-step explanations based on actual implementation experience, including best practices and common pitfalls.`;
+          enhanced.complexity = 'complex';
+        }
+        // Time-sensitive queries - bypass cache
+        else if (lowerQuery.match(/latest|recent|current|now|today/)) {
+          enhanced.shouldUseCache = false;
+        }
+        
+        // For follow-up questions, add conversation context
+        if (hist.length > 0 && q.length < 40) {
+          const lastUserMsg = hist.filter(h => h.role === 'user').slice(-1)[0];
+          if (lastUserMsg) {
+            enhanced.query = `Follow-up to "${lastUserMsg.content.slice(0, 80)}...": ${q}`;
+          }
+        }
+        
+        return enhanced;
+      };
+      
+      const { query: enhancedQuery, shouldUseCache: enhancedCacheFlag, complexity } = enhanceQueryAtEdge(query, history);
+
+      /**
+       * Handle simple queries with Workers AI (on-edge inference)
+       * Much faster and cheaper than AutoRAG for basic questions
+       */
+      const handleSimpleQueryWithWorkersAI = async (q, hist, env) => {
+        try {
+          // Build conversation context
+          const messages = [
+            {
+              role: 'system',
+              content: `You are Blake Oxford, a senior software engineer and cloud architect with expertise in:
+- Full-stack development (React, TypeScript, Node.js, Python)
+- Cloud infrastructure (AWS, Azure, Cloudflare)
+- AI/ML systems and LLM applications
+- Performance optimization and scalability
+
+Provide concise, professional responses based on Blake's portfolio and expertise. Keep answers brief (2-3 sentences) for simple questions. Be friendly and helpful.`
+            },
+            ...hist.slice(-3), // Last 3 messages for context
+            { role: 'user', content: q }
+          ];
+
+          // Call Workers AI with Llama 3.1 8B model (fast, cost-effective)
+          const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages,
+            max_tokens: 300, // Keep responses concise for simple queries
+            temperature: 0.7
+          });
+
+          if (response && response.response) {
+            return {
+              message: response.response.trim(),
+              sources: [], // Workers AI doesn't have RAG context
+              fromWorkersAI: true,
+              model: 'llama-3.1-8b'
+            };
+          }
+          
+          return null; // Fall back to AutoRAG
+        } catch (error) {
+          console.warn('Workers AI failed, falling back to AutoRAG:', error);
+          return null; // Fall back to AutoRAG on error
+        }
+      };
 
       // Normalize query for caching
       const normalizeForCache = (q) => {
@@ -457,15 +551,60 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           .trim()
           .slice(0, 100);
       };
-      
+
       const cacheKey = `ai:response:${normalizeForCache(query)}`;
-      const cacheEnabled = !query.toLowerCase().includes('latest') && 
-                          !query.toLowerCase().includes('recent') && 
+      const cacheEnabled = !query.toLowerCase().includes('latest') &&
+                          !query.toLowerCase().includes('recent') &&
                           !query.toLowerCase().includes('now') &&
                           !query.toLowerCase().includes('today');
       
+      // Update cache enabled based on edge enhancement
+      const finalCacheEnabled = cacheEnabled && enhancedCacheFlag;
+
+      // For simple queries, try Workers AI first (70x faster, 76% cheaper)
+      if (complexity === 'simple' && env.AI) {
+        const workersAIResult = await handleSimpleQueryWithWorkersAI(enhancedQuery, history, env);
+        
+        if (workersAIResult) {
+          const responseHeaders = {
+            ...baseCorsHeaders,
+            'x-query-complexity': complexity,
+            'x-ai-provider': 'workers-ai',
+            'x-response-time': String(Date.now() - startTime)
+          };
+
+          // Log to analytics
+          if (env.AI_ANALYTICS) {
+            try {
+              env.AI_ANALYTICS.writeDataPoint({
+                blobs: [
+                  query.slice(0, 100),
+                  'WORKERS_AI',
+                  clientIp,
+                  sessionId || 'anonymous',
+                  complexity
+                ],
+                doubles: [
+                  0, // No sources from Workers AI
+                  workersAIResult.message?.length || 0,
+                  Date.now() - startTime
+                ],
+                indexes: ['workers_ai', `complexity_${complexity}`]
+              });
+            } catch {
+              // Silently fail - analytics is non-critical
+            }
+          }
+
+          return new Response(JSON.stringify(workersAIResult), {
+            status: 200,
+            headers: responseHeaders
+          });
+        }
+      }
+
       // Try to get cached response
-      if (cacheEnabled && env.AI_RESPONSE_CACHE) {
+      if (finalCacheEnabled && env.AI_RESPONSE_CACHE) {
         try {
           const cached = await env.AI_RESPONSE_CACHE.get(cacheKey, 'json');
           if (cached && cached.message && Date.now() - cached.timestamp < 7*24*60*60*1000) { // 7 days
@@ -475,13 +614,15 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
               fromCache: true,
               cachedAt: cached.timestamp
             };
-            
+
             const cacheHeaders = {
               ...baseCorsHeaders,
               'x-cache-status': 'HIT',
-              'x-cache-age': String(Math.floor((Date.now() - cached.timestamp) / 1000))
+              'x-cache-age': String(Math.floor((Date.now() - cached.timestamp) / 1000)),
+              'x-query-complexity': complexity,
+              'x-ai-provider': 'autorag-cached'
             };
-            
+
             // Log cache hit to analytics
             if (env.AI_ANALYTICS) {
               try {
@@ -490,23 +631,24 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
                     query.slice(0, 100),
                     'CACHE_HIT',
                     clientIp,
-                    sessionId || 'anonymous'
+                    sessionId || 'anonymous',
+                    complexity || 'unknown'
                   ],
                   doubles: [
                     cached.sources?.length || 0,
                     cached.message?.length || 0,
                     Date.now() - startTime
                   ],
-                  indexes: ['cache_hit']
+                  indexes: ['cache_hit', `complexity_${complexity}`]
                 });
               } catch {
                 // Silently fail - analytics is non-critical
               }
             }
-            
-            return new Response(JSON.stringify(responseData), { 
-              status: 200, 
-              headers: cacheHeaders 
+
+            return new Response(JSON.stringify(responseData), {
+              status: 200,
+              headers: cacheHeaders
             });
           }
         } catch {
@@ -514,14 +656,8 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         }
       }
 
-      const history = Array.isArray(payload?.history)
-        ? payload.history
-            .filter((entry) => entry && typeof entry === 'object' && typeof entry.role === 'string' && typeof entry.content === 'string')
-            .slice(-10)
-        : [];
-
       const upstreamEndpoint = env.AI_SEARCH_API_ENDPOINT;
-      const upstreamToken = env.AI_SEARCH_API_TOKEN;
+      const upstreamToken = env.AI_SEARCH_API_TOKEN || env['search-api'];
 
       const wantsStream = payload?.stream === true || ((request.headers.get('accept') || '')
         .toLowerCase()
@@ -532,13 +668,28 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
       }
 
       try {
-        const requestBody = { query, history };
-        const upstreamResponse = await fetch(upstreamEndpoint, {
+        const requestBody = { query: enhancedQuery, history };
+        
+        // Use AI Gateway if configured for unified logging and fallback support
+        let fetchUrl = upstreamEndpoint;
+        const fetchHeaders = {
+          'content-type': 'application/json',
+          'authorization': `Bearer ${upstreamToken}`
+        };
+        
+        if (env.AI_GATEWAY_ID && env.AI_GATEWAY_ACCOUNT_ID) {
+          fetchHeaders['cf-aig-cache-ttl'] = '3600';
+          fetchHeaders['cf-aig-metadata'] = JSON.stringify({ 
+            user: sessionId || 'anonymous', 
+            source: 'website-chat',
+            complexity,
+            enhanced: query !== enhancedQuery
+          });
+        }
+        
+        const upstreamResponse = await fetch(fetchUrl, {
           method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-            'authorization': `Bearer ${upstreamToken}`
-          },
+          headers: fetchHeaders,
           body: JSON.stringify(requestBody),
           cf: { cacheTtl: 0, cacheEverything: false }
         });
@@ -639,7 +790,10 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           streamHeaders.set('cache-control', 'no-store');
           streamHeaders.set('x-cache-status', 'MISS');
           streamHeaders.set('x-response-time', String(Date.now() - startTime));
-          
+          streamHeaders.set('x-query-complexity', complexity);
+          streamHeaders.set('x-query-enhanced', String(query !== enhancedQuery));
+          streamHeaders.set('x-ai-provider', 'autorag');
+
           const encoder = new globalThis.TextEncoder();
           const sleep = (ms) => (typeof globalThis.setTimeout === 'function'
             ? new Promise((resolve) => globalThis.setTimeout(resolve, ms))
@@ -662,9 +816,9 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
               }
               send('done', { message });
               controller.close();
-              
+
               // Cache and log after streaming completes
-              if (cacheEnabled && env.AI_RESPONSE_CACHE && message) {
+              if (finalCacheEnabled && env.AI_RESPONSE_CACHE && message) {
                 try {
                   await env.AI_RESPONSE_CACHE.put(cacheKey, JSON.stringify({
                     message,
@@ -675,7 +829,7 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
                   // Cache write failed, continue anyway
                 }
               }
-              
+
               if (env.AI_ANALYTICS) {
                 try {
                   const responseTime = Date.now() - startTime;
@@ -684,14 +838,15 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
                       query.slice(0, 100),
                       'API_CALL_STREAM',
                       clientIp,
-                      sessionId || 'anonymous'
+                      sessionId || 'anonymous',
+                      complexity || 'unknown'
                     ],
                     doubles: [
                       sources.length,
                       message.length,
                       responseTime
                     ],
-                    indexes: ['ai_query']
+                    indexes: ['ai_query', `complexity_${complexity}`]
                   });
                 } catch {
                   // Analytics write failed, continue anyway
@@ -706,9 +861,9 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         }
 
         const responsePayload = JSON.stringify({ message, sources });
-        
+
         // Cache the response for future queries
-        if (cacheEnabled && env.AI_RESPONSE_CACHE && message) {
+        if (finalCacheEnabled && env.AI_RESPONSE_CACHE && message) {
           try {
             await env.AI_RESPONSE_CACHE.put(cacheKey, JSON.stringify({
               message,
@@ -719,7 +874,7 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
             // Cache write failed, continue anyway
           }
         }
-        
+
         // Log successful query to analytics
         if (env.AI_ANALYTICS) {
           try {
@@ -729,26 +884,30 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
                 query.slice(0, 100),
                 'API_CALL',
                 clientIp,
-                sessionId || 'anonymous'
+                sessionId || 'anonymous',
+                complexity || 'unknown'
               ],
               doubles: [
                 sources.length,
                 message.length,
                 responseTime
               ],
-              indexes: ['ai_query']
+              indexes: ['ai_query', `complexity_${complexity}`]
             });
           } catch {
             // Analytics write failed, continue anyway
           }
         }
-        
+
         const responseHeaders = {
           ...baseCorsHeaders,
           'x-cache-status': 'MISS',
-          'x-response-time': String(Date.now() - startTime)
+          'x-response-time': String(Date.now() - startTime),
+          'x-query-complexity': complexity,
+          'x-query-enhanced': String(query !== enhancedQuery),
+          'x-ai-provider': 'autorag'
         };
-        
+
         return new Response(responsePayload, { status: 200, headers: responseHeaders });
       } catch (error) {
         let errorMessage = 'AI search request failed';
@@ -756,6 +915,109 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           errorMessage = 'AI search request timed out';
         }
         return new Response(JSON.stringify({ error: errorMessage }), { status: 504, headers: baseCorsHeaders });
+      }
+    }
+
+    // Semantic search endpoint using Vectorize
+    if (url.pathname === '/api/semantic-search') {
+      const origin = request.headers.get('origin') || '*';
+      const baseCorsHeaders = {
+        'access-control-allow-origin': origin,
+        'access-control-allow-credentials': 'true',
+        'access-control-allow-methods': 'POST, OPTIONS',
+        'access-control-allow-headers': 'content-type',
+        'cache-control': 'no-store',
+        'vary': 'Origin'
+      };
+
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: baseCorsHeaders });
+      }
+
+      if (request.method !== 'POST') {
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), { 
+          status: 405, 
+          headers: baseCorsHeaders 
+        });
+      }
+
+      try {
+        const { query, limit = 5 } = await request.json();
+
+        if (!query || typeof query !== 'string') {
+          return new Response(JSON.stringify({ error: 'Query is required' }), {
+            status: 400,
+            headers: baseCorsHeaders
+          });
+        }
+
+        // Check if Vectorize is available
+        if (!env.VECTORIZE) {
+          return new Response(JSON.stringify({ 
+            error: 'Semantic search not configured',
+            fallback: 'using-keyword-search' 
+          }), {
+            status: 503,
+            headers: baseCorsHeaders
+          });
+        }
+
+        // Generate embedding for query using Workers AI
+        let queryEmbedding;
+        try {
+          const embeddingResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
+            text: [query]
+          });
+          queryEmbedding = embeddingResponse.data[0];
+        } catch (error) {
+          return new Response(JSON.stringify({ 
+            error: 'Failed to generate query embedding',
+            details: error.message 
+          }), {
+            status: 500,
+            headers: baseCorsHeaders
+          });
+        }
+
+        // Query Vectorize index
+        const vectorizeResults = await env.VECTORIZE.query(queryEmbedding, {
+          topK: Math.min(limit, 10),
+          returnMetadata: true,
+          returnValues: false
+        });
+
+        // Format results
+        const results = vectorizeResults.matches.map(match => ({
+          id: match.id,
+          score: match.score,
+          title: match.metadata?.title || '',
+          description: match.metadata?.description || '',
+          url: match.metadata?.url || '',
+          collection: match.metadata?.collection || '',
+          tags: match.metadata?.tags ? match.metadata.tags.split(',') : [],
+          date: match.metadata?.date || ''
+        }));
+
+        return new Response(JSON.stringify({ 
+          query,
+          results,
+          count: results.length 
+        }), {
+          status: 200,
+          headers: {
+            ...baseCorsHeaders,
+            'content-type': 'application/json'
+          }
+        });
+
+      } catch (error) {
+        return new Response(JSON.stringify({ 
+          error: 'Semantic search failed',
+          details: error.message 
+        }), {
+          status: 500,
+          headers: baseCorsHeaders
+        });
       }
     }
 

@@ -59,8 +59,22 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 # ENVIRONMENT = "production"
 AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/autorag/rags/bold-heart-18e4/ai-search"
 
+# Phase 2: AI Gateway (optional - uncomment when gateway is created)
+# AI_GATEWAY_ID = "blakeoxford-ai-gateway"
+# AI_GATEWAY_ACCOUNT_ID = "cc3bb24ae3c87cff38c2be85df3dab29"
+# OPENAI_BACKUP_ENABLED = "false"
+
 [[analytics_engine_datasets]]
 binding = "AI_ANALYTICS"
+
+# Workers AI for on-edge inference (simple queries)
+[ai]
+binding = "AI"
+
+# Vectorize for semantic search (blog posts & projects)
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "blakeoxford-content"
 
 [observability.logs]
 enabled = true
