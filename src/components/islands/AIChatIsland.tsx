@@ -359,6 +359,7 @@ export default function AIChatIsland() {
 		return true;
 	});
 	const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+	const [copiedShareUrl, setCopiedShareUrl] = useState<string | null>(null);
 	const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
 	const [showDigest, setShowDigest] = useState(false);
 	const [showAnalytics, setShowAnalytics] = useState(false);
@@ -1707,6 +1708,52 @@ export default function AIChatIsland() {
 											onClick={() => handleCopyMessage(message)}
 										>
 											{copiedMessageId === message.id ? 'Copied' : 'Copy answer'}
+										</button>
+										<button
+											type="button"
+											className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+											title="Share this query"
+											onClick={() => {
+												const messageIndex = messages.findIndex((m) => m.id === message.id);
+												const userQuery = messageIndex > 0 ? messages[messageIndex - 1]?.content || '' : '';
+												const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(userQuery)}&autosubmit=true`;
+												
+												if (navigator.share) {
+													navigator.share({
+														title: 'AutoRAG Query Result',
+														text: `Check out this answer from Blake's AI assistant: "${userQuery}"`,
+														url: shareUrl,
+													}).then(() => {
+														if ((window as any).plausible) {
+															(window as any).plausible('AutoRAG Share', { props: { method: 'native' } });
+														}
+													}).catch(() => {/* User cancelled */});
+												} else {
+													navigator.clipboard.writeText(shareUrl).then(() => {
+														setCopiedShareUrl(message.id);
+														setTimeout(() => setCopiedShareUrl(null), 2000);
+														if ((window as any).plausible) {
+															(window as any).plausible('AutoRAG Share', { props: { method: 'clipboard' } });
+														}
+													}).catch(() => {/* Clipboard failed */});
+												}
+											}}
+										>
+											{copiedShareUrl === message.id ? (
+												<>
+													<svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
+														<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+													</svg>
+													Copied!
+												</>
+											) : (
+												<>
+													<svg className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+													</svg>
+													Share
+												</>
+											)}
 										</button>
 										{primarySource?.url && (
 											<button
