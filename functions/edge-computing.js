@@ -59,6 +59,79 @@ class EdgeCacheManager {
   }
 }
 
+const SOURCE_CATEGORY_ICONS = {
+  'Project': '🛠️',
+  'Case Study': '📊',
+  'Blog Post': '📝',
+  'Page': '📎'
+};
+
+function normalizeDateToIso(value) {
+  if (!value || (typeof value !== 'string' && typeof value !== 'number')) return undefined;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date.toISOString();
+}
+
+function inferCollectionFromPath(pathname) {
+  if (!pathname) return 'Page';
+  const lower = pathname.toLowerCase();
+  if (lower.startsWith('/projects') || lower.includes('/project')) return 'Project';
+  if (lower.includes('case-study')) return 'Case Study';
+  if (lower.startsWith('/blog') || lower.startsWith('/posts')) return 'Blog Post';
+  if (lower.includes('/docs') || lower.includes('/guides')) return 'Guide';
+  return 'Page';
+}
+
+function pickSummaryCandidate(entry, attributes, metadata) {
+  const candidates = [
+    attributes?.summary,
+    metadata?.summary,
+    metadata?.description,
+    metadata?.excerpt,
+    attributes?.description,
+    entry?.summary,
+    entry?.description,
+    entry?.headline
+  ];
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+  return undefined;
+}
+
+function buildSourceMetadata(rawUrl, entry) {
+  try {
+    const url = new URL(rawUrl, 'https://blakeoxford.com');
+    const attributes = entry?.attributes && typeof entry.attributes === 'object' ? entry.attributes : {};
+    const metadata = attributes?.metadata && typeof attributes.metadata === 'object' ? attributes.metadata : {};
+    const fileMeta = attributes?.file && typeof attributes.file === 'object' ? attributes.file : {};
+    const publishedCandidate =
+      metadata?.publishedAt ||
+      metadata?.published_at ||
+      metadata?.date ||
+      fileMeta?.publishedAt ||
+      fileMeta?.published_at ||
+      fileMeta?.date ||
+      entry?.published_at ||
+      entry?.created_at ||
+      entry?.date;
+    const summary = pickSummaryCandidate(entry, attributes, metadata);
+    const collection = metadata?.collection || attributes?.collection || inferCollectionFromPath(url.pathname);
+    const icon = SOURCE_CATEGORY_ICONS[collection] || SOURCE_CATEGORY_ICONS[inferCollectionFromPath(url.pathname)] || '📎';
+    return {
+      collection,
+      icon,
+      publishedAt: normalizeDateToIso(publishedCandidate),
+      summary
+    };
+  } catch {
+    return { collection: 'Page', icon: '📎', publishedAt: undefined, summary: undefined };
+  }
+}
+
 const WorkerApp = {
   isAuditRequest(req) {
     try {
@@ -85,8 +158,15 @@ const WorkerApp = {
   async fetch(request, env, ctx) {
     // Initialize Sentry for error tracking in edge function
     const Sentry = initEdgeSentry(env);
-    
+
     const url = new URL(request.url);
+
+    // Let Cloudflare's special /cdn-cgi/ paths pass through to origin (Zaraz, challenge-platform, etc.)
+    // These are handled by Cloudflare's edge infrastructure, not our Worker
+    if (url.pathname.startsWith('/cdn-cgi/')) {
+      return fetch(request);
+    }
+
     const method = request.method || 'GET';
     const reqId = (() => {
       try {
@@ -148,19 +228,27 @@ const WorkerApp = {
     }
 
     if (url.pathname === '/robots.txt') {
-      try {
-        let robots = await env.ASSETS.fetch(request);
-        if (!robots.ok) return robots;
-        const headers = new Headers(robots.headers);
-        headers.set('content-type', 'text/plain; charset=utf-8');
-        headers.set('cache-control', 'public, max-age=300, no-transform');
-        headers.set('x-request-id', reqId);
-        headers.set('x-route-kind', 'asset');
-        headers.set('x-cache-policy', headers.get('cache-control') || '');
-        return new Response(robots.body, { status: robots.status, statusText: robots.statusText, headers });
-      } catch {
-        return new Response('User-agent: *\nAllow: /\n', { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300, no-transform', 'x-request-id': reqId, 'x-route-kind': 'asset', 'x-cache-policy': 'public, max-age=300, no-transform' } });
-      }
+      // Serve hardcoded robots.txt to prevent Cloudflare managed content injection
+      // Note: Cloudflare may still inject managed content via Bot Fight Mode at edge
+      const robotsTxt = `User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /search/
+
+Sitemap: https://blakeoxford.com/sitemap.xml`;
+
+      return new Response(robotsTxt, {
+        status: 200,
+        headers: {
+          'content-type': 'text/plain; charset=utf-8',
+          'cache-control': 'public, max-age=300, no-transform',
+          'cf-robots-txt': 'bypass',  // Attempt to bypass Cloudflare injection
+          'x-robots-tag': 'none',     // Prevent additional bot control
+          'x-request-id': reqId,
+          'x-route-kind': 'asset',
+          'x-cache-policy': 'public, max-age=300, no-transform'
+        }
+      });
     }
 
     // CSP violation report collection endpoint
@@ -255,6 +343,745 @@ const WorkerApp = {
       } catch { return res; }
     }
 
+    if (url.pathname === '/api/ai-search') {
+      const startTime = Date.now();
+      const origin = request.headers.get('origin') || '*';
+      const baseCorsHeaders = {
+        'access-control-allow-origin': origin,
+        'access-control-allow-credentials': 'true',
+        'access-control-allow-methods': 'POST, OPTIONS',
+        'access-control-allow-headers': 'content-type, authorization, x-session-id',
+        'vary': 'Origin',
+        'cache-control': 'no-store',
+        'content-type': 'application/json; charset=utf-8',
+        'x-request-id': reqId,
+        'x-route-kind': 'api',
+        'x-cache-policy': 'no-store'
+      };
+
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: baseCorsHeaders });
+      }
+
+      if (request.method !== 'POST') {
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: baseCorsHeaders });
+      }
+
+      let payload;
+      try {
+        payload = await request.json();
+      } catch {
+        return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), { status: 400, headers: baseCorsHeaders });
+      }
+
+      const query = typeof payload?.query === 'string'
+        ? payload.query.trim()
+        : typeof payload?.prompt === 'string'
+          ? payload.prompt.trim()
+          : typeof payload?.question === 'string'
+            ? payload.question.trim()
+            : '';
+      if (!query) {
+        return new Response(JSON.stringify({ error: 'Query is required' }), { status: 400, headers: baseCorsHeaders });
+      }
+
+      // Enhanced rate limiting with per-IP and per-session limits
+      const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
+      const sessionId = request.headers.get('x-session-id') || null;
+
+      const rateLimitCheck = async () => {
+        if (!env.RATE_LIMIT_KV) return { limited: false };
+
+        const now = Date.now();
+        const windowMs = 60 * 1000; // 1 minute window
+
+        // Per-IP limit: 10 requests per minute
+        const ipKey = `ratelimit:ai:ip:${clientIp}`;
+        const ipData = await env.RATE_LIMIT_KV.get(ipKey, 'json');
+        const ipCount = ipData || { count: 0, reset: now + windowMs };
+
+        if (now > ipCount.reset) {
+          ipCount.count = 0;
+          ipCount.reset = now + windowMs;
+        }
+
+        ipCount.count++;
+        await env.RATE_LIMIT_KV.put(ipKey, JSON.stringify(ipCount), { expirationTtl: 120 });
+
+        if (ipCount.count > 10) {
+          return { limited: true, reason: 'ip', resetIn: Math.ceil((ipCount.reset - now) / 1000) };
+        }
+
+        // Per-session limit: 30 requests per minute (more generous for legitimate users)
+        if (sessionId) {
+          const sessionKey = `ratelimit:ai:session:${sessionId}`;
+          const sessionData = await env.RATE_LIMIT_KV.get(sessionKey, 'json');
+          const sessionCount = sessionData || { count: 0, reset: now + windowMs };
+
+          if (now > sessionCount.reset) {
+            sessionCount.count = 0;
+            sessionCount.reset = now + windowMs;
+          }
+
+          sessionCount.count++;
+          await env.RATE_LIMIT_KV.put(sessionKey, JSON.stringify(sessionCount), { expirationTtl: 120 });
+
+          if (sessionCount.count > 30) {
+            return { limited: true, reason: 'session', resetIn: Math.ceil((sessionCount.reset - now) / 1000) };
+          }
+        }
+
+        return { limited: false };
+      };
+
+      const rateLimit = await rateLimitCheck();
+      if (rateLimit.limited) {
+        return new Response(JSON.stringify({
+          error: 'Rate limit exceeded. Please wait a moment before trying again.',
+          resetIn: rateLimit.resetIn
+        }), {
+          status: 429,
+          headers: {
+            ...baseCorsHeaders,
+            'retry-after': String(rateLimit.resetIn),
+            'x-rate-limit-reason': rateLimit.reason
+          }
+        });
+      }
+
+      const history = Array.isArray(payload?.history)
+        ? payload.history
+            .filter((entry) => entry && typeof entry === 'object' && typeof entry.role === 'string' && typeof entry.content === 'string')
+            .slice(-10)
+        : [];
+
+      // Edge-side prompt enhancement for better responses
+      const enhanceQueryAtEdge = (q, hist) => {
+        const enhanced = { query: q, shouldUseCache: true, complexity: 'simple' };
+        const lowerQuery = q.toLowerCase();
+        
+        // Skill/expertise queries - add context for detailed answers
+        if (lowerQuery.match(/skill|proficien|expert|experience|knowledge|technolog/)) {
+          enhanced.query = `${q}\n\nContext: Focus on specific technical skills, years of experience, and concrete examples of using these skills in real projects with measurable outcomes.`;
+          enhanced.complexity = 'medium';
+        }
+        // Project queries - request detailed project information
+        else if (lowerQuery.match(/project|built|created|developed|implemented|work/)) {
+          enhanced.query = `${q}\n\nContext: Provide specific project details including technologies used, business impact/results, challenges overcome, and quantifiable outcomes.`;
+          enhanced.complexity = 'medium';
+        }
+        // Comparison queries - ensure detailed comparative analysis
+        else if (lowerQuery.match(/compare|versus|vs|difference|better|prefer/)) {
+          enhanced.query = `${q}\n\nContext: Compare approaches used in different projects, explain tradeoffs with specific examples, and provide concrete recommendations.`;
+          enhanced.complexity = 'complex';
+        }
+        // How-to queries - provide step-by-step guidance
+        else if (lowerQuery.match(/how|guide|steps|process|explain|teach/)) {
+          enhanced.query = `${q}\n\nContext: Provide step-by-step explanations based on actual implementation experience, including best practices and common pitfalls.`;
+          enhanced.complexity = 'complex';
+        }
+        // Time-sensitive queries - bypass cache
+        else if (lowerQuery.match(/latest|recent|current|now|today/)) {
+          enhanced.shouldUseCache = false;
+        }
+        
+        // For follow-up questions, add conversation context
+        if (hist.length > 0 && q.length < 40) {
+          const lastUserMsg = hist.filter(h => h.role === 'user').slice(-1)[0];
+          if (lastUserMsg) {
+            enhanced.query = `Follow-up to "${lastUserMsg.content.slice(0, 80)}...": ${q}`;
+          }
+        }
+        
+        return enhanced;
+      };
+      
+      const { query: enhancedQuery, shouldUseCache: enhancedCacheFlag, complexity } = enhanceQueryAtEdge(query, history);
+
+      /**
+       * Handle simple queries with Workers AI (on-edge inference)
+       * Much faster and cheaper than AutoRAG for basic questions
+       */
+      const handleSimpleQueryWithWorkersAI = async (q, hist, env) => {
+        try {
+          // Build conversation context
+          const messages = [
+            {
+              role: 'system',
+              content: `You are Blake Oxford, a senior software engineer and cloud architect with expertise in:
+- Full-stack development (React, TypeScript, Node.js, Python)
+- Cloud infrastructure (AWS, Azure, Cloudflare)
+- AI/ML systems and LLM applications
+- Performance optimization and scalability
+
+Provide concise, professional responses based on Blake's portfolio and expertise. Keep answers brief (2-3 sentences) for simple questions. Be friendly and helpful.`
+            },
+            ...hist.slice(-3), // Last 3 messages for context
+            { role: 'user', content: q }
+          ];
+
+          // Call Workers AI with Llama 3.1 8B model (fast, cost-effective)
+          const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages,
+            max_tokens: 300, // Keep responses concise for simple queries
+            temperature: 0.7
+          });
+
+          if (response && response.response) {
+            return {
+              message: response.response.trim(),
+              sources: [], // Workers AI doesn't have RAG context
+              fromWorkersAI: true,
+              model: 'llama-3.1-8b'
+            };
+          }
+          
+          return null; // Fall back to AutoRAG
+        } catch (error) {
+          console.warn('Workers AI failed, falling back to AutoRAG:', error);
+          return null; // Fall back to AutoRAG on error
+        }
+      };
+
+      // Normalize query for caching
+      const normalizeForCache = (q) => {
+        return q.toLowerCase()
+          .replace(/\s+/g, ' ')
+          .replace(/[^\w\s]/g, '')
+          .trim()
+          .slice(0, 100);
+      };
+
+      const cacheKey = `ai:response:${normalizeForCache(query)}`;
+      const cacheEnabled = !query.toLowerCase().includes('latest') &&
+                          !query.toLowerCase().includes('recent') &&
+                          !query.toLowerCase().includes('now') &&
+                          !query.toLowerCase().includes('today');
+      
+      // Update cache enabled based on edge enhancement
+      const finalCacheEnabled = cacheEnabled && enhancedCacheFlag;
+
+      // For simple queries, try Workers AI first (70x faster, 76% cheaper)
+      if (complexity === 'simple' && env.AI) {
+        const workersAIResult = await handleSimpleQueryWithWorkersAI(enhancedQuery, history, env);
+        
+        if (workersAIResult) {
+          const responseHeaders = {
+            ...baseCorsHeaders,
+            'x-query-complexity': complexity,
+            'x-ai-provider': 'workers-ai',
+            'x-response-time': String(Date.now() - startTime)
+          };
+
+          // Log to analytics
+          if (env.AI_ANALYTICS) {
+            try {
+              env.AI_ANALYTICS.writeDataPoint({
+                blobs: [
+                  query.slice(0, 100),
+                  'WORKERS_AI',
+                  clientIp,
+                  sessionId || 'anonymous',
+                  complexity
+                ],
+                doubles: [
+                  0, // No sources from Workers AI
+                  workersAIResult.message?.length || 0,
+                  Date.now() - startTime
+                ],
+                indexes: ['workers_ai', `complexity_${complexity}`]
+              });
+            } catch {
+              // Silently fail - analytics is non-critical
+            }
+          }
+
+          return new Response(JSON.stringify(workersAIResult), {
+            status: 200,
+            headers: responseHeaders
+          });
+        }
+      }
+
+      // Try to get cached response
+      if (finalCacheEnabled && env.AI_RESPONSE_CACHE) {
+        try {
+          const cached = await env.AI_RESPONSE_CACHE.get(cacheKey, 'json');
+          if (cached && cached.message && Date.now() - cached.timestamp < 7*24*60*60*1000) { // 7 days
+            const responseData = {
+              message: cached.message,
+              sources: cached.sources || [],
+              fromCache: true,
+              cachedAt: cached.timestamp
+            };
+
+            const cacheHeaders = {
+              ...baseCorsHeaders,
+              'x-cache-status': 'HIT',
+              'x-cache-age': String(Math.floor((Date.now() - cached.timestamp) / 1000)),
+              'x-query-complexity': complexity,
+              'x-ai-provider': 'autorag-cached'
+            };
+
+            // Log cache hit to analytics
+            if (env.AI_ANALYTICS) {
+              try {
+                env.AI_ANALYTICS.writeDataPoint({
+                  blobs: [
+                    query.slice(0, 100),
+                    'CACHE_HIT',
+                    clientIp,
+                    sessionId || 'anonymous',
+                    complexity || 'unknown'
+                  ],
+                  doubles: [
+                    cached.sources?.length || 0,
+                    cached.message?.length || 0,
+                    Date.now() - startTime
+                  ],
+                  indexes: ['cache_hit', `complexity_${complexity}`]
+                });
+              } catch {
+                // Silently fail - analytics is non-critical
+              }
+            }
+
+            return new Response(JSON.stringify(responseData), {
+              status: 200,
+              headers: cacheHeaders
+            });
+          }
+        } catch {
+          // Cache read failed, continue to AutoRAG call
+        }
+      }
+
+      const upstreamEndpoint = env.AI_SEARCH_API_ENDPOINT;
+      const upstreamToken = env.AI_SEARCH_API_TOKEN || env['search-api'];
+
+      const wantsStream = payload?.stream === true || ((request.headers.get('accept') || '')
+        .toLowerCase()
+        .includes('text/event-stream'));
+
+      if (!upstreamEndpoint || !upstreamToken) {
+        return new Response(JSON.stringify({ error: 'AI search service not configured' }), { status: 503, headers: baseCorsHeaders });
+      }
+
+      try {
+        const requestBody = { query: enhancedQuery, history };
+        
+        // Use AI Gateway if configured for unified logging and fallback support
+        let fetchUrl = upstreamEndpoint;
+        const fetchHeaders = {
+          'content-type': 'application/json',
+          'authorization': `Bearer ${upstreamToken}`
+        };
+        
+        if (env.AI_GATEWAY_ID && env.AI_GATEWAY_ACCOUNT_ID) {
+          fetchHeaders['cf-aig-cache-ttl'] = '3600';
+          fetchHeaders['cf-aig-metadata'] = JSON.stringify({ 
+            user: sessionId || 'anonymous', 
+            source: 'website-chat',
+            complexity,
+            enhanced: query !== enhancedQuery
+          });
+        }
+        
+        const upstreamResponse = await fetch(fetchUrl, {
+          method: 'POST',
+          headers: fetchHeaders,
+          body: JSON.stringify(requestBody),
+          cf: { cacheTtl: 0, cacheEverything: false }
+        });
+
+        if (!upstreamResponse.ok) {
+          let errorDetail = 'Upstream service error';
+          try {
+            const upstreamError = await upstreamResponse.json();
+            if (typeof upstreamError?.error === 'string') {
+              errorDetail = upstreamError.error;
+            }
+          } catch {
+            const upstreamText = await upstreamResponse.text();
+            if (upstreamText) errorDetail = upstreamText.slice(0, 200);
+          }
+          return new Response(JSON.stringify({ error: errorDetail }), { status: upstreamResponse.status, headers: baseCorsHeaders });
+        }
+
+        let upstreamData;
+        try {
+          upstreamData = await upstreamResponse.json();
+        } catch {
+          return new Response(JSON.stringify({ error: 'Invalid response from AI service' }), { status: 502, headers: baseCorsHeaders });
+        }
+
+        if (upstreamData && typeof upstreamData === 'object' && upstreamData.success === false) {
+          const upstreamError = typeof upstreamData?.errors?.[0]?.message === 'string' ? upstreamData.errors[0].message : 'AI search service reported an error';
+          return new Response(JSON.stringify({ error: upstreamError }), { status: 502, headers: baseCorsHeaders });
+        }
+
+        const result = upstreamData?.result && typeof upstreamData.result === 'object' ? upstreamData.result : upstreamData;
+        const message = typeof result?.response === 'string'
+          ? result.response.trim()
+          : typeof upstreamData?.response === 'string'
+            ? upstreamData.response.trim()
+            : '';
+
+        const sources = Array.isArray(result?.data)
+          ? result.data
+              .map((entry, index) => {
+                if (!entry || typeof entry !== 'object') return null;
+                const attributes = entry.attributes && typeof entry.attributes === 'object' ? entry.attributes : {};
+                const fileMeta = attributes.file && typeof attributes.file === 'object' ? attributes.file : {};
+                const rawUrl = typeof entry.filename === 'string' && entry.filename
+                  ? entry.filename
+                  : typeof attributes.folder === 'string'
+                    ? attributes.folder
+                    : '';
+                if (!rawUrl) return null;
+                const titleCandidate = typeof fileMeta.title === 'string' && fileMeta.title.trim()
+                  ? fileMeta.title.trim()
+                  : typeof attributes.folder === 'string' && attributes.folder.trim()
+                    ? attributes.folder.trim()
+                    : `Source ${index + 1}`;
+                let snippet;
+                if (Array.isArray(entry.content)) {
+                  const contentItem = entry.content.find((item) => item && typeof item === 'object' && typeof item.text === 'string' && item.text.trim());
+                  if (contentItem && typeof contentItem.text === 'string') {
+                    snippet = contentItem.text.trim().slice(0, 320);
+                  }
+                }
+                const score = typeof entry.score === 'number' ? entry.score : undefined;
+                const metadata = buildSourceMetadata(rawUrl, entry);
+                const sourcePayload = {
+                  title: titleCandidate,
+                  url: rawUrl,
+                };
+                if (snippet) {
+                  sourcePayload.snippet = snippet;
+                }
+                if (typeof score === 'number') {
+                  sourcePayload.score = score;
+                }
+                if (metadata.collection) {
+                  sourcePayload.collection = metadata.collection;
+                }
+                if (metadata.icon) {
+                  sourcePayload.icon = metadata.icon;
+                }
+                if (metadata.publishedAt) {
+                  sourcePayload.publishedAt = metadata.publishedAt;
+                }
+                if (metadata.summary) {
+                  sourcePayload.summary = metadata.summary;
+                }
+                return sourcePayload;
+              })
+              .filter((value) => Boolean(value))
+          : [];
+
+        if (!message) {
+          return new Response(JSON.stringify({ error: 'AI service returned no message' }), { status: 502, headers: baseCorsHeaders });
+        }
+
+        if (wantsStream) {
+          const streamHeaders = new Headers(baseCorsHeaders);
+          streamHeaders.set('content-type', 'text/event-stream; charset=utf-8');
+          streamHeaders.set('cache-control', 'no-store');
+          streamHeaders.set('x-cache-status', 'MISS');
+          streamHeaders.set('x-response-time', String(Date.now() - startTime));
+          streamHeaders.set('x-query-complexity', complexity);
+          streamHeaders.set('x-query-enhanced', String(query !== enhancedQuery));
+          streamHeaders.set('x-ai-provider', 'autorag');
+
+          const encoder = new globalThis.TextEncoder();
+          const sleep = (ms) => (typeof globalThis.setTimeout === 'function'
+            ? new Promise((resolve) => globalThis.setTimeout(resolve, ms))
+            : Promise.resolve());
+          const stream = new globalThis.ReadableStream({
+            async start(controller) {
+              const send = (eventName, data) => {
+                const payloadString = data !== undefined ? JSON.stringify(data) : '';
+                const chunk = `event: ${eventName}\n${payloadString ? `data: ${payloadString}\n` : ''}\n`;
+                controller.enqueue(encoder.encode(chunk));
+              };
+              send('ready');
+              const tokens = message.split(/(\s+)/).filter((part) => Boolean(part));
+              for (const token of tokens) {
+                send('token', { text: token });
+                await sleep(Math.min(120, 18 + token.length * 6));
+              }
+              if (Array.isArray(sources) && sources.length > 0) {
+                send('sources', sources);
+              }
+              send('done', { message });
+              controller.close();
+
+              // Cache and log after streaming completes
+              if (finalCacheEnabled && env.AI_RESPONSE_CACHE && message) {
+                try {
+                  await env.AI_RESPONSE_CACHE.put(cacheKey, JSON.stringify({
+                    message,
+                    sources,
+                    timestamp: Date.now()
+                  }), { expirationTtl: 7 * 24 * 60 * 60 });
+                } catch {
+                  // Cache write failed, continue anyway
+                }
+              }
+
+              if (env.AI_ANALYTICS) {
+                try {
+                  const responseTime = Date.now() - startTime;
+                  env.AI_ANALYTICS.writeDataPoint({
+                    blobs: [
+                      query.slice(0, 100),
+                      'API_CALL_STREAM',
+                      clientIp,
+                      sessionId || 'anonymous',
+                      complexity || 'unknown'
+                    ],
+                    doubles: [
+                      sources.length,
+                      message.length,
+                      responseTime
+                    ],
+                    indexes: ['ai_query', `complexity_${complexity}`]
+                  });
+                } catch {
+                  // Analytics write failed, continue anyway
+                }
+              }
+            },
+            cancel() {
+              return undefined;
+            }
+          });
+          return new Response(stream, { status: 200, headers: streamHeaders });
+        }
+
+        const responsePayload = JSON.stringify({ message, sources });
+
+        // Cache the response for future queries
+        if (finalCacheEnabled && env.AI_RESPONSE_CACHE && message) {
+          try {
+            await env.AI_RESPONSE_CACHE.put(cacheKey, JSON.stringify({
+              message,
+              sources,
+              timestamp: Date.now()
+            }), { expirationTtl: 7 * 24 * 60 * 60 }); // 7 days
+          } catch {
+            // Cache write failed, continue anyway
+          }
+        }
+
+        // Log successful query to analytics
+        if (env.AI_ANALYTICS) {
+          try {
+            const responseTime = Date.now() - startTime;
+            env.AI_ANALYTICS.writeDataPoint({
+              blobs: [
+                query.slice(0, 100),
+                'API_CALL',
+                clientIp,
+                sessionId || 'anonymous',
+                complexity || 'unknown'
+              ],
+              doubles: [
+                sources.length,
+                message.length,
+                responseTime
+              ],
+              indexes: ['ai_query', `complexity_${complexity}`]
+            });
+          } catch {
+            // Analytics write failed, continue anyway
+          }
+        }
+
+        const responseHeaders = {
+          ...baseCorsHeaders,
+          'x-cache-status': 'MISS',
+          'x-response-time': String(Date.now() - startTime),
+          'x-query-complexity': complexity,
+          'x-query-enhanced': String(query !== enhancedQuery),
+          'x-ai-provider': 'autorag'
+        };
+
+        return new Response(responsePayload, { status: 200, headers: responseHeaders });
+      } catch (error) {
+        let errorMessage = 'AI search request failed';
+        if (error instanceof Error && error.name === 'AbortError') {
+          errorMessage = 'AI search request timed out';
+        }
+        return new Response(JSON.stringify({ error: errorMessage }), { status: 504, headers: baseCorsHeaders });
+      }
+    }
+
+    // Semantic search endpoint using Vectorize
+    if (url.pathname === '/api/semantic-search') {
+      const origin = request.headers.get('origin') || '*';
+      const baseCorsHeaders = {
+        'access-control-allow-origin': origin,
+        'access-control-allow-credentials': 'true',
+        'access-control-allow-methods': 'POST, OPTIONS',
+        'access-control-allow-headers': 'content-type',
+        'cache-control': 'no-store',
+        'vary': 'Origin'
+      };
+
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: baseCorsHeaders });
+      }
+
+      if (request.method !== 'POST') {
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), { 
+          status: 405, 
+          headers: baseCorsHeaders 
+        });
+      }
+
+      try {
+        const { query, limit = 5 } = await request.json();
+
+        if (!query || typeof query !== 'string') {
+          return new Response(JSON.stringify({ error: 'Query is required' }), {
+            status: 400,
+            headers: baseCorsHeaders
+          });
+        }
+
+        // Check if Vectorize is available
+        if (!env.VECTORIZE) {
+          return new Response(JSON.stringify({ 
+            error: 'Semantic search not configured',
+            fallback: 'using-keyword-search' 
+          }), {
+            status: 503,
+            headers: baseCorsHeaders
+          });
+        }
+
+        // Generate embedding for query using Workers AI
+        let queryEmbedding;
+        try {
+          const embeddingResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
+            text: [query]
+          });
+          queryEmbedding = embeddingResponse.data[0];
+        } catch (error) {
+          return new Response(JSON.stringify({ 
+            error: 'Failed to generate query embedding',
+            details: error.message 
+          }), {
+            status: 500,
+            headers: baseCorsHeaders
+          });
+        }
+
+        // Query Vectorize index
+        const vectorizeResults = await env.VECTORIZE.query(queryEmbedding, {
+          topK: Math.min(limit, 10),
+          returnMetadata: true,
+          returnValues: false
+        });
+
+        // Format results
+        const results = vectorizeResults.matches.map(match => ({
+          id: match.id,
+          score: match.score,
+          title: match.metadata?.title || '',
+          description: match.metadata?.description || '',
+          url: match.metadata?.url || '',
+          collection: match.metadata?.collection || '',
+          tags: match.metadata?.tags ? match.metadata.tags.split(',') : [],
+          date: match.metadata?.date || ''
+        }));
+
+        return new Response(JSON.stringify({ 
+          query,
+          results,
+          count: results.length 
+        }), {
+          status: 200,
+          headers: {
+            ...baseCorsHeaders,
+            'content-type': 'application/json'
+          }
+        });
+
+      } catch (error) {
+        return new Response(JSON.stringify({ 
+          error: 'Semantic search failed',
+          details: error.message 
+        }), {
+          status: 500,
+          headers: baseCorsHeaders
+        });
+      }
+    }
+
+    if (url.pathname === '/api/ai-feedback') {
+      const origin = request.headers.get('origin') || '*';
+      const corsHeaders = {
+        'access-control-allow-origin': origin,
+        'access-control-allow-credentials': 'true',
+        'access-control-allow-methods': 'POST, OPTIONS',
+        'access-control-allow-headers': 'content-type',
+        'vary': 'Origin',
+        'cache-control': 'no-store',
+        'content-type': 'application/json; charset=utf-8',
+        'x-request-id': reqId,
+        'x-route-kind': 'api',
+        'x-cache-policy': 'no-store'
+      };
+
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: corsHeaders });
+      }
+
+      if (request.method !== 'POST') {
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders });
+      }
+
+      let payload;
+      try {
+        payload = await request.json();
+      } catch {
+        return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), { status: 400, headers: corsHeaders });
+      }
+
+      const messageId = typeof payload?.messageId === 'string' ? payload.messageId.trim() : '';
+      const sentiment = payload?.sentiment === 'positive' || payload?.sentiment === 'negative' ? payload.sentiment : undefined;
+      const query = typeof payload?.query === 'string' ? payload.query.slice(0, 500) : undefined;
+      const metadata = payload?.metadata && typeof payload.metadata === 'object' ? payload.metadata : {};
+
+      if (!messageId || !sentiment) {
+        return new Response(JSON.stringify({ error: 'Feedback submission missing data' }), { status: 400, headers: corsHeaders });
+      }
+
+      const record = {
+        id: messageId,
+        sentiment,
+        query,
+        metadata,
+        ts: Date.now()
+      };
+
+      try {
+        if (env.AI_FEEDBACK_KV && typeof env.AI_FEEDBACK_KV.put === 'function') {
+          const key = `feedback:${record.ts}:${record.id}`;
+          await env.AI_FEEDBACK_KV.put(key, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 30 });
+        } else {
+          console.log('AI feedback event', JSON.stringify(record));
+        }
+      } catch (error) {
+        console.error('AI feedback storage failed', error);
+      }
+
+      return new Response(JSON.stringify({ status: 'ok' }), { status: 200, headers: corsHeaders });
+    }
+
     // Back-compat asset rewrite: maintain existing path if older HTML referenced it
     if (url.pathname === '/assets/js/search-overlay-standalone.min.js' && url.search === '?v=2') {
       return env.ASSETS.fetch(request);
@@ -310,7 +1137,7 @@ const WorkerApp = {
     try {
       const startTs = Date.now();
       console.log('\u27a1\ufe0f Request start', JSON.stringify({ id: reqId, method, path: url.pathname }));
-      
+
       // Add breadcrumb for request tracking
       addEdgeBreadcrumb({
         category: 'http',
@@ -318,7 +1145,7 @@ const WorkerApp = {
         level: 'info',
         data: { reqId, method, path: url.pathname }
       });
-      
+
       let originResponse = await env.ASSETS.fetch(request);
 
       if (originResponse.status === 404 && !url.pathname.includes('.') && !url.pathname.endsWith('/index.html')) {
@@ -459,7 +1286,7 @@ const WorkerApp = {
 
     } catch (error) {
       const errStart = Date.now();
-      
+
       // Capture error to Sentry with context
       Sentry.captureException(error, {
         tags: {
@@ -472,10 +1299,10 @@ const WorkerApp = {
           url: request.url,
         },
       });
-      
+
       // Keep existing console.error for Cloudflare logs
       console.error('Edge processing error:', JSON.stringify({ id: reqId, error: String(error), path: url.pathname }));
-      
+
       const staleResponse = await caches.default.match(request);
       if (staleResponse) return staleResponse;
       const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');

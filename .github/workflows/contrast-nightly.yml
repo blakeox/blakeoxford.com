@@ -65,7 +65,7 @@ jobs:
           echo "${{ steps.parse.outputs.issue_body }}" > contrast_issue_body.md
       - name: Create issue if needed
         if: steps.parse.outputs.issue_body
-        uses: peter-evans/create-issue-from-file@v5
+        uses: peter-evans/create-issue-from-file@v6
         with:
             title: 'Contrast borderline threshold exceeded'
             content-filepath: contrast_issue_body.md

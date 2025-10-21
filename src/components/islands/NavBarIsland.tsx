@@ -1,3 +1,33 @@
+/**
+ * NavBarIsland - React island for site navigation
+ *
+ * Interactive navigation bar with mobile menu, logo, and responsive design.
+ * Integrates ModernNavBar and MotionAccessibility for enhanced UX.
+ *
+ * @component
+ * @category Islands
+ *
+ * @example
+ * ```tsx
+ * <NavBarIsland
+ *   client:load
+ *   links={navLinks}
+ *   currentPath={Astro.url.pathname}
+ *   logo={logoConfig}
+ * />
+ * ```
+ *
+ * @prop {NavLink[]} links - Navigation links configuration
+ * @prop {LogoConfig} logo - Logo configuration with name and avatar
+ * @prop {string} [currentPath] - Current page path for active link highlighting
+ *
+ * @accessibility
+ * - Semantic nav element
+ * - Mobile menu with ARIA attributes
+ * - Keyboard navigation (Tab, Enter, Escape)
+ * - Focus management for menu toggle
+ * - Screen reader announcements
+ */
 import { useEffect, useRef, useState } from 'react';
 
 import type { NavLink } from '../../config/navLinks';
@@ -49,21 +79,10 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
 
       if (mobileMenuRef.current) {
         mobileMenuRef.current.setAttribute('inert', '');
-        // Hide until opened to avoid accidental focus
-        (mobileMenuRef.current as HTMLElement).style.visibility = 'hidden';
-        // Ensure the mobile menu is portaled to the document body to avoid header stacking context conflicts
-        try {
-          const menuEl = mobileMenuRef.current as HTMLElement;
-          if (menuEl && menuEl.parentElement && menuEl.parentElement.tagName.toLowerCase() !== 'body') {
-            document.body.appendChild(menuEl);
-            menuEl.dataset.portaled = 'true';
-          }
-        } catch (e) {
-          // no-op: if portal fails, we keep the menu in place
-          if (typeof console !== 'undefined') {
-            console.debug('[NavBarIsland] mobile menu portal skipped', e);
-          }
-        }
+        // Hide until opened to avoid accidental focus and pointer interference
+        const menuEl = mobileMenuRef.current as HTMLElement;
+        menuEl.style.visibility = 'hidden';
+        menuEl.style.pointerEvents = 'none';
       }
 
       const cleanupNav = registerModernNavBar({
@@ -71,9 +90,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         mobileMenu: mobileMenuRef.current,
         burgerButton: burgerButtonRef.current,
         closeButton: closeButtonRef.current,
-        themeToggle: themeToggleRef.current,
-        searchToggle: searchToggleRef.current,
-        searchOverlay: document.getElementById('search-overlay')
+        themeToggle: themeToggleRef.current
       });
 
       if (!(window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit) {
@@ -116,7 +133,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   };
 
   return (
-    <div className="sticky top-0 z-50 border-b border-[--border]/40 bg-[--bg]/90 backdrop-blur supports-[backdrop-filter]:bg-[--bg]/65">
+  <div className="sticky top-0 z-50 border-b border-[--border]/40 bg-[color:var(--glass-surface-bg)] dark:bg-[color:var(--glass-surface-bg-dark)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)] dark:supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-dark-xl)]">
   <nav
         id="navbar"
         ref={navRef}
@@ -137,9 +154,9 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
                 src={logo.avatar.avif || logo.avatar.webp || logo.avatar.jpg}
                 alt=""
                 aria-hidden="true"
-                className="brand-avatar size-9"
-                width={36}
-                height={36}
+                className="brand-avatar size-9 object-cover"
+                width={640}
+                height={640}
                 loading="lazy"
                 decoding="async"
               />
@@ -175,9 +192,11 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             ref={searchToggleRef}
             type="button"
             className="search-toggle inline-flex size-11 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
-            aria-label="Open search"
-            aria-controls="search-overlay"
+            aria-label="Open AI search assistant"
+            aria-haspopup="dialog"
             aria-expanded="false"
+            data-ai-launcher
+            data-ai-action="open"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
@@ -219,67 +238,54 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       <div
         ref={mobileMenuRef}
         id="nav-mobile-links"
-        className="mobile-menu fixed inset-0 md:hidden pointer-events-auto z-[2147483646]"
+        className="mobile-menu absolute left-0 right-0 top-full md:hidden pointer-events-none z-[2147483646] shadow-lg bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700"
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation menu"
       >
   <div
-  className="mobile-menu-backdrop fixed inset-0 bg-[color:rgb(0_0_0_/_0.4)] z-[2147483646] pointer-events-auto"
-    onClick={() => {
-      // Let outside click handler close via document listener; don't stop propagation.
-    }}
-  />
-  <div
-  className="mobile-menu-content fixed inset-y-0 right-0 z-[2147483647] flex w-80 max-w-[85vw] flex-col gap-6 bg-[--surface] text-[--fg] px-5 py-6 shadow-2xl pointer-events-auto"
+  className="mobile-menu-content flex w-full flex-col gap-2 px-5 py-4 text-slate-900 dark:text-slate-100"
     onClick={(e) => {
       // Prevent clicks inside the panel from being treated as outside clicks.
       e.stopPropagation();
     }}
   >
-          <div className="mobile-menu-header flex items-center justify-between">
-            <button
-              id="close-mobile-menu"
-              ref={closeButtonRef}
-              type="button"
-              className="mobile-close-button inline-flex size-10 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] pointer-events-auto touch-manipulation"
-              aria-label="Close navigation menu"
-              onClick={() => {
-                try {
-                  const menu = document.getElementById('nav-mobile-links');
-                  const burger = document.getElementById('nav-toggle');
-                  if (menu) {
-                    menu.classList.remove('active');
-                    menu.style.visibility = 'hidden';
-                    (menu as HTMLElement).inert = true;
-                  }
-                  if (burger) {
-                    burger.setAttribute('aria-expanded', 'false');
-                    burger.classList.remove('active');
-                    burger.style.pointerEvents = '';
-                  }
-                  // Restore body scroll just in case
-                  document.body.style.overflow = '';
-                  document.body.style.position = '';
-                  document.body.style.width = '';
-                } catch {
-                  // no-op
+          <button
+            id="close-mobile-menu"
+            ref={closeButtonRef}
+            type="button"
+            className="mobile-close-button sr-only"
+            aria-label="Close navigation menu"
+            onClick={() => {
+              try {
+                const menu = document.getElementById('nav-mobile-links');
+                const burger = document.getElementById('nav-toggle');
+                if (menu) {
+                  menu.classList.remove('active');
+                  menu.style.visibility = 'hidden';
+                  (menu as HTMLElement).inert = true;
                 }
-              }}
-            >
-              <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="m6 18 12-12M6 6l12 12" />
-              </svg>
-            </button>
-            <span className="text-sm font-semibold tracking-wide text-foreground/75">Menu</span>
-          </div>
+                if (burger) {
+                  burger.setAttribute('aria-expanded', 'false');
+                  burger.classList.remove('active');
+                  burger.style.pointerEvents = '';
+                }
+                // Restore body scroll just in case
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+              } catch {
+                // no-op
+              }
+            }}
+          />
           <ul className="mobile-nav flex flex-col gap-1" role="menubar">
             {links.map((link) => (
               <li className="mobile-nav-item" role="none" key={`mobile-${link.href}`}>
                 <a
                   href={link.href}
                   role="menuitem"
-                  className="mobile-nav-link block rounded-xl px-3 py-2 text-base font-semibold text-[--fg]/80 transition hover:bg-[--bg]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
+                  className="mobile-nav-link block rounded-xl px-3 py-2 text-base font-semibold text-[--fg]/80 transition hover:bg-[color:var(--glass-surface-bg)] dark:hover:bg-[color:var(--glass-surface-bg-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
                   aria-current={isActive(link.href) ? 'page' : undefined}
                 >
                   {link.label}

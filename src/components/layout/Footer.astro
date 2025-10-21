@@ -1,4 +1,26 @@
 ---
+/**
+ * Footer - Site footer with navigation and social links
+ * 
+ * Displays site footer with quick links, social media links,
+ * copyright information, and back-to-top button.
+ * 
+ * @component
+ * @category Layout
+ * 
+ * @example Site footer
+ * ```astro
+ * <Footer />
+ * ```
+ * 
+ * @accessibility
+ * - role="contentinfo" landmark
+ * - aria-label for footer region
+ * - role="navigation" for link sections
+ * - Proper heading hierarchy with aria-level
+ * - Social links with descriptive aria-labels
+ * - SVG icons with role="img" and aria-labelledby
+ */
 const year = new Date().getFullYear();
 const siteTitle = 'Blake Oxford\'s portfolio';
 ---

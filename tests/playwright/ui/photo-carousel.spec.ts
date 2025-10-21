@@ -37,9 +37,10 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     const region = page.getByRole('region', { name: /photo carousel/i });
     await expect(region).toBeVisible();
 
-    const horizontal = page.locator('ul.animate-carousel-x-slow');
-    const upCol = page.locator('ul.animate-carousel-up-slow');
-    const downCol = page.locator('ul.animate-carousel-down-slow');
+    // Scope to region to avoid duplicate element issues
+    const horizontal = region.locator('ul.animate-carousel-x-slow').first();
+    const upCol = region.locator('ul.animate-carousel-up-slow').first();
+    const downCol = region.locator('ul.animate-carousel-down-slow').first();
 
     await expect(horizontal).toBeVisible();
     await expect(upCol).toBeHidden();
@@ -76,9 +77,10 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     const region = page.getByRole('region', { name: /photo carousel/i });
     await expect(region).toBeVisible();
 
-    const horizontal = page.locator('ul.animate-carousel-x-slow');
-    const upCol = page.locator('ul.animate-carousel-up-slow');
-    const downCol = page.locator('ul.animate-carousel-down-slow');
+    // Scope to region to avoid duplicate element issues
+    const horizontal = region.locator('ul.animate-carousel-x-slow').first();
+    const upCol = region.locator('ul.animate-carousel-up-slow').first();
+    const downCol = region.locator('ul.animate-carousel-down-slow').first();
 
     await expect(horizontal).toBeHidden();
     await expect(upCol).toBeVisible();
@@ -139,9 +141,10 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     const region = page.getByRole('region', { name: /photo carousel/i });
     await expect(region).toBeVisible();
 
-    const horizontal = page.locator('ul.animate-carousel-x-slow');
-    const upCol = page.locator('ul.animate-carousel-up-slow');
-    const downCol = page.locator('ul.animate-carousel-down-slow');
+    // Scope to region to avoid duplicate element issues
+    const horizontal = region.locator('ul.animate-carousel-x-slow').first();
+    const upCol = region.locator('ul.animate-carousel-up-slow').first();
+    const downCol = region.locator('ul.animate-carousel-down-slow').first();
 
     // At 768px, should show desktop twin columns
     await expect(horizontal).toBeHidden();

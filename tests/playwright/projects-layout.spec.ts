@@ -5,31 +5,30 @@ test.describe('Projects page layout', () => {
     await page.goto('/projects/');
 
     await page.waitForSelector('main#main-content');
-    await page.waitForSelector('section:nth-of-type(1) [class*="max-w-6xl"], section:nth-of-type(1) [class*="max-w-4xl"]');
-  const heroHeading = page.locator('h1').first();
-  await expect(heroHeading).toBeVisible();
+    const heroSection = page.locator('section[data-layout-section="projects-hero"]');
+    await expect(heroSection).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Selected Projects' })).toBeVisible();
 
     const metrics = await page.evaluate(() => {
-  const header = document.querySelector('header');
-  const heroHeadingEl = document.querySelector('h1');
-      const heroSection = heroHeadingEl ? heroHeadingEl.closest('section') : null;
-  const journeyHeading = document.querySelector('#journey-heading');
-  const journeySection = journeyHeading ? journeyHeading.closest('section') : null;
-      const heroContainer = heroSection?.querySelector('[class*="max-w-6xl"], [class*="max-w-4xl"]');
-      const journeyContainer = journeySection?.querySelector('[class*="max-w-6xl"], [class*="max-w-4xl"]');
+      const header = document.querySelector('header');
+      const heroSection = document.querySelector('section[data-layout-section="projects-hero"]');
+      const gridSection = document.querySelector('section[data-layout-section="projects-grid"]');
+      const heroShell = heroSection?.querySelector('[data-layout-shell="projects-hero-inner"]');
+      const gridShell = gridSection?.querySelector('[data-layout-shell="projects-grid-inner"]');
+      const heroHeadingEl = heroSection?.querySelector('h1');
 
       const navRect = header?.getBoundingClientRect() ?? null;
       const heroRect = heroSection?.getBoundingClientRect() ?? null;
-      const heroShellRect = heroContainer ? (heroContainer as HTMLElement).getBoundingClientRect() : null;
-      const journeyShellRect = journeyContainer ? (journeyContainer as HTMLElement).getBoundingClientRect() : null;
+      const heroShellRect = heroShell ? (heroShell as HTMLElement).getBoundingClientRect() : null;
+      const gridShellRect = gridShell ? (gridShell as HTMLElement).getBoundingClientRect() : null;
       const main = document.querySelector('main#main-content');
       const mainStyles = main ? window.getComputedStyle(main) : null;
 
       return {
         hasHeader: Boolean(header),
         hasHeroSection: Boolean(heroSection),
-        hasHeroShell: Boolean(heroContainer),
-        hasJourneyShell: Boolean(journeyContainer),
+        hasHeroShell: Boolean(heroShell),
+        hasGridShell: Boolean(gridShell),
         navBottom: navRect?.bottom ?? null,
         heroTop: heroRect?.top ?? null,
         mainPaddingTop: mainStyles ? parseFloat(mainStyles.paddingTop || '0') : null,
@@ -39,23 +38,23 @@ test.describe('Projects page layout', () => {
               right: window.innerWidth - heroShellRect.right,
             }
           : null,
-        journeyShell: journeyShellRect
+        heroHeadingText: heroHeadingEl?.textContent?.trim() ?? null,
+        gridShell: gridShellRect
           ? {
-              left: journeyShellRect.left,
-              right: window.innerWidth - journeyShellRect.right,
+              left: gridShellRect.left,
+              right: window.innerWidth - gridShellRect.right,
             }
           : null,
-        heroHeadingText: heroHeadingEl?.textContent?.trim() ?? null,
       };
     });
 
-  expect(metrics.hasHeader).toBeTruthy();
+    expect(metrics.hasHeader).toBeTruthy();
     expect(metrics.hasHeroSection).toBeTruthy();
     expect(metrics.hasHeroShell).toBeTruthy();
-    expect(metrics.hasJourneyShell).toBeTruthy();
+    expect(metrics.hasGridShell).toBeTruthy();
 
-  expect(metrics.heroHeadingText).not.toBeNull();
-  expect(metrics.heroHeadingText?.toLowerCase()).toContain('operational intelligence');
+    expect(metrics.heroHeadingText).not.toBeNull();
+    expect(metrics.heroHeadingText?.toLowerCase()).toContain('selected projects');
 
     expect(metrics.mainPaddingTop).not.toBeNull();
     expect(metrics.mainPaddingTop!).toBeGreaterThanOrEqual(48);
@@ -70,11 +69,11 @@ test.describe('Projects page layout', () => {
       expect(heroGapDifference).toBeLessThanOrEqual(6);
     }
 
-    expect(metrics.journeyShell).not.toBeNull();
-    if (metrics.journeyShell) {
-      const journeyGapDifference = Math.abs(metrics.journeyShell.left - metrics.journeyShell.right);
-      expect(metrics.journeyShell.left).toBeGreaterThanOrEqual(24);
-      expect(journeyGapDifference).toBeLessThanOrEqual(6);
+    expect(metrics.gridShell).not.toBeNull();
+    if (metrics.gridShell) {
+      const gridGapDifference = Math.abs(metrics.gridShell.left - metrics.gridShell.right);
+      expect(metrics.gridShell.left).toBeGreaterThanOrEqual(24);
+      expect(gridGapDifference).toBeLessThanOrEqual(6);
     }
   });
 });

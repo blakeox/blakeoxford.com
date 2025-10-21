@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import NavBar from '../components/layout/NavBar.astro';
-import SearchOverlay from '../components/features/search/SearchOverlay.astro';
+import AIChatWidget from '../components/AIChatWidget.astro';
 import Footer from '../components/layout/Footer.astro';
 import ThemeInitIsland from '../components/islands/ThemeInitIsland';
 import ServiceWorkerIsland from '../components/islands/ServiceWorkerIsland';
@@ -18,6 +18,13 @@ const {
   wide = false,
   keywords = '',
 } = Astro.props;
+
+// Sanitize description: remove extra whitespace, replace Unicode with ASCII for Lighthouse compatibility
+const metaDescription = String(description || '')
+  .replace(/\s+/g, ' ')
+  .replace(/—/g, '-')  // em dash to hyphen
+  .replace(/‑/g, '-')  // non-breaking hyphen to hyphen
+  .trim();
 
 // Compute base site href from astro.config.mjs or fallback (string only)
 const siteHref = (Astro.site?.href ?? 'https://blakeoxford.com').replace(/\/$/, '');
@@ -53,7 +60,8 @@ const mainClasses = `${baseMainClasses} pt-24`;
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="alternate" type="application/rss+xml" title="Blake Oxford RSS" href="/rss.xml" />
     <title>{title}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={metaDescription} />
+    <meta property="og:description" content={metaDescription} />
     {keywords && <meta name="keywords" content={keywords} />}
     <meta name="author" content="Blake Oxford" />
     <meta name="creator" content="Blake Oxford" />
@@ -130,6 +138,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
 
   <ExperimentsCookieIsland client:only="react" />
   <AccessibilityEnhancementsIsland client:only="react" />
+  <script src="/js/ai-chat-launcher.js" defer></script>
   <slot name="head" />
   </head>
   <body id="top" class="min-h-screen bg-[--bg] text-[--fg] transition-colors duration-300">
@@ -140,7 +149,6 @@ const mainClasses = `${baseMainClasses} pt-24`;
   <header role="banner">
       <NavBar />
     </header>
-  <SearchOverlay />
     <main
       id="main-content"
       role="main"
@@ -151,13 +159,6 @@ const mainClasses = `${baseMainClasses} pt-24`;
       <slot />
     </main>
     <Footer />
-    <!-- Back to top floating button -->
-    <div class="fixed bottom-6 right-6 z-50">
-  <a href="#top" class="border-2 border-accent/60 hover:border-accent text-accent hover:text-accent-dark dark:hover:text-accent-light p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" aria-label="Back to top">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-      </a>
-    </div>
+  <AIChatWidget />
   </body>
 </html>

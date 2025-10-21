@@ -3,9 +3,11 @@
  * Handles Content Security Policy violation reports
  */
 
-export async function POST({ request }: { request: Request }) {
+import type { CspViolationReport, CspReportResponse } from '../../types/api';
+
+export async function POST({ request }: { request: Request }): Promise<Response> {
   try {
-    const cspReport = await request.json();
+    const cspReport = await request.json() as CspViolationReport;
     
     // Log CSP violation
     console.warn('🛡️ CSP Violation Reported:', {
@@ -32,11 +34,12 @@ export async function POST({ request }: { request: Request }) {
     // 4. Alert security team for suspicious patterns
     
     // Acknowledge receipt
-    return new Response(JSON.stringify({ 
+    const response: CspReportResponse = { 
       success: true, 
       message: 'CSP violation recorded',
       reportId: `csp-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
-    }), {
+    };
+    return new Response(JSON.stringify(response), {
       status: 200,
       headers: {
         'Content-Type': 'application/json'

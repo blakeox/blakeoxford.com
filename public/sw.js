@@ -36,6 +36,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip Cloudflare infrastructure paths (Zaraz, challenges, etc.)
+  if (url.pathname.startsWith('/cdn-cgi/')) {
+    return;
+  }
+
   if (url.pathname === '/_healthz' || url.pathname === '/metrics') {
     return;
   }
@@ -63,6 +68,10 @@ function cacheFirst(request) {
         caches.open(STATIC_CACHE).then((cache) => cache.put(request, copy));
       }
       return response;
+    }).catch((error) => {
+      // Fail silently for fetch errors (network issues, CORS, etc.)
+      console.warn('Fetch failed for:', request.url, error);
+      return new Response('', { status: 404, statusText: 'Not Found' });
     });
   });
 }

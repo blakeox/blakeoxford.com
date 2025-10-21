@@ -10,8 +10,6 @@ type ModernNavBarOptions = {
   burgerButton?: ElementHandle<HTMLButtonElement>;
   closeButton?: ElementHandle<HTMLButtonElement>;
   themeToggle?: ElementHandle<HTMLButtonElement>;
-  searchToggle?: ElementHandle<HTMLButtonElement>;
-  searchOverlay?: ElementHandle<HTMLElement>;
 };
 
 type CleanupFn = () => void;
@@ -67,41 +65,11 @@ function toggleTheme(button: HTMLButtonElement | null) {
   updateThemeButton(button, nextTheme);
 }
 
-function openOverlay(overlay: HTMLElement | null) {
-  if (!overlay) return;
-  overlay.dataset.state = 'open';
-  overlay.classList.remove('hidden');
-  overlay.inert = false;
-  document.body.dataset.searchOpen = 'true';
-  document.body.style.overflow = 'hidden';
-  document.body.style.position = 'fixed';
-  document.body.style.width = '100%';
-
-  const searchInput = overlay.querySelector<HTMLInputElement>('#search-input');
-  if (searchInput) {
-    setTimeout(() => searchInput.focus(), 100);
-  }
-}
-
-function closeOverlay(overlay: HTMLElement | null) {
-  if (!overlay) return;
-  overlay.dataset.state = 'closed';
-  overlay.inert = true;
-  delete document.body.dataset.searchOpen;
-  document.body.style.overflow = '';
-  document.body.style.position = '';
-  document.body.style.width = '';
-  setTimeout(() => {
-    if (overlay.dataset.state === 'closed') {
-      overlay.classList.add('hidden');
-    }
-  }, 200);
-}
-
 function openMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
   if (!menu || !toggle) return;
   menu.inert = false;
   menu.style.visibility = '';
+  menu.style.pointerEvents = 'auto';
   menu.classList.add('active');
   toggle.setAttribute('aria-expanded', 'true');
   toggle.classList.add('active');
@@ -125,6 +93,7 @@ function closeMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
   setTimeout(() => {
     if (!menu.classList.contains('active')) {
       menu.style.visibility = 'hidden';
+      menu.style.pointerEvents = 'none';
       menu.inert = true;
     }
   }, 250);
@@ -141,9 +110,6 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
   const burgerButton = resolveElement(options.burgerButton);
   const closeButton = resolveElement(options.closeButton);
   const themeToggle = resolveElement(options.themeToggle);
-  const searchToggle = resolveElement(options.searchToggle);
-  const searchOverlay = resolveElement(options.searchOverlay);
-  const searchBackdrop = searchOverlay?.querySelector('[data-overlay-backdrop]') ?? null;
 
   setAriaCurrent(navBar);
 
@@ -174,9 +140,14 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
   }
 
   if (burgerButton && mobileMenu) {
-    const openHandler = (event: Event) => {
+    const toggleHandler = (event: Event) => {
       event.preventDefault();
-  openMobileMenu(mobileMenu, burgerButton);
+      // Toggle: if menu is active, close it; otherwise, open it
+      if (mobileMenu.classList.contains('active')) {
+        closeMobileMenu(mobileMenu, burgerButton);
+      } else {
+        openMobileMenu(mobileMenu, burgerButton);
+      }
     };
 
     const closeHandler = (event: Event) => {
@@ -184,8 +155,8 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
   closeMobileMenu(mobileMenu, burgerButton);
     };
 
-    burgerButton.addEventListener('click', openHandler);
-    cleanupFns.push(() => burgerButton.removeEventListener('click', openHandler));
+    burgerButton.addEventListener('click', toggleHandler);
+    cleanupFns.push(() => burgerButton.removeEventListener('click', toggleHandler));
 
     // Delegated capture-phase handler on the menu container to catch any clicks on the close button
     const delegatedMenuClickCapture = (event: Event) => {
@@ -243,34 +214,6 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
     };
     document.addEventListener('click', outsideClickHandler);
     cleanupFns.push(() => document.removeEventListener('click', outsideClickHandler));
-  }
-
-  if (searchToggle && searchOverlay) {
-    const openHandler = (event: Event) => {
-      event.preventDefault();
-      openOverlay(searchOverlay);
-    };
-
-    searchToggle.addEventListener('click', openHandler);
-    cleanupFns.push(() => searchToggle.removeEventListener('click', openHandler));
-
-    if (searchBackdrop instanceof HTMLElement) {
-      const overlayClickHandler = (event: MouseEvent) => {
-        if (event.target === searchBackdrop) {
-          closeOverlay(searchOverlay);
-        }
-      };
-      searchBackdrop.addEventListener('click', overlayClickHandler);
-      cleanupFns.push(() => searchBackdrop.removeEventListener('click', overlayClickHandler));
-    }
-
-    const escapeHandler = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && searchOverlay.dataset.state === 'open') {
-        closeOverlay(searchOverlay);
-      }
-    };
-    document.addEventListener('keydown', escapeHandler);
-    cleanupFns.push(() => document.removeEventListener('keydown', escapeHandler));
   }
 
   return () => {

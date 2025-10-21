@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
 import PhotoCarousel from '../components/ui/PhotoCarousel.astro';
-import Container from '../components/primitives/Container.astro';
 import Stack from '../components/primitives/Stack.astro';
 import Section from '../components/primitives/Section.astro';
 import Flex from '../components/primitives/Flex.astro';
@@ -121,41 +120,46 @@ const timelineItems: TimelineItem[] = [
       <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
         <div class="absolute inset-0"></div>
       </div>
-      <Container size="xl" class="relative z-10 h-full min-h-screen flex items-center">
-        <Grid cols="2" gap="xl" class="items-center w-full">
-          <Stack space="lg">
-            <h1 id="about-me-title" class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light leading-tight">
-              Systems Architect & Workflow Strategist
-            </h1>
-            <p class="text-base sm:text-lg md:text-xl leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-              Based in Michigan, I help organizations transform complex processes into streamlined, data-driven systems. From healthcare to finance, my approach combines technical expertise with strategic thinking to deliver solutions that scale.
-            </p>
-            <div class="rounded-2xl border border-border/35 bg-background/95 p-6 dark:bg-background-dark/75">
-              <ul class="space-y-3 text-sm font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">
-                <li class="flex items-center gap-3">
-                  <span class="inline-flex size-2 rounded-full bg-accent"></span>
-                  Automation with adoption guardrails
-                </li>
-                <li class="flex items-center gap-3">
-                  <span class="inline-flex size-2 rounded-full bg-accent"></span>
-                  Financial intelligence that informs every sprint
-                </li>
-                <li class="flex items-center gap-3">
-                  <span class="inline-flex size-2 rounded-full bg-accent"></span>
-                  Governance and enablement built-in from day one
-                </li>
-              </ul>
-            </div>
-          </Stack>
-          <div class="w-full h-screen" role="complementary" aria-label="Photo gallery">
+      <div class="relative z-10 min-h-screen">
+        <div class="flex flex-col md:grid md:grid-cols-2 md:gap-0 min-h-screen">
+          <!-- Text Content -->
+          <div class="order-1 flex flex-col justify-start px-4 sm:px-6 pt-28 pb-8 md:order-1 md:justify-center md:px-6 md:py-16 lg:px-12">
+            <Stack space="lg" class="max-w-2xl">
+              <h1 id="about-hero-heading" class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light leading-tight">
+                Systems Architect & Workflow Strategist
+              </h1>
+              <p class="text-base sm:text-lg md:text-xl leading-relaxed text-foreground/80 dark:text-foreground-light/80">
+                Based in Michigan, I help organizations transform complex processes into streamlined, data-driven systems. From healthcare to finance, my approach combines technical expertise with strategic thinking to deliver solutions that scale.
+              </p>
+              <div class="rounded-2xl border border-border/35 bg-background/95 p-6 dark:bg-background-dark/75">
+                <ul class="space-y-3 text-sm font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">
+                  <li class="flex items-center gap-3">
+                    <span class="inline-flex size-2 rounded-full bg-accent"></span>
+                    Automation with adoption guardrails
+                  </li>
+                  <li class="flex items-center gap-3">
+                    <span class="inline-flex size-2 rounded-full bg-accent"></span>
+                    Financial intelligence that informs every sprint
+                  </li>
+                  <li class="flex items-center gap-3">
+                    <span class="inline-flex size-2 rounded-full bg-accent"></span>
+                    Governance and enablement built-in from day one
+                  </li>
+                </ul>
+              </div>
+            </Stack>
+          </div>
+
+          <!-- Photo Carousel -->
+          <div class="order-2 w-full flex-1 min-h-[320px] overflow-hidden md:order-2 md:h-full" role="complementary" aria-label="Photo gallery">
             <div class="relative w-full h-full">
               <PhotoCarousel class="w-full h-full" />
-              <div class="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent dark:from-background-dark/20 pointer-events-none"></div>
+              <div class="hidden md:block absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent dark:from-background-dark/20 pointer-events-none"></div>
             </div>
           </div>
-        </Grid>
-      </Container>
-  </section>    <!-- Achievements -->
+        </div>
+      </div>
+  </section>
     <Section padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
             <!-- Background pattern -->
             <div class="absolute inset-0 z-0 opacity-5">
@@ -223,11 +227,11 @@ const timelineItems: TimelineItem[] = [
                 </p>
               </div>
               <!-- Two column layout -->
-              <Grid cols="2" gap="xl">
+              <Grid cols="2" gap="xl" class="items-stretch">
                 <!-- Education Column -->
-                <div>
+                <div class="flex flex-col h-full">
                   <h2 class="text-2xl sm:text-3xl font-bold border-l-4 border-accent pl-4 mb-6">Education</h2>
-                  <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-xl transition-all duration-300 group">
+                  <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-xl transition-all duration-300 group flex-1">
                     <div class="flex items-start">
                       <div class="flex-shrink-0 bg-accent/10 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -237,8 +241,12 @@ const timelineItems: TimelineItem[] = [
                         </svg>
                       </div>
                       <div class="ml-4">
-                        <h3 class="font-bold text-xl sm:text-2xl text-foreground dark:text-foreground-light group-hover:text-accent transition-colors duration-300">Calvin College</h3>
-                        <div class="text-sm text-foreground/80 dark:text-gray-400 mb-2">Bachelor of Arts in Finance</div>
+                        <h3 class="font-bold text-xl sm:text-2xl text-foreground dark:text-foreground-light group-hover:text-accent transition-colors duration-300">
+                          Calvin College
+                        </h3>
+                        <div class="text-sm text-foreground/80 dark:text-gray-400 mb-2">
+                          Bachelor of Arts in Finance
+                        </div>
                         <p class="text-foreground/85">
                           Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects.
                         </p>
@@ -248,11 +256,11 @@ const timelineItems: TimelineItem[] = [
                 </div>
 
                 <!-- Skills Column -->
-                <div>
+                <div class="flex flex-col h-full">
                   <h2 class="text-2xl sm:text-3xl font-bold border-l-4 border-accent pl-4 mb-6">Skills</h2>
-                  <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark">
+                  <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark flex-1 flex flex-col">
                     <p class="text-foreground/85 mb-4">A blend of systems thinking, finance, and hands-on engineering. I focus on shipping reliable, human-centered automation that delivers measurable outcomes.</p>
-                    <Flex as="ul" wrap gap="sm" role="list">
+                    <Flex as="ul" wrap gap="sm" role="list" class="flex-1">
                       <SkillBadge skill='Systems Architecture' />
                       <SkillBadge skill='Process Automation' />
                       <SkillBadge skill='Cloud: Azure / M365' />
@@ -269,7 +277,7 @@ const timelineItems: TimelineItem[] = [
           </Section>
 
           <!-- Career Timeline -->
-          <Section padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
+          <Section id="about-timeline" padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
             <!-- Overlay dots pattern -->
             <div class="absolute inset-0 z-0 opacity-10">
               <div class="absolute inset-0" aria-hidden="true">
