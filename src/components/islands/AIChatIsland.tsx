@@ -33,6 +33,8 @@ const GUIDED_PROMPTS = [
 
 type ChatState = 'idle' | 'loading' | 'ready';
 
+type LoadingPhase = 'searching' | 'analyzing' | 'crafting' | null;
+
 type ChatMessage = {
 	id: string;
 	role: 'user' | 'assistant';
@@ -290,7 +292,10 @@ export default function AIChatIsland() {
 	const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_ASSISTANT_MESSAGE]);
 	const [inputValue, setInputValue] = useState('');
 	const [chatState, setChatState] = useState<ChatState>('idle');
+	const [loadingPhase, setLoadingPhase] = useState<LoadingPhase>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [touchStartY, setTouchStartY] = useState<number | null>(null);
+	const [touchCurrentY, setTouchCurrentY] = useState<number | null>(null);
 	const [useMemory, setUseMemory] = useState<boolean>(() => {
 		if (typeof window === 'undefined') return true;
 		try {
@@ -530,12 +535,38 @@ export default function AIChatIsland() {
 		}
 		setIsOpen(false);
 		setError(null);
+		setTouchStartY(null);
+		setTouchCurrentY(null);
 		if (lastFocusedElement.current && typeof lastFocusedElement.current.focus === 'function') {
 			requestAnimationFrame(() => {
 				lastFocusedElement.current?.focus();
 			});
 		}
 	}, [isListening, isOpen]);
+
+	const handleTouchStart = useCallback((event: React.TouchEvent) => {
+		if (event.touches.length === 1) {
+			setTouchStartY(event.touches[0].clientY);
+		}
+	}, []);
+
+	const handleTouchMove = useCallback((event: React.TouchEvent) => {
+		if (touchStartY !== null && event.touches.length === 1) {
+			setTouchCurrentY(event.touches[0].clientY);
+		}
+	}, [touchStartY]);
+
+	const handleTouchEnd = useCallback(() => {
+		if (touchStartY !== null && touchCurrentY !== null) {
+			const deltaY = touchCurrentY - touchStartY;
+			// Swipe down more than 100px to close
+			if (deltaY > 100) {
+				closeChat();
+			}
+		}
+		setTouchStartY(null);
+		setTouchCurrentY(null);
+	}, [touchStartY, touchCurrentY, closeChat]);
 
 	const buildHistoryForRequest = useCallback((): AIChatMessage[] => {
 		if (!useMemory) return [];
@@ -799,6 +830,7 @@ export default function AIChatIsland() {
 	const sendQuery = useCallback(
 		async (query: string) => {
 			setChatState('loading');
+			setLoadingPhase('searching');
 			setError(null);
 			setFallbackResults([]);
 			lastQueryRef.current = query;
@@ -826,6 +858,10 @@ export default function AIChatIsland() {
 				? enhanceQuery(query, historyPayload.length > 0)
 				: query;
 
+			// Progressive loading phases for user feedback
+			const searchingTimer = setTimeout(() => setLoadingPhase('analyzing'), 1500);
+			const analyzingTimer = setTimeout(() => setLoadingPhase('crafting'), 4000);
+
 			try {
 				await searchWithAI(enhancedQuery, {
 					history: historyPayload,
@@ -838,22 +874,43 @@ export default function AIChatIsland() {
 					},
 					onSources: (sources) => {
 						assignAssistantSources(assistantId, sources);
+						setLoadingPhase('crafting');
 					},
 					onCompletion: (message) => {
 						replaceAssistantContent(assistantId, message.trim());
 					},
 				});
+				clearTimeout(searchingTimer);
+				clearTimeout(analyzingTimer);
 				setStreamingMessageId(null);
+				setLoadingPhase(null);
 				setChatState('ready');
 				await updateFallbackSuggestions(query);
 			} catch (err) {
+				clearTimeout(searchingTimer);
+				clearTimeout(analyzingTimer);
 				if (controller.signal.aborted) {
+					setLoadingPhase(null);
 					return;
 				}
 				setStreamingMessageId(null);
+				setLoadingPhase(null);
 				setChatState('ready');
 				setMessages((prev) => prev.filter((message) => message.id !== assistantId));
-				const message = err instanceof AISearchError ? err.message : 'Unable to reach the AI assistant right now. Please try again.';
+				
+				// Enhanced error messages with actionable guidance
+				let message = 'Unable to reach the AI assistant right now. Please try again.';
+				if (err instanceof AISearchError) {
+					message = err.message;
+					// Categorize known error patterns
+					if (err.message.includes('timeout') || err.message.includes('timed out')) {
+						message = 'Request timed out. Try simplifying your question or check your connection.';
+					} else if (err.message.includes('rate limit') || err.message.includes('too many')) {
+						message = 'Too many requests. Please wait a moment and try again.';
+					} else if (err.message.includes('network') || err.message.includes('fetch')) {
+						message = 'Network error. Check your internet connection and try again.';
+					}
+				}
 				setError(message);
 				await updateFallbackSuggestions(query);
 			} finally {
@@ -1124,14 +1181,25 @@ export default function AIChatIsland() {
 
 			<div
 				ref={panelRef}
-				className={`ai-chat-panel pointer-events-auto w-[min(90vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 shadow-[0_18px_45px_-18px_rgba(15,23,42,0.65)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/80 transition-transform duration-200 ease-out ${
+				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 shadow-[0_18px_45px_-18px_rgba(15,23,42,0.65)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/80 transition-transform duration-200 ease-out sm:w-[min(85vw,28rem)] ${
 					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
 				}`}
+				style={{
+					transform: touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY
+						? `translateY(${Math.min(touchCurrentY - touchStartY, 200)}px)`
+						: isOpen ? 'translateY(0)' : 'translateY(1rem)',
+					opacity: touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY
+						? Math.max(0.5, 1 - (touchCurrentY - touchStartY) / 400)
+						: isOpen ? 1 : 0
+				}}
 				data-ai-chat-panel
 				data-ai-visible={isOpen ? 'true' : 'false'}
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="ai-chat-heading"
+				onTouchStart={handleTouchStart}
+				onTouchMove={handleTouchMove}
+				onTouchEnd={handleTouchEnd}
 			>
 				<div className="flex items-center justify-between gap-2 border-b border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/40 px-4 py-3">
 					<div className="flex flex-col">
@@ -1370,7 +1438,7 @@ export default function AIChatIsland() {
 						const totalSources = sources.length;
 						const showAllSources = isAssistant ? Boolean(expandedSources[message.id]) : false;
 						const primarySource = sources[0] ?? null;
-						const primarySourceTitle = primarySource ? decodeHtmlEntities(primarySource.title || primarySource.url) : null;
+						const primarySourceTitle = primarySource ? decodeMimeEncodedWords(decodeHtmlEntities(primarySource.title || primarySource.url)) : null;
 						let primarySourceIsExternal = false;
 						if (primarySource) {
 							try {
@@ -1453,8 +1521,8 @@ export default function AIChatIsland() {
 											<ul className="flex flex-col gap-2">
 												{sources.map((source, index) => {
 												const relevance = typeof source.score === 'number' ? Math.round(Math.min(Math.max(source.score, 0), 1) * 100) : null;
-												const title = decodeHtmlEntities(source.title || '');
-												const displayTitle = title || decodeHtmlEntities(source.url);
+												const title = decodeMimeEncodedWords(decodeHtmlEntities(source.title || ''));
+												const displayTitle = title || decodeMimeEncodedWords(decodeHtmlEntities(source.url));
 												const snippetSource = source.summary || source.snippet || '';
 												const snippet = snippetSource ? cleanSnippet(snippetSource) : '';
 												const publishedLabel = formatPublishedDate(source.publishedAt ?? undefined);
@@ -1472,46 +1540,68 @@ export default function AIChatIsland() {
 												return (
 													<li
 														key={`${message.id}-source-${index}`}
-														className="group w-full rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/40 px-3 py-2 text-left text-[color:var(--fg)]/80 transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--surface)]/60"
+														className="group w-full rounded-2xl border border-[color:var(--border)]/40 bg-gradient-to-br from-[color:var(--surface-subtle)]/40 to-[color:var(--surface)]/20 px-4 py-3 text-left text-[color:var(--fg)]/80 shadow-sm transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--surface)]/60 hover:shadow-md"
 													>
-														<div className="flex items-center gap-2">
-															<span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[color:var(--accent)]/10 font-semibold text-[color:var(--accent)]">{index + 1}</span>
-															{source.icon && <span className="shrink-0 text-base" aria-hidden="true">{source.icon}</span>}
-															<a
-																ref={(element) => {
-																if (element) sourceRefs.current.push(element);
-																}}
-																href={source.url}
-																tabIndex={0}
-																target={linkTarget}
-																rel={linkRel}
-																className="flex-1 truncate text-[color:var(--accent)] underline decoration-dotted underline-offset-2 transition group-hover:text-[color:var(--accent-strong)]"
-															>
-																{displayTitle}
-															</a>
+														<div className="flex items-start gap-3">
+															<div className="flex shrink-0 items-center gap-2">
+																<span className="inline-flex size-6 items-center justify-center rounded-full bg-[color:var(--accent)]/15 text-xs font-bold text-[color:var(--accent)]">{index + 1}</span>
+																{source.icon && <span className="shrink-0 text-xl" aria-hidden="true">{source.icon}</span>}
+															</div>
+															<div className="min-w-0 flex-1">
+																<a
+																	ref={(element) => {
+																	if (element) sourceRefs.current.push(element);
+																	}}
+																	href={source.url}
+																	tabIndex={0}
+																	target={linkTarget}
+																	rel={linkRel}
+																	className="block font-medium text-[color:var(--accent)] underline decoration-dotted underline-offset-2 transition group-hover:text-[color:var(--accent-strong)]"
+																>
+																	{displayTitle}
+																</a>
+																<div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[0.65rem] text-[color:var(--fg)]/60">
+																	{source.collection && (
+																		<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/15 px-2.5 py-0.5 font-semibold text-[color:var(--accent-strong)]">
+																			{source.collection === 'blog' && '📝'}
+																			{source.collection === 'projects' && '🚀'}
+																			{source.collection !== 'blog' && source.collection !== 'projects' && '📄'}
+																			{source.collection}
+																		</span>
+																	)}
+																	{relevance !== null && (
+																		<span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[color:var(--accent)]/20 to-[color:var(--accent)]/10 px-2.5 py-0.5 font-bold text-[color:var(--accent-strong)]">
+																			<svg className="size-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+																				<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+																			</svg>
+																			{relevance}%
+																		</span>
+																	)}
+																	{publishedLabel && (
+																		<time className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 bg-[color:var(--surface)]/60 px-2.5 py-0.5" dateTime={source.publishedAt ?? undefined}>
+																			<svg className="size-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+																				<path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+																			</svg>
+																			{publishedLabel}
+																		</time>
+																	)}
+																	{isExternalLink && (
+																		<span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 bg-[color:var(--surface)]/40 px-2.5 py-0.5 text-[color:var(--fg)]/50">
+																			External
+																			<svg className="size-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+																				<path strokeLinecap="round" strokeLinejoin="round" d="M7.5 5h7.06m0 0v7.06m0-7.06-8.12 8.12" />
+																			</svg>
+																		</span>
+																	)}
+																</div>
+																{snippet && (
+																	<p className="mt-2 rounded-lg border border-[color:var(--border)]/20 bg-[color:var(--surface)]/30 px-3 py-2 text-xs leading-relaxed text-[color:var(--fg)]/70">
+																		<span className="font-medium text-[color:var(--fg)]/50">Preview: </span>
+																		{snippet}
+																	</p>
+																)}
+															</div>
 														</div>
-														<div className="mt-1 flex flex-wrap items-center gap-1 text-[0.6rem] text-[color:var(--fg)]/60">
-															{source.collection && (
-																<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 font-medium text-[color:var(--accent-strong)]">{source.collection}</span>
-															)}
-															{isExternalLink && (
-																<span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-2 py-0.5">
-																	External
-																	<svg className="size-2" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">
-																		<path strokeLinecap="round" strokeLinejoin="round" d="M7.5 5h7.06m0 0v7.06m0-7.06-8.12 8.12" />
-																	</svg>
-																</span>
-															)}
-															{publishedLabel && (
-																<time className="rounded-full bg-[color:var(--surface)]/60 px-2 py-0.5" dateTime={source.publishedAt ?? undefined}>
-																	{publishedLabel}
-																</time>
-															)}
-															{relevance !== null && (
-																<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 font-medium text-[color:var(--accent-strong)]">{relevance}% match</span>
-															)}
-														</div>
-														{snippet && <p className="mt-1 line-clamp-3 break-words text-[color:var(--fg)]/65">{snippet}</p>}
 													</li>
 												);
 											})}
@@ -1585,7 +1675,10 @@ export default function AIChatIsland() {
 						<svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
 							<path strokeLinecap="round" strokeLinejoin="round" d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364 6.364-2.121-2.121M8.757 8.757 6.636 6.636m12.728 0-2.121 2.121M8.757 15.243l-2.121 2.121" />
 						</svg>
-						Thinking through the best answer…
+						{loadingPhase === 'searching' && 'Searching knowledge base...'}
+						{loadingPhase === 'analyzing' && 'Analyzing sources...'}
+						{loadingPhase === 'crafting' && 'Crafting response...'}
+						{!loadingPhase && 'Thinking through the best answer...'}
 					</div>
 				)}
 
