@@ -1794,6 +1794,94 @@ export default function AIChatIsland() {
 									}
 									return null;
 								})()}
+								{isAssistant && sources.length > 0 && (() => {
+									// Generate dynamic follow-up suggestions based on sources
+									const suggestions: Array<{ label: string; query: string; icon: string }> = [];
+									
+									// Extract unique collections
+									const collections = [...new Set(sources.map((s) => s.collection).filter(Boolean))] as string[];
+									
+									// Suggest exploring specific collections
+									if (collections.includes('projects')) {
+										const projectSources = sources.filter((s) => s.collection === 'projects');
+										if (projectSources.length > 0) {
+											const projectTitle = projectSources[0].title;
+											suggestions.push({
+												label: 'Project details',
+												query: `Tell me more about the ${projectTitle} project`,
+												icon: '🔍',
+											});
+										}
+									}
+									
+									if (collections.includes('blog')) {
+										const blogSources = sources.filter((s) => s.collection === 'blog');
+										if (blogSources.length > 0) {
+											const blogTitle = blogSources[0].title;
+											suggestions.push({
+												label: 'Related article',
+												query: `What else has Blake written about topics in "${blogTitle}"?`,
+												icon: '📚',
+											});
+										}
+									}
+									
+									// Suggest digging deeper into top source
+									if (sources[0] && sources[0].title) {
+										const topSourceTitle = sources[0].title;
+										if (!suggestions.some((s) => s.query.includes(topSourceTitle))) {
+											suggestions.push({
+												label: 'Deep dive',
+												query: `Can you explain "${topSourceTitle}" in more detail?`,
+												icon: '💡',
+											});
+										}
+									}
+									
+									// Suggest comparing if multiple sources
+									if (sources.length >= 2 && sources[0].title && sources[1].title) {
+										suggestions.push({
+											label: 'Compare',
+											query: `How does "${sources[0].title}" compare to "${sources[1].title}"?`,
+											icon: '⚖️',
+										});
+									}
+									
+									// Limit to 3 suggestions
+									const limitedSuggestions = suggestions.slice(0, 3);
+									
+									if (limitedSuggestions.length === 0) return null;
+									
+									return (
+										<div className="mt-3 space-y-2">
+											<p className="text-xs font-medium uppercase tracking-wide text-[color:var(--fg)]/50">
+												Keep exploring
+											</p>
+											<div className="flex flex-wrap gap-2">
+												{limitedSuggestions.map((suggestion, index) => (
+													<button
+														key={index}
+														type="button"
+														onClick={() => {
+															setInputValue(suggestion.query);
+															setTimeout(() => sendQuery(suggestion.query), 100);
+															
+															if ((window as any).plausible) {
+																(window as any).plausible('AutoRAG Suggested Query', {
+																	props: { type: suggestion.label },
+																});
+															}
+														}}
+														className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--border)]/40 bg-[color:var(--surface)]/50 px-3 py-1.5 text-xs text-[color:var(--fg)]/80 transition-all duration-200 hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--accent)]/10 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+													>
+														<span className="text-sm" aria-hidden="true">{suggestion.icon}</span>
+														{suggestion.label}
+													</button>
+												))}
+											</div>
+										</div>
+									);
+								})()}
 								{isAssistant && (
 									<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
 										<button
