@@ -460,36 +460,45 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         const enhanced = { query: q, shouldUseCache: true, complexity: 'simple' };
         const lowerQuery = q.toLowerCase();
         
+        // CRITICAL: Anti-hallucination system instruction (concise version)
+        const antiHallucinationPrefix = `[SYSTEM: Only cite information from your indexed knowledge base. If unsure, say "I don't have that information." Do not fabricate project details.]\n\n`;
+        
         // Skill/expertise queries - add context for detailed answers
         if (lowerQuery.match(/skill|proficien|expert|experience|knowledge|technolog/)) {
-          enhanced.query = `${q}\n\nContext: Focus on specific technical skills, years of experience, and concrete examples of using these skills in real projects with measurable outcomes.`;
+          enhanced.query = `${antiHallucinationPrefix}${q}\n\nFocus on specific technical skills with concrete project examples and measurable outcomes.`;
           enhanced.complexity = 'medium';
         }
         // Project queries - request detailed project information
-        else if (lowerQuery.match(/project|built|created|developed|implemented|work/)) {
-          enhanced.query = `${q}\n\nContext: Provide specific project details including technologies used, business impact/results, challenges overcome, and quantifiable outcomes.`;
+        else if (lowerQuery.match(/project|built|created|developed|implemented|work|case study|portfolio/)) {
+          enhanced.query = `${antiHallucinationPrefix}${q}\n\nProvide specific project details: technologies, business impact, challenges, outcomes. Only cite documented projects.`;
           enhanced.complexity = 'medium';
         }
         // Comparison queries - ensure detailed comparative analysis
         else if (lowerQuery.match(/compare|versus|vs|difference|better|prefer/)) {
-          enhanced.query = `${q}\n\nContext: Compare approaches used in different projects, explain tradeoffs with specific examples, and provide concrete recommendations.`;
+          enhanced.query = `${antiHallucinationPrefix}${q}\n\nCompare approaches from different projects with specific examples and recommendations.`;
           enhanced.complexity = 'complex';
         }
         // How-to queries - provide step-by-step guidance
         else if (lowerQuery.match(/how|guide|steps|process|explain|teach/)) {
-          enhanced.query = `${q}\n\nContext: Provide step-by-step explanations based on actual implementation experience, including best practices and common pitfalls.`;
+          enhanced.query = `${antiHallucinationPrefix}${q}\n\nProvide step-by-step explanations based on actual implementation experience.`;
           enhanced.complexity = 'complex';
         }
-        // Time-sensitive queries - bypass cache
+        // Time-sensitive queries - bypass cache AND enforce strict knowledge base filtering
         else if (lowerQuery.match(/latest|recent|current|now|today/)) {
+          enhanced.query = `${antiHallucinationPrefix}${q}\n\nOnly cite projects with dates in the knowledge base. Sort by date. Do not fabricate recent work.`;
           enhanced.shouldUseCache = false;
+          enhanced.complexity = 'medium';
+        }
+        // Default: still apply anti-hallucination prefix
+        else {
+          enhanced.query = `${antiHallucinationPrefix}${q}`;
         }
         
         // For follow-up questions, add conversation context
         if (hist.length > 0 && q.length < 40) {
           const lastUserMsg = hist.filter(h => h.role === 'user').slice(-1)[0];
           if (lastUserMsg) {
-            enhanced.query = `Follow-up to "${lastUserMsg.content.slice(0, 80)}...": ${q}`;
+            enhanced.query = `${antiHallucinationPrefix}Follow-up: ${q}\n(Previous: "${lastUserMsg.content.slice(0, 60)}...")`;
           }
         }
         
@@ -508,13 +517,22 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           const messages = [
             {
               role: 'system',
-              content: `You are Blake Oxford, a senior software engineer and cloud architect with expertise in:
-- Full-stack development (React, TypeScript, Node.js, Python)
-- Cloud infrastructure (AWS, Azure, Cloudflare)
-- AI/ML systems and LLM applications
-- Performance optimization and scalability
+              content: `You are Blake Oxford's AI assistant. 
 
-Provide concise, professional responses based on Blake's portfolio and expertise. Keep answers brief (2-3 sentences) for simple questions. Be friendly and helpful.`
+CRITICAL RULES:
+1. ONLY provide information that is explicitly documented in Blake's portfolio
+2. If you don't have specific information, say "I don't have that information in my current knowledge base"
+3. NEVER fabricate project details, technologies, or achievements
+4. Do not mention projects involving AWS Lambda, DynamoDB, or e-commerce unless explicitly documented
+
+Blake's verified expertise includes:
+- Healthcare technology (AdvancedMD EHR implementation, patient documentation systems)
+- Enterprise systems (Microsoft Fabric, Google Workspace → M365 migration, ADP Workforce Now)
+- Cloud platforms (Cloudflare Workers, Azure, Microsoft 365)
+- AI/ML applications (OpenAI integration for clinical documentation)
+- Full-stack development (React, TypeScript, Python, SwiftUI)
+
+Provide concise, professional responses (2-3 sentences) for simple questions. Be friendly and helpful, but factual.`
             },
             ...hist.slice(-3), // Last 3 messages for context
             { role: 'user', content: q }
@@ -1301,7 +1319,26 @@ Provide concise, professional responses based on Blake's portfolio and expertise
       });
 
       // Keep existing console.error for Cloudflare logs
-      console.error('Edge processing error:', JSON.stringify({ id: reqId, error: String(error), path: url.pathname }));
+      console.error('Edge processing error:', JSON.stringify({ id: reqId, error: String(error), stack: error?.stack, path: url.pathname }));
+
+      // For API routes, return JSON errors instead of HTML
+      if (url.pathname.startsWith('/api/')) {
+        const errorPayload = {
+          error: 'Internal server error',
+          message: error?.message || String(error),
+          path: url.pathname,
+          requestId: reqId
+        };
+        return new Response(JSON.stringify(errorPayload), {
+          status: 500,
+          headers: {
+            'content-type': 'application/json',
+            'x-request-id': reqId,
+            'x-route-kind': 'api-error',
+            'cache-control': 'no-store'
+          }
+        });
+      }
 
       const staleResponse = await caches.default.match(request);
       if (staleResponse) return staleResponse;

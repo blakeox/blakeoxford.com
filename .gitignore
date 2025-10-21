@@ -129,9 +129,6 @@ dist
 # FuseBox cache
 .fusebox/
 
-# DynamoDB Local files
-.dynamodb/
-
 # TernJS port file
 .tern-port
 
@@ -192,3 +189,6 @@ toxic-tests.json
 # Cloudflare functions
 functions/.cache/
 .vectorize-temp-input.json
+
+# Legacy search index files (replaced by Vectorize)
+public/search/
