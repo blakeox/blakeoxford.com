@@ -33,6 +33,14 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 binding = "CONTACT_MESSAGES"
 id      = "65439bda285f486f9b07fc2a30bc5099"
 
+[[kv_namespaces]]
+binding = "AI_RESPONSE_CACHE"
+id      = "65439bda285f486f9b07fc2a30bc5099"
+
+[[kv_namespaces]]
+binding = "AI_FEEDBACK_KV"
+id      = "65439bda285f486f9b07fc2a30bc5099"
+
 # To enable CSP report persistence, create a KV namespace and add it here:
 # [[kv_namespaces]]
 # binding = "CSP_REPORTS"
@@ -50,6 +58,9 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 # Add ENVIRONMENT variable for Sentry context
 # ENVIRONMENT = "production"
 AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/autorag/rags/bold-heart-18e4/ai-search"
+
+[[analytics_engine_datasets]]
+binding = "AI_ANALYTICS"
 
 [observability.logs]
 enabled = true

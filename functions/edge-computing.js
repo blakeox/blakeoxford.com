@@ -344,12 +344,13 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
     }
 
     if (url.pathname === '/api/ai-search') {
+      const startTime = Date.now();
       const origin = request.headers.get('origin') || '*';
       const baseCorsHeaders = {
         'access-control-allow-origin': origin,
         'access-control-allow-credentials': 'true',
         'access-control-allow-methods': 'POST, OPTIONS',
-        'access-control-allow-headers': 'content-type, authorization',
+        'access-control-allow-headers': 'content-type, authorization, x-session-id',
         'vary': 'Origin',
         'cache-control': 'no-store',
         'content-type': 'application/json; charset=utf-8',
@@ -382,6 +383,135 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
             : '';
       if (!query) {
         return new Response(JSON.stringify({ error: 'Query is required' }), { status: 400, headers: baseCorsHeaders });
+      }
+
+      // Enhanced rate limiting with per-IP and per-session limits
+      const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
+      const sessionId = request.headers.get('x-session-id') || null;
+      
+      const rateLimitCheck = async () => {
+        if (!env.RATE_LIMIT_KV) return { limited: false };
+        
+        const now = Date.now();
+        const windowMs = 60 * 1000; // 1 minute window
+        
+        // Per-IP limit: 10 requests per minute
+        const ipKey = `ratelimit:ai:ip:${clientIp}`;
+        const ipData = await env.RATE_LIMIT_KV.get(ipKey, 'json');
+        const ipCount = ipData || { count: 0, reset: now + windowMs };
+        
+        if (now > ipCount.reset) {
+          ipCount.count = 0;
+          ipCount.reset = now + windowMs;
+        }
+        
+        ipCount.count++;
+        await env.RATE_LIMIT_KV.put(ipKey, JSON.stringify(ipCount), { expirationTtl: 120 });
+        
+        if (ipCount.count > 10) {
+          return { limited: true, reason: 'ip', resetIn: Math.ceil((ipCount.reset - now) / 1000) };
+        }
+        
+        // Per-session limit: 30 requests per minute (more generous for legitimate users)
+        if (sessionId) {
+          const sessionKey = `ratelimit:ai:session:${sessionId}`;
+          const sessionData = await env.RATE_LIMIT_KV.get(sessionKey, 'json');
+          const sessionCount = sessionData || { count: 0, reset: now + windowMs };
+          
+          if (now > sessionCount.reset) {
+            sessionCount.count = 0;
+            sessionCount.reset = now + windowMs;
+          }
+          
+          sessionCount.count++;
+          await env.RATE_LIMIT_KV.put(sessionKey, JSON.stringify(sessionCount), { expirationTtl: 120 });
+          
+          if (sessionCount.count > 30) {
+            return { limited: true, reason: 'session', resetIn: Math.ceil((sessionCount.reset - now) / 1000) };
+          }
+        }
+        
+        return { limited: false };
+      };
+      
+      const rateLimit = await rateLimitCheck();
+      if (rateLimit.limited) {
+        return new Response(JSON.stringify({ 
+          error: 'Rate limit exceeded. Please wait a moment before trying again.',
+          resetIn: rateLimit.resetIn 
+        }), { 
+          status: 429, 
+          headers: { 
+            ...baseCorsHeaders,
+            'retry-after': String(rateLimit.resetIn),
+            'x-rate-limit-reason': rateLimit.reason
+          } 
+        });
+      }
+
+      // Normalize query for caching
+      const normalizeForCache = (q) => {
+        return q.toLowerCase()
+          .replace(/\s+/g, ' ')
+          .replace(/[^\w\s]/g, '')
+          .trim()
+          .slice(0, 100);
+      };
+      
+      const cacheKey = `ai:response:${normalizeForCache(query)}`;
+      const cacheEnabled = !query.toLowerCase().includes('latest') && 
+                          !query.toLowerCase().includes('recent') && 
+                          !query.toLowerCase().includes('now') &&
+                          !query.toLowerCase().includes('today');
+      
+      // Try to get cached response
+      if (cacheEnabled && env.AI_RESPONSE_CACHE) {
+        try {
+          const cached = await env.AI_RESPONSE_CACHE.get(cacheKey, 'json');
+          if (cached && cached.message && Date.now() - cached.timestamp < 7*24*60*60*1000) { // 7 days
+            const responseData = {
+              message: cached.message,
+              sources: cached.sources || [],
+              fromCache: true,
+              cachedAt: cached.timestamp
+            };
+            
+            const cacheHeaders = {
+              ...baseCorsHeaders,
+              'x-cache-status': 'HIT',
+              'x-cache-age': String(Math.floor((Date.now() - cached.timestamp) / 1000))
+            };
+            
+            // Log cache hit to analytics
+            if (env.AI_ANALYTICS) {
+              try {
+                env.AI_ANALYTICS.writeDataPoint({
+                  blobs: [
+                    query.slice(0, 100),
+                    'CACHE_HIT',
+                    clientIp,
+                    sessionId || 'anonymous'
+                  ],
+                  doubles: [
+                    cached.sources?.length || 0,
+                    cached.message?.length || 0,
+                    Date.now() - startTime
+                  ],
+                  indexes: ['cache_hit']
+                });
+              } catch {
+                // Silently fail - analytics is non-critical
+              }
+            }
+            
+            return new Response(JSON.stringify(responseData), { 
+              status: 200, 
+              headers: cacheHeaders 
+            });
+          }
+        } catch {
+          // Cache read failed, continue to AutoRAG call
+        }
       }
 
       const history = Array.isArray(payload?.history)
@@ -507,6 +637,9 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           const streamHeaders = new Headers(baseCorsHeaders);
           streamHeaders.set('content-type', 'text/event-stream; charset=utf-8');
           streamHeaders.set('cache-control', 'no-store');
+          streamHeaders.set('x-cache-status', 'MISS');
+          streamHeaders.set('x-response-time', String(Date.now() - startTime));
+          
           const encoder = new globalThis.TextEncoder();
           const sleep = (ms) => (typeof globalThis.setTimeout === 'function'
             ? new Promise((resolve) => globalThis.setTimeout(resolve, ms))
@@ -529,6 +662,41 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
               }
               send('done', { message });
               controller.close();
+              
+              // Cache and log after streaming completes
+              if (cacheEnabled && env.AI_RESPONSE_CACHE && message) {
+                try {
+                  await env.AI_RESPONSE_CACHE.put(cacheKey, JSON.stringify({
+                    message,
+                    sources,
+                    timestamp: Date.now()
+                  }), { expirationTtl: 7 * 24 * 60 * 60 });
+                } catch {
+                  // Cache write failed, continue anyway
+                }
+              }
+              
+              if (env.AI_ANALYTICS) {
+                try {
+                  const responseTime = Date.now() - startTime;
+                  env.AI_ANALYTICS.writeDataPoint({
+                    blobs: [
+                      query.slice(0, 100),
+                      'API_CALL_STREAM',
+                      clientIp,
+                      sessionId || 'anonymous'
+                    ],
+                    doubles: [
+                      sources.length,
+                      message.length,
+                      responseTime
+                    ],
+                    indexes: ['ai_query']
+                  });
+                } catch {
+                  // Analytics write failed, continue anyway
+                }
+              }
             },
             cancel() {
               return undefined;
@@ -538,7 +706,50 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         }
 
         const responsePayload = JSON.stringify({ message, sources });
-        return new Response(responsePayload, { status: 200, headers: baseCorsHeaders });
+        
+        // Cache the response for future queries
+        if (cacheEnabled && env.AI_RESPONSE_CACHE && message) {
+          try {
+            await env.AI_RESPONSE_CACHE.put(cacheKey, JSON.stringify({
+              message,
+              sources,
+              timestamp: Date.now()
+            }), { expirationTtl: 7 * 24 * 60 * 60 }); // 7 days
+          } catch {
+            // Cache write failed, continue anyway
+          }
+        }
+        
+        // Log successful query to analytics
+        if (env.AI_ANALYTICS) {
+          try {
+            const responseTime = Date.now() - startTime;
+            env.AI_ANALYTICS.writeDataPoint({
+              blobs: [
+                query.slice(0, 100),
+                'API_CALL',
+                clientIp,
+                sessionId || 'anonymous'
+              ],
+              doubles: [
+                sources.length,
+                message.length,
+                responseTime
+              ],
+              indexes: ['ai_query']
+            });
+          } catch {
+            // Analytics write failed, continue anyway
+          }
+        }
+        
+        const responseHeaders = {
+          ...baseCorsHeaders,
+          'x-cache-status': 'MISS',
+          'x-response-time': String(Date.now() - startTime)
+        };
+        
+        return new Response(responsePayload, { status: 200, headers: responseHeaders });
       } catch (error) {
         let errorMessage = 'AI search request failed';
         if (error instanceof Error && error.name === 'AbortError') {

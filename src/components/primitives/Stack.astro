@@ -1,4 +1,6 @@
 ---
+import type { HTMLAttributes } from 'astro/types';
+
 /**
  * Stack - Vertical spacing component for consistent layouts
  * 
@@ -12,20 +14,19 @@
  * </Stack>
  */
 
-export interface Props {
+export interface Props extends HTMLAttributes<'div'> {
   /** Vertical spacing size */
   space?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
   /** HTML element type */
   as?: 'div' | 'section' | 'article' | 'ul' | 'ol' | 'nav' | 'header' | 'footer';
-  /** Additional CSS classes */
-  class?: string;
 }
 
 const {
   space = 'md',
   as: Element = 'div',
   class: className = '',
-} = Astro.props;
+  ...rest
+} = Astro.props as Props;
 
 // Space styles (matching common patterns in codebase)
 const spaceStyles = {
@@ -44,6 +45,6 @@ const classes = [
 ].filter(Boolean).join(' ');
 ---
 
-<Element class={classes}>
+<Element class={classes} {...rest}>
   <slot />
 </Element>

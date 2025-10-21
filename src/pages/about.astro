@@ -120,48 +120,10 @@ const timelineItems: TimelineItem[] = [
       <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
         <div class="absolute inset-0"></div>
       </div>
-      <div class="relative z-10 h-full min-h-screen">
-        <!-- Mobile Layout: Stack vertically -->
-        <div class="md:hidden flex flex-col min-h-screen">
-          <!-- Text at top with comfortable spacing -->
-          <div class="px-4 sm:px-6 pt-28 pb-8">
-            <Stack space="lg" class="max-w-2xl">
-              <h1 class="font-heading font-bold text-4xl sm:text-5xl tracking-tight text-foreground dark:text-foreground-light leading-tight">
-                Systems Architect & Workflow Strategist
-              </h1>
-              <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-                Based in Michigan, I help organizations transform complex processes into streamlined, data-driven systems. From healthcare to finance, my approach combines technical expertise with strategic thinking to deliver solutions that scale.
-              </p>
-              <div class="rounded-2xl border border-border/35 bg-background/95 p-6 dark:bg-background-dark/75">
-                <ul class="space-y-3 text-sm font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">
-                  <li class="flex items-center gap-3">
-                    <span class="inline-flex size-2 rounded-full bg-accent"></span>
-                    Automation with adoption guardrails
-                  </li>
-                  <li class="flex items-center gap-3">
-                    <span class="inline-flex size-2 rounded-full bg-accent"></span>
-                    Financial intelligence that informs every sprint
-                  </li>
-                  <li class="flex items-center gap-3">
-                    <span class="inline-flex size-2 rounded-full bg-accent"></span>
-                    Governance and enablement built-in from day one
-                  </li>
-                </ul>
-              </div>
-            </Stack>
-          </div>
-          <!-- Photo Carousel - horizontal scrolling on mobile -->
-          <div class="flex-1 w-full min-h-[300px] overflow-hidden" role="complementary" aria-label="Photo gallery">
-            <div class="relative w-full h-full">
-              <PhotoCarousel class="w-full h-full" />
-            </div>
-          </div>
-        </div>
-        
-        <!-- Desktop Layout: Side by side -->
-        <div class="hidden md:grid md:grid-cols-2 gap-0 w-full h-screen">
-          <!-- Left: Text Content with padding -->
-          <div class="flex items-center px-6 lg:px-12 py-16">
+      <div class="relative z-10 min-h-screen">
+        <div class="flex flex-col md:grid md:grid-cols-2 md:gap-0 min-h-screen">
+          <!-- Text Content -->
+          <div class="order-1 flex flex-col justify-start px-4 sm:px-6 pt-28 pb-8 md:order-1 md:justify-center md:px-6 md:py-16 lg:px-12">
             <Stack space="lg" class="max-w-2xl">
               <h1 id="about-hero-heading" class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light leading-tight">
                 Systems Architect & Workflow Strategist
@@ -187,16 +149,17 @@ const timelineItems: TimelineItem[] = [
               </div>
             </Stack>
           </div>
-          <!-- Right: Photo Carousel (full height, no padding) -->
-          <div class="w-full h-screen overflow-hidden" role="complementary" aria-label="Photo gallery">
+
+          <!-- Photo Carousel -->
+          <div class="order-2 w-full flex-1 min-h-[320px] overflow-hidden md:order-2 md:h-full" role="complementary" aria-label="Photo gallery">
             <div class="relative w-full h-full">
               <PhotoCarousel class="w-full h-full" />
-              <div class="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent dark:from-background-dark/20 pointer-events-none"></div>
+              <div class="hidden md:block absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent dark:from-background-dark/20 pointer-events-none"></div>
             </div>
           </div>
         </div>
       </div>
-  </section>    <!-- Achievements -->
+  </section>
     <Section padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
             <!-- Background pattern -->
             <div class="absolute inset-0 z-0 opacity-5">

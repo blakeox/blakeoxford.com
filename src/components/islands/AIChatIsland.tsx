@@ -76,7 +76,7 @@ const INITIAL_ASSISTANT_MESSAGE: ChatMessage = {
 	id: 'welcome',
 	role: 'assistant',
 	content:
-		'Hi! I\'m the AI search assistant for this site. Ask anything about Blake\'s work, projects, or posts and I\'ll pull the most relevant answers.',
+		'Hi! I\'m the AI search assistant. Ask me about Blake\'s work, projects, technical expertise, or case studies. I\'ll provide detailed insights with specific examples and outcomes, not just summaries.',
 };
 
 function createId(): string {
@@ -166,6 +166,127 @@ function cleanSnippet(snippet: string): string {
 		.trim();
 	if (!decoded) return '';
 	return decoded.length > 240 ? `${decoded.slice(0, 237).trim()}…` : decoded;
+}
+
+/**
+ * Enhances user queries with analytical context to guide the AI toward
+ * more insightful, synthesized responses rather than simple summarization.
+ */
+function enhanceQuery(query: string, hasHistory: boolean): string {
+	const trimmed = query.trim();
+	if (!trimmed) return trimmed;
+	
+	// Don't enhance if query already contains analytical language
+	const analyticalPatterns = /\b(analyze|compare|contrast|synthesize|evaluate|assess|implications?|impact|why|how does|what makes|difference between)\b/i;
+	if (analyticalPatterns.test(trimmed)) {
+		return trimmed;
+	}
+	
+	// Detect query type and add appropriate analytical framing
+	const queryLower = trimmed.toLowerCase();
+	
+	// Skills/experience queries - ask for insights and context
+	if (queryLower.match(/\b(skill|experience|tech|stack|tool|framework|language|proficiency)\b/)) {
+		return `${trimmed} Please provide specific examples and explain how these skills have been applied to solve real business problems.`;
+	}
+	
+	// Project queries - ask for outcomes and learnings
+	if (queryLower.match(/\b(project|case study|work|portfolio|built|created|developed)\b/)) {
+		return `${trimmed} Focus on measurable outcomes, challenges overcome, and key insights gained.`;
+	}
+	
+	// Comparison queries - explicitly request analysis
+	if (queryLower.match(/\b(latest|recent|newest|current|now)\b/) && !hasHistory) {
+		return `${trimmed} Compare this to previous work and highlight what makes it unique or improved.`;
+	}
+	
+	// General "what" questions - ask for deeper insights
+	if (queryLower.startsWith('what is') || queryLower.startsWith('what are') || queryLower.startsWith('what does')) {
+		return `${trimmed} Provide context on why this matters and how it creates value.`;
+	}
+	
+	// "How" questions - request methodology and reasoning
+	if (queryLower.startsWith('how')) {
+		return `${trimmed} Include the reasoning behind the approach and lessons learned.`;
+	}
+	
+	// For follow-up questions in conversation, be less aggressive
+	if (hasHistory) {
+		return trimmed;
+	}
+	
+	// Default enhancement for first message: request comprehensive analysis
+	return `${trimmed} Please provide a comprehensive answer with specific examples, outcomes, and insights rather than just a summary.`;
+}
+
+function cleanAssistantResponse(content: string): string {
+	if (!content) return content;
+	
+	// Remove YAML frontmatter blocks (--- at start and end)
+	let cleaned = content.replace(/^---\s*[\s\S]*?---\s*/gm, '');
+	
+	// Remove standalone dividers (---, ***, ___)
+	cleaned = cleaned.replace(/^[-*_]{3,}\s*$/gm, '');
+	
+	// Remove markdown file path indicators like "File: src/..." or similar patterns
+	cleaned = cleaned.replace(/^File:\s+.*$/gm, '');
+	cleaned = cleaned.replace(/^Path:\s+.*$/gm, '');
+	
+	// Remove markdown code fence artifacts that might appear
+	cleaned = cleaned.replace(/^```[\w]*\s*$/gm, '');
+	
+	// Remove markdown headings (# ## ### etc.)
+	cleaned = cleaned.replace(/^#{1,6}\s+/gm, '');
+	
+	// Remove blockquote markers
+	cleaned = cleaned.replace(/^>\s*/gm, '');
+	
+	// Convert markdown unordered list items to plain text with bullet points
+	cleaned = cleaned.replace(/^\s*[*\-+]\s+/gm, '• ');
+	
+	// Convert markdown ordered list items to plain text
+	cleaned = cleaned.replace(/^\s*\d+\.\s+/gm, (match) => {
+		const num = match.match(/\d+/)?.[0] || '1';
+		return `${num}. `;
+	});
+	
+	// Remove markdown strikethrough
+	cleaned = cleaned.replace(/~~([^~]+)~~/g, '$1');
+	
+	// Remove markdown bold/italic formatting
+	cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '$1');
+	cleaned = cleaned.replace(/\*([^*]+)\*/g, '$1');
+	cleaned = cleaned.replace(/__([^_]+)__/g, '$1');
+	cleaned = cleaned.replace(/_([^_]+)_/g, '$1');
+	
+	// Remove markdown links but keep the text
+	cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+	
+	// Remove markdown inline code backticks
+	cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
+	
+	// Remove HTML tags (basic sanitization)
+	cleaned = cleaned.replace(/<[^>]+>/g, '');
+	
+	// Decode common HTML entities
+	cleaned = cleaned.replace(/&quot;/g, '"')
+		.replace(/&amp;/g, '&')
+		.replace(/&lt;/g, '<')
+		.replace(/&gt;/g, '>')
+		.replace(/&nbsp;/g, ' ')
+		.replace(/&#39;/g, '\'')
+		.replace(/&apos;/g, '\'');
+	
+	// Remove escaped markdown characters
+	cleaned = cleaned.replace(/\\([*_[\](){}#+.!`|-])/g, '$1');
+	
+	// Clean up excessive whitespace while preserving paragraph breaks
+	cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+	
+	// Clean up spaces around bullet points for consistency
+	cleaned = cleaned.replace(/^•\s+/gm, '• ');
+	
+	return cleaned.trim();
 }
 
 function formatPublishedDate(value?: string): string | null {
@@ -758,9 +879,14 @@ export default function AIChatIsland() {
 			activeRequestRef.current = controller;
 
 			const historyPayload = buildHistoryForRequest();
+			
+			// Enhance the query with analytical context to guide better responses
+			const enhancedQuery = useMemory 
+				? enhanceQuery(query, historyPayload.length > 0)
+				: query;
 
 			try {
-				await searchWithAI(query, {
+				await searchWithAI(enhancedQuery, {
 					history: historyPayload,
 					signal: controller.signal,
 					onToken: (token) => {
@@ -793,7 +919,7 @@ export default function AIChatIsland() {
 				activeRequestRef.current = null;
 			}
 		},
-		[appendAssistantChunk, assignAssistantSources, buildHistoryForRequest, replaceAssistantContent, updateFallbackSuggestions],
+		[appendAssistantChunk, assignAssistantSources, buildHistoryForRequest, replaceAssistantContent, updateFallbackSuggestions, useMemory],
 	);
 
 	const handleSubmit = useCallback(
@@ -1029,7 +1155,10 @@ export default function AIChatIsland() {
 	const canStartNewChat = messages.length > 1;
 
 	return (
-		<div className="ai-chat-wrapper pointer-events-none fixed bottom-4 right-4 z-[1050] flex flex-col-reverse items-end gap-3 sm:bottom-6 sm:right-6">
+		<div
+			className="ai-chat-wrapper pointer-events-none fixed bottom-4 right-4 z-[1050] flex flex-col-reverse items-end gap-3 sm:bottom-6 sm:right-6"
+			data-ai-chat-open={isOpen ? 'true' : 'false'}
+		>
 			<button
 				ref={launcherRef}
 				type="button"
@@ -1057,6 +1186,8 @@ export default function AIChatIsland() {
 				className={`ai-chat-panel pointer-events-auto w-[min(90vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 shadow-[0_18px_45px_-18px_rgba(15,23,42,0.65)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/80 transition-transform duration-200 ease-out ${
 					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
 				}`}
+				data-ai-chat-panel
+				data-ai-visible={isOpen ? 'true' : 'false'}
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="ai-chat-heading"
@@ -1280,7 +1411,12 @@ export default function AIChatIsland() {
 				)}
 
 				<div className="relative">
-					<div ref={scrollContainerRef} className="flex max-h-80 flex-col gap-4 overflow-y-auto px-4 py-4" aria-live="polite">
+					<div
+						ref={scrollContainerRef}
+						className="flex max-h-80 flex-col gap-4 overflow-y-auto px-4 py-4"
+						aria-live="polite"
+						data-ai-chat-transcript
+					>
 						{messages.map((message) => {
 						const alignment = message.role === 'user' ? 'items-end text-right' : 'items-start text-left';
 						const bubbleClasses = message.role === 'user'
@@ -1288,7 +1424,7 @@ export default function AIChatIsland() {
 							: 'bg-[color:var(--surface)]/95 text-[color:var(--fg)] dark:bg-[color:var(--surface)]/90';
 						const isAssistant = message.role === 'assistant';
 						const isStreaming = streamingMessageId === message.id;
-						const bubbleContent = message.content;
+						const bubbleContent = isAssistant ? cleanAssistantResponse(message.content) : message.content;
 						const sources = isAssistant && message.sources ? message.sources : [];
 						const totalSources = sources.length;
 						const showAllSources = isAssistant ? Boolean(expandedSources[message.id]) : false;
@@ -1312,7 +1448,7 @@ export default function AIChatIsland() {
 						const messageTextClasses = isAssistant ? 'text-[0.95rem] leading-relaxed' : 'text-[0.9rem] leading-snug';
 
 						return (
-							<div key={message.id} className={`flex flex-col gap-2 ${alignment}`}>
+							<div key={message.id} className={`flex flex-col gap-2 ${alignment}`} data-ai-message-role={message.role}>
 								<div className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm shadow-sm ring-1 ring-[color:var(--border)]/20 dark:ring-[color:var(--border)]/30 ${bubbleClasses}`}>
 									<div className="flex flex-col gap-2">
 										{bubbleContent ? (
