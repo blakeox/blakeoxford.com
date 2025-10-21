@@ -5,7 +5,7 @@ import { AISearchError, searchWithAI } from '../../lib/ai-search';
 
 const CONVERSATION_STORAGE_KEY = 'ai-chat:conversation';
 const PREFERENCES_STORAGE_KEY = 'ai-chat:preferences';
-const FALLBACK_SEARCH_INDEX_URL = '/search/index.json';
+const SEMANTIC_SEARCH_URL = '/api/semantic-search';
 
 const GUIDED_PROMPTS = [
 	{
@@ -46,17 +46,6 @@ type SearchFallback = {
 	url: string;
 	excerpt?: string;
 	score: number;
-};
-
-type SearchIndexEntry = {
-	title?: string;
-	url?: string;
-	slug?: string;
-	type?: string;
-	description?: string;
-	summary?: string;
-	body?: string;
-	tags?: string[];
 };
 
 type SpeechRecognitionLike = {
@@ -296,41 +285,6 @@ function formatPublishedDate(value?: string): string | null {
 	return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
-function deriveEntryUrl(entry: SearchIndexEntry): string | null {
-	if (entry.url) return entry.url;
-	const slug = typeof entry.slug === 'string' ? entry.slug.replace(/^\/+/, '') : '';
-	if (!slug) return null;
-	const type = (entry.type || '').toLowerCase();
-	if (type === 'project' || type === 'projects') {
-		return `/projects/${slug}`;
-	}
-	if (type === 'blog' || type === 'post' || type === 'article') {
-		return `/blog/${slug}`;
-	}
-	return `/${slug}`;
-}
-
-function scoreFallbackEntry(words: string[], entry: SearchIndexEntry): number {
-	if (words.length === 0) return 0;
-	const haystack = [entry.title, entry.description, entry.summary, entry.body, entry.tags?.join(' ')].filter(Boolean).join(' ').toLowerCase();
-	if (!haystack) return 0;
-	let score = 0;
-	for (const word of words) {
-		if (haystack.includes(word)) {
-			score += 3;
-		}
-	}
-	if (entry.title) {
-		const title = entry.title.toLowerCase();
-		for (const word of words) {
-			if (title.includes(word)) {
-				score += 2;
-			}
-		}
-	}
-	return score;
-}
-
 export default function AIChatIsland() {
 	const [isOpen, setIsOpen] = useState(false);
 	const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_ASSISTANT_MESSAGE]);
@@ -382,7 +336,6 @@ export default function AIChatIsland() {
 	const messagesRef = useRef(messages);
 	const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 	const activeRequestRef = useRef<AbortController | null>(null);
-	const searchIndexRef = useRef<SearchIndexEntry[] | null>(null);
 	const sourceRefs = useRef<HTMLAnchorElement[]>([]);
 
 	useEffect(() => {
@@ -592,29 +545,6 @@ export default function AIChatIsland() {
 			.map((message) => ({ role: message.role, content: message.content }));
 	}, [useMemory]);
 
-	const ensureSearchIndex = useCallback(async (): Promise<SearchIndexEntry[]> => {
-		if (searchIndexRef.current) return searchIndexRef.current;
-		try {
-			const response = await fetch(FALLBACK_SEARCH_INDEX_URL, {
-				headers: { accept: 'application/json' },
-			});
-			if (!response.ok) {
-				searchIndexRef.current = [];
-				return [];
-			}
-			const data = await response.json();
-			if (Array.isArray(data)) {
-				searchIndexRef.current = data;
-				return data;
-			}
-		} catch {
-			searchIndexRef.current = [];
-			return [];
-		}
-		searchIndexRef.current = [];
-		return [];
-	}, []);
-
 	const updateFallbackSuggestions = useCallback(
 		async (query: string) => {
 			const normalized = query.toLowerCase().trim();
@@ -622,34 +552,45 @@ export default function AIChatIsland() {
 				setFallbackResults([]);
 				return;
 			}
-			const words = normalized.split(/\s+/).filter((word) => word.length > 2);
-			if (words.length === 0) {
+			
+			// Use Vectorize semantic search instead of keyword matching
+			try {
+				const response = await fetch(SEMANTIC_SEARCH_URL, {
+					method: 'POST',
+					headers: { 
+						'Content-Type': 'application/json',
+						'Accept': 'application/json'
+					},
+					body: JSON.stringify({ query: normalized })
+				});
+				
+				if (!response.ok) {
+					setFallbackResults([]);
+					return;
+				}
+				
+				const data = await response.json();
+				
+				// Transform Vectorize results to SearchFallback format
+				if (data.results && Array.isArray(data.results)) {
+					const ranked = data.results
+						.slice(0, 3)
+						.map((result: any) => ({
+							title: result.title || result.id,
+							url: result.url || `/${result.id}`,
+							excerpt: result.description || '',
+							score: result.score || 0
+						}));
+					setFallbackResults(ranked);
+				} else {
+					setFallbackResults([]);
+				}
+			} catch (err) {
+				console.error('Semantic search failed:', err);
 				setFallbackResults([]);
-				return;
 			}
-			const index = await ensureSearchIndex();
-			if (!index || index.length === 0) {
-				setFallbackResults([]);
-				return;
-			}
-			const ranked = index
-				.map((entry) => {
-					const url = deriveEntryUrl(entry);
-					if (!url) return null;
-					const score = scoreFallbackEntry(words, entry);
-					if (score <= 0) return null;
-					const excerptSource = entry.summary || entry.description || entry.body;
-					const excerpt = excerptSource ? cleanSnippet(excerptSource) : undefined;
-					const titleSource = entry.title || url.replace(/^\//, '');
-					const title = decodeMimeEncodedWords(titleSource).trim() || url.replace(/^\//, '');
-					return { title, url, excerpt, score } as SearchFallback;
-				})
-				.filter((value): value is SearchFallback => Boolean(value))
-				.sort((a, b) => b.score - a.score)
-				.slice(0, 3);
-			setFallbackResults(ranked);
 		},
-		[ensureSearchIndex],
+		[],
 	);
 
 	const appendAssistantChunk = useCallback((messageId: string, chunk: string) => {
