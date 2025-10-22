@@ -31,7 +31,96 @@ const GUIDED_PROMPTS = [
 	},
 ];
 
+interface ContextualCTA {
+	condition: (query: string, sources: AIChatSource[]) => boolean;
+	message: string;
+	ctaText: string;
+	ctaLink: string;
+	icon: string;
+}
+
+const CONTEXTUAL_CTAS: ContextualCTA[] = [
+	{
+		condition: (query, sources) =>
+			query.toLowerCase().includes('project') ||
+			query.toLowerCase().includes('portfolio') ||
+			sources.some((s) => s.collection === 'projects'),
+		message: 'Interested in working together on a similar project?',
+		ctaText: 'Schedule a consultation',
+		ctaLink: '/contact?ref=autorag&topic=project-inquiry',
+		icon: '📅',
+	},
+	{
+		condition: (query) =>
+			query.toLowerCase().includes('experience') ||
+			query.toLowerCase().includes('skills') ||
+			query.toLowerCase().includes('expertise'),
+		message: 'Want to discuss how my experience fits your needs?',
+		ctaText: 'Let\'s chat',
+		ctaLink: '/contact?ref=autorag&topic=expertise-inquiry',
+		icon: '💬',
+	},
+	{
+		condition: (_query, sources) => sources.some((s) => s.collection === 'blog'),
+		message: 'Found this helpful? Get more insights delivered to your inbox.',
+		ctaText: 'Subscribe to newsletter',
+		ctaLink: '#newsletter-signup',
+		icon: '📧',
+	},
+	{
+		condition: (query) =>
+			query.toLowerCase().includes('hire') ||
+			query.toLowerCase().includes('available') ||
+			query.toLowerCase().includes('freelance'),
+		message: 'I\'m currently available for new opportunities!',
+		ctaText: 'View availability & rates',
+		ctaLink: '/contact?ref=autorag&topic=hiring',
+		icon: '✨',
+	},
+];
+
+const QUICK_ACTIONS = [
+	{
+		icon: '🚀',
+		label: 'Recent Projects',
+		query: 'What are Blake\'s most recent projects?',
+		category: 'portfolio',
+	},
+	{
+		icon: '💼',
+		label: 'Work Experience',
+		query: 'Tell me about Blake\'s professional experience',
+		category: 'experience',
+	},
+	{
+		icon: '🛠️',
+		label: 'Tech Stack',
+		query: 'What technologies does Blake specialize in?',
+		category: 'skills',
+	},
+	{
+		icon: '📝',
+		label: 'Latest Articles',
+		query: 'What has Blake written about recently?',
+		category: 'blog',
+	},
+	{
+		icon: '🎯',
+		label: 'Specializations',
+		query: 'What are Blake\'s core competencies and areas of expertise?',
+		category: 'expertise',
+	},
+	{
+		icon: '📞',
+		label: 'Get in Touch',
+		query: 'How can I contact Blake or schedule a consultation?',
+		category: 'contact',
+	},
+];
+
 type ChatState = 'idle' | 'loading' | 'ready';
+
+type LoadingPhase = 'searching' | 'analyzing' | 'crafting' | null;
 
 type ChatMessage = {
 	id: string;
@@ -290,7 +379,10 @@ export default function AIChatIsland() {
 	const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_ASSISTANT_MESSAGE]);
 	const [inputValue, setInputValue] = useState('');
 	const [chatState, setChatState] = useState<ChatState>('idle');
+	const [loadingPhase, setLoadingPhase] = useState<LoadingPhase>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [touchStartY, setTouchStartY] = useState<number | null>(null);
+	const [touchCurrentY, setTouchCurrentY] = useState<number | null>(null);
 	const [useMemory, setUseMemory] = useState<boolean>(() => {
 		if (typeof window === 'undefined') return true;
 		try {
@@ -306,6 +398,7 @@ export default function AIChatIsland() {
 		return true;
 	});
 	const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+	const [copiedShareUrl, setCopiedShareUrl] = useState<string | null>(null);
 	const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
 	const [showDigest, setShowDigest] = useState(false);
 	const [showAnalytics, setShowAnalytics] = useState(false);
@@ -530,12 +623,38 @@ export default function AIChatIsland() {
 		}
 		setIsOpen(false);
 		setError(null);
+		setTouchStartY(null);
+		setTouchCurrentY(null);
 		if (lastFocusedElement.current && typeof lastFocusedElement.current.focus === 'function') {
 			requestAnimationFrame(() => {
 				lastFocusedElement.current?.focus();
 			});
 		}
 	}, [isListening, isOpen]);
+
+	const handleTouchStart = useCallback((event: React.TouchEvent) => {
+		if (event.touches.length === 1) {
+			setTouchStartY(event.touches[0].clientY);
+		}
+	}, []);
+
+	const handleTouchMove = useCallback((event: React.TouchEvent) => {
+		if (touchStartY !== null && event.touches.length === 1) {
+			setTouchCurrentY(event.touches[0].clientY);
+		}
+	}, [touchStartY]);
+
+	const handleTouchEnd = useCallback(() => {
+		if (touchStartY !== null && touchCurrentY !== null) {
+			const deltaY = touchCurrentY - touchStartY;
+			// Swipe down more than 100px to close
+			if (deltaY > 100) {
+				closeChat();
+			}
+		}
+		setTouchStartY(null);
+		setTouchCurrentY(null);
+	}, [touchStartY, touchCurrentY, closeChat]);
 
 	const buildHistoryForRequest = useCallback((): AIChatMessage[] => {
 		if (!useMemory) return [];
@@ -756,6 +875,72 @@ export default function AIChatIsland() {
 		[],
 	);
 
+	const handleExportConversation = useCallback(() => {
+		if (messages.length === 0) return;
+		
+		// Generate Markdown content
+		const timestamp = new Date().toLocaleString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+		});
+		
+		let markdown = '# AI Conversation with Blake Oxford\n\n';
+		markdown += `**Exported**: ${timestamp}  \n`;
+		markdown += `**Messages**: ${messages.length}  \n`;
+		markdown += `**URL**: ${window.location.href}\n\n`;
+		markdown += '---\n\n';
+		
+		messages.forEach((message, index) => {
+			const role = message.role === 'user' ? '👤 You' : '🤖 AI Assistant';
+			markdown += `## ${role}\n\n`;
+			markdown += `${message.content}\n\n`;
+			
+			// Add sources for assistant messages
+			if (message.role === 'assistant' && message.sources && message.sources.length > 0) {
+				markdown += '### 📚 Sources\n\n';
+				message.sources.forEach((source, sourceIndex) => {
+					const title = decodeMimeEncodedWords(decodeHtmlEntities(source.title || source.url));
+					const score = source.score ? ` (${Math.round(source.score * 100)}% relevant)` : '';
+					const collection = source.collection ? ` [${source.collection}]` : '';
+					markdown += `${sourceIndex + 1}. [${title}](${source.url})${score}${collection}\n`;
+					if (source.snippet) {
+						markdown += `   > ${source.snippet}\n\n`;
+					}
+				});
+				markdown += '\n';
+			}
+			
+			if (index < messages.length - 1) {
+				markdown += '---\n\n';
+			}
+		});
+		
+		markdown += '\n---\n\n';
+		markdown += `*Conversation exported from [blakeoxford.com](${window.location.origin})*\n`;
+		
+		// Create and download file
+		const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		const filename = `ai-conversation-${Date.now()}.md`;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		URL.revokeObjectURL(url);
+		
+		// Track export
+		if ((window as any).plausible) {
+			(window as any).plausible('AutoRAG Export', {
+				props: { format: 'markdown', messages: messages.length },
+			});
+		}
+	}, [messages]);
+
 	const toggleVoiceInput = useCallback(() => {
 		if (!voiceSupported) return;
 		const recognition = recognitionRef.current;
@@ -799,6 +984,7 @@ export default function AIChatIsland() {
 	const sendQuery = useCallback(
 		async (query: string) => {
 			setChatState('loading');
+			setLoadingPhase('searching');
 			setError(null);
 			setFallbackResults([]);
 			lastQueryRef.current = query;
@@ -826,6 +1012,10 @@ export default function AIChatIsland() {
 				? enhanceQuery(query, historyPayload.length > 0)
 				: query;
 
+			// Progressive loading phases for user feedback
+			const searchingTimer = setTimeout(() => setLoadingPhase('analyzing'), 1500);
+			const analyzingTimer = setTimeout(() => setLoadingPhase('crafting'), 4000);
+
 			try {
 				await searchWithAI(enhancedQuery, {
 					history: historyPayload,
@@ -838,22 +1028,43 @@ export default function AIChatIsland() {
 					},
 					onSources: (sources) => {
 						assignAssistantSources(assistantId, sources);
+						setLoadingPhase('crafting');
 					},
 					onCompletion: (message) => {
 						replaceAssistantContent(assistantId, message.trim());
 					},
 				});
+				clearTimeout(searchingTimer);
+				clearTimeout(analyzingTimer);
 				setStreamingMessageId(null);
+				setLoadingPhase(null);
 				setChatState('ready');
 				await updateFallbackSuggestions(query);
 			} catch (err) {
+				clearTimeout(searchingTimer);
+				clearTimeout(analyzingTimer);
 				if (controller.signal.aborted) {
+					setLoadingPhase(null);
 					return;
 				}
 				setStreamingMessageId(null);
+				setLoadingPhase(null);
 				setChatState('ready');
 				setMessages((prev) => prev.filter((message) => message.id !== assistantId));
-				const message = err instanceof AISearchError ? err.message : 'Unable to reach the AI assistant right now. Please try again.';
+				
+				// Enhanced error messages with actionable guidance
+				let message = 'Unable to reach the AI assistant right now. Please try again.';
+				if (err instanceof AISearchError) {
+					message = err.message;
+					// Categorize known error patterns
+					if (err.message.includes('timeout') || err.message.includes('timed out')) {
+						message = 'Request timed out. Try simplifying your question or check your connection.';
+					} else if (err.message.includes('rate limit') || err.message.includes('too many')) {
+						message = 'Too many requests. Please wait a moment and try again.';
+					} else if (err.message.includes('network') || err.message.includes('fetch')) {
+						message = 'Network error. Check your internet connection and try again.';
+					}
+				}
 				setError(message);
 				await updateFallbackSuggestions(query);
 			} finally {
@@ -1124,14 +1335,25 @@ export default function AIChatIsland() {
 
 			<div
 				ref={panelRef}
-				className={`ai-chat-panel pointer-events-auto w-[min(90vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 shadow-[0_18px_45px_-18px_rgba(15,23,42,0.65)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/80 transition-transform duration-200 ease-out ${
+				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 shadow-[0_18px_45px_-18px_rgba(15,23,42,0.65)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/80 transition-transform duration-200 ease-out sm:w-[min(85vw,28rem)] ${
 					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
 				}`}
+				style={{
+					transform: touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY
+						? `translateY(${Math.min(touchCurrentY - touchStartY, 200)}px)`
+						: isOpen ? 'translateY(0)' : 'translateY(1rem)',
+					opacity: touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY
+						? Math.max(0.5, 1 - (touchCurrentY - touchStartY) / 400)
+						: isOpen ? 1 : 0
+				}}
 				data-ai-chat-panel
 				data-ai-visible={isOpen ? 'true' : 'false'}
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="ai-chat-heading"
+				onTouchStart={handleTouchStart}
+				onTouchMove={handleTouchMove}
+				onTouchEnd={handleTouchEnd}
 			>
 				<div className="flex items-center justify-between gap-2 border-b border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/40 px-4 py-3">
 					<div className="flex flex-col">
@@ -1225,6 +1447,18 @@ export default function AIChatIsland() {
 								onClick={clearConversation}
 							>
 								Clear
+							</button>
+							<button
+								type="button"
+								className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--fg)]/70 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/45 disabled:opacity-50 disabled:cursor-not-allowed"
+								onClick={handleExportConversation}
+								disabled={messages.length === 0}
+								title="Download conversation as Markdown"
+							>
+								<svg className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+								</svg>
+								Export
 							</button>
 						</div>
 						{feedbackAnalytics.totalAssistant > 0 && (
@@ -1358,6 +1592,61 @@ export default function AIChatIsland() {
 						aria-live="polite"
 						data-ai-chat-transcript
 					>
+						{messages.length === 0 && chatState === 'ready' && (
+							<div className="space-y-4">
+								<div className="text-center space-y-2">
+									<h3 className="text-lg font-semibold text-[color:var(--fg)]">
+										👋 How can I help you today?
+									</h3>
+									<p className="text-sm text-[color:var(--fg)]/60">
+										Try one of these popular questions:
+									</p>
+								</div>
+								
+								<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+									{QUICK_ACTIONS.map((action, index) => (
+										<button
+											key={index}
+											type="button"
+											onClick={() => {
+												setInputValue(action.query);
+												// Auto-submit after a brief delay for UX smoothness
+												setTimeout(() => sendQuery(action.query), 100);
+												
+												// Track quick action usage
+												if ((window as any).plausible) {
+													(window as any).plausible('AutoRAG Quick Action', {
+														props: { category: action.category, label: action.label },
+													});
+												}
+											}}
+											className="group flex items-start gap-3 rounded-xl border border-[color:var(--border)]/40 bg-[color:var(--surface)]/50 p-4 text-left transition-all duration-200 hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--surface)]/80 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+										>
+											<span className="flex-shrink-0 text-2xl transition-transform duration-200 group-hover:scale-110" aria-hidden="true">
+												{action.icon}
+											</span>
+											<div className="min-w-0 flex-1">
+												<div className="mb-1 text-sm font-medium text-[color:var(--fg)]">
+													{action.label}
+												</div>
+												<div className="line-clamp-2 text-xs text-[color:var(--fg)]/60">
+													{action.query}
+												</div>
+											</div>
+											<svg 
+												className="size-5 flex-shrink-0 text-[color:var(--fg)]/40 transition-colors group-hover:text-[color:var(--accent)]" 
+												fill="none" 
+												stroke="currentColor" 
+												viewBox="0 0 24 24"
+												aria-hidden="true"
+											>
+												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+											</svg>
+										</button>
+									))}
+								</div>
+							</div>
+						)}
 						{messages.map((message) => {
 						const alignment = message.role === 'user' ? 'items-end text-right' : 'items-start text-left';
 						const bubbleClasses = message.role === 'user'
@@ -1370,7 +1659,7 @@ export default function AIChatIsland() {
 						const totalSources = sources.length;
 						const showAllSources = isAssistant ? Boolean(expandedSources[message.id]) : false;
 						const primarySource = sources[0] ?? null;
-						const primarySourceTitle = primarySource ? decodeHtmlEntities(primarySource.title || primarySource.url) : null;
+						const primarySourceTitle = primarySource ? decodeMimeEncodedWords(decodeHtmlEntities(primarySource.title || primarySource.url)) : null;
 						let primarySourceIsExternal = false;
 						if (primarySource) {
 							try {
@@ -1453,8 +1742,8 @@ export default function AIChatIsland() {
 											<ul className="flex flex-col gap-2">
 												{sources.map((source, index) => {
 												const relevance = typeof source.score === 'number' ? Math.round(Math.min(Math.max(source.score, 0), 1) * 100) : null;
-												const title = decodeHtmlEntities(source.title || '');
-												const displayTitle = title || decodeHtmlEntities(source.url);
+												const title = decodeMimeEncodedWords(decodeHtmlEntities(source.title || ''));
+												const displayTitle = title || decodeMimeEncodedWords(decodeHtmlEntities(source.url));
 												const snippetSource = source.summary || source.snippet || '';
 												const snippet = snippetSource ? cleanSnippet(snippetSource) : '';
 												const publishedLabel = formatPublishedDate(source.publishedAt ?? undefined);
@@ -1472,46 +1761,68 @@ export default function AIChatIsland() {
 												return (
 													<li
 														key={`${message.id}-source-${index}`}
-														className="group w-full rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/40 px-3 py-2 text-left text-[color:var(--fg)]/80 transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--surface)]/60"
+														className="group w-full rounded-2xl border border-[color:var(--border)]/40 bg-gradient-to-br from-[color:var(--surface-subtle)]/40 to-[color:var(--surface)]/20 px-4 py-3 text-left text-[color:var(--fg)]/80 shadow-sm transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--surface)]/60 hover:shadow-md"
 													>
-														<div className="flex items-center gap-2">
-															<span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[color:var(--accent)]/10 font-semibold text-[color:var(--accent)]">{index + 1}</span>
-															{source.icon && <span className="shrink-0 text-base" aria-hidden="true">{source.icon}</span>}
-															<a
-																ref={(element) => {
-																if (element) sourceRefs.current.push(element);
-																}}
-																href={source.url}
-																tabIndex={0}
-																target={linkTarget}
-																rel={linkRel}
-																className="flex-1 truncate text-[color:var(--accent)] underline decoration-dotted underline-offset-2 transition group-hover:text-[color:var(--accent-strong)]"
-															>
-																{displayTitle}
-															</a>
+														<div className="flex items-start gap-3">
+															<div className="flex shrink-0 items-center gap-2">
+																<span className="inline-flex size-6 items-center justify-center rounded-full bg-[color:var(--accent)]/15 text-xs font-bold text-[color:var(--accent)]">{index + 1}</span>
+																{source.icon && <span className="shrink-0 text-xl" aria-hidden="true">{source.icon}</span>}
+															</div>
+															<div className="min-w-0 flex-1">
+																<a
+																	ref={(element) => {
+																	if (element) sourceRefs.current.push(element);
+																	}}
+																	href={source.url}
+																	tabIndex={0}
+																	target={linkTarget}
+																	rel={linkRel}
+																	className="block font-medium text-[color:var(--accent)] underline decoration-dotted underline-offset-2 transition group-hover:text-[color:var(--accent-strong)]"
+																>
+																	{displayTitle}
+																</a>
+																<div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[0.65rem] text-[color:var(--fg)]/60">
+																	{source.collection && (
+																		<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/15 px-2.5 py-0.5 font-semibold text-[color:var(--accent-strong)]">
+																			{source.collection === 'blog' && '📝'}
+																			{source.collection === 'projects' && '🚀'}
+																			{source.collection !== 'blog' && source.collection !== 'projects' && '📄'}
+																			{source.collection}
+																		</span>
+																	)}
+																	{relevance !== null && (
+																		<span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[color:var(--accent)]/20 to-[color:var(--accent)]/10 px-2.5 py-0.5 font-bold text-[color:var(--accent-strong)]">
+																			<svg className="size-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+																				<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+																			</svg>
+																			{relevance}%
+																		</span>
+																	)}
+																	{publishedLabel && (
+																		<time className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 bg-[color:var(--surface)]/60 px-2.5 py-0.5" dateTime={source.publishedAt ?? undefined}>
+																			<svg className="size-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+																				<path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+																			</svg>
+																			{publishedLabel}
+																		</time>
+																	)}
+																	{isExternalLink && (
+																		<span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 bg-[color:var(--surface)]/40 px-2.5 py-0.5 text-[color:var(--fg)]/50">
+																			External
+																			<svg className="size-2.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+																				<path strokeLinecap="round" strokeLinejoin="round" d="M7.5 5h7.06m0 0v7.06m0-7.06-8.12 8.12" />
+																			</svg>
+																		</span>
+																	)}
+																</div>
+																{snippet && (
+																	<p className="mt-2 rounded-lg border border-[color:var(--border)]/20 bg-[color:var(--surface)]/30 px-3 py-2 text-xs leading-relaxed text-[color:var(--fg)]/70">
+																		<span className="font-medium text-[color:var(--fg)]/50">Preview: </span>
+																		{snippet}
+																	</p>
+																)}
+															</div>
 														</div>
-														<div className="mt-1 flex flex-wrap items-center gap-1 text-[0.6rem] text-[color:var(--fg)]/60">
-															{source.collection && (
-																<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 font-medium text-[color:var(--accent-strong)]">{source.collection}</span>
-															)}
-															{isExternalLink && (
-																<span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-2 py-0.5">
-																	External
-																	<svg className="size-2" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">
-																		<path strokeLinecap="round" strokeLinejoin="round" d="M7.5 5h7.06m0 0v7.06m0-7.06-8.12 8.12" />
-																	</svg>
-																</span>
-															)}
-															{publishedLabel && (
-																<time className="rounded-full bg-[color:var(--surface)]/60 px-2 py-0.5" dateTime={source.publishedAt ?? undefined}>
-																	{publishedLabel}
-																</time>
-															)}
-															{relevance !== null && (
-																<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 font-medium text-[color:var(--accent-strong)]">{relevance}% match</span>
-															)}
-														</div>
-														{snippet && <p className="mt-1 line-clamp-3 break-words text-[color:var(--fg)]/65">{snippet}</p>}
 													</li>
 												);
 											})}
@@ -1519,6 +1830,136 @@ export default function AIChatIsland() {
 									)}
 								</div>
 								)}
+								{isAssistant && sources.length > 0 && (() => {
+									const messageIndex = messages.findIndex((m) => m.id === message.id);
+									const userQuery = messageIndex > 0 ? messages[messageIndex - 1]?.content || '' : '';
+									const matchedCTA = CONTEXTUAL_CTAS.find((cta) => cta.condition(userQuery, sources));
+									
+									if (matchedCTA) {
+										return (
+											<div className="mt-4 rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50 p-4 dark:border-blue-800 dark:from-blue-950/30 dark:to-purple-950/30">
+												<div className="flex items-start gap-3">
+													<span className="shrink-0 text-2xl" aria-hidden="true">
+														{matchedCTA.icon}
+													</span>
+													<div className="flex-1">
+														<p className="mb-2 text-sm text-gray-700 dark:text-gray-300">{matchedCTA.message}</p>
+														<a
+															href={matchedCTA.ctaLink}
+															className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-900"
+															onClick={() => {
+																if (typeof window !== 'undefined' && (window as any).plausible) {
+																	(window as any).plausible('AutoRAG CTA Click', {
+																		props: { cta: matchedCTA.ctaText, query: userQuery },
+																	});
+																}
+															}}
+														>
+															{matchedCTA.ctaText}
+															<svg
+																className="size-4"
+																fill="none"
+																stroke="currentColor"
+																viewBox="0 0 24 24"
+															>
+																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+															</svg>
+														</a>
+													</div>
+												</div>
+											</div>
+										);
+									}
+									return null;
+								})()}
+								{isAssistant && sources.length > 0 && (() => {
+									// Generate dynamic follow-up suggestions based on sources
+									const suggestions: Array<{ label: string; query: string; icon: string }> = [];
+									
+									// Extract unique collections
+									const collections = [...new Set(sources.map((s) => s.collection).filter(Boolean))] as string[];
+									
+									// Suggest exploring specific collections
+									if (collections.includes('projects')) {
+										const projectSources = sources.filter((s) => s.collection === 'projects');
+										if (projectSources.length > 0) {
+											const projectTitle = projectSources[0].title;
+											suggestions.push({
+												label: 'Project details',
+												query: `Tell me more about the ${projectTitle} project`,
+												icon: '🔍',
+											});
+										}
+									}
+									
+									if (collections.includes('blog')) {
+										const blogSources = sources.filter((s) => s.collection === 'blog');
+										if (blogSources.length > 0) {
+											const blogTitle = blogSources[0].title;
+											suggestions.push({
+												label: 'Related article',
+												query: `What else has Blake written about topics in "${blogTitle}"?`,
+												icon: '📚',
+											});
+										}
+									}
+									
+									// Suggest digging deeper into top source
+									if (sources[0] && sources[0].title) {
+										const topSourceTitle = sources[0].title;
+										if (!suggestions.some((s) => s.query.includes(topSourceTitle))) {
+											suggestions.push({
+												label: 'Deep dive',
+												query: `Can you explain "${topSourceTitle}" in more detail?`,
+												icon: '💡',
+											});
+										}
+									}
+									
+									// Suggest comparing if multiple sources
+									if (sources.length >= 2 && sources[0].title && sources[1].title) {
+										suggestions.push({
+											label: 'Compare',
+											query: `How does "${sources[0].title}" compare to "${sources[1].title}"?`,
+											icon: '⚖️',
+										});
+									}
+									
+									// Limit to 3 suggestions
+									const limitedSuggestions = suggestions.slice(0, 3);
+									
+									if (limitedSuggestions.length === 0) return null;
+									
+									return (
+										<div className="mt-3 space-y-2">
+											<p className="text-xs font-medium uppercase tracking-wide text-[color:var(--fg)]/50">
+												Keep exploring
+											</p>
+											<div className="flex flex-wrap gap-2">
+												{limitedSuggestions.map((suggestion, index) => (
+													<button
+														key={index}
+														type="button"
+														onClick={() => {
+															setInputValue(suggestion.query);
+															setTimeout(() => sendQuery(suggestion.query), 100);
+															
+															if ((window as any).plausible) {
+																(window as any).plausible('AutoRAG Suggested Query', {
+																	props: { type: suggestion.label },
+																});
+															}
+														}}
+														className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--border)]/40 bg-[color:var(--surface)]/50 px-3 py-1.5 text-xs text-[color:var(--fg)]/80 transition-all duration-200 hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--accent)]/10 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+													>
+														<span className="text-sm" aria-hidden="true">{suggestion.icon}</span>
+														{suggestion.label}
+													</button>
+												))}
+											</div>
+										</div>
+									);
+								})()}
 								{isAssistant && (
 									<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
 										<button
@@ -1527,6 +1968,52 @@ export default function AIChatIsland() {
 											onClick={() => handleCopyMessage(message)}
 										>
 											{copiedMessageId === message.id ? 'Copied' : 'Copy answer'}
+										</button>
+										<button
+											type="button"
+											className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+											title="Share this query"
+											onClick={() => {
+												const messageIndex = messages.findIndex((m) => m.id === message.id);
+												const userQuery = messageIndex > 0 ? messages[messageIndex - 1]?.content || '' : '';
+												const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(userQuery)}&autosubmit=true`;
+												
+												if (navigator.share) {
+													navigator.share({
+														title: 'AutoRAG Query Result',
+														text: `Check out this answer from Blake's AI assistant: "${userQuery}"`,
+														url: shareUrl,
+													}).then(() => {
+														if ((window as any).plausible) {
+															(window as any).plausible('AutoRAG Share', { props: { method: 'native' } });
+														}
+													}).catch(() => {/* User cancelled */});
+												} else {
+													navigator.clipboard.writeText(shareUrl).then(() => {
+														setCopiedShareUrl(message.id);
+														setTimeout(() => setCopiedShareUrl(null), 2000);
+														if ((window as any).plausible) {
+															(window as any).plausible('AutoRAG Share', { props: { method: 'clipboard' } });
+														}
+													}).catch(() => {/* Clipboard failed */});
+												}
+											}}
+										>
+											{copiedShareUrl === message.id ? (
+												<>
+													<svg className="size-3" fill="currentColor" viewBox="0 0 20 20">
+														<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+													</svg>
+													Copied!
+												</>
+											) : (
+												<>
+													<svg className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+													</svg>
+													Share
+												</>
+											)}
 										</button>
 										{primarySource?.url && (
 											<button
@@ -1585,7 +2072,10 @@ export default function AIChatIsland() {
 						<svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
 							<path strokeLinecap="round" strokeLinejoin="round" d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364 6.364-2.121-2.121M8.757 8.757 6.636 6.636m12.728 0-2.121 2.121M8.757 15.243l-2.121 2.121" />
 						</svg>
-						Thinking through the best answer…
+						{loadingPhase === 'searching' && 'Searching knowledge base...'}
+						{loadingPhase === 'analyzing' && 'Analyzing sources...'}
+						{loadingPhase === 'crafting' && 'Crafting response...'}
+						{!loadingPhase && 'Thinking through the best answer...'}
 					</div>
 				)}
 
