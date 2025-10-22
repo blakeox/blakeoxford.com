@@ -1120,6 +1120,92 @@ export default function AIChatIsland() {
 		return `Previous conversation context (summarized):\n${summary}\n\n---\n`;
 	}, []);
 
+	/**
+	 * Generate contextual CTAs based on message sources
+	 */
+	const generateContextualCTAs = useCallback((sources: AIChatSource[]): Array<{ label: string; url: string; icon: string; type: string }> => {
+		if (!sources || sources.length === 0) return [];
+		
+		const ctas: Array<{ label: string; url: string; icon: string; type: string }> = [];
+		const seenUrls = new Set<string>();
+		
+		// Prioritize internal content (projects, blog posts)
+		const internalSources = sources.filter((s) => {
+			try {
+				const url = new URL(s.url, `https://${siteHostname}`);
+				return url.hostname === siteHostname;
+			} catch {
+				return !s.url.startsWith('http');
+			}
+		});
+		
+		// Group by collection type
+		const projectSources = internalSources.filter((s) => s.collection === 'projects');
+		const blogSources = internalSources.filter((s) => s.collection === 'blog');
+		
+		// Add project CTA (prioritize highest relevance)
+		if (projectSources.length > 0) {
+			const topProject = projectSources[0];
+			if (!seenUrls.has(topProject.url)) {
+				ctas.push({
+					label: 'View Project Details',
+					url: topProject.url,
+					icon: '🚀',
+					type: 'project',
+				});
+				seenUrls.add(topProject.url);
+			}
+		}
+		
+		// Add blog CTA (prioritize highest relevance)
+		if (blogSources.length > 0) {
+			const topBlog = blogSources[0];
+			if (!seenUrls.has(topBlog.url)) {
+				ctas.push({
+					label: 'Read Full Article',
+					url: topBlog.url,
+					icon: '📚',
+					type: 'blog',
+				});
+				seenUrls.add(topBlog.url);
+			}
+		}
+		
+		// If multiple projects mentioned, add "Browse All Projects"
+		if (projectSources.length > 2) {
+			ctas.push({
+				label: 'Browse All Projects',
+				url: '/projects',
+				icon: '🗂️',
+				type: 'collection',
+			});
+		}
+		
+		// If multiple blog posts mentioned, add "Read More Articles"
+		if (blogSources.length > 2) {
+			ctas.push({
+				label: 'Read More Articles',
+				url: '/blog',
+				icon: '📖',
+				type: 'collection',
+			});
+		}
+		
+		// Add contact CTA if conversation is deep (>5 turns)
+		const messageCount = messagesRef.current.length;
+		if (messageCount > 5 && ctas.length > 0 && ctas.length < 3) {
+			ctas.push({
+				label: 'Get in Touch',
+				url: '/contact',
+				icon: '💬',
+				type: 'contact',
+			});
+		}
+		
+		// Limit to 3 CTAs max
+		return ctas.slice(0, 3);
+	}, [siteHostname]);
+
 	const buildHistoryForRequest = useCallback((): AIChatMessage[] => {
 		if (!useMemory) return [];
 		
@@ -2791,6 +2877,45 @@ export default function AIChatIsland() {
 										</div>
 									);
 								})()}
+								
+								{/* Contextual CTAs */}
+								{isAssistant && sources.length > 0 && (() => {
+									const ctas = generateContextualCTAs(sources);
+									if (ctas.length === 0) return null;
+									
+									return (
+										<div className="mt-3 space-y-2">
+											<p className="text-xs font-medium uppercase tracking-wide text-[color:var(--fg)]/50">
+												Take action
+											</p>
+											<div className="flex flex-col gap-2">
+												{ctas.map((cta, index) => (
+													<a
+														key={index}
+														href={cta.url}
+														target={cta.url.startsWith('http') ? '_blank' : undefined}
+														rel={cta.url.startsWith('http') ? 'noreferrer' : undefined}
+														onClick={() => {
+															if ((window as any).plausible) {
+																(window as any).plausible('AutoRAG CTA Click', {
+																	props: { type: cta.type, label: cta.label },
+																});
+															}
+														}}
+														className="group inline-flex items-center gap-2.5 rounded-xl border border-[color:var(--accent)]/30 bg-gradient-to-br from-[color:var(--accent)]/10 to-[color:var(--accent)]/5 px-4 py-3 text-sm font-medium text-[color:var(--accent-strong)] shadow-sm transition-all duration-200 hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--accent)]/15 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+													>
+														<span className="text-lg" aria-hidden="true">{cta.icon}</span>
+														<span className="flex-1">{cta.label}</span>
+														<svg className="size-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+															<path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+														</svg>
+													</a>
+												))}
+											</div>
+										</div>
+									);
+								})()}
+								
 								{isAssistant && (
 									<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
 										<button
