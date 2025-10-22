@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { AIChatMessage, AIChatSource } from '../../lib/ai-search';
-import { AISearchError, searchWithAI } from '../../lib/ai-search';
+import { searchWithAI } from '../../lib/ai-search';
 
 const CONVERSATION_STORAGE_KEY = 'ai-chat:conversation';
 const PREFERENCES_STORAGE_KEY = 'ai-chat:preferences';
@@ -493,6 +493,76 @@ function calculateConversationAnalytics(
 }
 
 /**
+ * Categorize errors for better user messaging and retry logic
+ */
+function categorizeError(err: unknown): { 
+	type: string; 
+	message: string; 
+	retryable: boolean;
+	action: string;
+} {
+	const errorMsg = err instanceof Error ? err.message.toLowerCase() : String(err).toLowerCase();
+	
+	// Timeout errors - retryable
+	if (errorMsg.includes('timeout') || errorMsg.includes('timed out') || errorMsg.includes('aborted')) {
+		return {
+			type: 'timeout',
+			message: '⏱️ Request timed out. The AI is taking longer than expected.',
+			retryable: true,
+			action: 'Try simplifying your question or we\'ll retry automatically.',
+		};
+	}
+	
+	// Rate limiting - retryable with delay
+	if (errorMsg.includes('rate limit') || errorMsg.includes('too many') || errorMsg.includes('429')) {
+		return {
+			type: 'rate_limit',
+			message: '🚦 Too many requests. Please slow down a bit.',
+			retryable: true,
+			action: 'We\'ll automatically retry in a moment.',
+		};
+	}
+	
+	// Network errors - retryable
+	if (errorMsg.includes('network') || errorMsg.includes('fetch') || errorMsg.includes('connection') || errorMsg.includes('offline')) {
+		return {
+			type: 'network',
+			message: '📡 Network connection issue detected.',
+			retryable: true,
+			action: 'Check your internet connection. We\'ll retry automatically.',
+		};
+	}
+	
+	// Server errors (5xx) - retryable
+	if (errorMsg.includes('500') || errorMsg.includes('502') || errorMsg.includes('503') || errorMsg.includes('504') || errorMsg.includes('server error')) {
+		return {
+			type: 'server_error',
+			message: '🔧 The AI service is temporarily unavailable.',
+			retryable: true,
+			action: 'This is usually temporary. We\'ll retry automatically.',
+		};
+	}
+	
+	// Client errors (4xx) - not retryable
+	if (errorMsg.includes('400') || errorMsg.includes('401') || errorMsg.includes('403') || errorMsg.includes('404')) {
+		return {
+			type: 'client_error',
+			message: '⚠️ Unable to process your request.',
+			retryable: false,
+			action: 'Try rephrasing your question or ask something else.',
+		};
+	}
+	
+	// Generic error - not retryable
+	return {
+		type: 'unknown',
+		message: '❌ Something unexpected happened.',
+		retryable: false,
+		action: 'Please try asking your question again.',
+	};
+}
+
+/**
  * Enhances user queries with analytical context to guide the AI toward
  * more insightful, synthesized responses rather than simple summarization.
  */
@@ -659,6 +729,8 @@ export default function AIChatIsland() {
 	const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
 	const [expandedIndividualSources, setExpandedIndividualSources] = useState<Record<string, boolean>>({});
 	const [showScrollToLatest, setShowScrollToLatest] = useState(false);
+	const [retryCount, setRetryCount] = useState(0);
+	const [lastFailedQuery, setLastFailedQuery] = useState<string>('');
 	const siteHostname = useMemo(() => {
 		if (typeof window !== 'undefined') {
 			return window.location.hostname;
@@ -1477,20 +1549,50 @@ export default function AIChatIsland() {
 				setChatState('ready');
 				setMessages((prev) => prev.filter((message) => message.id !== assistantId));
 				
-				// Enhanced error messages with actionable guidance
-				let message = 'Unable to reach the AI assistant right now. Please try again.';
-				if (err instanceof AISearchError) {
-					message = err.message;
-					// Categorize known error patterns
-					if (err.message.includes('timeout') || err.message.includes('timed out')) {
-						message = 'Request timed out. Try simplifying your question or check your connection.';
-					} else if (err.message.includes('rate limit') || err.message.includes('too many')) {
-						message = 'Too many requests. Please wait a moment and try again.';
-					} else if (err.message.includes('network') || err.message.includes('fetch')) {
-						message = 'Network error. Check your internet connection and try again.';
+				// Enhanced error categorization and recovery
+				const errorInfo = categorizeError(err);
+				const shouldRetry = errorInfo.retryable && retryCount < 2;
+				
+				if (shouldRetry) {
+					// Auto-retry with exponential backoff
+					const delay = Math.min(1000 * Math.pow(2, retryCount), 5000);
+					setError(`${errorInfo.message} Retrying in ${Math.ceil(delay / 1000)}s... (${retryCount + 1}/2)`);
+					setRetryCount(prev => prev + 1);
+					setLastFailedQuery(query);
+					
+					// Track retry attempt
+					if ((window as any).plausible) {
+						(window as any).plausible('AutoRAG Error Retry', {
+							props: {
+								error_type: errorInfo.type,
+								retry_attempt: retryCount + 1,
+							}
+						});
 					}
+					
+					setTimeout(() => {
+						if (lastQueryRef.current === query) {
+							sendQuery(query);
+						}
+					}, delay);
+					return;
 				}
-				setError(message);
+				
+				// Max retries reached or non-retryable error
+				setError(errorInfo.message);
+				setRetryCount(0);
+				setLastFailedQuery('');
+				
+				// Track error
+				if ((window as any).plausible) {
+					(window as any).plausible('AutoRAG Error', {
+						props: {
+							error_type: errorInfo.type,
+							retryable: errorInfo.retryable,
+						}
+					});
+				}
+				
 				await updateFallbackSuggestions(query);
 			} finally {
 				activeRequestRef.current = null;
@@ -1536,11 +1638,6 @@ export default function AIChatIsland() {
 		});
 		setShowScrollToLatest(false);
 	}, []);
-
-	const retryLastQuery = useCallback(async () => {
-		if (!lastQueryRef.current || chatState === 'loading') return;
-		await sendQuery(lastQueryRef.current);
-	}, [chatState, sendQuery]);
 
 	useEffect(() => {
 		if (!isOpen) return;
@@ -2706,12 +2803,32 @@ export default function AIChatIsland() {
 								Last question: <span className="font-medium text-[color:var(--fg)]">{lastQueryValue}</span>
 							</p>
 						)}
+						{retryCount > 0 && (
+							<p className="mt-1 text-[color:var(--fg)]/60 dark:text-red-200/80">
+								Retry attempts: {retryCount}/2
+							</p>
+						)}
 						<div className="mt-2 flex flex-wrap gap-2">
 							<button
 								type="button"
 								className="inline-flex items-center gap-2 rounded-full border border-red-400/60 px-3 py-1 font-medium transition hover:border-red-500 hover:text-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60 disabled:opacity-60 dark:hover:border-red-400 dark:hover:text-red-100"
-								onClick={retryLastQuery}
-								disabled={!canRetry}
+								onClick={() => {
+									// Manual retry - clear error and use lastFailedQuery if available
+									const queryToRetry = lastFailedQuery || lastQueryValue;
+									if (queryToRetry) {
+										setError(null);
+										setRetryCount(0);
+										sendQuery(queryToRetry);
+										
+										// Track manual retry
+										if ((window as any).plausible) {
+											(window as any).plausible('AutoRAG Manual Retry', {
+												props: { query: queryToRetry.substring(0, 50) }
+											});
+										}
+									}
+								}}
+								disabled={!canRetry && !lastFailedQuery}
 							>
 								Try again
 							</button>
