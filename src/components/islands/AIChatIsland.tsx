@@ -1978,11 +1978,10 @@ export default function AIChatIsland() {
 												setTimeout(() => sendQuery(action.query), 100);
 												
 												// Track quick action usage
-												if ((window as any).plausible) {
-													(window as any).plausible('AutoRAG Quick Action', {
-														props: { category: action.category, label: action.label },
-													});
-												}
+												autoragEvents.quickAction({
+												action: action.label,
+												category: action.category,
+											});
 											}}
 											className="group flex items-start gap-3 rounded-xl border border-[color:var(--border)]/40 bg-[color:var(--surface)]/50 p-4 text-left transition-all duration-200 hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--surface)]/80 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
 										>
@@ -2304,11 +2303,13 @@ export default function AIChatIsland() {
 															href={matchedCTA.ctaLink}
 															className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-900"
 															onClick={() => {
-																if (typeof window !== 'undefined' && (window as any).plausible) {
-																	(window as any).plausible('AutoRAG CTA Click', {
-																		props: { cta: matchedCTA.ctaText, query: userQuery },
-																	});
-																}
+																if (typeof window !== 'undefined') {
+											autoragEvents.ctaClick({
+												type: 'quality-suggestion',
+												label: matchedCTA.ctaText,
+												source: userQuery,
+											});
+										}
 															}}
 														>
 															{matchedCTA.ctaText}
@@ -2400,11 +2401,9 @@ export default function AIChatIsland() {
 															setInputValue(suggestion.query);
 															setTimeout(() => sendQuery(suggestion.query), 100);
 															
-															if ((window as any).plausible) {
-																(window as any).plausible('AutoRAG Suggested Query', {
-																	props: { type: suggestion.label },
-																});
-															}
+															autoragEvents.suggestedQuery({
+												query: suggestion.query,
+											});
 														}}
 														className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--border)]/40 bg-[color:var(--surface)]/50 px-3 py-1.5 text-xs text-[color:var(--fg)]/80 transition-all duration-200 hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--accent)]/10 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
 													>
@@ -2435,11 +2434,10 @@ export default function AIChatIsland() {
 														target={cta.url.startsWith('http') ? '_blank' : undefined}
 														rel={cta.url.startsWith('http') ? 'noreferrer' : undefined}
 														onClick={() => {
-															if ((window as any).plausible) {
-																(window as any).plausible('AutoRAG CTA Click', {
-																	props: { type: cta.type, label: cta.label },
-																});
-															}
+															autoragEvents.ctaClick({
+												type: cta.type,
+												label: cta.label,
+											});
 														}}
 														className="group inline-flex items-center gap-2.5 rounded-xl border border-[color:var(--accent)]/30 bg-gradient-to-br from-[color:var(--accent)]/10 to-[color:var(--accent)]/5 px-4 py-3 text-sm font-medium text-[color:var(--accent-strong)] shadow-sm transition-all duration-200 hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--accent)]/15 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
 													>
@@ -2479,17 +2477,13 @@ export default function AIChatIsland() {
 														text: `Check out this answer from Blake's AI assistant: "${userQuery}"`,
 														url: shareUrl,
 													}).then(() => {
-														if ((window as any).plausible) {
-															(window as any).plausible('AutoRAG Share', { props: { method: 'native' } });
-														}
+														autoragEvents.share('native');
 													}).catch(() => {/* User cancelled */});
 												} else {
 													navigator.clipboard.writeText(shareUrl).then(() => {
 														setCopiedShareUrl(message.id);
 														setTimeout(() => setCopiedShareUrl(null), 2000);
-														if ((window as any).plausible) {
-															(window as any).plausible('AutoRAG Share', { props: { method: 'clipboard' } });
-														}
+														autoragEvents.share('clipboard');
 													}).catch(() => {/* Clipboard failed */});
 												}
 											}}
@@ -2640,11 +2634,9 @@ export default function AIChatIsland() {
 										sendQuery(queryToRetry);
 										
 										// Track manual retry
-										if ((window as any).plausible) {
-											(window as any).plausible('AutoRAG Manual Retry', {
-												props: { query: queryToRetry.substring(0, 50) }
-											});
-										}
+										autoragEvents.manualRetry({
+										message_id: lastFailedQuery,
+									});
 									}
 								}}
 								disabled={!canRetry && !lastFailedQuery}
