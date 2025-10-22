@@ -11,9 +11,15 @@ import {
 	QUICK_ACTIONS,
 	SEMANTIC_SEARCH_URL,
 } from '../../lib/chat-constants';
+import { restoreMessages } from '../../lib/message-validation';
+import {
+	getBooleanPreference,
+	getStorageItem,
+	removeStorageItem,
+	setStorageItem,
+} from '../../lib/storage-utils';
 import {
 	calculateConversationAnalytics as calculateAnalytics,
-	filterMessages,
 } from '../../lib/conversation-utils';
 import { ConversationWebSocket, type WSMessage } from '../../lib/conversation-ws';
 import { categorizeError } from '../../lib/error-utils';
@@ -230,20 +236,9 @@ export default function AIChatIsland() {
 	const [error, setError] = useState<string | null>(null);
 	const [touchStartY, setTouchStartY] = useState<number | null>(null);
 	const [touchCurrentY, setTouchCurrentY] = useState<number | null>(null);
-	const [useMemory, setUseMemory] = useState<boolean>(() => {
-		if (typeof window === 'undefined') return true;
-		try {
-			const stored = window.localStorage.getItem(PREFERENCES_STORAGE_KEY);
-			if (!stored) return true;
-			const parsed = JSON.parse(stored);
-			if (parsed && typeof parsed.useMemory === 'boolean') {
-				return parsed.useMemory;
-			}
-		} catch {
-			/* ignore preference parse errors */
-		}
-		return true;
-	});
+	const [useMemory, setUseMemory] = useState<boolean>(() => 
+		getBooleanPreference(PREFERENCES_STORAGE_KEY, 'useMemory', true)
+	);
 	const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
 	const [copiedShareUrl, setCopiedShareUrl] = useState<string | null>(null);
 	const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
@@ -262,7 +257,6 @@ export default function AIChatIsland() {
 	const [showScrollToLatest, setShowScrollToLatest] = useState(false);
 	const [retryCount, setRetryCount] = useState(0);
 	const [lastFailedQuery, setLastFailedQuery] = useState<string>('');
-	const [searchQuery] = useState<string>('');
 	const [wsConnected, setWsConnected] = useState(false);
 	const [activeUsers, setActiveUsers] = useState(1);
 	const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
@@ -272,11 +266,6 @@ export default function AIChatIsland() {
 		}
 		return 'blakeoxford.com';
 	}, []);
-
-	// Filter messages based on search query
-	const filteredMessages = useMemo(() => {
-		return filterMessages(messages, searchQuery);
-	}, [messages, searchQuery]);
 
 	const panelRef = useRef<HTMLDivElement | null>(null);
 	const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -365,54 +354,12 @@ export default function AIChatIsland() {
 	}, [fallbackResults]);
 
 	useEffect(() => {
-		if (typeof window === 'undefined') return;
-		try {
-			const stored = window.localStorage.getItem(CONVERSATION_STORAGE_KEY);
-			if (!stored) return;
-			const parsed = JSON.parse(stored);
-			if (!Array.isArray(parsed) || parsed.length === 0) return;
-			const restored: ChatMessage[] = parsed
-				.filter(
-					(item) =>
-						item &&
-						typeof item === 'object' &&
-						(item.role === 'user' || item.role === 'assistant') &&
-						typeof item.id === 'string' &&
-						typeof item.content === 'string',
-				)
-				.slice(-30)
-				.map((item) => {
-					const sources = Array.isArray(item.sources)
-						? (item.sources
-								.filter(
-									(source: unknown) =>
-										source &&
-										typeof source === 'object' &&
-										typeof (source as { title?: unknown }).title === 'string' &&
-										typeof (source as { url?: unknown }).url === 'string',
-								)
-								.slice(0, 5) as AIChatSource[])
-						: undefined;
-					const feedback = item.feedback === 'positive' || item.feedback === 'negative' ? item.feedback : undefined;
-					const qualityScore = typeof item.qualityScore === 'number' ? item.qualityScore : undefined;
-					const citationHealth = (item.citationHealth === 'healthy' || item.citationHealth === 'warning' || item.citationHealth === 'error') 
-						? item.citationHealth 
-						: undefined;
-					return {
-						id: item.id,
-						role: item.role,
-						content: item.content,
-						sources,
-						feedback,
-						qualityScore,
-						citationHealth,
-					} as ChatMessage;
-				});
-			if (restored.length > 0) {
-				setMessages(restored);
-			}
-		} catch {
-			/* ignore restore issues */
+		const stored = getStorageItem(CONVERSATION_STORAGE_KEY, null);
+		if (!stored) return;
+		
+		const restored = restoreMessages(stored, 30);
+		if (restored.length > 0) {
+			setMessages(restored);
 		}
 	}, []);
 
@@ -422,20 +369,12 @@ export default function AIChatIsland() {
 			conversationHydratedRef.current = true;
 			return;
 		}
-		try {
-			window.localStorage.setItem(CONVERSATION_STORAGE_KEY, JSON.stringify(messages));
-		} catch {
-			/* ignore persistence issues */
-		}
+		setStorageItem(CONVERSATION_STORAGE_KEY, messages);
 	}, [messages]);
 
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
-		try {
-			window.localStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify({ useMemory }));
-		} catch {
-			/* ignore preference persistence failures */
-		}
+		setStorageItem(PREFERENCES_STORAGE_KEY, { useMemory });
 	}, [useMemory]);
 
 	useEffect(() => {
@@ -936,13 +875,7 @@ export default function AIChatIsland() {
 		setInterimTranscript('');
 		setShowScrollToLatest(false);
 		lastQueryRef.current = null;
-		if (typeof window !== 'undefined') {
-			try {
-				window.localStorage.removeItem(CONVERSATION_STORAGE_KEY);
-			} catch {
-				/* ignore clear failures */
-			}
-		}
+		removeStorageItem(CONVERSATION_STORAGE_KEY);
 		requestAnimationFrame(() => {
 			focusInput();
 		});
@@ -2010,7 +1943,7 @@ export default function AIChatIsland() {
 								</div>
 							</div>
 						)}
-						{filteredMessages.map((message) => {
+						{messages.map((message) => {
 						const alignment = message.role === 'user' ? 'items-end text-right' : 'items-start text-left';
 						const bubbleClasses = message.role === 'user'
 							? 'bg-[color:var(--accent)] text-[color:var(--on-accent)]'
