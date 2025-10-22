@@ -2,122 +2,37 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { AIChatMessage, AIChatSource } from '../../lib/ai-search';
 import { searchWithAI } from '../../lib/ai-search';
+import { autoragEvents } from '../../lib/analytics';
+import {
+	CONVERSATION_STORAGE_KEY,
+	CONTEXTUAL_CTAS,
+	GUIDED_PROMPTS,
+	PREFERENCES_STORAGE_KEY,
+	QUICK_ACTIONS,
+	SEMANTIC_SEARCH_URL,
+	type ContextualCTA,
+} from '../../lib/chat-constants';
+import {
+	calculateConversationAnalytics as calculateAnalytics,
+	exportToJSON,
+	exportToMarkdown,
+	filterMessages,
+} from '../../lib/conversation-utils';
 import { ConversationWebSocket, type WSMessage } from '../../lib/conversation-ws';
-
-const CONVERSATION_STORAGE_KEY = 'ai-chat:conversation';
-const PREFERENCES_STORAGE_KEY = 'ai-chat:preferences';
-const SEMANTIC_SEARCH_URL = '/api/semantic-search';
-
-const GUIDED_PROMPTS = [
-	{
-		id: 'recent-work',
-		label: 'Latest case study',
-		description: 'See what shipped most recently and the impact it created.',
-		icon: '🆕',
-		prompt: 'What is Blake\'s latest case study and what were the key results?',
-	},
-	{
-		id: 'skills',
-		label: 'Technical stack',
-		description: 'Get a quick overview of systems, frameworks, and specialties.',
-		icon: '🛠️',
-		prompt: 'Summarize Blake\'s core technical skills and current focus areas.',
-	},
-	{
-		id: 'collaboration',
-		label: 'Ways to collaborate',
-		description: 'Explore engagement models and how to start a project together.',
-		icon: '🤝',
-		prompt: 'How can I collaborate with Blake on a new project?',
-	},
-];
-
-interface ContextualCTA {
-	condition: (query: string, sources: AIChatSource[]) => boolean;
-	message: string;
-	ctaText: string;
-	ctaLink: string;
-	icon: string;
-}
-
-const CONTEXTUAL_CTAS: ContextualCTA[] = [
-	{
-		condition: (query, sources) =>
-			query.toLowerCase().includes('project') ||
-			query.toLowerCase().includes('portfolio') ||
-			sources.some((s) => s.collection === 'projects'),
-		message: 'Interested in working together on a similar project?',
-		ctaText: 'Schedule a consultation',
-		ctaLink: '/contact?ref=autorag&topic=project-inquiry',
-		icon: '📅',
-	},
-	{
-		condition: (query) =>
-			query.toLowerCase().includes('experience') ||
-			query.toLowerCase().includes('skills') ||
-			query.toLowerCase().includes('expertise'),
-		message: 'Want to discuss how my experience fits your needs?',
-		ctaText: 'Let\'s chat',
-		ctaLink: '/contact?ref=autorag&topic=expertise-inquiry',
-		icon: '💬',
-	},
-	{
-		condition: (_query, sources) => sources.some((s) => s.collection === 'blog'),
-		message: 'Found this helpful? Get more insights delivered to your inbox.',
-		ctaText: 'Subscribe to newsletter',
-		ctaLink: '#newsletter-signup',
-		icon: '📧',
-	},
-	{
-		condition: (query) =>
-			query.toLowerCase().includes('hire') ||
-			query.toLowerCase().includes('available') ||
-			query.toLowerCase().includes('freelance'),
-		message: 'I\'m currently available for new opportunities!',
-		ctaText: 'View availability & rates',
-		ctaLink: '/contact?ref=autorag&topic=hiring',
-		icon: '✨',
-	},
-];
-
-const QUICK_ACTIONS = [
-	{
-		icon: '🚀',
-		label: 'Recent Projects',
-		query: 'What are Blake\'s most recent projects?',
-		category: 'portfolio',
-	},
-	{
-		icon: '💼',
-		label: 'Work Experience',
-		query: 'Tell me about Blake\'s professional experience',
-		category: 'experience',
-	},
-	{
-		icon: '🛠️',
-		label: 'Tech Stack',
-		query: 'What technologies does Blake specialize in?',
-		category: 'skills',
-	},
-	{
-		icon: '📝',
-		label: 'Latest Articles',
-		query: 'What has Blake written about recently?',
-		category: 'blog',
-	},
-	{
-		icon: '🎯',
-		label: 'Specializations',
-		query: 'What are Blake\'s core competencies and areas of expertise?',
-		category: 'expertise',
-	},
-	{
-		icon: '📞',
-		label: 'Get in Touch',
-		query: 'How can I contact Blake or schedule a consultation?',
-		category: 'contact',
-	},
-];
+import { categorizeError } from '../../lib/error-utils';
+import {
+	calculateResponseQuality,
+	evaluateResponseWithLLM,
+	getCitationHealthIndicator,
+	getConfidenceIndicator,
+} from '../../lib/quality-utils';
+import {
+	cleanAssistantResponse,
+	createId,
+	decodeHtmlEntities,
+	decodeMimeEncodedWords,
+	formatPublishedDate,
+} from '../../lib/string-utils';
 
 type ChatState = 'idle' | 'loading' | 'ready';
 
@@ -185,75 +100,7 @@ const INITIAL_ASSISTANT_MESSAGE: ChatMessage = {
 		'Hi! I\'m the AI search assistant. Ask me about Blake\'s work, projects, technical expertise, or case studies. I\'ll provide detailed insights with specific examples and outcomes, not just summaries.',
 };
 
-function createId(): string {
-	if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-		return crypto.randomUUID();
-	}
-	return `chat-${Math.random().toString(36).slice(2)}`;
-}
-
-function decodeHtmlEntities(value: string): string {
-	if (!value) return value;
-	return value
-		.replace(/&#(\d+);/g, (match, code) => {
-			const parsed = Number.parseInt(code, 10);
-			return Number.isNaN(parsed) ? match : String.fromCharCode(parsed);
-		})
-		.replace(/&#x([0-9A-Fa-f]+);/g, (match, code) => {
-			const parsed = Number.parseInt(code, 16);
-			return Number.isNaN(parsed) ? match : String.fromCharCode(parsed);
-		})
-		.replace(/&amp;/g, '&')
-		.replace(/&lt;/g, '<')
-		.replace(/&gt;/g, '>')
-		.replace(/&quot;/g, '"')
-		.replace(/&apos;/g, '\u0027');
-}
-
-function decodeMimeEncodedWords(value: string): string {
-	if (!value) return value;
-	return value.replace(/=\?([^?]+)\?([BbQq])\?([^?]+)\?=/g, (match, charset, encoding, encodedText) => {
-		try {
-			const normalizedCharset = String(charset).toLowerCase();
-			const encodingLabel = normalizedCharset === 'utf8' ? 'utf-8' : normalizedCharset || 'utf-8';
-			const normalizedEncoding = String(encoding).toLowerCase();
-			const decoder = typeof TextDecoder === 'function' ? new TextDecoder(encodingLabel) : null;
-
-			if (normalizedEncoding === 'b') {
-				if (typeof atob !== 'function') return match;
-				const binary = atob(encodedText);
-				if (!decoder) return binary;
-				const bytes = new Uint8Array(binary.length);
-				for (let index = 0; index < binary.length; index += 1) {
-					bytes[index] = binary.charCodeAt(index);
-				}
-				return decoder.decode(bytes);
-			}
-
-			if (normalizedEncoding === 'q') {
-				const cleaned = encodedText.replace(/_/g, ' ');
-				const bytes: number[] = [];
-				for (let index = 0; index < cleaned.length; index += 1) {
-					const char = cleaned[index];
-					if (char === '=' && /^[0-9A-Fa-f]{2}$/.test(cleaned.slice(index + 1, index + 3))) {
-						bytes.push(Number.parseInt(cleaned.slice(index + 1, index + 3), 16));
-						index += 2;
-					} else {
-						bytes.push(char.charCodeAt(0));
-					}
-				}
-				if (!decoder) {
-					return String.fromCharCode(...bytes);
-				}
-				return decoder.decode(new Uint8Array(bytes));
-			}
-		} catch {
-			return match;
-		}
-		return match;
-	});
-}
-
+// cleanSnippet - local implementation with MIME decoding
 function cleanSnippet(snippet: string): string {
 	const prepared = decodeMimeEncodedWords(snippet);
 	const withoutLinks = prepared
@@ -274,247 +121,30 @@ function cleanSnippet(snippet: string): string {
 	return decoded.length > 240 ? `${decoded.slice(0, 237).trim()}…` : decoded;
 }
 
-/**
- * Calculates quality score for an AI response based on multiple factors:
- * - Source relevance: Average score of cited sources
- * - Source count: Number of sources (more = better, up to 5)
- * - Content completeness: Response length and structure
- * - Citation quality: Source diversity and collection coverage
- * 
- * @param content - The AI response text
- * @param sources - Array of cited sources with relevance scores
- * @returns Quality score from 0-100
- */
-function calculateResponseQuality(content: string, sources?: AIChatSource[]): number {
-	let score = 0;
-	
-	// Factor 1: Source Relevance (40 points max)
-	if (sources && sources.length > 0) {
-		const avgScore = sources.reduce((sum, s) => sum + (s.score || 0), 0) / sources.length;
-		score += avgScore * 40; // Convert 0-1 score to 0-40 points
-	} else {
-		// No sources = lower baseline quality
-		score += 10;
-	}
-	
-	// Factor 2: Source Count (20 points max)
-	if (sources && sources.length > 0) {
-		const sourceCount = Math.min(sources.length, 5); // Cap at 5 sources
-		score += (sourceCount / 5) * 20;
-	}
-	
-	// Factor 3: Content Completeness (25 points max)
-	const wordCount = content.trim().split(/\s+/).length;
-	if (wordCount >= 100) {
-		score += 25; // Comprehensive answer
-	} else if (wordCount >= 50) {
-		score += 20; // Decent answer
-	} else if (wordCount >= 20) {
-		score += 15; // Brief answer
-	} else {
-		score += 5; // Very short answer
-	}
-	
-	// Factor 4: Source Diversity (15 points max)
-	if (sources && sources.length > 0) {
-		const collections = new Set(sources.map(s => s.collection).filter(Boolean));
-		const hasProjects = sources.some(s => s.collection === 'projects');
-		const hasBlog = sources.some(s => s.collection === 'blog');
-		
-		if (collections.size > 1) {
-			score += 15; // Multiple collection types
-		} else if (hasProjects || hasBlog) {
-			score += 10; // Single collection type
-		} else {
-			score += 5; // Generic sources
-		}
-	}
-	
-	// Normalize to 0-100 and round
-	return Math.min(Math.round(score), 100);
-}
 
-/**
- * Use LLM to evaluate response quality (advanced AI self-evaluation)
- * Evaluates: completeness, citation accuracy, conciseness, relevance
- * 
- * @param userQuery - Original user query
- * @param response - AI response to evaluate
- * @param sources - Cited sources
- * @returns Quality score breakdown with overall score
- */
-async function evaluateResponseWithLLM(
-	userQuery: string,
-	response: string,
-	sources?: AIChatSource[]
-): Promise<{
-	overallScore: number;
-	completeness: number;
-	citationAccuracy: number;
-	conciseness: number;
-	relevance: number;
-	reasoning: string;
-}> {
-	try {
-		// Build evaluation prompt
-		const sourceTitles = sources?.map((s, i) => `${i + 1}. ${s.title || s.url}`).join('\n') || 'No sources cited';
-		
-		const evaluationPrompt = `You are a response quality evaluator. Analyze this AI assistant response and provide scores.
 
-USER QUERY: "${userQuery}"
 
-AI RESPONSE: "${response}"
 
-CITED SOURCES:
-${sourceTitles}
 
-Evaluate the response on these criteria (score each 0-100):
-1. COMPLETENESS: Does it fully answer the question?
-2. CITATION_ACCURACY: Are sources relevant and properly used?
-3. CONCISENESS: Is it clear without being verbose?
-4. RELEVANCE: Does it address what was actually asked?
 
-Respond ONLY with valid JSON in this exact format:
-{
-  "completeness": 85,
-  "citation_accuracy": 90,
-  "conciseness": 80,
-  "relevance": 95,
-  "reasoning": "Brief explanation (max 50 words)"
-}`;
 
-		const evaluationResponse = await fetch('/api/ai-search', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				query: evaluationPrompt,
-				history: [],
-				useRAG: false, // Don't need sources for evaluation
-			}),
-		});
 
-		if (!evaluationResponse.ok) {
-			throw new Error('Evaluation API failed');
-		}
 
-		const evaluationData = await evaluationResponse.json();
-		const evaluationText = evaluationData.answer || '';
-		
-		// Extract JSON from response (handle markdown code blocks)
-		const jsonMatch = evaluationText.match(/\{[\s\S]*\}/);
-		if (!jsonMatch) {
-			throw new Error('No JSON found in evaluation response');
-		}
-		
-		const scores = JSON.parse(jsonMatch[0]);
-		
-		// Calculate weighted overall score
-		const overallScore = Math.round(
-			scores.completeness * 0.3 +
-			scores.citation_accuracy * 0.3 +
-			scores.conciseness * 0.2 +
-			scores.relevance * 0.2
-		);
-		
-		return {
-			overallScore: Math.min(Math.max(overallScore, 0), 100),
-			completeness: Math.min(Math.max(scores.completeness || 0, 0), 100),
-			citationAccuracy: Math.min(Math.max(scores.citation_accuracy || 0, 0), 100),
-			conciseness: Math.min(Math.max(scores.conciseness || 0, 0), 100),
-			relevance: Math.min(Math.max(scores.relevance || 0, 0), 100),
-			reasoning: scores.reasoning || 'No reasoning provided',
-		};
-	} catch (error) {
-		console.error('LLM evaluation failed:', error);
-		// Fallback to heuristic score
-		const heuristicScore = calculateResponseQuality(response, sources);
-		return {
-			overallScore: heuristicScore,
-			completeness: heuristicScore,
-			citationAccuracy: sources && sources.length > 0 ? 75 : 50,
-			conciseness: 70,
-			relevance: heuristicScore,
-			reasoning: 'Evaluated using heuristics (LLM evaluation unavailable)',
-		};
-	}
-}
 
-/**
-		const avgScore = sources.reduce((sum, s) => sum + (s.score || 0), 0) / sources.length;
-		score += avgScore * 40; // Convert 0-1 score to 0-40 points
-	} else {
-		// No sources = lower baseline quality
-		score += 10;
-	}
-	
-	// Factor 2: Source Count (20 points max)
-	if (sources && sources.length > 0) {
-		const sourceCount = Math.min(sources.length, 5); // Cap at 5 sources
-		score += (sourceCount / 5) * 20;
-	}
-	
-	// Factor 3: Content Completeness (25 points max)
-	const wordCount = content.trim().split(/\s+/).length;
-	if (wordCount >= 100) {
-		score += 25; // Comprehensive answer
-	} else if (wordCount >= 50) {
-		score += 20; // Decent answer
-	} else if (wordCount >= 20) {
-		score += 15; // Brief answer
-	} else {
-		score += 5; // Very short answer
-	}
-	
-	// Factor 4: Source Diversity (15 points max)
-	if (sources && sources.length > 0) {
-		const collections = new Set(sources.map(s => s.collection).filter(Boolean));
-		const hasProjects = sources.some(s => s.collection === 'projects');
-		const hasBlog = sources.some(s => s.collection === 'blog');
-		
-		if (collections.size > 1) {
-			score += 15; // Multiple collection types
-		} else if (hasProjects || hasBlog) {
-			score += 10; // Single collection type
-		} else {
-			score += 5; // Generic sources
-		}
-	}
-	
-	// Normalize to 0-100 and round
-	return Math.min(Math.round(score), 100);
-}
 
-/**
- * Gets a confidence label and color based on quality score
- */
-function getConfidenceIndicator(score: number): { label: string; color: string; emoji: string } {
-	if (score >= 80) {
-		return { label: 'High confidence', color: 'text-green-600 dark:text-green-400', emoji: '✓' };
-	} else if (score >= 60) {
-		return { label: 'Moderate confidence', color: 'text-yellow-600 dark:text-yellow-400', emoji: '○' };
-	} else {
-		return { label: 'Low confidence', color: 'text-orange-600 dark:text-orange-400', emoji: '!' };
-	}
-}
 
-/**
- * Checks citation health for sources in a response
- * Validates URL accessibility and source relevance
- * 
- * @param sources - Array of cited sources
- * @returns Health status: 'healthy', 'warning', or 'error'
- */
+
+
+
+
+// checkCitationHealth - local implementation for citation validation
 async function checkCitationHealth(sources?: AIChatSource[]): Promise<'healthy' | 'warning' | 'error'> {
-	if (!sources || sources.length === 0) {
-		return 'warning'; // No sources = warning state
-	}
+	if (!sources || sources.length === 0) return 'warning';
 	
-	let healthyCount = 0;
-	let warningCount = 0;
 	let errorCount = 0;
+	let warningCount = 0;
 	
 	for (const source of sources) {
-		// Check 1: URL validity
 		let isValidUrl = false;
 		try {
 			new URL(source.url, typeof window !== 'undefined' ? window.location.origin : 'https://blakeoxford.com');
@@ -523,231 +153,26 @@ async function checkCitationHealth(sources?: AIChatSource[]): Promise<'healthy' 
 			isValidUrl = false;
 		}
 		
-		// Check 2: Relevance score (if available)
 		const hasGoodScore = source.score !== undefined && source.score >= 0.5;
-		
-		// Check 3: Has required metadata
 		const hasMetadata = Boolean(source.title && source.url);
 		
-		// Determine source health
 		if (!isValidUrl || !hasMetadata) {
 			errorCount++;
 		} else if (!hasGoodScore) {
 			warningCount++;
-		} else {
-			healthyCount++;
 		}
 	}
 	
-	// Overall health determination
 	const totalSources = sources.length;
 	const errorRate = errorCount / totalSources;
 	const warningRate = warningCount / totalSources;
 	
-	if (errorRate > 0.3) {
-		return 'error'; // >30% broken sources
-	} else if (errorRate > 0 || warningRate > 0.5) {
-		return 'warning'; // Any errors or >50% low relevance
-	} else {
-		return 'healthy'; // All sources good
-	}
+	if (errorRate > 0.3) return 'error';
+	if (errorRate > 0 || warningRate > 0.5) return 'warning';
+	return 'healthy';
 }
 
-/**
- * Gets citation health indicator with visual styling
- */
-function getCitationHealthIndicator(health: 'healthy' | 'warning' | 'error'): { 
-	label: string; 
-	color: string; 
-	icon: string; 
-	tooltip: string;
-} {
-	switch (health) {
-		case 'healthy':
-			return {
-				label: 'Sources verified',
-				color: 'text-green-600 dark:text-green-400',
-				icon: '✓',
-				tooltip: 'All sources are accessible and relevant',
-			};
-		case 'warning':
-			return {
-				label: 'Sources need review',
-				color: 'text-yellow-600 dark:text-yellow-400',
-				icon: '⚠',
-				tooltip: 'Some sources may have low relevance',
-			};
-		case 'error':
-			return {
-				label: 'Citation issues detected',
-				color: 'text-red-600 dark:text-red-400',
-				icon: '✗',
-				tooltip: 'Some sources may be broken or invalid',
-			};
-	}
-}
-
-/**
- * Calculate analytics for the current conversation
- * Returns insights like message count, quality scores, topics, session duration
- */
-function calculateConversationAnalytics(
-	messages: ChatMessage[], 
-	sessionStartTime: number
-): ConversationAnalytics {
-	const userQueries = messages.filter(m => m.role === 'user').length;
-	const assistantResponses = messages.filter(m => m.role === 'assistant' && m.id !== 'welcome').length;
-	
-	const responsesWithQuality = messages.filter(
-		m => m.role === 'assistant' && typeof m.qualityScore === 'number'
-	);
-	const averageQualityScore = responsesWithQuality.length > 0
-		? responsesWithQuality.reduce((sum, m) => sum + (m.qualityScore || 0), 0) / responsesWithQuality.length
-		: 0;
-	
-	const healthyResponses = messages.filter(m => m.citationHealth === 'healthy').length;
-	const warningResponses = messages.filter(m => m.citationHealth === 'warning').length;
-	const errorResponses = messages.filter(m => m.citationHealth === 'error').length;
-	
-	const uniqueCollections = new Set<string>();
-	messages.forEach(m => {
-		m.sources?.forEach(s => {
-			if (s.collection) uniqueCollections.add(s.collection);
-		});
-	});
-	
-	// Calculate response time metrics
-	const responsesWithTime = messages.filter(
-		m => m.role === 'assistant' && typeof m.responseTime === 'number' && m.responseTime > 0
-	);
-	let averageResponseTime = 0;
-	let fastestResponse = 0;
-	let slowestResponse = 0;
-	
-	if (responsesWithTime.length > 0) {
-		const times = responsesWithTime.map(m => m.responseTime || 0);
-		averageResponseTime = times.reduce((sum, t) => sum + t, 0) / times.length;
-		fastestResponse = Math.min(...times);
-		slowestResponse = Math.max(...times);
-	}
-	
-	const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 60000); // minutes
-	
-	return {
-		messageCount: messages.length - 1, // Exclude welcome message
-		userQueries,
-		assistantResponses,
-		averageQualityScore: Math.round(averageQualityScore),
-		healthyResponses,
-		warningResponses,
-		errorResponses,
-		uniqueCollections,
-		sessionDuration,
-		startTime: sessionStartTime,
-		averageResponseTime: Math.round(averageResponseTime),
-		fastestResponse: Math.round(fastestResponse),
-		slowestResponse: Math.round(slowestResponse),
-	};
-}
-
-/**
- * Categorize errors for better user messaging and retry logic
- */
-function categorizeError(err: unknown): { 
-	type: string; 
-	message: string; 
-	retryable: boolean;
-	action: string;
-} {
-	const errorMsg = err instanceof Error ? err.message.toLowerCase() : String(err).toLowerCase();
-	
-	// Timeout errors - retryable
-	if (errorMsg.includes('timeout') || errorMsg.includes('timed out') || errorMsg.includes('aborted')) {
-		return {
-			type: 'timeout',
-			message: '⏱️ Request timed out. The AI is taking longer than expected.',
-			retryable: true,
-			action: 'Try simplifying your question or we\'ll retry automatically.',
-		};
-	}
-	
-	// Rate limiting - retryable with delay
-	if (errorMsg.includes('rate limit') || errorMsg.includes('too many') || errorMsg.includes('429')) {
-		return {
-			type: 'rate_limit',
-			message: '🚦 Too many requests. Please slow down a bit.',
-			retryable: true,
-			action: 'We\'ll automatically retry in a moment.',
-		};
-	}
-	
-	// Network errors - retryable
-	if (errorMsg.includes('network') || errorMsg.includes('fetch') || errorMsg.includes('connection') || errorMsg.includes('offline')) {
-		return {
-			type: 'network',
-			message: '📡 Network connection issue detected.',
-			retryable: true,
-			action: 'Check your internet connection. We\'ll retry automatically.',
-		};
-	}
-	
-	// Server errors (5xx) - retryable
-	if (errorMsg.includes('500') || errorMsg.includes('502') || errorMsg.includes('503') || errorMsg.includes('504') || errorMsg.includes('server error')) {
-		return {
-			type: 'server_error',
-			message: '🔧 The AI service is temporarily unavailable.',
-			retryable: true,
-			action: 'This is usually temporary. We\'ll retry automatically.',
-		};
-	}
-	
-	// Client errors (4xx) - not retryable
-	if (errorMsg.includes('400') || errorMsg.includes('401') || errorMsg.includes('403') || errorMsg.includes('404')) {
-		return {
-			type: 'client_error',
-			message: '⚠️ Unable to process your request.',
-			retryable: false,
-			action: 'Try rephrasing your question or ask something else.',
-		};
-	}
-	
-	// Generic error - not retryable
-	return {
-		type: 'unknown',
-		message: '❌ Something unexpected happened.',
-		retryable: false,
-		action: 'Please try asking your question again.',
-	};
-}
-
-/**
- * Filter messages based on search query
- */
-function filterMessages(messages: ChatMessage[], query: string): ChatMessage[] {
-	if (!query.trim()) return messages;
-	
-	const searchTerm = query.toLowerCase().trim();
-	return messages.filter(msg => {
-		// Search in message content
-		if (msg.content.toLowerCase().includes(searchTerm)) return true;
-		
-		// Search in sources if present
-		if (msg.sources) {
-			return msg.sources.some(source => 
-				source.title?.toLowerCase().includes(searchTerm) ||
-				source.snippet?.toLowerCase().includes(searchTerm) ||
-				source.url?.toLowerCase().includes(searchTerm)
-			);
-		}
-		
-		return false;
-	});
-}
-
-/**
- * Enhances user queries with analytical context to guide the AI toward
- * more insightful, synthesized responses rather than simple summarization.
- */
+// enhanceQuery - local implementation specialized for this interface
 function enhanceQuery(query: string, hasHistory: boolean): string {
 	const trimmed = query.trim();
 	if (!trimmed) return trimmed;
@@ -795,82 +220,9 @@ function enhanceQuery(query: string, hasHistory: boolean): string {
 	return `${trimmed} Please provide a comprehensive answer with specific examples, outcomes, and insights rather than just a summary.`;
 }
 
-function cleanAssistantResponse(content: string): string {
-	if (!content) return content;
-	
-	// Remove YAML frontmatter blocks (--- at start and end)
-	let cleaned = content.replace(/^---\s*[\s\S]*?---\s*/gm, '');
-	
-	// Remove standalone dividers (---, ***, ___)
-	cleaned = cleaned.replace(/^[-*_]{3,}\s*$/gm, '');
-	
-	// Remove markdown file path indicators like "File: src/..." or similar patterns
-	cleaned = cleaned.replace(/^File:\s+.*$/gm, '');
-	cleaned = cleaned.replace(/^Path:\s+.*$/gm, '');
-	
-	// Remove markdown code fence artifacts that might appear
-	cleaned = cleaned.replace(/^```[\w]*\s*$/gm, '');
-	
-	// Remove markdown headings (# ## ### etc.)
-	cleaned = cleaned.replace(/^#{1,6}\s+/gm, '');
-	
-	// Remove blockquote markers
-	cleaned = cleaned.replace(/^>\s*/gm, '');
-	
-	// Convert markdown unordered list items to plain text with bullet points
-	cleaned = cleaned.replace(/^\s*[*\-+]\s+/gm, '• ');
-	
-	// Convert markdown ordered list items to plain text
-	cleaned = cleaned.replace(/^\s*\d+\.\s+/gm, (match) => {
-		const num = match.match(/\d+/)?.[0] || '1';
-		return `${num}. `;
-	});
-	
-	// Remove markdown strikethrough
-	cleaned = cleaned.replace(/~~([^~]+)~~/g, '$1');
-	
-	// Remove markdown bold/italic formatting
-	cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '$1');
-	cleaned = cleaned.replace(/\*([^*]+)\*/g, '$1');
-	cleaned = cleaned.replace(/__([^_]+)__/g, '$1');
-	cleaned = cleaned.replace(/_([^_]+)_/g, '$1');
-	
-	// Remove markdown links but keep the text
-	cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-	
-	// Remove markdown inline code backticks
-	cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
-	
-	// Remove HTML tags (basic sanitization)
-	cleaned = cleaned.replace(/<[^>]+>/g, '');
-	
-	// Decode common HTML entities
-	cleaned = cleaned.replace(/&quot;/g, '"')
-		.replace(/&amp;/g, '&')
-		.replace(/&lt;/g, '<')
-		.replace(/&gt;/g, '>')
-		.replace(/&nbsp;/g, ' ')
-		.replace(/&#39;/g, '\'')
-		.replace(/&apos;/g, '\'');
-	
-	// Remove escaped markdown characters
-	cleaned = cleaned.replace(/\\([*_[\](){}#+.!`|-])/g, '$1');
-	
-	// Clean up excessive whitespace while preserving paragraph breaks
-	cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
-	
-	// Clean up spaces around bullet points for consistency
-	cleaned = cleaned.replace(/^•\s+/gm, '• ');
-	
-	return cleaned.trim();
-}
 
-function formatPublishedDate(value?: string): string | null {
-	if (!value) return null;
-	const date = new Date(value);
-	if (Number.isNaN(date.getTime())) return null;
-	return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-}
+
+
 
 export default function AIChatIsland() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -927,7 +279,7 @@ export default function AIChatIsland() {
 
 	// Filter messages based on search query
 	const filteredMessages = useMemo(() => {
-		return filterMessages(messages, searchQuery);
+		return filterMessages(messages as any, searchQuery);
 	}, [messages, searchQuery]);
 
 	const panelRef = useRef<HTMLDivElement | null>(null);
@@ -1515,44 +867,46 @@ export default function AIChatIsland() {
 		
 		// Then run LLM evaluation asynchronously
 		try {
-			const llmEvaluation = await evaluateResponseWithLLM(userQuery, content, message.sources);
+			const llmEvaluation = await evaluateResponseWithLLM(userQuery, content, message.sources || []);
 			
-			// Update with detailed LLM scores
-			setMessages((prev) =>
-				prev.map((m) => {
-					if (m.id !== messageId) return m;
-					
-					// Track quality metric with detailed breakdown
-					if ((window as any).plausible) {
-						(window as any).plausible('AutoRAG Quality Score', {
-							props: {
-								overall_score: llmEvaluation.overallScore,
+			if (llmEvaluation) {
+				// Update with detailed LLM scores
+				setMessages((prev) =>
+					prev.map((m) => {
+						if (m.id !== messageId) return m;
+						
+						// Track quality metric with detailed breakdown
+						if ((window as any).plausible) {
+							(window as any).plausible('AutoRAG Quality Score', {
+								props: {
+									overall_score: llmEvaluation.overall,
+									completeness: llmEvaluation.completeness,
+									citation_accuracy: llmEvaluation.citationAccuracy,
+									conciseness: llmEvaluation.conciseness,
+									relevance: llmEvaluation.relevance,
+									source_count: m.sources?.length || 0,
+									word_count: content.trim().split(/\s+/).length,
+									citation_health: citationHealth,
+									response_time_ms: responseTime,
+								},
+							});
+						}
+						
+						return {
+							...m,
+							qualityScore: llmEvaluation.overall,
+							qualityDetails: {
 								completeness: llmEvaluation.completeness,
-								citation_accuracy: llmEvaluation.citationAccuracy,
+								citationAccuracy: llmEvaluation.citationAccuracy,
 								conciseness: llmEvaluation.conciseness,
 								relevance: llmEvaluation.relevance,
-								source_count: m.sources?.length || 0,
-								word_count: content.trim().split(/\s+/).length,
-								citation_health: citationHealth,
-								response_time_ms: responseTime,
+								reasoning: llmEvaluation.reasoning,
 							},
-						});
-					}
-					
-					return {
-						...m,
-						qualityScore: llmEvaluation.overallScore,
-						qualityDetails: {
-							completeness: llmEvaluation.completeness,
-							citationAccuracy: llmEvaluation.citationAccuracy,
-							conciseness: llmEvaluation.conciseness,
-							relevance: llmEvaluation.relevance,
-							reasoning: llmEvaluation.reasoning,
-						},
-						citationHealth,
-					};
-				}),
-			);
+							citationHealth,
+						};
+					}),
+				);
+			}
 		} catch (error) {
 			console.error('LLM evaluation failed, using heuristic score:', error);
 			// Keep the heuristic score already set
@@ -1943,7 +1297,7 @@ export default function AIChatIsland() {
 					if ((window as any).plausible) {
 						(window as any).plausible('AutoRAG Error Retry', {
 							props: {
-								error_type: errorInfo.type,
+								error_type: errorInfo.category,
 								retry_attempt: retryCount + 1,
 							}
 						});
@@ -1966,7 +1320,7 @@ export default function AIChatIsland() {
 				if ((window as any).plausible) {
 					(window as any).plausible('AutoRAG Error', {
 						props: {
-							error_type: errorInfo.type,
+							error_type: errorInfo.category,
 							retryable: errorInfo.retryable,
 						}
 					});
@@ -2471,60 +1825,70 @@ export default function AIChatIsland() {
 						<span className="mb-2 block uppercase tracking-wide text-[color:var(--fg)]/50">Conversation Insights</span>
 						
 						{(() => {
-							const analytics = calculateConversationAnalytics(messages, sessionStartTime);
+							const analytics = calculateAnalytics(messages as any);
+							const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 60000);
+							const healthyResponses = messages.filter(m => (m as any).citationHealth === 'healthy').length;
+							const warningResponses = messages.filter(m => (m as any).citationHealth === 'warning').length;
+							const errorResponses = messages.filter(m => (m as any).citationHealth === 'error').length;
+							const uniqueCollections = new Set<string>();
+							messages.forEach(m => {
+								m.sources?.forEach(s => {
+									if (s.collection) uniqueCollections.add(s.collection);
+								});
+							});
 							return (
 								<>
 									{/* Core Metrics */}
 									<div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
 										<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 											<span className="block text-[color:var(--fg)]/45">Messages</span>
-											<span className="text-sm font-semibold text-[color:var(--fg)]">{analytics.messageCount}</span>
+											<span className="text-sm font-semibold text-[color:var(--fg)]">{analytics.totalMessages}</span>
 										</div>
 										<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 											<span className="block text-[color:var(--fg)]/45">Avg Quality</span>
 											<span className={`text-sm font-semibold ${
-												analytics.averageQualityScore >= 80 
+												analytics.avgQualityScore >= 80 
 													? 'text-green-600 dark:text-green-400' 
-													: analytics.averageQualityScore >= 60
+													: analytics.avgQualityScore >= 60
 													? 'text-yellow-600 dark:text-yellow-400'
 													: 'text-red-600 dark:text-red-400'
 											}`}>
-												{analytics.averageQualityScore > 0 ? `${analytics.averageQualityScore}/100` : 'N/A'}
+												{analytics.avgQualityScore > 0 ? `${Math.round(analytics.avgQualityScore)}/100` : 'N/A'}
 											</span>
 										</div>
 										<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 											<span className="block text-[color:var(--fg)]/45">Session Time</span>
 											<span className="text-sm font-semibold text-[color:var(--fg)]">
-												{analytics.sessionDuration < 1 ? '<1m' : `${analytics.sessionDuration}m`}
+												{sessionDuration < 1 ? '<1m' : `${sessionDuration}m`}
 											</span>
 										</div>
 										<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 											<span className="block text-[color:var(--fg)]/45">Topics</span>
-											<span className="text-sm font-semibold text-[color:var(--fg)]">{analytics.uniqueCollections.size}</span>
+											<span className="text-sm font-semibold text-[color:var(--fg)]">{uniqueCollections.size}</span>
 										</div>
 									</div>
 
 									{/* Citation Health */}
-									{(analytics.healthyResponses + analytics.warningResponses + analytics.errorResponses) > 0 && (
+									{(healthyResponses + warningResponses + errorResponses) > 0 && (
 										<div className="mt-3 rounded-xl border border-[color:var(--border)]/30 p-3">
 											<span className="block text-[color:var(--fg)]/45 mb-2">Citation Health</span>
 											<div className="flex flex-wrap gap-2">
-												{analytics.healthyResponses > 0 && (
+												{healthyResponses > 0 && (
 													<span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/30 px-2.5 py-1 text-[0.65rem] font-medium text-green-700 dark:text-green-300">
 														<span>✓</span>
-														{analytics.healthyResponses} Verified
+														{healthyResponses} Verified
 													</span>
 												)}
-												{analytics.warningResponses > 0 && (
+												{warningResponses > 0 && (
 													<span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 dark:bg-yellow-900/30 px-2.5 py-1 text-[0.65rem] font-medium text-yellow-700 dark:text-yellow-300">
 														<span>⚠</span>
-														{analytics.warningResponses} Warnings
+														{warningResponses} Warnings
 													</span>
 												)}
-												{analytics.errorResponses > 0 && (
+												{errorResponses > 0 && (
 													<span className="inline-flex items-center gap-1 rounded-full bg-red-100 dark:bg-red-900/30 px-2.5 py-1 text-[0.65rem] font-medium text-red-700 dark:text-red-300">
 														<span>✗</span>
-														{analytics.errorResponses} Issues
+														{errorResponses} Issues
 													</span>
 												)}
 											</div>
@@ -2532,13 +1896,13 @@ export default function AIChatIsland() {
 									)}
 
 									{/* Topics Explored */}
-									{analytics.uniqueCollections.size > 0 && (
+									{uniqueCollections.size > 0 && (
 										<div className="mt-3">
 											<span className="block uppercase tracking-wide text-[color:var(--fg)]/50 mb-2">Topics Explored</span>
 											<div className="flex flex-wrap gap-1.5">
-												{Array.from(analytics.uniqueCollections).map((collection) => (
+												{Array.from(uniqueCollections).map((collection) => (
 													<span 
-														key={collection}
+														key={String(collection)}
 														className="inline-flex items-center rounded-full bg-[color:var(--accent)]/10 px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--accent-strong)]"
 													>
 														{collection}
@@ -2572,26 +1936,26 @@ export default function AIChatIsland() {
 									)}
 
 									{/* Performance Metrics */}
-									{analytics.averageResponseTime > 0 && (
+									{analytics.avgResponseTimeMs > 0 && (
 										<div className="mt-3 border-t border-[color:var(--border)]/30 pt-3">
 											<span className="block uppercase tracking-wide text-[color:var(--fg)]/50 mb-2">Performance</span>
 											<div className="flex flex-wrap gap-2">
 												<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 													<span className="block text-[color:var(--fg)]/45">Avg Response</span>
 													<span className="text-sm font-semibold text-[color:var(--fg)]">
-														{(analytics.averageResponseTime / 1000).toFixed(1)}s
+														{(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
 													</span>
 												</div>
 												<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 													<span className="block text-[color:var(--fg)]/45">Fastest</span>
 													<span className="text-sm font-semibold text-green-600 dark:text-green-400">
-														{(analytics.fastestResponse / 1000).toFixed(1)}s
+														{(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
 													</span>
 												</div>
 												<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 													<span className="block text-[color:var(--fg)]/45">Slowest</span>
 													<span className="text-sm font-semibold text-yellow-600 dark:text-yellow-400">
-														{(analytics.slowestResponse / 1000).toFixed(1)}s
+														{(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
 													</span>
 												</div>
 											</div>
@@ -2730,15 +2094,15 @@ export default function AIChatIsland() {
 														</>
 													);
 												})()}
-												{message.citationHealth && totalSources > 0 && (
+												{(message as any).citationHealth && totalSources > 0 && (
 													<>
 														<span className="text-[color:var(--fg)]/40">·</span>
 														{(() => {
-															const healthIndicator = getCitationHealthIndicator(message.citationHealth);
+															const healthIndicator = getCitationHealthIndicator((message as any).citationHealth);
 															return (
 																<span 
 																	className={`font-medium ${healthIndicator.color}`} 
-																	title={healthIndicator.tooltip}
+																	title={healthIndicator.description}
 																	aria-label={`Citation health: ${healthIndicator.label}`}
 																>
 																	<span aria-hidden="true">{healthIndicator.icon}</span> {healthIndicator.label}
