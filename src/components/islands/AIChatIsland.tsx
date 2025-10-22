@@ -634,12 +634,18 @@ export default function AIChatIsland() {
 								.slice(0, 5) as AIChatSource[])
 						: undefined;
 					const feedback = item.feedback === 'positive' || item.feedback === 'negative' ? item.feedback : undefined;
+					const qualityScore = typeof item.qualityScore === 'number' ? item.qualityScore : undefined;
+					const citationHealth = (item.citationHealth === 'healthy' || item.citationHealth === 'warning' || item.citationHealth === 'error') 
+						? item.citationHealth 
+						: undefined;
 					return {
 						id: item.id,
 						role: item.role,
 						content: item.content,
 						sources,
 						feedback,
+						qualityScore,
+						citationHealth,
 					} as ChatMessage;
 				});
 			if (restored.length > 0) {
