@@ -275,7 +275,7 @@ export default function AIChatIsland() {
 
 	// Filter messages based on search query
 	const filteredMessages = useMemo(() => {
-		return filterMessages(messages as any, searchQuery);
+		return filterMessages(messages, searchQuery);
 	}, [messages, searchQuery]);
 
 	const panelRef = useRef<HTMLDivElement | null>(null);
@@ -786,7 +786,7 @@ export default function AIChatIsland() {
 				if (data.results && Array.isArray(data.results)) {
 					const ranked = data.results
 						.slice(0, 3)
-						.map((result: any) => ({
+						.map((result: { title?: string; id: string; url?: string; description?: string; score?: number }) => ({
 							title: result.title || result.id,
 							url: result.url || `/${result.id}`,
 							excerpt: result.description || '',
@@ -1807,11 +1807,11 @@ export default function AIChatIsland() {
 						<span className="mb-2 block uppercase tracking-wide text-[color:var(--fg)]/50">Conversation Insights</span>
 						
 						{(() => {
-							const analytics = calculateAnalytics(messages as any);
+							const analytics = calculateAnalytics(messages);
 							const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 60000);
-							const healthyResponses = messages.filter(m => (m as any).citationHealth === 'healthy').length;
-							const warningResponses = messages.filter(m => (m as any).citationHealth === 'warning').length;
-							const errorResponses = messages.filter(m => (m as any).citationHealth === 'error').length;
+							const healthyResponses = messages.filter(m => m.citationHealth === 'healthy').length;
+							const warningResponses = messages.filter(m => m.citationHealth === 'warning').length;
+							const errorResponses = messages.filter(m => m.citationHealth === 'error').length;
 							const uniqueCollections = new Set<string>();
 							messages.forEach(m => {
 								m.sources?.forEach(s => {
@@ -2075,11 +2075,11 @@ export default function AIChatIsland() {
 														</>
 													);
 												})()}
-												{(message as any).citationHealth && totalSources > 0 && (
+												{message.citationHealth && totalSources > 0 && (
 													<>
 														<span className="text-[color:var(--fg)]/40">·</span>
 														{(() => {
-															const healthIndicator = getCitationHealthIndicator((message as any).citationHealth);
+															const healthIndicator = getCitationHealthIndicator(message.citationHealth);
 															return (
 																<span 
 																	className={`font-medium ${healthIndicator.color}`} 
