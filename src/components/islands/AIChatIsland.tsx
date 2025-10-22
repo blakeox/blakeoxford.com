@@ -129,6 +129,7 @@ type ChatMessage = {
 	sources?: AIChatSource[];
 	feedback?: 'positive' | 'negative';
 	qualityScore?: number; // 0-100 score for assistant responses
+	citationHealth?: 'healthy' | 'warning' | 'error'; // Source health status
 };
 
 type SearchFallback = {
@@ -317,6 +318,96 @@ function getConfidenceIndicator(score: number): { label: string; color: string; 
 		return { label: 'Moderate confidence', color: 'text-yellow-600 dark:text-yellow-400', emoji: '○' };
 	} else {
 		return { label: 'Low confidence', color: 'text-orange-600 dark:text-orange-400', emoji: '!' };
+	}
+}
+
+/**
+ * Checks citation health for sources in a response
+ * Validates URL accessibility and source relevance
+ * 
+ * @param sources - Array of cited sources
+ * @returns Health status: 'healthy', 'warning', or 'error'
+ */
+async function checkCitationHealth(sources?: AIChatSource[]): Promise<'healthy' | 'warning' | 'error'> {
+	if (!sources || sources.length === 0) {
+		return 'warning'; // No sources = warning state
+	}
+	
+	let healthyCount = 0;
+	let warningCount = 0;
+	let errorCount = 0;
+	
+	for (const source of sources) {
+		// Check 1: URL validity
+		let isValidUrl = false;
+		try {
+			new URL(source.url, typeof window !== 'undefined' ? window.location.origin : 'https://blakeoxford.com');
+			isValidUrl = true;
+		} catch {
+			isValidUrl = false;
+		}
+		
+		// Check 2: Relevance score (if available)
+		const hasGoodScore = source.score !== undefined && source.score >= 0.5;
+		
+		// Check 3: Has required metadata
+		const hasMetadata = Boolean(source.title && source.url);
+		
+		// Determine source health
+		if (!isValidUrl || !hasMetadata) {
+			errorCount++;
+		} else if (!hasGoodScore) {
+			warningCount++;
+		} else {
+			healthyCount++;
+		}
+	}
+	
+	// Overall health determination
+	const totalSources = sources.length;
+	const errorRate = errorCount / totalSources;
+	const warningRate = warningCount / totalSources;
+	
+	if (errorRate > 0.3) {
+		return 'error'; // >30% broken sources
+	} else if (errorRate > 0 || warningRate > 0.5) {
+		return 'warning'; // Any errors or >50% low relevance
+	} else {
+		return 'healthy'; // All sources good
+	}
+}
+
+/**
+ * Gets citation health indicator with visual styling
+ */
+function getCitationHealthIndicator(health: 'healthy' | 'warning' | 'error'): { 
+	label: string; 
+	color: string; 
+	icon: string; 
+	tooltip: string;
+} {
+	switch (health) {
+		case 'healthy':
+			return {
+				label: 'Sources verified',
+				color: 'text-green-600 dark:text-green-400',
+				icon: '✓',
+				tooltip: 'All sources are accessible and relevant',
+			};
+		case 'warning':
+			return {
+				label: 'Sources need review',
+				color: 'text-yellow-600 dark:text-yellow-400',
+				icon: '⚠',
+				tooltip: 'Some sources may have low relevance',
+			};
+		case 'error':
+			return {
+				label: 'Citation issues detected',
+				color: 'text-red-600 dark:text-red-400',
+				icon: '✗',
+				tooltip: 'Some sources may be broken or invalid',
+			};
 	}
 }
 
@@ -876,31 +967,48 @@ export default function AIChatIsland() {
 	}, []);
 
 	/**
-	 * Finalizes assistant message with content and calculated quality score
+	 * Finalizes assistant message with content, quality score, and citation health
 	 */
-	const finalizeAssistantMessage = useCallback((messageId: string, content: string) => {
+	const finalizeAssistantMessage = useCallback(async (messageId: string, content: string) => {
+		// First update with content
 		setMessages((prev) =>
 			prev.map((message) => {
 				if (message.id !== messageId) return message;
-				
-				// Calculate quality score based on content and sources
-				const qualityScore = calculateResponseQuality(content, message.sources);
+				return {
+					...message,
+					content,
+				};
+			}),
+		);
+		
+		// Then calculate quality score and citation health asynchronously
+		const message = messagesRef.current.find((m) => m.id === messageId);
+		if (!message) return;
+		
+		const qualityScore = calculateResponseQuality(content, message.sources);
+		const citationHealth = await checkCitationHealth(message.sources);
+		
+		// Update with scores
+		setMessages((prev) =>
+			prev.map((m) => {
+				if (m.id !== messageId) return m;
 				
 				// Track quality metric
 				if ((window as any).plausible) {
 					(window as any).plausible('AutoRAG Quality Score', {
 						props: {
 							score: qualityScore,
-							source_count: message.sources?.length || 0,
+							source_count: m.sources?.length || 0,
 							word_count: content.trim().split(/\s+/).length,
+							citation_health: citationHealth,
 						},
 					});
 				}
 				
 				return {
-					...message,
-					content,
+					...m,
 					qualityScore,
+					citationHealth,
 				};
 			}),
 		);
@@ -1197,8 +1305,8 @@ export default function AIChatIsland() {
 						assignAssistantSources(assistantId, sources);
 						setLoadingPhase('crafting');
 					},
-					onCompletion: (message) => {
-						finalizeAssistantMessage(assistantId, message.trim());
+					onCompletion: async (message) => {
+						await finalizeAssistantMessage(assistantId, message.trim());
 					},
 				});
 				clearTimeout(searchingTimer);
@@ -1864,7 +1972,7 @@ export default function AIChatIsland() {
 											</span>
 										)}
 										{isAssistant && !isStreaming && message.qualityScore !== undefined && (
-											<div className="flex items-center gap-1.5 text-[0.65rem]">
+											<div className="flex flex-wrap items-center gap-1.5 text-[0.65rem]">
 												{(() => {
 													const indicator = getConfidenceIndicator(message.qualityScore);
 													return (
@@ -1879,6 +1987,23 @@ export default function AIChatIsland() {
 														</>
 													);
 												})()}
+												{message.citationHealth && totalSources > 0 && (
+													<>
+														<span className="text-[color:var(--fg)]/40">·</span>
+														{(() => {
+															const healthIndicator = getCitationHealthIndicator(message.citationHealth);
+															return (
+																<span 
+																	className={`font-medium ${healthIndicator.color}`} 
+																	title={healthIndicator.tooltip}
+																	aria-label={`Citation health: ${healthIndicator.label}`}
+																>
+																	<span aria-hidden="true">{healthIndicator.icon}</span> {healthIndicator.label}
+																</span>
+															);
+														})()}
+													</>
+												)}
 											</div>
 										)}
 										{isAssistant && totalSources > 0 && (
