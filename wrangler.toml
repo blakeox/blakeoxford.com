@@ -85,7 +85,7 @@ index_name = "blakeoxford-content"
 # Durable Objects migrations
 [[migrations]]
 tag = "v1"
-new_classes = ["ConversationDurableObject"]
+new_sqlite_classes = ["ConversationDurableObject"]
 
 [observability.logs]
 enabled = true
