@@ -656,13 +656,88 @@ export default function AIChatIsland() {
 		setTouchCurrentY(null);
 	}, [touchStartY, touchCurrentY, closeChat]);
 
+	/**
+	 * Compresses conversation history with smart context management:
+	 * - Recent messages (last 4): Kept in full for immediate context
+	 * - Older messages: Summarized to preserve context while reducing tokens
+	 * - Maintains conversation flow and important details
+	 */
+	const compressOlderMessages = useCallback((messages: ChatMessage[]): string => {
+		if (messages.length === 0) return '';
+		
+		// Create a condensed summary of older conversation
+		const pairs: Array<{ user: string; assistant: string }> = [];
+		
+		for (let i = 0; i < messages.length; i++) {
+			if (messages[i].role === 'user') {
+				const userMsg = messages[i].content;
+				const assistantMsg = messages[i + 1]?.role === 'assistant' ? messages[i + 1].content : '';
+				
+				// Truncate long messages while preserving key points
+				const truncatedUser = userMsg.length > 150 
+					? userMsg.substring(0, 150) + '...'
+					: userMsg;
+				const truncatedAssistant = assistantMsg.length > 200
+					? assistantMsg.substring(0, 200) + '...'
+					: assistantMsg;
+				
+				pairs.push({ user: truncatedUser, assistant: truncatedAssistant });
+				i++; // Skip the assistant message we just processed
+			}
+		}
+		
+		// Format as a concise summary
+		const summary = pairs
+			.map((pair, idx) => `[Q${idx + 1}] ${pair.user}\n[A${idx + 1}] ${pair.assistant}`)
+			.join('\n\n');
+		
+		return `Previous conversation context (summarized):\n${summary}\n\n---\n`;
+	}, []);
+
 	const buildHistoryForRequest = useCallback((): AIChatMessage[] => {
 		if (!useMemory) return [];
-		return messagesRef.current
-			.filter((message) => message.role === 'user' || message.role === 'assistant')
-			.slice(-10)
-			.map((message) => ({ role: message.role, content: message.content }));
-	}, [useMemory]);
+		
+		const allMessages = messagesRef.current.filter(
+			(message) => message.role === 'user' || message.role === 'assistant'
+		);
+		
+		// If conversation is short, send all messages
+		if (allMessages.length <= 8) {
+			return allMessages.map((message) => ({ 
+				role: message.role, 
+				content: message.content 
+			}));
+		}
+		
+		// For longer conversations: compress old, keep recent full
+		const RECENT_MESSAGE_COUNT = 4; // Last 2 user-assistant pairs
+		const recentMessages = allMessages.slice(-RECENT_MESSAGE_COUNT);
+		const olderMessages = allMessages.slice(0, -RECENT_MESSAGE_COUNT);
+		
+		// Create compressed history
+		const compressedSummary = compressOlderMessages(olderMessages);
+		
+		// Build payload: summary as system context + recent full messages
+		const historyPayload: AIChatMessage[] = [];
+		
+		if (compressedSummary) {
+			// Add summary as a system-like message for context
+			historyPayload.push({
+				role: 'user',
+				content: compressedSummary,
+			});
+		}
+		
+		// Add recent messages in full
+		recentMessages.forEach((message) => {
+			historyPayload.push({
+				role: message.role,
+				content: message.content,
+			});
+		});
+		
+		return historyPayload;
+	}, [useMemory, compressOlderMessages]);
 
 	const updateFallbackSuggestions = useCallback(
 		async (query: string) => {
