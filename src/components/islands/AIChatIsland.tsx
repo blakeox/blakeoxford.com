@@ -129,7 +129,14 @@ type ChatMessage = {
 	content: string;
 	sources?: AIChatSource[];
 	feedback?: 'positive' | 'negative';
-	qualityScore?: number; // 0-100 score for assistant responses
+	qualityScore?: number; // 0-100 overall score for assistant responses
+	qualityDetails?: {
+		completeness: number;
+		citationAccuracy: number;
+		conciseness: number;
+		relevance: number;
+		reasoning: string;
+	};
 	citationHealth?: 'healthy' | 'warning' | 'error'; // Source health status
 	timestamp?: number; // Unix timestamp for analytics
 	responseTime?: number; // Response time in milliseconds (for assistant messages)
@@ -283,6 +290,156 @@ function calculateResponseQuality(content: string, sources?: AIChatSource[]): nu
 	
 	// Factor 1: Source Relevance (40 points max)
 	if (sources && sources.length > 0) {
+		const avgScore = sources.reduce((sum, s) => sum + (s.score || 0), 0) / sources.length;
+		score += avgScore * 40; // Convert 0-1 score to 0-40 points
+	} else {
+		// No sources = lower baseline quality
+		score += 10;
+	}
+	
+	// Factor 2: Source Count (20 points max)
+	if (sources && sources.length > 0) {
+		const sourceCount = Math.min(sources.length, 5); // Cap at 5 sources
+		score += (sourceCount / 5) * 20;
+	}
+	
+	// Factor 3: Content Completeness (25 points max)
+	const wordCount = content.trim().split(/\s+/).length;
+	if (wordCount >= 100) {
+		score += 25; // Comprehensive answer
+	} else if (wordCount >= 50) {
+		score += 20; // Decent answer
+	} else if (wordCount >= 20) {
+		score += 15; // Brief answer
+	} else {
+		score += 5; // Very short answer
+	}
+	
+	// Factor 4: Source Diversity (15 points max)
+	if (sources && sources.length > 0) {
+		const collections = new Set(sources.map(s => s.collection).filter(Boolean));
+		const hasProjects = sources.some(s => s.collection === 'projects');
+		const hasBlog = sources.some(s => s.collection === 'blog');
+		
+		if (collections.size > 1) {
+			score += 15; // Multiple collection types
+		} else if (hasProjects || hasBlog) {
+			score += 10; // Single collection type
+		} else {
+			score += 5; // Generic sources
+		}
+	}
+	
+	// Normalize to 0-100 and round
+	return Math.min(Math.round(score), 100);
+}
+
+/**
+ * Use LLM to evaluate response quality (advanced AI self-evaluation)
+ * Evaluates: completeness, citation accuracy, conciseness, relevance
+ * 
+ * @param userQuery - Original user query
+ * @param response - AI response to evaluate
+ * @param sources - Cited sources
+ * @returns Quality score breakdown with overall score
+ */
+async function evaluateResponseWithLLM(
+	userQuery: string,
+	response: string,
+	sources?: AIChatSource[]
+): Promise<{
+	overallScore: number;
+	completeness: number;
+	citationAccuracy: number;
+	conciseness: number;
+	relevance: number;
+	reasoning: string;
+}> {
+	try {
+		// Build evaluation prompt
+		const sourceTitles = sources?.map((s, i) => `${i + 1}. ${s.title || s.url}`).join('\n') || 'No sources cited';
+		
+		const evaluationPrompt = `You are a response quality evaluator. Analyze this AI assistant response and provide scores.
+
+USER QUERY: "${userQuery}"
+
+AI RESPONSE: "${response}"
+
+CITED SOURCES:
+${sourceTitles}
+
+Evaluate the response on these criteria (score each 0-100):
+1. COMPLETENESS: Does it fully answer the question?
+2. CITATION_ACCURACY: Are sources relevant and properly used?
+3. CONCISENESS: Is it clear without being verbose?
+4. RELEVANCE: Does it address what was actually asked?
+
+Respond ONLY with valid JSON in this exact format:
+{
+  "completeness": 85,
+  "citation_accuracy": 90,
+  "conciseness": 80,
+  "relevance": 95,
+  "reasoning": "Brief explanation (max 50 words)"
+}`;
+
+		const evaluationResponse = await fetch('/api/ai-search', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				query: evaluationPrompt,
+				history: [],
+				useRAG: false, // Don't need sources for evaluation
+			}),
+		});
+
+		if (!evaluationResponse.ok) {
+			throw new Error('Evaluation API failed');
+		}
+
+		const evaluationData = await evaluationResponse.json();
+		const evaluationText = evaluationData.answer || '';
+		
+		// Extract JSON from response (handle markdown code blocks)
+		const jsonMatch = evaluationText.match(/\{[\s\S]*\}/);
+		if (!jsonMatch) {
+			throw new Error('No JSON found in evaluation response');
+		}
+		
+		const scores = JSON.parse(jsonMatch[0]);
+		
+		// Calculate weighted overall score
+		const overallScore = Math.round(
+			scores.completeness * 0.3 +
+			scores.citation_accuracy * 0.3 +
+			scores.conciseness * 0.2 +
+			scores.relevance * 0.2
+		);
+		
+		return {
+			overallScore: Math.min(Math.max(overallScore, 0), 100),
+			completeness: Math.min(Math.max(scores.completeness || 0, 0), 100),
+			citationAccuracy: Math.min(Math.max(scores.citation_accuracy || 0, 0), 100),
+			conciseness: Math.min(Math.max(scores.conciseness || 0, 0), 100),
+			relevance: Math.min(Math.max(scores.relevance || 0, 0), 100),
+			reasoning: scores.reasoning || 'No reasoning provided',
+		};
+	} catch (error) {
+		console.error('LLM evaluation failed:', error);
+		// Fallback to heuristic score
+		const heuristicScore = calculateResponseQuality(response, sources);
+		return {
+			overallScore: heuristicScore,
+			completeness: heuristicScore,
+			citationAccuracy: sources && sources.length > 0 ? 75 : 50,
+			conciseness: 70,
+			relevance: heuristicScore,
+			reasoning: 'Evaluated using heuristics (LLM evaluation unavailable)',
+		};
+	}
+}
+
+/**
 		const avgScore = sources.reduce((sum, s) => sum + (s.score || 0), 0) / sources.length;
 		score += avgScore * 40; // Convert 0-1 score to 0-40 points
 	} else {
@@ -1336,34 +1493,70 @@ export default function AIChatIsland() {
 		// Then calculate quality score and citation health asynchronously
 		if (!message) return;
 		
-		const qualityScore = calculateResponseQuality(content, message.sources);
+		// Get the user query that prompted this response
+		const messageIndex = messagesRef.current.findIndex((m) => m.id === messageId);
+		const userQuery = messageIndex > 0 ? messagesRef.current[messageIndex - 1]?.content || '' : '';
+		
+		// Calculate baseline heuristic score immediately
+		const heuristicScore = calculateResponseQuality(content, message.sources);
 		const citationHealth = await checkCitationHealth(message.sources);
 		
-		// Update with scores
+		// Update with baseline scores first
 		setMessages((prev) =>
 			prev.map((m) => {
 				if (m.id !== messageId) return m;
-				
-				// Track quality metric with performance data
-				if ((window as any).plausible) {
-					(window as any).plausible('AutoRAG Quality Score', {
-						props: {
-							score: qualityScore,
-							source_count: m.sources?.length || 0,
-							word_count: content.trim().split(/\s+/).length,
-							citation_health: citationHealth,
-							response_time_ms: responseTime,
-						},
-					});
-				}
-				
 				return {
 					...m,
-					qualityScore,
+					qualityScore: heuristicScore,
 					citationHealth,
 				};
 			}),
 		);
+		
+		// Then run LLM evaluation asynchronously
+		try {
+			const llmEvaluation = await evaluateResponseWithLLM(userQuery, content, message.sources);
+			
+			// Update with detailed LLM scores
+			setMessages((prev) =>
+				prev.map((m) => {
+					if (m.id !== messageId) return m;
+					
+					// Track quality metric with detailed breakdown
+					if ((window as any).plausible) {
+						(window as any).plausible('AutoRAG Quality Score', {
+							props: {
+								overall_score: llmEvaluation.overallScore,
+								completeness: llmEvaluation.completeness,
+								citation_accuracy: llmEvaluation.citationAccuracy,
+								conciseness: llmEvaluation.conciseness,
+								relevance: llmEvaluation.relevance,
+								source_count: m.sources?.length || 0,
+								word_count: content.trim().split(/\s+/).length,
+								citation_health: citationHealth,
+								response_time_ms: responseTime,
+							},
+						});
+					}
+					
+					return {
+						...m,
+						qualityScore: llmEvaluation.overallScore,
+						qualityDetails: {
+							completeness: llmEvaluation.completeness,
+							citationAccuracy: llmEvaluation.citationAccuracy,
+							conciseness: llmEvaluation.conciseness,
+							relevance: llmEvaluation.relevance,
+							reasoning: llmEvaluation.reasoning,
+						},
+						citationHealth,
+					};
+				}),
+			);
+		} catch (error) {
+			console.error('LLM evaluation failed, using heuristic score:', error);
+			// Keep the heuristic score already set
+		}
 	}, []);
 
 	const assignAssistantSources = useCallback((messageId: string, sources: AIChatSource[]) => {
@@ -2980,6 +3173,23 @@ export default function AIChatIsland() {
 												View top source
 											</button>
 										)}
+										
+										{/* Quality Score Indicator */}
+										{message.qualityScore !== undefined && message.qualityScore > 0 && (() => {
+											const confidence = getConfidenceIndicator(message.qualityScore);
+											const hasDetails = message.qualityDetails !== undefined;
+											
+											return (
+												<div className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 bg-[color:var(--surface)]/50 px-3 py-1 text-[0.65rem]" title={hasDetails ? `Completeness: ${message.qualityDetails?.completeness}% | Citations: ${message.qualityDetails?.citationAccuracy}% | Conciseness: ${message.qualityDetails?.conciseness}% | Relevance: ${message.qualityDetails?.relevance}%` : `Overall quality score: ${message.qualityScore}%`}>
+													<span className={confidence.color} aria-hidden="true">{confidence.emoji}</span>
+													<span className="text-[color:var(--fg)]/60">{message.qualityScore}%</span>
+													{hasDetails && (
+														<span className={`font-medium ${confidence.color}`}>{confidence.label}</span>
+													)}
+												</div>
+											);
+										})()}
+										
 										<div className="ml-auto inline-flex items-center gap-1">
 											<button
 												type="button"
