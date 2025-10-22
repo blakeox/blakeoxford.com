@@ -128,6 +128,7 @@ type ChatMessage = {
 	content: string;
 	sources?: AIChatSource[];
 	feedback?: 'positive' | 'negative';
+	qualityScore?: number; // 0-100 score for assistant responses
 };
 
 type SearchFallback = {
@@ -244,6 +245,79 @@ function cleanSnippet(snippet: string): string {
 		.trim();
 	if (!decoded) return '';
 	return decoded.length > 240 ? `${decoded.slice(0, 237).trim()}…` : decoded;
+}
+
+/**
+ * Calculates quality score for an AI response based on multiple factors:
+ * - Source relevance: Average score of cited sources
+ * - Source count: Number of sources (more = better, up to 5)
+ * - Content completeness: Response length and structure
+ * - Citation quality: Source diversity and collection coverage
+ * 
+ * @param content - The AI response text
+ * @param sources - Array of cited sources with relevance scores
+ * @returns Quality score from 0-100
+ */
+function calculateResponseQuality(content: string, sources?: AIChatSource[]): number {
+	let score = 0;
+	
+	// Factor 1: Source Relevance (40 points max)
+	if (sources && sources.length > 0) {
+		const avgScore = sources.reduce((sum, s) => sum + (s.score || 0), 0) / sources.length;
+		score += avgScore * 40; // Convert 0-1 score to 0-40 points
+	} else {
+		// No sources = lower baseline quality
+		score += 10;
+	}
+	
+	// Factor 2: Source Count (20 points max)
+	if (sources && sources.length > 0) {
+		const sourceCount = Math.min(sources.length, 5); // Cap at 5 sources
+		score += (sourceCount / 5) * 20;
+	}
+	
+	// Factor 3: Content Completeness (25 points max)
+	const wordCount = content.trim().split(/\s+/).length;
+	if (wordCount >= 100) {
+		score += 25; // Comprehensive answer
+	} else if (wordCount >= 50) {
+		score += 20; // Decent answer
+	} else if (wordCount >= 20) {
+		score += 15; // Brief answer
+	} else {
+		score += 5; // Very short answer
+	}
+	
+	// Factor 4: Source Diversity (15 points max)
+	if (sources && sources.length > 0) {
+		const collections = new Set(sources.map(s => s.collection).filter(Boolean));
+		const hasProjects = sources.some(s => s.collection === 'projects');
+		const hasBlog = sources.some(s => s.collection === 'blog');
+		
+		if (collections.size > 1) {
+			score += 15; // Multiple collection types
+		} else if (hasProjects || hasBlog) {
+			score += 10; // Single collection type
+		} else {
+			score += 5; // Generic sources
+		}
+	}
+	
+	// Normalize to 0-100 and round
+	return Math.min(Math.round(score), 100);
+}
+
+/**
+ * Gets a confidence label and color based on quality score
+ */
+function getConfidenceIndicator(score: number): { label: string; color: string; emoji: string } {
+	if (score >= 80) {
+		return { label: 'High confidence', color: 'text-green-600 dark:text-green-400', emoji: '✓' };
+	} else if (score >= 60) {
+		return { label: 'Moderate confidence', color: 'text-yellow-600 dark:text-yellow-400', emoji: '○' };
+	} else {
+		return { label: 'Low confidence', color: 'text-orange-600 dark:text-orange-400', emoji: '!' };
+	}
 }
 
 /**
@@ -801,16 +875,34 @@ export default function AIChatIsland() {
 		);
 	}, []);
 
-	const replaceAssistantContent = useCallback((messageId: string, content: string) => {
+	/**
+	 * Finalizes assistant message with content and calculated quality score
+	 */
+	const finalizeAssistantMessage = useCallback((messageId: string, content: string) => {
 		setMessages((prev) =>
-			prev.map((message) =>
-				message.id === messageId
-					? {
-							...message,
-							content,
-						}
-					: message,
-			),
+			prev.map((message) => {
+				if (message.id !== messageId) return message;
+				
+				// Calculate quality score based on content and sources
+				const qualityScore = calculateResponseQuality(content, message.sources);
+				
+				// Track quality metric
+				if ((window as any).plausible) {
+					(window as any).plausible('AutoRAG Quality Score', {
+						props: {
+							score: qualityScore,
+							source_count: message.sources?.length || 0,
+							word_count: content.trim().split(/\s+/).length,
+						},
+					});
+				}
+				
+				return {
+					...message,
+					content,
+					qualityScore,
+				};
+			}),
 		);
 	}, []);
 
@@ -1106,7 +1198,7 @@ export default function AIChatIsland() {
 						setLoadingPhase('crafting');
 					},
 					onCompletion: (message) => {
-						replaceAssistantContent(assistantId, message.trim());
+						finalizeAssistantMessage(assistantId, message.trim());
 					},
 				});
 				clearTimeout(searchingTimer);
@@ -1146,7 +1238,7 @@ export default function AIChatIsland() {
 				activeRequestRef.current = null;
 			}
 		},
-		[appendAssistantChunk, assignAssistantSources, buildHistoryForRequest, replaceAssistantContent, updateFallbackSuggestions, useMemory],
+		[appendAssistantChunk, assignAssistantSources, buildHistoryForRequest, finalizeAssistantMessage, updateFallbackSuggestions, useMemory],
 	);
 
 	const handleSubmit = useCallback(
@@ -1770,6 +1862,24 @@ export default function AIChatIsland() {
 												<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:150ms]" />
 												<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:300ms]" />
 											</span>
+										)}
+										{isAssistant && !isStreaming && message.qualityScore !== undefined && (
+											<div className="flex items-center gap-1.5 text-[0.65rem]">
+												{(() => {
+													const indicator = getConfidenceIndicator(message.qualityScore);
+													return (
+														<>
+															<span className={`font-medium ${indicator.color}`} aria-label={`Quality: ${indicator.label}`}>
+																<span aria-hidden="true">{indicator.emoji}</span> {indicator.label}
+															</span>
+															<span className="text-[color:var(--fg)]/40">·</span>
+															<span className="text-[color:var(--fg)]/50" title={`Response quality score: ${message.qualityScore}/100`}>
+																{message.qualityScore}/100
+															</span>
+														</>
+													);
+												})()}
+											</div>
 										)}
 										{isAssistant && totalSources > 0 && (
 											<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
