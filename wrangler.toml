@@ -41,6 +41,12 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 binding = "AI_FEEDBACK_KV"
 id      = "65439bda285f486f9b07fc2a30bc5099"
 
+# Durable Objects for real-time conversation state
+[[durable_objects.bindings]]
+name = "CONVERSATION_DO"
+class_name = "ConversationDurableObject"
+script_name = "blakeoxford-com"
+
 # To enable CSP report persistence, create a KV namespace and add it here:
 # [[kv_namespaces]]
 # binding = "CSP_REPORTS"
@@ -75,6 +81,11 @@ binding = "AI"
 [[vectorize]]
 binding = "VECTORIZE"
 index_name = "blakeoxford-content"
+
+# Durable Objects migrations
+[[migrations]]
+tag = "v1"
+new_classes = ["ConversationDurableObject"]
 
 [observability.logs]
 enabled = true

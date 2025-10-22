@@ -5,6 +5,7 @@
 import { onRequestPost as handleSendEmail } from './send-email.js';
 import { initEdgeSentry, addEdgeBreadcrumb } from '../sentry.edge.config.js';
 import { CACHE_DURATIONS, isHashedPath } from '../src/config/constants.ts';
+export { ConversationDurableObject } from './ConversationDO.js';
 
 class EdgeCacheManager {
   constructor(request, env) {
@@ -933,6 +934,32 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
           errorMessage = 'AI search request timed out';
         }
         return new Response(JSON.stringify({ error: errorMessage }), { status: 504, headers: baseCorsHeaders });
+      }
+    }
+
+    // Real-time conversation via Durable Objects WebSocket
+    if (url.pathname === '/api/conversation-ws' || url.pathname.startsWith('/api/conversation/')) {
+      try {
+        // Get or create conversation Durable Object
+        const conversationId = url.searchParams.get('id') || 'default';
+        const id = env.CONVERSATION_DO.idFromName(conversationId);
+        const stub = env.CONVERSATION_DO.get(id);
+        
+        // Forward request to Durable Object
+        return stub.fetch(request);
+      } catch (error) {
+        const origin = request.headers.get('origin') || '*';
+        return new Response(JSON.stringify({ 
+          error: 'Conversation service unavailable',
+          fallback: 'Use HTTP endpoints instead'
+        }), { 
+          status: 503,
+          headers: {
+            'content-type': 'application/json',
+            'access-control-allow-origin': origin,
+            'access-control-allow-credentials': 'true'
+          }
+        });
       }
     }
 
