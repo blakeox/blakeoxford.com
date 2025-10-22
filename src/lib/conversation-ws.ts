@@ -30,7 +30,7 @@ export type WSOptions = {
 
 export class ConversationWebSocket {
 	private ws: WebSocket | null = null;
-	private options: WSOptions;
+	public options: WSOptions;
 	private reconnectAttempts = 0;
 	private maxReconnectAttempts = 5;
 	private reconnectDelay = 1000;

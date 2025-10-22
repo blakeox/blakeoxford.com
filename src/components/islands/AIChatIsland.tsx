@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { AIChatMessage, AIChatSource } from '../../lib/ai-search';
 import { searchWithAI } from '../../lib/ai-search';
+import { ConversationWebSocket, type WSMessage } from '../../lib/conversation-ws';
 
 const CONVERSATION_STORAGE_KEY = 'ai-chat:conversation';
 const PREFERENCES_STORAGE_KEY = 'ai-chat:preferences';
@@ -757,6 +758,9 @@ export default function AIChatIsland() {
 	const [lastFailedQuery, setLastFailedQuery] = useState<string>('');
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [isSearching, setIsSearching] = useState(false);
+	const [wsConnected, setWsConnected] = useState(false);
+	const [activeUsers, setActiveUsers] = useState(1);
+	const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
 	const siteHostname = useMemo(() => {
 		if (typeof window !== 'undefined') {
 			return window.location.hostname;
@@ -781,10 +785,75 @@ export default function AIChatIsland() {
 	const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 	const activeRequestRef = useRef<AbortController | null>(null);
 	const sourceRefs = useRef<HTMLAnchorElement[]>([]);
+	const wsRef = useRef<ConversationWebSocket | null>(null);
+	const typingTimeoutRef = useRef<number | null>(null);
 
 	useEffect(() => {
 		messagesRef.current = messages;
 	}, [messages]);
+
+	// Initialize WebSocket connection for real-time features
+	useEffect(() => {
+		if (typeof window === 'undefined') return;
+
+		// Only connect WebSocket when chat is open
+		if (!isOpen) return;
+
+		// Create WebSocket connection
+		const ws = new ConversationWebSocket({
+			conversationId: 'default',
+			userId: 'anonymous',
+			onMessage: (message: WSMessage) => {
+				switch (message.type) {
+					case 'init':
+						setActiveUsers(message.activeSessions);
+						setWsConnected(true);
+						break;
+					case 'presence':
+						setActiveUsers(message.activeSessions);
+						break;
+					case 'typing':
+						// Only show typing indicator for other users
+						if (message.sessionId !== ws.options.sessionId) {
+							setIsOtherUserTyping(message.isTyping);
+						}
+						break;
+					case 'message':
+						// Message sync handled separately - we use HTTP for now
+						break;
+					default:
+						break;
+				}
+			},
+			onConnect: () => {
+				setWsConnected(true);
+			},
+			onDisconnect: () => {
+				setWsConnected(false);
+			},
+			onError: (error) => {
+				console.debug('WebSocket error:', error);
+				setWsConnected(false);
+			}
+		});
+
+		wsRef.current = ws;
+
+		// Connect with a small delay to avoid blocking initial render
+		const connectTimer = setTimeout(() => {
+			ws.connect().catch((err) => {
+				console.debug('WebSocket connection failed, will use HTTP fallback:', err);
+			});
+		}, 1000);
+
+		return () => {
+			clearTimeout(connectTimer);
+			if (wsRef.current) {
+				wsRef.current.close();
+				wsRef.current = null;
+			}
+		};
+	}, [isOpen]);
 
 	useEffect(() => {
 		setShowFallbackSuggestions(false);
@@ -1913,7 +1982,29 @@ export default function AIChatIsland() {
 						<span id="ai-chat-heading" className="text-sm font-semibold text-[color:var(--fg)]">
 							AI Portfolio Assistant
 						</span>
-						<span className="text-xs text-[color:var(--fg)]/60">Powered by AutoRAG search</span>
+						<span className="flex items-center gap-2 text-xs text-[color:var(--fg)]/60">
+							<span>Powered by AutoRAG search</span>
+							{wsConnected && (
+								<>
+									<span className="text-[color:var(--fg)]/30">•</span>
+									<span className="flex items-center gap-1">
+										<span className="inline-block size-1.5 rounded-full bg-green-500 animate-pulse" aria-hidden="true" />
+										<span>Real-time connected</span>
+									</span>
+									{activeUsers > 1 && (
+										<>
+											<span className="text-[color:var(--fg)]/30">•</span>
+											<span className="flex items-center gap-1">
+												<svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+													<path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+												</svg>
+												<span>{activeUsers} active</span>
+											</span>
+										</>
+									)}
+								</>
+							)}
+						</span>
 					</div>
 					<div className="flex items-center gap-2">
 						{voiceSupported && (
@@ -2791,6 +2882,22 @@ export default function AIChatIsland() {
 							</div>
 						);
 						})}
+						
+						{/* Typing indicator */}
+						{isOtherUserTyping && wsConnected && (
+							<div className="flex flex-col gap-2 items-start text-left" aria-live="polite" aria-label="AI is typing">
+								<div className="rounded-2xl bg-[color:var(--surface)]/95 text-[color:var(--fg)] dark:bg-[color:var(--surface)]/90 px-4 py-3 shadow-sm border border-[color:var(--border)]/20">
+									<div className="flex items-center gap-2">
+										<div className="flex gap-1">
+											<span className="inline-block size-2 rounded-full bg-[color:var(--fg)]/40 animate-bounce [animation-delay:0ms]" aria-hidden="true" />
+											<span className="inline-block size-2 rounded-full bg-[color:var(--fg)]/40 animate-bounce [animation-delay:150ms]" aria-hidden="true" />
+											<span className="inline-block size-2 rounded-full bg-[color:var(--fg)]/40 animate-bounce [animation-delay:300ms]" aria-hidden="true" />
+										</div>
+										<span className="text-xs text-[color:var(--fg)]/60">AI is thinking...</span>
+									</div>
+								</div>
+							</div>
+						)}
 					</div>
 					{showScrollToLatest && (
 						<button
@@ -2941,7 +3048,26 @@ export default function AIChatIsland() {
 							className="h-24 w-full resize-none rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface)]/70 px-4 pb-3 pr-12 pt-6 text-sm text-[color:var(--fg)] outline-none transition focus:border-[color:var(--accent)] focus:ring-2 focus:ring-[color:var(--accent)]/40"
 							placeholder=""
 							value={inputValue}
-							onChange={(event) => setInputValue(event.target.value)}
+							onChange={(event) => {
+								setInputValue(event.target.value);
+								
+								// Send typing indicator via WebSocket
+								if (wsRef.current?.isConnected()) {
+									wsRef.current.sendTyping(true);
+									
+									// Clear previous timeout
+									if (typingTimeoutRef.current !== null) {
+										window.clearTimeout(typingTimeoutRef.current);
+									}
+									
+									// Stop typing indicator after 2 seconds of inactivity
+									typingTimeoutRef.current = window.setTimeout(() => {
+										if (wsRef.current?.isConnected()) {
+											wsRef.current.sendTyping(false);
+										}
+									}, 2000);
+								}
+							}}
 							onKeyDown={handleTextareaKeyDown}
 							onFocus={() => setComposerFocused(true)}
 							onBlur={() => setComposerFocused(false)}
