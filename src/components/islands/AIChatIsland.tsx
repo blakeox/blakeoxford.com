@@ -131,6 +131,7 @@ type ChatMessage = {
 	qualityScore?: number; // 0-100 score for assistant responses
 	citationHealth?: 'healthy' | 'warning' | 'error'; // Source health status
 	timestamp?: number; // Unix timestamp for analytics
+	responseTime?: number; // Response time in milliseconds (for assistant messages)
 };
 
 type ConversationAnalytics = {
@@ -144,6 +145,9 @@ type ConversationAnalytics = {
 	uniqueCollections: Set<string>;
 	sessionDuration: number; // in minutes
 	startTime: number;
+	averageResponseTime: number; // in milliseconds
+	fastestResponse: number; // in milliseconds
+	slowestResponse: number; // in milliseconds
 };
 
 type SearchFallback = {
@@ -454,6 +458,21 @@ function calculateConversationAnalytics(
 		});
 	});
 	
+	// Calculate response time metrics
+	const responsesWithTime = messages.filter(
+		m => m.role === 'assistant' && typeof m.responseTime === 'number' && m.responseTime > 0
+	);
+	let averageResponseTime = 0;
+	let fastestResponse = 0;
+	let slowestResponse = 0;
+	
+	if (responsesWithTime.length > 0) {
+		const times = responsesWithTime.map(m => m.responseTime || 0);
+		averageResponseTime = times.reduce((sum, t) => sum + t, 0) / times.length;
+		fastestResponse = Math.min(...times);
+		slowestResponse = Math.max(...times);
+	}
+	
 	const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 60000); // minutes
 	
 	return {
@@ -467,6 +486,9 @@ function calculateConversationAnalytics(
 		uniqueCollections,
 		sessionDuration,
 		startTime: sessionStartTime,
+		averageResponseTime: Math.round(averageResponseTime),
+		fastestResponse: Math.round(fastestResponse),
+		slowestResponse: Math.round(slowestResponse),
 	};
 }
 
@@ -1036,19 +1058,23 @@ export default function AIChatIsland() {
 	 * Finalizes assistant message with content, quality score, and citation health
 	 */
 	const finalizeAssistantMessage = useCallback(async (messageId: string, content: string) => {
-		// First update with content
+		// Calculate response time
+		const message = messagesRef.current.find((m) => m.id === messageId);
+		const responseTime = message?.timestamp ? Date.now() - message.timestamp : 0;
+		
+		// First update with content and response time
 		setMessages((prev) =>
 			prev.map((message) => {
 				if (message.id !== messageId) return message;
 				return {
 					...message,
 					content,
+					responseTime,
 				};
 			}),
 		);
 		
 		// Then calculate quality score and citation health asynchronously
-		const message = messagesRef.current.find((m) => m.id === messageId);
 		if (!message) return;
 		
 		const qualityScore = calculateResponseQuality(content, message.sources);
@@ -1059,7 +1085,7 @@ export default function AIChatIsland() {
 			prev.map((m) => {
 				if (m.id !== messageId) return m;
 				
-				// Track quality metric
+				// Track quality metric with performance data
 				if ((window as any).plausible) {
 					(window as any).plausible('AutoRAG Quality Score', {
 						props: {
@@ -1067,6 +1093,7 @@ export default function AIChatIsland() {
 							source_count: m.sources?.length || 0,
 							word_count: content.trim().split(/\s+/).length,
 							citation_health: citationHealth,
+							response_time_ms: responseTime,
 						},
 					});
 				}
@@ -2005,6 +2032,33 @@ export default function AIChatIsland() {
 														<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.positiveRate}%</span>
 													</div>
 												)}
+											</div>
+										</div>
+									)}
+
+									{/* Performance Metrics */}
+									{analytics.averageResponseTime > 0 && (
+										<div className="mt-3 border-t border-[color:var(--border)]/30 pt-3">
+											<span className="block uppercase tracking-wide text-[color:var(--fg)]/50 mb-2">Performance</span>
+											<div className="flex flex-wrap gap-2">
+												<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+													<span className="block text-[color:var(--fg)]/45">Avg Response</span>
+													<span className="text-sm font-semibold text-[color:var(--fg)]">
+														{(analytics.averageResponseTime / 1000).toFixed(1)}s
+													</span>
+												</div>
+												<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+													<span className="block text-[color:var(--fg)]/45">Fastest</span>
+													<span className="text-sm font-semibold text-green-600 dark:text-green-400">
+														{(analytics.fastestResponse / 1000).toFixed(1)}s
+													</span>
+												</div>
+												<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+													<span className="block text-[color:var(--fg)]/45">Slowest</span>
+													<span className="text-sm font-semibold text-yellow-600 dark:text-yellow-400">
+														{(analytics.slowestResponse / 1000).toFixed(1)}s
+													</span>
+												</div>
 											</div>
 										</div>
 									)}
