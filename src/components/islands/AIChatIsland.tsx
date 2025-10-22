@@ -563,6 +563,30 @@ function categorizeError(err: unknown): {
 }
 
 /**
+ * Filter messages based on search query
+ */
+function filterMessages(messages: ChatMessage[], query: string): ChatMessage[] {
+	if (!query.trim()) return messages;
+	
+	const searchTerm = query.toLowerCase().trim();
+	return messages.filter(msg => {
+		// Search in message content
+		if (msg.content.toLowerCase().includes(searchTerm)) return true;
+		
+		// Search in sources if present
+		if (msg.sources) {
+			return msg.sources.some(source => 
+				source.title?.toLowerCase().includes(searchTerm) ||
+				source.snippet?.toLowerCase().includes(searchTerm) ||
+				source.url?.toLowerCase().includes(searchTerm)
+			);
+		}
+		
+		return false;
+	});
+}
+
+/**
  * Enhances user queries with analytical context to guide the AI toward
  * more insightful, synthesized responses rather than simple summarization.
  */
@@ -731,12 +755,19 @@ export default function AIChatIsland() {
 	const [showScrollToLatest, setShowScrollToLatest] = useState(false);
 	const [retryCount, setRetryCount] = useState(0);
 	const [lastFailedQuery, setLastFailedQuery] = useState<string>('');
+	const [searchQuery, setSearchQuery] = useState<string>('');
+	const [isSearching, setIsSearching] = useState(false);
 	const siteHostname = useMemo(() => {
 		if (typeof window !== 'undefined') {
 			return window.location.hostname;
 		}
 		return 'blakeoxford.com';
 	}, []);
+
+	// Filter messages based on search query
+	const filteredMessages = useMemo(() => {
+		return filterMessages(messages, searchQuery);
+	}, [messages, searchQuery]);
 
 	const panelRef = useRef<HTMLDivElement | null>(null);
 	const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -2264,7 +2295,7 @@ export default function AIChatIsland() {
 								</div>
 							</div>
 						)}
-						{messages.map((message) => {
+						{filteredMessages.map((message) => {
 						const alignment = message.role === 'user' ? 'items-end text-right' : 'items-start text-left';
 						const bubbleClasses = message.role === 'user'
 							? 'bg-[color:var(--accent)] text-[color:var(--on-accent)]'
