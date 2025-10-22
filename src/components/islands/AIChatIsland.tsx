@@ -10,12 +10,9 @@ import {
 	PREFERENCES_STORAGE_KEY,
 	QUICK_ACTIONS,
 	SEMANTIC_SEARCH_URL,
-	type ContextualCTA,
 } from '../../lib/chat-constants';
 import {
 	calculateConversationAnalytics as calculateAnalytics,
-	exportToJSON,
-	exportToMarkdown,
 	filterMessages,
 } from '../../lib/conversation-utils';
 import { ConversationWebSocket, type WSMessage } from '../../lib/conversation-ws';
@@ -265,8 +262,7 @@ export default function AIChatIsland() {
 	const [showScrollToLatest, setShowScrollToLatest] = useState(false);
 	const [retryCount, setRetryCount] = useState(0);
 	const [lastFailedQuery, setLastFailedQuery] = useState<string>('');
-	const [searchQuery, setSearchQuery] = useState<string>('');
-	const [isSearching, setIsSearching] = useState(false);
+	const [searchQuery] = useState<string>('');
 	const [wsConnected, setWsConnected] = useState(false);
 	const [activeUsers, setActiveUsers] = useState(1);
 	const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
@@ -876,21 +872,17 @@ export default function AIChatIsland() {
 						if (m.id !== messageId) return m;
 						
 						// Track quality metric with detailed breakdown
-						if ((window as any).plausible) {
-							(window as any).plausible('AutoRAG Quality Score', {
-								props: {
-									overall_score: llmEvaluation.overall,
-									completeness: llmEvaluation.completeness,
-									citation_accuracy: llmEvaluation.citationAccuracy,
-									conciseness: llmEvaluation.conciseness,
-									relevance: llmEvaluation.relevance,
-									source_count: m.sources?.length || 0,
-									word_count: content.trim().split(/\s+/).length,
-									citation_health: citationHealth,
-									response_time_ms: responseTime,
-								},
-							});
-						}
+						autoragEvents.qualityScore({
+							overall_score: llmEvaluation.overall,
+							completeness: llmEvaluation.completeness,
+							citation_accuracy: llmEvaluation.citationAccuracy,
+							conciseness: llmEvaluation.conciseness,
+							relevance: llmEvaluation.relevance,
+							source_count: m.sources?.length || 0,
+							word_count: content.trim().split(/\s+/).length,
+							citation_health: citationHealth,
+							response_time_ms: responseTime,
+						});
 						
 						return {
 							...m,
@@ -972,9 +964,12 @@ export default function AIChatIsland() {
 		setShowAnalytics((prev) => {
 			const newState = !prev;
 			// Track analytics panel usage
-			if (typeof window !== 'undefined' && (window as any).plausible) {
-				(window as any).plausible('Chat Insights', {
-					props: { action: newState ? 'opened' : 'closed' }
+			if (typeof window !== 'undefined') {
+				autoragEvents.chatInsights({
+					total_messages: 0,
+					user_messages: 0,
+					assistant_messages: 0,
+					total_sources: 0,
 				});
 			}
 			return newState;
@@ -1153,11 +1148,7 @@ export default function AIChatIsland() {
 		URL.revokeObjectURL(url);
 		
 		// Track export
-		if ((window as any).plausible) {
-			(window as any).plausible('AutoRAG Export', {
-				props: { format: 'markdown', messages: messages.length },
-			});
-		}
+		autoragEvents.export('markdown');
 	}, [messages]);
 
 	const toggleVoiceInput = useCallback(() => {
@@ -1291,19 +1282,13 @@ export default function AIChatIsland() {
 					const delay = Math.min(1000 * Math.pow(2, retryCount), 5000);
 					setError(`${errorInfo.message} Retrying in ${Math.ceil(delay / 1000)}s... (${retryCount + 1}/2)`);
 					setRetryCount(prev => prev + 1);
-					setLastFailedQuery(query);
-					
-					// Track retry attempt
-					if ((window as any).plausible) {
-						(window as any).plausible('AutoRAG Error Retry', {
-							props: {
-								error_type: errorInfo.category,
-								retry_attempt: retryCount + 1,
-							}
-						});
-					}
-					
-					setTimeout(() => {
+				setLastFailedQuery(query);
+				
+				// Track retry attempt
+				autoragEvents.errorRetry({
+					category: errorInfo.category,
+					attempt: retryCount + 1,
+				});					setTimeout(() => {
 						if (lastQueryRef.current === query) {
 							sendQuery(query);
 						}
@@ -1317,14 +1302,11 @@ export default function AIChatIsland() {
 				setLastFailedQuery('');
 				
 				// Track error
-				if ((window as any).plausible) {
-					(window as any).plausible('AutoRAG Error', {
-						props: {
-							error_type: errorInfo.category,
-							retryable: errorInfo.retryable,
-						}
-					});
-				}
+				autoragEvents.error({
+					category: errorInfo.category,
+					severity: 'error',
+					retry_available: errorInfo.retryable,
+				});
 				
 				await updateFallbackSuggestions(query);
 			} finally {
