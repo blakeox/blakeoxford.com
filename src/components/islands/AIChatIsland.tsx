@@ -2513,7 +2513,7 @@ export default function AIChatIsland() {
 											</button>
 										</div>
 										{showAllSources && (
-											<ul className="flex flex-col gap-2">
+											<ul className="flex max-h-96 flex-col gap-2 overflow-y-auto">
 												{sources.map((source, index) => {
 												const relevance = typeof source.score === 'number' ? Math.round(Math.min(Math.max(source.score, 0), 1) * 100) : null;
 												const title = decodeMimeEncodedWords(decodeHtmlEntities(source.title || ''));
