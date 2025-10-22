@@ -130,6 +130,20 @@ type ChatMessage = {
 	feedback?: 'positive' | 'negative';
 	qualityScore?: number; // 0-100 score for assistant responses
 	citationHealth?: 'healthy' | 'warning' | 'error'; // Source health status
+	timestamp?: number; // Unix timestamp for analytics
+};
+
+type ConversationAnalytics = {
+	messageCount: number;
+	userQueries: number;
+	assistantResponses: number;
+	averageQualityScore: number;
+	healthyResponses: number;
+	warningResponses: number;
+	errorResponses: number;
+	uniqueCollections: Set<string>;
+	sessionDuration: number; // in minutes
+	startTime: number;
 };
 
 type SearchFallback = {
@@ -412,6 +426,51 @@ function getCitationHealthIndicator(health: 'healthy' | 'warning' | 'error'): {
 }
 
 /**
+ * Calculate analytics for the current conversation
+ * Returns insights like message count, quality scores, topics, session duration
+ */
+function calculateConversationAnalytics(
+	messages: ChatMessage[], 
+	sessionStartTime: number
+): ConversationAnalytics {
+	const userQueries = messages.filter(m => m.role === 'user').length;
+	const assistantResponses = messages.filter(m => m.role === 'assistant' && m.id !== 'welcome').length;
+	
+	const responsesWithQuality = messages.filter(
+		m => m.role === 'assistant' && typeof m.qualityScore === 'number'
+	);
+	const averageQualityScore = responsesWithQuality.length > 0
+		? responsesWithQuality.reduce((sum, m) => sum + (m.qualityScore || 0), 0) / responsesWithQuality.length
+		: 0;
+	
+	const healthyResponses = messages.filter(m => m.citationHealth === 'healthy').length;
+	const warningResponses = messages.filter(m => m.citationHealth === 'warning').length;
+	const errorResponses = messages.filter(m => m.citationHealth === 'error').length;
+	
+	const uniqueCollections = new Set<string>();
+	messages.forEach(m => {
+		m.sources?.forEach(s => {
+			if (s.collection) uniqueCollections.add(s.collection);
+		});
+	});
+	
+	const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 60000); // minutes
+	
+	return {
+		messageCount: messages.length - 1, // Exclude welcome message
+		userQueries,
+		assistantResponses,
+		averageQualityScore: Math.round(averageQualityScore),
+		healthyResponses,
+		warningResponses,
+		errorResponses,
+		uniqueCollections,
+		sessionDuration,
+		startTime: sessionStartTime,
+	};
+}
+
+/**
  * Enhances user queries with analytical context to guide the AI toward
  * more insightful, synthesized responses rather than simple summarization.
  */
@@ -568,6 +627,7 @@ export default function AIChatIsland() {
 	const [showDigest, setShowDigest] = useState(false);
 	const [showAnalytics, setShowAnalytics] = useState(false);
 	const [showAdvancedControls, setShowAdvancedControls] = useState(false);
+	const [sessionStartTime] = useState<number>(Date.now()); // Track session start
 	const [voiceSupported, setVoiceSupported] = useState(false);
 	const [isListening, setIsListening] = useState(false);
 	const [interimTranscript, setInterimTranscript] = useState('');
@@ -1076,7 +1136,16 @@ export default function AIChatIsland() {
 	}, []);
 
 	const toggleAnalytics = useCallback(() => {
-		setShowAnalytics((prev) => !prev);
+		setShowAnalytics((prev) => {
+			const newState = !prev;
+			// Track analytics panel usage
+			if (typeof window !== 'undefined' && (window as any).plausible) {
+				(window as any).plausible('Chat Insights', {
+					props: { action: newState ? 'opened' : 'closed' }
+				});
+			}
+			return newState;
+		});
 	}, []);
 
 	const toggleAdvancedControls = useCallback(() => {
@@ -1270,13 +1339,24 @@ export default function AIChatIsland() {
 			setFallbackResults([]);
 			lastQueryRef.current = query;
 
-			const userMessage: ChatMessage = { id: createId(), role: 'user', content: query };
+			const userMessage: ChatMessage = { 
+				id: createId(), 
+				role: 'user', 
+				content: query,
+				timestamp: Date.now(),
+			};
 			const assistantId = createId();
 
 			setMessages((prev) => [
 				...prev,
 				userMessage,
-				{ id: assistantId, role: 'assistant', content: '', sources: [] },
+				{ 
+					id: assistantId, 
+					role: 'assistant', 
+					content: '', 
+					sources: [],
+					timestamp: Date.now(),
+				},
 			]);
 			setStreamingMessageId(assistantId);
 
@@ -1826,43 +1906,111 @@ export default function AIChatIsland() {
 
 				{showAnalytics && (
 					<div className="border-b border-[color:var(--border)]/20 bg-[color:var(--surface-subtle)]/20 px-4 py-3 text-xs text-[color:var(--fg)]/70">
-						<div className="flex flex-wrap items-center gap-3">
-							<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-								<span className="block text-[color:var(--fg)]/45">Assistant replies</span>
-								<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.totalAssistant}</span>
-							</div>
-							<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-								<span className="block text-[color:var(--fg)]/45">Helpful</span>
-								<span className="text-sm font-semibold text-[color:var(--accent-strong)]">{feedbackAnalytics.positive}</span>
-							</div>
-							<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-								<span className="block text-[color:var(--fg)]/45">Needs work</span>
-								<span className="text-sm font-semibold text-red-500 dark:text-red-300">{feedbackAnalytics.negative}</span>
-							</div>
-							{feedbackAnalytics.positiveRate !== null && (
-								<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-									<span className="block text-[color:var(--fg)]/45">Positive rate</span>
-									<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.positiveRate}%</span>
-								</div>
-							)}
-						</div>
-						{feedbackAnalytics.topSources.length > 0 && (
-							<div className="mt-3">
-								<span className="uppercase tracking-wide text-[color:var(--fg)]/50">Frequently cited</span>
-								<ul className="mt-2 space-y-1">
-									{feedbackAnalytics.topSources.map((source, index) => (
-										<li key={`top-source-${index}`} className="flex items-center justify-between gap-2 text-[color:var(--fg)]/70">
-											<a href={source.url} className="truncate text-[color:var(--accent)] underline decoration-dotted underline-offset-2" target="_blank" rel="noreferrer">
-												{source.title}
-											</a>
-											<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--accent)]/10 px-2 py-0.5 text-[0.65rem] font-medium text-[color:var(--accent-strong)]">
-												{source.count}×
+						<span className="mb-2 block uppercase tracking-wide text-[color:var(--fg)]/50">Conversation Insights</span>
+						
+						{(() => {
+							const analytics = calculateConversationAnalytics(messages, sessionStartTime);
+							return (
+								<>
+									{/* Core Metrics */}
+									<div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+										<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+											<span className="block text-[color:var(--fg)]/45">Messages</span>
+											<span className="text-sm font-semibold text-[color:var(--fg)]">{analytics.messageCount}</span>
+										</div>
+										<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+											<span className="block text-[color:var(--fg)]/45">Avg Quality</span>
+											<span className={`text-sm font-semibold ${
+												analytics.averageQualityScore >= 80 
+													? 'text-green-600 dark:text-green-400' 
+													: analytics.averageQualityScore >= 60
+													? 'text-yellow-600 dark:text-yellow-400'
+													: 'text-red-600 dark:text-red-400'
+											}`}>
+												{analytics.averageQualityScore > 0 ? `${analytics.averageQualityScore}/100` : 'N/A'}
 											</span>
-										</li>
-									))}
-								</ul>
-							</div>
-						)}
+										</div>
+										<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+											<span className="block text-[color:var(--fg)]/45">Session Time</span>
+											<span className="text-sm font-semibold text-[color:var(--fg)]">
+												{analytics.sessionDuration < 1 ? '<1m' : `${analytics.sessionDuration}m`}
+											</span>
+										</div>
+										<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+											<span className="block text-[color:var(--fg)]/45">Topics</span>
+											<span className="text-sm font-semibold text-[color:var(--fg)]">{analytics.uniqueCollections.size}</span>
+										</div>
+									</div>
+
+									{/* Citation Health */}
+									{(analytics.healthyResponses + analytics.warningResponses + analytics.errorResponses) > 0 && (
+										<div className="mt-3 rounded-xl border border-[color:var(--border)]/30 p-3">
+											<span className="block text-[color:var(--fg)]/45 mb-2">Citation Health</span>
+											<div className="flex flex-wrap gap-2">
+												{analytics.healthyResponses > 0 && (
+													<span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/30 px-2.5 py-1 text-[0.65rem] font-medium text-green-700 dark:text-green-300">
+														<span>✓</span>
+														{analytics.healthyResponses} Verified
+													</span>
+												)}
+												{analytics.warningResponses > 0 && (
+													<span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 dark:bg-yellow-900/30 px-2.5 py-1 text-[0.65rem] font-medium text-yellow-700 dark:text-yellow-300">
+														<span>⚠</span>
+														{analytics.warningResponses} Warnings
+													</span>
+												)}
+												{analytics.errorResponses > 0 && (
+													<span className="inline-flex items-center gap-1 rounded-full bg-red-100 dark:bg-red-900/30 px-2.5 py-1 text-[0.65rem] font-medium text-red-700 dark:text-red-300">
+														<span>✗</span>
+														{analytics.errorResponses} Issues
+													</span>
+												)}
+											</div>
+										</div>
+									)}
+
+									{/* Topics Explored */}
+									{analytics.uniqueCollections.size > 0 && (
+										<div className="mt-3">
+											<span className="block uppercase tracking-wide text-[color:var(--fg)]/50 mb-2">Topics Explored</span>
+											<div className="flex flex-wrap gap-1.5">
+												{Array.from(analytics.uniqueCollections).map((collection) => (
+													<span 
+														key={collection}
+														className="inline-flex items-center rounded-full bg-[color:var(--accent)]/10 px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--accent-strong)]"
+													>
+														{collection}
+													</span>
+												))}
+											</div>
+										</div>
+									)}
+
+									{/* Feedback Analytics */}
+									{feedbackAnalytics.totalAssistant > 0 && (
+										<div className="mt-3 border-t border-[color:var(--border)]/30 pt-3">
+											<span className="block uppercase tracking-wide text-[color:var(--fg)]/50 mb-2">User Feedback</span>
+											<div className="flex flex-wrap gap-2">
+												<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+													<span className="block text-[color:var(--fg)]/45">Helpful</span>
+													<span className="text-sm font-semibold text-[color:var(--accent-strong)]">{feedbackAnalytics.positive}</span>
+												</div>
+												<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+													<span className="block text-[color:var(--fg)]/45">Needs work</span>
+													<span className="text-sm font-semibold text-red-500 dark:text-red-300">{feedbackAnalytics.negative}</span>
+												</div>
+												{feedbackAnalytics.positiveRate !== null && (
+													<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
+														<span className="block text-[color:var(--fg)]/45">Satisfaction</span>
+														<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.positiveRate}%</span>
+													</div>
+												)}
+											</div>
+										</div>
+									)}
+								</>
+							);
+						})()}
 					</div>
 				)}
 
