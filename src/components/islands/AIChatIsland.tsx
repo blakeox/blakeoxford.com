@@ -657,6 +657,7 @@ export default function AIChatIsland() {
 	const [showFallbackSuggestions, setShowFallbackSuggestions] = useState(false);
 	const [composerFocused, setComposerFocused] = useState(false);
 	const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
+	const [expandedIndividualSources, setExpandedIndividualSources] = useState<Record<string, boolean>>({});
 	const [showScrollToLatest, setShowScrollToLatest] = useState(false);
 	const siteHostname = useMemo(() => {
 		if (typeof window !== 'undefined') {
@@ -1184,6 +1185,42 @@ export default function AIChatIsland() {
 			...previous,
 			[messageId]: !previous[messageId],
 		}));
+	}, []);
+
+	const toggleIndividualSource = useCallback((sourceKey: string) => {
+		setExpandedIndividualSources((previous) => ({
+			...previous,
+			[sourceKey]: !previous[sourceKey],
+		}));
+	}, []);
+
+	const getRelevanceExplanation = useCallback((score: number): { text: string; color: string; icon: string } => {
+		if (score >= 90) {
+			return {
+				text: 'Highly relevant - Core information matching your query',
+				color: 'text-green-600 dark:text-green-400',
+				icon: '🎯',
+			};
+		}
+		if (score >= 75) {
+			return {
+				text: 'Very relevant - Strong match to your question',
+				color: 'text-blue-600 dark:text-blue-400',
+				icon: '✨',
+			};
+		}
+		if (score >= 60) {
+			return {
+				text: 'Relevant - Contains related information',
+				color: 'text-purple-600 dark:text-purple-400',
+				icon: '💡',
+			};
+		}
+		return {
+			text: 'Contextually relevant - Provides background context',
+			color: 'text-yellow-600 dark:text-yellow-400',
+			icon: '📌',
+		};
 	}, []);
 
 	const handleCopyMessage = useCallback(async (message: ChatMessage) => {
@@ -2265,6 +2302,10 @@ export default function AIChatIsland() {
 												const snippetSource = source.summary || source.snippet || '';
 												const snippet = snippetSource ? cleanSnippet(snippetSource) : '';
 												const publishedLabel = formatPublishedDate(source.publishedAt ?? undefined);
+												const sourceKey = `${message.id}-source-${index}`;
+												const isExpanded = expandedIndividualSources[sourceKey];
+												const relevanceInfo = relevance !== null ? getRelevanceExplanation(relevance) : null;
+												
 												let isExternalLink = false;
 												try {
 													const parsed = source.url.startsWith('http')
@@ -2278,7 +2319,7 @@ export default function AIChatIsland() {
 												const linkRel = isExternalLink ? 'noreferrer' : undefined;
 												return (
 													<li
-														key={`${message.id}-source-${index}`}
+														key={sourceKey}
 														className="group w-full rounded-2xl border border-[color:var(--border)]/40 bg-gradient-to-br from-[color:var(--surface-subtle)]/40 to-[color:var(--surface)]/20 px-4 py-3 text-left text-[color:var(--fg)]/80 shadow-sm transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--surface)]/60 hover:shadow-md"
 													>
 														<div className="flex items-start gap-3">
@@ -2309,11 +2350,19 @@ export default function AIChatIsland() {
 																		</span>
 																	)}
 																	{relevance !== null && (
-																		<span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[color:var(--accent)]/20 to-[color:var(--accent)]/10 px-2.5 py-0.5 font-bold text-[color:var(--accent-strong)]">
+																		<span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-bold ${
+																			relevance >= 90 
+																				? 'bg-gradient-to-r from-green-500/20 to-emerald-500/10 text-green-700 dark:text-green-400'
+																				: relevance >= 75
+																				? 'bg-gradient-to-r from-blue-500/20 to-indigo-500/10 text-blue-700 dark:text-blue-400'
+																				: relevance >= 60
+																				? 'bg-gradient-to-r from-purple-500/20 to-pink-500/10 text-purple-700 dark:text-purple-400'
+																				: 'bg-gradient-to-r from-yellow-500/20 to-orange-500/10 text-yellow-700 dark:text-yellow-400'
+																		}`}>
 																			<svg className="size-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 																				<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
 																			</svg>
-																			{relevance}%
+																			{relevance}% match
 																		</span>
 																	)}
 																	{publishedLabel && (
@@ -2333,11 +2382,56 @@ export default function AIChatIsland() {
 																		</span>
 																	)}
 																</div>
-																{snippet && (
-																	<p className="mt-2 rounded-lg border border-[color:var(--border)]/20 bg-[color:var(--surface)]/30 px-3 py-2 text-xs leading-relaxed text-[color:var(--fg)]/70">
-																		<span className="font-medium text-[color:var(--fg)]/50">Preview: </span>
-																		{snippet}
-																	</p>
+																
+																{/* Relevance Explanation & Expand Toggle */}
+																{(relevanceInfo || snippet) && (
+																	<div className="mt-2">
+																		{relevanceInfo && !isExpanded && (
+																			<div className={`flex items-start gap-2 rounded-lg border border-[color:var(--border)]/20 bg-[color:var(--surface)]/20 px-3 py-2 text-[0.65rem] ${relevanceInfo.color}`}>
+																				<span className="text-sm" aria-hidden="true">{relevanceInfo.icon}</span>
+																				<span className="flex-1 leading-relaxed">{relevanceInfo.text}</span>
+																			</div>
+																		)}
+																		
+																		{(snippet || relevanceInfo) && (
+																			<button
+																				type="button"
+																				onClick={() => toggleIndividualSource(sourceKey)}
+																				className="mt-1.5 inline-flex items-center gap-1 text-[0.65rem] text-[color:var(--accent)] transition hover:text-[color:var(--accent-strong)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--accent)]/40"
+																			>
+																				<svg 
+																					className={`size-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+																					viewBox="0 0 20 20" 
+																					fill="currentColor"
+																					aria-hidden="true"
+																				>
+																					<path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+																				</svg>
+																				{isExpanded ? 'Hide details' : 'Show details'}
+																			</button>
+																		)}
+																		
+																		{/* Expanded Details */}
+																		{isExpanded && (
+																			<div className="mt-2 space-y-2">
+																				{relevanceInfo && (
+																					<div className={`flex items-start gap-2 rounded-lg border border-[color:var(--border)]/20 bg-[color:var(--surface)]/20 px-3 py-2 text-[0.65rem] ${relevanceInfo.color}`}>
+																						<span className="text-sm" aria-hidden="true">{relevanceInfo.icon}</span>
+																						<div className="flex-1">
+																							<div className="font-medium">Why this source?</div>
+																							<div className="mt-0.5 leading-relaxed">{relevanceInfo.text}</div>
+																						</div>
+																					</div>
+																				)}
+																				{snippet && (
+																					<p className="rounded-lg border border-[color:var(--border)]/20 bg-[color:var(--surface)]/30 px-3 py-2 text-xs leading-relaxed text-[color:var(--fg)]/70">
+																						<span className="font-medium text-[color:var(--fg)]/50">Preview: </span>
+																						{snippet}
+																					</p>
+																				)}
+																			</div>
+																		)}
+																	</div>
 																)}
 															</div>
 														</div>
