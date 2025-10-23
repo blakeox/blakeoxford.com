@@ -6,10 +6,17 @@ import { autoragEvents } from '../../lib/analytics';
 import {
 	CONVERSATION_STORAGE_KEY,
 	CONTEXTUAL_CTAS,
+	DEEP_CONVERSATION_THRESHOLD,
 	GUIDED_PROMPTS,
+	MAX_ASSISTANT_MESSAGE_LENGTH,
+	MAX_CTAS,
+	MAX_SUMMARY_LENGTH,
+	MAX_USER_MESSAGE_LENGTH,
+	MULTIPLE_SOURCES_THRESHOLD,
 	PREFERENCES_STORAGE_KEY,
 	QUICK_ACTIONS,
 	SEMANTIC_SEARCH_URL,
+	SUMMARY_TRUNCATE_AT,
 } from '../../lib/chat-constants';
 import { restoreMessages } from '../../lib/message-validation';
 import {
@@ -121,7 +128,7 @@ function cleanSnippet(snippet: string): string {
 		.replace(/\s+/g, ' ')
 		.trim();
 	if (!decoded) return '';
-	return decoded.length > 240 ? `${decoded.slice(0, 237).trim()}…` : decoded;
+	return decoded.length > MAX_SUMMARY_LENGTH ? `${decoded.slice(0, SUMMARY_TRUNCATE_AT).trim()}…` : decoded;
 }
 
 
@@ -544,11 +551,11 @@ export default function AIChatIsland() {
 				const assistantMsg = messages[i + 1]?.role === 'assistant' ? messages[i + 1].content : '';
 				
 				// Truncate long messages while preserving key points
-				const truncatedUser = userMsg.length > 150 
-					? userMsg.substring(0, 150) + '...'
+				const truncatedUser = userMsg.length > MAX_USER_MESSAGE_LENGTH 
+					? userMsg.substring(0, MAX_USER_MESSAGE_LENGTH) + '...'
 					: userMsg;
-				const truncatedAssistant = assistantMsg.length > 200
-					? assistantMsg.substring(0, 200) + '...'
+				const truncatedAssistant = assistantMsg.length > MAX_ASSISTANT_MESSAGE_LENGTH
+					? assistantMsg.substring(0, MAX_ASSISTANT_MESSAGE_LENGTH) + '...'
 					: assistantMsg;
 				
 				pairs.push({ user: truncatedUser, assistant: truncatedAssistant });
@@ -616,7 +623,7 @@ export default function AIChatIsland() {
 		}
 		
 		// If multiple projects mentioned, add "Browse All Projects"
-		if (projectSources.length > 2) {
+		if (projectSources.length > MULTIPLE_SOURCES_THRESHOLD) {
 			ctas.push({
 				label: 'Browse All Projects',
 				url: '/projects',
@@ -626,7 +633,7 @@ export default function AIChatIsland() {
 		}
 		
 		// If multiple blog posts mentioned, add "Read More Articles"
-		if (blogSources.length > 2) {
+		if (blogSources.length > MULTIPLE_SOURCES_THRESHOLD) {
 			ctas.push({
 				label: 'Read More Articles',
 				url: '/blog',
@@ -635,9 +642,9 @@ export default function AIChatIsland() {
 			});
 		}
 		
-		// Add contact CTA if conversation is deep (>5 turns)
+		// Add contact CTA if conversation is deep
 		const messageCount = messagesRef.current.length;
-		if (messageCount > 5 && ctas.length > 0 && ctas.length < 3) {
+		if (messageCount > DEEP_CONVERSATION_THRESHOLD && ctas.length > 0 && ctas.length < MAX_CTAS) {
 			ctas.push({
 				label: 'Get in Touch',
 				url: '/contact',
@@ -646,8 +653,8 @@ export default function AIChatIsland() {
 			});
 		}
 		
-		// Limit to 3 CTAs max
-		return ctas.slice(0, 3);
+		// Limit to max CTAs
+		return ctas.slice(0, MAX_CTAS);
 	}, [siteHostname]);
 
 	const buildHistoryForRequest = useCallback((): AIChatMessage[] => {

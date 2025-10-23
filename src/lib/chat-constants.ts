@@ -133,3 +133,16 @@ export const QUALITY_THRESHOLDS = {
 // Retry configuration
 export const MAX_RETRIES = 3;
 export const RETRY_DELAY_MS = 2000;
+
+// Text truncation limits
+export const MAX_SUMMARY_LENGTH = 240;
+export const SUMMARY_TRUNCATE_AT = 237; // Leave room for ellipsis
+
+// Message compression limits
+export const MAX_USER_MESSAGE_LENGTH = 150;
+export const MAX_ASSISTANT_MESSAGE_LENGTH = 200;
+
+// CTA generation thresholds
+export const MULTIPLE_SOURCES_THRESHOLD = 2;
+export const DEEP_CONVERSATION_THRESHOLD = 5;
+export const MAX_CTAS = 3;
