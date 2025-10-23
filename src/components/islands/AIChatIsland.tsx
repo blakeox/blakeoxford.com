@@ -14,6 +14,7 @@ import { useChatStorage } from '../../lib/hooks/useChatStorage';
 import { useTouchGestures } from '../../lib/hooks/useTouchGestures';
 import { useKeyboardShortcuts } from '../../lib/hooks/useKeyboardShortcuts';
 import { useScrollManagement } from '../../lib/hooks/useScrollManagement';
+import { useConversationAnalytics } from '../../lib/hooks/useConversationAnalytics';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -248,6 +249,22 @@ export default function AIChatIsland() {
 		showScrollButton: showScrollToLatest,
 		onScrollButtonChange: setShowScrollToLatest,
 		scrollThreshold: 48,
+	});
+
+	// Conversation analytics hook for derived state and metrics
+	const {
+		recentQueries,
+		conversationDigest,
+		feedbackAnalytics,
+		guidedPromptVisible,
+		composerHasValue,
+		floatingLabelActive,
+		canStartNewChat,
+	} = useConversationAnalytics({
+		messages,
+		interimTranscript,
+		inputValue,
+		composerFocused,
 	});
 
 	/**
@@ -709,80 +726,12 @@ export default function AIChatIsland() {
 		dispatchState(isOpen);
 	}, [dispatchState, isOpen]);
 
-	const recentQueries = useMemo(() => {
-		return messages
-			.filter((message) => message.role === 'user')
-			.map((message) => message.content.trim())
-			.filter((value) => value.length > 0)
-			.slice(-3)
-			.reverse();
-	}, [messages]);
-
-	const conversationDigest = useMemo(() => {
-		const assistantMessages = messages.filter(
-			(message) => message.role === 'assistant' && message.id !== INITIAL_ASSISTANT_MESSAGE.id,
-		);
-		if (assistantMessages.length === 0) return [] as string[];
-		return assistantMessages
-			.slice(-3)
-			.map((message) => {
-				const segment = message.content.split(/(?<=[.!?])\s+/u)[0]?.trim() ?? '';
-				if (!segment) return '';
-				return segment.length > 140 ? `${segment.slice(0, 137).trim()}…` : segment;
-			})
-			.filter((value) => value.length > 0);
-	}, [messages]);
-
-	const feedbackAnalytics = useMemo(() => {
-		const assistantMessages = messages.filter(
-			(message) => message.role === 'assistant' && message.id !== INITIAL_ASSISTANT_MESSAGE.id,
-		);
-		const totalAssistant = assistantMessages.length;
-		const positive = assistantMessages.filter((message) => message.feedback === 'positive').length;
-		const negative = assistantMessages.filter((message) => message.feedback === 'negative').length;
-		const cited = new Map<
-			string,
-			{
-				url: string;
-				title: string;
-				count: number;
-			}
-		>();
-		assistantMessages.forEach((message) => {
-			message.sources?.forEach((source) => {
-				if (!source.url) return;
-				const existing = cited.get(source.url) ?? {
-					url: source.url,
-					title: decodeHtmlEntities(source.title || source.url),
-					count: 0,
-				};
-				existing.count += 1;
-				cited.set(source.url, existing);
-			});
-		});
-		const topSources = Array.from(cited.values())
-			.sort((a, b) => b.count - a.count)
-			.slice(0, 3);
-		return {
-			totalAssistant,
-			positive,
-			negative,
-			positiveRate: totalAssistant > 0 ? Math.round((positive / totalAssistant) * 100) : null,
-			topSources,
-		};
-	}, [messages]);
-
-	const guidedPromptVisible = useMemo(() => messages.filter((message) => message.role === 'user').length === 0, [messages]);
-
 	sourceRefs.current = [];
 	const lastQueryValue = lastQueryRef.current;
 	const canRetry = Boolean(lastQueryValue) && chatState !== 'loading';
 	const fallbackPreviewLimit = 2;
 	const visibleFallbackResults = showFallbackSuggestions ? fallbackResults : fallbackResults.slice(0, fallbackPreviewLimit);
 	const hasMoreFallbackResults = fallbackResults.length > visibleFallbackResults.length;
-	const composerHasValue = inputValue.trim().length > 0 || interimTranscript.length > 0;
-	const floatingLabelActive = composerFocused || composerHasValue;
-	const canStartNewChat = messages.length > 1;
 
 	return (
 		<div
