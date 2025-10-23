@@ -23,25 +23,25 @@ interface UseComputedValuesReturn {
 
 /**
  * Custom hook for computed/derived values
- * 
+ *
  * Manages memoized computed values that are derived from state:
  * - Visible fallback results (respects show/hide toggle)
  * - Whether more results are available
- * 
+ *
  * This hook consolidates all computed values that don't require
  * their own state management, keeping them organized and memoized
  * for performance.
- * 
+ *
  * @param options - Configuration including state values
  * @returns Computed values
- * 
+ *
  * @example
  * ```tsx
  * const { visibleFallbackResults, hasMoreFallbackResults } = useComputedValues({
  *   showFallbackSuggestions,
  *   fallbackResults,
  * });
- * 
+ *
  * // Use in UI
  * {visibleFallbackResults.map(result => <Result key={result.id} {...result} />)}
  * {hasMoreFallbackResults && <button>Show More</button>}
@@ -55,8 +55,8 @@ export function useComputedValues(options: UseComputedValuesOptions): UseCompute
 
 	// Compute visible fallback results based on toggle state
 	const visibleFallbackResults = useMemo(() => {
-		return showFallbackSuggestions 
-			? fallbackResults 
+		return showFallbackSuggestions
+			? fallbackResults
 			: fallbackResults.slice(0, fallbackPreviewLimit);
 	}, [showFallbackSuggestions, fallbackResults, fallbackPreviewLimit]);
 

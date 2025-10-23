@@ -84,7 +84,7 @@ export default function AIChatIsland() {
 	const [chatState, setChatState] = useState<ChatState>('idle');
 	const [loadingPhase, setLoadingPhase] = useState<LoadingPhase>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [useMemory, setUseMemory] = useState<boolean>(() => 
+	const [useMemory, setUseMemory] = useState<boolean>(() =>
 		getBooleanPreference(PREFERENCES_STORAGE_KEY, 'useMemory', true)
 	);
 	const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
@@ -578,7 +578,7 @@ export default function AIChatIsland() {
 				{showAnalytics && (
 					<div className="border-b border-[color:var(--border)]/20 bg-[color:var(--surface-subtle)]/20 px-4 py-3 text-xs text-[color:var(--fg)]/70">
 						<span className="mb-2 block uppercase tracking-wide text-[color:var(--fg)]/50">Conversation Insights</span>
-						
+
 						{(() => {
 							const analytics = calculateAnalytics(messages);
 							const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 60000);
@@ -602,8 +602,8 @@ export default function AIChatIsland() {
 										<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 											<span className="block text-[color:var(--fg)]/45">Avg Quality</span>
 											<span className={`text-sm font-semibold ${
-												analytics.avgQualityScore >= 80 
-													? 'text-green-600 dark:text-green-400' 
+												analytics.avgQualityScore >= 80
+													? 'text-green-600 dark:text-green-400'
 													: analytics.avgQualityScore >= 60
 													? 'text-yellow-600 dark:text-yellow-400'
 													: 'text-red-600 dark:text-red-400'
@@ -656,7 +656,7 @@ export default function AIChatIsland() {
 											<span className="block uppercase tracking-wide text-[color:var(--fg)]/50 mb-2">Topics Explored</span>
 											<div className="flex flex-wrap gap-1.5">
 												{Array.from(uniqueCollections).map((collection) => (
-													<span 
+													<span
 														key={String(collection)}
 														className="inline-flex items-center rounded-full bg-[color:var(--accent)]/10 px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--accent-strong)]"
 													>
@@ -739,7 +739,7 @@ export default function AIChatIsland() {
 										Try one of these popular questions:
 									</p>
 								</div>
-								
+
 								<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 									{QUICK_ACTIONS.map((action, index) => (
 										<button
@@ -749,7 +749,7 @@ export default function AIChatIsland() {
 												setInputValue(action.query);
 												// Auto-submit after a brief delay for UX smoothness
 												setTimeout(() => sendQuery(action.query), 100);
-												
+
 												// Track quick action usage
 												autoragEvents.quickAction({
 												action: action.label,
@@ -769,10 +769,10 @@ export default function AIChatIsland() {
 													{action.query}
 												</div>
 											</div>
-											<svg 
-												className="size-5 flex-shrink-0 text-[color:var(--fg)]/40 transition-colors group-hover:text-[color:var(--accent)]" 
-												fill="none" 
-												stroke="currentColor" 
+											<svg
+												className="size-5 flex-shrink-0 text-[color:var(--fg)]/40 transition-colors group-hover:text-[color:var(--accent)]"
+												fill="none"
+												stroke="currentColor"
 												viewBox="0 0 24 24"
 												aria-hidden="true"
 											>
@@ -854,8 +854,8 @@ export default function AIChatIsland() {
 														{(() => {
 															const healthIndicator = getCitationHealthIndicator(message.citationHealth);
 															return (
-																<span 
-																	className={`font-medium ${healthIndicator.color}`} 
+																<span
+																	className={`font-medium ${healthIndicator.color}`}
 																	title={healthIndicator.description}
 																	aria-label={`Citation health: ${healthIndicator.label}`}
 																>
@@ -921,7 +921,7 @@ export default function AIChatIsland() {
 												const sourceKey = `${message.id}-source-${index}`;
 												const isExpanded = expandedIndividualSources[sourceKey];
 												const relevanceInfo = relevance !== null ? getRelevanceExplanation(relevance) : null;
-												
+
 												let isExternalLink = false;
 												try {
 													const parsed = source.url.startsWith('http')
@@ -967,7 +967,7 @@ export default function AIChatIsland() {
 																	)}
 																	{relevance !== null && (
 																		<span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-bold ${
-																			relevance >= 90 
+																			relevance >= 90
 																				? 'bg-gradient-to-r from-green-500/20 to-emerald-500/10 text-green-700 dark:text-green-400'
 																				: relevance >= 75
 																				? 'bg-gradient-to-r from-blue-500/20 to-indigo-500/10 text-blue-700 dark:text-blue-400'
@@ -998,7 +998,7 @@ export default function AIChatIsland() {
 																		</span>
 																	)}
 																</div>
-																
+
 																{/* Relevance Explanation & Expand Toggle */}
 																{(relevanceInfo || snippet) && (
 																	<div className="mt-2">
@@ -1008,16 +1008,16 @@ export default function AIChatIsland() {
 																				<span className="flex-1 leading-relaxed">{relevanceInfo.text}</span>
 																			</div>
 																		)}
-																		
+
 																		{(snippet || relevanceInfo) && (
 																			<button
 																				type="button"
 																				onClick={() => toggleIndividualSource(sourceKey)}
 																				className="mt-1.5 inline-flex items-center gap-1 text-[0.65rem] text-[color:var(--accent)] transition hover:text-[color:var(--accent-strong)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--accent)]/40"
 																			>
-																				<svg 
+																				<svg
 																					className={`size-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-																					viewBox="0 0 20 20" 
+																					viewBox="0 0 20 20"
 																					fill="currentColor"
 																					aria-hidden="true"
 																				>
@@ -1026,7 +1026,7 @@ export default function AIChatIsland() {
 																				{isExpanded ? 'Hide details' : 'Show details'}
 																			</button>
 																		)}
-																		
+
 																		{/* Expanded Details */}
 																		{isExpanded && (
 																			<div className="mt-2 space-y-2">
@@ -1062,7 +1062,7 @@ export default function AIChatIsland() {
 									const messageIndex = messages.findIndex((m) => m.id === message.id);
 									const userQuery = messageIndex > 0 ? messages[messageIndex - 1]?.content || '' : '';
 									const matchedCTA = CONTEXTUAL_CTAS.find((cta) => cta.condition(userQuery, sources));
-									
+
 									if (matchedCTA) {
 										return (
 											<div className="mt-4 rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50 p-4 dark:border-blue-800 dark:from-blue-950/30 dark:to-purple-950/30">
@@ -1105,10 +1105,10 @@ export default function AIChatIsland() {
 								{isAssistant && sources.length > 0 && (() => {
 									// Generate dynamic follow-up suggestions based on sources
 									const suggestions: Array<{ label: string; query: string; icon: string }> = [];
-									
+
 									// Extract unique collections
 									const collections = [...new Set(sources.map((s) => s.collection).filter(Boolean))] as string[];
-									
+
 									// Suggest exploring specific collections
 									if (collections.includes('projects')) {
 										const projectSources = sources.filter((s) => s.collection === 'projects');
@@ -1121,7 +1121,7 @@ export default function AIChatIsland() {
 											});
 										}
 									}
-									
+
 									if (collections.includes('blog')) {
 										const blogSources = sources.filter((s) => s.collection === 'blog');
 										if (blogSources.length > 0) {
@@ -1133,7 +1133,7 @@ export default function AIChatIsland() {
 											});
 										}
 									}
-									
+
 									// Suggest digging deeper into top source
 									if (sources[0] && sources[0].title) {
 										const topSourceTitle = sources[0].title;
@@ -1145,7 +1145,7 @@ export default function AIChatIsland() {
 											});
 										}
 									}
-									
+
 									// Suggest comparing if multiple sources
 									if (sources.length >= 2 && sources[0].title && sources[1].title) {
 										suggestions.push({
@@ -1154,12 +1154,12 @@ export default function AIChatIsland() {
 											icon: '⚖️',
 										});
 									}
-									
+
 									// Limit to 3 suggestions
 									const limitedSuggestions = suggestions.slice(0, 3);
-									
+
 									if (limitedSuggestions.length === 0) return null;
-									
+
 									return (
 										<div className="mt-3 space-y-2">
 											<p className="text-xs font-medium uppercase tracking-wide text-[color:var(--fg)]/50">
@@ -1173,7 +1173,7 @@ export default function AIChatIsland() {
 														onClick={() => {
 															setInputValue(suggestion.query);
 															setTimeout(() => sendQuery(suggestion.query), 100);
-															
+
 															autoragEvents.suggestedQuery({
 												query: suggestion.query,
 											});
@@ -1188,12 +1188,12 @@ export default function AIChatIsland() {
 										</div>
 									);
 								})()}
-								
+
 								{/* Contextual CTAs */}
 								{isAssistant && sources.length > 0 && (() => {
 									const ctas = generateContextualCTAs(sources, siteHostname, messagesRef.current.length);
 									if (ctas.length === 0) return null;
-									
+
 									return (
 										<div className="mt-3 space-y-2">
 											<p className="text-xs font-medium uppercase tracking-wide text-[color:var(--fg)]/50">
@@ -1225,7 +1225,7 @@ export default function AIChatIsland() {
 										</div>
 									);
 								})()}
-								
+
 								{isAssistant && (
 									<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
 										<button
@@ -1243,7 +1243,7 @@ export default function AIChatIsland() {
 												const messageIndex = messages.findIndex((m) => m.id === message.id);
 												const userQuery = messageIndex > 0 ? messages[messageIndex - 1]?.content || '' : '';
 												const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(userQuery)}&autosubmit=true`;
-												
+
 												if (navigator.share) {
 													navigator.share({
 														title: 'AutoRAG Query Result',
@@ -1286,12 +1286,12 @@ export default function AIChatIsland() {
 												View top source
 											</button>
 										)}
-										
+
 										{/* Quality Score Indicator */}
 										{message.qualityScore !== undefined && message.qualityScore > 0 && (() => {
 											const confidence = getConfidenceIndicator(message.qualityScore);
 											const hasDetails = message.qualityDetails !== undefined;
-											
+
 											return (
 												<div className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 bg-[color:var(--surface)]/50 px-3 py-1 text-[0.65rem]" title={hasDetails ? `Completeness: ${message.qualityDetails?.completeness}% | Citations: ${message.qualityDetails?.citationAccuracy}% | Conciseness: ${message.qualityDetails?.conciseness}% | Relevance: ${message.qualityDetails?.relevance}%` : `Overall quality score: ${message.qualityScore}%`}>
 													<span className={confidence.color} aria-hidden="true">{confidence.emoji}</span>
@@ -1302,7 +1302,7 @@ export default function AIChatIsland() {
 												</div>
 											);
 										})()}
-										
+
 										<div className="ml-auto inline-flex items-center gap-1">
 											<button
 												type="button"
@@ -1330,7 +1330,7 @@ export default function AIChatIsland() {
 							</div>
 						);
 						})}
-						
+
 						{/* Typing indicator */}
 						{isOtherUserTyping && wsConnected && (
 							<div className="flex flex-col gap-2 items-start text-left" aria-live="polite" aria-label="AI is typing">
@@ -1405,7 +1405,7 @@ export default function AIChatIsland() {
 										setError(null);
 										setRetryCount(0);
 										sendQuery(queryToRetry);
-										
+
 										// Track manual retry
 										autoragEvents.manualRetry({
 										message_id: lastFailedQuery,
@@ -1496,16 +1496,16 @@ export default function AIChatIsland() {
 							value={inputValue}
 							onChange={(event) => {
 								setInputValue(event.target.value);
-								
+
 								// Send typing indicator via WebSocket
 								if (wsRef.current?.isConnected()) {
 									wsRef.current.sendTyping(true);
-									
+
 									// Clear previous timeout
 									if (typingTimeoutRef.current !== null) {
 										window.clearTimeout(typingTimeoutRef.current);
 									}
-									
+
 									// Stop typing indicator after 2 seconds of inactivity
 									typingTimeoutRef.current = window.setTimeout(() => {
 										if (wsRef.current?.isConnected()) {
