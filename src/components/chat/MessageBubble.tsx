@@ -115,8 +115,8 @@ export default function MessageBubble(props: MessageBubbleProps) {
 									{(() => {
 										const healthIndicator = getCitationHealthIndicator(message.citationHealth);
 										return (
-											<span 
-												className={`font-medium ${healthIndicator.color}`} 
+											<span
+												className={`font-medium ${healthIndicator.color}`}
 												title={healthIndicator.description}
 												aria-label={`Citation health: ${healthIndicator.label}`}
 											>
@@ -228,7 +228,7 @@ export default function MessageBubble(props: MessageBubbleProps) {
 															)}
 															{relevance !== null && (
 																<span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-bold ${
-																	relevance >= 90 
+																	relevance >= 90
 																	? 'bg-gradient-to-r from-green-500/20 to-emerald-500/10 text-green-700 dark:text-green-400'
 																	: relevance >= 75
 																	? 'bg-gradient-to-r from-blue-500/20 to-indigo-500/10 text-blue-700 dark:text-blue-400'
@@ -259,7 +259,7 @@ export default function MessageBubble(props: MessageBubbleProps) {
 																</span>
 																)}
 															</div>
-											
+
 														{/* Relevance Explanation & Expand Toggle */}
 														{(relevanceInfo || snippet) && (
 															<div className="mt-2">
@@ -269,16 +269,16 @@ export default function MessageBubble(props: MessageBubbleProps) {
 																		<span className="flex-1 leading-relaxed">{relevanceInfo.text}</span>
 																	</div>
 																)}
-																
+
 																{(snippet || relevanceInfo) && (
 																	<button
 																		type="button"
 																		onClick={() => toggleIndividualSource(sourceKey)}
 																		className="mt-1.5 inline-flex items-center gap-1 text-[0.65rem] text-[color:var(--accent)] transition hover:text-[color:var(--accent-strong)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--accent)]/40"
 																	>
-																		<svg 
+																		<svg
 																			className={`size-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-																			viewBox="0 0 20 20" 
+																			viewBox="0 0 20 20"
 																			fill="currentColor"
 																			aria-hidden="true"
 																		>
@@ -287,7 +287,7 @@ export default function MessageBubble(props: MessageBubbleProps) {
 																		{isExpanded ? 'Hide details' : 'Show details'}
 																	</button>
 																)}
-																
+
 																{/* Expanded Details */}
 																{isExpanded && (
 																	<div className="mt-2 space-y-2">
