@@ -22,6 +22,7 @@ import { useQueryManagement } from '../../lib/hooks/useQueryManagement';
 import { useMessageProcessing } from '../../lib/hooks/useMessageProcessing';
 import { useInputHandlers } from '../../lib/hooks/useInputHandlers';
 import { useChatEffects } from '../../lib/hooks/useChatEffects';
+import { useComputedValues } from '../../lib/hooks/useComputedValues';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet } from '../../lib/chat-helpers';
 import {
@@ -309,9 +310,11 @@ export default function AIChatIsland() {
 		updateFallbackSuggestions,
 	});
 
-	const fallbackPreviewLimit = 2;
-	const visibleFallbackResults = showFallbackSuggestions ? fallbackResults : fallbackResults.slice(0, fallbackPreviewLimit);
-	const hasMoreFallbackResults = fallbackResults.length > visibleFallbackResults.length;
+	// Computed values hook for derived state
+	const { visibleFallbackResults, hasMoreFallbackResults } = useComputedValues({
+		showFallbackSuggestions,
+		fallbackResults,
+	});
 
 	return (
 		<div
