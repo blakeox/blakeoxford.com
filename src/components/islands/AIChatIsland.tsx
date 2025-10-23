@@ -15,6 +15,7 @@ import { useTouchGestures } from '../../lib/hooks/useTouchGestures';
 import { useKeyboardShortcuts } from '../../lib/hooks/useKeyboardShortcuts';
 import { useScrollManagement } from '../../lib/hooks/useScrollManagement';
 import { useConversationAnalytics } from '../../lib/hooks/useConversationAnalytics';
+import { useCopyFeedback } from '../../lib/hooks/useCopyFeedback';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -22,7 +23,6 @@ import {
 	generateContextualCTAs,
 } from '../../lib/message-processing';
 import {
-	copyToClipboard,
 	finalizeMessageQuality,
 	getRelevanceExplanation,
 } from '../../lib/response-handlers';
@@ -87,8 +87,6 @@ export default function AIChatIsland() {
 	const [useMemory, setUseMemory] = useState<boolean>(() => 
 		getBooleanPreference(PREFERENCES_STORAGE_KEY, 'useMemory', true)
 	);
-	const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
-	const [copiedShareUrl, setCopiedShareUrl] = useState<string | null>(null);
 	const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
 	const [sessionStartTime] = useState<number>(Date.now()); // Track session start
 	const [fallbackResults, setFallbackResults] = useState<SearchFallback[]>([]);
@@ -106,7 +104,6 @@ export default function AIChatIsland() {
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const launcherRef = useRef<HTMLButtonElement | null>(null);
 	const lastFocusedElement = useRef<HTMLElement | null>(null);
-	const copyResetTimeoutRef = useRef<number | null>(null);
 	const lastQueryRef = useRef<string | null>(null);
 	const messagesRef = useRef(messages);
 	const activeRequestRef = useRef<AbortController | null>(null);
@@ -176,9 +173,6 @@ export default function AIChatIsland() {
 
 	useEffect(() => {
 		return () => {
-			if (copyResetTimeoutRef.current !== null) {
-				window.clearTimeout(copyResetTimeoutRef.current);
-			}
 			if (activeRequestRef.current) {
 				activeRequestRef.current.abort();
 				activeRequestRef.current = null;
@@ -265,6 +259,11 @@ export default function AIChatIsland() {
 		interimTranscript,
 		inputValue,
 		composerFocused,
+	});
+
+	// Copy feedback hook for clipboard operations with visual feedback
+	const { copiedMessageId, copiedShareUrl, copyWithFeedback } = useCopyFeedback({
+		resetDelay: 2000,
 	});
 
 	/**
@@ -376,10 +375,6 @@ export default function AIChatIsland() {
 	}, []);
 
 	const clearConversation = useCallback(() => {
-		if (copyResetTimeoutRef.current !== null) {
-			window.clearTimeout(copyResetTimeoutRef.current);
-		}
-		setCopiedMessageId(null);
 		setMessages([INITIAL_ASSISTANT_MESSAGE]);
 		setError(null);
 		setStreamingMessageId(null);
@@ -422,17 +417,8 @@ export default function AIChatIsland() {
 
 	const handleCopyMessage = useCallback(async (message: ChatMessage) => {
 		if (!message.content) return;
-		const success = await copyToClipboard(message.content);
-		if (success) {
-			setCopiedMessageId(message.id);
-			if (copyResetTimeoutRef.current !== null) {
-				window.clearTimeout(copyResetTimeoutRef.current);
-			}
-			copyResetTimeoutRef.current = window.setTimeout(() => setCopiedMessageId(null), 2000);
-		} else {
-			setCopiedMessageId(null);
-		}
-	}, []);
+		await copyWithFeedback(message.content, message.id, 'message');
+	}, [copyWithFeedback]);
 
 	const handleOpenPrimarySource = useCallback((url: string) => {
 		if (!url) return;
@@ -1670,11 +1656,11 @@ export default function AIChatIsland() {
 														autoragEvents.share('native');
 													}).catch(() => {/* User cancelled */});
 												} else {
-													navigator.clipboard.writeText(shareUrl).then(() => {
-														setCopiedShareUrl(message.id);
-														setTimeout(() => setCopiedShareUrl(null), 2000);
-														autoragEvents.share('clipboard');
-													}).catch(() => {/* Clipboard failed */});
+													copyWithFeedback(shareUrl, message.id, 'share').then((success) => {
+														if (success) {
+															autoragEvents.share('clipboard');
+														}
+													});
 												}
 											}}
 										>
