@@ -6,8 +6,8 @@ import type {
 	ChatState,
 	LoadingPhase,
 	SearchFallback,
-	SpeechRecognitionLike,
 } from '../../lib/chat-types';
+import { useVoiceRecognition } from '../../lib/hooks/useVoiceRecognition';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -93,9 +93,6 @@ export default function AIChatIsland() {
 	const [showAnalytics, setShowAnalytics] = useState(false);
 	const [showAdvancedControls, setShowAdvancedControls] = useState(false);
 	const [sessionStartTime] = useState<number>(Date.now()); // Track session start
-	const [voiceSupported, setVoiceSupported] = useState(false);
-	const [isListening, setIsListening] = useState(false);
-	const [interimTranscript, setInterimTranscript] = useState('');
 	const [fallbackResults, setFallbackResults] = useState<SearchFallback[]>([]);
 	const [showFallbackSuggestions, setShowFallbackSuggestions] = useState(false);
 	const [composerFocused, setComposerFocused] = useState(false);
@@ -123,11 +120,25 @@ export default function AIChatIsland() {
 	const conversationHydratedRef = useRef(false);
 	const lastQueryRef = useRef<string | null>(null);
 	const messagesRef = useRef(messages);
-	const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 	const activeRequestRef = useRef<AbortController | null>(null);
 	const sourceRefs = useRef<HTMLAnchorElement[]>([]);
 	const wsRef = useRef<ConversationWebSocket | null>(null);
 	const typingTimeoutRef = useRef<number | null>(null);
+
+	// Voice recognition hook with real-time transcription
+	const { voiceSupported, isListening, interimTranscript, toggleListening } = useVoiceRecognition({
+		onTranscript: (transcript) => {
+			setInputValue((prev) => {
+				const existing = prev.trim();
+				const combined = existing ? `${existing} ${transcript}` : transcript;
+				return combined.trim();
+			});
+		},
+		language: 'en-US',
+		continuous: false,
+		interimResults: true,
+		maxAlternatives: 1,
+	});
 
 	useEffect(() => {
 		messagesRef.current = messages;
@@ -233,73 +244,6 @@ export default function AIChatIsland() {
 				activeRequestRef.current.abort();
 				activeRequestRef.current = null;
 			}
-			if (recognitionRef.current) {
-				try {
-					recognitionRef.current.stop();
-				} catch {
-					/* ignore stop failures */
-				}
-				recognitionRef.current = null;
-			}
-		};
-	}, []);
-
-	useEffect(() => {
-		if (typeof window === 'undefined') return;
-		const globalWindow = window as typeof window & {
-			SpeechRecognition?: new () => SpeechRecognitionLike;
-			webkitSpeechRecognition?: new () => SpeechRecognitionLike;
-		};
-		const RecognitionCtor = globalWindow.SpeechRecognition || globalWindow.webkitSpeechRecognition;
-		if (!RecognitionCtor) return;
-		const recognition = new RecognitionCtor();
-		recognition.lang = 'en-US';
-		recognition.continuous = false;
-		recognition.interimResults = true;
-		recognition.maxAlternatives = 1;
-		recognition.onresult = (event) => {
-			let finalTranscript = '';
-			let interim = '';
-			for (let i = 0; i < event.results.length; i += 1) {
-				const result = event.results[i];
-				const transcript = result?.[0]?.transcript ?? '';
-				if (!transcript) continue;
-				if (result.isFinal) {
-					finalTranscript += transcript;
-				} else {
-					interim += transcript;
-				}
-			}
-			if (finalTranscript.trim()) {
-				setInputValue((prev) => {
-					const existing = prev.trim();
-					const combined = existing ? `${existing} ${finalTranscript.trim()}` : finalTranscript.trim();
-					return combined.trim();
-				});
-			}
-			setInterimTranscript(interim.trim());
-		};
-		recognition.onerror = () => {
-			setIsListening(false);
-			setInterimTranscript('');
-		};
-		recognition.onend = () => {
-			setIsListening(false);
-			setInterimTranscript('');
-		};
-		recognitionRef.current = recognition;
-		setVoiceSupported(true);
-
-		return () => {
-			recognition.onresult = null;
-			recognition.onerror = null;
-			recognition.onend = null;
-			try {
-				recognition.stop();
-			} catch {
-				/* ignore stop failures */
-			}
-			recognitionRef.current = null;
 		};
 	}, []);
 
@@ -329,14 +273,8 @@ export default function AIChatIsland() {
 
 	const closeChat = useCallback(() => {
 		if (!isOpen) return;
-		if (isListening && recognitionRef.current) {
-			try {
-				recognitionRef.current.stop();
-			} catch {
-				/* ignore stop failures */
-			}
-			setIsListening(false);
-			setInterimTranscript('');
+		if (isListening) {
+			toggleListening(); // Stop voice recognition when closing
 		}
 		setIsOpen(false);
 		setError(null);
@@ -496,7 +434,6 @@ export default function AIChatIsland() {
 		setExpandedSources({});
 		setComposerFocused(false);
 		setInputValue('');
-		setInterimTranscript('');
 		setShowScrollToLatest(false);
 		lastQueryRef.current = null;
 		removeStorageItem(CONVERSATION_STORAGE_KEY);
@@ -670,27 +607,9 @@ export default function AIChatIsland() {
 
 	const toggleVoiceInput = useCallback(() => {
 		if (!voiceSupported) return;
-		const recognition = recognitionRef.current;
-		if (!recognition) return;
 		openChat();
-		if (isListening) {
-			try {
-				recognition.stop();
-			} catch {
-				/* ignore stop failures */
-			}
-			setIsListening(false);
-			setInterimTranscript('');
-			return;
-		}
-		try {
-			setInterimTranscript('');
-			recognition.start();
-			setIsListening(true);
-		} catch {
-			setIsListening(false);
-		}
-	}, [isListening, openChat, voiceSupported]);
+		toggleListening();
+	}, [openChat, voiceSupported, toggleListening]);
 
 	const handleTextareaKeyDown = useCallback(
 		(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
