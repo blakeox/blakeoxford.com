@@ -10,6 +10,7 @@ import type {
 import { useVoiceRecognition } from '../../lib/hooks/useVoiceRecognition';
 import { useConversationWebSocket } from '../../lib/hooks/useConversationWebSocket';
 import { useUIState } from '../../lib/hooks/useUIState';
+import { useChatStorage } from '../../lib/hooks/useChatStorage';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -31,12 +32,9 @@ import {
 	QUICK_ACTIONS,
 	SEMANTIC_SEARCH_URL,
 } from '../../lib/chat-constants';
-import { restoreMessages } from '../../lib/message-validation';
 import {
 	getBooleanPreference,
-	getStorageItem,
 	removeStorageItem,
-	setStorageItem,
 } from '../../lib/storage-utils';
 import {
 	calculateConversationAnalytics as calculateAnalytics,
@@ -107,7 +105,6 @@ export default function AIChatIsland() {
 	const launcherRef = useRef<HTMLButtonElement | null>(null);
 	const lastFocusedElement = useRef<HTMLElement | null>(null);
 	const copyResetTimeoutRef = useRef<number | null>(null);
-	const conversationHydratedRef = useRef(false);
 	const lastQueryRef = useRef<string | null>(null);
 	const messagesRef = useRef(messages);
 	const activeRequestRef = useRef<AbortController | null>(null);
@@ -159,6 +156,14 @@ export default function AIChatIsland() {
 		setExpandedIndividualSources,
 	} = useUIState();
 
+	// Chat storage hook for conversation persistence
+	useChatStorage({
+		messages,
+		useMemory,
+		onMessagesRestored: setMessages,
+		maxRestoreMessages: 30,
+	});
+
 	useEffect(() => {
 		messagesRef.current = messages;
 	}, [messages]);
@@ -166,30 +171,6 @@ export default function AIChatIsland() {
 	useEffect(() => {
 		setShowFallbackSuggestions(false);
 	}, [fallbackResults]);
-
-	useEffect(() => {
-		const stored = getStorageItem(CONVERSATION_STORAGE_KEY, null);
-		if (!stored) return;
-		
-		const restored = restoreMessages(stored, 30);
-		if (restored.length > 0) {
-			setMessages(restored);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (typeof window === 'undefined') return;
-		if (!conversationHydratedRef.current) {
-			conversationHydratedRef.current = true;
-			return;
-		}
-		setStorageItem(CONVERSATION_STORAGE_KEY, messages);
-	}, [messages]);
-
-	useEffect(() => {
-		if (typeof window === 'undefined') return;
-		setStorageItem(PREFERENCES_STORAGE_KEY, { useMemory });
-	}, [useMemory]);
 
 	useEffect(() => {
 		return () => {
