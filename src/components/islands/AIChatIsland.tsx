@@ -23,40 +23,33 @@ import { useMessageProcessing } from '../../lib/hooks/useMessageProcessing';
 import { useInputHandlers } from '../../lib/hooks/useInputHandlers';
 import { useChatEffects } from '../../lib/hooks/useChatEffects';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
-import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
+import { cleanSnippet } from '../../lib/chat-helpers';
 import {
 	buildHistoryForRequest,
 	generateContextualCTAs,
 } from '../../lib/message-processing';
 import {
-	finalizeMessageQuality,
 	getRelevanceExplanation,
 } from '../../lib/response-handlers';
-import { searchWithAI } from '../../lib/ai-search';
 import { autoragEvents } from '../../lib/analytics';
 import {
-	CONVERSATION_STORAGE_KEY,
 	CONTEXTUAL_CTAS,
 	GUIDED_PROMPTS,
 	PREFERENCES_STORAGE_KEY,
 	QUICK_ACTIONS,
-	SEMANTIC_SEARCH_URL,
 } from '../../lib/chat-constants';
 import {
 	getBooleanPreference,
-	removeStorageItem,
 } from '../../lib/storage-utils';
 import {
 	calculateConversationAnalytics as calculateAnalytics,
 } from '../../lib/conversation-utils';
-import { categorizeError } from '../../lib/error-utils';
 import {
 	getCitationHealthIndicator,
 	getConfidenceIndicator,
 } from '../../lib/quality-utils';
 import {
 	cleanAssistantResponse,
-	createId,
 	decodeHtmlEntities,
 	decodeMimeEncodedWords,
 	formatPublishedDate,
