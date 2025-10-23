@@ -9,6 +9,7 @@ import type {
 } from '../../lib/chat-types';
 import { useVoiceRecognition } from '../../lib/hooks/useVoiceRecognition';
 import { useConversationWebSocket } from '../../lib/hooks/useConversationWebSocket';
+import { useUIState } from '../../lib/hooks/useUIState';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -89,16 +90,8 @@ export default function AIChatIsland() {
 	const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
 	const [copiedShareUrl, setCopiedShareUrl] = useState<string | null>(null);
 	const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
-	const [showDigest, setShowDigest] = useState(false);
-	const [showAnalytics, setShowAnalytics] = useState(false);
-	const [showAdvancedControls, setShowAdvancedControls] = useState(false);
 	const [sessionStartTime] = useState<number>(Date.now()); // Track session start
 	const [fallbackResults, setFallbackResults] = useState<SearchFallback[]>([]);
-	const [showFallbackSuggestions, setShowFallbackSuggestions] = useState(false);
-	const [composerFocused, setComposerFocused] = useState(false);
-	const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
-	const [expandedIndividualSources, setExpandedIndividualSources] = useState<Record<string, boolean>>({});
-	const [showScrollToLatest, setShowScrollToLatest] = useState(false);
 	const [retryCount, setRetryCount] = useState(0);
 	const [lastFailedQuery, setLastFailedQuery] = useState<string>('');
 	const siteHostname = useMemo(() => {
@@ -143,6 +136,28 @@ export default function AIChatIsland() {
 		isOpen,
 		connectDelay: 1000,
 	});
+
+	// UI state management hook
+	const {
+		showDigest,
+		showAnalytics,
+		showAdvancedControls,
+		showFallbackSuggestions,
+		composerFocused,
+		showScrollToLatest,
+		expandedSources,
+		expandedIndividualSources,
+		toggleDigest,
+		toggleAnalytics,
+		toggleAdvancedControls,
+		setShowFallbackSuggestions,
+		setComposerFocused,
+		setShowScrollToLatest,
+		toggleExpandedSource,
+		toggleIndividualSource,
+		setExpandedSources,
+		setExpandedIndividualSources,
+	} = useUIState();
 
 	useEffect(() => {
 		messagesRef.current = messages;
@@ -369,8 +384,8 @@ export default function AIChatIsland() {
 		setError(null);
 		setStreamingMessageId(null);
 		setFallbackResults([]);
-		setShowDigest(false);
-		setShowAnalytics(false);
+		if (showDigest) toggleDigest();
+		if (showAnalytics) toggleAnalytics();
 		setShowFallbackSuggestions(false);
 		setExpandedSources({});
 		setComposerFocused(false);
@@ -381,7 +396,7 @@ export default function AIChatIsland() {
 		requestAnimationFrame(() => {
 			focusInput();
 		});
-	}, [focusInput]);
+	}, [focusInput, showDigest, showAnalytics, toggleDigest, toggleAnalytics, setShowFallbackSuggestions, setExpandedSources, setComposerFocused, setShowScrollToLatest]);
 
 	const startNewChat = useCallback(() => {
 		clearConversation();
@@ -391,43 +406,18 @@ export default function AIChatIsland() {
 		setUseMemory((prev) => !prev);
 	}, []);
 
-	const toggleDigest = useCallback(() => {
-		setShowDigest((prev) => !prev);
-	}, []);
-
-	const toggleAnalytics = useCallback(() => {
-		setShowAnalytics((prev) => {
-			const newState = !prev;
-			// Track analytics panel usage
-			if (typeof window !== 'undefined') {
-				autoragEvents.chatInsights({
-					total_messages: 0,
-					user_messages: 0,
-					assistant_messages: 0,
-					total_sources: 0,
-				});
-			}
-			return newState;
-		});
-	}, []);
-
-	const toggleAdvancedControls = useCallback(() => {
-		setShowAdvancedControls((prev) => !prev);
-	}, []);
-
-	const toggleExpandedSourcesForMessage = useCallback((messageId: string) => {
-		setExpandedSources((previous) => ({
-			...previous,
-			[messageId]: !previous[messageId],
-		}));
-	}, []);
-
-	const toggleIndividualSource = useCallback((sourceKey: string) => {
-		setExpandedIndividualSources((previous) => ({
-			...previous,
-			[sourceKey]: !previous[sourceKey],
-		}));
-	}, []);
+	const handleToggleAnalytics = useCallback(() => {
+		toggleAnalytics();
+		// Track analytics panel usage
+		if (typeof window !== 'undefined') {
+			autoragEvents.chatInsights({
+				total_messages: 0,
+				user_messages: 0,
+				assistant_messages: 0,
+				total_sources: 0,
+			});
+		}
+	}, [toggleAnalytics]);
 
 
 	const handleCopyMessage = useCallback(async (message: ChatMessage) => {
@@ -1508,7 +1498,7 @@ export default function AIChatIsland() {
 											<button
 												type="button"
 												className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-2.5 py-0.5 text-[0.65rem] text-[color:var(--fg)]/65 transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--accent)]/40"
-												onClick={() => toggleExpandedSourcesForMessage(message.id)}
+												onClick={() => toggleExpandedSource(message.id)}
 											>
 												{showAllSources ? 'Hide details' : totalSources > 1 ? `Show all (${totalSources})` : 'Show details'}
 											</button>
@@ -2043,7 +2033,7 @@ export default function AIChatIsland() {
 							<button
 								type="button"
 								className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)]/40 px-2.5 py-1 text-[0.625rem] font-medium text-[color:var(--fg)]/65 transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/40"
-								onClick={() => setShowFallbackSuggestions((previous) => !previous)}
+								onClick={() => setShowFallbackSuggestions(!showFallbackSuggestions)}
 							>
 								{showFallbackSuggestions ? 'Hide' : `Show all (${fallbackResults.length})`}
 							</button>
