@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import type { AIChatSource } from '../../lib/ai-search';
 import type {
@@ -21,6 +21,7 @@ import { useMessageActions } from '../../lib/hooks/useMessageActions';
 import { useQueryManagement } from '../../lib/hooks/useQueryManagement';
 import { useMessageProcessing } from '../../lib/hooks/useMessageProcessing';
 import { useInputHandlers } from '../../lib/hooks/useInputHandlers';
+import { useChatEffects } from '../../lib/hooks/useChatEffects';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -112,7 +113,6 @@ export default function AIChatIsland() {
 	const lastQueryRef = useRef<string | null>(null);
 	const messagesRef = useRef(messages);
 	const activeRequestRef = useRef<AbortController | null>(null);
-	const sourceRefs = useRef<HTMLAnchorElement[]>([]);
 	const typingTimeoutRef = useRef<number | null>(null);
 
 	// Voice recognition hook with real-time transcription
@@ -168,23 +168,6 @@ export default function AIChatIsland() {
 		maxRestoreMessages: 30,
 	});
 
-	useEffect(() => {
-		messagesRef.current = messages;
-	}, [messages]);
-
-	useEffect(() => {
-		setShowFallbackSuggestions(false);
-	}, [fallbackResults]);
-
-	useEffect(() => {
-		return () => {
-			if (activeRequestRef.current) {
-				activeRequestRef.current.abort();
-				activeRequestRef.current = null;
-			}
-		};
-	}, []);
-
 	// Chat lifecycle hook for open/close/focus management
 	const { openChat, closeChat, focusInput, dispatchState } = useChatLifecycle({
 		isOpen,
@@ -202,6 +185,21 @@ export default function AIChatIsland() {
 		onSwipeDown: closeChat,
 		swipeThreshold: 100,
 		enabled: isOpen,
+	});
+
+	// Chat effects hook for lifecycle management and computed values
+	const { canRetry, lastQueryValue, sourceRefs } = useChatEffects({
+		isOpen,
+		messages,
+		fallbackResults,
+		chatState,
+		focusInput,
+		dispatchState,
+		setShowFallbackSuggestions,
+		launcherRef,
+		messagesRef,
+		activeRequestRef,
+		lastQueryRef,
 	});
 
 	// Keyboard shortcuts hook for all keyboard interactions
@@ -318,31 +316,6 @@ export default function AIChatIsland() {
 		updateFallbackSuggestions,
 	});
 
-
-	/**
-	 * Compresses conversation history with smart context management:
-	 * - Recent messages (last 4): Kept in full for immediate context
-	 * - Older messages: Summarized to preserve context while reducing tokens
-	 * - Maintains conversation flow and important details
-	 */
-
-	useEffect(() => {
-		if (!isOpen) return;
-		focusInput();
-	}, [focusInput, isOpen]);
-
-	useEffect(() => {
-		if (!launcherRef.current) return;
-		launcherRef.current.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-	}, [isOpen]);
-
-	useEffect(() => {
-		dispatchState(isOpen);
-	}, [dispatchState, isOpen]);
-
-	sourceRefs.current = [];
-	const lastQueryValue = lastQueryRef.current;
-	const canRetry = Boolean(lastQueryValue) && chatState !== 'loading';
 	const fallbackPreviewLimit = 2;
 	const visibleFallbackResults = showFallbackSuggestions ? fallbackResults : fallbackResults.slice(0, fallbackPreviewLimit);
 	const hasMoreFallbackResults = fallbackResults.length > visibleFallbackResults.length;
