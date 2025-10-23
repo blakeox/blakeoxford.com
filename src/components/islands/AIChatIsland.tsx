@@ -17,6 +17,7 @@ import { useScrollManagement } from '../../lib/hooks/useScrollManagement';
 import { useConversationAnalytics } from '../../lib/hooks/useConversationAnalytics';
 import { useCopyFeedback } from '../../lib/hooks/useCopyFeedback';
 import { useChatLifecycle } from '../../lib/hooks/useChatLifecycle';
+import { useMessageActions } from '../../lib/hooks/useMessageActions';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -241,6 +242,15 @@ export default function AIChatIsland() {
 		resetDelay: 2000,
 	});
 
+	// Message actions hook for feedback, copy, export, and source navigation
+	const { handleFeedback, handleCopyMessage, handleOpenPrimarySource, handleExportConversation } = useMessageActions({
+		messages,
+		setMessages,
+		lastQueryRef,
+		messagesRef,
+		copyWithFeedback,
+	});
+
 	/**
 	 * Compresses conversation history with smart context management:
 	 * - Recent messages (last 4): Kept in full for immediate context
@@ -375,127 +385,6 @@ export default function AIChatIsland() {
 	const toggleMemory = useCallback(() => {
 		setUseMemory((prev) => !prev);
 	}, []);
-
-	const handleToggleAnalytics = useCallback(() => {
-		toggleAnalytics();
-		// Track analytics panel usage
-		if (typeof window !== 'undefined') {
-			autoragEvents.chatInsights({
-				total_messages: 0,
-				user_messages: 0,
-				assistant_messages: 0,
-				total_sources: 0,
-			});
-		}
-	}, [toggleAnalytics]);
-
-
-	const handleCopyMessage = useCallback(async (message: ChatMessage) => {
-		if (!message.content) return;
-		await copyWithFeedback(message.content, message.id, 'message');
-	}, [copyWithFeedback]);
-
-	const handleOpenPrimarySource = useCallback((url: string) => {
-		if (!url) return;
-		if (typeof window !== 'undefined') {
-			window.location.assign(url);
-		}
-	}, []);
-
-	const handleFeedback = useCallback(
-		async (messageId: string, sentiment: 'positive' | 'negative') => {
-			let resolvedSentiment: 'positive' | 'negative' | undefined;
-			setMessages((prev) =>
-				prev.map((message) => {
-					if (message.id !== messageId) return message;
-					const nextSentiment = message.feedback === sentiment ? undefined : sentiment;
-					resolvedSentiment = nextSentiment;
-					return { ...message, feedback: nextSentiment };
-				}),
-			);
-			if (!resolvedSentiment) return;
-			try {
-				await fetch('/api/ai-feedback', {
-					method: 'POST',
-					headers: { 'content-type': 'application/json' },
-					body: JSON.stringify({
-						messageId,
-						sentiment: resolvedSentiment,
-						query: lastQueryRef.current,
-						metadata: {
-							conversationLength: messagesRef.current.length,
-						},
-					}),
-					keepalive: true,
-				});
-			} catch {
-				/* ignore feedback errors */
-			}
-		},
-		[],
-	);
-
-	const handleExportConversation = useCallback(() => {
-		if (messages.length === 0) return;
-		
-		// Generate Markdown content
-		const timestamp = new Date().toLocaleString('en-US', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit',
-		});
-		
-		let markdown = '# AI Conversation with Blake Oxford\n\n';
-		markdown += `**Exported**: ${timestamp}  \n`;
-		markdown += `**Messages**: ${messages.length}  \n`;
-		markdown += `**URL**: ${window.location.href}\n\n`;
-		markdown += '---\n\n';
-		
-		messages.forEach((message, index) => {
-			const role = message.role === 'user' ? '👤 You' : '🤖 AI Assistant';
-			markdown += `## ${role}\n\n`;
-			markdown += `${message.content}\n\n`;
-			
-			// Add sources for assistant messages
-			if (message.role === 'assistant' && message.sources && message.sources.length > 0) {
-				markdown += '### 📚 Sources\n\n';
-				message.sources.forEach((source, sourceIndex) => {
-					const title = decodeMimeEncodedWords(decodeHtmlEntities(source.title || source.url));
-					const score = source.score ? ` (${Math.round(source.score * 100)}% relevant)` : '';
-					const collection = source.collection ? ` [${source.collection}]` : '';
-					markdown += `${sourceIndex + 1}. [${title}](${source.url})${score}${collection}\n`;
-					if (source.snippet) {
-						markdown += `   > ${source.snippet}\n\n`;
-					}
-				});
-				markdown += '\n';
-			}
-			
-			if (index < messages.length - 1) {
-				markdown += '---\n\n';
-			}
-		});
-		
-		markdown += '\n---\n\n';
-		markdown += `*Conversation exported from [blakeoxford.com](${window.location.origin})*\n`;
-		
-		// Create and download file
-		const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
-		const url = URL.createObjectURL(blob);
-		const link = document.createElement('a');
-		link.href = url;
-		const filename = `ai-conversation-${Date.now()}.md`;
-		link.download = filename;
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-		URL.revokeObjectURL(url);
-		
-		// Track export
-		autoragEvents.export('markdown');
-	}, [messages]);
 
 	const toggleVoiceInput = useCallback(() => {
 		if (!voiceSupported) return;
