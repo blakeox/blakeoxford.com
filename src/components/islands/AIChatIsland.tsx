@@ -8,6 +8,7 @@ import type {
 	SearchFallback,
 } from '../../lib/chat-types';
 import { useVoiceRecognition } from '../../lib/hooks/useVoiceRecognition';
+import { useConversationWebSocket } from '../../lib/hooks/useConversationWebSocket';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -39,7 +40,6 @@ import {
 import {
 	calculateConversationAnalytics as calculateAnalytics,
 } from '../../lib/conversation-utils';
-import { ConversationWebSocket, type WSMessage } from '../../lib/conversation-ws';
 import { categorizeError } from '../../lib/error-utils';
 import {
 	getCitationHealthIndicator,
@@ -101,9 +101,6 @@ export default function AIChatIsland() {
 	const [showScrollToLatest, setShowScrollToLatest] = useState(false);
 	const [retryCount, setRetryCount] = useState(0);
 	const [lastFailedQuery, setLastFailedQuery] = useState<string>('');
-	const [wsConnected, setWsConnected] = useState(false);
-	const [activeUsers, setActiveUsers] = useState(1);
-	const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
 	const siteHostname = useMemo(() => {
 		if (typeof window !== 'undefined') {
 			return window.location.hostname;
@@ -122,7 +119,6 @@ export default function AIChatIsland() {
 	const messagesRef = useRef(messages);
 	const activeRequestRef = useRef<AbortController | null>(null);
 	const sourceRefs = useRef<HTMLAnchorElement[]>([]);
-	const wsRef = useRef<ConversationWebSocket | null>(null);
 	const typingTimeoutRef = useRef<number | null>(null);
 
 	// Voice recognition hook with real-time transcription
@@ -140,72 +136,17 @@ export default function AIChatIsland() {
 		maxAlternatives: 1,
 	});
 
+	// WebSocket hook for real-time conversation features
+	const { wsConnected, activeUsers, isOtherUserTyping, wsRef } = useConversationWebSocket({
+		conversationId: 'default',
+		userId: 'anonymous',
+		isOpen,
+		connectDelay: 1000,
+	});
+
 	useEffect(() => {
 		messagesRef.current = messages;
 	}, [messages]);
-
-	// Initialize WebSocket connection for real-time features
-	useEffect(() => {
-		if (typeof window === 'undefined') return;
-
-		// Only connect WebSocket when chat is open
-		if (!isOpen) return;
-
-		// Create WebSocket connection
-		const ws = new ConversationWebSocket({
-			conversationId: 'default',
-			userId: 'anonymous',
-			onMessage: (message: WSMessage) => {
-				switch (message.type) {
-					case 'init':
-						setActiveUsers(message.activeSessions);
-						setWsConnected(true);
-						break;
-					case 'presence':
-						setActiveUsers(message.activeSessions);
-						break;
-					case 'typing':
-						// Only show typing indicator for other users
-						if (message.sessionId !== ws.options.sessionId) {
-							setIsOtherUserTyping(message.isTyping);
-						}
-						break;
-					case 'message':
-						// Message sync handled separately - we use HTTP for now
-						break;
-					default:
-						break;
-				}
-			},
-			onConnect: () => {
-				setWsConnected(true);
-			},
-			onDisconnect: () => {
-				setWsConnected(false);
-			},
-			onError: (error) => {
-				console.debug('WebSocket error:', error);
-				setWsConnected(false);
-			}
-		});
-
-		wsRef.current = ws;
-
-		// Connect with a small delay to avoid blocking initial render
-		const connectTimer = setTimeout(() => {
-			ws.connect().catch((err) => {
-				console.debug('WebSocket connection failed, will use HTTP fallback:', err);
-			});
-		}, 1000);
-
-		return () => {
-			clearTimeout(connectTimer);
-			if (wsRef.current) {
-				wsRef.current.close();
-				wsRef.current = null;
-			}
-		};
-	}, [isOpen]);
 
 	useEffect(() => {
 		setShowFallbackSuggestions(false);
