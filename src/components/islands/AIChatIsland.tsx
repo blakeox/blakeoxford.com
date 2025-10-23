@@ -16,6 +16,7 @@ import { useKeyboardShortcuts } from '../../lib/hooks/useKeyboardShortcuts';
 import { useScrollManagement } from '../../lib/hooks/useScrollManagement';
 import { useConversationAnalytics } from '../../lib/hooks/useConversationAnalytics';
 import { useCopyFeedback } from '../../lib/hooks/useCopyFeedback';
+import { useChatLifecycle } from '../../lib/hooks/useChatLifecycle';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -180,43 +181,17 @@ export default function AIChatIsland() {
 		};
 	}, []);
 
-	const dispatchState = useCallback((open: boolean) => {
-		if (typeof window === 'undefined') return;
-		window.dispatchEvent(new CustomEvent('ai-chat:state', { detail: { open } }));
-	}, []);
-
-	const focusInput = useCallback(() => {
-		if (!inputRef.current) return;
-		requestAnimationFrame(() => {
-			inputRef.current?.focus();
-			inputRef.current?.setSelectionRange(inputRef.current.value.length, inputRef.current.value.length);
-		});
-	}, []);
-
-	const openChat = useCallback(() => {
-		if (isOpen) {
-			focusInput();
-			return;
-		}
-		lastFocusedElement.current = (document.activeElement as HTMLElement | null) ?? null;
-		setIsOpen(true);
-		setError(null);
-		setChatState((state) => (state === 'idle' ? 'ready' : state));
-	}, [focusInput, isOpen]);
-
-	const closeChat = useCallback(() => {
-		if (!isOpen) return;
-		if (isListening) {
-			toggleListening(); // Stop voice recognition when closing
-		}
-		setIsOpen(false);
-		setError(null);
-		if (lastFocusedElement.current && typeof lastFocusedElement.current.focus === 'function') {
-			requestAnimationFrame(() => {
-				lastFocusedElement.current?.focus();
-			});
-		}
-	}, [isListening, isOpen, toggleListening]);
+	// Chat lifecycle hook for open/close/focus management
+	const { openChat, closeChat, focusInput, dispatchState } = useChatLifecycle({
+		isOpen,
+		setIsOpen,
+		setError,
+		setChatState,
+		isListening,
+		toggleListening,
+		inputRef,
+		lastFocusedElementRef: lastFocusedElement,
+	});
 
 	// Touch gestures hook for swipe-to-close
 	const { touchStartY, touchCurrentY, handleTouchStart, handleTouchMove, handleTouchEnd } = useTouchGestures({
