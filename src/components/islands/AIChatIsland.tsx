@@ -12,6 +12,7 @@ import { useConversationWebSocket } from '../../lib/hooks/useConversationWebSock
 import { useUIState } from '../../lib/hooks/useUIState';
 import { useChatStorage } from '../../lib/hooks/useChatStorage';
 import { useTouchGestures } from '../../lib/hooks/useTouchGestures';
+import { useKeyboardShortcuts } from '../../lib/hooks/useKeyboardShortcuts';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -226,6 +227,16 @@ export default function AIChatIsland() {
 		onSwipeDown: closeChat,
 		swipeThreshold: 100,
 		enabled: isOpen,
+	});
+
+	// Keyboard shortcuts hook for all keyboard interactions
+	useKeyboardShortcuts({
+		enabled: isOpen,
+		onOpen: openChat,
+		onClose: closeChat,
+		onToggle: () => (isOpen ? closeChat() : openChat()),
+		panelRef,
+		sourceRefs,
 	});
 
 	/**
@@ -695,85 +706,6 @@ export default function AIChatIsland() {
 	useEffect(() => {
 		dispatchState(isOpen);
 	}, [dispatchState, isOpen]);
-
-	useEffect(() => {
-		if (!isOpen) return;
-		const onKeyDown = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') {
-				event.preventDefault();
-				closeChat();
-			}
-		};
-		document.addEventListener('keydown', onKeyDown);
-		return () => document.removeEventListener('keydown', onKeyDown);
-	}, [closeChat, isOpen]);
-
-	useEffect(() => {
-		if (!isOpen) return;
-		const handleClick = (event: MouseEvent) => {
-			const target = event.target as Node | null;
-			if (!panelRef.current || !target) return;
-			if (!panelRef.current.contains(target)) {
-				closeChat();
-			}
-		};
-		document.addEventListener('mousedown', handleClick);
-		return () => document.removeEventListener('mousedown', handleClick);
-	}, [closeChat, isOpen]);
-
-	useEffect(() => {
-		if (!isOpen || !panelRef.current) return;
-		const panel = panelRef.current;
-		const handleKey = (event: KeyboardEvent) => {
-			if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
-				return;
-			}
-			const focusable = sourceRefs.current.filter((element) => element && element.isConnected);
-			if (focusable.length === 0) return;
-			const active = document.activeElement;
-			const currentIndex = focusable.findIndex((element) => element === active);
-			let nextIndex = currentIndex;
-			if (event.key === 'ArrowDown') {
-				nextIndex = currentIndex >= 0 ? (currentIndex + 1) % focusable.length : 0;
-			} else if (currentIndex <= 0) {
-				nextIndex = focusable.length - 1;
-			} else {
-				nextIndex = (currentIndex - 1 + focusable.length) % focusable.length;
-			}
-			focusable[nextIndex]?.focus();
-			event.preventDefault();
-		};
-		panel.addEventListener('keydown', handleKey);
-		return () => panel.removeEventListener('keydown', handleKey);
-	}, [isOpen]);
-
-	useEffect(() => {
-		const handleOpen = () => openChat();
-		const handleToggle = () => {
-			if (isOpen) {
-				closeChat();
-			} else {
-				openChat();
-			}
-		};
-		window.addEventListener('ai-chat:open', handleOpen as EventListener);
-		window.addEventListener('ai-chat:toggle', handleToggle as EventListener);
-		const handleShortcut = (event: KeyboardEvent) => {
-			const isMac = navigator.platform.toLowerCase().includes('mac');
-			const metaPressed = isMac ? event.metaKey : event.ctrlKey;
-			const isSlash = event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey;
-			if ((metaPressed && event.key.toLowerCase() === 'k') || isSlash) {
-				event.preventDefault();
-				openChat();
-			}
-		};
-		window.addEventListener('keydown', handleShortcut);
-		return () => {
-			window.removeEventListener('ai-chat:open', handleOpen as EventListener);
-			window.removeEventListener('ai-chat:toggle', handleToggle as EventListener);
-			window.removeEventListener('keydown', handleShortcut);
-		};
-	}, [closeChat, isOpen, openChat]);
 
 	useEffect(() => {
 		const container = scrollContainerRef.current;
