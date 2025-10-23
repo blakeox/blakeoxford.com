@@ -13,6 +13,7 @@ import { useUIState } from '../../lib/hooks/useUIState';
 import { useChatStorage } from '../../lib/hooks/useChatStorage';
 import { useTouchGestures } from '../../lib/hooks/useTouchGestures';
 import { useKeyboardShortcuts } from '../../lib/hooks/useKeyboardShortcuts';
+import { useScrollManagement } from '../../lib/hooks/useScrollManagement';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -237,6 +238,16 @@ export default function AIChatIsland() {
 		onToggle: () => (isOpen ? closeChat() : openChat()),
 		panelRef,
 		sourceRefs,
+	});
+
+	// Scroll management hook for auto-scroll and scroll-to-latest
+	const { scrollToLatest } = useScrollManagement({
+		containerRef: scrollContainerRef,
+		enabled: isOpen,
+		scrollTrigger: messages,
+		showScrollButton: showScrollToLatest,
+		onScrollButtonChange: setShowScrollToLatest,
+		scrollThreshold: 48,
 	});
 
 	/**
@@ -684,15 +695,6 @@ export default function AIChatIsland() {
 		[focusInput, openChat],
 	);
 
-	const scrollToLatest = useCallback(() => {
-		if (!scrollContainerRef.current) return;
-		scrollContainerRef.current.scrollTo({
-			top: scrollContainerRef.current.scrollHeight,
-			behavior: 'smooth',
-		});
-		setShowScrollToLatest(false);
-	}, []);
-
 	useEffect(() => {
 		if (!isOpen) return;
 		focusInput();
@@ -706,27 +708,6 @@ export default function AIChatIsland() {
 	useEffect(() => {
 		dispatchState(isOpen);
 	}, [dispatchState, isOpen]);
-
-	useEffect(() => {
-		const container = scrollContainerRef.current;
-		if (!container) return;
-		if (showScrollToLatest) return;
-		container.scrollTo({ top: container.scrollHeight });
-	}, [messages, showScrollToLatest]);
-
-	useEffect(() => {
-		const container = scrollContainerRef.current;
-		if (!container) return;
-		const updateVisibility = () => {
-			const distance = container.scrollHeight - (container.scrollTop + container.clientHeight);
-			setShowScrollToLatest(distance > 48);
-		};
-		updateVisibility();
-		container.addEventListener('scroll', updateVisibility);
-		return () => {
-			container.removeEventListener('scroll', updateVisibility);
-		};
-	}, [isOpen, messages]);
 
 	const recentQueries = useMemo(() => {
 		return messages
