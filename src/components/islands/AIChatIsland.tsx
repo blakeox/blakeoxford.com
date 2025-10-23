@@ -18,6 +18,7 @@ import { useConversationAnalytics } from '../../lib/hooks/useConversationAnalyti
 import { useCopyFeedback } from '../../lib/hooks/useCopyFeedback';
 import { useChatLifecycle } from '../../lib/hooks/useChatLifecycle';
 import { useMessageActions } from '../../lib/hooks/useMessageActions';
+import { useQueryManagement } from '../../lib/hooks/useQueryManagement';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -251,6 +252,7 @@ export default function AIChatIsland() {
 		copyWithFeedback,
 	});
 
+
 	/**
 	 * Compresses conversation history with smart context management:
 	 * - Recent messages (last 4): Kept in full for immediate context
@@ -406,160 +408,8 @@ export default function AIChatIsland() {
 			event.currentTarget.form?.requestSubmit();
 		},
 		[chatState],
-	);
 
-	const sendQuery = useCallback(
-		async (query: string) => {
-			setChatState('loading');
-			setLoadingPhase('searching');
-			setError(null);
-			setFallbackResults([]);
-			lastQueryRef.current = query;
 
-			const userMessage: ChatMessage = { 
-				id: createId(), 
-				role: 'user', 
-				content: query,
-				timestamp: Date.now(),
-			};
-			const assistantId = createId();
-
-			setMessages((prev) => [
-				...prev,
-				userMessage,
-				{ 
-					id: assistantId, 
-					role: 'assistant', 
-					content: '', 
-					sources: [],
-					timestamp: Date.now(),
-				},
-			]);
-			setStreamingMessageId(assistantId);
-
-			const controller = new AbortController();
-			if (activeRequestRef.current) {
-				activeRequestRef.current.abort();
-			}
-			activeRequestRef.current = controller;
-
-			const historyPayload = buildHistoryForRequest(messagesRef.current, useMemory);
-			
-			// Enhance the query with analytical context to guide better responses
-			const enhancedQuery = useMemory 
-				? enhanceQuery(query, historyPayload.length > 0)
-				: query;
-
-			// Progressive loading phases for user feedback
-			const searchingTimer = setTimeout(() => setLoadingPhase('analyzing'), 1500);
-			const analyzingTimer = setTimeout(() => setLoadingPhase('crafting'), 4000);
-
-			try {
-				await searchWithAI(enhancedQuery, {
-					history: historyPayload,
-					signal: controller.signal,
-					onToken: (token) => {
-						appendAssistantChunk(assistantId, token);
-						if (scrollContainerRef.current) {
-							scrollContainerRef.current.scrollTo({ top: scrollContainerRef.current.scrollHeight });
-						}
-					},
-					onSources: (sources) => {
-						assignAssistantSources(assistantId, sources);
-						setLoadingPhase('crafting');
-					},
-					onCompletion: async (message) => {
-						await finalizeAssistantMessage(assistantId, message.trim());
-					},
-				});
-				clearTimeout(searchingTimer);
-				clearTimeout(analyzingTimer);
-				setStreamingMessageId(null);
-				setLoadingPhase(null);
-				setChatState('ready');
-				await updateFallbackSuggestions(query);
-			} catch (err) {
-				clearTimeout(searchingTimer);
-				clearTimeout(analyzingTimer);
-				if (controller.signal.aborted) {
-					setLoadingPhase(null);
-					return;
-				}
-				setStreamingMessageId(null);
-				setLoadingPhase(null);
-				setChatState('ready');
-				setMessages((prev) => prev.filter((message) => message.id !== assistantId));
-				
-				// Enhanced error categorization and recovery
-				const errorInfo = categorizeError(err);
-				const shouldRetry = errorInfo.retryable && retryCount < 2;
-				
-				if (shouldRetry) {
-					// Auto-retry with exponential backoff
-					const delay = Math.min(1000 * Math.pow(2, retryCount), 5000);
-					setError(`${errorInfo.message} Retrying in ${Math.ceil(delay / 1000)}s... (${retryCount + 1}/2)`);
-					setRetryCount(prev => prev + 1);
-				setLastFailedQuery(query);
-				
-				// Track retry attempt
-				autoragEvents.errorRetry({
-					category: errorInfo.category,
-					attempt: retryCount + 1,
-				});					setTimeout(() => {
-						if (lastQueryRef.current === query) {
-							sendQuery(query);
-						}
-					}, delay);
-					return;
-				}
-				
-				// Max retries reached or non-retryable error
-				setError(errorInfo.message);
-				setRetryCount(0);
-				setLastFailedQuery('');
-				
-				// Track error
-				autoragEvents.error({
-					category: errorInfo.category,
-					severity: 'error',
-					retry_available: errorInfo.retryable,
-				});
-				
-				await updateFallbackSuggestions(query);
-			} finally {
-				activeRequestRef.current = null;
-			}
-		},
-		[appendAssistantChunk, assignAssistantSources, buildHistoryForRequest, finalizeAssistantMessage, updateFallbackSuggestions, useMemory],
-	);
-
-	const handleSubmit = useCallback(
-		async (event: React.FormEvent<HTMLFormElement>) => {
-			event.preventDefault();
-			const query = inputValue.trim();
-			if (!query || chatState === 'loading') return;
-			setInputValue('');
-			await sendQuery(query);
-		},
-		[chatState, inputValue, sendQuery],
-	);
-
-	const handleReplayQuery = useCallback(
-		async (query: string) => {
-			if (!query || chatState === 'loading') return;
-			setInputValue('');
-			await sendQuery(query);
-		},
-		[chatState, sendQuery],
-	);
-
-	const handleGuidedPrompt = useCallback(
-		(prompt: string) => {
-			setInputValue(prompt);
-			openChat();
-			focusInput();
-		},
-		[focusInput, openChat],
 	);
 
 	useEffect(() => {
