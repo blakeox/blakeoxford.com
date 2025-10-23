@@ -10,8 +10,8 @@ type ChatMessage = {
 	id: string;
 	role: 'user' | 'assistant';
 	content: string;
+	timestamp: number;
 	sources?: AIChatSource[];
-	feedback?: 'positive' | 'negative';
 	qualityScore?: number;
 	qualityDetails?: {
 		completeness: number;
@@ -21,7 +21,7 @@ type ChatMessage = {
 		reasoning: string;
 	};
 	citationHealth?: 'healthy' | 'warning' | 'error';
-	timestamp?: number;
+	feedback?: 'positive' | 'negative';
 	responseTime?: number;
 };
 
@@ -114,10 +114,13 @@ export function restoreMessages(stored: unknown, maxMessages = 30): ChatMessage[
 				id: item.id,
 				role: item.role,
 				content: item.content,
+				timestamp: typeof item.timestamp === 'number' ? item.timestamp : Date.now(),
 				sources,
 				feedback,
 				qualityScore,
+				qualityDetails: item.qualityDetails,
 				citationHealth,
+				responseTime: typeof item.responseTime === 'number' ? item.responseTime : undefined,
 			} as ChatMessage;
 		});
 

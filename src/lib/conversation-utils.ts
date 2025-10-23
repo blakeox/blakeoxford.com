@@ -18,7 +18,9 @@ export interface ChatMessage {
 		relevance: number;
 		reasoning: string;
 	};
+	citationHealth?: 'healthy' | 'warning' | 'error'; // Source health status
 	feedback?: 'positive' | 'negative';
+	responseTime?: number; // Response time in milliseconds (for assistant messages)
 	retryCount?: number;
 	error?: {
 		category: string;
