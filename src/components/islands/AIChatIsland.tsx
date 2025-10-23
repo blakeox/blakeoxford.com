@@ -19,6 +19,7 @@ import { useCopyFeedback } from '../../lib/hooks/useCopyFeedback';
 import { useChatLifecycle } from '../../lib/hooks/useChatLifecycle';
 import { useMessageActions } from '../../lib/hooks/useMessageActions';
 import { useQueryManagement } from '../../lib/hooks/useQueryManagement';
+import { useMessageProcessing } from '../../lib/hooks/useMessageProcessing';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -243,6 +244,33 @@ export default function AIChatIsland() {
 		resetDelay: 2000,
 	});
 
+	// Message processing hook for message state mutations
+	const {
+		updateFallbackSuggestions,
+		appendAssistantChunk,
+		finalizeAssistantMessage,
+		assignAssistantSources,
+		clearConversation,
+		startNewChat,
+	} = useMessageProcessing({
+		setMessages,
+		setError,
+		setStreamingMessageId,
+		setFallbackResults,
+		setInputValue,
+		messagesRef,
+		lastQueryRef,
+		showDigest,
+		showAnalytics,
+		toggleDigest,
+		toggleAnalytics,
+		setShowFallbackSuggestions,
+		setExpandedSources,
+		setComposerFocused,
+		setShowScrollToLatest,
+		focusInput,
+	});
+
 	// Message actions hook for feedback, copy, export, and source navigation
 	const { handleFeedback, handleCopyMessage, handleOpenPrimarySource, handleExportConversation } = useMessageActions({
 		messages,
@@ -259,130 +287,6 @@ export default function AIChatIsland() {
 	 * - Older messages: Summarized to preserve context while reducing tokens
 	 * - Maintains conversation flow and important details
 	 */
-
-
-
-
-
-
-	const updateFallbackSuggestions = useCallback(
-		async (query: string) => {
-			const normalized = query.toLowerCase().trim();
-			if (!normalized) {
-				setFallbackResults([]);
-				return;
-			}
-			
-			// Use Vectorize semantic search instead of keyword matching
-			try {
-				const response = await fetch(SEMANTIC_SEARCH_URL, {
-					method: 'POST',
-					headers: { 
-						'Content-Type': 'application/json',
-						'Accept': 'application/json'
-					},
-					body: JSON.stringify({ query: normalized })
-				});
-				
-				if (!response.ok) {
-					setFallbackResults([]);
-					return;
-				}
-				
-				const data = await response.json();
-				
-				// Transform Vectorize results to SearchFallback format
-				if (data.results && Array.isArray(data.results)) {
-					const ranked = data.results
-						.slice(0, 3)
-						.map((result: { title?: string; id: string; url?: string; description?: string; score?: number }) => ({
-							title: result.title || result.id,
-							url: result.url || `/${result.id}`,
-							excerpt: result.description || '',
-							score: result.score || 0
-						}));
-					setFallbackResults(ranked);
-				} else {
-					setFallbackResults([]);
-				}
-			} catch (err) {
-				console.error('Semantic search failed:', err);
-				setFallbackResults([]);
-			}
-		},
-		[],
-	);
-
-	const appendAssistantChunk = useCallback((messageId: string, chunk: string) => {
-		if (!chunk) return;
-		setMessages((prev) =>
-			prev.map((message) =>
-				message.id === messageId
-					? {
-							...message,
-							content: `${message.content}${chunk}`,
-						}
-					: message,
-			),
-		);
-	}, []);
-
-	/**
-	 * Finalizes assistant message with content, quality score, and citation health
-	 */
-	const finalizeAssistantMessage = useCallback(async (messageId: string, content: string) => {
-		const message = messagesRef.current.find((m) => m.id === messageId);
-		if (!message) return;
-		
-		// Get the user query that prompted this response
-		const messageIndex = messagesRef.current.findIndex((m) => m.id === messageId);
-		const userQuery = messageIndex > 0 ? messagesRef.current[messageIndex - 1]?.content || '' : '';
-		
-		// Calculate quality scores and update message
-		const qualityUpdate = await finalizeMessageQuality(messageId, content, messagesRef.current, userQuery);
-		
-		if (qualityUpdate) {
-			setMessages((prev) =>
-				prev.map((m) => (m.id === messageId ? { ...m, ...qualityUpdate } : m)),
-			);
-		}
-	}, []);
-
-	const assignAssistantSources = useCallback((messageId: string, sources: AIChatSource[]) => {
-		setMessages((prev) =>
-			prev.map((message) =>
-				message.id === messageId
-					? {
-							...message,
-							sources,
-						}
-					: message,
-			),
-		);
-	}, []);
-
-	const clearConversation = useCallback(() => {
-		setMessages([INITIAL_ASSISTANT_MESSAGE]);
-		setError(null);
-		setStreamingMessageId(null);
-		setFallbackResults([]);
-		if (showDigest) toggleDigest();
-		if (showAnalytics) toggleAnalytics();
-		setShowFallbackSuggestions(false);
-		setExpandedSources({});
-		setComposerFocused(false);
-		setInputValue('');
-		setShowScrollToLatest(false);
-		lastQueryRef.current = null;
-		removeStorageItem(CONVERSATION_STORAGE_KEY);
-		requestAnimationFrame(() => {
-			focusInput();
-		});
-	}, [focusInput, showDigest, showAnalytics, toggleDigest, toggleAnalytics, setShowFallbackSuggestions, setExpandedSources, setComposerFocused, setShowScrollToLatest]);
-
-	const startNewChat = useCallback(() => {
-		clearConversation();
-	}, [clearConversation]);
 
 	const toggleMemory = useCallback(() => {
 		setUseMemory((prev) => !prev);
