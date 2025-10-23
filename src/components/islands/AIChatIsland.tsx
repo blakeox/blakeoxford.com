@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { AIChatMessage, AIChatSource } from '../../lib/ai-search';
+import type {
+	ChatMessage,
+	ChatState,
+	LoadingPhase,
+	SearchFallback,
+	SpeechRecognitionLike,
+} from '../../lib/chat-types';
+import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { searchWithAI } from '../../lib/ai-search';
 import { autoragEvents } from '../../lib/analytics';
 import {
@@ -44,71 +52,7 @@ import {
 	formatPublishedDate,
 } from '../../lib/string-utils';
 
-type ChatState = 'idle' | 'loading' | 'ready';
 
-type LoadingPhase = 'searching' | 'analyzing' | 'crafting' | null;
-
-type ChatMessage = {
-	id: string;
-	role: 'user' | 'assistant';
-	content: string;
-	sources?: AIChatSource[];
-	feedback?: 'positive' | 'negative';
-	qualityScore?: number; // 0-100 overall score for assistant responses
-	qualityDetails?: {
-		completeness: number;
-		citationAccuracy: number;
-		conciseness: number;
-		relevance: number;
-		reasoning: string;
-	};
-	citationHealth?: 'healthy' | 'warning' | 'error'; // Source health status
-	timestamp?: number; // Unix timestamp for analytics
-	responseTime?: number; // Response time in milliseconds (for assistant messages)
-};
-
-type ConversationAnalytics = {
-	messageCount: number;
-	userQueries: number;
-	assistantResponses: number;
-	averageQualityScore: number;
-	healthyResponses: number;
-	warningResponses: number;
-	errorResponses: number;
-	uniqueCollections: Set<string>;
-	sessionDuration: number; // in minutes
-	startTime: number;
-	averageResponseTime: number; // in milliseconds
-	fastestResponse: number; // in milliseconds
-	slowestResponse: number; // in milliseconds
-};
-
-type SearchFallback = {
-	title: string;
-	url: string;
-	excerpt?: string;
-	score: number;
-};
-
-type SpeechRecognitionLike = {
-	lang: string;
-	continuous: boolean;
-	interimResults: boolean;
-	maxAlternatives: number;
-	start: () => void;
-	stop: () => void;
-	abort?: () => void;
-	onresult: ((event: { results: Array<{ isFinal: boolean; 0?: { transcript?: string } }> }) => void) | null;
-	onerror: ((event: unknown) => void) | null;
-	onend: (() => void) | null;
-};
-
-const INITIAL_ASSISTANT_MESSAGE: ChatMessage = {
-	id: 'welcome',
-	role: 'assistant',
-	content:
-		'Hi! I\'m the AI search assistant. Ask me about Blake\'s work, projects, technical expertise, or case studies. I\'ll provide detailed insights with specific examples and outcomes, not just summaries.',
-};
 
 // cleanSnippet - local implementation with MIME decoding
 function cleanSnippet(snippet: string): string {
