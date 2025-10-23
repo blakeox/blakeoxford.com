@@ -11,6 +11,7 @@ import { useVoiceRecognition } from '../../lib/hooks/useVoiceRecognition';
 import { useConversationWebSocket } from '../../lib/hooks/useConversationWebSocket';
 import { useUIState } from '../../lib/hooks/useUIState';
 import { useChatStorage } from '../../lib/hooks/useChatStorage';
+import { useTouchGestures } from '../../lib/hooks/useTouchGestures';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -80,8 +81,6 @@ export default function AIChatIsland() {
 	const [chatState, setChatState] = useState<ChatState>('idle');
 	const [loadingPhase, setLoadingPhase] = useState<LoadingPhase>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [touchStartY, setTouchStartY] = useState<number | null>(null);
-	const [touchCurrentY, setTouchCurrentY] = useState<number | null>(null);
 	const [useMemory, setUseMemory] = useState<boolean>(() => 
 		getBooleanPreference(PREFERENCES_STORAGE_KEY, 'useMemory', true)
 	);
@@ -215,38 +214,19 @@ export default function AIChatIsland() {
 		}
 		setIsOpen(false);
 		setError(null);
-		setTouchStartY(null);
-		setTouchCurrentY(null);
 		if (lastFocusedElement.current && typeof lastFocusedElement.current.focus === 'function') {
 			requestAnimationFrame(() => {
 				lastFocusedElement.current?.focus();
 			});
 		}
-	}, [isListening, isOpen]);
+	}, [isListening, isOpen, toggleListening]);
 
-	const handleTouchStart = useCallback((event: React.TouchEvent) => {
-		if (event.touches.length === 1) {
-			setTouchStartY(event.touches[0].clientY);
-		}
-	}, []);
-
-	const handleTouchMove = useCallback((event: React.TouchEvent) => {
-		if (touchStartY !== null && event.touches.length === 1) {
-			setTouchCurrentY(event.touches[0].clientY);
-		}
-	}, [touchStartY]);
-
-	const handleTouchEnd = useCallback(() => {
-		if (touchStartY !== null && touchCurrentY !== null) {
-			const deltaY = touchCurrentY - touchStartY;
-			// Swipe down more than 100px to close
-			if (deltaY > 100) {
-				closeChat();
-			}
-		}
-		setTouchStartY(null);
-		setTouchCurrentY(null);
-	}, [touchStartY, touchCurrentY, closeChat]);
+	// Touch gestures hook for swipe-to-close
+	const { touchStartY, touchCurrentY, handleTouchStart, handleTouchMove, handleTouchEnd } = useTouchGestures({
+		onSwipeDown: closeChat,
+		swipeThreshold: 100,
+		enabled: isOpen,
+	});
 
 	/**
 	 * Compresses conversation history with smart context management:
