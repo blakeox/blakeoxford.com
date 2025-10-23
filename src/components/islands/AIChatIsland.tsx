@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { AIChatSource } from '../../lib/ai-search';
 import type {
@@ -20,6 +20,7 @@ import { useChatLifecycle } from '../../lib/hooks/useChatLifecycle';
 import { useMessageActions } from '../../lib/hooks/useMessageActions';
 import { useQueryManagement } from '../../lib/hooks/useQueryManagement';
 import { useMessageProcessing } from '../../lib/hooks/useMessageProcessing';
+import { useInputHandlers } from '../../lib/hooks/useInputHandlers';
 import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
 import { cleanSnippet, enhanceQuery } from '../../lib/chat-helpers';
 import {
@@ -280,6 +281,43 @@ export default function AIChatIsland() {
 		copyWithFeedback,
 	});
 
+	// Input handlers hook for memory toggle, voice input, and keyboard events
+	const { toggleMemory, toggleVoiceInput, handleTextareaKeyDown } = useInputHandlers({
+		chatState,
+		voiceSupported,
+		setUseMemory,
+		openChat,
+		toggleListening,
+	});
+
+	// Query management hook for AI query lifecycle
+	const { sendQuery, handleSubmit, handleReplayQuery, handleGuidedPrompt } = useQueryManagement({
+		inputValue,
+		setInputValue,
+		openChat,
+		focusInput,
+		chatState,
+		setChatState,
+		setLoadingPhase,
+		setError,
+		setMessages,
+		setStreamingMessageId,
+		setFallbackResults,
+		setRetryCount,
+		setLastFailedQuery,
+		retryCount,
+		useMemory,
+		lastQueryRef,
+		messagesRef,
+		activeRequestRef,
+		scrollContainerRef,
+		appendAssistantChunk,
+		assignAssistantSources,
+		finalizeAssistantMessage,
+		buildHistoryForRequest,
+		updateFallbackSuggestions,
+	});
+
 
 	/**
 	 * Compresses conversation history with smart context management:
@@ -287,34 +325,6 @@ export default function AIChatIsland() {
 	 * - Older messages: Summarized to preserve context while reducing tokens
 	 * - Maintains conversation flow and important details
 	 */
-
-	const toggleMemory = useCallback(() => {
-		setUseMemory((prev) => !prev);
-	}, []);
-
-	const toggleVoiceInput = useCallback(() => {
-		if (!voiceSupported) return;
-		openChat();
-		toggleListening();
-	}, [openChat, voiceSupported, toggleListening]);
-
-	const handleTextareaKeyDown = useCallback(
-		(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-			if (event.key !== 'Enter' || event.shiftKey || event.metaKey || event.ctrlKey || event.altKey) {
-				return;
-			}
-			const trimmed = event.currentTarget.value.trim();
-			if (!trimmed || chatState === 'loading') {
-				event.preventDefault();
-				return;
-			}
-			event.preventDefault();
-			event.currentTarget.form?.requestSubmit();
-		},
-		[chatState],
-
-
-	);
 
 	useEffect(() => {
 		if (!isOpen) return;
