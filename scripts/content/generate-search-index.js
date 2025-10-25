@@ -95,6 +95,26 @@ const blogPosts = [
       tags: ['Welcome', 'Introduction'],
       draft: false
     }
+  },
+  {
+    slug: 'combating-legal-ai-hallucinations',
+    data: {
+      title: 'Combating Legal AI Hallucinations: How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research',
+      description: 'Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener.',
+      pubDate: new Date('2025-07-28T00:00:00.000Z'),
+      tags: ['AI', 'Legal Tech', 'Open Source'],
+      draft: false
+    }
+  },
+  {
+    slug: 'ai-statistics-future-decision-making',
+    data: {
+      title: 'AI, Statistics, and the Future of Decision-Making: What Our Research Reveals',
+      description: 'From our GPT-4 study to GPT-5\'s reasoning models — exploring RAG, CAG, MCP, and the evolution toward augmented, auditable analytics systems that amplify human capability.',
+      pubDate: new Date('2025-10-14T00:00:00.000Z'),
+      tags: ['AI', 'Machine Learning', 'Statistics', 'Research', 'Leadership', 'GPT-4', 'Data Science'],
+      draft: false
+    }
   }
 ];
 
@@ -144,24 +164,44 @@ const projectsIndex = formatProjectsForSearch(projects);
 
 writeJSON(path.join(projectRoot, 'public/search/blog.json'), blogIndex);
 writeJSON(path.join(projectRoot, 'public/search/projects.json'), projectsIndex);
+writeJSON(path.join(projectRoot, 'public/api/blog.json'), blogIndex);
 
 // Generate API endpoints for the tests
 writeJSON(path.join(projectRoot, 'public/api/projects.json'), projectsIndex);
 
-const searchIndex = [...projects.map(p => ({ ...p.data, type: 'project', slug: p.slug })), ...blogPosts.map(p => ({ ...p.data, type: 'blog', slug: p.slug }))];
+const searchIndex = [
+  ...projects.map((project) => ({
+    type: 'project',
+    slug: project.slug,
+    title: project.data.title,
+    description: project.data.description,
+    publishedAt: project.data.date?.toISOString ? project.data.date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    tags: project.data.tags || [],
+  })),
+  ...blogPosts.map((post) => ({
+    type: 'blog',
+    slug: post.slug,
+    title: post.data.title,
+    description: post.data.description,
+    publishedAt: post.data.pubDate?.toISOString ? post.data.pubDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    tags: post.data.tags || [],
+  })),
+];
+
+writeJSON(path.join(projectRoot, 'public/search/index.json'), searchIndex);
 
 const outputDir = path.join(projectRoot, 'dist');
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
-fs.writeFileSync(path.join(outputDir, 'search-index.json'), JSON.stringify(searchIndex, null, 2));
+writeJSON(path.join(outputDir, 'search-index.json'), searchIndex);
 
 // Also write combined index to dist/search/index.json to satisfy quality gate
 const distSearchDir = path.join(outputDir, 'search');
 if (!fs.existsSync(distSearchDir)) {
   fs.mkdirSync(distSearchDir, { recursive: true });
 }
-fs.writeFileSync(path.join(distSearchDir, 'index.json'), JSON.stringify(searchIndex, null, 2));
+writeJSON(path.join(distSearchDir, 'index.json'), searchIndex);
 
 // Also generate API endpoints in dist for build
 const distApiDir = path.join(outputDir, 'api');
@@ -169,6 +209,7 @@ if (!fs.existsSync(distApiDir)) {
   fs.mkdirSync(distApiDir, { recursive: true });
 }
 writeJSON(path.join(distApiDir, 'projects.json'), projectsIndex);
+writeJSON(path.join(distApiDir, 'blog.json'), blogIndex);
 
 console.log('Search indexes generated: blog.json, projects.json');
 console.log('Search index generated successfully at dist/search-index.json');

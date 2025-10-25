@@ -5,9 +5,10 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 export async function GET(context: APIContext) {
-  const blog = (await getCollection('blog', ({ data }) => !data.draft))
+  const blogEntries = await getCollection('blog', (entry: CollectionEntry<'blog'>) => !entry.data.draft);
+  const blog = blogEntries
     .slice()
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   return rss({
     title: 'Blake Oxford - Blog',

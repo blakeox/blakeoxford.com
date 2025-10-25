@@ -106,7 +106,7 @@ function getMarkdownFiles(dir, collection) {
  * Generate embedding text for content
  */
 function generateEmbeddingText(item) {
-  const { frontmatter, content, collection, slug } = item;
+  const { frontmatter, content } = item;
   
   // Title with extra weight (repeat 2x)
   const titleText = frontmatter.title ? `${frontmatter.title}. ${frontmatter.title}.` : '';

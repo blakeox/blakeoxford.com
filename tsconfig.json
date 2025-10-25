@@ -18,6 +18,7 @@
   },
   "include": [
     "src",
+    "scripts",
     ".astro/types.d.ts",
     ".astro/content.d.ts"
   ],

@@ -1,9 +1,15 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
+type SitemapEntry = {
+  loc: string;
+  changefreq: string;
+  priority: number;
+};
+
 export async function GET() {
   const site = 'https://blakeoxford.com';
-  const staticUrls = [
+  const staticUrls: SitemapEntry[] = [
     { loc: '/', changefreq: 'weekly', priority: 1.0 },
     { loc: '/about/', changefreq: 'monthly', priority: 0.8 },
     { loc: '/blog/', changefreq: 'weekly', priority: 0.9 },
@@ -12,7 +18,7 @@ export async function GET() {
   ];
 
   // Individual project pages (since they're now Astro pages, not MDX)
-  const projectPages = [
+  const projectPages: SitemapEntry[] = [
     { loc: '/projects/adp-workforcenow/', changefreq: 'monthly', priority: 0.6 },
     { loc: '/projects/advancedmd-implementation/', changefreq: 'monthly', priority: 0.6 },
     { loc: '/projects/bank-projections-modeling/', changefreq: 'monthly', priority: 0.6 },
@@ -23,23 +29,23 @@ export async function GET() {
   ];
 
   // Individual blog post pages from content collection
-  const blogEntries = await getCollection('blog', ({ data }) => !data.draft);
-  const blogPages = blogEntries.map((post: CollectionEntry<'blog'>) => ({
+  const blogEntries = await getCollection('blog', (entry: CollectionEntry<'blog'>) => !entry.data.draft);
+  const blogPages: SitemapEntry[] = blogEntries.map((post: CollectionEntry<'blog'>) => ({
     loc: `/blog/${post.slug}/`,
     changefreq: 'monthly',
     priority: 0.7,
   }));
 
   const urls = [
-    ...staticUrls.map((u) => ({
+  ...staticUrls.map((u: SitemapEntry) => ({
       ...u,
       loc: site + u.loc,
     })),
-    ...projectPages.map((u) => ({
+  ...projectPages.map((u: SitemapEntry) => ({
       ...u,
       loc: site + u.loc,
     })),
-    ...blogPages.map((u) => ({
+  ...blogPages.map((u: SitemapEntry) => ({
       ...u,
       loc: site + u.loc,
     })),
