@@ -220,3 +220,23 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
     cleanupFns.forEach((fn) => fn());
   };
 }
+
+export function initModernNavBar(): CleanupFn | undefined {
+  const navBar = document.getElementById('navbar');
+  if (!navBar) {
+    return undefined;
+  }
+
+  const mobileMenu = document.getElementById('nav-mobile-links');
+  const burgerButton = document.getElementById('nav-toggle') as HTMLButtonElement | null;
+  const closeButton = document.getElementById('close-mobile-menu') as HTMLButtonElement | null;
+  const themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement | null;
+
+  return registerModernNavBar({
+    navBar,
+    mobileMenu,
+    burgerButton,
+    closeButton,
+    themeToggle,
+  });
+}

@@ -276,7 +276,6 @@ const allTags = getAllTags();
     const searchTerm = searchInput?.value.toLowerCase() || '';
     
     componentCards.forEach((card) => {
-      const name = card.getAttribute('data-component-name') || '';
       const tags = card.getAttribute('data-component-tags') || '';
       const text = card.textContent?.toLowerCase() || '';
       
