@@ -423,10 +423,10 @@ class MotionAccessibility implements MotionAccessibilityController {
   }
 
   private syncToggleStates(): void {
-    this.toggles.forEach((handler, toggle) => {
+    for (const toggle of this.toggles.keys()) {
       toggle.checked = !this.reduced;
       toggle.setAttribute('data-motion-state', this.reduced ? 'reduced' : 'allowed');
-    });
+    }
   }
 
   private persistPreference(): void {

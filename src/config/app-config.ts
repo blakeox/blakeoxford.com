@@ -40,11 +40,28 @@ const SearchConfigSchema = z.object({
   keys: z.array(z.string()).default(['title', 'content', 'tags']),
 });
 
+const AnalyticsProviderSchema = z.enum(['gtag', 'plausible', 'fathom', 'clarity']);
+
+const AnalyticsConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  debug: z.boolean().default(false),
+  enableTracking: z.boolean().default(true),
+  respectDNT: z.boolean().default(true),
+  trackPageViews: z.boolean().default(true),
+  trackClicks: z.boolean().default(true),
+  trackScroll: z.boolean().default(false),
+  trackErrors: z.boolean().default(true),
+  trackPerformance: z.boolean().default(false),
+  providers: z.array(AnalyticsProviderSchema).default([]),
+  excludeSelectors: z.array(z.string()).default([]),
+});
+
 // Main application configuration schema
 const AppConfigSchema = z.object({
   accessibility: AccessibilityConfigSchema,
   dropdown: DropdownConfigSchema,
   search: SearchConfigSchema,
+  analytics: AnalyticsConfigSchema,
   
   // Global settings
   environment: z.enum(['development', 'staging', 'production']).default('development'),
@@ -61,6 +78,7 @@ export type AppConfig = z.infer<typeof AppConfigSchema>;
 export type AccessibilityConfig = z.infer<typeof AccessibilityConfigSchema>;
 export type DropdownConfig = z.infer<typeof DropdownConfigSchema>;
 export type SearchConfig = z.infer<typeof SearchConfigSchema>;
+export type AnalyticsConfig = z.infer<typeof AnalyticsConfigSchema>;
 
 // Configuration validation
 export const validateConfig = (config: unknown): AppConfig => {
@@ -196,6 +214,10 @@ export class ConfigManager {
   
   getSearchConfig(): SearchConfig {
     return this.config.search;
+  }
+
+  getAnalyticsConfig(): AnalyticsConfig {
+    return this.config.analytics;
   }
 
   private findChangedKeys(oldConfig: AppConfig, newConfig: AppConfig): string[] {

@@ -114,13 +114,6 @@ export class MonitoringSystem {
   }
 
   /**
-   * Get default sampling rate based on environment and monitor type
-   */
-  private getDefaultSampling(type: 'security' | 'performance'): number {
-    return MonitoringSystem.getDefaultSamplingStatic(this.config.environment, type);
-  }
-  
-  /**
    * Initialize all monitoring systems
    */
   async initialize(): Promise<void> {
