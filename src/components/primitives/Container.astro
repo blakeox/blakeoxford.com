@@ -23,13 +23,15 @@ export interface Props {
   class?: string;
 }
 
+const props = Astro.props as Props;
+
 const {
   size = 'lg',
   padding = true,
   center = false,
   as: Element = 'div',
   class: className = '',
-} = Astro.props;
+} = props;
 
 // Size styles (matching common patterns in codebase)
 const sizeStyles = {
@@ -38,12 +40,14 @@ const sizeStyles = {
   lg: 'max-w-6xl',
   xl: 'max-w-7xl',
   full: 'max-w-none',
-};
+} as const;
+
+const sizeKey = size ?? 'lg';
 
 const classes = [
   center && 'mx-auto',
-  size !== 'full' && 'w-full',
-  sizeStyles[size],
+  sizeKey !== 'full' && 'w-full',
+  sizeStyles[sizeKey],
   padding && 'px-4 sm:px-6 lg:px-8',
   className,
 ].filter(Boolean).join(' ');

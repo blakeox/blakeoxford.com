@@ -45,7 +45,7 @@ const {
   class: className = '',
   fullHeight = false,
   ...rest
-} = Astro.props;
+} = Astro.props as Props;
 
 // Enhanced interactive variant with stronger hover effects
 const interactiveClasses = variant === 'interactive'

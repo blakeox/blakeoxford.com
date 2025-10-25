@@ -19,7 +19,9 @@
  * </Grid>
  */
 
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'div'>, 'class'> {
   /** Number of columns (1-4) or 'auto' for auto-fit */
   cols?: '1' | '2' | '3' | '4' | 'auto';
   /** Minimum column width for auto-fit grids */
@@ -32,9 +34,9 @@ interface Props {
   class?: string;
   /** Align items vertically */
   alignItems?: 'start' | 'center' | 'end' | 'stretch';
-  /** ARIA role */
-  role?: string;
 }
+
+const props = Astro.props as Props;
 
 const {
   cols = '1',
@@ -45,7 +47,7 @@ const {
   alignItems = 'stretch',
   role,
   ...rest
-} = Astro.props;
+} = props;
 
 // Column configurations with responsive breakpoints
 const colsMap = {
@@ -54,7 +56,7 @@ const colsMap = {
   '3': 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3',
   '4': 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4',
   'auto': '', // Will use inline style
-};
+} as const;
 
 // Gap sizes matching Stack primitive
 const gapMap = {
@@ -65,7 +67,7 @@ const gapMap = {
   xl: 'gap-8',     // 2rem
   '2xl': 'gap-12', // 3rem
   '3xl': 'gap-16', // 4rem
-};
+} as const;
 
 // Align items options
 const alignMap = {
@@ -73,11 +75,15 @@ const alignMap = {
   center: 'items-center',
   end: 'items-end',
   stretch: 'items-stretch',
-};
+} as const;
 
-const gridClasses = cols === 'auto' ? 'grid' : `grid ${colsMap[cols]}`;
-const gapClasses = gapMap[gap];
-const alignClasses = alignMap[alignItems];
+const colsKey = cols ?? '1';
+const alignKey = alignItems ?? 'stretch';
+const gapKey = gap ?? 'md';
+
+const gridClasses = colsKey === 'auto' ? 'grid' : `grid ${colsMap[colsKey]}`;
+const gapClasses = gapMap[gapKey];
+const alignClasses = alignMap[alignKey];
 
 const classes = `${gridClasses} ${gapClasses} ${alignClasses} ${className}`.trim();
 

@@ -20,7 +20,7 @@ export interface Props extends HTMLAttributes<'section'> {
   /** Container size (false for full width) */
   container?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | false;
   /** Background color */
-  background?: 'default' | 'surface' | 'gradient';
+  background?: 'default' | 'surface' | 'gradient' | 'glass';
   /** HTML element type */
   as?: 'section' | 'div' | 'article' | 'aside' | 'main';
   /** Additional CSS classes */
@@ -46,14 +46,15 @@ const paddingStyles = {
   md: 'py-12 sm:py-16',
   lg: 'py-16 sm:py-20',
   xl: 'py-20 sm:py-24 lg:py-28',
-};
+} as const;
 
 // Background styles
 const backgroundStyles = {
   default: '',
   surface: 'bg-surface/50 dark:bg-surface-dark/50',
   gradient: 'bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark',
-};
+  glass: 'border border-[color:var(--border)]/40 bg-[color:var(--glass-surface-bg)]/85 shadow-[0_18px_45px_-18px_rgba(15,23,42,0.45)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/75',
+} as const;
 
 const classes = [
   paddingStyles[padding],

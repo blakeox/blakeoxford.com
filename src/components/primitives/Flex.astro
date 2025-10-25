@@ -18,7 +18,9 @@
  * </Flex>
  */
 
-interface Props {
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'div'>, 'class'> {
   /** Flex direction */
   direction?: 'row' | 'col' | 'row-reverse' | 'col-reverse';
   /** Responsive breakpoint where direction changes from col to row */
@@ -35,9 +37,9 @@ interface Props {
   as?: 'div' | 'ul' | 'ol' | 'nav' | 'section' | 'header' | 'footer';
   /** Additional CSS classes */
   class?: string;
-  /** ARIA role */
-  role?: string;
 }
+
+const props = Astro.props as Props;
 
 const {
   direction = 'row',
@@ -50,7 +52,7 @@ const {
   class: className = '',
   role,
   ...rest
-} = Astro.props;
+} = props;
 
 // Direction classes with responsive support
 const directionMap = {
@@ -58,7 +60,7 @@ const directionMap = {
   col: 'flex-col',
   'row-reverse': 'flex-row-reverse',
   'col-reverse': 'flex-col-reverse',
-};
+} as const;
 
 // Responsive direction: col → row at breakpoint
 const responsiveMap = {
@@ -66,9 +68,9 @@ const responsiveMap = {
   md: 'flex-col md:flex-row',
   lg: 'flex-col lg:flex-row',
   xl: 'flex-col xl:flex-row',
-};
+} as const;
 
-const directionClasses = responsive 
+const directionClasses = responsive
   ? responsiveMap[responsive]
   : directionMap[direction];
 
@@ -81,7 +83,7 @@ const gapMap = {
   xl: 'gap-8',     // 2rem
   '2xl': 'gap-12', // 3rem
   '3xl': 'gap-16', // 4rem
-};
+} as const;
 
 // Justify content options
 const justifyMap = {
@@ -91,7 +93,7 @@ const justifyMap = {
   between: 'justify-between',
   around: 'justify-around',
   evenly: 'justify-evenly',
-};
+} as const;
 
 // Align items options
 const alignMap = {
@@ -100,11 +102,12 @@ const alignMap = {
   end: 'items-end',
   baseline: 'items-baseline',
   stretch: 'items-stretch',
-};
+} as const;
 
-const gapClasses = gapMap[gap];
-const justifyClasses = justifyMap[justify];
-const alignClasses = alignMap[align];
+const gapKey = gap ?? 'md';
+const gapClasses = gapMap[gapKey];
+const justifyClasses = justifyMap[justify ?? 'start'];
+const alignClasses = alignMap[align ?? 'stretch'];
 const wrapClasses = wrap ? 'flex-wrap' : '';
 
 const classes = `flex ${directionClasses} ${gapClasses} ${justifyClasses} ${alignClasses} ${wrapClasses} ${className}`.trim();

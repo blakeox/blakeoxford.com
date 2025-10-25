@@ -19,6 +19,7 @@
  */
 
 import Flex from '../primitives/Flex.astro';
+import type { HTMLAttributes } from 'astro/types';
 
 interface Props {
   /** Horizontal alignment of buttons */
@@ -32,7 +33,7 @@ interface Props {
   /** Additional CSS classes */
   class?: string;
   /** ARIA role */
-  role?: string;
+  role?: HTMLAttributes<'div'>['role'];
 }
 
 const {

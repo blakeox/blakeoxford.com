@@ -48,6 +48,8 @@ export interface Props {
   value?: string;
 }
 
+const props = Astro.props as Props;
+
 const {
   id,
   label,
@@ -62,11 +64,13 @@ const {
   rows = 5,
   class: className = '',
   value,
-} = Astro.props;
+} = props;
 
 const fieldName = name || id;
 const isTextarea = type === 'textarea';
 const isHidden = type === 'hidden';
+
+const ariaRequired: 'true' | undefined = required ? 'true' : undefined;
 
 const inputClasses = [
   'w-full p-3 rounded-lg border-2 border-accent/30',
@@ -84,7 +88,7 @@ const commonProps = {
   autocomplete,
   minlength,
   maxlength,
-  'aria-required': required ? 'true' : undefined,
+  'aria-required': ariaRequired,
   'aria-describedby': [
     helpText && `${id}-help`,
     `${id}-error`,

@@ -25,11 +25,3 @@ export { default as FormField } from './FormField.astro';
 export { default as Grid } from './Grid.astro';
 export { default as Section } from './Section.astro';
 export { default as Stack } from './Stack.astro';
-
-// Form Components
-export { default as FormField } from './FormField.astro';
-
-// Layout Components
-export { default as Container } from './Container.astro';
-export { default as Stack } from './Stack.astro';
-export { default as Section } from './Section.astro';
