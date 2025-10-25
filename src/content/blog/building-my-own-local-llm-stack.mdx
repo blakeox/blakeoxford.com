@@ -1,0 +1,115 @@
+---
+title: "Building My Own Local LLM Stack (Because Sometimes You Shouldn't Ask ChatGPT About a Rash)"
+description: "How I built a secure, self-healing local AI stack using Ollama, Docker, and Open WebUI on a Mac Mini — a private, practical ChatGPT alternative."
+pubDate: 2025-10-25
+author: "Blake Oxford"
+tags: ["local LLM", "Ollama", "Open WebUI", "DevOps", "privacy", "AI infrastructure", "macOS"]
+draft: false
+---
+
+## Building My Own Local LLM Stack
+
+*Because sometimes you should not ask ChatGPT about a rash.*
+
+At some point, every engineer realizes that feeding private data into public AI models is not ideal — especially when that data might include a strange rash, a client contract, or a confidential project plan.
+
+That moment hit me after one too many "maybe I should not paste this" hesitations. So I decided to go fully local: a self-contained, self-healing large language model stack running on my Mac Mini — private, fast, and entirely under my control.
+
+It turned out to be part systems-engineering exercise, part weekend therapy session.
+
+---
+
+## Architecture Overview
+
+The goal: ChatGPT power, zero cloud dependency.
+
+**Stack Overview:**
+
+- Mac Mini (M1) as the local AI server
+- Ollama for macOS-friendly LLM runtime
+- Open WebUI (Docker) for modern interface, model switching, and retrieval tools
+- Cloudflare Tunnel for encrypted remote access without opening ports
+- LaunchDaemons plus watchdog scripts for automatic startup and self-repair
+- SSH hardening with key-only auth, isolated users, and no forwarding
+
+I wanted something that behaved like a production-grade microservice stack: services start automatically, run isolated from each other, and recover from failure without human intervention. This was not just about privacy — it was about designing reliability without the cloud.
+
+---
+
+## Building It Out
+
+### 1. Making Ollama a Managed Service
+
+Ollama originally ran as a background process under my admin account. I refactored it into a LaunchDaemon under a non-admin user ("ollama"), isolating model execution and file access. Now, even if something goes sideways, it stays contained and restarts automatically.
+
+### 2. Hardening SSH
+
+Default macOS SSH is friendly — too friendly. I locked it down to key-based authentication, disabled root, and whitelisted one user. It is still convenient, but hardened to a professional baseline.
+
+### 3. Running WebUI via Docker
+
+Open WebUI runs in a container bound only to localhost for safety and persistence:
+
+> Docker keeps the interface isolated, data stored locally, and restarts handled automatically with `--restart unless-stopped`.
+
+That gives me a private interface, vector memory persistence, and data portability between machines.
+
+### 4. Adding Self-Healing Automation
+
+I wrote a lightweight watchdog script that checks container health and restarts it if it ever stops responding. Combined with a cron job, it acts as an automatic failover loop — quiet reliability with no manual babysitting.
+
+### 5. Seamless Boot Recovery
+
+LaunchDaemons handle startup sequencing — Docker, then Ollama, then WebUI. If the power cuts or macOS updates, the entire system rebuilds itself without input.
+
+---
+
+## What It Can Do
+
+- Run large language models fully offline — private and fast
+- Swap between models (Llama 3, Mistral, Phi 3, and more)
+- Provide secure remote access through a private web interface
+- Extend with retrieval, embeddings, and custom functions
+- Maintain automatic backups and vector database persistence
+- Integrate with local scripts for data or code analysis
+
+Full disclosure: the output quality is not always on par with ChatGPT or Claude, especially on an M1 chip. Local models trade depth for independence — they think a little slower and dream a little smaller. But everyday tasks like drafting text, summarizing files, querying data, or brainstorming code run beautifully offline.
+
+With a clean, browser-based interface on my laptop or phone, it is easy to use and completely private. That is the sweet spot for me: convenient, capable, and under my own roof.
+
+---
+
+## Engineering Takeaways
+
+- Isolation matters — running Ollama as a dedicated non-admin user limits exposure.
+- Health checks beat blind uptime — a fast restart is better than a hung container.
+- Automation outlasts vigilance — self-healing scripts outperform manual babysitting.
+- Security starts at scope — localhost bindings, least-privilege users, and no public ports do more than any firewall toggle.
+
+And of course: do not ask your LLM about that rash.
+
+---
+
+## Professional Reflection
+
+This project brought together infrastructure automation (LaunchDaemons and Docker orchestration), security engineering (sandboxing, SSH hardening, local-only network scopes), AI deployment (Ollama model management and WebUI integration), and resilience design (self-healing watchdogs and automated recovery). It is hands-on DevOps meets applied AI — built to demonstrate privacy, reliability, and craftsmanship.
+
+---
+
+## What Is Next
+
+- Add persistent vector memory with Chroma DB and embeddings
+- Build agent workflows to automate system tasks
+- Package this as a reusable "Local LLM Stack" template
+- Add PWA support with an app icon for macOS and iPhone shortcuts
+
+If your home lab can talk back intelligently, it should look good doing it.
+
+---
+
+## Final Thought
+
+It is not meant to outthink ChatGPT — it is meant to outlast it. Local AI does not need a subscription, a login, or a cloud outage workaround. It is simply yours — always on, always available, and smart enough for nearly everything that matters.
+
+> "Privacy, practicality, and automation — all under one roof."
+> — Blake Oxford
