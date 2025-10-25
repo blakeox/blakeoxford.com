@@ -9,8 +9,9 @@ describe('projects/index.astro', () => {
     fileContent = readFileSync(filePath, 'utf-8');
   });
 
-  it('should use modern container spacing utilities', () => {
-    expect(fileContent).toContain('max-w-6xl');
+  it('should use tokenized container sizing', () => {
+    expect(fileContent).toContain('container="lg"');
+    expect(fileContent).toContain('container="md"');
   });
 
   it('should contain semantic HTML structure with proper roles', () => {
@@ -18,23 +19,28 @@ describe('projects/index.astro', () => {
     expect(fileContent).toContain('aria-labelledby');
   });
 
-  it('should use ProjectDetailSection component for better composition', () => {
-    expect(fileContent).toContain('ProjectDetailSection');
+  it('should render projects via ProjectCard grid', () => {
+    expect(fileContent).toContain('<Grid cols="3" gap="lg"');
+    expect(fileContent).toContain('<ProjectCard project={project} />');
   });
 
   it('should contain proper responsive breakpoints and spacing', () => {
-    expect(fileContent).toContain('sm:');
-    expect(fileContent).toContain('md:');
-    expect(fileContent).toContain('lg:');
+    expect(fileContent).toContain('sm:text-5xl');
+    expect(fileContent).toContain('md:text-6xl');
+    expect(fileContent).toContain('sm:text-base');
   });
 
   it('should have enhanced accessibility features', () => {
     expect(fileContent).toContain('role="list"');
     expect(fileContent).toContain('aria-label');
-    expect(fileContent).toContain('focus-visible:');
+    expect(fileContent).toContain('aria-labelledby="results-heading"');
   });
 
   it('should not use deprecated getCollection pattern', () => {
     expect(fileContent).not.toContain('getCollection(\'projects\')');
+  });
+
+  it('should source data from content helper', () => {
+    expect(fileContent).toContain('await getProjectsSorted()');
   });
 });

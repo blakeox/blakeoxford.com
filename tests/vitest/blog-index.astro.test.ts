@@ -18,8 +18,13 @@ describe('Blog Index Page', () => {
     expect(fileContent).toContain('BlogPostRow');
   });
 
-  it('should use manual blog post definitions', () => {
-    expect(fileContent).toContain('Manual blog post definitions');
-    expect(fileContent).toContain('const posts = [');
+  it('should load posts from content collections', () => {
+  expect(fileContent).toContain('await getCollection(\'blog\',');
+    expect(fileContent).toContain('const sortedPosts = posts');
+  });
+
+  it('should render structured blog layout regions', () => {
+    expect(fileContent).toContain('aria-labelledby="blog-posts-heading"');
+    expect(fileContent).toContain('<Section padding="lg"');
   });
 });
