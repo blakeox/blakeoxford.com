@@ -1,5 +1,4 @@
-import React from 'react';
-import type { ChatMessage } from '../../lib/chat-types';
+import type { ChatMessage, MutableRef } from '../../lib/chat-types';
 import { cleanAssistantResponse } from '../../lib/string-utils';
 import { decodeHtmlEntities, decodeMimeEncodedWords, formatPublishedDate } from '../../lib/string-utils';
 import { getCitationHealthIndicator, getConfidenceIndicator } from '../../lib/quality-utils';
@@ -23,8 +22,8 @@ interface MessageBubbleProps {
 	setInputValue: (value: string) => void;
 	sendQuery: (query: string) => Promise<void>;
 	siteHostname: string;
-	sourceRefs: React.MutableRefObject<HTMLAnchorElement[]>;
-	messagesRef: React.MutableRefObject<ChatMessage[]>;
+	sourceRefs: MutableRef<HTMLAnchorElement[]>;
+	messagesRef: MutableRef<ChatMessage[]>;
 	handleFeedback: (messageId: string, feedbackType: 'positive' | 'negative') => void;
 	copiedMessageId: string | null;
 	copiedShareUrl: string | null;

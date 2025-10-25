@@ -23,7 +23,7 @@ export function decodeHtmlEntities(value: string): string {
 export function decodeMimeEncodedWords(value: string): string {
 	if (!value) return value;
 
-	return value.replace(/=\?([^?]+)\?([BQ])\?([^?]+)\?=/gi, (match, charset, encoding, text) => {
+	return value.replace(/=\?([^?]+)\?([BQ])\?([^?]+)\?=/gi, (match, _charset, encoding, text) => {
 		try {
 			if (encoding.toUpperCase() === 'Q') {
 				text = text.replace(/_/g, ' ').replace(/=([0-9A-F]{2})/gi, (_m: string, hex: string) =>

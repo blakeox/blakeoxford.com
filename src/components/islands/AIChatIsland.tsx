@@ -1,60 +1,25 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect } from 'react';
 
-import type { AIChatSource } from '../../lib/ai-search';
-import type {
-	ChatMessage,
-	ChatState,
-	LoadingPhase,
-	SearchFallback,
-} from '../../lib/chat-types';
-import { useVoiceRecognition } from '../../lib/hooks/useVoiceRecognition';
-import { useConversationWebSocket } from '../../lib/hooks/useConversationWebSocket';
-import { useUIState } from '../../lib/hooks/useUIState';
-import { useChatStorage } from '../../lib/hooks/useChatStorage';
-import { useTouchGestures } from '../../lib/hooks/useTouchGestures';
-import { useKeyboardShortcuts } from '../../lib/hooks/useKeyboardShortcuts';
-import { useScrollManagement } from '../../lib/hooks/useScrollManagement';
-import { useConversationAnalytics } from '../../lib/hooks/useConversationAnalytics';
-import { useCopyFeedback } from '../../lib/hooks/useCopyFeedback';
-import { useChatLifecycle } from '../../lib/hooks/useChatLifecycle';
-import { useMessageActions } from '../../lib/hooks/useMessageActions';
-import { useQueryManagement } from '../../lib/hooks/useQueryManagement';
-import { useMessageProcessing } from '../../lib/hooks/useMessageProcessing';
-import { useInputHandlers } from '../../lib/hooks/useInputHandlers';
-import { useChatEffects } from '../../lib/hooks/useChatEffects';
-import { useComputedValues } from '../../lib/hooks/useComputedValues';
-import { INITIAL_ASSISTANT_MESSAGE } from '../../lib/chat-types';
-import { cleanSnippet } from '../../lib/chat-helpers';
-import {
-	buildHistoryForRequest,
-	generateContextualCTAs,
-} from '../../lib/message-processing';
-import {
-	getRelevanceExplanation,
-} from '../../lib/response-handlers';
 import { autoragEvents } from '../../lib/analytics';
 import {
 	CONTEXTUAL_CTAS,
 	GUIDED_PROMPTS,
-	PREFERENCES_STORAGE_KEY,
 	QUICK_ACTIONS,
 } from '../../lib/chat-constants';
-import {
-	getBooleanPreference,
-} from '../../lib/storage-utils';
+import { cleanSnippet } from '../../lib/chat-helpers';
 import {
 	calculateConversationAnalytics as calculateAnalytics,
 } from '../../lib/conversation-utils';
-import {
-	getCitationHealthIndicator,
-	getConfidenceIndicator,
-} from '../../lib/quality-utils';
+import { useAIChatController } from '../../lib/hooks/useAIChatController';
+import { generateContextualCTAs } from '../../lib/message-processing';
+import { getRelevanceExplanation } from '../../lib/response-handlers';
 import {
 	cleanAssistantResponse,
 	decodeHtmlEntities,
 	decodeMimeEncodedWords,
 	formatPublishedDate,
 } from '../../lib/string-utils';
+import { getCitationHealthIndicator, getConfidenceIndicator } from '../../lib/quality-utils';
 
 
 
@@ -78,67 +43,40 @@ import {
 
 
 export default function AIChatIsland() {
-	const [isOpen, setIsOpen] = useState(false);
-	const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_ASSISTANT_MESSAGE]);
-	const [inputValue, setInputValue] = useState('');
-	const [chatState, setChatState] = useState<ChatState>('idle');
-	const [loadingPhase, setLoadingPhase] = useState<LoadingPhase>(null);
-	const [error, setError] = useState<string | null>(null);
-	const [useMemory, setUseMemory] = useState<boolean>(() =>
-		getBooleanPreference(PREFERENCES_STORAGE_KEY, 'useMemory', true)
-	);
-	const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
-	const [sessionStartTime] = useState<number>(Date.now()); // Track session start
-	const [fallbackResults, setFallbackResults] = useState<SearchFallback[]>([]);
-	const [retryCount, setRetryCount] = useState(0);
-	const [lastFailedQuery, setLastFailedQuery] = useState<string>('');
-	const siteHostname = useMemo(() => {
-		if (typeof window !== 'undefined') {
-			return window.location.hostname;
-		}
-		return 'blakeoxford.com';
-	}, []);
-
-	const panelRef = useRef<HTMLDivElement | null>(null);
-	const inputRef = useRef<HTMLTextAreaElement | null>(null);
-	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-	const launcherRef = useRef<HTMLButtonElement | null>(null);
-	const lastFocusedElement = useRef<HTMLElement | null>(null);
-	const lastQueryRef = useRef<string | null>(null);
-	const messagesRef = useRef(messages);
-	const activeRequestRef = useRef<AbortController | null>(null);
-	const typingTimeoutRef = useRef<number | null>(null);
-
-	// Voice recognition hook with real-time transcription
-	const { voiceSupported, isListening, interimTranscript, toggleListening } = useVoiceRecognition({
-		onTranscript: (transcript) => {
-			setInputValue((prev) => {
-				const existing = prev.trim();
-				const combined = existing ? `${existing} ${transcript}` : transcript;
-				return combined.trim();
-			});
-		},
-		language: 'en-US',
-		continuous: false,
-		interimResults: true,
-		maxAlternatives: 1,
-	});
-
-	// WebSocket hook for real-time conversation features
-	const { wsConnected, activeUsers, isOtherUserTyping, wsRef } = useConversationWebSocket({
-		conversationId: 'default',
-		userId: 'anonymous',
-		isOpen,
-		connectDelay: 1000,
-	});
-
-	// UI state management hook
 	const {
+		isOpen,
+		messages,
+		inputValue,
+		setInputValue,
+		chatState,
+		loadingPhase,
+		error,
+		setError,
+		useMemory,
+		streamingMessageId,
+		sessionStartTime,
+		fallbackResults,
+		retryCount,
+		setRetryCount,
+		lastFailedQuery,
+		siteHostname,
+		panelRef,
+		inputRef,
+		scrollContainerRef,
+		launcherRef,
+		messagesRef,
+		typingTimeoutRef,
+		voiceSupported,
+		isListening,
+		interimTranscript,
+		wsConnected,
+		activeUsers,
+		isOtherUserTyping,
+		wsRef,
 		showDigest,
 		showAnalytics,
 		showAdvancedControls,
 		showFallbackSuggestions,
-		composerFocused,
 		showScrollToLatest,
 		expandedSources,
 		expandedIndividualSources,
@@ -147,174 +85,63 @@ export default function AIChatIsland() {
 		toggleAdvancedControls,
 		setShowFallbackSuggestions,
 		setComposerFocused,
-		setShowScrollToLatest,
 		toggleExpandedSource,
 		toggleIndividualSource,
-		setExpandedSources,
-		setExpandedIndividualSources,
-	} = useUIState();
-
-	// Chat storage hook for conversation persistence
-	useChatStorage({
-		messages,
-		useMemory,
-		onMessagesRestored: setMessages,
-		maxRestoreMessages: 30,
-	});
-
-	// Chat lifecycle hook for open/close/focus management
-	const { openChat, closeChat, focusInput, dispatchState } = useChatLifecycle({
-		isOpen,
-		setIsOpen,
-		setError,
-		setChatState,
-		isListening,
-		toggleListening,
-		inputRef,
-		lastFocusedElementRef: lastFocusedElement,
-	});
-
-	// Touch gestures hook for swipe-to-close
-	const { touchStartY, touchCurrentY, handleTouchStart, handleTouchMove, handleTouchEnd } = useTouchGestures({
-		onSwipeDown: closeChat,
-		swipeThreshold: 100,
-		enabled: isOpen,
-	});
-
-	// Chat effects hook for lifecycle management and computed values
-	const { canRetry, lastQueryValue, sourceRefs } = useChatEffects({
-		isOpen,
-		messages,
-		fallbackResults,
-		chatState,
-		focusInput,
-		dispatchState,
-		setShowFallbackSuggestions,
-		launcherRef,
-		messagesRef,
-		activeRequestRef,
-		lastQueryRef,
-	});
-
-	// Keyboard shortcuts hook for all keyboard interactions
-	useKeyboardShortcuts({
-		enabled: isOpen,
-		onOpen: openChat,
-		onClose: closeChat,
-		onToggle: () => (isOpen ? closeChat() : openChat()),
-		panelRef,
+		openChat,
+		closeChat,
+		touchStartY,
+		touchCurrentY,
+		handleTouchStart,
+		handleTouchMove,
+		handleTouchEnd,
+		canRetry,
+		lastQueryValue,
 		sourceRefs,
-	});
-
-	// Scroll management hook for auto-scroll and scroll-to-latest
-	const { scrollToLatest } = useScrollManagement({
-		containerRef: scrollContainerRef,
-		enabled: isOpen,
-		scrollTrigger: messages,
-		showScrollButton: showScrollToLatest,
-		onScrollButtonChange: setShowScrollToLatest,
-		scrollThreshold: 48,
-	});
-
-	// Conversation analytics hook for derived state and metrics
-	const {
+		scrollToLatest,
 		recentQueries,
 		conversationDigest,
 		feedbackAnalytics,
 		guidedPromptVisible,
-		composerHasValue,
 		floatingLabelActive,
 		canStartNewChat,
-	} = useConversationAnalytics({
-		messages,
-		interimTranscript,
-		inputValue,
-		composerFocused,
-	});
-
-	// Copy feedback hook for clipboard operations with visual feedback
-	const { copiedMessageId, copiedShareUrl, copyWithFeedback } = useCopyFeedback({
-		resetDelay: 2000,
-	});
-
-	// Message processing hook for message state mutations
-	const {
-		updateFallbackSuggestions,
-		appendAssistantChunk,
-		finalizeAssistantMessage,
-		assignAssistantSources,
+		copiedMessageId,
+		copiedShareUrl,
+		copyWithFeedback,
 		clearConversation,
 		startNewChat,
-	} = useMessageProcessing({
-		setMessages,
-		setError,
-		setStreamingMessageId,
-		setFallbackResults,
-		setInputValue,
-		messagesRef,
-		lastQueryRef,
-		showDigest,
-		showAnalytics,
-		toggleDigest,
-		toggleAnalytics,
-		setShowFallbackSuggestions,
-		setExpandedSources,
-		setComposerFocused,
-		setShowScrollToLatest,
-		focusInput,
-	});
+		handleFeedback,
+		handleCopyMessage,
+		handleOpenPrimarySource,
+		handleExportConversation,
+		toggleMemory,
+		toggleVoiceInput,
+		handleTextareaKeyDown,
+		sendQuery,
+		handleSubmit,
+		handleReplayQuery,
+		handleGuidedPrompt,
+		visibleFallbackResults,
+		hasMoreFallbackResults,
+	} = useAIChatController();
 
-	// Message actions hook for feedback, copy, export, and source navigation
-	const { handleFeedback, handleCopyMessage, handleOpenPrimarySource, handleExportConversation } = useMessageActions({
-		messages,
-		setMessages,
-		lastQueryRef,
-		messagesRef,
-		copyWithFeedback,
-	});
+		const isDragging = touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY;
+		const dragOffset = isDragging ? Math.min(touchCurrentY - touchStartY, 200) : 0;
+		const dragOpacity = isDragging ? Math.max(0.5, 1 - (touchCurrentY - touchStartY) / 400) : 1;
 
-	// Input handlers hook for memory toggle, voice input, and keyboard events
-	const { toggleMemory, toggleVoiceInput, handleTextareaKeyDown } = useInputHandlers({
-		chatState,
-		voiceSupported,
-		setUseMemory,
-		openChat,
-		toggleListening,
-	});
+		useEffect(() => {
+			const panelElement = panelRef.current;
+			if (!panelElement) return;
 
-	// Query management hook for AI query lifecycle
-	const { sendQuery, handleSubmit, handleReplayQuery, handleGuidedPrompt } = useQueryManagement({
-		inputValue,
-		setInputValue,
-		openChat,
-		focusInput,
-		chatState,
-		setChatState,
-		setLoadingPhase,
-		setError,
-		setMessages,
-		setStreamingMessageId,
-		setFallbackResults,
-		setRetryCount,
-		setLastFailedQuery,
-		retryCount,
-		useMemory,
-		lastQueryRef,
-		messagesRef,
-		activeRequestRef,
-		scrollContainerRef,
-		appendAssistantChunk,
-		assignAssistantSources,
-		finalizeAssistantMessage,
-		buildHistoryForRequest,
-		updateFallbackSuggestions,
-	});
-
-	// Computed values hook for derived state
-	const { visibleFallbackResults, hasMoreFallbackResults } = useComputedValues({
-		showFallbackSuggestions,
-		fallbackResults,
-	});
+			if (isDragging) {
+				panelElement.style.transform = `translateY(${dragOffset}px)`;
+				panelElement.style.opacity = dragOpacity.toString();
+				panelElement.dataset.dragging = 'true';
+			} else {
+				panelElement.style.transform = '';
+				panelElement.style.opacity = '';
+				panelElement.dataset.dragging = 'false';
+			}
+		}, [dragOffset, dragOpacity, isDragging, isOpen, panelRef]);
 
 	return (
 		<div
@@ -348,14 +175,6 @@ export default function AIChatIsland() {
 				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 shadow-[0_18px_45px_-18px_rgba(15,23,42,0.65)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/80 transition-transform duration-200 ease-out sm:w-[min(85vw,28rem)] ${
 					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
 				}`}
-				style={{
-					transform: touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY
-						? `translateY(${Math.min(touchCurrentY - touchStartY, 200)}px)`
-						: isOpen ? 'translateY(0)' : 'translateY(1rem)',
-					opacity: touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY
-						? Math.max(0.5, 1 - (touchCurrentY - touchStartY) / 400)
-						: isOpen ? 1 : 0
-				}}
 				data-ai-chat-panel
 				data-ai-visible={isOpen ? 'true' : 'false'}
 				role="dialog"

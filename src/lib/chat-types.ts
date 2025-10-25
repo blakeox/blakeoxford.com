@@ -5,6 +5,9 @@
 // Re-export from conversation-utils to ensure consistency
 export type { ChatMessage } from './conversation-utils';
 
+/** Simplified mutable ref shape to avoid deprecated React types */
+export type MutableRef<T> = { current: T };
+
 export type ChatState = 'idle' | 'loading' | 'ready';
 
 export type LoadingPhase = 'searching' | 'analyzing' | 'crafting' | null;

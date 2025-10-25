@@ -105,7 +105,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e40af" />
 
   <!-- Structured Data: Website & Person (enriched; merged safely with page-specific schemas) -->
-    <script type="application/ld+json">
+  <script is:inline type="application/ld+json">
       {JSON.stringify({
         '@context': 'https://schema.org',
         '@graph': [
@@ -138,7 +138,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
 
   <ExperimentsCookieIsland client:only="react" />
   <AccessibilityEnhancementsIsland client:only="react" />
-  <script src="/js/ai-chat-launcher.js" defer></script>
+  <script is:inline src="/js/ai-chat-launcher.js" defer></script>
   <slot name="head" />
   </head>
   <body id="top" class="min-h-screen bg-[--bg] text-[--fg] transition-colors duration-300">

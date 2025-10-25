@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import type { ChatMessage } from '../chat-types.js';
+import type { ChatMessage, MutableRef } from '../chat-types.js';
 import { decodeMimeEncodedWords, decodeHtmlEntities } from '../string-utils.js';
 import { autoragEvents } from '../analytics.js';
 
@@ -12,9 +12,9 @@ interface UseMessageActionsOptions {
 	/** Function to update messages state */
 	setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 	/** Reference to last query */
-	lastQueryRef: React.MutableRefObject<string | null>;
+	lastQueryRef: MutableRef<string | null>;
 	/** Reference to messages for feedback metadata */
-	messagesRef: React.MutableRefObject<ChatMessage[]>;
+	messagesRef: MutableRef<ChatMessage[]>;
 	/** Copy with feedback function */
 	copyWithFeedback: (content: string, id: string, type: 'message' | 'share') => Promise<boolean>;
 }

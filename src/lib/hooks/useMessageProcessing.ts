@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import type { ChatMessage, SearchFallback } from '../chat-types.js';
+import type { ChatMessage, MutableRef, SearchFallback } from '../chat-types.js';
 import type { AIChatSource } from '../ai-search.js';
 import { finalizeMessageQuality } from '../response-handlers.js';
 import { removeStorageItem } from '../storage-utils.js';
@@ -21,9 +21,9 @@ interface UseMessageProcessingOptions {
 	/** Function to update input value */
 	setInputValue: React.Dispatch<React.SetStateAction<string>>;
 	/** Reference to messages for quality calculation */
-	messagesRef: React.MutableRefObject<ChatMessage[]>;
+	messagesRef: MutableRef<ChatMessage[]>;
 	/** Reference to last query */
-	lastQueryRef: React.MutableRefObject<string | null>;
+	lastQueryRef: MutableRef<string | null>;
 	/** Whether digest is shown */
 	showDigest: boolean;
 	/** Whether analytics is shown */

@@ -1,3 +1,5 @@
+/* global WebSocketPair */
+
 /**
  * Cloudflare Durable Object: Real-time conversation state management
  * 
@@ -39,7 +41,7 @@ export class ConversationDurableObject {
 
 		// HTTP endpoints for fallback/management
 		if (url.pathname.endsWith('/state')) {
-			return this.handleGetState(request);
+			return this.handleGetState();
 		}
 
 		if (url.pathname.endsWith('/message')) {
@@ -102,7 +104,8 @@ export class ConversationDurableObject {
 			try {
 				const data = JSON.parse(event.data);
 				await this.handleWebSocketMessage(sessionId, userId, data);
-			} catch (err) {
+			} catch (error) {
+				console.warn('ConversationDO: invalid message payload', error);
 				this.sendToSession(sessionId, {
 					type: 'error',
 					error: 'Invalid message format'
@@ -223,7 +226,7 @@ export class ConversationDurableObject {
 	/**
 	 * Handle HTTP GET state (fallback)
 	 */
-	async handleGetState(request) {
+	async handleGetState() {
 		return new Response(JSON.stringify({
 			state: this.conversationState,
 			activeSessions: this.sessions.size,
@@ -349,7 +352,8 @@ export class ConversationDurableObject {
 		if (session?.socket) {
 			try {
 				session.socket.send(JSON.stringify(message));
-			} catch (err) {
+			} catch (error) {
+				console.warn('ConversationDO: failed to send message', error);
 				// Socket closed, clean up
 				this.sessions.delete(sessionId);
 			}
@@ -360,7 +364,7 @@ export class ConversationDurableObject {
 	 * Broadcast message to all sessions (optionally excluding one)
 	 */
 	broadcast(message, excludeSessionId = null) {
-		for (const [sessionId, session] of this.sessions.entries()) {
+		for (const sessionId of this.sessions.keys()) {
 			if (sessionId !== excludeSessionId) {
 				this.sendToSession(sessionId, message);
 			}

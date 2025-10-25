@@ -75,7 +75,9 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions): void
 		if (!onOpen) return;
 
 		const handleShortcut = (event: KeyboardEvent) => {
-			const isMac = navigator.platform.toLowerCase().includes('mac');
+			const uaData = (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData;
+			const platformSource = uaData?.platform ?? navigator.userAgent;
+			const isMac = /mac/i.test(platformSource);
 			const metaPressed = isMac ? event.metaKey : event.ctrlKey;
 			const isSlash = event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey;
 

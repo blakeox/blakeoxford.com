@@ -947,7 +947,8 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
         
         // Forward request to Durable Object
         return stub.fetch(request);
-      } catch (error) {
+        } catch (error) {
+        console.error('Edge Worker: conversation Durable Object unavailable', error);
         const origin = request.headers.get('origin') || '*';
         return new Response(JSON.stringify({ 
           error: 'Conversation service unavailable',

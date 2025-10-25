@@ -85,19 +85,23 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 		if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
 			await navigator.clipboard.writeText(text);
 			return true;
-		} else {
-			// Fallback for older browsers
-			const textarea = document.createElement('textarea');
-			textarea.value = text;
-			textarea.setAttribute('readonly', 'true');
-			textarea.style.position = 'absolute';
-			textarea.style.left = '-9999px';
-			document.body.appendChild(textarea);
-			textarea.select();
-			const success = document.execCommand('copy');
-			document.body.removeChild(textarea);
-			return success;
 		}
+
+		// Fallback: attempt to focus a hidden textarea and rely on legacy execCommand when available.
+		const textarea = document.createElement('textarea');
+		textarea.value = text;
+		textarea.setAttribute('readonly', 'true');
+		textarea.style.position = 'absolute';
+		textarea.style.left = '-9999px';
+		document.body.appendChild(textarea);
+		textarea.select();
+
+		type LegacyExecCommand = (commandId: 'copy') => boolean;
+		const execCommand = (document as Document & { execCommand?: LegacyExecCommand }).execCommand;
+		const success = execCommand?.('copy') ?? false;
+
+		document.body.removeChild(textarea);
+		return success;
 	} catch {
 		return false;
 	}

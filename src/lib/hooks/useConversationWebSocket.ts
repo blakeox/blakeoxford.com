@@ -9,6 +9,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ConversationWebSocket, type WSMessage } from '../conversation-ws';
+import type { MutableRef } from '../chat-types.js';
 
 export interface UseConversationWebSocketOptions {
 	/** Unique conversation identifier */
@@ -29,7 +30,7 @@ export interface UseConversationWebSocketReturn {
 	/** Whether another user is currently typing */
 	isOtherUserTyping: boolean;
 	/** WebSocket instance reference for direct access if needed */
-	wsRef: React.MutableRefObject<ConversationWebSocket | null>;
+	wsRef: MutableRef<ConversationWebSocket | null>;
 }
 
 /**

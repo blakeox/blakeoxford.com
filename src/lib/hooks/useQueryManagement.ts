@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import type { ChatMessage, ChatState, LoadingPhase } from '../chat-types.js';
+import type { ChatMessage, ChatState, LoadingPhase, MutableRef } from '../chat-types.js';
 import { searchWithAI } from '../ai-search.js';
 import { autoragEvents } from '../analytics.js';
 import { createId } from '../string-utils.js';
@@ -33,13 +33,13 @@ interface UseQueryManagementOptions {
 	/** Whether to use memory/history */
 	useMemory: boolean;
 	/** Reference to last query */
-	lastQueryRef: React.MutableRefObject<string | null>;
+	lastQueryRef: MutableRef<string | null>;
 	/** Reference to messages for history building */
-	messagesRef: React.MutableRefObject<ChatMessage[]>;
+	messagesRef: MutableRef<ChatMessage[]>;
 	/** Reference to active request controller */
-	activeRequestRef: React.MutableRefObject<AbortController | null>;
+	activeRequestRef: MutableRef<AbortController | null>;
 	/** Reference to scroll container */
-	scrollContainerRef: React.MutableRefObject<HTMLDivElement | null>;
+	scrollContainerRef: MutableRef<HTMLDivElement | null>;
 	/** Function to append assistant message chunk */
 	appendAssistantChunk: (assistantId: string, token: string) => void;
 	/** Function to assign sources to assistant message */

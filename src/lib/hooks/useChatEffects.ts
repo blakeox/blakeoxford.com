@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { ChatMessage, ChatState } from '../chat-types.js';
+import type { ChatMessage, ChatState, MutableRef } from '../chat-types.js';
 
 /**
  * Options for the chat effects hook
@@ -20,13 +20,13 @@ interface UseChatEffectsOptions {
 	/** Function to set fallback suggestions visibility */
 	setShowFallbackSuggestions: (show: boolean) => void;
 	/** Reference to the launcher button */
-	launcherRef: React.MutableRefObject<HTMLButtonElement | null>;
+	launcherRef: MutableRef<HTMLButtonElement | null>;
 	/** Reference to messages for history building */
-	messagesRef: React.MutableRefObject<ChatMessage[]>;
+	messagesRef: MutableRef<ChatMessage[]>;
 	/** Reference to active request controller */
-	activeRequestRef: React.MutableRefObject<AbortController | null>;
+	activeRequestRef: MutableRef<AbortController | null>;
 	/** Reference to last query */
-	lastQueryRef: React.MutableRefObject<string | null>;
+	lastQueryRef: MutableRef<string | null>;
 }
 
 /**
@@ -38,7 +38,7 @@ interface UseChatEffectsReturn {
 	/** Last query value for display */
 	lastQueryValue: string | null;
 	/** Source references array */
-	sourceRefs: React.MutableRefObject<HTMLAnchorElement[]>;
+	sourceRefs: MutableRef<HTMLAnchorElement[]>;
 }
 
 /**
@@ -134,7 +134,7 @@ export function useChatEffects(options: UseChatEffectsOptions): UseChatEffectsRe
 	}, [activeRequestRef]);
 
 	// Source refs array - reset on each render
-	const sourceRefs: React.MutableRefObject<HTMLAnchorElement[]> = { current: [] };
+	const sourceRefs: MutableRef<HTMLAnchorElement[]> = { current: [] };
 
 	// Compute retry capability
 	const lastQueryValue = lastQueryRef.current;
