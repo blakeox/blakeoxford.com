@@ -18,7 +18,7 @@ const containerClasses =
     : 'rounded-[2.75rem] bg-background/96 p-6 sm:p-9 lg:p-10 ring-1 ring-border/30 shadow-lg backdrop-blur-sm';
 ---
 <section class={`relative flex flex-col gap-6 ${containerClasses}`}>
-  <div class="space-y-3 max-w-6xl w-full mx-auto">
+  <div class="space-y-3 w-full">
     {eyebrow && (
       <BadgePill size="xs" showDot>
         {eyebrow}
@@ -38,7 +38,7 @@ const containerClasses =
       </p>
     )}
   </div>
-  <div class="flex flex-col gap-5 sm:gap-6 text-pretty max-w-6xl w-full mx-auto">
+  <div class="flex flex-col gap-5 sm:gap-6 text-pretty w-full">
     <slot />
   </div>
 </section>
