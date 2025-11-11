@@ -4,8 +4,6 @@ import Flex from '../../primitives/Flex.astro';
 import Button from '../../primitives/Button.astro';
 import BadgePill from '../../primitives/BadgePill.astro';
 import GradientOverlay from '../../primitives/GradientOverlay.astro';
-import BackgroundGrid from '../../primitives/BackgroundGrid.astro';
-import FloatingBlur from '../../primitives/FloatingBlur.astro';
 import ArrowLeftIcon from '../../primitives/icons/ArrowLeftIcon.astro';
 import ExternalLinkIcon from '../../primitives/icons/ExternalLinkIcon.astro';
 
@@ -25,9 +23,12 @@ const formattedDate = date.toLocaleDateString(undefined, {
 });
 const dateISO = date.toISOString();
 ---
-<section class="relative isolate overflow-hidden bg-gradient-to-br from-background via-surface-subtle to-background-dark/80 py-20">
-  <BackgroundGrid opacity={40} size="180px" />
-  <div class="container relative z-[1] mx-auto flex max-w-6xl flex-col gap-12 px-6 lg:flex-row lg:items-center lg:gap-16">
+<section class="relative isolate overflow-hidden min-h-[80vh] flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8 py-24">
+  <!-- Blur orbs for depth (matching site-wide pattern) -->
+  <div class="blur-orb-accent top-0 right-0"></div>
+  <div class="blur-orb-primary bottom-0 left-0"></div>
+  
+  <div class="container relative z-10 mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:gap-16">
     <div class="flex flex-1 flex-col gap-8">
       <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-smallcaps text-foreground/60 dark:text-foreground-light/60">
         <BadgePill size="sm" class="transition-colors duration-200 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50">
@@ -66,7 +67,7 @@ const dateISO = date.toISOString();
     </div>
 
     <figure class="relative flex flex-1 justify-center">
-      <div class="relative w-full max-w-[28rem] overflow-hidden rounded-[2.5rem] bg-surface/90 ring-1 ring-border/30 shadow-lg">
+      <div class="relative w-full max-w-[28rem] overflow-hidden rounded-[2.5rem] bg-surface/90 ring-1 ring-border/30 shadow-xl hover:shadow-2xl transition-shadow duration-300">
         <OptimizedImage
           src={image}
           alt={title}
@@ -76,8 +77,6 @@ const dateISO = date.toISOString();
         />
         <GradientOverlay variant='background' direction='tr' class='from-background/70 via-transparent to-background/40 dark:from-background-dark/70 dark:via-transparent dark:to-background-dark/40' />
       </div>
-      <FloatingBlur size="sm" color="accent-light" position="custom" class="-left-10 top-12 w-24 h-24" />
-      <FloatingBlur size="sm" color="sky" position="custom" blur="custom" class="-right-12 bottom-8 w-28 h-28" />
     </figure>
   </div>
 </section>

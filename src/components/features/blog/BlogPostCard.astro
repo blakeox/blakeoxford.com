@@ -23,7 +23,7 @@ const { slug, data } = post;
 const visibleTags = data.tags?.slice(0, maxTags) || [];
 const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
 ---
-<article class="group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-6 shadow-xl transition-transform duration-200 hover:-translate-y-1 hover:shadow-2xl dark:bg-surface/80 dark:border-border-dark/40">
+<article class="hover-lift group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-6 shadow-lg dark:bg-surface/80 dark:border-border-dark/40">
   <a
     href={`/blog/${slug}/`}
     class="flex h-full flex-col gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2"
