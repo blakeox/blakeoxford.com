@@ -9,9 +9,11 @@ import ResumeHighlightItem from '../components/features/home/ResumeHighlightItem
 import TechnologyItem from '../components/features/home/TechnologyItem.astro';
 import BlogPostCard from '../components/features/blog/BlogPostCard.astro';
 import SectionHeading from '../components/primitives/SectionHeading.astro';
+import SectionBadge from '../components/primitives/SectionBadge.astro';
 import FloatingEmoji from '../components/primitives/FloatingEmoji.astro';
 import FloatingBlur from '../components/primitives/FloatingBlur.astro';
 import Grid from '../components/primitives/Grid.astro';
+import FeatureCard from '../components/composites/FeatureCard.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { getProjectsSorted } from '../content/projects/getProjects';
@@ -67,6 +69,10 @@ function deriveImageData(imgPath?: string) {
   <div class="space-y-16 sm:space-y-20 lg:space-y-24">
     <!-- Hero Section -->
     <section id="about-me" class="relative overflow-hidden py-20 sm:py-24 md:py-32 min-h-[80vh] flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark -mt-24">
+      <!-- Floating blur orbs for depth -->
+      <div class="blur-orb-accent top-0 right-0"></div>
+      <div class="blur-orb-primary bottom-0 left-0"></div>
+      
       <!-- Animated background pattern -->
       <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
         <div class="absolute inset-0"></div>
@@ -151,6 +157,7 @@ function deriveImageData(imgPath?: string) {
     <section id="resume-highlights" class="py-16 sm:py-20 lg:py-24">
       <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
         <div class="text-center space-y-4">
+          <SectionBadge icon="💼" label="Experience" variant="accent" class="mb-6" />
           <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground dark:text-foreground-light">Resume Highlights</h2>
           <p class="mx-auto max-w-3xl text-lg text-foreground/80 dark:text-foreground-light/80">
             Impact snapshots from enterprise migrations, automation programs, and data strategy initiatives.
@@ -277,6 +284,7 @@ function deriveImageData(imgPath?: string) {
 
     <!-- Technologies I Excel At Section -->
   <section id="technologies" class="w-full py-16 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark">
+      <SectionBadge icon="⚡" label="Tech Stack" variant="primary" class="mb-6" />
       <SectionHeading size='4xl' class='mb-8'>Technologies I Excel At</SectionHeading>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
         {technologies.map((tech) => {
@@ -292,8 +300,11 @@ function deriveImageData(imgPath?: string) {
     </section>
 
     <!-- Recent Projects Section -->
-  <section id="recent-projects" class="container mx-auto px-6 sm:px-8 lg:px-12" aria-labelledby="recent-projects-title">
-  <SectionHeading id='recent-projects-title' size='4xl' class='mb-8 text-center'>Recent Projects</SectionHeading>
+  <section id="recent-projects" class="container mx-auto px-6 sm:px-8 lg:px-12 py-16" aria-labelledby="recent-projects-title">
+    <div class="text-center mb-12">
+      <SectionBadge icon="🚀" label="Portfolio" variant="accent" class="mb-6" />
+      <SectionHeading id='recent-projects-title' size='4xl' class='mb-4'>Recent Projects</SectionHeading>
+    </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {recentProjects.map((project: any) => (
           <ProjectCard project={project} />
@@ -306,6 +317,7 @@ function deriveImageData(imgPath?: string) {
     <!-- Latest Blog Posts Section -->
   <section class="w-full py-20 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark" aria-labelledby="latest-blog-posts">
   <div class="container mx-auto px-6 sm:px-8 lg:px-12">
+  <SectionBadge icon="✍️" label="Insights" variant="primary" class="mb-6" />
   <SectionHeading id='latest-blog-posts' size='4xl' class='mb-8'>Latest Blog Posts</SectionHeading>
         <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
           {recentBlogPosts.length > 0 ? (

@@ -3,6 +3,7 @@ import Layout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/features/projects/ProjectCard.astro';
 import Stack from '../../components/primitives/Stack.astro';
 import Section from '../../components/primitives/Section.astro';
+import SectionBadge from '../../components/primitives/SectionBadge.astro';
 import Grid from '../../components/primitives/Grid.astro';
 import Flex from '../../components/primitives/Flex.astro';
 import Button from '../../components/primitives/Button.astro';
@@ -31,9 +32,15 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     role="region"
     aria-labelledby="projects-title"
     data-layout-section="projects-hero"
+    class="relative overflow-hidden"
   >
-    <Stack space="2xl" class="@container text-pretty" data-layout-shell="projects-hero-inner">
+    <!-- Floating blur orbs for depth -->
+    <div class="blur-orb-accent top-0 right-0 translate-x-1/2 -translate-y-1/2"></div>
+    <div class="blur-orb-primary bottom-0 left-0 -translate-x-1/2 translate-y-1/2"></div>
+    
+    <Stack space="2xl" class="@container text-pretty relative z-10" data-layout-shell="projects-hero-inner">
       <Stack space="lg" class="max-w-3xl" as="header">
+          <SectionBadge icon="🚀" label="Portfolio" variant="accent" class="mb-6" />
           <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
             Selected Projects
           </h1>
@@ -58,16 +65,17 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   <Section
     padding="lg"
     container="lg"
-    class="border-t border-border/20 bg-background"
+    class="border-t border-border/20 bg-background relative overflow-hidden"
     role="region"
     aria-labelledby="projects-grid-heading"
     data-layout-section="projects-grid"
   >
-    <Stack space="xl" class="text-pretty" data-layout-shell="projects-grid-inner">
+    <!-- Subtle blur orb for visual interest -->
+    <div class="absolute top-1/2 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+    
+    <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-grid-inner">
       <Stack space="md" class="max-w-3xl">
-        <BadgePill size="xs" class="w-fit">
-          Case Studies
-        </BadgePill>
+        <SectionBadge icon="📋" label="Case Studies" variant="primary" class="mb-4" />
         <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
           Recent Engagements
         </h2>
@@ -88,16 +96,17 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
   <Section
     padding="lg"
     container="lg"
-    class="border-t border-border/20 bg-surface-subtle/40"
+    class="border-t border-border/20 bg-surface-subtle/40 relative overflow-hidden"
     role="region"
     aria-labelledby="results-heading"
     data-layout-section="projects-impact"
   >
-    <Stack space="xl" class="text-pretty" data-layout-shell="projects-impact-inner">
+    <!-- Accent blur orb for visual depth -->
+    <div class="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+    
+    <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-impact-inner">
       <Stack space="md" class="max-w-3xl">
-        <BadgePill size="xs" class="w-fit">
-          Impact Metrics
-        </BadgePill>
+        <SectionBadge icon="📊" label="Impact" variant="accent" class="mb-4" />
         <h2 id="results-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
           Results that stick
         </h2>

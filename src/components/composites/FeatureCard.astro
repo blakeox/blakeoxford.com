@@ -1,0 +1,106 @@
+---
+/**
+ * FeatureCard - Vibrant feature card with gradient background
+ * 
+ * Replaces blog-card patterns and brings blog's visual language site-wide.
+ * Provides consistent card styling with color variants and hover effects.
+ * 
+ * @example Basic feature card
+ * <FeatureCard variant="accent" icon="🚀" title="Fast Performance">
+ *   <p>Lightning-fast page loads with Astro's island architecture.</p>
+ * </FeatureCard>
+ * 
+ * @example With numbered badge
+ * <FeatureCard variant="primary" badge="1" title="Step One">
+ *   <p>Get started by installing dependencies.</p>
+ * </FeatureCard>
+ */
+
+interface Props {
+  /** Color variant */
+  variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error';
+  /** Icon (emoji or icon class) */
+  icon?: string;
+  /** Card title */
+  title?: string;
+  /** Card description */
+  description?: string;
+  /** Optional numbered badge */
+  badge?: string | number;
+  /** Enable hover effects */
+  hover?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const { 
+  variant = 'accent', 
+  icon, 
+  title,
+  description,
+  badge,
+  hover = true,
+  class: className = '' 
+} = Astro.props;
+
+// Variant-specific gradient backgrounds
+const variantClasses = {
+  accent: 'from-accent/10 to-accent/5 dark:from-accent/10 dark:to-accent/5 border-accent/30',
+  primary: 'from-primary/10 to-primary/5 dark:from-primary/10 dark:to-primary/5 border-primary/30',
+  success: 'from-green-500/10 to-emerald-500/5 dark:from-green-500/10 dark:to-emerald-500/5 border-green-500/30',
+  warning: 'from-amber-500/10 to-orange-500/5 dark:from-amber-500/10 dark:to-orange-500/5 border-amber-500/30',
+  info: 'from-blue-500/10 to-cyan-500/5 dark:from-blue-500/10 dark:to-cyan-500/5 border-blue-500/30',
+  error: 'from-red-500/10 to-rose-500/5 dark:from-red-500/10 dark:to-rose-500/5 border-red-500/30',
+};
+
+// Variant-specific text colors
+const variantTextColors = {
+  accent: 'text-accent dark:text-accent-light',
+  primary: 'text-primary dark:text-primary-light',
+  success: 'text-green-600 dark:text-green-400',
+  warning: 'text-amber-600 dark:text-amber-400',
+  info: 'text-blue-600 dark:text-blue-400',
+  error: 'text-red-600 dark:text-red-400',
+};
+
+// Variant-specific badge colors
+const badgeColors = {
+  accent: 'bg-accent dark:bg-accent-light',
+  primary: 'bg-primary dark:bg-primary-light',
+  success: 'bg-green-600 dark:bg-green-500',
+  warning: 'bg-amber-600 dark:bg-amber-500',
+  info: 'bg-blue-600 dark:bg-blue-500',
+  error: 'bg-red-600 dark:bg-red-500',
+};
+
+const hoverClasses = hover 
+  ? 'hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300'
+  : '';
+
+const classes = `group relative overflow-hidden bg-gradient-to-br ${variantClasses[variant]} rounded-2xl p-8 border-2 shadow-lg backdrop-blur-sm ${hoverClasses} ${className}`.trim();
+---
+
+<div class={classes}>
+  {badge && (
+    <div class={`absolute top-4 right-4 w-12 h-12 ${badgeColors[variant]} rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg`}>
+      {badge}
+    </div>
+  )}
+  
+  {icon && <div class="text-6xl mb-4">{icon}</div>}
+  
+  {title && (
+    <h3 class={`text-2xl font-bold mb-3 ${variantTextColors[variant]}`}>
+      {title}
+    </h3>
+  )}
+  
+  {description && (
+    <p class="text-lg leading-relaxed opacity-85">
+      {description}
+    </p>
+  )}
+  
+  <slot />
+</div>
+

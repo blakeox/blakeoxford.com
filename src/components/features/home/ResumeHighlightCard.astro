@@ -10,17 +10,17 @@ interface Props {
 const { title, description, class: className = '' } = Astro.props as Props;
 ---
 <div
-  class={`relative bg-surface dark:bg-surface-dark rounded-xl shadow-xl border border-border/50 dark:border-border-dark/50 p-8 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 overflow-hidden group ${className}`.trim()}
+  class={`relative bg-gradient-to-br from-white/10 to-white/5 dark:from-white/5 dark:to-white/3 rounded-2xl shadow-xl border-2 border-border/30 dark:border-border-dark/30 p-8 flex flex-col h-full hover-lift transition-all duration-300 hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 overflow-hidden group backdrop-blur-sm ${className}`.trim()}
 >
-  <GradientOverlay variant='hover-subtle' direction='br' />
+  <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl group-hover:bg-accent/10 transition-all duration-300"></div>
   <div class="flex items-center mb-4 relative z-10">
-    <div class="rounded-full bg-gradient-to-r from-accent to-primary p-2.5 mr-4">
+    <div class="rounded-full bg-gradient-to-r from-accent to-primary p-2.5 mr-4 shadow-lg">
       <slot name="icon" />
     </div>
     <h3 class="text-xl sm:text-2xl font-bold text-foreground dark:text-foreground-light">{title}</h3>
   </div>
   <div class="relative z-10">
-    <p class="text-foreground dark:text-foreground-light mb-2">{description}</p>
+    <p class="text-foreground/80 dark:text-foreground-light/80 mb-2">{description}</p>
     <ul class="space-y-2 ml-5">
       <slot />
     </ul>

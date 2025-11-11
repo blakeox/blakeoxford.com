@@ -1,0 +1,49 @@
+---
+/**
+ * SectionBadge - Decorative badge for section headers
+ * 
+ * Creates consistent, eye-catching badges used above section headings
+ * throughout the site. Matches the blog's vibrant design language.
+ * 
+ * @example
+ * <SectionBadge icon="🚀" label="Features" />
+ * 
+ * @example With custom variant
+ * <SectionBadge icon="💼" label="Projects" variant="primary" />
+ */
+
+interface Props {
+  /** Icon (emoji or icon class) */
+  icon: string;
+  /** Badge label text */
+  label: string;
+  /** Color variant */
+  variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info';
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const { 
+  icon, 
+  label, 
+  variant = 'accent',
+  class: className = '' 
+} = Astro.props;
+
+// Variant-specific colors
+const variantColors = {
+  accent: 'text-accent dark:text-accent-light',
+  primary: 'text-primary dark:text-primary-light',
+  success: 'text-green-600 dark:text-green-400',
+  warning: 'text-amber-600 dark:text-amber-400',
+  info: 'text-blue-600 dark:text-blue-400',
+};
+
+const textColor = variantColors[variant];
+---
+
+<div class={`section-badge ${className}`.trim()}>
+  <div class="text-4xl" aria-hidden="true">{icon}</div>
+  <span class={`text-xl font-semibold ${textColor}`}>{label}</span>
+</div>
+
