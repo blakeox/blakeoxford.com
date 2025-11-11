@@ -23,7 +23,7 @@ const { slug, data } = post;
 const visibleTags = data.tags?.slice(0, maxTags) || [];
 const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
 ---
-<article class="hover-lift group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-6 shadow-lg dark:bg-surface/80 dark:border-border-dark/40">
+<article class="hover-lift group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-6 shadow-lg hover:shadow-primary/5 dark:bg-surface/80 dark:border-border-dark/40">
   <a
     href={`/blog/${slug}/`}
     class="flex h-full flex-col gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
@@ -70,9 +70,9 @@ const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
       </ul>
     )}
 
-    <span class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-transform duration-200 group-hover:translate-x-1">
+    <span class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-all duration-200 group-hover:gap-3">
       Read article
-      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M5 12h14m-6-6 6 6-6 6" />
       </svg>
     </span>

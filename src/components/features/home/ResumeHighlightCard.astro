@@ -14,7 +14,7 @@ const { title, description, class: className = '' } = Astro.props as Props;
 >
   <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl group-hover:bg-accent/10 transition-all duration-300"></div>
   <div class="flex items-center mb-4 relative z-10">
-    <div class="rounded-full bg-gradient-to-r from-accent to-primary p-2.5 mr-4 shadow-lg">
+    <div class="rounded-full bg-gradient-to-r from-accent to-primary p-2.5 mr-4 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
       <slot name="icon" />
     </div>
     <h3 class="text-xl sm:text-2xl font-bold text-foreground dark:text-foreground-light">{title}</h3>

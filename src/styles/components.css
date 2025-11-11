@@ -257,6 +257,94 @@
     }
   }
 
+  /* Premium card enhancements */
+  
+  /* Enhanced multi-layered shadows for depth */
+  .card-shadow-premium {
+    box-shadow: 
+      0 1px 3px rgb(15 23 42 / 0.05),
+      0 4px 12px rgb(15 23 42 / 0.08),
+      0 8px 24px rgb(15 23 42 / 0.08);
+  }
+
+  .card-shadow-premium:hover {
+    box-shadow: 
+      0 2px 4px rgb(15 23 42 / 0.06),
+      0 8px 20px rgb(15 23 42 / 0.1),
+      0 16px 40px rgb(15 23 42 / 0.12),
+      0 0 0 1px rgb(6 182 212 / 0.08);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .card-shadow-premium {
+      box-shadow: 
+        0 1px 3px rgb(0 0 0 / 0.2),
+        0 4px 12px rgb(0 0 0 / 0.25),
+        0 8px 24px rgb(0 0 0 / 0.25);
+    }
+    
+    .card-shadow-premium:hover {
+      box-shadow: 
+        0 2px 4px rgb(0 0 0 / 0.3),
+        0 8px 20px rgb(0 0 0 / 0.35),
+        0 16px 40px rgb(0 0 0 / 0.4),
+        0 0 0 1px rgb(34 211 238 / 0.15);
+    }
+  }
+
+  /* Subtle ring glow that appears on card hover */
+  .card-ring-glow {
+    @apply transition-all duration-300;
+  }
+  
+  .card-ring-glow:hover {
+    --tw-ring-width: 2px;
+    --tw-ring-color: rgb(6 182 212 / 0.15);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .card-ring-glow:hover {
+      --tw-ring-color: rgb(34 211 238 / 0.2);
+    }
+  }
+
+  /* Button fill effect for card CTAs */
+  .card-button-fill {
+    @apply transition-all duration-200;
+  }
+  
+  .card-button-fill:hover {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 12px rgb(6 182 212 / 0.3);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .card-button-fill:hover {
+      background-color: var(--color-accent-light);
+      box-shadow: 0 4px 12px rgb(34 211 238 / 0.3);
+    }
+  }
+
+  /* Arrow slide animation for links */
+  .card-arrow-slide {
+    @apply transition-transform duration-200;
+  }
+  
+  .card-arrow-slide:hover {
+    transform: translateX(0.25rem);
+  }
+
+  /* Icon animation - gentle scale and rotate */
+  .card-icon-animate {
+    @apply transition-all duration-300;
+  }
+  
+  .card-icon-animate:hover {
+    transform: scale(1.1) rotate(12deg);
+  }
+
   /* Typography scale for consistent headings */
   
   /* Display heading - for hero sections and large titles */

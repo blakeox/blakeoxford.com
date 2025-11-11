@@ -12,7 +12,7 @@ const { slug, data } = post;
 const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as string[], 2) : [];
 ---
 
-<article class="hover-lift group flex flex-col h-full rounded-2xl border border-border/30 bg-background/95 shadow-lg dark:border-border-dark/30 dark:bg-surface/80">
+<article class="hover-lift group flex flex-col h-full rounded-2xl border border-border/30 bg-background/95 shadow-lg hover:shadow-primary/5 dark:border-border-dark/30 dark:bg-surface/80">
   <!-- Hero Image -->
   {data.heroImage && (
     <div class="aspect-[16/10] overflow-hidden rounded-t-2xl">

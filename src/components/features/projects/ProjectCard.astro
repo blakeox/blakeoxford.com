@@ -48,7 +48,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
 <article class="group relative flex h-full flex-col">
   <a
     href={`/projects/${slug}/`}
-    class="hover-lift relative flex h-full flex-col overflow-hidden rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+    class="hover-lift relative flex h-full flex-col overflow-hidden rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg hover:shadow-accent/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
     aria-labelledby={`project-card-${slug}`}
   >
     <GradientOverlay variant='hover-card' direction='br' />
@@ -108,9 +108,9 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
       )}
 
       <div class="mt-auto flex items-center justify-end gap-4">
-        <span class="inline-flex items-center gap-2 rounded-full border-2 border-accent/60 px-4 py-2 text-sm font-semibold text-accent transition-colors duration-200 group-hover:border-accent group-hover:text-accent-dark dark:group-hover:text-accent-light">
+        <span class="inline-flex items-center gap-2 rounded-full border-2 border-accent/60 px-4 py-2 text-sm font-semibold text-accent transition-all duration-200 group-hover:bg-accent group-hover:text-white group-hover:border-accent group-hover:shadow-lg group-hover:gap-3">
           Explore
-          <ArrowRightIcon class="opacity-90" />
+          <ArrowRightIcon class="opacity-90 transition-transform duration-200 group-hover:translate-x-0.5" />
         </span>
       </div>
     </div>
