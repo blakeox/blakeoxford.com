@@ -7,163 +7,286 @@ tags: ["AI", "Machine Learning", "Statistics", "Research", "Leadership", "GPT-4"
 draft: false
 ---
 
-import { Image } from 'astro:assets';
+<div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10 dark:from-accent/10 dark:via-primary/5 dark:to-accent/10 rounded-3xl p-12 md:p-16 my-12 border border-accent/20">
+  <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+  <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+  <div className="relative text-center">
+    <div className="text-7xl mb-6">📊</div>
+    <h2 className="text-4xl md:text-5xl font-black mb-6 bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light bg-clip-text text-transparent">
+      AI, Statistics, and the Future of Decision-Making
+    </h2>
+    <p className="text-xl md:text-2xl leading-relaxed max-w-4xl mx-auto opacity-90">
+      From our GPT-4 study to the evolution toward augmented, auditable analytics systems
+    </p>
+  </div>
+</div>
 
-## Executive Summary for Leaders
+<div className="grid gap-6 my-12">
+  <div className="bg-gradient-to-br from-red-500/5 to-rose-500/5 dark:from-red-500/5 dark:to-rose-500/5 rounded-2xl p-8 border-l-4 border-red-500 shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start gap-4">
+      <div className="text-4xl flex-shrink-0">⚠️</div>
+      <div>
+        <h3 className="text-xl font-bold mb-2 text-red-600 dark:text-red-400">Our study showed the limits of GPT-4</h3>
+        <p className="text-lg leading-relaxed opacity-85">It aligned with SPSS on simple tests but faltered on complex analyses, while o3-mini sometimes produced inflated or inconsistent results.</p>
+      </div>
+    </div>
+  </div>
 
-- **Our study showed the limits of GPT-4.** It aligned with SPSS on simple tests but faltered on complex analyses, while o3-mini sometimes produced inflated or inconsistent results.
-- **Best practice has shifted.** RAG grounds models in authoritative sources, while true CAG ensures repeatability — solving issues we documented.
-- **Integration is the future.** MCP connects natural language interfaces with validated tools like R, Python, or SAS.
-- **GPT-5 will shake things up.** Reasoning models improve accuracy but give users less control over when reasoning is applied, creating both opportunities and risks.
-- **Leadership mandate:** Don't just adopt AI. Build augmented, auditable systems that turn skilled professionals into super-users capable of performing beyond their original capability.
+  <div className="bg-gradient-to-br from-green-500/5 to-emerald-500/5 dark:from-green-500/5 dark:to-emerald-500/5 rounded-2xl p-8 border-l-4 border-green-500 shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start gap-4">
+      <div className="text-4xl flex-shrink-0">✅</div>
+      <div>
+        <h3 className="text-xl font-bold mb-2 text-green-600 dark:text-green-400">Best practice has shifted</h3>
+        <p className="text-lg leading-relaxed opacity-85">RAG grounds models in authoritative sources, while true CAG ensures repeatability — solving issues we documented.</p>
+      </div>
+    </div>
+  </div>
 
----
+  <div className="bg-gradient-to-br from-accent/5 to-primary/5 dark:from-accent/5 dark:to-primary/5 rounded-2xl p-8 border-l-4 border-accent shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start gap-4">
+      <div className="text-4xl flex-shrink-0">🔗</div>
+      <div>
+        <h3 className="text-xl font-bold mb-2 text-accent dark:text-accent-light">Integration is the future</h3>
+        <p className="text-lg leading-relaxed opacity-85">MCP connects natural language interfaces with validated tools like R, Python, or SAS.</p>
+      </div>
+    </div>
+  </div>
 
-## What Our Study Found
+  <div className="bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/5 dark:to-accent/5 rounded-2xl p-8 border-l-4 border-primary shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start gap-4">
+      <div className="text-4xl flex-shrink-0">🚀</div>
+      <div>
+        <h3 className="text-xl font-bold mb-2 text-primary dark:text-primary-light">GPT-5 will shake things up</h3>
+        <p className="text-lg leading-relaxed opacity-85">Reasoning models improve accuracy but give users less control over when reasoning is applied, creating both opportunities and risks.</p>
+      </div>
+    </div>
+  </div>
 
-In *Confirming SPSS Results With GPT-4 and o3-mini Models*, we tested whether LLMs could replicate SPSS outputs across a range of statistical tests.
-
-- **Strong on fundamentals.** GPT-4 generally matched SPSS on correlations, t-tests, and regressions, with only minor rounding issues.
-- **Weakness in complexity.** In MANOVA and factorial ANOVA, errors appeared: wrong degrees of freedom, inflated coefficients, and in o3-mini's case, "significant" results where none existed.
-- **Risk of error.** These aren't trivial differences — in regulated domains, a single misreported p-value could have serious consequences.
-
-> Our conclusion then: LLMs could assist but not replace validated tools or expert oversight.
-
----
-
-## Beyond the Study: What's Changed Since Then
-
-When we published, models worked in isolation. Now, augmentation strategies have transformed best practice.
-
-### Retrieval-Augmented Generation (RAG)
-
-- Retrieves authoritative sources before answering.
-- Reduces hallucinations by grounding analysis in verified references (e.g., SAS, R documentation).
-- Would have prevented the degree-of-freedom errors observed in our study.
-
-### Cache-Augmented Generation (CAG)
-
-- Reuses validated outputs across runs to ensure consistency.
-- Eliminates drift in repeated or iterative analyses.
-- Addresses o3-mini's coefficient inflation problem.
-
-**👉 Clarification:** GPT-4 used internal caching for efficiency but not true CAG. True CAG — explicit, auditable, and user-visible — is emerging with GPT-5-era systems.
-
-Together, **RAG reduces hallucination risk**, while **CAG enforces repeatability**.
-
----
-
-## The Power of Integration: Natural Language Meets Complex Software
-
-**Model Context Protocol (MCP)** bridges natural language and technical precision:
-
-- Users ask in English.
-- The model executes real R, Python, or SAS code.
-- Outputs are reproducible and audit-friendly.
-
-> This is the future of analytics: human-friendly interaction with machine-verified results.
-
----
-
-## GPT-5 and the Next Disruption
-
-Reasoning-centric models like GPT-5 raise new opportunities and risks:
-
-- **Greater accuracy** through adaptive reasoning when needed.
-- **Less user control** over when reasoning modes activate.
-- **Governance gap:** leaders must ensure reasoning doesn't occur in a black box.
-
-The next challenge isn't capability — it's **transparency**.
+  <div className="bg-gradient-to-br from-purple-500/5 to-violet-500/5 dark:from-purple-500/5 dark:to-violet-500/5 rounded-2xl p-8 border-l-4 border-purple-500 shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start gap-4">
+      <div className="text-4xl flex-shrink-0">👥</div>
+      <div>
+        <h3 className="text-xl font-bold mb-2 text-purple-600 dark:text-purple-400">Leadership mandate</h3>
+        <p className="text-lg leading-relaxed opacity-85">Don't just adopt AI. Build augmented, auditable systems that turn skilled professionals into super-users capable of performing beyond their original capability.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 ---
 
-## Governance and Provenance: The Next Frontier
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/10 dark:to-primary/10 px-8 py-4 rounded-full border border-accent/30 mb-6">
+    <div className="text-4xl">🔬</div>
+    <span className="text-xl font-semibold text-accent dark:text-accent-light">Research Findings</span>
+  </div>
+  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">What Our Study Found</h2>
+  <p className="text-xl mt-4 opacity-70 italic">Confirming SPSS Results With GPT-4 and o3-mini Models</p>
+</div>
 
-AI in statistical workflows demands traceability:
+<div className="prose prose-xl dark:prose-invert max-w-none my-12">
+  <p className="text-xl leading-relaxed">
+    In our published study, we tested whether LLMs could replicate SPSS outputs across a range of statistical tests.
+  </p>
+</div>
 
-- **Audit trails** must log data sources, methods, and computations.
-- **Provenance** ensures every result is traceable: dataset → script → output.
-- **Governance** ensures cached results (CAG) stay accurate and up-to-date.
+<div className="grid md:grid-cols-3 gap-6 my-16">
+  <div className="bg-gradient-to-br from-green-600 to-emerald-600 dark:from-green-500 dark:to-emerald-500 text-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+    <div className="text-5xl mb-4">💪</div>
+    <h3 className="text-2xl font-bold mb-4">Strong on Fundamentals</h3>
+    <p className="opacity-90 leading-relaxed">GPT-4 generally matched SPSS on correlations, t-tests, and regressions, with only minor rounding issues.</p>
+  </div>
 
-RAG and MCP boost trust by grounding outputs in traceable documentation. CAG adds consistency but requires oversight so caches don't become stale or opaque.
+  <div className="bg-gradient-to-br from-amber-600 to-orange-600 dark:from-amber-500 dark:to-orange-500 text-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+    <div className="text-5xl mb-4">⚠️</div>
+    <h3 className="text-2xl font-bold mb-4">Weakness in Complexity</h3>
+    <p className="opacity-90 leading-relaxed">In MANOVA and factorial ANOVA, errors appeared: wrong degrees of freedom, inflated coefficients, and "significant" results where none existed.</p>
+  </div>
 
----
+  <div className="bg-gradient-to-br from-red-600 to-rose-600 dark:from-red-500 dark:to-rose-500 text-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+    <div className="text-5xl mb-4">🎯</div>
+    <h3 className="text-2xl font-bold mb-4">Risk of Error</h3>
+    <p className="opacity-90 leading-relaxed">These aren't trivial differences — in regulated domains, a single misreported p-value could have serious consequences.</p>
+  </div>
+</div>
 
-## When to Use What: A Leader's Decision Framework
-
-| Technique | Best For | Example Use |
-|-----------|----------|-------------|
-| **RAG (Freshness)** | Rapidly changing info | Compliance, financial updates |
-| **CAG (Repeatability)** | Consistency & low latency | Internal audits, reproducible analysis |
-| **MCP (Rigor)** | Regulated, auditable workflows | Healthcare, legal, finance |
-| **Reasoning Models (GPT-5+)** | Complex logic & problem solving | Predictive analytics, forecasting |
-
-Leaders don't need one model — they need a **balanced ecosystem** where each approach plays its role.
-
----
-
-## Humans as Super-Users, Not Replacements
-
-The most transformative shift isn't technical — it's human.
-
-LLMs don't just automate; they **amplify human capability**:
-
-- **Analysts** use AI to explore models they never learned to code manually.
-- **Researchers** simulate scenarios, generate insights, and verify results at speeds previously impossible.
-- **Non-technical staff** can perform advanced analysis safely through natural language interfaces.
-
-> The result: humans performing beyond their original capability. AI doesn't replace expertise — it extends it.
-
----
-
-## Emerging Trends to Watch
-
-To stay ahead, leaders should prepare for several converging innovations:
-
-1. **Multi-Modal AI** – Models now process text, tables, charts, and code together, unlocking visual + statistical reasoning in one interface.
-
-2. **Agentic Workflows** – LLMs that plan, execute, and verify multi-step analyses autonomously. Human checkpoints are essential.
-
-3. **Secure and On-Prem Deployments** – Enterprises are moving analytics AI into private environments for data security and compliance.
-
-4. **Domain-Specific Fine-Tuning** – Specialized models tuned on industry data outperform general LLMs in precision and reliability.
-
-5. **LLMOps and Continuous Evaluation** – AI outputs must be tested, monitored, and benchmarked just like any production system.
-
-6. **Hybrid Human-AI Teams** – The most effective organizations design workflows where AI accelerates, and humans interpret — not the other way around.
-
-These aren't distant possibilities — **they're unfolding now**.
+<div className="blog-callout">
+  <div className="flex items-start gap-4">
+    <div className="text-5xl flex-shrink-0">💡</div>
+    <blockquote className="text-xl md:text-2xl italic leading-relaxed font-medium">
+      Our conclusion then: LLMs could assist but not replace validated tools or expert oversight.
+    </blockquote>
+  </div>
+</div>
 
 ---
 
-## Strategic Takeaways for Leaders
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-400/10 dark:to-emerald-400/10 px-8 py-4 rounded-full border border-green-500/30 mb-6">
+    <div className="text-4xl">🔄</div>
+    <span className="text-xl font-semibold text-green-600 dark:text-green-400">Evolution</span>
+  </div>
+  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">Beyond the Study</h2>
+  <p className="text-xl mt-4 opacity-70">What's Changed Since Then</p>
+</div>
 
-1. **Use LLMs as code generators, not calculators.** Generate scripts, run them in trusted environments.
+<div className="blog-takeaway-container">
+  <p className="text-xl md:text-2xl leading-relaxed text-center mb-12 font-medium">
+    When we published, models worked in isolation. Now, <strong className="text-green-600 dark:text-green-400">augmentation strategies</strong> have transformed best practice.
+  </p>
 
-2. **Adopt RAG, CAG, and MCP together.** They're complementary, not competitive.
+  <div className="grid md:grid-cols-2 gap-8">
+    {/* RAG Card */}
+    <div className="relative overflow-hidden bg-gradient-to-br from-accent/10 to-primary/10 dark:from-accent/10 dark:to-primary/10 rounded-2xl p-8 border-2 border-accent/40 shadow-lg">
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent/20 rounded-full blur-2xl"></div>
+      <div className="relative">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="text-5xl">📚</div>
+          <h3 className="text-3xl font-bold text-accent dark:text-accent-light">RAG</h3>
+        </div>
+        <p className="text-sm font-bold uppercase tracking-wider text-accent/70 dark:text-accent-light/70 mb-4">Retrieval-Augmented Generation</p>
+        <ul className="space-y-3 text-lg">
+          <li className="flex items-start gap-2">
+            <span className="text-accent flex-shrink-0">→</span>
+            <span className="opacity-90">Retrieves authoritative sources before answering</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-accent flex-shrink-0">→</span>
+            <span className="opacity-90">Reduces hallucinations by grounding in verified references</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-accent flex-shrink-0">→</span>
+            <span className="opacity-90">Would have prevented degree-of-freedom errors</span>
+          </li>
+        </ul>
+      </div>
+    </div>
 
-3. **Govern reasoning models.** Build visibility into when and why deep reasoning activates.
+    {/* CAG Card */}
+    <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/10 dark:to-accent/10 rounded-2xl p-8 border-2 border-primary/40 shadow-lg">
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
+      <div className="relative">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="text-5xl">💾</div>
+          <h3 className="text-3xl font-bold text-primary dark:text-primary-light">CAG</h3>
+        </div>
+        <p className="text-sm font-bold uppercase tracking-wider text-primary/70 dark:text-primary-light/70 mb-4">Cache-Augmented Generation</p>
+        <ul className="space-y-3 text-lg">
+          <li className="flex items-start gap-2">
+            <span className="text-primary flex-shrink-0">→</span>
+            <span className="opacity-90">Reuses validated outputs for consistency</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary flex-shrink-0">→</span>
+            <span className="opacity-90">Eliminates drift in repeated analyses</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary flex-shrink-0">→</span>
+            <span className="opacity-90">Addresses o3-mini's coefficient inflation</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-4. **Prioritize provenance.** Track every step from data to insight.
+  <div className="mt-8 blog-callout">
+    <p className="text-lg leading-relaxed"><strong className="text-accent dark:text-accent-light">👉 Clarification:</strong> GPT-4 used internal caching for efficiency but not true CAG. True CAG — explicit, auditable, and user-visible — is emerging with GPT-5-era systems.</p>
+  </div>
 
-5. **Invest in LLMOps.** Continuously evaluate and monitor model performance.
-
-6. **Elevate your people.** Turn analysts into super-users capable of work they couldn't have imagined before AI.
+  <div className="mt-10 text-center">
+    <div className="inline-block bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light text-white px-10 py-6 rounded-2xl shadow-xl">
+      <p className="text-2xl font-bold"><span className="text-cyan-200">RAG</span> reduces hallucination risk, while <span className="text-yellow-200">CAG</span> enforces repeatability.</p>
+    </div>
+  </div>
+</div>
 
 ---
 
-## Final Word
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 dark:from-primary/10 dark:to-accent/10 px-8 py-4 rounded-full border border-primary/30 mb-6">
+    <div className="text-4xl">🔗</div>
+    <span className="text-xl font-semibold text-primary dark:text-primary-light">Integration</span>
+  </div>
+  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">The Power of Integration</h2>
+  <p className="text-xl mt-4 opacity-70">Natural Language Meets Complex Software</p>
+</div>
 
-Our study captured a moment when GPT-4 was impressive yet imperfect. Since then, the industry has sprinted ahead — toward augmented, governed, and human-centered ecosystems.
+<div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/10 to-accent/10 dark:from-accent/10 dark:via-primary/10 dark:to-accent/10 rounded-3xl p-12 md:p-16 my-16 border-2 border-accent/40 shadow-2xl">
+  <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl"></div>
+  <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+  
+  <div className="relative text-center mb-10">
+    <div className="inline-block bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-2xl px-8 py-4 border-2 border-accent/30 shadow-xl mb-8">
+      <p className="text-3xl font-bold text-accent dark:text-accent-light">Model Context Protocol (MCP)</p>
+    </div>
+    <p className="text-2xl leading-relaxed font-medium opacity-90">Bridges natural language and technical precision</p>
+  </div>
 
-**The next frontier isn't just smarter models; it's smarter humans empowered by them.**
+  <div className="grid md:grid-cols-3 gap-6 mb-10">
+    <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+      <div className="text-4xl mb-3">💬</div>
+      <p className="text-lg font-semibold mb-2">Users ask in English</p>
+      <p className="text-sm opacity-75">Natural, conversational queries</p>
+    </div>
+    <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+      <div className="text-4xl mb-3">⚙️</div>
+      <p className="text-lg font-semibold mb-2">Execute Real Code</p>
+      <p className="text-sm opacity-75">R, Python, or SAS execution</p>
+    </div>
+    <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+      <div className="text-4xl mb-3">📋</div>
+      <p className="text-lg font-semibold mb-2">Audit-Friendly</p>
+      <p className="text-sm opacity-75">Reproducible, verified outputs</p>
+    </div>
+  </div>
 
-The message for industry leaders: **Adopt boldly. Govern wisely. Build systems that amplify human potential beyond its previous limits.**
+  <div className="bg-gradient-to-r from-white/20 to-white/10 dark:from-white/15 dark:to-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-xl text-center">
+    <p className="text-2xl md:text-3xl font-bold italic">
+      This is the future of analytics: <span className="text-accent-light dark:text-accent">human-friendly interaction</span> with <span className="text-primary-light dark:text-primary">machine-verified results</span>.
+    </p>
+  </div>
+</div>
 
 ---
 
-## About This Research
+<div className="relative overflow-hidden bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light rounded-3xl p-12 md:p-16 my-20 shadow-2xl">
+  <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="relative text-white text-center max-w-5xl mx-auto">
+    <p className="text-4xl md:text-6xl font-black mb-8 leading-tight drop-shadow-lg">
+      The next frontier isn't just <span className="text-yellow-200">smarter models</span>
+    </p>
+    <p className="text-4xl md:text-6xl font-black leading-tight drop-shadow-lg">
+      it's <span className="text-green-200">smarter humans</span> empowered by them.
+    </p>
+    <div className="mt-10 bg-white/15 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-2xl">
+      <p className="text-2xl md:text-3xl font-bold leading-relaxed">
+        <span className="text-green-200">Adopt boldly.</span> <span className="text-cyan-200">Govern wisely.</span> <span className="text-yellow-200">Build systems</span> that amplify human potential beyond its previous limits.
+      </p>
+    </div>
+  </div>
+</div>
 
-This analysis builds on our published study examining GPT-4's statistical capabilities compared to SPSS. As AI continues to evolve, the conversation has shifted from "can models do this?" to "how do we build trustworthy, auditable systems that amplify human expertise?"
+<div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-3xl p-12 md:p-16 my-16 border-2 border-gray-300/50 dark:border-gray-700/50 shadow-2xl">
+  <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl"></div>
+  <div className="relative text-center">
+    <div className="inline-block bg-accent/10 dark:bg-accent/10 px-6 py-3 rounded-full border border-accent/30 mb-6">
+      <span className="text-sm font-bold uppercase tracking-wider text-accent dark:text-accent-light">About This Research</span>
+    </div>
+    
+    <p className="text-xl md:text-2xl leading-relaxed mb-8 max-w-4xl mx-auto">
+      This analysis builds on our published study examining GPT-4's statistical capabilities compared to SPSS. As AI continues to evolve, the conversation has shifted from <em className="text-accent dark:text-accent-light">"can models do this?"</em> to <em className="text-primary dark:text-primary-light">"how do we build trustworthy, auditable systems that amplify human expertise?"</em>
+    </p>
 
-*Blake Oxford is a Systems Architect and Workflow Strategist specializing in AI-driven decision systems, healthcare analytics, and enterprise automation.*
+    <div className="border-t border-gray-300/50 dark:border-gray-700/50 pt-8 mt-8">
+      <div className="inline-flex items-center gap-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm px-8 py-5 rounded-2xl border border-gray-300/50 dark:border-gray-700/50 shadow-lg">
+        <div className="text-5xl">👨‍💼</div>
+        <div className="text-left">
+          <p className="font-bold text-lg text-foreground dark:text-foreground-light">Blake Oxford</p>
+          <p className="text-sm opacity-75">Systems Architect & Workflow Strategist</p>
+          <p className="text-sm opacity-75">AI-driven decision systems, healthcare analytics, enterprise automation</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

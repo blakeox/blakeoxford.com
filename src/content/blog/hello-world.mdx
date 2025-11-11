@@ -5,14 +5,75 @@ pubDate: 2025-05-19
 tags:
   - Blog
   - Astro
-heroImage: "/assets/images/og-image.jpg"
 draft: false
 ---
 
-Welcome to the newest corner of the site. I have been rebuilding my portfolio around three principles:
+<div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10 dark:from-accent/10 dark:via-primary/5 dark:to-accent/10 rounded-3xl p-12 md:p-16 my-12 border border-accent/20">
+  <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+  <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+  <div className="relative text-center">
+    <div className="text-7xl mb-6">👋</div>
+    <h2 className="text-5xl md:text-6xl font-black mb-6 bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light bg-clip-text text-transparent">
+      Hello World
+    </h2>
+    <p className="text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto">
+      Welcome to the newest corner of the site
+    </p>
+  </div>
+</div>
 
-1. **Performance-first delivery.** Astro's island architecture lets me ship the minimum JavaScript needed for each page.
-2. **Type-safe content.** Content collections and Zod schemas keep MDX frontmatter aligned with the UI, even as the project evolves.
-3. **Automated quality gates.** Vitest, Playwright, Lighthouse CI, and mutation testing run on every branch, so regressions get caught before deployment.
+<div className="prose prose-xl dark:prose-invert max-w-none my-12">
+  <p className="text-xl leading-relaxed">
+    I've been rebuilding my portfolio around three core principles:
+  </p>
+</div>
 
-Future posts will dive into the tooling behind my customer projects, the change management lessons that shaped them, and the experiments I'm running with AI-assisted operations. Stay tuned!
+<div className="grid md:grid-cols-3 gap-6 my-16">
+  <div className="relative overflow-hidden bg-gradient-to-br from-accent/10 to-accent/5 dark:from-accent/10 dark:to-accent/5 rounded-2xl p-8 border-2 border-accent/30 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+    <div className="absolute top-4 right-4 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+      1
+    </div>
+    <div className="text-5xl mb-4">⚡</div>
+    <h3 className="text-2xl font-bold mb-3 text-accent dark:text-accent-light">Performance-First Delivery</h3>
+    <p className="text-lg leading-relaxed opacity-90">
+      Astro's island architecture lets me ship the minimum JavaScript needed for each page.
+    </p>
+  </div>
+
+  <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/10 dark:to-primary/5 rounded-2xl p-8 border-2 border-primary/30 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+    <div className="absolute top-4 right-4 w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+      2
+    </div>
+    <div className="text-5xl mb-4">🔒</div>
+    <h3 className="text-2xl font-bold mb-3 text-primary dark:text-primary-light">Type-Safe Content</h3>
+    <p className="text-lg leading-relaxed opacity-90">
+      Content collections and Zod schemas keep MDX frontmatter aligned with the UI, even as the project evolves.
+    </p>
+  </div>
+
+  <div className="relative overflow-hidden bg-gradient-to-br from-green-500/10 to-emerald-500/5 dark:from-green-500/10 dark:to-emerald-500/5 rounded-2xl p-8 border-2 border-green-500/30 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+    <div className="absolute top-4 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+      3
+    </div>
+    <div className="text-5xl mb-4">✅</div>
+    <h3 className="text-2xl font-bold mb-3 text-green-600 dark:text-green-400">Automated Quality Gates</h3>
+    <p className="text-lg leading-relaxed opacity-90">
+      Vitest, Playwright, Lighthouse CI, and mutation testing run on every branch, so regressions get caught before deployment.
+    </p>
+  </div>
+</div>
+
+<div className="relative overflow-hidden bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light rounded-3xl p-12 md:p-16 my-16 shadow-2xl">
+  <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="relative text-white text-center">
+    <div className="text-6xl mb-6">🚀</div>
+    <h3 className="text-3xl md:text-4xl font-black mb-4">What's Coming Next</h3>
+    <p className="text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto">
+      Future posts will dive into the tooling behind my customer projects, the change management lessons that shaped them, and the experiments I'm running with AI-assisted operations.
+    </p>
+    <div className="mt-8 inline-block bg-white/20 backdrop-blur-sm rounded-xl px-8 py-4 border border-white/30">
+      <p className="text-lg font-semibold">Stay tuned!</p>
+    </div>
+  </div>
+</div>

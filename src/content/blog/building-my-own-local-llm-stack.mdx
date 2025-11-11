@@ -7,109 +7,581 @@ tags: ["local LLM", "Ollama", "Open WebUI", "DevOps", "privacy", "AI infrastruct
 draft: false
 ---
 
-## Building My Own Local LLM Stack
+<div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10 dark:from-accent/10 dark:via-primary/5 dark:to-accent/10 rounded-3xl p-12 md:p-16 my-12 border border-accent/20 dark:border-accent/20">
+  <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+  <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+  <div className="relative z-10">
+    <div className="flex items-center gap-4 mb-8">
+      <div className="text-7xl">🔐</div>
+      <div>
+        <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light bg-clip-text text-transparent">
+          Building My Own Local LLM Stack
+        </h2>
+      </div>
+    </div>
+    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-accent/30 dark:border-accent/30">
+      <p className="text-2xl md:text-3xl font-bold text-center text-accent dark:text-accent-light italic">
+        "Because sometimes you shouldn't ask ChatGPT about a rash."
+      </p>
+    </div>
+  </div>
+</div>
 
-*Because sometimes you should not ask ChatGPT about a rash.*
+<div className="prose prose-xl dark:prose-invert max-w-none my-12">
+  <p className="text-xl md:text-2xl leading-relaxed font-medium text-foreground/90 dark:text-foreground-light/90">
+    At some point, every engineer realizes that <strong className="text-accent dark:text-accent-light">feeding private data into public AI models is not ideal</strong> — especially when that data might include a strange rash, a client contract, or a confidential project plan.
+  </p>
+</div>
 
-At some point, every engineer realizes that feeding private data into public AI models is not ideal — especially when that data might include a strange rash, a client contract, or a confidential project plan.
+<div className="grid md:grid-cols-2 gap-8 my-12">
+  <div className="bg-gradient-to-br from-red-500/10 to-rose-500/5 dark:from-red-500/10 dark:to-rose-500/5 p-8 rounded-2xl border-l-4 border-red-500">
+    <div className="text-4xl mb-4">🤔</div>
+    <h3 className="text-2xl font-bold mb-4 text-red-600 dark:text-red-400">The Problem</h3>
+    <p className="text-lg leading-relaxed opacity-90">One too many <em>"maybe I should not paste this"</em> hesitations made me realize I needed a better solution.</p>
+  </div>
+  <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/5 dark:from-green-500/10 dark:to-emerald-500/5 p-8 rounded-2xl border-l-4 border-green-500">
+    <div className="text-4xl mb-4">✨</div>
+    <h3 className="text-2xl font-bold mb-4 text-green-600 dark:text-green-400">The Solution</h3>
+    <p className="text-lg leading-relaxed opacity-90">A <strong>self-contained, self-healing LLM stack</strong> running on my Mac Mini — private, fast, and entirely under my control.</p>
+  </div>
+</div>
 
-That moment hit me after one too many "maybe I should not paste this" hesitations. So I decided to go fully local: a self-contained, self-healing large language model stack running on my Mac Mini — private, fast, and entirely under my control.
-
-It turned out to be part systems-engineering exercise, part weekend therapy session.
-
----
-
-## Architecture Overview
-
-The goal: ChatGPT power, zero cloud dependency.
-
-**Stack Overview:**
-
-- Mac Mini (M1) as the local AI server
-- Ollama for macOS-friendly LLM runtime
-- Open WebUI (Docker) for modern interface, model switching, and retrieval tools
-- Cloudflare Tunnel for encrypted remote access without opening ports
-- LaunchDaemons plus watchdog scripts for automatic startup and self-repair
-- SSH hardening with key-only auth, isolated users, and no forwarding
-
-I wanted something that behaved like a production-grade microservice stack: services start automatically, run isolated from each other, and recover from failure without human intervention. This was not just about privacy — it was about designing reliability without the cloud.
-
----
-
-## Building It Out
-
-### 1. Making Ollama a Managed Service
-
-Ollama originally ran as a background process under my admin account. I refactored it into a LaunchDaemon under a non-admin user ("ollama"), isolating model execution and file access. Now, even if something goes sideways, it stays contained and restarts automatically.
-
-### 2. Hardening SSH
-
-Default macOS SSH is friendly — too friendly. I locked it down to key-based authentication, disabled root, and whitelisted one user. It is still convenient, but hardened to a professional baseline.
-
-### 3. Running WebUI via Docker
-
-Open WebUI runs in a container bound only to localhost for safety and persistence:
-
-> Docker keeps the interface isolated, data stored locally, and restarts handled automatically with `--restart unless-stopped`.
-
-That gives me a private interface, vector memory persistence, and data portability between machines.
-
-### 4. Adding Self-Healing Automation
-
-I wrote a lightweight watchdog script that checks container health and restarts it if it ever stops responding. Combined with a cron job, it acts as an automatic failover loop — quiet reliability with no manual babysitting.
-
-### 5. Seamless Boot Recovery
-
-LaunchDaemons handle startup sequencing — Docker, then Ollama, then WebUI. If the power cuts or macOS updates, the entire system rebuilds itself without input.
+<div className="bg-gradient-to-r from-accent/10 via-primary/10 to-accent/10 dark:from-accent/10 dark:via-primary/10 dark:to-accent/10 rounded-2xl p-10 my-16 border-2 border-accent/30 dark:border-accent/30 shadow-2xl">
+  <div className="flex items-start gap-4">
+    <div className="text-5xl flex-shrink-0">💡</div>
+    <div>
+      <p className="text-2xl font-bold mb-3 text-accent dark:text-accent-light">The Mission</p>
+      <p className="text-xl leading-relaxed italic">Part systems-engineering exercise, part weekend therapy session — building production-grade reliability without the cloud.</p>
+    </div>
+  </div>
+</div>
 
 ---
 
-## What It Can Do
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/10 dark:to-primary/10 px-8 py-4 rounded-full border border-accent/30 dark:border-accent/30 mb-8">
+    <div className="text-4xl">🏗️</div>
+    <span className="text-xl font-semibold text-accent dark:text-accent-light">Architecture Overview</span>
+  </div>
+  <h2 className="text-4xl md:text-6xl font-black mb-4 leading-tight">
+    <span className="bg-gradient-to-r from-accent via-primary to-accent dark:from-accent-light dark:via-primary-light dark:to-accent-light bg-clip-text text-transparent">
+      ChatGPT Power
+    </span>
+  </h2>
+  <p className="text-3xl md:text-4xl font-bold text-foreground/70 dark:text-foreground-light/70">
+    Zero Cloud Dependency
+  </p>
+</div>
 
-- Run large language models fully offline — private and fast
-- Swap between models (Llama 3, Mistral, Phi 3, and more)
-- Provide secure remote access through a private web interface
-- Extend with retrieval, embeddings, and custom functions
-- Maintain automatic backups and vector database persistence
-- Integrate with local scripts for data or code analysis
+<div className="relative my-16">
+  <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-primary/5 to-accent/5 dark:from-accent/5 dark:via-primary/5 dark:to-accent/5 blur-3xl"></div>
+  <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-Full disclosure: the output quality is not always on par with ChatGPT or Claude, especially on an M1 chip. Local models trade depth for independence — they think a little slower and dream a little smaller. But everyday tasks like drafting text, summarizing files, querying data, or brainstorming code run beautifully offline.
+    <div className="group relative overflow-hidden blog-bg-green blog-card-colored">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-all duration-300"></div>
+      <div className="relative">
+        <div className="text-6xl mb-4">💻</div>
+        <h3 className="text-2xl font-bold mb-3 text-green-600 dark:text-green-400">Mac Mini (M1)</h3>
+        <p className="text-base leading-relaxed opacity-85">The foundation — a powerful local AI server that keeps everything under your roof</p>
+      </div>
+    </div>
 
-With a clean, browser-based interface on my laptop or phone, it is easy to use and completely private. That is the sweet spot for me: convenient, capable, and under my own roof.
+    <div className="group relative overflow-hidden blog-bg-yellow blog-card-colored">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl group-hover:bg-yellow-500/20 transition-all duration-300"></div>
+      <div className="relative">
+        <div className="text-6xl mb-4">🤖</div>
+        <h3 className="text-2xl font-bold mb-3 text-yellow-600 dark:text-yellow-400">Ollama</h3>
+        <p className="text-base leading-relaxed opacity-85">macOS-optimized LLM runtime that makes running models effortless</p>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden blog-bg-purple blog-card-colored">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all duration-300"></div>
+      <div className="relative">
+        <div className="text-6xl mb-4">🖥️</div>
+        <h3 className="text-2xl font-bold mb-3 text-purple-600 dark:text-purple-400">Open WebUI</h3>
+        <p className="text-base leading-relaxed opacity-85">Beautiful Docker interface with model switching and retrieval tools</p>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden blog-bg-pink blog-card-colored">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl group-hover:bg-pink-500/20 transition-all duration-300"></div>
+      <div className="relative">
+        <div className="text-6xl mb-4">🔒</div>
+        <h3 className="text-2xl font-bold mb-3 text-pink-600 dark:text-pink-400">Cloudflare Tunnel</h3>
+        <p className="text-base leading-relaxed opacity-85">Encrypted remote access without exposing ports to the internet</p>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden blog-bg-blue blog-card-colored">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-300"></div>
+      <div className="relative">
+        <div className="text-6xl mb-4">⚡</div>
+        <h3 className="text-2xl font-bold mb-3 text-blue-600 dark:text-blue-400">LaunchDaemons</h3>
+        <p className="text-base leading-relaxed opacity-85">Automatic startup and self-repair for hands-free operation</p>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden blog-bg-red blog-card-colored">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all duration-300"></div>
+      <div className="relative">
+        <div className="text-6xl mb-4">🛡️</div>
+        <h3 className="text-2xl font-bold mb-3 text-red-600 dark:text-red-400">SSH Hardening</h3>
+        <p className="text-base leading-relaxed opacity-85">Key-only authentication with least-privilege principles</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div className="relative overflow-hidden bg-gradient-to-br from-accent/5 via-primary/5 to-accent/5 dark:from-accent/5 dark:via-primary/5 dark:to-accent/5 rounded-3xl p-10 my-16 border-2 border-accent/30 dark:border-accent/30">
+  <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl"></div>
+  <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+  <div className="relative text-center max-w-4xl mx-auto">
+    <p className="text-2xl md:text-3xl leading-relaxed italic font-medium">
+      I wanted something that behaved like a <strong className="text-accent dark:text-accent-light not-italic">production-grade microservice stack</strong> — services start automatically, run isolated from each other, and recover from failure without human intervention.
+    </p>
+    <div className="mt-6 pt-6 border-t border-accent/20">
+      <p className="text-xl opacity-75">This wasn't just about privacy — it was about designing <strong className="text-primary dark:text-primary-light">reliability without the cloud</strong>.</p>
+    </div>
+  </div>
+</div>
 
 ---
 
-## Engineering Takeaways
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 dark:from-orange-400/10 dark:to-red-400/10 px-8 py-4 rounded-full border border-orange-500/30 dark:border-orange-400/30 mb-6">
+    <div className="text-4xl">🔨</div>
+    <span className="text-xl font-semibold text-orange-600 dark:text-orange-400">Implementation Journey</span>
+  </div>
+  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">Building It Out</h2>
+  <p className="text-xl mt-4 opacity-70">Five steps from concept to production</p>
+</div>
 
-- Isolation matters — running Ollama as a dedicated non-admin user limits exposure.
-- Health checks beat blind uptime — a fast restart is better than a hung container.
-- Automation outlasts vigilance — self-healing scripts outperform manual babysitting.
-- Security starts at scope — localhost bindings, least-privilege users, and no public ports do more than any firewall toggle.
+<div className="relative my-16">
+  {/* Timeline connector line */}
+  <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-accent via-primary to-accent dark:from-accent-light dark:via-primary-light dark:to-accent-light opacity-20 hidden md:block"></div>
+  
+  <div className="space-y-12">
 
-And of course: do not ask your LLM about that rash.
+    {/* Step 1 */}
+    <div className="relative pl-0 md:pl-20">
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent to-primary dark:from-accent-light dark:to-primary-light text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">1</div>
+      <div className="bg-gradient-to-br from-accent/5 to-primary/5 dark:from-accent/5 dark:to-primary/5 rounded-3xl p-8 md:p-10 border-2 border-accent/30 dark:border-accent/30 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="md:hidden text-5xl">1️⃣</div>
+          <div>
+            <h3 className="text-3xl md:text-4xl font-bold text-accent dark:text-accent-light mb-4">Making Ollama a Managed Service</h3>
+          </div>
+        </div>
+        <p className="text-lg md:text-xl leading-relaxed mb-6 opacity-90">Ollama originally ran as a background process under my admin account. I refactored it into a <strong>LaunchDaemon</strong> under a non-admin user (<code className="bg-black/10 dark:bg-white/10 px-3 py-1 rounded text-base font-mono">"ollama"</code>), isolating model execution and file access.</p>
+        <div className="bg-gradient-to-r from-white/80 to-white/60 dark:from-gray-900/80 dark:to-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-accent/30 dark:border-accent/30 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="text-3xl">✅</div>
+            <div>
+              <p className="text-lg font-semibold text-accent dark:text-accent-light mb-1">Result</p>
+              <p className="text-base opacity-85">Even if something goes sideways, it stays contained and restarts automatically.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Step 2 */}
+    <div className="relative pl-0 md:pl-20">
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-primary to-accent dark:from-primary-light dark:to-accent-light text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-primary/20">2</div>
+      <div className="bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/5 dark:to-accent/5 rounded-3xl p-8 md:p-10 border-2 border-primary/30 dark:border-primary/30 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="md:hidden text-5xl">2️⃣</div>
+          <div>
+            <h3 className="text-3xl md:text-4xl font-bold text-primary dark:text-primary-light mb-4">Hardening SSH</h3>
+          </div>
+        </div>
+        <p className="text-lg md:text-xl leading-relaxed mb-6 opacity-90">Default macOS SSH is friendly — <strong>too friendly</strong>. I locked it down to:</p>
+        <div className="grid sm:grid-cols-3 gap-4 my-8">
+          <div className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-xl p-5 border border-primary/30 dark:border-primary/30 text-center shadow-md">
+            <div className="text-3xl mb-2">🔑</div>
+            <p className="font-semibold text-sm">Key-based auth only</p>
+          </div>
+          <div className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-xl p-5 border border-primary/30 dark:border-primary/30 text-center shadow-md">
+            <div className="text-3xl mb-2">🚫</div>
+            <p className="font-semibold text-sm">Root disabled</p>
+          </div>
+          <div className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-xl p-5 border border-primary/30 dark:border-primary/30 text-center shadow-md">
+            <div className="text-3xl mb-2">👤</div>
+            <p className="font-semibold text-sm">Single whitelisted user</p>
+          </div>
+        </div>
+        <div className="bg-gradient-to-r from-white/80 to-white/60 dark:from-gray-900/80 dark:to-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-primary/30 dark:border-primary/30 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="text-3xl">✅</div>
+            <div>
+              <p className="text-lg font-semibold text-primary dark:text-primary-light mb-1">Result</p>
+              <p className="text-base opacity-85">Still convenient, but hardened to a professional baseline.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Step 3 */}
+    <div className="relative pl-0 md:pl-20">
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent to-primary dark:from-accent-light dark:to-primary-light text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">3</div>
+      <div className="bg-gradient-to-br from-accent/5 to-primary/5 dark:from-accent/5 dark:to-primary/5 rounded-3xl p-8 md:p-10 border-2 border-accent/30 dark:border-accent/30 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="md:hidden text-5xl">3️⃣</div>
+          <div>
+            <h3 className="text-3xl md:text-4xl font-bold text-accent dark:text-accent-light mb-4">Running WebUI via Docker</h3>
+          </div>
+        </div>
+        <p className="text-lg md:text-xl leading-relaxed mb-6 opacity-90">Open WebUI runs in a container bound only to <code className="bg-black/10 dark:bg-white/10 px-3 py-1 rounded text-base font-mono">localhost</code> for safety and persistence.</p>
+        <div className="bg-accent/10 dark:bg-accent/10 p-6 border-l-4 border-accent rounded-xl my-6 shadow-md">
+          <p className="text-lg italic leading-relaxed">Docker keeps the interface isolated, data stored locally, and restarts handled automatically with <code className="bg-black/20 dark:bg-white/10 px-3 py-1 rounded text-sm font-mono not-italic">--restart unless-stopped</code>.</p>
+        </div>
+        <div className="bg-gradient-to-r from-white/80 to-white/60 dark:from-gray-900/80 dark:to-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-accent/30 dark:border-accent/30 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="text-3xl">✅</div>
+            <div>
+              <p className="text-lg font-semibold text-accent dark:text-accent-light mb-1">Result</p>
+              <p className="text-base opacity-85">Private interface with vector memory persistence and data portability.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Step 4 */}
+    <div className="relative pl-0 md:pl-20">
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-primary to-accent dark:from-primary-light dark:to-accent-light text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-primary/20">4</div>
+      <div className="bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/5 dark:to-accent/5 rounded-3xl p-8 md:p-10 border-2 border-primary/30 dark:border-primary/30 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="md:hidden text-5xl">4️⃣</div>
+          <div>
+            <h3 className="text-3xl md:text-4xl font-bold text-primary dark:text-primary-light mb-4">Adding Self-Healing Automation</h3>
+          </div>
+        </div>
+        <p className="text-lg md:text-xl leading-relaxed mb-6 opacity-90">I wrote a lightweight <strong>watchdog script</strong> that checks container health and restarts it if it ever stops responding.</p>
+        <div className="bg-gradient-to-r from-white/80 to-white/60 dark:from-gray-900/80 dark:to-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-primary/30 dark:border-primary/30 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="text-3xl">✅</div>
+            <div>
+              <p className="text-lg font-semibold text-primary dark:text-primary-light mb-1">Result</p>
+              <p className="text-base opacity-85">Automatic failover loop — quiet reliability with no manual babysitting.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Step 5 */}
+    <div className="relative pl-0 md:pl-20">
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent to-primary dark:from-accent-light dark:to-primary-light text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">5</div>
+      <div className="bg-gradient-to-br from-accent/5 to-primary/5 dark:from-accent/5 dark:to-primary/5 rounded-3xl p-8 md:p-10 border-2 border-accent/30 dark:border-accent/30 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="md:hidden text-5xl">5️⃣</div>
+          <div>
+            <h3 className="text-3xl md:text-4xl font-bold text-accent dark:text-accent-light mb-4">Seamless Boot Recovery</h3>
+          </div>
+        </div>
+        <p className="text-lg md:text-xl leading-relaxed mb-6 opacity-90">LaunchDaemons handle startup sequencing — <strong>Docker → Ollama → WebUI</strong>.</p>
+        <div className="bg-gradient-to-r from-white/80 to-white/60 dark:from-gray-900/80 dark:to-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-accent/30 dark:border-accent/30 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="text-3xl">✅</div>
+            <div>
+              <p className="text-lg font-semibold text-accent dark:text-accent-light mb-1">Result</p>
+              <p className="text-base opacity-85">If power cuts or macOS updates, the entire system rebuilds itself without input.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 ---
 
-## Professional Reflection
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-400/10 dark:to-emerald-400/10 px-8 py-4 rounded-full border border-green-500/30 dark:border-green-400/30 mb-6">
+    <div className="text-4xl">✨</div>
+    <span className="text-xl font-semibold text-green-600 dark:text-green-400">Capabilities</span>
+  </div>
+  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">What It Can Do</h2>
+</div>
 
-This project brought together infrastructure automation (LaunchDaemons and Docker orchestration), security engineering (sandboxing, SSH hardening, local-only network scopes), AI deployment (Ollama model management and WebUI integration), and resilience design (self-healing watchdogs and automated recovery). It is hands-on DevOps meets applied AI — built to demonstrate privacy, reliability, and craftsmanship.
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-16">
 
----
+  <div className="blog-card group">
+    <div className="flex items-center gap-4 mb-5">
+      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🔒</div>
+      <strong className="text-2xl font-bold">Run Fully Offline</strong>
+    </div>
+    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-gray-300 dark:border-gray-700">Private and fast LLMs running completely disconnected from the cloud</p>
+  </div>
 
-## What Is Next
+  <div className="blog-card group">
+    <div className="flex items-center gap-4 mb-5">
+      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🔄</div>
+      <strong className="text-2xl font-bold">Swap Models</strong>
+    </div>
+    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-gray-300 dark:border-gray-700">Switch between Llama 3, Mistral, Phi 3, and more with a click</p>
+  </div>
 
-- Add persistent vector memory with Chroma DB and embeddings
-- Build agent workflows to automate system tasks
-- Package this as a reusable "Local LLM Stack" template
-- Add PWA support with an app icon for macOS and iPhone shortcuts
+  <div className="blog-card group">
+    <div className="flex items-center gap-4 mb-5">
+      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🌐</div>
+      <strong className="text-2xl font-bold">Remote Access</strong>
+    </div>
+    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-gray-300 dark:border-gray-700">Secure encrypted access through a private web interface</p>
+  </div>
 
+  <div className="blog-card group">
+    <div className="flex items-center gap-4 mb-5">
+      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🧩</div>
+      <strong className="text-2xl font-bold">Extend & Customize</strong>
+    </div>
+    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-gray-300 dark:border-gray-700">Add retrieval, embeddings, and custom functions</p>
+  </div>
+
+  <div className="blog-card group">
+    <div className="flex items-center gap-4 mb-5">
+      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">💾</div>
+      <strong className="text-2xl font-bold">Auto Backups</strong>
+    </div>
+    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-gray-300 dark:border-gray-700">Persistent vector database with automatic backups</p>
+  </div>
+
+  <div className="blog-card group">
+    <div className="flex items-center gap-4 mb-5">
+      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">⚙️</div>
+      <strong className="text-2xl font-bold">Local Scripts</strong>
+    </div>
+    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-gray-300 dark:border-gray-700">Integrate with local scripts for data analysis and code</p>
+  </div>
+
+</div>
+
+<div className="relative overflow-hidden blog-callout-warning">
+  <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
+  <div className="relative flex items-start gap-5">
+    <div className="text-6xl flex-shrink-0">⚠️</div>
+    <div>
+      <h3 className="text-2xl md:text-3xl font-bold text-amber-600 dark:text-amber-400 mb-4">Real Talk</h3>
+      <p className="text-lg md:text-xl leading-relaxed">The output quality is not always on par with ChatGPT or Claude, especially on an M1 chip. Local models trade depth for independence — they think a little slower and dream a little smaller.</p>
+      <div className="mt-6 pt-6 border-t border-amber-500/20">
+        <p className="text-lg leading-relaxed opacity-90">But everyday tasks like <strong className="text-amber-600 dark:text-amber-400">drafting text, summarizing files, querying data, or brainstorming code</strong> run beautifully offline.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div className="relative overflow-hidden bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light rounded-3xl p-12 md:p-16 my-20 shadow-2xl">
+  <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="relative text-white text-center">
+    <p className="text-2xl md:text-3xl font-bold mb-6 leading-tight">With a clean, browser-based interface on my laptop or phone, it's easy to use and completely private.</p>
+    <div className="inline-block bg-white/20 backdrop-blur-sm rounded-2xl px-8 py-5 border border-white/30">
+      <p className="text-xl md:text-2xl font-semibold">That's the sweet spot: <span className="text-yellow-200">convenient, capable, and under my own roof</span></p>
+    </div>
+  </div>
+</div>
+
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/10 dark:to-primary/10 px-8 py-4 rounded-full border border-accent/30 dark:border-accent/30 mb-6">
+    <div className="text-4xl">🎯</div>
+    <span className="text-xl font-semibold text-accent dark:text-accent-light">Key Lessons</span>
+  </div>
+  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">Engineering Takeaways</h2>
+</div>
+
+<div className="grid md:grid-cols-2 gap-8 my-16">
+
+  <div className="relative overflow-hidden bg-gradient-to-br from-accent/5 to-primary/5 dark:from-accent/5 dark:to-primary/5 rounded-2xl p-8 border-2 border-accent/30 dark:border-accent/30 shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start gap-5">
+      <div className="text-6xl flex-shrink-0">🔐</div>
+      <div>
+        <h3 className="text-2xl font-bold mb-3 text-accent dark:text-accent-light">Isolation matters</h3>
+        <p className="text-lg leading-relaxed opacity-85">Running Ollama as a dedicated non-admin user limits exposure and contains potential issues.</p>
+      </div>
+    </div>
+  </div>
+
+  <div className="relative overflow-hidden bg-gradient-to-br from-green-500/5 to-emerald-500/5 dark:from-green-500/5 dark:to-emerald-500/5 rounded-2xl p-8 border-2 border-green-500/30 dark:border-green-400/30 shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start gap-5">
+      <div className="text-6xl flex-shrink-0">💚</div>
+      <div>
+        <h3 className="text-2xl font-bold mb-3 text-green-600 dark:text-green-400">Health checks beat blind uptime</h3>
+        <p className="text-lg leading-relaxed opacity-85">A fast restart is better than a hung container waiting for manual intervention.</p>
+      </div>
+    </div>
+  </div>
+
+  <div className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/5 dark:to-accent/5 rounded-2xl p-8 border-2 border-primary/30 dark:border-primary/30 shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start gap-5">
+      <div className="text-6xl flex-shrink-0">⚡</div>
+      <div>
+        <h3 className="text-2xl font-bold mb-3 text-primary dark:text-primary-light">Automation outlasts vigilance</h3>
+        <p className="text-lg leading-relaxed opacity-85">Self-healing scripts outperform manual babysitting every single time.</p>
+      </div>
+    </div>
+  </div>
+
+  <div className="relative overflow-hidden bg-gradient-to-br from-orange-500/5 to-red-500/5 dark:from-orange-500/5 dark:to-red-500/5 rounded-2xl p-8 border-2 border-orange-500/30 dark:border-orange-400/30 shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-start gap-5">
+      <div className="text-6xl flex-shrink-0">🛡️</div>
+      <div>
+        <h3 className="text-2xl font-bold mb-3 text-orange-600 dark:text-orange-400">Security starts at scope</h3>
+        <p className="text-lg leading-relaxed opacity-85">Localhost bindings, least-privilege users, and no public ports do more than any firewall.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div className="relative overflow-hidden bg-gradient-to-br from-red-500/10 to-rose-500/10 dark:from-red-500/10 dark:to-rose-500/10 rounded-3xl p-10 my-16 border-2 border-red-500/40 dark:border-red-400/40 shadow-xl">
+  <div className="absolute -top-10 -right-10 w-48 h-48 bg-red-500/10 rounded-full blur-3xl"></div>
+  <div className="relative text-center">
+    <div className="text-7xl mb-4">💊</div>
+    <p className="text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400">And of course...</p>
+    <p className="text-xl md:text-2xl mt-4 font-semibold">Do not ask your LLM about that rash.</p>
+  </div>
+</div>
+
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/10 dark:to-primary/10 px-8 py-4 rounded-full border border-accent/30 dark:border-accent/30 mb-6">
+    <div className="text-4xl">💼</div>
+    <span className="text-xl font-semibold text-accent dark:text-accent-light">Professional Context</span>
+  </div>
+  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">Project Reflection</h2>
+</div>
+
+<div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/10 to-accent/10 dark:from-accent/10 dark:via-primary/10 dark:to-accent/10 rounded-3xl p-12 md:p-16 my-16 border-2 border-accent/40 dark:border-accent/40 shadow-2xl">
+  <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+  <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+  
+  <div className="relative">
+    <p className="text-xl md:text-2xl leading-relaxed mb-10 opacity-95">This project brought together multiple engineering disciplines:</p>
+    
+    <div className="grid md:grid-cols-2 gap-6 mb-10">
+      <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-accent/30 dark:border-accent/30">
+        <h4 className="text-xl font-bold mb-3 text-accent dark:text-accent-light">Infrastructure Automation</h4>
+        <p className="text-base opacity-85">LaunchDaemons and Docker orchestration</p>
+      </div>
+      <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-primary/30 dark:border-primary/30">
+        <h4 className="text-xl font-bold mb-3 text-primary dark:text-primary-light">Security Engineering</h4>
+        <p className="text-base opacity-85">Sandboxing, SSH hardening, local-only scopes</p>
+      </div>
+      <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-accent/30 dark:border-accent/30">
+        <h4 className="text-xl font-bold mb-3 text-accent dark:text-accent-light">AI Deployment</h4>
+        <p className="text-base opacity-85">Ollama model management and WebUI integration</p>
+      </div>
+      <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-primary/30 dark:border-primary/30">
+        <h4 className="text-xl font-bold mb-3 text-primary dark:text-primary-light">Resilience Design</h4>
+        <p className="text-base opacity-85">Self-healing watchdogs and automated recovery</p>
+      </div>
+    </div>
+
+    <div className="bg-gradient-to-r from-white/20 to-white/10 dark:from-white/10 dark:to-white/5 backdrop-blur-md rounded-3xl p-10 border-2 border-white/30 dark:border-white/20 shadow-2xl text-center">
+      <p className="text-3xl md:text-4xl font-black mb-4 bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light bg-clip-text text-transparent">
+        Hands-on DevOps meets Applied AI
+      </p>
+      <p className="text-xl opacity-90">Built to demonstrate privacy, reliability, and craftsmanship.</p>
+    </div>
+  </div>
+</div>
+
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/10 dark:to-primary/10 px-8 py-4 rounded-full border border-accent/30 dark:border-accent/30 mb-6">
+    <div className="text-4xl">🚀</div>
+    <span className="text-xl font-semibold text-accent dark:text-accent-light">Future Roadmap</span>
+  </div>
+  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">What's Next</h2>
+</div>
+
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-16">
+
+  <div className="group relative overflow-hidden bg-gradient-to-br from-accent to-primary dark:from-accent-light dark:to-primary-light text-white p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
+    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
+    <div className="relative">
+      <div className="text-6xl mb-6">🧠</div>
+      <strong className="text-3xl font-bold block mb-4">Vector Memory</strong>
+      <p className="text-lg opacity-90 leading-relaxed">Add persistent memory with Chroma DB and embeddings for smarter, context-aware conversations</p>
+    </div>
+  </div>
+
+  <div className="group relative overflow-hidden bg-gradient-to-br from-primary to-accent dark:from-primary-light dark:to-accent-light text-white p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
+    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
+    <div className="relative">
+      <div className="text-6xl mb-6">🤖</div>
+      <strong className="text-3xl font-bold block mb-4">Agent Workflows</strong>
+      <p className="text-lg opacity-90 leading-relaxed">Build autonomous workflows to automate complex system tasks and operations</p>
+    </div>
+  </div>
+
+  <div className="group relative overflow-hidden bg-gradient-to-br from-accent to-primary dark:from-accent-light dark:to-primary-light text-white p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
+    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
+    <div className="relative">
+      <div className="text-6xl mb-6">📦</div>
+      <strong className="text-3xl font-bold block mb-4">Template Package</strong>
+      <p className="text-lg opacity-90 leading-relaxed">Package as a reusable "Local LLM Stack" template for the community</p>
+    </div>
+  </div>
+
+  <div className="group relative overflow-hidden bg-gradient-to-br from-primary to-accent dark:from-primary-light dark:to-accent-light text-white p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
+    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
+    <div className="relative">
+      <div className="text-6xl mb-6">📱</div>
+      <strong className="text-3xl font-bold block mb-4">PWA Support</strong>
+      <p className="text-lg opacity-90 leading-relaxed">Add progressive web app support with icons for macOS and iPhone shortcuts</p>
+    </div>
+  </div>
+
+</div>
+
+<div className="bg-gradient-to-br from-gray-100/80 to-gray-200/80 dark:from-gray-900/80 dark:to-gray-800/80 backdrop-blur-sm rounded-3xl p-12 my-16 border-2 border-gray-300/50 dark:border-gray-700/50 shadow-xl text-center">
+  <p className="text-2xl md:text-3xl italic font-medium opacity-90">
 If your home lab can talk back intelligently, it should look good doing it.
+  </p>
+</div>
 
----
+<div className="text-center my-20">
+  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/10 dark:to-primary/10 px-8 py-4 rounded-full border border-accent/30 dark:border-accent/30 mb-6">
+    <div className="text-4xl">💭</div>
+    <span className="text-xl font-semibold text-accent dark:text-accent-light">Closing Thoughts</span>
+  </div>
+</div>
 
-## Final Thought
+<div className="relative overflow-hidden bg-gradient-to-br from-accent via-primary to-accent dark:from-accent-light dark:via-primary-light dark:to-accent-light rounded-[2rem] p-16 md:p-20 my-20 shadow-[0_20px_70px_-15px_rgba(6,182,212,0.4)]">
+  <div className="absolute -top-32 -right-32 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+  
+  <div className="relative text-white text-center max-w-5xl mx-auto">
+    <p className="text-4xl md:text-6xl font-black mb-8 leading-tight drop-shadow-lg">
+      It's not meant to outthink ChatGPT<br/>
+      <span className="text-cyan-200">— it's meant to outlast it.</span>
+    </p>
+    <div className="bg-white/15 backdrop-blur-md rounded-2xl p-8 md:p-10 border border-white/30 shadow-2xl">
+      <p className="text-xl md:text-2xl leading-relaxed opacity-95 mb-4">
+        Local AI doesn't need a subscription, a login, or a cloud outage workaround.
+      </p>
+      <p className="text-2xl md:text-3xl font-bold">
+        It's simply <span className="text-yellow-300">yours</span> — always on, always available, and smart enough for nearly everything that matters.
+      </p>
+    </div>
+  </div>
+</div>
 
-It is not meant to outthink ChatGPT — it is meant to outlast it. Local AI does not need a subscription, a login, or a cloud outage workaround. It is simply yours — always on, always available, and smart enough for nearly everything that matters.
-
-> "Privacy, practicality, and automation — all under one roof."
-> — Blake Oxford
+<div className="relative overflow-hidden bg-gradient-to-r from-gray-100 via-accent/10 to-gray-100 dark:from-gray-900 dark:via-accent/10 dark:to-gray-900 rounded-3xl p-12 md:p-16 my-16 border-2 border-accent/30 dark:border-accent/30 shadow-2xl">
+  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-accent/20 to-transparent"></div>
+  <div className="relative text-center">
+    <div className="text-6xl mb-6">💬</div>
+    <blockquote className="text-3xl md:text-4xl font-serif italic mb-6 text-accent dark:text-accent-light leading-relaxed">
+      "Privacy, practicality, and automation<br/>— all under one roof."
+    </blockquote>
+    <div className="flex items-center justify-center gap-4 mt-8">
+      <div className="w-16 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
+      <p className="text-xl font-bold tracking-wide text-accent dark:text-accent-light">Blake Oxford</p>
+      <div className="w-16 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+---
+title: "Fanalyx Deterministic Finance Platform"
+date: "2025-03-01T00:00:00.000Z"
+heroImage: "/assets/images/og-image.jpg"
+tags:
+  - "Financial Modeling"
+  - "Deterministic AI"
+  - "Cloudflare Workers"
+  - "TypeScript"
+  - "Zod"
+  - "MCP"
+  - "Personal Finance"
+categories:
+  - "AI & Data"
+  - "Finance"
+  - "Edge Computing"
+highlights:
+  - "Rebuilt Fanalyx as a typed, deterministic finance stack where every calculation is reproducible and snapshot-tested each release."
+  - "Delivered a three-step EBITDA workflow that moves from ingestion to audit-ready forecasts in under two minutes."
+  - "Exposed the modeling engines through Cloudflare Workers, MCP tooling, and a modern dashboard so finance teams can choose their interface without sacrificing fidelity."
+  - "Expanded the catalog to include personal finance models so households can plan alongside corporate FP&A teams."
+  - "Wrapped explainable AI assist layers around deterministic math, surfacing reasoning chains while keeping the source calculations authoritative."
+impact:
+  - "Edge APIs sustain >10k requests per minute with sub-50ms p95 response times across the Cloudflare network."
+  - "Finance teams ship board-ready forecasts 6x faster than their legacy spreadsheet process."
+  - "Visibility upgrades cut audit review cycles from weeks to days thanks to immutable request IDs and change tracking."
+journey:
+  - "Mapped the existing Fanalyx workflows with finance directors to isolate the deterministic core from presentation logic."
+  - "Implemented ingestion pipelines with Zod validation so CSV, JSON, and API inputs are normalized once and tracked via schema revisions."
+  - "Authored Workers-based modeling engines that capture every assumption, attach request IDs, and replay instantly for audits."
+  - "Built MCP connectors and CLI tooling so analysts can trigger scenarios from their terminal or automation pipelines."
+  - "Layered in observability with persistent request tracing, SLO dashboards, and self-serve status reporting."
+lessons:
+  - title: Determinism builds trust
+    description: Finance teams adopt faster when every run produces byte-for-byte identical results, even under load.
+  - title: Interfaces should be swappable
+    description: Whether analysts choose dashboards, APIs, or MCP, the underlying math must stay singular and authoritative.
+  - title: Observability is a feature
+    description: Persistent request tracing, snapshot tests, and audit trails reduce downstream support and compliance cycles.
+reflection: Fanalyx now feels like a true finance platform instead of a pretty spreadsheet—typed inputs in, deterministic insights out, with edge-speed delivery and explainable AI augmenting every decision.
+---
+
+Fanalyx is my ongoing product build for finance teams that refuse to guess. I am rebuilding the entire experience around deterministic engines: typed schemas, reproducible math, and load-tested forecast pipelines. The same core powers dashboards, the API, and MCP connectors so every touchpoint surfaces identical numbers. We now ship personal finance modules alongside enterprise FP&A; families model debt payoff, runway, and savings with the same deterministic rigor.
+
+The stack runs on Cloudflare Workers with persistent request IDs, giving us audit trails and coherent logs at edge speed. Ingestion flows pass through Zod-based validation before data ever touches the modeling engines, and every release is snapshot-tested against real customer load profiles.
+
+Rather than bolt on opaque AI, I wrapped the deterministic core with explainable assist layers. Finance leads can ask for assumptions, scenario diffs, or recommended levers, and the responses are grounded in the stored calculations—not generative guesswork.
+
+We treat operations like a product: self-healing Worker deployments, status dashboards, and 18 months of audit retention live out of the box. Fanalyx is becoming the trusted source of financial models that power LLM conversations, whether you are aligning a household budget or briefing a board. That combination of privacy, precision, and reliability is why Fanalyx will become the go-to analysis stack for teams that need confidence faster than a spreadsheet can load.
