@@ -17,16 +17,13 @@ export async function GET() {
     { loc: '/contact/', changefreq: 'yearly', priority: 0.5 },
   ];
 
-  // Individual project pages (since they're now Astro pages, not MDX)
-  const projectPages: SitemapEntry[] = [
-    { loc: '/projects/adp-workforcenow/', changefreq: 'monthly', priority: 0.6 },
-    { loc: '/projects/advancedmd-implementation/', changefreq: 'monthly', priority: 0.6 },
-    { loc: '/projects/bank-projections-modeling/', changefreq: 'monthly', priority: 0.6 },
-    { loc: '/projects/ferment-app/', changefreq: 'monthly', priority: 0.6 },
-    { loc: '/projects/google-workspace-migration/', changefreq: 'monthly', priority: 0.6 },
-    { loc: '/projects/LLM-note-coaching/', changefreq: 'monthly', priority: 0.6 },
-    { loc: '/projects/Microsoft-Fabric/', changefreq: 'monthly', priority: 0.6 },
-  ];
+  // Individual project pages - dynamically load from content collection
+  const projectEntries = await getCollection('projects');
+  const projectPages: SitemapEntry[] = projectEntries.map((project: CollectionEntry<'projects'>) => ({
+    loc: `/projects/${project.slug}/`,
+    changefreq: 'monthly',
+    priority: 0.6,
+  }));
 
   // Individual blog post pages from content collection
   const blogEntries = await getCollection('blog', (entry: CollectionEntry<'blog'>) => !entry.data.draft);
