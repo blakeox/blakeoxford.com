@@ -137,8 +137,9 @@ const { Content } = await entry.render();
       <ProjectDetailSection title="Next steps" eyebrow="Ready to explore?" layout="surface">
         <slot name="cta" />
       </ProjectDetailSection>
+
+      <!-- Related Technologies -->
+      <ProjectTags tags={data.tags ?? []} />
     </div>
   </article>
-
-  <ProjectTags tags={data.tags ?? []} />
 </Layout>
