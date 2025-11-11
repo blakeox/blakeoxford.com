@@ -40,7 +40,6 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     
     <Stack space="2xl" class="@container text-pretty relative z-10" data-layout-shell="projects-hero-inner">
       <Stack space="lg" class="max-w-3xl" as="header">
-          <SectionBadge icon="🚀" label="Portfolio" variant="accent" class="mb-6" />
           <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
             Selected Projects
           </h1>
@@ -75,7 +74,9 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     
     <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-grid-inner">
       <Stack space="md" class="max-w-3xl">
-        <SectionBadge icon="📋" label="Case Studies" variant="primary" class="mb-4" />
+        <BadgePill size="xs" class="w-fit">
+          Case Studies
+        </BadgePill>
         <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
           Recent Engagements
         </h2>
@@ -106,7 +107,9 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     
     <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-impact-inner">
       <Stack space="md" class="max-w-3xl">
-        <SectionBadge icon="📊" label="Impact" variant="accent" class="mb-4" />
+        <BadgePill size="xs" class="w-fit">
+          Impact Metrics
+        </BadgePill>
         <h2 id="results-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
           Results that stick
         </h2>
