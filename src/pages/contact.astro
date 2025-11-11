@@ -9,6 +9,7 @@ import Stack from '../components/primitives/Stack.astro';
 import Section from '../components/primitives/Section.astro';
 import Grid from '../components/primitives/Grid.astro';
 import Flex from '../components/primitives/Flex.astro';
+import PageHero from '../components/composites/PageHero.astro';
 import { CANONICAL_URLS } from '../config/constants';
 
 const title = 'Contact Blake';
@@ -18,22 +19,20 @@ const canonicalUrl = CANONICAL_URLS.contact;
 
 <Layout title={title} description={description} url={canonicalUrl} wide={true}>
   <!-- Hero section -->
-  <Section padding="xl" container="lg" background="gradient" class="relative overflow-hidden">
-    <div class="relative z-10">
-      <Grid cols="2" gap="xl" alignItems="center">
-          <Stack space="lg" class="@container">
-            <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light">Let's Connect</h1>
-            <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80 max-w-2xl">Have a project in mind or just want to say hello? I'm all ears—whether it's a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can't wait to build something great together!</p>
-          </Stack>
-          <div class="flex justify-center md:justify-end">
-            <div class="relative">
-              <CoinFlipImage frontSrc="/assets/images/Blake-O-scaled.jpg" backSrc="/assets/images/china-profile-picture.jpg" alt="Blake Oxford" altBack="Blake Oxford in China" size={280} flipMultipleTimes loading="eager" fetchPriority="high" decoding="auto" />
-              <FloatingEmoji emoji='💡' position='top-right' size='lg' />
-          </div>
+  <PageHero fullScreen={true} includeBlurOrbs={true} id="contact-hero">
+    <Grid cols="2" gap="xl" alignItems="center">
+      <Stack space="lg" class="@container">
+        <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light">Let's Connect</h1>
+        <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80 max-w-2xl">Have a project in mind or just want to say hello? I'm all ears—whether it's a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can't wait to build something great together!</p>
+      </Stack>
+      <div class="flex justify-center md:justify-end">
+        <div class="relative">
+          <CoinFlipImage frontSrc="/assets/images/Blake-O-scaled.jpg" backSrc="/assets/images/china-profile-picture.jpg" alt="Blake Oxford" altBack="Blake Oxford in China" size={280} flipMultipleTimes loading="eager" fetchPriority="high" decoding="auto" />
+          <FloatingEmoji emoji='💡' position='top-right' size='lg' />
         </div>
-      </Grid>
-    </div>
-  </Section>
+      </div>
+    </Grid>
+  </PageHero>
 
   <!-- Main contact section -->
   <Section padding="lg" container="lg" background="gradient" class="relative overflow-hidden" aria-labelledby="message-form">

@@ -1,0 +1,71 @@
+---
+/**
+ * PageHero - Consistent full-screen hero section pattern
+ * 
+ * Provides unified hero treatment across all main pages with:
+ * - Full viewport height option
+ * - Floating blur orbs for visual depth
+ * - Edge-to-edge gradient background
+ * - Responsive max-width container for content
+ * 
+ * @example Homepage hero
+ * <PageHero fullScreen={true}>
+ *   <Grid cols="2" gap="xl" alignItems="center">
+ *     <div><h1>Blake Oxford</h1></div>
+ *     <div><CoinFlipImage /></div>
+ *   </Grid>
+ * </PageHero>
+ * 
+ * @example Projects hero
+ * <PageHero fullScreen={false}>
+ *   <h1>Selected Projects</h1>
+ *   <p>Description</p>
+ * </PageHero>
+ */
+
+interface Props {
+  /** Full screen height (min-h-screen) vs standard (min-h-[60vh]) */
+  fullScreen?: boolean;
+  /** Include floating blur orbs for visual depth */
+  includeBlurOrbs?: boolean;
+  /** Include background pattern overlay */
+  includePattern?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+  /** Section ID for anchor links */
+  id?: string;
+}
+
+const { 
+  fullScreen = true,
+  includeBlurOrbs = true,
+  includePattern = false,
+  class: className = '',
+  id = 'hero'
+} = Astro.props;
+
+const heightClass = fullScreen ? 'min-h-screen' : 'min-h-[60vh] md:min-h-[70vh]';
+---
+
+<section 
+  id={id}
+  class={`relative overflow-hidden py-20 sm:py-24 md:py-32 ${heightClass} flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8 ${className}`}
+>
+  {includeBlurOrbs && (
+    <>
+      <div class="blur-orb-accent top-0 right-0"></div>
+      <div class="blur-orb-primary bottom-0 left-0"></div>
+    </>
+  )}
+  
+  {includePattern && (
+    <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
+      <div class="absolute inset-0"></div>
+    </div>
+  )}
+  
+  <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+    <slot />
+  </div>
+</section>
+

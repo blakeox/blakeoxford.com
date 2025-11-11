@@ -5,6 +5,7 @@ export { default as FeatureGrid } from './FeatureGrid.astro';
 export { default as FeatureItem } from './FeatureItem.astro';
 export { default as FeatureCard } from './FeatureCard.astro';
 export { default as Hero } from './Hero.astro';
+export { default as PageHero } from './PageHero.astro';
 export { default as StatsCard } from './StatsCard.astro';
 export { default as AchievementCard } from './AchievementCard.astro';
 export { default as CTASection } from './CTASection.astro';
