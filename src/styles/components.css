@@ -440,5 +440,35 @@
       color: rgb(var(--color-foreground-light-rgb) / 0.7);
     }
   }
+  
+  /* Mobile Touch Optimizations */
+  /* Use :active instead of :hover on touch devices for better UX */
+  @media (hover: none) and (pointer: coarse) {
+    /* Touch devices - use :active for interactive feedback */
+    .hover-lift:active {
+      transform: translateY(-2px);
+    }
+    
+    .hover-scale:active {
+      transform: scale(1.02);
+    }
+    
+    .hover-glow:active {
+      box-shadow: 0 8px 24px rgb(6 182 212 / 0.2);
+    }
+    
+    /* Ensure minimum touch target size (WCAG 2.5.5) */
+    button, a[role="button"], [role="button"],
+    input[type="button"], input[type="submit"], input[type="reset"],
+    .c-btn, [class*="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* Improve tap feedback for links */
+    a:active {
+      opacity: 0.8;
+    }
+  }
 }
 
