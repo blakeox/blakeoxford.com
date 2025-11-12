@@ -1,12 +1,13 @@
 ---
-// ProjectRow.astro
-// import type { CollectionEntry } from 'astro:content';
-// TODO: Use correct type from astro:content when available
-const { project, featured = false, align = 'left' } = Astro.props as {
-  project: any; // fallback to any due to type issues
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
   featured?: boolean;
   align?: 'left' | 'right';
-};
+}
+
+const { project, featured = false, align = 'left' } = Astro.props as Props;
 const { slug, data } = project;
 ---
 <section class={`flex flex-col md:flex-row items-center w-full gap-8 md:gap-16 min-h-[340px] ${align === 'right' ? 'md:flex-row-reverse' : ''}`}>
