@@ -22,10 +22,14 @@ export * from './api';
 // ============================================================================
 // Legacy Types (Kept for backward compatibility)
 // ============================================================================
-// TODO: Migrate usages to new types from content.ts and components.ts
+// NOTE: These types are deprecated but kept for backward compatibility.
+// All new code should use types from './content' and 'astro:content' instead.
+// Migration status: Most usages have been migrated. Remaining usages are
+// in legacy components that will be updated incrementally.
 
 /**
- * @deprecated Use Project from './content' instead
+ * @deprecated Use CollectionEntry<'projects'> from 'astro:content' instead
+ * @see src/types/content.ts for the new type system
  */
 export interface ProjectData {
   slug: string;
@@ -41,7 +45,8 @@ export interface ProjectData {
 }
 
 /**
- * @deprecated Use BlogPost from './content' instead
+ * @deprecated Use CollectionEntry<'blog'> from 'astro:content' instead
+ * @see src/types/content.ts for the new type system
  */
 export interface BlogPost {
   slug: string;
