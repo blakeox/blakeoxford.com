@@ -3,6 +3,7 @@ import '../styles/global.css';
 import NavBar from '../components/layout/NavBar.astro';
 import AIChatWidget from '../components/AIChatWidget.astro';
 import Footer from '../components/layout/Footer.astro';
+import SkipLink from '../components/primitives/SkipLink.astro';
 import ThemeInitIsland from '../components/islands/ThemeInitIsland';
 import ServiceWorkerIsland from '../components/islands/ServiceWorkerIsland';
 import ExperimentsCookieIsland from '../components/islands/ExperimentsCookieIsland';
@@ -143,9 +144,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
   </head>
   <body id="top" class="min-h-screen bg-[--bg] text-[--fg] transition-colors duration-300">
     <ServiceWorkerIsland client:only="react" />
-    <a href="#main-content" class="skip-link sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[1000] focus:rounded-md focus:bg-[--accent] focus:px-4 focus:py-2 focus:text-[--on-accent] focus:shadow-lg">
-      Skip to main content
-    </a>
+    <SkipLink href="#main-content" />
   <header role="banner">
       <NavBar />
     </header>

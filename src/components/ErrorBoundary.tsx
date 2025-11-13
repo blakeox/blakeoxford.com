@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/astro';
 import { Component, type ReactNode, type ErrorInfo } from 'react';
+import { logger } from '../utils/logger';
 
 interface Props {
   children: ReactNode;
@@ -40,10 +41,8 @@ export class ErrorBoundary extends Component<Props, State> {
       },
     });
     
-    // Keep console.error for development debugging
-    if (import.meta.env.DEV) {
-      console.error('ErrorBoundary caught:', error, errorInfo);
-    }
+    // Log error using centralized logger
+    logger.error('ErrorBoundary caught:', error, errorInfo);
   }
 
   render() {
