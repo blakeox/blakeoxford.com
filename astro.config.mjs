@@ -283,7 +283,19 @@ export default defineConfig({
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes('node_modules')) return 'vendor';
+            // Split vendor into smaller chunks for better caching
+            if (id.includes('node_modules')) {
+              // React and React DOM - frequently updated, separate chunk
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'vendor-react';
+              }
+              // Large libraries - separate chunk
+              if (id.includes('@sentry') || id.includes('sentry')) {
+                return 'vendor-sentry';
+              }
+              // Everything else
+              return 'vendor';
+            }
             return undefined;
           }
         }

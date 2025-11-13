@@ -52,6 +52,11 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <!-- Avoid unconditional DNS-prefetch; GA/gtm are loaded lazily and only after interaction/idle -->
     <!-- Removed: <link rel="dns-prefetch" href="//www.googletagmanager.com" /> -->
 
+    <!-- Font Preloading for Critical Fonts -->
+    <!-- Preload primary fonts for faster rendering -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
     <!-- Favicon and touch icons (consolidated) -->
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icon-192x192.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
