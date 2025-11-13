@@ -1,0 +1,65 @@
+---
+/**
+ * SkipLink - Skip navigation link for accessibility
+ * 
+ * Provides a "Skip to main content" link that appears on focus
+ * for keyboard users. Improves accessibility and navigation efficiency.
+ * 
+ * @component
+ * @category Primitives
+ * @accessibility
+ * - Hidden by default, visible on focus
+ * - Allows keyboard users to skip navigation
+ * - WCAG 2.4.1 compliant
+ * 
+ * @example
+ * ```astro
+ * <SkipLink href="#main-content" />
+ * ```
+ * 
+ * @prop {string} href - Target anchor ID (e.g., "#main-content")
+ * @prop {string} [text='Skip to main content'] - Link text
+ */
+interface Props {
+  href: string;
+  text?: string;
+}
+
+const { 
+  href,
+  text = 'Skip to main content',
+} = Astro.props as Props;
+---
+
+<a
+  href={href}
+  class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2"
+>
+  {text}
+</a>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  .focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+</style>
+

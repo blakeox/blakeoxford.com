@@ -25,3 +25,5 @@ export { default as FormField } from './FormField.astro';
 export { default as Grid } from './Grid.astro';
 export { default as Section } from './Section.astro';
 export { default as Stack } from './Stack.astro';
+export { default as Skeleton } from './Skeleton.astro';
+export { default as SkipLink } from './SkipLink.astro';
