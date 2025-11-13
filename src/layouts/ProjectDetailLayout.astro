@@ -9,6 +9,7 @@
  */
 import { getEntry } from 'astro:content';
 import Layout from './BaseLayout.astro';
+import { createProjectSchema, createBreadcrumbListSchema, defaultAuthor } from '../utils/structuredData';
 import ProjectHero from '../components/features/projects/ProjectHero.astro';
 import ProjectDetailSection from '../components/features/projects/ProjectDetailSection.astro';
 import AchievementCard from '../components/composites/AchievementCard.astro';
@@ -49,9 +50,35 @@ const categories = hasCategories ? ((data as any).categories as string[]) : [];
 const reflection = 'reflection' in data ? ((data as any).reflection as string | undefined) : undefined;
 
 const { Content } = await entry.render();
+
+// Generate structured data
+const siteOrigin = 'https://blakeoxford.com';
+const projectImage = heroImage.startsWith('http') 
+  ? heroImage 
+  : `${siteOrigin}${heroImage.startsWith('/') ? heroImage : `/${heroImage}`}`;
+
+const projectSchema = createProjectSchema(
+  title,
+  defaultAuthor,
+  date,
+  {
+    description: description || undefined,
+    image: projectImage,
+    url: canonicalUrl,
+    keywords: Array.isArray(data.tags) ? data.tags : undefined,
+  }
+);
+
+const breadcrumbSchema = createBreadcrumbListSchema([
+  { name: 'Home', url: `${siteOrigin}/` },
+  { name: 'Projects', url: `${siteOrigin}/projects/` },
+  { name: title, url: canonicalUrl },
+]);
+
+const structuredData = [projectSchema, breadcrumbSchema];
 ---
 
-<Layout title={title} description={description} url={canonicalUrl} image={heroImage} wide>
+<Layout title={title} description={description} url={canonicalUrl} image={projectImage} structuredData={structuredData} wide>
   <ProjectHero title={title} description={description} date={date} image={heroImage} />
 
   <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">

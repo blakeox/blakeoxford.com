@@ -6,6 +6,7 @@ import Stack from '../../components/primitives/Stack.astro';
 import Flex from '../../components/primitives/Flex.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { createArticleSchema, createBreadcrumbListSchema, defaultAuthor } from '../../utils/structuredData';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }: { data: any }) => !data.draft);
@@ -41,12 +42,40 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric'
 });
+
+// Generate structured data
+const articleImage = heroImage 
+  ? (heroImage.startsWith('http') ? heroImage : `${siteOrigin}${heroImage.startsWith('/') ? heroImage : `/${heroImage}`}`)
+  : undefined;
+
+const articleSchema = createArticleSchema(
+  post.data.title,
+  defaultAuthor,
+  post.data.pubDate,
+  {
+    description: post.data.description ?? undefined,
+    dateModified: post.data.updatedDate,
+    image: articleImage,
+    url: canonicalUrl,
+    publisher: defaultAuthor,
+  }
+);
+
+const breadcrumbSchema = createBreadcrumbListSchema([
+  { name: 'Home', url: `${siteOrigin}/` },
+  { name: 'Blog', url: `${siteOrigin}/blog/` },
+  { name: post.data.title, url: canonicalUrl },
+]);
+
+const structuredData = [articleSchema, breadcrumbSchema];
 ---
 
 <Layout
   title={post.data.title}
   description={post.data.description ?? post.data.title}
   url={canonicalUrl}
+  image={articleImage}
+  structuredData={structuredData}
   wide={true}
 >
   <Container size="full" class="py-16 sm:py-20 lg:py-24">
