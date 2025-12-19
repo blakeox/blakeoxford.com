@@ -119,7 +119,7 @@ jobs:
 
       - name: Upload mutation report
         if: always() && matrix.test-group == 'unit'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: mutation-report-${{ github.sha }}
           path: mutation-report
@@ -159,7 +159,7 @@ jobs:
 
       - name: Upload quality badges
         if: always() && matrix.test-group == 'unit'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: quality-badges-${{ github.sha }}
           path: badges/
@@ -167,7 +167,7 @@ jobs:
 
       - name: Upload quality summary
         if: always() && matrix.test-group == 'unit'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: quality-summary-${{ github.sha }}
           path: quality-summary.md
@@ -241,7 +241,7 @@ jobs:
 
       - name: Upload coverage report
         if: matrix.test-group == 'unit'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: coverage-report
           path: coverage/
@@ -249,7 +249,7 @@ jobs:
 
       - name: Upload test results
         if: always() && matrix.test-group == 'e2e'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: comprehensive-playwright-report
           path: playwright-report/
@@ -261,7 +261,7 @@ jobs:
 
       - name: Upload flakiness history
         if: always() && matrix.test-group == 'e2e'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: flakiness-history-${{ github.sha }}
           path: flakiness-history.json
@@ -278,7 +278,7 @@ jobs:
 
       - name: Upload performance reports
         if: always() && matrix.test-group == 'performance'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: performance-reports-${{ github.sha }}
           path: lighthouse-reports/
