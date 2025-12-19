@@ -80,13 +80,13 @@ importers:
         version: 4.1.14
       '@tailwindcss/container-queries':
         specifier: ^0.1.1
-        version: 0.1.1(tailwindcss@4.1.14)
+        version: 0.1.1(tailwindcss@4.1.16)
       '@tailwindcss/postcss':
         specifier: ^4.1.14
         version: 4.1.14
       '@tailwindcss/typography':
         specifier: ^0.5.19
-        version: 0.5.19(tailwindcss@4.1.14)
+        version: 0.5.19(tailwindcss@4.1.16)
       '@tailwindcss/vite':
         specifier: ^4.1.15
         version: 4.1.16(vite@6.3.6(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.39.0)(yaml@2.8.1))
@@ -185,13 +185,13 @@ importers:
         version: 39.0.1(stylelint@16.25.0(typescript@5.9.3))
       stylelint-config-tailwindcss:
         specifier: ^1.0.0
-        version: 1.0.0(stylelint@16.25.0(typescript@5.9.3))(tailwindcss@4.1.14)
+        version: 1.0.0(stylelint@16.25.0(typescript@5.9.3))(tailwindcss@4.1.16)
       stylelint-order:
         specifier: ^7.0.0
         version: 7.0.0(stylelint@16.25.0(typescript@5.9.3))
       tailwindcss:
-        specifier: ^4.1.14
-        version: 4.1.14
+        specifier: ^4.1.16
+        version: 4.1.16
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -10058,9 +10058,9 @@ snapshots:
       picocolors: 1.1.1
       tailwindcss: 4.1.14
 
-  '@tailwindcss/container-queries@0.1.1(tailwindcss@4.1.14)':
+  '@tailwindcss/container-queries@0.1.1(tailwindcss@4.1.16)':
     dependencies:
-      tailwindcss: 4.1.14
+      tailwindcss: 4.1.16
 
   '@tailwindcss/node@4.1.14':
     dependencies:
@@ -10195,10 +10195,10 @@ snapshots:
       postcss: 8.5.6
       tailwindcss: 4.1.14
 
-  '@tailwindcss/typography@0.5.19(tailwindcss@4.1.14)':
+  '@tailwindcss/typography@0.5.19(tailwindcss@4.1.16)':
     dependencies:
       postcss-selector-parser: 6.0.10
-      tailwindcss: 4.1.14
+      tailwindcss: 4.1.16
 
   '@tailwindcss/vite@4.1.16(vite@6.3.6(@types/node@24.9.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.39.0)(yaml@2.8.1))':
     dependencies:
@@ -15182,10 +15182,10 @@ snapshots:
       stylelint: 16.25.0(typescript@5.9.3)
       stylelint-config-recommended: 17.0.0(stylelint@16.25.0(typescript@5.9.3))
 
-  stylelint-config-tailwindcss@1.0.0(stylelint@16.25.0(typescript@5.9.3))(tailwindcss@4.1.14):
+  stylelint-config-tailwindcss@1.0.0(stylelint@16.25.0(typescript@5.9.3))(tailwindcss@4.1.16):
     dependencies:
       stylelint: 16.25.0(typescript@5.9.3)
-      tailwindcss: 4.1.14
+      tailwindcss: 4.1.16
 
   stylelint-order@7.0.0(stylelint@16.25.0(typescript@5.9.3)):
     dependencies:
