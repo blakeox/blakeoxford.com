@@ -100,7 +100,7 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/cloudflare": "^12.6.10",
     "@astrojs/mdx": "^4.3.7",
-    "@astrojs/rss": "^4.0.12",
+    "@astrojs/rss": "^4.0.13",
     "@astrojs/sitemap": "^3.6.0",
     "@axe-core/playwright": "^4.10.2",
     "@eslint/js": "^9.38.0",
