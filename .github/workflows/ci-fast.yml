@@ -375,23 +375,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
       - name: Download quality summary
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: quality-summary
           path: ./artifacts
       - name: Download runtime quality artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: runtime-quality-artifacts
           path: ./artifacts
       - name: Download Linux essential E2E report
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: essential-playwright-report
           path: ./artifacts/linux
         continue-on-error: true
       - name: Download macOS essential E2E report
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: essential-playwright-report-macos
           path: ./artifacts/macos
