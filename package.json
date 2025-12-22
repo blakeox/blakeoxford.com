@@ -99,7 +99,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/cloudflare": "^12.6.10",
-    "@astrojs/mdx": "^4.3.7",
+    "@astrojs/mdx": "^4.3.13",
     "@astrojs/rss": "^4.0.13",
     "@astrojs/sitemap": "^3.6.0",
     "@axe-core/playwright": "^4.10.2",
