@@ -6,4 +6,4 @@ export * from './layout/index.js';
 export * from './ui/index.js';
 
 // Composite patterns (pre-composed bundles of components)
-export * from './composite/index.js';
+export * from './composites/index.js';
