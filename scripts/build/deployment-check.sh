@@ -38,7 +38,8 @@ fi
 echo "🔍 Checking for common deployment issues..."
 
 # Check for development URLs
-DEV_URLS=$(grep -r "localhost" $BUILD_DIR --include="*.html" --include="*.js" --include="*.css" | wc -l || echo "0")
+DEV_URL_PATTERN='(https?:\/\/|wss?:\/\/)(localhost|127\.0\.0\.1)(:[0-9]{1,5})?\b|\blocalhost:[0-9]{1,5}\b'
+DEV_URLS=$(grep -R -nE "$DEV_URL_PATTERN" "$BUILD_DIR" --include="*.html" --include="*.js" --include="*.css" | wc -l | tr -d ' ')
 if [ "$DEV_URLS" -gt 0 ]; then
     echo "❌ Found $DEV_URLS references to localhost in build"
     FAILED=true
