@@ -10,6 +10,44 @@ FAILED=false
 
 # Portable helpers for size calculations (true KB)
 # Uses stat to sum bytes, then converts to KB; works on macOS (-f%z) and Linux (-c%s)
+stat_bytes() {
+    local path="$1"
+    if stat -f%z / >/dev/null 2>&1; then
+        stat -f%z "$path" 2>/dev/null || echo 0
+    else
+        stat -c%s "$path" 2>/dev/null || echo 0
+    fi
+}
+
+sum_kb_from_pathlist() {
+    # Reads newline-delimited file paths from stdin.
+    # Outputs total KB (rounded up).
+    local total_bytes=0
+    local p
+    while IFS= read -r p; do
+        [ -n "$p" ] || continue
+        [ -f "$p" ] || continue
+        total_bytes=$((total_bytes + $(stat_bytes "$p")))
+    done
+    echo $(( (total_bytes + 1023) / 1024 ))
+}
+
+sum_gzip_kb_from_pathlist() {
+    # Reads newline-delimited file paths from stdin.
+    # Outputs total gzip KB (rounded up).
+    local total_bytes=0
+    local p
+    while IFS= read -r p; do
+        [ -n "$p" ] || continue
+        [ -f "$p" ] || continue
+        # wc output is padded; strip spaces
+        local gz_bytes
+        gz_bytes=$(gzip -c "$p" | wc -c | tr -d ' ')
+        total_bytes=$((total_bytes + gz_bytes))
+    done
+    echo $(( (total_bytes + 1023) / 1024 ))
+}
+
 sum_kb_from_find() {
     # Args: find command (path and predicates). This function appends -print0 and feeds to xargs.
     if stat -f%z / >/dev/null 2>&1; then
@@ -21,34 +59,42 @@ sum_kb_from_find() {
     fi
 }
 
+collect_referenced_urls() {
+    # Extracts referenced asset URLs from built HTML.
+    # Includes script src, modulepreload href, astro-island component-url, renderer-url, etc.
+    # Outputs newline-delimited URLs beginning with /_astro or /assets, with any query string removed.
+    grep -RohE "(/_astro|/assets)/[^\"'<>[:space:]]+" "$BUILD_DIR" --include="*.html" 2>/dev/null \
+        | sed 's/[?].*$//' \
+        | sort -u
+}
+
 # 1. Check JavaScript Bundle Size (minimal JS principle)
 echo "📦 Checking JavaScript bundle size..."
-JS_SIZE=$(sum_kb_from_find "$BUILD_DIR" -type f -name "*.js")
+REFERENCED_JS_PATHS=$(collect_referenced_urls \
+    | grep -E "^(/_astro|/assets)/.*\\.js$" \
+    | sed "s#^#$BUILD_DIR#")
 
-# Prefer counting only JS files that are actually referenced by built HTML (scripts/modulepreload)
-# Supports both single and double quotes in attributes to avoid falling back to counting all JS files.
-REFERENCED_JS_BASENAMES=$(grep -RohE "(<script[^>]+src=['\"][^'\"]*(\/_astro|\/assets)\/[A-Za-z0-9._\/\-]+\.js[^'\"]*['\"]|<link[^>]+rel=['\"]modulepreload['\"][^>]+href=['\"][^'\"]*(\/_astro|\/assets)\/[A-Za-z0-9._\/\-]+\.js[^'\"]*['\"])" "$BUILD_DIR" 2>/dev/null \
-    | sed -E 's/.*(\/_astro|\/assets)\//\1\//; s/\.js.*/.js/' \
-    | sed 's#.*/##' \
-    | sort -u)
-
-if [ -n "$REFERENCED_JS_BASENAMES" ]; then
-    # Resolve basenames back to files in BUILD_DIR and count unique paths
-    TMPJS=$(mktemp)
-    echo "$REFERENCED_JS_BASENAMES" > "$TMPJS"
-    JS_FILE_COUNT=$(while IFS= read -r name; do find "$BUILD_DIR" -type f -name "$name"; done < "$TMPJS" \
-        | sort -u | wc -l | tr -d ' ')
-    rm -f "$TMPJS"
+if [ -n "$REFERENCED_JS_PATHS" ]; then
+    JS_FILE_COUNT=$(printf "%s\n" "$REFERENCED_JS_PATHS" | sort -u | wc -l | tr -d ' ')
+    JS_RAW_SIZE=$(printf "%s\n" "$REFERENCED_JS_PATHS" | sort -u | sum_kb_from_pathlist)
+    JS_GZIP_SIZE=$(printf "%s\n" "$REFERENCED_JS_PATHS" | sort -u | sum_gzip_kb_from_pathlist)
 else
-    # Fallback: count all JS files in dist
+    # Fallback: count/sum all JS files in dist
     JS_FILE_COUNT=$(find "$BUILD_DIR" -type f -name "*.js" | wc -l | tr -d ' ')
+    JS_RAW_SIZE=$(sum_kb_from_find "$BUILD_DIR" -type f -name "*.js")
+    JS_GZIP_SIZE=$JS_RAW_SIZE
 fi
 
-if [ "$JS_SIZE" -gt 500 ]; then  # 500KB limit (more realistic for modern sites)
-    echo "❌ JavaScript bundle too large: ${JS_SIZE}KB (limit: 500KB)"
+# Budget (KB) based on network-relevant gzip size for referenced bundles
+JS_GZIP_LIMIT=150
+
+echo "✅ JavaScript referenced bundles: ${JS_GZIP_SIZE}KB gzip (${JS_RAW_SIZE}KB raw)"
+
+if [ "$JS_GZIP_SIZE" -gt "$JS_GZIP_LIMIT" ]; then
+    echo "❌ JavaScript bundle too large (gzip): ${JS_GZIP_SIZE}KB (limit: ${JS_GZIP_LIMIT}KB)"
     FAILED=true
 else
-    echo "✅ JavaScript bundle size: ${JS_SIZE}KB"
+    echo "✅ JavaScript bundle within gzip budget"
 fi
 
 if [ "$JS_FILE_COUNT" -gt 15 ]; then  # 15 files limit (more realistic)
@@ -110,58 +156,28 @@ fi
 # 5. Check Total Bundle Size (separating images vs. non-images)
 echo "📊 Checking total bundle size (split by type)..."
 
-# Calculate total size of referenced assets only (KB)
-# 1) Collect referenced asset basenames from built HTML/JS/CSS for /_astro and /assets paths
-REFERENCED_ALL=$(grep -RohE "(/_astro|/assets)/[A-Za-z0-9._/-]+\.(js|css|png|jpg|jpeg|webp|avif|gif|svg|map)" "$BUILD_DIR" 2>/dev/null \
-    | sed 's#.*/##' \
-    | sort -u)
+# Use referenced URLs (preserve paths) to avoid basename collisions like multiple index.html files.
+REFERENCED_ALL_PATHS=$(collect_referenced_urls \
+    | grep -E "^(/_astro|/assets)/.*\\.(js|css|png|jpg|jpeg|webp|avif|gif|svg|map)$" \
+    | sed "s#^#$BUILD_DIR#")
 
-# 2) Include HTML files explicitly (they are entry points)
-HTML_LIST=$(find "$BUILD_DIR" -type f -name "*.html" -exec basename {} \; 2>/dev/null || true)
+HTML_PATHS=$(find "$BUILD_DIR" -type f -name "*.html" 2>/dev/null || true)
 
-# 3) Sum bytes for referenced assets + HTML, then convert to KB
-if [ -n "$REFERENCED_ALL$HTML_LIST" ]; then
-    TMPREF=$(mktemp)
-    echo "$REFERENCED_ALL" > "$TMPREF"
-    # Append HTML basenames
-    if [ -n "$HTML_LIST" ]; then echo "$HTML_LIST" >> "$TMPREF"; fi
-    if stat -f%z / >/dev/null 2>&1; then
-        BYTES_TOTAL=$(while IFS= read -r name; do find "$BUILD_DIR" -type f -name "$name" -print0; done < "$TMPREF" \
-            | xargs -0 stat -f%z 2>/dev/null | awk '{s+=$1} END {printf "%.0f\n", s}')
-    else
-        BYTES_TOTAL=$(while IFS= read -r name; do find "$BUILD_DIR" -type f -name "$name" -print0; done < "$TMPREF" \
-            | xargs -0 stat -c%s 2>/dev/null | awk '{s+=$1} END {printf "%.0f\n", s}')
-    fi
-    TOTAL_SIZE=$(( (BYTES_TOTAL + 1023) / 1024 ))
-    rm -f "$TMPREF"
+if [ -n "$REFERENCED_ALL_PATHS$HTML_PATHS" ]; then
+    TOTAL_SIZE=$( (printf "%s\n" "$REFERENCED_ALL_PATHS"; printf "%s\n" "$HTML_PATHS") \
+        | sort -u \
+        | sum_kb_from_pathlist)
 else
     TOTAL_SIZE=$(du -sk "$BUILD_DIR" | awk '{print $1}')
 fi
 
-# Calculate size of image assets only (only those referenced by built files)
-# Build a list of referenced asset basenames from HTML/JS/CSS and sum their sizes
-REFERENCED_LIST=$(grep -RohE "(/_astro|/assets)/[A-Za-z0-9._-]+\.(png|jpg|jpeg|webp|avif|gif|svg)" "$BUILD_DIR" 2>/dev/null \
-    | sed 's#.*/##' \
-    | sort -u)
+REFERENCED_IMAGE_PATHS=$(collect_referenced_urls \
+    | grep -E "^(/_astro|/assets)/.*\\.(png|jpg|jpeg|webp|avif|gif|svg)$" \
+    | sed "s#^#$BUILD_DIR#")
 
 IMAGES_SIZE=0
-if [ -n "$REFERENCED_LIST" ]; then
-    # Create a temp file list and sum sizes for matches in BUILD_DIR
-    TMPFILE=$(mktemp)
-    echo "$REFERENCED_LIST" > "$TMPFILE"
-    # Find matching files in BUILD_DIR/_astro and BUILD_DIR/assets by basename
-    # Then sum their sizes in KB
-    if stat -f%z / >/dev/null 2>&1; then
-        # macOS/BSD stat
-        BYTES=$(while IFS= read -r name; do find "$BUILD_DIR" -type f -name "$name" -print0; done < "$TMPFILE" \
-            | xargs -0 stat -f%z 2>/dev/null | awk '{s+=$1} END {printf "%.0f\n", s}')
-    else
-        # GNU/Linux stat
-        BYTES=$(while IFS= read -r name; do find "$BUILD_DIR" -type f -name "$name" -print0; done < "$TMPFILE" \
-            | xargs -0 stat -c%s 2>/dev/null | awk '{s+=$1} END {printf "%.0f\n", s}')
-    fi
-    IMAGES_SIZE=$(( (BYTES + 1023) / 1024 ))
-    rm -f "$TMPFILE"
+if [ -n "$REFERENCED_IMAGE_PATHS" ]; then
+    IMAGES_SIZE=$(printf "%s\n" "$REFERENCED_IMAGE_PATHS" | sort -u | sum_kb_from_pathlist)
 else
     # Fallback to summing all images if reference scan yields nothing
     IMAGES_SIZE=$(sum_kb_from_find "$BUILD_DIR" \
@@ -202,7 +218,7 @@ fi
 # Summary
 echo ""
 echo "📋 Performance Budget Summary:"
-echo "  JavaScript: ${JS_SIZE}KB (${JS_FILE_COUNT} files)"
+echo "  JavaScript: ${JS_GZIP_SIZE}KB gzip (${JS_RAW_SIZE}KB raw, ${JS_FILE_COUNT} files)"
 echo "  CSS: ${CSS_SIZE}KB"
 echo "  Total: ${TOTAL_SIZE}KB (non-images: ${NON_IMAGE_SIZE}KB, images: ${IMAGES_SIZE}KB)"
 echo "  Critical CSS: $CRITICAL_CSS_COUNT files"

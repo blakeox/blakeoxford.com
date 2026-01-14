@@ -4,15 +4,43 @@
  * Manages focus trapping within modals, dialogs, and other overlay components.
  * Ensures keyboard users can navigate within the trap and cannot tab outside.
  * 
- * @example
+ * Features:
+ * - WCAG 2.4.3 compliant focus management
+ * - Tab/Shift+Tab cycling within trap
+ * - Prevents focus escape on outside clicks
+ * - Supports initial focus, return focus, and fallback focus
+ * - Dynamic content updates via update() method
+ * 
+ * @example Basic usage
  * ```typescript
  * import { createFocusTrap } from '@/utils/focusTrap';
  * 
+ * const containerRef = useRef<HTMLDivElement>(null);
  * const trap = createFocusTrap(containerRef.current);
+ * 
+ * // Activate when modal opens
  * trap.activate();
- * // ... later
+ * 
+ * // Deactivate when modal closes
  * trap.deactivate();
  * ```
+ * 
+ * @example With custom focus options
+ * ```typescript
+ * const trap = createFocusTrap(containerRef.current, {
+ *   initialFocus: firstInputRef.current,
+ *   returnFocus: triggerButtonRef.current,
+ *   fallbackFocus: containerRef.current,
+ * });
+ * ```
+ * 
+ * @accessibility
+ * - Ensures keyboard users cannot accidentally tab outside modal
+ * - Maintains logical focus order within trap
+ * - Returns focus to triggering element on close
+ * - Handles dynamic content changes
+ * 
+ * @see https://www.w3.org/WAI/WCAG21/Understanding/focus-order.html
  */
 
 /**

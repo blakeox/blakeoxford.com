@@ -10,7 +10,9 @@ echo "🚀 Running Deployment Quality Gate..."
 # Configuration
 REQUIRED_LIGHTHOUSE_SCORE=95
 REQUIRED_ACCESSIBILITY_SCORE=100
-BUNDLE_SIZE_LIMIT_KB=500
+# JS budget is enforced on the gzipped payload (network-relevant) rather than raw
+# on-disk sizes (which vary by filesystem block size and over-penalize minified JS).
+BUNDLE_SIZE_LIMIT_KB=250
 CRITICAL_CSS_LIMIT_KB=50
 
 # Colors for output
@@ -70,23 +72,35 @@ check_bundle_sizes() {
     
     # Find JS bundles
     local js_files=$(find dist -name "*.js" -type f)
-    local total_js_size=0
+    local total_js_size_kb=0
+    local total_js_gzip_kb=0
     
     if [ -n "$js_files" ]; then
         while IFS= read -r file; do
             if [ -f "$file" ]; then
-                local size=$(du -k "$file" | cut -f1)
-                total_js_size=$((total_js_size + size))
-                print_status $GREEN "📄 $(basename "$file"): ${size}KB"
+                local size_bytes
+                size_bytes=$(wc -c < "$file" | tr -d ' ')
+                local size_kb=$(((size_bytes + 1023) / 1024))
+
+                # Gzipped size is a closer proxy to what users actually download.
+                local gzip_bytes
+                gzip_bytes=$(gzip -c "$file" | wc -c | tr -d ' ')
+                local gzip_kb=$(((gzip_bytes + 1023) / 1024))
+
+                total_js_size_kb=$((total_js_size_kb + size_kb))
+                total_js_gzip_kb=$((total_js_gzip_kb + gzip_kb))
+
+                print_status $GREEN "📄 $(basename "$file"): ${size_kb}KB (gzip ${gzip_kb}KB)"
             fi
         done <<< "$js_files"
     fi
     
-    if [ $total_js_size -gt $BUNDLE_SIZE_LIMIT_KB ]; then
-        print_status $RED "❌ Total JS bundle size (${total_js_size}KB) exceeds limit (${BUNDLE_SIZE_LIMIT_KB}KB)"
+    if [ $total_js_gzip_kb -gt $BUNDLE_SIZE_LIMIT_KB ]; then
+        print_status $RED "❌ Total JS gzip size (${total_js_gzip_kb}KB) exceeds limit (${BUNDLE_SIZE_LIMIT_KB}KB)"
+        print_status $YELLOW "ℹ️  Raw total JS size: ${total_js_size_kb}KB"
         exit 1
     else
-        print_status $GREEN "✅ Bundle size within limits: ${total_js_size}KB"
+        print_status $GREEN "✅ JS gzip budget OK: ${total_js_gzip_kb}KB (raw ${total_js_size_kb}KB)"
     fi
 }
 

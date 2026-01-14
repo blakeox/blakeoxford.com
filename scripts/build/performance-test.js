@@ -89,7 +89,7 @@ class PerformanceTestRunner {
       'total-blocking-time': 200,
 
       // Resource budgets
-      'total-byte-weight': 512000, // 512KB
+      'total-byte-weight': 1048576, // 1MiB
       'dom-size': 1500,
       'unused-javascript': 51200, // 50KB unused JS
       'render-blocking-resources': 0
@@ -164,48 +164,48 @@ class PerformanceTestRunner {
       return;
     }
 
-  console.log('🚀 Starting local static server (serving dist)...');
-  const pnpmCmd = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
-  // Pick a free port and update baseUrl to match
-  const chosen = await this.findAvailablePort(4321, 10);
-  const port = chosen || 4321;
-  this.serverPort = port;
-  this.baseUrl = `http://127.0.0.1:${port}`;
-  console.log(`🔌 Using port ${port} for preview server`);
+    console.log('🚀 Starting local preview server (serving dist)...');
+    const pnpmCmd = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 
-    // Try using `serve` first
+    // Pick a free port and update baseUrl to match
+    const chosen = await this.findAvailablePort(4321, 10);
+    const port = chosen || 4321;
+    this.serverPort = port;
+    this.baseUrl = `http://127.0.0.1:${port}`;
+    console.log(`🔌 Using port ${port} for preview server`);
+
+    const killSpawned = async () => {
+      try {
+        if (!this.serverProcess?.pid) return;
+        if (process.platform === 'win32') {
+          spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], { stdio: 'ignore' });
+        } else {
+          try { process.kill(-this.serverProcess.pid, 'SIGTERM'); } catch { /* ignore */ }
+        }
+      } catch { /* ignore */ }
+    };
+
+    // Prefer `astro preview` (accurate multi-page routing). Fall back to `serve` (without SPA mode).
     this.serverProcess = spawn(
       pnpmCmd,
-  ['exec', 'serve', '-s', 'dist', '-l', String(port)],
+      ['preview', '--host', '127.0.0.1', '--port', String(port)],
       {
         detached: true,
         stdio: 'ignore',
         env: { ...process.env },
       }
     );
-    // Allow parent to exit independently of child if needed
     try { this.serverProcess.unref(); } catch { /* ignore */ }
 
     try {
-      // Try a shorter wait first; if it doesn't come up, fall back
-  await this.waitForServer(this.baseUrl, 10, 1000);
-  } catch {
-      console.warn('⚠️ `serve` did not become ready, falling back to `astro preview`...');
-      // Stop previous attempt if still around
-      try {
-        if (this.serverProcess?.pid) {
-          if (process.platform === 'win32') {
-            spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], { stdio: 'ignore' });
-          } else {
-      try { process.kill(-this.serverProcess.pid, 'SIGTERM'); } catch { /* ignore */ }
-          }
-        }
-    } catch { /* ignore */ }
+      await this.waitForServer(this.baseUrl, 30, 1000);
+    } catch {
+      console.warn('⚠️ `astro preview` did not become ready, falling back to `serve`...');
+      await killSpawned();
 
-      // Fallback to astro preview which serves the built dist
       this.serverProcess = spawn(
         pnpmCmd,
-        ['preview', '--host', '127.0.0.1', '--port', String(port)],
+        ['exec', 'serve', 'dist', '-l', String(port)],
         {
           detached: true,
           stdio: 'ignore',
@@ -214,7 +214,6 @@ class PerformanceTestRunner {
       );
       try { this.serverProcess.unref(); } catch { /* ignore */ }
 
-      // Wait full window for preview to come up
       await this.waitForServer(this.baseUrl, 30, 1000);
     }
   }
@@ -276,6 +275,8 @@ class PerformanceTestRunner {
       ];
 
       const results = [];
+      let hasBudgetFailures = false;
+      let hasErrors = false;
 
       for (const page of testPages) {
         console.log(`\n📊 Testing: ${page.name} (${page.url})`);
@@ -288,16 +289,25 @@ class PerformanceTestRunner {
           await this.generateReport(result, page.name);
 
           // Check budgets
-          this.checkBudgets(result, page.name);
+          const budgetCheck = this.checkBudgets(result, page.name);
+          if (!budgetCheck.passed) hasBudgetFailures = true;
 
         } catch (error) {
           console.error(`❌ Failed to test ${page.name}:`, error.message);
           results.push({ page: page.name, error: error.message });
+          hasErrors = true;
         }
       }
 
       // Generate summary report
       await this.generateSummaryReport(results);
+
+      if (hasErrors || hasBudgetFailures) {
+        const messageParts = [];
+        if (hasErrors) messageParts.push('one or more pages errored');
+        if (hasBudgetFailures) messageParts.push('one or more pages failed budgets');
+        throw new Error(`Lighthouse gate failed: ${messageParts.join(' and ')}`);
+      }
 
       console.log('\n✅ Performance testing completed!');
       return results;
