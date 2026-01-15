@@ -2,9 +2,10 @@
  * ChatInput component
  * Handles the chat input textarea and send button
  */
+import { memo } from 'react';
 import type { ChatInputProps } from './types';
 
-export function ChatInput({
+export const ChatInput = memo(function ChatInput({
 	inputValue,
 	chatState,
 	floatingLabelActive,
@@ -86,4 +87,6 @@ export function ChatInput({
 			</div>
 		</form>
 	);
-}
+});
+
+ChatInput.displayName = 'ChatInput';

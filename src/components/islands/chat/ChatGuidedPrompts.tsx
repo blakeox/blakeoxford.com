@@ -2,10 +2,11 @@
  * ChatGuidedPrompts component
  * Displays guided prompt suggestions for new users
  */
+import { memo } from 'react';
 import { GUIDED_PROMPTS } from '../../../lib/chat';
 import type { ChatGuidedPromptsProps } from './types';
 
-export function ChatGuidedPrompts({ visible, onSelectPrompt }: ChatGuidedPromptsProps) {
+export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({ visible, onSelectPrompt }: ChatGuidedPromptsProps) {
 	if (!visible) return null;
 
 	return (
@@ -33,4 +34,6 @@ export function ChatGuidedPrompts({ visible, onSelectPrompt }: ChatGuidedPrompts
 			</div>
 		</div>
 	);
-}
+});
+
+ChatGuidedPrompts.displayName = 'ChatGuidedPrompts';

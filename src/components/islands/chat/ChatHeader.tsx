@@ -2,9 +2,10 @@
  * ChatHeader component
  * Displays the header with title, connection status, and control buttons
  */
+import { memo } from 'react';
 import type { ChatHeaderProps } from './types';
 
-export function ChatHeader({
+export const ChatHeader = memo(function ChatHeader({
 	wsConnected,
 	activeUsers,
 	voiceSupported,
@@ -84,4 +85,6 @@ export function ChatHeader({
 			</div>
 		</div>
 	);
-}
+});
+
+ChatHeader.displayName = 'ChatHeader';

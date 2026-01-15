@@ -2,11 +2,12 @@
  * ChatQuickActions component
  * Displays quick action buttons for common queries
  */
+import { memo } from 'react';
 import { QUICK_ACTIONS } from '../../../lib/chat';
 import { autoragEvents } from '../../../lib/analytics';
 import type { ChatQuickActionsProps } from './types';
 
-export function ChatQuickActions({ onAction, setInputValue }: ChatQuickActionsProps) {
+export const ChatQuickActions = memo(function ChatQuickActions({ onAction, setInputValue }: ChatQuickActionsProps) {
 	return (
 		<div className="space-y-4">
 			<div className="text-center space-y-2">
@@ -61,4 +62,6 @@ export function ChatQuickActions({ onAction, setInputValue }: ChatQuickActionsPr
 			</div>
 		</div>
 	);
-}
+});
+
+ChatQuickActions.displayName = 'ChatQuickActions';
