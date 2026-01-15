@@ -11,9 +11,21 @@ vi.mock('../../../sentry.edge.config.js', () => ({
 	addEdgeBreadcrumb: vi.fn(),
 }));
 
-vi.mock('resend', () => ({ 
-	Resend: vi.fn(() => (global as any).__resendInst) 
-}));
+vi.mock('resend', () => {
+	return {
+		Resend: class {
+			constructor() {
+				return (global as any).__resendInst;
+			}
+		}
+	};
+});
+
+// Mock crypto.randomUUID before the test runs
+vi.stubGlobal('crypto', {
+	...crypto,
+	randomUUID: vi.fn(() => 'test-uuid-12345'),
+});
 
 interface MockOpts { json?: boolean; body?: any; turnstileOk?: boolean; existingHits?: number; resendError?: boolean; }
 
@@ -41,7 +53,16 @@ function mockContext({ json = true, body, turnstileOk = true, existingHits, rese
     }
     throw new Error('Unexpected fetch ' + url);
   });
-  const resendInst = { emails: { send: vi.fn(async () => (resendError ? { error: 'err', data: null } : { data: { id: '123' }, error: null })) } };
+  const resendInst = { 
+		emails: { 
+			send: vi.fn(async () => {
+				if (resendError) {
+					return { error: { message: 'err' }, data: null };
+				}
+				return { data: { id: '123' }, error: null };
+			}) 
+		} 
+	};
   (global as any).__resendInst = resendInst;
   return { request, env, waitUntil: vi.fn(), next: vi.fn(), params: {}, data: {} } as any;
 }

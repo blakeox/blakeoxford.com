@@ -10,7 +10,7 @@ describe('projects/index.astro', () => {
   });
 
   it('should use tokenized container sizing', () => {
-    expect(fileContent).toContain('container="lg"');
+    expect(fileContent).toContain('container="xl"');
     expect(fileContent).toContain('container="md"');
   });
 

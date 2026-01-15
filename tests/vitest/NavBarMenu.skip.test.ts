@@ -2,10 +2,16 @@
  * NavBarMenu Unit Tests - Simplified Version
  * Tests the NavBarMenu.js navigation enhancement functionality
  * TODO: Convert to Playwright e2e tests for real DOM testing
+ * 
+ * NOTE: This test file is currently skipped. See search-overlay.skip.test.ts pattern.
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
+
+describe.skip('NavBarMenu - JSDOM tests disabled', () => {
+  it.todo('Convert to Playwright e2e tests');
+});
 
 // Simple mock for NavBarMenu functionality
 class MockNavBarMenu {
