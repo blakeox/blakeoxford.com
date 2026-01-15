@@ -15,7 +15,7 @@ import { AppError, ErrorCodes, createApiErrorFromResponse } from '../utils/error
 export const ContactFormSchema = z.object({
 	name: z.string().min(2, 'Name must be at least 2 characters'),
 	email: z.string().email('Please enter a valid email address'),
-	subject: z.string().min(5, 'Subject must be at least 5 characters'),
+	subject: z.string().min(5, 'Subject must be at least 5 characters').optional(),
 	message: z.string().min(10, 'Message must be at least 10 characters'),
 	honeypot: z.string().optional(), // Spam detection field
 	turnstileToken: z.string().optional(), // Cloudflare Turnstile token
@@ -140,6 +140,101 @@ export class ContactFormService {
 		} catch (error) {
 			if (error instanceof AppError) {
 				throw error;
+			}
+
+			throw new AppError(
+				'Failed to submit contact form',
+				ErrorCodes.FORM_SUBMISSION_ERROR,
+				{
+					cause: error instanceof Error ? error : undefined,
+					isRetryable: true,
+				}
+			);
+		}
+	}
+
+	/**
+	 * Submit a contact form using FormData (for traditional form submissions)
+	 */
+	async submitFormData(
+		formData: FormData,
+		options?: { signal?: AbortSignal }
+	): Promise<ContactFormResponse> {
+		// Extract and validate data from FormData
+		const data: Record<string, string> = {
+			name: (formData.get('name') as string) || '',
+			email: (formData.get('email') as string) || '',
+			message: (formData.get('message') as string) || '',
+		};
+
+		// Optional fields
+		const subject = formData.get('subject') as string;
+		if (subject) data.subject = subject;
+
+		const honeypot = formData.get('honeypot') as string;
+		if (honeypot) data.honeypot = honeypot;
+
+		const turnstileToken = formData.get('cf-turnstile-response') as string;
+		if (turnstileToken) data.turnstileToken = turnstileToken;
+
+		// Client-side validation
+		const validation = validateContactForm(data);
+		if (!validation.success) {
+			throw new AppError('Validation failed', ErrorCodes.FORM_VALIDATION_ERROR, {
+				details: { errors: validation.errors },
+				userMessage: 'Please correct the errors in the form.',
+			});
+		}
+
+		// Honeypot check (spam detection)
+		if (data.honeypot && data.honeypot.length > 0) {
+			// Silently reject spam submissions
+			return {
+				success: true,
+				message: 'Thank you for your message!',
+			};
+		}
+
+		// Turnstile check
+		if (this.config.requireTurnstile && !data.turnstileToken) {
+			throw new AppError('Turnstile verification required', ErrorCodes.FORM_VALIDATION_ERROR, {
+				userMessage: 'Please complete the verification challenge.',
+			});
+		}
+
+		try {
+			const response = await fetch(this.config.endpoint, {
+				method: 'POST',
+				body: formData,
+				signal: options?.signal,
+			});
+
+			if (!response.ok) {
+				throw await createApiErrorFromResponse(response);
+			}
+
+			const result = await response.json();
+			return {
+				success: true,
+				message: result.message || 'Thank you for your message!',
+				id: result.id,
+			};
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error;
+			}
+
+			// Handle abort errors
+			if (error instanceof Error && error.name === 'AbortError') {
+				throw new AppError(
+					'Request timed out',
+					ErrorCodes.NETWORK_TIMEOUT,
+					{
+						cause: error,
+						isRetryable: true,
+						userMessage: 'The request timed out. Please try again.',
+					}
+				);
 			}
 
 			throw new AppError(

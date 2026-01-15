@@ -10,6 +10,8 @@ import {
   showStatusMessage,
   validateField,
 } from './form/FormHelpers';
+import { getContactFormService } from '../../services/ContactFormService';
+import { AppError, isAppError, getUserMessage } from '../../utils/errors';
 
 declare global {
   interface Window {
@@ -221,38 +223,38 @@ function setupContactForm(): CleanupFn | void {
     }
 
     const formData = new FormData(form);
-  const controller = new AbortController();
-  const timeoutId: ReturnType<typeof setTimeout> = globalThis.setTimeout(() => controller.abort(), 10000);
+    const controller = new AbortController();
+    const timeoutId: ReturnType<typeof setTimeout> = globalThis.setTimeout(() => controller.abort(), 10000);
 
     try {
       setSubmittingState(form, true);
-      // analytics removed; no-op
 
-      const response = await fetch(form.action || '/api/contact/submit', {
-        method: 'POST',
-        body: formData,
-        signal: controller.signal,
+      // Use ContactFormService for submission
+      const contactService = getContactFormService({
+        endpoint: form.action || '/api/contact/submit',
+        requireTurnstile: false, // Turnstile handled separately in this component
       });
 
-  globalThis.clearTimeout(timeoutId);
+      const result = await contactService.submitFormData(formData, { signal: controller.signal });
 
-      if (!response.ok) {
-        throw new Error(`Submission failed (${response.status})`);
+      globalThis.clearTimeout(timeoutId);
+
+      if (result.success) {
+        showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+        form.reset();
       }
-
-      showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
-      form.reset();
-      // analytics removed; no-op
     } catch (error) {
+      globalThis.clearTimeout(timeoutId);
+
+      // Use centralized error handling
+      const errorMessage = isAppError(error)
+        ? getUserMessage(error as AppError)
+        : '❌ Something went wrong. Please try again later or email me directly at contact@blakeoxford.com.';
+
       console.error('Form submission failed', error);
-      showStatusMessage(
-        statusElement ?? null,
-        '❌ Something went wrong. Please try again later or email me directly at contact@blakeoxford.com.',
-        'error',
-      );
-      // analytics removed; no-op
+      showStatusMessage(statusElement ?? null, errorMessage, 'error');
     } finally {
-  globalThis.clearTimeout(timeoutId);
+      globalThis.clearTimeout(timeoutId);
       setSubmittingState(form, false);
     }
   };
