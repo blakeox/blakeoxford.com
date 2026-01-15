@@ -110,7 +110,7 @@ export async function retry<T>(
 /**
  * Retry condition: only retry on network errors or 5xx status codes
  */
-export function shouldRetryNetworkError(error: unknown, attempt: number): boolean {
+export function shouldRetryNetworkError(error: unknown, _attempt: number): boolean {
   // Don't retry on 4xx errors (client errors)
   if (error instanceof Error && 'status' in error) {
     const status = (error as { status: number }).status;

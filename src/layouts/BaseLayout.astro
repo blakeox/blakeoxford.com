@@ -19,7 +19,7 @@ const {
   wide = false,
   keywords = '',
   image, // Optional OG image override
-  structuredData, // Optional additional structured data schemas
+  // structuredData, // Optional additional structured data schemas (unused)
 } = Astro.props;
 
 // Sanitize description: remove extra whitespace, replace Unicode with ASCII for Lighthouse compatibility
@@ -101,7 +101,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
 
     <!-- Additional SEO Meta Tags -->
     <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="msapplication-TileColor" content="rgb(var(--color-primary))" />
     <meta name="application-name" content="Blake Oxford Portfolio" />
     <!-- Apple mobile web app support -->
     <meta name="mobile-web-app-capable" content="yes" />
@@ -110,9 +110,9 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <meta name="apple-mobile-web-app-title" content="Blake Oxford" />
 
     <!-- Theme colors -->
-    <meta name="theme-color" content="#2563eb" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#2563eb" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e40af" />
+    <meta name="theme-color" content="rgb(var(--color-primary))" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="rgb(var(--color-primary))" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="rgb(var(--color-primary-dark))" />
 
   <!-- Structured Data: Website & Person (enriched; merged safely with page-specific schemas) -->
   <script is:inline type="application/ld+json">

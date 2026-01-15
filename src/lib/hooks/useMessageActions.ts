@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import type { ChatMessage, MutableRef } from '../chat-types.js';
+import type { ChatMessage, MutableRef } from '../chat/chat-types.js';
 import { decodeMimeEncodedWords, decodeHtmlEntities } from '../string-utils.js';
 import { autoragEvents } from '../analytics.js';
 
@@ -165,7 +165,7 @@ export function useMessageActions(options: UseMessageActionsOptions): UseMessage
 			// Add sources for assistant messages
 			if (message.role === 'assistant' && message.sources && message.sources.length > 0) {
 				markdown += '### 📚 Sources\n\n';
-				message.sources.forEach((source: any, sourceIndex: number) => {
+				message.sources.forEach((source, sourceIndex: number) => {
 					const title = decodeMimeEncodedWords(decodeHtmlEntities(source.title || source.url));
 					const score = source.score ? ` (${Math.round(source.score * 100)}% relevant)` : '';
 					const collection = source.collection ? ` [${source.collection}]` : '';

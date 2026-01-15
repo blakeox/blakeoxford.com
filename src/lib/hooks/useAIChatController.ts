@@ -5,11 +5,11 @@ import type {
 	ChatState,
 	LoadingPhase,
 	SearchFallback,
-} from '../chat-types';
-import { INITIAL_ASSISTANT_MESSAGE } from '../chat-types';
-import { PREFERENCES_STORAGE_KEY } from '../chat-constants';
-import { buildHistoryForRequest } from '../message-processing';
-import { getBooleanPreference } from '../storage-utils';
+} from '../chat/chat-types';
+import { INITIAL_ASSISTANT_MESSAGE } from '../chat/chat-types';
+import { PREFERENCES_STORAGE_KEY } from '../chat/chat-constants';
+import { buildHistoryForRequest } from '../chat/message-processing';
+import { getBooleanPreference } from '../chat/storage-utils';
 import { useConversationAnalytics } from './useConversationAnalytics';
 import { useConversationWebSocket } from './useConversationWebSocket';
 import { useCopyFeedback } from './useCopyFeedback';

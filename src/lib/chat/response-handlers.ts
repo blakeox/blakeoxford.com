@@ -3,9 +3,9 @@
  */
 
 import type { ChatMessage } from './chat-types';
-import { autoragEvents } from './analytics';
+import { autoragEvents } from '../analytics';
 import { checkCitationHealth } from './chat-helpers';
-import { calculateResponseQuality, evaluateResponseWithLLM } from './quality-utils';
+import { calculateResponseQuality, evaluateResponseWithLLM } from '../quality-utils';
 
 /**
  * Finalize assistant message with quality scoring and citation health

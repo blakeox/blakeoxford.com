@@ -58,7 +58,9 @@ export class Analytics implements ModuleInitializer<AnalyticsConfig> {
     }
     
     if (!this.shouldTrack()) {
-      console.log('🚫 Analytics tracking disabled');
+      if (this.config.debug) {
+        console.log('🚫 Analytics tracking disabled');
+      }
       return;
     }
     
@@ -66,7 +68,9 @@ export class Analytics implements ModuleInitializer<AnalyticsConfig> {
     this.setupPerformanceTracking();
     this.isInitialized = true;
     
-    console.log('📊 Analytics initialized', this.config.debug ? this.config : '');
+    if (this.config.debug) {
+      console.log('📊 Analytics initialized', this.config);
+    }
   }
   
   destroy(): void {

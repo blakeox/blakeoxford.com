@@ -127,7 +127,9 @@ export class MonitoringSystem {
     }
     
     try {
-      console.log('🔍 Initializing Advanced Monitoring System...');
+      if (this.config.debug) {
+        console.log('🔍 Initializing Advanced Monitoring System...');
+      }
       
       // Initialize base performance monitor (always enabled)
       this.monitors.performance = initPerformanceMonitor();
@@ -145,7 +147,9 @@ export class MonitoringSystem {
           }
         });
         
-        console.log('🔒 Security monitoring initialized');
+        if (this.config.debug) {
+          console.log('🔒 Security monitoring initialized');
+        }
       }
       
       // Initialize advanced performance monitoring
@@ -163,7 +167,9 @@ export class MonitoringSystem {
           }
         });
         
-        console.log('📈 Advanced performance monitoring initialized');
+        if (this.config.debug) {
+          console.log('📈 Advanced performance monitoring initialized');
+        }
       }
       
       // Initialize monitoring dashboard
@@ -179,7 +185,9 @@ export class MonitoringSystem {
           }
         });
         
-        console.log(`📊 Monitoring dashboard initialized - Press ${this.config.dashboard.hotkey} to toggle`);
+        if (this.config.debug) {
+          console.log(`📊 Monitoring dashboard initialized - Press ${this.config.dashboard.hotkey} to toggle`);
+        }
         
         // Auto-show dashboard in development
         if (this.config.dashboard.autoShow) {
@@ -200,8 +208,10 @@ export class MonitoringSystem {
       
       this.initialized = true;
       
-      console.log('✅ Advanced Monitoring System fully initialized');
-      this.logSystemStatus();
+      if (this.config.debug) {
+        console.log('✅ Advanced Monitoring System fully initialized');
+        this.logSystemStatus();
+      }
       
     } catch (error) {
       console.error('Failed to initialize monitoring system:', error);
@@ -412,7 +422,7 @@ export class MonitoringSystem {
     initialized: boolean;
     config: MonitoringSystemConfig;
     activeMonitors: string[];
-    performance: any;
+    performance: Record<string, unknown> | null;
     errors: number;
   } {
     return {
@@ -421,7 +431,7 @@ export class MonitoringSystem {
       activeMonitors: Object.entries(this.monitors)
         .filter(([, monitor]) => monitor !== null)
         .map(([name]) => name),
-      performance: this.monitors.performance?.calculateMetrics(),
+      performance: this.monitors.performance?.calculateMetrics() ?? null,
       errors: 0 // Would track errors over time
     };
   }
@@ -429,8 +439,8 @@ export class MonitoringSystem {
   /**
    * Generate comprehensive monitoring report
    */
-  generateReport(): any {
-    const reports: any = {
+  generateReport(): Record<string, unknown> {
+    const reports: Record<string, unknown> = {
       timestamp: new Date().toISOString(),
       system: this.getStatus()
     };

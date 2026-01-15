@@ -1,13 +1,29 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import fs from 'fs';
-import path from 'path';
 
-// Mock the dependencies
-vi.mock('fs');
-vi.mock('path');
+// Mock implementations
+const mockReadFileSync = vi.fn();
+const mockReaddirSync = vi.fn();
+const mockBasename = vi.fn();
+const mockJoin = vi.fn();
 
-const mockFs = vi.mocked(fs);
-const mockPath = vi.mocked(path);
+// Mock the modules before imports
+vi.mock('fs', () => ({
+  readFileSync: mockReadFileSync,
+  readdirSync: mockReaddirSync,
+  default: {
+    readFileSync: mockReadFileSync,
+    readdirSync: mockReaddirSync,
+  }
+}));
+
+vi.mock('path', () => ({
+  basename: mockBasename,
+  join: mockJoin,
+  default: {
+    basename: mockBasename,
+    join: mockJoin,
+  }
+}));
 
 interface SearchEntry {
   title: string;
@@ -23,20 +39,20 @@ describe('Search Index Generation', () => {
   describe('file parsing', () => {
     it('should handle basic file content parsing', () => {
       const mockFileContent = 'Sample file content for testing';
-      mockFs.readFileSync.mockReturnValue(mockFileContent as any);
+      mockReadFileSync.mockReturnValue(mockFileContent);
 
-      const content = fs.readFileSync('/test/file.astro', 'utf-8');
+      const content = mockReadFileSync('/test/file.astro', 'utf-8');
       
       expect(content).toBe(mockFileContent);
-      expect(mockFs.readFileSync).toHaveBeenCalledWith('/test/file.astro', 'utf-8');
+      expect(mockReadFileSync).toHaveBeenCalledWith('/test/file.astro', 'utf-8');
     });
 
     it('should handle file path operations', () => {
-      mockPath.basename.mockReturnValue('file.astro');
-      mockPath.join.mockReturnValue('/test/content/file.astro');
+      mockBasename.mockReturnValue('file.astro');
+      mockJoin.mockReturnValue('/test/content/file.astro');
 
-      const basename = path.basename('/test/content/file.astro');
-      const fullPath = path.join('/test', 'content', 'file.astro');
+      const basename = mockBasename('/test/content/file.astro');
+      const fullPath = mockJoin('/test', 'content', 'file.astro');
 
       expect(basename).toBe('file.astro');
       expect(fullPath).toBe('/test/content/file.astro');
@@ -72,9 +88,9 @@ describe('Search Index Generation', () => {
   describe('directory operations', () => {
     it('should read directory contents', () => {
       const mockFiles = ['file1.astro', 'file2.astro', 'other.txt'];
-      mockFs.readdirSync.mockReturnValue(mockFiles as any);
+      mockReaddirSync.mockReturnValue(mockFiles);
 
-      const files = fs.readdirSync('/test/dir');
+      const files = mockReaddirSync('/test/dir') as string[];
       const astroFiles = files.filter((f: string) => f.endsWith('.astro'));
 
       expect(files).toEqual(mockFiles);
@@ -85,21 +101,21 @@ describe('Search Index Generation', () => {
   describe('index building', () => {
     it('should build search index from files', () => {
       const mockFiles = ['post1.astro', 'post2.astro'];
-      mockFs.readdirSync.mockReturnValue(mockFiles as any);
-      mockFs.readFileSync.mockReturnValue('Sample content' as any);
-      mockPath.basename.mockImplementation((p: string, ext?: string) => {
+      mockReaddirSync.mockReturnValue(mockFiles);
+      mockReadFileSync.mockReturnValue('Sample content');
+      mockBasename.mockImplementation((p: string, ext?: string) => {
         const name = p.split('/').pop() || '';
         return ext ? name.replace(ext, '') : name;
       });
-      mockPath.join.mockImplementation((...args: string[]) => args.join('/'));
+      mockJoin.mockImplementation((...args: string[]) => args.join('/'));
 
       // Mock index building logic
       const buildIndexMock = (dir: string, baseUrl: string) => {
-        const files = fs.readdirSync(dir).filter((f: string) => f.endsWith('.astro'));
+        const files = (mockReaddirSync(dir) as string[]).filter((f: string) => f.endsWith('.astro'));
         return files.map((file: string) => ({
-          title: `Title for ${path.basename(file, '.astro')}`,
+          title: `Title for ${mockBasename(file, '.astro')}`,
           excerpt: 'Sample excerpt',
-          url: `${baseUrl}/${path.basename(file, '.astro')}`
+          url: `${baseUrl}/${mockBasename(file, '.astro')}`
         }));
       };
 

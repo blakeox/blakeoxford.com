@@ -2,10 +2,10 @@
 /**
  * Cloudflare Worker: Edge app with asset serving, security headers, caching, audit-mode, and utilities
  */
-import { onRequestPost as handleSendEmail } from './send-email.js';
+import { onRequestPost as handleSendEmail } from './send-email.ts';
 import { initEdgeSentry, addEdgeBreadcrumb } from '../sentry.edge.config.js';
 import { CACHE_DURATIONS, isHashedPath } from '../src/config/constants.ts';
-export { ConversationDurableObject } from './ConversationDO.js';
+export { ConversationDurableObject } from './ConversationDO.ts';
 
 class EdgeCacheManager {
   constructor(request, env) {

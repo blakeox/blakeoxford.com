@@ -75,7 +75,7 @@ async function loadProjects(): Promise<ProjectDocument[]> {
       categories: project.data.categories ?? [],
       draft: Boolean(project.data.draft),
       technologies: project.data.tags ?? [],
-      image: project.data.heroImage ?? project.data.image ?? null,
+      image: project.data.heroImage ?? null,
     }));
   } catch (err: unknown) {
     try {

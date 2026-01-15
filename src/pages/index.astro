@@ -9,11 +9,9 @@ import ResumeHighlightItem from '../components/features/home/ResumeHighlightItem
 import TechnologyItem from '../components/features/home/TechnologyItem.astro';
 import BlogPostCard from '../components/features/blog/BlogPostCard.astro';
 import SectionHeading from '../components/primitives/SectionHeading.astro';
-import SectionBadge from '../components/primitives/SectionBadge.astro';
 import FloatingEmoji from '../components/primitives/FloatingEmoji.astro';
 import FloatingBlur from '../components/primitives/FloatingBlur.astro';
 import Grid from '../components/primitives/Grid.astro';
-import FeatureCard from '../components/composites/FeatureCard.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { getProjectsSorted } from '../content/projects/getProjects';
@@ -286,8 +284,8 @@ function deriveImageData(imgPath?: string) {
       <SectionHeading size='4xl' class='mb-8'>Technologies I Excel At</SectionHeading>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-neutral">
         {technologies.map((tech) => {
-          const raw = tech.img as any;
-          const srcStr: string | undefined = typeof raw === 'string' ? raw : raw?.src;
+          const raw = tech.img;
+          const srcStr: string | undefined = typeof raw === 'string' ? raw : (raw && typeof raw === 'object' && 'src' in raw ? String(raw.src) : undefined);
           const canOptimize = typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
           const data = canOptimize ? deriveImageData(srcStr) : null;
           return (
@@ -303,7 +301,7 @@ function deriveImageData(imgPath?: string) {
       <SectionHeading id='recent-projects-title' size='4xl' class='mb-8'>Recent Projects</SectionHeading>
     </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {recentProjects.map((project: any) => (
+        {recentProjects.map((project: CollectionEntry<'projects'>) => (
           <ProjectCard project={project} />
         ))}
       </div>        <div class="mt-8 text-center">

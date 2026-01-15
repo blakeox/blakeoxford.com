@@ -20,7 +20,7 @@
 
 const isDev = import.meta.env.DEV;
 const isDebug = import.meta.env.PUBLIC_DEBUG === 'true';
-const isProduction = import.meta.env.PROD;
+const _isProduction = import.meta.env.PROD;
 
 /**
  * Logger interface with different log levels

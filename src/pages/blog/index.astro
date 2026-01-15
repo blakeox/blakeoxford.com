@@ -10,7 +10,7 @@ import BadgePill from '../../components/primitives/BadgePill.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
-const posts = await getCollection('blog', ({ data }: { data: any }) => !data.draft);
+const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);
 const sortedPosts = posts
   .slice()
   .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());

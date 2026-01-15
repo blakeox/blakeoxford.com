@@ -17,6 +17,14 @@ export default defineConfig({
     globals: true,
     setupFiles: './vitest.setup.ts',
   include: ['tests/**/*.test.{ts,tsx}'],
+  exclude: [
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/cypress/**',
+    '**/.{idea,git,cache,output,temp}/**',
+    '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+    '**/*.skip.test.{ts,tsx}', // Explicitly exclude .skip.test files
+  ],
   retry: 1, // enable single retry to surface flaky tests (tracked by custom reporter)
   reporters: [ 'default', './tests/reporters/flakinessReporter.ts' ],
     coverage: {

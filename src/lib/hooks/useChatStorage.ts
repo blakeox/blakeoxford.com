@@ -8,16 +8,16 @@
  */
 
 import { useEffect, useRef } from 'react';
-import type { ChatMessage } from '../chat-types';
+import type { ChatMessage } from '../chat/chat-types';
 import {
 	getStorageItem,
 	setStorageItem,
-} from '../storage-utils';
-import { restoreMessages } from '../message-validation';
+} from '../chat/storage-utils';
+import { restoreMessages } from '../chat/message-validation';
 import {
 	CONVERSATION_STORAGE_KEY,
 	PREFERENCES_STORAGE_KEY,
-} from '../chat-constants';
+} from '../chat/chat-constants';
 
 export interface UseChatStorageOptions {
 	/** Current conversation messages */

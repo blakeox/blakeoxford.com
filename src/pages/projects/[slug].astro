@@ -1,0 +1,42 @@
+---
+/**
+ * Dynamic Project Detail Route
+ * 
+ * Renders individual project pages using MDX content from the projects collection.
+ * Replaces 8 duplicate .astro files with a single dynamic route.
+ * 
+ * CTA sections are optional and configured via frontmatter (ctaHeading, ctaDescription).
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import ProjectDetailLayout from '../../layouts/ProjectDetailLayout.astro';
+import CTASection from '../../components/composites/CTASection.astro';
+
+export const getStaticPaths = (async () => {
+  const projects = await getCollection('projects');
+  return projects
+    .filter((project: CollectionEntry<'projects'>) => !project.data.draft)
+    .map((project: CollectionEntry<'projects'>) => ({
+      params: { slug: project.slug },
+      props: { project },
+    }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { ctaHeading, ctaDescription } = project.data;
+const showCTA = ctaHeading && ctaDescription;
+---
+
+<ProjectDetailLayout slug={project.slug}>
+  {showCTA && (
+    <CTASection
+      slot="cta"
+      heading={ctaHeading}
+      description={ctaDescription}
+    />
+  )}
+</ProjectDetailLayout>

@@ -8,7 +8,7 @@
  */
 
 import { useCallback, type RefObject } from 'react';
-import type { ChatState } from '../chat-types';
+import type { ChatState } from '../chat/chat-types';
 
 export interface UseChatLifecycleOptions {
 	/** Whether chat is currently open */

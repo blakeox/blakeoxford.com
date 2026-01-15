@@ -22,9 +22,6 @@ const projects = defineCollection({
     description: z.string().optional(),
     date: z.date().optional(),
     tags: z.array(z.string()).default([]),
-    url: z.string().url().optional(),
-    repo: z.string().url().optional(),
-    image: z.string().optional(),
     heroImage: z.string().optional(),
     highlights: z.array(z.string()).default([]),
     categories: z.array(z.string()).default([]),
@@ -48,8 +45,8 @@ const projects = defineCollection({
       )
       .default([]),
     reflection: z.string().optional(),
-    link: z.string().url().optional(),
-    external: z.string().url().optional(),
+    ctaHeading: z.string().optional(),
+    ctaDescription: z.string().optional(),
   }),
 });
 
