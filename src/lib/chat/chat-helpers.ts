@@ -2,9 +2,9 @@
  * Helper functions for AI Chat Island component
  */
 
-import type { AIChatSource } from './ai-search';
+import type { AIChatSource } from '../ai-search';
 import { MAX_SUMMARY_LENGTH, SUMMARY_TRUNCATE_AT } from './chat-constants';
-import { decodeHtmlEntities, decodeMimeEncodedWords } from './string-utils';
+import { decodeHtmlEntities, decodeMimeEncodedWords } from '../string-utils';
 
 /**
  * Clean and truncate snippet text for display

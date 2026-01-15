@@ -5,14 +5,14 @@ import {
 	CONTEXTUAL_CTAS,
 	GUIDED_PROMPTS,
 	QUICK_ACTIONS,
-} from '../../lib/chat-constants';
-import { cleanSnippet } from '../../lib/chat-helpers';
+} from '../../lib/chat/chat-constants';
+import { cleanSnippet } from '../../lib/chat/chat-helpers';
 import {
 	calculateConversationAnalytics as calculateAnalytics,
-} from '../../lib/conversation-utils';
+} from '../../lib/chat/conversation-utils';
 import { useAIChatController } from '../../lib/hooks/useAIChatController';
-import { generateContextualCTAs } from '../../lib/message-processing';
-import { getRelevanceExplanation } from '../../lib/response-handlers';
+import { generateContextualCTAs } from '../../lib/chat/message-processing';
+import { getRelevanceExplanation } from '../../lib/chat/response-handlers';
 import {
 	cleanAssistantResponse,
 	decodeHtmlEntities,

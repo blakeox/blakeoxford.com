@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import type { SpeechRecognitionLike } from '../chat-types';
+import type { SpeechRecognitionLike } from '../chat/chat-types';
 
 export interface UseVoiceRecognitionOptions {
 	/** Callback invoked when final transcript is ready */

@@ -3,7 +3,7 @@
  * Handles safe restoration of chat messages from storage
  */
 
-import type { AIChatSource } from './ai-search';
+import type { AIChatSource } from '../ai-search';
 
 // Local type definition to avoid circular dependencies
 type ChatMessage = {

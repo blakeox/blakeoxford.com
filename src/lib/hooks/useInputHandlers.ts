@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import type { ChatState } from '../chat-types.js';
+import type { ChatState } from '../chat/chat-types.js';
 
 /**
  * Options for the input handlers hook

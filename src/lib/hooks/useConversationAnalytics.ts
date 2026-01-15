@@ -8,8 +8,8 @@
  */
 
 import { useMemo } from 'react';
-import type { ChatMessage } from '../chat-types';
-import { INITIAL_ASSISTANT_MESSAGE } from '../chat-types';
+import type { ChatMessage } from '../chat/chat-types';
+import { INITIAL_ASSISTANT_MESSAGE } from '../chat/chat-types';
 import { decodeHtmlEntities } from '../string-utils';
 
 export interface ConversationAnalyticsOptions {

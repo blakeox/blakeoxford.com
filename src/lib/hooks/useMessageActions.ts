@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import type { ChatMessage, MutableRef } from '../chat-types.js';
+import type { ChatMessage, MutableRef } from '../chat/chat-types.js';
 import { decodeMimeEncodedWords, decodeHtmlEntities } from '../string-utils.js';
 import { autoragEvents } from '../analytics.js';
 

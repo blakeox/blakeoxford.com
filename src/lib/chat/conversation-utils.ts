@@ -2,7 +2,7 @@
  * Conversation management utilities
  */
 
-import type { AIChatSource } from './ai-search';
+import type { AIChatSource } from '../ai-search';
 
 export interface ChatMessage {
 	id: string;

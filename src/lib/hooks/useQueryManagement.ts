@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import type { ChatMessage, ChatState, LoadingPhase, MutableRef } from '../chat-types.js';
+import type { ChatMessage, ChatState, LoadingPhase, MutableRef } from '../chat/chat-types.js';
 import { searchWithAI } from '../ai-search.js';
 import { autoragEvents } from '../analytics.js';
 import { createId } from '../string-utils.js';
-import { enhanceQuery } from '../chat-helpers.js';
+import { enhanceQuery } from '../chat/chat-helpers.js';
 import { categorizeError } from '../error-utils.js';
 
 /**
