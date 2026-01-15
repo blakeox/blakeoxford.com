@@ -1,9 +1,41 @@
 /**
  * Type definitions for AI Chat Island component
+ * 
+ * This file is the SINGLE SOURCE OF TRUTH for chat-related types.
+ * All other files should import from here (or via the barrel export).
  */
 
-// Re-export from conversation-utils to ensure consistency
-export type { ChatMessage } from './conversation-utils';
+import type { AIChatSource } from '../ai-search';
+
+// ─── Core Chat Types ──────────────────────────────────────────────
+
+/**
+ * Chat message structure - unified across all chat functionality
+ */
+export interface ChatMessage {
+	id: string;
+	role: 'user' | 'assistant';
+	content: string;
+	timestamp: number;
+	sources?: AIChatSource[];
+	qualityScore?: number;
+	qualityDetails?: {
+		completeness: number;
+		citationAccuracy: number;
+		conciseness: number;
+		relevance: number;
+		reasoning: string;
+	};
+	citationHealth?: 'healthy' | 'warning' | 'error';
+	feedback?: 'positive' | 'negative';
+	responseTime?: number;
+	retryCount?: number;
+	error?: {
+		category: string;
+		message: string;
+		retryable: boolean;
+	};
+}
 
 /** Simplified mutable ref shape to avoid deprecated React types */
 export type MutableRef<T> = { current: T };
@@ -32,8 +64,7 @@ export type SpeechRecognitionLike = {
 	onend: (() => void) | null;
 };
 
-// Initial message for chat
-import type { ChatMessage } from './conversation-utils';
+// ─── Initial State ────────────────────────────────────────────────
 
 export const INITIAL_ASSISTANT_MESSAGE: ChatMessage = {
 	id: 'welcome',

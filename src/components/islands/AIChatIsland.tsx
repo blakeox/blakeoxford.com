@@ -2,17 +2,17 @@ import { useEffect } from 'react';
 
 import { autoragEvents } from '../../lib/analytics';
 import {
+	// Constants
 	CONTEXTUAL_CTAS,
 	GUIDED_PROMPTS,
 	QUICK_ACTIONS,
-} from '../../lib/chat/chat-constants';
-import { cleanSnippet } from '../../lib/chat/chat-helpers';
-import {
+	// Helper functions
+	cleanSnippet,
+	generateContextualCTAs,
+	getRelevanceExplanation,
 	calculateConversationAnalytics as calculateAnalytics,
-} from '../../lib/chat/conversation-utils';
-import { useAIChatController } from '../../lib/hooks/useAIChatController';
-import { generateContextualCTAs } from '../../lib/chat/message-processing';
-import { getRelevanceExplanation } from '../../lib/chat/response-handlers';
+} from '../../lib/chat';
+import { useAIChatController } from '../../lib/hooks';
 import {
 	cleanAssistantResponse,
 	decodeHtmlEntities,

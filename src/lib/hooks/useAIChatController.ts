@@ -5,11 +5,15 @@ import type {
 	ChatState,
 	LoadingPhase,
 	SearchFallback,
-} from '../chat/chat-types';
-import { INITIAL_ASSISTANT_MESSAGE } from '../chat/chat-types';
-import { PREFERENCES_STORAGE_KEY } from '../chat/chat-constants';
-import { buildHistoryForRequest } from '../chat/message-processing';
-import { getBooleanPreference } from '../chat/storage-utils';
+} from '../chat';
+import {
+	INITIAL_ASSISTANT_MESSAGE,
+	PREFERENCES_STORAGE_KEY,
+	buildHistoryForRequest,
+	getBooleanPreference,
+} from '../chat';
+
+// Local hook imports (not using barrel to avoid circular dependency)
 import { useConversationAnalytics } from './useConversationAnalytics';
 import { useConversationWebSocket } from './useConversationWebSocket';
 import { useCopyFeedback } from './useCopyFeedback';
