@@ -4,15 +4,13 @@
  * @module tests/vitest/ChatContext.test
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import {
 	ChatProvider,
 	useChatContext,
 	useChatState,
 	useChatDispatch,
-	type ChatAction,
-	type ChatContextState,
 } from '../../src/contexts/ChatContext';
 import type { ChatMessage } from '../../src/lib/chat';
 import type { ReactNode } from 'react';
