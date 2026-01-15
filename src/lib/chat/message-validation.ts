@@ -4,26 +4,7 @@
  */
 
 import type { AIChatSource } from '../ai-search';
-
-// Local type definition to avoid circular dependencies
-type ChatMessage = {
-	id: string;
-	role: 'user' | 'assistant';
-	content: string;
-	timestamp: number;
-	sources?: AIChatSource[];
-	qualityScore?: number;
-	qualityDetails?: {
-		completeness: number;
-		citationAccuracy: number;
-		conciseness: number;
-		relevance: number;
-		reasoning: string;
-	};
-	citationHealth?: 'healthy' | 'warning' | 'error';
-	feedback?: 'positive' | 'negative';
-	responseTime?: number;
-};
+import type { ChatMessage } from './chat-types';
 
 /**
  * Validate that a value is a valid chat message

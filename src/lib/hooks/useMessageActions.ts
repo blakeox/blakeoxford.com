@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import type { ChatMessage, MutableRef } from '../chat/chat-types.js';
-import { decodeMimeEncodedWords, decodeHtmlEntities } from '../string-utils.js';
-import { autoragEvents } from '../analytics.js';
+import type { ChatMessage, MutableRef } from '../chat';
+import { decodeMimeEncodedWords, decodeHtmlEntities } from '../string-utils';
+import { autoragEvents } from '../analytics';
 
 /**
  * Options for the message actions hook

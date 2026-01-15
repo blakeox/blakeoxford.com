@@ -1,10 +1,13 @@
 import { useCallback } from 'react';
-import type { ChatMessage, MutableRef, SearchFallback } from '../chat/chat-types.js';
-import type { AIChatSource } from '../ai-search.js';
-import { finalizeMessageQuality } from '../chat/response-handlers.js';
-import { removeStorageItem } from '../chat/storage-utils.js';
-import { CONVERSATION_STORAGE_KEY, SEMANTIC_SEARCH_URL } from '../chat/chat-constants.js';
-import { INITIAL_ASSISTANT_MESSAGE } from '../chat/chat-types.js';
+import type { ChatMessage, MutableRef, SearchFallback } from '../chat';
+import type { AIChatSource } from '../ai-search';
+import {
+	finalizeMessageQuality,
+	removeStorageItem,
+	CONVERSATION_STORAGE_KEY,
+	SEMANTIC_SEARCH_URL,
+	INITIAL_ASSISTANT_MESSAGE,
+} from '../chat';
 
 /**
  * Options for the message processing hook

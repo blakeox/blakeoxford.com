@@ -8,8 +8,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { ConversationWebSocket, type WSMessage } from '../chat/conversation-ws';
-import type { MutableRef } from '../chat/chat-types.js';
+import { ConversationWebSocket, type WSMessage, type MutableRef } from '../chat';
 
 export interface UseConversationWebSocketOptions {
 	/** Unique conversation identifier */

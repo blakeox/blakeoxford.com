@@ -9,7 +9,7 @@
  * - Graceful fallback to HTTP
  */
 
-import type { ChatMessage } from './conversation-utils';
+import type { ChatMessage } from './chat-types';
 
 export interface ConversationState {
 	messages: ChatMessage[];

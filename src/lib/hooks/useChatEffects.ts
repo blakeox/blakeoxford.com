@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { ChatMessage, ChatState, MutableRef } from '../chat/chat-types.js';
+import type { ChatMessage, ChatState, MutableRef } from '../chat';
 
 /**
  * Options for the chat effects hook

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { SearchFallback } from '../chat/chat-types.js';
+import type { SearchFallback } from '../chat';
 
 /**
  * Options for the computed values hook
