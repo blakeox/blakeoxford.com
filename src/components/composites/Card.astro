@@ -77,12 +77,20 @@ const liftClasses = hover === 'lift-sm'
     : '';
 
 const finalClasses = `${combinedClasses} ${liftClasses}`.trim();
+
+// Map variants that BaseCard doesn't support
+const baseVariant = variant === 'interactive' ? 'elevated' 
+  : variant === 'outline' ? 'default'
+  : variant as 'default' | 'glass' | 'elevated' | 'subtle';
+
+// Map padding values BaseCard supports
+const basePadding = padding === 'xl' ? 'lg' : padding as 'none' | 'sm' | 'md' | 'lg';
 ---
 
 <BaseCard 
-  variant={variant === 'interactive' ? 'elevated' : variant}
+  variant={baseVariant}
   hover={baseCardHover}
-  padding={padding}
+  padding={basePadding}
   as={as}
   class={finalClasses}
   {...rest}

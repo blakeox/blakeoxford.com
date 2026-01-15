@@ -117,7 +117,7 @@ export function createFocusTrap(
    * Handle Tab key to cycle focus within trap
    */
   function handleKeyDown(event: KeyboardEvent): void {
-    if (!isActive || event.key !== 'Tab') {
+    if (!isActive || event.key !== 'Tab' || !container) {
       return;
     }
 
