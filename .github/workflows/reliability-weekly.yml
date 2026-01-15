@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
@@ -30,7 +30,7 @@ jobs:
       - name: Run essential tests (Firefox)
         run: npx playwright test --grep "@essential" --project=firefox --reporter=line,json --output=test-results/firefox
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: weekly-reliability-artifacts
           path: |
@@ -43,7 +43,7 @@ jobs:
       - name: Generate quality summary
         run: pnpm quality:summary || true
       - name: Upload quality summary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: quality-summary
           path: quality-summary.md

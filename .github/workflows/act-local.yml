@@ -22,7 +22,7 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install rsync (for workspace sync)
         run: |
@@ -103,7 +103,7 @@ jobs:
 
       - name: Upload test results on failure
         if: ${{ failure() && env.ACT != 'true' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: debug-test-results
           path: |

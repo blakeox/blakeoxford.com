@@ -40,7 +40,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -119,7 +119,7 @@ jobs:
 
       - name: Upload quality badges
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: quality-badges
           path: badges/
@@ -127,7 +127,7 @@ jobs:
 
       - name: Upload quality summary artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: quality-summary
           path: quality-summary.md
@@ -143,7 +143,7 @@ jobs:
     needs: quick-validation # Wait for basic validation to pass first
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -205,7 +205,7 @@ jobs:
 
       - name: Upload runtime quality artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: runtime-quality-artifacts
           path: |
@@ -227,7 +227,7 @@ jobs:
 
       - name: Upload flakiness history
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: flakiness-history
           path: flakiness-history.json
@@ -263,7 +263,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: essential-playwright-report
           path: playwright-report/
@@ -275,7 +275,7 @@ jobs:
 
       - name: Upload quality badges (post-runtime)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: quality-badges-post-runtime
           path: badges/
@@ -289,7 +289,7 @@ jobs:
     needs: quick-validation
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -338,7 +338,7 @@ jobs:
 
       - name: Upload flakiness history (macOS)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: flakiness-history-macos
           path: flakiness-history.json
@@ -346,7 +346,7 @@ jobs:
 
       - name: Upload cross-browser report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: essential-playwright-report-macos
           path: playwright-report/
@@ -373,25 +373,25 @@ jobs:
       issues: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Download quality summary
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: quality-summary
           path: ./artifacts
       - name: Download runtime quality artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: runtime-quality-artifacts
           path: ./artifacts
       - name: Download Linux essential E2E report
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: essential-playwright-report
           path: ./artifacts/linux
         continue-on-error: true
       - name: Download macOS essential E2E report
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: essential-playwright-report-macos
           path: ./artifacts/macos
