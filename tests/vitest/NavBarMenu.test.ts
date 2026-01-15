@@ -1,6 +1,7 @@
 /**
  * NavBarMenu Unit Tests - Simplified Version
  * Tests the NavBarMenu.js navigation enhancement functionality
+ * TODO: Convert to Playwright e2e tests for real DOM testing
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
