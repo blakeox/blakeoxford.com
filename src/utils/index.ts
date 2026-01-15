@@ -290,7 +290,7 @@ export function debounce<T extends (...args: any[]) => any>(
 ): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   
-  return function (this: any, ...args: Parameters<T>) {
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
     if (timeoutId) clearTimeout(timeoutId);
     timeoutId = setTimeout(() => fn.apply(this, args), delayMs);
   };
@@ -306,7 +306,7 @@ export function throttle<T extends (...args: any[]) => any>(
 ): (...args: Parameters<T>) => void {
   let lastCall = 0;
   
-  return function (this: any, ...args: Parameters<T>) {
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
     const now = Date.now();
     if (now - lastCall >= delayMs) {
       lastCall = now;
@@ -384,7 +384,7 @@ export function memoize<T extends (...args: any[]) => any>(
 ): T {
   const cache = new Map();
   
-  return function (this: any, ...args: Parameters<T>): ReturnType<T> {
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>): ReturnType<T> {
     const key = JSON.stringify(args);
     if (cache.has(key)) return cache.get(key);
     const result = fn.apply(this, args);

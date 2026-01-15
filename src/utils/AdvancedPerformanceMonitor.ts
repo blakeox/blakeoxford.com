@@ -321,8 +321,8 @@ export class AdvancedPerformanceMonitor {
     if ('PerformanceObserver' in window) {
       let cumulativeShift = 0;
       const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry: any) => {
-          if (!entry.hadRecentInput) {
+        list.getEntries().forEach((entry: PerformanceEntry & { hadRecentInput?: boolean; value?: number }) => {
+          if (!entry.hadRecentInput && entry.value) {
             cumulativeShift += entry.value;
 
             if (cumulativeShift > this.config.alertThresholds.layoutShiftScore) {

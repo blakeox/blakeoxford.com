@@ -1,6 +1,11 @@
 ---
 import type { NavLink } from '../../../config/navLinks';
 
+interface ProjectCard {
+  title: string;
+  [key: string]: unknown;
+}
+
 const pages = [
   { href: '/', label: 'Home' },
   { href: '/about/', label: 'About' },
@@ -8,7 +13,7 @@ const pages = [
   { href: '/blog/', label: 'Blog' },
   { href: '/contact/', label: 'Contact' }
 ] as NavLink[];
-const projects: any[] = []; // (await import('../../content/projects/_meta.json')).default?.showcase?.cards ?? [];
+const projects: ProjectCard[] = []; // (await import('../../content/projects/_meta.json')).default?.showcase?.cards ?? [];
 ---
 
 <form class="rounded-2xl border border-border/50 bg-background/95 px-4 py-3 text-sm shadow focus-within:ring-2 focus-within:ring-accent/40" role="search" action="/projects/" method="get">
@@ -23,6 +28,6 @@ const projects: any[] = []; // (await import('../../content/projects/_meta.json'
   />
   <datalist id="search-suggestions">
     {pages.map((page) => <option value={page.label} />)}
-    {projects?.map((card: any) => <option value={card.title} />)}
+    {projects?.map((card) => <option value={card.title} />)}
   </datalist>
 </form>

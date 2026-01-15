@@ -191,13 +191,13 @@ function pickDefaultSrc(name: string) {
   perspective: 1000px;
   display: inline-block;
   border-radius: var(--radius-full, 50%);
-  box-shadow: var(--shadow-lg, 0 4px 16px rgba(0,0,0,0.10));
+  box-shadow: var(--shadow-lg, 0 4px 16px rgb(var(--color-neutral) / 0.10));
   overflow: hidden;
   cursor: pointer;
   outline: none;
 }
 .coin-flip:focus {
-  box-shadow: 0 0 0 2px var(--focus-ring-color, #2563eb), var(--shadow-lg, 0 4px 16px rgba(0,0,0,0.10));
+  box-shadow: 0 0 0 2px rgb(var(--color-accent)), var(--shadow-lg, 0 4px 16px rgb(var(--color-neutral) / 0.10));
 }
 .coin-flip-inner {
   position: relative;
@@ -243,7 +243,7 @@ function pickDefaultSrc(name: string) {
   width: 100%;
   height: 100%;
   border-radius: var(--radius-full, 50%);
-  background: radial-gradient(ellipse 60% 30% at 60% 30%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 80%, transparent 100%);
+  background: radial-gradient(ellipse 60% 30% at 60% 30%, rgb(var(--color-surface) / 0.18) 0%, rgb(var(--color-surface) / 0.04) 80%, transparent 100%);
   mix-blend-mode: lighten;
   z-index: 3;
 }
@@ -255,9 +255,9 @@ function pickDefaultSrc(name: string) {
   border-radius: var(--radius-full, 50%);
   z-index: 1;
   box-shadow:
-    0 0 0 3px rgba(80,80,80,0.12) inset,
-    0 0 8px 2px rgba(0,0,0,0.10) inset;
-  background: repeating-linear-gradient(90deg, rgba(180,180,180,0.12) 0 2px, transparent 2px 6px);
+    0 0 0 3px rgb(var(--color-neutral) / 0.12) inset,
+    0 0 8px 2px rgb(var(--color-neutral) / 0.10) inset;
+  background: repeating-linear-gradient(90deg, rgb(var(--color-neutral) / 0.12) 0 2px, transparent 2px 6px);
   pointer-events: none;
 }
 /* Flip axis logic */

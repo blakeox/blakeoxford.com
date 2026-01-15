@@ -9,7 +9,7 @@ import type { CollectionEntry } from 'astro:content';
 import { createArticleSchema, createBreadcrumbListSchema, defaultAuthor } from '../../utils/structuredData';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }: { data: any }) => !data.draft);
+  const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);
   // Exclude slugs that are implemented as a static .astro page to prevent route conflicts
   const STATIC_SLUGS = new Set([
     'combating-legal-ai-hallucinations',
@@ -27,7 +27,7 @@ if (!slug) {
   return Astro.redirect('/blog');
 }
 
-const posts = await getCollection('blog', ({ data }: { data: any }) => !data.draft);
+const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);
 const post = posts.find((entry: CollectionEntry<'blog'>) => entry.slug === slug);
 
 if (!post) {

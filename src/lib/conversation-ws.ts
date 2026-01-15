@@ -9,13 +9,21 @@
  * - Graceful fallback to HTTP
  */
 
+import type { ChatMessage } from './conversation-utils';
+
+export interface ConversationState {
+	messages: ChatMessage[];
+	created: number;
+	updated: number;
+}
+
 export type WSMessage = 
-	| { type: 'init'; state: any; sessionId: string; activeSessions: number }
-	| { type: 'message'; message: any }
+	| { type: 'init'; state: ConversationState; sessionId: string; activeSessions: number }
+	| { type: 'message'; message: ChatMessage }
 	| { type: 'typing'; sessionId: string; isTyping: boolean; typingCount: number }
 	| { type: 'presence'; action: 'join' | 'leave'; sessionId: string; activeSessions: number }
 	| { type: 'pong'; timestamp: number }
-	| { type: 'state'; state: any; activeSessions: number }
+	| { type: 'state'; state: ConversationState; activeSessions: number }
 	| { type: 'error'; error: string };
 
 export type WSOptions = {
