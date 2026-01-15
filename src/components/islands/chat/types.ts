@@ -1,7 +1,7 @@
 /**
  * Shared types for chat components
  */
-import type { MutableRefObject, RefObject } from 'react';
+import type { RefObject } from 'react';
 import type { ChatMessage, ChatState, LoadingPhase, SearchFallback } from '../../../lib/chat';
 import type { ConversationWebSocket } from '../../../lib/chat/conversation-ws';
 
@@ -103,8 +103,8 @@ export interface ChatMessageBubbleProps {
 	copiedMessageId: string | null;
 	copiedShareUrl: string | null;
 	messages: ChatMessage[];
-	messagesRef: MutableRefObject<ChatMessage[]>;
-	sourceRefs: MutableRefObject<HTMLAnchorElement[]>;
+	messagesRef: RefObject<ChatMessage[]>;
+	sourceRefs: RefObject<HTMLAnchorElement[]>;
 	toggleExpandedSource: (messageId: string) => void;
 	toggleIndividualSource: (sourceKey: string) => void;
 	handleFeedback: (messageId: string, feedback: 'positive' | 'negative') => void;
@@ -131,8 +131,8 @@ export interface ChatMessageListProps {
 	copiedMessageId: string | null;
 	copiedShareUrl: string | null;
 	scrollContainerRef: RefObject<HTMLDivElement | null>;
-	messagesRef: MutableRefObject<ChatMessage[]>;
-	sourceRefs: MutableRefObject<HTMLAnchorElement[]>;
+	messagesRef: RefObject<ChatMessage[]>;
+	sourceRefs: RefObject<HTMLAnchorElement[]>;
 	toggleExpandedSource: (messageId: string) => void;
 	toggleIndividualSource: (sourceKey: string) => void;
 	handleFeedback: (messageId: string, feedback: 'positive' | 'negative') => void;
@@ -152,8 +152,8 @@ export interface ChatInputProps {
 	chatState: ChatState;
 	floatingLabelActive: boolean;
 	inputRef: RefObject<HTMLTextAreaElement | null>;
-	wsRef: MutableRefObject<ConversationWebSocket | null>;
-	typingTimeoutRef: MutableRefObject<number | null>;
+	wsRef: RefObject<ConversationWebSocket | null>;
+	typingTimeoutRef: RefObject<number | null>;
 	setInputValue: (value: string) => void;
 	setComposerFocused: (focused: boolean) => void;
 	handleTextareaKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;

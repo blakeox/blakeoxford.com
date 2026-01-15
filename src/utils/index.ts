@@ -392,3 +392,32 @@ export function memoize<T extends (...args: any[]) => any>(
     return result;
   } as T;
 }
+
+// ─── Re-exports ───────────────────────────────────────────────────────
+
+// Lazy loading utilities
+export {
+  createLazyComponent,
+  createPreloadableLazyComponent,
+  preloadComponent,
+  DefaultLoadingSkeleton,
+  LoadingSpinner,
+  type LazyComponentOptions,
+  type RetryOptions,
+} from './lazy';
+
+// Error utilities
+export {
+  AppError,
+  ErrorCodes,
+  isAppError,
+  createApiErrorFromResponse,
+  createNetworkError,
+  createChatError,
+  isRetryableError,
+  isNetworkError,
+  getUserMessage,
+  logError,
+  type ErrorCode,
+} from './errors';
+
