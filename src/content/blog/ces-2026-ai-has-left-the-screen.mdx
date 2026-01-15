@@ -14,6 +14,9 @@ tags:
 draft: false
 ---
 
+import { Image } from 'astro:assets';
+import NvidiaPrize from '@/assets/images/carousel/Nvidia-prize-download.webp';
+
 <div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10 dark:from-accent/10 dark:via-primary/5 dark:to-accent/10 rounded-3xl p-10 md:p-14 my-12 border border-accent/20">
   <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
   <div className="absolute bottom-0 left-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl"></div>
@@ -84,6 +87,13 @@ What’s compelling isn’t just the form factor — it’s the tighter feedback
 ## NVIDIA Everywhere (As Usual)
 
 A special thanks to NVIDIA — I was lucky enough to be pulled for a DGX Spark after completing their scavenger hunt, which turned out to be a great excuse to talk with a lot of incredibly interesting people along the way.
+
+<Image 
+  src={NvidiaPrize} 
+  alt="NVIDIA DGX Spark Prize at CES 2026" 
+  class="rounded-2xl shadow-lg my-8"
+  loading="lazy"
+/>
 
 Those conversations spanned simulation, robotics, and the cutting edge of physical AI — and reinforced just how central NVIDIA’s platform has become in connecting massive compute to the real world. Their technology was everywhere at CES, often quietly powering what was on display.
 
