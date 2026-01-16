@@ -20,5 +20,7 @@ const iconSVGs: Record<Props['icon'], string> = {
   height='20' 
   fill='currentColor' 
   class={`text-foreground/80 ${className}`}
+  aria-hidden='true'
+  focusable='false'
   set:html={iconSVGs[icon]}
 />

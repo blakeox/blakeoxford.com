@@ -44,7 +44,7 @@ const iconSVGs = {
       <div class="absolute inset-0 rounded-full bg-gradient-to-br from-accent/30 to-primary/30 opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
       <!-- Enhanced icon container -->
       <div class="relative z-10 w-8 h-8">
-        <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" set:html={iconSVGs[icon]} />
+        <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false" set:html={iconSVGs[icon]} />
       </div>
     </div>
     <div class="flex-1">
@@ -59,7 +59,7 @@ const iconSVGs = {
         class="text-foreground/90 dark:text-foreground-light/90 group-hover:text-foreground flex items-start transform hover:translate-x-1 transition-all duration-300 hover:bg-neutral/10 dark:hover:bg-surface-dark-subtle/50 rounded-lg p-2" 
         style={`transition-delay: ${idx * 50}ms`}
       >
-        <svg class="w-4 h-4 text-accent mt-1 mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg class="w-4 h-4 text-accent mt-1 mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         {achievement}

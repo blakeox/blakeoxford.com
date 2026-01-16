@@ -64,28 +64,35 @@ function Icon({ name }: IconProps) {
     </header>
 
     <ul class="flex flex-col md:flex-row items-center justify-center gap-6" role="list">
-      {channels.items.map((channel) => (
+      {channels.items.map((channel, index) => (
         <li>
-          <a
-            href={channel.href}
-            target={channel.icon === 'linkedin' ? '_blank' : undefined}
-            rel={channel.icon === 'linkedin' ? 'noopener noreferrer' : undefined}
-            class="flex flex-col items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 p-4 rounded-xl hover:bg-accent/5 transition-colors"
-            aria-label={channel.label}
-            title={channel.label}
-          >
-            <span class="text-3xl text-accent group-hover:scale-110 transition-transform duration-200" aria-hidden="true">
-              <Icon name={channel.icon} />
-            </span>
-            <span class="font-medium text-primary group-hover:text-accent transition-colors">
-              {channel.label}
-            </span>
-            {channel.description && (
-              <span class="text-sm text-foreground/70 dark:text-foreground-light/70 text-center max-w-sm">
-                {channel.description}
-              </span>
-            )}
-          </a>
+          {(() => {
+            const labelId = `contact-channel-${index}-label`;
+            const descriptionId = `contact-channel-${index}-description`;
+            return (
+              <a
+                href={channel.href}
+                target={channel.icon === 'linkedin' ? '_blank' : undefined}
+                rel={channel.icon === 'linkedin' ? 'noopener noreferrer' : undefined}
+                class="flex flex-col items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 p-4 rounded-xl hover:bg-accent/5 transition-colors"
+                aria-labelledby={labelId}
+                aria-describedby={channel.description ? descriptionId : undefined}
+                title={channel.label}
+              >
+                <span class="text-3xl text-accent group-hover:scale-110 transition-transform duration-200" aria-hidden="true">
+                  <Icon name={channel.icon} />
+                </span>
+                <span id={labelId} class="font-medium text-primary group-hover:text-accent transition-colors">
+                  {channel.label}
+                </span>
+                {channel.description && (
+                  <span id={descriptionId} class="text-sm text-foreground/70 dark:text-foreground-light/70 text-center max-w-sm">
+                    {channel.description}
+                  </span>
+                )}
+              </a>
+            );
+          })()}
         </li>
       ))}
     </ul>
