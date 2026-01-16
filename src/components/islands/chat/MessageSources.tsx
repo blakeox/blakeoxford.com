@@ -1,6 +1,58 @@
 /**
- * MessageSources Component
- * Renders source citations, links, and expandable source list
+ * MessageSources - Renders source citations, expandable source lists, and metadata
+ *
+ * @component
+ * @category Islands/Chat
+ * @subcategory Source Display
+ *
+ * @description
+ * A collection of memoized React components for displaying AI chat sources with citations,
+ * relevance scores, snippets, and metadata. Provides expandable source lists with lazy
+ * loading, keyboard navigation, and responsive design.
+ *
+ * Exports three main components:
+ * - CitationLinks: Inline citation badges [1] [2] [3]
+ * - SourcesList: Primary source + expandable full source list
+ * - Internal helpers for expanded source details
+ *
+ * @example Citation links
+ * ```tsx
+ * <CitationLinks
+ *   sources={message.sources}
+ *   messageId={message.id}
+ *   handleOpenPrimarySource={(url) => window.open(url)}
+ * />
+ * ```
+ *
+ * @example Full sources list
+ * ```tsx
+ * <SourcesList
+ *   message={message}
+ *   sources={message.sources}
+ *   showAllSources={isExpanded}
+ *   primarySource={sources[0]}
+ *   primarySourceTitle="Blog Post Title"
+ *   totalSources={sources.length}
+ *   siteHostname="blakeoxford.com"
+ *   expandedIndividualSources={expandedState}
+ *   sourceRefs={sourceRefsArray}
+ *   toggleExpandedSource={(id) => setExpanded(!isExpanded)}
+ *   toggleIndividualSource={(key) => toggleSource(key)}
+ * />
+ * ```
+ *
+ * @accessibility
+ * - Sources container uses aria-label="Referenced sources"
+ * - Citation buttons have keyboard focus and ARIA attributes
+ * - External links use target="_blank" with rel="noopener noreferrer"
+ * - Expandable sections announce state changes
+ * - Relevance scores have explanatory tooltips
+ *
+ * @performance
+ * - All components wrapped in React.memo
+ * - Conditional rendering for expanded states
+ * - LazyLoad for source snippets
+ * - String utilities decode HTML entities once
  */
 import { memo, type RefObject } from 'react';
 import {

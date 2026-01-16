@@ -1,17 +1,69 @@
 /**
- * MessageContent Component
- * Renders the message text content with quality indicators
+ * MessageContent - Renders message text content with streaming indicators and quality badges
+ *
+ * @component
+ * @category Islands/Chat
+ * @subcategory Message Display
+ *
+ * @description
+ * A memoized React component that displays chat message content with streaming animations,
+ * quality indicators, and accessibility features. Shows typing indicators during streaming,
+ * quality scores after completion, and citation health metrics.
+ *
+ * @example Basic usage (assistant message)
+ * ```tsx
+ * <MessageContent
+ *   message={chatMessage}
+ *   isStreaming={false}
+ *   isAssistant={true}
+ *   bubbleContent="Here's your answer..."
+ *   totalSources={3}
+ *   messageTextClasses="text-gray-900 dark:text-gray-100"
+ * />
+ * ```
+ *
+ * @example Streaming message
+ * ```tsx
+ * <MessageContent
+ *   message={chatMessage}
+ *   isStreaming={true}
+ *   isAssistant={true}
+ *   bubbleContent="Thinking about..."
+ *   totalSources={0}
+ *   messageTextClasses="text-gray-900"
+ * />
+ * ```
+ *
+ * @accessibility
+ * - Streaming indicator uses aria-live="assertive" for screen reader announcements
+ * - Quality indicators have aria-label attributes for score interpretation
+ * - Visual-only animations use aria-hidden="true" with screen reader text
+ * - Supports keyboard navigation via parent component
+ *
+ * @performance
+ * - Wrapped in React.memo to prevent unnecessary re-renders
+ * - Conditional rendering based on streaming state
+ * - QualityIndicator also memoized separately
  */
 import { memo } from 'react';
 import { getConfidenceIndicator, getCitationHealthIndicator } from '../../../lib/quality-utils';
 import type { ChatMessage } from './types';
 
+/**
+ * Props for MessageContent component
+ */
 interface MessageContentProps {
+	/** The complete chat message object with metadata */
 	message: ChatMessage;
+	/** Whether the message is currently being streamed */
 	isStreaming: boolean;
+	/** Whether this is an assistant (AI) message vs user message */
 	isAssistant: boolean;
+	/** The processed message text content to display */
 	bubbleContent: string;
+	/** Number of sources cited in the message */
 	totalSources: number;
+	/** Tailwind classes for text styling (color, size, etc.) */
 	messageTextClasses: string;
 }
 
