@@ -2,32 +2,10 @@
  * Conversation management utilities
  */
 
-import type { AIChatSource } from '../ai-search';
+import type { ChatMessage } from './chat-types';
 
-export interface ChatMessage {
-	id: string;
-	role: 'user' | 'assistant';
-	content: string;
-	timestamp: number;
-	sources?: AIChatSource[];
-	qualityScore?: number;
-	qualityDetails?: {
-		completeness: number;
-		citationAccuracy: number;
-		conciseness: number;
-		relevance: number;
-		reasoning: string;
-	};
-	citationHealth?: 'healthy' | 'warning' | 'error'; // Source health status
-	feedback?: 'positive' | 'negative';
-	responseTime?: number; // Response time in milliseconds (for assistant messages)
-	retryCount?: number;
-	error?: {
-		category: string;
-		message: string;
-		retryable: boolean;
-	};
-}
+// Re-export ChatMessage for backwards compatibility
+export type { ChatMessage } from './chat-types';
 
 /**
  * Filter messages based on search query
@@ -120,24 +98,10 @@ export function calculateConversationAnalytics(messages: ChatMessage[]): {
 }
 
 /**
- * Enhance user query with conversation context
- * @param query - User's query
- * @param hasHistory - Whether there's conversation history
- * @returns Enhanced query string
+ * @deprecated Use enhanceQuery from chat-helpers.ts instead.
+ * This function is kept for backwards compatibility but delegates to the primary implementation.
  */
-export function enhanceQuery(query: string, hasHistory: boolean): string {
-	if (!hasHistory) {
-		return query;
-	}
-
-	// Add context indicators for follow-up questions
-	const followUpIndicators = /^(and|also|what about|how about|can you|could you|please)/i;
-	if (followUpIndicators.test(query.trim())) {
-		return `Follow-up: ${query}`;
-	}
-
-	return query;
-}
+export { enhanceQuery } from './chat-helpers';
 
 /**
  * Export conversation to markdown format

@@ -5,14 +5,25 @@
  */
 import fs from 'fs';
 import path from 'path';
+import ts from 'typescript';
 
 const tailwindConfigPath = path.join(process.cwd(), 'tailwind.config.ts');
 if (!fs.existsSync(tailwindConfigPath)) {
   console.error('tailwind.config.ts not found');
   process.exit(0);
 }
-// Dynamic import (ESM)
-const cfg = await import(tailwindConfigPath + '?cachebust=' + Date.now());
+// Load tailwind.config.ts by transpiling and evaluating (strip imports/exports)
+const tailwindSource = fs.readFileSync(tailwindConfigPath, 'utf-8');
+const transpiled = ts.transpileModule(tailwindSource, {
+  compilerOptions: {
+    module: ts.ModuleKind.ESNext,
+    target: ts.ScriptTarget.ES2020
+  }
+}).outputText;
+const sanitized = transpiled
+  .replace(/^import\s.+;$/gm, '')
+  .replace(/export\s+default\s+config;?/g, 'return config;');
+const cfg = new Function(`const containerQueries = undefined; const typography = undefined; ${sanitized}`)();
 const colors = (cfg.default || cfg).theme?.extend?.colors || {};
 
 function luminance(r,g,b){ const a=[r,g,b].map(v=>{v/=255;return v<=0.03928? v/12.92:Math.pow((v+0.055)/1.055,2.4);});return 0.2126*a[0]+0.7152*a[1]+0.0722*a[2]; }

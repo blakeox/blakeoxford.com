@@ -96,10 +96,10 @@ const columnBLoop = createSeamlessLoop(columnBImages);
 const mobileLoop = createSeamlessLoop(mobileImages);
 ---
 
-<div class="photo-carousel relative w-full h-full min-h-[280px] md:min-h-[320px] lg:min-h-[400px] overflow-hidden select-none" role="region" aria-label="Photo carousel">
+<div class="photo-carousel relative w-full h-full min-h-[280px] md:min-h-[320px] lg:min-h-[400px] overflow-hidden select-none" role="region" aria-label="Photo carousel" aria-live="off">
   <!-- Mobile: horizontal slow scroll (show only on small screens) -->
   <div class="absolute inset-0 flex items-center mobile-carousel pt-16 md:pt-0">
-    <ul class="flex gap-4 animate-carousel-x-slow" role="list">
+    <ul class="flex gap-4 animate-carousel-x-slow" role="list" aria-hidden="true">
       {mobileLoop.slice(0, CONFIG.mobile.count).map((image, index) => (
         <li class="h-[40vh] w-[80vw] flex-shrink-0" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-xl shadow-lg">
@@ -122,7 +122,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
   <!-- Desktop: 3 vertical columns (show on larger screens) -->
   <div class="absolute inset-0 gap-4 w-full h-full desktop-carousel pt-16 md:pt-8">
     <!-- Column 1 – scrolling up -->
-    <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list">
+    <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list" aria-hidden="true">
       {columnALoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
         <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
@@ -142,7 +142,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
     </ul>
 
     <!-- Column 2 – scrolling down -->
-    <ul class="flex flex-col gap-4 animate-carousel-down-slow flex-1" role="list">
+    <ul class="flex flex-col gap-4 animate-carousel-down-slow flex-1" role="list" aria-hidden="true">
       {columnBLoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
         <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
@@ -162,7 +162,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
     </ul>
 
     <!-- Column 3 – scrolling up (same direction as column 1) -->
-    <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list">
+    <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list" aria-hidden="true">
       {shuffledImages.slice(Math.floor(shuffledImages.length / 3), Math.floor(shuffledImages.length * 2 / 3)).map((image, index) => (
         <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
           <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
