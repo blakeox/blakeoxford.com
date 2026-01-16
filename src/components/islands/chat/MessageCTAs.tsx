@@ -1,6 +1,67 @@
 /**
- * MessageCTAs Component
- * Renders contextual call-to-actions, matched CTAs, and follow-up suggestions
+ * MessageCTAs - Renders contextual call-to-actions and follow-up suggestions
+ *
+ * @component
+ * @category Islands/Chat
+ * @subcategory Engagement & Navigation
+ *
+ * @description
+ * A collection of memoized React components that provide contextual CTAs and follow-up
+ * suggestions based on AI chat responses and cited sources. Intelligently matches user
+ * queries to relevant site actions (contact, projects, blog) and generates dynamic
+ * follow-up questions.
+ *
+ * Exports three main components:
+ * - MatchedCTA: Shows relevant CTA based on query context (hire me, explore projects, etc.)
+ * - FollowUpSuggestions: Dynamic suggestions based on cited sources
+ * - ContextualCTAs: Site-specific CTAs based on source collections
+ *
+ * @example Matched CTA (hiring query)
+ * ```tsx
+ * <MatchedCTA
+ *   message={chatMessage}
+ *   messages={conversationHistory}
+ *   sources={citedSources}
+ * />
+ * // Renders "Interested in hiring?" CTA if query mentions "hire", "work together", etc.
+ * ```
+ *
+ * @example Follow-up suggestions
+ * ```tsx
+ * <FollowUpSuggestions
+ *   sources={citedSources}
+ *   setInputValue={(query) => setInput(query)}
+ *   sendQuery={(query) => submitQuery(query)}
+ * />
+ * // Generates suggestions like "Tell me more about the [Project] project"
+ * ```
+ *
+ * @example Contextual CTAs
+ * ```tsx
+ * <ContextualCTAs
+ *   sources={citedSources}
+ *   siteHostname="blakeoxford.com"
+ *   messagesCount={conversationLength}
+ * />
+ * // Shows "Contact Blake" after 5+ messages or "Explore more projects" if project sources cited
+ * ```
+ *
+ * @accessibility
+ * - CTA buttons have focus-visible indicators
+ * - Keyboard navigation fully supported
+ * - Icon SVGs use aria-hidden with descriptive button text
+ * - Suggestion chips have clear labels and actions
+ *
+ * @performance
+ * - All components wrapped in React.memo
+ * - CTA matching runs once per message
+ * - Dynamic suggestions generated on-demand
+ * - Analytics events tracked efficiently
+ *
+ * @analytics
+ * - Tracks CTA clicks with type, label, and source context
+ * - Follow-up suggestion interactions logged
+ * - Contextual CTA engagement measured
  */
 import { memo } from 'react';
 import { autoragEvents } from '../../../lib/analytics';

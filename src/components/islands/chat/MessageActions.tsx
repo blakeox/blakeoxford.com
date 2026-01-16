@@ -1,6 +1,52 @@
 /**
- * MessageActions Component
- * Renders message action buttons (copy, share, feedback)
+ * MessageActions - Renders interactive action buttons for chat messages
+ *
+ * @component
+ * @category Islands/Chat
+ * @subcategory Message Interactions
+ *
+ * @description
+ * A memoized React component that provides action buttons for AI chat messages:
+ * - Copy answer to clipboard
+ * - Share query via native share or clipboard
+ * - View top source in new tab
+ * - Quality score badge display
+ * - Thumbs up/down feedback buttons
+ *
+ * Integrates with analytics tracking and provides visual feedback for all actions.
+ *
+ * @example Basic usage
+ * ```tsx
+ * <MessageActions
+ *   message={chatMessage}
+ *   messages={allMessages}
+ *   primarySource={sources[0]}
+ *   copiedMessageId={copiedId}
+ *   copiedShareUrl={copiedUrl}
+ *   isHelpful={feedbackState.helpful}
+ *   isNotHelpful={feedbackState.notHelpful}
+ *   handleCopyMessage={(msg) => navigator.clipboard.writeText(msg.content)}
+ *   handleOpenPrimarySource={(url) => window.open(url, '_blank')}
+ *   handleFeedback={(id, feedback) => submitFeedback(id, feedback)}
+ *   copyWithFeedback={async (content, id, type) => { ... }}
+ * />
+ * ```
+ *
+ * @accessibility
+ * - All buttons have focus-visible ring indicators
+ * - Keyboard navigation fully supported (Tab, Enter)
+ * - Visual state changes for copied/feedback actions
+ * - ARIA labels on interactive elements
+ * - Semantic button elements with type="button"
+ *
+ * @performance
+ * - Wrapped in React.memo to prevent unnecessary re-renders
+ * - Sub-components (ShareButton, QualityScoreBadge, FeedbackButtons) are optimized
+ * - Analytics events fire only on user interaction
+ *
+ * @analytics
+ * - Tracks copy, share, feedback, and source navigation events
+ * - Uses autoragEvents for centralized analytics
  */
 import { memo } from 'react';
 import { autoragEvents } from '../../../lib/analytics';
