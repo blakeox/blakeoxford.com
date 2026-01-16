@@ -44,3 +44,27 @@ export { useVoiceRecognition } from './useVoiceRecognition';
 
 // ─── Utilities ────────────────────────────────────────────────────
 export { useCopyFeedback } from './useCopyFeedback';
+
+// ─── DOM & Browser Utilities ──────────────────────────────────────
+export {
+  useMediaQuery,
+  useIsMobile,
+  useIsTablet,
+  useIsDesktop,
+  usePrefersReducedMotion,
+  usePrefersDarkMode,
+} from './useMediaQuery';
+export { useOnClickOutside } from './useOnClickOutside';
+export {
+  useScrollPosition,
+  useHasScrolled,
+  type ScrollPosition,
+  type ScrollDirection,
+  type UseScrollPositionOptions,
+} from './useScrollPosition';
+export {
+  useIntersectionObserver,
+  useIsVisible,
+  useLazyLoad,
+  type UseIntersectionObserverOptions,
+} from './useIntersectionObserver';
