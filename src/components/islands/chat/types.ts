@@ -4,9 +4,14 @@
 import type { RefObject } from 'react';
 import type { ChatMessage, ChatState, LoadingPhase, SearchFallback } from '../../../lib/chat';
 import type { ConversationWebSocket } from '../../../lib/chat/conversation-ws';
+import type { AIChatSource } from '../../../lib/ai-search';
 
 // Re-export types for components that need them
 export type { ChatMessage, ChatState, LoadingPhase, SearchFallback };
+
+// Re-export Source type with a shorter alias
+export type Source = AIChatSource;
+export type { AIChatSource };
 
 /**
  * Feedback analytics data
