@@ -56,7 +56,7 @@ function ScrollToLatestButton({ onClick }: { onClick: () => void }) {
 			className="pointer-events-auto absolute bottom-5 right-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 bg-[color:var(--surface)]/80 px-3 py-1.5 text-xs font-medium text-[color:var(--fg)]/70 shadow-sm backdrop-blur transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
 			aria-label="Jump to latest message"
 		>
-			<svg className="size-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+			<svg className="size-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true" focusable="false">
 				<path strokeLinecap="round" strokeLinejoin="round" d="m5 8 5 5 5-5" />
 			</svg>
 			<span>Jump to latest</span>
