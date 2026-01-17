@@ -141,6 +141,7 @@ export function useAIChatController() {
 		focusInput,
 		dispatchState,
 		setShowFallbackSuggestions,
+		closeChat,
 		launcherRef,
 		messagesRef,
 		activeRequestRef,
