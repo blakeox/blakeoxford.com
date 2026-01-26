@@ -117,7 +117,10 @@ export class EnhancedSearchOverlay {
     
     // Check if speech recognition is supported
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      this.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      // Support vendor-prefixed SpeechRecognition in browsers
+      // cast to any to satisfy TypeScript in mixed runtime environments
+      const SpeechRec: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      this.recognition = SpeechRec ? new SpeechRec() : null;
       this.recognition.continuous = false;
       this.recognition.interimResults = false;
       this.recognition.lang = 'en-US';
