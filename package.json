@@ -124,7 +124,7 @@
     "@typescript-eslint/parser": "^8.53.0",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.17",
-    "astro": "^5.16.9",
+    "astro": "^5.16.15",
     "astro-compress": "^2.3.9",
     "astro-eslint-parser": "^1.2.2",
     "autoprefixer": "^10.4.23",
