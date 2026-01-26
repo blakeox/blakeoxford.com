@@ -25,21 +25,21 @@ export default function ChatLauncherIsland() {
                     panel.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
                     // Move focus to composer if available for accessibility/tests
                     const composer = panel.querySelector('textarea, input') as HTMLElement | null;
-                    if (composer && typeof composer.focus === 'function') {
+                        if (composer && typeof composer.focus === 'function') {
                         // Blur launcher then attempt multiple focus tries to ensure composer
                         // becomes document.activeElement in test environments.
-                        try { (launcher as HTMLElement).blur(); } catch (e) {}
+                        try { (launcher as HTMLElement).blur(); } catch (e) { /* noop */ }
 
                         const attempts = [0, 10, 50, 150];
                         attempts.forEach((delay) => {
                             setTimeout(() => {
-                                try { composer.focus(); } catch (e) {}
-                                try { composer.dispatchEvent(new Event('focus', { bubbles: true })); } catch (e) {}
-                                try { composer.dispatchEvent(new Event('focusin', { bubbles: true })); } catch (e) {}
+                                try { composer.focus(); } catch (e) { /* noop */ }
+                                try { composer.dispatchEvent(new Event('focus', { bubbles: true })); } catch (e) { /* noop */ }
+                                try { composer.dispatchEvent(new Event('focusin', { bubbles: true })); } catch (e) { /* noop */ }
                             }, delay);
                         });
                         // Also try on next animation frame.
-                        try { requestAnimationFrame(() => { try { composer.focus(); } catch (e) {} }); } catch (e) {}
+                        try { requestAnimationFrame(() => { try { composer.focus(); } catch (e) { /* noop */ } }); } catch (e) { /* noop */ }
                     }
                 } else {
                     panel.classList.add('pointer-events-none', 'translate-y-4', 'opacity-0');

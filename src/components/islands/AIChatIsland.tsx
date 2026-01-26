@@ -145,12 +145,12 @@ export default function AIChatIsland() {
 				if (open === true) {
 					openChat();
 					// Ensure input receives focus when island has mounted
-					try { focusInput(); } catch {}
+					try { focusInput(); } catch (err) { /* noop - focus best-effort */ }
 				} else if (open === false) {
 					closeChat();
 				}
 			} catch (err) {
-				// swallow
+				/* noop - non-fatal state handler */
 			}
 		}
 
@@ -169,10 +169,10 @@ export default function AIChatIsland() {
 			const wrapper = document.querySelector('[data-ai-chat-open]');
 			if (wrapper && wrapper.getAttribute('data-ai-chat-open') === 'true') {
 				openChat();
-				try { focusInput(); } catch {}
+				try { focusInput(); } catch (err) { /* noop - best-effort focus */ }
 			}
 		} catch (e) {
-			// noop
+			/* noop - defensive DOM access */
 		}
 	}, [openChat, focusInput]);
 
@@ -189,7 +189,7 @@ export default function AIChatIsland() {
 				}
 			}
 		} catch (e) {
-			// noop
+			/* noop - defensive DOM sync */
 		}
 	}, [isOpen]);
 

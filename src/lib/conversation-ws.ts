@@ -27,20 +27,8 @@ function secureRandomString(length = 9) {
 			return s.slice(0, length);
 		}
 
-		// Node fallback (CommonJS require) - avoid module-level ESM import to keep compatibility
-		try {
-			// eslint-disable-next-line @typescript-eslint/no-var-requires
-			const { randomBytes } = require('crypto');
-			const buf = randomBytes(Math.ceil(length * 0.6));
-			let s = '';
-			for (let i = 0; i < buf.length; i += 2) {
-				const v = (buf[i] << 8) | (buf[i + 1] ?? 0);
-				s += v.toString(36);
-			}
-			return s.slice(0, length);
-		} catch (e) {
-			// fallthrough to Math.random
-		}
+		// Node fallback removed: prefer globalThis.crypto when available.
+		// For older Node runtimes without Web Crypto, fall back to non-crypto randomness.
 	} catch (e) {
 		// fallthrough
 	}
