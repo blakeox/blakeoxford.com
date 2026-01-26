@@ -1,1 +1,1 @@
-export { default } from '../islands/chat/ChatMessageBubble';
+export { ChatMessageBubble as default } from '../islands/chat/ChatMessageBubble';

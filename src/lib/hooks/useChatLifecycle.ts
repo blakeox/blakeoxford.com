@@ -110,15 +110,16 @@ export function useChatLifecycle(
 	const focusInput = useCallback(() => {
 		if (!inputRef.current) return;
 		requestAnimationFrame(() => {
-			inputRef.current?.focus();
-			inputRef.current?.setSelectionRange(
-				inputRef.current.value.length,
-				inputRef.current.value.length
+			const inputEl = inputRef.current!;
+			inputEl.focus();
+			inputEl.setSelectionRange(
+				inputEl.value.length,
+				inputEl.value.length
 			);
 			
 			// Set deterministic focus signal for accessibility testing
-			if (document.activeElement === inputRef.current) {
-				const panel = inputRef.current.closest('[data-ai-chat-panel]');
+			if (document.activeElement === inputEl) {
+				const panel = inputEl.closest('[data-ai-chat-panel]') as HTMLElement | null;
 				if (panel) {
 					panel.setAttribute('data-ai-chat-focused', 'true');
 					window.dispatchEvent(new CustomEvent('ai-chat:focused', { detail: { focused: true } }));

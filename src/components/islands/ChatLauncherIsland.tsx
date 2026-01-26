@@ -25,7 +25,7 @@ export default function ChatLauncherIsland() {
                     panel!.classList.remove('pointer-events-none', 'translate-y-4', 'opacity-0');
                     panel!.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
                     // Move focus to composer if available for accessibility/tests
-                    const composer = panel.querySelector('textarea, input') as HTMLElement | null;
+                    const composer = panel!.querySelector('textarea, input') as HTMLElement | null;
                         if (composer && typeof composer.focus === 'function') {
                         // Blur launcher then attempt multiple focus tries to ensure composer
                         // becomes document.activeElement in test environments.
@@ -43,14 +43,14 @@ export default function ChatLauncherIsland() {
                         try { requestAnimationFrame(() => { try { composer.focus(); } catch (e) { /* noop */ } }); } catch (e) { /* noop */ }
                     }
                 } else {
-                    panel.classList.add('pointer-events-none', 'translate-y-4', 'opacity-0');
-                    panel.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                    panel!.classList.add('pointer-events-none', 'translate-y-4', 'opacity-0');
+                    panel!.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
                 }
             }
 
             const clickHandler = (e: Event) => {
                 e.preventDefault();
-                const isOpen = wrapper.getAttribute('data-ai-chat-open') === 'true';
+                const isOpen = wrapper!.getAttribute('data-ai-chat-open') === 'true';
                 setOpen(!isOpen);
             };
 
