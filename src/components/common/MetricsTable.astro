@@ -1,0 +1,34 @@
+---
+export interface Metric {
+  metric: string;
+  result: string;
+  timeline: string;
+}
+
+export interface Props {
+  metrics: Metric[];
+}
+
+const { metrics } = Astro.props;
+---
+
+<div class="overflow-x-auto">
+  <table class="w-full border-collapse border border-gray-300 dark:border-gray-600 my-8">
+    <thead>
+  <tr class="bg-surface dark:bg-surface-dark">
+        <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">Metric</th>
+        <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">Result</th>
+        <th class="border border-gray-300 dark:border-gray-600 p-3 text-left font-semibold text-foreground dark:text-white">Timeline</th>
+      </tr>
+    </thead>
+    <tbody>
+      {metrics.map((metric, index) => (
+  <tr class={index % 2 === 1 ? 'bg-surface dark:bg-surface-dark' : ''}>
+          <td class="border border-gray-300 dark:border-gray-600 p-3 font-semibold text-foreground dark:text-white">{metric.metric}</td>
+          <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">{metric.result}</td>
+          <td class="border border-gray-300 dark:border-gray-600 p-3 text-foreground/85 dark:text-gray-300">{metric.timeline}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div> 

@@ -105,6 +105,7 @@ export function useChatLifecycle(
 	/**
 	 * Focuses the input field with cursor at end
 	 * Uses requestAnimationFrame for reliable focus
+	 * Sets data-ai-chat-focused attribute for deterministic testing
 	 */
 	const focusInput = useCallback(() => {
 		if (!inputRef.current) return;
@@ -114,6 +115,15 @@ export function useChatLifecycle(
 				inputRef.current.value.length,
 				inputRef.current.value.length
 			);
+			
+			// Set deterministic focus signal for accessibility testing
+			if (document.activeElement === inputRef.current) {
+				const panel = inputRef.current.closest('[data-ai-chat-panel]');
+				if (panel) {
+					panel.setAttribute('data-ai-chat-focused', 'true');
+					window.dispatchEvent(new CustomEvent('ai-chat:focused', { detail: { focused: true } }));
+				}
+			}
 		});
 	}, [inputRef]);
 
@@ -134,6 +144,17 @@ export function useChatLifecycle(
 		setIsOpen(true);
 		setError(null);
 		setChatState((state) => (state === 'idle' ? 'ready' : state));
+
+		// Ensure the input is focused shortly after opening.
+		// Use a small timeout to allow downstream refs to be assigned
+		// during React hydration/mount.
+		try {
+			setTimeout(() => {
+				focusInput();
+			}, 50);
+		} catch (e) {
+			// non-fatal
+		}
 	}, [focusInput, isOpen, setIsOpen, setError, setChatState, lastFocusedElementRef]);
 
 	/**

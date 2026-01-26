@@ -22,48 +22,7 @@ import {
 	ChatStatusIndicators,
 	ChatFallbackResults,
 	ChatNewChatPrompt,
-	ChatLauncher,
 } from './chat';
-
-/**
- * Typing indicator component for when another user is typing
- */
-function TypingIndicator() {
-	return (
-		<div className="flex flex-col gap-2 items-start text-left" aria-live="polite" aria-label="AI is typing">
-			<div className="rounded-2xl bg-[color:var(--surface)]/95 text-[color:var(--fg)] dark:bg-[color:var(--surface)]/90 px-4 py-3 shadow-sm border border-[color:var(--border)]/20">
-				<div className="flex items-center gap-2">
-					<div className="flex gap-1">
-						<span className="inline-block size-2 rounded-full bg-[color:var(--fg)]/40 animate-bounce [animation-delay:0ms]" aria-hidden="true" />
-						<span className="inline-block size-2 rounded-full bg-[color:var(--fg)]/40 animate-bounce [animation-delay:150ms]" aria-hidden="true" />
-						<span className="inline-block size-2 rounded-full bg-[color:var(--fg)]/40 animate-bounce [animation-delay:300ms]" aria-hidden="true" />
-					</div>
-					<span className="text-xs text-[color:var(--fg)]/60">AI is thinking...</span>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-/**
- * Scroll to latest button
- */
-function ScrollToLatestButton({ onClick }: { onClick: () => void }) {
-	return (
-		<button
-			type="button"
-			onClick={onClick}
-			className="pointer-events-auto absolute bottom-5 right-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 bg-[color:var(--surface)]/80 px-3 py-1.5 text-xs font-medium text-[color:var(--fg)]/70 shadow-sm backdrop-blur transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
-			aria-label="Jump to latest message"
-		>
-			<svg className="size-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true" focusable="false">
-				<path strokeLinecap="round" strokeLinejoin="round" d="m5 8 5 5 5-5" />
-			</svg>
-			<span>Jump to latest</span>
-		</button>
-	);
-}
-
 /**
  * Main AIChatIsland component
  * 
@@ -176,22 +135,67 @@ export default function AIChatIsland() {
 		}
 	}, [dragOffset, dragOpacity, isDragging, isOpen, panelRef]);
 
+	// Listen for deterministic open/close events from the early launcher (synchronous handshake)
+	useEffect(() => {
+		function handleStateEvent(e: Event) {
+			try {
+				// Prefer detail.open if available
+				const detail = (e as CustomEvent)?.detail;
+				const open = detail && typeof detail.open === 'boolean' ? detail.open : null;
+				if (open === true) {
+					openChat();
+					// Ensure input receives focus when island has mounted
+					try { focusInput(); } catch {}
+				} else if (open === false) {
+					closeChat();
+				}
+			} catch (err) {
+				// swallow
+			}
+		}
+
+		window.addEventListener('ai-chat:state', handleStateEvent as EventListener);
+		// also support legacy ai-chat:open event
+		window.addEventListener('ai-chat:open', handleStateEvent as EventListener);
+		return () => {
+			window.removeEventListener('ai-chat:state', handleStateEvent as EventListener);
+			window.removeEventListener('ai-chat:open', handleStateEvent as EventListener);
+		};
+	}, [openChat, closeChat, focusInput]);
+
+	// On mount, if the server-rendered wrapper already indicates open, ensure we run open/focus.
+	useEffect(() => {
+		try {
+			const wrapper = document.querySelector('[data-ai-chat-open]');
+			if (wrapper && wrapper.getAttribute('data-ai-chat-open') === 'true') {
+				openChat();
+				try { focusInput(); } catch {}
+			}
+		} catch (e) {
+			// noop
+		}
+	}, [openChat, focusInput]);
+
+	// Sync wrapper attribute when isOpen changes (for inline script compatibility)
+	useEffect(() => {
+		try {
+			const wrapper = document.querySelector('[data-ai-chat-open]');
+			if (wrapper) {
+				wrapper.setAttribute('data-ai-chat-open', isOpen ? 'true' : 'false');
+				if (isOpen) {
+					wrapper.classList.remove('pointer-events-none');
+				} else {
+					wrapper.classList.add('pointer-events-none');
+				}
+			}
+		} catch (e) {
+			// noop
+		}
+	}, [isOpen]);
+
 	return (
 		<div
-			className="ai-chat-wrapper pointer-events-none fixed bottom-4 right-4 z-[1050] flex flex-col-reverse items-end gap-3 sm:bottom-6 sm:right-6"
-			data-ai-chat-open={isOpen ? 'true' : 'false'}
-		>
-			{/* Launcher Button */}
-			<ChatLauncher
-				isOpen={isOpen}
-				launcherRef={launcherRef}
-				openChat={openChat}
-				closeChat={closeChat}
-			/>
-
-			{/* Chat Panel */}
-			<div
-				ref={panelRef}
+			ref={panelRef}
 				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 shadow-[0_18px_45px_-18px_rgba(15,23,42,0.65)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/80 transition-transform duration-200 ease-out sm:w-[min(85vw,28rem)] ${
 					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
 				}`}
@@ -351,6 +355,5 @@ export default function AIChatIsland() {
 					handleSubmit={handleSubmit}
 				/>
 			</div>
-		</div>
 	);
 }

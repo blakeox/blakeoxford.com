@@ -247,6 +247,7 @@ export function useAIChatController() {
 		messagesRef,
 		activeRequestRef,
 		scrollContainerRef,
+		setShowScrollToLatest,
 		appendAssistantChunk,
 		assignAssistantSources,
 		finalizeAssistantMessage,
