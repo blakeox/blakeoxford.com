@@ -1,0 +1,54 @@
+---
+/**
+ * CTASection - Reusable Call-to-Action section for project pages
+ * 
+ * Standard two-column layout with heading, description, and action buttons.
+ * Used in project detail pages "Next steps" sections.
+ * 
+ * @prop {string} heading - Main CTA heading
+ * @prop {string} description - Supporting description text
+ * @prop {string} primaryLabel - Primary button text (default: "Book a working session")
+ * @prop {string} primaryHref - Primary button URL (default: "/contact/")
+ * @prop {string} secondaryLabel - Secondary button text (default: "Review how I partner")
+ * @prop {string} secondaryHref - Secondary button URL (default: "/about/")
+ */
+import Button from '../primitives/Button.astro';
+import ButtonGroup from '../composites/ButtonGroup.astro';
+
+interface Props {
+  heading: string;
+  description: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+}
+
+const {
+  heading,
+  description,
+  primaryLabel = 'Book a working session',
+  primaryHref = '/contact/',
+  secondaryLabel = 'Review how I partner',
+  secondaryHref = '/about/',
+} = Astro.props;
+---
+
+<div class="grid gap-4 items-start lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+  <div class="space-y-4">
+    <h3 class="text-xl sm:text-2xl font-semibold text-foreground dark:text-foreground-light">
+      {heading}
+    </h3>
+    <p class="text-sm sm:text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+      {description}
+    </p>
+  </div>
+  <ButtonGroup align="end" responsive>
+    <Button variant="outline" href={primaryHref}>
+      {primaryLabel}
+    </Button>
+    <Button variant="ghost" href={secondaryHref}>
+      {secondaryLabel}
+    </Button>
+  </ButtonGroup>
+</div>

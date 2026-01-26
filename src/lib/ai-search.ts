@@ -109,13 +109,20 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
       }
     }
     const payloadRaw = dataLines.join('\n').trim();
-    let payload: unknown = payloadRaw;
-    if (payloadRaw) {
-      if (payloadRaw.startsWith('{') || payloadRaw.startsWith('[')) {
+    // Defensive sanitization: some SSE producers may accidentally emit stray
+    // 'event: ...' lines inside a data block (or malformed concatenations). Strip
+    // any leading/trailing 'event:' lines before attempting to parse JSON so we
+    // don't feed JSON.parse invalid input like "event: tok...{...}".
+    const payloadRawClean = payloadRaw.replace(/(^|\r?\n)event:\s*[^\r\n]+/gi, '').trim();
+    let payload: unknown = payloadRawClean || payloadRaw;
+    if (payload && typeof payload === 'string') {
+      const s = payload as string;
+      if (s.startsWith('{') || s.startsWith('[')) {
         try {
-          payload = JSON.parse(payloadRaw);
+          payload = JSON.parse(s);
         } catch {
-          payload = payloadRaw;
+          // leave as raw string if parsing fails
+          payload = s;
         }
       }
     }

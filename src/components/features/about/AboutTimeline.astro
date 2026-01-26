@@ -62,7 +62,7 @@ function Icon({ name }: IconProps) {
     </header>
 
     <div class="hidden md:block relative">
-      <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-accent via-primary to-accent animate-[gradient-shift_8s_ease_infinite]"></div>
+      <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-accent via-primary to-accent animate-[gradient-shift_8s_ease_infinite]" aria-hidden="true"></div>
       <div class="space-y-0">
         {timeline.items.map((item, index) => (
           <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'} group`}
@@ -96,7 +96,9 @@ function Icon({ name }: IconProps) {
                 </article>
               </div>
             </div>
-            <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-background bg-accent group-hover:scale-125 transition-transform duration-300"><span class="absolute inset-0 rounded-full bg-accent/60 animate-ping opacity-75"></span></div>
+            <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-background bg-accent group-hover:scale-125 transition-transform duration-300" aria-hidden="true">
+              <span class="absolute inset-0 rounded-full bg-accent/60 animate-ping opacity-75"></span>
+            </div>
           </div>
         ))}
       </div>
@@ -119,7 +121,7 @@ function Icon({ name }: IconProps) {
             <ul class="pl-2 border-l-2 border-border/60 space-y-2" role="list">
               {item.achievements.map((achievement) => (
                 <li class="text-sm text-foreground/75 dark:text-foreground-light/75 flex items-start gap-2">
-                  <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-accent/80"></span>
+                  <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-accent/80" aria-hidden="true"></span>
                   <span>{achievement}</span>
                 </li>
               ))}

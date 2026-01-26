@@ -74,7 +74,7 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 
 	return (
 		<div key={message.id} className={`flex flex-col gap-2 ${alignment}`} data-ai-message-role={message.role}>
-			<div className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm shadow-sm ring-1 ring-[color:var(--border)]/20 dark:ring-[color:var(--border)]/30 ${bubbleClasses}`}>
+			<div className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm shadow-sm ring-1 ring-[color:var(--border)]/20 dark:ring-[color:var(--border)]/30 transition-all duration-150 ease-out ${bubbleClasses}`}>
 				<div className="flex flex-col gap-2">
 					{bubbleContent ? (
 						<span className={`whitespace-pre-wrap break-words ${messageTextClasses}`}>{bubbleContent}</span>
@@ -84,7 +84,7 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 						) : null
 					)}
 					{isAssistant && isStreaming && (
-						<span className="flex items-center gap-1 text-[0.75rem] text-[color:var(--fg)]/60" aria-live="assertive">
+						<span className="flex items-center gap-1 text-[0.75rem] text-[color:var(--fg)]/60" aria-live="polite">
 							<span className="sr-only">Assistant is responding</span>
 							<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse" />
 							<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:150ms]" />

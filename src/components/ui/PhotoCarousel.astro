@@ -241,6 +241,14 @@ const mobileLoop = createSeamlessLoop(mobileImages);
   animation: carousel-down-slow 90s linear infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-carousel-x-slow,
+  .animate-carousel-up-slow,
+  .animate-carousel-down-slow {
+    animation: none !important;
+  }
+}
+
 /* Horizontal loop (mobile & tablet) */
 @keyframes carousel-x-slow {
   from { transform: translateX(0); }
