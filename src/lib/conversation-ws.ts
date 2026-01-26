@@ -11,6 +11,44 @@
 
 import { logger } from '../utils/logger';
 
+/**
+ * Generate a short secure random string suitable for IDs.
+ * Uses Web Crypto API in browsers, falls back to Node's crypto when available,
+ * and as a last resort falls back to Math.random (very unlikely).
+ */
+function secureRandomString(length = 9) {
+	try {
+		// Browser / modern env
+		if (typeof globalThis !== 'undefined' && (globalThis as any).crypto && typeof (globalThis as any).crypto.getRandomValues === 'function') {
+			const arr = new Uint32Array(Math.ceil((length / 8) * 2));
+			(globalThis as any).crypto.getRandomValues(arr);
+			let s = '';
+			for (let i = 0; i < arr.length; i++) s += arr[i].toString(36);
+			return s.slice(0, length);
+		}
+
+		// Node fallback (CommonJS require) - avoid module-level ESM import to keep compatibility
+		try {
+			// eslint-disable-next-line @typescript-eslint/no-var-requires
+			const { randomBytes } = require('crypto');
+			const buf = randomBytes(Math.ceil(length * 0.6));
+			let s = '';
+			for (let i = 0; i < buf.length; i += 2) {
+				const v = (buf[i] << 8) | (buf[i + 1] ?? 0);
+				s += v.toString(36);
+			}
+			return s.slice(0, length);
+		} catch (e) {
+			// fallthrough to Math.random
+		}
+	} catch (e) {
+		// fallthrough
+	}
+
+	// Last-resort fallback (non-crypto)
+	return Math.random().toString(36).slice(2, 2 + length);
+}
+
 export type WSMessage = 
 	| { type: 'init'; state: any; sessionId: string; activeSessions: number }
 	| { type: 'message'; message: any }
@@ -189,7 +227,7 @@ export class ConversationWebSocket {
 	 * Generate unique session ID
 	 */
 	private generateSessionId(): string {
-		return `session_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+		return `session_${Date.now()}_${secureRandomString(9)}`;
 	}
 }
 
@@ -270,6 +308,6 @@ export class ConversationHTTP {
 	}
 
 	private generateSessionId(): string {
-		return `session_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+		return `session_${Date.now()}_${secureRandomString(9)}`;
 	}
 }
