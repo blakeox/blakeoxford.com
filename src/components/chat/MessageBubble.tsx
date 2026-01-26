@@ -1,1 +1,1 @@
-export { default } from './MessageBubble.complete';
+export { default } from '../islands/chat/ChatMessageBubble';

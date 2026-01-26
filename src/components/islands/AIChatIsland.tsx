@@ -78,6 +78,7 @@ export default function AIChatIsland() {
 		toggleExpandedSource,
 		toggleIndividualSource,
 		openChat,
+			focusInput,
 		closeChat,
 		touchStartY,
 		touchCurrentY,

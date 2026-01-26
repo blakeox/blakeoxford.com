@@ -15,14 +15,15 @@ export default function ChatLauncherIsland() {
             if (!launcher || !panel || !wrapper) return;
 
             function setOpen(open: boolean) {
-                wrapper.setAttribute('data-ai-chat-open', open ? 'true' : 'false');
+                // wrapper/panel are captured from outer scope; assert non-null for TypeScript narrowing
+                wrapper!.setAttribute('data-ai-chat-open', open ? 'true' : 'false');
                 // toggle wrapper pointer-events so composer can be focused
-                if (open) wrapper.classList.remove('pointer-events-none');
-                else wrapper.classList.add('pointer-events-none');
-                panel.setAttribute('data-ai-visible', open ? 'true' : 'false');
+                if (open) wrapper!.classList.remove('pointer-events-none');
+                else wrapper!.classList.add('pointer-events-none');
+                panel!.setAttribute('data-ai-visible', open ? 'true' : 'false');
                 if (open) {
-                    panel.classList.remove('pointer-events-none', 'translate-y-4', 'opacity-0');
-                    panel.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                    panel!.classList.remove('pointer-events-none', 'translate-y-4', 'opacity-0');
+                    panel!.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
                     // Move focus to composer if available for accessibility/tests
                     const composer = panel.querySelector('textarea, input') as HTMLElement | null;
                         if (composer && typeof composer.focus === 'function') {
