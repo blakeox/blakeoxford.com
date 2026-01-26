@@ -64,8 +64,8 @@ importers:
         specifier: ^1.57.0
         version: 1.57.0
       '@rollup/rollup-linux-x64-gnu':
-        specifier: ^4.55.1
-        version: 4.55.1
+        specifier: ^4.56.0
+        version: 4.56.0
       '@sentry/cli':
         specifier: ^3.1.0
         version: 3.1.0
@@ -2264,11 +2264,6 @@ packages:
   '@rollup/rollup-linux-s390x-gnu@4.56.0':
     resolution: {integrity: sha512-zhLLJx9nQPu7wezbxt2ut+CI4YlXi68ndEve16tPc/iwoylWS9B3FxpLS2PkmfYgDQtosah07Mj9E0khc3Y+vQ==}
     cpu: [s390x]
-    os: [linux]
-
-  '@rollup/rollup-linux-x64-gnu@4.55.1':
-    resolution: {integrity: sha512-a8G4wiQxQG2BAvo+gU6XrReRRqj+pLS2NGXKm8io19goR+K8lw269eTrPkSdDTALwMmJp4th2Uh0D8J9bEV1vg==}
-    cpu: [x64]
     os: [linux]
 
   '@rollup/rollup-linux-x64-gnu@4.56.0':
@@ -9416,10 +9411,7 @@ snapshots:
   '@rollup/rollup-linux-s390x-gnu@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-x64-gnu@4.55.1': {}
-
-  '@rollup/rollup-linux-x64-gnu@4.56.0':
-    optional: true
+  '@rollup/rollup-linux-x64-gnu@4.56.0': {}
 
   '@rollup/rollup-linux-x64-musl@4.56.0':
     optional: true
