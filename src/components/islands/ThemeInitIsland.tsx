@@ -1,4 +1,5 @@
 export default function ThemeInitIsland() {
+  try { console.debug('ThemeInitIsland executing'); } catch (e) {}
   return (
     <script
       dangerouslySetInnerHTML={{

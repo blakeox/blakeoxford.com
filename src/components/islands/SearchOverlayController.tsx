@@ -135,6 +135,8 @@ export default function SearchOverlayController() {
     };
 
     const handleEscape = (event: KeyboardEvent) => {
+      try { console.debug('handleEscape invoked', { key: event.key, state: overlayElement?.dataset.state }); } catch (e) {}
+
       if (event.key !== 'Escape') return;
       if (overlayElement?.dataset.state !== 'open' && state !== 'fallback') return;
       event.preventDefault();

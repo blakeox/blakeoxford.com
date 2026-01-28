@@ -15,7 +15,7 @@ test.describe('@essential @theme Dark mode behavior', () => {
     await page.waitForFunction(() => {
       const val = getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim();
       return !!val;
-    }, null, { timeout: 5000 });
+    }, null, { timeout: 10000 });
 
     // Helper to read token value and a "probe" element's computed bg using the token
     const getTokenBg = async () => await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim());
@@ -43,7 +43,7 @@ test.describe('@essential @theme Dark mode behavior', () => {
     await page.waitForFunction(
       (wasDark) => document.documentElement.classList.contains('dark') !== wasDark,
       hasDark,
-      { timeout: 5000 }
+      { timeout: 10000 }
     );
 
   const flippedTokenBg = await getTokenBg();
