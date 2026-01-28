@@ -50,11 +50,12 @@ export class EnhancedSearchOverlay {
   open() {
     const searchOverlay = document.getElementById('search-overlay');
     if (!searchOverlay) return false;
-    
-  // Make overlay interactive
-  (searchOverlay as any).inert = false;
-
+    // Make overlay interactive and update ARIA/state so tests detect it
+    (searchOverlay as any).inert = false;
+    searchOverlay.dataset.state = 'open';
+    searchOverlay.setAttribute('aria-hidden', 'false');
     searchOverlay.classList.add('active');
+    searchOverlay.style.display = 'block';
     searchOverlay.style.visibility = 'visible';
     searchOverlay.style.opacity = '1';
     
@@ -698,9 +699,16 @@ export class EnhancedSearchOverlay {
       this.recognition.stop();
     }
     
-    // Close the overlay
+    // Close the overlay and update ARIA/state
     searchOverlay.classList.remove('active');
-  (searchOverlay as any).inert = true;
+    searchOverlay.dataset.state = 'closed';
+    searchOverlay.setAttribute('aria-hidden', 'true');
+    (searchOverlay as any).inert = true;
+
+    // Hide inline so tests see it immediately as not-visible
+    searchOverlay.style.opacity = '0';
+    searchOverlay.style.visibility = 'hidden';
+    searchOverlay.style.display = 'none';
     
     // Clear search input
     if (this.searchInput) {

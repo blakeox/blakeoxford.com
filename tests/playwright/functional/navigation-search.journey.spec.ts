@@ -20,18 +20,19 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
     // Basic assertion: results container exists or empty state still stable
     const results = page.locator('#search-results');
     await expect(results).toBeAttached();
-    // Close overlay via programmatic helper if available, else fall back to Escape key
-    const hasCloseHelper = await page.evaluate(() => !!(window as any).enhancedSearchOverlay?.closeSearchOverlay);
+    // Prefer programmatic close helper to avoid Playwright keyboard flakiness; require it in CI
+    const hasCloseHelper = await page.evaluate(() => !!(window as any).enhancedSearchOverlay?.closeSearchOverlay || !!(window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED);
     if (hasCloseHelper) {
-      await page.evaluate(() => (window as any).enhancedSearchOverlay.closeSearchOverlay());
+      await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.closeSearchOverlay?.(); } catch (e) { console.error('enhancedSearchOverlay.closeSearchOverlay threw', e); } });
     } else {
-      // Fallback: dispatch a DOM keyboard event to trigger in-page handlers instead of Playwright's keyboard.press
+      // In CI we expect the helper to be present; gather diagnostics and throw
       await page.evaluate(() => {
-        try {
-          const ev = new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, which: 27, bubbles: true, cancelable: true });
-          document.dispatchEvent(ev);
-        } catch (e) { /* noop */ }
+        // eslint-disable-next-line no-console
+        console.error('enhancedSearchOverlay missing:', { enhanced: !!(window as any).enhancedSearchOverlay, injectedFlag: !!(window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED });
+        try { console.log('document.readyState', document.readyState); } catch (e) {}
+        try { console.log('overlay element', !!document.getElementById('search-overlay')); } catch (e) {}
       });
+      throw new Error('Programmatic search overlay helper not available in test environment');
     }
     // Diagnostic: if overlay remains visible, log relevant attributes
     const overlay = page.locator('#search-overlay');

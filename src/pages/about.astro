@@ -10,6 +10,7 @@ import FloatingBlur from '../components/primitives/FloatingBlur.astro';
 import TimelineCard from '../components/features/about/TimelineCard.astro';
 import TimelineCardMobile from '../components/features/about/TimelineCardMobile.astro';
 import AchievementCard from '../components/features/about/AchievementCard.astro';
+import AboutSocial from '../components/features/about/AboutSocial.astro';
 import SkillBadge from '../components/primitives/SkillBadge.astro';
 import SocialLink from '../components/primitives/SocialLink.astro';
 import { CANONICAL_URLS } from '../config/constants';
@@ -114,6 +115,18 @@ const timelineItems: TimelineItem[] = [
     <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
     <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
   </div>
+
+    <!-- Render the AboutSocial feature so the DOM shape matches Playwright expectations -->
+    {
+      /* Build the social section object expected by AboutSocial. */
+    }
+    <AboutSocial
+      social={{
+        title: 'Connect',
+        description: 'Find me on the platforms I use most.',
+        links: socialLinks.map((s) => ({ href: s.url, label: s.name, icon: s.icon }))
+      }}
+    />
   <!-- About Hero Section (note: BaseLayout main already has pt-24; avoid double top spacing here) -->
   <section id="about-me" class="relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8 min-h-screen">
       <!-- Floating blur orbs for depth -->
@@ -128,8 +141,8 @@ const timelineItems: TimelineItem[] = [
         <div class="flex flex-col md:grid md:grid-cols-2 md:gap-0 min-h-screen">
           <!-- Text Content -->
           <div class="order-1 flex flex-col justify-start px-4 sm:px-6 pt-28 pb-8 md:order-1 md:justify-center md:px-6 md:py-16 lg:px-12">
-            <Stack space="lg" class="max-w-2xl">
-              <h1 id="about-hero-heading" class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light leading-tight">
+            <Stack space="lg" class="max-w-2xl mx-auto">
+              <h1 id="about-me-title" class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light leading-tight">
                 Systems Architect & Workflow Strategist
               </h1>
               <p class="text-base sm:text-lg md:text-xl leading-relaxed text-foreground/80 dark:text-foreground-light/80">

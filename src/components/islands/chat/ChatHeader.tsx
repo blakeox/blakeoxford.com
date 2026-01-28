@@ -16,7 +16,7 @@ export const ChatHeader = memo(function ChatHeader({
 	closeChat,
 }: ChatHeaderProps) {
 	return (
-		<div className="flex items-center justify-between gap-2 border-b border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/40 px-4 py-3">
+		<div className="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/40 px-4 py-3">
 			<div className="flex flex-col">
 				<span id="ai-chat-heading" className="text-sm font-semibold text-[color:var(--fg)]">
 					AI Portfolio Assistant

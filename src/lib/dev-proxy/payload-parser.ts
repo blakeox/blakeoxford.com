@@ -195,3 +195,30 @@ export function extractMessage(data: unknown): string {
   return '';
 }
 
+/**
+ * Extract a human-friendly error detail from upstream error payloads
+ */
+export function extractErrorDetail(err: unknown): string {
+  const defaultMsg = 'Upstream service error';
+  if (!err || typeof err !== 'object') return defaultMsg;
+
+  const e = err as Record<string, unknown>;
+
+  if (typeof e.error === 'string' && e.error.trim()) {
+    return e.error.trim();
+  }
+
+  if (Array.isArray(e.errors) && e.errors.length > 0) {
+    const first = e.errors[0];
+    if (first && typeof first === 'object' && typeof (first as any).message === 'string') {
+      return (first as any).message.trim();
+    }
+  }
+
+  if (typeof e.message === 'string' && e.message.trim()) {
+    return e.message.trim();
+  }
+
+  return defaultMsg;
+}
+

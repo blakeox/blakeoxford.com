@@ -9,6 +9,11 @@ import { useEffect } from 'react';
 export default function ChatLauncherIsland() {
     useEffect(() => {
         try {
+            // Signal that the hydrated launcher is present so the inline fallback avoids registering.
+            // This prevents duplicate listeners and keeps toggle behavior deterministic.
+            try { (window as any).__ai_chat_hydrated = true; } catch (e) { /* noop */ }
+        } catch (err) { /* noop */ }
+        try {
             const launcher = document.querySelector('.ai-chat-launcher');
             const wrapper = launcher?.closest('[data-ai-chat-open]') as HTMLElement | null;
             const panel = document.querySelector('[data-ai-chat-panel]') as HTMLElement | null;
@@ -45,6 +50,12 @@ export default function ChatLauncherIsland() {
                 } else {
                     panel!.classList.add('pointer-events-none', 'translate-y-4', 'opacity-0');
                     panel!.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                }
+                // Dispatch a deterministic event so the AIChatIsland can synchronize React state
+                try {
+                    window.dispatchEvent(new CustomEvent('ai-chat:state', { detail: { open } }));
+                } catch (err) {
+                    /* noop */
                 }
             }
 

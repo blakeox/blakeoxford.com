@@ -13,7 +13,10 @@ const mockFuse = {
   ])
 };
 
-global.Fuse = vi.fn().mockImplementation(() => mockFuse);
+// Provide a real constructor function for Fuse to allow `new global.Fuse(...)` in tests
+global.Fuse = function (this: any, data?: any, opts?: any) {
+  return mockFuse;
+} as any;
 
 // Mock SearchOverlay class
 class MockSearchOverlay {

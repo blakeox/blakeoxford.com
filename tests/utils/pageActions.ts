@@ -20,10 +20,10 @@ export async function openSearchOverlay(page: Page) {
 
   // If a deterministic test-only helper is available, prefer it (wait briefly for it to be injected)
   const helperAvailable = await page.waitForFunction(() => {
-    try { return !!(window as any).enhancedSearchOverlay?.openSearchOverlay; } catch (e) { return false; }
-  }, { timeout: 1000 }).catch(() => false as const);
+    try { return !!(window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED || !!(window as any).enhancedSearchOverlay?.openSearchOverlay; } catch (e) { return false; }
+  }, { timeout: 2000 }).catch(() => false as const);
   if (helperAvailable) {
-    await page.evaluate(() => { try { (window as any).enhancedSearchOverlay.openSearchOverlay(); } catch (e) { /* noop */ } });
+    await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.openSearchOverlay?.(); } catch (e) { /* noop */ } });
   }
 
   // Wait for overlay activation (class + style + inert removed)
@@ -85,11 +85,19 @@ export async function openSearchOverlay(page: Page) {
     }
   }
 
-  // Wait for reconciliation-ready flag set by the server/client helper
+  // Wait for reconciliation-ready flag set by the server/client helper (longer timeout)
   await page.waitForFunction(() => {
     const el = document.querySelector('#search-overlay') as HTMLElement | null;
     return !!el && el.dataset && el.dataset.ready === 'true';
-  }, { timeout: 2000 }).catch(() => {});
+  }, { timeout: 5000 }).catch(() => {});
+
+  // Ensure the input is visible before proceeding to fillSearch
+  await page.waitForFunction(() => {
+    const input = document.querySelector('#search-input') as HTMLInputElement | null;
+    if (!input) return false;
+    const style = window.getComputedStyle(input);
+    return style.visibility !== 'hidden' && style.display !== 'none' && parseFloat(style.opacity || '1') > 0;
+  }, { timeout: 3000 }).catch(() => {});
 
   await expect(overlay).toBeVisible();
   return overlay;

@@ -62,10 +62,19 @@ export const ChatInput = memo(function ChatInput({
 					Ask about projects, case studies, or posts…
 				</label>
 				<button
-					type="submit"
+					type="button"
 					className="absolute bottom-3 right-3 inline-flex size-9 items-center justify-center rounded-full bg-[color:var(--accent)] text-[color:var(--on-accent)] shadow-sm transition-transform duration-150 hover:scale-105 hover:bg-[color:var(--accent-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/60 active:scale-95 disabled:opacity-50"
 					aria-label={chatState === 'loading' ? 'Sending message' : 'Send message'}
 					disabled={chatState === 'loading'}
+					onClick={(e) => {
+						// Dispatch a submit event on the containing form so form-level handlers run
+						const el = (e.currentTarget as HTMLElement);
+						const form = el.closest('form') as HTMLFormElement | null;
+						if (form) {
+							const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+							form.dispatchEvent(submitEvent);
+						}
+					}}
 				>
 					{chatState === 'loading' ? (
 						<svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true" focusable="false">

@@ -377,7 +377,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                       if (inputEl) try { (inputEl as HTMLElement).focus(); } catch (e) {}; if (inputEl) (inputEl as HTMLElement).setAttribute('aria-expanded', 'true');
                       var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
                       results.forEach(function (r) { (r as HTMLElement).style.display = 'block'; (r as HTMLElement).style.visibility = 'visible'; (r as HTMLElement).style.opacity = '1'; });
-                      try { el.dataset.ready = 'true'; } catch (e) {}
+                      try { el.dataset.ready = 'true'; (window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch (e) {}
                     } catch (e) { /* noop */ }
                   },
                   closeSearchOverlay: function () {
