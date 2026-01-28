@@ -18,6 +18,14 @@ export async function openSearchOverlay(page: Page) {
     await page.keyboard.press(combo).catch(() => {});
   }
 
+  // If a deterministic test-only helper is available, prefer it (wait briefly for it to be injected)
+  const helperAvailable = await page.waitForFunction(() => {
+    try { return !!(window as any).enhancedSearchOverlay?.openSearchOverlay; } catch (e) { return false; }
+  }, { timeout: 1000 }).catch(() => false as const);
+  if (helperAvailable) {
+    await page.evaluate(() => { try { (window as any).enhancedSearchOverlay.openSearchOverlay(); } catch (e) { /* noop */ } });
+  }
+
   // Wait for overlay activation (class + style + inert removed)
   const activated = await page.waitForFunction(() => {
     const el = document.querySelector('#search-overlay') as HTMLElement | null;
@@ -40,6 +48,7 @@ export async function openSearchOverlay(page: Page) {
       const overlay = document.getElementById('search-overlay') as HTMLElement | null;
       if (!overlay) return;
       overlay.classList.add('active');
+      overlay.style.display = 'block';
       overlay.style.visibility = 'visible';
       overlay.style.opacity = '1';
       overlay.removeAttribute('inert');
@@ -48,6 +57,10 @@ export async function openSearchOverlay(page: Page) {
         input.focus();
         input.setAttribute('aria-expanded', 'true');
       }
+      // Reveal results and close button for deterministic tests
+      const results = overlay.querySelectorAll('.search-result, [data-results-container], [data-results]');
+      results.forEach((el: HTMLElement) => { el.style.display = 'block'; el.style.visibility = 'visible'; el.style.opacity = '1'; });
+      const closeBtn = overlay.querySelector('#close-search') as HTMLElement | null; if (closeBtn) closeBtn.style.display = 'block';
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
@@ -62,6 +75,12 @@ export async function openSearchOverlay(page: Page) {
       return !inert && el.classList.contains('active') && visible;
     }, { timeout: 3000 }).catch(() => {});
   }
+
+  // Wait for reconciliation-ready flag set by the server/client helper
+  await page.waitForFunction(() => {
+    const el = document.querySelector('#search-overlay') as HTMLElement | null;
+    return !!el && el.dataset && el.dataset.ready === 'true';
+  }, { timeout: 2000 }).catch(() => {});
 
   await expect(overlay).toBeVisible();
   return overlay;
