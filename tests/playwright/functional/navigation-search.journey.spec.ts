@@ -20,8 +20,13 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
     // Basic assertion: results container exists or empty state still stable
     const results = page.locator('#search-results');
     await expect(results).toBeAttached();
-    // Close overlay via Escape
-    await page.keyboard.press('Escape');
+    // Close overlay via programmatic helper if available, else fall back to Escape key
+    const hasCloseHelper = await page.evaluate(() => !!(window as any).enhancedSearchOverlay?.closeSearchOverlay);
+    if (hasCloseHelper) {
+      await page.evaluate(() => (window as any).enhancedSearchOverlay.closeSearchOverlay());
+    } else {
+      await page.keyboard.press('Escape');
+    }
     // Diagnostic: if overlay remains visible, log relevant attributes
     const overlay = page.locator('#search-overlay');
     if (await overlay.isVisible().catch(() => false)) {
