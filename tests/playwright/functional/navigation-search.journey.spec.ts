@@ -22,6 +22,17 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
     await expect(results).toBeAttached();
     // Close overlay via Escape
     await page.keyboard.press('Escape');
-    await expect(page.locator('#search-overlay')).not.toBeVisible();
+    // Diagnostic: if overlay remains visible, log relevant attributes
+    const overlay = page.locator('#search-overlay');
+    if (await overlay.isVisible().catch(() => false)) {
+      await page.evaluate(() => {
+        const el = document.getElementById('search-overlay');
+        if (!el) return;
+        const styles = window.getComputedStyle(el as HTMLElement);
+        // eslint-disable-next-line no-console
+        console.log('Overlay still visible after Escape:', { classList: Array.from((el as HTMLElement).classList), dataset: { ...(el as any).dataset }, display: styles.display, visibility: styles.visibility, opacity: styles.opacity });
+      });
+    }
+    await expect(overlay).not.toBeVisible();
   });
 });
