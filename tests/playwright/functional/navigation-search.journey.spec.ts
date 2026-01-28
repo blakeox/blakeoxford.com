@@ -25,7 +25,13 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
     if (hasCloseHelper) {
       await page.evaluate(() => (window as any).enhancedSearchOverlay.closeSearchOverlay());
     } else {
-      await page.keyboard.press('Escape');
+      // Fallback: dispatch a DOM keyboard event to trigger in-page handlers instead of Playwright's keyboard.press
+      await page.evaluate(() => {
+        try {
+          const ev = new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, which: 27, bubbles: true, cancelable: true });
+          document.dispatchEvent(ev);
+        } catch (e) { /* noop */ }
+      });
     }
     // Diagnostic: if overlay remains visible, log relevant attributes
     const overlay = page.locator('#search-overlay');
