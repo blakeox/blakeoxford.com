@@ -73,7 +73,8 @@ export default function SearchOverlayController() {
     const win = window as typeof window & {
       enhancedSearchOverlay?: undefined;
     };
-    delete win.enhancedSearchOverlay;
+    // Preserve test helper (enhancedSearchOverlay) so Playwright tests can control overlay deterministically
+
 
     const doc = document;
 
