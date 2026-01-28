@@ -27,13 +27,8 @@ function openFallbackOverlay(): void {
   if (!overlay) return;
 
   overlay.dataset.state = 'open';
-  // Ensure overlay is visible and interactive immediately for deterministic tests
-  overlay.classList.add('active');
-  overlay.style.display = 'block';
-  overlay.style.visibility = 'visible';
-  overlay.style.opacity = '1';
+  overlay.classList.remove('hidden');
   overlay.removeAttribute('inert');
-  overlay.setAttribute('aria-hidden', 'false');
 
   document.body.dataset.searchOpen = 'true';
   document.body.style.overflow = 'hidden';
@@ -51,16 +46,15 @@ function closeFallbackOverlay(): void {
   const overlay = document.getElementById('search-overlay');
   if (!overlay) return;
 
-  // Immediately update state and remove interactivity so tests observe closed state
   overlay.dataset.state = 'closed';
-  overlay.classList.remove('active');
   overlay.setAttribute('inert', '');
-  overlay.setAttribute('aria-hidden', 'true');
 
-  // Hide inline so Playwright/test runners see it as not visible right away
-  overlay.style.opacity = '0';
-  overlay.style.visibility = 'hidden';
-  overlay.style.display = 'none';
+  // Defer hiding to allow exit transition
+  setTimeout(() => {
+    if (overlay.dataset.state === 'closed') {
+      overlay.classList.add('hidden');
+    }
+  }, 200);
 
   delete document.body.dataset.searchOpen;
   document.body.style.overflow = '';
