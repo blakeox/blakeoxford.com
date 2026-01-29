@@ -637,8 +637,47 @@ const mainClasses = `${baseMainClasses} pt-24`;
       (function(){
         try {
           window.__TEST_EVENT_LOG = window.__TEST_EVENT_LOG || [];
+          var isTestEnv = (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) || (typeof navigator !== 'undefined' && navigator.webdriver);
+          if (!isTestEnv) return;
+
           var overlay = document.getElementById('search-overlay');
           if (!overlay) return;
+
+          // Instrument classList.add to detect who re-opens the overlay in tests
+          try {
+            var originalDOMTokenListAdd = DOMTokenList.prototype.add;
+            DOMTokenList.prototype.add = function () {
+              try {
+                for (var i = 0; i < arguments.length; i++) {
+                  if (arguments[i] === 'active') {
+                    try {
+                      var isOverlayClassList = (overlay && overlay.classList === this);
+                      var evt = { event: 'classList.add-active', isOverlay: !!isOverlayClassList, args: Array.prototype.slice.call(arguments), ts: Date.now(), stack: (new Error()).stack };
+                      try { window.__TEST_EVENT_LOG.push(evt); } catch (e) {}
+                      try { console.warn && console.warn('TEST-INSTRUMENTATION classList.add active', evt); } catch (e) {}
+                    } catch (e) {}
+                  }
+                }
+              } catch (e) {}
+              return originalDOMTokenListAdd.apply(this, arguments);
+            };
+          } catch (e) { /* noop */ }
+
+          // Instrument setAttribute to catch data-state=open calls
+          try {
+            var originalSetAttribute = Element.prototype.setAttribute;
+            Element.prototype.setAttribute = function (name, value) {
+              try {
+                if (String(name) === 'data-state' && String(value) === 'open') {
+                  var evt2 = { event: 'setAttribute-data-state-open', target: this.id || this.tagName, ts: Date.now(), stack: (new Error()).stack };
+                  try { window.__TEST_EVENT_LOG.push(evt2); } catch (e) {}
+                  try { console.warn && console.warn('TEST-INSTRUMENTATION setAttribute data-state open', evt2); } catch (e) {}
+                }
+              } catch (e) {}
+              return originalSetAttribute.apply(this, arguments);
+            };
+          } catch (e) { /* noop */ }
+
           var prevState = overlay.dataset.state || '';
           var prevActive = overlay.classList ? overlay.classList.contains('active') : false;
           var obs = new MutationObserver(function(){
