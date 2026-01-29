@@ -50,7 +50,7 @@ export class EnhancedSearchOverlay {
   open() {
     const searchOverlay = document.getElementById('search-overlay');
     if (!searchOverlay) return false;
-    try { if (searchOverlay.hasAttribute && searchOverlay.hasAttribute('data-closed-lock')) { return false; } } catch (e) {}
+    try { if (searchOverlay.hasAttribute && (searchOverlay.hasAttribute('data-closed-lock') || searchOverlay.hasAttribute('data-authoritative-closed'))) { return false; } } catch (e) {}
     // Make overlay interactive and update ARIA/state so tests detect it
     (searchOverlay as any).inert = false;
     searchOverlay.dataset.state = 'open';
