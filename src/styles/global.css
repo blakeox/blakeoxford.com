@@ -81,4 +81,23 @@
   opacity: 1 !important;
 }
 
+/* Ensure closed state wins over .active to avoid flakiness: if dataset state
+   indicates closed, force the overlay and children hidden regardless of class. */
+#search-overlay[data-state="closed"],
+#search-overlay[aria-hidden="true"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#search-overlay[data-state="closed"] .search-result,
+#search-overlay[data-state="closed"] [data-results-container],
+#search-overlay[data-state="closed"] [data-results] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+
 

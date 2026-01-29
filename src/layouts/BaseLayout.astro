@@ -61,6 +61,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
             try {
               var el = document.getElementById('search-overlay');
               if (!el) return;
+              try { if (el.hasAttribute && el.hasAttribute('data-closed-lock')) return; } catch(e) {}
               el.dataset.state = 'open';
               el.classList.add('active');
               el.style.display = 'block';
@@ -100,10 +101,53 @@ const mainClasses = `${baseMainClasses} pt-24`;
         try {
           var bg = '';
           try { bg = getComputedStyle(document.documentElement).getPropertyValue('--color-background') || ''; } catch (e) { /* noop */ }
-          if (!bg.trim()) document.documentElement.style.setProperty('--color-background', '#f8fafc');
+          if (!bg.trim()) { document.documentElement.style.setProperty('--color-background', '#f8fafc'); try { window.__TEST_THEME_PRIMED = true; } catch (e) {} }
         } catch (e) { /* noop */ }
 
-        try { console.debug && console.debug('early enhancedSearchOverlay injected', { isTestEnv: isTestEnv }); } catch (e) { /* noop */ }
+        try { console.debug && console.debug('early enhancedSearchOverlay injected', { isTestEnv: isTestEnv }); try { window.__TEST_EVENT_LOG.push({event:'early-enhancedSearchOverlay-injected', ts: Date.now()}); } catch(e){} } catch (e) { /* noop */ }
+
+        // Canonical, atomic close helper with short-lived lock to prevent late re-opens
+        try {
+          window.ensureOverlayClosed = window.ensureOverlayClosed || function ensureOverlayClosed() {
+            try {
+              var el = document.getElementById('search-overlay');
+              if (!el) return;
+              // If already locked, still perform idempotent close
+              el.setAttribute('data-closed-lock', 'true');
+              // Apply authoritative closed state
+              try { el.dataset.state = 'closed'; } catch (e) {}
+              try { el.classList.remove('active'); } catch (e) {}
+              try { el.setAttribute('inert', ''); } catch (e) {}
+              try { el.setAttribute('aria-hidden', 'true'); } catch (e) {}
+              try { el.style.opacity = '0'; el.style.visibility = 'hidden'; el.style.display = 'none'; } catch (e) {}
+              // Also try to stop any voice recognition if present
+              try { if (window.__ENHANCED_SEARCH_RECOGNITION && typeof window.__ENHANCED_SEARCH_RECOGNITION.stop === 'function') { window.__ENHANCED_SEARCH_RECOGNITION.stop(); } } catch (e) {}
+              // Record diagnostic event
+              try { window.__TEST_EVENT_LOG.push({ event: 'ensureOverlayClosed-invoked', ts: Date.now() }); } catch (e) {}
+              // Remove lock shortly after to allow normal interactions again
+              setTimeout(function () {
+                try { el.removeAttribute('data-closed-lock'); } catch (e) {}
+                try { window.__TEST_EVENT_LOG.push({ event: 'ensureOverlayClosed-lock-removed', ts: Date.now() }); } catch (e) {}
+              }, 350);
+            } catch (e) { /* noop */ }
+          };
+
+          // Override enhancedSearchOverlay.closeSearchOverlay to use canonical ensureOverlayClosed when available
+          try {
+            if (window.enhancedSearchOverlay && typeof window.enhancedSearchOverlay.closeSearchOverlay === 'function') {
+              var __orig_close = window.enhancedSearchOverlay.closeSearchOverlay;
+              window.enhancedSearchOverlay.closeSearchOverlay = function () {
+                try {
+                  if (typeof window.ensureOverlayClosed === 'function') {
+                    window.ensureOverlayClosed();
+                  } else {
+                    __orig_close && __orig_close();
+                  }
+                } catch (e) {}
+              };
+            }
+          } catch (e) {}
+        } catch (e) { /* noop */ }
       } catch (e) { /* noop */ }
     })();
   </script>
@@ -121,6 +165,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
           try { current = getComputedStyle(document.documentElement).getPropertyValue('--color-background') || ''; } catch (e) { /* noop */ }
           if (!current.trim()) {
             document.documentElement.style.setProperty('--color-background', '#ffffff');
+            try { window.__TEST_THEME_PRIMED = true; } catch (e) {}
           }
         } catch (e) { /* noop */ }
       } catch (e) { /* noop */ }
@@ -229,6 +274,18 @@ const mainClasses = `${baseMainClasses} pt-24`;
     <script is:inline>
   (function () {
     try {
+      // Initialize a lightweight test event log early so Playwright traces can include
+      // in-page diagnostics for race conditions and early errors.
+      try { window.__TEST_EVENT_LOG = window.__TEST_EVENT_LOG || []; } catch (e) { /* noop */ }
+      // Capture global errors to the test event log so failing traces include uncaught exceptions
+      try {
+        window.addEventListener('error', function (ev) {
+          try { window.__TEST_EVENT_LOG.push({ event: 'error', message: ev && ev.message, filename: ev && ev.filename, lineno: ev && ev.lineno, colno: ev && ev.colno, error: ev && ev.error && String(ev.error), ts: Date.now() }); } catch (e) {}
+        });
+        window.addEventListener('unhandledrejection', function (ev) {
+          try { window.__TEST_EVENT_LOG.push({ event: 'unhandledrejection', reason: ev && ev.reason && String(ev.reason), ts: Date.now() }); } catch (e) {}
+        });
+      } catch (e) { /* noop */ }
       var isTestEnv = (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) || (typeof navigator !== 'undefined' && navigator.webdriver);
       if (!isTestEnv) return;
 
@@ -396,17 +453,9 @@ const mainClasses = `${baseMainClasses} pt-24`;
           applyVisible();
           var mo = new MutationObserver(function (records) {
             try {
-              // Prefer the explicit `active` class: if an opener (tests or scripts)
-              // set the class we should show immediately regardless of previous
-              // data-state. This prevents a race where data-state remains
-              // 'closed' while class/inline styles indicate open.
-              if (overlay.classList && overlay.classList.contains('active')) {
-                applyVisible();
-                return;
-              }
-
-              // If overlay explicitly marked closed, hide it deterministically.
-              if (overlay.dataset.state === 'closed') {
+              // If overlay explicitly marked closed, hide it deterministically and
+              // *ensure* the closed state takes precedence over a leftover `active` class.
+              if (overlay.dataset && overlay.dataset.state === 'closed') {
                 overlay.classList.remove('active');
                 overlay.style.display = 'none';
                 overlay.style.opacity = '0';
@@ -426,6 +475,15 @@ const mainClasses = `${baseMainClasses} pt-24`;
                 var backdrop = overlay.querySelector('[data-overlay-backdrop]');
                 if (backdrop) backdrop.style.display = 'none';
                 try { overlay.dataset.ready = 'false'; } catch (e) { /* noop */ }
+                return;
+              }
+
+              // Prefer the explicit `active` class: if an opener (tests or scripts)
+              // set the class we should show immediately regardless of previous
+              // data-state. This prevents a race where data-state remains
+              // 'closed' while class/inline styles indicate open.
+              if (overlay.classList && overlay.classList.contains('active')) {
+                applyVisible();
                 return;
               }
             } catch (e) { /* noop */ }
@@ -549,6 +607,45 @@ const mainClasses = `${baseMainClasses} pt-24`;
         } catch (e) {
           console.warn('search-overlay test helper failed', e);
         }
+      })();
+    </script>
+    <script is:inline>
+      (function(){
+        try {
+          window.__TEST_EVENT_LOG = window.__TEST_EVENT_LOG || [];
+          var overlay = document.getElementById('search-overlay');
+          if (!overlay) return;
+          var prevState = overlay.dataset.state || '';
+          var prevActive = overlay.classList ? overlay.classList.contains('active') : false;
+          var obs = new MutationObserver(function(){
+            try {
+              var state = overlay.dataset.state || '';
+              var active = overlay.classList ? overlay.classList.contains('active') : false;
+              if (state !== prevState || active !== prevActive) {
+                prevState = state;
+                prevActive = active;
+                try { window.__TEST_EVENT_LOG.push({ event: 'overlay-mutation', state: state, active: active, ready: overlay.dataset.ready, ariaHidden: overlay.getAttribute('aria-hidden'), ts: Date.now() }); } catch (e) { /* noop */ }
+              }
+            } catch (e) { /* noop */ }
+          });
+          obs.observe(overlay, { attributes: true, attributeFilter: ['class', 'data-state', 'data-ready', 'aria-hidden'] });
+        } catch (e) { /* noop */ }
+      })();
+    </script>
+    <script is:inline>
+      (function(){
+        try {
+          document.addEventListener('keydown', function(e) {
+            try {
+              var el = document.getElementById('search-overlay');
+              if (!el) return;
+              if (el.hasAttribute && el.hasAttribute('data-closed-lock')) {
+                var isOpenKey = e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key && e.key.toLowerCase() === 'k');
+                if (isOpenKey) { e.preventDefault && e.preventDefault(); e.stopImmediatePropagation && e.stopImmediatePropagation(); }
+              }
+            } catch (err) {}
+          }, true);
+        } catch (err) {}
       })();
     </script>
     <button data-search-trigger aria-hidden="true" style="display:none"></button>

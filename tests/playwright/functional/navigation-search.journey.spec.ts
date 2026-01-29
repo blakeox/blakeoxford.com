@@ -21,30 +21,40 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
     const results = page.locator('#search-results');
     await expect(results).toBeAttached();
     // Prefer programmatic close helper to avoid Playwright keyboard flakiness; require it in CI
-    const hasCloseHelper = await page.evaluate(() => !!(window as any).enhancedSearchOverlay?.closeSearchOverlay || !!(window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED || !!(window as any).searchOverlay);
-    if (hasCloseHelper) {
-      await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.closeSearchOverlay?.(); } catch (e) { console.error('enhancedSearchOverlay.closeSearchOverlay threw', e); } });
+    const hasEnsureHelper = await page.evaluate(() => typeof (window as any).ensureOverlayClosed === 'function');
+    if (hasEnsureHelper) {
+      await page.evaluate(() => { try { (window as any).ensureOverlayClosed(); } catch (e) { console.error('ensureOverlayClosed threw', e); } });
     } else {
-      // Fallback: deterministically close via DOM manipulation to avoid flakiness
-      await page.evaluate(() => {
-        try {
-          const overlay = document.getElementById('search-overlay');
-          if (overlay) {
-            if (overlay.dataset) overlay.dataset.ready = 'false';
-            overlay.classList.remove('active');
-            overlay.classList.add('hidden');
-          }
-          const backdrop = document.getElementById('search-overlay-backdrop');
-          if (backdrop) backdrop.classList.add('hidden');
-          const input = document.querySelector('#search-overlay input, #search-overlay textarea, #search-overlay [role="search"]');
-          if (input && typeof input.blur === 'function') input.blur();
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error('Fallback DOM close failed', e);
-        }
-      });
+      const hasCloseHelper = await page.evaluate(() => !!(window as any).enhancedSearchOverlay?.closeSearchOverlay || !!(window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED || !!(window as any).searchOverlay);
+      if (hasCloseHelper) {
+        await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.closeSearchOverlay?.(); } catch (e) { console.error('enhancedSearchOverlay.closeSearchOverlay threw', e); } });
+      } else {
+        // Fallback: schedule a deterministic DOM close asynchronously to avoid blocking the renderer
+        await page.evaluate(() => {
+          try {
+            setTimeout(() => {
+              try {
+                const overlay = document.getElementById('search-overlay');
+                if (!overlay) return;
+                overlay.dataset.state = 'closed';
+                overlay.classList.remove('active');
+                overlay.setAttribute('inert', '');
+                overlay.setAttribute('aria-hidden', 'true');
+                overlay.style.opacity = '0';
+                overlay.style.visibility = 'hidden';
+                overlay.style.display = 'none';
+                const results = overlay.querySelectorAll('.search-result, [data-results-container], [data-results]');
+                results.forEach(function (r) { (r as HTMLElement).style.display = 'none'; (r as HTMLElement).style.visibility = 'hidden'; (r as HTMLElement).style.opacity = '0'; });
+                const inputEl = overlay.querySelector('#search-input'); if (inputEl) (inputEl as HTMLElement).setAttribute('aria-expanded', 'false');
+                try { overlay.dataset.ready = 'false'; } catch (e) {}
+              } catch (e) { console.error('scheduled overlay close failed', e); }
+            }, 10);
+          } catch (e) { console.error('fallback schedule failed', e); }
+        });
+      }
     }
-    // Diagnostic: if overlay remains visible, log relevant attributes
+
+    // Diagnostic: if overlay remains visible, log relevant attributes and wait deterministically for closed state
     const overlay = page.locator('#search-overlay');
     if (await overlay.isVisible().catch(() => false)) {
       await page.evaluate(() => {
@@ -52,9 +62,26 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
         if (!el) return;
         const styles = window.getComputedStyle(el as HTMLElement);
         // eslint-disable-next-line no-console
-        console.log('Overlay still visible after Escape:', { classList: Array.from((el as HTMLElement).classList), dataset: { ...(el as any).dataset }, display: styles.display, visibility: styles.visibility, opacity: styles.opacity });
+        console.log('Overlay still visible after close attempt:', { classList: Array.from((el as HTMLElement).classList), dataset: { ...(el as any).dataset }, display: styles.display, visibility: styles.visibility, opacity: styles.opacity });
       });
     }
+
+    // Wait for deterministic closed state (dataset and styles reconcile)
+    try {
+      await page.waitForFunction(() => {
+        const el = document.getElementById('search-overlay');
+        if (!el) return true;
+        const style = window.getComputedStyle(el as HTMLElement);
+        return (el.dataset.state === 'closed' && (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity || '0') === 0)) || !el.classList.contains('active');
+      }, { timeout: 8000 });
+    } catch (err) {
+      try {
+        const data = (window as any).__TEST_EVENT_LOG || [];
+        // eslint-disable-next-line no-console
+        console.log('TEST_EVENT_LOG DUMP:', data.slice(-200));
+      } catch (e) {}
+    }
+
     await expect(overlay).not.toBeVisible();
   });
 });

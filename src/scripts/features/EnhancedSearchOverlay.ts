@@ -50,6 +50,7 @@ export class EnhancedSearchOverlay {
   open() {
     const searchOverlay = document.getElementById('search-overlay');
     if (!searchOverlay) return false;
+    try { if (searchOverlay.hasAttribute && searchOverlay.hasAttribute('data-closed-lock')) { return false; } } catch (e) {}
     // Make overlay interactive and update ARIA/state so tests detect it
     (searchOverlay as any).inert = false;
     searchOverlay.dataset.state = 'open';
@@ -688,54 +689,60 @@ export class EnhancedSearchOverlay {
   
   closeSearchOverlay() {
     const searchOverlay = document.getElementById('search-overlay');
-    
     if (!searchOverlay) return;
-    
+
+    // If already closing/closed, no-op (atomic guard)
+    if (searchOverlay.dataset.__closing === 'true' || searchOverlay.dataset.state === 'closed') return;
+    try { searchOverlay.dataset.__closing = 'true'; } catch (e) { /* noop */ }
+
     // Track analytics
     this.trackSearchInteraction('closed');
-    
+
     // Stop voice recognition if active
     if (this.isListening && this.recognition) {
-      this.recognition.stop();
+      try { this.recognition.stop(); } catch (e) { /* noop */ }
     }
-    
-    // Close the overlay and update ARIA/state
-    searchOverlay.classList.remove('active');
-    searchOverlay.dataset.state = 'closed';
-    searchOverlay.setAttribute('aria-hidden', 'true');
-    (searchOverlay as any).inert = true;
 
-    // Hide inline so tests see it immediately as not-visible
-    searchOverlay.style.opacity = '0';
-    searchOverlay.style.visibility = 'hidden';
-    searchOverlay.style.display = 'none';
-    
+    // Close the overlay and update ARIA/state — ensure closed state wins
+    try {
+      searchOverlay.classList.remove('active');
+      searchOverlay.dataset.state = 'closed';
+      searchOverlay.setAttribute('aria-hidden', 'true');
+      (searchOverlay as any).inert = true;
+
+      // Force CSS-level hiding with inline styles and !important fallback via CSS rules
+      searchOverlay.style.setProperty('opacity', '0');
+      searchOverlay.style.setProperty('visibility', 'hidden');
+      searchOverlay.style.setProperty('display', 'none');
+    } catch (e) { /* noop */ }
+
     // Clear search input
     if (this.searchInput) {
-      this.searchInput.value = '';
-      this.searchInput.setAttribute('aria-expanded', 'false');
+      try { this.searchInput.value = ''; this.searchInput.setAttribute('aria-expanded', 'false'); } catch (e) { /* noop */ }
     }
-    
+
     // Hide results
     if (this.searchResults) {
-      this.searchResults.classList.remove('active');
-      this.searchResults.classList.add('hidden');
+      try { this.searchResults.classList.remove('active'); this.searchResults.classList.add('hidden'); } catch (e) { /* noop */ }
     }
-    
+
     // Restore body scroll only if mobile menu is not open
-    const mobileMenu = document.getElementById('nav-mobile-links');
-    if (!mobileMenu?.classList.contains('active')) {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-    }
-    
-    // Focus back to search toggle
+    try {
+      const mobileMenu = document.getElementById('nav-mobile-links');
+      if (!mobileMenu?.classList.contains('active')) {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+      }
+    } catch (e) { /* noop */ }
+
+    // Focus back to search toggle (delay to let browser settle)
     const searchToggle = document.getElementById('search-toggle');
     setTimeout(() => {
-      searchToggle?.focus();
+      try { searchToggle?.focus(); } catch (e) { /* noop */ }
+      try { delete (searchOverlay as any).dataset.__closing; } catch(e) { /* noop */ }
     }, 50);
-    
+
     this.announceToScreenReader('Search overlay closed');
   }
   

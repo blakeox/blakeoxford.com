@@ -25,6 +25,7 @@ interface ProjectAPIItem {
 function openFallbackOverlay(): void {
   const overlay = document.getElementById('search-overlay');
   if (!overlay) return;
+  try { if (overlay.hasAttribute && overlay.hasAttribute('data-closed-lock')) return; } catch (e) {}
 
   overlay.dataset.state = 'open';
   // Ensure overlay is visible and interactive immediately for deterministic tests
