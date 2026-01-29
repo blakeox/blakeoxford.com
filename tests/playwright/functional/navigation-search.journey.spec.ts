@@ -97,6 +97,12 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
       } catch (e) {
         console.log('Failed to read __PLAYWRIGHT_CONSOLE_CAPTURE', e);
       }
+
+      // Try to fetch the last 200 instrumenation events via HTML snapshot so it's available
+      try {
+        const html = await page.content();
+        console.log('Client HTML snapshot length:', html && html.length);
+      } catch(e) { console.log('Failed to fetch page content for snapshot', e); }
     }
 
     await expect(overlay).not.toBeVisible();

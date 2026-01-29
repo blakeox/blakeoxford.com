@@ -39,6 +39,7 @@ const mockCollections = {
         title: 'Project One',
         description: 'My first project',
         tags: ['test'],
+        date: new Date('2026-01-28'),
       }
     },
   ]
