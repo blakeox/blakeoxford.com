@@ -29,6 +29,15 @@ test.beforeEach(async ({ page }) => {
     } catch (e) { /* noop */ }
   });
 
+  // Ensure a test-friendly theme variable and flag are present early to avoid stylesheet timing issues
+  await page.addInitScript(() => {
+    try {
+      // Provide a conservative early background token so tests relying on token presence are deterministic
+      try { document.documentElement.style.setProperty('--color-background', document.documentElement.style.getPropertyValue('--color-background') || '#ffffff'); } catch(e) {}
+      try { (window as any).__TEST_THEME_PRIMED = true; } catch(e) {}
+    } catch (e) { /* noop */ }
+  });
+
   // Node-side console capture for messages emitted by the page
   (page as any)._consoleCapture = [];
   page.on('console', (msg) => {

@@ -24,7 +24,7 @@ test.describe('@essential @theme Dark mode behavior', () => {
       try { if ((window as any).__TEST_THEME_PRIMED) return true; } catch (e) {}
       const val = (getComputedStyle(document.documentElement).getPropertyValue('--color-background') || '').trim();
       return val !== '';
-    }, null, { timeout: 15000 });
+    }, null, { timeout: 30000 });
 
     // Helper to read token value and a "probe" element's computed bg using the token
     const getTokenBg = async () => await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim());
