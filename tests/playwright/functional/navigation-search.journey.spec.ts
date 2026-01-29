@@ -80,6 +80,23 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
         // eslint-disable-next-line no-console
         console.log('TEST_EVENT_LOG DUMP:', data.slice(-200));
       } catch (e) {}
+
+      // Additionally, snapshot console logs to help debugging when the page dies
+      try {
+        const consoleLines = await page.evaluate(() => (window as any).__TEST_EVENT_LOG || []);
+        console.log('Client TEST_EVENT_LOG:', JSON.stringify(consoleLines.slice(-200)));
+      } catch (e) {
+        console.log('Failed to read client TEST_EVENT_LOG in catch block', e);
+      }
+
+      try {
+        const cors = await page.evaluate(() => {
+          try { return (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []; } catch (e) { return [] }
+        });
+        console.log('Client __PLAYWRIGHT_CONSOLE_CAPTURE:', JSON.stringify(cors.slice(-200)));
+      } catch (e) {
+        console.log('Failed to read __PLAYWRIGHT_CONSOLE_CAPTURE', e);
+      }
     }
 
     await expect(overlay).not.toBeVisible();
