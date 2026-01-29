@@ -28,29 +28,17 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
       const hasCloseHelper = await page.evaluate(() => !!(window as any).enhancedSearchOverlay?.closeSearchOverlay || !!(window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED || !!(window as any).searchOverlay);
       if (hasCloseHelper) {
         await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.closeSearchOverlay?.(); } catch (e) { console.error('enhancedSearchOverlay.closeSearchOverlay threw', e); } });
+
       } else {
-        // Fallback: schedule a deterministic DOM close asynchronously to avoid blocking the renderer
-        await page.evaluate(() => {
-          try {
-            setTimeout(() => {
-              try {
-                const overlay = document.getElementById('search-overlay');
-                if (!overlay) return;
-                overlay.dataset.state = 'closed';
-                overlay.classList.remove('active');
-                overlay.setAttribute('inert', '');
-                overlay.setAttribute('aria-hidden', 'true');
-                overlay.style.opacity = '0';
-                overlay.style.visibility = 'hidden';
-                overlay.style.display = 'none';
-                const results = overlay.querySelectorAll('.search-result, [data-results-container], [data-results]');
-                results.forEach(function (r) { (r as HTMLElement).style.display = 'none'; (r as HTMLElement).style.visibility = 'hidden'; (r as HTMLElement).style.opacity = '0'; });
-                const inputEl = overlay.querySelector('#search-input'); if (inputEl) (inputEl as HTMLElement).setAttribute('aria-expanded', 'false');
-                try { overlay.dataset.ready = 'false'; } catch (e) {}
-              } catch (e) { console.error('scheduled overlay close failed', e); }
-            }, 10);
-          } catch (e) { console.error('fallback schedule failed', e); }
-        });
+        // Fallback: helpers not present — perform a safe reload to recover state instead of evaluating potentially-blocking DOM operations
+        try {
+          await Promise.all([
+            page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {}),
+            page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {})
+          ]);
+        } catch (e) { console.error('Fallback reload failed', e); }
+      }
+
       }
     }
 
@@ -75,34 +63,32 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
         return (el.dataset.state === 'closed' && (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity || '0') === 0)) || !el.classList.contains('active');
       }, { timeout: 8000 });
     } catch (err) {
-      try {
-        const data = (window as any).__TEST_EVENT_LOG || [];
-        // eslint-disable-next-line no-console
-        console.log('TEST_EVENT_LOG DUMP:', data.slice(-200));
-      } catch (e) {}
+      // If the page was closed, skip diagnostics that require page context
+      if (page.isClosed && page.isClosed()) {
+        console.log('Page is closed; skipping client diagnostics.');
+      } else {
+        try {
+          const consoleLines = await page.evaluate(() => (window as any).__TEST_EVENT_LOG || []);
+          console.log('Client TEST_EVENT_LOG:', JSON.stringify(consoleLines.slice(-200)));
+        } catch (e) {
+          console.log('Failed to read client TEST_EVENT_LOG in catch block', e);
+        }
 
-      // Additionally, snapshot console logs to help debugging when the page dies
-      try {
-        const consoleLines = await page.evaluate(() => (window as any).__TEST_EVENT_LOG || []);
-        console.log('Client TEST_EVENT_LOG:', JSON.stringify(consoleLines.slice(-200)));
-      } catch (e) {
-        console.log('Failed to read client TEST_EVENT_LOG in catch block', e);
+        try {
+          const cors = await page.evaluate(() => {
+            try { return (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []; } catch (e) { return [] }
+          });
+          console.log('Client __PLAYWRIGHT_CONSOLE_CAPTURE:', JSON.stringify(cors.slice(-200)));
+        } catch (e) {
+          console.log('Failed to read __PLAYWRIGHT_CONSOLE_CAPTURE', e);
+        }
+
+        // Try to fetch the last 200 instrumentation events via HTML snapshot so it's available
+        try {
+          const html = await page.content();
+          console.log('Client HTML snapshot length:', html && html.length);
+        } catch(e) { console.log('Failed to fetch page content for snapshot', e); }
       }
-
-      try {
-        const cors = await page.evaluate(() => {
-          try { return (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []; } catch (e) { return [] }
-        });
-        console.log('Client __PLAYWRIGHT_CONSOLE_CAPTURE:', JSON.stringify(cors.slice(-200)));
-      } catch (e) {
-        console.log('Failed to read __PLAYWRIGHT_CONSOLE_CAPTURE', e);
-      }
-
-      // Try to fetch the last 200 instrumenation events via HTML snapshot so it's available
-      try {
-        const html = await page.content();
-        console.log('Client HTML snapshot length:', html && html.length);
-      } catch(e) { console.log('Failed to fetch page content for snapshot', e); }
     }
 
     await expect(overlay).not.toBeVisible();

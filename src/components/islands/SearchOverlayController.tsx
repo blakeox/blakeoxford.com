@@ -93,8 +93,14 @@ export default function SearchOverlayController() {
     };
 
     const closeOverlay = () => {
-      if (overlayElement?.dataset.state === 'closed') return;
-      closeFallbackOverlay();
+      try {
+        if (overlayElement?.dataset.state === 'closed') return;
+        // Attempt authoritative close synchronously
+        if (typeof (window as any).ensureOverlayClosed === 'function') {
+          try { (window as any).ensureOverlayClosed(); return; } catch (e) {}
+        }
+        closeFallbackOverlay();
+      } catch(e) { console.error('closeOverlay failed', e); }
       // analytics removed; no-op
     };
 

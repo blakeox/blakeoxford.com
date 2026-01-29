@@ -46,33 +46,41 @@ export async function openSearchOverlay(page: Page) {
     if (usedHelper) {
       await page.evaluate(() => { try { (window as any).enhancedSearchOverlay.openSearchOverlay(); } catch (e) { /* noop */ } });
     } else {
+      // Avoid long synchronous page.evaluate calls that can hang if the page is unstable; split into guarded steps
+      const hasOverlay = await page.evaluate(() => !!document.getElementById('search-overlay'));
+      if (!hasOverlay) return overlay;
       await page.evaluate(() => {
-        const g = window as any;
-        const inst = g.enhancedSearchOverlay || g.searchOverlay;
-        if (inst && typeof inst.open === 'function') {
-          inst.open();
-          return;
-        }
-        const overlay = document.getElementById('search-overlay') as HTMLElement | null;
-        if (!overlay) return;
-        overlay.classList.add('active');
-        overlay.style.display = 'block';
-        overlay.style.visibility = 'visible';
-        overlay.style.opacity = '1';
-        overlay.removeAttribute('inert');
-        const input = document.getElementById('search-input') as HTMLInputElement | null;
-        if (input) {
-          input.focus();
-          input.setAttribute('aria-expanded', 'true');
-        }
-        // Reveal results and close button for deterministic tests
-        const results = overlay.querySelectorAll('.search-result, [data-results-container], [data-results]');
-        results.forEach((el: HTMLElement) => { el.style.display = 'block'; el.style.visibility = 'visible'; el.style.opacity = '1'; });
-        const closeBtn = overlay.querySelector('#close-search') as HTMLElement | null; if (closeBtn) closeBtn.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-      });
+        try {
+          const overlay = document.getElementById('search-overlay') as HTMLElement | null;
+          if (!overlay) return;
+          overlay.classList.add('active');
+          overlay.style.display = 'block';
+          overlay.style.visibility = 'visible';
+          overlay.style.opacity = '1';
+          overlay.removeAttribute('inert');
+        } catch (e) { console.error('partial open failed', e); }
+      }).catch(() => {});
+
+      // Focus input separately to avoid blocking
+      await page.evaluate(() => {
+        try {
+          const input = document.getElementById('search-input') as HTMLInputElement | null;
+          if (input) { input.focus(); input.setAttribute('aria-expanded', 'true'); }
+        } catch (e) { console.error('focus failed', e); }
+      }).catch(() => {});
+
+      await page.evaluate(() => {
+        try {
+          const overlay = document.getElementById('search-overlay') as HTMLElement | null;
+          if (!overlay) return;
+          const results = overlay.querySelectorAll('.search-result, [data-results-container], [data-results]');
+          results.forEach((el: HTMLElement) => { el.style.display = 'block'; el.style.visibility = 'visible'; el.style.opacity = '1'; });
+          const closeBtn = overlay.querySelector('#close-search') as HTMLElement | null; if (closeBtn) closeBtn.style.display = 'block';
+          document.body.style.overflow = 'hidden';
+          document.body.style.position = 'fixed';
+          document.body.style.width = '100%';
+        } catch (e) { console.error('reveal results failed', e); }
+      }).catch(() => {});
 
       await page.waitForFunction(() => {
         const el = document.querySelector('#search-overlay') as HTMLElement | null;

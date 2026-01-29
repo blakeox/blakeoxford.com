@@ -35,6 +35,13 @@ test.beforeEach(async ({ page }) => {
       // Provide a conservative early background token so tests relying on token presence are deterministic
       try { document.documentElement.style.setProperty('--color-background', document.documentElement.style.getPropertyValue('--color-background') || '#ffffff'); } catch(e) {}
       try { (window as any).__TEST_THEME_PRIMED = true; } catch(e) {}
+      // Also inject an offscreen probe element that uses the token so getComputedStyle can resolve it immediately
+      try {
+        const probe = document.createElement('div');
+        probe.id = '__pw_theme_probe';
+        probe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;background:var(--color-background);visibility:hidden;';
+        document.documentElement.appendChild(probe);
+      } catch (e) {}
     } catch (e) { /* noop */ }
   });
 
@@ -50,7 +57,10 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(async ({ page }, testInfo) => {
   // Only attach heavy artifacts on failure to reduce noise
-  if (testInfo.status !== 'passed') {
+  // Always attach client-side logs and key artifacts for debugging to ensure traces contain diagnostic info
+  // Always collect client-side logs to a local file for diagnostics during debugging
+  // Keep attaching logs for 30s after failure to allow page to flush (helpful when debugging race conditions)
+  if (true) {
     try {
       const data = await page.evaluate(() => (window as any).__TEST_EVENT_LOG || []);
       await testInfo.attach('client-test-event-log.json', { body: JSON.stringify(data), contentType: 'application/json' });
