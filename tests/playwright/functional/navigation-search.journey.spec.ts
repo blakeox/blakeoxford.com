@@ -28,7 +28,6 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
       const hasCloseHelper = await page.evaluate(() => !!(window as any).enhancedSearchOverlay?.closeSearchOverlay || !!(window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED || !!(window as any).searchOverlay);
       if (hasCloseHelper) {
         await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.closeSearchOverlay?.(); } catch (e) { console.error('enhancedSearchOverlay.closeSearchOverlay threw', e); } });
-
       } else {
         // Fallback: helpers not present — perform a safe reload to recover state instead of evaluating potentially-blocking DOM operations
         try {
@@ -37,8 +36,6 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
             page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {})
           ]);
         } catch (e) { console.error('Fallback reload failed', e); }
-      }
-
       }
     }
 
@@ -49,7 +46,7 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
         const el = document.getElementById('search-overlay');
         if (!el) return;
         const styles = window.getComputedStyle(el as HTMLElement);
-        // eslint-disable-next-line no-console
+         
         console.log('Overlay still visible after close attempt:', { classList: Array.from((el as HTMLElement).classList), dataset: { ...(el as any).dataset }, display: styles.display, visibility: styles.visibility, opacity: styles.opacity });
       });
     }
@@ -76,7 +73,7 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
 
         try {
           const cors = await page.evaluate(() => {
-            try { return (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []; } catch (e) { return [] }
+            try { return (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []; } catch (e) { return []; }
           });
           console.log('Client __PLAYWRIGHT_CONSOLE_CAPTURE:', JSON.stringify(cors.slice(-200)));
         } catch (e) {
