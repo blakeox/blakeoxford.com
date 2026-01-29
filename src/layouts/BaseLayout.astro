@@ -61,7 +61,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
             try {
               var el = document.getElementById('search-overlay');
               if (!el) return;
-              try { if (el.hasAttribute && el.hasAttribute('data-closed-lock')) return; } catch(e) {}
+              try { if (el.hasAttribute && (el.hasAttribute('data-closed-lock') || el.hasAttribute('data-authoritative-closed'))) return; } catch(e) {}
               el.dataset.state = 'open';
               el.classList.add('active');
               el.style.display = 'block';
@@ -114,6 +114,12 @@ const mainClasses = `${baseMainClasses} pt-24`;
               if (!el) return;
               // If already locked, still perform idempotent close
               el.setAttribute('data-closed-lock', 'true');
+              try { el.setAttribute('data-authoritative-closed','true'); } catch (e) {}
+              try {
+                el.style.setProperty('opacity', '0', 'important');
+                el.style.setProperty('visibility', 'hidden', 'important');
+                el.style.setProperty('display', 'none', 'important');
+              } catch (e) {}
               // Apply authoritative closed state
               try { el.dataset.state = 'closed'; } catch (e) {}
               try { el.classList.remove('active'); } catch (e) {}
@@ -124,11 +130,29 @@ const mainClasses = `${baseMainClasses} pt-24`;
               try { if (window.__ENHANCED_SEARCH_RECOGNITION && typeof window.__ENHANCED_SEARCH_RECOGNITION.stop === 'function') { window.__ENHANCED_SEARCH_RECOGNITION.stop(); } } catch (e) {}
               // Record diagnostic event
               try { window.__TEST_EVENT_LOG.push({ event: 'ensureOverlayClosed-invoked', ts: Date.now() }); } catch (e) {}
-              // Remove lock shortly after to allow normal interactions again
-              setTimeout(function () {
-                try { el.removeAttribute('data-closed-lock'); } catch (e) {}
-                try { window.__TEST_EVENT_LOG.push({ event: 'ensureOverlayClosed-lock-removed', ts: Date.now() }); } catch (e) {}
-              }, 350);
+              // Remove lock after a short stabilization period; extend if reopen attempts observed
+              (function waitForStability(retries) {
+                retries = retries || 0;
+                setTimeout(function () {
+                  try {
+                    var stillActive = el && el.classList && el.classList.contains('active');
+                    var stillOpenState = el && el.dataset && el.dataset.state !== 'closed';
+                    if (!stillActive && !stillOpenState) {
+                      try { el.removeAttribute('data-authoritative-closed'); } catch(e){}
+                      try { el.removeAttribute('data-closed-lock'); } catch(e){}
+                      try { window.__TEST_EVENT_LOG.push({ event:'ensureOverlayClosed-lock-removed', ts: Date.now() }); } catch(e){}
+                    } else if (retries < 3) {
+                      try { window.__TEST_EVENT_LOG.push({ event:'ensureOverlayClosed-still-open', state: el.dataset && el.dataset.state, active: el.classList && el.classList.contains('active'), ts: Date.now() }); } catch(e){}
+                      waitForStability(retries + 1);
+                    } else {
+                      // Final cleanup attempt after multiple retries
+                      try { el.removeAttribute('data-authoritative-closed'); } catch(e){}
+                      try { el.removeAttribute('data-closed-lock'); } catch(e){}
+                      try { window.__TEST_EVENT_LOG.push({ event:'ensureOverlayClosed-final-remove', ts: Date.now() }); } catch(e){}
+                    }
+                  } catch (e) {}
+                }, 300);
+              })();
             } catch (e) { /* noop */ }
           };
 
