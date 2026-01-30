@@ -121,6 +121,17 @@ const mainClasses = `${baseMainClasses} pt-24`;
             try {
               var el = document.getElementById('search-overlay');
               if (!el) return;
+              try {
+                var openTs = parseInt(el.dataset.openTs || '0', 10) || 0;
+                var now = Date.now();
+                var recentThreshold = 500; // ms
+                if (openTs && (now - openTs) < recentThreshold) {
+                  try { window.__TEST_EVENT_LOG.push({ event: 'ensureOverlayClosed-skipped-recent-open', openTs: openTs, now: now, delta: now - openTs, ts: Date.now() }); } catch(e){}
+                  // Retry after the threshold to allow the open to stabilize
+                  setTimeout(function() { try { window.ensureOverlayClosed(); } catch(e) {} }, recentThreshold);
+                  return;
+                }
+              } catch(e) {}
               // If already locked, still perform idempotent close
               el.setAttribute('data-closed-lock', 'true');
               try { el.setAttribute('data-authoritative-closed','true'); } catch (e) {}
@@ -135,6 +146,8 @@ const mainClasses = `${baseMainClasses} pt-24`;
               try { el.setAttribute('inert', ''); } catch (e) {}
               try { el.setAttribute('aria-hidden', 'true'); } catch (e) {}
               try { el.style.opacity = '0'; el.style.visibility = 'hidden'; el.style.display = 'none'; } catch (e) {}
+              // Clean up open timestamp so future closes are not skipped
+              try { el.removeAttribute('data-open-ts'); } catch(e){}
               // Also try to stop any voice recognition if present
               try { if (window.__ENHANCED_SEARCH_RECOGNITION && typeof window.__ENHANCED_SEARCH_RECOGNITION.stop === 'function') { window.__ENHANCED_SEARCH_RECOGNITION.stop(); } } catch (e) {}
               // Record diagnostic event
