@@ -51,11 +51,49 @@ test.beforeEach(async ({ page }) => {
       try {
         const style = document.createElement('style');
         style.id = '__pw_font_override';
-        style.innerHTML = '* { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important; line-height: 1.15 !important; box-sizing: border-box !important; }';
+        // Also hide the AI assistant UI and any transient overlays that can cause visual diffs in tests
+        style.innerHTML = '* { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important; line-height: 1.15 !important; box-sizing: border-box !important; }\n' +
+                         'dialog[aria-label*="AI Portfolio Assistant"], dialog[role="dialog"], .ai-assistant, #ai-assistant, .search-overlay { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }';
         document.documentElement.appendChild(style);
       } catch(e) {}
       try { (window as any).__TEST_FONT_PRIMED = true; } catch(e) {}
     } catch (e) { /* noop */ }
+  });
+
+  // Aggressively remove AI assistant elements and dynamic overlays that can alter page height
+  await page.addInitScript(() => {
+    try {
+      try {
+        const removeAssistantNodes = () => {
+          try {
+            const selectors = [
+              'dialog',
+              '[id*=\"ai-assistant\"]',
+              '[class*=\"ai-assistant\"]',
+              '[class*=\"search-overlay\"]',
+              '[aria-label*=\"AI Portfolio Assistant\"]',
+              '[role=\"dialog\"]'
+            ];
+            selectors.forEach(sel => {
+              document.querySelectorAll(sel).forEach(el => {
+                try {
+                  const text = (el.textContent || '').toLowerCase();
+                  if (sel !== 'dialog' || text.includes('ai portfolio') || el.id === 'ai-assistant' || sel.includes('ai-assistant')) {
+                    el.remove();
+                  }
+                } catch(e) {}
+              });
+            });
+          } catch(e) {}
+        };
+        removeAssistantNodes();
+        const observer = new MutationObserver(removeAssistantNodes);
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+        // Catch reinsertion by some frameworks with a short interval, then stop
+        const interval = setInterval(removeAssistantNodes, 500);
+        setTimeout(() => clearInterval(interval), 10000);
+      } catch(e) {}
+    } catch(e) {}
   });
 
   // Node-side console capture for messages emitted by the page

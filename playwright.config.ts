@@ -19,7 +19,6 @@ export default defineConfig({
     // Exclude slow mobile device tests - replaced with optimized versions
     '**/mobile-navigation.spec.ts', // Use mobile-navigation-essential.spec.ts instead
     // Exclude slow visual regression tests - use essential visual tests
-    '**/visual-regression.spec.ts', // Use visual-regression-essential.spec.ts instead
     // Exclude slow basic tests that timeout
     '**/basic.spec.ts', // Replace with optimized essential tests
     // Exclude other slow comprehensive tests

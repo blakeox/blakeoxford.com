@@ -34,9 +34,12 @@ import SearchOverlayClient from '../../islands/SearchOverlayClient';
   role="dialog"
   aria-modal="true"
   aria-labelledby="search-title"
+  aria-hidden="true"
   inert
   data-state="closed"
+  data-authoritative-closed="true"
   data-a11y-allow-color-contrast
+  style="display:none;opacity:0;visibility:hidden;"
 >
   <div class="absolute inset-0 cursor-pointer bg-background-dark/55 backdrop-blur-sm" data-overlay-backdrop></div>
 
@@ -76,6 +79,7 @@ import SearchOverlayClient from '../../islands/SearchOverlayClient';
               <svg class="size-5 text-foreground/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
               </svg>
+              <label for="search-input" class="sr-only">Search</label>
               <input
                 id="search-input"
                 type="text"

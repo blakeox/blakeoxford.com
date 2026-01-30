@@ -16,8 +16,9 @@ export async function snapshotRoute(
 ) {
   // Avoid networkidle on most pages with lazy widgets; DOMContentLoaded is enough for static capture
   await page.goto(route, { waitUntil: 'domcontentloaded' });
-  // Contact page: wait for load to stabilize layout without risking perpetual network activity.
-  if (route === '/contact/' || route === '/about/' || route === '/projects/') {
+  // Pages that include large images or layout-critical assets should wait for full load
+  // so visual snapshots are taken after all resources have been applied.
+  if (route === '/contact/' || route === '/about/' || route === '/projects/' || route === '/blog/') {
     await page.waitForLoadState('load');
   }
   // Ensure web fonts are fully loaded before we check for layout stability, otherwise

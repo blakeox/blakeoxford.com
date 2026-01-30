@@ -25,7 +25,14 @@ interface ProjectAPIItem {
 function openFallbackOverlay(): void {
   const overlay = document.getElementById('search-overlay');
   if (!overlay) return;
-  try { if (overlay.hasAttribute && (overlay.hasAttribute('data-closed-lock') || overlay.hasAttribute('data-authoritative-closed'))) return; } catch (e) {}
+  try {
+    // If authoritative closed exists from SSR or test harness, remove it on user-initiated open.
+    if (overlay.hasAttribute && overlay.hasAttribute('data-authoritative-closed')) {
+      try { overlay.removeAttribute('data-authoritative-closed'); } catch (e) { /* noop */ }
+    }
+    // Respect transient closed-lock used by tests to prevent reopens.
+    if (overlay.hasAttribute && overlay.hasAttribute('data-closed-lock')) return;
+  } catch (e) {}
 
   overlay.dataset.state = 'open';
   // Ensure overlay is visible and interactive immediately for deterministic tests

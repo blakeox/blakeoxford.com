@@ -134,11 +134,14 @@ const commonProps = {
 )}
 
 {isHidden && (
-  <input
-    type="hidden"
-    id={id}
-    name={fieldName}
-    value={value}
-    aria-hidden="true"
-  />
+  <>
+    <label for={id} class="sr-only">{label || id}</label>
+    <input
+      type="hidden"
+      id={id}
+      name={fieldName}
+      value={value}
+      aria-hidden="true"
+    />
+  </>
 )}
