@@ -60,6 +60,7 @@ export class EnhancedSearchOverlay {
     // Make overlay interactive and update ARIA/state so tests detect it
     try { (searchOverlay as any).inert = false; } catch (e) {}
     searchOverlay.dataset.state = 'open';
+    try { searchOverlay.dataset.openTs = String(Date.now()); } catch (e) {}
     // Remove aria-hidden attribute so CSS rules that check presence don't hide it
     try { searchOverlay.removeAttribute('aria-hidden'); } catch (e) {}
     searchOverlay.classList.add('active');

@@ -35,6 +35,7 @@ function openFallbackOverlay(): void {
   } catch (e) {}
 
   overlay.dataset.state = 'open';
+  try { overlay.dataset.openTs = String(Date.now()); } catch (e) {}
   // Ensure overlay is visible and interactive immediately for deterministic tests
   overlay.classList.add('active');
 
