@@ -39,9 +39,22 @@ test.beforeEach(async ({ page }) => {
       try {
         const probe = document.createElement('div');
         probe.id = '__pw_theme_probe';
-        probe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;background:var(--color-background);visibility:hidden;';
+        probe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:2px;background:var(--color-background);visibility:hidden;';
         document.documentElement.appendChild(probe);
       } catch (e) {}
+    } catch (e) { /* noop */ }
+  });
+
+  // Force system font to avoid webfont-induced layout shifts in visual tests
+  await page.addInitScript(() => {
+    try {
+      try {
+        const style = document.createElement('style');
+        style.id = '__pw_font_override';
+        style.innerHTML = '* { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important; line-height: 1.15 !important; box-sizing: border-box !important; }';
+        document.documentElement.appendChild(style);
+      } catch(e) {}
+      try { (window as any).__TEST_FONT_PRIMED = true; } catch(e) {}
     } catch (e) { /* noop */ }
   });
 

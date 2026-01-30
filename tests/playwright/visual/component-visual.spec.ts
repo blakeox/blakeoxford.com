@@ -46,9 +46,21 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
         await expect(page.locator(cfg.selector).first()).toBeVisible();
       }
       const element = page.locator(cfg.selector).first();
+      // Normalize element height to integer pixels to avoid subpixel rounding differences across browsers
+      await element.evaluate((el) => {
+        try {
+          el.style.boxSizing = 'border-box';
+          const rect = el.getBoundingClientRect();
+          const h = Math.round(rect.height);
+          el.style.height = `${h}px`;
+        } catch (e) {}
+      });
       await expect(element).toHaveScreenshot(`${name}.png`, {
         animations: 'disabled',
-        maxDiffPixelRatio: 0.02
+        maxDiffPixelRatio: 0.02,
+        scale: 'css',
+        // Allow small pixel variance
+        threshold: 0.01
       });
     });
   }
