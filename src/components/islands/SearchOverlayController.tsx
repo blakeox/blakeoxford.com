@@ -37,11 +37,22 @@ function openFallbackOverlay(): void {
   overlay.dataset.state = 'open';
   // Ensure overlay is visible and interactive immediately for deterministic tests
   overlay.classList.add('active');
-  overlay.style.display = 'block';
-  overlay.style.visibility = 'visible';
-  overlay.style.opacity = '1';
-  overlay.removeAttribute('inert');
-  overlay.setAttribute('aria-hidden', 'false');
+
+  // Remove aria-hidden entirely (presence matters)
+  try { overlay.removeAttribute('aria-hidden'); } catch (e) {}
+
+  // Override any important hide rules set by ensureOverlayClosed
+  try {
+    overlay.style.setProperty('display', 'block', 'important');
+    overlay.style.setProperty('visibility', 'visible', 'important');
+    overlay.style.setProperty('opacity', '1', 'important');
+  } catch (e) {
+    overlay.style.display = 'block';
+    overlay.style.visibility = 'visible';
+    overlay.style.opacity = '1';
+  }
+
+  try { overlay.removeAttribute('inert'); } catch (e) {}
 
   document.body.dataset.searchOpen = 'true';
   document.body.style.overflow = 'hidden';

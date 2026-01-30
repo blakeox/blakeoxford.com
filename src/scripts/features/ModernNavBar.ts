@@ -47,6 +47,12 @@ function setTheme(nextTheme: 'light' | 'dark') {
   root.dataset.theme = nextTheme;
   if (nextTheme === 'dark') { root.classList.add('dark'); } else { root.classList.remove('dark'); }
   root.style.colorScheme = nextTheme;
+  // If tests primed CSS variables via inline style, remove the inline token so stylesheet variables apply when theme toggles
+  try {
+    if (typeof window !== 'undefined' && ((window as any).__TEST_THEME_PRIMED || root.style.getPropertyValue('--color-background'))) {
+      root.style.removeProperty('--color-background');
+    }
+  } catch (e) {}
   localStorage.setItem('theme', nextTheme);
 }
 

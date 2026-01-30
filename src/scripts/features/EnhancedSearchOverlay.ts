@@ -58,13 +58,22 @@ export class EnhancedSearchOverlay {
       if (searchOverlay.hasAttribute && searchOverlay.hasAttribute('data-closed-lock')) { return false; }
     } catch (e) {}
     // Make overlay interactive and update ARIA/state so tests detect it
-    (searchOverlay as any).inert = false;
+    try { (searchOverlay as any).inert = false; } catch (e) {}
     searchOverlay.dataset.state = 'open';
-    searchOverlay.setAttribute('aria-hidden', 'false');
+    // Remove aria-hidden attribute so CSS rules that check presence don't hide it
+    try { searchOverlay.removeAttribute('aria-hidden'); } catch (e) {}
     searchOverlay.classList.add('active');
-    searchOverlay.style.display = 'block';
-    searchOverlay.style.visibility = 'visible';
-    searchOverlay.style.opacity = '1';
+
+    // Override any important hide rules set by ensureOverlayClosed
+    try {
+      searchOverlay.style.setProperty('display', 'block', 'important');
+      searchOverlay.style.setProperty('visibility', 'visible', 'important');
+      searchOverlay.style.setProperty('opacity', '1', 'important');
+    } catch (e) {
+      searchOverlay.style.display = 'block';
+      searchOverlay.style.visibility = 'visible';
+      searchOverlay.style.opacity = '1';
+    }
     
     // Focus search input
     if (this.searchInput) {
