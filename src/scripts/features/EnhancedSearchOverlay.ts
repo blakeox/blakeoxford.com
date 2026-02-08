@@ -450,7 +450,7 @@ export class EnhancedSearchOverlay {
       this.searchResults.innerHTML = `
         <div class="search-no-results">
           <div class="search-no-results-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-8 h-8 text-gray-400 dark:text-gray-500">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-8 h-8 text-gray-400 dark:text-foreground/70">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
@@ -625,7 +625,7 @@ export class EnhancedSearchOverlay {
           </svg>
         </div>
         <p class="font-medium text-red-600 dark:text-red-400">Search failed</p>
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Please try again</p>
+        <p class="mt-1 text-sm text-foreground/80 dark:text-gray-400">Please try again</p>
       </div>
     `;
     

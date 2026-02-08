@@ -4,73 +4,205 @@
    ⚠️  Edit values here to propagate changes everywhere.
 */
 
+/* ---------- @property Declarations ---------- */
+/* Type-safe CSS custom properties for smooth animations */
+/* Browser support: Chrome 85+, Safari 16.4+, Firefox 128+ */
+
+/* Primary color properties for animated transitions */
+@property --color-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(0.55 0.22 264);
+}
+
+@property --color-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(0.70 0.19 200);
+}
+
+@property --color-surface {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(0.98 0.01 264);
+}
+
+/* Background gradient angle for animated gradients */
+@property --gradient-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Scale factor for animated transforms */
+@property --scale-factor {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+
+/* Opacity levels for smooth fades */
+@property --opacity-level {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+
 :root {
   /* color-no-hex, declaration-property-value-disallowed-list */
 
   /* ---------- Colors ---------- */
-  /* Tech-forward consulting palette: Indigo primary + Cyan accent */
-  --color-primary: #4f46e5; /* indigo-600 */
-  --color-primary-light: #6366f1; /* indigo-500 */
-  --color-primary-dark: #3730a3; /* indigo-800 */
-  --color-secondary: #0ea5e9; /* sky-500 as supportive secondary */
-  --color-secondary-light: #38bdf8; /* sky-400 */
-  --color-secondary-dark: #0369a1; /* sky-700 */
-  /* Cyan accent for highlights and interactive emphasis */
-  --color-accent: #06b6d4;        /* cyan-500 */
-  /* Stronger foreground variant for improved contrast on light backgrounds (WCAG ≥4.5) */
-  --color-foreground-strong: #0f172a; /* slate-900 slightly deeper */
-  --color-accent-light: #22d3ee;  /* cyan-400 */
-  --color-accent-dark: #0e7490;   /* cyan-700 (AA base for on-accent text) */
-  /* Darken foreground slightly for stronger contrast on near-white backgrounds */
-  --color-foreground: #111827; /* slate-900 */
-  --color-foreground-light: #f9fafb;
-  --color-on-dark: #f9fafb; /* text on dark surfaces */
-  --color-on-accent: #051b2a; /* deeper on-cyan for AA on light */
-  --color-on-primary: #ffffff; /* on indigo */
-  --color-on-secondary: #062433; /* on sky */
-  --color-background: #f8fafc; /* slate-50 */
-  --color-background-dark: #0b1220; /* near-slate-950, cooler dark */
-  --color-neutral: #64748b;
-  --color-neutral-light: #cbd5e1;
-  --color-neutral-dark: #334155;
-  --color-success: #22c55e;
-  --color-success-light: #4ade80;
-  --color-success-dark: #15803d;
-  --color-warning: #facc15;
-  --color-warning-light: #fde047;
-  --color-warning-dark: #a16207;
-  --color-error: #ef4444;
-  --color-error-light: #f87171;
-  --color-error-dark: #991b1b;
-  --color-info: #0ea5e9;
-  --color-info-light: #38bdf8;
-  --color-info-dark: #0369a1;
-  /* ---------- Surfaces & Overlays ---------- */
-  --color-surface: #ffffff;                /* Card & sheet background (light)   */
-  --color-surface-subtle: #eef2ff;         /* subtle indigo-tinted surface */
-  --color-surface-dark: #0f172a;           /* slate-900 */
-  --color-surface-dark-subtle: #111827;
+  /* Modern OKLCH color space for perceptual uniformity and better dark mode */
+  /* Fallbacks provided for Safari < 16.4 */
+  
+  /* Primary colors - Indigo palette */
+  --color-primary: oklch(0.55 0.22 264);
+  --color-primary-fallback: #4f46e5;
+  --color-primary-light: oklch(0.63 0.22 264);
+  --color-primary-light-fallback: #6366f1;
+  --color-primary-dark: oklch(0.42 0.22 264);
+  --color-primary-dark-fallback: #3730a3;
+  
+  /* Secondary colors - Sky palette */
+  --color-secondary: oklch(0.67 0.15 230);
+  --color-secondary-fallback: #0ea5e9;
+  --color-secondary-light: oklch(0.75 0.15 230);
+  --color-secondary-light-fallback: #38bdf8;
+  --color-secondary-dark: oklch(0.52 0.15 230);
+  --color-secondary-dark-fallback: #0369a1;
+  
+  /* Accent colors - Cyan palette */
+  --color-accent: oklch(0.72 0.14 196);
+  --color-accent-fallback: #06b6d4;
+  --color-accent-light: oklch(0.82 0.14 196);
+  --color-accent-light-fallback: #22d3ee;
+  --color-accent-dark: oklch(0.55 0.14 196);
+  --color-accent-dark-fallback: #0e7490;
+  
+  /* Foreground colors */
+  --color-foreground: oklch(0.2 0.02 264);
+  --color-foreground-fallback: #111827;
+  --color-foreground-strong: oklch(0.15 0.02 264);
+  --color-foreground-strong-fallback: #0f172a;
+  --color-foreground-light: oklch(0.98 0 0);
+  --color-foreground-light-fallback: #f9fafb;
+  
+  /* Background colors */
+  --color-background: oklch(0.98 0.005 264);
+  --color-background-fallback: #f8fafc;
+  --color-background-dark: oklch(0.15 0.02 264);
+  --color-background-dark-fallback: #0b1220;
+  
+  /* Surface colors */
+  --color-surface: oklch(1 0 0);
+  --color-surface-fallback: #ffffff;
+  --color-surface-subtle: oklch(0.96 0.01 264);
+  --color-surface-subtle-fallback: #eef2ff;
+  --color-surface-dark: oklch(0.18 0.02 264);
+  --color-surface-dark-fallback: #0f172a;
+  --color-surface-dark-subtle: oklch(0.2 0.02 264);
+  --color-surface-dark-subtle-fallback: #111827;
+  
+  /* Neutral colors */
+  --color-neutral: oklch(0.58 0.02 264);
+  --color-neutral-fallback: #64748b;
+  --color-neutral-light: oklch(0.82 0.01 264);
+  --color-neutral-light-fallback: #cbd5e1;
+  --color-neutral-dark: oklch(0.42 0.02 264);
+  --color-neutral-dark-fallback: #334155;
+  
+  /* Semantic state colors */
+  --color-success: oklch(0.7 0.2 145);
+  --color-success-fallback: #22c55e;
+  --color-success-light: oklch(0.78 0.2 145);
+  --color-success-light-fallback: #4ade80;
+  --color-success-dark: oklch(0.55 0.2 145);
+  --color-success-dark-fallback: #15803d;
+  
+  --color-warning: oklch(0.85 0.16 95);
+  --color-warning-fallback: #facc15;
+  --color-warning-light: oklch(0.9 0.16 95);
+  --color-warning-light-fallback: #fde047;
+  --color-warning-dark: oklch(0.62 0.16 95);
+  --color-warning-dark-fallback: #a16207;
+  
+  --color-error: oklch(0.62 0.25 25);
+  --color-error-fallback: #ef4444;
+  --color-error-light: oklch(0.7 0.25 25);
+  --color-error-light-fallback: #f87171;
+  --color-error-dark: oklch(0.45 0.25 25);
+  --color-error-dark-fallback: #991b1b;
+  
+  --color-info: oklch(0.67 0.15 230);
+  --color-info-fallback: #0ea5e9;
+  --color-info-light: oklch(0.75 0.15 230);
+  --color-info-light-fallback: #38bdf8;
+  --color-info-dark: oklch(0.52 0.15 230);
+  --color-info-dark-fallback: #0369a1;
+  
+  /* On-color text */
+  --color-on-accent: oklch(0.2 0.02 196);
+  --color-on-accent-fallback: #051b2a;
+  --color-on-dark: oklch(0.98 0 0);
+  --color-on-dark-fallback: #f9fafb;
+  --color-on-primary: oklch(1 0 0);
+  --color-on-primary-fallback: #ffffff;
+  --color-on-secondary: oklch(0.2 0.02 230);
+  --color-on-secondary-fallback: #062433;
 
   /* Shadow chroma – referenced by all shadow tokens for theme switching */
   --shadow-chroma: 0 0 0 / 0.08;
 
   /* ---------- Gradients ---------- */
-  --gradient-primary: linear-gradient(135deg, color-mix(in oklch, var(--color-primary-light) 85%, white) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
-  --gradient-accent:  linear-gradient(135deg, color-mix(in oklch, var(--color-accent-light) 85%, white) 0%, var(--color-accent) 50%, var(--color-accent-dark) 100%);
-  --gradient-secondary: linear-gradient(135deg, color-mix(in oklch, var(--color-secondary-light) 85%, white) 0%, var(--color-secondary) 50%, var(--color-secondary-dark) 100%);
-  --gradient-info: linear-gradient(135deg, var(--color-info-light) 0%, var(--color-info) 50%, var(--color-info-dark) 100%);
-  --gradient-success: linear-gradient(135deg, var(--color-success-light) 0%, var(--color-success) 50%, var(--color-success-dark) 100%);
-  --gradient-warning: linear-gradient(135deg, var(--color-warning-light) 0%, var(--color-warning) 50%, var(--color-warning-dark) 100%);
-  --gradient-error: linear-gradient(135deg, var(--color-error-light) 0%, var(--color-error) 50%, var(--color-error-dark) 100%);
+    --gradient-primary: linear-gradient(135deg, color-mix(in oklch, var(--color-primary-light) 85%, white) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
+    --gradient-accent:  linear-gradient(135deg, color-mix(in oklch, var(--color-accent-light) 85%, white) 0%, var(--color-accent) 50%, var(--color-accent-dark) 100%);
+    --gradient-secondary: linear-gradient(135deg, color-mix(in oklch, var(--color-secondary-light) 85%, white) 0%, var(--color-secondary) 50%, var(--color-secondary-dark) 100%);
+    --gradient-info: linear-gradient(135deg, var(--color-info-light) 0%, var(--color-info) 50%, var(--color-info-dark) 100%);
+    --gradient-success: linear-gradient(135deg, var(--color-success-light) 0%, var(--color-success) 50%, var(--color-success-dark) 100%);
+    --gradient-warning: linear-gradient(135deg, var(--color-warning-light) 0%, var(--color-warning) 50%, var(--color-warning-dark) 100%);
+    --gradient-error: linear-gradient(135deg, var(--color-error-light) 0%, var(--color-error) 50%, var(--color-error-dark) 100%);
+  
+    /* ---------- Color-mix() Dynamic Variations ---------- */
+    /* Generate interactive state colors dynamically (better browser support) */
+    --color-primary-hover: color-mix(in oklch, var(--color-primary) 85%, white);
+    --color-primary-active: color-mix(in oklch, var(--color-primary) 70%, black);
+    --color-accent-hover: color-mix(in oklch, var(--color-accent) 85%, white);
+    --color-accent-active: color-mix(in oklch, var(--color-accent) 70%, black);
+    --color-secondary-hover: color-mix(in oklch, var(--color-secondary) 85%, white);
+    --color-secondary-active: color-mix(in oklch, var(--color-secondary) 70%, black);
+    
+    /* Subtle variations for backgrounds */
+    --color-accent-subtle: color-mix(in oklch, var(--color-accent) 10%, transparent);
+    --color-primary-subtle: color-mix(in oklch, var(--color-primary) 10%, transparent);
+    --color-success-subtle: color-mix(in oklch, var(--color-success) 10%, transparent);
+    --color-warning-subtle: color-mix(in oklch, var(--color-warning) 15%, transparent);
+    --color-error-subtle: color-mix(in oklch, var(--color-error) 10%, transparent);
 
   /* ---------- Overlays ---------- */
   --overlay-10: rgba(0, 0, 0, 0.10);
   --overlay-20: rgba(0, 0, 0, 0.20);
   --overlay-40: rgba(0, 0, 0, 0.40);
 
-  /* ---------- Focus ---------- */
+  /* ---------- Focus & Interactive States ---------- */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
   --focus-ring-color: var(--color-primary);
-  --focus-ring: 0 0 0 2px var(--focus-ring-color);
+  --focus-ring-offset-color: var(--color-background);
+  --focus-ring: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+  
+  /* Interactive state opacities */
+  --state-hover-opacity: 0.85;
+  --state-active-opacity: 0.7;
+  --state-disabled-opacity: 0.5;
+  
+  /* Hover overlays */
+  --hover-overlay: rgba(0, 0, 0, 0.05);
+  --hover-overlay-dark: rgba(255, 255, 255, 0.1);
+  
+  /* Active states */
+  --active-scale: 0.98;
+  --active-overlay: rgba(0, 0, 0, 0.1);
+  --active-overlay-dark: rgba(255, 255, 255, 0.15);
 
   /* ---------- Text Selection ---------- */
   --selection-bg: var(--color-primary-light);
@@ -78,13 +210,33 @@
   --selection-text: #fff;
 
   /* ---------- Motion ---------- */
-  --duration-fast: 150ms;
-  --duration: 250ms;          /* DEFAULT */
-  --duration-slow: 400ms;
+  /* Duration scale */
+  --duration-instant: 0ms;
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration: 250ms;          /* DEFAULT - legacy support */
+  --duration-moderate: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 700ms;
+  --duration-slowest: 1000ms;
+  
+  /* Easing curves - extended library */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);          /* Material‑like */
   --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);          /* Dramatic */
   --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
   --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --ease-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-bounce: cubic-bezier(0.68, -0.15, 0.265, 1.15);
+  
+  /* Animation delays */
+  --delay-xs: 50ms;
+  --delay-sm: 100ms;
+  --delay-md: 150ms;
+  --delay-lg: 200ms;
+  --delay-xl: 300ms;
 
   /* ---------- Blur & Glass ---------- */
   --blur-sm: 4px;
@@ -140,27 +292,29 @@
   --font-display: 'Playfair Display', 'Montserrat', ui-serif, serif;
   --font-ui: 'Inter', ui-sans-serif, system-ui, sans-serif;
   /* Semantic font size tokens for headings and UI */
-  --fs-h1: var(--fs-9xl); /* 8rem, 128px */
-  --fs-h2: var(--fs-8xl); /* 6rem, 96px */
-  --fs-h3: var(--fs-7xl); /* 4.5rem, 72px */
-  --fs-h4: var(--fs-6xl); /* 3.75rem, 60px */
-  --fs-h5: var(--fs-5xl); /* 3rem, 48px */
-  --fs-h6: var(--fs-3xl); /* 1.875rem, 30px */
-  --fs-ui: var(--fs-base); /* 1rem, 16px */
-  --fs-xxs: 0.65rem;      /* 10.4px - for ultra-compact labels */
-  --fs-xs: 0.75rem;       /* 12px */
-  --fs-sm: 0.875rem;      /* 14px */
-  --fs-base: 1rem;        /* 16px */
-  --fs-lg: 1.125rem;      /* 18px */
-  --fs-xl: 1.25rem;       /* 20px */
-  --fs-2xl: 1.5rem;       /* 24px */
-  --fs-3xl: 1.875rem;     /* 30px */
-  --fs-4xl: 2.25rem;      /* 36px */
-  --fs-5xl: 3rem;         /* 48px */
-  --fs-6xl: 3.75rem;      /* 60px */
-  --fs-7xl: 4.5rem;       /* 72px */
-  --fs-8xl: 6rem;         /* 96px */
-  --fs-9xl: 8rem;         /* 128px */
+  --fs-h1: var(--fs-9xl);
+  --fs-h2: var(--fs-8xl);
+  --fs-h3: var(--fs-7xl);
+  --fs-h4: var(--fs-6xl);
+  --fs-h5: var(--fs-5xl);
+  --fs-h6: var(--fs-3xl);
+  --fs-ui: var(--fs-base);
+  
+  /* Fluid typography scale - responsive from mobile to desktop */
+  --fs-xxs: clamp(0.65rem, 0.62rem + 0.1vw, 0.7rem);
+  --fs-xs: clamp(0.75rem, 0.7rem + 0.17vw, 0.825rem);
+  --fs-sm: clamp(0.875rem, 0.825rem + 0.17vw, 0.95rem);
+  --fs-base: clamp(1rem, 0.95rem + 0.17vw, 1.0625rem);
+  --fs-lg: clamp(1.125rem, 1.05rem + 0.25vw, 1.25rem);
+  --fs-xl: clamp(1.25rem, 1.15rem + 0.33vw, 1.4375rem);
+  --fs-2xl: clamp(1.5rem, 1.35rem + 0.5vw, 1.75rem);
+  --fs-3xl: clamp(1.875rem, 1.65rem + 0.75vw, 2.25rem);
+  --fs-4xl: clamp(2.25rem, 1.95rem + 1vw, 2.8125rem);
+  --fs-5xl: clamp(3rem, 2.55rem + 1.5vw, 3.75rem);
+  --fs-6xl: clamp(3.75rem, 3.15rem + 2vw, 4.6875rem);
+  --fs-7xl: clamp(4.5rem, 3.75rem + 2.5vw, 5.625rem);
+  --fs-8xl: clamp(6rem, 4.95rem + 3.5vw, 7.5rem);
+  --fs-9xl: clamp(8rem, 6.5rem + 5vw, 10rem);
   --fw-thin: 100;
   --fw-extralight: 200;
   --fw-light: 300;
@@ -196,18 +350,31 @@
   /* Layout helpers */
 
   /* ---------- Spacing & Sizing ---------- */
-  --space-0: 0rem;
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-14: 3.5rem;
-  --space-16: 4rem;
+  /* Modern 4px-based scale for consistent rhythm */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0\.5: 0.125rem;  /* 2px */
+  --space-1: 0.25rem;      /* 4px */
+  --space-1\.5: 0.375rem;  /* 6px */
+  --space-2: 0.5rem;       /* 8px */
+  --space-2\.5: 0.625rem;  /* 10px */
+  --space-3: 0.75rem;      /* 12px */
+  --space-3\.5: 0.875rem;  /* 14px */
+  --space-4: 1rem;         /* 16px */
+  --space-5: 1.25rem;      /* 20px */
+  --space-6: 1.5rem;       /* 24px */
+  --space-7: 1.75rem;      /* 28px */
+  --space-8: 2rem;         /* 32px */
+  --space-9: 2.25rem;      /* 36px */
+  --space-10: 2.5rem;      /* 40px */
+  --space-11: 2.75rem;     /* 44px */
+  --space-12: 3rem;        /* 48px */
+  --space-14: 3.5rem;      /* 56px */
+  --space-16: 4rem;        /* 64px */
+  --space-20: 5rem;        /* 80px */
+  --space-24: 6rem;        /* 96px */
+  --space-28: 7rem;        /* 112px */
+  --space-32: 8rem;        /* 128px */
 
   /* Card radius and chroma harmonisation for brand style */
   --radius-none: 0px;
@@ -247,6 +414,15 @@
   --space-lg: var(--space-8);
   --space-xl: var(--space-12);
   --space-2xl: var(--space-16);
+  
+  /* ---------- Logical Properties (i18n support) ---------- */
+  /* Use these for RTL language support (Arabic, Hebrew, etc.) */
+  /* Inline = horizontal axis (start/end instead of left/right) */
+  /* Block = vertical axis (start/end instead of top/bottom) */
+  --spacing-inline-start: var(--space-4);  /* Default start padding/margin */
+  --spacing-inline-end: var(--space-4);    /* Default end padding/margin */
+  --spacing-block-start: var(--space-4);   /* Default top padding/margin */
+  --spacing-block-end: var(--space-4);     /* Default bottom padding/margin */
 
   /* Inline icons */
   --icon-sm: 1rem;
@@ -295,141 +471,399 @@
   --transition-slow: all 400ms var(--ease-standard);
 
   color-scheme: light;
-}
+  
+  /* ---------- Smooth Theme Transitions (@property animations) ---------- */
+  /* These properties are registered as @property at the top of the file */
+  /* This enables smooth color transitions when switching themes */
+  transition: 
+    --color-background 0.3s ease,
+    --color-foreground 0.3s ease,
+    --color-surface 0.3s ease,
+    --color-primary 0.3s ease,
+    --color-accent 0.3s ease;
+  
+  /* ---------- Dark Mode Overrides (CSS Nesting) ---------- */
+  /* Use modern CSS nesting for better maintainability */
+  &[data-theme="dark"], &.dark {
+    /* OKLCH colors optimized for dark mode */
+    --color-foreground-strong: var(--color-foreground-light, var(--color-foreground-light-fallback));
+    --color-foreground: var(--color-foreground-light, var(--color-foreground-light-fallback));
+    --color-background: var(--color-background-dark, var(--color-background-dark-fallback));
+    --color-surface: var(--color-surface-dark, var(--color-surface-dark-fallback));
+    --color-surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
+    --color-neutral: var(--color-neutral-light, var(--color-neutral-light-fallback));
+    --color-neutral-dark: var(--color-neutral, var(--color-neutral-fallback));
+    --color-on-accent: oklch(0.92 0.02 196);
+    --color-on-accent-fallback: #e6faff;
+    --shadow-chroma: 0 0 0 / 0.6;
+    --glass-surface-bg: var(--glass-surface-bg-dark);
+    --glass-border: var(--glass-border-dark);
+    color-scheme: dark;
 
-:root[data-theme="dark"] {
-  --color-foreground-strong: var(--color-foreground-light);
-  --color-foreground: var(--color-foreground-light);
-  --color-background: var(--color-background-dark);
-  --color-surface: var(--color-surface-dark);
-  --color-surface-subtle: var(--color-surface-dark-subtle);
-  --color-neutral: var(--color-neutral-light);
-  --color-neutral-dark: var(--color-neutral);
-  --color-on-accent: #e6faff; /* lighter on-cyan for dark */
-  --shadow-chroma: 0 0 0 / 0.6;
-  --glass-surface-bg: var(--glass-surface-bg-dark);
-  --glass-border: var(--glass-border-dark);
-  color-scheme: dark;
-
-  /* Update semantic aliases for dark mode */
-  --bg: var(--color-background-dark);
-  --fg: var(--color-foreground-light);
-  --fg-strong: var(--color-foreground-light);
-  --surface: var(--color-surface-dark);
-  --surface-subtle: var(--color-surface-dark-subtle);
-  --border: var(--border-color-dark);
-  --border-subtle: var(--border-color-dark);
-  --ring: var(--color-accent);
-}
-
-/* Support dark mode via class as used by theme toggle scripts */
-html.dark, :root.dark {
-  --color-foreground-strong: var(--color-foreground-light);
-  --color-foreground: var(--color-foreground-light);
-  --color-background: var(--color-background-dark);
-  --color-surface: var(--color-surface-dark);
-  --color-surface-subtle: var(--color-surface-dark-subtle);
-  --color-neutral: var(--color-neutral-light);
-  --color-neutral-dark: var(--color-neutral);
-  --color-on-accent: #e6faff;
-  --shadow-chroma: 0 0 0 / 0.6;
-  --glass-surface-bg: var(--glass-surface-bg-dark);
-  --glass-border: var(--glass-border-dark);
-  color-scheme: dark;
-
-  /* Semantic aliases under dark class */
-  --bg: var(--color-background-dark);
-  --fg: var(--color-foreground-light);
-  --fg-strong: var(--color-foreground-light);
-  --surface: var(--color-surface-dark);
-  --surface-subtle: var(--color-surface-dark-subtle);
-  --border: var(--border-color-dark);
-  --border-subtle: var(--border-color-dark);
-  --ring: var(--color-accent);
-}
-
-html {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-}
-
-html[data-theme="dark"] {
-  background-color: var(--color-background-dark);
-  color: var(--color-foreground-light);
-}
-
-body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-}
-
-html[data-theme="dark"] body {
-  background-color: var(--color-background-dark);
-  color: var(--color-foreground-light);
-}
-
-/* Keyframes */
-@keyframes fadein {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@keyframes pulseslow {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-
-@keyframes bouncey {
-  0%, 100% { transform: translateY(0%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
-  50% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0,0,0.2,1); }
-}
-
-@keyframes slideup {
-  0% { opacity: 0; transform: translateY(100%); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slidedown {
-  0% { opacity: 0; transform: translateY(-100%); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideleft {
-  0% { opacity: 0; transform: translateX(100%); }
-  100% { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideright {
-  0% { opacity: 0; transform: translateX(-100%); }
-  100% { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes shimmer {
-  0%   { background-position: -100% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes wiggle {
-  0%, 100% { transform: rotate(-2deg); }
-  50%      { transform: rotate(2deg); }
-}
-
-/* ---------- Global Selection Styles ---------- */
-::selection {
-  color: var(--selection-text);
-  text-shadow: none;
-  background: var(--selection-bg);
-}
-
-:root[data-theme="dark"] ::selection {
-  background: var(--selection-bg-dark);
-}
-
-@media (forced-colors: active) {
-  @supports (forced-color-adjust: auto) {
-    * {
-      forced-color-adjust: auto;
-    }
+    /* Semantic aliases for dark mode */
+    --bg: var(--color-background-dark, var(--color-background-dark-fallback));
+    --fg: var(--color-foreground-light, var(--color-foreground-light-fallback));
+    --fg-strong: var(--color-foreground-light, var(--color-foreground-light-fallback));
+    --surface: var(--color-surface-dark, var(--color-surface-dark-fallback));
+    --surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
+    --border: var(--border-color-dark);
+    --border-subtle: var(--border-color-dark);
+    --ring: var(--color-accent, var(--color-accent-fallback));
+    
+    /* Dark mode interactive overlays */
+    --hover-overlay: var(--hover-overlay-dark);
+    --active-overlay: var(--active-overlay-dark);
   }
 }
+
+/* Support dark mode on html element as well (used by theme toggle) */
+html.dark {
+  --color-foreground-strong: var(--color-foreground-light, var(--color-foreground-light-fallback));
+  --color-foreground: var(--color-foreground-light, var(--color-foreground-light-fallback));
+  --color-background: var(--color-background-dark, var(--color-background-dark-fallback));
+  --color-surface: var(--color-surface-dark, var(--color-surface-dark-fallback));
+  --color-surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
+  --color-neutral: var(--color-neutral-light, var(--color-neutral-light-fallback));
+  --color-neutral-dark: var(--color-neutral, var(--color-neutral-fallback));
+  --color-on-accent: oklch(0.92 0.02 196);
+  --color-on-accent-fallback: #e6faff;
+  --shadow-chroma: 0 0 0 / 0.6;
+  --glass-surface-bg: var(--glass-surface-bg-dark);
+  --glass-border: var(--glass-border-dark);
+  color-scheme: dark;
+  
+  /* Semantic aliases */
+  --bg: var(--color-background-dark, var(--color-background-dark-fallback));
+  --fg: var(--color-foreground-light, var(--color-foreground-light-fallback));
+  --fg-strong: var(--color-foreground-light, var(--color-foreground-light-fallback));
+  --surface: var(--color-surface-dark, var(--color-surface-dark-fallback));
+  --surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
+  --border: var(--border-color-dark);
+  --border-subtle: var(--border-color-dark);
+  --ring: var(--color-accent, var(--color-accent-fallback));
+  
+  /* Dark mode interactive overlays */
+  --hover-overlay: var(--hover-overlay-dark);
+  --active-overlay: var(--active-overlay-dark);
+} /* End @layer tokens */
+
+/* ---------- Base Styles (using CSS Nesting) ---------- */
+@layer base {
+  html {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    
+    /* Nested dark mode styles */
+    &[data-theme="dark"], &.dark {
+      background-color: var(--color-background-dark);
+      color: var(--color-foreground-light);
+    }
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+  
+  /* Dark mode body styles */
+  html[data-theme="dark"] body, html.dark body {
+    background-color: var(--color-background-dark);
+    color: var(--color-foreground-light);
+  }
+
+  /* ---------- Global Selection Styles ---------- */
+  ::selection {
+    color: var(--selection-text);
+    text-shadow: none;
+    background: var(--selection-bg);
+  }
+
+  :root[data-theme="dark"] ::selection, :root.dark ::selection {
+    background: var(--selection-bg-dark);
+  }
+}
+
+/* ---------- Animations ---------- */
+@layer base {
+  /* Keyframe animations */
+  @keyframes fadein {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes pulseslow {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes bouncey {
+    0%, 100% { transform: translateY(0%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+    50% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0,0,0.2,1); }
+  }
+
+  @keyframes slideup {
+    0% { opacity: 0; transform: translateY(100%); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slidedown {
+    0% { opacity: 0; transform: translateY(-100%); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideleft {
+    0% { opacity: 0; transform: translateX(100%); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes slideright {
+    0% { opacity: 0; transform: translateX(-100%); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-2deg); }
+    50%      { transform: rotate(2deg); }
+  }
+  
+  /* Advanced @property animations */
+  @keyframes rotate-gradient {
+    0%   { --gradient-angle: 0deg; }
+    100% { --gradient-angle: 360deg; }
+  }
+  
+  @keyframes scale-pulse {
+    0%, 100% { --scale-factor: 1; }
+    50%      { --scale-factor: 1.05; }
+  }
+} /* End @layer base animations */
+
+/* ---------- Forced Colors Mode (Accessibility) ---------- */
+@layer base {
+  @media (forced-colors: active) {
+    @supports (forced-color-adjust: auto) {
+      * {
+        forced-color-adjust: auto;
+      }
+    }
+    
+    /* Windows High Contrast Mode support */
+    /* Ensure all interactive elements are visible */
+    button, a, input, select, textarea {
+      border: 1px solid CanvasText;
+    }
+    
+    .btn-primary, [class*="btn-"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+      border-color: HighlightText;
+    }
+    
+    .card, [class*="card-"] {
+      border: 1px solid CanvasText;
+    }
+    
+    /* Ensure focus is always visible */
+    :focus-visible {
+      outline: 2px solid Highlight;
+      outline-offset: 2px;
+    }
+  }
+} /* End @layer base forced-colors */
+
+/* ---------- Enhanced Focus Indicators (WCAG AAA) ---------- */
+@layer base {
+  /* Default enhanced focus for all interactive elements */
+  :focus-visible {
+    outline: 3px solid var(--color-primary, #4f46e5);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px color-mix(in oklch, var(--color-primary) 15%, transparent);
+    border-radius: var(--radius-sm, 0.25rem);
+  }
+  
+  /* Dark mode focus indicators */
+  :root[data-theme="dark"] :focus-visible,
+  :root.dark :focus-visible {
+    outline-color: var(--color-accent, #06b6d4);
+    box-shadow: 0 0 0 6px color-mix(in oklch, var(--color-accent) 20%, transparent);
+  }
+  
+  /* Button focus states */
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    outline-width: 3px;
+    outline-offset: 2px;
+  }
+  
+  /* Link focus states */
+  a:focus-visible {
+    outline-width: 2px;
+    outline-offset: 3px;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  
+  /* Input focus states */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline-width: 2px;
+    outline-offset: 0;
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--color-primary) 20%, transparent);
+  }
+  
+  /* Card/interactive container focus */
+  .card:focus-within,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-primary, #4f46e5);
+    outline-offset: 4px;
+  }
+} /* End @layer base focus indicators */
+
+/* ---------- Modern :has() Selector Patterns ---------- */
+@layer utilities {
+  /* Form validation states - parent responds to child state */
+  .form-group:has(input:invalid:not(:placeholder-shown)),
+  .form-group:has(textarea:invalid:not(:placeholder-shown)) {
+    border-inline-start: 3px solid var(--color-error, #ef4444);
+  }
+  
+  .form-group:has(input:valid:not(:placeholder-shown)),
+  .form-group:has(textarea:valid:not(:placeholder-shown)) {
+    border-inline-start: 3px solid var(--color-success, #22c55e);
+  }
+  
+  /* Card selection - highlight parent when child is checked */
+  .card:has(input[type="checkbox"]:checked),
+  .card:has(input[type="radio"]:checked) {
+    background: var(--color-primary-subtle, color-mix(in oklch, var(--color-primary) 10%, transparent));
+    border-color: var(--color-primary, #4f46e5);
+  }
+  
+  /* Navigation - highlight nav when active link present */
+  nav:has(a.active),
+  nav:has(a[aria-current="page"]) {
+    border-block-end: 2px solid var(--color-accent, #06b6d4);
+  }
+  
+  /* Section with errors - visual indicator on parent */
+  section:has(.error),
+  div:has(.error-message) {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      inset-inline-start: 0;
+      inset-block-start: 0;
+      inset-block-end: 0;
+      inline-size: 4px;
+      background: var(--color-error, #ef4444);
+      border-start-start-radius: var(--radius, 0.5rem);
+      border-end-start-radius: var(--radius, 0.5rem);
+    }
+  }
+  
+  /* Interactive parent - adjust when hovering child */
+  .interactive-parent:has(button:hover),
+  .interactive-parent:has(a:hover) {
+    background: var(--hover-overlay, rgba(0, 0, 0, 0.05));
+  }
+  
+  /* Empty state detection */
+  .container:has(> :only-child:empty)::after {
+    content: 'No items to display';
+    display: block;
+    padding: var(--space-8, 2rem);
+    text-align: center;
+    color: var(--color-neutral, #64748b);
+    font-style: italic;
+  }
+  
+  /* Focus within - highlight container when child has focus */
+  .focus-container:has(:focus-visible) {
+    outline: 2px solid var(--focus-ring-color, var(--color-primary));
+    outline-offset: 2px;
+    border-radius: var(--radius, 0.5rem);
+  }
+  
+  /* Nested disclosure - adjust parent when child is expanded */
+  details:has(details[open]) {
+    border-inline-start: 2px solid var(--color-accent, #06b6d4);
+    padding-inline-start: var(--space-4, 1rem);
+  }
+} /* End @layer utilities :has() patterns */
+
+/* ---------- Advanced @property Animation Utilities ---------- */
+@layer utilities {
+  /* Rotating gradient backgrounds */
+  .gradient-rotate {
+    background: linear-gradient(var(--gradient-angle, 0deg), var(--color-primary), var(--color-accent));
+    animation: rotate-gradient 10s linear infinite;
+  }
+  
+  .gradient-rotate-slow {
+    background: linear-gradient(var(--gradient-angle, 0deg), var(--color-primary), var(--color-accent));
+    animation: rotate-gradient 20s linear infinite;
+  }
+  
+  /* Interactive scale effects */
+  .scale-hover {
+    transform: scale(var(--scale-factor, 1));
+    transition: --scale-factor 0.2s ease-out;
+  }
+  
+  .scale-hover:hover {
+    --scale-factor: 1.05;
+  }
+  
+  /* Smooth color transitions */
+  .color-morph {
+    background: var(--color-primary);
+    transition: --color-primary 0.3s ease;
+  }
+  
+  .color-morph:hover {
+    --color-primary: var(--color-accent);
+  }
+  
+  /* Pulsing scale animation */
+  .pulse-scale {
+    transform: scale(var(--scale-factor, 1));
+    animation: scale-pulse 2s ease-in-out infinite;
+  }
+  
+  /* Hero gradient overlay with animation */
+  .hero-gradient-animated {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hero-gradient-animated::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      var(--gradient-angle, 45deg),
+      var(--color-primary) 0%,
+      var(--color-accent) 50%,
+      var(--color-primary) 100%
+    );
+    opacity: 0.1;
+    animation: rotate-gradient 15s linear infinite;
+    z-index: 0;
+  }
+  
+  .hero-gradient-animated > * {
+    position: relative;
+    z-index: 1;
+  }
+} /* End @layer utilities advanced animations */

@@ -112,7 +112,7 @@ export default function ChatBotNotification() {
 					type="button"
 					onClick={handleDismiss}
 					aria-label="Dismiss notification"
-					className="absolute right-2 top-2 rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+					className="absolute right-2 top-2 rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-foreground/80 dark:hover:bg-gray-700 dark:hover:text-gray-300"
 				>
 					<svg
 						className="h-4 w-4"
@@ -149,10 +149,10 @@ export default function ChatBotNotification() {
 							</svg>
 						</div>
 						<div className="flex-1">
-							<h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+							<h3 className="text-sm font-semibold text-foreground dark:text-gray-100">
 								Try the AI Assistant!
 							</h3>
-							<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+							<p className="mt-1 text-sm text-foreground/80 dark:text-gray-400">
 								Ask me anything about my work, projects, or experience. I'm in the bottom right corner.
 							</p>
 						</div>

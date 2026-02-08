@@ -18,7 +18,7 @@
  *   isAssistant={true}
  *   bubbleContent="Here's your answer..."
  *   totalSources={3}
- *   messageTextClasses="text-gray-900 dark:text-gray-100"
+ *   messageTextClasses="text-foreground dark:text-gray-100"
  * />
  * ```
  *
@@ -30,7 +30,7 @@
  *   isAssistant={true}
  *   bubbleContent="Thinking about..."
  *   totalSources={0}
- *   messageTextClasses="text-gray-900"
+ *   messageTextClasses="text-foreground"
  * />
  * ```
  *

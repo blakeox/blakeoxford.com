@@ -1,0 +1,159 @@
+---
+/**
+ * Keyboard Shortcuts Documentation
+ * 
+ * Comprehensive guide to keyboard navigation and shortcuts
+ * available on the site for improved accessibility.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/primitives/Container.astro';
+import Section from '../../components/primitives/Section.astro';
+
+const shortcuts = [
+  {
+    category: 'Navigation',
+    items: [
+      { key: 'Tab', description: 'Move forward through interactive elements' },
+      { key: 'Shift + Tab', description: 'Move backward through interactive elements' },
+      { key: 'Enter', description: 'Activate focused link or button' },
+      { key: 'Space', description: 'Activate focused button or checkbox' },
+      { key: 'Escape', description: 'Close modals, overlays, and dialogs' },
+    ]
+  },
+  {
+    category: 'Skip Links',
+    items: [
+      { key: 'Tab (from top)', description: 'Skip to main content' },
+      { key: 'Tab (second)', description: 'Skip to footer' },
+      { key: 'Tab (third)', description: 'Back to top link' },
+    ]
+  },
+  {
+    category: 'Search',
+    items: [
+      { key: 'Cmd/Ctrl + K', description: 'Open search overlay' },
+      { key: 'Escape', description: 'Close search overlay' },
+      { key: 'Arrow Up/Down', description: 'Navigate search results' },
+      { key: 'Enter', description: 'Go to selected result' },
+    ]
+  },
+  {
+    category: 'Theme',
+    items: [
+      { key: 'Click theme toggle', description: 'Switch between light and dark mode' },
+    ]
+  },
+  {
+    category: 'Chat Widget',
+    items: [
+      { key: 'Click chat icon', description: 'Open AI chat widget' },
+      { key: 'Escape', description: 'Close chat widget' },
+      { key: 'Enter (in input)', description: 'Send message' },
+    ]
+  },
+  {
+    category: 'Landmarks (Screen Reader)',
+    items: [
+      { key: 'Header (banner)', description: 'Navigate to site header' },
+      { key: 'Main', description: 'Navigate to main content' },
+      { key: 'Footer (contentinfo)', description: 'Navigate to footer' },
+      { key: 'Navigation', description: 'Navigate to navigation menus' },
+    ]
+  }
+];
+---
+
+<BaseLayout
+  title="Keyboard Shortcuts - Blake Oxford"
+  description="Complete guide to keyboard navigation and shortcuts for improved accessibility on blakeoxford.com"
+  keywords="keyboard shortcuts, accessibility, navigation, WCAG, a11y"
+>
+  <Section padding="xl">
+    <Container size="lg">
+      <!-- Header -->
+      <div class="mb-12">
+        <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-[--fg-strong]">
+          Keyboard Shortcuts
+        </h1>
+        <p class="text-lg text-[--fg] max-w-2xl">
+          Navigate this site efficiently using keyboard shortcuts. Full keyboard support ensures accessibility for all users.
+        </p>
+      </div>
+
+      <!-- Shortcuts by Category -->
+      <div class="space-y-12">
+        {shortcuts.map((section) => (
+          <div>
+            <h2 class="text-2xl font-semibold mb-6 text-[--fg-strong] border-b border-[--border] pb-2">
+              {section.category}
+            </h2>
+            <div class="grid gap-4">
+              {section.items.map((shortcut) => (
+                <div class="flex flex-col sm:flex-row sm:items-start gap-3 p-4 bg-[--surface] rounded-lg border border-[--border] hover:border-[--accent] transition-colors">
+                  <kbd class="inline-flex items-center justify-center px-3 py-1.5 text-sm font-mono font-semibold bg-[--bg] border border-[--border] rounded shadow-sm min-w-[120px] whitespace-nowrap">
+                    {shortcut.key}
+                  </kbd>
+                  <p class="text-[--fg] flex-1">
+                    {shortcut.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Additional Information -->
+      <div class="mt-16 p-6 bg-[--surface] rounded-xl border border-[--border]">
+        <h2 class="text-xl font-semibold mb-4 text-[--fg-strong]">
+          Accessibility Features
+        </h2>
+        <ul class="space-y-3 text-[--fg]">
+          <li class="flex items-start gap-3">
+            <span class="text-[--accent] mt-1">✓</span>
+            <span><strong>WCAG AA Compliant:</strong> All colors meet 4.5:1 contrast ratio</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-[--accent] mt-1">✓</span>
+            <span><strong>Enhanced Focus Indicators:</strong> 3px outlines with shadow for clear visibility</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-[--accent] mt-1">✓</span>
+            <span><strong>Screen Reader Support:</strong> Semantic HTML and ARIA labels throughout</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-[--accent] mt-1">✓</span>
+            <span><strong>Skip Links:</strong> Bypass navigation and jump to key content areas</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-[--accent] mt-1">✓</span>
+            <span><strong>Reduced Motion:</strong> Respects prefers-reduced-motion settings</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-[--accent] mt-1">✓</span>
+            <span><strong>High Contrast Mode:</strong> Windows High Contrast Mode support</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Feedback -->
+      <div class="mt-12 text-center">
+        <p class="text-[--fg] mb-4">
+          Have suggestions for improving accessibility?
+        </p>
+        <a
+          href="/contact/"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-[--accent] text-white font-semibold rounded-lg hover:bg-[--accent-dark] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+        >
+          Get in Touch
+        </a>
+      </div>
+    </Container>
+  </Section>
+</BaseLayout>
+
+<style>
+  kbd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+</style>
