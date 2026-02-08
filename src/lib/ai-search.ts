@@ -98,36 +98,81 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
 
   const processEvent = (rawEvent: string) => {
     if (!rawEvent.trim()) return;
+
+    // Collect lines and prefer 'data:' lines per SSE spec
     const lines = rawEvent.split(/\r?\n/);
     let eventType = 'message';
     const dataLines: string[] = [];
     for (const line of lines) {
-      if (line.startsWith('event:')) {
-        eventType = line.slice(6).trim();
-      } else if (line.startsWith('data:')) {
-        dataLines.push(line.slice(5));
+      if (/^event:\s*/i.test(line)) {
+        // event: may be malformed or followed by extra text; capture the declared type
+        try {
+          eventType = line.slice(line.indexOf(':') + 1).trim() || eventType;
+        } catch {
+          // ignore
+        }
+      } else if (/^data:\s*/i.test(line)) {
+        dataLines.push(line.slice(line.indexOf(':') + 1));
+      } else {
+        // Some producers may emit JSON fragments without the 'data:' prefix.
+        // Accept other lines as part of the payload if they look like JSON.
+        dataLines.push(line);
       }
     }
+
     const payloadRaw = dataLines.join('\n').trim();
+
+    // Try to recover a JSON payload if present. Some sources may concatenate
+    // fragments or emit stray metadata (e.g. "event: tok{...}"). Find the first
+    // JSON bracket and attempt to parse from there. If parsing fails, fall back
+    // to using the raw string token.
     let payload: unknown = payloadRaw;
-    if (payloadRaw) {
-      if (payloadRaw.startsWith('{') || payloadRaw.startsWith('[')) {
+    try {
+      const firstJsonIdx = Math.min(
+        ...['{', '[']
+          .map((ch) => payloadRaw.indexOf(ch))
+          .filter((i) => i >= 0)
+      );
+      if (!Number.isNaN(firstJsonIdx) && firstJsonIdx > 0) {
+        const candidate = payloadRaw.slice(firstJsonIdx).trim();
+        try {
+          payload = JSON.parse(candidate);
+        } catch (err) {
+          // Try a more permissive cleanup: remove stray "event:" tokens and
+          // any leading non-json characters, then attempt parse.
+          const cleaned = payloadRaw.replace(/event:\s*[^\r\n]+/gi, '').replace(/^[^{\[]*/s, '').trim();
+          if (cleaned && (cleaned.startsWith('{') || cleaned.startsWith('['))) {
+            try {
+              payload = JSON.parse(cleaned);
+            } catch (err2) {
+              // keep as raw string below
+              // eslint-disable-next-line no-console
+              console.debug('AI stream: failed to parse cleaned JSON fragment', { candidate, cleaned, err: String(err2) });
+            }
+          }
+        }
+      } else if (payloadRaw.startsWith('{') || payloadRaw.startsWith('[')) {
         try {
           payload = JSON.parse(payloadRaw);
-        } catch {
-          payload = payloadRaw;
+        } catch (err3) {
+          // ignore and fall back to raw string
+          // eslint-disable-next-line no-console
+          console.debug('AI stream: failed to parse JSON payload', { payloadRaw, err: String(err3) });
         }
       }
+    } catch (outer) {
+      // Best-effort: leave payload as raw string
     }
+
     if (eventType === 'token') {
       const token = typeof payload === 'string'
         ? payload
         : payload && typeof payload === 'object' && typeof (payload as { text?: unknown }).text === 'string'
           ? (payload as { text: string }).text
-          : '';
+          : payloadRaw;
       if (token) {
-        assembledMessage += token;
-        options.onToken?.(token);
+        assembledMessage += String(token);
+        options.onToken?.(String(token));
       }
     } else if (eventType === 'sources') {
       const nextSources = normalizeSources(payload);
@@ -142,6 +187,10 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
           assembledMessage = doneMessage;
           options.onToken?.(doneMessage);
         }
+      } else if (typeof payload === 'string' && payload.trim()) {
+        // fallback: treat final string as completion
+        assembledMessage = String(payload);
+        options.onToken?.(assembledMessage);
       }
     }
   };

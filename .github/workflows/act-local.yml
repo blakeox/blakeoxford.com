@@ -103,7 +103,7 @@ jobs:
 
       - name: Upload test results on failure
         if: ${{ failure() && env.ACT != 'true' }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: debug-test-results
           path: |

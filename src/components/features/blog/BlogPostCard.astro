@@ -3,7 +3,28 @@
  * BlogPostCard - Reusable blog post card for listings
  * 
  * Displays a blog post with date, title, description, tags, and read more link.
- * Optimized for grid layouts with hover effects.
+ * Optimized for grid layouts with hover effects and container query responsiveness.
+ * 
+ * @example Basic usage
+ * ```astro
+ * <BlogPostCard post={postEntry} />
+ * ```
+ * 
+ * @example With container query wrapper
+ * ```astro
+ * <div class="@container">
+ *   <BlogPostCard post={postEntry} />
+ * </div>
+ * ```
+ * 
+ * @example Custom max tags
+ * ```astro
+ * <BlogPostCard post={postEntry} maxTags={5} />
+ * ```
+ * 
+ * @containerQueries
+ * - @sm (384px): Larger padding, enhanced spacing
+ * - @md (448px): Enhanced typography, larger text sizes
  */
 
 import type { CollectionEntry } from 'astro:content';
@@ -23,12 +44,12 @@ const { slug, data } = post;
 const visibleTags = data.tags?.slice(0, maxTags) || [];
 const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
 ---
-<article class="hover-lift group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-6 shadow-lg hover:shadow-primary/5 dark:bg-surface/80 dark:border-border-dark/40">
+<article class="@container card-interactive hover-lift group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-5 @sm:p-6 shadow-lg hover:shadow-primary/5 dark:bg-surface/80 dark:border-border-dark/40">
   <a
     href={`/blog/${slug}/`}
-    class="flex h-full flex-col gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
+    class="flex h-full flex-col gap-3 @sm:gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
   >
-    <header class="space-y-2">
+    <header class="space-y-1.5 @sm:space-y-2">
       <time
         class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-smallcaps text-foreground/55 dark:text-foreground-light/60"
         datetime={formatDateISO(data.pubDate)}
@@ -40,13 +61,13 @@ const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
           day: 'numeric'
         })}
       </time>
-      <h3 class="text-xl sm:text-2xl font-semibold leading-snug text-foreground transition-colors duration-200 group-hover:text-accent dark:text-foreground-light">
+      <h3 class="text-lg @sm:text-xl @md:text-2xl font-semibold leading-snug text-foreground transition-colors duration-200 group-hover:text-accent dark:text-foreground-light">
         {data.title}
       </h3>
     </header>
 
     {data.description && (
-      <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+      <p class="text-sm @md:text-base leading-relaxed text-foreground/75 dark:text-foreground-light/75">
         {data.description}
       </p>
     )}
@@ -58,19 +79,19 @@ const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
         role="list"
       >
         {visibleTags.map((tag: string) => (
-          <li class="rounded-full bg-background/90 px-3 py-1 ring-1 ring-border/30 dark:bg-background-dark/70" role="listitem">
+          <li class="rounded-full bg-background/90 px-2.5 @sm:px-3 py-0.5 @sm:py-1 ring-1 ring-border/30 dark:bg-background-dark/70" role="listitem">
             {tag}
           </li>
         ))}
         {extraTagCount > 0 && (
-          <li class="rounded-full bg-background/80 px-3 py-1 ring-1 ring-border/20 text-foreground/50 dark:bg-background-dark/60 dark:text-foreground-light/55" role="listitem">
+          <li class="rounded-full bg-background/80 px-2.5 @sm:px-3 py-0.5 @sm:py-1 ring-1 ring-border/20 text-foreground/50 dark:bg-background-dark/60 dark:text-foreground-light/55" role="listitem">
             +{extraTagCount}
           </li>
         )}
       </ul>
     )}
 
-    <span class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-all duration-200 group-hover:gap-3">
+    <span class="mt-3 @sm:mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-all duration-200 group-hover:gap-3">
       Read article
       <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M5 12h14m-6-6 6 6-6 6" />

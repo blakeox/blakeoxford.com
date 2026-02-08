@@ -18,7 +18,7 @@
  *   isAssistant={true}
  *   bubbleContent="Here's your answer..."
  *   totalSources={3}
- *   messageTextClasses="text-gray-900 dark:text-gray-100"
+ *   messageTextClasses="text-foreground dark:text-gray-100"
  * />
  * ```
  *
@@ -30,7 +30,7 @@
  *   isAssistant={true}
  *   bubbleContent="Thinking about..."
  *   totalSources={0}
- *   messageTextClasses="text-gray-900"
+ *   messageTextClasses="text-foreground"
  * />
  * ```
  *
@@ -86,7 +86,7 @@ export const MessageContent = memo(function MessageContent({
 			)}
 			
 			{isAssistant && isStreaming && (
-				<span className="flex items-center gap-1 text-[0.75rem] text-[color:var(--fg)]/60" aria-live="assertive">
+				<span className="flex items-center gap-1 text-[0.75rem] text-[color:var(--fg)]/60" aria-live="polite">
 					<span className="sr-only">Assistant is responding</span>
 					<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse" />
 					<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:150ms]" />

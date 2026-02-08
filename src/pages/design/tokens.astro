@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Design Tokens Reference"
+  description="Complete reference of design tokens used in the Blake Oxford portfolio design system"
+  canonicalUrl="https://blakeoxford.com/design/tokens"
+>
+  <main class="container mx-auto px-4 py-16 max-w-7xl">
+    <header class="mb-12 text-center">
+      <h1 class="text-5xl md:text-6xl font-bold mb-4">Design Tokens Reference</h1>
+      <p class="text-xl text-foreground/80 max-w-3xl mx-auto">
+        Modern design system with OKLCH colors, fluid typography, and comprehensive spacing scale.
+      </p>
+    </header>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+      <div class="bg-surface rounded-lg border border-border p-6 text-center">
+        <div class="text-4xl font-bold text-primary mb-2">OKLCH</div>
+        <div class="text-sm text-foreground/70">Color Space</div>
+      </div>
+      <div class="bg-surface rounded-lg border border-border p-6 text-center">
+        <div class="text-4xl font-bold text-accent mb-2">Fluid</div>
+        <div class="text-sm text-foreground/70">Typography</div>
+      </div>
+      <div class="bg-surface rounded-lg border border-border p-6 text-center">
+        <div class="text-4xl font-bold text-primary mb-2">24</div>
+        <div class="text-sm text-foreground/70">Spacing Values</div>
+      </div>
+      <div class="bg-surface rounded-lg border border-border p-6 text-center">
+        <div class="text-4xl font-bold text-accent mb-2">9</div>
+        <div class="text-sm text-foreground/70">Easing Curves</div>
+      </div>
+    </div>
+
+    <!-- Color Showcase -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">Color Tokens</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="rounded-lg border border-border overflow-hidden">
+          <div class="w-full h-32 bg-primary"></div>
+          <div class="p-4 bg-surface">
+            <div class="font-semibold mb-1">primary</div>
+            <div class="font-mono text-xs text-foreground/70">oklch(0.55 0.22 264)</div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-border overflow-hidden">
+          <div class="w-full h-32 bg-accent"></div>
+          <div class="p-4 bg-surface">
+            <div class="font-semibold mb-1">accent</div>
+            <div class="font-mono text-xs text-foreground/70">oklch(0.72 0.14 196)</div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-border overflow-hidden">
+          <div class="w-full h-32 bg-surface border border-border"></div>
+          <div class="p-4 bg-surface">
+            <div class="font-semibold mb-1">surface</div>
+            <div class="font-mono text-xs text-foreground/70">oklch(1 0 0)</div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-border overflow-hidden">
+          <div class="w-full h-32 bg-background"></div>
+          <div class="p-4 bg-surface">
+            <div class="font-semibold mb-1">background</div>
+            <div class="font-mono text-xs text-foreground/70">oklch(0.98 0.005 264)</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6 p-4 bg-surface rounded-lg border border-border">
+        <p class="text-sm text-foreground/80">
+          <strong>OKLCH Benefits:</strong> Perceptually uniform, better dark mode, wide gamut support, predictable adjustments
+        </p>
+      </div>
+    </section>
+
+    <!-- Typography Scale -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">Fluid Typography Scale</h2>
+      <div class="space-y-4 bg-surface rounded-lg p-6 border border-border">
+        <div class="border-b border-border pb-3">
+          <span class="text-6xl font-bold">Heading 1</span>
+          <div class="text-sm text-foreground/70 mt-2 font-mono">clamp(3.75rem, 3.15rem + 2vw, 4.6875rem)</div>
+        </div>
+        <div class="border-b border-border pb-3">
+          <span class="text-4xl font-bold">Heading 2</span>
+          <div class="text-sm text-foreground/70 mt-2 font-mono">clamp(2.25rem, 1.95rem + 1vw, 2.8125rem)</div>
+        </div>
+        <div class="border-b border-border pb-3">
+          <span class="text-2xl font-semibold">Heading 3</span>
+          <div class="text-sm text-foreground/70 mt-2 font-mono">clamp(1.5rem, 1.35rem + 0.5vw, 1.75rem)</div>
+        </div>
+        <div>
+          <span class="text-base">Body Text</span>
+          <div class="text-sm text-foreground/70 mt-2 font-mono">clamp(1rem, 0.95rem + 0.17vw, 1.0625rem)</div>
+        </div>
+      </div>
+      <div class="mt-6 p-4 bg-surface rounded-lg border border-border">
+        <p class="text-sm text-foreground/80">
+          <strong>Fluid Typography:</strong> Automatically scales from mobile (375px) to desktop (1440px) without media queries
+        </p>
+      </div>
+    </section>
+
+    <!-- Interactive Demo -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">Interactive States</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <button class="bg-primary text-on-primary px-6 py-3 rounded-lg font-semibold transition duration-moderate ease-standard opacity-hover hover:opacity-100 transform hover:scale-105">
+          Hover Me (Spring)
+        </button>
+        <button class="bg-accent text-on-accent px-6 py-3 rounded-lg font-semibold transition duration-moderate ease-bounce opacity-hover hover:opacity-100">
+          Bounce Effect
+        </button>
+        <button class="bg-surface border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold transition duration-moderate ease-emphasized opacity-hover hover:opacity-100">
+          Emphasized
+        </button>
+      </div>
+    </section>
+
+    <!-- Documentation Link -->
+    <section class="text-center py-12 border-t border-border">
+      <p class="text-foreground/70 mb-4">For complete documentation, see:</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="https://github.com/blakeoxford/blakeoxford.com/blob/main/DESIGN_BEST_PRACTICES.md" class="px-6 py-3 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-dark transition">
+          Design Best Practices
+        </a>
+        <a href="https://github.com/blakeoxford/blakeoxford.com" class="px-6 py-3 bg-surface border border-border rounded-lg font-semibold hover:border-primary transition">
+          View on GitHub
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+    <!-- Design System Navigation -->
+    <section class="mt-16 py-12 border-t border-border">
+      <h2 class="text-2xl font-bold mb-6 text-center">Explore More</h2>
+      <div class="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <a href="/design/components/" class="p-6 bg-surface border border-border rounded-xl hover:border-accent transition-colors text-center group">
+          <div class="text-4xl mb-3">🧩</div>
+          <h3 class="font-semibold mb-2 group-hover:text-accent transition-colors">Components</h3>
+          <p class="text-sm text-foreground/70">Interactive component library</p>
+        </a>
+        <a href="/design/animations/" class="p-6 bg-surface border border-border rounded-xl hover:border-accent transition-colors text-center group">
+          <div class="text-4xl mb-3">✨</div>
+          <h3 class="font-semibold mb-2 group-hover:text-accent transition-colors">Animations</h3>
+          <p class="text-sm text-foreground/70">@property animation examples</p>
+        </a>
+        <a href="/design/patterns/" class="p-6 bg-surface border border-border rounded-xl hover:border-accent transition-colors text-center group">
+          <div class="text-4xl mb-3">📐</div>
+          <h3 class="font-semibold mb-2 group-hover:text-accent transition-colors">Patterns</h3>
+          <p class="text-sm text-foreground/70">Common UI patterns</p>
+        </a>
+      </div>
+    </section>

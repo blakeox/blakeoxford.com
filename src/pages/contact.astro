@@ -78,12 +78,10 @@ const canonicalUrl = CANONICAL_URLS.contact;
 
         <div class="scroll-animate bg-surface dark:bg-surface-dark rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30 hover:border-accent/50 transition-colors">
           <form id="contact-form" method="POST" action="/send-email" class="space-y-6" aria-describedby="contact-form-help">
-            <FormField id="form-name" type="hidden" label="" value="contact" />
+            <FormField id="form-name" type="hidden" label="form-name-hidden" value="contact" />
             <p class="sr-only" aria-hidden="true">
-              <label>
-                Don&#39;t fill this out:
-                <input name="bot-field" type="hidden" aria-hidden="true" tabindex="-1" />
-              </label>
+              <label for="bot-field" class="sr-only">Don&#39;t fill this out</label>
+              <input id="bot-field" name="bot-field" type="hidden" aria-hidden="true" tabindex="-1" aria-label="bot-field-hidden" />
             </p>
             <p id="contact-form-help" class="sr-only">All fields marked with an asterisk are required.</p>
 

@@ -79,9 +79,8 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
 
       if (mobileMenuRef.current) {
         mobileMenuRef.current.setAttribute('inert', '');
-        // Hide until opened to avoid accidental focus and pointer interference
+        // Keep menu non-interactive until opened; initial hiding is handled by CSS/offscreen transform
         const menuEl = mobileMenuRef.current as HTMLElement;
-        menuEl.style.visibility = 'hidden';
         menuEl.style.pointerEvents = 'none';
       }
 
@@ -212,12 +211,13 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             </svg>
           </button>
 
+          {/* Theme toggle button (separate from search toggle) */}
           <button
             id="theme-toggle"
             ref={themeToggleRef}
             type="button"
             className="theme-toggle inline-flex size-11 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
-            aria-label="Toggle dark mode"
+            aria-label="Toggle theme"
             aria-pressed="false"
           >
             <svg className="sun-icon size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true" focusable="false">
@@ -252,6 +252,14 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         aria-modal="true"
         aria-label="Mobile navigation menu"
       >
+        {/* Close button inside mobile menu so CSS selectors for .mobile-menu.active .mobile-close-button apply */}
+        <button
+          id="close-mobile-menu"
+          ref={closeButtonRef}
+          type="button"
+          className="mobile-close-button md:hidden sr-only"
+          aria-label="Close navigation menu"
+        />
   <div
   className="mobile-menu-content flex w-full flex-col gap-2 px-5 py-4 text-slate-900 dark:text-slate-100"
     onClick={(e) => {
@@ -259,35 +267,6 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       e.stopPropagation();
     }}
   >
-          <button
-            id="close-mobile-menu"
-            ref={closeButtonRef}
-            type="button"
-            className="mobile-close-button sr-only"
-            aria-label="Close navigation menu"
-            onClick={() => {
-              try {
-                const menu = document.getElementById('nav-mobile-links');
-                const burger = document.getElementById('nav-toggle');
-                if (menu) {
-                  menu.classList.remove('active');
-                  menu.style.visibility = 'hidden';
-                  (menu as HTMLElement).inert = true;
-                }
-                if (burger) {
-                  burger.setAttribute('aria-expanded', 'false');
-                  burger.classList.remove('active');
-                  burger.style.pointerEvents = '';
-                }
-                // Restore body scroll just in case
-                document.body.style.overflow = '';
-                document.body.style.position = '';
-                document.body.style.width = '';
-              } catch {
-                // no-op
-              }
-            }}
-          />
           <ul className="mobile-nav flex flex-col gap-1" role="menubar">
             {links.map((link) => (
               <li className="mobile-nav-item" role="none" key={`mobile-${link.href}`}>
@@ -304,6 +283,10 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
           </ul>
         </div>
       </div>
+      {/* Close button rendered inside the mobile menu so CSS rules targeting
+          `.mobile-menu.active .mobile-close-button` apply and the button
+          becomes visible when the menu is opened. */}
+      
     </div>
   );
 }

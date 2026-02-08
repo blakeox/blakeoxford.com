@@ -206,26 +206,79 @@ export class AISearchService {
 				if (done) break;
 
 				buffer += decoder.decode(value, { stream: true });
-				const lines = buffer.split('\n');
-				buffer = lines.pop() || '';
 
-				for (const line of lines) {
-					if (line.startsWith('data: ')) {
-						const data = line.slice(6);
-						if (data === '[DONE]') {
-							callbacks.onComplete?.(fullResponse);
-							return;
-						}
+				// Process complete SSE events delimited by double-newline (\n\n or \r\n\r\n)
+				let boundaryIdx = buffer.indexOf('\n\n');
+				if (boundaryIdx === -1) boundaryIdx = buffer.indexOf('\r\n\r\n');
+				while (boundaryIdx !== -1) {
+					const eventBlock = buffer.slice(0, boundaryIdx);
+					buffer = buffer.slice(boundaryIdx + (buffer[boundaryIdx] === '\r' ? 4 : 2));
 
-						try {
-							const parsed = JSON.parse(data);
-							this.handleStreamEvent(parsed, callbacks, fullResponse);
-						} catch {
-							// Not JSON, treat as raw text chunk
-							callbacks.onChunk(data);
-							fullResponse.answer += data;
+					// Extract data: lines
+					const lines = eventBlock.split(/\r?\n/);
+					let dataPayload = '';
+					for (const l of lines) {
+						if (/^data:\s*/i.test(l)) {
+							dataPayload += l.slice(l.indexOf(':') + 1) + '\n';
+						} else if (l.trim()) {
+							// accept other non-empty lines as potential payload fragments
+							dataPayload += l + '\n';
 						}
 					}
+					dataPayload = dataPayload.trim();
+
+					if (!dataPayload) {
+						boundaryIdx = buffer.indexOf('\n\n');
+						if (boundaryIdx === -1) boundaryIdx = buffer.indexOf('\r\n\r\n');
+						continue;
+					}
+
+					if (dataPayload === '[DONE]') {
+						callbacks.onComplete?.(fullResponse);
+						return;
+					}
+
+					// Attempt to parse permissively: find first JSON bracket and try to parse
+					let parsed: unknown = null;
+					try {
+						const firstIdx = Math.min(
+							...['{', '[']
+								.map((ch) => dataPayload.indexOf(ch))
+								.filter((i) => i >= 0)
+						);
+						if (!Number.isNaN(firstIdx) && firstIdx >= 0) {
+							const candidate = dataPayload.slice(firstIdx).trim();
+							try {
+								parsed = JSON.parse(candidate);
+							} catch (e1) {
+								const cleaned = dataPayload.replace(/event:\s*[^\r\n]+/gi, '').replace(/^[^{\[]*/s, '').trim();
+								if (cleaned && (cleaned.startsWith('{') || cleaned.startsWith('['))) {
+									try { parsed = JSON.parse(cleaned); } catch (e2) { /* leave null */ }
+								}
+							}
+						} else if (dataPayload.startsWith('{') || dataPayload.startsWith('[')) {
+							try { parsed = JSON.parse(dataPayload); } catch (e3) { /* leave null */ }
+						}
+					} catch (outer) {
+						// permissive parse failed; parsed stays null
+					}
+
+					if (parsed) {
+						this.handleStreamEvent(parsed as Record<string, unknown>, callbacks, fullResponse);
+					} else {
+						// Not JSON, treat as raw text chunk. Log payload for test triage.
+						try {
+							// eslint-disable-next-line no-console
+							console.debug('AI stream: non-JSON payload received', { dataPayload });
+						} catch (e) {
+							// ignore logging errors
+						}
+						callbacks.onChunk(dataPayload);
+						fullResponse.answer += dataPayload;
+					}
+
+					boundaryIdx = buffer.indexOf('\n\n');
+					if (boundaryIdx === -1) boundaryIdx = buffer.indexOf('\r\n\r\n');
 				}
 			}
 

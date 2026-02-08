@@ -19,6 +19,8 @@ interface UseChatEffectsOptions {
 	dispatchState: (isOpen: boolean) => void;
 	/** Function to set fallback suggestions visibility */
 	setShowFallbackSuggestions: (show: boolean) => void;
+	/** Function to close the chat panel */
+	closeChat: () => void;
 	/** Reference to the launcher button */
 	launcherRef: MutableRef<HTMLButtonElement | null>;
 	/** Reference to messages for history building */
@@ -90,6 +92,7 @@ export function useChatEffects(options: UseChatEffectsOptions): UseChatEffectsRe
 		focusInput,
 		dispatchState,
 		setShowFallbackSuggestions,
+		closeChat,
 		launcherRef,
 		messagesRef,
 		activeRequestRef,
@@ -101,6 +104,23 @@ export function useChatEffects(options: UseChatEffectsOptions): UseChatEffectsRe
 		if (!isOpen) return;
 		focusInput();
 	}, [focusInput, isOpen]);
+
+	// Handle Escape key to close dialog
+	useEffect(() => {
+		if (!isOpen) return;
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				closeChat();
+			}
+		};
+
+		document.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, [closeChat, isOpen]);
 
 	// Update ARIA expanded attribute on launcher button
 	useEffect(() => {

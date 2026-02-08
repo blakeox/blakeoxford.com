@@ -8,7 +8,7 @@ const filePath = path.resolve(__dirname, '../../src/components/features/projects
 let content: string;
 
 // TODO: Convert to Playwright e2e tests for real component rendering
-describe.skip('ProjectCard.astro file', () => {
+describe('ProjectCard.astro file', () => {
   beforeAll(() => {
     content = fs.readFileSync(filePath, 'utf-8');
   });
@@ -32,7 +32,8 @@ describe.skip('ProjectCard.astro file', () => {
 
   it('should render tags list with descriptive aria-label', () => {
     expect(content).toContain('aria-label="Project focus areas"');
-    expect(content).toContain('<ul class="flex flex-wrap items-center');
+    // ProjectCard uses a `Flex` primitive rendered as a list; check for the `Flex as="ul"` usage
+    expect(content).toContain('Flex as="ul"');
   });
 
   it('should expose a visible CTA without extra aria-label', () => {

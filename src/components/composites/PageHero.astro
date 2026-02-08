@@ -49,6 +49,7 @@ const heightClass = fullScreen ? 'min-h-screen' : 'min-h-[60vh] md:min-h-[70vh]'
 
 <section 
   id={id}
+  data-layout-section={id}
   class={`relative overflow-hidden py-20 sm:py-24 md:py-32 ${heightClass} flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8 ${className}`}
 >
   {includeBlurOrbs && (

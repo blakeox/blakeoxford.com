@@ -1,6 +1,11 @@
 /**
  * Site-wide component styles using design system tokens
  * Provides consistent, vibrant design patterns across all pages
+ * 
+ * Modern CSS Architecture (2026):
+ * - CSS nesting for better maintainability
+ * - Cascade layers for explicit control
+ * - Logical properties for i18n support
  */
 
 @layer components {
@@ -9,10 +14,9 @@
     @apply text-white px-8 py-8 rounded-2xl text-center font-semibold;
     @apply my-12 shadow-2xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02];
     background-image: linear-gradient(to right, var(--color-accent, #06b6d4), var(--color-primary, #4f46e5));
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .blog-gradient-banner {
+    
+    /* Nested dark mode styles */
+    @media (prefers-color-scheme: dark) {
       background-image: linear-gradient(to right, var(--color-accent-light, #22d3ee), var(--color-primary-light, #6366f1));
     }
   }
@@ -22,34 +26,29 @@
     @apply rounded-xl p-6 my-10 backdrop-blur-sm;
     @apply shadow-sm hover:shadow-md transition-shadow duration-200;
     background-color: rgb(6 182 212 / 0.05);
-    border-left: 4px solid var(--color-accent, #06b6d4);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .blog-callout {
+    border-inline-start: 4px solid var(--color-accent, #06b6d4);
+    
+    @media (prefers-color-scheme: dark) {
       background-color: rgb(34 211 238 / 0.1);
     }
   }
 
   .blog-callout-warning {
     @apply bg-amber-500/10 dark:bg-amber-500/10 border-2 border-amber-500/50 dark:border-amber-500/50;
-    @apply rounded-xl p-6 my-10;
-    @apply shadow-sm;
+    @apply rounded-xl p-6 my-10 shadow-sm;
   }
 
   .blog-callout-success {
-    @apply bg-green-500/5 dark:bg-green-500/10 border-l-4 border-green-500;
-    @apply rounded-xl p-6 my-10;
+    @apply bg-green-500/5 dark:bg-green-500/10 rounded-xl p-6 my-10;
+    border-inline-start: 4px solid var(--color-success, #22c55e);
   }
 
   .blog-callout-gradient {
     @apply rounded-2xl p-8 my-10 shadow-xl;
     background-image: linear-gradient(to bottom right, rgb(6 182 212 / 0.1), rgb(79 70 229 / 0.1), rgb(6 182 212 / 0.1));
     border: 2px solid rgb(6 182 212 / 0.4);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .blog-callout-gradient {
+    
+    @media (prefers-color-scheme: dark) {
       background-image: linear-gradient(to bottom right, rgb(34 211 238 / 0.1), rgb(99 102 241 / 0.1), rgb(34 211 238 / 0.1));
       border-color: rgb(34 211 238 / 0.4);
     }
@@ -60,17 +59,14 @@
     @apply bg-gradient-to-br from-white/10 to-white/5 dark:from-white/5 dark:to-white/3;
     @apply border border-gray-300/30 dark:border-gray-700/30;
     @apply rounded-2xl p-8 transition-all duration-300;
-    @apply hover:shadow-xl hover:scale-[1.02];
-    @apply backdrop-blur-sm;
-  }
-  
-  .blog-card:hover {
-    border-color: rgb(6 182 212 / 0.5);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .blog-card:hover {
-      border-color: rgb(34 211 238 / 0.3);
+    @apply hover:shadow-xl hover:scale-[1.02] backdrop-blur-sm;
+    
+    &:hover {
+      border-color: rgb(6 182 212 / 0.5);
+      
+      @media (prefers-color-scheme: dark) {
+        border-color: rgb(34 211 238 / 0.3);
+      }
     }
   }
 
@@ -82,20 +78,20 @@
 
   /* Step cards with vibrant gradients */
   .blog-step-card {
-    @apply rounded-2xl p-8 my-10 relative border-l-[6px];
-    @apply shadow-lg transition-all duration-300 hover:shadow-xl;
+    @apply rounded-2xl p-8 my-10 relative shadow-lg;
+    @apply transition-all duration-300 hover:shadow-xl;
+    border-inline-start-width: 6px;
   }
 
   .blog-step-badge {
-    @apply w-12 h-12 rounded-full flex items-center justify-center font-bold mb-6 text-white text-lg;
-    @apply shadow-lg ring-4 ring-white/20;
+    @apply w-12 h-12 rounded-full flex items-center justify-center;
+    @apply font-bold mb-6 text-white text-lg shadow-lg ring-4 ring-white/20;
   }
 
   /* Result boxes */
   .blog-result {
     @apply bg-gradient-to-r from-white/10 to-white/5 dark:from-white/8 dark:to-white/3;
-    @apply border rounded-xl p-5 mt-6;
-    @apply shadow-sm backdrop-blur-sm;
+    @apply border rounded-xl p-5 mt-6 shadow-sm backdrop-blur-sm;
   }
 
   /* Grid layouts */
@@ -470,5 +466,82 @@
       opacity: 0.8;
     }
   }
+  
+  /* ---------- Modern :has() Selector Enhancements ---------- */
+  
+  /* Blog post with code blocks - add indicator */
+  .blog-post:has(pre),
+  article:has(code) {
+    &::before {
+      content: '💻 Contains code examples';
+      display: inline-block;
+      padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+      margin-block-end: var(--space-4, 1rem);
+      background: var(--color-accent-subtle, color-mix(in oklch, var(--color-accent) 10%, transparent));
+      color: var(--color-accent, #06b6d4);
+      border-radius: var(--radius-sm, 0.125rem);
+      font-size: var(--fs-sm, 0.875rem);
+      font-weight: var(--fw-medium, 500);
+    }
+  }
+  
+  /* Cards with images - adjust layout */
+  .blog-card:has(img) {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: var(--space-4, 1rem);
+  }
+  
+  /* Interactive elements - show focus indicator on parent */
+  .blog-card:has(a:focus-visible),
+  .project-card:has(button:focus-visible) {
+    outline: 2px solid var(--focus-ring-color, var(--color-primary));
+    outline-offset: 2px;
+  }
+  
+  /* Form sections with errors */
+  .contact-form:has(.error) {
+    .submit-button {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 }
 
+
+/* ---------- Interactive Card Effects (@property animations) ---------- */
+.card-interactive {
+  transform: scale(var(--scale-factor, 1));
+  transition: 
+    --scale-factor 0.2s ease-out,
+    box-shadow 0.2s ease-out;
+}
+
+.card-interactive:hover {
+  --scale-factor: 1.02;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Card with color shift on hover */
+.card-color-shift {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  transition: 
+    --color-surface 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.card-color-shift:hover {
+  --color-surface: color-mix(in oklch, var(--color-primary) 5%, var(--color-surface));
+  border-color: var(--color-primary);
+}
+
+/* Button with smooth color morph */
+.btn-morph {
+  background: var(--color-primary);
+  transition: --color-primary 0.3s ease;
+}
+
+.btn-morph:hover {
+  --color-primary: var(--color-accent);
+}

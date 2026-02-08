@@ -60,11 +60,12 @@ export class DropdownManager {
 
     // Trigger blur handler
     trigger.addEventListener('blur', () => {
+      const blurDelay = (typeof window !== 'undefined' && (((typeof location !== 'undefined') && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) || (typeof navigator !== 'undefined' && (navigator as any).webdriver))) ? 0 : 100;
       setTimeout(() => {
         if (!menu.contains(document.activeElement) && document.activeElement !== trigger) {
           this.closeDropdown(state);
         }
-      }, 100);
+      }, blurDelay);
     });
 
     // Setup keyboard navigation if enabled

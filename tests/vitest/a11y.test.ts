@@ -6,7 +6,7 @@ const enhanceFocusManagement = vi.fn();
 
 // Phase 0 note: This test only validates mocks, offering minimal value.
 // Mark skipped pending rewrite into real accessibility utility tests.
-describe.skip('Accessibility Module (to be refactored)', () => {
+describe('Accessibility Module (to be refactored)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     document.body.innerHTML = '';

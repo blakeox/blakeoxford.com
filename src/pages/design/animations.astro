@@ -1,0 +1,202 @@
+---
+/**
+ * Animations Showcase - @property animation examples
+ * 
+ * Demonstrates advanced CSS animations using @property
+ * custom properties for smooth, type-safe transitions.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/primitives/Container.astro';
+import Section from '../../components/primitives/Section.astro';
+
+const animations = [
+  {
+    name: 'Smooth Theme Transition',
+    description: 'Colors animate smoothly when switching between light and dark modes',
+    class: 'demo-theme-transition',
+    code: `transition: --color-background 0.3s ease;`
+  },
+  {
+    name: 'Rotating Gradient',
+    description: 'Continuous gradient rotation using @property --gradient-angle',
+    class: 'gradient-rotate',
+    code: `animation: rotate-gradient 10s linear infinite;`
+  },
+  {
+    name: 'Interactive Scale',
+    description: 'Smooth scale transform on hover with @property --scale-factor',
+    class: 'scale-hover',
+    code: `transition: --scale-factor 0.2s ease-out;`
+  },
+  {
+    name: 'Color Morph',
+    description: 'Smooth color transitions between states',
+    class: 'color-morph',
+    code: `transition: --color-primary 0.3s ease;`
+  },
+  {
+    name: 'Pulse Scale',
+    description: 'Continuous pulsing scale animation',
+    class: 'pulse-scale',
+    code: `animation: scale-pulse 2s ease-in-out infinite;`
+  }
+];
+---
+
+<BaseLayout
+  title="Animation Showcase - Design System"
+  description="Advanced @property CSS animations for smooth, professional effects"
+>
+  <Section padding="xl">
+    <Container size="xl">
+      <!-- Header -->
+      <div class="mb-16 text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 text-[--fg-strong]">
+          Advanced Animations
+        </h1>
+        <p class="text-xl text-[--fg] max-w-3xl mx-auto">
+          Modern CSS animations using <code class="px-2 py-1 bg-[--surface] rounded font-mono text-[--accent]">@property</code> 
+          for type-safe, smooth transitions and effects.
+        </p>
+      </div>
+
+      <!-- What is @property? -->
+      <div class="mb-16 p-8 bg-[--surface] rounded-xl border border-[--border]">
+        <h2 class="text-2xl font-bold mb-4 text-[--fg-strong]">
+          What is @property?
+        </h2>
+        <p class="text-lg text-[--fg] mb-4">
+          CSS <code class="px-2 py-1 bg-[--bg] rounded font-mono text-[--accent]">@property</code> 
+          enables <strong>type-safe custom properties</strong> that can be animated smoothly.
+        </p>
+        <div class="grid md:grid-cols-3 gap-6 mt-6">
+          <div class="p-4 bg-[--bg] rounded-lg">
+            <div class="text-3xl mb-2">🎨</div>
+            <h3 class="font-semibold mb-2">Type-Safe</h3>
+            <p class="text-sm text-[--fg]">Define syntax (color, angle, number)</p>
+          </div>
+          <div class="p-4 bg-[--bg] rounded-lg">
+            <div class="text-3xl mb-2">⚡</div>
+            <h3 class="font-semibold mb-2">Animatable</h3>
+            <p class="text-sm text-[--fg]">Smooth CSS transitions/animations</p>
+          </div>
+          <div class="p-4 bg-[--bg] rounded-lg">
+            <div class="text-3xl mb-2">🌐</div>
+            <h3 class="font-semibold mb-2">92% Support</h3>
+            <p class="text-sm text-[--fg]">Chrome 85+, Safari 16.4+, Firefox 128+</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Animation Examples -->
+      <div class="space-y-12">
+        {animations.map((anim) => (
+          <article class="space-y-6">
+            <header>
+              <h3 class="text-2xl font-semibold mb-2 text-[--fg-strong]">
+                {anim.name}
+              </h3>
+              <p class="text-[--fg] text-lg">
+                {anim.description}
+              </p>
+            </header>
+
+            <!-- Live Demo -->
+            <div class="p-8 bg-[--surface] rounded-xl border border-[--border]">
+              <div class="flex items-center justify-center min-h-[200px]">
+                {anim.class === 'gradient-rotate' && (
+                  <div class={`${anim.class} w-64 h-64 rounded-2xl flex items-center justify-center text-white font-semibold text-lg shadow-2xl`}>
+                    Rotating Gradient
+                  </div>
+                )}
+                
+                {anim.class === 'scale-hover' && (
+                  <div class={`${anim.class} w-64 h-64 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-semibold text-lg shadow-lg`}>
+                    Hover Me
+                  </div>
+                )}
+                
+                {anim.class === 'color-morph' && (
+                  <button class={`${anim.class} w-64 h-64 rounded-2xl flex items-center justify-center text-white font-semibold text-lg shadow-lg`}>
+                    Hover to Morph
+                  </button>
+                )}
+                
+                {anim.class === 'pulse-scale' && (
+                  <div class={`${anim.class} w-64 h-64 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center text-white font-semibold text-lg shadow-lg`}>
+                    Pulsing
+                  </div>
+                )}
+                
+                {anim.class === 'demo-theme-transition' && (
+                  <div class="text-center">
+                    <p class="text-[--fg] mb-4">Toggle dark mode to see smooth color transitions</p>
+                    <div class="w-64 h-64 rounded-2xl bg-[--surface] border border-[--border] flex items-center justify-center">
+                      <span class="text-[--fg-strong] font-semibold">Theme Transitions</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <!-- Code Example -->
+            <details class="group">
+              <summary class="cursor-pointer px-4 py-3 bg-[--bg] rounded-lg border border-[--border] hover:border-[--accent] transition-colors list-none flex items-center justify-between">
+                <span class="font-mono text-sm">View Code</span>
+                <span class="text-[--fg] group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div class="mt-4 p-4 bg-[--bg] rounded-lg border border-[--border]">
+                <pre class="font-mono text-sm text-[--fg] overflow-x-auto"><code>{anim.code}</code></pre>
+              </div>
+            </details>
+          </article>
+        ))}
+      </div>
+
+      <!-- Registered Properties -->
+      <div class="mt-20 p-8 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl border border-[--border]">
+        <h2 class="text-2xl font-bold mb-6 text-[--fg-strong]">
+          Registered @property Declarations
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="p-4 bg-[--bg] rounded-lg font-mono text-sm">
+            <div class="text-[--accent] mb-2">@property --color-primary</div>
+            <div class="text-[--fg] opacity-70">syntax: "&lt;color&gt;"</div>
+          </div>
+          <div class="p-4 bg-[--bg] rounded-lg font-mono text-sm">
+            <div class="text-[--accent] mb-2">@property --gradient-angle</div>
+            <div class="text-[--fg] opacity-70">syntax: "&lt;angle&gt;"</div>
+          </div>
+          <div class="p-4 bg-[--bg] rounded-lg font-mono text-sm">
+            <div class="text-[--accent] mb-2">@property --scale-factor</div>
+            <div class="text-[--fg] opacity-70">syntax: "&lt;number&gt;"</div>
+          </div>
+          <div class="p-4 bg-[--bg] rounded-lg font-mono text-sm">
+            <div class="text-[--accent] mb-2">@property --opacity-level</div>
+            <div class="text-[--fg] opacity-70">syntax: "&lt;number&gt;"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back to Components -->
+      <div class="mt-12 text-center">
+        <a
+          href="/design/components/"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-[--surface] border border-[--border] rounded-lg hover:border-[--accent] transition-colors"
+        >
+          ← Back to Components
+        </a>
+      </div>
+    </Container>
+  </Section>
+</BaseLayout>
+
+<style>
+  pre {
+    tab-size: 2;
+  }
+  
+  code {
+    white-space: pre-wrap;
+  }
+</style>

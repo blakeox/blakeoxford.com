@@ -40,6 +40,8 @@ interface UseQueryManagementOptions {
 	activeRequestRef: MutableRef<AbortController | null>;
 	/** Reference to scroll container */
 	scrollContainerRef: MutableRef<HTMLDivElement | null>;
+	/** Setter to reveal the "Jump to latest" button when user scrolls away */
+	setShowScrollToLatest?: (show: boolean) => void;
 	/** Function to append assistant message chunk */
 	appendAssistantChunk: (assistantId: string, token: string) => void;
 	/** Function to assign sources to assistant message */
@@ -124,6 +126,7 @@ export function useQueryManagement(
 		activeRequestRef,
 		scrollContainerRef,
 		appendAssistantChunk,
+		setShowScrollToLatest,
 		assignAssistantSources,
 		finalizeAssistantMessage,
 		buildHistoryForRequest,
@@ -189,14 +192,41 @@ export function useQueryManagement(
 				await searchWithAI(enhancedQuery, {
 					history: historyPayload,
 					signal: controller.signal,
-					onToken: (token) => {
-						appendAssistantChunk(assistantId, token);
-						if (scrollContainerRef.current) {
-							scrollContainerRef.current.scrollTo({
-								top: scrollContainerRef.current.scrollHeight,
-							});
-						}
-					},
+						// Throttled token handler: append token, then auto-scroll only when
+						// the user is already near the bottom. If the user has scrolled up,
+						// reveal the Jump-to-latest button instead of forcing the view.
+						onToken: (() => {
+							let lastScrollAt = 0;
+							const THROTTLE_MS = 120;
+							const BOTTOM_THRESHOLD = 120; // px
+
+							return (token: string) => {
+								appendAssistantChunk(assistantId, token);
+								const el = scrollContainerRef.current;
+								if (!el) return;
+
+								const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < BOTTOM_THRESHOLD;
+								const now = Date.now();
+								if (atBottom) {
+									if (now - lastScrollAt > THROTTLE_MS) {
+										lastScrollAt = now;
+										try {
+											el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+										} catch {
+											// fallback to instant
+											el.scrollTop = el.scrollHeight;
+										}
+									}
+								} else {
+									// If available, reveal the Jump-to-latest affordance so user can opt-in
+									try {
+										setShowScrollToLatest?.(true);
+									} catch {
+										// ignore if setter not provided
+									}
+								}
+							};
+						})(),
 					onSources: (sources) => {
 						assignAssistantSources(assistantId, sources);
 						setLoadingPhase('crafting');

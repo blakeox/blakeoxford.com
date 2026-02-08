@@ -1,5 +1,6 @@
 // Simplified Service Worker for basic offline caching
-const CACHE_VERSION = 'v1';
+// Bumped cache version to force clients to refresh cached assets
+const CACHE_VERSION = 'v2';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
 

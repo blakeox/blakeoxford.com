@@ -1,0 +1,182 @@
+---
+/**
+ * UI Patterns - Common layout and interaction patterns
+ * 
+ * Demonstrates reusable UI patterns and composition strategies
+ * used throughout the design system.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/primitives/Container.astro';
+import Section from '../../components/primitives/Section.astro';
+import Stack from '../../components/primitives/Stack.astro';
+import Card from '../../components/composites/Card.astro';
+
+const patterns = [
+  {
+    name: 'Stack Pattern',
+    description: 'Vertical spacing with consistent gaps',
+    category: 'Layout'
+  },
+  {
+    name: 'Container Queries',
+    description: 'Components adapt to container width, not viewport',
+    category: 'Responsive'
+  },
+  {
+    name: ':has() Selectors',
+    description: 'Parent state styling based on child conditions',
+    category: 'Interactive'
+  },
+  {
+    name: 'Glass Morphism',
+    description: 'Frosted glass effect with backdrop blur',
+    category: 'Visual'
+  }
+];
+---
+
+<BaseLayout
+  title="UI Patterns - Design System"
+  description="Common layout and interaction patterns in the design system"
+>
+  <Section padding="xl">
+    <Container size="xl">
+      <!-- Header -->
+      <div class="mb-16 text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 text-[--fg-strong]">
+          UI Patterns
+        </h1>
+        <p class="text-xl text-[--fg] max-w-3xl mx-auto">
+          Reusable layout and interaction patterns for building consistent interfaces.
+        </p>
+      </div>
+
+      <!-- Patterns Grid -->
+      <div class="space-y-16">
+        {patterns.map((pattern) => (
+          <article class="space-y-6">
+            <header>
+              <div class="flex items-center gap-4 mb-2">
+                <h2 class="text-2xl font-semibold text-[--fg-strong]">
+                  {pattern.name}
+                </h2>
+                <span class="px-3 py-1 text-xs font-semibold uppercase tracking-wide bg-[--accent]/10 text-[--accent] rounded-full">
+                  {pattern.category}
+                </span>
+              </div>
+              <p class="text-[--fg] text-lg">
+                {pattern.description}
+              </p>
+            </header>
+
+            <!-- Examples -->
+            <div class="p-8 bg-[--surface] rounded-xl border border-[--border]">
+              {pattern.name === 'Stack Pattern' && (
+                <Stack space="md">
+                  <Card><p>Item 1 - Consistent spacing</p></Card>
+                  <Card><p>Item 2 - No margin management</p></Card>
+                  <Card><p>Item 3 - Clean composition</p></Card>
+                </Stack>
+              )}
+              
+              {pattern.name === 'Container Queries' && (
+                <div class="@container">
+                  <div class="p-4 bg-[--bg] rounded-lg @sm:p-6 @md:p-8">
+                    <p class="text-sm @md:text-base @lg:text-lg">
+                      This text size adapts to the container width, not the viewport.
+                      Resize your browser to see it in action!
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              {pattern.name === ':has() Selectors' && (
+                <div class="space-y-4">
+                  <div class="form-group p-4 bg-[--bg] rounded-lg">
+                    <label class="block mb-2">
+                      Try typing (leave empty for invalid):
+                    </label>
+                    <input 
+                      type="text" 
+                      required 
+                      placeholder="Type here..."
+                      class="w-full px-4 py-2 border border-[--border] rounded-lg"
+                    />
+                  </div>
+                  <p class="text-sm text-[--fg] opacity-70">
+                    The parent gets a colored border based on child input validity.
+                  </p>
+                </div>
+              )}
+              
+              {pattern.name === 'Glass Morphism' && (
+                <div class="relative h-64 bg-gradient-to-br from-primary to-accent rounded-xl overflow-hidden">
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="bg-[--glass-surface] backdrop-blur-[--backdrop-blur] border border-[--glass-border] rounded-xl p-8 shadow-lg">
+                      <p class="text-white font-semibold text-lg">Frosted Glass Effect</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <!-- Code Example -->
+            <details class="group">
+              <summary class="cursor-pointer px-4 py-3 bg-[--bg] rounded-lg border border-[--border] hover:border-[--accent] transition-colors list-none flex items-center justify-between">
+                <span class="font-mono text-sm">View Code</span>
+                <span class="text-[--fg] group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div class="mt-4 p-4 bg-[--bg] rounded-lg border border-[--border] overflow-x-auto">
+                <pre class="font-mono text-sm text-[--fg]"><code>{pattern.name === 'Stack Pattern' ? `<Stack space="md">
+  <Card>Item 1</Card>
+  <Card>Item 2</Card>
+  <Card>Item 3</Card>
+</Stack>` : pattern.name === 'Container Queries' ? `<div class="@container">
+  <div class="@sm:p-6 @md:p-8">
+    Content adapts to container
+  </div>
+</div>` : pattern.name === ':has() Selectors' ? `.form-group:has(input:invalid) {
+  border-left: 3px solid var(--color-error);
+}` : `background: var(--glass-surface);
+backdrop-filter: blur(var(--backdrop-blur));
+border: 1px solid var(--glass-border);`}</code></pre>
+              </div>
+            </details>
+          </article>
+        ))}
+      </div>
+
+      <!-- Navigation -->
+      <div class="mt-20 flex flex-wrap justify-center gap-4">
+        <a
+          href="/design/components/"
+          class="px-6 py-3 bg-[--surface] border border-[--border] rounded-lg hover:border-[--accent] transition-colors"
+        >
+          Components
+        </a>
+        <a
+          href="/design/animations/"
+          class="px-6 py-3 bg-[--surface] border border-[--border] rounded-lg hover:border-[--accent] transition-colors"
+        >
+          Animations
+        </a>
+        <a
+          href="/design/tokens/"
+          class="px-6 py-3 bg-[--surface] border border-[--border] rounded-lg hover:border-[--accent] transition-colors"
+        >
+          Tokens
+        </a>
+      </div>
+    </Container>
+  </Section>
+</BaseLayout>
+
+<style>
+  pre {
+    tab-size: 2;
+  }
+  
+  code {
+    white-space: pre;
+  }
+</style>

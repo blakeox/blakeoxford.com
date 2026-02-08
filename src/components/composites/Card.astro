@@ -4,6 +4,7 @@
  * 
  * An enhanced card component built on BaseCard with additional variants and effects.
  * Provides consistent card styling across the site with interactive hover states.
+ * Supports container queries for responsive design based on parent container.
  * 
  * @example Interactive project card
  * <Card variant="interactive" hover="lift-lg">
@@ -11,13 +12,22 @@
  *   <p>Description...</p>
  * </Card>
  * 
- * @example Glass morphism card
- * <Card variant="glass" padding="lg">
- *   <Stack space="md">
- *     <h3>Title</h3>
- *     <p>Content</p>
- *   </Stack>
- * </Card>
+ * @example Glass morphism card with container queries
+ * <div class="@container">
+ *   <Card variant="glass" padding="lg">
+ *     <Stack space="md">
+ *       <h3>Title</h3>
+ *       <p>Content</p>
+ *     </Stack>
+ *   </Card>
+ * </div>
+ * 
+ * @example Container query responsive layout
+ * <div class="@container">
+ *   <Card class="@sm:flex-row @md:gap-6">
+ *     <div>Content adapts to container size</div>
+ *   </Card>
+ * </div>
  */
 
 import BaseCard from '../primitives/BaseCard.astro';
@@ -35,6 +45,8 @@ interface Props {
   class?: string;
   /** Full height card */
   fullHeight?: boolean;
+  /** Enable container query support */
+  containerQuery?: boolean;
 }
 
 const {
@@ -44,6 +56,7 @@ const {
   as = 'div',
   class: className = '',
   fullHeight = false,
+  containerQuery = false,
   ...rest
 } = Astro.props as Props;
 
@@ -55,7 +68,10 @@ const interactiveClasses = variant === 'interactive'
 // Full height helper
 const heightClasses = fullHeight ? 'h-full flex flex-col' : '';
 
-const combinedClasses = `${interactiveClasses} ${heightClasses} ${className}`.trim();
+// Container query support
+const containerClasses = containerQuery ? '@container' : '';
+
+const combinedClasses = `${interactiveClasses} ${heightClasses} ${containerClasses} ${className}`.trim();
 
 // Map hover effects to BaseCard hover prop
 const hoverMap: Record<string, 'none' | 'lift' | 'scale' | 'glow'> = {

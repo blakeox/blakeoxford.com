@@ -38,3 +38,5 @@ export { ChatStatusIndicators } from './ChatStatusIndicators';
 export { ChatFallbackResults } from './ChatFallbackResults';
 export { ChatNewChatPrompt } from './ChatNewChatPrompt';
 export { ChatLauncher } from './ChatLauncher';
+export { default as TypingIndicator } from './TypingIndicator';
+export { default as ScrollToLatestButton } from './ScrollToLatestButton';

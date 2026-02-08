@@ -1,0 +1,199 @@
+---
+/**
+ * Component Showcase - Interactive component library
+ * 
+ * Live examples of all components in the design system
+ * with code snippets and variant demonstrations.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/primitives/Container.astro';
+import Section from '../../components/primitives/Section.astro';
+import Card from '../../components/composites/Card.astro';
+import FeatureCard from '../../components/composites/FeatureCard.astro';
+import Button from '../../components/primitives/Button.astro';
+import Badge from '../../components/primitives/Badge.astro';
+
+const components = [
+  {
+    category: 'Primitives',
+    items: [
+      {
+        name: 'Button',
+        description: 'Primary interactive element',
+        variants: ['primary', 'secondary', 'outline', 'ghost']
+      },
+      {
+        name: 'Badge',
+        description: 'Status and tag indicators',
+        variants: ['default', 'primary', 'accent', 'success', 'error']
+      },
+      {
+        name: 'Container',
+        description: 'Width-constrained wrapper',
+        variants: ['sm', 'md', 'lg', 'xl', 'full']
+      }
+    ]
+  },
+  {
+    category: 'Composites',
+    items: [
+      {
+        name: 'Card',
+        description: 'Content container with optional interactivity',
+        variants: ['default', 'hover', 'interactive', 'gradient']
+      },
+      {
+        name: 'FeatureCard',
+        description: 'Highlighted feature showcase',
+        variants: ['default', 'accent', 'primary']
+      }
+    ]
+  }
+];
+---
+
+<BaseLayout
+  title="Component Showcase - Design System"
+  description="Interactive component library for the Blake Oxford design system"
+>
+  <Section padding="xl">
+    <Container size="xl">
+      <!-- Header -->
+      <div class="mb-16 text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 text-[--fg-strong]">
+          Component Library
+        </h1>
+        <p class="text-xl text-[--fg] max-w-3xl mx-auto">
+          Explore all components in the design system with live examples and code snippets.
+        </p>
+      </div>
+
+      <!-- Quick Navigation -->
+      <nav class="mb-12 flex flex-wrap justify-center gap-4" aria-label="Component categories">
+        {components.map(cat => (
+          <a
+            href={`#${cat.category.toLowerCase()}`}
+            class="px-4 py-2 rounded-lg bg-[--surface] border border-[--border] hover:border-[--accent] transition-colors"
+          >
+            {cat.category}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Components by Category -->
+      {components.map((category) => (
+        <section id={category.category.toLowerCase()} class="mb-20">
+          <h2 class="text-3xl font-bold mb-8 text-[--fg-strong] border-b border-[--border] pb-4">
+            {category.category}
+          </h2>
+          
+          <div class="space-y-16">
+            {category.items.map((component) => (
+              <article class="space-y-6">
+                <header>
+                  <h3 class="text-2xl font-semibold mb-2 text-[--fg-strong]">
+                    {component.name}
+                  </h3>
+                  <p class="text-[--fg] text-lg">
+                    {component.description}
+                  </p>
+                </header>
+
+                <!-- Live Examples -->
+                <div class="p-8 bg-[--surface] rounded-xl border border-[--border]">
+                  <h4 class="text-sm font-semibold uppercase tracking-wide text-[--fg] mb-6">
+                    Live Examples
+                  </h4>
+                  
+                  {component.name === 'Button' && (
+                    <div class="flex flex-wrap gap-4">
+                      <Button variant="primary">Primary</Button>
+                      <Button variant="secondary">Secondary</Button>
+                      <Button variant="outline">Outline</Button>
+                      <Button variant="ghost">Ghost</Button>
+                    </div>
+                  )}
+                  
+                  {component.name === 'Badge' && (
+                    <div class="flex flex-wrap gap-3">
+                      <Badge>Default</Badge>
+                      <Badge variant="primary">Primary</Badge>
+                      <Badge variant="accent">Accent</Badge>
+                      <Badge variant="success">Success</Badge>
+                      <Badge variant="error">Error</Badge>
+                    </div>
+                  )}
+                  
+                  {component.name === 'Card' && (
+                    <div class="grid sm:grid-cols-2 gap-6">
+                      <Card>
+                        <h4 class="text-lg font-semibold mb-2">Default Card</h4>
+                        <p class="text-[--fg]">Basic card with content</p>
+                      </Card>
+                      <Card class="card-interactive">
+                        <h4 class="text-lg font-semibold mb-2">Interactive Card</h4>
+                        <p class="text-[--fg]">Hover for smooth scale effect</p>
+                      </Card>
+                    </div>
+                  )}
+                  
+                  {component.name === 'FeatureCard' && (
+                    <div class="grid sm:grid-cols-2 gap-6">
+                      <FeatureCard
+                        title="Feature Card"
+                        description="Highlighted feature with gradient background"
+                      />
+                      <FeatureCard
+                        title="With Icon"
+                        description="Card with accent color and icon support"
+                        icon="✨"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <!-- Code Example -->
+                <details class="group">
+                  <summary class="cursor-pointer px-4 py-3 bg-[--bg] rounded-lg border border-[--border] hover:border-[--accent] transition-colors list-none flex items-center justify-between">
+                    <span class="font-mono text-sm">View Code</span>
+                    <span class="text-[--fg] group-open:rotate-180 transition-transform">▼</span>
+                  </summary>
+                  <div class="mt-4 p-4 bg-[--bg] rounded-lg border border-[--border]">
+                    <pre class="font-mono text-sm text-[--fg] overflow-x-auto"><code>{`<${component.name} variant="${component.variants[0]}">${component.name}</${component.name}>`}</code></pre>
+                  </div>
+                </details>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      <!-- Animation Examples Link -->
+      <div class="mt-20 p-8 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl border border-[--border] text-center">
+        <h2 class="text-2xl font-bold mb-4 text-[--fg-strong]">
+          Want to see animations?
+        </h2>
+        <p class="text-lg text-[--fg] mb-6 max-w-2xl mx-auto">
+          Check out the advanced @property animations and interactive effects
+        </p>
+        <a
+          href="/design/animations/"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-[--accent] text-white font-semibold rounded-lg hover:bg-[--accent-dark] transition-colors"
+        >
+          View Animations →
+        </a>
+      </div>
+    </Container>
+  </Section>
+</BaseLayout>
+
+<style>
+  pre {
+    tab-size: 2;
+  }
+  
+  code {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+</style>

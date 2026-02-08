@@ -31,7 +31,7 @@ const { slug, data } = project;
       )}
     </h2>
     {data.date && (
-      <time class="text-xs text-gray-500 dark:text-gray-400 mb-1" datetime={data.date.toISOString()}>{data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+      <time class="text-xs text-foreground/70 dark:text-foreground-light/70 mb-1" datetime={data.date.toISOString()}>{data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
     )}
     {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
       <ul class="flex flex-wrap gap-2 mb-1" aria-label="Project tags">
@@ -41,7 +41,7 @@ const { slug, data } = project;
       </ul>
     )}
     {data.description && (
-      <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-4">
+      <p class="text-foreground/85 dark:text-foreground-light/85 mb-4 line-clamp-4">
         {data.description.length > 220 ? `${data.description.slice(0, 217)}...` : data.description}
         {data.description.length > 220 && (
           <a href={`/projects/${slug}/`} class="ml-1 text-accent dark:text-accent-light underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">

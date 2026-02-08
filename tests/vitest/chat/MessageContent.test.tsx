@@ -136,7 +136,7 @@ expect(screen.getByText('Assistant is responding')).toBeInTheDocument();
 
 		const srOnlyText = screen.getByText('Assistant is responding');
 		const liveRegion = srOnlyText.closest('[aria-live]');
-		expect(liveRegion).toHaveAttribute('aria-live', 'assertive');
+		expect(liveRegion).toHaveAttribute('aria-live', 'polite');
 	});
 });
 
