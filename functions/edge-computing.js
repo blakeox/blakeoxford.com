@@ -1316,6 +1316,36 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
         finalResponse = new Response(forReturn, { status: finalResponse.status, statusText: finalResponse.statusText, headers: finalResponse.headers });
       }
 
+      // Personalize HTML based on 'theme' cookie (if present)
+      try {
+        const cookieHeader = request.headers.get('cookie') || '';
+        const m = cookieHeader.match(/(^|;\s*)theme=([^;]+)/);
+        if (m && m[2]) {
+          const themeCookie = decodeURIComponent(m[2]);
+          const contentType = finalResponse.headers.get('content-type') || '';
+          if (contentType.includes('text/html')) {
+            let html = await finalResponse.text();
+            html = html.replace(/<html([^>]*)>/i, (full, attrs) => {
+              let newAttrs = attrs || '';
+              if (!/data-theme=/.test(newAttrs)) newAttrs += ` data-theme="${themeCookie}"`;
+              if (/class=(\"|\')(.*?)\1/.test(newAttrs)) {
+                newAttrs = newAttrs.replace(/class=(\"|\')(.*?)\1/, (cm, q, cls) => {
+                  const clsList = cls.split(/\s+/).filter(Boolean);
+                  if (themeCookie === 'dark' && !clsList.includes('dark')) clsList.push('dark');
+                  return `class=${q}${clsList.join(' ')}${q}`;
+                });
+              } else {
+                if (themeCookie === 'dark') newAttrs += ' class="dark"';
+              }
+              return `<html${newAttrs}>`;
+            });
+            const newHeaders = new Headers(finalResponse.headers);
+            newHeaders.delete('content-length');
+            finalResponse = new Response(html, { status: finalResponse.status, statusText: finalResponse.statusText, headers: newHeaders });
+          }
+        }
+      } catch (e) { /* noop personalization */ }
+
       // Edge analytics disabled
       try {
         const h = new Headers(finalResponse.headers);

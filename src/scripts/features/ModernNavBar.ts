@@ -54,6 +54,7 @@ function setTheme(nextTheme: 'light' | 'dark') {
     }
   } catch (e) {}
   localStorage.setItem('theme', nextTheme);
+  try { document.cookie = 'theme=' + encodeURIComponent(nextTheme) + '; Path=/; Max-Age=' + (60*60*24*365) + '; SameSite=Lax'; } catch (e) {}
 }
 
 function updateThemeButton(button: HTMLButtonElement | null, theme: 'light' | 'dark') {
