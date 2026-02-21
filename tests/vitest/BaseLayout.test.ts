@@ -15,7 +15,7 @@ describe('BaseLayout.astro file', () => {
 
   it('should include NavBar and Footer components', () => {
     expect(content).toContain('<NavBar />');
-    expect(content).toContain('<Footer />');
+    expect(content).toMatch(/<Footer\b/);
   });
 
   it('should have meta description and viewport meta tags', () => {
