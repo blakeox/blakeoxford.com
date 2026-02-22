@@ -20,7 +20,7 @@ const {
   wide = false,
   keywords = '',
   image, // Optional OG image override
-  structuredData = [], // Optional additional structured data schemas (default to empty array)
+  // structuredData, // Optional additional structured data schemas (unused)
 } = Astro.props;
 
 // Sanitize description: remove extra whitespace, replace Unicode with ASCII for Lighthouse compatibility
@@ -310,7 +310,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
               'https://github.com/blakeox'
             ]
           },
-          ...(structuredData ? structuredData : [])
+          ...(Astro.props && Astro.props.structuredData ? Astro.props.structuredData : [])
         ]
       })}
     </script>
