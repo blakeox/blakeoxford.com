@@ -454,7 +454,7 @@ export class EnhancedSearchOverlay {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <h3>No results found for "${query}"</h3>
+          <h3>No results found for "${this.escapeHtml(query)}"</h3>
           <p>Try different keywords or browse categories</p>
         </div>
       `;
@@ -526,11 +526,25 @@ export class EnhancedSearchOverlay {
     }
   }
 
+  private escapeHtml(text: string): string {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   private highlightMatches(text: string, query: string): string {
-    if (!query || query.length < 2) return text;
-    
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    return text.replace(regex, '<mark>$1</mark>');
+    const safeText = text ?? '';
+    if (!query || query.length < 2) return this.escapeHtml(safeText);
+
+    const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const parts = safeText.split(new RegExp(`(${safeQuery})`, 'ig'));
+
+    return parts.map((part, idx) => (
+      idx % 2 === 1 ? `<mark>${this.escapeHtml(part)}</mark>` : this.escapeHtml(part)
+    )).join('');
   }
 
   private addResultClickHandlers() {

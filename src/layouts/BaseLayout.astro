@@ -20,7 +20,7 @@ const {
   wide = false,
   keywords = '',
   image, // Optional OG image override
-  // structuredData, // Optional additional structured data schemas (unused)
+  structuredData = [], // Optional additional structured data schemas (default to empty array)
 } = Astro.props;
 
 // Sanitize description: remove extra whitespace, replace Unicode with ASCII for Lighthouse compatibility
