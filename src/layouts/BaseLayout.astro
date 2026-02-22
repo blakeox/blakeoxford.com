@@ -593,7 +593,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
           if (isTestEnv) {
               try {
                 // Expose test helpers for programmatic control from Playwright.
-                (window as any).enhancedSearchOverlay = (window as any).enhancedSearchOverlay || {
+                window.enhancedSearchOverlay = window.enhancedSearchOverlay || {
                   openSearchOverlay: function () {
                     try {
                       var el = document.getElementById('search-overlay');
@@ -606,10 +606,11 @@ const mainClasses = `${baseMainClasses} pt-24`;
                       el.removeAttribute('inert');
                       el.setAttribute('aria-hidden', 'false');
                       var inputEl = el.querySelector('#search-input');
-                      if (inputEl) try { (inputEl as HTMLElement).focus(); } catch (e) {}; if (inputEl) (inputEl as HTMLElement).setAttribute('aria-expanded', 'true');
+                      if (inputEl) try { inputEl.focus && inputEl.focus(); } catch (e) {};
+                      if (inputEl) try { inputEl.setAttribute && inputEl.setAttribute('aria-expanded', 'true'); } catch (e) {}
                       var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
-                      results.forEach(function (r) { (r as HTMLElement).style.display = 'block'; (r as HTMLElement).style.visibility = 'visible'; (r as HTMLElement).style.opacity = '1'; });
-                      try { el.dataset.ready = 'true'; (window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch (e) {}
+                      results.forEach(function (r) { try { r.style.display = 'block'; r.style.visibility = 'visible'; r.style.opacity = '1'; } catch (e) {} });
+                      try { el.dataset.ready = 'true'; window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch (e) {}
                     } catch (e) { /* noop */ }
                   },
                   closeSearchOverlay: function () {
@@ -624,17 +625,17 @@ const mainClasses = `${baseMainClasses} pt-24`;
                       el.style.visibility = 'hidden';
                       el.style.display = 'none';
                       var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
-                      results.forEach(function (r) { (r as HTMLElement).style.display = 'none'; (r as HTMLElement).style.visibility = 'hidden'; (r as HTMLElement).style.opacity = '0'; });
-                      var inputEl = el.querySelector('#search-input'); if (inputEl) (inputEl as HTMLElement).setAttribute('aria-expanded', 'false');
+                      results.forEach(function (r) { try { r.style.display = 'none'; r.style.visibility = 'hidden'; r.style.opacity = '0'; } catch (e) {} });
+                      var inputEl = el.querySelector('#search-input'); if (inputEl) try { inputEl.setAttribute && inputEl.setAttribute('aria-expanded', 'false'); } catch (e) {}
                       try { el.dataset.ready = 'false'; } catch (e) {}
                     } catch (e) { /* noop */ }
                   }
                 };
-                (window as any).searchOverlay = (window as any).searchOverlay || (window as any).enhancedSearchOverlay;
+                window.searchOverlay = window.searchOverlay || window.enhancedSearchOverlay;
                 // Provide a minimal TestSearchOverlay shim so any code that monkeypatches the prototype works
-                (window as any).TestSearchOverlay = (window as any).TestSearchOverlay || function () {};
-                (window as any).TestSearchOverlay.prototype.open = function () { (window as any).enhancedSearchOverlay.openSearchOverlay(); };
-                (window as any).TestSearchOverlay.prototype.close = function () { (window as any).enhancedSearchOverlay.closeSearchOverlay(); };
+                window.TestSearchOverlay = window.TestSearchOverlay || function () {};
+                window.TestSearchOverlay.prototype.open = function () { window.enhancedSearchOverlay.openSearchOverlay(); };
+                window.TestSearchOverlay.prototype.close = function () { window.enhancedSearchOverlay.closeSearchOverlay(); };
               } catch (e) { /* noop */ }
             }
           if (typeof window.TestSearchOverlay === 'function') {
