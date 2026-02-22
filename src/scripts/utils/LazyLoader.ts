@@ -188,7 +188,7 @@ export class LazyBundleLoader {
         this.log(`Attempt ${attempt}/${options.retryAttempts} failed for ${name}:`, error);
         
         if (attempt === options.retryAttempts) {
-          throw new Error(`Failed to load ${name} after ${options.retryAttempts} attempts`);
+          throw new Error(`Failed to load ${name} after ${options.retryAttempts} attempts`, { cause: error });
         }
         
         // Wait before retrying

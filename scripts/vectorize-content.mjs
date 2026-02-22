@@ -200,7 +200,7 @@ async function generateEmbedding(text, token) {
     const result = await response.json();
     return result.result.data[0]; // Returns 768-dimensional vector
   } catch (error) {
-    throw new Error(`Embedding generation failed: ${error.message}`);
+    throw new Error(`Embedding generation failed: ${error.message}`, { cause: error });
   }
 }
 

@@ -181,7 +181,7 @@ async function runBuildOptimization() {
       output: result.slice(-300)
     };
   } catch (error) {
-    throw new Error(`Build failed: ${error.message}`);
+    throw new Error(`Build failed: ${error.message}`, { cause: error });
   }
 }
 
