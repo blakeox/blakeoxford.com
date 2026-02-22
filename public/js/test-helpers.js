@@ -1,4 +1,4 @@
-/* eslint-env browser */
+/* global location, navigator, document, window */
 (function(){
   try {
     var isTestEnv = (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) || (typeof navigator !== 'undefined' && navigator.webdriver);
