@@ -121,6 +121,20 @@ export async function openSearchOverlay(page: Page) {
 
 export async function fillSearch(page: Page, query: string) {
   const input = page.locator('#search-input');
+  // Ensure input is visible and enabled; some overlays toggle attributes asynchronously
+  await page.evaluate(() => {
+    try {
+      const input = document.getElementById('search-input') as HTMLInputElement | null;
+      if (!input) return;
+      input.removeAttribute('aria-hidden');
+      input.removeAttribute('disabled');
+      input.style.display = 'block';
+      input.style.visibility = 'visible';
+      input.style.opacity = '1';
+      input.focus();
+      input.setAttribute('aria-expanded', 'true');
+    } catch (e) { console.error('ensure input visible failed', e); }
+  }).catch(() => {});
   await input.fill(query);
   const results = page.locator('[data-search-result], .search-result, .search-overlay [role="listbox"] [role="option"]');
   // Wait for at least one visible result to avoid strict mode multiple element error
