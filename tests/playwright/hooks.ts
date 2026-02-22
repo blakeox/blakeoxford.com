@@ -23,7 +23,7 @@ test.beforeEach(async ({ page }) => {
             });
             try { (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE.push({ level, args: serialized, ts: Date.now() }); } catch  { void 0; }
           } catch  { void 0; }
-          try { orig && orig.apply && orig.apply(console, args); } catch  { void 0; }
+          try { if (orig && orig.apply) { orig.apply(console, args); } } catch  { void 0; }
         };
       };
       ['log','warn','error','info','debug'].forEach(wrapConsole as any);

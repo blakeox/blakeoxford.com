@@ -96,7 +96,7 @@ class MockSearchOverlay {
       return [];
     }
     
-    let results: unknown[] = [];
+    let results: unknown[];
     if (this.fuse && 'search' in (this.fuse as object)) {
       results = (this.fuse as { search: (q: string) => unknown[] }).search(query);
     } else {

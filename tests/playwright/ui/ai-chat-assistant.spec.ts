@@ -32,14 +32,14 @@ test.describe('AI chat assistant', () => {
           onmessage: ((e: { data: any }) => void) | null = null;
           onerror: ((e?: any) => void) | null = null;
           onclose: ((e?: any) => void) | null = null;
-          _listeners: Record<string, Function[]> = {};
+          _listeners: Record<string, ((payload?: any) => void)[]> = {};
           constructor(url: string) {
             this.url = url;
             this.readyState = 0; // CONNECTING
             // simulate async open
             setTimeout(() => {
               this.readyState = 1; // OPEN
-              try { this.onopen && this.onopen({}); } catch { /* noop */ }
+              try { if (this.onopen) { this.onopen({}); } } catch { /* noop */ }
               this.dispatchEvent('open', {});
             }, 10);
           }
@@ -50,20 +50,20 @@ test.describe('AI chat assistant', () => {
               const msg = typeof data === 'string' ? data : JSON.stringify(data);
               // For diagnostics, send back a simple acknowledgment
               setTimeout(() => {
-                this.onmessage && this.onmessage({ data: JSON.stringify({ type: 'ack', payload: msg }) });
+                if (this.onmessage) { this.onmessage({ data: JSON.stringify({ type: 'ack', payload: msg }) }); }
                 this.dispatchEvent('message', { data: JSON.stringify({ type: 'ack', payload: msg }) });
               }, 20);
             } catch { /* noop */ }
           }
           close(code?: number, reason?: string) {
             this.readyState = 3; // CLOSED
-            try { this.onclose && this.onclose({ code, reason }); } catch { /* noop */ }
+            try { if (this.onclose) { this.onclose({ code, reason }); } } catch { /* noop */ }
             this.dispatchEvent('close', { code, reason });
           }
-          addEventListener(event: string, fn: Function) {
+          addEventListener(event: string, fn: (payload?: any) => void) {
             (this._listeners[event] ||= []).push(fn);
           }
-          removeEventListener(event: string, fn: Function) {
+          removeEventListener(event: string, fn: (payload?: any) => void) {
             const arr = this._listeners[event] || [];
             this._listeners[event] = arr.filter((f) => f !== fn);
           }
@@ -74,7 +74,7 @@ test.describe('AI chat assistant', () => {
             }
           }
         }
-        // @ts-ignore
+        // @ts-expect-error - intentional stub for WebSocket in Playwright tests
         (window as any).WebSocket = FakeWebSocket;
       }
       try { makeStub(); } catch { /* noop */ }

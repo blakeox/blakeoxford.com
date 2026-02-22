@@ -151,7 +151,7 @@ describe('PhotoCarousel Component', () => {
 
   describe('Timer Operations', () => {
     it('should handle timer creation and cleanup', () => {
-      let timerId: unknown = null;
+      let timerId: number | null;
       
       timerId = global.setInterval(() => {
         // Timer callback

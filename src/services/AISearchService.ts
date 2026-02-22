@@ -251,7 +251,7 @@ export class AISearchService {
 							try {
 								parsed = JSON.parse(candidate);
 							} catch (e1) {
-								const cleaned = dataPayload.replace(/event:\s*[^\r\n]+/gi, '').replace(/^[^{\[]*/s, '').trim();
+								const cleaned = dataPayload.replace(/event:\s*[^\r\n]+/gi, '').replace(/^[^{[]*/s, '').trim();
 								if (cleaned && (cleaned.startsWith('{') || cleaned.startsWith('['))) {
 									try { parsed = JSON.parse(cleaned); } catch (e2) { /* leave null */ }
 								}
