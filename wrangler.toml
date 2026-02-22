@@ -63,7 +63,7 @@ script_name = "blakeoxford-com"
 # Public variables (not sensitive)
 # Add ENVIRONMENT variable for Sentry context
 # ENVIRONMENT = "production"
-AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/autorag/rags/bold-heart-18e4/ai-search"
+# AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/autorag/rags/bold-heart-18e4/ai-search"  # disabled for CI deploy without ai-search scopes
 
 # Phase 2: AI Gateway (optional - uncomment when gateway is created)
 # AI_GATEWAY_ID = "blakeoxford-ai-gateway"
@@ -77,10 +77,10 @@ binding = "AI_ANALYTICS"
 [ai]
 binding = "AI"
 
-# Vectorize for semantic search (blog posts & projects)
-[[vectorize]]
-binding = "VECTORIZE"
-index_name = "blakeoxford-content"
+# Vectorize for semantic search (blog posts & projects) - temporarily disabled due to missing ai-search OAuth scopes
+# [[vectorize]]
+# binding = "VECTORIZE"
+# index_name = "blakeoxford-content"
 
 # Durable Objects migrations
 [[migrations]]
