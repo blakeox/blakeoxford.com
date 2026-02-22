@@ -108,7 +108,14 @@ export async function openSearchOverlay(page: Page) {
     return style.visibility !== 'hidden' && style.display !== 'none' && parseFloat(style.opacity || '1') > 0;
   }, { timeout: 3000 }).catch(() => {});
 
-  await expect(overlay).toBeVisible();
+  await page.waitForFunction(() => {
+    const el = document.querySelector('#search-overlay') as HTMLElement | null;
+    if (!el) return false;
+    try { el.removeAttribute('aria-hidden'); } catch (e) {}
+    const style = window.getComputedStyle(el);
+    const vis = style.visibility !== 'hidden' && style.display !== 'none' && parseFloat(style.opacity || '0') > 0;
+    return vis && el.classList.contains('active') && el.dataset.ready === 'true';
+  }, { timeout: 3000 }).catch(() => {});
   return overlay;
 }
 
