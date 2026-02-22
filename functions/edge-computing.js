@@ -1384,6 +1384,10 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
               return `<html${newAttrs}>`;
             });
             const newHeaders = new Headers(finalResponse.headers);
+            // Mark personalized responses as private and vary on Cookie to prevent CDN cache leakage
+            const existingVary = newHeaders.get('vary');
+            newHeaders.set('vary', existingVary ? `${existingVary}, Cookie` : 'Cookie');
+            newHeaders.set('cache-control', 'private, max-age=0, must-revalidate');
             newHeaders.delete('content-length');
             finalResponse = new Response(html, { status: finalResponse.status, statusText: finalResponse.statusText, headers: newHeaders });
           }

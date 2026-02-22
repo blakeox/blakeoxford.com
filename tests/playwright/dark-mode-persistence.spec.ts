@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Dark mode persistence', () => {
-  test('persists theme across navigation and reloads', async ({ page }) => {
+  test('persists theme across navigation and reloads @essential', async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('#theme-toggle');
 
