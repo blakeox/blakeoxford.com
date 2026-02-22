@@ -23,7 +23,7 @@ export async function openSearchOverlay(page: Page) {
     try { return !!(window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED || !!(window as any).enhancedSearchOverlay?.openSearchOverlay; } catch (e) { return false; }
   }, { timeout: 2000 }).catch(() => false as const);
   if (helperAvailable) {
-    await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.openSearchOverlay?.(); } catch (e) { /* noop */ } });
+    await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.openSearchOverlay?.(); } catch { /* noop */ } });
   }
 
   // Wait for overlay activation (class + style + inert removed)
@@ -44,7 +44,7 @@ export async function openSearchOverlay(page: Page) {
     }, { timeout: 500 }).catch(() => false as const);
 
     if (usedHelper) {
-      await page.evaluate(() => { try { (window as any).enhancedSearchOverlay.openSearchOverlay(); } catch (e) { /* noop */ } });
+      await page.evaluate(() => { try { (window as any).enhancedSearchOverlay.openSearchOverlay(); } catch { /* noop */ } });
     } else {
       // Avoid long synchronous page.evaluate calls that can hang if the page is unstable; split into guarded steps
       const hasOverlay = await page.evaluate(() => !!document.getElementById('search-overlay'));

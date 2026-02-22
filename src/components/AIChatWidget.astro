@@ -77,9 +77,7 @@ import ChatLauncherIsland from './islands/ChatLauncherIsland';
               } catch (e) {
                 try {
                   composer.focus();
-                } catch (e) {
-                  /* noop */
-                }
+                } catch { /* noop */ }
               }
               if (document.activeElement === composer) {
                 panel.setAttribute('data-ai-chat-focused', 'true');

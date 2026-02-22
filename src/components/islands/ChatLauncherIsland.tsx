@@ -11,7 +11,7 @@ export default function ChatLauncherIsland() {
         try {
             // Signal that the hydrated launcher is present so the inline fallback avoids registering.
             // This prevents duplicate listeners and keeps toggle behavior deterministic.
-            try { (window as any).__ai_chat_hydrated = true; } catch (e) { /* noop */ }
+            try { (window as any).__ai_chat_hydrated = true; } catch { /* noop */ }
         } catch (err) { /* noop */ }
         try {
             const launcher = document.querySelector('.ai-chat-launcher');
@@ -34,18 +34,18 @@ export default function ChatLauncherIsland() {
                         if (composer && typeof composer.focus === 'function') {
                         // Blur launcher then attempt multiple focus tries to ensure composer
                         // becomes document.activeElement in test environments.
-                        try { (launcher as HTMLElement).blur(); } catch (e) { /* noop */ }
+                        try { (launcher as HTMLElement).blur(); } catch { /* noop */ }
 
                         const attempts = [0, 10, 50, 150];
                         attempts.forEach((delay) => {
                             setTimeout(() => {
-                                try { composer.focus(); } catch (e) { /* noop */ }
-                                try { composer.dispatchEvent(new Event('focus', { bubbles: true })); } catch (e) { /* noop */ }
-                                try { composer.dispatchEvent(new Event('focusin', { bubbles: true })); } catch (e) { /* noop */ }
+                                try { composer.focus(); } catch { /* noop */ }
+                                try { composer.dispatchEvent(new Event('focus', { bubbles: true })); } catch { /* noop */ }
+                                try { composer.dispatchEvent(new Event('focusin', { bubbles: true })); } catch { /* noop */ }
                             }, delay);
                         });
                         // Also try on next animation frame.
-                        try { requestAnimationFrame(() => { try { composer.focus(); } catch (e) { /* noop */ } }); } catch (e) { /* noop */ }
+                        try { requestAnimationFrame(() => { try { composer.focus(); } catch { /* noop */ } }); } catch { /* noop */ }
                     }
                 } else {
                     panel!.classList.add('pointer-events-none', 'translate-y-4', 'opacity-0');

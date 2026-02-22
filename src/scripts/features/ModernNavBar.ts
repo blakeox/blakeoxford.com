@@ -67,7 +67,7 @@ function setTheme(nextTheme: 'light' | 'dark') {
         keepalive: true
       }).catch(() => { /* Fail silently */ });
     }
-  } catch (e) { /* noop */ }
+  } catch { /* noop */ }
 }
 
 function updateThemeButton(button: HTMLButtonElement | null, theme: 'light' | 'dark') {

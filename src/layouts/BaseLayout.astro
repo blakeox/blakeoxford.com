@@ -70,12 +70,12 @@ const mainClasses = `${baseMainClasses} pt-24`;
               el.style.opacity = '1';
               el.removeAttribute('inert');
               var inputEl = el.querySelector('#search-input');
-              if (inputEl) try { inputEl.focus(); } catch (e) { /* noop */ }
+              if (inputEl) try { inputEl.focus(); } catch { /* noop */ }
               if (inputEl) inputEl.setAttribute('aria-expanded', 'true');
               var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
               results.forEach(function (r) { r.style.display = 'block'; r.style.visibility = 'visible'; r.style.opacity = '1'; });
-              try { el.dataset.ready = 'true'; window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch (e) { /* noop */ }
-            } catch (e) { /* noop */ }
+              try { el.dataset.ready = 'true'; window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch { /* noop */ }
+            } catch { /* noop */ }
           },
           closeSearchOverlay: function () {
             try {
@@ -91,19 +91,19 @@ const mainClasses = `${baseMainClasses} pt-24`;
               var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
               results.forEach(function (r) { r.style.display = 'none'; r.style.visibility = 'hidden'; r.style.opacity = '0'; });
               var inputEl = el.querySelector('#search-input'); if (inputEl) inputEl.setAttribute('aria-expanded', 'false');
-              try { el.dataset.ready = 'false'; } catch (e) { /* noop */ }
-            } catch (e) { /* noop */ }
+              try { el.dataset.ready = 'false'; } catch { /* noop */ }
+            } catch { /* noop */ }
           }
         };
 
-        try { window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch (e) { /* noop */ }
+        try { window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch { /* noop */ }
 
         // Ensure a theme CSS variable is available early in tests to avoid timing issues
         try {
           var bg = '';
-          try { bg = getComputedStyle(document.documentElement).getPropertyValue('--color-background') || ''; } catch (e) { /* noop */ }
+          try { bg = getComputedStyle(document.documentElement).getPropertyValue('--color-background') || ''; } catch { /* noop */ }
           if (!bg.trim()) { document.documentElement.style.setProperty('--color-background', '#f8fafc'); try { window.__TEST_THEME_PRIMED = true; } catch (e) {} }
-        } catch (e) { /* noop */ }
+        } catch { /* noop */ }
 
         // Additional guard: in some environments the above may run too late; explicitly set flag and token immediately in test env
         try {
@@ -114,7 +114,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
           }
         } catch(e) {}
 
-        try { console.debug && console.debug('early enhancedSearchOverlay injected', { isTestEnv: isTestEnv }); try { window.__TEST_EVENT_LOG.push({event:'early-enhancedSearchOverlay-injected', ts: Date.now()}); } catch(e){} } catch (e) { /* noop */ }
+        try { console.debug && console.debug('early enhancedSearchOverlay injected', { isTestEnv: isTestEnv }); try { window.__TEST_EVENT_LOG.push({event:'early-enhancedSearchOverlay-injected', ts: Date.now()}); } catch(e){} } catch { /* noop */ }
 
         // Canonical, atomic close helper with short-lived lock to prevent late re-opens
         try {
@@ -176,7 +176,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                   } catch (e) {}
                 }, 300);
               })();
-            } catch (e) { /* noop */ }
+            } catch { /* noop */ }
           };
 
           // Override enhancedSearchOverlay.closeSearchOverlay to use canonical ensureOverlayClosed when available
@@ -194,8 +194,8 @@ const mainClasses = `${baseMainClasses} pt-24`;
               };
             }
           } catch (e) {}
-        } catch (e) { /* noop */ }
-      } catch (e) { /* noop */ }
+        } catch { /* noop */ }
+      } catch { /* noop */ }
     })();
   </script>
     <meta charset="UTF-8" />
@@ -212,13 +212,13 @@ const mainClasses = `${baseMainClasses} pt-24`;
         if (!isTestEnv) return;
         try {
           var current = '';
-          try { current = getComputedStyle(document.documentElement).getPropertyValue('--color-background') || ''; } catch (e) { /* noop */ }
+          try { current = getComputedStyle(document.documentElement).getPropertyValue('--color-background') || ''; } catch { /* noop */ }
           if (!current.trim()) {
             document.documentElement.style.setProperty('--color-background', '#ffffff');
             try { window.__TEST_THEME_PRIMED = true; } catch (e) {}
           }
-        } catch (e) { /* noop */ }
-      } catch (e) { /* noop */ }
+        } catch { /* noop */ }
+      } catch { /* noop */ }
     })();
   </script>
 
@@ -326,7 +326,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
     try {
       // Initialize a lightweight test event log early so Playwright traces can include
       // in-page diagnostics for race conditions and early errors.
-      try { window.__TEST_EVENT_LOG = window.__TEST_EVENT_LOG || []; } catch (e) { /* noop */ }
+      try { window.__TEST_EVENT_LOG = window.__TEST_EVENT_LOG || []; } catch { /* noop */ }
       // Capture global errors to the test event log so failing traces include uncaught exceptions
       try {
         window.addEventListener('error', function (ev) {
@@ -335,7 +335,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
         window.addEventListener('unhandledrejection', function (ev) {
           try { window.__TEST_EVENT_LOG.push({ event: 'unhandledrejection', reason: ev && ev.reason && String(ev.reason), ts: Date.now() }); } catch (e) {}
         });
-      } catch (e) { /* noop */ }
+      } catch { /* noop */ }
       var isTestEnv = (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) || (typeof navigator !== 'undefined' && navigator.webdriver);
       if (!isTestEnv) return;
 
@@ -358,7 +358,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
             var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
             results.forEach(function (r) { r.style.display = 'block'; r.style.visibility = 'visible'; r.style.opacity = '1'; });
             try { el.dataset.ready = 'true'; } catch (e) {}
-          } catch (e) { /* noop */ }
+          } catch { /* noop */ }
         },
         closeSearchOverlay: function () {
           try {
@@ -375,12 +375,12 @@ const mainClasses = `${baseMainClasses} pt-24`;
             results.forEach(function (r) { r.style.display = 'none'; r.style.visibility = 'hidden'; r.style.opacity = '0'; });
             var inputEl = el.querySelector('#search-input'); if (inputEl) inputEl.setAttribute('aria-expanded', 'false');
             try { el.dataset.ready = 'false'; } catch (e) {}
-          } catch (e) { /* noop */ }
+          } catch { /* noop */ }
         }
       };
 
-      try { window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch (e) { /* noop */ }
-    } catch (e) { /* noop */ }
+      try { window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch { /* noop */ }
+    } catch { /* noop */ }
   })();
 </script>
     <!-- Backwards-compatibility elements for Playwright tests that expect a legacy search overlay -->
@@ -489,7 +489,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
               var input = overlay.querySelector('#search-input');
               if (input) {
                 input.style.display = ''; // reveal
-                try { input.focus(); } catch (e) { /* noop */ }
+                try { input.focus(); } catch { /* noop */ }
               }
 
               var closeBtn = overlay.querySelector('#close-search');
@@ -498,7 +498,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
               if (backdrop) backdrop.style.display = '';
 
               // Mark overlay as reconciled/ready for tests to wait on
-              try { overlay.dataset.ready = 'true'; } catch (e) { /* noop */ }
+              try { overlay.dataset.ready = 'true'; } catch { /* noop */ }
             }
           };
           applyVisible();
@@ -525,7 +525,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                 if (closeBtn) closeBtn.style.display = 'none';
                 var backdrop = overlay.querySelector('[data-overlay-backdrop]');
                 if (backdrop) backdrop.style.display = 'none';
-                try { overlay.dataset.ready = 'false'; } catch (e) { /* noop */ }
+                try { overlay.dataset.ready = 'false'; } catch { /* noop */ }
                 return;
               }
 
@@ -537,7 +537,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                 applyVisible();
                 return;
               }
-            } catch (e) { /* noop */ }
+            } catch { /* noop */ }
             applyVisible();
           });
           mo.observe(overlay, { attributes: true, attributeFilter: ['class', 'data-state'] });
@@ -583,12 +583,12 @@ const mainClasses = `${baseMainClasses} pt-24`;
                     var closeBtn = overlay.querySelector('#close-search'); if (closeBtn) closeBtn.style.display = 'none';
                     var backdrop = overlay.querySelector('[data-overlay-backdrop]'); if (backdrop) backdrop.style.display = 'none';
                   }
-                } catch (e) { /* noop */ }
+                } catch { /* noop */ }
                 reconcileElapsed += reconcileInterval;
                 if (reconcileElapsed >= reconcileMax) clearInterval(reconcileId);
               }, reconcileInterval);
             }
-          } catch (e) { /* noop */ }
+          } catch { /* noop */ }
 
           if (isTestEnv) {
               try {
@@ -611,7 +611,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                       var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
                       results.forEach(function (r) { try { r.style.display = 'block'; r.style.visibility = 'visible'; r.style.opacity = '1'; } catch (e) {} });
                       try { el.dataset.ready = 'true'; window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch (e) {}
-                    } catch (e) { /* noop */ }
+                    } catch { /* noop */ }
                   },
                   closeSearchOverlay: function () {
                     try {
@@ -628,7 +628,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                       results.forEach(function (r) { try { r.style.display = 'none'; r.style.visibility = 'hidden'; r.style.opacity = '0'; } catch (e) {} });
                       var inputEl = el.querySelector('#search-input'); if (inputEl) try { inputEl.setAttribute && inputEl.setAttribute('aria-expanded', 'false'); } catch (e) {}
                       try { el.dataset.ready = 'false'; } catch (e) {}
-                    } catch (e) { /* noop */ }
+                    } catch { /* noop */ }
                   }
                 };
                 window.searchOverlay = window.searchOverlay || window.enhancedSearchOverlay;
@@ -636,7 +636,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                 window.TestSearchOverlay = window.TestSearchOverlay || function () {};
                 window.TestSearchOverlay.prototype.open = function () { window.enhancedSearchOverlay.openSearchOverlay(); };
                 window.TestSearchOverlay.prototype.close = function () { window.enhancedSearchOverlay.closeSearchOverlay(); };
-              } catch (e) { /* noop */ }
+              } catch { /* noop */ }
             }
           if (typeof window.TestSearchOverlay === 'function') {
             try {
@@ -651,7 +651,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                   overlay.style.visibility = 'visible';
                   overlay.removeAttribute('inert');
                   overlay.setAttribute('aria-hidden', 'false');
-                } catch (e) { /* noop */ }
+                } catch { /* noop */ }
                 return result;
               };
             } catch (e) { }
@@ -689,7 +689,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
               } catch (e) {}
               return originalDOMTokenListAdd.apply(this, arguments);
             };
-          } catch (e) { /* noop */ }
+          } catch { /* noop */ }
 
           // Instrument setAttribute to catch data-state=open calls
           try {
@@ -704,7 +704,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
               } catch (e) {}
               return originalSetAttribute.apply(this, arguments);
             };
-          } catch (e) { /* noop */ }
+          } catch { /* noop */ }
 
           var prevState = overlay.dataset.state || '';
           var prevActive = overlay.classList ? overlay.classList.contains('active') : false;
@@ -715,12 +715,12 @@ const mainClasses = `${baseMainClasses} pt-24`;
               if (state !== prevState || active !== prevActive) {
                 prevState = state;
                 prevActive = active;
-                try { window.__TEST_EVENT_LOG.push({ event: 'overlay-mutation', state: state, active: active, ready: overlay.dataset.ready, ariaHidden: overlay.getAttribute('aria-hidden'), ts: Date.now() }); } catch (e) { /* noop */ }
+                try { window.__TEST_EVENT_LOG.push({ event: 'overlay-mutation', state: state, active: active, ready: overlay.dataset.ready, ariaHidden: overlay.getAttribute('aria-hidden'), ts: Date.now() }); } catch { /* noop */ }
               }
-            } catch (e) { /* noop */ }
+            } catch { /* noop */ }
           });
           obs.observe(overlay, { attributes: true, attributeFilter: ['class', 'data-state', 'data-ready', 'aria-hidden'] });
-        } catch (e) { /* noop */ }
+        } catch { /* noop */ }
       })();
     </script>
     <script is:inline>

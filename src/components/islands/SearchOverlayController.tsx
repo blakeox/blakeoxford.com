@@ -29,7 +29,7 @@ function openFallbackOverlay(): void {
   try {
     // If authoritative closed exists from SSR or test harness, remove it on user-initiated open.
     if (overlay.hasAttribute && overlay.hasAttribute('data-authoritative-closed')) {
-      try { overlay.removeAttribute('data-authoritative-closed'); } catch (e) { /* noop */ }
+      try { overlay.removeAttribute('data-authoritative-closed'); } catch { /* noop */ }
     }
     // Respect transient closed-lock used by tests to prevent reopens.
     if (overlay.hasAttribute && overlay.hasAttribute('data-closed-lock')) return;

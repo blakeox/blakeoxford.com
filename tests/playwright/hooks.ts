@@ -27,7 +27,7 @@ test.beforeEach(async ({ page }) => {
         };
       };
       ['log','warn','error','info','debug'].forEach(wrapConsole as any);
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
   });
 
   // Ensure a test-friendly theme variable and flag are present early to avoid stylesheet timing issues
@@ -43,7 +43,7 @@ test.beforeEach(async ({ page }) => {
         probe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:2px;background:var(--color-background);visibility:hidden;';
         document.documentElement.appendChild(probe);
       } catch (e) {}
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
   });
 
   // Force system font to avoid webfont-induced layout shifts in visual tests
@@ -58,7 +58,7 @@ test.beforeEach(async ({ page }) => {
         document.documentElement.appendChild(style);
       } catch(e) {}
       try { (window as any).__TEST_FONT_PRIMED = true; } catch(e) {}
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
   });
 
   // Aggressively remove AI assistant elements and dynamic overlays that can alter page height
@@ -103,7 +103,7 @@ test.beforeEach(async ({ page }) => {
     try {
       const loc = msg.location ? msg.location() : undefined;
       (page as any)._consoleCapture.push({ type: msg.type(), text: msg.text(), location: loc });
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
   });
 });
 
@@ -116,22 +116,22 @@ test.afterEach(async ({ page }, testInfo) => {
     try {
       const data = await page.evaluate(() => (window as any).__TEST_EVENT_LOG || []);
       await testInfo.attach('client-test-event-log.json', { body: JSON.stringify(data), contentType: 'application/json' });
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
 
     try {
       const captured = await page.evaluate(() => (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []);
       await testInfo.attach('client-console.json', { body: JSON.stringify(captured), contentType: 'application/json' });
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
 
     try {
       const nodeConsole = (page as any)._consoleCapture || [];
       await testInfo.attach('node-console.json', { body: JSON.stringify(nodeConsole), contentType: 'application/json' });
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
 
     try {
       const html = await page.content();
       await testInfo.attach('page-content.html', { body: html, contentType: 'text/html' });
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
 
     // Try to include a screenshot if possible (may be disabled in config)
     try {
@@ -139,6 +139,6 @@ test.afterEach(async ({ page }, testInfo) => {
       if (buffer) {
         await testInfo.attach('screenshot.png', { body: buffer, contentType: 'image/png' });
       }
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
   }
 });

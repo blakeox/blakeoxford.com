@@ -53,16 +53,16 @@ export class EnhancedSearchOverlay {
     try {
       // Remove authoritative closed flag if user explicitly opens overlay
       if (searchOverlay.hasAttribute && searchOverlay.hasAttribute('data-authoritative-closed')) {
-        try { searchOverlay.removeAttribute('data-authoritative-closed'); } catch (e) { /* noop */ }
+        try { searchOverlay.removeAttribute('data-authoritative-closed'); } catch { /* noop */ }
       }
       if (searchOverlay.hasAttribute && searchOverlay.hasAttribute('data-closed-lock')) { return false; }
-    } catch (e) {}
+    } catch { /* noop */ }
     // Make overlay interactive and update ARIA/state so tests detect it
-    try { (searchOverlay as any).inert = false; } catch (e) {}
+    try { (searchOverlay as any).inert = false; } catch { /* noop */ }
     searchOverlay.dataset.state = 'open';
-    try { searchOverlay.dataset.openTs = String(Date.now()); } catch (e) {}
+    try { searchOverlay.dataset.openTs = String(Date.now()); } catch { /* noop */ }
     // Remove aria-hidden attribute so CSS rules that check presence don't hide it
-    try { searchOverlay.removeAttribute('aria-hidden'); } catch (e) {}
+    try { searchOverlay.removeAttribute('aria-hidden'); } catch { /* noop */ }
     searchOverlay.classList.add('active');
 
     // Override any important hide rules set by ensureOverlayClosed
@@ -709,14 +709,14 @@ export class EnhancedSearchOverlay {
 
     // If already closing/closed, no-op (atomic guard)
     if (searchOverlay.dataset.__closing === 'true' || searchOverlay.dataset.state === 'closed') return;
-    try { searchOverlay.dataset.__closing = 'true'; } catch (e) { /* noop */ }
+    try { searchOverlay.dataset.__closing = 'true'; } catch { /* noop */ }
 
     // Track analytics
     this.trackSearchInteraction('closed');
 
     // Stop voice recognition if active
     if (this.isListening && this.recognition) {
-      try { this.recognition.stop(); } catch (e) { /* noop */ }
+      try { this.recognition.stop(); } catch { /* noop */ }
     }
 
     // Close the overlay and update ARIA/state — ensure closed state wins
@@ -730,16 +730,16 @@ export class EnhancedSearchOverlay {
       searchOverlay.style.setProperty('opacity', '0');
       searchOverlay.style.setProperty('visibility', 'hidden');
       searchOverlay.style.setProperty('display', 'none');
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
 
     // Clear search input
     if (this.searchInput) {
-      try { this.searchInput.value = ''; this.searchInput.setAttribute('aria-expanded', 'false'); } catch (e) { /* noop */ }
+      try { this.searchInput.value = ''; this.searchInput.setAttribute('aria-expanded', 'false'); } catch { /* noop */ }
     }
 
     // Hide results
     if (this.searchResults) {
-      try { this.searchResults.classList.remove('active'); this.searchResults.classList.add('hidden'); } catch (e) { /* noop */ }
+      try { this.searchResults.classList.remove('active'); this.searchResults.classList.add('hidden'); } catch { /* noop */ }
     }
 
     // Restore body scroll only if mobile menu is not open
@@ -750,13 +750,13 @@ export class EnhancedSearchOverlay {
         document.body.style.position = '';
         document.body.style.width = '';
       }
-    } catch (e) { /* noop */ }
+    } catch { /* noop */ }
 
     // Focus back to search toggle (delay to let browser settle)
     const searchToggle = document.getElementById('search-toggle');
     setTimeout(() => {
-      try { searchToggle?.focus(); } catch (e) { /* noop */ }
-      try { delete (searchOverlay as any).dataset.__closing; } catch(e) { /* noop */ }
+      try { searchToggle?.focus(); } catch { /* noop */ }
+      try { delete (searchOverlay as any).dataset.__closing; } catch { /* noop */ }
     }, 50);
 
     this.announceToScreenReader('Search overlay closed');

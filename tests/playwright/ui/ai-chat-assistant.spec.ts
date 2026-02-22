@@ -39,7 +39,7 @@ test.describe('AI chat assistant', () => {
             // simulate async open
             setTimeout(() => {
               this.readyState = 1; // OPEN
-              try { this.onopen && this.onopen({}); } catch (e) { /* noop */ }
+              try { this.onopen && this.onopen({}); } catch { /* noop */ }
               this.dispatchEvent('open', {});
             }, 10);
           }
@@ -53,11 +53,11 @@ test.describe('AI chat assistant', () => {
                 this.onmessage && this.onmessage({ data: JSON.stringify({ type: 'ack', payload: msg }) });
                 this.dispatchEvent('message', { data: JSON.stringify({ type: 'ack', payload: msg }) });
               }, 20);
-            } catch (e) { /* noop */ }
+            } catch { /* noop */ }
           }
           close(code?: number, reason?: string) {
             this.readyState = 3; // CLOSED
-            try { this.onclose && this.onclose({ code, reason }); } catch (e) { /* noop */ }
+            try { this.onclose && this.onclose({ code, reason }); } catch { /* noop */ }
             this.dispatchEvent('close', { code, reason });
           }
           addEventListener(event: string, fn: Function) {
@@ -70,14 +70,14 @@ test.describe('AI chat assistant', () => {
           dispatchEvent(event: string, payload: any) {
             const arr = this._listeners[event] || [];
             for (const fn of arr.slice()) {
-              try { fn.call(this, payload); } catch (e) { /* noop */ }
+              try { fn.call(this, payload); } catch { /* noop */ }
             }
           }
         }
         // @ts-ignore
         (window as any).WebSocket = FakeWebSocket;
       }
-      try { makeStub(); } catch (e) { /* noop */ }
+      try { makeStub(); } catch { /* noop */ }
     });
     page.on('pageerror', (error) => {
       console.error('AI chat page error:', error); // aids diagnosing hydration failures
