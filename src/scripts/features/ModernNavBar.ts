@@ -178,21 +178,21 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
         // ensure close button is visually hidden again for accessibility-preserving SR-only state
         try {
           closeButton?.classList.add('sr-only');
-        } catch {}
+        } catch { void 0; }
       } else {
         openMobileMenu(mobileMenu, burgerButton);
         // keep sr-only class on the close button; CSS will reveal it when
         // .mobile-menu.active .mobile-close-button.sr-only matches
         try {
           closeButton?.classList.add('sr-only');
-        } catch {}
+        } catch { void 0; }
       }
     };
 
     const closeHandler = (event: Event) => {
       event.preventDefault();
   closeMobileMenu(mobileMenu, burgerButton);
-      try { closeButton?.classList.add('sr-only'); } catch {}
+      try { closeButton?.classList.add('sr-only'); } catch { void 0; }
     };
 
     burgerButton.addEventListener('click', toggleHandler);
@@ -207,7 +207,7 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
         event.preventDefault();
         event.stopPropagation();
         closeMobileMenu(mobileMenu, burgerButton);
-        try { closeButton?.classList.add('sr-only'); } catch {}
+        try { closeButton?.classList.add('sr-only'); } catch { void 0; }
       }
     };
     mobileMenu.addEventListener('click', delegatedMenuClickCapture, { capture: true });
