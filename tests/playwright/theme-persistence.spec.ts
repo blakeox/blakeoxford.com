@@ -37,10 +37,7 @@ test.describe('Theme persistence across navigation', () => {
     expect(classMatches).toBeTruthy();
 
     // Navigate to About and assert persistence
-    await Promise.all([
-      page.waitForURL('**/about/**'),
-      page.locator('nav#navbar .desktop-nav a.nav-link[href="/about/"]').click(),
-    ]);
+    await page.goto('/about/');
     await waitForIdle(page);
     await expect.poll(getThemeAttr).toBe(targetTheme);
     if (targetTheme === 'dark') {

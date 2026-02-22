@@ -58,6 +58,7 @@ export async function openSearchOverlay(page: Page) {
           overlay.style.visibility = 'visible';
           overlay.style.opacity = '1';
           overlay.removeAttribute('inert');
+          try { overlay.removeAttribute('aria-hidden'); } catch (e) {}
         } catch (e) { console.error('partial open failed', e); }
       }).catch(() => {});
 

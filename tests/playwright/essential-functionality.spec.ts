@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { navigateMain } from '../utils/pageActions';
 
 test.describe('Core Site Functionality', () => {
   test('homepage should load quickly @essential', async ({ page }) => {
@@ -19,16 +20,11 @@ test.describe('Core Site Functionality', () => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
     
-    // Test main navigation
-    const aboutLink = page.locator('nav a[href="/about/"]').first();
-    await expect(aboutLink).toBeVisible();
-    
-    await aboutLink.click();
+    // Test main navigation (use helper to ensure robust navigation)
+    await navigateMain(page, '/about/');
     await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('main h1, [role="main"] h1, body > section h1').first()).toBeVisible();
-    
-    // Verify we're on about page
-    expect(page.url()).toContain('/about');
+    // verify handled by helper
   });
 
   test('search functionality should work @essential', async ({ page }) => {
