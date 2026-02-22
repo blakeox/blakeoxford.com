@@ -1,4 +1,4 @@
-/* eslint-env browser */
+/* global document, window */
 const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch();
