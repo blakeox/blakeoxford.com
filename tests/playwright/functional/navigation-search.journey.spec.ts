@@ -21,23 +21,13 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
     const results = page.locator('#search-results');
     await expect(results).toBeAttached();
     // Prefer programmatic close helper to avoid Playwright keyboard flakiness; require it in CI
-    const hasEnsureHelper = await page.evaluate(() => typeof (window as any).ensureOverlayClosed === 'function');
-    if (hasEnsureHelper) {
-      await page.evaluate(() => { try { (window as any).ensureOverlayClosed(); } catch (e) { console.error('ensureOverlayClosed threw', e); } });
-    } else {
-      const hasCloseHelper = await page.evaluate(() => !!(window as any).enhancedSearchOverlay?.closeSearchOverlay || !!(window as any).__ENHANCED_SEARCH_OVERLAY_INJECTED || !!(window as any).searchOverlay);
-      if (hasCloseHelper) {
-        await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.closeSearchOverlay?.(); } catch (e) { console.error('enhancedSearchOverlay.closeSearchOverlay threw', e); } });
-      } else {
-        // Fallback: helpers not present — perform a safe reload to recover state instead of evaluating potentially-blocking DOM operations
-        try {
-          await Promise.all([
-            page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {}),
-            page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {})
-          ]);
-        } catch (e) { console.error('Fallback reload failed', e); }
-      }
-    }
+    // Prefer safe reload to recover state to avoid calling potentially-blocking client helpers in CI
+    try {
+      await Promise.all([
+        page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {}),
+        page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {})
+      ]);
+    } catch (e) { console.error('Fallback reload failed', e); }
 
     // Diagnostic: if overlay remains visible, log relevant attributes and wait deterministically for closed state
     const overlay = page.locator('#search-overlay');

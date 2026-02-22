@@ -24,7 +24,7 @@ test.describe('Server Health Check', () => {
         console.error(`Homepage navigation attempt ${attempt}/${retries} failed:`, error);
         
         if (attempt === retries) {
-          throw new Error(`Could not navigate to homepage after ${retries} attempts: ${error}`);
+          throw new Error(`Could not navigate to homepage after ${retries} attempts`, { cause: error });
         }
         
         // Wait before retry

@@ -69,11 +69,11 @@ test.beforeEach(async ({ page }) => {
           try {
             const selectors = [
               'dialog',
-              '[id*=\"ai-assistant\"]',
-              '[class*=\"ai-assistant\"]',
-              '[class*=\"search-overlay\"]',
-              '[aria-label*=\"AI Portfolio Assistant\"]',
-              '[role=\"dialog\"]'
+              '[id*="ai-assistant"]',
+              '[class*="ai-assistant"]',
+              '[class*="search-overlay"]',
+              '[aria-label*="AI Portfolio Assistant"]',
+              '[role="dialog"]'
             ];
             selectors.forEach(sel => {
               document.querySelectorAll(sel).forEach(el => {
@@ -112,26 +112,26 @@ test.afterEach(async ({ page }, testInfo) => {
   // Always attach client-side logs and key artifacts for debugging to ensure traces contain diagnostic info
   // Always collect client-side logs to a local file for diagnostics during debugging
   // Keep attaching logs for 30s after failure to allow page to flush (helpful when debugging race conditions)
-  if (true) {
+  {
     try {
       const data = await page.evaluate(() => (window as any).__TEST_EVENT_LOG || []);
       await testInfo.attach('client-test-event-log.json', { body: JSON.stringify(data), contentType: 'application/json' });
-    } catch { /* noop */ }
+    } catch { void 0; }
 
     try {
       const captured = await page.evaluate(() => (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []);
       await testInfo.attach('client-console.json', { body: JSON.stringify(captured), contentType: 'application/json' });
-    } catch { /* noop */ }
+    } catch { void 0; }
 
     try {
       const nodeConsole = (page as any)._consoleCapture || [];
       await testInfo.attach('node-console.json', { body: JSON.stringify(nodeConsole), contentType: 'application/json' });
-    } catch { /* noop */ }
+    } catch { void 0; }
 
     try {
       const html = await page.content();
       await testInfo.attach('page-content.html', { body: html, contentType: 'text/html' });
-    } catch { /* noop */ }
+    } catch { void 0; }
 
     // Try to include a screenshot if possible (may be disabled in config)
     try {
@@ -139,6 +139,6 @@ test.afterEach(async ({ page }, testInfo) => {
       if (buffer) {
         await testInfo.attach('screenshot.png', { body: buffer, contentType: 'image/png' });
       }
-    } catch { /* noop */ }
+    } catch { void 0; }
   }
 });
