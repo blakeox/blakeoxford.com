@@ -1,4 +1,4 @@
-/* eslint-disable no-empty */
+ 
 import { useEffect } from 'react';
 
 type OverlayState = 'idle' | 'fallback';

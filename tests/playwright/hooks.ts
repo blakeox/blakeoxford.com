@@ -1,4 +1,4 @@
-/* eslint-disable no-empty, @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { test } from '@playwright/test';
 
 // Global hooks: capture client-side logs and attach diagnostics when a test fails
