@@ -23,7 +23,7 @@ test.describe('AI chat assistant', () => {
     // without depending on a real server during Playwright tests. This prevents
     // handshake 404 errors and keeps client-side state deterministic.
     await page.addInitScript(() => {
-      // eslint-disable-next-line no-inner-declarations
+       
       function makeStub() {
         class FakeWebSocket {
           url: string;

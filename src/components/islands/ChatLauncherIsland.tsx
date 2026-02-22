@@ -70,7 +70,7 @@ export default function ChatLauncherIsland() {
         } catch (err) {
             // Non-fatal: if the DOM shape differs, fallback to no-op
             // but avoid noisy console errors in production tests.
-            // eslint-disable-next-line no-console
+             
             console.warn('ChatLauncherIsland init failed', err);
         }
     }, []);

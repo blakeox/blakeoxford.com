@@ -268,7 +268,7 @@ export class AISearchService {
 					} else {
 						// Not JSON, treat as raw text chunk. Log payload for test triage.
 						try {
-							// eslint-disable-next-line no-console
+							 
 							console.debug('AI stream: non-JSON payload received', { dataPayload });
 						} catch (e) {
 							// ignore logging errors

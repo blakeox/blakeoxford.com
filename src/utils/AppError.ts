@@ -13,6 +13,6 @@ export function createModuleError(moduleName: string, code: string, message: str
 export function handleError(err: unknown): void {
 	// minimal stub for environments where AppError utils are not present during typecheck
 	// In production, replace with real error handling
-	// eslint-disable-next-line no-console
+	 
 	console.error('AppError:', err);
 }

@@ -146,7 +146,7 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
               payload = JSON.parse(cleaned);
             } catch (err2) {
               // keep as raw string below
-              // eslint-disable-next-line no-console
+               
               console.debug('AI stream: failed to parse cleaned JSON fragment', { candidate, cleaned, err: String(err2) });
             }
           }
@@ -156,7 +156,7 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
           payload = JSON.parse(payloadRaw);
         } catch (err3) {
           // ignore and fall back to raw string
-          // eslint-disable-next-line no-console
+           
           console.debug('AI stream: failed to parse JSON payload', { payloadRaw, err: String(err3) });
         }
       }
