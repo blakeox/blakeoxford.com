@@ -1,4 +1,5 @@
 /* eslint quotes:["warn","single",{allowTemplateLiterals:true}] */
+/* eslint-disable no-useless-escape */
 /**
  * Cloudflare Worker: Edge app with asset serving, security headers, caching, audit-mode, and utilities
  */

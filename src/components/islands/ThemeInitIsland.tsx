@@ -1,3 +1,4 @@
+/* eslint-disable no-empty, no-useless-escape */
 export default function ThemeInitIsland() {
   try { console.debug('ThemeInitIsland executing'); } catch (e) {}
   return (
