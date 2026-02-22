@@ -33,15 +33,15 @@ function openFallbackOverlay(): void {
     }
     // Respect transient closed-lock used by tests to prevent reopens.
     if (overlay.hasAttribute && overlay.hasAttribute('data-closed-lock')) return;
-  } catch (e) {}
+  } catch  { void 0; }
 
   overlay.dataset.state = 'open';
-  try { overlay.dataset.openTs = String(Date.now()); } catch (e) {}
+  try { overlay.dataset.openTs = String(Date.now()); } catch  { void 0; }
   // Ensure overlay is visible and interactive immediately for deterministic tests
   overlay.classList.add('active');
 
   // Remove aria-hidden entirely (presence matters)
-  try { overlay.removeAttribute('aria-hidden'); } catch (e) {}
+  try { overlay.removeAttribute('aria-hidden'); } catch  { void 0; }
 
   // Override any important hide rules set by ensureOverlayClosed
   try {
@@ -54,7 +54,7 @@ function openFallbackOverlay(): void {
     overlay.style.opacity = '1';
   }
 
-  try { overlay.removeAttribute('inert'); } catch (e) {}
+  try { overlay.removeAttribute('inert'); } catch  { void 0; }
 
   document.body.dataset.searchOpen = 'true';
   document.body.style.overflow = 'hidden';
@@ -117,7 +117,7 @@ export default function SearchOverlayController() {
         if (overlayElement?.dataset.state === 'closed') return;
         // Attempt authoritative close synchronously
         if (typeof (window as any).ensureOverlayClosed === 'function') {
-          try { (window as any).ensureOverlayClosed(); return; } catch (e) {}
+          try { (window as any).ensureOverlayClosed(); return; } catch  { void 0; }
         }
         closeFallbackOverlay();
       } catch(e) { console.error('closeOverlay failed', e); }
@@ -162,7 +162,7 @@ export default function SearchOverlayController() {
     };
 
     const handleEscape = (event: KeyboardEvent) => {
-      try { console.debug('handleEscape invoked', { key: event.key, state: overlayElement?.dataset.state }); } catch (e) {}
+      try { console.debug('handleEscape invoked', { key: event.key, state: overlayElement?.dataset.state }); } catch  { void 0; }
 
       if (event.key !== 'Escape') return;
       if (overlayElement?.dataset.state !== 'open' && state !== 'fallback') return;

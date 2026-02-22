@@ -137,10 +137,10 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
         const candidate = payloadRaw.slice(firstJsonIdx).trim();
         try {
           payload = JSON.parse(candidate);
-        } catch (err) {
+        } catch {
           // Try a more permissive cleanup: remove stray "event:" tokens and
           // any leading non-json characters, then attempt parse.
-          const cleaned = payloadRaw.replace(/event:\s*[^\r\n]+/gi, '').replace(/^[^{\[]*/s, '').trim();
+          const cleaned = payloadRaw.replace(/event:\s*[^\r\n]+/gi, '').replace(/^[^{[]*/s, '').trim();
           if (cleaned && (cleaned.startsWith('{') || cleaned.startsWith('['))) {
             try {
               payload = JSON.parse(cleaned);
@@ -160,7 +160,7 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
           console.debug('AI stream: failed to parse JSON payload', { payloadRaw, err: String(err3) });
         }
       }
-    } catch (outer) {
+    } catch {
       // Best-effort: leave payload as raw string
     }
 

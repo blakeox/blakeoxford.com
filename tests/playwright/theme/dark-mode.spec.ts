@@ -10,10 +10,10 @@ test.describe('@essential @theme Dark mode behavior', () => {
     await page.addInitScript(() => {
       try {
         if (!(document && document.documentElement && document.documentElement.style && document.documentElement.style.getPropertyValue('--color-background'))) {
-          try { document.documentElement.style.setProperty('--color-background', '#f8fafc'); } catch (e) {}
+          try { document.documentElement.style.setProperty('--color-background', '#f8fafc'); } catch  { void 0; }
         }
-        try { (window as any).__TEST_THEME_PRIMED = true; } catch(e) {}
-      } catch (e) {}
+        try { (window as any).__TEST_THEME_PRIMED = true; } catch  { void 0; }
+      } catch  { void 0; }
     });
     await page.goto('/');
 
@@ -23,10 +23,10 @@ test.describe('@essential @theme Dark mode behavior', () => {
     // Wait for theme CSS variable to be available (ensures stylesheets loaded)
     // Make the wait resilient: first prefer the primed flag, then the class flip, then the CSS var
     await page.waitForFunction(() => {
-      try { if ((window as any).__TEST_THEME_PRIMED) return true; } catch (e) {}
-      try { if (document.documentElement.classList.contains('dark') || document.documentElement.classList.contains('light')) return true; } catch (e) {}
+      try { if ((window as any).__TEST_THEME_PRIMED) return true; } catch  { void 0; }
+      try { if (document.documentElement.classList.contains('dark') || document.documentElement.classList.contains('light')) return true; } catch  { void 0; }
       const val = (getComputedStyle(document.documentElement).getPropertyValue('--color-background') || '').trim();
-      try { console.debug('DEBUG_THEME_VAL_AT_WAIT', val, { primed: (window as any).__TEST_THEME_PRIMED }); } catch(e) {}
+      try { console.debug('DEBUG_THEME_VAL_AT_WAIT', val, { primed: (window as any).__TEST_THEME_PRIMED }); } catch  { void 0; }
       return val !== '';
     }, null, { timeout: 30000 });
 

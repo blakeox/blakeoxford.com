@@ -18,12 +18,12 @@ test.beforeEach(async ({ page }) => {
               try {
                 if (a instanceof Error) return a.stack || a.message;
                 if (typeof a === 'object') return JSON.stringify(a);
-              } catch (e) {}
+              } catch  { void 0; }
               return String(a);
             });
-            try { (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE.push({ level, args: serialized, ts: Date.now() }); } catch (e) {}
-          } catch (e) {}
-          try { orig && orig.apply && orig.apply(console, args); } catch (e) {}
+            try { (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE.push({ level, args: serialized, ts: Date.now() }); } catch  { void 0; }
+          } catch  { void 0; }
+          try { orig && orig.apply && orig.apply(console, args); } catch  { void 0; }
         };
       };
       ['log','warn','error','info','debug'].forEach(wrapConsole as any);
@@ -34,15 +34,15 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     try {
       // Provide a conservative early background token so tests relying on token presence are deterministic
-      try { document.documentElement.style.setProperty('--color-background', document.documentElement.style.getPropertyValue('--color-background') || '#ffffff'); } catch(e) {}
-      try { (window as any).__TEST_THEME_PRIMED = true; } catch(e) {}
+      try { document.documentElement.style.setProperty('--color-background', document.documentElement.style.getPropertyValue('--color-background') || '#ffffff'); } catch  { void 0; }
+      try { (window as any).__TEST_THEME_PRIMED = true; } catch  { void 0; }
       // Also inject an offscreen probe element that uses the token so getComputedStyle can resolve it immediately
       try {
         const probe = document.createElement('div');
         probe.id = '__pw_theme_probe';
         probe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:2px;background:var(--color-background);visibility:hidden;';
         document.documentElement.appendChild(probe);
-      } catch (e) {}
+      } catch  { void 0; }
     } catch { /* noop */ }
   });
 
@@ -56,8 +56,8 @@ test.beforeEach(async ({ page }) => {
         style.innerHTML = '* { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important; line-height: 1.15 !important; box-sizing: border-box !important; }\n' +
                          'dialog[aria-label*="AI Portfolio Assistant"], dialog[role="dialog"], .ai-assistant, #ai-assistant, .search-overlay { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }';
         document.documentElement.appendChild(style);
-      } catch(e) {}
-      try { (window as any).__TEST_FONT_PRIMED = true; } catch(e) {}
+      } catch  { void 0; }
+      try { (window as any).__TEST_FONT_PRIMED = true; } catch  { void 0; }
     } catch { /* noop */ }
   });
 
@@ -82,10 +82,10 @@ test.beforeEach(async ({ page }) => {
                   if (sel !== 'dialog' || text.includes('ai portfolio') || el.id === 'ai-assistant' || sel.includes('ai-assistant')) {
                     el.remove();
                   }
-                } catch(e) {}
+                } catch  { void 0; }
               });
             });
-          } catch(e) {}
+          } catch  { void 0; }
         };
         removeAssistantNodes();
         const observer = new MutationObserver(removeAssistantNodes);
@@ -93,8 +93,8 @@ test.beforeEach(async ({ page }) => {
         // Catch reinsertion by some frameworks with a short interval, then stop
         const interval = setInterval(removeAssistantNodes, 500);
         setTimeout(() => clearInterval(interval), 10000);
-      } catch(e) {}
-    } catch(e) {}
+      } catch  { void 0; }
+    } catch  { void 0; }
   });
 
   // Node-side console capture for messages emitted by the page

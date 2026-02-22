@@ -200,7 +200,7 @@ function ExpandedSourcesList({
 				const isExpanded = expandedIndividualSources[sourceKey];
 				const relevanceInfo = relevance !== null ? getRelevanceExplanation(relevance) : null;
 
-				let isExternalLink = false;
+				let isExternalLink: boolean;
 				try {
 					const parsed = source.url.startsWith('http')
 						? new URL(source.url)

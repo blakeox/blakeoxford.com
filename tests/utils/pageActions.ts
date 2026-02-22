@@ -58,7 +58,7 @@ export async function openSearchOverlay(page: Page) {
           overlay.style.visibility = 'visible';
           overlay.style.opacity = '1';
           overlay.removeAttribute('inert');
-          try { overlay.removeAttribute('aria-hidden'); } catch (e) {}
+          try { overlay.removeAttribute('aria-hidden'); } catch  { void 0; }
         } catch (e) { console.error('partial open failed', e); }
       }).catch(() => {});
 
@@ -111,7 +111,7 @@ export async function openSearchOverlay(page: Page) {
   await page.waitForFunction(() => {
     const el = document.querySelector('#search-overlay') as HTMLElement | null;
     if (!el) return false;
-    try { el.removeAttribute('aria-hidden'); } catch (e) {}
+    try { el.removeAttribute('aria-hidden'); } catch  { void 0; }
     const style = window.getComputedStyle(el);
     const vis = style.visibility !== 'hidden' && style.display !== 'none' && parseFloat(style.opacity || '0') > 0;
     return vis && el.classList.contains('active') && el.dataset.ready === 'true';

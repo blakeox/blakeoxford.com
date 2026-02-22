@@ -53,7 +53,7 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
           const rect = el.getBoundingClientRect();
           const h = Math.round(rect.height);
           el.style.height = `${h}px`;
-        } catch (e) {}
+        } catch  { void 0; }
       });
       await expect(element).toHaveScreenshot(`${name}.png`, {
         animations: 'disabled',

@@ -35,7 +35,7 @@ async function main() {
 
   // Use gh CLI to find open issues matching contrast alert title
   const { execSync } = await import('node:child_process');
-  let issuesRaw = '';
+  let issuesRaw;
   try {
   issuesRaw = execSync('gh issue list --state open --search "Contrast borderline threshold exceeded in:title" --json number,title', { encoding: 'utf8' });
   } catch (e) {

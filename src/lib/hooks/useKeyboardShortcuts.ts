@@ -164,7 +164,7 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions): void
 
 			const active = document.activeElement;
 			const currentIndex = focusable.findIndex((element) => element === active);
-			let nextIndex = currentIndex;
+			let nextIndex: number;
 
 			if (event.key === 'ArrowDown') {
 				nextIndex = currentIndex >= 0 ? (currentIndex + 1) % focusable.length : 0;

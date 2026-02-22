@@ -52,9 +52,9 @@ function setTheme(nextTheme: 'light' | 'dark') {
     if (typeof window !== 'undefined' && ((window as any).__TEST_THEME_PRIMED || root.style.getPropertyValue('--color-background'))) {
       root.style.removeProperty('--color-background');
     }
-  } catch (e) {}
+  } catch  { void 0; }
   localStorage.setItem('theme', nextTheme);
-  try { document.cookie = 'theme=' + encodeURIComponent(nextTheme) + '; Path=/; Max-Age=' + (60*60*24*365) + '; SameSite=Lax'; } catch (e) {}
+  try { document.cookie = 'theme=' + encodeURIComponent(nextTheme) + '; Path=/; Max-Age=' + (60*60*24*365) + '; SameSite=Lax'; } catch  { void 0; }
 
   // Attempt to set an HttpOnly server-side cookie for SSR personalization (non-blocking)
   try {

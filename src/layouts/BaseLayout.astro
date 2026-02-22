@@ -62,7 +62,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
             try {
               var el = document.getElementById('search-overlay');
               if (!el) return;
-              try { if (el.hasAttribute && (el.hasAttribute('data-closed-lock') || el.hasAttribute('data-authoritative-closed'))) return; } catch(e) {}
+              try { if (el.hasAttribute && (el.hasAttribute('data-closed-lock') || el.hasAttribute('data-authoritative-closed'))) return; } catch  { void 0; }
               el.dataset.state = 'open';
               el.classList.add('active');
               el.style.display = 'block';
@@ -102,19 +102,19 @@ const mainClasses = `${baseMainClasses} pt-24`;
         try {
           var bg = '';
           try { bg = getComputedStyle(document.documentElement).getPropertyValue('--color-background') || ''; } catch { /* noop */ }
-          if (!bg.trim()) { document.documentElement.style.setProperty('--color-background', '#f8fafc'); try { window.__TEST_THEME_PRIMED = true; } catch (e) {} }
+          if (!bg.trim()) { document.documentElement.style.setProperty('--color-background', '#f8fafc'); try { window.__TEST_THEME_PRIMED = true; } catch  { void 0; } }
         } catch { /* noop */ }
 
         // Additional guard: in some environments the above may run too late; explicitly set flag and token immediately in test env
         try {
           var isTestEnv2 = (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) || (typeof navigator !== 'undefined' && navigator.webdriver);
           if (isTestEnv2) {
-            try { document.documentElement.style.setProperty('--color-background', document.documentElement.style.getPropertyValue('--color-background') || '#ffffff'); } catch(e) {}
-            try { window.__TEST_THEME_PRIMED = true; } catch(e) {}
+            try { document.documentElement.style.setProperty('--color-background', document.documentElement.style.getPropertyValue('--color-background') || '#ffffff'); } catch  { void 0; }
+            try { window.__TEST_THEME_PRIMED = true; } catch  { void 0; }
           }
-        } catch(e) {}
+        } catch  { void 0; }
 
-        try { console.debug && console.debug('early enhancedSearchOverlay injected', { isTestEnv: isTestEnv }); try { window.__TEST_EVENT_LOG.push({event:'early-enhancedSearchOverlay-injected', ts: Date.now()}); } catch(e){} } catch { /* noop */ }
+        try { console.debug && console.debug('early enhancedSearchOverlay injected', { isTestEnv: isTestEnv }); try { window.__TEST_EVENT_LOG.push({event:'early-enhancedSearchOverlay-injected', ts: Date.now()}); } catch  { void 0; } } catch { /* noop */ }
 
         // Canonical, atomic close helper with short-lived lock to prevent late re-opens
         try {
@@ -127,32 +127,32 @@ const mainClasses = `${baseMainClasses} pt-24`;
                 var now = Date.now();
                 var recentThreshold = 500; // ms
                 if (openTs && (now - openTs) < recentThreshold) {
-                  try { window.__TEST_EVENT_LOG.push({ event: 'ensureOverlayClosed-skipped-recent-open', openTs: openTs, now: now, delta: now - openTs, ts: Date.now() }); } catch(e){}
+                  try { window.__TEST_EVENT_LOG.push({ event: 'ensureOverlayClosed-skipped-recent-open', openTs: openTs, now: now, delta: now - openTs, ts: Date.now() }); } catch  { void 0; }
                   // Retry after the threshold to allow the open to stabilize
-                  setTimeout(function() { try { window.ensureOverlayClosed(); } catch(e) {} }, recentThreshold);
+                  setTimeout(function() { try { window.ensureOverlayClosed(); } catch  { void 0; } }, recentThreshold);
                   return;
                 }
-              } catch(e) {}
+              } catch  { void 0; }
               // If already locked, still perform idempotent close
               el.setAttribute('data-closed-lock', 'true');
-              try { el.setAttribute('data-authoritative-closed','true'); } catch (e) {}
+              try { el.setAttribute('data-authoritative-closed','true'); } catch  { void 0; }
               try {
                 el.style.setProperty('opacity', '0', 'important');
                 el.style.setProperty('visibility', 'hidden', 'important');
                 el.style.setProperty('display', 'none', 'important');
-              } catch (e) {}
+              } catch  { void 0; }
               // Apply authoritative closed state
-              try { el.dataset.state = 'closed'; } catch (e) {}
-              try { el.classList.remove('active'); } catch (e) {}
-              try { el.setAttribute('inert', ''); } catch (e) {}
-              try { el.setAttribute('aria-hidden', 'true'); } catch (e) {}
-              try { el.style.opacity = '0'; el.style.visibility = 'hidden'; el.style.display = 'none'; } catch (e) {}
+              try { el.dataset.state = 'closed'; } catch  { void 0; }
+              try { el.classList.remove('active'); } catch  { void 0; }
+              try { el.setAttribute('inert', ''); } catch  { void 0; }
+              try { el.setAttribute('aria-hidden', 'true'); } catch  { void 0; }
+              try { el.style.opacity = '0'; el.style.visibility = 'hidden'; el.style.display = 'none'; } catch  { void 0; }
               // Clean up open timestamp so future closes are not skipped
-              try { el.removeAttribute('data-open-ts'); } catch(e){}
+              try { el.removeAttribute('data-open-ts'); } catch  { void 0; }
               // Also try to stop any voice recognition if present
-              try { if (window.__ENHANCED_SEARCH_RECOGNITION && typeof window.__ENHANCED_SEARCH_RECOGNITION.stop === 'function') { window.__ENHANCED_SEARCH_RECOGNITION.stop(); } } catch (e) {}
+              try { if (window.__ENHANCED_SEARCH_RECOGNITION && typeof window.__ENHANCED_SEARCH_RECOGNITION.stop === 'function') { window.__ENHANCED_SEARCH_RECOGNITION.stop(); } } catch  { void 0; }
               // Record diagnostic event
-              try { window.__TEST_EVENT_LOG.push({ event: 'ensureOverlayClosed-invoked', ts: Date.now() }); } catch (e) {}
+              try { window.__TEST_EVENT_LOG.push({ event: 'ensureOverlayClosed-invoked', ts: Date.now() }); } catch  { void 0; }
               // Remove lock after a short stabilization period; extend if reopen attempts observed
               (function waitForStability(retries) {
                 retries = retries || 0;
@@ -161,19 +161,19 @@ const mainClasses = `${baseMainClasses} pt-24`;
                     var stillActive = el && el.classList && el.classList.contains('active');
                     var stillOpenState = el && el.dataset && el.dataset.state !== 'closed';
                     if (!stillActive && !stillOpenState) {
-                      try { el.removeAttribute('data-authoritative-closed'); } catch(e){}
-                      try { el.removeAttribute('data-closed-lock'); } catch(e){}
-                      try { window.__TEST_EVENT_LOG.push({ event:'ensureOverlayClosed-lock-removed', ts: Date.now() }); } catch(e){}
+                      try { el.removeAttribute('data-authoritative-closed'); } catch  { void 0; }
+                      try { el.removeAttribute('data-closed-lock'); } catch  { void 0; }
+                      try { window.__TEST_EVENT_LOG.push({ event:'ensureOverlayClosed-lock-removed', ts: Date.now() }); } catch  { void 0; }
                     } else if (retries < 3) {
-                      try { window.__TEST_EVENT_LOG.push({ event:'ensureOverlayClosed-still-open', state: el.dataset && el.dataset.state, active: el.classList && el.classList.contains('active'), ts: Date.now() }); } catch(e){}
+                      try { window.__TEST_EVENT_LOG.push({ event:'ensureOverlayClosed-still-open', state: el.dataset && el.dataset.state, active: el.classList && el.classList.contains('active'), ts: Date.now() }); } catch  { void 0; }
                       waitForStability(retries + 1);
                     } else {
                       // Final cleanup attempt after multiple retries
-                      try { el.removeAttribute('data-authoritative-closed'); } catch(e){}
-                      try { el.removeAttribute('data-closed-lock'); } catch(e){}
-                      try { window.__TEST_EVENT_LOG.push({ event:'ensureOverlayClosed-final-remove', ts: Date.now() }); } catch(e){}
+                      try { el.removeAttribute('data-authoritative-closed'); } catch  { void 0; }
+                      try { el.removeAttribute('data-closed-lock'); } catch  { void 0; }
+                      try { window.__TEST_EVENT_LOG.push({ event:'ensureOverlayClosed-final-remove', ts: Date.now() }); } catch  { void 0; }
                     }
-                  } catch (e) {}
+                  } catch  { void 0; }
                 }, 300);
               })();
             } catch { /* noop */ }
@@ -190,10 +190,10 @@ const mainClasses = `${baseMainClasses} pt-24`;
                   } else {
                     __orig_close && __orig_close();
                   }
-                } catch (e) {}
+                } catch  { void 0; }
               };
             }
-          } catch (e) {}
+          } catch  { void 0; }
         } catch { /* noop */ }
       } catch { /* noop */ }
     })();
@@ -215,7 +215,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
           try { current = getComputedStyle(document.documentElement).getPropertyValue('--color-background') || ''; } catch { /* noop */ }
           if (!current.trim()) {
             document.documentElement.style.setProperty('--color-background', '#ffffff');
-            try { window.__TEST_THEME_PRIMED = true; } catch (e) {}
+            try { window.__TEST_THEME_PRIMED = true; } catch  { void 0; }
           }
         } catch { /* noop */ }
       } catch { /* noop */ }
@@ -330,10 +330,10 @@ const mainClasses = `${baseMainClasses} pt-24`;
       // Capture global errors to the test event log so failing traces include uncaught exceptions
       try {
         window.addEventListener('error', function (ev) {
-          try { window.__TEST_EVENT_LOG.push({ event: 'error', message: ev && ev.message, filename: ev && ev.filename, lineno: ev && ev.lineno, colno: ev && ev.colno, error: ev && ev.error && String(ev.error), ts: Date.now() }); } catch (e) {}
+          try { window.__TEST_EVENT_LOG.push({ event: 'error', message: ev && ev.message, filename: ev && ev.filename, lineno: ev && ev.lineno, colno: ev && ev.colno, error: ev && ev.error && String(ev.error), ts: Date.now() }); } catch  { void 0; }
         });
         window.addEventListener('unhandledrejection', function (ev) {
-          try { window.__TEST_EVENT_LOG.push({ event: 'unhandledrejection', reason: ev && ev.reason && String(ev.reason), ts: Date.now() }); } catch (e) {}
+          try { window.__TEST_EVENT_LOG.push({ event: 'unhandledrejection', reason: ev && ev.reason && String(ev.reason), ts: Date.now() }); } catch  { void 0; }
         });
       } catch { /* noop */ }
       var isTestEnv = (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) || (typeof navigator !== 'undefined' && navigator.webdriver);
@@ -353,11 +353,11 @@ const mainClasses = `${baseMainClasses} pt-24`;
             el.style.opacity = '1';
             el.removeAttribute('inert');
             var inputEl = el.querySelector('#search-input');
-            if (inputEl) try { inputEl.focus(); } catch (e) {}
+            if (inputEl) try { inputEl.focus(); } catch  { void 0; }
             if (inputEl) inputEl.setAttribute('aria-expanded', 'true');
             var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
             results.forEach(function (r) { r.style.display = 'block'; r.style.visibility = 'visible'; r.style.opacity = '1'; });
-            try { el.dataset.ready = 'true'; } catch (e) {}
+            try { el.dataset.ready = 'true'; } catch  { void 0; }
           } catch { /* noop */ }
         },
         closeSearchOverlay: function () {
@@ -374,7 +374,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
             var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
             results.forEach(function (r) { r.style.display = 'none'; r.style.visibility = 'hidden'; r.style.opacity = '0'; });
             var inputEl = el.querySelector('#search-input'); if (inputEl) inputEl.setAttribute('aria-expanded', 'false');
-            try { el.dataset.ready = 'false'; } catch (e) {}
+            try { el.dataset.ready = 'false'; } catch  { void 0; }
           } catch { /* noop */ }
         }
       };
@@ -445,7 +445,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                     overlay.style.visibility = 'visible';
                     var results = overlay.querySelectorAll('.search-result, [data-results-container], [data-results]');
                     results.forEach(function (el) { el.style.display = 'block'; el.style.visibility = 'visible'; el.style.opacity = '1'; });
-                    var input = overlay.querySelector('#search-input'); if (input) { input.style.display = ''; try { input.focus(); } catch (err) {} }
+                    var input = overlay.querySelector('#search-input'); if (input) { input.style.display = ''; try { input.focus(); } catch  { void 0; } }
                     var closeBtn = overlay.querySelector('#close-search'); if (closeBtn) closeBtn.style.display = 'block';
                     var backdrop = overlay.querySelector('[data-overlay-backdrop]'); if (backdrop) backdrop.style.display = '';
                     return;
@@ -606,11 +606,11 @@ const mainClasses = `${baseMainClasses} pt-24`;
                       el.removeAttribute('inert');
                       el.setAttribute('aria-hidden', 'false');
                       var inputEl = el.querySelector('#search-input');
-                      if (inputEl) try { inputEl.focus && inputEl.focus(); } catch (e) {};
-                      if (inputEl) try { inputEl.setAttribute && inputEl.setAttribute('aria-expanded', 'true'); } catch (e) {}
+                      if (inputEl) try { inputEl.focus && inputEl.focus(); } catch  { void 0; };
+                      if (inputEl) try { inputEl.setAttribute && inputEl.setAttribute('aria-expanded', 'true'); } catch  { void 0; }
                       var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
-                      results.forEach(function (r) { try { r.style.display = 'block'; r.style.visibility = 'visible'; r.style.opacity = '1'; } catch (e) {} });
-                      try { el.dataset.ready = 'true'; window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch (e) {}
+                      results.forEach(function (r) { try { r.style.display = 'block'; r.style.visibility = 'visible'; r.style.opacity = '1'; } catch  { void 0; } });
+                      try { el.dataset.ready = 'true'; window.__ENHANCED_SEARCH_OVERLAY_INJECTED = true; } catch  { void 0; }
                     } catch { /* noop */ }
                   },
                   closeSearchOverlay: function () {
@@ -625,9 +625,9 @@ const mainClasses = `${baseMainClasses} pt-24`;
                       el.style.visibility = 'hidden';
                       el.style.display = 'none';
                       var results = el.querySelectorAll('.search-result, [data-results-container], [data-results]');
-                      results.forEach(function (r) { try { r.style.display = 'none'; r.style.visibility = 'hidden'; r.style.opacity = '0'; } catch (e) {} });
-                      var inputEl = el.querySelector('#search-input'); if (inputEl) try { inputEl.setAttribute && inputEl.setAttribute('aria-expanded', 'false'); } catch (e) {}
-                      try { el.dataset.ready = 'false'; } catch (e) {}
+                      results.forEach(function (r) { try { r.style.display = 'none'; r.style.visibility = 'hidden'; r.style.opacity = '0'; } catch  { void 0; } });
+                      var inputEl = el.querySelector('#search-input'); if (inputEl) try { inputEl.setAttribute && inputEl.setAttribute('aria-expanded', 'false'); } catch  { void 0; }
+                      try { el.dataset.ready = 'false'; } catch  { void 0; }
                     } catch { /* noop */ }
                   }
                 };
@@ -654,7 +654,7 @@ const mainClasses = `${baseMainClasses} pt-24`;
                 } catch { /* noop */ }
                 return result;
               };
-            } catch (e) { }
+            } catch  { void 0; }
           }
         } catch (e) {
           console.warn('search-overlay test helper failed', e);
@@ -681,12 +681,12 @@ const mainClasses = `${baseMainClasses} pt-24`;
                     try {
                       var isOverlayClassList = (overlay && overlay.classList === this);
                       var evt = { event: 'classList.add-active', isOverlay: !!isOverlayClassList, args: Array.prototype.slice.call(arguments), ts: Date.now(), stack: (new Error()).stack };
-                      try { window.__TEST_EVENT_LOG.push(evt); } catch (e) {}
-                      try { console.warn && console.warn('TEST-INSTRUMENTATION classList.add active', evt); } catch (e) {}
-                    } catch (e) {}
+                      try { window.__TEST_EVENT_LOG.push(evt); } catch  { void 0; }
+                      try { console.warn && console.warn('TEST-INSTRUMENTATION classList.add active', evt); } catch  { void 0; }
+                    } catch  { void 0; }
                   }
                 }
-              } catch (e) {}
+              } catch  { void 0; }
               return originalDOMTokenListAdd.apply(this, arguments);
             };
           } catch { /* noop */ }
@@ -698,10 +698,10 @@ const mainClasses = `${baseMainClasses} pt-24`;
               try {
                 if (String(name) === 'data-state' && String(value) === 'open') {
                   var evt2 = { event: 'setAttribute-data-state-open', target: this.id || this.tagName, ts: Date.now(), stack: (new Error()).stack };
-                  try { window.__TEST_EVENT_LOG.push(evt2); } catch (e) {}
-                  try { console.warn && console.warn('TEST-INSTRUMENTATION setAttribute data-state open', evt2); } catch (e) {}
+                  try { window.__TEST_EVENT_LOG.push(evt2); } catch  { void 0; }
+                  try { console.warn && console.warn('TEST-INSTRUMENTATION setAttribute data-state open', evt2); } catch  { void 0; }
                 }
-              } catch (e) {}
+              } catch  { void 0; }
               return originalSetAttribute.apply(this, arguments);
             };
           } catch { /* noop */ }
@@ -734,9 +734,9 @@ const mainClasses = `${baseMainClasses} pt-24`;
                 var isOpenKey = e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key && e.key.toLowerCase() === 'k');
                 if (isOpenKey) { e.preventDefault && e.preventDefault(); e.stopImmediatePropagation && e.stopImmediatePropagation(); }
               }
-            } catch (err) {}
+            } catch  { void 0; }
           }, true);
-        } catch (err) {}
+        } catch  { void 0; }
       })();
     </script>
     <button data-search-trigger aria-hidden="true" style="display:none"></button>

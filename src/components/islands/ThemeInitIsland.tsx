@@ -1,6 +1,6 @@
 /* eslint-disable no-empty, no-useless-escape */
 export default function ThemeInitIsland() {
-  try { console.debug('ThemeInitIsland executing'); } catch (e) {}
+  try { console.debug('ThemeInitIsland executing'); } catch  { void 0; }
   return (
     <script
       dangerouslySetInnerHTML={{
@@ -24,9 +24,9 @@ export default function ThemeInitIsland() {
         root.style.setProperty('--bg', 'var(--color-background)');
       }
     } catch (err) { /* noop */ }
-    try { localStorage.setItem(key, theme); } catch(e) {}
+    try { localStorage.setItem(key, theme); } catch  { void 0; }
     // Also persist theme in a cookie for server-side personalization
-    try { document.cookie = key + '=' + encodeURIComponent(theme) + '; Path=/; Max-Age=' + (60*60*24*365) + '; SameSite=Lax'; } catch(e) {}
+    try { document.cookie = key + '=' + encodeURIComponent(theme) + '; Path=/; Max-Age=' + (60*60*24*365) + '; SameSite=Lax'; } catch  { void 0; }
   } catch (error) {
     console.warn('Theme initialization failed', error);
   }
