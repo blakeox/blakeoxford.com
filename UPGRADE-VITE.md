@@ -30,3 +30,9 @@ Notes
 - If native build scripts (sharp/esbuild) require approvals, run `pnpm approve-builds` on the CI host as needed.
 - Keep changes minimal and test often; prefer multiple small PRs over a single large upgrade.
 
+
+Note: A helper npm script 'upgrade:vite' has been added to package.json to run the upgrade command: 
+
+  pnpm run upgrade:vite
+
+Run this on a machine with network access to update package.json and pnpm-lock.yaml.
