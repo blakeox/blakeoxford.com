@@ -85,7 +85,8 @@
     "contrast:badge": "node scripts/quality/contrast-sparkline-badge.js",
     "contrast:check": "node scripts/quality/contrast-alert-check.js",
     "contrast:report": "node scripts/quality/contrast-report.js --limit 10",
-    "contrast:sitemap": "playwright test tests/playwright/accessibility/contrast-sitemap.spec.ts --project=chromium"
+    "contrast:sitemap": "playwright test tests/playwright/accessibility/contrast-sitemap.spec.ts --project=chromium",
+    "upgrade:vite": "pnpm up vite @vitejs/plugin-react --latest -L"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
@@ -155,7 +156,6 @@
   },
   "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad",
   "pnpm": {
-    "overrides": {
-    }
+    "overrides": {}
   }
 }
