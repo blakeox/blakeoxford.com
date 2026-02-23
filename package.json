@@ -85,7 +85,8 @@
     "contrast:badge": "node scripts/quality/contrast-sparkline-badge.js",
     "contrast:check": "node scripts/quality/contrast-alert-check.js",
     "contrast:report": "node scripts/quality/contrast-report.js --limit 10",
-    "contrast:sitemap": "playwright test tests/playwright/accessibility/contrast-sitemap.spec.ts --project=chromium"
+    "contrast:sitemap": "playwright test tests/playwright/accessibility/contrast-sitemap.spec.ts --project=chromium",
+    "upgrade:vulnerable": "pnpm audit --audit-level=moderate && pnpm audit fix || true"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
