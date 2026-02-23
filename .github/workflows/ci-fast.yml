@@ -188,14 +188,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-playwright-browsers-
 
-      - name: Install Chromium browser for Playwright
-        run: pnpm exec playwright install chromium
-
-      - name: Configure Chromium-only fallback on Linux CI
+      - name: Install Playwright browsers (full with Chromium fallback)
         run: |
-          echo "Configuring Chromium-only E2E run on Linux CI to avoid WebKit/Firefox deps..."
-          echo "BROWSER_INSTALL_FAILED=true" >> $GITHUB_ENV
-          echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> $GITHUB_ENV
+          echo "Attempting full Playwright browser install (chromium, firefox, webkit)..."
+          if pnpm exec playwright install; then
+            echo "✅ Playwright browsers installed"
+            echo "PLAYWRIGHT_BROWSERS_LIMITED=false" >> $GITHUB_ENV
+          else
+            echo "⚠️ Full Playwright install failed; falling back to Chromium-only"
+            pnpm exec playwright install chromium
+            echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> $GITHUB_ENV
+          fi
 
       - name: Build the application
         run: pnpm run build

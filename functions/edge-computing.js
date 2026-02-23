@@ -1168,7 +1168,7 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
         const headers = new Headers(corsHeaders);
         headers.append('Set-Cookie', cookie);
         return new Response(JSON.stringify({ status: 'ok', theme }), { status: 200, headers });
-      } catch (e) {
+      } catch {
         return new Response(JSON.stringify({ error: 'Failed to set theme cookie' }), { status: 500, headers: corsHeaders });
       }
     }
@@ -1393,7 +1393,7 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
             finalResponse = new Response(html, { status: finalResponse.status, statusText: finalResponse.statusText, headers: newHeaders });
           }
         }
-      } catch (e) { /* noop personalization */ }
+      } catch { /* noop personalization */ }
 
       // Edge analytics disabled
       try {

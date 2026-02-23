@@ -55,7 +55,7 @@ export default function AIChatIsland() {
 		panelRef,
 		inputRef,
 		scrollContainerRef,
-		launcherRef,
+		_launcherRef,
 		messagesRef,
 		typingTimeoutRef,
 		voiceSupported,
@@ -148,7 +148,7 @@ export default function AIChatIsland() {
 				if (open === true) {
 					openChat();
 					// Ensure input receives focus when island has mounted
-					try { focusInput(); } catch (err) { /* noop - focus best-effort */ }
+					try { focusInput(); } catch (_err) { /* noop - focus best-effort */ }
 				} else if (open === false) {
 					closeChat();
 				}

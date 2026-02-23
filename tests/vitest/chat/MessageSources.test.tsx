@@ -159,7 +159,7 @@ describe('SourcesList', () => {
 	});
 
 	it('should display "Hide details" when sources are expanded', async () => {
-		const { container } = render(<SourcesList {...mockProps} showAllSources={true} />);
+		const { container: _container } = render(<SourcesList {...mockProps} showAllSources={true} />);
 
 		const button = await screen.findByText('Hide details');
 		expect(button).toBeInTheDocument();

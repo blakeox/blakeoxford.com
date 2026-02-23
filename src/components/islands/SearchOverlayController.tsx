@@ -97,7 +97,7 @@ export default function SearchOverlayController() {
     let cancelled = false;
     let state: OverlayState = 'idle';
 
-    const win = window as typeof window & {
+    const _win = window as typeof window & {
       enhancedSearchOverlay?: undefined;
     };
     // Preserve test helper (enhancedSearchOverlay) so Playwright tests can control overlay deterministically

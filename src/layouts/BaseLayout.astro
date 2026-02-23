@@ -52,7 +52,7 @@ const includeTestHelpers = import.meta.env.DEV || import.meta.env.MODE === 'test
 
 <html lang="en" class="scroll-smooth bg-[--bg] text-[--fg]">
   <head>
-    { includeTestHelpers && <script src="/js/test-helpers.js"></script> }
+    { includeTestHelpers && <script is:inline src="/js/test-helpers.js"></script> }
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     

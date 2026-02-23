@@ -31,7 +31,7 @@ export default [
       'quotes': ['error', 'single'],
       'semi': ['error', 'always'],
       'no-console': 'off',
-      'no-unused-vars': 'warn',
+      'no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
     },
   },
 
@@ -51,6 +51,9 @@ export default [
         addEventListener: 'readonly',
         KVNamespace: 'readonly',
       },
+    },
+    rules: {
+      'no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
     },
   },
 
@@ -151,7 +154,7 @@ export default [
       'quotes': ['error', 'single'],
       'semi': ['error', 'always'],
       'no-console': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_', caughtErrors: 'none' }],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-undef': 'off', // TypeScript handles this
     },

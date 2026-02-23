@@ -14,7 +14,7 @@ const mockFuse = {
 };
 
 // Provide a real constructor function for Fuse to allow `new global.Fuse(...)` in tests
-global.Fuse = function (this: any, data?: any, opts?: any) {
+global.Fuse = function (this: any, _data?: any, _opts?: any) {
   return mockFuse;
 } as any;
 

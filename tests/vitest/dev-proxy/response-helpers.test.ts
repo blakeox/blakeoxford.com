@@ -20,7 +20,7 @@ describe('response-helpers', () => {
       setHeader: vi.fn((name: string, value: string) => {
         mockRes.headers[name] = value;
       }),
-      end: vi.fn((data: string) => {
+      end: vi.fn((_data: string) => {
         // Mock implementation
       }),
     };
