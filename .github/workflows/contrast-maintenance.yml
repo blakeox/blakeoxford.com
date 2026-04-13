@@ -2,7 +2,7 @@ name: Contrast Maintenance
 
 on:
   schedule:
-    - cron: '30 4 * * *' # after nightly contrast run
+    - cron: '30 4 * * 1' # weekly after contrast run
   workflow_dispatch: {}
 
 permissions:

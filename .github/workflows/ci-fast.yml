@@ -2,6 +2,7 @@ name: Fast CI
 
 # This workflow provides quick feedback for PRs with essential checks only
 on:
+  workflow_dispatch:
   pull_request:
     branches: ["**"]
   push:
@@ -293,6 +294,7 @@ jobs:
   # Cross-browser essential E2E (Firefox + WebKit) on macOS to keep Linux fast
   essential-e2e-crossbrowser:
     name: Essential E2E (Firefox/WebKit on macOS)
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: macos-latest
     timeout-minutes: 20
     needs: quick-validation
@@ -558,6 +560,5 @@ jobs:
           echo "✅ essential-e2e (Chromium)"
           echo "✅ essential-e2e-crossbrowser (Firefox/WebKit on macOS)"
           echo "All required checks are green."
-
 
 
