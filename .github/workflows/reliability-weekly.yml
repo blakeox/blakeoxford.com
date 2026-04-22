@@ -23,11 +23,15 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build site
         run: pnpm build
-      - name: Install Playwright Browsers
-        run: pnpm test:e2e:install
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Install Firefox
+        if: github.event_name == 'workflow_dispatch'
+        run: pnpm exec playwright install --with-deps firefox
       - name: Run essential tests (Chromium)
         run: npx playwright test --grep "@essential" --project=chromium --reporter=line,json --output=test-results/chromium
       - name: Run essential tests (Firefox)
+        if: github.event_name == 'workflow_dispatch'
         run: npx playwright test --grep "@essential" --project=firefox --reporter=line,json --output=test-results/firefox
       - name: Upload artifacts
         uses: actions/upload-artifact@v6

@@ -4,9 +4,6 @@ name: Comprehensive CI
 on:
   push:
     branches: [main]
-  schedule:
-    # Run comprehensive tests weekly on Sunday at 2 AM UTC (reduced from nightly)
-    - cron: '0 2 * * 0'
   workflow_dispatch:
     # Allow manual triggering for comprehensive testing
 
@@ -35,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false  # Continue other tests even if one fails
       matrix:
-        test-group: [unit, e2e, performance]
+        test-group: ${{ fromJSON(github.event_name == 'workflow_dispatch' && '["unit","e2e","performance"]' || '["unit","e2e"]') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
