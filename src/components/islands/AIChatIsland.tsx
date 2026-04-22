@@ -55,7 +55,6 @@ export default function AIChatIsland() {
 		panelRef,
 		inputRef,
 		scrollContainerRef,
-		_launcherRef,
 		messagesRef,
 		typingTimeoutRef,
 		voiceSupported,
