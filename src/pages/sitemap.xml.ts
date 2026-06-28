@@ -20,7 +20,7 @@ export async function GET() {
   // Individual project pages - dynamically load from content collection
   const projectEntries = await getCollection('projects');
   const projectPages: SitemapEntry[] = projectEntries.map((project: CollectionEntry<'projects'>) => ({
-    loc: `/projects/${project.slug}/`,
+    loc: `/projects/${project.id}/`,
     changefreq: 'monthly',
     priority: 0.6,
   }));
@@ -28,7 +28,7 @@ export async function GET() {
   // Individual blog post pages from content collection
   const blogEntries = await getCollection('blog', (entry: CollectionEntry<'blog'>) => !entry.data.draft);
   const blogPages: SitemapEntry[] = blogEntries.map((post: CollectionEntry<'blog'>) => ({
-    loc: `/blog/${post.slug}/`,
+    loc: `/blog/${post.id}/`,
     changefreq: 'monthly',
     priority: 0.7,
   }));

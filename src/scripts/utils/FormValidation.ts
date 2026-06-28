@@ -281,7 +281,7 @@ export class FormValidation {
 
       // Create error message
       const errorElement = document.createElement('div');
-      errorElement.className = 'field-error text-red-600 text-sm mt-1';
+      errorElement.className = 'field-error text-error text-sm mt-1';
       errorElement.textContent = errors[0];
       errorElement.setAttribute('role', 'alert');
       errorElement.id = `error-${field.id || Date.now()}`;

@@ -36,9 +36,10 @@ export interface RetryOptions {
 /**
  * Add minimum delay to a promise to prevent flash of loading state
  */
-function withMinimumDelay<T>(promise: Promise<T>, minimumDelay: number): Promise<T> {
+async function withMinimumDelay<T>(promise: Promise<T>, minimumDelay: number): Promise<T> {
 	const delayPromise = new Promise<void>((resolve) => setTimeout(resolve, minimumDelay));
-	return Promise.all([promise, delayPromise]).then(([result]) => result);
+	const [result] = await Promise.all([promise, delayPromise]);
+	return result;
 }
 
 /**

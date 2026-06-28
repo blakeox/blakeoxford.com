@@ -20,7 +20,6 @@
 
 const isDev = import.meta.env.DEV;
 const isDebug = import.meta.env.PUBLIC_DEBUG === 'true';
-const _isProduction = import.meta.env.PROD;
 
 /**
  * Logger interface with different log levels
@@ -128,5 +127,4 @@ export const analyticsLogger = {
     }
   },
 };
-
 

@@ -308,7 +308,7 @@ export class ProgressiveEnhancement {
     
     // Create error message
     const errorElement = document.createElement('div');
-    errorElement.className = 'field-error text-red-600 text-sm mt-1';
+    errorElement.className = 'field-error text-error text-sm mt-1';
     errorElement.textContent = this.getFieldErrorMessage(field);
     errorElement.setAttribute('role', 'alert');
     

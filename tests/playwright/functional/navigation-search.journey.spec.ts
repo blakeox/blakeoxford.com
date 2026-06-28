@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 import { openSearchOverlay, fillSearch, navigateMain } from '../../utils/pageActions';
 
 // Consolidated fast journey combining essential nav + search actions.

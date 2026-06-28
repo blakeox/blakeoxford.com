@@ -36,12 +36,24 @@ const achievementIconSVGs = {
   trending: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />'
 };
 
-// Color mapping for achievement badges
-const achievementColors = ['success', 'primary', 'accent'];
+const achievementStyles = [
+  {
+    iconBg: 'bg-success/10 dark:bg-success/20',
+    iconColor: 'text-success dark:text-success-light',
+  },
+  {
+    iconBg: 'bg-primary/10 dark:bg-primary/20',
+    iconColor: 'text-primary dark:text-primary-light',
+  },
+  {
+    iconBg: 'bg-accent/10 dark:bg-accent/20',
+    iconColor: 'text-accent dark:text-accent-light',
+  },
+] as const;
 ---
 
-<div class="bg-surface/80 dark:bg-surface-dark/80 p-8 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-2xl hover-lift-sm transition-all duration-300">
-  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-accent to-tertiary text-foreground-light text-2xl mb-6">
+<div class="bg-surface/80 dark:bg-surface-dark/80 p-8 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-xl hover-lift-sm transition-all duration-300">
+  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-accent to-primary text-foreground-light text-2xl mb-6">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false" set:html={mainIconSVGs[icon]} />
   </div>
   <h3 class="text-xl sm:text-2xl font-bold mb-3 text-foreground dark:text-foreground-light">{title}</h3>
@@ -49,11 +61,11 @@ const achievementColors = ['success', 'primary', 'accent'];
   <ul class="space-y-2">
     {achievements.map((achievement, idx) => {
       const iconKey = achievementIcons[idx] || 'grid';
-      const colorClass = achievementColors[idx % achievementColors.length];
+      const style = achievementStyles[idx % achievementStyles.length];
       return (
         <li class="flex items-center gap-2">
-          <span class={`inline-flex items-center justify-center w-6 h-6 rounded-full bg-${colorClass}/10 dark:bg-${colorClass}/20 aspect-square`}>
-            <svg class={`w-4 h-4 text-${colorClass} dark:text-${colorClass}-light`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false" set:html={achievementIconSVGs[iconKey]} />
+          <span class={`inline-flex items-center justify-center w-6 h-6 rounded-full ${style.iconBg} aspect-square`}>
+            <svg class={`w-4 h-4 ${style.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false" set:html={achievementIconSVGs[iconKey]} />
           </span>
           <span class="text-sm">{achievement}</span>
         </li>

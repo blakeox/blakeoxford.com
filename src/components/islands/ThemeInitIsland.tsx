@@ -1,6 +1,5 @@
 /* eslint-disable no-useless-escape */
 export default function ThemeInitIsland() {
-  try { console.debug('ThemeInitIsland executing'); } catch  { void 0; }
   return (
     <script
       dangerouslySetInnerHTML={{
@@ -19,8 +18,8 @@ export default function ThemeInitIsland() {
     // Ensure minimal CSS variables are present immediately for tests that probe computed styles
     try {
       if (!getComputedStyle(root).getPropertyValue('--color-background').trim()) {
-        root.style.setProperty('--color-background', theme === 'dark' ? '#0f172a' : '#f8fafc');
-        root.style.setProperty('--color-foreground', theme === 'dark' ? '#f8fafc' : '#111827');
+        root.style.setProperty('--color-background', theme === 'dark' ? 'oklch(0.15 0.02 264)' : 'oklch(0.98 0.005 264)');
+        root.style.setProperty('--color-foreground', theme === 'dark' ? 'oklch(0.98 0 0)' : 'oklch(0.2 0.02 264)');
         root.style.setProperty('--bg', 'var(--color-background)');
       }
     } catch (err) { /* noop */ }

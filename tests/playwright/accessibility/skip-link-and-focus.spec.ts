@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 test.describe('Skip link and focus management', () => {
   test('skip link moves focus to main content', async ({ page }) => {

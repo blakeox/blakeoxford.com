@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('About page layout', () => {
   test('uses layout shells, preserves navbar offset, and exposes accessible connect links', async ({ page }) => {

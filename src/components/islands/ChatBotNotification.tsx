@@ -103,16 +103,16 @@ export default function ChatBotNotification() {
 			aria-live="polite"
 			className="fixed bottom-24 right-4 z-[1060] animate-slideUp sm:bottom-28 sm:right-6"
 		>
-			<div className="relative max-w-xs rounded-lg bg-white p-4 shadow-lg ring-1 ring-black/5 dark:bg-gray-800 dark:ring-white/10">
+			<div className="relative max-w-xs rounded-lg bg-surface p-4 shadow-lg ring-1 ring-border/30 dark:bg-surface-dark dark:ring-border-dark/40">
 				{/* Arrow pointing to chat bot */}
-				<div className="absolute -bottom-2 right-6 h-4 w-4 rotate-45 bg-white dark:bg-gray-800" />
+				<div className="absolute -bottom-2 right-6 h-4 w-4 rotate-45 bg-surface dark:bg-surface-dark" />
 				
 				{/* Close button */}
 				<button
 					type="button"
 					onClick={handleDismiss}
 					aria-label="Dismiss notification"
-					className="absolute right-2 top-2 rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-foreground/80 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+					className="absolute right-2 top-2 rounded p-1 text-foreground/55 transition-colors hover:bg-surface-subtle hover:text-foreground/80 dark:text-foreground-light/55 dark:hover:bg-surface-dark-subtle dark:hover:text-foreground-light/80"
 				>
 					<svg
 						className="h-4 w-4"
@@ -134,7 +134,7 @@ export default function ChatBotNotification() {
 					<div className="mb-2 flex items-start gap-2">
 						<div className="flex-shrink-0">
 							<svg
-								className="h-5 w-5 text-blue-600 dark:text-blue-400"
+								className="h-5 w-5 text-accent dark:text-accent-light"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
@@ -149,10 +149,10 @@ export default function ChatBotNotification() {
 							</svg>
 						</div>
 						<div className="flex-1">
-							<h3 className="text-sm font-semibold text-foreground dark:text-gray-100">
+							<h3 className="text-sm font-semibold text-foreground dark:text-foreground-light">
 								Try the AI Assistant!
 							</h3>
-							<p className="mt-1 text-sm text-foreground/80 dark:text-gray-400">
+							<p className="mt-1 text-sm text-foreground/80 dark:text-foreground-light/75">
 								Ask me anything about my work, projects, or experience. I'm in the bottom right corner.
 							</p>
 						</div>
@@ -161,7 +161,7 @@ export default function ChatBotNotification() {
 					<button
 						type="button"
 						onClick={handleClickChat}
-						className="mt-3 w-full rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+						className="mt-3 w-full rounded-md bg-accent px-3 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
 					>
 						Open Chat
 					</button>
@@ -170,4 +170,3 @@ export default function ChatBotNotification() {
 		</div>
 	);
 }
-

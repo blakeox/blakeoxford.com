@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('NavBar hydration on Contact page', () => {
   test('nav renders and essential controls are visible', async ({ page }) => {

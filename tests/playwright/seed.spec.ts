@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Playwright 1.56 New Features Demo', () => {
   test('demonstrate new page.consoleMessages(), page.pageErrors(), and page.requests() APIs', async ({ page }) => {

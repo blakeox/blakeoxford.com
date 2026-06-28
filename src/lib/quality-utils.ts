@@ -144,20 +144,20 @@ export function getConfidenceIndicator(score: number): {
 	if (score >= 80) {
 		return {
 			label: 'High confidence',
-			color: 'text-green-600 dark:text-green-400',
+			color: 'text-success-dark dark:text-success-light',
 			emoji: '✓',
 		};
 	}
 	if (score >= 60) {
 		return {
 			label: 'Moderate confidence',
-			color: 'text-yellow-600 dark:text-yellow-400',
+			color: 'text-warning-dark dark:text-warning-light',
 			emoji: '○',
 		};
 	}
 	return {
 		label: 'Low confidence',
-		color: 'text-orange-600 dark:text-orange-400',
+		color: 'text-warning-dark dark:text-warning-light',
 		emoji: '!',
 	};
 }
@@ -176,21 +176,21 @@ export function getCitationHealthIndicator(health: 'healthy' | 'warning' | 'erro
 	switch (health) {
 		case 'healthy':
 			return {
-				color: 'text-green-600 dark:text-green-400',
+				color: 'text-success-dark dark:text-success-light',
 				icon: '✓',
 				label: 'Healthy',
 				description: 'All sources are relevant and properly cited',
 			};
 		case 'warning':
 			return {
-				color: 'text-yellow-600 dark:text-yellow-400',
+				color: 'text-warning-dark dark:text-warning-light',
 				icon: '⚠',
 				label: 'Warning',
 				description: 'Some sources may have lower relevance',
 			};
 		case 'error':
 			return {
-				color: 'text-red-600 dark:text-red-400',
+				color: 'text-error-dark dark:text-error-light',
 				icon: '✗',
 				label: 'Error',
 				description: 'Sources are missing or have very low relevance',

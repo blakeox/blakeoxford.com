@@ -1,4 +1,3 @@
- 
 import { useEffect } from 'react';
 
 type OverlayState = 'idle' | 'fallback';
@@ -29,19 +28,19 @@ function openFallbackOverlay(): void {
   try {
     // If authoritative closed exists from SSR or test harness, remove it on user-initiated open.
     if (overlay.hasAttribute && overlay.hasAttribute('data-authoritative-closed')) {
-      try { overlay.removeAttribute('data-authoritative-closed'); } catch { /* noop */ }
+      try { overlay.removeAttribute('data-authoritative-closed'); } catch (e) { /* noop */ }
     }
     // Respect transient closed-lock used by tests to prevent reopens.
     if (overlay.hasAttribute && overlay.hasAttribute('data-closed-lock')) return;
-  } catch  { void 0; }
+  } catch { /* noop */ }
 
   overlay.dataset.state = 'open';
-  try { overlay.dataset.openTs = String(Date.now()); } catch  { void 0; }
+  try { overlay.dataset.openTs = String(Date.now()); } catch { /* noop */ }
   // Ensure overlay is visible and interactive immediately for deterministic tests
   overlay.classList.add('active');
 
   // Remove aria-hidden entirely (presence matters)
-  try { overlay.removeAttribute('aria-hidden'); } catch  { void 0; }
+  try { overlay.removeAttribute('aria-hidden'); } catch { /* noop */ }
 
   // Override any important hide rules set by ensureOverlayClosed
   try {
@@ -54,7 +53,7 @@ function openFallbackOverlay(): void {
     overlay.style.opacity = '1';
   }
 
-  try { overlay.removeAttribute('inert'); } catch  { void 0; }
+  try { overlay.removeAttribute('inert'); } catch { /* noop */ }
 
   document.body.dataset.searchOpen = 'true';
   document.body.style.overflow = 'hidden';
@@ -97,11 +96,16 @@ export default function SearchOverlayController() {
     let cancelled = false;
     let state: OverlayState = 'idle';
 
-    const _win = window as typeof window & {
-      enhancedSearchOverlay?: undefined;
+    const win = window as typeof window & {
+      enhancedSearchOverlay?: {
+        openSearchOverlay: () => void;
+        closeSearchOverlay: () => void;
+      };
+      searchOverlay?: {
+        openSearchOverlay: () => void;
+        closeSearchOverlay: () => void;
+      };
     };
-    // Preserve test helper (enhancedSearchOverlay) so Playwright tests can control overlay deterministically
-
 
     const doc = document;
 
@@ -117,7 +121,7 @@ export default function SearchOverlayController() {
         if (overlayElement?.dataset.state === 'closed') return;
         // Attempt authoritative close synchronously
         if (typeof (window as any).ensureOverlayClosed === 'function') {
-          try { (window as any).ensureOverlayClosed(); return; } catch  { void 0; }
+          try { (window as any).ensureOverlayClosed(); return; } catch { /* noop */ }
         }
         closeFallbackOverlay();
       } catch(e) { console.error('closeOverlay failed', e); }
@@ -162,7 +166,7 @@ export default function SearchOverlayController() {
     };
 
     const handleEscape = (event: KeyboardEvent) => {
-      try { console.debug('handleEscape invoked', { key: event.key, state: overlayElement?.dataset.state }); } catch  { void 0; }
+      try { console.debug('handleEscape invoked', { key: event.key, state: overlayElement?.dataset.state }); } catch { /* noop */ }
 
       if (event.key !== 'Escape') return;
       if (overlayElement?.dataset.state !== 'open' && state !== 'fallback') return;
@@ -289,11 +293,11 @@ export default function SearchOverlayController() {
   option.className = 'search-result group flex flex-col gap-2 rounded-2xl border border-border/40 bg-background/95 p-4 sm:p-5 transition-all duration-200 hover:border-accent/50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 dark:bg-surface-dark/95';
 
         const title = doc.createElement('span');
-        title.className = 'text-sm font-semibold tracking-tight text-foreground dark:text-foreground-light';
+        title.className = 'block text-sm font-semibold tracking-tight text-foreground dark:text-foreground-light';
         title.appendChild(createHighlightedFragment(record.title, currentQuery));
 
         const description = doc.createElement('span');
-        description.className = 'text-xs leading-relaxed text-foreground/70 dark:text-foreground-light/70';
+        description.className = 'mt-1 block text-xs leading-relaxed text-foreground/70 dark:text-foreground-light/70';
         description.appendChild(createHighlightedFragment(record.description, currentQuery));
 
         const metaRow = doc.createElement('div');
@@ -313,7 +317,7 @@ export default function SearchOverlayController() {
 
         if (record.tags.length) {
           const tags = doc.createElement('div');
-          tags.className = 'flex flex-wrap gap-1 text-xxs uppercase tracking-label text-foreground/45 dark:text-foreground-light/45';
+          tags.className = 'flex flex-wrap gap-1 text-xxs uppercase tracking-label text-foreground/50 dark:text-foreground-light/50';
           record.tags.slice(0, 4).forEach(tag => {
             const pill = doc.createElement('span');
             pill.className = 'rounded-full bg-surface px-2 py-0.5 ring-1 ring-border/25 dark:bg-surface-dark';
@@ -461,6 +465,13 @@ export default function SearchOverlayController() {
     runSearch();
     loadProjects();
 
+    const overlayApi = {
+      openSearchOverlay: openOverlay,
+      closeSearchOverlay: closeOverlay,
+    };
+    win.enhancedSearchOverlay = overlayApi;
+    win.searchOverlay = overlayApi;
+
     toggleButton?.addEventListener('click', handleToggleClick, { passive: false });
     closeButton?.addEventListener('click', handleCloseClick, { passive: false });
   backdropElement?.addEventListener('click', handleBackdrop as EventListener, { passive: true });
@@ -499,6 +510,12 @@ export default function SearchOverlayController() {
       resultsContainer?.removeEventListener('mouseenter', handleResultMouseEnter);
       resultsContainer?.removeEventListener('mousemove', handleResultMouseEnter);
       resultsContainer?.removeEventListener('focusin', handleResultFocus);
+      if (win.enhancedSearchOverlay === overlayApi) {
+        delete win.enhancedSearchOverlay;
+      }
+      if (win.searchOverlay === overlayApi) {
+        delete win.searchOverlay;
+      }
     };
   }, []);
 

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // Essential performance smoke tests
 test.describe('Performance Smoke Tests', () => {

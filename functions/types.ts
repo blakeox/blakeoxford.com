@@ -6,10 +6,11 @@
 export interface Env {
 	// KV Namespaces
 	RATE_LIMIT_KV: KVNamespace;
-	CONTACT_FORM_KV: KVNamespace;
+	CONTACT_MESSAGES: KVNamespace;
 	CSP_REPORTS: KVNamespace;
 	CONVERSATION_CACHE_KV: KVNamespace;
 	AI_RESPONSE_CACHE: KVNamespace;
+	AI_FEEDBACK_KV: KVNamespace;
 
 	// Durable Objects
 	CONVERSATION_DO: DurableObjectNamespace;
@@ -18,7 +19,7 @@ export interface Env {
 	AI: Ai;
 
 	// Vectorize
-	VECTORIZE_INDEX: VectorizeIndex;
+	VECTORIZE: VectorizeIndex;
 
 	// Analytics Engine
 	AI_ANALYTICS: AnalyticsEngineDataset;
@@ -27,6 +28,9 @@ export interface Env {
 	RESEND_API_KEY: string;
 	TURNSTILE_SECRET_KEY: string;
 	AI_SEARCH_API_TOKEN?: string;
+	AI_SEARCH_API_ENDPOINT?: string;
+	AI_GATEWAY_ID?: string;
+	AI_GATEWAY_ACCOUNT_ID?: string;
 
 	// Assets binding (for static site)
 	ASSETS: Fetcher;

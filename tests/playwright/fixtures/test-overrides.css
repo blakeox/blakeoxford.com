@@ -1,0 +1,80 @@
+/**
+ * Playwright-only CSS overrides.
+ * Injected via tests/playwright/hooks.ts — not shipped in production bundles.
+ */
+
+/* Mobile menu close button: visible when menu is active so tests can click it. */
+.mobile-menu .mobile-close-button.sr-only {
+  /* Keep visually hidden by default */
+}
+
+.mobile-menu.active #close-mobile-menu {
+  position: fixed !important;
+  top: 1rem !important;
+  left: 1rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  padding: 0.25rem !important;
+  margin: 0 !important;
+  border-radius: 9999px !important;
+  background: var(--surface) !important;
+  color: var(--fg) !important;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12) !important;
+  clip: auto !important;
+  clip-path: none !important;
+  overflow: visible !important;
+  white-space: normal !important;
+  text-indent: 0 !important;
+  z-index: 2147483650 !important;
+  pointer-events: auto !important;
+}
+
+.mobile-menu.active .mobile-close-button.sr-only {
+  /* Legacy selector kept for specificity with sr-only utilities */
+  position: fixed !important;
+  top: 1rem !important;
+  left: 1rem !important;
+  right: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  padding: 0.25rem !important;
+  border-radius: 9999px !important;
+  background: var(--surface) !important;
+  color: var(--fg) !important;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12) !important;
+  clip: auto !important;
+  clip-path: none !important;
+  overflow: visible !important;
+  white-space: normal !important;
+  text-indent: 0 !important;
+  z-index: 2147483650 !important;
+}
+
+.mobile-menu.active .mobile-menu-content {
+  position: relative;
+}
+
+.mobile-menu.active .mobile-close-button {
+  pointer-events: auto;
+}
+
+/* Legacy TestSearchOverlay harness: force overlay visible when .active is set. */
+#search-overlay.active {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+#search-overlay.active .search-result,
+#search-overlay.active [data-results-container],
+#search-overlay.active [data-results] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}

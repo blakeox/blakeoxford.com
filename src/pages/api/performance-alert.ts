@@ -5,6 +5,19 @@
 
 import type { PerformanceAlert } from '../../types/api';
 
+export function GET(): Response {
+  return new Response(JSON.stringify({
+    success: false,
+    error: 'Method not allowed'
+  }), {
+    status: 405,
+    headers: {
+      'Content-Type': 'application/json',
+      'Allow': 'POST'
+    }
+  });
+}
+
 export async function POST({ request }: { request: Request }): Promise<Response> {
   try {
     const performanceAlert = await request.json() as PerformanceAlert;

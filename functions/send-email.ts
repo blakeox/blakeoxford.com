@@ -102,7 +102,7 @@ interface MessageData {
 async function storeMessage(env: Env, { ip, name, email, message }: MessageData): Promise<void> {
 	try {
 		const id = `${Date.now()}_${crypto.randomUUID()}`;
-		await env.CONTACT_FORM_KV.put(
+		await env.CONTACT_MESSAGES.put(
 			`msg:${id}`,
 			JSON.stringify({ id, timestamp: new Date().toISOString(), ip, name, email, message }),
 			{ expirationTtl: CONFIG.storage.messageTtl }

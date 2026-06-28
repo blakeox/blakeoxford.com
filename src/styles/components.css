@@ -1,547 +1,150 @@
 /**
- * Site-wide component styles using design system tokens
- * Provides consistent, vibrant design patterns across all pages
- * 
- * Modern CSS Architecture (2026):
- * - CSS nesting for better maintainability
- * - Cascade layers for explicit control
- * - Logical properties for i18n support
+ * Site-wide component utilities.
+ *
+ * Keep this file small. New page-specific presentation should live in
+ * components or Tailwind utilities unless it is reused across the site.
  */
 
 @layer components {
-  /* Vibrant gradient banner using theme colors */
-  .blog-gradient-banner {
-    @apply text-white px-8 py-8 rounded-2xl text-center font-semibold;
-    @apply my-12 shadow-2xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02];
-    background-image: linear-gradient(to right, var(--color-accent, #06b6d4), var(--color-primary, #4f46e5));
-    
-    /* Nested dark mode styles */
-    @media (prefers-color-scheme: dark) {
-      background-image: linear-gradient(to right, var(--color-accent-light, #22d3ee), var(--color-primary-light, #6366f1));
-    }
-  }
-
-  /* Callout boxes with colorful styling */
-  .blog-callout {
-    @apply rounded-xl p-6 my-10 backdrop-blur-sm;
-    @apply shadow-sm hover:shadow-md transition-shadow duration-200;
-    background-color: rgb(6 182 212 / 0.05);
-    border-inline-start: 4px solid var(--color-accent, #06b6d4);
-    
-    @media (prefers-color-scheme: dark) {
-      background-color: rgb(34 211 238 / 0.1);
-    }
-  }
-
-  .blog-callout-warning {
-    @apply bg-amber-500/10 dark:bg-amber-500/10 border-2 border-amber-500/50 dark:border-amber-500/50;
-    @apply rounded-xl p-6 my-10 shadow-sm;
-  }
-
-  .blog-callout-success {
-    @apply bg-green-500/5 dark:bg-green-500/10 rounded-xl p-6 my-10;
-    border-inline-start: 4px solid var(--color-success, #22c55e);
-  }
-
-  .blog-callout-gradient {
-    @apply rounded-2xl p-8 my-10 shadow-xl;
-    background-image: linear-gradient(to bottom right, rgb(6 182 212 / 0.1), rgb(79 70 229 / 0.1), rgb(6 182 212 / 0.1));
-    border: 2px solid rgb(6 182 212 / 0.4);
-    
-    @media (prefers-color-scheme: dark) {
-      background-image: linear-gradient(to bottom right, rgb(34 211 238 / 0.1), rgb(99 102 241 / 0.1), rgb(34 211 238 / 0.1));
-      border-color: rgb(34 211 238 / 0.4);
-    }
-  }
-
-  /* Feature cards with vibrant hover effects */
   .blog-card {
-    @apply bg-gradient-to-br from-white/10 to-white/5 dark:from-white/5 dark:to-white/3;
-    @apply border border-gray-300/30 dark:border-gray-700/30;
-    @apply rounded-2xl p-8 transition-all duration-300;
-    @apply hover:shadow-xl hover:scale-[1.02] backdrop-blur-sm;
-    
-    &:hover {
-      border-color: rgb(6 182 212 / 0.5);
-      
-      @media (prefers-color-scheme: dark) {
-        border-color: rgb(34 211 238 / 0.3);
-      }
-    }
+    @apply rounded-2xl p-6 shadow-lg transition-colors duration-200;
+
+    background: color-mix(in oklch, var(--surface) 90%, transparent);
+    border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
   }
 
-  .blog-card-colored {
-    @apply border-2 rounded-2xl p-6;
-    @apply transition-all duration-300 hover:shadow-xl hover:scale-[1.02];
-    @apply backdrop-blur-sm;
+  .blog-card:hover {
+    @apply shadow-lg;
+
+    border-color: color-mix(in oklch, var(--accent) 50%, transparent);
   }
 
-  /* Step cards with vibrant gradients */
-  .blog-step-card {
-    @apply rounded-2xl p-8 my-10 relative shadow-lg;
-    @apply transition-all duration-300 hover:shadow-xl;
-    border-inline-start-width: 6px;
+  .section-badge {
+    @apply inline-flex items-center gap-3 rounded-full px-5 py-2.5 shadow-sm backdrop-blur-sm;
+
+    background: color-mix(in oklch, var(--surface) 85%, transparent);
+    border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
   }
 
-  .blog-step-badge {
-    @apply w-12 h-12 rounded-full flex items-center justify-center;
-    @apply font-bold mb-6 text-white text-lg shadow-lg ring-4 ring-white/20;
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+
+    background-image: linear-gradient(90deg, var(--color-accent), var(--color-primary));
   }
 
-  /* Result boxes */
-  .blog-result {
-    @apply bg-gradient-to-r from-white/10 to-white/5 dark:from-white/8 dark:to-white/3;
-    @apply border rounded-xl p-5 mt-6 shadow-sm backdrop-blur-sm;
+  .hover-lift,
+  .hover-lift-sm,
+  .hover-lift-lg {
+    @apply transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200;
+
+    transition-timing-function: var(--ease-standard);
   }
 
-  /* Grid layouts */
-  .blog-grid-2 {
-    @apply grid grid-cols-1 md:grid-cols-2 gap-8 my-12;
+  .hover-lift:hover,
+  .hover-lift-sm:hover,
+  .hover-lift-lg:hover {
+    @apply shadow-lg;
   }
 
-  .blog-grid-3 {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-12;
+  .hover-lift:hover {
+    @apply motion-safe:-translate-y-1;
   }
 
-  .blog-grid-4 {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-12;
+  .hover-lift-sm:hover {
+    @apply motion-safe:-translate-y-0.5;
   }
 
-  .blog-grid-auto {
-    @apply grid gap-6 my-12;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  .hover-lift-lg:hover {
+    @apply motion-safe:-translate-y-1.5;
   }
 
-  /* Takeaway cards */
-  .blog-takeaway-container {
-    @apply bg-gradient-to-br from-gray-50/50 to-gray-100/50 dark:from-gray-900/50 dark:to-gray-800/50;
-    @apply rounded-2xl p-10 my-12 border border-gray-200/50 dark:border-gray-700/50;
-    @apply shadow-lg backdrop-blur-sm;
+  .card-interactive {
+    @apply transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200;
   }
 
-  .blog-takeaway-item {
-    @apply flex gap-5 mb-6 last:mb-0 p-6;
-    @apply bg-white/80 dark:bg-gray-900/80 rounded-xl;
-    @apply border border-gray-200/50 dark:border-gray-700/50;
-    @apply shadow-md hover:shadow-lg transition-all duration-200 hover:scale-[1.01];
-    @apply backdrop-blur-sm;
+  .card-interactive:hover {
+    @apply motion-safe:scale-[1.01];
   }
 
-  /* Text utilities */
-  .blog-text-muted {
-    @apply opacity-75;
+  .card-interactive:focus-within {
+    outline: 2px solid color-mix(in oklch, var(--accent) 40%, transparent);
+    outline-offset: 2px;
   }
 
-  .blog-icon {
-    @apply text-5xl mb-3;
+  .blur-orb-accent,
+  .blur-orb-primary {
+    @apply pointer-events-none absolute rounded-full blur-3xl;
   }
 
-  /* Color-specific backgrounds using theme colors where possible */
-  .blog-bg-accent {
-    @apply bg-gradient-to-br shadow-lg;
-    background-image: linear-gradient(to bottom right, rgb(6 182 212 / 0.15), rgb(34 211 238 / 0.1));
-    border-color: var(--color-accent, #06b6d4);
-  }
-
-  .blog-bg-primary {
-    @apply bg-gradient-to-br shadow-lg;
-    background-image: linear-gradient(to bottom right, rgb(79 70 229 / 0.15), rgb(99 102 241 / 0.1));
-    border-color: var(--color-primary, #4f46e5);
-  }
-
-  .blog-bg-green {
-    @apply bg-gradient-to-br from-green-500/15 to-emerald-500/10 dark:from-green-500/15 dark:to-emerald-500/10;
-    @apply border-green-500 shadow-lg;
-  }
-
-  .blog-bg-yellow {
-    @apply bg-gradient-to-br from-yellow-500/15 to-amber-500/10 dark:from-yellow-500/15 dark:to-amber-500/10;
-    @apply border-yellow-500 shadow-lg;
-  }
-
-  .blog-bg-purple {
-    @apply bg-gradient-to-br from-purple-500/15 to-violet-500/10 dark:from-purple-500/15 dark:to-violet-500/10;
-    @apply border-purple-500 shadow-lg;
-  }
-
-  .blog-bg-pink {
-    @apply bg-gradient-to-br from-pink-500/15 to-rose-500/10 dark:from-pink-500/15 dark:to-rose-500/10;
-    @apply border-pink-500 shadow-lg;
-  }
-
-  .blog-bg-blue {
-    @apply bg-gradient-to-br from-blue-500/15 to-cyan-500/10 dark:from-blue-500/15 dark:to-cyan-500/10;
-    @apply border-blue-500 shadow-lg;
-  }
-
-  .blog-bg-red {
-    @apply bg-gradient-to-br from-red-500/15 to-rose-500/10 dark:from-red-500/15 dark:to-rose-500/10;
-    @apply border-red-500 shadow-lg;
-  }
-
-  /* Site-wide patterns */
-  
-  /* Floating blur orbs for visual depth */
   .blur-orb-accent {
-    @apply absolute w-96 h-96 rounded-full blur-3xl pointer-events-none;
-    background-color: rgb(6 182 212 / 0.1);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .blur-orb-accent {
-      background-color: rgb(34 211 238 / 0.1);
-    }
+    @apply h-96 w-96;
+
+    background: color-mix(in oklch, var(--accent) 10%, transparent);
   }
 
   .blur-orb-primary {
-    @apply absolute w-64 h-64 rounded-full blur-3xl pointer-events-none;
-    background-color: rgb(79 70 229 / 0.1);
+    @apply h-64 w-64;
+
+    background: color-mix(in oklch, var(--color-primary) 10%, transparent);
   }
-  
-  @media (prefers-color-scheme: dark) {
-    .blur-orb-primary {
-      background-color: rgb(99 102 241 / 0.1);
+
+  /* Homepage hero animated gradient overlay */
+  .hero-gradient-animated {
+    @apply relative overflow-hidden;
+  }
+
+  .hero-gradient-animated::before {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    content: '';
+    background: linear-gradient(
+      var(--gradient-angle, 45deg),
+      var(--color-primary) 0%,
+      var(--color-accent) 50%,
+      var(--color-primary) 100%
+    );
+    opacity: 0.1;
+    animation: rotate-gradient 15s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-gradient-animated::before {
+      animation: none;
     }
   }
 
-  /* Section badges for consistent headers */
-  .section-badge {
-    @apply inline-flex items-center gap-3 px-8 py-4 rounded-full shadow-lg;
-    background-image: linear-gradient(to right, rgb(6 182 212 / 0.1), rgb(79 70 229 / 0.1));
-    border: 1px solid rgb(6 182 212 / 0.3);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .section-badge {
-      background-image: linear-gradient(to right, rgb(34 211 238 / 0.1), rgb(99 102 241 / 0.1));
-      border-color: rgb(34 211 238 / 0.3);
-    }
+  /* Closed state wins over stale .active (race-condition guard for search overlay). */
+  #search-overlay[data-state="closed"],
+  #search-overlay[aria-hidden="true"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
   }
 
-  /* Gradient text utility */
-  .gradient-text {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(to right, var(--color-accent, #06b6d4), var(--color-primary, #4f46e5));
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .gradient-text {
-      background-image: linear-gradient(to right, var(--color-accent-light, #22d3ee), var(--color-primary-light, #6366f1));
-    }
+  #search-overlay[data-state="closed"] .search-result,
+  #search-overlay[data-state="closed"] [data-results-container],
+  #search-overlay[data-state="closed"] [data-results] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
   }
 
-  /* Hover effects library */
-  .hover-lift {
-    @apply hover:-translate-y-1 hover:shadow-xl transition-all duration-300;
-  }
-
-  .hover-scale {
-    @apply hover:scale-[1.02] hover:shadow-xl transition-all duration-300;
-  }
-
-  .hover-glow {
-    @apply hover:shadow-2xl hover:ring-2 transition-all duration-300;
-  }
-  
-  .hover-glow:hover {
-    --tw-ring-color: rgb(6 182 212 / 0.2);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .hover-glow:hover {
-      --tw-ring-color: rgb(34 211 238 / 0.2);
-    }
-  }
-
-  /* Premium card enhancements */
-  
-  /* Enhanced multi-layered shadows for depth */
-  .card-shadow-premium {
-    box-shadow: 
-      0 1px 3px rgb(15 23 42 / 0.05),
-      0 4px 12px rgb(15 23 42 / 0.08),
-      0 8px 24px rgb(15 23 42 / 0.08);
-  }
-
-  .card-shadow-premium:hover {
-    box-shadow: 
-      0 2px 4px rgb(15 23 42 / 0.06),
-      0 8px 20px rgb(15 23 42 / 0.1),
-      0 16px 40px rgb(15 23 42 / 0.12),
-      0 0 0 1px rgb(6 182 212 / 0.08);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .card-shadow-premium {
-      box-shadow: 
-        0 1px 3px rgb(0 0 0 / 0.2),
-        0 4px 12px rgb(0 0 0 / 0.25),
-        0 8px 24px rgb(0 0 0 / 0.25);
-    }
-    
-    .card-shadow-premium:hover {
-      box-shadow: 
-        0 2px 4px rgb(0 0 0 / 0.3),
-        0 8px 20px rgb(0 0 0 / 0.35),
-        0 16px 40px rgb(0 0 0 / 0.4),
-        0 0 0 1px rgb(34 211 238 / 0.15);
-    }
-  }
-
-  /* Subtle ring glow that appears on card hover */
-  .card-ring-glow {
-    @apply transition-all duration-300;
-  }
-  
-  .card-ring-glow:hover {
-    --tw-ring-width: 2px;
-    --tw-ring-color: rgb(6 182 212 / 0.15);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .card-ring-glow:hover {
-      --tw-ring-color: rgb(34 211 238 / 0.2);
-    }
-  }
-
-  /* Button fill effect for card CTAs */
-  .card-button-fill {
-    @apply transition-all duration-200;
-  }
-  
-  .card-button-fill:hover {
-    background-color: var(--color-accent);
-    color: white;
-    border-color: var(--color-accent);
-    box-shadow: 0 4px 12px rgb(6 182 212 / 0.3);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .card-button-fill:hover {
-      background-color: var(--color-accent-light);
-      box-shadow: 0 4px 12px rgb(34 211 238 / 0.3);
-    }
-  }
-
-  /* Arrow slide animation for links */
-  .card-arrow-slide {
-    @apply transition-transform duration-200;
-  }
-  
-  .card-arrow-slide:hover {
-    transform: translateX(0.25rem);
-  }
-
-  /* Icon animation - gentle scale and rotate */
-  .card-icon-animate {
-    @apply transition-all duration-300;
-  }
-  
-  .card-icon-animate:hover {
-    transform: scale(1.1) rotate(12deg);
-  }
-
-  /* Typography scale for consistent headings */
-  
-  /* Display heading - for hero sections and large titles */
-  .heading-display {
-    @apply text-5xl md:text-6xl lg:text-7xl font-bold leading-tight;
-    color: var(--color-foreground);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .heading-display {
-      color: var(--color-foreground-light);
-    }
-  }
-
-  /* H1 - for main page titles */
-  .heading-h1 {
-    @apply text-4xl sm:text-5xl md:text-6xl font-bold leading-tight;
-    color: var(--color-foreground);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .heading-h1 {
-      color: var(--color-foreground-light);
-    }
-  }
-
-  /* H2 - for major sections */
-  .heading-h2 {
-    @apply text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight;
-    color: var(--color-foreground);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .heading-h2 {
-      color: var(--color-foreground-light);
-    }
-  }
-
-  /* H3 - for subsections */
-  .heading-h3 {
-    @apply text-2xl md:text-3xl font-semibold leading-snug;
-    color: var(--color-foreground);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .heading-h3 {
-      color: var(--color-foreground-light);
-    }
-  }
-
-  /* H4 - for card titles */
-  .heading-h4 {
-    @apply text-xl md:text-2xl font-semibold leading-snug;
-    color: var(--color-foreground);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .heading-h4 {
-      color: var(--color-foreground-light);
-    }
-  }
-
-  /* Body text variants */
-  .text-lead {
-    @apply text-lg sm:text-xl leading-relaxed;
-    color: rgb(var(--color-foreground-rgb) / 0.8);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .text-lead {
-      color: rgb(var(--color-foreground-light-rgb) / 0.8);
-    }
-  }
-
-  .text-body {
-    @apply text-base leading-relaxed;
-    color: rgb(var(--color-foreground-rgb) / 0.8);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .text-body {
-      color: rgb(var(--color-foreground-light-rgb) / 0.8);
-    }
-  }
-
-  .text-caption {
-    @apply text-sm leading-relaxed;
-    color: rgb(var(--color-foreground-rgb) / 0.7);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .text-caption {
-      color: rgb(var(--color-foreground-light-rgb) / 0.7);
-    }
-  }
-  
-  /* Mobile Touch Optimizations */
-  /* Use :active instead of :hover on touch devices for better UX */
   @media (hover: none) and (pointer: coarse) {
-    /* Touch devices - use :active for interactive feedback */
-    .hover-lift:active {
-      transform: translateY(-2px);
-    }
-    
-    .hover-scale:active {
-      transform: scale(1.02);
-    }
-    
-    .hover-glow:active {
-      box-shadow: 0 8px 24px rgb(6 182 212 / 0.2);
-    }
-    
-    /* Ensure minimum touch target size (WCAG 2.5.5) */
-    button, a[role="button"], [role="button"],
-    input[type="button"], input[type="submit"], input[type="reset"],
-    .c-btn, [class*="button"] {
-      min-height: 44px;
+    button,
+    a[role="button"],
+    [role="button"],
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    .c-btn {
       min-width: 44px;
+      min-height: 44px;
     }
-    
-    /* Improve tap feedback for links */
+
     a:active {
-      opacity: 0.8;
+      opacity: 0.85;
     }
   }
-  
-  /* ---------- Modern :has() Selector Enhancements ---------- */
-  
-  /* Blog post with code blocks - add indicator */
-  .blog-post:has(pre),
-  article:has(code) {
-    &::before {
-      content: '💻 Contains code examples';
-      display: inline-block;
-      padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
-      margin-block-end: var(--space-4, 1rem);
-      background: var(--color-accent-subtle, color-mix(in oklch, var(--color-accent) 10%, transparent));
-      color: var(--color-accent, #06b6d4);
-      border-radius: var(--radius-sm, 0.125rem);
-      font-size: var(--fs-sm, 0.875rem);
-      font-weight: var(--fw-medium, 500);
-    }
-  }
-  
-  /* Cards with images - adjust layout */
-  .blog-card:has(img) {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    gap: var(--space-4, 1rem);
-  }
-  
-  /* Interactive elements - show focus indicator on parent */
-  .blog-card:has(a:focus-visible),
-  .project-card:has(button:focus-visible) {
-    outline: 2px solid var(--focus-ring-color, var(--color-primary));
-    outline-offset: 2px;
-  }
-  
-  /* Form sections with errors */
-  .contact-form:has(.error) {
-    .submit-button {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-}
-
-
-/* ---------- Interactive Card Effects (@property animations) ---------- */
-.card-interactive {
-  transform: scale(var(--scale-factor, 1));
-  transition: 
-    --scale-factor 0.2s ease-out,
-    box-shadow 0.2s ease-out;
-}
-
-.card-interactive:hover {
-  --scale-factor: 1.02;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
-}
-
-/* Card with color shift on hover */
-.card-color-shift {
-  background: var(--color-surface);
-  border-color: var(--color-border);
-  transition: 
-    --color-surface 0.3s ease,
-    border-color 0.3s ease;
-}
-
-.card-color-shift:hover {
-  --color-surface: color-mix(in oklch, var(--color-primary) 5%, var(--color-surface));
-  border-color: var(--color-primary);
-}
-
-/* Button with smooth color morph */
-.btn-morph {
-  background: var(--color-primary);
-  transition: --color-primary 0.3s ease;
-}
-
-.btn-morph:hover {
-  --color-primary: var(--color-accent);
 }

@@ -42,7 +42,7 @@ function mockContext({ json = true, body, turnstileOk = true, existingHits, rese
       async get(k: string) { return (this as any).store[k] || null; },
       async put(k: string, v: string) { (this as any).store[k] = v; }
     },
-    CONTACT_FORM_KV: { async put() {} },
+    CONTACT_MESSAGES: { async put() {} },
     TURNSTILE_SECRET_KEY: 'secret',
     RESEND_API_KEY: 'apikey',
 		SENTRY_DSN_EDGE: 'https://test@test.ingest.sentry.io/test'

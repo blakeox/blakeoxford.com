@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 test.describe('Form Accessibility Tests', () => {
   test('contact form should be fully accessible', async ({ page }) => {

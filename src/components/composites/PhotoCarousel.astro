@@ -7,7 +7,7 @@
  * for screen readers and keyboard navigation.
  * 
  * @component
- * @category UI
+ * @category Composites
  * 
  * @example Default carousel
  * ```astro
@@ -125,7 +125,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
     <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list" aria-hidden="true">
       {columnALoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
         <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
-          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
+          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-lg">
             <Image
               src={image}
               alt={`Carousel photo ${index + 1}`}
@@ -145,7 +145,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
     <ul class="flex flex-col gap-4 animate-carousel-down-slow flex-1" role="list" aria-hidden="true">
       {columnBLoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
         <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
-          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
+          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-lg">
             <Image
               src={image}
               alt={`Carousel photo ${index + 1}`}
@@ -165,7 +165,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
     <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list" aria-hidden="true">
       {shuffledImages.slice(Math.floor(shuffledImages.length / 3), Math.floor(shuffledImages.length * 2 / 3)).map((image, index) => (
         <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
-          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-xl">
+          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-lg">
             <Image
               src={image}
               alt={`Carousel photo ${index + 1}`}

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 import { disableAnimationsComprehensive } from '../utils/test-helpers';
 
 const STREAMING_FIXTURE = [

@@ -1,13 +1,9 @@
 ---
 /**
- * Card - Enhanced Card Composite Component
- * 
- * An enhanced card component built on BaseCard with additional variants and effects.
- * Provides consistent card styling across the site with interactive hover states.
- * Supports container queries for responsive design based on parent container.
+ * Card - small compatibility wrapper around BaseCard.
  * 
  * @example Interactive project card
- * <Card variant="interactive" hover="lift-lg">
+ * <Card variant="interactive" hover="lift">
  *   <h3>Project Title</h3>
  *   <p>Description...</p>
  * </Card>
@@ -34,9 +30,9 @@ import BaseCard from '../primitives/BaseCard.astro';
 
 interface Props {
   /** Card variant */
-  variant?: 'default' | 'outline' | 'elevated' | 'glass' | 'interactive';
+  variant?: 'default' | 'outline' | 'elevated' | 'glass' | 'interactive' | 'subtle';
   /** Hover effect */
-  hover?: 'none' | 'lift-sm' | 'lift' | 'lift-lg' | 'scale' | 'glow';
+  hover?: 'none' | 'lift' | 'scale' | 'glow';
   /** Padding size */
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   /** HTML element tag to render */
@@ -51,7 +47,7 @@ interface Props {
 
 const {
   variant = 'default',
-  hover = 'lift-sm',
+  hover = 'lift',
   padding = 'md',
   as = 'div',
   class: className = '',
@@ -60,52 +56,21 @@ const {
   ...rest
 } = Astro.props as Props;
 
-// Enhanced interactive variant with stronger hover effects
-const interactiveClasses = variant === 'interactive'
-  ? 'hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 relative overflow-hidden group transition-all duration-300'
-  : '';
-
-// Full height helper
 const heightClasses = fullHeight ? 'h-full flex flex-col' : '';
-
-// Container query support
 const containerClasses = containerQuery ? '@container' : '';
 
-const combinedClasses = `${interactiveClasses} ${heightClasses} ${containerClasses} ${className}`.trim();
-
-// Map hover effects to BaseCard hover prop
-const hoverMap: Record<string, 'none' | 'lift' | 'scale' | 'glow'> = {
-  'none': 'none',
-  'lift-sm': 'lift',
-  'lift': 'lift',
-  'lift-lg': 'lift',
-  'scale': 'scale',
-  'glow': 'glow',
-};
-
-const baseCardHover = hoverMap[hover] || 'lift';
-
-// Add additional lift intensity via class
-const liftClasses = hover === 'lift-sm' 
-  ? 'hover-lift-sm' 
-  : hover === 'lift-lg' 
-    ? 'hover-lift-lg' 
-    : '';
-
-const finalClasses = `${combinedClasses} ${liftClasses}`.trim();
-
-// Map variants that BaseCard doesn't support
-const baseVariant = variant === 'interactive' ? 'elevated' 
-  : variant === 'outline' ? 'default'
-  : variant as 'default' | 'glass' | 'elevated' | 'subtle';
-
-// Map padding values BaseCard supports
+const finalClasses = `${heightClasses} ${containerClasses} ${className}`.trim();
+const baseVariant = variant === 'interactive'
+  ? 'elevated'
+  : variant === 'outline'
+    ? 'subtle'
+    : variant as 'default' | 'glass' | 'elevated' | 'subtle';
 const basePadding = padding === 'xl' ? 'lg' : padding as 'none' | 'sm' | 'md' | 'lg';
 ---
 
 <BaseCard 
   variant={baseVariant}
-  hover={baseCardHover}
+  hover={hover}
   padding={basePadding}
   as={as}
   class={finalClasses}

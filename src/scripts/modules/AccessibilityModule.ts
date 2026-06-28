@@ -103,7 +103,7 @@ export class AccessibilityModule {
     skipLink.id = 'skip-to-content';
     skipLink.href = '#main';
     skipLink.textContent = 'Skip to main content';
-    skipLink.className = 'sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-accent focus:text-white focus:rounded';
+    skipLink.className = 'sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-accent focus:text-on-accent focus:rounded';
     
     // Insert at the beginning of body
     if (document.body) {

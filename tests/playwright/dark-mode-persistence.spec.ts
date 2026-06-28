@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Dark mode persistence', () => {
   test('persists theme across navigation and reloads @essential', async ({ page }) => {

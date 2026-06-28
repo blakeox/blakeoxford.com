@@ -33,7 +33,7 @@ export default defineConfig({
       include: [
         'src/config/navLinks.ts',
         'src/utils/slug.ts',
-        'src/content/config.ts',
+        'src/content.config.ts',
         'src/components/**/*.tsx',
         'src/scripts/**/*.ts',
       ],

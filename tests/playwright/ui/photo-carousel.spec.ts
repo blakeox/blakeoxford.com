@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '../fixtures';
 
 // Utilities to read computed transform and animation duration
 async function getTransform(page: Page, locatorSelector: string): Promise<string> {

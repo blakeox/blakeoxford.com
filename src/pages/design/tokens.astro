@@ -1,157 +1,218 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/primitives/Container.astro';
+import Section from '../../components/primitives/Section.astro';
+import Badge from '../../components/primitives/Badge.astro';
+
+const semanticColors = [
+  { name: 'background', utility: 'bg-background', usage: 'Page canvas' },
+  { name: 'surface', utility: 'bg-surface', usage: 'Cards, panels, controls' },
+  { name: 'foreground', utility: 'text-foreground', usage: 'Primary readable text' },
+  { name: 'border', utility: 'border-border', usage: 'Dividers, rings, component outlines' },
+  { name: 'primary', utility: 'bg-primary text-on-primary', usage: 'Primary brand actions' },
+  { name: 'accent', utility: 'bg-accent text-on-accent', usage: 'Focused calls to action and highlights' },
+  { name: 'success', utility: 'bg-success', usage: 'Successful or available state' },
+  { name: 'warning', utility: 'bg-warning', usage: 'Caution and pending state' },
+  { name: 'error', utility: 'bg-error', usage: 'Failure and destructive state' },
+  { name: 'info', utility: 'bg-info', usage: 'Informational state (aliases secondary)' },
+];
+
+const semanticAliases = [
+  { token: '--bg', mapsTo: '--color-background', usage: 'Arbitrary values: bg-[--bg]' },
+  { token: '--fg', mapsTo: '--color-foreground', usage: 'Arbitrary values: text-[--fg]' },
+  { token: '--surface', mapsTo: '--color-surface', usage: 'Glass panels and cards' },
+  { token: '--border', mapsTo: '--border-color', usage: 'Component outlines' },
+  { token: '--accent', mapsTo: '--color-accent', usage: 'Focus rings and highlights' },
+];
+
+const motionTokens = [
+  { token: '--duration-fast', value: '100ms', usage: 'Micro-interactions, toggles' },
+  { token: '--duration', value: '250ms', usage: 'Default transitions (Tailwind duration DEFAULT)' },
+  { token: '--duration-slow', value: '500ms', usage: 'Panel open/close, hero motion' },
+  { token: '--ease-standard', value: 'Material curve', usage: 'Most UI transitions' },
+  { token: '--ease-emphasized', value: 'Dramatic curve', usage: 'Entrance animations (slideUp)' },
+];
+
+const elevationScale = [
+  { token: 'shadow-sm', usage: 'Static cards and subtle containers' },
+  { token: 'shadow-md', usage: 'Glass panels and light overlays' },
+  { token: 'shadow-lg', usage: 'Interactive cards, dialogs, and major panels' },
+];
+
+const radiusScale = [
+  { token: 'rounded-lg', usage: 'Buttons, inputs, compact controls' },
+  { token: 'rounded-xl', usage: 'Small cards and grouped controls' },
+  { token: 'rounded-2xl', usage: 'Standard cards and component panels' },
+  { token: 'rounded-3xl', usage: 'Route-level hero media or modal shells only' },
+];
+
+const stylesheetRoles = [
+  {
+    file: 'src/styles/theme.css',
+    role: 'Design tokens, base resets, focus styles, and opt-in :has() pattern utilities.',
+  },
+  {
+    file: 'src/styles/components.css',
+    role: 'Reusable component classes (cards, blur orbs, hero gradient, search overlay guards).',
+  },
+  {
+    file: 'src/styles/global.css',
+    role: 'Tailwind entry point only — imports theme + components; no test overrides.',
+  },
+  {
+    file: 'tests/playwright/fixtures/test-overrides.css',
+    role: 'Playwright-only CSS injected via hooks.ts (mobile menu + search harness).',
+  },
+];
 ---
 
 <BaseLayout
-  title="Design Tokens Reference"
-  description="Complete reference of design tokens used in the Blake Oxford portfolio design system"
-  canonicalUrl="https://blakeoxford.com/design/tokens"
+  title="Design Tokens"
+  description="Operational reference for the Blake Oxford design-system token contract."
+  canonicalUrl="https://blakeoxford.com/design/tokens/"
 >
-  <main class="container mx-auto px-4 py-16 max-w-7xl">
-    <header class="mb-12 text-center">
-      <h1 class="text-5xl md:text-6xl font-bold mb-4">Design Tokens Reference</h1>
-      <p class="text-xl text-foreground/80 max-w-3xl mx-auto">
-        Modern design system with OKLCH colors, fluid typography, and comprehensive spacing scale.
-      </p>
-    </header>
-
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-      <div class="bg-surface rounded-lg border border-border p-6 text-center">
-        <div class="text-4xl font-bold text-primary mb-2">OKLCH</div>
-        <div class="text-sm text-foreground/70">Color Space</div>
-      </div>
-      <div class="bg-surface rounded-lg border border-border p-6 text-center">
-        <div class="text-4xl font-bold text-accent mb-2">Fluid</div>
-        <div class="text-sm text-foreground/70">Typography</div>
-      </div>
-      <div class="bg-surface rounded-lg border border-border p-6 text-center">
-        <div class="text-4xl font-bold text-primary mb-2">24</div>
-        <div class="text-sm text-foreground/70">Spacing Values</div>
-      </div>
-      <div class="bg-surface rounded-lg border border-border p-6 text-center">
-        <div class="text-4xl font-bold text-accent mb-2">9</div>
-        <div class="text-sm text-foreground/70">Easing Curves</div>
-      </div>
-    </div>
-
-    <!-- Color Showcase -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-6">Color Tokens</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="rounded-lg border border-border overflow-hidden">
-          <div class="w-full h-32 bg-primary"></div>
-          <div class="p-4 bg-surface">
-            <div class="font-semibold mb-1">primary</div>
-            <div class="font-mono text-xs text-foreground/70">oklch(0.55 0.22 264)</div>
-          </div>
-        </div>
-        <div class="rounded-lg border border-border overflow-hidden">
-          <div class="w-full h-32 bg-accent"></div>
-          <div class="p-4 bg-surface">
-            <div class="font-semibold mb-1">accent</div>
-            <div class="font-mono text-xs text-foreground/70">oklch(0.72 0.14 196)</div>
-          </div>
-        </div>
-        <div class="rounded-lg border border-border overflow-hidden">
-          <div class="w-full h-32 bg-surface border border-border"></div>
-          <div class="p-4 bg-surface">
-            <div class="font-semibold mb-1">surface</div>
-            <div class="font-mono text-xs text-foreground/70">oklch(1 0 0)</div>
-          </div>
-        </div>
-        <div class="rounded-lg border border-border overflow-hidden">
-          <div class="w-full h-32 bg-background"></div>
-          <div class="p-4 bg-surface">
-            <div class="font-semibold mb-1">background</div>
-            <div class="font-mono text-xs text-foreground/70">oklch(0.98 0.005 264)</div>
-          </div>
-        </div>
-      </div>
-      <div class="mt-6 p-4 bg-surface rounded-lg border border-border">
-        <p class="text-sm text-foreground/80">
-          <strong>OKLCH Benefits:</strong> Perceptually uniform, better dark mode, wide gamut support, predictable adjustments
+  <Section padding="xl">
+    <Container size="xl">
+      <header class="max-w-3xl">
+        <Badge variant="subtle">Design system</Badge>
+        <h1 class="mt-5 text-4xl font-bold text-foreground dark:text-foreground-light sm:text-5xl">
+          Token Contract
+        </h1>
+        <p class="mt-4 text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+          Tokens live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">src/styles/theme.css</code>,
+          component classes in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">components.css</code>,
+          and Tailwind maps them in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">tailwind.config.ts</code>.
+          Components consume semantic utilities — not raw palette names or orphaned token variables.
         </p>
-      </div>
-    </section>
+      </header>
 
-    <!-- Typography Scale -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-6">Fluid Typography Scale</h2>
-      <div class="space-y-4 bg-surface rounded-lg p-6 border border-border">
-        <div class="border-b border-border pb-3">
-          <span class="text-6xl font-bold">Heading 1</span>
-          <div class="text-sm text-foreground/70 mt-2 font-mono">clamp(3.75rem, 3.15rem + 2vw, 4.6875rem)</div>
+      <div class="mt-12 grid gap-4 md:grid-cols-3">
+        <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+          <p class="text-sm font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">Source</p>
+          <p class="mt-3 text-xl font-semibold">theme.css</p>
+          <p class="mt-2 text-sm text-foreground/70 dark:text-foreground-light/70">OKLCH palette, motion scale, glass surfaces, and dark-mode swaps on <code>:root</code>.</p>
         </div>
-        <div class="border-b border-border pb-3">
-          <span class="text-4xl font-bold">Heading 2</span>
-          <div class="text-sm text-foreground/70 mt-2 font-mono">clamp(2.25rem, 1.95rem + 1vw, 2.8125rem)</div>
+        <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+          <p class="text-sm font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">Mapping</p>
+          <p class="mt-3 text-xl font-semibold">tailwind.config.ts</p>
+          <p class="mt-2 text-sm text-foreground/70 dark:text-foreground-light/70">Exposes semantic utilities. Unused token aliases are pruned rather than kept “just in case.”</p>
         </div>
-        <div class="border-b border-border pb-3">
-          <span class="text-2xl font-semibold">Heading 3</span>
-          <div class="text-sm text-foreground/70 mt-2 font-mono">clamp(1.5rem, 1.35rem + 0.5vw, 1.75rem)</div>
+        <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+          <p class="text-sm font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">Gate</p>
+          <p class="mt-3 text-xl font-semibold">design-lint</p>
+          <p class="mt-2 text-sm text-foreground/70 dark:text-foreground-light/70">Blocks duplicate artifacts, undefined tokens, raw reusable palettes, and unsupported opacity steps.</p>
+        </div>
+      </div>
+
+      <section class="mt-16" aria-labelledby="stylesheet-roles">
+        <h2 id="stylesheet-roles" class="text-2xl font-bold text-foreground dark:text-foreground-light">Stylesheet Roles</h2>
+        <div class="mt-5 grid gap-3">
+          {stylesheetRoles.map((item) => (
+            <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+              <code class="text-sm font-semibold text-accent">{item.file}</code>
+              <p class="mt-1 text-sm text-foreground/70 dark:text-foreground-light/70">{item.role}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="mt-16" aria-labelledby="color-tokens">
+        <h2 id="color-tokens" class="text-2xl font-bold text-foreground dark:text-foreground-light">Semantic Colors</h2>
+        <p class="mt-3 max-w-3xl text-foreground/75 dark:text-foreground-light/75">
+          Reusable components must use these semantic names. Raw colors belong only in token definition files or content-specific editorial art.
+        </p>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {semanticColors.map((color) => (
+            <article class="overflow-hidden rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+              <div class={`h-20 ${color.utility}`} aria-hidden="true"></div>
+              <div class="p-4">
+                <h3 class="font-semibold text-foreground dark:text-foreground-light">{color.name}</h3>
+                <p class="mt-1 text-xs text-foreground/65 dark:text-foreground-light/65">{color.usage}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="mt-16 grid gap-8 lg:grid-cols-2" aria-labelledby="aliases-motion">
+        <div>
+          <h2 id="aliases-motion" class="text-2xl font-bold text-foreground dark:text-foreground-light">Semantic Aliases</h2>
+          <p class="mt-3 text-sm text-foreground/75 dark:text-foreground-light/75">
+            Short names for arbitrary Tailwind values. Dark mode re-maps these inside <code>:root[data-theme="dark"]</code>.
+          </p>
+          <div class="mt-5 space-y-3">
+            {semanticAliases.map((item) => (
+              <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+                <code class="text-sm font-semibold text-accent">{item.token}</code>
+                <span class="mx-2 text-foreground/40">→</span>
+                <code class="text-sm text-foreground/70 dark:text-foreground-light/70">{item.mapsTo}</code>
+                <p class="mt-1 text-sm text-foreground/70 dark:text-foreground-light/70">{item.usage}</p>
+              </div>
+            ))}
+          </div>
         </div>
         <div>
-          <span class="text-base">Body Text</span>
-          <div class="text-sm text-foreground/70 mt-2 font-mono">clamp(1rem, 0.95rem + 0.17vw, 1.0625rem)</div>
+          <h2 class="text-2xl font-bold text-foreground dark:text-foreground-light">Motion</h2>
+          <p class="mt-3 text-sm text-foreground/75 dark:text-foreground-light/75">
+            Prefer Tailwind <code>duration-*</code> and <code>ease-*</code> utilities. Reduced motion sets <code>--animation-duration</code> and <code>--transition-duration</code> to near-zero.
+          </p>
+          <div class="mt-5 space-y-3">
+            {motionTokens.map((item) => (
+              <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+                <code class="text-sm font-semibold text-accent">{item.token}</code>
+                <span class="ml-2 text-xs text-foreground/55 dark:text-foreground-light/60">{item.value}</span>
+                <p class="mt-1 text-sm text-foreground/70 dark:text-foreground-light/70">{item.usage}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-      <div class="mt-6 p-4 bg-surface rounded-lg border border-border">
-        <p class="text-sm text-foreground/80">
-          <strong>Fluid Typography:</strong> Automatically scales from mobile (375px) to desktop (1440px) without media queries
-        </p>
-      </div>
-    </section>
+      </section>
 
-    <!-- Interactive Demo -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-6">Interactive States</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <button class="bg-primary text-on-primary px-6 py-3 rounded-lg font-semibold transition duration-moderate ease-standard opacity-hover hover:opacity-100 transform hover:scale-105">
-          Hover Me (Spring)
-        </button>
-        <button class="bg-accent text-on-accent px-6 py-3 rounded-lg font-semibold transition duration-moderate ease-bounce opacity-hover hover:opacity-100">
-          Bounce Effect
-        </button>
-        <button class="bg-surface border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold transition duration-moderate ease-emphasized opacity-hover hover:opacity-100">
-          Emphasized
-        </button>
-      </div>
-    </section>
+      <section class="mt-16 grid gap-8 lg:grid-cols-2" aria-labelledby="shape-elevation">
+        <div>
+          <h2 id="shape-elevation" class="text-2xl font-bold text-foreground dark:text-foreground-light">Elevation</h2>
+          <div class="mt-5 space-y-3">
+            {elevationScale.map((item) => (
+              <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+                <code class="text-sm font-semibold text-accent">{item.token}</code>
+                <p class="mt-1 text-sm text-foreground/70 dark:text-foreground-light/70">{item.usage}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-foreground dark:text-foreground-light">Radius & Layout</h2>
+          <div class="mt-5 space-y-3">
+            {radiusScale.map((item) => (
+              <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+                <code class="text-sm font-semibold text-accent">{item.token}</code>
+                <p class="mt-1 text-sm text-foreground/70 dark:text-foreground-light/70">{item.usage}</p>
+              </div>
+            ))}
+            <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+              <code class="text-sm font-semibold text-accent">max-w-container-2xl</code>
+              <p class="mt-1 text-sm text-foreground/70 dark:text-foreground-light/70">Site-wide max content width (<code>--container-2xl</code>, 110rem). Used by the navbar and wide layouts.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <!-- Documentation Link -->
-    <section class="text-center py-12 border-t border-border">
-      <p class="text-foreground/70 mb-4">For complete documentation, see:</p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <a href="https://github.com/blakeoxford/blakeoxford.com/blob/main/DESIGN_BEST_PRACTICES.md" class="px-6 py-3 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-dark transition">
-          Design Best Practices
-        </a>
-        <a href="https://github.com/blakeoxford/blakeoxford.com" class="px-6 py-3 bg-surface border border-border rounded-lg font-semibold hover:border-primary transition">
-          View on GitHub
-        </a>
-      </div>
-    </section>
-  </main>
+      <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark" aria-labelledby="token-rules">
+        <h2 id="token-rules" class="text-2xl font-bold text-foreground dark:text-foreground-light">Rules</h2>
+        <ul class="mt-5 grid gap-3 text-sm text-foreground/75 dark:text-foreground-light/75 md:grid-cols-2">
+          <li>Use semantic tokens for reusable UI: primary, accent, success, warning, error, info.</li>
+          <li>Use opacity steps supported by the system: 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 85, 90, 95, 100.</li>
+          <li>Keep card elevation to shadow-sm, shadow-md, or shadow-lg unless the surface is a route-level modal shell.</li>
+          <li>Do not add tokens without a mapped Tailwind utility or a direct component consumer — prune orphans during audits.</li>
+          <li>Playwright-only CSS belongs in <code>tests/playwright/fixtures/</code>, not <code>global.css</code>.</li>
+          <li>Keep token examples aligned with component props and data from <code>src/data/componentDocs.ts</code>.</li>
+        </ul>
+      </section>
+
+      <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
+        <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/design/components/">Component contracts</a>
+        <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark dark:text-foreground-light" href="/docs/components/">Component catalog</a>
+      </nav>
+    </Container>
+  </Section>
 </BaseLayout>
-
-    <!-- Design System Navigation -->
-    <section class="mt-16 py-12 border-t border-border">
-      <h2 class="text-2xl font-bold mb-6 text-center">Explore More</h2>
-      <div class="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <a href="/design/components/" class="p-6 bg-surface border border-border rounded-xl hover:border-accent transition-colors text-center group">
-          <div class="text-4xl mb-3">🧩</div>
-          <h3 class="font-semibold mb-2 group-hover:text-accent transition-colors">Components</h3>
-          <p class="text-sm text-foreground/70">Interactive component library</p>
-        </a>
-        <a href="/design/animations/" class="p-6 bg-surface border border-border rounded-xl hover:border-accent transition-colors text-center group">
-          <div class="text-4xl mb-3">✨</div>
-          <h3 class="font-semibold mb-2 group-hover:text-accent transition-colors">Animations</h3>
-          <p class="text-sm text-foreground/70">@property animation examples</p>
-        </a>
-        <a href="/design/patterns/" class="p-6 bg-surface border border-border rounded-xl hover:border-accent transition-colors text-center group">
-          <div class="text-4xl mb-3">📐</div>
-          <h3 class="font-semibold mb-2 group-hover:text-accent transition-colors">Patterns</h3>
-          <p class="text-sm text-foreground/70">Common UI patterns</p>
-        </a>
-      </div>
-    </section>

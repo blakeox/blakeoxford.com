@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 // DEPRECATED: Routes covered by navigation-search.journey.spec.ts & visual-routes.spec.ts
 test.describe.skip('Deprecated pages.spec.ts', () => {
 // ...existing code...

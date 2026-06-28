@@ -39,13 +39,14 @@ export async function checkCitationHealth(sources?: AIChatSource[]): Promise<'he
 	let warningCount = 0;
 	
 	for (const source of sources) {
-		let isValidUrl: boolean;
-		try {
-			new URL(source.url, typeof window !== 'undefined' ? window.location.origin : 'https://blakeoxford.com');
-			isValidUrl = true;
-		} catch {
-			isValidUrl = false;
-		}
+		const isValidUrl = (() => {
+			try {
+				new URL(source.url, typeof window !== 'undefined' ? window.location.origin : 'https://blakeoxford.com');
+				return true;
+			} catch {
+				return false;
+			}
+		})();
 		
 		const hasGoodScore = source.score !== undefined && source.score >= 0.5;
 		const hasMetadata = Boolean(source.title && source.url);

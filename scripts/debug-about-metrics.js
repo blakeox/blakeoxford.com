@@ -1,5 +1,6 @@
 /* global document, window */
-const { chromium } = require('playwright');
+import { chromium } from 'playwright';
+
 (async () => {
   const browser = await chromium.launch();
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });

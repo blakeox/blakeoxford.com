@@ -32,29 +32,29 @@ export function ChatAnalytics({
 			{/* Core Metrics */}
 			<div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
 				<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-					<span className="block text-[color:var(--fg)]/45">Messages</span>
+					<span className="block text-[color:var(--fg)]/50">Messages</span>
 					<span className="text-sm font-semibold text-[color:var(--fg)]">{analytics.totalMessages}</span>
 				</div>
 				<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-					<span className="block text-[color:var(--fg)]/45">Avg Quality</span>
+					<span className="block text-[color:var(--fg)]/50">Avg Quality</span>
 					<span className={`text-sm font-semibold ${
 						analytics.avgQualityScore >= 80
-							? 'text-green-600 dark:text-green-400'
+							? 'text-[color:var(--color-success-dark)] dark:text-[color:var(--color-success-light)]'
 							: analytics.avgQualityScore >= 60
-							? 'text-yellow-600 dark:text-yellow-400'
-							: 'text-red-600 dark:text-red-400'
+							? 'text-[color:var(--color-warning-dark)] dark:text-[color:var(--color-warning-light)]'
+							: 'text-[color:var(--color-error-dark)] dark:text-[color:var(--color-error-light)]'
 					}`}>
 						{analytics.avgQualityScore > 0 ? `${Math.round(analytics.avgQualityScore)}/100` : 'N/A'}
 					</span>
 				</div>
 				<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-					<span className="block text-[color:var(--fg)]/45">Session Time</span>
+					<span className="block text-[color:var(--fg)]/50">Session Time</span>
 					<span className="text-sm font-semibold text-[color:var(--fg)]">
 						{sessionDuration < 1 ? '<1m' : `${sessionDuration}m`}
 					</span>
 				</div>
 				<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-					<span className="block text-[color:var(--fg)]/45">Topics</span>
+					<span className="block text-[color:var(--fg)]/50">Topics</span>
 					<span className="text-sm font-semibold text-[color:var(--fg)]">{uniqueCollections.size}</span>
 				</div>
 			</div>
@@ -62,22 +62,22 @@ export function ChatAnalytics({
 			{/* Citation Health */}
 			{(healthyResponses + warningResponses + errorResponses) > 0 && (
 				<div className="mt-3 rounded-xl border border-[color:var(--border)]/30 p-3">
-					<span className="block text-[color:var(--fg)]/45 mb-2">Citation Health</span>
+					<span className="block text-[color:var(--fg)]/50 mb-2">Citation Health</span>
 					<div className="flex flex-wrap gap-2">
 						{healthyResponses > 0 && (
-							<span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/30 px-2.5 py-1 text-[0.65rem] font-medium text-green-700 dark:text-green-300">
+							<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-success-subtle)] px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--color-success-dark)] dark:text-[color:var(--color-success-light)]">
 								<span>✓</span>
 								{healthyResponses} Verified
 							</span>
 						)}
 						{warningResponses > 0 && (
-							<span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 dark:bg-yellow-900/30 px-2.5 py-1 text-[0.65rem] font-medium text-yellow-700 dark:text-yellow-300">
+							<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-warning-subtle)] px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--color-warning-dark)] dark:text-[color:var(--color-warning-light)]">
 								<span>⚠</span>
 								{warningResponses} Warnings
 							</span>
 						)}
 						{errorResponses > 0 && (
-							<span className="inline-flex items-center gap-1 rounded-full bg-red-100 dark:bg-red-900/30 px-2.5 py-1 text-[0.65rem] font-medium text-red-700 dark:text-red-300">
+							<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-error-subtle)] px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--color-error-dark)] dark:text-[color:var(--color-error-light)]">
 								<span>✗</span>
 								{errorResponses} Issues
 							</span>
@@ -109,16 +109,16 @@ export function ChatAnalytics({
 					<span className="block uppercase tracking-wide text-[color:var(--fg)]/50 mb-2">User Feedback</span>
 					<div className="flex flex-wrap gap-2">
 						<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-							<span className="block text-[color:var(--fg)]/45">Helpful</span>
+							<span className="block text-[color:var(--fg)]/50">Helpful</span>
 							<span className="text-sm font-semibold text-[color:var(--accent-strong)]">{feedbackAnalytics.positive}</span>
 						</div>
 						<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-							<span className="block text-[color:var(--fg)]/45">Needs work</span>
-							<span className="text-sm font-semibold text-red-500 dark:text-red-300">{feedbackAnalytics.negative}</span>
+							<span className="block text-[color:var(--fg)]/50">Needs work</span>
+							<span className="text-sm font-semibold text-[color:var(--color-error-dark)] dark:text-[color:var(--color-error-light)]">{feedbackAnalytics.negative}</span>
 						</div>
 						{feedbackAnalytics.positiveRate !== null && (
 							<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-								<span className="block text-[color:var(--fg)]/45">Satisfaction</span>
+								<span className="block text-[color:var(--fg)]/50">Satisfaction</span>
 								<span className="text-sm font-semibold text-[color:var(--fg)]">{feedbackAnalytics.positiveRate}%</span>
 							</div>
 						)}
@@ -132,20 +132,20 @@ export function ChatAnalytics({
 					<span className="block uppercase tracking-wide text-[color:var(--fg)]/50 mb-2">Performance</span>
 					<div className="flex flex-wrap gap-2">
 						<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-							<span className="block text-[color:var(--fg)]/45">Avg Response</span>
+							<span className="block text-[color:var(--fg)]/50">Avg Response</span>
 							<span className="text-sm font-semibold text-[color:var(--fg)]">
 								{(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
 							</span>
 						</div>
 						<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-							<span className="block text-[color:var(--fg)]/45">Fastest</span>
-							<span className="text-sm font-semibold text-green-600 dark:text-green-400">
+							<span className="block text-[color:var(--fg)]/50">Fastest</span>
+							<span className="text-sm font-semibold text-[color:var(--color-success-dark)] dark:text-[color:var(--color-success-light)]">
 								{(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
 							</span>
 						</div>
 						<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
-							<span className="block text-[color:var(--fg)]/45">Slowest</span>
-							<span className="text-sm font-semibold text-yellow-600 dark:text-yellow-400">
+							<span className="block text-[color:var(--fg)]/50">Slowest</span>
+							<span className="text-sm font-semibold text-[color:var(--color-warning-dark)] dark:text-[color:var(--color-warning-light)]">
 								{(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
 							</span>
 						</div>

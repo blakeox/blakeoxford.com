@@ -632,7 +632,7 @@ Note: Cloudflare Pages is deprecated for this project. Do not use `wrangler page
 - **PostCSS**: CSS processing with Tailwind
 - **astro-compress**: HTML/CSS/JS compression (conditionally enabled via `ENABLE_ASTRO_COMPRESS=true`)
 
-**Important**: Use `pnpm` as the package manager (pnpm@10.13.1+). Do not add new dependencies without explicit discussion - the stack is intentionally minimal.
+**Important**: Use `pnpm` as the package manager (pnpm@11.9.0+). Do not add new dependencies without explicit discussion - the stack is intentionally minimal.
 
 ---
 

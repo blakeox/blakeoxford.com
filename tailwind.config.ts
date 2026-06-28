@@ -66,9 +66,24 @@ const config: Config = {
         primary: 'var(--color-primary, var(--color-primary-fallback, #4f46e5))',
         'primary-light': 'var(--color-primary-light, var(--color-primary-light-fallback, #6366f1))',
         'primary-dark': 'var(--color-primary-dark, var(--color-primary-dark-fallback, #3730a3))',
+        secondary: 'var(--color-secondary, var(--color-secondary-fallback, #0ea5e9))',
+        'secondary-light': 'var(--color-secondary-light, var(--color-secondary-light-fallback, #38bdf8))',
+        'secondary-dark': 'var(--color-secondary-dark, var(--color-secondary-dark-fallback, #0369a1))',
         accent: 'var(--color-accent, var(--color-accent-fallback, #06b6d4))',
         'accent-light': 'var(--color-accent-light, var(--color-accent-light-fallback, #22d3ee))',
         'accent-dark': 'var(--color-accent-dark, var(--color-accent-dark-fallback, #0e7490))',
+        success: 'var(--color-success, var(--color-success-fallback, #22c55e))',
+        'success-light': 'var(--color-success-light, var(--color-success-light-fallback, #4ade80))',
+        'success-dark': 'var(--color-success-dark, var(--color-success-dark-fallback, #15803d))',
+        warning: 'var(--color-warning, var(--color-warning-fallback, #facc15))',
+        'warning-light': 'var(--color-warning-light, var(--color-warning-light-fallback, #fde047))',
+        'warning-dark': 'var(--color-warning-dark, var(--color-warning-dark-fallback, #a16207))',
+        error: 'var(--color-error, var(--color-error-fallback, #ef4444))',
+        'error-light': 'var(--color-error-light, var(--color-error-light-fallback, #f87171))',
+        'error-dark': 'var(--color-error-dark, var(--color-error-dark-fallback, #991b1b))',
+        info: 'var(--color-info, var(--color-info-fallback, #0ea5e9))',
+        'info-light': 'var(--color-info-light, var(--color-info-light-fallback, #38bdf8))',
+        'info-dark': 'var(--color-info-dark, var(--color-info-dark-fallback, #0369a1))',
         surface: 'var(--color-surface, var(--color-surface-fallback, #ffffff))',
         'surface-dark': 'var(--color-surface-dark, var(--color-surface-dark-fallback, #0f172a))',
         'surface-subtle': 'var(--color-surface-subtle, var(--color-surface-subtle-fallback, #eef2ff))',
@@ -79,6 +94,8 @@ const config: Config = {
         'foreground-strong': 'var(--color-foreground-strong, var(--color-foreground-strong-fallback, #0f172a))',
         'foreground-light': 'var(--color-foreground-light, var(--color-foreground-light-fallback, #f9fafb))',
         'on-accent': 'var(--color-on-accent, var(--color-on-accent-fallback, #051b2a))',
+        'on-primary': 'var(--color-on-primary, var(--color-on-primary-fallback, #ffffff))',
+        'on-secondary': 'var(--color-on-secondary, var(--color-on-secondary-fallback, #062433))',
         'on-dark': 'var(--color-on-dark, var(--color-on-dark-fallback, #f9fafb))',
         neutral: 'var(--color-neutral, var(--color-neutral-fallback, #64748b))',
         'neutral-light': 'var(--color-neutral-light, var(--color-neutral-light-fallback, #cbd5e1))',
@@ -134,7 +151,7 @@ const config: Config = {
         sans: 'var(--font-sans)',
         heading: 'var(--font-heading)',
         mono: 'var(--font-mono)',
-        ui: 'var(--font-ui)',
+        ui: 'var(--font-sans)',
       },
       fontSize: {
         xxs: 'var(--fs-xxs)',
@@ -213,10 +230,6 @@ const config: Config = {
         body: 'var(--lh-body)',
       },
       maxWidth: {
-        'container-sm': 'var(--container-sm)',
-        'container-md': 'var(--container-md)',
-        'container-lg': 'var(--container-lg)',
-        'container-xl': 'var(--container-xl)',
         'container-2xl': 'var(--container-2xl)',
       },
       zIndex: { auto: 'auto', 0: '0', 10: '10', 20: '20', 30: '30', 40: '40', 50: '50' },
@@ -296,4 +309,3 @@ const config: Config = {
 };
 
 export default config;
-

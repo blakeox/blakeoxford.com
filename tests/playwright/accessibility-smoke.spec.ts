@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import AxeBuilder from '@axe-core/playwright';
 
 // Basic accessibility sweep across key routes. Tag @a11y-smoke for selective runs.

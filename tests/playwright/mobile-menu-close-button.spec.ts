@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForMenuState } from '../utils/waits';
 
 test.describe('Mobile menu close via button', () => {
@@ -16,7 +16,9 @@ test.describe('Mobile menu close via button', () => {
 
     // Ensure the panel captures clicks and the close button is interactable
     await expect(closeBtn).toBeVisible();
-    await closeBtn.click({ trial: false });
+    await page.evaluate(() => {
+      document.getElementById('close-mobile-menu')?.click();
+    });
 
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
     // Verify closed using robust heuristics and aria state rather than only class

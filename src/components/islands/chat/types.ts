@@ -162,7 +162,7 @@ export interface ChatInputProps {
 	setInputValue: (value: string) => void;
 	setComposerFocused: (focused: boolean) => void;
 	handleTextareaKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
-	handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+	handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => Promise<void>;
 }
 
 /**

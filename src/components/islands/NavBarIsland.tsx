@@ -136,7 +136,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   <nav
         id="navbar"
         ref={navRef}
-  className="relative z-10 mx-auto flex h-[65px] w-full max-w-[110rem] items-center justify-between px-4 sm:px-6 lg:px-8 text-[--fg]"
+  className="relative z-10 mx-auto flex h-[65px] w-full max-w-container-2xl items-center justify-between px-4 sm:px-6 lg:px-8 text-[--fg]"
         role="navigation"
         aria-label="Main Navigation"
       >
@@ -191,11 +191,9 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             ref={searchToggleRef}
             type="button"
             className="search-toggle inline-flex size-11 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
-            aria-label="Open AI search assistant"
+            aria-label="Open search"
             aria-haspopup="dialog"
             aria-expanded="false"
-            data-ai-launcher
-            data-ai-action="open"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -290,4 +288,3 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
     </div>
   );
 }
-

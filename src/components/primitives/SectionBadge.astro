@@ -34,9 +34,9 @@ const {
 const variantColors = {
   accent: 'text-accent dark:text-accent-light',
   primary: 'text-primary dark:text-primary-light',
-  success: 'text-green-600 dark:text-green-400',
-  warning: 'text-amber-600 dark:text-amber-400',
-  info: 'text-blue-600 dark:text-blue-400',
+  success: 'text-success-dark dark:text-success-light',
+  warning: 'text-warning-dark dark:text-warning-light',
+  info: 'text-info-dark dark:text-info-light',
 };
 
 const textColor = variantColors[variant];
@@ -46,4 +46,3 @@ const textColor = variantColors[variant];
   <div class="text-4xl" aria-hidden="true">{icon}</div>
   <span class={`text-xl font-semibold ${textColor}`}>{label}</span>
 </div>
-

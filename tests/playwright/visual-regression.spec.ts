@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { disableAnimationsComprehensive, waitForStability } from './utils/test-helpers';
 import { waitForIdle, waitForTheme, waitForMenuState, waitForLayoutStability } from '../utils/waits';
 

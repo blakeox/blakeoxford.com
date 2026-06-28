@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 // Lightweight contrast ratio check for key text elements.
 // Tags: @accessibility-extended

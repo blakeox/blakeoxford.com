@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { navigateMain } from '../utils/pageActions';
 
 test.describe('Core Site Functionality', () => {

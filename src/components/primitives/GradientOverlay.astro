@@ -2,7 +2,7 @@
 /**
  * GradientOverlay Component
  * 
- * Reusable gradient overlay for cards, images, and decorative backgrounds.
+ * Reusable tokenized overlay for cards, images, and controlled visual accents.
  * Reduces ~300 lines of duplicate gradient markup across the codebase.
  * 
  * @example
@@ -44,7 +44,7 @@ const directionClasses = {
 // Opacity-based color stops
 const opacityStops = {
   'light': {
-    'hover-card': 'from-background/45 via-transparent to-background/60',
+    'hover-card': 'from-background/50 via-transparent to-background/60',
     'image-fade': 'from-background/95 via-background/75 to-transparent',
     'background': 'from-background/20 via-transparent to-transparent',
     'hover-subtle': 'from-accent/5 to-primary/5'

@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '../fixtures';
 import AxeBuilder from '@axe-core/playwright';
 
 // Debug helper: isolate /projects axe scan and log color-contrast violation node details.

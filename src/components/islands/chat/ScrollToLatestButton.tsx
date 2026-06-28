@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function ScrollToLatestButton({ onClick }: { onClick: () => void }) {
 	return (
 		<button

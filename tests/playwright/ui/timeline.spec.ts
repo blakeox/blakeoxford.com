@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 test.describe('@essential @timeline About Page - Timeline', () => {
   test('renders desktop timeline at >= md breakpoint', async ({ page }) => {

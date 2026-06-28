@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 test('edge sets x-request-id header on html responses', async ({ request }) => {
   const res = await request.get('/');

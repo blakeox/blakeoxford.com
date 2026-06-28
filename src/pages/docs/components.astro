@@ -78,7 +78,7 @@ const allTags = getAllTags();
           <div class="space-y-8">
             {components.map((component: ComponentDoc) => (
               <article
-                class="component-card rounded-2xl border border-border bg-surface/50 p-8 shadow-lg transition hover:shadow-xl dark:border-border-dark dark:bg-surface-dark/50"
+                class="component-card min-w-0 overflow-hidden rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm transition-colors hover:border-accent/40 dark:border-border-dark/40 dark:bg-surface-dark/60 sm:p-8"
                 data-component-name={component.name.toLowerCase()}
                 data-component-tags={component.tags?.join(',') || ''}
               >
@@ -125,7 +125,7 @@ const allTags = getAllTags();
                     <h4 class="mb-3 text-lg font-semibold text-foreground dark:text-foreground-light">
                       Props
                     </h4>
-                    <div class="overflow-x-auto">
+                    <div class="max-w-full overflow-x-auto">
                       <table class="w-full text-sm">
                         <thead class="border-b border-border dark:border-border-dark">
                           <tr class="text-left">
@@ -141,7 +141,7 @@ const allTags = getAllTags();
                               <td class="py-3 pr-4">
                                 <code class="rounded bg-accent/10 px-2 py-1 text-accent">
                                   {prop.name}
-                                  {prop.required && <span class="text-red-500">*</span>}
+                                  {prop.required && <span class="text-error">*</span>}
                                 </code>
                               </td>
                               <td class="py-3 pr-4">
@@ -188,7 +188,7 @@ const allTags = getAllTags();
                               {example.description}
                             </p>
                           )}
-                          <pre class="overflow-x-auto rounded-xl bg-surface-dark p-4 text-sm text-foreground-light dark:bg-background-dark"><code>{example.code}</code></pre>
+                          <pre class="max-w-full overflow-x-auto rounded-xl bg-surface-dark p-4 text-sm text-foreground-light dark:bg-background-dark"><code>{example.code}</code></pre>
                         </div>
                       ))}
                     </div>
@@ -204,7 +204,7 @@ const allTags = getAllTags();
                     <ul class="space-y-2">
                       {component.accessibility.map((feature) => (
                         <li class="flex items-start gap-2 text-sm text-foreground/80 dark:text-foreground-light/80">
-                          <span class="mt-1 text-green-500">✓</span>
+                          <span class="mt-1 text-success">✓</span>
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -221,7 +221,7 @@ const allTags = getAllTags();
                     <ul class="space-y-2">
                       {component.performance.map((feature) => (
                         <li class="flex items-start gap-2 text-sm text-foreground/80 dark:text-foreground-light/80">
-                          <span class="mt-1 text-blue-500">⚡</span>
+                          <span class="mt-1 text-info">⚡</span>
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -235,7 +235,7 @@ const allTags = getAllTags();
       ))}
 
       <!-- Stats Footer -->
-      <footer class="mt-16 rounded-2xl border border-border bg-surface/50 p-8 text-center dark:border-border-dark dark:bg-surface-dark/50">
+      <footer class="mt-16 rounded-2xl border border-border/40 bg-surface/70 p-5 text-center shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60 sm:p-8">
         <h2 class="mb-4 text-2xl font-bold text-foreground dark:text-foreground-light">
           Documentation Statistics
         </h2>
@@ -294,8 +294,8 @@ const allTags = getAllTags();
 
   tagFilters.forEach((button) => {
     button.addEventListener('click', () => {
-      tagFilters.forEach((btn) => btn.classList.remove('bg-accent', 'text-white', 'border-accent'));
-      button.classList.add('bg-accent', 'text-white', 'border-accent');
+      tagFilters.forEach((btn) => btn.classList.remove('bg-accent', 'text-on-accent', 'border-accent'));
+      button.classList.add('bg-accent', 'text-on-accent', 'border-accent');
       
       currentTag = button.getAttribute('data-tag') || 'all';
       filterComponents();
@@ -304,7 +304,7 @@ const allTags = getAllTags();
 
   // Set initial "All" button as active
   const allButton = document.querySelector('[data-tag="all"]');
-  allButton?.classList.add('bg-accent', 'text-white', 'border-accent');
+  allButton?.classList.add('bg-accent', 'text-on-accent', 'border-accent');
 </script>
 
 <style>
@@ -314,9 +314,9 @@ const allTags = getAllTags();
     line-height: 1.6;
   }
   
-  /* Smooth transitions */
+  /* Search filtering */
   .component-card {
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
   }
   
   /* Table responsiveness */

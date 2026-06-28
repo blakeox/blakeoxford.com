@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 // Small, stable visual snapshot around the timeline header and first two cards
 // Tags: @visual-essential @timeline

@@ -61,7 +61,7 @@ interface UseQueryManagementReturn {
 	/** Send a query to the AI */
 	sendQuery: (query: string) => Promise<void>;
 	/** Handle form submission */
-	handleSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
+	handleSubmit: (event: React.SubmitEvent<HTMLFormElement>) => Promise<void>;
 	/** Handle replaying a query */
 	handleReplayQuery: (query: string) => Promise<void>;
 	/** Handle guided prompt selection */
@@ -324,7 +324,7 @@ export function useQueryManagement(
 	 * Prevents default, validates input, clears field, and sends query
 	 */
 	const handleSubmit = useCallback(
-		async (event: React.FormEvent<HTMLFormElement>) => {
+		async (event: React.SubmitEvent<HTMLFormElement>) => {
 			event.preventDefault();
 			const query = inputValue.trim();
 			if (!query || chatState === 'loading') return;

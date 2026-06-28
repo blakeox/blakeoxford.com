@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Advanced Test Scenarios', () => {
   test.describe('API Error Handling', () => {

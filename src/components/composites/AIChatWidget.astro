@@ -12,8 +12,8 @@
  * - Reduces initial bundle by ~92KB
  * - Launcher button remains interactive immediately
  */
-import AIChatIsland from './islands/AIChatIsland';
-import ChatLauncherIsland from './islands/ChatLauncherIsland';
+import AIChatIsland from '../islands/AIChatIsland';
+import ChatLauncherIsland from '../islands/ChatLauncherIsland';
 ---
 
 <div data-ai-chat-widget>
@@ -25,9 +25,13 @@ import ChatLauncherIsland from './islands/ChatLauncherIsland';
     (function () {
       if (typeof window === 'undefined') return;
 
-      function onClick(e: Event) {
-        const target = e.target as HTMLElement | null;
-        const btn = target?.closest?.('.ai-chat-launcher') as HTMLElement | null;
+      const chatWindow = window as typeof window & { __ai_chat_hydrated?: boolean };
+
+      function onClick(e: MouseEvent) {
+        if (chatWindow.__ai_chat_hydrated) return;
+
+        const target = e.target instanceof Element ? e.target : null;
+        const btn = target?.closest?.('.ai-chat-launcher');
         if (!btn) return;
 
         try {
@@ -36,8 +40,8 @@ import ChatLauncherIsland from './islands/ChatLauncherIsland';
           /* noop */
         }
 
-        const wrapper = btn.closest('[data-ai-chat-open]') as HTMLElement | null;
-        const panel = (wrapper && wrapper.querySelector('[data-ai-chat-panel]')) as HTMLElement | null;
+        const wrapper = btn.closest('[data-ai-chat-open]');
+        const panel = wrapper?.querySelector('[data-ai-chat-panel]') as HTMLElement | null;
         if (!wrapper || !panel) return;
 
         const isOpen = wrapper.getAttribute('data-ai-chat-open') === 'true';
@@ -53,7 +57,7 @@ import ChatLauncherIsland from './islands/ChatLauncherIsland';
           const composer = panel.querySelector('textarea, input') as HTMLElement | null;
           if (composer && typeof composer.focus === 'function') {
             try {
-              btn.blur();
+              if (btn instanceof HTMLElement) btn.blur();
             } catch (err) {
               /* noop */
             }
@@ -73,11 +77,13 @@ import ChatLauncherIsland from './islands/ChatLauncherIsland';
             const attemptFocus = () => {
               try {
                 // some browsers support options
-                (composer as any).focus({ preventScroll: true });
+                composer.focus({ preventScroll: true });
               } catch (e) {
                 try {
                   composer.focus();
-                } catch { /* noop */ }
+                } catch (e) {
+                  /* noop */
+                }
               }
               if (document.activeElement === composer) {
                 panel.setAttribute('data-ai-chat-focused', 'true');
@@ -102,7 +108,7 @@ import ChatLauncherIsland from './islands/ChatLauncherIsland';
         }
       }
 
-      document.addEventListener('click', onClick as EventListener, true);
+      document.addEventListener('click', onClick, true);
     })();
   </script>
   <!-- Shared wrapper: launcher hydrates on load, heavy panel hydrates on idle -->

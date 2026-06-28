@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 // Sitemap-driven contrast sweep (lightweight, single-test run)
 // Tags: @accessibility-extended @sitemap-sweep

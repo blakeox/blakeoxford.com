@@ -105,16 +105,16 @@ export const MatchedCTA = memo(function MatchedCTA({
 	if (!matchedCTA) return null;
 
 	return (
-		<div className="mt-4 rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50 p-4 dark:border-blue-800 dark:from-blue-950/30 dark:to-purple-950/30">
+		<div className="mt-4 rounded-xl border border-[color:var(--accent)]/25 bg-[color:var(--color-accent-subtle)] p-4">
 			<div className="flex items-start gap-3">
 				<span className="shrink-0 text-2xl" aria-hidden="true">
 					{matchedCTA.icon}
 				</span>
 				<div className="flex-1">
-					<p className="mb-2 text-sm text-foreground/85 dark:text-gray-300">{matchedCTA.message}</p>
+					<p className="mb-2 text-sm text-foreground/85 dark:text-foreground-light/80">{matchedCTA.message}</p>
 					<a
 						href={matchedCTA.ctaLink}
-						className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-900"
+						className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors duration-200 hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
 						onClick={() => {
 							if (typeof window !== 'undefined') {
 								autoragEvents.ctaClick({

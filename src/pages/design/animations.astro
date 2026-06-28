@@ -1,202 +1,85 @@
 ---
-/**
- * Animations Showcase - @property animation examples
- * 
- * Demonstrates advanced CSS animations using @property
- * custom properties for smooth, type-safe transitions.
- */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/primitives/Container.astro';
 import Section from '../../components/primitives/Section.astro';
+import Badge from '../../components/primitives/Badge.astro';
 
-const animations = [
+const motionRules = [
   {
-    name: 'Smooth Theme Transition',
-    description: 'Colors animate smoothly when switching between light and dark modes',
-    class: 'demo-theme-transition',
-    code: 'transition: --color-background 0.3s ease;'
+    name: 'State transition',
+    purpose: 'Use for theme changes, hover color, and active state changes.',
+    contract: 'transition-colors duration-200',
+    example: 'Color changes should clarify state without moving layout.',
   },
   {
-    name: 'Rotating Gradient',
-    description: 'Continuous gradient rotation using @property --gradient-angle',
-    class: 'gradient-rotate',
-    code: 'animation: rotate-gradient 10s linear infinite;'
+    name: 'Surface reveal',
+    purpose: 'Use for dialogs, overlays, and panels that enter the viewport.',
+    contract: 'transition-transform duration-200 ease-out',
+    example: 'Search and chat panels can translate in; content cards should stay stable.',
   },
   {
-    name: 'Interactive Scale',
-    description: 'Smooth scale transform on hover with @property --scale-factor',
-    class: 'scale-hover',
-    code: 'transition: --scale-factor 0.2s ease-out;'
+    name: 'Affordance lift',
+    purpose: 'Use only on clickable repeated items where hover confirms interactivity.',
+    contract: 'motion-safe:hover:-translate-y-0.5',
+    example: 'Keep the movement small and pair it with focus-visible styles.',
   },
   {
-    name: 'Color Morph',
-    description: 'Smooth color transitions between states',
-    class: 'color-morph',
-    code: 'transition: --color-primary 0.3s ease;'
+    name: 'Reduced motion',
+    purpose: 'Every non-essential transform must respect user motion preferences.',
+    contract: '@media (prefers-reduced-motion: reduce)',
+    example: 'Disable continuous and ornamental motion first.',
   },
-  {
-    name: 'Pulse Scale',
-    description: 'Continuous pulsing scale animation',
-    class: 'pulse-scale',
-    code: 'animation: scale-pulse 2s ease-in-out infinite;'
-  }
 ];
 ---
 
 <BaseLayout
-  title="Animation Showcase - Design System"
-  description="Advanced @property CSS animations for smooth, professional effects"
+  title="Design Motion"
+  description="Operational motion rules for the Blake Oxford design system."
+  canonicalUrl="https://blakeoxford.com/design/animations/"
+  wide={true}
 >
   <Section padding="xl">
     <Container size="xl">
-      <!-- Header -->
-      <div class="mb-16 text-center">
-        <h1 class="text-5xl md:text-6xl font-bold mb-6 text-[--fg-strong]">
-          Advanced Animations
+      <header class="max-w-3xl">
+        <Badge variant="subtle">Design system</Badge>
+        <h1 class="mt-5 text-4xl font-bold text-foreground dark:text-foreground-light sm:text-5xl">
+          Motion Rules
         </h1>
-        <p class="text-xl text-[--fg] max-w-3xl mx-auto">
-          Modern CSS animations using <code class="px-2 py-1 bg-[--surface] rounded font-mono text-[--accent]">@property</code> 
-          for type-safe, smooth transitions and effects.
+        <p class="mt-4 text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/75">
+          Motion exists to clarify state, focus, and hierarchy. Continuous decorative animation is not part of the core component contract.
         </p>
-      </div>
+      </header>
 
-      <!-- What is @property? -->
-      <div class="mb-16 p-8 bg-[--surface] rounded-xl border border-[--border]">
-        <h2 class="text-2xl font-bold mb-4 text-[--fg-strong]">
-          What is @property?
-        </h2>
-        <p class="text-lg text-[--fg] mb-4">
-          CSS <code class="px-2 py-1 bg-[--bg] rounded font-mono text-[--accent]">@property</code> 
-          enables <strong>type-safe custom properties</strong> that can be animated smoothly.
-        </p>
-        <div class="grid md:grid-cols-3 gap-6 mt-6">
-          <div class="p-4 bg-[--bg] rounded-lg">
-            <div class="text-3xl mb-2">🎨</div>
-            <h3 class="font-semibold mb-2">Type-Safe</h3>
-            <p class="text-sm text-[--fg]">Define syntax (color, angle, number)</p>
-          </div>
-          <div class="p-4 bg-[--bg] rounded-lg">
-            <div class="text-3xl mb-2">⚡</div>
-            <h3 class="font-semibold mb-2">Animatable</h3>
-            <p class="text-sm text-[--fg]">Smooth CSS transitions/animations</p>
-          </div>
-          <div class="p-4 bg-[--bg] rounded-lg">
-            <div class="text-3xl mb-2">🌐</div>
-            <h3 class="font-semibold mb-2">92% Support</h3>
-            <p class="text-sm text-[--fg]">Chrome 85+, Safari 16.4+, Firefox 128+</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Animation Examples -->
-      <div class="space-y-12">
-        {animations.map((anim) => (
-          <article class="space-y-6">
-            <header>
-              <h3 class="text-2xl font-semibold mb-2 text-[--fg-strong]">
-                {anim.name}
-              </h3>
-              <p class="text-[--fg] text-lg">
-                {anim.description}
-              </p>
-            </header>
-
-            <!-- Live Demo -->
-            <div class="p-8 bg-[--surface] rounded-xl border border-[--border]">
-              <div class="flex items-center justify-center min-h-[200px]">
-                {anim.class === 'gradient-rotate' && (
-                  <div class={`${anim.class} w-64 h-64 rounded-2xl flex items-center justify-center text-white font-semibold text-lg shadow-2xl`}>
-                    Rotating Gradient
-                  </div>
-                )}
-                
-                {anim.class === 'scale-hover' && (
-                  <div class={`${anim.class} w-64 h-64 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-semibold text-lg shadow-lg`}>
-                    Hover Me
-                  </div>
-                )}
-                
-                {anim.class === 'color-morph' && (
-                  <button class={`${anim.class} w-64 h-64 rounded-2xl flex items-center justify-center text-white font-semibold text-lg shadow-lg`}>
-                    Hover to Morph
-                  </button>
-                )}
-                
-                {anim.class === 'pulse-scale' && (
-                  <div class={`${anim.class} w-64 h-64 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center text-white font-semibold text-lg shadow-lg`}>
-                    Pulsing
-                  </div>
-                )}
-                
-                {anim.class === 'demo-theme-transition' && (
-                  <div class="text-center">
-                    <p class="text-[--fg] mb-4">Toggle dark mode to see smooth color transitions</p>
-                    <div class="w-64 h-64 rounded-2xl bg-[--surface] border border-[--border] flex items-center justify-center">
-                      <span class="text-[--fg-strong] font-semibold">Theme Transitions</span>
-                    </div>
-                  </div>
-                )}
+      <section class="mt-12 grid gap-4 lg:grid-cols-2" aria-label="Motion contracts">
+        {motionRules.map((rule) => (
+          <article class="min-w-0 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 class="text-xl font-semibold text-foreground dark:text-foreground-light">{rule.name}</h2>
+                <p class="mt-2 text-sm leading-relaxed text-foreground/70 dark:text-foreground-light/70">{rule.purpose}</p>
               </div>
+              <Badge variant="outline" size="xs">Motion</Badge>
             </div>
-
-            <!-- Code Example -->
-            <details class="group">
-              <summary class="cursor-pointer px-4 py-3 bg-[--bg] rounded-lg border border-[--border] hover:border-[--accent] transition-colors list-none flex items-center justify-between">
-                <span class="font-mono text-sm">View Code</span>
-                <span class="text-[--fg] group-open:rotate-180 transition-transform">▼</span>
-              </summary>
-              <div class="mt-4 p-4 bg-[--bg] rounded-lg border border-[--border]">
-                <pre class="font-mono text-sm text-[--fg] overflow-x-auto"><code>{anim.code}</code></pre>
-              </div>
-            </details>
+            <code class="mt-5 block max-w-full overflow-x-auto rounded-lg bg-surface-subtle p-3 text-xs text-foreground/75 dark:bg-surface-dark-subtle dark:text-foreground-light/75">{rule.contract}</code>
+            <p class="mt-4 text-sm text-foreground/70 dark:text-foreground-light/70">{rule.example}</p>
           </article>
         ))}
-      </div>
+      </section>
 
-      <!-- Registered Properties -->
-      <div class="mt-20 p-8 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl border border-[--border]">
-        <h2 class="text-2xl font-bold mb-6 text-[--fg-strong]">
-          Registered @property Declarations
-        </h2>
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="p-4 bg-[--bg] rounded-lg font-mono text-sm">
-            <div class="text-[--accent] mb-2">@property --color-primary</div>
-            <div class="text-[--fg] opacity-70">syntax: "&lt;color&gt;"</div>
-          </div>
-          <div class="p-4 bg-[--bg] rounded-lg font-mono text-sm">
-            <div class="text-[--accent] mb-2">@property --gradient-angle</div>
-            <div class="text-[--fg] opacity-70">syntax: "&lt;angle&gt;"</div>
-          </div>
-          <div class="p-4 bg-[--bg] rounded-lg font-mono text-sm">
-            <div class="text-[--accent] mb-2">@property --scale-factor</div>
-            <div class="text-[--fg] opacity-70">syntax: "&lt;number&gt;"</div>
-          </div>
-          <div class="p-4 bg-[--bg] rounded-lg font-mono text-sm">
-            <div class="text-[--accent] mb-2">@property --opacity-level</div>
-            <div class="text-[--fg] opacity-70">syntax: "&lt;number&gt;"</div>
-          </div>
-        </div>
-      </div>
+      <section class="mt-16 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60 sm:p-6" aria-labelledby="motion-boundary">
+        <h2 id="motion-boundary" class="text-2xl font-bold text-foreground dark:text-foreground-light">Boundary</h2>
+        <ul class="mt-5 grid gap-3 text-sm text-foreground/75 dark:text-foreground-light/75 md:grid-cols-2">
+          <li>Do not add looping decorative motion to routine documentation or app surfaces.</li>
+          <li>Do not use motion to compensate for unclear layout, labels, or hierarchy.</li>
+          <li>Do not animate size, spacing, or text in ways that cause layout shift.</li>
+          <li>Do keep focus, hover, and open/closed states predictable across keyboard and pointer input.</li>
+        </ul>
+      </section>
 
-      <!-- Back to Components -->
-      <div class="mt-12 text-center">
-        <a
-          href="/design/components/"
-          class="inline-flex items-center gap-2 px-6 py-3 bg-[--surface] border border-[--border] rounded-lg hover:border-[--accent] transition-colors"
-        >
-          ← Back to Components
-        </a>
-      </div>
+      <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
+        <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/design/components/">Component contracts</a>
+        <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark dark:text-foreground-light" href="/design/tokens/">Tokens</a>
+      </nav>
     </Container>
   </Section>
 </BaseLayout>
-
-<style>
-  pre {
-    tab-size: 2;
-  }
-  
-  code {
-    white-space: pre-wrap;
-  }
-</style>

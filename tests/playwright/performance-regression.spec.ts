@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from './fixtures';
 import { capturePerformance, compareWithBaseline, maybePersistUpdatedBaselines } from '../performance/perfBaselineHelper';
 import { waitForLayoutStability } from './utils/deterministic-waits';
 

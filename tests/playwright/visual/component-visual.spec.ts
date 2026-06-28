@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 import { preparePage } from './_visualHelper';
 
 // Component-level focused snapshots (smaller surface, faster diff isolation)

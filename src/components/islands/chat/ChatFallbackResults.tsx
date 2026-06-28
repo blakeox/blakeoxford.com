@@ -29,7 +29,7 @@ export function ChatFallbackResults({
 				{visibleFallbackResults.map((result, index) => (
 					<li
 						key={`fallback-${index}`}
-						className="group flex min-w-0 max-w-full flex-1 flex-col gap-1 rounded-2xl border border-[color:var(--border)]/35 bg-[color:var(--surface)]/70 px-3 py-2 transition hover:border-[color:var(--accent)]/40"
+						className="group flex min-w-0 max-w-full flex-1 flex-col gap-1 rounded-2xl border border-[color:var(--border)]/40 bg-[color:var(--surface)]/70 px-3 py-2 transition hover:border-[color:var(--accent)]/40"
 					>
 						<a
 							href={result.url}

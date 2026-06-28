@@ -6,7 +6,7 @@
  * 
  * @module AIChatIsland
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useAIChatController } from '../../lib/hooks';
 import {
@@ -33,6 +33,7 @@ import {
  */
 export default function AIChatIsland() {
 	const controller = useAIChatController();
+	const hasCheckedInitialOpenRef = useRef(false);
 
 	// Destructure for cleaner code
 	const {
@@ -147,7 +148,7 @@ export default function AIChatIsland() {
 				if (open === true) {
 					openChat();
 					// Ensure input receives focus when island has mounted
-					try { focusInput(); } catch (_err) { /* noop - focus best-effort */ }
+					try { focusInput(); } catch (err) { /* noop - focus best-effort */ }
 				} else if (open === false) {
 					closeChat();
 				}
@@ -167,6 +168,8 @@ export default function AIChatIsland() {
 
 	// On mount, if the server-rendered wrapper already indicates open, ensure we run open/focus.
 	useEffect(() => {
+		if (hasCheckedInitialOpenRef.current) return;
+		hasCheckedInitialOpenRef.current = true;
 		try {
 			const wrapper = document.querySelector('[data-ai-chat-open]');
 			if (wrapper && wrapper.getAttribute('data-ai-chat-open') === 'true') {

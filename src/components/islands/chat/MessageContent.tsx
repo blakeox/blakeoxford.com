@@ -18,7 +18,7 @@
  *   isAssistant={true}
  *   bubbleContent="Here's your answer..."
  *   totalSources={3}
- *   messageTextClasses="text-foreground dark:text-gray-100"
+ *   messageTextClasses="text-foreground dark:text-foreground-light"
  * />
  * ```
  *

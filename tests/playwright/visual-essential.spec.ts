@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForIdle, waitForTheme, waitForLayoutStability, waitForCondition } from '../utils/waits';
 
 test.describe('Essential Visual Tests', () => {

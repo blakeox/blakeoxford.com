@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 // DEPRECATED: Covered by functional/navigation-search.journey.spec.ts and other focused specs.
 // Will be removed after stabilization.
 import { waitForIdle, waitForSearchOverlay, waitForSearchResultItem } from '../utils/waits';

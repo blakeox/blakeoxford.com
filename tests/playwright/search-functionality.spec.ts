@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 // DEPRECATED: Consolidated into functional/navigation-search.journey.spec.ts
 test.describe.skip('Deprecated search-functionality.spec.ts', () => {
 // ...existing code...

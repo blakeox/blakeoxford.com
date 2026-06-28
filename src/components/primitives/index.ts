@@ -5,7 +5,8 @@
  * They provide consistent styling, behavior, and accessibility.
  * 
  * Categories:
- * - UI: BaseCard, Badge, Button, DateDisplay
+ * - Controls: Badge, Button, DateDisplay
+ * - Media: OptimizedImage, ProficiencyLogo
  * - Forms: FormField
  * - Layout: Container, Stack, Section
  * 
@@ -23,6 +24,8 @@ export { default as DateDisplay } from './DateDisplay.astro';
 export { default as Flex } from './Flex.astro';
 export { default as FormField } from './FormField.astro';
 export { default as Grid } from './Grid.astro';
+export { default as OptimizedImage } from './OptimizedImage.astro';
+export { default as ProficiencyLogo } from './ProficiencyLogo.astro';
 export { default as Section } from './Section.astro';
 export { default as Stack } from './Stack.astro';
 export { default as Skeleton } from './Skeleton.astro';

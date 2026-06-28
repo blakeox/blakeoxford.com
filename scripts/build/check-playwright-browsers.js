@@ -4,7 +4,8 @@
  * Check which Playwright browsers are available and suggest appropriate test commands
  */
 
-const { execSync } = require('child_process');
+import { execSync } from 'node:child_process';
+import { pathToFileURL } from 'node:url';
 
 // Colors for terminal output
 const colors = {
@@ -139,8 +140,8 @@ function main() {
   }
 }
 
-if (require.main === module) {
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main();
 }
 
-module.exports = { checkBrowserInstallation, suggestTestCommands };
+export { checkBrowserInstallation, suggestTestCommands };

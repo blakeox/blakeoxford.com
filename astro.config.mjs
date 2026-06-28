@@ -250,15 +250,15 @@ export default defineConfig({
     // Sentry error tracking (production only to avoid noise in development)
     ...(process.env.NODE_ENV === 'production' && process.env.PUBLIC_SENTRY_DSN ? [
       sentry({
-        dsn: process.env.PUBLIC_SENTRY_DSN,
-        environment: process.env.NODE_ENV || 'development',
-        release: process.env.PUBLIC_GIT_COMMIT || 'dev',
-        // Source maps upload (optional - requires SENTRY_AUTH_TOKEN)
-        sourceMapsUploadOptions: process.env.SENTRY_AUTH_TOKEN ? {
+        telemetry: false,
+        sourcemaps: {
+          disable: !process.env.SENTRY_AUTH_TOKEN,
+        },
+        ...(process.env.SENTRY_AUTH_TOKEN ? {
+          authToken: process.env.SENTRY_AUTH_TOKEN,
           project: process.env.SENTRY_PROJECT || 'blakeoxford-browser',
           org: process.env.SENTRY_ORG || 'your-sentry-org',
-          authToken: process.env.SENTRY_AUTH_TOKEN,
-        } : undefined,
+        } : {}),
       })
     ] : []),
     // Gate astro-compress to avoid long hooks in CI builds

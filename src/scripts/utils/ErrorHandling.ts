@@ -214,7 +214,7 @@ export class ErrorHandlingSystem {
     
     const altText = img.alt || 'Image';
     const placeholder = document.createElement('div');
-    placeholder.className = 'image-error-placeholder bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg flex flex-col items-center justify-center text-foreground/80 dark:text-gray-400 text-sm border border-gray-200 dark:border-gray-600';
+    placeholder.className = 'image-error-placeholder bg-gradient-to-br from-surface-subtle to-surface dark:from-surface-dark-subtle dark:to-surface-dark rounded-lg flex flex-col items-center justify-center text-foreground/80 dark:text-foreground-light/70 text-sm border border-border dark:border-border-dark';
     
     // Maintain aspect ratio using img dimensions or reasonable defaults
     const width = img.width || img.naturalWidth || 300;
@@ -308,7 +308,7 @@ export class ErrorHandlingSystem {
     
     // Create error message
     const errorElement = document.createElement('div');
-    errorElement.className = 'field-error text-red-600 text-sm mt-1';
+    errorElement.className = 'field-error text-error text-sm mt-1';
     errorElement.textContent = message;
     errorElement.setAttribute('role', 'alert');
     
@@ -395,32 +395,32 @@ export class ErrorHandlingSystem {
 
   private createErrorElement(error: ErrorInfo): HTMLElement {
     const element = document.createElement('div');
-    element.className = 'error-item bg-white dark:bg-gray-800 border-l-4 border-red-500 p-4 rounded shadow-lg';
+    element.className = 'error-item bg-surface dark:bg-surface-dark border-l-4 border-error p-4 rounded shadow-lg';
     
     const severityColors = {
-      error: 'border-red-500',
-      warning: 'border-yellow-500',
-      info: 'border-blue-500'
+      error: 'border-error',
+      warning: 'border-warning',
+      info: 'border-info'
     };
     
-    element.className = `error-item bg-white dark:bg-gray-800 border-l-4 ${severityColors[error.severity]} p-4 rounded shadow-lg`;
+    element.className = `error-item bg-surface dark:bg-surface-dark border-l-4 ${severityColors[error.severity]} p-4 rounded shadow-lg`;
     
     element.innerHTML = `
       <div class="flex items-start">
         <div class="flex-1">
-          <h3 class="text-sm font-medium text-foreground dark:text-gray-100">${error.message}</h3>
-          ${error.details ? `<p class="text-sm text-foreground/80 dark:text-gray-400 mt-1">${error.details}</p>` : ''}
+          <h3 class="text-sm font-medium text-foreground dark:text-foreground-light">${error.message}</h3>
+          ${error.details ? `<p class="text-sm text-foreground/80 dark:text-foreground-light/70 mt-1">${error.details}</p>` : ''}
           ${error.actions ? `
             <div class="mt-3 space-x-2">
               ${error.actions.map(action => `
-                <button class="text-xs px-2 py-1 rounded ${action.primary ? 'bg-red-600 text-white' : 'bg-gray-200 text-foreground/85'}">
+                <button class="text-xs px-2 py-1 rounded ${action.primary ? 'bg-error text-on-primary' : 'bg-surface-subtle text-foreground/85'}">
                   ${action.label}
                 </button>
               `).join('')}
             </div>
           ` : ''}
         </div>
-        <button class="ml-4 text-gray-400 hover:text-foreground/80" onclick="this.parentElement.parentElement.remove()">
+        <button class="ml-4 text-foreground/50 hover:text-foreground/80" onclick="this.parentElement.parentElement.remove()">
           ×
         </button>
       </div>
@@ -476,23 +476,23 @@ export class ErrorHandlingSystem {
 
   private createNotification(notification: Notification): HTMLElement {
     const element = document.createElement('div');
-    element.className = 'notification bg-white dark:bg-gray-800 border-l-4 p-4 rounded shadow-lg';
+    element.className = 'notification bg-surface dark:bg-surface-dark border-l-4 p-4 rounded shadow-lg';
     
     const typeColors = {
-      success: 'border-green-500',
-      error: 'border-red-500',
-      warning: 'border-yellow-500',
-      info: 'border-blue-500'
+      success: 'border-success',
+      error: 'border-error',
+      warning: 'border-warning',
+      info: 'border-info'
     };
     
-    element.className = `notification bg-white dark:bg-gray-800 border-l-4 ${typeColors[notification.type]} p-4 rounded shadow-lg`;
+    element.className = `notification bg-surface dark:bg-surface-dark border-l-4 ${typeColors[notification.type]} p-4 rounded shadow-lg`;
     
     element.innerHTML = `
       <div class="flex items-start">
         <div class="flex-1">
-          <p class="text-sm text-foreground dark:text-gray-100">${notification.message}</p>
+          <p class="text-sm text-foreground dark:text-foreground-light">${notification.message}</p>
         </div>
-        <button class="ml-4 text-gray-400 hover:text-foreground/80" onclick="this.parentElement.parentElement.remove()">
+        <button class="ml-4 text-foreground/50 hover:text-foreground/80" onclick="this.parentElement.parentElement.remove()">
           ×
         </button>
       </div>

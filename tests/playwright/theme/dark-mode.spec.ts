@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 test.describe('@essential @theme Dark mode behavior', () => {
   test('toggles theme and updates background tokens', async ({ page }) => {

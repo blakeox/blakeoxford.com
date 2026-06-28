@@ -1,5 +1,5 @@
 
-import { test } from '@playwright/test';
+import { test } from './fixtures';
 import { waitForKeyboardResponse } from './utils/test-helpers';
 
 test.describe('SearchOverlay Manual Test', () => {

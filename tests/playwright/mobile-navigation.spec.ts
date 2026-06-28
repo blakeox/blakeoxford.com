@@ -1,4 +1,4 @@
-import { test, expect, devices } from '@playwright/test';
+import { test, expect, devices } from './fixtures';
 import { waitForMenuState } from '../utils/waits';
 import { waitForKeyboardResponse } from './utils/test-helpers';
 

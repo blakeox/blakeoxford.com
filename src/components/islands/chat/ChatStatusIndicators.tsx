@@ -41,22 +41,22 @@ export function ChatStatusIndicators({
 			)}
 
 			{error && (
-				<div className="rounded-xl border border-red-400/60 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-500/60 dark:bg-red-900/30 dark:text-red-200">
+				<div className="rounded-xl border border-[color:var(--color-error)]/50 bg-[color:var(--color-error-subtle)] px-3 py-2 text-xs text-[color:var(--color-error-dark)] dark:text-[color:var(--color-error-light)]">
 					<p>{error}</p>
 					{lastQueryValue && (
-						<p className="mt-1 text-[color:var(--fg)]/60 dark:text-red-200/80">
+						<p className="mt-1 text-[color:var(--fg)]/60">
 							Last question: <span className="font-medium text-[color:var(--fg)]">{lastQueryValue}</span>
 						</p>
 					)}
 					{retryCount > 0 && (
-						<p className="mt-1 text-[color:var(--fg)]/60 dark:text-red-200/80">
+						<p className="mt-1 text-[color:var(--fg)]/60">
 							Retry attempts: {retryCount}/2
 						</p>
 					)}
 					<div className="mt-2 flex flex-wrap gap-2">
 						<button
 							type="button"
-							className="inline-flex items-center gap-2 rounded-full border border-red-400/60 px-3 py-1 font-medium transition hover:border-red-500 hover:text-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60 disabled:opacity-60 dark:hover:border-red-400 dark:hover:text-red-100"
+							className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-error)]/55 px-3 py-1 font-medium transition hover:border-[color:var(--color-error)] hover:text-[color:var(--color-error-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-error)]/50 disabled:opacity-60 dark:hover:text-[color:var(--color-error-light)]"
 							onClick={() => {
 								// Manual retry - clear error and use lastFailedQuery if available
 								const queryToRetry = lastFailedQuery || lastQueryValue;

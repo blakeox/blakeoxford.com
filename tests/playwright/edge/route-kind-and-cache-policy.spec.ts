@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 
 // Verifies x-route-kind and x-cache-policy are set on representative routes.
 // Tests are tolerant in preview (headers may be missing), but strict when headers are present.

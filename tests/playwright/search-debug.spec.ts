@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from './fixtures';
 import { waitForAsyncOperation } from './utils/test-helpers';
 
 // Extend window typing for test-only globals

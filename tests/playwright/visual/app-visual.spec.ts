@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '../fixtures';
 import { preparePage, snapshotRoute } from './_visualHelper';
 
 // Application / interactive pages

@@ -12,7 +12,7 @@ export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({ visible, onSe
 	return (
 		<div className="border-b border-[color:var(--border)]/20 bg-[color:var(--surface-subtle)]/20 px-4 py-3 text-[0.75rem] text-[color:var(--fg)]/70">
 			<div className="flex flex-col gap-0.5">
-				<span className="uppercase tracking-wide text-[0.7rem] text-[color:var(--fg)]/45">Jump in</span>
+				<span className="uppercase tracking-wide text-[0.7rem] text-[color:var(--fg)]/50">Jump in</span>
 				<span className="text-[color:var(--fg)]/60">Choose a suggested prompt to get a rich, sourced answer.</span>
 			</div>
 			<div className="mt-3 grid gap-2 sm:grid-cols-2">

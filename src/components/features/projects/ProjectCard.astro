@@ -3,7 +3,7 @@
  * ProjectCard - Interactive project card for project listings
  * 
  * Displays a project with hero image, title, description, date, tags, and link.
- * Features hover effects with gradient overlay and shadow animations.
+ * Uses semantic tokens for surface, focus, and interactive states.
  * Uses container queries for responsive layout adapting to container width.
  * 
  * @component
@@ -37,7 +37,7 @@
  * - @lg (512px): Maximum content width, optimal reading layout
  */
 import type { ProjectCardProps } from '../../../types/components';
-import OptimizedImage from '../../ui/OptimizedImage.astro';
+import OptimizedImage from '../../primitives/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';
 import BadgePill from '../../primitives/BadgePill.astro';
 import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
@@ -121,7 +121,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
       )}
 
       <div class="mt-auto flex items-center justify-end gap-4">
-        <span class="inline-flex items-center gap-2 rounded-full border-2 border-accent/60 px-3 @sm:px-4 py-1.5 @sm:py-2 text-xs @sm:text-sm font-semibold text-accent transition-all duration-200 group-hover:bg-accent group-hover:text-white group-hover:border-accent group-hover:shadow-lg group-hover:gap-3">
+        <span class="inline-flex items-center gap-2 rounded-full border-2 border-accent/60 px-3 @sm:px-4 py-1.5 @sm:py-2 text-xs @sm:text-sm font-semibold text-accent transition-all duration-200 group-hover:bg-accent group-hover:text-on-accent group-hover:border-accent group-hover:shadow-lg group-hover:gap-3">
           Explore
           <ArrowRightIcon class="opacity-90 transition-transform duration-200 group-hover:translate-x-0.5" />
         </span>

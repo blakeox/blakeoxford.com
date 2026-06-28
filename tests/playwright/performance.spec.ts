@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForScrollSettled } from '../utils/waits';
 
 // Performance and load tests for homepage and API

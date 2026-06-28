@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 // DEPRECATED: Consolidated by tests/playwright/functional/navigation-search.journey.spec.ts
 // This spec will be removed once new journey spec is stable.
 test.describe.skip('Deprecated navigation-essential', () => {

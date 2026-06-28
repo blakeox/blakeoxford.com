@@ -9,7 +9,7 @@ export function ChatRecentQueries({ queries, onReplayQuery }: ChatRecentQueriesP
 
 	return (
 		<div className="flex flex-wrap items-center gap-2 border-b border-[color:var(--border)]/20 bg-[color:var(--surface-subtle)]/20 px-4 py-2 text-[0.65rem] text-[color:var(--fg)]/60">
-			<span className="uppercase tracking-wide text-[color:var(--fg)]/45">Recent</span>
+			<span className="uppercase tracking-wide text-[color:var(--fg)]/50">Recent</span>
 			{queries.map((query, index) => (
 				<button
 					key={`recent-query-${index}`}

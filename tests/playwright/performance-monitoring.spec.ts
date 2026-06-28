@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Performance and Monitoring', () => {

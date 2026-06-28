@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForKeyboardResponse, waitForAsyncOperation } from './utils/test-helpers';
 
 test.describe('Chaos Engineering Tests', () => {

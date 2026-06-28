@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Projects page layout', () => {
   test('uses Tailwind layout shells and clears the navbar', async ({ page }) => {

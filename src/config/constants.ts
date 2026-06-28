@@ -69,13 +69,13 @@ export const CSS_CLASSES = {
     base: 'bg-surface dark:bg-surface-dark rounded-xl shadow-xl border border-border/50 dark:border-border-dark/50',
     
     // Card variants
-    compact: 'rounded-2xl border border-border/30 bg-background/95 shadow-lg dark:border-border-dark/30 dark:bg-surface/80',
-    elevated: 'rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg',
-    glass: 'bg-surface/90 backdrop-blur-sm border border-border dark:border-border-dark rounded-xl',
+    compact: 'rounded-2xl border border-border/30 bg-surface/95 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/95',
+    elevated: 'rounded-2xl border border-border/30 bg-surface shadow-lg dark:border-border-dark/40 dark:bg-surface-dark',
+    glass: 'rounded-2xl border border-border/40 bg-[color:var(--glass-surface-bg)]/85 shadow-md backdrop-blur dark:border-border-dark/40',
     
     // Hover effects
-    hoverLift: 'transition-all duration-300 hover:-translate-y-1 hover:shadow-xl',
-    hoverLiftSm: 'transition-all duration-200 hover:-translate-y-1 hover:shadow-xl',
+    hoverLift: 'transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-1 hover:shadow-lg',
+    hoverLiftSm: 'transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 hover:shadow-lg',
     hoverGradient: 'pointer-events-none absolute inset-0 bg-gradient-to-br from-background/70 via-surface/85 to-background/65 opacity-0 transition-opacity duration-300 group-hover:opacity-100',
     
     // Interactive states
@@ -83,9 +83,9 @@ export const CSS_CLASSES = {
     focusRing: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60',
     
     // Complete card compositions
-    blog: 'group flex flex-col h-full rounded-2xl border border-border/30 bg-background/95 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-xl dark:border-border-dark/30 dark:bg-surface/80',
-    project: 'relative flex h-full flex-col overflow-hidden rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl',
-    feature: 'bg-surface dark:bg-surface-dark rounded-xl shadow-xl border border-border/50 dark:border-border-dark/50 p-6 flex flex-col h-full hover-lift-sm transition-all duration-300 hover:shadow-2xl hover:border-accent/50 dark:hover:border-accent/30 relative overflow-hidden group',
+    blog: 'group flex h-full flex-col rounded-2xl border border-border/30 bg-surface/95 shadow-sm transition-colors duration-200 hover:border-accent/50 hover:shadow-lg dark:border-border-dark/40 dark:bg-surface-dark/95',
+    project: 'relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/30 bg-surface/95 shadow-sm transition-colors duration-200 hover:border-accent/50 hover:shadow-lg dark:border-border-dark/40 dark:bg-surface-dark/95',
+    feature: 'group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/30 bg-surface/95 p-6 shadow-sm transition-colors duration-200 hover:border-accent/50 hover:shadow-lg dark:border-border-dark/40 dark:bg-surface-dark/95',
   },
   
   // Section containers

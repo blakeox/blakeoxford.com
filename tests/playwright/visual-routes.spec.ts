@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { preparePage } from './visual/_visualHelper';
 
 // Consolidated visual coverage for core routes using centralized config

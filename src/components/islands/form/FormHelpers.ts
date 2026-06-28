@@ -88,7 +88,7 @@ export function validateField(
 export function showError(field: HTMLElement, message: string): void {
   const errorContainer = document.getElementById(`${field.id}-error`);
   field.setAttribute('aria-invalid', 'true');
-  field.classList.add('border-red-500');
+  field.classList.add('border-error');
   if (errorContainer) {
     errorContainer.textContent = message;
     errorContainer.classList.remove('hidden');
@@ -98,7 +98,7 @@ export function showError(field: HTMLElement, message: string): void {
 export function clearError(field: HTMLElement): void {
   const errorContainer = document.getElementById(`${field.id}-error`);
   field.setAttribute('aria-invalid', 'false');
-  field.classList.remove('border-red-500');
+  field.classList.remove('border-error');
   if (errorContainer) {
     errorContainer.textContent = '';
     errorContainer.classList.add('hidden');
@@ -134,11 +134,11 @@ export function showStatusMessage(
   element.classList.remove('hidden');
 
   if (type === 'success') {
-    element.classList.remove('text-red-600');
-    element.classList.add('text-green-600', 'bg-green-50', 'border', 'border-green-200', 'rounded-lg', 'p-4');
+    element.classList.remove('text-error');
+    element.classList.add('text-success-dark', 'bg-success/10', 'border', 'border-success/30', 'rounded-lg', 'p-4');
   } else {
-    element.classList.remove('text-green-600');
-    element.classList.add('text-red-600');
+    element.classList.remove('text-success-dark', 'bg-success/10', 'border-success/30');
+    element.classList.add('text-error');
   }
 }
 
@@ -146,5 +146,5 @@ export function clearStatusMessage(element: HTMLElement | null): void {
   if (!element) return;
   element.textContent = '';
   element.classList.add('hidden');
-  element.classList.remove('text-green-600', 'bg-green-50', 'border', 'border-green-200', 'rounded-lg', 'p-4', 'text-red-600');
+  element.classList.remove('text-success-dark', 'bg-success/10', 'border', 'border-success/30', 'rounded-lg', 'p-4', 'text-error');
 }

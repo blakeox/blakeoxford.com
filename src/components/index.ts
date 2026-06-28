@@ -1,9 +1,8 @@
-// Components - Organized by feature and purpose with modern direct imports
-// Expose only the pieces we actively consume in Astro templates
+// Components - organized by stable design-system layers.
 
-// Layout & shared UI
+// Low-level primitives and layout
+export * from './primitives/index.js';
 export * from './layout/index.js';
-export * from './ui/index.js';
 
 // Composite patterns (pre-composed bundles of components)
 export * from './composites/index.js';

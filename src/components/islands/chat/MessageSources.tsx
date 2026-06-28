@@ -99,7 +99,7 @@ export const CitationLinks = memo(function CitationLinks({
 }: CitationLinksProps) {
 	return (
 		<div className="flex flex-wrap items-center gap-2 text-[0.65rem] text-[color:var(--fg)]/60">
-			<span className="uppercase tracking-wide text-[color:var(--fg)]/45">Cited</span>
+			<span className="uppercase tracking-wide text-[color:var(--fg)]/50">Cited</span>
 			{sources.map((source, index) => (
 				<button
 					key={`${messageId}-citation-${index}`}
@@ -200,15 +200,16 @@ function ExpandedSourcesList({
 				const isExpanded = expandedIndividualSources[sourceKey];
 				const relevanceInfo = relevance !== null ? getRelevanceExplanation(relevance) : null;
 
-				let isExternalLink: boolean;
-				try {
-					const parsed = source.url.startsWith('http')
-						? new URL(source.url)
-						: new URL(source.url, `https://${siteHostname}`);
-					isExternalLink = parsed.hostname !== siteHostname;
-				} catch {
-					isExternalLink = !source.url.startsWith('/');
-				}
+				const isExternalLink = (() => {
+					try {
+						const parsed = source.url.startsWith('http')
+							? new URL(source.url)
+							: new URL(source.url, `https://${siteHostname}`);
+						return parsed.hostname !== siteHostname;
+					} catch {
+						return !source.url.startsWith('/');
+					}
+				})();
 				const linkTarget = isExternalLink ? '_blank' : undefined;
 				const linkRel = isExternalLink ? 'noreferrer' : undefined;
 
@@ -285,12 +286,12 @@ function SourceMetadata({
 			{relevance !== null && (
 				<span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-bold ${
 					relevance >= 90
-						? 'bg-gradient-to-r from-green-500/20 to-emerald-500/10 text-green-700 dark:text-green-400'
+						? 'bg-[color:var(--color-success-subtle)] text-[color:var(--color-success-dark)] dark:text-[color:var(--color-success-light)]'
 						: relevance >= 75
-						? 'bg-gradient-to-r from-blue-500/20 to-indigo-500/10 text-blue-700 dark:text-blue-400'
+						? 'bg-[color:var(--color-info)]/10 text-[color:var(--color-info-dark)] dark:text-[color:var(--color-info-light)]'
 						: relevance >= 60
-						? 'bg-gradient-to-r from-purple-500/20 to-pink-500/10 text-purple-700 dark:text-purple-400'
-						: 'bg-gradient-to-r from-yellow-500/20 to-orange-500/10 text-yellow-700 dark:text-yellow-400'
+						? 'bg-[color:var(--color-accent)]/10 text-[color:var(--accent-strong)]'
+						: 'bg-[color:var(--color-warning-subtle)] text-[color:var(--color-warning-dark)] dark:text-[color:var(--color-warning-light)]'
 				}`}>
 					<svg className="size-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 						<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // Ensures hero/critical images use modern formats and avoid large legacy PNG/JPEG.
 // Tags: @essential

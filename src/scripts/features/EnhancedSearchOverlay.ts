@@ -53,7 +53,7 @@ export class EnhancedSearchOverlay {
     try {
       // Remove authoritative closed flag if user explicitly opens overlay
       if (searchOverlay.hasAttribute && searchOverlay.hasAttribute('data-authoritative-closed')) {
-        try { searchOverlay.removeAttribute('data-authoritative-closed'); } catch { /* noop */ }
+        try { searchOverlay.removeAttribute('data-authoritative-closed'); } catch (e) { /* noop */ }
       }
       if (searchOverlay.hasAttribute && searchOverlay.hasAttribute('data-closed-lock')) { return false; }
     } catch { /* noop */ }
@@ -450,11 +450,11 @@ export class EnhancedSearchOverlay {
       this.searchResults.innerHTML = `
         <div class="search-no-results">
           <div class="search-no-results-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-8 h-8 text-gray-400 dark:text-foreground/70">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-8 h-8 text-foreground/50 dark:text-foreground/70">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <h3>No results found for "${this.escapeHtml(query)}"</h3>
+          <h3>No results found for "${query}"</h3>
           <p>Try different keywords or browse categories</p>
         </div>
       `;
@@ -487,15 +487,6 @@ export class EnhancedSearchOverlay {
     this.searchResults.classList.add('active');
   }
 
-  private getResultIcon(type: string): string {
-    switch (type) {
-      case 'project': return '📁';
-      case 'blog': return '📝';
-      case 'page': return '📄';
-      default: return '📄';
-    }
-  }
-
   private getCategoryDisplayName(category: string): string {
     switch (category) {
       case 'projects': return 'Project';
@@ -526,25 +517,11 @@ export class EnhancedSearchOverlay {
     }
   }
 
-  private escapeHtml(text: string): string {
-    return String(text)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
   private highlightMatches(text: string, query: string): string {
-    const safeText = text ?? '';
-    if (!query || query.length < 2) return this.escapeHtml(safeText);
-
-    const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const parts = safeText.split(new RegExp(`(${safeQuery})`, 'ig'));
-
-    return parts.map((part, idx) => (
-      idx % 2 === 1 ? `<mark>${this.escapeHtml(part)}</mark>` : this.escapeHtml(part)
-    )).join('');
+    if (!query || query.length < 2) return text;
+    
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
   }
 
   private addResultClickHandlers() {
@@ -619,7 +596,7 @@ export class EnhancedSearchOverlay {
     
     this.searchResults.innerHTML = `
       <div class="search-loading">
-        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mb-3"></div>
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-info mb-3"></div>
         <p class="text-sm font-medium">Searching...</p>
       </div>
     `;
@@ -633,13 +610,13 @@ export class EnhancedSearchOverlay {
     
     this.searchResults.innerHTML = `
       <div class="search-error">
-        <div class="w-8 h-8 mx-auto mb-3 text-red-500 dark:text-red-400">
+        <div class="w-8 h-8 mx-auto mb-3 text-error dark:text-error-light">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-full h-full">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p class="font-medium text-red-600 dark:text-red-400">Search failed</p>
-        <p class="mt-1 text-sm text-foreground/80 dark:text-gray-400">Please try again</p>
+        <p class="font-medium text-error-dark dark:text-error-light">Search failed</p>
+        <p class="mt-1 text-sm text-foreground/80 dark:text-foreground-light/70">Please try again</p>
       </div>
     `;
     
@@ -723,14 +700,14 @@ export class EnhancedSearchOverlay {
 
     // If already closing/closed, no-op (atomic guard)
     if (searchOverlay.dataset.__closing === 'true' || searchOverlay.dataset.state === 'closed') return;
-    try { searchOverlay.dataset.__closing = 'true'; } catch { /* noop */ }
+    try { searchOverlay.dataset.__closing = 'true'; } catch (e) { /* noop */ }
 
     // Track analytics
     this.trackSearchInteraction('closed');
 
     // Stop voice recognition if active
     if (this.isListening && this.recognition) {
-      try { this.recognition.stop(); } catch { /* noop */ }
+      try { this.recognition.stop(); } catch (e) { /* noop */ }
     }
 
     // Close the overlay and update ARIA/state — ensure closed state wins
@@ -744,16 +721,16 @@ export class EnhancedSearchOverlay {
       searchOverlay.style.setProperty('opacity', '0');
       searchOverlay.style.setProperty('visibility', 'hidden');
       searchOverlay.style.setProperty('display', 'none');
-    } catch { /* noop */ }
+    } catch (e) { /* noop */ }
 
     // Clear search input
     if (this.searchInput) {
-      try { this.searchInput.value = ''; this.searchInput.setAttribute('aria-expanded', 'false'); } catch { /* noop */ }
+      try { this.searchInput.value = ''; this.searchInput.setAttribute('aria-expanded', 'false'); } catch (e) { /* noop */ }
     }
 
     // Hide results
     if (this.searchResults) {
-      try { this.searchResults.classList.remove('active'); this.searchResults.classList.add('hidden'); } catch { /* noop */ }
+      try { this.searchResults.classList.remove('active'); this.searchResults.classList.add('hidden'); } catch (e) { /* noop */ }
     }
 
     // Restore body scroll only if mobile menu is not open
@@ -764,13 +741,13 @@ export class EnhancedSearchOverlay {
         document.body.style.position = '';
         document.body.style.width = '';
       }
-    } catch { /* noop */ }
+    } catch (e) { /* noop */ }
 
     // Focus back to search toggle (delay to let browser settle)
     const searchToggle = document.getElementById('search-toggle');
     setTimeout(() => {
-      try { searchToggle?.focus(); } catch { /* noop */ }
-      try { delete (searchOverlay as any).dataset.__closing; } catch { /* noop */ }
+      try { searchToggle?.focus(); } catch (e) { /* noop */ }
+      try { delete (searchOverlay as any).dataset.__closing; } catch(e) { /* noop */ }
     }, 50);
 
     this.announceToScreenReader('Search overlay closed');

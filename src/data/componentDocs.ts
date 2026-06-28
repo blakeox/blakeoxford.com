@@ -21,7 +21,7 @@ export type ComponentExample = {
 
 export type ComponentDoc = {
   name: string;
-  category: 'Layout' | 'Features' | 'UI' | 'Islands' | 'Primitives' | 'Composites' | 'Common';
+  category: 'Layout' | 'Features' | 'Islands' | 'Primitives' | 'Composites';
   subcategory?: string;
   description: string;
   filePath: string;
@@ -83,7 +83,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'ProjectCard',
     category: 'Features',
     subcategory: 'Projects',
-    description: 'Interactive project card for project listings. Displays a project with hero image, title, description, date, tags, and link. Features hover effects with gradient overlay and shadow animations.',
+    description: 'Project listing card for repeated project summaries. Displays hero image, title, description, date, tags, and link while keeping card styling on the shared token contract.',
     filePath: 'src/components/features/projects/ProjectCard.astro',
     props: [
       {
@@ -106,14 +106,14 @@ export const componentDocs: ComponentDoc[] = [
       'Focus-visible styles for keyboard navigation',
       'Alt text required for images',
     ],
-    tags: ['project', 'card', 'interactive', 'hover-effects', 'gradient'],
+    tags: ['project', 'card', 'listing', 'summary'],
   },
   {
     name: 'AIChatWidget',
-    category: 'Features',
+    category: 'Composites',
     subcategory: 'Search',
     description: 'Floating AI search assistant anchored to the bottom-right of the viewport. Provides conversational answers backed by the AutoRAG API and surfaces cited sources.',
-    filePath: 'src/components/AIChatWidget.astro',
+    filePath: 'src/components/composites/AIChatWidget.astro',
     examples: [
       {
         title: 'Site-wide assistant',
@@ -137,7 +137,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'AboutTimeline',
     category: 'Features',
     subcategory: 'About',
-    description: 'Interactive timeline display. Displays a horizontal scrollable timeline with events, achievements, and milestones. Features gradient overlays, decorative elements, and responsive design.',
+    description: 'About-page timeline display. Renders dated milestones in a scrollable layout with semantic list structure and keyboard access.',
     filePath: 'src/components/features/about/AboutTimeline.astro',
     props: [
       {
@@ -157,7 +157,7 @@ export const componentDocs: ComponentDoc[] = [
       'role="listitem" for timeline entries',
       'aria-label descriptive labels ("{year} – {title}")',
       'Nested lists with proper roles',
-      'aria-hidden for decorative backgrounds',
+      'aria-hidden for non-content visual accents',
       'role="region" for scrollable container',
       'tabindex="0" for keyboard scrolling',
       'focus-visible styles for keyboard navigation',
@@ -168,7 +168,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'ContactChannels',
     category: 'Features',
     subcategory: 'Contact',
-    description: 'Contact channel links display. Displays available contact channels (email, phone, LinkedIn) with icons and interactive cards. Features hover effects and glass morphism design.',
+    description: 'Contact channel links display. Renders available channels such as email, phone, and LinkedIn with semantic links and tokenized surfaces.',
     filePath: 'src/components/features/contact/ContactChannels.astro',
     props: [
       {
@@ -191,13 +191,13 @@ export const componentDocs: ComponentDoc[] = [
       'Icons hidden with aria-hidden (text provides context)',
       'Decorative elements excluded from accessibility tree',
     ],
-    tags: ['contact', 'social', 'glass-morphism', 'cards'],
+    tags: ['contact', 'social', 'links', 'channels'],
   },
   {
     name: 'BlogPostCard',
     category: 'Features',
     subcategory: 'Blog',
-    description: 'Reusable blog post card for listings. Displays a blog post with date, title, description, tags, and read more link. Optimized for grid layouts with hover effects.',
+    description: 'Reusable blog post card for listings. Displays a blog post with date, title, description, tags, and read-more link in a stable grid surface.',
     filePath: 'src/components/features/blog/BlogPostCard.astro',
     props: [
       {
@@ -271,12 +271,12 @@ export const componentDocs: ComponentDoc[] = [
     tags: ['education', 'card', 'about'],
   },
 
-  // UI Components
+  // Media and visual components
   {
     name: 'PhotoCarousel',
-    category: 'UI',
+    category: 'Composites',
     description: 'Responsive photo carousel with navigation. Displays a collection of photos in a carousel with prev/next navigation, autoplay, and responsive image loading. Includes accessibility features for screen readers and keyboard navigation.',
-    filePath: 'src/components/ui/PhotoCarousel.astro',
+    filePath: 'src/components/composites/PhotoCarousel.astro',
     examples: [
       {
         title: 'Default carousel',
@@ -299,9 +299,9 @@ export const componentDocs: ComponentDoc[] = [
   },
   {
     name: 'CoinFlipImage',
-    category: 'UI',
+    category: 'Composites',
     description: 'Interactive 3D coin flip image component. Displays two images with a 3D flip animation effect. Supports click-to-flip, auto-flip, and customizable animation parameters. Optimized for performance with lazy loading.',
-    filePath: 'src/components/ui/CoinFlipImage.astro',
+    filePath: 'src/components/composites/CoinFlipImage.astro',
     props: [
       { name: 'frontSrc', type: 'string', required: true, description: 'Front image source URL' },
       { name: 'backSrc', type: 'string', required: true, description: 'Back image source URL' },
@@ -339,9 +339,9 @@ export const componentDocs: ComponentDoc[] = [
   },
   {
     name: 'OptimizedImage',
-    category: 'UI',
+    category: 'Primitives',
     description: 'Performance-optimized image component. Wrapper around Astro\'s Image component with automatic format conversion, lazy loading, and quality optimization. Supports both local and remote images.',
-    filePath: 'src/components/ui/OptimizedImage.astro',
+    filePath: 'src/components/primitives/OptimizedImage.astro',
     props: [
       { name: 'src', type: 'string | ImageMetadata', required: true, description: 'Image source (local import or URL)' },
       { name: 'alt', type: 'string', required: true, description: 'Alt text for accessibility' },
@@ -414,7 +414,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [
       {
         title: 'Assistant message',
-        code: '<MessageContent message={msg} isStreaming={false} isAssistant={true} bubbleContent="Answer..." totalSources={3} messageTextClasses="text-gray-900" />',
+        code: '<MessageContent message={msg} isStreaming={false} isAssistant={true} bubbleContent="Answer..." totalSources={3} messageTextClasses="text-foreground" />',
       },
     ],
     accessibility: [
@@ -538,10 +538,11 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'Badge',
     category: 'Primitives',
-    description: 'Simple badge component for tags and labels',
+    description: 'Simple badge component for tags, labels, and semantic status indicators.',
     filePath: 'src/components/primitives/Badge.astro',
     props: [
-      { name: 'variant', type: 'string', required: false, description: 'Badge style variant' },
+      { name: 'variant', type: '\'primary\' | \'secondary\' | \'outline\' | \'subtle\' | \'success\' | \'warning\' | \'error\'', required: false, default: '\'secondary\'', description: 'Semantic badge variant' },
+      { name: 'size', type: '\'xs\' | \'sm\' | \'md\'', required: false, default: '\'sm\'', description: 'Badge size preset' },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
     ],
     examples: [
@@ -555,14 +556,16 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'Button',
     category: 'Primitives',
-    description: 'Flexible button component with variants and states',
+    description: 'Flexible button/link primitive with tokenized variants, stable sizes, and accessible focus states.',
     filePath: 'src/components/primitives/Button.astro',
     props: [
       { name: 'type', type: '\'button\'|\'submit\'|\'reset\'', required: false, default: '\'button\'', description: 'Button type' },
-      { name: 'variant', type: 'string', required: false, description: 'Button variant (primary, secondary, etc.)' },
+      { name: 'variant', type: '\'primary\' | \'secondary\' | \'outline\' | \'ghost\' | \'link\'', required: false, default: '\'primary\'', description: 'Button variant' },
+      { name: 'size', type: '\'sm\' | \'md\' | \'lg\'', required: false, default: '\'md\'', description: 'Button size preset' },
       { name: 'disabled', type: 'boolean', required: false, default: 'false', description: 'Disabled state' },
       { name: 'href', type: 'string', required: false, description: 'If provided, renders as link' },
-      { name: 'ariaLabel', type: 'string', required: false, description: 'Accessible label' },
+      { name: 'fullWidth', type: 'boolean', required: false, default: 'false', description: 'Stretch button to parent width' },
+      { name: '\'aria-label\'', type: 'string', required: false, description: 'Accessible label for icon-only or ambiguous controls' },
     ],
     examples: [
       {

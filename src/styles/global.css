@@ -1,16 +1,13 @@
 /* src/styles/global.css - Main stylesheet entry point */
 
-@import url("./theme.css");
-@import url("./components.css");
-@import "tailwindcss";
+@import "../../node_modules/tailwindcss/index.css";
+@import "./theme.css";
+@import "./components.css";
 
 /* Font Loading Optimization */
 /* Note: Fonts are loaded via Google Fonts. To enable font-display: swap,
    add &display=swap to the Google Fonts URL in the HTML, or configure
    font-display in the font loading strategy. */
-
-/* For Playwright visual tests, allow an opt-in override via the
-   __pw_font_override style injected by tests/playwright/hooks.ts. */
 
 /* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
   class (or any of its descendants) is in the selector chain.   */
@@ -19,88 +16,12 @@
 @custom-variant dark (&:where(.dark, .dark *));
 /* stylelint-enable at-rule-no-unknown */
 
-/* Line clamp utilities for text truncation */
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+@layer utilities {
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
-
-/* Mobile menu close button: normally visually hidden, but make visible and interactive
-   when the mobile menu is active so automated tests can interact with it reliably.
-   This preserves SR-only semantics for accessibility while allowing tests to click
-   the button when the menu opens. */
-.mobile-menu .mobile-close-button.sr-only {
-  /* Keep visually hidden by default */
-}
-.mobile-menu.active .mobile-close-button.sr-only {
-  position: absolute !important;
-  top: 0.5rem !important;
-  right: 0.75rem !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 2.25rem !important;
-  height: 2.25rem !important;
-  padding: 0.25rem !important;
-  border-radius: 9999px !important;
-  background: var(--surface) !important;
-  color: var(--fg) !important;
-  box-shadow: 0 6px 18px rgba(15,23,42,0.12) !important;
-  clip: auto !important;
-  clip-path: none !important;
-  overflow: visible !important;
-  white-space: normal !important;
-  text-indent: 0 !important;
-  z-index: 2147483650 !important;
-}
-
-/* Ensure the mobile menu content does not unintentionally intercept the close button
-   by giving the close button a higher stacking context when visible. */
-.mobile-menu.active .mobile-menu-content { position: relative; }
-.mobile-menu.active .mobile-close-button { pointer-events: auto; }
-
-
-/* Make legacy search overlay test-friendly: when tests add `.active` to the
-   overlay element (via the injected TestSearchOverlay), force its display
-   so Playwright can detect visible results even if an inline `display:none`
-   exists in the HTML. This preserves normal behavior for production while
-   making the test harness deterministic. */
-#search-overlay.active {
-  display: block !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-/* Ensure any child result elements are forced visible when overlay is active
-   (some components toggle `.hidden` or set opacity on inner containers). */
-#search-overlay.active .search-result,
-#search-overlay.active [data-results-container],
-#search-overlay.active [data-results] {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Ensure closed state wins over .active to avoid flakiness: if dataset state
-   indicates closed, force the overlay and children hidden regardless of class. */
-#search-overlay[data-state="closed"],
-#search-overlay[aria-hidden="true"] {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-#search-overlay[data-state="closed"] .search-result,
-#search-overlay[data-state="closed"] [data-results-container],
-#search-overlay[data-state="closed"] [data-results] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-}
-
-
-

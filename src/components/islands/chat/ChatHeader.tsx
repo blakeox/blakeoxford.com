@@ -27,7 +27,7 @@ export const ChatHeader = memo(function ChatHeader({
 						<>
 							<span className="text-[color:var(--fg)]/30">•</span>
 							<span className="flex items-center gap-1">
-								<span className="inline-block size-1.5 rounded-full bg-green-500 animate-pulse" aria-hidden="true" />
+								<span className="inline-block size-1.5 rounded-full bg-[color:var(--color-success)] animate-pulse" aria-hidden="true" />
 								<span>Real-time connected</span>
 							</span>
 							{activeUsers > 1 && (
