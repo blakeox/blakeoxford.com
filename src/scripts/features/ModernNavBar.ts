@@ -73,10 +73,7 @@ function setTheme(nextTheme: 'light' | 'dark') {
 function updateThemeButton(button: HTMLButtonElement | null, theme: 'light' | 'dark') {
   if (!button) return;
   button.setAttribute('aria-pressed', String(theme === 'dark'));
-  const sunIcon = button.querySelector<SVGElement>('.sun-icon');
-  const moonIcon = button.querySelector<SVGElement>('.moon-icon');
-  sunIcon?.classList.toggle('hidden', theme === 'dark');
-  moonIcon?.classList.toggle('hidden', theme !== 'dark');
+  button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
 }
 
 function toggleTheme(button: HTMLButtonElement | null) {

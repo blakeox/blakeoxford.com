@@ -108,10 +108,10 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       if (themeToggleRef.current) {
         const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
         themeToggleRef.current.setAttribute('aria-pressed', String(currentTheme === 'dark'));
-        const sunIcon = themeToggleRef.current.querySelector<SVGElement>('.sun-icon');
-        const moonIcon = themeToggleRef.current.querySelector<SVGElement>('.moon-icon');
-        sunIcon?.classList.toggle('hidden', currentTheme === 'dark');
-        moonIcon?.classList.toggle('hidden', currentTheme !== 'dark');
+        themeToggleRef.current.setAttribute(
+          'aria-label',
+          currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+        );
       }
 
       return () => {
@@ -214,16 +214,34 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             id="theme-toggle"
             ref={themeToggleRef}
             type="button"
-            className="theme-toggle inline-flex size-11 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
-            aria-label="Toggle theme"
+            className="theme-toggle relative inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-[--border]/50 text-[--fg]/70 transition hover:border-[--border] hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
+            aria-label="Switch to dark mode"
             aria-pressed="false"
           >
-            <svg className="sun-icon size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true" focusable="false">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4V2m0 20v-2m8-8h2M2 12h2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M5.6 18.4 4.2 19.8m15.6-15.6-1.4 1.4M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
-            </svg>
-            <svg className="moon-icon hidden size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true" focusable="false">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79Z" />
-            </svg>
+            <span className="pointer-events-none relative block size-6" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="sun-icon absolute inset-0 size-6 hidden dark:block"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                focusable="false"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4V2m0 20v-2m8-8h2M2 12h2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M5.6 18.4 4.2 19.8m15.6-15.6-1.4 1.4M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+              </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="moon-icon absolute inset-0 size-6 translate-x-px dark:hidden"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                focusable="false"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79Z" />
+              </svg>
+            </span>
           </button>
 
           <button
