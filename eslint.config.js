@@ -66,6 +66,7 @@ export default [
       'src/scripts/**/*.ts',
       'scripts/build/critical-css-generator.js',
       'tests/playwright/**/*.js',
+      'tests/utils/colorResolver.browser.js',
     ],
     languageOptions: {
       globals: {

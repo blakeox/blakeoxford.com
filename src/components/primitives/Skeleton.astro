@@ -31,11 +31,11 @@
  * ```
  * 
  * @prop {'card' | 'image' | 'text' | 'avatar' | 'custom'} [variant='card'] - Skeleton variant
- *   - `card`: Full card placeholder with image and text sections
- *   - `image`: Image placeholder with optional aspect ratio
- *   - `text`: Multi-line text placeholder
- *   - `avatar`: Circular avatar placeholder
- *   - `custom`: Fully customizable placeholder
+ * - `card`: Full card placeholder with image and text sections
+ * - `image`: Image placeholder with optional aspect ratio
+ * - `text`: Multi-line text placeholder
+ * - `avatar`: Circular avatar placeholder
+ * - `custom`: Fully customizable placeholder
  * @prop {string} [aspectRatio] - Aspect ratio for image variant (e.g., "16/9", "4/3")
  * @prop {number} [lines=3] - Number of text lines for text variant
  * @prop {string} [class] - Additional CSS classes
@@ -51,59 +51,59 @@
  * - Minimal DOM impact
  */
 interface Props {
-  variant?: 'card' | 'image' | 'text' | 'avatar' | 'custom';
-  aspectRatio?: string;
-  lines?: number;
-  class?: string;
+ variant?: 'card' | 'image' | 'text' | 'avatar' | 'custom';
+ aspectRatio?: string;
+ lines?: number;
+ class?: string;
 }
 
 const { 
-  variant = 'card',
-  aspectRatio,
-  lines = 3,
-  class: className = '',
+ variant = 'card',
+ aspectRatio,
+ lines = 3,
+ class: className = '',
 } = Astro.props as Props;
 
 const baseClasses = 'animate-pulse bg-surface-subtle rounded-lg';
 ---
 
 {variant === 'card' && (
-  <div class={`${baseClasses} ${className}`} aria-busy="true" aria-label="Loading content">
-    <div class="h-48 bg-surface/50 rounded-t-lg"></div>
-    <div class="p-6 space-y-3">
-      <div class="h-4 bg-surface/50 rounded w-3/4"></div>
-      <div class="h-4 bg-surface/50 rounded w-1/2"></div>
-      <div class="h-4 bg-surface/50 rounded w-5/6"></div>
-    </div>
-  </div>
+ <div class={`${baseClasses} ${className}`} aria-busy="true" aria-label="Loading content">
+ <div class="h-48 bg-surface/50 rounded-t-lg"></div>
+ <div class="p-6 space-y-3">
+ <div class="h-4 bg-surface/50 rounded w-3/4"></div>
+ <div class="h-4 bg-surface/50 rounded w-1/2"></div>
+ <div class="h-4 bg-surface/50 rounded w-5/6"></div>
+ </div>
+ </div>
 )}
 
 {variant === 'image' && (
-  <div 
-    class={`${baseClasses} ${className}`}
-    style={aspectRatio ? `aspect-ratio: ${aspectRatio};` : undefined}
-    aria-busy="true"
-    aria-label="Loading image"
-  >
-    <div class="h-full w-full bg-surface/50 rounded-lg"></div>
-  </div>
+ <div 
+ class={`${baseClasses} ${className}`}
+ style={aspectRatio ? `aspect-ratio: ${aspectRatio};` : undefined}
+ aria-busy="true"
+ aria-label="Loading image"
+ >
+ <div class="h-full w-full bg-surface/50 rounded-lg"></div>
+ </div>
 )}
 
 {variant === 'text' && (
-  <div class={`${baseClasses} space-y-2 ${className}`} aria-busy="true" aria-label="Loading text content">
-    {Array.from({ length: lines }).map((_, i) => (
-      <div 
-        class={`h-4 bg-surface/50 rounded ${i === lines - 1 ? 'w-3/4' : 'w-full'}`}
-      />
-    ))}
-  </div>
+ <div class={`${baseClasses} space-y-2 ${className}`} aria-busy="true" aria-label="Loading text content">
+ {Array.from({ length: lines }).map((_, i) => (
+ <div 
+ class={`h-4 bg-surface/50 rounded ${i === lines - 1 ? 'w-3/4' : 'w-full'}`}
+ />
+ ))}
+ </div>
 )}
 
 {variant === 'avatar' && (
-  <div class={`${baseClasses} h-12 w-12 rounded-full bg-surface/50 ${className}`} aria-busy="true" aria-label="Loading avatar"></div>
+ <div class={`${baseClasses} h-12 w-12 rounded-full bg-surface/50 ${className}`} aria-busy="true" aria-label="Loading avatar"></div>
 )}
 
 {variant === 'custom' && (
-  <div class={`${baseClasses} ${className}`} aria-busy="true" aria-label="Loading content"></div>
+ <div class={`${baseClasses} ${className}`} aria-busy="true" aria-label="Loading content"></div>
 )}
 

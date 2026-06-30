@@ -11,70 +11,70 @@
  */
 
 export interface Props {
-  /** Button visual variant */
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
-  /** Button size */
-  size?: 'sm' | 'md' | 'lg';
-  /** Render as link (when href provided) or button */
-  href?: string;
-  /** Button type (when rendered as button) */
-  type?: 'button' | 'submit' | 'reset';
-  /** Disabled state */
-  disabled?: boolean;
-  /** Full width button */
-  fullWidth?: boolean;
-  /** Additional CSS classes */
-  class?: string;
-  /** ARIA label */
-  'aria-label'?: string;
-  /** Additional HTML attributes */
-  [key: string]: unknown;
+ /** Button visual variant */
+ variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
+ /** Button size */
+ size?: 'sm' | 'md' | 'lg';
+ /** Render as link (when href provided) or button */
+ href?: string;
+ /** Button type (when rendered as button) */
+ type?: 'button' | 'submit' | 'reset';
+ /** Disabled state */
+ disabled?: boolean;
+ /** Full width button */
+ fullWidth?: boolean;
+ /** Additional CSS classes */
+ class?: string;
+ /** ARIA label */
+ 'aria-label'?: string;
+ /** Additional HTML attributes */
+ [key: string]: unknown;
 }
 
 const {
-  variant = 'primary',
-  size = 'md',
-  href,
-  type = 'button',
-  disabled = false,
-  fullWidth = false,
-  class: className = '',
-  'aria-label': ariaLabel,
-  ...rest
+ variant = 'primary',
+ size = 'md',
+ href,
+ type = 'button',
+ disabled = false,
+ fullWidth = false,
+ class: className = '',
+ 'aria-label': ariaLabel,
+ ...rest
 } = Astro.props;
 
 const variantStyles = {
-  primary: 'border border-accent bg-accent text-on-accent shadow-sm hover:bg-accent-dark hover:border-accent-dark focus-visible:ring-accent/60',
-  secondary: 'border border-border bg-surface text-foreground shadow-sm hover:bg-surface-subtle dark:border-border-dark dark:bg-surface-dark dark:text-foreground-light dark:hover:bg-surface-dark-subtle',
-  outline: 'border border-accent/60 bg-transparent text-accent hover:border-accent hover:bg-accent/10 focus-visible:ring-accent/60',
-  ghost: 'border border-transparent bg-transparent text-foreground hover:bg-surface-subtle/70 dark:text-foreground-light dark:hover:bg-surface-dark-subtle/70',
-  link: 'border border-transparent bg-transparent px-0 text-accent hover:text-accent-dark hover:underline dark:hover:text-accent-light',
+ primary: 'border border-accent bg-accent text-on-accent shadow-sm hover:bg-accent-dark hover:border-accent-dark focus-visible:ring-accent/60 dark:bg-accent-dark dark:text-on-dark dark:hover:bg-accent dark:hover:border-accent',
+ secondary: 'border border-border bg-surface text-foreground shadow-sm hover:bg-surface-subtle dark:border-border-dark dark:bg-surface-dark dark:text-foreground dark:hover:bg-surface-dark-subtle',
+ outline: 'border border-accent/60 bg-transparent text-accent-dark hover:border-accent hover:bg-accent/10 focus-visible:ring-accent/60 dark:text-accent-light dark:hover:text-accent',
+ ghost: 'border border-transparent bg-transparent text-foreground hover:bg-surface-subtle/70 dark:text-foreground dark:hover:bg-surface-dark-subtle/70',
+ link: 'border border-transparent bg-transparent px-0 text-accent-dark hover:text-accent hover:underline dark:text-accent-light dark:hover:text-accent',
 };
 
 const sizeStyles = {
-  sm: 'min-h-[2.25rem] px-3.5 py-1.5 text-sm',
-  md: 'min-h-[2.75rem] px-5 py-2.5 text-sm',
-  lg: 'min-h-[3.25rem] px-6 py-3 text-base',
+ sm: 'min-h-[2.25rem] px-3.5 py-1.5 text-sm',
+ md: 'min-h-[2.75rem] px-5 py-2.5 text-sm',
+ lg: 'min-h-[3.25rem] px-6 py-3 text-base',
 };
 
 const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:focus-visible:ring-offset-background-dark';
 const sizeClass = variant === 'link' ? 'p-0 text-sm' : sizeStyles[size];
 
 const classes = [
-  baseClasses,
-  variantStyles[variant],
-  sizeClass,
-  fullWidth && 'w-full',
-  disabled && 'opacity-50 cursor-not-allowed',
-  className,
+ baseClasses,
+ variantStyles[variant],
+ sizeClass,
+ fullWidth && 'w-full',
+ disabled && 'opacity-50 cursor-not-allowed',
+ className,
 ].filter(Boolean).join(' ');
 
 const Element = href ? 'a' : 'button';
 const elementProps = href
-  ? { href, 'aria-label': ariaLabel, ...rest }
-  : { type, disabled, 'aria-label': ariaLabel, ...rest };
+ ? { href, 'aria-label': ariaLabel, ...rest }
+ : { type, disabled, 'aria-label': ariaLabel, ...rest };
 ---
 
 <Element class={classes} {...elementProps}>
-  <slot />
+ <slot />
 </Element>

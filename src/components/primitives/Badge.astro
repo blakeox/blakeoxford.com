@@ -10,46 +10,46 @@
  */
 
 export interface Props {
-  /** Badge visual variant */
-  variant?: 'primary' | 'secondary' | 'outline' | 'subtle' | 'success' | 'warning' | 'error';
-  /** Badge size */
-  size?: 'xs' | 'sm' | 'md';
-  /** Additional CSS classes */
-  class?: string;
+ /** Badge visual variant */
+ variant?: 'primary' | 'secondary' | 'outline' | 'subtle' | 'success' | 'warning' | 'error';
+ /** Badge size */
+ size?: 'xs' | 'sm' | 'md';
+ /** Additional CSS classes */
+ class?: string;
 }
 
 const {
-  variant = 'secondary',
-  size = 'sm',
-  class: className = '',
+ variant = 'secondary',
+ size = 'sm',
+ class: className = '',
 } = Astro.props;
 
 // Variant styles
 const variantStyles = {
-  primary: 'bg-accent text-on-accent border-accent/40',
-  secondary: 'bg-surface text-foreground border-border/40 dark:bg-surface-dark dark:text-foreground-light dark:border-border-dark/40',
-  outline: 'bg-transparent text-foreground border-border/60 dark:text-foreground-light dark:border-border-dark/60',
-  subtle: 'bg-surface-subtle text-foreground/80 border-border/25 dark:bg-surface-dark-subtle dark:text-foreground-light/80',
-  success: 'bg-success/10 text-success border-success/30 dark:text-success-light',
-  warning: 'bg-warning/10 text-warning border-warning/30 dark:text-warning-light',
-  error: 'bg-error/10 text-error border-error/30 dark:text-error-light',
+ primary: 'bg-accent text-on-accent border-accent/40',
+ secondary: 'bg-surface text-foreground border-border/40 dark:bg-surface-dark dark:text-foreground dark:border-border-dark/40',
+ outline: 'bg-transparent text-foreground border-border/60 dark:text-foreground dark:border-border-dark/60',
+ subtle: 'bg-surface-subtle text-muted-foreground border-border/25 dark:bg-surface-dark-subtle dark:text-foreground/85',
+ success: 'bg-success/10 text-success border-success/30 dark:text-success-light',
+ warning: 'bg-warning/10 text-warning border-warning/30 dark:text-warning-light',
+ error: 'bg-error/10 text-error border-error/30 dark:text-error-light',
 };
 
 // Size styles
 const sizeStyles = {
-  xs: 'px-2 py-0.5 text-xxs',
-  sm: 'px-2 py-1 text-xs',
-  md: 'px-3 py-1.5 text-sm',
+ xs: 'px-2 py-0.5 text-xxs',
+ sm: 'px-2 py-1 text-xs',
+ md: 'px-3 py-1.5 text-sm',
 };
 
 const classes = [
-  'inline-flex items-center font-medium rounded-full border',
-  variantStyles[variant],
-  sizeStyles[size],
-  className,
+ 'inline-flex items-center font-medium rounded-full border',
+ variantStyles[variant],
+ sizeStyles[size],
+ className,
 ].filter(Boolean).join(' ');
 ---
 
 <span class={classes}>
-  <slot />
+ <slot />
 </span>

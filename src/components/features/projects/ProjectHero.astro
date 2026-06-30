@@ -8,76 +8,76 @@ import ArrowLeftIcon from '../../primitives/icons/ArrowLeftIcon.astro';
 import ExternalLinkIcon from '../../primitives/icons/ExternalLinkIcon.astro';
 
 export interface Props {
-  title: string;
-  description: string;
-  date: Date;
-  image: OptimizedImageProps['src'];
-  link?: string;
+ title: string;
+ description: string;
+ date: Date;
+ image: OptimizedImageProps['src'];
+ link?: string;
 }
 
 const { title, description, date, image, link } = Astro.props;
 
 const formattedDate = date.toLocaleDateString(undefined, {
-  month: 'long',
-  year: 'numeric',
+ month: 'long',
+ year: 'numeric',
 });
 const dateISO = date.toISOString();
 ---
-<section class="relative isolate overflow-hidden min-h-[80vh] flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8 py-24">
-  <!-- Blur orbs for depth (matching site-wide pattern) -->
-  <div class="blur-orb-accent top-0 right-0"></div>
-  <div class="blur-orb-primary bottom-0 left-0"></div>
-  
-  <div class="container relative z-10 mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:gap-16">
-    <div class="flex flex-1 flex-col gap-8">
-      <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-smallcaps text-foreground/60 dark:text-foreground-light/60">
-        <BadgePill size="sm" class="transition-colors duration-200 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60">
-          <a href="/projects/" class="inline-flex items-center gap-2" aria-label="Back to all projects">
-            <ArrowLeftIcon />
-            Back to projects
-          </a>
-        </BadgePill>
-        <BadgePill size="sm" showDot>
-          <time datetime={dateISO}>
-            {formattedDate}
-          </time>
-        </BadgePill>
-      </div>
+<section class="relative isolate overflow-hidden min-h-[80vh] flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-background-dark dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8 py-24">
+ <!-- Blur orbs for depth (matching site-wide pattern) -->
+ <div class="blur-orb-accent top-0 right-0"></div>
+ <div class="blur-orb-primary bottom-0 left-0"></div>
+ 
+ <div class="container relative z-10 mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:gap-16">
+ <div class="flex flex-1 flex-col gap-8">
+ <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-smallcaps text-subtle-foreground">
+ <BadgePill size="sm" class="transition-colors duration-200 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60">
+ <a href="/projects/" class="inline-flex items-center gap-2" aria-label="Back to all projects">
+ <ArrowLeftIcon />
+ Back to projects
+ </a>
+ </BadgePill>
+ <BadgePill size="sm" showDot>
+ <time datetime={dateISO}>
+ {formattedDate}
+ </time>
+ </BadgePill>
+ </div>
 
-      <div class="space-y-6">
-        <h1 class="text-pretty font-heading text-4xl font-semibold text-foreground sm:text-5xl lg:text-6xl dark:text-foreground-light">
-          {title}
-        </h1>
-        <p class="text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-          {description}
-        </p>
-      </div>
+ <div class="space-y-6">
+ <h1 class="text-pretty font-heading text-4xl font-semibold text-foreground sm:text-5xl lg:text-6xl">
+ {title}
+ </h1>
+ <p class="text-lg leading-relaxed text-muted-foreground">
+ {description}
+ </p>
+ </div>
 
-      <Flex wrap align="center" gap="md">
-        <BadgePill size="sm">
-          Case study
-        </BadgePill>
-        {link && (
-          <Button variant="outline" href={link} target="_blank" rel="noopener noreferrer">
-            Visit project
-            <ExternalLinkIcon />
-          </Button>
-        )}
-      </Flex>
-    </div>
+ <Flex wrap align="center" gap="md">
+ <BadgePill size="sm">
+ Case study
+ </BadgePill>
+ {link && (
+ <Button variant="outline" href={link} target="_blank" rel="noopener noreferrer">
+ Visit project
+ <ExternalLinkIcon />
+ </Button>
+ )}
+ </Flex>
+ </div>
 
-    <figure class="relative flex flex-1 justify-center">
-      <div class="relative w-full max-w-[28rem] overflow-hidden rounded-[2.5rem] bg-surface/90 ring-1 ring-border/30 shadow-xl hover:shadow-2xl transition-shadow duration-300">
-        <OptimizedImage
-          src={image}
-          alt={title}
-          width={960}
-          height={960}
-          class="h-full w-full object-cover"
-          priority={true}
-        />
-        <GradientOverlay variant='background' direction='tr' class='from-background/70 via-transparent to-background/40 dark:from-background-dark/70 dark:via-transparent dark:to-background-dark/40' />
-      </div>
-    </figure>
-  </div>
+ <figure class="relative flex flex-1 justify-center">
+ <div class="relative w-full max-w-[28rem] overflow-hidden rounded-[2.5rem] bg-surface/90 ring-1 ring-border/30 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+ <OptimizedImage
+ src={image}
+ alt={title}
+ width={960}
+ height={960}
+ class="h-full w-full object-cover"
+ priority={true}
+ />
+ <GradientOverlay variant='background' direction='tr' class='from-background/70 via-transparent to-background/40 dark:from-background-dark/70 dark:via-transparent dark:to-background-dark/40' />
+ </div>
+ </figure>
+ </div>
 </section>

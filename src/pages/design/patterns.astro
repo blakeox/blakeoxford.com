@@ -7,101 +7,101 @@ import Badge from '../../components/primitives/Badge.astro';
 import Card from '../../components/composites/Card.astro';
 
 const patterns = [
-  {
-    name: 'Stack',
-    category: 'Layout',
-    description: 'Use Stack when vertical spacing is the behavior you need to standardize.',
-    code: '<Stack space="md">...</Stack>',
-  },
-  {
-    name: 'Container query',
-    category: 'Responsive',
-    description: 'Use container queries inside reusable components so they adapt to their parent, not the page.',
-    code: '<div class="@container">\\n  <div class="@md:grid-cols-2">...</div>\\n</div>',
-  },
-  {
-    name: 'Parent state',
-    category: 'State',
-    description: 'Use parent state selectors for local form or disclosure states when it removes JavaScript.',
-    code: '.form-group:has(input:invalid) { ... }',
-  },
-  {
-    name: 'Tokenized surface',
-    category: 'Surface',
-    description: 'Use semantic surface, border, radius, and elevation tokens instead of new visual effects.',
-    code: 'bg-surface/70 border-border/40 shadow-sm',
-  },
+ {
+ name: 'Stack',
+ category: 'Layout',
+ description: 'Use Stack when vertical spacing is the behavior you need to standardize.',
+ code: '<Stack space="md">...</Stack>',
+ },
+ {
+ name: 'Container query',
+ category: 'Responsive',
+ description: 'Use container queries inside reusable components so they adapt to their parent, not the page.',
+ code: '<div class="@container">\\n <div class="@md:grid-cols-2">...</div>\\n</div>',
+ },
+ {
+ name: 'Parent state',
+ category: 'State',
+ description: 'Use parent state selectors for local form or disclosure states when it removes JavaScript.',
+ code: '.form-group:has(input:invalid) { ... }',
+ },
+ {
+ name: 'Tokenized surface',
+ category: 'Surface',
+ description: 'Use semantic surface, border, radius, and elevation tokens instead of new visual effects.',
+ code: 'bg-surface/70 border-border/40 shadow-sm',
+ },
 ];
 ---
 
 <BaseLayout
-  title="Design Patterns"
-  description="Operational layout and state patterns for the Blake Oxford design system."
-  canonicalUrl="https://blakeoxford.com/design/patterns/"
-  wide={true}
+ title="Design Patterns"
+ description="Operational layout and state patterns for the Blake Oxford design system."
+ canonicalUrl="https://blakeoxford.com/design/patterns/"
+ wide={true}
 >
-  <Section padding="xl">
-    <Container size="xl">
-      <header class="max-w-3xl">
-        <Badge variant="subtle">Design system</Badge>
-        <h1 class="mt-5 text-4xl font-bold text-foreground dark:text-foreground-light sm:text-5xl">
-          Patterns
-        </h1>
-        <p class="mt-4 text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/75">
-          Patterns define repeatable layout and state behavior. They should reduce decisions, not add new decorative treatments.
-        </p>
-      </header>
+ <Section padding="xl">
+ <Container size="xl">
+ <header class="max-w-3xl">
+ <Badge variant="subtle">Design system</Badge>
+ <h1 class="mt-5 text-4xl font-bold text-foreground sm:text-5xl">
+ Patterns
+ </h1>
+ <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
+ Patterns define repeatable layout and state behavior. They should reduce decisions, not add new decorative treatments.
+ </p>
+ </header>
 
-      <section class="mt-12 grid gap-4 lg:grid-cols-2" aria-label="Design patterns">
-        {patterns.map((pattern) => (
-          <article class="min-w-0 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <h2 class="text-xl font-semibold text-foreground dark:text-foreground-light">{pattern.name}</h2>
-                <p class="mt-2 text-sm leading-relaxed text-foreground/70 dark:text-foreground-light/70">{pattern.description}</p>
-              </div>
-              <Badge variant="outline" size="xs">{pattern.category}</Badge>
-            </div>
-            <pre class="mt-5 max-w-full overflow-x-auto rounded-lg bg-surface-subtle p-3 text-xs text-foreground/75 dark:bg-surface-dark-subtle dark:text-foreground-light/75"><code>{pattern.code}</code></pre>
-          </article>
-        ))}
-      </section>
+ <section class="mt-12 grid gap-4 lg:grid-cols-2" aria-label="Design patterns">
+ {patterns.map((pattern) => (
+ <article class="min-w-0 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60">
+ <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+ <div>
+ <h2 class="text-xl font-semibold text-foreground">{pattern.name}</h2>
+ <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{pattern.description}</p>
+ </div>
+ <Badge variant="outline" size="xs">{pattern.category}</Badge>
+ </div>
+ <pre class="mt-5 max-w-full overflow-x-auto rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground dark:bg-surface-dark-subtle"><code>{pattern.code}</code></pre>
+ </article>
+ ))}
+ </section>
 
-      <section class="mt-16 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" aria-label="Live examples">
-        <div>
-          <h2 class="text-2xl font-bold text-foreground dark:text-foreground-light">Stack Example</h2>
-          <Stack space="md" class="mt-5">
-            <Card hover="none"><p class="text-sm text-foreground/75 dark:text-foreground-light/75">One spacing rule controls this group.</p></Card>
-            <Card hover="none"><p class="text-sm text-foreground/75 dark:text-foreground-light/75">No local margin decisions are needed.</p></Card>
-            <Card hover="none"><p class="text-sm text-foreground/75 dark:text-foreground-light/75">The pattern remains readable on mobile.</p></Card>
-          </Stack>
-        </div>
+ <section class="mt-16 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" aria-label="Live examples">
+ <div>
+ <h2 class="text-2xl font-bold text-foreground">Stack Example</h2>
+ <Stack space="md" class="mt-5">
+ <Card hover="none"><p class="text-sm text-muted-foreground">One spacing rule controls this group.</p></Card>
+ <Card hover="none"><p class="text-sm text-muted-foreground">No local margin decisions are needed.</p></Card>
+ <Card hover="none"><p class="text-sm text-muted-foreground">The pattern remains readable on mobile.</p></Card>
+ </Stack>
+ </div>
 
-        <div>
-          <h2 class="text-2xl font-bold text-foreground dark:text-foreground-light">State Example</h2>
-          <div class="form-group mt-5 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60">
-            <label class="block text-sm font-semibold text-foreground dark:text-foreground-light" for="pattern-email">
-              Email
-            </label>
-            <input
-              id="pattern-email"
-              type="email"
-              required
-              placeholder="name@example.com"
-              class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30 dark:border-border-dark dark:bg-background-dark dark:text-foreground-light"
-            />
-            <p class="mt-3 text-xs text-foreground/60 dark:text-foreground-light/60">
-              The parent can reflect local input state without adding a component variant.
-            </p>
-          </div>
-        </div>
-      </section>
+ <div>
+ <h2 class="text-2xl font-bold text-foreground">State Example</h2>
+ <div class="form-group mt-5 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60">
+ <label class="block text-sm font-semibold text-foreground" for="pattern-email">
+ Email
+ </label>
+ <input
+ id="pattern-email"
+ type="email"
+ required
+ placeholder="name@example.com"
+ class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30 dark:border-border-dark dark:bg-background-dark dark:text-foreground"
+ />
+ <p class="mt-3 text-xs text-subtle-foreground">
+ The parent can reflect local input state without adding a component variant.
+ </p>
+ </div>
+ </div>
+ </section>
 
-      <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
-        <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/design/components/">Component contracts</a>
-        <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark dark:text-foreground-light" href="/design/animations/">Motion rules</a>
-        <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark dark:text-foreground-light" href="/design/tokens/">Tokens</a>
-      </nav>
-    </Container>
-  </Section>
+ <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
+ <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/design/components/">Component contracts</a>
+ <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark" href="/design/animations/">Motion rules</a>
+ <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark" href="/design/tokens/">Tokens</a>
+ </nav>
+ </Container>
+ </Section>
 </BaseLayout>

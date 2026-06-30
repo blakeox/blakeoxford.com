@@ -13,24 +13,24 @@
  * @example Basic usage (assistant message)
  * ```tsx
  * <MessageContent
- *   message={chatMessage}
- *   isStreaming={false}
- *   isAssistant={true}
- *   bubbleContent="Here's your answer..."
- *   totalSources={3}
- *   messageTextClasses="text-foreground dark:text-foreground-light"
+ * message={chatMessage}
+ * isStreaming={false}
+ * isAssistant={true}
+ * bubbleContent="Here's your answer..."
+ * totalSources={3}
+ * messageTextClasses="text-foreground"
  * />
  * ```
  *
  * @example Streaming message
  * ```tsx
  * <MessageContent
- *   message={chatMessage}
- *   isStreaming={true}
- *   isAssistant={true}
- *   bubbleContent="Thinking about..."
- *   totalSources={0}
- *   messageTextClasses="text-foreground"
+ * message={chatMessage}
+ * isStreaming={true}
+ * isAssistant={true}
+ * bubbleContent="Thinking about..."
+ * totalSources={0}
+ * messageTextClasses="text-foreground"
  * />
  * ```
  *

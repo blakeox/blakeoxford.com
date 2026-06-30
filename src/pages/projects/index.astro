@@ -24,124 +24,124 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <!-- Hero Section -->
-  <PageHero fullScreen={true} includeBlurOrbs={true} id="projects-hero">
-    <div class="text-center max-w-4xl mx-auto space-y-8">
-      <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground dark:text-foreground-light">
-        Selected Projects
-      </h1>
-      <p class="text-lg sm:text-xl md:text-2xl leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-        Systems architecture, automation, and digital transformation work that delivered measurable results. Each engagement combines technical depth with the change programming needed to keep adoption high.
-      </p>
-      
-      <Flex wrap gap="sm" justify="center" class="text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60" role="list" aria-label="Focus areas">
-        {hero.focusAreas.map((area) => (
-          <span role="listitem">
-            <BadgePill size="sm">
-              {area}
-            </BadgePill>
-          </span>
-        ))}
-      </Flex>
-    </div>
-  </PageHero>
+ <!-- Hero Section -->
+ <PageHero fullScreen={true} includeBlurOrbs={true} id="projects-hero">
+ <div class="text-center max-w-4xl mx-auto space-y-8">
+ <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground">
+ Selected Projects
+ </h1>
+ <p class="text-lg sm:text-xl md:text-2xl leading-relaxed text-muted-foreground">
+ Systems architecture, automation, and digital transformation work that delivered measurable results. Each engagement combines technical depth with the change programming needed to keep adoption high.
+ </p>
+ 
+ <Flex wrap gap="sm" justify="center" class="text-xs font-semibold uppercase tracking-label text-subtle-foreground" role="list" aria-label="Focus areas">
+ {hero.focusAreas.map((area) => (
+ <span role="listitem">
+ <BadgePill size="sm">
+ {area}
+ </BadgePill>
+ </span>
+ ))}
+ </Flex>
+ </div>
+ </PageHero>
 
-  <!-- Projects Grid -->
-  <Section
-    padding="lg"
-    container="xl"
-    class="border-t border-border/20 bg-background relative overflow-hidden"
-    role="region"
-    aria-labelledby="projects-grid-heading"
-    data-layout-section="projects-grid"
-  >
-    <!-- Subtle blur orb for visual interest -->
-    <div class="absolute top-1/2 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
-    
-    <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-grid-inner">
-      <Stack space="md" class="max-w-3xl">
-        <BadgePill size="xs" class="w-fit">
-          Case Studies
-        </BadgePill>
-        <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
-          Recent Engagements
-        </h2>
-        <p class="text-sm sm:text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-          Explore programs where automation, analytics, and enablement launched together—strategy turned into operating rhythms that teams keep running.
-        </p>
-      </Stack>
+ <!-- Projects Grid -->
+ <Section
+ padding="lg"
+ container="xl"
+ class="border-t border-border/20 bg-background relative overflow-hidden"
+ role="region"
+ aria-labelledby="projects-grid-heading"
+ data-layout-section="projects-grid"
+ >
+ <!-- Subtle blur orb for visual interest -->
+ <div class="absolute top-1/2 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+ 
+ <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-grid-inner">
+ <Stack space="md" class="max-w-3xl">
+ <BadgePill size="xs" class="w-fit">
+ Case Studies
+ </BadgePill>
+ <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground">
+ Recent Engagements
+ </h2>
+ <p class="text-sm sm:text-base leading-relaxed text-muted-foreground">
+ Explore programs where automation, analytics, and enablement launched together—strategy turned into operating rhythms that teams keep running.
+ </p>
+ </Stack>
 
-      <Grid cols="3" gap="lg">
-        {projects.map((project) => (
-          <ProjectCard project={project} />
-        ))}
-      </Grid>
-    </Stack>
-  </Section>
+ <Grid cols="3" gap="lg">
+ {projects.map((project) => (
+ <ProjectCard project={project} />
+ ))}
+ </Grid>
+ </Stack>
+ </Section>
 
-  <!-- Impact Section -->
-  <Section
-    padding="lg"
-    container="xl"
-    class="border-t border-border/20 bg-surface-subtle/40 relative overflow-hidden"
-    role="region"
-    aria-labelledby="results-heading"
-    data-layout-section="projects-impact"
-  >
-    <!-- Accent blur orb for visual depth -->
-    <div class="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
-    
-    <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-impact-inner">
-      <Stack space="md" class="max-w-3xl">
-        <BadgePill size="xs" class="w-fit">
-          Impact Metrics
-        </BadgePill>
-        <h2 id="results-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground dark:text-foreground-light">
-          Results that stick
-        </h2>
-        <p class="text-sm sm:text-base leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-          Measurable outcomes from programs where automation and change enablement launched together.
-        </p>
-      </Stack>
+ <!-- Impact Section -->
+ <Section
+ padding="lg"
+ container="xl"
+ class="border-t border-border/20 bg-surface-subtle/40 dark:bg-background-dark relative overflow-hidden"
+ role="region"
+ aria-labelledby="results-heading"
+ data-layout-section="projects-impact"
+ >
+ <!-- Accent blur orb for visual depth -->
+ <div class="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+ 
+ <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-impact-inner">
+ <Stack space="md" class="max-w-3xl">
+ <BadgePill size="xs" class="w-fit">
+ Impact Metrics
+ </BadgePill>
+ <h2 id="results-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground">
+ Results that stick
+ </h2>
+ <p class="text-sm sm:text-base leading-relaxed text-muted-foreground">
+ Measurable outcomes from programs where automation and change enablement launched together.
+ </p>
+ </Stack>
 
-      <Grid cols="3" gap="md">
-        {hero.stats.map((stat) => (
-          <StatsCard label={stat.label} value={stat.value} variant="default" size="md" />
-        ))}
-      </Grid>
-    </Stack>
-  </Section>
+ <Grid cols="3" gap="md">
+ {hero.stats.map((stat) => (
+ <StatsCard label={stat.label} value={stat.value} variant="default" size="md" />
+ ))}
+ </Grid>
+ </Stack>
+ </Section>
 
-  <!-- CTA Section -->
-  <Section
-    padding="lg"
-    container="md"
-    class="border-t border-border/20 bg-background"
-    role="region"
-    aria-labelledby="cta-heading"
-    data-layout-section="projects-cta"
-  >
-    <Stack space="lg" class="text-center" data-layout-shell="projects-cta-inner">
-        <h2 id="cta-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight text-foreground dark:text-foreground-light">
-          Ready to line up the next leap?
-        </h2>
-        <p class="text-base sm:text-lg leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-          Bring the problem space and we'll map the operating backbone—automation, analytics, and change enablement—without losing clarity for stakeholders.
-        </p>
-        <ButtonGroup align="center" responsive>
-          <Button
-            variant="outline"
-            href="/contact/"
-          >
-            Start a project conversation
-          </Button>
-          <Button
-            variant="ghost"
-            href="/about/"
-          >
-            See how I work
-          </Button>
-        </ButtonGroup>
-    </Stack>
-  </Section>
+ <!-- CTA Section -->
+ <Section
+ padding="lg"
+ container="md"
+ class="border-t border-border/20 bg-background"
+ role="region"
+ aria-labelledby="cta-heading"
+ data-layout-section="projects-cta"
+ >
+ <Stack space="lg" class="text-center" data-layout-shell="projects-cta-inner">
+ <h2 id="cta-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight text-foreground">
+ Ready to line up the next leap?
+ </h2>
+ <p class="text-base sm:text-lg leading-relaxed text-muted-foreground">
+ Bring the problem space and we'll map the operating backbone—automation, analytics, and change enablement—without losing clarity for stakeholders.
+ </p>
+ <ButtonGroup align="center" responsive>
+ <Button
+ variant="outline"
+ href="/contact/"
+ >
+ Start a project conversation
+ </Button>
+ <Button
+ variant="ghost"
+ href="/about/"
+ >
+ See how I work
+ </Button>
+ </ButtonGroup>
+ </Stack>
+ </Section>
 </Layout>

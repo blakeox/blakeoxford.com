@@ -21,14 +21,14 @@ import MetricsTable from '../components/composites/MetricsTable.astro';
 import Flex from '../components/primitives/Flex.astro';
 
 interface Props {
-  slug: string;
+ slug: string;
 }
 
 const { slug } = Astro.props;
 
 const entry = await getEntry('projects', slug);
 if (!entry) {
-  throw new Error(`Project not found: ${slug}`);
+ throw new Error(`Project not found: ${slug}`);
 }
 
 const { data } = entry;
@@ -54,119 +54,119 @@ const { Content } = await render(entry);
 // Generate structured data
 const siteOrigin = 'https://blakeoxford.com';
 const projectImage = heroImage.startsWith('http') 
-  ? heroImage 
-  : `${siteOrigin}${heroImage.startsWith('/') ? heroImage : `/${heroImage}`}`;
+ ? heroImage 
+ : `${siteOrigin}${heroImage.startsWith('/') ? heroImage : `/${heroImage}`}`;
 
 const projectSchema = createProjectSchema(
-  title,
-  defaultAuthor,
-  date,
-  {
-    description: description || undefined,
-    image: projectImage,
-    url: canonicalUrl,
-    keywords: Array.isArray(data.tags) ? data.tags : undefined,
-  }
+ title,
+ defaultAuthor,
+ date,
+ {
+ description: description || undefined,
+ image: projectImage,
+ url: canonicalUrl,
+ keywords: Array.isArray(data.tags) ? data.tags : undefined,
+ }
 );
 
 const breadcrumbSchema = createBreadcrumbListSchema([
-  { name: 'Home', url: `${siteOrigin}/` },
-  { name: 'Projects', url: `${siteOrigin}/projects/` },
-  { name: title, url: canonicalUrl },
+ { name: 'Home', url: `${siteOrigin}/` },
+ { name: 'Projects', url: `${siteOrigin}/projects/` },
+ { name: title, url: canonicalUrl },
 ]);
 
 const structuredData = [projectSchema, breadcrumbSchema];
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} image={projectImage} structuredData={structuredData} wide>
-  <ProjectHero title={title} description={description} date={date} image={heroImage} />
+ <ProjectHero title={title} description={description} date={date} image={heroImage} />
 
-  <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
-    <BackgroundGrid opacity={35} size="200px" />
-    <div class="relative mx-auto flex w-full max-w-7xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
-      
-      <!-- Program Overview -->
-      <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.description}>
-        <div class="max-w-none space-y-6 text-base leading-relaxed text-foreground/80 dark:text-foreground-light/82">
-          <Content />
-        </div>
-      </ProjectDetailSection>
+ <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
+ <BackgroundGrid opacity={35} size="200px" />
+ <div class="relative mx-auto flex w-full max-w-7xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
+ 
+ <!-- Program Overview -->
+ <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.description}>
+ <div class="max-w-none space-y-6 text-base leading-relaxed text-muted-foreground">
+ <Content />
+ </div>
+ </ProjectDetailSection>
 
-      <!-- Highlights -->
-      {data.highlights?.length ? (
-        <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
-          <AchievementCard title="Program outcomes" achievements={data.highlights} />
-        </ProjectDetailSection>
-      ) : null}
+ <!-- Highlights -->
+ {data.highlights?.length ? (
+ <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
+ <AchievementCard title="Program outcomes" achievements={data.highlights} />
+ </ProjectDetailSection>
+ ) : null}
 
-      <!-- Impact Signals (with optional metrics) -->
-      {(hasMetrics || data.impact?.length) ? (
-        <ProjectDetailSection title="Impact signals" eyebrow="Proof of traction" layout={hasMetrics ? 'surface' : undefined}>
-          <div class="flex flex-col gap-6">
-            {hasMetrics ? <MetricsTable metrics={metrics} /> : null}
-            {data.impact?.length ? (
-              <ul class="flex flex-col gap-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
-                {(data.impact ?? []).map((item: string) => (
-                  <BulletListItem text={item} />
-                ))}
-              </ul>
-            ) : null}
-          </div>
-        </ProjectDetailSection>
-      ) : null}
+ <!-- Impact Signals (with optional metrics) -->
+ {(hasMetrics || data.impact?.length) ? (
+ <ProjectDetailSection title="Impact signals" eyebrow="Proof of traction" layout={hasMetrics ? 'surface' : undefined}>
+ <div class="flex flex-col gap-6">
+ {hasMetrics ? <MetricsTable metrics={metrics} /> : null}
+ {data.impact?.length ? (
+ <ul class="flex flex-col gap-3 text-sm leading-relaxed text-muted-foreground" role="list">
+ {(data.impact ?? []).map((item: string) => (
+ <BulletListItem text={item} />
+ ))}
+ </ul>
+ ) : null}
+ </div>
+ </ProjectDetailSection>
+ ) : null}
 
-      <!-- Journey -->
-      {hasJourney ? (
-        <ProjectDetailSection title="Journey" eyebrow="How it unfolded">
-          <ul class="space-y-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75" role="list">
-            {journey.map((item: string) => (
-              <BulletListItem><span set:html={item} /></BulletListItem>
-            ))}
-          </ul>
-        </ProjectDetailSection>
-      ) : null}
+ <!-- Journey -->
+ {hasJourney ? (
+ <ProjectDetailSection title="Journey" eyebrow="How it unfolded">
+ <ul class="space-y-3 text-sm leading-relaxed text-muted-foreground" role="list">
+ {journey.map((item: string) => (
+ <BulletListItem><span set:html={item} /></BulletListItem>
+ ))}
+ </ul>
+ </ProjectDetailSection>
+ ) : null}
 
-      <!-- Program Pillars (Categories) -->
-      {hasCategories ? (
-        <ProjectDetailSection title="Program pillars" eyebrow="Where it delivered" layout="surface">
-          <Flex wrap gap="xs" class="text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/65">
-            {categories.map((category: string) => (
-              <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 dark:bg-surface-dark-subtle">{category}</span>
-            ))}
-          </Flex>
-        </ProjectDetailSection>
-      ) : null}
+ <!-- Program Pillars (Categories) -->
+ {hasCategories ? (
+ <ProjectDetailSection title="Program pillars" eyebrow="Where it delivered" layout="surface">
+ <Flex wrap gap="xs" class="text-xs font-semibold uppercase tracking-label text-subtle-foreground">
+ {categories.map((category: string) => (
+ <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 dark:bg-surface-dark-subtle">{category}</span>
+ ))}
+ </Flex>
+ </ProjectDetailSection>
+ ) : null}
 
-      <!-- Lessons -->
-      {hasLessons ? (
-        <ProjectDetailSection title="Lessons" eyebrow="What stuck" layout="surface">
-          <Grid cols="2" gap="md">
-            {lessons.map((lesson: { title: string; description: string }) => (
-              <article class="flex flex-col gap-2 rounded-2xl border border-border/25 bg-background/95 p-4 shadow-sm">
-                <h3 class="text-lg font-semibold text-foreground dark:text-foreground-light">{lesson.title}</h3>
-                <p class="text-sm leading-relaxed text-foreground/75 dark:text-foreground-light/75">{lesson.description}</p>
-              </article>
-            ))}
-          </Grid>
-        </ProjectDetailSection>
-      ) : null}
+ <!-- Lessons -->
+ {hasLessons ? (
+ <ProjectDetailSection title="Lessons" eyebrow="What stuck" layout="surface">
+ <Grid cols="2" gap="md">
+ {lessons.map((lesson: { title: string; description: string }) => (
+ <article class="flex flex-col gap-2 rounded-2xl border border-border/25 bg-background/95 p-4 shadow-sm">
+ <h3 class="text-lg font-semibold text-foreground">{lesson.title}</h3>
+ <p class="text-sm leading-relaxed text-muted-foreground">{lesson.description}</p>
+ </article>
+ ))}
+ </Grid>
+ </ProjectDetailSection>
+ ) : null}
 
-      <!-- Reflection -->
-      {reflection ? (
-        <ProjectDetailSection title="Reflection" eyebrow="Personal note">
-          <blockquote class="border-l-4 border-accent/80 bg-surface-subtle/80 p-6 text-base italic leading-relaxed text-foreground/78 dark:bg-surface-dark-subtle dark:text-foreground-light/82">
-            {reflection}
-          </blockquote>
-        </ProjectDetailSection>
-      ) : null}
+ <!-- Reflection -->
+ {reflection ? (
+ <ProjectDetailSection title="Reflection" eyebrow="Personal note">
+ <blockquote class="border-l-4 border-accent/80 bg-surface-subtle/80 p-6 text-base italic leading-relaxed text-muted-foreground dark:bg-surface-dark-subtle">
+ {reflection}
+ </blockquote>
+ </ProjectDetailSection>
+ ) : null}
 
-      <!-- Next Steps (Slot for custom CTA content) -->
-      <ProjectDetailSection title="Next steps" eyebrow="Ready to explore?" layout="surface">
-        <slot name="cta" />
-      </ProjectDetailSection>
+ <!-- Next Steps (Slot for custom CTA content) -->
+ <ProjectDetailSection title="Next steps" eyebrow="Ready to explore?" layout="surface">
+ <slot name="cta" />
+ </ProjectDetailSection>
 
-      <!-- Related Technologies -->
-      <ProjectTags tags={data.tags ?? []} />
-    </div>
-  </article>
+ <!-- Related Technologies -->
+ <ProjectTags tags={data.tags ?? []} />
+ </div>
+ </article>
 </Layout>

@@ -4,56 +4,56 @@
  * 
  * @example Interactive project card
  * <Card variant="interactive" hover="lift">
- *   <h3>Project Title</h3>
- *   <p>Description...</p>
+ * <h3>Project Title</h3>
+ * <p>Description...</p>
  * </Card>
  * 
  * @example Glass morphism card with container queries
  * <div class="@container">
- *   <Card variant="glass" padding="lg">
- *     <Stack space="md">
- *       <h3>Title</h3>
- *       <p>Content</p>
- *     </Stack>
- *   </Card>
+ * <Card variant="glass" padding="lg">
+ * <Stack space="md">
+ * <h3>Title</h3>
+ * <p>Content</p>
+ * </Stack>
+ * </Card>
  * </div>
  * 
  * @example Container query responsive layout
  * <div class="@container">
- *   <Card class="@sm:flex-row @md:gap-6">
- *     <div>Content adapts to container size</div>
- *   </Card>
+ * <Card class="@sm:flex-row @md:gap-6">
+ * <div>Content adapts to container size</div>
+ * </Card>
  * </div>
  */
 
 import BaseCard from '../primitives/BaseCard.astro';
 
 interface Props {
-  /** Card variant */
-  variant?: 'default' | 'outline' | 'elevated' | 'glass' | 'interactive' | 'subtle';
-  /** Hover effect */
-  hover?: 'none' | 'lift' | 'scale' | 'glow';
-  /** Padding size */
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  /** HTML element tag to render */
-  as?: 'div' | 'article' | 'section';
-  /** Additional CSS classes */
-  class?: string;
-  /** Full height card */
-  fullHeight?: boolean;
-  /** Enable container query support */
-  containerQuery?: boolean;
+ /** Card variant */
+ variant?: 'default' | 'outline' | 'elevated' | 'glass' | 'interactive' | 'subtle';
+ /** Hover effect */
+ hover?: 'none' | 'lift' | 'scale' | 'glow';
+ /** Padding size */
+ padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+ /** HTML element tag to render */
+ as?: 'div' | 'article' | 'section';
+ /** Additional CSS classes */
+ class?: string;
+ /** Full height card */
+ fullHeight?: boolean;
+ /** Enable container query support */
+ containerQuery?: boolean;
 }
 
 const {
-  variant = 'default',
-  hover = 'lift',
-  padding = 'md',
-  as = 'div',
-  class: className = '',
-  fullHeight = false,
-  containerQuery = false,
-  ...rest
+ variant = 'default',
+ hover = 'lift',
+ padding = 'md',
+ as = 'div',
+ class: className = '',
+ fullHeight = false,
+ containerQuery = false,
+ ...rest
 } = Astro.props as Props;
 
 const heightClasses = fullHeight ? 'h-full flex flex-col' : '';
@@ -61,20 +61,20 @@ const containerClasses = containerQuery ? '@container' : '';
 
 const finalClasses = `${heightClasses} ${containerClasses} ${className}`.trim();
 const baseVariant = variant === 'interactive'
-  ? 'elevated'
-  : variant === 'outline'
-    ? 'subtle'
-    : variant as 'default' | 'glass' | 'elevated' | 'subtle';
+ ? 'elevated'
+ : variant === 'outline'
+ ? 'subtle'
+ : variant as 'default' | 'glass' | 'elevated' | 'subtle';
 const basePadding = padding === 'xl' ? 'lg' : padding as 'none' | 'sm' | 'md' | 'lg';
 ---
 
 <BaseCard 
-  variant={baseVariant}
-  hover={hover}
-  padding={basePadding}
-  as={as}
-  class={finalClasses}
-  {...rest}
+ variant={baseVariant}
+ hover={hover}
+ padding={basePadding}
+ as={as}
+ class={finalClasses}
+ {...rest}
 >
-  <slot />
+ <slot />
 </BaseCard>

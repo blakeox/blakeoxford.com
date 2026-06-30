@@ -1,301 +1,301 @@
 import { useEffect } from 'react';
 import {
-  clearError,
-  clearStatusMessage,
-  defaultErrorFormatter,
-  FormValidationConfig,
-  hydrateFields,
-  setSubmittingState,
-  showError,
-  showStatusMessage,
-  validateField,
+ clearError,
+ clearStatusMessage,
+ defaultErrorFormatter,
+ FormValidationConfig,
+ hydrateFields,
+ setSubmittingState,
+ showError,
+ showStatusMessage,
+ validateField,
 } from './form/FormHelpers';
 import { getContactFormService } from '../../services/ContactFormService';
 import { AppError, isAppError, getUserMessage } from '../../utils/errors';
 
 declare global {
-  interface Window {
-    turnstile?: {
-      render: (container: HTMLElement, options: Record<string, unknown>) => void;
-    };
-    __AUDIT__?: boolean;
-  }
+ interface Window {
+ turnstile?: {
+ render: (container: HTMLElement, options: Record<string, unknown>) => void;
+ };
+ __AUDIT__?: boolean;
+ }
 }
 
 const SITE_KEY = '0x4AAAAAABeu0PfX8oWvQvjR';
 
 const FORM_VALIDATION_CONFIG: FormValidationConfig = {
-  fields: [
-    {
-      id: 'name',
-      metadata: {
-        label: 'Name',
-        required: true,
-        minLength: 2,
-        transform: (value) => value.trim(),
-      },
-    },
-    {
-      id: 'email',
-      metadata: {
-        label: 'Email',
-        required: true,
-        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        transform: (value) => value.trim(),
-      },
-    },
-    {
-      id: 'message',
-      metadata: {
-        label: 'Message',
-        required: true,
-        minLength: 10,
-        maxLength: 2000,
-        transform: (value) => value.trim(),
-      },
-    },
-  ],
-  statusElementSelector: '#form-status',
+ fields: [
+ {
+ id: 'name',
+ metadata: {
+ label: 'Name',
+ required: true,
+ minLength: 2,
+ transform: (value) => value.trim(),
+ },
+ },
+ {
+ id: 'email',
+ metadata: {
+ label: 'Email',
+ required: true,
+ pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+ transform: (value) => value.trim(),
+ },
+ },
+ {
+ id: 'message',
+ metadata: {
+ label: 'Message',
+ required: true,
+ minLength: 10,
+ maxLength: 2000,
+ transform: (value) => value.trim(),
+ },
+ },
+ ],
+ statusElementSelector: '#form-status',
 };
 
 type CleanupFn = () => void;
 
 function setupTurnstile(isAudit: boolean): CleanupFn | void {
-  const container = document.getElementById('turnstile-container');
-  if (!container) return;
+ const container = document.getElementById('turnstile-container');
+ if (!container) return;
 
-  if (isAudit) {
-    container.setAttribute('aria-label', 'Human verification temporarily disabled during automated audits');
-    container.innerHTML = '<div class="text-center text-sm text-neutral">Verification skipped for audit.</div>';
-    return;
-  }
+ if (isAudit) {
+ container.setAttribute('aria-label', 'Human verification temporarily disabled during automated audits');
+ container.innerHTML = '<div class="text-center text-sm text-neutral">Verification skipped for audit.</div>';
+ return;
+ }
 
-  let injected = false;
-  const injectScript = () => {
-    if (injected) return;
-    if (window.turnstile) {
-      window.turnstile.render(container, { sitekey: SITE_KEY, size: 'compact' });
-      injected = true;
-      // analytics removed; no-op
-      return;
-    }
+ let injected = false;
+ const injectScript = () => {
+ if (injected) return;
+ if (window.turnstile) {
+ window.turnstile.render(container, { sitekey: SITE_KEY, size: 'compact' });
+ injected = true;
+ // analytics removed; no-op
+ return;
+ }
 
-    injected = true;
-    const script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      try {
-        window.turnstile?.render(container, { sitekey: SITE_KEY, size: 'compact' });
-        // analytics removed; no-op
-      } catch (error) {
-        console.warn('Turnstile render failed', error);
-        // analytics removed; no-op
-      }
-    };
-    script.onerror = () => {
-      console.warn('Turnstile script failed to load');
-      // analytics removed; no-op
-    };
-    document.head.appendChild(script);
-  };
+ injected = true;
+ const script = document.createElement('script');
+ script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+ script.async = true;
+ script.defer = true;
+ script.onload = () => {
+ try {
+ window.turnstile?.render(container, { sitekey: SITE_KEY, size: 'compact' });
+ // analytics removed; no-op
+ } catch (error) {
+ console.warn('Turnstile render failed', error);
+ // analytics removed; no-op
+ }
+ };
+ script.onerror = () => {
+ console.warn('Turnstile script failed to load');
+ // analytics removed; no-op
+ };
+ document.head.appendChild(script);
+ };
 
-  const cleanupFns: CleanupFn[] = [];
+ const cleanupFns: CleanupFn[] = [];
 
-  const form = document.getElementById('contact-form');
-  if (form) {
-    const events: Array<keyof HTMLElementEventMap> = ['focusin', 'click', 'keydown', 'pointerdown', 'touchstart', 'submit'];
-    events.forEach((eventName) => {
-      const handler = () => injectScript();
-      form.addEventListener(eventName, handler, { passive: true, once: true });
-      cleanupFns.push(() => form.removeEventListener(eventName, handler));
-    });
-  }
+ const form = document.getElementById('contact-form');
+ if (form) {
+ const events: Array<keyof HTMLElementEventMap> = ['focusin', 'click', 'keydown', 'pointerdown', 'touchstart', 'submit'];
+ events.forEach((eventName) => {
+ const handler = () => injectScript();
+ form.addEventListener(eventName, handler, { passive: true, once: true });
+ cleanupFns.push(() => form.removeEventListener(eventName, handler));
+ });
+ }
 
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          injectScript();
-          observer.disconnect();
-        }
-      });
-    });
-    observer.observe(container);
-    cleanupFns.push(() => observer.disconnect());
-  }
+ if ('IntersectionObserver' in window) {
+ const observer = new IntersectionObserver((entries) => {
+ entries.forEach((entry) => {
+ if (entry.isIntersecting) {
+ injectScript();
+ observer.disconnect();
+ }
+ });
+ });
+ observer.observe(container);
+ cleanupFns.push(() => observer.disconnect());
+ }
 
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  let idleId: number | undefined;
+ let timeoutId: ReturnType<typeof setTimeout> | undefined;
+ let idleId: number | undefined;
 
-  if ('requestIdleCallback' in window) {
-    idleId = window.requestIdleCallback?.(() => injectScript(), { timeout: 15000 });
-    cleanupFns.push(() => {
-      if (idleId !== undefined) window.cancelIdleCallback?.(idleId);
-    });
-  } else {
-    timeoutId = globalThis.setTimeout(injectScript, 15000);
-    cleanupFns.push(() => globalThis.clearTimeout(timeoutId));
-  }
+ if ('requestIdleCallback' in window) {
+ idleId = window.requestIdleCallback?.(() => injectScript(), { timeout: 15000 });
+ cleanupFns.push(() => {
+ if (idleId !== undefined) window.cancelIdleCallback?.(idleId);
+ });
+ } else {
+ timeoutId = globalThis.setTimeout(injectScript, 15000);
+ cleanupFns.push(() => globalThis.clearTimeout(timeoutId));
+ }
 
-  return () => {
-    cleanupFns.forEach((fn) => fn());
-  };
+ return () => {
+ cleanupFns.forEach((fn) => fn());
+ };
 }
 
 function setupContactForm(): CleanupFn | void {
-  const form = document.getElementById('contact-form') as HTMLFormElement | null;
-  if (!form) return;
+ const form = document.getElementById('contact-form') as HTMLFormElement | null;
+ if (!form) return;
 
-  const fields = hydrateFields(form, FORM_VALIDATION_CONFIG);
-  const statusElement = document.querySelector<HTMLElement>(FORM_VALIDATION_CONFIG.statusElementSelector ?? '');
+ const fields = hydrateFields(form, FORM_VALIDATION_CONFIG);
+ const statusElement = document.querySelector<HTMLElement>(FORM_VALIDATION_CONFIG.statusElementSelector ?? '');
 
-  const cleanupFns: CleanupFn[] = [];
+ const cleanupFns: CleanupFn[] = [];
 
-  const validateAllFields = () => {
-    const errors: Record<string, string> = {};
-    FORM_VALIDATION_CONFIG.fields.forEach(({ id, metadata }) => {
-      const field = fields[id] as HTMLInputElement | HTMLTextAreaElement | null;
-      if (!field) return;
-      const message = validateField(field, metadata);
-      if (message) {
-        errors[id] = defaultErrorFormatter(metadata.label, message);
-        showError(field, errors[id]);
-      } else {
-        clearError(field);
-      }
-    });
-    return errors;
-  };
+ const validateAllFields = () => {
+ const errors: Record<string, string> = {};
+ FORM_VALIDATION_CONFIG.fields.forEach(({ id, metadata }) => {
+ const field = fields[id] as HTMLInputElement | HTMLTextAreaElement | null;
+ if (!field) return;
+ const message = validateField(field, metadata);
+ if (message) {
+ errors[id] = defaultErrorFormatter(metadata.label, message);
+ showError(field, errors[id]);
+ } else {
+ clearError(field);
+ }
+ });
+ return errors;
+ };
 
-  const handleBlur = (id: string) => () => {
-    const fieldConfig = FORM_VALIDATION_CONFIG.fields.find((field) => field.id === id);
-    const field = fields[id] as HTMLInputElement | HTMLTextAreaElement | null;
-    if (!field || !fieldConfig) return;
+ const handleBlur = (id: string) => () => {
+ const fieldConfig = FORM_VALIDATION_CONFIG.fields.find((field) => field.id === id);
+ const field = fields[id] as HTMLInputElement | HTMLTextAreaElement | null;
+ if (!field || !fieldConfig) return;
 
-    const message = validateField(field, fieldConfig.metadata);
-    if (message) {
-      showError(field, defaultErrorFormatter(fieldConfig.metadata.label, message));
-    } else {
-      clearError(field);
-    }
-  };
+ const message = validateField(field, fieldConfig.metadata);
+ if (message) {
+ showError(field, defaultErrorFormatter(fieldConfig.metadata.label, message));
+ } else {
+ clearError(field);
+ }
+ };
 
-  const handleInput = (id: string) => () => {
-    const field = fields[id] as HTMLElement | null;
-    if (!field) return;
-    clearError(field);
-  };
+ const handleInput = (id: string) => () => {
+ const field = fields[id] as HTMLElement | null;
+ if (!field) return;
+ clearError(field);
+ };
 
-  FORM_VALIDATION_CONFIG.fields.forEach(({ id }) => {
-    const field = fields[id];
-    if (!field) return;
+ FORM_VALIDATION_CONFIG.fields.forEach(({ id }) => {
+ const field = fields[id];
+ if (!field) return;
 
-    const onBlur = handleBlur(id);
-    const onInput = handleInput(id);
+ const onBlur = handleBlur(id);
+ const onInput = handleInput(id);
 
-    field.addEventListener('blur', onBlur);
-    field.addEventListener('input', onInput);
+ field.addEventListener('blur', onBlur);
+ field.addEventListener('input', onInput);
 
-    cleanupFns.push(() => {
-      field.removeEventListener('blur', onBlur);
-      field.removeEventListener('input', onInput);
-    });
-  });
+ cleanupFns.push(() => {
+ field.removeEventListener('blur', onBlur);
+ field.removeEventListener('input', onInput);
+ });
+ });
 
-  const handleSubmit = async (event: Event) => {
-    event.preventDefault();
+ const handleSubmit = async (event: Event) => {
+ event.preventDefault();
 
-    clearStatusMessage(statusElement ?? null);
+ clearStatusMessage(statusElement ?? null);
 
-    const errors = validateAllFields();
-    const hasErrors = Object.keys(errors).length > 0;
+ const errors = validateAllFields();
+ const hasErrors = Object.keys(errors).length > 0;
 
-    if (hasErrors) {
-      // analytics removed; no-op
-      const firstErrorField = FORM_VALIDATION_CONFIG.fields.find(({ id }) => errors[id]);
-      if (firstErrorField) {
-        const field = fields[firstErrorField.id] as HTMLElement | null;
-        field?.focus();
-      }
-      return;
-    }
+ if (hasErrors) {
+ // analytics removed; no-op
+ const firstErrorField = FORM_VALIDATION_CONFIG.fields.find(({ id }) => errors[id]);
+ if (firstErrorField) {
+ const field = fields[firstErrorField.id] as HTMLElement | null;
+ field?.focus();
+ }
+ return;
+ }
 
-    const formData = new FormData(form);
-    const controller = new AbortController();
-    const timeoutId: ReturnType<typeof setTimeout> = globalThis.setTimeout(() => controller.abort(), 10000);
+ const formData = new FormData(form);
+ const controller = new AbortController();
+ const timeoutId: ReturnType<typeof setTimeout> = globalThis.setTimeout(() => controller.abort(), 10000);
 
-    try {
-      setSubmittingState(form, true);
+ try {
+ setSubmittingState(form, true);
 
-      // Use ContactFormService for submission
-      const contactService = getContactFormService({
-        endpoint: form.action || '/api/contact/submit',
-        requireTurnstile: false, // Turnstile handled separately in this component
-      });
+ // Use ContactFormService for submission
+ const contactService = getContactFormService({
+ endpoint: form.action || '/api/contact/submit',
+ requireTurnstile: false, // Turnstile handled separately in this component
+ });
 
-      const result = await contactService.submitFormData(formData, { signal: controller.signal });
+ const result = await contactService.submitFormData(formData, { signal: controller.signal });
 
-      globalThis.clearTimeout(timeoutId);
+ globalThis.clearTimeout(timeoutId);
 
-      if (result.success) {
-        showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
-        form.reset();
-      }
-    } catch (error) {
-      globalThis.clearTimeout(timeoutId);
+ if (result.success) {
+ showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+ form.reset();
+ }
+ } catch (error) {
+ globalThis.clearTimeout(timeoutId);
 
-      // Use centralized error handling
-      const errorMessage = isAppError(error)
-        ? getUserMessage(error as AppError)
-        : '❌ Something went wrong. Please try again later or email me directly at contact@blakeoxford.com.';
+ // Use centralized error handling
+ const errorMessage = isAppError(error)
+ ? getUserMessage(error as AppError)
+ : '❌ Something went wrong. Please try again later or email me directly at contact@blakeoxford.com.';
 
-      console.error('Form submission failed', error);
-      showStatusMessage(statusElement ?? null, errorMessage, 'error');
-    } finally {
-      globalThis.clearTimeout(timeoutId);
-      setSubmittingState(form, false);
-    }
-  };
+ console.error('Form submission failed', error);
+ showStatusMessage(statusElement ?? null, errorMessage, 'error');
+ } finally {
+ globalThis.clearTimeout(timeoutId);
+ setSubmittingState(form, false);
+ }
+ };
 
-  form.addEventListener('submit', handleSubmit);
-  cleanupFns.push(() => form.removeEventListener('submit', handleSubmit));
+ form.addEventListener('submit', handleSubmit);
+ cleanupFns.push(() => form.removeEventListener('submit', handleSubmit));
 
-  if (new URLSearchParams(window.location.search).get('success') === 'true') {
-    showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
-  }
+ if (new URLSearchParams(window.location.search).get('success') === 'true') {
+ showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+ }
 
-  return () => {
-    cleanupFns.forEach((fn) => fn());
-  };
+ return () => {
+ cleanupFns.forEach((fn) => fn());
+ };
 }
 
 export default function ContactFormIsland() {
-  useEffect(() => {
-    const isAudit = Boolean(
-      window.__AUDIT__ ||
-      /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie || '') ||
-      /lighthouse|headlesschrome/i.test(navigator.userAgent || ''),
-    );
+ useEffect(() => {
+ const isAudit = Boolean(
+ window.__AUDIT__ ||
+ /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie || '') ||
+ /lighthouse|headlesschrome/i.test(navigator.userAgent || ''),
+ );
 
-    const cleanupFns: Array<CleanupFn | void> = [
-      setupContactForm(),
-    ];
+ const cleanupFns: Array<CleanupFn | void> = [
+ setupContactForm(),
+ ];
 
-    if (!isAudit) {
-      const turnstileCleanup = setupTurnstile(isAudit);
-      if (typeof turnstileCleanup === 'function') {
-        cleanupFns.push(turnstileCleanup);
-      }
-    }
+ if (!isAudit) {
+ const turnstileCleanup = setupTurnstile(isAudit);
+ if (typeof turnstileCleanup === 'function') {
+ cleanupFns.push(turnstileCleanup);
+ }
+ }
 
-    return () => {
-      cleanupFns.forEach((fn) => {
-        if (typeof fn === 'function') fn();
-      });
-    };
-  }, []);
+ return () => {
+ cleanupFns.forEach((fn) => {
+ if (typeof fn === 'function') fn();
+ });
+ };
+ }, []);
 
-  return null;
+ return null;
 }

@@ -10,73 +10,73 @@
  * 
  * @example With description
  * <StatsCard 
- *   label="Team Productivity" 
- *   value="45% increase"
- *   description="Through automation and workflow optimization"
+ * label="Team Productivity" 
+ * value="45% increase"
+ * description="Through automation and workflow optimization"
  * />
  * 
  * @example Custom styling
  * <StatsCard 
- *   label="Projects Delivered" 
- *   value="23+"
- *   variant="elevated"
- *   size="lg"
+ * label="Projects Delivered" 
+ * value="23+"
+ * variant="elevated"
+ * size="lg"
  * />
  */
 
 interface Props {
-  /** Metric label (e.g., "Revenue Growth") */
-  label: string;
-  /** Metric value (e.g., "$2.4M+", "45%") */
-  value: string;
-  /** Optional description or context */
-  description?: string;
-  /** Visual variant */
-  variant?: 'default' | 'elevated' | 'glass' | 'subtle';
-  /** Size variant */
-  size?: 'sm' | 'md' | 'lg';
-  /** Additional CSS classes */
-  class?: string;
+ /** Metric label (e.g., "Revenue Growth") */
+ label: string;
+ /** Metric value (e.g., "$2.4M+", "45%") */
+ value: string;
+ /** Optional description or context */
+ description?: string;
+ /** Visual variant */
+ variant?: 'default' | 'elevated' | 'glass' | 'subtle';
+ /** Size variant */
+ size?: 'sm' | 'md' | 'lg';
+ /** Additional CSS classes */
+ class?: string;
 }
 
 const {
-  label,
-  value,
-  description,
-  variant = 'default',
-  size = 'md',
-  class: className = '',
-  ...rest
+ label,
+ value,
+ description,
+ variant = 'default',
+ size = 'md',
+ class: className = '',
+ ...rest
 } = Astro.props;
 
 // Variant styles
 const variantMap = {
-  default: 'bg-background ring-1 ring-border/30 shadow-lg',
-  elevated: 'bg-surface dark:bg-surface-dark shadow-lg ring-1 ring-border/20',
-  glass: 'bg-surface/60 dark:bg-surface-dark/60 backdrop-blur-md ring-1 ring-border/40 shadow-lg',
-  subtle: 'bg-surface-subtle/40 dark:bg-surface-dark-subtle/40 ring-1 ring-border/25',
+ default: 'bg-background ring-1 ring-border/30 shadow-lg',
+ elevated: 'bg-surface dark:bg-surface-dark shadow-lg ring-1 ring-border/20',
+ glass: 'bg-surface/60 dark:bg-surface-dark/60 backdrop-blur-md ring-1 ring-border/40 shadow-lg',
+ subtle: 'bg-surface-subtle/40 dark:bg-surface-dark-subtle/40 ring-1 ring-border/25',
 };
 
 // Size variants for padding and text
 const sizeMap = {
-  sm: {
-    container: 'px-3 py-4',
-    label: 'text-xxs mb-2',
-    value: 'text-lg',
-    description: 'text-xs mt-2',
-  },
-  md: {
-    container: 'px-4 py-5 sm:px-5 sm:py-6',
-    label: 'text-xs mb-3 sm:mb-4',
-    value: 'text-xl sm:text-2xl',
-    description: 'text-sm mt-2 sm:mt-3',
-  },
-  lg: {
-    container: 'px-5 py-6 sm:px-6 sm:py-8',
-    label: 'text-xs sm:text-sm mb-4 sm:mb-5',
-    value: 'text-2xl sm:text-3xl lg:text-4xl',
-    description: 'text-sm sm:text-base mt-3 sm:mt-4',
-  },
+ sm: {
+ container: 'px-3 py-4',
+ label: 'text-xxs mb-2',
+ value: 'text-lg',
+ description: 'text-xs mt-2',
+ },
+ md: {
+ container: 'px-4 py-5 sm:px-5 sm:py-6',
+ label: 'text-xs mb-3 sm:mb-4',
+ value: 'text-xl sm:text-2xl',
+ description: 'text-sm mt-2 sm:mt-3',
+ },
+ lg: {
+ container: 'px-5 py-6 sm:px-6 sm:py-8',
+ label: 'text-xs sm:text-sm mb-4 sm:mb-5',
+ value: 'text-2xl sm:text-3xl lg:text-4xl',
+ description: 'text-sm sm:text-base mt-3 sm:mt-4',
+ },
 };
 
 const variantClasses = variantMap[variant];
@@ -86,16 +86,16 @@ const containerClasses = `rounded-2xl ${variantClasses} ${sizeClasses.container}
 ---
 
 <div class={containerClasses} {...rest}>
-  <p class={`font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60 ${sizeClasses.label}`}>
-    {label}
-  </p>
-  <p class={`font-semibold text-foreground dark:text-foreground-light ${sizeClasses.value}`}>
-    {value}
-  </p>
-  {description && (
-    <p class={`text-foreground/70 dark:text-foreground-light/70 leading-relaxed ${sizeClasses.description}`}>
-      {description}
-    </p>
-  )}
-  <slot />
+ <p class={`font-semibold uppercase tracking-label text-subtle-foreground ${sizeClasses.label}`}>
+ {label}
+ </p>
+ <p class={`font-semibold text-foreground ${sizeClasses.value}`}>
+ {value}
+ </p>
+ {description && (
+ <p class={`text-muted-foreground leading-relaxed ${sizeClasses.description}`}>
+ {description}
+ </p>
+ )}
+ <slot />
 </div>

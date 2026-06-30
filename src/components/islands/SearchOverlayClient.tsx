@@ -6,6 +6,6 @@ import SearchOverlayController from './SearchOverlayController';
  * - On the client, renders the real controller which attaches events/effects.
  */
 export default function SearchOverlayClient() {
-  if (typeof window === 'undefined') return null;
-  return <SearchOverlayController />;
+ if (typeof window === 'undefined') return null;
+ return <SearchOverlayController />;
 }

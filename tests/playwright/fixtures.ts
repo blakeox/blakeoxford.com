@@ -10,6 +10,10 @@ const testOverridesCss = fs.readFileSync(
 
 export const test = base.extend({
   page: async ({ page }, use, testInfo) => {
+    await page.addInitScript({
+      path: path.join(path.dirname(fileURLToPath(import.meta.url)), '../utils/colorResolver.browser.js'),
+    });
+
     await page.addInitScript((css: string) => {
       try {
         if (document.getElementById('__pw_test_overrides')) return;
@@ -62,30 +66,9 @@ export const test = base.extend({
 
     await page.addInitScript(() => {
       try {
-        try {
-          document.documentElement.style.setProperty(
-            '--color-background',
-            document.documentElement.style.getPropertyValue('--color-background') || '#ffffff',
-          );
-        } catch {
-          void 0;
-        }
-        try {
-          (window as any).__TEST_THEME_PRIMED = true;
-        } catch {
-          void 0;
-        }
-        try {
-          const probe = document.createElement('div');
-          probe.id = '__pw_theme_probe';
-          probe.style.cssText =
-            'position:fixed;left:-9999px;top:-9999px;width:1px;height:2px;background:var(--color-background);visibility:hidden;';
-          document.documentElement.appendChild(probe);
-        } catch {
-          void 0;
-        }
+        (window as any).__TEST_THEME_PRIMED = true;
       } catch {
-        /* noop */
+        void 0;
       }
     });
 

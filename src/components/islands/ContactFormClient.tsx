@@ -6,6 +6,6 @@ import ContactFormIsland from './ContactFormIsland';
  * - On the client, renders the real island which attaches events/effects.
  */
 export default function ContactFormClient() {
-  if (typeof window === 'undefined') return null;
-  return <ContactFormIsland />;
+ if (typeof window === 'undefined') return null;
+ return <ContactFormIsland />;
 }

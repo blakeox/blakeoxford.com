@@ -11,20 +11,20 @@
  * @example Local image
  * ```astro
  * <OptimizedImage
- *   src={import('@/assets/hero.jpg')}
- *   alt="Hero image"
- *   width={800}
- *   height={600}
+ * src={import('@/assets/hero.jpg')}
+ * alt="Hero image"
+ * width={800}
+ * height={600}
  * />
  * ```
  * 
  * @example Remote image with priority loading
  * ```astro
  * <OptimizedImage
- *   src="https://example.com/image.jpg"
- *   alt="Remote image"
- *   priority={true}
- *   quality={90}
+ * src="https://example.com/image.jpg"
+ * alt="Remote image"
+ * priority={true}
+ * quality={90}
  * />
  * ```
  * 
@@ -47,22 +47,22 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 export type Props = {
-  src: string | ImageMetadata;
-  alt: string;
-  width?: number;
-  height?: number;
-  class?: string;
-  loading?: 'lazy' | 'eager';
-  priority?: boolean;
-  quality?: number;
+ src: string | ImageMetadata;
+ alt: string;
+ width?: number;
+ height?: number;
+ class?: string;
+ loading?: 'lazy' | 'eager';
+ priority?: boolean;
+ quality?: number;
 };
 
 const props = Astro.props as Props;
 const {
-  alt,
-  class: className = '',
-  loading = 'lazy',
-  priority = false,
+ alt,
+ class: className = '',
+ loading = 'lazy',
+ priority = false,
 } = props;
 
 const width = 'width' in props ? props.width : undefined;
@@ -77,41 +77,41 @@ const isLocalPath = typeof props.src === 'string' && (props.src.startsWith('/') 
 ---
 
 {typeof props.src === 'object' ? (
-  <Image
-    src={props.src}
-    alt={alt}
-    class={className}
-    loading={imageLoading}
-  />
+ <Image
+ src={props.src}
+ alt={alt}
+ class={className}
+ loading={imageLoading}
+ />
 ) : isLocalPath ? (
-  <img
-    src={props.src}
-    alt={alt}
-    width={width}
-    height={height}
-    class={className}
-    loading={imageLoading}
-    decoding="async"
-  />
+ <img
+ src={props.src}
+ alt={alt}
+ width={width}
+ height={height}
+ class={className}
+ loading={imageLoading}
+ decoding="async"
+ />
 ) : (
-  <Image
-    src={props.src}
-    alt={alt}
-    width={width}
-    height={height}
-    format="avif"
-    quality={quality}
-    loading={imageLoading}
-    class={className}
-    inferSize={true}
-  />
+ <Image
+ src={props.src}
+ alt={alt}
+ width={width}
+ height={height}
+ format="avif"
+ quality={quality}
+ loading={imageLoading}
+ class={className}
+ inferSize={true}
+ />
 )}
 
 {priority && typeof props.src === 'string' && (
-  <link
-    rel="preload"
-    as="image"
-    href={props.src}
-    type="image/avif"
-  />
+ <link
+ rel="preload"
+ as="image"
+ href={props.src}
+ type="image/avif"
+ />
 )}

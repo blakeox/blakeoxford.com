@@ -18,26 +18,26 @@
  * @example Citation links
  * ```tsx
  * <CitationLinks
- *   sources={message.sources}
- *   messageId={message.id}
- *   handleOpenPrimarySource={(url) => window.open(url)}
+ * sources={message.sources}
+ * messageId={message.id}
+ * handleOpenPrimarySource={(url) => window.open(url)}
  * />
  * ```
  *
  * @example Full sources list
  * ```tsx
  * <SourcesList
- *   message={message}
- *   sources={message.sources}
- *   showAllSources={isExpanded}
- *   primarySource={sources[0]}
- *   primarySourceTitle="Blog Post Title"
- *   totalSources={sources.length}
- *   siteHostname="blakeoxford.com"
- *   expandedIndividualSources={expandedState}
- *   sourceRefs={sourceRefsArray}
- *   toggleExpandedSource={(id) => setExpanded(!isExpanded)}
- *   toggleIndividualSource={(key) => toggleSource(key)}
+ * message={message}
+ * sources={message.sources}
+ * showAllSources={isExpanded}
+ * primarySource={sources[0]}
+ * primarySourceTitle="Blog Post Title"
+ * totalSources={sources.length}
+ * siteHostname="blakeoxford.com"
+ * expandedIndividualSources={expandedState}
+ * sourceRefs={sourceRefsArray}
+ * toggleExpandedSource={(id) => setExpanded(!isExpanded)}
+ * toggleIndividualSource={(key) => toggleSource(key)}
  * />
  * ```
  *

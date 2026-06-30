@@ -7,15 +7,15 @@
  * 
  * @example Basic hero
  * <Hero title="Welcome" subtitle="Build amazing things">
- *   <Button slot="cta" href="/get-started">Get Started</Button>
+ * <Button slot="cta" href="/get-started">Get Started</Button>
  * </Hero>
  * 
  * @example Hero with gradient background
  * <Hero 
- *   title="About Me" 
- *   subtitle="Designer & Developer"
- *   background="gradient"
- *   size="lg"
+ * title="About Me" 
+ * subtitle="Designer & Developer"
+ * background="gradient"
+ * size="lg"
  * />
  */
 
@@ -23,58 +23,58 @@ import Section from '../primitives/Section.astro';
 import Stack from '../primitives/Stack.astro';
 
 interface Props {
-  /** Hero title (h1) */
-  title: string;
-  /** Optional subtitle/description */
-  subtitle?: string;
-  /** Section background variant */
-  background?: 'default' | 'gradient' | 'glass';
-  /** Container size */
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  /** Section padding size */
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  /** Stack spacing for inner content */
-  spacing?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
-  /** Title alignment */
-  align?: 'left' | 'center' | 'right';
-  /** Additional CSS classes */
-  class?: string;
+ /** Hero title (h1) */
+ title: string;
+ /** Optional subtitle/description */
+ subtitle?: string;
+ /** Section background variant */
+ background?: 'default' | 'gradient' | 'glass';
+ /** Container size */
+ size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+ /** Section padding size */
+ padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+ /** Stack spacing for inner content */
+ spacing?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+ /** Title alignment */
+ align?: 'left' | 'center' | 'right';
+ /** Additional CSS classes */
+ class?: string;
 }
 
 const {
-  title,
-  subtitle,
-  background = 'gradient',
-  size = 'lg',
-  padding = 'xl',
-  spacing = 'lg',
-  align = 'center',
-  class: className = '',
+ title,
+ subtitle,
+ background = 'gradient',
+ size = 'lg',
+ padding = 'xl',
+ spacing = 'lg',
+ align = 'center',
+ class: className = '',
 } = Astro.props;
 
 const alignMap = {
-  left: 'text-left',
-  center: 'text-center',
-  right: 'text-right',
+ left: 'text-left',
+ center: 'text-center',
+ right: 'text-right',
 };
 
 const alignClasses = alignMap[align];
 ---
 
 <Section padding={padding} background={background} container={size} class={className}>
-  <Stack space={spacing} class={alignClasses}>
-    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground dark:text-foreground-light leading-tight">
-      {title}
-    </h1>
-    
-    {subtitle && (
-      <p class="text-lg sm:text-xl text-foreground/80 dark:text-foreground-light/80 max-w-3xl mx-auto leading-relaxed">
-        {subtitle}
-      </p>
-    )}
-    
-    <slot name="cta" />
-    
-    <slot />
-  </Stack>
+ <Stack space={spacing} class={alignClasses}>
+ <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+ {title}
+ </h1>
+ 
+ {subtitle && (
+ <p class="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+ {subtitle}
+ </p>
+ )}
+ 
+ <slot name="cta" />
+ 
+ <slot />
+ </Stack>
 </Section>

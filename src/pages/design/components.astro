@@ -10,132 +10,132 @@ import { componentDocs, getCategories, type ComponentDoc } from '../../data/comp
 
 const categories = getCategories();
 const componentsByCategory = categories.map((category) => ({
-  category,
-  components: componentDocs.filter((component) => component.category === category),
+ category,
+ components: componentDocs.filter((component) => component.category === category),
 }));
 
 const canonicalExamples = [
-  {
-    name: 'Button',
-    contract: 'Use for explicit commands. Prefer semantic variants and stable sizes.',
-    path: 'src/components/primitives/Button.astro',
-  },
-  {
-    name: 'Badge',
-    contract: 'Use for labels and status. Status variants must be semantic.',
-    path: 'src/components/primitives/Badge.astro',
-  },
-  {
-    name: 'Card',
-    contract: 'Use as the compatibility wrapper over BaseCard. Keep card styling centralized.',
-    path: 'src/components/composites/Card.astro',
-  },
-  {
-    name: 'FeatureCard',
-    contract: 'Use for reusable feature surfaces. Avoid page-specific color props.',
-    path: 'src/components/composites/FeatureCard.astro',
-  },
+ {
+ name: 'Button',
+ contract: 'Use for explicit commands. Prefer semantic variants and stable sizes.',
+ path: 'src/components/primitives/Button.astro',
+ },
+ {
+ name: 'Badge',
+ contract: 'Use for labels and status. Status variants must be semantic.',
+ path: 'src/components/primitives/Badge.astro',
+ },
+ {
+ name: 'Card',
+ contract: 'Use as the compatibility wrapper over BaseCard. Keep card styling centralized.',
+ path: 'src/components/composites/Card.astro',
+ },
+ {
+ name: 'FeatureCard',
+ contract: 'Use for reusable feature surfaces. Avoid page-specific color props.',
+ path: 'src/components/composites/FeatureCard.astro',
+ },
 ];
 ---
 
 <BaseLayout
-  title="Design Components"
-  description="Operational component contracts for the Blake Oxford design system."
-  canonicalUrl="https://blakeoxford.com/design/components/"
-  wide={true}
+ title="Design Components"
+ description="Operational component contracts for the Blake Oxford design system."
+ canonicalUrl="https://blakeoxford.com/design/components/"
+ wide={true}
 >
-  <Section padding="xl">
-    <Container size="xl">
-      <header class="max-w-3xl">
-        <Badge variant="subtle">Design system</Badge>
-        <h1 class="mt-5 text-4xl font-bold text-foreground dark:text-foreground-light sm:text-5xl">
-          Component Contracts
-        </h1>
-        <p class="mt-4 text-lg leading-relaxed text-foreground/75 dark:text-foreground-light/75">
-          This page documents the canonical component paths and allowed usage surface. The full searchable catalog is generated from
-          <code class="break-all rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">src/data/componentDocs.ts</code>.
-        </p>
-      </header>
+ <Section padding="xl">
+ <Container size="xl">
+ <header class="max-w-3xl">
+ <Badge variant="subtle">Design system</Badge>
+ <h1 class="mt-5 text-4xl font-bold text-foreground sm:text-5xl">
+ Component Contracts
+ </h1>
+ <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
+ This page documents the canonical component paths and allowed usage surface. The full searchable catalog is generated from
+ <code class="break-all rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">src/data/componentDocs.ts</code>.
+ </p>
+ </header>
 
-      <section class="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4" aria-label="Canonical examples">
-        {canonicalExamples.map((item) => (
-          <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
-            <h2 class="text-lg font-semibold text-foreground dark:text-foreground-light">{item.name}</h2>
-            <p class="mt-2 text-sm text-foreground/70 dark:text-foreground-light/70">{item.contract}</p>
-            <code class="mt-4 block break-all rounded-lg bg-surface-subtle p-3 text-xs text-foreground/75 dark:bg-surface-dark-subtle dark:text-foreground-light/75">{item.path}</code>
-          </article>
-        ))}
-      </section>
+ <section class="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4" aria-label="Canonical examples">
+ {canonicalExamples.map((item) => (
+ <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <h2 class="text-lg font-semibold text-foreground">{item.name}</h2>
+ <p class="mt-2 text-sm text-muted-foreground">{item.contract}</p>
+ <code class="mt-4 block break-all rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground dark:bg-surface-dark-subtle">{item.path}</code>
+ </article>
+ ))}
+ </section>
 
-      <section class="mt-16" aria-labelledby="live-examples">
-        <h2 id="live-examples" class="text-2xl font-bold text-foreground dark:text-foreground-light">Live Examples</h2>
-        <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <Card variant="elevated" hover="none">
-            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Buttons</h3>
-            <div class="mt-5 flex flex-wrap gap-3">
-              <Button variant="primary">Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="outline">Outline</Button>
-              <Button variant="ghost">Ghost</Button>
-            </div>
-          </Card>
+ <section class="mt-16" aria-labelledby="live-examples">
+ <h2 id="live-examples" class="text-2xl font-bold text-foreground">Live Examples</h2>
+ <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+ <Card variant="elevated" hover="none">
+ <h3 class="text-xl font-semibold text-foreground">Buttons</h3>
+ <div class="mt-5 flex flex-wrap gap-3">
+ <Button variant="primary">Primary</Button>
+ <Button variant="secondary">Secondary</Button>
+ <Button variant="outline">Outline</Button>
+ <Button variant="ghost">Ghost</Button>
+ </div>
+ </Card>
 
-          <Card variant="elevated" hover="none">
-            <h3 class="text-xl font-semibold text-foreground dark:text-foreground-light">Badges</h3>
-            <div class="mt-5 flex flex-wrap gap-2">
-              <Badge variant="secondary">Default</Badge>
-              <Badge variant="primary">Primary</Badge>
-              <Badge variant="success">Success</Badge>
-              <Badge variant="warning">Warning</Badge>
-              <Badge variant="error">Error</Badge>
-            </div>
-          </Card>
+ <Card variant="elevated" hover="none">
+ <h3 class="text-xl font-semibold text-foreground">Badges</h3>
+ <div class="mt-5 flex flex-wrap gap-2">
+ <Badge variant="secondary">Default</Badge>
+ <Badge variant="primary">Primary</Badge>
+ <Badge variant="success">Success</Badge>
+ <Badge variant="warning">Warning</Badge>
+ <Badge variant="error">Error</Badge>
+ </div>
+ </Card>
 
-          <FeatureCard title="Feature Card" description="Semantic variants use the shared token contract." variant="accent" hover={false} />
-          <FeatureCard title="Status Feature" description="Success, warning, info, and error map to tokens instead of raw palettes." variant="success" hover={false} />
-        </div>
-      </section>
+ <FeatureCard title="Feature Card" description="Semantic variants use the shared token contract." variant="accent" hover={false} />
+ <FeatureCard title="Status Feature" description="Success, warning, info, and error map to tokens instead of raw palettes." variant="success" hover={false} />
+ </div>
+ </section>
 
-      <section class="mt-16" aria-labelledby="catalog">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 id="catalog" class="text-2xl font-bold text-foreground dark:text-foreground-light">Catalog Summary</h2>
-            <p class="mt-2 text-foreground/70 dark:text-foreground-light/70">
-              {componentDocs.length} documented components across {categories.length} categories.
-            </p>
-          </div>
-          <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/docs/components/">
-            Open searchable catalog
-          </a>
-        </div>
+ <section class="mt-16" aria-labelledby="catalog">
+ <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+ <div>
+ <h2 id="catalog" class="text-2xl font-bold text-foreground">Catalog Summary</h2>
+ <p class="mt-2 text-muted-foreground">
+ {componentDocs.length} documented components across {categories.length} categories.
+ </p>
+ </div>
+ <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/docs/components/">
+ Open searchable catalog
+ </a>
+ </div>
 
-        <div class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {componentsByCategory.map(({ category, components }) => (
-            <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
-              <h3 class="font-semibold text-foreground dark:text-foreground-light">
-                {category} <span class="text-sm font-normal text-foreground/55 dark:text-foreground-light/60">({components.length})</span>
-              </h3>
-              <ul class="mt-4 grid gap-2 text-sm text-foreground/70 dark:text-foreground-light/70 sm:grid-cols-2">
-                {components.slice(0, 8).map((component: ComponentDoc) => (
-                  <li class="truncate">{component.name}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
+ <div class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+ {componentsByCategory.map(({ category, components }) => (
+ <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <h3 class="font-semibold text-foreground">
+ {category} <span class="text-sm font-normal text-subtle-foreground">({components.length})</span>
+ </h3>
+ <ul class="mt-4 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
+ {components.slice(0, 8).map((component: ComponentDoc) => (
+ <li class="truncate">{component.name}</li>
+ ))}
+ </ul>
+ </article>
+ ))}
+ </div>
+ </section>
 
-      <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark" aria-labelledby="anti-patterns">
-        <h2 id="anti-patterns" class="text-2xl font-bold text-foreground dark:text-foreground-light">Anti-Patterns</h2>
-        <ul class="mt-5 grid gap-3 text-sm text-foreground/75 dark:text-foreground-light/75 md:grid-cols-2">
-          <li>Do not add new component folders for one-off wrappers.</li>
-          <li>Do not place component files directly under <code>src/components</code>; use the canonical layer folders.</li>
-          <li>Do not document components unless the catalog path exists and the category matches the folder.</li>
-          <li>Do not advertise variants that are not supported by the component prop types.</li>
-          <li>Do not use raw green, red, blue, gray, white, or black utilities in reusable components.</li>
-          <li>Do not create duplicate files with a <code>* 2.*</code> suffix; the lint gate blocks them.</li>
-        </ul>
-      </section>
-    </Container>
-  </Section>
+ <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark" aria-labelledby="anti-patterns">
+ <h2 id="anti-patterns" class="text-2xl font-bold text-foreground">Anti-Patterns</h2>
+ <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
+ <li>Do not add new component folders for one-off wrappers.</li>
+ <li>Do not place component files directly under <code>src/components</code>; use the canonical layer folders.</li>
+ <li>Do not document components unless the catalog path exists and the category matches the folder.</li>
+ <li>Do not advertise variants that are not supported by the component prop types.</li>
+ <li>Do not use raw green, red, blue, gray, white, or black utilities in reusable components.</li>
+ <li>Do not create duplicate files with a <code>* 2.*</code> suffix; the lint gate blocks them.</li>
+ </ul>
+ </section>
+ </Container>
+ </Section>
 </BaseLayout>

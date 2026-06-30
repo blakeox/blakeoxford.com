@@ -77,10 +77,10 @@ async function withRetry<T>(
  * @example
  * ```tsx
  * const LazyChart = createLazyComponent({
- *   factory: () => import('./Chart'),
- *   fallback: <ChartSkeleton />,
- *   minimumDelay: 200,
- *   displayName: 'Chart'
+ * factory: () => import('./Chart'),
+ * fallback: <ChartSkeleton />,
+ * minimumDelay: 200,
+ * displayName: 'Chart'
  * });
  * 
  * // Usage
@@ -162,7 +162,7 @@ export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }): 
  * ```tsx
  * // Preload on hover
  * <button onMouseEnter={() => preloadComponent(() => import('./Modal'))}>
- *   Open Modal
+ * Open Modal
  * </button>
  * ```
  */

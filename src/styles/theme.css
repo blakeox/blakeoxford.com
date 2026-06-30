@@ -67,12 +67,17 @@
   --color-accent-dark-fallback: #0e7490;
   
   /* Foreground colors */
-  --color-foreground: oklch(0.2 0.02 264);
-  --color-foreground-fallback: #111827;
-  --color-foreground-strong: oklch(0.15 0.02 264);
-  --color-foreground-strong-fallback: #0f172a;
+  --color-foreground: oklch(0.18 0.02 264);
+  --color-foreground-fallback: #0f172a;
+  --color-foreground-strong: oklch(0.14 0.02 264);
+  --color-foreground-strong-fallback: #020617;
   --color-foreground-light: oklch(0.98 0 0);
   --color-foreground-light-fallback: #f9fafb;
+  /* Muted / subtle text – WCAG AA on --color-background (≥4.5:1 body) */
+  --color-muted-foreground: oklch(0.38 0.02 264);
+  --color-muted-foreground-fallback: #374151;
+  --color-subtle-foreground: oklch(0.45 0.02 264);
+  --color-subtle-foreground-fallback: #4b5563;
   
   /* Background colors */
   --color-background: oklch(0.98 0.005 264);
@@ -238,6 +243,8 @@
   --bg: var(--color-background);
   --fg: var(--color-foreground);
   --fg-strong: var(--color-foreground-strong);
+  --fg-muted: var(--color-muted-foreground);
+  --fg-subtle: var(--color-subtle-foreground);
   --surface: var(--color-surface);
   --surface-subtle: var(--color-surface-subtle);
   --border: var(--border-color);
@@ -409,8 +416,6 @@
     --color-surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
     --color-neutral: var(--color-neutral-light, var(--color-neutral-light-fallback));
     --color-neutral-dark: var(--color-neutral, var(--color-neutral-fallback));
-    --color-on-accent: oklch(0.92 0.02 196);
-    --color-on-accent-fallback: #e6faff;
     --shadow-chroma: 0 0 0 / 0.6;
     --glass-surface-bg: var(--glass-surface-bg-dark);
     --glass-border: var(--glass-border-dark);
@@ -420,6 +425,12 @@
     --bg: var(--color-background-dark, var(--color-background-dark-fallback));
     --fg: var(--color-foreground-light, var(--color-foreground-light-fallback));
     --fg-strong: var(--color-foreground-light, var(--color-foreground-light-fallback));
+    --color-muted-foreground: oklch(0.78 0.01 264);
+    --color-muted-foreground-fallback: #cbd5e1;
+    --color-subtle-foreground: oklch(0.80 0.01 264);
+    --color-subtle-foreground-fallback: #b6c2d3;
+    --fg-muted: var(--color-muted-foreground);
+    --fg-subtle: var(--color-subtle-foreground);
     --surface: var(--color-surface-dark, var(--color-surface-dark-fallback));
     --surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
     --border: var(--border-color-dark);
@@ -587,3 +598,39 @@
     padding-inline-start: var(--space-4, 1rem);
   }
 } /* End @layer utilities :has() patterns */
+
+/* Register design tokens as Tailwind v4 theme colors (generates bg-*, text-*, border-* utilities) */
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-light: var(--color-secondary-light);
+  --color-secondary-dark: var(--color-secondary-dark);
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --color-accent-dark: var(--color-accent-dark);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-error: var(--color-error);
+  --color-info: var(--color-info);
+  --color-surface: var(--color-surface);
+  --color-surface-dark: var(--color-surface-dark);
+  --color-surface-subtle: var(--color-surface-subtle);
+  --color-surface-dark-subtle: var(--color-surface-dark-subtle);
+  --color-background: var(--color-background);
+  --color-background-dark: var(--color-background-dark);
+  --color-foreground: var(--color-foreground);
+  --color-foreground-strong: var(--color-foreground-strong);
+  --color-foreground-light: var(--color-foreground-light);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-subtle-foreground: var(--color-subtle-foreground);
+  --color-on-accent: var(--color-on-accent);
+  --color-on-primary: var(--color-on-primary);
+  --color-on-dark: var(--color-on-dark);
+  --color-neutral: var(--color-neutral);
+  --color-neutral-light: var(--color-neutral-light);
+  --color-neutral-dark: var(--color-neutral-dark);
+  --color-border: var(--border-color);
+  --color-border-dark: var(--border-color-dark);
+}

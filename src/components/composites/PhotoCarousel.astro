@@ -47,34 +47,34 @@ import NvidiaPrizeVertical from '@/assets/images/carousel/nvidia-prize-download-
 
 // Array of all images
 const allImages = [
-  Appalatia, BlakeOScaled, CES, CESFront, CESInside, HongKong,
-  IMG0729, IMG2579, IMG2790, IMG4607, IMG5981, IMG9139, IMG9191,
-  SaoPaulo, ShangHaiOldNew, BlakeDetroit, BlakeMilan, ChinaProfile,
-  NvidiaPrize, NvidiaPrizeVertical
+ Appalatia, BlakeOScaled, CES, CESFront, CESInside, HongKong,
+ IMG0729, IMG2579, IMG2790, IMG4607, IMG5981, IMG9139, IMG9191,
+ SaoPaulo, ShangHaiOldNew, BlakeDetroit, BlakeMilan, ChinaProfile,
+ NvidiaPrize, NvidiaPrizeVertical
 ];
 
 // Shuffle function
 function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
+ const shuffled = [...array];
+ for (let i = shuffled.length - 1; i > 0; i--) {
+ const j = Math.floor(Math.random() * (i + 1));
+ [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+ }
+ return shuffled;
 }
 
 // Configuration
 const CONFIG = {
-  mobile: {
-    count: 5,
-    // Increased for high-DPI mobile screens (Retina, etc.)
-    imageSize: { width: 800, height: 800 }
-  },
-  desktop: {
-    // Increased count for full viewport height - show more photos per column
-    visiblePerColumn: 4,
-    imageSize: { width: 640, height: 640 }
-  }
+ mobile: {
+ count: 5,
+ // Increased for high-DPI mobile screens (Retina, etc.)
+ imageSize: { width: 800, height: 800 }
+ },
+ desktop: {
+ // Increased count for full viewport height - show more photos per column
+ visiblePerColumn: 4,
+ imageSize: { width: 640, height: 640 }
+ }
 };
 
 // Get random images for mobile view
@@ -88,7 +88,7 @@ const columnBImages = shuffledImages.slice(halfLength);
 
 // Create seamless loops
 function createSeamlessLoop<T>(images: T[]): T[] {
-  return [...images, ...images]; // Simple doubling for seamless loop
+ return [...images, ...images]; // Simple doubling for seamless loop
 }
 
 const columnALoop = createSeamlessLoop(columnAImages);
@@ -97,183 +97,183 @@ const mobileLoop = createSeamlessLoop(mobileImages);
 ---
 
 <div class="photo-carousel relative w-full h-full min-h-[280px] md:min-h-[320px] lg:min-h-[400px] overflow-hidden select-none" role="region" aria-label="Photo carousel" aria-live="off">
-  <!-- Mobile: horizontal slow scroll (show only on small screens) -->
-  <div class="absolute inset-0 flex items-center mobile-carousel pt-16 md:pt-0">
-    <ul class="flex gap-4 animate-carousel-x-slow" role="list" aria-hidden="true">
-      {mobileLoop.slice(0, CONFIG.mobile.count).map((image, index) => (
-        <li class="h-[40vh] w-[80vw] flex-shrink-0" role="listitem">
-          <div class="relative w-full h-full overflow-hidden rounded-xl shadow-lg">
-            <Image
-              src={image}
-              alt={`Carousel photo ${index + 1}`}
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              width={CONFIG.mobile.imageSize.width}
-              height={CONFIG.mobile.imageSize.height}
-              loading="lazy"
-              decoding="async"
-              fetchpriority="low"
-            />
-          </div>
-        </li>
-      ))}
-    </ul>
-  </div>
+ <!-- Mobile: horizontal slow scroll (show only on small screens) -->
+ <div class="absolute inset-0 flex items-center mobile-carousel pt-16 md:pt-0">
+ <ul class="flex gap-4 animate-carousel-x-slow" role="list" aria-hidden="true">
+ {mobileLoop.slice(0, CONFIG.mobile.count).map((image, index) => (
+ <li class="h-[40vh] w-[80vw] flex-shrink-0" role="listitem">
+ <div class="relative w-full h-full overflow-hidden rounded-xl shadow-lg">
+ <Image
+ src={image}
+ alt={`Carousel photo ${index + 1}`}
+ class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+ width={CONFIG.mobile.imageSize.width}
+ height={CONFIG.mobile.imageSize.height}
+ loading="lazy"
+ decoding="async"
+ fetchpriority="low"
+ />
+ </div>
+ </li>
+ ))}
+ </ul>
+ </div>
 
-  <!-- Desktop: 3 vertical columns (show on larger screens) -->
-  <div class="absolute inset-0 gap-4 w-full h-full desktop-carousel pt-16 md:pt-8">
-    <!-- Column 1 – scrolling up -->
-    <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list" aria-hidden="true">
-      {columnALoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
-        <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
-          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-lg">
-            <Image
-              src={image}
-              alt={`Carousel photo ${index + 1}`}
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              width={CONFIG.desktop.imageSize.width}
-              height={CONFIG.desktop.imageSize.height}
-              loading="lazy"
-              decoding="async"
-              fetchpriority="low"
-            />
-          </div>
-        </li>
-      ))}
-    </ul>
+ <!-- Desktop: 3 vertical columns (show on larger screens) -->
+ <div class="absolute inset-0 gap-4 w-full h-full desktop-carousel pt-16 md:pt-8">
+ <!-- Column 1 – scrolling up -->
+ <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list" aria-hidden="true">
+ {columnALoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
+ <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
+ <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-lg">
+ <Image
+ src={image}
+ alt={`Carousel photo ${index + 1}`}
+ class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+ width={CONFIG.desktop.imageSize.width}
+ height={CONFIG.desktop.imageSize.height}
+ loading="lazy"
+ decoding="async"
+ fetchpriority="low"
+ />
+ </div>
+ </li>
+ ))}
+ </ul>
 
-    <!-- Column 2 – scrolling down -->
-    <ul class="flex flex-col gap-4 animate-carousel-down-slow flex-1" role="list" aria-hidden="true">
-      {columnBLoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
-        <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
-          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-lg">
-            <Image
-              src={image}
-              alt={`Carousel photo ${index + 1}`}
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              width={CONFIG.desktop.imageSize.width}
-              height={CONFIG.desktop.imageSize.height}
-              loading="lazy"
-              decoding="async"
-              fetchpriority="low"
-            />
-          </div>
-        </li>
-      ))}
-    </ul>
+ <!-- Column 2 – scrolling down -->
+ <ul class="flex flex-col gap-4 animate-carousel-down-slow flex-1" role="list" aria-hidden="true">
+ {columnBLoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
+ <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
+ <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-lg">
+ <Image
+ src={image}
+ alt={`Carousel photo ${index + 1}`}
+ class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+ width={CONFIG.desktop.imageSize.width}
+ height={CONFIG.desktop.imageSize.height}
+ loading="lazy"
+ decoding="async"
+ fetchpriority="low"
+ />
+ </div>
+ </li>
+ ))}
+ </ul>
 
-    <!-- Column 3 – scrolling up (same direction as column 1) -->
-    <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list" aria-hidden="true">
-      {shuffledImages.slice(Math.floor(shuffledImages.length / 3), Math.floor(shuffledImages.length * 2 / 3)).map((image, index) => (
-        <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
-          <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-lg">
-            <Image
-              src={image}
-              alt={`Carousel photo ${index + 1}`}
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              width={CONFIG.desktop.imageSize.width}
-              height={CONFIG.desktop.imageSize.height}
-              loading="lazy"
-              decoding="async"
-              fetchpriority="low"
-            />
-          </div>
-        </li>
-      ))}
-    </ul>
-  </div>
+ <!-- Column 3 – scrolling up (same direction as column 1) -->
+ <ul class="flex flex-col gap-4 animate-carousel-up-slow flex-1" role="list" aria-hidden="true">
+ {shuffledImages.slice(Math.floor(shuffledImages.length / 3), Math.floor(shuffledImages.length * 2 / 3)).map((image, index) => (
+ <li class="w-full aspect-square mx-auto flex-shrink-0" role="listitem">
+ <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-lg">
+ <Image
+ src={image}
+ alt={`Carousel photo ${index + 1}`}
+ class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+ width={CONFIG.desktop.imageSize.width}
+ height={CONFIG.desktop.imageSize.height}
+ loading="lazy"
+ decoding="async"
+ fetchpriority="low"
+ />
+ </div>
+ </li>
+ ))}
+ </ul>
+ </div>
 
-  <span class="sr-only">Continuously scrolling photo gallery</span>
+ <span class="sr-only">Continuously scrolling photo gallery</span>
 </div>
 
 <style is:global>
 /* Viewport-based responsive carousel behavior */
 .mobile-carousel {
-  display: flex !important;
+ display: flex !important;
 }
 
 .desktop-carousel {
-  display: none !important;
+ display: none !important;
 }
 
 /* Show desktop twin columns on viewport width >= 768px regardless of container size */
 @media (min-width: 768px) {
-  .mobile-carousel {
-    display: none !important;
-  }
+ .mobile-carousel {
+ display: none !important;
+ }
 
-  .desktop-carousel {
-    display: flex !important;
-  }
+ .desktop-carousel {
+ display: flex !important;
+ }
 }
 
 /* Ensure columns have proper overflow and padding for rounded corners */
 .desktop-carousel ul {
-  padding: 1rem 0;
-  margin: -1rem 0;
-  /* Allow content to extend slightly beyond container for proper rounded corners */
-  overflow: visible;
+ padding: 1rem 0;
+ margin: -1rem 0;
+ /* Allow content to extend slightly beyond container for proper rounded corners */
+ overflow: visible;
 }
 
 /* Parent container should clip overflow only at the very edges */
 .desktop-carousel {
-  overflow: hidden;
-  padding: 1rem 0;
-  margin: -1rem 0;
+ overflow: hidden;
+ padding: 1rem 0;
+ margin: -1rem 0;
 }
 
 /* Vertical loop animations - adjusted for proper padding */
 @keyframes carousel-up-slow {
-  from { transform: translateY(0); }
-  to { transform: translateY(-50%); }
+ from { transform: translateY(0); }
+ to { transform: translateY(-50%); }
 }
 
 @keyframes carousel-down-slow {
-  from { transform: translateY(-50%); }
-  to { transform: translateY(0); }
+ from { transform: translateY(-50%); }
+ to { transform: translateY(0); }
 }
 
 
 .animate-carousel-up-slow {
-  animation: carousel-up-slow 90s linear infinite;
+ animation: carousel-up-slow 90s linear infinite;
 }
 
 .animate-carousel-down-slow {
-  animation: carousel-down-slow 90s linear infinite;
+ animation: carousel-down-slow 90s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-carousel-x-slow,
-  .animate-carousel-up-slow,
-  .animate-carousel-down-slow {
-    animation: none !important;
-  }
+ .animate-carousel-x-slow,
+ .animate-carousel-up-slow,
+ .animate-carousel-down-slow {
+ animation: none !important;
+ }
 }
 
 /* Horizontal loop (mobile & tablet) */
 @keyframes carousel-x-slow {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+ from { transform: translateX(0); }
+ to { transform: translateX(-50%); }
 }
 
 .animate-carousel-x-slow {
-  animation: carousel-x-slow 70s linear infinite;
+ animation: carousel-x-slow 70s linear infinite;
 }
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .animate-carousel-up-slow,
-  .animate-carousel-down-slow,
-  .animate-carousel-x-slow {
-    animation: none;
-  }
+ .animate-carousel-up-slow,
+ .animate-carousel-down-slow,
+ .animate-carousel-x-slow {
+ animation: none;
+ }
 }
 
 /* Optimize performance */
 .animate-carousel-up-slow,
 .animate-carousel-down-slow,
 .animate-carousel-x-slow {
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+ will-change: transform;
+ backface-visibility: hidden;
+ transform: translateZ(0);
 }
 </style>

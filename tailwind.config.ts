@@ -93,6 +93,8 @@ const config: Config = {
         foreground: 'var(--color-foreground, var(--color-foreground-fallback, #111827))',
         'foreground-strong': 'var(--color-foreground-strong, var(--color-foreground-strong-fallback, #0f172a))',
         'foreground-light': 'var(--color-foreground-light, var(--color-foreground-light-fallback, #f9fafb))',
+        'muted-foreground': 'var(--color-muted-foreground, var(--color-muted-foreground-fallback, #374151))',
+        'subtle-foreground': 'var(--color-subtle-foreground, var(--color-subtle-foreground-fallback, #4b5563))',
         'on-accent': 'var(--color-on-accent, var(--color-on-accent-fallback, #051b2a))',
         'on-primary': 'var(--color-on-primary, var(--color-on-primary-fallback, #ffffff))',
         'on-secondary': 'var(--color-on-secondary, var(--color-on-secondary-fallback, #062433))',

@@ -9,76 +9,76 @@ import type { HTMLAttributes } from 'astro/types';
  *
  * @example
  * <Section padding="lg" container="lg">
- *   <h2>Section Title</h2>
- *   <p>Section content...</p>
+ * <h2>Section Title</h2>
+ * <p>Section content...</p>
  * </Section>
  */
 
 export interface Props extends HTMLAttributes<'section'> {
-  /** Vertical padding size */
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  /** Container size (false for full width) */
-  container?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | false;
-  /** Background color */
-  background?: 'default' | 'surface' | 'gradient' | 'glass';
-  /** HTML element type */
-  as?: 'section' | 'div' | 'article' | 'aside' | 'main';
-  /** Additional CSS classes */
-  class?: string;
-  /** ARIA labelledby */
-  'aria-labelledby'?: string;
+ /** Vertical padding size */
+ padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+ /** Container size (false for full width) */
+ container?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | false;
+ /** Background color */
+ background?: 'default' | 'surface' | 'gradient' | 'glass';
+ /** HTML element type */
+ as?: 'section' | 'div' | 'article' | 'aside' | 'main';
+ /** Additional CSS classes */
+ class?: string;
+ /** ARIA labelledby */
+ 'aria-labelledby'?: string;
 }
 
 const {
-  padding = 'lg',
-  container = false,
-  background = 'default',
-  as: Element = 'section',
-  class: className = '',
-  'aria-labelledby': ariaLabelledby,
-  ...rest
+ padding = 'lg',
+ container = false,
+ background = 'default',
+ as: Element = 'section',
+ class: className = '',
+ 'aria-labelledby': ariaLabelledby,
+ ...rest
 } = Astro.props as Props;
 
 // Padding styles
 const paddingStyles = {
-  none: '',
-  sm: 'py-8 sm:py-12',
-  md: 'py-12 sm:py-16',
-  lg: 'py-16 sm:py-20',
-  xl: 'py-20 sm:py-24 lg:py-28',
+ none: '',
+ sm: 'py-8 sm:py-12',
+ md: 'py-12 sm:py-16',
+ lg: 'py-16 sm:py-20',
+ xl: 'py-20 sm:py-24 lg:py-28',
 } as const;
 
 // Background styles
 const backgroundStyles = {
-  default: '',
-  surface: 'bg-surface/50 dark:bg-surface-dark/50',
-  gradient: 'bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-surface-dark dark:to-background-dark',
-  glass: 'border border-[color:var(--border)]/40 bg-[color:var(--glass-surface-bg)]/85 shadow-md backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/75',
+ default: '',
+ surface: 'bg-surface/50 dark:bg-surface-dark/50',
+ gradient: 'bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-background-dark dark:to-background-dark',
+ glass: 'border border-[color:var(--border)]/40 bg-[color:var(--glass-surface-bg)]/85 shadow-md backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/75',
 } as const;
 
 // Container size mapping (matching Container component standards)
 const containerStyles = {
-  sm: 'max-w-2xl',
-  md: 'max-w-4xl',
-  lg: 'max-w-6xl',
-  xl: 'max-w-7xl',
-  full: 'max-w-none',
+ sm: 'max-w-2xl',
+ md: 'max-w-4xl',
+ lg: 'max-w-6xl',
+ xl: 'max-w-7xl',
+ full: 'max-w-none',
 } as const;
 
 const classes = [
-  paddingStyles[padding],
-  backgroundStyles[background],
-  !container && 'w-full',
-  className,
+ paddingStyles[padding],
+ backgroundStyles[background],
+ !container && 'w-full',
+ className,
 ].filter(Boolean).join(' ');
 ---
 
 <Element class={classes} aria-labelledby={ariaLabelledby} {...rest}>
-  {container ? (
-    <div class={`${containerStyles[container]} w-full mx-auto px-4 sm:px-6 lg:px-8`}>
-      <slot />
-    </div>
-  ) : (
-    <slot />
-  )}
+ {container ? (
+ <div class={`${containerStyles[container]} w-full mx-auto px-4 sm:px-6 lg:px-8`}>
+ <slot />
+ </div>
+ ) : (
+ <slot />
+ )}
 </Element>

@@ -8,84 +8,84 @@
  * 
  * @example Basic feature card
  * <FeatureCard variant="accent" icon="🚀" title="Fast Performance">
- *   <p>Lightning-fast page loads with Astro's island architecture.</p>
+ * <p>Lightning-fast page loads with Astro's island architecture.</p>
  * </FeatureCard>
  * 
  * @example With numbered badge and container queries
  * <div class="@container">
- *   <FeatureCard variant="primary" badge="1" title="Step One">
- *     <p>Get started by installing dependencies.</p>
- *   </FeatureCard>
+ * <FeatureCard variant="primary" badge="1" title="Step One">
+ * <p>Get started by installing dependencies.</p>
+ * </FeatureCard>
  * </div>
  * 
  * @example Responsive layout with container queries
  * <div class="@container">
- *   <FeatureCard 
- *     variant="accent" 
- *     class="@md:flex @md:flex-row @md:items-center @md:gap-8"
- *   >
- *     <div>Content adapts to container width</div>
- *   </FeatureCard>
+ * <FeatureCard 
+ * variant="accent" 
+ * class="@md:flex @md:flex-row @md:items-center @md:gap-8"
+ * >
+ * <div>Content adapts to container width</div>
+ * </FeatureCard>
  * </div>
  */
 
 interface Props {
-  /** Color variant */
-  variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error';
-  /** Icon (emoji or icon class) */
-  icon?: string;
-  /** Card title */
-  title?: string;
-  /** Card description */
-  description?: string;
-  /** Optional numbered badge */
-  badge?: string | number;
-  /** Enable hover effects */
-  hover?: boolean;
-  /** Additional CSS classes */
-  class?: string;
+ /** Color variant */
+ variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error';
+ /** Icon (emoji or icon class) */
+ icon?: string;
+ /** Card title */
+ title?: string;
+ /** Card description */
+ description?: string;
+ /** Optional numbered badge */
+ badge?: string | number;
+ /** Enable hover effects */
+ hover?: boolean;
+ /** Additional CSS classes */
+ class?: string;
 }
 
 const { 
-  variant = 'accent', 
-  icon, 
-  title,
-  description,
-  badge,
-  hover = true,
-  class: className = '' 
+ variant = 'accent', 
+ icon, 
+ title,
+ description,
+ badge,
+ hover = true,
+ class: className = '' 
 } = Astro.props;
 
 const variantClasses = {
-  accent: 'from-accent/10 to-accent/5 dark:from-accent/10 dark:to-accent/5 border-accent/30',
-  primary: 'from-primary/10 to-primary/5 dark:from-primary/10 dark:to-primary/5 border-primary/30',
-  success: 'from-success/10 to-success/5 border-success/30',
-  warning: 'from-warning/15 to-warning/5 border-warning/40',
-  info: 'from-info/10 to-info/5 border-info/30',
-  error: 'from-error/10 to-error/5 border-error/30',
+ accent: 'from-accent/10 to-accent/5 dark:from-accent/10 dark:to-accent/5 border-accent/30',
+ primary: 'from-primary/10 to-primary/5 dark:from-primary/10 dark:to-primary/5 border-primary/30',
+ success: 'from-success/10 to-success/5 border-success/30',
+ warning: 'from-warning/15 to-warning/5 border-warning/40',
+ info: 'from-info/10 to-info/5 border-info/30',
+ error: 'from-error/10 to-error/5 border-error/30',
 };
 
 const variantTextColors = {
-  accent: 'text-accent dark:text-accent-light',
-  primary: 'text-primary dark:text-primary-light',
-  success: 'text-success-dark dark:text-success-light',
-  warning: 'text-warning-dark dark:text-warning-light',
-  info: 'text-info-dark dark:text-info-light',
-  error: 'text-error-dark dark:text-error-light',
+ accent: 'text-accent dark:text-accent-light',
+ primary: 'text-primary dark:text-primary-light',
+ success: 'text-success-dark dark:text-success-light',
+ warning: 'text-warning-dark dark:text-warning-light',
+ info: 'text-info-dark dark:text-info-light',
+ error: 'text-error-dark dark:text-error-light',
 };
 
 const badgeColors = {
-  accent: 'bg-accent text-on-accent',
-  primary: 'bg-primary text-on-primary',
-  success: 'bg-success-dark text-on-primary dark:bg-success',
-  warning: 'bg-warning text-foreground',
-  info: 'bg-info-dark text-on-primary dark:bg-info',
-  error: 'bg-error-dark text-on-primary dark:bg-error',
+ accent: 'bg-accent text-on-accent',
+ primary: 'bg-primary text-on-primary',
+ success: 'bg-success-dark text-on-primary dark:bg-success',
+ warning: 'bg-warning text-foreground',
+ info: 'bg-info-dark text-on-primary dark:bg-info',
+ error: 'bg-error-dark text-on-primary dark:bg-error',
 };
 
 const hoverClasses = hover 
-  ? 'hover:shadow-lg motion-safe:hover:-translate-y-1 transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200'
-  : '';
+ ? 'hover:shadow-lg motion-safe:hover:-translate-y-1 transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200'
+ : '';
 
 // Container query responsive classes
 const responsiveClasses = '@container @md:p-10';
@@ -94,25 +94,25 @@ const classes = `group relative overflow-hidden bg-gradient-to-br ${variantClass
 ---
 
 <div class={classes}>
-  {badge && (
-    <div class={`absolute top-4 right-4 w-10 h-10 @sm:w-12 @sm:h-12 ${badgeColors[variant]} rounded-full flex items-center justify-center font-bold text-lg @sm:text-xl shadow-sm`}>
-      {badge}
-    </div>
-  )}
-  
-  {icon && <div class="text-5xl @sm:text-6xl mb-3 @sm:mb-4">{icon}</div>}
-  
-  {title && (
-    <h3 class={`text-xl @sm:text-2xl font-bold mb-2 @sm:mb-3 ${variantTextColors[variant]}`}>
-      {title}
-    </h3>
-  )}
-  
-  {description && (
-    <p class="text-base @sm:text-lg leading-relaxed opacity-85">
-      {description}
-    </p>
-  )}
-  
-  <slot />
+ {badge && (
+ <div class={`absolute top-4 right-4 w-10 h-10 @sm:w-12 @sm:h-12 ${badgeColors[variant]} rounded-full flex items-center justify-center font-bold text-lg @sm:text-xl shadow-sm`}>
+ {badge}
+ </div>
+ )}
+ 
+ {icon && <div class="text-5xl @sm:text-6xl mb-3 @sm:mb-4">{icon}</div>}
+ 
+ {title && (
+ <h3 class={`text-xl @sm:text-2xl font-bold mb-2 @sm:mb-3 ${variantTextColors[variant]}`}>
+ {title}
+ </h3>
+ )}
+ 
+ {description && (
+ <p class="text-base @sm:text-lg leading-relaxed opacity-85">
+ {description}
+ </p>
+ )}
+ 
+ <slot />
 </div>

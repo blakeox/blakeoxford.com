@@ -12,70 +12,70 @@ const { post, align = 'left' } = Astro.props as BlogPostRowProps;
 const { slug, data } = post;
 ---
 <article class={`group relative flex flex-col lg:flex-row items-start w-full gap-6 md:gap-8 lg:gap-12 xl:gap-16 overflow-hidden rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${align === 'right' ? 'lg:flex-row-reverse' : ''}`}>
-  <GradientOverlay variant='hover-card' direction='br' />
+ <GradientOverlay variant='hover-card' direction='br' />
 
-  <!-- Hero Image Section -->
-  {data.heroImage && (
-    <div class="w-full lg:w-2/5 xl:w-1/2 flex-shrink-0">
-      <div class="relative aspect-[16/10] lg:aspect-[4/3] xl:aspect-[16/10] overflow-hidden">
-        <OptimizedImage
-          src={data.heroImage}
-          alt={`Hero image for ${data.title}`}
-          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-          loading="lazy"
-        />
-        <GradientOverlay variant='image-fade' direction='t' class='lg:hidden' />
-      </div>
-    </div>
-  )}
+ <!-- Hero Image Section -->
+ {data.heroImage && (
+ <div class="w-full lg:w-2/5 xl:w-1/2 flex-shrink-0">
+ <div class="relative aspect-[16/10] lg:aspect-[4/3] xl:aspect-[16/10] overflow-hidden">
+ <OptimizedImage
+ src={data.heroImage}
+ alt={`Hero image for ${data.title}`}
+ class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+ loading="lazy"
+ />
+ <GradientOverlay variant='image-fade' direction='t' class='lg:hidden' />
+ </div>
+ </div>
+ )}
 
-  <!-- Content Section -->
-  <div class={`relative z-[1] flex flex-1 flex-col gap-6 px-7 pb-8 pt-7 sm:px-8 ${!data.heroImage ? 'w-full' : ''}`}>
-    <div class="space-y-4">
-      <Flex wrap align="center" gap="sm" class="text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
-        {data.pubDate && (
-          <time class="inline-flex items-center" datetime={formatDateISO(data.pubDate)}>
-            {formatDateShort(data.pubDate)}
-          </time>
-        )}
-      </Flex>
+ <!-- Content Section -->
+ <div class={`relative z-[1] flex flex-1 flex-col gap-6 px-7 pb-8 pt-7 sm:px-8 ${!data.heroImage ? 'w-full' : ''}`}>
+ <div class="space-y-4">
+ <Flex wrap align="center" gap="sm" class="text-xs font-semibold uppercase tracking-label text-subtle-foreground">
+ {data.pubDate && (
+ <time class="inline-flex items-center" datetime={formatDateISO(data.pubDate)}>
+ {formatDateShort(data.pubDate)}
+ </time>
+ )}
+ </Flex>
 
-      <h2 class="text-pretty font-heading text-2xl sm:text-3xl lg:text-4xl font-semibold text-foreground dark:text-foreground-light leading-tight group-hover:text-accent dark:group-hover:text-accent-light transition-colors duration-300">
-        <a href={`/blog/${slug}/`} class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-          {data.title}
-        </a>
-      </h2>
+ <h2 class="text-pretty font-heading text-2xl sm:text-3xl lg:text-4xl font-semibold text-foreground leading-tight group-hover:text-accent dark:group-hover:text-accent-light transition-colors duration-300">
+ <a href={`/blog/${slug}/`} class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+ {data.title}
+ </a>
+ </h2>
 
-      {data.description && (
-        <p class="text-sm leading-relaxed text-foreground/80 dark:text-foreground-light/80 [display:-webkit-box] [-webkit-line-clamp:4] [-webkit-box-orient:vertical] overflow-hidden">
-          {data.description}
-        </p>
-      )}
-    </div>
+ {data.description && (
+ <p class="text-sm leading-relaxed text-muted-foreground [display:-webkit-box] [-webkit-line-clamp:4] [-webkit-box-orient:vertical] overflow-hidden">
+ {data.description}
+ </p>
+ )}
+ </div>
 
-    {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
-      <Flex as="ul" wrap align="center" gap="xs" class="text-xxs font-semibold uppercase tracking-wide text-foreground/60 dark:text-foreground-light/65" aria-label="Post tags">
-        {data.tags.slice(0, 3).map((tag: string) => (
-          <li class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/30 dark:bg-surface-dark-subtle">
-            <span>{tag}</span>
-          </li>
-        ))}
-        {data.tags.length > 3 && (
-          <li class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 text-foreground/55 dark:bg-surface-dark-subtle dark:text-foreground-light/60">
-            +{data.tags.length - 3}
-          </li>
-        )}
-      </Flex>
-    )}
+ {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
+ <Flex as="ul" wrap align="center" gap="xs" class="text-xxs font-semibold uppercase tracking-wide text-subtle-foreground" aria-label="Post tags">
+ {data.tags.slice(0, 3).map((tag: string) => (
+ <li class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/30 dark:bg-surface-dark-subtle">
+ <span>{tag}</span>
+ </li>
+ ))}
+ {data.tags.length > 3 && (
+ <li class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 text-subtle-foreground dark:bg-surface-dark-subtle">
+ +{data.tags.length - 3}
+ </li>
+ )}
+ </Flex>
+ )}
 
-    <div class="mt-auto flex items-center justify-between gap-4">
-      <span class="text-xs font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/65">
-        Read article
-      </span>
-      <Button variant="outline" href={`/blog/${slug}/`}>
-        Explore
-        <ArrowRightIcon class="opacity-90" />
-      </Button>
-    </div>
-  </div>
+ <div class="mt-auto flex items-center justify-between gap-4">
+ <span class="text-xs font-semibold uppercase tracking-label text-subtle-foreground">
+ Read article
+ </span>
+ <Button variant="outline" href={`/blog/${slug}/`}>
+ Explore
+ <ArrowRightIcon class="opacity-90" />
+ </Button>
+ </div>
+ </div>
 </article>

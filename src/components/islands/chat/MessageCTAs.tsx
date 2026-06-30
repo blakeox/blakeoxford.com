@@ -19,9 +19,9 @@
  * @example Matched CTA (hiring query)
  * ```tsx
  * <MatchedCTA
- *   message={chatMessage}
- *   messages={conversationHistory}
- *   sources={citedSources}
+ * message={chatMessage}
+ * messages={conversationHistory}
+ * sources={citedSources}
  * />
  * // Renders "Interested in hiring?" CTA if query mentions "hire", "work together", etc.
  * ```
@@ -29,9 +29,9 @@
  * @example Follow-up suggestions
  * ```tsx
  * <FollowUpSuggestions
- *   sources={citedSources}
- *   setInputValue={(query) => setInput(query)}
- *   sendQuery={(query) => submitQuery(query)}
+ * sources={citedSources}
+ * setInputValue={(query) => setInput(query)}
+ * sendQuery={(query) => submitQuery(query)}
  * />
  * // Generates suggestions like "Tell me more about the [Project] project"
  * ```
@@ -39,9 +39,9 @@
  * @example Contextual CTAs
  * ```tsx
  * <ContextualCTAs
- *   sources={citedSources}
- *   siteHostname="blakeoxford.com"
- *   messagesCount={conversationLength}
+ * sources={citedSources}
+ * siteHostname="blakeoxford.com"
+ * messagesCount={conversationLength}
  * />
  * // Shows "Contact Blake" after 5+ messages or "Explore more projects" if project sources cited
  * ```
@@ -111,7 +111,7 @@ export const MatchedCTA = memo(function MatchedCTA({
 					{matchedCTA.icon}
 				</span>
 				<div className="flex-1">
-					<p className="mb-2 text-sm text-foreground/85 dark:text-foreground-light/80">{matchedCTA.message}</p>
+					<p className="mb-2 text-sm text-muted-foreground">{matchedCTA.message}</p>
 					<a
 						href={matchedCTA.ctaLink}
 						className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors duration-200 hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 dark:focus:ring-offset-background-dark"

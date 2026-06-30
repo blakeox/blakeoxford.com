@@ -16,17 +16,17 @@ import SocialLink from '../components/primitives/SocialLink.astro';
 import { CANONICAL_URLS } from '../config/constants';
 
 interface SocialLinkData {
-  name: string;
-  url: string;
-  icon: 'linkedin' | 'github' | 'microsoft-learn';
+ name: string;
+ url: string;
+ icon: 'linkedin' | 'github' | 'microsoft-learn';
 }
 
 interface TimelineItem {
-  year: string;
-  icon: '🔄' | '☁️' | '💡' | '🤖';
-  title: string;
-  achievements: string[];
-  color: string;
+ year: string;
+ icon: '🔄' | '☁️' | '💡' | '🤖';
+ title: string;
+ achievements: string[];
+ color: string;
 }
 
 const title = 'About Blake Oxford';
@@ -35,368 +35,368 @@ const canonicalUrl = CANONICAL_URLS.about;
 
 // Social Media Links
 const socialLinks: SocialLinkData[] = [
-  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/blakeoxford/', icon: 'linkedin' },
-  { name: 'GitHub', url: 'https://github.com/blakeoxford', icon: 'github' },
-  { name: 'Microsoft Learn', url: 'https://learn.microsoft.com/users/BlakeOxford-1002', icon: 'microsoft-learn' }
+ { name: 'LinkedIn', url: 'https://www.linkedin.com/in/blakeoxford/', icon: 'linkedin' },
+ { name: 'GitHub', url: 'https://github.com/blakeoxford', icon: 'github' },
+ { name: 'Microsoft Learn', url: 'https://learn.microsoft.com/users/BlakeOxford-1002', icon: 'microsoft-learn' }
 ];
 
 // Structured data for Person
 const personSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  'name': 'Blake Oxford',
-  'url': 'https://blakeoxford.com',
-  'jobTitle': 'Systems Architect',
-  'sameAs': socialLinks.map(link => link.url),
-  'description': description,
-  'image': '/assets/images/Blake-O-scaled.jpg'
+ '@context': 'https://schema.org',
+ '@type': 'Person',
+ 'name': 'Blake Oxford',
+ 'url': 'https://blakeoxford.com',
+ 'jobTitle': 'Systems Architect',
+ 'sameAs': socialLinks.map(link => link.url),
+ 'description': description,
+ 'image': '/assets/images/Blake-O-scaled.jpg'
 };
 
 
 // Timeline Data
 const timelineItems: TimelineItem[] = [
-  {
-    year: '2019',
-    icon: '🔄',
-    title: 'System Integration & Optimization',
-    achievements: [
-      'Streamlined cross-departmental workflows through integration of Sage Intacct and ADP',
-      'Reduced manual data entry by 80% through custom API integrations',
-      'Implemented automated reconciliation processes, reducing month-end close by 3 days'
-    ],
-    color: 'from-accent to-primary'
-  },
-  {
-    year: '2020',
-    icon: '☁️',
-    title: 'Cloud Migration & Digital Transformation',
-    achievements: [
-      'Led Google Workspace to Microsoft 365 migration for 180 staff with zero downtime',
-      'Implemented Sage Intacct and ADP Workforce Now, consolidating 5 legacy systems',
-      'Designed disaster recovery protocols reducing potential data loss window by 90%'
-    ],
-    color: 'from-accent to-primary'
-  },
-  {
-    year: '2023',
-    icon: '💡',
-    title: 'Analytics & Process Innovation',
-    achievements: [
-      'Developed Power BI dashboards for real-time financial forecasting',
-      'Authored SOPs and trained team on AdvancedMD RCM',
-      '$1.2M in unbilled services surfaced via SQL-based reporting suite'
-    ],
-    color: 'from-accent to-primary'
-  },
-  {
-    year: '2024',
-    icon: '🤖',
-    title: 'AI-Powered Compliance & Workflow Enhancement',
-    achievements: [
-      'Developed and launched a real-time Azure OpenAI auditing system for clinical notes, ensuring insurance compliance before submission',
-      'Enabled automated coaching for providers and technicians, improving documentation quality and reducing claim denials',
-      'Integrated AI into daily workflows for tasks like insurance appeals and internal process optimization, saving hours across departments'
-    ],
-    color: 'from-accent to-primary'
-  }
+ {
+ year: '2019',
+ icon: '🔄',
+ title: 'System Integration & Optimization',
+ achievements: [
+ 'Streamlined cross-departmental workflows through integration of Sage Intacct and ADP',
+ 'Reduced manual data entry by 80% through custom API integrations',
+ 'Implemented automated reconciliation processes, reducing month-end close by 3 days'
+ ],
+ color: 'from-accent to-primary'
+ },
+ {
+ year: '2020',
+ icon: '☁️',
+ title: 'Cloud Migration & Digital Transformation',
+ achievements: [
+ 'Led Google Workspace to Microsoft 365 migration for 180 staff with zero downtime',
+ 'Implemented Sage Intacct and ADP Workforce Now, consolidating 5 legacy systems',
+ 'Designed disaster recovery protocols reducing potential data loss window by 90%'
+ ],
+ color: 'from-accent to-primary'
+ },
+ {
+ year: '2023',
+ icon: '💡',
+ title: 'Analytics & Process Innovation',
+ achievements: [
+ 'Developed Power BI dashboards for real-time financial forecasting',
+ 'Authored SOPs and trained team on AdvancedMD RCM',
+ '$1.2M in unbilled services surfaced via SQL-based reporting suite'
+ ],
+ color: 'from-accent to-primary'
+ },
+ {
+ year: '2024',
+ icon: '🤖',
+ title: 'AI-Powered Compliance & Workflow Enhancement',
+ achievements: [
+ 'Developed and launched a real-time Azure OpenAI auditing system for clinical notes, ensuring insurance compliance before submission',
+ 'Enabled automated coaching for providers and technicians, improving documentation quality and reducing claim denials',
+ 'Integrated AI into daily workflows for tasks like insurance appeals and internal process optimization, saving hours across departments'
+ ],
+ color: 'from-accent to-primary'
+ }
 ];
 ---
 
 <Layout
-  title={title}
-  description={description}
-  image="/assets/images/Blake-O-scaled.jpg"
-  url={canonicalUrl}
-  wide={true}
+ title={title}
+ description={description}
+ image="/assets/images/Blake-O-scaled.jpg"
+ url={canonicalUrl}
+ wide={true}
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)} />
-  <!-- Decorative background shapes -->
-  <div class="fixed inset-0 -z-10 pointer-events-none">
-    <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
-    <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
-  </div>
+ <script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+ <!-- Decorative background shapes -->
+ <div class="fixed inset-0 -z-10 pointer-events-none">
+ <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
+ <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
+ </div>
 
 
-  <!-- About Hero Section (note: BaseLayout main already has pt-24; avoid double top spacing here) -->
-  <section id="about-me" class="relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-accent/10 dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8 min-h-screen">
-      <!-- Floating blur orbs for depth -->
-      <div class="blur-orb-accent top-0 right-0"></div>
-      <div class="blur-orb-primary bottom-0 left-0"></div>
-      
-      <!-- Animated background pattern -->
-      <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
-        <div class="absolute inset-0"></div>
-      </div>
-      <div class="relative z-10 min-h-screen">
-        <div class="flex flex-col md:grid md:grid-cols-2 md:gap-0 min-h-screen">
-          <!-- Text Content -->
-          <div class="order-1 flex flex-col justify-start px-4 sm:px-6 pt-28 pb-8 md:order-1 md:justify-center md:px-6 md:py-16 lg:px-12">
-            <Stack space="lg" class="max-w-2xl mx-auto">
-              <h1 id="about-me-title" class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground dark:text-foreground-light leading-tight">
-                Systems Architect & Workflow Strategist
-              </h1>
-              <p class="text-base sm:text-lg md:text-xl leading-relaxed text-foreground/80 dark:text-foreground-light/80">
-                Based in Michigan, I help organizations transform complex processes into streamlined, data-driven systems. From healthcare to finance, my approach combines technical expertise with strategic thinking to deliver solutions that scale.
-              </p>
-              <div class="rounded-2xl border border-border/40 bg-background/95 p-6 dark:bg-background-dark/75">
-                <ul class="space-y-3 text-sm font-semibold uppercase tracking-label text-foreground/55 dark:text-foreground-light/60">
-                  <li class="flex items-center gap-3">
-                    <span class="inline-flex size-2 rounded-full bg-accent"></span>
-                    Automation with adoption guardrails
-                  </li>
-                  <li class="flex items-center gap-3">
-                    <span class="inline-flex size-2 rounded-full bg-accent"></span>
-                    Financial intelligence that informs every sprint
-                  </li>
-                  <li class="flex items-center gap-3">
-                    <span class="inline-flex size-2 rounded-full bg-accent"></span>
-                    Governance and enablement built-in from day one
-                  </li>
-                </ul>
-              </div>
-            </Stack>
-          </div>
+ <!-- About Hero Section (note: BaseLayout main already has pt-24; avoid double top spacing here) -->
+ <section id="about-me" class="relative overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-background-dark dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8 min-h-screen">
+ <!-- Floating blur orbs for depth -->
+ <div class="blur-orb-accent top-0 right-0"></div>
+ <div class="blur-orb-primary bottom-0 left-0"></div>
+ 
+ <!-- Animated background pattern -->
+ <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
+ <div class="absolute inset-0"></div>
+ </div>
+ <div class="relative z-10 min-h-screen">
+ <div class="flex flex-col md:grid md:grid-cols-2 md:gap-0 min-h-screen">
+ <!-- Text Content -->
+ <div class="order-1 flex flex-col justify-start px-4 sm:px-6 pt-28 pb-8 md:order-1 md:justify-center md:px-6 md:py-16 lg:px-12">
+ <Stack space="lg" class="max-w-2xl mx-auto">
+ <h1 id="about-me-title" class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground leading-tight">
+ Systems Architect & Workflow Strategist
+ </h1>
+ <p class="text-base sm:text-lg md:text-xl leading-relaxed text-muted-foreground">
+ Based in Michigan, I help organizations transform complex processes into streamlined, data-driven systems. From healthcare to finance, my approach combines technical expertise with strategic thinking to deliver solutions that scale.
+ </p>
+ <div class="rounded-2xl border border-border/40 bg-background/95 p-6 dark:bg-background-dark/75">
+ <ul class="space-y-3 text-sm font-semibold uppercase tracking-label text-subtle-foreground">
+ <li class="flex items-center gap-3">
+ <span class="inline-flex size-2 rounded-full bg-accent"></span>
+ Automation with adoption guardrails
+ </li>
+ <li class="flex items-center gap-3">
+ <span class="inline-flex size-2 rounded-full bg-accent"></span>
+ Financial intelligence that informs every sprint
+ </li>
+ <li class="flex items-center gap-3">
+ <span class="inline-flex size-2 rounded-full bg-accent"></span>
+ Governance and enablement built-in from day one
+ </li>
+ </ul>
+ </div>
+ </Stack>
+ </div>
 
-          <!-- Photo Carousel -->
-          <div class="order-2 w-full flex-1 min-h-[320px] overflow-hidden md:order-2 md:h-full" role="complementary" aria-label="Photo gallery">
-            <div class="relative w-full h-full">
-              <PhotoCarousel class="w-full h-full" />
-              <div class="hidden md:block absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent dark:from-background-dark/20 pointer-events-none"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-  </section>
-    <Section padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
-            <!-- Background pattern -->
-            <div class="absolute inset-0 z-0 opacity-5">
-              <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
-            </div>
-            <div class="relative z-10">
-              <div class="grid grid-cols-1 gap-8 lg:gap-12">
-                <div>
-                                  <div class="text-center mb-12">
-                  <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground dark:text-foreground-light text-center mb-12">Key Achievements</h2>
-                </div>
+ <!-- Photo Carousel -->
+ <div class="order-2 w-full flex-1 min-h-[320px] overflow-hidden md:order-2 md:h-full" role="complementary" aria-label="Photo gallery">
+ <div class="relative w-full h-full">
+ <PhotoCarousel class="w-full h-full" />
+ <div class="hidden md:block absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent dark:from-background-dark/20 pointer-events-none"></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
+ <Section padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
+ <!-- Background pattern -->
+ <div class="absolute inset-0 z-0 opacity-5">
+ <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+ </div>
+ <div class="relative z-10">
+ <div class="grid grid-cols-1 gap-8 lg:gap-12">
+ <div>
+ <div class="text-center mb-12">
+ <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground text-center mb-12">Key Achievements</h2>
+ </div>
 
-                  <Grid cols="3" gap="lg">
-                    <AchievementCard
-                      icon='home'
-                      title='Enterprise Transformation'
-                      description='Successfully led Google Workspace to Microsoft 365 migration for 180+ staff with zero downtime, integrating 5 legacy systems.'
-                      achievements={[
-                        'Zero downtime during migration',
-                        '5 legacy systems consolidated',
-                        '100% employee adoption'
-                      ]}
-                      achievementIcons={['grid', 'clock', 'users']}
-                    />
-                    <AchievementCard
-                      icon='chart'
-                      title='Financial Analytics'
-                      description='Built sophisticated Power BI dashboards for real-time financial forecasting that revealed $1.2M in unbilled services.'
-                      achievements={[
-                        '$1.2M in unbilled services identified',
-                        'Real-time forecast dashboards',
-                        '25% improved financial accuracy'
-                      ]}
-                      achievementIcons={['dollar', 'clock', 'trending']}
-                    />
-                    <AchievementCard
-                      icon='lightbulb'
-                      title='AI-Powered Analytics Overhaul'
-                      description='Led the modernization of enterprise analytics by integrating AI-driven insights, centralizing KPIs, and building real-time dashboards that transformed operational decision-making.'
-                      achievements={[
-                        'Deployed 30+ AI-enhanced dashboards across 6 departments',
-                        'Cut reporting delays by 50% with predictive data models',
-                        'Unified metrics and insights for real-time decision-making'
-                      ]}
-                      achievementIcons={['grid', 'clock', 'trending']}
-                    />
-                  </Grid>
-                </div>
-              </div>
-            </div>
-          </Section>
+ <Grid cols="3" gap="lg">
+ <AchievementCard
+ icon='home'
+ title='Enterprise Transformation'
+ description='Successfully led Google Workspace to Microsoft 365 migration for 180+ staff with zero downtime, integrating 5 legacy systems.'
+ achievements={[
+ 'Zero downtime during migration',
+ '5 legacy systems consolidated',
+ '100% employee adoption'
+ ]}
+ achievementIcons={['grid', 'clock', 'users']}
+ />
+ <AchievementCard
+ icon='chart'
+ title='Financial Analytics'
+ description='Built sophisticated Power BI dashboards for real-time financial forecasting that revealed $1.2M in unbilled services.'
+ achievements={[
+ '$1.2M in unbilled services identified',
+ 'Real-time forecast dashboards',
+ '25% improved financial accuracy'
+ ]}
+ achievementIcons={['dollar', 'clock', 'trending']}
+ />
+ <AchievementCard
+ icon='lightbulb'
+ title='AI-Powered Analytics Overhaul'
+ description='Led the modernization of enterprise analytics by integrating AI-driven insights, centralizing KPIs, and building real-time dashboards that transformed operational decision-making.'
+ achievements={[
+ 'Deployed 30+ AI-enhanced dashboards across 6 departments',
+ 'Cut reporting delays by 50% with predictive data models',
+ 'Unified metrics and insights for real-time decision-making'
+ ]}
+ achievementIcons={['grid', 'clock', 'trending']}
+ />
+ </Grid>
+ </div>
+ </div>
+ </div>
+ </Section>
 
-          <AboutSocial
-            social={{
-              title: 'Connect',
-              description: 'Find me on the platforms I use most.',
-              links: socialLinks.map((s) => ({ href: s.url, label: s.name, icon: s.icon }))
-            }}
-          />
+ <AboutSocial
+ social={{
+ title: 'Connect',
+ description: 'Find me on the platforms I use most.',
+ links: socialLinks.map((s) => ({ href: s.url, label: s.name, icon: s.icon }))
+ }}
+ />
 
-          <!-- Education & Skills -->
-          <Section padding="lg" container="lg" class="bg-gradient-to-b from-background to-surface dark:from-background-dark dark:to-surface-dark relative overflow-hidden">
-            <!-- Background geometric shapes -->
-            <div class="absolute inset-0 z-0 opacity-20 overflow-hidden">
-                          <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-              <FloatingBlur size="lg" color="accent" position="custom" class="top-1/4 left-1/4" />
-              <FloatingBlur size="lg" color="primary" position="custom" class="bottom-1/4 right-1/4" />
-            </div>
-            </div>
-            <div class="relative z-10">
-              <div class="max-w-3xl mx-auto text-center mb-12">
-                <p class="text-lg text-neutral">
-                </p>
-              </div>
-              <!-- Two column layout -->
-              <Grid cols="2" gap="xl" class="items-stretch">
-                <!-- Education Column -->
-                <div class="flex flex-col h-full">
-                  <h2 class="text-2xl sm:text-3xl font-bold border-l-4 border-accent pl-4 mb-6">Education</h2>
-                  <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-xl transition-all duration-300 group flex-1">
-                    <div class="flex items-start">
-                      <div class="flex-shrink-0 bg-accent/10 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                          <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                        </svg>
-                      </div>
-                      <div class="ml-4">
-                        <h3 class="font-bold text-xl sm:text-2xl text-foreground dark:text-foreground-light group-hover:text-accent transition-colors duration-300">
-                          Calvin College
-                        </h3>
-                        <div class="text-sm text-foreground/80 dark:text-gray-400 mb-2">
-                          Bachelor of Arts in Finance
-                        </div>
-                        <p class="text-foreground/85">
-                          Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+ <!-- Education & Skills -->
+ <Section padding="lg" container="lg" class="bg-gradient-to-b from-background to-surface dark:from-background-dark dark:to-surface-dark relative overflow-hidden">
+ <!-- Background geometric shapes -->
+ <div class="absolute inset-0 z-0 opacity-20 overflow-hidden">
+ <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+ <FloatingBlur size="lg" color="accent" position="custom" class="top-1/4 left-1/4" />
+ <FloatingBlur size="lg" color="primary" position="custom" class="bottom-1/4 right-1/4" />
+ </div>
+ </div>
+ <div class="relative z-10">
+ <div class="max-w-3xl mx-auto text-center mb-12">
+ <p class="text-lg text-neutral">
+ </p>
+ </div>
+ <!-- Two column layout -->
+ <Grid cols="2" gap="xl" class="items-stretch">
+ <!-- Education Column -->
+ <div class="flex flex-col h-full">
+ <h2 class="text-2xl sm:text-3xl font-bold border-l-4 border-accent pl-4 mb-6">Education</h2>
+ <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-xl transition-all duration-300 group flex-1">
+ <div class="flex items-start">
+ <div class="flex-shrink-0 bg-accent/10 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
+ <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+ <path d="M12 14l9-5-9-5-9 5 9 5z" />
+ <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+ </svg>
+ </div>
+ <div class="ml-4">
+ <h3 class="font-bold text-xl sm:text-2xl text-foreground group-hover:text-accent transition-colors duration-300">
+ Calvin College
+ </h3>
+ <div class="text-sm text-muted-foreground dark:text-gray-400 mb-2">
+ Bachelor of Arts in Finance
+ </div>
+ <p class="text-muted-foreground">
+ Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects.
+ </p>
+ </div>
+ </div>
+ </div>
+ </div>
 
-                <!-- Skills Column -->
-                <div class="flex flex-col h-full">
-                  <h2 class="text-2xl sm:text-3xl font-bold border-l-4 border-accent pl-4 mb-6">Skills</h2>
-                  <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark flex-1 flex flex-col">
-                    <p class="text-foreground/85 mb-4">A blend of systems thinking, finance, and hands-on engineering. I focus on shipping reliable, human-centered automation that delivers measurable outcomes.</p>
-                    <Flex as="ul" wrap gap="sm" role="list" class="flex-1">
-                      <SkillBadge skill='Systems Architecture' />
-                      <SkillBadge skill='Process Automation' />
-                      <SkillBadge skill='Cloud: Azure / M365' />
-                      <SkillBadge skill='Data Analytics (Power BI)' />
-                      <SkillBadge skill='APIs & Integrations' />
-                      <SkillBadge skill='AI-Assisted Workflows' />
-                      <SkillBadge skill='Financial Operations' />
-                      <SkillBadge skill='Security & Compliance' />
-                    </Flex>
-                  </div>
-                </div>
-              </Grid>
-            </div>
-          </Section>
+ <!-- Skills Column -->
+ <div class="flex flex-col h-full">
+ <h2 class="text-2xl sm:text-3xl font-bold border-l-4 border-accent pl-4 mb-6">Skills</h2>
+ <div class="bg-surface dark:bg-surface-dark p-6 rounded-xl shadow-lg border border-border dark:border-border-dark flex-1 flex flex-col">
+ <p class="text-muted-foreground mb-4">A blend of systems thinking, finance, and hands-on engineering. I focus on shipping reliable, human-centered automation that delivers measurable outcomes.</p>
+ <Flex as="ul" wrap gap="sm" role="list" class="flex-1">
+ <SkillBadge skill='Systems Architecture' />
+ <SkillBadge skill='Process Automation' />
+ <SkillBadge skill='Cloud: Azure / M365' />
+ <SkillBadge skill='Data Analytics (Power BI)' />
+ <SkillBadge skill='APIs & Integrations' />
+ <SkillBadge skill='AI-Assisted Workflows' />
+ <SkillBadge skill='Financial Operations' />
+ <SkillBadge skill='Security & Compliance' />
+ </Flex>
+ </div>
+ </div>
+ </Grid>
+ </div>
+ </Section>
 
-          <!-- Career Timeline -->
-          <Section id="about-timeline" padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
-            <!-- Overlay dots pattern -->
-            <div class="absolute inset-0 z-0 opacity-10">
-              <div class="absolute inset-0" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-                </svg>
-              </div>
-            </div>
-            <div class="relative z-10">
-              <div class="max-w-3xl mx-auto text-center mb-16">
-                <SectionHeading size='3xl' class='mb-6'>Professional Journey</SectionHeading>
-                <p class="text-lg text-neutral-light">
-                </p>
-              </div>
-              <!-- Desktop Timeline (vertical) -->
-              <div class="hidden md:block relative timeline-desktop">
-                <!-- Timeline center line with gradient animation -->
-                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-emerald-400 via-purple-400 to-emerald-400 dark:from-emerald-500 dark:via-purple-500 dark:to-emerald-500 opacity-70 dark:opacity-100 animate-gradient-shift"></div>
-                <div class="space-y-0">
-                  {timelineItems.map((item, index) => (
-                    <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'} group`}>
-                      <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
-                        <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
-                          <TimelineCard
-                            year={item.year}
-                            icon={item.icon}
-                            title={item.title}
-                            achievements={item.achievements}
-                            color={item.color}
-                          />
-                        </div>
-                      </div>
-                      {/* Timeline dot with pulse animation */}
-                      <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-background bg-accent group-hover:scale-125 transition-transform duration-300">
-                        <div class="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-75"></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+ <!-- Career Timeline -->
+ <Section id="about-timeline" padding="lg" container="lg" class="relative overflow-hidden bg-surface dark:bg-surface-dark">
+ <!-- Overlay dots pattern -->
+ <div class="absolute inset-0 z-0 opacity-10">
+ <div class="absolute inset-0" aria-hidden="true">
+ <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+ </svg>
+ </div>
+ </div>
+ <div class="relative z-10">
+ <div class="max-w-3xl mx-auto text-center mb-16">
+ <SectionHeading size='3xl' class='mb-6'>Professional Journey</SectionHeading>
+ <p class="text-lg text-neutral-light">
+ </p>
+ </div>
+ <!-- Desktop Timeline (vertical) -->
+ <div class="hidden md:block relative timeline-desktop">
+ <!-- Timeline center line with gradient animation -->
+ <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-emerald-400 via-purple-400 to-emerald-400 dark:from-emerald-500 dark:via-purple-500 dark:to-emerald-500 opacity-70 dark:opacity-100 animate-gradient-shift"></div>
+ <div class="space-y-0">
+ {timelineItems.map((item, index) => (
+ <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'} group`}>
+ <div class={`w-full flex ${index % 2 === 0 ? '' : 'justify-end'} mb-16`}>
+ <div class={`${index % 2 === 0 ? 'ml-0 mr-8 text-right' : 'ml-8 mr-0'} w-5/12`}>
+ <TimelineCard
+ year={item.year}
+ icon={item.icon}
+ title={item.title}
+ achievements={item.achievements}
+ color={item.color}
+ />
+ </div>
+ </div>
+ {/* Timeline dot with pulse animation */}
+ <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-background bg-accent group-hover:scale-125 transition-transform duration-300">
+ <div class="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-75"></div>
+ </div>
+ </div>
+ ))}
+ </div>
+ </div>
 
-              <!-- Mobile Timeline (horizontal scroll) -->
-              <div class="md:hidden overflow-x-auto pb-8 timeline-scroll-container timeline-mobile focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-offset-surface-dark" role="region" aria-label="Timeline events" tabindex="0">
-                <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
-                  {timelineItems.map((item) => (
-                    <TimelineCardMobile
-                      year={item.year}
-                      icon={item.icon}
-                      title={item.title}
-                      achievements={item.achievements}
-                      color={item.color}
-                    />
-                  ))}
-                </div>
-              </div>
+ <!-- Mobile Timeline (horizontal scroll) -->
+ <div class="md:hidden overflow-x-auto pb-8 timeline-scroll-container timeline-mobile focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-offset-surface-dark" role="region" aria-label="Timeline events" tabindex="0">
+ <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
+ {timelineItems.map((item) => (
+ <TimelineCardMobile
+ year={item.year}
+ icon={item.icon}
+ title={item.title}
+ achievements={item.achievements}
+ color={item.color}
+ />
+ ))}
+ </div>
+ </div>
 
-              <style>
-                @keyframes gradient-shift {
-                  0% { background-position: 0% 0%; }
-                  50% { background-position: 0% 100%; }
-                  100% { background-position: 0% 0%; }
-                }
-                .animate-gradient-shift {
-                  background-size: 100% 200%;
-                  animation: gradient-shift 8s ease infinite;
-                }
-                /* Fallback display rules to ensure correct variant renders regardless of Tailwind purge/variant issues */
-                @media (min-width: 768px) {
-                  #about-timeline .timeline-desktop { display: block !important; }
-                  #about-timeline .timeline-mobile { display: none !important; }
-                }
-                @media (max-width: 767.98px) {
-                  #about-timeline .timeline-desktop { display: none !important; }
-                  #about-timeline .timeline-mobile { display: block !important; }
-                }
-                .timeline-scroll-container::-webkit-scrollbar {
-                  height: 8px;
-                }
-                .timeline-scroll-container::-webkit-scrollbar-track {
-                  background: rgb(var(--color-neutral) / 0.3);
-                  border-radius: 4px;
-                }
-                .timeline-scroll-container::-webkit-scrollbar-thumb {
-                  background: rgb(var(--color-accent) / 0.5);
-                  border-radius: 4px;
-                }
-                .timeline-scroll-container::-webkit-scrollbar-thumb:hover {
-                  background: rgb(var(--color-accent) / 0.7);
-                }
-              </style>
-            </div>
-          </Section>
+ <style>
+ @keyframes gradient-shift {
+ 0% { background-position: 0% 0%; }
+ 50% { background-position: 0% 100%; }
+ 100% { background-position: 0% 0%; }
+ }
+ .animate-gradient-shift {
+ background-size: 100% 200%;
+ animation: gradient-shift 8s ease infinite;
+ }
+ /* Fallback display rules to ensure correct variant renders regardless of Tailwind purge/variant issues */
+ @media (min-width: 768px) {
+ #about-timeline .timeline-desktop { display: block !important; }
+ #about-timeline .timeline-mobile { display: none !important; }
+ }
+ @media (max-width: 767.98px) {
+ #about-timeline .timeline-desktop { display: none !important; }
+ #about-timeline .timeline-mobile { display: block !important; }
+ }
+ .timeline-scroll-container::-webkit-scrollbar {
+ height: 8px;
+ }
+ .timeline-scroll-container::-webkit-scrollbar-track {
+ background: rgb(var(--color-neutral) / 0.3);
+ border-radius: 4px;
+ }
+ .timeline-scroll-container::-webkit-scrollbar-thumb {
+ background: rgb(var(--color-accent) / 0.5);
+ border-radius: 4px;
+ }
+ .timeline-scroll-container::-webkit-scrollbar-thumb:hover {
+ background: rgb(var(--color-accent) / 0.7);
+ }
+ </style>
+ </div>
+ </Section>
 
-          <!-- Connect / Social Links -->
-          <Section padding="lg" container="lg" class="bg-gradient-to-b from-surface to-background dark:from-surface-dark dark:to-background-dark">
-              <div class="max-w-3xl mx-auto text-center">
-                <SectionHeading size='3xl' class='mb-4'>Let's Connect</SectionHeading>
-                <p class="text-neutral mb-8">Open to collaborating on systems architecture, data platforms, and automation initiatives.</p>
-                <Flex as="ul" wrap justify="center" align="center" gap="md" role="list">
-                  {socialLinks.map((link) => (
-                    <li>
-                      <SocialLink href={link.url} icon={link.icon} label={link.name} />
-                    </li>
-                  ))}
-                </Flex>
-              </div>
-          </Section>
+ <!-- Connect / Social Links -->
+ <Section padding="lg" container="lg" class="bg-gradient-to-b from-surface to-background dark:from-surface-dark dark:to-background-dark">
+ <div class="max-w-3xl mx-auto text-center">
+ <SectionHeading size='3xl' class='mb-4'>Let's Connect</SectionHeading>
+ <p class="text-neutral mb-8">Open to collaborating on systems architecture, data platforms, and automation initiatives.</p>
+ <Flex as="ul" wrap justify="center" align="center" gap="md" role="list">
+ {socialLinks.map((link) => (
+ <li>
+ <SocialLink href={link.url} icon={link.icon} label={link.name} />
+ </li>
+ ))}
+ </Flex>
+ </div>
+ </Section>
 </Layout>

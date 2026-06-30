@@ -2,36 +2,36 @@ import { useEffect } from 'react';
 
 // Extend Window interface for audit detection
 declare global {
-  interface Window {
-    __AUDIT__?: boolean;
-  }
+ interface Window {
+ __AUDIT__?: boolean;
+ }
 }
 
 export default function ServiceWorkerIsland() {
-  useEffect(() => {
-    const isAudit = Boolean(
-      window.__AUDIT__ ||
-      /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie || '') ||
-      /lighthouse|headlesschrome/i.test(navigator.userAgent || '')
-    );
-    if (isAudit) return;
+ useEffect(() => {
+ const isAudit = Boolean(
+ window.__AUDIT__ ||
+ /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie || '') ||
+ /lighthouse|headlesschrome/i.test(navigator.userAgent || '')
+ );
+ if (isAudit) return;
 
-    if ('serviceWorker' in navigator) {
-      const handler = () => {
-        navigator.serviceWorker
-          .register('/sw.js')
-          .then((registration) => {
-            console.log('✅ Service Worker registered:', registration.scope);
-          })
-          .catch((error) => {
-            console.log('❌ Service Worker registration failed:', error);
-          });
-      };
+ if ('serviceWorker' in navigator) {
+ const handler = () => {
+ navigator.serviceWorker
+ .register('/sw.js')
+ .then((registration) => {
+ console.log('✅ Service Worker registered:', registration.scope);
+ })
+ .catch((error) => {
+ console.log('❌ Service Worker registration failed:', error);
+ });
+ };
 
-      window.addEventListener('load', handler, { once: true });
-      return () => window.removeEventListener('load', handler);
-    }
-  }, []);
+ window.addEventListener('load', handler, { once: true });
+ return () => window.removeEventListener('load', handler);
+ }
+ }, []);
 
-  return null;
+ return null;
 }

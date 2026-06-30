@@ -42,15 +42,21 @@ function getCurrentTheme(): 'light' | 'dark' {
   return (document.documentElement.dataset.theme as 'light' | 'dark') || 'light';
 }
 
+function clearInlineThemeTokens(root: HTMLElement) {
+  for (const prop of ['--color-background', '--color-foreground', '--bg', '--fg']) {
+    root.style.removeProperty(prop);
+  }
+}
+
 function setTheme(nextTheme: 'light' | 'dark') {
   const root = document.documentElement;
   root.dataset.theme = nextTheme;
   if (nextTheme === 'dark') { root.classList.add('dark'); } else { root.classList.remove('dark'); }
   root.style.colorScheme = nextTheme;
-  // If tests primed CSS variables via inline style, remove the inline token so stylesheet variables apply when theme toggles
+  // Remove inline token priming so stylesheet variables apply when theme toggles
   try {
     if (typeof window !== 'undefined' && ((window as any).__TEST_THEME_PRIMED || root.style.getPropertyValue('--color-background'))) {
-      root.style.removeProperty('--color-background');
+      clearInlineThemeTokens(root);
     }
   } catch  { void 0; }
   localStorage.setItem('theme', nextTheme);

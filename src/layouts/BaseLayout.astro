@@ -12,175 +12,175 @@ import AccessibilityEnhancementsIsland from '../components/islands/Accessibility
 
 // wide: when true, disable the default max-width wrapper for full-width layouts
 const {
-  title = 'Blake Oxford Portfolio',
-  // Provide a fuller default description to satisfy SEO description length guidance (50–160 chars)
-  description = 'Systems architect and workflow strategist. Explore shipped projects, implementation guides, and practical articles across cloud, automation, and analytics—plus ways to get in touch.',
-  // "url" may be passed in to override canonical; when omitted, compute from Astro.site + Astro.url
-  url,
-  wide = false,
-  keywords = '',
-  image, // Optional OG image override
-  // structuredData, // Optional additional structured data schemas (unused)
+ title = 'Blake Oxford Portfolio',
+ // Provide a fuller default description to satisfy SEO description length guidance (50–160 chars)
+ description = 'Systems architect and workflow strategist. Explore shipped projects, implementation guides, and practical articles across cloud, automation, and analytics—plus ways to get in touch.',
+ // "url" may be passed in to override canonical; when omitted, compute from Astro.site + Astro.url
+ url,
+ wide = false,
+ keywords = '',
+ image, // Optional OG image override
+ // structuredData, // Optional additional structured data schemas (unused)
 } = Astro.props;
 
 // Sanitize description: remove extra whitespace, replace Unicode with ASCII for Lighthouse compatibility
 const metaDescription = String(description || '')
-  .replace(/\s+/g, ' ')
-  .replace(/—/g, '-')  // em dash to hyphen
-  .replace(/‑/g, '-')  // non-breaking hyphen to hyphen
-  .trim();
+ .replace(/\s+/g, ' ')
+ .replace(/—/g, '-') // em dash to hyphen
+ .replace(/‑/g, '-') // non-breaking hyphen to hyphen
+ .trim();
 
 // Compute base site href from astro.config.mjs or fallback (string only)
 const siteHref = (Astro.site?.href ?? 'https://blakeoxford.com').replace(/\/$/, '');
 // Compute canonical URL: prefer explicit url prop; else use Astro.url (absolute when site is set)
 const canonicalUrl = (typeof url === 'string' && url.length > 0)
-  ? url
-  : (Astro.url?.href ?? `${siteHref}${Astro.url.pathname}`);
+ ? url
+ : (Astro.url?.href ?? `${siteHref}${Astro.url.pathname}`);
 // Build absolute asset URL for social image
 const ogImage = image 
-  ? (image.startsWith('http') ? image : `${siteHref}${image.startsWith('/') ? image : `/${image}`}`)
-  : `${siteHref}/assets/images/og-image.jpg`;
+ ? (image.startsWith('http') ? image : `${siteHref}${image.startsWith('/') ? image : `/${image}`}`)
+ : `${siteHref}/assets/images/og-image.jpg`;
 
 const baseMainClasses = wide
-  ? 'w-full px-4 sm:px-6 lg:px-8'
-  : 'mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 text-base leading-relaxed text-[--fg] prose dark:prose-invert';
+ ? 'w-full px-4 sm:px-6 lg:px-8'
+ : 'mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 text-base leading-relaxed text-foreground prose dark:prose-invert';
 
 const mainClasses = `${baseMainClasses} pt-24`;
 ---
 
-<html lang="en" class="scroll-smooth bg-[--bg] text-[--fg]">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-  <ThemeInitIsland client:load />
+<html lang="en" class="scroll-smooth bg-background text-foreground">
+ <head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ 
+ <ThemeInitIsland client:load />
 
-    <!-- Avoid unconditional DNS-prefetch; GA/gtm are loaded lazily and only after interaction/idle -->
-    <!-- Removed: <link rel="dns-prefetch" href="//www.googletagmanager.com" /> -->
+ <!-- Avoid unconditional DNS-prefetch; GA/gtm are loaded lazily and only after interaction/idle -->
+ <!-- Removed: <link rel="dns-prefetch" href="//www.googletagmanager.com" /> -->
 
-    <!-- Font Preloading for Critical Fonts -->
-    <!-- Preload primary fonts for faster rendering -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
-    <!-- Favicon and touch icons (consolidated) -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icon-192x192.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="alternate" type="application/rss+xml" title="Blake Oxford RSS" href="/rss.xml" />
-    <title>{title}</title>
-    <meta name="description" content={metaDescription} />
-    <meta property="og:description" content={metaDescription} />
-    {keywords && <meta name="keywords" content={keywords} />}
-    <meta name="author" content="Blake Oxford" />
-    <meta name="creator" content="Blake Oxford" />
-    <meta name="publisher" content="Blake Oxford" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <link rel="canonical" href={canonicalUrl} />
+ <!-- Font Preloading for Critical Fonts -->
+ <!-- Preload primary fonts for faster rendering -->
+ <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ 
+ <!-- Favicon and touch icons (consolidated) -->
+ <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icon-192x192.png" />
+ <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
+ <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
+ <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+ <link rel="manifest" href="/manifest.webmanifest" />
+ <link rel="alternate" type="application/rss+xml" title="Blake Oxford RSS" href="/rss.xml" />
+ <title>{title}</title>
+ <meta name="description" content={metaDescription} />
+ <meta property="og:description" content={metaDescription} />
+ {keywords && <meta name="keywords" content={keywords} />}
+ <meta name="author" content="Blake Oxford" />
+ <meta name="creator" content="Blake Oxford" />
+ <meta name="publisher" content="Blake Oxford" />
+ <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+ <link rel="canonical" href={canonicalUrl} />
 
-    <!-- Enhanced Open Graph & Twitter -->
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={metaDescription} />
-  <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Blake Oxford Portfolio Screenshot" />
-  <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Blake Oxford Portfolio" />
-    <meta property="og:locale" content="en_US" />
+ <!-- Enhanced Open Graph & Twitter -->
+ <meta property="og:title" content={title} />
+ <meta property="og:description" content={metaDescription} />
+ <meta property="og:image" content={ogImage} />
+ <meta property="og:image:width" content="1200" />
+ <meta property="og:image:height" content="630" />
+ <meta property="og:image:alt" content="Blake Oxford Portfolio Screenshot" />
+ <meta property="og:url" content={canonicalUrl} />
+ <meta property="og:type" content="website" />
+ <meta property="og:site_name" content="Blake Oxford Portfolio" />
+ <meta property="og:locale" content="en_US" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content="Blake Oxford Portfolio Screenshot" />
-    <meta name="twitter:creator" content="@blakeoxford" />
-    <meta name="twitter:site" content="@blakeoxford" />
+ <meta name="twitter:card" content="summary_large_image" />
+ <meta name="twitter:title" content={title} />
+ <meta name="twitter:description" content={description} />
+ <meta name="twitter:image" content={ogImage} />
+ <meta name="twitter:image:alt" content="Blake Oxford Portfolio Screenshot" />
+ <meta name="twitter:creator" content="@blakeoxford" />
+ <meta name="twitter:site" content="@blakeoxford" />
 
-    <!-- Additional SEO Meta Tags -->
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-TileColor" content="rgb(var(--color-primary))" />
-    <meta name="application-name" content="Blake Oxford Portfolio" />
-    <!-- Apple mobile web app support -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Blake Oxford" />
+ <!-- Additional SEO Meta Tags -->
+ <meta name="format-detection" content="telephone=no" />
+ <meta name="msapplication-TileColor" content="rgb(var(--color-primary))" />
+ <meta name="application-name" content="Blake Oxford Portfolio" />
+ <!-- Apple mobile web app support -->
+ <meta name="mobile-web-app-capable" content="yes" />
+ <meta name="apple-mobile-web-app-capable" content="yes" />
+ <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+ <meta name="apple-mobile-web-app-title" content="Blake Oxford" />
 
-    <!-- Theme colors -->
-    <meta name="theme-color" content="rgb(var(--color-primary))" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="rgb(var(--color-primary))" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="rgb(var(--color-primary-dark))" />
+ <!-- Theme colors -->
+ <meta name="theme-color" content="rgb(var(--color-primary))" />
+ <meta name="theme-color" media="(prefers-color-scheme: light)" content="rgb(var(--color-primary))" />
+ <meta name="theme-color" media="(prefers-color-scheme: dark)" content="rgb(var(--color-primary-dark))" />
 
-  <!-- Structured Data: Website & Person (enriched; merged safely with page-specific schemas) -->
-  <script is:inline type="application/ld+json">
-      {JSON.stringify({
-        '@context': 'https://schema.org',
-        '@graph': [
-          {
-            '@type': 'WebSite',
-            'url': siteHref,
-            'name': 'Blake Oxford Portfolio',
-            'description': description,
-            'inLanguage': 'en-US',
-            'publisher': {
-              '@type': 'Person',
-              'name': 'Blake Oxford',
-              'url': siteHref
-            }
-          },
-          {
-            '@type': 'Person',
-            'name': 'Blake Oxford',
-            'url': siteHref,
-            'image': ogImage,
-            'description': description,
-            'sameAs': [
-              'https://www.linkedin.com/in/blake-oxford',
-              'https://github.com/blakeox'
-            ]
-          },
-          ...(structuredData ? structuredData : [])
-        ]
-      })}
-    </script>
+ <!-- Structured Data: Website & Person (enriched; merged safely with page-specific schemas) -->
+ <script is:inline type="application/ld+json">
+ {JSON.stringify({
+ '@context': 'https://schema.org',
+ '@graph': [
+ {
+ '@type': 'WebSite',
+ 'url': siteHref,
+ 'name': 'Blake Oxford Portfolio',
+ 'description': description,
+ 'inLanguage': 'en-US',
+ 'publisher': {
+ '@type': 'Person',
+ 'name': 'Blake Oxford',
+ 'url': siteHref
+ }
+ },
+ {
+ '@type': 'Person',
+ 'name': 'Blake Oxford',
+ 'url': siteHref,
+ 'image': ogImage,
+ 'description': description,
+ 'sameAs': [
+ 'https://www.linkedin.com/in/blake-oxford',
+ 'https://github.com/blakeox'
+ ]
+ },
+ ...(structuredData ? structuredData : [])
+ ]
+ })}
+ </script>
 
-  <ExperimentsCookieIsland client:only="react" />
-  <AccessibilityEnhancementsIsland client:only="react" />
-  <script is:inline src="/js/ai-chat-launcher.js" defer></script>
-  <slot name="head" />
-  </head>
-  <body id="top" class="min-h-screen bg-[--bg] text-[--fg] transition-colors duration-300">
-    <SearchOverlay />
-    <ServiceWorkerIsland client:only="react" />
-    
-    <!-- Enhanced skip links for better keyboard navigation -->
-    <SkipLink href="#main-content" text="Skip to main content" />
-    <SkipLink href="#footer" text="Skip to footer" />
-    <a
-      href="#top"
-      class="skip-link sr-only focus:not-sr-only focus:absolute focus:top-16 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-on-accent focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2"
-    >
-      Back to top
-    </a>
-    
-  <header role="banner" transition:persist="nav">
-      <NavBar />
-    </header>
-    <main
-      id="main-content"
-      role="main"
-      tabindex="-1"
-      aria-label="Main Content"
-      class={mainClasses}
-      transition:animate="slide"
-    >
-      <slot />
-    </main>
-    <Footer transition:persist="footer" />
-  <AIChatWidget transition:persist="chat" />
-  </body>
+ <ExperimentsCookieIsland client:only="react" />
+ <AccessibilityEnhancementsIsland client:only="react" />
+ <script is:inline src="/js/ai-chat-launcher.js" defer></script>
+ <slot name="head" />
+ </head>
+  <body id="top" class="min-h-screen bg-background text-foreground">
+ <SearchOverlay />
+ <ServiceWorkerIsland client:only="react" />
+ 
+ <!-- Enhanced skip links for better keyboard navigation -->
+ <SkipLink href="#main-content" text="Skip to main content" />
+ <SkipLink href="#footer" text="Skip to footer" />
+ <a
+ href="#top"
+ class="skip-link sr-only focus:not-sr-only focus:absolute focus:top-16 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-on-accent focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2"
+ >
+ Back to top
+ </a>
+ 
+ <header role="banner" transition:persist="nav">
+ <NavBar />
+ </header>
+ <main
+ id="main-content"
+ role="main"
+ tabindex="-1"
+ aria-label="Main Content"
+ class={mainClasses}
+ transition:animate="slide"
+ >
+ <slot />
+ </main>
+ <Footer transition:persist="footer" />
+ <AIChatWidget transition:persist="chat" />
+ </body>
 </html>

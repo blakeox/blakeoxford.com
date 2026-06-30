@@ -5,71 +5,71 @@
  */
 
 export interface Props {
-  title: string;
-  description: string;
-  icon: 'home' | 'chart' | 'lightbulb';
-  achievements: string[];
-  achievementIcons?: ('grid' | 'clock' | 'users' | 'dollar' | 'trending')[];
+ title: string;
+ description: string;
+ icon: 'home' | 'chart' | 'lightbulb';
+ achievements: string[];
+ achievementIcons?: ('grid' | 'clock' | 'users' | 'dollar' | 'trending')[];
 }
 
 const {
-  title,
-  description,
-  icon,
-  achievements,
-  achievementIcons = []
+ title,
+ description,
+ icon,
+ achievements,
+ achievementIcons = []
 } = Astro.props;
 
 // Icon SVG mapping for main card icons
 const mainIconSVGs = {
-  home: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />',
-  chart: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />',
-  lightbulb: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />'
+ home: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />',
+ chart: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />',
+ lightbulb: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />'
 };
 
 // Icon SVG mapping for achievement list items
 const achievementIconSVGs = {
-  grid: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />',
-  clock: '<circle cx="12" cy="12" r="10" stroke-width="2" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" />',
-  users: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-4a4 4 0 11-8 0 4 4 0 018 0z" />',
-  dollar: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
-  trending: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />'
+ grid: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />',
+ clock: '<circle cx="12" cy="12" r="10" stroke-width="2" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" />',
+ users: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-4a4 4 0 11-8 0 4 4 0 018 0z" />',
+ dollar: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
+ trending: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />'
 };
 
 const achievementStyles = [
-  {
-    iconBg: 'bg-success/10 dark:bg-success/20',
-    iconColor: 'text-success dark:text-success-light',
-  },
-  {
-    iconBg: 'bg-primary/10 dark:bg-primary/20',
-    iconColor: 'text-primary dark:text-primary-light',
-  },
-  {
-    iconBg: 'bg-accent/10 dark:bg-accent/20',
-    iconColor: 'text-accent dark:text-accent-light',
-  },
+ {
+ iconBg: 'bg-success/10 dark:bg-success/20',
+ iconColor: 'text-success dark:text-success-light',
+ },
+ {
+ iconBg: 'bg-primary/10 dark:bg-primary/20',
+ iconColor: 'text-primary dark:text-primary-light',
+ },
+ {
+ iconBg: 'bg-accent/10 dark:bg-accent/20',
+ iconColor: 'text-accent dark:text-accent-light',
+ },
 ] as const;
 ---
 
 <div class="bg-surface/80 dark:bg-surface-dark/80 p-8 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-xl hover-lift-sm transition-all duration-300">
-  <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-accent to-primary text-foreground-light text-2xl mb-6">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false" set:html={mainIconSVGs[icon]} />
-  </div>
-  <h3 class="text-xl sm:text-2xl font-bold mb-3 text-foreground dark:text-foreground-light">{title}</h3>
-  <p class="mb-4 text-neutral dark:text-neutral-light">{description}</p>
-  <ul class="space-y-2">
-    {achievements.map((achievement, idx) => {
-      const iconKey = achievementIcons[idx] || 'grid';
-      const style = achievementStyles[idx % achievementStyles.length];
-      return (
-        <li class="flex items-center gap-2">
-          <span class={`inline-flex items-center justify-center w-6 h-6 rounded-full ${style.iconBg} aspect-square`}>
-            <svg class={`w-4 h-4 ${style.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false" set:html={achievementIconSVGs[iconKey]} />
-          </span>
-          <span class="text-sm">{achievement}</span>
-        </li>
-      );
-    })}
-  </ul>
+ <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-accent to-primary text-on-dark text-2xl mb-6">
+ <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false" set:html={mainIconSVGs[icon]} />
+ </div>
+ <h3 class="text-xl sm:text-2xl font-bold mb-3 text-foreground">{title}</h3>
+ <p class="mb-4 text-neutral dark:text-neutral-light">{description}</p>
+ <ul class="space-y-2">
+ {achievements.map((achievement, idx) => {
+ const iconKey = achievementIcons[idx] || 'grid';
+ const style = achievementStyles[idx % achievementStyles.length];
+ return (
+ <li class="flex items-center gap-2">
+ <span class={`inline-flex items-center justify-center w-6 h-6 rounded-full ${style.iconBg} aspect-square`}>
+ <svg class={`w-4 h-4 ${style.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false" set:html={achievementIconSVGs[iconKey]} />
+ </span>
+ <span class="text-sm">{achievement}</span>
+ </li>
+ );
+ })}
+ </ul>
 </div>

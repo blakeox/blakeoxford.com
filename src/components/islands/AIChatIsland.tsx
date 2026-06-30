@@ -22,8 +22,8 @@ import {
 	ChatStatusIndicators,
 	ChatFallbackResults,
 	ChatNewChatPrompt,
-    TypingIndicator,
-    ScrollToLatestButton,
+ TypingIndicator,
+ ScrollToLatestButton,
 } from './chat';
 /**
  * Main AIChatIsland component

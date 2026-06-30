@@ -11,147 +11,142 @@ const canonicalUrl = 'https://blakeoxford.com/blog/combating-legal-ai-hallucinat
 const image = '~/assets/images/blog/legal-ai-hallucinations.png';
 
 const formattedDate = pubDate.toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
+ year: 'numeric',
+ month: 'long',
+ day: 'numeric'
 });
 ---
 
 <Layout
-  title={title}
-  description={description}
-  image={image}
-  url={canonicalUrl}
-  wide={true}
+ title={title}
+ description={description}
+ image={image}
+ url={canonicalUrl}
+ wide={true}
 >
-  <Container size="full" class="py-16 sm:py-20 lg:py-24">
-    <Stack space="3xl" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <Stack space="lg" as="header">
-        <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-label text-foreground/60 dark:text-foreground-light/60">
-          {tags.map(tag => (
-            <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/40 dark:bg-surface-dark-subtle">
-              {tag}
-            </span>
-          ))}
-        </div>
-        <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground dark:text-foreground-light">
-          {title}
-        </h1>
-        <time datetime={pubDate.toISOString()} class="block text-sm text-foreground/70 dark:text-foreground-light/70">
-          Published on {formattedDate}
-        </time>
-      </Stack>
+ <Container size="full" class="py-16 sm:py-20 lg:py-24">
+ <Stack space="3xl" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+ <Stack space="lg" as="header">
+ <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-label text-subtle-foreground">
+ {tags.map(tag => (
+ <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/40 dark:bg-surface-dark-subtle">
+ {tag}
+ </span>
+ ))}
+ </div>
+ <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-foreground">
+ {title}
+ </h1>
+ <time datetime={pubDate.toISOString()} class="block text-sm text-muted-foreground">
+ Published on {formattedDate}
+ </time>
+ </Stack>
 
-      <div class="prose prose-lg lg:prose-xl max-w-none text-foreground/90 dark:prose-invert 
-        prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tight
+      <div class="prose prose-lg lg:prose-xl max-w-none text-foreground
+        prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground
         prose-h1:text-5xl prose-h1:mb-8
         prose-h2:text-4xl prose-h2:mt-16 prose-h2:mb-8
         prose-h3:text-3xl prose-h3:mt-10 prose-h3:mb-5
-        prose-p:text-lg prose-p:leading-relaxed prose-p:mb-6
-        prose-li:text-lg prose-li:leading-relaxed
-        prose-a:text-accent prose-a:no-underline hover:prose-a:underline
+        prose-p:text-lg prose-p:leading-relaxed prose-p:mb-6 prose-p:text-foreground/90
+        prose-li:text-lg prose-li:leading-relaxed prose-li:text-foreground/90
+        prose-a:text-accent prose-a:no-underline hover:prose-a:underline dark:prose-a:text-accent-light
         prose-strong:text-foreground prose-strong:font-semibold
-        prose-code:text-accent prose-code:bg-surface-subtle prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-        dark:prose-headings:text-foreground-light
-        dark:prose-p:text-foreground-light/90
-        dark:prose-li:text-foreground-light/90
-        dark:prose-strong:text-foreground-light
-        dark:prose-code:bg-surface-dark-subtle">
+        prose-code:text-accent prose-code:bg-surface-subtle prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded dark:prose-code:bg-surface-dark-subtle">
 
-        <div class="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/10 to-accent/10 dark:from-accent/10 dark:via-primary/10 dark:to-accent/10 rounded-3xl p-12 md:p-16 my-12 border-2 border-accent/30">
-          <div class="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
-          <div class="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
-          <div class="relative text-center">
-            <div class="text-6xl mb-6">⚖️</div>
-            <p class="text-2xl md:text-3xl leading-relaxed font-medium mb-4">
-              Introducing <strong class="text-accent dark:text-accent-light">courtlistener-mcp</strong>, an open-source MCP server that revolutionizes AI-assisted legal research by directly addressing one of the most critical challenges in AI:
-            </p>
-            <p class="text-4xl md:text-5xl font-black bg-gradient-to-r from-red-600 to-rose-600 dark:from-red-400 dark:to-rose-400 bg-clip-text text-transparent">
-              Hallucinations
-            </p>
-          </div>
-        </div>
+      <div class="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/10 to-accent/10 dark:from-background-dark dark:via-background-dark dark:to-background-dark rounded-3xl p-12 md:p-16 my-12 border-2 border-accent/30">
+ <div class="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+ <div class="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+ <div class="relative text-center">
+ <div class="text-6xl mb-6">⚖️</div>
+ <p class="text-2xl md:text-3xl leading-relaxed font-medium mb-4">
+ Introducing <strong class="text-accent dark:text-accent-light">courtlistener-mcp</strong>, an open-source MCP server that revolutionizes AI-assisted legal research by directly addressing one of the most critical challenges in AI:
+ </p>
+ <p class="text-4xl md:text-5xl font-black bg-gradient-to-r from-red-600 to-rose-600 dark:from-red-400 dark:to-rose-400 bg-clip-text text-transparent">
+ Hallucinations
+ </p>
+ </div>
+ </div>
 
-        <div class="my-12">
-          <p class="text-xl leading-relaxed">
-            AI-assisted research unlocks new possibilities for faster case reviews and deeper insights. Yet trusting an answer produced by a language model is risky when the response is not backed by the underlying record. I created <strong class="text-accent dark:text-accent-light">courtlistener-mcp</strong> to solve that problem.
-          </p>
-        </div>
+ <div class="my-12">
+ <p class="text-xl leading-relaxed">
+ AI-assisted research unlocks new possibilities for faster case reviews and deeper insights. Yet trusting an answer produced by a language model is risky when the response is not backed by the underlying record. I created <strong class="text-accent dark:text-accent-light">courtlistener-mcp</strong> to solve that problem.
+ </p>
+ </div>
 
-        <div class="text-center my-20">
-          <div class="inline-flex items-center gap-3 bg-gradient-to-r from-red-500/10 to-rose-500/10 dark:from-red-400/10 dark:to-rose-400/10 px-8 py-4 rounded-full border border-red-500/30 mb-6">
-            <div class="text-4xl">⚠️</div>
-            <span class="text-xl font-semibold text-red-600 dark:text-red-400">The Challenge</span>
-          </div>
-          <h2 class="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">Why Hallucinations Are Dangerous</h2>
-        </div>
+ <div class="text-center my-20">
+ <div class="inline-flex items-center gap-3 bg-gradient-to-r from-red-500/10 to-rose-500/10 dark:from-red-400/10 dark:to-rose-400/10 px-8 py-4 rounded-full border border-red-500/30 mb-6">
+ <div class="text-4xl">⚠️</div>
+ <span class="text-xl font-semibold text-red-600 dark:text-red-400">The Challenge</span>
+ </div>
+ <h2 class="text-4xl md:text-5xl font-black text-foreground">Why Hallucinations Are Dangerous</h2>
+ </div>
 
-        <div class="relative overflow-hidden bg-gradient-to-br from-red-600/10 to-rose-600/10 dark:from-red-500/10 dark:to-rose-500/10 rounded-3xl p-10 md:p-12 border-2 border-red-500/30 shadow-2xl mb-10">
-          <div class="absolute -top-10 -right-10 w-48 h-48 bg-red-500/20 rounded-full blur-3xl"></div>
-          <div class="relative">
-            <p class="text-2xl md:text-3xl leading-relaxed font-medium text-center">
-              Legal research is a high-stakes workflow. A confident but incorrect citation can have <strong class="text-red-600 dark:text-red-400">serious consequences</strong>.
-            </p>
-          </div>
-        </div>
+ <div class="relative overflow-hidden bg-gradient-to-br from-red-600/10 to-rose-600/10 dark:from-red-500/10 dark:to-rose-500/10 rounded-3xl p-10 md:p-12 border-2 border-red-500/30 shadow-2xl mb-10">
+ <div class="absolute -top-10 -right-10 w-48 h-48 bg-red-500/20 rounded-full blur-3xl"></div>
+ <div class="relative">
+ <p class="text-2xl md:text-3xl leading-relaxed font-medium text-center">
+ Legal research is a high-stakes workflow. A confident but incorrect citation can have <strong class="text-red-600 dark:text-red-400">serious consequences</strong>.
+ </p>
+ </div>
+ </div>
 
-        <div class="grid md:grid-cols-2 gap-8 my-16">
-          <div class="blog-card group">
-            <div class="text-6xl mb-4">🔗</div>
-            <h3 class="text-2xl font-bold mb-3 text-accent dark:text-accent-light">Grounded Citations</h3>
-            <p class="text-lg leading-relaxed opacity-85">Responses include the CourtListener ID and link for each cited document</p>
-          </div>
+ <div class="grid md:grid-cols-2 gap-8 my-16">
+ <div class="blog-card group">
+ <div class="text-6xl mb-4">🔗</div>
+ <h3 class="text-2xl font-bold mb-3 text-accent dark:text-accent-light">Grounded Citations</h3>
+ <p class="text-lg leading-relaxed opacity-85">Responses include the CourtListener ID and link for each cited document</p>
+ </div>
 
-          <div class="blog-card group">
-            <div class="text-6xl mb-4">📄</div>
-            <h3 class="text-2xl font-bold mb-3 text-primary dark:text-primary-light">Verified Documents</h3>
-            <p class="text-lg leading-relaxed opacity-85">Direct access to verified legal documents and court opinions</p>
-          </div>
+ <div class="blog-card group">
+ <div class="text-6xl mb-4">📄</div>
+ <h3 class="text-2xl font-bold mb-3 text-primary dark:text-primary-light">Verified Documents</h3>
+ <p class="text-lg leading-relaxed opacity-85">Direct access to verified legal documents and court opinions</p>
+ </div>
 
-          <div class="blog-card group">
-            <div class="text-6xl mb-4">🔍</div>
-            <h3 class="text-2xl font-bold mb-3 text-accent dark:text-accent-light">Real-Time Search</h3>
-            <p class="text-lg leading-relaxed opacity-85">Queries flow through CourtListener's search endpoint instantly</p>
-          </div>
+ <div class="blog-card group">
+ <div class="text-6xl mb-4">🔍</div>
+ <h3 class="text-2xl font-bold mb-3 text-accent dark:text-accent-light">Real-Time Search</h3>
+ <p class="text-lg leading-relaxed opacity-85">Queries flow through CourtListener's search endpoint instantly</p>
+ </div>
 
-          <div class="blog-card group">
-            <div class="text-6xl mb-4">🛡️</div>
-            <h3 class="text-2xl font-bold mb-3 text-primary dark:text-primary-light">Tamper-Resistant Auditing</h3>
-            <p class="text-lg leading-relaxed opacity-85">All interactions logged for compliance teams</p>
-          </div>
-        </div>
+ <div class="blog-card group">
+ <div class="text-6xl mb-4">🛡️</div>
+ <h3 class="text-2xl font-bold mb-3 text-primary dark:text-primary-light">Tamper-Resistant Auditing</h3>
+ <p class="text-lg leading-relaxed opacity-85">All interactions logged for compliance teams</p>
+ </div>
+ </div>
 
-        <div class="relative overflow-hidden bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light rounded-3xl p-12 md:p-16 my-16 shadow-2xl">
-          <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-          <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-          <div class="relative text-white text-center">
-            <h3 class="text-3xl md:text-4xl font-black mb-6">Ready to Get Started?</h3>
-            <p class="text-xl md:text-2xl leading-relaxed mb-8 max-w-3xl mx-auto">
-              Check out the project on GitHub or get in touch to discuss integration
-            </p>
-            <div class="flex gap-4 justify-center flex-wrap">
-              <a 
-                href="https://github.com/blakeox/courtlistener-mcp" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-semibold rounded-lg transition-all duration-200 border border-white/30"
-              >
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                </svg>
-                View on GitHub
-              </a>
-              <a 
-                href="/contact" 
-                class="inline-flex items-center px-6 py-3 bg-white text-accent hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 shadow-lg"
-              >
-                Contact Me
-              </a>
-            </div>
-          </div>
-        </div>
+ <div class="relative overflow-hidden bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light rounded-3xl p-12 md:p-16 my-16 shadow-2xl">
+ <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+ <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+ <div class="relative text-white text-center">
+ <h3 class="text-3xl md:text-4xl font-black mb-6">Ready to Get Started?</h3>
+ <p class="text-xl md:text-2xl leading-relaxed mb-8 max-w-3xl mx-auto">
+ Check out the project on GitHub or get in touch to discuss integration
+ </p>
+ <div class="flex gap-4 justify-center flex-wrap">
+ <a 
+ href="https://github.com/blakeox/courtlistener-mcp" 
+ target="_blank" 
+ rel="noopener noreferrer"
+ class="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-semibold rounded-lg transition-all duration-200 border border-white/30"
+ >
+ <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+ <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+ </svg>
+ View on GitHub
+ </a>
+ <a 
+ href="/contact" 
+ class="inline-flex items-center px-6 py-3 bg-white text-accent hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 shadow-lg"
+ >
+ Contact Me
+ </a>
+ </div>
+ </div>
+ </div>
 
-      </div>
-    </Stack>
-  </Container>
+ </div>
+ </Stack>
+ </Container>
 </Layout>

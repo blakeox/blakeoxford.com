@@ -18,17 +18,17 @@
  * @example Basic usage
  * ```tsx
  * <MessageActions
- *   message={chatMessage}
- *   messages={allMessages}
- *   primarySource={sources[0]}
- *   copiedMessageId={copiedId}
- *   copiedShareUrl={copiedUrl}
- *   isHelpful={feedbackState.helpful}
- *   isNotHelpful={feedbackState.notHelpful}
- *   handleCopyMessage={(msg) => navigator.clipboard.writeText(msg.content)}
- *   handleOpenPrimarySource={(url) => window.open(url, '_blank')}
- *   handleFeedback={(id, feedback) => submitFeedback(id, feedback)}
- *   copyWithFeedback={async (content, id, type) => { ... }}
+ * message={chatMessage}
+ * messages={allMessages}
+ * primarySource={sources[0]}
+ * copiedMessageId={copiedId}
+ * copiedShareUrl={copiedUrl}
+ * isHelpful={feedbackState.helpful}
+ * isNotHelpful={feedbackState.notHelpful}
+ * handleCopyMessage={(msg) => navigator.clipboard.writeText(msg.content)}
+ * handleOpenPrimarySource={(url) => window.open(url, '_blank')}
+ * handleFeedback={(id, feedback) => submitFeedback(id, feedback)}
+ * copyWithFeedback={async (content, id, type) => { ... }}
  * />
  * ```
  *

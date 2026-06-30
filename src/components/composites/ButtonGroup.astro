@@ -7,14 +7,14 @@
  * 
  * @example Hero CTA buttons
  * <ButtonGroup align="center" responsive>
- *   <Button href="/projects">View Projects</Button>
- *   <Button variant="outline" href="/contact">Get in Touch</Button>
+ * <Button href="/projects">View Projects</Button>
+ * <Button variant="outline" href="/contact">Get in Touch</Button>
  * </ButtonGroup>
  * 
  * @example Form action buttons
  * <ButtonGroup align="end" gap="sm">
- *   <Button variant="outline" type="button">Cancel</Button>
- *   <Button type="submit">Submit</Button>
+ * <Button variant="outline" type="button">Cancel</Button>
+ * <Button type="submit">Submit</Button>
  * </ButtonGroup>
  */
 
@@ -22,35 +22,35 @@ import Flex from '../primitives/Flex.astro';
 import type { HTMLAttributes } from 'astro/types';
 
 interface Props {
-  /** Horizontal alignment of buttons */
-  align?: 'start' | 'center' | 'end';
-  /** Gap between buttons */
-  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  /** Make responsive (stack vertically on mobile) */
-  responsive?: boolean;
-  /** Responsive breakpoint (only if responsive=true) */
-  breakpoint?: 'sm' | 'md' | 'lg';
-  /** Additional CSS classes */
-  class?: string;
-  /** ARIA role */
-  role?: HTMLAttributes<'div'>['role'];
+ /** Horizontal alignment of buttons */
+ align?: 'start' | 'center' | 'end';
+ /** Gap between buttons */
+ gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+ /** Make responsive (stack vertically on mobile) */
+ responsive?: boolean;
+ /** Responsive breakpoint (only if responsive=true) */
+ breakpoint?: 'sm' | 'md' | 'lg';
+ /** Additional CSS classes */
+ class?: string;
+ /** ARIA role */
+ role?: HTMLAttributes<'div'>['role'];
 }
 
 const {
-  align = 'center',
-  gap = 'md',
-  responsive = false,
-  breakpoint = 'sm',
-  class: className = '',
-  role,
-  ...rest
+ align = 'center',
+ gap = 'md',
+ responsive = false,
+ breakpoint = 'sm',
+ class: className = '',
+ role,
+ ...rest
 } = Astro.props;
 
 // Map alignment to justify prop
 const justifyMap = {
-  start: 'start',
-  center: 'center',
-  end: 'end',
+ start: 'start',
+ center: 'center',
+ end: 'end',
 } as const;
 
 const justify = justifyMap[align];
@@ -65,14 +65,14 @@ const combinedClasses = `${buttonGroupClasses} ${className}`.trim();
 ---
 
 <Flex
-  direction="row"
-  responsive={responsiveBreakpoint}
-  gap={gap}
-  justify={justify}
-  align="center"
-  class={combinedClasses}
-  role={role}
-  {...rest}
+ direction="row"
+ responsive={responsiveBreakpoint}
+ gap={gap}
+ justify={justify}
+ align="center"
+ class={combinedClasses}
+ role={role}
+ {...rest}
 >
-  <slot />
+ <slot />
 </Flex>

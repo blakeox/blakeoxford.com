@@ -1,54 +1,54 @@
 ---
 interface Props {
-  base: string; // path relative to src/assets/images (without extension), e.g. 'proficiencies/python_logo'
-  alt: string;
-  width?: number;
-  height?: number;
-  class?: string;
-  loading?: 'lazy' | 'eager';
+ base: string; // path relative to src/assets/images (without extension), e.g. 'proficiencies/python_logo'
+ alt: string;
+ width?: number;
+ height?: number;
+ class?: string;
+ loading?: 'lazy' | 'eager';
 }
 
 const {
-  base,
-  alt,
-  width = 64,
-  height = 64,
-  class: className = 'object-contain',
-  loading = 'lazy'
+ base,
+ alt,
+ width = 64,
+ height = 64,
+ class: className = 'object-contain',
+ loading = 'lazy'
 } = Astro.props as Props;
 
 // Glob only the proficiencies directory to avoid bundling unrelated large assets (e.g., carousel PNGs)
 const avifMap = import.meta.glob('../../assets/images/proficiencies/**/*.avif', { eager: true, query: '?url', import: 'default' });
 const webpMap = import.meta.glob('../../assets/images/proficiencies/**/*.webp', { eager: true, query: '?url', import: 'default' });
-const pngMap  = import.meta.glob('../../assets/images/proficiencies/**/*.png',  { eager: true, query: '?url', import: 'default' });
-const jpgMap  = import.meta.glob('../../assets/images/proficiencies/**/*.{jpg,jpeg}', { eager: true, query: '?url', import: 'default' });
+const pngMap = import.meta.glob('../../assets/images/proficiencies/**/*.png', { eager: true, query: '?url', import: 'default' });
+const jpgMap = import.meta.glob('../../assets/images/proficiencies/**/*.{jpg,jpeg}', { eager: true, query: '?url', import: 'default' });
 
 // Helper to build the absolute import key used by the globs above
 function keyFor(relativePath: string) {
-  // Constrain lookups to proficiencies directory
-  return `../../assets/images/${relativePath}`;
+ // Constrain lookups to proficiencies directory
+ return `../../assets/images/${relativePath}`;
 }
 
 const rel = base; // e.g., 'proficiencies/python_logo'
 const avifKey = keyFor(`${rel}.avif`);
 const webpKey = keyFor(`${rel}.webp`);
-const pngKey  = keyFor(`${rel}.png`);
-const jpgKey  = keyFor(`${rel}.jpg`);
+const pngKey = keyFor(`${rel}.png`);
+const jpgKey = keyFor(`${rel}.jpg`);
 const jpegKey = keyFor(`${rel}.jpeg`);
 
 const avifUrl: string | undefined = (avifMap as any)[avifKey];
 const webpUrl: string | undefined = (webpMap as any)[webpKey];
-const pngUrl:  string | undefined = (pngMap  as any)[pngKey];
-const jpgUrl:  string | undefined = (jpgMap  as any)[jpgKey] || (jpgMap as any)[jpegKey];
+const pngUrl: string | undefined = (pngMap as any)[pngKey];
+const jpgUrl: string | undefined = (jpgMap as any)[jpgKey] || (jpgMap as any)[jpegKey];
 
 // Prefer modern formats in <img> fallback to ensure currentSrc is modern in viewport
 const imgFallback = webpUrl || avifUrl || pngUrl || jpgUrl || '';
 ---
 <picture>
-  {avifUrl && (<source srcset={avifUrl} type="image/avif" />)}
-  {webpUrl && (<source srcset={webpUrl} type="image/webp" />)}
-  <img src={imgFallback} alt={alt} width={width} height={height} loading={loading} class={className} />
-  {!imgFallback && (
-    <span class="sr-only">{alt}</span>
-  )}
+ {avifUrl && (<source srcset={avifUrl} type="image/avif" />)}
+ {webpUrl && (<source srcset={webpUrl} type="image/webp" />)}
+ <img src={imgFallback} alt={alt} width={width} height={height} loading={loading} class={className} />
+ {!imgFallback && (
+ <span class="sr-only">{alt}</span>
+ )}
 </picture>

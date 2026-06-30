@@ -13,36 +13,36 @@
  */
 
 interface Props {
-  /** Icon (emoji or icon class) */
-  icon: string;
-  /** Badge label text */
-  label: string;
-  /** Color variant */
-  variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info';
-  /** Additional CSS classes */
-  class?: string;
+ /** Icon (emoji or icon class) */
+ icon: string;
+ /** Badge label text */
+ label: string;
+ /** Color variant */
+ variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info';
+ /** Additional CSS classes */
+ class?: string;
 }
 
 const { 
-  icon, 
-  label, 
-  variant = 'accent',
-  class: className = '' 
+ icon, 
+ label, 
+ variant = 'accent',
+ class: className = '' 
 } = Astro.props;
 
 // Variant-specific colors
 const variantColors = {
-  accent: 'text-accent dark:text-accent-light',
-  primary: 'text-primary dark:text-primary-light',
-  success: 'text-success-dark dark:text-success-light',
-  warning: 'text-warning-dark dark:text-warning-light',
-  info: 'text-info-dark dark:text-info-light',
+ accent: 'text-accent dark:text-accent-light',
+ primary: 'text-primary dark:text-primary-light',
+ success: 'text-success-dark dark:text-success-light',
+ warning: 'text-warning-dark dark:text-warning-light',
+ info: 'text-info-dark dark:text-info-light',
 };
 
 const textColor = variantColors[variant];
 ---
 
 <div class={`section-badge ${className}`.trim()}>
-  <div class="text-4xl" aria-hidden="true">{icon}</div>
-  <span class={`text-xl font-semibold ${textColor}`}>{label}</span>
+ <div class="text-4xl" aria-hidden="true">{icon}</div>
+ <span class={`text-xl font-semibold ${textColor}`}>{label}</span>
 </div>

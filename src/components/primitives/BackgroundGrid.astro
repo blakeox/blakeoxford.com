@@ -9,15 +9,15 @@
  * @prop {string} class - Optional additional classes
  */
 interface Props {
-  opacity?: number;
-  size?: string;
-  class?: string;
+ opacity?: number;
+ size?: string;
+ class?: string;
 }
 
 const { 
-  opacity = 35, 
-  size = '200px',
-  class: className = '' 
+ opacity = 35, 
+ size = '200px',
+ class: className = '' 
 } = Astro.props;
 
 const backgroundSize = `[background-size:${size}_${size}]`;
@@ -25,6 +25,6 @@ const opacityClass = `bg-grid-overlay/${opacity}`;
 ---
 
 <div 
-  class={`pointer-events-none absolute inset-0 ${opacityClass} ${backgroundSize} ${className}`.trim()} 
-  aria-hidden="true"
+ class={`pointer-events-none absolute inset-0 ${opacityClass} ${backgroundSize} ${className}`.trim()} 
+ aria-hidden="true"
 ></div>

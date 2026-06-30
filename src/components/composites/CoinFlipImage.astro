@@ -12,22 +12,22 @@
  * @example Basic coin flip
  * ```astro
  * <CoinFlipImage
- *   frontSrc="/front.jpg"
- *   backSrc="/back.jpg"
- *   alt="Front image"
- *   altBack="Back image"
+ * frontSrc="/front.jpg"
+ * backSrc="/back.jpg"
+ * alt="Front image"
+ * altBack="Back image"
  * />
  * ```
  * 
  * @example Auto-flip with custom duration
  * ```astro
  * <CoinFlipImage
- *   frontSrc="/front.jpg"
- *   backSrc="/back.jpg"
- *   alt="Front"
- *   altBack="Back"
- *   flipMultipleTimes={true}
- *   duration={1000}
+ * frontSrc="/front.jpg"
+ * backSrc="/back.jpg"
+ * alt="Front"
+ * altBack="Back"
+ * flipMultipleTimes={true}
+ * duration={1000}
  * />
  * ```
  * 
@@ -57,22 +57,22 @@
 import CoinFlipClient from '../islands/CoinFlipClient';
 
 function simpleId() {
-  return 'coin-flip-' + Math.random().toString(36).slice(2, 10);
+ return 'coin-flip-' + Math.random().toString(36).slice(2, 10);
 }
 const {
-  frontSrc,
-  backSrc,
-  alt = '',        // alias for front alt text
-  altBack = '',
-  size = 144,
-  flipMultipleTimes = false,
-  class: customClass = '',
-  duration = 700, // ms
-  flipOnClick = true,
-  flipAxis = 'y', // 'y' (default) or 'x'
-  flipEase = 'cubic-bezier(0.22,1,0.36,1)', // ease-out for realism
-  multiFlipDuration = 2000, // ms, slower for multi-flip
-  multiFlipEase = 'cubic-bezier(.68,-0.55,.27,1.55)' // springy for multi-flip
+ frontSrc,
+ backSrc,
+ alt = '', // alias for front alt text
+ altBack = '',
+ size = 144,
+ flipMultipleTimes = false,
+ class: customClass = '',
+ duration = 700, // ms
+ flipOnClick = true,
+ flipAxis = 'y', // 'y' (default) or 'x'
+ flipEase = 'cubic-bezier(0.22,1,0.36,1)', // ease-out for realism
+ multiFlipDuration = 2000, // ms, slower for multi-flip
+ multiFlipEase = 'cubic-bezier(.68,-0.55,.27,1.55)' // springy for multi-flip
 } = Astro.props;
 // Optional performance-related props (with safe defaults)
 const loading: 'eager' | 'lazy' = (Astro.props.loading as any) || 'lazy';
@@ -86,7 +86,7 @@ const uniqueId = simpleId();
 
 // Derive image key names (relative to /public/assets/images) for optimized manifests
 function toImageKey(src: string) {
-  return src.replace(/^\/?assets\/images\//, '').replace(/^\/?public\/assets\/images\//, '').replace(/\.(jpg|jpeg|png|webp|avif)$/i, '');
+ return src.replace(/^\/?assets\/images\//, '').replace(/^\/?public\/assets\/images\//, '').replace(/\.(jpg|jpeg|png|webp|avif)$/i, '');
 }
 
 const frontKey = toImageKey(frontSrc);
@@ -96,10 +96,10 @@ const backKey = toImageKey(backSrc);
 // We can't reliably read from /public at build time here, so we use a conservative
 // size map for known assets and a sensible fallback for others.
 const SIZE_MAP: Record<string, number[]> = {
-  // Known limited-size asset (only 320w available)
-  'china-profile-picture': [320],
-  // Common assets with full set generated
-  'Blake-O-scaled': [320, 640, 768]
+ // Known limited-size asset (only 320w available)
+ 'china-profile-picture': [320],
+ // Common assets with full set generated
+ 'Blake-O-scaled': [320, 640, 768]
 };
 
 // Some optimized assets are emitted without @width suffix (single-variant only).
@@ -109,22 +109,22 @@ const NO_SUFFIX = new Set(['china-profile-picture']);
 const FALLBACK_BREAKPOINTS = [320, 640, 768];
 
 function getAvailableBreakpoints(name: string): number[] {
-  // Normalize key by stripping directories
-  const key = name.split('/').pop() || name;
-  // Try exact match; also try without extension artifacts
-  const simple = key.replace(/\.[a-z0-9]+$/i, '');
-  return (SIZE_MAP[simple] || FALLBACK_BREAKPOINTS).slice().sort((a, b) => a - b);
+ // Normalize key by stripping directories
+ const key = name.split('/').pop() || name;
+ // Try exact match; also try without extension artifacts
+ const simple = key.replace(/\.[a-z0-9]+$/i, '');
+ return (SIZE_MAP[simple] || FALLBACK_BREAKPOINTS).slice().sort((a, b) => a - b);
 }
 
 function buildSrcSet(name: string, format: string) {
-  const widths = getAvailableBreakpoints(name);
-  const key = (name.split('/').pop() || name).replace(/\.[a-z0-9]+$/i, '');
-  if (NO_SUFFIX.has(key)) {
-    // Single-variant, unsuffixed file only
-    const w = widths[0] || 320;
-    return `/assets/images/optimized/${format}/${key}.${format} ${w}w`;
-  }
-  return widths.map((w: number) => `/assets/images/optimized/${format}/${name}@${w}w.${format} ${w}w`).join(', ');
+ const widths = getAvailableBreakpoints(name);
+ const key = (name.split('/').pop() || name).replace(/\.[a-z0-9]+$/i, '');
+ if (NO_SUFFIX.has(key)) {
+ // Single-variant, unsuffixed file only
+ const w = widths[0] || 320;
+ return `/assets/images/optimized/${format}/${key}.${format} ${w}w`;
+ }
+ return widths.map((w: number) => `/assets/images/optimized/${format}/${name}@${w}w.${format} ${w}w`).join(', ');
 }
 
 const frontAvifSet = buildSrcSet(frontKey, 'avif');
@@ -134,169 +134,169 @@ const backWebpSet = buildSrcSet(backKey, 'webp');
 
 // Choose a reasonable default src for the <img> tag to match requested size
 function pickDefaultSrc(name: string) {
-  const widths = getAvailableBreakpoints(name);
-  const key = (name.split('/').pop() || name).replace(/\.[a-z0-9]+$/i, '');
-  // Pick the smallest breakpoint that is >= requested size, else largest available
-  const candidate = widths.find(w => w >= size) || widths[widths.length - 1] || 320;
-  if (NO_SUFFIX.has(key)) {
-    return `/assets/images/optimized/avif/${key}.avif`;
-  }
-  return `/assets/images/optimized/avif/${name}@${candidate}w.avif`;
+ const widths = getAvailableBreakpoints(name);
+ const key = (name.split('/').pop() || name).replace(/\.[a-z0-9]+$/i, '');
+ // Pick the smallest breakpoint that is >= requested size, else largest available
+ const candidate = widths.find(w => w >= size) || widths[widths.length - 1] || 320;
+ if (NO_SUFFIX.has(key)) {
+ return `/assets/images/optimized/avif/${key}.avif`;
+ }
+ return `/assets/images/optimized/avif/${name}@${candidate}w.avif`;
 }
 ---
 <noscript>
-  <img src={frontSrc} alt={alt} style={`width:${size}px;height:${size}px;`} class={`coin-flip-front ${customClass}`} />
+ <img src={frontSrc} alt={alt} style={`width:${size}px;height:${size}px;`} class={`coin-flip-front ${customClass}`} />
 </noscript>
 <button
-  type="button"
-  class={`coin-flip ${customClass}`}
-  style={`width:${size}px;height:${size}px;aspect-ratio:1/1;`}
-  aria-pressed="false"
-  aria-label="Flip image; shows front/back of a coin."
-  id={uniqueId + '-root'}
-  data-flip-on-click={flipOnClick}
-  data-flip-axis={axis}
+ type="button"
+ class={`coin-flip ${customClass}`}
+ style={`width:${size}px;height:${size}px;aspect-ratio:1/1;`}
+ aria-pressed="false"
+ aria-label="Flip image; shows front/back of a coin."
+ id={uniqueId + '-root'}
+ data-flip-on-click={flipOnClick}
+ data-flip-axis={axis}
 >
-   <div class={'coin-flip-inner' + (flipMultipleTimes ? ' coin-flip-multi' : '')}
-     id={uniqueId + '-inner'}
-     style={flipMultipleTimes
-      ? `transition-duration:${multiFlipDuration}ms;transition-timing-function:${multiEase};`
-      : `transition-duration:${duration}ms;transition-timing-function:${ease};`}
-  >
-    <div class="coin-flip-face coin-flip-front-face">
-      <picture>
-        {frontAvifSet && (<source srcset={frontAvifSet} sizes={`${size}px`} type="image/avif" />)}
-        {frontWebpSet && (<source srcset={frontWebpSet} sizes={`${size}px`} type="image/webp" />)}
-  <img src={pickDefaultSrc(frontKey)} alt={alt} class="coin-flip-front" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
-      </picture>
-      <div class="coin-flip-highlight"></div>
-    </div>
-    <div class="coin-flip-edge"></div>
-    <div class="coin-flip-face coin-flip-back-face">
-      <picture>
-        {backAvifSet && (<source srcset={backAvifSet} sizes={`${size}px`} type="image/avif" />)}
-        {backWebpSet && (<source srcset={backWebpSet} sizes={`${size}px`} type="image/webp" />)}
-  <img src={pickDefaultSrc(backKey)} alt={altBack} class="coin-flip-back" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
-      </picture>
-      <div class="coin-flip-highlight"></div>
-    </div>
-  </div>
-  <span id={uniqueId + '-live'} class="sr-only" aria-live="polite"></span>
+ <div class={'coin-flip-inner' + (flipMultipleTimes ? ' coin-flip-multi' : '')}
+ id={uniqueId + '-inner'}
+ style={flipMultipleTimes
+ ? `transition-duration:${multiFlipDuration}ms;transition-timing-function:${multiEase};`
+ : `transition-duration:${duration}ms;transition-timing-function:${ease};`}
+ >
+ <div class="coin-flip-face coin-flip-front-face">
+ <picture>
+ {frontAvifSet && (<source srcset={frontAvifSet} sizes={`${size}px`} type="image/avif" />)}
+ {frontWebpSet && (<source srcset={frontWebpSet} sizes={`${size}px`} type="image/webp" />)}
+ <img src={pickDefaultSrc(frontKey)} alt={alt} class="coin-flip-front" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+ </picture>
+ <div class="coin-flip-highlight"></div>
+ </div>
+ <div class="coin-flip-edge"></div>
+ <div class="coin-flip-face coin-flip-back-face">
+ <picture>
+ {backAvifSet && (<source srcset={backAvifSet} sizes={`${size}px`} type="image/avif" />)}
+ {backWebpSet && (<source srcset={backWebpSet} sizes={`${size}px`} type="image/webp" />)}
+ <img src={pickDefaultSrc(backKey)} alt={altBack} class="coin-flip-back" loading={loading} draggable="false" width={size} height={size} fetchpriority={fetchPriority} decoding={decoding} />
+ </picture>
+ <div class="coin-flip-highlight"></div>
+ </div>
+ </div>
+ <span id={uniqueId + '-live'} class="sr-only" aria-live="polite"></span>
 </button>
 
 <CoinFlipClient client:load rootId={uniqueId + '-root'} innerId={uniqueId + '-inner'} liveRegionId={uniqueId + '-live'} flipOnClick={flipOnClick} />
 
 <style>
 .coin-flip {
-  perspective: 1000px;
-  display: inline-block;
-  border-radius: var(--radius-full, 50%);
-  box-shadow: var(--shadow-lg, 0 4px 16px rgb(var(--color-neutral) / 0.10));
-  overflow: hidden;
-  cursor: pointer;
-  outline: none;
+ perspective: 1000px;
+ display: inline-block;
+ border-radius: var(--radius-full, 50%);
+ box-shadow: var(--shadow-lg, 0 4px 16px rgb(var(--color-neutral) / 0.10));
+ overflow: hidden;
+ cursor: pointer;
+ outline: none;
 }
 .coin-flip:focus {
-  box-shadow: 0 0 0 2px rgb(var(--color-accent)), var(--shadow-lg, 0 4px 16px rgb(var(--color-neutral) / 0.10));
+ box-shadow: 0 0 0 2px rgb(var(--color-accent)), var(--shadow-lg, 0 4px 16px rgb(var(--color-neutral) / 0.10));
 }
 .coin-flip-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition-property: transform;
-  transition-timing-function: var(--ease-standard, cubic-bezier(0.4,0,0.2,1));
-  transform-style: preserve-3d;
+ position: relative;
+ width: 100%;
+ height: 100%;
+ transition-property: transform;
+ transition-timing-function: var(--ease-standard, cubic-bezier(0.4,0,0.2,1));
+ transform-style: preserve-3d;
 }
 .coin-flip-inner.coin-flip-multi {
-  /* duration and timing function are set inline */
+ /* duration and timing function are set inline */
 }
 .coin-flip-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0; left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backface-visibility: hidden;
-  border-radius: var(--radius-full, 50%);
-  overflow: hidden;
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ top: 0; left: 0;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ backface-visibility: hidden;
+ border-radius: var(--radius-full, 50%);
+ overflow: hidden;
 }
 .coin-flip-front-face {
-  z-index: 2;
+ z-index: 2;
 }
 .coin-flip-back-face {
-  transform: rotateY(180deg);
-  z-index: 2;
+ transform: rotateY(180deg);
+ z-index: 2;
 }
 .coin-flip-front, .coin-flip-back {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: var(--radius-full, 50%);
-  display: block;
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
+ border-radius: var(--radius-full, 50%);
+ display: block;
 }
 .coin-flip-highlight {
-  pointer-events: none;
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: var(--radius-full, 50%);
-  background: radial-gradient(ellipse 60% 30% at 60% 30%, rgb(var(--color-surface) / 0.18) 0%, rgb(var(--color-surface) / 0.04) 80%, transparent 100%);
-  mix-blend-mode: lighten;
-  z-index: 3;
+ pointer-events: none;
+ position: absolute;
+ top: 0; left: 0;
+ width: 100%;
+ height: 100%;
+ border-radius: var(--radius-full, 50%);
+ background: radial-gradient(ellipse 60% 30% at 60% 30%, rgb(var(--color-surface) / 0.18) 0%, rgb(var(--color-surface) / 0.04) 80%, transparent 100%);
+ mix-blend-mode: lighten;
+ z-index: 3;
 }
 .coin-flip-edge {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: var(--radius-full, 50%);
-  z-index: 1;
-  box-shadow:
-    0 0 0 3px rgb(var(--color-neutral) / 0.12) inset,
-    0 0 8px 2px rgb(var(--color-neutral) / 0.10) inset;
-  background: repeating-linear-gradient(90deg, rgb(var(--color-neutral) / 0.12) 0 2px, transparent 2px 6px);
-  pointer-events: none;
+ position: absolute;
+ top: 0; left: 0;
+ width: 100%;
+ height: 100%;
+ border-radius: var(--radius-full, 50%);
+ z-index: 1;
+ box-shadow:
+ 0 0 0 3px rgb(var(--color-neutral) / 0.12) inset,
+ 0 0 8px 2px rgb(var(--color-neutral) / 0.10) inset;
+ background: repeating-linear-gradient(90deg, rgb(var(--color-neutral) / 0.12) 0 2px, transparent 2px 6px);
+ pointer-events: none;
 }
 /* Flip axis logic */
 .coin-flip-inner {
-  /* Default is Y axis, but JS sets transform inline for flipping */
+ /* Default is Y axis, but JS sets transform inline for flipping */
 }
 @media (prefers-reduced-motion: reduce) {
-  .coin-flip-inner,
-  .coin-flip-inner.coin-flip-multi {
-    transition: none !important;
-  }
+ .coin-flip-inner,
+ .coin-flip-inner.coin-flip-multi {
+ transition: none !important;
+ }
 }
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
+ position: absolute;
+ width: 1px;
+ height: 1px;
+ padding: 0;
+ margin: -1px;
+ overflow: hidden;
+ clip: rect(0,0,0,0);
+ white-space: nowrap;
+ border: 0;
 }
 /* --- Hover/Focus Flip for Y axis --- */
 .coin-flip[data-flip-axis="Y"]:hover .coin-flip-inner,
 .coin-flip[data-flip-axis="Y"]:focus .coin-flip-inner {
-  transform: rotateY(180deg);
+ transform: rotateY(180deg);
 }
 .coin-flip[data-flip-axis="Y"]:hover .coin-flip-inner.coin-flip-multi,
 .coin-flip[data-flip-axis="Y"]:focus .coin-flip-inner.coin-flip-multi {
-  transform: rotateY(900deg);
+ transform: rotateY(900deg);
 }
 /* --- Hover/Focus Flip for X axis --- */
 .coin-flip[data-flip-axis="X"]:hover .coin-flip-inner,
 .coin-flip[data-flip-axis="X"]:focus .coin-flip-inner {
-  transform: rotateX(180deg);
+ transform: rotateX(180deg);
 }
 .coin-flip[data-flip-axis="X"]:hover .coin-flip-inner.coin-flip-multi,
 .coin-flip[data-flip-axis="X"]:focus .coin-flip-inner.coin-flip-multi {
-  transform: rotateX(900deg);
+ transform: rotateX(900deg);
 }
 </style>

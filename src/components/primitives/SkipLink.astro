@@ -21,44 +21,44 @@
  * @prop {string} [text='Skip to main content'] - Link text
  */
 interface Props {
-  href: string;
-  text?: string;
+ href: string;
+ text?: string;
 }
 
 const { 
-  href,
-  text = 'Skip to main content',
+ href,
+ text = 'Skip to main content',
 } = Astro.props as Props;
 ---
 
 <a
-  href={href}
-  class="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-on-accent focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2"
+ href={href}
+ class="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-on-accent focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2"
 >
-  {text}
+ {text}
 </a>
 
 <style>
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-  
-  .focus\:not-sr-only:focus {
-    position: static;
-    width: auto;
-    height: auto;
-    padding: inherit;
-    margin: inherit;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
-  }
+ .sr-only {
+ position: absolute;
+ width: 1px;
+ height: 1px;
+ padding: 0;
+ margin: -1px;
+ overflow: hidden;
+ clip: rect(0, 0, 0, 0);
+ white-space: nowrap;
+ border-width: 0;
+ }
+ 
+ .focus\:not-sr-only:focus {
+ position: static;
+ width: auto;
+ height: auto;
+ padding: inherit;
+ margin: inherit;
+ overflow: visible;
+ clip: auto;
+ white-space: normal;
+ }
 </style>

@@ -6,53 +6,53 @@
  * 
  * @example
  * <Container size="lg">
- *   <h1>Page Content</h1>
+ * <h1>Page Content</h1>
  * </Container>
  */
 
 export interface Props {
-  /** Container max-width */
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  /** Apply padding */
-  padding?: boolean;
-  /** Center content */
-  center?: boolean;
-  /** HTML element type */
-  as?: 'div' | 'section' | 'article' | 'main' | 'aside';
-  /** Additional CSS classes */
-  class?: string;
+ /** Container max-width */
+ size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+ /** Apply padding */
+ padding?: boolean;
+ /** Center content */
+ center?: boolean;
+ /** HTML element type */
+ as?: 'div' | 'section' | 'article' | 'main' | 'aside';
+ /** Additional CSS classes */
+ class?: string;
 }
 
 const props = Astro.props as Props;
 
 const {
-  size = 'lg',
-  padding = true,
-  center = false,
-  as: Element = 'div',
-  class: className = '',
+ size = 'lg',
+ padding = true,
+ center = false,
+ as: Element = 'div',
+ class: className = '',
 } = props;
 
 // Size styles (matching common patterns in codebase)
 const sizeStyles = {
-  sm: 'max-w-2xl',
-  md: 'max-w-4xl',
-  lg: 'max-w-6xl',
-  xl: 'max-w-7xl',
-  full: 'max-w-none',
+ sm: 'max-w-2xl',
+ md: 'max-w-4xl',
+ lg: 'max-w-6xl',
+ xl: 'max-w-7xl',
+ full: 'max-w-none',
 } as const;
 
 const sizeKey = size ?? 'lg';
 
 const classes = [
-  center && 'mx-auto',
-  sizeKey !== 'full' && 'w-full',
-  sizeStyles[sizeKey],
-  padding && 'px-4 sm:px-6 lg:px-8',
-  className,
+ center && 'mx-auto',
+ sizeKey !== 'full' && 'w-full',
+ sizeStyles[sizeKey],
+ padding && 'px-4 sm:px-6 lg:px-8',
+ className,
 ].filter(Boolean).join(' ');
 ---
 
 <Element class={classes}>
-  <slot />
+ <slot />
 </Element>

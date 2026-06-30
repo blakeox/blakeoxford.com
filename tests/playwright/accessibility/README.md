@@ -33,6 +33,14 @@ Run specific test suite:
 pnpm test:e2e tests/playwright/accessibility/keyboard-navigation.spec.ts
 ```
 
+Run contrast checks (light **and** dark themes):
+
+```bash
+pnpm exec playwright test tests/playwright/accessibility/contrast-ratio.spec.ts --project=chromium
+```
+
+Contrast utilities live in `tests/utils/colorContrast.ts` and `tests/utils/colorResolver.browser.js` (OKLCH/OKLAB-aware).
+
 Run core tests only (fastest):
 
 ```bash

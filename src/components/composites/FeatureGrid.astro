@@ -7,41 +7,41 @@
  * 
  * @example Basic 3-column feature grid
  * <FeatureGrid cols="3" gap="lg">
- *   <FeatureGrid.Item 
- *     icon="🚀" 
- *     title="Fast Deployment" 
- *     description="Ship code to production in minutes, not hours."
- *   />
- *   <FeatureGrid.Item 
- *     icon="🔒" 
- *     title="Secure by Default"
- *     description="Enterprise-grade security built into every layer."
- *   />
+ * <FeatureGrid.Item 
+ * icon="🚀" 
+ * title="Fast Deployment" 
+ * description="Ship code to production in minutes, not hours."
+ * />
+ * <FeatureGrid.Item 
+ * icon="🔒" 
+ * title="Secure by Default"
+ * description="Enterprise-grade security built into every layer."
+ * />
  * </FeatureGrid>
  */
 
 import Grid from '../primitives/Grid.astro';
 
 interface Props {
-  /** Number of columns */
-  cols?: '1' | '2' | '3' | '4';
-  /** Gap between items */
-  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
-  /** Align items */
-  alignItems?: 'start' | 'center' | 'end' | 'stretch';
-  /** Additional CSS classes */
-  class?: string;
+ /** Number of columns */
+ cols?: '1' | '2' | '3' | '4';
+ /** Gap between items */
+ gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+ /** Align items */
+ alignItems?: 'start' | 'center' | 'end' | 'stretch';
+ /** Additional CSS classes */
+ class?: string;
 }
 
 const {
-  cols = '3',
-  gap = 'lg',
-  alignItems = 'start',
-  class: className = '',
-  ...rest
+ cols = '3',
+ gap = 'lg',
+ alignItems = 'start',
+ class: className = '',
+ ...rest
 } = Astro.props;
 ---
 
 <Grid cols={cols} gap={gap} alignItems={alignItems} class={className} {...rest}>
-  <slot />
+ <slot />
 </Grid>
