@@ -1,9 +1,12 @@
 ---
 /**
  * StatsCard - Statistics/Metrics Display Component
- * 
+ *
+ * Built on BaseCard for consistent elevation and dark-mode behavior.
  * Uses container queries for responsive typography inside grid layouts.
  */
+
+import BaseCard from '../primitives/BaseCard.astro';
 
 interface Props {
  label: string;
@@ -25,11 +28,11 @@ const {
 } = Astro.props;
 
 const variantMap = {
- default: 'bg-background ring-1 ring-border/30 shadow-lg',
- elevated: 'bg-surface shadow-lg ring-1 ring-border/20',
- glass: 'bg-surface/60 backdrop-blur-md ring-1 ring-border/40 shadow-lg',
- subtle: 'bg-surface-subtle/40 ring-1 ring-border/25',
-};
+ default: 'default',
+ elevated: 'elevated',
+ glass: 'glass',
+ subtle: 'subtle',
+} as const;
 
 const sizeMap = {
  sm: {
@@ -52,14 +55,17 @@ const sizeMap = {
  },
 };
 
-const variantClasses = variantMap[variant];
 const sizeClasses = sizeMap[size];
-
-const containerClasses = `rounded-2xl ${variantClasses} ${sizeClasses.container} ${className}`.trim();
 ---
 
-<div class="@container" {...rest}>
- <div class={containerClasses}>
+<div class="@container">
+ <BaseCard
+ variant={variantMap[variant]}
+ hover="none"
+ padding="none"
+ class={`${sizeClasses.container} ${className}`.trim()}
+ {...rest}
+ >
  <p class={`font-semibold uppercase tracking-label text-subtle-foreground ${sizeClasses.label}`}>
  {label}
  </p>
@@ -72,5 +78,5 @@ const containerClasses = `rounded-2xl ${variantClasses} ${sizeClasses.container}
  </p>
  )}
  <slot />
- </div>
+ </BaseCard>
 </div>

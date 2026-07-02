@@ -452,6 +452,8 @@
     --surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
     --border: var(--border-color-dark);
     --border-subtle: var(--border-color-dark);
+    --border-color: var(--border-color-dark);
+    --border-color-subtle: var(--border-color-dark);
     --ring: var(--color-accent, var(--color-accent-fallback));
     
     /* Dark mode interactive overlays */

@@ -4,6 +4,7 @@
  * Used in about.astro for professional journey timeline
  */
 import GradientOverlay from '../../primitives/GradientOverlay.astro';
+import Card from '../../composites/Card.astro';
 
 export interface Props {
  year: string;
@@ -30,9 +31,11 @@ const iconSVGs = {
 };
 ---
 
-<div 
- data-testid="timeline-card" 
- class="hover-lift relative bg-surface/95 dark:bg-surface-dark/90 backdrop-blur-sm border border-border dark:border-border-dark px-8 py-8 rounded-2xl shadow-lg hover:shadow-accent/5 overflow-hidden group"
+<Card
+ data-testid="timeline-card"
+ hover="lift"
+ padding="lg"
+ class="relative overflow-hidden backdrop-blur-sm group"
 >
  <!-- Background gradient effect -->
  <GradientOverlay variant='hover-subtle' direction='r' />
@@ -69,5 +72,5 @@ const iconSVGs = {
  
  
  <!-- Bottom gradient line -->
- <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
-</div>
+ <div class="absolute bottom-0 left-0 h-1 w-full origin-center scale-x-0 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 transition-transform duration-500 group-hover:scale-x-100"></div>
+</Card>

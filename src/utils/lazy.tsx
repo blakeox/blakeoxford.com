@@ -126,7 +126,7 @@ export function createLazyComponent<P extends object>(
 export function DefaultLoadingSkeleton(): ReactNode {
 	return (
 		<div
-			className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded"
+			className="animate-pulse bg-surface-subtle dark:bg-surface-dark-subtle rounded"
 			style={{ height: '200px', width: '100%' }}
 			aria-label="Loading..."
 			role="status"
@@ -146,7 +146,7 @@ export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }): 
 
 	return (
 		<div
-			className={`${sizeClasses[size]} animate-spin rounded-full border-2 border-gray-300 border-t-accent`}
+			className={`${sizeClasses[size]} animate-spin rounded-full border-2 border-border border-t-accent`}
 			role="status"
 			aria-label="Loading..."
 		/>

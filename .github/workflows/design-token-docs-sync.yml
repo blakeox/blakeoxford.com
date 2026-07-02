@@ -1,0 +1,26 @@
+name: Design Token Docs Sync
+
+on:
+  pull_request:
+    paths:
+      - 'src/styles/theme.css'
+      - 'src/pages/design/tokens.astro'
+
+permissions:
+  contents: read
+
+jobs:
+  theme-docs-sync:
+    name: Verify token docs sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify theme.css changes include token docs
+        run: node scripts/quality/check-theme-docs-sync.js
+        env:
+          BASE_REF: origin/${{ github.base_ref }}
