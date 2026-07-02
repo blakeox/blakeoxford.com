@@ -290,7 +290,7 @@ export default function SearchOverlayController() {
  option.setAttribute('aria-selected', 'false');
  option.href = record.href;
  option.tabIndex = -1;
- option.className = 'search-result group flex flex-col gap-2 rounded-2xl border border-border/40 bg-background/95 p-4 sm:p-5 transition-all duration-200 hover:border-accent/50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 dark:bg-surface-dark/95';
+ option.className = 'search-result focus-ring-interactive touch-target group flex min-h-11 flex-col gap-2 rounded-2xl border border-border/40 bg-background/95 p-4 sm:p-5 transition-all duration-200 hover:border-accent/50 hover:shadow-lg dark:bg-surface-dark/95';
 
  const title = doc.createElement('span');
  title.className = 'block text-sm font-semibold tracking-tight text-foreground';
