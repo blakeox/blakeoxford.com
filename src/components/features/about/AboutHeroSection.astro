@@ -1,0 +1,48 @@
+---
+import PageHero from '../../composites/PageHero.astro';
+import Stack from '../../primitives/Stack.astro';
+import PhotoCarousel from '../../composites/PhotoCarousel.astro';
+---
+
+<PageHero id="about-me" class="min-h-screen py-0">
+  <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
+    <div class="absolute inset-0"></div>
+  </div>
+  <div class="relative z-10 min-h-screen">
+    <div class="flex min-h-screen flex-col md:grid md:grid-cols-2 md:gap-0">
+      <div class="order-1 flex flex-col justify-start px-4 pb-8 pt-28 sm:px-6 md:order-1 md:justify-center md:px-6 md:py-16 lg:px-12">
+        <Stack space="lg" class="mx-auto max-w-2xl">
+          <h1 id="about-me-title" class="font-heading text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl">
+            Systems Architect &amp; Workflow Strategist
+          </h1>
+          <p class="text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
+            Based in Michigan, I help organizations transform complex processes into streamlined, data-driven systems. From healthcare to finance, my approach combines technical expertise with strategic thinking to deliver solutions that scale.
+          </p>
+          <div class="rounded-2xl border border-border/40 bg-background/95 p-6 dark:bg-background-dark/75">
+            <ul class="space-y-3 text-sm font-semibold uppercase tracking-label text-subtle-foreground">
+              <li class="flex items-center gap-3">
+                <span class="inline-flex size-2 rounded-full bg-accent"></span>
+                Automation with adoption guardrails
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="inline-flex size-2 rounded-full bg-accent"></span>
+                Financial intelligence that informs every sprint
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="inline-flex size-2 rounded-full bg-accent"></span>
+                Governance and enablement built-in from day one
+              </li>
+            </ul>
+          </div>
+        </Stack>
+      </div>
+
+      <div class="order-2 min-h-[320px] w-full flex-1 overflow-hidden md:order-2 md:h-full" role="complementary" aria-label="Photo gallery">
+        <div class="relative h-full w-full">
+          <PhotoCarousel class="h-full w-full" />
+          <div class="absolute inset-0 hidden bg-gradient-to-r from-background/20 via-transparent to-transparent pointer-events-none dark:from-background-dark/20 md:block"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</PageHero>

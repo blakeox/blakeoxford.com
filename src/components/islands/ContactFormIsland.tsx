@@ -66,7 +66,7 @@ function setupTurnstile(isAudit: boolean): CleanupFn | void {
 
  if (isAudit) {
  container.setAttribute('aria-label', 'Human verification temporarily disabled during automated audits');
- container.innerHTML = '<div class="text-center text-sm text-neutral">Verification skipped for audit.</div>';
+ container.innerHTML = '<div class="text-center text-sm text-muted-foreground">Verification skipped for audit.</div>';
  return;
  }
 

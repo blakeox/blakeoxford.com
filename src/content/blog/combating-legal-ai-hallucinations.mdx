@@ -9,259 +9,154 @@ tags:
 draft: false
 ---
 
-<div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/10 to-accent/10 dark:from-accent/10 dark:via-primary/10 dark:to-accent/10 rounded-3xl p-12 md:p-16 my-12 border-2 border-accent/30">
-  <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
-  <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
-  <div className="relative text-center">
-    <div className="text-6xl mb-6">⚖️</div>
-    <p className="text-2xl md:text-3xl leading-relaxed font-medium mb-4">
-      Introducing <strong className="text-accent dark:text-accent-light">courtlistener-mcp</strong>, an open-source MCP server that revolutionizes AI-assisted legal research by directly addressing one of the most critical challenges in AI:
-    </p>
-    <p className="text-4xl md:text-5xl font-black bg-gradient-to-r from-red-600 to-rose-600 dark:from-red-400 dark:to-rose-400 bg-clip-text text-transparent">
-      Hallucinations
-    </p>
-  </div>
-</div>
+import FeatureCard from '../../components/composites/FeatureCard.astro';
+import CTASection from '../../components/composites/CTASection.astro';
+import Button from '../../components/primitives/Button.astro';
+import ButtonGroup from '../../components/composites/ButtonGroup.astro';
 
-<div className="prose prose-xl dark:prose-invert max-w-none my-12">
-  <p className="text-xl leading-relaxed">
-    AI-assisted research unlocks new possibilities for faster case reviews and deeper insights. Yet trusting an answer produced by a language model is risky when the response is not backed by the underlying record. I created <strong className="text-accent dark:text-accent-light">courtlistener-mcp</strong> to solve that problem by wiring CourtListener's open court data directly into the Model Context Protocol (MCP).
+<FeatureCard
+  variant="accent"
+  icon="⚖️"
+  title="Ground legal AI in verified source material"
+  class="my-12 text-center"
+>
+  <p class="text-lg leading-relaxed text-foreground/90">
+    <strong>courtlistener-mcp</strong> gives MCP-aware assistants direct access to CourtListener data so legal research responses can be tied back to real opinions, dockets, and identifiers instead of model guesswork.
   </p>
-</div>
-
----
-
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-red-500/10 to-rose-500/10 dark:from-red-400/10 dark:to-rose-400/10 px-8 py-4 rounded-full border border-red-500/30 mb-6">
-    <div className="text-4xl">⚠️</div>
-    <span className="text-xl font-semibold text-red-600 dark:text-red-400">The Challenge</span>
-  </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">Why Hallucinations Are So Dangerous</h2>
-</div>
-
-<div className="relative overflow-hidden bg-gradient-to-br from-red-600/10 to-rose-600/10 dark:from-red-500/10 dark:to-rose-500/10 rounded-3xl p-10 md:p-12 border-2 border-red-500/30 shadow-2xl mb-10">
-  <div className="absolute -top-10 -right-10 w-48 h-48 bg-red-500/20 rounded-full blur-3xl"></div>
-  <div className="relative">
-    <p className="text-2xl md:text-3xl leading-relaxed mb-8 font-medium text-center">
-      Legal research is a high-stakes workflow. A confident but incorrect citation can have <strong className="text-red-600 dark:text-red-400">serious consequences</strong>.
-    </p>
-  </div>
-</div>
-
-<div className="blog-takeaway-container">
-  <h3 className="text-3xl font-bold text-red-700 dark:text-red-300 mb-8 text-center">The Stakes Are High</h3>
-  <div className="grid md:grid-cols-3 gap-6">
-    <div className="blog-result text-center">
-      <div className="text-4xl mb-3">⚖️</div>
-      <p className="text-base leading-relaxed">Mislead attorneys and clerks on precedent</p>
-    </div>
-    <div className="blog-result text-center">
-      <div className="text-4xl mb-3">⚠️</div>
-      <p className="text-base leading-relaxed">Introduce professional liability when incorrect advice is sent to a client</p>
-    </div>
-    <div className="blog-result text-center">
-      <div className="text-4xl mb-3">💔</div>
-      <p className="text-base leading-relaxed">Erode trust in every AI-powered workflow that follows</p>
-    </div>
-  </div>
-</div>
-
-<div className="blog-callout">
-  <p className="text-lg leading-relaxed">
-Recent headline cases have already shown lawyers sanctioned for citing hallucinated opinions. Those errors are rarely malicious—they happen because the model has no verified source for its answer.
+  <p class="mt-4 text-3xl font-black text-warning-dark dark:text-warning-light">
+    Hallucinations are not acceptable in a high-stakes workflow.
   </p>
-</div>
+</FeatureCard>
 
----
+AI-assisted research creates real leverage for faster case review, better synthesis, and broader coverage. It also creates a control problem: a language model can sound convincing while inventing the citation it relies on. In legal work, that is not a minor quality issue. It is a trust failure with professional, financial, and compliance consequences.
 
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/10 dark:to-primary/10 px-8 py-4 rounded-full border border-accent/30 mb-6">
-    <div className="text-4xl">✅</div>
-    <span className="text-xl font-semibold text-accent dark:text-accent-light">The Solution</span>
-  </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">Grounding AI Answers with Real Court Data</h2>
-</div>
+## Why this matters
 
-<div className="bg-gradient-to-r from-accent/10 via-primary/10 to-accent/10 dark:from-accent/10 dark:via-primary/10 dark:to-accent/10 rounded-2xl p-10 my-12 border-2 border-accent/30 shadow-xl text-center">
-  <p className="text-2xl md:text-3xl leading-relaxed font-medium">
-    <strong className="text-accent dark:text-accent-light">courtlistener-mcp</strong> connects MCP-aware tools (like Claude, ChatGPT, or custom agents) to CourtListener's API.
+<FeatureCard
+  variant="error"
+  icon="⚠️"
+  title="The failure mode is confident inaccuracy"
+  class="my-10"
+>
+  <p class="text-lg leading-relaxed text-foreground/90">
+    A polished answer without a verifiable source can mislead attorneys, contaminate downstream work product, and erode trust in every AI-assisted workflow that follows.
   </p>
+</FeatureCard>
+
+Recent sanction cases have made the pattern clear. The expensive failure mode is not usually malicious behavior. It is a workflow that lets unverified output move forward because the underlying evidence was never attached to the answer in the first place.
+
+The operational requirement is straightforward:
+
+1. Every answer should point to a real source.
+2. Reviewers should be able to inspect that source without leaving the workflow.
+3. Teams should retain an audit trail of what was asked, what was returned, and what evidence supported it.
+
+## What courtlistener-mcp changes
+
+<div class="not-prose my-12 grid gap-6 md:grid-cols-2">
+  <FeatureCard
+    variant="accent"
+    icon="🔗"
+    title="Grounded citations"
+    description="Responses include the CourtListener ID and source link for each cited document."
+  />
+  <FeatureCard
+    variant="primary"
+    icon="📄"
+    title="Verified documents"
+    description="The server can return the opinion, docket, or transcript needed for direct review."
+  />
+  <FeatureCard
+    variant="accent"
+    icon="🔍"
+    title="Real-time search"
+    description="Queries run through CourtListener so newly available decisions can be surfaced immediately."
+  />
+  <FeatureCard
+    variant="primary"
+    icon="🛡️"
+    title="Auditability"
+    description="Requests and outputs can be logged so compliance and review teams have a durable record."
+  />
 </div>
 
-<div className="grid md:grid-cols-2 gap-8 my-16">
-  <div className="blog-card group">
-    <div className="text-6xl mb-4">🔗</div>
-    <h3 className="text-2xl font-bold mb-3 text-accent dark:text-accent-light">Grounded Citations</h3>
-    <p className="text-lg leading-relaxed opacity-85">Responses include the CourtListener ID and link for each cited document</p>
-  </div>
+At a practical level, the server connects MCP-aware tools such as ChatGPT, Claude, or internal agents to CourtListener's API. That lets the model operate with external evidence instead of relying on unsupported recall.
 
-  <div className="blog-card group">
-    <div className="text-6xl mb-4">📄</div>
-    <h3 className="text-2xl font-bold mb-3 text-primary dark:text-primary-light">Verified Documents</h3>
-    <p className="text-lg leading-relaxed opacity-85">The server can deliver the full opinion, docket, or audio transcript for review</p>
-  </div>
+## Architecture at a glance
 
-  <div className="blog-card group">
-    <div className="text-6xl mb-4">🔍</div>
-    <h3 className="text-2xl font-bold mb-3 text-accent dark:text-accent-light">Real-Time Search</h3>
-    <p className="text-lg leading-relaxed opacity-85">Queries flow through CourtListener's search endpoint, so newly uploaded opinions are available immediately</p>
-  </div>
+The control sequence is simple by design:
 
-  <div className="blog-card group">
-    <div className="text-6xl mb-4">🛡️</div>
-    <h3 className="text-2xl font-bold mb-3 text-primary dark:text-primary-light">Tamper-Resistant Auditing</h3>
-    <p className="text-lg leading-relaxed opacity-85">All interactions are logged with timestamps and query parameters to satisfy compliance teams</p>
-  </div>
+1. A user asks a research question through an MCP-capable client.
+2. `courtlistener-mcp` translates that request into a CourtListener query.
+3. Results are normalized into tool responses with metadata, snippets, and URLs.
+4. The model generates an answer from that payload and returns citations tied to the original source material.
+
+This keeps the human reviewer in control. The model can summarize and synthesize, but the supporting record remains visible and inspectable.
+
+## Why this is operationally better
+
+The system improves more than answer quality. It also reduces workflow ambiguity:
+
+1. Attorneys and analysts spend less time checking whether a cited authority exists at all.
+2. Compliance teams get a cleaner audit path for tool usage.
+3. Product teams can add legal AI features without normalizing unverifiable output as an acceptable default.
+
+That is the durable pattern: keep the assistant useful, but make evidence attachment part of the core path rather than an optional follow-up step.
+
+## Getting started
+
+The project is open source and designed to be easy to test locally:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+From there, point your MCP-compatible client at the `courtlistener-mcp` endpoint and configure the CourtListener credentials and jurisdiction scope you need. The README covers local setup and extension points in more detail.
+
+<div class="not-prose my-10">
+  <ButtonGroup align="start" responsive>
+    <Button href="https://github.com/blakeox/courtlistener-mcp" target="_blank" rel="noopener noreferrer">
+      View on GitHub
+    </Button>
+    <Button variant="outline" href="/contact/">
+      Discuss integration
+    </Button>
+  </ButtonGroup>
 </div>
 
----
+## Next steps
 
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 dark:from-primary/10 dark:to-accent/10 px-8 py-4 rounded-full border border-primary/30 mb-6">
-    <div className="text-4xl">🏗️</div>
-    <span className="text-xl font-semibold text-primary dark:text-primary-light">How It Works</span>
-  </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">Architecture at a Glance</h2>
+Current expansion areas are focused on depth rather than novelty:
+
+<div class="not-prose my-12 grid gap-6 md:grid-cols-3">
+  <FeatureCard
+    variant="warning"
+    icon="📦"
+    title="Bulk export utilities"
+    description="Support litigation knowledge-base workflows without manual handoffs."
+  />
+  <FeatureCard
+    variant="accent"
+    icon="📊"
+    title="Conflict analytics"
+    description="Identify conflicting authorities across jurisdictions with better review support."
+  />
+  <FeatureCard
+    variant="success"
+    icon="⚡"
+    title="Performance hardening"
+    description="Add caching and rate-control layers for larger research teams."
+  />
 </div>
 
-<div className="space-y-6 my-16">
-  <div className="relative pl-0 md:pl-20">
-    <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent to-primary dark:from-accent-light dark:to-primary-light text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">1</div>
-    <div className="bg-gradient-to-br from-accent/5 to-primary/5 dark:from-accent/5 dark:to-primary/5 rounded-2xl p-8 border-2 border-accent/30 shadow-lg">
-      <h3 className="text-xl font-bold mb-3 text-accent dark:text-accent-light">Query Received</h3>
-      <p className="text-lg leading-relaxed opacity-90">An MCP client sends a query such as "Show the latest Ninth Circuit rulings on data privacy."</p>
-    </div>
-  </div>
-
-  <div className="relative pl-0 md:pl-20">
-    <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-primary to-accent dark:from-primary-light dark:to-accent-light text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-primary/20">2</div>
-    <div className="bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/5 dark:to-accent/5 rounded-2xl p-8 border-2 border-primary/30 shadow-lg">
-      <h3 className="text-xl font-bold mb-3 text-primary dark:text-primary-light">Transform Request</h3>
-      <p className="text-lg leading-relaxed opacity-90"><code className="bg-black/10 dark:bg-white/10 px-2 py-1 rounded">courtlistener-mcp</code> transforms the prompt into a CourtListener search request.</p>
-    </div>
-  </div>
-
-  <div className="relative pl-0 md:pl-20">
-    <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent to-primary dark:from-accent-light dark:to-primary-light text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">3</div>
-    <div className="bg-gradient-to-br from-accent/5 to-primary/5 dark:from-accent/5 dark:to-primary/5 rounded-2xl p-8 border-2 border-accent/30 shadow-lg">
-      <h3 className="text-xl font-bold mb-3 text-accent dark:text-accent-light">Normalize Results</h3>
-      <p className="text-lg leading-relaxed opacity-90">Results are normalized into MCP "tool" responses that include metadata, snippets, and URLs.</p>
-    </div>
-  </div>
-
-  <div className="relative pl-0 md:pl-20">
-    <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-primary to-accent dark:from-primary-light dark:to-accent-light text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-primary/20">4</div>
-    <div className="bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/5 dark:to-accent/5 rounded-2xl p-8 border-2 border-primary/30 shadow-lg">
-      <h3 className="text-xl font-bold mb-3 text-primary dark:text-primary-light">Generate Answer</h3>
-      <p className="text-lg leading-relaxed opacity-90">The LLM uses the payload to compose an answer and returns citations linked to the original documents.</p>
-    </div>
-  </div>
-</div>
-
-<div className="blog-callout-gradient">
-  <p className="text-xl md:text-2xl leading-relaxed text-center font-medium">
-    This loop keeps human reviewers in control—AI can summarize or highlight, but the answer is always grounded in <strong className="text-accent dark:text-accent-light">verifiable evidence</strong>.
-  </p>
-</div>
-
----
-
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-400/10 dark:to-emerald-400/10 px-8 py-4 rounded-full border border-green-500/30 mb-6">
-    <div className="text-4xl">🚀</div>
-    <span className="text-xl font-semibold text-green-600 dark:text-green-400">Get Started</span>
-  </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">Getting Started</h2>
-</div>
-
-<div className="bg-gradient-to-br from-green-600/10 to-emerald-600/10 dark:from-green-500/10 dark:to-emerald-500/10 rounded-3xl p-10 my-12 border-2 border-green-500/30 shadow-2xl">
-  <p className="text-xl leading-relaxed mb-6 text-center">
-    The project is <strong className="text-green-600 dark:text-green-400">fully open source and MIT licensed</strong>. To test it locally:
-  </p>
-  
-  <div className="bg-gray-900 dark:bg-black/50 rounded-xl p-6 font-mono text-sm text-green-400 mb-6">
-    <div>pnpm install</div>
-    <div>pnpm dev</div>
-  </div>
-
-  <p className="text-lg leading-relaxed text-center opacity-90">
-    Then point your MCP-compatible client at the <code className="bg-black/20 dark:bg-white/10 px-2 py-1 rounded">courtlistener-mcp</code> endpoint. The README includes instructions for configuring API keys, selecting jurisdictions, and extending the toolset.
-  </p>
-</div>
-
-<div className="flex gap-4 justify-center my-12">
-  <a 
-    href="https://github.com/blakeox/courtlistener-mcp" 
-    target="_blank" 
-    rel="noopener noreferrer"
-    className="inline-flex items-center px-6 py-3 bg-accent hover:bg-accent-dark dark:hover:bg-accent text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-1"
-  >
-    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-    </svg>
-    View on GitHub
-  </a>
-</div>
-
----
-
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 dark:from-accent/10 dark:to-primary/10 px-8 py-4 rounded-full border border-accent/30 mb-6">
-    <div className="text-4xl">🔮</div>
-    <span className="text-xl font-semibold text-accent dark:text-accent-light">Roadmap</span>
-  </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground dark:text-foreground-light">What's Next</h2>
-</div>
-
-<div className="prose prose-xl dark:prose-invert max-w-none my-12">
-  <p className="text-xl leading-relaxed">
-I'm actively collaborating with compliance teams and legal technologists to expand coverage beyond U.S. courts. Planned enhancements include:
-  </p>
-</div>
-
-<div className="grid md:grid-cols-3 gap-6 my-16">
-  <div className="blog-card">
-    <div className="text-5xl mb-4">📦</div>
-    <h3 className="text-xl font-bold mb-3">Bulk Export Utilities</h3>
-    <p className="text-base leading-relaxed opacity-85">For litigation knowledge bases</p>
-  </div>
-
-  <div className="blog-card">
-    <div className="text-5xl mb-4">📊</div>
-    <h3 className="text-xl font-bold mb-3">Conflict Analytics</h3>
-    <p className="text-base leading-relaxed opacity-85">Flag conflicting authorities across jurisdictions</p>
-  </div>
-
-  <div className="blog-card">
-    <div className="text-5xl mb-4">⚡</div>
-    <h3 className="text-xl font-bold mb-3">Performance Optimization</h3>
-    <p className="text-base leading-relaxed opacity-85">Rate limiting and caching layers for large research teams</p>
-  </div>
-</div>
-
-<div className="relative overflow-hidden bg-gradient-to-r from-accent to-primary dark:from-accent-light dark:to-primary-light rounded-3xl p-12 md:p-16 my-16 shadow-2xl">
-  <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-  <div className="relative text-white text-center">
-    <h3 className="text-3xl md:text-4xl font-black mb-6">Ready to Get Involved?</h3>
-    <p className="text-xl md:text-2xl leading-relaxed mb-8 max-w-3xl mx-auto">
-      If you want to help shape the roadmap—or bring <strong>courtlistener-mcp</strong> into your own legal stack—reach out!
-    </p>
-    <div className="flex gap-4 justify-center">
-      <a 
-        href="https://github.com/blakeox/courtlistener-mcp" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-semibold rounded-lg transition-all duration-200 border border-white/30"
-      >
-        GitHub
-      </a>
-      <a 
-        href="/contact" 
-        className="inline-flex items-center px-6 py-3 bg-white text-accent hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 shadow-lg"
-      >
-        Contact Me
-      </a>
-    </div>
-  </div>
+<div class="not-prose mt-16">
+  <CTASection
+    heading="Want to pressure-test legal AI against real evidence?"
+    description="If you are building legal research workflows and need a tighter control surface than generic LLM output, I can help design the integration, review the failure modes, and harden the operating model."
+    primaryLabel="Start a conversation"
+    primaryHref="/contact/"
+    secondaryLabel="Review the repository"
+    secondaryHref="https://github.com/blakeox/courtlistener-mcp"
+  />
 </div>

@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
+import Container from './Container.astro';
 
 /**
  * Section - Semantic section component with consistent spacing
@@ -56,15 +57,6 @@ const backgroundStyles = {
  glass: 'border border-[color:var(--border)]/40 bg-[color:var(--glass-surface-bg)]/85 shadow-md backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/75',
 } as const;
 
-// Container size mapping (matching Container component standards)
-const containerStyles = {
- sm: 'max-w-2xl',
- md: 'max-w-4xl',
- lg: 'max-w-6xl',
- xl: 'max-w-7xl',
- full: 'max-w-none',
-} as const;
-
 const classes = [
  paddingStyles[padding],
  backgroundStyles[background],
@@ -75,9 +67,9 @@ const classes = [
 
 <Element class={classes} aria-labelledby={ariaLabelledby} {...rest}>
  {container ? (
- <div class={`${containerStyles[container]} w-full mx-auto px-4 sm:px-6 lg:px-8`}>
+ <Container size={container}>
  <slot />
- </div>
+ </Container>
  ) : (
  <slot />
  )}

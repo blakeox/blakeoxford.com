@@ -1,141 +1,53 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
-import CoinFlipImage from '../components/composites/CoinFlipImage.astro';
-import ContactFormClient from '../components/islands/ContactFormClient';
-import FormField from '../components/primitives/FormField.astro';
-import FloatingEmoji from '../components/primitives/FloatingEmoji.astro';
 import FloatingBlur from '../components/primitives/FloatingBlur.astro';
-import Stack from '../components/primitives/Stack.astro';
-import Section from '../components/primitives/Section.astro';
-import Grid from '../components/primitives/Grid.astro';
-import Flex from '../components/primitives/Flex.astro';
-import PageHero from '../components/composites/PageHero.astro';
+import ContactChannels from '../components/features/contact/ContactChannels.astro';
+import ContactHeroSection from '../components/features/contact/ContactHeroSection.astro';
+import ContactMessageSection from '../components/features/contact/ContactMessageSection.astro';
+import ContactFormClient from '../components/islands/ContactFormClient';
 import { CANONICAL_URLS } from '../config/constants';
 
 const title = 'Contact Blake';
-const description = 'Get in touch with Blake Oxford for design and development opportunities.';
+const description = 'Get in touch with Blake Oxford for systems architecture, automation, and analytics work.';
 const canonicalUrl = CANONICAL_URLS.contact;
+const channels = {
+  heading: 'Contact channels',
+  title: 'Reach out directly',
+  description: 'Choose the channel that matches how you prefer to work.',
+  items: [
+    {
+      icon: 'email',
+      title: 'Email',
+      description: 'Best for project details, introductions, and follow-up notes.',
+      href: 'mailto:blakepoxford@outlook.com',
+      label: 'blakepoxford@outlook.com',
+    },
+    {
+      icon: 'phone',
+      title: 'Phone',
+      description: 'Best for quick coordination and scheduling.',
+      href: 'tel:2482024479',
+      label: '248-202-4479',
+    },
+    {
+      icon: 'linkedin',
+      title: 'LinkedIn',
+      description: 'Best for network introductions and professional context.',
+      href: 'https://linkedin.com/in/blake-oxford',
+      label: 'linkedin.com/in/blake-oxford',
+    },
+  ],
+};
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide={true}>
- <!-- Hero section -->
- <PageHero fullScreen={true} includeBlurOrbs={true} id="contact-hero">
- <Grid cols="2" gap="xl" alignItems="center">
- <Stack space="lg" class="@container">
- <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight text-foreground">Let's Connect</h1>
- <p class="text-base sm:text-lg leading-relaxed text-muted-foreground max-w-2xl">Have a project in mind or just want to say hello? I'm all ears—whether it's a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can't wait to build something great together!</p>
- </Stack>
- <div class="flex justify-center md:justify-end">
- <div class="relative">
- <CoinFlipImage frontSrc="/assets/images/Blake-O-scaled.jpg" backSrc="/assets/images/china-profile-picture.jpg" alt="Blake Oxford" altBack="Blake Oxford in China" size={280} flipMultipleTimes loading="eager" fetchPriority="high" decoding="auto" />
- <FloatingEmoji emoji='💡' position='top-right' size='lg' />
- </div>
- </div>
- </Grid>
- </PageHero>
+  <div class="fixed inset-0 -z-10 pointer-events-none">
+    <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
+    <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
+  </div>
 
- <!-- Main contact section -->
- <Section padding="lg" container="lg" background="gradient" class="relative overflow-hidden" aria-labelledby="message-form">
- <!-- Animated SVG background pattern -->
- <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
- <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
- <defs>
- <pattern id="contact-grid" width="40" height="40" patternUnits="userSpaceOnUse">
- <path d="M0 40L40 0M20 40L40 20M0 20L20 0" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.12" />
- </pattern>
- </defs>
- <rect width="100%" height="100%" fill="url(#contact-grid)" />
- </svg>
- </div>
- <!-- Blurred/floating shapes -->
- <!-- Decorative blurs -->
- <div class="fixed inset-0 -z-10 pointer-events-none">
- <FloatingBlur size="md" color="accent-light" position="top-right" translate="translate-x-1/2 -translate-y-1/2" />
- <FloatingBlur size="sm" color="accent-light" position="bottom-left" translate="-translate-x-1/2 translate-y-1/2" />
- </div> <div class="relative z-10">
- <!-- Contact Information -->
- <Flex responsive="md" align="center" justify="center" gap="lg" class="scroll-animate mb-12 sm:mb-14 lg:mb-16">
- <a href="mailto:blakepoxford@outlook.com" class="flex flex-col items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent p-4 rounded-xl hover:bg-accent/5 transition-colors" aria-label="Email Blake Oxford" title="Email">
- <span class="text-accent text-3xl group-hover:scale-110 transition">✉️</span>
- <span class="font-medium text-primary group-hover:text-accent transition-colors">blakepoxford@outlook.com</span>
- </a>
- <a href="tel:2482024479" class="flex flex-col items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent p-4 rounded-xl hover:bg-accent/5 transition-colors" aria-label="Call Blake Oxford" title="Phone">
- <span class="text-accent text-3xl group-hover:scale-110 transition">📞</span>
- <span class="font-medium text-primary group-hover:text-accent transition-colors">248-202-4479</span>
- </a>
- <a href="https://linkedin.com/in/blake-oxford" target="_blank" rel="noopener" class="flex flex-col items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent p-4 rounded-xl hover:bg-accent/5 transition-colors" aria-label="LinkedIn" title="LinkedIn">
- <span class="text-accent text-3xl group-hover:scale-110 transition">💼</span>
- <span class="font-medium text-primary group-hover:text-accent transition-colors">linkedin.com/in/blake-oxford</span>
- </a>
- </Flex>
-
- <!-- Contact Form -->
- <div class="mx-auto w-full max-w-3xl">
- <h2 id="message-form" class="font-heading font-bold text-2xl sm:text-3xl md:text-4xl text-foreground text-center mb-8">Or Send Me a Message</h2>
-
- <!-- Form status banner -->
- <div id="form-status" aria-live="polite" class="hidden text-center font-semibold mb-4 min-h-[56px]"></div>
-
- <div class="scroll-animate bg-surface dark:bg-surface-dark rounded-2xl shadow-xl p-8 mt-4 max-w-xl mx-auto border-2 border-accent/30 hover:border-accent/50 transition-colors">
- <form id="contact-form" method="POST" action="/send-email" class="space-y-6" aria-describedby="contact-form-help">
- <FormField id="form-name" type="hidden" label="form-name-hidden" value="contact" />
- <p class="sr-only" aria-hidden="true">
- <label for="bot-field" class="sr-only">Don&#39;t fill this out</label>
- <input id="bot-field" name="bot-field" type="hidden" aria-hidden="true" tabindex="-1" aria-label="bot-field-hidden" />
- </p>
- <p id="contact-form-help" class="sr-only">All fields marked with an asterisk are required.</p>
-
- <FormField
- id="name"
- label="Name"
- type="text"
- required
- autocomplete="name"
- minlength={2}
- maxlength={100}
- placeholder="Your Name"
- />
- 
- <FormField
- id="email"
- label="Email"
- type="email"
- required
- autocomplete="email"
- maxlength={254}
- placeholder="you@email.com"
- helpText="I'll never share your email."
- />
- 
- <FormField
- id="message"
- label="Message"
- type="textarea"
- required
- rows={5}
- minlength={10}
- maxlength={2000}
- placeholder="How can I help you?"
- helpText="Please provide at least 10 characters (maximum 2000)."
- />
-
- <!-- Cloudflare Turnstile placeholder (reserve space to avoid CLS) -->
- <div class="w-full min-h-[72px] flex items-center justify-center">
- <div id="turnstile-container" class="w-full" role="group" aria-label="Human verification challenge">
- <!-- Facade placeholder; real widget injected on-demand -->
- <div class="text-center text-sm text-neutral">Human verification will appear when needed.</div>
- </div>
- </div>
-
- <button type="submit" class="mx-auto flex w-full md:w-auto items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent shadow-lg shadow-accent/25 transition-colors duration-200 hover:border-accent hover:text-accent-dark dark:hover:text-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2">
- 🚀 <span id="btn-label">Send Message</span>
- <svg id="spinner" class="hidden animate-spin h-5 w-5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/></svg>
- </button>
- </form>
- </div>
- </div>
- </div>
- </Section>
-
- <ContactFormClient client:load />
+  <ContactHeroSection />
+  <ContactChannels channels={channels} />
+  <ContactMessageSection />
+  <ContactFormClient client:load />
 </Layout>

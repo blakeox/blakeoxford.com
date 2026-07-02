@@ -13,6 +13,8 @@
  * - no stale decorative design-doc language
  * - no raw palette utilities in reusable components/runtime surfaces
  * - no hard-coded high elevation in primitives/composites
+ * - no legacy shell escape patterns
+ * - no direct Tailwind container shell usage in app surfaces
  */
 import fs from 'fs';
 import path from 'path';
@@ -46,6 +48,8 @@ const RAW_PALETTE_REGEX =
 const RAW_WHITE_BLACK_REGEX = /\b(?:text-white|bg-white|border-white|ring-white|from-white|to-white|via-white|text-black|bg-black|border-black|ring-black|from-black|to-black|via-black)(?:\/\d+)?\b/g;
 const HARD_ELEVATION_REGEX = /\bshadow-(?:xl|2xl)\b|shadow-\[[^\]]+\]/g;
 const HARD_RADIUS_REGEX = /\brounded-\[[^\]]+\]/g;
+const SHELL_ESCAPE_REGEX = /-mt-24|-mx-4\s+sm:-mx-6\s+lg:-mx-8/g;
+const DIRECT_CONTAINER_REGEX = /\bcontainer\s+mx-auto\b/g;
 const LEGACY_COMPONENT_PATH_REGEX = /src\/components\/(?:chat|common|composite|config|debug|media|ui)\b|components\/(?:chat|common|composite|config|debug|media|ui)\b|\.\.\/(?:common|composite|media|ui)\//g;
 const COMPONENT_DOC_ENTRY_REGEX =
   /^  {\s*\n\s{4}name:\s*'([^']+)'[\s\S]*?\n\s{4}category:\s*'([^']+)'[\s\S]*?\n\s{4}filePath:\s*'([^']+)'/gm;
@@ -59,9 +63,11 @@ const reusableSurfacePaths = [
   'src/components',
   'src/lib',
   'src/scripts',
+  'src/pages/blog',
   'src/pages/design',
   'src/pages/docs',
   'src/pages/debug',
+  'src/pages/projects',
   'src/pages/accessibility',
 ];
 
@@ -84,6 +90,8 @@ const findings = {
   palette: [],
   elevation: [],
   radius: [],
+  shell: [],
+  container: [],
 };
 
 function shouldIgnoreDir(name) {
@@ -244,6 +252,17 @@ function scanSourceFile(file) {
     addRegexFindings(findings.elevation, relPath, content, HARD_ELEVATION_REGEX);
     addRegexFindings(findings.radius, relPath, content, HARD_RADIUS_REGEX);
   }
+
+  if (
+    (relPath.startsWith('src/pages/') || relPath.startsWith('src/components/')) &&
+    !relPath.startsWith('src/pages/design/') &&
+    !relPath.startsWith('src/pages/docs/') &&
+    !relPath.startsWith('src/pages/debug/') &&
+    !relPath.startsWith('src/pages/accessibility/')
+  ) {
+    addRegexFindings(findings.shell, relPath, content, SHELL_ESCAPE_REGEX);
+    addRegexFindings(findings.container, relPath, content, DIRECT_CONTAINER_REGEX);
+  }
 }
 
 function printFindings(title, list, limit = 50) {
@@ -272,6 +291,8 @@ printFindings('Stale decorative design documentation detected', findings.docsLan
 printFindings('Raw palette utilities detected in reusable surfaces', findings.palette);
 printFindings('Hard-coded high elevation detected in primitives/composites', findings.elevation);
 printFindings('Hard-coded arbitrary radius detected in primitives/composites', findings.radius);
+printFindings('Legacy shell escape patterns detected', findings.shell);
+printFindings('Direct container shell usage detected', findings.container);
 
 const issueCount = Object.values(findings).reduce((count, list) => count + list.length, 0);
 

@@ -1,0 +1,46 @@
+---
+import Section from '../../primitives/Section.astro';
+import Grid from '../../primitives/Grid.astro';
+import Flex from '../../primitives/Flex.astro';
+import FloatingBlur from '../../primitives/FloatingBlur.astro';
+import SkillBadge from '../../primitives/SkillBadge.astro';
+import EducationCard from './EducationCard.astro';
+---
+
+<Section padding="lg" container="lg" class="relative overflow-hidden bg-gradient-to-b from-background to-surface dark:from-background-dark dark:to-surface-dark">
+  <div class="absolute inset-0 z-0 overflow-hidden opacity-20">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <FloatingBlur size="lg" color="accent" position="custom" class="top-1/4 left-1/4" />
+      <FloatingBlur size="lg" color="primary" position="custom" class="bottom-1/4 right-1/4" />
+    </div>
+  </div>
+  <div class="relative z-10">
+    <Grid cols="2" gap="xl" class="items-stretch">
+      <div class="flex h-full flex-col">
+        <h2 class="mb-6 border-l-4 border-accent pl-4 text-2xl font-bold sm:text-3xl">Education</h2>
+        <EducationCard
+          institution="Calvin College"
+          degree="Bachelor of Arts in Finance"
+          description="Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects."
+        />
+      </div>
+
+      <div class="flex h-full flex-col">
+        <h2 class="mb-6 border-l-4 border-accent pl-4 text-2xl font-bold sm:text-3xl">Skills</h2>
+        <div class="flex flex-1 flex-col rounded-xl border border-border bg-surface p-6 shadow-lg dark:border-border-dark dark:bg-surface-dark">
+          <p class="mb-4 text-muted-foreground">A blend of systems thinking, finance, and hands-on engineering. I focus on shipping reliable, human-centered automation that delivers measurable outcomes.</p>
+          <Flex as="ul" wrap gap="sm" role="list" class="flex-1">
+            <SkillBadge skill="Systems Architecture" />
+            <SkillBadge skill="Process Automation" />
+            <SkillBadge skill="Cloud: Azure / M365" />
+            <SkillBadge skill="Data Analytics (Power BI)" />
+            <SkillBadge skill="APIs & Integrations" />
+            <SkillBadge skill="AI-Assisted Workflows" />
+            <SkillBadge skill="Financial Operations" />
+            <SkillBadge skill="Security & Compliance" />
+          </Flex>
+        </div>
+      </div>
+    </Grid>
+  </div>
+</Section>
