@@ -63,6 +63,8 @@
   .nav-utility-button {
     @apply inline-flex size-11 items-center justify-center rounded-full border text-foreground/80 transition-colors;
 
+    min-height: 2.75rem;
+    min-width: 2.75rem;
     border-color: color-mix(in oklch, var(--border) 62%, transparent);
     background: color-mix(in oklch, var(--surface) 74%, transparent);
   }
@@ -74,8 +76,18 @@
   }
 
   .nav-utility-button:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px color-mix(in oklch, var(--accent) 55%, transparent);
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background dark:ring-offset-background-dark;
+  }
+
+  /* Unified keyboard focus for nav, search, chat, and theme controls */
+  .focus-ring-interactive:focus-visible {
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background dark:ring-offset-background-dark;
+  }
+
+  /* WCAG 2.5.5 minimum touch target (44×44px) */
+  .touch-target {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
   }
 
   /* MDX blog content only — listing cards use BlogPostCard → Card → BaseCard */

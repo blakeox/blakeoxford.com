@@ -69,7 +69,7 @@ test('@sitemap-sweep contrast ratios acceptable across sitemap pages', async ({ 
   }
 
   // Normalize to site-local routes and de-duplicate
-  const preferred: string[] = ['/', '/about/', '/projects/', '/blog/'];
+  const preferred: string[] = ['/', '/about/', '/projects/', '/blog/', '/design/tokens/'];
   const allRoutes = Array.from(new Set(
     locs
       .map(toRoute)

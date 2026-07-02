@@ -4,6 +4,8 @@
 @import "./theme.css";
 @import "./components.css";
 
+/* Font loading is handled in BaseLayout.astro with subset weights and display=swap. */
+
 /* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
   class (or any of its descendants) is in the selector chain.   */
 @custom-variant dark (&:where(.dark, .dark *));

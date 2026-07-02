@@ -19,7 +19,7 @@
 @property --color-accent {
   syntax: '<color>';
   inherits: true;
-  initial-value: oklch(0.70 0.19 200);
+  initial-value: oklch(0.72 0.14 196);
 }
 
 @property --color-surface {
@@ -54,7 +54,7 @@
   /* Modern OKLCH color space for perceptual uniformity and better dark mode */
   /* Fallbacks provided for Safari < 16.4 */
   
-  /* Primary colors - Indigo palette */
+  /* Primary colors - Indigo palette (brand hue 264°) */
   --color-primary: oklch(0.55 0.22 264);
   --color-primary-fallback: #4f46e5;
   --color-primary-light: oklch(0.63 0.22 264);
@@ -70,7 +70,7 @@
   --color-secondary-dark: oklch(0.52 0.15 230);
   --color-secondary-dark-fallback: #0369a1;
   
-  /* Accent colors - Cyan palette */
+  /* Accent colors - Cyan palette (brand hue 196°) */
   --color-accent: oklch(0.72 0.14 196);
   --color-accent-fallback: #06b6d4;
   --color-accent-light: oklch(0.82 0.14 196);
@@ -174,6 +174,7 @@
   --color-secondary-hover: color-mix(in oklch, var(--color-secondary) 85%, white);
   --color-secondary-active: color-mix(in oklch, var(--color-secondary) 70%, black);
   --color-accent-subtle: color-mix(in oklch, var(--color-accent) 10%, transparent);
+  /* Expressive-tier surfaces: chat CTAs, highlighted panels, soft accent washes */
   --color-primary-subtle: color-mix(in oklch, var(--color-primary) 10%, transparent);
   --color-success-subtle: color-mix(in oklch, var(--color-success) 10%, transparent);
   --color-warning-subtle: color-mix(in oklch, var(--color-warning) 15%, transparent);
@@ -183,7 +184,7 @@
   --color-backdrop: rgba(0, 0, 0, 0.6);
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
-  --focus-ring-color: var(--color-primary);
+  --focus-ring-color: var(--color-accent);
   --focus-ring-offset-color: var(--color-background);
   --focus-ring: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
   
@@ -519,16 +520,16 @@
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-primary, #4f46e5);
-    outline-offset: 3px;
-    box-shadow: 0 0 0 6px color-mix(in oklch, var(--color-primary) 15%, transparent);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color, var(--color-accent));
+    outline-offset: var(--focus-ring-offset);
+    box-shadow: 0 0 0 6px color-mix(in oklch, var(--focus-ring-color, var(--color-accent)) 15%, transparent);
     border-radius: var(--radius-sm, 0.25rem);
   }
 
   :root[data-theme="dark"] :focus-visible,
   :root.dark :focus-visible {
-    outline-color: var(--color-accent, #06b6d4);
-    box-shadow: 0 0 0 6px color-mix(in oklch, var(--color-accent) 20%, transparent);
+    outline-color: var(--focus-ring-color, var(--color-accent));
+    box-shadow: 0 0 0 6px color-mix(in oklch, var(--focus-ring-color, var(--color-accent)) 20%, transparent);
   }
 
   button:focus-visible,

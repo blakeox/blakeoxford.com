@@ -143,7 +143,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <div className="brand-section flex items-center gap-2">
  <a
  href="/"
- className="brand-link flex items-center gap-3 rounded-full px-2 py-1 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+ className="brand-link focus-ring-interactive flex items-center gap-3 rounded-full px-2 py-1 text-foreground"
  aria-label={logo.name}
  >
  <picture className="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60">
@@ -173,7 +173,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <a
  href={link.href}
  role="menuitem"
-                className={`nav-link inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 ${
+                className={`nav-link focus-ring-interactive inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent ${
                   isActive(link.href)
                     ? 'bg-accent/10 text-accent dark:bg-accent/10 dark:text-accent-light'
                     : 'text-foreground/90'
@@ -290,7 +290,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <a
  href={link.href}
  role="menuitem"
- className="mobile-nav-link block rounded-2xl px-3 py-3 text-sm font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent @sm:px-4 @sm:py-3 @sm:text-base"
+ className="mobile-nav-link touch-target focus-ring-interactive flex min-h-11 items-center rounded-2xl px-3 py-3 text-sm font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] dark:hover:bg-[color:var(--glass-surface-bg-dark)] @sm:px-4 @sm:py-3 @sm:text-base"
  aria-current={isActive(link.href) ? 'page' : undefined}
  >
  {link.label}

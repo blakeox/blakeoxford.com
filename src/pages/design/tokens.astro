@@ -4,6 +4,12 @@ import Container from '../../components/primitives/Container.astro';
 import Section from '../../components/primitives/Section.astro';
 import Badge from '../../components/primitives/Badge.astro';
 
+const brandPalette = [
+ { name: 'primary', hue: '264°', token: '--color-primary', usage: 'Indigo brand anchor — headings, selection, legacy focus fallback' },
+ { name: 'accent', hue: '196°', token: '--color-accent', usage: 'Cyan highlight — CTAs, focus rings, interactive chrome' },
+ { name: 'accent-subtle', hue: '196° (10% mix)', token: '--color-accent-subtle', usage: 'Expressive-tier washes — chat CTAs, soft accent panels (not body text backgrounds)' },
+];
+
 const semanticColors = [
  { name: 'background', utility: 'bg-background', usage: 'Page canvas' },
  { name: 'surface', utility: 'bg-surface', usage: 'Cards, panels, controls' },
@@ -107,6 +113,23 @@ const stylesheetRoles = [
  <p class="mt-2 text-sm text-muted-foreground">Blocks duplicate artifacts, undefined tokens, raw reusable palettes, and unsupported opacity steps.</p>
  </div>
  </div>
+
+ <section class="mt-16" aria-labelledby="brand-palette">
+ <h2 id="brand-palette" class="text-2xl font-bold text-foreground">Brand Palette</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ Primary indigo sits at OKLCH hue <strong>264°</strong>; accent cyan at <strong>196°</strong>. Keep these hues aligned when adjusting lightness or chroma — do not drift toward unrelated hues.
+ </p>
+ <div class="mt-6 grid gap-4 md:grid-cols-3">
+ {brandPalette.map((color) => (
+ <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <h3 class="font-semibold text-foreground">{color.name}</h3>
+ <p class="mt-1 text-xs text-subtle-foreground">Hue: {color.hue}</p>
+ <code class="mt-3 block text-sm text-accent">{color.token}</code>
+ <p class="mt-2 text-sm text-muted-foreground">{color.usage}</p>
+ </article>
+ ))}
+ </div>
+ </section>
 
  <section class="mt-16" aria-labelledby="stylesheet-roles">
  <h2 id="stylesheet-roles" class="text-2xl font-bold text-foreground">Stylesheet Roles</h2>
@@ -273,6 +296,7 @@ const LIVE_TOKENS = [
  '--color-surface',
  '--border-color',
  '--color-accent',
+ '--color-accent-subtle',
  '--color-primary',
  '--duration-fast',
  '--duration',
@@ -288,6 +312,7 @@ const CONTRAST_PAIRS = [
  { label: 'Muted text on background', fg: '--color-muted-foreground', bg: '--color-background', min: 4.5 },
  { label: 'Subtle text on background', fg: '--color-subtle-foreground', bg: '--color-background', min: 4.5 },
  { label: 'Accent on surface', fg: '--color-accent', bg: '--color-surface', min: 3 },
+ { label: 'Accent text on accent-subtle wash', fg: '--color-accent-dark', bg: '--color-accent-subtle', min: 4.5 },
  { label: 'Foreground on surface', fg: '--color-foreground', bg: '--color-surface', min: 4.5 },
 ];
 
