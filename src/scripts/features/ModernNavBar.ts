@@ -40,7 +40,6 @@ function setAriaCurrent(navElement: HTMLElement | null) {
 
 import {
   getCurrentTheme,
-  setTheme,
   applySystemTheme,
   toggleTheme as toggleResolvedTheme,
   updateThemeToggleButton,

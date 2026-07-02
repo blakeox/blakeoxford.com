@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import {
 	THEME_STORAGE_KEY,
 	THEME_COOKIE_MAX_AGE,
