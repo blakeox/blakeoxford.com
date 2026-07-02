@@ -1,8 +1,9 @@
 ---
 /**
  * StatsCard - Statistics/Metrics Display Component
- * 
+ *
  * Built on BaseCard for consistent elevation and dark-mode behavior.
+ * Uses container queries for responsive typography inside grid layouts.
  */
 
 import BaseCard from '../primitives/BaseCard.astro';
@@ -36,34 +37,35 @@ const variantMap = {
 const sizeMap = {
  sm: {
  container: 'px-3 py-4',
- label: 'text-xxs mb-2',
- value: 'text-lg',
+ label: 'text-xxs @sm:text-xs mb-2',
+ value: 'text-lg @md:text-xl',
  description: 'text-xs mt-2',
  },
  md: {
- container: 'px-4 py-5 sm:px-5 sm:py-6',
- label: 'text-xs mb-3 sm:mb-4',
- value: 'text-xl sm:text-2xl',
- description: 'text-sm mt-2 sm:mt-3',
+ container: 'px-4 py-5 @sm:px-5 @sm:py-6',
+ label: 'text-xs @md:text-sm mb-3 @sm:mb-4',
+ value: 'text-xl @md:text-2xl @lg:text-3xl',
+ description: 'text-sm mt-2 @sm:mt-3',
  },
  lg: {
- container: 'px-5 py-6 sm:px-6 sm:py-8',
- label: 'text-xs sm:text-sm mb-4 sm:mb-5',
- value: 'text-2xl sm:text-3xl lg:text-4xl',
- description: 'text-sm sm:text-base mt-3 sm:mt-4',
+ container: 'px-5 py-6 @sm:px-6 @sm:py-8',
+ label: 'text-xs @sm:text-sm mb-4 @sm:mb-5',
+ value: 'text-2xl @md:text-3xl @lg:text-4xl',
+ description: 'text-sm @md:text-base mt-3 @sm:mt-4',
  },
 };
 
 const sizeClasses = sizeMap[size];
 ---
 
-<BaseCard
+<div class="@container">
+ <BaseCard
  variant={variantMap[variant]}
  hover="none"
  padding="none"
  class={`${sizeClasses.container} ${className}`.trim()}
  {...rest}
->
+ >
  <p class={`font-semibold uppercase tracking-label text-subtle-foreground ${sizeClasses.label}`}>
  {label}
  </p>
@@ -76,4 +78,5 @@ const sizeClasses = sizeMap[size];
  </p>
  )}
  <slot />
-</BaseCard>
+ </BaseCard>
+</div>
