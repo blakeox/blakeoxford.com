@@ -1,2 +1,16 @@
-pnpm typecheck
-pnpm lint
+#!/bin/sh
+set -eu
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+if [ ! -x "./node_modules/.bin/astro" ] || [ ! -x "./node_modules/.bin/eslint" ]; then
+  echo "pre-push: missing local dependencies. Run 'pnpm install --frozen-lockfile' before pushing." >&2
+  exit 1
+fi
+
+echo "pre-push: running typecheck"
+./node_modules/.bin/astro check
+
+echo "pre-push: running lint"
+./node_modules/.bin/eslint . --ext .js,.ts,.astro,.mdx
