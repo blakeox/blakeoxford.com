@@ -78,7 +78,7 @@ jobs:
 
       - name: Design lint (tokens & spacing)
         if: matrix.test-group == 'unit'
-        run: pnpm design:lint || true
+        run: pnpm design:lint
 
       - name: Run TypeScript check
         if: matrix.test-group == 'unit'
