@@ -343,10 +343,11 @@ function resolveColor(cssColor: string): [number, number, number] | null {
  const canvas = document.createElement('canvas');
  const ctx = canvas.getContext('2d');
  if (!ctx) return null;
- ctx.fillStyle = '#010203';
+ const sentinel = '#010203';
+ ctx.fillStyle = sentinel;
  ctx.fillStyle = cssColor;
  const hex = ctx.fillStyle;
- if (typeof hex === 'string' && hex.startsWith('#')) {
+ if (typeof hex === 'string' && hex.startsWith('#') && hex.toLowerCase() !== sentinel) {
  const hx = hex.length === 4 ? hex.slice(1).split('').map((c) => c + c).join('') : hex.slice(1);
  return [parseInt(hx.slice(0, 2), 16), parseInt(hx.slice(2, 4), 16), parseInt(hx.slice(4, 6), 16)];
  }
@@ -354,6 +355,21 @@ function resolveColor(cssColor: string): [number, number, number] | null {
  /* noop */
  }
  return null;
+}
+
+function resolveTokenColor(tokenName: string, property: 'color' | 'background'): [number, number, number] | null {
+ const probe = document.createElement('span');
+ probe.style.cssText = 'position:fixed;left:-9999px;visibility:hidden;pointer-events:none;';
+ const cssValue = `var(${tokenName})`;
+ if (property === 'background') {
+ probe.style.backgroundColor = cssValue;
+ } else {
+ probe.style.color = cssValue;
+ }
+ document.documentElement.appendChild(probe);
+ const resolved = getComputedStyle(probe)[property === 'background' ? 'backgroundColor' : 'color'];
+ probe.remove();
+ return resolveColor(resolved);
 }
 
 function luminance(r: number, g: number, b: number): number {
@@ -385,10 +401,8 @@ function renderContrastMatrix() {
  const body = document.getElementById('contrast-matrix-body');
  if (!body) return;
  body.innerHTML = CONTRAST_PAIRS.map((pair) => {
- const fgRaw = getToken(pair.fg);
- const bgRaw = getToken(pair.bg);
- const fg = resolveColor(fgRaw);
- const bg = resolveColor(bgRaw);
+ const fg = resolveTokenColor(pair.fg, 'color');
+ const bg = resolveTokenColor(pair.bg, 'background');
  if (!fg || !bg) {
  return `<tr><td class="px-4 py-3">${pair.label}</td><td class="px-4 py-3 text-subtle-foreground" colspan="3">Unable to resolve colors</td></tr>`;
  }

@@ -36,7 +36,7 @@
  * - @md (448px): Enhanced typography, larger gaps
  * - @lg (512px): Maximum content width, optimal reading layout
  */
-import type { ProjectCardProps } from '../../../types/components';
+import Card from '../../composites/Card.astro';
 import OptimizedImage from '../../primitives/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';
 import BadgePill from '../../primitives/BadgePill.astro';
@@ -44,7 +44,7 @@ import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
 import GradientOverlay from '../../primitives/GradientOverlay.astro';
 import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
 
-const { project } = Astro.props as ProjectCardProps;
+const { project } = Astro.props as import('../../../types/components').ProjectCardProps;
 const { slug, data } = project;
 
 const title = data.title ?? 'Case study';
@@ -65,10 +65,11 @@ const proofLine = impact[0] || highlights[1] || highlights[0];
 const dateISO = project.data.date ? formatDateISO(project.data.date) : undefined;
 const dateLabel = project.data.date ? formatDateShort(project.data.date) : undefined;
 ---
-<article class="@container card-interactive group relative flex h-full flex-col">
+<article class="@container group relative flex h-full flex-col">
+ <Card variant="elevated" hover="lift" padding="none" rounded="3xl" class="h-full">
  <a
  href={`/projects/${slug}/`}
- class="hover-lift relative flex h-full flex-col overflow-hidden rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg hover:shadow-accent/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+ class="relative flex h-full flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
  aria-labelledby={`project-card-${slug}`}
  >
  <GradientOverlay variant='hover-card' direction='br' />
@@ -90,7 +91,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
  <div class="space-y-3 @sm:space-y-4">
  <Flex wrap align="center" gap="sm" class="text-xs font-semibold uppercase tracking-label text-subtle-foreground">
  {primaryCategory && (
- <BadgePill size="xs" class="bg-accent/10 text-accent ring-accent/20 dark:bg-accent/10 dark:text-accent-light">
+ <BadgePill size="xs" class="bg-accent/10 text-accent ring-accent/20">
  {primaryCategory}
  </BadgePill>
  )}
@@ -118,7 +119,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
  )}
 
  {proofLine && (
- <p class="rounded-2xl bg-surface-subtle/80 px-4 py-3 text-sm leading-relaxed text-foreground/82 ring-1 ring-border/25 dark:bg-surface-dark-subtle/65">
+ <p class="rounded-2xl bg-surface-subtle/80 px-4 py-3 text-sm leading-relaxed text-foreground/82 ring-1 ring-border/25">
  {proofLine}
  </p>
  )}
@@ -149,4 +150,5 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
  </div>
  </div>
  </a>
+ </Card>
 </article>

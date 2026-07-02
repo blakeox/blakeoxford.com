@@ -96,7 +96,7 @@ const columnBLoop = createSeamlessLoop(columnBImages);
 const mobileLoop = createSeamlessLoop(mobileImages);
 ---
 
-<div class="photo-carousel relative w-full h-full min-h-[280px] md:min-h-[320px] lg:min-h-[400px] overflow-hidden select-none" role="region" aria-label="Photo carousel" aria-live="off">
+<div class="@container photo-carousel relative h-full min-h-[280px] w-full overflow-hidden select-none @md:min-h-[320px] @lg:min-h-[400px]" role="region" aria-label="Photo carousel" aria-live="off">
  <!-- Mobile: horizontal slow scroll (show only on small screens) -->
  <div class="absolute inset-0 flex items-center mobile-carousel pt-16 md:pt-0">
  <ul class="flex gap-4 animate-carousel-x-slow" role="list" aria-hidden="true">
@@ -106,7 +106,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
  <Image
  src={image}
  alt={`Carousel photo ${index + 1}`}
- class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+ class="absolute inset-0 w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-normal hover:scale-105"
  width={CONFIG.mobile.imageSize.width}
  height={CONFIG.mobile.imageSize.height}
  loading="lazy"
@@ -129,7 +129,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
  <Image
  src={image}
  alt={`Carousel photo ${index + 1}`}
- class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+ class="absolute inset-0 w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-normal hover:scale-105"
  width={CONFIG.desktop.imageSize.width}
  height={CONFIG.desktop.imageSize.height}
  loading="lazy"
@@ -149,7 +149,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
  <Image
  src={image}
  alt={`Carousel photo ${index + 1}`}
- class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+ class="absolute inset-0 w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-normal hover:scale-105"
  width={CONFIG.desktop.imageSize.width}
  height={CONFIG.desktop.imageSize.height}
  loading="lazy"
@@ -169,7 +169,7 @@ const mobileLoop = createSeamlessLoop(mobileImages);
  <Image
  src={image}
  alt={`Carousel photo ${index + 1}`}
- class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+ class="absolute inset-0 w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-normal hover:scale-105"
  width={CONFIG.desktop.imageSize.width}
  height={CONFIG.desktop.imageSize.height}
  loading="lazy"

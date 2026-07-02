@@ -28,6 +28,18 @@
   initial-value: oklch(0.98 0.01 264);
 }
 
+@property --color-background {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(0.98 0.005 264);
+}
+
+@property --border-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(15, 23, 42, 0.08);
+}
+
 /* Background gradient angle for animated gradients */
 @property --gradient-angle {
   syntax: '<angle>';
@@ -236,7 +248,12 @@
   --glass-border-xl: 1.5px solid rgba(255,255,255,0.35);
   --glass-border-dark-xl: 1.5px solid rgba(255,255,255,0.15);
 
-  /* ---------- Container Max-Widths ---------- */
+  /* ---------- Container Max-Widths & Padding ---------- */
+  --container-padding: 1rem;
+  --container-padding-sm: 2rem;
+  --container-padding-lg: 4rem;
+  --container-padding-xl: 5rem;
+  --container-padding-2xl: 6rem;
   --container-2xl: min(100%, 110rem);
 
   /* ---------- Semantic Alias Tokens (Phase 2) ---------- */
@@ -436,6 +453,8 @@
     --surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
     --border: var(--border-color-dark);
     --border-subtle: var(--border-color-dark);
+    --border-color: var(--border-color-dark);
+    --border-color-subtle: var(--border-color-dark);
     --ring: var(--color-accent, var(--color-accent-fallback));
     
     /* Dark mode interactive overlays */
@@ -634,4 +653,90 @@
   --color-neutral-dark: var(--color-neutral-dark);
   --color-border: var(--border-color);
   --color-border-dark: var(--border-color-dark);
+
+  /* Spacing scale */
+  --spacing-px: var(--space-px);
+  --spacing-0: var(--space-0);
+  --spacing-0\.5: var(--space-0\.5);
+  --spacing-1: var(--space-1);
+  --spacing-1\.5: var(--space-1\.5);
+  --spacing-2: var(--space-2);
+  --spacing-2\.5: var(--space-2\.5);
+  --spacing-3: var(--space-3);
+  --spacing-3\.5: var(--space-3\.5);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-8: var(--space-8);
+  --spacing-9: var(--space-9);
+  --spacing-10: var(--space-10);
+  --spacing-11: var(--space-11);
+  --spacing-12: var(--space-12);
+  --spacing-14: var(--space-14);
+  --spacing-16: var(--space-16);
+  --spacing-20: var(--space-20);
+  --spacing-24: var(--space-24);
+  --spacing-28: var(--space-28);
+  --spacing-32: var(--space-32);
+
+  /* Radius scale */
+  --radius-none: var(--radius-none);
+  --radius-sm: var(--radius-sm);
+  --radius-DEFAULT: var(--radius);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-3xl: var(--radius-3xl);
+  --radius-full: var(--radius-full);
+
+  /* Shadows */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-DEFAULT: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+  --shadow-inner: var(--shadow-inner);
+  --shadow-none: var(--shadow-none);
+  --shadow-card: var(--shadow-card);
+
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --font-mono: var(--font-mono);
+  --text-xxs: var(--fs-xxs);
+  --text-xs: var(--fs-xs);
+  --text-sm: var(--fs-sm);
+  --text-base: var(--fs-base);
+  --text-lg: var(--fs-lg);
+  --text-xl: var(--fs-xl);
+  --text-2xl: var(--fs-2xl);
+  --text-3xl: var(--fs-3xl);
+  --text-4xl: var(--fs-4xl);
+  --text-5xl: var(--fs-5xl);
+  --text-6xl: var(--fs-6xl);
+  --text-7xl: var(--fs-7xl);
+  --text-8xl: var(--fs-8xl);
+  --text-9xl: var(--fs-9xl);
+
+  /* Motion tokens */
+  --transition-duration-instant: var(--duration-instant);
+  --transition-duration-fast: var(--duration-fast);
+  --transition-duration-normal: var(--duration-normal);
+  --transition-duration-DEFAULT: var(--duration);
+  --transition-duration-moderate: var(--duration-moderate);
+  --transition-duration-slow: var(--duration-slow);
+  --transition-duration-slower: var(--duration-slower);
+  --transition-duration-slowest: var(--duration-slowest);
+  --ease-standard: var(--ease-standard);
+  --ease-emphasized: var(--ease-emphasized);
+  --ease-decelerate: var(--ease-decelerate);
+  --ease-accelerate: var(--ease-accelerate);
+  --ease-in-quad: var(--ease-in-quad);
+  --ease-out-quad: var(--ease-out-quad);
+  --ease-in-out-quad: var(--ease-in-out-quad);
+  --ease-spring: var(--ease-spring);
+  --ease-bounce: var(--ease-bounce);
 }
