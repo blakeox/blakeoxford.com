@@ -28,7 +28,7 @@ function Icon({ name }: IconProps) {
  <div class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
  <div class="max-w-3xl mx-auto text-center">
  <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">{social.title}</h2>
- <p class="text-neutral mb-8">{social.description}</p>
+ <p class="mb-8 text-muted-foreground">{social.description}</p>
  <Flex as="ul" wrap align="center" justify="center" gap="md" role="list">
  {social.links.map((link) => (
  <li>

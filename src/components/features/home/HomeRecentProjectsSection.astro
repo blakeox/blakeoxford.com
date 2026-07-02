@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Section from '../../primitives/Section.astro';
+import SectionHeading from '../../primitives/SectionHeading.astro';
+import Grid from '../../primitives/Grid.astro';
+import Button from '../../primitives/Button.astro';
+import ProjectCard from '../projects/ProjectCard.astro';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { projects } = Astro.props as Props;
+---
+
+<Section id="recent-projects" padding="lg" container="xl" aria-labelledby="recent-projects-title">
+  <div class="mb-12 text-center">
+    <SectionHeading id="recent-projects-title" size="4xl" class="mb-8">Recent Projects</SectionHeading>
+  </div>
+  <Grid cols="3" gap="lg">
+    {projects.map((project) => (
+      <ProjectCard project={project} />
+    ))}
+  </Grid>
+  <div class="mt-8 text-center">
+    <Button variant="outline" href="/projects/">View All Projects</Button>
+  </div>
+</Section>

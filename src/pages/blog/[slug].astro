@@ -10,13 +10,7 @@ import { createArticleSchema, createBreadcrumbListSchema, defaultAuthor } from '
 
 export async function getStaticPaths() {
  const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);
- // Exclude slugs that are implemented as a static .astro page to prevent route conflicts
- const STATIC_SLUGS = new Set([
- 'combating-legal-ai-hallucinations',
- 'hello-world',
- ]);
  return posts
- .filter((entry: CollectionEntry<'blog'>) => !STATIC_SLUGS.has(entry.id))
  .map((entry: CollectionEntry<'blog'>) => ({
  params: { slug: entry.id },
  }));

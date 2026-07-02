@@ -1,92 +1,22 @@
 ---
-import Layout from '../../layouts/BaseLayout.astro';
-import { BlogPostRow } from '../../components/features/blog';
-import Stack from '../../components/primitives/Stack.astro';
-import Section from '../../components/primitives/Section.astro';
-import Flex from '../../components/primitives/Flex.astro';
-import Button from '../../components/primitives/Button.astro';
-import PageHero from '../../components/composites/PageHero.astro';
-import BadgePill from '../../components/primitives/BadgePill.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
+import Layout from '../../layouts/BaseLayout.astro';
+import BlogIndexHeroSection from '../../components/features/blog/BlogIndexHeroSection.astro';
+import BlogIndexContentSection from '../../components/features/blog/BlogIndexContentSection.astro';
+
 const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);
 const sortedPosts = posts
- .slice()
- .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .slice()
+  .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
+
 <Layout
- title="Insights & Updates"
- description="Thoughts on automation, analytics, and leadership—grounded in hands-on work and delivered with practical takeaways."
- wide
+  title="Insights & Updates"
+  description="Thoughts on automation, analytics, and leadership-grounded in hands-on work and delivered with practical takeaways."
+  wide
 >
- <PageHero fullScreen={false} includeBlurOrbs={true} id="blog-hero">
- <div class="text-center max-w-4xl mx-auto space-y-6">
- <h1 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight text-foreground">
- Fresh thinking, built on shipped work
- </h1>
- <p class="text-lg sm:text-xl md:text-2xl leading-relaxed text-muted-foreground">
- Every article explores real-world systems leadership—translating complex automation, data, and change programs into momentum you can measure.
- </p>
- </div>
- </PageHero>
-
- <!-- Blog Filter/Search Section -->
- {sortedPosts.length > 0 && (
- <Section padding="md" container="lg" class="border-t border-border/20 bg-surface-subtle/40">
- <Flex responsive="sm" gap="md" justify="between" align="center">
- <Flex wrap gap="sm" align="center">
- <BadgePill size="xs" class="w-fit">
- {sortedPosts.length} {sortedPosts.length === 1 ? 'Article' : 'Articles'}
- </BadgePill>
- <p class="text-sm leading-relaxed text-muted-foreground">
- Latest insights and deep dives
- </p>
- </Flex>
- <Flex gap="sm" align="center">
- <Button
- variant="ghost"
- as="button"
- data-ai-launcher
- data-ai-action="open"
- >
- <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
- </svg>
- Search articles
- </Button>
- </Flex>
- </Flex>
- </Section>
- )}
-
- <!-- Blog Posts Section -->
- <Section padding="lg" container="lg" class="border-t border-border/20 bg-background" role="region" aria-labelledby="blog-posts-heading">
- <Stack space="xl" class="text-pretty">
- {sortedPosts.length > 0 && (
- <Stack space="md" class="max-w-3xl">
- <h2 id="blog-posts-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground">
- Latest Insights
- </h2>
- <p class="text-sm sm:text-base leading-relaxed text-muted-foreground">
- Practical takeaways from real-world implementations and strategic initiatives.
- </p>
- </Stack>
- )}
- <Stack space="xl">
- {sortedPosts.length > 0 ? (
- sortedPosts.map((post: CollectionEntry<'blog'>, index: number) => (
- <BlogPostRow post={post} align={index % 2 === 0 ? 'left' : 'right'} />
- ))
- ) : (
- <div class="rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg p-12 text-center">
- <h2 class="font-heading text-2xl sm:text-3xl font-semibold text-foreground mb-4">Articles are on the way</h2>
- <p class="text-sm leading-relaxed text-muted-foreground">
- Check back soon for breakdowns of recent programs, playbooks, and technical deep dives.
- </p>
- </div>
- )}
- </Stack>
- </Stack>
- </Section>
+  <BlogIndexHeroSection />
+  <BlogIndexContentSection posts={sortedPosts} />
 </Layout>

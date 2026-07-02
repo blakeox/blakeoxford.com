@@ -1,0 +1,87 @@
+---
+import CoinFlipImage from '../../composites/CoinFlipImage.astro';
+import PageHero from '../../composites/PageHero.astro';
+import Button from '../../primitives/Button.astro';
+import ButtonGroup from '../../composites/ButtonGroup.astro';
+import FloatingEmoji from '../../primitives/FloatingEmoji.astro';
+
+interface Props {
+  author: string;
+  tagline?: string;
+  description?: string;
+}
+
+const { author, tagline, description } = Astro.props as Props;
+---
+
+<PageHero id="about-me" class="hero-gradient-animated">
+  <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
+    <div class="absolute inset-0"></div>
+  </div>
+  <div class="absolute bottom-0 left-0 w-full overflow-hidden rotate-180">
+    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
+    </svg>
+  </div>
+  <div class="grid items-center gap-10 md:grid-cols-2 sm:gap-12 lg:gap-16">
+    <div class="order-2 md:order-1">
+      <div class="max-w-2xl space-y-6 text-base leading-relaxed text-foreground/85">
+        <div class="space-y-3">
+          <p class="sr-only">Systems Architecture - Automation - Change Enablement</p>
+          <h1 class="font-heading text-4xl font-bold text-foreground sm:text-5xl md:text-6xl">
+            {author}
+          </h1>
+          {tagline && (
+            <h2 class="text-xl font-medium text-foreground/90 sm:text-2xl md:text-3xl">
+              {tagline}
+            </h2>
+          )}
+          {description && (
+            <blockquote class="mt-2 border-l-4 border-accent/70 pl-4 text-base text-foreground/90 sm:text-lg md:text-xl">
+              {description}
+            </blockquote>
+          )}
+        </div>
+      </div>
+      <ButtonGroup align="start" responsive class="mt-6">
+        <Button
+          variant="primary"
+          href="/contact/"
+          data-test="home-cta-connect"
+          data-analytics="hero-cta"
+        >
+          🤝 Let&apos;s Connect
+        </Button>
+        <Button
+          variant="outline"
+          href="/assets/Resume.pdf"
+          download
+        >
+          📄 Download Resume
+        </Button>
+      </ButtonGroup>
+    </div>
+    <div class="order-1 flex justify-center md:order-2 md:justify-end">
+      <div class="relative">
+        <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-primary/30 blur-xl opacity-70 animate-pulse"></div>
+        <div class="relative rounded-full bg-gradient-to-r from-accent to-primary p-1">
+          <CoinFlipImage
+            frontSrc="/assets/images/Blake-O-scaled.jpg"
+            backSrc="/assets/images/china-profile-picture.jpg"
+            alt="Blake Oxford"
+            altBack="Blake Oxford in China"
+            size={280}
+            flipMultipleTimes
+            loading="eager"
+            fetchPriority="high"
+            decoding="auto"
+            role="img"
+            aria-label="Photo of Blake Oxford"
+          />
+        </div>
+        <FloatingEmoji emoji="💡" position="top-right" size="md" />
+        <FloatingEmoji emoji="🚀" position="bottom-left" size="sm" color="accent-dark" />
+        <FloatingEmoji emoji="☁️" position="center-right" size="sm" color="primary" />
+      </div>
+    </div>
+  </div>
+</PageHero>

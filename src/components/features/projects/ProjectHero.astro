@@ -1,5 +1,6 @@
 ---
 import OptimizedImage, { type Props as OptimizedImageProps } from '../../primitives/OptimizedImage.astro';
+import Container from '../../primitives/Container.astro';
 import Flex from '../../primitives/Flex.astro';
 import Button from '../../primitives/Button.astro';
 import BadgePill from '../../primitives/BadgePill.astro';
@@ -23,12 +24,12 @@ const formattedDate = date.toLocaleDateString(undefined, {
 });
 const dateISO = date.toISOString();
 ---
-<section class="relative isolate overflow-hidden min-h-[80vh] flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-background-dark dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8 py-24">
+<section class="relative isolate flex min-h-[80vh] items-center overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background py-24 dark:from-background-dark dark:via-background-dark dark:to-background-dark">
  <!-- Blur orbs for depth (matching site-wide pattern) -->
  <div class="blur-orb-accent top-0 right-0"></div>
  <div class="blur-orb-primary bottom-0 left-0"></div>
  
- <div class="container relative z-10 mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:gap-16">
+ <Container size="xl" class="relative z-10 flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
  <div class="flex flex-1 flex-col gap-8">
  <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-smallcaps text-subtle-foreground">
  <BadgePill size="sm" class="transition-colors duration-200 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60">
@@ -79,5 +80,5 @@ const dateISO = date.toISOString();
  <GradientOverlay variant='background' direction='tr' class='from-background/70 via-transparent to-background/40 dark:from-background-dark/70 dark:via-transparent dark:to-background-dark/40' />
  </div>
  </figure>
- </div>
+ </Container>
 </section>

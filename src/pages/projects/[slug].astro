@@ -14,19 +14,8 @@ import CTASection from '../../components/composites/CTASection.astro';
 
 export const getStaticPaths = (async () => {
  const projects = await getCollection('projects');
- const staticSlugs = new Set([
- 'adp-workforcenow',
- 'advancedmd-implementation',
- 'bank-projections-modeling',
- 'fanalyx-deterministic-finance-platform',
- 'ferment-app',
- 'google-workspace-migration',
- 'llm-note-coaching',
- 'microsoft-fabric',
- ]);
  return projects
  .filter((project: CollectionEntry<'projects'>) => !project.data.draft)
- .filter((project: CollectionEntry<'projects'>) => !staticSlugs.has(project.id))
  .map((project: CollectionEntry<'projects'>) => ({
  params: { slug: project.id },
  props: { project },

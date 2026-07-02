@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Section from '../../primitives/Section.astro';
+import SectionHeading from '../../primitives/SectionHeading.astro';
+import Button from '../../primitives/Button.astro';
+import BlogPostCard from '../blog/BlogPostCard.astro';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { posts } = Astro.props as Props;
+---
+
+<Section padding="lg" container="xl" background="gradient" class="text-center" aria-labelledby="latest-blog-posts">
+  <SectionHeading id="latest-blog-posts" size="4xl" class="mb-8">Latest Blog Posts</SectionHeading>
+  <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
+    {posts.length > 0 ? (
+      posts.map((post) => (
+        <li role="listitem">
+          <BlogPostCard post={post} />
+        </li>
+      ))
+    ) : (
+      <li class="rounded-2xl border border-dashed border-border/40 bg-background/90 p-6 text-center shadow-md dark:bg-background-dark/80">
+        <p class="text-sm text-muted-foreground">
+          Blog posts are on the way-check back soon for new case studies and playbooks.
+        </p>
+      </li>
+    )}
+  </ul>
+  <div class="mt-8 text-center">
+    <Button variant="outline" href="/blog/">View All Blog Posts</Button>
+  </div>
+</Section>

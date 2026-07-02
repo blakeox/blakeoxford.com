@@ -1,344 +1,77 @@
 ---
-import Layout from '../layouts/BaseLayout.astro';
-import ProjectCard from '../components/features/projects/ProjectCard.astro';
-import CoinFlipImage from '../components/composites/CoinFlipImage.astro';
-import Button from '../components/primitives/Button.astro';
-import ButtonGroup from '../components/composites/ButtonGroup.astro';
-import ResumeHighlightCard from '../components/features/home/ResumeHighlightCard.astro';
-import ResumeHighlightItem from '../components/features/home/ResumeHighlightItem.astro';
-import TechnologyItem from '../components/features/home/TechnologyItem.astro';
-import BlogPostCard from '../components/features/blog/BlogPostCard.astro';
-import SectionHeading from '../components/primitives/SectionHeading.astro';
-import FloatingEmoji from '../components/primitives/FloatingEmoji.astro';
-import FloatingBlur from '../components/primitives/FloatingBlur.astro';
-import Grid from '../components/primitives/Grid.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+
+import Layout from '../layouts/BaseLayout.astro';
+import FloatingBlur from '../components/primitives/FloatingBlur.astro';
+import SectionHeading from '../components/primitives/SectionHeading.astro';
+import HomeHeroSection from '../components/features/home/HomeHeroSection.astro';
+import HomeResumeHighlightsSection from '../components/features/home/HomeResumeHighlightsSection.astro';
+import HomeRecentProjectsSection from '../components/features/home/HomeRecentProjectsSection.astro';
+import HomeLatestPostsSection from '../components/features/home/HomeLatestPostsSection.astro';
+import HomeCTASection from '../components/features/home/HomeCTASection.astro';
+import TechnologyItem from '../components/features/home/TechnologyItem.astro';
 import { getProjectsSorted } from '../content/projects/getProjects';
 import { technologies, siteConfig } from '../config/data';
 import { take } from '../utils/index.js';
 
 const allBlogPosts: CollectionEntry<'blog'>[] = await getCollection('blog');
 const blogPosts = allBlogPosts
- .filter((entry: CollectionEntry<'blog'>) => !entry.data.draft)
- .slice()
- .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .filter((entry: CollectionEntry<'blog'>) => !entry.data.draft)
+  .slice()
+  .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// Get most recent projects instead of featured projects
 const recentProjects = take(await getProjectsSorted(), 3);
-
-// Select the most recent posts for homepage feature
 const recentBlogPosts: CollectionEntry<'blog'>[] = take(blogPosts, 3);
 
-// Prevent duplicate hero copy: only show tagline if different from description
 const heroDescription: string | undefined = siteConfig?.description;
 const heroTagline: string | undefined = siteConfig?.tagline;
 const normalize = (s?: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
 const shouldShowTagline = normalize(heroTagline) !== '' && normalize(heroTagline) !== normalize(heroDescription);
-// Preferred default subtitle used previously on the site
 const defaultTagline = 'Systems Architect · Workflow Strategist · Action-Oriented Leader';
-// Show default when no tagline is set; otherwise show tagline only when not duplicative
 const taglineToShow: string | undefined = normalize(heroTagline) === ''
- ? defaultTagline
- : (shouldShowTagline ? heroTagline : undefined);
+  ? defaultTagline
+  : (shouldShowTagline ? heroTagline : undefined);
 
-// Helper to derive optimized image component props from a full /assets/images path
 function deriveImageData(imgPath?: string) {
- if (!imgPath) return null;
- // Expect path like /assets/images/proficiencies/python_logo.webp
- const prefix = '/assets/images/';
- if (!imgPath.startsWith(prefix)) return null;
- const relative = imgPath.slice(prefix.length); // proficiencies/python_logo.webp
- const lastDot = relative.lastIndexOf('.');
- if (lastDot === -1) return null;
- const name = relative.slice(0, lastDot); // proficiencies/python_logo
- const ext = relative.slice(lastDot + 1).toLowerCase();
- return { name, ext };
+  if (!imgPath) return null;
+  const prefix = '/assets/images/';
+  if (!imgPath.startsWith(prefix)) return null;
+  const relative = imgPath.slice(prefix.length);
+  const lastDot = relative.lastIndexOf('.');
+  if (lastDot === -1) return null;
+  const name = relative.slice(0, lastDot);
+  const ext = relative.slice(lastDot + 1).toLowerCase();
+  return { name, ext };
 }
 ---
-<Layout title="Blake Oxford - Leadership & Portfolio" description="Systems architect and workflow strategist turning complexity into opportunity—designing scalable systems, streamlining operations, and leading high‑stakes transformations that deliver lasting results." wide={true}>
- <!-- Preload hero LCP image (single optimal size) -->
- <link slot="head" rel="preload" as="image" href="/assets/images/optimized/avif/Blake-O-scaled@640w.avif" type="image/avif" fetchpriority="high" />
- <!-- Decorative background shapes -->
- <div class="fixed inset-0 -z-10 pointer-events-none">
- <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
- <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
- </div>
- <div class="space-y-16 sm:space-y-20 lg:space-y-24">
- <!-- Hero Section with animated gradient -->
- <section id="about-me" class="hero-gradient-animated relative overflow-hidden py-20 sm:py-24 md:py-32 min-h-screen flex items-center bg-gradient-to-br from-background via-accent/5 to-background dark:from-background-dark dark:via-background-dark dark:to-background-dark -mt-24 -mx-4 sm:-mx-6 lg:-mx-8">
- <!-- Floating blur orbs for depth -->
- <div class="blur-orb-accent top-0 right-0"></div>
- <div class="blur-orb-primary bottom-0 left-0"></div>
- 
- <!-- Animated background pattern -->
- <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
- <div class="absolute inset-0"></div>
- </div>
- <!-- Curved divider at bottom -->
- <div class="absolute bottom-0 left-0 w-full overflow-hidden rotate-180">
- <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="h-20 w-full">
- </svg>
- </div>
- <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
- <div class="grid md:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
- <!-- Left: Text -->
- <div class="order-2 md:order-1">
- <div class="max-w-2xl space-y-6 text-base leading-relaxed text-foreground/85">
- <div class="space-y-3">
- <!-- Visually hidden pretitle retained for a11y/SEO semantics -->
- <p class="sr-only">Systems Architecture · Automation · Change Enablement</p>
- <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold text-foreground">
- {siteConfig.author}
- </h1>
- {taglineToShow && (
- <h2 class="text-xl sm:text-2xl md:text-3xl font-medium text-foreground/90">
- {taglineToShow}
- </h2>
- )}
- {heroDescription && (
- <blockquote class="mt-2 border-l-4 border-accent/70 pl-4 text-base sm:text-lg md:text-xl text-foreground/90">
- {heroDescription}
- </blockquote>
- )}
- </div>
- </div>
- <ButtonGroup align="start" responsive class="mt-6">
- <Button
- variant="primary"
- href="/contact/"
- data-test="home-cta-connect"
- data-analytics="hero-cta"
- >
- 🤝 Let's Connect
- </Button>
- <Button
- variant="outline"
- href="/assets/Resume.pdf"
- download
- >
- 📄 Download Resume
- </Button>
- </ButtonGroup>
- </div>
- <!-- Right: Animated Profile Image -->
- <div class="flex justify-center md:justify-end order-1 md:order-2">
- <div class="relative">
- <!-- Decorative elements around the image -->
- <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-primary/30 blur-xl opacity-70 animate-pulse"></div>
- <div class="relative rounded-full p-1 bg-gradient-to-r from-accent to-primary">
- <CoinFlipImage
- frontSrc="/assets/images/Blake-O-scaled.jpg"
- backSrc="/assets/images/china-profile-picture.jpg"
- alt="Blake Oxford"
- altBack="Blake Oxford in China"
- size={280}
- flipMultipleTimes
- loading="eager"
- fetchPriority="high"
- decoding="auto"
- role="img"
- aria-label="Photo of Blake Oxford"
- />
- </div>
- <!-- Floating elements -->
- <FloatingEmoji emoji='💡' position='top-right' size='md' />
- <FloatingEmoji emoji='🚀' position='bottom-left' size='sm' color='accent-dark' />
- <FloatingEmoji emoji='☁️' position='center-right' size='sm' color='primary' />
- </div>
- </div>
- </div>
- </div>
- </section>
- 
- <!-- Resume Highlights Section -->
- <section id="resume-highlights" class="py-16 sm:py-20 lg:py-24">
- <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
- <div class="text-center space-y-4">
- <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">Resume Highlights</h2>
- <p class="mx-auto max-w-3xl text-lg text-muted-foreground">
- Impact snapshots from enterprise migrations, automation programs, and data strategy initiatives.
- </p>
- </div>
- <Grid cols="3" gap="lg" alignItems="stretch">
- <ResumeHighlightCard title="Cloud &amp; SaaS Transformations" description="Complex platform rollouts delivered end-to-end with strong adoption and governance controls.">
- <svg
- slot="icon"
- xmlns="http://www.w3.org/2000/svg"
- class="h-6 w-6 text-on-primary"
- fill="none"
- viewBox="0 0 24 24"
- stroke="currentColor"
- >
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
- </svg>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4.5 h-4.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
- </svg>
- Google Workspace → Microsoft 365 migration for 180 users
- </ResumeHighlightItem>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4.5 h-4.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
- </svg>
- Sage Intacct financial platform implementation
- </ResumeHighlightItem>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4.5 h-4.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
- </svg>
- Azure/Intune endpoint management deployment
- </ResumeHighlightItem>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4.5 h-4.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
- </svg>
- ADP Workforce Now and Cornerstone LMS integration
- </ResumeHighlightItem>
- </ResumeHighlightCard>
 
- <ResumeHighlightCard title="Automation &amp; Savings" description="Multi-million-dollar overhead reduction via coordinated automation, analytics, and consolidation initiatives.">
- <svg
- slot="icon"
- xmlns="http://www.w3.org/2000/svg"
- class="h-6 w-6 text-on-primary"
- fill="none"
- viewBox="0 0 24 24"
- stroke="currentColor"
- >
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
- </svg>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
- </svg>
- Azure cloud infrastructure optimization
- </ResumeHighlightItem>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
- </svg>
- Power BI analytics and real-time dashboarding
- </ResumeHighlightItem>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
- </svg>
- Custom OpenAI workflow integrations
- </ResumeHighlightItem>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
- </svg>
- Enterprise system consolidations and integrations
- </ResumeHighlightItem>
- </ResumeHighlightCard>
+<Layout title="Blake Oxford - Leadership & Portfolio" description="Systems architect and workflow strategist turning complexity into opportunity-designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results." wide={true}>
+  <link slot="head" rel="preload" as="image" href="/assets/images/optimized/avif/Blake-O-scaled@640w.avif" type="image/avif" fetchpriority="high" />
+  <div class="fixed inset-0 -z-10 pointer-events-none">
+    <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
+    <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
+  </div>
 
- <ResumeHighlightCard title="Data Analytics" description="Comprehensive business intelligence solutions that keep decision-makers informed in real time.">
- <svg
- slot="icon"
- xmlns="http://www.w3.org/2000/svg"
- class="h-6 w-6 text-on-primary"
- fill="none"
- viewBox="0 0 24 24"
- stroke="currentColor"
- >
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
- </svg>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
- </svg>
- Real-time SQL/Power BI dashboards
- </ResumeHighlightItem>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
- </svg>
- Predictive financial modeling systems
- </ResumeHighlightItem>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
- </svg>
- C-suite executive decision support frameworks
- </ResumeHighlightItem>
- <ResumeHighlightItem>
- <svg slot="icon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
- </svg>
- Automated KPI tracking and performance visualization
- </ResumeHighlightItem>
- </ResumeHighlightCard>
- </Grid>
- </div>
- </section>
+  <div class="space-y-16 sm:space-y-20 lg:space-y-24">
+    <HomeHeroSection author={siteConfig.author} tagline={taglineToShow} description={heroDescription} />
+    <HomeResumeHighlightsSection />
 
- <!-- Technologies I Excel At Section -->
- <section id="technologies" class="w-full py-16 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-background-dark dark:to-background-dark">
- <SectionHeading size='4xl' class='mb-8'>Technologies I Excel At</SectionHeading>
- <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-foreground/85">
- {technologies.map((tech) => {
- const raw = tech.img;
- const srcStr: string | undefined = typeof raw === 'string' ? raw : (raw && typeof raw === 'object' && 'src' in raw ? String(raw.src) : undefined);
- const canOptimize = typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
- const data = canOptimize ? deriveImageData(srcStr) : null;
- return (
- <TechnologyItem tech={tech} data={data} srcStr={srcStr} />
- );
- })}
- </ul>
- </section>
+    <section id="technologies" class="w-full bg-gradient-to-r from-background via-surface to-background py-16 text-center dark:from-background-dark dark:via-background-dark dark:to-background-dark">
+      <SectionHeading size="4xl" class="mb-8">Technologies I Excel At</SectionHeading>
+      <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-foreground/85">
+        {technologies.map((tech) => {
+          const raw = tech.img;
+          const srcStr: string | undefined = typeof raw === 'string' ? raw : (raw && typeof raw === 'object' && 'src' in raw ? String(raw.src) : undefined);
+          const canOptimize = typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
+          const data = canOptimize ? deriveImageData(srcStr) : null;
+          return <TechnologyItem tech={tech} data={data} srcStr={srcStr} />;
+        })}
+      </ul>
+    </section>
 
- <!-- Recent Projects Section -->
- <section id="recent-projects" class="container mx-auto px-6 sm:px-8 lg:px-12 py-16" aria-labelledby="recent-projects-title">
- <div class="text-center mb-12">
- <SectionHeading id='recent-projects-title' size='4xl' class='mb-8'>Recent Projects</SectionHeading>
- </div>
- <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
- {recentProjects.map((project: CollectionEntry<'projects'>) => (
- <ProjectCard project={project} />
- ))}
- </div> <div class="mt-8 text-center">
- <Button variant="outline" href="/projects/">View All Projects</Button>
- </div>
- </section>
-
- <!-- Latest Blog Posts Section -->
- <section class="w-full py-20 text-center bg-gradient-to-r from-background via-surface to-background dark:from-background-dark dark:via-background-dark dark:to-background-dark" aria-labelledby="latest-blog-posts">
- <div class="container mx-auto px-6 sm:px-8 lg:px-12">
- <SectionHeading id='latest-blog-posts' size='4xl' class='mb-8'>Latest Blog Posts</SectionHeading>
- <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
- {recentBlogPosts.length > 0 ? (
- recentBlogPosts.map((post) => (
- <li role="listitem">
- <BlogPostCard post={post} />
- </li>
- ))
- ) : (
- <li class="rounded-2xl border border-dashed border-border/40 bg-background/90 p-6 text-center shadow-md dark:bg-background-dark/80">
- <p class="text-sm text-muted-foreground">
- Blog posts are on the way—check back soon for new case studies and playbooks.
- </p>
- </li>
- )}
- </ul>
- <div class="mt-8 text-center">
- <Button variant="outline" href="/blog/">View All Blog Posts</Button>
- </div>
- </div>
- </section>
-
- <!-- Call-to-Action Section -->
- <section class="container mx-auto px-6 sm:px-8 lg:px-12 text-center py-16">
- <SectionHeading size='3xl' class='mb-4 flex items-center justify-center gap-2'><span>🤝</span> Want to Work Together?</SectionHeading>
- <p class="text-lg mb-6 text-neutral">I'm always open to exciting new opportunities and collaborations. Let's create something amazing together!</p>
- <Button variant="outline" href="/contact/">Contact Me</Button>
- </section>
- </div>
+    <HomeRecentProjectsSection projects={recentProjects} />
+    <HomeLatestPostsSection posts={recentBlogPosts} />
+    <HomeCTASection />
+  </div>
 </Layout>

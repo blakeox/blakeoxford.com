@@ -1,0 +1,22 @@
+---
+import CoinFlipImage from '../../composites/CoinFlipImage.astro';
+import PageHero from '../../composites/PageHero.astro';
+import FloatingEmoji from '../../primitives/FloatingEmoji.astro';
+import Grid from '../../primitives/Grid.astro';
+import Stack from '../../primitives/Stack.astro';
+---
+
+<PageHero fullScreen={true} includeBlurOrbs={true} id="contact-hero">
+  <Grid cols="2" gap="xl" alignItems="center">
+    <Stack space="lg" class="@container">
+      <h1 class="font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">Let&apos;s Connect</h1>
+      <p class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">Have a project in mind or just want to say hello? I&apos;m all ears, whether it&apos;s a collaboration idea, a question, or just a quick chat. I usually reply within 24 hours and can&apos;t wait to build something great together.</p>
+    </Stack>
+    <div class="flex justify-center md:justify-end">
+      <div class="relative">
+        <CoinFlipImage frontSrc="/assets/images/Blake-O-scaled.jpg" backSrc="/assets/images/china-profile-picture.jpg" alt="Blake Oxford" altBack="Blake Oxford in China" size={280} flipMultipleTimes loading="eager" fetchPriority="high" decoding="auto" />
+        <FloatingEmoji emoji="💡" position="top-right" size="lg" />
+      </div>
+    </div>
+  </Grid>
+</PageHero>
