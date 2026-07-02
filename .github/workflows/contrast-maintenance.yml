@@ -15,13 +15,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: 'pnpm'
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
       - name: Install deps
         run: pnpm install --frozen-lockfile --prod=false
       - name: Auto-close stable contrast issues
