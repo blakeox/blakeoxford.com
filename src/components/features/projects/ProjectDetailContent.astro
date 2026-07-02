@@ -2,7 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import ProjectDetailSection from './ProjectDetailSection.astro';
-import AchievementCard from '../../composites/AchievementCard.astro';
+import OutcomeCard from '../../composites/OutcomeCard.astro';
 import BulletListItem from '../../primitives/BulletListItem.astro';
 import BackgroundGrid from '../../primitives/BackgroundGrid.astro';
 import ProjectTags from './ProjectTags.astro';
@@ -50,7 +50,7 @@ const {
 
     {data.highlights?.length ? (
       <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
-        <AchievementCard title="Program outcomes" achievements={data.highlights} />
+        <OutcomeCard title="Program outcomes" achievements={data.highlights} />
       </ProjectDetailSection>
     ) : null}
 
