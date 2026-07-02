@@ -81,7 +81,7 @@ jobs:
         run: pnpm run lint
 
       - name: Design lint (tokens & spacing)
-        run: pnpm design:lint || true # non-blocking in fast CI
+        run: pnpm design:lint
 
       - name: Run TypeScript type checking
         run: pnpm run typecheck

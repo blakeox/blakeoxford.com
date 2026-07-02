@@ -13,7 +13,7 @@ These guidelines apply when creating or modifying visual components, styles, and
 
 ### CSS Variables (Source of Truth)
 
-All design tokens are defined in `src/styles/global.css` and mapped to Tailwind in `tailwind.config.ts`.
+All design tokens are defined in `src/styles/theme.css` and mapped to Tailwind in `tailwind.config.ts`.
 
 **Required Practice**: Always use semantic tokens instead of hardcoded values.
 
