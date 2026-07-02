@@ -5,13 +5,15 @@
 
 set -e  # Exit on error
 
+PNPM="./scripts/bin/pnpmw.sh"
+
 echo "🎯 Blake Oxford Portfolio - Comprehensive Test Suite"
 echo "==================================================="
 
 # Check if dependencies are installed
 echo "📦 Checking dependencies..."
-if ! command -v pnpm &> /dev/null; then
-    echo "❌ pnpm is not installed"
+if ! command -v corepack &> /dev/null && ! command -v pnpm &> /dev/null; then
+    echo "❌ Neither corepack nor pnpm is installed"
     exit 1
 fi
 
@@ -28,7 +30,7 @@ echo "🧪 Running Unit Tests..."
 echo "-------------------------"
 start_time=$(date +%s)
 
-pnpm run test:ci
+"$PNPM" run test:ci
 
 unit_end_time=$(date +%s)
 unit_duration=$((unit_end_time - start_time))
@@ -40,7 +42,7 @@ echo "🔨 Building the project..."
 echo "---------------------------"
 build_start_time=$(date +%s)
 
-pnpm run build
+"$PNPM" run build
 
 build_end_time=$(date +%s)
 build_duration=$((build_end_time - build_start_time))
@@ -60,7 +62,7 @@ echo "🚀 Starting preview server for E2E tests..."
 echo "---------------------------------------------"
 
 # Start server in background
-pnpm run preview &
+"$PNPM" run preview &
 SERVER_PID=$!
 
 # Wait for server to be ready
@@ -90,11 +92,11 @@ e2e_start_time=$(date +%s)
 
 # Run the most critical tests first
 echo "Running navigation tests..."
-pnpm exec playwright test tests/playwright/navigation-essential.spec.ts --project=chromium --reporter=line
+"$PNPM" exec playwright test tests/playwright/navigation-essential.spec.ts --project=chromium --reporter=line
 
 echo ""
 echo "Running accessibility tests..."
-pnpm exec playwright test tests/playwright/accessibility-basic.spec.ts --project=chromium --reporter=line
+"$PNPM" exec playwright test tests/playwright/accessibility-basic.spec.ts --project=chromium --reporter=line
 
 e2e_end_time=$(date +%s)
 e2e_duration=$((e2e_end_time - e2e_start_time))

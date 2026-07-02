@@ -165,7 +165,8 @@ class PerformanceTestRunner {
     }
 
     console.log('🚀 Starting local preview server (serving dist)...');
-    const pnpmCmd = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+    const pnpmCmd = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
+    const pnpmArgs = ['pnpm'];
 
     // Pick a free port and update baseUrl to match
     const chosen = await this.findAvailablePort(4321, 10);
@@ -188,7 +189,7 @@ class PerformanceTestRunner {
     // Prefer `astro preview` (accurate multi-page routing). Fall back to `serve` (without SPA mode).
     this.serverProcess = spawn(
       pnpmCmd,
-      ['preview', '--host', '127.0.0.1', '--port', String(port)],
+      [...pnpmArgs, 'preview', '--host', '127.0.0.1', '--port', String(port)],
       {
         detached: true,
         stdio: 'ignore',
@@ -205,7 +206,7 @@ class PerformanceTestRunner {
 
       this.serverProcess = spawn(
         pnpmCmd,
-        ['exec', 'serve', 'dist', '-l', String(port)],
+        [...pnpmArgs, 'exec', 'serve', 'dist', '-l', String(port)],
         {
           detached: true,
           stdio: 'ignore',
