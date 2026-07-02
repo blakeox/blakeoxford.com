@@ -115,8 +115,12 @@ const timelineItems: TimelineItem[] = [
     <div class="relative z-10">
       <div class="grid grid-cols-1 gap-8 lg:gap-12">
         <div>
-          <div class="mb-12 text-center">
-            <h2 class="mb-12 text-center text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">Key Achievements</h2>
+          <div class="section-intro mb-12">
+            <span class="section-kicker">Selected proof</span>
+            <h2 class="mb-4 text-center font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl">Key achievements</h2>
+            <p class="text-muted-foreground">
+              Representative outcomes across enterprise transformation, analytics, and operational modernization.
+            </p>
           </div>
 
           <Grid cols="3" gap="lg">
@@ -171,9 +175,10 @@ const timelineItems: TimelineItem[] = [
   <AboutTimelineSection items={timelineItems} />
 
   <Section padding="lg" container="lg" class="bg-gradient-to-b from-surface to-background dark:from-surface-dark dark:to-background-dark">
-    <div class="mx-auto max-w-3xl text-center">
-      <h2 class="mb-4 text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">Let&apos;s Connect</h2>
-      <p class="mb-8 text-muted-foreground">Open to collaborating on systems architecture, data platforms, and automation initiatives.</p>
+    <div class="section-intro mx-auto max-w-3xl">
+      <span class="section-kicker">Next move</span>
+      <h2 class="mb-4 font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl">Open to work that needs operational clarity</h2>
+      <p class="mb-8 text-muted-foreground">If the problem spans systems, analytics, automation, or adoption, the contact page is the best place to start.</p>
       <ul class="flex flex-wrap items-center justify-center gap-4" role="list">
         {socialLinks.map((link) => (
           <li>

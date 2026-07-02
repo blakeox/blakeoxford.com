@@ -22,7 +22,7 @@ const { posts } = Astro.props as Props;
           {posts.length} {posts.length === 1 ? 'Article' : 'Articles'}
         </BadgePill>
         <p class="text-sm leading-relaxed text-muted-foreground">
-          Latest insights and deep dives
+          Field notes and implementation breakdowns
         </p>
       </Flex>
       <Flex gap="sm" align="center">
@@ -41,11 +41,12 @@ const { posts } = Astro.props as Props;
   <Stack space="xl" class="text-pretty">
     {posts.length > 0 && (
       <Stack space="md" class="max-w-3xl">
+        <span class="section-kicker w-fit">Archive</span>
         <h2 id="blog-posts-heading" class="font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl">
-          Latest Insights
+          Latest insights
         </h2>
         <p class="text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Practical takeaways from real-world implementations and strategic initiatives.
+          Practical takeaways from real implementations, strategic initiatives, and operational cleanup work.
         </p>
       </Stack>
     )}

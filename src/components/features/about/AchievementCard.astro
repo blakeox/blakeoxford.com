@@ -52,11 +52,11 @@ const achievementStyles = [
 ] as const;
 ---
 
-<div class="bg-surface/80 dark:bg-surface-dark/80 p-8 rounded-xl shadow-lg border border-border dark:border-border-dark hover:shadow-xl hover-lift-sm transition-all duration-300">
- <div class="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-accent to-primary text-on-dark text-2xl mb-6">
+<div class="proof-card hover-lift-sm p-8 transition-all duration-300">
+ <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-primary text-2xl text-on-dark">
  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false" set:html={mainIconSVGs[icon]} />
  </div>
- <h3 class="text-xl sm:text-2xl font-bold mb-3 text-foreground">{title}</h3>
+ <h3 class="mb-3 font-heading text-xl font-semibold text-foreground sm:text-2xl">{title}</h3>
  <p class="mb-4 text-muted-foreground">{description}</p>
  <ul class="space-y-2">
  {achievements.map((achievement, idx) => {

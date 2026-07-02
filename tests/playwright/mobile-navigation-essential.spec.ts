@@ -1,4 +1,5 @@
-import { test, expect, devices } from './fixtures';
+import { devices } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Mobile Navigation Essential', () => {
   // Test mobile navigation with viewport simulation (faster than device contexts)

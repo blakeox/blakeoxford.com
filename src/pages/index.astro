@@ -24,11 +24,11 @@ const blogPosts = allBlogPosts
 const recentProjects = take(await getProjectsSorted(), 3);
 const recentBlogPosts: CollectionEntry<'blog'>[] = take(blogPosts, 3);
 
-const heroDescription: string | undefined = siteConfig?.description;
-const heroTagline: string | undefined = siteConfig?.tagline;
+const heroDescription: string | undefined = siteConfig?.tagline;
+const heroTagline: string | undefined = siteConfig?.description;
 const normalize = (s?: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
 const shouldShowTagline = normalize(heroTagline) !== '' && normalize(heroTagline) !== normalize(heroDescription);
-const defaultTagline = 'Systems Architect · Workflow Strategist · Action-Oriented Leader';
+const defaultTagline = 'Systems Architect · Workflow Strategist · Operational Improvement Leader';
 const taglineToShow: string | undefined = normalize(heroTagline) === ''
   ? defaultTagline
   : (shouldShowTagline ? heroTagline : undefined);
@@ -57,8 +57,14 @@ function deriveImageData(imgPath?: string) {
     <HomeHeroSection author={siteConfig.author} tagline={taglineToShow} description={heroDescription} />
     <HomeResumeHighlightsSection />
 
-    <section id="technologies" class="w-full bg-gradient-to-r from-background via-surface to-background py-16 text-center dark:from-background-dark dark:via-background-dark dark:to-background-dark">
-      <SectionHeading size="4xl" class="mb-8">Technologies I Excel At</SectionHeading>
+    <section id="technologies" class="page-slab w-full py-16 text-center">
+      <div class="section-intro mb-10">
+        <span class="section-kicker">Delivery stack</span>
+        <SectionHeading size="4xl">Platforms and tools used in delivery</SectionHeading>
+        <p class="text-lg text-muted-foreground">
+          A representative toolset behind architecture, workflow automation, analytics, and cloud delivery work.
+        </p>
+      </div>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-foreground/85">
         {technologies.map((tech) => {
           const raw = tech.img;

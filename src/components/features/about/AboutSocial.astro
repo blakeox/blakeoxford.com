@@ -24,16 +24,17 @@ function Icon({ name }: IconProps) {
 }
 ---
 
-<section id="about-social" class="py-16 bg-gradient-to-b from-surface to-background dark:from-surface-dark dark:to-background-dark">
+<section id="about-social" class="bg-gradient-to-b from-surface to-background py-16 dark:from-surface-dark dark:to-background-dark">
  <div class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
- <div class="max-w-3xl mx-auto text-center">
- <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">{social.title}</h2>
+ <div class="section-intro max-w-3xl">
+ <span class="section-kicker">Profiles</span>
+ <h2 class="mb-4 text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl">{social.title}</h2>
  <p class="mb-8 text-muted-foreground">{social.description}</p>
  <Flex as="ul" wrap align="center" justify="center" gap="md" role="list">
  {social.links.map((link) => (
  <li>
  <a
- class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border dark:border-border-dark hover:bg-accent/10 hover:border-accent transition-colors"
+ class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:border-accent hover:bg-accent/10 dark:border-border-dark"
  href={link.href}
  target="_blank"
  rel="noopener noreferrer"
