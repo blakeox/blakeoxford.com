@@ -1,10 +1,11 @@
 ---
-// BlogCard.astro - Compact card for grid layouts using primitives
+// BlogCard.astro - Compact card for grid layouts using Card → BaseCard
 import type { BlogCardProps } from '../../../types/components';
 import OptimizedImage from '../../primitives/OptimizedImage.astro';
 import Badge from '../../primitives/Badge.astro';
 import DateDisplay from '../../primitives/DateDisplay.astro';
 import Flex from '../../primitives/Flex.astro';
+import Card from '../../composites/Card.astro';
 import { truncate, take } from '../../../utils/index.js';
 
 const { post } = Astro.props as BlogCardProps;
@@ -12,23 +13,20 @@ const { slug, data } = post;
 const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as string[], 2) : [];
 ---
 
-<article class="hover-lift group flex flex-col h-full rounded-2xl border border-border/30 bg-background/95 shadow-lg hover:shadow-primary/5 dark:border-border-dark/30 dark:bg-surface/80">
- <!-- Hero Image -->
+<Card as="article" variant="default" hover="lift" padding="none" class="group h-full">
  {data.heroImage && (
- <div class="aspect-[16/10] overflow-hidden rounded-t-2xl">
+ <div slot="image" class="aspect-[16/10] overflow-hidden rounded-t-2xl">
  <OptimizedImage 
  src={data.heroImage} 
  alt={`Hero image for ${data.title}`}
- class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+ class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
  loading="lazy"
  />
  </div>
  )}
  
- <!-- Content -->
  <div class="flex flex-1 flex-col p-6">
  <header class="mb-4">
- <!-- Tags -->
  {visibleTags.length > 0 && (
  <Flex wrap gap="xs" class="mb-3">
  {visibleTags.map((tag: string) => (
@@ -37,32 +35,28 @@ const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as st
  </Flex>
  )}
  
- <!-- Title -->
- <h3 class="text-xl sm:text-2xl font-bold text-foreground leading-tight mb-3 group-hover:text-accent dark:group-hover:text-accent-light transition-colors duration-300">
+ <h3 class="mb-3 text-xl font-bold leading-tight text-foreground transition-colors duration-300 group-hover:text-accent sm:text-2xl">
  <a href={`/blog/${slug}/`} class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background">
  {data.title}
  </a>
  </h3>
 
- <!-- Date -->
  {data.pubDate && <DateDisplay date={data.pubDate} format="blog" />}
  </header>
 
- <!-- Description -->
  {data.description && (
- <p class="text-base text-muted-foreground leading-relaxed flex-1 mb-4 line-clamp-3">
+ <p class="mb-4 line-clamp-3 flex-1 text-base leading-relaxed text-muted-foreground">
  {truncate(data.description, 120)}
  </p>
  )}
 
- <!-- Footer -->
- <footer class="flex items-center justify-between pt-4 border-t border-border/20 dark:border-border-dark/20">
+ <footer class="flex items-center justify-between border-t border-border/20 pt-4">
  <a
  href={`/blog/${slug}/`}
- class="inline-flex items-center text-sm font-semibold text-accent hover:text-accent-dark transition-colors duration-200"
+ class="inline-flex items-center text-sm font-semibold text-accent transition-colors duration-200 hover:text-accent-dark"
  >
  Read more
- <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+ <svg class="ml-1 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
  </svg>
  </a>
@@ -72,4 +66,4 @@ const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as st
  </span>
  </footer>
  </div>
-</article>
+</Card>

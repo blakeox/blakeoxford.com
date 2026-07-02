@@ -132,7 +132,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  };
 
  return (
- <div className="sticky top-0 z-50 border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)] dark:bg-[color:var(--glass-surface-bg-dark)] dark:supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-dark-xl)]">
+ <div className="@container sticky top-0 z-50 border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)]">
  <nav
  id="navbar"
  ref={navRef}
@@ -264,7 +264,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <div
  ref={mobileMenuRef}
  id="nav-mobile-links"
- className="mobile-menu absolute inset-x-0 top-full z-[2147483646] border-t border-border bg-surface/98 shadow-lg dark:border-border-dark dark:bg-surface-dark/98 md:hidden pointer-events-none"
+ className="mobile-menu absolute inset-x-0 top-full z-[2147483646] border-t border-border bg-surface/98 shadow-lg md:hidden pointer-events-none motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard"
  role="dialog"
  aria-modal="true"
  aria-label="Mobile navigation menu"
@@ -278,7 +278,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  aria-label="Close navigation menu"
  />
  <div
- className="mobile-menu-content flex w-full flex-col gap-3 px-5 py-5 text-foreground"
+ className="mobile-menu-content flex w-full flex-col gap-2 px-4 py-4 text-foreground @sm:gap-3 @sm:px-5 @sm:py-5"
  onClick={(e) => {
  // Prevent clicks inside the panel from being treated as outside clicks.
  e.stopPropagation();
@@ -290,7 +290,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <a
  href={link.href}
  role="menuitem"
- className="mobile-nav-link block rounded-2xl px-4 py-3 text-base font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] dark:hover:bg-[color:var(--glass-surface-bg-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+ className="mobile-nav-link block rounded-2xl px-3 py-3 text-sm font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent @sm:px-4 @sm:py-3 @sm:text-base"
  aria-current={isActive(link.href) ? 'page' : undefined}
  >
  {link.label}

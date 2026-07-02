@@ -8,13 +8,13 @@ const motionRules = [
  {
  name: 'State transition',
  purpose: 'Use for theme changes, hover color, and active state changes.',
- contract: 'transition-colors duration-200',
+ contract: 'transition-colors duration-normal',
  example: 'Color changes should clarify state without moving layout.',
  },
  {
  name: 'Surface reveal',
  purpose: 'Use for dialogs, overlays, and panels that enter the viewport.',
- contract: 'transition-transform duration-200 ease-out',
+ contract: 'motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard',
  example: 'Search and chat panels can translate in; content cards should stay stable.',
  },
  {
@@ -26,7 +26,7 @@ const motionRules = [
  {
  name: 'Reduced motion',
  purpose: 'Every non-essential transform must respect user motion preferences.',
- contract: '@media (prefers-reduced-motion: reduce)',
+ contract: '@media (prefers-reduced-motion: reduce) { transition: none; animation: none; }',
  example: 'Disable continuous and ornamental motion first.',
  },
 ];
