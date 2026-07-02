@@ -4,6 +4,7 @@ import Container from '../../components/primitives/Container.astro';
 import Section from '../../components/primitives/Section.astro';
 import Badge from '../../components/primitives/Badge.astro';
 import { componentDocs, getCategories, getAllTags, type ComponentDoc } from '../../data/componentDocs';
+import { componentVisualBaselines } from '../../data/componentVisualBaselines';
 
 const title = 'Component Documentation';
 const description = 'Comprehensive documentation for all Blake Oxford Portfolio components';
@@ -108,6 +109,32 @@ const allTags = getAllTags();
  <p class="mt-4 text-muted-foreground">
  {component.description}
  </p>
+
+ {component.visualTier && (
+ <p class="mt-3 text-sm">
+ <span class="font-semibold text-foreground">Visual tier:</span>{' '}
+ <Badge class="bg-surface-subtle text-foreground text-xs dark:bg-surface-dark-subtle">{component.visualTier}</Badge>
+ </p>
+ )}
+
+ {component.tokenDependencies && component.tokenDependencies.length > 0 && (
+ <div class="mt-3">
+ <p class="text-sm font-semibold text-foreground">Token dependencies</p>
+ <div class="mt-2 flex flex-wrap gap-2">
+ {component.tokenDependencies.map((token) => (
+ <code class="rounded bg-accent/10 px-2 py-1 text-xs text-accent">{token}</code>
+ ))}
+ </div>
+ </div>
+ )}
+
+ {component.visualBaseline && (
+ <p class="mt-3 text-sm text-muted-foreground">
+ <span class="font-semibold text-foreground">Visual baseline:</span>{' '}
+ Playwright snapshot <code class="text-accent">{componentVisualBaselines[component.visualBaseline].snapshotFile}</code>
+ on <code>{componentVisualBaselines[component.visualBaseline].route}</code>
+ </p>
+ )}
 
  {/* Tags */}
  {component.tags && component.tags.length > 0 && (

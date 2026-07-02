@@ -1,22 +1,18 @@
 import { test, expect } from '../fixtures';
 import { preparePage } from './_visualHelper';
+import { componentVisualBaselines } from '../../../src/data/componentVisualBaselines';
 
 // Component-level focused snapshots (smaller surface, faster diff isolation)
 // Tags: @visual-essential @visual-components
-
-const componentSelectors: Record<string, { route: string; selector: string }> = {
-  navbar: { route: '/', selector: 'header nav#navbar, header nav[aria-label="Main navigation"], header nav' },
-  footer: { route: '/', selector: 'footer' },
-  searchOverlay: { route: '/', selector: '#search-overlay' }
-};
+// Registry: src/data/componentVisualBaselines.ts (linked from componentDocs.ts)
 
 test.describe('@visual-essential @visual-components Component Visual Snapshots', () => {
-  for (const [name, cfg] of Object.entries(componentSelectors)) {
-    test(`component visual ${name}`, async ({ page }) => {
+  for (const cfg of Object.values(componentVisualBaselines)) {
+    test(`component visual ${cfg.key}`, async ({ page }) => {
       await preparePage(page);
       await page.goto(cfg.route, { waitUntil: 'networkidle' });
       // Open search overlay if needed
-      if (name === 'searchOverlay') {
+      if (cfg.key === 'searchOverlay') {
         const toggle = page.locator('#search-toggle, [data-test="open-search"], button:has-text("Search")').first();
         if (await toggle.isVisible()) await toggle.click();
         else {
@@ -55,7 +51,7 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
           el.style.height = `${h}px`;
         } catch  { void 0; }
       });
-      await expect(element).toHaveScreenshot(`${name}.png`, {
+      await expect(element).toHaveScreenshot(cfg.snapshotFile, {
         animations: 'disabled',
         maxDiffPixelRatio: 0.02,
         scale: 'css',

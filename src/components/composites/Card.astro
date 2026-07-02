@@ -1,12 +1,19 @@
 ---
 /**
- * Card - small compatibility wrapper around BaseCard.
- * 
- * @example Interactive project card
+ * Card - Compatibility wrapper over BaseCard.
+ *
+ * Legacy variant aliases:
+ * - `interactive` → BaseCard `elevated` (shadow-lg interactive listing cards)
+ * - `outline` → BaseCard `subtle`
+ *
+ * @example Interactive project card (maps to BaseCard elevated)
  * <Card variant="interactive" hover="lift">
- * <h3>Project Title</h3>
- * <p>Description...</p>
+ *   <h3>Project Title</h3>
+ *   <p>Description...</p>
  * </Card>
+ *
+ * @example Explicit elevated surface (preferred when not migrating legacy code)
+ * <Card variant="elevated" hover="lift">...</Card>
  * 
  * @example Glass morphism card with container queries
  * <div class="@container">

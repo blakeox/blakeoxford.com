@@ -214,6 +214,48 @@ const stylesheetRoles = [
  </ul>
  </section>
 
+ <section class="mt-16" aria-labelledby="live-tokens">
+ <h2 id="live-tokens" class="text-2xl font-bold text-foreground">Live Computed Values</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ Values below are read from <code>:root</code> at runtime (respects light/dark theme). Toggle theme to verify dark-mode remaps.
+ </p>
+ <div class="mt-5 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <table class="w-full text-sm" id="live-token-table">
+ <thead class="border-b border-border bg-surface-subtle/50 dark:border-border-dark dark:bg-surface-dark-subtle/50">
+ <tr class="text-left">
+ <th class="px-4 py-3 font-semibold">Token</th>
+ <th class="px-4 py-3 font-semibold">Computed value</th>
+ </tr>
+ </thead>
+ <tbody id="live-token-body" class="divide-y divide-border dark:divide-border-dark">
+ <tr><td class="px-4 py-3 text-subtle-foreground" colspan="2">Loading computed tokens…</td></tr>
+ </tbody>
+ </table>
+ </div>
+ </section>
+
+ <section class="mt-16" aria-labelledby="contrast-matrix">
+ <h2 id="contrast-matrix" class="text-2xl font-bold text-foreground">Contrast Matrix</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ WCAG 2.1 contrast ratios for key semantic pairs in the active theme. Body text targets ≥4.5:1; large text ≥3:1.
+ </p>
+ <div class="mt-5 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <table class="w-full text-sm">
+ <thead class="border-b border-border bg-surface-subtle/50 dark:border-border-dark dark:bg-surface-dark-subtle/50">
+ <tr class="text-left">
+ <th class="px-4 py-3 font-semibold">Pair</th>
+ <th class="px-4 py-3 font-semibold">Ratio</th>
+ <th class="px-4 py-3 font-semibold">Target</th>
+ <th class="px-4 py-3 font-semibold">Status</th>
+ </tr>
+ </thead>
+ <tbody id="contrast-matrix-body" class="divide-y divide-border dark:divide-border-dark">
+ <tr><td class="px-4 py-3 text-subtle-foreground" colspan="4">Computing contrast…</td></tr>
+ </tbody>
+ </table>
+ </div>
+ </section>
+
  <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
  <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/design/components/">Component contracts</a>
  <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark" href="/docs/components/">Component catalog</a>
@@ -221,3 +263,131 @@ const stylesheetRoles = [
  </Container>
  </Section>
 </BaseLayout>
+
+<script>
+const LIVE_TOKENS = [
+ '--color-background',
+ '--color-foreground',
+ '--color-muted-foreground',
+ '--color-subtle-foreground',
+ '--color-surface',
+ '--border-color',
+ '--color-accent',
+ '--color-primary',
+ '--duration-fast',
+ '--duration',
+ '--duration-slow',
+ '--ease-standard',
+ '--bg',
+ '--fg',
+ '--fg-muted',
+];
+
+const CONTRAST_PAIRS = [
+ { label: 'Body text on background', fg: '--color-foreground', bg: '--color-background', min: 4.5 },
+ { label: 'Muted text on background', fg: '--color-muted-foreground', bg: '--color-background', min: 4.5 },
+ { label: 'Subtle text on background', fg: '--color-subtle-foreground', bg: '--color-background', min: 4.5 },
+ { label: 'Accent on surface', fg: '--color-accent', bg: '--color-surface', min: 3 },
+ { label: 'Foreground on surface', fg: '--color-foreground', bg: '--color-surface', min: 4.5 },
+];
+
+function getToken(name: string): string {
+ return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function parseRgb(raw: string): [number, number, number] | null {
+ if (!raw) return null;
+ const val = raw.trim().toLowerCase();
+ const hexMatch = val.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+ if (hexMatch) {
+ let h = hexMatch[1];
+ if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+ return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+ }
+ const rgbMatch = val.match(/rgba?\(\s*([\d.]+)\s*(?:,|\s)\s*([\d.]+)\s*(?:,|\s|\/)\s*([\d.]+)/i);
+ if (rgbMatch) {
+ return [Math.round(parseFloat(rgbMatch[1])), Math.round(parseFloat(rgbMatch[2])), Math.round(parseFloat(rgbMatch[3]))];
+ }
+ return null;
+}
+
+function resolveColor(cssColor: string): [number, number, number] | null {
+ const direct = parseRgb(cssColor);
+ if (direct) return direct;
+ try {
+ const canvas = document.createElement('canvas');
+ const ctx = canvas.getContext('2d');
+ if (!ctx) return null;
+ ctx.fillStyle = '#010203';
+ ctx.fillStyle = cssColor;
+ const hex = ctx.fillStyle;
+ if (typeof hex === 'string' && hex.startsWith('#')) {
+ const hx = hex.length === 4 ? hex.slice(1).split('').map((c) => c + c).join('') : hex.slice(1);
+ return [parseInt(hx.slice(0, 2), 16), parseInt(hx.slice(2, 4), 16), parseInt(hx.slice(4, 6), 16)];
+ }
+ } catch {
+ /* noop */
+ }
+ return null;
+}
+
+function luminance(r: number, g: number, b: number): number {
+ const channel = [r, g, b].map((v) => {
+ const normalized = v / 255;
+ return normalized <= 0.03928 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4);
+ });
+ return 0.2126 * channel[0] + 0.7152 * channel[1] + 0.0722 * channel[2];
+}
+
+function contrastRatio(fg: [number, number, number], bg: [number, number, number]): number {
+ const fgL = luminance(fg[0], fg[1], fg[2]);
+ const bgL = luminance(bg[0], bg[1], bg[2]);
+ const lighter = Math.max(fgL, bgL);
+ const darker = Math.min(fgL, bgL);
+ return (lighter + 0.05) / (darker + 0.05);
+}
+
+function renderLiveTokens() {
+ const body = document.getElementById('live-token-body');
+ if (!body) return;
+ body.innerHTML = LIVE_TOKENS.map((token) => {
+ const value = getToken(token) || '(unset)';
+ return `<tr><td class="px-4 py-3"><code class="text-accent">${token}</code></td><td class="px-4 py-3 font-mono text-xs text-muted-foreground">${value}</td></tr>`;
+ }).join('');
+}
+
+function renderContrastMatrix() {
+ const body = document.getElementById('contrast-matrix-body');
+ if (!body) return;
+ body.innerHTML = CONTRAST_PAIRS.map((pair) => {
+ const fgRaw = getToken(pair.fg);
+ const bgRaw = getToken(pair.bg);
+ const fg = resolveColor(fgRaw);
+ const bg = resolveColor(bgRaw);
+ if (!fg || !bg) {
+ return `<tr><td class="px-4 py-3">${pair.label}</td><td class="px-4 py-3 text-subtle-foreground" colspan="3">Unable to resolve colors</td></tr>`;
+ }
+ const ratio = contrastRatio(fg, bg);
+ const pass = ratio >= pair.min;
+ return `<tr>
+ <td class="px-4 py-3">${pair.label}</td>
+ <td class="px-4 py-3 font-mono">${ratio.toFixed(2)}:1</td>
+ <td class="px-4 py-3">≥ ${pair.min}:1</td>
+ <td class="px-4 py-3 ${pass ? 'text-success' : 'text-error'}">${pass ? 'Pass' : 'Fail'}</td>
+ </tr>`;
+ }).join('');
+}
+
+function refreshTokenPanels() {
+ renderLiveTokens();
+ renderContrastMatrix();
+}
+
+refreshTokenPanels();
+
+const themeObserver = new MutationObserver(refreshTokenPanels);
+themeObserver.observe(document.documentElement, {
+ attributes: true,
+ attributeFilter: ['data-theme', 'class'],
+});
+</script>
