@@ -25,7 +25,9 @@ export interface Props {
  fullWidth?: boolean;
  /** Additional CSS classes */
  class?: string;
- /** ARIA label */
+ /** Stable test hook for Playwright and unit tests */
+ 'data-testid'?: string;
+ /** Accessible label for icon-only or ambiguous controls */
  'aria-label'?: string;
  /** Additional HTML attributes */
  [key: string]: unknown;
@@ -40,6 +42,7 @@ const {
  fullWidth = false,
  class: className = '',
  'aria-label': ariaLabel,
+ 'data-testid': dataTestId,
  ...rest
 } = Astro.props;
 
@@ -71,8 +74,8 @@ const classes = [
 
 const Element = href ? 'a' : 'button';
 const elementProps = href
- ? { href, 'aria-label': ariaLabel, ...rest }
- : { type, disabled, 'aria-label': ariaLabel, ...rest };
+ ? { href, 'aria-label': ariaLabel, 'data-testid': dataTestId, ...rest }
+ : { type, disabled, 'aria-label': ariaLabel, 'data-testid': dataTestId, ...rest };
 ---
 
 <Element class={classes} {...elementProps}>

@@ -5,6 +5,9 @@
  * Used by the component documentation page for searchable component library.
  */
 
+import type { ComponentVisualBaselineKey } from './componentVisualBaselines';
+import { PRIMITIVE_PROP_CONTRACT } from './primitivePropContract';
+
 export type ComponentProp = {
   name: string;
   type: string;
@@ -19,6 +22,8 @@ export type ComponentExample = {
   description?: string;
 };
 
+export type VisualTier = 'quiet' | 'elevated' | 'expressive';
+
 export type ComponentDoc = {
   name: string;
   category: 'Layout' | 'Features' | 'Islands' | 'Primitives' | 'Composites';
@@ -30,7 +35,26 @@ export type ComponentDoc = {
   accessibility?: string[];
   performance?: string[];
   tags?: string[];
+  /** Visual weight tier from /design/patterns — quiet (static), elevated (interactive cards), expressive (hero/modal) */
+  visualTier?: VisualTier;
+  /** CSS custom properties and semantic utilities this component depends on */
+  tokenDependencies?: string[];
+  /** Key into componentVisualBaselines.ts for Playwright snapshot coverage */
+  visualBaseline?: ComponentVisualBaselineKey;
 };
+
+/** Checklist for authoring new components — surfaced on /design/components */
+export const COMPONENT_AUTHORING_CHECKLIST = [
+  'Place the file in the correct layer folder (primitives, composites, features, layout, islands).',
+  'Expose standard props when applicable: variant, size, class, as, data-testid (see PRIMITIVE_PROP_CONTRACT).',
+  'Document props and examples in this catalog — category must match the folder path.',
+  'Declare visualTier and tokenDependencies for surfaces that consume design tokens.',
+  'Link visualBaseline when a Playwright snapshot exists in componentVisualBaselines.ts.',
+  'Use semantic token utilities only — no raw palette names in reusable components.',
+  'Include accessibility notes (focus, landmarks, ARIA) for interactive components.',
+] as const;
+
+export { PRIMITIVE_PROP_CONTRACT };
 
 /**
  * Complete component documentation catalog
@@ -55,6 +79,9 @@ export const componentDocs: ComponentDoc[] = [
       'Focus management for menu toggle',
     ],
     tags: ['navigation', 'layout', 'mobile-menu', 'responsive'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-surface', '--border-color', '--color-accent', '--color-foreground'],
+    visualBaseline: 'navbar',
   },
   {
     name: 'Footer',
@@ -76,6 +103,9 @@ export const componentDocs: ComponentDoc[] = [
       'SVG icons with role="img" and aria-labelledby',
     ],
     tags: ['footer', 'navigation', 'social-links', 'layout'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-surface', '--border-color', '--color-muted-foreground'],
+    visualBaseline: 'footer',
   },
 
   // Feature Components
@@ -107,6 +137,31 @@ export const componentDocs: ComponentDoc[] = [
       'Alt text required for images',
     ],
     tags: ['project', 'card', 'listing', 'summary'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-surface', '--border-color', 'shadow-lg', 'rounded-2xl'],
+  },
+  {
+    name: 'SearchOverlay',
+    category: 'Features',
+    subcategory: 'Search',
+    description: 'Modal search interface with keyboard shortcuts and focus-trapped overlay. Renders the search shell; client logic lives in SearchOverlayClient island.',
+    filePath: 'src/components/features/search/SearchOverlay.astro',
+    examples: [
+      {
+        title: 'Site-wide search',
+        code: '<SearchOverlay />',
+      },
+    ],
+    accessibility: [
+      'Focus trap while open',
+      'Escape closes overlay and restores focus',
+      'aria-modal and labelled dialog region',
+      'Keyboard shortcut hints (/, Meta+K)',
+    ],
+    tags: ['search', 'overlay', 'modal', 'keyboard'],
+    visualTier: 'expressive',
+    tokenDependencies: ['--color-surface', '--glass-surface-bg', 'shadow-lg', '--color-accent'],
+    visualBaseline: 'searchOverlay',
   },
   {
     name: 'AIChatWidget',
@@ -132,6 +187,8 @@ export const componentDocs: ComponentDoc[] = [
       'History trimmed to recent prompts to keep payload small',
     ],
     tags: ['ai', 'assistant', 'search', 'chat'],
+    visualTier: 'expressive',
+    tokenDependencies: ['--color-surface', '--color-accent', 'shadow-lg'],
   },
   {
     name: 'AboutTimeline',
@@ -230,6 +287,8 @@ export const componentDocs: ComponentDoc[] = [
       'Descriptive link text',
     ],
     tags: ['blog', 'card', 'post', 'tags'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-surface', '--border-color', 'shadow-sm', 'rounded-2xl'],
   },
   {
     name: 'EducationCard',
@@ -566,11 +625,13 @@ export const componentDocs: ComponentDoc[] = [
       { name: 'href', type: 'string', required: false, description: 'If provided, renders as link' },
       { name: 'fullWidth', type: 'boolean', required: false, default: 'false', description: 'Stretch button to parent width' },
       { name: '\'aria-label\'', type: 'string', required: false, description: 'Accessible label for icon-only or ambiguous controls' },
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+      { name: 'data-testid', type: 'string', required: false, description: 'Stable test hook for Playwright and unit tests' },
     ],
     examples: [
       {
         title: 'Primary button',
-        code: '<Button variant="primary">Click me</Button>',
+        code: '<Button variant="primary" data-testid="submit-cta">Click me</Button>',
       },
     ],
     accessibility: [
@@ -580,6 +641,8 @@ export const componentDocs: ComponentDoc[] = [
       'Can render as link with href',
     ],
     tags: ['button', 'interactive', 'primitive'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-accent', '--color-surface', '--border-color', 'rounded-full'],
   },
   {
     name: 'Container',
@@ -682,6 +745,124 @@ export const componentDocs: ComponentDoc[] = [
       'Proper label association',
     ],
     tags: ['form', 'input', 'accessibility', 'primitive'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--border-color', '--color-foreground', '--color-error'],
+  },
+
+  // Composite Components
+  {
+    name: 'BaseCard',
+    category: 'Primitives',
+    description: 'Canonical card primitive. Owns border, surface, elevation, hover, and slot structure (header, image, footer). Prefer this over ad-hoc card classes.',
+    filePath: 'src/components/primitives/BaseCard.astro',
+    props: [
+      { name: 'variant', type: '\'default\' | \'glass\' | \'elevated\' | \'subtle\'', required: false, default: '\'default\'', description: 'Surface preset — elevated uses shadow-lg for interactive cards' },
+      { name: 'hover', type: '\'none\' | \'lift\' | \'scale\' | \'glow\'', required: false, default: '\'lift\'', description: 'Motion-safe hover treatment' },
+      { name: 'rounded', type: '\'lg\' | \'xl\' | \'2xl\' | \'3xl\'', required: false, default: '\'2xl\'', description: 'Border radius preset' },
+      { name: 'padding', type: '\'none\' | \'sm\' | \'md\' | \'lg\'', required: false, default: '\'md\'', description: 'Inner padding preset' },
+      { name: 'as', type: '\'article\' | \'div\' | \'section\'', required: false, default: '\'div\'', description: 'Semantic HTML element' },
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+    ],
+    examples: [
+      {
+        title: 'Elevated card with slots',
+        code: '<BaseCard variant="elevated" hover="lift">\n  <div slot="header">Title</div>\n  <p>Body</p>\n</BaseCard>',
+      },
+    ],
+    accessibility: [
+      'focus-within ring for keyboard users inside interactive cards',
+      'Semantic as prop for article/section landmarks',
+    ],
+    tags: ['card', 'surface', 'primitive'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-surface', '--border-color', '--glass-surface-bg', 'shadow-sm', 'shadow-lg', 'rounded-2xl'],
+  },
+  {
+    name: 'Card',
+    category: 'Composites',
+    description: 'Compatibility wrapper over BaseCard. Adds legacy variant names: interactive maps to BaseCard elevated; outline maps to subtle. Prefer BaseCard for new code.',
+    filePath: 'src/components/composites/Card.astro',
+    props: [
+      { name: 'variant', type: '\'default\' | \'outline\' | \'elevated\' | \'glass\' | \'interactive\' | \'subtle\'', required: false, default: '\'default\'', description: 'interactive → BaseCard elevated; outline → BaseCard subtle' },
+      { name: 'hover', type: '\'none\' | \'lift\' | \'scale\' | \'glow\'', required: false, default: '\'lift\'', description: 'Forwarded to BaseCard' },
+      { name: 'padding', type: '\'none\' | \'sm\' | \'md\' | \'lg\' | \'xl\'', required: false, default: '\'md\'', description: 'xl maps to BaseCard lg' },
+      { name: 'as', type: '\'div\' | \'article\' | \'section\'', required: false, default: '\'div\'', description: 'Semantic HTML element' },
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+      { name: 'fullHeight', type: 'boolean', required: false, default: 'false', description: 'Stretch card to parent height' },
+      { name: 'containerQuery', type: 'boolean', required: false, default: 'false', description: 'Adds @container wrapper class' },
+    ],
+    examples: [
+      {
+        title: 'Interactive listing card',
+        description: 'variant="interactive" is an alias for BaseCard variant="elevated"',
+        code: '<Card variant="interactive" hover="lift">\n  <h3>Project Title</h3>\n</Card>',
+      },
+    ],
+    tags: ['card', 'wrapper', 'composite'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-surface', '--border-color', 'shadow-lg'],
+  },
+  {
+    name: 'Stack',
+    category: 'Primitives',
+    description: 'Vertical spacing primitive using space-y-* utilities. Standardizes rhythm between stacked children.',
+    filePath: 'src/components/primitives/Stack.astro',
+    props: [
+      { name: 'space', type: '\'xs\' | \'sm\' | \'md\' | \'lg\' | \'xl\' | \'2xl\' | \'3xl\'', required: false, default: '\'md\'', description: 'Vertical gap preset' },
+      { name: 'as', type: '\'div\' | \'section\' | \'article\' | \'ul\' | \'ol\' | \'nav\' | \'header\' | \'footer\'', required: false, default: '\'div\'', description: 'Semantic HTML element' },
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+    ],
+    examples: [
+      {
+        title: 'Section content stack',
+        code: '<Stack space="md">\n  <h2>Title</h2>\n  <p>Body copy</p>\n</Stack>',
+      },
+    ],
+    tags: ['layout', 'spacing', 'primitive'],
+    visualTier: 'quiet',
+    tokenDependencies: [],
+  },
+  {
+    name: 'FeatureCard',
+    category: 'Composites',
+    description: 'Semantic feature surface with token-backed color variants. Use for marketing/feature grids instead of page-specific card styles.',
+    filePath: 'src/components/composites/FeatureCard.astro',
+    props: [
+      { name: 'variant', type: '\'accent\' | \'primary\' | \'success\' | \'warning\' | \'info\' | \'error\'', required: false, default: '\'accent\'', description: 'Semantic color variant' },
+      { name: 'title', type: 'string', required: false, description: 'Card heading' },
+      { name: 'description', type: 'string', required: false, description: 'Supporting copy' },
+      { name: 'hover', type: 'boolean', required: false, default: 'true', description: 'Enable hover lift' },
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+    ],
+    examples: [
+      {
+        title: 'Accent feature',
+        code: '<FeatureCard variant="accent" title="Fast" description="Island architecture." />',
+      },
+    ],
+    tags: ['card', 'feature', 'semantic', 'composite'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-accent', '--color-success', '--color-surface', 'rounded-2xl', 'shadow-sm'],
+  },
+  {
+    name: 'StatsCard',
+    category: 'Composites',
+    description: 'Metric highlight card with optional trend indicator. Uses container queries for responsive stat layouts.',
+    filePath: 'src/components/composites/StatsCard.astro',
+    props: [
+      { name: 'label', type: 'string', required: true, description: 'Metric label' },
+      { name: 'value', type: 'string', required: true, description: 'Displayed metric value' },
+      { name: 'variant', type: '\'default\' | \'elevated\' | \'glass\' | \'subtle\'', required: false, default: '\'default\'', description: 'Surface preset' },
+    ],
+    examples: [
+      {
+        title: 'Elevated stat',
+        code: '<StatsCard label="Projects" value="12+" variant="elevated" />',
+      },
+    ],
+    tags: ['card', 'metrics', 'stats', 'composite'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-surface', '--border-color', 'shadow-lg', '@container'],
   },
 ];
 
@@ -718,4 +899,9 @@ export function getCategories(): string[] {
 export function getAllTags(): string[] {
   const tags = componentDocs.flatMap((doc) => doc.tags || []);
   return Array.from(new Set(tags)).sort();
+}
+
+/** Components linked to a Playwright visual baseline snapshot */
+export function getComponentsWithVisualBaseline(): ComponentDoc[] {
+  return componentDocs.filter((doc) => doc.visualBaseline);
 }
