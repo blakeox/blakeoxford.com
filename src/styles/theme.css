@@ -235,7 +235,12 @@
   --glass-border-xl: 1.5px solid rgba(255,255,255,0.35);
   --glass-border-dark-xl: 1.5px solid rgba(255,255,255,0.15);
 
-  /* ---------- Container Max-Widths ---------- */
+  /* ---------- Container Max-Widths & Padding ---------- */
+  --container-padding: 1rem;
+  --container-padding-sm: 2rem;
+  --container-padding-lg: 4rem;
+  --container-padding-xl: 5rem;
+  --container-padding-2xl: 6rem;
   --container-2xl: min(100%, 110rem);
 
   /* ---------- Semantic Alias Tokens (Phase 2) ---------- */
