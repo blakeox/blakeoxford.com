@@ -7,6 +7,9 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import http from 'http';
 
+const pnpmCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
+const pnpmArgs = ['pnpm'];
+
 function run(cmd, args = [], opts = {}) {
   return new Promise((resolve, reject) => {
     const p = spawn(cmd, args, { stdio: 'inherit', ...opts });
@@ -36,7 +39,7 @@ async function waitForOk(url, timeoutMs = 10000) {
   let serverProc;
   try {
     console.log('[runtime] build');
-    await run('pnpm', ['build']);
+    await run(pnpmCommand, [...pnpmArgs, 'build']);
 
     // Find free port starting at 5000
     let port = 5000;
@@ -91,8 +94,8 @@ async function waitForOk(url, timeoutMs = 10000) {
     await step('toxic test list', async () => {
       if (fs.existsSync('flakiness-history.json')) await run('node', ['scripts/quality/toxic-test-detector.js']);
     });
-    await step('quality summary', async () => { await run('pnpm', ['quality:summary']); });
-    await step('snapshot', async () => { await run('pnpm', ['quality:snapshot']).catch(()=>{}); });
+    await step('quality summary', async () => { await run(pnpmCommand, [...pnpmArgs, 'quality:summary']); });
+    await step('snapshot', async () => { await run(pnpmCommand, [...pnpmArgs, 'quality:snapshot']).catch(()=>{}); });
 
   console.log('[runtime] complete');
   // If any gate failed (search/a11y/dead-links), mark overall failure

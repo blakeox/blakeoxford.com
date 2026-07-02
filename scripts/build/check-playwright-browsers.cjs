@@ -6,6 +6,8 @@
 
 const { execSync } = require('child_process');
 
+const pnpmExecPrefix = process.platform === 'win32' ? 'corepack pnpm' : 'corepack pnpm';
+
 // Colors for terminal output
 const colors = {
   green: '\x1b[32m',
@@ -30,7 +32,7 @@ function checkBrowserInstallation() {
   for (const browser of browsers) {
     try {
       // Try to run a simple test with the specific browser
-      const testResult = execSync(`pnpm exec playwright test --project=${browser} --list 2>&1`, { 
+      const testResult = execSync(`${pnpmExecPrefix} exec playwright test --project=${browser} --list 2>&1`, { 
         stdio: 'pipe', 
         encoding: 'utf8' 
       });

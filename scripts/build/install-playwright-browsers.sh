@@ -5,6 +5,8 @@
 
 set -e
 
+PNPM="./scripts/bin/pnpmw.sh"
+
 echo "🎭 Enhanced Playwright Browser Installation"
 echo "=========================================="
 
@@ -104,7 +106,7 @@ install_browsers() {
     while [ $attempt -le $max_attempts ]; do
         echo "🔄 Browser installation attempt $attempt/$max_attempts"
         
-        if pnpm exec playwright install --with-deps; then
+        if "$PNPM" exec playwright install --with-deps; then
             echo "✅ Browser installation successful on attempt $attempt"
             return 0
         else
@@ -126,7 +128,7 @@ install_browsers() {
 install_chromium_only() {
     echo "🔄 Attempting Chromium-only installation..."
     
-    if pnpm exec playwright install chromium --with-deps; then
+    if "$PNPM" exec playwright install chromium --with-deps; then
         echo "✅ Chromium installation successful"
         return 0
     else

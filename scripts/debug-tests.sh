@@ -4,6 +4,8 @@
 
 set -e
 
+PNPM="./scripts/bin/pnpmw.sh"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -17,24 +19,24 @@ echo -e "${BLUE}====================================${NC}"
 # Step 1: Check if dependencies are installed
 echo -e "${YELLOW}1. Checking dependencies...${NC}"
 if [ ! -d "node_modules" ]; then
-    echo -e "${RED}❌ node_modules not found. Running pnpm install...${NC}"
-    pnpm install --frozen-lockfile
+    echo -e "${RED}❌ node_modules not found. Running corepack pnpm install...${NC}"
+    "$PNPM" install --frozen-lockfile
 else
     echo -e "${GREEN}✅ Dependencies installed${NC}"
 fi
 
 # Step 2: Check Playwright browsers
 echo -e "${YELLOW}2. Checking Playwright browsers...${NC}"
-if pnpm exec playwright install --dry-run 2>/dev/null; then
+if "$PNPM" exec playwright install --dry-run 2>/dev/null; then
     echo -e "${GREEN}✅ Playwright browsers are available${NC}"
 else
     echo -e "${YELLOW}⚠️ Installing Playwright browsers...${NC}"
-    pnpm exec playwright install
+    "$PNPM" exec playwright install
 fi
 
 # Step 3: Build the application
 echo -e "${YELLOW}3. Building application...${NC}"
-if pnpm run build; then
+if "$PNPM" run build; then
     echo -e "${GREEN}✅ Build successful${NC}"
     
     # Check what was built
@@ -58,7 +60,7 @@ echo -e "${YELLOW}4. Testing preview server...${NC}"
 
 # Start server in background
 echo -e "${BLUE}Starting preview server...${NC}"
-pnpm run preview &
+"$PNPM" run preview &
 SERVER_PID=$!
 
 # Function to cleanup server
@@ -151,7 +153,7 @@ export DEBUG=pw:api
 export PLAYWRIGHT_DEBUG=1
 
 # Try to run the test
-if pnpm exec playwright test \
+if "$PNPM" exec playwright test \
   --config=playwright.debug.config.ts \
   --project=chromium-debug \
   tests/playwright/accessibility-basic.spec.ts:7 \

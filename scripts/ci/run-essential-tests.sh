@@ -6,6 +6,8 @@
 
 set -e
 
+PNPM="./scripts/bin/pnpmw.sh"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -22,7 +24,7 @@ if ! command -v firefox >/dev/null 2>&1 || ! command -v webkit >/dev/null 2>&1; 
     export BROWSER_INSTALL_FAILED=true
     
     # Run with Chromium only
-    if pnpm exec playwright test --grep="@essential" --project=chromium --reporter=line; then
+    if "$PNPM" exec playwright test --grep="@essential" --project=chromium --reporter=line; then
         echo -e "${GREEN}✅ Essential tests passed with Chromium!${NC}"
         exit 0
     else
@@ -31,7 +33,7 @@ if ! command -v firefox >/dev/null 2>&1 || ! command -v webkit >/dev/null 2>&1; 
     fi
 else
     # All browsers available, run full test
-    if pnpm exec playwright test --grep="@essential" --reporter=line; then
+    if "$PNPM" exec playwright test --grep="@essential" --reporter=line; then
         echo -e "${GREEN}✅ Essential tests passed!${NC}"
         exit 0
     else

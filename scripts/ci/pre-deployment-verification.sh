@@ -5,6 +5,8 @@
 
 set -euo pipefail  # Exit on any error
 
+PNPM="./scripts/bin/pnpmw.sh"
+
 echo "🚀 Starting pre-deployment verification for CI/CD pipeline..."
 echo ""
 
@@ -43,7 +45,7 @@ echo ""
 # 1. Verify Node.js and pnpm versions
 echo "🔍 1. Checking runtime environment..."
 NODE_VERSION=$(node --version)
-PNPM_VERSION=$(pnpm --version)
+PNPM_VERSION=$("$PNPM" --version)
 print_info "Node.js: $NODE_VERSION"
 print_info "pnpm: $PNPM_VERSION"
 
@@ -59,7 +61,7 @@ echo ""
 # 2. Verify dependencies are installed
 echo "🔍 2. Checking dependencies..."
 if [[ ! -d "node_modules" ]]; then
-    print_error "node_modules not found. Run 'pnpm install' first"
+    print_error "node_modules not found. Run 'corepack pnpm install' first"
     exit 1
 fi
 print_success "Dependencies are installed"
@@ -67,7 +69,7 @@ echo ""
 
 # 3. Check TypeScript compilation
 echo "🔍 3. Testing TypeScript compilation..."
-if pnpm run typecheck > /dev/null 2>&1; then
+if "$PNPM" run typecheck > /dev/null 2>&1; then
     print_success "TypeScript compilation passes"
 else
     print_error "TypeScript compilation failed"
@@ -77,7 +79,7 @@ echo ""
 
 # 4. Check linting
 echo "🔍 4. Testing linting..."
-if pnpm run lint > /dev/null 2>&1; then
+if "$PNPM" run lint > /dev/null 2>&1; then
     print_success "Linting passes"
 else
     print_error "Linting failed"
@@ -87,7 +89,7 @@ echo ""
 
 # 5. Test unit tests
 echo "🔍 5. Testing unit tests..."
-if pnpm test --run > /dev/null 2>&1; then
+if "$PNPM" test --run > /dev/null 2>&1; then
     print_success "All unit tests pass (185 tests)"
 else
     print_error "Unit tests failed"
@@ -97,7 +99,7 @@ echo ""
 
 # 6. Check Playwright browser availability
 echo "🔍 6. Testing Playwright browser setup..."
-BROWSER_STATUS=$(pnpm test:e2e:check)
+BROWSER_STATUS=$("$PNPM" test:e2e:check)
 if echo "$BROWSER_STATUS" | grep -q "✅ Chromium is installed"; then
     print_success "Chromium browser is available for E2E tests"
     
@@ -114,7 +116,7 @@ echo ""
 
 # 7. Test essential E2E tests (quick validation)
 echo "🔍 7. Testing essential E2E tests..."
-if timeout 120 pnpm test:e2e:essential > /dev/null 2>&1; then
+if timeout 120 "$PNPM" test:e2e:essential > /dev/null 2>&1; then
     print_success "Essential E2E tests pass (22 tests)"
 else
     print_warning "Essential E2E tests had issues - check Playwright setup"
@@ -123,7 +125,7 @@ echo ""
 
 # 8. Test build process
 echo "🔍 8. Testing build process..."
-if pnpm run build > /dev/null 2>&1; then
+if "$PNPM" run build > /dev/null 2>&1; then
     print_success "Build process completes successfully"
     
     # Check if critical files exist
