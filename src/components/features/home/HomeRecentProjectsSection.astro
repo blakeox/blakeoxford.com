@@ -14,8 +14,12 @@ const { projects } = Astro.props as Props;
 ---
 
 <Section id="recent-projects" padding="lg" container="xl" aria-labelledby="recent-projects-title">
-  <div class="mb-12 text-center">
-    <SectionHeading id="recent-projects-title" size="4xl" class="mb-8">Recent Projects</SectionHeading>
+  <div class="section-intro mb-12">
+    <span class="section-kicker">Selected projects</span>
+    <SectionHeading id="recent-projects-title" size="4xl">Work that shipped with measurable impact</SectionHeading>
+    <p class="text-lg text-muted-foreground">
+      A cross-section of systems, automation, and analytics engagements built to survive real operating conditions.
+    </p>
   </div>
   <Grid cols="3" gap="lg">
     {projects.map((project) => (
@@ -23,6 +27,6 @@ const { projects } = Astro.props as Props;
     ))}
   </Grid>
   <div class="mt-8 text-center">
-    <Button variant="outline" href="/projects/">View All Projects</Button>
+    <Button variant="outline" href="/projects/">View all case studies</Button>
   </div>
 </Section>

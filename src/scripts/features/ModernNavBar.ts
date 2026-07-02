@@ -135,6 +135,9 @@ function closeMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
     document.body.style.overflow = '';
     document.body.style.position = '';
     document.body.style.width = '';
+    if (toggle instanceof HTMLElement) {
+      toggle.focus();
+    }
 }
 
 export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {

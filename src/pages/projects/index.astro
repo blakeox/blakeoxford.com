@@ -26,7 +26,8 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 <Layout title={title} description={description} url={canonicalUrl} wide>
  <!-- Hero Section -->
  <PageHero fullScreen={true} includeBlurOrbs={true} id="projects-hero">
- <div class="text-center max-w-4xl mx-auto space-y-8">
+ <div class="section-intro max-w-4xl space-y-8">
+ <span class="section-kicker">{hero.kicker}</span>
  <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground">
  Selected Projects
  </h1>
@@ -43,6 +44,11 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
  </span>
  ))}
  </Flex>
+
+ <div class="flex flex-wrap justify-center gap-4 pt-2">
+ <Button variant="primary" href={hero.primaryCta.href}>{hero.primaryCta.label}</Button>
+ <Button variant="outline" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</Button>
+ </div>
  </div>
  </PageHero>
 
@@ -60,14 +66,12 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
  
  <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-grid-inner">
  <Stack space="md" class="max-w-3xl">
- <BadgePill size="xs" class="w-fit">
- Case Studies
- </BadgePill>
+ <span class="section-kicker w-fit">{meta.grid.kicker}</span>
  <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground">
- Recent Engagements
+ {meta.grid.title}
  </h2>
  <p class="text-sm sm:text-base leading-relaxed text-muted-foreground">
- Explore programs where automation, analytics, and enablement launched together—strategy turned into operating rhythms that teams keep running.
+ {meta.grid.description}
  </p>
  </Stack>
 
@@ -93,9 +97,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
  
  <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-impact-inner">
  <Stack space="md" class="max-w-3xl">
- <BadgePill size="xs" class="w-fit">
- Impact Metrics
- </BadgePill>
+ <span class="section-kicker w-fit">Portfolio signals</span>
  <h2 id="results-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground">
  Results that stick
  </h2>

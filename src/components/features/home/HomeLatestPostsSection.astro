@@ -13,7 +13,13 @@ const { posts } = Astro.props as Props;
 ---
 
 <Section padding="lg" container="xl" background="gradient" class="text-center" aria-labelledby="latest-blog-posts">
-  <SectionHeading id="latest-blog-posts" size="4xl" class="mb-8">Latest Blog Posts</SectionHeading>
+  <div class="section-intro mb-12">
+    <span class="section-kicker">Writing</span>
+    <SectionHeading id="latest-blog-posts" size="4xl">Practical notes from the field</SectionHeading>
+    <p class="text-lg text-muted-foreground">
+      Essays and case-backed observations on automation, analytics, governance, and operational improvement.
+    </p>
+  </div>
   <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
     {posts.length > 0 ? (
       posts.map((post) => (
@@ -30,6 +36,6 @@ const { posts } = Astro.props as Props;
     )}
   </ul>
   <div class="mt-8 text-center">
-    <Button variant="outline" href="/blog/">View All Blog Posts</Button>
+    <Button variant="outline" href="/blog/">View all writing</Button>
   </div>
 </Section>

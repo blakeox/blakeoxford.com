@@ -6,6 +6,78 @@
  */
 
 @layer components {
+  .page-hero-shell {
+    background:
+      radial-gradient(circle at top right, color-mix(in oklch, var(--accent) 11%, transparent), transparent 34%),
+      linear-gradient(180deg, color-mix(in oklch, var(--surface) 78%, transparent), transparent),
+      linear-gradient(135deg, color-mix(in oklch, var(--surface-subtle) 90%, transparent), color-mix(in oklch, var(--bg) 96%, transparent));
+  }
+
+  .section-kicker {
+    @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em];
+
+    border-color: color-mix(in oklch, var(--accent) 24%, transparent);
+    color: color-mix(in oklch, var(--accent-strong) 78%, var(--fg));
+    background: color-mix(in oklch, var(--accent) 8%, transparent);
+  }
+
+  .section-intro {
+    @apply mx-auto max-w-3xl space-y-4 text-center;
+  }
+
+  .section-intro-left {
+    @apply max-w-3xl space-y-4 text-left;
+  }
+
+  .proof-card {
+    @apply relative overflow-hidden rounded-3xl border p-8 shadow-lg transition-colors duration-200;
+
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--surface) 95%, transparent),
+      color-mix(in oklch, var(--surface-subtle) 92%, transparent)
+    );
+    border-color: color-mix(in oklch, var(--border) 76%, transparent);
+  }
+
+  .proof-card::before {
+    position: absolute;
+    inset: 0;
+    content: '';
+    pointer-events: none;
+    background: radial-gradient(circle at top right, color-mix(in oklch, var(--accent) 10%, transparent), transparent 42%);
+    opacity: 0.9;
+  }
+
+  .conversion-band {
+    @apply rounded-3xl border px-6 py-10 text-center shadow-lg sm:px-10;
+
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--accent) 8%, var(--surface)),
+      color-mix(in oklch, var(--primary, var(--color-primary)) 6%, var(--surface-subtle))
+    );
+    border-color: color-mix(in oklch, var(--accent) 22%, transparent);
+  }
+
+  .nav-utility-button {
+    @apply inline-flex size-11 items-center justify-center rounded-full border text-foreground/80 transition-colors;
+
+    border-color: color-mix(in oklch, var(--border) 62%, transparent);
+    background: color-mix(in oklch, var(--surface) 74%, transparent);
+  }
+
+  .nav-utility-button:hover {
+    color: var(--accent-strong);
+    border-color: color-mix(in oklch, var(--accent) 35%, transparent);
+    background: color-mix(in oklch, var(--surface) 92%, transparent);
+  }
+
+  .nav-utility-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--accent) 55%, transparent);
+  }
+
   .blog-card {
     @apply rounded-2xl p-6 shadow-lg transition-colors duration-200;
 
@@ -112,6 +184,10 @@
     .hero-gradient-animated::before {
       animation: none;
     }
+  }
+
+  .page-slab {
+    @apply border-t border-border/20 bg-background;
   }
 
   /* Closed state wins over stale .active (race-condition guard for search overlay). */

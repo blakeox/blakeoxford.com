@@ -15,9 +15,16 @@ import EducationCard from './EducationCard.astro';
     </div>
   </div>
   <div class="relative z-10">
+    <div class="section-intro mb-12">
+      <span class="section-kicker">Foundation</span>
+      <h2 class="font-heading text-3xl font-semibold text-foreground sm:text-4xl md:text-5xl">Education and working toolkit</h2>
+      <p class="text-lg text-muted-foreground">
+        The formal background and practical capabilities behind systems, automation, and operational design work.
+      </p>
+    </div>
     <Grid cols="2" gap="xl" class="items-stretch">
       <div class="flex h-full flex-col">
-        <h2 class="mb-6 border-l-4 border-accent pl-4 text-2xl font-bold sm:text-3xl">Education</h2>
+        <h2 class="mb-6 border-l-4 border-accent pl-4 text-2xl font-semibold sm:text-3xl">Education</h2>
         <EducationCard
           institution="Calvin College"
           degree="Bachelor of Arts in Finance"
@@ -26,9 +33,9 @@ import EducationCard from './EducationCard.astro';
       </div>
 
       <div class="flex h-full flex-col">
-        <h2 class="mb-6 border-l-4 border-accent pl-4 text-2xl font-bold sm:text-3xl">Skills</h2>
+        <h2 class="mb-6 border-l-4 border-accent pl-4 text-2xl font-semibold sm:text-3xl">Skills</h2>
         <div class="flex flex-1 flex-col rounded-xl border border-border bg-surface p-6 shadow-lg dark:border-border-dark dark:bg-surface-dark">
-          <p class="mb-4 text-muted-foreground">A blend of systems thinking, finance, and hands-on engineering. I focus on shipping reliable, human-centered automation that delivers measurable outcomes.</p>
+          <p class="mb-4 text-muted-foreground">A blend of systems thinking, finance, and hands-on engineering oriented around reliable execution, low cognitive load, and measurable operational change.</p>
           <Flex as="ul" wrap gap="sm" role="list" class="flex-1">
             <SkillBadge skill="Systems Architecture" />
             <SkillBadge skill="Process Automation" />

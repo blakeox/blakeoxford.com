@@ -132,18 +132,18 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  };
 
  return (
- <div className="sticky top-0 z-50 border-b border-border/40 bg-[color:var(--glass-surface-bg)] dark:bg-[color:var(--glass-surface-bg-dark)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)] dark:supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-dark-xl)]">
+ <div className="sticky top-0 z-50 border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)] dark:bg-[color:var(--glass-surface-bg-dark)] dark:supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-dark-xl)]">
  <nav
  id="navbar"
  ref={navRef}
- className="relative z-10 mx-auto flex h-[65px] w-full max-w-container-2xl items-center justify-between px-4 sm:px-6 lg:px-8 text-foreground"
+ className="relative z-10 mx-auto flex h-[72px] w-full max-w-container-2xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 text-foreground"
  role="navigation"
  aria-label="Main Navigation"
  >
  <div className="brand-section flex items-center gap-2">
  <a
  href="/"
- className="brand-link flex items-center gap-2 rounded-full px-2 py-1 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+ className="brand-link flex items-center gap-3 rounded-full px-2 py-1 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
  aria-label={logo.name}
  >
  <picture className="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60">
@@ -160,13 +160,14 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  decoding="async"
  />
  </picture>
- <span className="brand-text text-sm font-semibold tracking-tight text-foreground">
- {logo.name}
+ <span className="brand-text flex flex-col leading-none">
+ <span className="text-sm font-semibold tracking-tight text-foreground">{logo.name}</span>
+ <span className="hidden text-[0.7rem] font-medium uppercase tracking-[0.16em] text-subtle-foreground sm:block">Systems architect</span>
  </span>
  </a>
  </div>
 
- <ul className="desktop-nav hidden gap-1 md:flex" role="menubar">
+ <ul className="desktop-nav hidden gap-1 md:flex md:flex-1 md:justify-center" role="menubar">
  {links.map((link) => (
  <li className="nav-item" role="none" key={link.href}>
  <a
@@ -174,7 +175,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  role="menuitem"
                 className={`nav-link inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 ${
                   isActive(link.href)
-                    ? 'text-accent dark:text-accent-light'
+                    ? 'bg-accent/10 text-accent dark:bg-accent/10 dark:text-accent-light'
                     : 'text-foreground/90'
                 }`}
  aria-current={isActive(link.href) ? 'page' : undefined}
@@ -190,7 +191,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  id="search-toggle"
  ref={searchToggleRef}
  type="button"
- className="search-toggle inline-flex size-11 items-center justify-center rounded-full border border-border/50 text-foreground/80 transition hover:border-border hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+ className="nav-utility-button search-toggle"
  aria-label="Open search"
  aria-haspopup="dialog"
  aria-expanded="false"
@@ -214,7 +215,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  id="theme-toggle"
  ref={themeToggleRef}
  type="button"
- className="theme-toggle relative inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-border/50 text-foreground/80 transition hover:border-border hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+ className="nav-utility-button theme-toggle relative shrink-0"
  aria-label="Switch to dark mode"
  aria-pressed="false"
  >
@@ -248,7 +249,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  id="nav-toggle"
  ref={burgerButtonRef}
  type="button"
- className="burger-menu-button inline-flex size-11 items-center justify-center rounded-full border border-border/50 text-foreground transition hover:border-border hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:hidden"
+ className="nav-utility-button burger-menu-button md:hidden"
  aria-label="Toggle navigation menu"
  aria-controls="nav-mobile-links"
  aria-expanded="false"
@@ -263,7 +264,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <div
  ref={mobileMenuRef}
  id="nav-mobile-links"
- className="mobile-menu absolute left-0 right-0 top-full md:hidden pointer-events-none z-[2147483646] shadow-lg bg-surface dark:bg-surface-dark border-t border-border dark:border-border-dark"
+ className="mobile-menu absolute inset-x-0 top-full z-[2147483646] border-t border-border bg-surface/98 shadow-lg dark:border-border-dark dark:bg-surface-dark/98 md:hidden pointer-events-none"
  role="dialog"
  aria-modal="true"
  aria-label="Mobile navigation menu"
@@ -277,7 +278,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  aria-label="Close navigation menu"
  />
  <div
- className="mobile-menu-content flex w-full flex-col gap-2 px-5 py-4 text-foreground"
+ className="mobile-menu-content flex w-full flex-col gap-3 px-5 py-5 text-foreground"
  onClick={(e) => {
  // Prevent clicks inside the panel from being treated as outside clicks.
  e.stopPropagation();
@@ -289,7 +290,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <a
  href={link.href}
  role="menuitem"
- className="mobile-nav-link block rounded-xl px-3 py-2 text-base font-semibold text-foreground/85 transition hover:bg-[color:var(--glass-surface-bg)] dark:hover:bg-[color:var(--glass-surface-bg-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+ className="mobile-nav-link block rounded-2xl px-4 py-3 text-base font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] dark:hover:bg-[color:var(--glass-surface-bg-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
  aria-current={isActive(link.href) ? 'page' : undefined}
  >
  {link.label}

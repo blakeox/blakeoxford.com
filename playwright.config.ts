@@ -3,6 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 const isCI = !!process.env.CI;
 const isLinux = process.platform === 'linux';
 const browsersLimited = process.env.BROWSER_INSTALL_FAILED === 'true' || process.env.PLAYWRIGHT_BROWSERS_LIMITED === 'true';
+const runOptionalBrowsers = process.env.PLAYWRIGHT_OPTIONAL_BROWSERS === 'true';
 // Only prefer system Chrome when explicitly requested and environment supports it
 const preferSystemChrome = process.env.USE_SYSTEM_CHROME === 'true' && !process.env.ACT && !isLinux && !browsersLimited;
 
@@ -68,9 +69,9 @@ export default defineConfig({
             ...devices['Desktop Chrome'],
           },
     },
-    // Only run Firefox and Safari when browsers are properly installed
-    // Skip in CI on Linux (common missing deps) or when installation failed
-    ...((isCI && (isLinux || browsersLimited)) ? [] : [
+    // Run Firefox/WebKit only when explicitly requested. This keeps local QA
+    // reliable when Playwright's optional browser binaries drift out of sync.
+    ...(runOptionalBrowsers && !(isCI && (isLinux || browsersLimited)) ? [
       {
         name: 'firefox',
         use: { ...devices['Desktop Firefox'] },
@@ -79,14 +80,14 @@ export default defineConfig({
         name: 'webkit',
         use: { ...devices['Desktop Safari'] },
       },
-    ]),
+    ] : []),
   ],
   webServer: {
-    // Bind preview to the same port as baseURL to ensure tests hit the correct site
-  command: 'npm run preview -- --port 4330',
-  port: 4330,
-  // Always start a fresh preview server to avoid colliding with other local servers on the same port
-  reuseExistingServer: false,
+    // Keep preview on the same baseURL port; strictPort prevents silent drift to 4331+.
+    command: 'npm run preview -- --port 4330 --strictPort',
+    port: 4330,
+    // Reuse an existing local preview when available to avoid baseURL/preview races.
+    reuseExistingServer: !isCI,
     timeout: 120 * 1000,
     stdout: 'pipe',
     stderr: 'pipe',
