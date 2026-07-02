@@ -78,6 +78,7 @@
     box-shadow: 0 0 0 2px color-mix(in oklch, var(--accent) 55%, transparent);
   }
 
+  /* MDX blog content only — listing cards use BlogPostCard → Card → BaseCard */
   .blog-card {
     @apply rounded-2xl p-6 shadow-lg transition-colors duration-200;
 
@@ -134,6 +135,7 @@
     @apply transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200;
   }
 
+  /* Prefer BaseCard/Card hover="lift" for new cards; card-interactive adds focus-within scale for linked cards */
   .card-interactive:hover {
     @apply motion-safe:scale-[1.01];
   }
