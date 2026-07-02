@@ -168,10 +168,20 @@
     background: color-mix(in oklch, var(--accent) 10%, transparent);
   }
 
+  :root[data-theme="dark"] .blur-orb-accent,
+  :root.dark .blur-orb-accent {
+    background: color-mix(in oklch, var(--accent) 18%, transparent);
+  }
+
   .blur-orb-primary {
     @apply h-64 w-64;
 
     background: color-mix(in oklch, var(--color-primary) 10%, transparent);
+  }
+
+  :root[data-theme="dark"] .blur-orb-primary,
+  :root.dark .blur-orb-primary {
+    background: color-mix(in oklch, var(--color-primary) 16%, transparent);
   }
 
   /* Homepage hero animated gradient overlay */

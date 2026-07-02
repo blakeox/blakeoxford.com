@@ -9,6 +9,7 @@ import ThemeInitIsland from '../components/islands/ThemeInitIsland';
 import ServiceWorkerIsland from '../components/islands/ServiceWorkerIsland';
 import ExperimentsCookieIsland from '../components/islands/ExperimentsCookieIsland';
 import AccessibilityEnhancementsIsland from '../components/islands/AccessibilityEnhancementsIsland';
+import { THEME_COLOR_LIGHT, THEME_COLOR_DARK } from '../lib/theme';
 
 // wide: when true, disable the default max-width wrapper for full-width layouts
 const {
@@ -126,9 +127,9 @@ const mainClasses = baseMainClasses;
  <meta name="apple-mobile-web-app-title" content="Blake Oxford" />
 
  <!-- Theme colors -->
- <meta name="theme-color" content="rgb(var(--color-primary))" />
- <meta name="theme-color" media="(prefers-color-scheme: light)" content="rgb(var(--color-primary))" />
- <meta name="theme-color" media="(prefers-color-scheme: dark)" content="rgb(var(--color-primary-dark))" />
+ <meta name="theme-color" content={THEME_COLOR_LIGHT} />
+ <meta name="theme-color" media="(prefers-color-scheme: light)" content={THEME_COLOR_LIGHT} />
+ <meta name="theme-color" media="(prefers-color-scheme: dark)" content={THEME_COLOR_DARK} />
 
  <!-- Structured Data: Website & Person (enriched; merged safely with page-specific schemas) -->
  <script is:inline type="application/ld+json">

@@ -7,7 +7,7 @@ import SkillBadge from '../../primitives/SkillBadge.astro';
 import EducationCard from './EducationCard.astro';
 ---
 
-<Section padding="lg" container="lg" class="relative overflow-hidden bg-gradient-to-b from-background to-surface dark:from-background-dark dark:to-surface-dark">
+<Section padding="lg" container="lg" class="relative overflow-hidden bg-gradient-to-b from-background to-surface">
   <div class="absolute inset-0 z-0 overflow-hidden opacity-20">
     <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
       <FloatingBlur size="lg" color="accent" position="custom" class="top-1/4 left-1/4" />
@@ -34,7 +34,7 @@ import EducationCard from './EducationCard.astro';
 
       <div class="flex h-full flex-col">
         <h2 class="mb-6 border-l-4 border-accent pl-4 text-2xl font-semibold sm:text-3xl">Skills</h2>
-        <div class="flex flex-1 flex-col rounded-xl border border-border bg-surface p-6 shadow-lg dark:border-border-dark dark:bg-surface-dark">
+        <div class="flex flex-1 flex-col rounded-xl border border-border bg-surface p-6 shadow-lg">
           <p class="mb-4 text-muted-foreground">A blend of systems thinking, finance, and hands-on engineering oriented around reliable execution, low cognitive load, and measurable operational change.</p>
           <Flex as="ul" wrap gap="sm" role="list" class="flex-1">
             <SkillBadge skill="Systems Architecture" />
