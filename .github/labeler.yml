@@ -1,48 +1,48 @@
-'area:about':
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'src/pages/about.astro'
-          - 'src/components/**/PhotoCarousel.*'
+"area:about":
+- changed-files:
+  - any-glob-to-any-file:
+    - src/pages/about.astro
+    - src/components/**/PhotoCarousel.*
 
-'area:functions':
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'functions/**'
+"area:functions":
+- changed-files:
+  - any-glob-to-any-file:
+    - functions/**
 
-'area:tests-e2e':
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'playwright/**'
-          - 'tests/playwright/**'
+"area:tests-e2e":
+- changed-files:
+  - any-glob-to-any-file:
+    - playwright/**
+    - tests/playwright/**
 
-'area:tests-unit':
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'tests/vitest/**'
+"area:tests-unit":
+- changed-files:
+  - any-glob-to-any-file:
+    - tests/vitest/**
 
-'area:ci':
-  - changed-files:
-      - any-glob-to-any-file:
-          - '.github/workflows/**'
+"area:ci":
+- changed-files:
+  - any-glob-to-any-file:
+    - .github/workflows/**
 
-'area:content':
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'src/content/**'
+"area:content":
+- changed-files:
+  - any-glob-to-any-file:
+    - src/content/**
 
-'type:docs':
-  - changed-files:
-      - any-glob-to-any-file:
-          - '**/*.md'
+"type:docs":
+- changed-files:
+  - any-glob-to-any-file:
+    - "**/*.md"
 
-'type:chore':
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'scripts/**'
-          - '.github/**'
+"type:chore":
+- changed-files:
+  - any-glob-to-any-file:
+    - scripts/**
+    - .github/**
 
-'type:design':
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'src/styles/**'
-          - 'src/pages/design/**'
+"type:design":
+- changed-files:
+  - any-glob-to-any-file:
+    - src/styles/**
+    - src/pages/design/**

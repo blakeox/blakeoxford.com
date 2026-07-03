@@ -1,6 +1,7 @@
 import { test } from '../fixtures';
 import { applyThemeOnPage } from '../../utils/colorContrast';
 import { assertHeroCtaContrast, runContrastCheck, SAMPLE_CONTRAST_SELECTORS } from '../../utils/contrastCheck';
+import { waitForLayoutStability } from '../../utils/waits';
 
 // Very small XML parser for <loc> entries (no external deps)
 function extractLocs(xml: string): string[] {
@@ -97,7 +98,7 @@ test('@sitemap-sweep contrast ratios acceptable across sitemap pages', async ({ 
         try {
           await page.waitForLoadState('networkidle', { timeout: 4000 });
         } catch {
-          await page.waitForTimeout(250);
+          await waitForLayoutStability(page, 1, 500);
         }
         await applyThemeOnPage(page, theme);
 
