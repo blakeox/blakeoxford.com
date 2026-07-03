@@ -94,18 +94,20 @@
   /* Background colors */
   --color-background: oklch(0.98 0.005 264);
   --color-background-fallback: #f8fafc;
-  --color-background-dark: oklch(0.15 0.02 264);
-  --color-background-dark-fallback: #0b1220;
+  --color-background-dark: oklch(0.13 0.02 264);
+  --color-background-dark-fallback: #080f1a;
   
   /* Surface colors */
   --color-surface: oklch(1 0 0);
   --color-surface-fallback: #ffffff;
   --color-surface-subtle: oklch(0.96 0.01 264);
   --color-surface-subtle-fallback: #eef2ff;
-  --color-surface-dark: oklch(0.18 0.02 264);
+  --color-surface-dark: oklch(0.17 0.02 264);
   --color-surface-dark-fallback: #0f172a;
-  --color-surface-dark-subtle: oklch(0.2 0.02 264);
-  --color-surface-dark-subtle-fallback: #111827;
+  --color-surface-dark-subtle: oklch(0.19 0.02 264);
+  --color-surface-dark-subtle-fallback: #131c2e;
+  --color-surface-elevated-dark: oklch(0.21 0.025 264);
+  --color-surface-elevated-dark-fallback: #1a2332;
   
   /* Neutral colors */
   --color-neutral: oklch(0.58 0.02 264);
@@ -257,13 +259,13 @@
   --blur: 8px;              /* DEFAULT */
   --blur-lg: 16px;
   --glass-surface-bg: rgba(255,255,255,0.65);
-  --glass-surface-bg-dark: rgba(32,32,32,0.55);
+  --glass-surface-bg-dark: color-mix(in oklch, var(--color-surface-dark) 75%, transparent);
   --glass-border: 1px solid rgba(255,255,255,0.25);
-  --glass-border-dark: 1px solid rgba(255,255,255,0.08);
+  --glass-border-dark: 1px solid rgba(255,255,255,0.1);
   --glass-surface-bg-xl: rgba(255,255,255,0.85);
-  --glass-surface-bg-dark-xl: rgba(32,32,32,0.75);
+  --glass-surface-bg-dark-xl: color-mix(in oklch, var(--color-surface-elevated-dark) 80%, transparent);
   --glass-border-xl: 1.5px solid rgba(255,255,255,0.35);
-  --glass-border-dark-xl: 1.5px solid rgba(255,255,255,0.15);
+  --glass-border-dark-xl: 1.5px solid rgba(255,255,255,0.18);
 
   /* ---------- Container Max-Widths & Padding ---------- */
   --container-padding: 1rem;
@@ -414,7 +416,7 @@
 
   /* Border colors */
   --border-color: rgba(15, 23, 42, 0.08);
-  --border-color-dark: rgba(148, 163, 184, 0.2);
+  --border-color-dark: rgba(148, 163, 184, 0.28);
   --border-color-subtle: rgba(15, 23, 42, 0.05);
 
   /* Animations (reduced-motion overrides target these aliases) */
@@ -444,6 +446,8 @@
   /* Use modern CSS nesting for better maintainability */
   &[data-theme="dark"], &.dark {
     /* OKLCH colors optimized for dark mode */
+    --color-accent: oklch(0.75 0.16 196);
+    --color-accent-fallback: #22d3ee;
     --color-foreground-strong: var(--color-foreground-light, var(--color-foreground-light-fallback));
     --color-foreground: var(--color-foreground-light, var(--color-foreground-light-fallback));
     --color-background: var(--color-background-dark, var(--color-background-dark-fallback));
@@ -455,6 +459,14 @@
     --glass-surface-bg: var(--glass-surface-bg-dark);
     --glass-border: var(--glass-border-dark);
     color-scheme: dark;
+
+    /* Dark-mode gradients — mix toward transparent instead of white */
+    --gradient-primary: linear-gradient(135deg, color-mix(in oklch, var(--color-primary) 35%, transparent) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
+    --gradient-accent: linear-gradient(135deg, color-mix(in oklch, var(--color-accent) 30%, transparent) 0%, var(--color-accent) 50%, var(--color-accent-dark) 100%);
+    --gradient-secondary: linear-gradient(135deg, color-mix(in oklch, var(--color-secondary) 30%, transparent) 0%, var(--color-secondary) 50%, var(--color-secondary-dark) 100%);
+    --color-accent-subtle: color-mix(in oklch, var(--color-accent) 18%, transparent);
+    --color-primary-subtle: color-mix(in oklch, var(--color-primary) 18%, transparent);
+    --focus-ring-offset-color: var(--color-surface-dark, var(--color-surface-dark-fallback));
 
     /* Semantic aliases for dark mode */
     --bg: var(--color-background-dark, var(--color-background-dark-fallback));
@@ -468,6 +480,7 @@
     --fg-subtle: var(--color-subtle-foreground);
     --surface: var(--color-surface-dark, var(--color-surface-dark-fallback));
     --surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
+    --surface-elevated: var(--color-surface-elevated-dark, var(--color-surface-elevated-dark-fallback));
     --border: var(--border-color-dark);
     --border-subtle: var(--border-color-dark);
     --border-color: var(--border-color-dark);
@@ -508,6 +521,12 @@
     /* Dark mode interactive overlays */
     --hover-overlay: var(--hover-overlay-dark);
     --active-overlay: var(--active-overlay-dark);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    transition: none;
   }
 }
 
@@ -705,6 +724,7 @@
   --color-surface-dark: var(--color-surface-dark);
   --color-surface-subtle: var(--color-surface-subtle);
   --color-surface-dark-subtle: var(--color-surface-dark-subtle);
+  --color-surface-elevated-dark: var(--color-surface-elevated-dark);
   --color-background: var(--color-background);
   --color-background-dark: var(--color-background-dark);
   --color-foreground: var(--color-foreground);
