@@ -40,7 +40,7 @@ const {
  maxTags = 3,
 } = Astro.props;
 
-const { slug, data } = post;
+const { id: slug, data } = post;
 const visibleTags = data.tags?.slice(0, maxTags) || [];
 const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
 ---

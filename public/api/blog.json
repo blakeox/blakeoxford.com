@@ -1,27 +1,50 @@
 [
   {
-    "slug": "second-post",
-    "title": "Second Post",
-    "description": "My second post",
-    "publishedAt": "2023-01-02",
-    "tags": [
-      "test",
-      "second"
-    ],
-    "author": "Blake Oxford",
-    "draft": false,
-    "featured": false
-  },
-  {
     "slug": "hello-world",
     "title": "Hello World",
-    "description": "My first post",
-    "publishedAt": "2023-01-01",
+    "description": "Welcome to my blog! This is where I'll share insights about systems architecture, digital transformation, and the latest in technology.",
+    "publishedAt": "2024-01-01",
     "tags": [
-      "test"
+      "Welcome",
+      "Introduction"
     ],
     "author": "Blake Oxford",
+    "featured": false,
     "draft": false,
-    "featured": false
+    "excerpt": "Welcome to my blog! This is where I'll share insights about systems architecture, digital transformation, and the latest in technology."
+  },
+  {
+    "slug": "combating-legal-ai-hallucinations",
+    "title": "Combating Legal AI Hallucinations: How courtlistener-mcp Enhances Trustworthy AI-Assisted Legal Research",
+    "description": "Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener.",
+    "publishedAt": "2025-07-28",
+    "tags": [
+      "AI",
+      "Legal Tech",
+      "Open Source"
+    ],
+    "author": "Blake Oxford",
+    "featured": false,
+    "draft": false,
+    "excerpt": "Introducing courtlistener-mcp, an open-source MCP server that combats AI hallucinations in legal research by grounding responses in real court data from CourtListener."
+  },
+  {
+    "slug": "ai-statistics-future-decision-making",
+    "title": "AI, Statistics, and the Future of Decision-Making: What Our Research Reveals",
+    "description": "From our GPT-4 study to GPT-5's reasoning models — exploring RAG, CAG, MCP, and the evolution toward augmented, auditable analytics systems that amplify human capability.",
+    "publishedAt": "2025-10-14",
+    "tags": [
+      "AI",
+      "Machine Learning",
+      "Statistics",
+      "Research",
+      "Leadership",
+      "GPT-4",
+      "Data Science"
+    ],
+    "author": "Blake Oxford",
+    "featured": false,
+    "draft": false,
+    "excerpt": "From our GPT-4 study to GPT-5's reasoning models — exploring RAG, CAG, MCP, and the evolution toward augmented, auditable analytics systems that amplify human capability."
   }
 ]

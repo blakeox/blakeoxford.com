@@ -15,6 +15,7 @@ import Button from '../../components/primitives/Button.astro';
 import ButtonGroup from '../../components/composites/ButtonGroup.astro';
 
 <FeatureCard
+  titleLevel={2}
   variant="accent"
   icon="⚖️"
   title="Ground legal AI in verified source material"
@@ -23,7 +24,7 @@ import ButtonGroup from '../../components/composites/ButtonGroup.astro';
   <p class="text-lg leading-relaxed text-foreground/90">
     <strong>courtlistener-mcp</strong> gives MCP-aware assistants direct access to CourtListener data so legal research responses can be tied back to real opinions, dockets, and identifiers instead of model guesswork.
   </p>
-  <p class="mt-4 text-3xl font-black text-warning-dark dark:text-warning-light">
+  <p class="mt-4 text-3xl font-black text-warning-emphasis">
     Hallucinations are not acceptable in a high-stakes workflow.
   </p>
 </FeatureCard>
@@ -33,6 +34,7 @@ AI-assisted research creates real leverage for faster case review, better synthe
 ## Why this matters
 
 <FeatureCard
+  titleLevel={2}
   variant="error"
   icon="⚠️"
   title="The failure mode is confident inaccuracy"
@@ -55,24 +57,28 @@ The operational requirement is straightforward:
 
 <div class="not-prose my-12 grid gap-6 md:grid-cols-2">
   <FeatureCard
+  titleLevel={2}
     variant="accent"
     icon="🔗"
     title="Grounded citations"
     description="Responses include the CourtListener ID and source link for each cited document."
   />
   <FeatureCard
+  titleLevel={2}
     variant="primary"
     icon="📄"
     title="Verified documents"
     description="The server can return the opinion, docket, or transcript needed for direct review."
   />
   <FeatureCard
+  titleLevel={2}
     variant="accent"
     icon="🔍"
     title="Real-time search"
     description="Queries run through CourtListener so newly available decisions can be surfaced immediately."
   />
   <FeatureCard
+  titleLevel={2}
     variant="primary"
     icon="🛡️"
     title="Auditability"
@@ -131,18 +137,21 @@ Current expansion areas are focused on depth rather than novelty:
 
 <div class="not-prose my-12 grid gap-6 md:grid-cols-3">
   <FeatureCard
+  titleLevel={2}
     variant="warning"
     icon="📦"
     title="Bulk export utilities"
     description="Support litigation knowledge-base workflows without manual handoffs."
   />
   <FeatureCard
+  titleLevel={2}
     variant="accent"
     icon="📊"
     title="Conflict analytics"
     description="Identify conflicting authorities across jurisdictions with better review support."
   />
   <FeatureCard
+  titleLevel={2}
     variant="success"
     icon="⚡"
     title="Performance hardening"

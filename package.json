@@ -9,7 +9,7 @@
     "build": "astro build",
     "build:prod": "GIT_COMMIT=$(git rev-parse HEAD) PUBLIC_GIT_COMMIT=$(git rev-parse HEAD) NODE_ENV=production npm run build",
     "preview:prod": "npm run build:prod && npm run preview",
-    "prebuild": "node scripts/optimization/convert-proficiency-logos.js && node scripts/optimization/optimize-project-images.js && node scripts/optimization/optimize-carousel-images.js && node scripts/optimization/optimize-public-images.js",
+    "prebuild": "node scripts/optimization/convert-proficiency-logos.js && node scripts/optimization/optimize-project-images.js && node scripts/optimization/optimize-carousel-images.js && node scripts/optimization/optimize-public-images.js && node scripts/content/generate-search-index.js",
     "postbuild": "node scripts/build/postbuild-copy.js",
     "preview": "astro preview",
     "astro": "astro",
