@@ -11,6 +11,7 @@ export type SearchRecord = {
   featured?: boolean;
   score?: number;
   publishedAt?: string;
+  image?: string;
 };
 
 export type SemanticSearchMatch = {

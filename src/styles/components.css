@@ -286,6 +286,16 @@
     opacity: 0 !important;
   }
 
+  #search-overlay[data-state="open"].active {
+    display: flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  .command-center .overlay-panel {
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+  }
+
   #search-overlay[data-state="closed"] .search-result,
   #search-overlay[data-state="closed"] [data-results-container],
   #search-overlay[data-state="closed"] [data-results] {

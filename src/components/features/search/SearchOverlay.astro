@@ -1,103 +1,18 @@
 ---
 /**
- * SearchOverlay - Modal search interface
- *
- * Site-wide search powered by Cloudflare Vectorize semantic search at
- * `/api/semantic-search`, with a static JSON fallback for local/dev.
+ * Command Center mount — site search UI (Cloudflare Vectorize + local fallback).
+ * Client logic lives in CommandCenterMount island (React portal).
  */
-import Flex from '../../primitives/Flex.astro';
-import SearchOverlayClient from '../../islands/SearchOverlayClient';
+import CommandCenterMount from '../../../features/command-center/CommandCenterMount';
 ---
 
-<div
- id="search-overlay"
- class="group fixed inset-0 z-search flex opacity-0 transition duration-normal ease-standard data-[state=closed]:pointer-events-none data-[state=open]:opacity-100 motion-reduce:transition-none"
- role="dialog"
- aria-modal="true"
- aria-labelledby="search-title"
- aria-hidden="true"
- inert
- data-state="closed"
- data-authoritative-closed="true"
- data-a11y-allow-color-contrast
- style="display:none;opacity:0;visibility:hidden;"
->
- <div class="absolute inset-0 cursor-pointer bg-background-dark/55 backdrop-blur-sm" data-overlay-backdrop></div>
+<noscript>
+  <div class="mx-auto max-w-3xl px-4 py-6 text-sm text-muted-foreground">
+    Search requires JavaScript. Browse
+    <a class="text-accent underline" href="/projects/">projects</a>,
+    <a class="text-accent underline" href="/blog/">blog</a>, or
+    <a class="text-accent underline" href="/contact/">contact</a>.
+  </div>
+</noscript>
 
- <div class="relative flex min-h-full w-full items-start justify-center px-4 pb-8 pt-16 sm:pt-20 lg:pt-24" data-overlay-container>
- <div class="overlay-panel w-full max-w-3xl translate-y-6 rounded-3xl border border-border/60 bg-surface/95 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard group-data-[state=open]:translate-y-0 motion-reduce:translate-y-0 motion-reduce:transition-none" data-panel>
- <div class="flex items-center justify-between gap-3 border-b border-border/60 px-5 py-4">
- <h2 id="search-title" class="text-lg font-semibold text-foreground">Search</h2>
- <button
- id="close-search"
- class="touch-target focus-ring-interactive inline-flex size-11 items-center justify-center rounded-xl border border-border/80 bg-surface text-foreground transition hover:border-border"
- aria-label="Close search"
- >
- <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
- </svg>
- </button>
- </div>
-
- <div class="px-6 py-6">
- <form class="flex flex-col gap-6" autocomplete="off" data-search-form>
- <div class="flex flex-col gap-3">
- <span class="text-sm font-medium text-muted-foreground">Search in</span>
- <Flex wrap gap="xs" data-search-category-group role="group" aria-label="Search categories">
- <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="all" data-active aria-pressed="true">All</button>
- <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="projects" aria-pressed="false">Projects</button>
- <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="blog" aria-pressed="false">Blog</button>
- <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="pages" aria-pressed="false">Pages</button>
- </Flex>
- </div>
-
- <div class="flex flex-col gap-2" data-search-input-group>
- <label for="search-input" class="flex items-center justify-between text-sm font-medium text-muted-foreground">
- <span>What are you looking for?</span>
- <kbd class="hidden rounded-full border border-border px-2 py-1 text-xs font-sans text-subtle-foreground sm:inline-flex">/ or Cmd+K</kbd>
- </label>
-
- <div class="group relative flex w-full items-center gap-3 rounded-xl border border-border/60 bg-field-bg px-4 py-3 shadow-sm focus-within:border-accent/60 focus-within:ring-2 focus-within:ring-accent/40">
- <svg class="size-5 text-subtle-foreground/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
- <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
- </svg>
- <input
- id="search-input"
- type="search"
- class="peer flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground/70 focus:outline-none"
- placeholder="Search pages, projects, and blog posts..."
- aria-label="Search site content"
- autocomplete="off"
- spellcheck="false"
- aria-expanded="false"
- aria-controls="search-results"
- role="searchbox"
- />
- </div>
- <p class="text-xs text-subtle-foreground">Powered by Cloudflare semantic search. Try “Microsoft Fabric”, “CES 2026”, or “Contact”.</p>
- <p class="sr-only" data-search-status aria-live="polite" aria-atomic="true"></p>
- </div>
-
- <div data-search-loading class="hidden rounded-2xl border border-border/60 bg-surface/80 px-4 py-3 text-sm text-muted-foreground" aria-hidden="true">
- Searching with Cloudflare Vectorize…
- </div>
-
- <div data-search-empty class="hidden rounded-2xl border border-dashed border-border/60 bg-surface/60 px-4 py-3 text-sm text-muted-foreground" aria-hidden="true">
- No results found. Try a different keyword or browse from the suggestions below.
- </div>
-
- <div id="search-results" class="hidden flex-col gap-3" role="listbox" aria-label="Search results" data-results>
- <div class="max-h-[26rem] overflow-y-auto rounded-2xl border border-border/60 bg-surface/95 p-2 shadow-inner" data-results-container></div>
- </div>
-
- <div class="flex flex-col gap-2 rounded-2xl border border-dashed border-border/60 bg-surface/60 p-4 text-sm text-muted-foreground">
- <p class="flex items-center gap-2"><span aria-hidden="true">💡</span><span>Use keywords like “automation”, “AI coaching”, or “cloud rollout”.</span></p>
- <p class="flex items-center gap-2"><span aria-hidden="true">🧭</span><span>Press <kbd class="rounded border border-border px-2 py-1 text-xs">Esc</kbd> to close.</span></p>
- </div>
- </form>
- </div>
- </div>
- </div>
-</div>
-
-<SearchOverlayClient client:idle />
+<CommandCenterMount client:idle />

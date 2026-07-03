@@ -9,6 +9,7 @@ type ApiProject = {
   featured?: boolean;
   publishedAt?: string;
   draft?: boolean;
+  image?: string | null;
 };
 
 type ApiBlog = {
@@ -19,6 +20,7 @@ type ApiBlog = {
   featured?: boolean;
   publishedAt?: string;
   draft?: boolean;
+  image?: string | null;
 };
 
 let cachedCorpus: SearchRecord[] | null = null;
@@ -33,6 +35,7 @@ function toProjectRecord(item: ApiProject): SearchRecord {
     tags: Array.isArray(item.tags) ? item.tags : [],
     featured: Boolean(item.featured),
     publishedAt: item.publishedAt,
+    image: item.image ?? undefined,
   };
 }
 
@@ -45,6 +48,7 @@ function toBlogRecord(item: ApiBlog): SearchRecord {
     tags: Array.isArray(item.tags) ? item.tags : [],
     featured: Boolean(item.featured),
     publishedAt: item.publishedAt,
+    image: item.image ?? undefined,
   };
 }
 

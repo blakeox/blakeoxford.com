@@ -144,7 +144,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'SearchOverlay',
     category: 'Features',
     subcategory: 'Search',
-    description: 'Modal search interface with keyboard shortcuts and focus-trapped overlay. Renders the search shell; client logic lives in SearchOverlayClient island.',
+    description: 'Command Center site search (React portal). Cloudflare Vectorize semantic search with grouped results, browse state, and keyboard navigation.',
     filePath: 'src/components/features/search/SearchOverlay.astro',
     examples: [
       {
