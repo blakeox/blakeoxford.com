@@ -457,7 +457,9 @@
     --color-neutral-dark: var(--color-neutral, var(--color-neutral-fallback));
     --shadow-chroma: 0 0 0 / 0.6;
     --glass-surface-bg: var(--glass-surface-bg-dark);
+    --glass-surface-bg-xl: var(--glass-surface-bg-dark-xl);
     --glass-border: var(--glass-border-dark);
+    --glass-border-xl: var(--glass-border-dark-xl);
     color-scheme: dark;
 
     /* Dark-mode gradients — mix toward transparent instead of white */
