@@ -5,6 +5,7 @@ import Section from '../../components/primitives/Section.astro';
 import Stack from '../../components/primitives/Stack.astro';
 import Badge from '../../components/primitives/Badge.astro';
 import Card from '../../components/composites/Card.astro';
+import FeatureCard from '../../components/composites/FeatureCard.astro';
 
 const patterns = [
  {
@@ -32,11 +33,42 @@ const patterns = [
  code: 'bg-surface/70 border-border/40 shadow-sm',
  },
 ];
+
+const visualTiers = [
+ {
+ tier: 'Quiet',
+ usage: 'Body content, docs, forms, tables',
+ treatment: 'Surface tokens, minimal shadow, no gradient. Use Card variant="subtle" or variant="default" with hover="none".',
+ example: 'default',
+ },
+ {
+ tier: 'Elevated',
+ usage: 'Cards, feature grids, stats, project listings',
+ treatment: 'shadow-md or shadow-lg, subtle borders via color-mix, optional @container layout shifts. Use Card hover="lift".',
+ example: 'elevated',
+ },
+ {
+ tier: 'Expressive',
+ usage: 'Hero bands, blog highlights, conversion CTAs',
+ treatment: 'Gradient tokens, proof-card / conversion-band, glass surfaces. Use FeatureCard or proof-card pattern.',
+ example: 'expressive',
+ },
+];
+
+const cardMatrix = [
+ { layer: 'BaseCard', role: 'Primitive contract — variants, hover, radius, padding' },
+ { layer: 'Card', role: 'Compatibility wrapper — maps interactive → elevated, outline → subtle' },
+ { layer: 'FeatureCard', role: 'Expressive tier — gradient semantic variants' },
+ { layer: 'BlogPostCard', role: 'Blog index listings — Card + article link' },
+ { layer: 'ProjectCard', role: 'Case study listings — Card rounded="3xl" + media' },
+ { layer: 'StatsCard', role: 'KPI/metrics — BaseCard hover="none"' },
+ { layer: 'OutcomeCard', role: 'Bullet outcome lists on project detail pages' },
+];
 ---
 
 <BaseLayout
  title="Design Patterns"
- description="Operational layout and state patterns for the Blake Oxford design system."
+ description="Operational layout, visual tiers, and card patterns for the Blake Oxford design system."
  canonicalUrl="https://blakeoxford.com/design/patterns/"
  wide={true}
 >
@@ -48,13 +80,65 @@ const patterns = [
  Patterns
  </h1>
  <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
- Patterns define repeatable layout and state behavior. They should reduce decisions, not add new decorative treatments.
+ Patterns define repeatable layout, visual tier, and card behavior. They should reduce decisions, not add new decorative treatments.
  </p>
  </header>
 
- <section class="mt-12 grid gap-4 lg:grid-cols-2" aria-label="Design patterns">
+ <section class="mt-16" aria-labelledby="visual-tiers-heading">
+ <h2 id="visual-tiers-heading" class="text-2xl font-bold text-foreground">Visual tiers</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ Three intentional levels unify homepage restraint and blog expressiveness without splitting the token system.
+ </p>
+ <div class="mt-8 grid gap-4 lg:grid-cols-3">
+ {visualTiers.map((item) => (
+ <article class="rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm">
+ <Badge variant="outline" size="xs">{item.tier}</Badge>
+ <p class="mt-3 text-sm font-semibold text-foreground">{item.usage}</p>
+ <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{item.treatment}</p>
+ </article>
+ ))}
+ </div>
+ <div class="mt-8 grid gap-6 lg:grid-cols-3">
+ <Card variant="subtle" hover="none">
+ <p class="text-sm font-semibold text-foreground">Quiet</p>
+ <p class="mt-2 text-sm text-muted-foreground">Static card for docs and secondary content.</p>
+ </Card>
+ <Card variant="elevated" hover="lift">
+ <p class="text-sm font-semibold text-foreground">Elevated</p>
+ <p class="mt-2 text-sm text-muted-foreground">Interactive listing card with lift hover.</p>
+ </Card>
+ <FeatureCard variant="accent" title="Expressive" description="Gradient highlight for hero features and CTAs." hover={true} />
+ </div>
+ </section>
+
+ <section class="mt-16" aria-labelledby="card-matrix-heading">
+ <h2 id="card-matrix-heading" class="text-2xl font-bold text-foreground">Card matrix</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ Compose from this hierarchy instead of inline card markup in feature pages.
+ </p>
+ <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40" tabindex="0">
+ <table class="min-w-full text-left text-sm">
+ <thead class="border-b border-border/40 bg-surface-subtle/50">
+ <tr>
+ <th class="px-4 py-3 font-semibold text-foreground">Component</th>
+ <th class="px-4 py-3 font-semibold text-foreground">Role</th>
+ </tr>
+ </thead>
+ <tbody>
+ {cardMatrix.map((row) => (
+ <tr class="border-b border-border/20 last:border-b-0">
+ <td class="px-4 py-3 font-mono text-xs text-accent">{row.layer}</td>
+ <td class="px-4 py-3 text-muted-foreground">{row.role}</td>
+ </tr>
+ ))}
+ </tbody>
+ </table>
+ </div>
+ </section>
+
+ <section class="mt-16 grid gap-4 lg:grid-cols-2" aria-label="Design patterns">
  {patterns.map((pattern) => (
- <article class="min-w-0 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60">
+ <article class="min-w-0 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm">
  <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
  <div>
  <h2 class="text-xl font-semibold text-foreground">{pattern.name}</h2>
@@ -62,7 +146,7 @@ const patterns = [
  </div>
  <Badge variant="outline" size="xs">{pattern.category}</Badge>
  </div>
- <pre class="mt-5 max-w-full overflow-x-auto rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground dark:bg-surface-dark-subtle"><code>{pattern.code}</code></pre>
+ <pre class="mt-5 max-w-full overflow-x-auto rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground" tabindex="0"><code>{pattern.code}</code></pre>
  </article>
  ))}
  </section>
@@ -79,7 +163,7 @@ const patterns = [
 
  <div>
  <h2 class="text-2xl font-bold text-foreground">State Example</h2>
- <div class="form-group mt-5 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60">
+ <div class="form-group mt-5 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm">
  <label class="block text-sm font-semibold text-foreground" for="pattern-email">
  Email
  </label>
@@ -88,7 +172,7 @@ const patterns = [
  type="email"
  required
  placeholder="name@example.com"
- class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30 dark:border-border-dark dark:bg-background-dark dark:text-foreground"
+ class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
  />
  <p class="mt-3 text-xs text-subtle-foreground">
  The parent can reflect local input state without adding a component variant.
@@ -99,8 +183,8 @@ const patterns = [
 
  <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
  <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/design/components/">Component contracts</a>
- <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark" href="/design/animations/">Motion rules</a>
- <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark" href="/design/tokens/">Tokens</a>
+ <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent" href="/design/animations/">Motion rules</a>
+ <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent" href="/design/tokens/">Tokens</a>
  </nav>
  </Container>
  </Section>

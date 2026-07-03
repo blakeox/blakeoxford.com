@@ -1,12 +1,19 @@
 ---
 /**
- * Card - small compatibility wrapper around BaseCard.
- * 
- * @example Interactive project card
+ * Card - Compatibility wrapper over BaseCard.
+ *
+ * Legacy variant aliases:
+ * - `interactive` → BaseCard `elevated` (shadow-lg interactive listing cards)
+ * - `outline` → BaseCard `subtle`
+ *
+ * @example Interactive project card (maps to BaseCard elevated)
  * <Card variant="interactive" hover="lift">
- * <h3>Project Title</h3>
- * <p>Description...</p>
+ *   <h3>Project Title</h3>
+ *   <p>Description...</p>
  * </Card>
+ *
+ * @example Explicit elevated surface (preferred when not migrating legacy code)
+ * <Card variant="elevated" hover="lift">...</Card>
  * 
  * @example Glass morphism card with container queries
  * <div class="@container">
@@ -35,6 +42,8 @@ interface Props {
  hover?: 'none' | 'lift' | 'scale' | 'glow';
  /** Padding size */
  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+ /** Border radius */
+ rounded?: 'lg' | 'xl' | '2xl' | '3xl';
  /** HTML element tag to render */
  as?: 'div' | 'article' | 'section';
  /** Additional CSS classes */
@@ -49,6 +58,7 @@ const {
  variant = 'default',
  hover = 'lift',
  padding = 'md',
+ rounded = '2xl',
  as = 'div',
  class: className = '',
  fullHeight = false,
@@ -72,9 +82,13 @@ const basePadding = padding === 'xl' ? 'lg' : padding as 'none' | 'sm' | 'md' | 
  variant={baseVariant}
  hover={hover}
  padding={basePadding}
+ rounded={rounded}
  as={as}
  class={finalClasses}
  {...rest}
 >
+ <slot name="header" slot="header" />
+ <slot name="image" slot="image" />
  <slot />
+ <slot name="footer" slot="footer" />
 </BaseCard>

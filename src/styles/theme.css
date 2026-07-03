@@ -19,13 +19,25 @@
 @property --color-accent {
   syntax: '<color>';
   inherits: true;
-  initial-value: oklch(0.70 0.19 200);
+  initial-value: oklch(0.72 0.14 196);
 }
 
 @property --color-surface {
   syntax: '<color>';
   inherits: true;
   initial-value: oklch(0.98 0.01 264);
+}
+
+@property --color-background {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(0.98 0.005 264);
+}
+
+@property --border-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(15, 23, 42, 0.08);
 }
 
 /* Background gradient angle for animated gradients */
@@ -42,7 +54,7 @@
   /* Modern OKLCH color space for perceptual uniformity and better dark mode */
   /* Fallbacks provided for Safari < 16.4 */
   
-  /* Primary colors - Indigo palette */
+  /* Primary colors - Indigo palette (brand hue 264°) */
   --color-primary: oklch(0.55 0.22 264);
   --color-primary-fallback: #4f46e5;
   --color-primary-light: oklch(0.63 0.22 264);
@@ -58,7 +70,7 @@
   --color-secondary-dark: oklch(0.52 0.15 230);
   --color-secondary-dark-fallback: #0369a1;
   
-  /* Accent colors - Cyan palette */
+  /* Accent colors - Cyan palette (brand hue 196°) */
   --color-accent: oklch(0.72 0.14 196);
   --color-accent-fallback: #06b6d4;
   --color-accent-light: oklch(0.82 0.14 196);
@@ -82,18 +94,20 @@
   /* Background colors */
   --color-background: oklch(0.98 0.005 264);
   --color-background-fallback: #f8fafc;
-  --color-background-dark: oklch(0.15 0.02 264);
-  --color-background-dark-fallback: #0b1220;
+  --color-background-dark: oklch(0.13 0.02 264);
+  --color-background-dark-fallback: #080f1a;
   
   /* Surface colors */
   --color-surface: oklch(1 0 0);
   --color-surface-fallback: #ffffff;
   --color-surface-subtle: oklch(0.96 0.01 264);
   --color-surface-subtle-fallback: #eef2ff;
-  --color-surface-dark: oklch(0.18 0.02 264);
+  --color-surface-dark: oklch(0.17 0.02 264);
   --color-surface-dark-fallback: #0f172a;
-  --color-surface-dark-subtle: oklch(0.2 0.02 264);
-  --color-surface-dark-subtle-fallback: #111827;
+  --color-surface-dark-subtle: oklch(0.19 0.02 264);
+  --color-surface-dark-subtle-fallback: #131c2e;
+  --color-surface-elevated-dark: oklch(0.21 0.025 264);
+  --color-surface-elevated-dark-fallback: #1a2332;
   
   /* Neutral colors */
   --color-neutral: oklch(0.58 0.02 264);
@@ -142,6 +156,23 @@
   --color-on-secondary: oklch(0.2 0.02 230);
   --color-on-secondary-fallback: #062433;
 
+  /* Theme-aware emphasis (readable accent/state text on any surface) */
+  --color-accent-emphasis: var(--color-accent-dark);
+  --color-primary-emphasis: var(--color-primary-dark);
+  --color-success-emphasis: var(--color-success-dark);
+  --color-warning-emphasis: var(--color-warning-dark);
+  --color-error-emphasis: var(--color-error-dark);
+  --color-info-emphasis: var(--color-info-dark);
+
+  /* Primary button surfaces (invert contrast in dark mode) */
+  --color-button-primary-bg: var(--color-accent);
+  --color-button-primary-fg: var(--color-on-accent);
+  --color-button-primary-bg-hover: var(--color-accent-dark);
+  --color-button-primary-border-hover: var(--color-accent-dark);
+
+  /* Elevated field surfaces (search inputs, comboboxes) */
+  --color-field-bg: var(--color-background);
+
   /* Shadow chroma – referenced by all shadow tokens for theme switching */
   --shadow-chroma: 0 0 0 / 0.08;
 
@@ -162,6 +193,7 @@
   --color-secondary-hover: color-mix(in oklch, var(--color-secondary) 85%, white);
   --color-secondary-active: color-mix(in oklch, var(--color-secondary) 70%, black);
   --color-accent-subtle: color-mix(in oklch, var(--color-accent) 10%, transparent);
+  /* Expressive-tier surfaces: chat CTAs, highlighted panels, soft accent washes */
   --color-primary-subtle: color-mix(in oklch, var(--color-primary) 10%, transparent);
   --color-success-subtle: color-mix(in oklch, var(--color-success) 10%, transparent);
   --color-warning-subtle: color-mix(in oklch, var(--color-warning) 15%, transparent);
@@ -171,7 +203,7 @@
   --color-backdrop: rgba(0, 0, 0, 0.6);
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
-  --focus-ring-color: var(--color-primary);
+  --focus-ring-color: var(--color-accent);
   --focus-ring-offset-color: var(--color-background);
   --focus-ring: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
   
@@ -227,15 +259,20 @@
   --blur: 8px;              /* DEFAULT */
   --blur-lg: 16px;
   --glass-surface-bg: rgba(255,255,255,0.65);
-  --glass-surface-bg-dark: rgba(32,32,32,0.55);
+  --glass-surface-bg-dark: color-mix(in oklch, var(--color-surface-dark) 75%, transparent);
   --glass-border: 1px solid rgba(255,255,255,0.25);
-  --glass-border-dark: 1px solid rgba(255,255,255,0.08);
+  --glass-border-dark: 1px solid rgba(255,255,255,0.1);
   --glass-surface-bg-xl: rgba(255,255,255,0.85);
-  --glass-surface-bg-dark-xl: rgba(32,32,32,0.75);
+  --glass-surface-bg-dark-xl: color-mix(in oklch, var(--color-surface-elevated-dark) 80%, transparent);
   --glass-border-xl: 1.5px solid rgba(255,255,255,0.35);
-  --glass-border-dark-xl: 1.5px solid rgba(255,255,255,0.15);
+  --glass-border-dark-xl: 1.5px solid rgba(255,255,255,0.18);
 
-  /* ---------- Container Max-Widths ---------- */
+  /* ---------- Container Max-Widths & Padding ---------- */
+  --container-padding: 1rem;
+  --container-padding-sm: 2rem;
+  --container-padding-lg: 4rem;
+  --container-padding-xl: 5rem;
+  --container-padding-2xl: 6rem;
   --container-2xl: min(100%, 110rem);
 
   /* ---------- Semantic Alias Tokens (Phase 2) ---------- */
@@ -379,7 +416,7 @@
 
   /* Border colors */
   --border-color: rgba(15, 23, 42, 0.08);
-  --border-color-dark: rgba(148, 163, 184, 0.2);
+  --border-color-dark: rgba(148, 163, 184, 0.28);
   --border-color-subtle: rgba(15, 23, 42, 0.05);
 
   /* Animations (reduced-motion overrides target these aliases) */
@@ -409,6 +446,8 @@
   /* Use modern CSS nesting for better maintainability */
   &[data-theme="dark"], &.dark {
     /* OKLCH colors optimized for dark mode */
+    --color-accent: oklch(0.75 0.16 196);
+    --color-accent-fallback: #22d3ee;
     --color-foreground-strong: var(--color-foreground-light, var(--color-foreground-light-fallback));
     --color-foreground: var(--color-foreground-light, var(--color-foreground-light-fallback));
     --color-background: var(--color-background-dark, var(--color-background-dark-fallback));
@@ -418,8 +457,18 @@
     --color-neutral-dark: var(--color-neutral, var(--color-neutral-fallback));
     --shadow-chroma: 0 0 0 / 0.6;
     --glass-surface-bg: var(--glass-surface-bg-dark);
+    --glass-surface-bg-xl: var(--glass-surface-bg-dark-xl);
     --glass-border: var(--glass-border-dark);
+    --glass-border-xl: var(--glass-border-dark-xl);
     color-scheme: dark;
+
+    /* Dark-mode gradients — mix toward transparent instead of white */
+    --gradient-primary: linear-gradient(135deg, color-mix(in oklch, var(--color-primary) 35%, transparent) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
+    --gradient-accent: linear-gradient(135deg, color-mix(in oklch, var(--color-accent) 30%, transparent) 0%, var(--color-accent) 50%, var(--color-accent-dark) 100%);
+    --gradient-secondary: linear-gradient(135deg, color-mix(in oklch, var(--color-secondary) 30%, transparent) 0%, var(--color-secondary) 50%, var(--color-secondary-dark) 100%);
+    --color-accent-subtle: color-mix(in oklch, var(--color-accent) 18%, transparent);
+    --color-primary-subtle: color-mix(in oklch, var(--color-primary) 18%, transparent);
+    --focus-ring-offset-color: var(--color-surface-dark, var(--color-surface-dark-fallback));
 
     /* Semantic aliases for dark mode */
     --bg: var(--color-background-dark, var(--color-background-dark-fallback));
@@ -433,13 +482,53 @@
     --fg-subtle: var(--color-subtle-foreground);
     --surface: var(--color-surface-dark, var(--color-surface-dark-fallback));
     --surface-subtle: var(--color-surface-dark-subtle, var(--color-surface-dark-subtle-fallback));
+    --surface-elevated: var(--color-surface-elevated-dark, var(--color-surface-elevated-dark-fallback));
     --border: var(--border-color-dark);
     --border-subtle: var(--border-color-dark);
+    --border-color: var(--border-color-dark);
+    --border-color-subtle: var(--border-color-dark);
     --ring: var(--color-accent, var(--color-accent-fallback));
+    
+    /* Emphasis + button tokens for dark surfaces */
+    --color-accent-emphasis: var(--color-accent-light, var(--color-accent-light-fallback));
+    --color-primary-emphasis: var(--color-primary-light, var(--color-primary-light-fallback));
+    --color-success-emphasis: var(--color-success-light, var(--color-success-light-fallback));
+    --color-warning-emphasis: var(--color-warning-light, var(--color-warning-light-fallback));
+    --color-error-emphasis: var(--color-error-light, var(--color-error-light-fallback));
+    --color-info-emphasis: var(--color-info-light, var(--color-info-light-fallback));
+    --color-button-primary-bg: var(--color-accent-dark, var(--color-accent-dark-fallback));
+    --color-button-primary-fg: var(--color-on-dark, var(--color-on-dark-fallback));
+    --color-button-primary-bg-hover: var(--color-accent, var(--color-accent-fallback));
+    --color-button-primary-border-hover: var(--color-accent, var(--color-accent-fallback));
+    --color-field-bg: var(--color-surface-dark, var(--color-surface-dark-fallback));
+    
+    /* Typography plugin tokens (replaces dark:prose-invert on content pages) */
+    --tw-prose-body: var(--color-foreground);
+    --tw-prose-headings: var(--color-foreground);
+    --tw-prose-lead: var(--color-muted-foreground);
+    --tw-prose-links: var(--color-accent-emphasis);
+    --tw-prose-bold: var(--color-foreground);
+    --tw-prose-counters: var(--color-muted-foreground);
+    --tw-prose-bullets: var(--color-muted-foreground);
+    --tw-prose-hr: var(--border-color);
+    --tw-prose-quotes: var(--color-foreground);
+    --tw-prose-quote-borders: var(--border-color);
+    --tw-prose-captions: var(--color-muted-foreground);
+    --tw-prose-code: var(--color-accent-emphasis);
+    --tw-prose-pre-code: var(--color-foreground);
+    --tw-prose-pre-bg: var(--color-surface-subtle);
+    --tw-prose-th-borders: var(--border-color);
+    --tw-prose-td-borders: var(--border-color);
     
     /* Dark mode interactive overlays */
     --hover-overlay: var(--hover-overlay-dark);
     --active-overlay: var(--active-overlay-dark);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    transition: none;
   }
 }
 
@@ -500,16 +589,16 @@
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-primary, #4f46e5);
-    outline-offset: 3px;
-    box-shadow: 0 0 0 6px color-mix(in oklch, var(--color-primary) 15%, transparent);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color, var(--color-accent));
+    outline-offset: var(--focus-ring-offset);
+    box-shadow: 0 0 0 6px color-mix(in oklch, var(--focus-ring-color, var(--color-accent)) 15%, transparent);
     border-radius: var(--radius-sm, 0.25rem);
   }
 
   :root[data-theme="dark"] :focus-visible,
   :root.dark :focus-visible {
-    outline-color: var(--color-accent, #06b6d4);
-    box-shadow: 0 0 0 6px color-mix(in oklch, var(--color-accent) 20%, transparent);
+    outline-color: var(--focus-ring-color, var(--color-accent));
+    box-shadow: 0 0 0 6px color-mix(in oklch, var(--focus-ring-color, var(--color-accent)) 20%, transparent);
   }
 
   button:focus-visible,
@@ -610,6 +699,25 @@
   --color-accent: var(--color-accent);
   --color-accent-light: var(--color-accent-light);
   --color-accent-dark: var(--color-accent-dark);
+  --color-accent-emphasis: var(--color-accent-emphasis);
+  --color-primary-emphasis: var(--color-primary-emphasis);
+  --color-success-light: var(--color-success-light);
+  --color-success-dark: var(--color-success-dark);
+  --color-success-emphasis: var(--color-success-emphasis);
+  --color-warning-light: var(--color-warning-light);
+  --color-warning-dark: var(--color-warning-dark);
+  --color-warning-emphasis: var(--color-warning-emphasis);
+  --color-error-light: var(--color-error-light);
+  --color-error-dark: var(--color-error-dark);
+  --color-error-emphasis: var(--color-error-emphasis);
+  --color-info-light: var(--color-info-light);
+  --color-info-dark: var(--color-info-dark);
+  --color-info-emphasis: var(--color-info-emphasis);
+  --color-button-primary-bg: var(--color-button-primary-bg);
+  --color-button-primary-fg: var(--color-button-primary-fg);
+  --color-button-primary-bg-hover: var(--color-button-primary-bg-hover);
+  --color-button-primary-border-hover: var(--color-button-primary-border-hover);
+  --color-field-bg: var(--color-field-bg);
   --color-success: var(--color-success);
   --color-warning: var(--color-warning);
   --color-error: var(--color-error);
@@ -618,6 +726,7 @@
   --color-surface-dark: var(--color-surface-dark);
   --color-surface-subtle: var(--color-surface-subtle);
   --color-surface-dark-subtle: var(--color-surface-dark-subtle);
+  --color-surface-elevated-dark: var(--color-surface-elevated-dark);
   --color-background: var(--color-background);
   --color-background-dark: var(--color-background-dark);
   --color-foreground: var(--color-foreground);
@@ -633,4 +742,90 @@
   --color-neutral-dark: var(--color-neutral-dark);
   --color-border: var(--border-color);
   --color-border-dark: var(--border-color-dark);
+
+  /* Spacing scale */
+  --spacing-px: var(--space-px);
+  --spacing-0: var(--space-0);
+  --spacing-0\.5: var(--space-0\.5);
+  --spacing-1: var(--space-1);
+  --spacing-1\.5: var(--space-1\.5);
+  --spacing-2: var(--space-2);
+  --spacing-2\.5: var(--space-2\.5);
+  --spacing-3: var(--space-3);
+  --spacing-3\.5: var(--space-3\.5);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-8: var(--space-8);
+  --spacing-9: var(--space-9);
+  --spacing-10: var(--space-10);
+  --spacing-11: var(--space-11);
+  --spacing-12: var(--space-12);
+  --spacing-14: var(--space-14);
+  --spacing-16: var(--space-16);
+  --spacing-20: var(--space-20);
+  --spacing-24: var(--space-24);
+  --spacing-28: var(--space-28);
+  --spacing-32: var(--space-32);
+
+  /* Radius scale */
+  --radius-none: var(--radius-none);
+  --radius-sm: var(--radius-sm);
+  --radius-DEFAULT: var(--radius);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-3xl: var(--radius-3xl);
+  --radius-full: var(--radius-full);
+
+  /* Shadows */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-DEFAULT: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+  --shadow-inner: var(--shadow-inner);
+  --shadow-none: var(--shadow-none);
+  --shadow-card: var(--shadow-card);
+
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --font-mono: var(--font-mono);
+  --text-xxs: var(--fs-xxs);
+  --text-xs: var(--fs-xs);
+  --text-sm: var(--fs-sm);
+  --text-base: var(--fs-base);
+  --text-lg: var(--fs-lg);
+  --text-xl: var(--fs-xl);
+  --text-2xl: var(--fs-2xl);
+  --text-3xl: var(--fs-3xl);
+  --text-4xl: var(--fs-4xl);
+  --text-5xl: var(--fs-5xl);
+  --text-6xl: var(--fs-6xl);
+  --text-7xl: var(--fs-7xl);
+  --text-8xl: var(--fs-8xl);
+  --text-9xl: var(--fs-9xl);
+
+  /* Motion tokens */
+  --transition-duration-instant: var(--duration-instant);
+  --transition-duration-fast: var(--duration-fast);
+  --transition-duration-normal: var(--duration-normal);
+  --transition-duration-DEFAULT: var(--duration);
+  --transition-duration-moderate: var(--duration-moderate);
+  --transition-duration-slow: var(--duration-slow);
+  --transition-duration-slower: var(--duration-slower);
+  --transition-duration-slowest: var(--duration-slowest);
+  --ease-standard: var(--ease-standard);
+  --ease-emphasized: var(--ease-emphasized);
+  --ease-decelerate: var(--ease-decelerate);
+  --ease-accelerate: var(--ease-accelerate);
+  --ease-in-quad: var(--ease-in-quad);
+  --ease-out-quad: var(--ease-out-quad);
+  --ease-in-out-quad: var(--ease-in-out-quad);
+  --ease-spring: var(--ease-spring);
+  --ease-bounce: var(--ease-bounce);
 }

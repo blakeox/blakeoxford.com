@@ -60,7 +60,7 @@
     "health:check": "node -e \"console.log('✅ All systems operational')\"",
     "health:workflow": "./scripts/optimization/workflow-health-monitor.sh",
     "quality:summary": "node scripts/quality/generate-quality-summary.js > /dev/null || true",
-    "audit:contrast": "node scripts/quality/contrast-token-audit.js",
+    "audit:contrast": "playwright test tests/playwright/accessibility/contrast-ratio.spec.ts --project=chromium",
     "test:mutants": "stryker run || true",
     "flakiness:track": "node scripts/quality/flakiness-tracker.js",
     "flakiness:check": "node scripts/quality/check-flakiness-threshold.js",
@@ -72,7 +72,9 @@
     "pages:deploy": "node -e \"console.error('❌ Deprecated: Use `pnpm deploy:worker` or `pnpm edge:deploy` (Workers) instead of Pages.'); process.exit(1)\"",
     "quality:snapshot": "node scripts/quality/snapshot-quality-baseline.js",
     "quality:badges": "node scripts/quality/generate-badges.js",
-    "design:lint": "node scripts/quality/design-lint.js",
+    "design:lint": "node scripts/quality/design-lint.js && node scripts/quality/check-blog-mdx-dark-baseline.js",
+    "design:theme-docs-sync": "node scripts/quality/check-theme-docs-sync.js",
+    "design:blog-mdx-dark": "node scripts/quality/blog-mdx-dark-codemod.js --write",
     "quality:timeouts": "node scripts/quality/check-raw-timeouts.js",
     "security:headers": "node scripts/quality/check-security-headers.js",
     "quality:contrast:themes": "node scripts/quality/contrast-theme-diff.js",
@@ -131,11 +133,11 @@
     "astro-compress": "^2.4.1",
     "astro-eslint-parser": "^2.1.0",
     "autoprefixer": "^10.5.2",
-    "axe-playwright": "^2.2.2",
     "chrome-launcher": "^1.2.1",
     "cssnano": "^8.0.2",
     "eslint": "^10.6.0",
     "eslint-plugin-astro": "^2.1.1",
+    "eslint-plugin-better-tailwindcss": "^4.6.0",
     "eslint-plugin-mdx": "^3.8.1",
     "fuse.js": "^7.4.2",
     "happy-dom": "^20.10.6",
@@ -156,17 +158,17 @@
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
-    "wrangler": "^4.105.0"
+    "wrangler": "^4.107.0"
   },
   "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad",
   "pnpm": {
     "overrides": {
       "minimatch": "10.2.3",
+      "rollup": "4.59.0",
       "undici": "7.18.2",
       "tmp": "0.2.4",
       "lodash": "4.17.23",
-      "wrangler": "4.59.1",
-      "rollup": "4.59.0"
+      "wrangler": "4.107.0"
     }
   }
 }

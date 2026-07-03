@@ -47,7 +47,7 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 	const alignment = message.role === 'user' ? 'items-end text-right' : 'items-start text-left';
 	const bubbleClasses = message.role === 'user'
 		? 'bg-[color:var(--accent)] text-[color:var(--on-accent)]'
-		: 'bg-[color:var(--surface)]/95 text-[color:var(--fg)] dark:bg-[color:var(--surface)]/90';
+		: 'bg-[color:var(--surface)]/95 text-[color:var(--fg)]';
 	const isAssistant = message.role === 'assistant';
 	const bubbleContent = isAssistant ? cleanAssistantResponse(message.content) : message.content;
 	const sources = isAssistant && message.sources ? message.sources : [];
@@ -74,7 +74,7 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 
 	return (
 		<div key={message.id} className={`flex flex-col gap-2 ${alignment}`} data-ai-message-role={message.role}>
-			<div className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm shadow-sm ring-1 ring-[color:var(--border)]/20 dark:ring-[color:var(--border)]/30 transition-all duration-150 ease-out ${bubbleClasses}`}>
+			<div className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm shadow-sm ring-1 ring-[color:var(--border)]/25 transition-all duration-150 ease-out ${bubbleClasses}`}>
 				<div className="flex flex-col gap-2">
 					{bubbleContent ? (
 						<span className={`whitespace-pre-wrap break-words ${messageTextClasses}`}>{bubbleContent}</span>

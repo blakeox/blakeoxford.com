@@ -2,33 +2,13 @@
 /**
  * BlogPostCard - Reusable blog post card for listings
  * 
- * Displays a blog post with date, title, description, tags, and read more link.
- * Optimized for stable grid layouts and container query responsiveness.
- * 
- * @example Basic usage
- * ```astro
- * <BlogPostCard post={postEntry} />
- * ```
- * 
- * @example With container query wrapper
- * ```astro
- * <div class="@container">
- * <BlogPostCard post={postEntry} />
- * </div>
- * ```
- * 
- * @example Custom max tags
- * ```astro
- * <BlogPostCard post={postEntry} maxTags={5} />
- * ```
- * 
- * @containerQueries
- * - @sm (384px): Larger padding, enhanced spacing
- * - @md (448px): Enhanced typography, larger text sizes
+ * Built on Card → BaseCard. Replaces legacy `.blog-card` patterns for index listings.
+ * MDX blog content may still use `.blog-card` for expressive inline blocks.
  */
 
 import type { CollectionEntry } from 'astro:content';
 import { formatDateISO } from '../../../utils/index.js';
+import Card from '../../composites/Card.astro';
 
 export interface Props {
  post: CollectionEntry<'blog'>;
@@ -44,10 +24,10 @@ const { id: slug, data } = post;
 const visibleTags = data.tags?.slice(0, maxTags) || [];
 const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
 ---
-<article class="@container card-interactive hover-lift group flex h-full flex-col rounded-2xl border border-border/40 bg-surface/95 p-5 @sm:p-6 shadow-lg hover:shadow-primary/5 dark:bg-surface/80 dark:border-border-dark/40">
+<Card as="article" variant="default" hover="lift" padding="none" class="@container h-full">
  <a
  href={`/blog/${slug}/`}
- class="flex h-full flex-col gap-3 @sm:gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
+ class="group flex h-full flex-col gap-3 @sm:gap-4 p-5 @sm:p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
  >
  <header class="space-y-1.5 @sm:space-y-2">
  <time
@@ -79,12 +59,12 @@ const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
  role="list"
  >
  {visibleTags.map((tag: string) => (
- <li class="rounded-full bg-background/90 px-2.5 @sm:px-3 py-0.5 @sm:py-1 ring-1 ring-border/30 dark:bg-background-dark/70" role="listitem">
+ <li class="rounded-full bg-background/90 px-2.5 @sm:px-3 py-0.5 @sm:py-1 ring-1 ring-border/30" role="listitem">
  {tag}
  </li>
  ))}
  {extraTagCount > 0 && (
- <li class="rounded-full bg-background/80 px-2.5 @sm:px-3 py-0.5 @sm:py-1 ring-1 ring-border/20 text-subtle-foreground/90 dark:bg-background-dark/60" role="listitem">
+ <li class="rounded-full bg-background/80 px-2.5 @sm:px-3 py-0.5 @sm:py-1 ring-1 ring-border/20 text-subtle-foreground/90" role="listitem">
  +{extraTagCount}
  </li>
  )}
@@ -98,4 +78,4 @@ const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
  </svg>
  </span>
  </a>
-</article>
+</Card>

@@ -1,13 +1,10 @@
 import { test, expect } from './fixtures';
 import { waitForIdle, waitForTheme } from '../utils/waits';
-
-// Contract
-// - Input: user clicks theme toggle to switch to dark
-// - Behavior: html[data-theme="dark"] and .dark class persist across navigation and reload
-// - Error mode: if theme system absent, test should skip gracefully
+import { cycleThemeToResolved, seedThemePreference } from '../utils/themeActions';
 
 test.describe('Theme persistence across navigation', () => {
   test('dark mode persists after navigation and reload @essential', async ({ page }) => {
+    await seedThemePreference(page, 'light');
     await page.goto('/');
     await waitForIdle(page);
 
@@ -17,18 +14,12 @@ test.describe('Theme persistence across navigation', () => {
     const htmlHasDark = async () => await page.evaluate(() => document.documentElement.classList.contains('dark'));
     const getThemeAttr = async () => await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
 
-    // Determine current theme and target
-    const initialTheme = await getThemeAttr();
-    const targetTheme = initialTheme === 'dark' ? 'light' : 'dark';
+    await waitForTheme(page, 'light', 5000);
+    await cycleThemeToResolved(page, 'dark');
 
-    // Toggle theme
-    await page.locator('#theme-toggle').click({ trial: true }).catch(() => {});
-    await page.locator('#theme-toggle').click({ force: true });
-
-    await waitForTheme(page, targetTheme);
+    const targetTheme = 'dark';
     await expect.poll(getThemeAttr).toBe(targetTheme);
 
-    // Verify class alignment with attribute
     const classMatches = await page.evaluate(() => {
       const isDark = document.documentElement.classList.contains('dark');
       const attr = document.documentElement.getAttribute('data-theme');
@@ -36,24 +27,14 @@ test.describe('Theme persistence across navigation', () => {
     });
     expect(classMatches).toBeTruthy();
 
-    // Navigate to About and assert persistence
     await page.goto('/about/');
     await waitForIdle(page);
     await expect.poll(getThemeAttr).toBe(targetTheme);
-    if (targetTheme === 'dark') {
-      expect(await htmlHasDark()).toBeTruthy();
-    } else {
-      expect(await htmlHasDark()).toBeFalsy();
-    }
+    expect(await htmlHasDark()).toBeTruthy();
 
-    // Reload and verify persistence survives full page load
     await page.reload();
     await waitForIdle(page);
     await expect.poll(getThemeAttr).toBe(targetTheme);
-    if (targetTheme === 'dark') {
-      expect(await htmlHasDark()).toBeTruthy();
-    } else {
-      expect(await htmlHasDark()).toBeFalsy();
-    }
+    expect(await htmlHasDark()).toBeTruthy();
   });
 });

@@ -4,6 +4,14 @@ type ElementHandle<T extends HTMLElement> =
   | undefined
   | { current: T | null | undefined };
 
+import {
+  applySystemTheme,
+  cycleThemePreference,
+  getThemePreference,
+  updateThemeToggleButton,
+  readThemePreference,
+} from '../../lib/theme';
+
 type ModernNavBarOptions = {
   navBar?: ElementHandle<HTMLElement>;
   mobileMenu?: ElementHandle<HTMLElement>;
@@ -38,54 +46,9 @@ function setAriaCurrent(navElement: HTMLElement | null) {
   });
 }
 
-function getCurrentTheme(): 'light' | 'dark' {
-  return (document.documentElement.dataset.theme as 'light' | 'dark') || 'light';
-}
-
-function clearInlineThemeTokens(root: HTMLElement) {
-  for (const prop of ['--color-background', '--color-foreground', '--bg', '--fg']) {
-    root.style.removeProperty(prop);
-  }
-}
-
-function setTheme(nextTheme: 'light' | 'dark') {
-  const root = document.documentElement;
-  root.dataset.theme = nextTheme;
-  if (nextTheme === 'dark') { root.classList.add('dark'); } else { root.classList.remove('dark'); }
-  root.style.colorScheme = nextTheme;
-  // Remove inline token priming so stylesheet variables apply when theme toggles
-  try {
-    if (typeof window !== 'undefined' && ((window as any).__TEST_THEME_PRIMED || root.style.getPropertyValue('--color-background'))) {
-      clearInlineThemeTokens(root);
-    }
-  } catch  { void 0; }
-  localStorage.setItem('theme', nextTheme);
-  try { document.cookie = 'theme=' + encodeURIComponent(nextTheme) + '; Path=/; Max-Age=' + (60*60*24*365) + '; SameSite=Lax'; } catch  { void 0; }
-
-  // Attempt to set an HttpOnly server-side cookie for SSR personalization (non-blocking)
-  try {
-    if (typeof fetch === 'function') {
-      fetch('/api/set-theme', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({ theme: nextTheme }),
-        keepalive: true
-      }).catch(() => { /* Fail silently */ });
-    }
-  } catch { /* noop */ }
-}
-
-function updateThemeButton(button: HTMLButtonElement | null, theme: 'light' | 'dark') {
-  if (!button) return;
-  button.setAttribute('aria-pressed', String(theme === 'dark'));
-  button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-}
-
-function toggleTheme(button: HTMLButtonElement | null) {
-  const nextTheme = getCurrentTheme() === 'dark' ? 'light' : 'dark';
-  setTheme(nextTheme);
-  updateThemeButton(button, nextTheme);
+function cycleTheme(button: HTMLButtonElement | null) {
+  const nextPreference = cycleThemePreference();
+  updateThemeToggleButton(button, nextPreference);
 }
 
 function openMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
@@ -152,21 +115,20 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
   const cleanupFns: CleanupFn[] = [];
 
   if (themeToggle) {
-    updateThemeButton(themeToggle, getCurrentTheme());
+    updateThemeToggleButton(themeToggle, getThemePreference());
     const handler = (event: Event) => {
       event.preventDefault();
-      toggleTheme(themeToggle);
+      cycleTheme(themeToggle);
     };
     themeToggle.addEventListener('click', handler);
     cleanupFns.push(() => themeToggle.removeEventListener('click', handler));
 
     const mediaQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
     const systemThemeListener = (event: MediaQueryListEvent) => {
-      const storedTheme = localStorage.getItem('theme');
-      if (storedTheme) return; // respect explicit user choice
+      if (readThemePreference() !== 'system') return;
       const inferredTheme = event.matches ? 'dark' : 'light';
-      setTheme(inferredTheme);
-      updateThemeButton(themeToggle, inferredTheme);
+      applySystemTheme(inferredTheme);
+      updateThemeToggleButton(themeToggle, 'system');
     };
 
     if (mediaQuery?.addEventListener) {

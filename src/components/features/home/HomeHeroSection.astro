@@ -1,7 +1,9 @@
 ---
+import CoinFlipImage from '../../composites/CoinFlipImage.astro';
 import PageHero from '../../composites/PageHero.astro';
 import Button from '../../primitives/Button.astro';
 import ButtonGroup from '../../composites/ButtonGroup.astro';
+import FloatingEmoji from '../../primitives/FloatingEmoji.astro';
 
 interface Props {
   author: string;
@@ -12,8 +14,8 @@ interface Props {
 const { author, tagline, description } = Astro.props as Props;
 ---
 
-<PageHero id="about-me">
-  <div class="grid items-center gap-10 md:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] sm:gap-12 lg:gap-16">
+<PageHero id="about-me" class="hero-gradient-animated">
+  <div class="grid items-center gap-10 md:grid-cols-2 sm:gap-12 lg:gap-16">
     <div class="order-2 md:order-1">
       <div class="max-w-2xl space-y-8 text-base leading-relaxed text-foreground/85">
         <div class="space-y-5">
@@ -56,33 +58,26 @@ const { author, tagline, description } = Astro.props as Props;
       </ButtonGroup>
     </div>
     <div class="order-1 flex justify-center md:order-2 md:justify-end">
-      <div class="proof-card max-w-sm p-6 sm:p-8">
-        <div class="relative z-10 space-y-6">
-          <div class="overflow-hidden rounded-[2rem] border border-border/50 bg-surface shadow-sm">
-            <picture>
-              <source srcset="/assets/images/optimized/avif/Blake-O-scaled@640w.avif" type="image/avif" />
-              <source srcset="/assets/images/optimized/webp/Blake-O-scaled@640w.webp" type="image/webp" />
-              <img
-                src="/assets/images/Blake-O-scaled.jpg"
-                alt="Blake Oxford"
-                class="aspect-[4/5] w-full object-cover"
-                width="640"
-                height="800"
-                loading="eager"
-                fetchpriority="high"
-                decoding="async"
-              />
-            </picture>
-          </div>
-          <div class="space-y-3">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-subtle-foreground">Operating profile</p>
-            <ul class="space-y-2 text-sm leading-relaxed text-foreground/88 sm:text-base" role="list">
-              <li>Builds durable systems with low cognitive load.</li>
-              <li>Combines technical implementation with operational adoption.</li>
-              <li>Prioritizes control integrity over novelty.</li>
-            </ul>
-          </div>
+      <div class="relative">
+        <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-primary/30 blur-xl opacity-70 animate-pulse"></div>
+        <div class="relative rounded-full bg-gradient-to-r from-accent to-primary p-1">
+          <CoinFlipImage
+            frontSrc="/assets/images/Blake-O-scaled.jpg"
+            backSrc="/assets/images/china-profile-picture.jpg"
+            alt="Blake Oxford"
+            altBack="Blake Oxford in China"
+            size={280}
+            flipMultipleTimes
+            loading="eager"
+            fetchPriority="high"
+            decoding="auto"
+            role="img"
+            aria-label="Photo of Blake Oxford"
+          />
         </div>
+        <FloatingEmoji emoji="💡" position="top-right" size="md" />
+        <FloatingEmoji emoji="🚀" position="bottom-left" size="sm" color="accent-dark" />
+        <FloatingEmoji emoji="☁️" position="center-right" size="sm" color="primary" />
       </div>
     </div>
   </div>

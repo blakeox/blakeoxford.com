@@ -2,7 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import ProjectDetailSection from './ProjectDetailSection.astro';
-import AchievementCard from '../../composites/AchievementCard.astro';
+import OutcomeCard from '../../composites/OutcomeCard.astro';
 import BulletListItem from '../../primitives/BulletListItem.astro';
 import BackgroundGrid from '../../primitives/BackgroundGrid.astro';
 import ProjectTags from './ProjectTags.astro';
@@ -50,7 +50,7 @@ const {
 
     {data.highlights?.length ? (
       <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
-        <AchievementCard title="Program outcomes" achievements={data.highlights} />
+        <OutcomeCard title="Program outcomes" achievements={data.highlights} />
       </ProjectDetailSection>
     ) : null}
 
@@ -83,7 +83,7 @@ const {
       <ProjectDetailSection title="Program pillars" eyebrow="Where it delivered" layout="surface">
         <Flex wrap gap="xs" class="text-xs font-semibold uppercase tracking-label text-subtle-foreground">
           {categories.map((category: string) => (
-            <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25 dark:bg-surface-dark-subtle">{category}</span>
+            <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25">{category}</span>
           ))}
         </Flex>
       </ProjectDetailSection>
@@ -104,7 +104,7 @@ const {
 
     {reflection ? (
       <ProjectDetailSection title="Reflection" eyebrow="Personal note">
-        <blockquote class="border-l-4 border-accent/80 bg-surface-subtle/80 p-6 text-base italic leading-relaxed text-muted-foreground dark:bg-surface-dark-subtle">
+        <blockquote class="border-l-4 border-accent/80 bg-surface-subtle/80 p-6 text-base italic leading-relaxed text-muted-foreground">
           {reflection}
         </blockquote>
       </ProjectDetailSection>

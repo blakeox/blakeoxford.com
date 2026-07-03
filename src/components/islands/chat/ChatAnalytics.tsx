@@ -39,10 +39,10 @@ export function ChatAnalytics({
 					<span className="block text-[color:var(--fg)]/50">Avg Quality</span>
 					<span className={`text-sm font-semibold ${
 						analytics.avgQualityScore >= 80
-							? 'text-[color:var(--color-success-dark)] dark:text-[color:var(--color-success-light)]'
+							? 'text-success-emphasis'
 							: analytics.avgQualityScore >= 60
-							? 'text-[color:var(--color-warning-dark)] dark:text-[color:var(--color-warning-light)]'
-							: 'text-[color:var(--color-error-dark)] dark:text-[color:var(--color-error-light)]'
+							? 'text-warning-emphasis'
+							: 'text-error-emphasis'
 					}`}>
 						{analytics.avgQualityScore > 0 ? `${Math.round(analytics.avgQualityScore)}/100` : 'N/A'}
 					</span>
@@ -65,19 +65,19 @@ export function ChatAnalytics({
 					<span className="block text-[color:var(--fg)]/50 mb-2">Citation Health</span>
 					<div className="flex flex-wrap gap-2">
 						{healthyResponses > 0 && (
-							<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-success-subtle)] px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--color-success-dark)] dark:text-[color:var(--color-success-light)]">
+							<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-success-subtle)] px-2.5 py-1 text-[0.65rem] font-medium text-success-emphasis">
 								<span>✓</span>
 								{healthyResponses} Verified
 							</span>
 						)}
 						{warningResponses > 0 && (
-							<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-warning-subtle)] px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--color-warning-dark)] dark:text-[color:var(--color-warning-light)]">
+							<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-warning-subtle)] px-2.5 py-1 text-[0.65rem] font-medium text-warning-emphasis">
 								<span>⚠</span>
 								{warningResponses} Warnings
 							</span>
 						)}
 						{errorResponses > 0 && (
-							<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-error-subtle)] px-2.5 py-1 text-[0.65rem] font-medium text-[color:var(--color-error-dark)] dark:text-[color:var(--color-error-light)]">
+							<span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--color-error-subtle)] px-2.5 py-1 text-[0.65rem] font-medium text-error-emphasis">
 								<span>✗</span>
 								{errorResponses} Issues
 							</span>
@@ -114,7 +114,7 @@ export function ChatAnalytics({
 						</div>
 						<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 							<span className="block text-[color:var(--fg)]/50">Needs work</span>
-							<span className="text-sm font-semibold text-[color:var(--color-error-dark)] dark:text-[color:var(--color-error-light)]">{feedbackAnalytics.negative}</span>
+							<span className="text-sm font-semibold text-error-emphasis">{feedbackAnalytics.negative}</span>
 						</div>
 						{feedbackAnalytics.positiveRate !== null && (
 							<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
@@ -139,13 +139,13 @@ export function ChatAnalytics({
 						</div>
 						<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 							<span className="block text-[color:var(--fg)]/50">Fastest</span>
-							<span className="text-sm font-semibold text-[color:var(--color-success-dark)] dark:text-[color:var(--color-success-light)]">
+							<span className="text-sm font-semibold text-success-emphasis">
 								{(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
 							</span>
 						</div>
 						<div className="rounded-xl border border-[color:var(--border)]/30 px-3 py-2">
 							<span className="block text-[color:var(--fg)]/50">Slowest</span>
-							<span className="text-sm font-semibold text-[color:var(--color-warning-dark)] dark:text-[color:var(--color-warning-light)]">
+							<span className="text-sm font-semibold text-warning-emphasis">
 								{(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
 							</span>
 						</div>

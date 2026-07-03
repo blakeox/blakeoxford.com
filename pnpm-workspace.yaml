@@ -16,11 +16,12 @@ onlyBuiltDependencies:
   - workerd
 
 overrides:
-  minimatch: 10.2.1
-  undici: 7.18.2
-  ajv: 8.18.0
-  tmp: 0.2.4
-  lodash: 4.17.23
+  minimatch: "10.2.3"
+  rollup: "4.59.0"
+  undici: "7.18.2"
+  ajv: "8.18.0"
+  tmp: "0.2.4"
+  lodash: "4.17.23"
 
 peerDependencyRules:
   allowedVersions:

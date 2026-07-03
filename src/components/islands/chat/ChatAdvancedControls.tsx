@@ -91,7 +91,7 @@ export function ChatAdvancedControls({
 							</div>
 							<div className="rounded-xl border border-[color:var(--border)]/30 px-2.5 py-2">
 								<span className="block text-[0.6rem] text-[color:var(--fg)]/50">Needs work</span>
-								<span className="text-sm font-semibold text-[color:var(--color-error-dark)] dark:text-[color:var(--color-error-light)]">{feedbackAnalytics.negative}</span>
+								<span className="text-sm font-semibold text-error-emphasis">{feedbackAnalytics.negative}</span>
 							</div>
 							{feedbackAnalytics.positiveRate !== null && (
 								<div className="rounded-xl border border-[color:var(--border)]/30 px-2.5 py-2">

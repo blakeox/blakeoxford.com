@@ -4,9 +4,16 @@ import Container from '../../components/primitives/Container.astro';
 import Section from '../../components/primitives/Section.astro';
 import Badge from '../../components/primitives/Badge.astro';
 
+const brandPalette = [
+ { name: 'primary', hue: '264°', token: '--color-primary', usage: 'Indigo brand anchor — headings, selection, legacy focus fallback' },
+ { name: 'accent', hue: '196°', token: '--color-accent', usage: 'Cyan highlight — CTAs, focus rings, interactive chrome' },
+ { name: 'accent-subtle', hue: '196° (10% mix)', token: '--color-accent-subtle', usage: 'Expressive-tier washes — chat CTAs, soft accent panels (not body text backgrounds)' },
+];
+
 const semanticColors = [
  { name: 'background', utility: 'bg-background', usage: 'Page canvas' },
  { name: 'surface', utility: 'bg-surface', usage: 'Cards, panels, controls' },
+ { name: 'surface-elevated', utility: 'bg-[color:var(--surface-elevated)]', usage: 'Modals, dropdowns, and elevated overlays (dark remaps to --color-surface-elevated-dark)' },
  { name: 'foreground', utility: 'text-foreground', usage: 'Primary readable text' },
  { name: 'muted-foreground', utility: 'text-muted-foreground', usage: 'Secondary body copy (WCAG AA on background)' },
  { name: 'subtle-foreground', utility: 'text-subtle-foreground', usage: 'Labels, meta, uppercase captions' },
@@ -25,8 +32,17 @@ const semanticAliases = [
  { token: '--fg-muted', mapsTo: '--color-muted-foreground', usage: 'Nav links, secondary chrome' },
  { token: '--fg-subtle', mapsTo: '--color-subtle-foreground', usage: 'Labels and meta text' },
  { token: '--surface', mapsTo: '--color-surface', usage: 'Glass panels and cards' },
+ { token: '--surface-elevated', mapsTo: '--color-surface-elevated-dark (dark)', usage: 'Elevated overlays and modal shells' },
  { token: '--border', mapsTo: '--border-color', usage: 'Component outlines' },
  { token: '--accent', mapsTo: '--color-accent', usage: 'Focus rings and highlights' },
+];
+
+const themeAwareTokens = [
+ { token: '--color-accent-emphasis', utility: 'text-accent-emphasis', usage: 'Links and headings that need lighter accent in dark mode' },
+ { token: '--color-success-emphasis', utility: 'text-success-emphasis', usage: 'State text on subtle success washes' },
+ { token: '--color-button-primary-bg', utility: 'bg-button-primary-bg', usage: 'Primary button fill — inverts for dark contrast' },
+ { token: '--color-button-primary-fg', utility: 'text-button-primary-fg', usage: 'Primary button label color' },
+ { token: '--color-field-bg', utility: 'bg-field-bg', usage: 'Elevated inputs (search combobox, overlays)' },
 ];
 
 const motionTokens = [
@@ -108,6 +124,23 @@ const stylesheetRoles = [
  </div>
  </div>
 
+ <section class="mt-16" aria-labelledby="brand-palette">
+ <h2 id="brand-palette" class="text-2xl font-bold text-foreground">Brand Palette</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ Primary indigo sits at OKLCH hue <strong>264°</strong>; accent cyan at <strong>196°</strong>. Keep these hues aligned when adjusting lightness or chroma — do not drift toward unrelated hues.
+ </p>
+ <div class="mt-6 grid gap-4 md:grid-cols-3">
+ {brandPalette.map((color) => (
+ <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <h3 class="font-semibold text-foreground">{color.name}</h3>
+ <p class="mt-1 text-xs text-subtle-foreground">Hue: {color.hue}</p>
+ <code class="mt-3 block text-sm text-accent">{color.token}</code>
+ <p class="mt-2 text-sm text-muted-foreground">{color.usage}</p>
+ </article>
+ ))}
+ </div>
+ </section>
+
  <section class="mt-16" aria-labelledby="stylesheet-roles">
  <h2 id="stylesheet-roles" class="text-2xl font-bold text-foreground">Stylesheet Roles</h2>
  <div class="mt-5 grid gap-3">
@@ -133,6 +166,22 @@ const stylesheetRoles = [
  <h3 class="font-semibold text-foreground">{color.name}</h3>
  <p class="mt-1 text-xs text-subtle-foreground">{color.usage}</p>
  </div>
+ </article>
+ ))}
+ </div>
+ </section>
+
+ <section class="mt-16" aria-labelledby="theme-aware-tokens">
+ <h2 id="theme-aware-tokens" class="text-2xl font-bold text-foreground">Theme-Aware Emphasis</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ Use these instead of pairing <code>text-accent-dark dark:text-accent-light</code> (or similar) in reusable components. Values swap automatically inside <code>:root[data-theme="dark"]</code>.
+ </p>
+ <div class="mt-6 grid gap-4 sm:grid-cols-2">
+ {themeAwareTokens.map((item) => (
+ <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <code class="text-sm font-semibold text-accent">{item.token}</code>
+ <p class="mt-2 text-xs text-subtle-foreground">{item.utility}</p>
+ <p class="mt-2 text-sm text-muted-foreground">{item.usage}</p>
  </article>
  ))}
  </div>
@@ -214,6 +263,48 @@ const stylesheetRoles = [
  </ul>
  </section>
 
+ <section class="mt-16" aria-labelledby="live-tokens">
+ <h2 id="live-tokens" class="text-2xl font-bold text-foreground">Live Computed Values</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ Values below are read from <code>:root</code> at runtime (respects light/dark theme). Toggle theme to verify dark-mode remaps.
+ </p>
+ <div class="mt-5 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <table class="w-full text-sm" id="live-token-table">
+ <thead class="border-b border-border bg-surface-subtle/50 dark:border-border-dark dark:bg-surface-dark-subtle/50">
+ <tr class="text-left">
+ <th class="px-4 py-3 font-semibold">Token</th>
+ <th class="px-4 py-3 font-semibold">Computed value</th>
+ </tr>
+ </thead>
+ <tbody id="live-token-body" class="divide-y divide-border dark:divide-border-dark">
+ <tr><td class="px-4 py-3 text-subtle-foreground" colspan="2">Loading computed tokens…</td></tr>
+ </tbody>
+ </table>
+ </div>
+ </section>
+
+ <section class="mt-16" aria-labelledby="contrast-matrix">
+ <h2 id="contrast-matrix" class="text-2xl font-bold text-foreground">Contrast Matrix</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ WCAG 2.1 contrast ratios for key semantic pairs in the active theme. Body text targets ≥4.5:1; large text ≥3:1.
+ </p>
+ <div class="mt-5 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <table class="w-full text-sm">
+ <thead class="border-b border-border bg-surface-subtle/50 dark:border-border-dark dark:bg-surface-dark-subtle/50">
+ <tr class="text-left">
+ <th class="px-4 py-3 font-semibold">Pair</th>
+ <th class="px-4 py-3 font-semibold">Ratio</th>
+ <th class="px-4 py-3 font-semibold">Target</th>
+ <th class="px-4 py-3 font-semibold">Status</th>
+ </tr>
+ </thead>
+ <tbody id="contrast-matrix-body" class="divide-y divide-border dark:divide-border-dark">
+ <tr><td class="px-4 py-3 text-subtle-foreground" colspan="4">Computing contrast…</td></tr>
+ </tbody>
+ </table>
+ </div>
+ </section>
+
  <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
  <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/design/components/">Component contracts</a>
  <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark" href="/docs/components/">Component catalog</a>
@@ -221,3 +312,147 @@ const stylesheetRoles = [
  </Container>
  </Section>
 </BaseLayout>
+
+<script>
+const LIVE_TOKENS = [
+ '--color-background',
+ '--color-foreground',
+ '--color-muted-foreground',
+ '--color-subtle-foreground',
+ '--color-surface',
+ '--border-color',
+ '--color-accent',
+ '--color-accent-subtle',
+ '--color-primary',
+ '--duration-fast',
+ '--duration',
+ '--duration-slow',
+ '--ease-standard',
+ '--bg',
+ '--fg',
+ '--fg-muted',
+];
+
+const CONTRAST_PAIRS = [
+ { label: 'Body text on background', fg: '--color-foreground', bg: '--color-background', min: 4.5 },
+ { label: 'Muted text on background', fg: '--color-muted-foreground', bg: '--color-background', min: 4.5 },
+ { label: 'Subtle text on background', fg: '--color-subtle-foreground', bg: '--color-background', min: 4.5 },
+ { label: 'Accent on surface', fg: '--color-accent', bg: '--color-surface', min: 3 },
+ { label: 'Accent text on accent-subtle wash', fg: '--color-accent-dark', bg: '--color-accent-subtle', min: 4.5 },
+ { label: 'Foreground on surface', fg: '--color-foreground', bg: '--color-surface', min: 4.5 },
+];
+
+function getToken(name: string): string {
+ return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function parseRgb(raw: string): [number, number, number] | null {
+ if (!raw) return null;
+ const val = raw.trim().toLowerCase();
+ const hexMatch = val.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+ if (hexMatch) {
+ let h = hexMatch[1];
+ if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+ return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+ }
+ const rgbMatch = val.match(/rgba?\(\s*([\d.]+)\s*(?:,|\s)\s*([\d.]+)\s*(?:,|\s|\/)\s*([\d.]+)/i);
+ if (rgbMatch) {
+ return [Math.round(parseFloat(rgbMatch[1])), Math.round(parseFloat(rgbMatch[2])), Math.round(parseFloat(rgbMatch[3]))];
+ }
+ return null;
+}
+
+function resolveColor(cssColor: string): [number, number, number] | null {
+ const direct = parseRgb(cssColor);
+ if (direct) return direct;
+ try {
+ const canvas = document.createElement('canvas');
+ const ctx = canvas.getContext('2d');
+ if (!ctx) return null;
+ const sentinel = '#010203';
+ ctx.fillStyle = sentinel;
+ ctx.fillStyle = cssColor;
+ const hex = ctx.fillStyle;
+ if (typeof hex === 'string' && hex.startsWith('#') && hex.toLowerCase() !== sentinel) {
+ const hx = hex.length === 4 ? hex.slice(1).split('').map((c) => c + c).join('') : hex.slice(1);
+ return [parseInt(hx.slice(0, 2), 16), parseInt(hx.slice(2, 4), 16), parseInt(hx.slice(4, 6), 16)];
+ }
+ } catch {
+ /* noop */
+ }
+ return null;
+}
+
+function resolveTokenColor(tokenName: string, property: 'color' | 'background'): [number, number, number] | null {
+ const probe = document.createElement('span');
+ probe.style.cssText = 'position:fixed;left:-9999px;visibility:hidden;pointer-events:none;';
+ const cssValue = `var(${tokenName})`;
+ if (property === 'background') {
+ probe.style.backgroundColor = cssValue;
+ } else {
+ probe.style.color = cssValue;
+ }
+ document.documentElement.appendChild(probe);
+ const resolved = getComputedStyle(probe)[property === 'background' ? 'backgroundColor' : 'color'];
+ probe.remove();
+ return resolveColor(resolved);
+}
+
+function luminance(r: number, g: number, b: number): number {
+ const channel = [r, g, b].map((v) => {
+ const normalized = v / 255;
+ return normalized <= 0.03928 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4);
+ });
+ return 0.2126 * channel[0] + 0.7152 * channel[1] + 0.0722 * channel[2];
+}
+
+function contrastRatio(fg: [number, number, number], bg: [number, number, number]): number {
+ const fgL = luminance(fg[0], fg[1], fg[2]);
+ const bgL = luminance(bg[0], bg[1], bg[2]);
+ const lighter = Math.max(fgL, bgL);
+ const darker = Math.min(fgL, bgL);
+ return (lighter + 0.05) / (darker + 0.05);
+}
+
+function renderLiveTokens() {
+ const body = document.getElementById('live-token-body');
+ if (!body) return;
+ body.innerHTML = LIVE_TOKENS.map((token) => {
+ const value = getToken(token) || '(unset)';
+ return `<tr><td class="px-4 py-3"><code class="text-accent">${token}</code></td><td class="px-4 py-3 font-mono text-xs text-muted-foreground">${value}</td></tr>`;
+ }).join('');
+}
+
+function renderContrastMatrix() {
+ const body = document.getElementById('contrast-matrix-body');
+ if (!body) return;
+ body.innerHTML = CONTRAST_PAIRS.map((pair) => {
+ const fg = resolveTokenColor(pair.fg, 'color');
+ const bg = resolveTokenColor(pair.bg, 'background');
+ if (!fg || !bg) {
+ return `<tr><td class="px-4 py-3">${pair.label}</td><td class="px-4 py-3 text-subtle-foreground" colspan="3">Unable to resolve colors</td></tr>`;
+ }
+ const ratio = contrastRatio(fg, bg);
+ const pass = ratio >= pair.min;
+ return `<tr>
+ <td class="px-4 py-3">${pair.label}</td>
+ <td class="px-4 py-3 font-mono">${ratio.toFixed(2)}:1</td>
+ <td class="px-4 py-3">≥ ${pair.min}:1</td>
+ <td class="px-4 py-3 ${pass ? 'text-success' : 'text-error'}">${pass ? 'Pass' : 'Fail'}</td>
+ </tr>`;
+ }).join('');
+}
+
+function refreshTokenPanels() {
+ renderLiveTokens();
+ renderContrastMatrix();
+}
+
+refreshTokenPanels();
+
+const themeObserver = new MutationObserver(refreshTokenPanels);
+themeObserver.observe(document.documentElement, {
+ attributes: true,
+ attributeFilter: ['data-theme', 'class'],
+});
+</script>

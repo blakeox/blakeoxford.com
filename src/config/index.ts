@@ -32,8 +32,6 @@ export {
 	RATE_LIMIT,
 	// Caching
 	CACHE_DURATIONS,
-	// CSS classes
-	CSS_CLASSES,
 	// SEO
 	SEO,
 	// Animations

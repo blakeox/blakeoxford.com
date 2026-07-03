@@ -21,7 +21,7 @@ Current interim structure will be migrated incrementally.
 
 - @smoke @essential – Fast core health
 - @journey – Primary user flows
-- @accessibility-core / @accessibility-extended
+- @accessibility-core / @accessibility-contrast / @accessibility-extended
 - @perf-budget / @perf-regression
 - @visual-essential / @visual-full
 - @diagnostic – Debug / verbose

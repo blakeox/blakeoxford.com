@@ -81,7 +81,7 @@ jobs:
         run: pnpm run lint
 
       - name: Design lint (tokens & spacing)
-        run: pnpm design:lint || true # non-blocking in fast CI
+        run: pnpm design:lint
 
       - name: Run TypeScript type checking
         run: pnpm run typecheck
@@ -103,9 +103,6 @@ jobs:
 
       - name: Run unit tests
         run: pnpm test -- --run
-
-      - name: Contrast token audit
-        run: pnpm audit:contrast # fails only if failing tokens are actually used in build
 
       - name: Run mutation tests (non-blocking)
         run: pnpm test:mutants
@@ -230,6 +227,9 @@ jobs:
         run: pnpm run test:e2e:essential:chromium
         env:
           COMPREHENSIVE_TESTS: "false"
+
+      - name: Runtime contrast audit (Playwright)
+        run: pnpm audit:contrast
 
       - name: Track flakiness (Playwright JSON)
         if: always()

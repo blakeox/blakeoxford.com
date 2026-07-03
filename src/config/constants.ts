@@ -61,58 +61,6 @@ export const CACHE_DURATIONS = {
   },
 } as const;
 
-// ─── Common CSS Classes (Tailwind patterns) ──────────────────────
-export const CSS_CLASSES = {
-  // Card patterns
-  card: {
-    // Base card styles
-    base: 'bg-surface dark:bg-surface-dark rounded-xl shadow-xl border border-border/50 dark:border-border-dark/50',
-    
-    // Card variants
-    compact: 'rounded-2xl border border-border/30 bg-surface/95 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/95',
-    elevated: 'rounded-2xl border border-border/30 bg-surface shadow-lg dark:border-border-dark/40 dark:bg-surface-dark',
-    glass: 'rounded-2xl border border-border/40 bg-[color:var(--glass-surface-bg)]/85 shadow-md backdrop-blur dark:border-border-dark/40',
-    
-    // Hover effects
-    hoverLift: 'transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-1 hover:shadow-lg',
-    hoverLiftSm: 'transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 hover:shadow-lg',
-    hoverGradient: 'pointer-events-none absolute inset-0 bg-gradient-to-br from-background/70 via-surface/85 to-background/65 opacity-0 transition-opacity duration-300 group-hover:opacity-100',
-    
-    // Interactive states
-    interactive: 'group relative overflow-hidden',
-    focusRing: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60',
-    
-    // Complete card compositions
-    blog: 'group flex h-full flex-col rounded-2xl border border-border/30 bg-surface/95 shadow-sm transition-colors duration-200 hover:border-accent/50 hover:shadow-lg dark:border-border-dark/40 dark:bg-surface-dark/95',
-    project: 'relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/30 bg-surface/95 shadow-sm transition-colors duration-200 hover:border-accent/50 hover:shadow-lg dark:border-border-dark/40 dark:bg-surface-dark/95',
-    feature: 'group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/30 bg-surface/95 p-6 shadow-sm transition-colors duration-200 hover:border-accent/50 hover:shadow-lg dark:border-border-dark/40 dark:bg-surface-dark/95',
-  },
-  
-  // Section containers
-  section: 'py-16 sm:py-20 lg:py-24 relative',
-  container: 'mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8',
-  
-  // Typography
-  heading: {
-    h1: 'text-4xl sm:text-5xl md:text-6xl font-bold',
-    h2Major: 'text-3xl sm:text-4xl md:text-5xl font-bold',
-    h2: 'text-2xl sm:text-3xl md:text-4xl font-bold',
-    h3: 'text-xl sm:text-2xl font-bold',
-  },
-  
-  // Buttons
-  button: {
-    primary: 'inline-flex items-center justify-center gap-2 rounded-full px-6 sm:px-7 py-3 text-sm font-semibold shadow-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/65 focus-visible:ring-offset-2',
-    secondary: 'inline-flex items-center justify-center gap-2 rounded-full border-2 border-accent/60 px-6 sm:px-7 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:text-accent-dark hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2',
-  },
-  
-  // Image effects
-  image: {
-    scaleHover: 'transition-transform duration-500 group-hover:scale-105',
-    scaleHoverSm: 'transition-transform duration-500 group-hover:scale-[1.04]',
-  },
-} as const;
-
 // ─── SEO & Meta Configuration ────────────────────────────────────
 export const SEO = {
   defaultImage: '/assets/images/Blake-O-scaled.jpg',

@@ -30,7 +30,7 @@
   }
 
   .proof-card {
-    @apply relative overflow-hidden rounded-3xl border p-8 shadow-lg transition-colors duration-200;
+    @apply relative overflow-hidden rounded-3xl border p-8 shadow-lg transition-colors duration-normal;
 
     background: linear-gradient(
       180deg,
@@ -63,6 +63,8 @@
   .nav-utility-button {
     @apply inline-flex size-11 items-center justify-center rounded-full border text-foreground/80 transition-colors;
 
+    min-height: 2.75rem;
+    min-width: 2.75rem;
     border-color: color-mix(in oklch, var(--border) 62%, transparent);
     background: color-mix(in oklch, var(--surface) 74%, transparent);
   }
@@ -74,12 +76,23 @@
   }
 
   .nav-utility-button:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px color-mix(in oklch, var(--accent) 55%, transparent);
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background dark:ring-offset-background-dark;
   }
 
+  /* Unified keyboard focus for nav, search, chat, and theme controls */
+  .focus-ring-interactive:focus-visible {
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background dark:ring-offset-background-dark;
+  }
+
+  /* WCAG 2.5.5 minimum touch target (44×44px) */
+  .touch-target {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+
+  /* MDX blog content only — listing cards use BlogPostCard → Card → BaseCard */
   .blog-card {
-    @apply rounded-2xl p-6 shadow-lg transition-colors duration-200;
+    @apply rounded-2xl p-6 shadow-lg transition-colors duration-normal;
 
     background: color-mix(in oklch, var(--surface) 90%, transparent);
     border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
@@ -107,7 +120,7 @@
   .hover-lift,
   .hover-lift-sm,
   .hover-lift-lg {
-    @apply transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200;
+    @apply transition-colors duration-normal motion-safe:transition-transform motion-safe:duration-normal;
 
     transition-timing-function: var(--ease-standard);
   }
@@ -131,9 +144,10 @@
   }
 
   .card-interactive {
-    @apply transition-colors duration-200 motion-safe:transition-transform motion-safe:duration-200;
+    @apply transition-colors duration-normal motion-safe:transition-transform motion-safe:duration-normal;
   }
 
+  /* Prefer BaseCard/Card hover="lift" for new cards; card-interactive adds focus-within scale for linked cards */
   .card-interactive:hover {
     @apply motion-safe:scale-[1.01];
   }
@@ -154,10 +168,20 @@
     background: color-mix(in oklch, var(--accent) 10%, transparent);
   }
 
+  :root[data-theme="dark"] .blur-orb-accent,
+  :root.dark .blur-orb-accent {
+    background: color-mix(in oklch, var(--accent) 18%, transparent);
+  }
+
   .blur-orb-primary {
     @apply h-64 w-64;
 
     background: color-mix(in oklch, var(--color-primary) 10%, transparent);
+  }
+
+  :root[data-theme="dark"] .blur-orb-primary,
+  :root.dark .blur-orb-primary {
+    background: color-mix(in oklch, var(--color-primary) 16%, transparent);
   }
 
   /* Homepage hero animated gradient overlay */
@@ -184,6 +208,18 @@
     .hero-gradient-animated::before {
       animation: none;
     }
+  }
+
+  .theme-toggle .sun-icon,
+  .theme-toggle .moon-icon,
+  .theme-toggle .system-icon {
+    display: none;
+  }
+
+  .theme-toggle[data-theme-preference='light'] .sun-icon,
+  .theme-toggle[data-theme-preference='dark'] .moon-icon,
+  .theme-toggle[data-theme-preference='system'] .system-icon {
+    display: block;
   }
 
   .page-slab {
@@ -221,6 +257,27 @@
 
     a:active {
       opacity: 0.85;
+    }
+  }
+
+  /* Theme toggle icon spin — token-driven, disabled for reduced motion */
+  .theme-toggle:active .sun-icon,
+  .theme-toggle:active .moon-icon {
+    animation: themeToggleSpin var(--duration-fast) var(--ease-standard);
+  }
+
+  /* JS-driven panels and overlays */
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu,
+    .overlay-panel,
+    .ai-chat-panel,
+    #search-overlay {
+      transition: none !important;
+    }
+
+    .theme-toggle:active .sun-icon,
+    .theme-toggle:active .moon-icon {
+      animation: none !important;
     }
   }
 }

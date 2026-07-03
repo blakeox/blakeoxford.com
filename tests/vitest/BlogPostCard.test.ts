@@ -28,7 +28,7 @@ describe('BlogPostCard Component', () => {
     });
 
     it('should use semantic HTML article element', () => {
-      expect(fileContent).toContain('<article');
+      expect(fileContent).toContain('as="article"');
     });
 
     it('should have a link wrapper for navigation', () => {
@@ -93,8 +93,9 @@ describe('BlogPostCard Component', () => {
       expect(fileContent).toMatch(/hover:(shadow|translate|-translate-y)/);
     });
 
-    it('should have dark mode support', () => {
-      expect(fileContent).toContain('dark:');
+    it('should inherit dark mode from semantic surface tokens', () => {
+      expect(fileContent).toContain('Card');
+      expect(fileContent).toMatch(/text-foreground|bg-surface|border-border/);
     });
 
     it('should use group hover pattern', () => {

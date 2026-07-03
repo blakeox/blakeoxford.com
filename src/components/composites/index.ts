@@ -9,7 +9,7 @@ export { default as FeatureCard } from './FeatureCard.astro';
 export { default as Hero } from './Hero.astro';
 export { default as PageHero } from './PageHero.astro';
 export { default as StatsCard } from './StatsCard.astro';
-export { default as AchievementCard } from './AchievementCard.astro';
+export { default as OutcomeCard } from './OutcomeCard.astro';
 export { default as CTASection } from './CTASection.astro';
 export { default as MetricsTable } from './MetricsTable.astro';
 export { default as PhotoCarousel } from './PhotoCarousel.astro';

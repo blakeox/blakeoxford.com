@@ -104,18 +104,5 @@ module.exports = {
         },
       },
     },
-    {
-      files: ['src/styles/components/accessibility-panel.css'],
-      rules: {
-        'order/properties-order': null,
-      }
-    },
-    {
-      files: ['src/styles/utilities/animations.css'],
-      rules: {
-        'keyframes-name-pattern': null,
-        'selector-class-pattern': null
-      }
-    }
   ],
 };

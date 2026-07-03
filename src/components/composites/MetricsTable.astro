@@ -13,22 +13,22 @@ const { metrics } = Astro.props;
 ---
 
 <div class="overflow-x-auto">
- <table class="my-8 w-full border-collapse border border-border dark:border-border-dark">
+ <table class="my-8 w-full border-collapse border border-border">
  <thead>
- <tr class="bg-surface-subtle/70 dark:bg-surface-dark-subtle/70">
- <th class="border border-border p-3 text-left font-semibold text-foreground dark:border-border-dark">Metric</th>
- <th class="border border-border p-3 text-left font-semibold text-foreground dark:border-border-dark">Result</th>
- <th class="border border-border p-3 text-left font-semibold text-foreground dark:border-border-dark">Timeline</th>
+ <tr class="bg-surface-subtle/70">
+ <th class="border border-border p-3 text-left font-semibold text-foreground">Metric</th>
+ <th class="border border-border p-3 text-left font-semibold text-foreground">Result</th>
+ <th class="border border-border p-3 text-left font-semibold text-foreground">Timeline</th>
  </tr>
  </thead>
  <tbody>
  {metrics.map((metric, index) => (
- <tr class={index % 2 === 1 ? 'bg-surface/70 dark:bg-surface-dark/70' : ''}>
- <td class="border border-border p-3 font-semibold text-foreground dark:border-border-dark">{metric.metric}</td>
- <td class="border border-border p-3 text-muted-foreground dark:border-border-dark dark:text-foreground-light/80">{metric.result}</td>
- <td class="border border-border p-3 text-muted-foreground dark:border-border-dark dark:text-foreground-light/80">{metric.timeline}</td>
+ <tr class={index % 2 === 1 ? 'bg-surface/70' : ''}>
+ <td class="border border-border p-3 font-semibold text-foreground">{metric.metric}</td>
+ <td class="border border-border p-3 text-muted-foreground">{metric.result}</td>
+ <td class="border border-border p-3 text-muted-foreground">{metric.timeline}</td>
  </tr>
  ))}
  </tbody>
  </table>
-</div> 
+</div>

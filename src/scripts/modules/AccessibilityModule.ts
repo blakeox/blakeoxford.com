@@ -8,6 +8,7 @@ import type {
   AccessibilityConfig,
   FocusTrap 
 } from '../../types/accessibility';
+import { toggleTheme as setThemeToggle } from '../../lib/theme';
 
 // Extend the base config for module-specific needs
 export interface AccessibilityModuleConfig extends AccessibilityConfig {
@@ -324,17 +325,9 @@ export class AccessibilityModule {
 
   public toggleTheme(): void {
     if (typeof document === 'undefined') return;
-    
-    const root = document.documentElement;
-    const isDark = root.classList.contains('dark');
-    
-    if (isDark) {
-      root.classList.remove('dark');
-      this.announce('Switched to light theme');
-    } else {
-      root.classList.add('dark');
-      this.announce('Switched to dark theme');
-    }
+
+    const nextTheme = setThemeToggle();
+    this.announce(nextTheme === 'dark' ? 'Switched to dark theme' : 'Switched to light theme');
   }
 
   public cycleFontSize(): void {

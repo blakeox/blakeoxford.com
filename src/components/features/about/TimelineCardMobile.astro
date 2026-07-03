@@ -32,7 +32,7 @@ const iconSVGs = {
 
 <div 
  data-testid="timeline-card" 
- class="flex-none w-80 bg-surface/90 dark:bg-surface-dark/80 backdrop-blur-sm border border-border dark:border-border-dark rounded-xl p-6 hover:shadow-lg hover:shadow-emerald-500/10 transition-all group relative overflow-hidden"
+ class="flex-none w-80 bg-surface/90 backdrop-blur-sm border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-emerald-500/10 transition-all group relative overflow-hidden"
 >
  <!-- Background gradient effect -->
  <GradientOverlay variant='hover-subtle' direction='r' />
@@ -48,15 +48,15 @@ const iconSVGs = {
  </div>
  </div>
  <div class="ml-4 flex-1">
- <h3 class="font-bold text-xl sm:text-2xl text-foreground-strong group-hover:text-accent dark:group-hover:text-accent-light transition-colors duration-300">{year}</h3>
- <p class="text-success-dark dark:text-success-light group-hover:text-success transition-colors duration-300">{title}</p>
+ <h3 class="font-bold text-xl sm:text-2xl text-foreground-strong group-hover:text-accent-emphasis transition-colors duration-300">{year}</h3>
+ <p class="text-success-emphasis group-hover:text-success transition-colors duration-300">{title}</p>
  </div>
  </div>
  
- <div class="pl-2 border-l-2 border-border dark:border-border-dark group-hover:border-accent/50 transition-colors duration-300 space-y-2 relative">
+ <div class="pl-2 border-l-2 border-border group-hover:border-accent/50 transition-colors duration-300 space-y-2 relative">
  {achievements.map((achievement, idx) => (
  <p 
- class="text-sm text-foreground/90 group-hover:text-foreground flex items-start transform hover:translate-x-1 transition-all duration-300 hover:bg-neutral/10 dark:hover:bg-surface-dark-subtle/50 rounded-lg p-2" 
+ class="text-sm text-foreground/90 group-hover:text-foreground flex items-start transform hover:translate-x-1 transition-all duration-300 hover:bg-surface-subtle/50 rounded-lg p-2" 
  style={`transition-delay: ${idx * 50}ms`}
  >
  <svg class="w-3 h-3 text-accent mt-1 mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">

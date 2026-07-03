@@ -29,11 +29,11 @@ A blazing-fast, modern portfolio site built with [Astro](https://astro.build), d
 
 ### Styling
 
-- [Tailwind CSS](https://tailwindcss.com/)
-
-- SCSS (optional for custom overrides or animations)
+- [Tailwind CSS v4](https://tailwindcss.com/) with design tokens in `src/styles/theme.css`
 
 - [@tailwindcss/typography](https://tailwindcss.com/docs/typography-plugin)
+
+- [@tailwindcss/container-queries](https://github.com/tailwindlabs/tailwindcss-container-queries)
 
 ### Content
 
@@ -45,15 +45,11 @@ A blazing-fast, modern portfolio site built with [Astro](https://astro.build), d
 
 ### Components & Interactivity
 
-- Native `.astro` components
+- Native `.astro` components with React islands for interactive UI
 
-- Optional: [React](https://reactjs.org/), [Svelte](https://svelte.dev), [Vue](https://vuejs.org) components
+- [React](https://reactjs.org/) for hydrated islands (nav, search, chat, forms)
 
-- [Lucide](https://lucide.dev) or [Iconify](https://iconify.design) for icons
-
-- [Fuse.js](https://fusejs.io/) for fuzzy search (optional)
-
-- [Framer Motion](https://www.framer.com/motion/) for animations (if using React)
+- [Fuse.js](https://fusejs.io/) for fuzzy search
 
 ### Hosting & CDN
 

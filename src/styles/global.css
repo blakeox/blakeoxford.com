@@ -4,17 +4,11 @@
 @import "./theme.css";
 @import "./components.css";
 
-/* Font Loading Optimization */
-/* Note: Fonts are loaded via Google Fonts. To enable font-display: swap,
-   add &display=swap to the Google Fonts URL in the HTML, or configure
-   font-display in the font loading strategy. */
+/* Font loading is handled in BaseLayout.astro with subset weights and display=swap. */
 
 /* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
   class (or any of its descendants) is in the selector chain.   */
-/* @custom-variant is a Tailwind v4 feature - valid but not recognized by all linters */
-/* stylelint-disable at-rule-no-unknown */
 @custom-variant dark (&:where(.dark, .dark *));
-/* stylelint-enable at-rule-no-unknown */
 
 @layer utilities {
   .line-clamp-3 {

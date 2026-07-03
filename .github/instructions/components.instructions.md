@@ -48,19 +48,20 @@ export interface Props {
 ---
 ```
 
-### UI Components (`src/components/ui/`)
+### Composites (`src/components/composites/`)
 
-**Purpose**: Generic UI elements used across features
+**Purpose**: Pre-composed UI patterns built from primitives
 
 **Examples**:
+- `Card.astro` - Content card wrapper over `BaseCard`
+- `Hero.astro` - Page hero sections
+- `FeatureCard.astro` - Feature highlight cards
 - `CoinFlipImage.astro` - Interactive image flipper
-- `OptimizedImage.astro` - Optimized image with formats
-- `Card.astro` - Content card
-- `Modal.astro` - Dialog overlay
+- `CTASection.astro` - Call-to-action bands
 
 **Characteristics**:
 - Composed from primitives
-- Domain-agnostic
+- Domain-agnostic reusable patterns
 - Self-contained functionality
 - Accessibility built-in
 

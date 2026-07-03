@@ -31,6 +31,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import type { NavLink } from '../../config/navLinks';
+import { getThemePreference, updateThemeToggleButton } from '../../lib/theme';
 import { registerModernNavBar } from '../../scripts/features/ModernNavBar';
 import { initMotionAccessibility } from '../../scripts/modules/MotionAccessibility';
 
@@ -106,12 +107,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  window.addEventListener('scroll', handleScroll, { passive: true });
 
  if (themeToggleRef.current) {
- const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
- themeToggleRef.current.setAttribute('aria-pressed', String(currentTheme === 'dark'));
- themeToggleRef.current.setAttribute(
- 'aria-label',
- currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
- );
+  updateThemeToggleButton(themeToggleRef.current, getThemePreference());
  }
 
  return () => {
@@ -132,7 +128,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  };
 
  return (
- <div className="sticky top-0 z-50 border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)] dark:bg-[color:var(--glass-surface-bg-dark)] dark:supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-dark-xl)]">
+ <div className="@container sticky top-0 z-50 border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)]">
  <nav
  id="navbar"
  ref={navRef}
@@ -143,7 +139,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <div className="brand-section flex items-center gap-2">
  <a
  href="/"
- className="brand-link flex items-center gap-3 rounded-full px-2 py-1 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+ className="brand-link focus-ring-interactive flex items-center gap-3 rounded-full px-2 py-1 text-foreground"
  aria-label={logo.name}
  >
  <picture className="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60">
@@ -173,9 +169,9 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <a
  href={link.href}
  role="menuitem"
-                className={`nav-link inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 ${
+                className={`nav-link focus-ring-interactive inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent ${
                   isActive(link.href)
-                    ? 'bg-accent/10 text-accent dark:bg-accent/10 dark:text-accent-light'
+                    ? 'bg-surface-subtle text-foreground ring-1 ring-inset ring-accent/40'
                     : 'text-foreground/90'
                 }`}
  aria-current={isActive(link.href) ? 'page' : undefined}
@@ -210,19 +206,21 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  </svg>
  </button>
 
- {/* Theme toggle button (separate from search toggle) */}
+ {/* Theme cycles: light → dark → system */}
  <button
  id="theme-toggle"
  ref={themeToggleRef}
  type="button"
  className="nav-utility-button theme-toggle relative shrink-0"
- aria-label="Switch to dark mode"
+ aria-label="Theme: system preference. Switch to light mode."
  aria-pressed="false"
+ data-theme-preference="system"
  >
  <span className="pointer-events-none relative block size-6" aria-hidden="true">
  <svg
  xmlns="http://www.w3.org/2000/svg"
- className="sun-icon absolute inset-0 size-6 hidden dark:block"
+ className="sun-icon absolute inset-0 size-6"
+ data-icon="light"
  viewBox="0 0 24 24"
  fill="none"
  stroke="currentColor"
@@ -233,7 +231,8 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  </svg>
  <svg
  xmlns="http://www.w3.org/2000/svg"
- className="moon-icon absolute inset-0 size-6 translate-x-px dark:hidden"
+ className="moon-icon absolute inset-0 size-6 translate-x-px"
+ data-icon="dark"
  viewBox="0 0 24 24"
  fill="none"
  stroke="currentColor"
@@ -241,6 +240,18 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  focusable="false"
  >
  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79Z" />
+ </svg>
+ <svg
+ xmlns="http://www.w3.org/2000/svg"
+ className="system-icon absolute inset-0 size-6"
+ data-icon="system"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ strokeWidth={1.8}
+ focusable="false"
+ >
+ <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L8 21h8l-1.75-4M12 3v1m6.364 1.636-.707.707M21 12h-1M18.364 18.364l-.707-.707M12 19v1M5.636 18.364l.707-.707M4 12H3m2.636-6.364.707.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
  </svg>
  </span>
  </button>
@@ -264,7 +275,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <div
  ref={mobileMenuRef}
  id="nav-mobile-links"
- className="mobile-menu absolute inset-x-0 top-full z-[2147483646] border-t border-border bg-surface/98 shadow-lg dark:border-border-dark dark:bg-surface-dark/98 md:hidden pointer-events-none"
+ className="mobile-menu absolute inset-x-0 top-full z-[2147483646] border-t border-border bg-surface/98 shadow-lg md:hidden pointer-events-none motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard"
  role="dialog"
  aria-modal="true"
  aria-label="Mobile navigation menu"
@@ -278,7 +289,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  aria-label="Close navigation menu"
  />
  <div
- className="mobile-menu-content flex w-full flex-col gap-3 px-5 py-5 text-foreground"
+ className="mobile-menu-content flex w-full flex-col gap-2 px-4 py-4 text-foreground @sm:gap-3 @sm:px-5 @sm:py-5"
  onClick={(e) => {
  // Prevent clicks inside the panel from being treated as outside clicks.
  e.stopPropagation();
@@ -290,7 +301,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <a
  href={link.href}
  role="menuitem"
- className="mobile-nav-link block rounded-2xl px-4 py-3 text-base font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] dark:hover:bg-[color:var(--glass-surface-bg-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+ className="mobile-nav-link touch-target focus-ring-interactive flex min-h-11 items-center rounded-2xl px-3 py-3 text-sm font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] @sm:px-4 @sm:py-3 @sm:text-base"
  aria-current={isActive(link.href) ? 'page' : undefined}
  >
  {link.label}

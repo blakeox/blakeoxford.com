@@ -21,6 +21,9 @@ junit.xml
 tests/playwright/*.spec.ts-snapshots/
 tests/playwright/visual-regression.spec.ts-snapshots/
 **/*-snapshots/
+# Keep dark-mode visual baselines in CI
+!tests/playwright/visual/dark-mode-routes.spec.ts-snapshots/
+!tests/playwright/visual/dark-mode-routes.spec.ts-snapshots/**
 
 # Runtime data
 pids

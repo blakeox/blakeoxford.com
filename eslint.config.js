@@ -4,6 +4,7 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
 import * as astroEslintParser from 'astro-eslint-parser';
 import astroPlugin from 'eslint-plugin-astro';
+import betterTailwindcss from 'eslint-plugin-better-tailwindcss';
 
 export default [
   // Base JavaScript configuration
@@ -158,6 +159,58 @@ export default [
       '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_', caughtErrors: 'none' }],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-undef': 'off', // TypeScript handles this
+    },
+  },
+
+  // Tailwind class correctness (unknown/conflicting classes)
+  {
+    files: ['src/**/*.{astro,tsx,ts,jsx,js}'],
+    ...betterTailwindcss.configs['correctness-warn'],
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'src/styles/global.css',
+      },
+    },
+  },
+
+  // Reusable components must use semantic theme tokens, not raw dark: utilities
+  {
+    files: ['src/components/**/*.{astro,tsx,ts}'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/\\bdark:/]',
+          message:
+            'Avoid Tailwind dark: utilities in components. Use semantic theme tokens from theme.css instead.',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/\\bdark:/]',
+          message:
+            'Avoid Tailwind dark: utilities in components. Use semantic theme tokens from theme.css instead.',
+        },
+      ],
+    },
+  },
+
+  // App pages (excluding design-system docs) must use semantic tokens
+  {
+    files: ['src/pages/**/*.{astro,tsx,ts}'],
+    ignores: ['src/pages/design/**', 'src/pages/docs/**', 'src/pages/debug/**'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/\\bdark:/]',
+          message:
+            'Avoid Tailwind dark: utilities in app pages. Use semantic theme tokens from theme.css instead.',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/\\bdark:/]',
+          message:
+            'Avoid Tailwind dark: utilities in app pages. Use semantic theme tokens from theme.css instead.',
+        },
+      ],
     },
   },
 

@@ -1,8 +1,22 @@
 import { expect, Page } from '@playwright/test';
 import { waitForLayoutStability } from '../utils/deterministic-waits';
 import { VISUAL_ROUTE_CONFIG, type RouteCfg, type DiffCfg, MAX_ALLOWED_TOLERANCE } from './config';
+import { seedThemePreference } from '../../utils/themeActions';
 
-export async function preparePage(page: Page) {
+export type VisualTheme = 'light' | 'dark';
+
+export async function preparePage(page: Page, theme: VisualTheme = 'light') {
+  if (theme === 'dark') {
+    await seedThemePreference(page, 'dark');
+    await page.addInitScript(() => {
+      const root = document.documentElement;
+      root.setAttribute('data-theme', 'dark');
+      root.setAttribute('data-theme-preference', 'dark');
+      root.classList.add('dark');
+      root.style.colorScheme = 'dark';
+    });
+  }
+
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.addStyleTag({ content: '* { transition: none !important; animation: none !important; }' });
 }
@@ -12,8 +26,9 @@ export async function preparePage(page: Page) {
 export async function snapshotRoute(
   page: Page,
   route: string,
-  opts: { mask?: string[]; diff?: DiffCfg } = {}
+  opts: { mask?: string[]; diff?: DiffCfg; theme?: VisualTheme } = {}
 ) {
+  const theme = opts.theme ?? 'light';
   // Avoid networkidle on most pages with lazy widgets; DOMContentLoaded is enough for static capture
   await page.goto(route, { waitUntil: 'domcontentloaded' });
   // Pages that include large images or layout-critical assets should wait for full load
@@ -45,6 +60,13 @@ export async function snapshotRoute(
   if (opts.diff) baseCfg.diff = { ...(baseCfg.diff || {}), ...opts.diff };
   if (opts.mask?.length) baseCfg.mask = [...(baseCfg.mask || []), ...opts.mask];
 
+  if (theme === 'dark') {
+    baseCfg.diff = {
+      ...(baseCfg.diff || {}),
+      maxDiffPixelRatio: Math.max(baseCfg.diff?.maxDiffPixelRatio || 0, 0.035),
+    };
+  }
+
   // Chrome-specific variance bump for contact page (text/blur rendering)
   if (route === '/contact/') {
     const ua = (await page.evaluate(() => navigator.userAgent)) || '';
@@ -62,7 +84,7 @@ export async function snapshotRoute(
   }
 
   const rawName = route.replace(/\/$/, '').replace(/\//g, '_').replace(/^_/, '');
-  const fileName = (rawName || 'home') + '.png';
+  const fileName = `${rawName || 'home'}${theme === 'dark' ? '-dark' : ''}.png`;
 
   await expect(page).toHaveScreenshot(fileName, {
     animations: 'disabled',
