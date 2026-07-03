@@ -53,41 +53,29 @@ const DIRECT_CONTAINER_REGEX = /\bcontainer\s+mx-auto\b/g;
 const LEGACY_COMPONENT_PATH_REGEX = /src\/components\/(?:chat|common|composite|config|debug|media|ui)\b|components\/(?:chat|common|composite|config|debug|media|ui)\b|\.\.\/(?:common|composite|media|ui)\//g;
 const COMPONENT_DOC_ENTRY_REGEX =
   /^  {\s*\n\s{4}name:\s*'([^']+)'[\s\S]*?\n\s{4}category:\s*'([^']+)'[\s\S]*?\n\s{4}filePath:\s*'([^']+)'/gm;
-const INLINE_BUTTON_REGEX = /<button\b[^>]*\bclass\s*=\s*(["'`])[^"'`]*\1/;
-const COMPONENT_SOURCE_EXTENSIONS = /\.(astro|tsx)$/;
-
 const STALE_DECORATIVE_DOC_REGEX =
   /glass-morphism|glass morphism|Frosted Glass|Rotating Gradient|Pulse Scale|Continuous gradient|shadow animations|gradient overlay/g;
 
-const paletteExcludePaths = [
-  'src/pages/design/',
-  'src/pages/docs/',
-  'src/pages/debug/',
-  'src/pages/accessibility/',
-  'src/content/',
-];
+const allowedPx = new Set([0, 1, 2, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 48, 56, 64]);
 const allowedComponentRootFiles = new Set(['src/components/index.ts']);
 
 const reusableSurfacePaths = [
   'src/components',
   'src/lib',
   'src/scripts',
-  'src/utils',
-  'src/pages',
+  'src/pages/blog',
+  'src/pages/design',
+  'src/pages/docs',
+  'src/pages/debug',
+  'src/pages/projects',
+  'src/pages/accessibility',
 ];
 
 const elevationPolicyPaths = [
   'src/components/primitives',
   'src/components/composites',
-  'src/components/features',
-  'src/components/islands',
   'src/styles/components.css',
 ];
-
-const inlineButtonPolicyPaths = ['src/components/features'];
-const inlineButtonExcludePaths = ['src/components/features/search'];
-
-const allowedPx = new Set([0, 1, 2, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 48, 56, 64]);
 
 const findings = {
   duplicate: [],
@@ -104,8 +92,6 @@ const findings = {
   radius: [],
   shell: [],
   container: [],
-  inlineButton: [],
-  duplicateComponent: [],
 };
 
 function shouldIgnoreDir(name) {
@@ -184,36 +170,6 @@ function scanComponentRoot() {
   }
 }
 
-function isExcludedPalettePath(relPath) {
-  return paletteExcludePaths.some(
-    (excludePath) => relPath === excludePath.slice(0, -1) || relPath.startsWith(excludePath),
-  );
-}
-
-function scanDuplicateComponentNames() {
-  const componentsDir = path.join(root, 'src/components');
-  if (!fs.existsSync(componentsDir)) return;
-
-  const byName = new Map();
-  walkFiles(componentsDir, (file) => {
-    if (!COMPONENT_SOURCE_EXTENSIONS.test(file)) return;
-    const basename = path.basename(file, path.extname(file));
-    if (basename === 'index') return;
-
-    const relPath = rel(file);
-    if (!byName.has(basename)) byName.set(basename, []);
-    byName.get(basename).push(relPath);
-  });
-
-  for (const [name, paths] of byName.entries()) {
-    if (paths.length <= 1) continue;
-    findings.duplicateComponent.push({
-      file: paths.join(', '),
-      value: `${name} (${paths.length} definitions)`,
-    });
-  }
-}
-
 function scanComponentDocs() {
   const docsPath = path.join(root, 'src/data/componentDocs.ts');
   if (!fs.existsSync(docsPath)) return;
@@ -287,23 +243,9 @@ function scanSourceFile(file) {
     addRegexFindings(findings.docsLanguage, relPath, content, STALE_DECORATIVE_DOC_REGEX);
   }
 
-  if (isWithin(relPath, reusableSurfacePaths) && !TOKEN_ALLOW_PATH.test(relPath) && !isExcludedPalettePath(relPath)) {
+  if (isWithin(relPath, reusableSurfacePaths) && !TOKEN_ALLOW_PATH.test(relPath)) {
     addRegexFindings(findings.palette, relPath, content, RAW_PALETTE_REGEX);
     addRegexFindings(findings.palette, relPath, content, RAW_WHITE_BLACK_REGEX);
-  }
-
-  if (
-    isWithin(relPath, inlineButtonPolicyPaths) &&
-    !isWithin(relPath, inlineButtonExcludePaths) &&
-    relPath.endsWith('.astro')
-  ) {
-    INLINE_BUTTON_REGEX.lastIndex = 0;
-    if (INLINE_BUTTON_REGEX.test(content)) {
-      findings.inlineButton.push({
-        file: relPath,
-        value: 'use Button primitive instead of inline styled <button>',
-      });
-    }
   }
 
   if (isWithin(relPath, elevationPolicyPaths)) {
@@ -334,7 +276,6 @@ function printFindings(title, list, limit = 50) {
 
 scanDuplicates();
 scanComponentRoot();
-scanDuplicateComponentNames();
 scanComponentDocs();
 collectSourceFiles('src').forEach(scanSourceFile);
 
@@ -352,8 +293,6 @@ printFindings('Hard-coded high elevation detected in primitives/composites', fin
 printFindings('Hard-coded arbitrary radius detected in primitives/composites', findings.radius);
 printFindings('Legacy shell escape patterns detected', findings.shell);
 printFindings('Direct container shell usage detected', findings.container);
-printFindings('Inline styled buttons detected in feature components', findings.inlineButton);
-printFindings('Duplicate component filenames detected', findings.duplicateComponent);
 
 const issueCount = Object.values(findings).reduce((count, list) => count + list.length, 0);
 

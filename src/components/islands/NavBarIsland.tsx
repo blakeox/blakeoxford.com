@@ -171,7 +171,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  role="menuitem"
                 className={`nav-link focus-ring-interactive inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent ${
                   isActive(link.href)
-                    ? 'bg-accent/10 text-accent-emphasis'
+                    ? 'bg-surface-subtle text-foreground ring-1 ring-inset ring-accent/40'
                     : 'text-foreground/90'
                 }`}
  aria-current={isActive(link.href) ? 'page' : undefined}

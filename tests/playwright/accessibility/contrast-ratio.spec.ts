@@ -3,7 +3,7 @@ import { applyThemeOnPage } from '../../utils/colorContrast';
 import { assertHeroCtaContrast, runContrastCheck } from '../../utils/contrastCheck';
 
 // Lightweight contrast ratio check for key text elements.
-// Tags: @essential @accessibility-contrast
+// Tags: @accessibility-contrast (also run via pnpm audit:contrast in essential-e2e CI)
 // Runs in BOTH light and dark themes so regressions are caught per theme.
 
 const baseRoutes = [
@@ -23,7 +23,7 @@ const injected = (process.env.CONTRAST_EXTRA_ROUTES || '')
 const routes = Array.from(new Set([...baseRoutes, ...injected]));
 const themes = ['light', 'dark'] as const;
 
-test.describe('@essential @accessibility-contrast Contrast Ratios', () => {
+test.describe('@accessibility-contrast Contrast Ratios', () => {
   for (const theme of themes) {
     for (const route of routes) {
       test(`contrast ratios acceptable ${route} (${theme} mode)`, async ({ page }) => {

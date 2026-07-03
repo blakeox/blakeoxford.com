@@ -228,6 +228,9 @@ jobs:
         env:
           COMPREHENSIVE_TESTS: "false"
 
+      - name: Runtime contrast audit (Playwright)
+        run: pnpm audit:contrast
+
       - name: Track flakiness (Playwright JSON)
         if: always()
         run: pnpm flakiness:track || true
