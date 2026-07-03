@@ -247,9 +247,15 @@ export default function CommandCenter() {
         >
           <div className="flex items-center gap-3 border-b border-border/60 px-4 py-3 sm:px-5">
             <div className="relative flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-border/60 bg-field-bg px-3 py-2.5 shadow-sm focus-within:border-accent/60 focus-within:ring-2 focus-within:ring-accent/40">
-              <svg className="size-5 shrink-0 text-subtle-foreground/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
-              </svg>
+              {mode === 'ask' ? (
+                <svg className="size-5 shrink-0 text-accent/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h8m-8 3h5.5M21 11.5c0 4.418-4.03 8-9 8-1.15 0-2.26-.19-3.29-.54L3 21l1.1-3.3A8.35 8.35 0 0 1 3 11.5c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
+                </svg>
+              ) : (
+                <svg className="size-5 shrink-0 text-subtle-foreground/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
+                </svg>
+              )}
               <input
                 ref={inputRef}
                 id="search-input"
@@ -265,8 +271,8 @@ export default function CommandCenter() {
                   setActiveIndex(-1);
                 }}
                 onKeyDown={handleInputKeyDown}
-                placeholder={mode === 'ask' ? 'Ask a conversational question…' : 'Search pages, projects, and blog posts…'}
-                aria-label="Search site content"
+                placeholder={mode === 'ask' ? 'Ask a question about projects, posts, or experience…' : 'Search pages, projects, and blog posts…'}
+                aria-label={mode === 'ask' ? 'Ask the AI assistant' : 'Search site content'}
                 autoComplete="off"
                 spellCheck={false}
                 className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground/70 focus:outline-none"
@@ -306,7 +312,9 @@ export default function CommandCenter() {
 
           {mode === 'find' ? (
           <div className="border-b border-border/40 px-4 py-2 sm:px-5">
-            <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Search categories">
+            <div className="flex items-center gap-3">
+              <span className="shrink-0 text-xxs font-semibold uppercase tracking-label text-subtle-foreground">Filter</span>
+              <div className="flex gap-1 overflow-x-auto pb-0.5" role="group" aria-label="Search categories">
               {CATEGORIES.map((value) => {
                 const isActive = category === value;
                 return (
@@ -315,10 +323,10 @@ export default function CommandCenter() {
                     type="button"
                     data-category={value}
                     aria-pressed={isActive}
-                    className={`search-pill shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition touch-target focus-ring-interactive ${
+                    className={`search-pill shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition focus-ring-interactive ${
                       isActive
-                        ? 'border-accent/40 bg-accent/15 text-accent ring-1 ring-accent/30'
-                        : 'border-border/60 text-muted-foreground hover:border-accent hover:text-accent'
+                        ? 'bg-accent/15 text-accent'
+                        : 'text-muted-foreground hover:bg-surface-subtle hover:text-foreground'
                     }`}
                     onClick={() => {
                       setCategory(value);
@@ -329,8 +337,18 @@ export default function CommandCenter() {
                   </button>
                 );
               })}
+              </div>
             </div>
           </div>
+          ) : null}
+
+          {mode === 'find' && hasResults && !isLoading ? (
+            <div className="border-b border-border/30 px-4 py-1.5 sm:px-5">
+              <p className="text-xs text-subtle-foreground">
+                {flatItems.length} {flatItems.length === 1 ? 'result' : 'results'}
+                {findQuery ? ` for “${findQuery}”` : ''}
+              </p>
+            </div>
           ) : null}
 
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-5" ref={listRef}>

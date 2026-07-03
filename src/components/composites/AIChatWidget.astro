@@ -112,7 +112,7 @@ import ChatLauncherIsland from '../islands/ChatLauncherIsland';
  })();
  </script>
  <!-- Shared wrapper: launcher hydrates on load, heavy panel hydrates on idle -->
- <div class="ai-chat-wrapper pointer-events-none fixed bottom-4 right-4 z-[1050] flex flex-col-reverse items-end gap-3 sm:bottom-6 sm:right-6" data-ai-chat-open="false">
+ <div class="ai-chat-wrapper pointer-events-none fixed bottom-4 right-4 z-chat flex flex-col-reverse items-end gap-3 sm:bottom-6 sm:right-6" data-ai-chat-open="false">
  <!-- small island hydrates early to make launcher responsive -->
  <ChatLauncherIsland client:load />
 

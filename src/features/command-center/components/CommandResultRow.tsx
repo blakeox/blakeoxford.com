@@ -40,6 +40,14 @@ function PageIcon() {
   );
 }
 
+function AskIcon() {
+  return (
+    <svg className="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h8m-8 3h5.5M21 11.5c0 4.418-4.03 8-9 8-1.15 0-2.26-.19-3.29-.54L3 21l1.1-3.3A8.35 8.35 0 0 1 3 11.5c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
+    </svg>
+  );
+}
+
 type CommandResultRowProps = {
   item: CommandItem;
   index: number;
@@ -70,7 +78,7 @@ export function CommandResultRow({
       aria-selected={isActive}
       data-index={index}
       data-search-result
-      className={`command-result group/row flex min-h-[3.25rem] items-stretch gap-2 rounded-2xl border transition-all duration-200 ${
+      className={`command-result group/row flex min-h-[3.25rem] items-stretch gap-1 rounded-2xl border transition-all duration-200 ${
         isActive
           ? 'border-accent/50 bg-accent/10 shadow-sm ring-1 ring-accent/30'
           : 'border-border/40 bg-surface/95 hover:border-accent/40 hover:bg-surface hover:shadow-md'
@@ -86,7 +94,7 @@ export function CommandResultRow({
           onSelect(item);
         }}
       >
-        <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/50 bg-surface-subtle">
+        <div className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/50 bg-surface-subtle sm:size-12">
           {item.image ? (
             <img src={item.image} alt="" className="size-full object-cover" loading="lazy" decoding="async" />
           ) : item.kind === 'page' ? (
@@ -105,7 +113,7 @@ export function CommandResultRow({
               <HighlightText text={item.subtitle} query={query} />
             </span>
           ) : null}
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xxs font-semibold uppercase tracking-label text-subtle-foreground">
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xxs font-semibold uppercase tracking-label text-subtle-foreground">
             <span className="inline-flex items-center rounded-full bg-surface-subtle px-2 py-0.5 ring-1 ring-border/30">
               {kindLabel(item.kind)}
             </span>
@@ -114,7 +122,7 @@ export function CommandResultRow({
                 Featured
               </span>
             ) : null}
-            {formattedDate ? <span>{formattedDate}</span> : null}
+            {formattedDate ? <span className="normal-case">{formattedDate}</span> : null}
             {item.matchReason ? (
               <span className="normal-case text-subtle-foreground">{item.matchReason}</span>
             ) : null}
@@ -127,7 +135,11 @@ export function CommandResultRow({
 
       <button
         type="button"
-        className="command-ask-row focus-ring-interactive m-2 shrink-0 self-center rounded-xl border border-accent/30 bg-accent/10 px-2.5 py-2 text-xs font-semibold text-accent opacity-100 transition hover:bg-accent/15 sm:opacity-0 sm:group-hover/row:opacity-100 sm:focus:opacity-100"
+        className={`command-ask-row focus-ring-interactive m-1.5 flex shrink-0 items-center gap-1.5 self-center rounded-xl border px-2.5 py-2 text-xs font-semibold transition sm:m-2 ${
+          isActive
+            ? 'border-accent/50 bg-accent/15 text-accent'
+            : 'border-accent/30 bg-accent/10 text-accent opacity-100 hover:bg-accent/15 sm:opacity-70 sm:group-hover/row:opacity-100'
+        }`}
         aria-label={`Ask AI about ${item.title}`}
         onClick={(event) => {
           event.preventDefault();
@@ -135,7 +147,8 @@ export function CommandResultRow({
           onAskAbout(item);
         }}
       >
-        Ask AI
+        <AskIcon />
+        <span className="hidden min-[420px]:inline">Ask</span>
       </button>
     </div>
   );

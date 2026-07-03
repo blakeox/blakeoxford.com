@@ -12,7 +12,6 @@ import { useAIChatController } from '../../lib/hooks';
 import {
 	ChatHeader,
 	ChatAdvancedControls,
-	ChatGuidedPrompts,
 	ChatRecentQueries,
 	ChatDigest,
 	ChatAnalytics,
@@ -94,8 +93,6 @@ export default function AIChatIsland() {
 		recentQueries,
 		conversationDigest,
 		feedbackAnalytics,
-		guidedPromptVisible,
-		floatingLabelActive,
 		canStartNewChat,
 		copiedMessageId,
 		copiedShareUrl,
@@ -112,7 +109,6 @@ export default function AIChatIsland() {
 		sendQuery,
 		handleSubmit,
 		handleReplayQuery,
-		handleGuidedPrompt,
 		visibleFallbackResults,
 		hasMoreFallbackResults,
 	} = controller;
@@ -201,7 +197,7 @@ export default function AIChatIsland() {
 	return (
 		<div
 			ref={panelRef}
-				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-hidden rounded-3xl border border-[color:var(--border)]/30 bg-[color:var(--surface)]/80 shadow-lg backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/80 motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:w-[min(85vw,28rem)] motion-reduce:transition-none ${
+				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-hidden rounded-3xl border border-border/40 bg-surface/90 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:w-[min(85vw,28rem)] motion-reduce:transition-none ${
 					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
 				}`}
 				data-ai-chat-panel
@@ -240,17 +236,15 @@ export default function AIChatIsland() {
 					handleExportConversation={handleExportConversation}
 				/>
 
-				{/* Guided Prompts */}
-				<ChatGuidedPrompts
-					visible={guidedPromptVisible}
-					onSelectPrompt={handleGuidedPrompt}
-				/>
+				{/* Guided prompts removed — empty-state quick actions live in the transcript */}
 
-				{/* Recent Queries */}
-				<ChatRecentQueries
-					queries={recentQueries}
-					onReplayQuery={handleReplayQuery}
-				/>
+				{/* Recent Queries — only before conversation starts */}
+				{messages.length === 0 ? (
+					<ChatRecentQueries
+						queries={recentQueries}
+						onReplayQuery={handleReplayQuery}
+					/>
+				) : null}
 
 				{/* Conversation Digest */}
 				<ChatDigest
@@ -270,7 +264,7 @@ export default function AIChatIsland() {
 				<div className="relative">
 					<div
 						ref={scrollContainerRef}
-						className="flex max-h-80 flex-col gap-4 overflow-y-auto px-4 py-4"
+						className="flex max-h-[min(50dvh,22rem)] flex-col gap-3 overflow-y-auto px-4 py-3 sm:max-h-[min(55dvh,24rem)]"
 						aria-live="polite"
 						data-ai-chat-transcript
 					>
@@ -350,7 +344,6 @@ export default function AIChatIsland() {
 				<ChatInput
 					inputValue={inputValue}
 					chatState={chatState}
-					floatingLabelActive={floatingLabelActive}
 					inputRef={inputRef}
 					wsRef={wsRef}
 					typingTimeoutRef={typingTimeoutRef}

@@ -11,7 +11,7 @@ export function CommandAskHandoff({ query, onAsk, compact = false }: CommandAskH
   return (
     <button
       type="button"
-      className={`command-ask-handoff focus-ring-interactive flex w-full items-start gap-3 rounded-2xl border border-accent/30 bg-accent/5 text-left transition hover:border-accent/50 hover:bg-accent/10 ${
+      className={`command-ask-handoff focus-ring-interactive group/handoff flex w-full items-center gap-3 rounded-2xl border border-accent/30 bg-gradient-to-r from-accent/5 to-transparent text-left transition hover:border-accent/50 hover:from-accent/10 ${
         compact ? 'px-3 py-3' : 'px-4 py-4'
       }`}
       onClick={onAsk}
@@ -24,14 +24,26 @@ export function CommandAskHandoff({ query, onAsk, compact = false }: CommandAskH
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-semibold text-foreground">{label}</span>
         <span className="mt-0.5 block text-xs text-muted-foreground">
-          Conversational answers with citations — opens the assistant in the bottom-right corner.
+          Opens the assistant in the bottom-right with cited answers.
         </span>
       </span>
+      <svg
+        className="size-4 shrink-0 text-accent/60 transition group-hover/handoff:translate-x-0.5 group-hover/handoff:text-accent"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        aria-hidden="true"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="m9 5 7 7-7 7" />
+      </svg>
     </button>
   );
 }
 
 export function CommandAskPanel({ query, onAsk }: { query: string; onAsk: (prompt: string) => void }) {
+  const trimmed = query.trim();
+
   return (
     <div
       id="command-mode-panel-ask"
@@ -39,17 +51,25 @@ export function CommandAskPanel({ query, onAsk }: { query: string; onAsk: (promp
       aria-labelledby="command-mode-ask"
       className="flex flex-col gap-4"
     >
-      <div className="rounded-2xl border border-border/60 bg-surface/80 px-4 py-4 text-sm text-muted-foreground">
-        <p className="font-medium text-foreground">Ask the AI assistant</p>
-        <p className="mt-1">
-          Use this for conversational questions, summaries, and follow-ups. Site search (Find mode) is better for
-          jumping directly to a page or project.
+      <div className="rounded-2xl border border-border/60 bg-surface/80 px-4 py-4 text-sm">
+        <p className="font-medium text-foreground">Conversational answers</p>
+        <p className="mt-1 text-muted-foreground">
+          Ask follow-up questions, get summaries, and explore topics with cited sources from this site.
         </p>
       </div>
-      <CommandAskHandoff query={query} onAsk={() => onAsk(query)} />
+
+      {trimmed ? (
+        <CommandAskHandoff query={query} onAsk={() => onAsk(query)} />
+      ) : (
+        <div className="rounded-2xl border border-dashed border-border/60 bg-surface/60 px-4 py-4 text-sm text-muted-foreground">
+          Type your question above, then press <kbd className="rounded border border-border px-1.5 py-0.5 font-sans">↵</kbd> to
+          open the assistant with your prompt.
+        </div>
+      )}
+
       <p className="text-xs text-subtle-foreground">
-        Tip: type <kbd className="rounded border border-border px-1.5 py-0.5 font-sans">?</kbd> before your question
-        in Find mode to switch here quickly.
+        Tip: in Find mode, prefix a question with <kbd className="rounded border border-border px-1.5 py-0.5 font-sans">?</kbd> to
+        switch here instantly.
       </p>
     </div>
   );

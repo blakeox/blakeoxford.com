@@ -155,7 +155,6 @@ export interface ChatMessageListProps {
 export interface ChatInputProps {
 	inputValue: string;
 	chatState: ChatState;
-	floatingLabelActive: boolean;
 	inputRef: RefObject<HTMLTextAreaElement | null>;
 	wsRef: RefObject<ConversationWebSocket | null>;
 	typingTimeoutRef: RefObject<number | null>;
