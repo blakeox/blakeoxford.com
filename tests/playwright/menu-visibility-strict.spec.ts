@@ -21,6 +21,12 @@ test.describe('Menu visibility (production-faithful)', () => {
 
     await page.locator('#nav-toggle').click();
     await expect(menu).toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-backdrop')).toHaveAttribute('data-state', 'open');
+    const backdropVisible = await page.locator('#nav-mobile-backdrop').evaluate((el) => {
+      const style = getComputedStyle(el);
+      return style.display !== 'none' && parseFloat(style.opacity) > 0.4;
+    });
+    expect(backdropVisible).toBe(true);
 
     const metrics = await page.evaluate(() => {
       const el = document.getElementById('nav-mobile-links');

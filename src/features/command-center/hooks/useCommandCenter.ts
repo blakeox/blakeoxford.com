@@ -64,6 +64,8 @@ export function useCommandCenter() {
     };
 
     setExpanded(isOpen);
+    toggleButton?.setAttribute('aria-controls', 'search-overlay');
+    document.body.dataset.commandCenterReady = 'true';
 
     const api = {
       openSearchOverlay: open,
@@ -88,6 +90,8 @@ export function useCommandCenter() {
       if (win.searchOverlay === api) delete win.searchOverlay;
       if (win.enhancedSearchOverlay === api) delete win.enhancedSearchOverlay;
       setExpanded(false);
+      toggleButton?.removeAttribute('aria-controls');
+      delete document.body.dataset.commandCenterReady;
     };
   }, [isOpen, open, close, toggle]);
 

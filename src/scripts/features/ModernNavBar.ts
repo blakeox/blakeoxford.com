@@ -21,13 +21,18 @@ import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollLock';
 
 type ModernNavBarOptions = {
   navBar?: ElementHandle<HTMLElement>;
+  navShell?: ElementHandle<HTMLElement>;
   mobileMenu?: ElementHandle<HTMLElement>;
+  mobileBackdrop?: ElementHandle<HTMLElement>;
   burgerButton?: ElementHandle<HTMLButtonElement>;
-  closeButton?: ElementHandle<HTMLButtonElement>;
+  menuStatus?: ElementHandle<HTMLElement>;
   themeToggle?: ElementHandle<HTMLButtonElement>;
 };
 
 type CleanupFn = () => void;
+
+const MENU_LABEL_OPEN = 'Open navigation menu';
+const MENU_LABEL_CLOSED = 'Close navigation menu';
 
 function resolveElement<T extends HTMLElement>(handle?: ElementHandle<T>): T | null {
   if (!handle) return null;
@@ -35,15 +40,6 @@ function resolveElement<T extends HTMLElement>(handle?: ElementHandle<T>): T | n
     return (handle as { current?: T | null }).current ?? null;
   }
   return (handle as T) ?? null;
-}
-
-function isTestEnv(): boolean {
-  return (
-    typeof window !== 'undefined' &&
-    (((typeof location !== 'undefined') &&
-      (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) ||
-      (typeof navigator !== 'undefined' && (navigator as Navigator & { webdriver?: boolean }).webdriver))
-  );
 }
 
 function cycleTheme(button: HTMLButtonElement | null) {
@@ -55,54 +51,70 @@ function getInitialMenuFocus(menu: HTMLElement): HTMLElement | null {
   return menu.querySelector<HTMLElement>('.mobile-nav-link') ?? menu.querySelector<HTMLElement>('a[href]');
 }
 
+function setMenuOpenState(
+  open: boolean,
+  menu: HTMLElement,
+  toggle: HTMLButtonElement,
+  backdrop: HTMLElement | null,
+  shell: HTMLElement | null,
+  status: HTMLElement | null,
+): void {
+  menu.dataset.state = open ? 'open' : 'closed';
+  menu.classList.toggle('active', open);
+  menu.inert = !open;
+
+  if (backdrop) {
+    backdrop.dataset.state = open ? 'open' : 'closed';
+    backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+
+  if (shell) {
+    shell.dataset.menuState = open ? 'open' : 'closed';
+  }
+
+  toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  toggle.classList.toggle('active', open);
+  toggle.setAttribute('aria-label', open ? MENU_LABEL_CLOSED : MENU_LABEL_OPEN);
+
+  if (status) {
+    status.textContent = open ? 'Navigation menu opened' : 'Navigation menu closed';
+  }
+}
+
 function openMobileMenu(
   menu: HTMLElement,
   toggle: HTMLButtonElement,
+  backdrop: HTMLElement | null,
+  shell: HTMLElement | null,
+  status: HTMLElement | null,
   focusTrap: FocusTrap,
 ): void {
   closeSearch();
-  menu.inert = false;
-  menu.style.visibility = '';
-  menu.style.pointerEvents = '';
-  menu.classList.add('active');
-  toggle.setAttribute('aria-expanded', 'true');
-  toggle.classList.add('active');
+  setMenuOpenState(true, menu, toggle, backdrop, shell, status);
   acquireScrollLock();
-
   focusTrap.activate();
 }
 
 function closeMobileMenu(
   menu: HTMLElement,
   toggle: HTMLButtonElement,
+  backdrop: HTMLElement | null,
+  shell: HTMLElement | null,
+  status: HTMLElement | null,
   focusTrap: FocusTrap,
 ): void {
-  menu.classList.remove('active');
-  toggle.setAttribute('aria-expanded', 'false');
-  toggle.classList.remove('active');
+  setMenuOpenState(false, menu, toggle, backdrop, shell, status);
   focusTrap.deactivate();
   releaseScrollLock();
-
-  const hideMenu = () => {
-    if (!menu.classList.contains('active')) {
-      menu.style.visibility = 'hidden';
-      menu.style.pointerEvents = 'none';
-      menu.inert = true;
-    }
-  };
-
-  if (isTestEnv()) {
-    hideMenu();
-  } else {
-    setTimeout(hideMenu, 250);
-  }
 }
 
 export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
   const navBar = resolveElement(options.navBar);
+  const navShell = resolveElement(options.navShell);
   const mobileMenu = resolveElement(options.mobileMenu);
+  const mobileBackdrop = resolveElement(options.mobileBackdrop);
   const burgerButton = resolveElement(options.burgerButton);
-  const closeButton = resolveElement(options.closeButton);
+  const menuStatus = resolveElement(options.menuStatus);
   const themeToggle = resolveElement(options.themeToggle);
 
   const cleanupFns: CleanupFn[] = [];
@@ -137,8 +149,10 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
       fallbackFocus: mobileMenu,
     });
 
-    const close = () => closeMobileMenu(mobileMenu, burgerButton, focusTrap);
-    const open = () => openMobileMenu(mobileMenu, burgerButton, focusTrap);
+    const close = () =>
+      closeMobileMenu(mobileMenu, burgerButton, mobileBackdrop, navShell, menuStatus, focusTrap);
+    const open = () =>
+      openMobileMenu(mobileMenu, burgerButton, mobileBackdrop, navShell, menuStatus, focusTrap);
 
     const toggleHandler = (event: Event) => {
       event.preventDefault();
@@ -150,20 +164,16 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
       }
     };
 
-    const closeHandler = (event: Event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (mobileMenu.classList.contains('active')) {
-        close();
-      }
-    };
-
     burgerButton.addEventListener('click', toggleHandler);
     cleanupFns.push(() => burgerButton.removeEventListener('click', toggleHandler));
 
-    closeButton?.addEventListener('click', closeHandler);
-    if (closeButton) {
-      cleanupFns.push(() => closeButton.removeEventListener('click', closeHandler));
+    if (mobileBackdrop) {
+      const backdropHandler = (event: Event) => {
+        event.preventDefault();
+        if (mobileMenu.classList.contains('active')) close();
+      };
+      mobileBackdrop.addEventListener('click', backdropHandler);
+      cleanupFns.push(() => mobileBackdrop.removeEventListener('click', backdropHandler));
     }
 
     cleanupFns.push(
@@ -184,14 +194,19 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
     const outsideClickHandler = (event: MouseEvent) => {
       if (!mobileMenu.classList.contains('active')) return;
       const target = event.target as Node;
-      if (mobileMenu.contains(target) || burgerButton.contains(target)) return;
+      if (
+        mobileMenu.contains(target) ||
+        burgerButton.contains(target) ||
+        mobileBackdrop?.contains(target)
+      ) {
+        return;
+      }
       close();
     };
     document.addEventListener('click', outsideClickHandler);
     cleanupFns.push(() => document.removeEventListener('click', outsideClickHandler));
   }
 
-  // Mark JS-enhanced nav for CSS (hides no-JS fallback)
   navBar?.setAttribute('data-js-nav', 'true');
 
   return () => {
@@ -205,16 +220,20 @@ export function initModernNavBar(): CleanupFn | undefined {
     return undefined;
   }
 
+  const navShell = navBar.closest('.nav-shell');
   const mobileMenu = document.getElementById('nav-mobile-links');
+  const mobileBackdrop = document.getElementById('nav-mobile-backdrop');
   const burgerButton = document.getElementById('nav-toggle') as HTMLButtonElement | null;
-  const closeButton = document.getElementById('close-mobile-menu') as HTMLButtonElement | null;
+  const menuStatus = document.getElementById('nav-menu-status');
   const themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement | null;
 
   return registerModernNavBar({
     navBar,
+    navShell: navShell instanceof HTMLElement ? navShell : null,
     mobileMenu,
+    mobileBackdrop,
     burgerButton,
-    closeButton,
+    menuStatus,
     themeToggle,
   });
 }

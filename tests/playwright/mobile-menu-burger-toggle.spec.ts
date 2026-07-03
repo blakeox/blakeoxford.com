@@ -13,6 +13,8 @@ test.describe('Mobile menu close via burger toggle', () => {
     await burger.click();
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
     await expect(burger).toHaveAttribute('aria-expanded', 'true');
+    await expect(burger).toHaveAttribute('aria-label', 'Close navigation menu');
+    await expect(page.locator('#nav-mobile-backdrop')).toHaveAttribute('data-state', 'open');
 
     await burger.click();
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);

@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import type { NavLink } from '../../config/navLinks';
 import { normalizeNavPath } from '../../config/navLinks';
+import { openCommandCenter } from '../../features/command-center/lib/commandEvents';
 import { registerModernNavBar } from '../../scripts/features/ModernNavBar';
 import { initMotionAccessibility } from '../../scripts/modules/MotionAccessibility';
 
@@ -32,7 +33,9 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   const shellRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileBackdropRef = useRef<HTMLDivElement | null>(null);
   const burgerButtonRef = useRef<HTMLButtonElement | null>(null);
+  const menuStatusRef = useRef<HTMLDivElement | null>(null);
   const themeToggleRef = useRef<HTMLButtonElement | null>(null);
 
   const [activePath, setActivePath] = useState(() => normalizeNavPath(currentPath));
@@ -49,15 +52,13 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       syncActivePath();
       document.addEventListener('astro:page-load', syncActivePath);
 
-      if (mobileMenuRef.current) {
-        mobileMenuRef.current.setAttribute('inert', '');
-        mobileMenuRef.current.style.pointerEvents = 'none';
-      }
-
       const cleanupNav = registerModernNavBar({
         navBar: navRef.current,
+        navShell: shellRef.current,
         mobileMenu: mobileMenuRef.current,
+        mobileBackdrop: mobileBackdropRef.current,
         burgerButton: burgerButtonRef.current,
+        menuStatus: menuStatusRef.current,
         themeToggle: themeToggleRef.current,
       });
 
@@ -67,9 +68,12 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       }
 
       const navEl = navRef.current;
+      const shellEl = shellRef.current;
       const handleScroll = () => {
         if (!navEl) return;
-        navEl.classList.toggle('has-background', window.scrollY > 80);
+        const scrolled = window.scrollY > 80;
+        navEl.classList.toggle('has-background', scrolled);
+        shellEl?.classList.toggle('nav-shell--scrolled', scrolled);
       };
       handleScroll();
       window.addEventListener('scroll', handleScroll, { passive: true });
@@ -113,11 +117,20 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
     <div
       ref={shellRef}
       className="@container nav-shell relative overflow-visible sticky top-0 z-nav border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)]"
+      data-menu-state="closed"
     >
+      <div
+        id="nav-menu-status"
+        ref={menuStatusRef}
+        className="sr-only"
+        aria-live="polite"
+        aria-atomic="true"
+      />
+
       <nav
         id="navbar"
         ref={navRef}
-        className="relative z-10 mx-auto flex h-[72px] w-full max-w-container-2xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 text-foreground"
+        className="relative z-10 mx-auto flex h-[var(--nav-height,4.5rem)] w-full max-w-container-2xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 text-foreground motion-safe:transition-[height,box-shadow] motion-safe:duration-normal"
         role="navigation"
         aria-label="Main Navigation"
       >
@@ -137,7 +150,8 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
                 className="brand-avatar size-9 object-cover"
                 width={640}
                 height={640}
-                loading="lazy"
+                loading="eager"
+                fetchPriority="high"
                 decoding="async"
               />
             </picture>
@@ -165,18 +179,25 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         </ul>
 
         <div className="action-buttons flex items-center gap-2">
+          <a
+            href="/contact/"
+            className="nav-cta-button hidden md:inline-flex"
+          >
+            Contact
+          </a>
+
           <button
             id="search-toggle"
             type="button"
-            className="nav-utility-button search-toggle"
-            aria-label="Open site search"
+            className="nav-utility-button search-toggle gap-1.5 px-3"
+            aria-label="Open site search (Command K)"
             aria-haspopup="dialog"
-            aria-controls="search-overlay"
             aria-expanded="false"
+            onClick={() => openCommandCenter()}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="size-6"
+              className="size-5 shrink-0"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -186,6 +207,8 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
             </svg>
+            <span className="hidden text-xs font-medium text-muted-foreground lg:inline">Search</span>
+            <kbd className="nav-kbd hidden lg:inline-flex">⌘K</kbd>
           </button>
 
           <button
@@ -215,7 +238,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             ref={burgerButtonRef}
             type="button"
             className="nav-utility-button burger-menu-button md:hidden"
-            aria-label="Toggle navigation menu"
+            aria-label="Open navigation menu"
             aria-controls="nav-mobile-links"
             aria-expanded="false"
           >
@@ -227,6 +250,14 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
           </button>
         </div>
       </nav>
+
+      <div
+        id="nav-mobile-backdrop"
+        ref={mobileBackdropRef}
+        className="mobile-menu-backdrop md:hidden"
+        data-state="closed"
+        aria-hidden="true"
+      />
 
       {/* No-JS mobile fallback — hidden once ModernNavBar sets data-js-nav on #navbar */}
       <details className="mobile-nav-fallback border-t border-border/40 bg-surface/98 px-4 py-3 md:hidden">
@@ -248,13 +279,17 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         className="mobile-menu border-t border-border bg-surface/98 shadow-lg md:hidden"
         role="dialog"
         aria-modal="true"
-        aria-label="Mobile navigation menu"
+        aria-labelledby="nav-mobile-menu-title"
+        data-state="closed"
         inert
       >
         <div
           className="mobile-menu-content flex w-full flex-col gap-2 px-4 py-4 text-foreground @sm:gap-3 @sm:px-5 @sm:py-5"
           onClick={(e) => e.stopPropagation()}
         >
+          <h2 id="nav-mobile-menu-title" className="sr-only">
+            Site navigation
+          </h2>
           <ul className="mobile-nav flex flex-col gap-1">
             {links.map((link) =>
               renderLink(

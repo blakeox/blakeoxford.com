@@ -79,6 +79,33 @@
     @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background dark:ring-offset-background-dark;
   }
 
+  .nav-cta-button {
+    @apply inline-flex h-11 items-center rounded-full border px-4 text-sm font-semibold transition-colors;
+
+    min-height: 2.75rem;
+    border-color: color-mix(in oklch, var(--accent) 35%, transparent);
+    background: color-mix(in oklch, var(--accent) 10%, transparent);
+    color: var(--accent-strong);
+  }
+
+  .nav-cta-button:hover {
+    border-color: color-mix(in oklch, var(--accent) 55%, transparent);
+    background: color-mix(in oklch, var(--accent) 16%, transparent);
+    color: var(--foreground);
+  }
+
+  .nav-kbd {
+    @apply items-center rounded-md border px-1.5 py-0.5 font-mono text-[0.65rem] font-medium;
+
+    border-color: color-mix(in oklch, var(--border) 70%, transparent);
+    background: color-mix(in oklch, var(--surface-subtle) 90%, transparent);
+    color: color-mix(in oklch, var(--muted-foreground) 90%, var(--fg));
+  }
+
+  .nav-shell--scrolled #navbar {
+    height: 4rem;
+  }
+
   /* Scroll-aware sticky header shell */
   .nav-shell:has(#navbar.has-background) {
     border-color: color-mix(in oklch, var(--border) 85%, transparent);
@@ -367,10 +394,34 @@
     animation: themeToggleSpin var(--duration-fast) var(--ease-standard);
   }
 
-  /* Mobile nav drawer — hidden by default; ModernNavBar toggles `.active` */
-  .nav-shell:has(.mobile-menu.active) {
-    /* Keep the sticky bar above page content while the drawer is open (Safari stacking fix). */
+  /* Mobile nav drawer — hidden by default; ModernNavBar toggles `.active` + `data-state` */
+  .nav-shell:has(.mobile-menu.active),
+  .nav-shell[data-menu-state='open'] {
     z-index: var(--z-nav-drawer);
+  }
+
+  .mobile-menu-backdrop {
+    position: fixed;
+    top: var(--nav-height, 4.5rem);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: calc(var(--z-nav-drawer) - 1);
+    display: none;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: color-mix(in oklch, var(--bg) 55%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  .mobile-menu-backdrop[data-state='open'] {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .mobile-menu {
@@ -380,7 +431,8 @@
     pointer-events: none;
   }
 
-  .mobile-menu.active {
+  .mobile-menu.active,
+  .mobile-menu[data-state='open'] {
     position: fixed;
     top: var(--nav-height, 4.5rem);
     right: 0;
@@ -396,16 +448,35 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     transform: translateZ(0);
+    animation: mobile-menu-in var(--duration-normal) var(--ease-decelerate) forwards;
+  }
+
+  @keyframes mobile-menu-in {
+    from {
+      transform: translateY(-0.5rem);
+    }
+
+    to {
+      transform: translateY(0);
+    }
   }
 
   /* JS-driven panels and overlays */
   @media (prefers-reduced-motion: reduce) {
     .mobile-menu,
+    .mobile-menu-backdrop,
     .overlay-panel,
     .ai-chat-panel,
     #search-overlay,
     .burger-line {
       transition: none !important;
+      animation: none !important;
+    }
+
+    .mobile-menu.active,
+    .mobile-menu[data-state='open'] {
+      opacity: 1 !important;
+      transform: none !important;
     }
 
     .theme-toggle:active .sun-icon,
