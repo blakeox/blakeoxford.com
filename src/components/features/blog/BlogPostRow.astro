@@ -9,7 +9,7 @@ import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
 import { formatDateISO, formatDateShort } from '../../../utils/index.js';
 
 const { post, align = 'left' } = Astro.props as BlogPostRowProps;
-const { slug, data } = post;
+const { id: slug, data } = post;
 ---
 <article class={`group relative flex flex-col lg:flex-row items-start w-full gap-6 md:gap-8 lg:gap-12 xl:gap-16 overflow-hidden rounded-3xl bg-surface/95 ring-1 ring-border/30 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${align === 'right' ? 'lg:flex-row-reverse' : ''}`}>
  <GradientOverlay variant='hover-card' direction='br' />

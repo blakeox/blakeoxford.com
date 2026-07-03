@@ -11,6 +11,7 @@ interface Props {
  variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error';
  icon?: string;
  title?: string;
+ titleLevel?: 2 | 3;
  description?: string;
  badge?: string | number;
  hover?: boolean;
@@ -21,6 +22,7 @@ const {
  variant = 'accent', 
  icon, 
  title,
+ titleLevel = 3,
  description,
  badge,
  hover = true,
@@ -77,9 +79,15 @@ const classes = [
  {icon && <div class="mb-3 text-5xl @sm:mb-4 @sm:text-6xl">{icon}</div>}
  
  {title && (
+ titleLevel === 2 ? (
+ <h2 class={`mb-2 text-xl @sm:mb-3 @sm:text-2xl font-bold ${variantTextColors[variant]}`}>
+ {title}
+ </h2>
+ ) : (
  <h3 class={`mb-2 text-xl @sm:mb-3 @sm:text-2xl font-bold ${variantTextColors[variant]}`}>
  {title}
  </h3>
+ )
  )}
  
  {description && (

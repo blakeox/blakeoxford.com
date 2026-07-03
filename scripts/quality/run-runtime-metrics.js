@@ -41,6 +41,11 @@ async function waitForOk(url, timeoutMs = 10000) {
     console.log('[runtime] build');
     await run(pnpmCommand, [...pnpmArgs, 'build']);
 
+    console.log('[runtime] search index');
+    if (fs.existsSync('scripts/content/generate-search-index.js')) {
+      await run('node', ['scripts/content/generate-search-index.js']);
+    }
+
     // Find free port starting at 5000
     let port = 5000;
     const isFree = p => new Promise(res => {

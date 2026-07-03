@@ -45,7 +45,7 @@ import GradientOverlay from '../../primitives/GradientOverlay.astro';
 import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
 
 const { project } = Astro.props as import('../../../types/components').ProjectCardProps;
-const { slug, data } = project;
+const { id: slug, data } = project;
 
 const title = data.title ?? 'Case study';
 const image = data?.heroImage ?? '/assets/images/blake-logo-fallback.png';

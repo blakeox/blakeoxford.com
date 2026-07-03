@@ -9,7 +9,7 @@ import Card from '../../composites/Card.astro';
 import { truncate, take } from '../../../utils/index.js';
 
 const { post } = Astro.props as BlogCardProps;
-const { slug, data } = post;
+const { id: slug, data } = post;
 const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as string[], 2) : [];
 ---
 
