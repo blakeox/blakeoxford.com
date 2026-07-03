@@ -9,8 +9,6 @@ import {
 import { createFocusTrap } from '../../utils/focusTrap';
 import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollLock';
 
-type OverlayState = 'idle' | 'fallback';
-
 type SearchCategory = 'all' | 'projects' | 'pages';
 
 type SearchRecord = NavSearchPage | {
@@ -38,7 +36,6 @@ function setSearchToggleExpanded(expanded: boolean): void {
 export default function SearchOverlayController() {
   useEffect(() => {
     let cancelled = false;
-    let state: OverlayState = 'idle';
     let projectsLoaded = false;
     let projectsLoading = false;
     let projectRecords: SearchRecord[] = [];
@@ -75,7 +72,6 @@ export default function SearchOverlayController() {
       if (cancelled || overlayElement?.dataset.state === 'open') return;
 
       closeMobileMenu();
-      state = 'fallback';
 
       if (!overlayElement) return;
 
@@ -138,7 +134,6 @@ export default function SearchOverlayController() {
       setSearchToggleExpanded(false);
       focusTrap.deactivate();
       searchInput?.setAttribute('aria-expanded', 'false');
-      state = 'idle';
     };
 
     const escapeRegExp = (input: string): string => input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
