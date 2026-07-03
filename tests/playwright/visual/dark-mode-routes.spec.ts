@@ -1,17 +1,11 @@
 import { test, expect } from '../fixtures';
 import { disableAnimationsComprehensive, waitForStability } from '../utils/test-helpers';
 import { waitForTheme } from '../../utils/waits';
+import { seedThemePreference } from '../../utils/themeActions';
 
-test.describe('@essential @visual Dark mode route baselines', () => {
+test.describe('@visual Dark mode route baselines', () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => {
-      try {
-        localStorage.setItem('theme', 'dark');
-        document.cookie = 'theme=dark; Path=/; Max-Age=31536000; SameSite=Lax';
-      } catch {
-        /* ignore */
-      }
-    });
+    await seedThemePreference(page, 'dark');
     await disableAnimationsComprehensive(page);
   });
 
@@ -54,21 +48,19 @@ test.describe('@essential @visual Dark mode route baselines', () => {
       animations: 'disabled',
     });
   });
+});
 
+test.describe('@essential Theme preference cycling', () => {
   test('theme control cycles through preferences', async ({ page }) => {
-    await page.addInitScript(() => {
-      try {
-        localStorage.setItem('theme', 'light');
-        document.cookie = 'theme=light; Path=/; Max-Age=31536000; SameSite=Lax';
-      } catch {
-        /* ignore */
-      }
-    });
+    await seedThemePreference(page, 'light');
 
     await page.goto('/');
+    await page.waitForFunction(() => (window as any).__navHydrated === true, null, { timeout: 15000 });
     await waitForTheme(page, 'light', 5000);
 
     const toggle = page.locator('#theme-toggle');
+    await expect(toggle).toHaveAttribute('data-theme-preference', 'light');
+
     await toggle.click();
     await waitForTheme(page, 'dark', 5000);
     await expect(toggle).toHaveAttribute('data-theme-preference', 'dark');

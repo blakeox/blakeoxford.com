@@ -1,27 +1,27 @@
 import { test, expect } from './fixtures';
+import { seedThemePreference, cycleThemeToResolved } from '../utils/themeActions';
+import { waitForTheme } from '../utils/waits';
 
 test.describe('Dark mode persistence', () => {
   test('persists theme across navigation and reloads @essential', async ({ page }) => {
+    await seedThemePreference(page, 'light');
     await page.goto('/');
     await page.waitForSelector('#theme-toggle');
 
-    const toggle = page.locator('#theme-toggle');
-    await toggle.click();
+    await waitForTheme(page, 'light', 5000);
+    await cycleThemeToResolved(page, 'dark');
 
-    // Expect HTML to reflect dark theme via data-theme and class
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'dark');
     await expect(page.locator('html')).toHaveClass(/dark/);
 
-    // Navigate to another page and expect theme to persist
     await page.goto('/about');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await expect(page.locator('html')).toHaveClass(/dark/);
 
-    // Hard reload and expect persistence
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
-    // Prefer server cookie, but fall back to client-side localStorage if server cookie isn't present in this environment
     const cookies = await page.context().cookies();
     const themeCookie = cookies.find(c => c.name === 'theme');
     if (themeCookie) {
