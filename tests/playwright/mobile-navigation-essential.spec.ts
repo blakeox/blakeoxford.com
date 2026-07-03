@@ -21,9 +21,11 @@ test.describe('Mobile Navigation Essential', () => {
     await expect(mobileMenu).toHaveClass(/active/, { timeout: 3000 });
     await expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
 
-    // Test navigation links
-    const homeLink = mobileMenu.locator('a[href="/"]');
+    // Test navigation links are actually visible (not just class toggled)
+    const homeLink = mobileMenu.locator('a[href="/"]').first();
     await expect(homeLink).toBeVisible();
+    const menuHeight = await mobileMenu.evaluate((el) => el.getBoundingClientRect().height);
+    expect(menuHeight).toBeGreaterThan(40);
 
     // Close with escape key
     await page.keyboard.press('Escape');

@@ -3,6 +3,7 @@
  * Slim header with search, overflow menu, and close
  */
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { openCommandCenter } from '../../../features/command-center/lib/commandEvents';
 import type { ChatHeaderProps } from './types';
 
@@ -18,6 +19,7 @@ function MenuButton({
 	return (
 		<button
 			type="button"
+			role="menuitem"
 			disabled={disabled}
 			className="focus-ring-interactive flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-50"
 			onClick={onClick}
@@ -26,6 +28,11 @@ function MenuButton({
 		</button>
 	);
 }
+
+type MenuPosition = {
+	top: number;
+	right: number;
+};
 
 export const ChatHeader = memo(function ChatHeader({
 	wsConnected,
@@ -45,31 +52,124 @@ export const ChatHeader = memo(function ChatHeader({
 	closeChat,
 }: ChatHeaderProps) {
 	const [menuOpen, setMenuOpen] = useState(false);
+	const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
 	const menuRef = useRef<HTMLDivElement>(null);
+	const toggleRef = useRef<HTMLButtonElement>(null);
+	const ignoreNextOutsideClickRef = useRef(false);
+
+	const syncMenuPosition = () => {
+		const toggle = toggleRef.current;
+		if (!toggle) return;
+		const rect = toggle.getBoundingClientRect();
+		setMenuPosition({
+			top: rect.bottom + 6,
+			right: Math.max(8, window.innerWidth - rect.right),
+		});
+	};
 
 	useEffect(() => {
-		if (!menuOpen) return;
+		if (!menuOpen) {
+			setMenuPosition(null);
+			return;
+		}
+
+		syncMenuPosition();
+		const onResize = () => syncMenuPosition();
+		window.addEventListener('resize', onResize);
+		window.addEventListener('scroll', onResize, true);
+
 		const onEscape = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') setMenuOpen(false);
 		};
 		const onDocClick = (event: MouseEvent) => {
-			if (!menuRef.current?.contains(event.target as Node)) {
+			if (ignoreNextOutsideClickRef.current) {
+				ignoreNextOutsideClickRef.current = false;
+				return;
+			}
+			const target = event.target as Node;
+			if (!menuRef.current?.contains(target) && !toggleRef.current?.contains(target)) {
 				setMenuOpen(false);
 			}
 		};
+
 		document.addEventListener('keydown', onEscape);
-		// Defer outside-click listener so the opening click does not immediately close the menu.
-		const timer = window.setTimeout(() => {
-			document.addEventListener('click', onDocClick);
-		}, 0);
+		document.addEventListener('click', onDocClick, true);
+
 		return () => {
-			window.clearTimeout(timer);
-			document.removeEventListener('click', onDocClick);
+			window.removeEventListener('resize', onResize);
+			window.removeEventListener('scroll', onResize, true);
 			document.removeEventListener('keydown', onEscape);
+			document.removeEventListener('click', onDocClick, true);
 		};
 	}, [menuOpen]);
 
 	const closeMenu = () => setMenuOpen(false);
+
+	const menuPanel =
+		menuOpen && menuPosition && typeof document !== 'undefined'
+			? createPortal(
+					<div
+						ref={menuRef}
+						role="menu"
+						className="fixed z-[1300] min-w-[11rem] overflow-hidden rounded-xl border border-border/60 bg-surface py-1 shadow-lg"
+						style={{ top: menuPosition.top, right: menuPosition.right }}
+					>
+						{voiceSupported ? (
+							<MenuButton
+								onClick={() => {
+									toggleVoiceInput();
+									closeMenu();
+								}}
+							>
+								{isListening ? 'Stop voice input' : 'Voice input'}
+							</MenuButton>
+						) : null}
+						<MenuButton
+							onClick={() => {
+								toggleMemory();
+							}}
+						>
+							{useMemory ? 'Memory on' : 'Memory off'}
+						</MenuButton>
+						<MenuButton
+							onClick={() => {
+								toggleAdvancedControls();
+							}}
+						>
+							{showAdvancedControls ? 'Hide session settings' : 'Session settings'}
+						</MenuButton>
+						{canStartNewChat ? (
+							<MenuButton
+								onClick={() => {
+									startNewChat();
+									closeMenu();
+								}}
+							>
+								Start new chat
+							</MenuButton>
+						) : null}
+						<MenuButton
+							disabled={!hasMessages}
+							onClick={() => {
+								handleExportConversation();
+								closeMenu();
+							}}
+						>
+							Export chat
+						</MenuButton>
+						<MenuButton
+							disabled={!hasMessages}
+							onClick={() => {
+								clearConversation();
+								closeMenu();
+							}}
+						>
+							Clear chat
+						</MenuButton>
+					</div>,
+					document.body,
+				)
+			: null;
 
 	return (
 		<div className="sticky top-0 z-20 flex items-center gap-2 overflow-visible border-b border-border/40 bg-surface-subtle/60 px-3 py-2.5 backdrop-blur-sm sm:px-4">
@@ -108,8 +208,9 @@ export const ChatHeader = memo(function ChatHeader({
 					</svg>
 				</button>
 
-				<div className="relative" ref={menuRef}>
+				<div className="relative">
 					<button
+						ref={toggleRef}
 						type="button"
 						className={`focus-ring-interactive inline-flex size-8 items-center justify-center rounded-full border border-border/50 text-muted-foreground transition hover:border-accent/60 hover:text-accent ${
 							menuOpen || showAdvancedControls ? 'border-accent/50 bg-accent/10 text-accent' : ''
@@ -118,7 +219,9 @@ export const ChatHeader = memo(function ChatHeader({
 						aria-expanded={menuOpen}
 						aria-haspopup="menu"
 						onClick={(event) => {
+							event.preventDefault();
 							event.stopPropagation();
+							ignoreNextOutsideClickRef.current = true;
 							setMenuOpen((open) => !open);
 						}}
 					>
@@ -126,67 +229,9 @@ export const ChatHeader = memo(function ChatHeader({
 							<path strokeLinecap="round" strokeLinejoin="round" d="M6 12h.01M12 12h.01M18 12h.01" />
 						</svg>
 					</button>
-
-					{menuOpen ? (
-						<div
-							role="menu"
-							className="absolute right-0 top-[calc(100%+0.35rem)] z-[1300] min-w-[11rem] overflow-hidden rounded-xl border border-border/60 bg-surface py-1 shadow-lg"
-						>
-							{voiceSupported ? (
-								<MenuButton
-									onClick={() => {
-										toggleVoiceInput();
-										closeMenu();
-									}}
-								>
-									{isListening ? 'Stop voice input' : 'Voice input'}
-								</MenuButton>
-							) : null}
-							<MenuButton
-								onClick={() => {
-									toggleMemory();
-								}}
-							>
-								{useMemory ? 'Memory on' : 'Memory off'}
-							</MenuButton>
-							<MenuButton
-								onClick={() => {
-									toggleAdvancedControls();
-								}}
-							>
-								{showAdvancedControls ? 'Hide session settings' : 'Session settings'}
-							</MenuButton>
-							{canStartNewChat ? (
-								<MenuButton
-									onClick={() => {
-										startNewChat();
-										closeMenu();
-									}}
-								>
-									Start new chat
-								</MenuButton>
-							) : null}
-							<MenuButton
-								disabled={!hasMessages}
-								onClick={() => {
-									handleExportConversation();
-									closeMenu();
-								}}
-							>
-								Export chat
-							</MenuButton>
-							<MenuButton
-								disabled={!hasMessages}
-								onClick={() => {
-									clearConversation();
-									closeMenu();
-								}}
-							>
-								Clear chat
-							</MenuButton>
-						</div>
-					) : null}
 				</div>
+
+				{menuPanel}
 
 				<button
 					type="button"

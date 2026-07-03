@@ -367,29 +367,21 @@
     animation: themeToggleSpin var(--duration-fast) var(--ease-standard);
   }
 
-  /* Mobile nav drawer — collapsed by default; ModernNavBar toggles `.active` */
+  /* Mobile nav drawer — hidden by default; ModernNavBar toggles `.active` */
   .mobile-menu {
+    display: none;
     visibility: hidden;
-    max-height: 0;
-    overflow: hidden;
     opacity: 0;
     pointer-events: none;
-    transition:
-      max-height var(--duration-normal) var(--ease-standard),
-      opacity var(--duration-normal) var(--ease-standard),
-      visibility 0s linear var(--duration-normal);
   }
 
   .mobile-menu.active {
+    display: block;
     visibility: visible;
     max-height: min(80dvh, 32rem);
     overflow-y: auto;
     opacity: 1;
     pointer-events: auto;
-    transition:
-      max-height var(--duration-normal) var(--ease-standard),
-      opacity var(--duration-normal) var(--ease-standard),
-      visibility 0s linear 0s;
   }
 
   .mobile-menu-header {
