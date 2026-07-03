@@ -48,7 +48,7 @@ describe('BlogPostCard Component', () => {
     });
 
     it('should extract slug and data from post', () => {
-      expect(fileContent).toContain('const { slug, data } = post');
+      expect(fileContent).toContain('const { id: slug, data } = post');
     });
 
     it('should handle visible tags with slicing', () => {
