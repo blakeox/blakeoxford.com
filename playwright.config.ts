@@ -32,7 +32,13 @@ export default defineConfig({
   grepInvert: /@debug/,
   timeout: 30 * 1000, // Reduced timeout for faster failure detection
   expect: {
-    timeout: 5000 // Reduced expect timeout for faster feedback
+    timeout: 5000, // Reduced expect timeout for faster feedback
+    toHaveScreenshot: {
+      pathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}{ext}',
+    },
+    toMatchSnapshot: {
+      pathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}{ext}',
+    },
   },
   fullyParallel: true, // Re-enable parallel for faster execution
   forbidOnly: !!process.env.CI,
