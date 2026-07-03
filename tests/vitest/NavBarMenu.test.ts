@@ -26,7 +26,7 @@ class MockNavBarMenu {
   cacheElements() {
     this.navbar = document.getElementById('navbar');
     this.navToggle = document.getElementById('nav-toggle');
-    this.mobileMenu = document.getElementById('mobile-menu');
+    this.mobileMenu = document.getElementById('nav-mobile-links');
     this.searchToggle = document.getElementById('search-toggle');
   }
 
@@ -94,7 +94,7 @@ describe('NavBarMenu', () => {
               <span></span>
               <span></span>
             </button>
-            <div id="mobile-menu" class="mobile-menu" style="display: none;">
+            <div id="nav-mobile-links" class="mobile-menu" style="display: none;">
               <ul class="nav-list">
                 <li><a href="/" data-analytics="nav_home">Home</a></li>
                 <li><a href="/about/" data-analytics="nav_about">About</a></li>
@@ -145,7 +145,7 @@ describe('NavBarMenu', () => {
     it('should find required DOM elements', () => {
       expect(navBarMenu.navbar?.id).toBe('navbar');
       expect(navBarMenu.navToggle?.id).toBe('nav-toggle');
-      expect(navBarMenu.mobileMenu?.id).toBe('mobile-menu');
+      expect(navBarMenu.mobileMenu?.id).toBe('nav-mobile-links');
       expect(navBarMenu.searchToggle?.id).toBe('search-toggle');
     });
 

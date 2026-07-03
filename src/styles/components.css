@@ -79,6 +79,57 @@
     @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background dark:ring-offset-background-dark;
   }
 
+  /* Scroll-aware sticky header shell */
+  .nav-shell:has(#navbar.has-background) {
+    border-color: color-mix(in oklch, var(--border) 85%, transparent);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    background: color-mix(in oklch, var(--surface) 88%, transparent);
+  }
+
+  :root[data-theme='dark'] .nav-shell:has(#navbar.has-background),
+  :root.dark .nav-shell:has(#navbar.has-background) {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    background: color-mix(in oklch, var(--surface) 82%, transparent);
+  }
+
+  /* Hide no-JS fallback once JS nav is active */
+  #navbar[data-js-nav='true'] ~ .mobile-nav-fallback {
+    display: none;
+  }
+
+  /* Burger → close icon animation */
+  .burger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .burger-line {
+    display: block;
+    height: 2px;
+    width: 100%;
+    border-radius: 1px;
+    background: currentColor;
+    transition:
+      transform var(--duration-normal) var(--ease-standard),
+      opacity var(--duration-fast) var(--ease-standard);
+  }
+
+  .burger-menu-button.active .burger-line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .burger-menu-button.active .burger-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .burger-menu-button.active .burger-line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
   /* Unified keyboard focus for nav, search, chat, and theme controls */
   .focus-ring-interactive:focus-visible {
     @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background dark:ring-offset-background-dark;
@@ -289,31 +340,10 @@
       visibility 0s linear 0s;
   }
 
-  .mobile-menu.active .mobile-close-button.sr-only {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.75rem;
-    z-index: 1;
-    display: inline-flex;
+  .mobile-menu-header {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    padding: 0.25rem;
-    border-radius: 9999px;
-    background: var(--surface);
-    color: var(--fg);
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
-    clip: auto;
-    clip-path: none;
-    overflow: visible;
-    white-space: normal;
-    text-indent: 0;
-    pointer-events: auto;
-  }
-
-  .mobile-menu.active .mobile-menu-content {
-    position: relative;
+    justify-content: flex-end;
   }
 
   /* JS-driven panels and overlays */
@@ -321,7 +351,8 @@
     .mobile-menu,
     .overlay-panel,
     .ai-chat-panel,
-    #search-overlay {
+    #search-overlay,
+    .burger-line {
       transition: none !important;
     }
 

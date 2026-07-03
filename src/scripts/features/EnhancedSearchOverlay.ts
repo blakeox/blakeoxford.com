@@ -1,4 +1,7 @@
 /**
+ * @deprecated Production search uses SearchOverlayController.tsx.
+ * Kept for legacy standalone bundle references only — do not import in new code.
+ *
  * Enhanced search overlay with voice search, categories, and suggestions
  */
 // Load vendored Fuse.js on demand to avoid bundling it into main JS

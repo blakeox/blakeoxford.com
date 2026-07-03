@@ -30,7 +30,7 @@ import SearchOverlayClient from '../../islands/SearchOverlayClient';
 
 <div
  id="search-overlay"
- class="group fixed inset-0 z-[1200] flex opacity-0 transition duration-normal ease-standard data-[state=closed]:pointer-events-none data-[state=open]:opacity-100 motion-reduce:transition-none"
+ class="group fixed inset-0 z-search flex opacity-0 transition duration-normal ease-standard data-[state=closed]:pointer-events-none data-[state=open]:opacity-100 motion-reduce:transition-none"
  role="dialog"
  aria-modal="true"
  aria-labelledby="search-title"
@@ -116,4 +116,4 @@ import SearchOverlayClient from '../../islands/SearchOverlayClient';
  </div>
 </div>
 
-<SearchOverlayClient client:load />
+<SearchOverlayClient client:idle />

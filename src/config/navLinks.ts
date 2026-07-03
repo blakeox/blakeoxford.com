@@ -10,6 +10,12 @@ export interface NavLink {
   target?: string;
 }
 
+/** Normalize paths for active-link and aria-current comparisons. */
+export function normalizeNavPath(path: string): string {
+  if (!path) return '/';
+  return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
+}
+
 export interface NavConfig {
   links: NavLink[];
   socialLinks?: NavLink[];
@@ -38,10 +44,10 @@ export function getNavLinkByHref(href: string): NavLink | undefined {
 
 export function isCurrentPage(href: string): boolean {
   if (typeof window === 'undefined' || typeof window.location === 'undefined') return false;
-  return window.location.pathname === href;
+  return normalizeNavPath(window.location.pathname) === normalizeNavPath(href);
 }
 
 export function getActiveNavLink(): NavLink | undefined {
   if (typeof window === 'undefined' || typeof window.location === 'undefined') return undefined;
-  return navLinks.find(link => isCurrentPage(link.href));
+  return navLinks.find((link) => isCurrentPage(link.href));
 } 

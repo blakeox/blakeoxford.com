@@ -828,4 +828,10 @@
   --ease-in-out-quad: var(--ease-in-out-quad);
   --ease-spring: var(--ease-spring);
   --ease-bounce: var(--ease-bounce);
+
+  /* Layered UI stacking */
+  --z-nav: 50;
+  --z-nav-drawer: 100;
+  --z-chat: 1050;
+  --z-search: 1200;
 }
