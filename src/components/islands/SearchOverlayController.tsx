@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
-import { getNavSearchPages, type NavSearchPage } from '../../config/navSearchPages';
+import { runSearch } from '../../lib/search/searchService';
+import type { SearchCategory, SearchRecord } from '../../lib/search/types';
 import {
   closeMobileMenu,
   registerEscapeHandler,
@@ -9,49 +10,28 @@ import {
 import { createFocusTrap } from '../../utils/focusTrap';
 import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollLock';
 
-type SearchCategory = 'all' | 'projects' | 'pages';
-
-type SearchRecord = NavSearchPage | {
-  type: 'project';
-  title: string;
-  description: string;
-  href: string;
-  tags: string[];
-  featured?: boolean;
-};
-
-interface ProjectAPIItem {
-  slug: string;
-  title: string;
-  description?: string;
-  tags?: string[];
-  featured?: boolean;
-}
+const DEBOUNCE_MS = 200;
 
 function setSearchToggleExpanded(expanded: boolean): void {
-  const toggle = document.getElementById('search-toggle');
-  toggle?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  document.getElementById('search-toggle')?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+}
+
+function setSearchStatus(message: string): void {
+  const status = document.querySelector('[data-search-status]');
+  if (status) status.textContent = message;
 }
 
 export default function SearchOverlayController() {
   useEffect(() => {
     let cancelled = false;
-    let projectsLoaded = false;
-    let projectsLoading = false;
-    let projectRecords: SearchRecord[] = [];
-    let currentResults: SearchRecord[] = [];
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
     let activeCategory: SearchCategory = 'all';
     let activeIndex = -1;
     let currentQuery = '';
-
-    const win = window as typeof window & {
-      enhancedSearchOverlay?: { openSearchOverlay: () => void; closeSearchOverlay: () => void };
-      searchOverlay?: { openSearchOverlay: () => void; closeSearchOverlay: () => void };
-    };
+    let currentResults: SearchRecord[] = [];
+    let searchGeneration = 0;
 
     const doc = document;
-    const staticPages = getNavSearchPages();
-
     const toggleButton = doc.getElementById('search-toggle');
     const closeButton = doc.getElementById('close-search');
     const overlayElement = doc.getElementById('search-overlay');
@@ -60,6 +40,8 @@ export default function SearchOverlayController() {
     const searchInput = doc.getElementById('search-input') as HTMLInputElement | null;
     const resultsWrapper = overlayElement?.querySelector('[data-results]') as HTMLElement | null;
     const resultsContainer = overlayElement?.querySelector('[data-results-container]') as HTMLElement | null;
+    const emptyState = overlayElement?.querySelector('[data-search-empty]') as HTMLElement | null;
+    const loadingState = overlayElement?.querySelector('[data-search-loading]') as HTMLElement | null;
     const categoryButtons = overlayElement?.querySelectorAll<HTMLButtonElement>('[data-search-category-group] [data-category]') ?? [];
 
     const focusTrap = createFocusTrap(overlayElement, {
@@ -68,72 +50,9 @@ export default function SearchOverlayController() {
       fallbackFocus: overlayPanel,
     });
 
-    const openOverlay = () => {
-      if (cancelled || overlayElement?.dataset.state === 'open') return;
-
-      closeMobileMenu();
-
-      if (!overlayElement) return;
-
-      try {
-        if (overlayElement.hasAttribute('data-authoritative-closed')) {
-          overlayElement.removeAttribute('data-authoritative-closed');
-        }
-        if (overlayElement.hasAttribute('data-closed-lock')) return;
-      } catch { /* noop */ }
-
-      overlayElement.dataset.state = 'open';
-      overlayElement.classList.add('active');
-      overlayElement.removeAttribute('aria-hidden');
-      overlayElement.removeAttribute('inert');
-
-      try {
-        overlayElement.style.setProperty('display', 'block', 'important');
-        overlayElement.style.setProperty('visibility', 'visible', 'important');
-        overlayElement.style.setProperty('opacity', '1', 'important');
-      } catch {
-        overlayElement.style.display = 'block';
-        overlayElement.style.visibility = 'visible';
-        overlayElement.style.opacity = '1';
-      }
-
-      acquireScrollLock();
-      setSearchToggleExpanded(true);
-      focusTrap.activate();
-
-      if (searchInput) {
-        setTimeout(() => searchInput.focus(), 50);
-        searchInput.setAttribute('aria-expanded', 'true');
-      }
-
-      if (!projectsLoaded && !projectsLoading) {
-        loadProjects();
-      }
-    };
-
-    const closeOverlay = () => {
-      if (!overlayElement || overlayElement.dataset.state === 'closed') return;
-
-      try {
-        if (typeof (window as Window & { ensureOverlayClosed?: () => void }).ensureOverlayClosed === 'function') {
-          (window as Window & { ensureOverlayClosed?: () => void }).ensureOverlayClosed?.();
-          return;
-        }
-      } catch { /* noop */ }
-
-      overlayElement.dataset.state = 'closed';
-      overlayElement.classList.remove('active');
-      overlayElement.setAttribute('inert', '');
-      overlayElement.setAttribute('aria-hidden', 'true');
-      overlayElement.style.opacity = '0';
-      overlayElement.style.visibility = 'hidden';
-      overlayElement.style.display = 'none';
-
-      delete doc.body.dataset.searchOpen;
-      releaseScrollLock();
-      setSearchToggleExpanded(false);
-      focusTrap.deactivate();
-      searchInput?.setAttribute('aria-expanded', 'false');
+    const setLoading = (loading: boolean) => {
+      loadingState?.classList.toggle('hidden', !loading);
+      overlayElement?.setAttribute('data-search-loading', loading ? 'true' : 'false');
     };
 
     const escapeRegExp = (input: string): string => input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -147,9 +66,7 @@ export default function SearchOverlayController() {
       const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
       let lastIndex = 0;
       text.replace(regex, (match, _group, offset) => {
-        if (offset > lastIndex) {
-          fragment.appendChild(doc.createTextNode(text.slice(lastIndex, offset)));
-        }
+        if (offset > lastIndex) fragment.appendChild(doc.createTextNode(text.slice(lastIndex, offset)));
         const mark = doc.createElement('mark');
         mark.className = 'rounded bg-accent/20 px-1 py-0.5 text-foreground';
         mark.textContent = match;
@@ -157,9 +74,7 @@ export default function SearchOverlayController() {
         lastIndex = offset + match.length;
         return match;
       });
-      if (lastIndex < text.length) {
-        fragment.appendChild(doc.createTextNode(text.slice(lastIndex)));
-      }
+      if (lastIndex < text.length) fragment.appendChild(doc.createTextNode(text.slice(lastIndex)));
       return fragment;
     };
 
@@ -178,21 +93,29 @@ export default function SearchOverlayController() {
       });
     };
 
-    const renderResults = (records: SearchRecord[]) => {
+    const renderResults = (records: SearchRecord[], query: string) => {
       if (!resultsContainer || !resultsWrapper) return;
+
       resultsContainer.innerHTML = '';
+      currentResults = records;
 
       if (!records.length) {
         resultsWrapper.classList.add('hidden');
         resultsWrapper.setAttribute('aria-hidden', 'true');
-        searchInput?.setAttribute('aria-activedescendant', '');
+        emptyState?.classList.remove('hidden');
+        emptyState?.setAttribute('aria-hidden', 'false');
+        searchInput?.setAttribute('aria-expanded', 'false');
+        searchInput?.removeAttribute('aria-activedescendant');
         activeIndex = -1;
-        currentResults = records;
+        setSearchStatus(query.trim() ? `No results for "${query.trim()}".` : 'Start typing to search the site.');
         return;
       }
 
+      emptyState?.classList.add('hidden');
+      emptyState?.setAttribute('aria-hidden', 'true');
       resultsWrapper.classList.remove('hidden');
       resultsWrapper.setAttribute('aria-hidden', 'false');
+      searchInput?.setAttribute('aria-expanded', 'true');
 
       records.forEach((record, index) => {
         const option = doc.createElement('a');
@@ -204,39 +127,31 @@ export default function SearchOverlayController() {
         option.tabIndex = -1;
         option.className = 'search-result focus-ring-interactive touch-target group flex min-h-11 flex-col gap-2 rounded-2xl border border-border/40 bg-surface/95 p-4 sm:p-5 transition-all duration-200 hover:border-accent/50 hover:shadow-lg';
 
+        option.addEventListener('click', () => {
+          closeOverlay();
+        });
+
         const title = doc.createElement('span');
         title.className = 'block text-sm font-semibold tracking-tight text-foreground';
-        title.appendChild(createHighlightedFragment(record.title, currentQuery));
+        title.appendChild(createHighlightedFragment(record.title, query));
 
         const description = doc.createElement('span');
         description.className = 'mt-1 block text-xs leading-relaxed text-muted-foreground';
-        description.appendChild(createHighlightedFragment(record.description, currentQuery));
+        description.appendChild(createHighlightedFragment(record.description, query));
 
         const metaRow = doc.createElement('div');
         metaRow.className = 'flex items-center gap-2 text-xxs font-semibold uppercase tracking-label text-subtle-foreground';
 
         const typeBadge = doc.createElement('span');
         typeBadge.className = 'inline-flex items-center gap-1 rounded-full bg-surface-subtle px-2 py-1 ring-1 ring-border/30';
-        typeBadge.textContent = record.type === 'project' ? 'Project' : 'Page';
+        typeBadge.textContent = record.type === 'project' ? 'Project' : record.type === 'blog' ? 'Blog' : 'Page';
         metaRow.appendChild(typeBadge);
 
-        if ('featured' in record && record.featured) {
+        if (record.featured) {
           const featuredBadge = doc.createElement('span');
           featuredBadge.className = 'inline-flex items-center gap-1 rounded-full bg-accent/15 px-2 py-1 text-accent ring-1 ring-accent/30';
           featuredBadge.textContent = 'Featured';
           metaRow.appendChild(featuredBadge);
-        }
-
-        if (record.tags.length) {
-          const tags = doc.createElement('div');
-          tags.className = 'flex flex-wrap gap-1 text-xxs uppercase tracking-label text-subtle-foreground/90';
-          record.tags.slice(0, 4).forEach((tag) => {
-            const pill = doc.createElement('span');
-            pill.className = 'rounded-full bg-surface px-2 py-0.5 ring-1 ring-border/25';
-            pill.textContent = tag;
-            tags.appendChild(pill);
-          });
-          metaRow.appendChild(tags);
         }
 
         option.appendChild(title);
@@ -245,38 +160,17 @@ export default function SearchOverlayController() {
         resultsContainer.appendChild(option);
       });
 
-      currentResults = records;
       activeIndex = records.length ? 0 : -1;
       applyActiveState();
-    };
-
-    const filterRecords = (query: string, category: SearchCategory): SearchRecord[] => {
-      const normalized = query.trim().toLowerCase();
-      const pool = category === 'projects'
-        ? projectRecords
-        : category === 'pages'
-          ? staticPages
-          : [...projectRecords, ...staticPages];
-
-      if (!normalized) {
-        return pool
-          .slice()
-          .sort((a, b) => Number(Boolean('featured' in b && b.featured)) - Number(Boolean('featured' in a && a.featured)))
-          .slice(0, 8);
-      }
-
-      const terms = normalized.split(/\s+/).filter(Boolean);
-      return pool
-        .filter((record) => {
-          const haystack = `${record.title} ${record.description} ${record.tags.join(' ')}`.toLowerCase();
-          return terms.every((term) => haystack.includes(term));
-        })
-        .slice(0, 10);
+      setSearchStatus(`${records.length} result${records.length === 1 ? '' : 's'}${query.trim() ? ` for "${query.trim()}"` : ''}.`);
+      focusTrap.update();
     };
 
     const updateCategoryButtons = (category: SearchCategory) => {
       categoryButtons.forEach((button) => {
-        if (button.dataset.category === category) {
+        const isActive = button.dataset.category === category;
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        if (isActive) {
           button.dataset.active = '';
           button.classList.add('bg-accent/15', 'text-accent', 'ring-1', 'ring-accent/40');
         } else {
@@ -286,9 +180,82 @@ export default function SearchOverlayController() {
       });
     };
 
-    const runSearch = () => {
-      const records = filterRecords(currentQuery, activeCategory);
-      renderResults(records);
+    const executeSearch = async () => {
+      const generation = ++searchGeneration;
+      setLoading(true);
+
+      try {
+        const result = await runSearch({
+          query: currentQuery,
+          category: activeCategory,
+          limit: 10,
+        });
+
+        if (cancelled || generation !== searchGeneration) return;
+        renderResults(result.records, currentQuery);
+
+        if (result.source === 'cloudflare-vectorize' && currentQuery.trim()) {
+          overlayElement?.setAttribute('data-search-source', 'cloudflare-vectorize');
+        } else {
+          overlayElement?.setAttribute('data-search-source', result.source);
+        }
+      } catch (error) {
+        console.warn('[search] Query failed', error);
+        if (!cancelled && generation === searchGeneration) {
+          renderResults([], currentQuery);
+          setSearchStatus('Search is temporarily unavailable. Try again in a moment.');
+        }
+      } finally {
+        if (!cancelled && generation === searchGeneration) setLoading(false);
+      }
+    };
+
+    const scheduleSearch = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        void executeSearch();
+      }, DEBOUNCE_MS);
+    };
+
+    const openOverlay = () => {
+      if (cancelled || overlayElement?.dataset.state === 'open') return;
+      closeMobileMenu();
+      if (!overlayElement) return;
+
+      overlayElement.removeAttribute('data-authoritative-closed');
+      if (overlayElement.hasAttribute('data-closed-lock')) return;
+
+      overlayElement.dataset.state = 'open';
+      overlayElement.classList.add('active');
+      overlayElement.removeAttribute('aria-hidden');
+      overlayElement.removeAttribute('inert');
+      overlayElement.style.setProperty('display', 'block', 'important');
+      overlayElement.style.setProperty('visibility', 'visible', 'important');
+      overlayElement.style.setProperty('opacity', '1', 'important');
+
+      acquireScrollLock();
+      setSearchToggleExpanded(true);
+      focusTrap.activate();
+      setTimeout(() => searchInput?.focus(), 50);
+      void executeSearch();
+    };
+
+    const closeOverlay = () => {
+      if (!overlayElement || overlayElement.dataset.state === 'closed') return;
+
+      overlayElement.dataset.state = 'closed';
+      overlayElement.classList.remove('active');
+      overlayElement.setAttribute('inert', '');
+      overlayElement.setAttribute('aria-hidden', 'true');
+      overlayElement.style.opacity = '0';
+      overlayElement.style.visibility = 'hidden';
+      overlayElement.style.display = 'none';
+
+      releaseScrollLock();
+      setSearchToggleExpanded(false);
+      focusTrap.deactivate();
+      searchInput?.setAttribute('aria-expanded', 'false');
+      setLoading(false);
     };
 
     const handleToggleClick = (event: Event) => {
@@ -319,7 +286,7 @@ export default function SearchOverlayController() {
 
     const handleInput = (event: Event) => {
       currentQuery = (event.target as HTMLInputElement).value;
-      runSearch();
+      scheduleSearch();
     };
 
     const moveActiveIndex = (delta: number) => {
@@ -337,6 +304,7 @@ export default function SearchOverlayController() {
         event.preventDefault();
         moveActiveIndex(-1);
       } else if (event.key === 'Enter' && activeIndex >= 0 && currentResults[activeIndex]) {
+        closeOverlay();
         window.location.href = currentResults[activeIndex].href;
       }
     };
@@ -345,7 +313,7 @@ export default function SearchOverlayController() {
       const button = event.currentTarget as HTMLButtonElement;
       activeCategory = (button.dataset.category as SearchCategory) ?? 'all';
       updateCategoryButtons(activeCategory);
-      runSearch();
+      scheduleSearch();
     };
 
     const handleResultMouseEnter = (event: MouseEvent) => {
@@ -358,73 +326,32 @@ export default function SearchOverlayController() {
       }
     };
 
-    const handleResultFocus = (event: FocusEvent) => {
-      const target = (event.target as HTMLElement).closest('[data-index]') as HTMLElement | null;
-      if (!target) return;
-      const index = Number(target.dataset.index ?? -1);
-      if (Number.isFinite(index)) {
-        activeIndex = index;
-        applyActiveState();
-      }
-    };
-
-    const abortController = new AbortController();
-
-    const loadProjects = async () => {
-      projectsLoading = true;
-      try {
-        const response = await fetch('/api/projects.json', { signal: abortController.signal });
-        if (!response.ok) throw new Error(`Failed to load projects (${response.status})`);
-        const json = await response.json();
-        projectRecords = Array.isArray(json)
-          ? json.map((item: ProjectAPIItem) => ({
-              type: 'project' as const,
-              title: item.title ?? 'Untitled project',
-              description: item.description ?? '',
-              href: `/projects/${item.slug}/`,
-              tags: Array.isArray(item.tags) ? item.tags : [],
-              featured: Boolean(item.featured),
-            }))
-          : [];
-        projectsLoaded = true;
-      } catch (error) {
-        console.warn('Search overlay failed to load projects index', error);
-        projectRecords = [];
-      } finally {
-        projectsLoading = false;
-        runSearch();
-      }
-    };
-
     const handleBackdrop = (event: MouseEvent) => {
       if (!overlayElement || event.target !== backdropElement) return;
       closeOverlay();
     };
 
     updateCategoryButtons(activeCategory);
-    runSearch();
 
     const overlayApi = { openSearchOverlay: openOverlay, closeSearchOverlay: closeOverlay };
+    const win = window as typeof window & {
+      enhancedSearchOverlay?: typeof overlayApi;
+      searchOverlay?: typeof overlayApi;
+    };
     win.enhancedSearchOverlay = overlayApi;
     win.searchOverlay = overlayApi;
+    overlayElement?.setAttribute('data-ready', 'true');
 
     toggleButton?.addEventListener('click', handleToggleClick, { passive: false });
     closeButton?.addEventListener('click', handleCloseClick, { passive: false });
     backdropElement?.addEventListener('click', handleBackdrop as EventListener, { passive: true });
-
     doc.addEventListener('keydown', handleSlashShortcut, { passive: false });
     doc.addEventListener('keydown', handleMetaKShortcut, { passive: false });
-
     searchInput?.addEventListener('input', handleInput, { passive: true });
     searchInput?.addEventListener('keydown', handleInputKeydown, { passive: false });
-
-    categoryButtons.forEach((button) => {
-      button.addEventListener('click', handleCategoryClick, { passive: true });
-    });
-
+    categoryButtons.forEach((button) => button.addEventListener('click', handleCategoryClick, { passive: true }));
     resultsContainer?.addEventListener('mouseenter', handleResultMouseEnter, { passive: true });
     resultsContainer?.addEventListener('mousemove', handleResultMouseEnter, { passive: true });
-    resultsContainer?.addEventListener('focusin', handleResultFocus, { passive: true });
 
     const cleanupEscape = registerEscapeHandler({
       id: 'search-overlay',
@@ -432,12 +359,11 @@ export default function SearchOverlayController() {
       isActive: () => overlayElement?.dataset.state === 'open',
       handle: () => closeOverlay(),
     });
-
     const cleanupSearchClose = registerSearchClose(closeOverlay);
 
     return () => {
       cancelled = true;
-      abortController.abort();
+      if (debounceTimer) clearTimeout(debounceTimer);
       cleanupEscape();
       cleanupSearchClose();
       toggleButton?.removeEventListener('click', handleToggleClick);
@@ -447,12 +373,9 @@ export default function SearchOverlayController() {
       doc.removeEventListener('keydown', handleMetaKShortcut);
       searchInput?.removeEventListener('input', handleInput);
       searchInput?.removeEventListener('keydown', handleInputKeydown);
-      categoryButtons.forEach((button) => {
-        button.removeEventListener('click', handleCategoryClick);
-      });
+      categoryButtons.forEach((button) => button.removeEventListener('click', handleCategoryClick));
       resultsContainer?.removeEventListener('mouseenter', handleResultMouseEnter);
       resultsContainer?.removeEventListener('mousemove', handleResultMouseEnter);
-      resultsContainer?.removeEventListener('focusin', handleResultFocus);
       if (win.enhancedSearchOverlay === overlayApi) delete win.enhancedSearchOverlay;
       if (win.searchOverlay === overlayApi) delete win.searchOverlay;
     };

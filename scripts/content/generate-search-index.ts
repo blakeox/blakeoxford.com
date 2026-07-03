@@ -228,7 +228,13 @@ async function build() {
   console.log('🔍 Generated project and blog search indexes');
 }
 
-build().catch((error) => {
-  // Do not exit the process during tests; emit minimal files to satisfy consumers
-  console.error('Failed to generate search index', error);
-});
+export { build as buildSearchIndex };
+
+const isDirectRun = import.meta.url === `file://${process.argv[1]}`;
+
+if (isDirectRun) {
+  build().catch((error) => {
+    console.error('Failed to generate search index', error);
+    process.exit(1);
+  });
+}

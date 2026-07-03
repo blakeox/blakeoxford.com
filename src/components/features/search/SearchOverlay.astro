@@ -1,28 +1,9 @@
 ---
 /**
  * SearchOverlay - Modal search interface
- * 
- * Full-screen modal overlay with fuzzy search functionality.
- * Uses Fuse.js for client-side search across blog posts and projects.
- * Includes keyboard shortcuts (Cmd+K, Escape) and focus management.
- * 
- * @component
- * @category Features
- * @subcategory Search
- * 
- * @example Search overlay
- * ```astro
- * <SearchOverlay />
- * ```
- * 
- * @accessibility
- * - role="dialog" with aria-modal="true"
- * - aria-labelledby linking to search title
- * - Proper focus trap when open
- * - Escape key to close
- * - ARIA combobox pattern for search input
- * - role="listbox" for results
- * - Keyboard navigation (Arrow keys, Enter)
+ *
+ * Site-wide search powered by Cloudflare Vectorize semantic search at
+ * `/api/semantic-search`, with a static JSON fallback for local/dev.
  */
 import Flex from '../../primitives/Flex.astro';
 import SearchOverlayClient from '../../islands/SearchOverlayClient';
@@ -46,7 +27,7 @@ import SearchOverlayClient from '../../islands/SearchOverlayClient';
  <div class="relative flex min-h-full w-full items-start justify-center px-4 pb-8 pt-16 sm:pt-20 lg:pt-24" data-overlay-container>
  <div class="overlay-panel w-full max-w-3xl translate-y-6 rounded-3xl border border-border/60 bg-surface/95 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard group-data-[state=open]:translate-y-0 motion-reduce:translate-y-0 motion-reduce:transition-none" data-panel>
  <div class="flex items-center justify-between gap-3 border-b border-border/60 px-5 py-4">
- <div id="search-title" class="text-lg font-semibold text-foreground">Search</div>
+ <h2 id="search-title" class="text-lg font-semibold text-foreground">Search</h2>
  <button
  id="close-search"
  class="touch-target focus-ring-interactive inline-flex size-11 items-center justify-center rounded-xl border border-border/80 bg-surface text-foreground transition hover:border-border"
@@ -61,11 +42,12 @@ import SearchOverlayClient from '../../islands/SearchOverlayClient';
  <div class="px-6 py-6">
  <form class="flex flex-col gap-6" autocomplete="off" data-search-form>
  <div class="flex flex-col gap-3">
- <label class="text-sm font-medium text-muted-foreground">Search in</label>
- <Flex wrap gap="xs" data-search-category-group>
- <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="all" data-active>All</button>
- <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="projects">Projects</button>
- <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="pages">Pages</button>
+ <span class="text-sm font-medium text-muted-foreground">Search in</span>
+ <Flex wrap gap="xs" data-search-category-group role="group" aria-label="Search categories">
+ <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="all" data-active aria-pressed="true">All</button>
+ <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="projects" aria-pressed="false">Projects</button>
+ <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="blog" aria-pressed="false">Blog</button>
+ <button type="button" class="search-pill touch-target focus-ring-interactive inline-flex min-h-11 items-center rounded-full border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:text-accent" data-category="pages" aria-pressed="false">Pages</button>
  </Flex>
  </div>
 
@@ -76,30 +58,32 @@ import SearchOverlayClient from '../../islands/SearchOverlayClient';
  </label>
 
  <div class="group relative flex w-full items-center gap-3 rounded-xl border border-border/60 bg-field-bg px-4 py-3 shadow-sm focus-within:border-accent/60 focus-within:ring-2 focus-within:ring-accent/40">
- <svg class="size-5 text-subtle-foreground/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+ <svg class="size-5 text-subtle-foreground/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
  </svg>
- <label for="search-input" class="sr-only">Search</label>
  <input
  id="search-input"
- type="text"
+ type="search"
  class="peer flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground/70 focus:outline-none"
- placeholder="Type to search..."
- aria-label="Search input"
+ placeholder="Search pages, projects, and blog posts..."
+ aria-label="Search site content"
  autocomplete="off"
  spellcheck="false"
  aria-expanded="false"
  aria-controls="search-results"
- role="combobox"
+ role="searchbox"
  />
- <button type="button" id="voice-search" class="touch-target focus-ring-interactive hidden min-h-11 items-center gap-2 rounded-lg border border-border/60 px-3 py-2 text-sm text-muted-foreground transition hover:border-accent hover:text-accent sm:inline-flex">
- <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
- <path stroke-linecap="round" stroke-linejoin="round" d="M12 19a7 7 0 0 0 7-7V9a7 7 0 1 0-14 0v3a7 7 0 0 0 7 7Zm0 0v3m-4 0h8" />
- </svg>
- <span class="hidden text-xs uppercase tracking-wide text-subtle-foreground lg:block">Voice</span>
- </button>
  </div>
- <p class="text-xs text-subtle-foreground">Quick ideas: “Microsoft Fabric”, “Power BI dashboards”, “Contact”</p>
+ <p class="text-xs text-subtle-foreground">Powered by Cloudflare semantic search. Try “Microsoft Fabric”, “CES 2026”, or “Contact”.</p>
+ <p class="sr-only" data-search-status aria-live="polite" aria-atomic="true"></p>
+ </div>
+
+ <div data-search-loading class="hidden rounded-2xl border border-border/60 bg-surface/80 px-4 py-3 text-sm text-muted-foreground" aria-hidden="true">
+ Searching with Cloudflare Vectorize…
+ </div>
+
+ <div data-search-empty class="hidden rounded-2xl border border-dashed border-border/60 bg-surface/60 px-4 py-3 text-sm text-muted-foreground" aria-hidden="true">
+ No results found. Try a different keyword or browse from the suggestions below.
  </div>
 
  <div id="search-results" class="hidden flex-col gap-3" role="listbox" aria-label="Search results" data-results>

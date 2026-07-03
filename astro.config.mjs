@@ -29,6 +29,73 @@ function loadEnvFile(filename) {
 loadEnvFile('.env');
 loadEnvFile('.env.local');
 
+function createDevSemanticSearchProxy() {
+  const targetBase = process.env.SEMANTIC_SEARCH_PROXY_URL ?? 'https://blakeoxford.com';
+
+  return {
+    name: 'semantic-search-dev-proxy',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        if (!req.url || !req.url.startsWith('/api/semantic-search')) {
+          next();
+          return;
+        }
+
+        const origin = req.headers.origin ?? '*';
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'content-type');
+        res.setHeader('Vary', 'Origin');
+
+        if (req.method === 'OPTIONS') {
+          res.statusCode = 204;
+          res.end();
+          return;
+        }
+
+        if (req.method !== 'POST') {
+          res.statusCode = 405;
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.end(JSON.stringify({ error: 'Method not allowed' }));
+          return;
+        }
+
+        let rawBody = '';
+        try {
+          for await (const chunk of req) {
+            rawBody += chunk;
+          }
+        } catch (error) {
+          console.error('Failed to read semantic search request body', error);
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.end(JSON.stringify({ error: 'Invalid request body' }));
+          return;
+        }
+
+        try {
+          const upstreamResponse = await globalThis.fetch(`${targetBase}/api/semantic-search`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: rawBody,
+          });
+
+          const responseBody = await upstreamResponse.text();
+          res.statusCode = upstreamResponse.status;
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.end(responseBody);
+        } catch (error) {
+          console.error('Semantic search proxy failed', error);
+          res.statusCode = 504;
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.end(JSON.stringify({ error: 'Semantic search request failed' }));
+        }
+      });
+    },
+  };
+}
+
 function createDevAISearchProxy() {
   return {
     name: 'ai-search-dev-proxy',
@@ -275,7 +342,9 @@ export default defineConfig({
     }]
   },
   vite: {
-    plugins: process.env.NODE_ENV === 'production' ? [] : [createDevAISearchProxy()],
+    plugins: process.env.NODE_ENV === 'production'
+      ? []
+      : [createDevSemanticSearchProxy(), createDevAISearchProxy()],
     build: {
       // Use Lightning CSS for minification; it's more tolerant of modern selectors
       // and avoids false-positive errors like &:is(role="button") during minify.

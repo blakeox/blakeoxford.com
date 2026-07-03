@@ -27,6 +27,45 @@ const ACCOUNT_ID = 'cc3bb24ae3c87cff38c2be85df3dab29';
 const BLOG_DIR = join(__dirname, '../src/content/blog');
 const PROJECTS_DIR = join(__dirname, '../src/content/projects');
 
+/** Static pages — keep in sync with src/config/navSearchPages.ts */
+const NAV_PAGES = [
+  {
+    slug: 'home',
+    href: '/',
+    title: 'Home',
+    description: 'Portfolio overview and signature programs.',
+    tags: ['home', 'overview'],
+  },
+  {
+    slug: 'about',
+    href: '/about/',
+    title: 'About',
+    description: 'Credentials, achievements, and professional journey.',
+    tags: ['about', 'biography', 'achievements'],
+  },
+  {
+    slug: 'projects',
+    href: '/projects/',
+    title: 'Projects',
+    description: 'Selected case studies across automation, analytics, and change enablement.',
+    tags: ['projects', 'case studies'],
+  },
+  {
+    slug: 'blog',
+    href: '/blog/',
+    title: 'Blog',
+    description: 'Articles on systems architecture, automation, and cloud strategy.',
+    tags: ['blog', 'articles', 'writing'],
+  },
+  {
+    slug: 'contact',
+    href: '/contact/',
+    title: 'Contact',
+    description: 'Start a working session or send a note.',
+    tags: ['contact', 'connect'],
+  },
+];
+
 /**
  * Parse frontmatter from markdown files
  */
@@ -106,7 +145,18 @@ function getMarkdownFiles(dir, collection) {
  * Generate embedding text for content
  */
 function generateEmbeddingText(item) {
-  const { frontmatter, content } = item;
+  const { frontmatter, content, collection } = item;
+
+  if (collection === 'pages') {
+    const titleText = frontmatter.title ? `${frontmatter.title}. ${frontmatter.title}.` : '';
+    const descriptionText = frontmatter.description || '';
+    const tagsText = Array.isArray(frontmatter.tags)
+      ? frontmatter.tags.join(' ')
+      : typeof frontmatter.tags === 'string'
+        ? frontmatter.tags
+        : '';
+    return `${titleText} ${descriptionText} ${tagsText}`.trim();
+  }
   
   // Title with extra weight (repeat 2x)
   const titleText = frontmatter.title ? `${frontmatter.title}. ${frontmatter.title}.` : '';
@@ -232,9 +282,11 @@ async function indexContent(items) {
       console.log(`  ✓ Generated ${embedding.length}-dimensional vector`);
       
       // Prepare vector for Vectorize
-      const url = collection === 'blog' 
+      const url = collection === 'blog'
         ? `https://blakeoxford.com/blog/${slug}/`
-        : `https://blakeoxford.com/projects/${slug}/`;
+        : collection === 'pages'
+          ? `https://blakeoxford.com${frontmatter.href || '/'}`
+          : `https://blakeoxford.com/projects/${slug}/`;
       
       vectors.push({
         id: `${collection}-${slug}`,
@@ -283,13 +335,26 @@ async function main() {
   // Collect all content
   const blogPosts = getMarkdownFiles(BLOG_DIR, 'blog');
   const projects = getMarkdownFiles(PROJECTS_DIR, 'projects');
-  
+  const pages = NAV_PAGES.map((page) => ({
+    slug: page.slug,
+    collection: 'pages',
+    frontmatter: {
+      title: page.title,
+      description: page.description,
+      tags: page.tags,
+      href: page.href,
+    },
+    content: '',
+    fullPath: page.href,
+  }));
+
   console.log('\n📁 Found content:');
   console.log(`   Blog posts: ${blogPosts.length}`);
   console.log(`   Projects: ${projects.length}`);
-  console.log(`   Total: ${blogPosts.length + projects.length}`);
-  
-  const allContent = [...blogPosts, ...projects];
+  console.log(`   Pages: ${pages.length}`);
+  console.log(`   Total: ${blogPosts.length + projects.length + pages.length}`);
+
+  const allContent = [...blogPosts, ...projects, ...pages];
   
   if (allContent.length === 0) {
     console.log('\n⚠️  No content found. Exiting.');

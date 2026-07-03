@@ -1,10 +1,17 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import path from 'path';
 import fs from 'fs';
+import { spawnSync } from 'node:child_process';
 
-beforeAll(async () => {
-  const scriptPath = path.join(process.cwd(), 'scripts/content/generate-search-index.ts');
-  await import(scriptPath);
+beforeAll(() => {
+  const result = spawnSync('node', ['scripts/content/generate-search-index-from-files.mjs'], {
+    cwd: process.cwd(),
+    stdio: 'pipe',
+  });
+
+  if (result.status !== 0) {
+    throw new Error(result.stderr?.toString() || 'Failed to generate search index');
+  }
 });
 
 function readJSON(rel: string) {
@@ -16,7 +23,7 @@ describe('Search Index Integration', () => {
   it('dist/search-index.json exists and has combined entries', () => {
     const combined = readJSON('dist/search-index.json');
     expect(Array.isArray(combined)).toBe(true);
-    const types = new Set(combined.map(e => e.type));
+    const types = new Set(combined.map((e: { type: string }) => e.type));
     expect(types.has('project')).toBe(true);
   });
 
@@ -28,7 +35,7 @@ describe('Search Index Integration', () => {
 
   it('public/search/projects.json is sorted by date', () => {
     const projects = readJSON('public/search/projects.json');
-    const hasValidDates = projects.every((p: any) => p.publishedAt && /\d{4}-\d{2}-\d{2}/.test(p.publishedAt));
+    const hasValidDates = projects.every((p: { publishedAt?: string }) => p.publishedAt && /\d{4}-\d{2}-\d{2}/.test(p.publishedAt));
     expect(hasValidDates).toBe(true);
   });
 
