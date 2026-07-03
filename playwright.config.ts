@@ -17,8 +17,9 @@ export default defineConfig({
     '**/bundle-analysis.spec.ts', // 404 lines - breaking up due to timeouts
     '**/performance-monitoring.spec.ts', // 516 lines - run separately
     '**/chaos-engineering.spec.ts', // 423 lines - run separately
-    // Exclude slow mobile device tests - replaced with optimized versions
-    '**/mobile-navigation.spec.ts', // Use mobile-navigation-essential.spec.ts instead
+    // Exhaustive device matrix (~6 min) — fixed and runnable via:
+    // npx playwright test tests/playwright/mobile-navigation.spec.ts
+    '**/mobile-navigation.spec.ts',
     // Exclude slow visual regression tests - use essential visual tests
     // Exclude slow basic tests that timeout
     '**/basic.spec.ts', // Replace with optimized essential tests

@@ -34,7 +34,11 @@ export default navLinks;
 // Export configuration object for future extensibility
 export const navConfig: NavConfig = {
   links: navLinks,
-  socialLinks: []
+  socialLinks: [
+    { href: 'https://github.com/blakeox', label: 'GitHub', external: true, target: '_blank' },
+    { href: 'https://linkedin.com/in/blake-oxford', label: 'LinkedIn', external: true, target: '_blank' },
+    { href: 'mailto:hello@blakeoxford.com', label: 'Email', external: true },
+  ],
 };
 
 // Utility functions for navigation

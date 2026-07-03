@@ -1,5 +1,5 @@
 /**
- * @deprecated Production search uses SearchOverlayController.tsx.
+ * @deprecated Production search uses Command Center (`src/features/command-center/`).
  * Kept for legacy standalone bundle references only — do not import in new code.
  *
  * Enhanced search overlay with voice search, categories, and suggestions

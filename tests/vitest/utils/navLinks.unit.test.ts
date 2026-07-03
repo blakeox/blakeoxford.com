@@ -45,7 +45,8 @@ describe('navLinks utility functions', () => {
       expect(navConfig).toBeDefined();
       expect(navConfig.links).toEqual(navLinks);
       expect(Array.isArray(navConfig.socialLinks)).toBe(true);
-      expect(navConfig.socialLinks?.length).toBe(0);
+      expect(navConfig.socialLinks?.length).toBe(3);
+      expect(navConfig.socialLinks?.[0]?.label).toBe('GitHub');
     });
 
     it('should find link by href using exported function', () => {

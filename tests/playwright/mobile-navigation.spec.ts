@@ -1,4 +1,5 @@
-import { test, expect, devices } from './fixtures';
+import { devices } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForMenuState } from '../utils/waits';
 import { waitForKeyboardResponse } from './utils/test-helpers';
 
@@ -60,12 +61,8 @@ test.describe('Mobile Navigation', () => {
     await expect(burgerButton).toHaveClass(/active/);
     await expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
     
-    // Close button should be present
-    const closeButton = page.locator('#close-mobile-menu');
-    await expect(closeButton).toBeVisible();
-    
-    // Close menu using close button
-    await closeButton.click();
+    // Close menu using burger toggle (single close control in header)
+    await burgerButton.click();
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
     
     // Menu should be closed - use robust checking
