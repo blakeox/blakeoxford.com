@@ -275,10 +275,11 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <div
  ref={mobileMenuRef}
  id="nav-mobile-links"
- className="mobile-menu absolute inset-x-0 top-full z-[2147483646] border-t border-border bg-surface/98 shadow-lg md:hidden pointer-events-none motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard"
+ className="mobile-menu absolute inset-x-0 top-full z-[2147483646] border-t border-border bg-surface/98 shadow-lg md:hidden"
  role="dialog"
  aria-modal="true"
  aria-label="Mobile navigation menu"
+ inert
  >
  {/* Close button inside mobile menu so CSS selectors for .mobile-menu.active .mobile-close-button apply */}
  <button

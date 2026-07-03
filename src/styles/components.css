@@ -266,6 +266,56 @@
     animation: themeToggleSpin var(--duration-fast) var(--ease-standard);
   }
 
+  /* Mobile nav drawer — collapsed by default; ModernNavBar toggles `.active` */
+  .mobile-menu {
+    visibility: hidden;
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform var(--duration-normal) var(--ease-standard),
+      opacity var(--duration-normal) var(--ease-standard),
+      visibility 0s linear var(--duration-normal);
+  }
+
+  .mobile-menu.active {
+    visibility: visible;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+    transition:
+      transform var(--duration-normal) var(--ease-standard),
+      opacity var(--duration-normal) var(--ease-standard),
+      visibility 0s linear 0s;
+  }
+
+  .mobile-menu.active .mobile-close-button.sr-only {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0.25rem;
+    border-radius: 9999px;
+    background: var(--surface);
+    color: var(--fg);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+    clip: auto;
+    clip-path: none;
+    overflow: visible;
+    white-space: normal;
+    text-indent: 0;
+    pointer-events: auto;
+  }
+
+  .mobile-menu.active .mobile-menu-content {
+    position: relative;
+  }
+
   /* JS-driven panels and overlays */
   @media (prefers-reduced-motion: reduce) {
     .mobile-menu,
