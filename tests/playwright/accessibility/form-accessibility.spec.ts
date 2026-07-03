@@ -69,7 +69,7 @@ test.describe('Form Accessibility Tests', () => {
       await submitButton.click();
       
       // Wait for validation messages to appear
-      await page.waitForTimeout(500);
+      await expect(page.locator('[role="alert"], .error, [aria-invalid="true"]').first()).toBeVisible({ timeout: 5000 }).catch(() => {});
       
       // Check if error messages are accessible
       const errorMessages = page.locator('[role="alert"], .error, [aria-invalid="true"]');
