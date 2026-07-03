@@ -12,10 +12,18 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout labeler config from PR head
+      - name: Check if labeler config changed
+        id: labeler-config-changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          changed="$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq 'map(.filename) | index(".github/labeler.yml") != null')"
+          echo "changed=${changed}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout labeler config
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ steps.labeler-config-changed.outputs.changed == 'true' && github.event.pull_request.head.sha || github.event.pull_request.base.sha }}
           sparse-checkout: .github/labeler.yml
           sparse-checkout-cone-mode: false
 
