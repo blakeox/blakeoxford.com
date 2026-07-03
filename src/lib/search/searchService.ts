@@ -1,7 +1,7 @@
 import { loadSearchCorpus, filterByCategory } from './searchIndexLoader';
 import { searchLocalCorpus } from './localSearch';
 import { queryCloudflareSemanticSearch } from './semanticSearch';
-import type { SearchCategory, SearchQueryOptions, SearchQueryResult, SearchRecord } from './types';
+import type { SearchQueryOptions, SearchQueryResult, SearchRecord } from './types';
 
 function dedupeByHref(records: SearchRecord[]): SearchRecord[] {
   const seen = new Set<string>();
