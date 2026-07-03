@@ -24,7 +24,7 @@ function Icon({ name }: IconProps) {
 }
 ---
 
-<section id="about-social" class="bg-gradient-to-b from-surface to-background py-16 dark:from-surface-dark dark:to-background-dark">
+<section id="about-social" class="bg-gradient-to-b from-surface to-background py-16">
  <div class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
  <div class="section-intro max-w-3xl">
  <span class="section-kicker">Profiles</span>
@@ -34,7 +34,7 @@ function Icon({ name }: IconProps) {
  {social.links.map((link) => (
  <li>
  <a
- class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:border-accent hover:bg-accent/10 dark:border-border-dark"
+ class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:border-accent hover:bg-accent/10"
  href={link.href}
  target="_blank"
  rel="noopener noreferrer"

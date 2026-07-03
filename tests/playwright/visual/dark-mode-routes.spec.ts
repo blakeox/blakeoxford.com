@@ -3,7 +3,7 @@ import { preparePage, snapshotRoute } from './_visualHelper';
 
 // Dark-mode visual baselines for core content routes.
 // Tags: @essential @visual-dark @visual-content
-const darkRoutes = ['/', '/about/', '/projects/', '/blog/'];
+const darkRoutes = ['/', '/about/', '/projects/', '/blog/', '/contact/'];
 
 test.describe('@essential @visual-dark @visual-content Dark Mode Visual Regression', () => {
   test.beforeEach(async ({ page }) => {

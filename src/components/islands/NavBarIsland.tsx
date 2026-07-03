@@ -171,7 +171,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  role="menuitem"
                 className={`nav-link focus-ring-interactive inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent ${
                   isActive(link.href)
-                    ? 'bg-accent/10 text-accent dark:bg-accent/10 dark:text-accent-light'
+                    ? 'bg-accent/10 text-accent-emphasis'
                     : 'text-foreground/90'
                 }`}
  aria-current={isActive(link.href) ? 'page' : undefined}
@@ -301,7 +301,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  <a
  href={link.href}
  role="menuitem"
- className="mobile-nav-link touch-target focus-ring-interactive flex min-h-11 items-center rounded-2xl px-3 py-3 text-sm font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] dark:hover:bg-[color:var(--glass-surface-bg-dark)] @sm:px-4 @sm:py-3 @sm:text-base"
+ className="mobile-nav-link touch-target focus-ring-interactive flex min-h-11 items-center rounded-2xl px-3 py-3 text-sm font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] @sm:px-4 @sm:py-3 @sm:text-base"
  aria-current={isActive(link.href) ? 'page' : undefined}
  >
  {link.label}

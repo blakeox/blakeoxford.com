@@ -290,7 +290,7 @@ export default function SearchOverlayController() {
  option.setAttribute('aria-selected', 'false');
  option.href = record.href;
  option.tabIndex = -1;
- option.className = 'search-result focus-ring-interactive touch-target group flex min-h-11 flex-col gap-2 rounded-2xl border border-border/40 bg-background/95 p-4 sm:p-5 transition-all duration-200 hover:border-accent/50 hover:shadow-lg dark:bg-surface-dark/95';
+ option.className = 'search-result focus-ring-interactive touch-target group flex min-h-11 flex-col gap-2 rounded-2xl border border-border/40 bg-surface/95 p-4 sm:p-5 transition-all duration-200 hover:border-accent/50 hover:shadow-lg';
 
  const title = doc.createElement('span');
  title.className = 'block text-sm font-semibold tracking-tight text-foreground';
@@ -304,7 +304,7 @@ export default function SearchOverlayController() {
  metaRow.className = 'flex items-center gap-2 text-xxs font-semibold uppercase tracking-label text-subtle-foreground';
 
  const typeBadge = doc.createElement('span');
- typeBadge.className = 'inline-flex items-center gap-1 rounded-full bg-surface-subtle px-2 py-1 ring-1 ring-border/30 dark:bg-surface-dark-subtle';
+ typeBadge.className = 'inline-flex items-center gap-1 rounded-full bg-surface-subtle px-2 py-1 ring-1 ring-border/30';
  typeBadge.textContent = record.type === 'project' ? 'Project' : 'Page';
  metaRow.appendChild(typeBadge);
 
@@ -320,7 +320,7 @@ export default function SearchOverlayController() {
  tags.className = 'flex flex-wrap gap-1 text-xxs uppercase tracking-label text-subtle-foreground/90';
  record.tags.slice(0, 4).forEach(tag => {
  const pill = doc.createElement('span');
- pill.className = 'rounded-full bg-surface px-2 py-0.5 ring-1 ring-border/25 dark:bg-surface-dark';
+ pill.className = 'rounded-full bg-surface px-2 py-0.5 ring-1 ring-border/25';
  pill.textContent = tag;
  tags.appendChild(pill);
  });
