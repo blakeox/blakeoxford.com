@@ -17,7 +17,6 @@ import {
 	type ReactNode,
 } from 'react';
 import {
-	getSystemTheme,
 	readThemePreference,
 	setThemePreference,
 	applySystemTheme,
@@ -27,7 +26,6 @@ import {
 	resolveTheme,
 	type ResolvedTheme,
 	type ThemePreference,
-	THEME_STORAGE_KEY,
 } from '../lib/theme';
 
 export type Theme = ThemePreference;

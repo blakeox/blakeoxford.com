@@ -14,7 +14,7 @@ const INIT_SCRIPT = `(() => {
  try {
   const key = '${THEME_STORAGE_KEY}';
   const prefKey = '${THEME_PREFERENCE_ATTRIBUTE}';
-  const cookieMatch = (document.cookie || '').match(/(?:^|;\s*)theme=([^;]+)/);
+  const cookieMatch = (document.cookie || '').match(/(?:^|;\\s*)theme=([^;]+)/);
   const cookieVal = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
   const stored = localStorage.getItem(key);
   const preference = (stored === 'light' || stored === 'dark' || stored === 'system')

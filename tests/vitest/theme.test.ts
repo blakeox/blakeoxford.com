@@ -4,7 +4,6 @@ import {
 	applyTheme,
 	applySystemTheme,
 	cycleThemePreference,
-	getCurrentTheme,
 	getThemePreference,
 	hasExplicitThemePreference,
 	initializeTheme,
