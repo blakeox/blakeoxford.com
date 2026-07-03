@@ -13,6 +13,7 @@ const brandPalette = [
 const semanticColors = [
  { name: 'background', utility: 'bg-background', usage: 'Page canvas' },
  { name: 'surface', utility: 'bg-surface', usage: 'Cards, panels, controls' },
+ { name: 'surface-elevated', utility: 'bg-[color:var(--surface-elevated)]', usage: 'Modals, dropdowns, and elevated overlays (dark remaps to --color-surface-elevated-dark)' },
  { name: 'foreground', utility: 'text-foreground', usage: 'Primary readable text' },
  { name: 'muted-foreground', utility: 'text-muted-foreground', usage: 'Secondary body copy (WCAG AA on background)' },
  { name: 'subtle-foreground', utility: 'text-subtle-foreground', usage: 'Labels, meta, uppercase captions' },
@@ -31,6 +32,7 @@ const semanticAliases = [
  { token: '--fg-muted', mapsTo: '--color-muted-foreground', usage: 'Nav links, secondary chrome' },
  { token: '--fg-subtle', mapsTo: '--color-subtle-foreground', usage: 'Labels and meta text' },
  { token: '--surface', mapsTo: '--color-surface', usage: 'Glass panels and cards' },
+ { token: '--surface-elevated', mapsTo: '--color-surface-elevated-dark (dark)', usage: 'Elevated overlays and modal shells' },
  { token: '--border', mapsTo: '--border-color', usage: 'Component outlines' },
  { token: '--accent', mapsTo: '--color-accent', usage: 'Focus rings and highlights' },
 ];
