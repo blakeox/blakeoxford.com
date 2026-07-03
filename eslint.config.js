@@ -193,6 +193,27 @@ export default [
     },
   },
 
+  // App pages (excluding design-system docs) must use semantic tokens
+  {
+    files: ['src/pages/**/*.{astro,tsx,ts}'],
+    ignores: ['src/pages/design/**', 'src/pages/docs/**', 'src/pages/debug/**'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/\\bdark:/]',
+          message:
+            'Avoid Tailwind dark: utilities in app pages. Use semantic theme tokens from theme.css instead.',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/\\bdark:/]',
+          message:
+            'Avoid Tailwind dark: utilities in app pages. Use semantic theme tokens from theme.css instead.',
+        },
+      ],
+    },
+  },
+
   // Astro files
   {
     files: ['**/*.astro'],

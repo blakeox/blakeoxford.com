@@ -487,6 +487,24 @@
     --color-button-primary-border-hover: var(--color-accent, var(--color-accent-fallback));
     --color-field-bg: var(--color-surface-dark, var(--color-surface-dark-fallback));
     
+    /* Typography plugin tokens (replaces dark:prose-invert on content pages) */
+    --tw-prose-body: var(--color-foreground);
+    --tw-prose-headings: var(--color-foreground);
+    --tw-prose-lead: var(--color-muted-foreground);
+    --tw-prose-links: var(--color-accent-emphasis);
+    --tw-prose-bold: var(--color-foreground);
+    --tw-prose-counters: var(--color-muted-foreground);
+    --tw-prose-bullets: var(--color-muted-foreground);
+    --tw-prose-hr: var(--border-color);
+    --tw-prose-quotes: var(--color-foreground);
+    --tw-prose-quote-borders: var(--border-color);
+    --tw-prose-captions: var(--color-muted-foreground);
+    --tw-prose-code: var(--color-accent-emphasis);
+    --tw-prose-pre-code: var(--color-foreground);
+    --tw-prose-pre-bg: var(--color-surface-subtle);
+    --tw-prose-th-borders: var(--border-color);
+    --tw-prose-td-borders: var(--border-color);
+    
     /* Dark mode interactive overlays */
     --hover-overlay: var(--hover-overlay-dark);
     --active-overlay: var(--active-overlay-dark);
