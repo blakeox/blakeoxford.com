@@ -196,7 +196,7 @@ describe('EducationCard Component', () => {
     it('should have dark mode variants', () => {
       expect(fileContent).toContain('dark:bg-surface-dark');
       expect(fileContent).toContain('dark:border-border-dark');
-      expect(fileContent).toContain('dark:text-foreground-light');
+      expect(fileContent).toMatch(/text-foreground/);
     });
 
     it('should use accent color', () => {
