@@ -142,6 +142,7 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
 
     const toggleHandler = (event: Event) => {
       event.preventDefault();
+      event.stopPropagation();
       if (mobileMenu.classList.contains('active')) {
         close();
       } else {
@@ -151,6 +152,7 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
 
     const closeHandler = (event: Event) => {
       event.preventDefault();
+      event.stopPropagation();
       if (mobileMenu.classList.contains('active')) {
         close();
       }

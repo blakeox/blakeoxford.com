@@ -370,22 +370,24 @@
   /* Mobile nav drawer — collapsed by default; ModernNavBar toggles `.active` */
   .mobile-menu {
     visibility: hidden;
-    transform: translateY(-100%);
+    max-height: 0;
+    overflow: hidden;
     opacity: 0;
     pointer-events: none;
     transition:
-      transform var(--duration-normal) var(--ease-standard),
+      max-height var(--duration-normal) var(--ease-standard),
       opacity var(--duration-normal) var(--ease-standard),
       visibility 0s linear var(--duration-normal);
   }
 
   .mobile-menu.active {
     visibility: visible;
-    transform: translateY(0);
+    max-height: min(80dvh, 32rem);
+    overflow-y: auto;
     opacity: 1;
     pointer-events: auto;
     transition:
-      transform var(--duration-normal) var(--ease-standard),
+      max-height var(--duration-normal) var(--ease-standard),
       opacity var(--duration-normal) var(--ease-standard),
       visibility 0s linear 0s;
   }

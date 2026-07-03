@@ -196,7 +196,7 @@ export default function AIChatIsland() {
 	return (
 		<div
 			ref={panelRef}
-				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-hidden rounded-3xl border border-border/40 bg-surface/90 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:w-[min(85vw,28rem)] motion-reduce:transition-none ${
+				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-visible rounded-3xl border border-border/40 bg-surface/90 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:w-[min(85vw,28rem)] motion-reduce:transition-none ${
 					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
 				}`}
 				data-ai-chat-panel
@@ -267,7 +267,7 @@ export default function AIChatIsland() {
 				/>
 
 				{/* Messages Container */}
-				<div className="relative">
+				<div className="relative overflow-hidden">
 					<div
 						ref={scrollContainerRef}
 						className="flex max-h-[min(50dvh,22rem)] flex-col gap-3 overflow-y-auto px-4 py-3 sm:max-h-[min(55dvh,24rem)]"

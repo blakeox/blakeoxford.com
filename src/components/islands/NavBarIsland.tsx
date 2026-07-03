@@ -114,7 +114,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   return (
     <div
       ref={shellRef}
-      className="@container nav-shell sticky top-0 z-nav border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)]"
+      className="@container nav-shell relative overflow-visible sticky top-0 z-nav border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)]"
     >
       <nav
         id="navbar"
@@ -247,7 +247,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       <div
         ref={mobileMenuRef}
         id="nav-mobile-links"
-        className="mobile-menu absolute inset-x-0 top-full z-nav-drawer border-t border-border bg-surface/98 shadow-lg md:hidden"
+        className="mobile-menu absolute inset-x-0 top-full z-[200] border-t border-border bg-surface/98 shadow-lg md:hidden"
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation menu"

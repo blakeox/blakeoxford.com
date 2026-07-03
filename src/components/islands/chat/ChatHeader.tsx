@@ -49,17 +49,21 @@ export const ChatHeader = memo(function ChatHeader({
 
 	useEffect(() => {
 		if (!menuOpen) return;
+		const onEscape = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') setMenuOpen(false);
+		};
 		const onDocClick = (event: MouseEvent) => {
 			if (!menuRef.current?.contains(event.target as Node)) {
 				setMenuOpen(false);
 			}
 		};
-		const onEscape = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') setMenuOpen(false);
-		};
-		document.addEventListener('click', onDocClick);
 		document.addEventListener('keydown', onEscape);
+		// Defer outside-click listener so the opening click does not immediately close the menu.
+		const timer = window.setTimeout(() => {
+			document.addEventListener('click', onDocClick);
+		}, 0);
 		return () => {
+			window.clearTimeout(timer);
 			document.removeEventListener('click', onDocClick);
 			document.removeEventListener('keydown', onEscape);
 		};
@@ -68,7 +72,7 @@ export const ChatHeader = memo(function ChatHeader({
 	const closeMenu = () => setMenuOpen(false);
 
 	return (
-		<div className="sticky top-0 z-20 flex items-center gap-2 border-b border-border/40 bg-surface-subtle/60 px-3 py-2.5 backdrop-blur-sm sm:px-4">
+		<div className="sticky top-0 z-20 flex items-center gap-2 overflow-visible border-b border-border/40 bg-surface-subtle/60 px-3 py-2.5 backdrop-blur-sm sm:px-4">
 			<div className="min-w-0 flex-1">
 				<div className="flex items-center gap-2">
 					<span id="ai-chat-heading" className="truncate text-sm font-semibold text-foreground">
@@ -113,7 +117,10 @@ export const ChatHeader = memo(function ChatHeader({
 						aria-label="Assistant options"
 						aria-expanded={menuOpen}
 						aria-haspopup="menu"
-						onClick={() => setMenuOpen((open) => !open)}
+						onClick={(event) => {
+							event.stopPropagation();
+							setMenuOpen((open) => !open);
+						}}
 					>
 						<svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
 							<path strokeLinecap="round" strokeLinejoin="round" d="M6 12h.01M12 12h.01M18 12h.01" />
@@ -123,7 +130,7 @@ export const ChatHeader = memo(function ChatHeader({
 					{menuOpen ? (
 						<div
 							role="menu"
-							className="absolute right-0 top-[calc(100%+0.35rem)] z-30 min-w-[11rem] overflow-hidden rounded-xl border border-border/60 bg-surface py-1 shadow-lg"
+							className="absolute right-0 top-[calc(100%+0.35rem)] z-[1300] min-w-[11rem] overflow-hidden rounded-xl border border-border/60 bg-surface py-1 shadow-lg"
 						>
 							{voiceSupported ? (
 								<MenuButton
