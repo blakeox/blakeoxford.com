@@ -32,8 +32,15 @@ export interface ChatHeaderProps {
 	voiceSupported: boolean;
 	isListening: boolean;
 	showAdvancedControls: boolean;
+	useMemory: boolean;
+	canStartNewChat: boolean;
+	hasMessages: boolean;
 	toggleVoiceInput: () => void;
 	toggleAdvancedControls: () => void;
+	toggleMemory: () => void;
+	clearConversation: () => void;
+	handleExportConversation: () => void;
+	startNewChat: () => void;
 	closeChat: () => void;
 }
 

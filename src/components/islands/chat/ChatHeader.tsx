@@ -1,10 +1,31 @@
 /**
  * ChatHeader component
- * Displays the header with title, connection status, and control buttons
+ * Slim header with search, overflow menu, and close
  */
-import { memo } from 'react';
+import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { openCommandCenter } from '../../../features/command-center/lib/commandEvents';
 import type { ChatHeaderProps } from './types';
+
+function MenuButton({
+	children,
+	onClick,
+	disabled,
+}: {
+	children: ReactNode;
+	onClick: () => void;
+	disabled?: boolean;
+}) {
+	return (
+		<button
+			type="button"
+			disabled={disabled}
+			className="focus-ring-interactive flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-50"
+			onClick={onClick}
+		>
+			{children}
+		</button>
+	);
+}
 
 export const ChatHeader = memo(function ChatHeader({
 	wsConnected,
@@ -12,36 +33,65 @@ export const ChatHeader = memo(function ChatHeader({
 	voiceSupported,
 	isListening,
 	showAdvancedControls,
+	useMemory,
+	canStartNewChat,
+	hasMessages,
 	toggleVoiceInput,
 	toggleAdvancedControls,
+	toggleMemory,
+	clearConversation,
+	handleExportConversation,
+	startNewChat,
 	closeChat,
 }: ChatHeaderProps) {
+	const [menuOpen, setMenuOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!menuOpen) return;
+		const onDocClick = (event: MouseEvent) => {
+			if (!menuRef.current?.contains(event.target as Node)) {
+				setMenuOpen(false);
+			}
+		};
+		const onEscape = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') setMenuOpen(false);
+		};
+		document.addEventListener('click', onDocClick);
+		document.addEventListener('keydown', onEscape);
+		return () => {
+			document.removeEventListener('click', onDocClick);
+			document.removeEventListener('keydown', onEscape);
+		};
+	}, [menuOpen]);
+
+	const closeMenu = () => setMenuOpen(false);
+
 	return (
-		<div className="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-border/40 bg-surface-subtle/60 px-4 py-3 backdrop-blur-sm">
+		<div className="sticky top-0 z-20 flex items-center gap-2 border-b border-border/40 bg-surface-subtle/60 px-3 py-2.5 backdrop-blur-sm sm:px-4">
 			<div className="min-w-0 flex-1">
-				<span id="ai-chat-heading" className="block truncate text-sm font-semibold text-foreground">
-					AI Assistant
-				</span>
-				<span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
-					<span>Answers with cited sources</span>
-					{wsConnected ? (
-						<>
-							<span aria-hidden="true">·</span>
-							<span className="inline-flex items-center gap-1">
-								<span className="inline-block size-1.5 rounded-full bg-success animate-pulse" aria-hidden="true" />
-								<span>Live</span>
-							</span>
-							{activeUsers > 1 ? (
-								<>
-									<span aria-hidden="true">·</span>
-									<span>{activeUsers} online</span>
-								</>
-							) : null}
-						</>
+				<div className="flex items-center gap-2">
+					<span id="ai-chat-heading" className="truncate text-sm font-semibold text-foreground">
+						AI Assistant
+					</span>
+					{isListening ? (
+						<span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xxs font-medium text-accent">
+							<span className="size-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
+							Listening
+						</span>
+					) : wsConnected ? (
+						<span className="inline-flex items-center gap-1 text-xxs text-muted-foreground" title="Real-time connected">
+							<span className="size-1.5 rounded-full bg-success" aria-hidden="true" />
+							<span className="sr-only sm:not-sr-only">Live</span>
+						</span>
 					) : null}
-				</span>
+				</div>
+				{activeUsers > 1 ? (
+					<p className="mt-0.5 truncate text-xxs text-muted-foreground">{activeUsers} online</p>
+				) : null}
 			</div>
-			<div className="flex shrink-0 items-center gap-1.5">
+
+			<div className="flex shrink-0 items-center gap-1">
 				<button
 					type="button"
 					className="focus-ring-interactive inline-flex size-8 items-center justify-center rounded-full border border-border/50 text-muted-foreground transition hover:border-accent/60 hover:text-accent"
@@ -53,32 +103,84 @@ export const ChatHeader = memo(function ChatHeader({
 						<path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
 					</svg>
 				</button>
-				{voiceSupported ? (
+
+				<div className="relative" ref={menuRef}>
 					<button
 						type="button"
 						className={`focus-ring-interactive inline-flex size-8 items-center justify-center rounded-full border border-border/50 text-muted-foreground transition hover:border-accent/60 hover:text-accent ${
-							isListening ? 'border-accent/50 bg-accent/15 text-accent' : ''
+							menuOpen || showAdvancedControls ? 'border-accent/50 bg-accent/10 text-accent' : ''
 						}`}
-						aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
-						onClick={toggleVoiceInput}
+						aria-label="Assistant options"
+						aria-expanded={menuOpen}
+						aria-haspopup="menu"
+						onClick={() => setMenuOpen((open) => !open)}
 					>
-						<svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-							<path strokeLinecap="round" strokeLinejoin="round" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm6-3a6 6 0 0 1-12 0M12 18v3m-4 0h8" />
+						<svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+							<path strokeLinecap="round" strokeLinejoin="round" d="M6 12h.01M12 12h.01M18 12h.01" />
 						</svg>
 					</button>
-				) : null}
-				<button
-					type="button"
-					className={`focus-ring-interactive inline-flex size-8 items-center justify-center rounded-full border border-border/50 text-muted-foreground transition hover:border-accent/60 hover:text-accent ${
-						showAdvancedControls ? 'border-accent/50 bg-accent/15 text-accent' : ''
-					}`}
-					aria-label={showAdvancedControls ? 'Hide advanced controls' : 'Show advanced controls'}
-					onClick={toggleAdvancedControls}
-				>
-					<svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-						<path strokeLinecap="round" strokeLinejoin="round" d="M12 6v1.5m0 9V18m6-6h-1.5m-9 0H6m8.485-4.485-1.06 1.06m-6.85 6.85-1.06 1.06m0-8.97 1.06 1.06m6.85 6.85 1.06 1.06M12 9.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
-					</svg>
-				</button>
+
+					{menuOpen ? (
+						<div
+							role="menu"
+							className="absolute right-0 top-[calc(100%+0.35rem)] z-30 min-w-[11rem] overflow-hidden rounded-xl border border-border/60 bg-surface py-1 shadow-lg"
+						>
+							{voiceSupported ? (
+								<MenuButton
+									onClick={() => {
+										toggleVoiceInput();
+										closeMenu();
+									}}
+								>
+									{isListening ? 'Stop voice input' : 'Voice input'}
+								</MenuButton>
+							) : null}
+							<MenuButton
+								onClick={() => {
+									toggleMemory();
+								}}
+							>
+								{useMemory ? 'Memory on' : 'Memory off'}
+							</MenuButton>
+							<MenuButton
+								onClick={() => {
+									toggleAdvancedControls();
+								}}
+							>
+								{showAdvancedControls ? 'Hide session settings' : 'Session settings'}
+							</MenuButton>
+							{canStartNewChat ? (
+								<MenuButton
+									onClick={() => {
+										startNewChat();
+										closeMenu();
+									}}
+								>
+									Start new chat
+								</MenuButton>
+							) : null}
+							<MenuButton
+								disabled={!hasMessages}
+								onClick={() => {
+									handleExportConversation();
+									closeMenu();
+								}}
+							>
+								Export chat
+							</MenuButton>
+							<MenuButton
+								disabled={!hasMessages}
+								onClick={() => {
+									clearConversation();
+									closeMenu();
+								}}
+							>
+								Clear chat
+							</MenuButton>
+						</div>
+					) : null}
+				</div>
+
 				<button
 					type="button"
 					className="focus-ring-interactive inline-flex size-8 items-center justify-center rounded-full border border-border/50 text-muted-foreground transition hover:border-accent/50 hover:text-accent"

@@ -112,6 +112,7 @@ export function CommandFooter() {
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <span className="hidden sm:inline">
           <kbd className="rounded border border-border px-1 py-0.5 font-sans">↑↓</kbd> navigate ·{' '}
+          <kbd className="rounded border border-border px-1 py-0.5 font-sans">a</kbd> ask AI ·{' '}
           <kbd className="rounded border border-border px-1 py-0.5 font-sans">↵</kbd> open ·{' '}
           <kbd className="rounded border border-border px-1 py-0.5 font-sans">esc</kbd> close
         </span>

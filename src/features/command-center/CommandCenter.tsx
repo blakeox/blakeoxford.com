@@ -192,6 +192,16 @@ export default function CommandCenter() {
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       setActiveIndex((prev) => (prev <= 0 ? flatItems.length - 1 : prev - 1));
+    } else if (
+      event.key.toLowerCase() === 'a' &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      activeIndex >= 0 &&
+      flatItems[activeIndex]
+    ) {
+      event.preventDefault();
+      askAboutItem(flatItems[activeIndex]);
     } else if (event.key === 'Enter' && activeIndex >= 0 && flatItems[activeIndex]) {
       event.preventDefault();
       navigateTo(flatItems[activeIndex], event.metaKey || event.ctrlKey);
@@ -402,6 +412,9 @@ export default function CommandCenter() {
 
             {mode === 'find' && hasResults ? (
               <div id="search-results" role="listbox" aria-label="Search results" data-results className="flex flex-col gap-4">
+                <p className="sr-only">
+                  Use arrow keys to navigate results. Press Enter to open, or A to ask AI about the selected result.
+                </p>
                 <div data-results-container className="flex flex-col gap-4">
                   {groups.map((group) => (
                     <CommandGroupSection key={group.id} label={group.label}>

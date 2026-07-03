@@ -20,7 +20,6 @@ import {
 	ChatInput,
 	ChatStatusIndicators,
 	ChatFallbackResults,
-	ChatNewChatPrompt,
  TypingIndicator,
  ScrollToLatestButton,
 } from './chat';
@@ -216,8 +215,15 @@ export default function AIChatIsland() {
 					voiceSupported={voiceSupported}
 					isListening={isListening}
 					showAdvancedControls={showAdvancedControls}
+					useMemory={useMemory}
+					canStartNewChat={canStartNewChat}
+					hasMessages={messages.length > 0}
 					toggleVoiceInput={toggleVoiceInput}
 					toggleAdvancedControls={toggleAdvancedControls}
+					toggleMemory={toggleMemory}
+					clearConversation={clearConversation}
+					handleExportConversation={handleExportConversation}
+					startNewChat={startNewChat}
 					closeChat={closeChat}
 				/>
 
@@ -334,11 +340,7 @@ export default function AIChatIsland() {
 					setShowFallbackSuggestions={setShowFallbackSuggestions}
 				/>
 
-				{/* New Chat Prompt */}
-				<ChatNewChatPrompt
-					canStartNewChat={canStartNewChat}
-					startNewChat={startNewChat}
-				/>
+				{/* New chat prompt moved to header menu */}
 
 				{/* Input Form */}
 				<ChatInput
