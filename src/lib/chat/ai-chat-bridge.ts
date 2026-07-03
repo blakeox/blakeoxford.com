@@ -10,16 +10,33 @@ export type AiChatAskDetail = {
   autoSend?: boolean;
   sourceHref?: string;
   sourceTitle?: string;
+  sourceKind?: 'page' | 'project' | 'blog';
 };
 
 export const AI_CHAT_ASK = 'ai-chat:ask';
 
-export function buildAskPrompt(query: string, sourceTitle?: string): string {
+function kindLabel(kind?: AiChatAskDetail['sourceKind']): string {
+  if (kind === 'blog') return 'blog post';
+  if (kind === 'project') return 'project';
+  if (kind === 'page') return 'page';
+  return 'page';
+}
+
+export function buildAskPrompt(
+  query: string,
+  options?: Pick<AiChatAskDetail, 'sourceTitle' | 'sourceKind'>,
+): string {
   const trimmed = query.trim();
-  if (!trimmed) return '';
-  if (sourceTitle) {
-    return `Tell me about "${sourceTitle}" — ${trimmed}`;
+  const title = options?.sourceTitle?.trim();
+
+  if (title) {
+    const label = kindLabel(options?.sourceKind);
+    if (trimmed && !trimmed.toLowerCase().includes(title.toLowerCase())) {
+      return `Regarding my search for "${trimmed}", tell me more about the ${label} "${title}".`;
+    }
+    return `Tell me about the ${label} "${title}" — key approach, outcomes, and what I should know.`;
   }
+
   return trimmed;
 }
 
@@ -28,7 +45,10 @@ export function handoffToAiChat(detail: AiChatAskDetail): void {
 
   const payload: AiChatAskDetail = {
     ...detail,
-    query: buildAskPrompt(detail.query, detail.sourceTitle),
+    query: buildAskPrompt(detail.query, {
+      sourceTitle: detail.sourceTitle,
+      sourceKind: detail.sourceKind,
+    }),
   };
 
   window.dispatchEvent(new CustomEvent(AI_CHAT_ASK, { detail: payload }));

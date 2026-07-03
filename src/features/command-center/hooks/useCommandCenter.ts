@@ -11,29 +11,38 @@ import {
   COMMAND_CENTER_OPEN,
   COMMAND_CENTER_TOGGLE,
 } from '../lib/commandEvents';
+import { commandCenterEvents } from '../lib/analytics';
 
 export function useCommandCenter() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const open = useCallback(() => {
+  const open = useCallback((source: 'shortcut' | 'nav' | 'api' | 'unknown' = 'unknown') => {
     closeMobileMenu();
     closeAiChat();
     setIsOpen(true);
+    commandCenterEvents.open(source);
   }, []);
 
   const close = useCallback(() => {
     setIsOpen(false);
+    commandCenterEvents.close();
   }, []);
 
   const toggle = useCallback(() => {
     setIsOpen((prev) => {
-      if (!prev) closeMobileMenu();
+      if (!prev) {
+        closeMobileMenu();
+        closeAiChat();
+        commandCenterEvents.open('shortcut');
+      } else {
+        commandCenterEvents.close();
+      }
       return !prev;
     });
   }, []);
 
   useEffect(() => {
-    const onOpen = () => open();
+    const onOpen = () => open('api');
     const onClose = () => close();
     const onToggle = () => toggle();
 
@@ -86,7 +95,7 @@ export function useCommandCenter() {
     const handleToggleClick = (event: Event) => {
       event.preventDefault();
       event.stopPropagation();
-      open();
+      open('nav');
     };
 
     const toggleButton = document.getElementById('search-toggle');
@@ -101,7 +110,7 @@ export function useCommandCenter() {
       const active = document.activeElement as HTMLElement | null;
       if (active && ['INPUT', 'TEXTAREA'].includes(active.tagName)) return;
       event.preventDefault();
-      open();
+      open('shortcut');
     };
 
     const handleMetaK = (event: KeyboardEvent) => {

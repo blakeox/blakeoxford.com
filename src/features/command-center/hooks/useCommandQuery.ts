@@ -6,6 +6,7 @@ import { buildBrowseGroups, groupCommandItems } from '../lib/groupResults';
 import { mapSearchResults, toCommandItem } from '../lib/toCommandItem';
 import { enrichCommandItems } from '../lib/rankResults';
 import { parseCommandQuery } from '../lib/parseQuery';
+import { commandCenterEvents } from '../lib/analytics';
 import type { CommandGroup } from '../types';
 import { getNavSearchPages } from '../../../config/navSearchPages';
 
@@ -87,6 +88,14 @@ export function useCommandQuery(isOpen: boolean) {
       }
 
       setSearchSource(result.source);
+
+      if (searchQuery.trim()) {
+        commandCenterEvents.searchResults({
+          query_length: searchQuery.trim().length,
+          result_count: items.length,
+          backend: itemSource,
+        });
+      }
     } catch (err) {
       if (generation !== generationRef.current) return;
       if (err instanceof DOMException && err.name === 'AbortError') return;

@@ -1,8 +1,30 @@
 import { describe, expect, it } from 'vitest';
 
+import { buildAskPrompt } from '../../src/lib/chat/ai-chat-bridge';
 import { parseCommandQuery } from '../../src/features/command-center/lib/parseQuery';
 import { enrichCommandItems } from '../../src/features/command-center/lib/rankResults';
 import type { CommandItem } from '../../src/features/command-center/types';
+
+describe('buildAskPrompt', () => {
+  it('builds a context-aware prompt for a project', () => {
+    expect(
+      buildAskPrompt('fabric', { sourceTitle: 'Microsoft Fabric Project', sourceKind: 'project' }),
+    ).toContain('project');
+    expect(
+      buildAskPrompt('fabric', { sourceTitle: 'Microsoft Fabric Project', sourceKind: 'project' }),
+    ).toContain('Microsoft Fabric Project');
+  });
+
+  it('builds a title-only prompt when query matches title', () => {
+    const prompt = buildAskPrompt('Contact', { sourceTitle: 'Contact', sourceKind: 'page' });
+    expect(prompt).toContain('page');
+    expect(prompt).toContain('Contact');
+  });
+
+  it('returns trimmed query when no source title', () => {
+    expect(buildAskPrompt('  hello world  ')).toBe('hello world');
+  });
+});
 
 describe('parseCommandQuery', () => {
   it('detects ask prefix', () => {

@@ -46,6 +46,7 @@ type CommandResultRowProps = {
   query: string;
   isActive: boolean;
   onSelect: (item: CommandItem) => void;
+  onAskAbout: (item: CommandItem) => void;
   onHover: (index: number) => void;
 };
 
@@ -55,6 +56,7 @@ export function CommandResultRow({
   query,
   isActive,
   onSelect,
+  onAskAbout,
   onHover,
 }: CommandResultRowProps) {
   const formattedDate = item.publishedAt
@@ -62,63 +64,79 @@ export function CommandResultRow({
     : null;
 
   return (
-    <a
+    <div
       id={`command-result-${index}`}
-      href={item.href}
       role="option"
       aria-selected={isActive}
       data-index={index}
       data-search-result
-      tabIndex={-1}
-      className={`search-result command-result focus-ring-interactive group flex min-h-[3.25rem] items-start gap-3 rounded-2xl border px-3 py-3 transition-all duration-200 sm:px-4 ${
+      className={`command-result group/row flex min-h-[3.25rem] items-stretch gap-2 rounded-2xl border transition-all duration-200 ${
         isActive
           ? 'border-accent/50 bg-accent/10 shadow-sm ring-1 ring-accent/30'
           : 'border-border/40 bg-surface/95 hover:border-accent/40 hover:bg-surface hover:shadow-md'
       }`}
       onMouseEnter={() => onHover(index)}
-      onFocus={() => onHover(index)}
-      onClick={(event) => {
-        event.preventDefault();
-        onSelect(item);
-      }}
     >
-      <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/50 bg-surface-subtle">
-        {item.image ? (
-          <img src={item.image} alt="" className="size-full object-cover" loading="lazy" decoding="async" />
-        ) : item.kind === 'page' ? (
-          <PageIcon />
-        ) : (
-          <span className="text-xs font-bold uppercase text-subtle-foreground">{kindLabel(item.kind).slice(0, 1)}</span>
-        )}
-      </div>
+      <a
+        href={item.href}
+        tabIndex={-1}
+        className="search-result focus-ring-interactive flex min-w-0 flex-1 items-start gap-3 px-3 py-3 sm:px-4"
+        onClick={(event) => {
+          event.preventDefault();
+          onSelect(item);
+        }}
+      >
+        <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/50 bg-surface-subtle">
+          {item.image ? (
+            <img src={item.image} alt="" className="size-full object-cover" loading="lazy" decoding="async" />
+          ) : item.kind === 'page' ? (
+            <PageIcon />
+          ) : (
+            <span className="text-xs font-bold uppercase text-subtle-foreground">{kindLabel(item.kind).slice(0, 1)}</span>
+          )}
+        </div>
 
-      <div className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-semibold tracking-tight text-foreground">
-          <HighlightText text={item.title} query={query} />
-        </span>
-        {item.subtitle ? (
-          <span className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-            <HighlightText text={item.subtitle} query={query} />
+        <div className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-semibold tracking-tight text-foreground">
+            <HighlightText text={item.title} query={query} />
           </span>
-        ) : null}
-        <div className="mt-2 flex flex-wrap items-center gap-2 text-xxs font-semibold uppercase tracking-label text-subtle-foreground">
-          <span className="inline-flex items-center rounded-full bg-surface-subtle px-2 py-0.5 ring-1 ring-border/30">
-            {kindLabel(item.kind)}
-          </span>
-          {item.featured ? (
-            <span className="inline-flex items-center rounded-full bg-accent/15 px-2 py-0.5 text-accent ring-1 ring-accent/30">
-              Featured
+          {item.subtitle ? (
+            <span className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+              <HighlightText text={item.subtitle} query={query} />
             </span>
           ) : null}
-          {formattedDate ? <span>{formattedDate}</span> : null}
-          {item.matchReason ? (
-            <span className="normal-case text-subtle-foreground">{item.matchReason}</span>
-          ) : null}
-          {!item.matchReason && item.score && item.score > 0.7 ? (
-            <span className="normal-case text-accent">Best match</span>
-          ) : null}
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xxs font-semibold uppercase tracking-label text-subtle-foreground">
+            <span className="inline-flex items-center rounded-full bg-surface-subtle px-2 py-0.5 ring-1 ring-border/30">
+              {kindLabel(item.kind)}
+            </span>
+            {item.featured ? (
+              <span className="inline-flex items-center rounded-full bg-accent/15 px-2 py-0.5 text-accent ring-1 ring-accent/30">
+                Featured
+              </span>
+            ) : null}
+            {formattedDate ? <span>{formattedDate}</span> : null}
+            {item.matchReason ? (
+              <span className="normal-case text-subtle-foreground">{item.matchReason}</span>
+            ) : null}
+            {!item.matchReason && item.score && item.score > 0.7 ? (
+              <span className="normal-case text-accent">Best match</span>
+            ) : null}
+          </div>
         </div>
-      </div>
-    </a>
+      </a>
+
+      <button
+        type="button"
+        className="command-ask-row focus-ring-interactive m-2 shrink-0 self-center rounded-xl border border-accent/30 bg-accent/10 px-2.5 py-2 text-xs font-semibold text-accent opacity-100 transition hover:bg-accent/15 sm:opacity-0 sm:group-hover/row:opacity-100 sm:focus:opacity-100"
+        aria-label={`Ask AI about ${item.title}`}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onAskAbout(item);
+        }}
+      >
+        Ask AI
+      </button>
+    </div>
   );
 }

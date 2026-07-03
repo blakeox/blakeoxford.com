@@ -12,12 +12,21 @@ import { CommandResultRow } from './components/CommandResultRow';
 import { useCommandCenter } from './hooks/useCommandCenter';
 import { useCommandHistory } from './hooks/useCommandHistory';
 import { useCommandQuery } from './hooks/useCommandQuery';
+import { commandCenterEvents, type CommandCenterHandoffSource } from './lib/analytics';
 import { flattenGroups } from './lib/groupResults';
 import { parseCommandQuery } from './lib/parseQuery';
 import type { CommandCategory, CommandItem, CommandMode } from './types';
 import { CATEGORY_LABELS } from './types';
 
 const CATEGORIES: CommandCategory[] = ['all', 'projects', 'blog', 'pages'];
+
+type AskAiOptions = {
+  sourceTitle?: string;
+  sourceHref?: string;
+  sourceKind?: CommandItem['kind'];
+  analyticsSource?: CommandCenterHandoffSource;
+  autoSend?: boolean;
+};
 
 export default function CommandCenter() {
   const { isOpen, close } = useCommandCenter();
@@ -36,27 +45,66 @@ export default function CommandCenter() {
   const findQuery = parseCommandQuery(query).query;
 
   const askAi = useCallback(
-    (prompt: string, options?: { sourceTitle?: string; autoSend?: boolean }) => {
+    (prompt: string, options?: AskAiOptions) => {
       const trimmed = prompt.trim();
-      if (!trimmed) {
+      const analyticsSource =
+        options?.analyticsSource ?? (mode === 'ask' ? 'ask_panel' : 'ask_banner');
+
+      if (!trimmed && !options?.sourceTitle) {
+        commandCenterEvents.askHandoff({
+          source: analyticsSource,
+          query_length: 0,
+          auto_send: false,
+        });
         handoffToAiChat({ query: '', autoSend: false });
         close();
         return;
       }
+
       pushQuery(findQuery || trimmed);
+      commandCenterEvents.askHandoff({
+        source: analyticsSource,
+        query_length: trimmed.length,
+        item_kind: options?.sourceKind,
+        auto_send: options?.autoSend ?? true,
+      });
       handoffToAiChat({
         query: trimmed,
         autoSend: options?.autoSend ?? true,
         sourceTitle: options?.sourceTitle,
+        sourceHref: options?.sourceHref,
+        sourceKind: options?.sourceKind,
       });
       close();
     },
-    [close, findQuery, pushQuery],
+    [close, findQuery, mode, pushQuery],
   );
+
+  const askAboutItem = useCallback(
+    (item: CommandItem) => {
+      askAi(findQuery || item.title, {
+        sourceTitle: item.title,
+        sourceHref: item.href,
+        sourceKind: item.kind,
+        analyticsSource: 'result_row',
+      });
+    },
+    [askAi, findQuery],
+  );
+
+  const handleModeChange = useCallback((next: CommandMode) => {
+    setMode(next);
+    commandCenterEvents.modeChange(next);
+  }, []);
 
   useEffect(() => {
     if (parseCommandQuery(query).mode === 'ask') {
-      setMode('ask');
+      setMode((prev) => {
+        if (prev !== 'ask') {
+          commandCenterEvents.modeChange('ask');
+        }
+        return 'ask';
+      });
     }
   }, [query]);
 
@@ -66,6 +114,7 @@ export default function CommandCenter() {
 
   const navigateTo = useCallback(
     (item: CommandItem, newTab = false) => {
+      commandCenterEvents.resultClick({ kind: item.kind, href: item.href });
       pushQuery(query);
       close();
       if (newTab) {
@@ -131,7 +180,7 @@ export default function CommandCenter() {
 
     if (mode === 'ask' && event.key === 'Enter') {
       event.preventDefault();
-      askAi(findQuery || query);
+      askAi(findQuery || query, { analyticsSource: 'ask_panel' });
       return;
     }
 
@@ -253,7 +302,7 @@ export default function CommandCenter() {
             </button>
           </div>
 
-          <CommandModeTabs mode={mode} onChange={setMode} />
+          <CommandModeTabs mode={mode} onChange={handleModeChange} />
 
           {mode === 'find' ? (
           <div className="border-b border-border/40 px-4 py-2 sm:px-5">
@@ -305,12 +354,19 @@ export default function CommandCenter() {
             ) : null}
 
             {mode === 'ask' ? (
-              <CommandAskPanel query={findQuery || query} onAsk={(prompt) => askAi(prompt)} />
+              <CommandAskPanel
+                query={findQuery || query}
+                onAsk={(prompt) => askAi(prompt, { analyticsSource: 'ask_panel' })}
+              />
             ) : null}
 
             {mode === 'find' && findQuery ? (
               <div className="mb-4">
-                <CommandAskHandoff query={findQuery} compact onAsk={() => askAi(findQuery)} />
+                <CommandAskHandoff
+                  query={findQuery}
+                  compact
+                  onAsk={() => askAi(findQuery, { analyticsSource: 'ask_banner' })}
+                />
               </div>
             ) : null}
 
@@ -322,7 +378,7 @@ export default function CommandCenter() {
                 recentQueries={recentQueries}
                 onSuggestion={setQuery}
                 onClearHistory={clearHistory}
-                onAskAi={(value) => askAi(value)}
+                onAskAi={(value) => askAi(value, { analyticsSource: 'empty_state' })}
               />
             ) : null}
 
@@ -342,6 +398,7 @@ export default function CommandCenter() {
                             query={query}
                             isActive={index === activeIndex}
                             onSelect={(item) => navigateTo(item)}
+                            onAskAbout={askAboutItem}
                             onHover={setActiveIndex}
                           />
                         );

@@ -3,7 +3,15 @@
  * Referenced by componentDocs.ts and tests/playwright/visual/component-visual.spec.ts.
  */
 
-export type ComponentVisualBaselineKey = 'navbar' | 'footer' | 'searchOverlay';
+export type CommandCenterVisualSetup = 'browse' | 'results' | 'ask' | 'empty';
+
+export type ComponentVisualBaselineKey =
+  | 'navbar'
+  | 'footer'
+  | 'searchOverlay'
+  | 'commandCenterResults'
+  | 'commandCenterAsk'
+  | 'commandCenterEmpty';
 
 export type ComponentVisualBaseline = {
   key: ComponentVisualBaselineKey;
@@ -13,6 +21,8 @@ export type ComponentVisualBaseline = {
   snapshotFile: string;
   /** Playwright grep tag for the spec file */
   tags: readonly string[];
+  /** Optional Command Center state to capture */
+  commandCenterSetup?: CommandCenterVisualSetup;
 };
 
 export const componentVisualBaselines: Record<ComponentVisualBaselineKey, ComponentVisualBaseline> = {
@@ -35,10 +45,38 @@ export const componentVisualBaselines: Record<ComponentVisualBaselineKey, Compon
   searchOverlay: {
     key: 'searchOverlay',
     route: '/',
-    selector: '#search-overlay',
-    description: 'Search overlay open state',
+    selector: '#search-overlay [data-panel]',
+    description: 'Command Center browse state (open, no query)',
     snapshotFile: 'searchOverlay.png',
     tags: ['@visual-essential', '@visual-components'],
+    commandCenterSetup: 'browse',
+  },
+  commandCenterResults: {
+    key: 'commandCenterResults',
+    route: '/',
+    selector: '#search-overlay [data-panel]',
+    description: 'Command Center with search results',
+    snapshotFile: 'commandCenterResults.png',
+    tags: ['@visual-essential', '@visual-components'],
+    commandCenterSetup: 'results',
+  },
+  commandCenterAsk: {
+    key: 'commandCenterAsk',
+    route: '/',
+    selector: '#search-overlay [data-panel]',
+    description: 'Command Center Ask AI mode',
+    snapshotFile: 'commandCenterAsk.png',
+    tags: ['@visual-essential', '@visual-components'],
+    commandCenterSetup: 'ask',
+  },
+  commandCenterEmpty: {
+    key: 'commandCenterEmpty',
+    route: '/',
+    selector: '#search-overlay [data-panel]',
+    description: 'Command Center empty results state',
+    snapshotFile: 'commandCenterEmpty.png',
+    tags: ['@visual-essential', '@visual-components'],
+    commandCenterSetup: 'empty',
   },
 };
 
