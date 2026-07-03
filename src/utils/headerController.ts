@@ -15,6 +15,7 @@ let escapeListenerAttached = false;
 
 let closeMobileMenuFn: (() => void) | null = null;
 let closeSearchFn: (() => void) | null = null;
+let closeAiChatFn: (() => void) | null = null;
 
 function globalEscapeHandler(event: KeyboardEvent): void {
   if (event.key !== 'Escape') return;
@@ -66,6 +67,13 @@ export function registerSearchClose(fn: () => void): () => void {
   };
 }
 
+export function registerAiChatClose(fn: () => void): () => void {
+  closeAiChatFn = fn;
+  return () => {
+    if (closeAiChatFn === fn) closeAiChatFn = null;
+  };
+}
+
 export function closeMobileMenu(): void {
   closeMobileMenuFn?.();
 }
@@ -74,10 +82,15 @@ export function closeSearch(): void {
   closeSearchFn?.();
 }
 
+export function closeAiChat(): void {
+  closeAiChatFn?.();
+}
+
 export function resetHeaderControllerForTests(): void {
   escapeHandlers.length = 0;
   closeMobileMenuFn = null;
   closeSearchFn = null;
+  closeAiChatFn = null;
   if (escapeListenerAttached && typeof document !== 'undefined') {
     document.removeEventListener('keydown', globalEscapeHandler);
     escapeListenerAttached = false;

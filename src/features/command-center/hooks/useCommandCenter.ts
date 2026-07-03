@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   closeMobileMenu,
+  closeAiChat,
   registerEscapeHandler,
   registerSearchClose,
 } from '../../../utils/headerController';
@@ -16,6 +17,7 @@ export function useCommandCenter() {
 
   const open = useCallback(() => {
     closeMobileMenu();
+    closeAiChat();
     setIsOpen(true);
   }, []);
 

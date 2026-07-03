@@ -4,6 +4,8 @@ import { runSearch } from '../../../lib/search/searchService';
 import type { SearchCategory } from '../../../lib/search/types';
 import { buildBrowseGroups, groupCommandItems } from '../lib/groupResults';
 import { mapSearchResults, toCommandItem } from '../lib/toCommandItem';
+import { enrichCommandItems } from '../lib/rankResults';
+import { parseCommandQuery } from '../lib/parseQuery';
 import type { CommandGroup } from '../types';
 import { getNavSearchPages } from '../../../config/navSearchPages';
 
@@ -80,7 +82,8 @@ export function useCommandQuery(isOpen: boolean) {
         const quick = items.filter((item) => item.kind === 'page' && ['/contact/', '/projects/', '/blog/'].includes(item.href));
         setGroups(buildBrowseGroups(featured, recent, quick.length ? quick : items.filter((i) => i.kind === 'page').slice(0, 3)));
       } else {
-        setGroups(groupCommandItems(items, searchCategory));
+        const enriched = enrichCommandItems(items, searchQuery);
+        setGroups(groupCommandItems(enriched, searchCategory));
       }
 
       setSearchSource(result.source);
@@ -110,7 +113,8 @@ export function useCommandQuery(isOpen: boolean) {
 
   useEffect(() => {
     if (!isOpen) return;
-    scheduleSearch(query, category);
+    const searchQuery = parseCommandQuery(query).query;
+    scheduleSearch(searchQuery, category);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };

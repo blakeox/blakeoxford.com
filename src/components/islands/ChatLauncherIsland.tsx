@@ -77,7 +77,7 @@ export default function ChatLauncherIsland() {
  return (
  <button
  className="ai-chat-launcher touch-target focus-ring-interactive pointer-events-auto inline-flex size-14 items-center justify-center rounded-full border border-[color:var(--border)]/60 bg-[color:var(--glass-surface-bg)]/95 text-[color:var(--fg)] shadow-lg backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/90"
- aria-label="Open AI search assistant"
+ aria-label="Open AI assistant — conversational chat"
  type="button"
  >
  <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">

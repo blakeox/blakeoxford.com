@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { handoffToAiChat } from '../../lib/chat/ai-chat-bridge';
 import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollLock';
 import { createFocusTrap } from '../../utils/focusTrap';
+import { CommandAskHandoff, CommandAskPanel } from './components/CommandAskHandoff';
 import { CommandEmpty, CommandFooter } from './components/CommandEmpty';
 import { CommandGroupSection, CommandSkeletonList } from './components/CommandGroup';
+import { CommandModeTabs } from './components/CommandModeTabs';
 import { CommandResultRow } from './components/CommandResultRow';
 import { useCommandCenter } from './hooks/useCommandCenter';
 import { useCommandHistory } from './hooks/useCommandHistory';
 import { useCommandQuery } from './hooks/useCommandQuery';
 import { flattenGroups } from './lib/groupResults';
-import type { CommandCategory, CommandItem } from './types';
+import { parseCommandQuery } from './lib/parseQuery';
+import type { CommandCategory, CommandItem, CommandMode } from './types';
 import { CATEGORY_LABELS } from './types';
 
 const CATEGORIES: CommandCategory[] = ['all', 'projects', 'blog', 'pages'];
@@ -20,6 +24,7 @@ export default function CommandCenter() {
   const { recentQueries, pushQuery, clearHistory } = useCommandHistory();
   const { query, setQuery, category, setCategory, groups, isLoading, error } = useCommandQuery(isOpen);
 
+  const [mode, setMode] = useState<CommandMode>('find');
   const [activeIndex, setActiveIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -27,7 +32,37 @@ export default function CommandCenter() {
   const focusTrapRef = useRef<ReturnType<typeof createFocusTrap> | null>(null);
 
   const flatItems = useMemo(() => flattenGroups(groups), [groups]);
-  const hasResults = flatItems.length > 0;
+  const hasResults = mode === 'find' && flatItems.length > 0;
+  const findQuery = parseCommandQuery(query).query;
+
+  const askAi = useCallback(
+    (prompt: string, options?: { sourceTitle?: string; autoSend?: boolean }) => {
+      const trimmed = prompt.trim();
+      if (!trimmed) {
+        handoffToAiChat({ query: '', autoSend: false });
+        close();
+        return;
+      }
+      pushQuery(findQuery || trimmed);
+      handoffToAiChat({
+        query: trimmed,
+        autoSend: options?.autoSend ?? true,
+        sourceTitle: options?.sourceTitle,
+      });
+      close();
+    },
+    [close, findQuery, pushQuery],
+  );
+
+  useEffect(() => {
+    if (parseCommandQuery(query).mode === 'ask') {
+      setMode('ask');
+    }
+  }, [query]);
+
+  useEffect(() => {
+    if (!isOpen) setMode('find');
+  }, [isOpen]);
 
   const navigateTo = useCallback(
     (item: CommandItem, newTab = false) => {
@@ -94,7 +129,13 @@ export default function CommandCenter() {
       return;
     }
 
-    if (!flatItems.length) return;
+    if (mode === 'ask' && event.key === 'Enter') {
+      event.preventDefault();
+      askAi(findQuery || query);
+      return;
+    }
+
+    if (!flatItems.length || mode !== 'find') return;
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
@@ -175,7 +216,7 @@ export default function CommandCenter() {
                   setActiveIndex(-1);
                 }}
                 onKeyDown={handleInputKeyDown}
-                placeholder="Search pages, projects, and blog posts…"
+                placeholder={mode === 'ask' ? 'Ask a conversational question…' : 'Search pages, projects, and blog posts…'}
                 aria-label="Search site content"
                 autoComplete="off"
                 spellCheck={false}
@@ -212,6 +253,9 @@ export default function CommandCenter() {
             </button>
           </div>
 
+          <CommandModeTabs mode={mode} onChange={setMode} />
+
+          {mode === 'find' ? (
           <div className="border-b border-border/40 px-4 py-2 sm:px-5">
             <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Search categories">
               {CATEGORIES.map((value) => {
@@ -238,6 +282,7 @@ export default function CommandCenter() {
               })}
             </div>
           </div>
+          ) : null}
 
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-5" ref={listRef}>
             <h2 id="command-center-title" className="sr-only">
@@ -259,18 +304,29 @@ export default function CommandCenter() {
               </div>
             ) : null}
 
-            {isLoading && !hasResults ? <CommandSkeletonList /> : null}
+            {mode === 'ask' ? (
+              <CommandAskPanel query={findQuery || query} onAsk={(prompt) => askAi(prompt)} />
+            ) : null}
 
-            {!isLoading && !hasResults ? (
+            {mode === 'find' && findQuery ? (
+              <div className="mb-4">
+                <CommandAskHandoff query={findQuery} compact onAsk={() => askAi(findQuery)} />
+              </div>
+            ) : null}
+
+            {mode === 'find' && isLoading && !hasResults ? <CommandSkeletonList /> : null}
+
+            {mode === 'find' && !isLoading && !hasResults ? (
               <CommandEmpty
-                query={query}
+                query={findQuery}
                 recentQueries={recentQueries}
                 onSuggestion={setQuery}
                 onClearHistory={clearHistory}
+                onAskAi={(value) => askAi(value)}
               />
             ) : null}
 
-            {hasResults ? (
+            {mode === 'find' && hasResults ? (
               <div id="search-results" role="listbox" aria-label="Search results" data-results className="flex flex-col gap-4">
                 <div data-results-container className="flex flex-col gap-4">
                   {groups.map((group) => (
@@ -285,7 +341,7 @@ export default function CommandCenter() {
                             index={index}
                             query={query}
                             isActive={index === activeIndex}
-                            onSelect={navigateTo}
+                            onSelect={(item) => navigateTo(item)}
                             onHover={setActiveIndex}
                           />
                         );

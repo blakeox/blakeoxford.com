@@ -111,7 +111,10 @@ export function CommandResultRow({
             </span>
           ) : null}
           {formattedDate ? <span>{formattedDate}</span> : null}
-          {item.score && item.score > 0.7 ? (
+          {item.matchReason ? (
+            <span className="normal-case text-subtle-foreground">{item.matchReason}</span>
+          ) : null}
+          {!item.matchReason && item.score && item.score > 0.7 ? (
             <span className="normal-case text-accent">Best match</span>
           ) : null}
         </div>

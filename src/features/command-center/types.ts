@@ -14,7 +14,10 @@ export type CommandItem = {
   publishedAt?: string;
   image?: string;
   source: 'vectorize' | 'local' | 'curated' | 'history';
+  matchReason?: string;
 };
+
+export type CommandMode = 'find' | 'ask';
 
 export type CommandGroup = {
   id: string;
@@ -29,6 +32,11 @@ export const CATEGORY_LABELS: Record<CommandCategory, string> = {
   projects: 'Projects',
   pages: 'Pages',
   blog: 'Blog',
+};
+
+export const MODE_LABELS: Record<CommandMode, string> = {
+  find: 'Find',
+  ask: 'Ask AI',
 };
 
 export const SUGGESTED_QUERIES = [

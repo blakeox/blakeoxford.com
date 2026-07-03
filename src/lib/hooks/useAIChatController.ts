@@ -30,6 +30,7 @@ import { useScrollManagement } from './useScrollManagement';
 import { useTouchGestures } from './useTouchGestures';
 import { useUIState } from './useUIState';
 import { useVoiceRecognition } from './useVoiceRecognition';
+import { useAiChatBridge } from './useAiChatBridge';
 
 /**
  * Central controller hook that encapsulates all chat state, effects, and actions.
@@ -150,9 +151,7 @@ export function useAIChatController() {
 
 	useKeyboardShortcuts({
 		enabled: isOpen,
-		onOpen: openChat,
 		onClose: closeChat,
-		onToggle: () => (isOpen ? closeChat() : openChat()),
 		panelRef,
 		sourceRefs,
 	});
@@ -258,6 +257,14 @@ export function useAIChatController() {
 	const { visibleFallbackResults, hasMoreFallbackResults } = useComputedValues({
 		showFallbackSuggestions,
 		fallbackResults,
+	});
+
+	useAiChatBridge({
+		openChat,
+		closeChat,
+		setInputValue,
+		sendQuery,
+		focusInput,
 	});
 
 	return {

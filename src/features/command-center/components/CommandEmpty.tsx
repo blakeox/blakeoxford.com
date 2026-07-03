@@ -5,15 +5,20 @@ type CommandEmptyProps = {
   recentQueries: string[];
   onSuggestion: (value: string) => void;
   onClearHistory: () => void;
+  onAskAi: (query: string) => void;
 };
 
-export function CommandEmpty({ query, recentQueries, onSuggestion, onClearHistory }: CommandEmptyProps) {
+export function CommandEmpty({ query, recentQueries, onSuggestion, onClearHistory, onAskAi }: CommandEmptyProps) {
   const trimmed = query.trim();
 
   if (!trimmed) {
     return (
       <div className="rounded-2xl border border-dashed border-border/60 bg-surface/60 px-4 py-4 text-sm text-muted-foreground">
-        <p>Search by meaning across pages, projects, and blog posts.</p>
+        <p>
+          <strong className="font-medium text-foreground">Find</strong> jumps to pages and projects.
+          {' '}
+          <strong className="font-medium text-foreground">Ask AI</strong> opens the conversational assistant (bottom-right).
+        </p>
         {recentQueries.length ? (
           <div className="mt-3">
             <div className="mb-2 flex items-center justify-between gap-2">
@@ -47,7 +52,16 @@ export function CommandEmpty({ query, recentQueries, onSuggestion, onClearHistor
   return (
     <div className="rounded-2xl border border-dashed border-border/60 bg-surface/60 px-4 py-4 text-sm text-muted-foreground">
       <p>No results for &ldquo;{trimmed}&rdquo;.</p>
-      <p className="mt-2">Try a different keyword or browse a suggestion:</p>
+      <p className="mt-2">Try a different keyword, ask the AI assistant, or browse a suggestion:</p>
+      <div className="mt-3">
+        <button
+          type="button"
+          className="rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent transition hover:bg-accent/15"
+          onClick={() => onAskAi(trimmed)}
+        >
+          Ask AI about &ldquo;{trimmed}&rdquo;
+        </button>
+      </div>
       <div className="mt-3 flex flex-wrap gap-2">
         {SUGGESTED_QUERIES.map((item) => (
           <button
@@ -67,6 +81,10 @@ export function CommandEmpty({ query, recentQueries, onSuggestion, onClearHistor
 export function CommandFooter() {
   return (
     <div className="hidden border-t border-border/50 px-4 py-2 text-xs text-subtle-foreground sm:block">
+      <p className="mb-1">
+        <strong className="font-medium text-foreground">Find</strong> = site search ·{' '}
+        <strong className="font-medium text-foreground">Ask AI</strong> = chat assistant (AutoRAG)
+      </p>
       <span className="inline-flex flex-wrap gap-x-3 gap-y-1">
         <span>
           <kbd className="rounded border border-border px-1.5 py-0.5 font-sans">↑↓</kbd> navigate

@@ -171,7 +171,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             id="search-toggle"
             type="button"
             className="nav-utility-button search-toggle"
-            aria-label="Open search"
+            aria-label="Open site search"
             aria-haspopup="dialog"
             aria-controls="search-overlay"
             aria-expanded="false"
