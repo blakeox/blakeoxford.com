@@ -70,9 +70,8 @@ describe('EducationCard Component', () => {
 
   describe('Styling', () => {
     it('should have card styling', () => {
+      expect(fileContent).toContain('Card');
       expect(fileContent).toContain('rounded');
-      expect(fileContent).toContain('shadow');
-      expect(fileContent).toContain('border');
     });
 
     it('should have responsive typography', () => {
@@ -84,8 +83,8 @@ describe('EducationCard Component', () => {
       expect(fileContent).toContain('hover:');
     });
 
-    it('should have dark mode support', () => {
-      expect(fileContent).toContain('dark:');
+    it('should inherit dark mode from semantic surface tokens', () => {
+      expect(fileContent).toMatch(/text-foreground|bg-surface|border-border/);
     });
 
     it('should use group hover pattern', () => {
@@ -167,8 +166,8 @@ describe('EducationCard Component', () => {
   });
 
   describe('Interactive States', () => {
-    it('should have hover state shadow change', () => {
-      expect(fileContent).toContain('hover:shadow');
+    it('should have hover state via Card lift interaction', () => {
+      expect(fileContent).toContain('hover="lift"');
     });
 
     it('should have transition timing', () => {
@@ -193,10 +192,9 @@ describe('EducationCard Component', () => {
       expect(fileContent).toMatch(/text-foreground|bg-surface|border-border/);
     });
 
-    it('should have dark mode variants', () => {
-      expect(fileContent).toContain('dark:bg-surface-dark');
-      expect(fileContent).toContain('dark:border-border-dark');
-      expect(fileContent).toContain('dark:text-foreground-light');
+    it('should use semantic theme tokens instead of redundant dark variants', () => {
+      expect(fileContent).toMatch(/text-foreground|bg-surface|border-border/);
+      expect(fileContent).not.toContain('dark:bg-surface-dark');
     });
 
     it('should use accent color', () => {
