@@ -398,12 +398,6 @@
     transform: translateZ(0);
   }
 
-  .mobile-menu-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
   /* JS-driven panels and overlays */
   @media (prefers-reduced-motion: reduce) {
     .mobile-menu,

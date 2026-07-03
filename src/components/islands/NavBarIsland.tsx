@@ -33,7 +33,6 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   const navRef = useRef<HTMLElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const burgerButtonRef = useRef<HTMLButtonElement | null>(null);
-  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const themeToggleRef = useRef<HTMLButtonElement | null>(null);
 
   const [activePath, setActivePath] = useState(() => normalizeNavPath(currentPath));
@@ -59,7 +58,6 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         navBar: navRef.current,
         mobileMenu: mobileMenuRef.current,
         burgerButton: burgerButtonRef.current,
-        closeButton: closeButtonRef.current,
         themeToggle: themeToggleRef.current,
       });
 
@@ -257,19 +255,6 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
           className="mobile-menu-content flex w-full flex-col gap-2 px-4 py-4 text-foreground @sm:gap-3 @sm:px-5 @sm:py-5"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="mobile-menu-header flex items-center justify-end">
-            <button
-              id="close-mobile-menu"
-              ref={closeButtonRef}
-              type="button"
-              className="mobile-close-button touch-target focus-ring-interactive inline-flex size-11 items-center justify-center rounded-full border border-border/60 bg-surface text-foreground shadow-sm"
-              aria-label="Close navigation menu"
-            >
-              <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true" focusable="false">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
           <ul className="mobile-nav flex flex-col gap-1">
             {links.map((link) =>
               renderLink(
