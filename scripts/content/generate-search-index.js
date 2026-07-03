@@ -16,7 +16,7 @@ const projects = [
     }
   },
   {
-    slug: 'Microsoft-Fabric',
+    slug: 'microsoft-fabric',
     data: {
       title: 'Microsoft Fabric – Operational Intelligence & Workflow Automation',
       description: 'Built the operational backbone for a 200-person healthcare organization—uniting workflows, performance tracking, and automation across 10+ departments using Microsoft Fabric and Power Platform.',
@@ -27,7 +27,7 @@ const projects = [
     }
   },
   {
-    slug: 'LLM-note-coaching',
+    slug: 'llm-note-coaching',
     data: {
       title: 'OpenAI-Powered Documentation Quality Feedback System',
       description: 'Developed an end-to-end solution using the OpenAI API to ingest de-identified patient notes and generate actionable feedback—ensuring technicians and providers produce documentation that meets Blue Cross Blue Shield audit standards.',

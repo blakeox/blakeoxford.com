@@ -69,6 +69,7 @@ if (process.env.A11Y_MAX_BY_ROUTE) {
     try {
       await page.goto(base + r, { waitUntil: 'domcontentloaded', timeout: 20000 });
       await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(()=>{});
+      await page.waitForFunction(() => globalThis.document?.documentElement?.getAttribute('data-theme') != null, null, { timeout: 5000 }).catch(()=>{});
       const analysis = await new AxeBuilder({ page }).include('body').analyze();
       const violations = analysis.violations || [];
       pageRecord.violations = violations.length;

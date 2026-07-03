@@ -3,6 +3,8 @@
  * Resolves modern CSS color formats (OKLCH, color-mix, etc.) to sRGB via the browser.
  */
 
+import { waitForLayoutStability } from './waits';
+
 export type Rgb = [number, number, number];
 
 export function luminance(r: number, g: number, b: number): number {
@@ -196,7 +198,7 @@ export async function applyThemeOnPage(
   }, theme);
 
   // Allow islands to hydrate, then re-apply and let any @property transitions finish
-  await page.waitForTimeout(150);
+  await waitForLayoutStability(page, 1, 400);
   await page.evaluate((nextTheme) => {
     const root = document.documentElement;
     root.dataset.theme = nextTheme;
@@ -208,7 +210,7 @@ export async function applyThemeOnPage(
     }
   }, theme);
 
-  await page.waitForTimeout(350);
+  await waitForLayoutStability(page, 2, 600);
 
   await page.waitForFunction(
     (expected) => {

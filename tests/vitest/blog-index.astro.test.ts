@@ -14,17 +14,17 @@ describe('Blog Index Page', () => {
     expect(fileContent).toContain('Blog');
   });
 
-  it('should contain BlogPostRow component', () => {
-    expect(fileContent).toContain('BlogPostRow');
+  it('should contain blog index section components', () => {
+    expect(fileContent).toContain('BlogIndexContentSection');
   });
 
   it('should load posts from content collections', () => {
-  expect(fileContent).toContain('await getCollection(\'blog\',');
+    expect(fileContent).toContain('await getCollection(\'blog\',');
     expect(fileContent).toContain('const sortedPosts = posts');
   });
 
   it('should render structured blog layout regions', () => {
-    expect(fileContent).toContain('aria-labelledby="blog-posts-heading"');
-    expect(fileContent).toContain('<Section padding="lg"');
+    expect(fileContent).toContain('BlogIndexHeroSection');
+    expect(fileContent).toContain('BlogIndexContentSection');
   });
 });
