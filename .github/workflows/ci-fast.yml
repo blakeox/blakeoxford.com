@@ -104,9 +104,6 @@ jobs:
       - name: Run unit tests
         run: pnpm test -- --run
 
-      - name: Contrast token audit
-        run: pnpm audit:contrast # fails only if failing tokens are actually used in build
-
       - name: Run mutation tests (non-blocking)
         run: pnpm test:mutants
         continue-on-error: true

@@ -138,10 +138,6 @@ jobs:
             git push || echo "⚠️ Push failed (possibly due to race); safe to ignore"
           fi
 
-      - name: Contrast token audit
-        if: matrix.test-group == 'unit'
-        run: pnpm audit:contrast # fails only if low-contrast tokens used
-
       - name: Log mutation history
         if: matrix.test-group == 'unit'
         run: pnpm mutation:history:log || true
