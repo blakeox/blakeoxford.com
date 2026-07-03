@@ -1,6 +1,6 @@
 [
   { "query": "hello", "expectedTopSlug": "hello-world" },
-  { "query": "fabric", "expectedTopSlug": "Microsoft-Fabric" },
-  { "query": "openai", "expectedTopSlug": "LLM-note-coaching" },
+  { "query": "fabric", "expectedTopSlug": "microsoft-fabric" },
+  { "query": "openai", "expectedTopSlug": "llm-note-coaching" },
   { "query": "bank projections", "expectedTopSlug": "bank-projections-modeling" }
 ]
