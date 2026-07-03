@@ -103,16 +103,16 @@ export default function ChatBotNotification() {
 			aria-live="polite"
 			className="fixed bottom-24 right-4 z-[1060] animate-slideUp sm:bottom-28 sm:right-6"
 		>
-			<div className="relative max-w-xs rounded-lg bg-surface p-4 shadow-lg ring-1 ring-border/30 dark:bg-surface-dark dark:ring-border-dark/40">
+			<div className="relative max-w-xs rounded-lg bg-surface p-4 shadow-lg ring-1 ring-border/30">
 				{/* Arrow pointing to chat bot */}
-				<div className="absolute -bottom-2 right-6 h-4 w-4 rotate-45 bg-surface dark:bg-surface-dark" />
+				<div className="absolute -bottom-2 right-6 h-4 w-4 rotate-45 bg-surface" />
 				
 				{/* Close button */}
 				<button
 					type="button"
 					onClick={handleDismiss}
 					aria-label="Dismiss notification"
-					className="absolute right-2 top-2 rounded p-1 text-subtle-foreground transition-colors hover:bg-surface-subtle hover:text-muted-foreground dark:hover:bg-surface-dark-subtle dark:hover:text-foreground-light/85"
+					className="absolute right-2 top-2 rounded p-1 text-subtle-foreground transition-colors hover:bg-surface-subtle hover:text-muted-foreground"
 				>
 					<svg
 						className="h-4 w-4"
@@ -134,7 +134,7 @@ export default function ChatBotNotification() {
 					<div className="mb-2 flex items-start gap-2">
 						<div className="flex-shrink-0">
 							<svg
-								className="h-5 w-5 text-accent dark:text-accent-light"
+								className="h-5 w-5 text-accent-emphasis"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
@@ -161,7 +161,7 @@ export default function ChatBotNotification() {
 					<button
 						type="button"
 						onClick={handleClickChat}
-						className="mt-3 w-full rounded-md bg-accent px-3 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
+						className="mt-3 w-full rounded-md bg-button-primary-bg px-3 py-2 text-sm font-medium text-button-primary-fg transition-colors hover:bg-button-primary-bg-hover focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 focus:ring-offset-background"
 					>
 						Open Chat
 					</button>

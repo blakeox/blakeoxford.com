@@ -78,7 +78,7 @@ const structuredData = [articleSchema, breadcrumbSchema];
  <Stack space="lg" as="header">
  <Flex wrap gap="xs" class="text-xs font-semibold uppercase tracking-label text-subtle-foreground">
  {post.data.tags?.map((tag: string) => (
- <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/40 dark:bg-surface-dark-subtle">
+ <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/40">
  {tag}
  </span>
  ))}
@@ -102,16 +102,16 @@ const structuredData = [articleSchema, breadcrumbSchema];
  )}
  </Stack>
 
-      <div class="@container prose prose-lg lg:prose-xl max-w-none text-foreground
+      <div class="@container prose prose-lg lg:prose-xl dark:prose-invert max-w-none text-foreground
         prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground
         prose-h1:text-5xl prose-h1:mb-8
         prose-h2:text-4xl prose-h2:mt-16 prose-h2:mb-8
         prose-h3:text-3xl prose-h3:mt-10 prose-h3:mb-5
         prose-p:text-lg prose-p:leading-relaxed prose-p:mb-6 prose-p:text-foreground/90
         prose-li:text-lg prose-li:leading-relaxed prose-li:text-foreground/90
-        prose-a:text-accent prose-a:no-underline hover:prose-a:underline dark:prose-a:text-accent-light
+        prose-a:text-accent-emphasis prose-a:no-underline hover:prose-a:underline
         prose-strong:text-foreground prose-strong:font-semibold
-        prose-code:text-accent prose-code:bg-surface-subtle prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded dark:prose-code:bg-surface-dark-subtle">
+        prose-code:text-accent-emphasis prose-code:bg-surface-subtle prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded">
  <Content />
  </div>
  </Stack>

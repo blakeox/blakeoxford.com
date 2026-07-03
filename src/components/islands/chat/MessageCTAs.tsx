@@ -114,7 +114,7 @@ export const MatchedCTA = memo(function MatchedCTA({
 					<p className="mb-2 text-sm text-muted-foreground">{matchedCTA.message}</p>
 					<a
 						href={matchedCTA.ctaLink}
-						className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors duration-200 hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 dark:focus:ring-offset-background-dark"
+						className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors duration-200 hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 focus:ring-offset-background"
 						onClick={() => {
 							if (typeof window !== 'undefined') {
 								autoragEvents.ctaClick({

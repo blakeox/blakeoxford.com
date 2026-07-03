@@ -41,7 +41,7 @@ export function ChatStatusIndicators({
 			)}
 
 			{error && (
-				<div className="rounded-xl border border-[color:var(--color-error)]/50 bg-[color:var(--color-error-subtle)] px-3 py-2 text-xs text-[color:var(--color-error-dark)] dark:text-[color:var(--color-error-light)]">
+				<div className="rounded-xl border border-[color:var(--color-error)]/50 bg-[color:var(--color-error-subtle)] px-3 py-2 text-xs text-error-emphasis">
 					<p>{error}</p>
 					{lastQueryValue && (
 						<p className="mt-1 text-[color:var(--fg)]/60">
@@ -56,7 +56,7 @@ export function ChatStatusIndicators({
 					<div className="mt-2 flex flex-wrap gap-2">
 						<button
 							type="button"
-							className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-error)]/55 px-3 py-1 font-medium transition hover:border-[color:var(--color-error)] hover:text-[color:var(--color-error-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-error)]/50 disabled:opacity-60 dark:hover:text-[color:var(--color-error-light)]"
+							className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-error)]/55 px-3 py-1 font-medium transition hover:border-[color:var(--color-error)] hover:text-error-emphasis focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-error)]/50 disabled:opacity-60"
 							onClick={() => {
 								// Manual retry - clear error and use lastFailedQuery if available
 								const queryToRetry = lastFailedQuery || lastQueryValue;

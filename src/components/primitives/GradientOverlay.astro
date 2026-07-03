@@ -66,9 +66,7 @@ const opacityStops = {
 const baseClass = variantClasses[variant];
 const gradientDirection = directionClasses[direction];
 const colorStops = opacityStops[opacity][variant];
-const darkModeStops = colorStops.replace(/background/g, 'background-dark');
-
-const finalClasses = `${baseClass} ${gradientDirection} ${colorStops} dark:${darkModeStops} ${className}`.trim();
+const finalClasses = `${baseClass} ${gradientDirection} ${colorStops} ${className}`.trim();
 ---
 
 <div class={finalClasses} aria-hidden='true'></div>
