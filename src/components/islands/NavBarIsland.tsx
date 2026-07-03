@@ -31,6 +31,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import type { NavLink } from '../../config/navLinks';
+import { getThemePreference, updateThemeToggleButton } from '../../lib/theme';
 import { registerModernNavBar } from '../../scripts/features/ModernNavBar';
 import { initMotionAccessibility } from '../../scripts/modules/MotionAccessibility';
 
@@ -106,12 +107,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  window.addEventListener('scroll', handleScroll, { passive: true });
 
  if (themeToggleRef.current) {
- const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
- themeToggleRef.current.setAttribute('aria-pressed', String(currentTheme === 'dark'));
- themeToggleRef.current.setAttribute(
- 'aria-label',
- currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
- );
+  updateThemeToggleButton(themeToggleRef.current, getThemePreference());
  }
 
  return () => {
@@ -210,19 +206,21 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  </svg>
  </button>
 
- {/* Theme toggle button (separate from search toggle) */}
+ {/* Theme cycles: light → dark → system */}
  <button
  id="theme-toggle"
  ref={themeToggleRef}
  type="button"
  className="nav-utility-button theme-toggle relative shrink-0"
- aria-label="Switch to dark mode"
+ aria-label="Theme: system preference. Switch to light mode."
  aria-pressed="false"
+ data-theme-preference="system"
  >
  <span className="pointer-events-none relative block size-6" aria-hidden="true">
  <svg
  xmlns="http://www.w3.org/2000/svg"
- className="sun-icon absolute inset-0 size-6 hidden dark:block"
+ className="sun-icon absolute inset-0 size-6"
+ data-icon="light"
  viewBox="0 0 24 24"
  fill="none"
  stroke="currentColor"
@@ -233,7 +231,8 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  </svg>
  <svg
  xmlns="http://www.w3.org/2000/svg"
- className="moon-icon absolute inset-0 size-6 translate-x-px dark:hidden"
+ className="moon-icon absolute inset-0 size-6 translate-x-px"
+ data-icon="dark"
  viewBox="0 0 24 24"
  fill="none"
  stroke="currentColor"
@@ -241,6 +240,18 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
  focusable="false"
  >
  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79Z" />
+ </svg>
+ <svg
+ xmlns="http://www.w3.org/2000/svg"
+ className="system-icon absolute inset-0 size-6"
+ data-icon="system"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ strokeWidth={1.8}
+ focusable="false"
+ >
+ <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L8 21h8l-1.75-4M12 3v1m6.364 1.636-.707.707M21 12h-1M18.364 18.364l-.707-.707M12 19v1M5.636 18.364l.707-.707M4 12H3m2.636-6.364.707.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
  </svg>
  </span>
  </button>

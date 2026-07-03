@@ -3,14 +3,18 @@ import { JSDOM } from 'jsdom';
 import {
 	applyTheme,
 	applySystemTheme,
+	cycleThemePreference,
 	getCurrentTheme,
+	getThemePreference,
 	hasExplicitThemePreference,
 	initializeTheme,
-	readStoredTheme,
+	readThemePreference,
 	resolveInitialTheme,
-	setTheme,
+	resolveTheme,
+	setThemePreference,
 	toggleTheme,
 	THEME_ATTRIBUTE,
+	THEME_PREFERENCE_ATTRIBUTE,
 	THEME_STORAGE_KEY,
 	DARK_CLASS,
 } from '../../src/lib/theme';
@@ -53,9 +57,9 @@ describe('theme utilities', () => {
 
 		Object.defineProperty(window, 'matchMedia', {
 			writable: true,
-			value: vi.fn().mockImplementation((query: string) => ({
-				matches: query.includes('dark') ? false : false,
-				media: query,
+			value: vi.fn().mockImplementation(() => ({
+				matches: false,
+				media: '(prefers-color-scheme: dark)',
 				addEventListener: vi.fn(),
 				removeEventListener: vi.fn(),
 			})),
@@ -63,36 +67,42 @@ describe('theme utilities', () => {
 
 		document.documentElement.className = '';
 		document.documentElement.removeAttribute(THEME_ATTRIBUTE);
+		document.documentElement.removeAttribute(THEME_PREFERENCE_ATTRIBUTE);
 		document.cookie = '';
 		localStorageMock.clear();
 		vi.clearAllMocks();
 	});
 
-	it('applyTheme sets data-theme, class, and colorScheme', () => {
-		applyTheme('dark');
+	it('applyTheme sets data-theme, preference, class, and colorScheme', () => {
+		applyTheme('dark', { preference: 'dark' });
 		expect(document.documentElement.getAttribute(THEME_ATTRIBUTE)).toBe('dark');
+		expect(document.documentElement.getAttribute(THEME_PREFERENCE_ATTRIBUTE)).toBe('dark');
 		expect(document.documentElement.classList.contains(DARK_CLASS)).toBe(true);
 		expect(document.documentElement.style.colorScheme).toBe('dark');
 	});
 
-	it('setTheme persists explicit preference', () => {
-		setTheme('dark');
+	it('setThemePreference persists explicit preference', () => {
+		setThemePreference('dark');
 		expect(localStorageMock.getItem(THEME_STORAGE_KEY)).toBe('dark');
 		expect(document.cookie).toContain('theme=dark');
 		expect(global.fetch).toHaveBeenCalled();
 	});
 
-	it('applySystemTheme does not persist preference', () => {
+	it('applySystemTheme updates resolved theme only when preference is system', () => {
+		setThemePreference('system');
 		applySystemTheme('dark');
 		expect(document.documentElement.classList.contains(DARK_CLASS)).toBe(true);
-		expect(localStorageMock.getItem(THEME_STORAGE_KEY)).toBeNull();
-		expect(global.fetch).not.toHaveBeenCalled();
+
+		setThemePreference('light');
+		applySystemTheme('dark');
+		expect(document.documentElement.classList.contains(DARK_CLASS)).toBe(false);
 	});
 
 	it('initializeTheme uses system preference without persisting on first visit', () => {
 		const theme = initializeTheme();
 		expect(theme).toBe('light');
 		expect(localStorageMock.getItem(THEME_STORAGE_KEY)).toBeNull();
+		expect(getThemePreference()).toBe('system');
 	});
 
 	it('initializeTheme respects stored explicit preference', () => {
@@ -102,19 +112,27 @@ describe('theme utilities', () => {
 		expect(document.documentElement.classList.contains(DARK_CLASS)).toBe(true);
 	});
 
-	it('toggleTheme switches between light and dark and persists', () => {
-		applyTheme('light');
-		expect(toggleTheme()).toBe('dark');
-		expect(getCurrentTheme()).toBe('dark');
-		expect(localStorageMock.getItem(THEME_STORAGE_KEY)).toBe('dark');
+	it('cycleThemePreference rotates light → dark → system → light', () => {
+		setThemePreference('light');
+		expect(cycleThemePreference()).toBe('dark');
+		expect(cycleThemePreference()).toBe('system');
+		expect(cycleThemePreference()).toBe('light');
+	});
 
+	it('toggleTheme flips between light and dark only', () => {
+		setThemePreference('light');
+		expect(toggleTheme()).toBe('dark');
+		expect(getThemePreference()).toBe('dark');
 		expect(toggleTheme()).toBe('light');
-		expect(getCurrentTheme()).toBe('light');
+	});
+
+	it('resolveTheme maps system to matchMedia result', () => {
+		expect(resolveTheme('system')).toBe('light');
 	});
 
 	it('hasExplicitThemePreference reflects storage and cookies', () => {
 		expect(hasExplicitThemePreference()).toBe(false);
-		localStorageMock.setItem(THEME_STORAGE_KEY, 'dark');
+		localStorageMock.setItem(THEME_STORAGE_KEY, 'system');
 		expect(hasExplicitThemePreference()).toBe(true);
 	});
 
@@ -123,8 +141,8 @@ describe('theme utilities', () => {
 		expect(resolveInitialTheme()).toBe('dark');
 	});
 
-	it('readStoredTheme returns null for invalid values', () => {
-		localStorageMock.setItem(THEME_STORAGE_KEY, 'system');
-		expect(readStoredTheme()).toBeNull();
+	it('readThemePreference returns null for invalid values', () => {
+		localStorageMock.setItem(THEME_STORAGE_KEY, 'invalid');
+		expect(readThemePreference()).toBeNull();
 	});
 });

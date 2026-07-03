@@ -18,66 +18,46 @@ import {
 } from 'react';
 import {
 	getSystemTheme,
-	readStoredTheme,
-	setTheme as persistTheme,
+	readThemePreference,
+	setThemePreference,
 	applySystemTheme,
 	getCurrentTheme,
-	toggleTheme as toggleResolvedTheme,
+	getThemePreference,
+	cycleThemePreference,
+	resolveTheme,
 	type ResolvedTheme,
+	type ThemePreference,
 	THEME_STORAGE_KEY,
 } from '../lib/theme';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = ThemePreference;
 
 export interface ThemeContextValue {
 	/** Current theme setting (may be 'system') */
-	theme: Theme;
+	theme: ThemePreference;
 	/** Actual theme being displayed */
 	resolvedTheme: ResolvedTheme;
 	/** Set the theme */
-	setTheme: (theme: Theme) => void;
-	/** Toggle between light and dark */
+	setTheme: (theme: ThemePreference) => void;
+	/** Cycle light → dark → system */
+	cycleTheme: () => void;
+	/** Toggle between light and dark (keyboard shortcut compat) */
 	toggleTheme: () => void;
 	/** Whether dark mode is active */
 	isDark: boolean;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function getStoredThemeSetting(): Theme {
-	if (typeof window === 'undefined') return 'system';
-	const stored = localStorage.getItem(THEME_STORAGE_KEY);
-	if (stored === 'light' || stored === 'dark') return stored;
-	return 'system';
-}
-
-function resolveTheme(theme: Theme): ResolvedTheme {
-	return theme === 'system' ? getSystemTheme() : theme;
-}
-
-// ─── Context ──────────────────────────────────────────────────────────────────
-
 const ThemeContext = createContext<ThemeContextValue | null>(null);
-
-// ─── Provider ─────────────────────────────────────────────────────────────────
 
 export interface ThemeProviderProps {
 	children: ReactNode;
-	/** Initial theme override */
-	defaultTheme?: Theme;
-	/** Storage key for persisting theme */
-	storageKey?: string;
+	defaultTheme?: ThemePreference;
 }
 
-export function ThemeProvider({
-	children,
-	defaultTheme,
-}: ThemeProviderProps) {
-	const [theme, setThemeState] = useState<Theme>(() => {
+export function ThemeProvider({ children, defaultTheme }: ThemeProviderProps) {
+	const [theme, setThemeState] = useState<ThemePreference>(() => {
 		if (defaultTheme) return defaultTheme;
-		return getStoredThemeSetting();
+		return readThemePreference() ?? 'system';
 	});
 
 	const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => {
@@ -87,11 +67,7 @@ export function ThemeProvider({
 	useEffect(() => {
 		const resolved = resolveTheme(theme);
 		setResolvedTheme(resolved);
-		if (theme === 'system') {
-			applySystemTheme(resolved);
-		} else {
-			persistTheme(resolved);
-		}
+		setThemePreference(theme);
 	}, [theme]);
 
 	useEffect(() => {
@@ -109,45 +85,37 @@ export function ThemeProvider({
 		return () => mediaQuery.removeEventListener('change', handleChange);
 	}, [theme]);
 
-	const setTheme = useCallback((newTheme: Theme) => {
+	const setTheme = useCallback((newTheme: ThemePreference) => {
 		setThemeState(newTheme);
-		if (newTheme === 'system') {
-			localStorage.removeItem(THEME_STORAGE_KEY);
-			const resolved = getSystemTheme();
-			setResolvedTheme(resolved);
-			applySystemTheme(resolved);
-			return;
-		}
-		persistTheme(newTheme);
-		setResolvedTheme(newTheme);
+		setResolvedTheme(resolveTheme(newTheme));
+	}, []);
+
+	const cycleTheme = useCallback(() => {
+		const next = cycleThemePreference();
+		setThemeState(next);
+		setResolvedTheme(getCurrentTheme());
 	}, []);
 
 	const toggleTheme = useCallback(() => {
-		const nextTheme = toggleResolvedTheme();
-		setThemeState(nextTheme);
-		setResolvedTheme(nextTheme);
-	}, []);
+		const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+		setTheme(next);
+	}, [setTheme]);
 
 	const value = useMemo<ThemeContextValue>(
 		() => ({
 			theme,
 			resolvedTheme,
 			setTheme,
+			cycleTheme,
 			toggleTheme,
 			isDark: resolvedTheme === 'dark',
 		}),
-		[theme, resolvedTheme, setTheme, toggleTheme],
+		[theme, resolvedTheme, setTheme, cycleTheme, toggleTheme],
 	);
 
 	return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
-
-/**
- * Hook to access theme context
- * @throws If used outside of ThemeProvider
- */
 export function useTheme(): ThemeContextValue {
 	const context = useContext(ThemeContext);
 	if (!context) {
@@ -156,14 +124,10 @@ export function useTheme(): ThemeContextValue {
 	return context;
 }
 
-/**
- * Hook for simple dark mode check
- */
 export function useIsDark(): boolean {
 	const { isDark } = useTheme();
 	return isDark;
 }
 
-/** Re-export resolved theme reader for islands that cannot use context. */
-export { getCurrentTheme, readStoredTheme };
-export type { ResolvedTheme } from '../lib/theme';
+export { getCurrentTheme, readThemePreference, getThemePreference };
+export type { ResolvedTheme, ThemePreference } from '../lib/theme';

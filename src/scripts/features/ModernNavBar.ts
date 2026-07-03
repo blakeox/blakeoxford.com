@@ -4,6 +4,14 @@ type ElementHandle<T extends HTMLElement> =
   | undefined
   | { current: T | null | undefined };
 
+import {
+  applySystemTheme,
+  cycleThemePreference,
+  getThemePreference,
+  updateThemeToggleButton,
+  readThemePreference,
+} from '../../lib/theme';
+
 type ModernNavBarOptions = {
   navBar?: ElementHandle<HTMLElement>;
   mobileMenu?: ElementHandle<HTMLElement>;
@@ -38,18 +46,9 @@ function setAriaCurrent(navElement: HTMLElement | null) {
   });
 }
 
-import {
-  getCurrentTheme,
-  applySystemTheme,
-  toggleTheme as toggleResolvedTheme,
-  updateThemeToggleButton,
-  readStoredTheme,
-  type ResolvedTheme,
-} from '../../lib/theme';
-
-function toggleTheme(button: HTMLButtonElement | null) {
-  const nextTheme = toggleResolvedTheme();
-  updateThemeToggleButton(button, nextTheme);
+function cycleTheme(button: HTMLButtonElement | null) {
+  const nextPreference = cycleThemePreference();
+  updateThemeToggleButton(button, nextPreference);
 }
 
 function openMobileMenu(menu: HTMLElement | null, toggle: HTMLElement | null) {
@@ -116,20 +115,20 @@ export function registerModernNavBar(options: ModernNavBarOptions): CleanupFn {
   const cleanupFns: CleanupFn[] = [];
 
   if (themeToggle) {
-    updateThemeToggleButton(themeToggle, getCurrentTheme());
+    updateThemeToggleButton(themeToggle, getThemePreference());
     const handler = (event: Event) => {
       event.preventDefault();
-      toggleTheme(themeToggle);
+      cycleTheme(themeToggle);
     };
     themeToggle.addEventListener('click', handler);
     cleanupFns.push(() => themeToggle.removeEventListener('click', handler));
 
     const mediaQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
     const systemThemeListener = (event: MediaQueryListEvent) => {
-      if (readStoredTheme()) return; // respect explicit user choice
-      const inferredTheme: ResolvedTheme = event.matches ? 'dark' : 'light';
+      if (readThemePreference() !== 'system') return;
+      const inferredTheme = event.matches ? 'dark' : 'light';
       applySystemTheme(inferredTheme);
-      updateThemeToggleButton(themeToggle, inferredTheme);
+      updateThemeToggleButton(themeToggle, 'system');
     };
 
     if (mediaQuery?.addEventListener) {

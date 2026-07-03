@@ -1,12 +1,14 @@
 /**
- * Shared theme utilities — single source of truth for light/dark mode.
+ * Shared theme utilities — single source of truth for light/dark/system mode.
  *
  * Used by ModernNavBar, AccessibilityModule, ThemeContext, and ThemeInitIsland.
  */
 
 export type ResolvedTheme = 'light' | 'dark';
+export type ThemePreference = 'light' | 'dark' | 'system';
 
 export const THEME_STORAGE_KEY = 'theme';
+export const THEME_PREFERENCE_ATTRIBUTE = 'data-theme-preference';
 export const THEME_ATTRIBUTE = 'data-theme';
 export const DARK_CLASS = 'dark';
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
@@ -15,34 +17,50 @@ export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 export const THEME_COLOR_LIGHT = '#4f46e5';
 export const THEME_COLOR_DARK = '#080f1a';
 
+const CYCLE_ORDER: ThemePreference[] = ['light', 'dark', 'system'];
+
 export function getSystemTheme(): ResolvedTheme {
 	if (typeof window === 'undefined') return 'light';
 	return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-export function readStoredTheme(): ResolvedTheme | null {
+export function readThemePreference(): ThemePreference | null {
 	if (typeof window === 'undefined') return null;
 	const stored = localStorage.getItem(THEME_STORAGE_KEY);
-	if (stored === 'light' || stored === 'dark') return stored;
+	if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
 	return null;
 }
 
-export function readThemeCookie(): ResolvedTheme | null {
+/** @deprecated Use readThemePreference — kept for compatibility during migration. */
+export function readStoredTheme(): ThemePreference | null {
+	return readThemePreference();
+}
+
+export function readThemeCookie(): ThemePreference | null {
 	if (typeof document === 'undefined') return null;
 	const match = (document.cookie || '').match(/(?:^|;\s*)theme=([^;]+)/);
 	if (!match?.[1]) return null;
 	const value = decodeURIComponent(match[1]);
-	if (value === 'light' || value === 'dark') return value;
+	if (value === 'light' || value === 'dark' || value === 'system') return value;
 	return null;
 }
 
-/** Resolve theme for first paint: explicit storage/cookie wins, else system preference. */
+export function resolveThemePreference(): ThemePreference {
+	return readThemeCookie() ?? readThemePreference() ?? 'system';
+}
+
+export function resolveTheme(preference: ThemePreference): ResolvedTheme {
+	if (preference === 'system') return getSystemTheme();
+	return preference;
+}
+
+/** Resolve theme for first paint. */
 export function resolveInitialTheme(): ResolvedTheme {
-	return readThemeCookie() ?? readStoredTheme() ?? getSystemTheme();
+	return resolveTheme(resolveThemePreference());
 }
 
 export function hasExplicitThemePreference(): boolean {
-	return readStoredTheme() !== null || readThemeCookie() !== null;
+	return readThemePreference() !== null || readThemeCookie() !== null;
 }
 
 function clearInlineThemeTokens(root: HTMLElement): void {
@@ -51,22 +69,22 @@ function clearInlineThemeTokens(root: HTMLElement): void {
 	}
 }
 
-function writeThemeCookie(theme: ResolvedTheme): void {
+function writeThemeCookie(preference: ThemePreference): void {
 	try {
-		document.cookie = `${THEME_STORAGE_KEY}=${encodeURIComponent(theme)}; Path=/; Max-Age=${THEME_COOKIE_MAX_AGE}; SameSite=Lax`;
+		document.cookie = `${THEME_STORAGE_KEY}=${encodeURIComponent(preference)}; Path=/; Max-Age=${THEME_COOKIE_MAX_AGE}; SameSite=Lax`;
 	} catch {
 		/* noop */
 	}
 }
 
-function persistThemeServerSide(theme: ResolvedTheme): void {
+function persistThemeServerSide(preference: ThemePreference): void {
 	try {
 		if (typeof fetch === 'function') {
 			fetch('/api/set-theme', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'same-origin',
-				body: JSON.stringify({ theme }),
+				body: JSON.stringify({ theme: preference }),
 				keepalive: true,
 			}).catch(() => {
 				/* Fail silently */
@@ -78,6 +96,7 @@ function persistThemeServerSide(theme: ResolvedTheme): void {
 }
 
 export interface ApplyThemeOptions {
+	preference?: ThemePreference;
 	/** When true, write localStorage + cookies (user explicitly chose a theme). */
 	persist?: boolean;
 	/** When true, POST to /api/set-theme for HttpOnly SSR cookie. */
@@ -90,10 +109,13 @@ export function applyTheme(
 ): void {
 	if (typeof document === 'undefined') return;
 
-	const { persist = false, syncServer = false } = options;
+	const { persist = false, syncServer = false, preference } = options;
 	const root = document.documentElement;
 
 	root.setAttribute(THEME_ATTRIBUTE, resolvedTheme);
+	if (preference) {
+		root.setAttribute(THEME_PREFERENCE_ATTRIBUTE, preference);
+	}
 	if (resolvedTheme === 'dark') {
 		root.classList.add(DARK_CLASS);
 	} else {
@@ -113,36 +135,50 @@ export function applyTheme(
 		/* noop */
 	}
 
-	if (persist) {
+	if (persist && preference) {
 		try {
-			localStorage.setItem(THEME_STORAGE_KEY, resolvedTheme);
+			localStorage.setItem(THEME_STORAGE_KEY, preference);
 		} catch {
 			/* noop */
 		}
-		writeThemeCookie(resolvedTheme);
+		writeThemeCookie(preference);
 	}
 
-	if (syncServer) {
-		persistThemeServerSide(resolvedTheme);
+	if (syncServer && preference) {
+		persistThemeServerSide(preference);
 	}
 }
 
 /** Apply resolved theme on first paint without persisting implicit system preference. */
 export function initializeTheme(): ResolvedTheme {
-	const resolved = resolveInitialTheme();
+	const preference = resolveThemePreference();
 	const explicit = hasExplicitThemePreference();
-	applyTheme(resolved, { persist: explicit, syncServer: explicit });
+	const resolved = resolveTheme(preference);
+	applyTheme(resolved, {
+		preference,
+		persist: explicit,
+		syncServer: explicit,
+	});
 	return resolved;
 }
 
-/** User-initiated theme change — always persists. */
-export function setTheme(resolvedTheme: ResolvedTheme): void {
-	applyTheme(resolvedTheme, { persist: true, syncServer: true });
+/** User-initiated preference change — always persists. */
+export function setThemePreference(preference: ThemePreference): ResolvedTheme {
+	const resolved = resolveTheme(preference);
+	applyTheme(resolved, { preference, persist: true, syncServer: true });
+	return resolved;
 }
 
-/** System preference change — applies without persisting until user toggles. */
+/** @deprecated Use setThemePreference */
+export function setTheme(resolvedTheme: ResolvedTheme): void {
+	setThemePreference(resolvedTheme);
+}
+
+/** System preference change — applies without persisting until user chooses. */
 export function applySystemTheme(resolvedTheme: ResolvedTheme): void {
-	applyTheme(resolvedTheme, { persist: false, syncServer: false });
+	const preference = readThemePreference() ?? 'system';
+	if (preference !== 'system') return;
+	applyTheme(resolvedTheme, { preference: 'system' });
 }
 
 export function getCurrentTheme(): ResolvedTheme {
@@ -152,20 +188,41 @@ export function getCurrentTheme(): ResolvedTheme {
 	return document.documentElement.classList.contains(DARK_CLASS) ? 'dark' : 'light';
 }
 
-export function toggleTheme(): ResolvedTheme {
-	const nextTheme = getCurrentTheme() === 'dark' ? 'light' : 'dark';
-	setTheme(nextTheme);
-	return nextTheme;
+export function getThemePreference(): ThemePreference {
+	if (typeof document === 'undefined') return 'system';
+	const attr = document.documentElement.getAttribute(THEME_PREFERENCE_ATTRIBUTE);
+	if (attr === 'light' || attr === 'dark' || attr === 'system') return attr;
+	return readThemePreference() ?? 'system';
 }
+
+export function cycleThemePreference(): ThemePreference {
+	const current = getThemePreference();
+	const index = CYCLE_ORDER.indexOf(current);
+	const next = CYCLE_ORDER[(index + 1) % CYCLE_ORDER.length];
+	setThemePreference(next);
+	return next;
+}
+
+/** Binary toggle for keyboard shortcuts — flips between light and dark only. */
+export function toggleTheme(): ResolvedTheme {
+	const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+	return setThemePreference(next);
+}
+
+const PREFERENCE_LABELS: Record<ThemePreference, string> = {
+	light: 'Theme: light mode. Switch to dark mode.',
+	dark: 'Theme: dark mode. Switch to system theme.',
+	system: 'Theme: system preference. Switch to light mode.',
+};
 
 export function updateThemeToggleButton(
 	button: HTMLButtonElement | null,
-	theme: ResolvedTheme,
+	preference?: ThemePreference,
 ): void {
 	if (!button) return;
-	button.setAttribute('aria-pressed', String(theme === 'dark'));
-	button.setAttribute(
-		'aria-label',
-		theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
-	);
+	const pref = preference ?? getThemePreference();
+	const resolved = getCurrentTheme();
+	button.setAttribute('aria-pressed', String(pref !== 'system' && pref === resolved));
+	button.setAttribute('data-theme-preference', pref);
+	button.setAttribute('aria-label', PREFERENCE_LABELS[pref]);
 }

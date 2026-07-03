@@ -1155,7 +1155,7 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
       let payload;
       try { payload = await request.json(); } catch { return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), { status: 400, headers: corsHeaders }); }
 
-      const theme = (typeof payload?.theme === 'string' && (payload.theme === 'light' || payload.theme === 'dark')) ? payload.theme : null;
+      const theme = (typeof payload?.theme === 'string' && (payload.theme === 'light' || payload.theme === 'dark' || payload.theme === 'system')) ? payload.theme : null;
       if (!theme) {
         return new Response(JSON.stringify({ error: 'Invalid theme value' }), { status: 400, headers: corsHeaders });
       }
@@ -1368,7 +1368,7 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
         if (m && m[2]) {
           const themeCookie = decodeURIComponent(m[2]);
           const contentType = finalResponse.headers.get('content-type') || '';
-          if (contentType.includes('text/html')) {
+          if (contentType.includes('text/html') && themeCookie !== 'system') {
             let html = await finalResponse.text();
             html = html.replace(/<html([^>]*)>/i, (full, attrs) => {
               let newAttrs = attrs || '';

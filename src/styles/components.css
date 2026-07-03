@@ -210,6 +210,18 @@
     }
   }
 
+  .theme-toggle .sun-icon,
+  .theme-toggle .moon-icon,
+  .theme-toggle .system-icon {
+    display: none;
+  }
+
+  .theme-toggle[data-theme-preference='light'] .sun-icon,
+  .theme-toggle[data-theme-preference='dark'] .moon-icon,
+  .theme-toggle[data-theme-preference='system'] .system-icon {
+    display: block;
+  }
+
   .page-slab {
     @apply border-t border-border/20 bg-background;
   }

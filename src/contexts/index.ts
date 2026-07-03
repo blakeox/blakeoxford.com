@@ -25,6 +25,7 @@ export {
 	useIsDark,
 	type Theme,
 	type ResolvedTheme,
+	type ThemePreference,
 	type ThemeContextValue,
 	type ThemeProviderProps,
 } from './ThemeContext';
