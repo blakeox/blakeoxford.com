@@ -72,7 +72,7 @@
     "pages:deploy": "node -e \"console.error('❌ Deprecated: Use `pnpm deploy:worker` or `pnpm edge:deploy` (Workers) instead of Pages.'); process.exit(1)\"",
     "quality:snapshot": "node scripts/quality/snapshot-quality-baseline.js",
     "quality:badges": "node scripts/quality/generate-badges.js",
-    "design:lint": "node scripts/quality/design-lint.js",
+    "design:lint": "node scripts/quality/design-lint.js && node scripts/quality/check-blog-mdx-dark-baseline.js",
     "design:theme-docs-sync": "node scripts/quality/check-theme-docs-sync.js",
     "design:blog-mdx-dark": "node scripts/quality/blog-mdx-dark-codemod.js --write",
     "quality:timeouts": "node scripts/quality/check-raw-timeouts.js",

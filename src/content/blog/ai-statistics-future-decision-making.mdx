@@ -26,7 +26,7 @@ draft: false
     <div className="flex items-start gap-4">
       <div className="text-4xl flex-shrink-0">⚠️</div>
       <div>
-        <h3 className="text-xl font-bold mb-2 text-red-600 dark:text-red-400">Our study showed the limits of GPT-4</h3>
+        <h3 className="text-xl font-bold mb-2 text-error-emphasis">Our study showed the limits of GPT-4</h3>
         <p className="text-lg leading-relaxed opacity-85">It aligned with SPSS on simple tests but faltered on complex analyses, while o3-mini sometimes produced inflated or inconsistent results.</p>
       </div>
     </div>
@@ -36,7 +36,7 @@ draft: false
     <div className="flex items-start gap-4">
       <div className="text-4xl flex-shrink-0">✅</div>
       <div>
-        <h3 className="text-xl font-bold mb-2 text-green-600 dark:text-green-400">Best practice has shifted</h3>
+        <h3 className="text-xl font-bold mb-2 text-success-emphasis">Best practice has shifted</h3>
         <p className="text-lg leading-relaxed opacity-85">RAG grounds models in authoritative sources, while true CAG ensures repeatability — solving issues we documented.</p>
       </div>
     </div>
@@ -66,7 +66,7 @@ draft: false
     <div className="flex items-start gap-4">
       <div className="text-4xl flex-shrink-0">👥</div>
       <div>
-        <h3 className="text-xl font-bold mb-2 text-purple-600 dark:text-purple-400">Leadership mandate</h3>
+        <h3 className="text-xl font-bold mb-2 text-accent-emphasis">Leadership mandate</h3>
         <p className="text-lg leading-relaxed opacity-85">Don't just adopt AI. Build augmented, auditable systems that turn skilled professionals into super-users capable of performing beyond their original capability.</p>
       </div>
     </div>
@@ -124,7 +124,7 @@ draft: false
 <div className="text-center my-20">
   <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-400/10 dark:to-emerald-400/10 px-8 py-4 rounded-full border border-green-500/30 mb-6">
     <div className="text-4xl">🔄</div>
-    <span className="text-xl font-semibold text-green-600 dark:text-green-400">Evolution</span>
+    <span className="text-xl font-semibold text-success-emphasis">Evolution</span>
   </div>
   <h2 className="text-4xl md:text-5xl font-black text-foreground">Beyond the Study</h2>
   <p className="text-xl mt-4 opacity-70">What's Changed Since Then</p>
@@ -132,7 +132,7 @@ draft: false
 
 <div className="blog-takeaway-container">
   <p className="text-xl md:text-2xl leading-relaxed text-center mb-12 font-medium">
-    When we published, models worked in isolation. Now, <strong className="text-green-600 dark:text-green-400">augmentation strategies</strong> have transformed best practice.
+    When we published, models worked in isolation. Now, <strong className="text-success-emphasis">augmentation strategies</strong> have transformed best practice.
   </p>
 
   <div className="grid md:grid-cols-2 gap-8">
@@ -144,7 +144,7 @@ draft: false
           <div className="text-5xl">📚</div>
           <h3 className="text-3xl font-bold text-accent-emphasis">RAG</h3>
         </div>
-        <p className="text-sm font-bold uppercase tracking-wider text-accent/70 dark:text-accent-light/70 mb-4">Retrieval-Augmented Generation</p>
+        <p className="text-sm font-bold uppercase tracking-wider text-accent-emphasis/70 mb-4">Retrieval-Augmented Generation</p>
         <ul className="space-y-3 text-lg">
           <li className="flex items-start gap-2">
             <span className="text-accent flex-shrink-0">→</span>
@@ -170,7 +170,7 @@ draft: false
           <div className="text-5xl">💾</div>
           <h3 className="text-3xl font-bold text-primary-emphasis">CAG</h3>
         </div>
-        <p className="text-sm font-bold uppercase tracking-wider text-primary/70 dark:text-primary-light/70 mb-4">Cache-Augmented Generation</p>
+        <p className="text-sm font-bold uppercase tracking-wider text-primary-emphasis/70 mb-4">Cache-Augmented Generation</p>
         <ul className="space-y-3 text-lg">
           <li className="flex items-start gap-2">
             <span className="text-primary flex-shrink-0">→</span>
@@ -223,17 +223,17 @@ draft: false
   </div>
 
   <div className="grid md:grid-cols-3 gap-6 mb-10">
-    <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+    <div className="bg-surface/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
       <div className="text-4xl mb-3">💬</div>
       <p className="text-lg font-semibold mb-2">Users ask in English</p>
       <p className="text-sm opacity-75">Natural, conversational queries</p>
     </div>
-    <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+    <div className="bg-surface/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
       <div className="text-4xl mb-3">⚙️</div>
       <p className="text-lg font-semibold mb-2">Execute Real Code</p>
       <p className="text-sm opacity-75">R, Python, or SAS execution</p>
     </div>
-    <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+    <div className="bg-surface/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
       <div className="text-4xl mb-3">📋</div>
       <p className="text-lg font-semibold mb-2">Audit-Friendly</p>
       <p className="text-sm opacity-75">Reproducible, verified outputs</p>
@@ -267,7 +267,7 @@ draft: false
   </div>
 </div>
 
-<div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-3xl p-12 md:p-16 my-16 border-2 border-gray-300/50 dark:border-gray-700/50 shadow-2xl">
+<div className="relative overflow-hidden bg-gradient-to-br from-surface-subtle to-surface rounded-3xl p-12 md:p-16 my-16 border-2 border-border/50 shadow-2xl">
   <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl"></div>
   <div className="relative text-center">
     <div className="inline-block bg-accent/10 px-6 py-3 rounded-full border border-accent/30 mb-6">
@@ -278,8 +278,8 @@ draft: false
       This analysis builds on our published study examining GPT-4's statistical capabilities compared to SPSS. As AI continues to evolve, the conversation has shifted from <em className="text-accent-emphasis">"can models do this?"</em> to <em className="text-primary-emphasis">"how do we build trustworthy, auditable systems that amplify human expertise?"</em>
     </p>
 
-    <div className="border-t border-gray-300/50 dark:border-gray-700/50 pt-8 mt-8">
-      <div className="inline-flex items-center gap-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm px-8 py-5 rounded-2xl border border-gray-300/50 dark:border-gray-700/50 shadow-lg">
+    <div className="border-t border-border/50 pt-8 mt-8">
+      <div className="inline-flex items-center gap-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm px-8 py-5 rounded-2xl border border-border/50 shadow-lg">
         <div className="text-5xl">👨‍💼</div>
         <div className="text-left">
           <p className="font-bold text-lg text-foreground">Blake Oxford</p>

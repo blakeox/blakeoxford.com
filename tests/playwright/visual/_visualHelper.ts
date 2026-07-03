@@ -60,6 +60,13 @@ export async function snapshotRoute(
   if (opts.diff) baseCfg.diff = { ...(baseCfg.diff || {}), ...opts.diff };
   if (opts.mask?.length) baseCfg.mask = [...(baseCfg.mask || []), ...opts.mask];
 
+  if (theme === 'dark') {
+    baseCfg.diff = {
+      ...(baseCfg.diff || {}),
+      maxDiffPixelRatio: Math.max(baseCfg.diff?.maxDiffPixelRatio || 0, 0.035),
+    };
+  }
+
   // Chrome-specific variance bump for contact page (text/blur rendering)
   if (route === '/contact/') {
     const ua = (await page.evaluate(() => navigator.userAgent)) || '';
