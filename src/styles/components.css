@@ -368,6 +368,11 @@
   }
 
   /* Mobile nav drawer — hidden by default; ModernNavBar toggles `.active` */
+  .nav-shell:has(.mobile-menu.active) {
+    /* Keep the sticky bar above page content while the drawer is open (Safari stacking fix). */
+    z-index: var(--z-nav-drawer);
+  }
+
   .mobile-menu {
     display: none;
     visibility: hidden;
@@ -376,12 +381,21 @@
   }
 
   .mobile-menu.active {
+    position: fixed;
+    top: var(--nav-height, 4.5rem);
+    right: 0;
+    left: 0;
+    z-index: var(--z-nav-drawer);
     display: block;
     visibility: visible;
+    width: 100%;
     max-height: min(80dvh, 32rem);
     overflow-y: auto;
     opacity: 1;
     pointer-events: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    transform: translateZ(0);
   }
 
   .mobile-menu-header {

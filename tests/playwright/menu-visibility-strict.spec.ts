@@ -53,6 +53,23 @@ test.describe('Menu visibility (production-faithful)', () => {
     expect(metrics!.linkBottom).toBeLessThanOrEqual(metrics!.viewportHeight + 1);
 
     await expect(firstLink).toBeVisible();
+
+    // Menu links must sit above hero content (Safari sticky/absolute stacking bug).
+    const hitTest = await page.evaluate(() => {
+      const link = document.querySelector('#nav-mobile-links .mobile-nav-link') as HTMLElement | null;
+      if (!link) return { ok: false, reason: 'missing-link' };
+      const rect = link.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      const hit = document.elementFromPoint(x, y);
+      return {
+        ok: Boolean(hit?.closest('#nav-mobile-links')),
+        hitTag: hit?.tagName ?? null,
+        menuZ: getComputedStyle(document.getElementById('nav-mobile-links')!).zIndex,
+      };
+    });
+    expect(hitTest.ok).toBe(true);
+    expect(Number.parseInt(hitTest.menuZ, 10)).toBeGreaterThanOrEqual(1000);
   });
 
   test('chat overflow menu is visible when opened', async ({ page }) => {

@@ -247,7 +247,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       <div
         ref={mobileMenuRef}
         id="nav-mobile-links"
-        className="mobile-menu absolute inset-x-0 top-full z-[200] border-t border-border bg-surface/98 shadow-lg md:hidden"
+        className="mobile-menu border-t border-border bg-surface/98 shadow-lg md:hidden"
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation menu"

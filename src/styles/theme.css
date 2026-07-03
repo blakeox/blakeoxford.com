@@ -831,7 +831,8 @@
 
   /* Layered UI stacking */
   --z-nav: 50;
-  --z-nav-drawer: 100;
+  --z-nav-drawer: 1100;
+  --nav-height: 4.5rem;
   --z-chat: 1050;
   --z-search: 1200;
 }
