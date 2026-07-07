@@ -20,6 +20,13 @@ export default defineConfig({
     // Exhaustive device matrix (~6 min) — fixed and runnable via:
     // npx playwright test tests/playwright/mobile-navigation.spec.ts
     '**/mobile-navigation.spec.ts',
+    // Keep the visual gate small and maintainable. The Chromium-first smoke
+    // and component baseline suites cover the actively maintained snapshot path.
+    '**/visual-regression.spec.ts',
+    '**/visual-routes.spec.ts',
+    '**/visual-sectional.spec.ts',
+    '**/visual.spec.ts',
+    '**/visual/**/*.spec.ts',
     // Exclude slow visual regression tests - use essential visual tests
     // Exclude slow basic tests that timeout
     '**/basic.spec.ts', // Replace with optimized essential tests
