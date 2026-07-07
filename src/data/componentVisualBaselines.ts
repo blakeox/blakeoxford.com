@@ -5,13 +5,14 @@
 
 export type CommandCenterVisualSetup = 'browse' | 'results' | 'ask' | 'empty';
 
-export type NavVisualSetup = 'scrolled';
+export type NavVisualSetup = 'scrolled' | 'autoHidden';
 
 export type ComponentVisualBaselineKey =
   | 'navbar'
   | 'navbarMobileClosed'
   | 'navbarMobileOpen'
   | 'navbarScrolled'
+  | 'navbarAutoHidden'
   | 'footer'
   | 'searchOverlay'
   | 'commandCenterResults'
@@ -34,6 +35,8 @@ export type ComponentVisualBaseline = {
   openMobileMenu?: boolean;
   /** Scroll the page before capture */
   navSetup?: NavVisualSetup;
+  /** Viewport clip for off-screen states (e.g. auto-hidden header) */
+  screenshotClip?: { x: number; y: number; width: number; height: number };
 };
 
 export const componentVisualBaselines: Record<ComponentVisualBaselineKey, ComponentVisualBaseline> = {
@@ -72,6 +75,16 @@ export const componentVisualBaselines: Record<ComponentVisualBaselineKey, Compon
     snapshotFile: 'navbarScrolled.png',
     tags: ['@visual-essential', '@visual-components'],
     navSetup: 'scrolled',
+  },
+  navbarAutoHidden: {
+    key: 'navbarAutoHidden',
+    route: '/',
+    selector: 'header .nav-shell',
+    description: 'Desktop navigation tucked away after scrolling down',
+    snapshotFile: 'navbarAutoHidden.png',
+    tags: ['@visual-essential', '@visual-components'],
+    navSetup: 'autoHidden',
+    screenshotClip: { x: 0, y: 0, width: 1280, height: 88 },
   },
   footer: {
     key: 'footer',
