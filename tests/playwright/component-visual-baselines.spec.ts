@@ -4,6 +4,7 @@ import {
   componentVisualBaselines,
   type ComponentVisualBaselineKey,
 } from '../../src/data/componentVisualBaselines';
+import { captureNavBaselineScreenshot, setupNavVisual } from './visual/_navVisualSetup';
 
 // Visual baselines for critical components
 // Tags: @visual @visual-components
@@ -13,6 +14,7 @@ const NAV_BASELINE_KEYS = [
   'navbarMobileClosed',
   'navbarMobileOpen',
   'navbarScrolled',
+  'navbarAutoHidden',
 ] as const satisfies readonly ComponentVisualBaselineKey[];
 
 async function capturePreview(page: Page, route: string, name: string) {
@@ -33,23 +35,6 @@ async function capturePreview(page: Page, route: string, name: string) {
     animations: 'disabled',
     maxDiffPixelRatio: 0.005,
   });
-}
-
-async function setupNavVisual(page: Page, cfg: (typeof componentVisualBaselines)[ComponentVisualBaselineKey]) {
-  await page.waitForFunction(() => (window as Window & { __navHydrated?: boolean }).__navHydrated === true, {
-    timeout: 10000,
-  });
-
-  if (cfg.navSetup === 'scrolled') {
-    await page.evaluate(() => window.scrollTo(0, 120));
-    await page.waitForFunction(() => document.querySelector('.nav-shell--scrolled') !== null, { timeout: 5000 });
-  }
-
-  if (cfg.openMobileMenu) {
-    await page.locator('#nav-toggle').click();
-    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
-    await expect(page.locator('#nav-mobile-backdrop')).toHaveAttribute('data-state', 'open');
-  }
 }
 
 test.describe('Component Visual Baselines @visual @visual-components', () => {
@@ -73,24 +58,7 @@ test.describe('Component Visual Baselines @visual @visual-components', () => {
       await setupNavVisual(page, cfg);
 
       const element = page.locator(cfg.selector).first();
-      await expect(element).toBeVisible();
-
-      await element.evaluate((el) => {
-        try {
-          el.style.boxSizing = 'border-box';
-          const rect = el.getBoundingClientRect();
-          el.style.height = `${Math.round(rect.height)}px`;
-        } catch {
-          /* noop */
-        }
-      });
-
-      await expect(element).toHaveScreenshot(cfg.snapshotFile, {
-        animations: 'disabled',
-        maxDiffPixelRatio: 0.02,
-        scale: 'css',
-        threshold: 0.01,
-      });
+      await captureNavBaselineScreenshot(page, cfg, element);
     });
   }
 });

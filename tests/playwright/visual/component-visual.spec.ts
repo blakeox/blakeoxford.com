@@ -4,6 +4,7 @@ import {
   componentVisualBaselines,
   type CommandCenterVisualSetup,
 } from '../../../src/data/componentVisualBaselines';
+import { captureNavBaselineScreenshot, setupNavVisual } from './_navVisualSetup';
 
 async function normalizeCommandCenterOverlay(page: Page) {
   const overlay = page.locator('#search-overlay').first();
@@ -60,23 +61,6 @@ async function setupCommandCenter(page: Page, setup: CommandCenterVisualSetup) {
   });
 }
 
-async function setupNavVisual(page: Page, cfg: (typeof componentVisualBaselines)[keyof typeof componentVisualBaselines]) {
-  await page.waitForFunction(() => (window as Window & { __navHydrated?: boolean }).__navHydrated === true, {
-    timeout: 10000,
-  });
-
-  if (cfg.navSetup === 'scrolled') {
-    await page.evaluate(() => window.scrollTo(0, 120));
-    await page.waitForFunction(() => document.querySelector('.nav-shell--scrolled') !== null, { timeout: 5000 });
-  }
-
-  if (cfg.openMobileMenu) {
-    await page.locator('#nav-toggle').click();
-    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
-    await expect(page.locator('#nav-mobile-backdrop')).toHaveAttribute('data-state', 'open');
-  }
-}
-
 // Component-level focused snapshots (smaller surface, faster diff isolation)
 // Tags: @visual-essential @visual-components
 // Registry: src/data/componentVisualBaselines.ts (linked from componentDocs.ts)
@@ -90,19 +74,21 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
       }
       await page.goto(cfg.route, { waitUntil: 'networkidle' });
 
+      const element = page.locator(cfg.selector).first();
+
       if (cfg.commandCenterSetup) {
         await setupCommandCenter(page, cfg.commandCenterSetup);
       } else if (cfg.openMobileMenu || cfg.navSetup || cfg.selector.includes('.nav-shell')) {
         await setupNavVisual(page, cfg);
-        await expect(page.locator(cfg.selector).first()).toBeVisible();
-      } else {
-        await expect(page.locator(cfg.selector).first()).toBeVisible();
       }
 
-      const element = page.locator(cfg.selector).first();
+      if (cfg.screenshotClip) {
+        await captureNavBaselineScreenshot(page, cfg, element);
+        return;
+      }
+
       await expect(element).toBeVisible();
 
-      // Normalize element height to integer pixels to avoid subpixel rounding differences across browsers
       await element.evaluate((el) => {
         try {
           el.style.boxSizing = 'border-box';
