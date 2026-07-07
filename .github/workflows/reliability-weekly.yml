@@ -30,6 +30,8 @@ jobs:
         run: pnpm exec playwright install --with-deps firefox
       - name: Run essential tests (Chromium)
         run: npx playwright test --grep "@essential" --project=chromium --reporter=line,json --output=test-results/chromium
+      - name: Run extended device matrix (Chromium)
+        run: PLAYWRIGHT_EXTENDED=true pnpm run test:e2e:device-matrix
       - name: Run essential tests (Firefox)
         if: github.event_name == 'workflow_dispatch'
         run: npx playwright test --grep "@essential" --project=firefox --reporter=line,json --output=test-results/firefox

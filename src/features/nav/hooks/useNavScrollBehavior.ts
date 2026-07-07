@@ -18,7 +18,7 @@ function isCommandCenterOpen(): boolean {
 }
 
 /**
- * Compact header on scroll and auto-hide when scrolling down (mobile only).
+ * Compact header on scroll and auto-hide when scrolling down.
  * Re-shows when the user scrolls up or returns near the top.
  */
 export function useNavScrollBehavior(refs: NavScrollRefs, options: NavScrollOptions = {}) {
