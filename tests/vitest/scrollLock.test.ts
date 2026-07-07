@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   acquireScrollLock,
+  forceReleaseScrollLock,
   releaseScrollLock,
   isScrollLocked,
   resetScrollLockForTests,
@@ -48,5 +49,13 @@ describe('scrollLock', () => {
     expect(document.body.style.left).toBe('0px');
     expect(document.body.style.right).toBe('0px');
     expect(document.body.style.width).toBe('auto');
+  });
+
+  it('forceReleaseScrollLock clears a stuck lock', () => {
+    acquireScrollLock();
+    acquireScrollLock();
+    forceReleaseScrollLock();
+    expect(isScrollLocked()).toBe(false);
+    expect(document.body.style.position).toBe('');
   });
 });

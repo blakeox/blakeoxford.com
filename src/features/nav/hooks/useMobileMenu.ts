@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 
+import { useOverlayScrollLock } from '../../../hooks/useOverlayScrollLock';
 import {
   closeSearch,
   registerEscapeHandler,
   registerMobileMenuClose,
 } from '../../../utils/headerController';
 import { createFocusTrap, type FocusTrap } from '../../../utils/focusTrap';
-import { acquireScrollLock, releaseScrollLock } from '../../../utils/scrollLock';
 
 export const MENU_LABEL_OPEN = 'Open navigation menu';
 export const MENU_LABEL_CLOSED = 'Close navigation menu';
+
+const DESKTOP_NAV_QUERY = '(min-width: 768px)';
 
 export type MobileMenuRefs = {
   menu: RefObject<HTMLElement | null>;
@@ -25,20 +27,16 @@ function getInitialMenuFocus(menu: HTMLElement): HTMLElement | null {
 export function useMobileMenu(refs: MobileMenuRefs) {
   const [isOpen, setIsOpen] = useState(false);
   const focusTrapRef = useRef<FocusTrap | null>(null);
-  const scrollLockHeldRef = useRef(false);
   const isOpenRef = useRef(isOpen);
+  const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
 
   isOpenRef.current = isOpen;
 
-  const releaseMenuScrollLock = () => {
-    if (!scrollLockHeldRef.current) return;
-    releaseScrollLock();
-    scrollLockHeldRef.current = false;
-  };
-
   const close = useCallback(() => {
+    releaseScrollLockNow();
+    focusTrapRef.current?.deactivate();
     setIsOpen(false);
-  }, []);
+  }, [releaseScrollLockNow]);
 
   const open = useCallback(() => {
     closeSearch();
@@ -66,21 +64,15 @@ export function useMobileMenu(refs: MobileMenuRefs) {
     const status = refs.status.current;
 
     if (isOpen) {
-      if (!scrollLockHeldRef.current) {
-        acquireScrollLock();
-        scrollLockHeldRef.current = true;
-      }
       trap.activate();
       if (status) status.textContent = 'Navigation menu opened';
     } else {
       trap.deactivate();
-      releaseMenuScrollLock();
       if (status) status.textContent = 'Navigation menu closed';
     }
 
     return () => {
       trap.deactivate();
-      releaseMenuScrollLock();
     };
   }, [isOpen, refs.menu, refs.burger, refs.status]);
 
@@ -121,6 +113,29 @@ export function useMobileMenu(refs: MobileMenuRefs) {
     document.addEventListener('click', outsideClickHandler);
     return () => document.removeEventListener('click', outsideClickHandler);
   }, [isOpen, close, refs.menu, refs.burger, refs.backdrop]);
+
+  useEffect(() => {
+    const handlePageLoad = () => {
+      if (isOpenRef.current) close();
+    };
+
+    document.addEventListener('astro:page-load', handlePageLoad);
+    return () => document.removeEventListener('astro:page-load', handlePageLoad);
+  }, [close]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia?.(DESKTOP_NAV_QUERY);
+    if (!mediaQuery) return;
+
+    const handleViewportChange = (event: MediaQueryListEvent) => {
+      if (event.matches && isOpenRef.current) close();
+    };
+
+    mediaQuery.addEventListener('change', handleViewportChange);
+    if (mediaQuery.matches && isOpenRef.current) close();
+
+    return () => mediaQuery.removeEventListener('change', handleViewportChange);
+  }, [close]);
 
   const onBurgerClick = useCallback(
     (event: React.MouseEvent) => {

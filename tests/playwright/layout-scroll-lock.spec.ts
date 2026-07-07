@@ -80,4 +80,29 @@ test.describe('Page layout after overlays @essential', () => {
     expect(after.bodyPosition).toBe('static');
     expect(after.mainLeft).toBe(0);
   });
+
+  test('mobile menu closes on Astro client navigation', async ({ page }) => {
+    await page.locator('#nav-toggle').click();
+    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
+
+    await page.evaluate(() => {
+      document.dispatchEvent(new Event('astro:page-load'));
+    });
+
+    await expect(page.locator('#nav-mobile-links')).not.toHaveClass(/active/);
+    const after = await readLayout(page);
+    expect(after.bodyPosition).toBe('static');
+  });
+
+  test('mobile menu closes when viewport expands to desktop', async ({ page }) => {
+    await page.locator('#nav-toggle').click();
+    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.waitForTimeout(100);
+
+    await expect(page.locator('#nav-mobile-links')).not.toHaveClass(/active/);
+    const after = await readLayout(page);
+    expect(after.bodyPosition).toBe('static');
+  });
 });

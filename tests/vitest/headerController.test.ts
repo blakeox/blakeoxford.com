@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   closeMobileMenu,
   closeSearch,
+  closeAllHeaderOverlays,
   registerEscapeHandler,
   registerMobileMenuClose,
   registerSearchClose,
@@ -59,6 +60,19 @@ describe('headerController', () => {
 
     closeMobileMenu();
     closeSearch();
+
+    expect(menuClose).toHaveBeenCalledOnce();
+    expect(searchClose).toHaveBeenCalledOnce();
+  });
+
+  it('closes every registered header overlay', () => {
+    const menuClose = vi.fn();
+    const searchClose = vi.fn();
+
+    registerMobileMenuClose(menuClose);
+    registerSearchClose(searchClose);
+
+    closeAllHeaderOverlays();
 
     expect(menuClose).toHaveBeenCalledOnce();
     expect(searchClose).toHaveBeenCalledOnce();

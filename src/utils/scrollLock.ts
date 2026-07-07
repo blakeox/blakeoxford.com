@@ -70,6 +70,13 @@ export function isScrollLocked(): boolean {
   return lockCount > 0;
 }
 
+/** Emergency unlock — use only when all overlays have been closed (e.g. Astro view transitions). */
+export function forceReleaseScrollLock(): void {
+  if (typeof document === 'undefined') return;
+  lockCount = 0;
+  clearScrollLockStyles();
+}
+
 export function resetScrollLockForTests(): void {
   lockCount = 0;
   savedScrollY = 0;
