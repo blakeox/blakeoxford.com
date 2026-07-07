@@ -1173,7 +1173,8 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
       }
     }
 
-    // Back-compat asset rewrite: maintain existing path if older HTML referenced it
+    // Back-compat asset rewrite: legacy HTML may still request the standalone bundle.
+    // Production search is Command Center — see src/features/command-center/.
     if (url.pathname === '/assets/js/search-overlay-standalone.min.js' && url.search === '?v=2') {
       return env.ASSETS.fetch(request);
     }

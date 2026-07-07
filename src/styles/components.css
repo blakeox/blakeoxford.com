@@ -106,6 +106,21 @@
     height: 4rem;
   }
 
+  /* Mobile: tuck header away while scrolling down; restored on scroll up */
+  @media (max-width: 767px) {
+    .nav-shell--auto-hidden:not([data-menu-state='open']) {
+      pointer-events: none;
+      transform: translateY(calc(-1 * var(--nav-height, 4.5rem)));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-shell--auto-hidden {
+      transform: none !important;
+      pointer-events: auto !important;
+    }
+  }
+
   /* Scroll-aware sticky header shell */
   .nav-shell:has(#navbar.has-background) {
     border-color: color-mix(in oklch, var(--border) 85%, transparent);
