@@ -124,6 +124,11 @@
     display: none;
   }
 
+  /* Keep sticky header aligned when scroll lock removes the scrollbar gutter */
+  body.scroll-locked .nav-shell {
+    padding-right: var(--scrollbar-width, 0px);
+  }
+
   /* Burger → close icon animation */
   .burger-icon {
     display: flex;

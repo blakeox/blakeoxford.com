@@ -5,13 +5,13 @@ export type DiffCfg = { maxDiffPixelRatio?: number; maxDiffPixels?: number };
 export type RouteCfg = { mask?: string[]; diff?: DiffCfg; fullPage?: boolean };
 
 export const VISUAL_ROUTE_CONFIG: Record<string, RouteCfg> = {
-  '/': { diff: { maxDiffPixelRatio: 0.01 } },
-  '/projects/': { diff: { maxDiffPixelRatio: 0.01 } },
-  '/blog/': { diff: { maxDiffPixelRatio: 0.02 } },
-  '/about/': { mask: ['.photo-carousel'], diff: { maxDiffPixelRatio: 0.025 } },
+  '/': { diff: { maxDiffPixelRatio: 0.008 } },
+  '/projects/': { diff: { maxDiffPixelRatio: 0.008 } },
+  '/blog/': { diff: { maxDiffPixelRatio: 0.012 } },
+  '/about/': { mask: ['.photo-carousel'], diff: { maxDiffPixelRatio: 0.015 } },
   '/contact/': {
-    mask: ['#hero .absolute', '#contact-info .absolute', '.coin-flip'],
-    diff: { maxDiffPixelRatio: 0.02 },
+    mask: ['[name="cf-turnstile-response"]', '#turnstile-container iframe'],
+    diff: { maxDiffPixelRatio: 0.015 },
     fullPage: false,
   },
 };

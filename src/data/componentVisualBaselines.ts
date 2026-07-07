@@ -5,8 +5,13 @@
 
 export type CommandCenterVisualSetup = 'browse' | 'results' | 'ask' | 'empty';
 
+export type NavVisualSetup = 'scrolled';
+
 export type ComponentVisualBaselineKey =
   | 'navbar'
+  | 'navbarMobileClosed'
+  | 'navbarMobileOpen'
+  | 'navbarScrolled'
   | 'footer'
   | 'searchOverlay'
   | 'commandCenterResults'
@@ -23,6 +28,12 @@ export type ComponentVisualBaseline = {
   tags: readonly string[];
   /** Optional Command Center state to capture */
   commandCenterSetup?: CommandCenterVisualSetup;
+  /** Override default desktop viewport (1280×800) */
+  viewport?: { width: number; height: number };
+  /** Open the mobile nav drawer before capture */
+  openMobileMenu?: boolean;
+  /** Scroll the page before capture */
+  navSetup?: NavVisualSetup;
 };
 
 export const componentVisualBaselines: Record<ComponentVisualBaselineKey, ComponentVisualBaseline> = {
@@ -33,6 +44,34 @@ export const componentVisualBaselines: Record<ComponentVisualBaselineKey, Compon
     description: 'Main site navigation (desktop layout)',
     snapshotFile: 'navbar.png',
     tags: ['@visual-essential', '@visual-components'],
+  },
+  navbarMobileClosed: {
+    key: 'navbarMobileClosed',
+    route: '/',
+    selector: 'header .nav-shell',
+    description: 'Mobile navigation bar (drawer closed)',
+    snapshotFile: 'navbarMobileClosed.png',
+    tags: ['@visual-essential', '@visual-components'],
+    viewport: { width: 390, height: 844 },
+  },
+  navbarMobileOpen: {
+    key: 'navbarMobileOpen',
+    route: '/',
+    selector: 'header .nav-shell',
+    description: 'Mobile navigation with drawer and backdrop open',
+    snapshotFile: 'navbarMobileOpen.png',
+    tags: ['@visual-essential', '@visual-components'],
+    viewport: { width: 390, height: 844 },
+    openMobileMenu: true,
+  },
+  navbarScrolled: {
+    key: 'navbarScrolled',
+    route: '/',
+    selector: 'header .nav-shell',
+    description: 'Desktop navigation after scroll (compact header)',
+    snapshotFile: 'navbarScrolled.png',
+    tags: ['@visual-essential', '@visual-components'],
+    navSetup: 'scrolled',
   },
   footer: {
     key: 'footer',

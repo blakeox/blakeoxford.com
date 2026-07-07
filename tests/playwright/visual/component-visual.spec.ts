@@ -60,6 +60,23 @@ async function setupCommandCenter(page: Page, setup: CommandCenterVisualSetup) {
   });
 }
 
+async function setupNavVisual(page: Page, cfg: (typeof componentVisualBaselines)[keyof typeof componentVisualBaselines]) {
+  await page.waitForFunction(() => (window as Window & { __navHydrated?: boolean }).__navHydrated === true, {
+    timeout: 10000,
+  });
+
+  if (cfg.navSetup === 'scrolled') {
+    await page.evaluate(() => window.scrollTo(0, 120));
+    await page.waitForFunction(() => document.querySelector('.nav-shell--scrolled') !== null, { timeout: 5000 });
+  }
+
+  if (cfg.openMobileMenu) {
+    await page.locator('#nav-toggle').click();
+    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-backdrop')).toHaveAttribute('data-state', 'open');
+  }
+}
+
 // Component-level focused snapshots (smaller surface, faster diff isolation)
 // Tags: @visual-essential @visual-components
 // Registry: src/data/componentVisualBaselines.ts (linked from componentDocs.ts)
@@ -68,10 +85,16 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
   for (const cfg of Object.values(componentVisualBaselines)) {
     test(`component visual ${cfg.key}`, async ({ page }) => {
       await preparePage(page);
+      if (cfg.viewport) {
+        await page.setViewportSize(cfg.viewport);
+      }
       await page.goto(cfg.route, { waitUntil: 'networkidle' });
 
       if (cfg.commandCenterSetup) {
         await setupCommandCenter(page, cfg.commandCenterSetup);
+      } else if (cfg.openMobileMenu || cfg.navSetup || cfg.selector.includes('.nav-shell')) {
+        await setupNavVisual(page, cfg);
+        await expect(page.locator(cfg.selector).first()).toBeVisible();
       } else {
         await expect(page.locator(cfg.selector).first()).toBeVisible();
       }

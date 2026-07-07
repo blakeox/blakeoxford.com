@@ -2,12 +2,13 @@
  * NavBarIsland - React island for site navigation
  *
  * Interactive navigation bar with mobile menu, logo, and responsive design.
- * Integrates ModernNavBar and MotionAccessibility for enhanced UX.
+ * Mobile menu state lives in useMobileMenu; theme toggle uses registerNavTheme.
  */
 import { useEffect, useRef, useState } from 'react';
 
 import type { NavLink } from '../../config/navLinks';
 import { normalizeNavPath } from '../../config/navLinks';
+import { useMobileMenu } from '../../features/nav/hooks/useMobileMenu';
 import { openCommandCenter } from '../../features/command-center/lib/commandEvents';
 import { registerModernNavBar } from '../../scripts/features/ModernNavBar';
 import { initMotionAccessibility } from '../../scripts/modules/MotionAccessibility';
@@ -40,6 +41,13 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
 
   const [activePath, setActivePath] = useState(() => normalizeNavPath(currentPath));
 
+  const { isOpen, burgerLabel, onBurgerClick, onBackdropClick, onMenuLinkClick } = useMobileMenu({
+    menu: mobileMenuRef,
+    backdrop: mobileBackdropRef,
+    burger: burgerButtonRef,
+    status: menuStatusRef,
+  });
+
   useEffect(() => {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       return;
@@ -54,11 +62,6 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
 
       const cleanupNav = registerModernNavBar({
         navBar: navRef.current,
-        navShell: shellRef.current,
-        mobileMenu: mobileMenuRef.current,
-        mobileBackdrop: mobileBackdropRef.current,
-        burgerButton: burgerButtonRef.current,
-        menuStatus: menuStatusRef.current,
         themeToggle: themeToggleRef.current,
       });
 
@@ -88,12 +91,17 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
     }
   }, []);
 
+  useEffect(() => {
+    const menu = mobileMenuRef.current;
+    if (menu) menu.inert = !isOpen;
+  }, [isOpen]);
+
   const isActive = (href: string): boolean => {
     if (!href.startsWith('/')) return false;
     return normalizeNavPath(href) === normalizeNavPath(activePath);
   };
 
-  const renderLink = (link: NavLink, className: string, keyPrefix: string) => {
+  const renderLink = (link: NavLink, className: string, keyPrefix: string, onNavigate?: () => void) => {
     const external = Boolean(link.external);
     const linkProps = external
       ? { target: link.target ?? '_blank', rel: 'noopener noreferrer' }
@@ -105,6 +113,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
           href={link.href}
           className={className}
           aria-current={!external && isActive(link.href) ? 'page' : undefined}
+          onClick={onNavigate}
           {...linkProps}
         >
           {link.label}
@@ -117,7 +126,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
     <div
       ref={shellRef}
       className="@container nav-shell relative overflow-visible sticky top-0 z-nav border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)]"
-      data-menu-state="closed"
+      data-menu-state={isOpen ? 'open' : 'closed'}
     >
       <div
         id="nav-menu-status"
@@ -237,10 +246,11 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
             id="nav-toggle"
             ref={burgerButtonRef}
             type="button"
-            className="nav-utility-button burger-menu-button md:hidden"
-            aria-label="Open navigation menu"
+            className={`nav-utility-button burger-menu-button md:hidden${isOpen ? ' active' : ''}`}
+            aria-label={burgerLabel}
             aria-controls="nav-mobile-links"
-            aria-expanded="false"
+            aria-expanded={isOpen}
+            onClick={onBurgerClick}
           >
             <span className="burger-icon" aria-hidden="true">
               <span className="burger-line" />
@@ -255,8 +265,9 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         id="nav-mobile-backdrop"
         ref={mobileBackdropRef}
         className="mobile-menu-backdrop md:hidden"
-        data-state="closed"
-        aria-hidden="true"
+        data-state={isOpen ? 'open' : 'closed'}
+        aria-hidden={isOpen ? 'false' : 'true'}
+        onClick={onBackdropClick}
       />
 
       {/* No-JS mobile fallback — hidden once ModernNavBar sets data-js-nav on #navbar */}
@@ -276,12 +287,11 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
       <div
         ref={mobileMenuRef}
         id="nav-mobile-links"
-        className="mobile-menu border-t border-border bg-surface/98 shadow-lg md:hidden"
+        className={`mobile-menu border-t border-border bg-surface/98 shadow-lg md:hidden${isOpen ? ' active' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="nav-mobile-menu-title"
-        data-state="closed"
-        inert
+        data-state={isOpen ? 'open' : 'closed'}
       >
         <div
           className="mobile-menu-content flex w-full flex-col gap-2 px-4 py-4 text-foreground @sm:gap-3 @sm:px-5 @sm:py-5"
@@ -296,6 +306,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
                 link,
                 'mobile-nav-link touch-target focus-ring-interactive flex min-h-11 items-center rounded-2xl px-3 py-3 text-sm font-semibold text-foreground/88 transition hover:bg-[color:var(--glass-surface-bg)] @sm:px-4 @sm:py-3 @sm:text-base',
                 'mobile',
+                onMenuLinkClick,
               ),
             )}
           </ul>
