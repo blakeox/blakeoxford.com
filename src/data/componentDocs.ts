@@ -73,10 +73,12 @@ export const componentDocs: ComponentDoc[] = [
       },
     ],
     accessibility: [
-      'Semantic nav element (handled by island)',
-      'Keyboard navigation support',
-      'Mobile menu with proper ARIA attributes',
-      'Focus management for menu toggle',
+      'Semantic nav element',
+      'Mobile menu with ARIA attributes',
+      'Keyboard navigation (Tab, Enter, Escape)',
+      'Focus trap in mobile drawer with return focus to burger',
+      'Auto-hide on scroll down (all viewports); blocked when menu or Command Center is open',
+      'Screen reader status announcements via aria-live',
     ],
     tags: ['navigation', 'layout', 'mobile-menu', 'responsive'],
     visualTier: 'quiet',
@@ -434,7 +436,7 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'NavBarIsland',
     category: 'Islands',
-    description: 'React island for site navigation. Interactive navigation bar with mobile menu, logo, and responsive design. Integrates ModernNavBar and MotionAccessibility for enhanced UX.',
+    description: 'React island for site navigation. Interactive navigation bar with mobile menu, logo, and responsive design. Scroll-aware compact header and auto-hide on all viewports.',
     filePath: 'src/components/islands/NavBarIsland.tsx',
     props: [
       { name: 'links', type: 'NavLink[]', required: true, description: 'Navigation links configuration' },

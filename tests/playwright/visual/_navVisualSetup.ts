@@ -17,7 +17,9 @@ export async function setupNavVisual(page: Page, cfg: ComponentVisualBaseline) {
   }
 
   if (cfg.navSetup === 'autoHidden') {
-    await page.mouse.move(640, 400);
+    const width = cfg.viewport?.width ?? 1280;
+    const height = cfg.viewport?.height ?? 800;
+    await page.mouse.move(width / 2, height / 2);
     for (let i = 0; i < 8; i += 1) {
       await page.mouse.wheel(0, 150);
       await page.waitForTimeout(40);

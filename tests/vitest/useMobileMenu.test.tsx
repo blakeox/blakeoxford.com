@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { useRef } from 'react';
 
 import { useMobileMenu } from '../../src/features/nav/hooks/useMobileMenu';
-import { resetHeaderControllerForTests } from '../../src/utils/headerController';
+import { closeSearch, resetHeaderControllerForTests } from '../../src/utils/headerController';
 import { resetScrollLockForTests } from '../../src/utils/scrollLock';
 
 vi.mock('../../src/utils/headerController', async (importOriginal) => {
@@ -122,5 +122,13 @@ describe('useMobileMenu', () => {
     const menu = document.getElementById('nav-mobile-links')!;
     expect(menu.classList.contains('active')).toBe(false);
     expect(menu.dataset.state).toBe('closed');
+  });
+
+  it('closes command center search when opening the mobile menu', () => {
+    render(<MobileMenuFixture />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open navigation menu' }));
+
+    expect(vi.mocked(closeSearch)).toHaveBeenCalledTimes(1);
   });
 });

@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const filePath = path.resolve(__dirname, '../../src/components/features/projects/ProjectCard.astro');
 let content: string;
 
-// TODO: Convert to Playwright e2e tests for real component rendering
+// Static markup contract tests for ProjectCard.astro (rendering covered by Playwright visual baselines).
 describe('ProjectCard.astro file', () => {
   beforeAll(() => {
     content = fs.readFileSync(filePath, 'utf-8');

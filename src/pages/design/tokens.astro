@@ -67,6 +67,13 @@ const stackingLayers = [
  { token: '--nav-height', value: '4.5rem (72px)', usage: 'Header height; compacts to 4rem when scrolled' },
 ];
 
+const navScrollBehavior = [
+ { class: '.nav-shell--scrolled', usage: 'Compact header after ~80px scroll; navbar height drops to 4rem' },
+ { class: '.nav-shell--auto-hidden', usage: 'Header tucked away on scroll down; restored on scroll up or near top' },
+ { class: '[data-menu-state="open"]', usage: 'Suppresses auto-hide while the mobile drawer is open' },
+ { class: 'prefers-reduced-motion', usage: 'Disables auto-hide transform; header stays visible' },
+];
+
 const radiusScale = [
  { token: 'rounded-lg', usage: 'Buttons, inputs, compact controls' },
  { token: 'rounded-xl', usage: 'Small cards and grouped controls' },
@@ -186,6 +193,34 @@ const stylesheetRoles = [
  </tbody>
  </table>
  </div>
+ </section>
+
+ <section class="mt-16" aria-labelledby="nav-scroll-behavior">
+ <h2 id="nav-scroll-behavior" class="text-2xl font-bold text-foreground">Navigation Scroll Behavior</h2>
+ <p class="mt-3 max-w-3xl text-muted-foreground">
+ Header scroll states are driven by <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">useNavScrollBehavior</code> in the NavBar island. Auto-hide applies on all viewports; Command Center and an open mobile drawer block it.
+ </p>
+ <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <table class="min-w-full text-left text-sm">
+ <thead class="border-b border-border/40 bg-surface-subtle/60 text-subtle-foreground dark:border-border-dark/40">
+ <tr>
+ <th class="px-4 py-3 font-semibold">Class / media</th>
+ <th class="px-4 py-3 font-semibold">Usage</th>
+ </tr>
+ </thead>
+ <tbody>
+ {navScrollBehavior.map((row) => (
+ <tr class="border-b border-border/20 last:border-0 dark:border-border-dark/20">
+ <td class="px-4 py-3"><code class="text-accent">{row.class}</code></td>
+ <td class="px-4 py-3 text-muted-foreground">{row.usage}</td>
+ </tr>
+ ))}
+ </tbody>
+ </table>
+ </div>
+ <p class="mt-4 text-sm text-muted-foreground">
+ Visual baselines: <code>navbarScrolled</code>, <code>navbarAutoHidden</code>, <code>navbarMobileAutoHidden</code> in <code>componentVisualBaselines.ts</code>.
+ </p>
  </section>
 
  <section class="mt-16" aria-labelledby="color-tokens">
