@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { NavLink } from '../../config/navLinks';
 import { normalizeNavPath } from '../../config/navLinks';
 import { useMobileMenu } from '../../features/nav/hooks/useMobileMenu';
+import { useNavScrollBehavior } from '../../features/nav/hooks/useNavScrollBehavior';
 import { openCommandCenter } from '../../features/command-center/lib/commandEvents';
 import { registerModernNavBar } from '../../scripts/features/ModernNavBar';
 import { registerHeaderOverlayLifecycle } from '../../scripts/features/registerHeaderOverlayLifecycle';
@@ -49,6 +50,11 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
     status: menuStatusRef,
   });
 
+  const { isAutoHidden } = useNavScrollBehavior(
+    { shell: shellRef, nav: navRef },
+    { blockAutoHide: isOpen },
+  );
+
   useEffect(() => {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       return;
@@ -73,22 +79,10 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         (window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit = true;
       }
 
-      const navEl = navRef.current;
-      const shellEl = shellRef.current;
-      const handleScroll = () => {
-        if (!navEl) return;
-        const scrolled = window.scrollY > 80;
-        navEl.classList.toggle('has-background', scrolled);
-        shellEl?.classList.toggle('nav-shell--scrolled', scrolled);
-      };
-      handleScroll();
-      window.addEventListener('scroll', handleScroll, { passive: true });
-
       return () => {
         cleanupNav?.();
         cleanupOverlayLifecycle?.();
         document.removeEventListener('astro:page-load', syncActivePath);
-        window.removeEventListener('scroll', handleScroll);
       };
     } catch (err) {
       console.error('[NavBarIsland] hydration error', err);
@@ -129,7 +123,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   return (
     <div
       ref={shellRef}
-      className="@container nav-shell relative overflow-visible sticky top-0 z-nav border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)]"
+      className={`@container nav-shell relative overflow-visible sticky top-0 z-nav border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)] motion-safe:transition-transform motion-safe:duration-normal md:motion-safe:transition-none${isAutoHidden ? ' nav-shell--auto-hidden' : ''}`}
       data-menu-state={isOpen ? 'open' : 'closed'}
     >
       <div
