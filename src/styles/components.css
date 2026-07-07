@@ -106,12 +106,10 @@
     height: 4rem;
   }
 
-  /* Mobile: tuck header away while scrolling down; restored on scroll up */
-  @media (max-width: 767px) {
-    .nav-shell--auto-hidden:not([data-menu-state='open']) {
-      pointer-events: none;
-      transform: translateY(calc(-1 * var(--nav-height, 4.5rem)));
-    }
+  /* Tuck header away while scrolling down; restored on scroll up (all viewports) */
+  .nav-shell--auto-hidden:not([data-menu-state='open']) {
+    pointer-events: none;
+    transform: translateY(-100%);
   }
 
   @media (prefers-reduced-motion: reduce) {

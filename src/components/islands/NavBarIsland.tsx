@@ -89,11 +89,6 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
     }
   }, []);
 
-  useEffect(() => {
-    const menu = mobileMenuRef.current;
-    if (menu) menu.inert = !isOpen;
-  }, [isOpen]);
-
   const isActive = (href: string): boolean => {
     if (!href.startsWith('/')) return false;
     return normalizeNavPath(href) === normalizeNavPath(activePath);
@@ -123,7 +118,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
   return (
     <div
       ref={shellRef}
-      className={`@container nav-shell relative overflow-visible sticky top-0 z-nav border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)] motion-safe:transition-transform motion-safe:duration-normal md:motion-safe:transition-none${isAutoHidden ? ' nav-shell--auto-hidden' : ''}`}
+      className={`@container nav-shell relative overflow-visible sticky top-0 z-nav border-b border-border/40 bg-[color:var(--glass-surface-bg)] backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg-xl)] motion-safe:transition-transform motion-safe:duration-normal${isAutoHidden ? ' nav-shell--auto-hidden' : ''}`}
       data-menu-state={isOpen ? 'open' : 'closed'}
     >
       <div
@@ -290,6 +285,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         aria-modal="true"
         aria-labelledby="nav-mobile-menu-title"
         data-state={isOpen ? 'open' : 'closed'}
+        inert={!isOpen}
       >
         <div
           className="mobile-menu-content flex w-full flex-col gap-2 px-4 py-4 text-foreground @sm:gap-3 @sm:px-5 @sm:py-5"

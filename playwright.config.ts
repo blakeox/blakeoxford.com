@@ -4,6 +4,7 @@ const isCI = !!process.env.CI;
 const isLinux = process.platform === 'linux';
 const browsersLimited = process.env.BROWSER_INSTALL_FAILED === 'true' || process.env.PLAYWRIGHT_BROWSERS_LIMITED === 'true';
 const runOptionalBrowsers = process.env.PLAYWRIGHT_OPTIONAL_BROWSERS === 'true';
+const runExtended = process.env.PLAYWRIGHT_EXTENDED === 'true';
 // Only prefer system Chrome when explicitly requested and environment supports it
 const preferSystemChrome = process.env.USE_SYSTEM_CHROME === 'true' && !process.env.ACT && !isLinux && !browsersLimited;
 
@@ -17,9 +18,9 @@ export default defineConfig({
     '**/bundle-analysis.spec.ts', // 404 lines - breaking up due to timeouts
     '**/performance-monitoring.spec.ts', // 516 lines - run separately
     '**/chaos-engineering.spec.ts', // 423 lines - run separately
-    // Exhaustive device matrix (~6 min) — fixed and runnable via:
-    // npx playwright test tests/playwright/mobile-navigation.spec.ts
-    '**/mobile-navigation.spec.ts',
+    // Curated device matrix — opt in via PLAYWRIGHT_EXTENDED=true:
+    // pnpm run test:e2e:device-matrix
+    ...(runExtended ? [] : ['**/mobile-navigation.spec.ts']),
     // Keep the visual gate small and maintainable. The Chromium-first smoke
     // and component baseline suites cover the actively maintained snapshot path.
     '**/visual-regression.spec.ts',
@@ -36,8 +37,8 @@ export default defineConfig({
     '**/pages.spec.ts', // Inconsistent performance
     '**/user-journeys.spec.ts', // Some slow tests
   ],
-  // Exclude debug-tagged specs (marked with // @debug) from default runs; can be included manually via CLI pattern
-  grepInvert: /@debug/,
+  // Exclude debug-tagged specs from default runs; @extended requires PLAYWRIGHT_EXTENDED=true
+  grepInvert: runExtended ? /@debug/ : /@debug|@extended/,
   timeout: 30 * 1000, // Reduced timeout for faster failure detection
   expect: {
     timeout: 5000, // Reduced expect timeout for faster feedback

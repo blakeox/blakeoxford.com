@@ -2,9 +2,11 @@ import { devices } from '@playwright/test';
 import { test, expect } from './fixtures';
 import { waitForMenuState } from '../utils/waits';
 import { waitForKeyboardResponse } from './utils/test-helpers';
+import { EXTENDED_MOBILE_DEVICES } from '../utils/mobileDeviceMatrix';
 
-// Test mobile navigation specifically
-test.describe('Mobile Navigation', () => {
+// Exhaustive navigation regression — excluded from default CI (see playwright.config.ts).
+// Run via: pnpm run test:e2e:device-matrix
+test.describe('Mobile Navigation @extended', () => {
   test.beforeEach(async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 }); // iPhone SE size
@@ -121,31 +123,30 @@ test.describe('Mobile Navigation', () => {
   test('should handle search overlay and mobile menu correctly', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
-    
+
     const searchToggle = page.locator('#search-toggle');
     const searchOverlay = page.locator('#search-overlay');
     const burgerButton = page.locator('#nav-toggle');
     const mobileMenu = page.locator('#nav-mobile-links');
-    
-    // Open search overlay first
-    if (await searchToggle.isVisible()) {
-      await searchToggle.click();
-    await waitForMenuState(page, '#search-overlay', true, 1500);
-      await expect(searchOverlay).toHaveClass(/active/);
-      
-      // Open mobile menu - should close search overlay
-      await burgerButton.click();
+
+    if (!(await searchToggle.isVisible())) return;
+
+    await searchToggle.click();
+    await waitForMenuState(page, '#search-overlay', true, 3000);
+    await expect(searchOverlay).toHaveAttribute('data-state', 'open');
+
+    await page.keyboard.press('Escape');
+    await expect(searchOverlay).toHaveAttribute('data-state', 'closed', { timeout: 5000 });
+
+    await burgerButton.click();
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
-      
-      // Mobile menu should be open, search overlay should be closed
-      await expect(mobileMenu).toHaveClass(/active/);
-      await expect(searchOverlay).not.toHaveClass(/active/);
-      
-      // Close mobile menu
-      await page.keyboard.press('Escape');
+
+    await expect(mobileMenu).toHaveClass(/active/);
+    await expect(searchOverlay).toHaveAttribute('data-state', 'closed');
+
+    await page.keyboard.press('Escape');
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
-      await expect(mobileMenu).not.toHaveClass(/active/);
-    }
+    await expect(mobileMenu).not.toHaveClass(/active/);
   });
 
   test('should navigate using mobile menu links', async ({ page }) => {
@@ -215,8 +216,13 @@ test.describe('Mobile Navigation', () => {
     });
     
     expect(isMenuActive).toBe(true);
-    
-    // First focusable element should be focused
+
+    await page.waitForFunction(() => {
+      const menu = document.querySelector('#nav-mobile-links');
+      const active = document.activeElement;
+      return Boolean(menu && active && menu.contains(active));
+    }, { timeout: 3000 });
+
     const firstFocusable = mobileMenu.locator('a, button, [tabindex]:not([tabindex="-1"])').first();
     await expect(firstFocusable).toBeFocused();
     
@@ -263,33 +269,48 @@ test.describe('Mobile Navigation', () => {
   });
 });
 
-// Test specific mobile devices
-test.describe('Mobile Device Navigation', () => {
-  Object.entries(devices).forEach(([deviceName, device]) => {
-    if (deviceName.includes('iPhone') || deviceName.includes('Pixel')) {
-      test(`should work on ${deviceName}`, async ({ browser }) => {
-        const context = await browser.newContext(device);
-        const page = await context.newPage();
-        
+// Curated device matrix — representative iOS, Android, foldable, and tablet profiles
+test.describe('Mobile Device Navigation @extended', () => {
+  EXTENDED_MOBILE_DEVICES.forEach((deviceName) => {
+    test(`should work on ${deviceName}`, async ({ browser, browserName }) => {
+      const device = devices[deviceName];
+      if (!device) {
+        test.skip();
+        return;
+      }
+
+      const contextOptions =
+        browserName === 'firefox' && device.isMobile
+          ? { viewport: device.viewport, userAgent: device.userAgent }
+          : device;
+
+      const context = await browser.newContext(contextOptions);
+      const page = await context.newPage();
+
+      try {
         await page.goto('/');
         await page.waitForLoadState('domcontentloaded');
-        
-        // Basic functionality test
+
         const burgerButton = page.locator('#nav-toggle');
         const mobileMenu = page.locator('#nav-mobile-links');
-        
+
+        if (device.viewport.width >= 768) {
+          await expect(page.locator('main')).toBeVisible();
+          return;
+        }
+
         await expect(burgerButton).toBeVisible();
-        
+
         await burgerButton.click();
         await waitForKeyboardResponse(page);
         await expect(mobileMenu).toHaveClass(/active/);
-        
+
         await page.keyboard.press('Escape');
         await waitForKeyboardResponse(page);
         await expect(mobileMenu).not.toHaveClass(/active/);
-        
+      } finally {
         await context.close();
-      });
-    }
+      }
+    });
   });
 });

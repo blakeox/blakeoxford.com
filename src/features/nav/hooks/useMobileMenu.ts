@@ -44,7 +44,10 @@ export function useMobileMenu(refs: MobileMenuRefs) {
   }, []);
 
   const toggle = useCallback(() => {
-    setIsOpen((prev) => !prev);
+    setIsOpen((prev) => {
+      if (!prev) closeSearch();
+      return !prev;
+    });
   }, []);
 
   useEffect(() => {
