@@ -258,5 +258,31 @@ Heuristics:
 - Avoid raising global retries above 1; prefer deterministic utilities (`tests/utils/waits.ts`) to reduce variance.
 - History automatically prunes zero-test placeholder runs to keep signal clean.
 
+## Navigation Test Matrix (NavBar / Command Center)
 
+Fast essential nav checks (Chromium):
+
+```bash
+npx playwright test tests/playwright/menu-visibility-strict.spec.ts \
+  tests/playwright/mobile-navigation-essential.spec.ts \
+  tests/playwright/layout-scroll-lock.spec.ts \
+  tests/playwright/nav-scroll-hide.spec.ts --project=chromium
+```
+
+Extended device matrix (opt-in):
+
+```bash
+pnpm run test:e2e:device-matrix
+```
+
+Visual nav baselines (`navbar`, mobile open/closed, scrolled, auto-hidden):
+
+```bash
+npm run test:e2e:visual:chromium
+npm run test:e2e:visual:update   # regenerate snapshots after intentional UI changes
+```
+
+Unit hooks: `tests/vitest/useMobileMenu.test.tsx`, `useNavScrollBehavior.test.tsx`, `useOverlayScrollLock.test.tsx`, `navLinksSync.test.ts`.
+
+Config source of truth: `src/content/navigation/nav.json` (imported by `src/config/navLinks.ts`).
 

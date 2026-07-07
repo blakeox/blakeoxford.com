@@ -15,6 +15,7 @@ const NAV_BASELINE_KEYS = [
   'navbarMobileOpen',
   'navbarScrolled',
   'navbarAutoHidden',
+  'navbarMobileAutoHidden',
 ] as const satisfies readonly ComponentVisualBaselineKey[];
 
 async function capturePreview(page: Page, route: string, name: string) {

@@ -13,6 +13,7 @@ export type ComponentVisualBaselineKey =
   | 'navbarMobileOpen'
   | 'navbarScrolled'
   | 'navbarAutoHidden'
+  | 'navbarMobileAutoHidden'
   | 'footer'
   | 'searchOverlay'
   | 'commandCenterResults'
@@ -85,6 +86,17 @@ export const componentVisualBaselines: Record<ComponentVisualBaselineKey, Compon
     tags: ['@visual-essential', '@visual-components'],
     navSetup: 'autoHidden',
     screenshotClip: { x: 0, y: 0, width: 1280, height: 88 },
+  },
+  navbarMobileAutoHidden: {
+    key: 'navbarMobileAutoHidden',
+    route: '/',
+    selector: 'header .nav-shell',
+    description: 'Mobile navigation tucked away after scrolling down',
+    snapshotFile: 'navbarMobileAutoHidden.png',
+    tags: ['@visual-essential', '@visual-components'],
+    viewport: { width: 390, height: 844 },
+    navSetup: 'autoHidden',
+    screenshotClip: { x: 0, y: 0, width: 390, height: 88 },
   },
   footer: {
     key: 'footer',
