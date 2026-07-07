@@ -134,6 +134,15 @@ export function useCommandCenter() {
   }, [open, toggle]);
 
   useEffect(() => {
+    const handlePageLoad = () => {
+      if (isOpen) close();
+    };
+
+    document.addEventListener('astro:page-load', handlePageLoad);
+    return () => document.removeEventListener('astro:page-load', handlePageLoad);
+  }, [isOpen, close]);
+
+  useEffect(() => {
     const cleanupEscape = registerEscapeHandler({
       id: 'command-center',
       priority: 2,

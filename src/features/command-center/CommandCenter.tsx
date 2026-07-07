@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { handoffToAiChat } from '../../lib/chat/ai-chat-bridge';
-import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollLock';
+import { useOverlayScrollLock } from '../../hooks/useOverlayScrollLock';
 import { createFocusTrap } from '../../utils/focusTrap';
 import { CommandAskHandoff, CommandAskPanel } from './components/CommandAskHandoff';
 import { CommandEmpty, CommandFooter } from './components/CommandEmpty';
@@ -29,7 +29,8 @@ type AskAiOptions = {
 };
 
 export default function CommandCenter() {
-  const { isOpen, close } = useCommandCenter();
+  const { isOpen, close: closeCommandCenter } = useCommandCenter();
+  const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
   const { recentQueries, pushQuery, clearHistory } = useCommandHistory();
   const { query, setQuery, category, setCategory, groups, isLoading, error } = useCommandQuery(isOpen);
 
@@ -39,7 +40,12 @@ export default function CommandCenter() {
   const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const focusTrapRef = useRef<ReturnType<typeof createFocusTrap> | null>(null);
-  const scrollLockHeldRef = useRef(false);
+
+  const close = useCallback(() => {
+    releaseScrollLockNow();
+    focusTrapRef.current?.deactivate();
+    closeCommandCenter();
+  }, [closeCommandCenter, releaseScrollLockNow]);
 
   const flatItems = useMemo(() => flattenGroups(groups), [groups]);
   const hasResults = mode === 'find' && flatItems.length > 0;
@@ -129,18 +135,9 @@ export default function CommandCenter() {
 
   useEffect(() => {
     if (!isOpen) {
-      if (scrollLockHeldRef.current) {
-        releaseScrollLock();
-        scrollLockHeldRef.current = false;
-      }
       focusTrapRef.current?.deactivate();
       setActiveIndex(-1);
       return;
-    }
-
-    if (!scrollLockHeldRef.current) {
-      acquireScrollLock();
-      scrollLockHeldRef.current = true;
     }
 
     const toggleButton = document.getElementById('search-toggle');
@@ -155,10 +152,6 @@ export default function CommandCenter() {
 
     return () => {
       window.clearTimeout(timer);
-      if (scrollLockHeldRef.current) {
-        releaseScrollLock();
-        scrollLockHeldRef.current = false;
-      }
       focusTrapRef.current?.deactivate();
     };
   }, [isOpen]);

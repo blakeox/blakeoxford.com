@@ -11,6 +11,7 @@ import { normalizeNavPath } from '../../config/navLinks';
 import { useMobileMenu } from '../../features/nav/hooks/useMobileMenu';
 import { openCommandCenter } from '../../features/command-center/lib/commandEvents';
 import { registerModernNavBar } from '../../scripts/features/ModernNavBar';
+import { registerHeaderOverlayLifecycle } from '../../scripts/features/registerHeaderOverlayLifecycle';
 import { initMotionAccessibility } from '../../scripts/modules/MotionAccessibility';
 
 type LogoAvatar = {
@@ -65,6 +66,8 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
         themeToggle: themeToggleRef.current,
       });
 
+      const cleanupOverlayLifecycle = registerHeaderOverlayLifecycle();
+
       if (!(window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit) {
         initMotionAccessibility();
         (window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit = true;
@@ -83,6 +86,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
 
       return () => {
         cleanupNav?.();
+        cleanupOverlayLifecycle?.();
         document.removeEventListener('astro:page-load', syncActivePath);
         window.removeEventListener('scroll', handleScroll);
       };

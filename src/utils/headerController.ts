@@ -86,6 +86,13 @@ export function closeAiChat(): void {
   closeAiChatFn?.();
 }
 
+/** Close every registered header overlay (mobile menu, search, AI chat). */
+export function closeAllHeaderOverlays(): void {
+  closeMobileMenu();
+  closeSearch();
+  closeAiChat();
+}
+
 export function resetHeaderControllerForTests(): void {
   escapeHandlers.length = 0;
   closeMobileMenuFn = null;

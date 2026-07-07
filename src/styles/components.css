@@ -129,6 +129,10 @@
     padding-right: var(--scrollbar-width, 0px);
   }
 
+  body.scroll-locked [data-ai-chat-widget] {
+    padding-right: var(--scrollbar-width, 0px);
+  }
+
   /* Burger → close icon animation */
   .burger-icon {
     display: flex;
