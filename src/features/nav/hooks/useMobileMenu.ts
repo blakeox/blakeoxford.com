@@ -25,9 +25,16 @@ function getInitialMenuFocus(menu: HTMLElement): HTMLElement | null {
 export function useMobileMenu(refs: MobileMenuRefs) {
   const [isOpen, setIsOpen] = useState(false);
   const focusTrapRef = useRef<FocusTrap | null>(null);
+  const scrollLockHeldRef = useRef(false);
   const isOpenRef = useRef(isOpen);
 
   isOpenRef.current = isOpen;
+
+  const releaseMenuScrollLock = () => {
+    if (!scrollLockHeldRef.current) return;
+    releaseScrollLock();
+    scrollLockHeldRef.current = false;
+  };
 
   const close = useCallback(() => {
     setIsOpen(false);
@@ -59,20 +66,21 @@ export function useMobileMenu(refs: MobileMenuRefs) {
     const status = refs.status.current;
 
     if (isOpen) {
-      acquireScrollLock();
+      if (!scrollLockHeldRef.current) {
+        acquireScrollLock();
+        scrollLockHeldRef.current = true;
+      }
       trap.activate();
       if (status) status.textContent = 'Navigation menu opened';
     } else {
       trap.deactivate();
-      releaseScrollLock();
+      releaseMenuScrollLock();
       if (status) status.textContent = 'Navigation menu closed';
     }
 
     return () => {
-      if (isOpenRef.current) {
-        trap.deactivate();
-        releaseScrollLock();
-      }
+      trap.deactivate();
+      releaseMenuScrollLock();
     };
   }, [isOpen, refs.menu, refs.burger, refs.status]);
 

@@ -39,6 +39,7 @@ export default function CommandCenter() {
   const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const focusTrapRef = useRef<ReturnType<typeof createFocusTrap> | null>(null);
+  const scrollLockHeldRef = useRef(false);
 
   const flatItems = useMemo(() => flattenGroups(groups), [groups]);
   const hasResults = mode === 'find' && flatItems.length > 0;
@@ -128,13 +129,19 @@ export default function CommandCenter() {
 
   useEffect(() => {
     if (!isOpen) {
-      releaseScrollLock();
+      if (scrollLockHeldRef.current) {
+        releaseScrollLock();
+        scrollLockHeldRef.current = false;
+      }
       focusTrapRef.current?.deactivate();
       setActiveIndex(-1);
       return;
     }
 
-    acquireScrollLock();
+    if (!scrollLockHeldRef.current) {
+      acquireScrollLock();
+      scrollLockHeldRef.current = true;
+    }
 
     const toggleButton = document.getElementById('search-toggle');
     focusTrapRef.current = createFocusTrap(panelRef.current, {
@@ -148,7 +155,10 @@ export default function CommandCenter() {
 
     return () => {
       window.clearTimeout(timer);
-      releaseScrollLock();
+      if (scrollLockHeldRef.current) {
+        releaseScrollLock();
+        scrollLockHeldRef.current = false;
+      }
       focusTrapRef.current?.deactivate();
     };
   }, [isOpen]);
