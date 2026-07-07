@@ -18,16 +18,26 @@ function normalizeLinks(links: Array<{ href: string; label: string }>) {
   return links.map((link) => ({ href: link.href, label: link.label }));
 }
 
-describe('navLinks sync with nav.json', () => {
+describe('navLinks derived from nav.json', () => {
   const navJson = loadNavJson();
 
-  it('keeps primary links aligned with the content collection mirror', () => {
-    expect(normalizeLinks(navJson.links)).toEqual(normalizeLinks(navLinks));
+  it('loads primary links from nav.json', () => {
+    expect(normalizeLinks(navLinks)).toEqual(normalizeLinks(navJson.links));
   });
 
-  it('keeps social link hrefs aligned with navConfig', () => {
+  it('applies external metadata to social links from nav.json', () => {
     const jsonSocial = (navJson.socialLinks ?? []).map((link) => link.href).sort();
     const tsSocial = (navConfig.socialLinks ?? []).map((link) => link.href).sort();
-    expect(jsonSocial).toEqual(tsSocial);
+    expect(tsSocial).toEqual(jsonSocial);
+
+    for (const link of navConfig.socialLinks ?? []) {
+      expect(link.external).toBe(true);
+      expect(link.target).toBe('_blank');
+    }
+  });
+
+  it('keeps required primary routes in nav.json', () => {
+    const hrefs = navJson.links.map((link) => link.href);
+    expect(hrefs).toEqual(expect.arrayContaining(['/', '/about/', '/projects/', '/blog/', '/contact/']));
   });
 });

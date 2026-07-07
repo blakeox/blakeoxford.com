@@ -1,7 +1,9 @@
 /**
- * Navigation Links Configuration
- * TypeScript version with proper interfaces
+ * Navigation links — derived from `src/content/navigation/nav.json`.
+ * Edit nav.json; social links get external/target metadata applied here.
  */
+
+import navJson from '../content/navigation/nav.json';
 
 export interface NavLink {
   href: string;
@@ -21,29 +23,26 @@ export interface NavConfig {
   socialLinks?: NavLink[];
 }
 
-const navLinks: NavLink[] = [
-  { href: '/', label: 'Home' },
-  { href: '/about/', label: 'About' },
-  { href: '/projects/', label: 'Projects' },
-  { href: '/blog/', label: 'Blog' },
-  { href: '/contact/', label: 'Contact' },
-];
+function withExternalMetadata(link: { href: string; label: string }): NavLink {
+  const external = /^https?:\/\//.test(link.href) || link.href.startsWith('mailto:');
+  return {
+    href: link.href,
+    label: link.label,
+    ...(external ? { external: true, target: '_blank' as const } : {}),
+  };
+}
+
+const navLinks: NavLink[] = navJson.links.map(withExternalMetadata);
 
 export default navLinks;
 
-// Export configuration object for future extensibility
 export const navConfig: NavConfig = {
   links: navLinks,
-  socialLinks: [
-    { href: 'https://github.com/blakeox', label: 'GitHub', external: true, target: '_blank' },
-    { href: 'https://linkedin.com/in/blake-oxford', label: 'LinkedIn', external: true, target: '_blank' },
-    { href: 'mailto:hello@blakeoxford.com', label: 'Email', external: true },
-  ],
+  socialLinks: (navJson.socialLinks ?? []).map(withExternalMetadata),
 };
 
-// Utility functions for navigation
 export function getNavLinkByHref(href: string): NavLink | undefined {
-  return navLinks.find(link => link.href === href);
+  return navLinks.find((link) => link.href === href);
 }
 
 export function isCurrentPage(href: string): boolean {
@@ -54,4 +53,4 @@ export function isCurrentPage(href: string): boolean {
 export function getActiveNavLink(): NavLink | undefined {
   if (typeof window === 'undefined' || typeof window.location === 'undefined') return undefined;
   return navLinks.find((link) => isCurrentPage(link.href));
-} 
+}
