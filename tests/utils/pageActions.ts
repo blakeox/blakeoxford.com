@@ -147,6 +147,6 @@ export async function fillSearch(page: Page, query: string) {
 }
 
 export async function navigateMain(page: Page, path: string) {
-  await page.locator(`nav a[href="${path}"]`).click();
+  await page.locator(`nav a[href="${path}"]`).first().click();
   await expect(page).toHaveURL(new RegExp(path.replace(/\/$/, '')));
 }
