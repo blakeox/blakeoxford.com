@@ -92,7 +92,7 @@ e2e_start_time=$(date +%s)
 
 # Run the most critical tests first
 echo "Running navigation tests..."
-"$PNPM" exec playwright test tests/playwright/navigation-essential.spec.ts --project=chromium --reporter=line
+"$PNPM" exec playwright test tests/playwright/functional/navigation-search.journey.spec.ts --project=chromium --reporter=line
 
 echo ""
 echo "Running accessibility tests..."

@@ -228,6 +228,9 @@ jobs:
         env:
           COMPREHENSIVE_TESTS: "false"
 
+      - name: Run nav visual baselines (Chromium)
+        run: pnpm run test:e2e:visual:chromium
+
       - name: Runtime contrast audit (Playwright)
         run: pnpm audit:contrast
 

@@ -38,7 +38,7 @@ async function capturePreview(page: Page, route: string, name: string) {
   });
 }
 
-test.describe('Component Visual Baselines @visual @visual-components', () => {
+test.describe('Component Visual Baselines @visual-essential @visual @visual-components', () => {
   test('nav preview', async ({ page }) => {
     await capturePreview(page, '/components/nav-preview', 'nav');
   });
