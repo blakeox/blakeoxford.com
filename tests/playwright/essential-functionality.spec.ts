@@ -30,10 +30,12 @@ test.describe('Core Site Functionality', () => {
   test('search functionality should work @essential', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
-    
-    // Just verify search elements exist - simplified test for performance
-    const searchElements = await page.locator('[data-search-trigger], #search-overlay, .search-button').count();
-    expect(searchElements).toBeGreaterThan(0);
+    await page.waitForFunction(() => (window as Window & { __navHydrated?: boolean }).__navHydrated === true, {
+      timeout: 10000,
+    });
+
+    await expect(page.locator('#search-toggle')).toBeAttached();
+    await expect(page.locator('#search-overlay')).toBeAttached();
   });
 });
 
