@@ -21,21 +21,14 @@ export default defineConfig({
     // Curated device matrix — opt in via PLAYWRIGHT_EXTENDED=true:
     // pnpm run test:e2e:device-matrix
     ...(runExtended ? [] : ['**/mobile-navigation.spec.ts']),
-    // Keep the visual gate small and maintainable. The Chromium-first smoke
-    // and component baseline suites cover the actively maintained snapshot path.
+    // Legacy visual specs removed; maintained paths:
+    // - tests/playwright/visual-smoke.spec.ts
+    // - tests/playwright/component-visual-baselines.spec.ts
     '**/visual-regression.spec.ts',
-    '**/visual-routes.spec.ts',
     '**/visual-sectional.spec.ts',
-    '**/visual.spec.ts',
     '**/visual/**/*.spec.ts',
-    // Exclude slow visual regression tests - use essential visual tests
-    // Exclude slow basic tests that timeout
-    '**/basic.spec.ts', // Replace with optimized essential tests
-    // Exclude other slow comprehensive tests
-    '**/search-functionality.spec.ts', // High timeout rates
+    // Exclude slow comprehensive tests
     '**/projects.spec.ts', // 20+ second timeouts
-    '**/pages.spec.ts', // Inconsistent performance
-    '**/user-journeys.spec.ts', // Some slow tests
   ],
   // Exclude debug-tagged specs from default runs; @extended requires PLAYWRIGHT_EXTENDED=true
   grepInvert: runExtended ? /@debug/ : /@debug|@extended/,

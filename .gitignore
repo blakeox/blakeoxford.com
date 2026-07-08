@@ -21,6 +21,11 @@ junit.xml
 tests/playwright/*.spec.ts-snapshots/
 tests/playwright/visual-regression.spec.ts-snapshots/
 **/*-snapshots/
+# Keep visual baselines in CI (Chromium snapshots committed)
+!tests/playwright/component-visual-baselines.spec.ts-snapshots/
+!tests/playwright/component-visual-baselines.spec.ts-snapshots/**
+!tests/playwright/visual-smoke.spec.ts-snapshots/
+!tests/playwright/visual-smoke.spec.ts-snapshots/**
 # Keep dark-mode visual baselines in CI
 !tests/playwright/visual/dark-mode-routes.spec.ts-snapshots/
 !tests/playwright/visual/dark-mode-routes.spec.ts-snapshots/**

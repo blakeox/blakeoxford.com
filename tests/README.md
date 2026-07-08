@@ -67,10 +67,11 @@ These lay groundwork for removing older redundant navigation/search specs in a l
 
 ### Deprecations
 
-The following legacy specs are now skipped pending removal:
+Legacy skipped specs (`navigation-essential`, `search-functionality`, `user-journeys`, `pages`, `basic`, `visual`, `visual-routes`) were removed in favor of:
 
-- `tests/playwright/navigation-essential.spec.ts` (replaced by `functional/navigation-search.journey.spec.ts`)
-Other large redundant specs (navigation/search variants) will be consolidated in future phases.
+- `functional/navigation-search.journey.spec.ts` — nav + search journeys
+- `visual-smoke.spec.ts` + `component-visual-baselines.spec.ts` — visual regression
+- `vitest/a11y.test.ts` (mock-only) removed; a11y covered by Playwright axe/contrast specs
 
 ### Centralized Schemas
 
@@ -275,12 +276,14 @@ Extended device matrix (opt-in):
 pnpm run test:e2e:device-matrix
 ```
 
-Visual nav baselines (`navbar`, mobile open/closed, scrolled, auto-hidden):
+Visual nav baselines (`navbar`, mobile open/closed, scrolled, auto-hidden) — **gated in CI** (`ci-fast.yml`):
 
 ```bash
 npm run test:e2e:visual:chromium
 npm run test:e2e:visual:update   # regenerate snapshots after intentional UI changes
 ```
+
+Chromium snapshots live in `component-visual-baselines.spec.ts-snapshots/` and `visual-smoke.spec.ts-snapshots/` (committed to git).
 
 Unit hooks: `tests/vitest/useMobileMenu.test.tsx`, `useNavScrollBehavior.test.tsx`, `useOverlayScrollLock.test.tsx`, `navLinksSync.test.ts`.
 
