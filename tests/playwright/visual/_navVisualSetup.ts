@@ -1,4 +1,5 @@
 import { expect, type Page } from '@playwright/test';
+import { wheelScrollSteps } from '../utils/deterministic-waits';
 
 import type { ComponentVisualBaseline } from '../../../src/data/componentVisualBaselines';
 
@@ -20,10 +21,7 @@ export async function setupNavVisual(page: Page, cfg: ComponentVisualBaseline) {
     const width = cfg.viewport?.width ?? 1280;
     const height = cfg.viewport?.height ?? 800;
     await page.mouse.move(width / 2, height / 2);
-    for (let i = 0; i < 8; i += 1) {
-      await page.mouse.wheel(0, 150);
-      await page.waitForTimeout(40);
-    }
+    await wheelScrollSteps(page, { steps: 8, delta: 150, pauseMs: 40 });
     await page.waitForFunction(() => document.querySelector('.nav-shell--auto-hidden') !== null, { timeout: 5000 });
   }
 

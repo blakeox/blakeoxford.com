@@ -24,3 +24,19 @@ export async function waitForLayoutStability(page: Page, {interval=50, samples=5
     await page.waitForTimeout(interval);
   }
 }
+
+/** Wheel scroll in discrete steps with a short settle pause between each. */
+export async function wheelScrollSteps(
+  page: Page,
+  { steps = 1, delta = 120, pauseMs = 40 }: { steps?: number; delta?: number; pauseMs?: number } = {},
+) {
+  for (let i = 0; i < steps; i += 1) {
+    await page.mouse.wheel(0, delta);
+    await page.waitForTimeout(pauseMs);
+  }
+}
+
+/** Brief pause after viewport or layout changes before asserting state. */
+export async function waitForViewportSettle(page: Page, pauseMs = 100) {
+  await page.waitForTimeout(pauseMs);
+}

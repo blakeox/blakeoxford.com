@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForViewportSettle } from './utils/deterministic-waits';
 
 async function readLayout(page: import('@playwright/test').Page) {
   return page.evaluate(() => {
@@ -99,7 +100,7 @@ test.describe('Page layout after overlays @essential', () => {
     await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
 
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.waitForTimeout(100);
+    await waitForViewportSettle(page, 100);
 
     await expect(page.locator('#nav-mobile-links')).not.toHaveClass(/active/);
     const after = await readLayout(page);

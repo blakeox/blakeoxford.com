@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { wheelScrollSteps } from './utils/deterministic-waits';
+import { waitForAsyncOperation } from './utils/test-helpers';
 
 async function waitForNavHydration(page: import('@playwright/test').Page) {
   await page.waitForFunction(() => (window as Window & { __navHydrated?: boolean }).__navHydrated === true, {
@@ -7,17 +9,11 @@ async function waitForNavHydration(page: import('@playwright/test').Page) {
 }
 
 async function scrollDown(page: import('@playwright/test').Page, steps = 6, delta = 120) {
-  for (let i = 0; i < steps; i += 1) {
-    await page.mouse.wheel(0, delta);
-    await page.waitForTimeout(40);
-  }
+  await wheelScrollSteps(page, { steps, delta, pauseMs: 40 });
 }
 
 async function scrollUp(page: import('@playwright/test').Page, steps = 4, delta = -160) {
-  for (let i = 0; i < steps; i += 1) {
-    await page.mouse.wheel(0, delta);
-    await page.waitForTimeout(40);
-  }
+  await wheelScrollSteps(page, { steps, delta, pauseMs: 40 });
 }
 
 test.describe('Mobile nav auto-hide @essential', () => {
@@ -46,7 +42,7 @@ test.describe('Mobile nav auto-hide @essential', () => {
     await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
 
     await page.evaluate(() => window.scrollTo(0, 360));
-    await page.waitForTimeout(100);
+    await waitForAsyncOperation(page, 100);
 
     await expect(page.locator('.nav-shell')).not.toHaveClass(/nav-shell--auto-hidden/);
   });
