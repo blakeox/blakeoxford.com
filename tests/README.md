@@ -257,11 +257,7 @@ Changes:
 - Default visual CI paths: `visual-smoke.spec.ts` + `component-visual-baselines.spec.ts`.
 - Grouped visual specs under `playwright/visual/` are `@extended` (not part of fast CI).
 - Bumped `pnpm/action-setup` to v6 and completed `actions/checkout@v6` across workflows.
-
-Debug specs (excluded from default runs via `grepInvert: /@debug/`):
-
-- `search-debug.spec.ts`, `search-diagnostic.spec.ts`, `debug-form.spec.ts`, `debug-keyboard.spec.ts`
-- `accessibility/axe-debug-projects.spec.ts`
+- Removed legacy `@debug` diagnostic Playwright specs (search overlay debug trio, form/keyboard debug, axe-debug-projects) and `tests/assets/search-debug-manual.js`; search, form, and a11y behavior covered by journey and accessibility specs.
 
 ## Reliability & Flakiness (Addendum)
 

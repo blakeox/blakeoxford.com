@@ -18,11 +18,9 @@ try {
   console.log('Created dist/.assetsignore');
 } catch { /* noop */ }
 
-// Remove any test-only debug artifacts that should never ship
+// Remove any test-only debug artifacts that should never ship (legacy cleanup guard)
 try {
-  const testOnlyFiles = [
-    'search-debug-manual.js',
-  ];
+  const testOnlyFiles = [];
   for (const rel of testOnlyFiles) {
     const p = join(dist, rel);
     if (existsSync(p)) {
