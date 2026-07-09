@@ -285,10 +285,11 @@ npx playwright test tests/playwright/menu-visibility-strict.spec.ts \
   tests/playwright/nav-scroll-hide.spec.ts --project=chromium
 ```
 
-Extended device matrix (opt-in):
+Extended device matrix (opt-in locally, runs weekly in CI):
 
 ```bash
 pnpm run test:e2e:device-matrix
+pnpm run test:e2e:extended:chromium   # full @extended suite (chaos, bundle, visual matrix, etc.)
 ```
 
 Visual nav baselines (`navbar`, mobile open/closed, scrolled, auto-hidden) — **gated in CI** (`ci-fast.yml`):
