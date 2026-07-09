@@ -14,8 +14,7 @@ const NAV_BASELINE_KEYS = [
   'navbarMobileClosed',
   'navbarMobileOpen',
   'navbarScrolled',
-  'navbarAutoHidden',
-  'navbarMobileAutoHidden',
+  // auto-hidden clip baselines are OS-sensitive; behavior covered by nav-scroll-hide.spec.ts
 ] as const satisfies readonly ComponentVisualBaselineKey[];
 
 async function capturePreview(page: Page, route: string, name: string) {

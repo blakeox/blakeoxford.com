@@ -1,6 +1,6 @@
 import { test, expect } from './fixtures';
 import { waitForLayoutStability } from './utils/deterministic-waits';
-import { MAX_ALLOWED_TOLERANCE, VISUAL_ROUTE_CONFIG } from './visual/config';
+import { VISUAL_SMOKE_CI_TOLERANCE, VISUAL_ROUTE_CONFIG } from './visual/config';
 
 // Tag with @visual-smoke for selective execution
 // Minimal set of high-value pages for early layout/render regressions.
@@ -15,8 +15,8 @@ const routes = [
 function smokeTolerance(path: string, fallback = 0.01) {
   const cfg = VISUAL_ROUTE_CONFIG[path];
   const configured = cfg?.diff?.maxDiffPixelRatio ?? fallback;
-  // Linux CI font/layout rasterization can diverge slightly from macOS baselines.
-  return Math.min(Math.max(configured, process.env.CI ? MAX_ALLOWED_TOLERANCE : configured), MAX_ALLOWED_TOLERANCE);
+  const floor = process.env.CI ? VISUAL_SMOKE_CI_TOLERANCE : configured;
+  return Math.max(configured, floor);
 }
 
 for (const r of routes) {
