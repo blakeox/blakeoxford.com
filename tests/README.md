@@ -245,6 +245,24 @@ Next Candidates (Phase 6+):
 - Theming/contrast token audit ensuring all design tokens meet WCAG in both light/dark contexts.
 - Visual component-level snapshotting (mount + per-component diff) to catch isolated regressions earlier.
 
+## Phase 6 Updates
+
+Focus: test hygiene, CI action maintenance, and production logging cleanup.
+
+Changes:
+
+- Removed dead legacy Vitest files under `tests/api/` (old Astro JSON route handlers no longer exist; API shape is covered by `tests/contracts/api/*`).
+- Deleted obsolete Playwright specs: `accessibility-enhanced`, `visual-regression`, `visual-sectional`, `projects`.
+- Heavy / diagnostic suites now opt in via `@extended` or `@debug` tags (`PLAYWRIGHT_EXTENDED=true` or `pnpm run test:e2e:extended`).
+- Default visual CI paths: `visual-smoke.spec.ts` + `component-visual-baselines.spec.ts`.
+- Grouped visual specs under `playwright/visual/` are `@extended` (not part of fast CI).
+- Bumped `pnpm/action-setup` to v6 and completed `actions/checkout@v6` across workflows.
+
+Debug specs (excluded from default runs via `grepInvert: /@debug/`):
+
+- `search-debug.spec.ts`, `search-diagnostic.spec.ts`, `debug-form.spec.ts`, `debug-keyboard.spec.ts`
+- `accessibility/axe-debug-projects.spec.ts`
+
 ## Reliability & Flakiness (Addendum)
 
 Run-level reliability now surfaced via:
