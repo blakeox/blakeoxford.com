@@ -28,7 +28,15 @@ if [[ "${1:-}" == "--from-wrangler" ]]; then
     echo "pnpm is required to read wrangler auth token"
     exit 1
   fi
-  TOKEN="$(pnpm exec wrangler auth token 2>/dev/null || true)"
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "python3 is required to parse wrangler auth token output"
+    exit 1
+  fi
+  TOKEN="$(
+    pnpm exec wrangler auth token --json 2>/dev/null \
+      | python3 -c "import sys, json; raw = json.load(sys.stdin).get('token', ''); lines = [line.strip() for line in raw.splitlines() if line.strip()]; print(lines[-1] if lines else '')" \
+      || true
+  )"
   if [[ -z "$TOKEN" ]]; then
     echo "No wrangler auth token found. Run: pnpm exec wrangler login"
     exit 1
