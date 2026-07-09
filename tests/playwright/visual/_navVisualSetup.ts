@@ -30,6 +30,7 @@ async function waitForFontsReady(page: Page) {
 }
 
 export async function setupNavVisual(page: Page, cfg: ComponentVisualBaseline) {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await waitForNavHydration(page);
 
   if (cfg.navSetup === 'scrolled' || cfg.navSetup === 'autoHidden') {
@@ -50,6 +51,12 @@ export async function setupNavVisual(page: Page, cfg: ComponentVisualBaseline) {
     await page.mouse.move(width / 2, height / 2);
     await wheelScrollSteps(page, { steps: 8, delta: 150, pauseMs: 40 });
     await page.waitForFunction(() => document.querySelector('.nav-shell--auto-hidden') !== null, { timeout: 5000 });
+    await page.waitForFunction(() => {
+      const shell = document.querySelector('.nav-shell--auto-hidden');
+      if (!shell) return false;
+      const transform = getComputedStyle(shell).transform;
+      return transform !== 'none' && !transform.includes('matrix(1, 0, 0, 1, 0, 0)');
+    }, { timeout: 5000 });
   }
 
   if (cfg.openMobileMenu) {
