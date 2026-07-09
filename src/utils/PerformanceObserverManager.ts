@@ -3,6 +3,8 @@
  * Eliminates redundant PerformanceObserver instances across monitoring systems
  */
 
+import { logger } from './logger';
+
 export interface PerformanceObserverCallback {
   (entries: PerformanceEntry[]): void;
 }
@@ -73,7 +75,7 @@ export class PerformanceObserverManager {
     });
 
     if (this.debugMode) {
-      console.log(`📊 Performance subscription added for ${system}:`, {
+      logger.debug(`Performance subscription added for ${system}:`, {
         subscriptionId,
         entryTypes,
         totalSubscriptions: this.subscriptions.size
@@ -109,7 +111,7 @@ export class PerformanceObserverManager {
     this.subscriptions.delete(subscriptionId);
 
     if (this.debugMode) {
-      console.log(`📊 Performance subscription removed: ${subscriptionId}`);
+      logger.debug(`Performance subscription removed: ${subscriptionId}`);
     }
   }
 
@@ -143,7 +145,7 @@ export class PerformanceObserverManager {
       this.observers.set(entryType, observer);
 
       if (this.debugMode) {
-        console.log(`📊 Created PerformanceObserver for: ${entryType}`);
+        logger.debug(`Created PerformanceObserver for: ${entryType}`);
       }
     } catch (error) {
       console.warn(`Failed to create PerformanceObserver for ${entryType}:`, error);
@@ -161,7 +163,7 @@ export class PerformanceObserverManager {
       this.entryTypeCallbacks.delete(entryType);
 
       if (this.debugMode) {
-        console.log(`📊 Disconnected PerformanceObserver for: ${entryType}`);
+        logger.debug(`Disconnected PerformanceObserver for: ${entryType}`);
       }
     }
   }
@@ -199,7 +201,7 @@ export class PerformanceObserverManager {
   setDebugMode(enabled: boolean): void {
     this.debugMode = enabled;
     if (enabled) {
-      console.log('📊 PerformanceObserverManager debug mode enabled');
+      logger.debug('PerformanceObserverManager debug mode enabled');
     }
   }
 
@@ -213,7 +215,7 @@ export class PerformanceObserverManager {
     this.entryTypeCallbacks.clear();
 
     if (this.debugMode) {
-      console.log('📊 PerformanceObserverManager cleaned up');
+      logger.debug('PerformanceObserverManager cleaned up');
     }
   }
 

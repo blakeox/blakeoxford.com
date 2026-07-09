@@ -3,6 +3,8 @@
  * Provides comprehensive form validation with accessibility support
  */
 
+import { logger } from '../../utils/logger';
+
 interface ValidationRule {
   pattern?: RegExp;
   validate?: (value: string, param?: number | string) => boolean;
@@ -369,7 +371,7 @@ export class FormValidation {
     })
     .then(response => {
       if (response.ok) {
-        console.log('Form submitted successfully');
+        logger.debug('Form submitted successfully');
       } else {
         throw new Error('Form submission failed');
       }
@@ -469,7 +471,7 @@ export class FormValidation {
 
 // Initialize form validation
 export function initFormValidation(config?: FormValidationConfig): FormValidation {
-  console.log('🚀 Initializing FormValidation...');
+  logger.debug('Initializing FormValidation...');
   return new FormValidation(config);
 }
 

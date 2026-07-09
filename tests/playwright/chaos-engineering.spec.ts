@@ -1,7 +1,7 @@
 import { test, expect } from './fixtures';
 import { waitForKeyboardResponse, waitForAsyncOperation } from './utils/test-helpers';
 
-test.describe('Chaos Engineering Tests', () => {
+test.describe('Chaos Engineering Tests @extended', () => {
   test.describe('Network Resilience', () => {
     test('should handle random network failures gracefully', async ({ page, context }) => {
       // Randomly fail 20% of requests to simulate unstable network

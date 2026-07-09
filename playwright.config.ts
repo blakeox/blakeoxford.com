@@ -11,25 +11,10 @@ const preferSystemChrome = process.env.USE_SYSTEM_CHROME === 'true' && !process.
 export default defineConfig({
   testDir: './tests/playwright',
   outputDir: './test-results',
-  testIgnore: [
-    // Temporarily exclude large problematic test files
-    '**/accessibility-enhanced.spec.ts', // 545 lines - needs review
-    '**/advanced-scenarios.spec.ts', // 539 lines - needs review
-    '**/bundle-analysis.spec.ts', // 404 lines - breaking up due to timeouts
-    '**/performance-monitoring.spec.ts', // 516 lines - run separately
-    '**/chaos-engineering.spec.ts', // 423 lines - run separately
-    // Curated device matrix — opt in via PLAYWRIGHT_EXTENDED=true:
-    // pnpm run test:e2e:device-matrix
-    ...(runExtended ? [] : ['**/mobile-navigation.spec.ts']),
-    // Legacy visual specs removed; maintained paths:
-    // - tests/playwright/visual-smoke.spec.ts
-    // - tests/playwright/component-visual-baselines.spec.ts
-    '**/visual-regression.spec.ts',
-    '**/visual-sectional.spec.ts',
-    '**/visual/**/*.spec.ts',
-    // Exclude slow comprehensive tests
-    '**/projects.spec.ts', // 20+ second timeouts
-  ],
+  // Heavy / opt-in suites use @extended and are excluded via grepInvert unless
+  // PLAYWRIGHT_EXTENDED=true (see test:e2e:extended / test:e2e:device-matrix).
+  // Default visual CI: visual-smoke.spec.ts + component-visual-baselines.spec.ts
+  testIgnore: runExtended ? [] : ['**/mobile-navigation.spec.ts'],
   // Exclude debug-tagged specs from default runs; @extended requires PLAYWRIGHT_EXTENDED=true
   grepInvert: runExtended ? /@debug/ : /@debug|@extended/,
   timeout: 30 * 1000, // Reduced timeout for faster failure detection

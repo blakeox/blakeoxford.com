@@ -1,7 +1,7 @@
 import { test, expect } from './fixtures';
 import { waitForAsyncOperation } from './utils/test-helpers';
 
-test.describe('Performance and Monitoring', () => {
+test.describe('Performance and Monitoring @extended', () => {
   test.describe('Core Web Vitals', () => {
     test('should meet Largest Contentful Paint (LCP) thresholds', async ({ page }) => {
       const startTime = Date.now();

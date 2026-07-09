@@ -1,6 +1,6 @@
 import { test, expect } from './fixtures';
 
-test.describe('Advanced Test Scenarios', () => {
+test.describe('Advanced Test Scenarios @extended', () => {
   test.describe('API Error Handling', () => {
     test('should handle API failures gracefully', async ({ page }) => {
       await page.route('**/api/projects.json', (route) => {

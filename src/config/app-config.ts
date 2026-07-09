@@ -4,6 +4,7 @@
  */
 
 import { z } from 'zod';
+import { logger } from '../utils/logger';
 
 // Configuration change callback type
 export type ConfigChangeCallback = (newConfig: AppConfig, changedKeys: string[]) => void;
@@ -169,10 +170,12 @@ export class ConfigManager {
           }
         });
 
-        console.log('📊 Configuration updated:', {
-          changedKeys,
-          environment: newConfig.environment
-        });
+        if (import.meta.env.DEV) {
+          logger.debug('Configuration updated:', {
+            changedKeys,
+            environment: newConfig.environment
+          });
+        }
       }
     } catch (error) {
       console.error('Invalid configuration update:', error);

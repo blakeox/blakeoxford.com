@@ -20,6 +20,7 @@ Current interim structure will be migrated incrementally.
 ## Tagging Conventions (Playwright)
 
 - @smoke @essential – Fast core health
+- @extended – Heavy/slow suites (chaos, bundle analysis, full visual matrix); opt in via `PLAYWRIGHT_EXTENDED=true` or `pnpm run test:e2e:extended`
 - @journey – Primary user flows
 - @accessibility-core / @accessibility-contrast / @accessibility-extended
 - @perf-budget / @perf-regression

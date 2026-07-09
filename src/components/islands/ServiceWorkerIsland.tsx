@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { logger } from '../../utils/logger';
 
 // Extend Window interface for audit detection
 declare global {
@@ -21,10 +22,10 @@ export default function ServiceWorkerIsland() {
  navigator.serviceWorker
  .register('/sw.js')
  .then((registration) => {
- console.log('✅ Service Worker registered:', registration.scope);
+ logger.debug('Service Worker registered:', registration.scope);
  })
  .catch((error) => {
- console.log('❌ Service Worker registration failed:', error);
+ logger.warn('Service Worker registration failed:', error);
  });
  };
 

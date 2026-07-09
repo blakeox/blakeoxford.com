@@ -2,7 +2,7 @@ import { test, expect } from './fixtures';
 import fs from 'fs';
 import path from 'path';
 
-test.describe('Bundle Analysis Testing', () => {
+test.describe('Bundle Analysis Testing @extended', () => {
   test.describe('JavaScript Bundle Optimization', () => {
     test('should maintain reasonable JavaScript bundle sizes', async ({ page }) => {
       const jsBundles: Array<{ url: string; size: number }> = [];

@@ -3,6 +3,8 @@
  * Provides comprehensive error states, validation, and user feedback
  */
 
+import { logger } from '../../utils/logger';
+
 // TypeScript interfaces
 interface ErrorInfo {
   type: 'javascript' | 'promise' | 'network' | 'resource' | 'validation' | 'form';
@@ -557,7 +559,7 @@ export class ErrorHandlingSystem {
 
 // Initialize error handling system
 export function initErrorHandlingSystem(): ErrorHandlingSystem {
-  console.log('🚀 Initializing ErrorHandlingSystem...');
+  logger.debug('Initializing ErrorHandlingSystem...');
   return new ErrorHandlingSystem();
 }
 

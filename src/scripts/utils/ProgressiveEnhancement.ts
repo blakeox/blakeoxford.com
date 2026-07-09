@@ -3,6 +3,8 @@
  * Ensures functionality works without JavaScript and enhances when available
  */
 
+import { logger } from '../../utils/logger';
+
 interface EnhancementConfig {
   enableForms?: boolean;
   enableNavigation?: boolean;
@@ -86,7 +88,7 @@ export class ProgressiveEnhancement {
     if (this.config.enableAccessibility) this.setupAccessibilityEnhancements();
     if (this.config.enablePerformance) this.setupPerformanceEnhancements();
     
-    console.log('🚀 ProgressiveEnhancement initialized with features:', this.featureDetection);
+    logger.debug('ProgressiveEnhancement initialized with features:', this.featureDetection);
   }
 
   private enhanceForms(): void {
@@ -399,7 +401,7 @@ export class ProgressiveEnhancement {
 
 // Initialize progressive enhancement
 export function initProgressiveEnhancement(config?: EnhancementConfig): ProgressiveEnhancement {
-  console.log('🚀 Initializing ProgressiveEnhancement...');
+  logger.debug('Initializing ProgressiveEnhancement...');
   return new ProgressiveEnhancement(config);
 }
 
