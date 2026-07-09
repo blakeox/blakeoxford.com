@@ -33,6 +33,7 @@ function withExternalMetadata(link: { href: string; label: string }): NavLink {
 }
 
 const navLinks: NavLink[] = navJson.links.map(withExternalMetadata);
+const navQuickLinks: NavLink[] = (navJson.quickLinks ?? []).map(withExternalMetadata);
 
 export default navLinks;
 
@@ -40,6 +41,10 @@ export const navConfig: NavConfig = {
   links: navLinks,
   socialLinks: (navJson.socialLinks ?? []).map(withExternalMetadata),
 };
+
+export function getNavQuickLinks(): NavLink[] {
+  return navQuickLinks;
+}
 
 export function getNavLinkByHref(href: string): NavLink | undefined {
   return navLinks.find((link) => link.href === href);

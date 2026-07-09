@@ -1,7 +1,7 @@
 /**
  * Search index entries derived from navLinks — single source for page search results.
  */
-import navLinks from './navLinks';
+import navLinks, { getNavQuickLinks } from './navLinks';
 
 export type NavSearchPage = {
   type: 'page';
@@ -49,4 +49,24 @@ export function getNavSearchPages(): NavSearchPage[] {
       tags: meta.tags,
     };
   });
+}
+
+function toNavSearchPage(link: { href: string; label: string }): NavSearchPage {
+  const meta = PAGE_SEARCH_META[link.href] ?? {
+    description: link.label,
+    tags: [link.label.toLowerCase()],
+  };
+
+  return {
+    type: 'page',
+    title: link.label,
+    description: meta.description,
+    href: link.href,
+    tags: meta.tags,
+  };
+}
+
+/** Command Center quick links — sourced from nav.json `quickLinks`. */
+export function getNavQuickSearchPages(): NavSearchPage[] {
+  return getNavQuickLinks().map(toNavSearchPage);
 }

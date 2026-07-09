@@ -2,10 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import navLinks, { navConfig } from '../../src/config/navLinks';
+import navLinks, { getNavQuickLinks, navConfig } from '../../src/config/navLinks';
+import { getNavQuickSearchPages } from '../../src/config/navSearchPages';
 
 type NavJson = {
   links: Array<{ href: string; label: string }>;
+  quickLinks?: Array<{ href: string; label: string }>;
   socialLinks?: Array<{ href: string; label: string }>;
 };
 
@@ -23,6 +25,13 @@ describe('navLinks derived from nav.json', () => {
 
   it('loads primary links from nav.json', () => {
     expect(normalizeLinks(navLinks)).toEqual(normalizeLinks(navJson.links));
+  });
+
+  it('loads quick links from nav.json', () => {
+    expect(normalizeLinks(getNavQuickLinks())).toEqual(normalizeLinks(navJson.quickLinks ?? []));
+    expect(
+      getNavQuickSearchPages().map((page) => ({ href: page.href, label: page.title })),
+    ).toEqual(normalizeLinks(navJson.quickLinks ?? []));
   });
 
   it('applies external metadata to social links from nav.json', () => {
