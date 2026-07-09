@@ -3,10 +3,10 @@ import { describe, it, expect, vi } from 'vitest';
 // Mock astro:content to provide sample projects
 const mockProjects = [
   {
-    slug: 'enterprise-digital-transformation',
+    slug: 'microsoft-fabric',
     data: {
-      title: 'Enterprise Digital Transformation',
-      date: new Date('2024-01-01'),
+      title: 'Microsoft Fabric',
+      date: new Date('2025-01-01'),
       draft: false,
       image: '/assets/images/project1.png',
     },
