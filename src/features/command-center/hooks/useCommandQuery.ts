@@ -79,9 +79,7 @@ export function useCommandQuery(isOpen: boolean) {
       if (!searchQuery.trim() && result.source === 'browse') {
         const featured = items.filter((item) => item.kind === 'project' && item.featured).slice(0, 3);
         const recent = items.filter((item) => item.kind === 'blog').slice(0, 3);
-        const quickHrefs = new Set(getNavQuickSearchPages().map((page) => page.href));
-        const quick = items.filter((item) => item.kind === 'page' && quickHrefs.has(item.href));
-        setGroups(buildBrowseGroups(featured, recent, quick.length ? quick : items.filter((i) => i.kind === 'page').slice(0, 3)));
+        setGroups(buildBrowseGroups(featured, recent, toQuickCommandItems()));
       } else {
         const enriched = enrichCommandItems(items, searchQuery);
         setGroups(groupCommandItems(enriched, searchCategory));
