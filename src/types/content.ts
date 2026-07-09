@@ -13,7 +13,7 @@ import type { CollectionEntry } from 'astro:content';
  * Blog post from content collection
  * Represents a complete blog post with all metadata
  */
-export type BlogPost = CollectionEntry<'projects'>;
+export type BlogPost = CollectionEntry<'blog'>;
 
 /**
  * Project from content collection

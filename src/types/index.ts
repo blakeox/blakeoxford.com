@@ -20,47 +20,6 @@ export * from './components';
 export * from './api';
 
 // ============================================================================
-// Legacy Types (Kept for backward compatibility)
-// ============================================================================
-// NOTE: These types are deprecated but kept for backward compatibility.
-// All new code should use types from './content' and 'astro:content' instead.
-// Migration status: Most usages have been migrated. Remaining usages are
-// in legacy components that will be updated incrementally.
-
-/**
- * @deprecated Use CollectionEntry<'projects'> from 'astro:content' instead
- * @see src/types/content.ts for the new type system
- */
-export interface ProjectData {
-  slug: string;
-  data: {
-    title: string;
-    description: string;
-    date: Date;
-    tags: string[];
-    image?: string;
-    link?: string;
-    draft: boolean;
-  };
-}
-
-/**
- * @deprecated Use CollectionEntry<'blog'> from 'astro:content' instead
- * @see src/types/content.ts for the new type system
- */
-export interface BlogPost {
-  slug: string;
-  data: {
-    title: string;
-    description?: string;
-    pubDate: Date;
-    author?: string;
-    tags?: string[];
-    draft?: boolean;
-  };
-}
-
-// ============================================================================
 // Utility Types (Kept for general use)
 // ============================================================================
 

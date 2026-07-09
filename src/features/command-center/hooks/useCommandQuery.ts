@@ -8,7 +8,7 @@ import { enrichCommandItems } from '../lib/rankResults';
 import { parseCommandQuery } from '../lib/parseQuery';
 import { commandCenterEvents } from '../lib/analytics';
 import type { CommandGroup } from '../types';
-import { getNavSearchPages } from '../../../config/navSearchPages';
+import { getNavQuickSearchPages } from '../../../config/navSearchPages';
 
 const DEBOUNCE_MS = 150;
 const LOADING_DELAY_MS = 150;
@@ -19,24 +19,23 @@ function sourceFromResult(source: Awaited<ReturnType<typeof runSearch>>['source'
   return 'local';
 }
 
-function buildDefaultBrowse(): CommandGroup[] {
-  const pages = getNavSearchPages();
-  const quickLinks = pages
-    .filter((page) => ['/contact/', '/projects/', '/blog/'].includes(page.href))
-    .map((page) =>
-      toCommandItem(
-        {
-          type: 'page',
-          title: page.title,
-          description: page.description,
-          href: page.href,
-          tags: page.tags,
-        },
-        'curated',
-      ),
-    );
+function toQuickCommandItems() {
+  return getNavQuickSearchPages().map((page) =>
+    toCommandItem(
+      {
+        type: 'page',
+        title: page.title,
+        description: page.description,
+        href: page.href,
+        tags: page.tags,
+      },
+      'curated',
+    ),
+  );
+}
 
-  return buildBrowseGroups([], [], quickLinks);
+function buildDefaultBrowse(): CommandGroup[] {
+  return buildBrowseGroups([], [], toQuickCommandItems());
 }
 
 export function useCommandQuery(isOpen: boolean) {
@@ -80,8 +79,7 @@ export function useCommandQuery(isOpen: boolean) {
       if (!searchQuery.trim() && result.source === 'browse') {
         const featured = items.filter((item) => item.kind === 'project' && item.featured).slice(0, 3);
         const recent = items.filter((item) => item.kind === 'blog').slice(0, 3);
-        const quick = items.filter((item) => item.kind === 'page' && ['/contact/', '/projects/', '/blog/'].includes(item.href));
-        setGroups(buildBrowseGroups(featured, recent, quick.length ? quick : items.filter((i) => i.kind === 'page').slice(0, 3)));
+        setGroups(buildBrowseGroups(featured, recent, toQuickCommandItems()));
       } else {
         const enriched = enrichCommandItems(items, searchQuery);
         setGroups(groupCommandItems(enriched, searchCategory));
