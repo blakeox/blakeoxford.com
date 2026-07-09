@@ -67,10 +67,7 @@ Received: false
 // Overlay element doesn't exist in DOM
 ```
 
-**Files Affected**:
-- `search-debug.spec.ts`
-- `search-diagnostic.spec.ts`
-- `search-manual.spec.ts`
+**Files Affected** (historical — debug specs removed; see `navigation-search.journey.spec.ts`):
 - `essential-functionality.spec.ts` (search test)
 - `navigation-search.journey.spec.ts`
 
