@@ -5,7 +5,7 @@ import { preparePage, snapshotRoute } from './_visualHelper';
 // Tags: @visual-dark @visual-content (Linux CI baselines differ; run via audit:visual-dark or comprehensive CI)
 const darkRoutes = ['/', '/about/', '/projects/', '/blog/', '/contact/'];
 
-test.describe('@visual-dark @visual-content Dark Mode Visual Regression', () => {
+test.describe('@extended @visual-dark @visual-content Dark Mode Visual Regression', () => {
   test.beforeEach(async ({ page }) => {
     await preparePage(page, 'dark');
   });

@@ -6,6 +6,7 @@
 import { getDynamicModuleLoader } from './DynamicModuleLoader';
 import { getFeatureBundleManager } from './FeatureBundleManager';
 import { getPerformanceObserverManager } from './PerformanceObserverManager';
+import { logger, perfLogger } from './logger';
 
 export interface PerformanceMetrics {
   // Loading metrics
@@ -278,36 +279,35 @@ export class PerformanceMonitor {
   logPerformanceReport(): void {
     const report = this.generateOptimizationReport();
 
-    console.group('📊 Bundle Optimization Performance Report');
-    console.log('🕐 Timestamp:', report.timestamp);
-    console.log('🌐 Page:', report.pageUrl);
+    logger.group('📊 Bundle Optimization Performance Report', () => {
+      logger.debug('Timestamp:', report.timestamp);
+      logger.debug('Page:', report.pageUrl);
 
-    console.group('📈 Metrics');
-    console.log(`⚡ Total Bundle Load Time: ${report.metrics.totalBundleLoadTime.toFixed(2)}ms`);
-    console.log(`🔄 Average Module Load Time: ${report.metrics.averageModuleLoadTime.toFixed(2)}ms`);
-    console.log(`📦 Bundles Loaded: ${report.metrics.bundlesLoaded}`);
-    console.log(`🧩 Modules Loaded: ${report.metrics.modulesLoaded}`);
-    console.log(`💾 Size Savings: ${(report.metrics.sizeSavings / 1024).toFixed(2)} KB`);
-    console.log(`🎯 Cache Hit Rate: ${report.metrics.cacheHitRate.toFixed(1)}%`);
-    console.log(`❌ Error Rate: ${report.metrics.errorRate.toFixed(1)}%`);
-    console.groupEnd();
-
-    if (report.bundleBreakdown.length > 0) {
-      console.group('📋 Bundle Breakdown');
-      report.bundleBreakdown.forEach(bundle => {
-        const status = bundle.success ? '✅' : '❌';
-        console.log(`${status} ${bundle.bundleName}: ${bundle.loadTime.toFixed(2)}ms (${bundle.moduleCount} modules)`);
+      logger.group('📈 Metrics', () => {
+        logger.debug(`Total Bundle Load Time: ${report.metrics.totalBundleLoadTime.toFixed(2)}ms`);
+        logger.debug(`Average Module Load Time: ${report.metrics.averageModuleLoadTime.toFixed(2)}ms`);
+        logger.debug(`Bundles Loaded: ${report.metrics.bundlesLoaded}`);
+        logger.debug(`Modules Loaded: ${report.metrics.modulesLoaded}`);
+        logger.debug(`Size Savings: ${(report.metrics.sizeSavings / 1024).toFixed(2)} KB`);
+        logger.debug(`Cache Hit Rate: ${report.metrics.cacheHitRate.toFixed(1)}%`);
+        logger.debug(`Error Rate: ${report.metrics.errorRate.toFixed(1)}%`);
       });
-      console.groupEnd();
-    }
 
-    if (report.recommendations.length > 0) {
-      console.group('💡 Recommendations');
-      report.recommendations.forEach(rec => console.log(`• ${rec}`));
-      console.groupEnd();
-    }
+      if (report.bundleBreakdown.length > 0) {
+        logger.group('📋 Bundle Breakdown', () => {
+          report.bundleBreakdown.forEach(bundle => {
+            const status = bundle.success ? '✅' : '❌';
+            logger.debug(`${status} ${bundle.bundleName}: ${bundle.loadTime.toFixed(2)}ms (${bundle.moduleCount} modules)`);
+          });
+        });
+      }
 
-    console.groupEnd();
+      if (report.recommendations.length > 0) {
+        logger.group('💡 Recommendations', () => {
+          report.recommendations.forEach(rec => logger.debug(`• ${rec}`));
+        });
+      }
+    });
   }
 
   /**
@@ -322,7 +322,9 @@ export class PerformanceMonitor {
    * Start monitoring session
    */
   startMonitoring(): void {
-    console.log('🔍 Performance monitoring started');
+    if (!import.meta.env.DEV) return;
+
+    perfLogger.metric('monitoring_started', 1, '');
 
     // Log report after 5 seconds
     setTimeout(() => this.logPerformanceReport(), 5000);
@@ -355,8 +357,8 @@ export function getPerformanceMonitor(): PerformanceMonitor {
   return globalMonitor || initPerformanceMonitor();
 }
 
-// Auto-initialize and start monitoring
-if (typeof document !== 'undefined') {
+// Auto-initialize in development only; production callers can use initPerformanceMonitor()
+if (typeof document !== 'undefined' && import.meta.env.DEV) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       const monitor = initPerformanceMonitor();

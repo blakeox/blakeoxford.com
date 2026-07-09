@@ -5,6 +5,7 @@
 
 import type { FocusTrap } from '../../types/core';
 import type { DropdownConfig, DropdownState } from '../../types/dropdown';
+import { logger } from '../../utils/logger';
 
 export class DropdownManager {
   private dropdowns: Map<HTMLElement, DropdownState> = new Map();
@@ -17,7 +18,8 @@ export class DropdownManager {
     menuSelector: 'ul[role="menu"]',
     autoClose: true,
     keyboardNavigation: true,
-    enabled: true
+    enabled: true,
+    debug: false,
   }) {
     this.config = config;
     this.init();
@@ -46,7 +48,9 @@ export class DropdownManager {
       this.setupDropdownEventHandlers(state);
     });
 
-    console.log(`🎯 DropdownManager: Setup ${this.dropdowns.size} dropdowns`);
+    if (this.config.debug) {
+      logger.debug(`DropdownManager: Setup ${this.dropdowns.size} dropdowns`);
+    }
   }
 
   private setupDropdownEventHandlers(state: DropdownState): void {
@@ -300,7 +304,9 @@ export class DropdownManager {
 
 // Initialize dropdown manager
 export function initDropdownManager(config?: DropdownConfig): DropdownManager {
-  console.log('🚀 Initializing DropdownManager...');
+  if (config?.debug) {
+    logger.debug('Initializing DropdownManager...');
+  }
   return new DropdownManager(config);
 }
 

@@ -7,6 +7,7 @@ import { initSecurityMonitor } from '../../utils/SecurityMonitor';
 import { initAdvancedPerformanceMonitor } from '../../utils/AdvancedPerformanceMonitor';
 import { initMonitoringDashboard } from '../../utils/MonitoringDashboard';
 import { initPerformanceMonitor } from '../../utils/PerformanceMonitor';
+import { logger } from '../../utils/logger';
 
 export interface MonitoringSystemConfig {
   enabled: boolean;
@@ -128,7 +129,7 @@ export class MonitoringSystem {
     
     try {
       if (this.config.debug) {
-        console.log('🔍 Initializing Advanced Monitoring System...');
+        logger.debug('Initializing Advanced Monitoring System...');
       }
       
       // Initialize base performance monitor (always enabled)
@@ -148,7 +149,7 @@ export class MonitoringSystem {
         });
         
         if (this.config.debug) {
-          console.log('🔒 Security monitoring initialized');
+          logger.debug('Security monitoring initialized');
         }
       }
       
@@ -168,7 +169,7 @@ export class MonitoringSystem {
         });
         
         if (this.config.debug) {
-          console.log('📈 Advanced performance monitoring initialized');
+          logger.debug('Advanced performance monitoring initialized');
         }
       }
       
@@ -186,7 +187,7 @@ export class MonitoringSystem {
         });
         
         if (this.config.debug) {
-          console.log(`📊 Monitoring dashboard initialized - Press ${this.config.dashboard.hotkey} to toggle`);
+          logger.debug(`Monitoring dashboard initialized - Press ${this.config.dashboard.hotkey} to toggle`);
         }
         
         // Auto-show dashboard in development
@@ -209,7 +210,7 @@ export class MonitoringSystem {
       this.initialized = true;
       
       if (this.config.debug) {
-        console.log('✅ Advanced Monitoring System fully initialized');
+        logger.debug('Advanced Monitoring System fully initialized');
         this.logSystemStatus();
       }
       
@@ -404,15 +405,15 @@ export class MonitoringSystem {
   private logSystemStatus(): void {
     if (!this.config.debug) return;
     
-    console.group('🔍 Monitoring System Status');
-    console.log('Environment:', this.config.environment);
-    console.log('Sampling Rates:', this.config.sampling);
-    console.log('Active Features:', Object.entries(this.config.features)
-      .filter(([, enabled]) => enabled)
-      .map(([feature]) => feature));
-    console.log('Dashboard Hotkey:', this.config.dashboard.hotkey);
-    console.log('Debug Mode:', this.config.debug);
-    console.groupEnd();
+    logger.group('Monitoring System Status', () => {
+      logger.debug('Environment:', this.config.environment);
+      logger.debug('Sampling Rates:', this.config.sampling);
+      logger.debug('Active Features:', Object.entries(this.config.features)
+        .filter(([, enabled]) => enabled)
+        .map(([feature]) => feature));
+      logger.debug('Dashboard Hotkey:', this.config.dashboard.hotkey);
+      logger.debug('Debug Mode:', this.config.debug);
+    });
   }
   
   /**
@@ -474,7 +475,9 @@ export class MonitoringSystem {
   shutdown(): void {
     if (!this.initialized) return;
     
-    console.log('🔻 Shutting down monitoring system...');
+    if (this.config.debug) {
+      logger.debug('Shutting down monitoring system...');
+    }
     
     // Clean up monitors
     Object.values(this.monitors).forEach(monitor => {
@@ -484,7 +487,9 @@ export class MonitoringSystem {
     });
     
     this.initialized = false;
-    console.log('✅ Monitoring system shutdown complete');
+    if (this.config.debug) {
+      logger.debug('Monitoring system shutdown complete');
+    }
   }
 }
 

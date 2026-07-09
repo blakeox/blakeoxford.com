@@ -3,6 +3,8 @@
  * Provides typed no-op methods so the monitoring system can operate safely.
  */
 
+import { logger } from './logger';
+
 export interface SecurityMonitorConfig {
   enabled: boolean;
   debugMode?: boolean;
@@ -36,7 +38,7 @@ class SecurityMonitor {
 
   shutdown(): void {
     if (this.config.debugMode) {
-      console.log('[SecurityMonitor] shutdown');
+      logger.debug('[SecurityMonitor] shutdown');
     }
   }
 }

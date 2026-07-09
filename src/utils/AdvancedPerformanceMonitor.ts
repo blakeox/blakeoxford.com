@@ -4,6 +4,7 @@
  */
 
 import { getPerformanceMonitor } from './PerformanceMonitor';
+import { logger } from './logger';
 
 export interface AdvancedPerformanceMetrics {
   // Memory metrics
@@ -147,7 +148,7 @@ export class AdvancedPerformanceMonitor {
       },
       realUserMonitoring: true,
       automaticReporting: false,
-      debugMode: true,
+      debugMode: import.meta.env.DEV,
       ...config
     };
 
@@ -177,7 +178,7 @@ export class AdvancedPerformanceMonitor {
     this.setupPerformanceAlerts();
 
     if (this.config.debugMode) {
-      console.log('📈 Advanced performance monitoring initialized');
+      logger.debug('Advanced performance monitoring initialized');
     }
   }
 
@@ -664,18 +665,18 @@ export class AdvancedPerformanceMonitor {
    */
   startAdvancedMonitoring(): void {
     if (this.config.debugMode) {
-      console.log('📈 Advanced performance monitoring started');
+      logger.debug('Advanced performance monitoring started');
 
       // Log advanced report every 2 minutes in debug mode
       setInterval(() => {
-        console.group('📈 Advanced Performance Report');
-        const report = this.generateAdvancedReport();
-        console.log('Advanced Metrics:', report.advancedMetrics);
-        console.log('Recent Alerts:', report.alerts.slice(-3));
-        if (report.recommendations.length > 0) {
-          console.log('Recommendations:', report.recommendations);
-        }
-        console.groupEnd();
+        logger.group('Advanced Performance Report', () => {
+          const report = this.generateAdvancedReport();
+          logger.debug('Advanced Metrics:', report.advancedMetrics);
+          logger.debug('Recent Alerts:', report.alerts.slice(-3));
+          if (report.recommendations.length > 0) {
+            logger.debug('Recommendations:', report.recommendations);
+          }
+        });
       }, 2 * 60 * 1000);
     }
   }
@@ -698,8 +699,8 @@ export function getAdvancedPerformanceMonitor(): AdvancedPerformanceMonitor {
   return globalAdvancedMonitor;
 }
 
-// Auto-initialize advanced monitoring
-if (typeof document !== 'undefined') {
+// Auto-initialize advanced monitoring in development only
+if (typeof document !== 'undefined' && import.meta.env.DEV) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       const monitor = initAdvancedPerformanceMonitor();

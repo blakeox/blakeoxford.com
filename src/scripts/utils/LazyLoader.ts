@@ -3,6 +3,8 @@
  * Progressive Enhancement System for loading JavaScript bundles on demand
  */
 
+import { logger } from '../../utils/logger';
+
 export interface LazyLoaderConfig {
   basePath?: string;
   enableLogging?: boolean;
@@ -25,7 +27,7 @@ export class LazyBundleLoader {
   constructor(config: LazyLoaderConfig = {}) {
     this.config = {
       basePath: '/assets/js/',
-      enableLogging: true,
+      enableLogging: import.meta.env.DEV,
       retryAttempts: 3,
       retryDelay: 1000,
       ...config
@@ -241,7 +243,7 @@ export class LazyBundleLoader {
    */
   private log(message: string, ...args: unknown[]): void {
     if (this.config.enableLogging) {
-      console.log(`[LazyLoader] ${message}`, ...args);
+      logger.debug(`[LazyLoader] ${message}`, ...args);
     }
   }
 }

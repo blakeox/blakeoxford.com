@@ -5,7 +5,7 @@ import { preparePage, snapshotRoute } from './_visualHelper';
 // Tags: @visual-essential @visual-app
 const appRoutes = ['/contact/'];
 
-test.describe('@visual-essential @visual-app App Visual Regression', () => {
+test.describe('@extended @visual-app App Visual Regression', () => {
   test.beforeEach(async ({ page }) => { await preparePage(page); });
   for (const route of appRoutes) {
     test(`app visual ${route}`, async ({ page }) => {

@@ -5,7 +5,7 @@ import { preparePage, snapshotRoute } from './_visualHelper';
 // Tags: @visual-essential @visual-content
 const contentRoutes = ['/', '/about/', '/projects/', '/blog/'];
 
-test.describe('@visual-essential @visual-content Content Visual Regression', () => {
+test.describe('@extended @visual-content Content Visual Regression', () => {
   test.beforeEach(async ({ page }) => { await preparePage(page); });
   for (const route of contentRoutes) {
     test(`content visual ${route}`, async ({ page }) => {

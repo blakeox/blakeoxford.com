@@ -3,6 +3,8 @@
  * Provides scroll effects and behaviors for navigation and page transitions
  */
 
+import { logger } from '../../utils/logger';
+
 interface ScrollContext {
   ticking?: boolean;
   updateNavbarOnScroll?: () => void;
@@ -409,7 +411,7 @@ export class ScrollEffects {
 
 // Initialize scroll effects
 export function initScrollEffects(options?: ScrollBehaviorOptions): ScrollEffects {
-  console.log('🚀 Initializing ScrollEffects...');
+  logger.debug('Initializing ScrollEffects...');
   return new ScrollEffects(options);
 }
 

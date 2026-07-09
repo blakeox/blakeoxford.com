@@ -16,6 +16,7 @@ import type {
 } from '../../types/analytics';
 import type { ModuleInitializer } from '../../types/core';
 import { ConfigManager } from '../../config/app-config';
+import { analyticsLogger } from '../../utils/logger';
 
 export class Analytics implements ModuleInitializer<AnalyticsConfig> {
   private static instance: Analytics;
@@ -59,7 +60,7 @@ export class Analytics implements ModuleInitializer<AnalyticsConfig> {
     
     if (!this.shouldTrack()) {
       if (this.config.debug) {
-        console.log('🚫 Analytics tracking disabled');
+        analyticsLogger.track('tracking_disabled');
       }
       return;
     }
@@ -69,7 +70,7 @@ export class Analytics implements ModuleInitializer<AnalyticsConfig> {
     this.isInitialized = true;
     
     if (this.config.debug) {
-      console.log('📊 Analytics initialized', this.config);
+      analyticsLogger.track('initialized', { config: this.config });
     }
   }
   
@@ -111,7 +112,7 @@ export class Analytics implements ModuleInitializer<AnalyticsConfig> {
     this.sendToProviders(trackingEvent);
     
     if (this.config.debug) {
-      console.log('📊 Event tracked:', trackingEvent);
+      analyticsLogger.track('event', trackingEvent as unknown as Record<string, unknown>);
     }
   }
   
@@ -299,7 +300,7 @@ export class Analytics implements ModuleInitializer<AnalyticsConfig> {
     this.performanceMetrics.push(metric);
     
     if (this.config.debug) {
-      console.log('⚡ Performance metric:', metric);
+      analyticsLogger.track('performance_metric', metric as unknown as Record<string, unknown>);
     }
   }
   
