@@ -1,7 +1,7 @@
 // Centralized configuration for visual snapshot tolerances and masks.
 // This file is Playwright-agnostic to allow simple unit testing.
 
-export type DiffCfg = { maxDiffPixelRatio?: number; maxDiffPixels?: number };
+export type DiffCfg = { maxDiffPixelRatio?: number; maxDiffPixels?: number; threshold?: number };
 export type RouteCfg = { mask?: string[]; diff?: DiffCfg; fullPage?: boolean };
 
 export const VISUAL_ROUTE_CONFIG: Record<string, RouteCfg> = {
@@ -18,3 +18,6 @@ export const VISUAL_ROUTE_CONFIG: Record<string, RouteCfg> = {
 
 // Guardrails for acceptable tolerance ranges
 export const MAX_ALLOWED_TOLERANCE = 0.03; // do not exceed 3%
+
+/** Nav component baselines: text-heavy; allow Linux/macOS font raster variance. */
+export const NAV_COMPONENT_DIFF: DiffCfg = { maxDiffPixelRatio: MAX_ALLOWED_TOLERANCE, threshold: 0.02 };

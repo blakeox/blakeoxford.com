@@ -348,6 +348,7 @@ jobs:
         run: pnpm exec playwright test --grep="@essential" --project=firefox --project=webkit
         env:
           COMPREHENSIVE_TESTS: "false"
+          PLAYWRIGHT_OPTIONAL_BROWSERS: "true"
 
       - name: Track flakiness (Playwright JSON)
         if: always()

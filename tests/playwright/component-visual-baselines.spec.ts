@@ -19,9 +19,8 @@ const NAV_BASELINE_KEYS = [
 ] as const satisfies readonly ComponentVisualBaselineKey[];
 
 async function capturePreview(page: Page, route: string, name: string) {
-  await page.goto(route);
+  await page.goto(route, { waitUntil: 'load' });
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.waitForLoadState('load');
   await page.evaluate(async () => {
     try {
       if (document.fonts && 'ready' in document.fonts) {
@@ -40,11 +39,11 @@ async function capturePreview(page: Page, route: string, name: string) {
 
 test.describe('Component Visual Baselines @visual-essential @visual @visual-components', () => {
   test('nav preview', async ({ page }) => {
-    await capturePreview(page, '/components/nav-preview', 'nav');
+    await capturePreview(page, '/components/nav-preview/', 'nav');
   });
 
   test('project card preview', async ({ page }) => {
-    await capturePreview(page, '/components/project-card-preview', 'project-card');
+    await capturePreview(page, '/components/project-card-preview/', 'project-card');
   });
 
   for (const key of NAV_BASELINE_KEYS) {
