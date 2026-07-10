@@ -11,31 +11,17 @@ test.describe('@essential @theme Dark mode behavior', () => {
     });
     await waitForTheme(page, 'light', 10000);
 
-    const getTokenBg = async () =>
-      page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim());
+    const getPageBackground = async () =>
+      page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
 
-    const getProbedBg = async () =>
-      page.evaluate(() => {
-        const probe = document.createElement('div');
-        probe.style.cssText =
-          'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;background:var(--color-background)';
-        document.body.appendChild(probe);
-        const color = getComputedStyle(probe).backgroundColor;
-        probe.remove();
-        return color;
-      });
-
-    const initialTokenBg = await getTokenBg();
-    const initialEffectiveBg = await getProbedBg();
-    expect(initialTokenBg.length).toBeGreaterThan(0);
+    const initialBg = await getPageBackground();
+    expect(initialBg.length).toBeGreaterThan(0);
 
     await cycleThemeToResolved(page, 'dark');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect(page.locator('html')).toHaveClass(/dark/);
 
-    const flippedTokenBg = await getTokenBg();
-    const flippedEffectiveBg = await getProbedBg();
-
-    expect(flippedTokenBg).not.toEqual(initialTokenBg);
-    expect(flippedEffectiveBg).not.toEqual(initialEffectiveBg);
+    const flippedBg = await getPageBackground();
+    expect(flippedBg).not.toEqual(initialBg);
   });
 });
