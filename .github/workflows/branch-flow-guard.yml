@@ -34,6 +34,7 @@ jobs:
             const isFeature = /^(feat|feature|fix|bugfix|chore|docs|test|refactor|perf|ci|build|style)\//.test(headLower);
             const isSprint = /^sprint\//.test(headLower);
             const isHotfix = /^hotfix\//.test(headLower);
+            const isCursorAgent = /^cursor\//.test(headLower);
             const isDev = head === 'development';
             const isTesting = head === 'testing';
 
@@ -41,13 +42,13 @@ jobs:
             let rule = '';
 
             // Allowed flows
-            if ((isFeature || isSprint) && toDev) { allowed = true; rule = 'feature/sprint -> development'; }
+            if ((isFeature || isSprint || isCursorAgent) && toDev) { allowed = true; rule = 'feature/sprint/cursor -> development'; }
             else if (isDev && toTesting) { allowed = true; rule = 'development -> testing'; }
             else if (isTesting && toMain) { allowed = true; rule = 'testing -> main'; }
             else if (isHotfix && toMain) { allowed = true; rule = 'hotfix/* -> main'; }
 
             if (!allowed) {
-              core.setFailed(`Invalid branch flow: '${head}' -> '${base}'.\nAllowed flows:\n- feature/* or sprint/* -> development\n- development -> testing\n- testing -> main\n- hotfix/* -> main (then back-merge to development/testing)\n`);
+              core.setFailed(`Invalid branch flow: '${head}' -> '${base}'.\nAllowed flows:\n- feature/*, sprint/*, or cursor/* -> development\n- development -> testing\n- testing -> main\n- hotfix/* -> main (then back-merge to development/testing)\n`);
             } else {
               core.info(`Branch flow OK (${rule}): '${head}' -> '${base}'.`);
             }
