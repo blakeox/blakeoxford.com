@@ -273,9 +273,10 @@ const allTags = getAllTags();
 
     componentCards.forEach((card) => {
       const tags = card.getAttribute('data-component-tags') || '';
+      const tagList = tags ? tags.split(',') : [];
       const text = card.textContent?.toLowerCase() || '';
       const matchesSearch = text.includes(searchTerm);
-      const matchesTag = currentTag === 'all' || tags.includes(currentTag);
+      const matchesTag = currentTag === 'all' || tagList.includes(currentTag);
 
       if (matchesSearch && matchesTag) {
         (card as HTMLElement).style.display = 'block';

@@ -25,12 +25,14 @@ export interface NavConfig {
 }
 
 function withExternalMetadata(link: { href: string; label: string; icon?: string }): NavLink {
-  const external = /^https?:\/\//.test(link.href) || link.href.startsWith('mailto:');
+  const isHttp = /^https?:\/\//.test(link.href);
+  const external = isHttp || link.href.startsWith('mailto:');
   return {
     href: link.href,
     label: link.label,
     ...(link.icon ? { icon: link.icon } : {}),
-    ...(external ? { external: true, target: '_blank' as const } : {}),
+    ...(external ? { external: true } : {}),
+    ...(isHttp ? { target: '_blank' as const } : {}),
   };
 }
 
