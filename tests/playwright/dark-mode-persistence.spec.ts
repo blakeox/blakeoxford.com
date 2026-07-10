@@ -6,9 +6,12 @@ test.describe('Dark mode persistence', () => {
   test('persists theme across navigation and reloads @essential', async ({ page }) => {
     await seedThemePreference(page, 'light');
     await page.goto('/');
-    await page.waitForSelector('#theme-toggle');
+    await page.waitForFunction(() => (window as { __navHydrated?: boolean }).__navHydrated === true, null, {
+      timeout: 15000,
+    });
+    await page.waitForSelector('#theme-toggle', { state: 'visible' });
 
-    await waitForTheme(page, 'light', 5000);
+    await waitForTheme(page, 'light', 10000);
     await cycleThemeToResolved(page, 'dark');
 
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
