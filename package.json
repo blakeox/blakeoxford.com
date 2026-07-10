@@ -21,6 +21,7 @@
     "generate:search-index": "node scripts/content/generate-search-index.js",
     "vectorize:index": "node scripts/vectorize-content.mjs",
     "optimize:images": "node scripts/optimization/optimize-images-advanced.js",
+    "optimize:advanced": "node scripts/optimization/optimize-images-advanced.js",
     "edge:deploy": "corepack pnpm exec wrangler deploy functions/edge-computing.js",
     "deploy:worker": "corepack pnpm exec wrangler deploy",
     "deploy:worker:latest": "corepack pnpm dlx wrangler@latest deploy",
