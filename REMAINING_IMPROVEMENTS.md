@@ -58,7 +58,7 @@
 
 **Files to Review:**
 - `src/components/islands/NavBarIsland.tsx` (27 ARIA attributes)
-- `src/components/ui/PhotoCarousel.astro` (14 ARIA attributes)
+- `src/components/composites/PhotoCarousel.astro` (14 ARIA attributes)
 - `src/components/features/contact/ContactChannels.astro` (8 ARIA attributes)
 - All icon components
 

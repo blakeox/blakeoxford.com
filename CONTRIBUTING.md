@@ -283,6 +283,28 @@ Before requesting review:
 - Treat environment variables as sensitive (no logging secrets).
 - Validate user input in edge functions (anti-abuse, rate limit, Turnstile if sensitive).
 
+## Production deploy (Cloudflare Workers)
+
+Pushes to `main` trigger `.github/workflows/deploy-worker.yml`, which runs `pnpm build` and `wrangler deploy`.
+
+If **Deploy Worker** fails with `Invalid access token [code: 9109]` or `Authentication error [code: 10000]`, rotate GitHub credentials:
+
+```bash
+# Preferred: dedicated API token (Cloudflare dashboard → Edit Cloudflare Workers)
+CLOUDFLARE_API_TOKEN='your-token' ./scripts/setup/github-cloudflare-deploy.sh
+
+# Quick bootstrap from local wrangler login (rotate to a dedicated token later)
+./scripts/setup/github-cloudflare-deploy.sh --from-wrangler
+```
+
+Then re-run deploy:
+
+```bash
+gh workflow run deploy-worker.yml
+```
+
+Cloudflare Git integration may also build on push; the GitHub Action is the explicit Wrangler deploy path when `CLOUDFLARE_API_TOKEN` is configured. See `.github/instructions/cloudflare.instructions.md` for Worker bindings and secrets.
+
 ## Release Cadence
 
 - Tag stable architecture milestones (e.g., `v2-quality-foundation`).
