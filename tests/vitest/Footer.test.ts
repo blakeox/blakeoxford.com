@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { describe, it, expect, beforeAll } from 'vitest';
+import navJson from '../../src/content/navigation/nav.json';
 
 // ESM __dirname shim
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -22,9 +23,24 @@ describe('Footer.astro file', () => {
     expect(content).toContain('aria-label="Footer Quick Links"');
   });
 
-  it('should include LinkedIn and GitHub social links', () => {
-    expect(content).toContain('href="https://linkedin.com/in/blake-oxford"');
-    expect(content).toContain('href="https://github.com/blakeox"');
+  it('should source quick links and social links from nav.json via navLinks', () => {
+    expect(content).toContain('getNavQuickLinks()');
+    expect(content).toContain('navConfig.socialLinks');
+
+    const linkedin = navJson.socialLinks?.find((link) => link.icon === 'linkedin');
+    const github = navJson.socialLinks?.find((link) => link.icon === 'github');
+    const email = navJson.socialLinks?.find((link) => link.icon === 'email');
+
+    expect(linkedin?.href).toContain('linkedin.com');
+    expect(github?.href).toContain('github.com/blakeox');
+    expect(email?.href).toMatch(/^mailto:/);
+  });
+
+  it('should render footer quick links from nav.json', () => {
+    for (const link of navJson.quickLinks ?? []) {
+      expect(content).not.toContain(`href="${link.href}"`);
+    }
+    expect(content).toContain('{quickLinks.map((link) =>');
   });
 
   it('should include copyright notice with dynamic year', () => {

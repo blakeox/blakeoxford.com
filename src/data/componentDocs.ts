@@ -1220,7 +1220,7 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'Contact',
     description: 'Contact page hero with title and introductory messaging.',
     filePath: 'src/components/features/contact/ContactHeroSection.astro',
-    examples: [{ title: 'Contact hero', code: '<ContactHeroSection />' }],
+    examples: [{ title: 'Contact hero', code: '<ContactHeroSection content={page.hero} />' }],
     tags: ['contact', 'hero'],
     visualTier: 'expressive',
     tokenDependencies: ['--color-foreground', '--fs-h1'],
