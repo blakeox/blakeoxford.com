@@ -61,12 +61,19 @@
   }
 
   .nav-utility-button {
-    @apply inline-flex size-11 items-center justify-center rounded-full border text-foreground/80 transition-colors;
+    @apply inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-full border text-foreground/80 transition-colors;
 
-    min-height: 2.75rem;
-    min-width: 2.75rem;
     border-color: color-mix(in oklch, var(--border) 62%, transparent);
     background: color-mix(in oklch, var(--surface) 74%, transparent);
+  }
+
+  .nav-utility-button.search-toggle {
+    width: auto;
+  }
+
+  .nav-utility-button.theme-toggle,
+  .nav-utility-button.burger-menu-button {
+    @apply w-11;
   }
 
   .nav-utility-button:hover {
