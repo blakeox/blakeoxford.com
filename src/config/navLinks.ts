@@ -10,6 +10,7 @@ export interface NavLink {
   label: string;
   external?: boolean;
   target?: string;
+  icon?: string;
 }
 
 /** Normalize paths for active-link and aria-current comparisons. */
@@ -23,11 +24,12 @@ export interface NavConfig {
   socialLinks?: NavLink[];
 }
 
-function withExternalMetadata(link: { href: string; label: string }): NavLink {
+function withExternalMetadata(link: { href: string; label: string; icon?: string }): NavLink {
   const external = /^https?:\/\//.test(link.href) || link.href.startsWith('mailto:');
   return {
     href: link.href,
     label: link.label,
+    ...(link.icon ? { icon: link.icon } : {}),
     ...(external ? { external: true, target: '_blank' as const } : {}),
   };
 }

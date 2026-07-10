@@ -19,6 +19,7 @@ const {
  // "url" may be passed in to override canonical; when omitted, compute from Astro.site + Astro.url
  url,
  wide = false,
+ noindex = false,
  keywords = '',
  image, // Optional OG image override
  // structuredData, // Optional additional structured data schemas (unused)
@@ -93,7 +94,7 @@ const mainClasses = baseMainClasses;
  <meta name="author" content="Blake Oxford" />
  <meta name="creator" content="Blake Oxford" />
  <meta name="publisher" content="Blake Oxford" />
- <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+ <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
  <link rel="canonical" href={canonicalUrl} />
 
  <!-- Enhanced Open Graph & Twitter -->
