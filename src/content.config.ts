@@ -63,6 +63,115 @@ const navigationLink = z.object({
   target: z.string().optional(),
 });
 
+const achievementCardSchema = z.object({
+  icon: z.enum(['home', 'chart', 'lightbulb']),
+  title: z.string(),
+  description: z.string(),
+  achievements: z.array(z.string()),
+  achievementIcons: z.array(z.enum(['grid', 'clock', 'users', 'dollar', 'trending'])).optional(),
+});
+
+const timelineItemSchema = z.object({
+  year: z.string(),
+  icon: z.string(),
+  title: z.string(),
+  achievements: z.array(z.string()),
+  color: z.string(),
+});
+
+const socialLinkSchema = z.object({
+  name: z.string(),
+  url: z.string(),
+  icon: z.enum(['linkedin', 'github', 'microsoft-learn']),
+});
+
+const contactChannelSchema = z.object({
+  icon: z.string(),
+  title: z.string(),
+  description: z.string(),
+  href: z.string(),
+  label: z.string(),
+});
+
+// About page content
+const about = defineCollection({
+  loader: glob({ pattern: 'page.json', base: './src/content/about' }),
+  schema: z.object({
+    meta: z.object({
+      title: z.string(),
+      description: z.string(),
+    }),
+    hero: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+      proofPoints: z.array(z.string()),
+    }),
+    achievements: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+      cards: z.array(achievementCardSchema),
+    }),
+    social: z.object({
+      title: z.string(),
+      description: z.string(),
+      links: z.array(socialLinkSchema),
+    }),
+    education: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+      institution: z.string(),
+      degree: z.string(),
+      educationDescription: z.string(),
+      skillsIntro: z.string(),
+      skills: z.array(z.string()),
+    }),
+    timeline: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+      items: z.array(timelineItemSchema),
+    }),
+    closing: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+    }),
+  }),
+});
+
+// Contact page content
+const contact = defineCollection({
+  loader: glob({ pattern: 'page.json', base: './src/content/contact' }),
+  schema: z.object({
+    meta: z.object({
+      title: z.string(),
+      description: z.string(),
+    }),
+    hero: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+      scenarios: z.array(z.string()),
+      primaryCta: z.object({ href: z.string(), label: z.string() }),
+      secondaryCta: z.object({ href: z.string(), label: z.string() }),
+      sidebar: z.object({
+        heading: z.string(),
+        items: z.array(z.string()),
+        note: z.string(),
+      }),
+    }),
+    channels: z.object({
+      heading: z.string(),
+      title: z.string(),
+      description: z.string(),
+      items: z.array(contactChannelSchema),
+    }),
+  }),
+});
+
 // Navigation collection schema
 const navigation = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/navigation' }),
@@ -75,4 +184,4 @@ const navigation = defineCollection({
   }),
 });
 
-export const collections = { blog, projects, navigation };
+export const collections = { blog, projects, about, contact, navigation };

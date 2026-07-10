@@ -8,31 +8,11 @@ import AchievementCard from '../components/features/about/AchievementCard.astro'
 import AboutSocial from '../components/features/about/AboutSocial.astro';
 import Section from '../components/primitives/Section.astro';
 import Grid from '../components/primitives/Grid.astro';
+import { getAboutPage } from '../content/about/getAboutPage';
 import { CANONICAL_URLS } from '../config/constants';
 
-interface SocialLinkData {
-  name: string;
-  url: string;
-  icon: 'linkedin' | 'github' | 'microsoft-learn';
-}
-
-interface TimelineItem {
-  year: string;
-  icon: '🔄' | '☁️' | '💡' | '🤖';
-  title: string;
-  achievements: string[];
-  color: string;
-}
-
-const title = 'About Blake Oxford';
-const description = 'Systems architect and workflow strategist focused on automation, analytics, and durable operational improvement.';
+const page = await getAboutPage();
 const canonicalUrl = CANONICAL_URLS.about;
-
-const socialLinks: SocialLinkData[] = [
-  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/blakeoxford/', icon: 'linkedin' },
-  { name: 'GitHub', url: 'https://github.com/blakeox', icon: 'github' },
-  { name: 'Microsoft Learn', url: 'https://learn.microsoft.com/users/BlakeOxford-1002', icon: 'microsoft-learn' }
-];
 
 const personSchema = {
   '@context': 'https://schema.org',
@@ -40,62 +20,15 @@ const personSchema = {
   'name': 'Blake Oxford',
   'url': 'https://blakeoxford.com',
   'jobTitle': 'Systems Architect',
-  'sameAs': socialLinks.map((link) => link.url),
-  'description': description,
+  'sameAs': page.social.links.map((link) => link.url),
+  'description': page.meta.description,
   'image': '/assets/images/Blake-O-scaled.jpg'
 };
-
-const timelineItems: TimelineItem[] = [
-  {
-    year: '2019',
-    icon: '🔄',
-    title: 'System Integration & Optimization',
-    achievements: [
-      'Streamlined cross-departmental workflows through integration of Sage Intacct and ADP',
-      'Reduced manual data entry by 80% through custom API integrations',
-      'Implemented automated reconciliation processes, reducing month-end close by 3 days'
-    ],
-    color: 'from-accent to-primary'
-  },
-  {
-    year: '2020',
-    icon: '☁️',
-    title: 'Cloud Migration & Digital Transformation',
-    achievements: [
-      'Led Google Workspace to Microsoft 365 migration for 180 staff with zero downtime',
-      'Implemented Sage Intacct and ADP Workforce Now, consolidating 5 legacy systems',
-      'Designed disaster recovery protocols reducing potential data loss window by 90%'
-    ],
-    color: 'from-accent to-primary'
-  },
-  {
-    year: '2023',
-    icon: '💡',
-    title: 'Analytics & Process Innovation',
-    achievements: [
-      'Developed Power BI dashboards for real-time financial forecasting',
-      'Authored SOPs and trained team on AdvancedMD RCM',
-      '$1.2M in unbilled services surfaced via SQL-based reporting suite'
-    ],
-    color: 'from-accent to-primary'
-  },
-  {
-    year: '2024',
-    icon: '🤖',
-    title: 'AI-Powered Compliance & Workflow Enhancement',
-    achievements: [
-      'Developed and launched a real-time Azure OpenAI auditing system for clinical notes, ensuring insurance compliance before submission',
-      'Enabled automated coaching for providers and technicians, improving documentation quality and reducing claim denials',
-      'Integrated AI into daily workflows for tasks like insurance appeals and internal process optimization, saving hours across departments'
-    ],
-    color: 'from-accent to-primary'
-  }
-];
 ---
 
 <Layout
-  title={title}
-  description={description}
+  title={page.meta.title}
+  description={page.meta.description}
   image="/assets/images/Blake-O-scaled.jpg"
   url={canonicalUrl}
   wide={true}
@@ -106,7 +39,7 @@ const timelineItems: TimelineItem[] = [
     <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
   </div>
 
-  <AboutHeroSection />
+  <AboutHeroSection content={page.hero} />
 
   <Section padding="lg" container="lg" class="relative overflow-hidden bg-surface">
     <div class="absolute inset-0 z-0 opacity-5">
@@ -116,47 +49,23 @@ const timelineItems: TimelineItem[] = [
       <div class="grid grid-cols-1 gap-8 lg:gap-12">
         <div>
           <div class="section-intro mb-12">
-            <span class="section-kicker">Selected proof</span>
-            <h2 class="mb-4 text-center font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl">Key achievements</h2>
+            <span class="section-kicker">{page.achievements.kicker}</span>
+            <h2 class="mb-4 text-center font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl">{page.achievements.title}</h2>
             <p class="text-muted-foreground">
-              Representative outcomes across enterprise transformation, analytics, and operational modernization.
+              {page.achievements.description}
             </p>
           </div>
 
           <Grid cols="3" gap="lg">
-            <AchievementCard
-              icon="home"
-              title="Enterprise Transformation"
-              description="Successfully led Google Workspace to Microsoft 365 migration for 180+ staff with zero downtime, integrating 5 legacy systems."
-              achievements={[
-                'Zero downtime during migration',
-                '5 legacy systems consolidated',
-                '100% employee adoption'
-              ]}
-              achievementIcons={['grid', 'clock', 'users']}
-            />
-            <AchievementCard
-              icon="chart"
-              title="Financial Analytics"
-              description="Built sophisticated Power BI dashboards for real-time financial forecasting that revealed $1.2M in unbilled services."
-              achievements={[
-                '$1.2M in unbilled services identified',
-                'Real-time forecast dashboards',
-                '25% improved financial accuracy'
-              ]}
-              achievementIcons={['dollar', 'clock', 'trending']}
-            />
-            <AchievementCard
-              icon="lightbulb"
-              title="AI-Powered Analytics Overhaul"
-              description="Led the modernization of enterprise analytics by integrating AI-driven insights, centralizing KPIs, and building real-time dashboards that transformed operational decision-making."
-              achievements={[
-                'Deployed 30+ AI-enhanced dashboards across 6 departments',
-                'Cut reporting delays by 50% with predictive data models',
-                'Unified metrics and insights for real-time decision-making'
-              ]}
-              achievementIcons={['grid', 'clock', 'trending']}
-            />
+            {page.achievements.cards.map((card) => (
+              <AchievementCard
+                icon={card.icon}
+                title={card.title}
+                description={card.description}
+                achievements={card.achievements}
+                achievementIcons={card.achievementIcons}
+              />
+            ))}
           </Grid>
         </div>
       </div>
@@ -165,22 +74,22 @@ const timelineItems: TimelineItem[] = [
 
   <AboutSocial
     social={{
-      title: 'Connect',
-      description: 'Find me on the platforms I use most.',
-      links: socialLinks.map((s) => ({ href: s.url, label: s.name, icon: s.icon }))
+      title: page.social.title,
+      description: page.social.description,
+      links: page.social.links.map((link) => ({ href: link.url, label: link.name, icon: link.icon }))
     }}
   />
 
-  <AboutEducationSkillsSection />
-  <AboutTimelineSection items={timelineItems} />
+  <AboutEducationSkillsSection content={page.education} />
+  <AboutTimelineSection content={page.timeline} />
 
   <Section padding="lg" container="lg" class="bg-gradient-to-b from-surface to-background">
     <div class="section-intro mx-auto max-w-3xl">
-      <span class="section-kicker">Next move</span>
-      <h2 class="mb-4 font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl">Open to work that needs operational clarity</h2>
-      <p class="mb-8 text-muted-foreground">If the problem spans systems, analytics, automation, or adoption, the contact page is the best place to start.</p>
+      <span class="section-kicker">{page.closing.kicker}</span>
+      <h2 class="mb-4 font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl">{page.closing.title}</h2>
+      <p class="mb-8 text-muted-foreground">{page.closing.description}</p>
       <ul class="flex flex-wrap items-center justify-center gap-4" role="list">
-        {socialLinks.map((link) => (
+        {page.social.links.map((link) => (
           <li>
             <a
               href={link.url}

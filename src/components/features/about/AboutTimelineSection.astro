@@ -12,11 +12,19 @@ interface TimelineItem {
   color: string;
 }
 
-interface Props {
+export interface AboutTimelineContent {
+  kicker: string;
+  title: string;
+  description: string;
   items: TimelineItem[];
 }
 
-const { items } = Astro.props as Props;
+interface Props {
+  content: AboutTimelineContent;
+}
+
+const { content } = Astro.props as Props;
+const { items } = content;
 ---
 
 <Section id="about-timeline" padding="lg" container="lg" class="relative overflow-hidden bg-surface">
@@ -28,10 +36,10 @@ const { items } = Astro.props as Props;
   </div>
   <div class="relative z-10">
     <div class="section-intro mx-auto mb-16 max-w-3xl">
-      <span class="section-kicker">Track record</span>
-      <SectionHeading size="3xl" class="mb-2">Professional journey</SectionHeading>
+      <span class="section-kicker">{content.kicker}</span>
+      <SectionHeading size="3xl" class="mb-2">{content.title}</SectionHeading>
       <p class="text-lg text-muted-foreground">
-        A condensed view of the environments, programs, and outcomes that shaped how I approach operational change.
+        {content.description}
       </p>
     </div>
     <div class="timeline-desktop relative hidden md:block">

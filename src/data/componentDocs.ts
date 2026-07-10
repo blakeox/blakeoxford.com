@@ -1174,7 +1174,7 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'About',
     description: 'About page hero introducing background and professional summary.',
     filePath: 'src/components/features/about/AboutHeroSection.astro',
-    examples: [{ title: 'About hero', code: '<AboutHeroSection />' }],
+    examples: [{ title: 'About hero', code: '<AboutHeroSection content={page.hero} />' }],
     tags: ['about', 'hero'],
     visualTier: 'expressive',
     tokenDependencies: ['--color-foreground', '--fs-h1'],

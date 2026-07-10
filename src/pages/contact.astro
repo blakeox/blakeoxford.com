@@ -5,49 +5,21 @@ import ContactChannels from '../components/features/contact/ContactChannels.astr
 import ContactHeroSection from '../components/features/contact/ContactHeroSection.astro';
 import ContactMessageSection from '../components/features/contact/ContactMessageSection.astro';
 import ContactFormClient from '../components/islands/ContactFormClient';
+import { getContactPage } from '../content/contact/getContactPage';
 import { CANONICAL_URLS } from '../config/constants';
 
-const title = 'Contact Blake';
-const description = 'Get in touch with Blake Oxford for systems architecture, automation, and analytics work.';
+const page = await getContactPage();
 const canonicalUrl = CANONICAL_URLS.contact;
-const channels = {
-  heading: 'Contact channels',
-  title: 'Reach out directly',
-  description: 'Choose the channel that matches how you prefer to work.',
-  items: [
-    {
-      icon: 'email',
-      title: 'Email',
-      description: 'Best for project details, introductions, and follow-up notes.',
-      href: 'mailto:blakepoxford@outlook.com',
-      label: 'blakepoxford@outlook.com',
-    },
-    {
-      icon: 'phone',
-      title: 'Phone',
-      description: 'Best for quick coordination and scheduling.',
-      href: 'tel:2482024479',
-      label: '248-202-4479',
-    },
-    {
-      icon: 'linkedin',
-      title: 'LinkedIn',
-      description: 'Best for network introductions and professional context.',
-      href: 'https://linkedin.com/in/blake-oxford',
-      label: 'linkedin.com/in/blake-oxford',
-    },
-  ],
-};
 ---
 
-<Layout title={title} description={description} url={canonicalUrl} wide={true}>
+<Layout title={page.meta.title} description={page.meta.description} url={canonicalUrl} wide={true}>
   <div class="fixed inset-0 -z-10 pointer-events-none">
     <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
     <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
   </div>
 
-  <ContactHeroSection />
-  <ContactChannels channels={channels} />
+  <ContactHeroSection content={page.hero} />
+  <ContactChannels channels={page.channels} />
   <ContactMessageSection />
   <ContactFormClient client:load />
 </Layout>

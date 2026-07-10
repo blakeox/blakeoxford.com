@@ -6,13 +6,8 @@ import Button from '../../components/primitives/Button.astro';
 import Badge from '../../components/primitives/Badge.astro';
 import Card from '../../components/composites/Card.astro';
 import FeatureCard from '../../components/composites/FeatureCard.astro';
-import { componentDocs, getCategories, PRIMITIVE_PROP_CONTRACT, COMPONENT_AUTHORING_CHECKLIST, type ComponentDoc } from '../../data/componentDocs';
-
-const categories = getCategories();
-const componentsByCategory = categories.map((category) => ({
- category,
- components: componentDocs.filter((component) => component.category === category),
-}));
+import { PRIMITIVE_PROP_CONTRACT, COMPONENT_AUTHORING_CHECKLIST } from '../../data/componentDocs';
+import ComponentCatalog from '../../components/features/design/ComponentCatalog.astro';
 
 const canonicalExamples = [
  {
@@ -40,7 +35,7 @@ const canonicalExamples = [
 
 <BaseLayout
  title="Design Components"
- description="Operational component contracts for the Blake Oxford design system."
+ description="Operational component contracts and searchable catalog for the Blake Oxford design system."
  canonicalUrl="https://blakeoxford.com/design/components/"
  wide={true}
 >
@@ -52,7 +47,7 @@ const canonicalExamples = [
  Component Contracts
  </h1>
  <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
- This page documents the canonical component paths and allowed usage surface. The full searchable catalog is generated from
+ This page documents canonical component paths, live examples, and the full searchable catalog generated from
  <code class="break-all rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">src/data/componentDocs.ts</code>.
  </p>
  </header>
@@ -96,34 +91,7 @@ const canonicalExamples = [
  </div>
  </section>
 
- <section class="mt-16" aria-labelledby="catalog">
- <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
- <div>
- <h2 id="catalog" class="text-2xl font-bold text-foreground">Catalog Summary</h2>
- <p class="mt-2 text-muted-foreground">
- {componentDocs.length} documented components across {categories.length} categories.
- </p>
- </div>
- <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/docs/components/">
- Open searchable catalog
- </a>
- </div>
-
- <div class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
- {componentsByCategory.map(({ category, components }) => (
- <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <h3 class="font-semibold text-foreground">
- {category} <span class="text-sm font-normal text-subtle-foreground">({components.length})</span>
- </h3>
- <ul class="mt-4 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
- {components.slice(0, 8).map((component: ComponentDoc) => (
- <li class="truncate">{component.name}</li>
- ))}
- </ul>
- </article>
- ))}
- </div>
- </section>
+ <ComponentCatalog />
 
  <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark" aria-labelledby="authoring-checklist">
  <h2 id="authoring-checklist" class="text-2xl font-bold text-foreground">New Component Checklist</h2>

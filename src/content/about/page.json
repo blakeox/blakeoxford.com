@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "title": "About Blake Oxford",
+    "description": "Systems architect and workflow strategist focused on automation, analytics, and durable operational improvement."
+  },
+  "hero": {
+    "kicker": "About",
+    "title": "Systems architect focused on durable operational improvement",
+    "description": "Based in Michigan, I help organizations turn complex process, reporting, and platform problems into operating systems teams can actually run. The work spans automation, analytics, governance, and adoption, with an emphasis on contained blast radius and measurable outcomes.",
+    "proofPoints": [
+      "Automation with adoption guardrails",
+      "Financial intelligence that informs decisions, not dashboards alone",
+      "Governance and enablement built-in from day one"
+    ]
+  },
+  "achievements": {
+    "kicker": "Selected proof",
+    "title": "Key achievements",
+    "description": "Representative outcomes across enterprise transformation, analytics, and operational modernization.",
+    "cards": [
+      {
+        "icon": "home",
+        "title": "Enterprise Transformation",
+        "description": "Successfully led Google Workspace to Microsoft 365 migration for 180+ staff with zero downtime, integrating 5 legacy systems.",
+        "achievements": [
+          "Zero downtime during migration",
+          "5 legacy systems consolidated",
+          "100% employee adoption"
+        ],
+        "achievementIcons": ["grid", "clock", "users"]
+      },
+      {
+        "icon": "chart",
+        "title": "Financial Analytics",
+        "description": "Built sophisticated Power BI dashboards for real-time financial forecasting that revealed $1.2M in unbilled services.",
+        "achievements": [
+          "$1.2M in unbilled services identified",
+          "Real-time forecast dashboards",
+          "25% improved financial accuracy"
+        ],
+        "achievementIcons": ["dollar", "clock", "trending"]
+      },
+      {
+        "icon": "lightbulb",
+        "title": "AI-Powered Analytics Overhaul",
+        "description": "Led the modernization of enterprise analytics by integrating AI-driven insights, centralizing KPIs, and building real-time dashboards that transformed operational decision-making.",
+        "achievements": [
+          "Deployed 30+ AI-enhanced dashboards across 6 departments",
+          "Cut reporting delays by 50% with predictive data models",
+          "Unified metrics and insights for real-time decision-making"
+        ],
+        "achievementIcons": ["grid", "clock", "trending"]
+      }
+    ]
+  },
+  "social": {
+    "title": "Connect",
+    "description": "Find me on the platforms I use most.",
+    "links": [
+      {
+        "name": "LinkedIn",
+        "url": "https://www.linkedin.com/in/blakeoxford/",
+        "icon": "linkedin"
+      },
+      {
+        "name": "GitHub",
+        "url": "https://github.com/blakeox",
+        "icon": "github"
+      },
+      {
+        "name": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/users/BlakeOxford-1002",
+        "icon": "microsoft-learn"
+      }
+    ]
+  },
+  "education": {
+    "kicker": "Foundation",
+    "title": "Education and working toolkit",
+    "description": "The formal background and practical capabilities behind systems, automation, and operational design work.",
+    "institution": "Calvin College",
+    "degree": "Bachelor of Arts in Finance",
+    "educationDescription": "Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects.",
+    "skillsIntro": "A blend of systems thinking, finance, and hands-on engineering oriented around reliable execution, low cognitive load, and measurable operational change.",
+    "skills": [
+      "Systems Architecture",
+      "Process Automation",
+      "Cloud: Azure / M365",
+      "Data Analytics (Power BI)",
+      "APIs & Integrations",
+      "AI-Assisted Workflows",
+      "Financial Operations",
+      "Security & Compliance"
+    ]
+  },
+  "timeline": {
+    "kicker": "Track record",
+    "title": "Professional journey",
+    "description": "A condensed view of the environments, programs, and outcomes that shaped how I approach operational change.",
+    "items": [
+      {
+        "year": "2019",
+        "icon": "🔄",
+        "title": "System Integration & Optimization",
+        "achievements": [
+          "Streamlined cross-departmental workflows through integration of Sage Intacct and ADP",
+          "Reduced manual data entry by 80% through custom API integrations",
+          "Implemented automated reconciliation processes, reducing month-end close by 3 days"
+        ],
+        "color": "from-accent to-primary"
+      },
+      {
+        "year": "2020",
+        "icon": "☁️",
+        "title": "Cloud Migration & Digital Transformation",
+        "achievements": [
+          "Led Google Workspace to Microsoft 365 migration for 180 staff with zero downtime",
+          "Implemented Sage Intacct and ADP Workforce Now, consolidating 5 legacy systems",
+          "Designed disaster recovery protocols reducing potential data loss window by 90%"
+        ],
+        "color": "from-accent to-primary"
+      },
+      {
+        "year": "2023",
+        "icon": "💡",
+        "title": "Analytics & Process Innovation",
+        "achievements": [
+          "Developed Power BI dashboards for real-time financial forecasting",
+          "Authored SOPs and trained team on AdvancedMD RCM",
+          "$1.2M in unbilled services surfaced via SQL-based reporting suite"
+        ],
+        "color": "from-accent to-primary"
+      },
+      {
+        "year": "2024",
+        "icon": "🤖",
+        "title": "AI-Powered Compliance & Workflow Enhancement",
+        "achievements": [
+          "Developed and launched a real-time Azure OpenAI auditing system for clinical notes, ensuring insurance compliance before submission",
+          "Enabled automated coaching for providers and technicians, improving documentation quality and reducing claim denials",
+          "Integrated AI into daily workflows for tasks like insurance appeals and internal process optimization, saving hours across departments"
+        ],
+        "color": "from-accent to-primary"
+      }
+    ]
+  },
+  "closing": {
+    "kicker": "Next move",
+    "title": "Open to work that needs operational clarity",
+    "description": "If the problem spans systems, analytics, automation, or adoption, the contact page is the best place to start."
+  }
+}
