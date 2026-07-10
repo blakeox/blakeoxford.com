@@ -3,37 +3,57 @@ import PageHero from '../../composites/PageHero.astro';
 import Stack from '../../primitives/Stack.astro';
 import Button from '../../primitives/Button.astro';
 import ButtonGroup from '../../composites/ButtonGroup.astro';
+
+export interface ContactHeroContent {
+  kicker: string;
+  title: string;
+  description: string;
+  scenarios: string[];
+  primaryCta: { href: string; label: string };
+  secondaryCta: { href: string; label: string };
+  sidebar: {
+    heading: string;
+    items: string[];
+    note: string;
+  };
+}
+
+interface Props {
+  content: ContactHeroContent;
+}
+
+const { content } = Astro.props;
 ---
 
 <PageHero fullScreen={true} includeBlurOrbs={true} id="contact-hero">
   <div class="grid items-center gap-10 md:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
     <Stack space="lg" class="@container max-w-3xl">
-      <span class="section-kicker">Contact</span>
-      <h1 class="font-heading text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">Start the conversation</h1>
+      <span class="section-kicker">{content.kicker}</span>
+      <h1 class="font-heading text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">{content.title}</h1>
       <p class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
-        Use this page when you need help with a migration, automation program, analytics backbone, or AI-enabled workflow that needs operational discipline, not just implementation.
+        {content.description}
       </p>
       <ul class="grid gap-3 text-sm text-foreground/88 sm:grid-cols-3 sm:text-base" role="list" aria-label="Best fit scenarios">
-        <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">Cross-system change that needs sequencing and adoption.</li>
-        <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">Automation work that must hold up under real operating load.</li>
-        <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">Reporting or controls work that executives need to trust.</li>
+        {content.scenarios.map((scenario) => (
+          <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">{scenario}</li>
+        ))}
       </ul>
       <ButtonGroup align="start" responsive class="pt-1">
-        <Button variant="primary" href="#contact-form">Go to the form</Button>
-        <Button variant="outline" href="/projects/">Review case studies</Button>
+        <Button variant="primary" href={content.primaryCta.href}>{content.primaryCta.label}</Button>
+        <Button variant="outline" href={content.secondaryCta.href}>{content.secondaryCta.label}</Button>
       </ButtonGroup>
     </Stack>
     <div class="flex justify-center md:justify-end">
       <div class="proof-card max-w-sm p-6 sm:p-8">
         <div class="relative z-10 space-y-4">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-subtle-foreground">What to include</p>
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-subtle-foreground">{content.sidebar.heading}</p>
           <ul class="space-y-3 text-sm leading-relaxed text-foreground/88 sm:text-base" role="list">
-            <li>The problem that is creating drag or risk.</li>
-            <li>The systems, teams, or approvals involved.</li>
-            <li>The outcome you need and the constraint that matters most.</li>
+            {content.sidebar.items.map((item) => (
+              <li>{item}</li>
+            ))}
           </ul>
           <div class="rounded-2xl border border-border/50 bg-surface/90 px-4 py-4 text-sm text-muted-foreground">
-            Typical next step: a short working session to map dependencies, risk, and a contained first move.
+            {content.sidebar.note}
           </div>
         </div>
       </div>

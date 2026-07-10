@@ -100,8 +100,8 @@ Follow the documented standards in `docs/COMPONENT_DOCUMENTATION_GUIDE.md`:
 1. **Choose the Right Category**:
    - **Primitives** (`src/components/primitives/`): Low-level building blocks (Button, Badge, Flex, Grid)
    - **Composites** (`src/components/composites/`): Mid-level composed components (Card, Hero, FeatureGrid)
-   - **Features** (`src/components/features/`): Domain-specific components (BlogPostCard, ProjectCard)
-   - **UI** (`src/components/ui/`): Specialized interactive components (SearchOverlay, PhotoCarousel)
+   - **Features** (`src/components/features/`): Domain-specific components (BlogPostCard, ProjectCard, SearchOverlay)
+   - **Islands** (`src/components/islands/`): React hydrated interactive components (NavBarIsland, ContactFormIsland)
 
 2. **Component Structure**:
    ```astro

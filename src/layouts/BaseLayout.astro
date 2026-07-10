@@ -1,4 +1,9 @@
 ---
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/inter/latin-700.css';
+import '@fontsource/montserrat/latin-600.css';
+import '@fontsource/montserrat/latin-700.css';
 import '../styles/global.css';
 import NavBar from '../components/layout/NavBar.astro';
 import AIChatWidget from '../components/composites/AIChatWidget.astro';
@@ -19,6 +24,7 @@ const {
  // "url" may be passed in to override canonical; when omitted, compute from Astro.site + Astro.url
  url,
  wide = false,
+ noindex = false,
  keywords = '',
  image, // Optional OG image override
  // structuredData, // Optional additional structured data schemas (unused)
@@ -59,26 +65,8 @@ const mainClasses = baseMainClasses;
  <!-- Avoid unconditional DNS-prefetch; GA/gtm are loaded lazily and only after interaction/idle -->
  <!-- Removed: <link rel="dns-prefetch" href="//www.googletagmanager.com" /> -->
 
- <!-- Styles: Astro bundles global.css from the layout import above. No inline critical CSS subset in production builds. Optional extraction lives in scripts/build/critical-css-generator.js. -->
+ <!-- Styles: Astro bundles global.css from the layout import above. Fonts are self-hosted via @fontsource in global.css. -->
 
- <!-- Font loading: subset to weights used in theme.css (Inter 400/600/700, Montserrat 600/700) -->
- <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
- <link
- rel="preload"
- as="style"
- href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@600;700&display=swap"
- />
- <link
- rel="stylesheet"
- href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@600;700&display=swap"
- media="print"
- onload="this.media='all'"
- />
- <noscript>
- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@600;700&display=swap" />
- </noscript>
- 
  <!-- Favicon and touch icons (consolidated) -->
  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icon-192x192.png" />
  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
@@ -93,7 +81,7 @@ const mainClasses = baseMainClasses;
  <meta name="author" content="Blake Oxford" />
  <meta name="creator" content="Blake Oxford" />
  <meta name="publisher" content="Blake Oxford" />
- <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+ <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
  <link rel="canonical" href={canonicalUrl} />
 
  <!-- Enhanced Open Graph & Twitter -->

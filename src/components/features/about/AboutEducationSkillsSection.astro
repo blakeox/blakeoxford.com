@@ -5,6 +5,23 @@ import Flex from '../../primitives/Flex.astro';
 import FloatingBlur from '../../primitives/FloatingBlur.astro';
 import SkillBadge from '../../primitives/SkillBadge.astro';
 import EducationCard from './EducationCard.astro';
+
+export interface AboutEducationContent {
+  kicker: string;
+  title: string;
+  description: string;
+  institution: string;
+  degree: string;
+  educationDescription: string;
+  skillsIntro: string;
+  skills: string[];
+}
+
+interface Props {
+  content: AboutEducationContent;
+}
+
+const { content } = Astro.props;
 ---
 
 <Section padding="lg" container="lg" class="relative overflow-hidden bg-gradient-to-b from-background to-surface">
@@ -16,35 +33,30 @@ import EducationCard from './EducationCard.astro';
   </div>
   <div class="relative z-10">
     <div class="section-intro mb-12">
-      <span class="section-kicker">Foundation</span>
-      <h2 class="font-heading text-3xl font-semibold text-foreground sm:text-4xl md:text-5xl">Education and working toolkit</h2>
+      <span class="section-kicker">{content.kicker}</span>
+      <h2 class="font-heading text-3xl font-semibold text-foreground sm:text-4xl md:text-5xl">{content.title}</h2>
       <p class="text-lg text-muted-foreground">
-        The formal background and practical capabilities behind systems, automation, and operational design work.
+        {content.description}
       </p>
     </div>
     <Grid cols="2" gap="xl" class="items-stretch">
       <div class="flex h-full flex-col">
         <h2 class="mb-6 border-l-4 border-accent pl-4 text-2xl font-semibold sm:text-3xl">Education</h2>
         <EducationCard
-          institution="Calvin College"
-          degree="Bachelor of Arts in Finance"
-          description="Focused on Finance with complementary studies in Mandarin Chinese and development economics. Gained experience applying financial modeling and international business concepts through coursework and projects."
+          institution={content.institution}
+          degree={content.degree}
+          description={content.educationDescription}
         />
       </div>
 
       <div class="flex h-full flex-col">
         <h2 class="mb-6 border-l-4 border-accent pl-4 text-2xl font-semibold sm:text-3xl">Skills</h2>
         <div class="flex flex-1 flex-col rounded-xl border border-border bg-surface p-6 shadow-lg">
-          <p class="mb-4 text-muted-foreground">A blend of systems thinking, finance, and hands-on engineering oriented around reliable execution, low cognitive load, and measurable operational change.</p>
+          <p class="mb-4 text-muted-foreground">{content.skillsIntro}</p>
           <Flex as="ul" wrap gap="sm" role="list" class="flex-1">
-            <SkillBadge skill="Systems Architecture" />
-            <SkillBadge skill="Process Automation" />
-            <SkillBadge skill="Cloud: Azure / M365" />
-            <SkillBadge skill="Data Analytics (Power BI)" />
-            <SkillBadge skill="APIs & Integrations" />
-            <SkillBadge skill="AI-Assisted Workflows" />
-            <SkillBadge skill="Financial Operations" />
-            <SkillBadge skill="Security & Compliance" />
+            {content.skills.map((skill) => (
+              <SkillBadge skill={skill} />
+            ))}
           </Flex>
         </div>
       </div>

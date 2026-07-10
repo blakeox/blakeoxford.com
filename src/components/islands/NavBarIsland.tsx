@@ -180,14 +180,7 @@ export default function NavBarIsland({ links, logo, currentPath }: NavBarIslandP
           )}
         </ul>
 
-        <div className="action-buttons flex items-center gap-2">
-          <a
-            href="/contact/"
-            className="nav-cta-button hidden md:inline-flex"
-          >
-            Contact
-          </a>
-
+        <div className="action-buttons flex shrink-0 items-center gap-2">
           <button
             id="search-toggle"
             type="button"

@@ -312,7 +312,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 **"I need to create a new component"**
 ```
 1. Is it reusable across features?
-   ├─ Yes → Create in src/components/ui/ or src/components/primitives/
+   ├─ Yes → Create in src/components/features/ or src/components/primitives/
    └─ No → Create in src/components/features/{feature-name}/
 
 2. Does it need client-side interactivity?
@@ -711,7 +711,7 @@ pnpm deploy:worker        # Deploy to Cloudflare
 cat .github/instructions/components.instructions.md
 
 # 2. Create component file
-# src/components/ui/MyComponent.astro
+# src/components/primitives/MyComponent.astro
 
 # 3. Write tests
 # tests/vitest/components/MyComponent.test.ts
