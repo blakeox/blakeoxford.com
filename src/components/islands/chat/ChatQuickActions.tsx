@@ -14,7 +14,7 @@ export const ChatQuickActions = memo(function ChatQuickActions({
 	setInputValue,
 }: ChatQuickActionsProps) {
 	return (
-		<div className="flex h-full flex-col justify-center gap-5 px-1 py-4">
+		<div className="flex flex-col gap-5 px-1 py-2">
 			<div className="space-y-1.5">
 				<p className="text-[0.9375rem] font-semibold tracking-tight text-foreground">
 					Ask while you browse
