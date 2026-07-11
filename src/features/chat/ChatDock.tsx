@@ -57,7 +57,7 @@ export function ChatDock({
           data-ai-visible={isOpen ? 'true' : 'false'}
           className={`ai-chat-panel pointer-events-auto flex w-full flex-col overflow-hidden border border-border/50 bg-surface/92 shadow-[0_24px_64px_-12px_rgba(0,0,0,0.28)] backdrop-blur-2xl ${
             isOpen ? 'opacity-100' : 'opacity-0'
-          } max-h-[min(82dvh,40rem)] rounded-t-[1.25rem] sm:h-[min(72dvh,36rem)] sm:max-h-[36rem] sm:w-[min(100vw-3rem,26rem)] sm:rounded-[1.25rem]`}
+          } max-h-[min(82dvh,40rem)] rounded-t-[1.25rem] sm:max-h-[min(72dvh,36rem)] sm:w-[min(100vw-3rem,26rem)] sm:rounded-[1.25rem]`}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
