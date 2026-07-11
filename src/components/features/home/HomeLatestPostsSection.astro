@@ -4,20 +4,22 @@ import Section from '../../primitives/Section.astro';
 import SectionHeading from '../../primitives/SectionHeading.astro';
 import Button from '../../primitives/Button.astro';
 import BlogPostCard from '../blog/BlogPostCard.astro';
+import type { HomePageContent } from '../../../content/home/pageTypes';
 
 interface Props {
   posts: CollectionEntry<'blog'>[];
+  content: HomePageContent['latestPosts'];
 }
 
-const { posts } = Astro.props as Props;
+const { posts, content } = Astro.props as Props;
 ---
 
 <Section padding="lg" container="xl" background="gradient" class="text-center" aria-labelledby="latest-blog-posts">
   <div class="section-intro mb-12">
-    <span class="section-kicker">Writing</span>
-    <SectionHeading id="latest-blog-posts" size="4xl">Practical notes from the field</SectionHeading>
+    <span class="section-kicker">{content.kicker}</span>
+    <SectionHeading id="latest-blog-posts" size="4xl">{content.title}</SectionHeading>
     <p class="text-lg text-muted-foreground">
-      Essays and case-backed observations on automation, analytics, governance, and operational improvement.
+      {content.description}
     </p>
   </div>
   <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
@@ -30,12 +32,12 @@ const { posts } = Astro.props as Props;
     ) : (
       <li class="rounded-2xl border border-dashed border-border/40 bg-background/90 p-6 text-center shadow-md">
         <p class="text-sm text-muted-foreground">
-          Blog posts are on the way-check back soon for new case studies and playbooks.
+          {content.emptyMessage}
         </p>
       </li>
     )}
   </ul>
   <div class="mt-8 text-center">
-    <Button variant="outline" href="/blog/">View all writing</Button>
+    <Button variant="outline" href={content.cta.href}>{content.cta.label}</Button>
   </div>
 </Section>

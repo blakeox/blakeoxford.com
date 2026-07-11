@@ -4,14 +4,16 @@ import PageHero from '../../composites/PageHero.astro';
 import Button from '../../primitives/Button.astro';
 import ButtonGroup from '../../composites/ButtonGroup.astro';
 import FloatingEmoji from '../../primitives/FloatingEmoji.astro';
+import type { HomePageContent } from '../../../content/home/pageTypes';
 
 interface Props {
   author: string;
   tagline?: string;
   description?: string;
+  content: HomePageContent['hero'];
 }
 
-const { author, tagline, description } = Astro.props as Props;
+const { author, tagline, description, content } = Astro.props as Props;
 ---
 
 <PageHero id="about-me" class="hero-gradient-animated">
@@ -19,7 +21,7 @@ const { author, tagline, description } = Astro.props as Props;
     <div class="order-2 md:order-1">
       <div class="max-w-2xl space-y-8 text-base leading-relaxed text-foreground/85">
         <div class="space-y-5">
-          <span class="section-kicker">Systems architecture · automation · operating rigor</span>
+          <span class="section-kicker">{content.kicker}</span>
           <h1 class="font-heading text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
             {author}
           </h1>
@@ -35,25 +37,22 @@ const { author, tagline, description } = Astro.props as Props;
           )}
         </div>
         <ul class="grid gap-3 text-sm text-foreground/88 sm:grid-cols-3 sm:text-base" role="list" aria-label="Selected strengths">
-          <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">Enterprise migrations with adoption discipline</li>
-          <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">Automation that reduces manual operational drag</li>
-          <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">Analytics and controls built for decision-making</li>
+          {content.strengths.map((strength) => (
+            <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">{strength}</li>
+          ))}
         </ul>
       </div>
       <ButtonGroup align="start" responsive class="mt-8">
         <Button
           variant="primary"
-          href="/contact/"
+          href={content.primaryCta.href}
           data-test="home-cta-connect"
           data-analytics="hero-cta"
         >
-          Start a conversation
+          {content.primaryCta.label}
         </Button>
-        <Button
-          variant="outline"
-          href="/projects/"
-        >
-          Review selected projects
+        <Button variant="outline" href={content.secondaryCta.href}>
+          {content.secondaryCta.label}
         </Button>
       </ButtonGroup>
     </div>
@@ -62,17 +61,17 @@ const { author, tagline, description } = Astro.props as Props;
         <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-primary/30 blur-xl opacity-70 animate-pulse"></div>
         <div class="relative rounded-full bg-gradient-to-r from-accent to-primary p-1">
           <CoinFlipImage
-            frontSrc="/assets/images/Blake-O-scaled.jpg"
-            backSrc="/assets/images/china-profile-picture.jpg"
-            alt="Blake Oxford"
-            altBack="Blake Oxford in China"
+            frontSrc={content.portrait.frontSrc}
+            backSrc={content.portrait.backSrc}
+            alt={content.portrait.alt}
+            altBack={content.portrait.altBack}
             size={280}
             flipMultipleTimes
             loading="eager"
             fetchPriority="high"
             decoding="auto"
             role="img"
-            aria-label="Photo of Blake Oxford"
+            aria-label={`Photo of ${content.portrait.alt}`}
           />
         </div>
         <FloatingEmoji emoji="💡" position="top-right" size="md" />

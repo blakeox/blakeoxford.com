@@ -93,6 +93,36 @@ const contactChannelSchema = z.object({
   label: z.string(),
 });
 
+const ctaLinkSchema = z.object({
+  href: z.string(),
+  label: z.string(),
+});
+
+const homeResumeHighlightItemSchema = z.object({
+  icon: z.enum([
+    'migrate',
+    'money',
+    'cloud-plus',
+    'chat',
+    'azure-opt',
+    'chart',
+    'lightbulb',
+    'consolidate',
+    'grid',
+    'predictive',
+    'shield',
+    'trend',
+  ]),
+  text: z.string(),
+});
+
+const homeResumeHighlightCardSchema = z.object({
+  icon: z.enum(['cloud', 'automation', 'analytics']),
+  title: z.string(),
+  description: z.string(),
+  items: z.array(homeResumeHighlightItemSchema),
+});
+
 // About page content
 const about = defineCollection({
   loader: glob({ pattern: 'page.json', base: './src/content/about' }),
@@ -172,6 +202,60 @@ const contact = defineCollection({
   }),
 });
 
+// Home page content
+const home = defineCollection({
+  loader: glob({ pattern: 'page.json', base: './src/content/home' }),
+  schema: z.object({
+    meta: z.object({
+      title: z.string(),
+      description: z.string(),
+    }),
+    hero: z.object({
+      kicker: z.string(),
+      defaultTagline: z.string(),
+      strengths: z.array(z.string()),
+      primaryCta: ctaLinkSchema,
+      secondaryCta: ctaLinkSchema,
+      portrait: z.object({
+        frontSrc: z.string(),
+        backSrc: z.string(),
+        alt: z.string(),
+        altBack: z.string(),
+      }),
+    }),
+    technologies: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+    }),
+    resumeHighlights: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+      cards: z.array(homeResumeHighlightCardSchema),
+    }),
+    recentProjects: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+      cta: ctaLinkSchema,
+    }),
+    latestPosts: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+      emptyMessage: z.string(),
+      cta: ctaLinkSchema,
+    }),
+    cta: z.object({
+      kicker: z.string(),
+      title: z.string(),
+      description: z.string(),
+      button: ctaLinkSchema,
+    }),
+  }),
+});
+
 // Navigation collection schema
 const navigation = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/navigation' }),
@@ -184,4 +268,4 @@ const navigation = defineCollection({
   }),
 });
 
-export const collections = { blog, projects, about, contact, navigation };
+export const collections = { blog, projects, about, contact, home, navigation };

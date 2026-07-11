@@ -2,18 +2,25 @@
 import Section from '../../primitives/Section.astro';
 import SectionHeading from '../../primitives/SectionHeading.astro';
 import Button from '../../primitives/Button.astro';
+import type { HomePageContent } from '../../../content/home/pageTypes';
+
+interface Props {
+  content: HomePageContent['cta'];
+}
+
+const { content } = Astro.props as Props;
 ---
 
 <Section padding="lg" container="xl" class="text-center">
   <div class="conversion-band mx-auto max-w-4xl">
     <div class="section-intro">
-      <span class="section-kicker">Next move</span>
-      <SectionHeading size="3xl">Bring the problem space. I&apos;ll help design the operating backbone.</SectionHeading>
+      <span class="section-kicker">{content.kicker}</span>
+      <SectionHeading size="3xl">{content.title}</SectionHeading>
       <p class="text-lg text-muted-foreground">
-        If you are evaluating a migration, automation program, reporting overhaul, or AI-enabled workflow, start with the highest-risk bottleneck and we can scope from there.
+        {content.description}
       </p>
       <div class="pt-2">
-        <Button variant="primary" href="/contact/">Start the conversation</Button>
+        <Button variant="primary" href={content.button.href}>{content.button.label}</Button>
       </div>
     </div>
   </div>

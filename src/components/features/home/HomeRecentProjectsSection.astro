@@ -5,20 +5,22 @@ import SectionHeading from '../../primitives/SectionHeading.astro';
 import Grid from '../../primitives/Grid.astro';
 import Button from '../../primitives/Button.astro';
 import ProjectCard from '../projects/ProjectCard.astro';
+import type { HomePageContent } from '../../../content/home/pageTypes';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
+  content: HomePageContent['recentProjects'];
 }
 
-const { projects } = Astro.props as Props;
+const { projects, content } = Astro.props as Props;
 ---
 
 <Section id="recent-projects" padding="lg" container="xl" aria-labelledby="recent-projects-title">
   <div class="section-intro mb-12">
-    <span class="section-kicker">Selected projects</span>
-    <SectionHeading id="recent-projects-title" size="4xl">Work that shipped with measurable impact</SectionHeading>
+    <span class="section-kicker">{content.kicker}</span>
+    <SectionHeading id="recent-projects-title" size="4xl">{content.title}</SectionHeading>
     <p class="text-lg text-muted-foreground">
-      A cross-section of systems, automation, and analytics engagements built to survive real operating conditions.
+      {content.description}
     </p>
   </div>
   <Grid cols="3" gap="lg">
@@ -27,6 +29,6 @@ const { projects } = Astro.props as Props;
     ))}
   </Grid>
   <div class="mt-8 text-center">
-    <Button variant="outline" href="/projects/">View all case studies</Button>
+    <Button variant="outline" href={content.cta.href}>{content.cta.label}</Button>
   </div>
 </Section>
