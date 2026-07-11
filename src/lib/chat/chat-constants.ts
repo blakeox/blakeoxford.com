@@ -47,13 +47,13 @@ export const QUICK_ACTIONS = [
 	{
 		icon: '',
 		label: 'Recent projects',
-		query: "What are Blake's most recent projects?",
+		query: 'What are Blake\'s most recent projects?',
 		category: 'portfolio',
 	},
 	{
 		icon: '',
 		label: 'Experience',
-		query: "Tell me about Blake's professional experience",
+		query: 'Tell me about Blake\'s professional experience',
 		category: 'experience',
 	},
 	{

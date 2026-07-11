@@ -268,7 +268,7 @@ export default function AIChatIsland() {
 			<div className="relative min-h-0 flex-1 overflow-hidden">
 				<div
 					ref={scrollContainerRef}
-					className="flex h-full max-h-[min(42dvh,18rem)] flex-col gap-3 overflow-y-auto px-3 py-3 sm:max-h-none sm:px-4"
+					className="flex h-full max-h-[min(48dvh,22rem)] flex-col gap-3.5 overflow-y-auto px-3.5 py-3.5 sm:max-h-none sm:px-4"
 					aria-live="polite"
 					data-ai-chat-transcript
 				>

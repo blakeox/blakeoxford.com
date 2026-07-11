@@ -1,9 +1,8 @@
 /**
- * ChatInput — shared field language with Find overlay.
+ * ChatInput — calm composer for the Ask dock.
  */
 import { memo, useCallback } from 'react';
 import type { ChatInputProps } from './types';
-import { OVERLAY_FOOTER } from '../../../features/overlay/overlayStyles';
 
 export const ChatInput = memo(function ChatInput({
 	inputValue,
@@ -26,12 +25,12 @@ export const ChatInput = memo(function ChatInput({
 	}, [inputRef]);
 
 	return (
-		<form className="border-t border-border/40 bg-surface/80 px-3 py-3 sm:px-4" onSubmit={handleSubmit}>
-			<div className="relative flex items-end gap-2 rounded-lg border border-border/60 bg-field-bg px-3 py-2 focus-within:border-accent/60 focus-within:ring-2 focus-within:ring-accent/30">
+		<form className="border-t border-border/40 bg-surface/70 px-3 pb-3 pt-2.5 sm:px-4 sm:pb-3.5" onSubmit={handleSubmit}>
+			<div className="relative flex items-end gap-2 rounded-xl border border-border/55 bg-field-bg px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition focus-within:border-accent/55 focus-within:ring-2 focus-within:ring-accent/25">
 				<textarea
 					id="ai-chat-input"
 					ref={inputRef}
-					className="max-h-[7.5rem] min-h-[2.5rem] w-full resize-none bg-transparent py-1 pr-10 text-sm text-foreground outline-none placeholder:text-subtle-foreground/70 disabled:opacity-60"
+					className="max-h-[7.5rem] min-h-[2.5rem] w-full resize-none bg-transparent py-1 pr-11 text-sm leading-relaxed text-foreground outline-none placeholder:text-subtle-foreground/65 disabled:opacity-60"
 					placeholder="Ask about this page or the site…"
 					value={inputValue}
 					onChange={(event) => {
@@ -62,7 +61,7 @@ export const ChatInput = memo(function ChatInput({
 				/>
 				<button
 					type="submit"
-					className="focus-ring-interactive absolute bottom-1.5 right-1.5 inline-flex size-8 items-center justify-center rounded-lg bg-accent text-on-accent transition hover:bg-accent-dark disabled:opacity-50"
+					className="focus-ring-interactive absolute bottom-1.5 right-1.5 inline-flex size-8 items-center justify-center rounded-lg bg-accent text-on-accent transition hover:bg-accent-dark disabled:opacity-40"
 					aria-label={isLoading ? 'Sending message' : 'Send message'}
 					disabled={isLoading || !inputValue.trim()}
 				>
@@ -77,19 +76,10 @@ export const ChatInput = memo(function ChatInput({
 					)}
 				</button>
 			</div>
-			<div className={`${OVERLAY_FOOTER} border-0 px-0 pb-0 pt-2`}>
-				<div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-					<span className="hidden sm:inline">
-						<kbd className="rounded border border-border px-1 py-0.5 font-sans">↵</kbd> send ·{' '}
-						<span className="text-subtle-foreground/70">Shift+Enter new line</span>
-					</span>
-					<span className="sm:hidden">Send · Close</span>
-					<span className="text-subtle-foreground/80">
-						<span className="hidden sm:inline">Stays open while you browse · </span>
-						<kbd className="rounded border border-border px-1 py-0.5 font-sans">⌘K</kbd> search
-					</span>
-				</div>
-			</div>
+			<p className="mt-2 hidden text-xxs text-subtle-foreground/80 sm:block">
+				<kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">↵</kbd> send · stays open while you browse ·{' '}
+				<kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">⌘K</kbd> search
+			</p>
 		</form>
 	);
 });

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /**
- * ChatLauncherIsland — FAB that opens the corner Ask companion.
+ * ChatLauncherIsland — accent FAB that opens the corner Ask companion.
  */
 export default function ChatLauncherIsland() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -33,11 +33,13 @@ export default function ChatLauncherIsland() {
 	return (
 		<div
 			className="pointer-events-none fixed bottom-4 right-4 z-chat sm:bottom-6 sm:right-6"
-			style={{ zIndex: 'var(--z-chat)' }}
+			style={{ zIndex: 'calc(var(--z-chat) + 1)' }}
 		>
 			<button
-				className={`ai-chat-launcher touch-target focus-ring-interactive pointer-events-auto inline-flex size-12 items-center justify-center rounded-full border bg-surface/95 text-foreground shadow-lg backdrop-blur transition hover:shadow-xl sm:size-14 ${
-					isOpen ? 'border-accent/50 ring-2 ring-accent/25' : 'border-border/60'
+				className={`ai-chat-launcher touch-target focus-ring-interactive pointer-events-auto inline-flex size-12 items-center justify-center rounded-full shadow-lg transition duration-normal ease-standard hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 sm:size-14 ${
+					isOpen
+						? 'border border-border/70 bg-surface/95 text-foreground backdrop-blur'
+						: 'border border-accent/30 bg-accent text-on-accent'
 				}`}
 				aria-label={isOpen ? 'Close Ask' : 'Open Ask — AI assistant'}
 				aria-expanded={isOpen}

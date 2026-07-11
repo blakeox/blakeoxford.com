@@ -72,8 +72,8 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 			<div
 				className={`max-w-[92%] px-3.5 py-2.5 text-sm ${
 					isAssistant
-						? 'rounded-2xl rounded-tl-md bg-surface-subtle/80 text-foreground'
-						: 'rounded-2xl rounded-tr-md bg-accent text-on-accent'
+						? 'rounded-2xl rounded-tl-md bg-surface-subtle/90 text-foreground ring-1 ring-border/30'
+						: 'rounded-2xl rounded-tr-md bg-accent text-on-accent shadow-sm shadow-accent/20'
 				}`}
 			>
 				{bubbleContent ? (

@@ -1,9 +1,9 @@
 /**
- * ChatHeader — Ask companion chrome with page context (no Find mode switch).
+ * ChatHeader — Ask companion chrome with page-context pill.
  */
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { OVERLAY_CLOSE_BUTTON, OVERLAY_HEADER, OVERLAY_ICON_BUTTON } from '../../../features/overlay/overlayStyles';
+import { OVERLAY_ICON_BUTTON } from '../../../features/overlay/overlayStyles';
 import type { ChatHeaderProps } from './types';
 
 function MenuButton({
@@ -124,18 +124,10 @@ export const ChatHeader = memo(function ChatHeader({
 								{isListening ? 'Stop voice input' : 'Voice input'}
 							</MenuButton>
 						) : null}
-						<MenuButton
-							onClick={() => {
-								toggleMemory();
-							}}
-						>
+						<MenuButton onClick={() => toggleMemory()}>
 							{useMemory ? 'Memory on' : 'Memory off'}
 						</MenuButton>
-						<MenuButton
-							onClick={() => {
-								toggleAdvancedControls();
-							}}
-						>
+						<MenuButton onClick={() => toggleAdvancedControls()}>
 							{showAdvancedControls ? 'Hide session settings' : 'Session settings'}
 						</MenuButton>
 						{canStartNewChat ? (
@@ -172,25 +164,34 @@ export const ChatHeader = memo(function ChatHeader({
 			: null;
 
 	return (
-		<div className={`${OVERLAY_HEADER} overflow-visible`}>
-			<div className="min-w-0 flex-1">
-				<p id="ai-chat-heading" className="truncate text-sm font-semibold text-foreground">
-					Ask
-				</p>
-				<p className="truncate text-xxs text-muted-foreground" title={pageLabel}>
-					About {pageLabel}
-				</p>
-				{isListening ? (
-					<span className="mt-1 inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xxs font-medium text-accent">
-						<span className="size-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
-						Listening
+		<div className="flex items-start gap-2 border-b border-border/40 px-3.5 pb-3 pt-2 sm:px-4 sm:pt-3.5">
+			<div className="min-w-0 flex-1 space-y-1.5">
+				<div className="flex items-center gap-2">
+					<p id="ai-chat-heading" className="text-sm font-semibold tracking-tight text-foreground">
+						Ask
+					</p>
+					{isListening ? (
+						<span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xxs font-medium text-accent">
+							<span className="size-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
+							Listening
+						</span>
+					) : null}
+				</div>
+				<span
+					className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-border/50 bg-surface-subtle/70 px-2.5 py-0.5 text-xxs text-muted-foreground"
+					title={pageLabel}
+				>
+					<span className="size-1.5 shrink-0 rounded-full bg-accent/80" aria-hidden="true" />
+					<span className="truncate">
+						<span className="text-subtle-foreground">Viewing</span>{' '}
+						<span className="font-medium text-foreground/85">{pageLabel}</span>
 					</span>
-				) : null}
+				</span>
 				<span className="sr-only">{wsConnected ? 'Live connection' : 'Offline'}</span>
 				{activeUsers > 1 ? <span className="sr-only">{activeUsers} online</span> : null}
 			</div>
 
-			<div className="flex shrink-0 items-center gap-1">
+			<div className="flex shrink-0 items-center gap-1 pt-0.5">
 				<button
 					ref={toggleRef}
 					type="button"
@@ -216,11 +217,11 @@ export const ChatHeader = memo(function ChatHeader({
 
 				<button
 					type="button"
-					className={OVERLAY_CLOSE_BUTTON}
+					className="focus-ring-interactive inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-surface-subtle hover:text-foreground"
 					aria-label="Close assistant"
 					onClick={closeChat}
 				>
-					<svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 6l12 12M6 18L18 6" />
 					</svg>
 				</button>
