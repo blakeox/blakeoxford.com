@@ -14,6 +14,9 @@ import ThemeInitIsland from '../components/islands/ThemeInitIsland';
 import ServiceWorkerIsland from '../components/islands/ServiceWorkerIsland';
 import ExperimentsCookieIsland from '../components/islands/ExperimentsCookieIsland';
 import AccessibilityEnhancementsIsland from '../components/islands/AccessibilityEnhancementsIsland';
+import ClarityIsland from '../components/islands/ClarityIsland';
+import WebVitalsIsland from '../components/islands/WebVitalsIsland';
+import CloudflareBeaconIsland from '../components/islands/CloudflareBeaconIsland';
 import { THEME_COLOR_LIGHT, THEME_COLOR_DARK } from '../lib/theme';
 
 // wide: when true, disable the default max-width wrapper for full-width layouts
@@ -53,6 +56,8 @@ const baseMainClasses = wide
  : 'mx-auto w-full max-w-3xl px-4 pt-24 sm:px-6 lg:px-8 text-base leading-relaxed text-foreground prose dark:prose-invert';
 
 const mainClasses = baseMainClasses;
+
+const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() ?? '';
 ---
 
 <html lang="en" class="scroll-smooth bg-background text-foreground">
@@ -82,6 +87,9 @@ const mainClasses = baseMainClasses;
  <meta name="creator" content="Blake Oxford" />
  <meta name="publisher" content="Blake Oxford" />
  <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+ {googleSiteVerification && (
+  <meta name="google-site-verification" content={googleSiteVerification} />
+ )}
  <link rel="canonical" href={canonicalUrl} />
 
  <!-- Enhanced Open Graph & Twitter -->
@@ -154,6 +162,13 @@ const mainClasses = baseMainClasses;
 
  <ExperimentsCookieIsland client:only="react" />
  <AccessibilityEnhancementsIsland client:only="react" />
+ {import.meta.env.PUBLIC_CLARITY_PROJECT_ID && (
+  <ClarityIsland client:idle />
+ )}
+ <WebVitalsIsland client:idle />
+ {import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN && (
+  <CloudflareBeaconIsland client:idle />
+ )}
  <script is:inline src="/js/ai-chat-launcher.js" defer></script>
  <slot name="head" />
  </head>

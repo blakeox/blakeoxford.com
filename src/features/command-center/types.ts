@@ -36,12 +36,13 @@ export const CATEGORY_LABELS: Record<CommandCategory, string> = {
 
 export const MODE_LABELS: Record<CommandMode, string> = {
   find: 'Find',
-  ask: 'Ask AI',
+  ask: 'Ask',
 };
 
+/** Discovery terms only — avoid duplicating nav quick links like Contact. */
 export const SUGGESTED_QUERIES = [
   'Microsoft Fabric',
   'CES 2026',
-  'Contact',
   'automation',
+  'Power BI',
 ] as const;

@@ -5,7 +5,7 @@
  * All other files should import from here (or via the barrel export).
  */
 
-import type { AIChatSource } from '../ai-search';
+import type { AIChatSource, AISearchMeta } from '../ai-search';
 
 // ─── Core Chat Types ──────────────────────────────────────────────
 
@@ -18,6 +18,8 @@ export interface ChatMessage {
 	content: string;
 	timestamp: number;
 	sources?: AIChatSource[];
+	/** Cloudflare Worker provenance (AutoRAG / Workers AI / cache). */
+	provenance?: AISearchMeta;
 	qualityScore?: number;
 	qualityDetails?: {
 		completeness: number;
@@ -69,7 +71,6 @@ export type SpeechRecognitionLike = {
 export const INITIAL_ASSISTANT_MESSAGE: ChatMessage = {
 	id: 'welcome',
 	role: 'assistant',
-	content:
-		'Hi! I\'m the AI search assistant. Ask me about Blake\'s work, projects, technical expertise, or case studies. I\'ll provide detailed insights with specific examples and outcomes, not just summaries.',
+	content: 'Ask about projects, case studies, or posts.',
 	timestamp: Date.now(),
 };

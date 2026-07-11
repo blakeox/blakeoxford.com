@@ -29,6 +29,8 @@ tests/playwright/visual-regression.spec.ts-snapshots/
 # Keep dark-mode visual baselines in CI
 !tests/playwright/visual/dark-mode-routes.spec.ts-snapshots/
 !tests/playwright/visual/dark-mode-routes.spec.ts-snapshots/**
+!tests/playwright/visual/component-visual.spec.ts-snapshots/
+!tests/playwright/visual/component-visual.spec.ts-snapshots/**
 
 # Runtime data
 pids
@@ -201,3 +203,6 @@ functions/.cache/
 
 # Legacy search index files (replaced by Vectorize)
 public/search/
+
+# Generated Zaraz config (contains measurement IDs)
+infra/zaraz/blakeoxford.com.json

@@ -38,7 +38,6 @@ import type { ChatMessage } from './conversation-utils';
 export const INITIAL_ASSISTANT_MESSAGE: ChatMessage = {
 	id: 'welcome',
 	role: 'assistant',
-	content:
-		'Hi! I\'m the AI search assistant. Ask me about Blake\'s work, projects, technical expertise, or case studies. I\'ll provide detailed insights with specific examples and outcomes, not just summaries.',
+	content: 'Ask about projects, case studies, or posts.',
 	timestamp: Date.now(),
 };

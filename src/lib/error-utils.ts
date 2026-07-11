@@ -13,8 +13,9 @@ export function categorizeError(err: unknown): {
 	message: string;
 	retryable: boolean;
 	userMessage: string;
+	retryAfterSec?: number;
 } {
-	const error = err as Error & { status?: number; code?: string };
+	const error = err as Error & { status?: number; code?: string; retryAfterSec?: number };
 
 	// Network errors
 	if (error.name === 'TypeError' && error.message.includes('fetch')) {
@@ -50,13 +51,19 @@ export function categorizeError(err: unknown): {
 	}
 
 	// Rate limit errors
-	if (error.status === 429) {
+	if (error.status === 429 || /rate limit|too many/i.test(error.message || '')) {
+		const wait = typeof error.retryAfterSec === 'number' && error.retryAfterSec > 0
+			? Math.ceil(error.retryAfterSec)
+			: undefined;
 		return {
 			category: 'rate-limit',
 			severity: 'medium',
 			message: 'Rate limit exceeded',
-			retryable: true,
-			userMessage: 'Too many requests. Please wait a moment and try again.',
+			retryable: false,
+			retryAfterSec: wait,
+			userMessage: wait
+				? `Too many requests on the edge. Please wait ${wait}s and try again.`
+				: 'Too many requests on the edge. Please wait a moment and try again.',
 		};
 	}
 

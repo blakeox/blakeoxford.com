@@ -189,6 +189,7 @@ export function useAIChatController() {
 		appendAssistantChunk,
 		finalizeAssistantMessage,
 		assignAssistantSources,
+		assignAssistantProvenance,
 		clearConversation,
 		startNewChat,
 	} = useMessageProcessing({
@@ -249,6 +250,7 @@ export function useAIChatController() {
 		setShowScrollToLatest,
 		appendAssistantChunk,
 		assignAssistantSources,
+		assignAssistantProvenance,
 		finalizeAssistantMessage,
 		buildHistoryForRequest,
 		updateFallbackSuggestions,

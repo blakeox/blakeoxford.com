@@ -1,0 +1,101 @@
+{
+  "dataLayer": true,
+  "historyChange": true,
+  "debugKey": "",
+  "settings": {
+    "autoInjectScript": true,
+    "cookieDomain": "blakeoxford.com",
+    "ecommerce": false,
+    "hideExternalReferer": true,
+    "hideIPAddress": true,
+    "hideQueryParams": true,
+    "hideUserAgent": true,
+    "injectIframes": false
+  },
+  "analytics": {
+    "enabled": true,
+    "sessionExpTime": 1800
+  },
+  "triggers": {
+    "tPageview": {
+      "name": "All Pages",
+      "description": "Initial and SPA pageviews",
+      "system": "pageload",
+      "loadRules": [],
+      "excludeRules": []
+    },
+    "tAllEvents": {
+      "name": "All Custom Events",
+      "description": "Matches zaraz.track() and dataLayer.push() events",
+      "loadRules": [
+        {
+          "id": "rEventName",
+          "match": "Event Name",
+          "op": "MATCH_REGEX",
+          "value": ".+"
+        }
+      ],
+      "excludeRules": []
+    }
+  },
+  "variables": {},
+  "tools": {
+    "toolGa4": {
+      "enabled": true,
+      "name": "Google Analytics 4",
+      "component": "google-analytics-4",
+      "type": "component",
+      "blockingTriggers": [],
+      "permissions": [
+        "access_client_kv",
+        "server_network_requests"
+      ],
+      "settings": {
+        "tid": "__GA4_MEASUREMENT_ID__",
+        "baseDomain": "blakeoxford.com",
+        "hideOriginalIP": true,
+        "ecommerce": false,
+        "ga-audiences": false
+      },
+      "defaultFields": {},
+      "actions": {
+        "aGa4Pageview": {
+          "actionType": "pageview",
+          "firingTriggers": ["tPageview"],
+          "blockingTriggers": [],
+          "data": {}
+        },
+        "aGa4Event": {
+          "actionType": "event",
+          "firingTriggers": ["tAllEvents"],
+          "blockingTriggers": [],
+          "data": {}
+        }
+      }
+    },
+    "toolConversionLinker": {
+      "enabled": true,
+      "name": "Google Conversion Linker",
+      "component": "google-conversion-linker",
+      "type": "component",
+      "blockingTriggers": [],
+      "permissions": [
+        "access_client_kv",
+        "server_network_requests"
+      ],
+      "settings": {
+        "baseDomain": "blakeoxford.com"
+      },
+      "defaultFields": {},
+      "actions": {
+        "aConversionLinkerPageview": {
+          "actionType": "pageview",
+          "firingTriggers": ["tPageview"],
+          "blockingTriggers": [],
+          "data": {}
+        }
+      }
+    }
+  },
+  "zarazVersion": 0
+}

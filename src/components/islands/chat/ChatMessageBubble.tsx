@@ -1,12 +1,5 @@
 /**
- * ChatMessageBubble component
- * Renders a single chat message with sources, actions, and feedback
- *
- * This is the main container component that composes:
- * - MessageContent: Core message rendering with quality indicators
- * - MessageSources: Source citations and expandable source lists
- * - MessageActions: Copy, share, feedback buttons
- * - MessageCTAs: Contextual call-to-actions and follow-up suggestions
+ * ChatMessageBubble — restrained message UI aligned with Find overlay density.
  */
 import { memo } from 'react';
 import {
@@ -14,16 +7,12 @@ import {
 	decodeHtmlEntities,
 	decodeMimeEncodedWords,
 } from '../../../lib/string-utils';
-import { QualityIndicator } from './MessageContent';
-import { CitationLinks, SourcesList } from './MessageSources';
+import { formatAISearchProvenance } from '../../../lib/ai-search';
+import { SourcesList } from './MessageSources';
 import { MessageActions } from './MessageActions';
-import { MatchedCTA, FollowUpSuggestions, ContextualCTAs } from './MessageCTAs';
+import { FollowUpSuggestions, MatchedCTA } from './MessageCTAs';
 import type { ChatMessageBubbleProps } from './types';
 
-/**
- * ChatMessageBubble - Main container component
- * Composes sub-components for message rendering, sources, actions, and CTAs
- */
 export const ChatMessageBubble = memo(function ChatMessageBubble({
 	message,
 	isStreaming,
@@ -43,18 +32,21 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 	setInputValue,
 	sendQuery,
 	copyWithFeedback,
+	isLatestAssistant = false,
 }: ChatMessageBubbleProps) {
-	const alignment = message.role === 'user' ? 'items-end text-right' : 'items-start text-left';
-	const bubbleClasses = message.role === 'user'
-		? 'bg-accent text-on-accent'
-		: 'bg-surface/95 text-foreground';
 	const isAssistant = message.role === 'assistant';
 	const bubbleContent = isAssistant ? cleanAssistantResponse(message.content) : message.content;
 	const sources = isAssistant && message.sources ? message.sources : [];
 	const totalSources = sources.length;
+	const provenanceLabel =
+		isAssistant && !isStreaming
+			? formatAISearchProvenance(message.provenance, totalSources)
+			: null;
 	const showAllSources = isAssistant ? Boolean(expandedSources[message.id]) : false;
 	const primarySource = sources[0] ?? null;
-	const primarySourceTitle = primarySource ? decodeMimeEncodedWords(decodeHtmlEntities(primarySource.title || primarySource.url)) : null;
+	const primarySourceTitle = primarySource
+		? decodeMimeEncodedWords(decodeHtmlEntities(primarySource.title || primarySource.url))
+		: null;
 	let primarySourceIsExternal = false;
 	if (primarySource) {
 		try {
@@ -70,37 +62,52 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 	const primaryLinkRel = primarySourceIsExternal ? 'noreferrer' : undefined;
 	const isHelpful = message.feedback === 'positive';
 	const isNotHelpful = message.feedback === 'negative';
-	const messageTextClasses = isAssistant ? 'text-[0.95rem] leading-relaxed' : 'text-[0.9rem] leading-snug';
 
 	return (
-		<div key={message.id} className={`flex flex-col gap-2 ${alignment}`} data-ai-message-role={message.role}>
-			<div className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm shadow-sm ring-1 ring-border/25 transition-all duration-150 ease-out ${bubbleClasses}`}>
-				<div className="flex flex-col gap-2">
-					{bubbleContent ? (
-						<span className={`whitespace-pre-wrap break-words ${messageTextClasses}`}>{bubbleContent}</span>
-					) : (
-						isAssistant && !isStreaming ? (
-							<span className={`whitespace-pre-wrap break-words ${messageTextClasses}`}>Thinking…</span>
-						) : null
-					)}
-					{isAssistant && isStreaming && (
-						<span className="flex items-center gap-1 text-[0.75rem] text-[color:var(--fg)]/60" aria-live="polite">
-							<span className="sr-only">Assistant is responding</span>
-							<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse" />
-							<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:150ms]" />
-							<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:300ms]" />
-						</span>
-					)}
-					{isAssistant && !isStreaming && message.qualityScore !== undefined && (
-						<QualityIndicator message={message} totalSources={totalSources} />
-					)}
-					{isAssistant && totalSources > 0 && (
-						<CitationLinks sources={sources} messageId={message.id} handleOpenPrimarySource={handleOpenPrimarySource} />
-					)}
-				</div>
+		<div
+			key={message.id}
+			className={`flex flex-col gap-1.5 ${isAssistant ? 'items-start' : 'items-end'}`}
+			data-ai-message-role={message.role}
+		>
+			<div
+				className={`max-w-[92%] px-3.5 py-2.5 text-sm ${
+					isAssistant
+						? 'rounded-2xl rounded-tl-md bg-surface-subtle/80 text-foreground'
+						: 'rounded-2xl rounded-tr-md bg-accent text-on-accent'
+				}`}
+			>
+				{bubbleContent ? (
+					<span className={`whitespace-pre-wrap break-words ${isAssistant ? 'leading-relaxed' : 'leading-snug'}`}>
+						{bubbleContent}
+					</span>
+				) : isAssistant && !isStreaming ? (
+					<span className="text-muted-foreground">Thinking…</span>
+				) : null}
+				{isAssistant && isStreaming ? (
+					<span className="mt-1 flex items-center gap-1" aria-live="polite">
+						<span className="sr-only">Assistant is responding</span>
+						<span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-accent/60" />
+						<span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-accent/60 [animation-delay:150ms]" />
+						<span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-accent/60 [animation-delay:300ms]" />
+					</span>
+				) : null}
 			</div>
 
-			{isAssistant && totalSources > 0 && (
+			{provenanceLabel ? (
+				<span
+					className="max-w-[92%] px-1 text-xxs text-subtle-foreground"
+					data-ai-provenance
+					title={
+						message.provenance?.provider
+							? `Cloudflare ${message.provenance.provider}${message.provenance.cacheStatus ? ` · cache ${message.provenance.cacheStatus}` : ''}`
+							: undefined
+					}
+				>
+					{provenanceLabel}
+				</span>
+			) : null}
+
+			{isAssistant && totalSources > 0 && !isStreaming ? (
 				<SourcesList
 					message={message}
 					sources={sources}
@@ -116,36 +123,21 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 					toggleExpandedSource={toggleExpandedSource}
 					toggleIndividualSource={toggleIndividualSource}
 				/>
-			)}
+			) : null}
 
-			{/* Contextual CTA for matched conditions */}
-			{isAssistant && sources.length > 0 && (
-				<MatchedCTA
-					message={message}
-					messages={messages}
-					sources={sources}
-				/>
-			)}
+			{isAssistant && isLatestAssistant && !isStreaming && sources.length > 0 ? (
+				<>
+					<FollowUpSuggestions
+						sources={sources}
+						setInputValue={setInputValue}
+						sendQuery={sendQuery}
+						maxSuggestions={2}
+					/>
+					<MatchedCTA message={message} messages={messages} sources={sources} compact />
+				</>
+			) : null}
 
-			{/* Dynamic follow-up suggestions */}
-			{isAssistant && sources.length > 0 && (
-				<FollowUpSuggestions
-					sources={sources}
-					setInputValue={setInputValue}
-					sendQuery={sendQuery}
-				/>
-			)}
-
-			{/* Contextual CTAs */}
-			{isAssistant && sources.length > 0 && (
-				<ContextualCTAs
-					sources={sources}
-					siteHostname={siteHostname}
-					messagesCount={messagesRef.current.length}
-				/>
-			)}
-
-			{isAssistant && (
+			{isAssistant && !isStreaming ? (
 				<MessageActions
 					message={message}
 					messages={messages}
@@ -158,8 +150,11 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 					handleOpenPrimarySource={handleOpenPrimarySource}
 					handleFeedback={handleFeedback}
 					copyWithFeedback={copyWithFeedback}
+					compact
 				/>
-			)}
+			) : null}
 		</div>
 	);
 });
+
+ChatMessageBubble.displayName = 'ChatMessageBubble';

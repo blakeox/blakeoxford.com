@@ -145,6 +145,7 @@ export function useChatLifecycle(
 		setIsOpen(true);
 		setError(null);
 		setChatState((state) => (state === 'idle' ? 'ready' : state));
+		dispatchState(true);
 
 		// Ensure the input is focused shortly after opening.
 		// Use a small timeout to allow downstream refs to be assigned
@@ -156,7 +157,7 @@ export function useChatLifecycle(
 		} catch (e) {
 			// non-fatal
 		}
-	}, [focusInput, isOpen, setIsOpen, setError, setChatState, lastFocusedElementRef]);
+	}, [dispatchState, focusInput, isOpen, setIsOpen, setError, setChatState, lastFocusedElementRef]);
 
 	/**
 	 * Closes the chat panel
@@ -172,12 +173,13 @@ export function useChatLifecycle(
 		}
 		setIsOpen(false);
 		setError(null);
+		dispatchState(false);
 		if (lastFocusedElementRef.current && typeof lastFocusedElementRef.current.focus === 'function') {
 			requestAnimationFrame(() => {
 				lastFocusedElementRef.current?.focus();
 			});
 		}
-	}, [isListening, isOpen, toggleListening, setIsOpen, setError, lastFocusedElementRef]);
+	}, [dispatchState, isListening, isOpen, toggleListening, setIsOpen, setError, lastFocusedElementRef]);
 
 	return {
 		openChat,

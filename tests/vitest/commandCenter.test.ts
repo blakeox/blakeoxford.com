@@ -40,7 +40,7 @@ describe('parseCommandQuery', () => {
 });
 
 describe('enrichCommandItems', () => {
-  it('boosts title matches and adds match reason', () => {
+  it('boosts title matches and adds related match reason', () => {
     const items: CommandItem[] = [
       {
         id: '/projects/fabric/',
@@ -55,7 +55,38 @@ describe('enrichCommandItems', () => {
     ];
 
     const ranked = enrichCommandItems(items, 'fabric');
-    expect(ranked[0]?.matchReason).toBeTruthy();
+    expect(ranked[0]?.matchReason).toMatch(/^Related to:/);
     expect(ranked[0]?.score).toBeGreaterThan(0.4);
+  });
+
+  it('demotes hub pages without a title term match', () => {
+    const items: CommandItem[] = [
+      {
+        id: '/projects/',
+        kind: 'page',
+        title: 'Projects',
+        subtitle: 'Browse work',
+        href: '/projects/',
+        tags: [],
+        source: 'vectorize',
+        score: 0.92,
+      },
+      {
+        id: '/projects/fabric/',
+        kind: 'project',
+        title: 'Microsoft Fabric – Workflow Automation',
+        subtitle: 'Operational intelligence',
+        href: '/projects/fabric/',
+        tags: ['automation'],
+        source: 'local',
+        score: 0.5,
+        image: '/images/fabric.webp',
+      },
+    ];
+
+    const ranked = enrichCommandItems(items, 'automation');
+    expect(ranked[0]?.href).toContain('fabric');
+    expect(ranked.every((item) => item.title !== 'Projects')).toBe(true);
+    expect(ranked.every((item) => item.matchReason !== 'Semantic match')).toBe(true);
   });
 });

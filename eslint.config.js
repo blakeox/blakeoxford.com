@@ -285,6 +285,7 @@ export default [
       '*.config.ts',
       '*.config.mjs',
       'scripts/**/*.js',
+      'scripts/**/*.mjs',
     ],
     languageOptions: {
       globals: {
@@ -296,6 +297,12 @@ export default [
         process: 'readonly',
         Buffer: 'readonly',
         console: 'readonly',
+        fetch: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        Headers: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         setInterval: 'readonly',

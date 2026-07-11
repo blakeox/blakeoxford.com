@@ -12,6 +12,7 @@ import {
 } from './form/FormHelpers';
 import { getContactFormService } from '../../services/ContactFormService';
 import { AppError, isAppError, getUserMessage } from '../../utils/errors';
+import { conversionEvents } from '../../lib/analytics';
 
 declare global {
  interface Window {
@@ -241,6 +242,7 @@ function setupContactForm(): CleanupFn | void {
 
  if (result.success) {
  showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+ conversionEvents.generateLead({ method: 'contact_form', form: 'contact' });
  form.reset();
  }
  } catch (error) {

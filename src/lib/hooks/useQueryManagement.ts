@@ -46,6 +46,8 @@ interface UseQueryManagementOptions {
 	appendAssistantChunk: (assistantId: string, token: string) => void;
 	/** Function to assign sources to assistant message */
 	assignAssistantSources: (assistantId: string, sources: any[]) => void;
+	/** Function to assign Cloudflare provenance metadata */
+	assignAssistantProvenance: (assistantId: string, provenance: NonNullable<ChatMessage['provenance']>) => void;
 	/** Function to finalize assistant message */
 	finalizeAssistantMessage: (assistantId: string, message: string) => Promise<void>;
 	/** Function to build history for request */
@@ -128,6 +130,7 @@ export function useQueryManagement(
 		appendAssistantChunk,
 		setShowScrollToLatest,
 		assignAssistantSources,
+		assignAssistantProvenance,
 		finalizeAssistantMessage,
 		buildHistoryForRequest,
 		updateFallbackSuggestions,
@@ -184,23 +187,28 @@ export function useQueryManagement(
 			// Enhance the query with analytical context to guide better responses
 			const enhancedQuery = useMemory ? enhanceQuery(query, historyPayload.length > 0) : query;
 
-			// Progressive loading phases for user feedback
+			// Progressive loading phases — advance on real Cloudflare pipeline signals
 			const searchingTimer = setTimeout(() => setLoadingPhase('analyzing'), 1500);
 			const analyzingTimer = setTimeout(() => setLoadingPhase('crafting'), 4000);
+			let sawMeta = false;
+			let sawSources = false;
 
 			try {
-				await searchWithAI(enhancedQuery, {
+				const result = await searchWithAI(enhancedQuery, {
 					history: historyPayload,
 					signal: controller.signal,
-						// Throttled token handler: append token, then auto-scroll only when
-						// the user is already near the bottom. If the user has scrolled up,
-						// reveal the Jump-to-latest button instead of forcing the view.
 						onToken: (() => {
 							let lastScrollAt = 0;
 							const THROTTLE_MS = 120;
 							const BOTTOM_THRESHOLD = 120; // px
+							let firstToken = true;
 
 							return (token: string) => {
+								if (firstToken) {
+									firstToken = false;
+									clearTimeout(searchingTimer);
+									setLoadingPhase(sawSources ? 'crafting' : 'analyzing');
+								}
 								appendAssistantChunk(assistantId, token);
 								const el = scrollContainerRef.current;
 								if (!el) return;
@@ -213,12 +221,10 @@ export function useQueryManagement(
 										try {
 											el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
 										} catch {
-											// fallback to instant
 											el.scrollTop = el.scrollHeight;
 										}
 									}
 								} else {
-									// If available, reveal the Jump-to-latest affordance so user can opt-in
 									try {
 										setShowScrollToLatest?.(true);
 									} catch {
@@ -228,19 +234,43 @@ export function useQueryManagement(
 							};
 						})(),
 					onSources: (sources) => {
+						sawSources = true;
 						assignAssistantSources(assistantId, sources);
+						clearTimeout(analyzingTimer);
 						setLoadingPhase('crafting');
+					},
+					onMeta: (meta) => {
+						sawMeta = true;
+						assignAssistantProvenance(assistantId, meta);
+						clearTimeout(searchingTimer);
+						setLoadingPhase(meta.provider === 'workers-ai' ? 'crafting' : 'analyzing');
+						if (meta.provider) {
+							autoragEvents.responseMeta({
+								provider: meta.provider,
+								cache_status: meta.cacheStatus ?? 'unknown',
+								complexity: meta.complexity ?? 'unknown',
+							});
+						}
 					},
 					onCompletion: async (message) => {
 						await finalizeAssistantMessage(assistantId, message.trim());
 					},
 				});
+				if (result.meta) {
+					assignAssistantProvenance(assistantId, result.meta);
+				}
 				clearTimeout(searchingTimer);
 				clearTimeout(analyzingTimer);
 				setStreamingMessageId(null);
 				setLoadingPhase(null);
 				setChatState('ready');
-				await updateFallbackSuggestions(query);
+				// Only surface Vectorize fallback when the answer has no citations.
+				if ((result.sources?.length ?? 0) === 0) {
+					await updateFallbackSuggestions(query);
+				} else {
+					setFallbackResults([]);
+				}
+				void sawMeta;
 			} catch (err) {
 				clearTimeout(searchingTimer);
 				clearTimeout(analyzingTimer);
@@ -253,20 +283,18 @@ export function useQueryManagement(
 				setChatState('ready');
 				setMessages((prev) => prev.filter((message) => message.id !== assistantId));
 
-				// Enhanced error categorization and recovery
 				const errorInfo = categorizeError(err);
-				const shouldRetry = errorInfo.retryable && retryCount < 2;
+				const shouldRetry =
+					errorInfo.category !== 'rate-limit' && errorInfo.retryable && retryCount < 2;
 
 				if (shouldRetry) {
-					// Auto-retry with exponential backoff
 					const delay = Math.min(1000 * Math.pow(2, retryCount), 5000);
 					setError(
-						`${errorInfo.message} Retrying in ${Math.ceil(delay / 1000)}s... (${retryCount + 1}/2)`,
+						`${errorInfo.userMessage} Retrying in ${Math.ceil(delay / 1000)}s... (${retryCount + 1}/2)`,
 					);
 					setRetryCount((prev) => prev + 1);
 					setLastFailedQuery(query);
 
-					// Track retry attempt
 					autoragEvents.errorRetry({
 						category: errorInfo.category,
 						attempt: retryCount + 1,
@@ -279,12 +307,10 @@ export function useQueryManagement(
 					return;
 				}
 
-				// Max retries reached or non-retryable error
-				setError(errorInfo.message);
+				setError(errorInfo.userMessage);
 				setRetryCount(0);
-				setLastFailedQuery('');
+				setLastFailedQuery(errorInfo.category === 'rate-limit' ? '' : query);
 
-				// Track error
 				autoragEvents.error({
 					category: errorInfo.category,
 					severity: 'error',
@@ -299,6 +325,7 @@ export function useQueryManagement(
 		[
 			appendAssistantChunk,
 			assignAssistantSources,
+			assignAssistantProvenance,
 			buildHistoryForRequest,
 			finalizeAssistantMessage,
 			updateFallbackSuggestions,
@@ -316,6 +343,7 @@ export function useQueryManagement(
 			scrollContainerRef,
 			setRetryCount,
 			setLastFailedQuery,
+			setShowScrollToLatest,
 		],
 	);
 

@@ -12,25 +12,36 @@ export type CommandCenterHandoffSource =
 
 export const commandCenterEvents = {
   open: (source: CommandCenterOpenSource) =>
-    trackEvent('Command Center Open', { source }),
+    trackEvent('command_center_open', { source }),
 
-  close: () => trackEvent('Command Center Close'),
+  close: () => trackEvent('command_center_close'),
 
-  modeChange: (mode: 'find' | 'ask') => trackEvent('Command Center Mode', { mode }),
+  modeChange: (mode: 'find' | 'ask') => trackEvent('command_center_mode', { mode }),
 
   searchResults: (data: {
     query_length: number;
     result_count: number;
     backend: string;
-  }) => trackEvent('Command Center Search', data),
+    semantic_hit_count?: number;
+    top_score?: number;
+  }) => trackEvent('command_center_search', data),
 
   resultClick: (data: { kind: string; href: string }) =>
-    trackEvent('Command Center Result Click', data),
+    trackEvent('command_center_result_click', {
+      kind: data.kind,
+      href_path: (() => {
+        try {
+          return new URL(data.href, window.location.origin).pathname;
+        } catch {
+          return data.href.slice(0, 120);
+        }
+      })(),
+    }),
 
   askHandoff: (data: {
     source: CommandCenterHandoffSource;
     query_length: number;
     item_kind?: string;
     auto_send: boolean;
-  }) => trackEvent('Command Center Ask Handoff', data),
+  }) => trackEvent('command_center_ask_handoff', data),
 };

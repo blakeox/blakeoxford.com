@@ -8,6 +8,48 @@ import { initEdgeSentry, addEdgeBreadcrumb } from '../sentry.edge.config.js';
 import { CACHE_DURATIONS, isHashedPath } from '../src/config/constants.ts';
 export { ConversationDurableObject } from './ConversationDO.ts';
 
+/** FNV-1a style fingerprint so Analytics Engine never stores raw client IPs. */
+function anonymizeClientIp(ip) {
+  if (!ip || ip === 'unknown') return 'unknown';
+  let hash = 2166136261;
+  for (let i = 0; i < ip.length; i++) {
+    hash ^= ip.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `ip_${(hash >>> 0).toString(16)}`;
+}
+
+const API_EXPOSE_HEADERS = [
+  'x-ai-provider',
+  'x-cache-status',
+  'x-query-complexity',
+  'x-response-time',
+  'x-rate-limit-reason',
+  'x-rate-limit-remaining',
+  'x-search-provider',
+  'x-request-id',
+  'retry-after',
+].join(',');
+
+/**
+ * Same-origin friendly CORS headers. Never pairs `*` with credentials.
+ * @param {Request} request
+ * @param {{ methods?: string, allowHeaders?: string, extra?: Record<string, string> }} [options]
+ */
+function buildApiCorsHeaders(request, options = {}) {
+  const requestOrigin = request.headers.get('origin');
+  const allowOrigin = requestOrigin && requestOrigin !== 'null' ? requestOrigin : new URL(request.url).origin;
+  return {
+    'access-control-allow-origin': allowOrigin,
+    'access-control-allow-credentials': 'true',
+    'access-control-allow-methods': options.methods || 'POST, OPTIONS',
+    'access-control-allow-headers': options.allowHeaders || 'content-type, authorization, x-session-id',
+    'access-control-expose-headers': API_EXPOSE_HEADERS,
+    'vary': 'Origin',
+    ...(options.extra || {}),
+  };
+}
+
 class EdgeCacheManager {
   constructor(request, env) {
     this.request = request;
@@ -347,18 +389,16 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
 
     if (url.pathname === '/api/ai-search') {
       const startTime = Date.now();
-      const origin = request.headers.get('origin') || '*';
       const baseCorsHeaders = {
-        'access-control-allow-origin': origin,
-        'access-control-allow-credentials': 'true',
-        'access-control-allow-methods': 'POST, OPTIONS',
-        'access-control-allow-headers': 'content-type, authorization, x-session-id',
-        'vary': 'Origin',
-        'cache-control': 'no-store',
-        'content-type': 'application/json; charset=utf-8',
-        'x-request-id': reqId,
-        'x-route-kind': 'api',
-        'x-cache-policy': 'no-store'
+        ...buildApiCorsHeaders(request, {
+          extra: {
+            'cache-control': 'no-store',
+            'content-type': 'application/json; charset=utf-8',
+            'x-request-id': reqId,
+            'x-route-kind': 'api',
+            'x-cache-policy': 'no-store',
+          },
+        }),
       };
 
       if (request.method === 'OPTIONS') {
@@ -446,7 +486,8 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           headers: {
             ...baseCorsHeaders,
             'retry-after': String(rateLimit.resetIn),
-            'x-rate-limit-reason': rateLimit.reason
+            'x-rate-limit-reason': rateLimit.reason,
+            'x-rate-limit-remaining': '0',
           }
         });
       }
@@ -590,6 +631,7 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
             ...baseCorsHeaders,
             'x-query-complexity': complexity,
             'x-ai-provider': 'workers-ai',
+            'x-cache-status': 'N/A',
             'x-response-time': String(Date.now() - startTime)
           };
 
@@ -598,9 +640,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
             try {
               env.AI_ANALYTICS.writeDataPoint({
                 blobs: [
-                  query.slice(0, 100),
+                  query.slice(0, 50),
                   'WORKERS_AI',
-                  clientIp,
+                  anonymizeClientIp(clientIp),
                   sessionId || 'anonymous',
                   complexity
                 ],
@@ -648,9 +690,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
               try {
                 env.AI_ANALYTICS.writeDataPoint({
                   blobs: [
-                    query.slice(0, 100),
+                    query.slice(0, 50),
                     'CACHE_HIT',
-                    clientIp,
+                    anonymizeClientIp(clientIp),
                     sessionId || 'anonymous',
                     complexity || 'unknown'
                   ],
@@ -690,7 +732,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
       try {
         const requestBody = { query: enhancedQuery, history };
         
-        // Use AI Gateway if configured for unified logging and fallback support
+        // Optional AI Gateway: attach observability headers when configured.
+        // Keep the AutoRAG endpoint URL (gateway URL rewrite is provider-specific).
+        // Enable by setting AI_GATEWAY_ID + AI_GATEWAY_ACCOUNT_ID in wrangler.toml.
         let fetchUrl = upstreamEndpoint;
         const fetchHeaders = {
           'content-type': 'application/json',
@@ -703,7 +747,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
             user: sessionId || 'anonymous', 
             source: 'website-chat',
             complexity,
-            enhanced: query !== enhancedQuery
+            enhanced: query !== enhancedQuery,
+            gateway: env.AI_GATEWAY_ID,
+            account: env.AI_GATEWAY_ACCOUNT_ID,
           });
         }
         
@@ -855,9 +901,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
                   const responseTime = Date.now() - startTime;
                   env.AI_ANALYTICS.writeDataPoint({
                     blobs: [
-                      query.slice(0, 100),
+                      query.slice(0, 50),
                       'API_CALL_STREAM',
-                      clientIp,
+                      anonymizeClientIp(clientIp),
                       sessionId || 'anonymous',
                       complexity || 'unknown'
                     ],
@@ -901,9 +947,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
             const responseTime = Date.now() - startTime;
             env.AI_ANALYTICS.writeDataPoint({
               blobs: [
-                query.slice(0, 100),
+                query.slice(0, 50),
                 'API_CALL',
-                clientIp,
+                anonymizeClientIp(clientIp),
                 sessionId || 'anonymous',
                 complexity || 'unknown'
               ],
@@ -967,14 +1013,19 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
 
     // Semantic search endpoint using Vectorize
     if (url.pathname === '/api/semantic-search') {
-      const origin = request.headers.get('origin') || '*';
+      const startTime = Date.now();
       const baseCorsHeaders = {
-        'access-control-allow-origin': origin,
-        'access-control-allow-credentials': 'true',
-        'access-control-allow-methods': 'POST, OPTIONS',
-        'access-control-allow-headers': 'content-type',
-        'cache-control': 'no-store',
-        'vary': 'Origin'
+        ...buildApiCorsHeaders(request, {
+          allowHeaders: 'content-type, x-session-id',
+          extra: {
+            'cache-control': 'no-store',
+            'content-type': 'application/json; charset=utf-8',
+            'x-request-id': reqId,
+            'x-route-kind': 'api',
+            'x-cache-policy': 'no-store',
+            'x-search-provider': 'vectorize',
+          },
+        }),
       };
 
       if (request.method === 'OPTIONS') {
@@ -989,6 +1040,38 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
       }
 
       try {
+        const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
+
+        // Light rate limit for Find (higher than Ask — typing fires often)
+        if (env.RATE_LIMIT_KV) {
+          const now = Date.now();
+          const windowMs = 60 * 1000;
+          const ipKey = `ratelimit:search:ip:${clientIp}`;
+          const ipData = await env.RATE_LIMIT_KV.get(ipKey, 'json');
+          const ipCount = ipData || { count: 0, reset: now + windowMs };
+          if (now > ipCount.reset) {
+            ipCount.count = 0;
+            ipCount.reset = now + windowMs;
+          }
+          ipCount.count++;
+          await env.RATE_LIMIT_KV.put(ipKey, JSON.stringify(ipCount), { expirationTtl: 120 });
+          if (ipCount.count > 60) {
+            const resetIn = Math.ceil((ipCount.reset - now) / 1000);
+            return new Response(JSON.stringify({
+              error: 'Search rate limit exceeded. Please wait a moment.',
+              resetIn,
+            }), {
+              status: 429,
+              headers: {
+                ...baseCorsHeaders,
+                'retry-after': String(resetIn),
+                'x-rate-limit-reason': 'ip',
+                'x-rate-limit-remaining': '0',
+              },
+            });
+          }
+        }
+
         const { query, limit = 5 } = await request.json();
 
         if (!query || typeof query !== 'string') {
@@ -1045,15 +1128,42 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
           date: match.metadata?.date || ''
         }));
 
+        const topScore = results[0]?.score ?? 0;
+        const latency = Date.now() - startTime;
+
+        if (env.AI_ANALYTICS) {
+          try {
+            env.AI_ANALYTICS.writeDataPoint({
+              blobs: [
+                query.slice(0, 50),
+                'VECTORIZE',
+                anonymizeClientIp(clientIp),
+                'anonymous',
+              ],
+              doubles: [
+                results.length,
+                topScore,
+                latency,
+              ],
+              indexes: ['semantic_search'],
+            });
+          } catch {
+            // Analytics is non-critical
+          }
+        }
+
         return new Response(JSON.stringify({ 
           query,
           results,
-          count: results.length 
+          count: results.length,
+          provider: 'vectorize',
+          topScore,
         }), {
           status: 200,
           headers: {
             ...baseCorsHeaders,
-            'content-type': 'application/json'
+            'x-response-time': String(latency),
+            'x-search-provider': 'vectorize',
           }
         });
 

@@ -3,6 +3,8 @@
 interface ImportMetaEnv {
   readonly PUBLIC_SENTRY_DSN?: string;
   readonly PUBLIC_GIT_COMMIT?: string;
+  readonly PUBLIC_CLARITY_PROJECT_ID?: string;
+  readonly PUBLIC_CF_WEB_ANALYTICS_TOKEN?: string;
   readonly MODE: 'development' | 'production';
   readonly DEV: boolean;
   readonly PROD: boolean;

@@ -1,13 +1,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { handoffToAiChat } from '../../lib/chat/ai-chat-bridge';
+import { handoffToAiChat, openAiChat } from '../../lib/chat/ai-chat-bridge';
 import { useOverlayScrollLock } from '../../hooks/useOverlayScrollLock';
 import { createFocusTrap } from '../../utils/focusTrap';
-import { CommandAskHandoff, CommandAskPanel } from './components/CommandAskHandoff';
-import { CommandEmpty, CommandFooter } from './components/CommandEmpty';
+import { ModeSwitch, OverlayShell } from '../overlay';
+import { OVERLAY_CLOSE_BUTTON, OVERLAY_FIELD, OVERLAY_HEADER } from '../overlay/overlayStyles';
+import { CommandAskHandoff, CommandAskState } from './components/CommandAskHandoff';
+import {
+  CommandEmpty,
+  CommandFooter,
+  CommandRecentList,
+  CommandSuggestions,
+} from './components/CommandEmpty';
 import { CommandGroupSection, CommandSkeletonList } from './components/CommandGroup';
-import { CommandModeTabs } from './components/CommandModeTabs';
 import { CommandResultRow } from './components/CommandResultRow';
 import { useCommandCenter } from './hooks/useCommandCenter';
 import { useCommandHistory } from './hooks/useCommandHistory';
@@ -15,15 +21,9 @@ import { useCommandQuery } from './hooks/useCommandQuery';
 import { commandCenterEvents, type CommandCenterHandoffSource } from './lib/analytics';
 import { flattenGroups } from './lib/groupResults';
 import { parseCommandQuery } from './lib/parseQuery';
-import type { CommandCategory, CommandItem, CommandMode } from './types';
-import { CATEGORY_LABELS } from './types';
-
-const CATEGORIES: CommandCategory[] = ['all', 'projects', 'blog', 'pages'];
+import type { CommandItem, CommandMode } from './types';
 
 type AskAiOptions = {
-  sourceTitle?: string;
-  sourceHref?: string;
-  sourceKind?: CommandItem['kind'];
   analyticsSource?: CommandCenterHandoffSource;
   autoSend?: boolean;
 };
@@ -32,14 +32,35 @@ export default function CommandCenter() {
   const { isOpen, close: closeCommandCenter } = useCommandCenter();
   const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
   const { recentQueries, pushQuery, clearHistory } = useCommandHistory();
-  const { query, setQuery, category, setCategory, groups, isLoading, error } = useCommandQuery(isOpen);
+  const { query, setQuery, groups, isLoading, error, searchSource } = useCommandQuery(isOpen);
 
-  const [mode, setMode] = useState<CommandMode>('find');
-  const [activeIndex, setActiveIndex] = useState(-1);
+  const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const focusTrapRef = useRef<ReturnType<typeof createFocusTrap> | null>(null);
+
+  const parsedQuery = useMemo(() => parseCommandQuery(query), [query]);
+  const isAskMode = parsedQuery.mode === 'ask';
+  const findQuery = parsedQuery.query;
+  const uiMode: CommandMode = isAskMode ? 'ask' : 'find';
+  const lastModeRef = useRef<'find' | 'ask' | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      lastModeRef.current = null;
+      return;
+    }
+    const mode = isAskMode ? 'ask' : 'find';
+    if (lastModeRef.current === null) {
+      lastModeRef.current = mode;
+      return;
+    }
+    if (lastModeRef.current !== mode) {
+      lastModeRef.current = mode;
+      commandCenterEvents.modeChange(mode);
+    }
+  }, [isAskMode, isOpen]);
 
   const close = useCallback(() => {
     releaseScrollLockNow();
@@ -48,35 +69,28 @@ export default function CommandCenter() {
   }, [closeCommandCenter, releaseScrollLockNow]);
 
   const flatItems = useMemo(() => flattenGroups(groups), [groups]);
-  const hasResults = mode === 'find' && flatItems.length > 0;
-  const findQuery = parseCommandQuery(query).query;
+  const hasResults = !isAskMode && flatItems.length > 0;
+  const showQuietAskChip = !isAskMode && !isLoading && findQuery.length >= 3 && hasResults;
 
   const askAi = useCallback(
-    (prompt: string, options?: AskAiOptions) => {
+    (prompt: string, options?: AskAiOptions & {
+      sourceTitle?: string;
+      sourceHref?: string;
+      sourceKind?: CommandItem['kind'];
+    }) => {
       const trimmed = prompt.trim();
-      const analyticsSource =
-        options?.analyticsSource ?? (mode === 'ask' ? 'ask_panel' : 'ask_banner');
+      if (!trimmed && !options?.sourceTitle) return;
 
-      if (!trimmed && !options?.sourceTitle) {
-        commandCenterEvents.askHandoff({
-          source: analyticsSource,
-          query_length: 0,
-          auto_send: false,
-        });
-        handoffToAiChat({ query: '', autoSend: false });
-        close();
-        return;
-      }
-
-      pushQuery(findQuery || trimmed);
+      const trackQuery = trimmed || options?.sourceTitle || '';
+      pushQuery(trackQuery);
       commandCenterEvents.askHandoff({
-        source: analyticsSource,
-        query_length: trimmed.length,
-        item_kind: options?.sourceKind,
+        source: options?.analyticsSource ?? 'ask_banner',
+        query_length: trackQuery.length,
         auto_send: options?.autoSend ?? true,
+        item_kind: options?.sourceKind,
       });
       handoffToAiChat({
-        query: trimmed,
+        query: trimmed || options?.sourceTitle || '',
         autoSend: options?.autoSend ?? true,
         sourceTitle: options?.sourceTitle,
         sourceHref: options?.sourceHref,
@@ -84,59 +98,45 @@ export default function CommandCenter() {
       });
       close();
     },
-    [close, findQuery, mode, pushQuery],
+    [close, pushQuery],
   );
 
   const askAboutItem = useCallback(
     (item: CommandItem) => {
       askAi(findQuery || item.title, {
+        analyticsSource: 'result_row',
+        autoSend: true,
         sourceTitle: item.title,
         sourceHref: item.href,
         sourceKind: item.kind,
-        analyticsSource: 'result_row',
       });
     },
     [askAi, findQuery],
   );
 
-  const handleModeChange = useCallback((next: CommandMode) => {
-    setMode(next);
-    commandCenterEvents.modeChange(next);
-  }, []);
-
-  useEffect(() => {
-    if (parseCommandQuery(query).mode === 'ask') {
-      setMode((prev) => {
-        if (prev !== 'ask') {
-          commandCenterEvents.modeChange('ask');
+  const setMode = useCallback(
+    (mode: CommandMode) => {
+      if (mode === 'ask') {
+        const base = parseCommandQuery(query).query.trim();
+        commandCenterEvents.modeChange('ask');
+        if (base) {
+          askAi(base, { analyticsSource: 'ask_banner', autoSend: true });
+          return;
         }
-        return 'ask';
-      });
-    }
-  }, [query]);
-
-  useEffect(() => {
-    if (!isOpen) setMode('find');
-  }, [isOpen]);
-
-  const navigateTo = useCallback(
-    (item: CommandItem, newTab = false) => {
-      commandCenterEvents.resultClick({ kind: item.kind, href: item.href });
-      pushQuery(query);
-      close();
-      if (newTab) {
-        window.open(item.href, '_blank', 'noopener,noreferrer');
-      } else {
-        window.location.href = item.href;
+        close();
+        openAiChat();
+        return;
       }
+      setQuery(parseCommandQuery(query).query);
+      commandCenterEvents.modeChange('find');
     },
-    [close, pushQuery, query],
+    [askAi, close, query, setQuery],
   );
 
   useEffect(() => {
     if (!isOpen) {
       focusTrapRef.current?.deactivate();
-      setActiveIndex(-1);
+      setActiveIndex(0);
       return;
     }
 
@@ -158,17 +158,33 @@ export default function CommandCenter() {
 
   useEffect(() => {
     focusTrapRef.current?.update();
-  }, [flatItems.length, isLoading]);
+  }, [flatItems.length, isLoading, isAskMode]);
 
+  // Auto-select first result when results appear or list changes.
   useEffect(() => {
     if (!hasResults) {
       setActiveIndex(-1);
       return;
     }
-    if (activeIndex >= flatItems.length) {
-      setActiveIndex(flatItems.length - 1);
-    }
-  }, [activeIndex, flatItems.length, hasResults]);
+    setActiveIndex((prev) => {
+      if (prev < 0 || prev >= flatItems.length) return 0;
+      return prev;
+    });
+  }, [flatItems.length, hasResults, findQuery]);
+
+  const navigateTo = useCallback(
+    (item: CommandItem, newTab = false) => {
+      commandCenterEvents.resultClick({ kind: item.kind, href: item.href });
+      pushQuery(findQuery || query);
+      close();
+      if (newTab) {
+        window.open(item.href, '_blank', 'noopener,noreferrer');
+      } else {
+        window.location.href = item.href;
+      }
+    },
+    [close, findQuery, pushQuery, query],
+  );
 
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
@@ -181,13 +197,13 @@ export default function CommandCenter() {
       return;
     }
 
-    if (mode === 'ask' && event.key === 'Enter') {
+    if (isAskMode && event.key === 'Enter') {
       event.preventDefault();
-      askAi(findQuery || query, { analyticsSource: 'ask_panel' });
+      askAi(findQuery || query, { analyticsSource: 'prefix' });
       return;
     }
 
-    if (!flatItems.length || mode !== 'find') return;
+    if (!flatItems.length || isAskMode) return;
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
@@ -195,19 +211,12 @@ export default function CommandCenter() {
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       setActiveIndex((prev) => (prev <= 0 ? flatItems.length - 1 : prev - 1));
-    } else if (
-      event.key.toLowerCase() === 'a' &&
-      !event.metaKey &&
-      !event.ctrlKey &&
-      !event.altKey &&
-      activeIndex >= 0 &&
-      flatItems[activeIndex]
-    ) {
-      event.preventDefault();
-      askAboutItem(flatItems[activeIndex]);
-    } else if (event.key === 'Enter' && activeIndex >= 0 && flatItems[activeIndex]) {
-      event.preventDefault();
-      navigateTo(flatItems[activeIndex], event.metaKey || event.ctrlKey);
+    } else if (event.key === 'Enter') {
+      const index = activeIndex >= 0 ? activeIndex : 0;
+      if (flatItems[index]) {
+        event.preventDefault();
+        navigateTo(flatItems[index], event.metaKey || event.ctrlKey);
+      }
     }
   };
 
@@ -223,231 +232,177 @@ export default function CommandCenter() {
   let resultIndex = -1;
 
   const overlay = (
-    <div
+    <OverlayShell
       id="search-overlay"
-      data-command-center
-      data-state={isOpen ? 'open' : 'closed'}
-      data-search-loading={isLoading ? 'true' : 'false'}
-      className={`command-center group fixed inset-0 z-search flex ${
-        isOpen ? 'active opacity-100' : 'pointer-events-none opacity-0'
-      } transition duration-normal ease-standard motion-reduce:transition-none`}
-      role="presentation"
-      aria-hidden={!isOpen}
-      inert={!isOpen}
-      style={
-        isOpen
-          ? { display: 'block', visibility: 'visible' as const, opacity: 1 }
-          : { display: 'none', visibility: 'hidden' as const, opacity: 0 }
-      }
+      isOpen={isOpen}
+      onClose={close}
+      labelledBy="command-center-title"
+      panelRef={panelRef}
+      variant="find"
+      rootProps={{
+        'data-command-center': true,
+        'data-state': isOpen ? 'open' : 'closed',
+        'data-search-loading': isLoading ? 'true' : 'false',
+        className: `command-center group fixed inset-0 z-search flex ${
+          isOpen ? 'active opacity-100' : 'pointer-events-none opacity-0'
+        } transition duration-normal ease-standard motion-reduce:transition-none`,
+      }}
+      onPanelClick={(event) => event.stopPropagation()}
     >
-      <button
-        type="button"
-        className="absolute inset-0 cursor-pointer bg-background-dark/55 backdrop-blur-sm"
-        aria-label="Close search"
-        tabIndex={-1}
-        onClick={close}
-      />
-
-      <div className="relative flex min-h-full w-full items-end justify-center sm:items-start sm:px-4 sm:pb-8 sm:pt-16 md:pt-20 lg:pt-24">
-        <div
-          ref={panelRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="command-center-title"
-          className="overlay-panel flex max-h-[88dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl border border-border/60 bg-surface/95 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:rounded-3xl sm:translate-y-0 motion-reduce:transition-none"
-          data-panel
-          onClick={(event) => event.stopPropagation()}
-        >
-          <div className="flex items-center gap-3 border-b border-border/60 px-4 py-3 sm:px-5">
-            <div className="relative flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-border/60 bg-field-bg px-3 py-2.5 shadow-sm focus-within:border-accent/60 focus-within:ring-2 focus-within:ring-accent/40">
-              {mode === 'ask' ? (
-                <svg className="size-5 shrink-0 text-accent/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h8m-8 3h5.5M21 11.5c0 4.418-4.03 8-9 8-1.15 0-2.26-.19-3.29-.54L3 21l1.1-3.3A8.35 8.35 0 0 1 3 11.5c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
-                </svg>
-              ) : (
-                <svg className="size-5 shrink-0 text-subtle-foreground/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
-                </svg>
-              )}
-              <input
-                ref={inputRef}
-                id="search-input"
-                type="search"
-                role="combobox"
-                aria-expanded={hasResults}
-                aria-controls="search-results"
-                aria-autocomplete="list"
-                aria-activedescendant={activeIndex >= 0 ? `command-result-${activeIndex}` : undefined}
-                value={query}
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setActiveIndex(-1);
-                }}
-                onKeyDown={handleInputKeyDown}
-                placeholder={mode === 'ask' ? 'Ask a question about projects, posts, or experience…' : 'Search pages, projects, and blog posts…'}
-                aria-label={mode === 'ask' ? 'Ask the AI assistant' : 'Search site content'}
-                autoComplete="off"
-                spellCheck={false}
-                className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground/70 focus:outline-none"
-              />
-              {query ? (
-                <button
-                  type="button"
-                  className="rounded-lg px-2 py-1 text-xs text-subtle-foreground hover:text-foreground"
-                  aria-label="Clear search"
-                  onClick={() => {
-                    setQuery('');
-                    setActiveIndex(-1);
-                    inputRef.current?.focus();
-                  }}
-                >
-                  Clear
-                </button>
-              ) : null}
-              {isLoading ? (
-                <span className="size-4 shrink-0 animate-spin rounded-full border-2 border-accent/30 border-t-accent" aria-hidden="true" />
-              ) : null}
-            </div>
+      <div className={OVERLAY_HEADER}>
+        <ModeSwitch mode={uiMode} onChange={setMode} />
+        <div className={OVERLAY_FIELD}>
+          {isAskMode ? (
+            <svg className="size-4 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h8m-8 3h5.5M21 11.5c0 4.418-4.03 8-9 8-1.15 0-2.26-.19-3.29-.54L3 21l1.1-3.3A8.35 8.35 0 0 1 3 11.5c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
+            </svg>
+          ) : (
+            <svg className="size-4 shrink-0 text-subtle-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
+            </svg>
+          )}
+          <input
+            ref={inputRef}
+            id="search-input"
+            type="text"
+            role="combobox"
+            inputMode="search"
+            enterKeyHint="search"
+            aria-expanded={hasResults}
+            aria-controls="search-results"
+            aria-autocomplete="list"
+            aria-activedescendant={activeIndex >= 0 ? `command-result-${activeIndex}` : undefined}
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value);
+            }}
+            onKeyDown={handleInputKeyDown}
+            placeholder={isAskMode ? 'Ask about projects, case studies, or posts…' : 'Search pages, projects, and posts…'}
+            aria-label={isAskMode ? 'Ask the AI assistant' : 'Search site content'}
+            autoComplete="off"
+            spellCheck={false}
+            className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground/70 focus:outline-none"
+          />
+          {query ? (
             <button
-              id="close-search"
               type="button"
-              className="touch-target focus-ring-interactive inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-border/80 bg-surface text-foreground transition hover:border-border"
-              aria-label="Close search"
-              onClick={close}
+              className="rounded-md p-1 text-subtle-foreground hover:text-foreground"
+              aria-label="Clear search"
+              onClick={() => {
+                setQuery('');
+                inputRef.current?.focus();
+              }}
             >
-              <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
             </button>
-          </div>
-
-          <CommandModeTabs mode={mode} onChange={handleModeChange} />
-
-          {mode === 'find' ? (
-          <div className="border-b border-border/40 px-4 py-2 sm:px-5">
-            <div className="flex items-center gap-3">
-              <span className="shrink-0 text-xxs font-semibold uppercase tracking-label text-subtle-foreground">Filter</span>
-              <div className="flex gap-1 overflow-x-auto pb-0.5" role="group" aria-label="Search categories">
-              {CATEGORIES.map((value) => {
-                const isActive = category === value;
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    data-category={value}
-                    aria-pressed={isActive}
-                    className={`search-pill shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition focus-ring-interactive ${
-                      isActive
-                        ? 'bg-accent/15 text-accent'
-                        : 'text-muted-foreground hover:bg-surface-subtle hover:text-foreground'
-                    }`}
-                    onClick={() => {
-                      setCategory(value);
-                      setActiveIndex(-1);
-                    }}
-                  >
-                    {CATEGORY_LABELS[value]}
-                  </button>
-                );
-              })}
-              </div>
-            </div>
-          </div>
           ) : null}
-
-          {mode === 'find' && hasResults && !isLoading ? (
-            <div className="border-b border-border/30 px-4 py-1.5 sm:px-5">
-              <p className="text-xs text-subtle-foreground">
-                {flatItems.length} {flatItems.length === 1 ? 'result' : 'results'}
-                {findQuery ? ` for “${findQuery}”` : ''}
-              </p>
-            </div>
+          {isLoading ? (
+            <span className="size-3.5 shrink-0 animate-spin rounded-full border-2 border-accent/30 border-t-accent" aria-hidden="true" />
           ) : null}
-
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-5" ref={listRef}>
-            <h2 id="command-center-title" className="sr-only">
-              Search
-            </h2>
-            <p className="sr-only" aria-live="polite" aria-atomic="true">
-              {isLoading
-                ? 'Searching…'
-                : hasResults
-                  ? `${flatItems.length} results${query.trim() ? ` for ${query.trim()}` : ''}`
-                  : query.trim()
-                    ? `No results for ${query.trim()}`
-                    : 'Start typing to search the site'}
-            </p>
-
-            {error ? (
-              <div className="mb-3 rounded-2xl border border-border/60 bg-surface/80 px-4 py-3 text-sm text-muted-foreground">
-                {error}
-              </div>
-            ) : null}
-
-            {mode === 'ask' ? (
-              <CommandAskPanel
-                query={findQuery || query}
-                onAsk={(prompt) => askAi(prompt, { analyticsSource: 'ask_panel' })}
-              />
-            ) : null}
-
-            {mode === 'find' && findQuery ? (
-              <div className="mb-4">
-                <CommandAskHandoff
-                  query={findQuery}
-                  compact
-                  onAsk={() => askAi(findQuery, { analyticsSource: 'ask_banner' })}
-                />
-              </div>
-            ) : null}
-
-            {mode === 'find' && isLoading && !hasResults ? <CommandSkeletonList /> : null}
-
-            {mode === 'find' && !isLoading && !hasResults ? (
-              <CommandEmpty
-                query={findQuery}
-                recentQueries={recentQueries}
-                onSuggestion={setQuery}
-                onClearHistory={clearHistory}
-                onAskAi={(value) => askAi(value, { analyticsSource: 'empty_state' })}
-              />
-            ) : null}
-
-            {mode === 'find' && hasResults ? (
-              <div id="search-results" role="listbox" aria-label="Search results" data-results className="flex flex-col gap-4">
-                <p className="sr-only">
-                  Use arrow keys to navigate results. Press Enter to open, or A to ask AI about the selected result.
-                </p>
-                <div data-results-container className="flex flex-col gap-4">
-                  {groups.map((group) => (
-                    <CommandGroupSection key={group.id} label={group.label}>
-                      {group.items.map((item) => {
-                        resultIndex += 1;
-                        const index = resultIndex;
-                        return (
-                          <CommandResultRow
-                            key={item.id}
-                            item={item}
-                            index={index}
-                            query={query}
-                            isActive={index === activeIndex}
-                            onSelect={(item) => navigateTo(item)}
-                            onAskAbout={askAboutItem}
-                            onHover={setActiveIndex}
-                          />
-                        );
-                      })}
-                    </CommandGroupSection>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </div>
-
-          <CommandFooter />
         </div>
+        <button
+          id="close-search"
+          type="button"
+          className={OVERLAY_CLOSE_BUTTON}
+          aria-label="Close search"
+          onClick={close}
+        >
+          <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
-    </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3 sm:px-4" ref={listRef}>
+        <h2 id="command-center-title" className="sr-only">
+          {isAskMode ? 'Ask' : 'Find'}
+        </h2>
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          {isAskMode
+            ? 'Ask mode. Press Enter to send your question.'
+            : isLoading
+              ? 'Searching…'
+              : hasResults
+                ? `${flatItems.length} results${findQuery ? ` for ${findQuery}` : ''}`
+                : findQuery
+                  ? `No results for ${findQuery}`
+                  : 'Start typing to search the site'}
+        </p>
+
+        {error ? (
+          <div className="mb-3 rounded-lg border border-border/60 bg-surface/80 px-3 py-2.5 text-sm text-muted-foreground">
+            {error}
+          </div>
+        ) : null}
+
+        {isAskMode ? (
+          <CommandAskState query={findQuery} onAsk={() => askAi(findQuery, { analyticsSource: 'prefix' })} />
+        ) : null}
+
+        {!isAskMode && !findQuery ? (
+          <>
+            {recentQueries.length > 0 ? (
+              <CommandRecentList
+                recentQueries={recentQueries}
+                onSelect={setQuery}
+                onClear={clearHistory}
+              />
+            ) : null}
+            <CommandSuggestions onSelect={setQuery} />
+          </>
+        ) : null}
+
+        {!isAskMode && isLoading && !hasResults ? <CommandSkeletonList /> : null}
+
+        {!isAskMode && !isLoading && findQuery && !hasResults ? (
+          <CommandEmpty
+            query={findQuery}
+            onSuggestion={setQuery}
+            onAskAi={(value) => askAi(value, { analyticsSource: 'empty_state' })}
+          />
+        ) : null}
+
+        {!isAskMode && hasResults ? (
+          <div id="search-results" role="listbox" aria-label="Search results" data-results className="flex flex-col gap-3">
+            {showQuietAskChip ? (
+              <CommandAskHandoff
+                query={findQuery}
+                onAsk={() => askAi(findQuery, { analyticsSource: 'ask_banner' })}
+              />
+            ) : null}
+            {findQuery ? (
+              <p className="sr-only">Use arrow keys to navigate results. Press Enter to open.</p>
+            ) : null}
+            <div data-results-container className="flex flex-col gap-3">
+              {groups.map((group) => (
+                <CommandGroupSection key={group.id} label={group.label}>
+                  {group.items.map((item) => {
+                    resultIndex += 1;
+                    const index = resultIndex;
+                    return (
+                      <CommandResultRow
+                        key={item.id}
+                        item={item}
+                        index={index}
+                        query={findQuery}
+                        isActive={index === activeIndex}
+                        onSelect={(selected) => navigateTo(selected)}
+                        onHover={setActiveIndex}
+                        onAsk={askAboutItem}
+                      />
+                    );
+                  })}
+                </CommandGroupSection>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+
+      <CommandFooter isAskMode={isAskMode} searchSource={searchSource} hasQuery={Boolean(findQuery)} />
+    </OverlayShell>
   );
 
   return createPortal(overlay, document.body);

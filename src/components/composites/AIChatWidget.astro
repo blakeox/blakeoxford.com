@@ -1,122 +1,14 @@
 ---
 /**
- * AIChatWidget - Lazy-loaded AI chat assistant
- * 
- * Uses client:idle to defer loading until browser is idle, reducing initial bundle size.
- * The launcher button is always available, but the heavy React component loads on idle.
- * 
- * @component
- * @category Features
- * @performance
- * - Lazy loads AIChatIsland on browser idle (client:idle)
- * - Reduces initial bundle by ~92KB
- * - Launcher button remains interactive immediately
+ * AIChatWidget — Ask overlay (shared shell with Find) + FAB launcher.
  */
 import AIChatIsland from '../islands/AIChatIsland';
 import ChatLauncherIsland from '../islands/ChatLauncherIsland';
 ---
 
 <div data-ai-chat-widget>
- <!-- Minimal early-binding launcher script: keeps launcher responsive before React hydration
- This is intentionally tiny and only toggles visibility + focuses the composer with retries.
- It avoids heavy runtime logic and hands control to the hydrated islands once available. -->
- <script>
- /* early chat launcher - lightweight fallback for instant UX */
- (function () {
- if (typeof window === 'undefined') return;
-
- const chatWindow = window as typeof window & { __ai_chat_hydrated?: boolean };
-
- function onClick(e: MouseEvent) {
- if (chatWindow.__ai_chat_hydrated) return;
-
- const target = e.target instanceof Element ? e.target : null;
- const btn = target?.closest?.('.ai-chat-launcher');
- if (!btn) return;
-
- try {
- e.preventDefault();
- } catch (err) {
- /* noop */
- }
-
- const wrapper = btn.closest('[data-ai-chat-open]');
- const panel = wrapper?.querySelector('[data-ai-chat-panel]') as HTMLElement | null;
- if (!wrapper || !panel) return;
-
- const isOpen = wrapper.getAttribute('data-ai-chat-open') === 'true';
- const open = !isOpen;
- wrapper.setAttribute('data-ai-chat-open', open ? 'true' : 'false');
- if (open) wrapper.classList.remove('pointer-events-none');
- else wrapper.classList.add('pointer-events-none');
- panel.setAttribute('data-ai-visible', open ? 'true' : 'false');
-
- if (open) {
- panel.classList.remove('pointer-events-none', 'translate-y-4', 'opacity-0');
- panel.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
- const composer = panel.querySelector('textarea, input') as HTMLElement | null;
- if (composer && typeof composer.focus === 'function') {
- try {
- if (btn instanceof HTMLElement) btn.blur();
- } catch (err) {
- /* noop */
- }
- try {
- panel.tabIndex = -1;
- panel.focus();
- } catch (err) {
- /* noop */
- }
- // Dispatch a deterministic window event so the React island can reliably react.
- try {
- window.dispatchEvent(new CustomEvent('ai-chat:state', { detail: { open: true } }));
- } catch (err) {
- /* noop */
- }
-
- const attemptFocus = () => {
- try {
- // some browsers support options
- composer.focus({ preventScroll: true });
- } catch (e) {
- try {
- composer.focus();
- } catch (e) {
- /* noop */
- }
- }
- if (document.activeElement === composer) {
- panel.setAttribute('data-ai-chat-focused', 'true');
- try {
- window.dispatchEvent(new CustomEvent('ai-chat:focused', { detail: { focused: true } }));
- } catch (err) {
- /* noop */
- }
- }
- };
-
- [0, 10, 50, 150, 300, 450].forEach((d) => setTimeout(attemptFocus, d));
- try {
- requestAnimationFrame(attemptFocus);
- } catch (err) {
- /* noop */
- }
- }
- } else {
- panel.classList.add('pointer-events-none', 'translate-y-4', 'opacity-0');
- panel.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
- }
- }
-
- document.addEventListener('click', onClick, true);
- })();
- </script>
- <!-- Shared wrapper: launcher hydrates on load, heavy panel hydrates on idle -->
- <div class="ai-chat-wrapper pointer-events-none fixed bottom-4 right-4 z-chat flex flex-col-reverse items-end gap-3 sm:bottom-6 sm:right-6" data-ai-chat-open="false">
- <!-- small island hydrates early to make launcher responsive -->
- <ChatLauncherIsland client:load />
-
- <!-- heavy panel hydrates on load to ensure focus management runs before user interaction -->
- <AIChatIsland client:load />
- </div>
+  <div class="ai-chat-wrapper" data-ai-chat-open="false">
+    <ChatLauncherIsland client:load />
+    <AIChatIsland client:load />
+  </div>
 </div>

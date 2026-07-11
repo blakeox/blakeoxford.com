@@ -8,6 +8,7 @@ import {
 	SEMANTIC_SEARCH_URL,
 	INITIAL_ASSISTANT_MESSAGE,
 } from '../chat';
+import { autoragEvents, conversionEvents } from '../analytics';
 
 /**
  * Options for the message processing hook
@@ -59,6 +60,8 @@ interface UseMessageProcessingReturn {
 	finalizeAssistantMessage: (messageId: string, content: string) => Promise<void>;
 	/** Assign sources to assistant message */
 	assignAssistantSources: (messageId: string, sources: AIChatSource[]) => void;
+	/** Assign Cloudflare provenance metadata to assistant message */
+	assignAssistantProvenance: (messageId: string, provenance: NonNullable<ChatMessage['provenance']>) => void;
 	/** Clear entire conversation */
 	clearConversation: () => void;
 	/** Start a new chat (alias for clearConversation) */
@@ -255,11 +258,57 @@ export function useMessageProcessing(
 		[setMessages],
 	);
 
+	const assignAssistantProvenance = useCallback(
+		(messageId: string, provenance: NonNullable<ChatMessage['provenance']>) => {
+			setMessages((prev) =>
+				prev.map((message) =>
+					message.id === messageId
+						? {
+								...message,
+								provenance,
+							}
+						: message,
+				),
+			);
+		},
+		[setMessages],
+	);
+
 	/**
 	 * Clear entire conversation and reset all state
 	 * Removes all messages, errors, and UI state
 	 */
 	const clearConversation = useCallback(() => {
+		const prior = messagesRef.current ?? [];
+		const userMessages = prior.filter((m) => m.role === 'user');
+		const assistantMessages = prior.filter(
+			(m) => m.role === 'assistant' && m.id !== INITIAL_ASSISTANT_MESSAGE.id,
+		);
+		if (userMessages.length > 0) {
+			const scored = assistantMessages.filter((m) => typeof m.qualityScore === 'number');
+			const avgQuality =
+				scored.length > 0
+					? scored.reduce((sum, m) => sum + (m.qualityScore ?? 0), 0) / scored.length
+					: undefined;
+			const totalSources = assistantMessages.reduce(
+				(sum, m) => sum + (m.sources?.length ?? 0),
+				0,
+			);
+			autoragEvents.chatInsights({
+				total_messages: prior.length,
+				user_messages: userMessages.length,
+				assistant_messages: assistantMessages.length,
+				total_sources: totalSources,
+				avg_quality_score: avgQuality,
+			});
+			if (userMessages.length >= 2) {
+				conversionEvents.chatEngagement({
+					user_messages: userMessages.length,
+					total_messages: prior.length,
+				});
+			}
+		}
+
 		setMessages([INITIAL_ASSISTANT_MESSAGE]);
 		setError(null);
 		setStreamingMessageId(null);
@@ -292,6 +341,7 @@ export function useMessageProcessing(
 		setFallbackResults,
 		setInputValue,
 		lastQueryRef,
+		messagesRef,
 	]);
 
 	/**
@@ -307,6 +357,7 @@ export function useMessageProcessing(
 		appendAssistantChunk,
 		finalizeAssistantMessage,
 		assignAssistantSources,
+		assignAssistantProvenance,
 		clearConversation,
 		startNewChat,
 	};

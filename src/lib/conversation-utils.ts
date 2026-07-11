@@ -2,7 +2,7 @@
  * Conversation management utilities
  */
 
-import type { AIChatSource } from './ai-search';
+import type { AIChatSource, AISearchMeta } from './ai-search';
 
 export interface ChatMessage {
 	id: string;
@@ -10,6 +10,8 @@ export interface ChatMessage {
 	content: string;
 	timestamp: number;
 	sources?: AIChatSource[];
+	/** Cloudflare Worker provenance (AutoRAG / Workers AI / cache). */
+	provenance?: AISearchMeta;
 	qualityScore?: number;
 	qualityDetails?: {
 		completeness: number;

@@ -146,7 +146,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'SearchOverlay',
     category: 'Features',
     subcategory: 'Search',
-    description: 'Command Center site search (React portal). Cloudflare Vectorize semantic search with grouped results, browse state, and keyboard navigation.',
+    description: 'Command Center site search (React portal). Input-first command palette with grouped results, recent searches, and contextual AI handoff via ? prefix.',
     filePath: 'src/components/features/search/SearchOverlay.astro',
     examples: [
       {
@@ -156,9 +156,9 @@ export const componentDocs: ComponentDoc[] = [
     ],
     accessibility: [
       'Focus trap while open',
-      'Escape closes overlay and restores focus',
-      'aria-modal and labelled dialog region',
-      'Keyboard shortcut hints (/, Meta+K)',
+      'Escape clears query then closes overlay and restores focus',
+      'aria-modal combobox + listbox pattern',
+      'Keyboard: ↑↓ navigate, ↵ open, ⌘↵ new tab, ? prefix for AI',
     ],
     tags: ['search', 'overlay', 'modal', 'keyboard'],
     visualTier: 'expressive',
@@ -169,7 +169,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'AIChatWidget',
     category: 'Composites',
     subcategory: 'Search',
-    description: 'Floating AI search assistant anchored to the bottom-right of the viewport. Provides conversational answers backed by the AutoRAG API and surfaces cited sources.',
+    description: 'Find/Ask overlay — site search and conversational assistant sharing one command shell. Ask opens from the FAB or Find mode switch; answers cite AutoRAG sources.',
     filePath: 'src/components/composites/AIChatWidget.astro',
     examples: [
       {

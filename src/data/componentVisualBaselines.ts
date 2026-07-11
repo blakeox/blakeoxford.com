@@ -128,7 +128,7 @@ export const componentVisualBaselines: Record<ComponentVisualBaselineKey, Compon
     key: 'commandCenterAsk',
     route: '/',
     selector: '#search-overlay [data-panel]',
-    description: 'Command Center Ask AI mode',
+    description: 'Command Center Ask AI mode (? prefix)',
     snapshotFile: 'commandCenterAsk.png',
     tags: ['@visual-essential', '@visual-components'],
     commandCenterSetup: 'ask',

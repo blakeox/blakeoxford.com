@@ -7,8 +7,11 @@
  * @module AIChatIsland
  */
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 import { useAIChatController } from '../../lib/hooks';
+import { useOverlayScrollLock } from '../../hooks/useOverlayScrollLock';
+import { OverlayShell } from '../../features/overlay';
 import {
 	ChatHeader,
 	ChatAdvancedControls,
@@ -20,15 +23,10 @@ import {
 	ChatInput,
 	ChatStatusIndicators,
 	ChatFallbackResults,
- TypingIndicator,
- ScrollToLatestButton,
+	TypingIndicator,
+	ScrollToLatestButton,
 } from './chat';
-/**
- * Main AIChatIsland component
- * 
- * This component serves as the orchestrator for the AI chat widget,
- * composing smaller components for each section of the UI.
- */
+
 export default function AIChatIsland() {
 	const controller = useAIChatController();
 	const hasCheckedInitialOpenRef = useRef(false);
@@ -112,6 +110,8 @@ export default function AIChatIsland() {
 		hasMoreFallbackResults,
 	} = controller;
 
+	useOverlayScrollLock(isOpen);
+
 	// Calculate drag state
 	const isDragging = touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY;
 	const dragOffset = isDragging ? Math.min(touchCurrentY - touchStartY, 200) : 0;
@@ -193,22 +193,32 @@ export default function AIChatIsland() {
 		}
 	}, [isOpen]);
 
-	return (
-		<div
-			ref={panelRef}
-				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-visible rounded-3xl border border-border/40 bg-surface/90 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:w-[min(85vw,28rem)] motion-reduce:transition-none ${
-					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
-				}`}
-				data-ai-chat-panel
-				data-ai-visible={isOpen ? 'true' : 'false'}
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="ai-chat-heading"
-				onTouchStart={handleTouchStart}
-				onTouchMove={handleTouchMove}
-				onTouchEnd={handleTouchEnd}
-			>
-				{/* Header */}
+	const latestAssistantId = [...messages].reverse().find((m) => m.role === 'assistant' && m.id !== 'welcome')?.id;
+	const isEmptyConversation =
+		messages.length === 0 ||
+		(messages.length === 1 && messages[0]?.id === 'welcome');
+	const transcriptMessages = isEmptyConversation
+		? []
+		: messages.filter((message) => message.id !== 'welcome');
+
+	if (typeof document === 'undefined') return null;
+
+	const panel = (
+		<OverlayShell
+			isOpen={isOpen}
+			onClose={closeChat}
+			labelledBy="ai-chat-heading"
+			panelRef={panelRef}
+			variant="ask"
+			rootProps={{
+				'data-ai-chat-overlay': true,
+				className: 'ai-chat-overlay z-chat',
+			}}
+			onPanelClick={(event) => event.stopPropagation()}
+			onTouchStart={handleTouchStart}
+			onTouchMove={handleTouchMove}
+			onTouchEnd={handleTouchEnd}
+		>
 				<ChatHeader
 					wsConnected={wsConnected}
 					activeUsers={activeUsers}
@@ -217,7 +227,7 @@ export default function AIChatIsland() {
 					showAdvancedControls={showAdvancedControls}
 					useMemory={useMemory}
 					canStartNewChat={canStartNewChat}
-					hasMessages={messages.length > 0}
+					hasMessages={transcriptMessages.length > 0}
 					toggleVoiceInput={toggleVoiceInput}
 					toggleAdvancedControls={toggleAdvancedControls}
 					toggleMemory={toggleMemory}
@@ -227,13 +237,12 @@ export default function AIChatIsland() {
 					closeChat={closeChat}
 				/>
 
-				{/* Advanced Controls */}
 				<ChatAdvancedControls
 					showAdvancedControls={showAdvancedControls}
 					useMemory={useMemory}
 					showDigest={showDigest}
 					showAnalytics={showAnalytics}
-					messages={messages}
+					messages={transcriptMessages}
 					feedbackAnalytics={feedbackAnalytics}
 					toggleMemory={toggleMemory}
 					toggleDigest={toggleDigest}
@@ -242,48 +251,34 @@ export default function AIChatIsland() {
 					handleExportConversation={handleExportConversation}
 				/>
 
-				{/* Guided prompts removed — empty-state quick actions live in the transcript */}
-
-				{/* Recent Queries — only before conversation starts */}
-				{messages.length === 0 ? (
-					<ChatRecentQueries
-						queries={recentQueries}
-						onReplayQuery={handleReplayQuery}
-					/>
+				{isEmptyConversation ? (
+					<ChatRecentQueries queries={recentQueries} onReplayQuery={handleReplayQuery} />
 				) : null}
 
-				{/* Conversation Digest */}
-				<ChatDigest
-					show={showDigest}
-					digest={conversationDigest}
-				/>
+				<ChatDigest show={showDigest} digest={conversationDigest} />
 
-				{/* Analytics */}
 				<ChatAnalytics
 					show={showAnalytics}
-					messages={messages}
+					messages={transcriptMessages}
 					sessionStartTime={sessionStartTime}
 					feedbackAnalytics={feedbackAnalytics}
 				/>
 
-				{/* Messages Container */}
-				<div className="relative overflow-hidden">
+				<div className="relative min-h-0 flex-1 overflow-hidden">
 					<div
 						ref={scrollContainerRef}
-						className="flex max-h-[min(50dvh,22rem)] flex-col gap-3 overflow-y-auto px-4 py-3 sm:max-h-[min(55dvh,24rem)]"
+						className="flex max-h-[min(52dvh,26rem)] flex-col gap-3 overflow-y-auto px-3 py-3 sm:max-h-[min(58dvh,28rem)] sm:px-4"
 						aria-live="polite"
 						data-ai-chat-transcript
 					>
-						{/* Empty State with Quick Actions */}
-						{messages.length === 0 && chatState === 'ready' && (
+						{isEmptyConversation && chatState === 'ready' ? (
 							<ChatQuickActions
 								onAction={(query) => sendQuery(query)}
 								setInputValue={setInputValue}
 							/>
-						)}
+						) : null}
 
-						{/* Messages */}
-						{messages.map((message) => (
+						{transcriptMessages.map((message) => (
 							<ChatMessageBubble
 								key={message.id}
 								message={message}
@@ -293,7 +288,7 @@ export default function AIChatIsland() {
 								expandedIndividualSources={expandedIndividualSources}
 								copiedMessageId={copiedMessageId}
 								copiedShareUrl={copiedShareUrl}
-								messages={messages}
+								messages={transcriptMessages}
 								messagesRef={messagesRef}
 								sourceRefs={sourceRefs}
 								toggleExpandedSource={toggleExpandedSource}
@@ -304,18 +299,16 @@ export default function AIChatIsland() {
 								setInputValue={setInputValue}
 								sendQuery={sendQuery}
 								copyWithFeedback={copyWithFeedback}
+								isLatestAssistant={message.id === latestAssistantId}
 							/>
 						))}
 
-						{/* Typing Indicator */}
-						{isOtherUserTyping && wsConnected && <TypingIndicator />}
+						{isOtherUserTyping && wsConnected ? <TypingIndicator /> : null}
 					</div>
 
-					{/* Scroll to Latest */}
-					{showScrollToLatest && <ScrollToLatestButton onClick={scrollToLatest} />}
+					{showScrollToLatest ? <ScrollToLatestButton onClick={scrollToLatest} /> : null}
 				</div>
 
-				{/* Status Indicators */}
 				<ChatStatusIndicators
 					chatState={chatState}
 					loadingPhase={loadingPhase}
@@ -331,7 +324,6 @@ export default function AIChatIsland() {
 					sendQuery={sendQuery}
 				/>
 
-				{/* Fallback Results */}
 				<ChatFallbackResults
 					fallbackResults={fallbackResults}
 					visibleFallbackResults={visibleFallbackResults}
@@ -340,9 +332,6 @@ export default function AIChatIsland() {
 					setShowFallbackSuggestions={setShowFallbackSuggestions}
 				/>
 
-				{/* New chat prompt moved to header menu */}
-
-				{/* Input Form */}
 				<ChatInput
 					inputValue={inputValue}
 					chatState={chatState}
@@ -354,6 +343,8 @@ export default function AIChatIsland() {
 					handleTextareaKeyDown={handleTextareaKeyDown}
 					handleSubmit={handleSubmit}
 				/>
-			</div>
+		</OverlayShell>
 	);
+
+	return createPortal(panel, document.body);
 }

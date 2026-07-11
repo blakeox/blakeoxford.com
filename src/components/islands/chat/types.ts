@@ -125,6 +125,8 @@ export interface ChatMessageBubbleProps {
 	setInputValue: (value: string) => void;
 	sendQuery: (query: string) => void;
 	copyWithFeedback: (content: string, id: string, type: 'message' | 'share') => Promise<boolean>;
+	/** Only the latest assistant reply shows follow-ups / CTA. */
+	isLatestAssistant?: boolean;
 }
 
 /**

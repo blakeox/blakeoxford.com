@@ -21,6 +21,7 @@ export {
 export {
 	trackEvent,
 	autoragEvents,
+	conversionEvents,
 } from './analytics';
 
 // Error Utilities

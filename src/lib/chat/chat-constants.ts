@@ -36,37 +36,31 @@ export const GUIDED_PROMPTS = [
 	},
 ] as const;
 
-// Quick action buttons
+// Quick action chips (Ask empty state) — short labels, utility copy
 export const QUICK_ACTIONS = [
 	{
-		icon: '🚀',
-		label: 'Recent Projects',
+		icon: '',
+		label: 'Recent projects',
 		query: 'What are Blake\'s most recent projects?',
 		category: 'portfolio',
 	},
 	{
-		icon: '💼',
-		label: 'Work Experience',
+		icon: '',
+		label: 'Experience',
 		query: 'Tell me about Blake\'s professional experience',
 		category: 'experience',
 	},
 	{
-		icon: '🛠️',
-		label: 'Tech Stack',
+		icon: '',
+		label: 'Tech stack',
 		query: 'What technologies does Blake specialize in?',
 		category: 'skills',
 	},
 	{
-		icon: '📝',
-		label: 'Recent Articles',
+		icon: '',
+		label: 'Recent writing',
 		query: 'What has Blake written about recently?',
 		category: 'blog',
-	},
-	{
-		icon: '🎯',
-		label: 'Problem Solving',
-		query: 'What problems does Blake\'s work solve?',
-		category: 'solutions',
 	},
 ] as const;
 

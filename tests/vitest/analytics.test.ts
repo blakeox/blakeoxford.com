@@ -1,63 +1,90 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { trackEvent, autoragEvents, conversionEvents } from '../../src/lib/analytics';
+import { __resetClarityForTests } from '../../src/lib/clarity';
 
-// Mock analytics functions for testing
-const trackEvent = vi.fn();
-const trackEventLegacy = vi.fn();
-const trackPageView = vi.fn();
+describe('trackEvent routing', () => {
+	beforeEach(() => {
+		__resetClarityForTests();
+		vi.stubGlobal('window', {
+			zaraz: undefined,
+			dataLayer: undefined,
+			gtag: undefined,
+			clarity: undefined,
+		});
+	});
 
-describe('Analytics Module', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+	afterEach(() => {
+		vi.unstubAllGlobals();
+		vi.restoreAllMocks();
+	});
 
-  describe('trackEvent', () => {
-    it('should be mockable', () => {
-      trackEvent('test_event', { test: 'data' });
-      expect(trackEvent).toHaveBeenCalledWith('test_event', { test: 'data' });
-    });
+	it('prefers zaraz.track when available', () => {
+		const track = vi.fn();
+		const clarity = vi.fn();
+		vi.stubGlobal('window', { zaraz: { track }, clarity });
 
-    it('should handle multiple calls', () => {
-      trackEvent('event1');
-      trackEvent('event2');
-      expect(trackEvent).toHaveBeenCalledTimes(2);
-    });
+		trackEvent('command_center_open', { source: 'nav' });
 
-    it('should handle events without data', () => {
-      trackEvent('simple_event');
-      expect(trackEvent).toHaveBeenCalledWith('simple_event');
-    });
-  });
+		expect(track).toHaveBeenCalledWith('command_center_open', { source: 'nav' });
+		expect(clarity).toHaveBeenCalledWith('event', 'command_center_open');
+		expect(clarity).toHaveBeenCalledWith('set', 'source', 'nav');
+	});
 
-  describe('trackEventLegacy', () => {
-    it('should be mockable', () => {
-      trackEventLegacy('legacy_event');
-      expect(trackEventLegacy).toHaveBeenCalledWith('legacy_event');
-    });
+	it('falls back to dataLayer when zaraz is missing', () => {
+		const dataLayer: Array<Record<string, unknown>> = [];
+		vi.stubGlobal('window', { dataLayer, clarity: vi.fn() });
 
-    it('should handle different event types', () => {
-      trackEventLegacy('click');
-      trackEventLegacy('view');
-      expect(trackEventLegacy).toHaveBeenCalledWith('click');
-      expect(trackEventLegacy).toHaveBeenCalledWith('view');
-    });
-  });
+		trackEvent('web_vitals', { metric_name: 'LCP', value: 1200 });
 
-  describe('trackPageView', () => {
-    it('should be mockable', () => {
-      trackPageView('/test-page');
-      expect(trackPageView).toHaveBeenCalledWith('/test-page');
-    });
+		expect(dataLayer).toEqual([
+			{ event: 'web_vitals', metric_name: 'LCP', value: 1200 },
+		]);
+	});
 
-    it('should handle different page paths', () => {
-      trackPageView('/home');
-      trackPageView('/about');
-      trackPageView('/contact');
-      expect(trackPageView).toHaveBeenCalledTimes(3);
-    });
+	it('falls back to gtag when zaraz and dataLayer are missing', () => {
+		const gtag = vi.fn();
+		vi.stubGlobal('window', { gtag, clarity: vi.fn() });
 
-    it('should handle root path', () => {
-      trackPageView('/');
-      expect(trackPageView).toHaveBeenCalledWith('/');
-    });
-  });
+		trackEvent('generate_lead', { method: 'contact_form' });
+
+		expect(gtag).toHaveBeenCalledWith('event', 'generate_lead', {
+			method: 'contact_form',
+		});
+	});
+
+	it('never throws when analytics clients fail', () => {
+		const debug = vi.spyOn(console, 'debug').mockImplementation(() => {});
+		vi.stubGlobal('window', {
+			zaraz: {
+				track: () => {
+					throw new Error('boom');
+				},
+			},
+		});
+
+		expect(() => trackEvent('autorag_error', { category: 'network', severity: 'high' })).not.toThrow();
+		expect(debug).toHaveBeenCalled();
+	});
+
+	it('autorag and conversion helpers emit snake_case events', () => {
+		const track = vi.fn();
+		vi.stubGlobal('window', { zaraz: { track }, clarity: vi.fn() });
+
+		autoragEvents.feedback({ sentiment: 'positive', message_id: 'm1' });
+		conversionEvents.generateLead();
+		conversionEvents.chatEngagement({ user_messages: 2, total_messages: 5 });
+
+		expect(track).toHaveBeenCalledWith('autorag_feedback', {
+			sentiment: 'positive',
+			message_id: 'm1',
+		});
+		expect(track).toHaveBeenCalledWith('generate_lead', {
+			method: 'contact_form',
+			form: 'contact',
+		});
+		expect(track).toHaveBeenCalledWith('chat_engagement', {
+			user_messages: 2,
+			total_messages: 5,
+		});
+	});
 });

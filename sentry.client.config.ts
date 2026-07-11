@@ -21,10 +21,11 @@ Sentry.init({
     }),
   ],
   
-  // FREE TIER OPTIMIZATION: Low sample rates to stay under 5,000 errors/month
+  // FREE TIER OPTIMIZATION: Low sample rates to stay under free quotas
   tracesSampleRate: 0.1, // 10% of transactions for performance monitoring
-  replaysSessionSampleRate: 0.05, // 5% of normal sessions (very conservative)
-  replaysOnErrorSampleRate: 0.5, // 50% of sessions with errors (prioritize errors)
+  // Clarity owns continuous session replay; Sentry only records on errors
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0.5, // 50% of sessions with errors
   
   // Privacy & Security
   beforeSend(event) {

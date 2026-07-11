@@ -23,15 +23,18 @@ export function useAiChatBridge({
   useEffect(() => {
     const handleAsk = (event: Event) => {
       const detail = (event as CustomEvent<AiChatAskDetail>).detail;
-      if (!detail?.query?.trim()) return;
+      if (!detail) return;
 
       closeSearch();
-      setInputValue(detail.query.trim());
       openChat();
       focusInput();
 
+      const trimmed = detail.query?.trim();
+      if (!trimmed) return;
+
+      setInputValue(trimmed);
       if (detail.autoSend) {
-        void sendQuery(detail.query.trim());
+        void sendQuery(trimmed);
       }
     };
 

@@ -1,9 +1,26 @@
 /**
- * ChatStatusIndicators component
- * Displays loading, listening, and error states
+ * ChatStatusIndicators — quiet loading / error chrome for Ask overlay.
+ * Loading copy mirrors the Cloudflare pipeline: Vectorize/AutoRAG retrieve → answer.
  */
 import { autoragEvents } from '../../../lib/analytics';
 import type { ChatStatusIndicatorsProps } from './types';
+
+function loadingCopy(phase: ChatStatusIndicatorsProps['loadingPhase']): string {
+	switch (phase) {
+		case 'searching':
+			return 'Searching site index…';
+		case 'analyzing':
+			return 'Retrieving sources…';
+		case 'crafting':
+			return 'Writing answer…';
+		case null:
+			return 'Thinking…';
+		default: {
+			const _exhaustive: never = phase;
+			return _exhaustive;
+		}
+	}
+}
 
 export function ChatStatusIndicators({
 	chatState,
@@ -19,53 +36,45 @@ export function ChatStatusIndicators({
 	setRetryCount,
 	sendQuery,
 }: ChatStatusIndicatorsProps) {
-	return (
-		<>
-			{chatState === 'loading' && (
-				<div className="flex items-center gap-2 text-sm text-[color:var(--fg)]/70">
-					<svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-						<path strokeLinecap="round" strokeLinejoin="round" d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364 6.364-2.121-2.121M8.757 8.757 6.636 6.636m12.728 0-2.121 2.121M8.757 15.243l-2.121 2.121" />
-					</svg>
-					{loadingPhase === 'searching' && 'Searching knowledge base...'}
-					{loadingPhase === 'analyzing' && 'Analyzing sources...'}
-					{loadingPhase === 'crafting' && 'Crafting response...'}
-					{!loadingPhase && 'Thinking through the best answer...'}
-				</div>
-			)}
+	if (chatState !== 'loading' && !isListening && !error) return null;
 
-			{isListening && (
-				<div className="flex items-center gap-2 text-xs text-[color:var(--accent-strong)]">
-					<span className="inline-flex size-2 rounded-full bg-[color:var(--accent-strong)]" aria-hidden="true" />
+	return (
+		<div className="border-t border-border/40 px-3 py-2 sm:px-4">
+			{chatState === 'loading' ? (
+				<div className="flex items-center gap-2 text-xs text-muted-foreground">
+					<span className="size-3.5 animate-spin rounded-full border-2 border-accent/30 border-t-accent" aria-hidden="true" />
+					<span>{loadingCopy(loadingPhase)}</span>
+				</div>
+			) : null}
+
+			{isListening ? (
+				<div className="flex items-center gap-2 text-xs text-accent">
+					<span className="size-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
 					Listening{interimTranscript ? `: ${interimTranscript}` : ''}
 				</div>
-			)}
+			) : null}
 
-			{error && (
-				<div className="rounded-xl border border-[color:var(--color-error)]/50 bg-[color:var(--color-error-subtle)] px-3 py-2 text-xs text-error-emphasis">
-					<p>{error}</p>
-					{lastQueryValue && (
-						<p className="mt-1 text-[color:var(--fg)]/60">
-							Last question: <span className="font-medium text-[color:var(--fg)]">{lastQueryValue}</span>
+			{error ? (
+				<div className="rounded-lg border border-border/60 bg-surface-subtle/60 px-3 py-2 text-xs text-muted-foreground">
+					<p className="text-foreground">{error}</p>
+					{lastQueryValue ? (
+						<p className="mt-1 text-subtle-foreground">
+							Last question: <span className="text-foreground">{lastQueryValue}</span>
 						</p>
-					)}
-					{retryCount > 0 && (
-						<p className="mt-1 text-[color:var(--fg)]/60">
-							Retry attempts: {retryCount}/2
-						</p>
-					)}
+					) : null}
+					{retryCount > 0 ? (
+						<p className="mt-1 text-subtle-foreground">Retry {retryCount}/2</p>
+					) : null}
 					<div className="mt-2 flex flex-wrap gap-2">
 						<button
 							type="button"
-							className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-error)]/55 px-3 py-1 font-medium transition hover:border-[color:var(--color-error)] hover:text-error-emphasis focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-error)]/50 disabled:opacity-60"
+							className="focus-ring-interactive rounded-full border border-border/60 px-3 py-1 text-xs font-medium text-foreground transition hover:border-accent hover:text-accent disabled:opacity-50"
 							onClick={() => {
-								// Manual retry - clear error and use lastFailedQuery if available
 								const queryToRetry = lastFailedQuery || lastQueryValue;
 								if (queryToRetry) {
 									setError(null);
 									setRetryCount(0);
 									sendQuery(queryToRetry);
-
-									// Track manual retry
 									autoragEvents.manualRetry({
 										message_id: lastFailedQuery ?? undefined,
 									});
@@ -76,20 +85,14 @@ export function ChatStatusIndicators({
 							Try again
 						</button>
 						<a
-							href="/projects"
-							className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+							href="/projects/"
+							className="focus-ring-interactive rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground transition hover:border-accent hover:text-accent"
 						>
 							Browse projects
 						</a>
-						<a
-							href="/contact"
-							className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)]/40 px-3 py-1 transition hover:border-[color:var(--accent)]/50 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
-						>
-							Contact Blake
-						</a>
 					</div>
 				</div>
-			)}
-		</>
+			) : null}
+		</div>
 	);
 }

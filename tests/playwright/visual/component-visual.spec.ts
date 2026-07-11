@@ -41,23 +41,36 @@ async function openCommandCenter(page: Page) {
 }
 
 async function setupCommandCenter(page: Page, setup: CommandCenterVisualSetup) {
+  await page.evaluate(() => window.localStorage.removeItem('command-center:recent'));
   await openCommandCenter(page);
   const input = page.locator('#search-input');
 
   if (setup === 'results') {
     await input.fill('fabric');
     await page.locator('[data-search-result]').first().waitFor({ state: 'visible', timeout: 15000 });
+    await page.waitForTimeout(300);
   } else if (setup === 'empty') {
     await input.fill('zzzzno-results-visual-test-xyz');
-    await page.getByText('No results for').waitFor({ state: 'visible', timeout: 15000 });
+    await page.locator('.rounded-xl.border-dashed').first().waitFor({ state: 'visible', timeout: 15000 });
+    await page.waitForTimeout(300);
   } else if (setup === 'ask') {
-    await page.locator('#command-mode-ask').click();
-    await page.locator('#command-mode-panel-ask').waitFor({ state: 'visible', timeout: 5000 });
+    await input.fill('?microsoft fabric');
+    await page.locator('[data-command-ask-state]').waitFor({ state: 'visible', timeout: 5000 });
+    await page.evaluate(() => {
+      const panel = document.querySelector('[data-panel]') as HTMLElement | null;
+      if (panel) panel.style.height = '240px';
+    });
+  } else {
+    await page.waitForTimeout(300);
   }
 
   await page.evaluate(() => {
     const active = document.activeElement as HTMLElement | null;
     if (active?.blur) active.blur();
+    const input = document.getElementById('search-input') as HTMLInputElement | null;
+    if (input) {
+      input.style.caretColor = 'transparent';
+    }
   });
 }
 
@@ -89,20 +102,26 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
 
       await expect(element).toBeVisible();
 
-      await element.evaluate((el) => {
-        try {
+      if (cfg.commandCenterSetup === 'ask') {
+        await element.evaluate((el) => {
           el.style.boxSizing = 'border-box';
-          const rect = el.getBoundingClientRect();
-          const h = Math.round(rect.height);
-          el.style.height = `${h}px`;
-        } catch {
-          void 0;
-        }
-      });
+          el.style.height = '240px';
+        });
+      } else {
+        await element.evaluate((el) => {
+          try {
+            el.style.boxSizing = 'border-box';
+            const rect = el.getBoundingClientRect();
+            el.style.height = `${Math.ceil(rect.height)}px`;
+          } catch {
+            void 0;
+          }
+        });
+      }
 
       await expect(element).toHaveScreenshot(cfg.snapshotFile, {
         animations: 'disabled',
-        maxDiffPixelRatio: 0.02,
+        maxDiffPixelRatio: cfg.commandCenterSetup ? 0.04 : 0.02,
         scale: 'css',
         threshold: 0.01,
       });

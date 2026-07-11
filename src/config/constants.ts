@@ -90,7 +90,6 @@ export const ANIMATION = {
 // ─── External Services ───────────────────────────────────────────
 export const SERVICES = {
   turnstileVerifyUrl: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-  plausibleDomain: 'blakeoxford.com',
 } as const;
 
 // ─── Error Messages ──────────────────────────────────────────────

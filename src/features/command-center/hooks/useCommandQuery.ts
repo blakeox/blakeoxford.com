@@ -92,6 +92,10 @@ export function useCommandQuery(isOpen: boolean) {
           query_length: searchQuery.trim().length,
           result_count: items.length,
           backend: itemSource,
+          semantic_hit_count: result.meta?.semanticCount,
+          top_score: result.meta?.topScore !== undefined
+            ? Math.round((result.meta.topScore || 0) * 100) / 100
+            : undefined,
         });
       }
     } catch (err) {
@@ -120,8 +124,16 @@ export function useCommandQuery(isOpen: boolean) {
 
   useEffect(() => {
     if (!isOpen) return;
-    const searchQuery = parseCommandQuery(query).query;
-    scheduleSearch(searchQuery, category);
+    const parsed = parseCommandQuery(query);
+    if (parsed.mode === 'ask') {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      abortRef.current?.abort();
+      setGroups([]);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
+    scheduleSearch(parsed.query, category);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
