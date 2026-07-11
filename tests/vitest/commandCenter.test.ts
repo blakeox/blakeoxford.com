@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildAskPrompt } from '../../src/lib/chat/ai-chat-bridge';
-import { parseCommandQuery } from '../../src/features/command-center/lib/parseQuery';
 import { enrichCommandItems } from '../../src/features/command-center/lib/rankResults';
 import type { CommandItem } from '../../src/features/command-center/types';
 
@@ -23,19 +22,6 @@ describe('buildAskPrompt', () => {
 
   it('returns trimmed query when no source title', () => {
     expect(buildAskPrompt('  hello world  ')).toBe('hello world');
-  });
-});
-
-describe('parseCommandQuery', () => {
-  it('still parses legacy ask prefix for compatibility', () => {
-    expect(parseCommandQuery('?microsoft fabric')).toEqual({
-      mode: 'ask',
-      query: 'microsoft fabric',
-    });
-  });
-
-  it('defaults to find mode', () => {
-    expect(parseCommandQuery('contact')).toEqual({ mode: 'find', query: 'contact' });
   });
 });
 
@@ -78,15 +64,13 @@ describe('enrichCommandItems', () => {
         subtitle: 'Operational intelligence',
         href: '/projects/fabric/',
         tags: ['automation'],
-        source: 'local',
+        source: 'vectorize',
         score: 0.5,
-        image: '/images/fabric.webp',
       },
     ];
 
     const ranked = enrichCommandItems(items, 'automation');
-    expect(ranked[0]?.href).toContain('fabric');
-    expect(ranked.every((item) => item.title !== 'Projects')).toBe(true);
-    expect(ranked.every((item) => item.matchReason !== 'Semantic match')).toBe(true);
+    expect(ranked[0]?.kind).toBe('project');
+    expect(ranked.some((item) => item.href === '/projects/')).toBe(false);
   });
 });

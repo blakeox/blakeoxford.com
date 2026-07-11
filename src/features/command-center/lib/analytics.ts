@@ -16,8 +16,6 @@ export const commandCenterEvents = {
 
   close: () => trackEvent('command_center_close'),
 
-  modeChange: (mode: 'find' | 'ask') => trackEvent('command_center_mode', { mode }),
-
   searchResults: (data: {
     query_length: number;
     result_count: number;
@@ -37,6 +35,24 @@ export const commandCenterEvents = {
         }
       })(),
     }),
+
+  filterChange: (category: string) =>
+    trackEvent('command_center_filter', { category }),
+
+  recentClick: (query_length: number) =>
+    trackEvent('command_center_recent_click', { query_length }),
+
+  suggestionClick: (source: 'empty_chip' | 'title_autocomplete' | 'destination') =>
+    trackEvent('command_center_suggestion_click', { source }),
+
+  emptyImpression: (query_length: number) =>
+    trackEvent('command_center_empty', { query_length }),
+
+  copyLink: (kind: string) =>
+    trackEvent('command_center_copy_link', { kind }),
+
+  tagDrillIn: (tag_length: number) =>
+    trackEvent('command_center_tag', { tag_length }),
 
   askHandoff: (data: {
     source: CommandCenterHandoffSource;

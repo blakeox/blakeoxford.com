@@ -1,16 +1,17 @@
 /**
- * ChatStatusIndicators — quiet loading / error chrome for Ask overlay.
- * Loading copy mirrors the Cloudflare pipeline: Vectorize/AutoRAG retrieve → answer.
+ * ChatStatusIndicators — quiet loading / error chrome for Ask.
+ * On failure, hand off to Find (⌘K) instead of stacking search results in the dock.
  */
 import { autoragEvents } from '../../../lib/analytics';
+import { openCommandCenter } from '../../../features/command-center/lib/commandEvents';
 import type { ChatStatusIndicatorsProps } from './types';
 
 function loadingCopy(phase: ChatStatusIndicatorsProps['loadingPhase']): string {
 	switch (phase) {
 		case 'searching':
-			return 'Searching site index…';
+			return 'Looking that up…';
 		case 'analyzing':
-			return 'Retrieving sources…';
+			return 'Reading relevant pages…';
 		case 'crafting':
 			return 'Writing answer…';
 		case null:
@@ -38,8 +39,10 @@ export function ChatStatusIndicators({
 }: ChatStatusIndicatorsProps) {
 	if (chatState !== 'loading' && !isListening && !error) return null;
 
+	const searchQuery = (lastFailedQuery || lastQueryValue || '').trim();
+
 	return (
-		<div className="border-t border-border/40 px-3 py-2 sm:px-4">
+		<div className="shrink-0 border-t border-border/40 px-3 py-2 sm:px-4">
 			{chatState === 'loading' ? (
 				<div className="flex items-center gap-2 text-xs text-muted-foreground">
 					<span className="size-3.5 animate-spin rounded-full border-2 border-accent/30 border-t-accent" aria-hidden="true" />
@@ -57,14 +60,6 @@ export function ChatStatusIndicators({
 			{error ? (
 				<div className="rounded-lg border border-border/60 bg-surface-subtle/60 px-3 py-2 text-xs text-muted-foreground">
 					<p className="text-foreground">{error}</p>
-					{lastQueryValue ? (
-						<p className="mt-1 text-subtle-foreground">
-							Last question: <span className="text-foreground">{lastQueryValue}</span>
-						</p>
-					) : null}
-					{retryCount > 0 ? (
-						<p className="mt-1 text-subtle-foreground">Retry {retryCount}/2</p>
-					) : null}
 					<div className="mt-2 flex flex-wrap gap-2">
 						<button
 							type="button"
@@ -84,12 +79,15 @@ export function ChatStatusIndicators({
 						>
 							Try again
 						</button>
-						<a
-							href="/projects/"
-							className="focus-ring-interactive rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground transition hover:border-accent hover:text-accent"
-						>
-							Browse projects
-						</a>
+						{searchQuery ? (
+							<button
+								type="button"
+								className="focus-ring-interactive rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground transition hover:border-accent hover:text-accent"
+								onClick={() => openCommandCenter(searchQuery)}
+							>
+								Search the site
+							</button>
+						) : null}
 					</div>
 				</div>
 			) : null}

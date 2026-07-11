@@ -55,21 +55,42 @@ export function cleanSnippet(snippet: string): string {
 }
 
 /**
- * Clean assistant response text
- * @param content - Raw response content
- * @returns Cleaned response text
+ * Clean assistant response text for plain-text chat bubbles.
+ * Models often emit markdown (**bold**, headers) that looks broken when not rendered.
  */
 export function cleanAssistantResponse(content: string): string {
 	let cleaned = content.trim();
 
-	const patterns = [
+	const leadIns = [
 		/^(Here is |Here's |I found |I can help |Let me help |Based on |According to |I'll |I will )/i,
 		/^(Sure[,!]? |Certainly[,!]? |Of course[,!]? |Absolutely[,!]? )/i,
 	];
 
-	for (const pattern of patterns) {
+	for (const pattern of leadIns) {
 		cleaned = cleaned.replace(pattern, '');
 	}
+
+	// Fenced code blocks → inner text
+	cleaned = cleaned.replace(/```[\w-]*\n?([\s\S]*?)```/g, '$1');
+
+	// Headings: "## Title" → "Title"
+	cleaned = cleaned.replace(/^#{1,6}\s+/gm, '');
+
+	// Bold / strong / underline — unwrap markers, keep the words
+	cleaned = cleaned.replace(/\*\*\*([^*]+)\*\*\*/g, '$1');
+	cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '$1');
+	cleaned = cleaned.replace(/__([^_]+)__/g, '$1');
+
+	// Italic *word* (avoid list markers like "* item")
+	cleaned = cleaned.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,!?:;]|$)/gm, '$1$2');
+	cleaned = cleaned.replace(/(^|[\s(])_([^_\n]+)_(?=[\s).,!?:;]|$)/gm, '$1$2');
+
+	// Inline code + markdown links
+	cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
+	cleaned = cleaned.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
+
+	// Any leftover emphasis markers from partial matches
+	cleaned = cleaned.replace(/\*\*/g, '');
 
 	cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
 	cleaned = cleaned.replace(/[ \t]+/g, ' ');
@@ -95,6 +116,28 @@ export function formatPublishedDate(value?: string): string | null {
 			month: 'short',
 			day: 'numeric',
 		});
+	} catch {
+		return null;
+	}
+}
+
+/** Compact relative date for Find result rows (blog posts). */
+export function formatRelativeDate(value?: string): string | null {
+	if (!value) return null;
+	try {
+		const date = new Date(value);
+		if (Number.isNaN(date.getTime())) return null;
+		const deltaMs = Date.now() - date.getTime();
+		const days = Math.round(deltaMs / 86_400_000);
+		if (days <= 0) return 'Today';
+		if (days === 1) return 'Yesterday';
+		if (days < 30) return `${days}d ago`;
+		if (days < 365) {
+			const months = Math.max(1, Math.round(days / 30));
+			return `${months}mo ago`;
+		}
+		const years = Math.max(1, Math.round(days / 365));
+		return `${years}y ago`;
 	} catch {
 		return null;
 	}

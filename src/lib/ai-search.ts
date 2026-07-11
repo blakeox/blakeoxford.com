@@ -93,16 +93,22 @@ export function formatAISearchProvenance(
 ): string | null {
   if (!meta?.provider && sourceCount <= 0) return null;
   const provider = meta?.provider ?? '';
-  if (provider === 'autorag-cached' || meta?.cacheStatus === 'HIT') {
-    return sourceCount > 0 ? 'Cached · cited from site index' : 'Cached answer';
-  }
+
+  // Workers AI answers from verified expertise — no fake "cited" chrome
   if (provider === 'workers-ai') {
-    return sourceCount > 0
-      ? 'Quick answer · Workers AI'
-      : 'Quick answer · not cited from site index';
+    return null;
   }
-  if (provider === 'autorag' || sourceCount > 0) {
-    return sourceCount > 0 ? 'Cited from site index · AutoRAG' : 'Answered with AutoRAG';
+
+  // When we already show citation links under the bubble, skip redundant labels
+  if (sourceCount > 0) {
+    return null;
+  }
+
+  if (provider === 'autorag-cached' || meta?.cacheStatus === 'HIT') {
+    return 'Cached answer';
+  }
+  if (provider === 'autorag') {
+    return null;
   }
   return null;
 }

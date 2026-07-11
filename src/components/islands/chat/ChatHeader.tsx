@@ -1,5 +1,5 @@
 /**
- * ChatHeader — Ask companion chrome with page-context pill.
+ * ChatHeader — Ask companion chrome with page context + New chat.
  */
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
@@ -130,16 +130,6 @@ export const ChatHeader = memo(function ChatHeader({
 						<MenuButton onClick={() => toggleAdvancedControls()}>
 							{showAdvancedControls ? 'Hide session settings' : 'Session settings'}
 						</MenuButton>
-						{canStartNewChat ? (
-							<MenuButton
-								onClick={() => {
-									startNewChat();
-									closeMenu();
-								}}
-							>
-								Start new chat
-							</MenuButton>
-						) : null}
 						<MenuButton
 							disabled={!hasMessages}
 							onClick={() => {
@@ -164,10 +154,10 @@ export const ChatHeader = memo(function ChatHeader({
 			: null;
 
 	return (
-		<div className="flex items-start gap-2 border-b border-border/40 px-3.5 pb-3 pt-2 sm:px-4 sm:pt-3.5">
-			<div className="min-w-0 flex-1 space-y-1.5">
-				<div className="flex items-center gap-2">
-					<p id="ai-chat-heading" className="text-sm font-semibold tracking-tight text-foreground">
+		<div className="flex shrink-0 items-center gap-2 border-b border-border/40 px-3.5 py-2.5 sm:px-4 sm:py-3">
+			<div className="min-w-0 flex-1">
+				<div className="flex min-w-0 items-center gap-2">
+					<p id="ai-chat-heading" className="shrink-0 text-sm font-semibold tracking-tight text-foreground">
 						Ask
 					</p>
 					{isListening ? (
@@ -175,23 +165,38 @@ export const ChatHeader = memo(function ChatHeader({
 							<span className="size-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
 							Listening
 						</span>
-					) : null}
+					) : (
+						<span
+							className="inline-flex min-w-0 items-center gap-1.5 truncate text-xxs text-muted-foreground"
+							title={pageLabel}
+						>
+							<span className="size-1.5 shrink-0 rounded-full bg-accent/80" aria-hidden="true" />
+							<span className="truncate">
+								<span className="text-subtle-foreground">Viewing</span>{' '}
+								<span className="font-medium text-foreground/85">{pageLabel}</span>
+							</span>
+						</span>
+					)}
 				</div>
-				<span
-					className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-border/50 bg-surface-subtle/70 px-2.5 py-0.5 text-xxs text-muted-foreground"
-					title={pageLabel}
-				>
-					<span className="size-1.5 shrink-0 rounded-full bg-accent/80" aria-hidden="true" />
-					<span className="truncate">
-						<span className="text-subtle-foreground">Viewing</span>{' '}
-						<span className="font-medium text-foreground/85">{pageLabel}</span>
-					</span>
-				</span>
 				<span className="sr-only">{wsConnected ? 'Live connection' : 'Offline'}</span>
 				{activeUsers > 1 ? <span className="sr-only">{activeUsers} online</span> : null}
 			</div>
 
-			<div className="flex shrink-0 items-center gap-1 pt-0.5">
+			<div className="flex shrink-0 items-center gap-0.5">
+				{canStartNewChat ? (
+					<button
+						type="button"
+						className={OVERLAY_ICON_BUTTON}
+						aria-label="Start new chat"
+						title="New chat"
+						onClick={startNewChat}
+					>
+						<svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+							<path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
+						</svg>
+					</button>
+				) : null}
+
 				<button
 					ref={toggleRef}
 					type="button"

@@ -185,7 +185,6 @@ export function useAIChatController() {
 	});
 
 	const {
-		updateFallbackSuggestions,
 		appendAssistantChunk,
 		finalizeAssistantMessage,
 		assignAssistantSources,
@@ -253,7 +252,6 @@ export function useAIChatController() {
 		assignAssistantProvenance,
 		finalizeAssistantMessage,
 		buildHistoryForRequest,
-		updateFallbackSuggestions,
 	});
 
 	const { visibleFallbackResults, hasMoreFallbackResults } = useComputedValues({
@@ -312,6 +310,7 @@ export function useAIChatController() {
 		toggleAnalytics,
 		toggleAdvancedControls,
 		setShowFallbackSuggestions,
+		setFallbackResults,
 		setComposerFocused,
 		setShowScrollToLatest,
 		toggleExpandedSource,

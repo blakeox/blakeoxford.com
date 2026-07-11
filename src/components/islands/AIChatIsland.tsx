@@ -11,14 +11,12 @@ import { useAIChatController } from '../../lib/hooks';
 import {
 	ChatHeader,
 	ChatAdvancedControls,
-	ChatRecentQueries,
 	ChatDigest,
 	ChatAnalytics,
 	ChatQuickActions,
 	ChatMessageBubble,
 	ChatInput,
 	ChatStatusIndicators,
-	ChatFallbackResults,
 	TypingIndicator,
 	ScrollToLatestButton,
 } from './chat';
@@ -27,6 +25,8 @@ export default function AIChatIsland() {
 	const controller = useAIChatController();
 	const hasCheckedInitialOpenRef = useRef(false);
 	const [pageLabel, setPageLabel] = useState('Site assistant');
+	const [freshNotice, setFreshNotice] = useState(false);
+	const freshTimerRef = useRef<number | null>(null);
 
 	const {
 		isOpen,
@@ -40,7 +40,6 @@ export default function AIChatIsland() {
 		useMemory,
 		streamingMessageId,
 		sessionStartTime,
-		fallbackResults,
 		retryCount,
 		setRetryCount,
 		lastFailedQuery,
@@ -60,14 +59,12 @@ export default function AIChatIsland() {
 		showDigest,
 		showAnalytics,
 		showAdvancedControls,
-		showFallbackSuggestions,
 		showScrollToLatest,
 		expandedSources,
 		expandedIndividualSources,
 		toggleDigest,
 		toggleAnalytics,
 		toggleAdvancedControls,
-		setShowFallbackSuggestions,
 		setComposerFocused,
 		toggleExpandedSource,
 		toggleIndividualSource,
@@ -83,7 +80,6 @@ export default function AIChatIsland() {
 		lastQueryValue,
 		sourceRefs,
 		scrollToLatest,
-		recentQueries,
 		conversationDigest,
 		feedbackAnalytics,
 		canStartNewChat,
@@ -101,12 +97,8 @@ export default function AIChatIsland() {
 		handleTextareaKeyDown,
 		sendQuery,
 		handleSubmit,
-		handleReplayQuery,
-		visibleFallbackResults,
-		hasMoreFallbackResults,
 	} = controller;
 
-	// Refresh page label when opening and on Astro navigations
 	useEffect(() => {
 		const syncLabel = () => {
 			setPageLabel(formatPageContextLabel(getPageContext()));
@@ -115,6 +107,26 @@ export default function AIChatIsland() {
 		document.addEventListener('astro:page-load', syncLabel);
 		return () => document.removeEventListener('astro:page-load', syncLabel);
 	}, [isOpen]);
+
+	useEffect(() => {
+		return () => {
+			if (freshTimerRef.current !== null) {
+				window.clearTimeout(freshTimerRef.current);
+			}
+		};
+	}, []);
+
+	const handleStartNewChat = () => {
+		startNewChat();
+		setFreshNotice(true);
+		if (freshTimerRef.current !== null) {
+			window.clearTimeout(freshTimerRef.current);
+		}
+		freshTimerRef.current = window.setTimeout(() => {
+			setFreshNotice(false);
+			freshTimerRef.current = null;
+		}, 2200);
+	};
 
 	const isDragging = touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY;
 	const dragOffset = isDragging ? Math.min(touchCurrentY - touchStartY, 200) : 0;
@@ -206,6 +218,8 @@ export default function AIChatIsland() {
 	const transcriptMessages = isEmptyConversation
 		? []
 		: messages.filter((message) => message.id !== 'welcome');
+	const showQuickActions =
+		isEmptyConversation && (chatState === 'ready' || chatState === 'idle') && !error;
 
 	if (typeof document === 'undefined') return null;
 
@@ -234,9 +248,18 @@ export default function AIChatIsland() {
 				toggleMemory={toggleMemory}
 				clearConversation={clearConversation}
 				handleExportConversation={handleExportConversation}
-				startNewChat={startNewChat}
+				startNewChat={handleStartNewChat}
 				closeChat={closeChat}
 			/>
+
+			{freshNotice ? (
+				<p
+					className="shrink-0 border-b border-border/30 bg-surface-subtle/50 px-3.5 py-1.5 text-xxs text-muted-foreground sm:px-4"
+					role="status"
+				>
+					Started fresh
+				</p>
+			) : null}
 
 			<ChatAdvancedControls
 				showAdvancedControls={showAdvancedControls}
@@ -252,10 +275,6 @@ export default function AIChatIsland() {
 				handleExportConversation={handleExportConversation}
 			/>
 
-			{isEmptyConversation ? (
-				<ChatRecentQueries queries={recentQueries} onReplayQuery={handleReplayQuery} />
-			) : null}
-
 			<ChatDigest show={showDigest} digest={conversationDigest} />
 
 			<ChatAnalytics
@@ -265,14 +284,14 @@ export default function AIChatIsland() {
 				feedbackAnalytics={feedbackAnalytics}
 			/>
 
-			<div className="relative min-h-0 overflow-hidden">
+			<div className="relative min-h-0 flex-1 overflow-hidden">
 				<div
 					ref={scrollContainerRef}
-					className="flex min-h-0 max-h-[min(48dvh,22rem)] flex-col gap-3.5 overflow-y-auto px-3.5 py-3.5 sm:max-h-[min(52dvh,26rem)] sm:px-4"
+					className="flex h-full min-h-[min(40dvh,16rem)] flex-col gap-3.5 overflow-y-auto px-3.5 py-3.5 sm:min-h-[12rem] sm:px-4"
 					aria-live="polite"
 					data-ai-chat-transcript
 				>
-					{isEmptyConversation && chatState === 'ready' ? (
+					{showQuickActions ? (
 						<ChatQuickActions
 							pageLabel={pageLabel}
 							onAction={(query) => sendQuery(query)}
@@ -324,14 +343,6 @@ export default function AIChatIsland() {
 				setError={setError}
 				setRetryCount={setRetryCount}
 				sendQuery={sendQuery}
-			/>
-
-			<ChatFallbackResults
-				fallbackResults={fallbackResults}
-				visibleFallbackResults={visibleFallbackResults}
-				hasMoreFallbackResults={hasMoreFallbackResults}
-				showFallbackSuggestions={showFallbackSuggestions}
-				setShowFallbackSuggestions={setShowFallbackSuggestions}
 			/>
 
 			<ChatInput

@@ -3,42 +3,84 @@ import { createPortal } from 'react-dom';
 
 import { handoffToAiChat } from '../../lib/chat/ai-chat-bridge';
 import { useOverlayScrollLock } from '../../hooks/useOverlayScrollLock';
+import { useTouchGestures } from '../../lib/hooks/useTouchGestures';
 import { createFocusTrap } from '../../utils/focusTrap';
 import { OverlayShell } from '../overlay';
 import { OVERLAY_CLOSE_BUTTON, OVERLAY_FIELD, OVERLAY_HEADER } from '../overlay/overlayStyles';
+import { CommandCategoryFilters } from './components/CommandCategoryFilters';
 import {
+  CommandDestinationList,
   CommandEmpty,
   CommandFooter,
   CommandRecentList,
-  CommandSuggestions,
 } from './components/CommandEmpty';
 import { CommandGroupSection, CommandSkeletonList } from './components/CommandGroup';
 import { CommandResultRow } from './components/CommandResultRow';
+import { CommandTitleSuggestions } from './components/CommandTitleSuggestions';
 import { useCommandCenter } from './hooks/useCommandCenter';
 import { useCommandHistory } from './hooks/useCommandHistory';
 import { useCommandQuery } from './hooks/useCommandQuery';
 import { commandCenterEvents, type CommandCenterHandoffSource } from './lib/analytics';
 import { flattenGroups } from './lib/groupResults';
-import type { CommandItem } from './types';
+import type { CommandCategory, CommandItem } from './types';
 
 /**
  * Site search — navigate pages, projects, and posts.
  * Ask lives in the corner companion; search stays search-like.
  */
 export default function CommandCenter() {
-  const { isOpen, close: closeCommandCenter } = useCommandCenter();
+  const { isOpen, close: closeCommandCenter, seedQuery, clearSeedQuery } = useCommandCenter();
   const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
-  const { recentQueries, pushQuery, clearHistory } = useCommandHistory();
-  const { query, setQuery, groups, isLoading, error, searchSource } = useCommandQuery(isOpen);
+  const {
+    recentQueries,
+    recentDestinations,
+    pushQuery,
+    pushDestination,
+    clearHistory,
+  } = useCommandHistory();
+  const {
+    query,
+    setQuery,
+    category,
+    setCategory,
+    groups,
+    isLoading,
+    error,
+    searchSource,
+  } = useCommandQuery(isOpen);
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const [copiedHref, setCopiedHref] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const focusTrapRef = useRef<ReturnType<typeof createFocusTrap> | null>(null);
+  const emptyTrackedRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!seedQuery) return;
+    setQuery(seedQuery);
+    clearSeedQuery();
+  }, [seedQuery, setQuery, clearSeedQuery]);
 
   const findQuery = query.trim();
-  const flatItems = useMemo(() => flattenGroups(groups), [groups]);
+
+  // Reset type filter when the query is cleared
+  useEffect(() => {
+    if (!findQuery && category !== 'all') {
+      setCategory('all');
+    }
+  }, [findQuery, category, setCategory]);
+
+  const flatBrowseGroups = useMemo(() => {
+    if (findQuery) return groups;
+    if (recentQueries.length > 0 || recentDestinations.length > 0) {
+      return groups.filter((group) => group.id !== 'recent');
+    }
+    return groups;
+  }, [findQuery, groups, recentQueries.length, recentDestinations.length]);
+
+  const flatItems = useMemo(() => flattenGroups(flatBrowseGroups), [flatBrowseGroups]);
   const hasResults = flatItems.length > 0;
 
   const close = useCallback(() => {
@@ -46,6 +88,12 @@ export default function CommandCenter() {
     focusTrapRef.current?.deactivate();
     closeCommandCenter();
   }, [closeCommandCenter, releaseScrollLockNow]);
+
+  const { handleTouchStart, handleTouchMove, handleTouchEnd } = useTouchGestures({
+    enabled: isOpen,
+    swipeThreshold: 100,
+    onSwipeDown: close,
+  });
 
   const askAi = useCallback(
     (prompt: string, analyticsSource: CommandCenterHandoffSource = 'empty_state') => {
@@ -103,12 +151,13 @@ export default function CommandCenter() {
       if (prev < 0 || prev >= flatItems.length) return 0;
       return prev;
     });
-  }, [flatItems.length, hasResults, findQuery]);
+  }, [flatItems.length, hasResults, findQuery, category]);
 
   const navigateTo = useCallback(
     (item: CommandItem, newTab = false) => {
       commandCenterEvents.resultClick({ kind: item.kind, href: item.href });
       pushQuery(findQuery || query);
+      pushDestination({ title: item.title, href: item.href });
       close();
       if (newTab) {
         window.open(item.href, '_blank', 'noopener,noreferrer');
@@ -116,18 +165,116 @@ export default function CommandCenter() {
         window.location.href = item.href;
       }
     },
+    [close, findQuery, pushDestination, pushQuery, query],
+  );
+
+  const handleCategoryChange = useCallback(
+    (next: CommandCategory) => {
+      setCategory(next);
+      commandCenterEvents.filterChange(next);
+    },
+    [setCategory],
+  );
+
+  const copyActiveLink = useCallback(
+    async (item?: CommandItem) => {
+      const target = item ?? (activeIndex >= 0 ? flatItems[activeIndex] : undefined);
+      if (!target) return;
+      try {
+        const absolute = new URL(target.href, window.location.origin).toString();
+        await navigator.clipboard.writeText(absolute);
+        setCopiedHref(target.href);
+        commandCenterEvents.copyLink(target.kind);
+        window.setTimeout(() => {
+          setCopiedHref((prev) => (prev === target.href ? null : prev));
+        }, 1600);
+      } catch {
+        // Clipboard can fail in restricted contexts — keep silent
+      }
+    },
+    [activeIndex, flatItems],
+  );
+
+  const askAboutItemWithContext = useCallback(
+    (item: CommandItem) => {
+      pushQuery(findQuery || query);
+      commandCenterEvents.askHandoff({
+        source: 'result_row',
+        query_length: (findQuery || item.title).length,
+        item_kind: item.kind,
+        auto_send: true,
+      });
+      handoffToAiChat({
+        query: findQuery || item.title,
+        autoSend: true,
+        sourceHref: item.href,
+        sourceTitle: item.title,
+        sourceKind: item.kind,
+      });
+      close();
+    },
     [close, findQuery, pushQuery, query],
   );
+
+  const handleTagClick = useCallback(
+    (tag: string) => {
+      setQuery(tag);
+      setCategory('all');
+      commandCenterEvents.tagDrillIn(tag.length);
+      inputRef.current?.focus();
+    },
+    [setCategory, setQuery],
+  );
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onCopyShortcut = (event: KeyboardEvent) => {
+      const meta = event.metaKey || event.ctrlKey;
+      if (!meta || event.key.toLowerCase() !== 'c') return;
+      // Don't steal copy when the user is selecting input text
+      const selection = window.getSelection()?.toString();
+      if (selection && selection.length > 0 && document.activeElement === inputRef.current) {
+        return;
+      }
+      if (activeIndex < 0 || !flatItems[activeIndex]) return;
+      event.preventDefault();
+      void copyActiveLink(flatItems[activeIndex]);
+    };
+    document.addEventListener('keydown', onCopyShortcut);
+    return () => document.removeEventListener('keydown', onCopyShortcut);
+  }, [activeIndex, copyActiveLink, flatItems, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || isLoading || !findQuery || hasResults) {
+      if (!findQuery) emptyTrackedRef.current = null;
+      return;
+    }
+    if (emptyTrackedRef.current === findQuery) return;
+    emptyTrackedRef.current = findQuery;
+    commandCenterEvents.emptyImpression(findQuery.length);
+  }, [findQuery, hasResults, isLoading, isOpen]);
 
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
       event.preventDefault();
       if (query.trim()) {
         setQuery('');
+        setCategory('all');
       } else {
         close();
       }
       return;
+    }
+
+    if (event.key === 'Tab' && findQuery.length >= 2 && flatItems.length > 0) {
+      const firstTitle = flatItems.find((item) =>
+        item.title.toLowerCase().includes(findQuery.toLowerCase()),
+      );
+      if (firstTitle && firstTitle.title.toLowerCase() !== findQuery.toLowerCase()) {
+        event.preventDefault();
+        setQuery(firstTitle.title);
+        return;
+      }
     }
 
     if (!flatItems.length) return;
@@ -175,6 +322,9 @@ export default function CommandCenter() {
         } transition duration-normal ease-standard motion-reduce:transition-none`,
       }}
       onPanelClick={(event) => event.stopPropagation()}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <div className={OVERLAY_HEADER}>
         <div className={OVERLAY_FIELD}>
@@ -221,6 +371,7 @@ export default function CommandCenter() {
               aria-label="Clear search"
               onClick={() => {
                 setQuery('');
+                setCategory('all');
                 inputRef.current?.focus();
               }}
             >
@@ -269,17 +420,31 @@ export default function CommandCenter() {
           </div>
         ) : null}
 
-        {!findQuery ? (
-          <>
-            {recentQueries.length > 0 ? (
-              <CommandRecentList
-                recentQueries={recentQueries}
-                onSelect={setQuery}
-                onClear={clearHistory}
-              />
-            ) : null}
-            <CommandSuggestions onSelect={setQuery} />
-          </>
+        {findQuery ? (
+          <CommandCategoryFilters category={category} onChange={handleCategoryChange} />
+        ) : null}
+
+        {!findQuery && recentQueries.length > 0 ? (
+          <CommandRecentList
+            recentQueries={recentQueries}
+            onSelect={(value) => {
+              commandCenterEvents.recentClick(value.trim().length);
+              setQuery(value);
+            }}
+            onClear={clearHistory}
+          />
+        ) : null}
+
+        {!findQuery && recentDestinations.length > 0 ? (
+          <CommandDestinationList
+            destinations={recentDestinations}
+            onSelect={(destination) => {
+              commandCenterEvents.suggestionClick('destination');
+              pushDestination(destination);
+              close();
+              window.location.href = destination.href;
+            }}
+          />
         ) : null}
 
         {isLoading && !hasResults ? <CommandSkeletonList /> : null}
@@ -287,8 +452,23 @@ export default function CommandCenter() {
         {!isLoading && findQuery && !hasResults ? (
           <CommandEmpty
             query={findQuery}
-            onSuggestion={setQuery}
+            onSuggestion={(value) => {
+              commandCenterEvents.suggestionClick('empty_chip');
+              setQuery(value);
+            }}
             onAskAi={(value) => askAi(value, 'empty_state')}
+          />
+        ) : null}
+
+        {findQuery && hasResults ? (
+          <CommandTitleSuggestions
+            query={findQuery}
+            items={flatItems}
+            onSelect={(title) => {
+              commandCenterEvents.suggestionClick('title_autocomplete');
+              setQuery(title);
+              inputRef.current?.focus();
+            }}
           />
         ) : null}
 
@@ -301,10 +481,10 @@ export default function CommandCenter() {
             className="flex flex-col gap-3"
           >
             {findQuery ? (
-              <p className="sr-only">Use arrow keys to navigate results. Press Enter to open.</p>
+              <p className="sr-only">Use arrow keys to navigate results. Press Enter to open. Press Command C to copy the active link.</p>
             ) : null}
             <div data-results-container className="flex flex-col gap-3">
-              {groups.map((group) => (
+              {flatBrowseGroups.map((group) => (
                 <CommandGroupSection key={group.id} label={group.label}>
                   {group.items.map((item) => {
                     resultIndex += 1;
@@ -318,6 +498,12 @@ export default function CommandCenter() {
                         isActive={index === activeIndex}
                         onSelect={(selected) => navigateTo(selected)}
                         onHover={setActiveIndex}
+                        onAsk={askAboutItemWithContext}
+                        onCopyLink={(selected) => {
+                          void copyActiveLink(selected);
+                        }}
+                        onTagClick={handleTagClick}
+                        linkCopied={copiedHref === item.href}
                       />
                     );
                   })}
@@ -328,7 +514,7 @@ export default function CommandCenter() {
         ) : null}
       </div>
 
-      <CommandFooter searchSource={searchSource} hasQuery={Boolean(findQuery)} />
+      <CommandFooter searchSource={searchSource} showCopyHint={hasResults} />
     </OverlayShell>
   );
 

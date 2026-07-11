@@ -9,17 +9,21 @@ import {
   COMMAND_CENTER_CLOSE,
   COMMAND_CENTER_OPEN,
   COMMAND_CENTER_TOGGLE,
+  type CommandCenterOpenDetail,
 } from '../lib/commandEvents';
 import { commandCenterEvents } from '../lib/analytics';
 
 export function useCommandCenter() {
   const [isOpen, setIsOpen] = useState(false);
+  const [seedQuery, setSeedQuery] = useState<string | null>(null);
 
   const open = useCallback((source: 'shortcut' | 'nav' | 'api' | 'unknown' = 'unknown') => {
     closeMobileMenu();
     setIsOpen(true);
     commandCenterEvents.open(source);
   }, []);
+
+  const clearSeedQuery = useCallback(() => setSeedQuery(null), []);
 
   const close = useCallback(() => {
     setIsOpen(false);
@@ -39,7 +43,13 @@ export function useCommandCenter() {
   }, []);
 
   useEffect(() => {
-    const onOpen = () => open('api');
+    const onOpen = (event: Event) => {
+      const detail = (event as CustomEvent<CommandCenterOpenDetail>).detail;
+      if (typeof detail?.query === 'string' && detail.query.trim()) {
+        setSeedQuery(detail.query.trim());
+      }
+      open('api');
+    };
     const onClose = () => close();
     const onToggle = () => toggle();
 
@@ -153,5 +163,5 @@ export function useCommandCenter() {
     };
   }, [isOpen, close]);
 
-  return { isOpen, open, close, toggle };
+  return { isOpen, open, close, toggle, seedQuery, clearSeedQuery };
 }

@@ -1,36 +1,33 @@
 /**
- * ChatMessageBubble — restrained message UI aligned with Find overlay density.
+ * ChatMessageBubble — answer-first message UI.
+ * Citations sit under the bubble; Workers AI answers skip fake citation chrome.
  */
 import { memo } from 'react';
-import {
-	cleanAssistantResponse,
-	decodeHtmlEntities,
-	decodeMimeEncodedWords,
-} from '../../../lib/string-utils';
+import { cleanAssistantResponse } from '../../../lib/string-utils';
 import { formatAISearchProvenance } from '../../../lib/ai-search';
-import { SourcesList } from './MessageSources';
+import { MessageSources } from './MessageSources';
 import { MessageActions } from './MessageActions';
-import { FollowUpSuggestions, MatchedCTA } from './MessageCTAs';
+import { MatchedCTA } from './MessageCTAs';
 import type { ChatMessageBubbleProps } from './types';
 
 export const ChatMessageBubble = memo(function ChatMessageBubble({
 	message,
 	isStreaming,
 	siteHostname,
-	expandedSources,
-	expandedIndividualSources,
+	expandedSources: _expandedSources,
+	expandedIndividualSources: _expandedIndividualSources,
 	copiedMessageId,
 	copiedShareUrl,
 	messages,
 	messagesRef: _messagesRef,
 	sourceRefs,
-	toggleExpandedSource,
-	toggleIndividualSource,
+	toggleExpandedSource: _toggleExpandedSource,
+	toggleIndividualSource: _toggleIndividualSource,
 	handleFeedback,
 	handleCopyMessage,
 	handleOpenPrimarySource,
-	setInputValue,
-	sendQuery,
+	setInputValue: _setInputValue,
+	sendQuery: _sendQuery,
 	copyWithFeedback,
 	isLatestAssistant = false,
 }: ChatMessageBubbleProps) {
@@ -42,30 +39,15 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 		isAssistant && !isStreaming
 			? formatAISearchProvenance(message.provenance, totalSources)
 			: null;
-	const showAllSources = isAssistant ? Boolean(expandedSources[message.id]) : false;
 	const primarySource = sources[0] ?? null;
-	const primarySourceTitle = primarySource
-		? decodeMimeEncodedWords(decodeHtmlEntities(primarySource.title || primarySource.url))
-		: null;
-	let primarySourceIsExternal = false;
-	if (primarySource) {
-		try {
-			const parsed = primarySource.url.startsWith('http')
-				? new URL(primarySource.url)
-				: new URL(primarySource.url, `https://${siteHostname}`);
-			primarySourceIsExternal = parsed.hostname !== siteHostname;
-		} catch {
-			primarySourceIsExternal = !primarySource.url.startsWith('/');
-		}
-	}
-	const primaryLinkTarget = primarySourceIsExternal ? '_blank' : undefined;
-	const primaryLinkRel = primarySourceIsExternal ? 'noreferrer' : undefined;
 	const isHelpful = message.feedback === 'positive';
 	const isNotHelpful = message.feedback === 'negative';
+	const showCitations = isAssistant && !isStreaming && totalSources > 0;
+	const provider = message.provenance?.provider ?? '';
+	const isWorkersAi = provider === 'workers-ai';
 
 	return (
 		<div
-			key={message.id}
 			className={`flex flex-col gap-1.5 ${isAssistant ? 'items-start' : 'items-end'}`}
 			data-ai-message-role={message.role}
 		>
@@ -93,48 +75,24 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 				) : null}
 			</div>
 
+			{showCitations && !isWorkersAi ? (
+				<MessageSources
+					sources={sources}
+					messageId={message.id}
+					siteHostname={siteHostname}
+					sourceRefs={sourceRefs}
+					onOpenSource={handleOpenPrimarySource}
+				/>
+			) : null}
+
 			{provenanceLabel ? (
-				<span
-					className="max-w-[92%] px-1 text-xxs text-subtle-foreground"
-					data-ai-provenance
-					title={
-						message.provenance?.provider
-							? `Cloudflare ${message.provenance.provider}${message.provenance.cacheStatus ? ` · cache ${message.provenance.cacheStatus}` : ''}`
-							: undefined
-					}
-				>
+				<span className="max-w-[92%] px-1 text-xxs text-subtle-foreground" data-ai-provenance>
 					{provenanceLabel}
 				</span>
 			) : null}
 
-			{isAssistant && totalSources > 0 && !isStreaming ? (
-				<SourcesList
-					message={message}
-					sources={sources}
-					showAllSources={showAllSources}
-					primarySource={primarySource}
-					primarySourceTitle={primarySourceTitle}
-					primaryLinkTarget={primaryLinkTarget}
-					primaryLinkRel={primaryLinkRel}
-					totalSources={totalSources}
-					siteHostname={siteHostname}
-					expandedIndividualSources={expandedIndividualSources}
-					sourceRefs={sourceRefs}
-					toggleExpandedSource={toggleExpandedSource}
-					toggleIndividualSource={toggleIndividualSource}
-				/>
-			) : null}
-
-			{isAssistant && isLatestAssistant && !isStreaming && sources.length > 0 ? (
-				<>
-					<FollowUpSuggestions
-						sources={sources}
-						setInputValue={setInputValue}
-						sendQuery={sendQuery}
-						maxSuggestions={2}
-					/>
-					<MatchedCTA message={message} messages={messages} sources={sources} compact />
-				</>
+			{isAssistant && isLatestAssistant && !isStreaming && showCitations && !isWorkersAi ? (
+				<MatchedCTA message={message} messages={messages} sources={sources} compact />
 			) : null}
 
 			{isAssistant && !isStreaming ? (

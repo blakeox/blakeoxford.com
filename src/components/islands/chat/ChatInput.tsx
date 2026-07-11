@@ -77,7 +77,7 @@ export const ChatInput = memo(function ChatInput({
 				</button>
 			</div>
 			<p className="mt-2 hidden text-xxs text-subtle-foreground/80 sm:block">
-				<kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">↵</kbd> send · stays open while you browse ·{' '}
+				<kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">↵</kbd> send ·{' '}
 				<kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">⌘K</kbd> search
 			</p>
 		</form>

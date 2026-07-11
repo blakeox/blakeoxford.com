@@ -52,8 +52,6 @@ interface UseQueryManagementOptions {
 	finalizeAssistantMessage: (assistantId: string, message: string) => Promise<void>;
 	/** Function to build history for request */
 	buildHistoryForRequest: (messages: ChatMessage[], useMemory: boolean) => any[];
-	/** Function to update fallback suggestions */
-	updateFallbackSuggestions: (query: string) => Promise<void>;
 }
 
 /**
@@ -133,7 +131,6 @@ export function useQueryManagement(
 		assignAssistantProvenance,
 		finalizeAssistantMessage,
 		buildHistoryForRequest,
-		updateFallbackSuggestions,
 		inputValue,
 		setInputValue,
 		openChat,
@@ -266,12 +263,8 @@ export function useQueryManagement(
 				setStreamingMessageId(null);
 				setLoadingPhase(null);
 				setChatState('ready');
-				// Only surface Vectorize fallback when the answer has no citations.
-				if ((result.sources?.length ?? 0) === 0) {
-					await updateFallbackSuggestions(query);
-				} else {
-					setFallbackResults([]);
-				}
+				// Successful answers own the dock — Find (⌘K) owns browsing matches.
+				setFallbackResults([]);
 				void sawMeta;
 			} catch (err) {
 				clearTimeout(searchingTimer);
@@ -319,7 +312,8 @@ export function useQueryManagement(
 					retry_available: errorInfo.retryable,
 				});
 
-				await updateFallbackSuggestions(query);
+				// Browse recovery lives in Find (⌘K), not a second results panel in Ask.
+				setFallbackResults([]);
 			} finally {
 				activeRequestRef.current = null;
 			}
@@ -330,7 +324,6 @@ export function useQueryManagement(
 			assignAssistantProvenance,
 			buildHistoryForRequest,
 			finalizeAssistantMessage,
-			updateFallbackSuggestions,
 			useMemory,
 			retryCount,
 			setChatState,

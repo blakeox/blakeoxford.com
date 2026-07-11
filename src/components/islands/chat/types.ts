@@ -202,6 +202,7 @@ export interface ChatFallbackResultsProps {
 	hasMoreFallbackResults: boolean;
 	showFallbackSuggestions: boolean;
 	setShowFallbackSuggestions: (show: boolean) => void;
+	onDismiss?: () => void;
 }
 
 /**

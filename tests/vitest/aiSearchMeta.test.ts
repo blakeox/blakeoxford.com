@@ -19,21 +19,16 @@ describe('readAISearchMeta', () => {
 });
 
 describe('formatAISearchProvenance', () => {
-  it('labels cached AutoRAG answers', () => {
-    expect(formatAISearchProvenance({ provider: 'autorag-cached' }, 2)).toBe(
-      'Cached · cited from site index',
-    );
+  it('hides provenance when citations are already shown', () => {
+    expect(formatAISearchProvenance({ provider: 'autorag-cached' }, 2)).toBeNull();
+    expect(formatAISearchProvenance({ provider: 'autorag' }, 3)).toBeNull();
   });
 
-  it('labels Workers AI quick answers without citations', () => {
-    expect(formatAISearchProvenance({ provider: 'workers-ai' }, 0)).toBe(
-      'Quick answer · not cited from site index',
-    );
+  it('skips Workers AI chrome so answers stay conversational', () => {
+    expect(formatAISearchProvenance({ provider: 'workers-ai' }, 0)).toBeNull();
   });
 
-  it('labels cited AutoRAG answers', () => {
-    expect(formatAISearchProvenance({ provider: 'autorag' }, 3)).toBe(
-      'Cited from site index · AutoRAG',
-    );
+  it('labels cached answers only when there are no citations', () => {
+    expect(formatAISearchProvenance({ provider: 'autorag-cached' }, 0)).toBe('Cached answer');
   });
 });

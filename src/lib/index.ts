@@ -38,6 +38,7 @@ export {
 	cleanSnippet,
 	cleanAssistantResponse,
 	formatPublishedDate,
+	formatRelativeDate,
 	createId,
 } from './string-utils';
 

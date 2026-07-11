@@ -17,8 +17,6 @@ export type CommandItem = {
   matchReason?: string;
 };
 
-export type CommandMode = 'find' | 'ask';
-
 export type CommandGroup = {
   id: string;
   label: string;
@@ -34,15 +32,11 @@ export const CATEGORY_LABELS: Record<CommandCategory, string> = {
   blog: 'Blog',
 };
 
-export const MODE_LABELS: Record<CommandMode, string> = {
-  find: 'Find',
-  ask: 'Ask',
-};
-
-/** Discovery terms only — avoid duplicating nav quick links like Contact. */
+/** Discovery terms only — keep the idle/empty search surface calm.
+ * Lead with a known-good corpus hit so empty-state examples always work.
+ */
 export const SUGGESTED_QUERIES = [
   'Microsoft Fabric',
-  'CES 2026',
   'automation',
-  'Power BI',
+  'CES 2026',
 ] as const;

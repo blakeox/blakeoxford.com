@@ -1,198 +1,85 @@
 /**
- * MessageSources — compact source row aligned with Find/Ask overlay language.
+ * MessageSources — 1–2 titled citation links under an assistant answer.
+ * No Vectorize jargon, scores, or dock-stealing chrome.
  */
 import { memo, type RefObject } from 'react';
-import {
-	cleanSnippet,
-	getRelevanceExplanation,
-} from '../../../lib/chat';
-import {
-	decodeHtmlEntities,
-	decodeMimeEncodedWords,
-	formatPublishedDate,
-} from '../../../lib/string-utils';
-import { SECTION_LABEL } from '../../../features/overlay/overlayStyles';
-import type { ChatMessage, Source } from './types';
+import { decodeHtmlEntities, decodeMimeEncodedWords } from '../../../lib/string-utils';
+import type { Source } from './types';
 
-interface CitationLinksProps {
+const MIN_SOURCE_SCORE = 0.55;
+
+function sourceTitle(source: Source): string {
+	return decodeMimeEncodedWords(decodeHtmlEntities(source.title || source.url));
+}
+
+function isExternalUrl(url: string, siteHostname: string): boolean {
+	try {
+		const parsed = url.startsWith('http') ? new URL(url) : new URL(url, `https://${siteHostname}`);
+		return parsed.hostname !== siteHostname;
+	} catch {
+		return !url.startsWith('/');
+	}
+}
+
+export function filterDisplaySources(sources: Source[], limit = 2): Source[] {
+	const ranked = [...sources].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+	const strong = ranked.filter((source) => typeof source.score !== 'number' || source.score >= MIN_SOURCE_SCORE);
+	const pool = strong.length > 0 ? strong : ranked;
+	return pool.slice(0, limit);
+}
+
+type MessageSourcesProps = {
 	sources: Source[];
 	messageId: string;
-	handleOpenPrimarySource: (url: string) => void;
-}
-
-interface SourcesListProps {
-	message: ChatMessage;
-	sources: Source[];
-	showAllSources: boolean;
-	primarySource: Source | null;
-	primarySourceTitle: string | null;
-	primaryLinkTarget: string | undefined;
-	primaryLinkRel: string | undefined;
-	totalSources: number;
 	siteHostname: string;
-	expandedIndividualSources: Record<string, boolean>;
-	sourceRefs: RefObject<HTMLAnchorElement[]>;
-	toggleExpandedSource: (messageId: string) => void;
-	toggleIndividualSource: (sourceKey: string) => void;
-}
+	sourceRefs?: RefObject<HTMLAnchorElement[]>;
+	onOpenSource?: (url: string) => void;
+};
 
-const chip =
-	'focus-ring-interactive inline-flex max-w-full items-center truncate rounded-full border border-border/50 px-2.5 py-1 text-xxs text-muted-foreground transition hover:border-accent/40 hover:text-accent';
-
-export const CitationLinks = memo(function CitationLinks({
+export const MessageSources = memo(function MessageSources({
 	sources,
 	messageId,
-	handleOpenPrimarySource,
-}: CitationLinksProps) {
-	return (
-		<div className="flex flex-wrap items-center gap-1.5">
-			<span className={SECTION_LABEL}>Cited</span>
-			{sources.map((source, index) => (
-				<button
-					key={`${messageId}-citation-${index}`}
-					type="button"
-					className={`${chip} border-accent/30 text-accent`}
-					onClick={() => handleOpenPrimarySource(source.url)}
-				>
-					[{index + 1}]
-				</button>
-			))}
-		</div>
-	);
-});
-
-export const SourcesList = memo(function SourcesList({
-	message,
-	sources,
-	showAllSources,
-	primarySource,
-	primarySourceTitle,
-	primaryLinkTarget,
-	primaryLinkRel,
-	totalSources,
 	siteHostname,
-	expandedIndividualSources,
 	sourceRefs,
-	toggleExpandedSource,
-	toggleIndividualSource,
-}: SourcesListProps) {
+	onOpenSource,
+}: MessageSourcesProps) {
+	const visible = filterDisplaySources(sources, 2);
+	if (visible.length === 0) return null;
+
+	const remaining = Math.max(0, sources.length - visible.length);
+
 	return (
-		<div className="mt-0.5 flex w-full max-w-[92%] flex-col gap-1.5 text-xs" aria-label="Referenced sources">
-			<div className="flex flex-wrap items-center gap-1.5">
-				<span className={SECTION_LABEL}>Sources</span>
-				{primarySource?.collection ? (
-					<span className="rounded-full border border-border/40 px-2 py-0.5 text-xxs capitalize text-subtle-foreground">
-						{primarySource.collection}
-					</span>
-				) : null}
-				{primarySource && primarySourceTitle ? (
-					<a
-						href={primarySource.url}
-						target={primaryLinkTarget}
-						rel={primaryLinkRel}
-						className={`${chip} text-accent`}
-					>
-						{primarySourceTitle}
-					</a>
-				) : null}
-				{totalSources > 1 && !showAllSources ? (
-					<span className="text-xxs text-subtle-foreground">+{totalSources - 1}</span>
-				) : null}
-				<button
-					type="button"
-					className={chip}
-					onClick={() => toggleExpandedSource(message.id)}
-				>
-					{showAllSources ? 'Hide' : totalSources > 1 ? `All ${totalSources}` : 'Details'}
-				</button>
-			</div>
-			{showAllSources ? (
-				<ExpandedSourcesList
-					sources={sources}
-					messageId={message.id}
-					siteHostname={siteHostname}
-					expandedIndividualSources={expandedIndividualSources}
-					sourceRefs={sourceRefs}
-					toggleIndividualSource={toggleIndividualSource}
-				/>
+		<div className="mt-0.5 flex w-full max-w-[92%] flex-col gap-1" aria-label="Cited pages">
+			<ul className="flex flex-col gap-0.5">
+				{visible.map((source, index) => {
+					const title = sourceTitle(source);
+					const external = isExternalUrl(source.url, siteHostname);
+					return (
+						<li key={`${messageId}-source-${index}`}>
+							<a
+								ref={(el) => {
+									if (!sourceRefs?.current || !el) return;
+									sourceRefs.current[index] = el;
+								}}
+								href={source.url}
+								target={external ? '_blank' : undefined}
+								rel={external ? 'noreferrer' : undefined}
+								className="focus-ring-interactive inline-flex max-w-full items-center gap-1.5 rounded-md px-1 py-0.5 text-xs text-accent transition hover:underline"
+								onClick={() => onOpenSource?.(source.url)}
+							>
+								<span className="truncate font-medium">{title}</span>
+							</a>
+						</li>
+					);
+				})}
+			</ul>
+			{remaining > 0 ? (
+				<p className="px-1 text-xxs text-subtle-foreground">+{remaining} more cited</p>
 			) : null}
 		</div>
 	);
 });
 
-function ExpandedSourcesList({
-	sources,
-	messageId,
-	siteHostname,
-	expandedIndividualSources,
-	sourceRefs,
-	toggleIndividualSource,
-}: {
-	sources: Source[];
-	messageId: string;
-	siteHostname: string;
-	expandedIndividualSources: Record<string, boolean>;
-	sourceRefs: RefObject<HTMLAnchorElement[]>;
-	toggleIndividualSource: (sourceKey: string) => void;
-}) {
-	return (
-		<ul className="flex flex-col gap-1.5">
-			{sources.map((source, index) => {
-				const sourceKey = `${messageId}-${index}`;
-				const expanded = Boolean(expandedIndividualSources[sourceKey]);
-				const title = decodeMimeEncodedWords(decodeHtmlEntities(source.title || source.url));
-				let isExternal: boolean;
-				try {
-					const parsed = source.url.startsWith('http')
-						? new URL(source.url)
-						: new URL(source.url, `https://${siteHostname}`);
-					isExternal = parsed.hostname !== siteHostname;
-				} catch {
-					isExternal = !source.url.startsWith('/');
-				}
-				const snippet = source.snippet ? cleanSnippet(source.snippet) : '';
-								const relevance =
-									typeof source.score === 'number' ? getRelevanceExplanation(source.score) : null;
-
-								return (
-									<li key={sourceKey} className="rounded-lg border border-border/50 bg-surface-subtle/50 px-3 py-2">
-										<div className="flex items-start gap-2">
-											<span className="mt-0.5 text-xxs text-subtle-foreground">[{index + 1}]</span>
-											<div className="min-w-0 flex-1">
-												<a
-													ref={(el) => {
-														if (!sourceRefs.current) return;
-														if (el) sourceRefs.current[index] = el;
-													}}
-													href={source.url}
-													target={isExternal ? '_blank' : undefined}
-													rel={isExternal ? 'noreferrer' : undefined}
-													className="block truncate text-sm font-medium text-accent hover:underline"
-												>
-													{title}
-												</a>
-												{relevance ? (
-													<p className={`mt-0.5 text-xxs ${relevance.color}`}>{relevance.text}</p>
-												) : null}
-								{source.publishedAt ? (
-									<p className="mt-0.5 text-xxs text-subtle-foreground">
-										{formatPublishedDate(source.publishedAt)}
-									</p>
-								) : null}
-								{snippet ? (
-									<button
-										type="button"
-										className="mt-1 text-left text-xxs text-muted-foreground hover:text-foreground"
-										onClick={() => toggleIndividualSource(sourceKey)}
-									>
-										{expanded ? snippet : `${snippet.slice(0, 120)}${snippet.length > 120 ? '…' : ''}`}
-									</button>
-								) : null}
-							</div>
-						</div>
-					</li>
-				);
-			})}
-		</ul>
-	);
-}
+/** @deprecated Prefer MessageSources — kept for any legacy imports */
+export const SourcesList = MessageSources;
+export const CitationLinks = MessageSources;
