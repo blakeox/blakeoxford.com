@@ -103,8 +103,6 @@
   },
   "dependencies": {
     "@astrojs/react": "^6.0.0",
-    "@fontsource/inter": "^5.2.8",
-    "@fontsource/montserrat": "^5.2.8",
     "@sentry/astro": "^10.62.0",
     "@sentry/cloudflare": "^10.62.0",
     "react": "^19.2.7",
@@ -120,6 +118,8 @@
     "@astrojs/sitemap": "^3.7.3",
     "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "^10.0.1",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/montserrat": "^5.2.8",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.61.1",
     "@rollup/rollup-linux-x64-gnu": "^4.62.2",

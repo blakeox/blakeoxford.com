@@ -5,6 +5,7 @@ import {
   type CommandCenterVisualSetup,
 } from '../../../src/data/componentVisualBaselines';
 import { captureNavBaselineScreenshot, setupNavVisual } from './_navVisualSetup';
+import { waitForViewportSettle } from '../utils/deterministic-waits';
 
 async function normalizeCommandCenterOverlay(page: Page) {
   const overlay = page.locator('#search-overlay').first();
@@ -48,11 +49,11 @@ async function setupCommandCenter(page: Page, setup: CommandCenterVisualSetup) {
   if (setup === 'results') {
     await input.fill('fabric');
     await page.locator('[data-search-result]').first().waitFor({ state: 'visible', timeout: 15000 });
-    await page.waitForTimeout(300);
+    await waitForViewportSettle(page, 300);
   } else if (setup === 'empty') {
     await input.fill('zzzzno-results-visual-test-xyz');
     await page.locator('.rounded-xl.border-dashed').first().waitFor({ state: 'visible', timeout: 15000 });
-    await page.waitForTimeout(300);
+    await waitForViewportSettle(page, 300);
   } else if (setup === 'ask') {
     await input.fill('?microsoft fabric');
     await page.locator('[data-command-ask-state]').waitFor({ state: 'visible', timeout: 5000 });
@@ -61,7 +62,7 @@ async function setupCommandCenter(page: Page, setup: CommandCenterVisualSetup) {
       if (panel) panel.style.height = '240px';
     });
   } else {
-    await page.waitForTimeout(300);
+    await waitForViewportSettle(page, 300);
   }
 
   await page.evaluate(() => {
