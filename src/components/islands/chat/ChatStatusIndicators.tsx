@@ -31,7 +31,6 @@ export function ChatStatusIndicators({
 	error,
 	lastQueryValue,
 	lastFailedQuery,
-	retryCount,
 	canRetry,
 	setError,
 	setRetryCount,
