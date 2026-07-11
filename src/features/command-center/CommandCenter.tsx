@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { handoffToAiChat, openAiChat } from '../../lib/chat/ai-chat-bridge';
+import { handoffToAiChat } from '../../lib/chat/ai-chat-bridge';
 import { useOverlayScrollLock } from '../../hooks/useOverlayScrollLock';
 import { createFocusTrap } from '../../utils/focusTrap';
-import { ModeSwitch, OverlayShell } from '../overlay';
+import { OverlayShell } from '../overlay';
 import { OVERLAY_CLOSE_BUTTON, OVERLAY_FIELD, OVERLAY_HEADER } from '../overlay/overlayStyles';
-import { CommandAskHandoff, CommandAskState } from './components/CommandAskHandoff';
 import {
   CommandEmpty,
   CommandFooter,
@@ -20,14 +19,12 @@ import { useCommandHistory } from './hooks/useCommandHistory';
 import { useCommandQuery } from './hooks/useCommandQuery';
 import { commandCenterEvents, type CommandCenterHandoffSource } from './lib/analytics';
 import { flattenGroups } from './lib/groupResults';
-import { parseCommandQuery } from './lib/parseQuery';
-import type { CommandItem, CommandMode } from './types';
+import type { CommandItem } from './types';
 
-type AskAiOptions = {
-  analyticsSource?: CommandCenterHandoffSource;
-  autoSend?: boolean;
-};
-
+/**
+ * Site search — navigate pages, projects, and posts.
+ * Ask lives in the corner companion; search stays search-like.
+ */
 export default function CommandCenter() {
   const { isOpen, close: closeCommandCenter } = useCommandCenter();
   const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
@@ -40,27 +37,9 @@ export default function CommandCenter() {
   const listRef = useRef<HTMLDivElement>(null);
   const focusTrapRef = useRef<ReturnType<typeof createFocusTrap> | null>(null);
 
-  const parsedQuery = useMemo(() => parseCommandQuery(query), [query]);
-  const isAskMode = parsedQuery.mode === 'ask';
-  const findQuery = parsedQuery.query;
-  const uiMode: CommandMode = isAskMode ? 'ask' : 'find';
-  const lastModeRef = useRef<'find' | 'ask' | null>(null);
-
-  useEffect(() => {
-    if (!isOpen) {
-      lastModeRef.current = null;
-      return;
-    }
-    const mode = isAskMode ? 'ask' : 'find';
-    if (lastModeRef.current === null) {
-      lastModeRef.current = mode;
-      return;
-    }
-    if (lastModeRef.current !== mode) {
-      lastModeRef.current = mode;
-      commandCenterEvents.modeChange(mode);
-    }
-  }, [isAskMode, isOpen]);
+  const findQuery = query.trim();
+  const flatItems = useMemo(() => flattenGroups(groups), [groups]);
+  const hasResults = flatItems.length > 0;
 
   const close = useCallback(() => {
     releaseScrollLockNow();
@@ -68,69 +47,24 @@ export default function CommandCenter() {
     closeCommandCenter();
   }, [closeCommandCenter, releaseScrollLockNow]);
 
-  const flatItems = useMemo(() => flattenGroups(groups), [groups]);
-  const hasResults = !isAskMode && flatItems.length > 0;
-  const showQuietAskChip = !isAskMode && !isLoading && findQuery.length >= 3 && hasResults;
-
   const askAi = useCallback(
-    (prompt: string, options?: AskAiOptions & {
-      sourceTitle?: string;
-      sourceHref?: string;
-      sourceKind?: CommandItem['kind'];
-    }) => {
+    (prompt: string, analyticsSource: CommandCenterHandoffSource = 'empty_state') => {
       const trimmed = prompt.trim();
-      if (!trimmed && !options?.sourceTitle) return;
+      if (!trimmed) return;
 
-      const trackQuery = trimmed || options?.sourceTitle || '';
-      pushQuery(trackQuery);
+      pushQuery(trimmed);
       commandCenterEvents.askHandoff({
-        source: options?.analyticsSource ?? 'ask_banner',
-        query_length: trackQuery.length,
-        auto_send: options?.autoSend ?? true,
-        item_kind: options?.sourceKind,
+        source: analyticsSource,
+        query_length: trimmed.length,
+        auto_send: true,
       });
       handoffToAiChat({
-        query: trimmed || options?.sourceTitle || '',
-        autoSend: options?.autoSend ?? true,
-        sourceTitle: options?.sourceTitle,
-        sourceHref: options?.sourceHref,
-        sourceKind: options?.sourceKind,
+        query: trimmed,
+        autoSend: true,
       });
       close();
     },
     [close, pushQuery],
-  );
-
-  const askAboutItem = useCallback(
-    (item: CommandItem) => {
-      askAi(findQuery || item.title, {
-        analyticsSource: 'result_row',
-        autoSend: true,
-        sourceTitle: item.title,
-        sourceHref: item.href,
-        sourceKind: item.kind,
-      });
-    },
-    [askAi, findQuery],
-  );
-
-  const setMode = useCallback(
-    (mode: CommandMode) => {
-      if (mode === 'ask') {
-        const base = parseCommandQuery(query).query.trim();
-        commandCenterEvents.modeChange('ask');
-        if (base) {
-          askAi(base, { analyticsSource: 'ask_banner', autoSend: true });
-          return;
-        }
-        close();
-        openAiChat();
-        return;
-      }
-      setQuery(parseCommandQuery(query).query);
-      commandCenterEvents.modeChange('find');
-    },
-    [askAi, close, query, setQuery],
   );
 
   useEffect(() => {
@@ -158,9 +92,8 @@ export default function CommandCenter() {
 
   useEffect(() => {
     focusTrapRef.current?.update();
-  }, [flatItems.length, isLoading, isAskMode]);
+  }, [flatItems.length, isLoading]);
 
-  // Auto-select first result when results appear or list changes.
   useEffect(() => {
     if (!hasResults) {
       setActiveIndex(-1);
@@ -197,13 +130,7 @@ export default function CommandCenter() {
       return;
     }
 
-    if (isAskMode && event.key === 'Enter') {
-      event.preventDefault();
-      askAi(findQuery || query, { analyticsSource: 'prefix' });
-      return;
-    }
-
-    if (!flatItems.length || isAskMode) return;
+    if (!flatItems.length) return;
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
@@ -250,21 +177,25 @@ export default function CommandCenter() {
       onPanelClick={(event) => event.stopPropagation()}
     >
       <div className={OVERLAY_HEADER}>
-        <ModeSwitch mode={uiMode} onChange={setMode} />
         <div className={OVERLAY_FIELD}>
-          {isAskMode ? (
-            <svg className="size-4 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h8m-8 3h5.5M21 11.5c0 4.418-4.03 8-9 8-1.15 0-2.26-.19-3.29-.54L3 21l1.1-3.3A8.35 8.35 0 0 1 3 11.5c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
-            </svg>
-          ) : (
-            <svg className="size-4 shrink-0 text-subtle-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
-            </svg>
-          )}
+          <svg
+            className="size-4 shrink-0 text-subtle-foreground"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.8}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+            />
+          </svg>
           <input
             ref={inputRef}
             id="search-input"
-            type="text"
+            type="search"
             role="combobox"
             inputMode="search"
             enterKeyHint="search"
@@ -277,8 +208,8 @@ export default function CommandCenter() {
               setQuery(event.target.value);
             }}
             onKeyDown={handleInputKeyDown}
-            placeholder={isAskMode ? 'Ask about projects, case studies, or posts…' : 'Search pages, projects, and posts…'}
-            aria-label={isAskMode ? 'Ask the AI assistant' : 'Search site content'}
+            placeholder="Search pages, projects, and posts…"
+            aria-label="Search site content"
             autoComplete="off"
             spellCheck={false}
             className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground/70 focus:outline-none"
@@ -299,7 +230,10 @@ export default function CommandCenter() {
             </button>
           ) : null}
           {isLoading ? (
-            <span className="size-3.5 shrink-0 animate-spin rounded-full border-2 border-accent/30 border-t-accent" aria-hidden="true" />
+            <span
+              className="size-3.5 shrink-0 animate-spin rounded-full border-2 border-accent/30 border-t-accent"
+              aria-hidden="true"
+            />
           ) : null}
         </div>
         <button
@@ -317,18 +251,16 @@ export default function CommandCenter() {
 
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3 sm:px-4" ref={listRef}>
         <h2 id="command-center-title" className="sr-only">
-          {isAskMode ? 'Ask' : 'Find'}
+          Search
         </h2>
         <p className="sr-only" aria-live="polite" aria-atomic="true">
-          {isAskMode
-            ? 'Ask mode. Press Enter to send your question.'
-            : isLoading
-              ? 'Searching…'
-              : hasResults
-                ? `${flatItems.length} results${findQuery ? ` for ${findQuery}` : ''}`
-                : findQuery
-                  ? `No results for ${findQuery}`
-                  : 'Start typing to search the site'}
+          {isLoading
+            ? 'Searching…'
+            : hasResults
+              ? `${flatItems.length} results${findQuery ? ` for ${findQuery}` : ''}`
+              : findQuery
+                ? `No results for ${findQuery}`
+                : 'Start typing to search the site'}
         </p>
 
         {error ? (
@@ -337,11 +269,7 @@ export default function CommandCenter() {
           </div>
         ) : null}
 
-        {isAskMode ? (
-          <CommandAskState query={findQuery} onAsk={() => askAi(findQuery, { analyticsSource: 'prefix' })} />
-        ) : null}
-
-        {!isAskMode && !findQuery ? (
+        {!findQuery ? (
           <>
             {recentQueries.length > 0 ? (
               <CommandRecentList
@@ -354,24 +282,24 @@ export default function CommandCenter() {
           </>
         ) : null}
 
-        {!isAskMode && isLoading && !hasResults ? <CommandSkeletonList /> : null}
+        {isLoading && !hasResults ? <CommandSkeletonList /> : null}
 
-        {!isAskMode && !isLoading && findQuery && !hasResults ? (
+        {!isLoading && findQuery && !hasResults ? (
           <CommandEmpty
             query={findQuery}
             onSuggestion={setQuery}
-            onAskAi={(value) => askAi(value, { analyticsSource: 'empty_state' })}
+            onAskAi={(value) => askAi(value, 'empty_state')}
           />
         ) : null}
 
-        {!isAskMode && hasResults ? (
-          <div id="search-results" role="listbox" aria-label="Search results" data-results className="flex flex-col gap-3">
-            {showQuietAskChip ? (
-              <CommandAskHandoff
-                query={findQuery}
-                onAsk={() => askAi(findQuery, { analyticsSource: 'ask_banner' })}
-              />
-            ) : null}
+        {hasResults ? (
+          <div
+            id="search-results"
+            role="listbox"
+            aria-label="Search results"
+            data-results
+            className="flex flex-col gap-3"
+          >
             {findQuery ? (
               <p className="sr-only">Use arrow keys to navigate results. Press Enter to open.</p>
             ) : null}
@@ -390,7 +318,6 @@ export default function CommandCenter() {
                         isActive={index === activeIndex}
                         onSelect={(selected) => navigateTo(selected)}
                         onHover={setActiveIndex}
-                        onAsk={askAboutItem}
                       />
                     );
                   })}
@@ -401,7 +328,7 @@ export default function CommandCenter() {
         ) : null}
       </div>
 
-      <CommandFooter isAskMode={isAskMode} searchSource={searchSource} hasQuery={Boolean(findQuery)} />
+      <CommandFooter searchSource={searchSource} hasQuery={Boolean(findQuery)} />
     </OverlayShell>
   );
 

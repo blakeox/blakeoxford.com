@@ -427,6 +427,18 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         return new Response(JSON.stringify({ error: 'Query is required' }), { status: 400, headers: baseCorsHeaders });
       }
 
+      // Optional page context from the docked Ask companion
+      const pageContext = payload?.pageContext && typeof payload.pageContext === 'object'
+        ? {
+            title: typeof payload.pageContext.title === 'string' ? payload.pageContext.title.trim() : '',
+            pathname: typeof payload.pageContext.pathname === 'string' ? payload.pageContext.pathname.trim() : '',
+            url: typeof payload.pageContext.url === 'string' ? payload.pageContext.url.trim() : '',
+          }
+        : null;
+      const contextualQuery = pageContext?.title
+        ? `[Visitor is viewing “${pageContext.title}”${pageContext.pathname ? ` (${pageContext.pathname})` : ''}] ${query}`
+        : query;
+
       // Enhanced rate limiting with per-IP and per-session limits
       const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
       const sessionId = request.headers.get('x-session-id') || null;
@@ -548,7 +560,7 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         return enhanced;
       };
       
-      const { query: enhancedQuery, shouldUseCache: enhancedCacheFlag, complexity } = enhanceQueryAtEdge(query, history);
+      const { query: enhancedQuery, shouldUseCache: enhancedCacheFlag, complexity } = enhanceQueryAtEdge(contextualQuery, history);
 
       /**
        * Handle simple queries with Workers AI (on-edge inference)

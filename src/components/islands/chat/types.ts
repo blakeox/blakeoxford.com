@@ -27,6 +27,7 @@ export interface FeedbackAnalytics {
  * Props for ChatHeader component
  */
 export interface ChatHeaderProps {
+	pageLabel?: string;
 	wsConnected: boolean;
 	activeUsers: number;
 	voiceSupported: boolean;
@@ -99,6 +100,7 @@ export interface ChatAnalyticsProps {
  * Props for ChatQuickActions component
  */
 export interface ChatQuickActionsProps {
+	pageLabel?: string;
 	onAction: (query: string, label: string, category: string) => void;
 	setInputValue: (value: string) => void;
 }

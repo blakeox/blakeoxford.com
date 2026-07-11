@@ -1,10 +1,8 @@
 /**
- * ChatHeader — slim Ask header with Find mode switch and overflow menu.
+ * ChatHeader — Ask companion chrome with page context (no Find mode switch).
  */
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { openCommandCenter } from '../../../features/command-center/lib/commandEvents';
-import { ModeSwitch } from '../../../features/overlay/ModeSwitch';
 import { OVERLAY_CLOSE_BUTTON, OVERLAY_HEADER, OVERLAY_ICON_BUTTON } from '../../../features/overlay/overlayStyles';
 import type { ChatHeaderProps } from './types';
 
@@ -36,6 +34,7 @@ type MenuPosition = {
 };
 
 export const ChatHeader = memo(function ChatHeader({
+	pageLabel = 'Site assistant',
 	wsConnected,
 	activeUsers,
 	voiceSupported,
@@ -174,22 +173,15 @@ export const ChatHeader = memo(function ChatHeader({
 
 	return (
 		<div className={`${OVERLAY_HEADER} overflow-visible`}>
-			<ModeSwitch
-				mode="ask"
-				onChange={(mode) => {
-					if (mode === 'find') {
-						closeChat();
-						openCommandCenter();
-					}
-				}}
-			/>
-
 			<div className="min-w-0 flex-1">
-				<span id="ai-chat-heading" className="sr-only">
+				<p id="ai-chat-heading" className="truncate text-sm font-semibold text-foreground">
 					Ask
-				</span>
+				</p>
+				<p className="truncate text-xxs text-muted-foreground" title={pageLabel}>
+					About {pageLabel}
+				</p>
 				{isListening ? (
-					<span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xxs font-medium text-accent">
+					<span className="mt-1 inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xxs font-medium text-accent">
 						<span className="size-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
 						Listening
 					</span>

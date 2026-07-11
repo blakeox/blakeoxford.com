@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import type { ChatMessage, ChatState, LoadingPhase, MutableRef } from '../chat';
-import { enhanceQuery } from '../chat';
+import { enhanceQuery, getPageContext } from '../chat';
 import { searchWithAI } from '../ai-search';
 import { autoragEvents } from '../analytics';
 import { createId } from '../string-utils';
@@ -186,6 +186,7 @@ export function useQueryManagement(
 
 			// Enhance the query with analytical context to guide better responses
 			const enhancedQuery = useMemory ? enhanceQuery(query, historyPayload.length > 0) : query;
+			const pageContext = getPageContext();
 
 			// Progressive loading phases — advance on real Cloudflare pipeline signals
 			const searchingTimer = setTimeout(() => setLoadingPhase('analyzing'), 1500);
@@ -196,6 +197,7 @@ export function useQueryManagement(
 			try {
 				const result = await searchWithAI(enhancedQuery, {
 					history: historyPayload,
+					pageContext,
 					signal: controller.signal,
 						onToken: (() => {
 							let lastScrollAt = 0;

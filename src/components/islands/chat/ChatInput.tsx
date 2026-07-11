@@ -32,7 +32,7 @@ export const ChatInput = memo(function ChatInput({
 					id="ai-chat-input"
 					ref={inputRef}
 					className="max-h-[7.5rem] min-h-[2.5rem] w-full resize-none bg-transparent py-1 pr-10 text-sm text-foreground outline-none placeholder:text-subtle-foreground/70 disabled:opacity-60"
-					placeholder="Ask about projects, case studies, or posts…"
+					placeholder="Ask about this page or the site…"
 					value={inputValue}
 					onChange={(event) => {
 						setInputValue(event.target.value);
@@ -58,7 +58,7 @@ export const ChatInput = memo(function ChatInput({
 					disabled={isLoading}
 					required
 					rows={1}
-					aria-label="Message the AI assistant"
+					aria-label="Ask about this page or the site"
 				/>
 				<button
 					type="submit"
@@ -85,8 +85,8 @@ export const ChatInput = memo(function ChatInput({
 					</span>
 					<span className="sm:hidden">Send · Close</span>
 					<span className="text-subtle-foreground/80">
-						<span className="hidden sm:inline">Answers cite the site index · </span>
-						<kbd className="rounded border border-border px-1 py-0.5 font-sans">⌘K</kbd> Find
+						<span className="hidden sm:inline">Stays open while you browse · </span>
+						<kbd className="rounded border border-border px-1 py-0.5 font-sans">⌘K</kbd> search
 					</span>
 				</div>
 			</div>

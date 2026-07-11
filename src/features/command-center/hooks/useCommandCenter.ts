@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   closeMobileMenu,
-  closeAiChat,
   registerEscapeHandler,
   registerSearchClose,
 } from '../../../utils/headerController';
@@ -18,7 +17,6 @@ export function useCommandCenter() {
 
   const open = useCallback((source: 'shortcut' | 'nav' | 'api' | 'unknown' = 'unknown') => {
     closeMobileMenu();
-    closeAiChat();
     setIsOpen(true);
     commandCenterEvents.open(source);
   }, []);
@@ -32,7 +30,6 @@ export function useCommandCenter() {
     setIsOpen((prev) => {
       if (!prev) {
         closeMobileMenu();
-        closeAiChat();
         commandCenterEvents.open('shortcut');
       } else {
         commandCenterEvents.close();

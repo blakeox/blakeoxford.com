@@ -27,7 +27,7 @@ describe('buildAskPrompt', () => {
 });
 
 describe('parseCommandQuery', () => {
-  it('detects ask prefix', () => {
+  it('still parses legacy ask prefix for compatibility', () => {
     expect(parseCommandQuery('?microsoft fabric')).toEqual({
       mode: 'ask',
       query: 'microsoft fabric',

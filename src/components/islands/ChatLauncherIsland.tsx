@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /**
- * ChatLauncherIsland — FAB that opens Ask in the shared overlay shell.
+ * ChatLauncherIsland — FAB that opens the corner Ask companion.
  */
 export default function ChatLauncherIsland() {
 	const [isOpen, setIsOpen] = useState(false);

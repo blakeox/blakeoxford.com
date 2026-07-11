@@ -158,7 +158,7 @@ export const componentDocs: ComponentDoc[] = [
       'Focus trap while open',
       'Escape clears query then closes overlay and restores focus',
       'aria-modal combobox + listbox pattern',
-      'Keyboard: ↑↓ navigate, ↵ open, ⌘↵ new tab, ? prefix for AI',
+      'Keyboard: ↑↓ navigate, ↵ open, ⌘↵ new tab, ⌘K / / to open',
     ],
     tags: ['search', 'overlay', 'modal', 'keyboard'],
     visualTier: 'expressive',
@@ -169,7 +169,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'AIChatWidget',
     category: 'Composites',
     subcategory: 'Search',
-    description: 'Find/Ask overlay — site search and conversational assistant sharing one command shell. Ask opens from the FAB or Find mode switch; answers cite AutoRAG sources.',
+    description: 'Corner Ask companion — docked chat panel for questions about the current page or the site. Opens from the FAB; stays over the page while browsing. Site search lives separately in the nav (⌘K).',
     filePath: 'src/components/composites/AIChatWidget.astro',
     examples: [
       {
@@ -178,9 +178,9 @@ export const componentDocs: ComponentDoc[] = [
       },
     ],
     accessibility: [
-      'Launcher button with aria-expanded sync and keyboard shortcut support',
-      'Dialog with aria-modal="true" and labelled title',
-      'Escape key closes the assistant and focus returns to the triggering control',
+      'Launcher button with aria-expanded sync',
+      'Non-modal dialog (aria-modal="false") so the page stays readable and interactive on desktop',
+      'Escape key closes the assistant',
       'Sources rendered as accessible link list',
     ],
     performance: [

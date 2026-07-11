@@ -3,7 +3,7 @@
  * Referenced by componentDocs.ts and tests/playwright/visual/component-visual.spec.ts.
  */
 
-export type CommandCenterVisualSetup = 'browse' | 'results' | 'ask' | 'empty';
+export type CommandCenterVisualSetup = 'browse' | 'results' | 'empty';
 
 export type NavVisualSetup = 'scrolled' | 'autoHidden';
 
@@ -17,8 +17,8 @@ export type ComponentVisualBaselineKey =
   | 'footer'
   | 'searchOverlay'
   | 'commandCenterResults'
-  | 'commandCenterAsk'
-  | 'commandCenterEmpty';
+  | 'commandCenterEmpty'
+  | 'chatDock';
 
 export type ComponentVisualBaseline = {
   key: ComponentVisualBaselineKey;
@@ -119,28 +119,27 @@ export const componentVisualBaselines: Record<ComponentVisualBaselineKey, Compon
     key: 'commandCenterResults',
     route: '/',
     selector: '#search-overlay [data-panel]',
-    description: 'Command Center with search results',
+    description: 'Site search with results',
     snapshotFile: 'commandCenterResults.png',
     tags: ['@visual-essential', '@visual-components'],
     commandCenterSetup: 'results',
-  },
-  commandCenterAsk: {
-    key: 'commandCenterAsk',
-    route: '/',
-    selector: '#search-overlay [data-panel]',
-    description: 'Command Center Ask AI mode (? prefix)',
-    snapshotFile: 'commandCenterAsk.png',
-    tags: ['@visual-essential', '@visual-components'],
-    commandCenterSetup: 'ask',
   },
   commandCenterEmpty: {
     key: 'commandCenterEmpty',
     route: '/',
     selector: '#search-overlay [data-panel]',
-    description: 'Command Center empty results state',
+    description: 'Site search empty results state',
     snapshotFile: 'commandCenterEmpty.png',
     tags: ['@visual-essential', '@visual-components'],
     commandCenterSetup: 'empty',
+  },
+  chatDock: {
+    key: 'chatDock',
+    route: '/',
+    selector: '[data-ai-chat-panel]',
+    description: 'Corner Ask companion dock (open, empty)',
+    snapshotFile: 'chatDock.png',
+    tags: ['@visual-essential', '@visual-components'],
   },
 };
 

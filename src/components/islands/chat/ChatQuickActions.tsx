@@ -1,5 +1,5 @@
 /**
- * ChatQuickActions — empty Ask state aligned with Find suggestion language.
+ * ChatQuickActions — empty Ask state with page-aware prompts.
  */
 import { memo } from 'react';
 import { QUICK_ACTIONS } from '../../../lib/chat';
@@ -9,13 +9,19 @@ import { SuggestionChip } from '../../../features/overlay/SuggestionChip';
 import { SECTION_LABEL } from '../../../features/overlay/overlayStyles';
 import type { ChatQuickActionsProps } from './types';
 
-export const ChatQuickActions = memo(function ChatQuickActions({ onAction, setInputValue }: ChatQuickActionsProps) {
+export const ChatQuickActions = memo(function ChatQuickActions({
+	pageLabel,
+	onAction,
+	setInputValue,
+}: ChatQuickActionsProps) {
 	return (
 		<div className="space-y-3 py-1">
 			<div className="space-y-1">
-				<p className={SECTION_LABEL}>Ask</p>
+				<p className={SECTION_LABEL}>Ask while you browse</p>
 				<p className="text-sm text-muted-foreground">
-					Ask about projects, case studies, or posts.
+					{pageLabel
+						? `Chat about ${pageLabel}, or anything across the site.`
+						: 'Chat about this page or anything across the site.'}
 				</p>
 			</div>
 
@@ -41,7 +47,7 @@ export const ChatQuickActions = memo(function ChatQuickActions({ onAction, setIn
 				className="focus-ring-interactive text-xs text-muted-foreground underline-offset-2 transition hover:text-accent hover:underline"
 				onClick={() => openCommandCenter()}
 			>
-				Search the site instead
+				Search pages instead
 			</button>
 		</div>
 	);

@@ -32,6 +32,11 @@ export type AIChatResponse = {
 export type SearchWithAIOptions = {
   signal?: AbortSignal;
   history?: AIChatMessage[];
+  pageContext?: {
+    url: string;
+    title: string;
+    pathname: string;
+  } | null;
   onToken?: (token: string) => void;
   onCompletion?: (message: string) => void;
   onSources?: (sources: AIChatSource[]) => void;
@@ -295,6 +300,15 @@ export async function searchWithAI(prompt: string, options?: SearchWithAIOptions
     query: prompt.trim(),
     history: options?.history ?? [],
     stream: preferStream,
+    ...(options?.pageContext
+      ? {
+          pageContext: {
+            url: options.pageContext.url,
+            title: options.pageContext.title,
+            pathname: options.pageContext.pathname,
+          },
+        }
+      : {}),
   };
 
   const signal = preferStream ? options?.signal : withTimeout(options?.signal);

@@ -5,7 +5,6 @@ import type { SearchCategory } from '../../../lib/search/types';
 import { buildBrowseGroups, groupCommandItems } from '../lib/groupResults';
 import { mapSearchResults, toCommandItem } from '../lib/toCommandItem';
 import { enrichCommandItems } from '../lib/rankResults';
-import { parseCommandQuery } from '../lib/parseQuery';
 import { commandCenterEvents } from '../lib/analytics';
 import type { CommandGroup } from '../types';
 import { getNavQuickSearchPages } from '../../../config/navSearchPages';
@@ -124,16 +123,7 @@ export function useCommandQuery(isOpen: boolean) {
 
   useEffect(() => {
     if (!isOpen) return;
-    const parsed = parseCommandQuery(query);
-    if (parsed.mode === 'ask') {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      abortRef.current?.abort();
-      setGroups([]);
-      setIsLoading(false);
-      setError(null);
-      return;
-    }
-    scheduleSearch(parsed.query, category);
+    scheduleSearch(query, category);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };

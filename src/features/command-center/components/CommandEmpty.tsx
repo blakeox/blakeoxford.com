@@ -14,7 +14,9 @@ export function CommandEmpty({ query, onSuggestion, onAskAi }: CommandEmptyProps
   return (
     <div className="px-1 py-2">
       <p className="text-sm font-medium text-foreground">No results for &ldquo;{trimmed}&rdquo;</p>
-      <p className="mt-1 text-sm text-muted-foreground">Try another keyword, or ask the assistant.</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Try another keyword, or ask the corner assistant.
+      </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <SuggestionChip
           accent
@@ -88,7 +90,6 @@ export function CommandSuggestions({
 }
 
 export function CommandFooter({
-  isAskMode = false,
   searchSource,
   hasQuery = false,
 }: {
@@ -97,7 +98,7 @@ export function CommandFooter({
   hasQuery?: boolean;
 }) {
   const backendLabel = (() => {
-    if (isAskMode || !hasQuery) return null;
+    if (!hasQuery) return null;
     if (searchSource === 'cloudflare-vectorize') return 'Semantic · Cloudflare Vectorize';
     if (searchSource === 'local-fallback') return 'Keyword · local index';
     return null;
@@ -107,32 +108,16 @@ export function CommandFooter({
     <div className={OVERLAY_FOOTER}>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <span className="hidden sm:inline">
-          {isAskMode ? (
-            <>
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans">↵</kbd> ask ·{' '}
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans">esc</kbd> close
-            </>
-          ) : (
-            <>
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans">↑↓</kbd> navigate ·{' '}
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans">↵</kbd> open ·{' '}
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans">esc</kbd> close
-            </>
-          )}
+          <kbd className="rounded border border-border px-1 py-0.5 font-sans">↑↓</kbd> navigate ·{' '}
+          <kbd className="rounded border border-border px-1 py-0.5 font-sans">↵</kbd> open ·{' '}
+          <kbd className="rounded border border-border px-1 py-0.5 font-sans">esc</kbd> close
         </span>
-        <span className="sm:hidden text-subtle-foreground/80">
-          {isAskMode ? 'Ask · Close' : 'Tap a result · Close'}
-        </span>
+        <span className="sm:hidden text-subtle-foreground/80">Tap a result · Close</span>
         <span className="text-subtle-foreground/80">
           {backendLabel ? (
             <span data-search-backend={searchSource}>{backendLabel}</span>
-          ) : isAskMode ? (
-            'Find mode clears the ? prefix'
           ) : (
-            <>
-              <kbd className="rounded border border-border px-1 py-0.5 font-sans">?</kbd> or Ask to
-              chat
-            </>
+            'Corner chat for questions'
           )}
         </span>
       </div>
