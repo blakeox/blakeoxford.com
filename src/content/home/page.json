@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "title": "Blake Oxford - Leadership & Portfolio",
+    "description": "Systems architect and workflow strategist turning complexity into opportunity-designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results."
+  },
+  "hero": {
+    "kicker": "Systems architecture · automation · operating rigor",
+    "defaultTagline": "Systems Architect · Workflow Strategist · Operational Improvement Leader",
+    "strengths": [
+      "Enterprise migrations with adoption discipline",
+      "Automation that reduces manual operational drag",
+      "Analytics and controls built for decision-making"
+    ],
+    "primaryCta": { "href": "/contact/", "label": "Start a conversation" },
+    "secondaryCta": { "href": "/projects/", "label": "Review selected projects" },
+    "portrait": {
+      "frontSrc": "/assets/images/Blake-O-scaled.jpg",
+      "backSrc": "/assets/images/china-profile-picture.jpg",
+      "alt": "Blake Oxford",
+      "altBack": "Blake Oxford in China"
+    }
+  },
+  "technologies": {
+    "kicker": "Delivery stack",
+    "title": "Platforms and tools used in delivery",
+    "description": "A representative toolset behind architecture, workflow automation, analytics, and cloud delivery work."
+  },
+  "resumeHighlights": {
+    "kicker": "Selected outcomes",
+    "title": "Proof from enterprise transformation work",
+    "description": "Representative operating wins across migration, automation, analytics, and workflow control design.",
+    "cards": [
+      {
+        "icon": "cloud",
+        "title": "Cloud & SaaS Transformations",
+        "description": "Complex platform rollouts delivered end-to-end with strong adoption and governance controls.",
+        "items": [
+          { "icon": "migrate", "text": "Google Workspace → Microsoft 365 migration for 180 users" },
+          { "icon": "money", "text": "Sage Intacct financial platform implementation" },
+          { "icon": "cloud-plus", "text": "Azure/Intune endpoint management deployment" },
+          { "icon": "chat", "text": "ADP Workforce Now and Cornerstone LMS integration" }
+        ]
+      },
+      {
+        "icon": "automation",
+        "title": "Automation & Savings",
+        "description": "Multi-million-dollar overhead reduction via coordinated automation, analytics, and consolidation initiatives.",
+        "items": [
+          { "icon": "azure-opt", "text": "Azure cloud infrastructure optimization" },
+          { "icon": "chart", "text": "Power BI analytics and real-time dashboarding" },
+          { "icon": "lightbulb", "text": "Custom OpenAI workflow integrations" },
+          { "icon": "consolidate", "text": "Enterprise system consolidations and integrations" }
+        ]
+      },
+      {
+        "icon": "analytics",
+        "title": "Data Analytics",
+        "description": "Comprehensive business intelligence solutions that keep decision-makers informed in real time.",
+        "items": [
+          { "icon": "grid", "text": "Real-time SQL/Power BI dashboards" },
+          { "icon": "predictive", "text": "Predictive financial modeling systems" },
+          { "icon": "shield", "text": "C-suite executive decision support frameworks" },
+          { "icon": "trend", "text": "Automated KPI tracking and performance visualization" }
+        ]
+      }
+    ]
+  },
+  "recentProjects": {
+    "kicker": "Selected projects",
+    "title": "Work that shipped with measurable impact",
+    "description": "A cross-section of systems, automation, and analytics engagements built to survive real operating conditions.",
+    "cta": { "href": "/projects/", "label": "View all case studies" }
+  },
+  "latestPosts": {
+    "kicker": "Writing",
+    "title": "Practical notes from the field",
+    "description": "Essays and case-backed observations on automation, analytics, governance, and operational improvement.",
+    "emptyMessage": "Blog posts are on the way-check back soon for new case studies and playbooks.",
+    "cta": { "href": "/blog/", "label": "View all writing" }
+  },
+  "cta": {
+    "kicker": "Next move",
+    "title": "Bring the problem space. I'll help design the operating backbone.",
+    "description": "If you are evaluating a migration, automation program, reporting overhaul, or AI-enabled workflow, start with the highest-risk bottleneck and we can scope from there.",
+    "button": { "href": "/contact/", "label": "Start the conversation" }
+  }
+}

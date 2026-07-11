@@ -12,8 +12,11 @@ import HomeLatestPostsSection from '../components/features/home/HomeLatestPostsS
 import HomeCTASection from '../components/features/home/HomeCTASection.astro';
 import TechnologyItem from '../components/features/home/TechnologyItem.astro';
 import { getProjectsSorted } from '../content/projects/getProjects';
+import { getHomePage } from '../content/home/getHomePage';
 import { technologies, siteConfig } from '../config/data';
 import { take } from '../utils/index.js';
+
+const page = await getHomePage();
 
 const allBlogPosts: CollectionEntry<'blog'>[] = await getCollection('blog');
 const blogPosts = allBlogPosts
@@ -28,9 +31,8 @@ const heroDescription: string | undefined = siteConfig?.tagline;
 const heroTagline: string | undefined = siteConfig?.description;
 const normalize = (s?: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
 const shouldShowTagline = normalize(heroTagline) !== '' && normalize(heroTagline) !== normalize(heroDescription);
-const defaultTagline = 'Systems Architect · Workflow Strategist · Operational Improvement Leader';
 const taglineToShow: string | undefined = normalize(heroTagline) === ''
-  ? defaultTagline
+  ? page.hero.defaultTagline
   : (shouldShowTagline ? heroTagline : undefined);
 
 function deriveImageData(imgPath?: string) {
@@ -46,7 +48,7 @@ function deriveImageData(imgPath?: string) {
 }
 ---
 
-<Layout title="Blake Oxford - Leadership & Portfolio" description="Systems architect and workflow strategist turning complexity into opportunity-designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results." wide={true}>
+<Layout title={page.meta.title} description={page.meta.description} wide={true}>
   <link slot="head" rel="preload" as="image" href="/assets/images/optimized/avif/Blake-O-scaled@640w.avif" type="image/avif" fetchpriority="high" />
   <div class="fixed inset-0 -z-10 pointer-events-none">
     <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
@@ -54,15 +56,20 @@ function deriveImageData(imgPath?: string) {
   </div>
 
   <div class="space-y-16 sm:space-y-20 lg:space-y-24">
-    <HomeHeroSection author={siteConfig.author} tagline={taglineToShow} description={heroDescription} />
-    <HomeResumeHighlightsSection />
+    <HomeHeroSection
+      author={siteConfig.author}
+      tagline={taglineToShow}
+      description={heroDescription}
+      content={page.hero}
+    />
+    <HomeResumeHighlightsSection content={page.resumeHighlights} />
 
     <section id="technologies" class="page-slab w-full py-16 text-center">
       <div class="section-intro mb-10">
-        <span class="section-kicker">Delivery stack</span>
-        <SectionHeading size="4xl">Platforms and tools used in delivery</SectionHeading>
+        <span class="section-kicker">{page.technologies.kicker}</span>
+        <SectionHeading size="4xl">{page.technologies.title}</SectionHeading>
         <p class="text-lg text-muted-foreground">
-          A representative toolset behind architecture, workflow automation, analytics, and cloud delivery work.
+          {page.technologies.description}
         </p>
       </div>
       <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-foreground/85">
@@ -76,8 +83,8 @@ function deriveImageData(imgPath?: string) {
       </ul>
     </section>
 
-    <HomeRecentProjectsSection projects={recentProjects} />
-    <HomeLatestPostsSection posts={recentBlogPosts} />
-    <HomeCTASection />
+    <HomeRecentProjectsSection projects={recentProjects} content={page.recentProjects} />
+    <HomeLatestPostsSection posts={recentBlogPosts} content={page.latestPosts} />
+    <HomeCTASection content={page.cta} />
   </div>
 </Layout>
