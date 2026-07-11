@@ -22,7 +22,7 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
 	copiedMessageId,
 	copiedShareUrl,
 	messages,
-	messagesRef,
+	messagesRef: _messagesRef,
 	sourceRefs,
 	toggleExpandedSource,
 	toggleIndividualSource,

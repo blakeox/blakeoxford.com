@@ -141,7 +141,7 @@ function ExpandedSourcesList({
 				const sourceKey = `${messageId}-${index}`;
 				const expanded = Boolean(expandedIndividualSources[sourceKey]);
 				const title = decodeMimeEncodedWords(decodeHtmlEntities(source.title || source.url));
-				let isExternal = false;
+				let isExternal: boolean;
 				try {
 					const parsed = source.url.startsWith('http')
 						? new URL(source.url)
