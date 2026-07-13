@@ -146,7 +146,7 @@
     "autoprefixer": "^10.5.2",
     "chrome-launcher": "^1.2.1",
     "cssnano": "^8.0.2",
-    "eslint": "^10.6.0",
+    "eslint": "^10.7.0",
     "eslint-plugin-astro": "^2.1.1",
     "eslint-plugin-better-tailwindcss": "^4.6.0",
     "eslint-plugin-mdx": "^3.8.1",
