@@ -148,7 +148,7 @@
     "cssnano": "^8.0.2",
     "eslint": "^10.6.0",
     "eslint-plugin-astro": "^2.1.1",
-    "eslint-plugin-better-tailwindcss": "^4.6.0",
+    "eslint-plugin-better-tailwindcss": "^4.6.1",
     "eslint-plugin-mdx": "^3.8.1",
     "fuse.js": "^7.4.2",
     "happy-dom": "^20.10.6",
