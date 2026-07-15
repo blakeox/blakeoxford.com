@@ -34,7 +34,7 @@
 
 **What It Is**: Forward emails sent to @blakeoxford.com to your personal email
 
-**Current State**: Using Resend for contact form ($0.10/1000 emails)
+**Current State**: Using the native Cloudflare Email Service Worker binding for contact form delivery
 
 **Benefit**: 
 - Professional email forwarding (info@, contact@, hello@)

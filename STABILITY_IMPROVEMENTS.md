@@ -44,7 +44,7 @@ Updated to latest stable versions (October 10, 2025):
 4. **Security Headers**: CSP, HSTS, X-Frame-Options all configured
 5. **Testing**: 96/96 essential e2e tests passing
 6. **Performance**: Optimized caching (immutable hashed assets, stale-while-revalidate)
-7. **Email Service**: Resend integration with Turnstile bot protection
+7. **Email Service**: Cloudflare Email Service binding with Turnstile bot protection
 
 ### 📋 **Architecture Strengths:**
 - **Static Site Generation (SSG)**: Minimal JavaScript, optimal performance
@@ -63,7 +63,7 @@ Updated to latest stable versions (October 10, 2025):
 4. **Test Suite**: Run `pnpm test:e2e:essential` regularly
 
 ### **Future Considerations:**
-1. **Cloudflare Email Service**: Migrate from Resend when GA (currently private beta)
+1. **Cloudflare Email Service**: Monitor delivery metrics and beta-to-GA changes
 2. **React 19**: Monitor for stable release features (Server Components, Actions)
 3. **Tailwind v4**: Watch for stable release (currently RC)
 4. **Astro 6**: Plan migration when released (currently on 5.14.4)

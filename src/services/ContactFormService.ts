@@ -205,6 +205,7 @@ export class ContactFormService {
 		try {
 			const response = await fetch(this.config.endpoint, {
 				method: 'POST',
+				headers: { Accept: 'application/json' },
 				body: formData,
 				signal: options?.signal,
 			});

@@ -617,7 +617,7 @@ Note: Cloudflare Pages is deprecated for this project. Do not use `wrangler page
 
 ### External APIs
 
-- **Resend**: Email delivery service (contact forms)
+- **Cloudflare Email Service**: Native Worker binding for contact form delivery
 - **Fuse.js**: Client-side fuzzy search
 - **Cloudflare AI**: Workers AI for on-edge inference
 - **Cloudflare Vectorize**: Vector database for semantic search
