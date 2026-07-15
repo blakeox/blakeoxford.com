@@ -65,41 +65,75 @@ type CleanupFn = () => void;
 
 function setupTurnstile(isAudit: boolean): CleanupFn | void {
  const container = document.getElementById('turnstile-container');
+ const shell = document.getElementById('turnstile-shell');
+ const placeholder = document.getElementById('turnstile-placeholder');
+ const status = document.getElementById('turnstile-status');
  if (!container) return;
+
+ const widgetSize = container.getBoundingClientRect().width >= 300 ? 'flexible' : 'compact';
+ const setVerificationState = (
+ state: 'idle' | 'loading' | 'interactive' | 'verified' | 'error' | 'audit',
+ message: string,
+ ) => {
+ shell?.setAttribute('data-turnstile-state', state);
+ if (shell) shell.style.minHeight = state === 'interactive' && widgetSize === 'compact' ? '140px' : '65px';
+ placeholder?.classList.toggle('invisible', state === 'interactive');
+ if (status) status.textContent = message;
+ };
 
  if (isAudit) {
  container.setAttribute('aria-label', 'Human verification temporarily disabled during automated audits');
- container.innerHTML = '<div class="text-center text-sm text-muted-foreground">Verification skipped for audit.</div>';
+ setVerificationState('audit', 'Verification skipped during automated audit');
  return;
  }
+
+ const renderWidget = () => {
+ if (!window.turnstile) {
+ setVerificationState('error', 'Verification could not load. Refresh and try again.');
+ return;
+ }
+
+ setVerificationState('loading', 'Checking your browser…');
+ window.turnstile.render(container, {
+ sitekey: SITE_KEY,
+ size: widgetSize,
+ theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
+ appearance: 'interaction-only',
+ action: 'contact_form',
+ callback: () => setVerificationState('verified', 'Verification complete'),
+ 'before-interactive-callback': () => setVerificationState('interactive', 'Complete the verification below'),
+ 'after-interactive-callback': () => setVerificationState('loading', 'Finishing verification…'),
+ 'expired-callback': () => setVerificationState('loading', 'Verification expired. Checking again…'),
+ 'error-callback': () => setVerificationState('error', 'Verification could not load. Refresh and try again.'),
+ });
+ };
 
  let injected = false;
  const injectScript = () => {
  if (injected) return;
  if (window.turnstile) {
- window.turnstile.render(container, { sitekey: SITE_KEY, size: 'compact' });
  injected = true;
- // analytics removed; no-op
+ renderWidget();
  return;
  }
 
  injected = true;
+ setVerificationState('loading', 'Loading secure verification…');
  const script = document.createElement('script');
- script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+ script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
  script.async = true;
  script.defer = true;
  script.onload = () => {
  try {
- window.turnstile?.render(container, { sitekey: SITE_KEY, size: 'compact' });
- // analytics removed; no-op
+ renderWidget();
  } catch (error) {
  console.warn('Turnstile render failed', error);
- // analytics removed; no-op
+ setVerificationState('error', 'Verification could not load. Refresh and try again.');
  }
  };
  script.onerror = () => {
  console.warn('Turnstile script failed to load');
- // analytics removed; no-op
+ setVerificationState('error', 'Verification could not load. Refresh and try again.');
  };
  document.head.appendChild(script);
  };
@@ -298,11 +332,9 @@ export default function ContactFormIsland() {
  setupContactForm(),
  ];
 
- if (!isAudit) {
  const turnstileCleanup = setupTurnstile(isAudit);
  if (typeof turnstileCleanup === 'function') {
  cleanupFns.push(turnstileCleanup);
- }
  }
 
  return () => {

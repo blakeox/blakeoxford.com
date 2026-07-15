@@ -92,9 +92,30 @@ import Button from '../../primitives/Button.astro';
             <span id="message-count">0</span><span aria-hidden="true"> / 2,000</span><span class="sr-only"> characters used</span>
           </div>
 
-          <div class="flex min-h-[72px] w-full items-center justify-start border-t border-border/60 pt-5">
-            <div id="turnstile-container" class="w-full" role="group" aria-label="Human verification challenge">
-              <div class="text-sm text-muted-foreground">Human verification will appear when needed.</div>
+          <div class="border-t border-border/60 pt-5">
+            <div
+              id="turnstile-shell"
+              class="relative grid min-h-[65px] w-full overflow-hidden rounded-xl border border-border/60 bg-surface-subtle/40 transition-[min-height,border-color,background-color] duration-200 data-[turnstile-state=error]:border-error/40 data-[turnstile-state=interactive]:bg-background data-[turnstile-state=verified]:border-success/30"
+              data-turnstile-state="idle"
+            >
+              <div id="turnstile-placeholder" class="col-start-1 row-start-1 flex h-[65px] items-center gap-3 px-4 transition-opacity">
+                <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-accent/25 bg-accent/8 text-accent" aria-hidden="true">
+                  <svg class="size-4" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3 5 6v5c0 4.6 2.9 8.2 7 10 4.1-1.8 7-5.4 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                    <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <span class="min-w-0">
+                  <span id="turnstile-status" class="block text-sm font-semibold text-foreground" aria-live="polite">Secure verification ready</span>
+                  <span class="mt-0.5 block text-xs text-muted-foreground">Protected by Cloudflare</span>
+                </span>
+              </div>
+              <div
+                id="turnstile-container"
+                class="z-10 col-start-1 row-start-1 flex w-full min-w-0 items-start justify-start [&>iframe]:max-w-full [&>iframe]:rounded-xl"
+                role="group"
+                aria-label="Human verification challenge"
+              ></div>
             </div>
           </div>
 

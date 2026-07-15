@@ -29,6 +29,8 @@ test.describe('Contact Page', () => {
     await expect(contactForm).toBeVisible();
     await expect(contactForm).toHaveAttribute('action', '/send-email');
     await expect(page.getByText('Cloudflare delivery', { exact: true })).toBeVisible();
+    await expect(page.locator('#turnstile-shell')).toBeVisible();
+    await expect(page.getByText('Protected by Cloudflare', { exact: true })).toBeVisible();
   });
 });
 
