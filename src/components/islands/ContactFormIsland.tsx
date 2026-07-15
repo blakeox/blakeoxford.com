@@ -59,6 +59,8 @@ const FORM_VALIDATION_CONFIG: FormValidationConfig = {
  statusElementSelector: '#form-status',
 };
 
+const SUCCESS_MESSAGE = 'Your project brief was sent. I’ll review it and follow up by email.';
+
 type CleanupFn = () => void;
 
 function setupTurnstile(isAudit: boolean): CleanupFn | void {
@@ -154,6 +156,15 @@ function setupContactForm(): CleanupFn | void {
 
  const cleanupFns: CleanupFn[] = [];
 
+ const messageField = fields.message as HTMLTextAreaElement | null;
+ const messageCount = document.getElementById('message-count');
+ const updateMessageCount = () => {
+ if (messageField && messageCount) messageCount.textContent = String(messageField.value.length);
+ };
+ messageField?.addEventListener('input', updateMessageCount);
+ updateMessageCount();
+ cleanupFns.push(() => messageField?.removeEventListener('input', updateMessageCount));
+
  const validateAllFields = () => {
  const errors: Record<string, string> = {};
  FORM_VALIDATION_CONFIG.fields.forEach(({ id, metadata }) => {
@@ -233,7 +244,7 @@ function setupContactForm(): CleanupFn | void {
  // Use ContactFormService for submission
  const contactService = getContactFormService({
  endpoint: form.action || '/api/contact/submit',
- requireTurnstile: false, // Turnstile handled separately in this component
+ requireTurnstile: true,
  });
 
  const result = await contactService.submitFormData(formData, { signal: controller.signal });
@@ -241,9 +252,11 @@ function setupContactForm(): CleanupFn | void {
  globalThis.clearTimeout(timeoutId);
 
  if (result.success) {
- showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+ showStatusMessage(statusElement ?? null, SUCCESS_MESSAGE, 'success');
  conversionEvents.generateLead({ method: 'contact_form', form: 'contact' });
  form.reset();
+ updateMessageCount();
+ statusElement?.focus();
  }
  } catch (error) {
  globalThis.clearTimeout(timeoutId);
@@ -251,7 +264,7 @@ function setupContactForm(): CleanupFn | void {
  // Use centralized error handling
  const errorMessage = isAppError(error)
  ? getUserMessage(error as AppError)
- : '❌ Something went wrong. Please try again later or email me directly at contact@blakeoxford.com.';
+ : 'Your message could not be sent. Please try again or email blakepoxford@outlook.com directly.';
 
  console.error('Form submission failed', error);
  showStatusMessage(statusElement ?? null, errorMessage, 'error');
@@ -265,7 +278,7 @@ function setupContactForm(): CleanupFn | void {
  cleanupFns.push(() => form.removeEventListener('submit', handleSubmit));
 
  if (new URLSearchParams(window.location.search).get('success') === 'true') {
- showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+ showStatusMessage(statusElement ?? null, SUCCESS_MESSAGE, 'success');
  }
 
  return () => {

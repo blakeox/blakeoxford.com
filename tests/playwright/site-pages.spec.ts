@@ -25,7 +25,10 @@ test.describe('Contact Page', () => {
   test('should display contact form', async ({ page }) => {
     await page.goto('/contact');
     await expect(page.getByRole('heading', { name: /start the conversation/i })).toBeVisible();
-    await expect(page.locator('#contact-form')).toBeVisible();
+    const contactForm = page.locator('#contact-form');
+    await expect(contactForm).toBeVisible();
+    await expect(contactForm).toHaveAttribute('action', '/send-email');
+    await expect(page.getByText('Cloudflare delivery', { exact: true })).toBeVisible();
   });
 });
 

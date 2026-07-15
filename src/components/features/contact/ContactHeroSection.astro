@@ -1,6 +1,5 @@
 ---
 import PageHero from '../../composites/PageHero.astro';
-import Stack from '../../primitives/Stack.astro';
 import Button from '../../primitives/Button.astro';
 import ButtonGroup from '../../composites/ButtonGroup.astro';
 
@@ -25,38 +24,28 @@ interface Props {
 const { content } = Astro.props;
 ---
 
-<PageHero fullScreen={true} includeBlurOrbs={true} id="contact-hero">
-  <div class="grid items-center gap-10 md:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
-    <Stack space="lg" class="@container max-w-3xl">
-      <span class="section-kicker">{content.kicker}</span>
-      <h1 class="font-heading text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">{content.title}</h1>
-      <p class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
-        {content.description}
-      </p>
-      <ul class="grid gap-3 text-sm text-foreground/88 sm:grid-cols-3 sm:text-base" role="list" aria-label="Best fit scenarios">
-        {content.scenarios.map((scenario) => (
-          <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">{scenario}</li>
-        ))}
-      </ul>
-      <ButtonGroup align="start" responsive class="pt-1">
-        <Button variant="primary" href={content.primaryCta.href}>{content.primaryCta.label}</Button>
-        <Button variant="outline" href={content.secondaryCta.href}>{content.secondaryCta.label}</Button>
-      </ButtonGroup>
-    </Stack>
-    <div class="flex justify-center md:justify-end">
-      <div class="proof-card max-w-sm p-6 sm:p-8">
-        <div class="relative z-10 space-y-4">
-          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-subtle-foreground">{content.sidebar.heading}</p>
-          <ul class="space-y-3 text-sm leading-relaxed text-foreground/88 sm:text-base" role="list">
-            {content.sidebar.items.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
-          <div class="rounded-2xl border border-border/50 bg-surface/90 px-4 py-4 text-sm text-muted-foreground">
-            {content.sidebar.note}
-          </div>
-        </div>
-      </div>
-    </div>
+<PageHero fullScreen={false} includeBlurOrbs={true} id="contact-hero" class="min-h-0!">
+  <div class="mx-auto max-w-4xl text-center">
+    <span class="section-kicker">{content.kicker}</span>
+    <h1 class="mt-5 font-heading text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+      {content.title}
+    </h1>
+    <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
+      {content.description}
+    </p>
+    <ButtonGroup align="center" responsive class="mt-8">
+      <Button variant="primary" size="lg" href={content.primaryCta.href}>{content.primaryCta.label}</Button>
+      <Button variant="outline" size="lg" href={content.secondaryCta.href}>{content.secondaryCta.label}</Button>
+    </ButtonGroup>
+    <ul class="mx-auto mt-10 flex max-w-3xl flex-col justify-center gap-x-8 gap-y-3 border-t border-border/60 pt-6 text-sm text-muted-foreground sm:flex-row" role="list" aria-label="Best fit scenarios">
+      {content.scenarios.map((scenario) => (
+        <li class="flex items-start gap-2 text-left sm:flex-1">
+          <svg class="mt-0.5 size-4 shrink-0 text-accent" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="m5 10 3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>{scenario}</span>
+        </li>
+      ))}
+    </ul>
   </div>
 </PageHero>
