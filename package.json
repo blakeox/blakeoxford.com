@@ -52,7 +52,7 @@
     "perf:budget": "node scripts/build/performance-test.js",
     "perf:summary": "node scripts/build/performance-summary.js",
     "perf:long-tasks": "node scripts/quality/perf-long-tasks.js",
-    "security:audit": "corepack pnpm audit --audit-level=moderate --prod",
+    "security:audit": "node scripts/quality/run-dependency-audit.js",
     "security:fix": "corepack pnpm audit fix",
     "deploy:quality-gate": "./scripts/optimization/deployment-quality-gate.sh",
     "deploy:ready": "npm run build && npm run deploy:quality-gate",
