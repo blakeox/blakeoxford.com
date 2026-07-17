@@ -38,7 +38,9 @@
   --color-border-dark: oklch(0.82 0.015 75 / 0.22);
 
   /* On-color text */
-  --color-on-accent: oklch(0.18 0.02 55);
+  /* Light theme: near-white reads on the mid/dark ochre accent (WCAG AA).
+     Dark theme lightens the accent, so it overrides this with dark ink below. */
+  --color-on-accent: oklch(0.97 0.01 85);
   --color-on-primary: oklch(0.97 0.01 85);
   --color-on-dark: oklch(0.97 0.01 85);
 
@@ -152,6 +154,8 @@
     color-scheme: dark;
 
     --color-accent: oklch(0.76 0.11 78);
+    /* Accent is lighter in dark mode, so dark ink keeps AA contrast on it. */
+    --color-on-accent: oklch(0.18 0.02 55);
     --color-accent-emphasis: var(--color-accent-light);
     --color-primary-emphasis: var(--color-primary-light);
     --color-success-emphasis: var(--color-success-light);
@@ -165,8 +169,9 @@
     --color-surface: var(--color-surface-dark);
     --color-surface-subtle: var(--color-surface-dark-subtle);
     --color-surface-elevated: var(--color-surface-elevated-dark);
-    --color-muted-foreground: oklch(0.78 0.015 75);
-    --color-subtle-foreground: oklch(0.72 0.015 75);
+    --color-muted-foreground: oklch(0.82 0.015 75);
+    /* Small-caps labels use this on dark surfaces; keep it AA-readable. */
+    --color-subtle-foreground: oklch(0.8 0.015 75);
     --color-border: var(--color-border-dark);
 
     --shadow-color: oklch(0 0 0 / 0.45);
