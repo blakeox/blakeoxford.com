@@ -455,7 +455,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [
       {
         title: 'Boot from NavBar.astro',
-        code: "import { initModernNavBar } from '../../scripts/features/ModernNavBar';\ninitModernNavBar();",
+        code: 'import { initModernNavBar } from \'../../scripts/features/ModernNavBar\';\ninitModernNavBar();',
       },
     ],
     accessibility: [
