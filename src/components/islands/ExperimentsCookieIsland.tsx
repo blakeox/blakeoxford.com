@@ -5,5 +5,5 @@ export default function ExperimentsCookieIsland() {
  // Legacy experiments cookie removed; keep hook to avoid breaking hydration order
  }, []);
 
- return null;
+ return <></>;
 }

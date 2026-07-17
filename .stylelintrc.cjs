@@ -104,5 +104,17 @@ module.exports = {
         },
       },
     },
+    {
+      files: ['src/styles/components.css'],
+      rules: {
+        // BEM modifiers used by nav JS (nav-shell--scrolled, etc.)
+        'selector-class-pattern': [
+          '^[a-z][a-z0-9]*(?:-+[a-z0-9]+)*(?:__[a-z0-9]+(?:-+[a-z0-9]+)*)?(?:--[a-z0-9]+(?:-+[a-z0-9]+)*)?$',
+          { message: 'Expected class selector to be kebab-case or BEM' },
+        ],
+        'keyframes-name-pattern': null,
+        'no-descending-specificity': null,
+      },
+    },
   ],
 };

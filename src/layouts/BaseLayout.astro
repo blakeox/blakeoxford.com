@@ -1,23 +1,29 @@
 ---
-import '@fontsource/inter/latin-400.css';
-import '@fontsource/inter/latin-600.css';
-import '@fontsource/inter/latin-700.css';
-import '@fontsource/montserrat/latin-600.css';
-import '@fontsource/montserrat/latin-700.css';
+import '@fontsource/source-sans-3/latin-400.css';
+import '@fontsource/source-sans-3/latin-600.css';
+import '@fontsource/source-sans-3/latin-700.css';
+import '@fontsource/space-grotesk/latin-500.css';
+import '@fontsource/space-grotesk/latin-600.css';
+import '@fontsource/space-grotesk/latin-700.css';
 import '../styles/global.css';
 import NavBar from '../components/layout/NavBar.astro';
 import AIChatWidget from '../components/composites/AIChatWidget.astro';
 import Footer from '../components/layout/Footer.astro';
 import SkipLink from '../components/primitives/SkipLink.astro';
 import SearchOverlay from '../components/features/search/SearchOverlay.astro';
-import ThemeInitIsland from '../components/islands/ThemeInitIsland';
 import ServiceWorkerIsland from '../components/islands/ServiceWorkerIsland';
 import ExperimentsCookieIsland from '../components/islands/ExperimentsCookieIsland';
 import AccessibilityEnhancementsIsland from '../components/islands/AccessibilityEnhancementsIsland';
 import ClarityIsland from '../components/islands/ClarityIsland';
 import WebVitalsIsland from '../components/islands/WebVitalsIsland';
 import CloudflareBeaconIsland from '../components/islands/CloudflareBeaconIsland';
-import { THEME_COLOR_LIGHT, THEME_COLOR_DARK } from '../lib/theme';
+import {
+ THEME_COLOR_LIGHT,
+ THEME_COLOR_DARK,
+ getThemeFoucPreventionScript,
+} from '../lib/theme';
+
+const themeFoucScript = getThemeFoucPreventionScript();
 
 // wide: when true, disable the default max-width wrapper for full-width layouts
 const {
@@ -53,7 +59,7 @@ const ogImage = image
 
 const baseMainClasses = wide
  ? 'w-full'
- : 'mx-auto w-full max-w-3xl px-4 pt-24 sm:px-6 lg:px-8 text-base leading-relaxed text-foreground prose dark:prose-invert';
+ : 'mx-auto w-full max-w-3xl px-4 pt-24 sm:px-6 lg:px-8 text-base leading-relaxed text-foreground prose';
 
 const mainClasses = baseMainClasses;
 
@@ -65,7 +71,8 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
  <meta charset="UTF-8" />
  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
  
- <ThemeInitIsland client:load />
+ <!-- FOUC prevention: inline before paint (not a React island — avoids head hydration) -->
+ <script is:inline set:html={themeFoucScript} />
 
  <!-- Avoid unconditional DNS-prefetch; GA/gtm are loaded lazily and only after interaction/idle -->
  <!-- Removed: <link rel="dns-prefetch" href="//www.googletagmanager.com" /> -->
@@ -163,11 +170,11 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
  <ExperimentsCookieIsland client:only="react" />
  <AccessibilityEnhancementsIsland client:only="react" />
  {import.meta.env.PUBLIC_CLARITY_PROJECT_ID && (
-  <ClarityIsland client:idle />
+  <ClarityIsland client:only="react" />
  )}
- <WebVitalsIsland client:idle />
+ <WebVitalsIsland client:only="react" />
  {import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN && (
-  <CloudflareBeaconIsland client:idle />
+  <CloudflareBeaconIsland client:only="react" />
  )}
  <script is:inline src="/js/ai-chat-launcher.js" defer></script>
  <slot name="head" />

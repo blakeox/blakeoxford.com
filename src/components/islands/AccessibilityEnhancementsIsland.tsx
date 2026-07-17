@@ -75,5 +75,5 @@ export default function AccessibilityEnhancementsIsland() {
  };
  }, []);
 
- return null;
+ return <></>;
 }

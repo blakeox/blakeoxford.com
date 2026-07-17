@@ -3,7 +3,6 @@ import CoinFlipImage from '../../composites/CoinFlipImage.astro';
 import PageHero from '../../composites/PageHero.astro';
 import Button from '../../primitives/Button.astro';
 import ButtonGroup from '../../composites/ButtonGroup.astro';
-import FloatingEmoji from '../../primitives/FloatingEmoji.astro';
 import type { HomePageContent } from '../../../content/home/pageTypes';
 
 interface Props {
@@ -16,33 +15,26 @@ interface Props {
 const { author, tagline, description, content } = Astro.props as Props;
 ---
 
-<PageHero id="about-me" class="hero-gradient-animated">
-  <div class="grid items-center gap-10 md:grid-cols-2 sm:gap-12 lg:gap-16">
-    <div class="order-2 md:order-1">
-      <div class="max-w-2xl space-y-8 text-base leading-relaxed text-foreground/85">
-        <div class="space-y-5">
-          <span class="section-kicker">{content.kicker}</span>
-          <h1 class="font-heading text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-            {author}
-          </h1>
-          {tagline && (
-            <p class="max-w-2xl text-xl font-medium leading-relaxed text-foreground/92 sm:text-2xl md:text-3xl">
-              {tagline}
-            </p>
-          )}
-          {description && (
-            <p class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
-              {description}
-            </p>
-          )}
-        </div>
-        <ul class="grid gap-3 text-sm text-foreground/88 sm:grid-cols-3 sm:text-base" role="list" aria-label="Selected strengths">
-          {content.strengths.map((strength) => (
-            <li class="rounded-2xl border border-border/50 bg-surface/80 px-4 py-3">{strength}</li>
-          ))}
-        </ul>
+<PageHero id="about-me" class="hero-gradient-animated" includeBlurOrbs={false}>
+  <div class="relative z-10 grid items-center gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16">
+    <div class="hero-entrance order-2 max-w-xl space-y-7 lg:order-1">
+      <p class="section-kicker">{content.kicker}</p>
+      <div class="space-y-4">
+        <h1 class="font-heading text-5xl font-semibold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[4.75rem] lg:leading-[1.02]">
+          {author}
+        </h1>
+        {tagline && (
+          <p class="max-w-lg text-xl font-medium leading-snug text-foreground/90 sm:text-2xl">
+            {tagline}
+          </p>
+        )}
+        {description && (
+          <p class="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
+            {description}
+          </p>
+        )}
       </div>
-      <ButtonGroup align="start" responsive class="mt-8">
+      <ButtonGroup align="start" responsive class="pt-1">
         <Button
           variant="primary"
           href={content.primaryCta.href}
@@ -51,21 +43,30 @@ const { author, tagline, description, content } = Astro.props as Props;
         >
           {content.primaryCta.label}
         </Button>
-        <Button variant="outline" href={content.secondaryCta.href}>
+        <Button variant="ghost" href={content.secondaryCta.href}>
           {content.secondaryCta.label}
         </Button>
       </ButtonGroup>
+      <ul class="flex flex-col gap-2 border-t border-border/50 pt-6 text-sm text-muted-foreground sm:text-base" role="list" aria-label="Selected strengths">
+        {content.strengths.map((strength) => (
+          <li class="flex gap-3">
+            <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+            <span>{strength}</span>
+          </li>
+        ))}
+      </ul>
     </div>
-    <div class="order-1 flex justify-center md:order-2 md:justify-end">
+
+    <div class="order-1 flex justify-center lg:order-2 lg:justify-end">
       <div class="relative">
-        <div class="absolute -inset-4 rounded-full bg-gradient-to-r from-accent/30 to-primary/30 blur-xl opacity-70 animate-pulse"></div>
-        <div class="relative rounded-full bg-gradient-to-r from-accent to-primary p-1">
+        <div class="absolute inset-0 -translate-y-2 scale-110 rounded-full bg-accent/10 blur-3xl" aria-hidden="true"></div>
+        <div class="relative rounded-full ring-1 ring-accent/30 ring-offset-4 ring-offset-background">
           <CoinFlipImage
             frontSrc={content.portrait.frontSrc}
             backSrc={content.portrait.backSrc}
             alt={content.portrait.alt}
             altBack={content.portrait.altBack}
-            size={280}
+            size={300}
             flipMultipleTimes
             loading="eager"
             fetchPriority="high"
@@ -74,9 +75,6 @@ const { author, tagline, description, content } = Astro.props as Props;
             aria-label={`Photo of ${content.portrait.alt}`}
           />
         </div>
-        <FloatingEmoji emoji="💡" position="top-right" size="md" />
-        <FloatingEmoji emoji="🚀" position="bottom-left" size="sm" color="accent-dark" />
-        <FloatingEmoji emoji="☁️" position="center-right" size="sm" color="primary" />
       </div>
     </div>
   </div>

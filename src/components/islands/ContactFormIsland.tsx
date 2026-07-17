@@ -3,13 +3,13 @@ import {
  clearError,
  clearStatusMessage,
  defaultErrorFormatter,
- FormValidationConfig,
  hydrateFields,
  setSubmittingState,
  showError,
  showStatusMessage,
  validateField,
 } from './form/FormHelpers';
+import type { FormValidationConfig } from './form/FormHelpers';
 import { getContactFormService } from '../../services/ContactFormService';
 import { AppError, isAppError, getUserMessage } from '../../utils/errors';
 import { conversionEvents } from '../../lib/analytics';

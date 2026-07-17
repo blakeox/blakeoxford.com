@@ -394,7 +394,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 - Responsive modifiers: `sm:`, `md:`, `lg:`, `xl:`
 - Dark mode variants: `dark:bg-surface`, `dark:text-primary`
 - Semantic class names via `@apply` when needed (rare)
-- Glass morphism via CSS variables: `var(--glass-surface)`
+- Glass morphism via CSS variables: `bg-glass` / `var(--color-glass)`
 
 **TypeScript**:
 - Strict mode enabled, no `any` types

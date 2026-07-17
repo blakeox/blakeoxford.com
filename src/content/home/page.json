@@ -4,15 +4,15 @@
     "description": "Systems architect and workflow strategist turning complexity into opportunity-designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results."
   },
   "hero": {
-    "kicker": "Systems architecture · automation · operating rigor",
+    "kicker": "Systems architecture",
     "defaultTagline": "Systems Architect · Workflow Strategist · Operational Improvement Leader",
     "strengths": [
-      "Enterprise migrations with adoption discipline",
-      "Automation that reduces manual operational drag",
-      "Analytics and controls built for decision-making"
+      "Migrations that hold adoption",
+      "Automation that cuts operational drag",
+      "Analytics built for decisions"
     ],
     "primaryCta": { "href": "/contact/", "label": "Start a conversation" },
-    "secondaryCta": { "href": "/projects/", "label": "Review selected projects" },
+    "secondaryCta": { "href": "/projects/", "label": "Selected projects" },
     "portrait": {
       "frontSrc": "/assets/images/Blake-O-scaled.jpg",
       "backSrc": "/assets/images/china-profile-picture.jpg",
@@ -21,14 +21,14 @@
     }
   },
   "technologies": {
-    "kicker": "Delivery stack",
-    "title": "Platforms and tools used in delivery",
-    "description": "A representative toolset behind architecture, workflow automation, analytics, and cloud delivery work."
+    "kicker": "Toolkit",
+    "title": "What the work runs on",
+    "description": "Platforms used across architecture, automation, analytics, and cloud delivery."
   },
   "resumeHighlights": {
-    "kicker": "Selected outcomes",
-    "title": "Proof from enterprise transformation work",
-    "description": "Representative operating wins across migration, automation, analytics, and workflow control design.",
+    "kicker": "Outcomes",
+    "title": "Proof from the work",
+    "description": "Representative wins across migration, automation, and decision systems.",
     "cards": [
       {
         "icon": "cloud",
@@ -55,7 +55,7 @@
       {
         "icon": "analytics",
         "title": "Data Analytics",
-        "description": "Comprehensive business intelligence solutions that keep decision-makers informed in real time.",
+        "description": "Business intelligence that keeps decision-makers informed in real time.",
         "items": [
           { "icon": "grid", "text": "Real-time SQL/Power BI dashboards" },
           { "icon": "predictive", "text": "Predictive financial modeling systems" },
@@ -66,22 +66,22 @@
     ]
   },
   "recentProjects": {
-    "kicker": "Selected projects",
-    "title": "Work that shipped with measurable impact",
-    "description": "A cross-section of systems, automation, and analytics engagements built to survive real operating conditions.",
-    "cta": { "href": "/projects/", "label": "View all case studies" }
+    "kicker": "Projects",
+    "title": "Work that shipped",
+    "description": "Systems, automation, and analytics built to survive real operating conditions.",
+    "cta": { "href": "/projects/", "label": "All case studies" }
   },
   "latestPosts": {
     "kicker": "Writing",
-    "title": "Practical notes from the field",
-    "description": "Essays and case-backed observations on automation, analytics, governance, and operational improvement.",
+    "title": "Notes from the field",
+    "description": "Essays on automation, analytics, governance, and operational improvement.",
     "emptyMessage": "Blog posts are on the way-check back soon for new case studies and playbooks.",
-    "cta": { "href": "/blog/", "label": "View all writing" }
+    "cta": { "href": "/blog/", "label": "All writing" }
   },
   "cta": {
-    "kicker": "Next move",
-    "title": "Bring the problem space. I'll help design the operating backbone.",
-    "description": "If you are evaluating a migration, automation program, reporting overhaul, or AI-enabled workflow, start with the highest-risk bottleneck and we can scope from there.",
+    "kicker": "Next",
+    "title": "Bring the hardest bottleneck.",
+    "description": "Migration, automation, reporting, or AI-enabled workflow — start with the risk that matters most.",
     "button": { "href": "/contact/", "label": "Start the conversation" }
   }
 }

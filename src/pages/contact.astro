@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
-import FloatingBlur from '../components/primitives/FloatingBlur.astro';
 import ContactChannels from '../components/features/contact/ContactChannels.astro';
 import ContactHeroSection from '../components/features/contact/ContactHeroSection.astro';
 import ContactMessageSection from '../components/features/contact/ContactMessageSection.astro';
@@ -13,13 +12,8 @@ const canonicalUrl = CANONICAL_URLS.contact;
 ---
 
 <Layout title={page.meta.title} description={page.meta.description} url={canonicalUrl} wide={true}>
-  <div class="fixed inset-0 -z-10 pointer-events-none">
-    <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
-    <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
-  </div>
-
   <ContactHeroSection content={page.hero} />
   <ContactMessageSection />
   <ContactChannels channels={page.channels} />
-  <ContactFormClient client:load />
+  <ContactFormClient client:only="react" />
 </Layout>

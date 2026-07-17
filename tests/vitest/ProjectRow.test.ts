@@ -34,6 +34,7 @@ describe('ProjectRow.astro file', () => {
 
   it('should render primary call-to-action with descriptive text', () => {
     expect(content).toContain('View Project: {data.title}');
-    expect(content).toContain('class="c-btn');
+    expect(content).toContain('bg-button-primary-bg');
+    expect(content).toContain('View Project:');
   });
 });

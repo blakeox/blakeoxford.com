@@ -178,24 +178,25 @@ To ensure global theming agility and hardened accessibility, direct Tailwind gra
 | Primary text | `text-foreground` | `--color-foreground` |
 | Muted / secondary | `text-foreground/80` (or /70) | same + opacity layer |
 | Strong emphasis | `text-foreground` with font-weight change | `--color-foreground` |
-| Inverse (on dark surface) | `.dark:text-foreground` | dark token variant |
-| Surface background | `bg-surface` / `dark:bg-surface-dark` | `--color-surface*` |
-| Page background | `bg-background` / `dark:bg-background` | `--color-background*` |
-| Border | `border-border` / `dark:border-border-dark` | `--color-border*` |
+| Inverse (on dark surface) | `text-foreground` on dark surfaces | `--color-foreground` |
+| Surface background | `bg-surface` (theme-aware) | `--color-surface` |
+| Accent text | `text-accent-emphasis` (theme-aware) | `--color-accent-emphasis` |
+| Page background | `bg-background` (theme-aware) | `--color-background` |
+| Border | `border-border` (theme-aware) | `--color-border` |
 
 Rules:
 
 - Never reintroduce raw `text-gray-*` for prose or headings. Exception: temporary experimental component prototypes (remove before merge).
 - Prefer opacity suffixes (`/90`, `/80`, `/70`) over inventing new near-identical tokens for hierarchy.
 - If a new semantic meaning (e.g., `success`, `warning`) emerges, add a token + Tailwind mapping; do not approximate with a random green/yellow hex.
-- Background layers should use `background` (page), `surface` (cards/sections), and `surface-alt` (if introduced) instead of arbitrary gray steps.
+- Background layers should use `background` (page), `surface` (cards/sections), and `surface-subtle` instead of arbitrary gray steps.
 - Contrast drift monitoring is enforced via the Playwright contrast spec with a non-failing sentinel (see `tests/playwright/accessibility/contrast-ratio.spec.ts`).
 
 Migration Guidance:
 
 1. Replace `text-gray-*` with `text-foreground` plus optional opacity.
-2. Replace `dark:text-gray-*` with `.dark:text-foreground` (or opacity variant if muted).
-3. Replace gray backgrounds (`bg-gray-50`, `dark:bg-gray-800`) with `bg-surface` / `dark:bg-surface-dark` (or `bg-background` variants when representing the base page layer).
+2. Replace `dark:text-gray-*` with `text-muted-foreground` or `text-subtle-foreground`.
+3. Replace gray backgrounds (`bg-gray-50`, `dark:bg-gray-800`) with `bg-surface` or `bg-background` (theme-aware — no `dark:` pair needed).
 4. Adjust perceived hierarchy with weight/size/spacing first; only then apply an opacity tweak if required.
 
 Review Process:

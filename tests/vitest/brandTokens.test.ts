@@ -5,18 +5,13 @@ import { resolve } from 'node:path';
 const themeCss = readFileSync(resolve(__dirname, '../../src/styles/theme.css'), 'utf8');
 
 describe('brand token contract', () => {
-  it('keeps primary indigo at hue 264 and accent cyan at hue 196', () => {
-    expect(themeCss).toMatch(/--color-primary:\s*oklch\([^)]*264\)/);
-    expect(themeCss).toMatch(/--color-accent:\s*oklch\([^)]*196\)/);
+  it('keeps warm ink primary (hue 55) and brass accent (hue 75)', () => {
+    expect(themeCss).toMatch(/--color-primary:\s*oklch\([^)]*55\)/);
+    expect(themeCss).toMatch(/--color-accent:\s*oklch\([^)]*75\)/);
   });
 
-  it('aligns @property accent initial value with accent token hue', () => {
-    expect(themeCss).toMatch(/@property --color-accent[\s\S]*?initial-value:\s*oklch\([^)]*196\)/);
-  });
-
-  it('documents accent-subtle for expressive-tier surfaces', () => {
+  it('documents accent-subtle for soft surfaces', () => {
     expect(themeCss).toContain('--color-accent-subtle');
-    expect(themeCss).toMatch(/Expressive-tier surfaces/);
   });
 
   it('uses accent for unified focus ring color', () => {

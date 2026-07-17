@@ -142,15 +142,15 @@ function Icon({ name }: IconProps) {
  height: 8px;
  }
  .timeline-scroll-container::-webkit-scrollbar-track {
- background: rgb(var(--color-neutral) / 0.3);
+ background: color-mix(in oklch, var(--color-foreground) 20%, transparent);
  border-radius: 4px;
  }
  .timeline-scroll-container::-webkit-scrollbar-thumb {
- background: rgb(var(--color-accent) / 0.5);
+ background: color-mix(in oklch, var(--color-accent) 50%, transparent);
  border-radius: 4px;
  }
  .timeline-scroll-container::-webkit-scrollbar-thumb:hover {
- background: rgb(var(--color-accent) / 0.7);
+ background: color-mix(in oklch, var(--color-accent) 70%, transparent);
  }
  </style>
 </section>

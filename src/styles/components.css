@@ -1,24 +1,28 @@
 /**
- * Site-wide component utilities.
- *
- * Keep this file small. New page-specific presentation should live in
- * components or Tailwind utilities unless it is reused across the site.
+ * Shared component utilities only.
+ * Prefer Tailwind semantic utilities in markup.
+ * Keep this file for multi-selector chrome (nav, overlays, hero motion).
  */
 
 @layer components {
   .page-hero-shell {
-    background:
-      radial-gradient(circle at top right, color-mix(in oklch, var(--accent) 11%, transparent), transparent 34%),
-      linear-gradient(180deg, color-mix(in oklch, var(--surface) 78%, transparent), transparent),
-      linear-gradient(135deg, color-mix(in oklch, var(--surface-subtle) 90%, transparent), color-mix(in oklch, var(--bg) 96%, transparent));
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--color-surface) 88%, transparent),
+      color-mix(in oklch, var(--color-background) 96%, transparent)
+    );
   }
 
   .section-kicker {
-    @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em];
+    @apply inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-label text-accent-emphasis;
+  }
 
-    border-color: color-mix(in oklch, var(--accent) 24%, transparent);
-    color: color-mix(in oklch, var(--accent-strong) 78%, var(--fg));
-    background: color-mix(in oklch, var(--accent) 8%, transparent);
+  .section-kicker::before {
+    display: block;
+    width: 1.5rem;
+    height: 1px;
+    content: '';
+    background: color-mix(in oklch, var(--color-accent) 70%, transparent);
   }
 
   .section-intro {
@@ -29,42 +33,70 @@
     @apply max-w-3xl space-y-4 text-left;
   }
 
-  .proof-card {
-    @apply relative overflow-hidden rounded-3xl border p-8 shadow-lg transition-colors duration-normal;
-
-    background: linear-gradient(
-      180deg,
-      color-mix(in oklch, var(--surface) 95%, transparent),
-      color-mix(in oklch, var(--surface-subtle) 92%, transparent)
-    );
-    border-color: color-mix(in oklch, var(--border) 76%, transparent);
+  .hero-gradient-animated {
+    @apply relative overflow-hidden;
   }
 
-  .proof-card::before {
+  .hero-gradient-animated::before {
     position: absolute;
     inset: 0;
-    content: '';
+    z-index: 0;
     pointer-events: none;
-    background: radial-gradient(circle at top right, color-mix(in oklch, var(--accent) 10%, transparent), transparent 42%);
-    opacity: 0.9;
+    content: '';
+    background:
+      radial-gradient(
+        ellipse 70% 55% at 85% 40%,
+        color-mix(in oklch, var(--color-accent) 14%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 50% 40% at 10% 80%,
+        color-mix(in oklch, var(--color-primary) 8%, transparent),
+        transparent 65%
+      );
   }
 
-  .conversion-band {
-    @apply rounded-3xl border px-6 py-10 text-center shadow-lg sm:px-10;
-
-    background: linear-gradient(
-      135deg,
-      color-mix(in oklch, var(--accent) 8%, var(--surface)),
-      color-mix(in oklch, var(--primary, var(--color-primary)) 6%, var(--surface-subtle))
-    );
-    border-color: color-mix(in oklch, var(--accent) 22%, transparent);
+  .hero-entrance > * {
+    animation: hero-rise 700ms var(--ease-decelerate) both;
   }
 
+  .hero-entrance > *:nth-child(2) {
+    animation-delay: 60ms;
+  }
+
+  .hero-entrance > *:nth-child(3) {
+    animation-delay: 120ms;
+  }
+
+  .hero-entrance > *:nth-child(4) {
+    animation-delay: 180ms;
+  }
+
+  .hero-entrance > *:nth-child(5) {
+    animation-delay: 240ms;
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-entrance > * {
+      animation: none;
+    }
+  }
+
+  /* Nav */
   .nav-utility-button {
-    @apply inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-full border text-foreground/80 transition-colors;
-
-    border-color: color-mix(in oklch, var(--border) 62%, transparent);
-    background: color-mix(in oklch, var(--surface) 74%, transparent);
+    @apply inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-border/60 bg-surface/75 text-foreground/80 transition-colors;
   }
 
   .nav-utility-button.search-toggle {
@@ -74,101 +106,70 @@
   .nav-utility-button.theme-toggle,
   .nav-utility-button.burger-menu-button {
     @apply w-11;
+    touch-action: manipulation;
   }
 
   .nav-utility-button:hover {
-    color: var(--accent-strong);
-    border-color: color-mix(in oklch, var(--accent) 35%, transparent);
-    background: color-mix(in oklch, var(--surface) 92%, transparent);
+    @apply border-accent/30 bg-surface/90 text-accent-emphasis;
   }
 
   .nav-utility-button:focus-visible {
-    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background dark:ring-offset-background-dark;
-  }
-
-  .nav-cta-button {
-    @apply inline-flex h-11 items-center rounded-full border px-4 text-sm font-semibold transition-colors;
-
-    min-height: 2.75rem;
-    border-color: color-mix(in oklch, var(--accent) 35%, transparent);
-    background: color-mix(in oklch, var(--accent) 10%, transparent);
-    color: var(--accent-strong);
-  }
-
-  .nav-cta-button:hover {
-    border-color: color-mix(in oklch, var(--accent) 55%, transparent);
-    background: color-mix(in oklch, var(--accent) 16%, transparent);
-    color: var(--foreground);
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background;
   }
 
   .nav-kbd {
-    @apply items-center rounded-md border px-1.5 py-0.5 font-mono text-[0.65rem] font-medium;
-
-    border-color: color-mix(in oklch, var(--border) 70%, transparent);
-    background: color-mix(in oklch, var(--surface-subtle) 90%, transparent);
-    color: color-mix(in oklch, var(--muted-foreground) 90%, var(--fg));
+    @apply items-center rounded-md border border-border/70 bg-surface-subtle/90 px-1.5 py-0.5 font-mono text-[0.65rem] font-medium text-muted-foreground;
   }
 
   .nav-shell--scrolled #navbar {
     height: 4rem;
   }
 
-  /* Tuck header away while scrolling down; restored on scroll up (all viewports) */
   .nav-shell--auto-hidden:not([data-menu-state='open']) {
     pointer-events: none;
     transform: translateY(-100%);
   }
 
+  /* Keep sticky nav above in-flow hero stacking (page content often uses z-10) */
+  .nav-shell {
+    z-index: var(--z-nav);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .nav-shell--auto-hidden {
-      transform: none !important;
       pointer-events: auto !important;
+      transform: none !important;
     }
   }
 
-  /* Scroll-aware sticky header shell */
   .nav-shell:has(#navbar.has-background) {
-    border-color: color-mix(in oklch, var(--border) 85%, transparent);
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-    background: color-mix(in oklch, var(--surface) 88%, transparent);
+    @apply border-border/80 bg-glass-xl shadow-md;
   }
 
-  :root[data-theme='dark'] .nav-shell:has(#navbar.has-background),
-  :root.dark .nav-shell:has(#navbar.has-background) {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    background: color-mix(in oklch, var(--surface) 82%, transparent);
-  }
-
-  /* Hide no-JS fallback once JS nav is active */
   #navbar[data-js-nav='true'] ~ .mobile-nav-fallback {
     display: none;
   }
 
-  /* Keep sticky header aligned when scroll lock removes the scrollbar gutter */
-  body.scroll-locked .nav-shell {
-    padding-right: var(--scrollbar-width, 0px);
-  }
-
+  body.scroll-locked .nav-shell,
   body.scroll-locked [data-ai-chat-widget] {
-    padding-right: var(--scrollbar-width, 0px);
+    padding-right: var(--scrollbar-width, 0);
   }
 
-  /* Burger → close icon animation */
   .burger-icon {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     gap: 0.25rem;
+    justify-content: center;
     width: 1.25rem;
     height: 1.25rem;
   }
 
   .burger-line {
     display: block;
-    height: 2px;
     width: 100%;
+    height: 2px;
+    background: currentcolor;
     border-radius: 1px;
-    background: currentColor;
     transition:
       transform var(--duration-normal) var(--ease-standard),
       opacity var(--duration-fast) var(--ease-standard);
@@ -186,137 +187,6 @@
     transform: translateY(-6px) rotate(-45deg);
   }
 
-  /* Unified keyboard focus for nav, search, chat, and theme controls */
-  .focus-ring-interactive:focus-visible {
-    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background dark:ring-offset-background-dark;
-  }
-
-  /* WCAG 2.5.5 minimum touch target (44×44px) */
-  .touch-target {
-    min-height: 2.75rem;
-    min-width: 2.75rem;
-  }
-
-  /* MDX blog content only — listing cards use BlogPostCard → Card → BaseCard */
-  .blog-card {
-    @apply rounded-2xl p-6 shadow-lg transition-colors duration-normal;
-
-    background: color-mix(in oklch, var(--surface) 90%, transparent);
-    border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
-  }
-
-  .blog-card:hover {
-    @apply shadow-lg;
-
-    border-color: color-mix(in oklch, var(--accent) 50%, transparent);
-  }
-
-  .section-badge {
-    @apply inline-flex items-center gap-3 rounded-full px-5 py-2.5 shadow-sm backdrop-blur-sm;
-
-    background: color-mix(in oklch, var(--surface) 85%, transparent);
-    border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
-  }
-
-  .gradient-text {
-    @apply bg-clip-text text-transparent;
-
-    background-image: linear-gradient(90deg, var(--color-accent), var(--color-primary));
-  }
-
-  .hover-lift,
-  .hover-lift-sm,
-  .hover-lift-lg {
-    @apply transition-colors duration-normal motion-safe:transition-transform motion-safe:duration-normal;
-
-    transition-timing-function: var(--ease-standard);
-  }
-
-  .hover-lift:hover,
-  .hover-lift-sm:hover,
-  .hover-lift-lg:hover {
-    @apply shadow-lg;
-  }
-
-  .hover-lift:hover {
-    @apply motion-safe:-translate-y-1;
-  }
-
-  .hover-lift-sm:hover {
-    @apply motion-safe:-translate-y-0.5;
-  }
-
-  .hover-lift-lg:hover {
-    @apply motion-safe:-translate-y-1.5;
-  }
-
-  .card-interactive {
-    @apply transition-colors duration-normal motion-safe:transition-transform motion-safe:duration-normal;
-  }
-
-  /* Prefer BaseCard/Card hover="lift" for new cards; card-interactive adds focus-within scale for linked cards */
-  .card-interactive:hover {
-    @apply motion-safe:scale-[1.01];
-  }
-
-  .card-interactive:focus-within {
-    outline: 2px solid color-mix(in oklch, var(--accent) 40%, transparent);
-    outline-offset: 2px;
-  }
-
-  .blur-orb-accent,
-  .blur-orb-primary {
-    @apply pointer-events-none absolute rounded-full blur-3xl;
-  }
-
-  .blur-orb-accent {
-    @apply h-96 w-96;
-
-    background: color-mix(in oklch, var(--accent) 10%, transparent);
-  }
-
-  :root[data-theme="dark"] .blur-orb-accent,
-  :root.dark .blur-orb-accent {
-    background: color-mix(in oklch, var(--accent) 18%, transparent);
-  }
-
-  .blur-orb-primary {
-    @apply h-64 w-64;
-
-    background: color-mix(in oklch, var(--color-primary) 10%, transparent);
-  }
-
-  :root[data-theme="dark"] .blur-orb-primary,
-  :root.dark .blur-orb-primary {
-    background: color-mix(in oklch, var(--color-primary) 16%, transparent);
-  }
-
-  /* Homepage hero animated gradient overlay */
-  .hero-gradient-animated {
-    @apply relative overflow-hidden;
-  }
-
-  .hero-gradient-animated::before {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    content: '';
-    background: linear-gradient(
-      var(--gradient-angle, 45deg),
-      var(--color-primary) 0%,
-      var(--color-accent) 50%,
-      var(--color-primary) 100%
-    );
-    opacity: 0.1;
-    animation: rotate-gradient 15s linear infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-gradient-animated::before {
-      animation: none;
-    }
-  }
-
   .theme-toggle .sun-icon,
   .theme-toggle .moon-icon,
   .theme-toggle .system-icon {
@@ -329,35 +199,124 @@
     display: block;
   }
 
-  .page-slab {
-    @apply border-t border-border/20 bg-background;
+  .theme-toggle:active .sun-icon,
+  .theme-toggle:active .moon-icon {
+    animation: theme-toggle-spin var(--duration-fast) var(--ease-standard);
   }
 
-  /* Closed state wins over stale .active (race-condition guard for search overlay). */
-  #search-overlay[data-state="closed"],
-  #search-overlay[aria-hidden="true"] {
+  @keyframes theme-toggle-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .nav-shell:has(.mobile-menu.active),
+  .nav-shell[data-menu-state='open'] {
+    z-index: var(--z-nav-drawer);
+  }
+
+  .mobile-menu-backdrop {
+    position: fixed;
+    inset: var(--nav-height) 0 0 0;
+    z-index: calc(var(--z-nav-drawer) - 1);
+    display: none;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+    background: color-mix(in oklch, var(--color-background) 55%, transparent);
+    border: 0;
+    opacity: 0;
+    backdrop-filter: blur(2px);
+  }
+
+  .mobile-menu-backdrop[data-state='open'] {
+    display: block;
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .mobile-menu {
+    display: none;
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .mobile-menu.active,
+  .mobile-menu[data-state='open'] {
+    position: fixed;
+    top: var(--nav-height);
+    right: 0;
+    left: 0;
+    z-index: var(--z-nav-drawer);
+    display: block;
+    visibility: visible;
+    width: 100%;
+    max-height: min(80dvh, 32rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    pointer-events: auto;
+    opacity: 1;
+    animation: mobile-menu-in var(--duration-normal) var(--ease-decelerate) forwards;
+  }
+
+  @keyframes mobile-menu-in {
+    from {
+      transform: translateY(-0.5rem);
+    }
+
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  /* Shared interactive chrome */
+  .focus-ring-interactive:focus-visible {
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background;
+  }
+
+  .touch-target {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .form-group:has(input:invalid:not(:placeholder-shown)),
+  .form-group:has(textarea:invalid:not(:placeholder-shown)) {
+    border-inline-start: 3px solid var(--color-error);
+  }
+
+  .form-group:has(input:valid:not(:placeholder-shown)),
+  .form-group:has(textarea:valid:not(:placeholder-shown)) {
+    border-inline-start: 3px solid var(--color-success);
+  }
+
+  /* Overlays */
+  #search-overlay[data-state='closed'],
+  #search-overlay[aria-hidden='true'] {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
     opacity: 0 !important;
   }
 
-  #search-overlay[data-state="open"].active {
+  #search-overlay[data-state='open'].active {
     display: flex !important;
     visibility: visible !important;
     pointer-events: auto !important;
   }
 
+  #search-overlay[data-state='closed'] .search-result,
+  #search-overlay[data-state='closed'] [data-results-container],
+  #search-overlay[data-state='closed'] [data-results] {
+    display: none !important;
+  }
+
   .command-center .overlay-panel {
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-xl);
   }
 
   .ai-chat-panel {
-    box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
-  }
-
-  .ai-chat-launcher {
-    will-change: transform;
+    box-shadow: var(--shadow-2xl);
   }
 
   .ai-chat-launcher[aria-expanded='true'] {
@@ -370,8 +329,8 @@
     }
 
     .ai-chat-panel[data-ai-visible='true'] {
-      animation: chat-panel-in 280ms var(--ease-decelerate);
       transform-origin: bottom right;
+      animation: chat-panel-in 280ms var(--ease-decelerate);
     }
 
     .ai-chat-launcher {
@@ -389,6 +348,7 @@
       opacity: 0;
       transform: translateY(12px) scale(0.98);
     }
+
     to {
       opacity: 1;
       transform: translateY(0) scale(1);
@@ -400,111 +360,22 @@
       opacity: 0;
       transform: translateY(18px) scale(0.96);
     }
+
     to {
       opacity: 1;
       transform: translateY(0) scale(1);
     }
   }
 
-  #search-overlay[data-state="closed"] .search-result,
-  #search-overlay[data-state="closed"] [data-results-container],
-  #search-overlay[data-state="closed"] [data-results] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-  }
-
   @media (hover: none) and (pointer: coarse) {
     button,
-    a[role="button"],
-    [role="button"],
-    input[type="button"],
-    input[type="submit"],
-    input[type="reset"],
-    .c-btn {
+    a[role='button'],
+    [role='button'] {
       min-width: 44px;
       min-height: 44px;
     }
-
-    a:active {
-      opacity: 0.85;
-    }
   }
 
-  /* Theme toggle icon spin — token-driven, disabled for reduced motion */
-  .theme-toggle:active .sun-icon,
-  .theme-toggle:active .moon-icon {
-    animation: themeToggleSpin var(--duration-fast) var(--ease-standard);
-  }
-
-  /* Mobile nav drawer — hidden by default; ModernNavBar toggles `.active` + `data-state` */
-  .nav-shell:has(.mobile-menu.active),
-  .nav-shell[data-menu-state='open'] {
-    z-index: var(--z-nav-drawer);
-  }
-
-  .mobile-menu-backdrop {
-    position: fixed;
-    top: var(--nav-height, 4.5rem);
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: calc(var(--z-nav-drawer) - 1);
-    display: none;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    background: color-mix(in oklch, var(--bg) 55%, transparent);
-    opacity: 0;
-    pointer-events: none;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-  }
-
-  .mobile-menu-backdrop[data-state='open'] {
-    display: block;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .mobile-menu {
-    display: none;
-    visibility: hidden;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .mobile-menu.active,
-  .mobile-menu[data-state='open'] {
-    position: fixed;
-    top: var(--nav-height, 4.5rem);
-    right: 0;
-    left: 0;
-    z-index: var(--z-nav-drawer);
-    display: block;
-    visibility: visible;
-    width: 100%;
-    max-height: min(80dvh, 32rem);
-    overflow-y: auto;
-    opacity: 1;
-    pointer-events: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    transform: translateZ(0);
-    animation: mobile-menu-in var(--duration-normal) var(--ease-decelerate) forwards;
-  }
-
-  @keyframes mobile-menu-in {
-    from {
-      transform: translateY(-0.5rem);
-    }
-
-    to {
-      transform: translateY(0);
-    }
-  }
-
-  /* JS-driven panels and overlays */
   @media (prefers-reduced-motion: reduce) {
     .mobile-menu,
     .mobile-menu-backdrop,

@@ -2,8 +2,13 @@
  * Shared types for chat components
  */
 import type { RefObject } from 'react';
-import type { ChatMessage, ChatState, LoadingPhase, SearchFallback } from '../../../lib/chat';
-import type { ConversationWebSocket } from '../../../lib/chat/conversation-ws';
+import type {
+	ChatMessage,
+	ChatState,
+	ConversationWebSocket,
+	LoadingPhase,
+	SearchFallback,
+} from '../../../lib/chat';
 import type { AIChatSource } from '../../../lib/ai-search';
 
 // Re-export types for components that need them

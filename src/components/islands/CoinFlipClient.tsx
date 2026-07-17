@@ -8,10 +8,9 @@ interface Props {
 }
 
 /**
- * SSR guard wrapper for CoinFlipInteraction.
- * Prevents React hooks from running during SSR while allowing client hydration.
+ * Client-only coin flip interaction. Mount with `client:only="react"` —
+ * no SSR null guard (that caused hydration mismatches).
  */
 export default function CoinFlipClient(props: Props) {
- if (typeof window === 'undefined') return null;
  return <CoinFlipInteraction {...props} />;
 }

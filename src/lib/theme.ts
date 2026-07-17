@@ -1,7 +1,7 @@
 /**
  * Shared theme utilities — single source of truth for light/dark/system mode.
  *
- * Used by ModernNavBar, AccessibilityModule, ThemeContext, and ThemeInitIsland.
+ * Used by ModernNavBar, AccessibilityModule, ThemeContext, and BaseLayout FOUC script.
  */
 
 export type ResolvedTheme = 'light' | 'dark';
@@ -14,8 +14,8 @@ export const DARK_CLASS = 'dark';
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 /** Static hex fallbacks for platform chrome (meta theme-color, manifest). */
-export const THEME_COLOR_LIGHT = '#4f46e5';
-export const THEME_COLOR_DARK = '#080f1a';
+export const THEME_COLOR_LIGHT = '#c18a3a';
+export const THEME_COLOR_DARK = '#171411';
 
 const CYCLE_ORDER: ThemePreference[] = ['light', 'dark', 'system'];
 
@@ -29,11 +29,6 @@ export function readThemePreference(): ThemePreference | null {
 	const stored = localStorage.getItem(THEME_STORAGE_KEY);
 	if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
 	return null;
-}
-
-/** @deprecated Use readThemePreference — kept for compatibility during migration. */
-export function readStoredTheme(): ThemePreference | null {
-	return readThemePreference();
 }
 
 export function readThemeCookie(): ThemePreference | null {
@@ -64,7 +59,7 @@ export function hasExplicitThemePreference(): boolean {
 }
 
 function clearInlineThemeTokens(root: HTMLElement): void {
-	for (const prop of ['--color-background', '--color-foreground', '--bg', '--fg']) {
+	for (const prop of ['--color-background', '--color-foreground']) {
 		root.style.removeProperty(prop);
 	}
 }
@@ -169,11 +164,6 @@ export function setThemePreference(preference: ThemePreference): ResolvedTheme {
 	return resolved;
 }
 
-/** @deprecated Use setThemePreference */
-export function setTheme(resolvedTheme: ResolvedTheme): void {
-	setThemePreference(resolvedTheme);
-}
-
 /** System preference change — applies without persisting until user chooses. */
 export function applySystemTheme(resolvedTheme: ResolvedTheme): void {
 	const preference = readThemePreference() ?? 'system';
@@ -225,4 +215,38 @@ export function updateThemeToggleButton(
 	button.setAttribute('aria-pressed', String(pref !== 'system' && pref === resolved));
 	button.setAttribute('data-theme-preference', pref);
 	button.setAttribute('aria-label', PREFERENCE_LABELS[pref]);
+}
+
+/**
+ * Inline FOUC-prevention script for Astro `<script is:inline>`.
+ * Keep logic aligned with initializeTheme() above.
+ */
+export function getThemeFoucPreventionScript(): string {
+	return `(() => {
+ try {
+  const key = '${THEME_STORAGE_KEY}';
+  const prefKey = '${THEME_PREFERENCE_ATTRIBUTE}';
+  const cookieMatch = (document.cookie || '').match(/(?:^|;\\s*)theme=([^;]+)/);
+  const cookieVal = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
+  const stored = localStorage.getItem(key);
+  const preference = (stored === 'light' || stored === 'dark' || stored === 'system')
+    ? stored
+    : ((cookieVal === 'light' || cookieVal === 'dark' || cookieVal === 'system') ? cookieVal : 'system');
+  const explicit = (stored === 'light' || stored === 'dark' || stored === 'system')
+    || (cookieVal === 'light' || cookieVal === 'dark' || cookieVal === 'system');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = preference === 'system' ? (prefersDark ? 'dark' : 'light') : preference;
+  const root = document.documentElement;
+  root.setAttribute('${THEME_ATTRIBUTE}', theme);
+  root.setAttribute(prefKey, preference);
+  if (theme === 'dark') { root.classList.add('${DARK_CLASS}'); } else { root.classList.remove('${DARK_CLASS}'); }
+  root.style.colorScheme = theme;
+  if (explicit) {
+   try { localStorage.setItem(key, preference); } catch { void 0; }
+   try { document.cookie = key + '=' + encodeURIComponent(preference) + '; Path=/; Max-Age=${THEME_COOKIE_MAX_AGE}; SameSite=Lax'; } catch { void 0; }
+  }
+ } catch (error) {
+  console.warn('Theme initialization failed', error);
+ }
+})();`;
 }

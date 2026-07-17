@@ -1,40 +1,344 @@
 ---
 /**
- * NavBar - Main site navigation wrapper
- * 
- * Wraps the NavBarIsland React component with Astro props.
- * Provides site-wide navigation with mobile menu, logo, and theme toggle.
- * 
- * @component
- * @category Layout
- * 
- * @example Default navigation
- * ```astro
- * <NavBar />
- * ```
- * 
- * @accessibility
- * - Semantic nav element (handled by island)
- * - Keyboard navigation support
- * - Mobile menu with proper ARIA attributes
- * - Focus management for menu toggle
+ * NavBar - Site chrome (Astro HTML + progressive enhancement).
+ *
+ * Critical navigation must not depend on React hydration. Markup is SSR'd;
+ * ModernNavBar wires theme, mobile menu, scroll, and search on the client.
+ * No-JS: details.mobile-nav-fallback remains available until data-js-nav is set.
  */
-import NavBarIsland from '../islands/NavBarIsland';
-import navLinks from '../../config/navLinks';
+import navLinks, { normalizeNavPath } from '../../config/navLinks';
+
+const currentPath = normalizeNavPath(Astro.url.pathname);
+const logo = {
+  name: 'Blake Oxford',
+  avatar: {
+    jpg: '/assets/images/Blake-O-scaled.jpg',
+    webp: '/assets/images/optimized/webp/Blake-O-scaled@640w.webp',
+    avif: '/assets/images/optimized/avif/Blake-O-scaled@640w.avif',
+  },
+};
+
+function isActive(href: string): boolean {
+  if (!href.startsWith('/')) return false;
+  return normalizeNavPath(href) === currentPath;
+}
 ---
 
-<NavBarIsland
- client:load
- links={navLinks}
- currentPath={Astro.url.pathname}
- logo={{
- name: 'Blake Oxford',
- avatar: {
- jpg: '/assets/images/Blake-O-scaled.jpg',
- webp: '/assets/images/optimized/webp/Blake-O-scaled@640w.webp',
- avif: '/assets/images/optimized/avif/Blake-O-scaled@640w.avif'
- }
- }}
-/>
+<div
+  class="@container nav-shell relative isolate overflow-visible sticky top-0 z-nav border-b border-border/50 bg-glass backdrop-blur-md supports-[backdrop-filter]:bg-glass-xl motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-normal"
+  data-menu-state="closed"
+>
+  <div id="nav-menu-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
+  <nav
+    id="navbar"
+    class="relative z-10 mx-auto flex h-[var(--nav-height,4.5rem)] w-full max-w-container-2xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 text-foreground motion-safe:transition-[height,box-shadow] motion-safe:duration-normal"
+    role="navigation"
+    aria-label="Main Navigation"
+  >
+    <div class="brand-section flex items-center gap-2">
+      <a
+        href="/"
+        class="brand-link focus-ring-interactive flex items-center gap-3 rounded-full px-2 py-1 text-foreground"
+        aria-label={logo.name}
+      >
+        <picture class="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60">
+          {logo.avatar.avif && <source srcset={logo.avatar.avif} type="image/avif" />}
+          {logo.avatar.webp && <source srcset={logo.avatar.webp} type="image/webp" />}
+          <img
+            src={logo.avatar.avif || logo.avatar.webp || logo.avatar.jpg}
+            alt=""
+            aria-hidden="true"
+            class="brand-avatar size-9 object-cover"
+            width={640}
+            height={640}
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </picture>
+        <span class="brand-text flex flex-col leading-none">
+          <span class="text-sm font-semibold tracking-tight text-foreground">{logo.name}</span>
+          <span class="hidden text-[0.7rem] font-medium uppercase tracking-[0.16em] text-subtle-foreground sm:block">
+            Systems architect
+          </span>
+        </span>
+      </a>
+    </div>
 
+    <ul class="desktop-nav hidden gap-1 md:flex md:flex-1 md:justify-center">
+      {
+        navLinks.map((link) => {
+          const external = Boolean(link.external);
+          const active = !external && isActive(link.href);
+          return (
+            <li class="nav-item">
+              <a
+                href={link.href}
+                class:list={[
+                  'nav-link focus-ring-interactive inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent',
+                  active
+                    ? 'bg-surface-subtle text-foreground ring-1 ring-inset ring-accent/40'
+                    : 'text-foreground/90',
+                ]}
+                aria-current={active ? 'page' : undefined}
+                target={external ? (link.target ?? '_blank') : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+
+    <div class="action-buttons flex shrink-0 items-center gap-2">
+      <button
+        id="search-toggle"
+        type="button"
+        class="nav-utility-button search-toggle gap-1.5 px-3"
+        aria-label="Open site search (Command K)"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-5 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+          ></path>
+        </svg>
+        <span class="hidden text-xs font-medium text-muted-foreground lg:inline">Search</span>
+        <kbd class="nav-kbd hidden lg:inline-flex">⌘K</kbd>
+      </button>
+
+      <button
+        id="theme-toggle"
+        type="button"
+        class="nav-utility-button theme-toggle relative shrink-0"
+        aria-label="Theme: system preference. Switch to light mode."
+        aria-pressed="false"
+        data-theme-preference="system"
+      >
+        <span class="pointer-events-none relative block size-6" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" class="sun-icon absolute inset-0 size-6" data-icon="light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" focusable="false">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4V2m0 20v-2m8-8h2M2 12h2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M5.6 18.4 4.2 19.8m15.6-15.6-1.4 1.4M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"></path>
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="moon-icon absolute inset-0 size-6 translate-x-px" data-icon="dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" focusable="false">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79Z"></path>
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="system-icon absolute inset-0 size-6" data-icon="system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" focusable="false">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L8 21h8l-1.75-4M12 3v1m6.364 1.636-.707.707M21 12h-1M18.364 18.364l-.707-.707M12 19v1M5.636 18.364l.707-.707M4 12H3m2.636-6.364.707.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path>
+          </svg>
+        </span>
+      </button>
+
+      <button
+        id="nav-toggle"
+        type="button"
+        class="nav-utility-button burger-menu-button md:hidden"
+        aria-label="Open navigation menu"
+        aria-controls="nav-mobile-links"
+        aria-expanded="false"
+      >
+        <span class="burger-icon" aria-hidden="true">
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+        </span>
+      </button>
+    </div>
+  </nav>
+
+  <div
+    id="nav-mobile-backdrop"
+    class="mobile-menu-backdrop md:hidden"
+    data-state="closed"
+    aria-hidden="true"
+  >
+  </div>
+
+  <!-- No-JS mobile fallback — hidden once ModernNavBar sets data-js-nav on #navbar -->
+  <details class="mobile-nav-fallback border-t border-border/40 bg-surface/98 px-4 py-3 md:hidden">
+    <summary class="cursor-pointer text-sm font-semibold text-foreground">Menu</summary>
+    <ul class="mt-2 flex flex-col gap-1">
+      {
+        navLinks.map((link) => {
+          const external = Boolean(link.external);
+          return (
+            <li class="mobile-nav-item">
+              <a
+                href={link.href}
+                class="mobile-nav-link touch-target focus-ring-interactive flex min-h-11 items-center rounded-2xl px-3 py-3 text-sm font-semibold text-foreground/88 transition hover:bg-glass"
+                target={external ? (link.target ?? '_blank') : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </details>
+
+  <div
+    id="nav-mobile-links"
+    class="mobile-menu border-t border-border bg-surface/98 shadow-lg md:hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="nav-mobile-menu-title"
+    data-state="closed"
+    inert
+  >
+    <div class="mobile-menu-content flex w-full flex-col gap-2 px-4 py-4 text-foreground @sm:gap-3 @sm:px-5 @sm:py-5">
+      <h2 id="nav-mobile-menu-title" class="sr-only">Site navigation</h2>
+      <ul class="mobile-nav flex flex-col gap-1">
+        {
+          navLinks.map((link) => {
+            const external = Boolean(link.external);
+            const active = !external && isActive(link.href);
+            return (
+              <li class="mobile-nav-item">
+                <a
+                  href={link.href}
+                  class="mobile-nav-link touch-target focus-ring-interactive flex min-h-11 items-center rounded-2xl px-3 py-3 text-sm font-semibold text-foreground/88 transition hover:bg-glass @sm:px-4 @sm:py-3 @sm:text-base"
+                  aria-current={active ? 'page' : undefined}
+                  target={external ? (link.target ?? '_blank') : undefined}
+                  rel={external ? 'noopener noreferrer' : undefined}
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!--
+  Classic inline script (not type=module): binds the burger even if Vite module
+  init/HMR tears down ModernNavBar listeners. AbortController allows safe re-run.
+  Outside-close is backdrop-only — document capture pointerdown races with the open tap.
+-->
+<script is:inline>
+  (() => {
+    var w = window;
+    if (w.__boNavMenuAC) w.__boNavMenuAC.abort();
+    w.__boNavMenuAC = new AbortController();
+    var signal = w.__boNavMenuAC.signal;
+
+    function els() {
+      return {
+        shell: document.querySelector('.nav-shell'),
+        menu: document.getElementById('nav-mobile-links'),
+        backdrop: document.getElementById('nav-mobile-backdrop'),
+        burger: document.getElementById('nav-toggle'),
+        status: document.getElementById('nav-menu-status'),
+      };
+    }
+
+    function isOpen(shell) {
+      return shell.getAttribute('data-menu-state') === 'open';
+    }
+
+    function setOpen(next) {
+      var e = els();
+      if (!e.shell || !e.menu || !e.burger) return;
+      e.shell.setAttribute('data-menu-state', next ? 'open' : 'closed');
+      e.burger.setAttribute('aria-expanded', next ? 'true' : 'false');
+      e.burger.setAttribute(
+        'aria-label',
+        next ? 'Close navigation menu' : 'Open navigation menu',
+      );
+      e.burger.classList.toggle('active', next);
+      e.menu.classList.toggle('active', next);
+      e.menu.setAttribute('data-state', next ? 'open' : 'closed');
+      if (next) e.menu.removeAttribute('inert');
+      else e.menu.setAttribute('inert', '');
+      if (e.backdrop) {
+        e.backdrop.setAttribute('data-state', next ? 'open' : 'closed');
+        e.backdrop.setAttribute('aria-hidden', next ? 'false' : 'true');
+      }
+      if (e.status) {
+        e.status.textContent = next ? 'Navigation menu opened' : 'Navigation menu closed';
+      }
+      document.body.classList.toggle('scroll-locked', next);
+    }
+
+    function wireBurger() {
+      var burger = document.getElementById('nav-toggle');
+      var nav = document.getElementById('navbar');
+      if (!burger) return;
+      // Idempotent: replace prior handler if the node was reused
+      burger.onclick = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var shell = document.querySelector('.nav-shell');
+        if (!shell) return;
+        setOpen(!isOpen(shell));
+      };
+      // Hide no-JS details fallback only after the burger is actually wired
+      if (nav) nav.setAttribute('data-js-nav', 'true');
+    }
+
+    wireBurger();
+
+    document.addEventListener(
+      'click',
+      function (event) {
+        var target = event.target;
+        if (!target || !target.closest) return;
+        if (target.closest('#nav-mobile-backdrop')) {
+          event.preventDefault();
+          setOpen(false);
+          return;
+        }
+        var shell = document.querySelector('.nav-shell');
+        if (shell && isOpen(shell) && target.closest('#nav-mobile-links a[href]')) {
+          setOpen(false);
+        }
+      },
+      { signal: signal },
+    );
+
+    document.addEventListener(
+      'keydown',
+      function (event) {
+        if (event.key !== 'Escape') return;
+        var shell = document.querySelector('.nav-shell');
+        if (shell && isOpen(shell)) setOpen(false);
+      },
+      { signal: signal },
+    );
+
+    var mq = window.matchMedia('(min-width: 768px)');
+    if (mq.addEventListener) {
+      mq.addEventListener(
+        'change',
+        function (event) {
+          if (event.matches) setOpen(false);
+        },
+        { signal: signal },
+      );
+    }
+
+    // Re-wire after late DOM swaps (HMR / persist)
+    document.addEventListener('astro:page-load', wireBurger, { signal: signal });
+  })();
+</script>
+
+<script>
+  import { initModernNavBar } from '../../scripts/features/ModernNavBar';
+
+  initModernNavBar();
+</script>

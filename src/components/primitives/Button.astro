@@ -47,10 +47,10 @@ const {
 } = Astro.props;
 
 const variantStyles = {
- primary: 'border border-button-primary-bg bg-button-primary-bg text-button-primary-fg shadow-lg shadow-accent/15 hover:-translate-y-0.5 hover:bg-button-primary-bg-hover hover:border-button-primary-border-hover focus-visible:ring-accent/60',
- secondary: 'border border-border bg-surface text-foreground shadow-sm hover:-translate-y-0.5 hover:bg-surface-subtle',
- outline: 'border border-accent/40 bg-surface/70 text-accent-emphasis shadow-sm hover:-translate-y-0.5 hover:border-accent hover:bg-accent/8 hover:text-accent focus-visible:ring-accent/60',
- ghost: 'border border-transparent bg-transparent text-foreground hover:bg-surface-subtle/70',
+ primary: 'border border-button-primary-bg bg-button-primary-bg text-button-primary-fg hover:bg-button-primary-bg-hover hover:border-button-primary-border-hover focus-visible:ring-accent/60',
+ secondary: 'border border-border bg-surface text-foreground hover:bg-surface-subtle',
+ outline: 'border border-foreground/20 bg-transparent text-foreground hover:border-accent hover:text-accent-emphasis focus-visible:ring-accent/60',
+ ghost: 'border border-transparent bg-transparent text-foreground/85 hover:text-accent-emphasis',
  link: 'border border-transparent bg-transparent px-0 text-accent-emphasis hover:text-accent hover:underline',
 };
 
@@ -60,7 +60,7 @@ const sizeStyles = {
  lg: 'min-h-[3.25rem] px-6 py-3 text-base',
 };
 
-const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-[color,background-color,border-color,transform,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-[color,background-color,border-color,transform,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
 const sizeClass = variant === 'link' ? 'p-0 text-sm' : sizeStyles[size];
 
 const classes = [

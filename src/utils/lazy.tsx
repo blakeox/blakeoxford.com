@@ -126,7 +126,7 @@ export function createLazyComponent<P extends object>(
 export function DefaultLoadingSkeleton(): ReactNode {
 	return (
 		<div
-			className="animate-pulse bg-surface-subtle dark:bg-surface-dark-subtle rounded"
+			className="animate-pulse bg-surface-subtle rounded"
 			style={{ height: '200px', width: '100%' }}
 			aria-label="Loading..."
 			role="status"
