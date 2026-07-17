@@ -17,6 +17,27 @@ describe('brand token contract', () => {
   it('uses accent for unified focus ring color', () => {
     expect(themeCss).toMatch(/--focus-ring-color:\s*var\(--color-accent\)/);
   });
+
+  it('exposes always-dark overlay and code helpers without parallel *-dark utilities', () => {
+    expect(themeCss).toContain('--color-overlay-scrim');
+    expect(themeCss).toContain('--color-code-surface');
+    expect(themeCss).toContain('--shadow-overlay');
+    const themeBridgeStart = themeCss.indexOf('@theme inline {');
+    expect(themeBridgeStart).toBeGreaterThan(-1);
+    const themeBridge = themeCss.slice(themeBridgeStart);
+    expect(themeBridge).not.toMatch(/--color-background-dark:/);
+    expect(themeBridge).not.toMatch(/--color-foreground-light:/);
+  });
+
+  it('bridges semantic motion durations including moderate', () => {
+    expect(themeCss).toContain('--transition-duration-moderate');
+    expect(themeCss).toContain('--duration-moderate');
+  });
+
+  it('bridges named z-index utilities including chat launcher', () => {
+    expect(themeCss).toContain('--z-chat-launcher');
+    expect(themeCss).toContain('--z-index-chat-launcher');
+  });
 });
 
 describe('interactive focus ring utility', () => {

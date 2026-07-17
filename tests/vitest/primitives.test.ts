@@ -156,8 +156,8 @@ describe('Container Component', () => {
     expect(fileContent).toMatch(/max-w-/);
   });
 
-  it('should have horizontal padding', () => {
-    expect(fileContent).toMatch(/px-/);
+  it('should use tokenized layout gutter padding', () => {
+    expect(fileContent).toContain('layout-gutter');
   });
 
   it('should center content', () => {

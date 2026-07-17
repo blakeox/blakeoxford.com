@@ -20,7 +20,8 @@ test.describe('Menu visibility (production-faithful)', () => {
     const firstLink = menu.locator('.mobile-nav-link').first();
 
     await page.locator('#nav-toggle').click();
-    await expect(menu).toHaveClass(/active/);
+    await expect(menu).toHaveAttribute('data-state', 'open');
+    await expect(page.locator('#nav-toggle')).toHaveClass(/active/);
     await expect(page.locator('#nav-mobile-backdrop')).toHaveAttribute('data-state', 'open');
     const backdropVisible = await page.locator('#nav-mobile-backdrop').evaluate((el) => {
       const style = getComputedStyle(el);

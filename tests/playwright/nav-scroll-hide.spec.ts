@@ -39,7 +39,7 @@ test.describe('Mobile nav auto-hide @essential', () => {
 
   test('does not auto-hide while the mobile menu is open', async ({ page }) => {
     await page.locator('#nav-toggle').click();
-    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'open');
 
     await page.evaluate(() => window.scrollTo(0, 360));
     await waitForAsyncOperation(page, 100);

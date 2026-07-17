@@ -5,6 +5,45 @@
  */
 
 @layer components {
+  /* Tokenized page gutters — prefer over hard-coded px-4 sm:px-6 lg:px-8 */
+  .layout-gutter {
+    padding-inline: clamp(
+      var(--container-padding),
+      4vw,
+      var(--container-padding-lg)
+    );
+  }
+
+  @media (width >= 640px) {
+    .layout-gutter {
+      padding-inline: clamp(
+        var(--container-padding-sm),
+        5vw,
+        var(--container-padding-lg)
+      );
+    }
+  }
+
+  @media (width >= 1024px) {
+    .layout-gutter {
+      padding-inline: clamp(
+        var(--container-padding-lg),
+        6vw,
+        var(--container-padding-xl)
+      );
+    }
+  }
+
+  @media (width >= 1280px) {
+    .layout-gutter {
+      padding-inline: clamp(
+        var(--container-padding-xl),
+        7vw,
+        var(--container-padding-2xl)
+      );
+    }
+  }
+
   .page-hero-shell {
     background: linear-gradient(
       180deg,
@@ -106,6 +145,7 @@
   .nav-utility-button.theme-toggle,
   .nav-utility-button.burger-menu-button {
     @apply w-11;
+
     touch-action: manipulation;
   }
 
@@ -135,10 +175,12 @@
     z-index: var(--z-nav);
   }
 
+  /* Match the base selector's specificity so the auto-hide is neutralized for
+     reduced-motion users without needing !important. */
   @media (prefers-reduced-motion: reduce) {
-    .nav-shell--auto-hidden {
-      pointer-events: auto !important;
-      transform: none !important;
+    .nav-shell--auto-hidden:not([data-menu-state='open']) {
+      pointer-events: auto;
+      transform: none;
     }
   }
 
@@ -210,7 +252,7 @@
     }
   }
 
-  .nav-shell:has(.mobile-menu.active),
+  .nav-shell:has(.mobile-menu[data-state='open']),
   .nav-shell[data-menu-state='open'] {
     z-index: var(--z-nav-drawer);
   }
@@ -242,7 +284,6 @@
     opacity: 0;
   }
 
-  .mobile-menu.active,
   .mobile-menu[data-state='open'] {
     position: fixed;
     top: var(--nav-height);
@@ -290,27 +331,9 @@
     border-inline-start: 3px solid var(--color-success);
   }
 
-  /* Overlays */
-  #search-overlay[data-state='closed'],
-  #search-overlay[aria-hidden='true'] {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-    opacity: 0 !important;
-  }
-
-  #search-overlay[data-state='open'].active {
-    display: flex !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-  }
-
-  #search-overlay[data-state='closed'] .search-result,
-  #search-overlay[data-state='closed'] [data-results-container],
-  #search-overlay[data-state='closed'] [data-results] {
-    display: none !important;
-  }
-
+  /* Overlays — OverlayShell toggles the `flex`/`hidden` display utilities and
+     the `data-state` attribute directly, so visibility needs no component-layer
+     rule or !important (utilities would otherwise shadow this layer). */
   .command-center .overlay-panel {
     box-shadow: var(--shadow-xl);
   }
@@ -387,7 +410,6 @@
       animation: none !important;
     }
 
-    .mobile-menu.active,
     .mobile-menu[data-state='open'] {
       opacity: 1 !important;
       transform: none !important;

@@ -13,7 +13,7 @@ export function registerHeaderOverlayLifecycle(): CleanupFn {
   const handlePageLoad = () => {
     closeAllHeaderOverlays();
     requestAnimationFrame(() => {
-      const menuOpen = document.getElementById('nav-mobile-links')?.classList.contains('active');
+      const menuOpen = document.getElementById('nav-mobile-links')?.getAttribute('data-state') === 'open';
       const searchOpen = document.getElementById('search-overlay')?.getAttribute('data-state') === 'open';
       if (!menuOpen && !searchOpen) {
         forceReleaseScrollLock();

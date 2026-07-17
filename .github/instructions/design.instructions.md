@@ -11,151 +11,109 @@ These guidelines apply when creating or modifying visual components, styles, and
 
 ## 1. Design Token System
 
-### CSS Variables (Source of Truth)
+### Source of truth
 
-All design tokens are defined in `src/styles/theme.css` and mapped to Tailwind in `tailwind.config.ts`.
+All design tokens live in `src/styles/theme.css`:
 
-**Required Practice**: Always use semantic tokens instead of hardcoded values.
+1. Define values on `:root` (OKLCH colors, radius, shadows, motion, fonts, z-index).
+2. Remap semantic tokens under `&[data-theme='dark']` / `&.dark`.
+3. Bridge to Tailwind with `@theme inline` in the same file.
 
-#### Color Tokens
-- Use `--color-*` variables: primary, accent, surface, background, foreground, semantic states
-- Dark mode: Parallel `--color-*-dark` tokens toggled via `.dark` class
-- Text colors: Use semantic tokens (`text-foreground`, `text-foreground/80`) instead of raw Tailwind gray scales
-- **Never** hardcode hex colors in components
+`tailwind.config.ts` only keeps the typography plugin, container padding, and a few screens — not color maps.
+Tailwind is applied via `@tailwindcss/vite` in `astro.config.mjs` and `@import "tailwindcss"` in `global.css`.
+Prefer `bg-accent-subtle` / `text-accent-emphasis` over ad-hoc `bg-accent/10` opacity suffixes when a semantic wash exists.
+Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 
-#### Typography Tokens
-- Sizes: `--fs-*` (functional) or `--fs-h1` through `--fs-h6` (semantic)
-- Weights: `--fw-*` (normal, medium, semibold, bold)
-- Line heights: `--lh-*` (tight, normal, relaxed)
-- Letter spacing: `--ls-*`
+### Color tokens
 
-#### Spacing & Layout
-- Spacing scale: `--space-*` mapped to Tailwind spacing extension
-- Container widths: `--container-*` for max-widths
-- Radius: `--radius-*` for consistent border-radius values
+- Brand / semantic: `primary`, `accent`, `success`, `warning`, `error`, `info` (+ light/dark/emphasis/subtle where needed)
+- Surfaces: `background`, `surface`, `surface-subtle`, `surface-elevated`, `glass`, `glass-xl`
+- Text: `foreground`, `foreground-strong`, `muted-foreground`, `subtle-foreground`
+- Always-dark helpers (not remapped): `overlay-scrim`, `code-surface`, `code-foreground`
+- **Never** use parallel utilities like `bg-background-dark` or `text-foreground-light` in markup
+- Dark mode: prefer remapped semantic utilities — avoid spraying `dark:` color pairs
 
-#### Shadows & Effects
-- Elevations: `--shadow-*` tokens for depth
-- Glass morphism: Pre-defined `--glass-*` variables for surfaces and borders
+### Typography
 
-### Token Creation Policy
+- Fonts: `--font-sans` (Source Sans 3), `--font-heading` (Space Grotesk), `--font-mono`
+- Utilities: `font-sans`, `font-heading`, `text-xxs`, `tracking-label`, `tracking-smallcaps`
+- Otherwise use Tailwind type scale (`text-sm` … `text-5xl`) — there is no custom `--fs-*` scale
 
-- Create new tokens only if used ≥3 times or expressing semantic meaning
-- Extend `tailwind.config.ts` to expose tokens to utilities
-- Document new tokens with purpose and usage examples
+### Spacing, radius, shadows, motion
+
+- Spacing: Tailwind default scale (prefer rem utilities; avoid one-off `px` arbitrary values)
+- Radius: `rounded-sm` … `rounded-2xl` from `--radius-*`
+- Shadows: `shadow-sm` … `shadow-2xl`, plus `shadow-overlay` for modal panels
+- Motion: `duration-fast` (100ms), `duration-normal` (200ms), `duration-moderate` (300ms), `duration-slow` (500ms)
+- Easing: `ease-standard`, `ease-emphasized`, `ease-decelerate`
+
+### Token creation policy
+
+- Create a new token only if used ≥3 times or it expresses semantic meaning
+- Expose it via `@theme inline` in `theme.css` (not by extending colors in `tailwind.config.ts`)
+- Document purpose on `/design/tokens`
 
 ---
 
 ## 2. Accessibility Standards
 
-### WCAG AA Compliance (Non-Negotiable)
+### WCAG AA (non-negotiable)
 
-- **Color Contrast**: Minimum 4.5:1 for body text, 3:1 for large headings
-- **Audit Tools**: Run `pnpm audit:contrast` before committing visual changes
-- **Semantic State Colors**: Use dedicated state tokens instead of opacity for disabled elements
+- Contrast: ≥4.5:1 body text, ≥3:1 large headings
+- Run `pnpm audit:contrast` before committing visual changes
+- Use dedicated state tokens instead of opacity alone for disabled UI
 
-### Interactive Elements
+### Interactive elements
 
-- All focusable elements require visible focus states
-- Keyboard navigation: Tab, Enter, Esc, Arrow keys
-- Screen reader support: Proper ARIA attributes and semantic HTML
-- Focus management in modals/overlays
+- Visible `:focus-visible` rings (see base styles + `.focus-ring-interactive`)
+- Keyboard navigation and proper ARIA on overlays
+- Touch targets: `.touch-target` / min 44×44 on coarse pointers
 
-### Motion & Animation
+### Motion
 
-- Respect `prefers-reduced-motion` for all animations
-- Avoid layout shift: specify dimensions for late-loading content
-- Progressive enhancement: ensure core functionality without JavaScript
+- Respect `prefers-reduced-motion` (token durations collapse; chrome animations are gated)
+- Prefer transform/opacity; avoid layout-affecting animation for essential info
 
 ---
 
-## 3. Component Styling
+## 3. Component styling
 
-### Composition Over Configuration
+- Prefer composing primitives (`Container`, `Section`, `Button`, `BaseCard`) over bespoke layouts
+- Shared multi-selector chrome belongs in `src/styles/components.css`
+- Page/feature markup should stay on Tailwind semantic utilities
+- Run `pnpm design:lint` — bans raw palette, white/black, and parallel `*-dark` surface utilities
 
-- Prefer composing primitives (`Container`, `Stack`, `Section`) over bespoke layouts
-- Avoid boolean prop explosion; use variant patterns instead
-- Keep component CSS minimal and reusable
+### Tailwind usage
 
-### Tailwind Usage
-
-- Use utility classes mapped to design tokens
-- Typography: Wrap Markdown with `prose` classes
-- Dark mode: Use `dark:` variants with `class` strategy
-- **Avoid**: Custom CSS unless creating reusable tokens
-
-### Design Lint
-
-Run `pnpm design:lint` to catch:
-- Raw hex values in components
-- Suspicious spacing patterns
-- Token drift from standards
+- Map intent to semantic tokens, not gray scales
+- Blog/prose: `prose` (typography plugin) — prose vars remapped in dark theme
+- Dark mode strategy is class + `data-theme` with semantic remaps; do not default to `dark:bg-*` pairs
 
 ---
 
-## 4. Visual Hierarchy
+## 4. Responsive design
 
-### Layout Principles
-
-- Zero-layout-shift: Specify image dimensions, avoid DOM reflows
-- Consistent spacing: Use token scale for margins/padding
-- Semantic HTML: `<main>`, `<section>`, `<article>` for structure
-
-### Color & Emphasis
-
-- High-chroma accents: Reserve for CTAs and interactive focus only
-- Gradients: Store as CSS variables if reused (`--gradient-primary`)
-- Visual weight: Typography weight changes over opacity manipulation
+- Page layouts: viewport breakpoints (`sm` 640 → `2xl` 1440 in this project’s container screens)
+- Reusable cards/widgets: prefer `@container` + `@sm:` / `@md:` where already used
+- Mobile-first; touch targets ≥44×44px
 
 ---
 
-## 5. Responsive Design
+## 5. Testing visual changes
 
-### Mobile-First Approach
-
-- Base styles for mobile, enhance with breakpoint modifiers
-- Test all breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
-- Touch targets: Minimum 44×44px for interactive elements
-
-### Performance Considerations
-
-- Ship minimal CSS: Remove unused utilities in production
-- Critical CSS: Inlined in `BaseLayout.astro`
-- Font loading: System fonts first, web fonts with `font-display: swap`
-
----
-
-## 6. Documentation Requirements
-
-When adding new visual patterns:
-
-1. Document in `DESIGN_BEST_PRACTICES.md` if establishing precedent
-2. Add JSDoc comments for component props with visual impact
-3. Include accessibility notes for interactive elements
-4. Link to related components in composite patterns
-
----
-
-## 7. Testing Visual Changes
-
-### Required Checks
-
-- Contrast audit: `pnpm audit:contrast`
+- Contrast: `pnpm audit:contrast`
 - Design lint: `pnpm design:lint`
-- Cross-browser e2e: `pnpm test:e2e`
-- Accessibility: Tests with `@axe-core/playwright`
-
-### Visual Regression
-
-- Essential tests tagged with `@essential`
-- Screenshot comparisons in critical user paths
-- Test in both light and dark modes
+- CSS lint: `pnpm lint:css`
+- Accessibility e2e with `@axe-core/playwright`
+- Check both light and dark themes
 
 ---
 
-## Reference Documents
+## Reference
 
-- `DESIGN_BEST_PRACTICES.md` - Detailed design philosophy and patterns
-- `docs/COMPONENT_DOCUMENTATION_GUIDE.md` - Component documentation standards
-- `src/styles/global.css` - Design token definitions
-- `tailwind.config.ts` - Tailwind integration and extensions
+- `src/styles/theme.css` — tokens + `@theme inline`
+- `src/styles/components.css` — nav/overlay/hero chrome
+- `src/styles/global.css` — entry (`@import "tailwindcss"`)
+- `tailwind.config.ts` — plugins + container
+- `DESIGN_BEST_PRACTICES.md` — detailed philosophy
+- `/design/tokens` — live token reference

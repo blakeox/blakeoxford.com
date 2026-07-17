@@ -80,7 +80,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
  alt={`${title} preview`}
  width={960}
  height={540}
- class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+ class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.04]"
  loading="lazy"
  quality={80}
  />
@@ -91,7 +91,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
  <div class="space-y-3 @sm:space-y-4">
  <Flex wrap align="center" gap="sm" class="text-xs font-semibold uppercase tracking-label text-subtle-foreground">
  {primaryCategory && (
- <BadgePill size="xs" class="bg-accent/10 text-accent ring-accent/20">
+ <BadgePill size="xs" class="bg-accent-subtle text-accent ring-accent/20">
  {primaryCategory}
  </BadgePill>
  )}
@@ -143,9 +143,9 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
  )}
 
  <div class="mt-auto flex items-center justify-end gap-4">
- <span class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis transition-all duration-200 group-hover:gap-3">
+ <span class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis transition-all duration-normal group-hover:gap-3">
  View case study
- <ArrowRightIcon class="opacity-90 transition-transform duration-200 group-hover:translate-x-0.5" />
+ <ArrowRightIcon class="opacity-90 transition-transform duration-normal group-hover:translate-x-0.5" />
  </span>
  </div>
  </div>

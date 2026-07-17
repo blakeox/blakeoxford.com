@@ -94,7 +94,7 @@ export function ChatAnalytics({
 						{Array.from(uniqueCollections).map((collection) => (
 							<span
 								key={String(collection)}
-								className="inline-flex items-center rounded-full bg-accent/10 px-2.5 py-1 text-[0.65rem] font-medium text-accent-emphasis"
+								className="inline-flex items-center rounded-full bg-accent-subtle px-2.5 py-1 text-[0.65rem] font-medium text-accent-emphasis"
 							>
 								{collection}
 							</span>

@@ -16,6 +16,9 @@ function expectedCategory(filePath: string) {
   if (filePath.startsWith('src/components/islands/')) return 'Islands';
   if (filePath.startsWith('src/components/primitives/')) return 'Primitives';
   if (filePath.startsWith('src/components/composites/')) return 'Composites';
+  // Progressive-enhancement scripts and theme helpers live alongside islands docs
+  if (filePath.startsWith('src/scripts/features/')) return 'Islands';
+  if (filePath === 'src/lib/theme.ts') return 'Islands';
   return null;
 }
 

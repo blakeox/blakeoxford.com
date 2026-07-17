@@ -35,14 +35,14 @@ const allTags = getAllTags();
     </h3>
     <div class="flex flex-wrap gap-2">
       <button
-        class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent/10"
+        class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
         data-tag="all"
       >
         All
       </button>
       {allTags.map((tag) => (
         <button
-          class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent/10"
+          class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
           data-tag={tag}
         >
           {tag}
@@ -81,7 +81,7 @@ const allTags = getAllTags();
                   href={`https://github.com/blakeox/blakeoxford.com/blob/main/${component.filePath}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent/10"
+                  class="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
                 >
                   View Source
                 </a>
@@ -103,7 +103,7 @@ const allTags = getAllTags();
                   <p class="text-sm font-semibold text-foreground">Token dependencies</p>
                   <div class="mt-2 flex flex-wrap gap-2">
                     {component.tokenDependencies.map((token) => (
-                      <code class="rounded bg-accent/10 px-2 py-1 text-xs text-accent">{token}</code>
+                      <code class="rounded bg-accent-subtle px-2 py-1 text-xs text-accent">{token}</code>
                     ))}
                   </div>
                 </div>
@@ -120,7 +120,7 @@ const allTags = getAllTags();
               {component.tags && component.tags.length > 0 && (
                 <div class="mt-4 flex flex-wrap gap-2">
                   {component.tags.map((tag) => (
-                    <Badge class="bg-accent/10 text-accent text-xs">{tag}</Badge>
+                    <Badge class="bg-accent-subtle text-accent text-xs">{tag}</Badge>
                   ))}
                 </div>
               )}
@@ -143,7 +143,7 @@ const allTags = getAllTags();
                       {component.props.map((prop) => (
                         <tr>
                           <td class="py-3 pr-4">
-                            <code class="rounded bg-accent/10 px-2 py-1 text-accent">
+                            <code class="rounded bg-accent-subtle px-2 py-1 text-accent">
                               {prop.name}
                               {prop.required && <span class="text-error">*</span>}
                             </code>
@@ -179,7 +179,7 @@ const allTags = getAllTags();
                       {example.description && (
                         <p class="mb-2 text-sm text-subtle-foreground">{example.description}</p>
                       )}
-                      <pre class="max-w-full overflow-x-auto rounded-xl bg-background-dark p-4 text-sm text-foreground-light" tabindex="0"><code>{example.code}</code></pre>
+                      <pre class="max-w-full overflow-x-auto rounded-xl bg-code-surface p-4 text-sm text-code-foreground" tabindex="0"><code>{example.code}</code></pre>
                     </div>
                   ))}
                 </div>

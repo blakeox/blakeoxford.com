@@ -1,9 +1,9 @@
 import type { Config } from 'tailwindcss';
-import containerQueries from '@tailwindcss/container-queries';
 import typography from '@tailwindcss/typography';
 
 /**
  * Tailwind v4 — design tokens and motion live in src/styles/theme.css.
+ * Container queries are built into Tailwind v4 (`@container`, `@md:`, …).
  * This file only keeps plugins and container padding that still need JS config.
  */
 const config: Config = {
@@ -55,7 +55,7 @@ const config: Config = {
       }),
     },
   },
-  plugins: [containerQueries, typography],
+  plugins: [typography],
 };
 
 export default config;

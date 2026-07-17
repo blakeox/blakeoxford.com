@@ -61,7 +61,7 @@ export async function setupNavVisual(page: Page, cfg: ComponentVisualBaseline) {
 
   if (cfg.openMobileMenu) {
     await page.locator('#nav-toggle').click();
-    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'open');
     await expect(page.locator('#nav-mobile-backdrop')).toHaveAttribute('data-state', 'open');
   }
 }

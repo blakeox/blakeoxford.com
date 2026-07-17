@@ -261,7 +261,6 @@ function isActive(href: string): boolean {
         next ? 'Close navigation menu' : 'Open navigation menu',
       );
       e.burger.classList.toggle('active', next);
-      e.menu.classList.toggle('active', next);
       e.menu.setAttribute('data-state', next ? 'open' : 'closed');
       if (next) e.menu.removeAttribute('inert');
       else e.menu.setAttribute('inert', '');
@@ -274,6 +273,11 @@ function isActive(href: string): boolean {
       }
       document.body.classList.toggle('scroll-locked', next);
     }
+
+    // Bridge for module-side closeMobileMenu() / search open / overlay lifecycle
+    w.__boCloseNavMenu = function () {
+      setOpen(false);
+    };
 
     function wireBurger() {
       var burger = document.getElementById('nav-toggle');
@@ -332,8 +336,15 @@ function isActive(href: string): boolean {
       );
     }
 
-    // Re-wire after late DOM swaps (HMR / persist)
-    document.addEventListener('astro:page-load', wireBurger, { signal: signal });
+    // Re-wire after late DOM swaps (HMR / persist) and close on client navigations
+    document.addEventListener(
+      'astro:page-load',
+      function () {
+        wireBurger();
+        setOpen(false);
+      },
+      { signal: signal },
+    );
   })();
 </script>
 

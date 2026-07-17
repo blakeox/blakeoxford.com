@@ -79,11 +79,11 @@ test.describe('Interactive Elements', () => {
     // Test mobile menu
     await expect(burgerButton).toBeVisible();
     await burgerButton.click();
-    await expect(mobileMenu).toHaveClass(/active/, { timeout: 3000 });
+    await expect(mobileMenu).toHaveAttribute('data-state', 'open', { timeout: 3000 });
     
     // Close menu
     await page.keyboard.press('Escape');
-    await expect(mobileMenu).not.toHaveClass(/active/, { timeout: 3000 });
+    await expect(mobileMenu).toHaveAttribute('data-state', 'closed', { timeout: 3000 });
   });
 
   test('theme toggle should work @essential', async ({ page }) => {

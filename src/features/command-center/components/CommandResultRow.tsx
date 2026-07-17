@@ -189,7 +189,7 @@ export function CommandResultRow({
           {onAsk ? (
             <button
               type="button"
-              className="focus-ring-interactive rounded-md border border-accent/30 bg-accent/10 px-2 py-1 text-xxs font-medium text-accent transition hover:bg-accent/15"
+              className="focus-ring-interactive rounded-md border border-accent/30 bg-accent-subtle px-2 py-1 text-xxs font-medium text-accent transition hover:bg-accent/15"
               aria-label={`Ask about ${item.title}`}
               onClick={(event) => {
                 event.preventDefault();
