@@ -24,7 +24,7 @@ export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({ visible, onSe
 						onClick={() => onSelectPrompt(prompt.prompt)}
 						title={prompt.prompt}
 					>
-						<span className="inline-flex size-8 items-center justify-center rounded-full bg-accent/10 text-base">
+						<span className="inline-flex size-8 items-center justify-center rounded-full bg-accent-subtle text-base">
 							{prompt.icon}
 						</span>
 						<span className="text-sm font-semibold text-foreground group-hover:text-accent-emphasis">{prompt.label}</span>

@@ -261,7 +261,6 @@ function isActive(href: string): boolean {
         next ? 'Close navigation menu' : 'Open navigation menu',
       );
       e.burger.classList.toggle('active', next);
-      e.menu.classList.toggle('active', next);
       e.menu.setAttribute('data-state', next ? 'open' : 'closed');
       if (next) e.menu.removeAttribute('inert');
       else e.menu.setAttribute('inert', '');

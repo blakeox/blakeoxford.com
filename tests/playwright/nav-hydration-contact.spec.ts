@@ -31,10 +31,10 @@ test.describe('NavBar hydration on Contact page', () => {
 
     // Open menu
     await toggle.click();
-    await expect(menu).toHaveClass(/active/);
+    await expect(menu).toHaveAttribute('data-state', 'open');
 
     // Close via keyboard (Escape) to avoid any pointer interception flake
     await page.keyboard.press('Escape');
-    await expect(menu).not.toHaveClass(/active/);
+    await expect(menu).toHaveAttribute('data-state', 'closed');
   });
 });

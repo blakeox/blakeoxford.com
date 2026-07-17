@@ -78,8 +78,6 @@ export function registerNavMobileMenu(): CleanupFn {
     burger.setAttribute('aria-expanded', String(next));
     burger.setAttribute('aria-label', next ? MENU_LABEL_CLOSED : MENU_LABEL_OPEN);
     burger.classList.toggle('active', next);
-
-    menu.classList.toggle('active', next);
     menu.setAttribute('data-state', next ? 'open' : 'closed');
     if (next) {
       menu.removeAttribute('inert');
@@ -200,7 +198,6 @@ export function registerNavMobileMenu(): CleanupFn {
     initial.burger.setAttribute('aria-expanded', 'false');
     initial.burger.setAttribute('aria-label', MENU_LABEL_OPEN);
     initial.burger.classList.remove('active');
-    initial.menu.classList.remove('active');
     initial.menu.setAttribute('data-state', 'closed');
     initial.menu.setAttribute('inert', '');
     if (initial.backdrop) {

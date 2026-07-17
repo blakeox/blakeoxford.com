@@ -1,5 +1,14 @@
 import type { ReactNode, RefObject } from 'react';
 
+import { cn } from '../../utils/cn';
+import {
+  CHAT_DOCK_BACKDROP,
+  CHAT_DOCK_DRAG_HANDLE,
+  CHAT_DOCK_FRAME,
+  CHAT_DOCK_PANEL,
+  CHAT_DOCK_ROOT,
+} from './chatStyles';
+
 type ChatDockProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -14,6 +23,7 @@ type ChatDockProps = {
 /**
  * Corner companion for Ask.
  * Visual thesis: calm glass dock rising from the FAB — presence without taking the page.
+ * Visibility uses Tailwind display utilities (`block`/`hidden`), same contract as OverlayShell.
  */
 export function ChatDock({
   isOpen,
@@ -31,22 +41,18 @@ export function ChatDock({
       aria-hidden={!isOpen}
       inert={!isOpen}
       data-ai-chat-overlay
-      className="ai-chat-overlay pointer-events-none fixed inset-0 z-chat"
-      style={{
-        zIndex: 'var(--z-chat)',
-        display: isOpen ? 'block' : 'none',
-        visibility: isOpen ? 'visible' : 'hidden',
-      }}
+      data-state={isOpen ? 'open' : 'closed'}
+      className={cn(CHAT_DOCK_ROOT, isOpen ? 'block' : 'hidden')}
     >
       <button
         type="button"
-        className="pointer-events-auto absolute inset-0 cursor-pointer bg-overlay-scrim/30 backdrop-blur-[1px] sm:hidden"
+        className={CHAT_DOCK_BACKDROP}
         aria-label="Close assistant"
         tabIndex={-1}
         onClick={onClose}
       />
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center sm:inset-auto sm:bottom-[5.5rem] sm:right-6 sm:justify-end">
+      <div className={CHAT_DOCK_FRAME}>
         <div
           ref={panelRef}
           role="dialog"
@@ -55,17 +61,12 @@ export function ChatDock({
           data-panel
           data-ai-chat-panel
           data-ai-visible={isOpen ? 'true' : 'false'}
-          className={`ai-chat-panel pointer-events-auto flex w-full flex-col overflow-hidden border border-border/50 bg-surface/92 shadow-[0_24px_64px_-12px_rgba(0,0,0,0.28)] backdrop-blur-2xl ${
-            isOpen ? 'opacity-100' : 'opacity-0'
-          } max-h-[min(82dvh,40rem)] rounded-t-[1.25rem] sm:max-h-[min(72dvh,36rem)] sm:w-[min(100vw-3rem,26rem)] sm:rounded-[1.25rem]`}
+          className={cn(CHAT_DOCK_PANEL, isOpen ? 'opacity-100' : 'opacity-0')}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
-          <div
-            className="mx-auto mt-2.5 h-1 w-9 shrink-0 rounded-full bg-border/70 sm:hidden"
-            aria-hidden="true"
-          />
+          <div className={CHAT_DOCK_DRAG_HANDLE} aria-hidden="true" />
           {children}
         </div>
       </div>

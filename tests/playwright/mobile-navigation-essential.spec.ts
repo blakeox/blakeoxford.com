@@ -14,11 +14,11 @@ test.describe('Mobile Navigation Essential', () => {
 
     // Verify mobile menu is present
     await expect(burgerButton).toBeVisible();
-    await expect(mobileMenu).not.toHaveClass(/active/);
+    await expect(mobileMenu).toHaveAttribute('data-state', 'closed');
 
     // Open mobile menu
     await burgerButton.click();
-    await expect(mobileMenu).toHaveClass(/active/, { timeout: 3000 });
+    await expect(mobileMenu).toHaveAttribute('data-state', 'open', { timeout: 3000 });
     await expect(burgerButton).toHaveAttribute('aria-expanded', 'true');
 
     // Test navigation links are actually visible (not just class toggled)
@@ -29,7 +29,7 @@ test.describe('Mobile Navigation Essential', () => {
 
     // Close with escape key
     await page.keyboard.press('Escape');
-    await expect(mobileMenu).not.toHaveClass(/active/, { timeout: 3000 });
+    await expect(mobileMenu).toHaveAttribute('data-state', 'closed', { timeout: 3000 });
     await expect(burgerButton).toHaveAttribute('aria-expanded', 'false');
   });
 
@@ -52,7 +52,7 @@ test.describe('Mobile Navigation Essential', () => {
         if (!el) return false;
         const inert = el.hasAttribute('inert');
         const style = window.getComputedStyle(el);
-        return !inert && el.classList.contains('active') && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0;
+        return !inert && el.getAttribute('data-state') === 'open' && style.display !== 'none' && parseFloat(style.opacity || '1') > 0;
       }, { timeout: 3000 }).catch(() => {});
       await expect(searchOverlay).toBeVisible({ timeout: 3000 });
 
@@ -66,7 +66,7 @@ test.describe('Mobile Navigation Essential', () => {
       const el = document.querySelector('#search-overlay') as HTMLElement | null;
       if (!el) return false;
       const style = window.getComputedStyle(el);
-      return el.classList.contains('active') || style.visibility !== 'hidden' || (parseFloat(style.opacity || '1') > 0);
+      return el.getAttribute('data-state') === 'open' || (style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0);
     });
     if (overlayIntercepts) {
       // Force close via script using instance method if available
@@ -78,7 +78,7 @@ test.describe('Mobile Navigation Essential', () => {
           g.searchOverlay.closeSearchOverlay();
         } else {
           const el = document.getElementById('search-overlay');
-          if (el) { el.classList.remove('active'); el.setAttribute('inert', ''); }
+          if (el) { el.setAttribute('data-state', 'closed'); el.setAttribute('inert', ''); el.classList.add('hidden'); }
         }
       });
       await expect(searchOverlay).not.toBeVisible({ timeout: 5000 });
@@ -86,11 +86,11 @@ test.describe('Mobile Navigation Essential', () => {
 
     // Test mobile menu after search interaction
     await burgerButton.click();
-    await expect(mobileMenu).toHaveClass(/active/, { timeout: 3000 });
+    await expect(mobileMenu).toHaveAttribute('data-state', 'open', { timeout: 3000 });
 
     // Close mobile menu
     await page.keyboard.press('Escape');
-    await expect(mobileMenu).not.toHaveClass(/active/, { timeout: 3000 });
+    await expect(mobileMenu).toHaveAttribute('data-state', 'closed', { timeout: 3000 });
   });
 
   // Test key device categories instead of every device
@@ -132,10 +132,10 @@ test.describe('Mobile Navigation Essential', () => {
 
           // Quick functionality test
           await burgerButton.click();
-          await expect(mobileMenu).toHaveClass(/active/, { timeout: 3000 });
+          await expect(mobileMenu).toHaveAttribute('data-state', 'open', { timeout: 3000 });
 
           await page.keyboard.press('Escape');
-          await expect(mobileMenu).not.toHaveClass(/active/, { timeout: 3000 });
+          await expect(mobileMenu).toHaveAttribute('data-state', 'closed', { timeout: 3000 });
 
         } finally {
           await context.close();

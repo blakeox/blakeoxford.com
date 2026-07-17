@@ -29,11 +29,11 @@ test.describe('Mobile Navigation @extended', () => {
     // Mobile menu should be initially hidden - use robust selector
     const mobileMenu = page.locator('#nav-mobile-links, .mobile-menu').first();
     const isMenuHidden = await mobileMenu.evaluate(el => {
-      const hasActiveClass = el.classList.contains('active');
+      const isOpen = el.getAttribute('data-state') === 'open';
       const styles = window.getComputedStyle(el);
       const isHidden = styles.visibility === 'hidden' || styles.display === 'none';
       const hasHiddenTransform = styles.right === '-100vw' || styles.transform.includes('-100');
-      return !hasActiveClass || isHidden || hasHiddenTransform;
+      return !isOpen || isHidden || hasHiddenTransform;
     });
     
     expect(isMenuHidden).toBe(true);
@@ -52,11 +52,11 @@ test.describe('Mobile Navigation @extended', () => {
     
     // Menu should be active and visible - use robust checking
     const isMenuOpen = await mobileMenu.evaluate(el => {
-      const hasActiveClass = el.classList.contains('active');
+      const isOpen = el.getAttribute('data-state') === 'open';
       const styles = window.getComputedStyle(el);
       const isVisible = styles.visibility !== 'hidden' && styles.display !== 'none';
       const hasValidPosition = !styles.right?.includes('-100') && !styles.transform?.includes('-100');
-      return hasActiveClass || (isVisible && hasValidPosition);
+      return isOpen || (isVisible && hasValidPosition);
     });
     
     expect(isMenuOpen).toBe(true);
@@ -69,11 +69,11 @@ test.describe('Mobile Navigation @extended', () => {
     
     // Menu should be closed - use robust checking
     const isMenuClosed = await mobileMenu.evaluate(el => {
-      const hasActiveClass = el.classList.contains('active');
+      const isOpen = el.getAttribute('data-state') === 'open';
       const styles = window.getComputedStyle(el);
       const isHidden = styles.visibility === 'hidden' || styles.display === 'none';
       const hasHiddenTransform = styles.right === '-100vw' || styles.transform?.includes('-100');
-      return !hasActiveClass || isHidden || hasHiddenTransform;
+      return !isOpen || isHidden || hasHiddenTransform;
     });
     
     expect(isMenuClosed).toBe(true);
@@ -94,11 +94,11 @@ test.describe('Mobile Navigation @extended', () => {
     
     // Verify menu is open
     const isMenuOpen = await mobileMenu.evaluate(el => {
-      const hasActiveClass = el.classList.contains('active');
+      const isOpen = el.getAttribute('data-state') === 'open';
       const styles = window.getComputedStyle(el);
       const isVisible = styles.visibility !== 'hidden' && styles.display !== 'none';
       const hasValidPosition = !styles.right?.includes('-100') && !styles.transform?.includes('-100');
-      return hasActiveClass || (isVisible && hasValidPosition);
+      return isOpen || (isVisible && hasValidPosition);
     });
     
     expect(isMenuOpen).toBe(true);
@@ -109,11 +109,11 @@ test.describe('Mobile Navigation @extended', () => {
     
     // Menu should be closed - verify both class and visual state
     const isMenuClosed = await mobileMenu.evaluate(el => {
-      const hasActiveClass = el.classList.contains('active');
+      const isOpen = el.getAttribute('data-state') === 'open';
       const styles = window.getComputedStyle(el);
       const isHidden = styles.visibility === 'hidden' || styles.display === 'none';
       const hasHiddenTransform = styles.right === '-100vw' || styles.transform?.includes('-100');
-      return !hasActiveClass || isHidden || hasHiddenTransform;
+      return !isOpen || isHidden || hasHiddenTransform;
     });
     
     expect(isMenuClosed).toBe(true);
@@ -141,12 +141,12 @@ test.describe('Mobile Navigation @extended', () => {
     await burgerButton.click();
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
 
-    await expect(mobileMenu).toHaveClass(/active/);
+    await expect(mobileMenu).toHaveAttribute('data-state', 'open');
     await expect(searchOverlay).toHaveAttribute('data-state', 'closed');
 
     await page.keyboard.press('Escape');
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
-    await expect(mobileMenu).not.toHaveClass(/active/);
+    await expect(mobileMenu).toHaveAttribute('data-state', 'closed');
   });
 
   test('should navigate using mobile menu links', async ({ page }) => {
@@ -162,11 +162,11 @@ test.describe('Mobile Navigation @extended', () => {
     
     // Verify menu is open
     const isMenuOpen = await mobileMenu.evaluate(el => {
-      const hasActiveClass = el.classList.contains('active');
+      const isOpen = el.getAttribute('data-state') === 'open';
       const styles = window.getComputedStyle(el);
       const isVisible = styles.visibility !== 'hidden' && styles.display !== 'none';
       const hasValidPosition = !styles.right?.includes('-100') && !styles.transform?.includes('-100');
-      return hasActiveClass || (isVisible && hasValidPosition);
+      return isOpen || (isVisible && hasValidPosition);
     });
     
     expect(isMenuOpen).toBe(true);
@@ -184,11 +184,11 @@ test.describe('Mobile Navigation @extended', () => {
       
       // Mobile menu should be closed after navigation - check both ways
       const isMenuClosedAfterNav = await mobileMenu.evaluate(el => {
-        const hasActiveClass = el.classList.contains('active');
+        const isOpen = el.getAttribute('data-state') === 'open';
         const styles = window.getComputedStyle(el);
         const isHidden = styles.visibility === 'hidden' || styles.display === 'none';
         const hasHiddenTransform = styles.right === '-100vw' || styles.transform?.includes('-100');
-        return !hasActiveClass || isHidden || hasHiddenTransform;
+        return !isOpen || isHidden || hasHiddenTransform;
       });
       
       expect(isMenuClosedAfterNav).toBe(true);
@@ -208,11 +208,11 @@ test.describe('Mobile Navigation @extended', () => {
     
     // Check if mobile menu is active/visible with fallback selectors
     const isMenuActive = await mobileMenu.evaluate(el => {
-      const hasActiveClass = el.classList.contains('active');
+      const isOpen = el.getAttribute('data-state') === 'open';
       const styles = window.getComputedStyle(el);
       const isVisible = styles.visibility !== 'hidden' && styles.display !== 'none';
       const hasValidPosition = !styles.right?.includes('-100') && !styles.transform?.includes('-100');
-      return hasActiveClass || (isVisible && hasValidPosition);
+      return isOpen || (isVisible && hasValidPosition);
     });
     
     expect(isMenuActive).toBe(true);
@@ -254,7 +254,7 @@ test.describe('Mobile Navigation @extended', () => {
     // Open mobile menu
     await burgerButton.click();
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', true, 1500);
-    await expect(mobileMenu).toHaveClass(/active/);
+    await expect(mobileMenu).toHaveAttribute('data-state', 'open');
     
     // Menu should not overflow viewport
     const menuBoundingBox = await mobileMenu.boundingBox();
@@ -265,7 +265,7 @@ test.describe('Mobile Navigation @extended', () => {
     // Close menu
     await page.keyboard.press('Escape');
     await waitForMenuState(page, '#nav-mobile-links, .mobile-menu', false, 1500);
-    await expect(mobileMenu).not.toHaveClass(/active/);
+    await expect(mobileMenu).toHaveAttribute('data-state', 'closed');
   });
 });
 
@@ -303,11 +303,11 @@ test.describe('Mobile Device Navigation @extended', () => {
 
         await burgerButton.click();
         await waitForKeyboardResponse(page);
-        await expect(mobileMenu).toHaveClass(/active/);
+        await expect(mobileMenu).toHaveAttribute('data-state', 'open');
 
         await page.keyboard.press('Escape');
         await waitForKeyboardResponse(page);
-        await expect(mobileMenu).not.toHaveClass(/active/);
+        await expect(mobileMenu).toHaveAttribute('data-state', 'closed');
       } finally {
         await context.close();
       }

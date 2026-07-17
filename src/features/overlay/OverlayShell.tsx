@@ -1,5 +1,6 @@
 import type { ReactNode, RefObject } from 'react';
 
+import { cn } from '../../utils/cn';
 import {
  OVERLAY_BACKDROP,
  OVERLAY_DRAG_HANDLE,
@@ -45,10 +46,6 @@ export function OverlayShell({
  ...restRootProps
  } = rootProps ?? {};
  const zClass = variant === 'ask' ? 'z-chat' : 'z-search';
- const zIndex = variant === 'ask' ? 'var(--z-chat)' : 'var(--z-search)';
- const baseClassName = `fixed inset-0 flex ${zClass} ${
- isOpen ? 'active opacity-100' : 'pointer-events-none opacity-0'
- } transition duration-normal ease-standard motion-reduce:transition-none`;
 
  return (
  <div
@@ -56,14 +53,17 @@ export function OverlayShell({
  role="presentation"
  aria-hidden={!isOpen}
  inert={!isOpen}
- className={[baseClassName, rootClassName].filter(Boolean).join(' ')}
- style={{
- zIndex,
- ...(isOpen
- ? { display: 'block', visibility: 'visible' as const, opacity: 1 }
- : { display: 'none', visibility: 'hidden' as const, opacity: 0 }),
- ...rootStyle,
- }}
+ data-state={isOpen ? 'open' : 'closed'}
+ className={cn(
+  // Visibility is driven by toggling the display utility (flex/hidden) so no
+  // inline display styles and no !important are needed. Both utilities live in
+  // Tailwind's utilities layer, so exactly one applies deterministically.
+  'overlay-root fixed inset-0 transition duration-normal ease-standard motion-reduce:transition-none',
+  zClass,
+  isOpen ? 'flex opacity-100' : 'hidden pointer-events-none opacity-0',
+  rootClassName,
+ )}
+ style={rootStyle}
  {...restRootProps}
  >
  <button
@@ -80,7 +80,7 @@ export function OverlayShell({
  role="dialog"
  aria-modal="true"
  aria-labelledby={labelledBy}
- className={`${panelClass}${variant === 'ask' ? ' ai-chat-panel' : ''}`}
+ className={cn(panelClass, variant === 'ask' && 'ai-chat-panel')}
  data-panel
  data-ai-chat-panel={variant === 'ask' ? true : undefined}
  data-ai-visible={variant === 'ask' ? (isOpen ? 'true' : 'false') : undefined}

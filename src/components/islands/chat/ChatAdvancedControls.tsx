@@ -22,7 +22,7 @@ export function ChatAdvancedControls({
 	const chip = (active: boolean) =>
 		`focus-ring-interactive inline-flex items-center rounded-full border px-2.5 py-1 text-xxs font-medium transition ${
 			active
-				? 'border-accent/40 bg-accent/10 text-accent'
+				? 'border-accent/40 bg-accent-subtle text-accent'
 				: 'border-border/50 text-muted-foreground hover:border-accent/50 hover:text-accent'
 		}`;
 

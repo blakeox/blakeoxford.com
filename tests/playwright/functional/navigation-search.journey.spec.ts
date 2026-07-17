@@ -47,7 +47,7 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
         const el = document.getElementById('search-overlay');
         if (!el) return true;
         const style = window.getComputedStyle(el as HTMLElement);
-        return (el.dataset.state === 'closed' && (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity || '0') === 0)) || !el.classList.contains('active');
+        return el.dataset.state === 'closed' || style.display === 'none' || el.classList.contains('hidden');
       }, { timeout: 8000 });
     } catch (err) {
       // If the page was closed, skip diagnostics that require page context

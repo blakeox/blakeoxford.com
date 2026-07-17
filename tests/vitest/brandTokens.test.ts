@@ -33,6 +33,11 @@ describe('brand token contract', () => {
     expect(themeCss).toContain('--transition-duration-moderate');
     expect(themeCss).toContain('--duration-moderate');
   });
+
+  it('bridges named z-index utilities including chat launcher', () => {
+    expect(themeCss).toContain('--z-chat-launcher');
+    expect(themeCss).toContain('--z-index-chat-launcher');
+  });
 });
 
 describe('interactive focus ring utility', () => {

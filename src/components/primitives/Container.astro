@@ -1,19 +1,22 @@
 ---
 /**
  * Container - Responsive container with consistent padding and max-width
- * 
+ *
  * Provides standard container patterns used throughout the site.
- * 
+ * Padding uses `.layout-gutter` (tokenized clamps from theme.css).
+ *
  * @example
  * <Container size="lg">
  * <h1>Page Content</h1>
  * </Container>
  */
 
+import { cn } from '../../utils/cn';
+
 export interface Props {
  /** Container max-width */
  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
- /** Apply padding */
+ /** Apply tokenized horizontal padding */
  padding?: boolean;
  /** Center content */
  center?: boolean;
@@ -33,7 +36,6 @@ const {
  class: className = '',
 } = props;
 
-// Size styles (matching common patterns in codebase)
 const sizeStyles = {
  sm: 'max-w-2xl',
  md: 'max-w-4xl',
@@ -44,13 +46,13 @@ const sizeStyles = {
 
 const sizeKey = size ?? 'lg';
 
-const classes = [
+const classes = cn(
  center && 'mx-auto',
  sizeKey !== 'full' && 'w-full',
  sizeStyles[sizeKey],
- padding && 'px-4 sm:px-6 lg:px-8',
+ padding && 'layout-gutter',
  className,
-].filter(Boolean).join(' ');
+);
 ---
 
 <Element class={classes}>

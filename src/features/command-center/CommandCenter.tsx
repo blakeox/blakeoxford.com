@@ -315,11 +315,9 @@ export default function CommandCenter() {
  variant="find"
  rootProps={{
  'data-command-center': true,
- 'data-state': isOpen ? 'open' : 'closed',
  'data-search-loading': isLoading ? 'true' : 'false',
- className: `command-center group fixed inset-0 z-search flex ${
- isOpen ? 'active opacity-100' : 'pointer-events-none opacity-0'
- } transition duration-normal ease-standard motion-reduce:transition-none`,
+ // Visibility + layout come from OverlayShell (.overlay-root, data-state).
+ className: 'command-center group',
  }}
  onPanelClick={(event) => event.stopPropagation()}
  onTouchStart={handleTouchStart}

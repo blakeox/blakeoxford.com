@@ -31,10 +31,10 @@ export const OVERLAY_FOOTER =
  'border-t border-border/40 px-4 py-2 text-xxs text-subtle-foreground sm:text-xs';
 
 export const SUGGESTION_CHIP =
- 'focus-ring-interactive rounded-full border border-border/55 bg-surface/40 px-3 py-1.5 text-xs text-muted-foreground transition hover:border-accent/40 hover:bg-accent/5 hover:text-accent';
+ 'focus-ring-interactive rounded-full border border-border/55 bg-surface/40 px-3 py-1.5 text-xs text-muted-foreground transition hover:border-accent/40 hover:bg-accent-subtle hover:text-accent';
 
 export const SUGGESTION_CHIP_ACCENT =
- 'focus-ring-interactive inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent transition hover:bg-accent/15';
+ 'focus-ring-interactive inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent-subtle px-3 py-1.5 text-xs font-medium text-accent transition hover:bg-accent/15';
 
 export const SECTION_LABEL =
  'px-1 text-xxs font-semibold uppercase tracking-label text-subtle-foreground';
@@ -42,5 +42,5 @@ export const SECTION_LABEL =
 export const RESULT_ROW_BASE =
  'flex items-center gap-3 rounded-lg px-3 py-2 transition-colors';
 
-export const RESULT_ROW_ACTIVE = 'bg-accent/12 ring-1 ring-inset ring-accent/25';
+export const RESULT_ROW_ACTIVE = 'bg-accent-subtle ring-1 ring-inset ring-accent/25';
 export const RESULT_ROW_IDLE = 'hover:bg-surface-subtle';

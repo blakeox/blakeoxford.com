@@ -66,10 +66,10 @@ test.describe('Page layout after overlays @essential', () => {
 
   test('opening search while menu is open keeps a single scroll lock owner', async ({ page }) => {
     await page.locator('#nav-toggle').click();
-    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'open');
 
     await page.locator('#search-toggle').click();
-    await expect(page.locator('#nav-mobile-links')).not.toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'closed');
     await page.locator('#search-overlay').waitFor({ state: 'attached', timeout: 10000 });
 
     const duringSearch = await readLayout(page);
@@ -84,25 +84,25 @@ test.describe('Page layout after overlays @essential', () => {
 
   test('mobile menu closes on Astro client navigation', async ({ page }) => {
     await page.locator('#nav-toggle').click();
-    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'open');
 
     await page.evaluate(() => {
       document.dispatchEvent(new Event('astro:page-load'));
     });
 
-    await expect(page.locator('#nav-mobile-links')).not.toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'closed');
     const after = await readLayout(page);
     expect(after.bodyPosition).toBe('static');
   });
 
   test('mobile menu closes when viewport expands to desktop', async ({ page }) => {
     await page.locator('#nav-toggle').click();
-    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'open');
 
     await page.setViewportSize({ width: 1280, height: 800 });
     await waitForViewportSettle(page, 100);
 
-    await expect(page.locator('#nav-mobile-links')).not.toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'closed');
     const after = await readLayout(page);
     expect(after.bodyPosition).toBe('static');
   });

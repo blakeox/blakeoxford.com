@@ -1,5 +1,6 @@
 ---
 import SocialIcon from './SocialIcon.astro';
+import { cn } from '../../utils/cn';
 
 interface Props {
  href: string;
@@ -12,7 +13,10 @@ const { href, icon, label, class: className = '' } = Astro.props;
 ---
 
 <a
- class={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-accent/10 hover:border-accent transition-colors ${className}`}
+ class={cn(
+  'inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-accent-subtle hover:border-accent transition-colors',
+  className,
+ )}
  href={href}
  target='_blank'
  rel='noopener noreferrer'

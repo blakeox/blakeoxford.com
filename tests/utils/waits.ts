@@ -84,7 +84,7 @@ export async function waitForCondition(page: Page, predicate: () => Promise<bool
   return false;
 }
 
-// Mobile menu state helper using existing DOM heuristics
+// Mobile menu state helper — prefers data-state, falls back to computed visibility
 export async function waitForMenuState(page: Page, selector: string, open: boolean, timeout = 2000) {
   await waitForCondition(
     page,
@@ -93,11 +93,14 @@ export async function waitForMenuState(page: Page, selector: string, open: boole
         ({ sel, shouldBeOpen }) => {
           const el = document.querySelector<HTMLElement>(sel);
             if (!el) return false;
-            const hasActiveClass = el.classList.contains('active');
+            const dataState = el.getAttribute('data-state');
+            if (dataState === 'open' || dataState === 'closed') {
+              return shouldBeOpen ? dataState === 'open' : dataState === 'closed';
+            }
             const styles = window.getComputedStyle(el);
             const isVisible = styles.visibility !== 'hidden' && styles.display !== 'none';
             const offscreen = styles.right === '-100vw' || styles.transform.includes('-100');
-            const computedOpen = hasActiveClass || (isVisible && !offscreen);
+            const computedOpen = isVisible && !offscreen;
             return shouldBeOpen ? computedOpen : !computedOpen;
         },
         { sel: selector, shouldBeOpen: open }

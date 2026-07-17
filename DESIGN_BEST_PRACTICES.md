@@ -21,10 +21,10 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 |------|--------|------|
 | 1. Values | `:root` custom properties | OKLCH colors, radius, shadows, motion, fonts, z-index, layout chrome |
 | 2. Dark remap | `&[data-theme='dark']`, `&.dark` | Semantic tokens flip (`--color-background`, `--color-foreground`, emphasis, glass, etc.) |
-| 3. Tailwind bridge | `@theme inline` | Exposes utilities (`bg-surface`, `text-accent-emphasis`, `shadow-overlay`, `duration-normal`, `z-nav`) |
+| 3. Tailwind bridge | `@theme inline` | Exposes utilities (`bg-surface`, `text-accent-emphasis`, `shadow-overlay`, `duration-normal`, `z-nav`). Z-index tokens use the `--z-index-*` namespace so utilities become `z-nav`, `z-chat`, `z-chat-launcher`, `z-search`. |
 | 4. Build | `@tailwindcss/vite` in `astro.config.mjs` | Resolves `@import "tailwindcss"` from `global.css` |
 
-`tailwind.config.ts` is **not** the color map. It only keeps plugins (`typography`, `container-queries`), container padding, and a few custom screens.
+`tailwind.config.ts` is **not** the color map. It only keeps the typography plugin, container padding, and a few custom screens.
 
 ### Architecture features in use
 
@@ -33,6 +33,7 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 - **OKLCH + `color-mix()`** — perceptual brand colors and theme-aware subtles (`--color-accent-subtle`)
 - **Always-dark helpers** — `overlay-scrim`, `code-surface` / `code-foreground` for scrims and code samples (not remapped)
 - **Cascade layers** — base styles in `@layer base`; shared chrome in `@layer components`
+- **Class composer** — `cn()` in `src/utils/cn.ts` for primitives (no Tailwind merge; keep variants controlled)
 
 ### Token categories (actual)
 
@@ -40,14 +41,14 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 |----------|----------|-----------|
 | Color | `--color-accent`, `--color-surface`, `--color-muted-foreground` | `bg-accent`, `text-muted-foreground` |
 | Emphasis | `--color-accent-emphasis`, `--color-error-emphasis` | `text-accent-emphasis` |
-| Subtle washes | `--color-accent-subtle` via `color-mix` | `bg-accent-subtle` |
+| Subtle washes | `--color-accent-subtle` via `color-mix` | `bg-accent-subtle` (prefer over `bg-accent/10`) |
 | Overlay / code | `--color-overlay-scrim`, `--color-code-surface` | `bg-overlay-scrim`, `bg-code-surface` |
 | Typography | `--font-sans`, `--font-heading`, `--text-xxs`, `--tracking-label` | `font-heading`, `text-xxs` |
 | Radius | `--radius` … `--radius-2xl` | `rounded`, `rounded-xl` |
 | Shadows | `--shadow-sm` … `--shadow-2xl`, `--shadow-overlay` | `shadow-md`, `shadow-overlay` |
 | Motion | `--duration-fast` … `--duration-slow` | `duration-fast`, `duration-moderate` |
-| Z-index | `--z-nav`, `--z-chat`, `--z-search` | `z-nav`, `z-chat` |
-| Layout | `--container-padding*`, `--layout-max-2xl`, `--nav-height` | `container`, `max-w-container-2xl` |
+| Z-index | `--z-nav`, `--z-chat`, `--z-chat-launcher`, `--z-search` | `z-nav`, `z-chat`, `z-chat-launcher`, `z-search` |
+| Layout | `--container-padding*`, `--layout-max-2xl`, `--nav-height` | `layout-gutter` (via `Container`), `max-w-container-2xl` |
 
 There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind’s type and spacing scales plus the tokens above.
 
@@ -73,8 +74,8 @@ There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind�
 
 **Component-based responsive design** - Components adapt to their container width, not the viewport.
 
-#### Plugin Support
-- `@tailwindcss/container-queries` (already installed)
+#### Built-in Tailwind v4 support
+- Container queries ship with Tailwind v4 (`@container`, `@sm:` … `@7xl:`)
 - Excellent browser support: Chrome 106+, Safari 16+, Firefox 110+
 
 #### Usage Patterns
@@ -88,13 +89,13 @@ There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind�
 </div>
 ```
 
-**Container Query Modifiers**:
-- `@sm:` - 384px container width
-- `@md:` - 448px container width
-- `@lg:` - 512px container width
-- `@xl:` - 576px container width
-- `@2xl:` - 672px container width
-- `@3xl:` - 768px container width
+**Container Query Modifiers** (from Tailwind `--container-*`):
+- `@sm:` - 24rem (384px)
+- `@md:` - 28rem (448px)
+- `@lg:` - 32rem (512px)
+- `@xl:` - 36rem (576px)
+- `@2xl:` - 42rem (672px)
+- `@3xl:` - 48rem (768px)
 
 **Practical Examples**:
 ```astro
@@ -142,7 +143,7 @@ For page-level layouts that should respond to viewport:
 - `md`: 768px
 - `lg`: 1024px
 - `xl`: 1280px
-- `2xl`: 1536px
+- `2xl`: 1440px (project container screen; not Tailwind’s default 1536px)
 
 Use for:
 - Global navigation changes
@@ -341,9 +342,33 @@ section:has(.error)::before {
 
 ## 11. Theming & Mode Strategy
 
-- Single `.dark` class toggle at root; no nested theme scopes.
 - Derive user preference via `prefers-color-scheme`; persist after first paint.
 - Let tokens drive differences—avoid duplicating structural markup/styles for dark mode.
+
+### Dual signaling: `.dark` + `data-theme` (intentional)
+
+`src/lib/theme.ts` writes **both** signals to `<html>` on every theme change, and each has a distinct job:
+
+| Signal | Consumer | Why it exists |
+|--------|----------|---------------|
+| `data-theme="dark"` \| `"light"` | CSS token remap in `theme.css` (`:root[data-theme='dark']`) and SSR/FOUC cookie | Source of truth for semantic token flips; readable server-side |
+| `.dark` class | Tailwind's `dark:` variant (`@custom-variant dark (&:where(.dark, .dark *))` in `global.css`) | Lets the few unavoidable `dark:*` utilities resolve |
+| `data-theme-preference` | Theme-toggle icon state (sun/moon/system) | Tracks the *preference* (incl. `system`), not the resolved theme |
+
+Rules:
+
+- Prefer remapped semantic utilities (`bg-surface`, `text-foreground`) — they need neither signal in markup.
+- If you must branch, rely on the token remap (driven by `data-theme`), not `dark:*` pairs.
+- Never write only one of the two signals by hand; go through `applyTheme()` / `setThemePreference()` in `theme.ts` so both stay in sync.
+- `color-scheme` is also set on the root element for native form/scrollbar theming.
+
+### Overlay visibility contract
+
+- Overlays (`OverlayShell` → `.overlay-root`, mobile menu, backdrop, `ChatDock`) toggle visibility via `data-state="open" | "closed"` and Tailwind display utilities (`flex`/`block` vs `hidden`), not inline `display`/`visibility` styles.
+- Search/command center: `OverlayShell` owns the contract; Command Center only adds `command-center` chrome classes.
+- Mobile menu: CSS keys off `[data-state='open']`. The burger still uses `.active` for the icon morph only.
+- Ask companion: `ChatDock` uses the same `data-state` + `block`/`hidden` pattern; shared strings live in `src/features/chat/chatStyles.ts`.
+- The only remaining `!important` in `components.css` lives in `prefers-reduced-motion` blocks, where forcibly killing motion is the intended, accessible behavior.
 
 ## 12. Content Formatting
 

@@ -116,7 +116,7 @@ export const MatchedCTA = memo(function MatchedCTA({
 		return (
 			<a
 				href={matchedCTA.ctaLink}
-				className="focus-ring-interactive inline-flex items-center gap-2 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-xs font-medium text-accent transition hover:bg-accent/10"
+				className="focus-ring-interactive inline-flex items-center gap-2 rounded-lg border border-accent/30 bg-accent-subtle px-3 py-2 text-xs font-medium text-accent transition hover:bg-accent/15"
 				onClick={() => {
 					autoragEvents.ctaClick({
 						type: 'quality-suggestion',
@@ -134,7 +134,7 @@ export const MatchedCTA = memo(function MatchedCTA({
 	}
 
 	return (
-		<div className="mt-2 rounded-lg border border-accent/25 bg-accent/5 p-3">
+		<div className="mt-2 rounded-lg border border-accent/25 bg-accent-subtle p-3">
 			<p className="mb-2 text-sm text-muted-foreground">{matchedCTA.message}</p>
 			<a
 				href={matchedCTA.ctaLink}

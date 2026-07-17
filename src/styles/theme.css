@@ -118,6 +118,7 @@
   --z-nav: 40;
   --z-nav-drawer: 45;
   --z-chat: 50;
+  --z-chat-launcher: 51;
   --z-search: 55;
 
   /* Radius */
@@ -373,9 +374,11 @@
   --animate-slide-up: slide-up var(--duration) var(--ease-emphasized) both;
   --animate-float: float 3s var(--ease-standard) infinite;
 
-  /* Named z-index utilities require the --z-index-* namespace in Tailwind v4 */
+  /* Named z-index utilities require the --z-index-* namespace in Tailwind v4
+     (produces z-nav, z-chat, z-chat-launcher, z-search, …). */
   --z-index-nav: var(--z-nav);
   --z-index-nav-drawer: var(--z-nav-drawer);
   --z-index-chat: var(--z-chat);
+  --z-index-chat-launcher: var(--z-chat-launcher);
   --z-index-search: var(--z-search);
 }

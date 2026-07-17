@@ -19,10 +19,10 @@ All design tokens live in `src/styles/theme.css`:
 2. Remap semantic tokens under `&[data-theme='dark']` / `&.dark`.
 3. Bridge to Tailwind with `@theme inline` in the same file.
 
-`tailwind.config.ts` only keeps plugins, container padding, and a few screens — not color maps.
+`tailwind.config.ts` only keeps the typography plugin, container padding, and a few screens — not color maps.
 Tailwind is applied via `@tailwindcss/vite` in `astro.config.mjs` and `@import "tailwindcss"` in `global.css`.
-
-**Required practice**: use semantic utilities (`bg-surface`, `text-foreground`, `border-border`) instead of hardcoded values or raw palette scales.
+Prefer `bg-accent-subtle` / `text-accent-emphasis` over ad-hoc `bg-accent/10` opacity suffixes when a semantic wash exists.
+Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 
 ### Color tokens
 

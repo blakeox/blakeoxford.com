@@ -4,6 +4,8 @@
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { OVERLAY_ICON_BUTTON } from '../../../features/overlay/overlayStyles';
+import { CHAT_ACCENT_CHIP, CHAT_TOGGLE_ACTIVE } from '../../../features/chat/chatStyles';
+import { cn } from '../../../utils/cn';
 import type { ChatHeaderProps } from './types';
 
 function MenuButton({
@@ -161,7 +163,7 @@ export const ChatHeader = memo(function ChatHeader({
 						Ask
 					</p>
 					{isListening ? (
-						<span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xxs font-medium text-accent">
+						<span className={CHAT_ACCENT_CHIP}>
 							<span className="size-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
 							Listening
 						</span>
@@ -200,9 +202,10 @@ export const ChatHeader = memo(function ChatHeader({
 				<button
 					ref={toggleRef}
 					type="button"
-					className={`${OVERLAY_ICON_BUTTON} ${
-						menuOpen || showAdvancedControls ? 'border-accent/50 bg-accent/10 text-accent' : ''
-					}`}
+					className={cn(
+						OVERLAY_ICON_BUTTON,
+						(menuOpen || showAdvancedControls) && CHAT_TOGGLE_ACTIVE,
+					)}
 					aria-label="Assistant options"
 					aria-expanded={menuOpen}
 					aria-haspopup="menu"

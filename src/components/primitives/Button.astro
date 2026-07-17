@@ -1,14 +1,16 @@
 ---
 /**
  * Button - Reusable button/link component
- * 
+ *
  * Provides consistent button styling with support for different variants,
  * sizes, and states. Can render as button or link.
- * 
+ *
  * @example
  * <Button variant="primary" href="/projects">View Projects</Button>
  * <Button variant="outline" size="sm">Learn More</Button>
  */
+
+import { cn } from '../../utils/cn';
 
 export interface Props {
  /** Button visual variant */
@@ -52,25 +54,22 @@ const variantStyles = {
  outline: 'border border-foreground/20 bg-transparent text-foreground hover:border-accent hover:text-accent-emphasis focus-visible:ring-accent/60',
  ghost: 'border border-transparent bg-transparent text-foreground/85 hover:text-accent-emphasis',
  link: 'border border-transparent bg-transparent px-0 text-accent-emphasis hover:text-accent hover:underline',
-};
+} as const;
 
 const sizeStyles = {
  sm: 'min-h-[2.25rem] px-3.5 py-1.5 text-sm',
  md: 'min-h-[2.75rem] px-5 py-2.5 text-sm',
  lg: 'min-h-[3.25rem] px-6 py-3 text-base',
-};
+} as const;
 
-const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-[color,background-color,border-color,transform,box-shadow] duration-normal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
-const sizeClass = variant === 'link' ? 'p-0 text-sm' : sizeStyles[size];
-
-const classes = [
- baseClasses,
+const classes = cn(
+ 'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-[color,background-color,border-color,transform,box-shadow] duration-normal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
  variantStyles[variant],
- sizeClass,
+ variant === 'link' ? 'p-0 text-sm' : sizeStyles[size],
  fullWidth && 'w-full',
  disabled && 'opacity-50 cursor-not-allowed',
  className,
-].filter(Boolean).join(' ');
+);
 
 const Element = href ? 'a' : 'button';
 const elementProps = href
