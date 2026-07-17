@@ -5,11 +5,9 @@ import Stack from '../../components/primitives/Stack.astro';
 import Section from '../../components/primitives/Section.astro';
 import PageHero from '../../components/composites/PageHero.astro';
 import Grid from '../../components/primitives/Grid.astro';
-import Flex from '../../components/primitives/Flex.astro';
 import Button from '../../components/primitives/Button.astro';
 import ButtonGroup from '../../components/composites/ButtonGroup.astro';
 import StatsCard from '../../components/composites/StatsCard.astro';
-import BadgePill from '../../components/primitives/BadgePill.astro';
 import { getProjectsSorted } from '../../content/projects/getProjects';
 
 const meta = (await import('../../content/projects/_meta.json')).default;
@@ -25,30 +23,29 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
  <!-- Hero Section -->
- <PageHero fullScreen={true} includeBlurOrbs={true} id="projects-hero">
- <div class="section-intro max-w-4xl space-y-8">
+ <PageHero fullScreen={true} includeBlurOrbs={false} id="projects-hero">
+ <div class="section-intro-left max-w-3xl space-y-7">
  <span class="section-kicker">{hero.kicker}</span>
- <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground">
+ <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-tight tracking-tight text-foreground">
  Selected Projects
  </h1>
- <p class="text-lg sm:text-xl md:text-2xl leading-relaxed text-muted-foreground">
- Systems architecture, automation, and digital transformation work that delivered measurable results. Each engagement combines technical depth with the change programming needed to keep adoption high.
+ <p class="text-lg sm:text-xl leading-relaxed text-muted-foreground">
+ Systems architecture, automation, and digital transformation work with measurable results.
  </p>
  
- <Flex wrap gap="sm" justify="center" class="text-xs font-semibold uppercase tracking-label text-subtle-foreground" role="list" aria-label="Focus areas">
+ <ul class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground" role="list" aria-label="Focus areas">
  {hero.focusAreas.map((area) => (
- <span role="listitem">
- <BadgePill size="sm">
- {area}
- </BadgePill>
- </span>
+ <li class="flex items-center gap-2">
+ <span class="size-1 rounded-full bg-accent" aria-hidden="true"></span>
+ <span>{area}</span>
+ </li>
  ))}
- </Flex>
+ </ul>
 
- <div class="flex flex-wrap justify-center gap-4 pt-2">
+ <ButtonGroup align="start" responsive class="pt-1">
  <Button variant="primary" href={hero.primaryCta.href}>{hero.primaryCta.label}</Button>
- <Button variant="outline" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</Button>
- </div>
+ <Button variant="ghost" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</Button>
+ </ButtonGroup>
  </div>
  </PageHero>
 
@@ -56,15 +53,12 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
  <Section
  padding="lg"
  container="xl"
- class="border-t border-border/20 bg-background relative overflow-hidden"
+ class="border-t border-border/30 bg-background"
  role="region"
  aria-labelledby="projects-grid-heading"
  data-layout-section="projects-grid"
  >
- <!-- Subtle blur orb for visual interest -->
- <div class="absolute top-1/2 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
- 
- <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-grid-inner">
+ <Stack space="xl" class="text-pretty" data-layout-shell="projects-grid-inner">
  <Stack space="md" class="max-w-3xl">
  <span class="section-kicker w-fit">{meta.grid.kicker}</span>
  <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground">
@@ -87,15 +81,12 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
  <Section
  padding="lg"
  container="xl"
- class="border-t border-border/20 bg-surface-subtle/40 relative overflow-hidden"
+ class="border-t border-border/30 bg-surface-subtle/40"
  role="region"
  aria-labelledby="results-heading"
  data-layout-section="projects-impact"
  >
- <!-- Accent blur orb for visual depth -->
- <div class="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
- 
- <Stack space="xl" class="text-pretty relative z-10" data-layout-shell="projects-impact-inner">
+ <Stack space="xl" class="text-pretty" data-layout-shell="projects-impact-inner">
  <Stack space="md" class="max-w-3xl">
  <span class="section-kicker w-fit">Portfolio signals</span>
  <h2 id="results-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground">

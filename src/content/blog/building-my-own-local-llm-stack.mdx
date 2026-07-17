@@ -8,7 +8,7 @@ draft: false
 ---
 
 <div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10 rounded-3xl p-12 md:p-16 my-12 border border-accent/20">
-  <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+  <div className="absolute top-0 right-0 w-96 h-96 bg-accent-subtle rounded-full blur-3xl"></div>
   <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
   <div className="relative z-10">
     <div className="flex items-center gap-4 mb-8">
@@ -34,12 +34,12 @@ draft: false
 </div>
 
 <div className="grid md:grid-cols-2 gap-8 my-12">
-  <div className="bg-gradient-to-br from-red-500/10 to-rose-500/5 p-8 rounded-2xl border-l-4 border-red-500">
+  <div className="bg-error-subtle p-8 rounded-2xl border-l-4 border-error">
     <div className="text-4xl mb-4">🤔</div>
     <h3 className="text-2xl font-bold mb-4 text-error-emphasis">The Problem</h3>
     <p className="text-lg leading-relaxed opacity-90">One too many <em>"maybe I should not paste this"</em> hesitations made me realize I needed a better solution.</p>
   </div>
-  <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/5 p-8 rounded-2xl border-l-4 border-green-500">
+  <div className="bg-success-subtle p-8 rounded-2xl border-l-4 border-success">
     <div className="text-4xl mb-4">✨</div>
     <h3 className="text-2xl font-bold mb-4 text-success-emphasis">The Solution</h3>
     <p className="text-lg leading-relaxed opacity-90">A <strong>self-contained, self-healing LLM stack</strong> running on my Mac Mini — private, fast, and entirely under my control.</p>
@@ -77,8 +77,8 @@ draft: false
   <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-primary/5 to-accent/5 blur-3xl"></div>
   <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-    <div className="group relative overflow-hidden blog-bg-green blog-card-colored">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-all duration-300"></div>
+    <div className="group relative overflow-hidden rounded-2xl border border-success/30 bg-success-subtle p-6 shadow-sm">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-success/10 rounded-full blur-2xl group-hover:bg-success/20 transition-all duration-300"></div>
       <div className="relative">
         <div className="text-6xl mb-4">💻</div>
         <h3 className="text-2xl font-bold mb-3 text-success-emphasis">Mac Mini (M1)</h3>
@@ -86,8 +86,8 @@ draft: false
       </div>
     </div>
 
-    <div className="group relative overflow-hidden blog-bg-yellow blog-card-colored">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl group-hover:bg-yellow-500/20 transition-all duration-300"></div>
+    <div className="group relative overflow-hidden rounded-2xl border border-warning/30 bg-warning-subtle p-6 shadow-sm">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-full blur-2xl group-hover:bg-warning/20 transition-all duration-300"></div>
       <div className="relative">
         <div className="text-6xl mb-4">🤖</div>
         <h3 className="text-2xl font-bold mb-3 text-warning-emphasis">Ollama</h3>
@@ -95,8 +95,8 @@ draft: false
       </div>
     </div>
 
-    <div className="group relative overflow-hidden blog-bg-purple blog-card-colored">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all duration-300"></div>
+    <div className="group relative overflow-hidden rounded-2xl border border-accent/30 bg-accent-subtle p-6 shadow-sm">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-accent-subtle rounded-full blur-2xl group-hover:bg-accent/20 transition-all duration-300"></div>
       <div className="relative">
         <div className="text-6xl mb-4">🖥️</div>
         <h3 className="text-2xl font-bold mb-3 text-accent-emphasis">Open WebUI</h3>
@@ -104,8 +104,8 @@ draft: false
       </div>
     </div>
 
-    <div className="group relative overflow-hidden blog-bg-pink blog-card-colored">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl group-hover:bg-pink-500/20 transition-all duration-300"></div>
+    <div className="group relative overflow-hidden rounded-2xl border border-accent/30 bg-accent-subtle p-6 shadow-sm">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-accent-subtle rounded-full blur-2xl group-hover:bg-accent/20 transition-all duration-300"></div>
       <div className="relative">
         <div className="text-6xl mb-4">🔒</div>
         <h3 className="text-2xl font-bold mb-3 text-accent-emphasis">Cloudflare Tunnel</h3>
@@ -113,8 +113,8 @@ draft: false
       </div>
     </div>
 
-    <div className="group relative overflow-hidden blog-bg-blue blog-card-colored">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-300"></div>
+    <div className="group relative overflow-hidden rounded-2xl border border-info/30 bg-info/10 p-6 shadow-sm">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-info/10 rounded-full blur-2xl group-hover:bg-info/20 transition-all duration-300"></div>
       <div className="relative">
         <div className="text-6xl mb-4">⚡</div>
         <h3 className="text-2xl font-bold mb-3 text-info-emphasis">LaunchDaemons</h3>
@@ -122,8 +122,8 @@ draft: false
       </div>
     </div>
 
-    <div className="group relative overflow-hidden blog-bg-red blog-card-colored">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all duration-300"></div>
+    <div className="group relative overflow-hidden rounded-2xl border border-error/30 bg-error-subtle p-6 shadow-sm">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-error/10 rounded-full blur-2xl group-hover:bg-error/20 transition-all duration-300"></div>
       <div className="relative">
         <div className="text-6xl mb-4">🛡️</div>
         <h3 className="text-2xl font-bold mb-3 text-error-emphasis">SSH Hardening</h3>
@@ -135,7 +135,7 @@ draft: false
 </div>
 
 <div className="relative overflow-hidden bg-gradient-to-br from-accent/5 via-primary/5 to-accent/5 rounded-3xl p-10 my-16 border-2 border-accent/30">
-  <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl"></div>
+  <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent-subtle rounded-full blur-3xl"></div>
   <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
   <div className="relative text-center max-w-4xl mx-auto">
     <p className="text-2xl md:text-3xl leading-relaxed italic font-medium">
@@ -150,7 +150,7 @@ draft: false
 ---
 
 <div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 dark:from-orange-400/10 dark:to-red-400/10 px-8 py-4 rounded-full border border-orange-500/30 mb-6">
+  <div className="inline-flex items-center gap-3 bg-warning-subtle px-8 py-4 rounded-full border border-warning/30 mb-6">
     <div className="text-4xl">🔨</div>
     <span className="text-xl font-semibold text-warning-emphasis">Implementation Journey</span>
   </div>
@@ -166,7 +166,7 @@ draft: false
 
     {/* Step 1 */}
     <div className="relative pl-0 md:pl-20">
-      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">1</div>
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-on-dark rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">1</div>
       <div className="bg-gradient-to-br from-accent/5 to-primary/5 rounded-3xl p-8 md:p-10 border-2 border-accent/30 shadow-xl hover:shadow-2xl transition-all duration-300">
         <div className="flex items-start gap-4 mb-6">
           <div className="md:hidden text-5xl">1️⃣</div>
@@ -189,7 +189,7 @@ draft: false
 
     {/* Step 2 */}
     <div className="relative pl-0 md:pl-20">
-      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-primary to-accent text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-primary/20">2</div>
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-primary to-accent text-on-dark rounded-full font-bold text-xl shadow-xl ring-4 ring-primary/20">2</div>
       <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-3xl p-8 md:p-10 border-2 border-primary/30 shadow-xl hover:shadow-2xl transition-all duration-300">
         <div className="flex items-start gap-4 mb-6">
           <div className="md:hidden text-5xl">2️⃣</div>
@@ -226,7 +226,7 @@ draft: false
 
     {/* Step 3 */}
     <div className="relative pl-0 md:pl-20">
-      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">3</div>
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-on-dark rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">3</div>
       <div className="bg-gradient-to-br from-accent/5 to-primary/5 rounded-3xl p-8 md:p-10 border-2 border-accent/30 shadow-xl hover:shadow-2xl transition-all duration-300">
         <div className="flex items-start gap-4 mb-6">
           <div className="md:hidden text-5xl">3️⃣</div>
@@ -235,7 +235,7 @@ draft: false
           </div>
         </div>
         <p className="text-lg md:text-xl leading-relaxed mb-6 opacity-90">Open WebUI runs in a container bound only to <code className="bg-foreground/10 px-3 py-1 rounded text-base font-mono">localhost</code> for safety and persistence.</p>
-        <div className="bg-accent/10 p-6 border-l-4 border-accent rounded-xl my-6 shadow-md">
+        <div className="bg-accent-subtle p-6 border-l-4 border-accent rounded-xl my-6 shadow-md">
           <p className="text-lg italic leading-relaxed">Docker keeps the interface isolated, data stored locally, and restarts handled automatically with <code className="bg-foreground/10 px-3 py-1 rounded text-sm font-mono not-italic">--restart unless-stopped</code>.</p>
         </div>
         <div className="bg-gradient-to-r from-surface/80 to-surface/60 backdrop-blur-sm rounded-xl p-6 border border-accent/30 shadow-lg">
@@ -252,7 +252,7 @@ draft: false
 
     {/* Step 4 */}
     <div className="relative pl-0 md:pl-20">
-      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-primary to-accent text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-primary/20">4</div>
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-primary to-accent text-on-dark rounded-full font-bold text-xl shadow-xl ring-4 ring-primary/20">4</div>
       <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-3xl p-8 md:p-10 border-2 border-primary/30 shadow-xl hover:shadow-2xl transition-all duration-300">
         <div className="flex items-start gap-4 mb-6">
           <div className="md:hidden text-5xl">4️⃣</div>
@@ -275,7 +275,7 @@ draft: false
 
     {/* Step 5 */}
     <div className="relative pl-0 md:pl-20">
-      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-white rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">5</div>
+      <div className="absolute left-0 top-0 hidden md:flex w-14 h-14 items-center justify-center bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-on-dark rounded-full font-bold text-xl shadow-xl ring-4 ring-accent/20">5</div>
       <div className="bg-gradient-to-br from-accent/5 to-primary/5 rounded-3xl p-8 md:p-10 border-2 border-accent/30 shadow-xl hover:shadow-2xl transition-all duration-300">
         <div className="flex items-start gap-4 mb-6">
           <div className="md:hidden text-5xl">5️⃣</div>
@@ -302,7 +302,7 @@ draft: false
 ---
 
 <div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-400/10 dark:to-emerald-400/10 px-8 py-4 rounded-full border border-green-500/30 mb-6">
+  <div className="inline-flex items-center gap-3 bg-success-subtle px-8 py-4 rounded-full border border-success/30 mb-6">
     <div className="text-4xl">✨</div>
     <span className="text-xl font-semibold text-success-emphasis">Capabilities</span>
   </div>
@@ -311,7 +311,7 @@ draft: false
 
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-16">
 
-  <div className="blog-card group">
+  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
     <div className="flex items-center gap-4 mb-5">
       <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🔒</div>
       <strong className="text-2xl font-bold">Run Fully Offline</strong>
@@ -319,7 +319,7 @@ draft: false
     <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Private and fast LLMs running completely disconnected from the cloud</p>
   </div>
 
-  <div className="blog-card group">
+  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
     <div className="flex items-center gap-4 mb-5">
       <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🔄</div>
       <strong className="text-2xl font-bold">Swap Models</strong>
@@ -327,7 +327,7 @@ draft: false
     <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Switch between Llama 3, Mistral, Phi 3, and more with a click</p>
   </div>
 
-  <div className="blog-card group">
+  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
     <div className="flex items-center gap-4 mb-5">
       <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🌐</div>
       <strong className="text-2xl font-bold">Remote Access</strong>
@@ -335,7 +335,7 @@ draft: false
     <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Secure encrypted access through a private web interface</p>
   </div>
 
-  <div className="blog-card group">
+  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
     <div className="flex items-center gap-4 mb-5">
       <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🧩</div>
       <strong className="text-2xl font-bold">Extend & Customize</strong>
@@ -343,7 +343,7 @@ draft: false
     <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Add retrieval, embeddings, and custom functions</p>
   </div>
 
-  <div className="blog-card group">
+  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
     <div className="flex items-center gap-4 mb-5">
       <div className="text-6xl transition-transform duration-300 group-hover:scale-110">💾</div>
       <strong className="text-2xl font-bold">Auto Backups</strong>
@@ -351,7 +351,7 @@ draft: false
     <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Persistent vector database with automatic backups</p>
   </div>
 
-  <div className="blog-card group">
+  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
     <div className="flex items-center gap-4 mb-5">
       <div className="text-6xl transition-transform duration-300 group-hover:scale-110">⚙️</div>
       <strong className="text-2xl font-bold">Local Scripts</strong>
@@ -362,13 +362,13 @@ draft: false
 </div>
 
 <div className="relative overflow-hidden blog-callout-warning">
-  <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
+  <div className="absolute top-0 right-0 w-64 h-64 bg-warning/10 rounded-full blur-3xl"></div>
   <div className="relative flex items-start gap-5">
     <div className="text-6xl flex-shrink-0">⚠️</div>
     <div>
       <h3 className="text-2xl md:text-3xl font-bold text-warning-emphasis mb-4">Real Talk</h3>
       <p className="text-lg md:text-xl leading-relaxed">The output quality is not always on par with ChatGPT or Claude, especially on an M1 chip. Local models trade depth for independence — they think a little slower and dream a little smaller.</p>
-      <div className="mt-6 pt-6 border-t border-amber-500/20">
+      <div className="mt-6 pt-6 border-t border-warning/20">
         <p className="text-lg leading-relaxed opacity-90">But everyday tasks like <strong className="text-warning-emphasis">drafting text, summarizing files, querying data, or brainstorming code</strong> run beautifully offline.</p>
       </div>
     </div>
@@ -376,12 +376,12 @@ draft: false
 </div>
 
 <div className="relative overflow-hidden bg-gradient-to-r from-accent-emphasis to-primary-emphasis rounded-3xl p-12 md:p-16 my-20 shadow-2xl">
-  <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-  <div className="relative text-white text-center">
+  <div className="absolute -top-20 -right-20 w-64 h-64 bg-on-dark/10 rounded-full blur-3xl"></div>
+  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-on-dark/10 rounded-full blur-3xl"></div>
+  <div className="relative text-on-dark text-center">
     <p className="text-2xl md:text-3xl font-bold mb-6 leading-tight">With a clean, browser-based interface on my laptop or phone, it's easy to use and completely private.</p>
-    <div className="inline-block bg-white/20 backdrop-blur-sm rounded-2xl px-8 py-5 border border-white/30">
-      <p className="text-xl md:text-2xl font-semibold">That's the sweet spot: <span className="text-yellow-200">convenient, capable, and under my own roof</span></p>
+    <div className="inline-block bg-white/20 backdrop-blur-sm rounded-2xl px-8 py-5 border border-on-dark/30">
+      <p className="text-xl md:text-2xl font-semibold">That's the sweet spot: <span className="text-warning-light">convenient, capable, and under my own roof</span></p>
     </div>
   </div>
 </div>
@@ -406,7 +406,7 @@ draft: false
     </div>
   </div>
 
-  <div className="relative overflow-hidden bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl p-8 border-2 border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300">
+  <div className="relative overflow-hidden bg-success-subtle rounded-2xl p-8 border-2 border-success/30 shadow-lg hover:shadow-xl transition-all duration-300">
     <div className="flex items-start gap-5">
       <div className="text-6xl flex-shrink-0">💚</div>
       <div>
@@ -426,7 +426,7 @@ draft: false
     </div>
   </div>
 
-  <div className="relative overflow-hidden bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-2xl p-8 border-2 border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300">
+  <div className="relative overflow-hidden bg-warning-subtle rounded-2xl p-8 border-2 border-warning/30 shadow-lg hover:shadow-xl transition-all duration-300">
     <div className="flex items-start gap-5">
       <div className="text-6xl flex-shrink-0">🛡️</div>
       <div>
@@ -438,8 +438,8 @@ draft: false
 
 </div>
 
-<div className="relative overflow-hidden bg-gradient-to-br from-red-500/10 to-rose-500/10 rounded-3xl p-10 my-16 border-2 border-red-500/40 shadow-xl">
-  <div className="absolute -top-10 -right-10 w-48 h-48 bg-red-500/10 rounded-full blur-3xl"></div>
+<div className="relative overflow-hidden bg-error-subtle rounded-3xl p-10 my-16 border-2 border-error/40 shadow-xl">
+  <div className="absolute -top-10 -right-10 w-48 h-48 bg-error/10 rounded-full blur-3xl"></div>
   <div className="relative text-center">
     <div className="text-7xl mb-4">💊</div>
     <p className="text-2xl md:text-3xl font-bold text-error-emphasis">And of course...</p>
@@ -456,7 +456,7 @@ draft: false
 </div>
 
 <div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/10 to-accent/10 rounded-3xl p-12 md:p-16 my-16 border-2 border-accent/40 shadow-2xl">
-  <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+  <div className="absolute top-0 right-0 w-96 h-96 bg-accent-subtle rounded-full blur-3xl"></div>
   <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
   
   <div className="relative">
@@ -481,7 +481,7 @@ draft: false
       </div>
     </div>
 
-    <div className="bg-gradient-to-r from-surface/20 to-surface/10 backdrop-blur-md rounded-3xl p-10 border-2 border-white/30 dark:border-white/20 shadow-2xl text-center">
+    <div className="bg-gradient-to-r from-surface/20 to-surface/10 backdrop-blur-md rounded-3xl p-10 border-2 border-border/40 shadow-2xl text-center">
       <p className="text-3xl md:text-4xl font-black mb-4 bg-gradient-to-r from-accent-emphasis to-primary-emphasis bg-clip-text text-transparent">
         Hands-on DevOps meets Applied AI
       </p>
@@ -500,8 +500,8 @@ draft: false
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-16">
 
-  <div className="group relative overflow-hidden bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-white p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
+  <div className="group relative overflow-hidden bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-on-dark p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
+    <div className="absolute -top-10 -right-10 w-40 h-40 bg-on-dark/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
     <div className="relative">
       <div className="text-6xl mb-6">🧠</div>
       <strong className="text-3xl font-bold block mb-4">Vector Memory</strong>
@@ -509,8 +509,8 @@ draft: false
     </div>
   </div>
 
-  <div className="group relative overflow-hidden bg-gradient-to-br from-primary to-accent text-white p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
+  <div className="group relative overflow-hidden bg-gradient-to-br from-primary to-accent text-on-dark p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
+    <div className="absolute -top-10 -right-10 w-40 h-40 bg-on-dark/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
     <div className="relative">
       <div className="text-6xl mb-6">🤖</div>
       <strong className="text-3xl font-bold block mb-4">Agent Workflows</strong>
@@ -518,8 +518,8 @@ draft: false
     </div>
   </div>
 
-  <div className="group relative overflow-hidden bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-white p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
+  <div className="group relative overflow-hidden bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-on-dark p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
+    <div className="absolute -top-10 -right-10 w-40 h-40 bg-on-dark/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
     <div className="relative">
       <div className="text-6xl mb-6">📦</div>
       <strong className="text-3xl font-bold block mb-4">Template Package</strong>
@@ -527,8 +527,8 @@ draft: false
     </div>
   </div>
 
-  <div className="group relative overflow-hidden bg-gradient-to-br from-primary to-accent text-white p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
+  <div className="group relative overflow-hidden bg-gradient-to-br from-primary to-accent text-on-dark p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
+    <div className="absolute -top-10 -right-10 w-40 h-40 bg-on-dark/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
     <div className="relative">
       <div className="text-6xl mb-6">📱</div>
       <strong className="text-3xl font-bold block mb-4">PWA Support</strong>
@@ -552,20 +552,20 @@ If your home lab can talk back intelligently, it should look good doing it.
 </div>
 
 <div className="relative overflow-hidden bg-gradient-to-br from-accent-emphasis via-primary-emphasis to-accent-emphasis rounded-[2rem] p-16 md:p-20 my-20 shadow-[0_20px_70px_-15px_rgba(6,182,212,0.4)]">
-  <div className="absolute -top-32 -right-32 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-  <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="absolute -top-32 -right-32 w-96 h-96 bg-on-dark/10 rounded-full blur-3xl"></div>
+  <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-on-dark/10 rounded-full blur-3xl"></div>
   
-  <div className="relative text-white text-center max-w-5xl mx-auto">
+  <div className="relative text-on-dark text-center max-w-5xl mx-auto">
     <p className="text-4xl md:text-6xl font-black mb-8 leading-tight drop-shadow-lg">
       It's not meant to outthink ChatGPT<br/>
-      <span className="text-cyan-200">— it's meant to outlast it.</span>
+      <span className="text-info-light">— it's meant to outlast it.</span>
     </p>
-    <div className="bg-white/15 backdrop-blur-md rounded-2xl p-8 md:p-10 border border-white/30 shadow-2xl">
+    <div className="bg-on-dark/15 backdrop-blur-md rounded-2xl p-8 md:p-10 border border-on-dark/30 shadow-2xl">
       <p className="text-xl md:text-2xl leading-relaxed opacity-95 mb-4">
         Local AI doesn't need a subscription, a login, or a cloud outage workaround.
       </p>
       <p className="text-2xl md:text-3xl font-bold">
-        It's simply <span className="text-yellow-300">yours</span> — always on, always available, and smart enough for nearly everything that matters.
+        It's simply <span className="text-warning-light">yours</span> — always on, always available, and smart enough for nearly everything that matters.
       </p>
     </div>
   </div>

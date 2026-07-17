@@ -30,8 +30,6 @@ interface Props {
  fullScreen?: boolean;
  /** Include floating blur orbs for visual depth */
  includeBlurOrbs?: boolean;
- /** Include background pattern overlay */
- includePattern?: boolean;
  /** Additional CSS classes */
  class?: string;
  /** Section ID for anchor links */
@@ -41,7 +39,6 @@ interface Props {
 const { 
  fullScreen = true,
  includeBlurOrbs = true,
- includePattern = false,
  class: className = '',
  id = 'hero'
 } = Astro.props;
@@ -56,15 +53,9 @@ const heightClass = fullScreen ? 'min-h-screen' : 'min-h-[60vh] md:min-h-[70vh]'
 >
  {includeBlurOrbs && (
  <>
- <div class="blur-orb-accent top-0 right-0"></div>
- <div class="blur-orb-primary bottom-0 left-0"></div>
+ <div class="pointer-events-none absolute top-0 right-0 size-96 rounded-full bg-accent-subtle blur-3xl" aria-hidden="true"></div>
+ <div class="pointer-events-none absolute bottom-0 left-0 size-64 rounded-full bg-primary-subtle blur-3xl" aria-hidden="true"></div>
  </>
- )}
- 
- {includePattern && (
- <div class="absolute inset-0 z-0 opacity-20" aria-hidden="true">
- <div class="absolute inset-0"></div>
- </div>
  )}
  
  <Container size="xl" class="relative z-10">

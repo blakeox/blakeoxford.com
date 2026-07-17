@@ -8,7 +8,7 @@ import ChatLauncherIsland from '../islands/ChatLauncherIsland';
 
 <div data-ai-chat-widget>
   <div class="ai-chat-wrapper" data-ai-chat-open="false">
-    <ChatLauncherIsland client:load />
-    <AIChatIsland client:load />
+    <ChatLauncherIsland client:only="react" />
+    <AIChatIsland client:only="react" />
   </div>
 </div>

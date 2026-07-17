@@ -48,16 +48,16 @@ const canonicalExamples = [
  </h1>
  <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
  This page documents canonical component paths, live examples, and the full searchable catalog generated from
- <code class="break-all rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">src/data/componentDocs.ts</code>.
+ <code class="break-all rounded bg-surface-subtle px-1.5 py-0.5 text-sm">src/data/componentDocs.ts</code>.
  </p>
  </header>
 
  <section class="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4" aria-label="Canonical examples">
  {canonicalExamples.map((item) => (
- <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
+ <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
  <h2 class="text-lg font-semibold text-foreground">{item.name}</h2>
  <p class="mt-2 text-sm text-muted-foreground">{item.contract}</p>
- <code class="mt-4 block break-all rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground dark:bg-surface-dark-subtle">{item.path}</code>
+ <code class="mt-4 block break-all rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground">{item.path}</code>
  </article>
  ))}
  </section>
@@ -93,7 +93,7 @@ const canonicalExamples = [
 
  <ComponentCatalog />
 
- <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark" aria-labelledby="authoring-checklist">
+ <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm" aria-labelledby="authoring-checklist">
  <h2 id="authoring-checklist" class="text-2xl font-bold text-foreground">New Component Checklist</h2>
  <p class="mt-3 text-sm text-muted-foreground">
  Follow this list before merging a new component. The catalog at <code>src/data/componentDocs.ts</code> is the searchable source of truth.
@@ -110,14 +110,14 @@ const canonicalExamples = [
  <h3 class="text-lg font-semibold text-foreground">Standard primitive props</h3>
  <div class="mt-4 overflow-x-auto">
  <table class="w-full text-sm">
- <thead class="border-b border-border dark:border-border-dark">
+ <thead class="border-b border-border">
  <tr class="text-left">
  <th class="pb-2 pr-4 font-semibold">Prop</th>
  <th class="pb-2 pr-4 font-semibold">When</th>
  <th class="pb-2 font-semibold">Notes</th>
  </tr>
  </thead>
- <tbody class="divide-y divide-border dark:divide-border-dark">
+ <tbody class="divide-y divide-border">
  {PRIMITIVE_PROP_CONTRACT.map((entry) => (
  <tr>
  <td class="py-3 pr-4"><code class="text-accent">{entry.prop}</code></td>
@@ -131,7 +131,7 @@ const canonicalExamples = [
  </div>
  </section>
 
- <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark" aria-labelledby="anti-patterns">
+ <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm" aria-labelledby="anti-patterns">
  <h2 id="anti-patterns" class="text-2xl font-bold text-foreground">Anti-Patterns</h2>
  <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
  <li>Do not add new component folders for one-off wrappers.</li>

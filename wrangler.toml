@@ -41,6 +41,12 @@ id      = "65439bda285f486f9b07fc2a30bc5099"
 binding = "AI_FEEDBACK_KV"
 id      = "65439bda285f486f9b07fc2a30bc5099"
 
+# Contact form delivery is restricted to this sender and verified destination.
+[[send_email]]
+name = "CONTACT_EMAIL"
+destination_address = "blakepoxford@outlook.com"
+allowed_sender_addresses = ["noreply@blakeoxford.com"]
+
 # Durable Objects for real-time conversation state
 [[durable_objects.bindings]]
 name = "CONVERSATION_DO"

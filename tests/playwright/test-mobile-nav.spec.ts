@@ -218,19 +218,19 @@ test.describe('Mobile Navigation Visual Test', () => {
         function openMenu() {
             navToggle.classList.add('active');
             navToggle.setAttribute('aria-expanded', 'true');
-            mobileMenu.classList.add('active');
+            mobileMenu.setAttribute('data-state', 'open');
             document.body.style.overflow = 'hidden';
         }
         
         function closeMenu() {
             navToggle.classList.remove('active');
             navToggle.setAttribute('aria-expanded', 'false');
-            mobileMenu.classList.remove('active');
+            mobileMenu.setAttribute('data-state', 'closed');
             document.body.style.overflow = '';
         }
         
         navToggle.addEventListener('click', () => {
-            if (mobileMenu.classList.contains('active')) {
+            if (mobileMenu.getAttribute('data-state') === 'open') {
                 closeMenu();
             } else {
                 openMenu();
@@ -241,7 +241,7 @@ test.describe('Mobile Navigation Visual Test', () => {
         
         // Close on escape
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            if (e.key === 'Escape' && mobileMenu.getAttribute('data-state') === 'open') {
                 closeMenu();
             }
         });
@@ -250,7 +250,7 @@ test.describe('Mobile Navigation Visual Test', () => {
         document.addEventListener('click', (e) => {
             if (!navToggle.contains(e.target) && 
                 !mobileMenu.querySelector('.mobile-menu-content').contains(e.target) &&
-                mobileMenu.classList.contains('active')) {
+                mobileMenu.getAttribute('data-state') === 'open') {
                 closeMenu();
             }
         });
@@ -279,7 +279,7 @@ test.describe('Mobile Navigation Visual Test', () => {
     
     // Verify menu is open
     const mobileMenu = page.locator('#mobile-menu');
-    await expect(mobileMenu).toHaveClass(/active/);
+    await expect(mobileMenu).toHaveAttribute('data-state', 'open');
     
     // Test close functionality
     await page.click('#close-mobile-menu');
@@ -430,11 +430,11 @@ test.describe('Mobile Navigation Visual Test', () => {
         const closeButton = document.getElementById('close-mobile-menu');
         
         navToggle.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
+            mobileMenu.setAttribute('data-state', mobileMenu.getAttribute('data-state') === 'open' ? 'closed' : 'open');
         });
         
         closeButton.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
+            mobileMenu.setAttribute('data-state', 'closed');
         });
     </script>
 </body>

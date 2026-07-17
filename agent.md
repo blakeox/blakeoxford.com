@@ -35,7 +35,7 @@ Primary audience: recruiters, collaborators, and technical peers evaluating arch
 - **Quality tooling**: `scripts/quality/` orchestrates runtime checks (search relevance, accessibility via axe-core, dead link crawl, long-task probe) + summary.
 - **Testing**: Vitest (`tests/vitest/`), Playwright (`tests/playwright/`), plus performance & accessibility logs.
 - **Search**: Fuse.js client-side index auto-generated on build.
-- **Edge functions**: `functions/` (e.g., `send-email.js`, `edge-computing.js`).
+- **Edge functions**: `functions/` (e.g., `send-email.ts`, `edge-computing.js`).
 - **Config conventions**: Minimal global state; prefer pure functions; ESM modules.
 
 Directory highlights:

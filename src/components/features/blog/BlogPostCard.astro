@@ -2,8 +2,7 @@
 /**
  * BlogPostCard - Reusable blog post card for listings
  * 
- * Built on Card → BaseCard. Replaces legacy `.blog-card` patterns for index listings.
- * MDX blog content may still use `.blog-card` for expressive inline blocks.
+ * Built on Card → BaseCard for index listings.
  */
 
 import type { CollectionEntry } from 'astro:content';
@@ -41,7 +40,7 @@ const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
  day: 'numeric'
  })}
  </time>
- <h3 class="text-lg @sm:text-xl @md:text-2xl font-semibold leading-snug text-foreground transition-colors duration-200 group-hover:text-accent">
+ <h3 class="text-lg @sm:text-xl @md:text-2xl font-semibold leading-snug text-foreground transition-colors duration-normal group-hover:text-accent">
  {data.title}
  </h3>
  </header>
@@ -71,9 +70,9 @@ const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
  </ul>
  )}
 
- <span class="mt-3 @sm:mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-all duration-200 group-hover:gap-3">
+ <span class="mt-3 @sm:mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-all duration-normal group-hover:gap-3">
  Read article
- <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+ <svg class="h-4 w-4 transition-transform duration-normal group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
  <path d="M5 12h14m-6-6 6 6-6 6" />
  </svg>
  </span>

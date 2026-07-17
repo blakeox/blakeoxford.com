@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
 import sentry from '@sentry/astro';
+import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import { existsSync, readFileSync } from 'fs';
@@ -342,9 +343,15 @@ export default defineConfig({
     }]
   },
   vite: {
-    plugins: process.env.NODE_ENV === 'production'
-      ? []
-      : [createDevSemanticSearchProxy(), createDevAISearchProxy()],
+    plugins: [
+      tailwindcss(),
+      ...(process.env.NODE_ENV === 'production'
+        ? []
+        : [createDevSemanticSearchProxy(), createDevAISearchProxy()]),
+    ],
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+    },
     build: {
       // Use Lightning CSS for minification; it's more tolerant of modern selectors
       // and avoids false-positive errors like &:is(role="button") during minify.
@@ -354,8 +361,11 @@ export default defineConfig({
           manualChunks(id) {
             // Split vendor into smaller chunks for better caching
             if (id.includes('node_modules')) {
-              // React and React DOM - frequently updated, separate chunk
-              if (id.includes('react') || id.includes('react-dom')) {
+              // Only the React packages themselves — not every path containing "react"
+              if (
+                /node_modules\/(?:react|react-dom|scheduler)\//.test(id) ||
+                /node_modules\/\.pnpm\/(?:react|react-dom|scheduler)@/.test(id)
+              ) {
                 return 'vendor-react';
               }
               // Large libraries - separate chunk

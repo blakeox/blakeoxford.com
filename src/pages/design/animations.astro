@@ -52,7 +52,7 @@ const motionRules = [
 
  <section class="mt-12 grid gap-4 lg:grid-cols-2" aria-label="Motion contracts">
  {motionRules.map((rule) => (
- <article class="min-w-0 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60">
+ <article class="min-w-0 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm">
  <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
  <div>
  <h2 class="text-xl font-semibold text-foreground">{rule.name}</h2>
@@ -60,13 +60,13 @@ const motionRules = [
  </div>
  <Badge variant="outline" size="xs">Motion</Badge>
  </div>
- <code class="mt-5 block max-w-full overflow-x-auto rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground dark:bg-surface-dark-subtle">{rule.contract}</code>
+ <code class="mt-5 block max-w-full overflow-x-auto rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground">{rule.contract}</code>
  <p class="mt-4 text-sm text-muted-foreground">{rule.example}</p>
  </article>
  ))}
  </section>
 
- <section class="mt-16 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark/60 sm:p-6" aria-labelledby="motion-boundary">
+ <section class="mt-16 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm sm:p-6" aria-labelledby="motion-boundary">
  <h2 id="motion-boundary" class="text-2xl font-bold text-foreground">Boundary</h2>
  <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
  <li>Do not add looping decorative motion to routine documentation or app surfaces.</li>
@@ -78,7 +78,7 @@ const motionRules = [
 
  <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
  <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/design/components/">Component contracts</a>
- <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent dark:border-border-dark" href="/design/tokens/">Tokens</a>
+ <a class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent" href="/design/tokens/">Tokens</a>
  </nav>
  </Container>
  </Section>

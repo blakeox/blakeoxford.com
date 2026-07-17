@@ -1,4 +1,3 @@
-import { Resend } from 'resend';
 import type { Env, ContactFormData } from './types';
 import { initEdgeSentry, addEdgeBreadcrumb } from '../sentry.edge.config.js';
 
@@ -10,8 +9,8 @@ const CONFIG = {
 		kvTtl: 60,
 	},
 	email: {
-		from: 'Contact Form <noreply@blakeoxford.com>',
-		to: ['blakepoxford@outlook.com'],
+		from: { email: 'noreply@blakeoxford.com', name: 'Blake Oxford Contact Form' },
+		to: 'blakepoxford@outlook.com',
 	},
 	storage: {
 		messageTtl: 60 * 60 * 24 * 365, // 1 year
@@ -25,7 +24,6 @@ const ERROR_MESSAGES = {
 	missingFields: 'Missing required fields or Turnstile token.',
 	rateLimited: 'Too many requests. Please wait a bit.',
 	botVerificationFailed: 'Bot verification failed.',
-	emailSendFailed: 'Failed to send email.',
 } as const;
 
 // ─── Helper Functions ───────────────────────────────────────────
@@ -77,9 +75,20 @@ async function verifyTurnstile(secret: string, token: string, ip: string): Promi
  * Format email HTML
  */
 function formatEmailHtml(name: string, email: string, message: string): string {
-	return `<h2>New Message from ${name}</h2>
-             <p><strong>Email:</strong> ${email}</p>
-             <p>${message.replace(/\n/g, '<br>')}</p>`;
+	return `<h2>New contact form message</h2>
+             <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+             <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+             <p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`;
+}
+
+function escapeHtml(value: string): string {
+	return value.replace(/[&<>"']/g, (character) => ({
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		'\'': '&#39;',
+	})[character] ?? character);
 }
 
 /**
@@ -152,14 +161,15 @@ export async function onRequestPost(context: EventContext<Env, string, unknown>)
 	const Sentry = initEdgeSentry(context.env);
 	
 	const ct = context.request.headers.get('content-type') || '';
-	const isJson = ct.includes('application/json');
+	const hasJsonBody = ct.includes('application/json');
+	const wantsJsonResponse = hasJsonBody || (context.request.headers.get('accept') || '').includes('application/json');
 
 	// Add breadcrumb to track email processing
 	addEdgeBreadcrumb({
 		category: 'email',
 		message: 'Processing contact form submission',
 		level: 'info',
-		data: { contentType: ct, isJson }
+		data: { contentType: ct, hasJsonBody, wantsJsonResponse }
 	});
 
 	try {
@@ -170,7 +180,7 @@ export async function onRequestPost(context: EventContext<Env, string, unknown>)
 		let token: string | undefined;
 		let botField: string | null = null;
 
-		if (isJson) {
+		if (hasJsonBody) {
 			const body = await context.request.json() as Partial<ContactFormData>;
 			name = body.name;
 			email = body.email;
@@ -189,45 +199,41 @@ export async function onRequestPost(context: EventContext<Env, string, unknown>)
 
 		// ─── Honeypot: silently succeed ───────────────────
 		if (botField) {
-			return jsonOrRedirect({ success: true }, isJson);
+			return jsonOrRedirect({ success: true }, wantsJsonResponse);
 		}
 
 		// ─── Validate required fields & token ────────────
 		if (!name || !email || !message || !token) {
-			return errorResponse(400, ERROR_MESSAGES.missingFields, isJson);
+			return errorResponse(400, ERROR_MESSAGES.missingFields, wantsJsonResponse);
 		}
 
 		// ─── Rate‐limit per IP via KV ────────────────────
 		const isRateLimited = await checkRateLimit(context.env, ip);
 		if (isRateLimited) {
-			return errorResponse(429, ERROR_MESSAGES.rateLimited, isJson);
+			return errorResponse(429, ERROR_MESSAGES.rateLimited, wantsJsonResponse);
 		}
 
 		// ─── Verify Turnstile ────────────────────────────
 		const isVerified = await verifyTurnstile(context.env.TURNSTILE_SECRET_KEY, token, ip);
 		if (!isVerified) {
-			return errorResponse(403, ERROR_MESSAGES.botVerificationFailed, isJson);
+			return errorResponse(403, ERROR_MESSAGES.botVerificationFailed, wantsJsonResponse);
 		}
 
-		// ─── Send email via Resend ───────────────────────
-		const resend = new Resend(context.env.RESEND_API_KEY);
-		const { error } = await resend.emails.send({
+		// ─── Send email via Cloudflare Email Service ─────
+		await context.env.CONTACT_EMAIL.send({
 			from: CONFIG.email.from,
 			to: CONFIG.email.to,
-			subject: `New Message from ${name}`,
-			reply_to: email,
+			subject: `New contact form message from ${name.replace(/[\r\n]/g, ' ')}`,
+			replyTo: email,
 			text: formatEmailText(name, email, message),
 			html: formatEmailHtml(name, email, message),
 		});
-		if (error) {
-			return errorResponse(500, ERROR_MESSAGES.emailSendFailed, isJson);
-		}
 
 		// ─── Log submission in KV ────────────────────────
 		await storeMessage(context.env, { ip, name, email, message });
 
 		// ─── Success response ────────────────────────────
-		return jsonOrRedirect({ success: true }, isJson);
+		return jsonOrRedirect({ success: true }, wantsJsonResponse);
 
 	} catch (err) {
 		// Capture error to Sentry with context
@@ -238,12 +244,13 @@ export async function onRequestPost(context: EventContext<Env, string, unknown>)
 			},
 			extra: { 
 				hasBody: !!context.request.body,
-				isJson
+				hasJsonBody,
+				wantsJsonResponse
 			}
 		});
 		
 		// Keep existing console.error for Cloudflare logs
 		console.error('💥 send-email error:', err);
-		return errorResponse(500, 'Internal server error.', isJson);
+		return errorResponse(500, 'Internal server error.', wantsJsonResponse);
 	}
 }

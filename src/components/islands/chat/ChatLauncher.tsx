@@ -9,7 +9,7 @@ export function ChatLauncher({ isOpen, launcherRef, openChat, closeChat }: ChatL
 		<button
 			ref={launcherRef}
 			type="button"
-			className="ai-chat-launcher touch-target focus-ring-interactive pointer-events-auto inline-flex size-14 items-center justify-center rounded-full border border-[color:var(--border)]/60 bg-[color:var(--glass-surface-bg)]/95 text-[color:var(--fg)] shadow-lg backdrop-blur supports-[backdrop-filter]:bg-[color:var(--glass-surface-bg)]/90"
+			className="ai-chat-launcher touch-target focus-ring-interactive pointer-events-auto inline-flex size-14 items-center justify-center rounded-full border border-border/60 bg-glass/95 text-foreground shadow-lg backdrop-blur supports-[backdrop-filter]:bg-glass/90"
 			aria-label={isOpen ? 'Close AI assistant' : 'Open AI assistant — conversational chat'}
 			onClick={() => {
 				if (isOpen) {

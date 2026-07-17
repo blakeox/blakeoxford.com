@@ -393,6 +393,10 @@ export function memoize<T extends (...args: any[]) => any>(
   } as T;
 }
 
+// ─── Class utilities ──────────────────────────────────────────────────
+
+export { cn, type ClassValue } from './cn';
+
 // ─── Re-exports ───────────────────────────────────────────────────────
 
 // Lazy loading utilities

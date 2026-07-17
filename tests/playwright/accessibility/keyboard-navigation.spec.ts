@@ -81,7 +81,7 @@ test.describe('Keyboard Navigation Tests', () => {
     await page.evaluate(async () => {
       const el = document.getElementById('search-overlay');
       if (!el) return;
-      const visible = el.classList.contains('active') || window.getComputedStyle(el).visibility !== 'hidden';
+      const visible = el.getAttribute('data-state') === 'open' || window.getComputedStyle(el).display !== 'none';
       if (visible) {
         try {
           const g: any = window as any;
@@ -90,8 +90,9 @@ test.describe('Keyboard Navigation Tests', () => {
           } else if (g.searchOverlay && typeof g.searchOverlay.closeSearchOverlay === 'function') {
             g.searchOverlay.closeSearchOverlay();
           } else {
-            el.classList.remove('active');
+            el.setAttribute('data-state', 'closed');
             el.setAttribute('inert', '');
+            el.classList.add('hidden');
           }
         } catch { /* noop */ }
       }
@@ -112,8 +113,9 @@ test.describe('Keyboard Navigation Tests', () => {
             const el = document.getElementById('search-overlay');
             if (!el) return;
             (window as any).enhancedSearchOverlay?.closeSearchOverlay?.();
-            el.classList.remove('active');
+            el.setAttribute('data-state', 'closed');
             el.setAttribute('inert', '');
+            el.classList.add('hidden');
             (el as HTMLElement).style.pointerEvents = 'none';
             (el as HTMLElement).style.display = 'none';
           });
@@ -132,8 +134,9 @@ test.describe('Keyboard Navigation Tests', () => {
       const el = document.getElementById('search-overlay');
       if (!el) return;
       (window as any).enhancedSearchOverlay?.closeSearchOverlay?.();
-      el.classList.remove('active');
+      el.setAttribute('data-state', 'closed');
       el.setAttribute('inert', '');
+      el.classList.add('hidden');
       (el as HTMLElement).style.pointerEvents = 'none';
       (el as HTMLElement).style.display = 'none';
     });
@@ -163,22 +166,22 @@ test.describe('Keyboard Navigation Tests', () => {
       // Check if menu is visible either through active class or visibility
       const isMenuVisible = await mobileMenu.evaluate(el => {
         const styles = window.getComputedStyle(el as HTMLElement);
-        const hasActiveClass = (el as HTMLElement).classList.contains('active');
+        const isOpen = (el as HTMLElement).getAttribute('data-state') === 'open';
         const isVisible = styles.visibility !== 'hidden' && styles.display !== 'none';
         const hasValidTransform = !styles.transform.includes('-100') && styles.transform !== 'matrix(1, 0, 0, 1, -100, 0)';
-        return hasActiveClass || (isVisible && hasValidTransform);
+        return isOpen || (isVisible && hasValidTransform);
       });
       
       if (isMenuVisible) {
         await page.keyboard.press('Escape');
         
-        // Verify menu is closed by checking active class removal or visibility change
+        // Verify menu is closed by checking data-state or visibility change
         const isMenuClosed = await mobileMenu.evaluate(el => {
           const styles = window.getComputedStyle(el as HTMLElement);
-          const hasActiveClass = (el as HTMLElement).classList.contains('active');
+          const isOpen = (el as HTMLElement).getAttribute('data-state') === 'open';
           const isHidden = styles.visibility === 'hidden' || styles.display === 'none';
           const hasHiddenTransform = styles.transform.includes('-100') || (styles as any).right === '-100vw';
-          return !hasActiveClass || isHidden || hasHiddenTransform;
+          return !isOpen || isHidden || hasHiddenTransform;
         });
         
         expect(isMenuClosed).toBe(true);

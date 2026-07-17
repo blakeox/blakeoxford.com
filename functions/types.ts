@@ -24,8 +24,10 @@ export interface Env {
 	// Analytics Engine
 	AI_ANALYTICS: AnalyticsEngineDataset;
 
+	// Cloudflare Email Service
+	CONTACT_EMAIL: SendEmailBinding;
+
 	// Secrets
-	RESEND_API_KEY: string;
 	TURNSTILE_SECRET_KEY: string;
 	AI_SEARCH_API_TOKEN?: string;
 	AI_SEARCH_API_ENDPOINT?: string;
@@ -37,6 +39,17 @@ export interface Env {
 
 	// Sentry
 	SENTRY_DSN?: string;
+}
+
+export interface SendEmailBinding {
+	send(message: {
+		to: string;
+		from: string | { email: string; name?: string };
+		subject: string;
+		text?: string;
+		html?: string;
+		replyTo?: string;
+	}): Promise<{ messageId: string }>;
 }
 
 /**

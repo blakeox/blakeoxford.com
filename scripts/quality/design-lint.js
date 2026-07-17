@@ -41,12 +41,14 @@ const TOKEN_ALLOW_PATH = /(?:^|\/)(?:tailwind\.config\.ts|DESIGN_BEST_PRACTICES\
 const ARBITRARY_SPACING_PX_REGEX =
   /(?:^|\s)(?:-?m[trblxy]?|-?p[trblxy]?|gap[xy]?|space-[xy]|inset[xy]?|top|right|bottom|left)-\[[^\]\n]*?(-?\d+(?:\.\d+)?)px[^\]\n]*?\]/g;
 const UNDEFINED_DESIGN_REGEX =
-  /(?:from|via|to|bg|text|border|ring)-tertiary(?:-[\w/.[\]]+)?|var\(--color-(?:border|foreground-rgb|foreground-light-rgb)\)/g;
+  /(?:from|via|to|bg|text|border|ring)-tertiary(?:-[\w/.[\]]+)?|var\(--color-(?:foreground-rgb|foreground-light-rgb)\)/g;
 const UNSUPPORTED_OPACITY_REGEX = /\/(?:35|45)(?=[\s"'`}\]])/g;
 const RAW_PALETTE_REGEX =
   /\b(?:text|bg|border|ring|from|via|to)-(?:gray|green|red|blue|yellow|amber|purple|pink|orange|emerald|rose|indigo|cyan)-(?:50|100|200|300|400|500|600|700|800|900|950)(?:\/\d+)?\b/g;
 const RAW_WHITE_BLACK_REGEX = /\b(?:text-white|bg-white|border-white|ring-white|from-white|to-white|via-white|text-black|bg-black|border-black|ring-black|from-black|to-black|via-black)(?:\/\d+)?\b/g;
-const HARD_ELEVATION_REGEX = /\bshadow-(?:xl|2xl)\b|shadow-\[[^\]]+\]/g;
+const PARALLEL_DARK_UTIL_REGEX =
+  /\b(?:bg|text|border|from|via|to)-(?:background-dark|surface-dark|surface-dark-subtle|surface-elevated-dark|foreground-light|border-dark)(?:\/\d+)?\b/g;
+const HARD_ELEVATION_REGEX = /(?<!-)(?:\bshadow-(?:xl|2xl)\b)|shadow-\[[^\]]+\]/g;
 const HARD_RADIUS_REGEX = /\brounded-\[[^\]]+\]/g;
 const SHELL_ESCAPE_REGEX = /-mt-24|-mx-4\s+sm:-mx-6\s+lg:-mx-8/g;
 const DIRECT_CONTAINER_REGEX = /\bcontainer\s+mx-auto\b/g;
@@ -61,6 +63,7 @@ const allowedComponentRootFiles = new Set(['src/components/index.ts']);
 
 const reusableSurfacePaths = [
   'src/components',
+  'src/features',
   'src/lib',
   'src/scripts',
   'src/pages/blog',
@@ -150,6 +153,9 @@ function expectedComponentCategory(filePath) {
   if (filePath.startsWith('src/components/islands/')) return 'Islands';
   if (filePath.startsWith('src/components/primitives/')) return 'Primitives';
   if (filePath.startsWith('src/components/composites/')) return 'Composites';
+  // Progressive-enhancement scripts and theme FOUC helpers documented alongside islands
+  if (filePath.startsWith('src/scripts/features/')) return 'Islands';
+  if (filePath === 'src/lib/theme.ts') return 'Islands';
   return null;
 }
 
@@ -246,6 +252,7 @@ function scanSourceFile(file) {
   if (isWithin(relPath, reusableSurfacePaths) && !TOKEN_ALLOW_PATH.test(relPath)) {
     addRegexFindings(findings.palette, relPath, content, RAW_PALETTE_REGEX);
     addRegexFindings(findings.palette, relPath, content, RAW_WHITE_BLACK_REGEX);
+    addRegexFindings(findings.palette, relPath, content, PARALLEL_DARK_UTIL_REGEX);
   }
 
   if (isWithin(relPath, elevationPolicyPaths)) {

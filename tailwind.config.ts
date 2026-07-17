@@ -1,10 +1,10 @@
 import type { Config } from 'tailwindcss';
-import containerQueries from '@tailwindcss/container-queries';
 import typography from '@tailwindcss/typography';
 
 /**
- * Tailwind v4 config — design tokens live in src/styles/theme.css (@theme inline).
- * Plugins remain here until CSS @plugin output is compatible with Lightning CSS minify.
+ * Tailwind v4 — design tokens and motion live in src/styles/theme.css.
+ * Container queries are built into Tailwind v4 (`@container`, `@md:`, …).
+ * This file only keeps plugins and container padding that still need JS config.
  */
 const config: Config = {
   darkMode: 'class',
@@ -28,63 +28,12 @@ const config: Config = {
       },
     },
     extend: {
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        fadeInUp: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(40px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
-        pulseGlow: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.5' },
-        },
-        themeToggleSpin: {
-          '100%': { transform: 'rotate(360deg)' },
-        },
-      },
-      animation: {
-        fadeIn:
-          'fadeIn var(--duration, 250ms) var(--ease-standard, cubic-bezier(0.4,0,0.2,1)) both',
-        fadeInUp:
-          'fadeInUp var(--duration, 250ms) var(--ease-standard, cubic-bezier(0.4,0,0.2,1)) both',
-        slideUp:
-          'slideUp var(--duration, 250ms) var(--ease-emphasized, cubic-bezier(0.2,0,0,1)) both',
-        float: 'float 3s var(--ease-standard, cubic-bezier(0.4,0,0.2,1)) infinite',
-        pulseGlow: 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        themeToggleSpin:
-          'themeToggleSpin var(--duration-fast, 100ms) var(--ease-standard, cubic-bezier(0.4,0,0.2,1))',
-      },
       screens: {
         'sm-md': { raw: '(min-width: 651px) and (max-width: 767px)' },
         'supports-backdrop': { raw: '(backdrop-filter: blur(0))' },
       },
       maxWidth: {
-        'container-2xl': 'var(--container-2xl)',
-      },
-      zIndex: { auto: 'auto', 0: '0', 10: '10', 20: '20', 30: '30', 40: '40', 50: '50' },
-      borderWidth: { 0: '0px', 1: '1px', 2: '2px', 4: '4px', 8: '8px' },
-      ringWidth: { DEFAULT: '2px', 0: '0px', 1: '1px', 2: '2px', 4: '4px' },
-      backgroundImage: {
-        'btn-primary':
-          'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
-        'gradient-primary': 'var(--gradient-primary)',
-        'gradient-accent': 'var(--gradient-accent)',
-        'gradient-secondary': 'var(--gradient-secondary)',
-        'gradient-info': 'var(--gradient-info)',
-        'gradient-success': 'var(--gradient-success)',
-        'gradient-warning': 'var(--gradient-warning)',
-        'gradient-error': 'var(--gradient-error)',
+        'container-2xl': 'var(--layout-max-2xl)',
       },
       data: {
         open: 'state=open',
@@ -95,19 +44,18 @@ const config: Config = {
           css: {
             maxWidth: 'none',
             a: {
-              color: theme('colors.primary', 'var(--color-primary)'),
+              color: theme('colors.accent', 'var(--color-accent)'),
               textDecoration: 'underline',
-              '&:hover': { color: theme('colors["primary-dark"]', 'var(--color-primary-dark)') },
+              '&:hover': {
+                color: theme('colors["accent-emphasis"]', 'var(--color-accent-emphasis)'),
+              },
             },
-            h1: { fontSize: theme('fontSize.2xl'), fontWeight: theme('fontWeight.bold') },
-            h2: { fontSize: theme('fontSize.xl'), fontWeight: theme('fontWeight.semibold') },
-            h3: { fontSize: theme('fontSize.lg'), fontWeight: theme('fontWeight.medium') },
           },
         },
       }),
     },
   },
-  plugins: [containerQueries, typography],
+  plugins: [typography],
 };
 
 export default config;

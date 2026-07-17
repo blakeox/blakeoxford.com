@@ -1,11 +1,9 @@
 import ContactFormIsland from './ContactFormIsland';
 
 /**
- * SSR guard wrapper for ContactFormIsland.
- * - On the server (SSR), returns null so no hooks run.
- * - On the client, renders the real island which attaches events/effects.
+ * Contact form island. Mount with `client:only="react"` —
+ * no SSR null guard (that caused hydration mismatches).
  */
 export default function ContactFormClient() {
- if (typeof window === 'undefined') return null;
  return <ContactFormIsland />;
 }

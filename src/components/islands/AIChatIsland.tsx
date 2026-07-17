@@ -221,8 +221,6 @@ export default function AIChatIsland() {
 	const showQuickActions =
 		isEmptyConversation && (chatState === 'ready' || chatState === 'idle') && !error;
 
-	if (typeof document === 'undefined') return null;
-
 	const panel = (
 		<ChatDock
 			isOpen={isOpen}

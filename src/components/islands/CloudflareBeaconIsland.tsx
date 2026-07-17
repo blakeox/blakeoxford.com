@@ -17,5 +17,5 @@ export default function CloudflareBeaconIsland() {
 		document.head.appendChild(script);
 	}, []);
 
-	return null;
+	return <></>;
 }

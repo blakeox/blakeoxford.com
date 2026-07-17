@@ -114,27 +114,27 @@ export function getRelevanceExplanation(score: number): { text: string; color: s
 	if (score >= 90) {
 		return {
 			text: 'Highly relevant - Core information matching your query',
-			color: 'text-success-dark dark:text-success-light',
+			color: 'text-success-emphasis',
 			icon: '🎯',
 		};
 	}
 	if (score >= 75) {
 		return {
 			text: 'Very relevant - Strong match to your question',
-			color: 'text-info-dark dark:text-info-light',
+			color: 'text-info-emphasis',
 			icon: '✨',
 		};
 	}
 	if (score >= 60) {
 		return {
 			text: 'Relevant - Contains related information',
-			color: 'text-accent dark:text-accent-light',
+			color: 'text-accent-emphasis',
 			icon: '💡',
 		};
 	}
 	return {
 		text: 'Contextually relevant - Provides background context',
-		color: 'text-warning-dark dark:text-warning-light',
+		color: 'text-warning-emphasis',
 		icon: '📌',
 	};
 }

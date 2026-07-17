@@ -192,7 +192,7 @@ export async function applyThemeOnPage(
     } catch {
       /* noop */
     }
-    for (const prop of ['--color-background', '--color-foreground', '--bg', '--fg']) {
+    for (const prop of ['--color-background', '--color-foreground']) {
       root.style.removeProperty(prop);
     }
   }, theme);
@@ -205,7 +205,7 @@ export async function applyThemeOnPage(
     root.classList.toggle('dark', nextTheme === 'dark');
     root.style.colorScheme = nextTheme;
     root.style.setProperty('transition', 'none');
-    for (const prop of ['--color-background', '--color-foreground', '--bg', '--fg']) {
+    for (const prop of ['--color-background', '--color-foreground']) {
       root.style.removeProperty(prop);
     }
   }, theme);

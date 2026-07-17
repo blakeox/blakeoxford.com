@@ -81,7 +81,7 @@ export const MessageActions = memo(function MessageActions({
 			<div className="ml-auto inline-flex items-center gap-1">
 				<button
 					type="button"
-					className={`${chip} size-7 justify-center px-0 ${isHelpful ? 'border-accent/40 bg-accent/10 text-accent' : ''}`}
+					className={`${chip} size-7 justify-center px-0 ${isHelpful ? 'border-accent/40 bg-accent-subtle text-accent' : ''}`}
 					aria-label={isHelpful ? 'Marked helpful' : 'Mark answer helpful'}
 					onClick={() => handleFeedback(message.id, 'positive')}
 				>
@@ -91,7 +91,7 @@ export const MessageActions = memo(function MessageActions({
 				</button>
 				<button
 					type="button"
-					className={`${chip} size-7 justify-center px-0 ${isNotHelpful ? 'border-accent/40 bg-accent/10 text-accent' : ''}`}
+					className={`${chip} size-7 justify-center px-0 ${isNotHelpful ? 'border-accent/40 bg-accent-subtle text-accent' : ''}`}
 					aria-label={isNotHelpful ? 'Marked not helpful' : 'Mark answer not helpful'}
 					onClick={() => handleFeedback(message.id, 'negative')}
 				>

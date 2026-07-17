@@ -26,14 +26,14 @@ export async function openSearchOverlay(page: Page) {
     await page.evaluate(() => { try { (window as any).enhancedSearchOverlay?.openSearchOverlay?.(); } catch { /* noop */ } });
   }
 
-  // Wait for overlay activation (class + style + inert removed)
+  // Wait for overlay activation (data-state + display utility)
   const activated = await page.waitForFunction(() => {
     const el = document.querySelector('#search-overlay') as HTMLElement | null;
     if (!el) return false;
     const inert = el.hasAttribute('inert');
     const style = el ? window.getComputedStyle(el) : null;
-    const visible = !!style && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0;
-    return !inert && el.classList.contains('active') && visible;
+    const visible = !!style && style.display !== 'none' && parseFloat(style.opacity || '1') > 0;
+    return !inert && el.getAttribute('data-state') === 'open' && visible;
   }, { timeout: 3000 }).catch(() => false as const);
 
   // If still not active, attempt to force init + open via page script
@@ -53,10 +53,9 @@ export async function openSearchOverlay(page: Page) {
         try {
           const overlay = document.getElementById('search-overlay') as HTMLElement | null;
           if (!overlay) return;
-          overlay.classList.add('active');
-          overlay.style.display = 'block';
-          overlay.style.visibility = 'visible';
-          overlay.style.opacity = '1';
+          overlay.setAttribute('data-state', 'open');
+          overlay.classList.remove('hidden');
+          overlay.classList.add('flex');
           overlay.removeAttribute('inert');
           try { overlay.removeAttribute('aria-hidden'); } catch  { void 0; }
         } catch (e) { console.error('partial open failed', e); }
@@ -74,9 +73,6 @@ export async function openSearchOverlay(page: Page) {
         try {
           const overlay = document.getElementById('search-overlay') as HTMLElement | null;
           if (!overlay) return;
-          const results = overlay.querySelectorAll('.search-result, [data-results-container], [data-results]');
-          results.forEach((el: HTMLElement) => { el.style.display = 'block'; el.style.visibility = 'visible'; el.style.opacity = '1'; });
-          const closeBtn = overlay.querySelector('#close-search') as HTMLElement | null; if (closeBtn) closeBtn.style.display = 'block';
           document.body.style.overflow = 'hidden';
           document.body.style.position = 'fixed';
           document.body.style.width = '100%';
@@ -88,8 +84,8 @@ export async function openSearchOverlay(page: Page) {
         if (!el) return false;
         const inert = el.hasAttribute('inert');
         const style = window.getComputedStyle(el);
-        const visible = style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0;
-        return !inert && el.classList.contains('active') && visible;
+        const visible = style.display !== 'none' && parseFloat(style.opacity || '1') > 0;
+        return !inert && el.getAttribute('data-state') === 'open' && visible;
       }, { timeout: 3000 }).catch(() => {});
     }
   }
@@ -113,8 +109,8 @@ export async function openSearchOverlay(page: Page) {
     if (!el) return false;
     try { el.removeAttribute('aria-hidden'); } catch  { void 0; }
     const style = window.getComputedStyle(el);
-    const vis = style.visibility !== 'hidden' && style.display !== 'none' && parseFloat(style.opacity || '0') > 0;
-    return vis && el.classList.contains('active') && el.dataset.ready === 'true';
+    const vis = style.display !== 'none' && parseFloat(style.opacity || '0') > 0;
+    return vis && el.getAttribute('data-state') === 'open' && el.dataset.ready === 'true';
   }, { timeout: 3000 }).catch(() => {});
   return overlay;
 }

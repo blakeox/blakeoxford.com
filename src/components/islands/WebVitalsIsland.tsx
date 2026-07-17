@@ -15,5 +15,5 @@ export default function WebVitalsIsland() {
 		}
 	}, []);
 
-	return null;
+	return <></>;
 }

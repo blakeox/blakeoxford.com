@@ -130,7 +130,7 @@ Notes:
 - Accessibility baseline capture: first run of `playwright/accessibility/axe-core.spec.ts` writes `tests/accessibility-baseline.json`, subsequent runs fail on new violations.
 - Deterministic visual snapshots: `playwright/visual-routes.spec.ts` now asserts full-page screenshots with animation disabling.
 - Coverage thresholds ratcheted (+5% across statements/branches/functions/lines) in `vitest.config.ts`.
-- Edge function negative-path & success tests: `tests/vitest/edge/send-email.edge.test.ts` covering validation, rate limit, Turnstile failure, resend failure, and success.
+- Edge function negative-path & success tests: `tests/vitest/edge/send-email.edge.test.ts` covering validation, rate limit, Turnstile failure, Cloudflare Email Service failure, HTML escaping, and success.
 - Run-level flakiness tracking groundwork: `scripts/quality/update-flakiness-history.js` + integration in deployment quality gate (captures aggregate passRate / flakyTests / retryIntensity for future per-test expansion).
 - Vitest flakiness reporter: `tests/reporters/flakinessReporter.ts` writing `test-results.json` to supply real counts to history updater.
 
@@ -304,4 +304,3 @@ Chromium snapshots live in `component-visual-baselines.spec.ts-snapshots/` and `
 Unit hooks: `tests/vitest/useMobileMenu.test.tsx`, `useNavScrollBehavior.test.tsx`, `useOverlayScrollLock.test.tsx`, `navLinksSync.test.ts`.
 
 Config source of truth: `src/content/navigation/nav.json` (imported by `src/config/navLinks.ts`).
-

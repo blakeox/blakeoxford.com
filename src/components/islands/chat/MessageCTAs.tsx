@@ -116,7 +116,7 @@ export const MatchedCTA = memo(function MatchedCTA({
 		return (
 			<a
 				href={matchedCTA.ctaLink}
-				className="focus-ring-interactive inline-flex items-center gap-2 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-xs font-medium text-accent transition hover:bg-accent/10"
+				className="focus-ring-interactive inline-flex items-center gap-2 rounded-lg border border-accent/30 bg-accent-subtle px-3 py-2 text-xs font-medium text-accent transition hover:bg-accent/15"
 				onClick={() => {
 					autoragEvents.ctaClick({
 						type: 'quality-suggestion',
@@ -134,7 +134,7 @@ export const MatchedCTA = memo(function MatchedCTA({
 	}
 
 	return (
-		<div className="mt-2 rounded-lg border border-accent/25 bg-accent/5 p-3">
+		<div className="mt-2 rounded-lg border border-accent/25 bg-accent-subtle p-3">
 			<p className="mb-2 text-sm text-muted-foreground">{matchedCTA.message}</p>
 			<a
 				href={matchedCTA.ctaLink}
@@ -226,7 +226,7 @@ export const ContextualCTAs = memo(function ContextualCTAs({
 
 	return (
 		<div className="mt-3 space-y-2">
-			<p className="text-xs font-medium uppercase tracking-wide text-[color:var(--fg)]/50">
+			<p className="text-xs font-medium uppercase tracking-wide text-foreground/50">
 				Take action
 			</p>
 			<div className="flex flex-col gap-2">
@@ -242,7 +242,7 @@ export const ContextualCTAs = memo(function ContextualCTAs({
 								label: cta.label,
 							});
 						}}
-						className="group inline-flex items-center gap-2.5 rounded-xl border border-[color:var(--accent)]/30 bg-gradient-to-br from-[color:var(--accent)]/10 to-[color:var(--accent)]/5 px-4 py-3 text-sm font-medium text-[color:var(--accent-strong)] shadow-sm transition-all duration-200 hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--accent)]/15 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+						className="group inline-flex items-center gap-2.5 rounded-xl border border-accent/30 bg-gradient-to-br from-accent/10 to-accent/5 px-4 py-3 text-sm font-medium text-accent-emphasis shadow-sm transition-all duration-normal hover:border-accent/50 hover:bg-accent/15 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
 					>
 						<span className="text-lg" aria-hidden="true">{cta.icon}</span>
 						<span className="flex-1">{cta.label}</span>

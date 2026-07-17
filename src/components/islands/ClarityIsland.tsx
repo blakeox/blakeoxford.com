@@ -15,5 +15,5 @@ export default function ClarityIsland() {
 		}
 	}, []);
 
-	return null;
+	return <></>;
 }

@@ -33,7 +33,7 @@ A blazing-fast, modern portfolio site built with [Astro](https://astro.build), d
 
 - [@tailwindcss/typography](https://tailwindcss.com/docs/typography-plugin)
 
-- [@tailwindcss/container-queries](https://github.com/tailwindlabs/tailwindcss-container-queries)
+- Built-in Tailwind v4 container queries (`@container`, `@md:`, …)
 
 ### Content
 

@@ -13,6 +13,7 @@ lerna-debug.log*
 chromewebdata_*.report.html
 test-results/
 playwright-report/
+.playwright-mcp/
 *.lighthouse.report.html
 .lighthouseci/
 junit.xml
