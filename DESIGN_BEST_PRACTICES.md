@@ -15,67 +15,57 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 
 ## 2. Design Tokens (Source of Truth)
 
-Use CSS variables defined in `theme.css` and mapped through Tailwind in `tailwind.config.ts`:
+**Single source:** `src/styles/theme.css`
 
-### Modern Token System (2026)
+| Step | Where | What |
+|------|--------|------|
+| 1. Values | `:root` custom properties | OKLCH colors, radius, shadows, motion, fonts, z-index, layout chrome |
+| 2. Dark remap | `&[data-theme='dark']`, `&.dark` | Semantic tokens flip (`--color-background`, `--color-foreground`, emphasis, glass, etc.) |
+| 3. Tailwind bridge | `@theme inline` | Exposes utilities (`bg-surface`, `text-accent-emphasis`, `shadow-overlay`, `duration-normal`, `z-nav`) |
+| 4. Build | `@tailwindcss/vite` in `astro.config.mjs` | Resolves `@import "tailwindcss"` from `global.css` |
 
-#### Architecture Features
-- **Cascade Layers**: Explicit CSS organization (`@layer reset, base, tokens, components, utilities, overrides`)
-- **CSS Nesting**: Improved maintainability for dark mode and media queries
-- **Logical Properties**: RTL language support (Arabic, Hebrew) via `inline-start`/`inline-end`
-- **Color-mix() Functions**: Dynamic color variations with better browser support
+`tailwind.config.ts` is **not** the color map. It only keeps plugins (`typography`, `container-queries`), container padding, and a few custom screens.
 
-#### Token Categories
+### Architecture features in use
 
-- **Color**: OKLCH color space with HEX fallbacks for perceptual uniformity
-  - `--color-*` groups (primary, accent, surface, background, foreground, semantic states)
-  - Fallback tokens (`--color-*-fallback`) for Safari < 16.4 compatibility
-  - Dynamic variations via `color-mix()`: `--color-primary-hover`, `--color-accent-subtle`
-- **Typography**: 
-  - Fluid type scale using `clamp()` for responsive text sizes (375px → 1440px viewports)
-  - Size (`--fs-*` / semantic `--fs-h1`…), weight (`--fw-*`), line-height (`--lh-*`), letter-spacing (`--ls-*`)
-- **Spacing**: 
-  - Modern 4px-based scale (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32)
-  - Logical property tokens for i18n: `--spacing-inline-start`, `--spacing-block-start`
-- **Interactive States**:
-  - Focus tokens (`--focus-ring-width`, `--focus-ring-offset`)
-  - State opacities (`--state-hover-opacity`, `--state-active-opacity`, `--state-disabled-opacity`)
-  - Overlays (`--hover-overlay`, `--active-overlay`)
-- **Motion**:
-  - Extended duration scale (instant, fast, normal, moderate, slow, slower, slowest)
-  - Comprehensive easing library (standard, emphasized, spring, bounce, quad variants)
-  - Animation delays (xs, sm, md, lg, xl)
-- **Radius**: `--radius-*` → borderRadius extension for consistent corners
-- **Shadows**: `--shadow-*` → boxShadow tokens
-- **Containers**: `--container-*` for layout max-widths
+- **CSS-first Tailwind v4** — tokens in CSS, not a large JS theme object
+- **Semantic dark remapping** — prefer `bg-surface` over `dark:bg-*` pairs
+- **OKLCH + `color-mix()`** — perceptual brand colors and theme-aware subtles (`--color-accent-subtle`)
+- **Always-dark helpers** — `overlay-scrim`, `code-surface` / `code-foreground` for scrims and code samples (not remapped)
+- **Cascade layers** — base styles in `@layer base`; shared chrome in `@layer components`
 
-### Color System Benefits
+### Token categories (actual)
 
-**OKLCH Color Space**:
-- Perceptually uniform color adjustments
-- Predictable lightness modifications
-- Better dark mode color generation
-- Wide gamut color support
-- Automatic fallbacks for older browsers (Safari < 16.4)
+| Category | Examples | Utilities |
+|----------|----------|-----------|
+| Color | `--color-accent`, `--color-surface`, `--color-muted-foreground` | `bg-accent`, `text-muted-foreground` |
+| Emphasis | `--color-accent-emphasis`, `--color-error-emphasis` | `text-accent-emphasis` |
+| Subtle washes | `--color-accent-subtle` via `color-mix` | `bg-accent-subtle` |
+| Overlay / code | `--color-overlay-scrim`, `--color-code-surface` | `bg-overlay-scrim`, `bg-code-surface` |
+| Typography | `--font-sans`, `--font-heading`, `--text-xxs`, `--tracking-label` | `font-heading`, `text-xxs` |
+| Radius | `--radius` … `--radius-2xl` | `rounded`, `rounded-xl` |
+| Shadows | `--shadow-sm` … `--shadow-2xl`, `--shadow-overlay` | `shadow-md`, `shadow-overlay` |
+| Motion | `--duration-fast` … `--duration-slow` | `duration-fast`, `duration-moderate` |
+| Z-index | `--z-nav`, `--z-chat`, `--z-search` | `z-nav`, `z-chat` |
+| Layout | `--container-padding*`, `--layout-max-2xl`, `--nav-height` | `container`, `max-w-container-2xl` |
 
-**Color-mix() Functions**:
-- Dynamic hover/active state generation
-- Better browser compatibility than `oklch(from ...)` syntax
-- Subtle background variations: `--color-accent-subtle`
-- Interactive states: `--color-primary-hover`, `--color-accent-active`
+There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind’s type and spacing scales plus the tokens above.
 
-**CSS Architecture**:
-- **Cascade Layers**: Explicit CSS organization prevents specificity conflicts
-- **CSS Nesting**: Cleaner dark mode blocks, better co-location
-- **Logical Properties**: RTL support via `margin-inline-start` instead of `margin-left`
+### Guidelines
 
-Guidelines:
+- Introduce a new token only if used ≥3 times or it carries semantic meaning
+- Never hardcode hex in components; edit `theme.css` and bridge with `@theme inline`
+- Do not export parallel `*-dark` surface utilities for markup — keep those values private for remapping
+- Prefer logical properties (`border-inline-start`) where directionality matters
+- Always verify light and dark themes
 
-- Introduce a new token only if used ≥3 times or communicates semantic meaning (e.g., `--color-positive`)
-- Never hardcode hex/size in components when a token exists; extend Tailwind config instead
-- Dark mode: Use CSS nesting (`&[data-theme="dark"]`) for co-located styles
-- Internationalization: Use logical properties (`inline-start`, `block-start`) for directional layout
-- Always test in both light and dark modes
+### Color system benefits
+
+**OKLCH**: perceptually uniform adjustments, predictable lightness, wide-gamut ready.
+
+**`color-mix()`**: theme-aware subtle washes without `dark:` overrides.
+
+**Remap-first dark mode**: one utility, two themes.
 
 ## 3. Responsive Design Strategy
 
@@ -218,13 +208,12 @@ Designer / reviewer action: If sentinel counts rise or badge slope trends upward
 
 ## 4. Typography
 
-- Use fluid type scale with `clamp()` for responsive sizing across all viewports
-- Pair semantic HTML with semantic size tokens rather than arbitrary utility jumps (`text-4xl`)
-- Typography automatically scales based on viewport width (no manual breakpoint adjustments needed)
+- Pair semantic HTML with Tailwind type utilities (`text-sm` … `text-5xl`) plus `font-heading` / `font-sans`
+- Use `text-xxs`, `tracking-label`, and `tracking-smallcaps` for labels/meta
 - Limit heading weight variance (h1–h2 bold, h3–h4 semibold, body normal/medium)
-- Constrain prose width (~60–75ch) using container utilities
-- Prevent FOIT/FOUT: use `font-display: swap` and preload critical fonts when self-hosted
-- Test typography at mobile (375px) and desktop (1440px) to verify clamp() ranges
+- Constrain prose width (~60–75ch) using container / max-width utilities
+- Prevent FOIT/FOUT: self-host via `@fontsource` in `BaseLayout.astro` with `font-display: swap`
+- Test typography at mobile (375px) and desktop (1440px)
 
 ## 5. Spacing & Layout Rhythm
 
@@ -243,11 +232,13 @@ Designer / reviewer action: If sentinel counts rise or badge slope trends upward
 ## 7. Interaction & Motion
 
 - Respect `prefers-reduced-motion` (no essential information conveyed only via motion)
-- Use semantic duration tokens (instant, fast, normal, moderate, slow, slower, slowest)
-- Use semantic easing curves (standard, emphasized, spring, bounce) for different effects
+- Use semantic duration tokens: `duration-fast` (100ms), `duration-normal` (200ms), `duration-moderate` (300ms), `duration-slow` (500ms)
+- Use semantic easing: `ease-standard`, `ease-emphasized`, `ease-decelerate`
 - Prefer transform/opacity for performance; avoid layout-affecting animations
 - Always provide a visible focus ring (never remove outline without replacement)
 - Use `--focus-ring-width` and `--focus-ring-offset` tokens for consistency
+- Prefer `.focus-ring-interactive` for shared chrome controls
+- Prefer `shadow-overlay` for modal panels instead of arbitrary `shadow-[…]` rgba values
 - Apply interactive state overlays using `--hover-overlay` and `--active-overlay` tokens
 
 ### 7.1 View Transitions (Astro)

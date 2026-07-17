@@ -40,7 +40,7 @@ export function ChatDock({
     >
       <button
         type="button"
-        className="pointer-events-auto absolute inset-0 cursor-pointer bg-background-dark/30 backdrop-blur-[1px] sm:hidden"
+        className="pointer-events-auto absolute inset-0 cursor-pointer bg-overlay-scrim/30 backdrop-blur-[1px] sm:hidden"
         aria-label="Close assistant"
         tabIndex={-1}
         onClick={onClose}

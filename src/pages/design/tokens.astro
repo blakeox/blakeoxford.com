@@ -10,6 +10,8 @@ const semanticColors = [
   { name: 'surface-subtle', utility: 'bg-surface-subtle', usage: 'Quiet secondary panels' },
   { name: 'surface-elevated', utility: 'bg-surface-elevated', usage: 'Elevated overlays' },
   { name: 'glass', utility: 'bg-glass', usage: 'Nav and chat translucent chrome' },
+  { name: 'overlay-scrim', utility: 'bg-overlay-scrim', usage: 'Modal backdrops (always dark)' },
+  { name: 'code-surface', utility: 'bg-code-surface text-code-foreground', usage: 'Always-dark code samples' },
   { name: 'foreground', utility: 'text-foreground', usage: 'Primary readable text' },
   { name: 'muted-foreground', utility: 'text-muted-foreground', usage: 'Secondary body copy' },
   { name: 'subtle-foreground', utility: 'text-subtle-foreground', usage: 'Labels and meta' },
@@ -22,7 +24,9 @@ const semanticColors = [
 
 const rules = [
   'Edit tokens only in src/styles/theme.css. @theme inline exposes them as utilities.',
-  'Prefer theme-aware utilities (bg-surface, text-accent-emphasis, bg-accent-subtle). Avoid dark:bg-surface-dark.',
+  'Prefer theme-aware utilities (bg-surface, text-accent-emphasis, bg-accent-subtle). Never use bg-background-dark / text-foreground-light.',
+  'Use bg-overlay-scrim for modal backdrops and bg-code-surface for always-dark code blocks.',
+  'Motion: duration-fast | duration-normal | duration-moderate | duration-slow (not duration-200).',
   'Do not use bg-[color:var(--…)] for tokens that already have utilities.',
   'Shared chrome (nav, overlays, hero motion) lives in components.css; page layout stays in Tailwind.',
   'tailwind.config.ts keeps plugins + container padding only.',

@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
 import sentry from '@sentry/astro';
+import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import { existsSync, readFileSync } from 'fs';
@@ -342,9 +343,12 @@ export default defineConfig({
     }]
   },
   vite: {
-    plugins: process.env.NODE_ENV === 'production'
-      ? []
-      : [createDevSemanticSearchProxy(), createDevAISearchProxy()],
+    plugins: [
+      tailwindcss(),
+      ...(process.env.NODE_ENV === 'production'
+        ? []
+        : [createDevSemanticSearchProxy(), createDevAISearchProxy()]),
+    ],
     optimizeDeps: {
       include: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     },

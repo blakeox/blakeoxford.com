@@ -1,10 +1,10 @@
 /** Shared class strings for Find (Command Center) and Ask (AI Chat) overlays. */
 
 export const OVERLAY_BACKDROP =
- 'absolute inset-0 cursor-pointer bg-background-dark/55 backdrop-blur-sm';
+ 'absolute inset-0 cursor-pointer bg-overlay-scrim/55 backdrop-blur-sm';
 
 export const OVERLAY_PANEL =
- 'overlay-panel flex max-h-[85dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-border/50 bg-surface/95 shadow-[0_28px_80px_-16px_rgba(0,0,0,0.28)] backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:rounded-2xl motion-reduce:transition-none';
+ 'overlay-panel flex max-h-[85dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-border/50 bg-surface/95 shadow-overlay backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:rounded-2xl motion-reduce:transition-none';
 
 export const OVERLAY_PANEL_ASK =
  'overlay-panel flex max-h-[88dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-border/60 bg-surface/95 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:max-h-[85dvh] sm:rounded-2xl motion-reduce:transition-none';

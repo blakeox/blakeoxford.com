@@ -1,7 +1,9 @@
 /* Design tokens — single source of truth for Tailwind v4.
    Edit values here; @theme inline exposes them as utilities.
    Dark mode remaps semantic tokens on :root — prefer those utilities
-   over dark:* pairs in components. */
+   over dark:* pairs in components.
+   Parallel *-dark / *-light palette vars stay private for remapping;
+   markup uses overlay-scrim / code-surface for always-dark surfaces. */
 
 :root {
   color-scheme: light;
@@ -88,6 +90,7 @@
   --duration-fast: 100ms;
   --duration-normal: 200ms;
   --duration: 250ms;
+  --duration-moderate: 300ms;
   --duration-slow: 500ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
@@ -98,6 +101,11 @@
   /* Glass (nav / chat) — remapped in dark */
   --color-glass: color-mix(in oklch, var(--color-surface) 78%, transparent);
   --color-glass-xl: color-mix(in oklch, var(--color-surface) 92%, transparent);
+
+  /* Always-dark surfaces (code samples, modal scrims) — not remapped by theme */
+  --color-overlay-scrim: oklch(0.16 0.015 55);
+  --color-code-surface: var(--color-background-dark);
+  --color-code-foreground: var(--color-foreground-light);
 
   /* Layout chrome */
   --container-padding: 1rem;
@@ -127,6 +135,7 @@
   --shadow-lg: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px var(--shadow-color);
   --shadow-xl: 0 20px 25px -5px var(--shadow-color), 0 10px 10px -5px var(--shadow-color);
   --shadow-2xl: 0 25px 50px -12px var(--shadow-color);
+  --shadow-overlay: 0 28px 80px -16px oklch(0 0 0 / 0.28);
 
   /* Fonts */
   --font-sans: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
@@ -290,15 +299,16 @@
   --color-accent-emphasis: var(--color-accent-emphasis);
   --color-accent-subtle: var(--color-accent-subtle);
   --color-background: var(--color-background);
-  --color-background-dark: var(--color-background-dark);
   --color-surface: var(--color-surface);
   --color-surface-subtle: var(--color-surface-subtle);
   --color-surface-elevated: var(--color-surface-elevated);
   --color-glass: var(--color-glass);
   --color-glass-xl: var(--color-glass-xl);
+  --color-overlay-scrim: var(--color-overlay-scrim);
+  --color-code-surface: var(--color-code-surface);
+  --color-code-foreground: var(--color-code-foreground);
   --color-foreground: var(--color-foreground);
   --color-foreground-strong: var(--color-foreground-strong);
-  --color-foreground-light: var(--color-foreground-light);
   --color-muted-foreground: var(--color-muted-foreground);
   --color-subtle-foreground: var(--color-subtle-foreground);
   --color-border: var(--color-border);
@@ -349,10 +359,12 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+  --shadow-overlay: var(--shadow-overlay);
 
   --transition-duration-fast: var(--duration-fast);
   --transition-duration-normal: var(--duration-normal);
   --transition-duration-DEFAULT: var(--duration);
+  --transition-duration-moderate: var(--duration-moderate);
   --transition-duration-slow: var(--duration-slow);
   --ease-standard: var(--ease-standard);
   --ease-emphasized: var(--ease-emphasized);

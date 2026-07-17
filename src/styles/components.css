@@ -106,6 +106,7 @@
   .nav-utility-button.theme-toggle,
   .nav-utility-button.burger-menu-button {
     @apply w-11;
+
     touch-action: manipulation;
   }
 
