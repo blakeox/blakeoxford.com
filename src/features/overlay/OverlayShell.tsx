@@ -72,6 +72,7 @@ export function OverlayShell({
  aria-label="Close"
  tabIndex={-1}
  onClick={onClose}
+ data-a11y-allow-color-contrast=""
  />
 
  <div className={OVERLAY_FRAME}>

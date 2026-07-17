@@ -64,6 +64,26 @@ export async function runContrastCheck(
       }, SKIP_CONTAINER);
       if (isInsideSkip) continue;
 
+      // Closed overlays / offscreen chrome should not pollute text-contrast samples.
+      const isVisible = await handle.evaluate((node) => {
+        const el = node as HTMLElement;
+        if (typeof el.checkVisibility === 'function') {
+          return el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true });
+        }
+        const cs = window.getComputedStyle(el);
+        return cs.display !== 'none' && cs.visibility !== 'hidden' && Number(cs.opacity) > 0;
+      });
+      if (!isVisible) continue;
+
+      // WCAG 1.4.3 is about painted text. Empty dismiss/scrim controls (aria-label only)
+      // are not text contrast targets; icon buttons (svg/img) still are.
+      const hasPaintedContent = await handle.evaluate((node) => {
+        const el = node as HTMLElement;
+        if ((el.innerText || '').trim().length > 0) return true;
+        return Boolean(el.querySelector('svg, img, canvas, video'));
+      });
+      if (!hasPaintedContent) continue;
+
       const isTransparentText = await handle.evaluate((node) => {
         const cs = window.getComputedStyle(node);
         return cs.color === 'rgba(0, 0, 0, 0)' || cs.webkitTextFillColor === 'transparent';

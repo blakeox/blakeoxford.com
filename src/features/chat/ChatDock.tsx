@@ -50,6 +50,7 @@ export function ChatDock({
         aria-label="Close assistant"
         tabIndex={-1}
         onClick={onClose}
+        data-a11y-allow-color-contrast=""
       />
 
       <div className={CHAT_DOCK_FRAME}>
