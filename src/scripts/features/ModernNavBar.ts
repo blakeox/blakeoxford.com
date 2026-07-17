@@ -8,6 +8,8 @@ import { registerNavTheme } from './registerNavTheme';
 import { registerNavScrollBehavior } from './registerNavScrollBehavior';
 import { registerHeaderOverlayLifecycle } from './registerHeaderOverlayLifecycle';
 import { openCommandCenter } from '../../features/command-center/lib/commandEvents';
+import { registerMobileMenuClose } from '../../utils/headerController';
+import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollLock';
 
 type ModernNavBarOptions = {
   navBar?: ElementHandle<HTMLElement>;
@@ -15,6 +17,12 @@ type ModernNavBarOptions = {
 };
 
 type CleanupFn = () => void;
+
+type BoNavWindow = Window & {
+  __boCloseNavMenu?: () => void;
+  __navHydrated?: boolean;
+  __motionAccessibilityInit?: boolean;
+};
 
 let activeCleanup: CleanupFn | null = null;
 
@@ -40,13 +48,18 @@ export function registerModernNavBar(options?: ModernNavBarOptions): CleanupFn {
     (document.getElementById('theme-toggle') as HTMLButtonElement | null);
 
   const cleanupTheme = registerNavTheme({ themeToggle });
-  // Mobile menu: bound by NavBar.astro classic inline script (not this module).
-  // Module listeners were getting cleaned/raced away while data-js-nav stayed set.
+  // Burger open/close is owned by NavBar.astro's classic inline script.
+  // Bridge headerController.closeMobileMenu() → that script's close helper,
+  // and keep the shared scroll-lock refcount in sync with data-menu-state.
+  const cleanupMenuClose = registerMobileMenuClose(() => {
+    (window as BoNavWindow).__boCloseNavMenu?.();
+  });
+  const cleanupMenuScrollLock = registerNavMenuScrollLock();
   const cleanupScroll = registerNavScrollBehavior();
   const cleanupOverlay = registerHeaderOverlayLifecycle();
 
   navBar?.setAttribute('data-js-nav', 'true');
-  (window as typeof window & { __navHydrated?: boolean }).__navHydrated = true;
+  (window as BoNavWindow).__navHydrated = true;
 
   const onSearch = (event: MouseEvent) => {
     const target = event.target;
@@ -58,12 +71,11 @@ export function registerModernNavBar(options?: ModernNavBarOptions): CleanupFn {
 
   void import('../modules/MotionAccessibility')
     .then(({ initMotionAccessibility }) => {
-      if ((window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit) {
+      if ((window as BoNavWindow).__motionAccessibilityInit) {
         return;
       }
       initMotionAccessibility();
-      (window as typeof window & { __motionAccessibilityInit?: boolean }).__motionAccessibilityInit =
-        true;
+      (window as BoNavWindow).__motionAccessibilityInit = true;
     })
     .catch(() => {
       /* non-critical */
@@ -71,6 +83,8 @@ export function registerModernNavBar(options?: ModernNavBarOptions): CleanupFn {
 
   const cleanup: CleanupFn = () => {
     cleanupTheme();
+    cleanupMenuClose();
+    cleanupMenuScrollLock();
     cleanupScroll();
     cleanupOverlay();
     document.removeEventListener('click', onSearch);
@@ -79,6 +93,36 @@ export function registerModernNavBar(options?: ModernNavBarOptions): CleanupFn {
 
   activeCleanup = cleanup;
   return cleanup;
+}
+
+/** Keep acquireScrollLock() aligned with the inline menu's data-menu-state. */
+function registerNavMenuScrollLock(): CleanupFn {
+  const shell = document.querySelector<HTMLElement>('.nav-shell');
+  if (!shell) return () => {};
+
+  let held = false;
+  const sync = () => {
+    const open = shell.getAttribute('data-menu-state') === 'open';
+    if (open && !held) {
+      acquireScrollLock();
+      held = true;
+    } else if (!open && held) {
+      releaseScrollLock();
+      held = false;
+    }
+  };
+
+  sync();
+  const observer = new MutationObserver(sync);
+  observer.observe(shell, { attributes: true, attributeFilter: ['data-menu-state'] });
+
+  return () => {
+    observer.disconnect();
+    if (held) {
+      releaseScrollLock();
+      held = false;
+    }
+  };
 }
 
 export function initModernNavBar(): CleanupFn | undefined {

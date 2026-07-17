@@ -274,6 +274,11 @@ function isActive(href: string): boolean {
       document.body.classList.toggle('scroll-locked', next);
     }
 
+    // Bridge for module-side closeMobileMenu() / search open / overlay lifecycle
+    w.__boCloseNavMenu = function () {
+      setOpen(false);
+    };
+
     function wireBurger() {
       var burger = document.getElementById('nav-toggle');
       var nav = document.getElementById('navbar');
@@ -331,8 +336,15 @@ function isActive(href: string): boolean {
       );
     }
 
-    // Re-wire after late DOM swaps (HMR / persist)
-    document.addEventListener('astro:page-load', wireBurger, { signal: signal });
+    // Re-wire after late DOM swaps (HMR / persist) and close on client navigations
+    document.addEventListener(
+      'astro:page-load',
+      function () {
+        wireBurger();
+        setOpen(false);
+      },
+      { signal: signal },
+    );
   })();
 </script>
 
