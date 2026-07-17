@@ -13,10 +13,11 @@ const semanticColors = [
   { name: 'overlay-scrim', utility: 'bg-overlay-scrim', usage: 'Modal backdrops (always dark)' },
   { name: 'code-surface', utility: 'bg-code-surface text-code-foreground', usage: 'Always-dark code samples' },
   { name: 'foreground', utility: 'text-foreground', usage: 'Primary readable text' },
-  { name: 'muted-foreground', utility: 'text-muted-foreground', usage: 'Secondary body copy' },
-  { name: 'subtle-foreground', utility: 'text-subtle-foreground', usage: 'Labels and meta' },
+  { name: 'muted-foreground', utility: 'text-muted-foreground', usage: 'Secondary body copy (dark floor oklch 0.82)' },
+  { name: 'subtle-foreground', utility: 'text-subtle-foreground', usage: 'Labels and meta (dark floor oklch 0.80)' },
   { name: 'border', utility: 'border-border', usage: 'Dividers and outlines' },
-  { name: 'accent', utility: 'bg-accent text-on-accent', usage: 'Primary actions' },
+  { name: 'accent', utility: 'bg-accent text-on-accent', usage: 'Primary actions — on-accent is near-white in light, dark ink in dark' },
+  { name: 'on-accent', utility: 'text-on-accent', usage: 'Foreground paired with bg-accent / button-primary (theme-aware)' },
   { name: 'accent-subtle', utility: 'bg-accent-subtle', usage: 'Soft accent washes (theme-aware)' },
   { name: 'primary-subtle', utility: 'bg-primary-subtle', usage: 'Soft primary washes (blur orbs)' },
   { name: '*-emphasis', utility: 'text-accent-emphasis', usage: 'Theme-aware accent/state text — prefer over dark: pairs' },
@@ -25,7 +26,9 @@ const semanticColors = [
 const rules = [
   'Edit tokens only in src/styles/theme.css. @theme inline exposes them as utilities.',
   'Prefer theme-aware utilities (bg-surface, text-accent-emphasis, bg-accent-subtle). Never use bg-background-dark / text-foreground-light.',
-  'Use bg-overlay-scrim for modal backdrops and bg-code-surface for always-dark code blocks.',
+  'Pair bg-accent with text-on-accent (or button-primary-*). Light mode uses near-white on-accent; dark mode remaps to dark ink because the accent lightens.',
+  'Dark muted/subtle foregrounds stay ≥ oklch 0.80 so small-caps labels clear WCAG AA 4.5:1.',
+  'Use bg-overlay-scrim for modal backdrops and bg-code-surface for always-dark code blocks. Scrim dismiss layers are decorative — mark with data-a11y-allow-color-contrast.',
   'Motion: duration-fast | duration-normal | duration-moderate | duration-slow (not duration-200).',
   'Do not use bg-[color:var(--…)] for tokens that already have utilities.',
   'Shared chrome (nav, overlays, hero motion) lives in components.css; page layout stays in Tailwind.',
@@ -82,10 +85,12 @@ const rules = [
             <p class="mt-2 text-sm text-muted-foreground">Warm ink — secondary brand surfaces and emphasis</p>
           </article>
           <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
-            <div class="mb-4 h-16 rounded-xl bg-accent"></div>
+            <div class="mb-4 flex h-16 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-on-accent">
+              text-on-accent
+            </div>
             <h3 class="font-semibold text-foreground">accent</h3>
-            <p class="mt-1 text-sm text-subtle-foreground">75° · <code>--color-accent</code></p>
-            <p class="mt-2 text-sm text-muted-foreground">Brass signal — CTAs, focus rings, interactive chrome</p>
+            <p class="mt-1 text-sm text-subtle-foreground">75° · <code>--color-accent</code> + <code>--color-on-accent</code></p>
+            <p class="mt-2 text-sm text-muted-foreground">Brass signal — CTAs, focus rings, interactive chrome (AA with on-accent)</p>
           </article>
           <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
             <div class="mb-4 h-16 rounded-xl bg-accent-subtle"></div>
