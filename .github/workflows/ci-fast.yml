@@ -75,7 +75,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run dependency audit (fail on high)
-        run: pnpm audit --audit-level=high --prod
+        run: pnpm security:audit -- --audit-level=high
 
       - name: Run ESLint
         run: pnpm run lint
@@ -85,6 +85,9 @@ jobs:
 
       - name: Run TypeScript type checking
         run: pnpm run typecheck
+
+      - name: Validate Zaraz analytics template
+        run: pnpm run validate:zaraz
 
       - name: Build the application
         run: pnpm run build
@@ -169,7 +172,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run dependency audit (fail on high)
-        run: pnpm audit --audit-level=high --prod
+        run: pnpm security:audit -- --audit-level=high
 
       - name: Install Playwright dependencies
         run: |
@@ -328,7 +331,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run dependency audit (fail on high)
-        run: pnpm audit --audit-level=high --prod
+        run: pnpm security:audit -- --audit-level=high
 
       - name: Cache Playwright browsers (macOS)
         uses: actions/cache@v4
@@ -564,5 +567,4 @@ jobs:
           echo "✅ essential-e2e (Chromium)"
           echo "✅ essential-e2e-crossbrowser (Firefox/WebKit on macOS)"
           echo "All required checks are green."
-
 

@@ -101,7 +101,7 @@ export default function ChatBotNotification() {
 		<div
 			role="alert"
 			aria-live="polite"
-			className="fixed bottom-24 right-4 z-[1060] animate-slideUp sm:bottom-28 sm:right-6"
+			className="fixed bottom-24 right-4 z-[1060] animate-slide-up sm:bottom-28 sm:right-6"
 		>
 			<div className="relative max-w-xs rounded-lg bg-surface p-4 shadow-lg ring-1 ring-border/30">
 				{/* Arrow pointing to chat bot */}

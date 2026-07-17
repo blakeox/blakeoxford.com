@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildAskPrompt } from '../../src/lib/chat/ai-chat-bridge';
-import { parseCommandQuery } from '../../src/features/command-center/lib/parseQuery';
 import { enrichCommandItems } from '../../src/features/command-center/lib/rankResults';
 import type { CommandItem } from '../../src/features/command-center/types';
 
@@ -26,21 +25,8 @@ describe('buildAskPrompt', () => {
   });
 });
 
-describe('parseCommandQuery', () => {
-  it('detects ask prefix', () => {
-    expect(parseCommandQuery('?microsoft fabric')).toEqual({
-      mode: 'ask',
-      query: 'microsoft fabric',
-    });
-  });
-
-  it('defaults to find mode', () => {
-    expect(parseCommandQuery('contact')).toEqual({ mode: 'find', query: 'contact' });
-  });
-});
-
 describe('enrichCommandItems', () => {
-  it('boosts title matches and adds match reason', () => {
+  it('boosts title matches and adds related match reason', () => {
     const items: CommandItem[] = [
       {
         id: '/projects/fabric/',
@@ -55,7 +41,36 @@ describe('enrichCommandItems', () => {
     ];
 
     const ranked = enrichCommandItems(items, 'fabric');
-    expect(ranked[0]?.matchReason).toBeTruthy();
+    expect(ranked[0]?.matchReason).toMatch(/^Related to:/);
     expect(ranked[0]?.score).toBeGreaterThan(0.4);
+  });
+
+  it('demotes hub pages without a title term match', () => {
+    const items: CommandItem[] = [
+      {
+        id: '/projects/',
+        kind: 'page',
+        title: 'Projects',
+        subtitle: 'Browse work',
+        href: '/projects/',
+        tags: [],
+        source: 'vectorize',
+        score: 0.92,
+      },
+      {
+        id: '/projects/fabric/',
+        kind: 'project',
+        title: 'Microsoft Fabric – Workflow Automation',
+        subtitle: 'Operational intelligence',
+        href: '/projects/fabric/',
+        tags: ['automation'],
+        source: 'vectorize',
+        score: 0.5,
+      },
+    ];
+
+    const ranked = enrichCommandItems(items, 'automation');
+    expect(ranked[0]?.kind).toBe('project');
+    expect(ranked.some((item) => item.href === '/projects/')).toBe(false);
   });
 });

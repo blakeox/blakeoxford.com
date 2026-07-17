@@ -50,20 +50,14 @@ interface UseComputedValuesReturn {
 export function useComputedValues(options: UseComputedValuesOptions): UseComputedValuesReturn {
 	const { showFallbackSuggestions, fallbackResults } = options;
 
-	// Limit preview to 2 results when not expanded
-	const fallbackPreviewLimit = 2;
-
-	// Compute visible fallback results based on toggle state
+	// Collapsed = no list (one-line disclosure). Expanded = up to 3 titles.
 	const visibleFallbackResults = useMemo(() => {
-		return showFallbackSuggestions
-			? fallbackResults
-			: fallbackResults.slice(0, fallbackPreviewLimit);
-	}, [showFallbackSuggestions, fallbackResults, fallbackPreviewLimit]);
+		return showFallbackSuggestions ? fallbackResults.slice(0, 3) : [];
+	}, [showFallbackSuggestions, fallbackResults]);
 
-	// Check if there are more results available
 	const hasMoreFallbackResults = useMemo(() => {
-		return fallbackResults.length > visibleFallbackResults.length;
-	}, [fallbackResults.length, visibleFallbackResults.length]);
+		return showFallbackSuggestions && fallbackResults.length > visibleFallbackResults.length;
+	}, [showFallbackSuggestions, fallbackResults.length, visibleFallbackResults.length]);
 
 	return {
 		visibleFallbackResults,

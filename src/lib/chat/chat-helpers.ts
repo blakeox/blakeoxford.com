@@ -68,51 +68,32 @@ export async function checkCitationHealth(sources?: AIChatSource[]): Promise<'he
 }
 
 /**
- * Enhance user query with analytical framing based on query type
+ * Soft framing for Ask — keep short conversational questions intact.
+ * Heavy "comprehensive analysis" appends hurt AutoRAG retrieval.
  */
 export function enhanceQuery(query: string, hasHistory: boolean): string {
 	const trimmed = query.trim();
 	if (!trimmed) return trimmed;
-	
-	// Don't enhance if query already contains analytical language
-	const analyticalPatterns = /\b(analyze|compare|contrast|synthesize|evaluate|assess|implications?|impact|why|how does|what makes|difference between)\b/i;
+
+	if (hasHistory || trimmed.length < 72) {
+		return trimmed;
+	}
+
+	const analyticalPatterns =
+		/\b(analyze|compare|contrast|synthesize|evaluate|assess|implications?|impact|why|how does|what makes|difference between)\b/i;
 	if (analyticalPatterns.test(trimmed)) {
 		return trimmed;
 	}
-	
-	// Detect query type and add appropriate analytical framing
+
 	const queryLower = trimmed.toLowerCase();
-	
-	// Skills/experience queries - ask for insights and context
+
 	if (queryLower.match(/\b(skill|experience|tech|stack|tool|framework|language|proficiency)\b/)) {
-		return `${trimmed} Please provide specific examples and explain how these skills have been applied to solve real business problems.`;
+		return `${trimmed} Include concrete project examples when relevant.`;
 	}
-	
-	// Project queries - ask for outcomes and learnings
+
 	if (queryLower.match(/\b(project|case study|work|portfolio|built|created|developed)\b/)) {
-		return `${trimmed} Focus on measurable outcomes, challenges overcome, and key insights gained.`;
+		return `${trimmed} Focus on outcomes and approaches used.`;
 	}
-	
-	// Comparison queries - explicitly request analysis
-	if (queryLower.match(/\b(latest|recent|newest|current|now)\b/) && !hasHistory) {
-		return `${trimmed} Compare this to previous work and highlight what makes it unique or improved.`;
-	}
-	
-	// General "what" questions - ask for deeper insights
-	if (queryLower.startsWith('what is') || queryLower.startsWith('what are') || queryLower.startsWith('what does')) {
-		return `${trimmed} Provide context on why this matters and how it creates value.`;
-	}
-	
-	// "How" questions - request methodology and reasoning
-	if (queryLower.startsWith('how')) {
-		return `${trimmed} Include the reasoning behind the approach and lessons learned.`;
-	}
-	
-	// For follow-up questions in conversation, be less aggressive
-	if (hasHistory) {
-		return trimmed;
-	}
-	
-	// Default enhancement for first message: request comprehensive analysis
-	return `${trimmed} Please provide a comprehensive answer with specific examples, outcomes, and insights rather than just a summary.`;
+
+	return trimmed;
 }

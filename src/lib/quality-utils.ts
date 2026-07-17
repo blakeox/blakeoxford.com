@@ -78,11 +78,11 @@ Evaluate on these criteria:
 
 Respond ONLY with valid JSON:
 {
-  "completeness": 85,
-  "citation_accuracy": 90,
-  "conciseness": 75,
-  "relevance": 95,
-  "reasoning": "Brief explanation of scores"
+ "completeness": 85,
+ "citation_accuracy": 90,
+ "conciseness": 75,
+ "relevance": 95,
+ "reasoning": "Brief explanation of scores"
 }`;
 
 		const evaluationResponse = await fetch('/api/ai-search', {
@@ -144,20 +144,20 @@ export function getConfidenceIndicator(score: number): {
 	if (score >= 80) {
 		return {
 			label: 'High confidence',
-			color: 'text-success-dark dark:text-success-light',
+			color: 'text-success-emphasis',
 			emoji: '✓',
 		};
 	}
 	if (score >= 60) {
 		return {
 			label: 'Moderate confidence',
-			color: 'text-warning-dark dark:text-warning-light',
+			color: 'text-warning-emphasis',
 			emoji: '○',
 		};
 	}
 	return {
 		label: 'Low confidence',
-		color: 'text-warning-dark dark:text-warning-light',
+		color: 'text-warning-emphasis',
 		emoji: '!',
 	};
 }
@@ -176,21 +176,21 @@ export function getCitationHealthIndicator(health: 'healthy' | 'warning' | 'erro
 	switch (health) {
 		case 'healthy':
 			return {
-				color: 'text-success-dark dark:text-success-light',
+				color: 'text-success-emphasis',
 				icon: '✓',
 				label: 'Healthy',
 				description: 'All sources are relevant and properly cited',
 			};
 		case 'warning':
 			return {
-				color: 'text-warning-dark dark:text-warning-light',
+				color: 'text-warning-emphasis',
 				icon: '⚠',
 				label: 'Warning',
 				description: 'Some sources may have lower relevance',
 			};
 		case 'error':
 			return {
-				color: 'text-error-dark dark:text-error-light',
+				color: 'text-error-emphasis',
 				icon: '✗',
 				label: 'Error',
 				description: 'Sources are missing or have very low relevance',

@@ -1,18 +1,13 @@
 ---
 /**
  * FloatingBlur - Decorative floating blur shape element
- * 
+ *
  * Creates a blurred circular background decoration commonly used in hero sections
  * and cards for visual interest.
- * 
- * @prop {string} size - Size preset: 'sm' (48/192px), 'md' (64/256px), 'lg' (80/320px), 'xl' (96/384px)
- * @prop {string} color - Color: 'accent' (accent/10-20), 'primary' (primary/10-20), 'sky' (sky-500/25)
- * @prop {string} position - Position preset: 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'
- * @prop {string} blur - Blur size: 'sm' (blur-xl), 'md' (blur-2xl), 'lg' (blur-3xl), 'custom' (blur-[120px])
- * @prop {string} translate - Custom translate classes (e.g., '-translate-x-1/2 -translate-y-1/2')
- * @prop {boolean} animated - Whether to animate with pulse
- * @prop {string} class - Optional additional classes
  */
+
+import { cn } from '../../utils/cn';
+
 interface Props {
  size?: 'sm' | 'md' | 'lg' | 'xl';
  color?: 'accent' | 'accent-light' | 'primary' | 'sky';
@@ -38,33 +33,41 @@ const sizeClasses = {
  md: 'w-64 h-64',
  lg: 'w-80 h-80',
  xl: 'w-96 h-96',
-};
+} as const;
 
 const colorClasses = {
- 'accent': 'bg-accent/10',
+ accent: 'bg-accent-subtle',
  'accent-light': 'bg-accent/20',
- 'primary': 'bg-primary/20',
- 'sky': 'bg-sky-500/25',
-};
+ primary: 'bg-primary-subtle',
+ sky: 'bg-info-subtle',
+} as const;
 
 const positionClasses = {
  'top-left': 'top-0 left-0',
  'top-right': 'top-0 right-0',
  'bottom-left': 'bottom-0 left-0',
  'bottom-right': 'bottom-0 right-0',
- 'center': 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
- 'custom': '',
-};
+ center: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+ custom: '',
+} as const;
 
 const blurClasses = {
  sm: 'blur-xl',
  md: 'blur-2xl',
  lg: 'blur-3xl',
  custom: 'blur-[120px]',
-};
+} as const;
 
-const animatedClass = animated ? 'animate-pulse' : '';
-const finalClasses = `absolute rounded-full pointer-events-none ${positionClasses[position]} ${sizeClasses[size]} ${colorClasses[color]} ${blurClasses[blur]} ${translate} ${animatedClass} ${className}`.trim();
+const finalClasses = cn(
+ 'absolute rounded-full pointer-events-none',
+ positionClasses[position],
+ sizeClasses[size],
+ colorClasses[color],
+ blurClasses[blur],
+ translate,
+ animated && 'animate-pulse',
+ className,
+);
 ---
 
 <div class={finalClasses} aria-hidden="true"></div>

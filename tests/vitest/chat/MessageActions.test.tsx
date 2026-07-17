@@ -66,10 +66,10 @@ describe('MessageActions', () => {
 	});
 
 	describe('Copy Button', () => {
-		it('should render "Copy answer" button', () => {
+		it('should render the copy button', () => {
 			render(<MessageActions {...defaultProps} />);
 
-			expect(screen.getByText('Copy answer')).toBeInTheDocument();
+			expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
 		});
 
 		it('should call handleCopyMessage when clicked', () => {
@@ -77,7 +77,7 @@ describe('MessageActions', () => {
 
 			render(<MessageActions {...defaultProps} handleCopyMessage={handleCopy} />);
 
-			fireEvent.click(screen.getByText('Copy answer'));
+			fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
 			expect(handleCopy).toHaveBeenCalledWith(baseMessage);
 		});
 
@@ -85,15 +85,15 @@ describe('MessageActions', () => {
 			render(<MessageActions {...defaultProps} copiedMessageId="test-msg-1" />);
 
 			expect(screen.getByText('Copied')).toBeInTheDocument();
-			expect(screen.queryByText('Copy answer')).not.toBeInTheDocument();
+			expect(screen.queryByRole('button', { name: 'Copy' })).not.toBeInTheDocument();
 		});
 
-		it('should display "Copy answer" for other messages when one is copied', () => {
+		it('should display "Copy" for other messages when one is copied', () => {
 			const otherMessage: ChatMessage = { ...baseMessage, id: 'other-msg' };
 
 			render(<MessageActions {...defaultProps} message={otherMessage} copiedMessageId="test-msg-1" />);
 
-			expect(screen.getByText('Copy answer')).toBeInTheDocument();
+			expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
 		});
 	});
 
@@ -108,16 +108,16 @@ describe('MessageActions', () => {
 	});
 
 	describe('View Top Source Button', () => {
-		it('should render "View top source" button when primary source exists', () => {
+		it('should render the source button when primary source exists', () => {
 			render(<MessageActions {...defaultProps} />);
 
-			expect(screen.getByText('View top source')).toBeInTheDocument();
+			expect(screen.getByRole('button', { name: 'Source' })).toBeInTheDocument();
 		});
 
-		it('should not render "View top source" button when primary source is null', () => {
+		it('should not render the source button when primary source is null', () => {
 			render(<MessageActions {...defaultProps} primarySource={null} />);
 
-			expect(screen.queryByText('View top source')).not.toBeInTheDocument();
+			expect(screen.queryByRole('button', { name: 'Source' })).not.toBeInTheDocument();
 		});
 
 		it('should call handleOpenPrimarySource when clicked', () => {
@@ -125,7 +125,7 @@ describe('MessageActions', () => {
 
 			render(<MessageActions {...defaultProps} handleOpenPrimarySource={handleOpen} />);
 
-			fireEvent.click(screen.getByText('View top source'));
+			fireEvent.click(screen.getByRole('button', { name: 'Source' }));
 			expect(handleOpen).toHaveBeenCalledWith('https://example.com/article');
 		});
 	});
@@ -148,7 +148,7 @@ describe('MessageActions', () => {
 			render(<MessageActions {...defaultProps} message={messageWithoutQuality} />);
 
 			// Should render without errors
-			expect(screen.getByText('Copy answer')).toBeInTheDocument();
+			expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
 		});
 	});
 
@@ -196,9 +196,7 @@ describe('MessageActions', () => {
 		it('should have keyboard accessible buttons', () => {
 			render(<MessageActions {...defaultProps} />);
 
-			const copyButton = screen.getByText('Copy answer');
-			const buttonElement = copyButton.closest('button');
-			expect(buttonElement).toBeInTheDocument();
+			expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
 		});
 	});
 });

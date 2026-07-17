@@ -1,21 +1,10 @@
-/* src/styles/global.css - Main stylesheet entry point */
+/* Main stylesheet entry — Tailwind first, then tokens, then shared components. */
 
-@import "../../node_modules/tailwindcss/index.css";
+@import "tailwindcss";
 @import "./theme.css";
 @import "./components.css";
 
-/* Inter and Montserrat are self-hosted via @fontsource imports in BaseLayout.astro. */
+/* Fonts are self-hosted via @fontsource imports in BaseLayout.astro. */
 
-/* Tell Tailwind to apply `dark:*` utilities whenever a `.dark`
-  class (or any of its descendants) is in the selector chain.   */
+/* Apply dark:* utilities when .dark is on an ancestor. */
 @custom-variant dark (&:where(.dark, .dark *));
-
-@layer utilities {
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-}

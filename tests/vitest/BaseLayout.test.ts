@@ -34,6 +34,8 @@ describe('BaseLayout.astro file', () => {
 
   it('should include both wide and default layout classes', () => {
     expect(content).toMatch(/const baseMainClasses = wide\s*\?/);
-    expect(content).toContain('prose dark:prose-invert');
+    // Semantic prose tokens remap in dark mode — no dark:prose-invert pair.
+    expect(content).toContain('prose');
+    expect(content).not.toContain('dark:prose-invert');
   });
 });

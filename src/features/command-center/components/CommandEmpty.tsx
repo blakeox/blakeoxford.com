@@ -1,129 +1,161 @@
+import { SuggestionChip } from '../../overlay/SuggestionChip';
+import { OVERLAY_FOOTER, SECTION_LABEL } from '../../overlay/overlayStyles';
 import { SUGGESTED_QUERIES } from '../types';
+
+const IDLE_RECENT_LIMIT = 3;
 
 type CommandEmptyProps = {
   query: string;
-  recentQueries: string[];
   onSuggestion: (value: string) => void;
-  onClearHistory: () => void;
   onAskAi: (query: string) => void;
 };
 
-function BrowseHint({ title, description }: { title: string; description: string }) {
+export function CommandEmpty({ query, onSuggestion, onAskAi }: CommandEmptyProps) {
+  const trimmed = query.trim();
+  // Always lead with a known-good corpus term (Microsoft Fabric), then one more.
+  const suggestions = SUGGESTED_QUERIES.slice(0, 2);
+
   return (
-    <div className="rounded-xl border border-border/50 bg-surface/80 px-3 py-2.5">
-      <p className="text-sm font-medium text-foreground">{title}</p>
-      <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+    <div className="px-1 py-3">
+      <p className="text-sm font-medium text-foreground">No results for &ldquo;{trimmed}&rdquo;</p>
+      <p className="mt-1 text-sm text-muted-foreground">Try a shorter keyword, or pick an example.</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {suggestions.map((item) => (
+          <SuggestionChip key={item} label={item} onClick={() => onSuggestion(item)} />
+        ))}
+      </div>
+      <button
+        type="button"
+        className="focus-ring-interactive mt-4 text-xs text-muted-foreground underline-offset-2 transition hover:text-accent hover:underline"
+        onClick={() => onAskAi(trimmed)}
+      >
+        Ask about “{trimmed}” instead
+      </button>
     </div>
   );
 }
 
-export function CommandEmpty({ query, recentQueries, onSuggestion, onClearHistory, onAskAi }: CommandEmptyProps) {
-  const trimmed = query.trim();
-
-  if (!trimmed) {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="grid gap-2 sm:grid-cols-2">
-          <BrowseHint title="Find" description="Search pages, projects, and blog posts — press ↵ to open." />
-          <BrowseHint title="Ask AI" description="Conversational answers with citations — opens the chat assistant." />
-        </div>
-
-        {recentQueries.length ? (
-          <div>
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold uppercase tracking-label text-subtle-foreground">Recent searches</span>
-              <button
-                type="button"
-                className="text-xs text-accent hover:underline focus-ring-interactive rounded"
-                onClick={onClearHistory}
-              >
-                Clear
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {recentQueries.map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  className="rounded-full border border-border/60 bg-surface/80 px-3 py-1.5 text-xs transition hover:border-accent hover:text-accent focus-ring-interactive"
-                  onClick={() => onSuggestion(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div>
-            <span className="mb-2 block text-xs font-semibold uppercase tracking-label text-subtle-foreground">
-              Try searching
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {SUGGESTED_QUERIES.slice(0, 4).map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  className="rounded-full border border-border/60 bg-surface/80 px-3 py-1.5 text-xs transition hover:border-accent hover:text-accent focus-ring-interactive"
-                  onClick={() => onSuggestion(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
+export function CommandRecentList({
+  recentQueries,
+  onSelect,
+  onClear,
+}: {
+  recentQueries: string[];
+  onSelect: (value: string) => void;
+  onClear: () => void;
+}) {
+  const visible = recentQueries.slice(0, IDLE_RECENT_LIMIT);
+  if (!visible.length) return null;
 
   return (
-    <div className="rounded-2xl border border-dashed border-border/60 bg-surface/60 px-4 py-4 text-sm text-muted-foreground">
-      <p className="font-medium text-foreground">No results for &ldquo;{trimmed}&rdquo;</p>
-      <p className="mt-1">Try a different keyword or ask the AI assistant for a conversational answer.</p>
-      <div className="mt-3 flex flex-wrap gap-2">
+    <section className="mb-3" aria-label="Recent searches">
+      <div className="mb-1.5 flex items-center justify-between gap-2 px-1">
+        <h3 className={SECTION_LABEL}>Recent</h3>
         <button
           type="button"
-          className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent transition hover:bg-accent/15 focus-ring-interactive"
-          onClick={() => onAskAi(trimmed)}
+          className="rounded text-xxs text-subtle-foreground transition hover:text-foreground focus-ring-interactive"
+          onClick={onClear}
         >
-          <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h8m-8 3h5.5M21 11.5c0 4.418-4.03 8-9 8-1.15 0-2.26-.19-3.29-.54L3 21l1.1-3.3A8.35 8.35 0 0 1 3 11.5c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
-          </svg>
-          Ask AI about &ldquo;{trimmed}&rdquo;
+          Clear
         </button>
-        {SUGGESTED_QUERIES.map((item) => (
+      </div>
+      <div className="flex flex-col">
+        {visible.map((item) => (
           <button
             key={item}
             type="button"
-            className="rounded-full border border-border/60 px-3 py-1.5 text-xs transition hover:border-accent hover:text-accent focus-ring-interactive"
-            onClick={() => onSuggestion(item)}
+            className="flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle focus-ring-interactive"
+            onClick={() => onSelect(item)}
           >
-            {item}
+            <span className="truncate">{item}</span>
+            <span className="shrink-0 text-xxs text-subtle-foreground" aria-hidden="true">
+              ↵
+            </span>
           </button>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
-export function CommandFooter() {
+export function CommandDestinationList({
+  destinations,
+  onSelect,
+}: {
+  destinations: Array<{ title: string; href: string }>;
+  onSelect: (destination: { title: string; href: string }) => void;
+}) {
+  const visible = destinations.slice(0, 4);
+  if (!visible.length) return null;
+
   return (
-    <div className="border-t border-border/50 px-4 py-2 text-xxs text-subtle-foreground sm:text-xs">
+    <section className="mb-3" aria-label="Continue browsing">
+      <div className="mb-1.5 px-1">
+        <h3 className={SECTION_LABEL}>Continue</h3>
+      </div>
+      <div className="flex flex-col">
+        {visible.map((item) => (
+          <button
+            key={item.href}
+            type="button"
+            className="flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle focus-ring-interactive"
+            onClick={() => onSelect(item)}
+          >
+            <span className="truncate">{item.title}</span>
+            <span className="shrink-0 text-xxs text-subtle-foreground" aria-hidden="true">
+              ↵
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function CommandSuggestions({
+  onSelect,
+  className = 'mb-2',
+}: {
+  onSelect: (value: string) => void;
+  className?: string;
+}) {
+  return (
+    <section className={className} aria-label="Suggested searches">
+      <h3 className={`${SECTION_LABEL} mb-1.5 px-1`}>Try</h3>
+      <div className="flex flex-wrap gap-2 px-1">
+        {SUGGESTED_QUERIES.map((item) => (
+          <SuggestionChip key={item} label={item} onClick={() => onSelect(item)} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function CommandFooter({
+  searchSource,
+  showCopyHint = false,
+}: {
+  isAskMode?: boolean;
+  searchSource?: string;
+  hasQuery?: boolean;
+  showCopyHint?: boolean;
+}) {
+  return (
+    <div className={OVERLAY_FOOTER} data-search-backend={searchSource || undefined}>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <span className="hidden sm:inline">
-          <kbd className="rounded border border-border px-1 py-0.5 font-sans">↑↓</kbd> navigate ·{' '}
-          <kbd className="rounded border border-border px-1 py-0.5 font-sans">a</kbd> ask AI ·{' '}
-          <kbd className="rounded border border-border px-1 py-0.5 font-sans">↵</kbd> open ·{' '}
-          <kbd className="rounded border border-border px-1 py-0.5 font-sans">esc</kbd> close
+        <span className="hidden text-subtle-foreground/90 sm:inline">
+          <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">↑↓</kbd> ·{' '}
+          <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">↵</kbd> open ·{' '}
+          <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">⌘↵</kbd> new tab
+          {showCopyHint ? (
+            <>
+              {' '}
+              · <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">⌘C</kbd> copy
+            </>
+          ) : null}{' '}
+          · <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">esc</kbd>
         </span>
-        <span className="sm:hidden">
-          <kbd className="rounded border border-border px-1 py-0.5 font-sans">↵</kbd> open ·{' '}
-          <kbd className="rounded border border-border px-1 py-0.5 font-sans">esc</kbd> close
-        </span>
-        <span className="text-subtle-foreground/80">
-          <span className="font-medium text-foreground">Find</span> = search ·{' '}
-          <span className="font-medium text-foreground">Ask AI</span> = chat
-        </span>
+        <span className="text-subtle-foreground/80 sm:hidden">Tap to open</span>
       </div>
     </div>
   );

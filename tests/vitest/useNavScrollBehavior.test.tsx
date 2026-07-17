@@ -1,85 +1,59 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { render, act } from '@testing-library/react';
-import { useRef } from 'react';
 
-import { useNavScrollBehavior } from '../../src/features/nav/hooks/useNavScrollBehavior';
+import { registerNavScrollBehavior } from '../../src/scripts/features/registerNavScrollBehavior';
 
-function ScrollHarness({ blockAutoHide = false }: { blockAutoHide?: boolean }) {
-  const shellRef = useRef<HTMLDivElement>(null);
-  const navRef = useRef<HTMLElement>(null);
-  const { isScrolled, isAutoHidden } = useNavScrollBehavior(
-    { shell: shellRef, nav: navRef },
-    { blockAutoHide },
-  );
+describe('registerNavScrollBehavior', () => {
+  let cleanup: () => void;
 
-  return (
-    <div>
-      <div ref={shellRef} className={`nav-shell${isAutoHidden ? ' nav-shell--auto-hidden' : ''}`}>
-        <nav ref={navRef} id="navbar" />
-      </div>
-      <output data-scrolled={isScrolled ? 'true' : 'false'} />
-      <output data-hidden={isAutoHidden ? 'true' : 'false'} />
-    </div>
-  );
-}
-
-describe('useNavScrollBehavior', () => {
   beforeEach(() => {
     Object.defineProperty(window, 'scrollY', { value: 0, writable: true, configurable: true });
     document.body.style.minHeight = '2000px';
+    document.body.innerHTML = `
+      <div class="nav-shell" data-menu-state="closed">
+        <nav id="navbar"></nav>
+      </div>
+    `;
+    cleanup = registerNavScrollBehavior();
   });
 
   afterEach(() => {
+    cleanup?.();
+    document.body.innerHTML = '';
     document.body.style.minHeight = '';
   });
 
-  it('marks the header compact after scrolling past the threshold', async () => {
-    const { container } = render(<ScrollHarness />);
-    const nav = container.querySelector('#navbar') as HTMLElement;
+  it('marks the header compact after scrolling past the threshold', () => {
+    const nav = document.getElementById('navbar') as HTMLElement;
 
-    await act(async () => {
-      window.scrollY = 120;
-      window.dispatchEvent(new Event('scroll'));
-    });
+    window.scrollY = 120;
+    window.dispatchEvent(new Event('scroll'));
 
     expect(nav.classList.contains('has-background')).toBe(true);
-    expect(container.querySelector('output[data-scrolled="true"]')).toBeTruthy();
+    expect(document.querySelector('.nav-shell--scrolled')).toBeTruthy();
   });
 
-  it('auto-hides on downward scroll and restores on upward scroll', async () => {
-    const { container } = render(<ScrollHarness />);
+  it('auto-hides on downward scroll and restores on upward scroll', () => {
+    window.scrollY = 200;
+    window.dispatchEvent(new Event('scroll'));
+    window.scrollY = 260;
+    window.dispatchEvent(new Event('scroll'));
 
-    await act(async () => {
-      window.scrollY = 200;
-      window.dispatchEvent(new Event('scroll'));
-    });
-    await act(async () => {
-      window.scrollY = 260;
-      window.dispatchEvent(new Event('scroll'));
-    });
+    expect(document.querySelector('.nav-shell--auto-hidden')).toBeTruthy();
 
-    expect(container.querySelector('.nav-shell--auto-hidden')).toBeTruthy();
+    window.scrollY = 220;
+    window.dispatchEvent(new Event('scroll'));
 
-    await act(async () => {
-      window.scrollY = 220;
-      window.dispatchEvent(new Event('scroll'));
-    });
-
-    expect(container.querySelector('.nav-shell--auto-hidden')).toBeFalsy();
+    expect(document.querySelector('.nav-shell--auto-hidden')).toBeFalsy();
   });
 
-  it('does not auto-hide while blockAutoHide is true', async () => {
-    const { container } = render(<ScrollHarness blockAutoHide />);
+  it('does not auto-hide while the mobile menu is open', () => {
+    document.querySelector('.nav-shell')?.setAttribute('data-menu-state', 'open');
 
-    await act(async () => {
-      window.scrollY = 260;
-      window.dispatchEvent(new Event('scroll'));
-    });
-    await act(async () => {
-      window.scrollY = 320;
-      window.dispatchEvent(new Event('scroll'));
-    });
+    window.scrollY = 260;
+    window.dispatchEvent(new Event('scroll'));
+    window.scrollY = 320;
+    window.dispatchEvent(new Event('scroll'));
 
-    expect(container.querySelector('.nav-shell--auto-hidden')).toBeFalsy();
+    expect(document.querySelector('.nav-shell--auto-hidden')).toBeFalsy();
   });
 });

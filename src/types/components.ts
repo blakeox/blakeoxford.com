@@ -211,7 +211,7 @@ export interface NavBarProps {
 }
 
 /**
- * NavBarIsland component props (React)
+ * @deprecated Nav is Astro HTML + progressive enhancement; kept for type catalog compat.
  */
 export interface NavBarIslandProps {
   currentPath?: string;

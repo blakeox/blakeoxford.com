@@ -86,11 +86,11 @@ export const MessageContent = memo(function MessageContent({
 			)}
 			
 			{isAssistant && isStreaming && (
-				<span className="flex items-center gap-1 text-[0.75rem] text-[color:var(--fg)]/60" aria-live="polite">
+				<span className="flex items-center gap-1 text-[0.75rem] text-foreground/60" aria-live="polite">
 					<span className="sr-only">Assistant is responding</span>
-					<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse" />
-					<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:150ms]" />
-					<span aria-hidden="true" className="size-1.5 rounded-full bg-[color:var(--accent)]/60 animate-pulse [animation-delay:300ms]" />
+					<span aria-hidden="true" className="size-1.5 rounded-full bg-accent/60 animate-pulse" />
+					<span aria-hidden="true" className="size-1.5 rounded-full bg-accent/60 animate-pulse [animation-delay:150ms]" />
+					<span aria-hidden="true" className="size-1.5 rounded-full bg-accent/60 animate-pulse [animation-delay:300ms]" />
 				</span>
 			)}
 			
@@ -111,13 +111,13 @@ export const QualityIndicator = memo(function QualityIndicator({ message, totalS
 			<span className={`font-medium ${indicator.color}`} aria-label={`Quality: ${indicator.label}`}>
 				<span aria-hidden="true">{indicator.emoji}</span> {indicator.label}
 			</span>
-			<span className="text-[color:var(--fg)]/40">·</span>
-			<span className="text-[color:var(--fg)]/50" title={`Response quality score: ${message.qualityScore}/100`}>
+			<span className="text-foreground/40">·</span>
+			<span className="text-foreground/50" title={`Response quality score: ${message.qualityScore}/100`}>
 				{message.qualityScore}/100
 			</span>
 			{message.citationHealth && totalSources > 0 && (
 				<>
-					<span className="text-[color:var(--fg)]/40">·</span>
+					<span className="text-foreground/40">·</span>
 					{(() => {
 						const healthIndicator = getCitationHealthIndicator(message.citationHealth);
 						return (

@@ -3,15 +3,16 @@ import {
  clearError,
  clearStatusMessage,
  defaultErrorFormatter,
- FormValidationConfig,
  hydrateFields,
  setSubmittingState,
  showError,
  showStatusMessage,
  validateField,
 } from './form/FormHelpers';
+import type { FormValidationConfig } from './form/FormHelpers';
 import { getContactFormService } from '../../services/ContactFormService';
 import { AppError, isAppError, getUserMessage } from '../../utils/errors';
+import { conversionEvents } from '../../lib/analytics';
 
 declare global {
  interface Window {
@@ -58,45 +59,81 @@ const FORM_VALIDATION_CONFIG: FormValidationConfig = {
  statusElementSelector: '#form-status',
 };
 
+const SUCCESS_MESSAGE = 'Your project brief was sent. I’ll review it and follow up by email.';
+
 type CleanupFn = () => void;
 
 function setupTurnstile(isAudit: boolean): CleanupFn | void {
  const container = document.getElementById('turnstile-container');
+ const shell = document.getElementById('turnstile-shell');
+ const placeholder = document.getElementById('turnstile-placeholder');
+ const status = document.getElementById('turnstile-status');
  if (!container) return;
+
+ const widgetSize = container.getBoundingClientRect().width >= 300 ? 'flexible' : 'compact';
+ const setVerificationState = (
+ state: 'idle' | 'loading' | 'interactive' | 'verified' | 'error' | 'audit',
+ message: string,
+ ) => {
+ shell?.setAttribute('data-turnstile-state', state);
+ if (shell) shell.style.minHeight = state === 'interactive' && widgetSize === 'compact' ? '140px' : '65px';
+ placeholder?.classList.toggle('invisible', state === 'interactive');
+ if (status) status.textContent = message;
+ };
 
  if (isAudit) {
  container.setAttribute('aria-label', 'Human verification temporarily disabled during automated audits');
- container.innerHTML = '<div class="text-center text-sm text-muted-foreground">Verification skipped for audit.</div>';
+ setVerificationState('audit', 'Verification skipped during automated audit');
  return;
  }
+
+ const renderWidget = () => {
+ if (!window.turnstile) {
+ setVerificationState('error', 'Verification could not load. Refresh and try again.');
+ return;
+ }
+
+ setVerificationState('loading', 'Checking your browser…');
+ window.turnstile.render(container, {
+ sitekey: SITE_KEY,
+ size: widgetSize,
+ theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
+ appearance: 'interaction-only',
+ action: 'contact_form',
+ callback: () => setVerificationState('verified', 'Verification complete'),
+ 'before-interactive-callback': () => setVerificationState('interactive', 'Complete the verification below'),
+ 'after-interactive-callback': () => setVerificationState('loading', 'Finishing verification…'),
+ 'expired-callback': () => setVerificationState('loading', 'Verification expired. Checking again…'),
+ 'error-callback': () => setVerificationState('error', 'Verification could not load. Refresh and try again.'),
+ });
+ };
 
  let injected = false;
  const injectScript = () => {
  if (injected) return;
  if (window.turnstile) {
- window.turnstile.render(container, { sitekey: SITE_KEY, size: 'compact' });
  injected = true;
- // analytics removed; no-op
+ renderWidget();
  return;
  }
 
  injected = true;
+ setVerificationState('loading', 'Loading secure verification…');
  const script = document.createElement('script');
- script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+ script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
  script.async = true;
  script.defer = true;
  script.onload = () => {
  try {
- window.turnstile?.render(container, { sitekey: SITE_KEY, size: 'compact' });
- // analytics removed; no-op
+ renderWidget();
  } catch (error) {
  console.warn('Turnstile render failed', error);
- // analytics removed; no-op
+ setVerificationState('error', 'Verification could not load. Refresh and try again.');
  }
  };
  script.onerror = () => {
  console.warn('Turnstile script failed to load');
- // analytics removed; no-op
+ setVerificationState('error', 'Verification could not load. Refresh and try again.');
  };
  document.head.appendChild(script);
  };
@@ -152,6 +189,15 @@ function setupContactForm(): CleanupFn | void {
  const statusElement = document.querySelector<HTMLElement>(FORM_VALIDATION_CONFIG.statusElementSelector ?? '');
 
  const cleanupFns: CleanupFn[] = [];
+
+ const messageField = fields.message as HTMLTextAreaElement | null;
+ const messageCount = document.getElementById('message-count');
+ const updateMessageCount = () => {
+ if (messageField && messageCount) messageCount.textContent = String(messageField.value.length);
+ };
+ messageField?.addEventListener('input', updateMessageCount);
+ updateMessageCount();
+ cleanupFns.push(() => messageField?.removeEventListener('input', updateMessageCount));
 
  const validateAllFields = () => {
  const errors: Record<string, string> = {};
@@ -232,7 +278,7 @@ function setupContactForm(): CleanupFn | void {
  // Use ContactFormService for submission
  const contactService = getContactFormService({
  endpoint: form.action || '/api/contact/submit',
- requireTurnstile: false, // Turnstile handled separately in this component
+ requireTurnstile: true,
  });
 
  const result = await contactService.submitFormData(formData, { signal: controller.signal });
@@ -240,8 +286,11 @@ function setupContactForm(): CleanupFn | void {
  globalThis.clearTimeout(timeoutId);
 
  if (result.success) {
- showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+ showStatusMessage(statusElement ?? null, SUCCESS_MESSAGE, 'success');
+ conversionEvents.generateLead({ method: 'contact_form', form: 'contact' });
  form.reset();
+ updateMessageCount();
+ statusElement?.focus();
  }
  } catch (error) {
  globalThis.clearTimeout(timeoutId);
@@ -249,7 +298,7 @@ function setupContactForm(): CleanupFn | void {
  // Use centralized error handling
  const errorMessage = isAppError(error)
  ? getUserMessage(error as AppError)
- : '❌ Something went wrong. Please try again later or email me directly at contact@blakeoxford.com.';
+ : 'Your message could not be sent. Please try again or email blakepoxford@outlook.com directly.';
 
  console.error('Form submission failed', error);
  showStatusMessage(statusElement ?? null, errorMessage, 'error');
@@ -263,7 +312,7 @@ function setupContactForm(): CleanupFn | void {
  cleanupFns.push(() => form.removeEventListener('submit', handleSubmit));
 
  if (new URLSearchParams(window.location.search).get('success') === 'true') {
- showStatusMessage(statusElement ?? null, '✅ Thank you for your message! I\'ll get back to you soon. 🎉', 'success');
+ showStatusMessage(statusElement ?? null, SUCCESS_MESSAGE, 'success');
  }
 
  return () => {
@@ -283,11 +332,9 @@ export default function ContactFormIsland() {
  setupContactForm(),
  ];
 
- if (!isAudit) {
  const turnstileCleanup = setupTurnstile(isAudit);
  if (typeof turnstileCleanup === 'function') {
  cleanupFns.push(turnstileCleanup);
- }
  }
 
  return () => {

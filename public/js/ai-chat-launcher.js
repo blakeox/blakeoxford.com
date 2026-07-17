@@ -14,8 +14,8 @@
   };
 
   const handleLauncherClick = (event) => {
-  const trigger = event.currentTarget;
-  if (!(trigger instanceof window.HTMLElement)) return;
+    const trigger = event.currentTarget;
+    if (!(trigger instanceof window.HTMLElement)) return;
     event.preventDefault();
     const action = trigger.dataset.aiAction || 'open';
     dispatch(action === 'toggle' ? TOGGLE_EVENT : OPEN_EVENT);
@@ -45,24 +45,5 @@
     syncExpanded(Boolean(detail && detail.open));
   });
 
-  window.addEventListener('keydown', (event) => {
-  const target = event.target;
-  if (target instanceof window.HTMLElement) {
-      const tag = target.tagName.toLowerCase();
-      const interacting = tag === 'input' || tag === 'textarea' || target.isContentEditable;
-      if (interacting && event.key !== 'Escape') {
-        return;
-      }
-    }
-
-    const isMac = navigator.platform.toLowerCase().includes('mac');
-    const metaPressed = isMac ? event.metaKey : event.ctrlKey;
-    const key = event.key.toLowerCase();
-    const slashShortcut = key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey;
-
-    if ((metaPressed && key === 'k') || slashShortcut) {
-      event.preventDefault();
-      dispatch(OPEN_EVENT);
-    }
-  });
+  // Keyboard shortcuts for Ask were removed — Cmd/Ctrl+K and / open site search.
 })();

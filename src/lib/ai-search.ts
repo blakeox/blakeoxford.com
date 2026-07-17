@@ -16,29 +16,102 @@ export type AIChatSource = {
   icon?: string;
 };
 
+/** Metadata from Cloudflare Worker response headers on /api/ai-search. */
+export type AISearchMeta = {
+  provider?: string;
+  cacheStatus?: string;
+  complexity?: string;
+};
+
 export type AIChatResponse = {
   message: string;
   sources: AIChatSource[];
+  meta?: AISearchMeta;
 };
 
 export type SearchWithAIOptions = {
   signal?: AbortSignal;
   history?: AIChatMessage[];
+  pageContext?: {
+    url: string;
+    title: string;
+    pathname: string;
+  } | null;
   onToken?: (token: string) => void;
   onCompletion?: (message: string) => void;
   onSources?: (sources: AIChatSource[]) => void;
+  onMeta?: (meta: AISearchMeta) => void;
 };
 
 export class AISearchError extends Error {
   status?: number;
-  constructor(message: string, status?: number) {
+  retryAfterSec?: number;
+  rateLimitReason?: string;
+  constructor(message: string, status?: number, extras?: { retryAfterSec?: number; rateLimitReason?: string }) {
     super(message);
     this.name = 'AISearchError';
     this.status = status;
+    this.retryAfterSec = extras?.retryAfterSec;
+    this.rateLimitReason = extras?.rateLimitReason;
   }
 }
 
 const REQUEST_TIMEOUT_MS = 45000;
+const SESSION_STORAGE_KEY = 'ai-chat:session-id';
+
+export function getOrCreateAiSessionId(): string {
+  if (typeof window === 'undefined') return 'ssr';
+  try {
+    const existing = window.localStorage.getItem(SESSION_STORAGE_KEY);
+    if (existing && existing.length >= 8) return existing;
+    const created =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `sess_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    window.localStorage.setItem(SESSION_STORAGE_KEY, created);
+    return created;
+  } catch {
+    return `sess_${Date.now().toString(36)}`;
+  }
+}
+
+export function readAISearchMeta(response: Response): AISearchMeta {
+  const provider = response.headers.get('x-ai-provider') ?? undefined;
+  const cacheStatus = response.headers.get('x-cache-status') ?? undefined;
+  const complexity = response.headers.get('x-query-complexity') ?? undefined;
+  return {
+    ...(provider ? { provider } : {}),
+    ...(cacheStatus ? { cacheStatus } : {}),
+    ...(complexity ? { complexity } : {}),
+  };
+}
+
+/** Quiet user-facing label for Cloudflare AI provenance. */
+export function formatAISearchProvenance(
+  meta?: AISearchMeta | null,
+  sourceCount = 0,
+): string | null {
+  if (!meta?.provider && sourceCount <= 0) return null;
+  const provider = meta?.provider ?? '';
+
+  // Workers AI answers from verified expertise — no fake "cited" chrome
+  if (provider === 'workers-ai') {
+    return null;
+  }
+
+  // When we already show citation links under the bubble, skip redundant labels
+  if (sourceCount > 0) {
+    return null;
+  }
+
+  if (provider === 'autorag-cached' || meta?.cacheStatus === 'HIT') {
+    return 'Cached answer';
+  }
+  if (provider === 'autorag') {
+    return null;
+  }
+  return null;
+}
 
 function withTimeout(signal?: AbortSignal): AbortSignal {
   const controller = new AbortController();
@@ -233,14 +306,25 @@ export async function searchWithAI(prompt: string, options?: SearchWithAIOptions
     query: prompt.trim(),
     history: options?.history ?? [],
     stream: preferStream,
+    ...(options?.pageContext
+      ? {
+          pageContext: {
+            url: options.pageContext.url,
+            title: options.pageContext.title,
+            pathname: options.pageContext.pathname,
+          },
+        }
+      : {}),
   };
 
   const signal = preferStream ? options?.signal : withTimeout(options?.signal);
+  const sessionId = getOrCreateAiSessionId();
 
   const response = await fetch('/api/ai-search', {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
+      'x-session-id': sessionId,
       ...(preferStream ? { accept: 'text/event-stream' } : {}),
     },
     body: JSON.stringify(payload),
@@ -249,24 +333,39 @@ export async function searchWithAI(prompt: string, options?: SearchWithAIOptions
 
   if (!response.ok) {
     let errorMessage = 'Failed to reach AI search service';
+    let resetIn: number | undefined;
     try {
       const errorData = await response.json();
       if (typeof errorData?.error === 'string') {
         errorMessage = errorData.error;
       }
+      if (typeof errorData?.resetIn === 'number' && Number.isFinite(errorData.resetIn)) {
+        resetIn = errorData.resetIn;
+      }
     } catch {
       // ignore JSON parse issues
     }
-    throw new AISearchError(errorMessage, response.status);
+    const retryHeader = response.headers.get('retry-after');
+    const retryAfterSec =
+      resetIn ??
+      (retryHeader && Number.isFinite(Number(retryHeader)) ? Number(retryHeader) : undefined);
+    const rateLimitReason = response.headers.get('x-rate-limit-reason') ?? undefined;
+    throw new AISearchError(errorMessage, response.status, { retryAfterSec, rateLimitReason });
   }
 
   const contentType = response.headers.get('content-type') || '';
+  const meta = readAISearchMeta(response);
+  if (Object.keys(meta).length > 0) {
+    options?.onMeta?.(meta);
+  }
+
   if (preferStream && contentType.includes('text/event-stream')) {
-    return consumeEventStream(response, {
+    const streamed = await consumeEventStream(response, {
       onToken: options?.onToken,
       onCompletion: options?.onCompletion,
       onSources: options?.onSources,
     });
+    return { ...streamed, meta: Object.keys(meta).length ? meta : undefined };
   }
 
   const data = await response.json();
@@ -287,5 +386,9 @@ export async function searchWithAI(prompt: string, options?: SearchWithAIOptions
     options.onSources(sources);
   }
 
-  return { message, sources };
+  return {
+    message,
+    sources,
+    meta: Object.keys(meta).length ? meta : undefined,
+  };
 }

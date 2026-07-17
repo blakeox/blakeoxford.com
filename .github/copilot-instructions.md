@@ -195,7 +195,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 
 ### Styling with Tailwind
 
-- Use CSS variables mapped to Tailwind (see `tailwind.config.ts` color extensions)
+- Use CSS variables in `src/styles/theme.css` bridged via `@theme inline` (not color maps in `tailwind.config.ts`)
 - Typography: Always wrap Markdown with `prose` classes
 - Dark mode: `class` strategy with `dark:` variants
 - Glass morphism: Pre-defined CSS variables for glass surfaces and borders
@@ -394,7 +394,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 - Responsive modifiers: `sm:`, `md:`, `lg:`, `xl:`
 - Dark mode variants: `dark:bg-surface`, `dark:text-primary`
 - Semantic class names via `@apply` when needed (rare)
-- Glass morphism via CSS variables: `var(--glass-surface)`
+- Glass morphism via CSS variables: `bg-glass` / `var(--color-glass)`
 
 **TypeScript**:
 - Strict mode enabled, no `any` types
@@ -617,7 +617,7 @@ Note: Cloudflare Pages is deprecated for this project. Do not use `wrangler page
 
 ### External APIs
 
-- **Resend**: Email delivery service (contact forms)
+- **Cloudflare Email Service**: Native Worker binding for contact form delivery
 - **Fuse.js**: Client-side fuzzy search
 - **Cloudflare AI**: Workers AI for on-edge inference
 - **Cloudflare Vectorize**: Vector database for semantic search
@@ -729,7 +729,7 @@ pnpm test
 cat src/styles/global.css | grep "--color"
 
 # 2. Extend Tailwind if needed
-# Edit tailwind.config.ts
+# Edit src/styles/theme.css (@theme inline) — keep tailwind.config.ts for plugins/container only
 
 # 3. Apply changes using tokens
 # Use Tailwind utilities

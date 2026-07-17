@@ -35,7 +35,7 @@ test.describe('Essential Visual Tests', () => {
     await expect(burgerButton).toBeVisible();
 
     await burgerButton.click();
-    await expect(page.locator('#nav-mobile-links')).toHaveClass(/active/);
+    await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'open');
     await expect(page.locator('#nav-mobile-backdrop')).toHaveAttribute('data-state', 'open');
     const menuHeight = await page.locator('#nav-mobile-links').evaluate((el) => el.getBoundingClientRect().height);
     expect(menuHeight).toBeGreaterThan(40);

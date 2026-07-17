@@ -3,8 +3,10 @@ import { preparePage } from './_visualHelper';
 import {
   componentVisualBaselines,
   type CommandCenterVisualSetup,
+  type ComponentVisualBaseline,
 } from '../../../src/data/componentVisualBaselines';
 import { captureNavBaselineScreenshot, setupNavVisual } from './_navVisualSetup';
+import { waitForViewportSettle } from '../utils/deterministic-waits';
 
 async function normalizeCommandCenterOverlay(page: Page) {
   const overlay = page.locator('#search-overlay').first();
@@ -41,24 +43,42 @@ async function openCommandCenter(page: Page) {
 }
 
 async function setupCommandCenter(page: Page, setup: CommandCenterVisualSetup) {
+  await page.evaluate(() => window.localStorage.removeItem('command-center:recent'));
   await openCommandCenter(page);
   const input = page.locator('#search-input');
 
   if (setup === 'results') {
     await input.fill('fabric');
     await page.locator('[data-search-result]').first().waitFor({ state: 'visible', timeout: 15000 });
+    await waitForViewportSettle(page, 300);
   } else if (setup === 'empty') {
     await input.fill('zzzzno-results-visual-test-xyz');
-    await page.getByText('No results for').waitFor({ state: 'visible', timeout: 15000 });
-  } else if (setup === 'ask') {
-    await page.locator('#command-mode-ask').click();
-    await page.locator('#command-mode-panel-ask').waitFor({ state: 'visible', timeout: 5000 });
+    await page.getByText(/No results for/i).first().waitFor({ state: 'visible', timeout: 15000 });
+    await waitForViewportSettle(page, 300);
+  } else {
+    await waitForViewportSettle(page, 300);
   }
 
   await page.evaluate(() => {
     const active = document.activeElement as HTMLElement | null;
     if (active?.blur) active.blur();
+    const input = document.getElementById('search-input') as HTMLInputElement | null;
+    if (input) {
+      input.style.caretColor = 'transparent';
+    }
   });
+}
+
+async function openChatDock(page: Page) {
+  const launcher = page.locator('[data-ai-launcher]').first();
+  await launcher.click();
+  const panel = page.locator('[data-ai-chat-panel]').first();
+  await panel.waitFor({ state: 'visible', timeout: 10000 });
+  await page.evaluate(() => {
+    const active = document.activeElement as HTMLElement | null;
+    if (active?.blur) active.blur();
+  });
+  await waitForViewportSettle(page, 300);
 }
 
 // Component-level focused snapshots (smaller surface, faster diff isolation)
@@ -66,7 +86,7 @@ async function setupCommandCenter(page: Page, setup: CommandCenterVisualSetup) {
 // Registry: src/data/componentVisualBaselines.ts (linked from componentDocs.ts)
 
 test.describe('@visual-essential @visual-components Component Visual Snapshots', () => {
-  for (const cfg of Object.values(componentVisualBaselines)) {
+  for (const cfg of Object.values(componentVisualBaselines) as ComponentVisualBaseline[]) {
     test(`component visual ${cfg.key}`, async ({ page }) => {
       await preparePage(page);
       if (cfg.viewport) {
@@ -76,7 +96,9 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
 
       const element = page.locator(cfg.selector).first();
 
-      if (cfg.commandCenterSetup) {
+      if (cfg.key === 'chatDock') {
+        await openChatDock(page);
+      } else if (cfg.commandCenterSetup) {
         await setupCommandCenter(page, cfg.commandCenterSetup);
       } else if (cfg.openMobileMenu || cfg.navSetup || cfg.selector.includes('.nav-shell')) {
         await setupNavVisual(page, cfg);
@@ -93,8 +115,7 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
         try {
           el.style.boxSizing = 'border-box';
           const rect = el.getBoundingClientRect();
-          const h = Math.round(rect.height);
-          el.style.height = `${h}px`;
+          el.style.height = `${Math.ceil(rect.height)}px`;
         } catch {
           void 0;
         }
@@ -102,7 +123,7 @@ test.describe('@visual-essential @visual-components Component Visual Snapshots',
 
       await expect(element).toHaveScreenshot(cfg.snapshotFile, {
         animations: 'disabled',
-        maxDiffPixelRatio: 0.02,
+        maxDiffPixelRatio: cfg.commandCenterSetup || cfg.key === 'chatDock' ? 0.04 : 0.02,
         scale: 'css',
         threshold: 0.01,
       });

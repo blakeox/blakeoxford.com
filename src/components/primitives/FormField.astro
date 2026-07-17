@@ -73,10 +73,11 @@ const isHidden = type === 'hidden';
 const ariaRequired: 'true' | undefined = required ? 'true' : undefined;
 
 const inputClasses = [
- 'w-full p-3 rounded-lg border-2 border-accent/30',
- 'focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60',
- 'bg-surface',
- 'transition-colors',
+ 'w-full rounded-xl border border-border bg-surface px-4 py-3.5 text-base text-foreground shadow-sm',
+ 'placeholder:text-subtle-foreground/80',
+ 'hover:border-accent/40 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25',
+ 'disabled:cursor-not-allowed disabled:opacity-60',
+ 'transition-[border-color,box-shadow,background-color]',
  className,
 ].filter(Boolean).join(' ');
 
@@ -99,10 +100,10 @@ const commonProps = {
 ---
 
 {!isHidden && (
- <div class="flex flex-col gap-2">
- <label for={id} class="font-semibold text-lg">
+ <div class="form-group flex flex-col gap-2">
+ <label for={id} class="text-sm font-semibold text-foreground">
  {label}
- {required && <span class="text-accent-emphasis">*</span>}
+ {required && <span class="text-error-emphasis" aria-hidden="true">*</span>}
  </label>
  
  {isTextarea ? (
@@ -118,14 +119,14 @@ const commonProps = {
  )}
  
  {helpText && (
- <small id={`${id}-help`} class="text-sm text-muted-foreground">
+ <small id={`${id}-help`} class="text-xs leading-relaxed text-muted-foreground">
  {helpText}
  </small>
  )}
  
  <div
  id={`${id}-error`}
- class="text-error-emphasis text-sm hidden"
+ class="hidden text-xs font-medium text-error-emphasis"
  role="alert"
  aria-live="polite"
  aria-atomic="true"

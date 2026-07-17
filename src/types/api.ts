@@ -277,7 +277,7 @@ export interface EdgeRequestContext {
 export interface EdgeEnvironment {
   ASSETS: Fetcher;
   CONTACT_FORMS?: KVNamespace;
-  RESEND_API_KEY?: string;
+  CONTACT_EMAIL?: unknown;
   ENVIRONMENT?: 'development' | 'staging' | 'production';
   [key: string]: unknown;
 }

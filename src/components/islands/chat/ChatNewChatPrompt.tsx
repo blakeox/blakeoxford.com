@@ -8,11 +8,11 @@ export function ChatNewChatPrompt({ canStartNewChat, startNewChat }: ChatNewChat
 	if (!canStartNewChat) return null;
 
 	return (
-		<div className="flex items-center justify-between gap-2 border-t border-[color:var(--border)]/40 bg-[color:var(--surface-subtle)]/40 px-4 py-2 text-[0.7rem] text-[color:var(--fg)]/65">
+		<div className="flex items-center justify-between gap-2 border-t border-border/40 bg-surface-subtle/40 px-4 py-2 text-[0.7rem] text-foreground/65">
 			<span className="truncate pr-2">Want to start fresh?</span>
 			<button
 				type="button"
-				className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--border)]/40 px-3 py-1 text-[0.65rem] font-medium text-[color:var(--fg)]/70 transition hover:border-[color:var(--accent)]/40 hover:text-[color:var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]/50"
+				className="inline-flex items-center gap-1.5 rounded-full border border-border/40 px-3 py-1 text-[0.65rem] font-medium text-foreground/70 transition hover:border-accent/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
 				onClick={startNewChat}
 			>
 				<span>Start new chat</span>

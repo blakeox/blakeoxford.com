@@ -12,6 +12,8 @@ export type SearchRecord = {
   score?: number;
   publishedAt?: string;
   image?: string;
+  /** How this hit was retrieved — drives Find trust UI. */
+  retrieval?: 'semantic' | 'keyword' | 'browse';
 };
 
 export type SemanticSearchMatch = {
@@ -35,4 +37,10 @@ export type SearchQueryOptions = {
 export type SearchQueryResult = {
   records: SearchRecord[];
   source: 'cloudflare-vectorize' | 'local-fallback' | 'browse';
+  meta?: {
+    provider?: string;
+    semanticCount?: number;
+    topScore?: number;
+    responseTimeMs?: number;
+  };
 };

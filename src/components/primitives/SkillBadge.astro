@@ -1,4 +1,6 @@
 ---
+import { cn } from '../../utils/cn';
+
 interface Props {
  skill: string;
  class?: string;
@@ -7,6 +9,6 @@ interface Props {
 const { skill, class: className = '' } = Astro.props;
 ---
 
-<li class={`px-3 py-2 rounded-lg bg-accent/10 text-foreground/90 ${className}`}>
+<li class={cn('px-3 py-2 rounded-lg bg-accent-subtle text-foreground/90', className)}>
  {skill}
 </li>

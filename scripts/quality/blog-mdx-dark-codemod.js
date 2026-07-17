@@ -67,6 +67,30 @@ const REPLACEMENTS = [
 	[/\bdark:border-green-400\/30\b/g, ''],
 	[/\bdark:border-orange-400\/30\b/g, ''],
 	[/\bdark:border-red-400\/40\b/g, ''],
+	[
+		/\bbg-gradient-to-br from-green-600 to-emerald-600 dark:from-green-500 dark:to-emerald-500 text-white\b/g,
+		'bg-gradient-to-br from-success to-success-dark text-on-dark',
+	],
+	[
+		/\bbg-gradient-to-br from-amber-600 to-orange-600 dark:from-amber-500 dark:to-orange-500 text-white\b/g,
+		'bg-gradient-to-br from-warning to-warning-dark text-on-dark',
+	],
+	[
+		/\bbg-gradient-to-br from-red-600 to-rose-600 dark:from-red-500 dark:to-rose-500 text-white\b/g,
+		'bg-gradient-to-br from-error to-error-dark text-on-dark',
+	],
+	[
+		/\bfrom-green-500\/10 to-emerald-500\/10 dark:from-green-400\/10 dark:to-emerald-400\/10\b/g,
+		'from-success/10 to-success/10',
+	],
+	[
+		/\bfrom-orange-500\/10 to-red-500\/10 dark:from-orange-400\/10 dark:to-red-400\/10\b/g,
+		'from-warning/10 to-error/10',
+	],
+	[
+		/\bfrom-white\/20 to-white\/10 dark:from-white\/15 dark:to-white\/5\b/g,
+		'from-surface/20 to-surface/10',
+	],
 	[/\bdark:prose-invert\b/g, ''],
 	[/\bdark:border-accent\/20\b/g, ''],
 	[/\bdark:border-accent\/30\b/g, ''],

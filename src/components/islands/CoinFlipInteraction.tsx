@@ -61,5 +61,5 @@ export default function CoinFlipInteraction({ rootId, innerId, liveRegionId, fli
  };
  }, [rootId, innerId, liveRegionId, flipOnClick]);
 
- return null;
+ return <></>;
 }

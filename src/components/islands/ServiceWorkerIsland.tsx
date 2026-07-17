@@ -34,5 +34,5 @@ export default function ServiceWorkerIsland() {
  }
  }, []);
 
- return null;
+ return <></>;
 }

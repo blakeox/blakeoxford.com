@@ -8,6 +8,48 @@ import { initEdgeSentry, addEdgeBreadcrumb } from '../sentry.edge.config.js';
 import { CACHE_DURATIONS, isHashedPath } from '../src/config/constants.ts';
 export { ConversationDurableObject } from './ConversationDO.ts';
 
+/** FNV-1a style fingerprint so Analytics Engine never stores raw client IPs. */
+function anonymizeClientIp(ip) {
+  if (!ip || ip === 'unknown') return 'unknown';
+  let hash = 2166136261;
+  for (let i = 0; i < ip.length; i++) {
+    hash ^= ip.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `ip_${(hash >>> 0).toString(16)}`;
+}
+
+const API_EXPOSE_HEADERS = [
+  'x-ai-provider',
+  'x-cache-status',
+  'x-query-complexity',
+  'x-response-time',
+  'x-rate-limit-reason',
+  'x-rate-limit-remaining',
+  'x-search-provider',
+  'x-request-id',
+  'retry-after',
+].join(',');
+
+/**
+ * Same-origin friendly CORS headers. Never pairs `*` with credentials.
+ * @param {Request} request
+ * @param {{ methods?: string, allowHeaders?: string, extra?: Record<string, string> }} [options]
+ */
+function buildApiCorsHeaders(request, options = {}) {
+  const requestOrigin = request.headers.get('origin');
+  const allowOrigin = requestOrigin && requestOrigin !== 'null' ? requestOrigin : new URL(request.url).origin;
+  return {
+    'access-control-allow-origin': allowOrigin,
+    'access-control-allow-credentials': 'true',
+    'access-control-allow-methods': options.methods || 'POST, OPTIONS',
+    'access-control-allow-headers': options.allowHeaders || 'content-type, authorization, x-session-id',
+    'access-control-expose-headers': API_EXPOSE_HEADERS,
+    'vary': 'Origin',
+    ...(options.extra || {}),
+  };
+}
+
 class EdgeCacheManager {
   constructor(request, env) {
     this.request = request;
@@ -347,18 +389,16 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
 
     if (url.pathname === '/api/ai-search') {
       const startTime = Date.now();
-      const origin = request.headers.get('origin') || '*';
       const baseCorsHeaders = {
-        'access-control-allow-origin': origin,
-        'access-control-allow-credentials': 'true',
-        'access-control-allow-methods': 'POST, OPTIONS',
-        'access-control-allow-headers': 'content-type, authorization, x-session-id',
-        'vary': 'Origin',
-        'cache-control': 'no-store',
-        'content-type': 'application/json; charset=utf-8',
-        'x-request-id': reqId,
-        'x-route-kind': 'api',
-        'x-cache-policy': 'no-store'
+        ...buildApiCorsHeaders(request, {
+          extra: {
+            'cache-control': 'no-store',
+            'content-type': 'application/json; charset=utf-8',
+            'x-request-id': reqId,
+            'x-route-kind': 'api',
+            'x-cache-policy': 'no-store',
+          },
+        }),
       };
 
       if (request.method === 'OPTIONS') {
@@ -386,6 +426,73 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
       if (!query) {
         return new Response(JSON.stringify({ error: 'Query is required' }), { status: 400, headers: baseCorsHeaders });
       }
+
+      // Optional page context from the docked Ask companion (generation hint only — never retrieval)
+      const pageContext = payload?.pageContext && typeof payload.pageContext === 'object'
+        ? {
+            title: typeof payload.pageContext.title === 'string' ? payload.pageContext.title.trim() : '',
+            pathname: typeof payload.pageContext.pathname === 'string' ? payload.pageContext.pathname.trim() : '',
+            url: typeof payload.pageContext.url === 'string' ? payload.pageContext.url.trim() : '',
+          }
+        : null;
+
+      /**
+       * Rewrite conversational questions into retrieval-friendly portfolio queries.
+       * Critical: never stuff SYSTEM instructions or page chrome into the AutoRAG query —
+       * that kills document retrieval (e.g. "What does he do well" → empty results).
+       */
+      const rewriteAskQuery = (raw, ctx) => {
+        let text = String(raw || '').trim();
+        const lower = text.toLowerCase();
+
+        // Resolve pronouns / second-person to Blake
+        text = text
+          .replace(/\b(he|him|his)\b/gi, 'Blake Oxford')
+          .replace(/\b(you|your)\b/gi, 'Blake Oxford');
+
+        const aboutPage = /\b(this page|this project|this post|here)\b/i.test(raw) && ctx?.title;
+        const strengthAsk = /\b(do well|good at|strength|excel|best at|specialize|known for|stand out|great at)\b/i.test(lower);
+        const whoAsk = /\b(who is|who are|about blake|tell me about)\b/i.test(lower);
+        const skillAsk = /\b(skill|experien|tech|stack|proficien|expertise)\b/i.test(lower);
+        const projectAsk = /\b(project|case study|portfolio|built|work)\b/i.test(lower);
+
+        let complexity = 'simple';
+        if (skillAsk || projectAsk || strengthAsk || whoAsk) complexity = 'medium';
+        if (/\b(compare|versus|vs\.?|difference|how did|how does|analyze)\b/i.test(lower)) complexity = 'complex';
+
+        // Build a clean retrieval query AutoRAG can match against the index
+        let retrievalQuery = text;
+        if (strengthAsk || whoAsk) {
+          retrievalQuery = `Blake Oxford strengths expertise skills projects outcomes achievements ${text}`;
+        } else if (aboutPage) {
+          retrievalQuery = `${ctx.title} ${text}`;
+        } else if (
+          !/\bblake\b/i.test(retrievalQuery)
+          && retrievalQuery.length < 48
+          && !/^(hi|hello|hey|thanks|thank you|ok|okay)\b/i.test(retrievalQuery)
+        ) {
+          // Short questions without an explicit subject — bias toward Blake's portfolio
+          retrievalQuery = `Blake Oxford ${retrievalQuery}`;
+        }
+
+        // Generation prompt stays conversational; page context is guidance only for page-specific asks
+        let generationQuery = text;
+        if (ctx?.title && (aboutPage || (!strengthAsk && !whoAsk))) {
+          generationQuery = `${text}\n\nContext: the visitor is currently viewing “${ctx.title}”. If the question is about this page, prioritize it; if it is about Blake or the site in general, answer site-wide.`;
+        }
+
+        const shouldUseCache = !/\b(latest|recent|current|now|today)\b/i.test(lower);
+
+        return { retrievalQuery: retrievalQuery.trim(), generationQuery, complexity, shouldUseCache };
+      };
+
+      const {
+        retrievalQuery,
+        generationQuery,
+        complexity,
+        shouldUseCache: enhancedCacheFlag,
+      } = rewriteAskQuery(query, pageContext);
+      const enhancedQuery = retrievalQuery;
 
       // Enhanced rate limiting with per-IP and per-session limits
       const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
@@ -446,7 +553,8 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           headers: {
             ...baseCorsHeaders,
             'retry-after': String(rateLimit.resetIn),
-            'x-rate-limit-reason': rateLimit.reason
+            'x-rate-limit-reason': rateLimit.reason,
+            'x-rate-limit-remaining': '0',
           }
         });
       }
@@ -457,109 +565,65 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
             .slice(-10)
         : [];
 
-      // Edge-side prompt enhancement for better responses
-      const enhanceQueryAtEdge = (q, hist) => {
-        const enhanced = { query: q, shouldUseCache: true, complexity: 'simple' };
-        const lowerQuery = q.toLowerCase();
-        
-        // CRITICAL: Anti-hallucination system instruction (concise version)
-        const antiHallucinationPrefix = `[SYSTEM: Only cite information from your indexed knowledge base. If unsure, say "I don't have that information." Do not fabricate project details.]\n\n`;
-        
-        // Skill/expertise queries - add context for detailed answers
-        if (lowerQuery.match(/skill|proficien|expert|experience|knowledge|technolog/)) {
-          enhanced.query = `${antiHallucinationPrefix}${q}\n\nFocus on specific technical skills with concrete project examples and measurable outcomes.`;
-          enhanced.complexity = 'medium';
-        }
-        // Project queries - request detailed project information
-        else if (lowerQuery.match(/project|built|created|developed|implemented|work|case study|portfolio/)) {
-          enhanced.query = `${antiHallucinationPrefix}${q}\n\nProvide specific project details: technologies, business impact, challenges, outcomes. Only cite documented projects.`;
-          enhanced.complexity = 'medium';
-        }
-        // Comparison queries - ensure detailed comparative analysis
-        else if (lowerQuery.match(/compare|versus|vs|difference|better|prefer/)) {
-          enhanced.query = `${antiHallucinationPrefix}${q}\n\nCompare approaches from different projects with specific examples and recommendations.`;
-          enhanced.complexity = 'complex';
-        }
-        // How-to queries - provide step-by-step guidance
-        else if (lowerQuery.match(/how|guide|steps|process|explain|teach/)) {
-          enhanced.query = `${antiHallucinationPrefix}${q}\n\nProvide step-by-step explanations based on actual implementation experience.`;
-          enhanced.complexity = 'complex';
-        }
-        // Time-sensitive queries - bypass cache AND enforce strict knowledge base filtering
-        else if (lowerQuery.match(/latest|recent|current|now|today/)) {
-          enhanced.query = `${antiHallucinationPrefix}${q}\n\nOnly cite projects with dates in the knowledge base. Sort by date. Do not fabricate recent work.`;
-          enhanced.shouldUseCache = false;
-          enhanced.complexity = 'medium';
-        }
-        // Default: still apply anti-hallucination prefix
-        else {
-          enhanced.query = `${antiHallucinationPrefix}${q}`;
-        }
-        
-        // For follow-up questions, add conversation context
-        if (hist.length > 0 && q.length < 40) {
-          const lastUserMsg = hist.filter(h => h.role === 'user').slice(-1)[0];
-          if (lastUserMsg) {
-            enhanced.query = `${antiHallucinationPrefix}Follow-up: ${q}\n(Previous: "${lastUserMsg.content.slice(0, 60)}...")`;
-          }
-        }
-        
-        return enhanced;
-      };
-      
-      const { query: enhancedQuery, shouldUseCache: enhancedCacheFlag, complexity } = enhanceQueryAtEdge(query, history);
-
       /**
-       * Handle simple queries with Workers AI (on-edge inference)
-       * Much faster and cheaper than AutoRAG for basic questions
+       * Conversational Workers AI path — answers from verified Blake expertise.
+       * Do NOT pass SYSTEM/retrieval-junk as the user message.
        */
-      const handleSimpleQueryWithWorkersAI = async (q, hist, env) => {
+      const handleSimpleQueryWithWorkersAI = async (userQuestion, hist, env) => {
         try {
-          // Build conversation context
           const messages = [
             {
               role: 'system',
-              content: `You are Blake Oxford's AI assistant. 
+              content: `You are Blake Oxford's friendly AI assistant on blakeoxford.com.
 
-CRITICAL RULES:
-1. ONLY provide information that is explicitly documented in Blake's portfolio
-2. If you don't have specific information, say "I don't have that information in my current knowledge base"
-3. NEVER fabricate project details, technologies, or achievements
-4. Do not mention projects involving AWS Lambda, DynamoDB, or e-commerce unless explicitly documented
+Answer conversationally about Blake, his work, and this site. Be specific and useful.
 
-Blake's verified expertise includes:
-- Healthcare technology (AdvancedMD EHR implementation, patient documentation systems)
-- Enterprise systems (Microsoft Fabric, Google Workspace → M365 migration, ADP Workforce Now)
+Blake's verified expertise and work includes:
+- Healthcare technology (AdvancedMD EHR implementation, clinical documentation systems)
+- Enterprise systems (Microsoft Fabric, Google Workspace → Microsoft 365 migration, ADP Workforce Now)
 - Cloud platforms (Cloudflare Workers, Azure, Microsoft 365)
-- AI/ML applications (OpenAI integration for clinical documentation)
+- AI/ML applications (OpenAI integration for clinical documentation, RAG/AutoRAG)
 - Full-stack development (React, TypeScript, Python, SwiftUI)
+- Finance/ops automation (bank projections modeling, Power BI, Power Platform)
 
-Provide concise, professional responses (2-3 sentences) for simple questions. Be friendly and helpful, but factual.`
+Guidelines:
+1. Prefer concrete project examples and outcomes from the list above.
+2. If asked what Blake does well, summarize strengths across automation, enterprise systems, AI, and healthcare IT with 2–4 crisp points.
+3. Do not invent employers, clients, or projects that are not listed.
+4. Keep answers to 2–5 short sentences unless the user asks for more detail.
+5. Warm, professional tone — like a knowledgeable colleague, not a legal disclaimer.
+6. Plain text only. Do not use markdown: no **bold**, no *italics*, no # headings, no code fences. Use short sentences or simple "- " bullets if listing points.`
             },
-            ...hist.slice(-3), // Last 3 messages for context
-            { role: 'user', content: q }
+            ...hist.slice(-3),
+            { role: 'user', content: userQuestion }
           ];
 
-          // Call Workers AI with Llama 3.1 8B model (fast, cost-effective)
-          const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+          // llama-3.1-8b-instruct was deprecated 2026-05-30; use the active -fast variant
+          const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
             messages,
-            max_tokens: 300, // Keep responses concise for simple queries
-            temperature: 0.7
+            max_tokens: 420,
+            temperature: 0.65
           });
 
-          if (response && response.response) {
+          const text = typeof response?.response === 'string'
+            ? response.response
+            : typeof response === 'string'
+              ? response
+              : '';
+
+          if (text.trim()) {
             return {
-              message: response.response.trim(),
-              sources: [], // Workers AI doesn't have RAG context
+              message: text.trim(),
+              sources: [],
               fromWorkersAI: true,
-              model: 'llama-3.1-8b'
+              model: 'llama-3.1-8b-instruct-fast'
             };
           }
-          
-          return null; // Fall back to AutoRAG
+
+          return null;
         } catch (error) {
           console.warn('Workers AI failed, falling back to AutoRAG:', error);
-          return null; // Fall back to AutoRAG on error
+          return null;
         }
       };
 
@@ -572,7 +636,7 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
           .slice(0, 100);
       };
 
-      const cacheKey = `ai:response:${normalizeForCache(query)}`;
+      const cacheKey = `ai:response:v4:${normalizeForCache(query)}`;
       const cacheEnabled = !query.toLowerCase().includes('latest') &&
                           !query.toLowerCase().includes('recent') &&
                           !query.toLowerCase().includes('now') &&
@@ -581,15 +645,18 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
       // Update cache enabled based on edge enhancement
       const finalCacheEnabled = cacheEnabled && enhancedCacheFlag;
 
-      // For simple queries, try Workers AI first (70x faster, 76% cheaper)
-      if (complexity === 'simple' && env.AI) {
-        const workersAIResult = await handleSimpleQueryWithWorkersAI(enhancedQuery, history, env);
+      // Conversational Blake-profile questions: answer with Workers AI from verified expertise.
+      // AutoRAG retrieval often fails on pronouns / soft phrasing ("What does he do well").
+      const conversationalProfileAsk = /\b(do well|good at|strength|excel|best at|specialize|known for|stand out|great at|who is|who are|about blake|tell me about)\b/i.test(query);
+      if ((complexity === 'simple' || conversationalProfileAsk) && env.AI) {
+        const workersAIResult = await handleSimpleQueryWithWorkersAI(generationQuery, history, env);
         
         if (workersAIResult) {
           const responseHeaders = {
             ...baseCorsHeaders,
             'x-query-complexity': complexity,
             'x-ai-provider': 'workers-ai',
+            'x-cache-status': 'N/A',
             'x-response-time': String(Date.now() - startTime)
           };
 
@@ -598,9 +665,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
             try {
               env.AI_ANALYTICS.writeDataPoint({
                 blobs: [
-                  query.slice(0, 100),
+                  query.slice(0, 50),
                   'WORKERS_AI',
-                  clientIp,
+                  anonymizeClientIp(clientIp),
                   sessionId || 'anonymous',
                   complexity
                 ],
@@ -648,9 +715,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
               try {
                 env.AI_ANALYTICS.writeDataPoint({
                   blobs: [
-                    query.slice(0, 100),
+                    query.slice(0, 50),
                     'CACHE_HIT',
-                    clientIp,
+                    anonymizeClientIp(clientIp),
                     sessionId || 'anonymous',
                     complexity || 'unknown'
                   ],
@@ -690,7 +757,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
       try {
         const requestBody = { query: enhancedQuery, history };
         
-        // Use AI Gateway if configured for unified logging and fallback support
+        // Optional AI Gateway: attach observability headers when configured.
+        // Keep the AutoRAG endpoint URL (gateway URL rewrite is provider-specific).
+        // Enable by setting AI_GATEWAY_ID + AI_GATEWAY_ACCOUNT_ID in wrangler.toml.
         let fetchUrl = upstreamEndpoint;
         const fetchHeaders = {
           'content-type': 'application/json',
@@ -703,7 +772,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
             user: sessionId || 'anonymous', 
             source: 'website-chat',
             complexity,
-            enhanced: query !== enhancedQuery
+            enhanced: query !== enhancedQuery,
+            gateway: env.AI_GATEWAY_ID,
+            account: env.AI_GATEWAY_ACCOUNT_ID,
           });
         }
         
@@ -804,6 +875,25 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
           return new Response(JSON.stringify({ error: 'AI service returned no message' }), { status: 502, headers: baseCorsHeaders });
         }
 
+        // AutoRAG empty-retrieval refusals → conversational Workers AI fallback
+        const looksLikeEmptyRetrieval = sources.length === 0 && /\b(don'?t have that information|no documents|not (found|available) in|cannot provide an answer based on)\b/i.test(message);
+        if (looksLikeEmptyRetrieval && env.AI) {
+          const fallback = await handleSimpleQueryWithWorkersAI(generationQuery, history, env);
+          if (fallback?.message) {
+            return new Response(JSON.stringify(fallback), {
+              status: 200,
+              headers: {
+                ...baseCorsHeaders,
+                'x-query-complexity': complexity,
+                'x-ai-provider': 'workers-ai',
+                'x-cache-status': 'MISS',
+                'x-response-time': String(Date.now() - startTime),
+                'x-query-enhanced': String(query !== enhancedQuery),
+              },
+            });
+          }
+        }
+
         if (wantsStream) {
           const streamHeaders = new Headers(baseCorsHeaders);
           streamHeaders.set('content-type', 'text/event-stream; charset=utf-8');
@@ -855,9 +945,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
                   const responseTime = Date.now() - startTime;
                   env.AI_ANALYTICS.writeDataPoint({
                     blobs: [
-                      query.slice(0, 100),
+                      query.slice(0, 50),
                       'API_CALL_STREAM',
-                      clientIp,
+                      anonymizeClientIp(clientIp),
                       sessionId || 'anonymous',
                       complexity || 'unknown'
                     ],
@@ -901,9 +991,9 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
             const responseTime = Date.now() - startTime;
             env.AI_ANALYTICS.writeDataPoint({
               blobs: [
-                query.slice(0, 100),
+                query.slice(0, 50),
                 'API_CALL',
-                clientIp,
+                anonymizeClientIp(clientIp),
                 sessionId || 'anonymous',
                 complexity || 'unknown'
               ],
@@ -967,14 +1057,19 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
 
     // Semantic search endpoint using Vectorize
     if (url.pathname === '/api/semantic-search') {
-      const origin = request.headers.get('origin') || '*';
+      const startTime = Date.now();
       const baseCorsHeaders = {
-        'access-control-allow-origin': origin,
-        'access-control-allow-credentials': 'true',
-        'access-control-allow-methods': 'POST, OPTIONS',
-        'access-control-allow-headers': 'content-type',
-        'cache-control': 'no-store',
-        'vary': 'Origin'
+        ...buildApiCorsHeaders(request, {
+          allowHeaders: 'content-type, x-session-id',
+          extra: {
+            'cache-control': 'no-store',
+            'content-type': 'application/json; charset=utf-8',
+            'x-request-id': reqId,
+            'x-route-kind': 'api',
+            'x-cache-policy': 'no-store',
+            'x-search-provider': 'vectorize',
+          },
+        }),
       };
 
       if (request.method === 'OPTIONS') {
@@ -989,6 +1084,38 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
       }
 
       try {
+        const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
+
+        // Light rate limit for Find (higher than Ask — typing fires often)
+        if (env.RATE_LIMIT_KV) {
+          const now = Date.now();
+          const windowMs = 60 * 1000;
+          const ipKey = `ratelimit:search:ip:${clientIp}`;
+          const ipData = await env.RATE_LIMIT_KV.get(ipKey, 'json');
+          const ipCount = ipData || { count: 0, reset: now + windowMs };
+          if (now > ipCount.reset) {
+            ipCount.count = 0;
+            ipCount.reset = now + windowMs;
+          }
+          ipCount.count++;
+          await env.RATE_LIMIT_KV.put(ipKey, JSON.stringify(ipCount), { expirationTtl: 120 });
+          if (ipCount.count > 60) {
+            const resetIn = Math.ceil((ipCount.reset - now) / 1000);
+            return new Response(JSON.stringify({
+              error: 'Search rate limit exceeded. Please wait a moment.',
+              resetIn,
+            }), {
+              status: 429,
+              headers: {
+                ...baseCorsHeaders,
+                'retry-after': String(resetIn),
+                'x-rate-limit-reason': 'ip',
+                'x-rate-limit-remaining': '0',
+              },
+            });
+          }
+        }
+
         const { query, limit = 5 } = await request.json();
 
         if (!query || typeof query !== 'string') {
@@ -1045,15 +1172,42 @@ Provide concise, professional responses (2-3 sentences) for simple questions. Be
           date: match.metadata?.date || ''
         }));
 
+        const topScore = results[0]?.score ?? 0;
+        const latency = Date.now() - startTime;
+
+        if (env.AI_ANALYTICS) {
+          try {
+            env.AI_ANALYTICS.writeDataPoint({
+              blobs: [
+                query.slice(0, 50),
+                'VECTORIZE',
+                anonymizeClientIp(clientIp),
+                'anonymous',
+              ],
+              doubles: [
+                results.length,
+                topScore,
+                latency,
+              ],
+              indexes: ['semantic_search'],
+            });
+          } catch {
+            // Analytics is non-critical
+          }
+        }
+
         return new Response(JSON.stringify({ 
           query,
           results,
-          count: results.length 
+          count: results.length,
+          provider: 'vectorize',
+          topScore,
         }), {
           status: 200,
           headers: {
             ...baseCorsHeaders,
-            'content-type': 'application/json'
+            'x-response-time': String(latency),
+            'x-search-provider': 'vectorize',
           }
         });
 

@@ -21,6 +21,7 @@ export {
 export {
 	trackEvent,
 	autoragEvents,
+	conversionEvents,
 } from './analytics';
 
 // Error Utilities
@@ -37,6 +38,7 @@ export {
 	cleanSnippet,
 	cleanAssistantResponse,
 	formatPublishedDate,
+	formatRelativeDate,
 	createId,
 } from './string-utils';
 

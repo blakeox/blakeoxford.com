@@ -68,6 +68,13 @@ export {
 	enhanceQuery,
 } from './chat-helpers';
 
+export {
+	getPageContext,
+	formatPageContextLabel,
+	withPageContext,
+	type PageContext,
+} from './pageContext';
+
 // ─── Conversation Utilities ───────────────────────────────────────
 export {
 	filterMessages,

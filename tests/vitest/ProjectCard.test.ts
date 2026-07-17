@@ -37,7 +37,7 @@ describe('ProjectCard.astro file', () => {
   });
 
   it('should expose a visible CTA without extra aria-label', () => {
-    expect(content).toContain('<span class="inline-flex items-center gap-2 rounded-full border-2 border-accent/60 px-3 @sm:px-4 py-1.5 @sm:py-2 text-xs @sm:text-sm font-semibold text-accent');
+    expect(content).toContain('inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis');
     expect(content).toContain('View case study');
     expect(content).not.toContain('aria-label={`View ${data.title}`}');
   });

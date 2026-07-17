@@ -3,452 +3,518 @@ import { createPortal } from 'react-dom';
 
 import { handoffToAiChat } from '../../lib/chat/ai-chat-bridge';
 import { useOverlayScrollLock } from '../../hooks/useOverlayScrollLock';
+import { useTouchGestures } from '../../lib/hooks/useTouchGestures';
 import { createFocusTrap } from '../../utils/focusTrap';
-import { CommandAskHandoff, CommandAskPanel } from './components/CommandAskHandoff';
-import { CommandEmpty, CommandFooter } from './components/CommandEmpty';
+import { OverlayShell } from '../overlay';
+import { OVERLAY_CLOSE_BUTTON, OVERLAY_FIELD, OVERLAY_HEADER } from '../overlay/overlayStyles';
+import { CommandCategoryFilters } from './components/CommandCategoryFilters';
+import {
+ CommandDestinationList,
+ CommandEmpty,
+ CommandFooter,
+ CommandRecentList,
+} from './components/CommandEmpty';
 import { CommandGroupSection, CommandSkeletonList } from './components/CommandGroup';
-import { CommandModeTabs } from './components/CommandModeTabs';
 import { CommandResultRow } from './components/CommandResultRow';
+import { CommandTitleSuggestions } from './components/CommandTitleSuggestions';
 import { useCommandCenter } from './hooks/useCommandCenter';
 import { useCommandHistory } from './hooks/useCommandHistory';
 import { useCommandQuery } from './hooks/useCommandQuery';
 import { commandCenterEvents, type CommandCenterHandoffSource } from './lib/analytics';
 import { flattenGroups } from './lib/groupResults';
-import { parseCommandQuery } from './lib/parseQuery';
-import type { CommandCategory, CommandItem, CommandMode } from './types';
-import { CATEGORY_LABELS } from './types';
+import type { CommandCategory, CommandItem } from './types';
 
-const CATEGORIES: CommandCategory[] = ['all', 'projects', 'blog', 'pages'];
-
-type AskAiOptions = {
-  sourceTitle?: string;
-  sourceHref?: string;
-  sourceKind?: CommandItem['kind'];
-  analyticsSource?: CommandCenterHandoffSource;
-  autoSend?: boolean;
-};
-
+/**
+ * Site search — navigate pages, projects, and posts.
+ * Ask lives in the corner companion; search stays search-like.
+ */
 export default function CommandCenter() {
-  const { isOpen, close: closeCommandCenter } = useCommandCenter();
-  const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
-  const { recentQueries, pushQuery, clearHistory } = useCommandHistory();
-  const { query, setQuery, category, setCategory, groups, isLoading, error } = useCommandQuery(isOpen);
+ const { isOpen, close: closeCommandCenter, seedQuery, clearSeedQuery } = useCommandCenter();
+ const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
+ const {
+ recentQueries,
+ recentDestinations,
+ pushQuery,
+ pushDestination,
+ clearHistory,
+ } = useCommandHistory();
+ const {
+ query,
+ setQuery,
+ category,
+ setCategory,
+ groups,
+ isLoading,
+ error,
+ searchSource,
+ } = useCommandQuery(isOpen);
 
-  const [mode, setMode] = useState<CommandMode>('find');
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
-  const focusTrapRef = useRef<ReturnType<typeof createFocusTrap> | null>(null);
+ const [activeIndex, setActiveIndex] = useState(0);
+ const [copiedHref, setCopiedHref] = useState<string | null>(null);
+ const inputRef = useRef<HTMLInputElement>(null);
+ const panelRef = useRef<HTMLDivElement>(null);
+ const listRef = useRef<HTMLDivElement>(null);
+ const focusTrapRef = useRef<ReturnType<typeof createFocusTrap> | null>(null);
+ const emptyTrackedRef = useRef<string | null>(null);
 
-  const close = useCallback(() => {
-    releaseScrollLockNow();
-    focusTrapRef.current?.deactivate();
-    closeCommandCenter();
-  }, [closeCommandCenter, releaseScrollLockNow]);
+ useEffect(() => {
+ if (!seedQuery) return;
+ setQuery(seedQuery);
+ clearSeedQuery();
+ }, [seedQuery, setQuery, clearSeedQuery]);
 
-  const flatItems = useMemo(() => flattenGroups(groups), [groups]);
-  const hasResults = mode === 'find' && flatItems.length > 0;
-  const findQuery = parseCommandQuery(query).query;
+ const findQuery = query.trim();
 
-  const askAi = useCallback(
-    (prompt: string, options?: AskAiOptions) => {
-      const trimmed = prompt.trim();
-      const analyticsSource =
-        options?.analyticsSource ?? (mode === 'ask' ? 'ask_panel' : 'ask_banner');
+ // Reset type filter when the query is cleared
+ useEffect(() => {
+ if (!findQuery && category !== 'all') {
+ setCategory('all');
+ }
+ }, [findQuery, category, setCategory]);
 
-      if (!trimmed && !options?.sourceTitle) {
-        commandCenterEvents.askHandoff({
-          source: analyticsSource,
-          query_length: 0,
-          auto_send: false,
-        });
-        handoffToAiChat({ query: '', autoSend: false });
-        close();
-        return;
-      }
+ const flatBrowseGroups = useMemo(() => {
+ if (findQuery) return groups;
+ if (recentQueries.length > 0 || recentDestinations.length > 0) {
+ return groups.filter((group) => group.id !== 'recent');
+ }
+ return groups;
+ }, [findQuery, groups, recentQueries.length, recentDestinations.length]);
 
-      pushQuery(findQuery || trimmed);
-      commandCenterEvents.askHandoff({
-        source: analyticsSource,
-        query_length: trimmed.length,
-        item_kind: options?.sourceKind,
-        auto_send: options?.autoSend ?? true,
-      });
-      handoffToAiChat({
-        query: trimmed,
-        autoSend: options?.autoSend ?? true,
-        sourceTitle: options?.sourceTitle,
-        sourceHref: options?.sourceHref,
-        sourceKind: options?.sourceKind,
-      });
-      close();
-    },
-    [close, findQuery, mode, pushQuery],
-  );
+ const flatItems = useMemo(() => flattenGroups(flatBrowseGroups), [flatBrowseGroups]);
+ const hasResults = flatItems.length > 0;
 
-  const askAboutItem = useCallback(
-    (item: CommandItem) => {
-      askAi(findQuery || item.title, {
-        sourceTitle: item.title,
-        sourceHref: item.href,
-        sourceKind: item.kind,
-        analyticsSource: 'result_row',
-      });
-    },
-    [askAi, findQuery],
-  );
+ const close = useCallback(() => {
+ releaseScrollLockNow();
+ focusTrapRef.current?.deactivate();
+ closeCommandCenter();
+ }, [closeCommandCenter, releaseScrollLockNow]);
 
-  const handleModeChange = useCallback((next: CommandMode) => {
-    setMode(next);
-    commandCenterEvents.modeChange(next);
-  }, []);
+ const { handleTouchStart, handleTouchMove, handleTouchEnd } = useTouchGestures({
+ enabled: isOpen,
+ swipeThreshold: 100,
+ onSwipeDown: close,
+ });
 
-  useEffect(() => {
-    if (parseCommandQuery(query).mode === 'ask') {
-      setMode((prev) => {
-        if (prev !== 'ask') {
-          commandCenterEvents.modeChange('ask');
-        }
-        return 'ask';
-      });
-    }
-  }, [query]);
+ const askAi = useCallback(
+ (prompt: string, analyticsSource: CommandCenterHandoffSource = 'empty_state') => {
+ const trimmed = prompt.trim();
+ if (!trimmed) return;
 
-  useEffect(() => {
-    if (!isOpen) setMode('find');
-  }, [isOpen]);
+ pushQuery(trimmed);
+ commandCenterEvents.askHandoff({
+ source: analyticsSource,
+ query_length: trimmed.length,
+ auto_send: true,
+ });
+ handoffToAiChat({
+ query: trimmed,
+ autoSend: true,
+ });
+ close();
+ },
+ [close, pushQuery],
+ );
 
-  const navigateTo = useCallback(
-    (item: CommandItem, newTab = false) => {
-      commandCenterEvents.resultClick({ kind: item.kind, href: item.href });
-      pushQuery(query);
-      close();
-      if (newTab) {
-        window.open(item.href, '_blank', 'noopener,noreferrer');
-      } else {
-        window.location.href = item.href;
-      }
-    },
-    [close, pushQuery, query],
-  );
+ useEffect(() => {
+ if (!isOpen) {
+ focusTrapRef.current?.deactivate();
+ setActiveIndex(0);
+ return;
+ }
 
-  useEffect(() => {
-    if (!isOpen) {
-      focusTrapRef.current?.deactivate();
-      setActiveIndex(-1);
-      return;
-    }
+ const toggleButton = document.getElementById('search-toggle');
+ focusTrapRef.current = createFocusTrap(panelRef.current, {
+ initialFocus: inputRef.current,
+ returnFocus: toggleButton,
+ fallbackFocus: panelRef.current,
+ });
+ focusTrapRef.current.activate();
 
-    const toggleButton = document.getElementById('search-toggle');
-    focusTrapRef.current = createFocusTrap(panelRef.current, {
-      initialFocus: inputRef.current,
-      returnFocus: toggleButton,
-      fallbackFocus: panelRef.current,
-    });
-    focusTrapRef.current.activate();
+ const timer = window.setTimeout(() => inputRef.current?.focus(), 50);
 
-    const timer = window.setTimeout(() => inputRef.current?.focus(), 50);
+ return () => {
+ window.clearTimeout(timer);
+ focusTrapRef.current?.deactivate();
+ };
+ }, [isOpen]);
 
-    return () => {
-      window.clearTimeout(timer);
-      focusTrapRef.current?.deactivate();
-    };
-  }, [isOpen]);
+ useEffect(() => {
+ focusTrapRef.current?.update();
+ }, [flatItems.length, isLoading]);
 
-  useEffect(() => {
-    focusTrapRef.current?.update();
-  }, [flatItems.length, isLoading]);
+ useEffect(() => {
+ if (!hasResults) {
+ setActiveIndex(-1);
+ return;
+ }
+ setActiveIndex((prev) => {
+ if (prev < 0 || prev >= flatItems.length) return 0;
+ return prev;
+ });
+ }, [flatItems.length, hasResults, findQuery, category]);
 
-  useEffect(() => {
-    if (!hasResults) {
-      setActiveIndex(-1);
-      return;
-    }
-    if (activeIndex >= flatItems.length) {
-      setActiveIndex(flatItems.length - 1);
-    }
-  }, [activeIndex, flatItems.length, hasResults]);
+ const navigateTo = useCallback(
+ (item: CommandItem, newTab = false) => {
+ commandCenterEvents.resultClick({ kind: item.kind, href: item.href });
+ pushQuery(findQuery || query);
+ pushDestination({ title: item.title, href: item.href });
+ close();
+ if (newTab) {
+ window.open(item.href, '_blank', 'noopener,noreferrer');
+ } else {
+ window.location.href = item.href;
+ }
+ },
+ [close, findQuery, pushDestination, pushQuery, query],
+ );
 
-  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      if (query.trim()) {
-        setQuery('');
-      } else {
-        close();
-      }
-      return;
-    }
+ const handleCategoryChange = useCallback(
+ (next: CommandCategory) => {
+ setCategory(next);
+ commandCenterEvents.filterChange(next);
+ },
+ [setCategory],
+ );
 
-    if (mode === 'ask' && event.key === 'Enter') {
-      event.preventDefault();
-      askAi(findQuery || query, { analyticsSource: 'ask_panel' });
-      return;
-    }
+ const copyActiveLink = useCallback(
+ async (item?: CommandItem) => {
+ const target = item ?? (activeIndex >= 0 ? flatItems[activeIndex] : undefined);
+ if (!target) return;
+ try {
+ const absolute = new URL(target.href, window.location.origin).toString();
+ await navigator.clipboard.writeText(absolute);
+ setCopiedHref(target.href);
+ commandCenterEvents.copyLink(target.kind);
+ window.setTimeout(() => {
+ setCopiedHref((prev) => (prev === target.href ? null : prev));
+ }, 1600);
+ } catch {
+ // Clipboard can fail in restricted contexts — keep silent
+ }
+ },
+ [activeIndex, flatItems],
+ );
 
-    if (!flatItems.length || mode !== 'find') return;
+ const askAboutItemWithContext = useCallback(
+ (item: CommandItem) => {
+ pushQuery(findQuery || query);
+ commandCenterEvents.askHandoff({
+ source: 'result_row',
+ query_length: (findQuery || item.title).length,
+ item_kind: item.kind,
+ auto_send: true,
+ });
+ handoffToAiChat({
+ query: findQuery || item.title,
+ autoSend: true,
+ sourceHref: item.href,
+ sourceTitle: item.title,
+ sourceKind: item.kind,
+ });
+ close();
+ },
+ [close, findQuery, pushQuery, query],
+ );
 
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      setActiveIndex((prev) => (prev < 0 ? 0 : (prev + 1) % flatItems.length));
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      setActiveIndex((prev) => (prev <= 0 ? flatItems.length - 1 : prev - 1));
-    } else if (
-      event.key.toLowerCase() === 'a' &&
-      !event.metaKey &&
-      !event.ctrlKey &&
-      !event.altKey &&
-      activeIndex >= 0 &&
-      flatItems[activeIndex]
-    ) {
-      event.preventDefault();
-      askAboutItem(flatItems[activeIndex]);
-    } else if (event.key === 'Enter' && activeIndex >= 0 && flatItems[activeIndex]) {
-      event.preventDefault();
-      navigateTo(flatItems[activeIndex], event.metaKey || event.ctrlKey);
-    }
-  };
+ const handleTagClick = useCallback(
+ (tag: string) => {
+ setQuery(tag);
+ setCategory('all');
+ commandCenterEvents.tagDrillIn(tag.length);
+ inputRef.current?.focus();
+ },
+ [setCategory, setQuery],
+ );
 
-  useEffect(() => {
-    if (activeIndex < 0 || !listRef.current) return;
-    const node = listRef.current.querySelector<HTMLElement>(`#command-result-${activeIndex}`);
-    node?.scrollIntoView({ block: 'nearest' });
-    inputRef.current?.setAttribute('aria-activedescendant', `command-result-${activeIndex}`);
-  }, [activeIndex]);
+ useEffect(() => {
+ if (!isOpen) return;
+ const onCopyShortcut = (event: KeyboardEvent) => {
+ const meta = event.metaKey || event.ctrlKey;
+ if (!meta || event.key.toLowerCase() !== 'c') return;
+ // Don't steal copy when the user is selecting input text
+ const selection = window.getSelection()?.toString();
+ if (selection && selection.length > 0 && document.activeElement === inputRef.current) {
+ return;
+ }
+ if (activeIndex < 0 || !flatItems[activeIndex]) return;
+ event.preventDefault();
+ void copyActiveLink(flatItems[activeIndex]);
+ };
+ document.addEventListener('keydown', onCopyShortcut);
+ return () => document.removeEventListener('keydown', onCopyShortcut);
+ }, [activeIndex, copyActiveLink, flatItems, isOpen]);
 
-  if (typeof document === 'undefined') return null;
+ useEffect(() => {
+ if (!isOpen || isLoading || !findQuery || hasResults) {
+ if (!findQuery) emptyTrackedRef.current = null;
+ return;
+ }
+ if (emptyTrackedRef.current === findQuery) return;
+ emptyTrackedRef.current = findQuery;
+ commandCenterEvents.emptyImpression(findQuery.length);
+ }, [findQuery, hasResults, isLoading, isOpen]);
 
-  let resultIndex = -1;
+ const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+ if (event.key === 'Escape') {
+ event.preventDefault();
+ if (query.trim()) {
+ setQuery('');
+ setCategory('all');
+ } else {
+ close();
+ }
+ return;
+ }
 
-  const overlay = (
-    <div
-      id="search-overlay"
-      data-command-center
-      data-state={isOpen ? 'open' : 'closed'}
-      data-search-loading={isLoading ? 'true' : 'false'}
-      className={`command-center group fixed inset-0 z-search flex ${
-        isOpen ? 'active opacity-100' : 'pointer-events-none opacity-0'
-      } transition duration-normal ease-standard motion-reduce:transition-none`}
-      role="presentation"
-      aria-hidden={!isOpen}
-      inert={!isOpen}
-      style={
-        isOpen
-          ? { display: 'block', visibility: 'visible' as const, opacity: 1 }
-          : { display: 'none', visibility: 'hidden' as const, opacity: 0 }
-      }
-    >
-      <button
-        type="button"
-        className="absolute inset-0 cursor-pointer bg-background-dark/55 backdrop-blur-sm"
-        aria-label="Close search"
-        tabIndex={-1}
-        onClick={close}
-      />
+ if (event.key === 'Tab' && findQuery.length >= 2 && flatItems.length > 0) {
+ const firstTitle = flatItems.find((item) =>
+ item.title.toLowerCase().includes(findQuery.toLowerCase()),
+ );
+ if (firstTitle && firstTitle.title.toLowerCase() !== findQuery.toLowerCase()) {
+ event.preventDefault();
+ setQuery(firstTitle.title);
+ return;
+ }
+ }
 
-      <div className="relative flex min-h-full w-full items-end justify-center sm:items-start sm:px-4 sm:pb-8 sm:pt-16 md:pt-20 lg:pt-24">
-        <div
-          ref={panelRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="command-center-title"
-          className="overlay-panel flex max-h-[88dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl border border-border/60 bg-surface/95 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:rounded-3xl sm:translate-y-0 motion-reduce:transition-none"
-          data-panel
-          onClick={(event) => event.stopPropagation()}
-        >
-          <div className="flex items-center gap-3 border-b border-border/60 px-4 py-3 sm:px-5">
-            <div className="relative flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-border/60 bg-field-bg px-3 py-2.5 shadow-sm focus-within:border-accent/60 focus-within:ring-2 focus-within:ring-accent/40">
-              {mode === 'ask' ? (
-                <svg className="size-5 shrink-0 text-accent/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h8m-8 3h5.5M21 11.5c0 4.418-4.03 8-9 8-1.15 0-2.26-.19-3.29-.54L3 21l1.1-3.3A8.35 8.35 0 0 1 3 11.5c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
-                </svg>
-              ) : (
-                <svg className="size-5 shrink-0 text-subtle-foreground/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
-                </svg>
-              )}
-              <input
-                ref={inputRef}
-                id="search-input"
-                type="search"
-                role="combobox"
-                aria-expanded={hasResults}
-                aria-controls="search-results"
-                aria-autocomplete="list"
-                aria-activedescendant={activeIndex >= 0 ? `command-result-${activeIndex}` : undefined}
-                value={query}
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setActiveIndex(-1);
-                }}
-                onKeyDown={handleInputKeyDown}
-                placeholder={mode === 'ask' ? 'Ask a question about projects, posts, or experience…' : 'Search pages, projects, and blog posts…'}
-                aria-label={mode === 'ask' ? 'Ask the AI assistant' : 'Search site content'}
-                autoComplete="off"
-                spellCheck={false}
-                className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground/70 focus:outline-none"
-              />
-              {query ? (
-                <button
-                  type="button"
-                  className="rounded-lg px-2 py-1 text-xs text-subtle-foreground hover:text-foreground"
-                  aria-label="Clear search"
-                  onClick={() => {
-                    setQuery('');
-                    setActiveIndex(-1);
-                    inputRef.current?.focus();
-                  }}
-                >
-                  Clear
-                </button>
-              ) : null}
-              {isLoading ? (
-                <span className="size-4 shrink-0 animate-spin rounded-full border-2 border-accent/30 border-t-accent" aria-hidden="true" />
-              ) : null}
-            </div>
-            <button
-              id="close-search"
-              type="button"
-              className="touch-target focus-ring-interactive inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-border/80 bg-surface text-foreground transition hover:border-border"
-              aria-label="Close search"
-              onClick={close}
-            >
-              <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+ if (!flatItems.length) return;
 
-          <CommandModeTabs mode={mode} onChange={handleModeChange} />
+ if (event.key === 'ArrowDown') {
+ event.preventDefault();
+ setActiveIndex((prev) => (prev < 0 ? 0 : (prev + 1) % flatItems.length));
+ } else if (event.key === 'ArrowUp') {
+ event.preventDefault();
+ setActiveIndex((prev) => (prev <= 0 ? flatItems.length - 1 : prev - 1));
+ } else if (event.key === 'Enter') {
+ const index = activeIndex >= 0 ? activeIndex : 0;
+ if (flatItems[index]) {
+ event.preventDefault();
+ navigateTo(flatItems[index], event.metaKey || event.ctrlKey);
+ }
+ }
+ };
 
-          {mode === 'find' ? (
-          <div className="border-b border-border/40 px-4 py-2 sm:px-5">
-            <div className="flex items-center gap-3">
-              <span className="shrink-0 text-xxs font-semibold uppercase tracking-label text-subtle-foreground">Filter</span>
-              <div className="flex gap-1 overflow-x-auto pb-0.5" role="group" aria-label="Search categories">
-              {CATEGORIES.map((value) => {
-                const isActive = category === value;
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    data-category={value}
-                    aria-pressed={isActive}
-                    className={`search-pill shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition focus-ring-interactive ${
-                      isActive
-                        ? 'bg-accent/15 text-accent'
-                        : 'text-muted-foreground hover:bg-surface-subtle hover:text-foreground'
-                    }`}
-                    onClick={() => {
-                      setCategory(value);
-                      setActiveIndex(-1);
-                    }}
-                  >
-                    {CATEGORY_LABELS[value]}
-                  </button>
-                );
-              })}
-              </div>
-            </div>
-          </div>
-          ) : null}
+ useEffect(() => {
+ if (activeIndex < 0 || !listRef.current) return;
+ const node = listRef.current.querySelector<HTMLElement>(`#command-result-${activeIndex}`);
+ node?.scrollIntoView({ block: 'nearest' });
+ inputRef.current?.setAttribute('aria-activedescendant', `command-result-${activeIndex}`);
+ }, [activeIndex]);
 
-          {mode === 'find' && hasResults && !isLoading ? (
-            <div className="border-b border-border/30 px-4 py-1.5 sm:px-5">
-              <p className="text-xs text-subtle-foreground">
-                {flatItems.length} {flatItems.length === 1 ? 'result' : 'results'}
-                {findQuery ? ` for “${findQuery}”` : ''}
-              </p>
-            </div>
-          ) : null}
+ if (typeof document === 'undefined') return null;
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-5" ref={listRef}>
-            <h2 id="command-center-title" className="sr-only">
-              Search
-            </h2>
-            <p className="sr-only" aria-live="polite" aria-atomic="true">
-              {isLoading
-                ? 'Searching…'
-                : hasResults
-                  ? `${flatItems.length} results${query.trim() ? ` for ${query.trim()}` : ''}`
-                  : query.trim()
-                    ? `No results for ${query.trim()}`
-                    : 'Start typing to search the site'}
-            </p>
+ let resultIndex = -1;
 
-            {error ? (
-              <div className="mb-3 rounded-2xl border border-border/60 bg-surface/80 px-4 py-3 text-sm text-muted-foreground">
-                {error}
-              </div>
-            ) : null}
+ const overlay = (
+ <OverlayShell
+ id="search-overlay"
+ isOpen={isOpen}
+ onClose={close}
+ labelledBy="command-center-title"
+ panelRef={panelRef}
+ variant="find"
+ rootProps={{
+ 'data-command-center': true,
+ 'data-search-loading': isLoading ? 'true' : 'false',
+ // Visibility + layout come from OverlayShell (.overlay-root, data-state).
+ className: 'command-center group',
+ }}
+ onPanelClick={(event) => event.stopPropagation()}
+ onTouchStart={handleTouchStart}
+ onTouchMove={handleTouchMove}
+ onTouchEnd={handleTouchEnd}
+ >
+ <div className={OVERLAY_HEADER}>
+ <div className={OVERLAY_FIELD}>
+ <svg
+ className="size-4 shrink-0 text-subtle-foreground"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ strokeWidth={1.8}
+ aria-hidden="true"
+ >
+ <path
+ strokeLinecap="round"
+ strokeLinejoin="round"
+ d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+ />
+ </svg>
+ <input
+ ref={inputRef}
+ id="search-input"
+ type="search"
+ role="combobox"
+ inputMode="search"
+ enterKeyHint="search"
+ aria-expanded={hasResults}
+ aria-controls="search-results"
+ aria-autocomplete="list"
+ aria-activedescendant={activeIndex >= 0 ? `command-result-${activeIndex}` : undefined}
+ value={query}
+ onChange={(event) => {
+ setQuery(event.target.value);
+ }}
+ onKeyDown={handleInputKeyDown}
+ placeholder="Search pages, projects, and posts…"
+ aria-label="Search site content"
+ autoComplete="off"
+ spellCheck={false}
+ className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground/70 focus:outline-none"
+ />
+ {query ? (
+ <button
+ type="button"
+ className="rounded-md p-1 text-subtle-foreground hover:text-foreground"
+ aria-label="Clear search"
+ onClick={() => {
+ setQuery('');
+ setCategory('all');
+ inputRef.current?.focus();
+ }}
+ >
+ <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+ <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+ </svg>
+ </button>
+ ) : null}
+ {isLoading ? (
+ <span
+ className="size-3.5 shrink-0 animate-spin rounded-full border-2 border-accent/30 border-t-accent"
+ aria-hidden="true"
+ />
+ ) : null}
+ </div>
+ <button
+ id="close-search"
+ type="button"
+ className={OVERLAY_CLOSE_BUTTON}
+ aria-label="Close search"
+ onClick={close}
+ >
+ <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+ <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+ </svg>
+ </button>
+ </div>
 
-            {mode === 'ask' ? (
-              <CommandAskPanel
-                query={findQuery || query}
-                onAsk={(prompt) => askAi(prompt, { analyticsSource: 'ask_panel' })}
-              />
-            ) : null}
+ <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3 sm:px-4" ref={listRef}>
+ <h2 id="command-center-title" className="sr-only">
+ Search
+ </h2>
+ <p className="sr-only" aria-live="polite" aria-atomic="true">
+ {isLoading
+ ? 'Searching…'
+ : hasResults
+ ? `${flatItems.length} results${findQuery ? ` for ${findQuery}` : ''}`
+ : findQuery
+ ? `No results for ${findQuery}`
+ : 'Start typing to search the site'}
+ </p>
 
-            {mode === 'find' && findQuery ? (
-              <div className="mb-4">
-                <CommandAskHandoff
-                  query={findQuery}
-                  compact
-                  onAsk={() => askAi(findQuery, { analyticsSource: 'ask_banner' })}
-                />
-              </div>
-            ) : null}
+ {error ? (
+ <div className="mb-3 rounded-lg border border-border/60 bg-surface/80 px-3 py-2.5 text-sm text-muted-foreground">
+ {error}
+ </div>
+ ) : null}
 
-            {mode === 'find' && isLoading && !hasResults ? <CommandSkeletonList /> : null}
+ {findQuery ? (
+ <CommandCategoryFilters category={category} onChange={handleCategoryChange} />
+ ) : null}
 
-            {mode === 'find' && !isLoading && !hasResults ? (
-              <CommandEmpty
-                query={findQuery}
-                recentQueries={recentQueries}
-                onSuggestion={setQuery}
-                onClearHistory={clearHistory}
-                onAskAi={(value) => askAi(value, { analyticsSource: 'empty_state' })}
-              />
-            ) : null}
+ {!findQuery && recentQueries.length > 0 ? (
+ <CommandRecentList
+ recentQueries={recentQueries}
+ onSelect={(value) => {
+ commandCenterEvents.recentClick(value.trim().length);
+ setQuery(value);
+ }}
+ onClear={clearHistory}
+ />
+ ) : null}
 
-            {mode === 'find' && hasResults ? (
-              <div id="search-results" role="listbox" aria-label="Search results" data-results className="flex flex-col gap-4">
-                <p className="sr-only">
-                  Use arrow keys to navigate results. Press Enter to open, or A to ask AI about the selected result.
-                </p>
-                <div data-results-container className="flex flex-col gap-4">
-                  {groups.map((group) => (
-                    <CommandGroupSection key={group.id} label={group.label}>
-                      {group.items.map((item) => {
-                        resultIndex += 1;
-                        const index = resultIndex;
-                        return (
-                          <CommandResultRow
-                            key={item.id}
-                            item={item}
-                            index={index}
-                            query={query}
-                            isActive={index === activeIndex}
-                            onSelect={(item) => navigateTo(item)}
-                            onAskAbout={askAboutItem}
-                            onHover={setActiveIndex}
-                          />
-                        );
-                      })}
-                    </CommandGroupSection>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </div>
+ {!findQuery && recentDestinations.length > 0 ? (
+ <CommandDestinationList
+ destinations={recentDestinations}
+ onSelect={(destination) => {
+ commandCenterEvents.suggestionClick('destination');
+ pushDestination(destination);
+ close();
+ window.location.href = destination.href;
+ }}
+ />
+ ) : null}
 
-          <CommandFooter />
-        </div>
-      </div>
-    </div>
-  );
+ {isLoading && !hasResults ? <CommandSkeletonList /> : null}
 
-  return createPortal(overlay, document.body);
+ {!isLoading && findQuery && !hasResults ? (
+ <CommandEmpty
+ query={findQuery}
+ onSuggestion={(value) => {
+ commandCenterEvents.suggestionClick('empty_chip');
+ setQuery(value);
+ }}
+ onAskAi={(value) => askAi(value, 'empty_state')}
+ />
+ ) : null}
+
+ {findQuery && hasResults ? (
+ <CommandTitleSuggestions
+ query={findQuery}
+ items={flatItems}
+ onSelect={(title) => {
+ commandCenterEvents.suggestionClick('title_autocomplete');
+ setQuery(title);
+ inputRef.current?.focus();
+ }}
+ />
+ ) : null}
+
+ {hasResults ? (
+ <div
+ id="search-results"
+ role="listbox"
+ aria-label="Search results"
+ data-results
+ className="flex flex-col gap-3"
+ >
+ {findQuery ? (
+ <p className="sr-only">Use arrow keys to navigate results. Press Enter to open. Press Command C to copy the active link.</p>
+ ) : null}
+ <div data-results-container className="flex flex-col gap-3">
+ {flatBrowseGroups.map((group) => (
+ <CommandGroupSection key={group.id} label={group.label}>
+ {group.items.map((item) => {
+ resultIndex += 1;
+ const index = resultIndex;
+ return (
+ <CommandResultRow
+ key={item.id}
+ item={item}
+ index={index}
+ query={findQuery}
+ isActive={index === activeIndex}
+ onSelect={(selected) => navigateTo(selected)}
+ onHover={setActiveIndex}
+ onAsk={askAboutItemWithContext}
+ onCopyLink={(selected) => {
+ void copyActiveLink(selected);
+ }}
+ onTagClick={handleTagClick}
+ linkCopied={copiedHref === item.href}
+ />
+ );
+ })}
+ </CommandGroupSection>
+ ))}
+ </div>
+ </div>
+ ) : null}
+ </div>
+
+ <CommandFooter searchSource={searchSource} showCopyHint={hasResults} />
+ </OverlayShell>
+ );
+
+ return createPortal(overlay, document.body);
 }

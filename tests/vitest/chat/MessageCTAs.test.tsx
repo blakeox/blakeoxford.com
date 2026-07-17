@@ -123,10 +123,10 @@ describe('MatchedCTA', () => {
 		expect(screen.getByText('Explore projects')).toBeInTheDocument();
 	});
 
-	it('should render icon in CTA', () => {
+	it('should render an accessible CTA link', () => {
 		render(<MatchedCTA message={baseMessage} messages={mockMessages} sources={[]} />);
 
-		expect(screen.getByText('💼')).toBeInTheDocument();
+		expect(screen.getByRole('link', { name: 'Let\'s work together' })).toBeInTheDocument();
 	});
 
 	it('should have correct link href', () => {
@@ -193,7 +193,7 @@ describe('FollowUpSuggestions', () => {
 			/>
 		);
 
-		expect(screen.getByText('Project details')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'More on this project' })).toBeInTheDocument();
 	});
 
 	it('should generate blog follow-up suggestion', () => {
@@ -205,7 +205,7 @@ describe('FollowUpSuggestions', () => {
 			/>
 		);
 
-		expect(screen.getByText('Related article')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Related writing' })).toBeInTheDocument();
 	});
 
 	it('should not render when no suggestions available', () => {
@@ -222,7 +222,7 @@ describe('FollowUpSuggestions', () => {
 		expect(chips.length).toBe(0);
 	});
 
-	it('should render icons for suggestions', () => {
+	it('should render accessible suggestion controls', () => {
 		render(
 			<FollowUpSuggestions
 				sources={projectSources}
@@ -231,7 +231,7 @@ describe('FollowUpSuggestions', () => {
 			/>
 		);
 
-		expect(screen.getByText('🔍')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'More on this project' })).toBeInTheDocument();
 	});
 });
 

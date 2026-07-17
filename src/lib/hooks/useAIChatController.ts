@@ -185,10 +185,10 @@ export function useAIChatController() {
 	});
 
 	const {
-		updateFallbackSuggestions,
 		appendAssistantChunk,
 		finalizeAssistantMessage,
 		assignAssistantSources,
+		assignAssistantProvenance,
 		clearConversation,
 		startNewChat,
 	} = useMessageProcessing({
@@ -249,9 +249,9 @@ export function useAIChatController() {
 		setShowScrollToLatest,
 		appendAssistantChunk,
 		assignAssistantSources,
+		assignAssistantProvenance,
 		finalizeAssistantMessage,
 		buildHistoryForRequest,
-		updateFallbackSuggestions,
 	});
 
 	const { visibleFallbackResults, hasMoreFallbackResults } = useComputedValues({
@@ -310,6 +310,7 @@ export function useAIChatController() {
 		toggleAnalytics,
 		toggleAdvancedControls,
 		setShowFallbackSuggestions,
+		setFallbackResults,
 		setComposerFocused,
 		setShowScrollToLatest,
 		toggleExpandedSource,

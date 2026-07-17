@@ -21,10 +21,10 @@ test.describe('Mobile menu close via burger toggle', () => {
     await expect(burger).toHaveAttribute('aria-expanded', 'false');
 
     const isMenuClosed = await menu.evaluate((el) => {
-      const hasActiveClass = el.classList.contains('active');
+      const isOpen = el.getAttribute('data-state') === 'open';
       const styles = window.getComputedStyle(el);
       const isHidden = styles.visibility === 'hidden' || styles.display === 'none';
-      return !hasActiveClass || isHidden;
+      return !isOpen || isHidden;
     });
     expect(isMenuClosed).toBe(true);
   });

@@ -35,6 +35,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build site
+        env:
+          PUBLIC_CLARITY_PROJECT_ID: tqngpokfgs
+          PUBLIC_CF_WEB_ANALYTICS_TOKEN: ${{ secrets.PUBLIC_CF_WEB_ANALYTICS_TOKEN }}
         run: pnpm build
 
       - name: Deploy to Cloudflare Workers
@@ -43,3 +46,10 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
+
+      - name: Refresh Vectorize index
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm vectorize:index || echo "Vectorize index refresh skipped"

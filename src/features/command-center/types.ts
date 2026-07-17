@@ -17,8 +17,6 @@ export type CommandItem = {
   matchReason?: string;
 };
 
-export type CommandMode = 'find' | 'ask';
-
 export type CommandGroup = {
   id: string;
   label: string;
@@ -34,14 +32,11 @@ export const CATEGORY_LABELS: Record<CommandCategory, string> = {
   blog: 'Blog',
 };
 
-export const MODE_LABELS: Record<CommandMode, string> = {
-  find: 'Find',
-  ask: 'Ask AI',
-};
-
+/** Discovery terms only — keep the idle/empty search surface calm.
+ * Lead with a known-good corpus hit so empty-state examples always work.
+ */
 export const SUGGESTED_QUERIES = [
   'Microsoft Fabric',
-  'CES 2026',
-  'Contact',
   'automation',
+  'CES 2026',
 ] as const;

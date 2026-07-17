@@ -1,39 +1,33 @@
 /**
- * AIChatIsland - Refactored AI Chat Widget
- * 
- * A modular React island component that provides AI-powered chat functionality.
- * This component orchestrates the extracted sub-components for a clean architecture.
- * 
- * @module AIChatIsland
+ * AIChatIsland — docked corner Ask companion.
+ * Stays over the page so visitors can chat while reading.
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
+import { ChatDock } from '../../features/chat/ChatDock';
+import { formatPageContextLabel, getPageContext } from '../../lib/chat';
 import { useAIChatController } from '../../lib/hooks';
 import {
 	ChatHeader,
 	ChatAdvancedControls,
-	ChatRecentQueries,
 	ChatDigest,
 	ChatAnalytics,
 	ChatQuickActions,
 	ChatMessageBubble,
 	ChatInput,
 	ChatStatusIndicators,
-	ChatFallbackResults,
- TypingIndicator,
- ScrollToLatestButton,
+	TypingIndicator,
+	ScrollToLatestButton,
 } from './chat';
-/**
- * Main AIChatIsland component
- * 
- * This component serves as the orchestrator for the AI chat widget,
- * composing smaller components for each section of the UI.
- */
+
 export default function AIChatIsland() {
 	const controller = useAIChatController();
 	const hasCheckedInitialOpenRef = useRef(false);
+	const [pageLabel, setPageLabel] = useState('Site assistant');
+	const [freshNotice, setFreshNotice] = useState(false);
+	const freshTimerRef = useRef<number | null>(null);
 
-	// Destructure for cleaner code
 	const {
 		isOpen,
 		messages,
@@ -46,7 +40,6 @@ export default function AIChatIsland() {
 		useMemory,
 		streamingMessageId,
 		sessionStartTime,
-		fallbackResults,
 		retryCount,
 		setRetryCount,
 		lastFailedQuery,
@@ -66,19 +59,17 @@ export default function AIChatIsland() {
 		showDigest,
 		showAnalytics,
 		showAdvancedControls,
-		showFallbackSuggestions,
 		showScrollToLatest,
 		expandedSources,
 		expandedIndividualSources,
 		toggleDigest,
 		toggleAnalytics,
 		toggleAdvancedControls,
-		setShowFallbackSuggestions,
 		setComposerFocused,
 		toggleExpandedSource,
 		toggleIndividualSource,
 		openChat,
-			focusInput,
+		focusInput,
 		closeChat,
 		touchStartY,
 		touchCurrentY,
@@ -89,7 +80,6 @@ export default function AIChatIsland() {
 		lastQueryValue,
 		sourceRefs,
 		scrollToLatest,
-		recentQueries,
 		conversationDigest,
 		feedbackAnalytics,
 		canStartNewChat,
@@ -107,17 +97,41 @@ export default function AIChatIsland() {
 		handleTextareaKeyDown,
 		sendQuery,
 		handleSubmit,
-		handleReplayQuery,
-		visibleFallbackResults,
-		hasMoreFallbackResults,
 	} = controller;
 
-	// Calculate drag state
+	useEffect(() => {
+		const syncLabel = () => {
+			setPageLabel(formatPageContextLabel(getPageContext()));
+		};
+		syncLabel();
+		document.addEventListener('astro:page-load', syncLabel);
+		return () => document.removeEventListener('astro:page-load', syncLabel);
+	}, [isOpen]);
+
+	useEffect(() => {
+		return () => {
+			if (freshTimerRef.current !== null) {
+				window.clearTimeout(freshTimerRef.current);
+			}
+		};
+	}, []);
+
+	const handleStartNewChat = () => {
+		startNewChat();
+		setFreshNotice(true);
+		if (freshTimerRef.current !== null) {
+			window.clearTimeout(freshTimerRef.current);
+		}
+		freshTimerRef.current = window.setTimeout(() => {
+			setFreshNotice(false);
+			freshTimerRef.current = null;
+		}, 2200);
+	};
+
 	const isDragging = touchStartY !== null && touchCurrentY !== null && touchCurrentY > touchStartY;
 	const dragOffset = isDragging ? Math.min(touchCurrentY - touchStartY, 200) : 0;
 	const dragOpacity = isDragging ? Math.max(0.5, 1 - (touchCurrentY - touchStartY) / 400) : 1;
 
-	// Handle drag animation
 	useEffect(() => {
 		const panelElement = panelRef.current;
 		if (!panelElement) return;
@@ -133,27 +147,27 @@ export default function AIChatIsland() {
 		}
 	}, [dragOffset, dragOpacity, isDragging, isOpen, panelRef]);
 
-	// Listen for deterministic open/close events from the early launcher (synchronous handshake)
 	useEffect(() => {
 		function handleStateEvent(e: Event) {
 			try {
-				// Prefer detail.open if available
 				const detail = (e as CustomEvent)?.detail;
 				const open = detail && typeof detail.open === 'boolean' ? detail.open : null;
 				if (open === true) {
 					openChat();
-					// Ensure input receives focus when island has mounted
-					try { focusInput(); } catch (err) { /* noop - focus best-effort */ }
+					try {
+						focusInput();
+					} catch {
+						/* noop */
+					}
 				} else if (open === false) {
 					closeChat();
 				}
-			} catch (err) {
-				/* noop - non-fatal state handler */
+			} catch {
+				/* noop */
 			}
 		}
 
 		window.addEventListener('ai-chat:state', handleStateEvent as EventListener);
-		// also support legacy ai-chat:open event
 		window.addEventListener('ai-chat:open', handleStateEvent as EventListener);
 		return () => {
 			window.removeEventListener('ai-chat:state', handleStateEvent as EventListener);
@@ -161,7 +175,6 @@ export default function AIChatIsland() {
 		};
 	}, [openChat, closeChat, focusInput]);
 
-	// On mount, if the server-rendered wrapper already indicates open, ensure we run open/focus.
 	useEffect(() => {
 		if (hasCheckedInitialOpenRef.current) return;
 		hasCheckedInitialOpenRef.current = true;
@@ -169,14 +182,17 @@ export default function AIChatIsland() {
 			const wrapper = document.querySelector('[data-ai-chat-open]');
 			if (wrapper && wrapper.getAttribute('data-ai-chat-open') === 'true') {
 				openChat();
-				try { focusInput(); } catch (err) { /* noop - best-effort focus */ }
+				try {
+					focusInput();
+				} catch {
+					/* noop */
+				}
 			}
-		} catch (e) {
-			/* noop - defensive DOM access */
+		} catch {
+			/* noop */
 		}
 	}, [openChat, focusInput]);
 
-	// Sync wrapper attribute when isOpen changes (for inline script compatibility)
 	useEffect(() => {
 		try {
 			const wrapper = document.querySelector('[data-ai-chat-open]');
@@ -188,172 +204,158 @@ export default function AIChatIsland() {
 					wrapper.classList.add('pointer-events-none');
 				}
 			}
-		} catch (e) {
-			/* noop - defensive DOM sync */
+		} catch {
+			/* noop */
 		}
 	}, [isOpen]);
 
-	return (
-		<div
-			ref={panelRef}
-				className={`ai-chat-panel pointer-events-auto w-[min(95vw,24rem)] overflow-visible rounded-3xl border border-border/40 bg-surface/90 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:w-[min(85vw,28rem)] motion-reduce:transition-none ${
-					isOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
-				}`}
-				data-ai-chat-panel
-				data-ai-visible={isOpen ? 'true' : 'false'}
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="ai-chat-heading"
-				onTouchStart={handleTouchStart}
-				onTouchMove={handleTouchMove}
-				onTouchEnd={handleTouchEnd}
-			>
-				{/* Header */}
-				<ChatHeader
-					wsConnected={wsConnected}
-					activeUsers={activeUsers}
-					voiceSupported={voiceSupported}
-					isListening={isListening}
-					showAdvancedControls={showAdvancedControls}
-					useMemory={useMemory}
-					canStartNewChat={canStartNewChat}
-					hasMessages={messages.length > 0}
-					toggleVoiceInput={toggleVoiceInput}
-					toggleAdvancedControls={toggleAdvancedControls}
-					toggleMemory={toggleMemory}
-					clearConversation={clearConversation}
-					handleExportConversation={handleExportConversation}
-					startNewChat={startNewChat}
-					closeChat={closeChat}
-				/>
+	const latestAssistantId = useMemo(
+		() => [...messages].reverse().find((m) => m.role === 'assistant' && m.id !== 'welcome')?.id,
+		[messages],
+	);
+	const isEmptyConversation =
+		messages.length === 0 || (messages.length === 1 && messages[0]?.id === 'welcome');
+	const transcriptMessages = isEmptyConversation
+		? []
+		: messages.filter((message) => message.id !== 'welcome');
+	const showQuickActions =
+		isEmptyConversation && (chatState === 'ready' || chatState === 'idle') && !error;
 
-				{/* Advanced Controls */}
-				<ChatAdvancedControls
-					showAdvancedControls={showAdvancedControls}
-					useMemory={useMemory}
-					showDigest={showDigest}
-					showAnalytics={showAnalytics}
-					messages={messages}
-					feedbackAnalytics={feedbackAnalytics}
-					toggleMemory={toggleMemory}
-					toggleDigest={toggleDigest}
-					toggleAnalytics={toggleAnalytics}
-					clearConversation={clearConversation}
-					handleExportConversation={handleExportConversation}
-				/>
+	const panel = (
+		<ChatDock
+			isOpen={isOpen}
+			onClose={closeChat}
+			labelledBy="ai-chat-heading"
+			panelRef={panelRef}
+			onTouchStart={handleTouchStart}
+			onTouchMove={handleTouchMove}
+			onTouchEnd={handleTouchEnd}
+		>
+			<ChatHeader
+				pageLabel={pageLabel}
+				wsConnected={wsConnected}
+				activeUsers={activeUsers}
+				voiceSupported={voiceSupported}
+				isListening={isListening}
+				showAdvancedControls={showAdvancedControls}
+				useMemory={useMemory}
+				canStartNewChat={canStartNewChat}
+				hasMessages={transcriptMessages.length > 0}
+				toggleVoiceInput={toggleVoiceInput}
+				toggleAdvancedControls={toggleAdvancedControls}
+				toggleMemory={toggleMemory}
+				clearConversation={clearConversation}
+				handleExportConversation={handleExportConversation}
+				startNewChat={handleStartNewChat}
+				closeChat={closeChat}
+			/>
 
-				{/* Guided prompts removed — empty-state quick actions live in the transcript */}
+			{freshNotice ? (
+				<p
+					className="shrink-0 border-b border-border/30 bg-surface-subtle/50 px-3.5 py-1.5 text-xxs text-muted-foreground sm:px-4"
+					role="status"
+				>
+					Started fresh
+				</p>
+			) : null}
 
-				{/* Recent Queries — only before conversation starts */}
-				{messages.length === 0 ? (
-					<ChatRecentQueries
-						queries={recentQueries}
-						onReplayQuery={handleReplayQuery}
-					/>
-				) : null}
+			<ChatAdvancedControls
+				showAdvancedControls={showAdvancedControls}
+				useMemory={useMemory}
+				showDigest={showDigest}
+				showAnalytics={showAnalytics}
+				messages={transcriptMessages}
+				feedbackAnalytics={feedbackAnalytics}
+				toggleMemory={toggleMemory}
+				toggleDigest={toggleDigest}
+				toggleAnalytics={toggleAnalytics}
+				clearConversation={clearConversation}
+				handleExportConversation={handleExportConversation}
+			/>
 
-				{/* Conversation Digest */}
-				<ChatDigest
-					show={showDigest}
-					digest={conversationDigest}
-				/>
+			<ChatDigest show={showDigest} digest={conversationDigest} />
 
-				{/* Analytics */}
-				<ChatAnalytics
-					show={showAnalytics}
-					messages={messages}
-					sessionStartTime={sessionStartTime}
-					feedbackAnalytics={feedbackAnalytics}
-				/>
+			<ChatAnalytics
+				show={showAnalytics}
+				messages={transcriptMessages}
+				sessionStartTime={sessionStartTime}
+				feedbackAnalytics={feedbackAnalytics}
+			/>
 
-				{/* Messages Container */}
-				<div className="relative overflow-hidden">
-					<div
-						ref={scrollContainerRef}
-						className="flex max-h-[min(50dvh,22rem)] flex-col gap-3 overflow-y-auto px-4 py-3 sm:max-h-[min(55dvh,24rem)]"
-						aria-live="polite"
-						data-ai-chat-transcript
-					>
-						{/* Empty State with Quick Actions */}
-						{messages.length === 0 && chatState === 'ready' && (
-							<ChatQuickActions
-								onAction={(query) => sendQuery(query)}
-								setInputValue={setInputValue}
-							/>
-						)}
+			<div className="relative min-h-0 flex-1 overflow-hidden">
+				<div
+					ref={scrollContainerRef}
+					className="flex h-full min-h-[min(40dvh,16rem)] flex-col gap-3.5 overflow-y-auto px-3.5 py-3.5 sm:min-h-[12rem] sm:px-4"
+					aria-live="polite"
+					data-ai-chat-transcript
+				>
+					{showQuickActions ? (
+						<ChatQuickActions
+							pageLabel={pageLabel}
+							onAction={(query) => sendQuery(query)}
+							setInputValue={setInputValue}
+						/>
+					) : null}
 
-						{/* Messages */}
-						{messages.map((message) => (
-							<ChatMessageBubble
-								key={message.id}
-								message={message}
-								isStreaming={streamingMessageId === message.id}
-								siteHostname={siteHostname}
-								expandedSources={expandedSources}
-								expandedIndividualSources={expandedIndividualSources}
-								copiedMessageId={copiedMessageId}
-								copiedShareUrl={copiedShareUrl}
-								messages={messages}
-								messagesRef={messagesRef}
-								sourceRefs={sourceRefs}
-								toggleExpandedSource={toggleExpandedSource}
-								toggleIndividualSource={toggleIndividualSource}
-								handleFeedback={handleFeedback}
-								handleCopyMessage={handleCopyMessage}
-								handleOpenPrimarySource={handleOpenPrimarySource}
-								setInputValue={setInputValue}
-								sendQuery={sendQuery}
-								copyWithFeedback={copyWithFeedback}
-							/>
-						))}
+					{transcriptMessages.map((message) => (
+						<ChatMessageBubble
+							key={message.id}
+							message={message}
+							isStreaming={streamingMessageId === message.id}
+							siteHostname={siteHostname}
+							expandedSources={expandedSources}
+							expandedIndividualSources={expandedIndividualSources}
+							copiedMessageId={copiedMessageId}
+							copiedShareUrl={copiedShareUrl}
+							messages={transcriptMessages}
+							messagesRef={messagesRef}
+							sourceRefs={sourceRefs}
+							toggleExpandedSource={toggleExpandedSource}
+							toggleIndividualSource={toggleIndividualSource}
+							handleFeedback={handleFeedback}
+							handleCopyMessage={handleCopyMessage}
+							handleOpenPrimarySource={handleOpenPrimarySource}
+							setInputValue={setInputValue}
+							sendQuery={sendQuery}
+							copyWithFeedback={copyWithFeedback}
+							isLatestAssistant={message.id === latestAssistantId}
+						/>
+					))}
 
-						{/* Typing Indicator */}
-						{isOtherUserTyping && wsConnected && <TypingIndicator />}
-					</div>
-
-					{/* Scroll to Latest */}
-					{showScrollToLatest && <ScrollToLatestButton onClick={scrollToLatest} />}
+					{isOtherUserTyping && wsConnected ? <TypingIndicator /> : null}
 				</div>
 
-				{/* Status Indicators */}
-				<ChatStatusIndicators
-					chatState={chatState}
-					loadingPhase={loadingPhase}
-					isListening={isListening}
-					interimTranscript={interimTranscript}
-					error={error}
-					lastQueryValue={lastQueryValue}
-					lastFailedQuery={lastFailedQuery}
-					retryCount={retryCount}
-					canRetry={canRetry}
-					setError={setError}
-					setRetryCount={setRetryCount}
-					sendQuery={sendQuery}
-				/>
-
-				{/* Fallback Results */}
-				<ChatFallbackResults
-					fallbackResults={fallbackResults}
-					visibleFallbackResults={visibleFallbackResults}
-					hasMoreFallbackResults={hasMoreFallbackResults}
-					showFallbackSuggestions={showFallbackSuggestions}
-					setShowFallbackSuggestions={setShowFallbackSuggestions}
-				/>
-
-				{/* New chat prompt moved to header menu */}
-
-				{/* Input Form */}
-				<ChatInput
-					inputValue={inputValue}
-					chatState={chatState}
-					inputRef={inputRef}
-					wsRef={wsRef}
-					typingTimeoutRef={typingTimeoutRef}
-					setInputValue={setInputValue}
-					setComposerFocused={setComposerFocused}
-					handleTextareaKeyDown={handleTextareaKeyDown}
-					handleSubmit={handleSubmit}
-				/>
+				{showScrollToLatest ? <ScrollToLatestButton onClick={scrollToLatest} /> : null}
 			</div>
+
+			<ChatStatusIndicators
+				chatState={chatState}
+				loadingPhase={loadingPhase}
+				isListening={isListening}
+				interimTranscript={interimTranscript}
+				error={error}
+				lastQueryValue={lastQueryValue}
+				lastFailedQuery={lastFailedQuery}
+				retryCount={retryCount}
+				canRetry={canRetry}
+				setError={setError}
+				setRetryCount={setRetryCount}
+				sendQuery={sendQuery}
+			/>
+
+			<ChatInput
+				inputValue={inputValue}
+				chatState={chatState}
+				inputRef={inputRef}
+				wsRef={wsRef}
+				typingTimeoutRef={typingTimeoutRef}
+				setInputValue={setInputValue}
+				setComposerFocused={setComposerFocused}
+				handleTextareaKeyDown={handleTextareaKeyDown}
+				handleSubmit={handleSubmit}
+			/>
+		</ChatDock>
 	);
+
+	return createPortal(panel, document.body);
 }

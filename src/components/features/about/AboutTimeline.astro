@@ -73,19 +73,19 @@ function Icon({ name }: IconProps) {
  <Card as="article" hover="lift" padding="md" rounded="xl" class="relative overflow-hidden bg-surface/90 backdrop-blur-sm">
  <GradientOverlay variant='hover-subtle' direction='r' />
  <header class="flex items-center mb-6 gap-4 relative">
- <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-accent to-primary text-2xl group-hover:scale-110 transition-transform duration-300 relative">
+ <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-accent to-primary text-2xl group-hover:scale-110 transition-transform duration-moderate relative">
  <span set:html={Icon({ name: item.icon })}></span>
  </div>
  <div class="flex-1">
- <h3 class="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-accent transition-colors duration-300">
+ <h3 class="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-accent transition-colors duration-moderate">
  {item.year}
  </h3>
- <p class="text-accent group-hover:text-accent/80 transition-colors duration-300">
+ <p class="text-accent group-hover:text-accent/80 transition-colors duration-moderate">
  {item.title}
  </p>
  </div>
  </header>
- <ul class="space-y-3 pl-4 border-l-2 border-border/60 group-hover:border-accent/50 transition-colors duration-300" role="list">
+ <ul class="space-y-3 pl-4 border-l-2 border-border/60 group-hover:border-accent/50 transition-colors duration-moderate" role="list">
  {item.achievements.map((achievement) => (
  <li class="text-sm text-muted-foreground flex items-start gap-2">
  <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-accent/80"></span>
@@ -96,7 +96,7 @@ function Icon({ name }: IconProps) {
  </Card>
  </div>
  </div>
- <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-background bg-accent group-hover:scale-125 transition-transform duration-300" aria-hidden="true">
+ <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-background bg-accent group-hover:scale-125 transition-transform duration-moderate" aria-hidden="true">
  <span class="absolute inset-0 rounded-full bg-accent/60 animate-ping opacity-75"></span>
  </div>
  </div>
@@ -142,15 +142,15 @@ function Icon({ name }: IconProps) {
  height: 8px;
  }
  .timeline-scroll-container::-webkit-scrollbar-track {
- background: rgb(var(--color-neutral) / 0.3);
+ background: color-mix(in oklch, var(--color-foreground) 20%, transparent);
  border-radius: 4px;
  }
  .timeline-scroll-container::-webkit-scrollbar-thumb {
- background: rgb(var(--color-accent) / 0.5);
+ background: color-mix(in oklch, var(--color-accent) 50%, transparent);
  border-radius: 4px;
  }
  .timeline-scroll-container::-webkit-scrollbar-thumb:hover {
- background: rgb(var(--color-accent) / 0.7);
+ background: color-mix(in oklch, var(--color-accent) 70%, transparent);
  }
  </style>
 </section>

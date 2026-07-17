@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 import Layout from '../layouts/BaseLayout.astro';
-import FloatingBlur from '../components/primitives/FloatingBlur.astro';
 import SectionHeading from '../components/primitives/SectionHeading.astro';
 import HomeHeroSection from '../components/features/home/HomeHeroSection.astro';
 import HomeResumeHighlightsSection from '../components/features/home/HomeResumeHighlightsSection.astro';
@@ -50,12 +49,8 @@ function deriveImageData(imgPath?: string) {
 
 <Layout title={page.meta.title} description={page.meta.description} wide={true}>
   <link slot="head" rel="preload" as="image" href="/assets/images/optimized/avif/Blake-O-scaled@640w.avif" type="image/avif" fetchpriority="high" />
-  <div class="fixed inset-0 -z-10 pointer-events-none">
-    <FloatingBlur size="xl" color="accent" position="top-left" translate="-translate-x-1/2 -translate-y-1/2" />
-    <FloatingBlur size="lg" color="accent-light" position="bottom-right" translate="translate-x-1/3 translate-y-1/3" />
-  </div>
 
-  <div class="space-y-16 sm:space-y-20 lg:space-y-24">
+  <div class="space-y-20 sm:space-y-24 lg:space-y-28">
     <HomeHeroSection
       author={siteConfig.author}
       tagline={taglineToShow}
@@ -64,23 +59,27 @@ function deriveImageData(imgPath?: string) {
     />
     <HomeResumeHighlightsSection content={page.resumeHighlights} />
 
-    <section id="technologies" class="page-slab w-full py-16 text-center">
-      <div class="section-intro mb-10">
-        <span class="section-kicker">{page.technologies.kicker}</span>
-        <SectionHeading size="4xl">{page.technologies.title}</SectionHeading>
-        <p class="text-lg text-muted-foreground">
-          {page.technologies.description}
-        </p>
+    <section id="technologies" class="w-full border-t border-border/30 bg-transparent py-14">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div class="section-intro-left max-w-xl">
+            <span class="section-kicker">{page.technologies.kicker}</span>
+            <SectionHeading size="4xl">{page.technologies.title}</SectionHeading>
+            <p class="text-lg text-muted-foreground">
+              {page.technologies.description}
+            </p>
+          </div>
+        </div>
+        <ul class="flex flex-wrap items-center gap-x-8 gap-y-6 text-base font-medium text-foreground/80">
+          {technologies.map((tech) => {
+            const raw = tech.img;
+            const srcStr: string | undefined = typeof raw === 'string' ? raw : (raw && typeof raw === 'object' && 'src' in raw ? String(raw.src) : undefined);
+            const canOptimize = typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
+            const data = canOptimize ? deriveImageData(srcStr) : null;
+            return <TechnologyItem tech={tech} data={data} srcStr={srcStr} />;
+          })}
+        </ul>
       </div>
-      <ul class="flex flex-wrap justify-center gap-8 text-lg font-medium text-foreground/85">
-        {technologies.map((tech) => {
-          const raw = tech.img;
-          const srcStr: string | undefined = typeof raw === 'string' ? raw : (raw && typeof raw === 'object' && 'src' in raw ? String(raw.src) : undefined);
-          const canOptimize = typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
-          const data = canOptimize ? deriveImageData(srcStr) : null;
-          return <TechnologyItem tech={tech} data={data} srcStr={srcStr} />;
-        })}
-      </ul>
     </section>
 
     <HomeRecentProjectsSection projects={recentProjects} content={page.recentProjects} />

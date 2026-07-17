@@ -8,8 +8,6 @@
  * Usage: node scripts/vectorize-content.mjs
  */
 
-/* global fetch */
-
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 import { fileURLToPath } from 'url';

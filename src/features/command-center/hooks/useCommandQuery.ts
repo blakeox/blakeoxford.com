@@ -3,12 +3,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { runSearch } from '../../../lib/search/searchService';
 import type { SearchCategory } from '../../../lib/search/types';
 import { buildBrowseGroups, groupCommandItems } from '../lib/groupResults';
-import { mapSearchResults, toCommandItem } from '../lib/toCommandItem';
+import { mapSearchResults } from '../lib/toCommandItem';
 import { enrichCommandItems } from '../lib/rankResults';
-import { parseCommandQuery } from '../lib/parseQuery';
 import { commandCenterEvents } from '../lib/analytics';
 import type { CommandGroup } from '../types';
-import { getNavQuickSearchPages } from '../../../config/navSearchPages';
 
 const DEBOUNCE_MS = 150;
 const LOADING_DELAY_MS = 150;
@@ -19,23 +17,8 @@ function sourceFromResult(source: Awaited<ReturnType<typeof runSearch>>['source'
   return 'local';
 }
 
-function toQuickCommandItems() {
-  return getNavQuickSearchPages().map((page) =>
-    toCommandItem(
-      {
-        type: 'page',
-        title: page.title,
-        description: page.description,
-        href: page.href,
-        tags: page.tags,
-      },
-      'curated',
-    ),
-  );
-}
-
 function buildDefaultBrowse(): CommandGroup[] {
-  return buildBrowseGroups([], [], toQuickCommandItems());
+  return buildBrowseGroups([], [], []);
 }
 
 export function useCommandQuery(isOpen: boolean) {
@@ -78,8 +61,9 @@ export function useCommandQuery(isOpen: boolean) {
 
       if (!searchQuery.trim() && result.source === 'browse') {
         const featured = items.filter((item) => item.kind === 'project' && item.featured).slice(0, 3);
-        const recent = items.filter((item) => item.kind === 'blog').slice(0, 3);
-        setGroups(buildBrowseGroups(featured, recent, toQuickCommandItems()));
+        const recent = items.filter((item) => item.kind === 'blog').slice(0, 2);
+        // Idle browse: featured + posts. CommandCenter drops posts when Recent searches exist.
+        setGroups(buildBrowseGroups(featured, recent, []));
       } else {
         const enriched = enrichCommandItems(items, searchQuery);
         setGroups(groupCommandItems(enriched, searchCategory));
@@ -92,6 +76,10 @@ export function useCommandQuery(isOpen: boolean) {
           query_length: searchQuery.trim().length,
           result_count: items.length,
           backend: itemSource,
+          semantic_hit_count: result.meta?.semanticCount,
+          top_score: result.meta?.topScore !== undefined
+            ? Math.round((result.meta.topScore || 0) * 100) / 100
+            : undefined,
         });
       }
     } catch (err) {
@@ -120,8 +108,7 @@ export function useCommandQuery(isOpen: boolean) {
 
   useEffect(() => {
     if (!isOpen) return;
-    const searchQuery = parseCommandQuery(query).query;
-    scheduleSearch(searchQuery, category);
+    scheduleSearch(query, category);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };

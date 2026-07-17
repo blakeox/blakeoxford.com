@@ -4,524 +4,138 @@ import Container from '../../components/primitives/Container.astro';
 import Section from '../../components/primitives/Section.astro';
 import Badge from '../../components/primitives/Badge.astro';
 
-const brandPalette = [
- { name: 'primary', hue: '264°', token: '--color-primary', usage: 'Indigo brand anchor — headings, selection, legacy focus fallback' },
- { name: 'accent', hue: '196°', token: '--color-accent', usage: 'Cyan highlight — CTAs, focus rings, interactive chrome' },
- { name: 'accent-subtle', hue: '196° (10% mix)', token: '--color-accent-subtle', usage: 'Expressive-tier washes — chat CTAs, soft accent panels (not body text backgrounds)' },
-];
-
 const semanticColors = [
- { name: 'background', utility: 'bg-background', usage: 'Page canvas' },
- { name: 'surface', utility: 'bg-surface', usage: 'Cards, panels, controls' },
- { name: 'surface-elevated', utility: 'bg-[color:var(--surface-elevated)]', usage: 'Modals, dropdowns, and elevated overlays (dark remaps to --color-surface-elevated-dark)' },
- { name: 'foreground', utility: 'text-foreground', usage: 'Primary readable text' },
- { name: 'muted-foreground', utility: 'text-muted-foreground', usage: 'Secondary body copy (WCAG AA on background)' },
- { name: 'subtle-foreground', utility: 'text-subtle-foreground', usage: 'Labels, meta, uppercase captions' },
- { name: 'border', utility: 'border-border', usage: 'Dividers, rings, component outlines' },
- { name: 'primary', utility: 'bg-primary text-on-primary', usage: 'Primary brand actions' },
- { name: 'accent', utility: 'bg-accent text-on-accent', usage: 'Focused calls to action and highlights' },
- { name: 'success', utility: 'bg-success', usage: 'Successful or available state' },
- { name: 'warning', utility: 'bg-warning', usage: 'Caution and pending state' },
- { name: 'error', utility: 'bg-error', usage: 'Failure and destructive state' },
- { name: 'info', utility: 'bg-info', usage: 'Informational state (aliases secondary)' },
+  { name: 'background', utility: 'bg-background', usage: 'Page canvas (theme-aware)' },
+  { name: 'surface', utility: 'bg-surface', usage: 'Cards, panels, controls' },
+  { name: 'surface-subtle', utility: 'bg-surface-subtle', usage: 'Quiet secondary panels' },
+  { name: 'surface-elevated', utility: 'bg-surface-elevated', usage: 'Elevated overlays' },
+  { name: 'glass', utility: 'bg-glass', usage: 'Nav and chat translucent chrome' },
+  { name: 'overlay-scrim', utility: 'bg-overlay-scrim', usage: 'Modal backdrops (always dark)' },
+  { name: 'code-surface', utility: 'bg-code-surface text-code-foreground', usage: 'Always-dark code samples' },
+  { name: 'foreground', utility: 'text-foreground', usage: 'Primary readable text' },
+  { name: 'muted-foreground', utility: 'text-muted-foreground', usage: 'Secondary body copy (dark floor oklch 0.82)' },
+  { name: 'subtle-foreground', utility: 'text-subtle-foreground', usage: 'Labels and meta (dark floor oklch 0.80)' },
+  { name: 'border', utility: 'border-border', usage: 'Dividers and outlines' },
+  { name: 'accent', utility: 'bg-accent text-on-accent', usage: 'Primary actions — on-accent is near-white in light, dark ink in dark' },
+  { name: 'on-accent', utility: 'text-on-accent', usage: 'Foreground paired with bg-accent / button-primary (theme-aware)' },
+  { name: 'accent-subtle', utility: 'bg-accent-subtle', usage: 'Soft accent washes (theme-aware)' },
+  { name: 'primary-subtle', utility: 'bg-primary-subtle', usage: 'Soft primary washes (blur orbs)' },
+  { name: '*-emphasis', utility: 'text-accent-emphasis', usage: 'Theme-aware accent/state text — prefer over dark: pairs' },
 ];
 
-const semanticAliases = [
- { token: '--bg', mapsTo: '--color-background', usage: 'Arbitrary values: bg-background' },
- { token: '--fg', mapsTo: '--color-foreground', usage: 'Arbitrary values: text-foreground' },
- { token: '--fg-muted', mapsTo: '--color-muted-foreground', usage: 'Nav links, secondary chrome' },
- { token: '--fg-subtle', mapsTo: '--color-subtle-foreground', usage: 'Labels and meta text' },
- { token: '--surface', mapsTo: '--color-surface', usage: 'Glass panels and cards' },
- { token: '--surface-elevated', mapsTo: '--color-surface-elevated-dark (dark)', usage: 'Elevated overlays and modal shells' },
- { token: '--border', mapsTo: '--border-color', usage: 'Component outlines' },
- { token: '--accent', mapsTo: '--color-accent', usage: 'Focus rings and highlights' },
-];
-
-const themeAwareTokens = [
- { token: '--color-accent-emphasis', utility: 'text-accent-emphasis', usage: 'Links and headings that need lighter accent in dark mode' },
- { token: '--color-success-emphasis', utility: 'text-success-emphasis', usage: 'State text on subtle success washes' },
- { token: '--color-button-primary-bg', utility: 'bg-button-primary-bg', usage: 'Primary button fill — inverts for dark contrast' },
- { token: '--color-button-primary-fg', utility: 'text-button-primary-fg', usage: 'Primary button label color' },
- { token: '--color-field-bg', utility: 'bg-field-bg', usage: 'Elevated inputs (search combobox, overlays)' },
-];
-
-const motionTokens = [
- { token: '--duration-fast', value: '100ms', usage: 'Micro-interactions, toggles' },
- { token: '--duration', value: '250ms', usage: 'Default transitions (Tailwind duration DEFAULT)' },
- { token: '--duration-slow', value: '500ms', usage: 'Panel open/close, hero motion' },
- { token: '--ease-standard', value: 'Material curve', usage: 'Most UI transitions' },
- { token: '--ease-emphasized', value: 'Dramatic curve', usage: 'Entrance animations (slideUp)' },
-];
-
-const elevationScale = [
- { token: 'shadow-sm', usage: 'Static cards and subtle containers' },
- { token: 'shadow-md', usage: 'Glass panels and light overlays' },
- { token: 'shadow-lg', usage: 'Interactive cards, dialogs, and major panels' },
-];
-
-const stackingLayers = [
- { token: '--z-nav', value: '50', usage: 'Sticky header shell (default)' },
- { token: '--z-nav-drawer', value: '1100', usage: 'Mobile menu drawer + backdrop while open' },
- { token: '--z-chat', value: '1050', usage: 'AI chat launcher and panel' },
- { token: '--z-search', value: '1200', usage: 'Command Center search overlay' },
- { token: '--nav-height', value: '4.5rem (72px)', usage: 'Header height; compacts to 4rem when scrolled' },
-];
-
-const navScrollBehavior = [
- { class: '.nav-shell--scrolled', usage: 'Compact header after ~80px scroll; navbar height drops to 4rem' },
- { class: '.nav-shell--auto-hidden', usage: 'Header tucked away on scroll down; restored on scroll up or near top' },
- { class: '[data-menu-state="open"]', usage: 'Suppresses auto-hide while the mobile drawer is open' },
- { class: 'prefers-reduced-motion', usage: 'Disables auto-hide transform; header stays visible' },
-];
-
-const radiusScale = [
- { token: 'rounded-lg', usage: 'Buttons, inputs, compact controls' },
- { token: 'rounded-xl', usage: 'Small cards and grouped controls' },
- { token: 'rounded-2xl', usage: 'Standard cards and component panels' },
- { token: 'rounded-3xl', usage: 'Route-level hero media or modal shells only' },
-];
-
-const stylesheetRoles = [
- {
- file: 'src/styles/theme.css',
- role: 'Design tokens, base resets, focus styles, and opt-in :has() pattern utilities.',
- },
- {
- file: 'src/styles/components.css',
- role: 'Reusable component classes (cards, blur orbs, hero gradient, search overlay guards).',
- },
- {
- file: 'src/styles/global.css',
- role: 'Tailwind entry point only — imports theme + components; no test overrides.',
- },
- {
- file: 'tests/playwright/fixtures/test-overrides.css',
- role: 'Playwright-only CSS injected via hooks.ts (mobile menu + search harness).',
- },
+const rules = [
+  'Edit tokens only in src/styles/theme.css. @theme inline exposes them as utilities.',
+  'Prefer theme-aware utilities (bg-surface, text-accent-emphasis, bg-accent-subtle). Never use bg-background-dark / text-foreground-light.',
+  'Pair bg-accent with text-on-accent (or button-primary-*). Light mode uses near-white on-accent; dark mode remaps to dark ink because the accent lightens.',
+  'Dark muted/subtle foregrounds stay ≥ oklch 0.80 so small-caps labels clear WCAG AA 4.5:1.',
+  'Use bg-overlay-scrim for modal backdrops and bg-code-surface for always-dark code blocks. Scrim dismiss layers are decorative — mark with data-a11y-allow-color-contrast.',
+  'Motion: duration-fast | duration-normal | duration-moderate | duration-slow (not duration-200).',
+  'Do not use bg-[color:var(--…)] for tokens that already have utilities.',
+  'Shared chrome (nav, overlays, hero motion) lives in components.css; page layout stays in Tailwind.',
+  'tailwind.config.ts keeps plugins + container padding only.',
 ];
 ---
 
 <BaseLayout
- title="Design Tokens"
- description="Operational reference for the Blake Oxford design-system token contract."
- canonicalUrl="https://blakeoxford.com/design/tokens/"
+  title="Design Tokens"
+  description="Operational reference for the Blake Oxford design token contract."
 >
- <Section padding="xl">
- <Container size="xl">
- <header class="max-w-3xl">
- <Badge variant="subtle">Design system</Badge>
- <h1 class="mt-5 text-4xl font-bold text-foreground sm:text-5xl">
- Token Contract
- </h1>
- <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
- Tokens live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">src/styles/theme.css</code>,
- component classes in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">components.css</code>,
- and Tailwind maps them in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">tailwind.config.ts</code>.
- Components consume semantic utilities — not raw palette names or orphaned token variables.
- </p>
- </header>
+  <Section padding="xl">
+    <Container size="xl">
+      <header class="max-w-3xl">
+        <Badge variant="subtle">Design system</Badge>
+        <h1 class="mt-5 font-heading text-4xl font-bold text-foreground sm:text-5xl">
+          Token contract
+        </h1>
+        <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
+          Tokens live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">src/styles/theme.css</code>.
+          Shared classes live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">components.css</code>.
+          Dark mode remaps semantic tokens on <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">:root</code> — components should not restate dark variants.
+        </p>
+      </header>
 
- <div class="mt-12 grid gap-4 md:grid-cols-3">
- <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Source</p>
- <p class="mt-3 text-xl font-semibold">theme.css</p>
- <p class="mt-2 text-sm text-muted-foreground">OKLCH palette, motion scale, glass surfaces, and dark-mode swaps on <code>:root</code>.</p>
- </div>
- <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Mapping</p>
- <p class="mt-3 text-xl font-semibold">tailwind.config.ts</p>
- <p class="mt-2 text-sm text-muted-foreground">Exposes semantic utilities. Unused token aliases are pruned rather than kept “just in case.”</p>
- </div>
- <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Gate</p>
- <p class="mt-3 text-xl font-semibold">design-lint</p>
- <p class="mt-2 text-sm text-muted-foreground">Blocks duplicate artifacts, undefined tokens, raw reusable palettes, and unsupported opacity steps.</p>
- </div>
- </div>
+      <div class="mt-12 grid gap-4 md:grid-cols-3">
+        <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
+          <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Source</p>
+          <p class="mt-3 text-xl font-semibold text-foreground">theme.css</p>
+          <p class="mt-2 text-sm text-muted-foreground">OKLCH palette, motion, glass, and dark swaps.</p>
+        </div>
+        <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
+          <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Bridge</p>
+          <p class="mt-3 text-xl font-semibold text-foreground">@theme inline</p>
+          <p class="mt-2 text-sm text-muted-foreground">Generates semantic Tailwind utilities from tokens.</p>
+        </div>
+        <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
+          <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Config</p>
+          <p class="mt-3 text-xl font-semibold text-foreground">tailwind.config.ts</p>
+          <p class="mt-2 text-sm text-muted-foreground">Plugins and container padding only.</p>
+        </div>
+      </div>
 
- <section class="mt-16" aria-labelledby="brand-palette">
- <h2 id="brand-palette" class="text-2xl font-bold text-foreground">Brand Palette</h2>
- <p class="mt-3 max-w-3xl text-muted-foreground">
- Primary indigo sits at OKLCH hue <strong>264°</strong>; accent cyan at <strong>196°</strong>. Keep these hues aligned when adjusting lightness or chroma — do not drift toward unrelated hues.
- </p>
- <div class="mt-6 grid gap-4 md:grid-cols-3">
- {brandPalette.map((color) => (
- <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <h3 class="font-semibold text-foreground">{color.name}</h3>
- <p class="mt-1 text-xs text-subtle-foreground">Hue: {color.hue}</p>
- <code class="mt-3 block text-sm text-accent">{color.token}</code>
- <p class="mt-2 text-sm text-muted-foreground">{color.usage}</p>
- </article>
- ))}
- </div>
- </section>
+      <section class="mt-16" aria-labelledby="brand-palette">
+        <h2 id="brand-palette" class="font-heading text-2xl font-bold text-foreground">Brand palette</h2>
+        <p class="mt-3 max-w-3xl text-muted-foreground">
+          Primary ink at OKLCH hue <strong>55°</strong>; accent brass at <strong>75°</strong>.
+        </p>
+        <div class="mt-6 grid gap-4 md:grid-cols-3">
+          <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
+            <div class="mb-4 h-16 rounded-xl bg-primary"></div>
+            <h3 class="font-semibold text-foreground">primary</h3>
+            <p class="mt-1 text-sm text-subtle-foreground">55° · <code>--color-primary</code></p>
+            <p class="mt-2 text-sm text-muted-foreground">Warm ink — secondary brand surfaces and emphasis</p>
+          </article>
+          <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
+            <div class="mb-4 flex h-16 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-on-accent">
+              text-on-accent
+            </div>
+            <h3 class="font-semibold text-foreground">accent</h3>
+            <p class="mt-1 text-sm text-subtle-foreground">75° · <code>--color-accent</code> + <code>--color-on-accent</code></p>
+            <p class="mt-2 text-sm text-muted-foreground">Brass signal — CTAs, focus rings, interactive chrome (AA with on-accent)</p>
+          </article>
+          <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
+            <div class="mb-4 h-16 rounded-xl bg-accent-subtle"></div>
+            <h3 class="font-semibold text-foreground">accent-subtle</h3>
+            <p class="mt-1 text-sm text-subtle-foreground">75° mix · <code>--color-accent-subtle</code></p>
+            <p class="mt-2 text-sm text-muted-foreground">Soft accent washes for panels and chips</p>
+          </article>
+        </div>
+      </section>
 
- <section class="mt-16" aria-labelledby="stylesheet-roles">
- <h2 id="stylesheet-roles" class="text-2xl font-bold text-foreground">Stylesheet Roles</h2>
- <div class="mt-5 grid gap-3">
- {stylesheetRoles.map((item) => (
- <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <code class="text-sm font-semibold text-accent">{item.file}</code>
- <p class="mt-1 text-sm text-muted-foreground">{item.role}</p>
- </div>
- ))}
- </div>
- </section>
+      <section class="mt-16" aria-labelledby="semantic-colors">
+        <h2 id="semantic-colors" class="font-heading text-2xl font-bold text-foreground">Semantic utilities</h2>
+        <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm">
+          <table class="min-w-full text-left text-sm">
+            <thead class="border-b border-border/40 bg-surface-subtle/60 text-subtle-foreground">
+              <tr>
+                <th class="px-4 py-3 font-semibold">Name</th>
+                <th class="px-4 py-3 font-semibold">Utility</th>
+                <th class="px-4 py-3 font-semibold">Usage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {semanticColors.map((row) => (
+                <tr class="border-b border-border/20 last:border-0">
+                  <td class="px-4 py-3 font-medium text-foreground">{row.name}</td>
+                  <td class="px-4 py-3"><code class="text-accent-emphasis">{row.utility}</code></td>
+                  <td class="px-4 py-3 text-muted-foreground">{row.usage}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
- <section class="mt-16" aria-labelledby="stacking-layers">
- <h2 id="stacking-layers" class="text-2xl font-bold text-foreground">Header & Overlay Stacking</h2>
- <p class="mt-3 max-w-3xl text-muted-foreground">
- Fixed UI layers for nav, mobile drawer, chat, and Command Center. Higher values paint above page content; do not introduce ad-hoc z-index values in components.
- </p>
- <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <table class="min-w-full text-left text-sm">
- <thead class="border-b border-border/40 bg-surface-subtle/60 text-subtle-foreground dark:border-border-dark/40">
- <tr>
- <th class="px-4 py-3 font-semibold">Token</th>
- <th class="px-4 py-3 font-semibold">Value</th>
- <th class="px-4 py-3 font-semibold">Usage</th>
- </tr>
- </thead>
- <tbody>
- {stackingLayers.map((layer) => (
- <tr class="border-b border-border/20 last:border-0 dark:border-border-dark/20">
- <td class="px-4 py-3"><code class="text-accent">{layer.token}</code></td>
- <td class="px-4 py-3 font-mono text-xs text-muted-foreground">{layer.value}</td>
- <td class="px-4 py-3 text-muted-foreground">{layer.usage}</td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- </section>
-
- <section class="mt-16" aria-labelledby="nav-scroll-behavior">
- <h2 id="nav-scroll-behavior" class="text-2xl font-bold text-foreground">Navigation Scroll Behavior</h2>
- <p class="mt-3 max-w-3xl text-muted-foreground">
- Header scroll states are driven by <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm dark:bg-surface-dark-subtle">useNavScrollBehavior</code> in the NavBar island. Auto-hide applies on all viewports; Command Center and an open mobile drawer block it.
- </p>
- <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <table class="min-w-full text-left text-sm">
- <thead class="border-b border-border/40 bg-surface-subtle/60 text-subtle-foreground dark:border-border-dark/40">
- <tr>
- <th class="px-4 py-3 font-semibold">Class / media</th>
- <th class="px-4 py-3 font-semibold">Usage</th>
- </tr>
- </thead>
- <tbody>
- {navScrollBehavior.map((row) => (
- <tr class="border-b border-border/20 last:border-0 dark:border-border-dark/20">
- <td class="px-4 py-3"><code class="text-accent">{row.class}</code></td>
- <td class="px-4 py-3 text-muted-foreground">{row.usage}</td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- <p class="mt-4 text-sm text-muted-foreground">
- Visual baselines: <code>navbarScrolled</code>, <code>navbarAutoHidden</code>, <code>navbarMobileAutoHidden</code> in <code>componentVisualBaselines.ts</code>.
- </p>
- </section>
-
- <section class="mt-16" aria-labelledby="color-tokens">
- <h2 id="color-tokens" class="text-2xl font-bold text-foreground">Semantic Colors</h2>
- <p class="mt-3 max-w-3xl text-muted-foreground">
- Reusable components must use these semantic names. Raw colors belong only in token definition files or content-specific editorial art.
- </p>
- <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
- {semanticColors.map((color) => (
- <article class="overflow-hidden rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <div class={`h-20 ${color.utility}`} aria-hidden="true"></div>
- <div class="p-4">
- <h3 class="font-semibold text-foreground">{color.name}</h3>
- <p class="mt-1 text-xs text-subtle-foreground">{color.usage}</p>
- </div>
- </article>
- ))}
- </div>
- </section>
-
- <section class="mt-16" aria-labelledby="theme-aware-tokens">
- <h2 id="theme-aware-tokens" class="text-2xl font-bold text-foreground">Theme-Aware Emphasis</h2>
- <p class="mt-3 max-w-3xl text-muted-foreground">
- Use these instead of pairing <code>text-accent-dark dark:text-accent-light</code> (or similar) in reusable components. Values swap automatically inside <code>:root[data-theme="dark"]</code>.
- </p>
- <div class="mt-6 grid gap-4 sm:grid-cols-2">
- {themeAwareTokens.map((item) => (
- <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <code class="text-sm font-semibold text-accent">{item.token}</code>
- <p class="mt-2 text-xs text-subtle-foreground">{item.utility}</p>
- <p class="mt-2 text-sm text-muted-foreground">{item.usage}</p>
- </article>
- ))}
- </div>
- </section>
-
- <section class="mt-16 grid gap-8 lg:grid-cols-2" aria-labelledby="aliases-motion">
- <div>
- <h2 id="aliases-motion" class="text-2xl font-bold text-foreground">Semantic Aliases</h2>
- <p class="mt-3 text-sm text-muted-foreground">
- Short names for arbitrary Tailwind values. Dark mode re-maps these inside <code>:root[data-theme="dark"]</code>.
- </p>
- <div class="mt-5 space-y-3">
- {semanticAliases.map((item) => (
- <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <code class="text-sm font-semibold text-accent">{item.token}</code>
- <span class="mx-2 text-subtle-foreground/80">→</span>
- <code class="text-sm text-muted-foreground">{item.mapsTo}</code>
- <p class="mt-1 text-sm text-muted-foreground">{item.usage}</p>
- </div>
- ))}
- </div>
- </div>
- <div>
- <h2 class="text-2xl font-bold text-foreground">Motion</h2>
- <p class="mt-3 text-sm text-muted-foreground">
- Prefer Tailwind <code>duration-*</code> and <code>ease-*</code> utilities. Reduced motion sets <code>--animation-duration</code> and <code>--transition-duration</code> to near-zero.
- </p>
- <div class="mt-5 space-y-3">
- {motionTokens.map((item) => (
- <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <code class="text-sm font-semibold text-accent">{item.token}</code>
- <span class="ml-2 text-xs text-subtle-foreground">{item.value}</span>
- <p class="mt-1 text-sm text-muted-foreground">{item.usage}</p>
- </div>
- ))}
- </div>
- </div>
- </section>
-
- <section class="mt-16 grid gap-8 lg:grid-cols-2" aria-labelledby="shape-elevation">
- <div>
- <h2 id="shape-elevation" class="text-2xl font-bold text-foreground">Elevation</h2>
- <div class="mt-5 space-y-3">
- {elevationScale.map((item) => (
- <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <code class="text-sm font-semibold text-accent">{item.token}</code>
- <p class="mt-1 text-sm text-muted-foreground">{item.usage}</p>
- </div>
- ))}
- </div>
- </div>
- <div>
- <h2 class="text-2xl font-bold text-foreground">Radius & Layout</h2>
- <div class="mt-5 space-y-3">
- {radiusScale.map((item) => (
- <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <code class="text-sm font-semibold text-accent">{item.token}</code>
- <p class="mt-1 text-sm text-muted-foreground">{item.usage}</p>
- </div>
- ))}
- <div class="rounded-xl border border-border/40 bg-surface p-4 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <code class="text-sm font-semibold text-accent">max-w-container-2xl</code>
- <p class="mt-1 text-sm text-muted-foreground">Site-wide max content width (<code>--container-2xl</code>, 110rem). Used by the navbar and wide layouts.</p>
- </div>
- </div>
- </div>
- </section>
-
- <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm dark:border-border-dark/40 dark:bg-surface-dark" aria-labelledby="token-rules">
- <h2 id="token-rules" class="text-2xl font-bold text-foreground">Rules</h2>
- <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
- <li>Use semantic tokens for reusable UI: primary, accent, success, warning, error, info.</li>
- <li>Use opacity steps supported by the system: 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 75, 80, 85, 90, 95, 100.</li>
- <li>Keep card elevation to shadow-sm, shadow-md, or shadow-lg unless the surface is a route-level modal shell.</li>
- <li>Do not add tokens without a mapped Tailwind utility or a direct component consumer — prune orphans during audits.</li>
- <li>Prefer <code class="text-subtle-foreground">text-muted-foreground</code> and <code class="text-subtle-foreground">text-subtle-foreground</code> over <code class="text-subtle-foreground">text-foreground/55–/65</code> for readable secondary copy in light mode.</li>
- <li>Playwright-only CSS belongs in <code>tests/playwright/fixtures/</code>, not <code>global.css</code>.</li>
- <li>Keep token examples aligned with component props and data from <code>src/data/componentDocs.ts</code>.</li>
- </ul>
- </section>
-
- <section class="mt-16" aria-labelledby="live-tokens">
- <h2 id="live-tokens" class="text-2xl font-bold text-foreground">Live Computed Values</h2>
- <p class="mt-3 max-w-3xl text-muted-foreground">
- Values below are read from <code>:root</code> at runtime (respects light/dark theme). Toggle theme to verify dark-mode remaps.
- </p>
- <div class="mt-5 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <table class="w-full text-sm" id="live-token-table">
- <thead class="border-b border-border bg-surface-subtle/50 dark:border-border-dark dark:bg-surface-dark-subtle/50">
- <tr class="text-left">
- <th class="px-4 py-3 font-semibold">Token</th>
- <th class="px-4 py-3 font-semibold">Computed value</th>
- </tr>
- </thead>
- <tbody id="live-token-body" class="divide-y divide-border dark:divide-border-dark">
- <tr><td class="px-4 py-3 text-subtle-foreground" colspan="2">Loading computed tokens…</td></tr>
- </tbody>
- </table>
- </div>
- </section>
-
- <section class="mt-16" aria-labelledby="contrast-matrix">
- <h2 id="contrast-matrix" class="text-2xl font-bold text-foreground">Contrast Matrix</h2>
- <p class="mt-3 max-w-3xl text-muted-foreground">
- WCAG 2.1 contrast ratios for key semantic pairs in the active theme. Body text targets ≥4.5:1; large text ≥3:1.
- </p>
- <div class="mt-5 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm dark:border-border-dark/40 dark:bg-surface-dark">
- <table class="w-full text-sm">
- <thead class="border-b border-border bg-surface-subtle/50 dark:border-border-dark dark:bg-surface-dark-subtle/50">
- <tr class="text-left">
- <th class="px-4 py-3 font-semibold">Pair</th>
- <th class="px-4 py-3 font-semibold">Ratio</th>
- <th class="px-4 py-3 font-semibold">Target</th>
- <th class="px-4 py-3 font-semibold">Status</th>
- </tr>
- </thead>
- <tbody id="contrast-matrix-body" class="divide-y divide-border dark:divide-border-dark">
- <tr><td class="px-4 py-3 text-subtle-foreground" colspan="4">Computing contrast…</td></tr>
- </tbody>
- </table>
- </div>
- </section>
-
- <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
- <a class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark" href="/design/components/">Component catalog</a>
- </nav>
- </Container>
- </Section>
+      <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm" aria-labelledby="token-rules">
+        <h2 id="token-rules" class="font-heading text-2xl font-bold text-foreground">Rules</h2>
+        <ul class="mt-4 space-y-2 text-muted-foreground">
+          {rules.map((rule) => (
+            <li class="flex gap-3">
+              <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+              <span>{rule}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </Container>
+  </Section>
 </BaseLayout>
-
-<script>
-const LIVE_TOKENS = [
- '--color-background',
- '--color-foreground',
- '--color-muted-foreground',
- '--color-subtle-foreground',
- '--color-surface',
- '--border-color',
- '--color-accent',
- '--color-accent-subtle',
- '--color-primary',
- '--duration-fast',
- '--duration',
- '--duration-slow',
- '--ease-standard',
- '--bg',
- '--fg',
- '--fg-muted',
-];
-
-const CONTRAST_PAIRS = [
- { label: 'Body text on background', fg: '--color-foreground', bg: '--color-background', min: 4.5 },
- { label: 'Muted text on background', fg: '--color-muted-foreground', bg: '--color-background', min: 4.5 },
- { label: 'Subtle text on background', fg: '--color-subtle-foreground', bg: '--color-background', min: 4.5 },
- { label: 'Accent on surface', fg: '--color-accent', bg: '--color-surface', min: 3 },
- { label: 'Accent text on accent-subtle wash', fg: '--color-accent-dark', bg: '--color-accent-subtle', min: 4.5 },
- { label: 'Foreground on surface', fg: '--color-foreground', bg: '--color-surface', min: 4.5 },
-];
-
-function getToken(name: string): string {
- return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
-
-function parseRgb(raw: string): [number, number, number] | null {
- if (!raw) return null;
- const val = raw.trim().toLowerCase();
- const hexMatch = val.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
- if (hexMatch) {
- let h = hexMatch[1];
- if (h.length === 3) h = h.split('').map((c) => c + c).join('');
- return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
- }
- const rgbMatch = val.match(/rgba?\(\s*([\d.]+)\s*(?:,|\s)\s*([\d.]+)\s*(?:,|\s|\/)\s*([\d.]+)/i);
- if (rgbMatch) {
- return [Math.round(parseFloat(rgbMatch[1])), Math.round(parseFloat(rgbMatch[2])), Math.round(parseFloat(rgbMatch[3]))];
- }
- return null;
-}
-
-function resolveColor(cssColor: string): [number, number, number] | null {
- const direct = parseRgb(cssColor);
- if (direct) return direct;
- try {
- const canvas = document.createElement('canvas');
- const ctx = canvas.getContext('2d');
- if (!ctx) return null;
- const sentinel = '#010203';
- ctx.fillStyle = sentinel;
- ctx.fillStyle = cssColor;
- const hex = ctx.fillStyle;
- if (typeof hex === 'string' && hex.startsWith('#') && hex.toLowerCase() !== sentinel) {
- const hx = hex.length === 4 ? hex.slice(1).split('').map((c) => c + c).join('') : hex.slice(1);
- return [parseInt(hx.slice(0, 2), 16), parseInt(hx.slice(2, 4), 16), parseInt(hx.slice(4, 6), 16)];
- }
- } catch {
- /* noop */
- }
- return null;
-}
-
-function resolveTokenColor(tokenName: string, property: 'color' | 'background'): [number, number, number] | null {
- const probe = document.createElement('span');
- probe.style.cssText = 'position:fixed;left:-9999px;visibility:hidden;pointer-events:none;';
- const cssValue = `var(${tokenName})`;
- if (property === 'background') {
- probe.style.backgroundColor = cssValue;
- } else {
- probe.style.color = cssValue;
- }
- document.documentElement.appendChild(probe);
- const resolved = getComputedStyle(probe)[property === 'background' ? 'backgroundColor' : 'color'];
- probe.remove();
- return resolveColor(resolved);
-}
-
-function luminance(r: number, g: number, b: number): number {
- const channel = [r, g, b].map((v) => {
- const normalized = v / 255;
- return normalized <= 0.03928 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4);
- });
- return 0.2126 * channel[0] + 0.7152 * channel[1] + 0.0722 * channel[2];
-}
-
-function contrastRatio(fg: [number, number, number], bg: [number, number, number]): number {
- const fgL = luminance(fg[0], fg[1], fg[2]);
- const bgL = luminance(bg[0], bg[1], bg[2]);
- const lighter = Math.max(fgL, bgL);
- const darker = Math.min(fgL, bgL);
- return (lighter + 0.05) / (darker + 0.05);
-}
-
-function renderLiveTokens() {
- const body = document.getElementById('live-token-body');
- if (!body) return;
- body.innerHTML = LIVE_TOKENS.map((token) => {
- const value = getToken(token) || '(unset)';
- return `<tr><td class="px-4 py-3"><code class="text-accent">${token}</code></td><td class="px-4 py-3 font-mono text-xs text-muted-foreground">${value}</td></tr>`;
- }).join('');
-}
-
-function renderContrastMatrix() {
- const body = document.getElementById('contrast-matrix-body');
- if (!body) return;
- body.innerHTML = CONTRAST_PAIRS.map((pair) => {
- const fg = resolveTokenColor(pair.fg, 'color');
- const bg = resolveTokenColor(pair.bg, 'background');
- if (!fg || !bg) {
- return `<tr><td class="px-4 py-3">${pair.label}</td><td class="px-4 py-3 text-subtle-foreground" colspan="3">Unable to resolve colors</td></tr>`;
- }
- const ratio = contrastRatio(fg, bg);
- const pass = ratio >= pair.min;
- return `<tr>
- <td class="px-4 py-3">${pair.label}</td>
- <td class="px-4 py-3 font-mono">${ratio.toFixed(2)}:1</td>
- <td class="px-4 py-3">≥ ${pair.min}:1</td>
- <td class="px-4 py-3 ${pass ? 'text-success' : 'text-error'}">${pass ? 'Pass' : 'Fail'}</td>
- </tr>`;
- }).join('');
-}
-
-function refreshTokenPanels() {
- renderLiveTokens();
- renderContrastMatrix();
-}
-
-refreshTokenPanels();
-
-const themeObserver = new MutationObserver(refreshTokenPanels);
-themeObserver.observe(document.documentElement, {
- attributes: true,
- attributeFilter: ['data-theme', 'class'],
-});
-</script>

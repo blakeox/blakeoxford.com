@@ -132,7 +132,7 @@ test.describe('AI chat assistant', () => {
   const panel = page.locator('[data-ai-chat-panel]');
   await expect(panel).toHaveAttribute('data-ai-visible', 'true');
 
-    const composer = panel.getByRole('textbox', { name: /Ask about projects/i });
+    const composer = panel.getByRole('textbox', { name: /Ask about this page or the site/i });
 		
 		// Verify composer is visible and interactive (accessibility requirement)
 		// Note: Programmatic focus in headless/headed browsers may not reliably set document.activeElement
@@ -164,7 +164,7 @@ test.describe('AI chat assistant', () => {
     await widget.getByRole('button', { name: 'Open AI search assistant' }).click();
     await expect(panel).toHaveAttribute('data-ai-visible', 'true');
 
-    const composer = panel.getByRole('textbox', { name: /Ask about projects/i });
+    const composer = panel.getByRole('textbox', { name: /Ask about this page or the site/i });
 
     await composer.fill('Tell me about the latest project');
     await composer.press('Enter');

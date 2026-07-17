@@ -64,7 +64,8 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'NavBar',
     category: 'Layout',
-    description: 'Main site navigation wrapper. Wraps the NavBarIsland React component with Astro props. Provides site-wide navigation with mobile menu, logo, and theme toggle.',
+    description:
+      'Site chrome navigation as Astro HTML with progressive enhancement (theme, mobile menu, scroll). Does not depend on React hydration.',
     filePath: 'src/components/layout/NavBar.astro',
     examples: [
       {
@@ -82,7 +83,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['navigation', 'layout', 'mobile-menu', 'responsive'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--border-color', '--color-accent', '--color-foreground'],
+    tokenDependencies: ['--color-surface', '--color-border', '--color-accent', '--color-foreground'],
     visualBaseline: 'navbar',
   },
   {
@@ -106,7 +107,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['footer', 'navigation', 'social-links', 'layout'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--border-color', '--color-muted-foreground'],
+    tokenDependencies: ['--color-surface', '--color-border', '--color-muted-foreground'],
     visualBaseline: 'footer',
   },
 
@@ -140,13 +141,13 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['project', 'card', 'listing', 'summary'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-lg', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-lg', 'rounded-2xl'],
   },
   {
     name: 'SearchOverlay',
     category: 'Features',
     subcategory: 'Search',
-    description: 'Command Center site search (React portal). Cloudflare Vectorize semantic search with grouped results, browse state, and keyboard navigation.',
+    description: 'Command Center site search (React portal). Input-first command palette with grouped results, recent searches, and contextual AI handoff via ? prefix.',
     filePath: 'src/components/features/search/SearchOverlay.astro',
     examples: [
       {
@@ -156,20 +157,20 @@ export const componentDocs: ComponentDoc[] = [
     ],
     accessibility: [
       'Focus trap while open',
-      'Escape closes overlay and restores focus',
-      'aria-modal and labelled dialog region',
-      'Keyboard shortcut hints (/, Meta+K)',
+      'Escape clears query then closes overlay and restores focus',
+      'aria-modal combobox + listbox pattern',
+      'Keyboard: ↑↓ navigate, ↵ open, ⌘↵ new tab, ⌘K / / to open',
     ],
     tags: ['search', 'overlay', 'modal', 'keyboard'],
     visualTier: 'expressive',
-    tokenDependencies: ['--color-surface', '--glass-surface-bg', 'shadow-lg', '--color-accent'],
+    tokenDependencies: ['--color-surface', '--color-glass', 'shadow-lg', '--color-accent'],
     visualBaseline: 'searchOverlay',
   },
   {
     name: 'AIChatWidget',
     category: 'Composites',
     subcategory: 'Search',
-    description: 'Floating AI search assistant anchored to the bottom-right of the viewport. Provides conversational answers backed by the AutoRAG API and surfaces cited sources.',
+    description: 'Corner Ask companion — docked chat panel for questions about the current page or the site. Opens from the FAB; stays over the page while browsing. Site search lives separately in the nav (⌘K).',
     filePath: 'src/components/composites/AIChatWidget.astro',
     examples: [
       {
@@ -178,9 +179,9 @@ export const componentDocs: ComponentDoc[] = [
       },
     ],
     accessibility: [
-      'Launcher button with aria-expanded sync and keyboard shortcut support',
-      'Dialog with aria-modal="true" and labelled title',
-      'Escape key closes the assistant and focus returns to the triggering control',
+      'Launcher button with aria-expanded sync',
+      'Non-modal dialog (aria-modal="false") so the page stays readable and interactive on desktop',
+      'Escape key closes the assistant',
       'Sources rendered as accessible link list',
     ],
     performance: [
@@ -223,7 +224,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['timeline', 'scrollable', 'interactive', 'achievements'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--color-foreground', '--border-color'],
+    tokenDependencies: ['--color-surface', '--color-foreground', '--color-border'],
   },
   {
     name: 'ContactChannels',
@@ -254,7 +255,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['contact', 'social', 'links', 'channels'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--border-color', '--color-accent'],
+    tokenDependencies: ['--color-surface', '--color-border', '--color-accent'],
   },
   {
     name: 'BlogPostCard',
@@ -294,7 +295,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['blog', 'card', 'post', 'tags'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-sm', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
   },
   {
     name: 'EducationCard',
@@ -335,7 +336,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['education', 'card', 'about'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-sm', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
   },
 
   // Media and visual components
@@ -364,7 +365,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['carousel', 'photos', 'slider', 'navigation'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-md', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-md', 'rounded-2xl'],
   },
   {
     name: 'CoinFlipImage',
@@ -446,31 +447,27 @@ export const componentDocs: ComponentDoc[] = [
 
   // Island Components
   {
-    name: 'NavBarIsland',
+    name: 'Nav enhancement scripts',
     category: 'Islands',
-    description: 'React island for site navigation. Interactive navigation bar with mobile menu, logo, and responsive design. Scroll-aware compact header and auto-hide on all viewports.',
-    filePath: 'src/components/islands/NavBarIsland.tsx',
-    props: [
-      { name: 'links', type: 'NavLink[]', required: true, description: 'Navigation links configuration' },
-      { name: 'logo', type: 'LogoConfig', required: true, description: 'Logo configuration with name and avatar' },
-      { name: 'currentPath', type: 'string', required: false, description: 'Current page path for active link highlighting' },
-    ],
+    description:
+      'Vanilla progressive enhancement for the Astro NavBar (theme, mobile menu, scroll, search).',
+    filePath: 'src/scripts/features/ModernNavBar.ts',
     examples: [
       {
-        title: 'Navigation island',
-        code: '<NavBarIsland client:load links={navLinks} currentPath={Astro.url.pathname} logo={logoConfig} />',
+        title: 'Boot from NavBar.astro',
+        code: 'import { initModernNavBar } from \'../../scripts/features/ModernNavBar\';\ninitModernNavBar();',
       },
     ],
     accessibility: [
-      'Semantic nav element',
+      'Semantic nav element (in Astro markup)',
       'Mobile menu with ARIA attributes',
       'Keyboard navigation (Tab, Enter, Escape)',
       'Focus management for menu toggle',
       'Screen reader announcements',
     ],
-    tags: ['react', 'island', 'navigation', 'interactive'],
+    tags: ['navigation', 'progressive-enhancement'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--border-color', '--color-accent', '--nav-height'],
+    tokenDependencies: ['--color-surface', '--color-border', '--color-accent', '--nav-height'],
   },
   {
     name: 'MessageContent',
@@ -628,7 +625,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['badge', 'tag', 'label', 'primitive'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-accent', '--color-surface', '--border-color', 'rounded-full'],
+    tokenDependencies: ['--color-accent', '--color-surface', '--color-border', 'rounded-full'],
   },
   {
     name: 'Button',
@@ -660,7 +657,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['button', 'interactive', 'primitive'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-accent', '--color-surface', '--border-color', 'rounded-full'],
+    tokenDependencies: ['--color-accent', '--color-surface', '--color-border', 'rounded-full'],
   },
   {
     name: 'Container',
@@ -772,7 +769,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['form', 'input', 'accessibility', 'primitive'],
     visualTier: 'quiet',
-    tokenDependencies: ['--border-color', '--color-foreground', '--color-error'],
+    tokenDependencies: ['--color-border', '--color-foreground', '--color-error'],
   },
 
   // Composite Components
@@ -801,7 +798,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['card', 'surface', 'primitive'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', '--glass-surface-bg', 'shadow-sm', 'shadow-lg', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', '--color-glass', 'shadow-sm', 'shadow-lg', 'rounded-2xl'],
   },
   {
     name: 'Card',
@@ -826,7 +823,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['card', 'wrapper', 'composite'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-lg'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-lg'],
   },
   {
     name: 'Stack',
@@ -888,7 +885,7 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['card', 'metrics', 'stats', 'composite'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-lg', '@container'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-lg', '@container'],
   },
 
   // Additional Primitives
@@ -901,16 +898,6 @@ export const componentDocs: ComponentDoc[] = [
     tags: ['heading', 'typography', 'section', 'primitive'],
     visualTier: 'quiet',
     tokenDependencies: ['--color-foreground', '--color-muted-foreground', '--fs-h2'],
-  },
-  {
-    name: 'SectionBadge',
-    category: 'Primitives',
-    description: 'Small kicker badge used above section headings for visual hierarchy.',
-    filePath: 'src/components/primitives/SectionBadge.astro',
-    examples: [{ title: 'Kicker badge', code: '<SectionBadge>Featured</SectionBadge>' }],
-    tags: ['badge', 'kicker', 'primitive'],
-    visualTier: 'quiet',
-    tokenDependencies: ['--color-accent', '--color-muted-foreground'],
   },
   {
     name: 'SkipLink',
@@ -941,7 +928,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Skill tag', code: '<SkillBadge>TypeScript</SkillBadge>' }],
     tags: ['badge', 'skill', 'tag', 'primitive'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface-subtle', '--border-color', 'rounded-full'],
+    tokenDependencies: ['--color-surface-subtle', '--color-border', 'rounded-full'],
   },
   {
     name: 'SocialLink',
@@ -957,7 +944,7 @@ export const componentDocs: ComponentDoc[] = [
     accessibility: ['Descriptive aria-label', 'External link indication for screen readers'],
     tags: ['social', 'link', 'icon', 'primitive'],
     visualTier: 'quiet',
-    tokenDependencies: ['--border-color', '--color-accent', 'rounded-lg'],
+    tokenDependencies: ['--color-border', '--color-accent', 'rounded-lg'],
   },
   {
     name: 'FloatingBlur',
@@ -1039,7 +1026,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Outcomes', code: '<OutcomeCard title="Results" items={outcomes} />' }],
     tags: ['card', 'outcomes', 'project', 'composite'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-sm', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
   },
   {
     name: 'MetricsTable',
@@ -1049,7 +1036,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Project metrics', code: '<MetricsTable metrics={project.data.metrics} />' }],
     tags: ['table', 'metrics', 'project', 'composite'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--border-color', '--color-muted-foreground'],
+    tokenDependencies: ['--color-surface', '--color-border', '--color-muted-foreground'],
   },
   {
     name: 'ButtonGroup',
@@ -1094,7 +1081,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Highlight card', code: '<ResumeHighlightCard title="Leadership" description="Led cross-functional teams." />' }],
     tags: ['home', 'resume', 'card'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-md', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-md', 'rounded-2xl'],
   },
   {
     name: 'HomeRecentProjectsSection',
@@ -1129,7 +1116,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Blog card', code: '<BlogCard post={blogEntry} />' }],
     tags: ['blog', 'card', 'listing'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-sm', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
   },
   {
     name: 'BlogIndexHeroSection',
@@ -1188,7 +1175,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Achievement', code: '<AchievementCard title="Certification" description="Details..." />' }],
     tags: ['about', 'achievement', 'card'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', 'shadow-sm', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
   },
   {
     name: 'TimelineCard',
@@ -1199,7 +1186,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Timeline entry', code: '<TimelineCard year="2024" title="Role" achievements={[]} />' }],
     tags: ['about', 'timeline', 'card'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--border-color', '--color-accent'],
+    tokenDependencies: ['--color-surface', '--color-border', '--color-accent'],
   },
   {
     name: 'AboutSocial',
@@ -1210,7 +1197,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Social profiles', code: '<AboutSocial social={socialData} />' }],
     tags: ['about', 'social', 'links'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--border-color', '--color-accent'],
+    tokenDependencies: ['--color-surface', '--color-border', '--color-accent'],
   },
 
   // Contact Feature Sections
@@ -1234,7 +1221,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Contact form', code: '<ContactMessageSection />' }],
     tags: ['contact', 'form'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--border-color', '--color-field-bg'],
+    tokenDependencies: ['--color-surface', '--color-border', '--color-field-bg'],
   },
 
   // Search Feature Components
@@ -1247,7 +1234,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [{ title: 'Search input', code: '<SearchBar placeholder="Search..." />' }],
     tags: ['search', 'input'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-field-bg', '--border-color', '--focus-ring-color'],
+    tokenDependencies: ['--color-field-bg', '--color-border', '--focus-ring-color'],
   },
 
   // Additional Islands
@@ -1260,7 +1247,7 @@ export const componentDocs: ComponentDoc[] = [
     accessibility: ['Form labels associated with inputs', 'Error messages announced via aria-live'],
     tags: ['react', 'island', 'form', 'contact'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-field-bg', '--border-color', '--color-error', '--color-success'],
+    tokenDependencies: ['--color-field-bg', '--color-border', '--color-error', '--color-success'],
   },
   {
     name: 'AIChatIsland',
@@ -1271,15 +1258,21 @@ export const componentDocs: ComponentDoc[] = [
     accessibility: ['Dialog with aria-modal', 'Keyboard shortcut support', 'Focus management'],
     tags: ['react', 'island', 'chat', 'ai'],
     visualTier: 'expressive',
-    tokenDependencies: ['--color-surface', '--glass-surface-bg', '--color-accent', '--z-chat'],
+    tokenDependencies: ['--color-surface', '--color-glass', '--color-accent', '--z-chat'],
   },
   {
-    name: 'ThemeInitIsland',
+    name: 'Theme FOUC script',
     category: 'Islands',
-    description: 'Inline script island that applies theme preference before paint to prevent FOUC.',
-    filePath: 'src/components/islands/ThemeInitIsland.tsx',
-    examples: [{ title: 'Theme init', code: '<ThemeInitIsland client:load />' }],
-    tags: ['react', 'island', 'theme'],
+    description:
+      'Inline FOUC-prevention script from getThemeFoucPreventionScript() in BaseLayout (not a React island).',
+    filePath: 'src/lib/theme.ts',
+    examples: [
+      {
+        title: 'Theme init',
+        code: '<script is:inline set:html={getThemeFoucPreventionScript()} />',
+      },
+    ],
+    tags: ['theme', 'inline-script'],
     visualTier: 'quiet',
     tokenDependencies: ['--color-background', '--color-foreground'],
   },

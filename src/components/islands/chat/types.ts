@@ -2,8 +2,13 @@
  * Shared types for chat components
  */
 import type { RefObject } from 'react';
-import type { ChatMessage, ChatState, LoadingPhase, SearchFallback } from '../../../lib/chat';
-import type { ConversationWebSocket } from '../../../lib/chat/conversation-ws';
+import type {
+	ChatMessage,
+	ChatState,
+	ConversationWebSocket,
+	LoadingPhase,
+	SearchFallback,
+} from '../../../lib/chat';
 import type { AIChatSource } from '../../../lib/ai-search';
 
 // Re-export types for components that need them
@@ -27,6 +32,7 @@ export interface FeedbackAnalytics {
  * Props for ChatHeader component
  */
 export interface ChatHeaderProps {
+	pageLabel?: string;
 	wsConnected: boolean;
 	activeUsers: number;
 	voiceSupported: boolean;
@@ -99,6 +105,7 @@ export interface ChatAnalyticsProps {
  * Props for ChatQuickActions component
  */
 export interface ChatQuickActionsProps {
+	pageLabel?: string;
 	onAction: (query: string, label: string, category: string) => void;
 	setInputValue: (value: string) => void;
 }
@@ -125,6 +132,8 @@ export interface ChatMessageBubbleProps {
 	setInputValue: (value: string) => void;
 	sendQuery: (query: string) => void;
 	copyWithFeedback: (content: string, id: string, type: 'message' | 'share') => Promise<boolean>;
+	/** Only the latest assistant reply shows follow-ups / CTA. */
+	isLatestAssistant?: boolean;
 }
 
 /**
@@ -198,6 +207,7 @@ export interface ChatFallbackResultsProps {
 	hasMoreFallbackResults: boolean;
 	showFallbackSuggestions: boolean;
 	setShowFallbackSuggestions: (show: boolean) => void;
+	onDismiss?: () => void;
 }
 
 /**

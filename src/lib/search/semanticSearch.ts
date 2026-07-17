@@ -2,6 +2,18 @@ import type { SearchRecord, SemanticSearchMatch } from './types';
 
 const SEMANTIC_SEARCH_ENDPOINT = '/api/semantic-search';
 
+export type SemanticSearchMeta = {
+  provider?: string;
+  count?: number;
+  topScore?: number;
+  responseTimeMs?: number;
+};
+
+export type SemanticSearchResult = {
+  records: SearchRecord[];
+  meta: SemanticSearchMeta;
+};
+
 function normalizeUrl(url: string): string {
   if (!url) return '/';
   try {
@@ -39,7 +51,7 @@ export async function queryCloudflareSemanticSearch(
   query: string,
   limit = 10,
   signal?: AbortSignal,
-): Promise<SearchRecord[]> {
+): Promise<SemanticSearchResult> {
   const response = await fetch(SEMANTIC_SEARCH_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -53,6 +65,25 @@ export async function queryCloudflareSemanticSearch(
     throw new Error(message);
   }
 
-  const data = await response.json() as { results?: SemanticSearchMatch[] };
-  return (data.results ?? []).map(mapSemanticMatch);
+  const data = await response.json() as {
+    results?: SemanticSearchMatch[];
+    count?: number;
+    provider?: string;
+    topScore?: number;
+  };
+  const records = (data.results ?? []).map(mapSemanticMatch);
+  const responseTimeHeader = response.headers.get('x-response-time');
+  const responseTimeMs = responseTimeHeader && Number.isFinite(Number(responseTimeHeader))
+    ? Number(responseTimeHeader)
+    : undefined;
+
+  return {
+    records,
+    meta: {
+      provider: data.provider || response.headers.get('x-search-provider') || 'vectorize',
+      count: typeof data.count === 'number' ? data.count : records.length,
+      topScore: typeof data.topScore === 'number' ? data.topScore : records[0]?.score,
+      ...(responseTimeMs !== undefined ? { responseTimeMs } : {}),
+    },
+  };
 }

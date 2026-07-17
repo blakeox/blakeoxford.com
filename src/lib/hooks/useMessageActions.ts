@@ -88,6 +88,11 @@ export function useMessageActions(options: UseMessageActionsOptions): UseMessage
 			
 			// If feedback was toggled off, don't submit
 			if (!resolvedSentiment) return;
+
+			autoragEvents.feedback({
+				sentiment: resolvedSentiment,
+				message_id: messageId,
+			});
 			
 			// Submit feedback to API
 			try {
