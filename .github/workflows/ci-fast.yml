@@ -41,7 +41,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -150,7 +150,7 @@ jobs:
     needs: quick-validation # Wait for basic validation to pass first
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -309,7 +309,7 @@ jobs:
     needs: quick-validation
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -397,7 +397,7 @@ jobs:
       issues: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Download quality summary
         uses: actions/download-artifact@v6
         with:

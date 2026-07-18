@@ -35,7 +35,7 @@ jobs:
         test-group: ${{ fromJSON(github.event_name == 'workflow_dispatch' && '["unit","e2e","performance"]' || '["unit","e2e"]') }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -289,7 +289,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
