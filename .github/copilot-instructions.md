@@ -213,8 +213,8 @@ Always use the defined Zod schemas in `src/content/config.ts`:
   
 - **CoinFlipImage.astro**: Interactive image flipper with proper accessibility
   - When: Need front/back image transition (team photos, cards)
-  - Why: Accessible click/keyboard flip with live announcement; no React island
-  - Props: `frontSrc`, `backSrc`, `alt`, `altBack`, `size`, `flipOnClick`, `flipAxis`
+  - Why: Accessible click/keyboard flip with live announcement; hover multi-spin optional
+  - Props: `frontSrc`, `backSrc`, `alt`, `altBack`, `size`, `flipMultipleTimes`, `flipOnClick`, `flipAxis`
 
 **Search & Navigation**:
 - **SearchOverlay.astro**: Client-side search with Fuse.js

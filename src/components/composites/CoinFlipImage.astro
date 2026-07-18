@@ -2,8 +2,8 @@
 /**
  * CoinFlipImage — interactive 3D coin flip portrait.
  *
- * Flip state is driven by `data-flipped` (CSS). Click / keyboard (native button)
- * toggles faces. Back face loads lazily so the front can stay LCP-friendly.
+ * Flip state is driven by `data-flipped` (CSS). Optional multi-spin flourish on
+ * hover when not flipped. Click / keyboard toggles faces; back face loads lazily.
  */
 import { cn } from '../../utils/cn';
 import blakePortraitMeta from '../../../public/assets/images/optimized/Blake-O-scaled.json';
@@ -15,11 +15,14 @@ interface Props {
   alt?: string;
   altBack?: string;
   size?: number;
+  flipMultipleTimes?: boolean;
   class?: string;
   duration?: number;
   flipOnClick?: boolean;
   flipAxis?: 'x' | 'y';
   flipEase?: string;
+  multiFlipDuration?: number;
+  multiFlipEase?: string;
   loading?: 'lazy' | 'eager';
   fetchPriority?: 'low' | 'high' | 'auto';
   decoding?: 'async' | 'sync' | 'auto';
@@ -31,11 +34,14 @@ const {
   alt = '',
   altBack = '',
   size = 144,
+  flipMultipleTimes = false,
   class: customClass = '',
   duration = 700,
   flipOnClick = true,
   flipAxis = 'y',
   flipEase = 'var(--ease-emphasized)',
+  multiFlipDuration = 2000,
+  multiFlipEase = 'cubic-bezier(0.68, -0.55, 0.27, 1.55)',
   loading = 'lazy',
   fetchPriority = 'low',
   decoding = 'async',
@@ -125,7 +131,7 @@ const ariaLabel =
 <button
   type="button"
   class={cn('coin-flip focus-ring-interactive', customClass)}
-  style={`--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};`}
+  style={`--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`}
   aria-pressed="false"
   aria-label={ariaLabel}
   id={`${uniqueId}-root`}
@@ -133,6 +139,7 @@ const ariaLabel =
   data-flip-on-click={flipOnClick ? 'true' : 'false'}
   data-flip-axis={axis}
   data-flipped="false"
+  data-multi={flipMultipleTimes ? 'true' : 'false'}
   data-hint="true"
 >
   <div class="coin-flip-inner" id={`${uniqueId}-inner`}>
@@ -154,7 +161,6 @@ const ariaLabel =
       </picture>
       <div class="coin-flip-highlight" aria-hidden="true"></div>
     </div>
-    <div class="coin-flip-edge" aria-hidden="true"></div>
     <div class="coin-flip-face coin-flip-back-face">
       <picture>
         {backAvifSet && <source srcset={backAvifSet} sizes={`${size}px`} type="image/avif" />}
@@ -216,6 +222,17 @@ const ariaLabel =
       root.setAttribute('data-hint', 'false');
       announce(next ? 'Showing reverse side.' : 'Showing front side.');
     });
+
+    // Once the user explores via hover, drop the Flip hint
+    root.addEventListener(
+      'pointerenter',
+      () => {
+        if (root.getAttribute('data-multi') === 'true') {
+          root.setAttribute('data-hint', 'false');
+        }
+      },
+      { once: true }
+    );
   }
 
   function setupCoinFlips() {
@@ -258,7 +275,9 @@ const ariaLabel =
     overflow: hidden;
     border-radius: 50%;
     backface-visibility: hidden;
-    box-shadow: var(--shadow-lg);
+    box-shadow:
+      var(--shadow-lg),
+      0 0 0 1px color-mix(in oklch, var(--color-foreground) 8%, transparent) inset;
   }
 
   .coin-flip-front-face {
@@ -297,23 +316,6 @@ const ariaLabel =
     mix-blend-mode: lighten;
   }
 
-  .coin-flip-edge {
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    border-radius: 50%;
-    transform: translateZ(-1px);
-    box-shadow:
-      0 0 0 4px color-mix(in oklch, var(--color-foreground) 18%, transparent) inset,
-      0 0 10px 2px color-mix(in oklch, var(--color-foreground) 12%, transparent) inset;
-    background: repeating-linear-gradient(
-      90deg,
-      color-mix(in oklch, var(--color-foreground) 16%, transparent) 0 2px,
-      transparent 2px 5px
-    );
-  }
-
   .coin-flip-hint {
     pointer-events: none;
     position: absolute;
@@ -343,14 +345,31 @@ const ariaLabel =
       animation: coin-hint-fade 4s ease-in-out 1.2s both;
     }
 
-    .coin-flip[data-hint='true']:not([data-flipped='true']) .coin-flip-inner {
+    /* Hover multi-spin when enabled and still showing the front face */
+    .coin-flip[data-multi='true']:hover:not([data-flipped='true']) .coin-flip-inner,
+    .coin-flip[data-multi='true']:focus-visible:not([data-flipped='true']) .coin-flip-inner {
+      transform: rotateY(900deg);
+      transition-duration: var(--coin-multi-duration, 2000ms);
+      transition-timing-function: var(--coin-multi-ease);
+      animation: none;
+    }
+
+    .coin-flip[data-multi='true'][data-flip-axis='X']:hover:not([data-flipped='true'])
+      .coin-flip-inner,
+    .coin-flip[data-multi='true'][data-flip-axis='X']:focus-visible:not([data-flipped='true'])
+      .coin-flip-inner {
+      transform: rotateX(900deg);
+    }
+
+    /* Soft idle nudge only when multi-spin is off */
+    .coin-flip[data-multi='false'][data-hint='true']:not([data-flipped='true']) .coin-flip-inner {
       animation: coin-idle-nudge 5s ease-in-out 0.8s 1;
     }
 
     .coin-flip[data-hint='false'] .coin-flip-inner,
     .coin-flip[data-flipped='true'] .coin-flip-inner,
-    .coin-flip[data-hint='true']:hover .coin-flip-inner,
-    .coin-flip[data-hint='true']:focus-visible .coin-flip-inner {
+    .coin-flip[data-multi='false'][data-hint='true']:hover .coin-flip-inner,
+    .coin-flip[data-multi='false'][data-hint='true']:focus-visible .coin-flip-inner {
       animation: none;
     }
   }

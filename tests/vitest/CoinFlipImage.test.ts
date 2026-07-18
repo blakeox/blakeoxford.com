@@ -33,7 +33,15 @@ describe('CoinFlipImage.astro', () => {
 
   it('uses CSS custom properties for motion timing instead of inline transform', () => {
     expect(content).toContain('--coin-duration');
+    expect(content).toContain('--coin-multi-duration');
     expect(content).not.toContain('transition-duration:${duration}ms');
+  });
+
+  it('supports optional hover multi-spin without a striped edge layer', () => {
+    expect(content).toContain('data-multi={flipMultipleTimes ? \'true\' : \'false\'}');
+    expect(content).toContain('rotateY(900deg)');
+    expect(content).not.toContain('coin-flip-edge');
+    expect(content).not.toContain('repeating-linear-gradient');
   });
 
   it('binds interaction with a vanilla script instead of a React island', () => {

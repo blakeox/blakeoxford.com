@@ -107,6 +107,7 @@ export interface CoinFlipImageProps {
   alt: string;
   altBack: string;
   size?: number;
+  flipMultipleTimes?: boolean;
   flipOnClick?: boolean;
   flipAxis?: 'x' | 'y';
   duration?: number;

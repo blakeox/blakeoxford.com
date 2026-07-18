@@ -87,6 +87,7 @@ const { author, tagline, description, content } = Astro.props as Props;
             alt={content.portrait.alt}
             altBack={content.portrait.altBack}
             size={300}
+            flipMultipleTimes
             loading="eager"
             fetchPriority="high"
             decoding="auto"

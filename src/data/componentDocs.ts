@@ -372,7 +372,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'CoinFlipImage',
     category: 'Composites',
     description:
-      'Interactive 3D coin flip portrait. Flip state is CSS `data-flipped`. Click toggles faces with a polite live announcement. Idle nudge + hint affordance; back face loads lazily.',
+      'Interactive 3D coin flip portrait. Flip state is CSS `data-flipped`; optional multi-spin flourish on hover. Click toggles faces with a polite live announcement. Back face loads lazily.',
     filePath: 'src/components/composites/CoinFlipImage.astro',
     props: [
       { name: 'frontSrc', type: 'string', required: true, description: 'Front image source URL' },
@@ -385,6 +385,13 @@ export const componentDocs: ComponentDoc[] = [
         required: false,
         default: '144',
         description: 'Image size in pixels',
+      },
+      {
+        name: 'flipMultipleTimes',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Enable multi-spin flourish on hover when not flipped',
       },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
       {
@@ -415,8 +422,8 @@ export const componentDocs: ComponentDoc[] = [
         code: '<CoinFlipImage frontSrc="/front.jpg" backSrc="/back.jpg" alt="Front image" altBack="Back image" />',
       },
       {
-        title: 'Hero portrait',
-        code: '<CoinFlipImage frontSrc="/front.jpg" backSrc="/back.jpg" alt="Front" altBack="Back" size={300} loading="eager" fetchPriority="high" />',
+        title: 'Hero portrait with hover spin',
+        code: '<CoinFlipImage frontSrc="/front.jpg" backSrc="/back.jpg" alt="Front" altBack="Back" size={300} flipMultipleTimes loading="eager" fetchPriority="high" />',
       },
     ],
     accessibility: [
