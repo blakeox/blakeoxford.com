@@ -21,12 +21,10 @@ const base = process.env.BASE_URL || 'http://localhost:4321';
       window.__longTasks = [];
       // eslint-disable-next-line no-undef
       new PerformanceObserver((list) => {
-        // eslint-disable-next-line no-undef
-        list
-          .getEntries()
-          .forEach((e) =>
-            window.__longTasks.push({ name: e.name, start: e.startTime, duration: e.duration })
-          );
+        list.getEntries().forEach((e) =>
+          // eslint-disable-next-line no-undef -- injected browser context
+          window.__longTasks.push({ name: e.name, start: e.startTime, duration: e.duration })
+        );
       }).observe({ type: 'longtask', buffered: true });
     });
     // small wait to allow tasks; alternative is networkidle but SSG should be fast

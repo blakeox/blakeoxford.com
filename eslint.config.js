@@ -29,7 +29,7 @@ export default [
       },
     },
     rules: {
-      quotes: ['error', 'single'],
+      quotes: ['error', 'single', { avoidEscape: true }],
       semi: ['error', 'always'],
       'no-console': 'off',
       'no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
@@ -153,7 +153,7 @@ export default [
     },
     rules: {
       ...tseslint.configs.recommended.rules,
-      quotes: ['error', 'single'],
+      quotes: ['error', 'single', { avoidEscape: true }],
       semi: ['error', 'always'],
       'no-console': 'off',
       '@typescript-eslint/no-unused-vars': [
@@ -234,7 +234,7 @@ export default [
     },
     rules: {
       ...astroPlugin.configs.recommended.rules,
-      quotes: ['error', 'single'],
+      quotes: ['error', 'single', { avoidEscape: true }],
       semi: ['error', 'always'],
       'no-console': 'off',
     },
