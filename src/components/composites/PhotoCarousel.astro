@@ -1,29 +1,14 @@
 ---
 /**
- * PhotoCarousel - Responsive photo carousel with navigation
+ * PhotoCarousel — decorative scrolling photo collage for the About hero.
  *
- * Displays a collection of photos in a carousel with prev/next navigation,
- * autoplay, and responsive image loading. Includes accessibility features
- * for screen readers and keyboard navigation.
- *
- * @component
- * @category Composites
- *
- * @example Default carousel
- * ```astro
- * <PhotoCarousel />
- * ```
- *
- * @accessibility
- * - role="region" with aria-label="Photo carousel"
- * - Semantic list structure (ul/li)
- * - Alt text for all images
- * - Keyboard navigation support (prev/next buttons)
- * - ARIA labels on navigation buttons
+ * Mobile: horizontal marquee. Desktop (md+): three vertical columns (up / down / up).
+ * Motion pauses on hover/focus-within and when prefers-reduced-motion is set.
+ * Not an interactive slideshow (no prev/next controls).
  */
 import { Image } from 'astro:assets';
+import { cn } from '../../utils/cn';
 
-// Import carousel images directly
 import Appalatia from '@/assets/images/carousel/Appalatia.webp';
 import BlakeOScaled from '@/assets/images/carousel/Blake-O-scaled.webp';
 import CES from '@/assets/images/carousel/CES.webp';
@@ -45,7 +30,12 @@ import ChinaProfile from '@/assets/images/carousel/china-profile-picture.webp';
 import NvidiaPrize from '@/assets/images/carousel/Nvidia-prize-download.webp';
 import NvidiaPrizeVertical from '@/assets/images/carousel/nvidia-prize-download-vertical.webp';
 
-// Array of all images
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props as Props;
+
 const allImages = [
   Appalatia,
   BlakeOScaled,
@@ -69,68 +59,70 @@ const allImages = [
   NvidiaPrizeVertical,
 ];
 
-// Shuffle function
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+/** Deterministic shuffle so SSR / visual baselines stay stable across builds. */
+function seededShuffle<T>(items: T[], seed: number): T[] {
+  const result = [...items];
+  let state = seed % 2147483647;
+  if (state <= 0) state += 2147483646;
+  for (let i = result.length - 1; i > 0; i--) {
+    state = (state * 16807) % 2147483647;
+    const j = state % (i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
   }
-  return shuffled;
+  return result;
 }
 
-// Configuration
+function loop<T>(items: T[]): T[] {
+  return items.length ? [...items, ...items] : items;
+}
+
 const CONFIG = {
-  mobile: {
-    count: 5,
-    // Increased for high-DPI mobile screens (Retina, etc.)
-    imageSize: { width: 800, height: 800 },
-  },
-  desktop: {
-    // Increased count for full viewport height - show more photos per column
-    visiblePerColumn: 4,
-    imageSize: { width: 640, height: 640 },
-  },
-};
+  mobileCount: 6,
+  desktopVisible: 5,
+  mobileSize: { width: 800, height: 800 },
+  desktopSize: { width: 640, height: 640 },
+} as const;
 
-// Get random images for mobile view
-const shuffledImages = shuffleArray(allImages);
-const mobileImages = shuffledImages.slice(0, CONFIG.mobile.count);
+const shuffled = seededShuffle(allImages, 42);
+const third = Math.ceil(shuffled.length / 3);
+const columnA = shuffled.slice(0, third);
+const columnB = shuffled.slice(third, third * 2);
+const columnC = shuffled.slice(third * 2);
+const mobileImages = shuffled.slice(0, CONFIG.mobileCount);
 
-// Split images between columns A and B for desktop
-const halfLength = Math.ceil(shuffledImages.length / 2);
-const columnAImages = shuffledImages.slice(0, halfLength);
-const columnBImages = shuffledImages.slice(halfLength);
-
-// Create seamless loops
-function createSeamlessLoop<T>(images: T[]): T[] {
-  return [...images, ...images]; // Simple doubling for seamless loop
-}
-
-const columnALoop = createSeamlessLoop(columnAImages);
-const columnBLoop = createSeamlessLoop(columnBImages);
-const mobileLoop = createSeamlessLoop(mobileImages);
+const mobileLoop = loop(mobileImages);
+const columnALoop = loop(columnA);
+const columnBLoop = loop(columnB);
+const columnCLoop = loop(columnC);
 ---
 
 <div
-  class="photo-carousel @container relative h-full min-h-[280px] w-full overflow-hidden select-none @md:min-h-[320px] @lg:min-h-[400px]"
+  class={cn(
+    'photo-carousel @container relative h-full min-h-[280px] w-full overflow-hidden select-none',
+    '@md:min-h-[320px] @lg:min-h-[400px]',
+    className
+  )}
   role="region"
-  aria-label="Photo carousel"
+  aria-label="Travel and work photo gallery"
   aria-live="off"
 >
-  <!-- Mobile: horizontal slow scroll (show only on small screens) -->
-  <div class="mobile-carousel absolute inset-0 flex items-center pt-16 md:pt-0">
-    <ul class="animate-carousel-x-slow flex gap-4" role="list" aria-hidden="true">
+  <!-- Mobile / narrow: horizontal marquee -->
+  <div class="absolute inset-0 flex items-center pt-16 md:hidden md:pt-0">
+    <ul
+      class="photo-carousel-track photo-carousel-track--x flex gap-4"
+      role="list"
+      aria-hidden="true"
+    >
       {
-        mobileLoop.slice(0, CONFIG.mobile.count).map((image, index) => (
-          <li class="h-[40vh] w-[80vw] flex-shrink-0" role="listitem">
+        mobileLoop.map((image) => (
+          <li class="h-[40vh] w-[80vw] flex-shrink-0">
             <div class="relative h-full w-full overflow-hidden rounded-xl shadow-lg">
               <Image
                 src={image}
-                alt={`Carousel photo ${index + 1}`}
-                class="absolute inset-0 h-full w-full object-cover hover:scale-105 motion-safe:transition-transform motion-safe:duration-normal"
-                width={CONFIG.mobile.imageSize.width}
-                height={CONFIG.mobile.imageSize.height}
+                alt=""
+                class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-normal motion-safe:hover:scale-105"
+                width={CONFIG.mobileSize.width}
+                height={CONFIG.mobileSize.height}
                 loading="lazy"
                 decoding="async"
                 fetchpriority="low"
@@ -142,184 +134,96 @@ const mobileLoop = createSeamlessLoop(mobileImages);
     </ul>
   </div>
 
-  <!-- Desktop: 3 vertical columns (show on larger screens) -->
-  <div class="desktop-carousel absolute inset-0 h-full w-full gap-4 pt-16 md:pt-8">
-    <!-- Column 1 – scrolling up -->
-    <ul class="animate-carousel-up-slow flex flex-1 flex-col gap-4" role="list" aria-hidden="true">
-      {
-        columnALoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
-          <li class="mx-auto aspect-square w-full flex-shrink-0" role="listitem">
-            <div class="relative h-full w-full overflow-hidden rounded-2xl shadow-lg">
-              <Image
-                src={image}
-                alt={`Carousel photo ${index + 1}`}
-                class="absolute inset-0 h-full w-full object-cover hover:scale-105 motion-safe:transition-transform motion-safe:duration-normal"
-                width={CONFIG.desktop.imageSize.width}
-                height={CONFIG.desktop.imageSize.height}
-                loading="lazy"
-                decoding="async"
-                fetchpriority="low"
-              />
-            </div>
-          </li>
-        ))
-      }
-    </ul>
-
-    <!-- Column 2 – scrolling down -->
-    <ul
-      class="animate-carousel-down-slow flex flex-1 flex-col gap-4"
-      role="list"
-      aria-hidden="true"
-    >
-      {
-        columnBLoop.slice(0, CONFIG.desktop.visiblePerColumn).map((image, index) => (
-          <li class="mx-auto aspect-square w-full flex-shrink-0" role="listitem">
-            <div class="relative h-full w-full overflow-hidden rounded-2xl shadow-lg">
-              <Image
-                src={image}
-                alt={`Carousel photo ${index + 1}`}
-                class="absolute inset-0 h-full w-full object-cover hover:scale-105 motion-safe:transition-transform motion-safe:duration-normal"
-                width={CONFIG.desktop.imageSize.width}
-                height={CONFIG.desktop.imageSize.height}
-                loading="lazy"
-                decoding="async"
-                fetchpriority="low"
-              />
-            </div>
-          </li>
-        ))
-      }
-    </ul>
-
-    <!-- Column 3 – scrolling up (same direction as column 1) -->
-    <ul class="animate-carousel-up-slow flex flex-1 flex-col gap-4" role="list" aria-hidden="true">
-      {
-        shuffledImages
-          .slice(Math.floor(shuffledImages.length / 3), Math.floor((shuffledImages.length * 2) / 3))
-          .map((image, index) => (
-            <li class="mx-auto aspect-square w-full flex-shrink-0" role="listitem">
+  <!-- Desktop: three vertical columns -->
+  <div class="absolute inset-0 hidden h-full w-full gap-4 overflow-hidden pt-8 md:flex">
+    {
+      (
+        [
+          { images: columnALoop, track: 'photo-carousel-track--up' },
+          { images: columnBLoop, track: 'photo-carousel-track--down' },
+          { images: columnCLoop, track: 'photo-carousel-track--up' },
+        ] as const
+      ).map(({ images, track }) => (
+        <ul
+          class={cn('photo-carousel-track flex flex-1 flex-col gap-4 py-4', track)}
+          role="list"
+          aria-hidden="true"
+        >
+          {images.map((image) => (
+            <li class="mx-auto aspect-square w-full flex-shrink-0">
               <div class="relative h-full w-full overflow-hidden rounded-2xl shadow-lg">
                 <Image
                   src={image}
-                  alt={`Carousel photo ${index + 1}`}
-                  class="absolute inset-0 h-full w-full object-cover hover:scale-105 motion-safe:transition-transform motion-safe:duration-normal"
-                  width={CONFIG.desktop.imageSize.width}
-                  height={CONFIG.desktop.imageSize.height}
+                  alt=""
+                  class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-normal motion-safe:hover:scale-105"
+                  width={CONFIG.desktopSize.width}
+                  height={CONFIG.desktopSize.height}
                   loading="lazy"
                   decoding="async"
                   fetchpriority="low"
                 />
               </div>
             </li>
-          ))
-      }
-    </ul>
+          ))}
+        </ul>
+      ))
+    }
   </div>
 
-  <span class="sr-only">Continuously scrolling photo gallery</span>
+  <span class="sr-only">
+    Decorative scrolling photo collage. Animation pauses when reduced motion is preferred.
+  </span>
 </div>
 
-<style is:global>
-  /* Viewport-based responsive carousel behavior */
-  .mobile-carousel {
-    display: flex !important;
-  }
-
-  .desktop-carousel {
-    display: none !important;
-  }
-
-  /* Show desktop twin columns on viewport width >= 768px regardless of container size */
-  @media (min-width: 768px) {
-    .mobile-carousel {
-      display: none !important;
-    }
-
-    .desktop-carousel {
-      display: flex !important;
-    }
-  }
-
-  /* Ensure columns have proper overflow and padding for rounded corners */
-  .desktop-carousel ul {
-    padding: 1rem 0;
-    margin: -1rem 0;
-    /* Allow content to extend slightly beyond container for proper rounded corners */
-    overflow: visible;
-  }
-
-  /* Parent container should clip overflow only at the very edges */
-  .desktop-carousel {
-    overflow: hidden;
-    padding: 1rem 0;
-    margin: -1rem 0;
-  }
-
-  /* Vertical loop animations - adjusted for proper padding */
-  @keyframes carousel-up-slow {
+<style>
+  @keyframes photo-carousel-x {
     from {
-      transform: translateY(0);
+      transform: translate3d(0, 0, 0);
     }
     to {
-      transform: translateY(-50%);
+      transform: translate3d(-50%, 0, 0);
     }
   }
 
-  @keyframes carousel-down-slow {
+  @keyframes photo-carousel-up {
     from {
-      transform: translateY(-50%);
+      transform: translate3d(0, 0, 0);
     }
     to {
-      transform: translateY(0);
+      transform: translate3d(0, -50%, 0);
     }
   }
 
-  .animate-carousel-up-slow {
-    animation: carousel-up-slow 90s linear infinite;
-  }
-
-  .animate-carousel-down-slow {
-    animation: carousel-down-slow 90s linear infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .animate-carousel-x-slow,
-    .animate-carousel-up-slow,
-    .animate-carousel-down-slow {
-      animation: none !important;
-    }
-  }
-
-  /* Horizontal loop (mobile & tablet) */
-  @keyframes carousel-x-slow {
+  @keyframes photo-carousel-down {
     from {
-      transform: translateX(0);
+      transform: translate3d(0, -50%, 0);
     }
     to {
-      transform: translateX(-50%);
+      transform: translate3d(0, 0, 0);
     }
   }
 
-  .animate-carousel-x-slow {
-    animation: carousel-x-slow 70s linear infinite;
-  }
-
-  /* Reduce motion for accessibility */
-  @media (prefers-reduced-motion: reduce) {
-    .animate-carousel-up-slow,
-    .animate-carousel-down-slow,
-    .animate-carousel-x-slow {
-      animation: none;
-    }
-  }
-
-  /* Optimize performance */
-  .animate-carousel-up-slow,
-  .animate-carousel-down-slow,
-  .animate-carousel-x-slow {
-    will-change: transform;
+  .photo-carousel-track {
     backface-visibility: hidden;
-    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .photo-carousel-track--x {
+      animation: photo-carousel-x 70s linear infinite;
+    }
+
+    .photo-carousel-track--up {
+      animation: photo-carousel-up 90s linear infinite;
+    }
+
+    .photo-carousel-track--down {
+      animation: photo-carousel-down 90s linear infinite;
+    }
+
+    .photo-carousel:hover .photo-carousel-track,
+    .photo-carousel:focus-within .photo-carousel-track {
+      animation-play-state: paused;
+    }
   }
 </style>

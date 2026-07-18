@@ -102,14 +102,19 @@ export interface OptimizedImageProps {
  * Interactive image flipper with accessibility
  */
 export interface CoinFlipImageProps {
-  frontSrc: string | ImageMetadata;
-  backSrc: string | ImageMetadata;
+  frontSrc: string;
+  backSrc: string;
   alt: string;
   altBack: string;
   size?: number;
   flipMultipleTimes?: boolean;
-  autoFlip?: boolean;
-  flipDuration?: number;
+  flipOnClick?: boolean;
+  flipAxis?: 'x' | 'y';
+  duration?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  fetchPriority?: 'low' | 'high' | 'auto';
+  decoding?: 'async' | 'sync' | 'auto';
 }
 
 // ============================================================================

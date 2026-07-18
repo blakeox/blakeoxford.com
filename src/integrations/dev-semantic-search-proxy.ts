@@ -1,10 +1,35 @@
-import type { Plugin } from 'vite';
 import { sendErrorResponse, setCORSHeaders } from '../lib/dev-proxy/response-helpers';
+
+type ConnectNext = (error?: unknown) => void;
+
+type ConnectReq = {
+  url?: string;
+  method?: string;
+  headers: { origin?: string };
+  [Symbol.asyncIterator](): AsyncIterator<string | Buffer>;
+};
+
+type ConnectRes = {
+  statusCode: number;
+  setHeader: (name: string, value: string) => void;
+  end: (data?: string) => void;
+};
+
+type ViteDevServer = {
+  middlewares: {
+    use: (handler: (req: ConnectReq, res: ConnectRes, next: ConnectNext) => void | Promise<void>) => void;
+  };
+};
+
+type VitePlugin = {
+  name: string;
+  configureServer: (server: ViteDevServer) => void;
+};
 
 /**
  * Dev-only Vite middleware: proxy `/api/semantic-search` to production (or SEMANTIC_SEARCH_PROXY_URL).
  */
-export function createDevSemanticSearchProxy(): Plugin {
+export function createDevSemanticSearchProxy(): VitePlugin {
   const targetBase = process.env.SEMANTIC_SEARCH_PROXY_URL ?? 'https://blakeoxford.com';
 
   return {

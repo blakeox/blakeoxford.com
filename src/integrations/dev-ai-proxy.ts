@@ -1,4 +1,3 @@
-import type { Plugin } from 'vite';
 import {
   extractErrorDetail,
   extractMessage,
@@ -7,10 +6,36 @@ import {
 } from '../lib/dev-proxy/payload-parser';
 import { sendErrorResponse, sendSuccessResponse, setCORSHeaders } from '../lib/dev-proxy/response-helpers';
 
+type ConnectNext = (error?: unknown) => void;
+
+type ConnectReq = {
+  url?: string;
+  method?: string;
+  headers: { origin?: string };
+  [Symbol.asyncIterator](): AsyncIterator<string | Buffer>;
+};
+
+type ConnectRes = {
+  statusCode: number;
+  setHeader: (name: string, value: string) => void;
+  end: (data?: string) => void;
+};
+
+type ViteDevServer = {
+  middlewares: {
+    use: (handler: (req: ConnectReq, res: ConnectRes, next: ConnectNext) => void | Promise<void>) => void;
+  };
+};
+
+type VitePlugin = {
+  name: string;
+  configureServer: (server: ViteDevServer) => void;
+};
+
 /**
  * Dev-only Vite middleware: proxy `/api/ai-search` to AI_SEARCH_API_ENDPOINT.
  */
-export function createDevAISearchProxy(): Plugin {
+export function createDevAISearchProxy(): VitePlugin {
   return {
     name: 'ai-search-dev-proxy',
     configureServer(server) {

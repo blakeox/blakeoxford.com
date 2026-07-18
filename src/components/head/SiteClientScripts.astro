@@ -7,7 +7,7 @@ const clarityId = import.meta.env.PUBLIC_CLARITY_PROJECT_ID?.trim() ?? '';
 const cfToken = import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN?.trim() ?? '';
 ---
 
-<script define:vars={{ clarityId, cfToken }}>
+<script is:inline define:vars={{ clarityId, cfToken }}>
   // Cloudflare Web Analytics — plain script tag, not a React root
   if (cfToken && !document.querySelector('script[data-cf-beacon]')) {
     const script = document.createElement('script');

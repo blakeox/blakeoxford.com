@@ -6,7 +6,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-function loadEnvFile(filename) {
+function loadEnvFile(filename: string): void {
   const absolutePath = resolve(process.cwd(), filename);
   if (!existsSync(absolutePath)) return;
 
