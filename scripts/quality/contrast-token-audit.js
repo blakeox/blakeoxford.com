@@ -1,30 +1,24 @@
 #!/usr/bin/env node
 /**
- * Scans Tailwind color tokens & reports low-contrast pairs against a default background.
- * Non-blocking diagnostic script.
+ * Scans design tokens in theme.css & reports low-contrast pairs against a default background.
+ * Non-blocking diagnostic script. (Legacy hex maps in a JS Tailwind config are no longer used.)
  */
 import fs from 'fs';
 import path from 'path';
-import ts from 'typescript';
 
-const tailwindConfigPath = path.join(process.cwd(), 'tailwind.config.ts');
-if (!fs.existsSync(tailwindConfigPath)) {
-  console.error('tailwind.config.ts not found');
+const themeCssPath = path.join(process.cwd(), 'src/styles/theme.css');
+if (!fs.existsSync(themeCssPath)) {
+  console.error('src/styles/theme.css not found');
   process.exit(0);
 }
-// Load tailwind.config.ts by transpiling and evaluating (strip imports/exports)
-const tailwindSource = fs.readFileSync(tailwindConfigPath, 'utf-8');
-const transpiled = ts.transpileModule(tailwindSource, {
-  compilerOptions: {
-    module: ts.ModuleKind.ESNext,
-    target: ts.ScriptTarget.ES2020
-  }
-}).outputText;
-const sanitized = transpiled
-  .replace(/^import\s.+;$/gm, '')
-  .replace(/export\s+default\s+config;?/g, 'return config;');
-const cfg = new Function(`const containerQueries = undefined; const typography = undefined; ${sanitized}`)();
-const colors = (cfg.default || cfg).theme?.extend?.colors || {};
+
+const themeCss = fs.readFileSync(themeCssPath, 'utf-8');
+// Extract simple hex custom properties if any remain (OKLCH is the primary format).
+const hexTokenPattern = /--([\w-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\b/g;
+const colors = {};
+for (const match of themeCss.matchAll(hexTokenPattern)) {
+  colors[match[1]] = match[2];
+}
 
 function luminance(r,g,b){ const a=[r,g,b].map(v=>{v/=255;return v<=0.03928? v/12.92:Math.pow((v+0.055)/1.055,2.4);});return 0.2126*a[0]+0.7152*a[1]+0.0722*a[2]; }
 function contrast(rgb1,rgb2){const L1=luminance(rgb1[0],rgb1[1],rgb1[2]);const L2=luminance(rgb2[0],rgb2[1],rgb2[2]);const light=Math.max(L1,L2);const dark=Math.min(L1,L2);return (light+0.05)/(dark+0.05);} 
@@ -42,22 +36,11 @@ for (const [name, val] of Object.entries(colors)) {
     const darkRatio = contrast(fg, DARK_BG);
     if (lightRatio < 4.5) lightFails.push({ name, value: val, ratio: +lightRatio.toFixed(2) });
     if (darkRatio < 4.5) darkFails.push({ name: name + ' (dark)', value: val, ratio: +darkRatio.toFixed(2) });
-  } else if (typeof val === 'object') {
-    for (const [shade, hex] of Object.entries(val)) {
-      if (typeof hex === 'string' && hex.startsWith('#')) {
-        const fg = hexToRgb(hex);
-        const ident = `${name}-${shade}`;
-        const lightRatio = contrast(fg, LIGHT_BG);
-        const darkRatio = contrast(fg, DARK_BG);
-        if (lightRatio < 4.5) lightFails.push({ name: ident, value: hex, ratio: +lightRatio.toFixed(2) });
-        if (darkRatio < 4.5) darkFails.push({ name: ident + ' (dark)', value: hex, ratio: +darkRatio.toFixed(2) });
-      }
-    }
   }
 }
 const hasAny = lightFails.length || darkFails.length;
 if (!hasAny) {
-  console.log('✅ All extended Tailwind color tokens meet 4.5:1 contrast in both light (#fff) and dark (#111) contexts.');
+  console.log('✅ All hex tokens in theme.css meet 4.5:1 contrast in both light (#fff) and dark (#111) contexts.');
   process.exit(0);
 }
 

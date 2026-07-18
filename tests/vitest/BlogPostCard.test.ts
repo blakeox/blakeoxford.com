@@ -85,7 +85,8 @@ describe('BlogPostCard Component', () => {
   describe('Styling', () => {
     it('should have responsive typography classes', () => {
       expect(fileContent).toMatch(/text-(xl|2xl|sm)/);
-      expect(fileContent).toMatch(/sm:text-/);
+      expect(fileContent).toMatch(/@sm:text-/);
+      expect(fileContent).toContain('@container');
     });
 
     it('should have hover effects', () => {

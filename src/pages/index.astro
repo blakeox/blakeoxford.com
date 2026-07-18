@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 import Layout from '../layouts/BaseLayout.astro';
+import Container from '../components/primitives/Container.astro';
 import SectionHeading from '../components/primitives/SectionHeading.astro';
 import HomeHeroSection from '../components/features/home/HomeHeroSection.astro';
 import HomeResumeHighlightsSection from '../components/features/home/HomeResumeHighlightsSection.astro';
@@ -60,7 +61,7 @@ function deriveImageData(imgPath?: string) {
     <HomeResumeHighlightsSection content={page.resumeHighlights} />
 
     <section id="technologies" class="w-full border-t border-border/30 bg-transparent py-14">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <Container size="lg">
         <div class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div class="section-intro-left max-w-xl">
             <span class="section-kicker">{page.technologies.kicker}</span>
@@ -79,7 +80,7 @@ function deriveImageData(imgPath?: string) {
             return <TechnologyItem tech={tech} data={data} srcStr={srcStr} />;
           })}
         </ul>
-      </div>
+      </Container>
     </section>
 
     <HomeRecentProjectsSection projects={recentProjects} content={page.recentProjects} />

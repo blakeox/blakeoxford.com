@@ -3,28 +3,34 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/primitives/Container.astro';
 import Section from '../../components/primitives/Section.astro';
 import Badge from '../../components/primitives/Badge.astro';
+import {
+  SEMANTIC_COLOR_USAGE,
+  getPublicThemeTokens,
+  groupTokensByCategory,
+} from '../../lib/designTokens';
 
-const semanticColors = [
-  { name: 'background', utility: 'bg-background', usage: 'Page canvas (theme-aware)' },
-  { name: 'surface', utility: 'bg-surface', usage: 'Cards, panels, controls' },
-  { name: 'surface-subtle', utility: 'bg-surface-subtle', usage: 'Quiet secondary panels' },
-  { name: 'surface-elevated', utility: 'bg-surface-elevated', usage: 'Elevated overlays' },
-  { name: 'glass', utility: 'bg-glass', usage: 'Nav and chat translucent chrome' },
-  { name: 'overlay-scrim', utility: 'bg-overlay-scrim', usage: 'Modal backdrops (always dark)' },
-  { name: 'code-surface', utility: 'bg-code-surface text-code-foreground', usage: 'Always-dark code samples' },
-  { name: 'foreground', utility: 'text-foreground', usage: 'Primary readable text' },
-  { name: 'muted-foreground', utility: 'text-muted-foreground', usage: 'Secondary body copy (dark floor oklch 0.82)' },
-  { name: 'subtle-foreground', utility: 'text-subtle-foreground', usage: 'Labels and meta (dark floor oklch 0.80)' },
-  { name: 'border', utility: 'border-border', usage: 'Dividers and outlines' },
-  { name: 'accent', utility: 'bg-accent text-on-accent', usage: 'Primary actions — on-accent is near-white in light, dark ink in dark' },
-  { name: 'on-accent', utility: 'text-on-accent', usage: 'Foreground paired with bg-accent / button-primary (theme-aware)' },
-  { name: 'accent-subtle', utility: 'bg-accent-subtle', usage: 'Soft accent washes (theme-aware)' },
-  { name: 'primary-subtle', utility: 'bg-primary-subtle', usage: 'Soft primary washes (blur orbs)' },
-  { name: '*-emphasis', utility: 'text-accent-emphasis', usage: 'Theme-aware accent/state text — prefer over dark: pairs' },
-];
+const tokens = getPublicThemeTokens();
+const grouped = groupTokensByCategory(tokens);
+const colorTokens = grouped.color;
+
+const semanticRows = colorTokens.map((token) => ({
+  name: token.stem,
+  utility: token.utility ?? `bg-${token.stem}`,
+  usage: SEMANTIC_COLOR_USAGE[token.stem] ?? 'Public theme token (bridged via @theme inline)',
+}));
+
+const categorySections = [
+  { id: 'motion', title: 'Motion', tokens: [...grouped.motion, ...grouped.ease, ...grouped.animate] },
+  { id: 'type', title: 'Typography', tokens: [...grouped.font, ...grouped.text, ...grouped.tracking] },
+  { id: 'radius', title: 'Radius', tokens: grouped.radius },
+  { id: 'shadow', title: 'Shadows', tokens: grouped.shadow },
+  { id: 'z-index', title: 'Z-index', tokens: grouped['z-index'] },
+  { id: 'layout', title: 'Layout', tokens: grouped.layout },
+].filter((section) => section.tokens.length > 0);
 
 const rules = [
   'Edit tokens only in src/styles/theme.css. @theme inline exposes them as utilities.',
+  'This page lists public tokens by parsing @theme inline — private *-dark / *-light remap vars stay out of the bridge.',
   'Prefer theme-aware utilities (bg-surface, text-accent-emphasis, bg-accent-subtle). Never use bg-background-dark / text-foreground-light.',
   'Pair bg-accent with text-on-accent (or button-primary-*). Light mode uses near-white on-accent; dark mode remaps to dark ink because the accent lightens.',
   'Dark muted/subtle foregrounds stay ≥ oklch 0.80 so small-caps labels clear WCAG AA 4.5:1.',
@@ -32,7 +38,9 @@ const rules = [
   'Motion: duration-fast | duration-normal | duration-moderate | duration-slow (not duration-200).',
   'Do not use bg-[color:var(--…)] for tokens that already have utilities.',
   'Shared chrome (nav, overlays, hero motion) lives in components.css; page layout stays in Tailwind.',
-  'tailwind.config.ts keeps plugins + container padding only.',
+  'Page gutters: Container or layout-gutter — not hard-coded px-4 sm:px-6 lg:px-8.',
+  'Plugins and variants live in global.css (@plugin typography, @custom-variant). No JS tailwind.config.',
+  'Article MDX: wrap with the Prose primitive instead of scattering prose-* modifiers.',
 ];
 ---
 
@@ -51,6 +59,7 @@ const rules = [
           Tokens live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">src/styles/theme.css</code>.
           Shared classes live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">components.css</code>.
           Dark mode remaps semantic tokens on <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">:root</code> — components should not restate dark variants.
+          Public utilities below are generated from <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">@theme inline</code> ({tokens.length} tokens).
         </p>
       </header>
 
@@ -66,9 +75,9 @@ const rules = [
           <p class="mt-2 text-sm text-muted-foreground">Generates semantic Tailwind utilities from tokens.</p>
         </div>
         <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
-          <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Config</p>
-          <p class="mt-3 text-xl font-semibold text-foreground">tailwind.config.ts</p>
-          <p class="mt-2 text-sm text-muted-foreground">Plugins and container padding only.</p>
+          <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Entry</p>
+          <p class="mt-3 text-xl font-semibold text-foreground">global.css</p>
+          <p class="mt-2 text-sm text-muted-foreground">Tailwind import, typography plugin, and custom variants.</p>
         </div>
       </div>
 
@@ -102,7 +111,10 @@ const rules = [
       </section>
 
       <section class="mt-16" aria-labelledby="semantic-colors">
-        <h2 id="semantic-colors" class="font-heading text-2xl font-bold text-foreground">Semantic utilities</h2>
+        <h2 id="semantic-colors" class="font-heading text-2xl font-bold text-foreground">Semantic color utilities</h2>
+        <p class="mt-3 max-w-3xl text-muted-foreground">
+          Auto-listed from <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">@theme inline</code>. Usage notes are curated where available.
+        </p>
         <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm">
           <table class="min-w-full text-left text-sm">
             <thead class="border-b border-border/40 bg-surface-subtle/60 text-subtle-foreground">
@@ -113,7 +125,7 @@ const rules = [
               </tr>
             </thead>
             <tbody>
-              {semanticColors.map((row) => (
+              {semanticRows.map((row) => (
                 <tr class="border-b border-border/20 last:border-0">
                   <td class="px-4 py-3 font-medium text-foreground">{row.name}</td>
                   <td class="px-4 py-3"><code class="text-accent-emphasis">{row.utility}</code></td>
@@ -124,6 +136,23 @@ const rules = [
           </table>
         </div>
       </section>
+
+      {categorySections.map((section) => (
+        <section class="mt-16" aria-labelledby={`token-${section.id}`}>
+          <h2 id={`token-${section.id}`} class="font-heading text-2xl font-bold text-foreground">{section.title}</h2>
+          <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {section.tokens.map((token) => (
+              <li class="rounded-xl border border-border/40 bg-surface px-4 py-3 shadow-sm">
+                <p class="font-medium text-foreground">{token.stem}</p>
+                <p class="mt-1 text-xs text-subtle-foreground"><code>{token.name}</code></p>
+                {token.utility && (
+                  <p class="mt-1 text-sm text-accent-emphasis"><code>{token.utility}</code></p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
       <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm" aria-labelledby="token-rules">
         <h2 id="token-rules" class="font-heading text-2xl font-bold text-foreground">Rules</h2>

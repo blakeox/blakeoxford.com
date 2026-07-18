@@ -195,8 +195,8 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 
 ### Styling with Tailwind
 
-- Use CSS variables in `src/styles/theme.css` bridged via `@theme inline` (not color maps in `tailwind.config.ts`)
-- Typography: Always wrap Markdown with `prose` classes
+- Use CSS variables in `src/styles/theme.css` bridged via `@theme inline` (CSS-first; no JS Tailwind config)
+- Typography: wrap Markdown/MDX with the `Prose` primitive (not ad-hoc `prose-*` class walls)
 - Dark mode: `class` strategy with `dark:` variants
 - Glass morphism: Pre-defined CSS variables for glass surfaces and borders
 - **Never** write custom CSS - extend Tailwind or use CSS variables
@@ -729,7 +729,7 @@ pnpm test
 cat src/styles/global.css | grep "--color"
 
 # 2. Extend Tailwind if needed
-# Edit src/styles/theme.css (@theme inline) — keep tailwind.config.ts for plugins/container only
+# Edit src/styles/theme.css (@theme inline) and global.css (@plugin / variants)
 
 # 3. Apply changes using tokens
 # Use Tailwind utilities
