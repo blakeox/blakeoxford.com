@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -52,7 +52,7 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Cache Astro build
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .astro/
@@ -153,7 +153,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -185,7 +185,7 @@ jobs:
           echo "✅ System dependencies installed"
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -312,7 +312,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -337,7 +337,7 @@ jobs:
         run: pnpm security:audit -- --audit-level=high
 
       - name: Cache Playwright browsers (macOS)
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/pnpm-lock.yaml') }}
