@@ -5,5 +5,5 @@ import ContactFormIsland from './ContactFormIsland';
  * no SSR null guard (that caused hydration mismatches).
  */
 export default function ContactFormClient() {
- return <ContactFormIsland />;
+  return <ContactFormIsland />;
 }

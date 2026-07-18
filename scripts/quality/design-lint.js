@@ -18,8 +18,11 @@
  */
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const root = process.cwd();
+const isDirectRun =
+  process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
 const IGNORED_DIRS = new Set([
   '.git',
@@ -37,7 +40,8 @@ const IGNORED_DIRS = new Set([
 const SOURCE_EXTENSIONS = /\.(astro|tsx?|jsx?|css|mdx?)$/;
 const DUPLICATE_COPY_REGEX = /(?:^|\/)[^/]+ 2\.[^/]+$/;
 const HEX_REGEX = /#[0-9a-fA-F]{3,8}\b/g;
-const TOKEN_ALLOW_PATH = /(?:^|\/)(?:DESIGN_BEST_PRACTICES\.md)|design-best-practices|token|theme|migration/i;
+const TOKEN_ALLOW_PATH =
+  /(?:^|\/)(?:DESIGN_BEST_PRACTICES\.md)|design-best-practices|token|theme|migration/i;
 const ARBITRARY_SPACING_PX_REGEX =
   /(?:^|\s)(?:-?m[trblxy]?|-?p[trblxy]?|gap[xy]?|space-[xy]|inset[xy]?|top|right|bottom|left)-\[[^\]\n]*?(-?\d+(?:\.\d+)?)px[^\]\n]*?\]/g;
 const UNDEFINED_DESIGN_REGEX =
@@ -45,15 +49,26 @@ const UNDEFINED_DESIGN_REGEX =
 const UNSUPPORTED_OPACITY_REGEX = /\/(?:35|45)(?=[\s"'`}\]])/g;
 const RAW_PALETTE_REGEX =
   /\b(?:text|bg|border|ring|from|via|to)-(?:gray|green|red|blue|yellow|amber|purple|pink|orange|emerald|rose|indigo|cyan)-(?:50|100|200|300|400|500|600|700|800|900|950)(?:\/\d+)?\b/g;
-const RAW_WHITE_BLACK_REGEX = /\b(?:text-white|bg-white|border-white|ring-white|from-white|to-white|via-white|text-black|bg-black|border-black|ring-black|from-black|to-black|via-black)(?:\/\d+)?\b/g;
+const RAW_WHITE_BLACK_REGEX =
+  /\b(?:text-white|bg-white|border-white|ring-white|from-white|to-white|via-white|text-black|bg-black|border-black|ring-black|from-black|to-black|via-black)(?:\/\d+)?\b/g;
 const PARALLEL_DARK_UTIL_REGEX =
   /\b(?:bg|text|border|from|via|to)-(?:background-dark|surface-dark|surface-dark-subtle|surface-elevated-dark|foreground-light|border-dark)(?:\/\d+)?\b/g;
 const HARD_ELEVATION_REGEX = /(?<!-)(?:\bshadow-(?:xl|2xl)\b)|shadow-\[[^\]]+\]/g;
+/** Arbitrary elevation/radius only — named shadow-xl/2xl in legacy blog MDX is documented as exempt until migrated. */
+const MDX_ARBITRARY_ELEVATION_REGEX = /shadow-\[[^\]]+\]/g;
 const HARD_RADIUS_REGEX = /\brounded-\[[^\]]+\]/g;
 const SHELL_ESCAPE_REGEX = /-mt-24|-mx-4\s+sm:-mx-6\s+lg:-mx-8/g;
-const HARD_GUTTER_REGEX = /\bpx-4\s+sm:px-6\s+lg:px-8\b/g;
+/** Contiguous page-padding ladders (px-4 + responsive px-*). */
+const HARD_GUTTER_REGEX = /\bpx-4(?:\s+(?:sm|md|lg|xl|2xl):px-\d+)+\b/g;
+/**
+ * Near-miss ladders with intervening utilities (e.g. px-4 pb-8 sm:px-6 … lg:px-12).
+ * Keep the window tight so component-local px-4 … md:px-2 pairs are less likely to false-positive.
+ */
+const HARD_GUTTER_NEAR_MISS_REGEX =
+  /\bpx-4\b(?:(?!["'`\n])[\s\S]){0,100}?\b(?:sm|md|lg|xl|2xl):px-(?:6|8|10|12)\b/g;
 const DIRECT_CONTAINER_REGEX = /\bcontainer\s+mx-auto\b/g;
-const LEGACY_COMPONENT_PATH_REGEX = /src\/components\/(?:chat|common|composite|config|debug|media|ui)\b|components\/(?:chat|common|composite|config|debug|media|ui)\b|\.\.\/(?:common|composite|media|ui)\//g;
+const LEGACY_COMPONENT_PATH_REGEX =
+  /src\/components\/(?:chat|common|composite|config|debug|media|ui)\b|components\/(?:chat|common|composite|config|debug|media|ui)\b|\.\.\/(?:common|composite|media|ui)\//g;
 const COMPONENT_DOC_ENTRY_REGEX =
   /^  {\s*\n\s{4}name:\s*'([^']+)'[\s\S]*?\n\s{4}category:\s*'([^']+)'[\s\S]*?\n\s{4}filePath:\s*'([^']+)'/gm;
 const STALE_DECORATIVE_DOC_REGEX =
@@ -78,8 +93,12 @@ const reusableSurfacePaths = [
 const elevationPolicyPaths = [
   'src/components/primitives',
   'src/components/composites',
+  'src/components/features',
   'src/styles/components.css',
 ];
+
+/** Blog MDX: ban arbitrary shadow/radius; named high elevation is legacy-exempt (see DESIGN_BEST_PRACTICES). */
+const mdxElevationPolicyPaths = ['src/content/blog'];
 
 const findings = {
   duplicate: [],
@@ -129,7 +148,9 @@ function rel(file) {
 }
 
 function isWithin(relPath, policyPaths) {
-  return policyPaths.some((policyPath) => relPath === policyPath || relPath.startsWith(`${policyPath}/`));
+  return policyPaths.some(
+    (policyPath) => relPath === policyPath || relPath.startsWith(`${policyPath}/`)
+  );
 }
 
 function addRegexFindings(list, file, content, regex) {
@@ -262,6 +283,11 @@ function scanSourceFile(file) {
     addRegexFindings(findings.radius, relPath, content, HARD_RADIUS_REGEX);
   }
 
+  if (isWithin(relPath, mdxElevationPolicyPaths)) {
+    addRegexFindings(findings.elevation, relPath, content, MDX_ARBITRARY_ELEVATION_REGEX);
+    addRegexFindings(findings.radius, relPath, content, HARD_RADIUS_REGEX);
+  }
+
   if (
     (relPath.startsWith('src/pages/') || relPath.startsWith('src/components/')) &&
     !relPath.startsWith('src/pages/design/') &&
@@ -271,9 +297,16 @@ function scanSourceFile(file) {
   ) {
     addRegexFindings(findings.shell, relPath, content, SHELL_ESCAPE_REGEX);
     addRegexFindings(findings.gutter, relPath, content, HARD_GUTTER_REGEX);
+    addRegexFindings(findings.gutter, relPath, content, HARD_GUTTER_NEAR_MISS_REGEX);
     addRegexFindings(findings.container, relPath, content, DIRECT_CONTAINER_REGEX);
   }
 }
+
+/** Exported for Vitest synthetic escape fixtures (#374). */
+export const DESIGN_LINT_GUTTER_PATTERNS = {
+  HARD_GUTTER_REGEX,
+  HARD_GUTTER_NEAR_MISS_REGEX,
+};
 
 function printFindings(title, list, limit = 50) {
   if (!list.length) return;
@@ -284,32 +317,43 @@ function printFindings(title, list, limit = 50) {
   if (list.length > limit) console.log(`  ... +${list.length - limit} more`);
 }
 
-scanDuplicates();
-scanComponentRoot();
-scanComponentDocs();
-collectSourceFiles('src').forEach(scanSourceFile);
+if (isDirectRun) {
+  scanDuplicates();
+  scanComponentRoot();
+  scanComponentDocs();
+  collectSourceFiles('src').forEach(scanSourceFile);
 
-printFindings('Duplicate artifact files detected', findings.duplicate);
-printFindings('Raw hex colors detected outside token files', findings.hex);
-printFindings('Suspicious arbitrary pixel spacing detected', findings.spacing);
-printFindings('Undefined design tokens/utilities detected', findings.undefined);
-printFindings('Unsupported opacity suffixes detected', findings.opacity);
-printFindings('Legacy component taxonomy references detected', findings.taxonomy);
-printFindings('Root-level component files detected', findings.componentRoot);
-printFindings('Component documentation drift detected', findings.componentDocs);
-printFindings('Stale decorative design documentation detected', findings.docsLanguage);
-printFindings('Raw palette utilities detected in reusable surfaces', findings.palette);
-printFindings('Hard-coded high elevation detected in primitives/composites', findings.elevation);
-printFindings('Hard-coded arbitrary radius detected in primitives/composites', findings.radius);
-printFindings('Legacy shell escape patterns detected', findings.shell);
-printFindings('Hard-coded page gutters detected (use layout-gutter or Container)', findings.gutter);
-printFindings('Direct container shell usage detected', findings.container);
+  printFindings('Duplicate artifact files detected', findings.duplicate);
+  printFindings('Raw hex colors detected outside token files', findings.hex);
+  printFindings('Suspicious arbitrary pixel spacing detected', findings.spacing);
+  printFindings('Undefined design tokens/utilities detected', findings.undefined);
+  printFindings('Unsupported opacity suffixes detected', findings.opacity);
+  printFindings('Legacy component taxonomy references detected', findings.taxonomy);
+  printFindings('Root-level component files detected', findings.componentRoot);
+  printFindings('Component documentation drift detected', findings.componentDocs);
+  printFindings('Stale decorative design documentation detected', findings.docsLanguage);
+  printFindings('Raw palette utilities detected in reusable surfaces', findings.palette);
+  printFindings(
+    'Hard-coded high elevation detected in primitives/composites/features',
+    findings.elevation
+  );
+  printFindings(
+    'Hard-coded arbitrary radius detected in primitives/composites/features/MDX',
+    findings.radius
+  );
+  printFindings('Legacy shell escape patterns detected', findings.shell);
+  printFindings(
+    'Hard-coded page gutters detected (use layout-gutter or Container)',
+    findings.gutter
+  );
+  printFindings('Direct container shell usage detected', findings.container);
 
-const issueCount = Object.values(findings).reduce((count, list) => count + list.length, 0);
+  const issueCount = Object.values(findings).reduce((count, list) => count + list.length, 0);
 
-if (issueCount === 0) {
-  console.log('[design-lint] No issues found.');
-  process.exit(0);
+  if (issueCount === 0) {
+    console.log('[design-lint] No issues found.');
+    process.exit(0);
+  }
+
+  process.exit(1);
 }
-
-process.exit(1);

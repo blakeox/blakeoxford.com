@@ -1,100 +1,103 @@
 ---
 /**
  * FeatureCard - semantic feature card built on BaseCard
- * 
+ *
  * Expressive tier card for highlights and feature grids.
  */
 
 import BaseCard from '../primitives/BaseCard.astro';
 
 interface Props {
- variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error';
- icon?: string;
- title?: string;
- titleLevel?: 2 | 3;
- description?: string;
- badge?: string | number;
- hover?: boolean;
- class?: string;
+  variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error';
+  icon?: string;
+  title?: string;
+  titleLevel?: 2 | 3;
+  description?: string;
+  badge?: string | number;
+  hover?: boolean;
+  class?: string;
 }
 
-const { 
- variant = 'accent', 
- icon, 
- title,
- titleLevel = 3,
- description,
- badge,
- hover = true,
- class: className = '' 
+const {
+  variant = 'accent',
+  icon,
+  title,
+  titleLevel = 3,
+  description,
+  badge,
+  hover = true,
+  class: className = '',
 } = Astro.props;
 
 const variantClasses = {
- accent: 'from-accent/10 to-accent/5 border-accent/30',
- primary: 'from-primary/10 to-primary/5 border-primary/30',
- success: 'from-success/10 to-success/5 border-success/30',
- warning: 'from-warning/15 to-warning/5 border-warning/40',
- info: 'from-info/10 to-info/5 border-info/30',
- error: 'from-error/10 to-error/5 border-error/30',
+  accent: 'from-accent/10 to-accent/5 border-accent/30',
+  primary: 'from-primary/10 to-primary/5 border-primary/30',
+  success: 'from-success/10 to-success/5 border-success/30',
+  warning: 'from-warning/15 to-warning/5 border-warning/40',
+  info: 'from-info/10 to-info/5 border-info/30',
+  error: 'from-error/10 to-error/5 border-error/30',
 };
 
 const variantTextColors = {
- accent: 'text-accent-emphasis',
- primary: 'text-primary-emphasis',
- success: 'text-success-emphasis',
- warning: 'text-warning-emphasis',
- info: 'text-info-emphasis',
- error: 'text-error-emphasis',
+  accent: 'text-accent-emphasis',
+  primary: 'text-primary-emphasis',
+  success: 'text-success-emphasis',
+  warning: 'text-warning-emphasis',
+  info: 'text-info-emphasis',
+  error: 'text-error-emphasis',
 };
 
 const badgeColors = {
- accent: 'bg-accent text-on-accent',
- primary: 'bg-primary text-on-primary',
- success: 'bg-success-dark text-on-primary',
- warning: 'bg-warning text-foreground',
- info: 'bg-info-dark text-on-primary',
- error: 'bg-error-dark text-on-primary',
+  accent: 'bg-accent text-on-accent',
+  primary: 'bg-primary text-on-primary',
+  success: 'bg-success-dark text-on-primary',
+  warning: 'bg-warning text-foreground',
+  info: 'bg-info-dark text-on-primary',
+  error: 'bg-error-dark text-on-primary',
 };
 
 const classes = [
- 'bg-gradient-to-br backdrop-blur-sm @container @md:p-10',
- variantClasses[variant],
- className,
-].filter(Boolean).join(' ');
+  'bg-gradient-to-br backdrop-blur-sm @container @md:p-10',
+  variantClasses[variant],
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <BaseCard
- variant="subtle"
- hover={hover ? 'lift' : 'none'}
- rounded="2xl"
- padding="md"
- class={classes}
+  variant="subtle"
+  hover={hover ? 'lift' : 'none'}
+  rounded="2xl"
+  padding="md"
+  class={classes}
 >
- {badge && (
- <div class={`absolute top-4 right-4 flex h-10 w-10 @sm:h-12 @sm:w-12 items-center justify-center rounded-full ${badgeColors[variant]} text-lg @sm:text-xl font-bold shadow-sm`}>
- {badge}
- </div>
- )}
- 
- {icon && <div class="mb-3 text-5xl @sm:mb-4 @sm:text-6xl">{icon}</div>}
- 
- {title && (
- titleLevel === 2 ? (
- <h2 class={`mb-2 text-xl @sm:mb-3 @sm:text-2xl font-bold ${variantTextColors[variant]}`}>
- {title}
- </h2>
- ) : (
- <h3 class={`mb-2 text-xl @sm:mb-3 @sm:text-2xl font-bold ${variantTextColors[variant]}`}>
- {title}
- </h3>
- )
- )}
- 
- {description && (
- <p class="text-base @sm:text-lg leading-relaxed opacity-85">
- {description}
- </p>
- )}
- 
- <slot />
+  {
+    badge && (
+      <div
+        class={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full @sm:h-12 @sm:w-12 ${badgeColors[variant]} text-lg font-bold shadow-sm @sm:text-xl`}
+      >
+        {badge}
+      </div>
+    )
+  }
+
+  {icon && <div class="mb-3 text-5xl @sm:mb-4 @sm:text-6xl">{icon}</div>}
+
+  {
+    title &&
+      (titleLevel === 2 ? (
+        <h2 class={`mb-2 text-xl font-bold @sm:mb-3 @sm:text-2xl ${variantTextColors[variant]}`}>
+          {title}
+        </h2>
+      ) : (
+        <h3 class={`mb-2 text-xl font-bold @sm:mb-3 @sm:text-2xl ${variantTextColors[variant]}`}>
+          {title}
+        </h3>
+      ))
+  }
+
+  {description && <p class="text-base leading-relaxed opacity-85 @sm:text-lg">{description}</p>}
+
+  <slot />
 </BaseCard>

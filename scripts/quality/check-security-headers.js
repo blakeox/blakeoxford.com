@@ -21,7 +21,7 @@ const REQUIRED = [
   'X-Content-Type-Options',
   'X-Frame-Options',
   'Referrer-Policy',
-  'Strict-Transport-Security'
+  'Strict-Transport-Security',
 ];
 const ADVISORY = ['Permissions-Policy'];
 
@@ -31,18 +31,18 @@ if (!fs.existsSync(headersPath)) {
 }
 
 const raw = fs.readFileSync(headersPath, 'utf8');
-const missing = REQUIRED.filter(h => !new RegExp('^[\t ]*'+h+':', 'mi').test(raw));
-const advisoryMissing = ADVISORY.filter(h => !new RegExp('^[\t ]*'+h+':', 'mi').test(raw));
+const missing = REQUIRED.filter((h) => !new RegExp('^[\t ]*' + h + ':', 'mi').test(raw));
+const advisoryMissing = ADVISORY.filter((h) => !new RegExp('^[\t ]*' + h + ':', 'mi').test(raw));
 
 if (missing.length) {
   console.error('❌ Missing required security headers:');
-  missing.forEach(h => console.error('  - ' + h));
+  missing.forEach((h) => console.error('  - ' + h));
 } else {
   console.log('✅ All required security headers present.');
 }
 if (advisoryMissing.length) {
   console.warn('⚠️ Advisory headers absent (consider adding):');
-  advisoryMissing.forEach(h => console.warn('  - ' + h));
+  advisoryMissing.forEach((h) => console.warn('  - ' + h));
 }
 
 process.exit(missing.length ? 1 : 0);

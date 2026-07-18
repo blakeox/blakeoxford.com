@@ -72,7 +72,7 @@ describe('Scroll Module', () => {
     it('should handle scroll position tracking', () => {
       // Mock scroll position
       Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
-      
+
       // Test would normally check if scroll effects respond to position
       expect(window.scrollY).toBe(500);
     });
@@ -81,7 +81,7 @@ describe('Scroll Module', () => {
       const mockElement = document.createElement('div');
       Object.defineProperty(mockElement, 'offsetTop', { value: 1000, writable: true });
       document.body.appendChild(mockElement);
-      
+
       // Test would normally check if element is in viewport
       expect(mockElement.offsetTop).toBe(1000);
     });

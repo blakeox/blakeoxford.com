@@ -53,18 +53,18 @@ export class PerformanceObserverManager {
       return '';
     }
 
-  const subscriptionId = `${system}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-    
+    const subscriptionId = `${system}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+
     // Register subscription
     this.subscriptions.set(subscriptionId, {
       id: subscriptionId,
       entryTypes,
       callback,
-      system
+      system,
     });
 
     // Register callbacks for each entry type
-    entryTypes.forEach(entryType => {
+    entryTypes.forEach((entryType) => {
       if (!this.entryTypeCallbacks.has(entryType)) {
         this.entryTypeCallbacks.set(entryType, []);
       }
@@ -78,7 +78,7 @@ export class PerformanceObserverManager {
       logger.debug(`Performance subscription added for ${system}:`, {
         subscriptionId,
         entryTypes,
-        totalSubscriptions: this.subscriptions.size
+        totalSubscriptions: this.subscriptions.size,
       });
     }
 
@@ -93,7 +93,7 @@ export class PerformanceObserverManager {
     if (!subscription) return;
 
     // Remove callbacks
-    subscription.entryTypes.forEach(entryType => {
+    subscription.entryTypes.forEach((entryType) => {
       const callbacks = this.entryTypeCallbacks.get(entryType);
       if (callbacks) {
         const index = callbacks.indexOf(subscription.callback);
@@ -125,9 +125,9 @@ export class PerformanceObserverManager {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         const callbacks = this.entryTypeCallbacks.get(entryType) || [];
-        
+
         // Call all registered callbacks for this entry type
-        callbacks.forEach(callback => {
+        callbacks.forEach((callback) => {
           try {
             callback(entries);
           } catch (error) {
@@ -180,9 +180,9 @@ export class PerformanceObserverManager {
     const subscriptionsBySystem: Record<string, number> = {};
     const entryTypeSubscriptions: Record<string, number> = {};
 
-    this.subscriptions.forEach(sub => {
+    this.subscriptions.forEach((sub) => {
       subscriptionsBySystem[sub.system] = (subscriptionsBySystem[sub.system] || 0) + 1;
-      sub.entryTypes.forEach(type => {
+      sub.entryTypes.forEach((type) => {
         entryTypeSubscriptions[type] = (entryTypeSubscriptions[type] || 0) + 1;
       });
     });
@@ -191,7 +191,7 @@ export class PerformanceObserverManager {
       totalSubscriptions: this.subscriptions.size,
       activeObservers: this.observers.size,
       subscriptionsBySystem,
-      entryTypeSubscriptions
+      entryTypeSubscriptions,
     };
   }
 
@@ -209,7 +209,7 @@ export class PerformanceObserverManager {
    * Cleanup all observers
    */
   cleanup(): void {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach((observer) => observer.disconnect());
     this.observers.clear();
     this.subscriptions.clear();
     this.entryTypeCallbacks.clear();

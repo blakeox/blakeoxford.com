@@ -12,10 +12,6 @@ import firebaseLogo from '../assets/images/proficiencies/Firebase_Logomark_Full 
 import cloudflareLogo from '../assets/images/proficiencies/cloudflare_logo.webp';
 import fabricLogo from '../assets/images/proficiencies/fabric_32_color.webp';
 
-
-
-
-
 // Technology stack data
 export const technologies: TechnologyItem[] = [
   { name: 'Python Automation', img: pythonLogo, alt: 'Python Logo', optimized: true },
@@ -26,7 +22,7 @@ export const technologies: TechnologyItem[] = [
   { name: 'Firebase', img: firebaseLogo, alt: 'Firebase Logo' },
   { name: 'Azure', img: azureSqlLogo, alt: 'Azure Logo' },
   { name: 'Cloudflare', img: cloudflareLogo, alt: 'Cloudflare Logo' },
-  { name: 'Microsoft Fabric', img: fabricLogo, alt: 'Microsoft Fabric Logo' }
+  { name: 'Microsoft Fabric', img: fabricLogo, alt: 'Microsoft Fabric Logo' },
 ];
 
 // Site metadata and configuration
@@ -40,6 +36,6 @@ export const siteConfig: SiteConfig = {
   social: {
     twitter: '@blakeoxford',
     github: 'https://github.com/blakeox',
-    linkedin: 'https://linkedin.com/in/blakeoxford'
-  }
+    linkedin: 'https://linkedin.com/in/blakeoxford',
+  },
 };

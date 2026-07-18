@@ -27,7 +27,10 @@ export type FormValidationConfig = {
   statusElementSelector?: string;
 };
 
-export function hydrateFields(form: HTMLFormElement, config: FormValidationConfig): Record<string, HTMLElement | null> {
+export function hydrateFields(
+  form: HTMLFormElement,
+  config: FormValidationConfig
+): Record<string, HTMLElement | null> {
   return config.fields.reduce<Record<string, HTMLElement | null>>((accumulator, field) => {
     const selector = field.inputSelector ?? `#${field.id}`;
     accumulator[field.id] = form.querySelector(selector);
@@ -41,7 +44,9 @@ export function defaultErrorFormatter(label: string, message: string): string {
 
 export function getFieldLabel(field: HTMLElement, fallback: string): string {
   const labels =
-    'labels' in field ? ((field as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).labels ?? []) : [];
+    'labels' in field
+      ? ((field as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).labels ?? [])
+      : [];
   const labelArray = Array.from(labels);
   if (labelArray.length > 0) {
     const raw = labelArray[0]?.textContent ?? '';
@@ -135,10 +140,24 @@ export function showStatusMessage(
 
   if (type === 'success') {
     element.classList.remove('text-error', 'bg-error-subtle', 'border-error/30');
-    element.classList.add('text-success-emphasis', 'bg-success-subtle', 'border', 'border-success/30', 'rounded-xl', 'p-4');
+    element.classList.add(
+      'text-success-emphasis',
+      'bg-success-subtle',
+      'border',
+      'border-success/30',
+      'rounded-xl',
+      'p-4'
+    );
   } else {
     element.classList.remove('text-success-emphasis', 'bg-success-subtle', 'border-success/30');
-    element.classList.add('text-error', 'bg-error-subtle', 'border', 'border-error/30', 'rounded-xl', 'p-4');
+    element.classList.add(
+      'text-error',
+      'bg-error-subtle',
+      'border',
+      'border-error/30',
+      'rounded-xl',
+      'p-4'
+    );
   }
 }
 
@@ -146,5 +165,15 @@ export function clearStatusMessage(element: HTMLElement | null): void {
   if (!element) return;
   element.textContent = '';
   element.classList.add('hidden');
-  element.classList.remove('text-success-emphasis', 'bg-success-subtle', 'border', 'border-success/30', 'rounded-xl', 'p-4', 'text-error', 'bg-error-subtle', 'border-error/30');
+  element.classList.remove(
+    'text-success-emphasis',
+    'bg-success-subtle',
+    'border',
+    'border-success/30',
+    'rounded-xl',
+    'p-4',
+    'text-error',
+    'bg-error-subtle',
+    'border-error/30'
+  );
 }

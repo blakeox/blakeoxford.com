@@ -36,7 +36,11 @@ const CACHED_HISTORY_PATH = path.join(CACHE_DIR, 'flakiness-history.json');
 const TEST_RESULTS_PATH = path.join(ROOT, 'test-results.json');
 
 function loadJSONSafe(p) {
-  try { return JSON.parse(fs.readFileSync(p, 'utf-8')); } catch { return null; }
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf-8'));
+  } catch {
+    return null;
+  }
 }
 
 function detectFromVitest(results) {
@@ -44,7 +48,10 @@ function detectFromVitest(results) {
   // Support custom flakinessReporter output shape
   if (Array.isArray(results.tests) || Array.isArray(results.tests?.tests)) {
     const testsArr = Array.isArray(results.tests) ? results.tests : results.tests.tests;
-    let total = 0, failed = 0, flaky = 0, retryDerived = 0;
+    let total = 0,
+      failed = 0,
+      flaky = 0,
+      retryDerived = 0;
     for (const t of testsArr) {
       total++;
       if (t.status === 'fail') failed++;
@@ -61,7 +68,9 @@ function detectFromVitest(results) {
   }
   // Legacy (future) JSON reporter compatibility
   if (Array.isArray(results.testResults)) {
-    let total = 0, failed = 0, flaky = 0;
+    let total = 0,
+      failed = 0,
+      flaky = 0;
     for (const file of results.testResults) {
       if (!file.assertionResults) continue;
       for (const t of file.assertionResults) {
@@ -84,22 +93,31 @@ function fallbackScan() {
 function prune(history) {
   if (!history || !Array.isArray(history.runs)) return history;
   // Remove any early placeholder entries (totalTests === 0) except if ALL are zero keep latest only
-  const meaningful = history.runs.filter(r => typeof r.totalTests === 'number' && r.totalTests > 0);
+  const meaningful = history.runs.filter(
+    (r) => typeof r.totalTests === 'number' && r.totalTests > 0
+  );
   // Also drop any entries that do not contain recognized timestamp fields and vitals
-  const cleaned = (meaningful.length ? meaningful : history.runs).filter(r => (
-    typeof r.totalTests === 'number' && typeof r.failedTests === 'number' && typeof r.flakyTests === 'number'
-  ));
+  const cleaned = (meaningful.length ? meaningful : history.runs).filter(
+    (r) =>
+      typeof r.totalTests === 'number' &&
+      typeof r.failedTests === 'number' &&
+      typeof r.flakyTests === 'number'
+  );
   if (cleaned.length === 0) {
     // keep only the last (most recent) zero-test metrics-like entry if present
-    if (history.runs.length > 1) history.runs = [history.runs[history.runs.length -1]];
+    if (history.runs.length > 1) history.runs = [history.runs[history.runs.length - 1]];
     return history;
   }
   history.runs = cleaned;
   return history;
 }
 
-function ensureCacheDir(){
-  try { fs.mkdirSync(CACHE_DIR, { recursive: true }); } catch { /* ignore */ }
+function ensureCacheDir() {
+  try {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
+  } catch {
+    /* ignore */
+  }
 }
 
 function mergeCached(history) {
@@ -108,16 +126,30 @@ function mergeCached(history) {
   if (!history || !Array.isArray(history.runs)) return cached;
   // Merge by timestamp uniqueness
   const existingKeys = new Set(
-    history.runs.map(r => (typeof r.timestamp === 'string' && r.timestamp) || (typeof r.lastRun === 'string' && r.lastRun) || '')
+    history.runs.map(
+      (r) =>
+        (typeof r.timestamp === 'string' && r.timestamp) ||
+        (typeof r.lastRun === 'string' && r.lastRun) ||
+        ''
+    )
   );
   for (const run of cached.runs) {
-    const key = (typeof run.timestamp === 'string' && run.timestamp) || (typeof run.lastRun === 'string' && run.lastRun) || '';
+    const key =
+      (typeof run.timestamp === 'string' && run.timestamp) ||
+      (typeof run.lastRun === 'string' && run.lastRun) ||
+      '';
     if (key && !existingKeys.has(key)) history.runs.push(run);
   }
   // Sort ascending by best-effort timestamp (fallback to lastRun); place entries without any timestamp at the start
-  history.runs.sort((a,b)=> {
-    const ta = (typeof a.timestamp === 'string' && a.timestamp) || (typeof a.lastRun === 'string' && a.lastRun) || '';
-    const tb = (typeof b.timestamp === 'string' && b.timestamp) || (typeof b.lastRun === 'string' && b.lastRun) || '';
+  history.runs.sort((a, b) => {
+    const ta =
+      (typeof a.timestamp === 'string' && a.timestamp) ||
+      (typeof a.lastRun === 'string' && a.lastRun) ||
+      '';
+    const tb =
+      (typeof b.timestamp === 'string' && b.timestamp) ||
+      (typeof b.lastRun === 'string' && b.lastRun) ||
+      '';
     if (!ta && !tb) return 0;
     if (!ta) return -1;
     if (!tb) return 1;
@@ -138,13 +170,20 @@ function main() {
 
   // If metrics show zero tests and we already have a non-empty history, skip recording to avoid noise
   let existingHistory = loadJSONSafe(HISTORY_PATH);
-  if (metrics.totalTests === 0 && existingHistory && Array.isArray(existingHistory.runs) && existingHistory.runs.length > 0) {
+  if (
+    metrics.totalTests === 0 &&
+    existingHistory &&
+    Array.isArray(existingHistory.runs) &&
+    existingHistory.runs.length > 0
+  ) {
     console.log('[flakiness-history] Skipping zero-test run (non-initial)');
     return;
   }
 
-  const passRate = metrics.totalTests ? (metrics.totalTests - metrics.failedTests) / metrics.totalTests : 1;
-  const retryIntensity = metrics.totalTests ? (metrics.flakyTests / metrics.totalTests) : 0;
+  const passRate = metrics.totalTests
+    ? (metrics.totalTests - metrics.failedTests) / metrics.totalTests
+    : 1;
+  const retryIntensity = metrics.totalTests ? metrics.flakyTests / metrics.totalTests : 0;
 
   // Also try cached copy for continuity across clean runs
   let history = mergeCached(existingHistory) || { version: 1, maxEntries: 200, runs: [] };
@@ -155,7 +194,7 @@ function main() {
     failedTests: metrics.failedTests,
     flakyTests: metrics.flakyTests,
     retryIntensity: Number(retryIntensity.toFixed(4)),
-    passRate: Number(passRate.toFixed(4))
+    passRate: Number(passRate.toFixed(4)),
   });
 
   history = prune(history);
@@ -167,7 +206,9 @@ function main() {
   fs.writeFileSync(HISTORY_PATH, JSON.stringify(history, null, 2));
   ensureCacheDir();
   fs.writeFileSync(CACHED_HISTORY_PATH, JSON.stringify(history, null, 2));
-  console.log(`[flakiness-history] Updated: ${history.runs.length} entries (latest passRate=${passRate.toFixed(3)}, flaky=${metrics.flakyTests})`);
+  console.log(
+    `[flakiness-history] Updated: ${history.runs.length} entries (latest passRate=${passRate.toFixed(3)}, flaky=${metrics.flakyTests})`
+  );
 }
 
 main();

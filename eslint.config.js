@@ -29,8 +29,8 @@ export default [
       },
     },
     rules: {
-      'quotes': ['error', 'single'],
-      'semi': ['error', 'always'],
+      quotes: ['error', 'single', { avoidEscape: true }],
+      semi: ['error', 'always'],
       'no-console': 'off',
       'no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
     },
@@ -153,10 +153,13 @@ export default [
     },
     rules: {
       ...tseslint.configs.recommended.rules,
-      'quotes': ['error', 'single'],
-      'semi': ['error', 'always'],
+      quotes: ['error', 'single', { avoidEscape: true }],
+      semi: ['error', 'always'],
       'no-console': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_', caughtErrors: 'none' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { varsIgnorePattern: '^_', argsIgnorePattern: '^_', caughtErrors: 'none' },
+      ],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-undef': 'off', // TypeScript handles this
     },
@@ -169,6 +172,8 @@ export default [
     settings: {
       'better-tailwindcss': {
         entryPoint: 'src/styles/global.css',
+        // Discover @layer components chrome (layout-gutter, nav-shell, ai-chat-*, …)
+        detectComponentClasses: true,
       },
     },
   },
@@ -229,8 +234,8 @@ export default [
     },
     rules: {
       ...astroPlugin.configs.recommended.rules,
-      'quotes': ['error', 'single'],
-      'semi': ['error', 'always'],
+      quotes: ['error', 'single', { avoidEscape: true }],
+      semi: ['error', 'always'],
       'no-console': 'off',
     },
   },
@@ -280,13 +285,7 @@ export default [
 
   // Configuration files
   {
-    files: [
-      '*.config.js',
-      '*.config.ts',
-      '*.config.mjs',
-      'scripts/**/*.js',
-      'scripts/**/*.mjs',
-    ],
+    files: ['*.config.js', '*.config.ts', '*.config.mjs', 'scripts/**/*.js', 'scripts/**/*.mjs'],
     languageOptions: {
       globals: {
         require: 'readonly',
@@ -319,8 +318,8 @@ export default [
       'node_modules/',
       '.astro/',
       '.astro 2/',
-  // Don't ignore public JS so we can lint SW and utility scripts
-  // 'public/',
+      // Don't ignore public JS so we can lint SW and utility scripts
+      // 'public/',
       // Ignore vendor/minified JS under public, but keep service worker linted
       'public/assets/**/*.js',
       'public/**/*.min.js',
@@ -329,7 +328,7 @@ export default [
       'test-results/',
       'lighthouse-reports/',
       'optimization-reports/',
-  'src/content/**/*',
+      'src/content/**/*',
       '*.css',
       '*.scss',
       '*.md',

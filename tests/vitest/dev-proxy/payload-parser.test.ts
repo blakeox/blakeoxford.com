@@ -260,10 +260,7 @@ describe('payload-parser', () => {
     it('should generate default title for sources without title', () => {
       const data = {
         result: {
-          data: [
-            { filename: '/path1' },
-            { filename: '/path2' },
-          ],
+          data: [{ filename: '/path1' }, { filename: '/path2' }],
         },
       };
       const result = parseSources(data);
@@ -311,4 +308,3 @@ describe('payload-parser', () => {
     });
   });
 });
-

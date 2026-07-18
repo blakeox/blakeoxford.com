@@ -10,11 +10,7 @@ type CommandTitleSuggestionsProps = {
 /**
  * Up to 3 title autocompletes while typing — completes the query, not a chip cloud.
  */
-export function CommandTitleSuggestions({
-  query,
-  items,
-  onSelect,
-}: CommandTitleSuggestionsProps) {
+export function CommandTitleSuggestions({ query, items, onSelect }: CommandTitleSuggestionsProps) {
   const trimmed = query.trim().toLowerCase();
   if (trimmed.length < 2) return null;
 

@@ -9,9 +9,12 @@ describe('Dropdown Menu Functionality', () => {
   let container: HTMLElement;
 
   // Mock implementations of the dropdown functions
-  function setupDropdowns(triggerSelector = '.nav-link[aria-haspopup="true"]', menuSelector = 'ul[role="menu"]') {
+  function setupDropdowns(
+    triggerSelector = '.nav-link[aria-haspopup="true"]',
+    menuSelector = 'ul[role="menu"]'
+  ) {
     const triggers = document.querySelectorAll(triggerSelector);
-    triggers.forEach(trigger => {
+    triggers.forEach((trigger) => {
       const menu = trigger.parentElement?.querySelector(menuSelector) as HTMLElement;
       if (!menu) return;
 
@@ -39,7 +42,10 @@ describe('Dropdown Menu Functionality', () => {
     });
   }
 
-  function setupDropdownKeyboardNavigation(triggerSelector = '.nav-link[aria-haspopup="true"]', menuSelector = 'ul[role="menu"]') {
+  function setupDropdownKeyboardNavigation(
+    triggerSelector = '.nav-link[aria-haspopup="true"]',
+    menuSelector = 'ul[role="menu"]'
+  ) {
     document.addEventListener('keydown', (e) => {
       const trigger = e.target as HTMLElement;
       if (!trigger.matches?.(triggerSelector)) return;
@@ -101,7 +107,7 @@ describe('Dropdown Menu Functionality', () => {
 
   function closeAllDropdowns() {
     const allTriggers = document.querySelectorAll('[aria-haspopup="true"]');
-    allTriggers.forEach(trigger => {
+    allTriggers.forEach((trigger) => {
       const menu = trigger.parentElement?.querySelector('ul[role="menu"]') as HTMLElement;
       if (menu) {
         trigger.setAttribute('aria-expanded', 'false');

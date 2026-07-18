@@ -20,201 +20,198 @@ export const THEME_COLOR_DARK = '#171411';
 const CYCLE_ORDER: ThemePreference[] = ['light', 'dark', 'system'];
 
 export function getSystemTheme(): ResolvedTheme {
-	if (typeof window === 'undefined') return 'light';
-	return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  if (typeof window === 'undefined') return 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 export function readThemePreference(): ThemePreference | null {
-	if (typeof window === 'undefined') return null;
-	const stored = localStorage.getItem(THEME_STORAGE_KEY);
-	if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
-	return null;
+  if (typeof window === 'undefined') return null;
+  const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
+  return null;
 }
 
 export function readThemeCookie(): ThemePreference | null {
-	if (typeof document === 'undefined') return null;
-	const match = (document.cookie || '').match(/(?:^|;\s*)theme=([^;]+)/);
-	if (!match?.[1]) return null;
-	const value = decodeURIComponent(match[1]);
-	if (value === 'light' || value === 'dark' || value === 'system') return value;
-	return null;
+  if (typeof document === 'undefined') return null;
+  const match = (document.cookie || '').match(/(?:^|;\s*)theme=([^;]+)/);
+  if (!match?.[1]) return null;
+  const value = decodeURIComponent(match[1]);
+  if (value === 'light' || value === 'dark' || value === 'system') return value;
+  return null;
 }
 
 export function resolveThemePreference(): ThemePreference {
-	return readThemeCookie() ?? readThemePreference() ?? 'system';
+  return readThemeCookie() ?? readThemePreference() ?? 'system';
 }
 
 export function resolveTheme(preference: ThemePreference): ResolvedTheme {
-	if (preference === 'system') return getSystemTheme();
-	return preference;
+  if (preference === 'system') return getSystemTheme();
+  return preference;
 }
 
 /** Resolve theme for first paint. */
 export function resolveInitialTheme(): ResolvedTheme {
-	return resolveTheme(resolveThemePreference());
+  return resolveTheme(resolveThemePreference());
 }
 
 export function hasExplicitThemePreference(): boolean {
-	return readThemePreference() !== null || readThemeCookie() !== null;
+  return readThemePreference() !== null || readThemeCookie() !== null;
 }
 
 function clearInlineThemeTokens(root: HTMLElement): void {
-	for (const prop of ['--color-background', '--color-foreground']) {
-		root.style.removeProperty(prop);
-	}
+  for (const prop of ['--color-background', '--color-foreground']) {
+    root.style.removeProperty(prop);
+  }
 }
 
 function writeThemeCookie(preference: ThemePreference): void {
-	try {
-		document.cookie = `${THEME_STORAGE_KEY}=${encodeURIComponent(preference)}; Path=/; Max-Age=${THEME_COOKIE_MAX_AGE}; SameSite=Lax`;
-	} catch {
-		/* noop */
-	}
+  try {
+    document.cookie = `${THEME_STORAGE_KEY}=${encodeURIComponent(preference)}; Path=/; Max-Age=${THEME_COOKIE_MAX_AGE}; SameSite=Lax`;
+  } catch {
+    /* noop */
+  }
 }
 
 function persistThemeServerSide(preference: ThemePreference): void {
-	try {
-		if (typeof fetch === 'function') {
-			fetch('/api/set-theme', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				credentials: 'same-origin',
-				body: JSON.stringify({ theme: preference }),
-				keepalive: true,
-			}).catch(() => {
-				/* Fail silently */
-			});
-		}
-	} catch {
-		/* noop */
-	}
+  try {
+    if (typeof fetch === 'function') {
+      fetch('/api/set-theme', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ theme: preference }),
+        keepalive: true,
+      }).catch(() => {
+        /* Fail silently */
+      });
+    }
+  } catch {
+    /* noop */
+  }
 }
 
 export interface ApplyThemeOptions {
-	preference?: ThemePreference;
-	/** When true, write localStorage + cookies (user explicitly chose a theme). */
-	persist?: boolean;
-	/** When true, POST to /api/set-theme for HttpOnly SSR cookie. */
-	syncServer?: boolean;
+  preference?: ThemePreference;
+  /** When true, write localStorage + cookies (user explicitly chose a theme). */
+  persist?: boolean;
+  /** When true, POST to /api/set-theme for HttpOnly SSR cookie. */
+  syncServer?: boolean;
 }
 
-export function applyTheme(
-	resolvedTheme: ResolvedTheme,
-	options: ApplyThemeOptions = {},
-): void {
-	if (typeof document === 'undefined') return;
+export function applyTheme(resolvedTheme: ResolvedTheme, options: ApplyThemeOptions = {}): void {
+  if (typeof document === 'undefined') return;
 
-	const { persist = false, syncServer = false, preference } = options;
-	const root = document.documentElement;
+  const { persist = false, syncServer = false, preference } = options;
+  const root = document.documentElement;
 
-	root.setAttribute(THEME_ATTRIBUTE, resolvedTheme);
-	if (preference) {
-		root.setAttribute(THEME_PREFERENCE_ATTRIBUTE, preference);
-	}
-	if (resolvedTheme === 'dark') {
-		root.classList.add(DARK_CLASS);
-	} else {
-		root.classList.remove(DARK_CLASS);
-	}
-	root.style.colorScheme = resolvedTheme;
+  root.setAttribute(THEME_ATTRIBUTE, resolvedTheme);
+  if (preference) {
+    root.setAttribute(THEME_PREFERENCE_ATTRIBUTE, preference);
+  }
+  if (resolvedTheme === 'dark') {
+    root.classList.add(DARK_CLASS);
+  } else {
+    root.classList.remove(DARK_CLASS);
+  }
+  root.style.colorScheme = resolvedTheme;
 
-	try {
-		if (
-			typeof window !== 'undefined' &&
-			((window as Window & { __TEST_THEME_PRIMED?: boolean }).__TEST_THEME_PRIMED ||
-				root.style.getPropertyValue('--color-background'))
-		) {
-			clearInlineThemeTokens(root);
-		}
-	} catch {
-		/* noop */
-	}
+  try {
+    if (
+      typeof window !== 'undefined' &&
+      ((window as Window & { __TEST_THEME_PRIMED?: boolean }).__TEST_THEME_PRIMED ||
+        root.style.getPropertyValue('--color-background'))
+    ) {
+      clearInlineThemeTokens(root);
+    }
+  } catch {
+    /* noop */
+  }
 
-	if (persist && preference) {
-		try {
-			localStorage.setItem(THEME_STORAGE_KEY, preference);
-		} catch {
-			/* noop */
-		}
-		writeThemeCookie(preference);
-	}
+  if (persist && preference) {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, preference);
+    } catch {
+      /* noop */
+    }
+    writeThemeCookie(preference);
+  }
 
-	if (syncServer && preference) {
-		persistThemeServerSide(preference);
-	}
+  if (syncServer && preference) {
+    persistThemeServerSide(preference);
+  }
 }
 
 /** Apply resolved theme on first paint without persisting implicit system preference. */
 export function initializeTheme(): ResolvedTheme {
-	const preference = resolveThemePreference();
-	const explicit = hasExplicitThemePreference();
-	const resolved = resolveTheme(preference);
-	applyTheme(resolved, {
-		preference,
-		persist: explicit,
-		syncServer: explicit,
-	});
-	return resolved;
+  const preference = resolveThemePreference();
+  const explicit = hasExplicitThemePreference();
+  const resolved = resolveTheme(preference);
+  applyTheme(resolved, {
+    preference,
+    persist: explicit,
+    syncServer: explicit,
+  });
+  return resolved;
 }
 
 /** User-initiated preference change — always persists. */
 export function setThemePreference(preference: ThemePreference): ResolvedTheme {
-	const resolved = resolveTheme(preference);
-	applyTheme(resolved, { preference, persist: true, syncServer: true });
-	return resolved;
+  const resolved = resolveTheme(preference);
+  applyTheme(resolved, { preference, persist: true, syncServer: true });
+  return resolved;
 }
 
 /** System preference change — applies without persisting until user chooses. */
 export function applySystemTheme(resolvedTheme: ResolvedTheme): void {
-	const preference = readThemePreference() ?? 'system';
-	if (preference !== 'system') return;
-	applyTheme(resolvedTheme, { preference: 'system' });
+  const preference = readThemePreference() ?? 'system';
+  if (preference !== 'system') return;
+  applyTheme(resolvedTheme, { preference: 'system' });
 }
 
 export function getCurrentTheme(): ResolvedTheme {
-	if (typeof document === 'undefined') return 'light';
-	const attr = document.documentElement.getAttribute(THEME_ATTRIBUTE);
-	if (attr === 'dark' || attr === 'light') return attr;
-	return document.documentElement.classList.contains(DARK_CLASS) ? 'dark' : 'light';
+  if (typeof document === 'undefined') return 'light';
+  const attr = document.documentElement.getAttribute(THEME_ATTRIBUTE);
+  if (attr === 'dark' || attr === 'light') return attr;
+  return document.documentElement.classList.contains(DARK_CLASS) ? 'dark' : 'light';
 }
 
 export function getThemePreference(): ThemePreference {
-	if (typeof document === 'undefined') return 'system';
-	const attr = document.documentElement.getAttribute(THEME_PREFERENCE_ATTRIBUTE);
-	if (attr === 'light' || attr === 'dark' || attr === 'system') return attr;
-	return readThemePreference() ?? 'system';
+  if (typeof document === 'undefined') return 'system';
+  const attr = document.documentElement.getAttribute(THEME_PREFERENCE_ATTRIBUTE);
+  if (attr === 'light' || attr === 'dark' || attr === 'system') return attr;
+  return readThemePreference() ?? 'system';
 }
 
 export function cycleThemePreference(): ThemePreference {
-	const current = getThemePreference();
-	const index = CYCLE_ORDER.indexOf(current);
-	const next = CYCLE_ORDER[(index + 1) % CYCLE_ORDER.length];
-	setThemePreference(next);
-	return next;
+  const current = getThemePreference();
+  const index = CYCLE_ORDER.indexOf(current);
+  const next = CYCLE_ORDER[(index + 1) % CYCLE_ORDER.length];
+  setThemePreference(next);
+  return next;
 }
 
 /** Binary toggle for keyboard shortcuts — flips between light and dark only. */
 export function toggleTheme(): ResolvedTheme {
-	const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
-	return setThemePreference(next);
+  const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+  return setThemePreference(next);
 }
 
 const PREFERENCE_LABELS: Record<ThemePreference, string> = {
-	light: 'Theme: light mode. Switch to dark mode.',
-	dark: 'Theme: dark mode. Switch to system theme.',
-	system: 'Theme: system preference. Switch to light mode.',
+  light: 'Theme: light mode. Switch to dark mode.',
+  dark: 'Theme: dark mode. Switch to system theme.',
+  system: 'Theme: system preference. Switch to light mode.',
 };
 
 export function updateThemeToggleButton(
-	button: HTMLButtonElement | null,
-	preference?: ThemePreference,
+  button: HTMLButtonElement | null,
+  preference?: ThemePreference
 ): void {
-	if (!button) return;
-	const pref = preference ?? getThemePreference();
-	const resolved = getCurrentTheme();
-	button.setAttribute('aria-pressed', String(pref !== 'system' && pref === resolved));
-	button.setAttribute('data-theme-preference', pref);
-	button.setAttribute('aria-label', PREFERENCE_LABELS[pref]);
+  if (!button) return;
+  const pref = preference ?? getThemePreference();
+  const resolved = getCurrentTheme();
+  button.setAttribute('aria-pressed', String(pref !== 'system' && pref === resolved));
+  button.setAttribute('data-theme-preference', pref);
+  button.setAttribute('aria-label', PREFERENCE_LABELS[pref]);
 }
 
 /**
@@ -222,7 +219,7 @@ export function updateThemeToggleButton(
  * Keep logic aligned with initializeTheme() above.
  */
 export function getThemeFoucPreventionScript(): string {
-	return `(() => {
+  return `(() => {
  try {
   const key = '${THEME_STORAGE_KEY}';
   const prefKey = '${THEME_PREFERENCE_ATTRIBUTE}';

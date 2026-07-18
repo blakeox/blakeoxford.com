@@ -45,7 +45,7 @@ function readDestinations(): CommandDestination[] {
           Boolean(item) &&
           typeof item === 'object' &&
           typeof (item as CommandDestination).title === 'string' &&
-          typeof (item as CommandDestination).href === 'string',
+          typeof (item as CommandDestination).href === 'string'
       )
       .slice(0, MAX_DESTINATIONS);
   } catch {
@@ -57,7 +57,7 @@ function writeDestinations(items: CommandDestination[]): void {
   try {
     window.localStorage.setItem(
       DESTINATION_STORAGE_KEY,
-      JSON.stringify(items.slice(0, MAX_DESTINATIONS)),
+      JSON.stringify(items.slice(0, MAX_DESTINATIONS))
     );
   } catch {
     // ignore quota errors
@@ -67,7 +67,7 @@ function writeDestinations(items: CommandDestination[]): void {
 export function useCommandHistory() {
   const [recentQueries, setRecentQueries] = useState<string[]>(() => readQueries());
   const [recentDestinations, setRecentDestinations] = useState<CommandDestination[]>(() =>
-    readDestinations(),
+    readDestinations()
   );
 
   const pushQuery = useCallback((query: string) => {
@@ -85,10 +85,10 @@ export function useCommandHistory() {
     const href = destination.href.trim();
     if (!title || !href) return;
     setRecentDestinations((prev) => {
-      const next = [
-        { title, href },
-        ...prev.filter((item) => item.href !== href),
-      ].slice(0, MAX_DESTINATIONS);
+      const next = [{ title, href }, ...prev.filter((item) => item.href !== href)].slice(
+        0,
+        MAX_DESTINATIONS
+      );
       writeDestinations(next);
       return next;
     });

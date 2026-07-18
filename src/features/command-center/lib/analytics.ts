@@ -3,16 +3,10 @@ import { trackEvent } from '../../../lib/analytics';
 export type CommandCenterOpenSource = 'shortcut' | 'nav' | 'api' | 'unknown';
 
 export type CommandCenterHandoffSource =
-  | 'result_row'
-  | 'ask_banner'
-  | 'ask_tab'
-  | 'empty_state'
-  | 'ask_panel'
-  | 'prefix';
+  'result_row' | 'ask_banner' | 'ask_tab' | 'empty_state' | 'ask_panel' | 'prefix';
 
 export const commandCenterEvents = {
-  open: (source: CommandCenterOpenSource) =>
-    trackEvent('command_center_open', { source }),
+  open: (source: CommandCenterOpenSource) => trackEvent('command_center_open', { source }),
 
   close: () => trackEvent('command_center_close'),
 
@@ -36,8 +30,7 @@ export const commandCenterEvents = {
       })(),
     }),
 
-  filterChange: (category: string) =>
-    trackEvent('command_center_filter', { category }),
+  filterChange: (category: string) => trackEvent('command_center_filter', { category }),
 
   recentClick: (query_length: number) =>
     trackEvent('command_center_recent_click', { query_length }),
@@ -45,14 +38,11 @@ export const commandCenterEvents = {
   suggestionClick: (source: 'empty_chip' | 'title_autocomplete' | 'destination') =>
     trackEvent('command_center_suggestion_click', { source }),
 
-  emptyImpression: (query_length: number) =>
-    trackEvent('command_center_empty', { query_length }),
+  emptyImpression: (query_length: number) => trackEvent('command_center_empty', { query_length }),
 
-  copyLink: (kind: string) =>
-    trackEvent('command_center_copy_link', { kind }),
+  copyLink: (kind: string) => trackEvent('command_center_copy_link', { kind }),
 
-  tagDrillIn: (tag_length: number) =>
-    trackEvent('command_center_tag', { tag_length }),
+  tagDrillIn: (tag_length: number) => trackEvent('command_center_tag', { tag_length }),
 
   askHandoff: (data: {
     source: CommandCenterHandoffSource;

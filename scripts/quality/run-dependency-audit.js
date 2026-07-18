@@ -1,7 +1,8 @@
 import { spawnSync } from 'node:child_process';
 
 const auditArgs = process.argv.slice(2).filter((arg) => arg !== '--');
-if (!auditArgs.some((arg) => arg.startsWith('--audit-level'))) auditArgs.push('--audit-level=moderate');
+if (!auditArgs.some((arg) => arg.startsWith('--audit-level')))
+  auditArgs.push('--audit-level=moderate');
 if (!auditArgs.includes('--prod')) auditArgs.push('--prod');
 
 const pnpmCli = process.env.npm_execpath;
@@ -24,7 +25,7 @@ const registryUnavailable =
 
 if (registryUnavailable) {
   console.warn(
-    '::warning title=Dependency audit unavailable::The npm audit endpoint is unavailable; CodeQL and dependency scanning remain active.',
+    '::warning title=Dependency audit unavailable::The npm audit endpoint is unavailable; CodeQL and dependency scanning remain active.'
   );
   process.exit(0);
 }

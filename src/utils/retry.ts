@@ -1,19 +1,19 @@
 /**
  * Retry Utility
- * 
+ *
  * Provides retry logic for async operations with exponential backoff.
  * Useful for API calls, network requests, and other operations that may fail transiently.
- * 
+ *
  * @example Basic retry
  * ```typescript
  * import { retry } from '@/utils/retry';
- * 
+ *
  * const result = await retry(
  *   () => fetch('/api/data'),
  *   { maxAttempts: 3 }
  * );
  * ```
- * 
+ *
  * @example With custom backoff
  * ```typescript
  * const result = await retry(
@@ -52,16 +52,13 @@ function sleep(ms: number): Promise<void> {
 
 /**
  * Retry an async operation with exponential backoff
- * 
+ *
  * @param fn - Async function to retry
  * @param options - Retry configuration options
  * @returns Result of the async function
  * @throws Last error if all attempts fail
  */
-export async function retry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions = {}
-): Promise<T> {
+export async function retry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
   const {
     maxAttempts = 3,
     initialDelay = 1000,
@@ -129,4 +126,3 @@ export function shouldRetryNetworkError(error: unknown, _attempt: number): boole
 export function shouldRetryAllErrors(): boolean {
   return true;
 }
-

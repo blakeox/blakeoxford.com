@@ -13,7 +13,7 @@ const pnpmArgs = ['pnpm'];
 function run(cmd, args = [], opts = {}) {
   return new Promise((resolve, reject) => {
     const p = spawn(cmd, args, { stdio: 'inherit', ...opts });
-    p.on('exit', (code) => code === 0 ? resolve() : reject(new Error(cmd + ' exited ' + code)));
+    p.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(cmd + ' exited ' + code))));
   });
 }
 
@@ -21,16 +21,22 @@ async function waitForOk(url, timeoutMs = 10000) {
   const start = Date.now();
   const { request } = url.startsWith('https') ? await import('https') : await import('http');
   function probe() {
-    return new Promise(res => {
-      const req = request(url, { method: 'GET' }, r => { r.destroy(); res(r.statusCode && r.statusCode < 500); });
+    return new Promise((res) => {
+      const req = request(url, { method: 'GET' }, (r) => {
+        r.destroy();
+        res(r.statusCode && r.statusCode < 500);
+      });
       req.on('error', () => res(false));
-      req.setTimeout(2000, () => { req.destroy(); res(false); });
+      req.setTimeout(2000, () => {
+        req.destroy();
+        res(false);
+      });
       req.end();
     });
   }
   while (Date.now() - start < timeoutMs) {
     if (await probe()) return true;
-    await new Promise(r => setTimeout(r, 250));
+    await new Promise((r) => setTimeout(r, 250));
   }
   return false;
 }
@@ -43,10 +49,11 @@ async function waitForOk(url, timeoutMs = 10000) {
 
     // Find free port starting at 5000
     let port = 5000;
-    const isFree = p => new Promise(res => {
-      const srv = http.createServer().listen(p, () => srv.close(() => res(true))); // if success then free
-      srv.on('error', () => res(false));
-    });
+    const isFree = (p) =>
+      new Promise((res) => {
+        const srv = http.createServer().listen(p, () => srv.close(() => res(true))); // if success then free
+        srv.on('error', () => res(false));
+      });
     while (!(await isFree(port)) && port < 6000) port++;
     if (port >= 6000) throw new Error('No free port found 5000-5999');
 
@@ -59,18 +66,25 @@ async function waitForOk(url, timeoutMs = 10000) {
 
     const step = async (label, fn) => {
       console.log(`[runtime] ${label}`);
-      try { await fn(); return true; } catch (e) { console.error(`[runtime] ${label} failed:`, e.message); return false; }
+      try {
+        await fn();
+        return true;
+      } catch (e) {
+        console.error(`[runtime] ${label} failed:`, e.message);
+        return false;
+      }
     };
 
     const searchOk = await step('search relevance', async () => {
-      if (fs.existsSync('scripts/quality/search-relevance-golden.js')) await run('node', ['scripts/quality/search-relevance-golden.js']);
+      if (fs.existsSync('scripts/quality/search-relevance-golden.js'))
+        await run('node', ['scripts/quality/search-relevance-golden.js']);
     });
     // Evaluate gate if results exist
     let relevanceGatePassed = true;
     const minTopNEnv = parseFloat(process.env.MIN_TOPN_PASS_RATE || '0');
     if (fs.existsSync('search-relevance-results.json')) {
       try {
-        const data = JSON.parse(fs.readFileSync('search-relevance-results.json','utf-8'));
+        const data = JSON.parse(fs.readFileSync('search-relevance-results.json', 'utf-8'));
         if (data.minTopNRequired > 0 && !data.gatePassed) {
           relevanceGatePassed = false;
           console.warn('[runtime] search relevance gate failed');
@@ -83,23 +97,31 @@ async function waitForOk(url, timeoutMs = 10000) {
       relevanceGatePassed = false;
     }
     const a11yOk = await step('a11y trend', async () => {
-      if (fs.existsSync('scripts/quality/a11y-trend-log.js')) await run('node', ['scripts/quality/a11y-trend-log.js']);
+      if (fs.existsSync('scripts/quality/a11y-trend-log.js'))
+        await run('node', ['scripts/quality/a11y-trend-log.js']);
     });
     const deadOk = await step('dead links', async () => {
-      if (fs.existsSync('scripts/quality/check-dead-links.js')) await run('node', ['scripts/quality/check-dead-links.js']);
+      if (fs.existsSync('scripts/quality/check-dead-links.js'))
+        await run('node', ['scripts/quality/check-dead-links.js']);
     });
     await step('long tasks', async () => {
-      if (fs.existsSync('scripts/quality/perf-long-tasks.js')) await run('node', ['scripts/quality/perf-long-tasks.js']);
+      if (fs.existsSync('scripts/quality/perf-long-tasks.js'))
+        await run('node', ['scripts/quality/perf-long-tasks.js']);
     });
     await step('toxic test list', async () => {
-      if (fs.existsSync('flakiness-history.json')) await run('node', ['scripts/quality/toxic-test-detector.js']);
+      if (fs.existsSync('flakiness-history.json'))
+        await run('node', ['scripts/quality/toxic-test-detector.js']);
     });
-    await step('quality summary', async () => { await run(pnpmCommand, [...pnpmArgs, 'quality:summary']); });
-    await step('snapshot', async () => { await run(pnpmCommand, [...pnpmArgs, 'quality:snapshot']).catch(()=>{}); });
+    await step('quality summary', async () => {
+      await run(pnpmCommand, [...pnpmArgs, 'quality:summary']);
+    });
+    await step('snapshot', async () => {
+      await run(pnpmCommand, [...pnpmArgs, 'quality:snapshot']).catch(() => {});
+    });
 
-  console.log('[runtime] complete');
-  // If any gate failed (search/a11y/dead-links), mark overall failure
-  if (!relevanceGatePassed || a11yOk === false || deadOk === false) process.exitCode = 1;
+    console.log('[runtime] complete');
+    // If any gate failed (search/a11y/dead-links), mark overall failure
+    if (!relevanceGatePassed || a11yOk === false || deadOk === false) process.exitCode = 1;
   } catch (e) {
     console.error('[runtime] failed', e.message);
     process.exitCode = 1;

@@ -6,8 +6,8 @@ export function normalizeSlug(input) {
   if (input == null) return undefined;
   if (input === '') return '';
   return String(input)
-    .replace(/^\/+/, '')      // remove ALL leading slashes
-    .replace(/index$/, '')     // strip trailing 'index'
+    .replace(/^\/+/, '') // remove ALL leading slashes
+    .replace(/index$/, '') // strip trailing 'index'
     .replace(/\/{2,}/g, '/'); // collapse duplicate slashes globally
 }
 

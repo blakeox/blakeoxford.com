@@ -28,18 +28,18 @@ const { posts, content } = Astro.props as Props;
     </Button>
   </div>
   <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
-    {posts.length > 0 ? (
-      posts.map((post) => (
-        <li role="listitem">
-          <BlogPostCard post={post} />
+    {
+      posts.length > 0 ? (
+        posts.map((post) => (
+          <li role="listitem">
+            <BlogPostCard post={post} />
+          </li>
+        ))
+      ) : (
+        <li class="border border-dashed border-border/50 p-6 text-center">
+          <p class="text-sm text-muted-foreground">{content.emptyMessage}</p>
         </li>
-      ))
-    ) : (
-      <li class="border border-dashed border-border/50 p-6 text-center">
-        <p class="text-sm text-muted-foreground">
-          {content.emptyMessage}
-        </p>
-      </li>
-    )}
+      )
+    }
   </ul>
 </Section>

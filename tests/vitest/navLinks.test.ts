@@ -7,13 +7,13 @@ describe('navLinks configuration', () => {
   });
 
   it('should have expected link properties', () => {
-    const homeLink = navLinks.find(link => link.href === '/');
+    const homeLink = navLinks.find((link) => link.href === '/');
     expect(homeLink).toBeDefined();
     expect(homeLink).toMatchObject({ label: 'Home' });
   });
 
   it('each link should have href and label properties', () => {
-    navLinks.forEach(link => {
+    navLinks.forEach((link) => {
       expect(link).toHaveProperty('href');
       expect(link).toHaveProperty('label');
     });

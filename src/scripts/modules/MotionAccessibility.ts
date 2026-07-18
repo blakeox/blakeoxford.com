@@ -1,4 +1,4 @@
-export { };
+export {};
 /**
  * Motion and Animation Accessibility Module
  * Respects user preferences for reduced motion and provides alternatives
@@ -26,10 +26,18 @@ export interface MotionAccessibilityController {
   isMotionReduced(): boolean;
   getMotionPreferences(): MotionPreferences;
   setMotionPreferences(preferences: Partial<MotionPreferences>): void;
-  safeAnimate(element: HTMLElement, keyframes: Keyframe[], options?: KeyframeAnimationOptions & { onComplete?: () => void; onCancel?: () => void }): void;
+  safeAnimate(
+    element: HTMLElement,
+    keyframes: Keyframe[],
+    options?: KeyframeAnimationOptions & { onComplete?: () => void; onCancel?: () => void }
+  ): void;
   safeFadeIn(element: HTMLElement, duration?: number): void;
   safeFadeOut(element: HTMLElement, duration?: number): Promise<void>;
-  safeSlideIn(element: HTMLElement, direction: 'left' | 'right' | 'up' | 'down', duration?: number): void;
+  safeSlideIn(
+    element: HTMLElement,
+    direction: 'left' | 'right' | 'up' | 'down',
+    duration?: number
+  ): void;
   safeScale(element: HTMLElement, from?: number, to?: number, duration?: number): void;
   registerToggles(selector?: string): void;
   destroy(): void;
@@ -62,7 +70,10 @@ class MotionAccessibility implements MotionAccessibilityController {
     return this.preference;
   }
 
-  setPreference(preference: MotionPreference, { announce = true }: { announce?: boolean } = {}): void {
+  setPreference(
+    preference: MotionPreference,
+    { announce = true }: { announce?: boolean } = {}
+  ): void {
     if (this.destroyed) return;
 
     if (this.preference === preference) {
@@ -88,7 +99,7 @@ class MotionAccessibility implements MotionAccessibilityController {
   getMotionPreferences(): MotionPreferences {
     return {
       respectsReducedMotion: this.reduced,
-      userOverride: this.preference === 'system' ? undefined : this.preference === 'allow'
+      userOverride: this.preference === 'system' ? undefined : this.preference === 'allow',
     };
   }
 
@@ -119,12 +130,12 @@ class MotionAccessibility implements MotionAccessibilityController {
     }
 
     const animation = element.animate(keyframes, options);
-      
-      if (options.onComplete) {
+
+    if (options.onComplete) {
       animation.addEventListener('finish', options.onComplete);
-      }
-      
-      if (options.onCancel) {
+    }
+
+    if (options.onCancel) {
       animation.addEventListener('cancel', options.onCancel);
     }
   }
@@ -136,17 +147,13 @@ class MotionAccessibility implements MotionAccessibilityController {
     }
 
     element.style.opacity = '0';
-    this.safeAnimate(
-      element,
-      [{ opacity: 0 }, { opacity: 1 }], 
-      { 
-        duration,
-        easing: 'ease-out',
-        onComplete: () => {
-          element.style.opacity = '1';
-        }
-      }
-    );
+    this.safeAnimate(element, [{ opacity: 0 }, { opacity: 1 }], {
+      duration,
+      easing: 'ease-out',
+      onComplete: () => {
+        element.style.opacity = '1';
+      },
+    });
   }
 
   safeFadeOut(element: HTMLElement, duration: number = 300): Promise<void> {
@@ -157,23 +164,23 @@ class MotionAccessibility implements MotionAccessibilityController {
         return;
       }
 
-      this.safeAnimate(
-        element,
-        [{ opacity: 1 }, { opacity: 0 }],
-        {
-          duration,
-          easing: 'ease-in',
-          onComplete: () => {
-            element.style.opacity = '0';
-            resolve();
-          },
-          onCancel: () => resolve()
-        }
-      );
+      this.safeAnimate(element, [{ opacity: 1 }, { opacity: 0 }], {
+        duration,
+        easing: 'ease-in',
+        onComplete: () => {
+          element.style.opacity = '0';
+          resolve();
+        },
+        onCancel: () => resolve(),
+      });
     });
   }
 
-  safeSlideIn(element: HTMLElement, direction: 'left' | 'right' | 'up' | 'down', duration: number = 300): void {
+  safeSlideIn(
+    element: HTMLElement,
+    direction: 'left' | 'right' | 'up' | 'down',
+    duration: number = 300
+  ): void {
     if (this.reduced) {
       element.style.transform = 'none';
       element.style.opacity = '1';
@@ -184,7 +191,7 @@ class MotionAccessibility implements MotionAccessibilityController {
       left: { from: 'translateX(-100%)', to: 'translateX(0)' },
       right: { from: 'translateX(100%)', to: 'translateX(0)' },
       up: { from: 'translateY(-100%)', to: 'translateY(0)' },
-      down: { from: 'translateY(100%)', to: 'translateY(0)' }
+      down: { from: 'translateY(100%)', to: 'translateY(0)' },
     };
 
     const transform = transforms[direction];
@@ -195,7 +202,7 @@ class MotionAccessibility implements MotionAccessibilityController {
       element,
       [
         { transform: transform.from, opacity: 0 },
-        { transform: transform.to, opacity: 1 }
+        { transform: transform.to, opacity: 1 },
       ],
       {
         duration,
@@ -203,7 +210,7 @@ class MotionAccessibility implements MotionAccessibilityController {
         onComplete: () => {
           element.style.transform = transform.to;
           element.style.opacity = '1';
-        }
+        },
       }
     );
   }
@@ -215,20 +222,13 @@ class MotionAccessibility implements MotionAccessibilityController {
     }
 
     element.style.transform = `scale(${from})`;
-    this.safeAnimate(
-      element,
-      [
-        { transform: `scale(${from})` },
-        { transform: `scale(${to})` }
-      ],
-      {
-        duration,
-        easing: 'ease-out',
-        onComplete: () => {
-          element.style.transform = `scale(${to})`;
-        }
-      }
-    );
+    this.safeAnimate(element, [{ transform: `scale(${from})` }, { transform: `scale(${to})` }], {
+      duration,
+      easing: 'ease-out',
+      onComplete: () => {
+        element.style.transform = `scale(${to})`;
+      },
+    });
   }
 
   registerToggles(selector?: string): void {
@@ -331,11 +331,7 @@ class MotionAccessibility implements MotionAccessibilityController {
     }
 
     if (announce) {
-      this.announce(
-        reduce
-          ? 'Animations disabled for better accessibility'
-          : 'Animations enabled'
-      );
+      this.announce(reduce ? 'Animations disabled for better accessibility' : 'Animations enabled');
     }
   }
 
@@ -475,7 +471,9 @@ class MotionAccessibility implements MotionAccessibilityController {
 
 let singletonController: MotionAccessibility | null = null;
 
-export function initMotionAccessibility(options: MotionAccessibilityOptions = {}): MotionAccessibilityController {
+export function initMotionAccessibility(
+  options: MotionAccessibilityOptions = {}
+): MotionAccessibilityController {
   if (typeof window === 'undefined') {
     throw new Error('initMotionAccessibility must be called in the browser');
   }

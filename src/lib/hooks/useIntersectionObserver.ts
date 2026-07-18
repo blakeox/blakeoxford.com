@@ -16,7 +16,7 @@
  * ```tsx
  * const imgRef = useRef<HTMLImageElement>(null);
  * const entry = useIntersectionObserver(imgRef, { rootMargin: '100px' });
- * 
+ *
  * useEffect(() => {
  *   if (entry?.isIntersecting && imgRef.current) {
  *     imgRef.current.src = imgRef.current.dataset.src ?? '';
@@ -33,8 +33,7 @@
  */
 import { useEffect, useState, type RefObject } from 'react';
 
-export interface UseIntersectionObserverOptions
-  extends IntersectionObserverInit {
+export interface UseIntersectionObserverOptions extends IntersectionObserverInit {
   /** Whether the observer should be active (default: true) */
   enabled?: boolean;
   /** Whether to disconnect after first intersection (default: false) */

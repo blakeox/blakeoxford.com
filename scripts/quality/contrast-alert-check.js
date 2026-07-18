@@ -23,7 +23,8 @@ const borderline = latest.summary?.borderline || 0;
 if (borderline > threshold) {
   const routes = Object.entries(latest.routes)
     .filter(([, r]) => r.borderline > 0)
-    .map(([route, r]) => `${route}(${r.borderline})`).join(', ');
+    .map(([route, r]) => `${route}(${r.borderline})`)
+    .join(', ');
   const body = `Contrast borderline threshold exceeded: ${borderline} > ${threshold}. Affected routes: ${routes}`;
   console.log(`CONTRAST_ISSUE::${body}`);
   process.exit(0);

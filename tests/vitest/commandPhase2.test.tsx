@@ -37,16 +37,14 @@ describe('CommandTitleSuggestions', () => {
   ];
 
   it('shows matching titles for partial queries', () => {
-    render(
-      <CommandTitleSuggestions query="fab" items={items} onSelect={() => undefined} />,
-    );
+    render(<CommandTitleSuggestions query="fab" items={items} onSelect={() => undefined} />);
     expect(screen.getByText('Microsoft Fabric')).toBeInTheDocument();
     expect(screen.queryByText('Other Work')).not.toBeInTheDocument();
   });
 
   it('hides when the query is too short', () => {
     const { container } = render(
-      <CommandTitleSuggestions query="f" items={items} onSelect={() => undefined} />,
+      <CommandTitleSuggestions query="f" items={items} onSelect={() => undefined} />
     );
     expect(container).toBeEmptyDOMElement();
   });

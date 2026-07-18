@@ -47,7 +47,11 @@ export class AISearchError extends Error {
   status?: number;
   retryAfterSec?: number;
   rateLimitReason?: string;
-  constructor(message: string, status?: number, extras?: { retryAfterSec?: number; rateLimitReason?: string }) {
+  constructor(
+    message: string,
+    status?: number,
+    extras?: { retryAfterSec?: number; rateLimitReason?: string }
+  ) {
     super(message);
     this.name = 'AISearchError';
     this.status = status;
@@ -89,7 +93,7 @@ export function readAISearchMeta(response: Response): AISearchMeta {
 /** Quiet user-facing label for Cloudflare AI provenance. */
 export function formatAISearchProvenance(
   meta?: AISearchMeta | null,
-  sourceCount = 0,
+  sourceCount = 0
 ): string | null {
   if (!meta?.provider && sourceCount <= 0) return null;
   const provider = meta?.provider ?? '';
@@ -123,7 +127,11 @@ function withTimeout(signal?: AbortSignal): AbortSignal {
       controller.abort();
     } else {
       signal.addEventListener('abort', abortHandler, { once: true });
-      controller.signal.addEventListener('abort', () => signal.removeEventListener('abort', abortHandler), { once: true });
+      controller.signal.addEventListener(
+        'abort',
+        () => signal.removeEventListener('abort', abortHandler),
+        { once: true }
+      );
     }
   }
 
@@ -137,15 +145,32 @@ function normalizeSources(value: unknown): AIChatSource[] {
   const sources: AIChatSource[] = [];
   for (const item of value) {
     if (!item || typeof item !== 'object') continue;
-    const raw = item as { title?: unknown; url?: unknown; snippet?: unknown; score?: unknown; collection?: unknown; publishedAt?: unknown; summary?: unknown; icon?: unknown };
-    const title = typeof raw.title === 'string' && raw.title.trim() ? raw.title.trim() : 'Referenced source';
+    const raw = item as {
+      title?: unknown;
+      url?: unknown;
+      snippet?: unknown;
+      score?: unknown;
+      collection?: unknown;
+      publishedAt?: unknown;
+      summary?: unknown;
+      icon?: unknown;
+    };
+    const title =
+      typeof raw.title === 'string' && raw.title.trim() ? raw.title.trim() : 'Referenced source';
     const url = typeof raw.url === 'string' ? raw.url : '';
     if (!url) continue;
     const snippet = typeof raw.snippet === 'string' ? raw.snippet : undefined;
     const score = typeof raw.score === 'number' ? raw.score : undefined;
-    const collection = typeof raw.collection === 'string' && raw.collection.trim() ? raw.collection.trim() : undefined;
-    const publishedAt = typeof raw.publishedAt === 'string' && raw.publishedAt.trim() ? raw.publishedAt.trim() : undefined;
-    const summary = typeof raw.summary === 'string' && raw.summary.trim() ? raw.summary.trim() : undefined;
+    const collection =
+      typeof raw.collection === 'string' && raw.collection.trim()
+        ? raw.collection.trim()
+        : undefined;
+    const publishedAt =
+      typeof raw.publishedAt === 'string' && raw.publishedAt.trim()
+        ? raw.publishedAt.trim()
+        : undefined;
+    const summary =
+      typeof raw.summary === 'string' && raw.summary.trim() ? raw.summary.trim() : undefined;
     const icon = typeof raw.icon === 'string' && raw.icon.trim() ? raw.icon.trim() : undefined;
     const source: AIChatSource = { title, url };
     if (snippet) source.snippet = snippet;
@@ -159,7 +184,10 @@ function normalizeSources(value: unknown): AIChatSource[] {
   return sources;
 }
 
-async function consumeEventStream(response: Response, options: Pick<SearchWithAIOptions, 'onToken' | 'onCompletion' | 'onSources'>): Promise<AIChatResponse> {
+async function consumeEventStream(
+  response: Response,
+  options: Pick<SearchWithAIOptions, 'onToken' | 'onCompletion' | 'onSources'>
+): Promise<AIChatResponse> {
   if (!response.body) {
     throw new AISearchError('Streamed response missing body', response.status);
   }
@@ -202,9 +230,7 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
     let payload: unknown = payloadRaw;
     try {
       const firstJsonIdx = Math.min(
-        ...['{', '[']
-          .map((ch) => payloadRaw.indexOf(ch))
-          .filter((i) => i >= 0)
+        ...['{', '['].map((ch) => payloadRaw.indexOf(ch)).filter((i) => i >= 0)
       );
       if (!Number.isNaN(firstJsonIdx) && firstJsonIdx > 0) {
         const candidate = payloadRaw.slice(firstJsonIdx).trim();
@@ -213,14 +239,21 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
         } catch {
           // Try a more permissive cleanup: remove stray "event:" tokens and
           // any leading non-json characters, then attempt parse.
-          const cleaned = payloadRaw.replace(/event:\s*[^\r\n]+/gi, '').replace(/^[^{[]*/s, '').trim();
+          const cleaned = payloadRaw
+            .replace(/event:\s*[^\r\n]+/gi, '')
+            .replace(/^[^{[]*/s, '')
+            .trim();
           if (cleaned && (cleaned.startsWith('{') || cleaned.startsWith('['))) {
             try {
               payload = JSON.parse(cleaned);
             } catch (err2) {
               // keep as raw string below
-               
-              console.debug('AI stream: failed to parse cleaned JSON fragment', { candidate, cleaned, err: String(err2) });
+
+              console.debug('AI stream: failed to parse cleaned JSON fragment', {
+                candidate,
+                cleaned,
+                err: String(err2),
+              });
             }
           }
         }
@@ -229,8 +262,11 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
           payload = JSON.parse(payloadRaw);
         } catch (err3) {
           // ignore and fall back to raw string
-           
-          console.debug('AI stream: failed to parse JSON payload', { payloadRaw, err: String(err3) });
+
+          console.debug('AI stream: failed to parse JSON payload', {
+            payloadRaw,
+            err: String(err3),
+          });
         }
       }
     } catch {
@@ -238,11 +274,14 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
     }
 
     if (eventType === 'token') {
-      const token = typeof payload === 'string'
-        ? payload
-        : payload && typeof payload === 'object' && typeof (payload as { text?: unknown }).text === 'string'
-          ? (payload as { text: string }).text
-          : payloadRaw;
+      const token =
+        typeof payload === 'string'
+          ? payload
+          : payload &&
+              typeof payload === 'object' &&
+              typeof (payload as { text?: unknown }).text === 'string'
+            ? (payload as { text: string }).text
+            : payloadRaw;
       if (token) {
         assembledMessage += String(token);
         options.onToken?.(String(token));
@@ -254,7 +293,11 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
         options.onSources?.(nextSources);
       }
     } else if (eventType === 'done') {
-      if (payload && typeof payload === 'object' && typeof (payload as { message?: unknown }).message === 'string') {
+      if (
+        payload &&
+        typeof payload === 'object' &&
+        typeof (payload as { message?: unknown }).message === 'string'
+      ) {
         const doneMessage = (payload as { message: string }).message;
         if (doneMessage && !assembledMessage) {
           assembledMessage = doneMessage;
@@ -296,7 +339,10 @@ async function consumeEventStream(response: Response, options: Pick<SearchWithAI
   return { message: assembledMessage, sources: collectedSources };
 }
 
-export async function searchWithAI(prompt: string, options?: SearchWithAIOptions): Promise<AIChatResponse> {
+export async function searchWithAI(
+  prompt: string,
+  options?: SearchWithAIOptions
+): Promise<AIChatResponse> {
   if (!prompt?.trim()) {
     throw new AISearchError('Prompt is required');
   }

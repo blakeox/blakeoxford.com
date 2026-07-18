@@ -9,7 +9,7 @@ function kindFromType(type: SearchRecord['type']): CommandItemKind {
 
 export function toCommandItem(
   record: SearchRecord,
-  source: CommandItem['source'] = 'local',
+  source: CommandItem['source'] = 'local'
 ): CommandItem {
   const resolvedSource: CommandItem['source'] =
     record.retrieval === 'semantic'
@@ -35,7 +35,7 @@ export function toCommandItem(
 
 export function mapSearchResults(
   records: SearchRecord[],
-  source: CommandItem['source'],
+  source: CommandItem['source']
 ): CommandItem[] {
   return records.map((record) => toCommandItem(record, source));
 }

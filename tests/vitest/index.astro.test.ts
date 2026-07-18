@@ -65,6 +65,8 @@ describe('Main Index Page', () => {
     expect(recentProjects.length).toBe(3);
     expect(publishedProjects.some((p) => p.slug === 'draft-project')).toBe(false);
     // Verify chronological ordering (most recent first)
-    expect(recentProjects[0].data.date.getTime()).toBeGreaterThanOrEqual(recentProjects[1].data.date.getTime());
+    expect(recentProjects[0].data.date.getTime()).toBeGreaterThanOrEqual(
+      recentProjects[1].data.date.getTime()
+    );
   });
 });

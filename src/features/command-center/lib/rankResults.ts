@@ -48,7 +48,15 @@ export function enrichCommandItems(items: CommandItem[], query: string): Command
       const baseScore = item.score ?? 0;
       const score = Math.min(
         1,
-        Math.max(0, baseScore + boost + descBoost + overlap.length * 0.05 + imageBoost(item) + hubPenalty(item, terms)),
+        Math.max(
+          0,
+          baseScore +
+            boost +
+            descBoost +
+            overlap.length * 0.05 +
+            imageBoost(item) +
+            hubPenalty(item, terms)
+        )
       );
 
       // Only surface human-useful reasons — never "Semantic match".

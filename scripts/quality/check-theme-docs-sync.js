@@ -99,7 +99,10 @@ function parsePublicThemeTokens(themeCss) {
                         : name.startsWith('--max-width-')
                           ? 'layout'
                           : 'other';
-    const stem = name.replace(/^--(?:color|font|text|tracking|radius|shadow|transition-duration|ease|animate|z-index|max-width)-/, '');
+    const stem = name.replace(
+      /^--(?:color|font|text|tracking|radius|shadow|transition-duration|ease|animate|z-index|max-width)-/,
+      ''
+    );
     tokens.push({ name, stem, category });
   }
   return tokens;
@@ -125,20 +128,20 @@ if (privateBridged.length) {
 const tokensDoc = fs.readFileSync(path.join(root, TOKENS_DOC_PATH), 'utf8');
 if (!tokensDoc.includes('getPublicThemeTokens') && !tokensDoc.includes('designTokens')) {
   console.error(
-    `[theme-docs-sync] ${TOKENS_DOC_PATH} must import public tokens from src/lib/designTokens.ts`,
+    `[theme-docs-sync] ${TOKENS_DOC_PATH} must import public tokens from src/lib/designTokens.ts`
   );
   process.exit(1);
 }
 
 const colorCount = tokens.filter((t) => t.category === 'color').length;
 console.log(
-  `[theme-docs-sync] OK — ${tokens.length} public tokens (${colorCount} colors); private remap stems stay unbridged`,
+  `[theme-docs-sync] OK — ${tokens.length} public tokens (${colorCount} colors); private remap stems stay unbridged`
 );
 
 const changed = getChangedFiles();
 if (changed.includes(THEME_PATH)) {
   console.log(
-    `[theme-docs-sync] ${THEME_PATH} changed — tokens page auto-lists from @theme inline (no manual table edit required)`,
+    `[theme-docs-sync] ${THEME_PATH} changed — tokens page auto-lists from @theme inline (no manual table edit required)`
   );
 }
 

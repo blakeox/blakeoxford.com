@@ -35,5 +35,3 @@ describe('NavBar Astro template', () => {
     expect(content).toContain('__boNavMenuAC');
   });
 });
-
-

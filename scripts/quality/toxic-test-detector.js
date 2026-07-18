@@ -20,36 +20,40 @@ try {
   process.exit(0);
 }
 
-const history = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.runs) ? raw.runs : []);
+const history = Array.isArray(raw) ? raw : raw && Array.isArray(raw.runs) ? raw.runs : [];
 if (!Array.isArray(history) || history.length === 0) {
   console.log('[toxic] empty flakiness history');
   fs.writeFileSync('toxic-tests.json', JSON.stringify([], null, 2));
   process.exit(0);
 }
 
-function score(t){
+function score(t) {
   const runs = t.runs || 1;
   const retryRate = (t.totalRetries || 0) / runs; // avg retries per run
   const failRate = (t.failures || 0) / runs;
   const avgDuration = (t.totalDuration || 0) / runs; // ms
   // weights: retries 0.4, failRate 0.4, duration scaled 0.2 (>=3000ms saturates)
   const durationScore = Math.min(1, avgDuration / 3000);
-  return retryRate*0.4 + failRate*0.4 + durationScore*0.2;
+  return retryRate * 0.4 + failRate * 0.4 + durationScore * 0.2;
 }
 
 const ranked = history
-  .filter(t => (t?.runs || 0) > 0 && typeof t.id === 'string')
-  .map(t => ({
+  .filter((t) => (t?.runs || 0) > 0 && typeof t.id === 'string')
+  .map((t) => ({
     id: t.id,
     score: score(t),
     runs: t.runs,
     avgRetries: (t.totalRetries || 0) / (t.runs || 1),
     avgDuration: ((t.totalDuration || 0) / (t.runs || 1)).toFixed(1),
-    failRate: ((t.failures || 0) / (t.runs || 1)).toFixed(2)
+    failRate: ((t.failures || 0) / (t.runs || 1)).toFixed(2),
   }))
-  .sort((a,b) => b.score - a.score)
+  .sort((a, b) => b.score - a.score)
   .slice(0, 10);
 
 fs.writeFileSync('toxic-tests.json', JSON.stringify(ranked, null, 2));
 console.log('[toxic] top offenders');
-ranked.forEach(r => console.log(`  - ${r.id} score=${r.score.toFixed(3)} retries=${r.avgRetries.toFixed(2)} failRate=${r.failRate} avgDuration=${r.avgDuration}ms`));
+ranked.forEach((r) =>
+  console.log(
+    `  - ${r.id} score=${r.score.toFixed(3)} retries=${r.avgRetries.toFixed(2)} failRate=${r.failRate} avgDuration=${r.avgDuration}ms`
+  )
+);

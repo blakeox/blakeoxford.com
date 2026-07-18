@@ -22,7 +22,10 @@ const allBlogPosts: CollectionEntry<'blog'>[] = await getCollection('blog');
 const blogPosts = allBlogPosts
   .filter((entry: CollectionEntry<'blog'>) => !entry.data.draft)
   .slice()
-  .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .sort(
+    (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
+      b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
 
 const recentProjects = take(await getProjectsSorted(), 3);
 const recentBlogPosts: CollectionEntry<'blog'>[] = take(blogPosts, 3);
@@ -30,10 +33,14 @@ const recentBlogPosts: CollectionEntry<'blog'>[] = take(blogPosts, 3);
 const heroDescription: string | undefined = siteConfig?.tagline;
 const heroTagline: string | undefined = siteConfig?.description;
 const normalize = (s?: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-const shouldShowTagline = normalize(heroTagline) !== '' && normalize(heroTagline) !== normalize(heroDescription);
-const taglineToShow: string | undefined = normalize(heroTagline) === ''
-  ? page.hero.defaultTagline
-  : (shouldShowTagline ? heroTagline : undefined);
+const shouldShowTagline =
+  normalize(heroTagline) !== '' && normalize(heroTagline) !== normalize(heroDescription);
+const taglineToShow: string | undefined =
+  normalize(heroTagline) === ''
+    ? page.hero.defaultTagline
+    : shouldShowTagline
+      ? heroTagline
+      : undefined;
 
 function deriveImageData(imgPath?: string) {
   if (!imgPath) return null;
@@ -49,7 +56,14 @@ function deriveImageData(imgPath?: string) {
 ---
 
 <Layout title={page.meta.title} description={page.meta.description} wide={true}>
-  <link slot="head" rel="preload" as="image" href="/assets/images/optimized/avif/Blake-O-scaled@640w.avif" type="image/avif" fetchpriority="high" />
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    href="/assets/images/optimized/avif/Blake-O-scaled@640w.avif"
+    type="image/avif"
+    fetchpriority="high"
+  />
 
   <div class="space-y-20 sm:space-y-24 lg:space-y-28">
     <HomeHeroSection
@@ -71,14 +85,24 @@ function deriveImageData(imgPath?: string) {
             </p>
           </div>
         </div>
-        <ul class="flex flex-wrap items-center gap-x-8 gap-y-6 text-base font-medium text-foreground/80">
-          {technologies.map((tech) => {
-            const raw = tech.img;
-            const srcStr: string | undefined = typeof raw === 'string' ? raw : (raw && typeof raw === 'object' && 'src' in raw ? String(raw.src) : undefined);
-            const canOptimize = typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
-            const data = canOptimize ? deriveImageData(srcStr) : null;
-            return <TechnologyItem tech={tech} data={data} srcStr={srcStr} />;
-          })}
+        <ul
+          class="flex flex-wrap items-center gap-x-8 gap-y-6 text-base font-medium text-foreground/80"
+        >
+          {
+            technologies.map((tech) => {
+              const raw = tech.img;
+              const srcStr: string | undefined =
+                typeof raw === 'string'
+                  ? raw
+                  : raw && typeof raw === 'object' && 'src' in raw
+                    ? String(raw.src)
+                    : undefined;
+              const canOptimize =
+                typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
+              const data = canOptimize ? deriveImageData(srcStr) : null;
+              return <TechnologyItem tech={tech} data={data} srcStr={srcStr} />;
+            })
+          }
         </ul>
       </Container>
     </section>

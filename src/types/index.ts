@@ -1,7 +1,7 @@
 /**
  * Core Type Definitions - Central Export Hub
  * Re-exports all type definitions from domain-specific modules
- * 
+ *
  * Type Organization:
  * - core.ts: Base interfaces and shared types
  * - accessibility.ts: Accessibility-related types

@@ -62,7 +62,8 @@ export interface AdvancedPerformanceMetrics {
 }
 
 export interface PerformanceAlert {
-  type: 'memory_leak' | 'slow_interaction' | 'large_layout_shift' | 'budget_exceeded' | 'error_spike';
+  type:
+    'memory_leak' | 'slow_interaction' | 'large_layout_shift' | 'budget_exceeded' | 'error_spike';
   severity: 'low' | 'medium' | 'high' | 'critical';
   timestamp: number;
   metric: string;
@@ -126,7 +127,7 @@ export class AdvancedPerformanceMonitor {
         memoryUsage: 100, // 100MB
         interactionDelay: 200, // 200ms
         layoutShiftScore: 0.1,
-        errorRate: 5 // 5%
+        errorRate: 5, // 5%
       },
       budget: {
         metrics: {
@@ -135,21 +136,21 @@ export class AdvancedPerformanceMonitor {
           firstInputDelay: 100,
           cumulativeLayoutShift: 0.1,
           totalBlockingTime: 200,
-          speedIndex: 3000
+          speedIndex: 3000,
         },
         resources: {
           totalSize: 512000, // 512KB
           jsSize: 200000, // 200KB
           cssSize: 50000, // 50KB
           imageSize: 200000, // 200KB
-          fontSize: 50000 // 50KB
+          fontSize: 50000, // 50KB
         },
-        enabled: true
+        enabled: true,
       },
       realUserMonitoring: true,
       automaticReporting: false,
       debugMode: import.meta.env.DEV,
-      ...config
+      ...config,
     };
 
     if (typeof window !== 'undefined' && this.config.enabled) {
@@ -202,7 +203,7 @@ export class AdvancedPerformanceMonitor {
           value: memoryUsage,
           threshold: this.config.alertThresholds.memoryUsage,
           message: `High memory usage detected: ${memoryUsage.toFixed(2)}MB`,
-          recommendation: 'Check for memory leaks in JavaScript code or large objects in memory'
+          recommendation: 'Check for memory leaks in JavaScript code or large objects in memory',
         });
       }
     }, 30000);
@@ -216,21 +217,30 @@ export class AdvancedPerformanceMonitor {
     this.pageViews++;
 
     // Track interactions
-    ['click', 'keydown', 'scroll', 'touchstart'].forEach(eventType => {
-      document.addEventListener(eventType, () => {
-        this.interactions++;
-      }, { passive: true });
+    ['click', 'keydown', 'scroll', 'touchstart'].forEach((eventType) => {
+      document.addEventListener(
+        eventType,
+        () => {
+          this.interactions++;
+        },
+        { passive: true }
+      );
     });
 
     // Track scroll depth
     let maxScroll = 0;
-    document.addEventListener('scroll', () => {
-      const scrollPercent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
-      if (scrollPercent > maxScroll) {
-        maxScroll = scrollPercent;
-        this.maxScrollDepth = Math.min(100, Math.max(0, scrollPercent));
-      }
-    }, { passive: true });
+    document.addEventListener(
+      'scroll',
+      () => {
+        const scrollPercent =
+          (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+        if (scrollPercent > maxScroll) {
+          maxScroll = scrollPercent;
+          this.maxScrollDepth = Math.min(100, Math.max(0, scrollPercent));
+        }
+      },
+      { passive: true }
+    );
 
     // Track session duration on page unload
     window.addEventListener('beforeunload', () => {
@@ -253,7 +263,9 @@ export class AdvancedPerformanceMonitor {
         });
       });
 
-      observer.observe({ entryTypes: ['paint', 'largest-contentful-paint', 'first-input', 'layout-shift'] });
+      observer.observe({
+        entryTypes: ['paint', 'largest-contentful-paint', 'first-input', 'layout-shift'],
+      });
     }
 
     // Monitor resource sizes
@@ -270,7 +282,9 @@ export class AdvancedPerformanceMonitor {
 
     // Collect real user metrics
     window.addEventListener('load', () => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
       if (navigation) {
         const loadTime = navigation.loadEventEnd - navigation.fetchStart;
         this.recordUserMetric('loadTime', loadTime);
@@ -300,7 +314,11 @@ export class AdvancedPerformanceMonitor {
       const observer = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => {
           const firstInputEntry = entry as any; // PerformanceEventTiming
-          if (entry.name === 'first-input' && firstInputEntry.processingStart - firstInputEntry.startTime > this.config.alertThresholds.interactionDelay) {
+          if (
+            entry.name === 'first-input' &&
+            firstInputEntry.processingStart - firstInputEntry.startTime >
+              this.config.alertThresholds.interactionDelay
+          ) {
             this.createAlert({
               type: 'slow_interaction',
               severity: 'medium',
@@ -309,7 +327,7 @@ export class AdvancedPerformanceMonitor {
               value: firstInputEntry.processingStart - firstInputEntry.startTime,
               threshold: this.config.alertThresholds.interactionDelay,
               message: `Slow interaction detected: ${(firstInputEntry.processingStart - firstInputEntry.startTime).toFixed(2)}ms`,
-              recommendation: 'Optimize main thread blocking and reduce JavaScript execution time'
+              recommendation: 'Optimize main thread blocking and reduce JavaScript execution time',
             });
           }
         });
@@ -322,24 +340,27 @@ export class AdvancedPerformanceMonitor {
     if ('PerformanceObserver' in window) {
       let cumulativeShift = 0;
       const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry: PerformanceEntry & { hadRecentInput?: boolean; value?: number }) => {
-          if (!entry.hadRecentInput && entry.value) {
-            cumulativeShift += entry.value;
+        list
+          .getEntries()
+          .forEach((entry: PerformanceEntry & { hadRecentInput?: boolean; value?: number }) => {
+            if (!entry.hadRecentInput && entry.value) {
+              cumulativeShift += entry.value;
 
-            if (cumulativeShift > this.config.alertThresholds.layoutShiftScore) {
-              this.createAlert({
-                type: 'large_layout_shift',
-                severity: 'medium',
-                timestamp: Date.now(),
-                metric: 'cumulative_layout_shift',
-                value: cumulativeShift,
-                threshold: this.config.alertThresholds.layoutShiftScore,
-                message: `Large layout shift detected: ${cumulativeShift.toFixed(3)}`,
-                recommendation: 'Review images without dimensions, dynamic content insertion, and web fonts causing layout shifts'
-              });
+              if (cumulativeShift > this.config.alertThresholds.layoutShiftScore) {
+                this.createAlert({
+                  type: 'large_layout_shift',
+                  severity: 'medium',
+                  timestamp: Date.now(),
+                  metric: 'cumulative_layout_shift',
+                  value: cumulativeShift,
+                  threshold: this.config.alertThresholds.layoutShiftScore,
+                  message: `Large layout shift detected: ${cumulativeShift.toFixed(3)}`,
+                  recommendation:
+                    'Review images without dimensions, dynamic content insertion, and web fonts causing layout shifts',
+                });
+              }
             }
-          }
-        });
+          });
       });
 
       observer.observe({ entryTypes: ['layout-shift'] });
@@ -358,7 +379,10 @@ export class AdvancedPerformanceMonitor {
 
     switch (entry.entryType) {
       case 'paint':
-        if (entry.name === 'first-contentful-paint' && entry.startTime > budget.firstContentfulPaint) {
+        if (
+          entry.name === 'first-contentful-paint' &&
+          entry.startTime > budget.firstContentfulPaint
+        ) {
           exceeded = true;
           metric = 'first_contentful_paint';
           value = entry.startTime;
@@ -396,7 +420,7 @@ export class AdvancedPerformanceMonitor {
         value,
         threshold,
         message: `Performance budget exceeded for ${metric}: ${value.toFixed(2)}ms`,
-        recommendation: `Optimize ${metric} to meet budget threshold of ${threshold}ms`
+        recommendation: `Optimize ${metric} to meet budget threshold of ${threshold}ms`,
       });
     }
   }
@@ -414,7 +438,7 @@ export class AdvancedPerformanceMonitor {
     let imageSize = 0;
     let fontSize = 0;
 
-    resources.forEach(resource => {
+    resources.forEach((resource) => {
       const size = resource.transferSize || 0;
       totalSize += size;
 
@@ -435,10 +459,10 @@ export class AdvancedPerformanceMonitor {
       { type: 'js', size: jsSize, budget: budget.jsSize },
       { type: 'css', size: cssSize, budget: budget.cssSize },
       { type: 'image', size: imageSize, budget: budget.imageSize },
-      { type: 'font', size: fontSize, budget: budget.fontSize }
+      { type: 'font', size: fontSize, budget: budget.fontSize },
     ];
 
-    checks.forEach(check => {
+    checks.forEach((check) => {
       if (check.size > check.budget) {
         this.createAlert({
           type: 'budget_exceeded',
@@ -448,7 +472,7 @@ export class AdvancedPerformanceMonitor {
           value: check.size,
           threshold: check.budget,
           message: `Resource budget exceeded for ${check.type}: ${(check.size / 1024).toFixed(2)}KB`,
-          recommendation: `Optimize ${check.type} resources to meet budget of ${(check.budget / 1024).toFixed(2)}KB`
+          recommendation: `Optimize ${check.type} resources to meet budget of ${(check.budget / 1024).toFixed(2)}KB`,
         });
       }
     });
@@ -492,9 +516,9 @@ export class AdvancedPerformanceMonitor {
       await fetch('/api/performance-alert', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(alert)
+        body: JSON.stringify(alert),
       });
     } catch (error) {
       if (this.config.debugMode) {
@@ -516,8 +540,12 @@ export class AdvancedPerformanceMonitor {
     const errors = this.userMetrics.get('errors') || [];
     const conversions = this.userMetrics.get('conversions') || [];
 
-    const averageLoadTime = loadTimes.length > 0 ? loadTimes.reduce((a, b) => a + b, 0) / loadTimes.length : 0;
-    const p95LoadTime = loadTimes.length > 0 ? loadTimes.sort((a, b) => a - b)[Math.floor(loadTimes.length * 0.95)] : 0;
+    const averageLoadTime =
+      loadTimes.length > 0 ? loadTimes.reduce((a, b) => a + b, 0) / loadTimes.length : 0;
+    const p95LoadTime =
+      loadTimes.length > 0
+        ? loadTimes.sort((a, b) => a - b)[Math.floor(loadTimes.length * 0.95)]
+        : 0;
     const errorRate = (errors.length / this.pageViews) * 100;
     const conversionRate = (conversions.length / this.pageViews) * 100;
 
@@ -528,65 +556,74 @@ export class AdvancedPerformanceMonitor {
     const budgetScores = {
       loading: this.calculateBudgetScore([
         { value: baseMetrics.firstContentfulPaint || 0, budget: budget.firstContentfulPaint },
-        { value: baseMetrics.timeToInteractive || 0, budget: budget.speedIndex }
+        { value: baseMetrics.timeToInteractive || 0, budget: budget.speedIndex },
       ]),
       interactivity: this.calculateBudgetScore([
-        { value: baseMetrics.interactionToResponseTime, budget: budget.firstInputDelay }
+        { value: baseMetrics.interactionToResponseTime, budget: budget.firstInputDelay },
       ]),
       visualStability: this.calculateBudgetScore([
-        { value: baseMetrics.criticalResourceLoadTime, budget: budget.totalBlockingTime }
+        { value: baseMetrics.criticalResourceLoadTime, budget: budget.totalBlockingTime },
       ]),
-      accessibility: 100 // Would integrate with accessibility monitoring
+      accessibility: 100, // Would integrate with accessibility monitoring
     };
 
     const totalScore = Object.values(budgetScores).reduce((a, b) => a + b, 0) / 4;
 
     return {
-      memoryUsage: memory ? {
-        used: memory.usedJSHeapSize,
-        total: memory.totalJSHeapSize,
-        limit: memory.jsHeapSizeLimit,
-        percentage: (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100
-      } : { used: 0, total: 0, limit: 0, percentage: 0 },
+      memoryUsage: memory
+        ? {
+            used: memory.usedJSHeapSize,
+            total: memory.totalJSHeapSize,
+            limit: memory.jsHeapSizeLimit,
+            percentage: (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100,
+          }
+        : { used: 0, total: 0, limit: 0, percentage: 0 },
 
-      networkTiming: connection ? {
-        connectionType: connection.type || 'unknown',
-        effectiveType: connection.effectiveType || 'unknown',
-        downlink: connection.downlink || 0,
-        rtt: connection.rtt || 0
-      } : { connectionType: 'unknown', effectiveType: 'unknown', downlink: 0, rtt: 0 },
+      networkTiming: connection
+        ? {
+            connectionType: connection.type || 'unknown',
+            effectiveType: connection.effectiveType || 'unknown',
+            downlink: connection.downlink || 0,
+            rtt: connection.rtt || 0,
+          }
+        : { connectionType: 'unknown', effectiveType: 'unknown', downlink: 0, rtt: 0 },
 
       userEngagement: {
         sessionDuration,
         pageViews: this.pageViews,
         interactions: this.interactions,
         scrollDepth: this.maxScrollDepth,
-        bounceRate: this.interactions === 0 ? 100 : 0
+        bounceRate: this.interactions === 0 ? 100 : 0,
       },
 
       budgetCompliance: {
         totalScore,
-        categoryScores: budgetScores
+        categoryScores: budgetScores,
       },
 
       resourceEfficiency: {
         unusedCSS: 0, // Would need additional analysis
         unusedJS: 0, // Would need additional analysis
         totalResources: performance.getEntriesByType('resource').length,
-        compressedResources: performance.getEntriesByType('resource').filter(r =>
-          (r as PerformanceResourceTiming).responseStart - (r as PerformanceResourceTiming).requestStart < 100
-        ).length,
-        cachedResources: performance.getEntriesByType('resource').filter(r =>
-          (r as PerformanceResourceTiming).transferSize === 0
-        ).length
+        compressedResources: performance
+          .getEntriesByType('resource')
+          .filter(
+            (r) =>
+              (r as PerformanceResourceTiming).responseStart -
+                (r as PerformanceResourceTiming).requestStart <
+              100
+          ).length,
+        cachedResources: performance
+          .getEntriesByType('resource')
+          .filter((r) => (r as PerformanceResourceTiming).transferSize === 0).length,
       },
 
       realUserMetrics: {
         averageLoadTime,
         p95LoadTime,
         errorRate,
-        conversionRate
-      }
+        conversionRate,
+      },
     };
   }
 
@@ -628,7 +665,9 @@ export class AdvancedPerformanceMonitor {
 
     // Generate recommendations based on metrics
     if (advancedMetrics.memoryUsage.percentage > 80) {
-      recommendations.push('High memory usage detected - consider optimizing memory-intensive operations');
+      recommendations.push(
+        'High memory usage detected - consider optimizing memory-intensive operations'
+      );
     }
 
     if (advancedMetrics.userEngagement.bounceRate > 50) {
@@ -640,7 +679,9 @@ export class AdvancedPerformanceMonitor {
     }
 
     if (advancedMetrics.realUserMetrics.errorRate > 2) {
-      recommendations.push('High error rate detected - review error logs and implement error handling');
+      recommendations.push(
+        'High error rate detected - review error logs and implement error handling'
+      );
     }
 
     return {
@@ -648,7 +689,7 @@ export class AdvancedPerformanceMonitor {
       baseMetrics,
       advancedMetrics,
       alerts,
-      recommendations
+      recommendations,
     };
   }
 
@@ -668,16 +709,19 @@ export class AdvancedPerformanceMonitor {
       logger.debug('Advanced performance monitoring started');
 
       // Log advanced report every 2 minutes in debug mode
-      setInterval(() => {
-        logger.group('Advanced Performance Report', () => {
-          const report = this.generateAdvancedReport();
-          logger.debug('Advanced Metrics:', report.advancedMetrics);
-          logger.debug('Recent Alerts:', report.alerts.slice(-3));
-          if (report.recommendations.length > 0) {
-            logger.debug('Recommendations:', report.recommendations);
-          }
-        });
-      }, 2 * 60 * 1000);
+      setInterval(
+        () => {
+          logger.group('Advanced Performance Report', () => {
+            const report = this.generateAdvancedReport();
+            logger.debug('Advanced Metrics:', report.advancedMetrics);
+            logger.debug('Recent Alerts:', report.alerts.slice(-3));
+            if (report.recommendations.length > 0) {
+              logger.debug('Recommendations:', report.recommendations);
+            }
+          });
+        },
+        2 * 60 * 1000
+      );
     }
   }
 }
@@ -685,7 +729,9 @@ export class AdvancedPerformanceMonitor {
 // Global instance management
 let globalAdvancedMonitor: AdvancedPerformanceMonitor;
 
-export function initAdvancedPerformanceMonitor(config?: Partial<AdvancedPerformanceConfig>): AdvancedPerformanceMonitor {
+export function initAdvancedPerformanceMonitor(
+  config?: Partial<AdvancedPerformanceConfig>
+): AdvancedPerformanceMonitor {
   if (!globalAdvancedMonitor) {
     globalAdvancedMonitor = AdvancedPerformanceMonitor.getInstance(config);
   }

@@ -23,7 +23,7 @@ describe('BlogPostCard Component', () => {
 
     it('should have TypeScript type definitions', () => {
       expect(fileContent).toContain('export interface Props');
-      expect(fileContent).toContain('post: CollectionEntry<\'blog\'>');
+      expect(fileContent).toContain("post: CollectionEntry<'blog'>");
       expect(fileContent).toContain('maxTags?: number');
     });
 
@@ -120,7 +120,7 @@ describe('BlogPostCard Component', () => {
     });
 
     it('should conditionally render description', () => {
-      expect(fileContent).toContain('{data.description &&');
+      expect(fileContent).toMatch(/data\.description\s*&&/);
       expect(fileContent).toContain('{data.description}');
     });
 
@@ -132,11 +132,11 @@ describe('BlogPostCard Component', () => {
 
   describe('Utility Integration', () => {
     it('should import formatDateISO utility', () => {
-      expect(fileContent).toContain('import { formatDateISO } from \'../../../utils/index.js\'');
+      expect(fileContent).toContain("import { formatDateISO } from '../../../utils/index.js'");
     });
 
     it('should import Astro types', () => {
-      expect(fileContent).toContain('import type { CollectionEntry } from \'astro:content\'');
+      expect(fileContent).toContain("import type { CollectionEntry } from 'astro:content'");
     });
   });
 

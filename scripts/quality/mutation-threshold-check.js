@@ -17,7 +17,7 @@ import path from 'path';
 const root = process.cwd();
 const primary = path.join(root, 'mutation-report', 'report.json');
 const alt = path.join(root, 'reports', 'mutation', 'report.json');
-const target = fs.existsSync(primary) ? primary : (fs.existsSync(alt) ? alt : null);
+const target = fs.existsSync(primary) ? primary : fs.existsSync(alt) ? alt : null;
 
 if (!target) {
   console.log('ℹ️ No mutation report found; skipping threshold check.');
@@ -26,7 +26,10 @@ if (!target) {
 
 let min = parseFloat(process.env.MUTATION_MIN_SCORE || '0');
 const hard = process.env.MUTATION_HARD_FAIL === '1';
-const baselinePath = path.join(root, process.env.MUTATION_BASELINE_FILE || '.mutation-baseline.json');
+const baselinePath = path.join(
+  root,
+  process.env.MUTATION_BASELINE_FILE || '.mutation-baseline.json'
+);
 const allowDrop = parseFloat(process.env.MUTATION_ALLOW_DROP || '0');
 const updateBaseline = process.env.MUTATION_UPDATE_BASELINE === '1';
 const ratchetOnly = process.env.MUTATION_RATCHET_ONLY === '1';
@@ -35,13 +38,18 @@ try {
   const data = JSON.parse(fs.readFileSync(target, 'utf-8'));
   const killed = data.killed || data.metrics?.killed || 0;
   const total = data.totalMutants || data.metrics?.total || 0;
-  const score = data.mutationScore ?? data.metrics?.mutationScore ?? (total ? (killed/total*100) : 0);
+  const score =
+    data.mutationScore ?? data.metrics?.mutationScore ?? (total ? (killed / total) * 100 : 0);
   console.log(`🧬 Mutation score: ${score}% (${killed}/${total} killed)`);
 
   // Load baseline
   let baselineVal = null;
   if (fs.existsSync(baselinePath)) {
-    try { baselineVal = JSON.parse(fs.readFileSync(baselinePath, 'utf-8')).baseline; } catch { /* ignore */ }
+    try {
+      baselineVal = JSON.parse(fs.readFileSync(baselinePath, 'utf-8')).baseline;
+    } catch {
+      /* ignore */
+    }
   }
   if (baselineVal === null) baselineVal = 0;
 
@@ -50,7 +58,9 @@ try {
   if (ratchetOnly) {
     const drop = baselineVal - score;
     if (drop > allowDrop) {
-      console.warn(`⚠️ Score ${score}% below baseline ${baselineVal}% (drop ${drop} > allow ${allowDrop}).`);
+      console.warn(
+        `⚠️ Score ${score}% below baseline ${baselineVal}% (drop ${drop} > allow ${allowDrop}).`
+      );
       fail = true;
     } else {
       console.log(`✅ Ratchet check passed (baseline ${baselineVal}%, score ${score}%).`);

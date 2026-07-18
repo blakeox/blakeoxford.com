@@ -16,6 +16,13 @@ describe('cn', () => {
   });
 
   it('collapses extra whitespace', () => {
-    expect(cn('  a  ', 'b   c')).toBe('a b c');
+    expect(cn('a', 'b c')).toBe('a b c');
+  });
+
+  it('does not merge conflicting Tailwind utilities (no tailwind-merge)', () => {
+    // Intentional policy: both classes are preserved. Resolve conflicts with
+    // exclusive variant maps (see Button.astro), not by adding tailwind-merge.
+    expect(cn('p-2', 'p-4')).toBe('p-2 p-4');
+    expect(cn('px-2', 'p-4')).toBe('px-2 p-4');
   });
 });

@@ -1,14 +1,14 @@
 ---
 /**
  * FormField - Reusable form field wrapper with label, input, and error handling
- * 
+ *
  * Provides consistent form field styling with:
  * - Label with optional required indicator
  * - Input/textarea/select support
  * - Help text
  * - Error messaging with ARIA live regions
  * - Full accessibility support
- * 
+ *
  * @example
  * <FormField
  * id="email"
@@ -20,50 +20,50 @@
  */
 
 export interface Props {
- /** Field ID (also used for name if not provided) */
- id: string;
- /** Field label text */
- label: string;
- /** Field type */
- type?: 'text' | 'email' | 'tel' | 'url' | 'password' | 'textarea' | 'hidden';
- /** Field name (defaults to id) */
- name?: string;
- /** Is field required */
- required?: boolean;
- /** Placeholder text */
- placeholder?: string;
- /** Help text displayed below field */
- helpText?: string;
- /** Autocomplete value */
- autocomplete?: string;
- /** Min length validation */
- minlength?: number;
- /** Max length validation */
- maxlength?: number;
- /** Number of rows (textarea only) */
- rows?: number;
- /** Additional CSS classes for input */
- class?: string;
- /** Default value */
- value?: string;
+  /** Field ID (also used for name if not provided) */
+  id: string;
+  /** Field label text */
+  label: string;
+  /** Field type */
+  type?: 'text' | 'email' | 'tel' | 'url' | 'password' | 'textarea' | 'hidden';
+  /** Field name (defaults to id) */
+  name?: string;
+  /** Is field required */
+  required?: boolean;
+  /** Placeholder text */
+  placeholder?: string;
+  /** Help text displayed below field */
+  helpText?: string;
+  /** Autocomplete value */
+  autocomplete?: string;
+  /** Min length validation */
+  minlength?: number;
+  /** Max length validation */
+  maxlength?: number;
+  /** Number of rows (textarea only) */
+  rows?: number;
+  /** Additional CSS classes for input */
+  class?: string;
+  /** Default value */
+  value?: string;
 }
 
 const props = Astro.props as Props;
 
 const {
- id,
- label,
- type = 'text',
- name,
- required = false,
- placeholder,
- helpText,
- autocomplete,
- minlength,
- maxlength,
- rows = 5,
- class: className = '',
- value,
+  id,
+  label,
+  type = 'text',
+  name,
+  required = false,
+  placeholder,
+  helpText,
+  autocomplete,
+  minlength,
+  maxlength,
+  rows = 5,
+  class: className = '',
+  value,
 } = props;
 
 const fieldName = name || id;
@@ -73,76 +73,74 @@ const isHidden = type === 'hidden';
 const ariaRequired: 'true' | undefined = required ? 'true' : undefined;
 
 const inputClasses = [
- 'w-full rounded-xl border border-border bg-surface px-4 py-3.5 text-base text-foreground shadow-sm',
- 'placeholder:text-subtle-foreground/80',
- 'hover:border-accent/40 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25',
- 'disabled:cursor-not-allowed disabled:opacity-60',
- 'transition-[border-color,box-shadow,background-color]',
- className,
-].filter(Boolean).join(' ');
+  'w-full rounded-xl border border-border bg-surface px-4 py-3.5 text-base text-foreground shadow-sm',
+  'placeholder:text-subtle-foreground/80',
+  'hover:border-accent/40 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25',
+  'disabled:cursor-not-allowed disabled:opacity-60',
+  'transition-[border-color,box-shadow,background-color]',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 const commonProps = {
- id,
- name: fieldName,
- required,
- placeholder,
- autocomplete,
- minlength,
- maxlength,
- 'aria-required': ariaRequired,
- 'aria-describedby': [
- helpText && `${id}-help`,
- `${id}-error`,
- ].filter(Boolean).join(' ') || undefined,
- class: inputClasses,
- value,
+  id,
+  name: fieldName,
+  required,
+  placeholder,
+  autocomplete,
+  minlength,
+  maxlength,
+  'aria-required': ariaRequired,
+  'aria-describedby':
+    [helpText && `${id}-help`, `${id}-error`].filter(Boolean).join(' ') || undefined,
+  class: inputClasses,
+  value,
 };
 ---
 
-{!isHidden && (
- <div class="form-group flex flex-col gap-2">
- <label for={id} class="text-sm font-semibold text-foreground">
- {label}
- {required && <span class="text-error-emphasis" aria-hidden="true">*</span>}
- </label>
- 
- {isTextarea ? (
- <textarea
- {...commonProps}
- rows={rows}
- ></textarea>
- ) : (
- <input
- type={type}
- {...commonProps}
- />
- )}
- 
- {helpText && (
- <small id={`${id}-help`} class="text-xs leading-relaxed text-muted-foreground">
- {helpText}
- </small>
- )}
- 
- <div
- id={`${id}-error`}
- class="hidden text-xs font-medium text-error-emphasis"
- role="alert"
- aria-live="polite"
- aria-atomic="true"
- ></div>
- </div>
-)}
+{
+  !isHidden && (
+    <div class="form-group flex flex-col gap-2">
+      <label for={id} class="text-sm font-semibold text-foreground">
+        {label}
+        {required && (
+          <span class="text-error-emphasis" aria-hidden="true">
+            *
+          </span>
+        )}
+      </label>
 
-{isHidden && (
- <>
- <label for={id} class="sr-only">{label || id}</label>
- <input
- type="hidden"
- id={id}
- name={fieldName}
- value={value}
- aria-hidden="true"
- />
- </>
-)}
+      {isTextarea ? (
+        <textarea {...commonProps} rows={rows} />
+      ) : (
+        <input type={type} {...commonProps} />
+      )}
+
+      {helpText && (
+        <small id={`${id}-help`} class="text-xs leading-relaxed text-muted-foreground">
+          {helpText}
+        </small>
+      )}
+
+      <div
+        id={`${id}-error`}
+        class="hidden text-xs font-medium text-error-emphasis"
+        role="alert"
+        aria-live="polite"
+        aria-atomic="true"
+      />
+    </div>
+  )
+}
+
+{
+  isHidden && (
+    <>
+      <label for={id} class="sr-only">
+        {label || id}
+      </label>
+      <input type="hidden" id={id} name={fieldName} value={value} aria-hidden="true" />
+    </>
+  )
+}
