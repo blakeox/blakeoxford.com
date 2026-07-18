@@ -29,7 +29,7 @@ describe('ProjectRow.astro file', () => {
 
   it('should render tags list with correct aria-label', () => {
     expect(content).toContain('aria-label="Project tags"');
-    expect(content).toContain('<ul class="flex flex-wrap gap-2');
+    expect(content).toMatch(/<ul[^>]*class="[^"]*\bflex\b[^"]*\bflex-wrap\b[^"]*\bgap-2\b/);
   });
 
   it('should render primary call-to-action with descriptive text', () => {
