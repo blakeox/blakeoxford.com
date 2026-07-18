@@ -37,7 +37,7 @@ const IGNORED_DIRS = new Set([
 const SOURCE_EXTENSIONS = /\.(astro|tsx?|jsx?|css|mdx?)$/;
 const DUPLICATE_COPY_REGEX = /(?:^|\/)[^/]+ 2\.[^/]+$/;
 const HEX_REGEX = /#[0-9a-fA-F]{3,8}\b/g;
-const TOKEN_ALLOW_PATH = /(?:^|\/)(?:tailwind\.config\.ts|DESIGN_BEST_PRACTICES\.md)|design-best-practices|token|theme|migration/i;
+const TOKEN_ALLOW_PATH = /(?:^|\/)(?:DESIGN_BEST_PRACTICES\.md)|design-best-practices|token|theme|migration/i;
 const ARBITRARY_SPACING_PX_REGEX =
   /(?:^|\s)(?:-?m[trblxy]?|-?p[trblxy]?|gap[xy]?|space-[xy]|inset[xy]?|top|right|bottom|left)-\[[^\]\n]*?(-?\d+(?:\.\d+)?)px[^\]\n]*?\]/g;
 const UNDEFINED_DESIGN_REGEX =
@@ -51,6 +51,7 @@ const PARALLEL_DARK_UTIL_REGEX =
 const HARD_ELEVATION_REGEX = /(?<!-)(?:\bshadow-(?:xl|2xl)\b)|shadow-\[[^\]]+\]/g;
 const HARD_RADIUS_REGEX = /\brounded-\[[^\]]+\]/g;
 const SHELL_ESCAPE_REGEX = /-mt-24|-mx-4\s+sm:-mx-6\s+lg:-mx-8/g;
+const HARD_GUTTER_REGEX = /\bpx-4\s+sm:px-6\s+lg:px-8\b/g;
 const DIRECT_CONTAINER_REGEX = /\bcontainer\s+mx-auto\b/g;
 const LEGACY_COMPONENT_PATH_REGEX = /src\/components\/(?:chat|common|composite|config|debug|media|ui)\b|components\/(?:chat|common|composite|config|debug|media|ui)\b|\.\.\/(?:common|composite|media|ui)\//g;
 const COMPONENT_DOC_ENTRY_REGEX =
@@ -94,6 +95,7 @@ const findings = {
   elevation: [],
   radius: [],
   shell: [],
+  gutter: [],
   container: [],
 };
 
@@ -268,6 +270,7 @@ function scanSourceFile(file) {
     !relPath.startsWith('src/pages/accessibility/')
   ) {
     addRegexFindings(findings.shell, relPath, content, SHELL_ESCAPE_REGEX);
+    addRegexFindings(findings.gutter, relPath, content, HARD_GUTTER_REGEX);
     addRegexFindings(findings.container, relPath, content, DIRECT_CONTAINER_REGEX);
   }
 }
@@ -299,6 +302,7 @@ printFindings('Raw palette utilities detected in reusable surfaces', findings.pa
 printFindings('Hard-coded high elevation detected in primitives/composites', findings.elevation);
 printFindings('Hard-coded arbitrary radius detected in primitives/composites', findings.radius);
 printFindings('Legacy shell escape patterns detected', findings.shell);
+printFindings('Hard-coded page gutters detected (use layout-gutter or Container)', findings.gutter);
 printFindings('Direct container shell usage detected', findings.container);
 
 const issueCount = Object.values(findings).reduce((count, list) => count + list.length, 0);

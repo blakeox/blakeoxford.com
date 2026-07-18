@@ -24,7 +24,7 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 | 3. Tailwind bridge | `@theme inline` | Exposes utilities (`bg-surface`, `text-accent-emphasis`, `shadow-overlay`, `duration-normal`, `z-nav`). Z-index tokens use the `--z-index-*` namespace so utilities become `z-nav`, `z-chat`, `z-chat-launcher`, `z-search`. |
 | 4. Build | `@tailwindcss/vite` in `astro.config.mjs` | Resolves `@import "tailwindcss"` from `global.css` |
 
-`tailwind.config.ts` is **not** the color map. It only keeps the typography plugin, container padding, and a few custom screens.
+`global.css` loads Tailwind and `@plugin "@tailwindcss/typography"`. There is no JS `tailwind.config` — tokens, variants, and utilities are CSS-first.
 
 ### Architecture features in use
 
@@ -49,6 +49,12 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 | Motion | `--duration-fast` … `--duration-slow` | `duration-fast`, `duration-moderate` |
 | Z-index | `--z-nav`, `--z-chat`, `--z-chat-launcher`, `--z-search` | `z-nav`, `z-chat`, `z-chat-launcher`, `z-search` |
 | Layout | `--container-padding*`, `--layout-max-2xl`, `--nav-height` | `layout-gutter` (via `Container`), `max-w-container-2xl` |
+
+Page gutters: prefer `Container` or the `.layout-gutter` class. Do not hard-code `px-4 sm:px-6 lg:px-8` — `design:lint` rejects that pattern on app surfaces.
+
+Article/MDX body: wrap with `Prose` (`src/components/primitives/Prose.astro`). Token remaps for typography live in `@utility prose` in `global.css`.
+
+Live token docs at `/design/tokens` auto-list public utilities by parsing `@theme inline` via `src/lib/designTokens.ts`.
 
 There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind’s type and spacing scales plus the tokens above.
 

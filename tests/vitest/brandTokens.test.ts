@@ -38,6 +38,26 @@ describe('brand token contract', () => {
     expect(themeCss).toContain('--z-chat-launcher');
     expect(themeCss).toContain('--z-index-chat-launcher');
   });
+
+  it('bridges layout max-width for max-w-container-2xl', () => {
+    expect(themeCss).toContain('--max-width-container-2xl');
+    expect(themeCss).toContain('--layout-max-2xl');
+  });
+});
+
+describe('Tailwind CSS-first entry', () => {
+  it('registers typography via @plugin in global.css', () => {
+    const globalCss = readFileSync(resolve(__dirname, '../../src/styles/global.css'), 'utf8');
+    expect(globalCss).toMatch(/@plugin ['"]@tailwindcss\/typography['"]/);
+    expect(globalCss).toContain('@custom-variant dark');
+  });
+
+  it('overrides prose plugin vars with semantic tokens', () => {
+    const globalCss = readFileSync(resolve(__dirname, '../../src/styles/global.css'), 'utf8');
+    expect(globalCss).toContain('@utility prose');
+    expect(globalCss).toContain('--tw-prose-body: var(--color-foreground)');
+    expect(globalCss).toContain('--tw-prose-links: var(--color-accent-emphasis)');
+  });
 });
 
 describe('interactive focus ring utility', () => {

@@ -59,7 +59,7 @@ const ogImage = image
 
 const baseMainClasses = wide
  ? 'w-full'
- : 'mx-auto w-full max-w-3xl px-4 pt-24 sm:px-6 lg:px-8 text-base leading-relaxed text-foreground prose';
+ : 'mx-auto w-full max-w-3xl layout-gutter pt-24 text-base leading-relaxed text-foreground prose';
 
 const mainClasses = baseMainClasses;
 
@@ -121,7 +121,7 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
 
  <!-- Additional SEO Meta Tags -->
  <meta name="format-detection" content="telephone=no" />
- <meta name="msapplication-TileColor" content="rgb(var(--color-primary))" />
+ <meta name="msapplication-TileColor" content={THEME_COLOR_LIGHT} />
  <meta name="application-name" content="Blake Oxford Portfolio" />
  <!-- Apple mobile web app support -->
  <meta name="mobile-web-app-capable" content="yes" />

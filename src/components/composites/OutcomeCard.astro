@@ -9,12 +9,12 @@ export interface Props {
 const { title, achievements } = Astro.props;
 ---
 
-<BaseCard variant="subtle" hover="none" rounded="3xl" padding="lg" as="section">
-  <header class="space-y-2 mb-4">
+<BaseCard variant="subtle" hover="none" rounded="3xl" padding="lg" as="section" class="@container">
+  <header class="mb-4 space-y-2">
     <p class="text-xs font-semibold uppercase tracking-label text-subtle-foreground">
       Outcome thread
     </p>
-    <h3 class="text-xl sm:text-2xl font-semibold text-foreground">
+    <h3 class="text-xl font-semibold text-foreground @sm:text-2xl">
       {title}
     </h3>
   </header>

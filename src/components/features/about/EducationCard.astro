@@ -17,7 +17,7 @@ const {
  description,
 } = Astro.props;
 ---
-<Card hover="lift" padding="md" class="group">
+<Card hover="lift" padding="md" containerQuery class="group">
  <div class="flex items-start">
  <div class="flex-shrink-0 rounded-lg bg-accent-subtle p-3 transition-transform duration-moderate group-hover:scale-110">
  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
@@ -27,7 +27,7 @@ const {
  </svg>
  </div>
  <div class="ml-4">
- <h3 class="text-xl font-bold text-foreground transition-colors duration-moderate group-hover:text-accent sm:text-2xl">
+ <h3 class="text-xl font-bold text-foreground transition-colors duration-moderate group-hover:text-accent @sm:text-2xl">
  {institution}
  </h3>
  <div class="mb-2 text-sm text-muted-foreground">

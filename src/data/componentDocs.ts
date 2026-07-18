@@ -679,6 +679,43 @@ export const componentDocs: ComponentDoc[] = [
     tokenDependencies: ['--container-padding', '--container-padding-lg'],
   },
   {
+    name: 'Prose',
+    category: 'Primitives',
+    description:
+      'Article/MDX typography shell. Encodes the blog prose recipe once so pages do not scatter long prose-* modifier strings. Token remaps live in @utility prose.',
+    filePath: 'src/components/primitives/Prose.astro',
+    props: [
+      {
+        name: 'size',
+        type: '\'base\' | \'lg\' | \'xl\'',
+        required: false,
+        default: '\'xl\'',
+        description: 'Typography scale (maps to prose / prose-lg / prose-lg lg:prose-xl)',
+      },
+      {
+        name: 'as',
+        type: '\'div\' | \'article\' | \'section\'',
+        required: false,
+        default: '\'div\'',
+        description: 'HTML element to render',
+      },
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+    ],
+    examples: [
+      {
+        title: 'Blog article body',
+        code: '<Prose>\n  <Content />\n</Prose>',
+      },
+      {
+        title: 'Compact prose',
+        code: '<Prose size="base"><p>Short copy</p></Prose>',
+      },
+    ],
+    tags: ['prose', 'typography', 'mdx', 'blog', 'primitive'],
+    visualTier: 'quiet',
+    tokenDependencies: ['prose', '--color-foreground', '--color-accent-emphasis', '--font-heading'],
+  },
+  {
     name: 'Flex',
     category: 'Primitives',
     description: 'Flexbox layout primitive',
