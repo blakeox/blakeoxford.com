@@ -30,7 +30,7 @@ export class LazyBundleLoader {
       enableLogging: import.meta.env.DEV,
       retryAttempts: 3,
       retryDelay: 1000,
-      ...config
+      ...config,
     };
   }
 
@@ -52,12 +52,12 @@ export class LazyBundleLoader {
       retryAttempts: this.config.retryAttempts,
       retryDelay: this.config.retryDelay,
       timeout: 30000,
-      ...options
+      ...options,
     };
 
     const promise = this.loadScriptWithRetry(bundleName, loadOptions);
     this.loadingPromises.set(bundleName, promise);
-    
+
     try {
       await promise;
       this.loadedBundles.add(bundleName);
@@ -73,7 +73,11 @@ export class LazyBundleLoader {
   /**
    * Load external libraries with caching
    */
-  async loadExternalLibrary(libName: string, url: string, options: LoadOptions = {}): Promise<void> {
+  async loadExternalLibrary(
+    libName: string,
+    url: string,
+    options: LoadOptions = {}
+  ): Promise<void> {
     if (this.loadedBundles.has(libName)) {
       this.log(`External library already loaded: ${libName}`);
       return Promise.resolve();
@@ -88,12 +92,12 @@ export class LazyBundleLoader {
       retryAttempts: this.config.retryAttempts,
       retryDelay: this.config.retryDelay,
       timeout: 30000,
-      ...options
+      ...options,
     };
 
     const promise = this.loadScriptWithRetry(libName, loadOptions, url);
     this.loadingPromises.set(libName, promise);
-    
+
     try {
       await promise;
       this.loadedBundles.add(libName);
@@ -123,9 +127,7 @@ export class LazyBundleLoader {
     // Only load external libraries, not the old interactive bundle
     // since we're using modular TypeScript components now
     // Load Fuse.js from local assets to comply with CSP and avoid third-party fetches
-    await Promise.all([
-      this.loadBundle('fuse')
-    ]);
+    await Promise.all([this.loadBundle('fuse')]);
   }
 
   /**
@@ -168,7 +170,7 @@ export class LazyBundleLoader {
     return {
       loadedBundles: Array.from(this.loadedBundles),
       loadingBundles: Array.from(this.loadingPromises.keys()),
-      loadedModules: Array.from(this.modulesLoaded)
+      loadedModules: Array.from(this.modulesLoaded),
     };
   }
 
@@ -176,23 +178,25 @@ export class LazyBundleLoader {
    * Load script with retry logic
    */
   private async loadScriptWithRetry(
-    name: string, 
-    options: Required<LoadOptions>, 
+    name: string,
+    options: Required<LoadOptions>,
     customUrl?: string
   ): Promise<void> {
     const url = customUrl || `${this.config.basePath}${name}.min.js`;
-    
+
     for (let attempt = 1; attempt <= options.retryAttempts; attempt++) {
       try {
         await this.loadScript(url, options.timeout);
         return;
       } catch (error) {
         this.log(`Attempt ${attempt}/${options.retryAttempts} failed for ${name}:`, error);
-        
+
         if (attempt === options.retryAttempts) {
-          throw new Error(`Failed to load ${name} after ${options.retryAttempts} attempts`, { cause: error });
+          throw new Error(`Failed to load ${name} after ${options.retryAttempts} attempts`, {
+            cause: error,
+          });
         }
-        
+
         // Wait before retrying
         await this.delay(options.retryDelay * attempt);
       }
@@ -212,7 +216,7 @@ export class LazyBundleLoader {
       const script = document.createElement('script');
       script.src = url;
       script.async = true;
-      
+
       const timeoutId = setTimeout(() => {
         reject(new Error(`Timeout loading script: ${url}`));
       }, timeout);
@@ -221,12 +225,12 @@ export class LazyBundleLoader {
         clearTimeout(timeoutId);
         resolve();
       };
-      
+
       script.onerror = () => {
         clearTimeout(timeoutId);
         reject(new Error(`Failed to load script: ${url}`));
       };
-      
+
       document.head.appendChild(script);
     });
   }
@@ -235,7 +239,7 @@ export class LazyBundleLoader {
    * Utility delay function
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -254,23 +258,23 @@ export function initLazyBundleLoader(config?: LazyLoaderConfig): LazyBundleLoade
     window.LazyBundleLoader = new LazyBundleLoader(config);
     return window.LazyBundleLoader;
   }
-  
+
   return new LazyBundleLoader(config);
 }
 
 // Load accessibility features on first user interaction
 export function setupAccessibilityLoading(loader: LazyBundleLoader): void {
   if (typeof document === 'undefined') return;
-  
+
   const events = ['keydown', 'click', 'focus'];
   const loadOnce = () => {
     loader.loadAccessibilityFeatures();
-    events.forEach(event => {
+    events.forEach((event) => {
       document.removeEventListener(event, loadOnce, true);
     });
   };
-  
-  events.forEach(event => {
+
+  events.forEach((event) => {
     document.addEventListener(event, loadOnce, true);
   });
 
@@ -283,7 +287,7 @@ export function setupAccessibilityLoading(loader: LazyBundleLoader): void {
 // Initialize progressive loading
 export function setupProgressiveLoading(loader: LazyBundleLoader): void {
   if (typeof document === 'undefined') return;
-  
+
   const loadInteractive = () => {
     setTimeout(() => loader.loadInteractiveFeatures(), 100);
   };
@@ -301,4 +305,4 @@ if (typeof window !== 'undefined') {
   (window as Window & { LazyBundleLoader?: LazyBundleLoader }).LazyBundleLoader = loader;
   setupAccessibilityLoading(loader);
   setupProgressiveLoading(loader);
-} 
+}

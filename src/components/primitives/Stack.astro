@@ -15,36 +15,28 @@ import type { HTMLAttributes } from 'astro/types';
  */
 
 export interface Props extends HTMLAttributes<'div'> {
- /** Vertical spacing size */
- space?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
- /** HTML element type */
- as?: 'div' | 'section' | 'article' | 'ul' | 'ol' | 'nav' | 'header' | 'footer';
+  /** Vertical spacing size */
+  space?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+  /** HTML element type */
+  as?: 'div' | 'section' | 'article' | 'ul' | 'ol' | 'nav' | 'header' | 'footer';
 }
 
-const {
- space = 'md',
- as: Element = 'div',
- class: className = '',
- ...rest
-} = Astro.props as Props;
+const { space = 'md', as: Element = 'div', class: className = '', ...rest } = Astro.props as Props;
 
 // Space styles (matching common patterns in codebase)
 const spaceStyles = {
- xs: 'space-y-2',
- sm: 'space-y-3',
- md: 'space-y-4',
- lg: 'space-y-6',
- xl: 'space-y-8',
- '2xl': 'space-y-12',
- '3xl': 'space-y-16',
+  xs: 'space-y-2',
+  sm: 'space-y-3',
+  md: 'space-y-4',
+  lg: 'space-y-6',
+  xl: 'space-y-8',
+  '2xl': 'space-y-12',
+  '3xl': 'space-y-16',
 };
 
-const classes = [
- spaceStyles[space],
- className,
-].filter(Boolean).join(' ');
+const classes = [spaceStyles[space], className].filter(Boolean).join(' ');
 ---
 
 <Element class={classes} {...rest}>
- <slot />
+  <slot />
 </Element>

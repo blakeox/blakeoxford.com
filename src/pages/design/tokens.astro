@@ -15,13 +15,22 @@ const colorTokens = grouped.color;
 
 const semanticRows = colorTokens.map((token) => ({
   name: token.stem,
+  cssVar: token.name,
   utility: token.utility ?? `bg-${token.stem}`,
   usage: SEMANTIC_COLOR_USAGE[token.stem] ?? 'Public theme token (bridged via @theme inline)',
 }));
 
 const categorySections = [
-  { id: 'motion', title: 'Motion', tokens: [...grouped.motion, ...grouped.ease, ...grouped.animate] },
-  { id: 'type', title: 'Typography', tokens: [...grouped.font, ...grouped.text, ...grouped.tracking] },
+  {
+    id: 'motion',
+    title: 'Motion',
+    tokens: [...grouped.motion, ...grouped.ease, ...grouped.animate],
+  },
+  {
+    id: 'type',
+    title: 'Typography',
+    tokens: [...grouped.font, ...grouped.text, ...grouped.tracking],
+  },
   { id: 'radius', title: 'Radius', tokens: grouped.radius },
   { id: 'shadow', title: 'Shadows', tokens: grouped.shadow },
   { id: 'z-index', title: 'Z-index', tokens: grouped['z-index'] },
@@ -56,33 +65,50 @@ const rules = [
           Token contract
         </h1>
         <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
-          Tokens live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">src/styles/theme.css</code>.
-          Shared classes live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">components.css</code>.
-          Dark mode remaps semantic tokens on <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">:root</code> — components should not restate dark variants.
-          Public utilities below are generated from <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">@theme inline</code> ({tokens.length} tokens).
+          Tokens live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm"
+            >src/styles/theme.css</code
+          >. Shared classes live in <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm"
+            >components.css</code
+          >. Dark mode remaps semantic tokens on <code
+            class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">:root</code
+          > — components should not restate dark variants. Public utilities below are generated from <code
+            class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">@theme inline</code
+          > ({tokens.length} tokens).
         </p>
       </header>
 
       <div class="mt-12 grid gap-4 md:grid-cols-3">
         <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
-          <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Source</p>
+          <p class="text-sm font-semibold tracking-label text-subtle-foreground uppercase">
+            Source
+          </p>
           <p class="mt-3 text-xl font-semibold text-foreground">theme.css</p>
-          <p class="mt-2 text-sm text-muted-foreground">OKLCH palette, motion, glass, and dark swaps.</p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            OKLCH palette, motion, glass, and dark swaps.
+          </p>
         </div>
         <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
-          <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Bridge</p>
+          <p class="text-sm font-semibold tracking-label text-subtle-foreground uppercase">
+            Bridge
+          </p>
           <p class="mt-3 text-xl font-semibold text-foreground">@theme inline</p>
-          <p class="mt-2 text-sm text-muted-foreground">Generates semantic Tailwind utilities from tokens.</p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            Generates semantic Tailwind utilities from tokens.
+          </p>
         </div>
         <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
-          <p class="text-sm font-semibold uppercase tracking-label text-subtle-foreground">Entry</p>
+          <p class="text-sm font-semibold tracking-label text-subtle-foreground uppercase">Entry</p>
           <p class="mt-3 text-xl font-semibold text-foreground">global.css</p>
-          <p class="mt-2 text-sm text-muted-foreground">Tailwind import, typography plugin, and custom variants.</p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            Tailwind import, typography plugin, and custom variants.
+          </p>
         </div>
       </div>
 
       <section class="mt-16" aria-labelledby="brand-palette">
-        <h2 id="brand-palette" class="font-heading text-2xl font-bold text-foreground">Brand palette</h2>
+        <h2 id="brand-palette" class="font-heading text-2xl font-bold text-foreground">
+          Brand palette
+        </h2>
         <p class="mt-3 max-w-3xl text-muted-foreground">
           Primary ink at OKLCH hue <strong>55°</strong>; accent brass at <strong>75°</strong>.
         </p>
@@ -91,29 +117,74 @@ const rules = [
             <div class="mb-4 h-16 rounded-xl bg-primary"></div>
             <h3 class="font-semibold text-foreground">primary</h3>
             <p class="mt-1 text-sm text-subtle-foreground">55° · <code>--color-primary</code></p>
-            <p class="mt-2 text-sm text-muted-foreground">Warm ink — secondary brand surfaces and emphasis</p>
+            <p class="mt-2 text-sm text-muted-foreground">
+              Warm ink — secondary brand surfaces and emphasis
+            </p>
           </article>
           <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
-            <div class="mb-4 flex h-16 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-on-accent">
+            <div
+              class="mb-4 flex h-16 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-on-accent"
+            >
               text-on-accent
             </div>
             <h3 class="font-semibold text-foreground">accent</h3>
-            <p class="mt-1 text-sm text-subtle-foreground">75° · <code>--color-accent</code> + <code>--color-on-accent</code></p>
-            <p class="mt-2 text-sm text-muted-foreground">Brass signal — CTAs, focus rings, interactive chrome (AA with on-accent)</p>
+            <p class="mt-1 text-sm text-subtle-foreground">
+              75° · <code>--color-accent</code> + <code>--color-on-accent</code>
+            </p>
+            <p class="mt-2 text-sm text-muted-foreground">
+              Brass signal — CTAs, focus rings, interactive chrome (AA with on-accent)
+            </p>
           </article>
           <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
             <div class="mb-4 h-16 rounded-xl bg-accent-subtle"></div>
             <h3 class="font-semibold text-foreground">accent-subtle</h3>
-            <p class="mt-1 text-sm text-subtle-foreground">75° mix · <code>--color-accent-subtle</code></p>
-            <p class="mt-2 text-sm text-muted-foreground">Soft accent washes for panels and chips</p>
+            <p class="mt-1 text-sm text-subtle-foreground">
+              75° mix · <code>--color-accent-subtle</code>
+            </p>
+            <p class="mt-2 text-sm text-muted-foreground">
+              Soft accent washes for panels and chips
+            </p>
           </article>
         </div>
       </section>
 
-      <section class="mt-16" aria-labelledby="semantic-colors">
-        <h2 id="semantic-colors" class="font-heading text-2xl font-bold text-foreground">Semantic color utilities</h2>
+      <section class="mt-16" aria-labelledby="contrast-pairs">
+        <h2 id="contrast-pairs" class="font-heading text-2xl font-bold text-foreground">
+          Live contrast pairs
+        </h2>
         <p class="mt-3 max-w-3xl text-muted-foreground">
-          Auto-listed from <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">@theme inline</code>. Usage notes are curated where available.
+          Computed in the browser from the active theme cascade. Toggle light/dark in the nav to
+          refresh ratios.
+        </p>
+        <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm">
+          <table class="min-w-full text-left text-sm">
+            <thead class="border-b border-border/40 bg-surface-subtle/60 text-subtle-foreground">
+              <tr>
+                <th class="px-4 py-3 font-semibold">Pair</th>
+                <th class="px-4 py-3 font-semibold">Theme</th>
+                <th class="px-4 py-3 font-semibold">Foreground</th>
+                <th class="px-4 py-3 font-semibold">Background</th>
+                <th class="px-4 py-3 font-semibold">Ratio</th>
+                <th class="px-4 py-3 font-semibold">WCAG</th>
+              </tr>
+            </thead>
+            <tbody id="token-contrast-pairs">
+              <tr>
+                <td class="px-4 py-3 text-muted-foreground" colspan="6">Resolving contrast…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="mt-16" aria-labelledby="semantic-colors">
+        <h2 id="semantic-colors" class="font-heading text-2xl font-bold text-foreground">
+          Semantic color utilities
+        </h2>
+        <p class="mt-3 max-w-3xl text-muted-foreground">
+          Auto-listed from <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm"
+            >@theme inline</code
+          >. Resolved values update with the active theme.
         </p>
         <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm">
           <table class="min-w-full text-left text-sm">
@@ -121,50 +192,81 @@ const rules = [
               <tr>
                 <th class="px-4 py-3 font-semibold">Name</th>
                 <th class="px-4 py-3 font-semibold">Utility</th>
+                <th class="px-4 py-3 font-semibold">Resolved</th>
                 <th class="px-4 py-3 font-semibold">Usage</th>
               </tr>
             </thead>
             <tbody>
-              {semanticRows.map((row) => (
-                <tr class="border-b border-border/20 last:border-0">
-                  <td class="px-4 py-3 font-medium text-foreground">{row.name}</td>
-                  <td class="px-4 py-3"><code class="text-accent-emphasis">{row.utility}</code></td>
-                  <td class="px-4 py-3 text-muted-foreground">{row.usage}</td>
-                </tr>
-              ))}
+              {
+                semanticRows.map((row) => (
+                  <tr class="border-b border-border/20 last:border-0">
+                    <td class="px-4 py-3 font-medium text-foreground">{row.name}</td>
+                    <td class="px-4 py-3">
+                      <code class="text-accent-emphasis">{row.utility}</code>
+                    </td>
+                    <td class="px-4 py-3">
+                      <code class="text-xs text-muted-foreground" data-token-var={row.cssVar}>
+                        …
+                      </code>
+                    </td>
+                    <td class="px-4 py-3 text-muted-foreground">{row.usage}</td>
+                  </tr>
+                ))
+              }
             </tbody>
           </table>
         </div>
       </section>
 
-      {categorySections.map((section) => (
-        <section class="mt-16" aria-labelledby={`token-${section.id}`}>
-          <h2 id={`token-${section.id}`} class="font-heading text-2xl font-bold text-foreground">{section.title}</h2>
-          <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {section.tokens.map((token) => (
-              <li class="rounded-xl border border-border/40 bg-surface px-4 py-3 shadow-sm">
-                <p class="font-medium text-foreground">{token.stem}</p>
-                <p class="mt-1 text-xs text-subtle-foreground"><code>{token.name}</code></p>
-                {token.utility && (
-                  <p class="mt-1 text-sm text-accent-emphasis"><code>{token.utility}</code></p>
-                )}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      {
+        categorySections.map((section) => (
+          <section class="mt-16" aria-labelledby={`token-${section.id}`}>
+            <h2 id={`token-${section.id}`} class="font-heading text-2xl font-bold text-foreground">
+              {section.title}
+            </h2>
+            <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {section.tokens.map((token) => (
+                <li class="rounded-xl border border-border/40 bg-surface px-4 py-3 shadow-sm">
+                  <p class="font-medium text-foreground">{token.stem}</p>
+                  <p class="mt-1 text-xs text-subtle-foreground">
+                    <code>{token.name}</code>
+                  </p>
+                  {token.utility && (
+                    <p class="mt-1 text-sm text-accent-emphasis">
+                      <code>{token.utility}</code>
+                    </p>
+                  )}
+                  <p class="mt-2 text-xs text-muted-foreground">
+                    Resolved: <code data-token-var={token.name}>…</code>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
 
-      <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm" aria-labelledby="token-rules">
+      <section
+        class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm"
+        aria-labelledby="token-rules"
+      >
         <h2 id="token-rules" class="font-heading text-2xl font-bold text-foreground">Rules</h2>
         <ul class="mt-4 space-y-2 text-muted-foreground">
-          {rules.map((rule) => (
-            <li class="flex gap-3">
-              <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
-              <span>{rule}</span>
-            </li>
-          ))}
+          {
+            rules.map((rule) => (
+              <li class="flex gap-3">
+                <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                <span>{rule}</span>
+              </li>
+            ))
+          }
         </ul>
       </section>
     </Container>
   </Section>
+
+  <script>
+    import { initTokenLiveValues } from '../../scripts/features/tokenLiveValues';
+    initTokenLiveValues();
+  </script>
 </BaseLayout>

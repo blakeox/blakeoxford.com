@@ -24,7 +24,7 @@ function kindLabel(kind?: AiChatAskDetail['sourceKind']): string {
 
 export function buildAskPrompt(
   query: string,
-  options?: Pick<AiChatAskDetail, 'sourceTitle' | 'sourceKind'>,
+  options?: Pick<AiChatAskDetail, 'sourceTitle' | 'sourceKind'>
 ): string {
   const trimmed = query.trim();
   const title = options?.sourceTitle?.trim();

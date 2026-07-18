@@ -51,7 +51,7 @@ describe('component documentation catalog', () => {
       if (!doc.visualBaseline) continue;
       expect(
         componentVisualBaselines[doc.visualBaseline],
-        `${doc.name} references unknown baseline ${doc.visualBaseline}`,
+        `${doc.name} references unknown baseline ${doc.visualBaseline}`
       ).toBeDefined();
     }
   });

@@ -16,23 +16,31 @@ const { author, tagline, description, content } = Astro.props as Props;
 ---
 
 <PageHero id="about-me" class="hero-gradient-animated" includeBlurOrbs={false}>
-  <div class="relative z-10 grid items-center gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16">
+  <div
+    class="relative z-10 grid items-center gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16"
+  >
     <div class="hero-entrance order-2 max-w-xl space-y-7 lg:order-1">
       <p class="section-kicker">{content.kicker}</p>
       <div class="space-y-4">
-        <h1 class="font-heading text-5xl font-semibold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[4.75rem] lg:leading-[1.02]">
+        <h1
+          class="font-heading text-5xl font-semibold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[4.75rem] lg:leading-[1.02]"
+        >
           {author}
         </h1>
-        {tagline && (
-          <p class="max-w-lg text-xl font-medium leading-snug text-foreground/90 sm:text-2xl">
-            {tagline}
-          </p>
-        )}
-        {description && (
-          <p class="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {description}
-          </p>
-        )}
+        {
+          tagline && (
+            <p class="max-w-lg text-xl leading-snug font-medium text-foreground/90 sm:text-2xl">
+              {tagline}
+            </p>
+          )
+        }
+        {
+          description && (
+            <p class="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
+              {description}
+            </p>
+          )
+        }
       </div>
       <ButtonGroup align="start" responsive class="pt-1">
         <Button
@@ -47,20 +55,32 @@ const { author, tagline, description, content } = Astro.props as Props;
           {content.secondaryCta.label}
         </Button>
       </ButtonGroup>
-      <ul class="flex flex-col gap-2 border-t border-border/50 pt-6 text-sm text-muted-foreground sm:text-base" role="list" aria-label="Selected strengths">
-        {content.strengths.map((strength) => (
-          <li class="flex gap-3">
-            <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
-            <span>{strength}</span>
-          </li>
-        ))}
+      <ul
+        class="flex flex-col gap-2 border-t border-border/50 pt-6 text-sm text-muted-foreground sm:text-base"
+        role="list"
+        aria-label="Selected strengths"
+      >
+        {
+          content.strengths.map((strength) => (
+            <li class="flex gap-3">
+              <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+              <span>{strength}</span>
+            </li>
+          ))
+        }
       </ul>
     </div>
 
     <div class="order-1 flex justify-center lg:order-2 lg:justify-end">
       <div class="relative">
-        <div class="absolute inset-0 -translate-y-2 scale-110 rounded-full bg-accent-subtle blur-3xl" aria-hidden="true"></div>
-        <div class="relative rounded-full ring-1 ring-accent/30 ring-offset-4 ring-offset-background">
+        <div
+          class="absolute inset-0 -translate-y-2 scale-110 rounded-full bg-accent-subtle blur-3xl"
+          aria-hidden="true"
+        >
+        </div>
+        <div
+          class="relative rounded-full ring-1 ring-accent/30 ring-offset-4 ring-offset-background"
+        >
           <CoinFlipImage
             frontSrc={content.portrait.frontSrc}
             backSrc={content.portrait.backSrc}

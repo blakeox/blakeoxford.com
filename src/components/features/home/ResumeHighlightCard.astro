@@ -1,25 +1,28 @@
 ---
 interface Props {
- title: string;
- description: string;
- class?: string;
+  title: string;
+  description: string;
+  class?: string;
 }
 
 const { title, description, class: className = '' } = Astro.props as Props;
 ---
+
 <div
- class={`@container relative flex h-full flex-col overflow-hidden rounded-xl border border-border/80 bg-surface/95 p-6 transition-colors duration-normal motion-safe:transition-transform motion-safe:duration-normal group hover:shadow-lg motion-safe:hover:-translate-y-1 ${className}`.trim()}
+  class={`@container relative flex h-full flex-col overflow-hidden rounded-xl border border-border/80 bg-surface/95 p-6 transition-colors duration-normal motion-safe:transition-transform motion-safe:duration-normal group hover:shadow-lg motion-safe:hover:-translate-y-1 ${className}`.trim()}
 >
- <div class="relative z-10 mb-5 flex items-center">
- <div class="mr-4 rounded-full bg-gradient-to-r from-accent to-primary p-2.5 shadow-sm transition-transform duration-moderate group-hover:scale-105">
- <slot name="icon" />
- </div>
- <h3 class="font-heading text-xl font-semibold text-foreground @sm:text-2xl">{title}</h3>
- </div>
- <div class="relative z-10">
- <p class="mb-4 text-sm leading-relaxed text-muted-foreground @sm:text-base">{description}</p>
- <ul class="ml-5 space-y-2 text-sm leading-relaxed text-foreground/85 @sm:text-base">
- <slot />
- </ul>
- </div>
+  <div class="relative z-10 mb-5 flex items-center">
+    <div
+      class="mr-4 rounded-full bg-gradient-to-r from-accent to-primary p-2.5 shadow-sm transition-transform duration-moderate group-hover:scale-105"
+    >
+      <slot name="icon" />
+    </div>
+    <h3 class="font-heading text-xl font-semibold text-foreground @sm:text-2xl">{title}</h3>
+  </div>
+  <div class="relative z-10">
+    <p class="mb-4 text-sm leading-relaxed text-muted-foreground @sm:text-base">{description}</p>
+    <ul class="ml-5 space-y-2 text-sm leading-relaxed text-foreground/85 @sm:text-base">
+      <slot />
+    </ul>
+  </div>
 </div>

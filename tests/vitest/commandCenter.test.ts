@@ -7,10 +7,10 @@ import type { CommandItem } from '../../src/features/command-center/types';
 describe('buildAskPrompt', () => {
   it('builds a context-aware prompt for a project', () => {
     expect(
-      buildAskPrompt('fabric', { sourceTitle: 'Microsoft Fabric Project', sourceKind: 'project' }),
+      buildAskPrompt('fabric', { sourceTitle: 'Microsoft Fabric Project', sourceKind: 'project' })
     ).toContain('project');
     expect(
-      buildAskPrompt('fabric', { sourceTitle: 'Microsoft Fabric Project', sourceKind: 'project' }),
+      buildAskPrompt('fabric', { sourceTitle: 'Microsoft Fabric Project', sourceKind: 'project' })
     ).toContain('Microsoft Fabric Project');
   });
 

@@ -1,8 +1,5 @@
 type ElementHandle<T extends HTMLElement> =
-  | T
-  | null
-  | undefined
-  | { current: T | null | undefined };
+  T | null | undefined | { current: T | null | undefined };
 
 import { registerNavTheme } from './registerNavTheme';
 import { registerNavScrollBehavior } from './registerNavScrollBehavior';
@@ -41,8 +38,7 @@ export function registerModernNavBar(options?: ModernNavBarOptions): CleanupFn {
   activeCleanup?.();
   activeCleanup = null;
 
-  const navBar =
-    resolveElement(opts.navBar) ?? document.getElementById('navbar');
+  const navBar = resolveElement(opts.navBar) ?? document.getElementById('navbar');
   const themeToggle =
     resolveElement(opts.themeToggle) ??
     (document.getElementById('theme-toggle') as HTMLButtonElement | null);

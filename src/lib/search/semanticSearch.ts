@@ -50,7 +50,7 @@ export function mapSemanticMatch(match: SemanticSearchMatch): SearchRecord {
 export async function queryCloudflareSemanticSearch(
   query: string,
   limit = 10,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<SemanticSearchResult> {
   const response = await fetch(SEMANTIC_SEARCH_ENDPOINT, {
     method: 'POST',
@@ -61,11 +61,14 @@ export async function queryCloudflareSemanticSearch(
 
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
-    const message = typeof payload?.error === 'string' ? payload.error : `Semantic search failed (${response.status})`;
+    const message =
+      typeof payload?.error === 'string'
+        ? payload.error
+        : `Semantic search failed (${response.status})`;
     throw new Error(message);
   }
 
-  const data = await response.json() as {
+  const data = (await response.json()) as {
     results?: SemanticSearchMatch[];
     count?: number;
     provider?: string;
@@ -73,9 +76,10 @@ export async function queryCloudflareSemanticSearch(
   };
   const records = (data.results ?? []).map(mapSemanticMatch);
   const responseTimeHeader = response.headers.get('x-response-time');
-  const responseTimeMs = responseTimeHeader && Number.isFinite(Number(responseTimeHeader))
-    ? Number(responseTimeHeader)
-    : undefined;
+  const responseTimeMs =
+    responseTimeHeader && Number.isFinite(Number(responseTimeHeader))
+      ? Number(responseTimeHeader)
+      : undefined;
 
   return {
     records,

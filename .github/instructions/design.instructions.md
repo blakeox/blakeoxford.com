@@ -23,6 +23,7 @@ Plugins and variants are CSS-first in `src/styles/global.css` (`@plugin "@tailwi
 Tailwind is applied via `@tailwindcss/vite` in `astro.config.mjs` and `@import "tailwindcss"` in `global.css`.
 Prefer `bg-accent-subtle` / `text-accent-emphasis` over ad-hoc `bg-accent/10` opacity suffixes when a semantic wash exists.
 Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
+`cn()` intentionally does **not** use `tailwind-merge` — conflicting utilities stay in the string. Prefer exclusive variant maps (see `Button.astro`). Do not add `tailwind-merge` without an ADR.
 
 ### Color tokens
 
@@ -79,12 +80,14 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 ## 3. Component styling
 
 - Prefer composing primitives (`Container`, `Section`, `Button`, `BaseCard`, `Prose`) over bespoke layouts
-- Shared multi-selector chrome belongs in `src/styles/components.css`
+- Shared multi-selector chrome belongs in `src/styles/components.css` (`layout-gutter`, `nav-shell`, `focus-ring-interactive`, `ai-chat-*`, …). ESLint discovers these via `better-tailwindcss` `entryPoint` + `detectComponentClasses`.
 - Page/feature markup should stay on Tailwind semantic utilities
-- Page gutters: `Container` or `.layout-gutter` — not hard-coded `px-4 sm:px-6 lg:px-8`
-- Blog/MDX body: wrap with `Prose` — do not scatter long `prose-*:` class strings in pages
+- Page gutters: `Container` or `.layout-gutter` — not hard-coded padding ladders (`px-4 sm:px-6 lg:px-8`, `px-4 md:px-6 lg:px-12`, etc.)
+- Blog/MDX body: wrap with `Prose` — do not nest additional `prose` / `prose-xl` shells in MDX; use `not-prose` for custom blocks
 - Card grids: prefer `@container` + `@sm:` / `@md:` over viewport `sm:` when the card already sits in a variable-width column
-- Run `pnpm design:lint` — bans raw palette, white/black, parallel `*-dark` surface utilities, and hard-coded gutters; also validates `@theme inline` token docs sync
+- Decorative motion: gate with `motion-safe:` (or CSS `prefers-reduced-motion` for custom chrome classes)
+- Run `pnpm design:lint` — bans raw palette, white/black, parallel `*-dark` surface utilities, hard-coded gutters, and high elevation / arbitrary radius on primitives, composites, and features; also validates `@theme inline` token docs sync
+- Run `pnpm format:check` (Prettier + Tailwind class sort) before PRs — same gate as ESLint in CI
 
 ### Tailwind usage
 

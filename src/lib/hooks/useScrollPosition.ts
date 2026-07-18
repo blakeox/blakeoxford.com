@@ -2,7 +2,7 @@
  * useScrollPosition - Hook for tracking scroll position with throttling
  *
  * Provides scroll position tracking with built-in throttling for performance.
- * Useful for scroll-based UI effects like sticky headers, parallax, or 
+ * Useful for scroll-based UI effects like sticky headers, parallax, or
  * scroll progress indicators.
  *
  * @example Basic usage
@@ -53,9 +53,7 @@ const DEFAULT_POSITION: ScrollPosition = {
   isScrolling: false,
 };
 
-export function useScrollPosition(
-  options: UseScrollPositionOptions = {}
-): ScrollPosition {
+export function useScrollPosition(options: UseScrollPositionOptions = {}): ScrollPosition {
   const { throttleMs = 16, element, initialPosition } = options;
 
   const [position, setPosition] = useState<ScrollPosition>({
@@ -68,19 +66,11 @@ export function useScrollPosition(
   const scrollingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updatePosition = useCallback(() => {
-    const scrollY = element?.current
-      ? element.current.scrollTop
-      : window.scrollY;
-    const scrollX = element?.current
-      ? element.current.scrollLeft
-      : window.scrollX;
+    const scrollY = element?.current ? element.current.scrollTop : window.scrollY;
+    const scrollX = element?.current ? element.current.scrollLeft : window.scrollX;
 
     const direction: ScrollDirection =
-      scrollY > lastScrollY.current
-        ? 'down'
-        : scrollY < lastScrollY.current
-          ? 'up'
-          : null;
+      scrollY > lastScrollY.current ? 'down' : scrollY < lastScrollY.current ? 'up' : null;
 
     lastScrollY.current = scrollY;
 

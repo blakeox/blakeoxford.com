@@ -7,7 +7,8 @@ const mockPost = {
     title: 'Hello World',
     pubDate: new Date('2024-05-21'),
     tags: ['Astro', 'Testing'],
-    description: 'A short excerpt or summary of the blog post goes here to entice the reader to click through and read more.',
+    description:
+      'A short excerpt or summary of the blog post goes here to entice the reader to click through and read more.',
   },
 };
 
@@ -42,7 +43,11 @@ describe('BlogPostRow.astro', () => {
 
   it('formats the pubDate correctly', () => {
     const date = new Date(mockPost.data.pubDate);
-    const formatted = date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    const formatted = date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
     expect(typeof formatted).toBe('string');
   });
 });

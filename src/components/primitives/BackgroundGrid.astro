@@ -1,30 +1,27 @@
 ---
 /**
  * BackgroundGrid - Reusable grid overlay background pattern
- * 
+ *
  * Creates a decorative grid pattern overlay commonly used in hero sections.
- * 
+ *
  * @prop {number} opacity - Grid opacity (default: 35)
  * @prop {string} size - Grid cell size in pixels (default: '200px')
  * @prop {string} class - Optional additional classes
  */
 interface Props {
- opacity?: number;
- size?: string;
- class?: string;
+  opacity?: number;
+  size?: string;
+  class?: string;
 }
 
-const { 
- opacity = 35, 
- size = '200px',
- class: className = '' 
-} = Astro.props;
+const { opacity = 35, size = '200px', class: className = '' } = Astro.props;
 
 const backgroundSize = `[background-size:${size}_${size}]`;
 const opacityClass = `bg-grid-overlay/${opacity}`;
 ---
 
-<div 
- class={`pointer-events-none absolute inset-0 ${opacityClass} ${backgroundSize} ${className}`.trim()} 
- aria-hidden="true"
-></div>
+<div
+  class={`pointer-events-none absolute inset-0 ${opacityClass} ${backgroundSize} ${className}`.trim()}
+  aria-hidden="true"
+>
+</div>

@@ -1,15 +1,15 @@
 /**
  * Hooks Module - Consolidated exports for React hooks
- * 
+ *
  * This barrel file provides a single import point for all chat-related hooks,
  * eliminating deep imports and improving code organization.
- * 
+ *
  * @example
  * ```ts
- * import { 
+ * import {
  *   useAIChatController,
  *   useChatStorage,
- *   useVoiceRecognition 
+ *   useVoiceRecognition
  * } from '@/lib/hooks';
  * ```
  */

@@ -10,7 +10,9 @@ import fs from 'fs';
 function runAudit(theme) {
   // Reuse existing script if available by injecting THEME env or fallback command.
   try {
-    const out = execSync(`THEME=${theme} node scripts/quality/contrast-token-audit.js`, { stdio: ['ignore','pipe','pipe'] }).toString();
+    const out = execSync(`THEME=${theme} node scripts/quality/contrast-token-audit.js`, {
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).toString();
     return out;
   } catch (e) {
     return e.stdout?.toString() || '';
@@ -19,7 +21,7 @@ function runAudit(theme) {
 
 function extractViolations(output) {
   const m = output.match(/Violations?:\s*(\d+)/i);
-  if (m) return parseInt(m[1],10);
+  if (m) return parseInt(m[1], 10);
   // Fallback: count lines containing '[contrast-fail]'
   return (output.match(/contrast-fail/gi) || []).length;
 }
@@ -30,6 +32,6 @@ const lightV = extractViolations(light);
 const darkV = extractViolations(dark);
 const delta = darkV - lightV;
 
-const summary = `[contrast:themes] light=${lightV} dark=${darkV} delta=${delta>0?`+${delta}`:delta}`;
+const summary = `[contrast:themes] light=${lightV} dark=${darkV} delta=${delta > 0 ? `+${delta}` : delta}`;
 console.log(summary);
 fs.writeFileSync('contrast-theme-diff.txt', summary + '\n');

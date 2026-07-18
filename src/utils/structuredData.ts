@@ -1,6 +1,6 @@
 /**
  * Structured Data Utilities
- * 
+ *
  * Generates JSON-LD structured data for SEO and rich snippets.
  * Supports Article, Project, BreadcrumbList, and other schema.org types.
  */
@@ -68,13 +68,7 @@ export function createArticleSchema(
     publisher?: Person;
   } = {}
 ): ArticleSchema {
-  const {
-    description,
-    dateModified,
-    image,
-    url,
-    publisher,
-  } = options;
+  const { description, dateModified, image, url, publisher } = options;
 
   return {
     '@type': 'Article',
@@ -86,10 +80,12 @@ export function createArticleSchema(
     image: image ? (Array.isArray(image) ? image : [image]) : undefined,
     url,
     publisher,
-    mainEntityOfPage: url ? {
-      '@type': 'WebPage',
-      '@id': url,
-    } : undefined,
+    mainEntityOfPage: url
+      ? {
+          '@type': 'WebPage',
+          '@id': url,
+        }
+      : undefined,
   };
 }
 
@@ -108,13 +104,7 @@ export function createProjectSchema(
     keywords?: string[];
   } = {}
 ): ProjectSchema {
-  const {
-    description,
-    dateModified,
-    image,
-    url,
-    keywords,
-  } = options;
+  const { description, dateModified, image, url, keywords } = options;
 
   return {
     '@type': 'CreativeWork',
@@ -132,7 +122,9 @@ export function createProjectSchema(
 /**
  * Create BreadcrumbList schema for navigation
  */
-export function createBreadcrumbListSchema(items: Array<{ name: string; url: string }>): BreadcrumbListSchema {
+export function createBreadcrumbListSchema(
+  items: Array<{ name: string; url: string }>
+): BreadcrumbListSchema {
   return {
     '@type': 'BreadcrumbList',
     itemListElement: items.map((item, index) => ({
@@ -151,19 +143,17 @@ export const defaultAuthor: Person = {
   '@type': 'Person',
   name: 'Blake Oxford',
   url: 'https://blakeoxford.com',
-  sameAs: [
-    'https://www.linkedin.com/in/blake-oxford',
-    'https://github.com/blakeox',
-  ],
+  sameAs: ['https://www.linkedin.com/in/blake-oxford', 'https://github.com/blakeox'],
 };
 
 /**
  * Generate complete structured data graph for a page
  */
-export function generateStructuredDataGraph(schemas: Array<ArticleSchema | ProjectSchema | BreadcrumbListSchema>) {
+export function generateStructuredDataGraph(
+  schemas: Array<ArticleSchema | ProjectSchema | BreadcrumbListSchema>
+) {
   return {
     '@context': 'https://schema.org',
     '@graph': schemas,
   };
 }
-

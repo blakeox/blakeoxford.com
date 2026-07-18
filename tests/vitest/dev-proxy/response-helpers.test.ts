@@ -3,7 +3,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { sendErrorResponse, sendSuccessResponse, setCORSHeaders } from '../../../src/lib/dev-proxy/response-helpers.js';
+import {
+  sendErrorResponse,
+  sendSuccessResponse,
+  setCORSHeaders,
+} from '../../../src/lib/dev-proxy/response-helpers.js';
 
 describe('response-helpers', () => {
   let mockRes: {
@@ -42,9 +46,7 @@ describe('response-helpers', () => {
 
     it('should send error message in JSON format', () => {
       sendErrorResponse(mockRes, 500, 'Internal Server Error');
-      expect(mockRes.end).toHaveBeenCalledWith(
-        JSON.stringify({ error: 'Internal Server Error' })
-      );
+      expect(mockRes.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal Server Error' }));
     });
 
     it('should handle different status codes', () => {
@@ -106,10 +108,7 @@ describe('response-helpers', () => {
 
     it('should use wildcard when origin is undefined', () => {
       setCORSHeaders(mockRes, undefined);
-      expect(mockRes.setHeader).toHaveBeenCalledWith(
-        'Access-Control-Allow-Origin',
-        '*'
-      );
+      expect(mockRes.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Origin', '*');
     });
 
     it('should set all required CORS headers', () => {
@@ -118,10 +117,7 @@ describe('response-helpers', () => {
         'Access-Control-Allow-Origin',
         'https://example.com'
       );
-      expect(mockRes.setHeader).toHaveBeenCalledWith(
-        'Access-Control-Allow-Credentials',
-        'true'
-      );
+      expect(mockRes.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Credentials', 'true');
       expect(mockRes.setHeader).toHaveBeenCalledWith(
         'Access-Control-Allow-Methods',
         'POST, OPTIONS'
@@ -139,4 +135,3 @@ describe('response-helpers', () => {
     });
   });
 });
-

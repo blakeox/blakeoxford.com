@@ -5,20 +5,20 @@ import type { SearchFallback } from '../chat';
  * Options for the computed values hook
  */
 interface UseComputedValuesOptions {
-	/** Whether to show all fallback suggestions */
-	showFallbackSuggestions: boolean;
-	/** Array of fallback search results */
-	fallbackResults: SearchFallback[];
+  /** Whether to show all fallback suggestions */
+  showFallbackSuggestions: boolean;
+  /** Array of fallback search results */
+  fallbackResults: SearchFallback[];
 }
 
 /**
  * Return type for the computed values hook
  */
 interface UseComputedValuesReturn {
-	/** Visible fallback results (limited or all) */
-	visibleFallbackResults: SearchFallback[];
-	/** Whether there are more fallback results to show */
-	hasMoreFallbackResults: boolean;
+  /** Visible fallback results (limited or all) */
+  visibleFallbackResults: SearchFallback[];
+  /** Whether there are more fallback results to show */
+  hasMoreFallbackResults: boolean;
 }
 
 /**
@@ -48,19 +48,19 @@ interface UseComputedValuesReturn {
  * ```
  */
 export function useComputedValues(options: UseComputedValuesOptions): UseComputedValuesReturn {
-	const { showFallbackSuggestions, fallbackResults } = options;
+  const { showFallbackSuggestions, fallbackResults } = options;
 
-	// Collapsed = no list (one-line disclosure). Expanded = up to 3 titles.
-	const visibleFallbackResults = useMemo(() => {
-		return showFallbackSuggestions ? fallbackResults.slice(0, 3) : [];
-	}, [showFallbackSuggestions, fallbackResults]);
+  // Collapsed = no list (one-line disclosure). Expanded = up to 3 titles.
+  const visibleFallbackResults = useMemo(() => {
+    return showFallbackSuggestions ? fallbackResults.slice(0, 3) : [];
+  }, [showFallbackSuggestions, fallbackResults]);
 
-	const hasMoreFallbackResults = useMemo(() => {
-		return showFallbackSuggestions && fallbackResults.length > visibleFallbackResults.length;
-	}, [showFallbackSuggestions, fallbackResults.length, visibleFallbackResults.length]);
+  const hasMoreFallbackResults = useMemo(() => {
+    return showFallbackSuggestions && fallbackResults.length > visibleFallbackResults.length;
+  }, [showFallbackSuggestions, fallbackResults.length, visibleFallbackResults.length]);
 
-	return {
-		visibleFallbackResults,
-		hasMoreFallbackResults,
-	};
+  return {
+    visibleFallbackResults,
+    hasMoreFallbackResults,
+  };
 }

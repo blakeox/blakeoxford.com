@@ -50,7 +50,9 @@ describe('registerNavMobileMenu', () => {
 
     expect(burger.getAttribute('aria-expanded')).toBe('true');
     expect(burger.getAttribute('aria-label')).toBe('Close navigation menu');
-    expect(document.getElementById('nav-mobile-links')?.getAttribute('data-state') === 'open').toBe(true);
+    expect(document.getElementById('nav-mobile-links')?.getAttribute('data-state') === 'open').toBe(
+      true
+    );
     expect(document.querySelector('.nav-shell')?.getAttribute('data-menu-state')).toBe('open');
   });
 
@@ -60,6 +62,8 @@ describe('registerNavMobileMenu', () => {
     (document.getElementById('nav-mobile-backdrop') as HTMLElement).click();
 
     expect(burger.getAttribute('aria-expanded')).toBe('false');
-    expect(document.getElementById('nav-mobile-links')?.getAttribute('data-state') === 'open').toBe(false);
+    expect(document.getElementById('nav-mobile-links')?.getAttribute('data-state') === 'open').toBe(
+      false
+    );
   });
 });

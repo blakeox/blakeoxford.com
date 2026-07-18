@@ -13,7 +13,7 @@ vi.mock('fs', () => ({
   default: {
     readFileSync: mockReadFileSync,
     readdirSync: mockReaddirSync,
-  }
+  },
 }));
 
 vi.mock('path', () => ({
@@ -22,7 +22,7 @@ vi.mock('path', () => ({
   default: {
     basename: mockBasename,
     join: mockJoin,
-  }
+  },
 }));
 
 interface SearchEntry {
@@ -42,7 +42,7 @@ describe('Search Index Generation', () => {
       mockReadFileSync.mockReturnValue(mockFileContent);
 
       const content = mockReadFileSync('/test/file.astro', 'utf-8');
-      
+
       expect(content).toBe(mockFileContent);
       expect(mockReadFileSync).toHaveBeenCalledWith('/test/file.astro', 'utf-8');
     });
@@ -64,7 +64,7 @@ describe('Search Index Generation', () => {
       const entry: SearchEntry = {
         title: 'Test Title',
         excerpt: 'Test excerpt',
-        url: '/test-url'
+        url: '/test-url',
       };
 
       expect(entry.title).toBe('Test Title');
@@ -76,7 +76,7 @@ describe('Search Index Generation', () => {
       const entry: SearchEntry = {
         title: '',
         excerpt: '',
-        url: ''
+        url: '',
       };
 
       expect(entry.title).toBe('');
@@ -111,11 +111,13 @@ describe('Search Index Generation', () => {
 
       // Mock index building logic
       const buildIndexMock = (dir: string, baseUrl: string) => {
-        const files = (mockReaddirSync(dir) as string[]).filter((f: string) => f.endsWith('.astro'));
+        const files = (mockReaddirSync(dir) as string[]).filter((f: string) =>
+          f.endsWith('.astro')
+        );
         return files.map((file: string) => ({
           title: `Title for ${mockBasename(file, '.astro')}`,
           excerpt: 'Sample excerpt',
-          url: `${baseUrl}/${mockBasename(file, '.astro')}`
+          url: `${baseUrl}/${mockBasename(file, '.astro')}`,
         }));
       };
 

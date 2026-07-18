@@ -9,7 +9,7 @@ export function searchLocalCorpus(
   corpus: SearchRecord[],
   query: string,
   category: SearchCategory,
-  limit = 10,
+  limit = 10
 ): SearchRecord[] {
   const pool = filterByCategory(corpus, category);
 
@@ -24,7 +24,8 @@ export function searchLocalCorpus(
 
   return pool
     .map((record) => {
-      const haystack = `${record.title} ${record.description} ${record.tags.join(' ')}`.toLowerCase();
+      const haystack =
+        `${record.title} ${record.description} ${record.tags.join(' ')}`.toLowerCase();
       const matchedTerms = terms.filter((term) => haystack.includes(term)).length;
       const score = matchedTerms / terms.length;
       return { record, score };

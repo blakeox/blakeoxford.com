@@ -7,10 +7,7 @@ import {
 } from '../../lib/theme';
 
 type ElementHandle<T extends HTMLElement> =
-  | T
-  | null
-  | undefined
-  | { current: T | null | undefined };
+  T | null | undefined | { current: T | null | undefined };
 
 type NavThemeOptions = {
   themeToggle?: ElementHandle<HTMLButtonElement>;

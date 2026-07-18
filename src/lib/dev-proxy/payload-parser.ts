@@ -24,7 +24,7 @@ export function extractQuery(payload: unknown): string {
   }
 
   const p = payload as Record<string, unknown>;
-  
+
   // Try different field names
   if (typeof p.query === 'string') {
     return p.query.trim();
@@ -48,7 +48,7 @@ export function parseHistory(payload: unknown): Array<{ role: string; content: s
   }
 
   const p = payload as Record<string, unknown>;
-  
+
   if (!Array.isArray(p.history)) {
     return [];
   }
@@ -83,16 +83,18 @@ export function parseSources(data: unknown): ParsedSource[] {
     return [];
   }
 
-  const result = (data as { result?: unknown }).result && typeof (data as { result: unknown }).result === 'object'
-    ? (data as { result: unknown }).result
-    : data;
+  const result =
+    (data as { result?: unknown }).result &&
+    typeof (data as { result: unknown }).result === 'object'
+      ? (data as { result: unknown }).result
+      : data;
 
   if (!result || typeof result !== 'object') {
     return [];
   }
 
   const resultObj = result as { data?: unknown };
-  
+
   if (!Array.isArray(resultObj.data)) {
     return [];
   }
@@ -104,30 +106,34 @@ export function parseSources(data: unknown): ParsedSource[] {
       }
 
       const entryObj = entry as Record<string, unknown>;
-      const attributes = entryObj.attributes && typeof entryObj.attributes === 'object'
-        ? (entryObj.attributes as Record<string, unknown>)
-        : {};
-      const fileMeta = attributes.file && typeof attributes.file === 'object'
-        ? (attributes.file as Record<string, unknown>)
-        : {};
+      const attributes =
+        entryObj.attributes && typeof entryObj.attributes === 'object'
+          ? (entryObj.attributes as Record<string, unknown>)
+          : {};
+      const fileMeta =
+        attributes.file && typeof attributes.file === 'object'
+          ? (attributes.file as Record<string, unknown>)
+          : {};
 
       // Extract URL
-      const rawUrl = typeof entryObj.filename === 'string' && entryObj.filename
-        ? entryObj.filename
-        : typeof attributes.folder === 'string'
-          ? attributes.folder
-          : '';
+      const rawUrl =
+        typeof entryObj.filename === 'string' && entryObj.filename
+          ? entryObj.filename
+          : typeof attributes.folder === 'string'
+            ? attributes.folder
+            : '';
 
       if (!rawUrl) {
         return null;
       }
 
       // Extract title
-      const titleCandidate = typeof fileMeta.title === 'string' && fileMeta.title.trim()
-        ? fileMeta.title.trim()
-        : typeof attributes.folder === 'string' && attributes.folder.trim()
-          ? attributes.folder.trim()
-          : `Source ${index + 1}`;
+      const titleCandidate =
+        typeof fileMeta.title === 'string' && fileMeta.title.trim()
+          ? fileMeta.title.trim()
+          : typeof attributes.folder === 'string' && attributes.folder.trim()
+            ? attributes.folder.trim()
+            : `Source ${index + 1}`;
 
       // Extract snippet
       let snippet: string | undefined;
@@ -173,9 +179,11 @@ export function extractMessage(data: unknown): string {
     return '';
   }
 
-  const result = (data as { result?: unknown }).result && typeof (data as { result: unknown }).result === 'object'
-    ? (data as { result: unknown }).result
-    : data;
+  const result =
+    (data as { result?: unknown }).result &&
+    typeof (data as { result: unknown }).result === 'object'
+      ? (data as { result: unknown }).result
+      : data;
 
   if (!result || typeof result !== 'object') {
     return '';
@@ -221,4 +229,3 @@ export function extractErrorDetail(err: unknown): string {
 
   return defaultMsg;
 }
-

@@ -1,6 +1,6 @@
 /**
  * Tests for useMediaQuery hook
- * 
+ *
  * Validates SSR-safe media query matching with proper event handling.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -37,9 +37,7 @@ const createMatchMediaMock = (matches: boolean) => {
     }),
     dispatchEvent: vi.fn(),
     _triggerChange: (newMatches: boolean) => {
-      listeners.forEach((listener) =>
-        listener({ matches: newMatches } as MediaQueryListEvent)
-      );
+      listeners.forEach((listener) => listener({ matches: newMatches } as MediaQueryListEvent));
     },
   };
 };
@@ -61,7 +59,7 @@ describe('useMediaQuery', () => {
     window.matchMedia = vi.fn(() => mockMedia) as typeof window.matchMedia;
 
     const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
-    
+
     // After hydration, it should match the actual value
     expect(typeof result.current).toBe('boolean');
   });
@@ -71,7 +69,7 @@ describe('useMediaQuery', () => {
     window.matchMedia = vi.fn(() => mockMedia) as typeof window.matchMedia;
 
     const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
-    
+
     expect(result.current).toBe(true);
   });
 
@@ -80,7 +78,7 @@ describe('useMediaQuery', () => {
     window.matchMedia = vi.fn(() => mockMedia) as typeof window.matchMedia;
 
     const { result } = renderHook(() => useMediaQuery('(min-width: 1024px)'));
-    
+
     expect(result.current).toBe(false);
   });
 
@@ -90,7 +88,7 @@ describe('useMediaQuery', () => {
     window.matchMedia = matchMediaSpy as typeof window.matchMedia;
 
     renderHook(() => useMediaQuery('(prefers-color-scheme: dark)'));
-    
+
     expect(matchMediaSpy).toHaveBeenCalledWith('(prefers-color-scheme: dark)');
   });
 
@@ -99,11 +97,11 @@ describe('useMediaQuery', () => {
     window.matchMedia = vi.fn(() => mockMedia) as typeof window.matchMedia;
 
     const { unmount } = renderHook(() => useMediaQuery('(min-width: 768px)'));
-    
+
     expect(mockMedia.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
-    
+
     unmount();
-    
+
     expect(mockMedia.removeEventListener).toHaveBeenCalledWith('change', expect.any(Function));
   });
 });
@@ -125,7 +123,7 @@ describe('convenience hooks', () => {
     window.matchMedia = matchMediaSpy as typeof window.matchMedia;
 
     renderHook(() => useIsMobile());
-    
+
     expect(matchMediaSpy).toHaveBeenCalledWith('(max-width: 767px)');
   });
 
@@ -135,7 +133,7 @@ describe('convenience hooks', () => {
     window.matchMedia = matchMediaSpy as typeof window.matchMedia;
 
     renderHook(() => useIsTablet());
-    
+
     expect(matchMediaSpy).toHaveBeenCalledWith('(min-width: 768px) and (max-width: 1023px)');
   });
 
@@ -145,7 +143,7 @@ describe('convenience hooks', () => {
     window.matchMedia = matchMediaSpy as typeof window.matchMedia;
 
     renderHook(() => useIsDesktop());
-    
+
     expect(matchMediaSpy).toHaveBeenCalledWith('(min-width: 1024px)');
   });
 
@@ -155,7 +153,7 @@ describe('convenience hooks', () => {
     window.matchMedia = matchMediaSpy as typeof window.matchMedia;
 
     renderHook(() => usePrefersReducedMotion());
-    
+
     expect(matchMediaSpy).toHaveBeenCalledWith('(prefers-reduced-motion: reduce)');
   });
 
@@ -165,7 +163,7 @@ describe('convenience hooks', () => {
     window.matchMedia = matchMediaSpy as typeof window.matchMedia;
 
     renderHook(() => usePrefersDarkMode());
-    
+
     expect(matchMediaSpy).toHaveBeenCalledWith('(prefers-color-scheme: dark)');
   });
 });

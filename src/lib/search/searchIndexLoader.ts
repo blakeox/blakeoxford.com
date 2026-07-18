@@ -100,7 +100,10 @@ export function resetSearchCorpusCache(): void {
   loadPromise = null;
 }
 
-export function filterByCategory(records: SearchRecord[], category: SearchCategory): SearchRecord[] {
+export function filterByCategory(
+  records: SearchRecord[],
+  category: SearchCategory
+): SearchRecord[] {
   if (category === 'all') return records;
   if (category === 'pages') return records.filter((record) => record.type === 'page');
   if (category === 'projects') return records.filter((record) => record.type === 'project');

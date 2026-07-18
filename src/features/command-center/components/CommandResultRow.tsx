@@ -44,8 +44,19 @@ function kindGlyph(kind: CommandItem['kind']): string {
 
 function PageIcon() {
   return (
-    <svg className="size-4 text-subtle-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M6 4h8l4 4v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" />
+    <svg
+      className="size-4 text-subtle-foreground"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M6 4h8l4 4v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"
+      />
       <path strokeLinecap="round" strokeLinejoin="round" d="M14 4v4h4" />
     </svg>
   );
@@ -103,7 +114,9 @@ export function CommandResultRow({
       data-search-result
       data-search-source={item.source}
       data-vectorize-score={
-        item.source === 'vectorize' && typeof item.score === 'number' ? String(item.score) : undefined
+        item.source === 'vectorize' && typeof item.score === 'number'
+          ? String(item.score)
+          : undefined
       }
       className={`${RESULT_ROW_BASE} ${isActive ? RESULT_ROW_ACTIVE : RESULT_ROW_IDLE}`}
       onMouseEnter={() => onHover(index)}
@@ -120,11 +133,19 @@ export function CommandResultRow({
         >
           <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-surface-subtle">
             {item.image ? (
-              <img src={item.image} alt="" className="size-full object-cover" loading="lazy" decoding="async" />
+              <img
+                src={item.image}
+                alt=""
+                className="size-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
             ) : item.kind === 'page' ? (
               <PageIcon />
             ) : (
-              <span className="text-xxs font-bold uppercase text-subtle-foreground">{kindGlyph(item.kind)}</span>
+              <span className="text-xxs font-bold text-subtle-foreground uppercase">
+                {kindGlyph(item.kind)}
+              </span>
             )}
           </div>
 
@@ -145,7 +166,9 @@ export function CommandResultRow({
           </div>
 
           {!hideKindLabel ? (
-            <span className="shrink-0 text-xxs font-medium text-subtle-foreground capitalize">{item.kind}</span>
+            <span className="shrink-0 text-xxs font-medium text-subtle-foreground capitalize">
+              {item.kind}
+            </span>
           ) : null}
         </a>
       </div>

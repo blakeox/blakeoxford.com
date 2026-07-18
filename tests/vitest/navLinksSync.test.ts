@@ -30,7 +30,7 @@ describe('navLinks derived from nav.json', () => {
   it('loads quick links from nav.json', () => {
     expect(normalizeLinks(getNavQuickLinks())).toEqual(normalizeLinks(navJson.quickLinks ?? []));
     expect(
-      getNavQuickSearchPages().map((page) => ({ href: page.href, label: page.title })),
+      getNavQuickSearchPages().map((page) => ({ href: page.href, label: page.title }))
     ).toEqual(normalizeLinks(navJson.quickLinks ?? []));
   });
 
@@ -47,6 +47,8 @@ describe('navLinks derived from nav.json', () => {
 
   it('keeps required primary routes in nav.json', () => {
     const hrefs = navJson.links.map((link) => link.href);
-    expect(hrefs).toEqual(expect.arrayContaining(['/', '/about/', '/projects/', '/blog/', '/contact/']));
+    expect(hrefs).toEqual(
+      expect.arrayContaining(['/', '/about/', '/projects/', '/blog/', '/contact/'])
+    );
   });
 });
