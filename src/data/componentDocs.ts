@@ -687,16 +687,16 @@ export const componentDocs: ComponentDoc[] = [
     props: [
       {
         name: 'size',
-        type: "'base' | 'lg' | 'xl'",
+        type: '\'base\' | \'lg\' | \'xl\'',
         required: false,
-        default: "'xl'",
+        default: '\'xl\'',
         description: 'Typography scale (maps to prose / prose-lg / prose-lg lg:prose-xl)',
       },
       {
         name: 'as',
-        type: "'div' | 'article' | 'section'",
+        type: '\'div\' | \'article\' | \'section\'',
         required: false,
-        default: "'div'",
+        default: '\'div\'',
         description: 'HTML element to render',
       },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
