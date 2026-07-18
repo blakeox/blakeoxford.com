@@ -26,6 +26,14 @@ describe('design token parser', () => {
     );
   });
 
+  it('maps emphasis and fg color stems to text utilities', () => {
+    const tokens = parsePublicThemeTokens(themeCss);
+    const accentEmphasis = tokens.find((t) => t.name === '--color-accent-emphasis');
+    const buttonFg = tokens.find((t) => t.name === '--color-button-primary-fg');
+    expect(accentEmphasis?.utility).toBe('text-accent-emphasis');
+    expect(buttonFg?.utility).toBe('text-button-primary-fg');
+  });
+
   it('does not bridge private remap color stems', () => {
     const tokens = getPublicThemeTokens();
     expect(assertNoPrivateColorsBridged(tokens)).toEqual([]);

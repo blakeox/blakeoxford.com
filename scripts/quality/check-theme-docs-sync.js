@@ -2,11 +2,13 @@
 /**
  * Ensures public design tokens stay valid and documentable.
  *
+ * Zero-dependency (no TypeScript transpile) so CI workflows that skip
+ * `pnpm install` can still run this gate.
+ *
  * Checks:
  * 1. `@theme inline` in theme.css exposes a non-empty public token set
- * 2. Private remap colors (*-dark / *-light palette helpers) are not bridged
- * 3. When theme.css changes vs BASE_REF, tokens docs still build from the parser
- *    (tokens.astro imports designTokens — no manual table sync required)
+ * 2. Private remap colors are not bridged
+ * 3. tokens.astro imports the designTokens parser
  *
  * Usage:
  *   node scripts/quality/check-theme-docs-sync.js
@@ -17,13 +19,10 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { createRequire } from 'node:module';
-import ts from 'typescript';
 
 const root = process.cwd();
 const THEME_PATH = 'src/styles/theme.css';
 const TOKENS_DOC_PATH = 'src/pages/design/tokens.astro';
-const DESIGN_TOKENS_PATH = 'src/lib/designTokens.ts';
 const baseRef = process.env.BASE_REF || 'origin/main';
 
 const PRIVATE_COLOR_STEMS = new Set([
@@ -47,33 +46,70 @@ function getChangedFiles() {
   }
 }
 
-function loadDesignTokenHelpers() {
-  const sourcePath = path.join(root, DESIGN_TOKENS_PATH);
-  const source = fs.readFileSync(sourcePath, 'utf8');
-  const transpiled = ts.transpileModule(source, {
-    compilerOptions: {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2020,
-      esModuleInterop: true,
-    },
-  }).outputText;
-
-  const module = { exports: {} };
-  const requireFn = createRequire(import.meta.url);
-  const wrapper = new Function('exports', 'require', 'module', '__filename', '__dirname', transpiled);
-  wrapper(module.exports, requireFn, module, sourcePath, path.dirname(sourcePath));
-  return module.exports;
+function extractThemeInlineBlock(themeCss) {
+  const start = themeCss.indexOf('@theme inline {');
+  if (start === -1) return '';
+  let depth = 0;
+  let i = start + '@theme inline '.length;
+  while (i < themeCss.length && themeCss[i] !== '{') i += 1;
+  const blockStart = i;
+  for (; i < themeCss.length; i += 1) {
+    const ch = themeCss[i];
+    if (ch === '{') depth += 1;
+    else if (ch === '}') {
+      depth -= 1;
+      if (depth === 0) return themeCss.slice(blockStart + 1, i);
+    }
+  }
+  return '';
 }
 
-const {
-  parsePublicThemeTokens,
-  assertNoPrivateColorsBridged,
-  loadThemeCss,
-} = loadDesignTokenHelpers();
+function parsePublicThemeTokens(themeCss) {
+  const block = extractThemeInlineBlock(themeCss);
+  if (!block) return [];
 
-const themeCss = loadThemeCss(root);
+  const tokens = [];
+  const seen = new Set();
+  const propRegex = /--([\w-]+)\s*:/g;
+  let match;
+  while ((match = propRegex.exec(block))) {
+    const name = `--${match[1]}`;
+    if (seen.has(name)) continue;
+    seen.add(name);
+    const category = name.startsWith('--color-')
+      ? 'color'
+      : name.startsWith('--font-')
+        ? 'font'
+        : name.startsWith('--text-')
+          ? 'text'
+          : name.startsWith('--tracking-')
+            ? 'tracking'
+            : name.startsWith('--radius-')
+              ? 'radius'
+              : name.startsWith('--shadow-')
+                ? 'shadow'
+                : name.startsWith('--transition-duration-')
+                  ? 'motion'
+                  : name.startsWith('--ease-')
+                    ? 'ease'
+                    : name.startsWith('--animate-')
+                      ? 'animate'
+                      : name.startsWith('--z-index-')
+                        ? 'z-index'
+                        : name.startsWith('--max-width-')
+                          ? 'layout'
+                          : 'other';
+    const stem = name.replace(/^--(?:color|font|text|tracking|radius|shadow|transition-duration|ease|animate|z-index|max-width)-/, '');
+    tokens.push({ name, stem, category });
+  }
+  return tokens;
+}
+
+const themeCss = fs.readFileSync(path.join(root, THEME_PATH), 'utf8');
 const tokens = parsePublicThemeTokens(themeCss);
-const privateBridged = assertNoPrivateColorsBridged(tokens);
+const privateBridged = tokens
+  .filter((t) => t.category === 'color' && PRIVATE_COLOR_STEMS.has(t.stem))
+  .map((t) => t.name);
 
 if (!tokens.length) {
   console.error('[theme-docs-sync] No public tokens found in @theme inline — check theme.css');
@@ -104,14 +140,6 @@ if (changed.includes(THEME_PATH)) {
   console.log(
     `[theme-docs-sync] ${THEME_PATH} changed — tokens page auto-lists from @theme inline (no manual table edit required)`,
   );
-}
-
-// Keep PRIVATE_COLOR_STEMS local copy aligned with the TS module (sanity).
-for (const stem of PRIVATE_COLOR_STEMS) {
-  if (tokens.some((t) => t.category === 'color' && t.stem === stem)) {
-    console.error(`[theme-docs-sync] Unexpected bridged private stem: ${stem}`);
-    process.exit(1);
-  }
 }
 
 process.exit(0);

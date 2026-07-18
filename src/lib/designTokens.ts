@@ -65,7 +65,12 @@ export const SEMANTIC_COLOR_USAGE: Record<string, string> = {
 function categorize(name: string): { category: TokenCategory; stem: string; utility?: string } {
   if (name.startsWith('--color-')) {
     const stem = name.slice('--color-'.length);
-    const utility = stem.includes('foreground') || stem.startsWith('on-')
+    const isTextToken =
+      stem.includes('foreground') ||
+      stem.startsWith('on-') ||
+      stem.endsWith('-emphasis') ||
+      stem.endsWith('-fg');
+    const utility = isTextToken
       ? `text-${stem}`
       : stem === 'border'
         ? `border-${stem}`
