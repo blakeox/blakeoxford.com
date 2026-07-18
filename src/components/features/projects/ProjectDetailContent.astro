@@ -9,6 +9,7 @@ import ProjectTags from './ProjectTags.astro';
 import Grid from '../../primitives/Grid.astro';
 import MetricsTable from '../../composites/MetricsTable.astro';
 import Flex from '../../primitives/Flex.astro';
+import Container from '../../primitives/Container.astro';
 
 interface Props {
   data: CollectionEntry<'projects'>['data'];
@@ -41,7 +42,7 @@ const {
 
 <article class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24">
   <BackgroundGrid opacity={35} size="200px" />
-  <div class="relative mx-auto flex w-full max-w-7xl flex-col gap-14 px-4 sm:px-6 lg:px-8">
+  <Container size="xl" class="relative flex flex-col gap-14">
     <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.description}>
       <div class="max-w-none space-y-6 text-base leading-relaxed text-muted-foreground">
         <Content />
@@ -115,5 +116,5 @@ const {
     </ProjectDetailSection>
 
     <ProjectTags tags={data.tags ?? []} />
-  </div>
+  </Container>
 </article>

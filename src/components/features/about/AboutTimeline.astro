@@ -56,13 +56,13 @@ function Icon({ name }: IconProps) {
  <div class="absolute inset-0" />
  </div>
 
- <div class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 relative z-10">
+ <div class="relative z-10 mx-auto w-full max-w-5xl layout-gutter">
  <header class="max-w-3xl mx-auto text-center mb-16">
  <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">{timeline.title}</h2>
  </header>
 
  <div class="hidden md:block relative">
- <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-accent via-primary to-accent animate-[gradient-shift_8s_ease_infinite]" aria-hidden="true"></div>
+ <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-accent via-primary to-accent animate-gradient-shift" aria-hidden="true"></div>
  <div class="space-y-0">
  {timeline.items.map((item, index) => (
  <div class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'} group`}
@@ -104,7 +104,7 @@ function Icon({ name }: IconProps) {
  </div>
  </div>
 
- <div class="md:hidden overflow-x-auto pb-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background" role="region" aria-label="Timeline events" tabindex="0">
+ <div class="timeline-scroll-container md:hidden overflow-x-auto pb-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background" role="region" aria-label="Timeline events" tabindex="0">
  <div class="inline-flex space-x-6 min-w-max px-4 pb-6">
  {timeline.items.map((item) => (
  <Card as="article" hover="none" padding="md" rounded="xl" class="relative w-80 flex-none overflow-hidden bg-surface/50 backdrop-blur-sm">
@@ -131,26 +131,4 @@ function Icon({ name }: IconProps) {
  </div>
  </div>
  </div>
-
- <style>
- @keyframes gradient-shift {
- 0% { background-position: 0% 0%; }
- 50% { background-position: 0% 100%; }
- 100% { background-position: 0% 0%; }
- }
- .timeline-scroll-container::-webkit-scrollbar {
- height: 8px;
- }
- .timeline-scroll-container::-webkit-scrollbar-track {
- background: color-mix(in oklch, var(--color-foreground) 20%, transparent);
- border-radius: 4px;
- }
- .timeline-scroll-container::-webkit-scrollbar-thumb {
- background: color-mix(in oklch, var(--color-accent) 50%, transparent);
- border-radius: 4px;
- }
- .timeline-scroll-container::-webkit-scrollbar-thumb:hover {
- background: color-mix(in oklch, var(--color-accent) 70%, transparent);
- }
- </style>
 </section>

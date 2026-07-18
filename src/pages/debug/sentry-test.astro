@@ -1,12 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/primitives/Container.astro';
 
 const title = 'Sentry Test Trigger';
 const description = 'Debug page to manually trigger a test error for Sentry verification.';
 ---
 
 <BaseLayout title={title} description={description} wide noindex>
- <section class="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 py-12 prose">
+ <Container size="sm" class="py-12 prose">
  <h1>{title}</h1>
  <p class="!text-foreground">
  This page intentionally throws an error when you click the button below, so you can verify
@@ -34,5 +35,5 @@ const description = 'Debug page to manually trigger a test error for Sentry veri
  });
  }
  </script>
- </section>
+ </Container>
 </BaseLayout>

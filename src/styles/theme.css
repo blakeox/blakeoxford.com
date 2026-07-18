@@ -186,23 +186,6 @@
     --color-button-primary-bg-hover: var(--color-accent-light);
     --color-button-primary-border-hover: var(--color-accent-light);
     --color-field-bg: var(--color-surface-dark);
-
-    --tw-prose-body: var(--color-foreground);
-    --tw-prose-headings: var(--color-foreground);
-    --tw-prose-lead: var(--color-muted-foreground);
-    --tw-prose-links: var(--color-accent-emphasis);
-    --tw-prose-bold: var(--color-foreground);
-    --tw-prose-counters: var(--color-muted-foreground);
-    --tw-prose-bullets: var(--color-muted-foreground);
-    --tw-prose-hr: var(--color-border);
-    --tw-prose-quotes: var(--color-foreground);
-    --tw-prose-quote-borders: var(--color-border);
-    --tw-prose-captions: var(--color-muted-foreground);
-    --tw-prose-code: var(--color-accent-emphasis);
-    --tw-prose-pre-code: var(--color-foreground);
-    --tw-prose-pre-bg: var(--color-surface-subtle);
-    --tw-prose-th-borders: var(--color-border);
-    --tw-prose-td-borders: var(--color-border);
   }
 }
 
@@ -386,4 +369,7 @@
   --z-index-chat: var(--z-chat);
   --z-index-chat-launcher: var(--z-chat-launcher);
   --z-index-search: var(--z-search);
+
+  /* Layout max-width (was theme.extend.maxWidth in orphaned JS config) */
+  --max-width-container-2xl: var(--layout-max-2xl);
 }
