@@ -46,9 +46,9 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     await expect(upCol).toBeHidden();
     await expect(downCol).toBeHidden();
 
-    // Check animation duration is slow (~70s)
+    // Check animation duration is perceptible (~45s)
     const animDuration = await getAnimationDuration(page, 'ul.photo-carousel-track--x');
-    expect(animDuration).toContain('70s');
+    expect(animDuration).toContain('45s');
 
     // Verify motion by comparing transform over time (skip if prefers-reduced-motion)
     const mqlReduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -70,7 +70,7 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     }
   });
 
-  test('desktop (>=md): two vertical slow columns animate', async ({ page }) => {
+  test('desktop (>=md): three vertical slow columns animate', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 }); // desktop (>=md: >=768px)
     await page.goto('/about');
 
@@ -86,11 +86,11 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     await expect(upCol).toBeVisible();
     await expect(downCol).toBeVisible();
 
-    // Check animation durations (~90s)
+    // Check animation durations (~60s)
     const upDur = await getAnimationDuration(page, 'ul.photo-carousel-track--up');
     const downDur = await getAnimationDuration(page, 'ul.photo-carousel-track--down');
-    expect(upDur).toContain('90s');
-    expect(downDur).toContain('90s');
+    expect(upDur).toContain('60s');
+    expect(downDur).toContain('60s');
 
     // Verify both columns animate (transforms change)
     const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -132,6 +132,32 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
         expect(Math.sign(upDelta)).not.toEqual(Math.sign(dnDelta));
       }
     }
+  });
+
+  test('pause control toggles gallery motion', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/about');
+
+    const region = page.getByRole('region', { name: /travel and work photo gallery/i });
+    const pause = region.getByRole('button', { name: /pause photo gallery motion/i });
+    await expect(pause).toBeVisible();
+
+    const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (reduced) return;
+
+    await pause.click();
+    await expect(region).toHaveAttribute('data-paused', 'true');
+    await expect(pause).toHaveAttribute('aria-pressed', 'true');
+    await expect(region.getByRole('button', { name: /play photo gallery motion/i })).toBeVisible();
+
+    const pausedDuration = await page.evaluate(() => {
+      const el = document.querySelector('ul.photo-carousel-track--up') as HTMLElement | null;
+      return el ? getComputedStyle(el).animationPlayState : '';
+    });
+    expect(pausedDuration).toBe('paused');
+
+    await region.getByRole('button', { name: /play photo gallery motion/i }).click();
+    await expect(region).toHaveAttribute('data-paused', 'false');
   });
 
   test('tablet (exactly md breakpoint): desktop columns show at 768px', async ({ page }) => {

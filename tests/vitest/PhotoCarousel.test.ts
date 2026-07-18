@@ -17,18 +17,24 @@ describe('PhotoCarousel.astro', () => {
     expect(content).toContain('md:flex');
   });
 
-  it('uses a deterministic shuffle and seamless doubled loops', () => {
-    expect(content).toContain('seededShuffle');
+  it('uses authored thematic columns and seamless doubled loops', () => {
+    expect(content).toContain('workImages');
+    expect(content).toContain('travelImages');
+    expect(content).toContain('lifeImages');
     expect(content).toMatch(/function loop/);
     expect(content).not.toContain('Math.random()');
+    expect(content).not.toContain('seededShuffle');
   });
 
-  it('pauses motion for reduced-motion and hover/focus-within', () => {
+  it('pauses motion for reduced-motion, hover, and an explicit control', () => {
     expect(content).toContain('prefers-reduced-motion');
     expect(content).toContain('animation-play-state: paused');
+    expect(content).toContain('data-carousel-pause');
+    expect(content).toContain('data-paused');
   });
 
-  it('does not claim prev/next controls', () => {
+  it('does not claim prev/next controls or fake hover zoom', () => {
     expect(content).not.toMatch(/prev-btn|next-btn|carousel-controls/);
+    expect(content).not.toContain('hover:scale-105');
   });
 });

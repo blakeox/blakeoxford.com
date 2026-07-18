@@ -1,5 +1,6 @@
 ---
 import Container from '../primitives/Container.astro';
+import { cn } from '../../utils/cn';
 
 /**
  * PageHero - Consistent full-screen hero section pattern
@@ -30,6 +31,12 @@ interface Props {
   fullScreen?: boolean;
   /** Include floating blur orbs for visual depth */
   includeBlurOrbs?: boolean;
+  /** Strip default vertical padding and stretch children (split / media heroes) */
+  flush?: boolean;
+  /** Container max-width */
+  containerSize?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  /** Apply horizontal layout gutter on the inner container */
+  containerPadding?: boolean;
   /** Additional CSS classes */
   class?: string;
   /** Section ID for anchor links */
@@ -39,17 +46,23 @@ interface Props {
 const {
   fullScreen = true,
   includeBlurOrbs = true,
+  flush = false,
+  containerSize = 'xl',
+  containerPadding = true,
   class: className = '',
   id = 'hero',
 } = Astro.props;
-
-const heightClass = fullScreen ? 'min-h-screen' : 'min-h-[60vh] md:min-h-[70vh]';
 ---
 
 <section
   id={id}
   data-layout-section={id}
-  class={`page-hero-shell relative flex items-center overflow-hidden py-20 sm:py-24 md:py-32 ${heightClass} ${className}`}
+  class={cn(
+    'page-hero-shell relative flex overflow-hidden',
+    fullScreen ? 'min-h-screen' : 'min-h-[60vh] md:min-h-[70vh]',
+    flush ? 'items-stretch py-0' : 'items-center py-20 sm:py-24 md:py-32',
+    className
+  )}
 >
   {
     includeBlurOrbs && (
@@ -66,7 +79,11 @@ const heightClass = fullScreen ? 'min-h-screen' : 'min-h-[60vh] md:min-h-[70vh]'
     )
   }
 
-  <Container size="xl" class="relative z-10">
+  <Container
+    size={containerSize}
+    padding={containerPadding}
+    class={cn('relative z-10', flush && 'flex w-full flex-1 flex-col')}
+  >
     <slot />
   </Container>
 </section>

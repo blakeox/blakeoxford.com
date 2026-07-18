@@ -2,10 +2,9 @@
 /**
  * CoinFlipImage — interactive 3D coin flip portrait.
  *
- * Flip state is driven by `data-flipped` (CSS). Optional multi-flip flourish on hover.
- * Click / keyboard (native button) toggles faces; no competing inline transforms.
+ * Flip state is driven by `data-flipped` (CSS). Click / keyboard (native button)
+ * toggles faces. Back face loads lazily so the front can stay LCP-friendly.
  */
-import CoinFlipClient from '../islands/CoinFlipClient';
 import { cn } from '../../utils/cn';
 import blakePortraitMeta from '../../../public/assets/images/optimized/Blake-O-scaled.json';
 import chinaPortraitMeta from '../../../public/assets/images/optimized/china-profile-picture.json';
@@ -16,14 +15,11 @@ interface Props {
   alt?: string;
   altBack?: string;
   size?: number;
-  flipMultipleTimes?: boolean;
   class?: string;
   duration?: number;
   flipOnClick?: boolean;
   flipAxis?: 'x' | 'y';
   flipEase?: string;
-  multiFlipDuration?: number;
-  multiFlipEase?: string;
   loading?: 'lazy' | 'eager';
   fetchPriority?: 'low' | 'high' | 'auto';
   decoding?: 'async' | 'sync' | 'auto';
@@ -35,23 +31,19 @@ const {
   alt = '',
   altBack = '',
   size = 144,
-  flipMultipleTimes = false,
   class: customClass = '',
   duration = 700,
   flipOnClick = true,
   flipAxis = 'y',
   flipEase = 'var(--ease-emphasized)',
-  multiFlipDuration = 2000,
-  multiFlipEase = 'cubic-bezier(0.68, -0.55, 0.27, 1.55)',
   loading = 'lazy',
   fetchPriority = 'low',
   decoding = 'async',
 } = Astro.props as Props;
 
 const axis = flipAxis === 'x' ? 'X' : 'Y';
-const uniqueId = `coin-flip-${Math.random().toString(36).slice(2, 10)}`;
 
-type OptimizedMeta = { sizes: number[] };
+type OptimizedMeta = { sizes: number[]; width?: number };
 
 const OPTIMIZED_META: Record<string, OptimizedMeta> = {
   'Blake-O-scaled': blakePortraitMeta,
@@ -88,7 +80,7 @@ function buildSrcSet(name: string, format: string): string {
   const widths = getWidths(name);
   const key = basename(name);
   if (NO_WIDTH_SUFFIX.has(key)) {
-    const w = widths[0] || 320;
+    const w = OPTIMIZED_META[key]?.width || widths[0] || 320;
     return `/assets/images/optimized/${format}/${key}.${format} ${w}w`;
   }
   return widths
@@ -106,6 +98,7 @@ function pickDefaultSrc(name: string): string {
   return `/assets/images/optimized/avif/${name}@${candidate}w.avif`;
 }
 
+const uniqueId = `coin-flip-${toImageKey(frontSrc).replace(/[^a-z0-9]+/gi, '-').slice(0, 24)}`;
 const frontKey = toImageKey(frontSrc);
 const backKey = toImageKey(backSrc);
 const frontAvifSet = buildSrcSet(frontKey, 'avif');
@@ -132,14 +125,15 @@ const ariaLabel =
 <button
   type="button"
   class={cn('coin-flip focus-ring-interactive', customClass)}
-  style={`--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`}
+  style={`--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};`}
   aria-pressed="false"
   aria-label={ariaLabel}
   id={`${uniqueId}-root`}
+  data-bo-coin
   data-flip-on-click={flipOnClick ? 'true' : 'false'}
   data-flip-axis={axis}
   data-flipped="false"
-  data-multi={flipMultipleTimes ? 'true' : 'false'}
+  data-hint="true"
 >
   <div class="coin-flip-inner" id={`${uniqueId}-inner`}>
     <div class="coin-flip-face coin-flip-front-face">
@@ -169,26 +163,68 @@ const ariaLabel =
           src={pickDefaultSrc(backKey)}
           alt={altBack}
           class="coin-flip-photo"
-          loading={loading}
+          loading="lazy"
           draggable="false"
           width={size}
           height={size}
-          fetchpriority={fetchPriority}
-          decoding={decoding}
+          fetchpriority="low"
+          decoding="async"
+          data-coin-back
         />
       </picture>
       <div class="coin-flip-highlight" aria-hidden="true"></div>
     </div>
   </div>
-  <span id={`${uniqueId}-live`} class="sr-only" aria-live="polite"></span>
+  <span class="coin-flip-hint" aria-hidden="true">Flip</span>
+  <span id={`${uniqueId}-live`} class="sr-only" aria-live="polite" data-coin-live></span>
 </button>
 
-<CoinFlipClient
-  client:only="react"
-  rootId={`${uniqueId}-root`}
-  liveRegionId={`${uniqueId}-live`}
-  flipOnClick={flipOnClick}
-/>
+<script>
+  function bindCoinFlip(root: HTMLElement) {
+    if (root.dataset.boBound === 'true') return;
+    root.dataset.boBound = 'true';
+
+    const liveRegion = root.querySelector<HTMLElement>('[data-coin-live]');
+    const backImg = root.querySelector<HTMLImageElement>('[data-coin-back]');
+    const flipOnClick = root.getAttribute('data-flip-on-click') === 'true';
+
+    const announce = (message: string) => {
+      if (!liveRegion) return;
+      liveRegion.textContent = message;
+      window.setTimeout(() => {
+        liveRegion.textContent = '';
+      }, 750);
+    };
+
+    const warmBack = () => {
+      if (!backImg || backImg.dataset.warmed === 'true') return;
+      backImg.dataset.warmed = 'true';
+      if (backImg.loading === 'lazy') {
+        backImg.loading = 'eager';
+      }
+    };
+
+    root.addEventListener('pointerenter', warmBack, { once: true });
+    root.addEventListener('focus', warmBack, { once: true });
+
+    root.addEventListener('click', () => {
+      if (!flipOnClick) return;
+      warmBack();
+      const next = root.getAttribute('data-flipped') !== 'true';
+      root.setAttribute('data-flipped', next ? 'true' : 'false');
+      root.setAttribute('aria-pressed', next ? 'true' : 'false');
+      root.setAttribute('data-hint', 'false');
+      announce(next ? 'Showing reverse side.' : 'Showing front side.');
+    });
+  }
+
+  function setupCoinFlips() {
+    document.querySelectorAll<HTMLElement>('[data-bo-coin]').forEach(bindCoinFlip);
+  }
+
+  setupCoinFlips();
+  document.addEventListener('astro:page-load', setupCoinFlips);
+</script>
 
 <style>
   .coin-flip {
@@ -197,7 +233,7 @@ const ariaLabel =
     width: var(--coin-size, 144px);
     height: var(--coin-size, 144px);
     aspect-ratio: 1;
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
     border-radius: 50%;
     box-shadow: var(--shadow-lg);
@@ -208,6 +244,7 @@ const ariaLabel =
     position: relative;
     width: 100%;
     height: 100%;
+    border-radius: 50%;
     transform-style: preserve-3d;
     transition: transform var(--coin-duration, 700ms) var(--coin-ease, var(--ease-emphasized));
   }
@@ -221,6 +258,7 @@ const ariaLabel =
     overflow: hidden;
     border-radius: 50%;
     backface-visibility: hidden;
+    box-shadow: var(--shadow-lg);
   }
 
   .coin-flip-front-face {
@@ -265,14 +303,30 @@ const ariaLabel =
     inset: 0;
     z-index: 1;
     border-radius: 50%;
+    transform: translateZ(-1px);
     box-shadow:
-      0 0 0 3px color-mix(in oklch, var(--color-foreground) 12%, transparent) inset,
-      0 0 8px 2px color-mix(in oklch, var(--color-foreground) 10%, transparent) inset;
+      0 0 0 4px color-mix(in oklch, var(--color-foreground) 18%, transparent) inset,
+      0 0 10px 2px color-mix(in oklch, var(--color-foreground) 12%, transparent) inset;
     background: repeating-linear-gradient(
       90deg,
-      color-mix(in oklch, var(--color-foreground) 12%, transparent) 0 2px,
-      transparent 2px 6px
+      color-mix(in oklch, var(--color-foreground) 16%, transparent) 0 2px,
+      transparent 2px 5px
     );
+  }
+
+  .coin-flip-hint {
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    bottom: -1.75rem;
+    z-index: 4;
+    translate: -50% 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: color-mix(in oklch, var(--color-muted-foreground) 88%, transparent);
+    opacity: 0;
   }
 
   /* Click / pressed resting state — no inline transform fights */
@@ -285,24 +339,58 @@ const ariaLabel =
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .coin-flip[data-multi='true']:hover:not([data-flipped='true']) .coin-flip-inner,
-    .coin-flip[data-multi='true']:focus-visible:not([data-flipped='true']) .coin-flip-inner {
-      transform: rotateY(900deg);
-      transition-duration: var(--coin-multi-duration, 2000ms);
-      transition-timing-function: var(--coin-multi-ease);
+    .coin-flip[data-hint='true'] .coin-flip-hint {
+      animation: coin-hint-fade 4s ease-in-out 1.2s both;
     }
 
-    .coin-flip[data-multi='true'][data-flip-axis='X']:hover:not([data-flipped='true'])
-      .coin-flip-inner,
-    .coin-flip[data-multi='true'][data-flip-axis='X']:focus-visible:not([data-flipped='true'])
-      .coin-flip-inner {
-      transform: rotateX(900deg);
+    .coin-flip[data-hint='true']:not([data-flipped='true']) .coin-flip-inner {
+      animation: coin-idle-nudge 5s ease-in-out 0.8s 1;
+    }
+
+    .coin-flip[data-hint='false'] .coin-flip-inner,
+    .coin-flip[data-flipped='true'] .coin-flip-inner,
+    .coin-flip[data-hint='true']:hover .coin-flip-inner,
+    .coin-flip[data-hint='true']:focus-visible .coin-flip-inner {
+      animation: none;
+    }
+  }
+
+  @keyframes coin-idle-nudge {
+    0%,
+    100% {
+      transform: rotateY(0deg);
+    }
+    35% {
+      transform: rotateY(-12deg);
+    }
+    55% {
+      transform: rotateY(8deg);
+    }
+    70% {
+      transform: rotateY(0deg);
+    }
+  }
+
+  @keyframes coin-hint-fade {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    15%,
+    70% {
+      opacity: 1;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .coin-flip-inner {
       transition: none !important;
+      animation: none !important;
+    }
+
+    .coin-flip[data-hint='true'] .coin-flip-hint {
+      opacity: 1;
+      animation: none;
     }
   }
 </style>

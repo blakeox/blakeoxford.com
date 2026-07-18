@@ -345,7 +345,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'PhotoCarousel',
     category: 'Composites',
     description:
-      'Decorative scrolling photo collage for the About hero. Horizontal marquee on mobile; three vertical columns on desktop. Pauses on hover/focus-within and when reduced motion is preferred.',
+      'Decorative scrolling photo collage for the About hero. Horizontal marquee on mobile; three vertical columns on desktop. Includes a pause control; also pauses on hover and when reduced motion is preferred.',
     filePath: 'src/components/composites/PhotoCarousel.astro',
     props: [
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
@@ -360,9 +360,10 @@ export const componentDocs: ComponentDoc[] = [
       'role="region" with descriptive aria-label',
       'Decorative tracks marked aria-hidden',
       'Empty alt on collage images (region label carries meaning)',
-      'Motion gated by prefers-reduced-motion; pauses on hover/focus-within',
+      'Focusable pause/play control for keyboard users',
+      'Motion gated by prefers-reduced-motion; pauses on hover',
     ],
-    performance: ['Lazy loading', 'astro:assets Image', 'GPU translate3d marquees'],
+    performance: ['Lazy loading', 'astro:assets Image', 'GPU translate3d marquees', 'Capped image budget'],
     tags: ['carousel', 'photos', 'marquee', 'decorative'],
     visualTier: 'elevated',
     tokenDependencies: ['shadow-lg', 'rounded-2xl', 'duration-normal'],
@@ -371,7 +372,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'CoinFlipImage',
     category: 'Composites',
     description:
-      'Interactive 3D coin flip portrait. Flip state is CSS `data-flipped`; optional multi-spin flourish on hover. Click toggles faces with a polite live announcement.',
+      'Interactive 3D coin flip portrait. Flip state is CSS `data-flipped`. Click toggles faces with a polite live announcement. Idle nudge + hint affordance; back face loads lazily.',
     filePath: 'src/components/composites/CoinFlipImage.astro',
     props: [
       { name: 'frontSrc', type: 'string', required: true, description: 'Front image source URL' },
@@ -384,13 +385,6 @@ export const componentDocs: ComponentDoc[] = [
         required: false,
         default: '144',
         description: 'Image size in pixels',
-      },
-      {
-        name: 'flipMultipleTimes',
-        type: 'boolean',
-        required: false,
-        default: 'false',
-        description: 'Enable multi-spin flourish on hover when not flipped',
       },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
       {
@@ -421,8 +415,8 @@ export const componentDocs: ComponentDoc[] = [
         code: '<CoinFlipImage frontSrc="/front.jpg" backSrc="/back.jpg" alt="Front image" altBack="Back image" />',
       },
       {
-        title: 'Multi-spin flourish',
-        code: '<CoinFlipImage frontSrc="/front.jpg" backSrc="/back.jpg" alt="Front" altBack="Back" flipMultipleTimes={true} duration={1000} />',
+        title: 'Hero portrait',
+        code: '<CoinFlipImage frontSrc="/front.jpg" backSrc="/back.jpg" alt="Front" altBack="Back" size={300} loading="eager" fetchPriority="high" />',
       },
     ],
     accessibility: [
@@ -430,11 +424,12 @@ export const componentDocs: ComponentDoc[] = [
       'aria-pressed + polite live region on toggle',
       'Native keyboard activation (Enter/Space)',
       'focus-ring-interactive + reduced-motion disables transition',
+      'Visible Flip hint until first interaction',
     ],
     performance: [
-      'Lazy loading by default',
+      'Front loading configurable; back face always lazy until warmed',
       'Optimized AVIF/WebP srcsets from image manifests',
-      'CSS transform only (no inline JS transforms)',
+      'CSS transform only (no React island)',
     ],
     tags: ['interactive', 'animation', '3d', 'flip', 'images'],
     visualTier: 'expressive',

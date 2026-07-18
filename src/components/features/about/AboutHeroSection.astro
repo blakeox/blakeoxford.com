@@ -17,52 +17,82 @@ interface Props {
 const { content } = Astro.props;
 ---
 
-<PageHero id="about-me" class="min-h-screen py-0" includeBlurOrbs={false}>
-  <div class="relative z-10 min-h-screen">
-    <div class="flex min-h-screen flex-col md:grid md:grid-cols-2 md:gap-0">
+<PageHero
+  id="about-me"
+  flush
+  containerSize="full"
+  containerPadding={false}
+  includeBlurOrbs={false}
+>
+  <div class="relative z-10 flex w-full flex-1 flex-col">
+    <div class="about-hero-split flex flex-col md:grid md:grid-cols-2 md:gap-0">
       <div
-        class="layout-gutter order-1 flex flex-col justify-start pt-28 pb-8 md:order-1 md:justify-center md:py-16"
+        class="layout-gutter order-1 flex flex-col justify-start pt-28 pb-8 md:order-1 md:h-full md:justify-center md:py-16 md:pr-6 lg:pr-10 xl:pr-14"
       >
-        <Stack space="lg" class="mx-auto max-w-2xl">
+        <Stack space="lg" class="mx-auto w-full max-w-2xl md:mx-0">
           <span class="section-kicker">{content.kicker}</span>
           <h1
             id="about-me-title"
-            class="font-heading text-4xl leading-tight font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl"
+            class="font-heading text-4xl leading-[1.12] font-semibold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem] xl:text-6xl"
           >
             {content.title}
           </h1>
-          <p class="text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
+          <p class="max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg">
             {content.description}
           </p>
-          <ul
-            class="space-y-3 border-t border-border/60 pt-6 text-sm text-foreground/85 sm:text-base"
-            role="list"
-          >
-            {
-              content.proofPoints.map((point) => (
-                <li class="flex items-start gap-3">
-                  <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-                  <span>{point}</span>
-                </li>
-              ))
-            }
-          </ul>
         </Stack>
       </div>
 
-      <div
-        class="order-2 min-h-[320px] w-full flex-1 overflow-hidden md:order-2 md:h-full"
-        role="complementary"
-        aria-label="Photo gallery"
-      >
+      <div class="about-hero-media order-2 w-full overflow-hidden md:order-2 md:h-full">
         <div class="relative h-full w-full">
           <PhotoCarousel class="h-full w-full" />
           <div
-            class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background/30 via-transparent to-transparent md:block"
+            class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background/50 via-background/15 to-transparent md:block"
+            aria-hidden="true"
           >
           </div>
         </div>
       </div>
     </div>
+
+    <div class="layout-gutter border-t border-border/50 py-10 md:py-12">
+      <ul
+        class="mx-auto grid max-w-5xl gap-4 text-sm text-foreground/85 sm:grid-cols-3 sm:gap-6 sm:text-base"
+        role="list"
+        aria-label="About highlights"
+      >
+        {
+          content.proofPoints.map((point) => (
+            <li class="flex items-start gap-3">
+              <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+              <span>{point}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </div>
 </PageHero>
+
+<style>
+  .about-hero-media {
+    height: min(42vh, 20rem);
+  }
+
+  @media (width >= 640px) {
+    .about-hero-media {
+      height: min(44vh, 22rem);
+    }
+  }
+
+  @media (width >= 768px) {
+    .about-hero-split {
+      height: calc(100svh - 4.5rem);
+    }
+
+    .about-hero-media {
+      height: 100%;
+      min-height: 0;
+    }
+  }
+</style>

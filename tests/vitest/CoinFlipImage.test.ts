@@ -33,12 +33,20 @@ describe('CoinFlipImage.astro', () => {
 
   it('uses CSS custom properties for motion timing instead of inline transform', () => {
     expect(content).toContain('--coin-duration');
-    expect(content).toContain('--coin-multi-duration');
     expect(content).not.toContain('transition-duration:${duration}ms');
   });
 
-  it('mounts the client island for click toggling', () => {
-    expect(content).toContain('CoinFlipClient');
-    expect(content).toContain('client:only="react"');
+  it('binds interaction with a vanilla script instead of a React island', () => {
+    expect(content).toContain('data-bo-coin');
+    expect(content).toContain('astro:page-load');
+    expect(content).not.toContain('CoinFlipClient');
+    expect(content).not.toContain('client:only');
+  });
+
+  it('defers the back face and shows a flip affordance', () => {
+    expect(content).toContain('loading="lazy"');
+    expect(content).toContain('data-coin-back');
+    expect(content).toContain('coin-flip-hint');
+    expect(content).toContain('data-hint');
   });
 });

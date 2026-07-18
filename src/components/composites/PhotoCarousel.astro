@@ -2,9 +2,9 @@
 /**
  * PhotoCarousel — decorative scrolling photo collage for the About hero.
  *
- * Mobile: horizontal marquee. Desktop (md+): three vertical columns (up / down / up).
- * Motion pauses on hover/focus-within and when prefers-reduced-motion is set.
- * Not an interactive slideshow (no prev/next controls).
+ * Mobile: horizontal marquee. Desktop (md+): three vertical columns (work / travel / life).
+ * Motion pauses via explicit control, hover, and prefers-reduced-motion.
+ * Not an interactive slideshow (no prev/next / lightbox).
  */
 import { Image } from 'astro:assets';
 import { cn } from '../../utils/cn';
@@ -30,47 +30,43 @@ import ChinaProfile from '@/assets/images/carousel/china-profile-picture.webp';
 import NvidiaPrize from '@/assets/images/carousel/Nvidia-prize-download.webp';
 import NvidiaPrizeVertical from '@/assets/images/carousel/nvidia-prize-download-vertical.webp';
 
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   class?: string;
 }
 
 const { class: className = '' } = Astro.props as Props;
 
-const allImages = [
-  Appalatia,
-  BlakeOScaled,
+/** Authored columns: work / travel / life — not a random shuffle. */
+const workImages: ImageMetadata[] = [
   CES,
   CESFront,
   CESInside,
+  NvidiaPrize,
+  NvidiaPrizeVertical,
+  IMG9139,
+  IMG9191,
+];
+
+const travelImages: ImageMetadata[] = [
   HongKong,
+  ShangHaiOldNew,
+  SaoPaulo,
+  BlakeMilan,
+  ChinaProfile,
+  IMG4607,
+  IMG5981,
+];
+
+const lifeImages: ImageMetadata[] = [
+  BlakeOScaled,
+  BlakeDetroit,
+  Appalatia,
   IMG0729,
   IMG2579,
   IMG2790,
-  IMG4607,
-  IMG5981,
-  IMG9139,
-  IMG9191,
-  SaoPaulo,
-  ShangHaiOldNew,
-  BlakeDetroit,
-  BlakeMilan,
-  ChinaProfile,
-  NvidiaPrize,
-  NvidiaPrizeVertical,
 ];
-
-/** Deterministic shuffle so SSR / visual baselines stay stable across builds. */
-function seededShuffle<T>(items: T[], seed: number): T[] {
-  const result = [...items];
-  let state = seed % 2147483647;
-  if (state <= 0) state += 2147483646;
-  for (let i = result.length - 1; i > 0; i--) {
-    state = (state * 16807) % 2147483647;
-    const j = state % (i + 1);
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
 
 function loop<T>(items: T[]): T[] {
   return items.length ? [...items, ...items] : items;
@@ -78,17 +74,15 @@ function loop<T>(items: T[]): T[] {
 
 const CONFIG = {
   mobileCount: 6,
-  desktopVisible: 5,
-  mobileSize: { width: 800, height: 800 },
-  desktopSize: { width: 640, height: 640 },
+  desktopPerColumn: 5,
+  mobileSize: { width: 640, height: 480 },
+  desktopSize: { width: 480, height: 480 },
 } as const;
 
-const shuffled = seededShuffle(allImages, 42);
-const third = Math.ceil(shuffled.length / 3);
-const columnA = shuffled.slice(0, third);
-const columnB = shuffled.slice(third, third * 2);
-const columnC = shuffled.slice(third * 2);
-const mobileImages = shuffled.slice(0, CONFIG.mobileCount);
+const columnA = workImages.slice(0, CONFIG.desktopPerColumn);
+const columnB = travelImages.slice(0, CONFIG.desktopPerColumn);
+const columnC = lifeImages.slice(0, CONFIG.desktopPerColumn);
+const mobileImages = [...workImages, ...travelImages, ...lifeImages].slice(0, CONFIG.mobileCount);
 
 const mobileLoop = loop(mobileImages);
 const columnALoop = loop(columnA);
@@ -98,29 +92,29 @@ const columnCLoop = loop(columnC);
 
 <div
   class={cn(
-    'photo-carousel @container relative h-full min-h-[280px] w-full overflow-hidden select-none',
-    '@md:min-h-[320px] @lg:min-h-[400px]',
+    'photo-carousel @container relative h-full min-h-[12rem] w-full overflow-hidden select-none md:min-h-0',
     className
   )}
   role="region"
   aria-label="Travel and work photo gallery"
-  aria-live="off"
+  data-bo-carousel
+  data-paused="false"
 >
   <!-- Mobile / narrow: horizontal marquee -->
-  <div class="absolute inset-0 flex items-center pt-16 md:hidden md:pt-0">
+  <div class="absolute inset-0 flex items-center md:hidden">
     <ul
-      class="photo-carousel-track photo-carousel-track--x flex gap-4"
+      class="photo-carousel-track photo-carousel-track--x flex gap-3 px-1"
       role="list"
       aria-hidden="true"
     >
       {
         mobileLoop.map((image) => (
-          <li class="h-[40vh] w-[80vw] flex-shrink-0">
+          <li class="photo-carousel-mobile-tile flex-shrink-0">
             <div class="relative h-full w-full overflow-hidden rounded-xl shadow-lg">
               <Image
                 src={image}
                 alt=""
-                class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-normal motion-safe:hover:scale-105"
+                class="absolute inset-0 h-full w-full object-cover"
                 width={CONFIG.mobileSize.width}
                 height={CONFIG.mobileSize.height}
                 loading="lazy"
@@ -134,7 +128,7 @@ const columnCLoop = loop(columnC);
     </ul>
   </div>
 
-  <!-- Desktop: three vertical columns -->
+  <!-- Desktop: three vertical columns (work / travel / life) -->
   <div class="absolute inset-0 hidden h-full w-full gap-4 overflow-hidden pt-8 md:flex">
     {
       (
@@ -150,12 +144,12 @@ const columnCLoop = loop(columnC);
           aria-hidden="true"
         >
           {images.map((image) => (
-            <li class="mx-auto aspect-square w-full flex-shrink-0">
+            <li class="photo-carousel-desktop-tile mx-auto aspect-square w-full flex-shrink-0">
               <div class="relative h-full w-full overflow-hidden rounded-2xl shadow-lg">
                 <Image
                   src={image}
                   alt=""
-                  class="absolute inset-0 h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-normal motion-safe:hover:scale-105"
+                  class="absolute inset-0 h-full w-full object-cover"
                   width={CONFIG.desktopSize.width}
                   height={CONFIG.desktopSize.height}
                   loading="lazy"
@@ -170,10 +164,53 @@ const columnCLoop = loop(columnC);
     }
   </div>
 
+  <button
+    type="button"
+    class="photo-carousel-pause focus-ring-interactive"
+    data-carousel-pause
+    aria-pressed="false"
+    aria-label="Pause photo gallery motion"
+  >
+    <span data-pause-label>Pause</span>
+  </button>
+
   <span class="sr-only">
-    Decorative scrolling photo collage. Animation pauses when reduced motion is preferred.
+    Decorative scrolling photo collage. Use the pause control to stop motion. Animation is off when
+    reduced motion is preferred.
   </span>
 </div>
+
+<script>
+  function bindCarousel(root: HTMLElement) {
+    if (root.dataset.boBound === 'true') return;
+    root.dataset.boBound = 'true';
+
+    const button = root.querySelector<HTMLButtonElement>('[data-carousel-pause]');
+    const label = button?.querySelector<HTMLElement>('[data-pause-label]');
+    if (!button || !label) return;
+
+    const setPaused = (paused: boolean) => {
+      root.dataset.paused = paused ? 'true' : 'false';
+      button.setAttribute('aria-pressed', paused ? 'true' : 'false');
+      button.setAttribute(
+        'aria-label',
+        paused ? 'Play photo gallery motion' : 'Pause photo gallery motion'
+      );
+      label.textContent = paused ? 'Play' : 'Pause';
+    };
+
+    button.addEventListener('click', () => {
+      setPaused(root.dataset.paused !== 'true');
+    });
+  }
+
+  function setupCarousels() {
+    document.querySelectorAll<HTMLElement>('[data-bo-carousel]').forEach(bindCarousel);
+  }
+
+  setupCarousels();
+  document.addEventListener('astro:page-load', setupCarousels);
+</script>
 
 <style>
   @keyframes photo-carousel-x {
@@ -203,27 +240,72 @@ const columnCLoop = loop(columnC);
     }
   }
 
-  .photo-carousel-track {
-    backface-visibility: hidden;
-    will-change: transform;
+  .photo-carousel-pause {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 2;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in oklch, var(--color-border) 80%, transparent);
+    background: color-mix(in oklch, var(--color-background) 82%, transparent);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-foreground);
+    backdrop-filter: blur(8px);
+    opacity: 0.72;
+    transition: opacity 160ms ease;
+  }
+
+  .photo-carousel-pause:hover,
+  .photo-carousel-pause:focus-visible {
+    opacity: 1;
+  }
+
+  .photo-carousel-mobile-tile {
+    width: min(70vw, 18rem);
+    height: min(34vh, 16rem);
+  }
+
+  .photo-carousel-desktop-tile {
+    max-width: 15rem;
+  }
+
+  @media (width >= 1280px) {
+    .photo-carousel-desktop-tile {
+      max-width: 17rem;
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .photo-carousel-track {
+      backface-visibility: hidden;
+      will-change: transform;
+    }
+
     .photo-carousel-track--x {
-      animation: photo-carousel-x 70s linear infinite;
+      animation: photo-carousel-x 45s linear infinite;
     }
 
     .photo-carousel-track--up {
-      animation: photo-carousel-up 90s linear infinite;
+      animation: photo-carousel-up 60s linear infinite;
     }
 
     .photo-carousel-track--down {
-      animation: photo-carousel-down 90s linear infinite;
+      animation: photo-carousel-down 60s linear infinite;
     }
 
     .photo-carousel:hover .photo-carousel-track,
-    .photo-carousel:focus-within .photo-carousel-track {
+    .photo-carousel[data-paused='true'] .photo-carousel-track {
       animation-play-state: paused;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .photo-carousel-pause {
+      display: none;
     }
   }
 </style>
