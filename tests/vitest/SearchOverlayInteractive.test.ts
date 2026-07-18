@@ -6,9 +6,15 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
     let store: Record<string, string> = {};
     return {
       getItem: vi.fn((key: string) => store[key] || null),
-      setItem: vi.fn((key: string, value: string) => { store[key] = value; }),
-      clear: vi.fn(() => { store = {}; }),
-      removeItem: vi.fn((key: string) => { delete store[key]; })
+      setItem: vi.fn((key: string, value: string) => {
+        store[key] = value;
+      }),
+      clear: vi.fn(() => {
+        store = {};
+      }),
+      removeItem: vi.fn((key: string) => {
+        delete store[key];
+      }),
     };
   })();
 
@@ -16,8 +22,8 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
   const fetchMock = vi.fn().mockResolvedValue({
     json: vi.fn().mockResolvedValue([
       { title: 'Test Blog', excerpt: 'A test blog post', url: '/blog/test' },
-      { title: 'Project One', excerpt: 'A test project', url: '/projects/test' }
-    ])
+      { title: 'Project One', excerpt: 'A test project', url: '/projects/test' },
+    ]),
   });
 
   beforeEach(() => {
@@ -45,7 +51,7 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
     // Mock window properties and methods
     Object.defineProperty(window, 'localStorage', { value: localStorageMock });
     (window as any).fetch = fetchMock;
-    (window as any).matchMedia = vi.fn().mockImplementation(query => ({
+    (window as any).matchMedia = vi.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
       onchange: null,
@@ -57,10 +63,10 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
     }));
 
     // Mock requestAnimationFrame and cancelAnimationFrame
-    (window as any).requestAnimationFrame = function(callback: FrameRequestCallback): number {
+    (window as any).requestAnimationFrame = function (callback: FrameRequestCallback): number {
       return window.setTimeout(callback, 0);
     };
-    (window as any).cancelAnimationFrame = function(id: number): void {
+    (window as any).cancelAnimationFrame = function (id: number): void {
       window.clearTimeout(id);
     };
 
@@ -104,7 +110,7 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
         (window as any).searchOverlay.isOpen = false;
         console.log('[Search Analytics] search_closed {}');
         closeOverlay();
-      }
+      },
     };
 
     const handleInput = (value: string) => {
@@ -115,7 +121,9 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
         results.innerHTML = '';
         return;
       }
-      console.log('[Search Analytics] search_performed { query: "' + value + '", results_count: 0 }');
+      console.log(
+        '[Search Analytics] search_performed { query: "' + value + '", results_count: 0 }'
+      );
       if (value === 'test') {
         results.innerHTML = '<div class="search-result-item">Test result</div>';
       } else {
@@ -123,8 +131,12 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
       }
     };
 
-    document.getElementById('search-toggle')?.addEventListener('click', () => (window as any).searchOverlay.open());
-    document.getElementById('close-search')?.addEventListener('click', () => (window as any).searchOverlay.closeSearchOverlay());
+    document
+      .getElementById('search-toggle')
+      ?.addEventListener('click', () => (window as any).searchOverlay.open());
+    document
+      .getElementById('close-search')
+      ?.addEventListener('click', () => (window as any).searchOverlay.closeSearchOverlay());
     document.addEventListener('keydown', (e) => {
       if (e.key === '/') {
         (window as any).searchOverlay.open();
@@ -195,7 +207,7 @@ describe('SearchOverlayEnhanced interactive behavior', () => {
     searchInput.dispatchEvent(inputEvent);
 
     // Wait for the debounce timeout
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     // No need to verify fetch was called since we've mocked the entire search functionality
 

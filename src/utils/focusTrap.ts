@@ -1,30 +1,30 @@
 /**
  * Focus Trap Utility
- * 
+ *
  * Manages focus trapping within modals, dialogs, and other overlay components.
  * Ensures keyboard users can navigate within the trap and cannot tab outside.
- * 
+ *
  * Features:
  * - WCAG 2.4.3 compliant focus management
  * - Tab/Shift+Tab cycling within trap
  * - Prevents focus escape on outside clicks
  * - Supports initial focus, return focus, and fallback focus
  * - Dynamic content updates via update() method
- * 
+ *
  * @example Basic usage
  * ```typescript
  * import { createFocusTrap } from '@/utils/focusTrap';
- * 
+ *
  * const containerRef = useRef<HTMLDivElement>(null);
  * const trap = createFocusTrap(containerRef.current);
- * 
+ *
  * // Activate when modal opens
  * trap.activate();
- * 
+ *
  * // Deactivate when modal closes
  * trap.deactivate();
  * ```
- * 
+ *
  * @example With custom focus options
  * ```typescript
  * const trap = createFocusTrap(containerRef.current, {
@@ -33,13 +33,13 @@
  *   fallbackFocus: containerRef.current,
  * });
  * ```
- * 
+ *
  * @accessibility
  * - Ensures keyboard users cannot accidentally tab outside modal
  * - Maintains logical focus order within trap
  * - Returns focus to triggering element on close
  * - Handles dynamic content changes
- * 
+ *
  * @see https://www.w3.org/WAI/WCAG21/Understanding/focus-order.html
  */
 
@@ -60,13 +60,11 @@ const FOCUSABLE_SELECTORS = [
  * Get all focusable elements within a container
  */
 function getFocusableElements(container: HTMLElement): HTMLElement[] {
-  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)).filter(
-    (el) => {
-      // Filter out hidden elements
-      const style = window.getComputedStyle(el);
-      return style.display !== 'none' && style.visibility !== 'hidden';
-    }
-  );
+  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)).filter((el) => {
+    // Filter out hidden elements
+    const style = window.getComputedStyle(el);
+    return style.display !== 'none' && style.visibility !== 'hidden';
+  });
 }
 
 /**
@@ -80,7 +78,7 @@ export interface FocusTrap {
 
 /**
  * Create a focus trap for a container element
- * 
+ *
  * @param container - The container element to trap focus within
  * @param options - Configuration options
  * @returns Focus trap instance with activate/deactivate methods
@@ -102,11 +100,7 @@ export function createFocusTrap(
     };
   }
 
-  const {
-    initialFocus = null,
-    returnFocus = null,
-    fallbackFocus = null,
-  } = options;
+  const { initialFocus = null, returnFocus = null, fallbackFocus = null } = options;
 
   let previousActiveElement: HTMLElement | null = null;
   let isActive = false;
@@ -234,4 +228,3 @@ export function createFocusTrap(
     update,
   };
 }
-

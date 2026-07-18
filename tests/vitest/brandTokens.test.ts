@@ -62,7 +62,10 @@ describe('Tailwind CSS-first entry', () => {
 
 describe('interactive focus ring utility', () => {
   it('defines focus-ring-interactive in components.css', () => {
-    const componentsCss = readFileSync(resolve(__dirname, '../../src/styles/components.css'), 'utf8');
+    const componentsCss = readFileSync(
+      resolve(__dirname, '../../src/styles/components.css'),
+      'utf8'
+    );
     expect(componentsCss).toContain('.focus-ring-interactive');
     expect(componentsCss).toContain('.touch-target');
   });

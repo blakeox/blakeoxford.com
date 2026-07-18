@@ -18,32 +18,34 @@ Thank you for investing time in improving this project. This guide covers workfl
 
 Core commands:
 
-| Intent | Command |
-|--------|---------|
-| Dev server | `pnpm dev` |
-| Build static site | `pnpm build` |
-| Unit tests (Vitest) | `pnpm test` |
-| E2E tests (Playwright) | `pnpm test:e2e` |
-| Comprehensive quality (CI parity) | `pnpm test:ci` |
-| Flakiness track | `pnpm flakiness:track` |
-| Flakiness gate | `pnpm flakiness:check` |
-| Mutation testing (if configured) | `pnpm mutation:test` |
-| Generate quality summary | `pnpm quality:summary` |
-| Snapshot current quality | `pnpm quality:snapshot` |
-| Generate quality badges | `pnpm quality:badges` |
-| Design lint | `pnpm design:lint` |
+| Intent                                  | Command                 |
+| --------------------------------------- | ----------------------- |
+| Dev server                              | `pnpm dev`              |
+| Build static site                       | `pnpm build`            |
+| Unit tests (Vitest)                     | `pnpm test`             |
+| E2E tests (Playwright)                  | `pnpm test:e2e`         |
+| Comprehensive quality (CI parity)       | `pnpm test:ci`          |
+| Flakiness track                         | `pnpm flakiness:track`  |
+| Flakiness gate                          | `pnpm flakiness:check`  |
+| Mutation testing (if configured)        | `pnpm mutation:test`    |
+| Generate quality summary                | `pnpm quality:summary`  |
+| Snapshot current quality                | `pnpm quality:snapshot` |
+| Generate quality badges                 | `pnpm quality:badges`   |
+| Design lint                             | `pnpm design:lint`      |
+| Format check (Prettier + Tailwind sort) | `pnpm format:check`     |
+| Format write                            | `pnpm format`           |
 
 ## Deterministic Testing Guidelines
 
 Avoid brittle timeouts. Prefer utility waits:
 
-| Use Case | Utility |
-|----------|---------|
-| Wait after theme toggle | `waitForThemeReady` |
-| Wait after network-triggering action | `waitForNetworkIdleAfterAction` |
-| Ensure layout settled before screenshot | `waitForLayoutStability` |
-| Scroll-driven lazy load complete | `waitForScrollSettle` |
-| Dynamic list population | `waitForDynamicList` |
+| Use Case                                | Utility                               |
+| --------------------------------------- | ------------------------------------- |
+| Wait after theme toggle                 | `waitForThemeReady`                   |
+| Wait after network-triggering action    | `waitForNetworkIdleAfterAction`       |
+| Ensure layout settled before screenshot | `waitForLayoutStability`              |
+| Scroll-driven lazy load complete        | `waitForScrollSettle`                 |
+| Dynamic list population                 | `waitForDynamicList`                  |
 | Focus transition in accessibility flows | `waitForFocusChange` (if implemented) |
 
 Principles:
@@ -90,6 +92,7 @@ Refer to `DESIGN_BEST_PRACTICES.md` for:
 - Component API design (composition > boolean prop explosion).
 
 Design lint (`pnpm design:lint`) flags raw hex & suspicious spacing to prevent drift.
+Format check (`pnpm format:check`) enforces Prettier + Tailwind class sorting on `src`, Vitest, and design docs — run `pnpm format` before opening a PR.
 
 ## Component Development
 
@@ -104,33 +107,34 @@ Follow the documented standards in `docs/COMPONENT_DOCUMENTATION_GUIDE.md`:
    - **Islands** (`src/components/islands/`): React hydrated interactive components (NavBarIsland, ContactFormIsland)
 
 2. **Component Structure**:
+
    ```astro
    ---
    /**
     * ComponentName - One-line description
-    * 
+    *
     * Detailed description with usage notes.
-    * 
+    *
     * @example
     * <ComponentName variant="primary" size="md">
     *   Content
     * </ComponentName>
-    * 
+    *
     * @accessibility
     * - Keyboard navigation support
     * - Screen reader compatible
     * - Focus management included
     */
-   
+
    export interface Props {
      /** Prop description with type and default */
      variant?: 'default' | 'primary' | 'secondary';
      size?: 'sm' | 'md' | 'lg';
    }
-   
+
    const { variant = 'default', size = 'md' } = Astro.props;
    ---
-   
+
    <!-- Component implementation -->
    ```
 
@@ -164,6 +168,7 @@ interface Props {
 ```
 
 **Available Type Modules**:
+
 - `@/types/core` - Configuration, events, performance, UI state
 - `@/types/content` - Blog posts, projects, search, tags
 - `@/types/api` - API responses, forms, validation, email
@@ -262,21 +267,21 @@ Before requesting review:
 - [ ] No new large dependencies without discussion.
 - [ ] README or relevant docs updated if behavior or architecture changed.
 - [ ] Source/target branches follow the required flow:
-	- feature/* or sprint/* → development
-	- development → testing
-	- testing → main
-	- hotfix/* → main (then back-merge to development/testing)
+  - feature/* or sprint/* → development
+  - development → testing
+  - testing → main
+  - hotfix/* → main (then back-merge to development/testing)
 
 ## Issue Labels (Suggested)
 
-| Label | Purpose |
-|-------|---------|
-| `type:bug` | Defect or regression |
-| `type:feature` | New capability |
-| `quality:flaky` | Flaky test tracking |
-| `quality:perf` | Performance task |
-| `a11y` | Accessibility-related work |
-| `docs` | Documentation only |
+| Label           | Purpose                    |
+| --------------- | -------------------------- |
+| `type:bug`      | Defect or regression       |
+| `type:feature`  | New capability             |
+| `quality:flaky` | Flaky test tracking        |
+| `quality:perf`  | Performance task           |
+| `a11y`          | Accessibility-related work |
+| `docs`          | Documentation only         |
 
 ## Security Considerations
 

@@ -32,6 +32,17 @@ const API_EXPOSE_HEADERS = [
 ].join(',');
 
 /**
+ * Brand-adjacent offline/500 HTML for the edge Worker.
+ * Values mirror theme.css dark canvas + THEME_COLOR_LIGHT brass — no runtime CSS import.
+ * Keep in sync with src/lib/theme.ts (THEME_COLOR_*) and src/styles/theme.css dark surfaces.
+ * @param {string} reqId
+ */
+function buildOfflineHtml(reqId) {
+  const safeId = String(reqId || 'unknown').replace(/[<>&"']/g, '');
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#c18a3a"><title>Temporarily unavailable</title><style>body{font-family:'Source Sans 3','Space Grotesk',ui-sans-serif,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:oklch(0.16 0.015 55);color:oklch(0.92 0.01 55)}.card{background:oklch(0.2 0.015 55);border:1px solid oklch(0.92 0.01 55 / 0.12);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px oklch(0 0 0 / 0.35)}h1{font-family:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:oklch(0.82 0.02 55)}a.btn{display:inline-block;background:oklch(0.66 0.12 75);color:oklch(0.97 0.01 85);font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}.meta{margin-top:8px;font-size:12px;color:oklch(0.72 0.02 55)}a.link{color:oklch(0.78 0.1 78)}</style></head><body><div class="card"><h1>We're updating things</h1><p>Please try again in a moment. If this persists, contact me via <a class="link" href="https://www.linkedin.com/in/blakeoxford">LinkedIn</a>.</p><a class="btn" href="/">Go home</a><div class="meta">Correlation ID: ${safeId}</div></div></body></html>`;
+}
+
+/**
  * Same-origin friendly CORS headers. Never pairs `*` with credentials.
  * @param {Request} request
  * @param {{ methods?: string, allowHeaders?: string, extra?: Record<string, string> }} [options]
@@ -1400,7 +1411,7 @@ Guidelines:
           if (cached) return cached;
           const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
           if (isHtmlRoute) {
-            const offlineHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0b1020;color:#e5e7eb}.card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.25)}h1{font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:#cbd5e1}a.btn{display:inline-block;background:#ffffff;color:#111827;font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}.meta{margin-top:8px;font-size:12px;color:#94a3b8}</style></head><body><div class="card"><h1>We\'re updating things</h1><p>Please try again in a moment. If this persists, contact me via LinkedIn below.</p><a class="btn" href="/">Go home</a><div class="meta">Correlation ID: '+reqId+'</div></div></body></html>';
+            const offlineHtml = buildOfflineHtml(reqId);
             const headers = { 'content-type': 'text/html; charset=utf-8', 'x-request-id': reqId, 'x-route-kind': 'html', 'cache-control': 'no-store', 'x-cache-policy': 'no-store' };
             const resp = new Response(offlineHtml, { status: 200, headers });
             console.log('\u26a0\ufe0f Fallback html', JSON.stringify({ id: reqId, status: resp.status, path: url.pathname, dur: Date.now() - startTs }));
@@ -1600,7 +1611,7 @@ Guidelines:
       if (staleResponse) return staleResponse;
       const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
       if (isHtmlRoute) {
-        const offlineHtml = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Temporarily unavailable</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0b1020;color:#e5e7eb}.card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.25)}h1{font-size:20px;margin:0 0 8px}p{margin:0 0 12px;color:#cbd5e1}a.btn{display:inline-block;background:#ffffff;color:#111827;font-weight:700;padding:8px 12px;border-radius:8px;text-decoration:none}.meta{margin-top:8px;font-size:12px;color:#94a3b8}</style></head><body><div class="card"><h1>We\'re updating things</h1><p>Please try again in a moment. If this persists, contact me via LinkedIn below.</p><a class="btn" href="/">Go home</a><div class="meta">Correlation ID: '+reqId+'</div></div></body></html>';
+        const offlineHtml = buildOfflineHtml(reqId);
         const headers = { 'content-type': 'text/html; charset=utf-8', 'x-request-id': reqId, 'x-route-kind': 'html', 'cache-control': 'no-store', 'x-cache-policy': 'no-store' };
         const resp = new Response(offlineHtml, { status: 200, headers });
         console.log('\u26a0\ufe0f Fallback html', JSON.stringify({ id: reqId, status: resp.status, path: url.pathname, dur: Date.now() - errStart }));

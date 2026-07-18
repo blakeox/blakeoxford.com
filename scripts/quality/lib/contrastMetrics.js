@@ -43,7 +43,7 @@ export function slope(values) {
 export function deriveMetrics(borderlineCounts, window = 7) {
   return {
     rollingAvg: rollingAverage(borderlineCounts, window),
-    slope: slope(borderlineCounts)
+    slope: slope(borderlineCounts),
   };
 }
 
@@ -67,7 +67,7 @@ export function stdDev(values, window = 7) {
   if (!Array.isArray(values) || values.length < 2) return null;
   const slice = values.slice(-window);
   if (slice.length < 2) return null;
-  const mean = slice.reduce((a,b)=>a+b,0)/slice.length;
-  const variance = slice.reduce((a,b)=>a + Math.pow(b-mean,2),0)/slice.length;
+  const mean = slice.reduce((a, b) => a + b, 0) / slice.length;
+  const variance = slice.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / slice.length;
   return +Math.sqrt(variance).toFixed(3);
 }

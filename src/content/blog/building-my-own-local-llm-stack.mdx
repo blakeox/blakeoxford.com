@@ -1,76 +1,88 @@
 ---
 title: "Building My Own Local LLM Stack (Because Sometimes You Shouldn't Ask ChatGPT About a Rash)"
-description: "How I built a secure, self-healing local AI stack using Ollama, Docker, and Open WebUI on a Mac Mini — a private, practical ChatGPT alternative."
+description: 'How I built a secure, self-healing local AI stack using Ollama, Docker, and Open WebUI on a Mac Mini — a private, practical ChatGPT alternative.'
 pubDate: 2025-10-25
-author: "Blake Oxford"
-tags: ["local LLM", "Ollama", "Open WebUI", "DevOps", "privacy", "AI infrastructure", "macOS"]
+author: 'Blake Oxford'
+tags: ['local LLM', 'Ollama', 'Open WebUI', 'DevOps', 'privacy', 'AI infrastructure', 'macOS']
 draft: false
 ---
 
-<div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10 rounded-3xl p-12 md:p-16 my-12 border border-accent/20">
-  <div className="absolute top-0 right-0 w-96 h-96 bg-accent-subtle rounded-full blur-3xl"></div>
-  <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+<div className="relative my-12 overflow-hidden rounded-3xl border border-accent/20 bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10 p-12 md:p-16">
+  <div className="absolute top-0 right-0 h-96 w-96 rounded-full bg-accent-subtle blur-3xl"></div>
+  <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl"></div>
   <div className="relative z-10">
-    <div className="flex items-center gap-4 mb-8">
+    <div className="mb-8 flex items-center gap-4">
       <div className="text-7xl">🔐</div>
       <div>
-        <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-accent-emphasis to-primary-emphasis bg-clip-text text-transparent">
+        <h2 className="bg-gradient-to-r from-accent-emphasis to-primary-emphasis bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
           Building My Own Local LLM Stack
         </h2>
       </div>
     </div>
-    <div className="bg-surface/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-accent/30">
-      <p className="text-2xl md:text-3xl font-bold text-center text-accent-emphasis italic">
+    <div className="rounded-2xl border border-accent/30 bg-surface/90 p-8 shadow-2xl backdrop-blur-sm">
+      <p className="text-center text-2xl font-bold text-accent-emphasis italic md:text-3xl">
         "Because sometimes you shouldn't ask ChatGPT about a rash."
       </p>
     </div>
   </div>
 </div>
 
-<div className="prose prose-xl max-w-none my-12">
-  <p className="text-xl md:text-2xl leading-relaxed font-medium text-foreground/90">
-    At some point, every engineer realizes that <strong className="text-accent-emphasis">feeding private data into public AI models is not ideal</strong> — especially when that data might include a strange rash, a client contract, or a confidential project plan.
+<div className="my-12">
+  <p className="text-xl leading-relaxed font-medium text-foreground/90 md:text-2xl">
+    At some point, every engineer realizes that{' '}
+    <strong className="text-accent-emphasis">
+      feeding private data into public AI models is not ideal
+    </strong>{' '}
+    — especially when that data might include a strange rash, a client contract, or a confidential
+    project plan.
   </p>
 </div>
 
-<div className="grid md:grid-cols-2 gap-8 my-12">
-  <div className="bg-error-subtle p-8 rounded-2xl border-l-4 border-error">
-    <div className="text-4xl mb-4">🤔</div>
-    <h3 className="text-2xl font-bold mb-4 text-error-emphasis">The Problem</h3>
-    <p className="text-lg leading-relaxed opacity-90">One too many <em>"maybe I should not paste this"</em> hesitations made me realize I needed a better solution.</p>
+<div className="my-12 grid gap-8 md:grid-cols-2">
+  <div className="rounded-2xl border-l-4 border-error bg-error-subtle p-8">
+    <div className="mb-4 text-4xl">🤔</div>
+    <h3 className="mb-4 text-2xl font-bold text-error-emphasis">The Problem</h3>
+    <p className="text-lg leading-relaxed opacity-90">
+      One too many <em>"maybe I should not paste this"</em> hesitations made me realize I needed a
+      better solution.
+    </p>
   </div>
-  <div className="bg-success-subtle p-8 rounded-2xl border-l-4 border-success">
-    <div className="text-4xl mb-4">✨</div>
-    <h3 className="text-2xl font-bold mb-4 text-success-emphasis">The Solution</h3>
-    <p className="text-lg leading-relaxed opacity-90">A <strong>self-contained, self-healing LLM stack</strong> running on my Mac Mini — private, fast, and entirely under my control.</p>
+  <div className="rounded-2xl border-l-4 border-success bg-success-subtle p-8">
+    <div className="mb-4 text-4xl">✨</div>
+    <h3 className="mb-4 text-2xl font-bold text-success-emphasis">The Solution</h3>
+    <p className="text-lg leading-relaxed opacity-90">
+      A <strong>self-contained, self-healing LLM stack</strong> running on my Mac Mini — private,
+      fast, and entirely under my control.
+    </p>
   </div>
 </div>
 
-<div className="bg-gradient-to-r from-accent/10 via-primary/10 to-accent/10 rounded-2xl p-10 my-16 border-2 border-accent/30 shadow-2xl">
+<div className="my-16 rounded-2xl border-2 border-accent/30 bg-gradient-to-r from-accent/10 via-primary/10 to-accent/10 p-10 shadow-2xl">
   <div className="flex items-start gap-4">
-    <div className="text-5xl flex-shrink-0">💡</div>
+    <div className="flex-shrink-0 text-5xl">💡</div>
     <div>
-      <p className="text-2xl font-bold mb-3 text-accent-emphasis">The Mission</p>
-      <p className="text-xl leading-relaxed italic">Part systems-engineering exercise, part weekend therapy session — building production-grade reliability without the cloud.</p>
+      <p className="mb-3 text-2xl font-bold text-accent-emphasis">The Mission</p>
+      <p className="text-xl leading-relaxed italic">
+        Part systems-engineering exercise, part weekend therapy session — building production-grade
+        reliability without the cloud.
+      </p>
     </div>
   </div>
 </div>
 
 ---
 
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4 rounded-full border border-accent/30 mb-8">
+<div className="my-20 text-center">
+  <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4">
     <div className="text-4xl">🏗️</div>
     <span className="text-xl font-semibold text-accent-emphasis">Architecture Overview</span>
   </div>
-  <h2 className="text-4xl md:text-6xl font-black mb-4 leading-tight">
+  <h2 className="mb-4 text-4xl leading-tight font-black md:text-6xl">
     <span className="bg-gradient-to-r from-accent-emphasis via-primary-emphasis to-accent-emphasis bg-clip-text text-transparent">
       ChatGPT Power
     </span>
   </h2>
-  <p className="text-3xl md:text-4xl font-bold text-foreground/70">
-    Zero Cloud Dependency
-  </p>
+  <p className="text-3xl font-bold text-foreground/70 md:text-4xl">Zero Cloud Dependency</p>
 </div>
 
 <div className="relative my-16">
@@ -134,28 +146,36 @@ draft: false
   </div>
 </div>
 
-<div className="relative overflow-hidden bg-gradient-to-br from-accent/5 via-primary/5 to-accent/5 rounded-3xl p-10 my-16 border-2 border-accent/30">
-  <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent-subtle rounded-full blur-3xl"></div>
-  <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
-  <div className="relative text-center max-w-4xl mx-auto">
-    <p className="text-2xl md:text-3xl leading-relaxed italic font-medium">
-      I wanted something that behaved like a <strong className="text-accent-emphasis not-italic">production-grade microservice stack</strong> — services start automatically, run isolated from each other, and recover from failure without human intervention.
+<div className="relative my-16 overflow-hidden rounded-3xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 via-primary/5 to-accent/5 p-10">
+  <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-accent-subtle blur-3xl"></div>
+  <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl"></div>
+  <div className="relative mx-auto max-w-4xl text-center">
+    <p className="text-2xl leading-relaxed font-medium italic md:text-3xl">
+      I wanted something that behaved like a{' '}
+      <strong className="text-accent-emphasis not-italic">
+        production-grade microservice stack
+      </strong>{' '}
+      — services start automatically, run isolated from each other, and recover from failure without
+      human intervention.
     </p>
-    <div className="mt-6 pt-6 border-t border-accent/20">
-      <p className="text-xl opacity-75">This wasn't just about privacy — it was about designing <strong className="text-primary-emphasis">reliability without the cloud</strong>.</p>
+    <div className="mt-6 border-t border-accent/20 pt-6">
+      <p className="text-xl opacity-75">
+        This wasn't just about privacy — it was about designing{' '}
+        <strong className="text-primary-emphasis">reliability without the cloud</strong>.
+      </p>
     </div>
   </div>
 </div>
 
 ---
 
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-warning-subtle px-8 py-4 rounded-full border border-warning/30 mb-6">
+<div className="my-20 text-center">
+  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-warning/30 bg-warning-subtle px-8 py-4">
     <div className="text-4xl">🔨</div>
     <span className="text-xl font-semibold text-warning-emphasis">Implementation Journey</span>
   </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground">Building It Out</h2>
-  <p className="text-xl mt-4 opacity-70">Five steps from concept to production</p>
+  <h2 className="text-4xl font-black text-foreground md:text-5xl">Building It Out</h2>
+  <p className="mt-4 text-xl opacity-70">Five steps from concept to production</p>
 </div>
 
 <div className="relative my-16">
@@ -301,158 +321,198 @@ draft: false
 
 ---
 
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-success-subtle px-8 py-4 rounded-full border border-success/30 mb-6">
+<div className="my-20 text-center">
+  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-success/30 bg-success-subtle px-8 py-4">
     <div className="text-4xl">✨</div>
     <span className="text-xl font-semibold text-success-emphasis">Capabilities</span>
   </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground">What It Can Do</h2>
+  <h2 className="text-4xl font-black text-foreground md:text-5xl">What It Can Do</h2>
 </div>
 
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-16">
 
-  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
-    <div className="flex items-center gap-4 mb-5">
-      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🔒</div>
-      <strong className="text-2xl font-bold">Run Fully Offline</strong>
-    </div>
-    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Private and fast LLMs running completely disconnected from the cloud</p>
+<div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
+  <div className="mb-5 flex items-center gap-4">
+    <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🔒</div>
+    <strong className="text-2xl font-bold">Run Fully Offline</strong>
   </div>
+  <p className="border-l-4 border-border pl-2 text-lg leading-relaxed opacity-80">
+    Private and fast LLMs running completely disconnected from the cloud
+  </p>
+</div>
 
-  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
-    <div className="flex items-center gap-4 mb-5">
-      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🔄</div>
-      <strong className="text-2xl font-bold">Swap Models</strong>
-    </div>
-    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Switch between Llama 3, Mistral, Phi 3, and more with a click</p>
+<div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
+  <div className="mb-5 flex items-center gap-4">
+    <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🔄</div>
+    <strong className="text-2xl font-bold">Swap Models</strong>
   </div>
+  <p className="border-l-4 border-border pl-2 text-lg leading-relaxed opacity-80">
+    Switch between Llama 3, Mistral, Phi 3, and more with a click
+  </p>
+</div>
 
-  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
-    <div className="flex items-center gap-4 mb-5">
-      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🌐</div>
-      <strong className="text-2xl font-bold">Remote Access</strong>
-    </div>
-    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Secure encrypted access through a private web interface</p>
+<div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
+  <div className="mb-5 flex items-center gap-4">
+    <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🌐</div>
+    <strong className="text-2xl font-bold">Remote Access</strong>
   </div>
+  <p className="border-l-4 border-border pl-2 text-lg leading-relaxed opacity-80">
+    Secure encrypted access through a private web interface
+  </p>
+</div>
 
-  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
-    <div className="flex items-center gap-4 mb-5">
-      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🧩</div>
-      <strong className="text-2xl font-bold">Extend & Customize</strong>
-    </div>
-    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Add retrieval, embeddings, and custom functions</p>
+<div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
+  <div className="mb-5 flex items-center gap-4">
+    <div className="text-6xl transition-transform duration-300 group-hover:scale-110">🧩</div>
+    <strong className="text-2xl font-bold">Extend & Customize</strong>
   </div>
+  <p className="border-l-4 border-border pl-2 text-lg leading-relaxed opacity-80">
+    Add retrieval, embeddings, and custom functions
+  </p>
+</div>
 
-  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
-    <div className="flex items-center gap-4 mb-5">
-      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">💾</div>
-      <strong className="text-2xl font-bold">Auto Backups</strong>
-    </div>
-    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Persistent vector database with automatic backups</p>
+<div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
+  <div className="mb-5 flex items-center gap-4">
+    <div className="text-6xl transition-transform duration-300 group-hover:scale-110">💾</div>
+    <strong className="text-2xl font-bold">Auto Backups</strong>
   </div>
+  <p className="border-l-4 border-border pl-2 text-lg leading-relaxed opacity-80">
+    Persistent vector database with automatic backups
+  </p>
+</div>
 
-  <div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
-    <div className="flex items-center gap-4 mb-5">
-      <div className="text-6xl transition-transform duration-300 group-hover:scale-110">⚙️</div>
-      <strong className="text-2xl font-bold">Local Scripts</strong>
-    </div>
-    <p className="text-lg leading-relaxed opacity-80 pl-2 border-l-4 border-border">Integrate with local scripts for data analysis and code</p>
+<div className="group rounded-2xl border border-border/70 bg-surface/90 p-6 shadow-lg transition-colors duration-normal hover:border-accent/50">
+  <div className="mb-5 flex items-center gap-4">
+    <div className="text-6xl transition-transform duration-300 group-hover:scale-110">⚙️</div>
+    <strong className="text-2xl font-bold">Local Scripts</strong>
   </div>
+  <p className="border-l-4 border-border pl-2 text-lg leading-relaxed opacity-80">
+    Integrate with local scripts for data analysis and code
+  </p>
+</div>
 
 </div>
 
-<div className="relative overflow-hidden blog-callout-warning">
-  <div className="absolute top-0 right-0 w-64 h-64 bg-warning/10 rounded-full blur-3xl"></div>
+<div className="blog-callout-warning relative overflow-hidden">
+  <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-warning/10 blur-3xl"></div>
   <div className="relative flex items-start gap-5">
-    <div className="text-6xl flex-shrink-0">⚠️</div>
+    <div className="flex-shrink-0 text-6xl">⚠️</div>
     <div>
-      <h3 className="text-2xl md:text-3xl font-bold text-warning-emphasis mb-4">Real Talk</h3>
-      <p className="text-lg md:text-xl leading-relaxed">The output quality is not always on par with ChatGPT or Claude, especially on an M1 chip. Local models trade depth for independence — they think a little slower and dream a little smaller.</p>
-      <div className="mt-6 pt-6 border-t border-warning/20">
-        <p className="text-lg leading-relaxed opacity-90">But everyday tasks like <strong className="text-warning-emphasis">drafting text, summarizing files, querying data, or brainstorming code</strong> run beautifully offline.</p>
+      <h3 className="mb-4 text-2xl font-bold text-warning-emphasis md:text-3xl">Real Talk</h3>
+      <p className="text-lg leading-relaxed md:text-xl">
+        The output quality is not always on par with ChatGPT or Claude, especially on an M1 chip.
+        Local models trade depth for independence — they think a little slower and dream a little
+        smaller.
+      </p>
+      <div className="mt-6 border-t border-warning/20 pt-6">
+        <p className="text-lg leading-relaxed opacity-90">
+          But everyday tasks like{' '}
+          <strong className="text-warning-emphasis">
+            drafting text, summarizing files, querying data, or brainstorming code
+          </strong>{' '}
+          run beautifully offline.
+        </p>
       </div>
     </div>
   </div>
 </div>
 
-<div className="relative overflow-hidden bg-gradient-to-r from-accent-emphasis to-primary-emphasis rounded-3xl p-12 md:p-16 my-20 shadow-2xl">
-  <div className="absolute -top-20 -right-20 w-64 h-64 bg-on-dark/10 rounded-full blur-3xl"></div>
-  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-on-dark/10 rounded-full blur-3xl"></div>
-  <div className="relative text-on-dark text-center">
-    <p className="text-2xl md:text-3xl font-bold mb-6 leading-tight">With a clean, browser-based interface on my laptop or phone, it's easy to use and completely private.</p>
-    <div className="inline-block bg-white/20 backdrop-blur-sm rounded-2xl px-8 py-5 border border-on-dark/30">
-      <p className="text-xl md:text-2xl font-semibold">That's the sweet spot: <span className="text-warning-light">convenient, capable, and under my own roof</span></p>
+<div className="relative my-20 overflow-hidden rounded-3xl bg-gradient-to-r from-accent-emphasis to-primary-emphasis p-12 shadow-2xl md:p-16">
+  <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-on-dark/10 blur-3xl"></div>
+  <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-on-dark/10 blur-3xl"></div>
+  <div className="relative text-center text-on-dark">
+    <p className="mb-6 text-2xl leading-tight font-bold md:text-3xl">
+      With a clean, browser-based interface on my laptop or phone, it's easy to use and completely
+      private.
+    </p>
+    <div className="inline-block rounded-2xl border border-on-dark/30 bg-white/20 px-8 py-5 backdrop-blur-sm">
+      <p className="text-xl font-semibold md:text-2xl">
+        That's the sweet spot:{' '}
+        <span className="text-warning-light">convenient, capable, and under my own roof</span>
+      </p>
     </div>
   </div>
 </div>
 
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4 rounded-full border border-accent/30 mb-6">
+<div className="my-20 text-center">
+  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4">
     <div className="text-4xl">🎯</div>
     <span className="text-xl font-semibold text-accent-emphasis">Key Lessons</span>
   </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground">Engineering Takeaways</h2>
+  <h2 className="text-4xl font-black text-foreground md:text-5xl">Engineering Takeaways</h2>
 </div>
 
 <div className="grid md:grid-cols-2 gap-8 my-16">
 
-  <div className="relative overflow-hidden bg-gradient-to-br from-accent/5 to-primary/5 rounded-2xl p-8 border-2 border-accent/30 shadow-lg hover:shadow-xl transition-all duration-300">
-    <div className="flex items-start gap-5">
-      <div className="text-6xl flex-shrink-0">🔐</div>
-      <div>
-        <h3 className="text-2xl font-bold mb-3 text-accent-emphasis">Isolation matters</h3>
-        <p className="text-lg leading-relaxed opacity-85">Running Ollama as a dedicated non-admin user limits exposure and contains potential issues.</p>
-      </div>
+<div className="relative overflow-hidden rounded-2xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 to-primary/5 p-8 shadow-lg transition-all duration-300 hover:shadow-xl">
+  <div className="flex items-start gap-5">
+    <div className="flex-shrink-0 text-6xl">🔐</div>
+    <div>
+      <h3 className="mb-3 text-2xl font-bold text-accent-emphasis">Isolation matters</h3>
+      <p className="text-lg leading-relaxed opacity-85">
+        Running Ollama as a dedicated non-admin user limits exposure and contains potential issues.
+      </p>
     </div>
   </div>
+</div>
 
-  <div className="relative overflow-hidden bg-success-subtle rounded-2xl p-8 border-2 border-success/30 shadow-lg hover:shadow-xl transition-all duration-300">
-    <div className="flex items-start gap-5">
-      <div className="text-6xl flex-shrink-0">💚</div>
-      <div>
-        <h3 className="text-2xl font-bold mb-3 text-success-emphasis">Health checks beat blind uptime</h3>
-        <p className="text-lg leading-relaxed opacity-85">A fast restart is better than a hung container waiting for manual intervention.</p>
-      </div>
+<div className="relative overflow-hidden rounded-2xl border-2 border-success/30 bg-success-subtle p-8 shadow-lg transition-all duration-300 hover:shadow-xl">
+  <div className="flex items-start gap-5">
+    <div className="flex-shrink-0 text-6xl">💚</div>
+    <div>
+      <h3 className="mb-3 text-2xl font-bold text-success-emphasis">
+        Health checks beat blind uptime
+      </h3>
+      <p className="text-lg leading-relaxed opacity-85">
+        A fast restart is better than a hung container waiting for manual intervention.
+      </p>
     </div>
   </div>
+</div>
 
-  <div className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl p-8 border-2 border-primary/30 shadow-lg hover:shadow-xl transition-all duration-300">
-    <div className="flex items-start gap-5">
-      <div className="text-6xl flex-shrink-0">⚡</div>
-      <div>
-        <h3 className="text-2xl font-bold mb-3 text-primary-emphasis">Automation outlasts vigilance</h3>
-        <p className="text-lg leading-relaxed opacity-85">Self-healing scripts outperform manual babysitting every single time.</p>
-      </div>
+<div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5 p-8 shadow-lg transition-all duration-300 hover:shadow-xl">
+  <div className="flex items-start gap-5">
+    <div className="flex-shrink-0 text-6xl">⚡</div>
+    <div>
+      <h3 className="mb-3 text-2xl font-bold text-primary-emphasis">
+        Automation outlasts vigilance
+      </h3>
+      <p className="text-lg leading-relaxed opacity-85">
+        Self-healing scripts outperform manual babysitting every single time.
+      </p>
     </div>
   </div>
+</div>
 
-  <div className="relative overflow-hidden bg-warning-subtle rounded-2xl p-8 border-2 border-warning/30 shadow-lg hover:shadow-xl transition-all duration-300">
-    <div className="flex items-start gap-5">
-      <div className="text-6xl flex-shrink-0">🛡️</div>
-      <div>
-        <h3 className="text-2xl font-bold mb-3 text-warning-emphasis">Security starts at scope</h3>
-        <p className="text-lg leading-relaxed opacity-85">Localhost bindings, least-privilege users, and no public ports do more than any firewall.</p>
-      </div>
+<div className="relative overflow-hidden rounded-2xl border-2 border-warning/30 bg-warning-subtle p-8 shadow-lg transition-all duration-300 hover:shadow-xl">
+  <div className="flex items-start gap-5">
+    <div className="flex-shrink-0 text-6xl">🛡️</div>
+    <div>
+      <h3 className="mb-3 text-2xl font-bold text-warning-emphasis">Security starts at scope</h3>
+      <p className="text-lg leading-relaxed opacity-85">
+        Localhost bindings, least-privilege users, and no public ports do more than any firewall.
+      </p>
     </div>
   </div>
+</div>
 
 </div>
 
-<div className="relative overflow-hidden bg-error-subtle rounded-3xl p-10 my-16 border-2 border-error/40 shadow-xl">
-  <div className="absolute -top-10 -right-10 w-48 h-48 bg-error/10 rounded-full blur-3xl"></div>
+<div className="relative my-16 overflow-hidden rounded-3xl border-2 border-error/40 bg-error-subtle p-10 shadow-xl">
+  <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-error/10 blur-3xl"></div>
   <div className="relative text-center">
-    <div className="text-7xl mb-4">💊</div>
-    <p className="text-2xl md:text-3xl font-bold text-error-emphasis">And of course...</p>
-    <p className="text-xl md:text-2xl mt-4 font-semibold">Do not ask your LLM about that rash.</p>
+    <div className="mb-4 text-7xl">💊</div>
+    <p className="text-2xl font-bold text-error-emphasis md:text-3xl">And of course...</p>
+    <p className="mt-4 text-xl font-semibold md:text-2xl">Do not ask your LLM about that rash.</p>
   </div>
 </div>
 
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4 rounded-full border border-accent/30 mb-6">
+<div className="my-20 text-center">
+  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4">
     <div className="text-4xl">💼</div>
     <span className="text-xl font-semibold text-accent-emphasis">Professional Context</span>
   </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground">Project Reflection</h2>
+  <h2 className="text-4xl font-black text-foreground md:text-5xl">Project Reflection</h2>
 </div>
 
 <div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/10 to-accent/10 rounded-3xl p-12 md:p-16 my-16 border-2 border-accent/40 shadow-2xl">
@@ -487,101 +547,113 @@ draft: false
       </p>
       <p className="text-xl opacity-90">Built to demonstrate privacy, reliability, and craftsmanship.</p>
     </div>
+
   </div>
 </div>
 
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4 rounded-full border border-accent/30 mb-6">
+<div className="my-20 text-center">
+  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4">
     <div className="text-4xl">🚀</div>
     <span className="text-xl font-semibold text-accent-emphasis">Future Roadmap</span>
   </div>
-  <h2 className="text-4xl md:text-5xl font-black text-foreground">What's Next</h2>
+  <h2 className="text-4xl font-black text-foreground md:text-5xl">What's Next</h2>
 </div>
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-16">
 
-  <div className="group relative overflow-hidden bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-on-dark p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-on-dark/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
-    <div className="relative">
-      <div className="text-6xl mb-6">🧠</div>
-      <strong className="text-3xl font-bold block mb-4">Vector Memory</strong>
-      <p className="text-lg opacity-90 leading-relaxed">Add persistent memory with Chroma DB and embeddings for smarter, context-aware conversations</p>
-    </div>
+<div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent-emphasis to-primary-emphasis p-10 text-on-dark shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl">
+  <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-on-dark/10 blur-2xl transition-all duration-500 group-hover:bg-white/20"></div>
+  <div className="relative">
+    <div className="mb-6 text-6xl">🧠</div>
+    <strong className="mb-4 block text-3xl font-bold">Vector Memory</strong>
+    <p className="text-lg leading-relaxed opacity-90">
+      Add persistent memory with Chroma DB and embeddings for smarter, context-aware conversations
+    </p>
   </div>
+</div>
 
-  <div className="group relative overflow-hidden bg-gradient-to-br from-primary to-accent text-on-dark p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-on-dark/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
-    <div className="relative">
-      <div className="text-6xl mb-6">🤖</div>
-      <strong className="text-3xl font-bold block mb-4">Agent Workflows</strong>
-      <p className="text-lg opacity-90 leading-relaxed">Build autonomous workflows to automate complex system tasks and operations</p>
-    </div>
+<div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-accent p-10 text-on-dark shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl">
+  <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-on-dark/10 blur-2xl transition-all duration-500 group-hover:bg-white/20"></div>
+  <div className="relative">
+    <div className="mb-6 text-6xl">🤖</div>
+    <strong className="mb-4 block text-3xl font-bold">Agent Workflows</strong>
+    <p className="text-lg leading-relaxed opacity-90">
+      Build autonomous workflows to automate complex system tasks and operations
+    </p>
   </div>
+</div>
 
-  <div className="group relative overflow-hidden bg-gradient-to-br from-accent-emphasis to-primary-emphasis text-on-dark p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-on-dark/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
-    <div className="relative">
-      <div className="text-6xl mb-6">📦</div>
-      <strong className="text-3xl font-bold block mb-4">Template Package</strong>
-      <p className="text-lg opacity-90 leading-relaxed">Package as a reusable "Local LLM Stack" template for the community</p>
-    </div>
+<div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent-emphasis to-primary-emphasis p-10 text-on-dark shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl">
+  <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-on-dark/10 blur-2xl transition-all duration-500 group-hover:bg-white/20"></div>
+  <div className="relative">
+    <div className="mb-6 text-6xl">📦</div>
+    <strong className="mb-4 block text-3xl font-bold">Template Package</strong>
+    <p className="text-lg leading-relaxed opacity-90">
+      Package as a reusable "Local LLM Stack" template for the community
+    </p>
   </div>
+</div>
 
-  <div className="group relative overflow-hidden bg-gradient-to-br from-primary to-accent text-on-dark p-10 rounded-3xl shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.03]">
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-on-dark/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
-    <div className="relative">
-      <div className="text-6xl mb-6">📱</div>
-      <strong className="text-3xl font-bold block mb-4">PWA Support</strong>
-      <p className="text-lg opacity-90 leading-relaxed">Add progressive web app support with icons for macOS and iPhone shortcuts</p>
-    </div>
+<div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-accent p-10 text-on-dark shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl">
+  <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-on-dark/10 blur-2xl transition-all duration-500 group-hover:bg-white/20"></div>
+  <div className="relative">
+    <div className="mb-6 text-6xl">📱</div>
+    <strong className="mb-4 block text-3xl font-bold">PWA Support</strong>
+    <p className="text-lg leading-relaxed opacity-90">
+      Add progressive web app support with icons for macOS and iPhone shortcuts
+    </p>
   </div>
+</div>
 
 </div>
 
-<div className="bg-gradient-to-br from-surface-subtle/80 to-surface/80 backdrop-blur-sm rounded-3xl p-12 my-16 border-2 border-border/50 shadow-xl text-center">
-  <p className="text-2xl md:text-3xl italic font-medium opacity-90">
-If your home lab can talk back intelligently, it should look good doing it.
+<div className="my-16 rounded-3xl border-2 border-border/50 bg-gradient-to-br from-surface-subtle/80 to-surface/80 p-12 text-center shadow-xl backdrop-blur-sm">
+  <p className="text-2xl font-medium italic opacity-90 md:text-3xl">
+    If your home lab can talk back intelligently, it should look good doing it.
   </p>
 </div>
 
-<div className="text-center my-20">
-  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4 rounded-full border border-accent/30 mb-6">
+<div className="my-20 text-center">
+  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4">
     <div className="text-4xl">💭</div>
     <span className="text-xl font-semibold text-accent-emphasis">Closing Thoughts</span>
   </div>
 </div>
 
-<div className="relative overflow-hidden bg-gradient-to-br from-accent-emphasis via-primary-emphasis to-accent-emphasis rounded-[2rem] p-16 md:p-20 my-20 shadow-[0_20px_70px_-15px_rgba(6,182,212,0.4)]">
-  <div className="absolute -top-32 -right-32 w-96 h-96 bg-on-dark/10 rounded-full blur-3xl"></div>
-  <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-on-dark/10 rounded-full blur-3xl"></div>
-  
-  <div className="relative text-on-dark text-center max-w-5xl mx-auto">
-    <p className="text-4xl md:text-6xl font-black mb-8 leading-tight drop-shadow-lg">
-      It's not meant to outthink ChatGPT<br/>
+<div className="relative my-20 overflow-hidden rounded-3xl bg-gradient-to-br from-accent-emphasis via-primary-emphasis to-accent-emphasis p-16 shadow-2xl md:p-20">
+  <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-on-dark/10 blur-3xl"></div>
+  <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-on-dark/10 blur-3xl"></div>
+
+  <div className="relative mx-auto max-w-5xl text-center text-on-dark">
+    <p className="mb-8 text-4xl leading-tight font-black drop-shadow-lg md:text-6xl">
+      It's not meant to outthink ChatGPT
+      <br />
       <span className="text-info-light">— it's meant to outlast it.</span>
     </p>
-    <div className="bg-on-dark/15 backdrop-blur-md rounded-2xl p-8 md:p-10 border border-on-dark/30 shadow-2xl">
-      <p className="text-xl md:text-2xl leading-relaxed opacity-95 mb-4">
+    <div className="rounded-2xl border border-on-dark/30 bg-on-dark/15 p-8 shadow-2xl backdrop-blur-md md:p-10">
+      <p className="mb-4 text-xl leading-relaxed opacity-95 md:text-2xl">
         Local AI doesn't need a subscription, a login, or a cloud outage workaround.
       </p>
-      <p className="text-2xl md:text-3xl font-bold">
-        It's simply <span className="text-warning-light">yours</span> — always on, always available, and smart enough for nearly everything that matters.
+      <p className="text-2xl font-bold md:text-3xl">
+        It's simply <span className="text-warning-light">yours</span> — always on, always available,
+        and smart enough for nearly everything that matters.
       </p>
     </div>
   </div>
 </div>
 
-<div className="relative overflow-hidden bg-gradient-to-r from-surface-subtle via-accent/10 to-surface-subtle rounded-3xl p-12 md:p-16 my-16 border-2 border-accent/30 shadow-2xl">
-  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-accent/20 to-transparent"></div>
+<div className="relative my-16 overflow-hidden rounded-3xl border-2 border-accent/30 bg-gradient-to-r from-surface-subtle via-accent/10 to-surface-subtle p-12 shadow-2xl md:p-16">
+  <div className="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-accent/20 to-transparent"></div>
   <div className="relative text-center">
-    <div className="text-6xl mb-6">💬</div>
-    <blockquote className="text-3xl md:text-4xl font-serif italic mb-6 text-accent-emphasis leading-relaxed">
-      "Privacy, practicality, and automation<br/>— all under one roof."
+    <div className="mb-6 text-6xl">💬</div>
+    <blockquote className="mb-6 font-serif text-3xl leading-relaxed text-accent-emphasis italic md:text-4xl">
+      "Privacy, practicality, and automation
+      <br />— all under one roof."
     </blockquote>
-    <div className="flex items-center justify-center gap-4 mt-8">
-      <div className="w-16 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
+    <div className="mt-8 flex items-center justify-center gap-4">
+      <div className="h-px w-16 bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
       <p className="text-xl font-bold tracking-wide text-accent-emphasis">Blake Oxford</p>
-      <div className="w-16 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
+      <div className="h-px w-16 bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
     </div>
   </div>
 </div>

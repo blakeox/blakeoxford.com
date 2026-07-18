@@ -1,4 +1,3 @@
- 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 describe('Search Utilities Integration', () => {
@@ -18,13 +17,13 @@ describe('Search Utilities Integration', () => {
           slug: 'test-project',
           title: 'Test Project',
           description: 'Test project description',
-          tags: ['test', 'project']
-        }
+          tags: ['test', 'project'],
+        },
       ];
 
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockProjectsData)
+        json: () => Promise.resolve(mockProjectsData),
       });
 
       const response = await fetch('/api/projects.json');
@@ -43,7 +42,8 @@ describe('Search Utilities Integration', () => {
 
   describe('Search Query Processing', () => {
     it('should normalize search queries', () => {
-      const normalizeQuery = (query: string): string => query.toLowerCase().trim().replace(/\s+/g, ' ');
+      const normalizeQuery = (query: string): string =>
+        query.toLowerCase().trim().replace(/\s+/g, ' ');
 
       expect(normalizeQuery('  Project   One  ')).toBe('project one');
       expect(normalizeQuery('Modern Stack')).toBe('modern stack');
@@ -51,7 +51,8 @@ describe('Search Utilities Integration', () => {
     });
 
     it('should extract search terms', () => {
-      const extractTerms = (query: string): string[] => query.toLowerCase().trim().split(/\s+/).filter(Boolean);
+      const extractTerms = (query: string): string[] =>
+        query.toLowerCase().trim().split(/\s+/).filter(Boolean);
 
       expect(extractTerms('microsoft fabric')).toEqual(['microsoft', 'fabric']);
       expect(extractTerms('  cloud automation  ')).toEqual(['cloud', 'automation']);
@@ -60,16 +61,24 @@ describe('Search Utilities Integration', () => {
 
     it('should filter results by search terms', () => {
       const mockData = [
-        { title: 'Microsoft Fabric', content: 'Operational intelligence platform', tags: ['microsoft', 'fabric'] },
-        { title: 'OpenAI Coaching', content: 'Documentation quality feedback', tags: ['openai', 'compliance'] },
-        { title: 'Ferment App', content: 'SwiftUI mobile product', tags: ['swiftui', 'mobile'] }
+        {
+          title: 'Microsoft Fabric',
+          content: 'Operational intelligence platform',
+          tags: ['microsoft', 'fabric'],
+        },
+        {
+          title: 'OpenAI Coaching',
+          content: 'Documentation quality feedback',
+          tags: ['openai', 'compliance'],
+        },
+        { title: 'Ferment App', content: 'SwiftUI mobile product', tags: ['swiftui', 'mobile'] },
       ];
 
       const searchFilter = (data: any[], query: string) => {
         const terms = query.toLowerCase().split(/\s+/);
-        return data.filter(item => {
+        return data.filter((item) => {
           const searchText = `${item.title} ${item.content} ${item.tags.join(' ')}`.toLowerCase();
-          return terms.some(term => searchText.includes(term));
+          return terms.some((term) => searchText.includes(term));
         });
       };
 
@@ -108,7 +117,10 @@ describe('Search Utilities Integration', () => {
     });
 
     it('should limit number of search results', () => {
-      const mockResults = Array.from({ length: 50 }, (_, i) => ({ title: `Project ${i}`, content: `Content for project ${i}` }));
+      const mockResults = Array.from({ length: 50 }, (_, i) => ({
+        title: `Project ${i}`,
+        content: `Content for project ${i}`,
+      }));
       const limitResults = (results: any[], limit: number = 10) => results.slice(0, limit);
 
       const limitedResults = limitResults(mockResults, 5);

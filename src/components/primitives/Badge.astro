@@ -12,44 +12,40 @@
 import { cn } from '../../utils/cn';
 
 export interface Props {
- /** Badge visual variant */
- variant?: 'primary' | 'secondary' | 'outline' | 'subtle' | 'success' | 'warning' | 'error';
- /** Badge size */
- size?: 'xs' | 'sm' | 'md';
- /** Additional CSS classes */
- class?: string;
+  /** Badge visual variant */
+  variant?: 'primary' | 'secondary' | 'outline' | 'subtle' | 'success' | 'warning' | 'error';
+  /** Badge size */
+  size?: 'xs' | 'sm' | 'md';
+  /** Additional CSS classes */
+  class?: string;
 }
 
-const {
- variant = 'secondary',
- size = 'sm',
- class: className = '',
-} = Astro.props;
+const { variant = 'secondary', size = 'sm', class: className = '' } = Astro.props;
 
 const variantStyles = {
- primary: 'bg-accent text-on-accent border-accent/40',
- secondary: 'bg-surface text-foreground border-border/40',
- outline: 'bg-transparent text-foreground border-border/60',
- subtle: 'bg-surface-subtle text-muted-foreground border-border/25',
- success: 'bg-success-subtle text-success-emphasis border-success/30',
- warning: 'bg-warning-subtle text-warning-emphasis border-warning/30',
- error: 'bg-error-subtle text-error-emphasis border-error/30',
+  primary: 'bg-accent text-on-accent border-accent/40',
+  secondary: 'bg-surface text-foreground border-border/40',
+  outline: 'bg-transparent text-foreground border-border/60',
+  subtle: 'bg-surface-subtle text-muted-foreground border-border/25',
+  success: 'bg-success-subtle text-success-emphasis border-success/30',
+  warning: 'bg-warning-subtle text-warning-emphasis border-warning/30',
+  error: 'bg-error-subtle text-error-emphasis border-error/30',
 } as const;
 
 const sizeStyles = {
- xs: 'px-2 py-0.5 text-xxs',
- sm: 'px-2 py-1 text-xs',
- md: 'px-3 py-1.5 text-sm',
+  xs: 'px-2 py-0.5 text-xxs',
+  sm: 'px-2 py-1 text-xs',
+  md: 'px-3 py-1.5 text-sm',
 } as const;
 
 const classes = cn(
- 'inline-flex items-center font-medium rounded-full border',
- variantStyles[variant],
- sizeStyles[size],
- className,
+  'inline-flex items-center rounded-full border font-medium',
+  variantStyles[variant],
+  sizeStyles[size],
+  className
 );
 ---
 
 <span class={classes}>
- <slot />
+  <slot />
 </span>

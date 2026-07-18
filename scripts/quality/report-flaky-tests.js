@@ -17,8 +17,20 @@ const RESULTS = path.join(ROOT, 'test-results.json');
 const CACHE_DIR = path.join(ROOT, '.cache', 'quality');
 const HISTORY_FILE = path.join(CACHE_DIR, 'flaky-tests-history.json');
 
-function readJSON(p){ try { return JSON.parse(fs.readFileSync(p,'utf-8')); } catch { return null; } }
-function ensureDir(p){ try { fs.mkdirSync(p,{recursive:true}); } catch { /* ignore */ } }
+function readJSON(p) {
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf-8'));
+  } catch {
+    return null;
+  }
+}
+function ensureDir(p) {
+  try {
+    fs.mkdirSync(p, { recursive: true });
+  } catch {
+    /* ignore */
+  }
+}
 
 const results = readJSON(RESULTS);
 if (!results || !Array.isArray(results.tests)) {
@@ -37,7 +49,7 @@ for (const t of results.tests) {
 console.log('\n=== Flaky Test Report ===');
 if (flaky.length === 0) console.log('No flaky (retry-assisted) tests this run ✅');
 else {
-  flaky.sort((a,b)=> (b.retry||0)-(a.retry||0));
+  flaky.sort((a, b) => (b.retry || 0) - (a.retry || 0));
   for (const f of flaky) {
     console.log(`FLAKY x${f.retry}: ${f.fullName || f.name} (${f.file})`);
   }
@@ -49,14 +61,23 @@ if (failing.length) {
 
 if (process.env.FLAKY_HISTORY) {
   ensureDir(CACHE_DIR);
-  const hist = readJSON(HISTORY_FILE) || { version:1, tests:{} };
+  const hist = readJSON(HISTORY_FILE) || { version: 1, tests: {} };
   const now = Date.now();
   for (const f of flaky) {
     const key = `${f.file}::${f.fullName || f.name}`;
-    if (!hist.tests[key]) hist.tests[key] = { file: f.file, name: f.fullName || f.name, flakes: 0, lastFlaked: null, firstDetected: now };
+    if (!hist.tests[key])
+      hist.tests[key] = {
+        file: f.file,
+        name: f.fullName || f.name,
+        flakes: 0,
+        lastFlaked: null,
+        firstDetected: now,
+      };
     hist.tests[key].flakes += 1;
     hist.tests[key].lastFlaked = now;
   }
-  fs.writeFileSync(HISTORY_FILE, JSON.stringify(hist,null,2));
-  console.log(`\n[flaky-report] Persisted per-test flake history (${Object.keys(hist.tests).length} tracked)`);
+  fs.writeFileSync(HISTORY_FILE, JSON.stringify(hist, null, 2));
+  console.log(
+    `\n[flaky-report] Persisted per-test flake history (${Object.keys(hist.tests).length} tracked)`
+  );
 }

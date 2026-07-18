@@ -1,10 +1,10 @@
 import CoinFlipInteraction from './CoinFlipInteraction';
 
 interface Props {
- rootId: string;
- innerId: string;
- liveRegionId: string;
- flipOnClick: boolean;
+  rootId: string;
+  innerId: string;
+  liveRegionId: string;
+  flipOnClick: boolean;
 }
 
 /**
@@ -12,5 +12,5 @@ interface Props {
  * no SSR null guard (that caused hydration mismatches).
  */
 export default function CoinFlipClient(props: Props) {
- return <CoinFlipInteraction {...props} />;
+  return <CoinFlipInteraction {...props} />;
 }

@@ -21,9 +21,11 @@ describe('design token parser', () => {
     const tokens = parsePublicThemeTokens(themeCss);
     expect(tokens.length).toBeGreaterThan(40);
     expect(tokens.some((t) => t.name === '--color-accent')).toBe(true);
-    expect(tokens.some((t) => t.name === '--max-width-container-2xl' && t.utility === 'max-w-container-2xl')).toBe(
-      true,
-    );
+    expect(
+      tokens.some(
+        (t) => t.name === '--max-width-container-2xl' && t.utility === 'max-w-container-2xl'
+      )
+    ).toBe(true);
   });
 
   it('maps emphasis and fg color stems to text utilities', () => {
@@ -44,15 +46,18 @@ describe('design token parser', () => {
 
 describe('Prose primitive', () => {
   it('encodes the article prose recipe', () => {
-    const prose = readFileSync(resolve(__dirname, '../../src/components/primitives/Prose.astro'), 'utf8');
+    const prose = readFileSync(
+      resolve(__dirname, '../../src/components/primitives/Prose.astro'),
+      'utf8'
+    );
     expect(prose).toContain('prose-headings:font-heading');
     expect(prose).toContain('prose-a:text-accent-emphasis');
-    expect(prose).toContain('size = \'xl\'');
+    expect(prose).toContain("size = 'xl'");
   });
 
   it('is used by the blog slug page', () => {
     const slug = readFileSync(resolve(__dirname, '../../src/pages/blog/[slug].astro'), 'utf8');
-    expect(slug).toContain('import Prose from \'../../components/primitives/Prose.astro\'');
+    expect(slug).toContain("import Prose from '../../components/primitives/Prose.astro'");
     expect(slug).toContain('<Prose>');
     expect(slug).not.toContain('prose-h1:text-5xl');
   });

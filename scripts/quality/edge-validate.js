@@ -18,8 +18,7 @@ for (const f of fs.readdirSync(functionsDir)) {
   if (!f.endsWith('.js')) continue;
   const full = path.join(functionsDir, f);
   const src = fs.readFileSync(full, 'utf-8');
-  const hasNamedOrCommonJsExport =
-    exportedFunctionRegex.test(src) || commonJsExportRegex.test(src);
+  const hasNamedOrCommonJsExport = exportedFunctionRegex.test(src) || commonJsExportRegex.test(src);
   const hasDefaultFetchExport = defaultFetchExportRegex.test(src);
   let hasExportedFetchObject = false;
   const match = src.match(defaultExportIdentifierRegex);

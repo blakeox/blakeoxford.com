@@ -19,14 +19,19 @@ export async function GET() {
 
   // Individual project pages - dynamically load from content collection
   const projectEntries = await getCollection('projects');
-  const projectPages: SitemapEntry[] = projectEntries.map((project: CollectionEntry<'projects'>) => ({
-    loc: `/projects/${project.id}/`,
-    changefreq: 'monthly',
-    priority: 0.6,
-  }));
+  const projectPages: SitemapEntry[] = projectEntries.map(
+    (project: CollectionEntry<'projects'>) => ({
+      loc: `/projects/${project.id}/`,
+      changefreq: 'monthly',
+      priority: 0.6,
+    })
+  );
 
   // Individual blog post pages from content collection
-  const blogEntries = await getCollection('blog', (entry: CollectionEntry<'blog'>) => !entry.data.draft);
+  const blogEntries = await getCollection(
+    'blog',
+    (entry: CollectionEntry<'blog'>) => !entry.data.draft
+  );
   const blogPages: SitemapEntry[] = blogEntries.map((post: CollectionEntry<'blog'>) => ({
     loc: `/blog/${post.id}/`,
     changefreq: 'monthly',
@@ -34,15 +39,15 @@ export async function GET() {
   }));
 
   const urls = [
-  ...staticUrls.map((u: SitemapEntry) => ({
+    ...staticUrls.map((u: SitemapEntry) => ({
       ...u,
       loc: site + u.loc,
     })),
-  ...projectPages.map((u: SitemapEntry) => ({
+    ...projectPages.map((u: SitemapEntry) => ({
       ...u,
       loc: site + u.loc,
     })),
-  ...blogPages.map((u: SitemapEntry) => ({
+    ...blogPages.map((u: SitemapEntry) => ({
       ...u,
       loc: site + u.loc,
     })),
@@ -50,7 +55,8 @@ export async function GET() {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
     .map(
-      (u) => `  <url>\n    <loc>${u.loc}</loc>\n    <changefreq>${u.changefreq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`
+      (u) =>
+        `  <url>\n    <loc>${u.loc}</loc>\n    <changefreq>${u.changefreq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`
     )
     .join('\n')}\n</urlset>`;
 

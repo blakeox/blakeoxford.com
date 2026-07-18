@@ -10,138 +10,182 @@ import { PRIMITIVE_PROP_CONTRACT, COMPONENT_AUTHORING_CHECKLIST } from '../../da
 import ComponentCatalog from '../../components/features/design/ComponentCatalog.astro';
 
 const canonicalExamples = [
- {
- name: 'Button',
- contract: 'Use for explicit commands. Prefer semantic variants and stable sizes.',
- path: 'src/components/primitives/Button.astro',
- },
- {
- name: 'Badge',
- contract: 'Use for labels and status. Status variants must be semantic.',
- path: 'src/components/primitives/Badge.astro',
- },
- {
- name: 'Card',
- contract: 'Use as the compatibility wrapper over BaseCard. Keep card styling centralized.',
- path: 'src/components/composites/Card.astro',
- },
- {
- name: 'FeatureCard',
- contract: 'Use for reusable feature surfaces. Avoid page-specific color props.',
- path: 'src/components/composites/FeatureCard.astro',
- },
+  {
+    name: 'Button',
+    contract: 'Use for explicit commands. Prefer semantic variants and stable sizes.',
+    path: 'src/components/primitives/Button.astro',
+  },
+  {
+    name: 'Badge',
+    contract: 'Use for labels and status. Status variants must be semantic.',
+    path: 'src/components/primitives/Badge.astro',
+  },
+  {
+    name: 'Card',
+    contract: 'Use as the compatibility wrapper over BaseCard. Keep card styling centralized.',
+    path: 'src/components/composites/Card.astro',
+  },
+  {
+    name: 'FeatureCard',
+    contract: 'Use for reusable feature surfaces. Avoid page-specific color props.',
+    path: 'src/components/composites/FeatureCard.astro',
+  },
 ];
 ---
 
 <BaseLayout
- title="Design Components"
- description="Operational component contracts and searchable catalog for the Blake Oxford design system."
- canonicalUrl="https://blakeoxford.com/design/components/"
- wide={true}
+  title="Design Components"
+  description="Operational component contracts and searchable catalog for the Blake Oxford design system."
+  canonicalUrl="https://blakeoxford.com/design/components/"
+  wide={true}
 >
- <Section padding="xl">
- <Container size="xl">
- <header class="max-w-3xl">
- <Badge variant="subtle">Design system</Badge>
- <h1 class="mt-5 text-4xl font-bold text-foreground sm:text-5xl">
- Component Contracts
- </h1>
- <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
- This page documents canonical component paths, live examples, and the full searchable catalog generated from
- <code class="break-all rounded bg-surface-subtle px-1.5 py-0.5 text-sm">src/data/componentDocs.ts</code>.
- </p>
- </header>
+  <Section padding="xl">
+    <Container size="xl">
+      <header class="max-w-3xl">
+        <Badge variant="subtle">Design system</Badge>
+        <h1 class="mt-5 text-4xl font-bold text-foreground sm:text-5xl">Component Contracts</h1>
+        <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
+          This page documents canonical component paths, live examples, and the full searchable
+          catalog generated from
+          <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm break-all"
+            >src/data/componentDocs.ts</code
+          >.
+        </p>
+      </header>
 
- <section class="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4" aria-label="Canonical examples">
- {canonicalExamples.map((item) => (
- <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
- <h2 class="text-lg font-semibold text-foreground">{item.name}</h2>
- <p class="mt-2 text-sm text-muted-foreground">{item.contract}</p>
- <code class="mt-4 block break-all rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground">{item.path}</code>
- </article>
- ))}
- </section>
+      <section
+        class="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+        aria-label="Canonical examples"
+      >
+        {
+          canonicalExamples.map((item) => (
+            <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
+              <h2 class="text-lg font-semibold text-foreground">{item.name}</h2>
+              <p class="mt-2 text-sm text-muted-foreground">{item.contract}</p>
+              <code class="mt-4 block rounded-lg bg-surface-subtle p-3 text-xs break-all text-muted-foreground">
+                {item.path}
+              </code>
+            </article>
+          ))
+        }
+      </section>
 
- <section class="mt-16" aria-labelledby="live-examples">
- <h2 id="live-examples" class="text-2xl font-bold text-foreground">Live Examples</h2>
- <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
- <Card variant="elevated" hover="none">
- <h3 class="text-xl font-semibold text-foreground">Buttons</h3>
- <div class="mt-5 flex flex-wrap gap-3">
- <Button variant="primary">Primary</Button>
- <Button variant="secondary">Secondary</Button>
- <Button variant="outline">Outline</Button>
- <Button variant="ghost">Ghost</Button>
- </div>
- </Card>
+      <section class="mt-16" aria-labelledby="live-examples">
+        <h2 id="live-examples" class="text-2xl font-bold text-foreground">Live Examples</h2>
+        <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Card variant="elevated" hover="none">
+            <h3 class="text-xl font-semibold text-foreground">Buttons</h3>
+            <div class="mt-5 flex flex-wrap gap-3">
+              <Button variant="primary">Primary</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="outline">Outline</Button>
+              <Button variant="ghost">Ghost</Button>
+            </div>
+          </Card>
 
- <Card variant="elevated" hover="none">
- <h3 class="text-xl font-semibold text-foreground">Badges</h3>
- <div class="mt-5 flex flex-wrap gap-2">
- <Badge variant="secondary">Default</Badge>
- <Badge variant="primary">Primary</Badge>
- <Badge variant="success">Success</Badge>
- <Badge variant="warning">Warning</Badge>
- <Badge variant="error">Error</Badge>
- </div>
- </Card>
+          <Card variant="elevated" hover="none">
+            <h3 class="text-xl font-semibold text-foreground">Badges</h3>
+            <div class="mt-5 flex flex-wrap gap-2">
+              <Badge variant="secondary">Default</Badge>
+              <Badge variant="primary">Primary</Badge>
+              <Badge variant="success">Success</Badge>
+              <Badge variant="warning">Warning</Badge>
+              <Badge variant="error">Error</Badge>
+            </div>
+          </Card>
 
- <FeatureCard title="Feature Card" description="Semantic variants use the shared token contract." variant="accent" hover={false} />
- <FeatureCard title="Status Feature" description="Success, warning, info, and error map to tokens instead of raw palettes." variant="success" hover={false} />
- </div>
- </section>
+          <FeatureCard
+            title="Feature Card"
+            description="Semantic variants use the shared token contract."
+            variant="accent"
+            hover={false}
+          />
+          <FeatureCard
+            title="Status Feature"
+            description="Success, warning, info, and error map to tokens instead of raw palettes."
+            variant="success"
+            hover={false}
+          />
+        </div>
+      </section>
 
- <ComponentCatalog />
+      <ComponentCatalog />
 
- <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm" aria-labelledby="authoring-checklist">
- <h2 id="authoring-checklist" class="text-2xl font-bold text-foreground">New Component Checklist</h2>
- <p class="mt-3 text-sm text-muted-foreground">
- Follow this list before merging a new component. The catalog at <code>src/data/componentDocs.ts</code> is the searchable source of truth.
- </p>
- <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
- {COMPONENT_AUTHORING_CHECKLIST.map((item) => (
- <li class="flex items-start gap-2">
- <span class="mt-0.5 text-success">✓</span>
- <span>{item}</span>
- </li>
- ))}
- </ul>
- <div class="mt-8">
- <h3 class="text-lg font-semibold text-foreground">Standard primitive props</h3>
- <div class="mt-4 overflow-x-auto">
- <table class="w-full text-sm">
- <thead class="border-b border-border">
- <tr class="text-left">
- <th class="pb-2 pr-4 font-semibold">Prop</th>
- <th class="pb-2 pr-4 font-semibold">When</th>
- <th class="pb-2 font-semibold">Notes</th>
- </tr>
- </thead>
- <tbody class="divide-y divide-border">
- {PRIMITIVE_PROP_CONTRACT.map((entry) => (
- <tr>
- <td class="py-3 pr-4"><code class="text-accent">{entry.prop}</code></td>
- <td class="py-3 pr-4 text-muted-foreground">{entry.when}</td>
- <td class="py-3 text-muted-foreground">{entry.notes ?? '—'}</td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- </div>
- </section>
+      <section
+        class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm"
+        aria-labelledby="authoring-checklist"
+      >
+        <h2 id="authoring-checklist" class="text-2xl font-bold text-foreground">
+          New Component Checklist
+        </h2>
+        <p class="mt-3 text-sm text-muted-foreground">
+          Follow this list before merging a new component. The catalog at <code
+            >src/data/componentDocs.ts</code
+          > is the searchable source of truth.
+        </p>
+        <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
+          {
+            COMPONENT_AUTHORING_CHECKLIST.map((item) => (
+              <li class="flex items-start gap-2">
+                <span class="mt-0.5 text-success">✓</span>
+                <span>{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="mt-8">
+          <h3 class="text-lg font-semibold text-foreground">Standard primitive props</h3>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="border-b border-border">
+                <tr class="text-left">
+                  <th class="pr-4 pb-2 font-semibold">Prop</th>
+                  <th class="pr-4 pb-2 font-semibold">When</th>
+                  <th class="pb-2 font-semibold">Notes</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                {
+                  PRIMITIVE_PROP_CONTRACT.map((entry) => (
+                    <tr>
+                      <td class="py-3 pr-4">
+                        <code class="text-accent">{entry.prop}</code>
+                      </td>
+                      <td class="py-3 pr-4 text-muted-foreground">{entry.when}</td>
+                      <td class="py-3 text-muted-foreground">{entry.notes ?? '—'}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
- <section class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm" aria-labelledby="anti-patterns">
- <h2 id="anti-patterns" class="text-2xl font-bold text-foreground">Anti-Patterns</h2>
- <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
- <li>Do not add new component folders for one-off wrappers.</li>
- <li>Do not place component files directly under <code>src/components</code>; use the canonical layer folders.</li>
- <li>Do not document components unless the catalog path exists and the category matches the folder.</li>
- <li>Do not advertise variants that are not supported by the component prop types.</li>
- <li>Do not use raw green, red, blue, gray, white, or black utilities in reusable components.</li>
- <li>Do not create duplicate files with a <code>* 2.*</code> suffix; the lint gate blocks them.</li>
- </ul>
- </section>
- </Container>
- </Section>
+      <section
+        class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm"
+        aria-labelledby="anti-patterns"
+      >
+        <h2 id="anti-patterns" class="text-2xl font-bold text-foreground">Anti-Patterns</h2>
+        <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
+          <li>Do not add new component folders for one-off wrappers.</li>
+          <li>
+            Do not place component files directly under <code>src/components</code>; use the
+            canonical layer folders.
+          </li>
+          <li>
+            Do not document components unless the catalog path exists and the category matches the
+            folder.
+          </li>
+          <li>Do not advertise variants that are not supported by the component prop types.</li>
+          <li>
+            Do not use raw green, red, blue, gray, white, or black utilities in reusable components.
+          </li>
+          <li>
+            Do not create duplicate files with a <code>* 2.*</code> suffix; the lint gate blocks them.
+          </li>
+        </ul>
+      </section>
+    </Container>
+  </Section>
 </BaseLayout>

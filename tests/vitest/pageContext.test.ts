@@ -19,7 +19,7 @@ describe('pageContext helpers', () => {
         url: 'https://blakeoxford.com/',
         title: 'Blake Oxford',
         pathname: '/',
-      }),
+      })
     ).toBe('Home');
   });
 

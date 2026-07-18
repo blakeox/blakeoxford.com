@@ -27,13 +27,13 @@ class MonitoringDashboard {
 
   showDashboard(): void {
     if (!this.config.enabled) return;
-  this.visible = true;
-  this.pushHistory('Dashboard displayed');
+    this.visible = true;
+    this.pushHistory('Dashboard displayed');
   }
 
   hideDashboard(): void {
-  this.visible = false;
-  this.pushHistory('Dashboard hidden');
+    this.visible = false;
+    this.pushHistory('Dashboard hidden');
   }
 
   recordEvent(message: string): void {
@@ -45,8 +45,8 @@ class MonitoringDashboard {
   }
 
   shutdown(): void {
-  this.visible = false;
-  this.pushHistory('Dashboard shutdown');
+    this.visible = false;
+    this.pushHistory('Dashboard shutdown');
   }
 
   private pushHistory(message: string): void {

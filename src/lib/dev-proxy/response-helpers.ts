@@ -7,7 +7,11 @@
  * Send an error response with consistent format
  */
 export function sendErrorResponse(
-  res: { statusCode: number; setHeader: (name: string, value: string) => void; end: (data: string) => void },
+  res: {
+    statusCode: number;
+    setHeader: (name: string, value: string) => void;
+    end: (data: string) => void;
+  },
   statusCode: number,
   message: string
 ): void {
@@ -20,7 +24,11 @@ export function sendErrorResponse(
  * Send a success response with data
  */
 export function sendSuccessResponse(
-  res: { statusCode: number; setHeader: (name: string, value: string) => void; end: (data: string) => void },
+  res: {
+    statusCode: number;
+    setHeader: (name: string, value: string) => void;
+    end: (data: string) => void;
+  },
   data: unknown
 ): void {
   res.statusCode = 200;
@@ -42,4 +50,3 @@ export function setCORSHeaders(
   res.setHeader('Access-Control-Allow-Headers', 'content-type, authorization');
   res.setHeader('Vary', 'Origin');
 }
-

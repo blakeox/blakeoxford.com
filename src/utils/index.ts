@@ -18,9 +18,9 @@ export function formatDateISO(date: Date | string | number): string {
  * @example formatDateShort(new Date()) // "Oct 2025"
  */
 export function formatDateShort(date: Date | string | number): string {
-  return new Date(date).toLocaleDateString(undefined, { 
-    month: 'short', 
-    year: 'numeric' 
+  return new Date(date).toLocaleDateString(undefined, {
+    month: 'short',
+    year: 'numeric',
   });
 }
 
@@ -32,7 +32,7 @@ export function formatDateFull(date: Date | string | number): string {
   return new Date(date).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   });
 }
 
@@ -44,7 +44,7 @@ export function formatDateBlog(date: Date | string | number): string {
   return new Date(date).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   });
 }
 
@@ -136,12 +136,15 @@ export function shuffle<T>(array: T[]): T[] {
  * @example groupBy([{type: 'a', val: 1}], item => item.type) // {a: [{type: 'a', val: 1}]}
  */
 export function groupBy<T>(array: T[], keyFn: (item: T) => string): Record<string, T[]> {
-  return array.reduce((groups, item) => {
-    const key = keyFn(item);
-    groups[key] = groups[key] || [];
-    groups[key].push(item);
-    return groups;
-  }, {} as Record<string, T[]>);
+  return array.reduce(
+    (groups, item) => {
+      const key = keyFn(item);
+      groups[key] = groups[key] || [];
+      groups[key].push(item);
+      return groups;
+    },
+    {} as Record<string, T[]>
+  );
 }
 
 // ─── Number Utilities ─────────────────────────────────────────────────
@@ -252,7 +255,7 @@ export function isNotEmpty(str: string): boolean {
  * @example await sleep(1000) // Wait 1 second
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -265,7 +268,7 @@ export async function retry<T>(
   delayMs: number = 1000
 ): Promise<T> {
   let lastError: Error | undefined;
-  
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await fn();
@@ -276,7 +279,7 @@ export async function retry<T>(
       }
     }
   }
-  
+
   throw lastError || new Error('Retry failed');
 }
 
@@ -289,7 +292,7 @@ export function debounce<T extends (...args: any[]) => any>(
   delayMs: number
 ): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  
+
   return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
     if (timeoutId) clearTimeout(timeoutId);
     timeoutId = setTimeout(() => fn.apply(this, args), delayMs);
@@ -305,7 +308,7 @@ export function throttle<T extends (...args: any[]) => any>(
   delayMs: number
 ): (...args: Parameters<T>) => void {
   let lastCall = 0;
-  
+
   return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
     const now = Date.now();
     if (now - lastCall >= delayMs) {
@@ -342,7 +345,7 @@ export function omit<T extends Record<string, any>, K extends keyof T>(
   ...keys: K[]
 ): Omit<T, K> {
   const result = { ...obj };
-  keys.forEach(key => delete result[key]);
+  keys.forEach((key) => delete result[key]);
   return result;
 }
 
@@ -354,10 +357,13 @@ export function pick<T extends Record<string, any>, K extends keyof T>(
   obj: T,
   ...keys: K[]
 ): Pick<T, K> {
-  return keys.reduce((result, key) => {
-    if (key in obj) result[key] = obj[key];
-    return result;
-  }, {} as Pick<T, K>);
+  return keys.reduce(
+    (result, key) => {
+      if (key in obj) result[key] = obj[key];
+      return result;
+    },
+    {} as Pick<T, K>
+  );
 }
 
 // ─── Performance Utilities ────────────────────────────────────────────
@@ -366,9 +372,7 @@ export function pick<T extends Record<string, any>, K extends keyof T>(
  * Measure execution time of a function
  * @example const [result, time] = await measureTime(async () => await fetch('/api'))
  */
-export async function measureTime<T>(
-  fn: () => Promise<T> | T
-): Promise<[T, number]> {
+export async function measureTime<T>(fn: () => Promise<T> | T): Promise<[T, number]> {
   const start = performance.now();
   const result = await fn();
   const duration = performance.now() - start;
@@ -379,11 +383,9 @@ export async function measureTime<T>(
  * Memoize function results
  * @example const memoized = memoize((x) => expensiveComputation(x))
  */
-export function memoize<T extends (...args: any[]) => any>(
-  fn: T
-): T {
+export function memoize<T extends (...args: any[]) => any>(fn: T): T {
   const cache = new Map();
-  
+
   return function (this: ThisParameterType<T>, ...args: Parameters<T>): ReturnType<T> {
     const key = JSON.stringify(args);
     if (cache.has(key)) return cache.get(key);
@@ -424,4 +426,3 @@ export {
   logError,
   type ErrorCode,
 } from './errors';
-

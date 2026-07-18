@@ -16,61 +16,66 @@ import Container from './Container.astro';
  */
 
 export interface Props extends HTMLAttributes<'section'> {
- /** Vertical padding size */
- padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
- /** Container size (false for full width) */
- container?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | false;
- /** Background color */
- background?: 'default' | 'surface' | 'gradient' | 'glass';
- /** HTML element type */
- as?: 'section' | 'div' | 'article' | 'aside' | 'main';
- /** Additional CSS classes */
- class?: string;
- /** ARIA labelledby */
- 'aria-labelledby'?: string;
+  /** Vertical padding size */
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Container size (false for full width) */
+  container?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | false;
+  /** Background color */
+  background?: 'default' | 'surface' | 'gradient' | 'glass';
+  /** HTML element type */
+  as?: 'section' | 'div' | 'article' | 'aside' | 'main';
+  /** Additional CSS classes */
+  class?: string;
+  /** ARIA labelledby */
+  'aria-labelledby'?: string;
 }
 
 const {
- padding = 'lg',
- container = false,
- background = 'default',
- as: Element = 'section',
- class: className = '',
- 'aria-labelledby': ariaLabelledby,
- ...rest
+  padding = 'lg',
+  container = false,
+  background = 'default',
+  as: Element = 'section',
+  class: className = '',
+  'aria-labelledby': ariaLabelledby,
+  ...rest
 } = Astro.props as Props;
 
 // Padding styles
 const paddingStyles = {
- none: '',
- sm: 'py-8 sm:py-12',
- md: 'py-12 sm:py-16',
- lg: 'py-16 sm:py-20',
- xl: 'py-20 sm:py-24 lg:py-28',
+  none: '',
+  sm: 'py-8 sm:py-12',
+  md: 'py-12 sm:py-16',
+  lg: 'py-16 sm:py-20',
+  xl: 'py-20 sm:py-24 lg:py-28',
 } as const;
 
 // Background styles
 const backgroundStyles = {
- default: '',
- surface: 'bg-surface/50',
- gradient: 'bg-gradient-to-r from-background via-surface to-background',
- glass: 'border border-border/40 bg-glass/85 shadow-md backdrop-blur supports-[backdrop-filter]:bg-glass/75',
+  default: '',
+  surface: 'bg-surface/50',
+  gradient: 'bg-gradient-to-r from-background via-surface to-background',
+  glass:
+    'border border-border/40 bg-glass/85 shadow-md backdrop-blur supports-[backdrop-filter]:bg-glass/75',
 } as const;
 
 const classes = [
- paddingStyles[padding],
- backgroundStyles[background],
- !container && 'w-full',
- className,
-].filter(Boolean).join(' ');
+  paddingStyles[padding],
+  backgroundStyles[background],
+  !container && 'w-full',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <Element class={classes} aria-labelledby={ariaLabelledby} {...rest}>
- {container ? (
- <Container size={container}>
- <slot />
- </Container>
- ) : (
- <slot />
- )}
+  {
+    container ? (
+      <Container size={container}>
+        <slot />
+      </Container>
+    ) : (
+      <slot />
+    )
+  }
 </Element>

@@ -26,7 +26,7 @@ import SocialIcon from '../primitives/SocialIcon.astro';
 import { getNavQuickLinks, navConfig, type NavLink } from '../../config/navLinks';
 
 const year = new Date().getFullYear();
-const siteTitle = 'Blake Oxford\'s portfolio';
+const siteTitle = "Blake Oxford's portfolio";
 const quickLinks = getNavQuickLinks();
 const socialLinks = navConfig.socialLinks ?? [];
 
@@ -43,83 +43,126 @@ function socialLinkRel(link: NavLink): string | undefined {
   return link.external ? 'noopener noreferrer' : undefined;
 }
 ---
-<footer id="footer" role="contentinfo" aria-label="Site footer" tabindex="-1" class="bg-surface text-foreground border-t border-border py-6 pb-1.5 relative">
- <Container size="xl" padding={true}>
- <!-- Upper footer with main content -->
- <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
- <!-- Quick Links -->
- <div aria-labelledby="footer-links-heading" role="navigation" aria-label="Footer Quick Links" class="flex flex-col items-center md:items-start">
- <div id="footer-links-heading" class="text-base font-semibold mb-2 tracking-wide text-foreground-strong" role="heading" aria-level="2">Quick Links</div>
- <ul class="flex flex-col gap-1.5">
- {quickLinks.map((link) => (
- <li>
- <a
- href={link.href}
- class="text-foreground hover:text-accent transition-colors font-medium text-sm rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 hover:underline underline-offset-2"
- >{link.label}</a>
- </li>
- ))}
- </ul>
- </div>
 
- <!-- Social Media -->
- <div class="flex flex-col items-center">
- <div class="text-base font-semibold mb-2 tracking-wide text-foreground-strong" role="heading" aria-level="2">Connect with Me</div>
- <ul class="flex flex-row gap-5 list-none p-0 m-0">
- {socialLinks.map((link) => (
- <li>
- <a
- href={link.href}
- target={link.target}
- rel={socialLinkRel(link)}
- aria-label={link.label}
- class="inline-flex items-center justify-center group"
- >
- <SocialIcon
- icon={resolveSocialIcon(link.icon)}
- class="w-7 h-7 text-primary group-hover:text-accent group-focus:text-accent transition-colors duration-normal"
- />
- </a>
- </li>
- ))}
- </ul>
- </div>
+<footer
+  id="footer"
+  role="contentinfo"
+  aria-label="Site footer"
+  tabindex="-1"
+  class="relative border-t border-border bg-surface py-6 pb-1.5 text-foreground"
+>
+  <Container size="xl" padding={true}>
+    <!-- Upper footer with main content -->
+    <div class="mb-4 grid grid-cols-1 gap-6 md:grid-cols-3">
+      <!-- Quick Links -->
+      <div
+        aria-labelledby="footer-links-heading"
+        role="navigation"
+        aria-label="Footer Quick Links"
+        class="flex flex-col items-center md:items-start"
+      >
+        <div
+          id="footer-links-heading"
+          class="mb-2 text-base font-semibold tracking-wide text-foreground-strong"
+          role="heading"
+          aria-level="2"
+        >
+          Quick Links
+        </div>
+        <ul class="flex flex-col gap-1.5">
+          {
+            quickLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="rounded text-sm font-medium text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
 
- <!-- Info -->
- <div class="flex flex-col items-center md:items-end text-foreground text-xs md:text-sm">
- <p class="mb-0.5">© {year} {siteTitle}. All rights reserved.</p>
- <p>
- Built with
- <a
- href="https://astro.build/"
- target="_blank"
- rel="noopener"
- class="text-foreground hover:text-accent transition-colors underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 rounded"
- >Astro</a>
- &
- <a
- href="https://cloudflare.com/pages"
- target="_blank"
- rel="noopener"
- class="text-foreground hover:text-accent transition-colors underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 rounded"
- >Cloudflare Workers</a>.
- </p>
- </div>
- </div>
+      <!-- Social Media -->
+      <div class="flex flex-col items-center">
+        <div
+          class="mb-2 text-base font-semibold tracking-wide text-foreground-strong"
+          role="heading"
+          aria-level="2"
+        >
+          Connect with Me
+        </div>
+        <ul class="m-0 flex list-none flex-row gap-5 p-0">
+          {
+            socialLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  target={link.target}
+                  rel={socialLinkRel(link)}
+                  aria-label={link.label}
+                  class="group inline-flex items-center justify-center"
+                >
+                  <SocialIcon
+                    icon={resolveSocialIcon(link.icon)}
+                    class="h-7 w-7 text-primary transition-colors duration-normal group-hover:text-accent group-focus:text-accent"
+                  />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
 
- <!-- Lower footer with divider and back to top button -->
- <div class="relative pt-3 border-t border-border flex items-center justify-between">
- <p class="text-xs text-muted-foreground">Made with ☕ by Blake Oxford</p>
- <a
- href="#top"
- class="group flex items-center gap-0.5 text-muted-foreground hover:text-accent focus:text-accent transition-colors duration-normal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 rounded-md text-xs"
- aria-label="Back to Top"
- >
- <span>Back to Top</span>
- <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform duration-normal" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
- <path d="m18 15-6-6-6 6"/>
- </svg>
- </a>
- </div>
- </Container>
+      <!-- Info -->
+      <div class="flex flex-col items-center text-xs text-foreground md:items-end md:text-sm">
+        <p class="mb-0.5">© {year} {siteTitle}. All rights reserved.</p>
+        <p>
+          Built with
+          <a
+            href="https://astro.build/"
+            target="_blank"
+            rel="noopener"
+            class="rounded text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
+            >Astro</a
+          >
+          &
+          <a
+            href="https://cloudflare.com/pages"
+            target="_blank"
+            rel="noopener"
+            class="rounded text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
+            >Cloudflare Workers</a
+          >.
+        </p>
+      </div>
+    </div>
+
+    <!-- Lower footer with divider and back to top button -->
+    <div class="relative flex items-center justify-between border-t border-border pt-3">
+      <p class="text-xs text-muted-foreground">Made with ☕ by Blake Oxford</p>
+      <a
+        href="#top"
+        class="group flex items-center gap-0.5 rounded-md text-xs text-muted-foreground transition-colors duration-normal hover:text-accent focus:text-accent focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
+        aria-label="Back to Top"
+      >
+        <span>Back to Top</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-3.5 w-3.5 transition-transform duration-normal group-hover:-translate-y-0.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="m18 15-6-6-6 6"></path>
+        </svg>
+      </a>
+    </div>
+  </Container>
 </footer>

@@ -7,8 +7,12 @@ describe('HighlightText', () => {
     render(<HighlightText text="Microsoft Fabric automation guide" query="fabric auto" />);
     const marks = screen.getAllByText(/fabric|auto/i);
     // "Fabric" and "auto" (from automation) should be marked
-    expect(marks.some((el) => el.tagName === 'MARK' && /fabric/i.test(el.textContent || ''))).toBe(true);
-    expect(marks.some((el) => el.tagName === 'MARK' && /auto/i.test(el.textContent || ''))).toBe(true);
+    expect(marks.some((el) => el.tagName === 'MARK' && /fabric/i.test(el.textContent || ''))).toBe(
+      true
+    );
+    expect(marks.some((el) => el.tagName === 'MARK' && /auto/i.test(el.textContent || ''))).toBe(
+      true
+    );
   });
 
   it('returns plain text when the query is empty', () => {

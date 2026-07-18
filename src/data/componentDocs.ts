@@ -83,13 +83,19 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['navigation', 'layout', 'mobile-menu', 'responsive'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--color-border', '--color-accent', '--color-foreground'],
+    tokenDependencies: [
+      '--color-surface',
+      '--color-border',
+      '--color-accent',
+      '--color-foreground',
+    ],
     visualBaseline: 'navbar',
   },
   {
     name: 'Footer',
     category: 'Layout',
-    description: 'Site footer with navigation and social links. Quick links and social URLs are sourced from nav.json via navLinks.ts. Displays copyright information and back-to-top button.',
+    description:
+      'Site footer with navigation and social links. Quick links and social URLs are sourced from nav.json via navLinks.ts. Displays copyright information and back-to-top button.',
     filePath: 'src/components/layout/Footer.astro',
     examples: [
       {
@@ -116,12 +122,13 @@ export const componentDocs: ComponentDoc[] = [
     name: 'ProjectCard',
     category: 'Features',
     subcategory: 'Projects',
-    description: 'Project listing card for repeated project summaries. Displays hero image, title, description, date, tags, and link while keeping card styling on the shared token contract.',
+    description:
+      'Project listing card for repeated project summaries. Displays hero image, title, description, date, tags, and link while keeping card styling on the shared token contract.',
     filePath: 'src/components/features/projects/ProjectCard.astro',
     props: [
       {
         name: 'project',
-        type: 'CollectionEntry<\'projects\'>',
+        type: "CollectionEntry<'projects'>",
         required: true,
         description: 'Project content collection entry',
       },
@@ -147,7 +154,8 @@ export const componentDocs: ComponentDoc[] = [
     name: 'SearchOverlay',
     category: 'Features',
     subcategory: 'Search',
-    description: 'Command Center site search (React portal). Input-first command palette with grouped results, recent searches, and contextual AI handoff via ? prefix.',
+    description:
+      'Command Center site search (React portal). Input-first command palette with grouped results, recent searches, and contextual AI handoff via ? prefix.',
     filePath: 'src/components/features/search/SearchOverlay.astro',
     examples: [
       {
@@ -170,7 +178,8 @@ export const componentDocs: ComponentDoc[] = [
     name: 'AIChatWidget',
     category: 'Composites',
     subcategory: 'Search',
-    description: 'Corner Ask companion — docked chat panel for questions about the current page or the site. Opens from the FAB; stays over the page while browsing. Site search lives separately in the nav (⌘K).',
+    description:
+      'Corner Ask companion — docked chat panel for questions about the current page or the site. Opens from the FAB; stays over the page while browsing. Site search lives separately in the nav (⌘K).',
     filePath: 'src/components/composites/AIChatWidget.astro',
     examples: [
       {
@@ -197,7 +206,8 @@ export const componentDocs: ComponentDoc[] = [
     name: 'AboutTimeline',
     category: 'Features',
     subcategory: 'About',
-    description: 'About-page timeline display. Renders dated milestones in a scrollable layout with semantic list structure and keyboard access.',
+    description:
+      'About-page timeline display. Renders dated milestones in a scrollable layout with semantic list structure and keyboard access.',
     filePath: 'src/components/features/about/AboutTimeline.astro',
     props: [
       {
@@ -230,7 +240,8 @@ export const componentDocs: ComponentDoc[] = [
     name: 'ContactChannels',
     category: 'Features',
     subcategory: 'Contact',
-    description: 'Contact channel links display. Renders available channels such as email, phone, and LinkedIn with semantic links and tokenized surfaces.',
+    description:
+      'Contact channel links display. Renders available channels such as email, phone, and LinkedIn with semantic links and tokenized surfaces.',
     filePath: 'src/components/features/contact/ContactChannels.astro',
     props: [
       {
@@ -261,12 +272,13 @@ export const componentDocs: ComponentDoc[] = [
     name: 'BlogPostCard',
     category: 'Features',
     subcategory: 'Blog',
-    description: 'Reusable blog post card for listings. Displays a blog post with date, title, description, tags, and read-more link in a stable grid surface.',
+    description:
+      'Reusable blog post card for listings. Displays a blog post with date, title, description, tags, and read-more link in a stable grid surface.',
     filePath: 'src/components/features/blog/BlogPostCard.astro',
     props: [
       {
         name: 'post',
-        type: 'CollectionEntry<\'blog\'>',
+        type: "CollectionEntry<'blog'>",
         required: true,
         description: 'Blog post content collection entry',
       },
@@ -288,11 +300,7 @@ export const componentDocs: ComponentDoc[] = [
         code: '<BlogPostCard post={blogEntry} maxTags={5} />',
       },
     ],
-    accessibility: [
-      'Semantic article element',
-      'Focus-visible styles',
-      'Descriptive link text',
-    ],
+    accessibility: ['Semantic article element', 'Focus-visible styles', 'Descriptive link text'],
     tags: ['blog', 'card', 'post', 'tags'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
@@ -301,7 +309,8 @@ export const componentDocs: ComponentDoc[] = [
     name: 'EducationCard',
     category: 'Features',
     subcategory: 'About',
-    description: 'Education display card with icon and details. Displays educational background with institution, degree, and description.',
+    description:
+      'Education display card with icon and details. Displays educational background with institution, degree, and description.',
     filePath: 'src/components/features/about/EducationCard.astro',
     props: [
       {
@@ -329,11 +338,7 @@ export const componentDocs: ComponentDoc[] = [
         code: '<EducationCard institution="University" degree="BS Computer Science" />',
       },
     ],
-    accessibility: [
-      'Semantic structure',
-      'Icon with proper ARIA',
-      'Hover effects',
-    ],
+    accessibility: ['Semantic structure', 'Icon with proper ARIA', 'Hover effects'],
     tags: ['education', 'card', 'about'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
@@ -343,7 +348,8 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'PhotoCarousel',
     category: 'Composites',
-    description: 'Responsive photo carousel with navigation. Displays a collection of photos in a carousel with prev/next navigation, autoplay, and responsive image loading. Includes accessibility features for screen readers and keyboard navigation.',
+    description:
+      'Responsive photo carousel with navigation. Displays a collection of photos in a carousel with prev/next navigation, autoplay, and responsive image loading. Includes accessibility features for screen readers and keyboard navigation.',
     filePath: 'src/components/composites/PhotoCarousel.astro',
     examples: [
       {
@@ -358,11 +364,7 @@ export const componentDocs: ComponentDoc[] = [
       'Keyboard navigation support (prev/next buttons)',
       'ARIA labels on navigation buttons',
     ],
-    performance: [
-      'Lazy loading images',
-      'Responsive image sizing',
-      'Optimized navigation',
-    ],
+    performance: ['Lazy loading images', 'Responsive image sizing', 'Optimized navigation'],
     tags: ['carousel', 'photos', 'slider', 'navigation'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-surface', '--color-border', 'shadow-md', 'rounded-2xl'],
@@ -370,19 +372,50 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'CoinFlipImage',
     category: 'Composites',
-    description: 'Interactive 3D coin flip image component. Displays two images with a 3D flip animation effect. Supports click-to-flip, auto-flip, and customizable animation parameters. Optimized for performance with lazy loading.',
+    description:
+      'Interactive 3D coin flip image component. Displays two images with a 3D flip animation effect. Supports click-to-flip, auto-flip, and customizable animation parameters. Optimized for performance with lazy loading.',
     filePath: 'src/components/composites/CoinFlipImage.astro',
     props: [
       { name: 'frontSrc', type: 'string', required: true, description: 'Front image source URL' },
       { name: 'backSrc', type: 'string', required: true, description: 'Back image source URL' },
       { name: 'alt', type: 'string', required: true, description: 'Front image alt text' },
       { name: 'altBack', type: 'string', required: true, description: 'Back image alt text' },
-      { name: 'size', type: 'number', required: false, default: '144', description: 'Image size in pixels' },
-      { name: 'flipMultipleTimes', type: 'boolean', required: false, default: 'false', description: 'Enable auto-flip animation' },
+      {
+        name: 'size',
+        type: 'number',
+        required: false,
+        default: '144',
+        description: 'Image size in pixels',
+      },
+      {
+        name: 'flipMultipleTimes',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Enable auto-flip animation',
+      },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
-      { name: 'duration', type: 'number', required: false, default: '700', description: 'Flip animation duration in ms' },
-      { name: 'flipOnClick', type: 'boolean', required: false, default: 'true', description: 'Enable click-to-flip' },
-      { name: 'flipAxis', type: '\'x\'|\'y\'', required: false, default: '\'y\'', description: 'Flip axis (horizontal or vertical)' },
+      {
+        name: 'duration',
+        type: 'number',
+        required: false,
+        default: '700',
+        description: 'Flip animation duration in ms',
+      },
+      {
+        name: 'flipOnClick',
+        type: 'boolean',
+        required: false,
+        default: 'true',
+        description: 'Enable click-to-flip',
+      },
+      {
+        name: 'flipAxis',
+        type: "'x'|'y'",
+        required: false,
+        default: "'y'",
+        description: 'Flip axis (horizontal or vertical)',
+      },
     ],
     examples: [
       {
@@ -412,17 +445,41 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'OptimizedImage',
     category: 'Primitives',
-    description: 'Performance-optimized image component. Wrapper around Astro\'s Image component with automatic format conversion, lazy loading, and quality optimization. Supports both local and remote images.',
+    description:
+      "Performance-optimized image component. Wrapper around Astro's Image component with automatic format conversion, lazy loading, and quality optimization. Supports both local and remote images.",
     filePath: 'src/components/primitives/OptimizedImage.astro',
     props: [
-      { name: 'src', type: 'string | ImageMetadata', required: true, description: 'Image source (local import or URL)' },
+      {
+        name: 'src',
+        type: 'string | ImageMetadata',
+        required: true,
+        description: 'Image source (local import or URL)',
+      },
       { name: 'alt', type: 'string', required: true, description: 'Alt text for accessibility' },
       { name: 'width', type: 'number', required: false, description: 'Image width in pixels' },
       { name: 'height', type: 'number', required: false, description: 'Image height in pixels' },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
-      { name: 'loading', type: '\'lazy\' | \'eager\'', required: false, default: '\'lazy\'', description: 'Loading strategy' },
-      { name: 'priority', type: 'boolean', required: false, default: 'false', description: 'Priority loading (sets eager + fetchpriority)' },
-      { name: 'quality', type: 'number', required: false, default: '80', description: 'Image quality (1-100)' },
+      {
+        name: 'loading',
+        type: "'lazy' | 'eager'",
+        required: false,
+        default: "'lazy'",
+        description: 'Loading strategy',
+      },
+      {
+        name: 'priority',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Priority loading (sets eager + fetchpriority)',
+      },
+      {
+        name: 'quality',
+        type: 'number',
+        required: false,
+        default: '80',
+        description: 'Image quality (1-100)',
+      },
     ],
     examples: [
       {
@@ -455,7 +512,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [
       {
         title: 'Boot from NavBar.astro',
-        code: 'import { initModernNavBar } from \'../../scripts/features/ModernNavBar\';\ninitModernNavBar();',
+        code: "import { initModernNavBar } from '../../scripts/features/ModernNavBar';\ninitModernNavBar();",
       },
     ],
     accessibility: [
@@ -473,15 +530,46 @@ export const componentDocs: ComponentDoc[] = [
     name: 'MessageContent',
     category: 'Islands',
     subcategory: 'Chat',
-    description: 'Message text content renderer with streaming indicators and quality badges. Displays chat message content with typing animations, quality scores, and citation health metrics.',
+    description:
+      'Message text content renderer with streaming indicators and quality badges. Displays chat message content with typing animations, quality scores, and citation health metrics.',
     filePath: 'src/components/islands/chat/MessageContent.tsx',
     props: [
-      { name: 'message', type: 'ChatMessage', required: true, description: 'Complete chat message object with metadata' },
-      { name: 'isStreaming', type: 'boolean', required: true, description: 'Whether message is currently being streamed' },
-      { name: 'isAssistant', type: 'boolean', required: true, description: 'Whether this is an AI assistant message' },
-      { name: 'bubbleContent', type: 'string', required: true, description: 'Processed message text to display' },
-      { name: 'totalSources', type: 'number', required: true, description: 'Number of sources cited' },
-      { name: 'messageTextClasses', type: 'string', required: true, description: 'Tailwind classes for text styling' },
+      {
+        name: 'message',
+        type: 'ChatMessage',
+        required: true,
+        description: 'Complete chat message object with metadata',
+      },
+      {
+        name: 'isStreaming',
+        type: 'boolean',
+        required: true,
+        description: 'Whether message is currently being streamed',
+      },
+      {
+        name: 'isAssistant',
+        type: 'boolean',
+        required: true,
+        description: 'Whether this is an AI assistant message',
+      },
+      {
+        name: 'bubbleContent',
+        type: 'string',
+        required: true,
+        description: 'Processed message text to display',
+      },
+      {
+        name: 'totalSources',
+        type: 'number',
+        required: true,
+        description: 'Number of sources cited',
+      },
+      {
+        name: 'messageTextClasses',
+        type: 'string',
+        required: true,
+        description: 'Tailwind classes for text styling',
+      },
     ],
     examples: [
       {
@@ -505,13 +593,29 @@ export const componentDocs: ComponentDoc[] = [
     name: 'MessageSources',
     category: 'Islands',
     subcategory: 'Chat',
-    description: 'Source citations and expandable source list display. Shows citation badges, primary source, and expandable detailed source list with metadata.',
+    description:
+      'Source citations and expandable source list display. Shows citation badges, primary source, and expandable detailed source list with metadata.',
     filePath: 'src/components/islands/chat/MessageSources.tsx',
     props: [
       { name: 'sources', type: 'Source[]', required: true, description: 'Array of source objects' },
-      { name: 'messageId', type: 'string', required: true, description: 'Message ID for citation linking' },
-      { name: 'showAllSources', type: 'boolean', required: true, description: 'Whether to show expanded source list' },
-      { name: 'expandedIndividualSources', type: 'Record<string, boolean>', required: true, description: 'Individual source expansion state' },
+      {
+        name: 'messageId',
+        type: 'string',
+        required: true,
+        description: 'Message ID for citation linking',
+      },
+      {
+        name: 'showAllSources',
+        type: 'boolean',
+        required: true,
+        description: 'Whether to show expanded source list',
+      },
+      {
+        name: 'expandedIndividualSources',
+        type: 'Record<string, boolean>',
+        required: true,
+        description: 'Individual source expansion state',
+      },
     ],
     examples: [
       {
@@ -540,15 +644,41 @@ export const componentDocs: ComponentDoc[] = [
     name: 'MessageActions',
     category: 'Islands',
     subcategory: 'Chat',
-    description: 'Interactive action buttons for chat messages. Provides copy, share, feedback, and source viewing actions with analytics tracking.',
+    description:
+      'Interactive action buttons for chat messages. Provides copy, share, feedback, and source viewing actions with analytics tracking.',
     filePath: 'src/components/islands/chat/MessageActions.tsx',
     props: [
       { name: 'message', type: 'ChatMessage', required: true, description: 'Chat message object' },
-      { name: 'messages', type: 'ChatMessage[]', required: true, description: 'All conversation messages' },
-      { name: 'primarySource', type: 'Source | null', required: true, description: 'Top cited source' },
-      { name: 'copiedMessageId', type: 'string | null', required: true, description: 'ID of copied message for UI feedback' },
-      { name: 'handleCopyMessage', type: '(message: ChatMessage) => void', required: true, description: 'Copy message handler' },
-      { name: 'handleFeedback', type: '(id: string, feedback: "positive" | "negative") => void', required: true, description: 'Feedback handler' },
+      {
+        name: 'messages',
+        type: 'ChatMessage[]',
+        required: true,
+        description: 'All conversation messages',
+      },
+      {
+        name: 'primarySource',
+        type: 'Source | null',
+        required: true,
+        description: 'Top cited source',
+      },
+      {
+        name: 'copiedMessageId',
+        type: 'string | null',
+        required: true,
+        description: 'ID of copied message for UI feedback',
+      },
+      {
+        name: 'handleCopyMessage',
+        type: '(message: ChatMessage) => void',
+        required: true,
+        description: 'Copy message handler',
+      },
+      {
+        name: 'handleFeedback',
+        type: '(id: string, feedback: "positive" | "negative") => void',
+        required: true,
+        description: 'Feedback handler',
+      },
     ],
     examples: [
       {
@@ -573,14 +703,35 @@ export const componentDocs: ComponentDoc[] = [
     name: 'MessageCTAs',
     category: 'Islands',
     subcategory: 'Chat',
-    description: 'Contextual call-to-actions and follow-up suggestions. Shows relevant CTAs based on query context and generates dynamic follow-up questions.',
+    description:
+      'Contextual call-to-actions and follow-up suggestions. Shows relevant CTAs based on query context and generates dynamic follow-up questions.',
     filePath: 'src/components/islands/chat/MessageCTAs.tsx',
     props: [
       { name: 'message', type: 'ChatMessage', required: true, description: 'Chat message object' },
-      { name: 'messages', type: 'ChatMessage[]', required: true, description: 'Conversation history' },
-      { name: 'sources', type: 'Source[]', required: true, description: 'Cited sources for suggestions' },
-      { name: 'setInputValue', type: '(value: string) => void', required: false, description: 'Set input field value' },
-      { name: 'sendQuery', type: '(query: string) => void', required: false, description: 'Send query function' },
+      {
+        name: 'messages',
+        type: 'ChatMessage[]',
+        required: true,
+        description: 'Conversation history',
+      },
+      {
+        name: 'sources',
+        type: 'Source[]',
+        required: true,
+        description: 'Cited sources for suggestions',
+      },
+      {
+        name: 'setInputValue',
+        type: '(value: string) => void',
+        required: false,
+        description: 'Set input field value',
+      },
+      {
+        name: 'sendQuery',
+        type: '(query: string) => void',
+        required: false,
+        description: 'Send query function',
+      },
     ],
     examples: [
       {
@@ -613,8 +764,20 @@ export const componentDocs: ComponentDoc[] = [
     description: 'Simple badge component for tags, labels, and semantic status indicators.',
     filePath: 'src/components/primitives/Badge.astro',
     props: [
-      { name: 'variant', type: '\'primary\' | \'secondary\' | \'outline\' | \'subtle\' | \'success\' | \'warning\' | \'error\'', required: false, default: '\'secondary\'', description: 'Semantic badge variant' },
-      { name: 'size', type: '\'xs\' | \'sm\' | \'md\'', required: false, default: '\'sm\'', description: 'Badge size preset' },
+      {
+        name: 'variant',
+        type: "'primary' | 'secondary' | 'outline' | 'subtle' | 'success' | 'warning' | 'error'",
+        required: false,
+        default: "'secondary'",
+        description: 'Semantic badge variant',
+      },
+      {
+        name: 'size',
+        type: "'xs' | 'sm' | 'md'",
+        required: false,
+        default: "'sm'",
+        description: 'Badge size preset',
+      },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
     ],
     examples: [
@@ -630,18 +793,64 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'Button',
     category: 'Primitives',
-    description: 'Flexible button/link primitive with tokenized variants, stable sizes, and accessible focus states.',
+    description:
+      'Flexible button/link primitive with tokenized variants, stable sizes, and accessible focus states.',
     filePath: 'src/components/primitives/Button.astro',
     props: [
-      { name: 'type', type: '\'button\'|\'submit\'|\'reset\'', required: false, default: '\'button\'', description: 'Button type' },
-      { name: 'variant', type: '\'primary\' | \'secondary\' | \'outline\' | \'ghost\' | \'link\'', required: false, default: '\'primary\'', description: 'Button variant' },
-      { name: 'size', type: '\'sm\' | \'md\' | \'lg\'', required: false, default: '\'md\'', description: 'Button size preset' },
-      { name: 'disabled', type: 'boolean', required: false, default: 'false', description: 'Disabled state' },
-      { name: 'href', type: 'string', required: false, description: 'If provided, renders as link' },
-      { name: 'fullWidth', type: 'boolean', required: false, default: 'false', description: 'Stretch button to parent width' },
-      { name: '\'aria-label\'', type: 'string', required: false, description: 'Accessible label for icon-only or ambiguous controls' },
+      {
+        name: 'type',
+        type: "'button'|'submit'|'reset'",
+        required: false,
+        default: "'button'",
+        description: 'Button type',
+      },
+      {
+        name: 'variant',
+        type: "'primary' | 'secondary' | 'outline' | 'ghost' | 'link'",
+        required: false,
+        default: "'primary'",
+        description: 'Button variant',
+      },
+      {
+        name: 'size',
+        type: "'sm' | 'md' | 'lg'",
+        required: false,
+        default: "'md'",
+        description: 'Button size preset',
+      },
+      {
+        name: 'disabled',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Disabled state',
+      },
+      {
+        name: 'href',
+        type: 'string',
+        required: false,
+        description: 'If provided, renders as link',
+      },
+      {
+        name: 'fullWidth',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Stretch button to parent width',
+      },
+      {
+        name: "'aria-label'",
+        type: 'string',
+        required: false,
+        description: 'Accessible label for icon-only or ambiguous controls',
+      },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
-      { name: 'data-testid', type: 'string', required: false, description: 'Stable test hook for Playwright and unit tests' },
+      {
+        name: 'data-testid',
+        type: 'string',
+        required: false,
+        description: 'Stable test hook for Playwright and unit tests',
+      },
     ],
     examples: [
       {
@@ -687,16 +896,16 @@ export const componentDocs: ComponentDoc[] = [
     props: [
       {
         name: 'size',
-        type: '\'base\' | \'lg\' | \'xl\'',
+        type: "'base' | 'lg' | 'xl'",
         required: false,
-        default: '\'xl\'',
+        default: "'xl'",
         description: 'Typography scale (maps to prose / prose-lg / prose-lg lg:prose-xl)',
       },
       {
         name: 'as',
-        type: '\'div\' | \'article\' | \'section\'',
+        type: "'div' | 'article' | 'section'",
         required: false,
-        default: '\'div\'',
+        default: "'div'",
         description: 'HTML element to render',
       },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
@@ -726,7 +935,13 @@ export const componentDocs: ComponentDoc[] = [
       { name: 'align', type: 'string', required: false, description: 'Align items' },
       { name: 'justify', type: 'string', required: false, description: 'Justify content' },
       { name: 'wrap', type: 'boolean', required: false, description: 'Flex wrap' },
-      { name: 'as', type: 'string', required: false, default: '\'div\'', description: 'HTML element to render' },
+      {
+        name: 'as',
+        type: 'string',
+        required: false,
+        default: "'div'",
+        description: 'HTML element to render',
+      },
       { name: 'role', type: 'string', required: false, description: 'ARIA role' },
     ],
     examples: [
@@ -747,7 +962,13 @@ export const componentDocs: ComponentDoc[] = [
     props: [
       { name: 'cols', type: 'string', required: false, description: 'Grid columns' },
       { name: 'gap', type: 'string', required: false, description: 'Gap between items' },
-      { name: 'as', type: 'string', required: false, default: '\'div\'', description: 'HTML element to render' },
+      {
+        name: 'as',
+        type: 'string',
+        required: false,
+        default: "'div'",
+        description: 'HTML element to render',
+      },
       { name: 'role', type: 'string', required: false, description: 'ARIA role' },
     ],
     examples: [
@@ -766,8 +987,19 @@ export const componentDocs: ComponentDoc[] = [
     description: 'Semantic section wrapper with optional styling',
     filePath: 'src/components/primitives/Section.astro',
     props: [
-      { name: 'as', type: 'string', required: false, default: '\'section\'', description: 'HTML element to render' },
-      { name: 'ariaLabelledby', type: 'string', required: false, description: 'ARIA labelledby ID' },
+      {
+        name: 'as',
+        type: 'string',
+        required: false,
+        default: "'section'",
+        description: 'HTML element to render',
+      },
+      {
+        name: 'ariaLabelledby',
+        type: 'string',
+        required: false,
+        description: 'ARIA labelledby ID',
+      },
     ],
     examples: [
       {
@@ -787,8 +1019,20 @@ export const componentDocs: ComponentDoc[] = [
     props: [
       { name: 'label', type: 'string', required: true, description: 'Field label' },
       { name: 'name', type: 'string', required: true, description: 'Field name' },
-      { name: 'type', type: 'string', required: false, default: '\'text\'', description: 'Input type' },
-      { name: 'required', type: 'boolean', required: false, default: 'false', description: 'Required field' },
+      {
+        name: 'type',
+        type: 'string',
+        required: false,
+        default: "'text'",
+        description: 'Input type',
+      },
+      {
+        name: 'required',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Required field',
+      },
       { name: 'error', type: 'string', required: false, description: 'Error message' },
       { name: 'helperText', type: 'string', required: false, description: 'Helper text' },
     ],
@@ -813,14 +1057,45 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'BaseCard',
     category: 'Primitives',
-    description: 'Canonical card primitive. Owns border, surface, elevation, hover, and slot structure (header, image, footer). Prefer this over ad-hoc card classes.',
+    description:
+      'Canonical card primitive. Owns border, surface, elevation, hover, and slot structure (header, image, footer). Prefer this over ad-hoc card classes.',
     filePath: 'src/components/primitives/BaseCard.astro',
     props: [
-      { name: 'variant', type: '\'default\' | \'glass\' | \'elevated\' | \'subtle\'', required: false, default: '\'default\'', description: 'Surface preset — elevated uses shadow-lg for interactive cards' },
-      { name: 'hover', type: '\'none\' | \'lift\' | \'scale\' | \'glow\'', required: false, default: '\'lift\'', description: 'Motion-safe hover treatment' },
-      { name: 'rounded', type: '\'lg\' | \'xl\' | \'2xl\' | \'3xl\'', required: false, default: '\'2xl\'', description: 'Border radius preset' },
-      { name: 'padding', type: '\'none\' | \'sm\' | \'md\' | \'lg\'', required: false, default: '\'md\'', description: 'Inner padding preset' },
-      { name: 'as', type: '\'article\' | \'div\' | \'section\'', required: false, default: '\'div\'', description: 'Semantic HTML element' },
+      {
+        name: 'variant',
+        type: "'default' | 'glass' | 'elevated' | 'subtle'",
+        required: false,
+        default: "'default'",
+        description: 'Surface preset — elevated uses shadow-lg for interactive cards',
+      },
+      {
+        name: 'hover',
+        type: "'none' | 'lift' | 'scale' | 'glow'",
+        required: false,
+        default: "'lift'",
+        description: 'Motion-safe hover treatment',
+      },
+      {
+        name: 'rounded',
+        type: "'lg' | 'xl' | '2xl' | '3xl'",
+        required: false,
+        default: "'2xl'",
+        description: 'Border radius preset',
+      },
+      {
+        name: 'padding',
+        type: "'none' | 'sm' | 'md' | 'lg'",
+        required: false,
+        default: "'md'",
+        description: 'Inner padding preset',
+      },
+      {
+        name: 'as',
+        type: "'article' | 'div' | 'section'",
+        required: false,
+        default: "'div'",
+        description: 'Semantic HTML element',
+      },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
     ],
     examples: [
@@ -835,21 +1110,65 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['card', 'surface', 'primitive'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', '--color-glass', 'shadow-sm', 'shadow-lg', 'rounded-2xl'],
+    tokenDependencies: [
+      '--color-surface',
+      '--color-border',
+      '--color-glass',
+      'shadow-sm',
+      'shadow-lg',
+      'rounded-2xl',
+    ],
   },
   {
     name: 'Card',
     category: 'Composites',
-    description: 'Compatibility wrapper over BaseCard. Adds legacy variant names: interactive maps to BaseCard elevated; outline maps to subtle. Prefer BaseCard for new code.',
+    description:
+      'Compatibility wrapper over BaseCard. Adds legacy variant names: interactive maps to BaseCard elevated; outline maps to subtle. Prefer BaseCard for new code.',
     filePath: 'src/components/composites/Card.astro',
     props: [
-      { name: 'variant', type: '\'default\' | \'outline\' | \'elevated\' | \'glass\' | \'interactive\' | \'subtle\'', required: false, default: '\'default\'', description: 'interactive → BaseCard elevated; outline → BaseCard subtle' },
-      { name: 'hover', type: '\'none\' | \'lift\' | \'scale\' | \'glow\'', required: false, default: '\'lift\'', description: 'Forwarded to BaseCard' },
-      { name: 'padding', type: '\'none\' | \'sm\' | \'md\' | \'lg\' | \'xl\'', required: false, default: '\'md\'', description: 'xl maps to BaseCard lg' },
-      { name: 'as', type: '\'div\' | \'article\' | \'section\'', required: false, default: '\'div\'', description: 'Semantic HTML element' },
+      {
+        name: 'variant',
+        type: "'default' | 'outline' | 'elevated' | 'glass' | 'interactive' | 'subtle'",
+        required: false,
+        default: "'default'",
+        description: 'interactive → BaseCard elevated; outline → BaseCard subtle',
+      },
+      {
+        name: 'hover',
+        type: "'none' | 'lift' | 'scale' | 'glow'",
+        required: false,
+        default: "'lift'",
+        description: 'Forwarded to BaseCard',
+      },
+      {
+        name: 'padding',
+        type: "'none' | 'sm' | 'md' | 'lg' | 'xl'",
+        required: false,
+        default: "'md'",
+        description: 'xl maps to BaseCard lg',
+      },
+      {
+        name: 'as',
+        type: "'div' | 'article' | 'section'",
+        required: false,
+        default: "'div'",
+        description: 'Semantic HTML element',
+      },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
-      { name: 'fullHeight', type: 'boolean', required: false, default: 'false', description: 'Stretch card to parent height' },
-      { name: 'containerQuery', type: 'boolean', required: false, default: 'false', description: 'Adds @container wrapper class' },
+      {
+        name: 'fullHeight',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Stretch card to parent height',
+      },
+      {
+        name: 'containerQuery',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Adds @container wrapper class',
+      },
     ],
     examples: [
       {
@@ -865,11 +1184,24 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'Stack',
     category: 'Primitives',
-    description: 'Vertical spacing primitive using space-y-* utilities. Standardizes rhythm between stacked children.',
+    description:
+      'Vertical spacing primitive using space-y-* utilities. Standardizes rhythm between stacked children.',
     filePath: 'src/components/primitives/Stack.astro',
     props: [
-      { name: 'space', type: '\'xs\' | \'sm\' | \'md\' | \'lg\' | \'xl\' | \'2xl\' | \'3xl\'', required: false, default: '\'md\'', description: 'Vertical gap preset' },
-      { name: 'as', type: '\'div\' | \'section\' | \'article\' | \'ul\' | \'ol\' | \'nav\' | \'header\' | \'footer\'', required: false, default: '\'div\'', description: 'Semantic HTML element' },
+      {
+        name: 'space',
+        type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'",
+        required: false,
+        default: "'md'",
+        description: 'Vertical gap preset',
+      },
+      {
+        name: 'as',
+        type: "'div' | 'section' | 'article' | 'ul' | 'ol' | 'nav' | 'header' | 'footer'",
+        required: false,
+        default: "'div'",
+        description: 'Semantic HTML element',
+      },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
     ],
     examples: [
@@ -885,13 +1217,26 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'FeatureCard',
     category: 'Composites',
-    description: 'Semantic feature surface with token-backed color variants. Use for marketing/feature grids instead of page-specific card styles.',
+    description:
+      'Semantic feature surface with token-backed color variants. Use for marketing/feature grids instead of page-specific card styles.',
     filePath: 'src/components/composites/FeatureCard.astro',
     props: [
-      { name: 'variant', type: '\'accent\' | \'primary\' | \'success\' | \'warning\' | \'info\' | \'error\'', required: false, default: '\'accent\'', description: 'Semantic color variant' },
+      {
+        name: 'variant',
+        type: "'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error'",
+        required: false,
+        default: "'accent'",
+        description: 'Semantic color variant',
+      },
       { name: 'title', type: 'string', required: false, description: 'Card heading' },
       { name: 'description', type: 'string', required: false, description: 'Supporting copy' },
-      { name: 'hover', type: 'boolean', required: false, default: 'true', description: 'Enable hover lift' },
+      {
+        name: 'hover',
+        type: 'boolean',
+        required: false,
+        default: 'true',
+        description: 'Enable hover lift',
+      },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
     ],
     examples: [
@@ -902,17 +1247,30 @@ export const componentDocs: ComponentDoc[] = [
     ],
     tags: ['card', 'feature', 'semantic', 'composite'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-accent', '--color-success', '--color-surface', 'rounded-2xl', 'shadow-sm'],
+    tokenDependencies: [
+      '--color-accent',
+      '--color-success',
+      '--color-surface',
+      'rounded-2xl',
+      'shadow-sm',
+    ],
   },
   {
     name: 'StatsCard',
     category: 'Composites',
-    description: 'Metric highlight card with optional trend indicator. Uses container queries for responsive stat layouts.',
+    description:
+      'Metric highlight card with optional trend indicator. Uses container queries for responsive stat layouts.',
     filePath: 'src/components/composites/StatsCard.astro',
     props: [
       { name: 'label', type: 'string', required: true, description: 'Metric label' },
       { name: 'value', type: 'string', required: true, description: 'Displayed metric value' },
-      { name: 'variant', type: '\'default\' | \'elevated\' | \'glass\' | \'subtle\'', required: false, default: '\'default\'', description: 'Surface preset' },
+      {
+        name: 'variant',
+        type: "'default' | 'elevated' | 'glass' | 'subtle'",
+        required: false,
+        default: "'default'",
+        description: 'Surface preset',
+      },
     ],
     examples: [
       {
@@ -931,7 +1289,9 @@ export const componentDocs: ComponentDoc[] = [
     category: 'Primitives',
     description: 'Standardized section heading with optional kicker, title, and description slots.',
     filePath: 'src/components/primitives/SectionHeading.astro',
-    examples: [{ title: 'Section intro', code: '<SectionHeading kicker="Work" title="Recent Projects" />' }],
+    examples: [
+      { title: 'Section intro', code: '<SectionHeading kicker="Work" title="Recent Projects" />' },
+    ],
     tags: ['heading', 'typography', 'section', 'primitive'],
     visualTier: 'quiet',
     tokenDependencies: ['--color-foreground', '--color-muted-foreground', '--fs-h2'],
@@ -939,9 +1299,15 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'SkipLink',
     category: 'Primitives',
-    description: 'Accessibility skip link for keyboard users to bypass navigation and jump to main content.',
+    description:
+      'Accessibility skip link for keyboard users to bypass navigation and jump to main content.',
     filePath: 'src/components/primitives/SkipLink.astro',
-    examples: [{ title: 'Skip to main', code: '<SkipLink href="#main-content">Skip to main content</SkipLink>' }],
+    examples: [
+      {
+        title: 'Skip to main',
+        code: '<SkipLink href="#main-content">Skip to main content</SkipLink>',
+      },
+    ],
     accessibility: ['Visible on focus', 'First focusable element in document order'],
     tags: ['accessibility', 'navigation', 'primitive'],
     visualTier: 'quiet',
@@ -970,14 +1336,25 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'SocialLink',
     category: 'Primitives',
-    description: 'Social profile link with icon and label. Supports LinkedIn, GitHub, email, and Microsoft Learn icons.',
+    description:
+      'Social profile link with icon and label. Supports LinkedIn, GitHub, email, and Microsoft Learn icons.',
     filePath: 'src/components/primitives/SocialLink.astro',
     props: [
       { name: 'href', type: 'string', required: true, description: 'Profile or mailto URL' },
-      { name: 'icon', type: '\'linkedin\' | \'github\' | \'email\' | \'microsoft-learn\'', required: true, description: 'Icon variant' },
+      {
+        name: 'icon',
+        type: "'linkedin' | 'github' | 'email' | 'microsoft-learn'",
+        required: true,
+        description: 'Icon variant',
+      },
       { name: 'label', type: 'string', required: true, description: 'Accessible link label' },
     ],
-    examples: [{ title: 'GitHub link', code: '<SocialLink href="https://github.com/blakeox" icon="github" label="GitHub" />' }],
+    examples: [
+      {
+        title: 'GitHub link',
+        code: '<SocialLink href="https://github.com/blakeox" icon="github" label="GitHub" />',
+      },
+    ],
     accessibility: ['Descriptive aria-label', 'External link indication for screen readers'],
     tags: ['social', 'link', 'icon', 'primitive'],
     visualTier: 'quiet',
@@ -986,9 +1363,15 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'FloatingBlur',
     category: 'Primitives',
-    description: 'Decorative blurred gradient orb for page backgrounds. Respects reduced-motion preferences.',
+    description:
+      'Decorative blurred gradient orb for page backgrounds. Respects reduced-motion preferences.',
     filePath: 'src/components/primitives/FloatingBlur.astro',
-    examples: [{ title: 'Hero background', code: '<FloatingBlur size="xl" color="accent" position="top-left" />' }],
+    examples: [
+      {
+        title: 'Hero background',
+        code: '<FloatingBlur size="xl" color="accent" position="top-left" />',
+      },
+    ],
     tags: ['decorative', 'background', 'gradient', 'primitive'],
     visualTier: 'expressive',
     tokenDependencies: ['--color-accent', '--blur-lg'],
@@ -998,7 +1381,9 @@ export const componentDocs: ComponentDoc[] = [
     category: 'Primitives',
     description: 'Technology proficiency logo with optimized AVIF/WebP image loading.',
     filePath: 'src/components/primitives/ProficiencyLogo.astro',
-    examples: [{ title: 'Tech logo', code: '<ProficiencyLogo name="typescript" alt="TypeScript" />' }],
+    examples: [
+      { title: 'Tech logo', code: '<ProficiencyLogo name="typescript" alt="TypeScript" />' },
+    ],
     tags: ['logo', 'image', 'technology', 'primitive'],
     visualTier: 'quiet',
     tokenDependencies: ['rounded-lg'],
@@ -1020,7 +1405,12 @@ export const componentDocs: ComponentDoc[] = [
     category: 'Composites',
     description: 'Full-width hero band with title, description, and optional CTA slot.',
     filePath: 'src/components/composites/Hero.astro',
-    examples: [{ title: 'Page hero', code: '<Hero title="Projects" description="Case studies and shipped work." />' }],
+    examples: [
+      {
+        title: 'Page hero',
+        code: '<Hero title="Projects" description="Case studies and shipped work." />',
+      },
+    ],
     tags: ['hero', 'marketing', 'composite'],
     visualTier: 'expressive',
     tokenDependencies: ['--gradient-primary', '--color-foreground', '--fs-h1'],
@@ -1030,7 +1420,12 @@ export const componentDocs: ComponentDoc[] = [
     category: 'Composites',
     description: 'Page-level hero with kicker, title, description, and optional actions slot.',
     filePath: 'src/components/composites/PageHero.astro',
-    examples: [{ title: 'Index hero', code: '<PageHero kicker="Blog" title="Articles" description="Thoughts on systems and AI." />' }],
+    examples: [
+      {
+        title: 'Index hero',
+        code: '<PageHero kicker="Blog" title="Articles" description="Thoughts on systems and AI." />',
+      },
+    ],
     tags: ['hero', 'page', 'composite'],
     visualTier: 'expressive',
     tokenDependencies: ['--color-foreground', '--color-muted-foreground', '--fs-h1'],
@@ -1038,9 +1433,15 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'CTASection',
     category: 'Composites',
-    description: 'Conversion-focused call-to-action band with heading, description, and button group.',
+    description:
+      'Conversion-focused call-to-action band with heading, description, and button group.',
     filePath: 'src/components/composites/CTASection.astro',
-    examples: [{ title: 'Contact CTA', code: '<CTASection heading="Get in touch" href="/contact/">Contact</CTASection>' }],
+    examples: [
+      {
+        title: 'Contact CTA',
+        code: '<CTASection heading="Get in touch" href="/contact/">Contact</CTASection>',
+      },
+    ],
     tags: ['cta', 'conversion', 'composite'],
     visualTier: 'expressive',
     tokenDependencies: ['--gradient-accent', '--color-on-accent', 'rounded-3xl'],
@@ -1050,7 +1451,9 @@ export const componentDocs: ComponentDoc[] = [
     category: 'Composites',
     description: 'Responsive grid layout for FeatureItem or FeatureCard children.',
     filePath: 'src/components/composites/FeatureGrid.astro',
-    examples: [{ title: 'Feature grid', code: '<FeatureGrid><FeatureCard title="Fast" /></FeatureGrid>' }],
+    examples: [
+      { title: 'Feature grid', code: '<FeatureGrid><FeatureCard title="Fast" /></FeatureGrid>' },
+    ],
     tags: ['grid', 'features', 'composite'],
     visualTier: 'elevated',
     tokenDependencies: ['@container', 'gap-6'],
@@ -1068,9 +1471,12 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'MetricsTable',
     category: 'Composites',
-    description: 'Structured metrics table for project KPIs with label, result, and timeline columns.',
+    description:
+      'Structured metrics table for project KPIs with label, result, and timeline columns.',
     filePath: 'src/components/composites/MetricsTable.astro',
-    examples: [{ title: 'Project metrics', code: '<MetricsTable metrics={project.data.metrics} />' }],
+    examples: [
+      { title: 'Project metrics', code: '<MetricsTable metrics={project.data.metrics} />' },
+    ],
     tags: ['table', 'metrics', 'project', 'composite'],
     visualTier: 'quiet',
     tokenDependencies: ['--color-surface', '--color-border', '--color-muted-foreground'],
@@ -1080,7 +1486,12 @@ export const componentDocs: ComponentDoc[] = [
     category: 'Composites',
     description: 'Horizontal or vertical grouping of Button primitives with consistent spacing.',
     filePath: 'src/components/composites/ButtonGroup.astro',
-    examples: [{ title: 'Action group', code: '<ButtonGroup><Button>Primary</Button><Button variant="outline">Secondary</Button></ButtonGroup>' }],
+    examples: [
+      {
+        title: 'Action group',
+        code: '<ButtonGroup><Button>Primary</Button><Button variant="outline">Secondary</Button></ButtonGroup>',
+      },
+    ],
     tags: ['button', 'layout', 'composite'],
     visualTier: 'quiet',
     tokenDependencies: ['gap-3'],
@@ -1093,7 +1504,12 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'Home',
     description: 'Homepage hero with author photo, tagline, description, and primary CTAs.',
     filePath: 'src/components/features/home/HomeHeroSection.astro',
-    examples: [{ title: 'Home hero', code: '<HomeHeroSection author={siteConfig.author} description={tagline} />' }],
+    examples: [
+      {
+        title: 'Home hero',
+        code: '<HomeHeroSection author={siteConfig.author} description={tagline} />',
+      },
+    ],
     tags: ['home', 'hero', 'landing'],
     visualTier: 'expressive',
     tokenDependencies: ['--gradient-primary', '--color-foreground', '--fs-h1'],
@@ -1115,7 +1531,12 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'Home',
     description: 'Card displaying a resume highlight with icon, title, and description.',
     filePath: 'src/components/features/home/ResumeHighlightCard.astro',
-    examples: [{ title: 'Highlight card', code: '<ResumeHighlightCard title="Leadership" description="Led cross-functional teams." />' }],
+    examples: [
+      {
+        title: 'Highlight card',
+        code: '<ResumeHighlightCard title="Leadership" description="Led cross-functional teams." />',
+      },
+    ],
     tags: ['home', 'resume', 'card'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-surface', '--color-border', 'shadow-md', 'rounded-2xl'],
@@ -1126,7 +1547,9 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'Home',
     description: 'Homepage section listing recent project cards with link to full projects index.',
     filePath: 'src/components/features/home/HomeRecentProjectsSection.astro',
-    examples: [{ title: 'Recent projects', code: '<HomeRecentProjectsSection projects={recentProjects} />' }],
+    examples: [
+      { title: 'Recent projects', code: '<HomeRecentProjectsSection projects={recentProjects} />' },
+    ],
     tags: ['home', 'projects', 'listing'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-foreground', 'gap-6'],
@@ -1137,7 +1560,9 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'Home',
     description: 'Homepage section listing recent blog post cards with link to blog index.',
     filePath: 'src/components/features/home/HomeLatestPostsSection.astro',
-    examples: [{ title: 'Latest posts', code: '<HomeLatestPostsSection posts={recentBlogPosts} />' }],
+    examples: [
+      { title: 'Latest posts', code: '<HomeLatestPostsSection posts={recentBlogPosts} />' },
+    ],
     tags: ['home', 'blog', 'listing'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-foreground', 'gap-6'],
@@ -1183,9 +1608,12 @@ export const componentDocs: ComponentDoc[] = [
     name: 'ProjectDetailContent',
     category: 'Features',
     subcategory: 'Projects',
-    description: 'Project detail body rendering MDX content with metrics, journey, and lessons sections.',
+    description:
+      'Project detail body rendering MDX content with metrics, journey, and lessons sections.',
     filePath: 'src/components/features/projects/ProjectDetailContent.astro',
-    examples: [{ title: 'Project body', code: '<ProjectDetailContent project={entry} Content={Content} />' }],
+    examples: [
+      { title: 'Project body', code: '<ProjectDetailContent project={entry} Content={Content} />' },
+    ],
     tags: ['project', 'detail', 'mdx'],
     visualTier: 'quiet',
     tokenDependencies: ['--color-foreground', 'prose'],
@@ -1209,7 +1637,12 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'About',
     description: 'Card displaying a professional achievement with icon and description.',
     filePath: 'src/components/features/about/AchievementCard.astro',
-    examples: [{ title: 'Achievement', code: '<AchievementCard title="Certification" description="Details..." />' }],
+    examples: [
+      {
+        title: 'Achievement',
+        code: '<AchievementCard title="Certification" description="Details..." />',
+      },
+    ],
     tags: ['about', 'achievement', 'card'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
@@ -1220,7 +1653,12 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'About',
     description: 'Individual timeline milestone card with year, title, and achievements list.',
     filePath: 'src/components/features/about/TimelineCard.astro',
-    examples: [{ title: 'Timeline entry', code: '<TimelineCard year="2024" title="Role" achievements={[]} />' }],
+    examples: [
+      {
+        title: 'Timeline entry',
+        code: '<TimelineCard year="2024" title="Role" achievements={[]} />',
+      },
+    ],
     tags: ['about', 'timeline', 'card'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-surface', '--color-border', '--color-accent'],
@@ -1278,7 +1716,8 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'ContactFormIsland',
     category: 'Islands',
-    description: 'React island for the contact form with validation, submission, and success/error states.',
+    description:
+      'React island for the contact form with validation, submission, and success/error states.',
     filePath: 'src/components/islands/ContactFormIsland.tsx',
     examples: [{ title: 'Contact form', code: '<ContactFormIsland client:load />' }],
     accessibility: ['Form labels associated with inputs', 'Error messages announced via aria-live'],
@@ -1289,7 +1728,8 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'AIChatIsland',
     category: 'Islands',
-    description: 'React island powering the AI chat assistant with streaming responses and source citations.',
+    description:
+      'React island powering the AI chat assistant with streaming responses and source citations.',
     filePath: 'src/components/islands/AIChatIsland.tsx',
     examples: [{ title: 'AI chat', code: '<AIChatIsland client:load />' }],
     accessibility: ['Dialog with aria-modal', 'Keyboard shortcut support', 'Focus management'],

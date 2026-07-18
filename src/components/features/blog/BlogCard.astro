@@ -13,57 +13,76 @@ const { id: slug, data } = post;
 const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as string[], 2) : [];
 ---
 
-<Card as="article" variant="default" hover="lift" padding="none" class="@container group h-full">
- {data.heroImage && (
- <div slot="image" class="aspect-[16/10] overflow-hidden rounded-t-2xl">
- <OptimizedImage 
- src={data.heroImage} 
- alt={`Hero image for ${data.title}`}
- class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-slow"
- loading="lazy"
- />
- </div>
- )}
- 
- <div class="flex flex-1 flex-col p-5 @sm:p-6">
- <header class="mb-4">
- {visibleTags.length > 0 && (
- <Flex wrap gap="xs" class="mb-3">
- {visibleTags.map((tag: string) => (
- <Badge variant="secondary">{tag}</Badge>
- ))}
- </Flex>
- )}
- 
- <h3 class="mb-3 text-xl font-bold leading-tight text-foreground transition-colors duration-moderate group-hover:text-accent @sm:text-2xl">
- <a href={`/blog/${slug}/`} class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background">
- {data.title}
- </a>
- </h3>
+<Card as="article" variant="default" hover="lift" padding="none" class="group @container h-full">
+  {
+    data.heroImage && (
+      <div slot="image" class="aspect-[16/10] overflow-hidden rounded-t-2xl">
+        <OptimizedImage
+          src={data.heroImage}
+          alt={`Hero image for ${data.title}`}
+          class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-105"
+          loading="lazy"
+        />
+      </div>
+    )
+  }
 
- {data.pubDate && <DateDisplay date={data.pubDate} format="blog" />}
- </header>
+  <div class="flex flex-1 flex-col p-5 @sm:p-6">
+    <header class="mb-4">
+      {
+        visibleTags.length > 0 && (
+          <Flex wrap gap="xs" class="mb-3">
+            {visibleTags.map((tag: string) => (
+              <Badge variant="secondary">{tag}</Badge>
+            ))}
+          </Flex>
+        )
+      }
 
- {data.description && (
- <p class="mb-4 line-clamp-3 flex-1 text-base leading-relaxed text-muted-foreground">
- {truncate(data.description, 120)}
- </p>
- )}
+      <h3
+        class="mb-3 text-xl leading-tight font-bold text-foreground transition-colors duration-moderate group-hover:text-accent @sm:text-2xl"
+      >
+        <a
+          href={`/blog/${slug}/`}
+          class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          {data.title}
+        </a>
+      </h3>
 
- <footer class="flex items-center justify-between border-t border-border/20 pt-4">
- <a
- href={`/blog/${slug}/`}
- class="inline-flex items-center text-sm font-semibold text-accent transition-colors duration-normal hover:text-accent-dark"
- >
- Read more
- <svg class="ml-1 h-4 w-4 transition-transform duration-normal group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
- </svg>
- </a>
+      {data.pubDate && <DateDisplay date={data.pubDate} format="blog" />}
+    </header>
 
- <span class="text-xs text-subtle-foreground">
- 5 min read
- </span>
- </footer>
- </div>
+    {
+      data.description && (
+        <p class="mb-4 line-clamp-3 flex-1 text-base leading-relaxed text-muted-foreground">
+          {truncate(data.description, 120)}
+        </p>
+      )
+    }
+
+    <footer class="flex items-center justify-between border-t border-border/20 pt-4">
+      <a
+        href={`/blog/${slug}/`}
+        class="inline-flex items-center text-sm font-semibold text-accent transition-colors duration-normal hover:text-accent-dark"
+      >
+        Read more
+        <svg
+          class="ml-1 h-4 w-4 transition-transform duration-normal group-hover:translate-x-1"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
+      </a>
+
+      <span class="text-xs text-subtle-foreground"> 5 min read </span>
+    </footer>
+  </div>
 </Card>

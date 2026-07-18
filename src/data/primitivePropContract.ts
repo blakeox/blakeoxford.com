@@ -40,5 +40,5 @@ export const PRIMITIVE_PROP_CONTRACT: PrimitivePropContractEntry[] = [
 ];
 
 export const PRIMITIVE_PROP_NAMES: PrimitivePropName[] = PRIMITIVE_PROP_CONTRACT.map(
-  (entry) => entry.prop,
+  (entry) => entry.prop
 );

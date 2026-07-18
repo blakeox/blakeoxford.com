@@ -13,7 +13,9 @@ export function getPageContext(): PageContext | null {
     rawTitle
       .replace(/\s*[|–—•·].*$/, '')
       .replace(/\s+-\s+Blake Oxford.*$/i, '')
-      .trim() || rawTitle || 'this page';
+      .trim() ||
+    rawTitle ||
+    'this page';
 
   return {
     url: window.location.href,

@@ -80,6 +80,9 @@ jobs:
       - name: Run ESLint
         run: pnpm run lint
 
+      - name: Check formatting (Prettier + Tailwind class sort)
+        run: pnpm format:check
+
       - name: Design lint (tokens & spacing)
         run: pnpm design:lint
 

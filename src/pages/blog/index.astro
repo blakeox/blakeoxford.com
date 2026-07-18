@@ -9,7 +9,10 @@ import BlogIndexContentSection from '../../components/features/blog/BlogIndexCon
 const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);
 const sortedPosts = posts
   .slice()
-  .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .sort(
+    (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
+      b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
 ---
 
 <Layout

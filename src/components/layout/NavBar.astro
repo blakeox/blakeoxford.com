@@ -25,14 +25,14 @@ function isActive(href: string): boolean {
 ---
 
 <div
-  class="@container nav-shell relative isolate overflow-visible sticky top-0 z-nav border-b border-border/50 bg-glass backdrop-blur-md supports-[backdrop-filter]:bg-glass-xl motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-normal"
+  class="nav-shell @container relative sticky top-0 isolate z-nav overflow-visible border-b border-border/50 bg-glass backdrop-blur-md supports-[backdrop-filter]:bg-glass-xl motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-normal"
   data-menu-state="closed"
 >
   <div id="nav-menu-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
   <nav
     id="navbar"
-    class="relative z-10 mx-auto flex h-[var(--nav-height,4.5rem)] w-full max-w-container-2xl layout-gutter items-center justify-between gap-4 text-foreground motion-safe:transition-[height,box-shadow] motion-safe:duration-normal"
+    class="layout-gutter relative z-10 mx-auto flex h-[var(--nav-height,4.5rem)] w-full max-w-container-2xl items-center justify-between gap-4 text-foreground motion-safe:transition-[height,box-shadow] motion-safe:duration-normal"
     role="navigation"
     aria-label="Main Navigation"
   >
@@ -42,7 +42,9 @@ function isActive(href: string): boolean {
         class="brand-link focus-ring-interactive flex items-center gap-3 rounded-full px-2 py-1 text-foreground"
         aria-label={logo.name}
       >
-        <picture class="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60">
+        <picture
+          class="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60"
+        >
           {logo.avatar.avif && <source srcset={logo.avatar.avif} type="image/avif" />}
           {logo.avatar.webp && <source srcset={logo.avatar.webp} type="image/webp" />}
           <img
@@ -59,7 +61,9 @@ function isActive(href: string): boolean {
         </picture>
         <span class="brand-text flex flex-col leading-none">
           <span class="text-sm font-semibold tracking-tight text-foreground">{logo.name}</span>
-          <span class="hidden text-[0.7rem] font-medium uppercase tracking-[0.16em] text-subtle-foreground sm:block">
+          <span
+            class="hidden text-[0.7rem] font-medium tracking-[0.16em] text-subtle-foreground uppercase sm:block"
+          >
             Systems architect
           </span>
         </span>
@@ -78,7 +82,7 @@ function isActive(href: string): boolean {
                 class:list={[
                   'nav-link focus-ring-interactive inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:text-accent',
                   active
-                    ? 'bg-surface-subtle text-foreground ring-1 ring-inset ring-accent/40'
+                    ? 'bg-surface-subtle text-foreground ring-1 ring-accent/40 ring-inset'
                     : 'text-foreground/90',
                 ]}
                 aria-current={active ? 'page' : undefined}
@@ -112,8 +116,10 @@ function isActive(href: string): boolean {
           aria-hidden="true"
           focusable="false"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
-          ></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"></path>
         </svg>
         <span class="hidden text-xs font-medium text-muted-foreground lg:inline">Search</span>
         <kbd class="nav-kbd hidden lg:inline-flex">⌘K</kbd>
@@ -128,14 +134,52 @@ function isActive(href: string): boolean {
         data-theme-preference="system"
       >
         <span class="pointer-events-none relative block size-6" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" class="sun-icon absolute inset-0 size-6" data-icon="light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" focusable="false">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4V2m0 20v-2m8-8h2M2 12h2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M5.6 18.4 4.2 19.8m15.6-15.6-1.4 1.4M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"></path>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="sun-icon absolute inset-0 size-6"
+            data-icon="light"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            focusable="false"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4V2m0 20v-2m8-8h2M2 12h2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M5.6 18.4 4.2 19.8m15.6-15.6-1.4 1.4M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"
+            ></path>
           </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" class="moon-icon absolute inset-0 size-6 translate-x-px" data-icon="dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" focusable="false">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79Z"></path>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="moon-icon absolute inset-0 size-6 translate-x-px"
+            data-icon="dark"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            focusable="false"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 12.79A9 9 0 0 1 11.21 3 7 7 0 1 0 21 12.79Z"></path>
           </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" class="system-icon absolute inset-0 size-6" data-icon="system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" focusable="false">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L8 21h8l-1.75-4M12 3v1m6.364 1.636-.707.707M21 12h-1M18.364 18.364l-.707-.707M12 19v1M5.636 18.364l.707-.707M4 12H3m2.636-6.364.707.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="system-icon absolute inset-0 size-6"
+            data-icon="system"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            focusable="false"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9.75 17L8 21h8l-1.75-4M12 3v1m6.364 1.636-.707.707M21 12h-1M18.364 18.364l-.707-.707M12 19v1M5.636 18.364l.707-.707M4 12H3m2.636-6.364.707.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"
+            ></path>
           </svg>
         </span>
       </button>
@@ -198,7 +242,9 @@ function isActive(href: string): boolean {
     data-state="closed"
     inert
   >
-    <div class="mobile-menu-content flex w-full flex-col gap-2 px-4 py-4 text-foreground @sm:gap-3 @sm:px-5 @sm:py-5">
+    <div
+      class="mobile-menu-content flex w-full flex-col gap-2 px-4 py-4 text-foreground @sm:gap-3 @sm:px-5 @sm:py-5"
+    >
       <h2 id="nav-mobile-menu-title" class="sr-only">Site navigation</h2>
       <ul class="mobile-nav flex flex-col gap-1">
         {
@@ -256,10 +302,7 @@ function isActive(href: string): boolean {
       if (!e.shell || !e.menu || !e.burger) return;
       e.shell.setAttribute('data-menu-state', next ? 'open' : 'closed');
       e.burger.setAttribute('aria-expanded', next ? 'true' : 'false');
-      e.burger.setAttribute(
-        'aria-label',
-        next ? 'Close navigation menu' : 'Open navigation menu',
-      );
+      e.burger.setAttribute('aria-label', next ? 'Close navigation menu' : 'Open navigation menu');
       e.burger.classList.toggle('active', next);
       e.menu.setAttribute('data-state', next ? 'open' : 'closed');
       if (next) e.menu.removeAttribute('inert');
@@ -312,7 +355,7 @@ function isActive(href: string): boolean {
           setOpen(false);
         }
       },
-      { signal: signal },
+      { signal: signal }
     );
 
     document.addEventListener(
@@ -322,7 +365,7 @@ function isActive(href: string): boolean {
         var shell = document.querySelector('.nav-shell');
         if (shell && isOpen(shell)) setOpen(false);
       },
-      { signal: signal },
+      { signal: signal }
     );
 
     var mq = window.matchMedia('(min-width: 768px)');
@@ -332,7 +375,7 @@ function isActive(href: string): boolean {
         function (event) {
           if (event.matches) setOpen(false);
         },
-        { signal: signal },
+        { signal: signal }
       );
     }
 
@@ -343,7 +386,7 @@ function isActive(href: string): boolean {
         wireBurger();
         setOpen(false);
       },
-      { signal: signal },
+      { signal: signal }
     );
   })();
 </script>

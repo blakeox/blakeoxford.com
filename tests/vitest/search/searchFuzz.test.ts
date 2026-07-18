@@ -3,15 +3,24 @@ import fs from 'fs';
 import path from 'path';
 
 const root = path.resolve(__dirname, '../../..');
-const projects = JSON.parse(fs.readFileSync(path.join(root, 'public/search/projects.json'), 'utf-8'));
+const projects = JSON.parse(
+  fs.readFileSync(path.join(root, 'public/search/projects.json'), 'utf-8')
+);
 const corpus = [...projects];
 
-function randomInt(max: number) { return Math.floor(Math.random() * max); }
-function sample<T>(arr: T[]) { return arr[randomInt(arr.length)]; }
+function randomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
+function sample<T>(arr: T[]) {
+  return arr[randomInt(arr.length)];
+}
 
 function naiveSearch(query: string) {
   const q = query.toLowerCase();
-  return corpus.filter(e => (e.title || '').toLowerCase().includes(q) || (e.description || '').toLowerCase().includes(q));
+  return corpus.filter(
+    (e) =>
+      (e.title || '').toLowerCase().includes(q) || (e.description || '').toLowerCase().includes(q)
+  );
 }
 
 describe('Search Fuzz', () => {

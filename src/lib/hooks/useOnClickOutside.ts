@@ -23,9 +23,7 @@
  */
 import { useEffect, type RefObject } from 'react';
 
-type RefOrRefs<T extends HTMLElement = HTMLElement> =
-  | RefObject<T | null>
-  | RefObject<T | null>[];
+type RefOrRefs<T extends HTMLElement = HTMLElement> = RefObject<T | null> | RefObject<T | null>[];
 
 export function useOnClickOutside<T extends HTMLElement = HTMLElement>(
   ref: RefOrRefs<T>,

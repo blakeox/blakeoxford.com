@@ -28,7 +28,7 @@ export function extractLinks(html, { includeExternal = false } = {}) {
     const url = m[2];
     if (!url) continue;
     if (url.startsWith('#')) continue;
-    if (SKIP_PROTOCOLS.some(p => url.startsWith(p))) continue;
+    if (SKIP_PROTOCOLS.some((p) => url.startsWith(p))) continue;
     // Protocol-relative URLs '//' should be considered external
     const isProtocolRelative = url.startsWith('//');
     const isHttp = url.startsWith('http://') || url.startsWith('https://') || isProtocolRelative;
@@ -102,9 +102,16 @@ export async function runPool(items, limit, worker) {
         const idx = i++;
         active++;
         Promise.resolve(worker(items[idx], idx))
-          .then(res => { results[idx] = res; })
-          .catch(err => { results[idx] = { error: err?.message || 'error' }; })
-          .finally(() => { active--; maybeNext(); });
+          .then((res) => {
+            results[idx] = res;
+          })
+          .catch((err) => {
+            results[idx] = { error: err?.message || 'error' };
+          })
+          .finally(() => {
+            active--;
+            maybeNext();
+          });
       }
     };
     maybeNext();
@@ -117,10 +124,19 @@ export async function runPool(items, limit, worker) {
  */
 export function buildAllowlist(patternRaw) {
   if (!patternRaw) return () => false;
-  const parts = patternRaw.split(',').map(p => p.trim()).filter(Boolean);
-  const regexes = parts.map(p => {
-    try { return new RegExp(p); } catch { return null; }
-  }).filter(Boolean);
+  const parts = patternRaw
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const regexes = parts
+    .map((p) => {
+      try {
+        return new RegExp(p);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
   if (!regexes.length) return () => false;
-  return (value) => regexes.some(r => r.test(value));
+  return (value) => regexes.some((r) => r.test(value));
 }

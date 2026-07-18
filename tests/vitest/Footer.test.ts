@@ -40,7 +40,7 @@ describe('Footer.astro file', () => {
     for (const link of navJson.quickLinks ?? []) {
       expect(content).not.toContain(`href="${link.href}"`);
     }
-    expect(content).toContain('{quickLinks.map((link) =>');
+    expect(content).toMatch(/quickLinks\.map\(\(link\)\s*=>/);
   });
 
   it('should include copyright notice with dynamic year', () => {

@@ -1,66 +1,63 @@
 ---
 /**
  * GradientOverlay Component
- * 
+ *
  * Reusable tokenized overlay for cards, images, and controlled visual accents.
  * Reduces ~300 lines of duplicate gradient markup across the codebase.
- * 
+ *
  * @example
  * <GradientOverlay variant="hover-card" direction="br" />
  * <GradientOverlay variant="image-fade" direction="t" />
  */
 
 interface Props {
- variant: 'hover-card' | 'image-fade' | 'background' | 'hover-subtle';
- direction?: 'br' | 'tr' | 'r' | 't' | 'b';
- opacity?: 'light' | 'medium' | 'heavy';
- class?: string;
+  variant: 'hover-card' | 'image-fade' | 'background' | 'hover-subtle';
+  direction?: 'br' | 'tr' | 'r' | 't' | 'b';
+  opacity?: 'light' | 'medium' | 'heavy';
+  class?: string;
 }
 
-const { 
- variant, 
- direction = 'br',
- opacity = 'medium',
- class: className = '' 
-} = Astro.props;
+const { variant, direction = 'br', opacity = 'medium', class: className = '' } = Astro.props;
 
 // Variant-specific base classes
 const variantClasses = {
- 'hover-card': 'pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-moderate group-hover:opacity-100',
- 'image-fade': 'absolute inset-x-0 bottom-0 h-24',
- 'background': 'absolute inset-0',
- 'hover-subtle': 'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-slow'
+  'hover-card':
+    'pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-moderate group-hover:opacity-100',
+  'image-fade': 'absolute inset-x-0 bottom-0 h-24',
+  background: 'absolute inset-0',
+  'hover-subtle':
+    'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-slow',
 };
 
 // Direction-based gradient classes
 const directionClasses = {
- 'br': 'bg-gradient-to-br',
- 'tr': 'bg-gradient-to-tr',
- 'r': 'bg-gradient-to-r',
- 't': 'bg-gradient-to-t',
- 'b': 'bg-gradient-to-b'
+  br: 'bg-gradient-to-br',
+  tr: 'bg-gradient-to-tr',
+  r: 'bg-gradient-to-r',
+  t: 'bg-gradient-to-t',
+  b: 'bg-gradient-to-b',
 };
 
 // Opacity-based color stops
 const opacityStops = {
- 'light': {
- 'hover-card': 'from-background/50 via-transparent to-background/60',
- 'image-fade': 'from-background/95 via-background/75 to-transparent',
- 'background': 'from-background/20 via-transparent to-transparent',
- 'hover-subtle': 'from-accent/5 to-primary/5'
- },
- 'medium': {
- 'hover-card': 'from-background/70 via-surface/85 to-background/65',
- 'image-fade': 'from-background/95 via-background/75 to-transparent',
- 'background': 'from-background/40 via-transparent to-background/40',
- 'hover-subtle': 'from-accent/5 to-primary/5'
- },
- 'heavy': {
- 'hover-card': 'from-background/90 via-surface/95 to-background/90',
- 'image-fade': 'from-background/100 via-background/90 to-transparent',
- 'background': 'from-background/70 via-transparent to-background/70',
- 'hover-subtle': 'from-accent/10 to-primary/10'
- }
+  light: {
+    'hover-card': 'from-background/50 via-transparent to-background/60',
+    'image-fade': 'from-background/95 via-background/75 to-transparent',
+    background: 'from-background/20 via-transparent to-transparent',
+    'hover-subtle': 'from-accent/5 to-primary/5',
+  },
+  medium: {
+    'hover-card': 'from-background/70 via-surface/85 to-background/65',
+    'image-fade': 'from-background/95 via-background/75 to-transparent',
+    background: 'from-background/40 via-transparent to-background/40',
+    'hover-subtle': 'from-accent/5 to-primary/5',
+  },
+  heavy: {
+    'hover-card': 'from-background/90 via-surface/95 to-background/90',
+    'image-fade': 'from-background/100 via-background/90 to-transparent',
+    background: 'from-background/70 via-transparent to-background/70',
+    'hover-subtle': 'from-accent/10 to-primary/10',
+  },
 };
 
 const baseClass = variantClasses[variant];
@@ -69,4 +66,4 @@ const colorStops = opacityStops[opacity][variant];
 const finalClasses = `${baseClass} ${gradientDirection} ${colorStops} ${className}`.trim();
 ---
 
-<div class={finalClasses} aria-hidden='true'></div>
+<div class={finalClasses} aria-hidden="true"></div>

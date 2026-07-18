@@ -13,14 +13,16 @@ export class DropdownManager {
   private globalClickHandler: ((e: Event) => void) | null = null;
   private globalKeyHandler: ((e: KeyboardEvent) => void) | null = null;
 
-  constructor(config: DropdownConfig = {
-    triggerSelector: '.nav-link[aria-haspopup="true"]',
-    menuSelector: 'ul[role="menu"]',
-    autoClose: true,
-    keyboardNavigation: true,
-    enabled: true,
-    debug: false,
-  }) {
+  constructor(
+    config: DropdownConfig = {
+      triggerSelector: '.nav-link[aria-haspopup="true"]',
+      menuSelector: 'ul[role="menu"]',
+      autoClose: true,
+      keyboardNavigation: true,
+      enabled: true,
+      debug: false,
+    }
+  ) {
     this.config = config;
     this.init();
   }
@@ -32,8 +34,8 @@ export class DropdownManager {
 
   private setupDropdowns(): void {
     const triggers = document.querySelectorAll<HTMLElement>(this.config.triggerSelector);
-    
-    triggers.forEach(trigger => {
+
+    triggers.forEach((trigger) => {
       const menu = trigger.parentElement?.querySelector<HTMLElement>(this.config.menuSelector);
       if (!menu) return;
 
@@ -41,7 +43,7 @@ export class DropdownManager {
         isOpen: false,
         trigger,
         menu,
-        focusTrap: null
+        focusTrap: null,
       };
 
       this.dropdowns.set(trigger, state);
@@ -64,7 +66,13 @@ export class DropdownManager {
 
     // Trigger blur handler
     trigger.addEventListener('blur', () => {
-      const blurDelay = (typeof window !== 'undefined' && (((typeof location !== 'undefined') && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) || (typeof navigator !== 'undefined' && (navigator as any).webdriver))) ? 0 : 100;
+      const blurDelay =
+        typeof window !== 'undefined' &&
+        ((typeof location !== 'undefined' &&
+          (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) ||
+          (typeof navigator !== 'undefined' && (navigator as any).webdriver))
+          ? 0
+          : 100;
       setTimeout(() => {
         if (!menu.contains(document.activeElement) && document.activeElement !== trigger) {
           this.closeDropdown(state);
@@ -196,7 +204,7 @@ export class DropdownManager {
       return {
         activate: () => {},
         deactivate: () => {},
-        handleKeyDown: () => {}
+        handleKeyDown: () => {},
       };
     }
 
@@ -224,7 +232,7 @@ export class DropdownManager {
     return {
       activate: () => firstElement.focus(),
       deactivate: () => element.removeEventListener('keydown', handleKeyDown),
-      handleKeyDown
+      handleKeyDown,
     };
   }
 
@@ -241,7 +249,7 @@ export class DropdownManager {
       isOpen: false,
       trigger,
       menu,
-      focusTrap: null
+      focusTrap: null,
     };
 
     this.dropdowns.set(trigger, state);
@@ -267,7 +275,7 @@ export class DropdownManager {
 
   public updateConfig(newConfig: Partial<DropdownConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    
+
     // Reinitialize if needed
     if (newConfig.triggerSelector || newConfig.menuSelector) {
       this.cleanup();
@@ -314,9 +322,11 @@ export function initDropdownManager(config?: DropdownConfig): DropdownManager {
 if (typeof window !== 'undefined') {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      (window as Window & { dropdownManager?: DropdownManager }).dropdownManager = initDropdownManager();
+      (window as Window & { dropdownManager?: DropdownManager }).dropdownManager =
+        initDropdownManager();
     });
   } else {
-    (window as Window & { dropdownManager?: DropdownManager }).dropdownManager = initDropdownManager();
+    (window as Window & { dropdownManager?: DropdownManager }).dropdownManager =
+      initDropdownManager();
   }
-} 
+}

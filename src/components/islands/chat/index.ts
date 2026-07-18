@@ -1,27 +1,27 @@
 /**
  * Chat components barrel export
- * 
+ *
  * Modular components extracted from AIChatIsland for better maintainability.
  */
 
 // Types
 export type {
-	ChatState,
-	FeedbackAnalytics,
-	ChatHeaderProps,
-	ChatAdvancedControlsProps,
-	ChatGuidedPromptsProps,
-	ChatRecentQueriesProps,
-	ChatDigestProps,
-	ChatAnalyticsProps,
-	ChatQuickActionsProps,
-	ChatMessageBubbleProps,
-	ChatMessageListProps,
-	ChatInputProps,
-	ChatStatusIndicatorsProps,
-	ChatFallbackResultsProps,
-	ChatNewChatPromptProps,
-	ChatLauncherProps,
+  ChatState,
+  FeedbackAnalytics,
+  ChatHeaderProps,
+  ChatAdvancedControlsProps,
+  ChatGuidedPromptsProps,
+  ChatRecentQueriesProps,
+  ChatDigestProps,
+  ChatAnalyticsProps,
+  ChatQuickActionsProps,
+  ChatMessageBubbleProps,
+  ChatMessageListProps,
+  ChatInputProps,
+  ChatStatusIndicatorsProps,
+  ChatFallbackResultsProps,
+  ChatNewChatPromptProps,
+  ChatLauncherProps,
 } from './types';
 
 // Components

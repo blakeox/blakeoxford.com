@@ -11,7 +11,9 @@ import type { CommandGroup } from '../types';
 const DEBOUNCE_MS = 150;
 const LOADING_DELAY_MS = 150;
 
-function sourceFromResult(source: Awaited<ReturnType<typeof runSearch>>['source']): 'vectorize' | 'local' | 'curated' {
+function sourceFromResult(
+  source: Awaited<ReturnType<typeof runSearch>>['source']
+): 'vectorize' | 'local' | 'curated' {
   if (source === 'cloudflare-vectorize') return 'vectorize';
   if (source === 'browse') return 'curated';
   return 'local';
@@ -60,7 +62,9 @@ export function useCommandQuery(isOpen: boolean) {
       const items = mapSearchResults(result.records, itemSource);
 
       if (!searchQuery.trim() && result.source === 'browse') {
-        const featured = items.filter((item) => item.kind === 'project' && item.featured).slice(0, 3);
+        const featured = items
+          .filter((item) => item.kind === 'project' && item.featured)
+          .slice(0, 3);
         const recent = items.filter((item) => item.kind === 'blog').slice(0, 2);
         // Idle browse: featured + posts. CommandCenter drops posts when Recent searches exist.
         setGroups(buildBrowseGroups(featured, recent, []));
@@ -77,9 +81,10 @@ export function useCommandQuery(isOpen: boolean) {
           result_count: items.length,
           backend: itemSource,
           semantic_hit_count: result.meta?.semanticCount,
-          top_score: result.meta?.topScore !== undefined
-            ? Math.round((result.meta.topScore || 0) * 100) / 100
-            : undefined,
+          top_score:
+            result.meta?.topScore !== undefined
+              ? Math.round((result.meta.topScore || 0) * 100) / 100
+              : undefined,
         });
       }
     } catch (err) {
@@ -103,7 +108,7 @@ export function useCommandQuery(isOpen: boolean) {
         void executeSearch(searchQuery, searchCategory);
       }, DEBOUNCE_MS);
     },
-    [executeSearch],
+    [executeSearch]
   );
 
   useEffect(() => {

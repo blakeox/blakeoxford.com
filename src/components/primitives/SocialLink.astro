@@ -3,26 +3,26 @@ import SocialIcon from './SocialIcon.astro';
 import { cn } from '../../utils/cn';
 
 interface Props {
- href: string;
- icon: 'linkedin' | 'github' | 'email' | 'microsoft-learn';
- label: string;
- class?: string;
+  href: string;
+  icon: 'linkedin' | 'github' | 'email' | 'microsoft-learn';
+  label: string;
+  class?: string;
 }
 
 const { href, icon, label, class: className = '' } = Astro.props;
 ---
 
 <a
- class={cn(
-  'inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-accent-subtle hover:border-accent transition-colors',
-  className,
- )}
- href={href}
- target='_blank'
- rel='noopener noreferrer'
- aria-label={`Open ${label} profile in a new tab`}
+  class={cn(
+    'inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 transition-colors hover:border-accent hover:bg-accent-subtle',
+    className
+  )}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={`Open ${label} profile in a new tab`}
 >
- <SocialIcon icon={icon} />
- <span class='font-medium'>{label}</span>
- <span class='sr-only'>(opens in a new tab)</span>
+  <SocialIcon icon={icon} />
+  <span class="font-medium">{label}</span>
+  <span class="sr-only">(opens in a new tab)</span>
 </a>
