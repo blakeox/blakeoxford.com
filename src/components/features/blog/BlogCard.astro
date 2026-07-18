@@ -1,11 +1,11 @@
 ---
-// BlogCard.astro - Compact card for grid layouts using Card → BaseCard
+// BlogCard.astro - Compact card for grid layouts using BaseCard
 import type { BlogCardProps } from '../../../types/components';
 import OptimizedImage from '../../primitives/OptimizedImage.astro';
 import Badge from '../../primitives/Badge.astro';
 import DateDisplay from '../../primitives/DateDisplay.astro';
 import Flex from '../../primitives/Flex.astro';
-import Card from '../../composites/Card.astro';
+import BaseCard from '../../primitives/BaseCard.astro';
 import { truncate, take } from '../../../utils/index.js';
 
 const { post } = Astro.props as BlogCardProps;
@@ -13,7 +13,7 @@ const { id: slug, data } = post;
 const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as string[], 2) : [];
 ---
 
-<Card as="article" variant="default" hover="lift" padding="none" class="group @container h-full">
+<BaseCard as="article" variant="default" hover="lift" padding="none" class="group @container h-full">
   {
     data.heroImage && (
       <div slot="image" class="aspect-[16/10] overflow-hidden rounded-t-2xl">
@@ -85,4 +85,4 @@ const visibleTags = data.tags && Array.isArray(data.tags) ? take(data.tags as st
       <span class="text-xs text-subtle-foreground"> 5 min read </span>
     </footer>
   </div>
-</Card>
+</BaseCard>

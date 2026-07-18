@@ -30,7 +30,7 @@ Primary audience: recruiters, collaborators, and technical peers evaluating arch
 - **Routing**: File-based under `src/pages/` (kebab-case). API endpoints in `/src/pages/api/`.
 - **Components**: Astro or minimal React in `src/components/` (PascalCase). React only for true interactivity.
 - **Content**: Zod-driven schemas in `src/content.config.ts`; static JSON in `public/api/`.
-- **Styling**: Tailwind CSS v4 (no custom CSS beyond global variables). Modify via config or utility classes.
+- **Styling**: Tailwind CSS v4 via `@tailwindcss/vite` (CSS-first). Tokens live in `src/styles/theme.css` (`@theme inline`); prefer utilities over bespoke CSS. Shared chrome belongs in `components.css`.
 - **Optimization scripts**: `scripts/optimization/` (image optimization, bundle analysis, critical CSS inlining, code splitting guidance).
 - **Quality tooling**: `scripts/quality/` orchestrates runtime checks (search relevance, accessibility via axe-core, dead link crawl, long-task probe) + summary.
 - **Testing**: Vitest (`tests/vitest/`), Playwright (`tests/playwright/`), plus performance & accessibility logs.
@@ -174,7 +174,7 @@ Escalate (open issue / PR note) if any of:
 
 Coding style:
 
-- Use existing patterns; Tailwind utilities over custom CSS.
+- Use existing patterns; Tailwind utilities and semantic tokens over one-off CSS.
 - Keep components focused; move reusable logic to `utils`.
 - Add JSDoc/TSDoc for nontrivial functions (inputs, outputs, error cases).
 

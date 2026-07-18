@@ -4,6 +4,9 @@
 @plugin '@tailwindcss/typography';
 @import './theme.css';
 @import './components.css';
+@import '../components/layout/nav.css';
+@import '../components/composites/hero.css';
+@import '../components/features/about/timeline.css';
 
 /* Fonts are self-hosted via @fontsource imports in BaseLayout.astro. */
 

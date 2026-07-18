@@ -11,182 +11,67 @@ import AIChatWidget from '../components/composites/AIChatWidget.astro';
 import Footer from '../components/layout/Footer.astro';
 import SkipLink from '../components/primitives/SkipLink.astro';
 import SearchOverlay from '../components/features/search/SearchOverlay.astro';
-import ServiceWorkerIsland from '../components/islands/ServiceWorkerIsland';
-import ExperimentsCookieIsland from '../components/islands/ExperimentsCookieIsland';
-import AccessibilityEnhancementsIsland from '../components/islands/AccessibilityEnhancementsIsland';
-import ClarityIsland from '../components/islands/ClarityIsland';
-import WebVitalsIsland from '../components/islands/WebVitalsIsland';
-import CloudflareBeaconIsland from '../components/islands/CloudflareBeaconIsland';
-import { THEME_COLOR_LIGHT, THEME_COLOR_DARK, getThemeFoucPreventionScript } from '../lib/theme';
+import DocumentMeta from '../components/head/DocumentMeta.astro';
+import StructuredData from '../components/head/StructuredData.astro';
+import SiteClientScripts from '../components/head/SiteClientScripts.astro';
+import { getThemeFoucPreventionScript } from '../lib/theme';
 
 const themeFoucScript = getThemeFoucPreventionScript();
 
-// wide: when true, disable the default max-width wrapper for full-width layouts
 const {
   title = 'Blake Oxford Portfolio',
-  // Provide a fuller default description to satisfy SEO description length guidance (50–160 chars)
   description = 'Systems architect and workflow strategist. Explore shipped projects, implementation guides, and practical articles across cloud, automation, and analytics—plus ways to get in touch.',
-  // "url" may be passed in to override canonical; when omitted, compute from Astro.site + Astro.url
   url,
   wide = false,
   noindex = false,
   keywords = '',
-  image, // Optional OG image override
-  // structuredData, // Optional additional structured data schemas (unused)
+  image,
 } = Astro.props;
 
-// Sanitize description: remove extra whitespace, replace Unicode with ASCII for Lighthouse compatibility
 const metaDescription = String(description || '')
   .replace(/\s+/g, ' ')
-  .replace(/—/g, '-') // em dash to hyphen
-  .replace(/‑/g, '-') // non-breaking hyphen to hyphen
+  .replace(/—/g, '-')
+  .replace(/‑/g, '-')
   .trim();
 
-// Compute base site href from astro.config.mjs or fallback (string only)
 const siteHref = (Astro.site?.href ?? 'https://blakeoxford.com').replace(/\/$/, '');
-// Compute canonical URL: prefer explicit url prop; else use Astro.url (absolute when site is set)
 const canonicalUrl =
   typeof url === 'string' && url.length > 0
     ? url
     : (Astro.url?.href ?? `${siteHref}${Astro.url.pathname}`);
-// Build absolute asset URL for social image
 const ogImage = image
   ? image.startsWith('http')
     ? image
     : `${siteHref}${image.startsWith('/') ? image : `/${image}`}`
   : `${siteHref}/assets/images/og-image.jpg`;
 
-const baseMainClasses = wide
+// Neutral site shell — apply Prose intentionally on article pages, not globally
+const mainClasses = wide
   ? 'w-full'
-  : 'mx-auto w-full max-w-3xl layout-gutter pt-24 text-base leading-relaxed text-foreground prose';
-
-const mainClasses = baseMainClasses;
+  : 'mx-auto w-full max-w-3xl layout-gutter pt-24 text-base leading-relaxed text-foreground';
 
 const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() ?? '';
-
-// Built in frontmatter so Prettier/astro can parse the layout (avoid `{JSON.stringify}` inside ld+json).
-const websitePersonJsonLd = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebSite',
-      url: siteHref,
-      name: 'Blake Oxford Portfolio',
-      description,
-      inLanguage: 'en-US',
-      publisher: {
-        '@type': 'Person',
-        name: 'Blake Oxford',
-        url: siteHref,
-      },
-    },
-    {
-      '@type': 'Person',
-      name: 'Blake Oxford',
-      url: siteHref,
-      image: ogImage,
-      description,
-      sameAs: ['https://www.linkedin.com/in/blake-oxford', 'https://github.com/blakeox'],
-    },
-  ],
-});
 ---
 
 <html lang="en" class="scroll-smooth bg-background text-foreground">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- FOUC prevention: inline before paint (not a React island — avoids head hydration) -->
     <script is:inline set:html={themeFoucScript} />
-
-    <!-- Avoid unconditional DNS-prefetch; GA/gtm are loaded lazily and only after interaction/idle -->
-    <!-- Removed: <link rel="dns-prefetch" href="//www.googletagmanager.com" /> -->
-
-    <!-- Styles: Astro bundles global.css from the layout import above. Fonts are self-hosted via @fontsource imports in this file. -->
-
-    <!-- Favicon and touch icons (consolidated) -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icon-192x192.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="alternate" type="application/rss+xml" title="Blake Oxford RSS" href="/rss.xml" />
-    <title>{title}</title>
-    <meta name="description" content={metaDescription} />
-    <meta property="og:description" content={metaDescription} />
-    {keywords && <meta name="keywords" content={keywords} />}
-    <meta name="author" content="Blake Oxford" />
-    <meta name="creator" content="Blake Oxford" />
-    <meta name="publisher" content="Blake Oxford" />
-    <meta
-      name="robots"
-      content={noindex
-        ? 'noindex, nofollow'
-        : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
+    <DocumentMeta
+      title={title}
+      metaDescription={metaDescription}
+      canonicalUrl={canonicalUrl}
+      ogImage={ogImage}
+      keywords={keywords}
+      noindex={noindex}
+      googleSiteVerification={googleSiteVerification}
     />
-    {
-      googleSiteVerification && (
-        <meta name="google-site-verification" content={googleSiteVerification} />
-      )
-    }
-    <link rel="canonical" href={canonicalUrl} />
-
-    <!-- Enhanced Open Graph & Twitter -->
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={metaDescription} />
-    <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Blake Oxford Portfolio Screenshot" />
-    <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Blake Oxford Portfolio" />
-    <meta property="og:locale" content="en_US" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content="Blake Oxford Portfolio Screenshot" />
-    <meta name="twitter:creator" content="@blakeoxford" />
-    <meta name="twitter:site" content="@blakeoxford" />
-
-    <!-- Additional SEO Meta Tags -->
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-TileColor" content={THEME_COLOR_LIGHT} />
-    <meta name="application-name" content="Blake Oxford Portfolio" />
-    <!-- Apple mobile web app support -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Blake Oxford" />
-
-    <!-- Theme colors -->
-    <meta name="theme-color" content={THEME_COLOR_LIGHT} />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content={THEME_COLOR_LIGHT} />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content={THEME_COLOR_DARK} />
-
-    <!-- Structured Data: Website & Person -->
-    <script is:inline type="application/ld+json" set:html={websitePersonJsonLd} />
-
-    <ExperimentsCookieIsland client:only="react" />
-    <AccessibilityEnhancementsIsland client:only="react" />
-    {import.meta.env.PUBLIC_CLARITY_PROJECT_ID && <ClarityIsland client:only="react" />}
-    <WebVitalsIsland client:only="react" />
-    {
-      import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN && (
-        <CloudflareBeaconIsland client:only="react" />
-      )
-    }
-    <script is:inline src="/js/ai-chat-launcher.js" defer></script>
+    <StructuredData siteHref={siteHref} description={description} ogImage={ogImage} />
+    <SiteClientScripts />
     <slot name="head" />
   </head>
   <body id="top" class="min-h-screen bg-background text-foreground">
     <SearchOverlay />
-    <ServiceWorkerIsland client:only="react" />
 
-    <!-- Enhanced skip links for better keyboard navigation -->
     <SkipLink href="#main-content" text="Skip to main content" />
     <SkipLink href="#footer" text="Skip to footer" />
     <a
@@ -196,17 +81,10 @@ const websitePersonJsonLd = JSON.stringify({
       Back to top
     </a>
 
-    <header role="banner" transition:persist="nav">
+    <header transition:persist="nav">
       <NavBar />
     </header>
-    <main
-      id="main-content"
-      role="main"
-      tabindex="-1"
-      aria-label="Main Content"
-      class={mainClasses}
-      transition:animate="slide"
-    >
+    <main id="main-content" tabindex="-1" class={mainClasses} transition:animate="slide">
       <slot />
     </main>
     <Footer transition:persist="footer" />

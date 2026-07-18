@@ -1,0 +1,40 @@
+---
+/**
+ * JSON-LD for WebSite + Person.
+ */
+interface Props {
+  siteHref: string;
+  description: string;
+  ogImage: string;
+}
+
+const { siteHref, description, ogImage } = Astro.props;
+
+const websitePersonJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      url: siteHref,
+      name: 'Blake Oxford Portfolio',
+      description,
+      inLanguage: 'en-US',
+      publisher: {
+        '@type': 'Person',
+        name: 'Blake Oxford',
+        url: siteHref,
+      },
+    },
+    {
+      '@type': 'Person',
+      name: 'Blake Oxford',
+      url: siteHref,
+      image: ogImage,
+      description,
+      sameAs: ['https://www.linkedin.com/in/blake-oxford', 'https://github.com/blakeox'],
+    },
+  ],
+});
+---
+
+<script is:inline type="application/ld+json" set:html={websitePersonJsonLd} />

@@ -203,32 +203,28 @@ export const componentDocs: ComponentDoc[] = [
     tokenDependencies: ['--color-surface', '--color-accent', 'shadow-lg'],
   },
   {
-    name: 'AboutTimeline',
+    name: 'AboutTimelineSection',
     category: 'Features',
     subcategory: 'About',
     description:
-      'About-page timeline display. Renders dated milestones in a scrollable layout with semantic list structure and keyboard access.',
-    filePath: 'src/components/features/about/AboutTimeline.astro',
+      'About-page timeline section. Renders dated milestones in desktop and mobile layouts with semantic list structure and keyboard access.',
+    filePath: 'src/components/features/about/AboutTimelineSection.astro',
     props: [
       {
-        name: 'timeline',
-        type: 'TimelineSection',
+        name: 'content',
+        type: 'AboutTimelineContent',
         required: true,
-        description: 'Timeline data with year, title, icon, achievements',
+        description: 'Timeline kicker, title, description, and milestone items',
       },
     ],
     examples: [
       {
-        title: 'Timeline display',
-        code: '<AboutTimeline timeline={timelineData} />',
+        title: 'Timeline section',
+        code: '<AboutTimelineSection content={page.timeline} />',
       },
     ],
     accessibility: [
-      'role="listitem" for timeline entries',
-      'aria-label descriptive labels ("{year} – {title}")',
-      'Nested lists with proper roles',
-      'aria-hidden for non-content visual accents',
-      'role="region" for scrollable container',
+      'role="region" for scrollable mobile container',
       'tabindex="0" for keyboard scrolling',
       'focus-visible styles for keyboard navigation',
     ],
@@ -974,7 +970,7 @@ export const componentDocs: ComponentDoc[] = [
     examples: [
       {
         title: 'Responsive grid',
-        code: '<Grid cols="3"><Card>1</Card><Card>2</Card><Card>3</Card></Grid>',
+        code: '<Grid cols="3"><BaseCard>1</BaseCard><BaseCard>2</BaseCard><BaseCard>3</BaseCard></Grid>',
       },
     ],
     tags: ['grid', 'layout', 'primitive'],
@@ -1118,68 +1114,6 @@ export const componentDocs: ComponentDoc[] = [
       'shadow-lg',
       'rounded-2xl',
     ],
-  },
-  {
-    name: 'Card',
-    category: 'Composites',
-    description:
-      'Compatibility wrapper over BaseCard. Adds legacy variant names: interactive maps to BaseCard elevated; outline maps to subtle. Prefer BaseCard for new code.',
-    filePath: 'src/components/composites/Card.astro',
-    props: [
-      {
-        name: 'variant',
-        type: "'default' | 'outline' | 'elevated' | 'glass' | 'interactive' | 'subtle'",
-        required: false,
-        default: "'default'",
-        description: 'interactive → BaseCard elevated; outline → BaseCard subtle',
-      },
-      {
-        name: 'hover',
-        type: "'none' | 'lift' | 'scale' | 'glow'",
-        required: false,
-        default: "'lift'",
-        description: 'Forwarded to BaseCard',
-      },
-      {
-        name: 'padding',
-        type: "'none' | 'sm' | 'md' | 'lg' | 'xl'",
-        required: false,
-        default: "'md'",
-        description: 'xl maps to BaseCard lg',
-      },
-      {
-        name: 'as',
-        type: "'div' | 'article' | 'section'",
-        required: false,
-        default: "'div'",
-        description: 'Semantic HTML element',
-      },
-      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
-      {
-        name: 'fullHeight',
-        type: 'boolean',
-        required: false,
-        default: 'false',
-        description: 'Stretch card to parent height',
-      },
-      {
-        name: 'containerQuery',
-        type: 'boolean',
-        required: false,
-        default: 'false',
-        description: 'Adds @container wrapper class',
-      },
-    ],
-    examples: [
-      {
-        title: 'Interactive listing card',
-        description: 'variant="interactive" is an alias for BaseCard variant="elevated"',
-        code: '<Card variant="interactive" hover="lift">\n  <h3>Project Title</h3>\n</Card>',
-      },
-    ],
-    tags: ['card', 'wrapper', 'composite'],
-    visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', 'shadow-lg'],
   },
   {
     name: 'Stack',

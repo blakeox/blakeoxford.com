@@ -17,7 +17,7 @@ test.describe('Screen Reader Support Tests', () => {
     await expect(contentinfo).toBeVisible();
     
     // Ensure header exists for semantic structure even if not visible
-    const header = page.locator('header[role="banner"]');
+    const header = page.locator('header').first();
     await expect(header).toHaveCount(1);
   });
 

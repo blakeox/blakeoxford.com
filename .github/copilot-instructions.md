@@ -61,7 +61,7 @@ When working on this project, always:
 
 1. **For bugs/errors**: Read error messages, check related test files, examine similar working code
 2. **For new features**: Search for similar implementations, check existing patterns, read relevant instruction files
-3. **For styling**: Check design tokens (`global.css`), find similar components, verify dark mode support
+3. **For styling**: Check design tokens (`src/styles/theme.css`), find similar components, verify dark mode support
 4. **For tests**: Read test utilities, check for similar test patterns, verify test environment setup
 5. **For edge/Worker changes**: Check `functions/` directory, review environment bindings, read error logs
 
@@ -72,7 +72,7 @@ When working on this project, always:
 This is a **performance-first Astro SSG** deployed on Cloudflare Workers with comprehensive optimization tooling and AI-powered features:
 
 - **Framework**: Astro static site generator (`output: 'static'`)
-- **Styling**: Tailwind CSS v4.1 with Typography plugin; CSS variables for theming (`src/styles/global.css`)
+- **Styling**: Tailwind CSS v4 (CSS-first via `@tailwindcss/vite` + Typography plugin); tokens in `src/styles/theme.css` bridged with `@theme inline`
 - **Content**: Type-safe content collections (`src/content/config.ts`) for blog posts and projects
 - **Testing**: Vitest (unit/component) + Playwright (e2e) + accessibility testing with axe-core + Stryker mutation testing
 - **Performance**: Custom optimization scripts, critical CSS inlining, image optimization, bundle analysis
@@ -166,7 +166,9 @@ pnpm a11y:trend            # Track accessibility trends
 - `src/layouts/BaseLayout.astro` - Main layout with critical CSS inlining
 - `src/content/` - Type-safe collections (blog/, projects/) with Zod schemas
 - `src/lib/` - Utility libraries (chat-types, chat-helpers, ai-search, analytics, etc.)
-- `src/styles/global.css` - Theme variables and Tailwind imports
+- `src/styles/global.css` - Tailwind entry (`@import`, plugins) plus theme/components imports
+- `src/styles/theme.css` - Design tokens + `@theme inline` bridge
+- `src/styles/components.css` - Shared chrome (`layout-gutter`, nav, reduced-motion)
 
 ### Testing & Scripts
 
@@ -332,11 +334,11 @@ Always use the defined Zod schemas in `src/content/config.ts`:
    └─ No → Continue to #2
 
 2. Does a design token exist for this?
-   ├─ Yes → Extend Tailwind config to expose it
-   └─ No → Propose new token in design.instructions.md
+   ├─ Yes → Use the bridged utility from `@theme inline` in theme.css
+   └─ No → Propose new token in design.instructions.md / theme.css
 
-3. Is this component-specific?
-   ├─ Yes → Use scoped <style> with CSS variables
+3. Is this component-specific chrome?
+   ├─ Yes → Prefer utilities; shared chrome goes in components.css
    └─ No → Create reusable pattern
 ```
 
@@ -629,7 +631,7 @@ Note: Cloudflare Pages is deprecated for this project. Do not use `wrangler page
 - **Astro**: Static site generation with MDX, sitemap, and RSS feed support
 - **Vite**: Build tool with React plugin for client components, Lightning CSS minification
 - **Sharp**: Image optimization with AVIF/WebP/JPEG format support
-- **PostCSS**: CSS processing with Tailwind
+- **Lightning CSS**: CSS minification in the Astro/Vite pipeline (no PostCSS Tailwind config)
 - **astro-compress**: HTML/CSS/JS compression (conditionally enabled via `ENABLE_ASTRO_COMPRESS=true`)
 
 **Important**: Use `pnpm` as the package manager (pnpm@11.9.0+). Do not add new dependencies without explicit discussion - the stack is intentionally minimal.
@@ -726,9 +728,9 @@ pnpm test
 
 ```bash
 # 1. Check design tokens
-cat src/styles/global.css | grep "--color"
+rg -- "--color-" src/styles/theme.css
 
-# 2. Extend Tailwind if needed
+# 2. Extend the CSS-first theme if needed
 # Edit src/styles/theme.css (@theme inline) and global.css (@plugin / variants)
 
 # 3. Apply changes using tokens
@@ -1048,7 +1050,7 @@ DEBUG=astro:* pnpm dev             # Verbose Astro logs
 pnpm typecheck && pnpm test
 
 # Styling Change
-# 1. Check design tokens in src/styles/global.css
+# 1. Check design tokens in src/styles/theme.css
 # 2. Apply changes using Tailwind utilities
 pnpm audit:contrast && pnpm test:e2e
 
