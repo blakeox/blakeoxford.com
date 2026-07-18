@@ -34,7 +34,7 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     await page.setViewportSize({ width: 600, height: 900 }); // mobile width (<md: <768px)
     await page.goto('/about');
 
-    const region = page.getByRole('region', { name: /photo carousel/i });
+    const region = page.getByRole('region', { name: /travel and work photo gallery/i });
     await expect(region).toBeVisible();
 
     // Scope to region to avoid duplicate element issues
@@ -74,7 +74,7 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     await page.setViewportSize({ width: 1280, height: 900 }); // desktop (>=md: >=768px)
     await page.goto('/about');
 
-    const region = page.getByRole('region', { name: /photo carousel/i });
+    const region = page.getByRole('region', { name: /travel and work photo gallery/i });
     await expect(region).toBeVisible();
 
     // Scope to region to avoid duplicate element issues
@@ -138,7 +138,7 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     await page.setViewportSize({ width: 768, height: 900 }); // exactly at md breakpoint
     await page.goto('/about');
 
-    const region = page.getByRole('region', { name: /photo carousel/i });
+    const region = page.getByRole('region', { name: /travel and work photo gallery/i });
     await expect(region).toBeVisible();
 
     // Scope to region to avoid duplicate element issues
