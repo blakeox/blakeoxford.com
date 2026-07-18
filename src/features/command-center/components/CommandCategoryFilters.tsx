@@ -12,11 +12,7 @@ type CommandCategoryFiltersProps = {
 /** Progressive type filters — only render while the user is searching. */
 export function CommandCategoryFilters({ category, onChange }: CommandCategoryFiltersProps) {
   return (
-    <div
-      className="flex flex-wrap gap-1.5 px-1 pb-2"
-      role="tablist"
-      aria-label="Filter by type"
-    >
+    <div className="flex flex-wrap gap-1.5 px-1 pb-2" role="tablist" aria-label="Filter by type">
       {FILTERS.map((value) => {
         const active = category === value;
         return (
@@ -29,7 +25,7 @@ export function CommandCategoryFilters({ category, onChange }: CommandCategoryFi
               'focus-ring-interactive rounded-full px-2.5 py-1 text-xxs font-medium transition',
               active
                 ? 'bg-accent-subtle text-accent'
-                : 'text-muted-foreground hover:bg-surface-subtle hover:text-foreground',
+                : 'text-muted-foreground hover:bg-surface-subtle hover:text-foreground'
             )}
             onClick={() => onChange(value)}
           >

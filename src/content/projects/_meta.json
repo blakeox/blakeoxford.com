@@ -22,22 +22,34 @@
       {
         "title": "Discover the real friction",
         "summary": "Shadow workflows, baseline the metrics executives actually care about, and map the people who can champion the change.",
-        "proof": ["Documented current-state maps across teams", "Baseline adoption and ROI metrics agreed with sponsors"]
+        "proof": [
+          "Documented current-state maps across teams",
+          "Baseline adoption and ROI metrics agreed with sponsors"
+        ]
       },
       {
         "title": "Design the operating rhythm",
         "summary": "Co-create the future-state cadence, dashboards, and story that explains how the new operating model works before automation enters the picture.",
-        "proof": ["Annotated future-state flow mapped with owners", "Communication kit drafted with change stories"]
+        "proof": [
+          "Annotated future-state flow mapped with owners",
+          "Communication kit drafted with change stories"
+        ]
       },
       {
         "title": "Pilot with instrumentation",
         "summary": "Run controlled pilots with analytics and field coaching that surface adoption signals in real time.",
-        "proof": ["Pilot scorecard live within two weeks", "Qualitative feedback loop hooked into weekly standups"]
+        "proof": [
+          "Pilot scorecard live within two weeks",
+          "Qualitative feedback loop hooked into weekly standups"
+        ]
       },
       {
         "title": "Automate with guardrails",
         "summary": "Launch automation, dashboards, and governance together so every team inherits clear roles, alerts, and recovery plans.",
-        "proof": ["Automation launch checklist signed off", "Runbooks and escalation paths distributed"]
+        "proof": [
+          "Automation launch checklist signed off",
+          "Runbooks and escalation paths distributed"
+        ]
       },
       {
         "title": "Sustain and evolve",
@@ -80,4 +92,3 @@
     "secondaryCta": { "href": "/about/", "label": "See how I work" }
   }
 }
-

@@ -1,17 +1,17 @@
 ---
 /**
  * Grid - Responsive Grid Layout Primitive
- * 
+ *
  * A flexible grid container with configurable columns, gap, and responsive behavior.
  * Simplifies common grid patterns like card grids, content layouts, and dashboards.
- * 
+ *
  * @example
  * <Grid cols="3" gap="lg">
  * <div>Item 1</div>
  * <div>Item 2</div>
  * <div>Item 3</div>
  * </Grid>
- * 
+ *
  * @example Auto-fit responsive grid
  * <Grid cols="auto" gap="md" minColWidth="250px">
  * <Card>...</Card>
@@ -22,59 +22,59 @@
 import type { HTMLAttributes } from 'astro/types';
 
 interface Props extends Omit<HTMLAttributes<'div'>, 'class'> {
- /** Number of columns (1-4) or 'auto' for auto-fit */
- cols?: '1' | '2' | '3' | '4' | 'auto';
- /** Minimum column width for auto-fit grids */
- minColWidth?: string;
- /** Gap between grid items */
- gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
- /** HTML element tag to render */
- as?: 'div' | 'ul' | 'ol' | 'section' | 'article';
- /** Additional CSS classes */
- class?: string;
- /** Align items vertically */
- alignItems?: 'start' | 'center' | 'end' | 'stretch';
+  /** Number of columns (1-4) or 'auto' for auto-fit */
+  cols?: '1' | '2' | '3' | '4' | 'auto';
+  /** Minimum column width for auto-fit grids */
+  minColWidth?: string;
+  /** Gap between grid items */
+  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+  /** HTML element tag to render */
+  as?: 'div' | 'ul' | 'ol' | 'section' | 'article';
+  /** Additional CSS classes */
+  class?: string;
+  /** Align items vertically */
+  alignItems?: 'start' | 'center' | 'end' | 'stretch';
 }
 
 const props = Astro.props as Props;
 
 const {
- cols = '1',
- minColWidth = '250px',
- gap = 'md',
- as: Element = 'div',
- class: className = '',
- alignItems = 'stretch',
- role,
- ...rest
+  cols = '1',
+  minColWidth = '250px',
+  gap = 'md',
+  as: Element = 'div',
+  class: className = '',
+  alignItems = 'stretch',
+  role,
+  ...rest
 } = props;
 
 // Column configurations with responsive breakpoints
 const colsMap = {
- '1': 'grid-cols-1',
- '2': 'grid-cols-1 md:grid-cols-2',
- '3': 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3',
- '4': 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4',
- 'auto': '', // Will use inline style
+  '1': 'grid-cols-1',
+  '2': 'grid-cols-1 md:grid-cols-2',
+  '3': 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3',
+  '4': 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4',
+  auto: '', // Will use inline style
 } as const;
 
 // Gap sizes matching Stack primitive
 const gapMap = {
- xs: 'gap-2', // 0.5rem
- sm: 'gap-3', // 0.75rem
- md: 'gap-4', // 1rem
- lg: 'gap-6', // 1.5rem
- xl: 'gap-8', // 2rem
- '2xl': 'gap-12', // 3rem
- '3xl': 'gap-16', // 4rem
+  xs: 'gap-2', // 0.5rem
+  sm: 'gap-3', // 0.75rem
+  md: 'gap-4', // 1rem
+  lg: 'gap-6', // 1.5rem
+  xl: 'gap-8', // 2rem
+  '2xl': 'gap-12', // 3rem
+  '3xl': 'gap-16', // 4rem
 } as const;
 
 // Align items options
 const alignMap = {
- start: 'items-start',
- center: 'items-center',
- end: 'items-end',
- stretch: 'items-stretch',
+  start: 'items-start',
+  center: 'items-center',
+  end: 'items-end',
+  stretch: 'items-stretch',
 } as const;
 
 const colsKey = cols ?? '1';
@@ -88,11 +88,12 @@ const alignClasses = alignMap[alignKey];
 const classes = `${gridClasses} ${gapClasses} ${alignClasses} ${className}`.trim();
 
 // Inline style for auto-fit grids
-const autoFitStyle = cols === 'auto' 
- ? `grid-template-columns: repeat(auto-fit, minmax(min(${minColWidth}, 100%), 1fr));`
- : undefined;
+const autoFitStyle =
+  cols === 'auto'
+    ? `grid-template-columns: repeat(auto-fit, minmax(min(${minColWidth}, 100%), 1fr));`
+    : undefined;
 ---
 
 <Element class={classes} style={autoFitStyle} role={role} {...rest}>
- <slot />
+  <slot />
 </Element>

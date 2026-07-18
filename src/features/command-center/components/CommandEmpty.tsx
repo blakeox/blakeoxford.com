@@ -18,7 +18,9 @@ export function CommandEmpty({ query, onSuggestion, onAskAi }: CommandEmptyProps
   return (
     <div className="px-1 py-3">
       <p className="text-sm font-medium text-foreground">No results for &ldquo;{trimmed}&rdquo;</p>
-      <p className="mt-1 text-sm text-muted-foreground">Try a shorter keyword, or pick an example.</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Try a shorter keyword, or pick an example.
+      </p>
       <div className="mt-3 flex flex-wrap gap-2">
         {suggestions.map((item) => (
           <SuggestionChip key={item} label={item} onClick={() => onSuggestion(item)} />
@@ -53,7 +55,7 @@ export function CommandRecentList({
         <h3 className={SECTION_LABEL}>Recent</h3>
         <button
           type="button"
-          className="rounded text-xxs text-subtle-foreground transition hover:text-foreground focus-ring-interactive"
+          className="focus-ring-interactive rounded text-xxs text-subtle-foreground transition hover:text-foreground"
           onClick={onClear}
         >
           Clear
@@ -64,7 +66,7 @@ export function CommandRecentList({
           <button
             key={item}
             type="button"
-            className="flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle focus-ring-interactive"
+            className="focus-ring-interactive flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle"
             onClick={() => onSelect(item)}
           >
             <span className="truncate">{item}</span>
@@ -98,7 +100,7 @@ export function CommandDestinationList({
           <button
             key={item.href}
             type="button"
-            className="flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle focus-ring-interactive"
+            className="focus-ring-interactive flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle"
             onClick={() => onSelect(item)}
           >
             <span className="truncate">{item.title}</span>

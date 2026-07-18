@@ -19,58 +19,59 @@ import { cn } from '../../utils/cn';
 type AllowedElements = 'article' | 'div' | 'section';
 
 export interface Props extends Omit<HTMLAttributes<'div'>, 'class'> {
- /** Card visual variant */
- variant?: 'default' | 'glass' | 'elevated' | 'subtle';
- /** Hover effect type */
- hover?: 'none' | 'lift' | 'scale' | 'glow';
- /** Border radius size */
- rounded?: 'lg' | 'xl' | '2xl' | '3xl';
- /** Padding size */
- padding?: 'none' | 'sm' | 'md' | 'lg';
- /** HTML element type */
- as?: AllowedElements;
- /** Additional CSS classes */
- class?: string;
+  /** Card visual variant */
+  variant?: 'default' | 'glass' | 'elevated' | 'subtle';
+  /** Hover effect type */
+  hover?: 'none' | 'lift' | 'scale' | 'glow';
+  /** Border radius size */
+  rounded?: 'lg' | 'xl' | '2xl' | '3xl';
+  /** Padding size */
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** HTML element type */
+  as?: AllowedElements;
+  /** Additional CSS classes */
+  class?: string;
 }
 
 const props = Astro.props as Props;
 
 const {
- variant = 'default',
- hover = 'lift',
- rounded = '2xl',
- padding = 'md',
- as: Element = 'div',
- class: className = '',
- ...rest
+  variant = 'default',
+  hover = 'lift',
+  rounded = '2xl',
+  padding = 'md',
+  as: Element = 'div',
+  class: className = '',
+  ...rest
 } = props;
 
 const variantStyles = {
- default: 'border border-border/30 bg-surface/95 shadow-sm',
- glass: 'border border-border/40 bg-glass/85 shadow-md backdrop-blur supports-[backdrop-filter]:bg-glass/75',
- elevated: 'border border-border/30 bg-surface shadow-lg',
- subtle: 'border border-border/25 bg-surface-subtle/50 shadow-none',
+  default: 'border border-border/30 bg-surface/95 shadow-sm',
+  glass:
+    'border border-border/40 bg-glass/85 shadow-md backdrop-blur supports-[backdrop-filter]:bg-glass/75',
+  elevated: 'border border-border/30 bg-surface shadow-lg',
+  subtle: 'border border-border/25 bg-surface-subtle/50 shadow-none',
 } as const;
 
 const hoverStyles = {
- none: '',
- lift: 'motion-safe:hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg',
- scale: 'motion-safe:hover:scale-[1.02] focus-within:scale-[1.01]',
- glow: 'hover:shadow-lg motion-safe:hover:ring-2 motion-safe:hover:ring-accent/20 focus-within:ring-2 focus-within:ring-accent/25',
+  none: '',
+  lift: 'motion-safe:hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg',
+  scale: 'motion-safe:hover:scale-[1.02] focus-within:scale-[1.01]',
+  glow: 'hover:shadow-lg motion-safe:hover:ring-2 motion-safe:hover:ring-accent/20 focus-within:ring-2 focus-within:ring-accent/25',
 } as const;
 
 const roundedStyles = {
- lg: 'rounded-lg',
- xl: 'rounded-xl',
- '2xl': 'rounded-2xl',
- '3xl': 'rounded-3xl',
+  lg: 'rounded-lg',
+  xl: 'rounded-xl',
+  '2xl': 'rounded-2xl',
+  '3xl': 'rounded-3xl',
 } as const;
 
 const paddingStyles = {
- none: 'p-0',
- sm: 'p-4',
- md: 'p-6',
- lg: 'p-8',
+  none: 'p-0',
+  sm: 'p-4',
+  md: 'p-6',
+  lg: 'p-8',
 } as const;
 
 const variantKey = variant ?? 'default';
@@ -79,52 +80,57 @@ const roundedKey = rounded ?? '2xl';
 const paddingKey = padding ?? 'md';
 
 const classes = cn(
- 'group relative flex flex-col',
- 'focus-within:ring-2 focus-within:ring-accent/25 focus-within:ring-offset-2 focus-within:ring-offset-background',
- 'focus-visible:outline-none',
- 'transition-colors duration-normal motion-safe:transition-transform motion-safe:duration-normal',
- 'supports-[backdrop-filter]:backdrop-saturate-150',
- 'transform-gpu',
- variantStyles[variantKey],
- hoverStyles[hoverKey],
- roundedStyles[roundedKey],
- className,
+  'group relative flex flex-col',
+  'focus-within:ring-2 focus-within:ring-accent/25 focus-within:ring-offset-2 focus-within:ring-offset-background',
+  'focus-visible:outline-none',
+  'transition-colors duration-normal motion-safe:transition-transform motion-safe:duration-normal',
+  'supports-[backdrop-filter]:backdrop-saturate-150',
+  'transform-gpu',
+  variantStyles[variantKey],
+  hoverStyles[hoverKey],
+  roundedStyles[roundedKey],
+  className
 );
 ---
 
 <Element
- class={classes}
- data-card-variant={variantKey}
- data-card-hover={hoverKey}
- data-card-rounded={roundedKey}
- {...rest}
+  class={classes}
+  data-card-variant={variantKey}
+  data-card-hover={hoverKey}
+  data-card-rounded={roundedKey}
+  {...rest}
 >
- {Astro.slots.has('header') && (
- <header class={paddingStyles[paddingKey]}>
- <slot name="header" />
- </header>
- )}
+  {
+    Astro.slots.has('header') && (
+      <header class={paddingStyles[paddingKey]}>
+        <slot name="header" />
+      </header>
+    )
+  }
 
- {Astro.slots.has('image') && (
- <div class="overflow-hidden">
- <slot name="image" />
- </div>
- )}
+  {
+    Astro.slots.has('image') && (
+      <div class="overflow-hidden">
+        <slot name="image" />
+      </div>
+    )
+  }
 
- <div class={cn(
- 'flex flex-1 flex-col',
- paddingStyles[paddingKey],
- Astro.slots.has('header') && 'pt-0',
- )}>
- <slot />
- </div>
+  <div
+    class={cn(
+      'flex flex-1 flex-col',
+      paddingStyles[paddingKey],
+      Astro.slots.has('header') && 'pt-0'
+    )}
+  >
+    <slot />
+  </div>
 
- {Astro.slots.has('footer') && (
- <footer class={cn(
- paddingStyles[paddingKey],
- 'pt-4 border-t border-border/20',
- )}>
- <slot name="footer" />
- </footer>
- )}
+  {
+    Astro.slots.has('footer') && (
+      <footer class={cn(paddingStyles[paddingKey], 'border-t border-border/20 pt-4')}>
+        <slot name="footer" />
+      </footer>
+    )
+  }
 </Element>

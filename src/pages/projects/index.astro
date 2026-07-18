@@ -15,126 +15,136 @@ const hero = meta.hero;
 
 const projects = await getProjectsSorted();
 
-const title = 'Blake Oxford\'s Projects';
-const description = 'Explore my portfolio of systems architecture, digital transformation, and development projects.';
+const title = "Blake Oxford's Projects";
+const description =
+  'Explore my portfolio of systems architecture, digital transformation, and development projects.';
 const canonicalUrl = 'https://blakeoxford.com/projects/';
-
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
- <!-- Hero Section -->
- <PageHero fullScreen={true} includeBlurOrbs={false} id="projects-hero">
- <div class="section-intro-left max-w-3xl space-y-7">
- <span class="section-kicker">{hero.kicker}</span>
- <h1 id="projects-title" class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-tight tracking-tight text-foreground">
- Selected Projects
- </h1>
- <p class="text-lg sm:text-xl leading-relaxed text-muted-foreground">
- Systems architecture, automation, and digital transformation work with measurable results.
- </p>
- 
- <ul class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground" role="list" aria-label="Focus areas">
- {hero.focusAreas.map((area) => (
- <li class="flex items-center gap-2">
- <span class="size-1 rounded-full bg-accent" aria-hidden="true"></span>
- <span>{area}</span>
- </li>
- ))}
- </ul>
+  <!-- Hero Section -->
+  <PageHero fullScreen={true} includeBlurOrbs={false} id="projects-hero">
+    <div class="section-intro-left max-w-3xl space-y-7">
+      <span class="section-kicker">{hero.kicker}</span>
+      <h1
+        id="projects-title"
+        class="font-heading text-4xl leading-tight font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+      >
+        Selected Projects
+      </h1>
+      <p class="text-lg leading-relaxed text-muted-foreground sm:text-xl">
+        Systems architecture, automation, and digital transformation work with measurable results.
+      </p>
 
- <ButtonGroup align="start" responsive class="pt-1">
- <Button variant="primary" href={hero.primaryCta.href}>{hero.primaryCta.label}</Button>
- <Button variant="ghost" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</Button>
- </ButtonGroup>
- </div>
- </PageHero>
+      <ul
+        class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground"
+        role="list"
+        aria-label="Focus areas"
+      >
+        {
+          hero.focusAreas.map((area) => (
+            <li class="flex items-center gap-2">
+              <span class="size-1 rounded-full bg-accent" aria-hidden="true" />
+              <span>{area}</span>
+            </li>
+          ))
+        }
+      </ul>
 
- <!-- Projects Grid -->
- <Section
- padding="lg"
- container="xl"
- class="border-t border-border/30 bg-background"
- role="region"
- aria-labelledby="projects-grid-heading"
- data-layout-section="projects-grid"
- >
- <Stack space="xl" class="text-pretty" data-layout-shell="projects-grid-inner">
- <Stack space="md" class="max-w-3xl">
- <span class="section-kicker w-fit">{meta.grid.kicker}</span>
- <h2 id="projects-grid-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground">
- {meta.grid.title}
- </h2>
- <p class="text-sm sm:text-base leading-relaxed text-muted-foreground">
- {meta.grid.description}
- </p>
- </Stack>
+      <ButtonGroup align="start" responsive class="pt-1">
+        <Button variant="primary" href={hero.primaryCta.href}>{hero.primaryCta.label}</Button>
+        <Button variant="ghost" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</Button>
+      </ButtonGroup>
+    </div>
+  </PageHero>
 
- <Grid cols="3" gap="lg">
- {projects.map((project) => (
- <ProjectCard project={project} />
- ))}
- </Grid>
- </Stack>
- </Section>
+  <!-- Projects Grid -->
+  <Section
+    padding="lg"
+    container="xl"
+    class="border-t border-border/30 bg-background"
+    role="region"
+    aria-labelledby="projects-grid-heading"
+    data-layout-section="projects-grid"
+  >
+    <Stack space="xl" class="text-pretty" data-layout-shell="projects-grid-inner">
+      <Stack space="md" class="max-w-3xl">
+        <span class="section-kicker w-fit">{meta.grid.kicker}</span>
+        <h2
+          id="projects-grid-heading"
+          class="font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl"
+        >
+          {meta.grid.title}
+        </h2>
+        <p class="text-sm leading-relaxed text-muted-foreground sm:text-base">
+          {meta.grid.description}
+        </p>
+      </Stack>
 
- <!-- Impact Section -->
- <Section
- padding="lg"
- container="xl"
- class="border-t border-border/30 bg-surface-subtle/40"
- role="region"
- aria-labelledby="results-heading"
- data-layout-section="projects-impact"
- >
- <Stack space="xl" class="text-pretty" data-layout-shell="projects-impact-inner">
- <Stack space="md" class="max-w-3xl">
- <span class="section-kicker w-fit">Portfolio signals</span>
- <h2 id="results-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground">
- Results that stick
- </h2>
- <p class="text-sm sm:text-base leading-relaxed text-muted-foreground">
- Measurable outcomes from programs where automation and change enablement launched together.
- </p>
- </Stack>
+      <Grid cols="3" gap="lg">
+        {projects.map((project) => <ProjectCard project={project} />)}
+      </Grid>
+    </Stack>
+  </Section>
 
- <Grid cols="3" gap="md">
- {hero.stats.map((stat) => (
- <StatsCard label={stat.label} value={stat.value} variant="default" size="md" />
- ))}
- </Grid>
- </Stack>
- </Section>
+  <!-- Impact Section -->
+  <Section
+    padding="lg"
+    container="xl"
+    class="border-t border-border/30 bg-surface-subtle/40"
+    role="region"
+    aria-labelledby="results-heading"
+    data-layout-section="projects-impact"
+  >
+    <Stack space="xl" class="text-pretty" data-layout-shell="projects-impact-inner">
+      <Stack space="md" class="max-w-3xl">
+        <span class="section-kicker w-fit">Portfolio signals</span>
+        <h2
+          id="results-heading"
+          class="font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl"
+        >
+          Results that stick
+        </h2>
+        <p class="text-sm leading-relaxed text-muted-foreground sm:text-base">
+          Measurable outcomes from programs where automation and change enablement launched
+          together.
+        </p>
+      </Stack>
 
- <!-- CTA Section -->
- <Section
- padding="lg"
- container="md"
- class="border-t border-border/20 bg-background"
- role="region"
- aria-labelledby="cta-heading"
- data-layout-section="projects-cta"
- >
- <Stack space="lg" class="text-center" data-layout-shell="projects-cta-inner">
- <h2 id="cta-heading" class="font-heading text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight text-foreground">
- Ready to line up the next leap?
- </h2>
- <p class="text-base sm:text-lg leading-relaxed text-muted-foreground">
- Bring the problem space and we'll map the operating backbone—automation, analytics, and change enablement—without losing clarity for stakeholders.
- </p>
- <ButtonGroup align="center" responsive>
- <Button
- variant="outline"
- href="/contact/"
- >
- Start a project conversation
- </Button>
- <Button
- variant="ghost"
- href="/about/"
- >
- See how I work
- </Button>
- </ButtonGroup>
- </Stack>
- </Section>
+      <Grid cols="3" gap="md">
+        {
+          hero.stats.map((stat) => (
+            <StatsCard label={stat.label} value={stat.value} variant="default" size="md" />
+          ))
+        }
+      </Grid>
+    </Stack>
+  </Section>
+
+  <!-- CTA Section -->
+  <Section
+    padding="lg"
+    container="md"
+    class="border-t border-border/20 bg-background"
+    role="region"
+    aria-labelledby="cta-heading"
+    data-layout-section="projects-cta"
+  >
+    <Stack space="lg" class="text-center" data-layout-shell="projects-cta-inner">
+      <h2
+        id="cta-heading"
+        class="font-heading text-2xl leading-tight font-semibold text-foreground sm:text-3xl md:text-4xl"
+      >
+        Ready to line up the next leap?
+      </h2>
+      <p class="text-base leading-relaxed text-muted-foreground sm:text-lg">
+        Bring the problem space and we'll map the operating backbone—automation, analytics, and
+        change enablement—without losing clarity for stakeholders.
+      </p>
+      <ButtonGroup align="center" responsive>
+        <Button variant="outline" href="/contact/"> Start a project conversation </Button>
+        <Button variant="ghost" href="/about/"> See how I work </Button>
+      </ButtonGroup>
+    </Stack>
+  </Section>
 </Layout>

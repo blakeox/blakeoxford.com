@@ -30,7 +30,7 @@ describe('CoinFlipImage.astro file', () => {
   it('should include aria-pressed and live region for accessibility', () => {
     expect(content).toContain('aria-pressed="false"');
     expect(content).toContain('aria-live="polite"');
-    expect(content).toContain('id={uniqueId + \'-live\'}');
+    expect(content).toContain("id={uniqueId + '-live'}");
   });
 
   it('should bind flip axis and click behavior', () => {

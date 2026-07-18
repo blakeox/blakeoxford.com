@@ -3,11 +3,11 @@
  */
 import type { RefObject } from 'react';
 import type {
-	ChatMessage,
-	ChatState,
-	ConversationWebSocket,
-	LoadingPhase,
-	SearchFallback,
+  ChatMessage,
+  ChatState,
+  ConversationWebSocket,
+  LoadingPhase,
+  SearchFallback,
 } from '../../../lib/chat';
 import type { AIChatSource } from '../../../lib/ai-search';
 
@@ -22,208 +22,208 @@ export type { AIChatSource };
  * Feedback analytics data
  */
 export interface FeedbackAnalytics {
-	totalAssistant: number;
-	positive: number;
-	negative: number;
-	positiveRate: number | null;
+  totalAssistant: number;
+  positive: number;
+  negative: number;
+  positiveRate: number | null;
 }
 
 /**
  * Props for ChatHeader component
  */
 export interface ChatHeaderProps {
-	pageLabel?: string;
-	wsConnected: boolean;
-	activeUsers: number;
-	voiceSupported: boolean;
-	isListening: boolean;
-	showAdvancedControls: boolean;
-	useMemory: boolean;
-	canStartNewChat: boolean;
-	hasMessages: boolean;
-	toggleVoiceInput: () => void;
-	toggleAdvancedControls: () => void;
-	toggleMemory: () => void;
-	clearConversation: () => void;
-	handleExportConversation: () => void;
-	startNewChat: () => void;
-	closeChat: () => void;
+  pageLabel?: string;
+  wsConnected: boolean;
+  activeUsers: number;
+  voiceSupported: boolean;
+  isListening: boolean;
+  showAdvancedControls: boolean;
+  useMemory: boolean;
+  canStartNewChat: boolean;
+  hasMessages: boolean;
+  toggleVoiceInput: () => void;
+  toggleAdvancedControls: () => void;
+  toggleMemory: () => void;
+  clearConversation: () => void;
+  handleExportConversation: () => void;
+  startNewChat: () => void;
+  closeChat: () => void;
 }
 
 /**
  * Props for ChatAdvancedControls component
  */
 export interface ChatAdvancedControlsProps {
-	showAdvancedControls: boolean;
-	useMemory: boolean;
-	showDigest: boolean;
-	showAnalytics: boolean;
-	messages: ChatMessage[];
-	feedbackAnalytics: FeedbackAnalytics;
-	toggleMemory: () => void;
-	toggleDigest: () => void;
-	toggleAnalytics: () => void;
-	clearConversation: () => void;
-	handleExportConversation: () => void;
+  showAdvancedControls: boolean;
+  useMemory: boolean;
+  showDigest: boolean;
+  showAnalytics: boolean;
+  messages: ChatMessage[];
+  feedbackAnalytics: FeedbackAnalytics;
+  toggleMemory: () => void;
+  toggleDigest: () => void;
+  toggleAnalytics: () => void;
+  clearConversation: () => void;
+  handleExportConversation: () => void;
 }
 
 /**
  * Props for ChatGuidedPrompts component
  */
 export interface ChatGuidedPromptsProps {
-	visible: boolean;
-	onSelectPrompt: (prompt: string) => void;
+  visible: boolean;
+  onSelectPrompt: (prompt: string) => void;
 }
 
 /**
  * Props for ChatRecentQueries component
  */
 export interface ChatRecentQueriesProps {
-	queries: string[];
-	onReplayQuery: (query: string) => void;
+  queries: string[];
+  onReplayQuery: (query: string) => void;
 }
 
 /**
  * Props for ChatDigest component
  */
 export interface ChatDigestProps {
-	show: boolean;
-	digest: string[];
+  show: boolean;
+  digest: string[];
 }
 
 /**
  * Props for ChatAnalytics component
  */
 export interface ChatAnalyticsProps {
-	show: boolean;
-	messages: ChatMessage[];
-	sessionStartTime: number;
-	feedbackAnalytics: FeedbackAnalytics;
+  show: boolean;
+  messages: ChatMessage[];
+  sessionStartTime: number;
+  feedbackAnalytics: FeedbackAnalytics;
 }
 
 /**
  * Props for ChatQuickActions component
  */
 export interface ChatQuickActionsProps {
-	pageLabel?: string;
-	onAction: (query: string, label: string, category: string) => void;
-	setInputValue: (value: string) => void;
+  pageLabel?: string;
+  onAction: (query: string, label: string, category: string) => void;
+  setInputValue: (value: string) => void;
 }
 
 /**
  * Props for ChatMessageBubble component
  */
 export interface ChatMessageBubbleProps {
-	message: ChatMessage;
-	isStreaming: boolean;
-	siteHostname: string;
-	expandedSources: Record<string, boolean>;
-	expandedIndividualSources: Record<string, boolean>;
-	copiedMessageId: string | null;
-	copiedShareUrl: string | null;
-	messages: ChatMessage[];
-	messagesRef: RefObject<ChatMessage[]>;
-	sourceRefs: RefObject<HTMLAnchorElement[]>;
-	toggleExpandedSource: (messageId: string) => void;
-	toggleIndividualSource: (sourceKey: string) => void;
-	handleFeedback: (messageId: string, feedback: 'positive' | 'negative') => void;
-	handleCopyMessage: (message: ChatMessage) => void;
-	handleOpenPrimarySource: (url: string) => void;
-	setInputValue: (value: string) => void;
-	sendQuery: (query: string) => void;
-	copyWithFeedback: (content: string, id: string, type: 'message' | 'share') => Promise<boolean>;
-	/** Only the latest assistant reply shows follow-ups / CTA. */
-	isLatestAssistant?: boolean;
+  message: ChatMessage;
+  isStreaming: boolean;
+  siteHostname: string;
+  expandedSources: Record<string, boolean>;
+  expandedIndividualSources: Record<string, boolean>;
+  copiedMessageId: string | null;
+  copiedShareUrl: string | null;
+  messages: ChatMessage[];
+  messagesRef: RefObject<ChatMessage[]>;
+  sourceRefs: RefObject<HTMLAnchorElement[]>;
+  toggleExpandedSource: (messageId: string) => void;
+  toggleIndividualSource: (sourceKey: string) => void;
+  handleFeedback: (messageId: string, feedback: 'positive' | 'negative') => void;
+  handleCopyMessage: (message: ChatMessage) => void;
+  handleOpenPrimarySource: (url: string) => void;
+  setInputValue: (value: string) => void;
+  sendQuery: (query: string) => void;
+  copyWithFeedback: (content: string, id: string, type: 'message' | 'share') => Promise<boolean>;
+  /** Only the latest assistant reply shows follow-ups / CTA. */
+  isLatestAssistant?: boolean;
 }
 
 /**
  * Props for ChatMessageList component
  */
 export interface ChatMessageListProps {
-	messages: ChatMessage[];
-	chatState: ChatState;
-	streamingMessageId: string | null;
-	isOtherUserTyping: boolean;
-	wsConnected: boolean;
-	showScrollToLatest: boolean;
-	siteHostname: string;
-	expandedSources: Record<string, boolean>;
-	expandedIndividualSources: Record<string, boolean>;
-	copiedMessageId: string | null;
-	copiedShareUrl: string | null;
-	scrollContainerRef: RefObject<HTMLDivElement | null>;
-	messagesRef: RefObject<ChatMessage[]>;
-	sourceRefs: RefObject<HTMLAnchorElement[]>;
-	toggleExpandedSource: (messageId: string) => void;
-	toggleIndividualSource: (sourceKey: string) => void;
-	handleFeedback: (messageId: string, feedback: 'positive' | 'negative') => void;
-	handleCopyMessage: (message: ChatMessage) => void;
-	handleOpenPrimarySource: (url: string) => void;
-	scrollToLatest: () => void;
-	setInputValue: (value: string) => void;
-	sendQuery: (query: string) => void;
-	copyWithFeedback: (content: string, id: string, type: 'message' | 'share') => Promise<boolean>;
+  messages: ChatMessage[];
+  chatState: ChatState;
+  streamingMessageId: string | null;
+  isOtherUserTyping: boolean;
+  wsConnected: boolean;
+  showScrollToLatest: boolean;
+  siteHostname: string;
+  expandedSources: Record<string, boolean>;
+  expandedIndividualSources: Record<string, boolean>;
+  copiedMessageId: string | null;
+  copiedShareUrl: string | null;
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
+  messagesRef: RefObject<ChatMessage[]>;
+  sourceRefs: RefObject<HTMLAnchorElement[]>;
+  toggleExpandedSource: (messageId: string) => void;
+  toggleIndividualSource: (sourceKey: string) => void;
+  handleFeedback: (messageId: string, feedback: 'positive' | 'negative') => void;
+  handleCopyMessage: (message: ChatMessage) => void;
+  handleOpenPrimarySource: (url: string) => void;
+  scrollToLatest: () => void;
+  setInputValue: (value: string) => void;
+  sendQuery: (query: string) => void;
+  copyWithFeedback: (content: string, id: string, type: 'message' | 'share') => Promise<boolean>;
 }
 
 /**
  * Props for ChatInput component
  */
 export interface ChatInputProps {
-	inputValue: string;
-	chatState: ChatState;
-	inputRef: RefObject<HTMLTextAreaElement | null>;
-	wsRef: RefObject<ConversationWebSocket | null>;
-	typingTimeoutRef: RefObject<number | null>;
-	setInputValue: (value: string) => void;
-	setComposerFocused: (focused: boolean) => void;
-	handleTextareaKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
-	handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => Promise<void>;
+  inputValue: string;
+  chatState: ChatState;
+  inputRef: RefObject<HTMLTextAreaElement | null>;
+  wsRef: RefObject<ConversationWebSocket | null>;
+  typingTimeoutRef: RefObject<number | null>;
+  setInputValue: (value: string) => void;
+  setComposerFocused: (focused: boolean) => void;
+  handleTextareaKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => Promise<void>;
 }
 
 /**
  * Props for ChatStatusIndicators component
  */
 export interface ChatStatusIndicatorsProps {
-	chatState: ChatState;
-	loadingPhase: LoadingPhase;
-	isListening: boolean;
-	interimTranscript: string;
-	error: string | null;
-	lastQueryValue: string | null;
-	lastFailedQuery: string;
-	retryCount: number;
-	canRetry: boolean;
-	setError: (error: string | null) => void;
-	setRetryCount: (count: number) => void;
-	sendQuery: (query: string) => void;
+  chatState: ChatState;
+  loadingPhase: LoadingPhase;
+  isListening: boolean;
+  interimTranscript: string;
+  error: string | null;
+  lastQueryValue: string | null;
+  lastFailedQuery: string;
+  retryCount: number;
+  canRetry: boolean;
+  setError: (error: string | null) => void;
+  setRetryCount: (count: number) => void;
+  sendQuery: (query: string) => void;
 }
 
 /**
  * Props for ChatFallbackResults component
  */
 export interface ChatFallbackResultsProps {
-	fallbackResults: SearchFallback[];
-	visibleFallbackResults: SearchFallback[];
-	hasMoreFallbackResults: boolean;
-	showFallbackSuggestions: boolean;
-	setShowFallbackSuggestions: (show: boolean) => void;
-	onDismiss?: () => void;
+  fallbackResults: SearchFallback[];
+  visibleFallbackResults: SearchFallback[];
+  hasMoreFallbackResults: boolean;
+  showFallbackSuggestions: boolean;
+  setShowFallbackSuggestions: (show: boolean) => void;
+  onDismiss?: () => void;
 }
 
 /**
  * Props for ChatNewChatPrompt component
  */
 export interface ChatNewChatPromptProps {
-	canStartNewChat: boolean;
-	startNewChat: () => void;
+  canStartNewChat: boolean;
+  startNewChat: () => void;
 }
 
 /**
  * Props for ChatLauncher component
  */
 export interface ChatLauncherProps {
-	isOpen: boolean;
-	launcherRef: RefObject<HTMLButtonElement | null>;
-	openChat: () => void;
-	closeChat: () => void;
+  isOpen: boolean;
+  launcherRef: RefObject<HTMLButtonElement | null>;
+  openChat: () => void;
+  closeChat: () => void;
 }

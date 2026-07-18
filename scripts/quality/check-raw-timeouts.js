@@ -12,41 +12,42 @@ const ALLOW_FUNCTIONS = [
   'waitForFormValidation',
   'waitForKeyboardResponse',
   'waitForAsyncOperation',
-  'waitForImagesWithFallback'
+  'waitForImagesWithFallback',
 ];
 const TARGET_PATTERN = /page\.waitForTimeout\(/g;
 let violations = [];
 
-function walk(dir){
-  for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
-    if(entry.name.startsWith('.') || entry.name === 'node_modules') continue;
+function walk(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name.startsWith('.') || entry.name === 'node_modules') continue;
     const p = path.join(dir, entry.name);
-    if(entry.isDirectory()) walk(p); else if(/\.(ts|js|tsx|astro)$/.test(entry.name)) scan(p);
+    if (entry.isDirectory()) walk(p);
+    else if (/\.(ts|js|tsx|astro)$/.test(entry.name)) scan(p);
   }
 }
-function scan(file){
-  const rel = path.relative(root,file);
-  if (ALLOW_DIR_SNIPPETS.some(sn => rel.includes(sn))) return; // allowed context
-  const content = fs.readFileSync(file,'utf8');
-  
+function scan(file) {
+  const rel = path.relative(root, file);
+  if (ALLOW_DIR_SNIPPETS.some((sn) => rel.includes(sn))) return; // allowed context
+  const content = fs.readFileSync(file, 'utf8');
+
   // Check if raw waitForTimeout is used
   const hasRawTimeout = TARGET_PATTERN.test(content);
-  
+
   // Check if any allowed functions are used (which may internally use waitForTimeout)
-  const hasAllowedFunctions = ALLOW_FUNCTIONS.some(func => content.includes(func));
-  
+  const hasAllowedFunctions = ALLOW_FUNCTIONS.some((func) => content.includes(func));
+
   // Only flag as violation if raw timeout is used AND no allowed functions are present
   if (hasRawTimeout && !hasAllowedFunctions) {
     violations.push(rel);
   }
 }
 
-walk(path.join(root,'tests'));
-walk(path.join(root,'src'));
+walk(path.join(root, 'tests'));
+walk(path.join(root, 'src'));
 
-if (violations.length){
+if (violations.length) {
   console.error(`❌ Raw waitForTimeout usage detected in ${violations.length} file(s):`);
-  violations.forEach(f => console.error('  - ' + f));
+  violations.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 } else {
   console.log('✅ No raw waitForTimeout usages outside approved utilities.');

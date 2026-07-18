@@ -76,6 +76,10 @@ jobs:
         if: matrix.test-group == 'unit'
         run: pnpm run lint
 
+      - name: Check formatting (Prettier + Tailwind class sort)
+        if: matrix.test-group == 'unit'
+        run: pnpm format:check
+
       - name: Design lint (tokens & spacing)
         if: matrix.test-group == 'unit'
         run: pnpm design:lint

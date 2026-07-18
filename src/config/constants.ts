@@ -7,7 +7,8 @@
 export const SITE_URL = 'https://blakeoxford.com';
 export const SITE_NAME = 'Blake Oxford';
 export const SITE_TITLE = 'Blake Oxford - Enterprise Systems Architect & Technology Leader';
-export const SITE_DESCRIPTION = 'Innovative technology leader specializing in enterprise systems architecture, healthcare IT, cloud infrastructure, and business intelligence solutions.';
+export const SITE_DESCRIPTION =
+  'Innovative technology leader specializing in enterprise systems architecture, healthcare IT, cloud infrastructure, and business intelligence solutions.';
 
 // ─── Contact Information ─────────────────────────────────────────
 export const CONTACT_EMAIL = 'blakepoxford@outlook.com';
@@ -33,31 +34,31 @@ export const RATE_LIMIT = {
 export const CACHE_DURATIONS = {
   // Asset caching
   assets: {
-    fonts: 2592000,            // 30 days
-    images: 604800,            // 7 days
-    jsCss: 604800,             // 7 days
-    videos: 2592000,           // 30 days
-    default: 86400,            // 1 day (non-hashed assets)
+    fonts: 2592000, // 30 days
+    images: 604800, // 7 days
+    jsCss: 604800, // 7 days
+    videos: 2592000, // 30 days
+    default: 86400, // 1 day (non-hashed assets)
   },
-  
+
   // Page caching
   pages: {
-    html: 300,                 // 5 minutes (CDN cache)
+    html: 300, // 5 minutes (CDN cache)
     htmlStaleWhileRevalidate: 3600, // 1 hour stale-while-revalidate
-    robots: 300,               // 5 minutes
-    sitemap: 300,              // 5 minutes
-    manifest: 3600,            // 1 hour
-    searchIndex: 600,          // 10 minutes
+    robots: 300, // 5 minutes
+    sitemap: 300, // 5 minutes
+    manifest: 3600, // 1 hour
+    searchIndex: 600, // 10 minutes
   },
-  
+
   // API caching
   api: {
-    default: 300,              // 5 minutes
+    default: 300, // 5 minutes
   },
-  
+
   // Static build artifacts (hashed filenames)
   static: {
-    hashed: 31536000,          // 1 year (immutable)
+    hashed: 31536000, // 1 year (immutable)
   },
 } as const;
 

@@ -3,13 +3,13 @@ import Container from '../primitives/Container.astro';
 
 /**
  * PageHero - Consistent full-screen hero section pattern
- * 
+ *
  * Provides unified hero treatment across all main pages with:
  * - Full viewport height option
  * - Floating blur orbs for visual depth
  * - Edge-to-edge gradient background
  * - Responsive max-width container for content
- * 
+ *
  * @example Homepage hero
  * <PageHero fullScreen={true}>
  * <Grid cols="2" gap="xl" alignItems="center">
@@ -17,7 +17,7 @@ import Container from '../primitives/Container.astro';
  * <div><CoinFlipImage /></div>
  * </Grid>
  * </PageHero>
- * 
+ *
  * @example Projects hero
  * <PageHero fullScreen={false}>
  * <h1>Selected Projects</h1>
@@ -26,39 +26,47 @@ import Container from '../primitives/Container.astro';
  */
 
 interface Props {
- /** Full screen height (min-h-screen) vs standard (min-h-[60vh]) */
- fullScreen?: boolean;
- /** Include floating blur orbs for visual depth */
- includeBlurOrbs?: boolean;
- /** Additional CSS classes */
- class?: string;
- /** Section ID for anchor links */
- id?: string;
+  /** Full screen height (min-h-screen) vs standard (min-h-[60vh]) */
+  fullScreen?: boolean;
+  /** Include floating blur orbs for visual depth */
+  includeBlurOrbs?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+  /** Section ID for anchor links */
+  id?: string;
 }
 
-const { 
- fullScreen = true,
- includeBlurOrbs = true,
- class: className = '',
- id = 'hero'
+const {
+  fullScreen = true,
+  includeBlurOrbs = true,
+  class: className = '',
+  id = 'hero',
 } = Astro.props;
 
 const heightClass = fullScreen ? 'min-h-screen' : 'min-h-[60vh] md:min-h-[70vh]';
 ---
 
-<section 
- id={id}
- data-layout-section={id}
- class={`page-hero-shell relative flex items-center overflow-hidden py-20 sm:py-24 md:py-32 ${heightClass} ${className}`}
+<section
+  id={id}
+  data-layout-section={id}
+  class={`page-hero-shell relative flex items-center overflow-hidden py-20 sm:py-24 md:py-32 ${heightClass} ${className}`}
 >
- {includeBlurOrbs && (
- <>
- <div class="pointer-events-none absolute top-0 right-0 size-96 rounded-full bg-accent-subtle blur-3xl" aria-hidden="true"></div>
- <div class="pointer-events-none absolute bottom-0 left-0 size-64 rounded-full bg-primary-subtle blur-3xl" aria-hidden="true"></div>
- </>
- )}
- 
- <Container size="xl" class="relative z-10">
- <slot />
- </Container>
+  {
+    includeBlurOrbs && (
+      <>
+        <div
+          class="pointer-events-none absolute top-0 right-0 size-96 rounded-full bg-accent-subtle blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          class="pointer-events-none absolute bottom-0 left-0 size-64 rounded-full bg-primary-subtle blur-3xl"
+          aria-hidden="true"
+        />
+      </>
+    )
+  }
+
+  <Container size="xl" class="relative z-10">
+    <slot />
+  </Container>
 </section>

@@ -6,10 +6,9 @@ export function normalizeSlug(input: string | undefined | null): string | undefi
   if (input == null) return undefined;
   if (input === '') return '';
   return input
-    .replace(/^\/+/, '')      // remove ALL leading slashes
-    .replace(/index$/,'')      // strip trailing 'index'
-    .replace(/\/{2,}/g, '/')  // collapse duplicate slashes globally
-    ;
+    .replace(/^\/+/, '') // remove ALL leading slashes
+    .replace(/index$/, '') // strip trailing 'index'
+    .replace(/\/{2,}/g, '/'); // collapse duplicate slashes globally
 }
 
 /** Ensure slug has leading slash (except empty/undefined). */

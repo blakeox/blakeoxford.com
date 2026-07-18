@@ -22,7 +22,9 @@ function generateEdgeCaseStrings(): string[] {
     '<script>alert("xss")</script>', // XSS attempt
     'DROP TABLE users;', // SQL injection attempt
     '../../etc/passwd', // Path traversal
-    'null', 'undefined', 'NaN', // Falsy-ish values
+    'null',
+    'undefined',
+    'NaN', // Falsy-ish values
     '\n\r\t', // Special characters
     '🌍Hello世界', // Mixed unicode
   ];
@@ -34,30 +36,30 @@ describe('Property-Based Testing', () => {
       // Test 50 random search queries
       for (let i = 0; i < 50; i++) {
         const query = generateRandomString(Math.floor(Math.random() * 100));
-        
+
         // Mock search function behavior
         const mockSearch = (searchQuery: string) => {
           // Should not crash on any input
           expect(typeof searchQuery).toBe('string');
-          
+
           // Should return array result
           return [];
         };
-        
+
         expect(() => mockSearch(query)).not.toThrow();
       }
     });
 
     it('should handle edge case search inputs', () => {
       const edgeCases = generateEdgeCaseStrings();
-      
-      edgeCases.forEach(edgeCase => {
+
+      edgeCases.forEach((edgeCase) => {
         const mockSearch = (query: string) => {
           // Should sanitize and handle safely
           const sanitized = query.trim();
           return sanitized.length > 0 ? [] : [];
         };
-        
+
         expect(() => mockSearch(edgeCase)).not.toThrow();
       });
     });
@@ -68,10 +70,10 @@ describe('Property-Based Testing', () => {
       // Test 30 random emails
       for (let i = 0; i < 30; i++) {
         const email = generateRandomEmail();
-        
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const isValid = emailRegex.test(email);
-        
+
         expect(typeof isValid).toBe('boolean');
         expect(email).toContain('@');
       }
@@ -84,7 +86,7 @@ describe('Property-Based Testing', () => {
         { name: '<script>', email: 'test@evil.com', message: 'DROP TABLE;' },
       ];
 
-      testCases.forEach(testCase => {
+      testCases.forEach((testCase) => {
         const validateForm = (data: typeof testCase) => {
           return {
             nameValid: data.name.trim().length > 0 && data.name.length < 100,
@@ -108,7 +110,7 @@ describe('Property-Based Testing', () => {
         'data:text/html,<script>',
       ];
 
-      dangerousPaths.forEach(path => {
+      dangerousPaths.forEach((path) => {
         const sanitizePath = (inputPath: string) => {
           // Basic path sanitization
           return inputPath.replace(/[^a-zA-Z0-9\-/]/g, '').replace(/\.{2,}/g, '');
@@ -133,7 +135,7 @@ describe('Property-Based Testing', () => {
         {},
       ];
 
-      randomEventData.forEach(data => {
+      randomEventData.forEach((data) => {
         const trackEvent = (eventData: unknown) => {
           // Should handle any data type safely
           if (eventData && typeof eventData === 'object') {
@@ -156,7 +158,7 @@ describe('Property-Based Testing', () => {
         { prefersDark: false, localStorage: 'invalid' },
       ];
 
-      randomStates.forEach(state => {
+      randomStates.forEach((state) => {
         const determineTheme = (prefs: typeof state) => {
           if (prefs.localStorage && ['light', 'dark'].includes(prefs.localStorage)) {
             return prefs.localStorage;
@@ -178,7 +180,9 @@ describe('Property-Based Testing', () => {
           slug: generateRandomString(15).toLowerCase().replace(/\s/g, '-'),
           title: generateRandomString(50),
           date: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
-          tags: Array.from({ length: Math.floor(Math.random() * 5) + 1 }, () => generateRandomString(8)),
+          tags: Array.from({ length: Math.floor(Math.random() * 5) + 1 }, () =>
+            generateRandomString(8)
+          ),
           draft: Math.random() > 0.7, // 30% chance of being draft
         };
 

@@ -3,7 +3,6 @@ import type { LazyBundleLoader } from '../scripts/utils/LazyLoader';
 export {};
 
 declare global {
-
   type AccessibilityPoliteness = 'polite' | 'assertive';
 
   interface AccessibilityModule {

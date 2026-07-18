@@ -160,7 +160,7 @@ export function registerNavMobileMenu(): CleanupFn {
     registerMobileMenuClose(() => {
       const shell = document.querySelector<HTMLElement>('.nav-shell');
       if (shell && isMenuOpen(shell)) close();
-    }),
+    })
   );
 
   cleanups.push(
@@ -172,7 +172,7 @@ export function registerNavMobileMenu(): CleanupFn {
         return Boolean(shell && isMenuOpen(shell));
       },
       handle: () => close(),
-    }),
+    })
   );
 
   const handlePageLoad = () => {

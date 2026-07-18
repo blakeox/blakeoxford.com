@@ -16,7 +16,9 @@ const { projects, content } = Astro.props as Props;
 ---
 
 <Section id="recent-projects" padding="lg" container="xl" aria-labelledby="recent-projects-title">
-  <div class="mb-12 flex flex-col gap-6 border-b border-border/50 pb-8 md:flex-row md:items-end md:justify-between">
+  <div
+    class="mb-12 flex flex-col gap-6 border-b border-border/50 pb-8 md:flex-row md:items-end md:justify-between"
+  >
     <div class="section-intro-left max-w-2xl">
       <span class="section-kicker">{content.kicker}</span>
       <SectionHeading id="recent-projects-title" size="4xl">{content.title}</SectionHeading>
@@ -29,8 +31,6 @@ const { projects, content } = Astro.props as Props;
     </Button>
   </div>
   <Grid cols="3" gap="lg">
-    {projects.map((project) => (
-      <ProjectCard project={project} />
-    ))}
+    {projects.map((project) => <ProjectCard project={project} />)}
   </Grid>
 </Section>

@@ -1,16 +1,16 @@
 /**
  * Centralized logging utility
- * 
+ *
  * Provides consistent logging across the application with:
  * - Environment-aware logging (dev vs production)
  * - Debug mode support
  * - Structured log levels
  * - No-op in production for performance
- * 
+ *
  * @example
  * ```typescript
  * import { logger } from '@/utils/logger';
- * 
+ *
  * logger.debug('Debug information');
  * logger.info('User action');
  * logger.warn('Deprecation warning');
@@ -127,4 +127,3 @@ export const analyticsLogger = {
     }
   },
 };
-

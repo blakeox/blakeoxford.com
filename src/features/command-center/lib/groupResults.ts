@@ -14,8 +14,7 @@ function groupLabel(category: CommandCategory, count: number, base: string): str
 
 export function groupCommandItems(items: CommandItem[], category: CommandCategory): CommandGroup[] {
   if (category !== 'all') {
-    const label =
-      category === 'projects' ? 'Projects' : category === 'blog' ? 'Blog' : 'Pages';
+    const label = category === 'projects' ? 'Projects' : category === 'blog' ? 'Blog' : 'Pages';
     return items.length ? [{ id: category, label, items }] : [];
   }
 
@@ -42,7 +41,7 @@ export function flattenGroups(groups: CommandGroup[]): CommandItem[] {
 export function buildBrowseGroups(
   featuredProjects: CommandItem[],
   recentPosts: CommandItem[],
-  quickLinks: CommandItem[],
+  quickLinks: CommandItem[]
 ): CommandGroup[] {
   const groups: CommandGroup[] = [];
 

@@ -58,7 +58,7 @@ export class PerformanceMonitor {
     this.setupPerformanceObserver();
   }
 
-    /**
+  /**
    * Setup Performance Observer using consolidated observer manager
    */
   private setupPerformanceObserver(): void {
@@ -88,7 +88,10 @@ export class PerformanceMonitor {
         (entries) => {
           entries.forEach((entry) => {
             if ('loadEventEnd' in entry) {
-              this.loadMetrics.set('loadComplete', (entry as PerformanceNavigationTiming).loadEventEnd);
+              this.loadMetrics.set(
+                'loadComplete',
+                (entry as PerformanceNavigationTiming).loadEventEnd
+              );
             }
           });
         },
@@ -107,8 +110,11 @@ export class PerformanceMonitor {
       );
 
       // Track subscriptions for cleanup
-      this.observerSubscriptions.push(paintSubscription, navigationSubscription, resourceSubscription);
-
+      this.observerSubscriptions.push(
+        paintSubscription,
+        navigationSubscription,
+        resourceSubscription
+      );
     } catch (error) {
       console.warn('Failed to setup performance monitoring:', error);
     }
@@ -177,9 +183,11 @@ export class PerformanceMonitor {
 
     // Calculate interaction response time
     const recentInteractionTimes = Array.from(this.interactionStartTimes.values());
-    const averageInteractionTime = recentInteractionTimes.length > 0
-      ? recentInteractionTimes.reduce((sum, time) => sum + (performance.now() - time), 0) / recentInteractionTimes.length
-      : 0;
+    const averageInteractionTime =
+      recentInteractionTimes.length > 0
+        ? recentInteractionTimes.reduce((sum, time) => sum + (performance.now() - time), 0) /
+          recentInteractionTimes.length
+        : 0;
 
     // Calculate size savings
     const sizeSavings = bundleStats.totalEstimatedSize - bundleStats.loadedSize;
@@ -203,7 +211,7 @@ export class PerformanceMonitor {
       criticalResourceLoadTime: this.loadMetrics.get('bundle-core') || 0,
       interactionToResponseTime: averageInteractionTime,
       cacheHitRate,
-      errorRate
+      errorRate,
     };
   }
 
@@ -215,19 +223,27 @@ export class PerformanceMonitor {
 
     // Performance recommendations
     if (metrics.firstContentfulPaint && metrics.firstContentfulPaint > 2500) {
-      recommendations.push('Consider preloading critical CSS and reducing render-blocking resources');
+      recommendations.push(
+        'Consider preloading critical CSS and reducing render-blocking resources'
+      );
     }
 
     if (metrics.averageModuleLoadTime > 500) {
-      recommendations.push('Module loading is slow - consider CDN optimization or module size reduction');
+      recommendations.push(
+        'Module loading is slow - consider CDN optimization or module size reduction'
+      );
     }
 
     if (metrics.errorRate > 5) {
-      recommendations.push(`High error rate (${metrics.errorRate.toFixed(1)}%) - investigate failed module loads`);
+      recommendations.push(
+        `High error rate (${metrics.errorRate.toFixed(1)}%) - investigate failed module loads`
+      );
     }
 
     if (metrics.cacheHitRate < 80) {
-      recommendations.push(`Low cache hit rate (${metrics.cacheHitRate.toFixed(1)}%) - optimize caching strategy`);
+      recommendations.push(
+        `Low cache hit rate (${metrics.cacheHitRate.toFixed(1)}%) - optimize caching strategy`
+      );
     }
 
     // Bundle optimization recommendations
@@ -236,7 +252,9 @@ export class PerformanceMonitor {
     }
 
     if (metrics.interactionToResponseTime > 100) {
-      recommendations.push('Slow interaction response time - consider preloading interactive features');
+      recommendations.push(
+        'Slow interaction response time - consider preloading interactive features'
+      );
     }
 
     // Success messages
@@ -257,11 +275,11 @@ export class PerformanceMonitor {
     const bundleManager = getFeatureBundleManager();
     const bundleStats = bundleManager.getBundleStats();
 
-    const bundleBreakdown = bundleStats.bundleDetails.map(bundle => ({
+    const bundleBreakdown = bundleStats.bundleDetails.map((bundle) => ({
       bundleName: bundle.name,
       loadTime: this.loadMetrics.get(`bundle-${bundle.name}`) || 0,
       moduleCount: bundle.moduleCount,
-      success: bundle.loaded
+      success: bundle.loaded,
     }));
 
     return {
@@ -269,7 +287,7 @@ export class PerformanceMonitor {
       pageUrl: typeof window !== 'undefined' ? window.location.href : 'unknown',
       metrics,
       bundleBreakdown,
-      recommendations
+      recommendations,
     };
   }
 
@@ -285,7 +303,9 @@ export class PerformanceMonitor {
 
       logger.group('📈 Metrics', () => {
         logger.debug(`Total Bundle Load Time: ${report.metrics.totalBundleLoadTime.toFixed(2)}ms`);
-        logger.debug(`Average Module Load Time: ${report.metrics.averageModuleLoadTime.toFixed(2)}ms`);
+        logger.debug(
+          `Average Module Load Time: ${report.metrics.averageModuleLoadTime.toFixed(2)}ms`
+        );
         logger.debug(`Bundles Loaded: ${report.metrics.bundlesLoaded}`);
         logger.debug(`Modules Loaded: ${report.metrics.modulesLoaded}`);
         logger.debug(`Size Savings: ${(report.metrics.sizeSavings / 1024).toFixed(2)} KB`);
@@ -295,16 +315,18 @@ export class PerformanceMonitor {
 
       if (report.bundleBreakdown.length > 0) {
         logger.group('📋 Bundle Breakdown', () => {
-          report.bundleBreakdown.forEach(bundle => {
+          report.bundleBreakdown.forEach((bundle) => {
             const status = bundle.success ? '✅' : '❌';
-            logger.debug(`${status} ${bundle.bundleName}: ${bundle.loadTime.toFixed(2)}ms (${bundle.moduleCount} modules)`);
+            logger.debug(
+              `${status} ${bundle.bundleName}: ${bundle.loadTime.toFixed(2)}ms (${bundle.moduleCount} modules)`
+            );
           });
         });
       }
 
       if (report.recommendations.length > 0) {
         logger.group('💡 Recommendations', () => {
-          report.recommendations.forEach(rec => logger.debug(`• ${rec}`));
+          report.recommendations.forEach((rec) => logger.debug(`• ${rec}`));
         });
       }
     });

@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { extractLinks, buildLinkTasks, buildAllowlist } from '../../../src/utils/links/deadLinkCore';
+import {
+  extractLinks,
+  buildLinkTasks,
+  buildAllowlist,
+} from '../../../src/utils/links/deadLinkCore';
 import path from 'path';
 import fs from 'fs';
 
@@ -34,7 +38,7 @@ function teardown() {
 describe('deadLinkCore', () => {
   it('extractLinks internal only', () => {
     const links = extractLinks(html, { includeExternal: false });
-    const urls = links.map(l => l.raw).sort();
+    const urls = links.map((l) => l.raw).sort();
     expect(urls).toContain('/about');
     expect(urls).toContain('contact/index.html');
     expect(urls).toContain('/assets/img/logo.png');
@@ -43,14 +47,14 @@ describe('deadLinkCore', () => {
 
   it('extractLinks with external', () => {
     const links = extractLinks(html, { includeExternal: true });
-    const urls = links.map(l => l.raw);
+    const urls = links.map((l) => l.raw);
     expect(urls).toContain('https://example.com/remote');
   });
 
   it('buildLinkTasks normalizes relative paths', () => {
     setup();
     const tasks = buildLinkTasks([pageFile], distDir, { includeExternal: false });
-    const paths = tasks.map(t => t.urlPath).sort();
+    const paths = tasks.map((t) => t.urlPath).sort();
     expect(paths).toContain('/about');
     expect(paths).toContain('/contact/index.html');
     expect(paths).toContain('/assets/img/logo.png');

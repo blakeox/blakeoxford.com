@@ -7,40 +7,24 @@
 @layer components {
   /* Tokenized page gutters — prefer over hard-coded px-4 sm:px-6 lg:px-8 */
   .layout-gutter {
-    padding-inline: clamp(
-      var(--container-padding),
-      4vw,
-      var(--container-padding-lg)
-    );
+    padding-inline: clamp(var(--container-padding), 4vw, var(--container-padding-lg));
   }
 
   @media (width >= 640px) {
     .layout-gutter {
-      padding-inline: clamp(
-        var(--container-padding-sm),
-        5vw,
-        var(--container-padding-lg)
-      );
+      padding-inline: clamp(var(--container-padding-sm), 5vw, var(--container-padding-lg));
     }
   }
 
   @media (width >= 1024px) {
     .layout-gutter {
-      padding-inline: clamp(
-        var(--container-padding-lg),
-        6vw,
-        var(--container-padding-xl)
-      );
+      padding-inline: clamp(var(--container-padding-lg), 6vw, var(--container-padding-xl));
     }
   }
 
   @media (width >= 1280px) {
     .layout-gutter {
-      padding-inline: clamp(
-        var(--container-padding-xl),
-        7vw,
-        var(--container-padding-2xl)
-      );
+      padding-inline: clamp(var(--container-padding-xl), 7vw, var(--container-padding-2xl));
     }
   }
 
@@ -62,6 +46,12 @@
   .animate-gradient-shift {
     background-size: 100% 200%;
     animation: gradient-shift 8s var(--ease-standard) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-gradient-shift {
+      animation: none;
+    }
   }
 
   .timeline-scroll-container::-webkit-scrollbar {
@@ -91,7 +81,7 @@
   }
 
   .section-kicker {
-    @apply inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-label text-accent-emphasis;
+    @apply inline-flex items-center gap-3 text-xs font-semibold tracking-label text-accent-emphasis uppercase;
   }
 
   .section-kicker::before {
@@ -192,7 +182,7 @@
   }
 
   .nav-utility-button:focus-visible {
-    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background;
+    @apply ring-2 ring-accent/60 ring-offset-2 ring-offset-background outline-none;
   }
 
   .nav-kbd {
@@ -351,7 +341,7 @@
 
   /* Shared interactive chrome */
   .focus-ring-interactive:focus-visible {
-    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-background;
+    @apply ring-2 ring-accent/60 ring-offset-2 ring-offset-background outline-none;
   }
 
   .touch-target {

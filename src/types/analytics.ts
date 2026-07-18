@@ -48,12 +48,7 @@ export interface ErrorData {
 }
 
 export type TrackingPayload =
-  | Record<string, unknown>
-  | NavigationData
-  | ScrollData
-  | FormData
-  | SearchData
-  | ErrorData;
+  Record<string, unknown> | NavigationData | ScrollData | FormData | SearchData | ErrorData;
 
 export interface TrackingEvent {
   category: string;

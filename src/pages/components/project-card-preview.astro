@@ -1,27 +1,28 @@
 ---
 import ProjectCard from '../../components/features/projects/ProjectCard.astro';
 // Provide a ProjectData-shaped sample
-const sample = { 
- id: 'microsoft-fabric', 
- data: { 
- title: 'Sample Project', 
- description: 'Preview card for baseline visual test.', 
- date: new Date(),
- tags: ['demo'],
- draft: false,
- image: '/assets/images/default-project.png'
- }
+const sample = {
+  id: 'microsoft-fabric',
+  data: {
+    title: 'Sample Project',
+    description: 'Preview card for baseline visual test.',
+    date: new Date(),
+    tags: ['demo'],
+    draft: false,
+    image: '/assets/images/default-project.png',
+  },
 };
 ---
+
 <html lang="en">
- <head>
-  <meta charset="utf-8" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>Project Card Preview</title>
- </head>
- <body class="min-h-screen p-6">
- <div class="max-w-sm">
- <ProjectCard project={sample} />
- </div>
- </body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Project Card Preview</title>
+  </head>
+  <body class="min-h-screen p-6">
+    <div class="max-w-sm">
+      <ProjectCard project={sample} />
+    </div>
+  </body>
 </html>

@@ -35,8 +35,4 @@ export const CATEGORY_LABELS: Record<CommandCategory, string> = {
 /** Discovery terms only — keep the idle/empty search surface calm.
  * Lead with a known-good corpus hit so empty-state examples always work.
  */
-export const SUGGESTED_QUERIES = [
-  'Microsoft Fabric',
-  'automation',
-  'CES 2026',
-] as const;
+export const SUGGESTED_QUERIES = ['Microsoft Fabric', 'automation', 'CES 2026'] as const;

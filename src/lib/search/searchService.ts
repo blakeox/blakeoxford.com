@@ -16,13 +16,17 @@ function dedupeByHref(records: SearchRecord[]): SearchRecord[] {
   return output;
 }
 
-function mergeResults(primary: SearchRecord[], secondary: SearchRecord[], limit: number): SearchRecord[] {
+function mergeResults(
+  primary: SearchRecord[],
+  secondary: SearchRecord[],
+  limit: number
+): SearchRecord[] {
   return dedupeByHref([...primary, ...secondary]).slice(0, limit);
 }
 
 function markRetrieval(
   records: SearchRecord[],
-  retrieval: NonNullable<SearchRecord['retrieval']>,
+  retrieval: NonNullable<SearchRecord['retrieval']>
 ): SearchRecord[] {
   return records.map((record) => ({ ...record, retrieval: record.retrieval ?? retrieval }));
 }
@@ -65,7 +69,7 @@ export function filterNoisyHubRecords(records: SearchRecord[], query: string): S
 /** Enrich semantic hits with local corpus fields (title, image, featured, description). */
 export function hydrateRecordsFromCorpus(
   records: SearchRecord[],
-  corpus: SearchRecord[],
+  corpus: SearchRecord[]
 ): SearchRecord[] {
   if (!records.length || !corpus.length) return records;
 
@@ -114,16 +118,16 @@ export async function runSearch(options: SearchQueryOptions): Promise<SearchQuer
     const semanticMeta = semantic.meta;
     const filteredSemantic = filterByCategory(
       semanticResults,
-      category === 'all' ? 'all' : category,
+      category === 'all' ? 'all' : category
     );
     const hydrated = filterNoisyHubRecords(
       markRetrieval(hydrateRecordsFromCorpus(filteredSemantic, corpus), 'semantic'),
-      trimmed,
+      trimmed
     );
 
     const withMeta = (
       records: SearchRecord[],
-      source: SearchQueryResult['source'],
+      source: SearchQueryResult['source']
     ): SearchQueryResult => ({
       records,
       source,
@@ -154,9 +158,9 @@ export async function runSearch(options: SearchQueryOptions): Promise<SearchQuer
       return withMeta(
         hydrateRecordsFromCorpus(
           filterNoisyHubRecords(mergeResults(localAll, relevantSemantic, limit), trimmed),
-          corpus,
+          corpus
         ),
-        'cloudflare-vectorize',
+        'cloudflare-vectorize'
       );
     }
 
@@ -166,20 +170,20 @@ export async function runSearch(options: SearchQueryOptions): Promise<SearchQuer
         hydrateRecordsFromCorpus(
           filterNoisyHubRecords(
             mergeResults(localAll, mergeResults(localPages, hydrated, limit), limit),
-            trimmed,
+            trimmed
           ),
-          corpus,
+          corpus
         ),
-        'cloudflare-vectorize',
+        'cloudflare-vectorize'
       );
     }
 
     return withMeta(
       hydrateRecordsFromCorpus(
         filterNoisyHubRecords(mergeResults(localAll, hydrated, limit), trimmed),
-        corpus,
+        corpus
       ),
-      'cloudflare-vectorize',
+      'cloudflare-vectorize'
     );
   } catch (error) {
     console.warn('[search] Cloudflare semantic search unavailable, using local fallback', error);

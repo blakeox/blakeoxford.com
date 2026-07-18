@@ -262,9 +262,13 @@ const navigation = defineCollection({
   schema: z.object({
     links: z.array(navigationLink),
     quickLinks: z.array(navigationLink).optional(),
-    socialLinks: z.array(navigationLink.extend({
-      icon: z.string().optional(),
-    })).optional(),
+    socialLinks: z
+      .array(
+        navigationLink.extend({
+          icon: z.string().optional(),
+        })
+      )
+      .optional(),
   }),
 });
 

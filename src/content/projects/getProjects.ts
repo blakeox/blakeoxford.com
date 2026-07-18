@@ -2,7 +2,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 // Centralized helper to fetch and sort projects content.
 export async function getProjectsSorted(): Promise<CollectionEntry<'projects'>[]> {
-  const projects = await getCollection('projects') as CollectionEntry<'projects'>[];
+  const projects = (await getCollection('projects')) as CollectionEntry<'projects'>[];
 
   return projects
     .filter((project): project is CollectionEntry<'projects'> => Boolean(project?.data))

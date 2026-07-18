@@ -24,7 +24,7 @@ const AccessibilityConfigSchema = z.object({
 
 const DropdownConfigSchema = z.object({
   enabled: z.boolean().default(true),
-  debug: z.boolean().default(false),  
+  debug: z.boolean().default(false),
   triggerSelector: z.string().default('.nav-link[aria-haspopup="true"]'),
   menuSelector: z.string().default('ul[role="menu"]'),
   autoClose: z.boolean().default(true),
@@ -63,7 +63,7 @@ const AppConfigSchema = z.object({
   dropdown: DropdownConfigSchema,
   search: SearchConfigSchema,
   analytics: AnalyticsConfigSchema,
-  
+
   // Global settings
   environment: z.enum(['development', 'staging', 'production']).default('development'),
   version: z.string().default('1.0.0'),
@@ -92,28 +92,27 @@ export const defaultConfig: AppConfig = AppConfigSchema.parse({});
 // Configuration factory with environment-specific overrides
 export const createConfig = (overrides: Partial<AppConfig> = {}): AppConfig => {
   const baseConfig = defaultConfig;
-  
+
   // Environment-specific overrides
   const envOverrides: Partial<AppConfig> = {};
-  
+
   if (typeof window !== 'undefined') {
     // Browser environment
     const hostname = window.location.hostname;
-    
+
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       envOverrides.environment = 'development';
-      
     } else if (hostname.includes('staging') || hostname.includes('preview')) {
       envOverrides.environment = 'staging';
     } else {
       envOverrides.environment = 'production';
     }
   }
-  
+
   return AppConfigSchema.parse({
     ...baseConfig,
     ...envOverrides,
-    ...overrides
+    ...overrides,
   });
 };
 
@@ -148,21 +147,21 @@ export class ConfigManager {
    */
   updateConfig(updates: Partial<AppConfig>): void {
     const oldConfig = { ...this.config };
-    
+
     try {
       const newConfig = createConfig({
         ...this.config,
-        ...updates
+        ...updates,
       });
-      
+
       // Find changed keys
       const changedKeys = this.findChangedKeys(oldConfig, newConfig);
-      
+
       if (changedKeys.length > 0) {
         this.config = newConfig;
-        
+
         // Notify all callbacks
-        this.changeCallbacks.forEach(callback => {
+        this.changeCallbacks.forEach((callback) => {
           try {
             callback(newConfig, changedKeys);
           } catch (error) {
@@ -173,7 +172,7 @@ export class ConfigManager {
         if (import.meta.env.DEV) {
           logger.debug('Configuration updated:', {
             changedKeys,
-            environment: newConfig.environment
+            environment: newConfig.environment,
           });
         }
       }
@@ -188,7 +187,7 @@ export class ConfigManager {
    */
   onChange(callback: ConfigChangeCallback): () => void {
     this.changeCallbacks.push(callback);
-    
+
     return () => {
       const index = this.changeCallbacks.indexOf(callback);
       if (index > -1) {
@@ -202,7 +201,7 @@ export class ConfigManager {
    */
   getOptimizedConfig(): AppConfig {
     const config = this.getConfig();
-    
+
     return config;
   }
 
@@ -210,11 +209,11 @@ export class ConfigManager {
   getAccessibilityConfig(): AccessibilityConfig {
     return this.config.accessibility;
   }
-  
+
   getDropdownConfig(): DropdownConfig {
     return this.config.dropdown;
   }
-  
+
   getSearchConfig(): SearchConfig {
     return this.config.search;
   }
@@ -225,14 +224,26 @@ export class ConfigManager {
 
   private findChangedKeys(oldConfig: AppConfig, newConfig: AppConfig): string[] {
     const changedKeys: string[] = [];
-    
-    const compareObjects = (old: Record<string, unknown>, current: Record<string, unknown>, prefix = ''): void => {
+
+    const compareObjects = (
+      old: Record<string, unknown>,
+      current: Record<string, unknown>,
+      prefix = ''
+    ): void => {
       for (const key in current) {
         const fullKey = prefix ? `${prefix}.${key}` : key;
-        
-        if (typeof current[key] === 'object' && current[key] !== null && !Array.isArray(current[key])) {
+
+        if (
+          typeof current[key] === 'object' &&
+          current[key] !== null &&
+          !Array.isArray(current[key])
+        ) {
           if (typeof old[key] === 'object' && old[key] !== null) {
-            compareObjects(old[key] as Record<string, unknown>, current[key] as Record<string, unknown>, fullKey);
+            compareObjects(
+              old[key] as Record<string, unknown>,
+              current[key] as Record<string, unknown>,
+              fullKey
+            );
           } else {
             changedKeys.push(fullKey);
           }
@@ -241,7 +252,7 @@ export class ConfigManager {
         }
       }
     };
-    
+
     compareObjects(oldConfig, newConfig);
     return changedKeys;
   }

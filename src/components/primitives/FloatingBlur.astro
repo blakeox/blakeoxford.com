@@ -9,64 +9,64 @@
 import { cn } from '../../utils/cn';
 
 interface Props {
- size?: 'sm' | 'md' | 'lg' | 'xl';
- color?: 'accent' | 'accent-light' | 'primary' | 'sky';
- position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center' | 'custom';
- blur?: 'sm' | 'md' | 'lg' | 'custom';
- translate?: string;
- animated?: boolean;
- class?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  color?: 'accent' | 'accent-light' | 'primary' | 'sky';
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center' | 'custom';
+  blur?: 'sm' | 'md' | 'lg' | 'custom';
+  translate?: string;
+  animated?: boolean;
+  class?: string;
 }
 
 const {
- size = 'lg',
- color = 'accent',
- position = 'custom',
- blur = 'lg',
- translate = '',
- animated = false,
- class: className = '',
+  size = 'lg',
+  color = 'accent',
+  position = 'custom',
+  blur = 'lg',
+  translate = '',
+  animated = false,
+  class: className = '',
 } = Astro.props;
 
 const sizeClasses = {
- sm: 'w-48 h-48',
- md: 'w-64 h-64',
- lg: 'w-80 h-80',
- xl: 'w-96 h-96',
+  sm: 'w-48 h-48',
+  md: 'w-64 h-64',
+  lg: 'w-80 h-80',
+  xl: 'w-96 h-96',
 } as const;
 
 const colorClasses = {
- accent: 'bg-accent-subtle',
- 'accent-light': 'bg-accent/20',
- primary: 'bg-primary-subtle',
- sky: 'bg-info-subtle',
+  accent: 'bg-accent-subtle',
+  'accent-light': 'bg-accent/20',
+  primary: 'bg-primary-subtle',
+  sky: 'bg-info-subtle',
 } as const;
 
 const positionClasses = {
- 'top-left': 'top-0 left-0',
- 'top-right': 'top-0 right-0',
- 'bottom-left': 'bottom-0 left-0',
- 'bottom-right': 'bottom-0 right-0',
- center: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
- custom: '',
+  'top-left': 'top-0 left-0',
+  'top-right': 'top-0 right-0',
+  'bottom-left': 'bottom-0 left-0',
+  'bottom-right': 'bottom-0 right-0',
+  center: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+  custom: '',
 } as const;
 
 const blurClasses = {
- sm: 'blur-xl',
- md: 'blur-2xl',
- lg: 'blur-3xl',
- custom: 'blur-[120px]',
+  sm: 'blur-xl',
+  md: 'blur-2xl',
+  lg: 'blur-3xl',
+  custom: 'blur-[120px]',
 } as const;
 
 const finalClasses = cn(
- 'absolute rounded-full pointer-events-none',
- positionClasses[position],
- sizeClasses[size],
- colorClasses[color],
- blurClasses[blur],
- translate,
- animated && 'animate-pulse',
- className,
+  'pointer-events-none absolute rounded-full',
+  positionClasses[position],
+  sizeClasses[size],
+  colorClasses[color],
+  blurClasses[blur],
+  translate,
+  animated && 'animate-pulse',
+  className
 );
 ---
 

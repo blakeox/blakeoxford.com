@@ -37,7 +37,7 @@ describe('projects/index.astro', () => {
   });
 
   it('should not use deprecated getCollection pattern', () => {
-    expect(fileContent).not.toContain('getCollection(\'projects\')');
+    expect(fileContent).not.toContain("getCollection('projects')");
   });
 
   it('should source data from content helper', () => {

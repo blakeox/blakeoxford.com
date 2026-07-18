@@ -16,14 +16,14 @@ if (!fs.existsSync(HISTORY_PATH)) {
   console.error('contrast-sparkline-badge: no history file');
   process.exit(0);
 }
-const history = JSON.parse(fs.readFileSync(HISTORY_PATH,'utf8'));
-if (!Array.isArray(history) || !history.length){
+const history = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf8'));
+if (!Array.isArray(history) || !history.length) {
   console.error('contrast-sparkline-badge: empty history');
   process.exit(0);
 }
 // Build arrays
-const sampledSeries = history.map(h => h.summary?.sampled || 0);
-const borderlineSeries = history.map(h => h.summary?.borderline || 0);
+const sampledSeries = history.map((h) => h.summary?.sampled || 0);
+const borderlineSeries = history.map((h) => h.summary?.borderline || 0);
 // Compute rolling borderline series (aligned; only plot for points having enough history if desired)
 const rollingWindow = 7;
 const rollingSeries = borderlineSeries.map((_, idx) => {
@@ -31,9 +31,9 @@ const rollingSeries = borderlineSeries.map((_, idx) => {
   return rollingAverage(slice, rollingWindow) ?? 0;
 });
 
-function normalize(series, height){
+function normalize(series, height) {
   const max = Math.max(...series, 1);
-  return series.map(v => height - (v / max) * (height - 2) - 1); // padding
+  return series.map((v) => height - (v / max) * (height - 2) - 1); // padding
 }
 
 const width = 200;
@@ -45,19 +45,21 @@ const sampledY = normalize(sampledSeries, height);
 const borderlineY = normalize(borderlineSeries, height);
 const rollingY = normalize(rollingSeries, height);
 
-function linePath(yVals){
-  return yVals.map((y,i)=>`${i===0?'M':'L'}${(padLeft + i*step).toFixed(1)},${y.toFixed(1)}`).join(' ');
+function linePath(yVals) {
+  return yVals
+    .map((y, i) => `${i === 0 ? 'M' : 'L'}${(padLeft + i * step).toFixed(1)},${y.toFixed(1)}`)
+    .join(' ');
 }
 
 const sampledPath = linePath(sampledY);
 const borderlinePath = linePath(borderlineY);
 const rollingPath = linePath(rollingY);
 
-const latest = history[history.length-1];
+const latest = history[history.length - 1];
 const slope7 = latest.metrics?.slope7Borderline ?? null;
 const trendClass = classifyTrend(slope7, 0.02);
 const arrow = trendClass === 'worsening' ? '▲' : trendClass === 'improving' ? '▼' : '⭮';
-const label = `Contrast (borderline ${latest.summary?.borderline||0} ${arrow})`;
+const label = `Contrast (borderline ${latest.summary?.borderline || 0} ${arrow})`;
 
 const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${width}' height='${height}' role='img' aria-label='${label}'>
   <title>${label}</title>

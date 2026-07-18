@@ -2,16 +2,31 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { resetSearchCorpusCache } from '../../src/lib/search/searchIndexLoader';
 import { searchLocalCorpus } from '../../src/lib/search/localSearch';
-import {
-  filterNoisyHubRecords,
-  runSearch,
-} from '../../src/lib/search/searchService';
+import { filterNoisyHubRecords, runSearch } from '../../src/lib/search/searchService';
 import type { SearchRecord } from '../../src/lib/search/types';
 
 const sampleCorpus: SearchRecord[] = [
-  { type: 'page', title: 'Contact', description: 'Start a session', href: '/contact/', tags: ['contact'] },
-  { type: 'project', title: 'Microsoft Fabric', description: 'Operational intelligence', href: '/projects/microsoft-fabric/', tags: ['fabric'] },
-  { type: 'blog', title: 'CES 2026', description: 'AI has left the screen', href: '/blog/ces-2026-ai-has-left-the-screen/', tags: ['ai'] },
+  {
+    type: 'page',
+    title: 'Contact',
+    description: 'Start a session',
+    href: '/contact/',
+    tags: ['contact'],
+  },
+  {
+    type: 'project',
+    title: 'Microsoft Fabric',
+    description: 'Operational intelligence',
+    href: '/projects/microsoft-fabric/',
+    tags: ['fabric'],
+  },
+  {
+    type: 'blog',
+    title: 'CES 2026',
+    description: 'AI has left the screen',
+    href: '/blog/ces-2026-ai-has-left-the-screen/',
+    tags: ['ai'],
+  },
 ];
 
 describe('searchLocalCorpus', () => {
@@ -36,13 +51,25 @@ describe('runSearch', () => {
     vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const url = String(input);
       if (url.includes('/api/projects.json')) {
-        return new Response(JSON.stringify([{ slug: 'microsoft-fabric', title: 'Microsoft Fabric', description: 'Fabric project', tags: ['fabric'] }]), { status: 200 });
+        return new Response(
+          JSON.stringify([
+            {
+              slug: 'microsoft-fabric',
+              title: 'Microsoft Fabric',
+              description: 'Fabric project',
+              tags: ['fabric'],
+            },
+          ]),
+          { status: 200 }
+        );
       }
       if (url.includes('/api/blog.json')) {
         return new Response(JSON.stringify([]), { status: 200 });
       }
       if (url.includes('/api/semantic-search')) {
-        return new Response(JSON.stringify({ error: 'Semantic search not configured' }), { status: 503 });
+        return new Response(JSON.stringify({ error: 'Semantic search not configured' }), {
+          status: 503,
+        });
       }
       return new Response('{}', { status: 404 });
     });
@@ -62,17 +89,22 @@ describe('runSearch', () => {
         return new Response(JSON.stringify([]), { status: 200 });
       }
       if (url.includes('/api/semantic-search')) {
-        return new Response(JSON.stringify({
-          results: [{
-            id: 'blog-test',
-            score: 0.92,
-            title: 'CES 2026',
-            description: 'AI has left the screen',
-            url: 'https://blakeoxford.com/blog/ces-2026-ai-has-left-the-screen/',
-            collection: 'blog',
-            tags: ['ai'],
-          }],
-        }), { status: 200 });
+        return new Response(
+          JSON.stringify({
+            results: [
+              {
+                id: 'blog-test',
+                score: 0.92,
+                title: 'CES 2026',
+                description: 'AI has left the screen',
+                url: 'https://blakeoxford.com/blog/ces-2026-ai-has-left-the-screen/',
+                collection: 'blog',
+                tags: ['ai'],
+              },
+            ],
+          }),
+          { status: 200 }
+        );
       }
       return new Response('{}', { status: 404 });
     });
@@ -86,7 +118,17 @@ describe('runSearch', () => {
     vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const url = String(input);
       if (url.includes('/api/projects.json')) {
-        return new Response(JSON.stringify([{ slug: 'microsoft-fabric', title: 'Microsoft Fabric', description: 'Fabric project', tags: ['fabric'] }]), { status: 200 });
+        return new Response(
+          JSON.stringify([
+            {
+              slug: 'microsoft-fabric',
+              title: 'Microsoft Fabric',
+              description: 'Fabric project',
+              tags: ['fabric'],
+            },
+          ]),
+          { status: 200 }
+        );
       }
       if (url.includes('/api/blog.json')) {
         return new Response(JSON.stringify([]), { status: 200 });
@@ -106,48 +148,56 @@ describe('runSearch', () => {
     vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const url = String(input);
       if (url.includes('/api/projects.json')) {
-        return new Response(JSON.stringify([{
-          slug: 'microsoft-fabric',
-          title: 'Microsoft Fabric – Operational Intelligence & Workflow Automation',
-          description: 'Fabric project',
-          tags: ['fabric', 'automation'],
-        }]), { status: 200 });
+        return new Response(
+          JSON.stringify([
+            {
+              slug: 'microsoft-fabric',
+              title: 'Microsoft Fabric – Operational Intelligence & Workflow Automation',
+              description: 'Fabric project',
+              tags: ['fabric', 'automation'],
+            },
+          ]),
+          { status: 200 }
+        );
       }
       if (url.includes('/api/blog.json')) {
         return new Response(JSON.stringify([]), { status: 200 });
       }
       if (url.includes('/api/semantic-search')) {
-        return new Response(JSON.stringify({
-          results: [
-            {
-              id: 'page-projects',
-              score: 0.91,
-              title: 'Projects',
-              description: 'Browse projects',
-              url: 'https://blakeoxford.com/projects/',
-              collection: 'pages',
-              tags: [],
-            },
-            {
-              id: 'page-blog',
-              score: 0.89,
-              title: 'Blog',
-              description: 'Browse posts',
-              url: 'https://blakeoxford.com/blog/',
-              collection: 'pages',
-              tags: [],
-            },
-            {
-              id: 'project-fabric',
-              score: 0.72,
-              title: 'Microsoft Fabric – Operational Intelligence & Workflow Automation',
-              description: 'Automation workflows',
-              url: 'https://blakeoxford.com/projects/microsoft-fabric/',
-              collection: 'projects',
-              tags: ['automation'],
-            },
-          ],
-        }), { status: 200 });
+        return new Response(
+          JSON.stringify({
+            results: [
+              {
+                id: 'page-projects',
+                score: 0.91,
+                title: 'Projects',
+                description: 'Browse projects',
+                url: 'https://blakeoxford.com/projects/',
+                collection: 'pages',
+                tags: [],
+              },
+              {
+                id: 'page-blog',
+                score: 0.89,
+                title: 'Blog',
+                description: 'Browse posts',
+                url: 'https://blakeoxford.com/blog/',
+                collection: 'pages',
+                tags: [],
+              },
+              {
+                id: 'project-fabric',
+                score: 0.72,
+                title: 'Microsoft Fabric – Operational Intelligence & Workflow Automation',
+                description: 'Automation workflows',
+                url: 'https://blakeoxford.com/projects/microsoft-fabric/',
+                collection: 'projects',
+                tags: ['automation'],
+              },
+            ],
+          }),
+          { status: 200 }
+        );
       }
       return new Response('{}', { status: 404 });
     });
@@ -170,7 +220,13 @@ describe('filterNoisyHubRecords', () => {
   it('drops hub pages when the query does not match the title', () => {
     const records: SearchRecord[] = [
       { type: 'page', title: 'Projects', description: 'automation', href: '/projects/', tags: [] },
-      { type: 'project', title: 'Fabric', description: 'automation', href: '/projects/fabric/', tags: [] },
+      {
+        type: 'project',
+        title: 'Fabric',
+        description: 'automation',
+        href: '/projects/fabric/',
+        tags: [],
+      },
     ];
     const filtered = filterNoisyHubRecords(records, 'automation');
     expect(filtered).toHaveLength(1);

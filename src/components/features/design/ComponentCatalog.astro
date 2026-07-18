@@ -1,6 +1,11 @@
 ---
 import Badge from '../../primitives/Badge.astro';
-import { componentDocs, getCategories, getAllTags, type ComponentDoc } from '../../../data/componentDocs';
+import {
+  componentDocs,
+  getCategories,
+  getAllTags,
+  type ComponentDoc,
+} from '../../../data/componentDocs';
 import { componentVisualBaselines } from '../../../data/componentVisualBaselines';
 
 const categories = getCategories();
@@ -25,12 +30,12 @@ const allTags = getAllTags();
       type="search"
       id="component-search"
       placeholder="Search components by name, description, or tag..."
-      class="w-full rounded-xl border border-border px-6 py-4 text-lg transition focus:outline-none focus:ring-2 focus:ring-accent"
+      class="w-full rounded-xl border border-border px-6 py-4 text-lg transition focus:ring-2 focus:ring-accent focus:outline-none"
     />
   </div>
 
   <div class="mb-12">
-    <h3 class="mb-4 text-sm font-semibold uppercase tracking-wide text-subtle-foreground">
+    <h3 class="mb-4 text-sm font-semibold tracking-wide text-subtle-foreground uppercase">
       Filter by Tag
     </h3>
     <div class="flex flex-wrap gap-2">
@@ -40,186 +45,204 @@ const allTags = getAllTags();
       >
         All
       </button>
-      {allTags.map((tag) => (
-        <button
-          class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
-          data-tag={tag}
-        >
-          {tag}
-        </button>
-      ))}
+      {
+        allTags.map((tag) => (
+          <button
+            class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
+            data-tag={tag}
+          >
+            {tag}
+          </button>
+        ))
+      }
     </div>
   </div>
 
-  {componentsByCategory.map(({ category, components }) => (
-    <section class="mb-16">
-      <h3 class="mb-8 text-3xl font-bold text-foreground">
-        {category} Components
-        <span class="ml-2 text-base font-normal text-subtle-foreground">({components.length})</span>
-      </h3>
+  {
+    componentsByCategory.map(({ category, components }) => (
+      <section class="mb-16">
+        <h3 class="mb-8 text-3xl font-bold text-foreground">
+          {category} Components
+          <span class="ml-2 text-base font-normal text-subtle-foreground">
+            ({components.length})
+          </span>
+        </h3>
 
-      <div class="space-y-8">
-        {components.map((component: ComponentDoc) => (
-          <article
-            class="component-card min-w-0 overflow-hidden rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm transition-colors hover:border-accent/40 sm:p-8"
-            data-component-name={component.name.toLowerCase()}
-            data-component-tags={component.tags?.join(',') || ''}
-          >
-            <header class="mb-6">
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <h4 class="text-2xl font-bold text-foreground">
-                    {component.name}
-                  </h4>
-                  {component.subcategory && (
-                    <p class="mt-1 text-sm text-subtle-foreground">
-                      {component.category} › {component.subcategory}
-                    </p>
-                  )}
+        <div class="space-y-8">
+          {components.map((component: ComponentDoc) => (
+            <article
+              class="component-card min-w-0 overflow-hidden rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm transition-colors hover:border-accent/40 sm:p-8"
+              data-component-name={component.name.toLowerCase()}
+              data-component-tags={component.tags?.join(',') || ''}
+            >
+              <header class="mb-6">
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <h4 class="text-2xl font-bold text-foreground">{component.name}</h4>
+                    {component.subcategory && (
+                      <p class="mt-1 text-sm text-subtle-foreground">
+                        {component.category} › {component.subcategory}
+                      </p>
+                    )}
+                  </div>
+                  <a
+                    href={`https://github.com/blakeox/blakeoxford.com/blob/main/${component.filePath}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
+                  >
+                    View Source
+                  </a>
                 </div>
-                <a
-                  href={`https://github.com/blakeox/blakeoxford.com/blob/main/${component.filePath}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
-                >
-                  View Source
-                </a>
-              </div>
 
-              <p class="mt-4 text-muted-foreground">
-                {component.description}
-              </p>
+                <p class="mt-4 text-muted-foreground">{component.description}</p>
 
-              {component.visualTier && (
-                <p class="mt-3 text-sm">
-                  <span class="font-semibold text-foreground">Visual tier:</span>{' '}
-                  <Badge class="bg-surface-subtle text-foreground text-xs">{component.visualTier}</Badge>
-                </p>
+                {component.visualTier && (
+                  <p class="mt-3 text-sm">
+                    <span class="font-semibold text-foreground">Visual tier:</span>{' '}
+                    <Badge class="bg-surface-subtle text-xs text-foreground">
+                      {component.visualTier}
+                    </Badge>
+                  </p>
+                )}
+
+                {component.tokenDependencies && component.tokenDependencies.length > 0 && (
+                  <div class="mt-3">
+                    <p class="text-sm font-semibold text-foreground">Token dependencies</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      {component.tokenDependencies.map((token) => (
+                        <code class="rounded bg-accent-subtle px-2 py-1 text-xs text-accent">
+                          {token}
+                        </code>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {component.visualBaseline && (
+                  <p class="mt-3 text-sm text-muted-foreground">
+                    <span class="font-semibold text-foreground">Visual baseline:</span> Playwright
+                    snapshot{' '}
+                    <code class="text-accent">
+                      {componentVisualBaselines[component.visualBaseline].snapshotFile}
+                    </code>
+                    on <code>{componentVisualBaselines[component.visualBaseline].route}</code>
+                  </p>
+                )}
+
+                {component.tags && component.tags.length > 0 && (
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    {component.tags.map((tag) => (
+                      <Badge class="bg-accent-subtle text-xs text-accent">{tag}</Badge>
+                    ))}
+                  </div>
+                )}
+              </header>
+
+              {component.props && component.props.length > 0 && (
+                <div class="mb-6">
+                  <h5 class="mb-3 text-lg font-semibold text-foreground">Props</h5>
+                  <div class="max-w-full overflow-x-auto" tabindex="0">
+                    <table class="w-full text-sm">
+                      <thead class="border-b border-border">
+                        <tr class="text-left">
+                          <th class="pr-4 pb-2 font-semibold">Name</th>
+                          <th class="pr-4 pb-2 font-semibold">Type</th>
+                          <th class="pr-4 pb-2 font-semibold">Default</th>
+                          <th class="pb-2 font-semibold">Description</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-border">
+                        {component.props.map((prop) => (
+                          <tr>
+                            <td class="py-3 pr-4">
+                              <code class="rounded bg-accent-subtle px-2 py-1 text-accent">
+                                {prop.name}
+                                {prop.required && <span class="text-error">*</span>}
+                              </code>
+                            </td>
+                            <td class="py-3 pr-4">
+                              <code class="text-muted-foreground">{prop.type}</code>
+                            </td>
+                            <td class="py-3 pr-4">
+                              {prop.default ? (
+                                <code class="text-muted-foreground">{prop.default}</code>
+                              ) : (
+                                <span class="text-subtle-foreground/80">—</span>
+                              )}
+                            </td>
+                            <td class="py-3 text-muted-foreground">{prop.description}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               )}
 
-              {component.tokenDependencies && component.tokenDependencies.length > 0 && (
-                <div class="mt-3">
-                  <p class="text-sm font-semibold text-foreground">Token dependencies</p>
-                  <div class="mt-2 flex flex-wrap gap-2">
-                    {component.tokenDependencies.map((token) => (
-                      <code class="rounded bg-accent-subtle px-2 py-1 text-xs text-accent">{token}</code>
+              {component.examples && component.examples.length > 0 && (
+                <div class="mb-6">
+                  <h5 class="mb-3 text-lg font-semibold text-foreground">Examples</h5>
+                  <div class="space-y-4">
+                    {component.examples.map((example) => (
+                      <div>
+                        {example.title && (
+                          <p class="mb-2 text-sm font-medium text-muted-foreground">
+                            {example.title}
+                          </p>
+                        )}
+                        {example.description && (
+                          <p class="mb-2 text-sm text-subtle-foreground">{example.description}</p>
+                        )}
+                        <pre
+                          class="max-w-full overflow-x-auto rounded-xl bg-code-surface p-4 text-sm text-code-foreground"
+                          tabindex="0"
+                        >
+                          <code>{example.code}</code>
+                        </pre>
+                      </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {component.visualBaseline && (
-                <p class="mt-3 text-sm text-muted-foreground">
-                  <span class="font-semibold text-foreground">Visual baseline:</span>{' '}
-                  Playwright snapshot <code class="text-accent">{componentVisualBaselines[component.visualBaseline].snapshotFile}</code>
-                  on <code>{componentVisualBaselines[component.visualBaseline].route}</code>
-                </p>
-              )}
-
-              {component.tags && component.tags.length > 0 && (
-                <div class="mt-4 flex flex-wrap gap-2">
-                  {component.tags.map((tag) => (
-                    <Badge class="bg-accent-subtle text-accent text-xs">{tag}</Badge>
-                  ))}
+              {component.accessibility && component.accessibility.length > 0 && (
+                <div class="mb-6">
+                  <h5 class="mb-3 text-lg font-semibold text-foreground">Accessibility</h5>
+                  <ul class="space-y-2">
+                    {component.accessibility.map((feature) => (
+                      <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                        <span class="mt-1 text-success">✓</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
-            </header>
 
-            {component.props && component.props.length > 0 && (
-              <div class="mb-6">
-                <h5 class="mb-3 text-lg font-semibold text-foreground">Props</h5>
-                <div class="max-w-full overflow-x-auto" tabindex="0">
-                  <table class="w-full text-sm">
-                    <thead class="border-b border-border">
-                      <tr class="text-left">
-                        <th class="pb-2 pr-4 font-semibold">Name</th>
-                        <th class="pb-2 pr-4 font-semibold">Type</th>
-                        <th class="pb-2 pr-4 font-semibold">Default</th>
-                        <th class="pb-2 font-semibold">Description</th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-border">
-                      {component.props.map((prop) => (
-                        <tr>
-                          <td class="py-3 pr-4">
-                            <code class="rounded bg-accent-subtle px-2 py-1 text-accent">
-                              {prop.name}
-                              {prop.required && <span class="text-error">*</span>}
-                            </code>
-                          </td>
-                          <td class="py-3 pr-4">
-                            <code class="text-muted-foreground">{prop.type}</code>
-                          </td>
-                          <td class="py-3 pr-4">
-                            {prop.default ? (
-                              <code class="text-muted-foreground">{prop.default}</code>
-                            ) : (
-                              <span class="text-subtle-foreground/80">—</span>
-                            )}
-                          </td>
-                          <td class="py-3 text-muted-foreground">{prop.description}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              {component.performance && component.performance.length > 0 && (
+                <div>
+                  <h5 class="mb-3 text-lg font-semibold text-foreground">Performance</h5>
+                  <ul class="space-y-2">
+                    {component.performance.map((feature) => (
+                      <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                        <span class="mt-1 text-info">⚡</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-            )}
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+    ))
+  }
 
-            {component.examples && component.examples.length > 0 && (
-              <div class="mb-6">
-                <h5 class="mb-3 text-lg font-semibold text-foreground">Examples</h5>
-                <div class="space-y-4">
-                  {component.examples.map((example) => (
-                    <div>
-                      {example.title && (
-                        <p class="mb-2 text-sm font-medium text-muted-foreground">{example.title}</p>
-                      )}
-                      {example.description && (
-                        <p class="mb-2 text-sm text-subtle-foreground">{example.description}</p>
-                      )}
-                      <pre class="max-w-full overflow-x-auto rounded-xl bg-code-surface p-4 text-sm text-code-foreground" tabindex="0"><code>{example.code}</code></pre>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {component.accessibility && component.accessibility.length > 0 && (
-              <div class="mb-6">
-                <h5 class="mb-3 text-lg font-semibold text-foreground">Accessibility</h5>
-                <ul class="space-y-2">
-                  {component.accessibility.map((feature) => (
-                    <li class="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span class="mt-1 text-success">✓</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {component.performance && component.performance.length > 0 && (
-              <div>
-                <h5 class="mb-3 text-lg font-semibold text-foreground">Performance</h5>
-                <ul class="space-y-2">
-                  {component.performance.map((feature) => (
-                    <li class="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span class="mt-1 text-info">⚡</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </article>
-        ))}
-      </div>
-    </section>
-  ))}
-
-  <footer class="mt-16 rounded-2xl border border-border/40 bg-surface/70 p-5 text-center shadow-sm sm:p-8">
+  <footer
+    class="mt-16 rounded-2xl border border-border/40 bg-surface/70 p-5 text-center shadow-sm sm:p-8"
+  >
     <h3 class="mb-4 text-2xl font-bold text-foreground">Documentation Statistics</h3>
     <div class="grid gap-6 sm:grid-cols-3">
       <div>
@@ -266,7 +289,9 @@ const allTags = getAllTags();
 
   tagFilters.forEach((button) => {
     button.addEventListener('click', () => {
-      tagFilters.forEach((btn) => btn.classList.remove('bg-accent', 'text-on-accent', 'border-accent'));
+      tagFilters.forEach((btn) =>
+        btn.classList.remove('bg-accent', 'text-on-accent', 'border-accent')
+      );
       button.classList.add('bg-accent', 'text-on-accent', 'border-accent');
       currentTag = button.getAttribute('data-tag') || 'all';
       filterComponents();
@@ -284,7 +309,9 @@ const allTags = getAllTags();
   }
 
   .component-card {
-    transition: opacity 0.2s ease, border-color 0.2s ease;
+    transition:
+      opacity 0.2s ease,
+      border-color 0.2s ease;
   }
 
   @media (max-width: 768px) {

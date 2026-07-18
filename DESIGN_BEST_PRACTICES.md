@@ -17,12 +17,12 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 
 **Single source:** `src/styles/theme.css`
 
-| Step | Where | What |
-|------|--------|------|
-| 1. Values | `:root` custom properties | OKLCH colors, radius, shadows, motion, fonts, z-index, layout chrome |
-| 2. Dark remap | `&[data-theme='dark']`, `&.dark` | Semantic tokens flip (`--color-background`, `--color-foreground`, emphasis, glass, etc.) |
-| 3. Tailwind bridge | `@theme inline` | Exposes utilities (`bg-surface`, `text-accent-emphasis`, `shadow-overlay`, `duration-normal`, `z-nav`). Z-index tokens use the `--z-index-*` namespace so utilities become `z-nav`, `z-chat`, `z-chat-launcher`, `z-search`. |
-| 4. Build | `@tailwindcss/vite` in `astro.config.mjs` | Resolves `@import "tailwindcss"` from `global.css` |
+| Step               | Where                                     | What                                                                                                                                                                                                                         |
+| ------------------ | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Values          | `:root` custom properties                 | OKLCH colors, radius, shadows, motion, fonts, z-index, layout chrome                                                                                                                                                         |
+| 2. Dark remap      | `&[data-theme='dark']`, `&.dark`          | Semantic tokens flip (`--color-background`, `--color-foreground`, emphasis, glass, etc.)                                                                                                                                     |
+| 3. Tailwind bridge | `@theme inline`                           | Exposes utilities (`bg-surface`, `text-accent-emphasis`, `shadow-overlay`, `duration-normal`, `z-nav`). Z-index tokens use the `--z-index-*` namespace so utilities become `z-nav`, `z-chat`, `z-chat-launcher`, `z-search`. |
+| 4. Build           | `@tailwindcss/vite` in `astro.config.mjs` | Resolves `@import "tailwindcss"` from `global.css`                                                                                                                                                                           |
 
 `global.css` loads Tailwind and `@plugin "@tailwindcss/typography"`. There is no JS `tailwind.config` — tokens, variants, and utilities are CSS-first.
 
@@ -33,28 +33,30 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 - **OKLCH + `color-mix()`** — perceptual brand colors and theme-aware subtles (`--color-accent-subtle`)
 - **Always-dark helpers** — `overlay-scrim`, `code-surface` / `code-foreground` for scrims and code samples (not remapped)
 - **Cascade layers** — base styles in `@layer base`; shared chrome in `@layer components`
-- **Class composer** — `cn()` in `src/utils/cn.ts` for primitives (no Tailwind merge; keep variants controlled)
+- **Class composer** — `cn()` in `src/utils/cn.ts` for primitives (no `tailwind-merge`; keep variants controlled — do not add merge without an ADR)
 
 ### Token categories (actual)
 
-| Category | Examples | Utilities |
-|----------|----------|-----------|
-| Color | `--color-accent`, `--color-surface`, `--color-muted-foreground` | `bg-accent`, `text-muted-foreground` |
-| Emphasis | `--color-accent-emphasis`, `--color-error-emphasis` | `text-accent-emphasis` |
-| Subtle washes | `--color-accent-subtle` via `color-mix` | `bg-accent-subtle` (prefer over `bg-accent/10`) |
-| Overlay / code | `--color-overlay-scrim`, `--color-code-surface` | `bg-overlay-scrim`, `bg-code-surface` |
-| Typography | `--font-sans`, `--font-heading`, `--text-xxs`, `--tracking-label` | `font-heading`, `text-xxs` |
-| Radius | `--radius` … `--radius-2xl` | `rounded`, `rounded-xl` |
-| Shadows | `--shadow-sm` … `--shadow-2xl`, `--shadow-overlay` | `shadow-md`, `shadow-overlay` |
-| Motion | `--duration-fast` … `--duration-slow` | `duration-fast`, `duration-moderate` |
-| Z-index | `--z-nav`, `--z-chat`, `--z-chat-launcher`, `--z-search` | `z-nav`, `z-chat`, `z-chat-launcher`, `z-search` |
-| Layout | `--container-padding*`, `--layout-max-2xl`, `--nav-height` | `layout-gutter` (via `Container`), `max-w-container-2xl` |
+| Category       | Examples                                                          | Utilities                                                |
+| -------------- | ----------------------------------------------------------------- | -------------------------------------------------------- |
+| Color          | `--color-accent`, `--color-surface`, `--color-muted-foreground`   | `bg-accent`, `text-muted-foreground`                     |
+| Emphasis       | `--color-accent-emphasis`, `--color-error-emphasis`               | `text-accent-emphasis`                                   |
+| Subtle washes  | `--color-accent-subtle` via `color-mix`                           | `bg-accent-subtle` (prefer over `bg-accent/10`)          |
+| Overlay / code | `--color-overlay-scrim`, `--color-code-surface`                   | `bg-overlay-scrim`, `bg-code-surface`                    |
+| Typography     | `--font-sans`, `--font-heading`, `--text-xxs`, `--tracking-label` | `font-heading`, `text-xxs`                               |
+| Radius         | `--radius` … `--radius-2xl`                                       | `rounded`, `rounded-xl`                                  |
+| Shadows        | `--shadow-sm` … `--shadow-2xl`, `--shadow-overlay`                | `shadow-md`, `shadow-overlay`                            |
+| Motion         | `--duration-fast` … `--duration-slow`                             | `duration-fast`, `duration-moderate`                     |
+| Z-index        | `--z-nav`, `--z-chat`, `--z-chat-launcher`, `--z-search`          | `z-nav`, `z-chat`, `z-chat-launcher`, `z-search`         |
+| Layout         | `--container-padding*`, `--layout-max-2xl`, `--nav-height`        | `layout-gutter` (via `Container`), `max-w-container-2xl` |
 
-Page gutters: prefer `Container` or the `.layout-gutter` class. Do not hard-code `px-4 sm:px-6 lg:px-8` — `design:lint` rejects that pattern on app surfaces.
+Page gutters: prefer `Container` or the `.layout-gutter` class. Do not hard-code responsive padding ladders (`px-4 sm:px-6 lg:px-8`, `px-4 md:px-6 lg:px-12`, etc.) — `design:lint` rejects those patterns on app surfaces.
 
-Article/MDX body: wrap with `Prose` (`src/components/primitives/Prose.astro`). Token remaps for typography live in `@utility prose` in `global.css`.
+Article/MDX body: wrap with `Prose` (`src/components/primitives/Prose.astro`). Token remaps for typography live in `@utility prose` in `global.css`. Do not nest extra `prose` shells inside MDX.
 
-Live token docs at `/design/tokens` auto-list public utilities by parsing `@theme inline` via `src/lib/designTokens.ts`.
+**MDX elevation policy:** `design:lint` bans arbitrary `shadow-[…]` / `rounded-[…]` in `src/content/blog`. Named `shadow-xl` / `shadow-2xl` in older posts is legacy-exempt until those blocks migrate to composites (`FeatureCard`, etc.). New MDX should prefer ≤ `shadow-lg` and token radii.
+
+Live token docs at `/design/tokens` auto-list public utilities by parsing `@theme inline` via `src/lib/designTokens.ts`, and show browser-resolved values plus live WCAG contrast pairs.
 
 There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind’s type and spacing scales plus the tokens above.
 
@@ -81,12 +83,14 @@ There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind�
 **Component-based responsive design** - Components adapt to their container width, not the viewport.
 
 #### Built-in Tailwind v4 support
+
 - Container queries ship with Tailwind v4 (`@container`, `@sm:` … `@7xl:`)
 - Excellent browser support: Chrome 106+, Safari 16+, Firefox 110+
 
 #### Usage Patterns
 
 **Container Wrapper**:
+
 ```astro
 <div class="@container">
   <Card>
@@ -96,6 +100,7 @@ There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind�
 ```
 
 **Container Query Modifiers** (from Tailwind `--container-*`):
+
 - `@sm:` - 24rem (384px)
 - `@md:` - 28rem (448px)
 - `@lg:` - 32rem (512px)
@@ -104,33 +109,37 @@ There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind�
 - `@3xl:` - 48rem (768px)
 
 **Practical Examples**:
+
 ```astro
 <!-- Responsive spacing -->
 <div class="@container p-4 @sm:p-6 @md:p-8">
-
-<!-- Responsive layout -->
-<div class="@container flex flex-col @md:flex-row @lg:gap-8">
-
-<!-- Responsive typography -->
-<h2 class="@container text-xl @sm:text-2xl @md:text-3xl">
-
-<!-- Responsive visibility -->
-<div class="@container hidden @md:block">
+  <!-- Responsive layout -->
+  <div class="@container flex flex-col @md:flex-row @lg:gap-8">
+    <!-- Responsive typography -->
+    <h2 class="@container text-xl @sm:text-2xl @md:text-3xl">
+      <!-- Responsive visibility -->
+      <div class="@container hidden @md:block"></div>
+    </h2>
+  </div>
+</div>
 ```
 
 **Component Integration**:
+
 - **Card**: Supports `containerQuery` prop for opt-in container support
 - **FeatureCard**: Built-in container query responsive padding/typography
 - **ProjectCard**: Automatic container query spacing adjustments
 - **BlogPostCard**: Container-aware typography and spacing
 
 **Best Practices**:
+
 - Wrap card grids in `@container` for optimal responsiveness
 - Use container queries for sidebar widgets
 - Prefer container queries over viewport queries for reusable components
 - Combine viewport and container queries for hybrid layouts
 
 **Migration Strategy**:
+
 ```diff
 <!-- Old: Viewport-based -->
 - <div class="p-4 sm:p-6 md:p-8">
@@ -152,6 +161,7 @@ For page-level layouts that should respond to viewport:
 - `2xl`: 1440px (project container screen; not Tailwind’s default 1536px)
 
 Use for:
+
 - Global navigation changes
 - Page layout shifts
 - Footer reorganization
@@ -170,16 +180,16 @@ Use for:
 
 To ensure global theming agility and hardened accessibility, direct Tailwind grayscale utilities for body or heading text (e.g., `text-gray-600/700/800/900` and dark variants) are deprecated. Always express textual color via semantic tokens:
 
-| Intent | Utility Pattern | Backed Token |
-|--------|-----------------|--------------|
-| Primary text | `text-foreground` | `--color-foreground` |
-| Muted / secondary | `text-foreground/80` (or /70) | same + opacity layer |
-| Strong emphasis | `text-foreground` with font-weight change | `--color-foreground` |
-| Inverse (on dark surface) | `text-foreground` on dark surfaces | `--color-foreground` |
-| Surface background | `bg-surface` (theme-aware) | `--color-surface` |
-| Accent text | `text-accent-emphasis` (theme-aware) | `--color-accent-emphasis` |
-| Page background | `bg-background` (theme-aware) | `--color-background` |
-| Border | `border-border` (theme-aware) | `--color-border` |
+| Intent                    | Utility Pattern                           | Backed Token              |
+| ------------------------- | ----------------------------------------- | ------------------------- |
+| Primary text              | `text-foreground`                         | `--color-foreground`      |
+| Muted / secondary         | `text-foreground/80` (or /70)             | same + opacity layer      |
+| Strong emphasis           | `text-foreground` with font-weight change | `--color-foreground`      |
+| Inverse (on dark surface) | `text-foreground` on dark surfaces        | `--color-foreground`      |
+| Surface background        | `bg-surface` (theme-aware)                | `--color-surface`         |
+| Accent text               | `text-accent-emphasis` (theme-aware)      | `--color-accent-emphasis` |
+| Page background           | `bg-background` (theme-aware)             | `--color-background`      |
+| Border                    | `border-border` (theme-aware)             | `--color-border`          |
 
 Rules:
 
@@ -259,6 +269,7 @@ Native smooth page transitions using Astro's built-in View Transitions API:
 - **Browser Support**: Chrome 111+, Safari 18+, Firefox (in development)
 
 **Guidelines**:
+
 - Persist shared UI elements (navigation, footer, widgets)
 - Animate main content areas for smooth transitions
 - Test across different page types (blog, projects, contact)
@@ -274,6 +285,7 @@ Native smooth page transitions using Astro's built-in View Transitions API:
 Parent state styling based on child conditions eliminates JavaScript for common patterns:
 
 **Form Validation**:
+
 ```css
 .form-group:has(input:invalid:not(:placeholder-shown)) {
   border-inline-start: 3px solid var(--color-error);
@@ -285,21 +297,24 @@ Parent state styling based on child conditions eliminates JavaScript for common 
 ```
 
 **Card Selection**:
+
 ```css
-.card:has(input[type="checkbox"]:checked) {
+.card:has(input[type='checkbox']:checked) {
   background: var(--color-primary-subtle);
   border-color: var(--color-primary);
 }
 ```
 
 **Navigation State**:
+
 ```css
-nav:has(a[aria-current="page"]) {
+nav:has(a[aria-current='page']) {
   border-block-end: 2px solid var(--color-accent);
 }
 ```
 
 **Focus Within**:
+
 ```css
 .container:has(:focus-visible) {
   outline: 2px solid var(--focus-ring-color);
@@ -308,6 +323,7 @@ nav:has(a[aria-current="page"]) {
 ```
 
 **Error Indicators**:
+
 ```css
 section:has(.error)::before {
   content: '';
@@ -319,12 +335,14 @@ section:has(.error)::before {
 ```
 
 **Benefits**:
+
 - No JavaScript for parent state changes
 - Better performance
 - Cleaner code architecture
 - Excellent browser support (Chrome 105+, Safari 15.4+, Firefox 121+)
 
 **Guidelines**:
+
 - Use for parent-child state relationships
 - Combine with logical properties for i18n
 - Test in all supported browsers
@@ -355,11 +373,11 @@ section:has(.error)::before {
 
 `src/lib/theme.ts` writes **both** signals to `<html>` on every theme change, and each has a distinct job:
 
-| Signal | Consumer | Why it exists |
-|--------|----------|---------------|
-| `data-theme="dark"` \| `"light"` | CSS token remap in `theme.css` (`:root[data-theme='dark']`) and SSR/FOUC cookie | Source of truth for semantic token flips; readable server-side |
-| `.dark` class | Tailwind's `dark:` variant (`@custom-variant dark (&:where(.dark, .dark *))` in `global.css`) | Lets the few unavoidable `dark:*` utilities resolve |
-| `data-theme-preference` | Theme-toggle icon state (sun/moon/system) | Tracks the *preference* (incl. `system`), not the resolved theme |
+| Signal                           | Consumer                                                                                      | Why it exists                                                    |
+| -------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `data-theme="dark"` \| `"light"` | CSS token remap in `theme.css` (`:root[data-theme='dark']`) and SSR/FOUC cookie               | Source of truth for semantic token flips; readable server-side   |
+| `.dark` class                    | Tailwind's `dark:` variant (`@custom-variant dark (&:where(.dark, .dark *))` in `global.css`) | Lets the few unavoidable `dark:*` utilities resolve              |
+| `data-theme-preference`          | Theme-toggle icon state (sun/moon/system)                                                     | Tracks the _preference_ (incl. `system`), not the resolved theme |
 
 Rules:
 
@@ -432,19 +450,19 @@ Defined at the top of `theme.css`:
 
 ```css
 @property --color-primary {
-  syntax: "<color>";
+  syntax: '<color>';
   inherits: true;
   initial-value: oklch(0.55 0.22 264);
 }
 
 @property --gradient-angle {
-  syntax: "<angle>";
+  syntax: '<angle>';
   inherits: false;
   initial-value: 0deg;
 }
 
 @property --scale-factor {
-  syntax: "<number>";
+  syntax: '<number>';
   inherits: false;
   initial-value: 1;
 }
@@ -453,6 +471,7 @@ Defined at the top of `theme.css`:
 ### Use Cases
 
 #### 1. Smooth Color Transitions
+
 ```css
 .button {
   background: var(--color-primary);
@@ -465,20 +484,22 @@ Defined at the top of `theme.css`:
 ```
 
 #### 2. Rotating Gradients
+
 ```css
 .gradient-card {
-  background: linear-gradient(var(--gradient-angle), 
-    var(--color-primary), 
-    var(--color-accent));
+  background: linear-gradient(var(--gradient-angle), var(--color-primary), var(--color-accent));
   animation: rotate-gradient 3s linear infinite;
 }
 
 @keyframes rotate-gradient {
-  to { --gradient-angle: 360deg; }
+  to {
+    --gradient-angle: 360deg;
+  }
 }
 ```
 
 #### 3. Interactive Transforms
+
 ```css
 .scale-card {
   transform: scale(var(--scale-factor));
@@ -490,12 +511,14 @@ Defined at the top of `theme.css`:
 ```
 
 ### Browser Support
+
 - Chrome 85+ ✅
 - Safari 16.4+ ✅
 - Firefox 128+ ✅
 - ~92% global coverage
 
 ### Guidelines
+
 - Use for **animated** properties only (color, angle, number, length)
 - Set `inherits: true` for theme tokens, `false` for component-specific
 - Always provide `initial-value` for fallback
@@ -508,6 +531,7 @@ Defined at the top of `theme.css`:
 ### Philosophy
 
 Focus indicators must be **immediately visible** to keyboard users with:
+
 - High contrast against all backgrounds
 - Sufficient size (3px minimum)
 - Clear offset from element
@@ -525,6 +549,7 @@ Focus indicators must be **immediately visible** to keyboard users with:
 ```
 
 **Features**:
+
 - 3px solid outline (WCAG AAA)
 - 3px offset for breathing room
 - 6px shadow for visibility on any background
@@ -544,6 +569,7 @@ Uses accent color (cyan) for better contrast in dark mode.
 ### Element-Specific Patterns
 
 #### Buttons
+
 ```css
 button:focus-visible {
   outline-width: 3px;
@@ -553,6 +579,7 @@ button:focus-visible {
 ```
 
 #### Links
+
 ```css
 a:focus-visible {
   outline-width: 2px;
@@ -564,6 +591,7 @@ a:focus-visible {
 ```
 
 #### Form Inputs
+
 ```css
 input:focus-visible,
 textarea:focus-visible,
@@ -585,6 +613,7 @@ select:focus-visible {
 ```
 
 **Visual on Focus**:
+
 - Position: absolute, top-left
 - Z-index: 50 (above all content)
 - High contrast background (accent color)
@@ -594,26 +623,26 @@ select:focus-visible {
 ### Testing Focus Indicators
 
 **Manual Test**:
+
 1. Press Tab repeatedly from page top
 2. Verify focus visible on every interactive element
 3. Check contrast in both light/dark modes
 4. Test on complex backgrounds (images, gradients)
 
 **Automated Test**:
+
 ```typescript
 test('focus indicators visible', async ({ page }) => {
   await page.goto('/');
-  
+
   // Tab through elements
   for (let i = 0; i < 10; i++) {
     await page.keyboard.press('Tab');
     const focused = page.locator(':focus-visible');
     await expect(focused).toBeVisible();
-    
+
     // Verify outline exists
-    const outline = await focused.evaluate(el => 
-      getComputedStyle(el).outlineWidth
-    );
+    const outline = await focused.evaluate((el) => getComputedStyle(el).outlineWidth);
     expect(parseInt(outline)).toBeGreaterThan(0);
   }
 });
@@ -623,7 +652,7 @@ test('focus indicators visible', async ({ page }) => {
 
 ✅ **WCAG 2.4.7 Focus Visible (Level AA)**: All interactive elements have visible focus  
 ✅ **WCAG 2.4.11 Focus Not Obscured (Level AAA)**: Focus indicators not hidden by other content  
-✅ **WCAG 1.4.11 Non-text Contrast (Level AA)**: 3:1 contrast ratio for UI components  
+✅ **WCAG 1.4.11 Non-text Contrast (Level AA)**: 3:1 contrast ratio for UI components
 
 ---
 
@@ -634,6 +663,7 @@ test('focus indicators visible', async ({ page }) => {
 Created comprehensive guide at `/accessibility/keyboard-shortcuts/`:
 
 **Features**:
+
 - All keyboard shortcuts documented by category
 - Visual `<kbd>` elements for key representation
 - Accessibility features list
@@ -641,6 +671,7 @@ Created comprehensive guide at `/accessibility/keyboard-shortcuts/`:
 - Contact link for feedback
 
 ### Shortcut Categories
+
 1. **Navigation**: Tab, Shift+Tab, Enter, Space, Escape
 2. **Skip Links**: Quick jumps to main/footer/top
 3. **Search**: Cmd/Ctrl+K to open, arrow keys to navigate
@@ -651,6 +682,7 @@ Created comprehensive guide at `/accessibility/keyboard-shortcuts/`:
 ### Implementation
 
 Link from footer or about page:
+
 ```astro
 <a href="/accessibility/keyboard-shortcuts/">Keyboard Shortcuts</a>
 ```

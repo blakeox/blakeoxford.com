@@ -1,15 +1,15 @@
 /**
  * Primitives - Low-level reusable components
- * 
+ *
  * These are the building blocks for more complex components.
  * They provide consistent styling, behavior, and accessibility.
- * 
+ *
  * Categories:
  * - Controls: Badge, Button, DateDisplay
  * - Media: OptimizedImage, ProficiencyLogo
  * - Forms: FormField
  * - Layout: Container, Stack, Section
- * 
+ *
  * @example
  * import { BaseCard, Badge, Button, DateDisplay, FormField, Container, Stack, Section } from '../primitives';
  */

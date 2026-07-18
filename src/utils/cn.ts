@@ -3,13 +3,7 @@
  * Falsy values are dropped; arrays are flattened. No Tailwind conflict merge —
  * prefer controlled variant maps over competing utilities in one string.
  */
-export type ClassValue =
-  | string
-  | number
-  | false
-  | null
-  | undefined
-  | ClassValue[];
+export type ClassValue = string | number | false | null | undefined | ClassValue[];
 
 export function cn(...inputs: ClassValue[]): string {
   const out: string[] = [];

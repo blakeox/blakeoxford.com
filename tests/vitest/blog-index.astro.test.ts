@@ -4,7 +4,7 @@ import path from 'path';
 
 describe('Blog Index Page', () => {
   let fileContent: string;
-  
+
   beforeAll(() => {
     const filePath = path.resolve(__dirname, '../../src/pages/blog/index.astro');
     fileContent = readFileSync(filePath, 'utf-8');
@@ -19,7 +19,7 @@ describe('Blog Index Page', () => {
   });
 
   it('should load posts from content collections', () => {
-    expect(fileContent).toContain('await getCollection(\'blog\',');
+    expect(fileContent).toContain("await getCollection('blog',");
     expect(fileContent).toContain('const sortedPosts = posts');
   });
 

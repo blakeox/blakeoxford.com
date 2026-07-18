@@ -47,9 +47,9 @@ export class FormValidation {
       enableAccessibility: true,
       showErrorsImmediately: false,
       customRules: new Map(),
-      ...config
+      ...config,
     };
-    
+
     this.init();
   }
 
@@ -58,7 +58,7 @@ export class FormValidation {
     this.setupDefaultErrorMessages();
     this.scanForForms();
     this.setupGlobalFormHandlers();
-    
+
     // Mark as loaded in lazy loader
     if (typeof window !== 'undefined' && window.LazyBundleLoader) {
       window.LazyBundleLoader.markModuleLoaded('forms');
@@ -68,17 +68,17 @@ export class FormValidation {
   private setupDefaultValidationRules(): void {
     this.validationRules.set('email', {
       pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      message: 'Please enter a valid email address'
+      message: 'Please enter a valid email address',
     });
 
     this.validationRules.set('phone', {
       pattern: /^[+]?[1-9][\d]{0,15}$/,
-      message: 'Please enter a valid phone number'
+      message: 'Please enter a valid phone number',
     });
 
     this.validationRules.set('required', {
       validate: (value: string) => value.trim().length > 0,
-      message: 'This field is required'
+      message: 'This field is required',
     });
 
     this.validationRules.set('minLength', {
@@ -89,7 +89,7 @@ export class FormValidation {
       message: (param?: string | number) => {
         const min = typeof param === 'number' ? param : parseInt(param as string) || 0;
         return `Must be at least ${min} characters`;
-      }
+      },
     });
 
     this.validationRules.set('maxLength', {
@@ -100,12 +100,12 @@ export class FormValidation {
       message: (param?: string | number) => {
         const max = typeof param === 'number' ? param : parseInt(param as string) || 0;
         return `Must be no more than ${max} characters`;
-      }
+      },
     });
 
     this.validationRules.set('url', {
       pattern: /^https?:\/\/.+/,
-      message: 'Please enter a valid URL'
+      message: 'Please enter a valid URL',
     });
 
     // Add custom rules from config
@@ -125,7 +125,7 @@ export class FormValidation {
 
   private scanForForms(): void {
     const forms = document.querySelectorAll<HTMLFormElement>('form[data-validate]');
-    forms.forEach(form => this.registerForm(form));
+    forms.forEach((form) => this.registerForm(form));
   }
 
   public registerForm(form: HTMLFormElement): void {
@@ -133,7 +133,7 @@ export class FormValidation {
     this.forms.set(formId, {
       element: form,
       fields: new Map(),
-      isValid: true
+      isValid: true,
     });
 
     this.setupFormValidation(form, formId);
@@ -142,14 +142,14 @@ export class FormValidation {
   private setupFormValidation(form: HTMLFormElement, formId: string): void {
     const formData = this.forms.get(formId);
     if (!formData) return;
-    
+
     // Setup field validation
     const fields = form.querySelectorAll<HTMLElement>('input, textarea, select');
-    fields.forEach(field => this.setupFieldValidation(field, formId));
+    fields.forEach((field) => this.setupFieldValidation(field, formId));
 
     // Setup form submission
     form.addEventListener('submit', (e: Event) => this.handleFormSubmit(e, formId));
-    
+
     // Setup real-time validation
     if (this.config.enableRealTime) {
       form.addEventListener('input', (e: Event) => this.handleFieldInput(e, formId));
@@ -160,13 +160,13 @@ export class FormValidation {
   private setupFieldValidation(field: HTMLElement, formId: string): void {
     const formData = this.forms.get(formId);
     if (!formData) return;
-    
+
     const fieldId = field.id || (field as HTMLInputElement).name || `field-${Date.now()}`;
-    
+
     formData.fields.set(fieldId, {
       element: field,
       isValid: true,
-      errors: []
+      errors: [],
     });
 
     // Parse validation attributes
@@ -174,49 +174,49 @@ export class FormValidation {
     field.dataset.validations = JSON.stringify(validations);
   }
 
-  private parseValidationAttributes(field: HTMLElement): Array<{type: string; value?: unknown}> {
-    const validations: Array<{type: string; value?: unknown}> = [];
-    
+  private parseValidationAttributes(field: HTMLElement): Array<{ type: string; value?: unknown }> {
+    const validations: Array<{ type: string; value?: unknown }> = [];
+
     if (field.hasAttribute('required')) {
       validations.push({ type: 'required' });
     }
-    
+
     if (field.hasAttribute('minlength')) {
-      validations.push({ 
-        type: 'minLength', 
-        value: parseInt(field.getAttribute('minlength') || '0') 
+      validations.push({
+        type: 'minLength',
+        value: parseInt(field.getAttribute('minlength') || '0'),
       });
     }
-    
+
     if (field.hasAttribute('maxlength')) {
-      validations.push({ 
-        type: 'maxLength', 
-        value: parseInt(field.getAttribute('maxlength') || '0') 
+      validations.push({
+        type: 'maxLength',
+        value: parseInt(field.getAttribute('maxlength') || '0'),
       });
     }
-    
+
     const inputField = field as HTMLInputElement;
     if (inputField.type === 'email') {
       validations.push({ type: 'email' });
     }
-    
+
     if (inputField.type === 'url') {
       validations.push({ type: 'url' });
     }
-    
+
     if (inputField.type === 'tel') {
       validations.push({ type: 'phone' });
     }
-    
+
     // Custom validation attributes
     if (field.hasAttribute('data-validate')) {
       const customValidations = field.getAttribute('data-validate')?.split(',') || [];
-      customValidations.forEach(validation => {
+      customValidations.forEach((validation) => {
         const [type, value] = validation.trim().split(':');
         validations.push({ type, value });
       });
     }
-    
+
     return validations;
   }
 
@@ -232,7 +232,7 @@ export class FormValidation {
     const validations = this.parseValidationAttributes(field);
     const errors: string[] = [];
 
-    validations.forEach(validation => {
+    validations.forEach((validation) => {
       const rule = this.validationRules.get(validation.type);
       if (!rule) return;
 
@@ -245,15 +245,16 @@ export class FormValidation {
       }
 
       if (!isValid) {
-        const message = typeof rule.message === 'function' 
-          ? rule.message(validation.value as string | number)
-          : rule.message;
+        const message =
+          typeof rule.message === 'function'
+            ? rule.message(validation.value as string | number)
+            : rule.message;
         errors.push(message);
       }
     });
 
     const isValid = errors.length === 0;
-    
+
     // Update field data
     fieldData.isValid = isValid;
     fieldData.errors = errors;
@@ -315,12 +316,12 @@ export class FormValidation {
 
   private handleFormSubmit(e: Event, formId: string): void {
     e.preventDefault();
-    
+
     const formData = this.forms.get(formId);
     if (!formData) return;
 
     const isValid = this.validateForm(formId);
-    
+
     if (isValid) {
       this.showFormSuccess(formData.element);
       this.submitForm(formData.element);
@@ -353,7 +354,7 @@ export class FormValidation {
   private showFormSuccess(form: HTMLFormElement): void {
     // Add success styling
     form.classList.add('form-success');
-    
+
     // Announce to screen reader
     if (this.config.enableAccessibility) {
       this.announceToScreenReader('Form submitted successfully.');
@@ -363,23 +364,23 @@ export class FormValidation {
   private submitForm(form: HTMLFormElement): void {
     // Get form data
     const formData = new FormData(form);
-    
+
     // Submit form (you can customize this for your needs)
     fetch(form.action, {
       method: form.method || 'POST',
-      body: formData
+      body: formData,
     })
-    .then(response => {
-      if (response.ok) {
-        logger.debug('Form submitted successfully');
-      } else {
-        throw new Error('Form submission failed');
-      }
-    })
-    .catch(error => {
-      console.error('Form submission error:', error);
-      this.announceToScreenReader('Form submission failed. Please try again.');
-    });
+      .then((response) => {
+        if (response.ok) {
+          logger.debug('Form submitted successfully');
+        } else {
+          throw new Error('Form submission failed');
+        }
+      })
+      .catch((error) => {
+        console.error('Form submission error:', error);
+        this.announceToScreenReader('Form submission failed. Please try again.');
+      });
   }
 
   private setupGlobalFormHandlers(): void {
@@ -394,12 +395,12 @@ export class FormValidation {
 
     // Handle dynamic form additions
     const observer = new MutationObserver((mutations) => {
-      mutations.forEach(mutation => {
-        mutation.addedNodes.forEach(node => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             const element = node as Element;
             const forms = element.querySelectorAll<HTMLFormElement>('form[data-validate]');
-            forms.forEach(form => this.registerForm(form));
+            forms.forEach((form) => this.registerForm(form));
           }
         });
       });
@@ -407,7 +408,7 @@ export class FormValidation {
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   }
 
@@ -479,9 +480,10 @@ export function initFormValidation(config?: FormValidationConfig): FormValidatio
 if (typeof window !== 'undefined') {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      (window as Window & { formValidation?: FormValidation }).formValidation = initFormValidation();
+      (window as Window & { formValidation?: FormValidation }).formValidation =
+        initFormValidation();
     });
   } else {
     (window as Window & { formValidation?: FormValidation }).formValidation = initFormValidation();
   }
-} 
+}

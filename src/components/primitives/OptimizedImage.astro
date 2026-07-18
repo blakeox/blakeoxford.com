@@ -1,13 +1,13 @@
 ---
 /**
  * OptimizedImage - Performance-optimized image component
- * 
+ *
  * Wrapper around Astro's Image component with automatic format conversion,
  * lazy loading, and quality optimization. Supports both local and remote images.
- * 
+ *
  * @component
  * @category Primitives
- * 
+ *
  * @example Local image
  * ```astro
  * <OptimizedImage
@@ -17,7 +17,7 @@
  * height={600}
  * />
  * ```
- * 
+ *
  * @example Remote image with priority loading
  * ```astro
  * <OptimizedImage
@@ -27,7 +27,7 @@
  * quality={90}
  * />
  * ```
- * 
+ *
  * @prop {string | ImageMetadata} src - Image source (local import or URL)
  * @prop {string} alt - Alt text for accessibility (required)
  * @prop {number} [width] - Image width in pixels
@@ -36,7 +36,7 @@
  * @prop {'lazy' | 'eager'} [loading='lazy'] - Loading strategy
  * @prop {boolean} [priority=false] - Priority loading (sets eager + fetchpriority)
  * @prop {number} [quality=80] - Image quality (1-100)
- * 
+ *
  * @performance
  * - Automatic WebP/AVIF conversion
  * - Lazy loading by default
@@ -47,71 +47,62 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 export type Props = {
- src: string | ImageMetadata;
- alt: string;
- width?: number;
- height?: number;
- class?: string;
- loading?: 'lazy' | 'eager';
- priority?: boolean;
- quality?: number;
+  src: string | ImageMetadata;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  quality?: number;
 };
 
 const props = Astro.props as Props;
-const {
- alt,
- class: className = '',
- loading = 'lazy',
- priority = false,
-} = props;
+const { alt, class: className = '', loading = 'lazy', priority = false } = props;
 
 const width = 'width' in props ? props.width : undefined;
 const height = 'height' in props ? props.height : undefined;
-const quality = 'quality' in props ? props.quality ?? 80 : 80;
+const quality = 'quality' in props ? (props.quality ?? 80) : 80;
 
 // Set loading to eager for priority images
 const imageLoading = priority ? 'eager' : loading;
 
 // Check if src is a local path (starts with /, ../, or ./)
-const isLocalPath = typeof props.src === 'string' && (props.src.startsWith('/') || props.src.startsWith('../') || props.src.startsWith('./'));
+const isLocalPath =
+  typeof props.src === 'string' &&
+  (props.src.startsWith('/') || props.src.startsWith('../') || props.src.startsWith('./'));
 ---
 
-{typeof props.src === 'object' ? (
- <Image
- src={props.src}
- alt={alt}
- class={className}
- loading={imageLoading}
- />
-) : isLocalPath ? (
- <img
- src={props.src}
- alt={alt}
- width={width}
- height={height}
- class={className}
- loading={imageLoading}
- decoding="async"
- />
-) : (
- <Image
- src={props.src}
- alt={alt}
- width={width}
- height={height}
- format="avif"
- quality={quality}
- loading={imageLoading}
- class={className}
- inferSize={true}
- />
-)}
+{
+  typeof props.src === 'object' ? (
+    <Image src={props.src} alt={alt} class={className} loading={imageLoading} />
+  ) : isLocalPath ? (
+    <img
+      src={props.src}
+      alt={alt}
+      width={width}
+      height={height}
+      class={className}
+      loading={imageLoading}
+      decoding="async"
+    />
+  ) : (
+    <Image
+      src={props.src}
+      alt={alt}
+      width={width}
+      height={height}
+      format="avif"
+      quality={quality}
+      loading={imageLoading}
+      class={className}
+      inferSize={true}
+    />
+  )
+}
 
-{priority && typeof props.src === 'string' && (
- <link
- rel="preload"
- as="image"
- href={props.src}
- type="image/avif"
- />
-)}
+{
+  priority && typeof props.src === 'string' && (
+    <link rel="preload" as="image" href={props.src} type="image/avif" />
+  )
+}
