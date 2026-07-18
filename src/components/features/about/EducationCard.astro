@@ -3,7 +3,7 @@
  * EducationCard - Education display card with icon and details
  */
 
-import Card from '../../composites/Card.astro';
+import BaseCard from '../../primitives/BaseCard.astro';
 
 export interface Props {
   institution: string;
@@ -14,7 +14,7 @@ export interface Props {
 const { institution, degree, description } = Astro.props;
 ---
 
-<Card hover="lift" padding="md" containerQuery class="group">
+<BaseCard hover="lift" padding="md" class="group @container">
   <div class="flex items-start">
     <div
       class="flex-shrink-0 rounded-lg bg-accent-subtle p-3 motion-safe:transition-transform motion-safe:duration-moderate motion-safe:group-hover:scale-110"
@@ -52,4 +52,4 @@ const { institution, degree, description } = Astro.props;
       {description && <p class="text-muted-foreground">{description}</p>}
     </div>
   </div>
-</Card>
+</BaseCard>

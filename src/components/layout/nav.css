@@ -1,0 +1,198 @@
+/**
+ * Navigation chrome — colocated with NavBar.astro.
+ */
+
+@layer components {
+  .nav-utility-button {
+    @apply inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-border/60 bg-surface/75 text-foreground/80 transition-colors;
+  }
+
+  .nav-utility-button.search-toggle {
+    width: auto;
+  }
+
+  .nav-utility-button.theme-toggle,
+  .nav-utility-button.burger-menu-button {
+    @apply w-11;
+
+    touch-action: manipulation;
+  }
+
+  .nav-utility-button:hover {
+    @apply border-accent/30 bg-surface/90 text-accent-emphasis;
+  }
+
+  .nav-utility-button:focus-visible {
+    @apply ring-2 ring-accent/60 ring-offset-2 ring-offset-background outline-none;
+  }
+
+  .nav-kbd {
+    @apply items-center rounded-md border border-border/70 bg-surface-subtle/90 px-1.5 py-0.5 font-mono text-[0.65rem] font-medium text-muted-foreground;
+  }
+
+  .nav-shell--scrolled #navbar {
+    height: 4rem;
+  }
+
+  .nav-shell--auto-hidden:not([data-menu-state='open']) {
+    pointer-events: none;
+    transform: translateY(-100%);
+  }
+
+  .nav-shell {
+    z-index: var(--z-nav);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-shell--auto-hidden:not([data-menu-state='open']) {
+      pointer-events: auto;
+      transform: none;
+    }
+  }
+
+  .nav-shell:has(#navbar.has-background) {
+    @apply border-border/80 bg-glass-xl shadow-md;
+  }
+
+  #navbar[data-js-nav='true'] ~ .mobile-nav-fallback {
+    display: none;
+  }
+
+  body.scroll-locked .nav-shell,
+  body.scroll-locked [data-ai-chat-widget] {
+    padding-right: var(--scrollbar-width, 0);
+  }
+
+  .burger-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .burger-line {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: currentcolor;
+    border-radius: 1px;
+    transition:
+      transform var(--duration-normal) var(--ease-standard),
+      opacity var(--duration-fast) var(--ease-standard);
+  }
+
+  .burger-menu-button.active .burger-line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .burger-menu-button.active .burger-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .burger-menu-button.active .burger-line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  .theme-toggle .sun-icon,
+  .theme-toggle .moon-icon,
+  .theme-toggle .system-icon {
+    display: none;
+  }
+
+  .theme-toggle[data-theme-preference='light'] .sun-icon,
+  .theme-toggle[data-theme-preference='dark'] .moon-icon,
+  .theme-toggle[data-theme-preference='system'] .system-icon {
+    display: block;
+  }
+
+  .theme-toggle:active .sun-icon,
+  .theme-toggle:active .moon-icon {
+    animation: theme-toggle-spin var(--duration-fast) var(--ease-standard);
+  }
+
+  @keyframes theme-toggle-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .nav-shell:has(.mobile-menu[data-state='open']),
+  .nav-shell[data-menu-state='open'] {
+    z-index: var(--z-nav-drawer);
+  }
+
+  .mobile-menu-backdrop {
+    position: fixed;
+    inset: var(--nav-height) 0 0 0;
+    z-index: calc(var(--z-nav-drawer) - 1);
+    display: none;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+    background: color-mix(in oklch, var(--color-background) 55%, transparent);
+    border: 0;
+    opacity: 0;
+    backdrop-filter: blur(2px);
+  }
+
+  .mobile-menu-backdrop[data-state='open'] {
+    display: block;
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .mobile-menu {
+    display: none;
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .mobile-menu[data-state='open'] {
+    position: fixed;
+    top: var(--nav-height);
+    right: 0;
+    left: 0;
+    z-index: var(--z-nav-drawer);
+    display: block;
+    visibility: visible;
+    width: 100%;
+    max-height: min(80dvh, 32rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    pointer-events: auto;
+    opacity: 1;
+    animation: mobile-menu-in var(--duration-normal) var(--ease-decelerate) forwards;
+  }
+
+  @keyframes mobile-menu-in {
+    from {
+      transform: translateY(-0.5rem);
+    }
+
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu,
+    .mobile-menu-backdrop,
+    .burger-line {
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .mobile-menu[data-state='open'] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .theme-toggle:active .sun-icon,
+    .theme-toggle:active .moon-icon {
+      animation: none !important;
+    }
+  }
+}

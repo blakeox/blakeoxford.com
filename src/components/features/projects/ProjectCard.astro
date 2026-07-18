@@ -36,7 +36,7 @@
  * - @md (448px): Enhanced typography, larger gaps
  * - @lg (512px): Maximum content width, optimal reading layout
  */
-import Card from '../../composites/Card.astro';
+import BaseCard from '../../primitives/BaseCard.astro';
 import OptimizedImage from '../../primitives/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';
 import BadgePill from '../../primitives/BadgePill.astro';
@@ -71,7 +71,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
 ---
 
 <article class="group @container relative flex h-full flex-col">
-  <Card variant="elevated" hover="lift" padding="none" rounded="xl" class="h-full">
+  <BaseCard variant="elevated" hover="lift" padding="none" rounded="xl" class="h-full">
     <a
       href={`/projects/${slug}/`}
       class="relative flex h-full flex-col overflow-hidden focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
@@ -180,5 +180,5 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
         </div>
       </div>
     </a>
-  </Card>
+  </BaseCard>
 </article>

@@ -2,64 +2,41 @@ import { useEffect } from 'react';
 
 interface Props {
   rootId: string;
-  innerId: string;
   liveRegionId: string;
   flipOnClick: boolean;
 }
 
-export default function CoinFlipInteraction({ rootId, innerId, liveRegionId, flipOnClick }: Props) {
+/**
+ * Toggles `data-flipped` / `aria-pressed` on the coin button.
+ * Transform is CSS-driven — do not set inline transform here.
+ * Native `<button>` already activates on Enter/Space; no extra keydown handler.
+ */
+export default function CoinFlipInteraction({ rootId, liveRegionId, flipOnClick }: Props) {
   useEffect(() => {
     const root = document.getElementById(rootId);
-    const inner = document.getElementById(innerId);
     const liveRegion = document.getElementById(liveRegionId);
-    if (!root || !inner || !liveRegion) return;
-
-    let flipped = false;
+    if (!root || !liveRegion) return;
 
     const announce = (message: string) => {
       liveRegion.textContent = message;
-      setTimeout(() => {
+      window.setTimeout(() => {
         liveRegion.textContent = '';
       }, 750);
     };
 
-    const toggleFlip = () => {
-      flipped = !flipped;
-      root.setAttribute('aria-pressed', flipped ? 'true' : 'false');
-      const axis = root.dataset.flipAxis === 'X' ? 'X' : 'Y';
-      inner.style.transform = flipped
-        ? axis === 'Y'
-          ? 'rotateY(180deg)'
-          : 'rotateX(180deg)'
-        : 'rotateY(0deg)';
-      announce(flipped ? 'Showing reverse side.' : 'Showing front side.');
-    };
-
     const handleClick = () => {
       if (!flipOnClick) return;
-      toggleFlip();
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        toggleFlip();
-      }
+      const next = root.getAttribute('data-flipped') !== 'true';
+      root.setAttribute('data-flipped', next ? 'true' : 'false');
+      root.setAttribute('aria-pressed', next ? 'true' : 'false');
+      announce(next ? 'Showing reverse side.' : 'Showing front side.');
     };
 
     root.addEventListener('click', handleClick);
-    root.addEventListener('keydown', handleKeyDown);
-    root.addEventListener('blur', () => {
-      if (flipOnClick && flipped) {
-        toggleFlip();
-      }
-    });
-
     return () => {
       root.removeEventListener('click', handleClick);
-      root.removeEventListener('keydown', handleKeyDown);
     };
-  }, [rootId, innerId, liveRegionId, flipOnClick]);
+  }, [rootId, liveRegionId, flipOnClick]);
 
-  return <></>;
+  return null;
 }

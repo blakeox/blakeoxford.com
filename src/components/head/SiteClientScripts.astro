@@ -1,0 +1,114 @@
+---
+/**
+ * Global client bootstraps — plain modules, not React islands.
+ * Interactive UI (chat, search, forms) stays as islands elsewhere.
+ */
+const clarityId = import.meta.env.PUBLIC_CLARITY_PROJECT_ID?.trim() ?? '';
+const cfToken = import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN?.trim() ?? '';
+---
+
+<script is:inline define:vars={{ clarityId, cfToken }}>
+  // Cloudflare Web Analytics — plain script tag, not a React root
+  if (cfToken && !document.querySelector('script[data-cf-beacon]')) {
+    const script = document.createElement('script');
+    script.defer = true;
+    script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    script.setAttribute('data-cf-beacon', JSON.stringify({ token: cfToken }));
+    document.head.appendChild(script);
+  }
+
+  // Stash Clarity id for the module script below
+  if (clarityId) {
+    document.documentElement.dataset.clarityId = clarityId;
+  }
+</script>
+
+<script>
+  import { initClarity } from '../../lib/clarity';
+  import { initWebVitals } from '../../lib/webVitals';
+  import { initMotionAccessibility } from '../../scripts/modules/MotionAccessibility';
+
+  const SKIP_LINK_SELECTOR = 'a.skip-link[href="#main-content"]';
+  const MAIN_CONTENT_ID = 'main-content';
+
+  function setupSkipLinkFocus(): () => void {
+    const skipLink = document.querySelector(SKIP_LINK_SELECTOR);
+    const target = document.getElementById(MAIN_CONTENT_ID);
+    if (!skipLink || !target) return () => {};
+
+    const focusMain = () => {
+      window.requestAnimationFrame(() => target.focus());
+    };
+    skipLink.addEventListener('click', focusMain);
+    if (window.location.hash === `#${MAIN_CONTENT_ID}`) focusMain();
+    return () => skipLink.removeEventListener('click', focusMain);
+  }
+
+  function setupFocusVisibleState(): () => void {
+    const root = document.documentElement;
+    const enable = () => root.classList.add('focus-visible');
+    const disable = () => root.classList.remove('focus-visible');
+    root.classList.add('focus-visible');
+
+    const handlePointer = () => disable();
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Tab') enable();
+    };
+    window.addEventListener('keydown', handleKeydown, { passive: true });
+    window.addEventListener('pointerdown', handlePointer, { passive: true });
+    window.addEventListener('touchstart', handlePointer, { passive: true });
+    window.addEventListener('blur', disable);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeydown);
+      window.removeEventListener('pointerdown', handlePointer);
+      window.removeEventListener('touchstart', handlePointer);
+      window.removeEventListener('blur', disable);
+    };
+  }
+
+  function registerServiceWorker(): void {
+    const isAudit = Boolean(
+      (window as Window & { __AUDIT__?: boolean }).__AUDIT__ ||
+        /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie || '') ||
+        /lighthouse|headlesschrome/i.test(navigator.userAgent || '')
+    );
+    if (isAudit || !('serviceWorker' in navigator)) return;
+
+    window.addEventListener(
+      'load',
+      () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      },
+      { once: true }
+    );
+  }
+
+  function scheduleIdle(fn: () => void, timeout: number, fallbackMs: number): void {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(fn, { timeout });
+    } else {
+      setTimeout(fn, fallbackMs);
+    }
+  }
+
+  const clarityId = document.documentElement.dataset.clarityId;
+  if (clarityId) {
+    scheduleIdle(() => initClarity(clarityId), 3000, 2000);
+  }
+
+  scheduleIdle(() => initWebVitals(), 4000, 2500);
+
+  try {
+    const motionController = initMotionAccessibility();
+    motionController.registerToggles();
+  } catch {
+    /* non-fatal */
+  }
+
+  setupSkipLinkFocus();
+  setupFocusVisibleState();
+  registerServiceWorker();
+</script>
+
+<script is:inline src="/js/ai-chat-launcher.js" defer></script>

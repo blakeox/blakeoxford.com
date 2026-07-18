@@ -2,12 +2,12 @@
 /**
  * BlogPostCard - Reusable blog post card for listings
  *
- * Built on Card → BaseCard for index listings.
+ * Built on BaseCard for index listings.
  */
 
 import type { CollectionEntry } from 'astro:content';
 import { formatDateISO } from '../../../utils/index.js';
-import Card from '../../composites/Card.astro';
+import BaseCard from '../../primitives/BaseCard.astro';
 
 export interface Props {
   post: CollectionEntry<'blog'>;
@@ -21,7 +21,7 @@ const visibleTags = data.tags?.slice(0, maxTags) || [];
 const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
 ---
 
-<Card as="article" variant="default" hover="lift" padding="none" class="@container h-full">
+<BaseCard as="article" variant="default" hover="lift" padding="none" class="@container h-full">
   <a
     href={`/blog/${slug}/`}
     class="group flex h-full flex-col gap-3 p-5 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:outline-none @sm:gap-4 @sm:p-6"
@@ -100,4 +100,4 @@ const extraTagCount = (data.tags?.length || 0) - visibleTags.length;
       </svg>
     </span>
   </a>
-</Card>
+</BaseCard>

@@ -4,7 +4,7 @@ import Container from '../../components/primitives/Container.astro';
 import Section from '../../components/primitives/Section.astro';
 import Stack from '../../components/primitives/Stack.astro';
 import Badge from '../../components/primitives/Badge.astro';
-import Card from '../../components/composites/Card.astro';
+import BaseCard from '../../components/primitives/BaseCard.astro';
 import FeatureCard from '../../components/composites/FeatureCard.astro';
 
 const patterns = [
@@ -42,14 +42,14 @@ const visualTiers = [
     tier: 'Quiet',
     usage: 'Body content, docs, forms, tables',
     treatment:
-      'Surface tokens, minimal shadow, no gradient. Use Card variant="subtle" or variant="default" with hover="none".',
+      'Surface tokens, minimal shadow, no gradient. Use BaseCard variant="subtle" or variant="default" with hover="none".',
     example: 'default',
   },
   {
     tier: 'Elevated',
     usage: 'Cards, feature grids, stats, project listings',
     treatment:
-      'shadow-md or shadow-lg, subtle borders via color-mix, optional @container layout shifts. Use Card hover="lift".',
+      'shadow-md or shadow-lg, subtle borders via color-mix, optional @container layout shifts. Use BaseCard hover="lift".',
     example: 'elevated',
   },
   {
@@ -63,10 +63,9 @@ const visualTiers = [
 
 const cardMatrix = [
   { layer: 'BaseCard', role: 'Primitive contract — variants, hover, radius, padding' },
-  { layer: 'Card', role: 'Compatibility wrapper — maps interactive → elevated, outline → subtle' },
   { layer: 'FeatureCard', role: 'Expressive tier — gradient semantic variants' },
-  { layer: 'BlogPostCard', role: 'Blog index listings — Card + article link' },
-  { layer: 'ProjectCard', role: 'Case study listings — Card rounded="3xl" + media' },
+  { layer: 'BlogPostCard', role: 'Blog index listings — BaseCard + article link' },
+  { layer: 'ProjectCard', role: 'Case study listings — BaseCard + media' },
   { layer: 'StatsCard', role: 'KPI/metrics — BaseCard hover="none"' },
   { layer: 'OutcomeCard', role: 'Bullet outcome lists on project detail pages' },
 ];
@@ -109,18 +108,18 @@ const cardMatrix = [
           }
         </div>
         <div class="mt-8 grid gap-6 lg:grid-cols-3">
-          <Card variant="subtle" hover="none">
+          <BaseCard variant="subtle" hover="none">
             <p class="text-sm font-semibold text-foreground">Quiet</p>
             <p class="mt-2 text-sm text-muted-foreground">
               Static card for docs and secondary content.
             </p>
-          </Card>
-          <Card variant="elevated" hover="lift">
+          </BaseCard>
+          <BaseCard variant="elevated" hover="lift">
             <p class="text-sm font-semibold text-foreground">Elevated</p>
             <p class="mt-2 text-sm text-muted-foreground">
               Interactive listing card with lift hover.
             </p>
-          </Card>
+          </BaseCard>
           <FeatureCard
             variant="accent"
             title="Expressive"
@@ -190,20 +189,20 @@ const cardMatrix = [
         <div>
           <h2 class="text-2xl font-bold text-foreground">Stack Example</h2>
           <Stack space="md" class="mt-5">
-            <Card hover="none"
+            <BaseCard hover="none"
               ><p class="text-sm text-muted-foreground">
                 One spacing rule controls this group.
-              </p></Card
+              </p></BaseCard
             >
-            <Card hover="none"
+            <BaseCard hover="none"
               ><p class="text-sm text-muted-foreground">
                 No local margin decisions are needed.
-              </p></Card
+              </p></BaseCard
             >
-            <Card hover="none"
+            <BaseCard hover="none"
               ><p class="text-sm text-muted-foreground">
                 The pattern remains readable on mobile.
-              </p></Card
+              </p></BaseCard
             >
           </Stack>
         </div>

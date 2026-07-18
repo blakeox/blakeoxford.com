@@ -70,14 +70,14 @@ describe('EducationCard Component', () => {
 
   describe('Styling', () => {
     it('should have card styling', () => {
-      expect(fileContent).toContain('Card');
-      expect(fileContent).toContain('rounded');
+      expect(fileContent).toContain('BaseCard');
+      expect(fileContent).toContain('@container');
     });
 
     it('should have responsive typography', () => {
       expect(fileContent).toMatch(/text-(xl|2xl|sm)/);
       expect(fileContent).toMatch(/@sm:text-/);
-      expect(fileContent).toContain('containerQuery');
+      expect(fileContent).toContain('@container');
     });
 
     it('should have hover effects', () => {
@@ -167,7 +167,7 @@ describe('EducationCard Component', () => {
   });
 
   describe('Interactive States', () => {
-    it('should have hover state via Card lift interaction', () => {
+    it('should have hover state via BaseCard lift interaction', () => {
       expect(fileContent).toContain('hover="lift"');
     });
 

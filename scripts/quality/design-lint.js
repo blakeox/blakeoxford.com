@@ -54,8 +54,6 @@ const RAW_WHITE_BLACK_REGEX =
 const PARALLEL_DARK_UTIL_REGEX =
   /\b(?:bg|text|border|from|via|to)-(?:background-dark|surface-dark|surface-dark-subtle|surface-elevated-dark|foreground-light|border-dark)(?:\/\d+)?\b/g;
 const HARD_ELEVATION_REGEX = /(?<!-)(?:\bshadow-(?:xl|2xl)\b)|shadow-\[[^\]]+\]/g;
-/** Arbitrary elevation/radius only — named shadow-xl/2xl in legacy blog MDX is documented as exempt until migrated. */
-const MDX_ARBITRARY_ELEVATION_REGEX = /shadow-\[[^\]]+\]/g;
 const HARD_RADIUS_REGEX = /\brounded-\[[^\]]+\]/g;
 const SHELL_ESCAPE_REGEX = /-mt-24|-mx-4\s+sm:-mx-6\s+lg:-mx-8/g;
 /** Contiguous page-padding ladders (px-4 + responsive px-*). */
@@ -97,7 +95,7 @@ const elevationPolicyPaths = [
   'src/styles/components.css',
 ];
 
-/** Blog MDX: ban arbitrary shadow/radius; named high elevation is legacy-exempt (see DESIGN_BEST_PRACTICES). */
+/** Blog MDX: same elevation/radius policy as components (≤ shadow-lg; no arbitrary radius). */
 const mdxElevationPolicyPaths = ['src/content/blog'];
 
 const findings = {
@@ -284,8 +282,9 @@ function scanSourceFile(file) {
   }
 
   if (isWithin(relPath, mdxElevationPolicyPaths)) {
-    addRegexFindings(findings.elevation, relPath, content, MDX_ARBITRARY_ELEVATION_REGEX);
+    addRegexFindings(findings.elevation, relPath, content, HARD_ELEVATION_REGEX);
     addRegexFindings(findings.radius, relPath, content, HARD_RADIUS_REGEX);
+    addRegexFindings(findings.palette, relPath, content, RAW_WHITE_BLACK_REGEX);
   }
 
   if (

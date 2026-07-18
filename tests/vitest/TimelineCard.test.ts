@@ -6,8 +6,8 @@ describe('TimelineCard', () => {
   const filePath = resolve(__dirname, '../../src/components/features/about/TimelineCard.astro');
   const fileContent = readFileSync(filePath, 'utf8');
 
-  it('enables containerQuery and uses @sm typography', () => {
-    expect(fileContent).toMatch(/containerQuery/);
+  it('enables @container and uses @sm typography', () => {
+    expect(fileContent).toContain('@container');
     expect(fileContent).toContain('@sm:text-');
     expect(fileContent).not.toMatch(/(?<!@)sm:text-/);
   });

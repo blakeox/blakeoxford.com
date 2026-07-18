@@ -86,7 +86,7 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 - Blog/MDX body: wrap with `Prose` — do not nest additional `prose` / `prose-xl` shells in MDX; use `not-prose` for custom blocks
 - Card grids: prefer `@container` + `@sm:` / `@md:` over viewport `sm:` when the card already sits in a variable-width column
 - Decorative motion: gate with `motion-safe:` (or CSS `prefers-reduced-motion` for custom chrome classes)
-- Run `pnpm design:lint` — bans raw palette, white/black, parallel `*-dark` surface utilities, hard-coded gutters, and high elevation / arbitrary radius on primitives, composites, and features; also validates `@theme inline` token docs sync
+- Run `pnpm design:lint` — bans raw palette, white/black, parallel `*-dark` surface utilities, hard-coded gutters, and high elevation / arbitrary radius on primitives, composites, features, and blog MDX; also validates `@theme inline` token docs sync
 - Run `pnpm format:check` (Prettier + Tailwind class sort) before PRs — same gate as ESLint in CI
 
 ### Tailwind usage

@@ -2,7 +2,6 @@ import CoinFlipInteraction from './CoinFlipInteraction';
 
 interface Props {
   rootId: string;
-  innerId: string;
   liveRegionId: string;
   flipOnClick: boolean;
 }

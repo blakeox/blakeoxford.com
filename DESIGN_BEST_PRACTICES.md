@@ -54,7 +54,7 @@ Page gutters: prefer `Container` or the `.layout-gutter` class. Do not hard-code
 
 Article/MDX body: wrap with `Prose` (`src/components/primitives/Prose.astro`). Token remaps for typography live in `@utility prose` in `global.css`. Do not nest extra `prose` shells inside MDX.
 
-**MDX elevation policy:** `design:lint` bans arbitrary `shadow-[…]` / `rounded-[…]` in `src/content/blog`. Named `shadow-xl` / `shadow-2xl` in older posts is legacy-exempt until those blocks migrate to composites (`FeatureCard`, etc.). New MDX should prefer ≤ `shadow-lg` and token radii.
+**MDX elevation policy:** `design:lint` bans `shadow-xl` / `shadow-2xl`, arbitrary `shadow-[…]` / `rounded-[…]`, and raw white/black utilities in `src/content/blog`. Prefer ≤ `shadow-lg`, token radii, and semantic surfaces (`bg-on-dark/20`, `FeatureCard`, etc.).
 
 Live token docs at `/design/tokens` auto-list public utilities by parsing `@theme inline` via `src/lib/designTokens.ts`, and show browser-resolved values plus live WCAG contrast pairs.
 
@@ -126,7 +126,7 @@ There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind�
 
 **Component Integration**:
 
-- **Card**: Supports `containerQuery` prop for opt-in container support
+- **BaseCard**: Add `@container` on the card (or parent) when using `@sm:` / `@md:` inside
 - **FeatureCard**: Built-in container query responsive padding/typography
 - **ProjectCard**: Automatic container query spacing adjustments
 - **BlogPostCard**: Container-aware typography and spacing
@@ -243,8 +243,8 @@ Designer / reviewer action: If sentinel counts rise or badge slope trends upward
 
 - Favor headless structure + Tailwind utilities.
 - Promote repeated patterns (buttons, badges) into variants/components after 3+ uses.
-- Migrate legacy global blocks into component scope incrementally.
-- Avoid deep descendant selectors; keep specificity flat.
+- Prefer composing from `BaseCard` / `FeatureCard` over inline card markup.
+- Prefer utilities & tokens; shared chrome in `components.css` over new scoped style islands.
 
 ## 7. Interaction & Motion
 
@@ -438,91 +438,11 @@ Rules:
 
 ---
 
-## 18. @property Custom Properties (2026)
+## 18. @property Custom Properties (optional)
 
-### What They Are
+CSS Houdini `@property` can register typed, animatable custom properties. **Not used in `theme.css` today** — tokens rely on normal custom properties + Tailwind utilities. Prefer that path unless you need interpolating a custom property (e.g. animated gradient angle).
 
-CSS Houdini `@property` declarations enable **type-safe, animatable custom properties** with browser validation and better performance.
-
-### Registered Properties
-
-Defined at the top of `theme.css`:
-
-```css
-@property --color-primary {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: oklch(0.55 0.22 264);
-}
-
-@property --gradient-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@property --scale-factor {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 1;
-}
-```
-
-### Use Cases
-
-#### 1. Smooth Color Transitions
-
-```css
-.button {
-  background: var(--color-primary);
-  transition: --color-primary 0.3s ease;
-}
-.button:hover {
-  --color-primary: oklch(0.6 0.24 264);
-  /* Smoothly animates the color change! */
-}
-```
-
-#### 2. Rotating Gradients
-
-```css
-.gradient-card {
-  background: linear-gradient(var(--gradient-angle), var(--color-primary), var(--color-accent));
-  animation: rotate-gradient 3s linear infinite;
-}
-
-@keyframes rotate-gradient {
-  to {
-    --gradient-angle: 360deg;
-  }
-}
-```
-
-#### 3. Interactive Transforms
-
-```css
-.scale-card {
-  transform: scale(var(--scale-factor));
-  transition: --scale-factor 0.2s ease-out;
-}
-.scale-card:hover {
-  --scale-factor: 1.05;
-}
-```
-
-### Browser Support
-
-- Chrome 85+ ✅
-- Safari 16.4+ ✅
-- Firefox 128+ ✅
-- ~92% global coverage
-
-### Guidelines
-
-- Use for **animated** properties only (color, angle, number, length)
-- Set `inherits: true` for theme tokens, `false` for component-specific
-- Always provide `initial-value` for fallback
-- Keep syntax type strict (`<color>`, `<angle>`, not `*`)
+If you introduce `@property`, keep it next to the consuming animation in `components.css`, set a strict `syntax`, and always provide `initial-value`.
 
 ---
 

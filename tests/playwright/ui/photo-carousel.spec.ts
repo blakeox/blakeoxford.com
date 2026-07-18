@@ -38,22 +38,22 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     await expect(region).toBeVisible();
 
     // Scope to region to avoid duplicate element issues
-    const horizontal = region.locator('ul.animate-carousel-x-slow').first();
-    const upCol = region.locator('ul.animate-carousel-up-slow').first();
-    const downCol = region.locator('ul.animate-carousel-down-slow').first();
+    const horizontal = region.locator('ul.photo-carousel-track--x').first();
+    const upCol = region.locator('ul.photo-carousel-track--up').first();
+    const downCol = region.locator('ul.photo-carousel-track--down').first();
 
     await expect(horizontal).toBeVisible();
     await expect(upCol).toBeHidden();
     await expect(downCol).toBeHidden();
 
     // Check animation duration is slow (~70s)
-    const animDuration = await getAnimationDuration(page, 'ul.animate-carousel-x-slow');
+    const animDuration = await getAnimationDuration(page, 'ul.photo-carousel-track--x');
     expect(animDuration).toContain('70s');
 
     // Verify motion by comparing transform over time (skip if prefers-reduced-motion)
     const mqlReduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
     if (!mqlReduced) {
-      const t0 = await getTransform(page, 'ul.animate-carousel-x-slow');
+      const t0 = await getTransform(page, 'ul.photo-carousel-track--x');
       // Wait until transform changes instead of a raw timeout
       await page.waitForFunction(
         ({ selector, initial }) => {
@@ -62,10 +62,10 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
           const style = getComputedStyle(el);
           return style.transform !== initial;
         },
-        { selector: 'ul.animate-carousel-x-slow', initial: t0 },
+        { selector: 'ul.photo-carousel-track--x', initial: t0 },
         { timeout: 3000 }
       );
-      const t1 = await getTransform(page, 'ul.animate-carousel-x-slow');
+      const t1 = await getTransform(page, 'ul.photo-carousel-track--x');
       expect(t0).not.toEqual(t1);
     }
   });
@@ -78,25 +78,25 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     await expect(region).toBeVisible();
 
     // Scope to region to avoid duplicate element issues
-    const horizontal = region.locator('ul.animate-carousel-x-slow').first();
-    const upCol = region.locator('ul.animate-carousel-up-slow').first();
-    const downCol = region.locator('ul.animate-carousel-down-slow').first();
+    const horizontal = region.locator('ul.photo-carousel-track--x').first();
+    const upCol = region.locator('ul.photo-carousel-track--up').first();
+    const downCol = region.locator('ul.photo-carousel-track--down').first();
 
     await expect(horizontal).toBeHidden();
     await expect(upCol).toBeVisible();
     await expect(downCol).toBeVisible();
 
     // Check animation durations (~90s)
-    const upDur = await getAnimationDuration(page, 'ul.animate-carousel-up-slow');
-    const downDur = await getAnimationDuration(page, 'ul.animate-carousel-down-slow');
+    const upDur = await getAnimationDuration(page, 'ul.photo-carousel-track--up');
+    const downDur = await getAnimationDuration(page, 'ul.photo-carousel-track--down');
     expect(upDur).toContain('90s');
     expect(downDur).toContain('90s');
 
     // Verify both columns animate (transforms change)
     const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
     if (!reduced) {
-      const upT0 = await getTransform(page, 'ul.animate-carousel-up-slow');
-      const downT0 = await getTransform(page, 'ul.animate-carousel-down-slow');
+      const upT0 = await getTransform(page, 'ul.photo-carousel-track--up');
+      const downT0 = await getTransform(page, 'ul.photo-carousel-track--down');
       // Wait until either column's transform changes instead of a raw timeout
       await page.waitForFunction(
         ({ upSel, dnSel, upInitial, dnInitial }) => {
@@ -108,15 +108,15 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
           return upT !== upInitial || dnT !== dnInitial;
         },
         {
-          upSel: 'ul.animate-carousel-up-slow',
-          dnSel: 'ul.animate-carousel-down-slow',
+          upSel: 'ul.photo-carousel-track--up',
+          dnSel: 'ul.photo-carousel-track--down',
           upInitial: upT0,
           dnInitial: downT0,
         },
         { timeout: 4000 }
       );
-      const upT1 = await getTransform(page, 'ul.animate-carousel-up-slow');
-      const downT1 = await getTransform(page, 'ul.animate-carousel-down-slow');
+      const upT1 = await getTransform(page, 'ul.photo-carousel-track--up');
+      const downT1 = await getTransform(page, 'ul.photo-carousel-track--down');
       expect(upT0).not.toEqual(upT1);
       expect(downT0).not.toEqual(downT1);
 
@@ -142,9 +142,9 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     await expect(region).toBeVisible();
 
     // Scope to region to avoid duplicate element issues
-    const horizontal = region.locator('ul.animate-carousel-x-slow').first();
-    const upCol = region.locator('ul.animate-carousel-up-slow').first();
-    const downCol = region.locator('ul.animate-carousel-down-slow').first();
+    const horizontal = region.locator('ul.photo-carousel-track--x').first();
+    const upCol = region.locator('ul.photo-carousel-track--up').first();
+    const downCol = region.locator('ul.photo-carousel-track--down').first();
 
     // At 768px, should show desktop twin columns
     await expect(horizontal).toBeHidden();

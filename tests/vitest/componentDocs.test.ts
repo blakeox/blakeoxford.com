@@ -56,13 +56,12 @@ describe('component documentation catalog', () => {
     }
   });
 
-  it('documents core card primitives with visual tiers and token dependencies', () => {
+  it('documents BaseCard with visual tiers and token dependencies', () => {
     const baseCard = componentDocs.find((doc) => doc.name === 'BaseCard');
-    const card = componentDocs.find((doc) => doc.name === 'Card');
 
     expect(baseCard?.visualTier).toBe('elevated');
     expect(baseCard?.tokenDependencies?.length).toBeGreaterThan(0);
-    expect(card?.props?.some((prop) => prop.description.includes('interactive'))).toBe(true);
+    expect(baseCard?.props?.some((prop) => prop.name === 'variant')).toBe(true);
   });
 
   it('exports authoring checklist and primitive prop contract', () => {

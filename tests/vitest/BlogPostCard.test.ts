@@ -95,7 +95,7 @@ describe('BlogPostCard Component', () => {
     });
 
     it('should inherit dark mode from semantic surface tokens', () => {
-      expect(fileContent).toContain('Card');
+      expect(fileContent).toContain('BaseCard');
       expect(fileContent).toMatch(/text-foreground|bg-surface|border-border/);
     });
 

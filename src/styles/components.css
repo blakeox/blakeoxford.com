@@ -1,11 +1,9 @@
 /**
- * Shared component utilities only.
- * Prefer Tailwind semantic utilities in markup.
- * Keep this file for multi-selector chrome (nav, overlays, hero motion).
+ * Shared multi-use chrome only (3+ unrelated consumers).
+ * Component-specific rules live beside their Astro/React files.
  */
 
 @layer components {
-  /* Tokenized page gutters — prefer over hard-coded px-4 sm:px-6 lg:px-8 */
   .layout-gutter {
     padding-inline: clamp(var(--container-padding), 4vw, var(--container-padding-lg));
   }
@@ -28,58 +26,6 @@
     }
   }
 
-  /* Shared about-timeline chrome (was duplicated in scoped <style> blocks) */
-  @keyframes gradient-shift {
-    0% {
-      background-position: 0% 0%;
-    }
-
-    50% {
-      background-position: 0% 100%;
-    }
-
-    100% {
-      background-position: 0% 0%;
-    }
-  }
-
-  .animate-gradient-shift {
-    background-size: 100% 200%;
-    animation: gradient-shift 8s var(--ease-standard) infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .animate-gradient-shift {
-      animation: none;
-    }
-  }
-
-  .timeline-scroll-container::-webkit-scrollbar {
-    height: 0.5rem;
-  }
-
-  .timeline-scroll-container::-webkit-scrollbar-track {
-    background: color-mix(in oklch, var(--color-foreground) 20%, transparent);
-    border-radius: var(--radius-sm);
-  }
-
-  .timeline-scroll-container::-webkit-scrollbar-thumb {
-    background: color-mix(in oklch, var(--color-accent) 50%, transparent);
-    border-radius: var(--radius-sm);
-  }
-
-  .timeline-scroll-container::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in oklch, var(--color-accent) 70%, transparent);
-  }
-
-  .page-hero-shell {
-    background: linear-gradient(
-      180deg,
-      color-mix(in oklch, var(--color-surface) 88%, transparent),
-      color-mix(in oklch, var(--color-background) 96%, transparent)
-    );
-  }
-
   .section-kicker {
     @apply inline-flex items-center gap-3 text-xs font-semibold tracking-label text-accent-emphasis uppercase;
   }
@@ -100,246 +46,6 @@
     @apply max-w-3xl space-y-4 text-left;
   }
 
-  .hero-gradient-animated {
-    @apply relative overflow-hidden;
-  }
-
-  .hero-gradient-animated::before {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    content: '';
-    background:
-      radial-gradient(
-        ellipse 70% 55% at 85% 40%,
-        color-mix(in oklch, var(--color-accent) 14%, transparent),
-        transparent 70%
-      ),
-      radial-gradient(
-        ellipse 50% 40% at 10% 80%,
-        color-mix(in oklch, var(--color-primary) 8%, transparent),
-        transparent 65%
-      );
-  }
-
-  .hero-entrance > * {
-    animation: hero-rise 700ms var(--ease-decelerate) both;
-  }
-
-  .hero-entrance > *:nth-child(2) {
-    animation-delay: 60ms;
-  }
-
-  .hero-entrance > *:nth-child(3) {
-    animation-delay: 120ms;
-  }
-
-  .hero-entrance > *:nth-child(4) {
-    animation-delay: 180ms;
-  }
-
-  .hero-entrance > *:nth-child(5) {
-    animation-delay: 240ms;
-  }
-
-  @keyframes hero-rise {
-    from {
-      opacity: 0;
-      transform: translateY(14px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-entrance > * {
-      animation: none;
-    }
-  }
-
-  /* Nav */
-  .nav-utility-button {
-    @apply inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-border/60 bg-surface/75 text-foreground/80 transition-colors;
-  }
-
-  .nav-utility-button.search-toggle {
-    width: auto;
-  }
-
-  .nav-utility-button.theme-toggle,
-  .nav-utility-button.burger-menu-button {
-    @apply w-11;
-
-    touch-action: manipulation;
-  }
-
-  .nav-utility-button:hover {
-    @apply border-accent/30 bg-surface/90 text-accent-emphasis;
-  }
-
-  .nav-utility-button:focus-visible {
-    @apply ring-2 ring-accent/60 ring-offset-2 ring-offset-background outline-none;
-  }
-
-  .nav-kbd {
-    @apply items-center rounded-md border border-border/70 bg-surface-subtle/90 px-1.5 py-0.5 font-mono text-[0.65rem] font-medium text-muted-foreground;
-  }
-
-  .nav-shell--scrolled #navbar {
-    height: 4rem;
-  }
-
-  .nav-shell--auto-hidden:not([data-menu-state='open']) {
-    pointer-events: none;
-    transform: translateY(-100%);
-  }
-
-  /* Keep sticky nav above in-flow hero stacking (page content often uses z-10) */
-  .nav-shell {
-    z-index: var(--z-nav);
-  }
-
-  /* Match the base selector's specificity so the auto-hide is neutralized for
-     reduced-motion users without needing !important. */
-  @media (prefers-reduced-motion: reduce) {
-    .nav-shell--auto-hidden:not([data-menu-state='open']) {
-      pointer-events: auto;
-      transform: none;
-    }
-  }
-
-  .nav-shell:has(#navbar.has-background) {
-    @apply border-border/80 bg-glass-xl shadow-md;
-  }
-
-  #navbar[data-js-nav='true'] ~ .mobile-nav-fallback {
-    display: none;
-  }
-
-  body.scroll-locked .nav-shell,
-  body.scroll-locked [data-ai-chat-widget] {
-    padding-right: var(--scrollbar-width, 0);
-  }
-
-  .burger-icon {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    justify-content: center;
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
-  .burger-line {
-    display: block;
-    width: 100%;
-    height: 2px;
-    background: currentcolor;
-    border-radius: 1px;
-    transition:
-      transform var(--duration-normal) var(--ease-standard),
-      opacity var(--duration-fast) var(--ease-standard);
-  }
-
-  .burger-menu-button.active .burger-line:nth-child(1) {
-    transform: translateY(6px) rotate(45deg);
-  }
-
-  .burger-menu-button.active .burger-line:nth-child(2) {
-    opacity: 0;
-  }
-
-  .burger-menu-button.active .burger-line:nth-child(3) {
-    transform: translateY(-6px) rotate(-45deg);
-  }
-
-  .theme-toggle .sun-icon,
-  .theme-toggle .moon-icon,
-  .theme-toggle .system-icon {
-    display: none;
-  }
-
-  .theme-toggle[data-theme-preference='light'] .sun-icon,
-  .theme-toggle[data-theme-preference='dark'] .moon-icon,
-  .theme-toggle[data-theme-preference='system'] .system-icon {
-    display: block;
-  }
-
-  .theme-toggle:active .sun-icon,
-  .theme-toggle:active .moon-icon {
-    animation: theme-toggle-spin var(--duration-fast) var(--ease-standard);
-  }
-
-  @keyframes theme-toggle-spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  .nav-shell:has(.mobile-menu[data-state='open']),
-  .nav-shell[data-menu-state='open'] {
-    z-index: var(--z-nav-drawer);
-  }
-
-  .mobile-menu-backdrop {
-    position: fixed;
-    inset: var(--nav-height) 0 0 0;
-    z-index: calc(var(--z-nav-drawer) - 1);
-    display: none;
-    padding: 0;
-    margin: 0;
-    pointer-events: none;
-    background: color-mix(in oklch, var(--color-background) 55%, transparent);
-    border: 0;
-    opacity: 0;
-    backdrop-filter: blur(2px);
-  }
-
-  .mobile-menu-backdrop[data-state='open'] {
-    display: block;
-    pointer-events: auto;
-    opacity: 1;
-  }
-
-  .mobile-menu {
-    display: none;
-    visibility: hidden;
-    pointer-events: none;
-    opacity: 0;
-  }
-
-  .mobile-menu[data-state='open'] {
-    position: fixed;
-    top: var(--nav-height);
-    right: 0;
-    left: 0;
-    z-index: var(--z-nav-drawer);
-    display: block;
-    visibility: visible;
-    width: 100%;
-    max-height: min(80dvh, 32rem);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    pointer-events: auto;
-    opacity: 1;
-    animation: mobile-menu-in var(--duration-normal) var(--ease-decelerate) forwards;
-  }
-
-  @keyframes mobile-menu-in {
-    from {
-      transform: translateY(-0.5rem);
-    }
-
-    to {
-      transform: translateY(0);
-    }
-  }
-
-  /* Shared interactive chrome */
   .focus-ring-interactive:focus-visible {
     @apply ring-2 ring-accent/60 ring-offset-2 ring-offset-background outline-none;
   }
@@ -359,9 +65,6 @@
     border-inline-start: 3px solid var(--color-success);
   }
 
-  /* Overlays — OverlayShell toggles the `flex`/`hidden` display utilities and
-     the `data-state` attribute directly, so visibility needs no component-layer
-     rule or !important (utilities would otherwise shadow this layer). */
   .command-center .overlay-panel {
     box-shadow: var(--shadow-xl);
   }
@@ -428,23 +131,10 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .mobile-menu,
-    .mobile-menu-backdrop,
     .overlay-panel,
     .ai-chat-panel,
-    #search-overlay,
-    .burger-line {
+    #search-overlay {
       transition: none !important;
-      animation: none !important;
-    }
-
-    .mobile-menu[data-state='open'] {
-      opacity: 1 !important;
-      transform: none !important;
-    }
-
-    .theme-toggle:active .sun-icon,
-    .theme-toggle:active .moon-icon {
       animation: none !important;
     }
   }

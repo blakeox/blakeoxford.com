@@ -4,7 +4,7 @@ import Container from '../../components/primitives/Container.astro';
 import Section from '../../components/primitives/Section.astro';
 import Button from '../../components/primitives/Button.astro';
 import Badge from '../../components/primitives/Badge.astro';
-import Card from '../../components/composites/Card.astro';
+import BaseCard from '../../components/primitives/BaseCard.astro';
 import FeatureCard from '../../components/composites/FeatureCard.astro';
 import { PRIMITIVE_PROP_CONTRACT, COMPONENT_AUTHORING_CHECKLIST } from '../../data/componentDocs';
 import ComponentCatalog from '../../components/features/design/ComponentCatalog.astro';
@@ -21,9 +21,9 @@ const canonicalExamples = [
     path: 'src/components/primitives/Badge.astro',
   },
   {
-    name: 'Card',
-    contract: 'Use as the compatibility wrapper over BaseCard. Keep card styling centralized.',
-    path: 'src/components/composites/Card.astro',
+    name: 'BaseCard',
+    contract: 'Use as the shared card primitive. Keep card styling centralized.',
+    path: 'src/components/primitives/BaseCard.astro',
   },
   {
     name: 'FeatureCard',
@@ -73,7 +73,7 @@ const canonicalExamples = [
       <section class="mt-16" aria-labelledby="live-examples">
         <h2 id="live-examples" class="text-2xl font-bold text-foreground">Live Examples</h2>
         <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <Card variant="elevated" hover="none">
+          <BaseCard variant="elevated" hover="none">
             <h3 class="text-xl font-semibold text-foreground">Buttons</h3>
             <div class="mt-5 flex flex-wrap gap-3">
               <Button variant="primary">Primary</Button>
@@ -81,9 +81,9 @@ const canonicalExamples = [
               <Button variant="outline">Outline</Button>
               <Button variant="ghost">Ghost</Button>
             </div>
-          </Card>
+          </BaseCard>
 
-          <Card variant="elevated" hover="none">
+          <BaseCard variant="elevated" hover="none">
             <h3 class="text-xl font-semibold text-foreground">Badges</h3>
             <div class="mt-5 flex flex-wrap gap-2">
               <Badge variant="secondary">Default</Badge>
@@ -92,7 +92,7 @@ const canonicalExamples = [
               <Badge variant="warning">Warning</Badge>
               <Badge variant="error">Error</Badge>
             </div>
-          </Card>
+          </BaseCard>
 
           <FeatureCard
             title="Feature Card"

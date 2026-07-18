@@ -6,8 +6,8 @@ const themeCss = readFileSync(resolve(__dirname, '../../src/styles/theme.css'), 
 
 describe('brand token contract', () => {
   it('keeps warm ink primary (hue 55) and brass accent (hue 75)', () => {
-    expect(themeCss).toMatch(/--color-primary:\s*oklch\([^)]*55\)/);
-    expect(themeCss).toMatch(/--color-accent:\s*oklch\([^)]*75\)/);
+    expect(themeCss).toMatch(/--brand-primary:\s*oklch\([^)]*55\)/);
+    expect(themeCss).toMatch(/--brand-accent:\s*oklch\([^)]*75\)/);
   });
 
   it('documents accent-subtle for soft surfaces', () => {
@@ -15,7 +15,7 @@ describe('brand token contract', () => {
   });
 
   it('uses accent for unified focus ring color', () => {
-    expect(themeCss).toMatch(/--focus-ring-color:\s*var\(--color-accent\)/);
+    expect(themeCss).toMatch(/--focus-ring-color:\s*var\(--runtime-accent\)/);
   });
 
   it('exposes always-dark overlay and code helpers without parallel *-dark utilities', () => {
@@ -32,6 +32,16 @@ describe('brand token contract', () => {
   it('bridges semantic motion durations including moderate', () => {
     expect(themeCss).toContain('--transition-duration-moderate');
     expect(themeCss).toContain('--duration-moderate');
+    expect(themeCss).toContain('--duration-instant');
+    expect(themeCss).toContain('--duration-standard');
+  });
+
+  it('avoids same-name @theme self-references for brand colors', () => {
+    const themeBridgeStart = themeCss.indexOf('@theme inline {');
+    const themeBridge = themeCss.slice(themeBridgeStart);
+    expect(themeBridge).not.toMatch(/--color-primary:\s*var\(--color-primary\)/);
+    expect(themeBridge).toMatch(/--color-primary:\s*var\(--runtime-primary\)/);
+    expect(themeBridge).toMatch(/--color-accent:\s*var\(--runtime-accent\)/);
   });
 
   it('bridges named z-index utilities including chat launcher', () => {
