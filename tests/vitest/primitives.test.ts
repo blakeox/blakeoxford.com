@@ -1,6 +1,6 @@
 /**
  * Primitive Components Test Suite
- * Tests for Badge, Button, Flex, DateDisplay, and other primitive components
+ * Tests for Badge, Button, Flex, and other primitive components
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
@@ -106,36 +106,6 @@ describe('Flex Component', () => {
 
   it('should support wrap prop', () => {
     expect(fileContent).toMatch(/wrap|flex-wrap/);
-  });
-});
-
-describe('DateDisplay Component', () => {
-  let fileContent: string;
-
-  beforeAll(() => {
-    const filePath = resolve(__dirname, '../../src/components/primitives/DateDisplay.astro');
-    fileContent = readFileSync(filePath, 'utf-8');
-  });
-
-  it('should exist and be readable', () => {
-    expect(fileContent).toBeDefined();
-    expect(fileContent.length).toBeGreaterThan(0);
-  });
-
-  it('should use semantic time element', () => {
-    expect(fileContent).toContain('<time');
-  });
-
-  it('should have datetime attribute', () => {
-    expect(fileContent).toContain('datetime');
-  });
-
-  it('should accept date prop', () => {
-    expect(fileContent).toContain('date');
-  });
-
-  it('should handle date formatting', () => {
-    expect(fileContent).toMatch(/format|toLocaleDateString|formatDate/);
   });
 });
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Generate simple flat SVG badges for mutation score & flakiness reliability.
- * Output: badges/mutation.svg, badges/flakiness.svg, badges/a11y.svg
+ * Generate simple flat SVG badges for flakiness reliability and accessibility.
+ * Output: badges/flakiness.svg, badges/reliability.svg, badges/a11y.svg
  */
 import fs from 'fs';
 import path from 'path';
@@ -21,13 +21,6 @@ function read(file) {
   }
 }
 
-function colorScaleMutation(score) {
-  if (score >= 90) return '#2e7d32';
-  if (score >= 80) return '#558b2f';
-  if (score >= 70) return '#f9a825';
-  if (score >= 60) return '#fb8c00';
-  return '#c62828';
-}
 function colorScaleFlakiness(intensity) {
   if (intensity <= 0.01) return '#2e7d32';
   if (intensity <= 0.02) return '#558b2f';
@@ -56,27 +49,6 @@ function svgBadge(label, value, color) {
 <text x='${labelWidth / 2}' y='15'>${label}</text>
 <text x='${labelWidth + valueWidth / 2}' y='15'>${value}</text>
 </g></svg>`;
-}
-
-// Mutation
-let mutationScore = null;
-const quality = read('quality-summary.md');
-if (quality) {
-  const m = quality.match(/Mutation Score[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
-  if (m) mutationScore = parseFloat(m[1]);
-}
-if (mutationScore != null) {
-  const svg = svgBadge(
-    'mutation',
-    mutationScore.toFixed(1) + '%',
-    colorScaleMutation(mutationScore)
-  );
-  fs.writeFileSync(path.join(outDir, 'mutation.svg'), svg, 'utf8');
-  console.log(`[badges] mutation=${mutationScore.toFixed(1)}%`);
-} else {
-  const svg = svgBadge('mutation', 'n/a', '#6c757d');
-  fs.writeFileSync(path.join(outDir, 'mutation.svg'), svg, 'utf8');
-  console.log('[badges] mutation score not found (emitted n/a)');
 }
 
 // Flakiness (retry intensity) & Reliability (pass rate)

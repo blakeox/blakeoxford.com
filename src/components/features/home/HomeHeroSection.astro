@@ -1,99 +1,128 @@
 ---
 import CoinFlipImage from '../../composites/CoinFlipImage.astro';
 import PageHero from '../../composites/PageHero.astro';
+import IntroCopy from '../../composites/IntroCopy.astro';
 import Button from '../../primitives/Button.astro';
 import ButtonGroup from '../../composites/ButtonGroup.astro';
 import type { HomePageContent } from '../../../content/home/pageTypes';
 
 interface Props {
   author: string;
-  tagline?: string;
+  /** Single supporting line under the name (promise or role). */
   description?: string;
   content: HomePageContent['hero'];
 }
 
-const { author, tagline, description, content } = Astro.props as Props;
+const { author, description, content } = Astro.props as Props;
 ---
 
-<PageHero id="about-me" class="hero-gradient-animated" includeBlurOrbs={false}>
+{/**
+ * Identity lockup: coin + name share one axis.
+ * Mobile — stacked, centered. Desktop — coin beside copy, group centered as a unit.
+ */}
+<PageHero
+  id="about-me"
+  class="hero-gradient-animated hero-with-atmosphere"
+  includeBlurOrbs={false}
+  style={`--hero-atmosphere-image: url('${content.portrait.frontSrc}')`}
+>
   <div
-    class="relative z-10 grid items-center gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16"
+    class="hero-entrance relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center gap-7 text-center lg:flex-row lg:items-center lg:justify-center lg:gap-12 lg:text-left xl:gap-14"
   >
-    <div class="hero-entrance order-2 max-w-xl space-y-7 lg:order-1">
-      <p class="section-kicker">{content.kicker}</p>
-      <div class="space-y-4">
-        <h1
-          class="font-heading text-5xl font-semibold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-[4.75rem] lg:leading-[1.02]"
-        >
-          {author}
-        </h1>
-        {
-          tagline && (
-            <p class="max-w-lg text-xl leading-snug font-medium text-foreground/90 sm:text-2xl">
-              {tagline}
-            </p>
-          )
-        }
-        {
-          description && (
-            <p class="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {description}
-            </p>
-          )
-        }
+    <div class="relative shrink-0 pb-4 lg:pb-5">
+      <div
+        class="pointer-events-none absolute -inset-[12%] rounded-full bg-accent-subtle blur-3xl"
+        aria-hidden="true"
+      >
       </div>
-      <ButtonGroup align="start" responsive class="pt-1">
+      <div
+        class="relative rounded-full ring-1 ring-accent/30 ring-offset-2 ring-offset-background sm:ring-offset-4"
+      >
+        <CoinFlipImage
+          frontSrc={content.portrait.frontSrc}
+          backSrc={content.portrait.backSrc}
+          alt={content.portrait.alt}
+          altBack={content.portrait.altBack}
+          size={300}
+          flipMultipleTimes
+          loading="eager"
+          fetchPriority="high"
+          decoding="auto"
+          class="home-coin-flip"
+        />
+      </div>
+    </div>
+
+    <div class="flex min-w-0 max-w-xl flex-col items-center gap-5 lg:items-start">
+      <IntroCopy
+        kicker={content.kicker}
+        title={author}
+        description={description}
+        size="identity"
+        descriptionTone="strong"
+        class="w-full items-center lg:items-start lg:text-left"
+      />
+      <ButtonGroup align="center" responsive class="lg:justify-start">
         <Button
           variant="primary"
+          size="lg"
           href={content.primaryCta.href}
           data-test="home-cta-connect"
           data-analytics="hero-cta"
+          data-prefetch-contact
         >
           {content.primaryCta.label}
         </Button>
-        <Button variant="ghost" href={content.secondaryCta.href}>
+        <Button variant="outline" size="lg" href={content.secondaryCta.href}>
           {content.secondaryCta.label}
         </Button>
       </ButtonGroup>
-      <ul
-        class="flex flex-col gap-2 border-t border-border/50 pt-6 text-sm text-muted-foreground sm:text-base"
-        role="list"
-        aria-label="Selected strengths"
-      >
-        {
-          content.strengths.map((strength) => (
-            <li class="flex gap-3">
-              <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-              <span>{strength}</span>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-
-    <div class="order-1 flex justify-center lg:order-2 lg:justify-end">
-      <div class="relative">
-        <div
-          class="absolute inset-0 -translate-y-2 scale-110 rounded-full bg-accent-subtle blur-3xl"
-          aria-hidden="true"
-        >
-        </div>
-        <div
-          class="relative rounded-full ring-1 ring-accent/30 ring-offset-4 ring-offset-background"
-        >
-          <CoinFlipImage
-            frontSrc={content.portrait.frontSrc}
-            backSrc={content.portrait.backSrc}
-            alt={content.portrait.alt}
-            altBack={content.portrait.altBack}
-            size={300}
-            flipMultipleTimes
-            loading="eager"
-            fetchPriority="high"
-            decoding="auto"
-          />
-        </div>
-      </div>
     </div>
   </div>
 </PageHero>
+
+<style is:global>
+  .home-coin-flip.coin-flip {
+    width: 11.5rem !important;
+    height: 11.5rem !important;
+  }
+
+  @media (width >= 640px) {
+    .home-coin-flip.coin-flip {
+      width: 14rem !important;
+      height: 14rem !important;
+    }
+  }
+
+  @media (width >= 1024px) {
+    .home-coin-flip.coin-flip {
+      width: 17.5rem !important;
+      height: 17.5rem !important;
+    }
+  }
+</style>
+
+<script>
+  function bindContactPrefetch() {
+    const cta = document.querySelector<HTMLAnchorElement>('[data-prefetch-contact]');
+    if (!cta || cta.dataset.prefetchBound === 'true') return;
+    cta.dataset.prefetchBound = 'true';
+
+    const href = cta.getAttribute('href');
+    if (!href) return;
+
+    const prefetch = () => {
+      if (document.querySelector(`link[rel="prefetch"][href="${href}"]`)) return;
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = href;
+      document.head.appendChild(link);
+    };
+
+    cta.addEventListener('pointerenter', prefetch, { once: true });
+    cta.addEventListener('focus', prefetch, { once: true });
+  }
+
+  bindContactPrefetch();
+  document.addEventListener('astro:page-load', bindContactPrefetch);
+</script>

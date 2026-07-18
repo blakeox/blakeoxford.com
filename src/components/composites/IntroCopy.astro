@@ -1,0 +1,99 @@
+---
+/**
+ * IntroCopy — kicker + heading + optional description with a tight type rhythm.
+ * Use in heroes and featured lockups so stacks don't drift page-to-page.
+ */
+export interface Props {
+  kicker?: string;
+  title: string;
+  titleId?: string;
+  description?: string;
+  as?: 'h1' | 'h2';
+  /** Heading size ladder */
+  size?: 'hero' | 'display' | 'section' | 'identity';
+  align?: 'start' | 'center';
+  /** Optional proof / outcome line between title and description */
+  emphasis?: string;
+  /** Body size under the title */
+  descriptionSize?: 'md' | 'lg' | 'xl';
+  /** Description color — strong for home identity line */
+  descriptionTone?: 'muted' | 'strong';
+  class?: string;
+}
+
+const {
+  kicker,
+  title,
+  titleId,
+  description,
+  as: Tag = 'h1',
+  size = 'hero',
+  align = 'start',
+  emphasis,
+  descriptionSize,
+  descriptionTone = 'muted',
+  class: className = '',
+} = Astro.props as Props;
+
+const isCentered = align === 'center';
+const bodySize =
+  descriptionSize ?? (size === 'identity' ? 'xl' : size === 'hero' ? 'lg' : 'md');
+
+const sizeClasses = {
+  identity: 'text-5xl leading-[1.05] sm:text-6xl md:text-7xl lg:text-[4.5rem]',
+  hero: 'text-4xl leading-[1.1] sm:text-5xl md:text-6xl',
+  display: 'text-3xl leading-snug sm:text-4xl md:text-5xl',
+  section: 'text-2xl leading-snug sm:text-3xl md:text-4xl',
+} as const;
+
+const descriptionSizeClasses = {
+  md: 'pt-0.5 text-base leading-relaxed text-pretty sm:text-lg',
+  lg: 'pt-0.5 text-lg leading-relaxed text-pretty sm:text-xl',
+  xl: 'pt-0.5 text-lg leading-relaxed text-pretty sm:text-xl lg:max-w-md lg:text-2xl lg:leading-snug',
+} as const;
+
+const descriptionToneClasses = {
+  muted: 'text-muted-foreground',
+  strong: 'text-foreground/90',
+} as const;
+---
+
+<div
+  class:list={[
+    'flex flex-col gap-2.5',
+    isCentered && 'items-center text-center',
+    className,
+  ]}
+>
+  {kicker && <span class:list={['section-kicker', isCentered && 'mx-auto']}>{kicker}</span>}
+  <Tag
+    id={titleId}
+    class:list={[
+      'font-heading font-semibold tracking-tight text-balance text-foreground',
+      sizeClasses[size],
+    ]}
+  >
+    {title}
+  </Tag>
+  {
+    emphasis && (
+      <p class="font-heading text-lg font-semibold tracking-tight text-accent-emphasis sm:text-xl">
+        {emphasis}
+      </p>
+    )
+  }
+  {
+    description && (
+      <p
+        class:list={[
+          descriptionSizeClasses[bodySize],
+          descriptionToneClasses[descriptionTone],
+          isCentered ? 'max-w-2xl' : size === 'identity' ? '' : 'max-w-xl',
+        ]}
+      >
+        {description}
+      </p>
+    )
+  }
+  <slot />
+</div>

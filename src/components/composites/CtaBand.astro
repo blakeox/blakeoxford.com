@@ -1,0 +1,62 @@
+---
+/**
+ * CtaBand — full-bleed closing CTA used on home, work, and about.
+ */
+import Container from '../primitives/Container.astro';
+import SectionHeading from '../primitives/SectionHeading.astro';
+import Button from '../primitives/Button.astro';
+import ButtonGroup from './ButtonGroup.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  titleId?: string;
+  kicker?: string;
+  primary: { href: string; label: string };
+  secondary?: { href: string; label: string };
+  class?: string;
+  'data-layout-section'?: string;
+}
+
+const {
+  title,
+  description,
+  titleId = 'cta-band-title',
+  kicker,
+  primary,
+  secondary,
+  class: className = '',
+  'data-layout-section': layoutSection,
+} = Astro.props;
+---
+
+<section
+  class:list={['home-cta-band w-full border-y border-border/40 py-16 sm:py-20 lg:py-24', className]}
+  aria-labelledby={titleId}
+  data-layout-section={layoutSection}
+>
+  <Container size="xl" class="relative z-10">
+    <div class="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
+      <div class="flex flex-col items-center gap-2.5">
+        {kicker && <span class="section-kicker mx-auto">{kicker}</span>}
+        <SectionHeading id={titleId} size="4xl">{title}</SectionHeading>
+        <p class="pt-0.5 text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">
+          {description}
+        </p>
+      </div>
+      <ButtonGroup align="center" responsive>
+        <Button variant="primary" size="lg" href={primary.href}>
+          {primary.label}
+        </Button>
+        {
+          secondary && (
+            <Button variant="outline" size="lg" href={secondary.href}>
+              {secondary.label}
+            </Button>
+          )
+        }
+      </ButtonGroup>
+      <slot />
+    </div>
+  </Container>
+</section>

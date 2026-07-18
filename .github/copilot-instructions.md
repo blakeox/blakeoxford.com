@@ -74,7 +74,7 @@ This is a **performance-first Astro SSG** deployed on Cloudflare Workers with co
 - **Framework**: Astro static site generator (`output: 'static'`)
 - **Styling**: Tailwind CSS v4 (CSS-first via `@tailwindcss/vite` + Typography plugin); tokens in `src/styles/theme.css` bridged with `@theme inline`
 - **Content**: Type-safe content collections (`src/content/config.ts`) for blog posts and projects
-- **Testing**: Vitest (unit/component) + Playwright (e2e) + accessibility testing with axe-core + Stryker mutation testing
+- **Testing**: Vitest (unit/component) + Playwright (e2e) + accessibility testing with axe-core
 - **Performance**: Custom optimization scripts, critical CSS inlining, image optimization, bundle analysis
 - **Edge**: Cloudflare Workers with KV storage, Durable Objects, Workers AI, and Vectorize
 - **AI Features**: AI-powered chat widget with RAG (Retrieval-Augmented Generation), semantic search via Vectorize
@@ -102,7 +102,7 @@ pnpm test:coverage          # Run tests with coverage report
 pnpm test:e2e              # Playwright e2e tests
 pnpm test:e2e:essential    # Run essential e2e tests only (faster)
 pnpm test:ci               # Run both test suites (CI)
-pnpm test:mutants          # Run Stryker mutation testing
+pnpm test -- --run           # Unit tests
 ```
 
 ### Performance & Optimization
@@ -110,7 +110,7 @@ pnpm test:mutants          # Run Stryker mutation testing
 ```bash
 pnpm optimize:images       # Advanced image optimization
 pnpm perf:test             # Performance testing with Lighthouse
-pnpm perf:budget           # Check performance budgets
+./scripts/build/performance-budget.sh  # Size/bundle budget gate
 pnpm perf:summary          # Generate performance summary
 pnpm perf:long-tasks       # Analyze long tasks
 pnpm deploy:quality-gate   # Run comprehensive quality gate
@@ -119,7 +119,7 @@ pnpm deploy:quality-gate   # Run comprehensive quality gate
 ### AI & Search Features
 
 ```bash
-pnpm generate:search-index # Generate Fuse.js search index
+pnpm generate:search-index # Generate client search index
 pnpm vectorize:index       # Index content in Cloudflare Vectorize
 ```
 
@@ -149,7 +149,7 @@ pnpm a11y:trend            # Track accessibility trends
 ### Pages & Routing
 
 - `src/pages/` - Astro file-based routing (kebab-case filenames)
-- `src/pages/api/` - API endpoints (csp-report.ts, security-report.ts, performance-alert.ts)
+- API/edge handlers live in `functions/` (Workers), not `src/pages/api/`
 - Always include proper frontmatter with Layout, title, description, canonicalUrl
 
 ### Components & Assets
@@ -177,7 +177,7 @@ pnpm a11y:trend            # Track accessibility trends
 - `tests/accessibility-baseline.json` - Accessibility baseline metrics
 - `scripts/` - Build optimization and performance tooling
   - `scripts/optimization/` - Image optimization, quality gates, deployment checks
-  - `scripts/quality/` - Quality metrics, contrast audits, mutation testing
+  - `scripts/quality/` - Quality metrics and contrast audits
   - `scripts/build/` - Build-time scripts and performance testing
   - `scripts/content/` - Content processing (search index generation)
 - `functions/` - Cloudflare Workers (edge-computing.js, send-email.js, ConversationDO.js)
@@ -217,7 +217,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
   - Props: `frontSrc`, `backSrc`, `alt`, `altBack`, `size`, `flipMultipleTimes`, `flipOnClick`, `flipAxis`
 
 **Search & Navigation**:
-- **SearchOverlay.astro**: Client-side search with Fuse.js
+- **SearchOverlay.astro**: Client-side search over a generated index
   - When: Need fuzzy search across blog/projects
   - Why: Fast client-side search with keyboard shortcuts (Cmd+K)
   - Data: Pre-generated search index from `generate:search-index`
@@ -452,7 +452,7 @@ pnpm audit:contrast # Color contrast (4.5:1+)
 
 # Performance
 pnpm perf:test      # Lighthouse (95+ all metrics)
-pnpm perf:budget    # Performance budgets
+./scripts/build/performance-budget.sh  # Size/bundle budget gate
 
 # Security
 pnpm security:audit # Dependency vulnerabilities
@@ -521,8 +521,7 @@ pnpm optimize:images
 # 1. Audit dependencies
 pnpm security:audit
 
-# 2. Check CSP reports (if configured)
-# Review KV: CSP_REPORTS
+# 2. Review CSP headers in public/_headers and edge responses
 
 # 3. Update dependencies
 pnpm update --latest
@@ -620,7 +619,7 @@ Note: Cloudflare Pages is deprecated for this project. Do not use `wrangler page
 ### External APIs
 
 - **Cloudflare Email Service**: Native Worker binding for contact form delivery
-- **Fuse.js**: Client-side fuzzy search
+- **Client search**: Generated JSON index + local ranking
 - **Cloudflare AI**: Workers AI for on-edge inference
 - **Cloudflare Vectorize**: Vector database for semantic search
 - **Lighthouse CI**: Automated performance testing
@@ -970,7 +969,7 @@ pnpm test:e2e -- --headed    # See browser
 pnpm test:e2e -- --debug     # Debug mode with Playwright Inspector
 
 # Quality Assurance
-pnpm test:mutants            # Mutation testing (Stryker)
+pnpm test -- --run               # Unit tests
 pnpm audit:contrast          # Color contrast WCAG AA (4.5:1+)
 pnpm a11y:trend             # Accessibility trend analysis
 pnpm design:lint            # Design token usage audit
@@ -981,7 +980,7 @@ pnpm security:audit         # Dependency vulnerabilities
 ```bash
 # Performance Testing
 pnpm perf:test              # Lighthouse (target: 95+ all metrics)
-pnpm perf:budget            # Check performance budgets
+./scripts/build/performance-budget.sh  # Size/bundle budget gate
 pnpm perf:summary           # Generate summary report
 pnpm perf:long-tasks        # Analyze JS long tasks (>50ms)
 
@@ -1000,7 +999,7 @@ pnpm edge:deploy           # Alternative deploy command
 pnpm edge:validate         # Validate edge configuration
 
 # AI & Search
-pnpm generate:search-index  # Generate Fuse.js search index
+pnpm generate:search-index  # Generate client search index
 pnpm vectorize:index       # Index content in Vectorize (RAG)
 
 # Debugging

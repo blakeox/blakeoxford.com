@@ -24,7 +24,7 @@ test.describe('About Page', () => {
 test.describe('Contact Page', () => {
   test('should display contact form', async ({ page }) => {
     await page.goto('/contact');
-    await expect(page.getByRole('heading', { name: /start the conversation/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /bring the hardest bottleneck/i })).toBeVisible();
     const contactForm = page.locator('#contact-form');
     await expect(contactForm).toBeVisible();
     await expect(contactForm).toHaveAttribute('action', '/send-email');

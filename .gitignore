@@ -194,6 +194,8 @@ dead-links-report.json
 search-relevance-results.json
 test-results.json
 toxic-tests.json
+quality-summary.md
+long-tasks-report.json
 
 # Wrangler outputs
 .wrangler/

@@ -16,7 +16,7 @@ test.describe('@extended @timeline About Timeline - Sectional Visual', () => {
     await expect(timelineSection).toBeVisible();
 
     // Snapshot just the header region to keep diffs minimal and avoid animation noise
-    const header = page.getByRole('heading', { name: /professional journey/i });
+    const header = page.getByRole('heading', { name: /where the judgment was forged/i });
     await expect(header).toBeVisible();
     await header.scrollIntoViewIfNeeded();
 

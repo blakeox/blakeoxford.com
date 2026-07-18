@@ -34,6 +34,26 @@
       );
   }
 
+  .hero-with-atmosphere::after {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    content: '';
+    background-image: var(--hero-atmosphere-image);
+    background-position: 70% 30%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.14;
+    filter: blur(28px) saturate(0.85);
+    transform: scale(1.12);
+    mask-image: radial-gradient(ellipse 75% 70% at 70% 40%, black 20%, transparent 72%);
+  }
+
+  :root:not(.dark):not([data-theme='dark']) .hero-with-atmosphere::after {
+    opacity: 0.1;
+  }
+
   .hero-entrance > * {
     animation: hero-rise 700ms var(--ease-decelerate) both;
   }
@@ -70,5 +90,30 @@
     .hero-entrance > * {
       animation: none;
     }
+  }
+
+  .home-cta-band {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-surface-subtle);
+  }
+
+  .home-cta-band::before {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    content: '';
+    background:
+      radial-gradient(
+        ellipse 50% 60% at 50% 40%,
+        color-mix(in oklch, var(--color-accent) 14%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 45% 50% at 50% 100%,
+        color-mix(in oklch, var(--color-primary) 8%, transparent),
+        transparent 65%
+      );
   }
 }

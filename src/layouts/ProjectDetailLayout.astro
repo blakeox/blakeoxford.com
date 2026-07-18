@@ -57,6 +57,10 @@ const categories = hasCategories ? ((data as any).categories as string[]) : [];
 const reflection =
   'reflection' in data ? ((data as any).reflection as string | undefined) : undefined;
 
+const primaryOutcome =
+  (Array.isArray(data.impact) && data.impact[0]) ||
+  (hasMetrics && metrics[0] ? `${metrics[0].result} — ${metrics[0].metric}` : undefined);
+
 const { Content } = await render(entry);
 
 // Generate structured data
@@ -74,9 +78,12 @@ const projectSchema = createProjectSchema(title, defaultAuthor, date, {
 
 const breadcrumbSchema = createBreadcrumbListSchema([
   { name: 'Home', url: `${siteOrigin}/` },
-  { name: 'Projects', url: `${siteOrigin}/projects/` },
+  { name: 'Selected work', url: `${siteOrigin}/projects/` },
   { name: title, url: canonicalUrl },
 ]);
+
+const externalLink =
+  typeof (data as { link?: string }).link === 'string' ? (data as { link: string }).link : undefined;
 
 const structuredData = [projectSchema, breadcrumbSchema];
 ---
@@ -89,19 +96,25 @@ const structuredData = [projectSchema, breadcrumbSchema];
   structuredData={structuredData}
   wide
 >
-  <ProjectHero title={title} description={description} date={date} image={heroImage} />
+  <ProjectHero
+    title={title}
+    description={description}
+    date={date}
+    image={heroImage}
+    link={externalLink}
+    categories={categories}
+    outcome={primaryOutcome}
+  />
   <ProjectDetailContent
     data={data}
     Content={Content}
     metrics={metrics}
     journey={journey}
     lessons={lessons}
-    categories={categories}
     reflection={reflection}
     hasMetrics={hasMetrics}
     hasJourney={hasJourney}
     hasLessons={hasLessons}
-    hasCategories={hasCategories}
   >
     <slot name="cta" slot="cta" />
   </ProjectDetailContent>

@@ -98,13 +98,3 @@ export function getRetryDelay(attempt: number): number {
   // Exponential backoff: 1s, 2s, 4s, 8s, max 10s
   return Math.min(1000 * Math.pow(2, attempt), 10000);
 }
-
-/**
- * Check if error is retryable
- * @param err - Error object
- * @returns True if error should be retried
- */
-export function isRetryableError(err: unknown): boolean {
-  const { retryable } = categorizeError(err);
-  return retryable;
-}

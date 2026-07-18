@@ -1,0 +1,42 @@
+---
+import Section from '../../primitives/Section.astro';
+import SectionHeader from '../../composites/SectionHeader.astro';
+import EditorialList from '../../composites/EditorialList.astro';
+
+interface Capability {
+  title: string;
+  description: string;
+  examples: string[];
+}
+
+interface Props {
+  kicker: string;
+  title: string;
+  description: string;
+  items: Capability[];
+}
+
+const { kicker, title, description, items } = Astro.props as Props;
+
+const rows = items.map((item) => ({
+  title: item.title,
+  body: item.description,
+  meta: item.examples.join(' · '),
+}));
+---
+
+<Section
+  id="capabilities"
+  padding="lg"
+  container="lg"
+  aria-labelledby="capabilities-heading"
+  data-layout-section="projects-capabilities"
+>
+  <SectionHeader
+    kicker={kicker}
+    title={title}
+    titleId="capabilities-heading"
+    description={description}
+  />
+  <EditorialList rows={rows} />
+</Section>

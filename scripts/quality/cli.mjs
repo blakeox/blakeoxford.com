@@ -15,7 +15,6 @@ const commands = {
   'contrast:history': ['contrast:history'],
   'contrast:check': ['contrast:check'],
   performance: ['perf:test'],
-  'perf:budget': ['perf:budget'],
   full: ['ci:full'],
   fast: ['ci:fast'],
   design: ['design:lint'],
@@ -23,7 +22,6 @@ const commands = {
   summary: ['quality:summary'],
   badges: ['quality:badges'],
   runtime: ['quality:runtime'],
-  mutants: ['test:mutants'],
   flakiness: ['flakiness:check'],
 };
 

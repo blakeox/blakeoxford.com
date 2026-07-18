@@ -49,25 +49,8 @@ export {
   isHashedPath,
 } from './constants';
 
-// ─── Application Configuration ────────────────────────────────────
-export {
-  ConfigManager,
-  getConfig,
-  getConfigManager,
-  defaultConfig,
-  createConfig,
-  validateConfig,
-} from './app-config';
-export type {
-  AppConfig,
-  AccessibilityConfig,
-  DropdownConfig,
-  SearchConfig,
-  AnalyticsConfig,
-} from './app-config';
-
 // ─── Site Data ────────────────────────────────────────────────────
-export { siteConfig, technologies } from './data';
+export { siteConfig } from './data';
 
 // ─── Navigation ───────────────────────────────────────────────────
 export { default as navLinks, navConfig, type NavLink, type NavConfig } from './navLinks';

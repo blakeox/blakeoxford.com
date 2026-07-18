@@ -5,7 +5,6 @@
  * Creates: quality-snapshots/<ISO_DATE>/
  *  - quality-summary.md (copied if exists)
  *  - flakiness-history.json (if exists)
- *  - mutation-history.json / mutation-baseline.json (if exist)
  *  - performance-history.json (if exists)
  * Appends an index line to quality-snapshots/INDEX.md with terse metrics.
  */
@@ -25,13 +24,7 @@ const stamp =
 const dateDir = path.join(root, 'quality-snapshots', stamp);
 fs.mkdirSync(dateDir, { recursive: true });
 
-const files = [
-  'quality-summary.md',
-  'flakiness-history.json',
-  'mutation-history.json',
-  'mutation-baseline.json',
-  'performance-history.json',
-];
+const files = ['quality-summary.md', 'flakiness-history.json', 'performance-history.json'];
 
 function safeRead(f) {
   try {
@@ -41,7 +34,6 @@ function safeRead(f) {
   }
 }
 
-// Copy existing files
 files.forEach((f) => {
   const data = safeRead(f);
   if (data) {
@@ -49,20 +41,8 @@ files.forEach((f) => {
   }
 });
 
-// Derive terse metrics, best-effort
-let mutationScore = 'n/a';
 let avgRetryIntensity = 'n/a';
 let flakyCount = 'n/a';
-
-try {
-  const qs = safeRead('quality-summary.md');
-  if (qs) {
-    const mutMatch = qs.match(/Mutation Score[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
-    if (mutMatch) mutationScore = mutMatch[1];
-  }
-} catch {
-  /* ignore parse errors */
-}
 
 try {
   const fhRaw = safeRead('flakiness-history.json');
@@ -87,24 +67,23 @@ const indexPath = path.join(root, 'quality-snapshots', 'INDEX.md');
 let indexIntro = '';
 if (!fs.existsSync(indexPath)) {
   indexIntro =
-    '# Quality Snapshots Index\n\n| Snapshot | Mutation Score | Δ Mutation | Avg Retry Intensity | Δ Retry | Flaky Tests |\n|----------|----------------|-----------|---------------------|--------|-------------|\n';
+    '# Quality Snapshots Index\n\n| Snapshot | Avg Retry Intensity | Δ Retry | Flaky Tests |\n|----------|---------------------|--------|-------------|\n';
 }
 
-// Read previous line for deltas (last non-header line)
-let prevMutation = null,
-  prevRetry = null;
+let prevRetry = null;
 if (fs.existsSync(indexPath)) {
   try {
     const content = fs.readFileSync(indexPath, 'utf8').trim().split('\n');
-    // find last data row (starts with | 20...) ignoring header separators
     for (let i = content.length - 1; i >= 0; i--) {
       const row = content[i];
       if (/^\| \d{4}-\d{2}-\d{2}_/.test(row)) {
-        // data row
         const cols = row.split('|').map((c) => c.trim());
-        // Columns per new header: 0 empty,1 Snapshot,2 Mutation Score,3 Δ Mutation,4 Avg Retry Intensity,5 Δ Retry,6 Flaky Tests,7 empty
-        if (cols[2] && cols[2] !== 'n/a') prevMutation = parseFloat(cols[2]);
-        if (cols[4] && cols[4] !== 'n/a') prevRetry = parseFloat(cols[4]);
+        // Prefer new layout (Snapshot | Retry | Δ Retry | Flaky); fall back to old mutation layout.
+        if (cols.length >= 5 && cols[2] && cols[2] !== 'n/a' && !Number.isNaN(parseFloat(cols[2]))) {
+          prevRetry = parseFloat(cols[2]);
+        } else if (cols[4] && cols[4] !== 'n/a') {
+          prevRetry = parseFloat(cols[4]);
+        }
         break;
       }
     }
@@ -113,12 +92,7 @@ if (fs.existsSync(indexPath)) {
   }
 }
 
-let deltaMutation = 'n/a';
 let deltaRetry = 'n/a';
-if (prevMutation !== null && mutationScore !== 'n/a' && !Number.isNaN(parseFloat(mutationScore))) {
-  deltaMutation = (parseFloat(mutationScore) - prevMutation).toFixed(2);
-  if (!deltaMutation.startsWith('-')) deltaMutation = '+' + deltaMutation;
-}
 if (
   prevRetry !== null &&
   avgRetryIntensity !== 'n/a' &&
@@ -128,7 +102,7 @@ if (
   if (!deltaRetry.startsWith('-')) deltaRetry = '+' + deltaRetry;
 }
 
-const line = `| ${stamp} | ${mutationScore} | ${deltaMutation} | ${avgRetryIntensity} | ${deltaRetry} | ${flakyCount} |\n`;
+const line = `| ${stamp} | ${avgRetryIntensity} | ${deltaRetry} | ${flakyCount} |\n`;
 fs.appendFileSync(indexPath, indexIntro + line, 'utf8');
 
 console.log(`[quality:snapshot] Archived snapshot at ${dateDir}`);

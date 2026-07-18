@@ -1,16 +1,6 @@
 ---
 /**
- * CTASection - Reusable Call-to-Action section for project pages
- *
- * Standard two-column layout with heading, description, and action buttons.
- * Used in project detail pages "Next steps" sections.
- *
- * @prop {string} heading - Main CTA heading
- * @prop {string} description - Supporting description text
- * @prop {string} primaryLabel - Primary button text (default: "Book a working session")
- * @prop {string} primaryHref - Primary button URL (default: "/contact/")
- * @prop {string} secondaryLabel - Secondary button text (default: "Review how I partner")
- * @prop {string} secondaryHref - Secondary button URL (default: "/about/")
+ * Case-study CTA — matches home / projects closing band language.
  */
 import Button from '../primitives/Button.astro';
 import ButtonGroup from '../composites/ButtonGroup.astro';
@@ -27,27 +17,25 @@ interface Props {
 const {
   heading,
   description,
-  primaryLabel = 'Book a working session',
+  primaryLabel = 'Book a 20-minute bottleneck review',
   primaryHref = '/contact/',
-  secondaryLabel = 'Review how I partner',
-  secondaryHref = '/about/',
+  secondaryLabel = 'Back to selected work',
+  secondaryHref = '/projects/',
 } = Astro.props;
 ---
 
-<div class="grid items-start gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-  <div class="space-y-4">
-    <h3 class="text-xl font-semibold text-foreground sm:text-2xl">
-      {heading}
-    </h3>
-    <p class="text-sm leading-relaxed text-muted-foreground sm:text-base">
-      {description}
-    </p>
-  </div>
-  <ButtonGroup align="end" responsive>
-    <Button variant="outline" href={primaryHref}>
+<div class="flex max-w-2xl flex-col gap-5">
+  <h3 class="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+    {heading}
+  </h3>
+  <p class="text-base leading-relaxed text-muted-foreground sm:text-lg">
+    {description}
+  </p>
+  <ButtonGroup align="start" responsive class="pt-1">
+    <Button variant="primary" href={primaryHref}>
       {primaryLabel}
     </Button>
-    <Button variant="ghost" href={secondaryHref}>
+    <Button variant="outline" href={secondaryHref}>
       {secondaryLabel}
     </Button>
   </ButtonGroup>

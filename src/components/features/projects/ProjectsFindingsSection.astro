@@ -1,0 +1,43 @@
+---
+/**
+ * Cross-portfolio results — supporting proof after the showcase.
+ */
+import Section from '../../primitives/Section.astro';
+import SectionHeader from '../../composites/SectionHeader.astro';
+import EditorialList from '../../composites/EditorialList.astro';
+import type { ProjectFinding } from '../../../content/projects/getProjectInsights';
+
+interface Props {
+  findings: ProjectFinding[];
+  kicker: string;
+  title: string;
+  description: string;
+}
+
+const { findings, kicker, title, description } = Astro.props as Props;
+
+const rows = findings.map((finding) => ({
+  body: finding.text,
+  href: `/projects/${finding.projectSlug}/`,
+  linkLabel: finding.projectTitle,
+}));
+---
+
+<Section
+  id="results"
+  padding="lg"
+  container="lg"
+  background="surface"
+  aria-labelledby="results-heading"
+  data-layout-section="projects-findings"
+>
+  <div data-layout-shell="projects-findings-inner">
+    <SectionHeader
+      kicker={kicker}
+      title={title}
+      titleId="results-heading"
+      description={description}
+    />
+    {findings.length > 0 && <EditorialList rows={rows} />}
+  </div>
+</Section>

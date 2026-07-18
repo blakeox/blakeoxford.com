@@ -306,45 +306,6 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
       });
     }
 
-    // CSP violation report collection endpoint
-    if (url.pathname === '/csp-report') {
-      if (request.method !== 'POST') {
-        return new Response(null, { status: 405, headers: { 'allow': 'POST', 'cache-control': 'no-store', 'x-request-id': reqId, 'x-route-kind': 'api', 'x-cache-policy': 'no-store' } });
-      }
-      try {
-        const ct = (request.headers.get('content-type') || '').toLowerCase();
-        let bodyText = await request.text();
-        let payload;
-        try {
-          payload = JSON.parse(bodyText);
-        } catch {
-          payload = { raw: bodyText };
-        }
-        // Normalize legacy report format
-        const report = payload?.['csp-report'] ? { type: 'csp-report', ...payload['csp-report'] } : payload;
-        const record = {
-          t: Date.now(),
-          url: request.url,
-          ip: request.headers.get('cf-connecting-ip') || null,
-          ua: request.headers.get('user-agent') || null,
-          ct,
-          report
-        };
-        console.warn('\ud83d\udd10 CSP violation report:', record);
-        const key = `csp:${record.t}:${Math.random().toString(36).slice(2, 8)}`;
-        // Prefer dedicated storage; if not configured, this is a best-effort no-op
-        if (env.CSP_REPORTS && typeof env.CSP_REPORTS.put === 'function') {
-          await env.CSP_REPORTS.put(key, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 7 });
-        } else if (env.RATE_LIMIT_KV && typeof env.RATE_LIMIT_KV.put === 'function') {
-          // Fallback storage if dedicated KV is not bound
-          await env.RATE_LIMIT_KV.put(key, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 3 });
-        }
-      } catch (e) {
-        console.error('Failed to store CSP report:', e);
-      }
-      return new Response(null, { status: 204, headers: { 'cache-control': 'no-store', 'x-request-id': reqId, 'x-route-kind': 'api', 'x-cache-policy': 'no-store' } });
-    }
-
     // Health endpoint (moved off /metrics to avoid third-party collisions)
     if (url.pathname === '/_healthz' || url.pathname === '/_healthz/') {
       return new Response(null, { status: 204, headers: { 'cache-control': 'no-store, no-cache, must-revalidate', 'content-type': 'text/plain; charset=utf-8', 'content-length': '0', 'x-content-type-options': 'nosniff', 'x-request-id': reqId, 'x-route-kind': 'health', 'x-cache-policy': 'no-store, no-cache, must-revalidate' } });

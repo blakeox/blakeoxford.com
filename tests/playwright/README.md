@@ -28,7 +28,7 @@ Files:
 Selectors and hooks:
 
 - Section root has `id="about-timeline"`.
-- Cards expose `data-testid="timeline-card"` for deterministic selection.
+- Use stable selectors (roles, labels, or section headings) rather than brittle class hooks.
 - Mobile scroll container is a focusable region with an accessible name (role="region", aria-label, tabindex).
 
 ## Debugging responsive visibility

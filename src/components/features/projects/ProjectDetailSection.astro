@@ -1,49 +1,32 @@
 ---
-import BadgePill from '../../primitives/BadgePill.astro';
-
+/**
+ * Project detail section — editorial chrome matching home / case insights.
+ * No elevated cards; kicker + heading + optional lead.
+ */
 export interface Props {
   title: string;
   eyebrow?: string;
   id?: string;
   description?: string;
-  subtitle?: string;
-  layout?: 'default' | 'surface';
+  class?: string;
 }
 
-const { title, eyebrow, id, description, subtitle, layout = 'default' } = Astro.props;
-
-const containerClasses =
-  layout === 'surface'
-    ? 'rounded-3xl bg-surface/95 p-6 sm:p-8 lg:p-10 ring-1 ring-border/30 shadow-lg backdrop-blur-sm'
-    : 'rounded-3xl bg-background/96 p-6 sm:p-9 lg:p-10 ring-1 ring-border/30 shadow-lg backdrop-blur-sm';
+const { title, eyebrow, id, description, class: className = '' } = Astro.props;
 ---
 
-<section class={`relative flex flex-col gap-6 ${containerClasses}`}>
-  <div class="w-full space-y-3">
-    {
-      eyebrow && (
-        <BadgePill size="xs" showDot>
-          {eyebrow}
-        </BadgePill>
-      )
-    }
-    <h2 id={id} class="font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl">
+<section class:list={['relative flex flex-col gap-5', className]}>
+  <header class="max-w-2xl space-y-2">
+    {eyebrow && <span class="section-kicker">{eyebrow}</span>}
+    <h2 id={id} class="font-heading text-2xl leading-snug font-semibold tracking-tight text-foreground sm:text-3xl md:text-4xl">
       {title}
     </h2>
     {
-      subtitle && (
-        <p class="max-w-3xl text-sm font-semibold tracking-label text-subtle-foreground uppercase">
-          {subtitle}
-        </p>
-      )
-    }
-    {
       description && (
-        <p class="max-w-3xl text-base leading-relaxed text-muted-foreground">{description}</p>
+        <p class="pt-0.5 text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
       )
     }
-  </div>
-  <div class="flex w-full flex-col gap-5 text-pretty sm:gap-6">
+  </header>
+  <div class="w-full text-pretty">
     <slot />
   </div>
 </section>

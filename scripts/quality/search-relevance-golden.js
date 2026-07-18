@@ -1,40 +1,48 @@
 #!/usr/bin/env node
 /**
  * Search Relevance Golden Tests
- * Weighted Fuse.js search with top-N acceptance and expected presence validation.
+ * Mirrors production localSearch ranking (title/description/tags term match)
+ * against golden queries with top-N acceptance.
  */
 import fs from 'fs';
 import path from 'path';
-import Fuse from 'fuse.js';
-import { normalizeSlug } from '../../src/utils/slug.js';
+import { normalizeSlug } from '../../src/utils/slug.ts';
 
 const root = process.cwd();
 const goldenPath = path.join(root, 'tests/search/golden-queries.json');
 const blogIndexPath = path.join(root, 'public/search/blog.json');
 const projectsIndexPath = path.join(root, 'public/search/projects.json');
-const TOP_N = parseInt(process.env.SEARCH_TOP_N || '3', 10); // Accept if expected inside top N
+const TOP_N = parseInt(process.env.SEARCH_TOP_N || '3', 10);
 
 function load(p) {
   return JSON.parse(fs.readFileSync(p, 'utf-8'));
 }
 
-function buildFuse(data) {
-  return new Fuse(data, {
-    keys: [
-      { name: 'title', weight: 0.5 },
-      { name: 'tags', weight: 0.2 },
-      { name: 'summary', weight: 0.15 },
-      { name: 'slug', weight: 0.15 },
-    ],
-    threshold: 0.3,
-    ignoreLocation: true,
-    minMatchCharLength: 3,
-    includeScore: true,
-    useExtendedSearch: true,
-  });
+/** Same ranking as src/lib/search/localSearch.ts (keep in sync). */
+function searchLocalCorpus(corpus, query, limit = 10) {
+  const normalized = String(query || '')
+    .trim()
+    .toLowerCase();
+  if (!normalized) {
+    return corpus
+      .slice()
+      .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)))
+      .slice(0, limit);
+  }
+  const terms = normalized.split(/\s+/).filter(Boolean);
+  return corpus
+    .map((record) => {
+      const haystack =
+        `${record.title} ${record.description} ${record.tags.join(' ')}`.toLowerCase();
+      const matchedTerms = terms.filter((term) => haystack.includes(term)).length;
+      const score = matchedTerms / terms.length;
+      return { record, score };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(({ record, score }) => ({ ...record, score }));
 }
-
-// slug normalization moved to src/utils/slug.ts for reuse & testability
 
 function main() {
   if (!fs.existsSync(goldenPath)) {
@@ -45,17 +53,23 @@ function main() {
   const golden = load(goldenPath);
   const blog = fs.existsSync(blogIndexPath) ? load(blogIndexPath) : [];
   const projects = fs.existsSync(projectsIndexPath) ? load(projectsIndexPath) : [];
-  const corpus = [...blog, ...projects];
+  const corpus = [...blog, ...projects].map((item) => ({
+    slug: item.slug,
+    title: item.title,
+    description: item.description ?? '',
+    tags: Array.isArray(item.tags) ? item.tags : [],
+    featured: Boolean(item.featured),
+  }));
   const availableSlugs = new Set(corpus.map((i) => normalizeSlug(i.slug)));
-  const fuseAll = buildFuse(corpus);
+
   let strictPass = 0;
   let topNPass = 0;
   const results = golden.map((g) => {
     const expectedNorm = normalizeSlug(g.expectedTopSlug);
     const expectedExists = availableSlugs.has(expectedNorm);
-    const hits = fuseAll.search(g.query).slice(0, TOP_N);
-    const topSlug = hits[0]?.item?.slug ? normalizeSlug(hits[0].item.slug) : null;
-    const inTopN = hits.some((h) => normalizeSlug(h.item.slug) === expectedNorm);
+    const hits = searchLocalCorpus(corpus, g.query, TOP_N);
+    const topSlug = hits[0]?.slug ? normalizeSlug(hits[0].slug) : null;
+    const inTopN = hits.some((h) => normalizeSlug(h.slug) === expectedNorm);
     const strict = topSlug === expectedNorm;
     if (strict) strictPass++;
     else if (inTopN) topNPass++;
@@ -66,7 +80,7 @@ function main() {
       actualTop: topSlug,
       inTopN,
       strict,
-      hits: hits.map((h) => ({ slug: normalizeSlug(h.item.slug), score: h.score })),
+      hits: hits.map((h) => ({ slug: normalizeSlug(h.slug), score: h.score })),
     };
   });
   const total = golden.length;

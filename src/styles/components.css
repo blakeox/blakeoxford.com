@@ -39,11 +39,11 @@
   }
 
   .section-intro {
-    @apply mx-auto max-w-3xl space-y-4 text-center;
+    @apply mx-auto max-w-3xl space-y-3 text-center;
   }
 
   .section-intro-left {
-    @apply max-w-3xl space-y-4 text-left;
+    @apply max-w-3xl space-y-3 text-left;
   }
 
   .focus-ring-interactive:focus-visible {

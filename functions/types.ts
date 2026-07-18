@@ -7,7 +7,6 @@ export interface Env {
 	// KV Namespaces
 	RATE_LIMIT_KV: KVNamespace;
 	CONTACT_MESSAGES: KVNamespace;
-	CSP_REPORTS: KVNamespace;
 	CONVERSATION_CACHE_KV: KVNamespace;
 	AI_RESPONSE_CACHE: KVNamespace;
 	AI_FEEDBACK_KV: KVNamespace;

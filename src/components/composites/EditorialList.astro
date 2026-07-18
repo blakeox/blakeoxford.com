@@ -1,0 +1,130 @@
+---
+/**
+ * EditorialList — numbered/divided rows shared by proof, capabilities, findings, timeline.
+ *
+ * Kicker placement:
+ * - numbered → index aside + optional kicker above title
+ * - kickerAside → short kickers (years) in a left column
+ * - otherwise → long kickers (metrics) stack above the title
+ */
+export type EditorialRow = {
+  /** Accent lead line (metric, year, etc.) */
+  kicker?: string;
+  title?: string;
+  body?: string;
+  /** HTML body (e.g. journey steps with bold labels). Prefer plain `body` when possible. */
+  bodyHtml?: string;
+  href?: string;
+  linkLabel?: string;
+  bullets?: string[];
+  /** Extra muted line under body (e.g. capability examples). */
+  meta?: string;
+};
+
+export interface Props {
+  rows: EditorialRow[];
+  /** Show 01 / 02 index column. */
+  numbered?: boolean;
+  /**
+   * Put short kickers (e.g. years) in a left aside column.
+   * Defaults to true when not numbered. Set false for long metrics.
+   */
+  kickerAside?: boolean;
+  as?: 'ol' | 'ul';
+  class?: string;
+}
+
+const {
+  rows,
+  numbered = true,
+  kickerAside,
+  as: listAs,
+  class: className = '',
+} = Astro.props as Props;
+
+const useAsideKicker = kickerAside ?? !numbered;
+const Tag = listAs ?? (numbered ? 'ol' : 'ul');
+---
+
+<Tag
+  class:list={['divide-y divide-border/50 border-y border-border/50', className]}
+  role="list"
+>
+  {
+    rows.map((row: EditorialRow, index: number) => {
+      const showInlineKicker = Boolean(row.kicker) && (numbered || !useAsideKicker);
+
+      return (
+        <li
+          class:list={[
+            'grid gap-2 py-5 sm:gap-6 sm:py-6',
+            numbered
+              ? 'sm:grid-cols-[3.5rem_minmax(0,1fr)]'
+              : useAsideKicker && row.kicker
+                ? 'sm:grid-cols-[5.5rem_minmax(0,1fr)]'
+                : '',
+          ]}
+        >
+          {numbered ? (
+            <span
+              class="font-heading text-sm font-semibold text-accent tabular-nums sm:pt-0.5"
+              aria-hidden="true"
+            >
+              {String(index + 1).padStart(2, '0')}
+            </span>
+          ) : useAsideKicker && row.kicker ? (
+            <p class="font-heading text-sm font-semibold tracking-tight text-accent-emphasis tabular-nums sm:pt-0.5">
+              {row.kicker}
+            </p>
+          ) : null}
+
+          <div class="min-w-0 space-y-2">
+            {showInlineKicker && (
+              <p class="font-heading text-base font-semibold tracking-tight text-accent-emphasis sm:text-lg">
+                {row.kicker}
+              </p>
+            )}
+            {row.title && (
+              <h3 class="font-heading text-xl leading-snug font-semibold tracking-tight text-foreground sm:text-2xl">
+                {row.title}
+              </h3>
+            )}
+            {row.bodyHtml ? (
+              <p
+                class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
+                set:html={row.bodyHtml}
+              />
+            ) : row.body ? (
+              <p class="max-w-2xl text-base leading-relaxed text-foreground/90 sm:text-lg">{row.body}</p>
+            ) : null}
+            {row.meta && <p class="text-sm leading-snug text-subtle-foreground">{row.meta}</p>}
+            {row.bullets && row.bullets.length > 0 && (
+              <ul
+                class="space-y-1.5 pt-0.5 text-sm leading-relaxed text-foreground/85 sm:text-base"
+                role="list"
+              >
+                {row.bullets.map((item: string) => (
+                  <li class="flex gap-3">
+                    <span
+                      class="mt-2 size-1 shrink-0 rounded-full bg-foreground/35"
+                      aria-hidden="true"
+                    />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {row.href && row.linkLabel && (
+              <a
+                href={row.href}
+                class="inline-flex pt-0.5 text-sm font-semibold text-accent-emphasis transition-colors hover:text-accent"
+              >
+                {row.linkLabel}
+              </a>
+            )}
+          </div>
+        </li>
+      );
+    })
+  }
+</Tag>

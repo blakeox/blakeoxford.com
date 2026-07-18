@@ -4,26 +4,12 @@ export type HomeCtaLink = {
 };
 
 export type HomeResumeHighlightItem = {
-  icon:
-    | 'migrate'
-    | 'money'
-    | 'cloud-plus'
-    | 'chat'
-    | 'azure-opt'
-    | 'chart'
-    | 'lightbulb'
-    | 'consolidate'
-    | 'grid'
-    | 'predictive'
-    | 'shield'
-    | 'trend';
   text: string;
 };
 
 export type HomeResumeHighlightCard = {
-  icon: 'cloud' | 'automation' | 'analytics';
+  metric: string;
   title: string;
-  description: string;
   items: HomeResumeHighlightItem[];
 };
 
@@ -35,7 +21,6 @@ export type HomePageContent = {
   hero: {
     kicker: string;
     defaultTagline: string;
-    strengths: string[];
     primaryCta: HomeCtaLink;
     secondaryCta: HomeCtaLink;
     portrait: {
@@ -45,11 +30,6 @@ export type HomePageContent = {
       altBack: string;
     };
   };
-  technologies: {
-    kicker: string;
-    title: string;
-    description: string;
-  };
   resumeHighlights: {
     kicker: string;
     title: string;
@@ -57,20 +37,20 @@ export type HomePageContent = {
     cards: HomeResumeHighlightCard[];
   };
   recentProjects: {
-    kicker: string;
+    kicker?: string;
     title: string;
     description: string;
     cta: HomeCtaLink;
   };
   latestPosts: {
-    kicker: string;
+    kicker?: string;
     title: string;
     description: string;
     emptyMessage: string;
     cta: HomeCtaLink;
   };
   cta: {
-    kicker: string;
+    kicker?: string;
     title: string;
     description: string;
     button: HomeCtaLink;

@@ -5,14 +5,15 @@
   },
   "hero": {
     "kicker": "Systems architecture",
-    "defaultTagline": "Systems Architect · Workflow Strategist · Operational Improvement Leader",
-    "strengths": [
-      "Migrations that hold adoption",
-      "Automation that cuts operational drag",
-      "Analytics built for decisions"
-    ],
-    "primaryCta": { "href": "/contact/", "label": "Start a conversation" },
-    "secondaryCta": { "href": "/projects/", "label": "Selected projects" },
+    "defaultTagline": "I design scalable systems, cut operational drag, and lead transformations that stick.",
+    "primaryCta": {
+      "href": "/contact/",
+      "label": "Start a conversation"
+    },
+    "secondaryCta": {
+      "href": "/projects/",
+      "label": "See the work"
+    },
     "portrait": {
       "frontSrc": "/assets/images/Blake-O-scaled.jpg",
       "backSrc": "/assets/images/china-profile-picture.jpg",
@@ -20,47 +21,54 @@
       "altBack": "Blake Oxford in China"
     }
   },
-  "technologies": {
-    "kicker": "Toolkit",
-    "title": "What the work runs on",
-    "description": "Platforms used across architecture, automation, analytics, and cloud delivery."
-  },
   "resumeHighlights": {
     "kicker": "Outcomes",
     "title": "Proof from the work",
-    "description": "Representative wins across migration, automation, and decision systems.",
+    "description": "Hard results from migrations, automation, and decision systems.",
     "cards": [
       {
-        "icon": "cloud",
+        "metric": "180 users migrated",
         "title": "Cloud & SaaS Transformations",
-        "description": "Complex platform rollouts delivered end-to-end with strong adoption and governance controls.",
         "items": [
-          { "icon": "migrate", "text": "Google Workspace → Microsoft 365 migration for 180 users" },
-          { "icon": "money", "text": "Sage Intacct financial platform implementation" },
-          { "icon": "cloud-plus", "text": "Azure/Intune endpoint management deployment" },
-          { "icon": "chat", "text": "ADP Workforce Now and Cornerstone LMS integration" }
+          {
+            "text": "Google Workspace \u2192 Microsoft 365 for 180 users"
+          },
+          {
+            "text": "Sage Intacct financial platform implementation"
+          },
+          {
+            "text": "Azure/Intune endpoint management deployment"
+          }
         ]
       },
       {
-        "icon": "automation",
+        "metric": "Multi-million $ overhead cut",
         "title": "Automation & Savings",
-        "description": "Multi-million-dollar overhead reduction via coordinated automation, analytics, and consolidation initiatives.",
         "items": [
-          { "icon": "azure-opt", "text": "Azure cloud infrastructure optimization" },
-          { "icon": "chart", "text": "Power BI analytics and real-time dashboarding" },
-          { "icon": "lightbulb", "text": "Custom OpenAI workflow integrations" },
-          { "icon": "consolidate", "text": "Enterprise system consolidations and integrations" }
+          {
+            "text": "Azure cloud infrastructure optimization"
+          },
+          {
+            "text": "Power BI analytics and real-time dashboarding"
+          },
+          {
+            "text": "Custom OpenAI workflow integrations"
+          }
         ]
       },
       {
-        "icon": "analytics",
+        "metric": "C-suite decision support",
         "title": "Data Analytics",
-        "description": "Business intelligence that keeps decision-makers informed in real time.",
         "items": [
-          { "icon": "grid", "text": "Real-time SQL/Power BI dashboards" },
-          { "icon": "predictive", "text": "Predictive financial modeling systems" },
-          { "icon": "shield", "text": "C-suite executive decision support frameworks" },
-          { "icon": "trend", "text": "Automated KPI tracking and performance visualization" }
+          {
+            "text": "Real-time SQL/Power BI dashboards"
+          },
+          {
+            "text": "Predictive financial modeling systems"
+          },
+          {
+            "text": "Automated KPI tracking and visualization"
+          }
         ]
       }
     ]
@@ -69,19 +77,26 @@
     "kicker": "Projects",
     "title": "Work that shipped",
     "description": "Systems, automation, and analytics built to survive real operating conditions.",
-    "cta": { "href": "/projects/", "label": "All case studies" }
+    "cta": {
+      "href": "/projects/",
+      "label": "All selected work"
+    }
   },
   "latestPosts": {
-    "kicker": "Writing",
     "title": "Notes from the field",
     "description": "Essays on automation, analytics, governance, and operational improvement.",
     "emptyMessage": "Blog posts are on the way-check back soon for new case studies and playbooks.",
-    "cta": { "href": "/blog/", "label": "All writing" }
+    "cta": {
+      "href": "/blog/",
+      "label": "All writing"
+    }
   },
   "cta": {
-    "kicker": "Next",
     "title": "Bring the hardest bottleneck.",
-    "description": "Migration, automation, reporting, or AI-enabled workflow — start with the risk that matters most.",
-    "button": { "href": "/contact/", "label": "Start the conversation" }
+    "description": "Migration, automation, reporting, or AI-enabled workflow \u2014 start with the risk that matters most.",
+    "button": {
+      "href": "/contact/",
+      "label": "Book a 20-minute bottleneck review"
+    }
   }
 }

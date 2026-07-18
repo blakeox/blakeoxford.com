@@ -209,9 +209,9 @@ check_performance_regression() {
     print_status $BLUE "⚡ Running performance regression check..."
     
     if command -v node >/dev/null 2>&1; then
-        if [ -f "scripts/optimization/performance-regression.sh" ]; then
-            chmod +x "scripts/optimization/performance-regression.sh"
-            ./scripts/optimization/performance-regression.sh || {
+        if [ -f "scripts/build/performance-regression.sh" ]; then
+            chmod +x "scripts/build/performance-regression.sh"
+            ./scripts/build/performance-regression.sh || {
                 print_status $YELLOW "⚠️ Performance regression check failed (non-blocking)"
             }
         else
@@ -226,9 +226,9 @@ check_performance_regression() {
 run_deployment_checks() {
     print_status $BLUE "🏁 Running deployment readiness checks..."
     
-    if [ -f "scripts/optimization/deployment-check.sh" ]; then
-        chmod +x "scripts/optimization/deployment-check.sh"
-        ./scripts/optimization/deployment-check.sh || {
+    if [ -f "scripts/build/deployment-check.sh" ]; then
+        chmod +x "scripts/build/deployment-check.sh"
+        ./scripts/build/deployment-check.sh || {
             print_status $RED "❌ Deployment readiness check failed"
             exit 1
         }

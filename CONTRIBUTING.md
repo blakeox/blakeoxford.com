@@ -27,7 +27,6 @@ Core commands:
 | Comprehensive quality (CI parity)       | `pnpm test:ci`          |
 | Flakiness track                         | `pnpm flakiness:track`  |
 | Flakiness gate                          | `pnpm flakiness:check`  |
-| Mutation testing (if configured)        | `pnpm mutation:test`    |
 | Generate quality summary                | `pnpm quality:summary`  |
 | Snapshot current quality                | `pnpm quality:snapshot` |
 | Generate quality badges                 | `pnpm quality:badges`   |
@@ -102,9 +101,9 @@ Follow the documented standards in `docs/COMPONENT_DOCUMENTATION_GUIDE.md`:
 
 1. **Choose the Right Category**:
    - **Primitives** (`src/components/primitives/`): Low-level building blocks (Button, Badge, Flex, Grid)
-   - **Composites** (`src/components/composites/`): Mid-level composed components (Card, Hero, FeatureGrid)
-   - **Features** (`src/components/features/`): Domain-specific components (BlogPostCard, ProjectCard, SearchOverlay)
-   - **Islands** (`src/components/islands/`): React hydrated interactive components (NavBarIsland, ContactFormIsland)
+   - **Composites** (`src/components/composites/`): Mid-level composed components (PageHero, FeatureCard, SectionHeader)
+   - **Features** (`src/components/features/`): Domain-specific components (BlogPostRow, ProjectCard, SearchOverlay)
+   - **Islands** (`src/components/islands/`): React hydrated interactive components (AIChatIsland, ContactFormIsland)
 
 2. **Component Structure**:
 
@@ -154,23 +153,16 @@ Follow the documented standards in `docs/COMPONENT_DOCUMENTATION_GUIDE.md`:
 
 ### Type System
 
-Use centralized types from `src/types/` (see `docs/TYPE_SYSTEM.md`):
+Prefer collection types from Astro and shared prop interfaces from `src/types/`:
 
 ```typescript
-// ✅ Good - Centralized types
-import type { BlogPost, Project, APIResponse } from '@/types';
-
-// ❌ Avoid - Inline type definitions
 import type { CollectionEntry } from 'astro:content';
-interface Props {
-  post: CollectionEntry<'blog'>;
-}
+import type { BlogPostRowProps, ProjectCardProps } from '@/types/components';
 ```
 
 **Available Type Modules**:
 
-- `@/types/core` - Configuration, events, performance, UI state
-- `@/types/content` - Blog posts, projects, search, tags
+- `@/types/components` - Shared component prop interfaces (`BlogPostRowProps`, `ProjectCardProps`)
 - `@/types/api` - API responses, forms, validation, email
 
 ### Component Best Practices

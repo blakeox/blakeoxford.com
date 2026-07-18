@@ -1,7 +1,5 @@
 ---
-import Section from '../../primitives/Section.astro';
-import SectionHeading from '../../primitives/SectionHeading.astro';
-import Button from '../../primitives/Button.astro';
+import CtaBand from '../../composites/CtaBand.astro';
 import type { HomePageContent } from '../../../content/home/pageTypes';
 
 interface Props {
@@ -11,17 +9,10 @@ interface Props {
 const { content } = Astro.props as Props;
 ---
 
-<Section padding="lg" container="xl">
-  <div class="mx-auto max-w-4xl border-y border-border/90 py-12 text-left sm:py-16">
-    <div class="section-intro-left max-w-2xl space-y-5">
-      <span class="section-kicker">{content.kicker}</span>
-      <SectionHeading size="3xl">{content.title}</SectionHeading>
-      <p class="text-lg text-muted-foreground">
-        {content.description}
-      </p>
-      <div class="pt-2">
-        <Button variant="primary" href={content.button.href}>{content.button.label}</Button>
-      </div>
-    </div>
-  </div>
-</Section>
+<CtaBand
+  titleId="home-cta-title"
+  kicker={content.kicker}
+  title={content.title}
+  description={content.description}
+  primary={content.button}
+/>

@@ -1,7 +1,9 @@
 ---
 import PageHero from '../../composites/PageHero.astro';
-import Stack from '../../primitives/Stack.astro';
 import PhotoCarousel from '../../composites/PhotoCarousel.astro';
+import IntroCopy from '../../composites/IntroCopy.astro';
+import Button from '../../primitives/Button.astro';
+import ButtonGroup from '../../composites/ButtonGroup.astro';
 
 export interface AboutHeroContent {
   kicker: string;
@@ -27,20 +29,36 @@ const { content } = Astro.props;
   <div class="relative z-10 flex w-full flex-1 flex-col">
     <div class="about-hero-split flex flex-col md:grid md:grid-cols-2 md:gap-0">
       <div
-        class="layout-gutter order-1 flex flex-col justify-start pt-28 pb-8 md:order-1 md:h-full md:justify-center md:py-16 md:pr-6 lg:pr-10 xl:pr-14"
+        class="layout-gutter order-1 flex flex-col justify-center pt-24 pb-10 md:order-1 md:py-14 md:pr-6 lg:pr-10 xl:pr-14"
       >
-        <Stack space="lg" class="mx-auto w-full max-w-2xl md:mx-0">
-          <span class="section-kicker">{content.kicker}</span>
-          <h1
-            id="about-me-title"
-            class="font-heading text-4xl leading-[1.12] font-semibold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem] xl:text-6xl"
+        <div class="mx-auto flex w-full max-w-2xl flex-col gap-6 md:mx-0">
+          <IntroCopy
+            kicker={content.kicker}
+            title={content.title}
+            titleId="about-me-title"
+            description={content.description}
+            size="hero"
+            descriptionSize="md"
+          />
+          <ButtonGroup align="start" responsive>
+            <Button variant="primary" href="/contact/">Start a conversation</Button>
+            <Button variant="outline" href="/projects/">See the work</Button>
+          </ButtonGroup>
+          <ul
+            class="grid gap-3 border-t border-border/50 pt-6 text-sm text-foreground/85 sm:text-base"
+            role="list"
+            aria-label="How I show up in engagements"
           >
-            {content.title}
-          </h1>
-          <p class="max-w-prose text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {content.description}
-          </p>
-        </Stack>
+            {
+              content.proofPoints.map((point) => (
+                <li class="flex items-start gap-3">
+                  <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                  <span>{point}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
       </div>
 
       <div class="about-hero-media order-2 w-full overflow-hidden md:order-2 md:h-full">
@@ -53,23 +71,6 @@ const { content } = Astro.props;
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="layout-gutter border-t border-border/50 py-10 md:py-12">
-      <ul
-        class="mx-auto grid max-w-5xl gap-4 text-sm text-foreground/85 sm:grid-cols-3 sm:gap-6 sm:text-base"
-        role="list"
-        aria-label="About highlights"
-      >
-        {
-          content.proofPoints.map((point) => (
-            <li class="flex items-start gap-3">
-              <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-              <span>{point}</span>
-            </li>
-          ))
-        }
-      </ul>
     </div>
   </div>
 </PageHero>
@@ -87,12 +88,12 @@ const { content } = Astro.props;
 
   @media (width >= 768px) {
     .about-hero-split {
-      height: calc(100svh - 4.5rem);
+      min-height: min(36rem, calc(100svh - 4.5rem));
     }
 
     .about-hero-media {
       height: 100%;
-      min-height: 0;
+      min-height: 28rem;
     }
   }
 </style>

@@ -1,0 +1,19 @@
+---
+import CtaBand from '../../composites/CtaBand.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  button: { href: string; label: string };
+}
+
+const { title, description, button } = Astro.props as Props;
+---
+
+<CtaBand
+  titleId="projects-cta-heading"
+  title={title}
+  description={description}
+  primary={button}
+  data-layout-section="projects-cta"
+/>

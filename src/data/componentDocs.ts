@@ -207,30 +207,17 @@ export const componentDocs: ComponentDoc[] = [
     category: 'Features',
     subcategory: 'About',
     description:
-      'About-page timeline section. Renders dated milestones in desktop and mobile layouts with semantic list structure and keyboard access.',
+      'About-page track record as an editorial year list (shared EditorialList).',
     filePath: 'src/components/features/about/AboutTimelineSection.astro',
-    props: [
-      {
-        name: 'content',
-        type: 'AboutTimelineContent',
-        required: true,
-        description: 'Timeline kicker, title, description, and milestone items',
-      },
-    ],
     examples: [
       {
-        title: 'Timeline section',
-        code: '<AboutTimelineSection content={page.timeline} />',
+        title: 'Track record',
+        code: '<AboutTimelineSection kicker="Track record" title="…" description="…" items={page.timeline.items} />',
       },
     ],
-    accessibility: [
-      'role="region" for scrollable mobile container',
-      'tabindex="0" for keyboard scrolling',
-      'focus-visible styles for keyboard navigation',
-    ],
-    tags: ['timeline', 'scrollable', 'interactive', 'achievements'],
+    tags: ['timeline', 'about', 'editorial'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--color-foreground', '--color-border'],
+    tokenDependencies: ['--color-surface', '--color-accent', '--color-border'],
   },
   {
     name: 'ContactChannels',
@@ -264,83 +251,7 @@ export const componentDocs: ComponentDoc[] = [
     visualTier: 'quiet',
     tokenDependencies: ['--color-surface', '--color-border', '--color-accent'],
   },
-  {
-    name: 'BlogPostCard',
-    category: 'Features',
-    subcategory: 'Blog',
-    description:
-      'Reusable blog post card for listings. Displays a blog post with date, title, description, tags, and read-more link in a stable grid surface.',
-    filePath: 'src/components/features/blog/BlogPostCard.astro',
-    props: [
-      {
-        name: 'post',
-        type: "CollectionEntry<'blog'>",
-        required: true,
-        description: 'Blog post content collection entry',
-      },
-      {
-        name: 'maxTags',
-        type: 'number',
-        required: false,
-        default: '3',
-        description: 'Maximum number of tags to display',
-      },
-    ],
-    examples: [
-      {
-        title: 'Basic usage',
-        code: '<BlogPostCard post={blogEntry} />',
-      },
-      {
-        title: 'Custom max tags',
-        code: '<BlogPostCard post={blogEntry} maxTags={5} />',
-      },
-    ],
-    accessibility: ['Semantic article element', 'Focus-visible styles', 'Descriptive link text'],
-    tags: ['blog', 'card', 'post', 'tags'],
-    visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
-  },
-  {
-    name: 'EducationCard',
-    category: 'Features',
-    subcategory: 'About',
-    description:
-      'Education display card with icon and details. Displays educational background with institution, degree, and description.',
-    filePath: 'src/components/features/about/EducationCard.astro',
-    props: [
-      {
-        name: 'institution',
-        type: 'string',
-        required: true,
-        description: 'Institution name',
-      },
-      {
-        name: 'degree',
-        type: 'string',
-        required: true,
-        description: 'Degree or certification',
-      },
-      {
-        name: 'description',
-        type: 'string',
-        required: false,
-        description: 'Additional description',
-      },
-    ],
-    examples: [
-      {
-        title: 'Basic usage',
-        code: '<EducationCard institution="University" degree="BS Computer Science" />',
-      },
-    ],
-    accessibility: ['Semantic structure', 'Icon with proper ARIA', 'Hover effects'],
-    tags: ['education', 'card', 'about'],
-    visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
-  },
 
-  // Media and visual components
   {
     name: 'PhotoCarousel',
     category: 'Composites',
@@ -1193,35 +1104,7 @@ export const componentDocs: ComponentDoc[] = [
       'shadow-sm',
     ],
   },
-  {
-    name: 'StatsCard',
-    category: 'Composites',
-    description:
-      'Metric highlight card with optional trend indicator. Uses container queries for responsive stat layouts.',
-    filePath: 'src/components/composites/StatsCard.astro',
-    props: [
-      { name: 'label', type: 'string', required: true, description: 'Metric label' },
-      { name: 'value', type: 'string', required: true, description: 'Displayed metric value' },
-      {
-        name: 'variant',
-        type: "'default' | 'elevated' | 'glass' | 'subtle'",
-        required: false,
-        default: "'default'",
-        description: 'Surface preset',
-      },
-    ],
-    examples: [
-      {
-        title: 'Elevated stat',
-        code: '<StatsCard label="Projects" value="12+" variant="elevated" />',
-      },
-    ],
-    tags: ['card', 'metrics', 'stats', 'composite'],
-    visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', 'shadow-lg', '@container'],
-  },
 
-  // Additional Primitives
   {
     name: 'SectionHeading',
     category: 'Primitives',
@@ -1251,108 +1134,9 @@ export const componentDocs: ComponentDoc[] = [
     visualTier: 'quiet',
     tokenDependencies: ['--color-accent', '--color-surface', '--focus-ring-color'],
   },
-  {
-    name: 'Skeleton',
-    category: 'Primitives',
-    description: 'Loading placeholder with pulse animation for async content surfaces.',
-    filePath: 'src/components/primitives/Skeleton.astro',
-    examples: [{ title: 'Loading state', code: '<Skeleton class="h-8 w-48" />' }],
-    tags: ['loading', 'placeholder', 'primitive'],
-    visualTier: 'quiet',
-    tokenDependencies: ['--color-surface-subtle', '--duration'],
-  },
-  {
-    name: 'SkillBadge',
-    category: 'Primitives',
-    description: 'Compact badge for displaying skills or technology tags.',
-    filePath: 'src/components/primitives/SkillBadge.astro',
-    examples: [{ title: 'Skill tag', code: '<SkillBadge>TypeScript</SkillBadge>' }],
-    tags: ['badge', 'skill', 'tag', 'primitive'],
-    visualTier: 'quiet',
-    tokenDependencies: ['--color-surface-subtle', '--color-border', 'rounded-full'],
-  },
-  {
-    name: 'SocialLink',
-    category: 'Primitives',
-    description:
-      'Social profile link with icon and label. Supports LinkedIn, GitHub, email, and Microsoft Learn icons.',
-    filePath: 'src/components/primitives/SocialLink.astro',
-    props: [
-      { name: 'href', type: 'string', required: true, description: 'Profile or mailto URL' },
-      {
-        name: 'icon',
-        type: "'linkedin' | 'github' | 'email' | 'microsoft-learn'",
-        required: true,
-        description: 'Icon variant',
-      },
-      { name: 'label', type: 'string', required: true, description: 'Accessible link label' },
-    ],
-    examples: [
-      {
-        title: 'GitHub link',
-        code: '<SocialLink href="https://github.com/blakeox" icon="github" label="GitHub" />',
-      },
-    ],
-    accessibility: ['Descriptive aria-label', 'External link indication for screen readers'],
-    tags: ['social', 'link', 'icon', 'primitive'],
-    visualTier: 'quiet',
-    tokenDependencies: ['--color-border', '--color-accent', 'rounded-lg'],
-  },
-  {
-    name: 'FloatingBlur',
-    category: 'Primitives',
-    description:
-      'Decorative blurred gradient orb for page backgrounds. Respects reduced-motion preferences.',
-    filePath: 'src/components/primitives/FloatingBlur.astro',
-    examples: [
-      {
-        title: 'Hero background',
-        code: '<FloatingBlur size="xl" color="accent" position="top-left" />',
-      },
-    ],
-    tags: ['decorative', 'background', 'gradient', 'primitive'],
-    visualTier: 'expressive',
-    tokenDependencies: ['--color-accent', '--blur-lg'],
-  },
-  {
-    name: 'ProficiencyLogo',
-    category: 'Primitives',
-    description: 'Technology proficiency logo with optimized AVIF/WebP image loading.',
-    filePath: 'src/components/primitives/ProficiencyLogo.astro',
-    examples: [
-      { title: 'Tech logo', code: '<ProficiencyLogo name="typescript" alt="TypeScript" />' },
-    ],
-    tags: ['logo', 'image', 'technology', 'primitive'],
-    visualTier: 'quiet',
-    tokenDependencies: ['rounded-lg'],
-  },
-  {
-    name: 'DateDisplay',
-    category: 'Primitives',
-    description: 'Formatted date display with semantic time element.',
-    filePath: 'src/components/primitives/DateDisplay.astro',
-    examples: [{ title: 'Publication date', code: '<DateDisplay date={post.data.pubDate} />' }],
-    tags: ['date', 'time', 'typography', 'primitive'],
-    visualTier: 'quiet',
-    tokenDependencies: ['--color-muted-foreground'],
-  },
 
-  // Additional Composites
-  {
-    name: 'Hero',
-    category: 'Composites',
-    description: 'Full-width hero band with title, description, and optional CTA slot.',
-    filePath: 'src/components/composites/Hero.astro',
-    examples: [
-      {
-        title: 'Page hero',
-        code: '<Hero title="Projects" description="Case studies and shipped work." />',
-      },
-    ],
-    tags: ['hero', 'marketing', 'composite'],
-    visualTier: 'expressive',
-    tokenDependencies: ['--gradient-primary', '--color-foreground', '--fs-h1'],
-  },
+
+
   {
     name: 'PageHero',
     category: 'Composites',
@@ -1384,27 +1168,103 @@ export const componentDocs: ComponentDoc[] = [
     visualTier: 'expressive',
     tokenDependencies: ['--gradient-accent', '--color-on-accent', 'rounded-3xl'],
   },
+
   {
-    name: 'FeatureGrid',
+    name: 'SectionHeader',
     category: 'Composites',
-    description: 'Responsive grid layout for FeatureItem or FeatureCard children.',
-    filePath: 'src/components/composites/FeatureGrid.astro',
+    description: 'Shared section intro with kicker, title, optional description and action.',
+    filePath: 'src/components/composites/SectionHeader.astro',
     examples: [
-      { title: 'Feature grid', code: '<FeatureGrid><FeatureCard title="Fast" /></FeatureGrid>' },
+      {
+        title: 'Section intro',
+        code: '<SectionHeader kicker="Work" title="Selected work" description="…" />',
+      },
     ],
-    tags: ['grid', 'features', 'composite'],
-    visualTier: 'elevated',
-    tokenDependencies: ['@container', 'gap-6'],
+    tags: ['header', 'section', 'composite'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-accent', '--font-heading'],
   },
   {
-    name: 'OutcomeCard',
+    name: 'CtaBand',
     category: 'Composites',
-    description: 'Bullet outcome list card used on project detail pages for impact summaries.',
-    filePath: 'src/components/composites/OutcomeCard.astro',
-    examples: [{ title: 'Outcomes', code: '<OutcomeCard title="Results" items={outcomes} />' }],
-    tags: ['card', 'outcomes', 'project', 'composite'],
+    description: 'Full-bleed closing CTA band shared by home, work, and about.',
+    filePath: 'src/components/composites/CtaBand.astro',
+    examples: [
+      {
+        title: 'Closing CTA',
+        code: '<CtaBand title="…" description="…" primary={{ href: "/contact/", label: "Book a review" }} />',
+      },
+    ],
+    tags: ['cta', 'band', 'composite'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
+    tokenDependencies: ['home-cta-band', '--color-accent'],
+  },
+  {
+    name: 'IntroCopy',
+    category: 'Composites',
+    description:
+      'Tight kicker + heading + optional emphasis/description stack for heroes and featured lockups.',
+    filePath: 'src/components/composites/IntroCopy.astro',
+    examples: [
+      {
+        title: 'Centered hero copy',
+        code: '<IntroCopy kicker="Selected work" title="…" description="…" align="center" />',
+      },
+    ],
+    tags: ['hero', 'typography', 'composite'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-accent', '--font-heading', 'section-kicker'],
+    props: [
+      {
+        name: 'size',
+        type: "'hero' | 'display' | 'section' | 'identity'",
+        required: false,
+        default: 'hero',
+        description: 'Heading ladder; identity is the home-name lockup.',
+      },
+      {
+        name: 'descriptionTone',
+        type: "'muted' | 'strong'",
+        required: false,
+        default: 'muted',
+        description: 'Body color — strong for the home promise line.',
+      },
+    ],
+  },
+  {
+    name: 'DotMetaList',
+    category: 'Composites',
+    description: 'Quiet inline chip list with accent dots for capabilities and focus areas.',
+    filePath: 'src/components/composites/DotMetaList.astro',
+    examples: [
+      {
+        title: 'Capability chips',
+        code: '<DotMetaList items={["Migrations", "Automation"]} label="Focus" align="center" />',
+      },
+    ],
+    tags: ['list', 'meta', 'composite'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-accent', '--color-muted-foreground'],
+  },
+  {
+    name: 'EditorialList',
+    category: 'Composites',
+    description:
+      'Divided proof rows. Use aside kickers for short labels (years); inline kickers for long metrics (`kickerAside={false}`).',
+    filePath: 'src/components/composites/EditorialList.astro',
+    examples: [
+      {
+        title: 'Proof rows',
+        code: '<EditorialList rows={[{ title: "Migrations", body: "…", bullets: [] }]} />',
+      },
+      {
+        title: 'Metric-led outcomes',
+        code: '<EditorialList numbered={false} kickerAside={false} rows={[{ kicker: "180 users migrated", title: "…", bullets: [] }]} />',
+      },
+    ],
+    tags: ['list', 'editorial', 'composite'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-border', '--color-accent'],
   },
   {
     name: 'MetricsTable',
@@ -1440,12 +1300,12 @@ export const componentDocs: ComponentDoc[] = [
     name: 'HomeHeroSection',
     category: 'Features',
     subcategory: 'Home',
-    description: 'Homepage hero with author photo, tagline, description, and primary CTAs.',
+    description: 'Homepage hero with CoinFlip portrait, promise line, and primary CTAs.',
     filePath: 'src/components/features/home/HomeHeroSection.astro',
     examples: [
       {
         title: 'Home hero',
-        code: '<HomeHeroSection author={siteConfig.author} description={tagline} />',
+        code: '<HomeHeroSection author={siteConfig.author} description={tagline} content={page.hero} />',
       },
     ],
     tags: ['home', 'hero', 'landing'],
@@ -1463,22 +1323,7 @@ export const componentDocs: ComponentDoc[] = [
     visualTier: 'expressive',
     tokenDependencies: ['--gradient-accent', '--color-on-accent'],
   },
-  {
-    name: 'ResumeHighlightCard',
-    category: 'Features',
-    subcategory: 'Home',
-    description: 'Card displaying a resume highlight with icon, title, and description.',
-    filePath: 'src/components/features/home/ResumeHighlightCard.astro',
-    examples: [
-      {
-        title: 'Highlight card',
-        code: '<ResumeHighlightCard title="Leadership" description="Led cross-functional teams." />',
-      },
-    ],
-    tags: ['home', 'resume', 'card'],
-    visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', 'shadow-md', 'rounded-2xl'],
-  },
+
   {
     name: 'HomeRecentProjectsSection',
     category: 'Features',
@@ -1507,17 +1352,7 @@ export const componentDocs: ComponentDoc[] = [
   },
 
   // Blog Feature Sections
-  {
-    name: 'BlogCard',
-    category: 'Features',
-    subcategory: 'Blog',
-    description: 'Compact blog post card variant for grid layouts.',
-    filePath: 'src/components/features/blog/BlogCard.astro',
-    examples: [{ title: 'Blog card', code: '<BlogCard post={blogEntry} />' }],
-    tags: ['blog', 'card', 'listing'],
-    visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
-  },
+
   {
     name: 'BlogIndexHeroSection',
     category: 'Features',
@@ -1569,49 +1404,6 @@ export const componentDocs: ComponentDoc[] = [
     visualTier: 'expressive',
     tokenDependencies: ['--color-foreground', '--fs-h1'],
   },
-  {
-    name: 'AchievementCard',
-    category: 'Features',
-    subcategory: 'About',
-    description: 'Card displaying a professional achievement with icon and description.',
-    filePath: 'src/components/features/about/AchievementCard.astro',
-    examples: [
-      {
-        title: 'Achievement',
-        code: '<AchievementCard title="Certification" description="Details..." />',
-      },
-    ],
-    tags: ['about', 'achievement', 'card'],
-    visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', 'shadow-sm', 'rounded-2xl'],
-  },
-  {
-    name: 'TimelineCard',
-    category: 'Features',
-    subcategory: 'About',
-    description: 'Individual timeline milestone card with year, title, and achievements list.',
-    filePath: 'src/components/features/about/TimelineCard.astro',
-    examples: [
-      {
-        title: 'Timeline entry',
-        code: '<TimelineCard year="2024" title="Role" achievements={[]} />',
-      },
-    ],
-    tags: ['about', 'timeline', 'card'],
-    visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', '--color-accent'],
-  },
-  {
-    name: 'AboutSocial',
-    category: 'Features',
-    subcategory: 'About',
-    description: 'About page social profiles section with icon links.',
-    filePath: 'src/components/features/about/AboutSocial.astro',
-    examples: [{ title: 'Social profiles', code: '<AboutSocial social={socialData} />' }],
-    tags: ['about', 'social', 'links'],
-    visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--color-border', '--color-accent'],
-  },
 
   // Contact Feature Sections
   {
@@ -1638,19 +1430,7 @@ export const componentDocs: ComponentDoc[] = [
   },
 
   // Search Feature Components
-  {
-    name: 'SearchBar',
-    category: 'Features',
-    subcategory: 'Search',
-    description: 'Inline search input component used within the Command Center overlay.',
-    filePath: 'src/components/features/search/SearchBar.astro',
-    examples: [{ title: 'Search input', code: '<SearchBar placeholder="Search..." />' }],
-    tags: ['search', 'input'],
-    visualTier: 'quiet',
-    tokenDependencies: ['--color-field-bg', '--color-border', '--focus-ring-color'],
-  },
 
-  // Additional Islands
   {
     name: 'ContactFormIsland',
     category: 'Islands',

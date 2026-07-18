@@ -3,10 +3,8 @@ import OptimizedImage, {
   type Props as OptimizedImageProps,
 } from '../../primitives/OptimizedImage.astro';
 import Container from '../../primitives/Container.astro';
-import Flex from '../../primitives/Flex.astro';
 import Button from '../../primitives/Button.astro';
-import BadgePill from '../../primitives/BadgePill.astro';
-import GradientOverlay from '../../primitives/GradientOverlay.astro';
+import DotMetaList from '../../composites/DotMetaList.astro';
 import ArrowLeftIcon from '../../primitives/icons/ArrowLeftIcon.astro';
 import ExternalLinkIcon from '../../primitives/icons/ExternalLinkIcon.astro';
 
@@ -16,9 +14,12 @@ export interface Props {
   date: Date;
   image: OptimizedImageProps['src'];
   link?: string;
+  categories?: string[];
+  /** Lead result — what this engagement proved. */
+  outcome?: string;
 }
 
-const { title, description, date, image, link } = Astro.props;
+const { title, description, date, image, link, categories = [], outcome } = Astro.props;
 
 const formattedDate = date.toLocaleDateString(undefined, {
   month: 'long',
@@ -27,91 +28,78 @@ const formattedDate = date.toLocaleDateString(undefined, {
 const dateISO = date.toISOString();
 ---
 
-<section
-  class="relative isolate flex min-h-[80vh] items-center overflow-hidden bg-gradient-to-br from-background via-accent/5 to-background py-24"
->
-  <!-- Blur orbs for depth (matching site-wide pattern) -->
+<section class="relative isolate overflow-hidden border-b border-border/40 py-14 sm:py-16 md:py-20">
   <div
     class="pointer-events-none absolute top-0 right-0 size-96 rounded-full bg-accent-subtle blur-3xl"
     aria-hidden="true"
   >
   </div>
-  <div
-    class="pointer-events-none absolute bottom-0 left-0 size-64 rounded-full bg-primary-subtle blur-3xl"
-    aria-hidden="true"
-  >
-  </div>
 
-  <Container
-    size="xl"
-    class="relative z-10 flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-16"
-  >
-    <div class="flex flex-1 flex-col gap-8">
-      <div
-        class="flex items-center gap-3 text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase"
-      >
-        <BadgePill
-          size="sm"
-          class="transition-colors duration-normal hover:text-accent focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-        >
+  <Container size="xl" class="relative z-10">
+    <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
+      <div class="flex flex-col gap-5">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
           <a
             href="/projects/"
-            class="inline-flex items-center gap-2"
-            aria-label="Back to all projects"
+            class="inline-flex items-center gap-2 text-accent-emphasis transition-colors hover:text-accent"
+            aria-label="Back to selected work"
           >
             <ArrowLeftIcon />
-            Back to projects
+            Selected work
           </a>
-        </BadgePill>
-        <BadgePill size="sm" showDot>
-          <time datetime={dateISO}>
-            {formattedDate}
-          </time>
-        </BadgePill>
-      </div>
+          <span aria-hidden="true" class="text-border">·</span>
+          <time datetime={dateISO}>{formattedDate}</time>
+        </div>
 
-      <div class="space-y-6">
-        <h1
-          class="font-heading text-4xl font-semibold text-pretty text-foreground sm:text-5xl lg:text-6xl"
-        >
-          {title}
-        </h1>
-        <p class="text-lg leading-relaxed text-muted-foreground">
-          {description}
-        </p>
-      </div>
+        <div class="space-y-2.5">
+          <p class="section-kicker">Case study</p>
+          <h1
+            class="font-heading text-4xl leading-[1.1] font-semibold tracking-tight text-pretty text-foreground sm:text-5xl lg:text-6xl"
+          >
+            {title}
+          </h1>
+          {
+            outcome && (
+              <p class="font-heading text-lg font-semibold tracking-tight text-accent-emphasis sm:text-xl">
+                {outcome}
+              </p>
+            )
+          }
+          {
+            description && (
+              <p class="max-w-xl pt-0.5 text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">
+                {description}
+              </p>
+            )
+          }
+        </div>
 
-      <Flex wrap align="center" gap="md">
-        <BadgePill size="sm"> Case study </BadgePill>
+        <DotMetaList items={categories} label="Focus areas" />
+
         {
           link && (
-            <Button variant="outline" href={link} target="_blank" rel="noopener noreferrer">
-              Visit project
-              <ExternalLinkIcon />
-            </Button>
+            <div>
+              <Button variant="outline" href={link} target="_blank" rel="noopener noreferrer">
+                Visit project
+                <ExternalLinkIcon />
+              </Button>
+            </div>
           )
         }
-      </Flex>
-    </div>
-
-    <figure class="relative flex flex-1 justify-center">
-      <div
-        class="relative w-full max-w-[28rem] overflow-hidden rounded-3xl bg-surface/90 shadow-lg ring-1 ring-border/30 transition-shadow duration-moderate hover:shadow-lg"
-      >
-        <OptimizedImage
-          src={image}
-          alt={title}
-          width={960}
-          height={960}
-          class="h-full w-full object-cover"
-          priority={true}
-        />
-        <GradientOverlay
-          variant="background"
-          direction="tr"
-          class="from-background/70 via-transparent to-background/40"
-        />
       </div>
-    </figure>
+
+      <figure class="relative">
+        <div class="overflow-hidden ring-1 ring-border/40">
+          <OptimizedImage
+            src={image}
+            alt={title}
+            width={960}
+            height={720}
+            class="aspect-[4/3] h-full w-full object-cover"
+            priority={true}
+          />
+        </div>
+      </figure>
+    </div>
   </Container>
 </section>

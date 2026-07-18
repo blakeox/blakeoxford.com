@@ -104,12 +104,6 @@ const cspHeader = [
 ].join('; ');
 ```
 
-### CSP Reporting
-
-- Endpoint: `/csp-report`
-- Storage: `CSP_REPORTS` KV or fallback to `RATE_LIMIT_KV`
-- TTL: 7 days (violations), 3 days (fallback)
-
 ### Other Security Headers
 
 ```javascript
@@ -322,22 +316,6 @@ ENVIRONMENT = "production"
 - Handler: `functions/send-email.js`
 - Rate limited: Yes
 - Storage: `CONTACT_MESSAGES` KV
-
-### CSP Reporting
-
-- Route: `/csp-report`
-- Method: POST
-- Storage: `CSP_REPORTS` KV (or `RATE_LIMIT_KV`)
-
-### Security Reports
-
-- Route: `/api/security-report`
-- File: `src/pages/api/security-report.ts`
-
-### Performance Alerts
-
-- Route: `/api/performance-alert`
-- File: `src/pages/api/performance-alert.ts`
 
 ---
 

@@ -67,18 +67,21 @@ const cfToken = import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN?.trim() ?? '';
     };
   }
 
-  function registerServiceWorker(): void {
-    const isAudit = Boolean(
-      (window as Window & { __AUDIT__?: boolean }).__AUDIT__ ||
-        /(^|;)\s*audit=1(;$|;|\s|$)/.test(document.cookie || '') ||
-        /lighthouse|headlesschrome/i.test(navigator.userAgent || '')
-    );
-    if (isAudit || !('serviceWorker' in navigator)) return;
+  /** Tear down any previously registered SW (kill-switch at /sw.js clears caches). */
+  function retireServiceWorker(): void {
+    if (!('serviceWorker' in navigator)) return;
 
     window.addEventListener(
       'load',
       () => {
+        // Hit kill-switch once so old clients pick up unregister + cache clear.
         navigator.serviceWorker.register('/sw.js').catch(() => {});
+        navigator.serviceWorker.getRegistrations().then((regs) => {
+          for (const reg of regs) reg.unregister().catch(() => {});
+        });
+        if (window.caches?.keys) {
+          caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))).catch(() => {});
+        }
       },
       { once: true }
     );
@@ -108,7 +111,7 @@ const cfToken = import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN?.trim() ?? '';
 
   setupSkipLinkFocus();
   setupFocusVisibleState();
-  registerServiceWorker();
+  retireServiceWorker();
 </script>
 
 <script is:inline src="/js/ai-chat-launcher.js" defer></script>

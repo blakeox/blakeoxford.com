@@ -2,8 +2,7 @@
  * Unified Error Utilities
  *
  * Provides standardized error handling utilities for the application.
- * These utilities work with the existing ErrorHandlingSystem for UI errors
- * and provide type-safe error creation for API and business logic errors.
+ * Type-safe error creation for API and business logic errors.
  *
  * @module utils/errors
  */

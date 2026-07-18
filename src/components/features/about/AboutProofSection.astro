@@ -1,0 +1,41 @@
+---
+/**
+ * Editorial proof — hire-path why, not achievement card grid.
+ */
+import Section from '../../primitives/Section.astro';
+import SectionHeader from '../../composites/SectionHeader.astro';
+import EditorialList from '../../composites/EditorialList.astro';
+
+interface ProofCard {
+  title: string;
+  description: string;
+  achievements: string[];
+}
+
+interface Props {
+  kicker: string;
+  title: string;
+  description: string;
+  cards: ProofCard[];
+}
+
+const { kicker, title, description, cards } = Astro.props as Props;
+
+const rows = cards.map((card) => ({
+  title: card.title,
+  body: card.description,
+  bullets: card.achievements,
+}));
+---
+
+<Section id="about-proof" padding="lg" container="lg" aria-labelledby="about-proof-heading">
+  <SectionHeader
+    kicker={kicker}
+    title={title}
+    titleId="about-proof-heading"
+    description={description}
+    actionHref="/projects/"
+    actionLabel="Selected work"
+  />
+  <EditorialList rows={rows} />
+</Section>

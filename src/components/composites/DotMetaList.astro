@@ -1,0 +1,41 @@
+---
+/**
+ * DotMetaList — quiet inline capability / chip list used under heroes and featured copy.
+ */
+export interface Props {
+  items: string[];
+  label?: string;
+  align?: 'start' | 'center';
+  class?: string;
+}
+
+const {
+  items,
+  label,
+  align = 'start',
+  class: className = '',
+} = Astro.props as Props;
+
+const isCentered = align === 'center';
+---
+
+{
+  items.length > 0 && (
+    <ul
+      class:list={[
+        'flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-muted-foreground',
+        isCentered && 'justify-center',
+        className,
+      ]}
+      role="list"
+      aria-label={label}
+    >
+      {items.map((item) => (
+        <li class="flex items-center gap-2">
+          <span class="size-1 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}

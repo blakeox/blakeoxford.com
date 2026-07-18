@@ -53,11 +53,12 @@ export interface Props {
 **Purpose**: Pre-composed UI patterns built from primitives
 
 **Examples**:
-- `Card.astro` - Content card wrapper over `BaseCard`
-- `Hero.astro` - Page hero sections
+- `PageHero.astro` - Shared page hero shell
 - `FeatureCard.astro` - Feature highlight cards
+- `SectionHeader.astro` - Section intros (kicker, title, description)
+- `CtaBand.astro` - Full-bleed closing CTA
 - `CoinFlipImage.astro` - Interactive image flipper
-- `CTASection.astro` - Call-to-action bands
+- `CTASection.astro` - Case-study next-steps actions
 
 **Characteristics**:
 - Composed from primitives
@@ -109,8 +110,7 @@ features/
 **Examples**:
 - `AIChatIsland.tsx` - AI chat widget
 - `ContactFormIsland.tsx` - Contact form with validation
-- `ThemeToggle.tsx` - Dark/light mode switcher
-- `NavBarIsland.tsx` - Mobile navigation
+- `ChatLauncherIsland.tsx` - Chat launcher entry point
 
 **Characteristics**:
 - React components (`.tsx`)

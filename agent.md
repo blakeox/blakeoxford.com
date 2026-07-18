@@ -27,14 +27,14 @@ Primary audience: recruiters, collaborators, and technical peers evaluating arch
 
 - **Build system**: Astro SSG (`output: static`).
 - **Deployment**: Cloudflare Workers / static assets (Pages deprecated for this project).
-- **Routing**: File-based under `src/pages/` (kebab-case). API endpoints in `/src/pages/api/`.
+- **Routing**: File-based under `src/pages/` (kebab-case). Edge/API handlers live in `functions/` (Workers).
 - **Components**: Astro or minimal React in `src/components/` (PascalCase). React only for true interactivity.
 - **Content**: Zod-driven schemas in `src/content.config.ts`; static JSON in `public/api/`.
 - **Styling**: Tailwind CSS v4 via `@tailwindcss/vite` (CSS-first). Tokens live in `src/styles/theme.css` (`@theme inline`); prefer utilities over bespoke CSS. Shared chrome belongs in `components.css`.
 - **Optimization scripts**: `scripts/optimization/` (image optimization, bundle analysis, critical CSS inlining, code splitting guidance).
 - **Quality tooling**: `scripts/quality/` orchestrates runtime checks (search relevance, accessibility via axe-core, dead link crawl, long-task probe) + summary.
 - **Testing**: Vitest (`tests/vitest/`), Playwright (`tests/playwright/`), plus performance & accessibility logs.
-- **Search**: Fuse.js client-side index auto-generated on build.
+- **Search**: Client-side index auto-generated on build (`localSearch`).
 - **Edge functions**: `functions/` (e.g., `send-email.ts`, `edge-computing.js`).
 - **Config conventions**: Minimal global state; prefer pure functions; ESM modules.
 
@@ -125,7 +125,7 @@ Key scripts (confirm in `package.json`):
 - `pnpm test`: Run vitest suite.
 - `pnpm test:e2e`: Run Playwright tests.
 - `pnpm quality:runtime`: Orchestrated runtime metrics & gating.
-- `pnpm quality:badges`: Generate badges (mutation, flakiness, a11y).
+- `pnpm quality:badges`: Generate badges (flakiness, a11y, reliability).
 - `pnpm optimize:*`: Performance utilities (images, bundle analysis, critical CSS).
 
 CI/CD:
@@ -215,7 +215,7 @@ Common tasks:
 
 ### Add an API route
 
-- Create `src/pages/api/your-endpoint.ts`.
+- Add a Worker route in `functions/edge-computing.js` (preferred) or a static JSON under `public/`.
 - Export HTTP verb handlers (e.g., POST); validate inputs (Zod preferred).
 - Ensure no secret leakage; log minimal metadata.
 
@@ -269,7 +269,7 @@ Objective: Provide an on-site assistant that can leverage curated internal APIs 
 
 Pattern:
 
-1. Implement an internal JSON endpoint (e.g., `src/pages/api/agent-tools.ts`) exposing a static manifest of available tools (search index query wrapper, project metadata fetch, calculator invocation).
+1. Prefer a Worker route in `functions/edge-computing.js`, or static JSON under `public/`, exposing a manifest of available tools (search index query wrapper, project metadata fetch, calculator invocation).
 2. Run the MCP server off-repo or as a dev-only module; never bundle server logic into client runtime.
 3. The client-side agent UI is a lazy-loaded React island (`AgentConsole.tsx`) rendering only on explicit user interaction (button click) to avoid layout shift.
 4. Communications: Use fetch calls to internal API endpoints; avoid WebSocket unless justified—prefer stateless requests for determinism.

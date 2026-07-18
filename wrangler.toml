@@ -26,6 +26,12 @@ zone_name = "blakeoxford.com"
 
 
 [[kv_namespaces]]
+# Shared physical namespace for cost efficiency. Keep key prefixes disjoint:
+#   ratelimit:*  → RATE_LIMIT_KV
+#   msg:*        → CONTACT_MESSAGES
+#   ai:response:* → AI_RESPONSE_CACHE
+#   feedback:*   → AI_FEEDBACK_KV
+# Split into separate KV namespaces before these datasets compete for eviction.
 binding = "RATE_LIMIT_KV"
 id      = "65439bda285f486f9b07fc2a30bc5099"
 
@@ -52,11 +58,6 @@ allowed_sender_addresses = ["noreply@blakeoxford.com"]
 name = "CONVERSATION_DO"
 class_name = "ConversationDurableObject"
 script_name = "blakeoxford-com"
-
-# To enable CSP report persistence, create a KV namespace and add it here:
-# [[kv_namespaces]]
-# binding = "CSP_REPORTS"
-# id      = "<your-kv-namespace-id>"
 
 # Sentry Configuration
 # Set these secrets via: wrangler secret put <NAME>

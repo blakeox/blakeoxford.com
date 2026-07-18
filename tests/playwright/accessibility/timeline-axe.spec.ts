@@ -11,7 +11,9 @@ test.describe('@essential @timeline @accessibility About Timeline - Axe scan', (
 
     // Ensure the timeline section and heading are present
     await expect(page.locator('section#about-timeline')).toBeVisible();
-    await expect(page.getByRole('heading', { name: /professional journey/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /where the judgment was forged/i })
+    ).toBeVisible();
 
     // Scope Axe to the timeline section to keep this fast and stable
     const results = await new AxeBuilder({ page })

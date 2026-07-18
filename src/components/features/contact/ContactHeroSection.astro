@@ -1,5 +1,7 @@
 ---
 import PageHero from '../../composites/PageHero.astro';
+import IntroCopy from '../../composites/IntroCopy.astro';
+import DotMetaList from '../../composites/DotMetaList.astro';
 import Button from '../../primitives/Button.astro';
 import ButtonGroup from '../../composites/ButtonGroup.astro';
 
@@ -24,38 +26,35 @@ interface Props {
 const { content } = Astro.props;
 ---
 
-<PageHero fullScreen={false} includeBlurOrbs={false} id="contact-hero" class="min-h-0!">
-  <div class="mx-auto max-w-3xl">
-    <span class="section-kicker">{content.kicker}</span>
-    <h1
-      class="mt-5 font-heading text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl"
-    >
-      {content.title}
-    </h1>
-    <p class="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
-      {content.description}
-    </p>
-    <ButtonGroup align="start" responsive class="mt-8">
-      <Button variant="primary" size="lg" href={content.primaryCta.href}
-        >{content.primaryCta.label}</Button
-      >
-      <Button variant="ghost" size="lg" href={content.secondaryCta.href}
-        >{content.secondaryCta.label}</Button
-      >
+<PageHero
+  fullScreen={false}
+  includeBlurOrbs={false}
+  align="center"
+  id="contact-hero"
+  class="min-h-0!"
+  shell="contact-hero-inner"
+>
+  <div class="flex w-full flex-col items-center gap-7">
+    <IntroCopy
+      kicker={content.kicker}
+      title={content.title}
+      description={content.description}
+      align="center"
+      size="hero"
+    />
+    <ButtonGroup align="center" responsive>
+      <Button variant="primary" size="lg" href={content.primaryCta.href}>
+        {content.primaryCta.label}
+      </Button>
+      <Button variant="outline" size="lg" href={content.secondaryCta.href}>
+        {content.secondaryCta.label}
+      </Button>
     </ButtonGroup>
-    <ul
-      class="mt-10 flex max-w-3xl flex-col gap-3 border-t border-border/60 pt-6 text-sm text-muted-foreground sm:flex-row sm:gap-8"
-      role="list"
-      aria-label="Best fit scenarios"
-    >
-      {
-        content.scenarios.map((scenario) => (
-          <li class="flex flex-1 items-start gap-2 text-left">
-            <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-            <span>{scenario}</span>
-          </li>
-        ))
-      }
-    </ul>
+    <DotMetaList
+      items={content.scenarios}
+      label="Best-fit scenarios"
+      align="center"
+      class="max-w-3xl"
+    />
   </div>
 </PageHero>

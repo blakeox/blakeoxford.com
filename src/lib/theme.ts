@@ -1,7 +1,7 @@
 /**
  * Shared theme utilities — single source of truth for light/dark/system mode.
  *
- * Used by ModernNavBar, AccessibilityModule, ThemeContext, and BaseLayout FOUC script.
+ * Used by ModernNavBar, ThemeContext, and BaseLayout FOUC script.
  */
 
 export type ResolvedTheme = 'light' | 'dark';

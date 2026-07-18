@@ -13,6 +13,7 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     heroImage: z.string().optional(),
     draft: z.boolean().default(false),
+    featured: z.boolean().default(false),
   }),
 });
 
@@ -50,7 +51,6 @@ const projects = defineCollection({
     ctaHeading: z.string().optional(),
     ctaDescription: z.string().optional(),
     link: z.url().optional(),
-    external: z.url().optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
   }),
@@ -64,25 +64,20 @@ const navigationLink = z.object({
 });
 
 const achievementCardSchema = z.object({
-  icon: z.enum(['home', 'chart', 'lightbulb']),
   title: z.string(),
   description: z.string(),
   achievements: z.array(z.string()),
-  achievementIcons: z.array(z.enum(['grid', 'clock', 'users', 'dollar', 'trending'])).optional(),
 });
 
 const timelineItemSchema = z.object({
   year: z.string(),
-  icon: z.string(),
   title: z.string(),
   achievements: z.array(z.string()),
-  color: z.string(),
 });
 
 const socialLinkSchema = z.object({
   name: z.string(),
   url: z.string(),
-  icon: z.enum(['linkedin', 'github', 'microsoft-learn']),
 });
 
 const contactChannelSchema = z.object({
@@ -99,28 +94,13 @@ const ctaLinkSchema = z.object({
 });
 
 const homeResumeHighlightItemSchema = z.object({
-  icon: z.enum([
-    'migrate',
-    'money',
-    'cloud-plus',
-    'chat',
-    'azure-opt',
-    'chart',
-    'lightbulb',
-    'consolidate',
-    'grid',
-    'predictive',
-    'shield',
-    'trend',
-  ]),
   text: z.string(),
 });
 
 const homeResumeHighlightCardSchema = z.object({
-  icon: z.enum(['cloud', 'automation', 'analytics']),
+  metric: z.string(),
   title: z.string(),
-  description: z.string(),
-  items: z.array(homeResumeHighlightItemSchema),
+  items: z.array(homeResumeHighlightItemSchema).max(3),
 });
 
 // About page content
@@ -145,7 +125,6 @@ const about = defineCollection({
     }),
     social: z.object({
       title: z.string(),
-      description: z.string(),
       links: z.array(socialLinkSchema),
     }),
     education: z.object({
@@ -213,7 +192,6 @@ const home = defineCollection({
     hero: z.object({
       kicker: z.string(),
       defaultTagline: z.string(),
-      strengths: z.array(z.string()),
       primaryCta: ctaLinkSchema,
       secondaryCta: ctaLinkSchema,
       portrait: z.object({
@@ -223,11 +201,6 @@ const home = defineCollection({
         altBack: z.string(),
       }),
     }),
-    technologies: z.object({
-      kicker: z.string(),
-      title: z.string(),
-      description: z.string(),
-    }),
     resumeHighlights: z.object({
       kicker: z.string(),
       title: z.string(),
@@ -235,20 +208,20 @@ const home = defineCollection({
       cards: z.array(homeResumeHighlightCardSchema),
     }),
     recentProjects: z.object({
-      kicker: z.string(),
+      kicker: z.string().optional(),
       title: z.string(),
       description: z.string(),
       cta: ctaLinkSchema,
     }),
     latestPosts: z.object({
-      kicker: z.string(),
+      kicker: z.string().optional(),
       title: z.string(),
       description: z.string(),
       emptyMessage: z.string(),
       cta: ctaLinkSchema,
     }),
     cta: z.object({
-      kicker: z.string(),
+      kicker: z.string().optional(),
       title: z.string(),
       description: z.string(),
       button: ctaLinkSchema,

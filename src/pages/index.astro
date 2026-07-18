@@ -3,23 +3,20 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 import Layout from '../layouts/BaseLayout.astro';
-import Container from '../components/primitives/Container.astro';
-import SectionHeading from '../components/primitives/SectionHeading.astro';
 import HomeHeroSection from '../components/features/home/HomeHeroSection.astro';
 import HomeResumeHighlightsSection from '../components/features/home/HomeResumeHighlightsSection.astro';
 import HomeRecentProjectsSection from '../components/features/home/HomeRecentProjectsSection.astro';
 import HomeLatestPostsSection from '../components/features/home/HomeLatestPostsSection.astro';
 import HomeCTASection from '../components/features/home/HomeCTASection.astro';
-import TechnologyItem from '../components/features/home/TechnologyItem.astro';
 import { getProjectsSorted } from '../content/projects/getProjects';
 import { getHomePage } from '../content/home/getHomePage';
-import { technologies, siteConfig } from '../config/data';
+import { siteConfig } from '../config/data';
 import { take } from '../utils/index.js';
 
 const page = await getHomePage();
 
 const allBlogPosts: CollectionEntry<'blog'>[] = await getCollection('blog');
-const blogPosts = allBlogPosts
+const publishedPosts = allBlogPosts
   .filter((entry: CollectionEntry<'blog'>) => !entry.data.draft)
   .slice()
   .sort(
@@ -27,32 +24,17 @@ const blogPosts = allBlogPosts
       b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
   );
 
+const featuredPosts = publishedPosts.filter((entry) => entry.data.featured);
+/** Two notes keep Writing a quiet beat after the project grid. */
+const recentBlogPosts: CollectionEntry<'blog'>[] = take(
+  featuredPosts.length > 0 ? featuredPosts : publishedPosts,
+  2
+);
+
 const recentProjects = take(await getProjectsSorted(), 3);
-const recentBlogPosts: CollectionEntry<'blog'>[] = take(blogPosts, 3);
 
-const heroDescription: string | undefined = siteConfig?.tagline;
-const heroTagline: string | undefined = siteConfig?.description;
-const normalize = (s?: string) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-const shouldShowTagline =
-  normalize(heroTagline) !== '' && normalize(heroTagline) !== normalize(heroDescription);
-const taglineToShow: string | undefined =
-  normalize(heroTagline) === ''
-    ? page.hero.defaultTagline
-    : shouldShowTagline
-      ? heroTagline
-      : undefined;
-
-function deriveImageData(imgPath?: string) {
-  if (!imgPath) return null;
-  const prefix = '/assets/images/';
-  if (!imgPath.startsWith(prefix)) return null;
-  const relative = imgPath.slice(prefix.length);
-  const lastDot = relative.lastIndexOf('.');
-  if (lastDot === -1) return null;
-  const name = relative.slice(0, lastDot);
-  const ext = relative.slice(lastDot + 1).toLowerCase();
-  return { name, ext };
-}
+const heroDescription =
+  (siteConfig?.tagline ?? '').replace(/\s+/g, ' ').trim() || page.hero.defaultTagline;
 ---
 
 <Layout title={page.meta.title} description={page.meta.description} wide={true}>
@@ -64,49 +46,15 @@ function deriveImageData(imgPath?: string) {
     type="image/avif"
     fetchpriority="high"
   />
+  <link slot="head" rel="prefetch" href="/contact/" />
 
-  <div class="space-y-20 sm:space-y-24 lg:space-y-28">
-    <HomeHeroSection
-      author={siteConfig.author}
-      tagline={taglineToShow}
-      description={heroDescription}
-      content={page.hero}
-    />
+  {/*
+    Page arc: identity → proof → shipped work → voice → convert.
+    Alternating surfaces and widths create rhythm without repeating one section template.
+  */}
+  <div class="flex flex-col">
+    <HomeHeroSection author={siteConfig.author} description={heroDescription} content={page.hero} />
     <HomeResumeHighlightsSection content={page.resumeHighlights} />
-
-    <section id="technologies" class="w-full border-t border-border/30 bg-transparent py-14">
-      <Container size="lg">
-        <div class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div class="section-intro-left max-w-xl">
-            <span class="section-kicker">{page.technologies.kicker}</span>
-            <SectionHeading size="4xl">{page.technologies.title}</SectionHeading>
-            <p class="text-lg text-muted-foreground">
-              {page.technologies.description}
-            </p>
-          </div>
-        </div>
-        <ul
-          class="flex flex-wrap items-center gap-x-8 gap-y-6 text-base font-medium text-foreground/80"
-        >
-          {
-            technologies.map((tech) => {
-              const raw = tech.img;
-              const srcStr: string | undefined =
-                typeof raw === 'string'
-                  ? raw
-                  : raw && typeof raw === 'object' && 'src' in raw
-                    ? String(raw.src)
-                    : undefined;
-              const canOptimize =
-                typeof srcStr === 'string' && srcStr.startsWith('/assets/images/');
-              const data = canOptimize ? deriveImageData(srcStr) : null;
-              return <TechnologyItem tech={tech} data={data} srcStr={srcStr} />;
-            })
-          }
-        </ul>
-      </Container>
-    </section>
-
     <HomeRecentProjectsSection projects={recentProjects} content={page.recentProjects} />
     <HomeLatestPostsSection posts={recentBlogPosts} content={page.latestPosts} />
     <HomeCTASection content={page.cta} />

@@ -165,28 +165,7 @@ test('should have no accessibility violations', async ({ page }) => {
 
 ---
 
-## 5. Mutation Testing (Stryker)
-
-### Purpose
-
-Validate test quality by introducing code mutations and checking if tests catch them.
-
-### Running
-
-```bash
-pnpm test:mutants  # Run mutation testing
-pnpm mutation:check  # Check against thresholds
-```
-
-### Best Practices
-
-- Don't chase 100% mutation score
-- Focus on critical business logic
-- Document intentional survivors
-
----
-
-## 6. Quality Gates
+## 5. Quality Gates
 
 ### Pre-Commit Checks
 
@@ -218,7 +197,7 @@ Includes:
 
 ---
 
-## 7. Flakiness & Reliability
+## 6. Flakiness & Reliability
 
 ### Environment Variables
 
@@ -242,13 +221,13 @@ Includes:
 
 ---
 
-## 8. Performance Testing
+## 7. Performance Testing
 
 ### Lighthouse CI
 
 ```bash
 pnpm perf:test      # Run Lighthouse performance tests
-pnpm perf:budget    # Check performance budgets
+./scripts/build/performance-budget.sh  # Size/bundle budget gate (CI)
 pnpm perf:summary   # Generate summary report
 ```
 
@@ -268,7 +247,7 @@ pnpm perf:long-tasks  # Analyze JavaScript execution
 
 ---
 
-## 9. Test Maintenance
+## 8. Test Maintenance
 
 ### When Tests Fail
 
@@ -294,7 +273,7 @@ pnpm perf:long-tasks  # Analyze JavaScript execution
 
 ---
 
-## 10. Reference Commands
+## 9. Reference Commands
 
 ```bash
 # Unit Testing
@@ -308,13 +287,13 @@ pnpm test:e2e:ui         # Interactive UI mode
 
 # Quality Checks
 pnpm test:ci             # Both test suites
-pnpm test:mutants        # Mutation testing
+pnpm test -- --run       # Unit tests
 pnpm flakiness:track     # Track flaky tests
 pnpm flakiness:check     # Validate thresholds
 
 # Performance
 pnpm perf:test           # Lighthouse tests
-pnpm perf:budget         # Check budgets
+./scripts/build/performance-budget.sh  # Size/bundle budget gate
 ```
 
 ---

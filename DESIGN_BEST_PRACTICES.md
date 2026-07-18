@@ -129,7 +129,7 @@ There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale â€” use Tailwindâ
 - **BaseCard**: Add `@container` on the card (or parent) when using `@sm:` / `@md:` inside
 - **FeatureCard**: Built-in container query responsive padding/typography
 - **ProjectCard**: Automatic container query spacing adjustments
-- **BlogPostCard**: Container-aware typography and spacing
+- **BlogPostRow**: Container-aware typography and spacing for blog listings
 
 **Best Practices**:
 

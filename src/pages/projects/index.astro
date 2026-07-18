@@ -1,150 +1,105 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
-import ProjectCard from '../../components/features/projects/ProjectCard.astro';
-import Stack from '../../components/primitives/Stack.astro';
-import Section from '../../components/primitives/Section.astro';
 import PageHero from '../../components/composites/PageHero.astro';
-import Grid from '../../components/primitives/Grid.astro';
+import IntroCopy from '../../components/composites/IntroCopy.astro';
+import DotMetaList from '../../components/composites/DotMetaList.astro';
 import Button from '../../components/primitives/Button.astro';
 import ButtonGroup from '../../components/composites/ButtonGroup.astro';
-import StatsCard from '../../components/composites/StatsCard.astro';
-import { getProjectsSorted } from '../../content/projects/getProjects';
+import ProjectsCapabilitiesSection from '../../components/features/projects/ProjectsCapabilitiesSection.astro';
+import ProjectsFeaturedSection from '../../components/features/projects/ProjectsFeaturedSection.astro';
+import ProjectsLibrarySection from '../../components/features/projects/ProjectsLibrarySection.astro';
+import ProjectsFindingsSection from '../../components/features/projects/ProjectsFindingsSection.astro';
+import ProjectsCTASection from '../../components/features/projects/ProjectsCTASection.astro';
+import { getProjectInsights } from '../../content/projects/getProjectInsights';
 
 const meta = (await import('../../content/projects/_meta.json')).default;
-const hero = meta.hero;
+const { findings, projects, deepCut } = await getProjectInsights();
 
-const projects = await getProjectsSorted();
+const featuredProject = deepCut
+  ? projects.find((project) => project.id === deepCut.projectSlug)
+  : undefined;
 
-const title = "Blake Oxford's Projects";
+const title = 'Selected work — Blake Oxford';
 const description =
-  'Explore my portfolio of systems architecture, digital transformation, and development projects.';
+  'Portfolio of migrations, automation, analytics, and AI-enabled workflows Blake Oxford has shipped under real operating pressure.';
 const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
+{/*
+  Portfolio showcase arc:
+  capability claim → what I deliver → featured proof → full range → cross-case results → convert.
+*/}
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <!-- Hero Section -->
-  <PageHero fullScreen={true} includeBlurOrbs={false} id="projects-hero">
-    <div class="section-intro-left max-w-3xl space-y-7">
-      <span class="section-kicker">{hero.kicker}</span>
-      <h1
-        id="projects-title"
-        class="font-heading text-4xl leading-tight font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+  <PageHero
+    fullScreen={false}
+    includeBlurOrbs={false}
+    align="center"
+    id="projects-hero"
+    shell="projects-hero-inner"
+  >
+    <div class="flex w-full flex-col items-center gap-7">
+      <IntroCopy
+        kicker={meta.hero.kicker}
+        title={meta.hero.title}
+        titleId="projects-title"
+        description={meta.hero.subtitle}
+        align="center"
+        size="hero"
       >
-        Selected Projects
-      </h1>
-      <p class="text-lg leading-relaxed text-muted-foreground sm:text-xl">
-        Systems architecture, automation, and digital transformation work with measurable results.
-      </p>
-
-      <ul
-        class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground"
-        role="list"
-        aria-label="Focus areas"
-      >
-        {
-          hero.focusAreas.map((area) => (
-            <li class="flex items-center gap-2">
-              <span class="size-1 rounded-full bg-accent" aria-hidden="true" />
-              <span>{area}</span>
-            </li>
-          ))
-        }
-      </ul>
-
-      <ButtonGroup align="start" responsive class="pt-1">
-        <Button variant="primary" href={hero.primaryCta.href}>{hero.primaryCta.label}</Button>
-        <Button variant="ghost" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</Button>
+        <DotMetaList
+          items={meta.hero.capabilities}
+          label="Capability focus"
+          align="center"
+          class="pt-1"
+        />
+      </IntroCopy>
+      <ButtonGroup align="center" responsive>
+        <Button variant="primary" href={meta.hero.primaryCta.href}>
+          {meta.hero.primaryCta.label}
+        </Button>
+        <Button variant="outline" href={meta.hero.secondaryCta.href}>
+          {meta.hero.secondaryCta.label}
+        </Button>
       </ButtonGroup>
     </div>
   </PageHero>
 
-  <!-- Projects Grid -->
-  <Section
-    padding="lg"
-    container="xl"
-    class="border-t border-border/30 bg-background"
-    role="region"
-    aria-labelledby="projects-grid-heading"
-    data-layout-section="projects-grid"
-  >
-    <Stack space="xl" class="text-pretty" data-layout-shell="projects-grid-inner">
-      <Stack space="md" class="max-w-3xl">
-        <span class="section-kicker w-fit">{meta.grid.kicker}</span>
-        <h2
-          id="projects-grid-heading"
-          class="font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl"
-        >
-          {meta.grid.title}
-        </h2>
-        <p class="text-sm leading-relaxed text-muted-foreground sm:text-base">
-          {meta.grid.description}
-        </p>
-      </Stack>
+  <ProjectsCapabilitiesSection
+    kicker={meta.capabilities.kicker}
+    title={meta.capabilities.title}
+    description={meta.capabilities.description}
+    items={meta.capabilities.items}
+  />
 
-      <Grid cols="3" gap="lg">
-        {projects.map((project) => <ProjectCard project={project} />)}
-      </Grid>
-    </Stack>
-  </Section>
+  {
+    featuredProject && deepCut && (
+      <ProjectsFeaturedSection
+        project={featuredProject}
+        deepCut={deepCut}
+        kicker={meta.featured.kicker}
+        ctaLabel={meta.featured.ctaLabel}
+      />
+    )
+  }
 
-  <!-- Impact Section -->
-  <Section
-    padding="lg"
-    container="xl"
-    class="border-t border-border/30 bg-surface-subtle/40"
-    role="region"
-    aria-labelledby="results-heading"
-    data-layout-section="projects-impact"
-  >
-    <Stack space="xl" class="text-pretty" data-layout-shell="projects-impact-inner">
-      <Stack space="md" class="max-w-3xl">
-        <span class="section-kicker w-fit">Portfolio signals</span>
-        <h2
-          id="results-heading"
-          class="font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl"
-        >
-          Results that stick
-        </h2>
-        <p class="text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Measurable outcomes from programs where automation and change enablement launched
-          together.
-        </p>
-      </Stack>
+  <ProjectsLibrarySection
+    projects={projects}
+    excludeSlug={deepCut?.projectSlug}
+    kicker={meta.library.kicker}
+    title={meta.library.title}
+    description={meta.library.description}
+  />
 
-      <Grid cols="3" gap="md">
-        {
-          hero.stats.map((stat) => (
-            <StatsCard label={stat.label} value={stat.value} variant="default" size="md" />
-          ))
-        }
-      </Grid>
-    </Stack>
-  </Section>
+  <ProjectsFindingsSection
+    findings={findings}
+    kicker={meta.results.kicker}
+    title={meta.results.title}
+    description={meta.results.description}
+  />
 
-  <!-- CTA Section -->
-  <Section
-    padding="lg"
-    container="md"
-    class="border-t border-border/20 bg-background"
-    role="region"
-    aria-labelledby="cta-heading"
-    data-layout-section="projects-cta"
-  >
-    <Stack space="lg" class="text-center" data-layout-shell="projects-cta-inner">
-      <h2
-        id="cta-heading"
-        class="font-heading text-2xl leading-tight font-semibold text-foreground sm:text-3xl md:text-4xl"
-      >
-        Ready to line up the next leap?
-      </h2>
-      <p class="text-base leading-relaxed text-muted-foreground sm:text-lg">
-        Bring the problem space and we'll map the operating backbone—automation, analytics, and
-        change enablement—without losing clarity for stakeholders.
-      </p>
-      <ButtonGroup align="center" responsive>
-        <Button variant="outline" href="/contact/"> Start a project conversation </Button>
-        <Button variant="ghost" href="/about/"> See how I work </Button>
-      </ButtonGroup>
-    </Stack>
-  </Section>
+  <ProjectsCTASection
+    title={meta.cta.title}
+    description={meta.cta.description}
+    button={meta.cta.button}
+  />
 </Layout>

@@ -1,40 +1,7 @@
 ---
 /**
- * ProjectCard - Interactive project card for project listings
- *
- * Displays a project with hero image, title, description, date, tags, and link.
- * Uses semantic tokens for surface, focus, and interactive states.
- * Uses container queries for responsive layout adapting to container width.
- *
- * @component
- * @category Features
- * @subcategory Projects
- *
- * @example Basic usage
- * ```astro
- * <ProjectCard project={projectEntry} />
- * ```
- *
- * @example With container query wrapper
- * ```astro
- * <div class="@container">
- * <ProjectCard project={projectEntry} />
- * </div>
- * ```
- *
- * @prop {CollectionEntry<'projects'>} project - Project content collection entry
- *
- * @accessibility
- * - Semantic article element
- * - aria-labelledby linking to project title
- * - Proper heading hierarchy (h3)
- * - Focus-visible styles for keyboard navigation
- * - Alt text required for images
- *
- * @containerQueries
- * - @sm (384px): Increased spacing, larger badges
- * - @md (448px): Enhanced typography, larger gaps
- * - @lg (512px): Maximum content width, optimal reading layout
+ * ProjectCard — portfolio showcase card.
+ * Compact: home teaser. Full: Selected work library with stronger visual weight.
  */
 import BaseCard from '../../primitives/BaseCard.astro';
 import OptimizedImage from '../../primitives/OptimizedImage.astro';
@@ -44,7 +11,10 @@ import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
 import GradientOverlay from '../../primitives/GradientOverlay.astro';
 import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
 
-const { project } = Astro.props as import('../../../types/components').ProjectCardProps;
+const {
+  project,
+  compact = false,
+} = Astro.props as import('../../../types/components').ProjectCardProps;
 const { id: slug, data } = project;
 
 const title = data.title ?? 'Case study';
@@ -79,7 +49,12 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
     >
       <GradientOverlay variant="hover-card" direction="br" />
 
-      <figure class="relative aspect-[16/10] overflow-hidden">
+      <figure
+        class:list={[
+          'relative overflow-hidden',
+          compact ? 'aspect-[16/10]' : 'aspect-[16/11] @md:aspect-[16/10]',
+        ]}
+      >
         <OptimizedImage
           src={image}
           alt={`${title} preview`}
@@ -93,9 +68,14 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
       </figure>
 
       <div
-        class="relative z-[1] flex flex-1 flex-col gap-4 px-6 pt-6 pb-7 @sm:gap-5 @sm:px-7 @sm:pt-7 @sm:pb-8 @md:gap-6 @md:px-8"
+        class:list={[
+          'relative z-[1] flex flex-1 flex-col',
+          compact
+            ? 'gap-3 px-5 pt-4 pb-5 @sm:px-6 @sm:pt-5 @sm:pb-6'
+            : 'gap-4 px-5 pt-5 pb-6 @sm:gap-4 @sm:px-6 @sm:pt-6 @sm:pb-7 @md:px-7',
+        ]}
       >
-        <div class="space-y-3 @sm:space-y-4">
+        <div class="space-y-2.5">
           <Flex
             wrap
             align="center"
@@ -109,41 +89,39 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
                 </BadgePill>
               )
             }
-            {supportingCategory && <BadgePill size="xs">{supportingCategory}</BadgePill>}
+            {!compact && supportingCategory && <BadgePill size="xs">{supportingCategory}</BadgePill>}
             {dateISO && dateLabel && <time datetime={dateISO}>{dateLabel}</time>}
-            {
-              categories.length === 0 && tags.length === 0 && (
-                <BadgePill size="xs">Case Study</BadgePill>
-              )
-            }
           </Flex>
 
           <h3
             id={`project-card-${slug}`}
-            class="font-heading text-lg font-semibold text-pretty text-foreground @sm:text-xl @md:text-2xl"
+            class:list={[
+              'font-heading leading-snug font-semibold text-pretty text-foreground',
+              compact ? 'text-lg @sm:text-xl' : 'text-xl @sm:text-2xl',
+            ]}
           >
             {title}
           </h3>
 
           {
-            (hasDescription || valueSummary) && (
-              <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:4] @md:text-base">
-                {valueSummary}
+            proofLine && (
+              <p class="border-l-2 border-accent/50 pl-3.5 text-sm font-semibold leading-snug text-foreground/90 @md:text-base">
+                {proofLine}
               </p>
             )
           }
 
           {
-            proofLine && (
-              <p class="border-l-2 border-accent/50 pl-4 text-sm leading-relaxed text-foreground/82">
-                {proofLine}
+            !compact && (hasDescription || valueSummary) && valueSummary !== proofLine && (
+              <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:3] @md:text-base">
+                {valueSummary}
               </p>
             )
           }
         </div>
 
         {
-          (visibleTags.length > 0 || extraTagCount > 0) && (
+          !compact && (visibleTags.length > 0 || extraTagCount > 0) && (
             <Flex
               as="ul"
               wrap
@@ -168,11 +146,9 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
           )
         }
 
-        <div class="mt-auto flex items-center justify-end gap-4">
-          <span
-            class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis transition-all duration-normal group-hover:gap-3"
-          >
-            View case study
+        <div class="mt-auto flex items-center justify-end gap-4 pt-1">
+          <span class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis transition-all duration-normal group-hover:gap-3">
+            {compact ? 'View case study' : 'Read the case study'}
             <ArrowRightIcon
               class="opacity-90 transition-transform duration-normal group-hover:translate-x-0.5"
             />

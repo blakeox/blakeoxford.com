@@ -94,7 +94,30 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 - Map intent to semantic tokens, not gray scales
 - Blog/prose: wrap MDX with the `Prose` primitive (typography plugin + semantic token remaps)
 - Dark mode strategy is class + `data-theme` with semantic remaps; do not default to `dark:bg-*` pairs
-- Reusable cards in grids: `@container` + `@sm:` / `@md:` (see BlogPostCard, EducationCard, ProjectCard)
+- Reusable cards in grids: `@container` + `@sm:` / `@md:` (see ProjectCard)
+
+### Text-stack rhythm (heroes & section intros)
+
+Prefer grouped stacks over uniform parent `gap-*` on every sibling:
+
+1. **Kicker → title** — tight (`gap-2` / `gap-2.5`)
+2. **Title → description** — slightly open (`pt-0.5` inside the same stack)
+3. **Copy block → CTA / meta** — one clear step (`gap-5`–`gap-7`)
+4. Use `IntroCopy` for hero/featured lockups and `SectionHeader` for section intros
+5. Use `DotMetaList` for quiet capability chips; `EditorialList` for proof rows
+   - Short kickers (years): `numbered={false}` (aside)
+   - Long kickers (metrics): `numbered={false} kickerAside={false}` (inline above title)
+
+Avoid equal `gap-6` between kicker, title, body, chips, and buttons — that reads as disconnected lines.
+
+### Section meter
+
+Alternate section weight on each page so consecutive editorial blocks don’t feel identical:
+
+- After a full-bleed hero: start at `padding="lg"`
+- Surface / featured beats: `padding="xl"` (or the section’s own slightly tighter `py-14…`)
+- Closing CTA bands keep their own vertical rhythm
+- Prefer `Section` padding props over ad-hoc `py-*` ladders on feature wrappers
 
 ---
 

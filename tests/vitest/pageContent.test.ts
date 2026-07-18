@@ -34,9 +34,18 @@ describe('About, Contact, and Home page content', () => {
     );
 
     expect(home.meta.title).toBeTruthy();
-    expect(home.hero.strengths.length).toBe(3);
+    expect(home.hero.defaultTagline).toBeTruthy();
     expect(home.resumeHighlights.cards.length).toBe(3);
+    expect(
+      home.resumeHighlights.cards.every(
+        (card: { metric: string; items: unknown[] }) =>
+          Boolean(card.metric) && card.items.length === 3
+      )
+    ).toBe(true);
     expect(home.recentProjects.cta.href).toBe('/projects/');
     expect(home.cta.button.href).toBe('/contact/');
+    expect(home.cta.button.label).toMatch(/bottleneck/i);
+    expect(home.latestPosts.kicker).toBeUndefined();
+    expect(home.cta.kicker).toBeUndefined();
   });
 });

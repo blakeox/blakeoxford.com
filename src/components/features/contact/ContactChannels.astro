@@ -1,125 +1,54 @@
 ---
 /**
- * ContactChannels - Contact channel links display
- *
- * Displays available contact channels (email, phone, LinkedIn)
- * with semantic links and tokenized interactive states.
- *
- * @component
- * @category Features
- * @subcategory Contact
- *
- * @example Contact channels
- * ```astro
- * <ContactChannels channels={contactData} />
- * ```
- *
- * @prop {ContactChannels} channels - Array of contact channel objects
- * @prop {string} channels[].icon - Icon name (email, phone, linkedin)
- * @prop {string} channels[].label - Display label
- * @prop {string} channels[].value - Contact value/URL
- * @prop {string} channels[].href - Link URL
- *
- * @accessibility
- * - section with aria-labelledby
- * - Semantic list structure (ul/li)
- * - Links with descriptive aria-label
- * - Icons hidden with aria-hidden (text provides context)
- * - Non-content visual accents excluded from accessibility tree
+ * Alternate contact channels — editorial list, no emoji cards.
  */
 import type { ContactChannels } from './types';
-import Container from '../../primitives/Container.astro';
+import Section from '../../primitives/Section.astro';
+import SectionHeader from '../../composites/SectionHeader.astro';
 
 const { channels } = Astro.props as { channels: ContactChannels };
-
-interface IconProps {
-  name: string;
-}
-
-function Icon({ name }: IconProps) {
-  switch (name) {
-    case 'email':
-      return '✉️';
-    case 'phone':
-      return '📞';
-    case 'linkedin':
-      return '💼';
-    default:
-      return '✨';
-  }
-}
 ---
 
-<section
-  class="relative w-full overflow-hidden bg-background py-16"
+<Section
+  padding="lg"
+  container="lg"
   aria-labelledby="contact-channels-heading"
 >
-  <div class="pointer-events-none absolute inset-0 z-0 opacity-20" aria-hidden="true">
-    <div
-      class="absolute inset-0 bg-[radial-gradient(circle_at_top,var(--color-accent-subtle),transparent_60%)]"
-    >
-    </div>
-  </div>
+  <SectionHeader
+    kicker={channels.heading}
+    title={channels.title}
+    titleId="contact-channels-heading"
+    description={channels.description}
+  />
 
-  <Container size="lg" class="relative z-10">
-    <header class="section-intro mb-12">
-      <span class="section-kicker">Alternate routes</span>
-      <h2
-        id="contact-channels-heading"
-        class="font-heading text-2xl font-bold text-foreground sm:text-3xl md:text-4xl"
-      >
-        {channels.title}
-      </h2>
-      <p class="text-lg text-muted-foreground">
-        Use the form for scoped project inquiries. These channels work best when you already know
-        the contact mode you want.
-      </p>
-    </header>
-
-    <ul class="grid gap-5 md:grid-cols-3" role="list">
-      {
-        channels.items.map((channel, index) => (
-          <li>
-            {(() => {
-              const labelId = `contact-channel-${index}-label`;
-              const descriptionId = `contact-channel-${index}-description`;
-              return (
-                <a
-                  href={channel.href}
-                  target={channel.icon === 'linkedin' ? '_blank' : undefined}
-                  rel={channel.icon === 'linkedin' ? 'noopener noreferrer' : undefined}
-                  class="group relative flex h-full flex-col gap-4 overflow-hidden rounded-xl border border-border/80 bg-surface/95 p-6 transition-colors hover:border-accent/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2"
-                  aria-labelledby={labelId}
-                  aria-describedby={channel.description ? descriptionId : undefined}
-                  title={channel.label}
-                >
-                  <span
-                    class="text-3xl text-accent transition-transform duration-normal group-hover:scale-105"
-                    aria-hidden="true"
-                  >
-                    <Icon name={channel.icon} />
-                  </span>
-                  <span class="section-kicker w-fit">Direct</span>
-                  <span
-                    id={labelId}
-                    class="font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-accent"
-                  >
-                    {channel.label}
-                  </span>
-                  {channel.description && (
-                    <span
-                      id={descriptionId}
-                      class="max-w-sm text-sm leading-relaxed text-muted-foreground"
-                    >
-                      {channel.description}
-                    </span>
-                  )}
-                </a>
-              );
-            })()}
-          </li>
-        ))
-      }
-    </ul>
-  </Container>
-</section>
+  <ul class="divide-y divide-border/50 border-y border-border/50" role="list">
+    {
+      channels.items.map((channel) => (
+        <li>
+          <a
+            href={channel.href}
+            target={channel.icon === 'linkedin' ? '_blank' : undefined}
+            rel={channel.icon === 'linkedin' ? 'noopener noreferrer' : undefined}
+            class="group grid gap-2 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 sm:py-6"
+            aria-label={`${channel.title}: ${channel.label}`}
+          >
+            <span class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
+              {channel.title}
+            </span>
+            <span class="min-w-0 space-y-1">
+              <span class="block font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-accent-emphasis">
+                {channel.label}
+              </span>
+              {channel.description && (
+                <span class="block text-sm leading-relaxed text-muted-foreground">
+                  {channel.description}
+                </span>
+              )}
+            </span>
+            <span class="text-sm font-semibold text-accent-emphasis sm:text-right">Open</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Section>

@@ -401,17 +401,6 @@ export { cn, type ClassValue } from './cn';
 
 // ─── Re-exports ───────────────────────────────────────────────────────
 
-// Lazy loading utilities
-export {
-  createLazyComponent,
-  createPreloadableLazyComponent,
-  preloadComponent,
-  DefaultLoadingSkeleton,
-  LoadingSpinner,
-  type LazyComponentOptions,
-  type RetryOptions,
-} from './lazy';
-
 // Error utilities
 export {
   AppError,

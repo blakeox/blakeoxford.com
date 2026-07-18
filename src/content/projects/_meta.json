@@ -1,94 +1,55 @@
 {
   "hero": {
-    "kicker": "Signature programs",
-    "title": "Operational intelligence work that stays adopted",
-    "subtitle": "Systems built to keep decisions, delivery, and change leadership moving in lockstep.",
-    "description": "Explore the programs where automation, financial intelligence, and enablement launched together—turning strategy slides into reliable operating rhythms.",
-    "focusAreas": ["Automation & AI", "Financial intelligence", "Change enablement"],
-    "stats": [
-      { "value": "120+ hrs/mo", "label": "Capacity returned through automation" },
-      { "value": "200 teammates", "label": "Enabled with new playbooks" },
-      { "value": "10 departments", "label": "Working from one operating model" }
+    "kicker": "Selected work",
+    "title": "Systems I've shipped under real operating pressure",
+    "subtitle": "Migrations, automation, analytics, and AI-enabled workflows—built so teams keep running them after launch.",
+    "capabilities": [
+      "Platform migrations that hold adoption",
+      "Automation that cuts lasting drag",
+      "Decision systems leaders actually use"
     ],
-    "primaryCta": { "href": "/contact/", "label": "Start a project conversation" },
-    "secondaryCta": { "href": "/about/", "label": "See how I work" }
+    "primaryCta": { "href": "#featured", "label": "See featured work" },
+    "secondaryCta": { "href": "#library", "label": "Browse all work" }
   },
-  "approach": {
-    "kicker": "How I deliver lasting change",
-    "title": "A repeatable method that keeps automation adopted",
-    "subtitle": "Five moves that keep adoption high",
-    "description": "Every program starts with evidence, co-design, and guardrails. The stages below show how strategy becomes an operating model teams actually keep running.",
-    "stages": [
+  "capabilities": {
+    "kicker": "What I deliver",
+    "title": "Hire me for the hard middle",
+    "description": "Not strategy decks alone—and not tools without adoption. The work sits where systems, people, and decisions have to move together.",
+    "items": [
       {
-        "title": "Discover the real friction",
-        "summary": "Shadow workflows, baseline the metrics executives actually care about, and map the people who can champion the change.",
-        "proof": [
-          "Documented current-state maps across teams",
-          "Baseline adoption and ROI metrics agreed with sponsors"
-        ]
+        "title": "Migrations & platforms",
+        "description": "Cutovers, identity, endpoints, and enablement so the new stack sticks.",
+        "examples": ["Microsoft 365", "AdvancedMD", "ADP Workforce Now"]
       },
       {
-        "title": "Design the operating rhythm",
-        "summary": "Co-create the future-state cadence, dashboards, and story that explains how the new operating model works before automation enters the picture.",
-        "proof": [
-          "Annotated future-state flow mapped with owners",
-          "Communication kit drafted with change stories"
-        ]
+        "title": "Automation & AI",
+        "description": "Workflows and coaching loops that remove drag without creating shadow IT.",
+        "examples": ["Microsoft Fabric", "OpenAI documentation coaching", "Power Platform"]
       },
       {
-        "title": "Pilot with instrumentation",
-        "summary": "Run controlled pilots with analytics and field coaching that surface adoption signals in real time.",
-        "proof": [
-          "Pilot scorecard live within two weeks",
-          "Qualitative feedback loop hooked into weekly standups"
-        ]
-      },
-      {
-        "title": "Automate with guardrails",
-        "summary": "Launch automation, dashboards, and governance together so every team inherits clear roles, alerts, and recovery plans.",
-        "proof": [
-          "Automation launch checklist signed off",
-          "Runbooks and escalation paths distributed"
-        ]
-      },
-      {
-        "title": "Sustain and evolve",
-        "summary": "Stand up enablement, champion networks, and improvement backlogs so the program keeps compounding value after launch.",
-        "proof": ["Champion network cadence in motion", "Quarterly improvement backlog prioritized"]
+        "title": "Decision systems",
+        "description": "Models and dashboards built for the questions executives actually ask.",
+        "examples": ["Bank projections", "Fanalyx", "Power BI scorecards"]
       }
-    ],
-    "signals": [
-      "Week-over-week storytelling that ties ROI, adoption, and delivery health together.",
-      "Enablement tracks, office hours, and feedback loops that convert new processes into habits.",
-      "Executive scorecards plus champion networks that keep momentum visible long after launch."
-    ],
-    "cta": {
-      "title": "Ready to map your operating backbone?",
-      "description": "In 30 minutes we can identify the friction points, sketch an adoption path, and decide if a working session makes sense.",
-      "primaryCta": { "href": "/contact/", "label": "Book a working session" },
-      "secondaryCta": { "href": "/about/", "label": "Review the engagement model" }
-    }
+    ]
   },
   "featured": {
-    "kicker": "Featured program",
-    "title": "Why it resonated",
-    "description": "Automation joined finance and operations data so leaders could spot friction before it slowed delivery, while change champion playbooks kept 200+ teammates aligned.",
-    "highlights": [
-      "Automation joined finance and operations data so leaders could spot friction before it slowed delivery.",
-      "Weekly CXO readouts blended adoption, ROI, and risk signals on a single dashboard.",
-      "Change champion playbooks equipped teams to run the new cadence with confidence."
-    ],
-    "cta": { "label": "View the full case study" }
+    "kicker": "Featured engagement",
+    "ctaLabel": "Read the full case study"
   },
-  "grid": {
-    "kicker": "Selected engagements",
-    "title": "Snapshots from the broader library.",
-    "description": "Each project combines operational clarity with the change programming needed for teams to run the new model with confidence."
+  "library": {
+    "kicker": "Portfolio",
+    "title": "More of the work",
+    "description": "Each study covers the problem, what I built, the proof, and what I’d repeat."
+  },
+  "results": {
+    "kicker": "Proof across engagements",
+    "title": "Results that show up more than once",
+    "description": "A sample of outcomes from the portfolio—each links to the case behind it."
   },
   "cta": {
-    "title": "Ready to line up the next leap?",
-    "description": "Bring the problem space and we’ll map the operating backbone—automation, analytics, and change enablement—without losing clarity for stakeholders.",
-    "primaryCta": { "href": "/contact/", "label": "Start a project conversation" },
-    "secondaryCta": { "href": "/about/", "label": "See how I work" }
+    "title": "Have a bottleneck that looks like this work?",
+    "description": "Migration, automation, reporting, or AI-enabled workflow—bring the constraint that’s costing you the most.",
+    "button": { "href": "/contact/", "label": "Book a 20-minute bottleneck review" }
   }
 }

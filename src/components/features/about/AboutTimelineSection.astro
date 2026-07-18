@@ -1,101 +1,45 @@
 ---
+/**
+ * Editorial timeline — years and outcomes.
+ */
 import Section from '../../primitives/Section.astro';
-import SectionHeading from '../../primitives/SectionHeading.astro';
-import TimelineCard from './TimelineCard.astro';
-import TimelineCardMobile from './TimelineCardMobile.astro';
+import SectionHeader from '../../composites/SectionHeader.astro';
+import EditorialList from '../../composites/EditorialList.astro';
 
 interface TimelineItem {
   year: string;
-  icon: '🔄' | '☁️' | '💡' | '🤖';
   title: string;
   achievements: string[];
-  color: string;
 }
 
-export interface AboutTimelineContent {
+interface Props {
   kicker: string;
   title: string;
   description: string;
   items: TimelineItem[];
 }
 
-interface Props {
-  content: AboutTimelineContent;
-}
+const { kicker, title, description, items } = Astro.props as Props;
 
-const { content } = Astro.props as Props;
-const { items } = content;
+const rows = items.map((item) => ({
+  kicker: item.year,
+  title: item.title,
+  bullets: item.achievements,
+}));
 ---
 
 <Section
   id="about-timeline"
-  padding="lg"
+  padding="xl"
   container="lg"
-  class="relative overflow-hidden bg-surface"
+  background="surface"
+  aria-labelledby="about-timeline-heading"
 >
-  <div class="absolute inset-0 z-0 opacity-10">
-    <div class="absolute inset-0" aria-hidden="true">
-      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"> </svg>
-    </div>
-  </div>
-  <div class="relative z-10">
-    <div class="section-intro mx-auto mb-16 max-w-3xl">
-      <span class="section-kicker">{content.kicker}</span>
-      <SectionHeading size="3xl" class="mb-2">{content.title}</SectionHeading>
-      <p class="text-lg text-muted-foreground">
-        {content.description}
-      </p>
-    </div>
-    <div class="timeline-desktop relative hidden md:block">
-      <div
-        class="animate-gradient-shift absolute left-1/2 h-full w-1 -translate-x-1/2 transform bg-gradient-to-b from-accent via-primary to-accent opacity-80"
-      >
-      </div>
-      <div class="space-y-0">
-        {
-          items.map((item, index) => (
-            <div
-              class={`relative z-10 flex items-center justify-${index % 2 === 0 ? 'start' : 'end'} group`}
-            >
-              <div class={`mb-16 flex w-full ${index % 2 === 0 ? '' : 'justify-end'}`}>
-                <div class={`${index % 2 === 0 ? 'mr-8 ml-0 text-right' : 'mr-0 ml-8'} w-5/12`}>
-                  <TimelineCard
-                    year={item.year}
-                    icon={item.icon}
-                    title={item.title}
-                    achievements={item.achievements}
-                    color={item.color}
-                  />
-                </div>
-              </div>
-              <div class="absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 transform rounded-full border-4 border-background bg-accent motion-safe:transition-transform motion-safe:duration-moderate motion-safe:group-hover:scale-125">
-                <div class="absolute inset-0 rounded-full bg-accent opacity-75 motion-safe:animate-ping" />
-              </div>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-
-    <div
-      class="timeline-scroll-container timeline-mobile overflow-x-auto pb-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface md:hidden"
-      role="region"
-      aria-label="Timeline events"
-      tabindex="0"
-    >
-      <div class="inline-flex min-w-max space-x-6 px-4 pb-6">
-        {
-          items.map((item) => (
-            <TimelineCardMobile
-              year={item.year}
-              icon={item.icon}
-              title={item.title}
-              achievements={item.achievements}
-              color={item.color}
-            />
-          ))
-        }
-      </div>
-    </div>
-  </div>
+  <SectionHeader
+    kicker={kicker}
+    title={title}
+    titleId="about-timeline-heading"
+    description={description}
+  />
+  <EditorialList rows={rows} numbered={false} />
 </Section>

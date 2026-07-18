@@ -2,13 +2,9 @@
 import type { CollectionEntry } from 'astro:content';
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import ProjectDetailSection from './ProjectDetailSection.astro';
-import OutcomeCard from '../../composites/OutcomeCard.astro';
-import BulletListItem from '../../primitives/BulletListItem.astro';
-import BackgroundGrid from '../../primitives/BackgroundGrid.astro';
 import ProjectTags from './ProjectTags.astro';
-import Grid from '../../primitives/Grid.astro';
 import MetricsTable from '../../composites/MetricsTable.astro';
-import Flex from '../../primitives/Flex.astro';
+import EditorialList from '../../composites/EditorialList.astro';
 import Container from '../../primitives/Container.astro';
 
 interface Props {
@@ -17,12 +13,10 @@ interface Props {
   metrics: Array<{ metric: string; result: string; timeline: string }>;
   journey: string[];
   lessons: Array<{ title: string; description: string }>;
-  categories: string[];
   reflection?: string;
   hasMetrics: boolean;
   hasJourney: boolean;
   hasLessons: boolean;
-  hasCategories: boolean;
 }
 
 const {
@@ -31,54 +25,50 @@ const {
   metrics,
   journey,
   lessons,
-  categories,
   reflection,
   hasMetrics,
   hasJourney,
   hasLessons,
-  hasCategories,
 } = Astro.props as Props;
+
+const hasImpact = Boolean(data.impact?.length);
+const hasHighlights = Boolean(data.highlights?.length);
+const hasCtaSlot = Astro.slots.has('cta');
+
+const impactRows = (data.impact ?? []).map((item: string) => ({ body: item }));
+const journeyRows = journey.map((item: string) => ({ bodyHtml: item }));
+const lessonRows = lessons.map((lesson: { title: string; description: string }) => ({
+  title: lesson.title,
+  body: lesson.description,
+}));
+const highlightRows = (data.highlights ?? []).map((item: string) => ({ body: item }));
 ---
 
-<article
-  class="relative isolate overflow-hidden bg-gradient-to-b from-surface-subtle via-background to-background py-24"
->
-  <BackgroundGrid opacity={35} size="200px" />
-  <Container size="xl" class="relative flex flex-col gap-14">
-    <ProjectDetailSection title="Program overview" eyebrow="Context" description={data.description}>
-      <div class="max-w-none space-y-6 text-base leading-relaxed text-muted-foreground">
+<article class="relative isolate py-14 sm:py-16 lg:py-20">
+  <Container size="lg" class="relative flex flex-col gap-12 sm:gap-14 lg:gap-16">
+    <ProjectDetailSection title="Overview" eyebrow="Context" description={data.description}>
+      <div
+        class="prose-case max-w-none space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg"
+      >
         <Content />
       </div>
     </ProjectDetailSection>
 
     {
-      data.highlights?.length ? (
-        <ProjectDetailSection title="Highlights" eyebrow="What resonated" layout="surface">
-          <OutcomeCard title="Program outcomes" achievements={data.highlights} />
+      hasImpact || hasMetrics ? (
+        <ProjectDetailSection title="Impact" eyebrow="Proof">
+          <div class="flex flex-col gap-8">
+            {hasMetrics ? <MetricsTable metrics={metrics} /> : null}
+            {hasImpact ? <EditorialList rows={impactRows} numbered={false} /> : null}
+          </div>
         </ProjectDetailSection>
       ) : null
     }
 
     {
-      hasMetrics || data.impact?.length ? (
-        <ProjectDetailSection
-          title="Impact signals"
-          eyebrow="Proof of traction"
-          layout={hasMetrics ? 'surface' : undefined}
-        >
-          <div class="flex flex-col gap-6">
-            {hasMetrics ? <MetricsTable metrics={metrics} /> : null}
-            {data.impact?.length ? (
-              <ul
-                class="flex flex-col gap-3 text-sm leading-relaxed text-muted-foreground"
-                role="list"
-              >
-                {(data.impact ?? []).map((item: string) => (
-                  <BulletListItem text={item} />
-                ))}
-              </ul>
-            ) : null}
-          </div>
+      hasHighlights ? (
+        <ProjectDetailSection title="What shipped" eyebrow="Highlights">
+          <EditorialList rows={highlightRows} numbered={false} />
         </ProjectDetailSection>
       ) : null
     }
@@ -86,46 +76,15 @@ const {
     {
       hasJourney ? (
         <ProjectDetailSection title="Journey" eyebrow="How it unfolded">
-          <ul class="space-y-3 text-sm leading-relaxed text-muted-foreground" role="list">
-            {journey.map((item: string) => (
-              <BulletListItem>
-                <span set:html={item} />
-              </BulletListItem>
-            ))}
-          </ul>
-        </ProjectDetailSection>
-      ) : null
-    }
-
-    {
-      hasCategories ? (
-        <ProjectDetailSection title="Program pillars" eyebrow="Where it delivered" layout="surface">
-          <Flex
-            wrap
-            gap="xs"
-            class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
-          >
-            {categories.map((category: string) => (
-              <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/25">
-                {category}
-              </span>
-            ))}
-          </Flex>
+          <EditorialList rows={journeyRows} />
         </ProjectDetailSection>
       ) : null
     }
 
     {
       hasLessons ? (
-        <ProjectDetailSection title="Lessons" eyebrow="What stuck" layout="surface">
-          <Grid cols="2" gap="md">
-            {lessons.map((lesson) => (
-              <article class="flex flex-col gap-2 rounded-2xl border border-border/25 bg-background/95 p-4 shadow-sm">
-                <h3 class="text-lg font-semibold text-foreground">{lesson.title}</h3>
-                <p class="text-sm leading-relaxed text-muted-foreground">{lesson.description}</p>
-              </article>
-            ))}
-          </Grid>
+        <ProjectDetailSection title="Lessons" eyebrow="What stuck">
+          <EditorialList rows={lessonRows} numbered={false} />
         </ProjectDetailSection>
       ) : null
     }
@@ -133,16 +92,20 @@ const {
     {
       reflection ? (
         <ProjectDetailSection title="Reflection" eyebrow="Personal note">
-          <blockquote class="border-l-4 border-accent/80 bg-surface-subtle/80 p-6 text-base leading-relaxed text-muted-foreground italic">
+          <blockquote class="max-w-2xl border-l-2 border-accent/60 pl-5 text-lg leading-relaxed text-foreground/90 italic sm:pl-6 sm:text-xl">
             {reflection}
           </blockquote>
         </ProjectDetailSection>
       ) : null
     }
 
-    <ProjectDetailSection title="Next steps" eyebrow="Ready to explore?" layout="surface">
-      <slot name="cta" />
-    </ProjectDetailSection>
+    {
+      hasCtaSlot ? (
+        <ProjectDetailSection title="Next steps" eyebrow="Continue the conversation">
+          <slot name="cta" />
+        </ProjectDetailSection>
+      ) : null
+    }
 
     <ProjectTags tags={data.tags ?? []} />
   </Container>

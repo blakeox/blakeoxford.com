@@ -1,0 +1,68 @@
+---
+/**
+ * SectionHeader — shared kicker + title + optional description/action.
+ * Used across home, work, about, and contact section intros.
+ */
+import SectionHeading from '../primitives/SectionHeading.astro';
+import Button from '../primitives/Button.astro';
+
+export interface Props {
+  title: string;
+  titleId?: string;
+  kicker?: string;
+  description?: string;
+  size?: '3xl' | '4xl';
+  actionHref?: string;
+  actionLabel?: string;
+  actionVariant?: 'outline' | 'ghost' | 'primary';
+  /** Center the intro block (e.g. Outcomes on home). */
+  align?: 'start' | 'center';
+  class?: string;
+}
+
+const {
+  title,
+  titleId,
+  kicker,
+  description,
+  size = '4xl',
+  actionHref,
+  actionLabel,
+  actionVariant = 'outline',
+  align = 'start',
+  class: className = '',
+} = Astro.props;
+
+const isCentered = align === 'center';
+---
+
+<div
+  class:list={[
+    'mb-8 flex flex-col gap-3',
+    isCentered
+      ? 'mx-auto max-w-2xl items-center text-center'
+      : 'md:flex-row md:items-end md:justify-between',
+    className,
+  ]}
+>
+  <div class:list={['max-w-2xl space-y-2', isCentered ? 'text-center' : 'text-left']}>
+    {kicker && <span class:list={['section-kicker', isCentered && 'mx-auto']}>{kicker}</span>}
+    <SectionHeading id={titleId} size={size}>{title}</SectionHeading>
+    {
+      description && (
+        <p class="pt-1 text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
+      )
+    }
+  </div>
+  {
+    actionHref && actionLabel && (
+      <Button
+        variant={actionVariant}
+        href={actionHref}
+        class:list={['shrink-0', isCentered ? 'self-center' : 'self-start md:self-auto']}
+      >
+        {actionLabel}
+      </Button>
+    )
+  }
+</div>

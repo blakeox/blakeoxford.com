@@ -26,8 +26,8 @@
   --palette-foreground: oklch(0.22 0.02 55);
   --palette-foreground-strong: oklch(0.16 0.02 55);
   --palette-foreground-light: oklch(0.97 0.01 85);
-  --palette-muted-foreground: oklch(0.42 0.02 55);
-  --palette-subtle-foreground: oklch(0.48 0.02 55);
+  --palette-muted-foreground: oklch(0.36 0.02 55);
+  --palette-subtle-foreground: oklch(0.42 0.02 55);
   --palette-border: oklch(0.34 0.035 55 / 0.12);
   --palette-border-dark: oklch(0.82 0.015 75 / 0.22);
   --palette-on-accent: oklch(0.97 0.01 85);

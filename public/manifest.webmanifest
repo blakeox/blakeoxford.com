@@ -4,8 +4,8 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#080f1a",
-  "theme_color": "#4f46e5",
+  "background_color": "#171411",
+  "theme_color": "#c18a3a",
   "orientation": "portrait-primary",
   "description": "Portfolio of Blake Oxford – Systems Architect, Workflow Strategist, and Action-Oriented Leader.",
   "lang": "en",
@@ -18,7 +18,7 @@
       "form_factor": "wide"
     },
     {
-      "src": "/assets/images/screenshot-mobile.png", 
+      "src": "/assets/images/screenshot-mobile.png",
       "sizes": "375x667",
       "type": "image/png",
       "form_factor": "narrow"

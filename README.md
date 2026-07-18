@@ -49,7 +49,7 @@ A blazing-fast, modern portfolio site built with [Astro](https://astro.build), d
 
 - [React](https://reactjs.org/) for hydrated islands (nav, search, chat, forms)
 
-- [Fuse.js](https://fusejs.io/) for fuzzy search
+- Client-side search over a generated JSON index
 
 ### Hosting & CDN
 
@@ -154,7 +154,7 @@ npx serve dist/
 
 ## 🧪 Test Architecture (Phase 6 Overview)
 
-![Mutation Score Badge showing current mutation test coverage level](badges/mutation.svg) ![Reliability Badge showing latest pass rate](badges/reliability.svg) ![Flakiness Badge showing average retry intensity health](badges/flakiness.svg) ![Accessibility Badge showing latest total a11y violations](badges/a11y.svg) ![Contrast Badge showing sampled text contrast trend](badges/contrast.svg)
+![Reliability Badge showing latest pass rate](badges/reliability.svg) ![Flakiness Badge showing average retry intensity health](badges/flakiness.svg) ![Accessibility Badge showing latest total a11y violations](badges/a11y.svg) ![Contrast Badge showing sampled text contrast trend](badges/contrast.svg)
 
 See the Phase 2 completion summary in `PHASE2_COMPLETION.md` for delivered reliability & governance foundations. New contributors: consult `CONTRIBUTING.md` for deterministic test & design token rules.
 
@@ -322,7 +322,7 @@ export default defineConfig({
 ### Performance budgets and image pipeline
 
 - The performance budget script validates bundle sizes and computes totals from referenced assets only. It scans built HTML/JS/CSS for references to /_astro and /assets files, then sums sizes for those exact files plus HTML. This avoids counting unreferenced hashed artifacts.
-- Images are optimized prebuild. Scripts generate AVIF/WebP for carousel, proficiencies, projects, and public images. Runtime components prefer AVIF > WebP > JPEG/PNG, with PNG originals excluded from imports where possible.
+- Images are optimized prebuild. Scripts generate AVIF/WebP for carousel, projects, and public images. Runtime components prefer AVIF > WebP > JPEG/PNG, with PNG originals excluded from imports where possible.
 - The budget warns on PNG/JPG without modern siblings, ignoring favicons/app icons and allowlisting optimized PNG derivatives under public/assets/images/optimized.
 - CSP, X-Frame-Options, and other headers enforced
 

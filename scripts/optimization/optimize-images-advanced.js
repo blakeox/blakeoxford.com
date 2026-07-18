@@ -13,8 +13,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const INPUT_DIR = path.join(__dirname, '../public/assets/images');
-const OUTPUT_DIR = path.join(__dirname, '../public/assets/images/optimized');
+const INPUT_DIR = path.join(__dirname, '../../public/assets/images');
+const OUTPUT_DIR = path.join(__dirname, '../../public/assets/images/optimized');
 
 // Image optimization configurations
 const FORMATS = {

@@ -202,7 +202,7 @@ Deprecated (removed this phase):
 
 Next Candidates (Phase 5+):
 
-- Mutation testing (e.g., Stryker) focused on critical validators & search indexing logic.
+- Mutation testing pilot on critical validators & search indexing logic.
 - Contrast ratio & color token validation (automated contrast assertions beyond axe where needed).
 - Contract drift diff reporter (human‑readable delta report when API baseline changes under flag, to embed in PR comment).
 - Structured visual diff thresholds per route classification (stricter for content pages, slightly relaxed for interactive app pages).
@@ -239,7 +239,7 @@ Guidelines:
 
 Next Candidates (Phase 6+):
 
-- Introduce mutation testing pilot (target schemas & search ranking function) pending dependency approval.
+- Introduce mutation testing pilot (target schemas & search ranking) only if reintroduced as a real dependency.
 - Automated PR comment bot summarizing API diff & performance deltas.
 - Performance trend regression detector (identify upward drift across last N history points before tolerance exceeded).
 - Theming/contrast token audit ensuring all design tokens meet WCAG in both light/dark contexts.

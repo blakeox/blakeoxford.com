@@ -9,38 +9,28 @@ describe('projects/index.astro', () => {
     fileContent = readFileSync(filePath, 'utf-8');
   });
 
-  it('should use tokenized container sizing', () => {
-    expect(fileContent).toContain('container="xl"');
-    expect(fileContent).toContain('container="md"');
+  it('should frame the page as a portfolio showcase', () => {
+    expect(fileContent).toContain('ProjectsCapabilitiesSection');
+    expect(fileContent).toContain('ProjectsFeaturedSection');
+    expect(fileContent).toContain('ProjectsLibrarySection');
+    expect(fileContent).toContain('getProjectInsights');
   });
 
-  it('should contain semantic HTML structure with proper roles', () => {
-    expect(fileContent).toContain('role="region"');
-    expect(fileContent).toContain('aria-labelledby');
+  it('should keep results as supporting proof', () => {
+    expect(fileContent).toContain('ProjectsFindingsSection');
+    expect(fileContent).toContain('ProjectsCTASection');
   });
 
-  it('should render projects via ProjectCard grid', () => {
-    expect(fileContent).toContain('<Grid cols="3" gap="lg"');
-    expect(fileContent).toContain('<ProjectCard project={project} />');
-  });
-
-  it('should contain proper responsive breakpoints and spacing', () => {
-    expect(fileContent).toContain('sm:text-5xl');
-    expect(fileContent).toContain('md:text-6xl');
-    expect(fileContent).toContain('sm:text-base');
-  });
-
-  it('should have enhanced accessibility features', () => {
-    expect(fileContent).toContain('role="list"');
-    expect(fileContent).toContain('aria-label');
-    expect(fileContent).toContain('aria-labelledby="results-heading"');
+  it('should have accessible hero landmarks', () => {
+    expect(fileContent).toContain('id="projects-hero"');
+    expect(fileContent).toContain('shell="projects-hero-inner"');
   });
 
   it('should not use deprecated getCollection pattern', () => {
     expect(fileContent).not.toContain("getCollection('projects')");
   });
 
-  it('should source data from content helper', () => {
-    expect(fileContent).toContain('await getProjectsSorted()');
+  it('should source insights from content helper', () => {
+    expect(fileContent).toContain('await getProjectInsights()');
   });
 });

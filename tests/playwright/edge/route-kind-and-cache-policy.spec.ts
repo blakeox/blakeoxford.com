@@ -32,15 +32,4 @@ test.describe('Edge diagnostics headers', () => {
       }
     }
   });
-
-  test('edge worker should set cache policy headers for assets', async () => {
-    test.skip(true, 'core-boot.js removed; route-kind check no longer applicable.');
-    const xcp = res.headers()['x-cache-policy'] || '';
-    const xrk = res.headers()['x-route-kind'] || '';
-    if (xrk || xcp) {
-      if (xrk) expect(xrk).toBe('asset');
-      const policy = xcp || '';
-      expect(/max-age=\s*86400/.test(policy)).toBeTruthy();
-    }
-  });
 });

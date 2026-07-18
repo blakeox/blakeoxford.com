@@ -110,18 +110,10 @@ jobs:
       - name: Run unit tests
         run: pnpm test -- --run
 
-      - name: Run mutation tests (non-blocking)
-        run: pnpm test:mutants
-        continue-on-error: true
-
-      - name: Log mutation history (main repo only)
-        if: github.repository_owner == 'blakeox'
-        run: pnpm mutation:history:log || true
-
       - name: Generate quality summary
         run: pnpm quality:summary || true # summary generation should never fail pipeline
 
-      - name: Generate quality badges (mutation/flakiness)
+      - name: Generate quality badges
         run: pnpm quality:badges || true
 
       - name: Upload quality badges
@@ -436,14 +428,14 @@ jobs:
               body = fs.readFileSync(summaryPath, 'utf-8');
             }
 
-            // Mutation badge line
+            // Prefer composite score when present
             let badge = '';
-            const scoreMatch = body.match(/Mutation Score: (\d+(?:\.\d+)?)%/);
-            if (scoreMatch) {
-              const s = parseFloat(scoreMatch[1]);
-              let emoji = '🧬';
-              if (s >= 80) emoji = '💎'; else if (s >= 70) emoji = '✅'; else if (s >= 60) emoji = '⚠️'; else emoji = '❌';
-              badge = `${emoji} Mutation: ${s}%`;
+            const compositeMatch = body.match(/Composite Score:\s*(\d+(?:\.\d+)?)/);
+            if (compositeMatch) {
+              const s = parseFloat(compositeMatch[1]);
+              let emoji = '✅';
+              if (s >= 85) emoji = '💎'; else if (s >= 70) emoji = '✅'; else if (s >= 55) emoji = '⚠️'; else emoji = '❌';
+              badge = `${emoji} Reliability composite: ${s}`;
             }
 
             // A11y totals

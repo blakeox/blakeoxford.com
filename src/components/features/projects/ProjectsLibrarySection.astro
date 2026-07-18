@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Section from '../../primitives/Section.astro';
+import Grid from '../../primitives/Grid.astro';
+import SectionHeader from '../../composites/SectionHeader.astro';
+import ProjectCard from './ProjectCard.astro';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+  kicker: string;
+  title: string;
+  description: string;
+  /** Featured slug to de-emphasize or skip if already shown above. */
+  excludeSlug?: string;
+}
+
+const { projects, kicker, title, description, excludeSlug } = Astro.props as Props;
+const libraryProjects = excludeSlug
+  ? projects.filter((project) => project.id !== excludeSlug)
+  : projects;
+---
+
+<Section
+  id="library"
+  padding="xl"
+  container="xl"
+  aria-labelledby="library-heading"
+  data-layout-section="projects-grid"
+>
+  <div data-layout-shell="projects-grid-inner">
+    <SectionHeader
+      kicker={kicker}
+      title={title}
+      titleId="library-heading"
+      description={description}
+    />
+
+    <Grid cols="3" gap="md">
+      {libraryProjects.map((project) => <ProjectCard project={project} />)}
+    </Grid>
+  </div>
+</Section>

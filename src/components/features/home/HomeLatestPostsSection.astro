@@ -1,10 +1,9 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Section from '../../primitives/Section.astro';
-import SectionHeading from '../../primitives/SectionHeading.astro';
-import Button from '../../primitives/Button.astro';
-import BlogPostCard from '../blog/BlogPostCard.astro';
+import SectionHeader from '../../composites/SectionHeader.astro';
 import type { HomePageContent } from '../../../content/home/pageTypes';
+import { formatDateISO } from '../../../utils/index.js';
 
 interface Props {
   posts: CollectionEntry<'blog'>[];
@@ -14,32 +13,52 @@ interface Props {
 const { posts, content } = Astro.props as Props;
 ---
 
-<Section padding="lg" container="xl" aria-labelledby="latest-blog-posts">
-  <div class="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-    <div class="section-intro-left max-w-2xl">
-      <span class="section-kicker">{content.kicker}</span>
-      <SectionHeading id="latest-blog-posts" size="4xl">{content.title}</SectionHeading>
-      <p class="text-lg text-muted-foreground">
-        {content.description}
-      </p>
-    </div>
-    <Button variant="ghost" href={content.cta.href} class="shrink-0 self-start md:self-auto">
-      {content.cta.label}
-    </Button>
-  </div>
-  <ul class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3" role="list">
-    {
-      posts.length > 0 ? (
-        posts.map((post) => (
+<Section padding="lg" container="lg" aria-labelledby="latest-blog-posts">
+  <SectionHeader
+    title={content.title}
+    titleId="latest-blog-posts"
+    actionHref={content.cta.href}
+    actionLabel={content.cta.label}
+    size="3xl"
+  />
+
+  {
+    posts.length > 0 ? (
+      <ul class="divide-y divide-border/50 border-y border-border/50" role="list">
+        {posts.map((post) => (
           <li role="listitem">
-            <BlogPostCard post={post} />
+            <a
+              href={`/blog/${post.id}/`}
+              class="group grid gap-1 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:items-baseline sm:gap-8 sm:py-6"
+            >
+              <time
+                class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase"
+                datetime={formatDateISO(post.data.pubDate)}
+              >
+                {post.data.pubDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </time>
+              <div class="min-w-0 space-y-1.5">
+                <h3 class="font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-accent-emphasis sm:text-xl">
+                  {post.data.title}
+                </h3>
+                {post.data.description && (
+                  <p class="max-w-2xl text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                    {post.data.description}
+                  </p>
+                )}
+              </div>
+            </a>
           </li>
-        ))
-      ) : (
-        <li class="border border-dashed border-border/50 p-6 text-center">
-          <p class="text-sm text-muted-foreground">{content.emptyMessage}</p>
-        </li>
-      )
-    }
-  </ul>
+        ))}
+      </ul>
+    ) : (
+      <p class="border border-dashed border-border/50 px-6 py-8 text-center text-sm text-muted-foreground">
+        {content.emptyMessage}
+      </p>
+    )
+  }
 </Section>

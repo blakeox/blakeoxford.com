@@ -12,10 +12,6 @@ const root = path.resolve(process.cwd());
 const apiDiffDir = path.join(root, 'tests/contracts/baselines/diff-reports');
 const perfBaselinePath = path.join(root, 'tests/performance/baselines.json');
 const perfHistoryPath = path.join(root, 'tests/performance/baselines-history.json');
-const mutationHistoryPath = path.join(root, 'mutation-history.json');
-const mutationReportSummaryPath = path.join(root, 'mutation-report', 'report.json'); // primary Stryker json
-const mutationAltPath = path.join(root, 'reports', 'mutation', 'report.json'); // fallback
-const mutationBaselineFile = path.join(root, '.mutation-baseline.json');
 const flakinessHistoryPath = path.join(root, 'flakiness-history.json');
 const searchRelevancePath = path.join(root, 'search-relevance-results.json');
 const a11yHistoryPath = path.join(root, 'accessibility-history.json');
@@ -112,27 +108,6 @@ function summarizePerformance() {
   return { markdown: lines.join('\n'), routeSlopes };
 }
 
-function summarizeMutationHistory() {
-  if (!fs.existsSync(mutationHistoryPath)) return null;
-  try {
-    const hist = loadJSON(mutationHistoryPath).slice(-12);
-    const scores = hist.map((h) => h.score);
-    if (!scores.length) return null;
-    const { slope, direction } = calcTrend(scores);
-    const series = sparkline(scores);
-    const emoji = direction === 'improving' ? '✅' : direction === 'regressing' ? '⚠️' : '➖';
-    return [
-      '### Mutation Trend',
-      '',
-      `- Recent (last ${scores.length}): ${scores.map((s) => s.toFixed(1)).join(', ')}`,
-      `- Trend slope ~ ${slope.toFixed(3)} (${direction}) ${emoji} ${series}`,
-      '',
-    ].join('\n');
-  } catch {
-    return null;
-  }
-}
-
 function summarizeFlakiness() {
   if (!fs.existsSync(flakinessHistoryPath)) return null;
   try {
@@ -205,30 +180,23 @@ function summarizeFlakiness() {
   }
 }
 
-function computeComposite(perf, mutationScore, flakinessAvgRetries) {
+function computeComposite(perf, flakinessAvgRetries) {
   // Normalize components to 0..100 where higher = better
-  // Performance: penalize positive regression slope average (take mean of route slopes if available)
   let perfComponent = 100;
   if (perf && perf.routeSlopes && perf.routeSlopes.length) {
     const avgSlopePct = perf.routeSlopes.reduce((a, b) => a + b, 0) / perf.routeSlopes.length; // positive is regression
-    // subtract up to 30 points if severe (>5% avg), linear scale
     const penalty = Math.min(30, Math.max(0, (avgSlopePct / 5) * 30));
     perfComponent = 100 - penalty;
   }
-  let mutationComponent = 0;
-  if (typeof mutationScore === 'number') {
-    mutationComponent = Math.min(100, Math.max(0, mutationScore));
-  }
   let flakinessComponent = 100;
   if (typeof flakinessAvgRetries === 'number') {
-    // Retry intensity 0 -> 100, 0.05 -> 40, >=0.1 -> 0 (linear piecewise)
     const r = flakinessAvgRetries;
     if (r <= 0.05) flakinessComponent = 100 - (r / 0.05) * 60;
     else if (r <= 0.1) flakinessComponent = 40 - ((r - 0.05) / 0.05) * 40;
     else flakinessComponent = 0;
   }
-  // Weights: mutation 40%, flakiness 30%, performance 30%
-  const composite = mutationComponent * 0.4 + flakinessComponent * 0.3 + perfComponent * 0.3;
+  // Weights: flakiness 50%, performance 50%
+  const composite = flakinessComponent * 0.5 + perfComponent * 0.5;
   let grade = 'A';
   if (composite < 85) grade = 'B';
   if (composite < 70) grade = 'C';
@@ -240,7 +208,6 @@ function computeComposite(perf, mutationScore, flakinessAvgRetries) {
     grade,
     parts: {
       perfComponent: perfComponent.toFixed(1),
-      mutationComponent: mutationComponent.toFixed(1),
       flakinessComponent: flakinessComponent.toFixed(1),
     },
   };
@@ -250,51 +217,6 @@ function main() {
   const parts = ['# Quality Summary', '', `Generated: ${new Date().toISOString()}`, ''];
   const perfSummary = summarizePerformance();
   if (perfSummary) parts.push(perfSummary.markdown, '');
-  const mutationPath = fs.existsSync(mutationReportSummaryPath)
-    ? mutationReportSummaryPath
-    : fs.existsSync(mutationAltPath)
-      ? mutationAltPath
-      : null;
-  let mutationScoreNumeric = null;
-  if (mutationPath) {
-    try {
-      const mr = loadJSON(mutationPath);
-      const killed = mr.killed || mr.metrics?.killed || 0;
-      const total = mr.totalMutants || mr.metrics?.total || 0;
-      const score =
-        mr.mutationScore ??
-        mr.metrics?.mutationScore ??
-        (total ? ((killed / total) * 100).toFixed(2) : '0');
-      if (!Number.isNaN(parseFloat(score))) mutationScoreNumeric = parseFloat(score);
-      let section = [
-        '### Mutation Testing',
-        '',
-        `- Mutation Score: ${score}% (${killed}/${total} killed)`,
-      ];
-      if (fs.existsSync(mutationBaselineFile)) {
-        try {
-          const b = JSON.parse(fs.readFileSync(mutationBaselineFile, 'utf-8')).baseline;
-          const delta = (parseFloat(score) - b).toFixed(2);
-          section.push(`- Baseline: ${b}% (Δ ${delta}%)`);
-        } catch {
-          /* ignore */
-        }
-      }
-      const min = process.env.MUTATION_MIN_SCORE
-        ? parseFloat(process.env.MUTATION_MIN_SCORE)
-        : null;
-      if (min !== null && !Number.isNaN(min)) {
-        const status = parseFloat(score) >= min ? '✅ Meets' : '⚠️ Below';
-        section.push(`- Threshold (${min}%): ${status}`);
-      }
-      section.push('');
-      parts.push(...section);
-      const mutTrend = summarizeMutationHistory();
-      if (mutTrend) parts.push(mutTrend);
-    } catch {
-      parts.push('### Mutation Testing', '', '_Mutation report unreadable_', '');
-    }
-  }
   const diffs = collectApiDiffs();
   if (diffs.length) {
     parts.push('### API Diff Reports', '');
@@ -311,17 +233,16 @@ function main() {
     avgRetries = flakinessSummary.avgRetriesPerRun;
   }
   // Composite reliability section
-  if (perfSummary || mutationScoreNumeric !== null || avgRetries !== null) {
+  if (perfSummary || avgRetries !== null) {
     const composite = computeComposite(
       perfSummary ? { routeSlopes: perfSummary.routeSlopes } : null,
-      mutationScoreNumeric,
       avgRetries
     );
     parts.push(
       '### Reliability Composite',
       '',
       `- Composite Score: ${composite.composite} (Grade ${composite.grade})`,
-      `- Components => Mutation: ${composite.parts.mutationComponent}, Flakiness: ${composite.parts.flakinessComponent}, Performance: ${composite.parts.perfComponent}`,
+      `- Components => Flakiness: ${composite.parts.flakinessComponent}, Performance: ${composite.parts.perfComponent}`,
       ''
     );
   }

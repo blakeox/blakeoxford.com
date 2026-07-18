@@ -3,64 +3,50 @@ import Container from '../primitives/Container.astro';
 import { cn } from '../../utils/cn';
 
 /**
- * PageHero - Consistent full-screen hero section pattern
- *
- * Provides unified hero treatment across all main pages with:
- * - Full viewport height option
- * - Floating blur orbs for visual depth
- * - Edge-to-edge gradient background
- * - Responsive max-width container for content
- *
- * @example Homepage hero
- * <PageHero fullScreen={true}>
- * <Grid cols="2" gap="xl" alignItems="center">
- * <div><h1>Blake Oxford</h1></div>
- * <div><CoinFlipImage /></div>
- * </Grid>
- * </PageHero>
- *
- * @example Projects hero
- * <PageHero fullScreen={false}>
- * <h1>Selected Projects</h1>
- * <p>Description</p>
- * </PageHero>
+ * PageHero — page-level hero shell.
+ * Use align="center" for Selected work / Contact style lockups.
  */
-
 interface Props {
-  /** Full screen height (min-h-screen) vs standard (min-h-[60vh]) */
   fullScreen?: boolean;
-  /** Include floating blur orbs for visual depth */
   includeBlurOrbs?: boolean;
-  /** Strip default vertical padding and stretch children (split / media heroes) */
   flush?: boolean;
-  /** Container max-width */
+  /** Content alignment inside the container */
+  align?: 'start' | 'center';
   containerSize?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  /** Apply horizontal layout gutter on the inner container */
   containerPadding?: boolean;
-  /** Additional CSS classes */
   class?: string;
-  /** Section ID for anchor links */
+  style?: string;
   id?: string;
+  /** Optional layout shell marker for tests / centering wrapper */
+  shell?: string;
 }
 
 const {
   fullScreen = true,
   includeBlurOrbs = true,
   flush = false,
+  align = 'start',
   containerSize = 'xl',
   containerPadding = true,
   class: className = '',
+  style,
   id = 'hero',
-} = Astro.props;
+  shell,
+} = Astro.props as Props;
+
+const isCentered = align === 'center';
 ---
 
 <section
   id={id}
   data-layout-section={id}
+  style={style}
   class={cn(
     'page-hero-shell relative flex overflow-hidden',
-    fullScreen ? 'min-h-screen' : 'min-h-[60vh] md:min-h-[70vh]',
-    flush ? 'items-stretch py-0' : 'items-center py-20 sm:py-24 md:py-32',
+    fullScreen
+      ? 'min-h-[calc(100svh-var(--nav-height))]'
+      : 'min-h-0',
+    flush ? 'items-stretch py-0' : 'items-center py-14 sm:py-16 md:py-20',
     className
   )}
 >
@@ -84,6 +70,17 @@ const {
     padding={containerPadding}
     class={cn('relative z-10', flush && 'flex w-full flex-1 flex-col')}
   >
-    <slot />
+    {
+      isCentered ? (
+        <div
+          class="mx-auto flex w-full max-w-3xl flex-col items-center text-center"
+          data-layout-shell={shell}
+        >
+          <slot />
+        </div>
+      ) : (
+        <slot />
+      )
+    }
   </Container>
 </section>

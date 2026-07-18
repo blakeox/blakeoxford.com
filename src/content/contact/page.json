@@ -1,38 +1,38 @@
 {
   "meta": {
-    "title": "Contact Blake",
-    "description": "Get in touch with Blake Oxford for systems architecture, automation, and analytics work."
+    "title": "Contact Blake Oxford",
+    "description": "Book a short bottleneck review with Blake Oxford—migrations, automation, analytics, and AI-enabled workflows that need operational discipline."
   },
   "hero": {
     "kicker": "Contact",
-    "title": "Start the conversation",
-    "description": "Use this page when you need help with a migration, automation program, analytics backbone, or AI-enabled workflow that needs operational discipline, not just implementation.",
+    "title": "Bring the hardest bottleneck",
+    "description": "Migration, automation, reporting, or AI-enabled workflow—start with the constraint costing you the most. A short note is enough to decide if a focused working session is the right next move.",
     "scenarios": [
-      "Cross-system change that needs sequencing and adoption.",
-      "Automation work that must hold up under real operating load.",
-      "Reporting or controls work that executives need to trust."
+      "Cross-system change that needs sequencing and adoption",
+      "Automation that has to hold under real operating load",
+      "Reporting or controls executives need to trust"
     ],
-    "primaryCta": { "href": "#contact-form", "label": "Go to the form" },
-    "secondaryCta": { "href": "/projects/", "label": "Review case studies" },
+    "primaryCta": { "href": "#contact-form", "label": "Open the brief" },
+    "secondaryCta": { "href": "/projects/", "label": "See the work" },
     "sidebar": {
       "heading": "What to include",
       "items": [
-        "The problem that is creating drag or risk.",
-        "The systems, teams, or approvals involved.",
-        "The outcome you need and the constraint that matters most."
+        "The problem creating drag, risk, or avoidable manual work",
+        "The systems, teams, or approvals involved",
+        "The outcome you need and the constraint that matters most"
       ],
-      "note": "Typical next step: a short working session to map dependencies, risk, and a contained first move."
+      "note": "Typical next step: a 20-minute bottleneck review to map dependencies, risk, and a contained first move."
     }
   },
   "channels": {
-    "heading": "Contact channels",
-    "title": "Reach out directly",
-    "description": "Choose the channel that matches how you prefer to work.",
+    "heading": "Other channels",
+    "title": "Prefer email, phone, or LinkedIn?",
+    "description": "Use the brief for scoped project inquiries. These channels work when you already know how you want to connect.",
     "items": [
       {
         "icon": "email",
         "title": "Email",
-        "description": "Best for project details, introductions, and follow-up notes.",
+        "description": "Best for project details, introductions, and follow-up.",
         "href": "mailto:blakepoxford@outlook.com",
         "label": "blakepoxford@outlook.com"
       },

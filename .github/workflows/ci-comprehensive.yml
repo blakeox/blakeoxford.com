@@ -95,56 +95,9 @@ jobs:
         if: matrix.test-group == 'unit'
         run: ./scripts/build/deployment-check.sh
 
-      - name: Validate critical CSS implementation
-        if: matrix.test-group == 'performance'
-        run: |
-          echo "🎨 Validating critical CSS inlining..."
-          if ! grep -r "critical-css" dist/ > /dev/null 2>&1; then
-            echo "⚠️ Warning: No critical CSS detected in build output"
-          else
-            echo "✅ Critical CSS validation passed"
-          fi
-
       - name: Run unit tests with coverage
         if: matrix.test-group == 'unit'
         run: pnpm run test:coverage
-
-      - name: Run mutation tests (non-blocking)
-        if: matrix.test-group == 'unit'
-        run: pnpm test:mutants
-        continue-on-error: true
-
-      - name: Mutation score threshold check (hard)
-        if: matrix.test-group == 'unit'
-        run: MUTATION_MIN_SCORE=60 MUTATION_HARD_FAIL=1 pnpm mutation:check # raise MUTATION_MIN_SCORE (e.g. 75) as baseline improves
-
-      - name: Upload mutation report
-        if: always() && matrix.test-group == 'unit'
-        uses: actions/upload-artifact@v6
-        with:
-          name: mutation-report-${{ github.sha }}
-          path: mutation-report
-          retention-days: 14
-
-      - name: Update mutation baseline (ratchet)
-        if: github.ref == 'refs/heads/main' && matrix.test-group == 'unit' && success()
-        run: |
-          echo "🔧 Running ratchet-only baseline update (no threshold enforcement)"
-          MUTATION_RATCHET_ONLY=1 MUTATION_UPDATE_BASELINE=1 pnpm mutation:check || true
-          if git diff --quiet .mutation-baseline.json; then
-            echo "Baseline unchanged; no commit required"
-          else
-            echo "Baseline improved; committing update"
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add .mutation-baseline.json
-            git commit -m "chore(ci): ratchet mutation baseline [skip ci]" || true
-            git push || echo "⚠️ Push failed (possibly due to race); safe to ignore"
-          fi
-
-      - name: Log mutation history
-        if: matrix.test-group == 'unit'
-        run: pnpm mutation:history:log || true
 
       - name: Generate quality summary
         if: matrix.test-group == 'unit'
@@ -304,7 +257,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run advanced optimizations
-        run: pnpm optimize:advanced
+        run: pnpm optimize:images
 
       - name: Snapshot quality baseline (main only)
         run: pnpm quality:snapshot || true
