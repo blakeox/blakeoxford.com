@@ -19,7 +19,7 @@ All design tokens live in `src/styles/theme.css`:
 2. Remap semantic tokens under `&[data-theme='dark']` / `&.dark`.
 3. Bridge to Tailwind with `@theme inline` in the same file.
 
-`tailwind.config.ts` only keeps the typography plugin, container padding, and a few screens — not color maps.
+Plugins and variants are CSS-first in `src/styles/global.css` (`@plugin "@tailwindcss/typography"`, `@custom-variant`). There is no JS `tailwind.config`.
 Tailwind is applied via `@tailwindcss/vite` in `astro.config.mjs` and `@import "tailwindcss"` in `global.css`.
 Prefer `bg-accent-subtle` / `text-accent-emphasis` over ad-hoc `bg-accent/10` opacity suffixes when a semantic wash exists.
 Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
@@ -50,7 +50,7 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 ### Token creation policy
 
 - Create a new token only if used ≥3 times or it expresses semantic meaning
-- Expose it via `@theme inline` in `theme.css` (not by extending colors in `tailwind.config.ts`)
+- Expose it via `@theme inline` in `theme.css` (not a JS Tailwind config)
 - Document purpose on `/design/tokens`
 
 ---
@@ -78,16 +78,20 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 
 ## 3. Component styling
 
-- Prefer composing primitives (`Container`, `Section`, `Button`, `BaseCard`) over bespoke layouts
+- Prefer composing primitives (`Container`, `Section`, `Button`, `BaseCard`, `Prose`) over bespoke layouts
 - Shared multi-selector chrome belongs in `src/styles/components.css`
 - Page/feature markup should stay on Tailwind semantic utilities
-- Run `pnpm design:lint` — bans raw palette, white/black, and parallel `*-dark` surface utilities
+- Page gutters: `Container` or `.layout-gutter` — not hard-coded `px-4 sm:px-6 lg:px-8`
+- Blog/MDX body: wrap with `Prose` — do not scatter long `prose-*:` class strings in pages
+- Card grids: prefer `@container` + `@sm:` / `@md:` over viewport `sm:` when the card already sits in a variable-width column
+- Run `pnpm design:lint` — bans raw palette, white/black, parallel `*-dark` surface utilities, and hard-coded gutters; also validates `@theme inline` token docs sync
 
 ### Tailwind usage
 
 - Map intent to semantic tokens, not gray scales
-- Blog/prose: `prose` (typography plugin) — prose vars remapped in dark theme
+- Blog/prose: wrap MDX with the `Prose` primitive (typography plugin + semantic token remaps)
 - Dark mode strategy is class + `data-theme` with semantic remaps; do not default to `dark:bg-*` pairs
+- Reusable cards in grids: `@container` + `@sm:` / `@md:` (see BlogPostCard, EducationCard, ProjectCard)
 
 ---
 
@@ -112,8 +116,9 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 ## Reference
 
 - `src/styles/theme.css` — tokens + `@theme inline`
+- `src/lib/designTokens.ts` — parses public tokens for `/design/tokens` + sync gate
+- `src/components/primitives/Prose.astro` — article/MDX typography shell
 - `src/styles/components.css` — nav/overlay/hero chrome
-- `src/styles/global.css` — entry (`@import "tailwindcss"`)
-- `tailwind.config.ts` — plugins + container
+- `src/styles/global.css` — entry (`@import "tailwindcss"`, `@plugin`, variants)
 - `DESIGN_BEST_PRACTICES.md` — detailed philosophy
-- `/design/tokens` — live token reference
+- `/design/tokens` — live token reference (auto-lists `@theme inline`)

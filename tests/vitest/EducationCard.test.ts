@@ -76,7 +76,8 @@ describe('EducationCard Component', () => {
 
     it('should have responsive typography', () => {
       expect(fileContent).toMatch(/text-(xl|2xl|sm)/);
-      expect(fileContent).toMatch(/sm:text-/);
+      expect(fileContent).toMatch(/@sm:text-/);
+      expect(fileContent).toContain('containerQuery');
     });
 
     it('should have hover effects', () => {

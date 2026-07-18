@@ -26,6 +26,7 @@ export { default as FormField } from './FormField.astro';
 export { default as Grid } from './Grid.astro';
 export { default as OptimizedImage } from './OptimizedImage.astro';
 export { default as ProficiencyLogo } from './ProficiencyLogo.astro';
+export { default as Prose } from './Prose.astro';
 export { default as Section } from './Section.astro';
 export { default as Stack } from './Stack.astro';
 export { default as Skeleton } from './Skeleton.astro';
