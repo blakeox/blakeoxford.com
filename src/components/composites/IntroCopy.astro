@@ -3,14 +3,16 @@
  * IntroCopy — kicker + heading + optional description with a tight type rhythm.
  * Use in heroes and featured lockups so stacks don't drift page-to-page.
  */
+import { headingSizeClass, type HeadingSize } from '../../lib/typeScale';
+
 export interface Props {
   kicker?: string;
   title: string;
   titleId?: string;
   description?: string;
   as?: 'h1' | 'h2';
-  /** Heading size ladder */
-  size?: 'hero' | 'display' | 'section' | 'identity';
+  /** Heading size ladder — shared with SectionHeading via typeScale */
+  size?: HeadingSize;
   align?: 'start' | 'center';
   /** Optional proof / outcome line between title and description */
   emphasis?: string;
@@ -38,13 +40,6 @@ const {
 const isCentered = align === 'center';
 const bodySize = descriptionSize ?? (size === 'identity' ? 'xl' : size === 'hero' ? 'lg' : 'md');
 
-const sizeClasses = {
-  identity: 'text-5xl leading-[1.05] sm:text-6xl md:text-7xl lg:text-[4.5rem]',
-  hero: 'text-4xl leading-[1.1] sm:text-5xl md:text-6xl',
-  display: 'text-3xl leading-snug sm:text-4xl md:text-5xl',
-  section: 'text-2xl leading-snug sm:text-3xl md:text-4xl',
-} as const;
-
 const descriptionSizeClasses = {
   md: 'pt-0.5 text-base leading-relaxed text-pretty sm:text-lg',
   lg: 'pt-0.5 text-lg leading-relaxed text-pretty sm:text-xl',
@@ -63,7 +58,7 @@ const descriptionToneClasses = {
     id={titleId}
     class:list={[
       'font-heading font-semibold tracking-tight text-balance text-foreground',
-      sizeClasses[size],
+      headingSizeClass(size),
     ]}
   >
     {title}

@@ -28,6 +28,7 @@
     "generate:search-index": "node scripts/content/generate-search-index.js",
     "vectorize:index": "node scripts/vectorize-content.mjs",
     "optimize:images": "node scripts/optimization/optimize-images-advanced.js",
+    "generate:favicons": "node scripts/optimization/generate-favicons.js",
     "deploy:zaraz": "node scripts/setup/deploy-zaraz.mjs",
     "deploy:zaraz:dry-run": "node scripts/setup/deploy-zaraz.mjs --dry-run",
     "validate:zaraz": "node scripts/setup/validate-zaraz.mjs",

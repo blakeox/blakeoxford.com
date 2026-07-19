@@ -44,6 +44,8 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 | Subtle washes  | `--color-accent-subtle` via `color-mix`                           | `bg-accent-subtle` (prefer over `bg-accent/10`)          |
 | Overlay / code | `--color-overlay-scrim`, `--color-code-surface`                   | `bg-overlay-scrim`, `bg-code-surface`                    |
 | Typography     | `--font-sans`, `--font-heading`, `--text-xxs`, `--tracking-label` | `font-heading`, `text-xxs`                               |
+| Heading ladder | `src/lib/typeScale.ts` (identity → subtitle)                      | Used by `IntroCopy` / `SectionHeading`                   |
+| Section rhythm | `--space-section-sm` … `--space-section-2xl`                      | `py-section-sm` … `py-section-2xl` via `Section`         |
 | Radius         | `--radius` … `--radius-2xl`                                       | `rounded`, `rounded-xl`                                  |
 | Shadows        | `--shadow-sm` … `--shadow-2xl`, `--shadow-overlay`                | `shadow-md`, `shadow-overlay`                            |
 | Motion         | `--duration-fast` … `--duration-slow`                             | `duration-fast`, `duration-moderate`                     |
@@ -58,7 +60,7 @@ Article/MDX body: wrap with `Prose` (`src/components/primitives/Prose.astro`). T
 
 Live token docs at `/design/tokens` auto-list public utilities by parsing `@theme inline` via `src/lib/designTokens.ts`, and show browser-resolved values plus live WCAG contrast pairs.
 
-There is **no** `--fs-*` / `--space-*` / `--fw-*` custom scale — use Tailwind’s type and spacing scales plus the tokens above.
+Heading sizes: use the shared ladder in `src/lib/typeScale.ts` (`identity` → `hero` → `display` → `section` → `title` → `subtitle`) via `IntroCopy` / `SectionHeading`. Section vertical padding uses `--space-section-*` / `py-section-*`. Prefer Tailwind’s default spacing scale for local gaps and padding.
 
 ### Guidelines
 

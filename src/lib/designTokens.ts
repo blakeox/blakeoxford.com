@@ -120,6 +120,10 @@ function categorize(name: string): { category: TokenCategory; stem: string; util
     const stem = name.slice('--max-width-'.length);
     return { category: 'layout', stem, utility: `max-w-${stem}` };
   }
+  if (name.startsWith('--spacing-')) {
+    const stem = name.slice('--spacing-'.length);
+    return { category: 'layout', stem, utility: `p-${stem}` };
+  }
   return { category: 'other', stem: name.replace(/^--/, '') };
 }
 
