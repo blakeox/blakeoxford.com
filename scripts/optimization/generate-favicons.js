@@ -87,7 +87,7 @@ async function run() {
   }
 
   await writeIco(rendered.get('favicon-32x32.png'), rendered.get('favicon-16x16.png'));
-  console.log(`✅ favicon.ico`);
+  console.log('✅ favicon.ico');
   console.log('🏁 Favicon generation complete.');
 }
 
