@@ -16,10 +16,12 @@ interface Props {
 const { author, description, content } = Astro.props as Props;
 ---
 
-{/**
- * Identity lockup: coin + name share one axis.
- * Mobile — stacked, centered. Desktop — coin beside copy, group centered as a unit.
- */}
+{
+  /**
+   * Identity lockup: coin + name share one axis.
+   * Mobile — stacked, centered. Desktop — coin beside copy, group centered as a unit.
+   */
+}
 <PageHero
   id="about-me"
   class="hero-gradient-animated hero-with-atmosphere"
@@ -53,7 +55,7 @@ const { author, description, content } = Astro.props as Props;
       </div>
     </div>
 
-    <div class="flex min-w-0 max-w-xl flex-col items-center gap-5 lg:items-start">
+    <div class="flex max-w-xl min-w-0 flex-col items-center gap-5 lg:items-start">
       <IntroCopy
         kicker={content.kicker}
         title={author}

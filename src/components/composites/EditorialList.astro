@@ -46,10 +46,7 @@ const useAsideKicker = kickerAside ?? !numbered;
 const Tag = listAs ?? (numbered ? 'ol' : 'ul');
 ---
 
-<Tag
-  class:list={['divide-y divide-border/50 border-y border-border/50', className]}
-  role="list"
->
+<Tag class:list={['divide-y divide-border/50 border-y border-border/50', className]} role="list">
   {
     rows.map((row: EditorialRow, index: number) => {
       const showInlineKicker = Boolean(row.kicker) && (numbered || !useAsideKicker);
@@ -95,7 +92,9 @@ const Tag = listAs ?? (numbered ? 'ol' : 'ul');
                 set:html={row.bodyHtml}
               />
             ) : row.body ? (
-              <p class="max-w-2xl text-base leading-relaxed text-foreground/90 sm:text-lg">{row.body}</p>
+              <p class="max-w-2xl text-base leading-relaxed text-foreground/90 sm:text-lg">
+                {row.body}
+              </p>
             ) : null}
             {row.meta && <p class="text-sm leading-snug text-subtle-foreground">{row.meta}</p>}
             {row.bullets && row.bullets.length > 0 && (

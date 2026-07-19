@@ -38,7 +38,7 @@ describe('CoinFlipImage.astro', () => {
   });
 
   it('supports optional hover multi-spin without a striped edge layer', () => {
-    expect(content).toContain('data-multi={flipMultipleTimes ? \'true\' : \'false\'}');
+    expect(content).toContain("data-multi={flipMultipleTimes ? 'true' : 'false'}");
     expect(content).toContain('rotateY(900deg)');
     expect(content).not.toContain('coin-flip-edge');
     expect(content).not.toContain('repeating-linear-gradient');

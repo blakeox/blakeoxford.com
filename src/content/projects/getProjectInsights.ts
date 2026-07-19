@@ -42,9 +42,7 @@ const MAX_PATTERNS = 6;
 /**
  * Aggregate portfolio proof from case studies for the selected-work page.
  */
-export function buildProjectInsights(
-  projects: CollectionEntry<'projects'>[]
-): ProjectInsights {
+export function buildProjectInsights(projects: CollectionEntry<'projects'>[]): ProjectInsights {
   const findings: ProjectFinding[] = [];
   const patterns: ProjectPattern[] = [];
   const themeCounts = new Map<string, number>();
@@ -138,14 +136,12 @@ function prioritizePatterns(
 
 /** Featured case as the portfolio showcase lead. */
 function buildDeepCut(projects: CollectionEntry<'projects'>[]): ProjectDeepCut | null {
-  const featured =
-    projects.find((project) => project.data.featured) ?? projects[0] ?? null;
+  const featured = projects.find((project) => project.data.featured) ?? projects[0] ?? null;
   if (!featured) return null;
 
   const metric = featured.data.metrics?.[0];
   const proof =
-    featured.data.impact?.[0]?.trim() ||
-    (metric ? `${metric.result} — ${metric.metric}` : '');
+    featured.data.impact?.[0]?.trim() || (metric ? `${metric.result} — ${metric.metric}` : '');
 
   // Capability first: what shipped, then description — reflection is last resort.
   const thesis =

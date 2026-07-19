@@ -83,7 +83,9 @@ const breadcrumbSchema = createBreadcrumbListSchema([
 ]);
 
 const externalLink =
-  typeof (data as { link?: string }).link === 'string' ? (data as { link: string }).link : undefined;
+  typeof (data as { link?: string }).link === 'string'
+    ? (data as { link: string }).link
+    : undefined;
 
 const structuredData = [projectSchema, breadcrumbSchema];
 ---

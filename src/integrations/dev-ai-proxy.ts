@@ -4,7 +4,11 @@ import {
   parseQueryPayload,
   parseSources,
 } from '../lib/dev-proxy/payload-parser';
-import { sendErrorResponse, sendSuccessResponse, setCORSHeaders } from '../lib/dev-proxy/response-helpers';
+import {
+  sendErrorResponse,
+  sendSuccessResponse,
+  setCORSHeaders,
+} from '../lib/dev-proxy/response-helpers';
 
 type ConnectNext = (error?: unknown) => void;
 
@@ -23,7 +27,9 @@ type ConnectRes = {
 
 type ViteDevServer = {
   middlewares: {
-    use: (handler: (req: ConnectReq, res: ConnectRes, next: ConnectNext) => void | Promise<void>) => void;
+    use: (
+      handler: (req: ConnectReq, res: ConnectRes, next: ConnectNext) => void | Promise<void>
+    ) => void;
   };
 };
 

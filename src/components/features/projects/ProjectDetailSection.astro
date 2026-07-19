@@ -17,12 +17,17 @@ const { title, eyebrow, id, description, class: className = '' } = Astro.props;
 <section class:list={['relative flex flex-col gap-5', className]}>
   <header class="max-w-2xl space-y-2">
     {eyebrow && <span class="section-kicker">{eyebrow}</span>}
-    <h2 id={id} class="font-heading text-2xl leading-snug font-semibold tracking-tight text-foreground sm:text-3xl md:text-4xl">
+    <h2
+      id={id}
+      class="font-heading text-2xl leading-snug font-semibold tracking-tight text-foreground sm:text-3xl md:text-4xl"
+    >
       {title}
     </h2>
     {
       description && (
-        <p class="pt-0.5 text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
+        <p class="pt-0.5 text-base leading-relaxed text-muted-foreground sm:text-lg">
+          {description}
+        </p>
       )
     }
   </header>

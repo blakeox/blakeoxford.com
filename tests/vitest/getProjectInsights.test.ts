@@ -63,9 +63,7 @@ describe('buildProjectInsights', () => {
       description: `Desc ${i}`,
     }));
 
-    const insights = buildProjectInsights([
-      project('dense', { title: 'Dense', impact, lessons }),
-    ]);
+    const insights = buildProjectInsights([project('dense', { title: 'Dense', impact, lessons })]);
 
     expect(insights.findings).toHaveLength(8);
     expect(insights.patterns).toHaveLength(6);

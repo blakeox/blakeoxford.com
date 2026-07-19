@@ -206,8 +206,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'AboutTimelineSection',
     category: 'Features',
     subcategory: 'About',
-    description:
-      'About-page track record as an editorial year list (shared EditorialList).',
+    description: 'About-page track record as an editorial year list (shared EditorialList).',
     filePath: 'src/components/features/about/AboutTimelineSection.astro',
     examples: [
       {
@@ -274,7 +273,12 @@ export const componentDocs: ComponentDoc[] = [
       'Focusable pause/play control for keyboard users',
       'Motion gated by prefers-reduced-motion; pauses on hover',
     ],
-    performance: ['Lazy loading', 'astro:assets Image', 'GPU translate3d marquees', 'Capped image budget'],
+    performance: [
+      'Lazy loading',
+      'astro:assets Image',
+      'GPU translate3d marquees',
+      'Capped image budget',
+    ],
     tags: ['carousel', 'photos', 'marquee', 'decorative'],
     visualTier: 'elevated',
     tokenDependencies: ['shadow-lg', 'rounded-2xl', 'duration-normal'],
@@ -1134,8 +1138,6 @@ export const componentDocs: ComponentDoc[] = [
     visualTier: 'quiet',
     tokenDependencies: ['--color-accent', '--color-surface', '--focus-ring-color'],
   },
-
-
 
   {
     name: 'PageHero',

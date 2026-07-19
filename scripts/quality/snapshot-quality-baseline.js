@@ -79,7 +79,12 @@ if (fs.existsSync(indexPath)) {
       if (/^\| \d{4}-\d{2}-\d{2}_/.test(row)) {
         const cols = row.split('|').map((c) => c.trim());
         // Prefer new layout (Snapshot | Retry | Δ Retry | Flaky); fall back to old mutation layout.
-        if (cols.length >= 5 && cols[2] && cols[2] !== 'n/a' && !Number.isNaN(parseFloat(cols[2]))) {
+        if (
+          cols.length >= 5 &&
+          cols[2] &&
+          cols[2] !== 'n/a' &&
+          !Number.isNaN(parseFloat(cols[2]))
+        ) {
           prevRetry = parseFloat(cols[2]);
         } else if (cols[4] && cols[4] !== 'n/a') {
           prevRetry = parseFloat(cols[4]);

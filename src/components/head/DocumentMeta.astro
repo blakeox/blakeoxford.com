@@ -47,7 +47,11 @@ const {
     ? 'noindex, nofollow'
     : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
 />
-{googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
+{
+  googleSiteVerification && (
+    <meta name="google-site-verification" content={googleSiteVerification} />
+  )
+}
 <link rel="canonical" href={canonicalUrl} />
 
 <meta property="og:title" content={title} />

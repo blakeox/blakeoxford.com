@@ -394,10 +394,14 @@
   --radius-2xl: var(--size-radius-2xl);
 
   --shadow-sm: 0 1px 2px 0 var(--runtime-shadow-color);
-  --shadow-DEFAULT: 0 1px 3px 0 var(--runtime-shadow-color), 0 1px 2px -1px var(--runtime-shadow-color);
-  --shadow-md: 0 4px 6px -1px var(--runtime-shadow-color), 0 2px 4px -2px var(--runtime-shadow-color);
-  --shadow-lg: 0 10px 15px -3px var(--runtime-shadow-color), 0 4px 6px -2px var(--runtime-shadow-color);
-  --shadow-xl: 0 20px 25px -5px var(--runtime-shadow-color), 0 10px 10px -5px var(--runtime-shadow-color);
+  --shadow-DEFAULT:
+    0 1px 3px 0 var(--runtime-shadow-color), 0 1px 2px -1px var(--runtime-shadow-color);
+  --shadow-md:
+    0 4px 6px -1px var(--runtime-shadow-color), 0 2px 4px -2px var(--runtime-shadow-color);
+  --shadow-lg:
+    0 10px 15px -3px var(--runtime-shadow-color), 0 4px 6px -2px var(--runtime-shadow-color);
+  --shadow-xl:
+    0 20px 25px -5px var(--runtime-shadow-color), 0 10px 10px -5px var(--runtime-shadow-color);
   --shadow-2xl: 0 25px 50px -12px var(--runtime-shadow-color);
   --shadow-overlay: 0 28px 80px -16px oklch(0 0 0 / 0.28);
 

@@ -9,11 +9,7 @@ import SectionHeader from '../../composites/SectionHeader.astro';
 const { channels } = Astro.props as { channels: ContactChannels };
 ---
 
-<Section
-  padding="lg"
-  container="lg"
-  aria-labelledby="contact-channels-heading"
->
+<Section padding="lg" container="lg" aria-labelledby="contact-channels-heading">
   <SectionHeader
     kicker={channels.heading}
     title={channels.title}
@@ -29,7 +25,7 @@ const { channels } = Astro.props as { channels: ContactChannels };
             href={channel.href}
             target={channel.icon === 'linkedin' ? '_blank' : undefined}
             rel={channel.icon === 'linkedin' ? 'noopener noreferrer' : undefined}
-            class="group grid gap-2 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 sm:py-6"
+            class="group grid gap-2 py-5 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 sm:py-6"
             aria-label={`${channel.title}: ${channel.label}`}
           >
             <span class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">

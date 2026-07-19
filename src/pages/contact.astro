@@ -11,9 +11,11 @@ const page = await getContactPage();
 const canonicalUrl = CANONICAL_URLS.contact;
 ---
 
-{/*
+{
+  /*
   Hire-path close: claim the bottleneck → send the brief → alternate channels.
-*/}
+*/
+}
 <Layout title={page.meta.title} description={page.meta.description} url={canonicalUrl} wide={true}>
   <ContactHeroSection content={page.hero} />
   <ContactMessageSection sidebar={page.hero.sidebar} />

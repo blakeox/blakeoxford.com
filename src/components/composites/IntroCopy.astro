@@ -36,8 +36,7 @@ const {
 } = Astro.props as Props;
 
 const isCentered = align === 'center';
-const bodySize =
-  descriptionSize ?? (size === 'identity' ? 'xl' : size === 'hero' ? 'lg' : 'md');
+const bodySize = descriptionSize ?? (size === 'identity' ? 'xl' : size === 'hero' ? 'lg' : 'md');
 
 const sizeClasses = {
   identity: 'text-5xl leading-[1.05] sm:text-6xl md:text-7xl lg:text-[4.5rem]',
@@ -58,13 +57,7 @@ const descriptionToneClasses = {
 } as const;
 ---
 
-<div
-  class:list={[
-    'flex flex-col gap-2.5',
-    isCentered && 'items-center text-center',
-    className,
-  ]}
->
+<div class:list={['flex flex-col gap-2.5', isCentered && 'items-center text-center', className]}>
   {kicker && <span class:list={['section-kicker', isCentered && 'mx-auto']}>{kicker}</span>}
   <Tag
     id={titleId}

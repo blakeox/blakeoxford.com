@@ -19,17 +19,8 @@ interface Props {
   hasLessons: boolean;
 }
 
-const {
-  data,
-  Content,
-  metrics,
-  journey,
-  lessons,
-  reflection,
-  hasMetrics,
-  hasJourney,
-  hasLessons,
-} = Astro.props as Props;
+const { data, Content, metrics, journey, lessons, reflection, hasMetrics, hasJourney, hasLessons } =
+  Astro.props as Props;
 
 const hasImpact = Boolean(data.impact?.length);
 const hasHighlights = Boolean(data.highlights?.length);

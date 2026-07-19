@@ -29,7 +29,7 @@ const { posts, content } = Astro.props as Props;
           <li role="listitem">
             <a
               href={`/blog/${post.id}/`}
-              class="group grid gap-1 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:items-baseline sm:gap-8 sm:py-6"
+              class="group grid gap-1 py-5 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:items-baseline sm:gap-8 sm:py-6"
             >
               <time
                 class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase"
@@ -46,7 +46,7 @@ const { posts, content } = Astro.props as Props;
                   {post.data.title}
                 </h3>
                 {post.data.description && (
-                  <p class="max-w-2xl text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                  <p class="line-clamp-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                     {post.data.description}
                   </p>
                 )}

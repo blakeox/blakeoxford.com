@@ -17,7 +17,9 @@ type ConnectRes = {
 
 type ViteDevServer = {
   middlewares: {
-    use: (handler: (req: ConnectReq, res: ConnectRes, next: ConnectNext) => void | Promise<void>) => void;
+    use: (
+      handler: (req: ConnectReq, res: ConnectRes, next: ConnectNext) => void | Promise<void>
+    ) => void;
   };
 };
 

@@ -19,13 +19,7 @@ interface Props {
 const { content } = Astro.props;
 ---
 
-<PageHero
-  id="about-me"
-  flush
-  containerSize="full"
-  containerPadding={false}
-  includeBlurOrbs={false}
->
+<PageHero id="about-me" flush containerSize="full" containerPadding={false} includeBlurOrbs={false}>
   <div class="relative z-10 flex w-full flex-1 flex-col">
     <div class="about-hero-split flex flex-col md:grid md:grid-cols-2 md:gap-0">
       <div

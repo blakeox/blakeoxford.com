@@ -104,7 +104,9 @@ function pickDefaultSrc(name: string): string {
   return `/assets/images/optimized/avif/${name}@${candidate}w.avif`;
 }
 
-const uniqueId = `coin-flip-${toImageKey(frontSrc).replace(/[^a-z0-9]+/gi, '-').slice(0, 24)}`;
+const uniqueId = `coin-flip-${toImageKey(frontSrc)
+  .replace(/[^a-z0-9]+/gi, '-')
+  .slice(0, 24)}`;
 const frontKey = toImageKey(frontSrc);
 const backKey = toImageKey(backSrc);
 const frontAvifSet = buildSrcSet(frontKey, 'avif');
