@@ -676,7 +676,8 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'Badge',
     category: 'Primitives',
-    description: 'Simple badge component for tags, labels, and semantic status indicators. Prefer variant="pill" for uppercase meta tags (BadgePill is a thin preset).',
+    description:
+      'Simple badge component for tags, labels, and semantic status indicators. Prefer variant="pill" for uppercase meta tags (BadgePill is a thin preset).',
     filePath: 'src/components/primitives/Badge.astro',
     props: [
       {
@@ -1127,7 +1128,10 @@ export const componentDocs: ComponentDoc[] = [
       'Standardized section heading. Shares the type ladder with IntroCopy via src/lib/typeScale.ts (identity → hero → display → section → title → subtitle; xl–5xl aliases still work).',
     filePath: 'src/components/primitives/SectionHeading.astro',
     examples: [
-      { title: 'Section intro', code: '<SectionHeading size="section">Recent Projects</SectionHeading>' },
+      {
+        title: 'Section intro',
+        code: '<SectionHeading size="section">Recent Projects</SectionHeading>',
+      },
     ],
     tags: ['heading', 'typography', 'section', 'primitive'],
     visualTier: 'quiet',

@@ -15,7 +15,14 @@ const { post, align = 'left' } = Astro.props as BlogPostRowProps;
 const { id: slug, data } = post;
 ---
 
-<BaseCard as="article" variant="elevated" hover="lift" rounded="3xl" padding="none" class="w-full overflow-hidden">
+<BaseCard
+  as="article"
+  variant="elevated"
+  hover="lift"
+  rounded="3xl"
+  padding="none"
+  class="w-full overflow-hidden"
+>
   <GradientOverlay variant="hover-card" direction="br" />
 
   <div
@@ -42,7 +49,7 @@ const { id: slug, data } = post;
 
     <div
       class={cn(
-        'relative z-[1] flex flex-1 flex-col gap-6 px-7 pb-8 pt-7 sm:px-8',
+        'relative z-[1] flex flex-1 flex-col gap-6 px-7 pt-7 pb-8 sm:px-8',
         !data.heroImage && 'w-full'
       )}
     >

@@ -89,7 +89,9 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
             }
             {
               !compact && supportingCategory && (
-                <Badge variant="pill" size="xs">{supportingCategory}</Badge>
+                <Badge variant="pill" size="xs">
+                  {supportingCategory}
+                </Badge>
               )
             }
             {dateISO && dateLabel && <time datetime={dateISO}>{dateLabel}</time>}
@@ -134,7 +136,9 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
             >
               {visibleTags.map((tag) => (
                 <li>
-                  <Badge variant="pill" size="xs">{tag}</Badge>
+                  <Badge variant="pill" size="xs">
+                    {tag}
+                  </Badge>
                 </li>
               ))}
               {extraTagCount > 0 && (

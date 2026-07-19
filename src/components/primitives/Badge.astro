@@ -15,7 +15,8 @@ import { cn } from '../../utils/cn';
 
 export interface Props {
   /** Badge visual variant */
-  variant?: 'primary' | 'secondary' | 'outline' | 'subtle' | 'pill' | 'success' | 'warning' | 'error';
+  variant?:
+    'primary' | 'secondary' | 'outline' | 'subtle' | 'pill' | 'success' | 'warning' | 'error';
   /** Badge size */
   size?: 'xs' | 'sm' | 'md';
   /** Decorative accent dot (pill variant) */
@@ -24,12 +25,7 @@ export interface Props {
   class?: string;
 }
 
-const {
-  variant = 'secondary',
-  size = 'sm',
-  showDot = false,
-  class: className = '',
-} = Astro.props;
+const { variant = 'secondary', size = 'sm', showDot = false, class: className = '' } = Astro.props;
 
 const variantStyles = {
   primary: 'bg-accent text-on-accent border border-accent/40 font-medium',
@@ -63,10 +59,6 @@ const classes = cn(
 ---
 
 <span class={classes}>
-  {
-    showDot && (
-      <span class={`rounded-full bg-accent ${dotSizes[size]}`} aria-hidden="true" />
-    )
-  }
+  {showDot && <span class={`rounded-full bg-accent ${dotSizes[size]}`} aria-hidden="true" />}
   <slot />
 </span>
