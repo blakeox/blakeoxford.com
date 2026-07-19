@@ -22,7 +22,7 @@ export interface Props extends Omit<HTMLAttributes<'div'>, 'class'> {
   /** Card visual variant */
   variant?: 'default' | 'glass' | 'elevated' | 'subtle';
   /** Hover effect type */
-  hover?: 'none' | 'lift' | 'scale' | 'glow';
+  hover?: 'none' | 'lift' | 'scale';
   /** Border radius size */
   rounded?: 'lg' | 'xl' | '2xl' | '3xl';
   /** Padding size */
@@ -57,7 +57,6 @@ const hoverStyles = {
   none: '',
   lift: 'motion-safe:hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg',
   scale: 'motion-safe:hover:scale-[1.02] focus-within:scale-[1.01]',
-  glow: 'hover:shadow-lg motion-safe:hover:ring-2 motion-safe:hover:ring-accent/20 focus-within:ring-2 focus-within:ring-accent/25',
 } as const;
 
 const roundedStyles = {

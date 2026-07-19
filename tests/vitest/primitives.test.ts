@@ -250,8 +250,9 @@ describe('BadgePill Component', () => {
     expect(fileContent).toMatch(/size|text-xs|text-sm/);
   });
 
-  it('should have inline styling', () => {
-    expect(fileContent).toMatch(/inline|inline-flex|inline-block/);
+  it('should delegate to Badge pill variant', () => {
+    expect(fileContent).toMatch(/Badge/);
+    expect(fileContent).toMatch(/variant=["']pill["']/);
   });
 });
 

@@ -38,11 +38,11 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 
 - Fonts: `--font-sans` (Source Sans 3), `--font-heading` (Space Grotesk), `--font-mono`
 - Utilities: `font-sans`, `font-heading`, `text-xxs`, `tracking-label`, `tracking-smallcaps`
-- Otherwise use Tailwind type scale (`text-sm` … `text-5xl`) — there is no custom `--fs-*` scale
+- Heading ladder: `src/lib/typeScale.ts` — `identity` | `hero` | `display` | `section` | `title` | `subtitle` (shared by `IntroCopy` and `SectionHeading`; `xl`–`5xl` aliases map to the ladder)
 
 ### Spacing, radius, shadows, motion
 
-- Spacing: Tailwind default scale (prefer rem utilities; avoid one-off `px` arbitrary values)
+- Spacing: Tailwind default scale for local gaps; section rhythm via `--space-section-*` → `py-section-*` on `Section`
 - Radius: `rounded-sm` … `rounded-2xl` from `--radius-*`
 - Shadows: `shadow-sm` … `shadow-2xl`, plus `shadow-overlay` for modal panels
 - Motion: `duration-fast` (100ms), `duration-normal` (200ms), `duration-moderate` (300ms), `duration-slow` (500ms)

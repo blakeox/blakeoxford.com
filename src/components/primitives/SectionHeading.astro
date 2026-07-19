@@ -1,25 +1,20 @@
 ---
+import { headingSizeClass, type HeadingSizeInput } from '../../lib/typeScale';
+
 interface Props {
   level?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-  size?: 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
+  /** Semantic ladder (identity|hero|display|section|title|subtitle) or legacy xl–5xl aliases */
+  size?: HeadingSizeInput;
   class?: string;
   id?: string;
 }
 
-const { level = 'h2', size = '4xl', class: className = '', id } = Astro.props;
-
-const sizeClasses = {
-  xl: 'text-xl sm:text-2xl',
-  '2xl': 'text-2xl sm:text-3xl',
-  '3xl': 'text-2xl sm:text-3xl md:text-4xl',
-  '4xl': 'text-3xl sm:text-4xl md:text-5xl',
-  '5xl': 'text-4xl sm:text-5xl md:text-6xl',
-};
+const { level = 'h2', size = 'display', class: className = '', id } = Astro.props;
 
 const baseClasses = 'font-heading font-semibold leading-tight tracking-tight text-foreground';
 const Tag = level;
 ---
 
-<Tag id={id} class={`${sizeClasses[size]} ${baseClasses} ${className}`}>
+<Tag id={id} class={`${headingSizeClass(size)} ${baseClasses} ${className}`}>
   <slot />
 </Tag>

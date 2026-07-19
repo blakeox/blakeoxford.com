@@ -676,15 +676,15 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'Badge',
     category: 'Primitives',
-    description: 'Simple badge component for tags, labels, and semantic status indicators.',
+    description: 'Simple badge component for tags, labels, and semantic status indicators. Prefer variant="pill" for uppercase meta tags (BadgePill is a thin preset).',
     filePath: 'src/components/primitives/Badge.astro',
     props: [
       {
         name: 'variant',
-        type: "'primary' | 'secondary' | 'outline' | 'subtle' | 'success' | 'warning' | 'error'",
+        type: "'primary' | 'secondary' | 'outline' | 'subtle' | 'pill' | 'success' | 'warning' | 'error'",
         required: false,
         default: "'secondary'",
-        description: 'Semantic badge variant',
+        description: 'Semantic badge variant — pill is uppercase meta styling',
       },
       {
         name: 'size',
@@ -693,12 +693,23 @@ export const componentDocs: ComponentDoc[] = [
         default: "'sm'",
         description: 'Badge size preset',
       },
+      {
+        name: 'showDot',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Decorative accent dot (works best with pill)',
+      },
       { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
     ],
     examples: [
       {
         title: 'Basic badge',
         code: '<Badge>TypeScript</Badge>',
+      },
+      {
+        title: 'Pill meta tag',
+        code: '<Badge variant="pill" showDot>Case Study</Badge>',
       },
     ],
     tags: ['badge', 'tag', 'label', 'primitive'],
@@ -985,7 +996,7 @@ export const componentDocs: ComponentDoc[] = [
       },
       {
         name: 'hover',
-        type: "'none' | 'lift' | 'scale' | 'glow'",
+        type: "'none' | 'lift' | 'scale'",
         required: false,
         default: "'lift'",
         description: 'Motion-safe hover treatment',
@@ -1112,14 +1123,15 @@ export const componentDocs: ComponentDoc[] = [
   {
     name: 'SectionHeading',
     category: 'Primitives',
-    description: 'Standardized section heading with optional kicker, title, and description slots.',
+    description:
+      'Standardized section heading. Shares the type ladder with IntroCopy via src/lib/typeScale.ts (identity → hero → display → section → title → subtitle; xl–5xl aliases still work).',
     filePath: 'src/components/primitives/SectionHeading.astro',
     examples: [
-      { title: 'Section intro', code: '<SectionHeading kicker="Work" title="Recent Projects" />' },
+      { title: 'Section intro', code: '<SectionHeading size="section">Recent Projects</SectionHeading>' },
     ],
     tags: ['heading', 'typography', 'section', 'primitive'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-foreground', '--color-muted-foreground', '--fs-h2'],
+    tokenDependencies: ['--color-foreground', '--font-heading'],
   },
   {
     name: 'SkipLink',

@@ -7,32 +7,32 @@
 :root {
   color-scheme: light;
 
-  /* Static brand */
+  /* Static brand — cool limestone paper + umber ink + teal accent */
   --brand-primary: oklch(0.34 0.035 55);
   --brand-primary-light: oklch(0.46 0.035 55);
   --brand-primary-dark: oklch(0.26 0.03 55);
-  --brand-accent: oklch(0.66 0.12 75);
-  --brand-accent-light: oklch(0.78 0.1 78);
-  --brand-accent-dark: oklch(0.52 0.11 70);
+  --brand-accent: oklch(0.55 0.1 195);
+  --brand-accent-light: oklch(0.68 0.08 198);
+  --brand-accent-dark: oklch(0.42 0.09 192);
 
   /* Static palette */
-  --palette-background: oklch(0.97 0.012 85);
-  --palette-surface: oklch(0.99 0.008 85);
-  --palette-surface-subtle: oklch(0.94 0.014 85);
-  --palette-background-dark: oklch(0.16 0.015 55);
-  --palette-surface-dark: oklch(0.2 0.015 55);
-  --palette-surface-dark-subtle: oklch(0.23 0.016 55);
-  --palette-surface-elevated-dark: oklch(0.26 0.018 55);
+  --palette-background: oklch(0.975 0.006 250);
+  --palette-surface: oklch(0.99 0.004 250);
+  --palette-surface-subtle: oklch(0.95 0.008 250);
+  --palette-background-dark: oklch(0.16 0.012 250);
+  --palette-surface-dark: oklch(0.2 0.012 250);
+  --palette-surface-dark-subtle: oklch(0.23 0.014 250);
+  --palette-surface-elevated-dark: oklch(0.26 0.015 250);
   --palette-foreground: oklch(0.22 0.02 55);
   --palette-foreground-strong: oklch(0.16 0.02 55);
-  --palette-foreground-light: oklch(0.97 0.01 85);
+  --palette-foreground-light: oklch(0.97 0.008 250);
   --palette-muted-foreground: oklch(0.36 0.02 55);
   --palette-subtle-foreground: oklch(0.42 0.02 55);
   --palette-border: oklch(0.34 0.035 55 / 0.12);
-  --palette-border-dark: oklch(0.82 0.015 75 / 0.22);
-  --palette-on-accent: oklch(0.97 0.01 85);
-  --palette-on-primary: oklch(0.97 0.01 85);
-  --palette-on-dark: oklch(0.97 0.01 85);
+  --palette-border-dark: oklch(0.82 0.02 250 / 0.22);
+  --palette-on-accent: oklch(0.98 0.008 250);
+  --palette-on-primary: oklch(0.98 0.008 250);
+  --palette-on-dark: oklch(0.98 0.008 250);
   --palette-success: oklch(0.7 0.2 145);
   --palette-success-light: oklch(0.78 0.2 145);
   --palette-success-dark: oklch(0.55 0.2 145);
@@ -42,9 +42,9 @@
   --palette-error: oklch(0.62 0.25 25);
   --palette-error-light: oklch(0.7 0.25 25);
   --palette-error-dark: oklch(0.45 0.25 25);
-  --palette-info: oklch(0.58 0.06 110);
-  --palette-info-light: oklch(0.7 0.06 110);
-  --palette-info-dark: oklch(0.46 0.05 110);
+  --palette-info: oklch(0.55 0.08 220);
+  --palette-info-light: oklch(0.68 0.07 220);
+  --palette-info-dark: oklch(0.42 0.07 220);
 
   /* Runtime semantic (dark remaps these) */
   --runtime-primary: var(--brand-primary);
@@ -134,7 +134,7 @@
   --color-field-bg: var(--runtime-field-bg);
   --color-glass: var(--runtime-glass);
   --color-glass-xl: var(--runtime-glass-xl);
-  --color-overlay-scrim: oklch(0.16 0.015 55);
+  --color-overlay-scrim: oklch(0.16 0.012 250);
   --color-code-surface: var(--palette-background-dark);
   --color-code-foreground: var(--palette-foreground-light);
 
@@ -167,6 +167,12 @@
   --container-padding-lg: 4rem;
   --container-padding-xl: 5rem;
   --container-padding-2xl: 6rem;
+  /* Section vertical rhythm — bridged as spacing-* for py-section-* utilities */
+  --space-section-sm: 2rem;
+  --space-section-md: 3rem;
+  --space-section-lg: 4rem;
+  --space-section-xl: 5rem;
+  --space-section-2xl: 6rem;
   --layout-max-2xl: min(100%, 110rem);
   --nav-height: 4.5rem;
   --z-nav: 40;
@@ -210,8 +216,8 @@
   &.dark {
     color-scheme: dark;
 
-    --runtime-accent: oklch(0.76 0.11 78);
-    --runtime-on-accent: oklch(0.18 0.02 55);
+    --runtime-accent: oklch(0.72 0.09 198);
+    --runtime-on-accent: oklch(0.16 0.02 250);
     --runtime-accent-emphasis: var(--brand-accent-light);
     --runtime-primary-emphasis: var(--brand-primary-light);
     --runtime-success-emphasis: var(--palette-success-light);
@@ -224,8 +230,8 @@
     --runtime-surface: var(--palette-surface-dark);
     --runtime-surface-subtle: var(--palette-surface-dark-subtle);
     --runtime-surface-elevated: var(--palette-surface-elevated-dark);
-    --runtime-muted-foreground: oklch(0.82 0.015 75);
-    --runtime-subtle-foreground: oklch(0.8 0.015 75);
+    --runtime-muted-foreground: oklch(0.82 0.015 250);
+    --runtime-subtle-foreground: oklch(0.8 0.015 250);
     --runtime-border: var(--palette-border-dark);
     --runtime-shadow-color: oklch(0 0 0 / 0.45);
     --runtime-glass: color-mix(in oklch, var(--palette-surface-dark) 75%, transparent);
@@ -344,7 +350,7 @@
   --color-surface-elevated: var(--runtime-surface-elevated);
   --color-glass: var(--runtime-glass);
   --color-glass-xl: var(--runtime-glass-xl);
-  --color-overlay-scrim: oklch(0.16 0.015 55);
+  --color-overlay-scrim: oklch(0.16 0.012 250);
   --color-code-surface: var(--palette-background-dark);
   --color-code-foreground: var(--palette-foreground-light);
   --color-foreground: var(--runtime-foreground);
@@ -425,4 +431,10 @@
   --z-index-search: var(--z-search);
 
   --max-width-container-2xl: var(--layout-max-2xl);
+
+  --spacing-section-sm: var(--space-section-sm);
+  --spacing-section-md: var(--space-section-md);
+  --spacing-section-lg: var(--space-section-lg);
+  --spacing-section-xl: var(--space-section-xl);
+  --spacing-section-2xl: var(--space-section-2xl);
 }

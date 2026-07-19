@@ -4,7 +4,8 @@ import Section from '../../primitives/Section.astro';
 import Stack from '../../primitives/Stack.astro';
 import Flex from '../../primitives/Flex.astro';
 import Button from '../../primitives/Button.astro';
-import BadgePill from '../../primitives/BadgePill.astro';
+import Badge from '../../primitives/Badge.astro';
+import BaseCard from '../../primitives/BaseCard.astro';
 import { BlogPostRow } from './index';
 
 interface Props {
@@ -19,9 +20,9 @@ const { posts } = Astro.props as Props;
     <Section padding="md" container="lg" class="border-t border-border/20 bg-surface-subtle/40">
       <Flex responsive="sm" gap="md" justify="between" align="center">
         <Flex wrap gap="sm" align="center">
-          <BadgePill size="xs" class="w-fit">
+          <Badge variant="pill" size="xs" class="w-fit">
             {posts.length} {posts.length === 1 ? 'Article' : 'Articles'}
-          </BadgePill>
+          </Badge>
           <p class="text-sm leading-relaxed text-muted-foreground">
             Field notes and implementation breakdowns
           </p>
@@ -76,7 +77,7 @@ const { posts } = Astro.props as Props;
             <BlogPostRow post={post} align={index % 2 === 0 ? 'left' : 'right'} />
           ))
         ) : (
-          <div class="rounded-3xl bg-surface/95 p-12 text-center shadow-lg ring-1 ring-border/30">
+          <BaseCard variant="elevated" hover="none" rounded="3xl" padding="lg" class="text-center">
             <h2 class="mb-4 font-heading text-2xl font-semibold text-foreground sm:text-3xl">
               Articles are on the way
             </h2>
@@ -84,7 +85,7 @@ const { posts } = Astro.props as Props;
               Check back soon for breakdowns of recent programs, playbooks, and technical deep
               dives.
             </p>
-          </div>
+          </BaseCard>
         )
       }
     </Stack>
