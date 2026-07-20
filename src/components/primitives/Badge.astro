@@ -3,43 +3,55 @@
  * Badge - Reusable badge/tag component
  *
  * Provides consistent styling for tags, labels, and status indicators.
+ * Use variant="pill" for uppercase meta tags (replaces BadgePill).
  *
  * @example
  * <Badge variant="primary">TypeScript</Badge>
  * <Badge variant="outline" size="sm">Featured</Badge>
+ * <Badge variant="pill" showDot>Case Study</Badge>
  */
 
 import { cn } from '../../utils/cn';
 
 export interface Props {
   /** Badge visual variant */
-  variant?: 'primary' | 'secondary' | 'outline' | 'subtle' | 'success' | 'warning' | 'error';
+  variant?:
+    'primary' | 'secondary' | 'outline' | 'subtle' | 'pill' | 'success' | 'warning' | 'error';
   /** Badge size */
   size?: 'xs' | 'sm' | 'md';
+  /** Decorative accent dot (pill variant) */
+  showDot?: boolean;
   /** Additional CSS classes */
   class?: string;
 }
 
-const { variant = 'secondary', size = 'sm', class: className = '' } = Astro.props;
+const { variant = 'secondary', size = 'sm', showDot = false, class: className = '' } = Astro.props;
 
 const variantStyles = {
-  primary: 'bg-accent text-on-accent border-accent/40',
-  secondary: 'bg-surface text-foreground border-border/40',
-  outline: 'bg-transparent text-foreground border-border/60',
-  subtle: 'bg-surface-subtle text-muted-foreground border-border/25',
-  success: 'bg-success-subtle text-success-emphasis border-success/30',
-  warning: 'bg-warning-subtle text-warning-emphasis border-warning/30',
-  error: 'bg-error-subtle text-error-emphasis border-error/30',
+  primary: 'bg-accent text-on-accent border border-accent/40 font-medium',
+  secondary: 'bg-surface text-foreground border border-border/40 font-medium',
+  outline: 'bg-transparent text-foreground border border-border/60 font-medium',
+  subtle: 'bg-surface-subtle text-muted-foreground border border-border/25 font-medium',
+  pill: 'bg-surface-subtle text-subtle-foreground ring-1 ring-border/40 border-0 font-semibold uppercase tracking-smallcaps',
+  success: 'bg-success-subtle text-success-emphasis border border-success/30 font-medium',
+  warning: 'bg-warning-subtle text-warning-emphasis border border-warning/30 font-medium',
+  error: 'bg-error-subtle text-error-emphasis border border-error/30 font-medium',
 } as const;
 
 const sizeStyles = {
-  xs: 'px-2 py-0.5 text-xxs',
-  sm: 'px-2 py-1 text-xs',
-  md: 'px-3 py-1.5 text-sm',
+  xs: variant === 'pill' ? 'gap-2 px-3 py-1 text-xxs' : 'px-2 py-0.5 text-xxs',
+  sm: variant === 'pill' ? 'gap-2 px-4 py-2 text-xs' : 'px-2 py-1 text-xs',
+  md: variant === 'pill' ? 'gap-2 px-5 py-2 text-sm' : 'px-3 py-1.5 text-sm',
+} as const;
+
+const dotSizes = {
+  xs: 'h-1 w-1',
+  sm: 'h-1.5 w-1.5',
+  md: 'h-2 w-2',
 } as const;
 
 const classes = cn(
-  'inline-flex items-center rounded-full border font-medium',
+  'inline-flex items-center rounded-full',
   variantStyles[variant],
   sizeStyles[size],
   className
@@ -47,5 +59,6 @@ const classes = cn(
 ---
 
 <span class={classes}>
+  {showDot && <span class={`rounded-full bg-accent ${dotSizes[size]}`} aria-hidden="true" />}
   <slot />
 </span>

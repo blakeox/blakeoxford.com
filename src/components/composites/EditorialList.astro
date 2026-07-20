@@ -7,6 +7,8 @@
  * - kickerAside → short kickers (years) in a left column
  * - otherwise → long kickers (metrics) stack above the title
  */
+import { headingSizeClass } from '../../lib/typeScale';
+
 export type EditorialRow = {
   /** Accent lead line (metric, year, etc.) */
   kicker?: string;
@@ -82,7 +84,12 @@ const Tag = listAs ?? (numbered ? 'ol' : 'ul');
               </p>
             )}
             {row.title && (
-              <h3 class="font-heading text-xl leading-snug font-semibold tracking-tight text-foreground sm:text-2xl">
+              <h3
+                class:list={[
+                  'font-heading font-semibold tracking-tight text-foreground',
+                  headingSizeClass('title'),
+                ]}
+              >
                 {row.title}
               </h3>
             )}
@@ -105,7 +112,7 @@ const Tag = listAs ?? (numbered ? 'ol' : 'ul');
                 {row.bullets.map((item: string) => (
                   <li class="flex gap-3">
                     <span
-                      class="mt-2 size-1 shrink-0 rounded-full bg-foreground/35"
+                      class="mt-2 size-1 shrink-0 rounded-full bg-foreground/40"
                       aria-hidden="true"
                     />
                     <span>{item}</span>

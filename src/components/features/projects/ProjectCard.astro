@@ -6,7 +6,7 @@
 import BaseCard from '../../primitives/BaseCard.astro';
 import OptimizedImage from '../../primitives/OptimizedImage.astro';
 import Flex from '../../primitives/Flex.astro';
-import BadgePill from '../../primitives/BadgePill.astro';
+import Badge from '../../primitives/Badge.astro';
 import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
 import GradientOverlay from '../../primitives/GradientOverlay.astro';
 import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
@@ -82,14 +82,16 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
           >
             {
               primaryCategory && (
-                <BadgePill size="xs" class="bg-accent-subtle text-accent ring-accent/20">
+                <Badge variant="pill" size="xs" class="bg-accent-subtle text-accent ring-accent/20">
                   {primaryCategory}
-                </BadgePill>
+                </Badge>
               )
             }
             {
               !compact && supportingCategory && (
-                <BadgePill size="xs">{supportingCategory}</BadgePill>
+                <Badge variant="pill" size="xs">
+                  {supportingCategory}
+                </Badge>
               )
             }
             {dateISO && dateLabel && <time datetime={dateISO}>{dateLabel}</time>}
@@ -134,14 +136,16 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
             >
               {visibleTags.map((tag) => (
                 <li>
-                  <BadgePill size="xs">{tag}</BadgePill>
+                  <Badge variant="pill" size="xs">
+                    {tag}
+                  </Badge>
                 </li>
               ))}
               {extraTagCount > 0 && (
                 <li>
-                  <BadgePill size="xs" class="text-subtle-foreground">
+                  <Badge variant="pill" size="xs" class="text-subtle-foreground">
                     +{extraTagCount}
-                  </BadgePill>
+                  </Badge>
                 </li>
               )}
             </Flex>

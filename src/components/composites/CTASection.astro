@@ -4,6 +4,7 @@
  */
 import Button from '../primitives/Button.astro';
 import ButtonGroup from '../composites/ButtonGroup.astro';
+import { headingSizeClass } from '../../lib/typeScale';
 
 interface Props {
   heading: string;
@@ -25,7 +26,12 @@ const {
 ---
 
 <div class="flex max-w-2xl flex-col gap-5">
-  <h3 class="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+  <h3
+    class:list={[
+      'font-heading font-semibold tracking-tight text-foreground',
+      headingSizeClass('title'),
+    ]}
+  >
     {heading}
   </h3>
   <p class="text-base leading-relaxed text-muted-foreground sm:text-lg">

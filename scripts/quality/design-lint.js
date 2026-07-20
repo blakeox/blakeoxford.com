@@ -15,6 +15,10 @@
  * - no hard-coded high elevation in primitives/composites
  * - no legacy shell escape patterns
  * - no direct Tailwind container shell usage in app surfaces
+ * - no decorative blur orbs outside PageHero opt-in
+ * - no BadgePill imports (use Badge variant="pill")
+ * - no DIY elevated card shells when BaseCard is available
+ * - no ad-hoc font-heading size ladders outside typeScale allowlist
  */
 import fs from 'fs';
 import path from 'path';
@@ -71,9 +75,43 @@ const COMPONENT_DOC_ENTRY_REGEX =
   /^  {\s*\n\s{4}name:\s*'([^']+)'[\s\S]*?\n\s{4}category:\s*'([^']+)'[\s\S]*?\n\s{4}filePath:\s*'([^']+)'/gm;
 const STALE_DECORATIVE_DOC_REGEX =
   /glass-morphism|glass morphism|Frosted Glass|Rotating Gradient|Pulse Scale|Continuous gradient|shadow animations|gradient overlay/g;
+/** Decorative blur orbs / washes (rounded-full + heavy blur). */
+const BLUR_ORB_REGEX =
+  /(?:rounded-full[^\n"'`]{0,100}blur-(?:2xl|3xl)|blur-(?:2xl|3xl)[^\n"'`]{0,100}rounded-full)/g;
+/** Prefer Badge variant="pill" — BadgePill is a deprecated thin wrapper. */
+const BADGE_PILL_IMPORT_REGEX =
+  /\bimport\s+BadgePill\b|from\s+['"][^'"]*BadgePill(?:\.astro)?['"]/g;
+/** Elevated DIY cards that should use BaseCard. */
+const DIY_ELEVATED_CARD_REGEX =
+  /(?:rounded-(?:2xl|3xl)[^\n"'`]{0,160}shadow-(?:md|lg)|shadow-(?:md|lg)[^\n"'`]{0,160}rounded-(?:2xl|3xl))/g;
+/** Ad-hoc heading ladders (2xl+) — prefer headingSizeClass / IntroCopy / SectionHeading. */
+const RAW_HEADING_LADDER_REGEX =
+  /font-heading[^\n"'`]{0,160}\b(?:sm:|md:|lg:|xl:)?text-(?:[2-7]xl)\b|\b(?:sm:|md:|lg:|xl:)?text-(?:[2-7]xl)\b[^\n"'`]{0,160}font-heading/g;
 
 const allowedPx = new Set([0, 1, 2, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 48, 56, 64]);
 const allowedComponentRootFiles = new Set(['src/components/index.ts']);
+
+/** Opt-in blur orbs only on PageHero (includeBlurOrbs). */
+const blurOrbAllowPaths = new Set(['src/components/composites/PageHero.astro']);
+
+const badgePillAllowPaths = new Set([
+  'src/components/primitives/BadgePill.astro',
+  'src/components/primitives/index.ts',
+  'tests/vitest/primitives.test.ts',
+]);
+
+const diyElevatedAllowPaths = new Set([
+  'src/components/primitives/BaseCard.astro',
+  'src/components/composites/FeatureCard.astro',
+  'src/components/composites/PhotoCarousel.astro',
+]);
+
+const headingLadderAllowPaths = new Set([
+  'src/lib/typeScale.ts',
+  'src/components/composites/IntroCopy.astro',
+  'src/components/primitives/SectionHeading.astro',
+  'src/components/primitives/Prose.astro',
+]);
 
 const reusableSurfacePaths = [
   'src/components',
@@ -114,6 +152,10 @@ const findings = {
   shell: [],
   gutter: [],
   container: [],
+  blurOrb: [],
+  badgePill: [],
+  diyCard: [],
+  headingLadder: [],
 };
 
 function shouldIgnoreDir(name) {
@@ -288,6 +330,38 @@ function scanSourceFile(file) {
   }
 
   if (
+    (relPath.startsWith('src/components/') ||
+      relPath.startsWith('src/content/blog/') ||
+      relPath.startsWith('src/pages/')) &&
+    !blurOrbAllowPaths.has(relPath)
+  ) {
+    addRegexFindings(findings.blurOrb, relPath, content, BLUR_ORB_REGEX);
+  }
+
+  if (!badgePillAllowPaths.has(relPath)) {
+    addRegexFindings(findings.badgePill, relPath, content, BADGE_PILL_IMPORT_REGEX);
+  }
+
+  if (
+    (relPath.startsWith('src/components/features/') ||
+      relPath.startsWith('src/components/composites/')) &&
+    !diyElevatedAllowPaths.has(relPath) &&
+    !content.includes('BaseCard')
+  ) {
+    addRegexFindings(findings.diyCard, relPath, content, DIY_ELEVATED_CARD_REGEX);
+  }
+
+  if (
+    (relPath.startsWith('src/components/') || relPath.startsWith('src/pages/')) &&
+    !relPath.startsWith('src/pages/design/') &&
+    !relPath.startsWith('src/pages/docs/') &&
+    !relPath.startsWith('src/pages/debug/') &&
+    !headingLadderAllowPaths.has(relPath)
+  ) {
+    addRegexFindings(findings.headingLadder, relPath, content, RAW_HEADING_LADDER_REGEX);
+  }
+
+  if (
     (relPath.startsWith('src/pages/') || relPath.startsWith('src/components/')) &&
     !relPath.startsWith('src/pages/design/') &&
     !relPath.startsWith('src/pages/docs/') &&
@@ -346,6 +420,16 @@ if (isDirectRun) {
     findings.gutter
   );
   printFindings('Direct container shell usage detected', findings.container);
+  printFindings(
+    'Decorative blur orbs detected (use PageHero includeBlurOrbs or remove)',
+    findings.blurOrb
+  );
+  printFindings('BadgePill imports detected (use Badge variant="pill")', findings.badgePill);
+  printFindings('DIY elevated card shells detected (prefer BaseCard)', findings.diyCard);
+  printFindings(
+    'Ad-hoc heading ladders detected (use typeScale / IntroCopy / SectionHeading)',
+    findings.headingLadder
+  );
 
   const issueCount = Object.values(findings).reduce((count, list) => count + list.length, 0);
 

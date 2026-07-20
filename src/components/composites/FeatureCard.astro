@@ -3,13 +3,14 @@
  * FeatureCard - semantic feature card built on BaseCard
  *
  * Expressive tier card for highlights and feature grids.
+ * Prefer text titles over decorative emoji icons.
  */
 
 import BaseCard from '../primitives/BaseCard.astro';
+import { headingSizeClass } from '../../lib/typeScale';
 
 interface Props {
   variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error';
-  icon?: string;
   title?: string;
   titleLevel?: 2 | 3;
   description?: string;
@@ -20,7 +21,6 @@ interface Props {
 
 const {
   variant = 'accent',
-  icon,
   title,
   titleLevel = 3,
   description,
@@ -63,6 +63,8 @@ const classes = [
 ]
   .filter(Boolean)
   .join(' ');
+
+const TitleTag = titleLevel === 2 ? 'h2' : 'h3';
 ---
 
 <BaseCard
@@ -82,22 +84,25 @@ const classes = [
     )
   }
 
-  {icon && <div class="mb-3 text-5xl @sm:mb-4 @sm:text-6xl">{icon}</div>}
-
   {
-    title &&
-      (titleLevel === 2 ? (
-        <h2 class={`mb-2 text-xl font-bold @sm:mb-3 @sm:text-2xl ${variantTextColors[variant]}`}>
-          {title}
-        </h2>
-      ) : (
-        <h3 class={`mb-2 text-xl font-bold @sm:mb-3 @sm:text-2xl ${variantTextColors[variant]}`}>
-          {title}
-        </h3>
-      ))
+    title && (
+      <TitleTag
+        class:list={[
+          'mb-2 font-heading font-semibold @sm:mb-3',
+          headingSizeClass('title'),
+          variantTextColors[variant],
+        ]}
+      >
+        {title}
+      </TitleTag>
+    )
   }
 
-  {description && <p class="text-base leading-relaxed opacity-85 @sm:text-lg">{description}</p>}
+  {
+    description && (
+      <p class="text-base leading-relaxed text-muted-foreground @sm:text-lg">{description}</p>
+    )
+  }
 
   <slot />
 </BaseCard>

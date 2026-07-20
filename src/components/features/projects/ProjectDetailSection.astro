@@ -3,6 +3,8 @@
  * Project detail section — editorial chrome matching home / case insights.
  * No elevated cards; kicker + heading + optional lead.
  */
+import { headingSizeClass } from '../../../lib/typeScale';
+
 export interface Props {
   title: string;
   eyebrow?: string;
@@ -19,7 +21,10 @@ const { title, eyebrow, id, description, class: className = '' } = Astro.props;
     {eyebrow && <span class="section-kicker">{eyebrow}</span>}
     <h2
       id={id}
-      class="font-heading text-2xl leading-snug font-semibold tracking-tight text-foreground sm:text-3xl md:text-4xl"
+      class:list={[
+        'font-heading font-semibold tracking-tight text-foreground',
+        headingSizeClass('section'),
+      ]}
     >
       {title}
     </h2>

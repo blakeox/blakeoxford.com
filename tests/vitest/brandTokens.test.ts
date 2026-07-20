@@ -5,9 +5,18 @@ import { resolve } from 'node:path';
 const themeCss = readFileSync(resolve(__dirname, '../../src/styles/theme.css'), 'utf8');
 
 describe('brand token contract', () => {
-  it('keeps warm ink primary (hue 55) and brass accent (hue 75)', () => {
+  it('keeps warm ink primary (hue 55) and teal accent (hue 195)', () => {
     expect(themeCss).toMatch(/--brand-primary:\s*oklch\([^)]*55\)/);
-    expect(themeCss).toMatch(/--brand-accent:\s*oklch\([^)]*75\)/);
+    expect(themeCss).toMatch(/--brand-accent:\s*oklch\([^)]*195\)/);
+  });
+
+  it('uses cool limestone paper (hue 250) for light surfaces', () => {
+    expect(themeCss).toMatch(/--palette-background:\s*oklch\([^)]*250\)/);
+  });
+
+  it('bridges section spacing rhythm', () => {
+    expect(themeCss).toContain('--space-section-sm');
+    expect(themeCss).toContain('--spacing-section-sm');
   });
 
   it('documents accent-subtle for soft surfaces', () => {

@@ -3,6 +3,7 @@
  * Related stack labels — display only (no broken ?filter= links).
  */
 import DotMetaList from '../../composites/DotMetaList.astro';
+import { headingSizeClass } from '../../../lib/typeScale';
 
 export interface Props {
   tags: string[];
@@ -21,7 +22,10 @@ const normalizedTags = Array.isArray(tags)
       <div class="max-w-2xl space-y-2">
         <h2
           id="case-stack-heading"
-          class="font-heading text-xl leading-snug font-semibold tracking-tight text-foreground sm:text-2xl"
+          class:list={[
+            'font-heading font-semibold tracking-tight text-foreground',
+            headingSizeClass('title'),
+          ]}
         >
           Stack & focus
         </h2>
