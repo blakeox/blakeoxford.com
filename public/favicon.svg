@@ -1,20 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Blake Oxford">
   <defs>
-    <linearGradient id="oxblood" x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#b46767"/>
-      <stop offset="0.5" stop-color="#91343d"/>
-      <stop offset="1" stop-color="#6d1a28"/>
+    <linearGradient id="steel" x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#608ab5"/>
+      <stop offset="0.5" stop-color="#32618e"/>
+      <stop offset="1" stop-color="#19446d"/>
     </linearGradient>
     <radialGradient id="disc" cx="38%" cy="32%" r="70%">
-      <stop stop-color="#251d1a"/>
-      <stop offset="1" stop-color="#0e0806"/>
+      <stop stop-color="#18202b"/>
+      <stop offset="1" stop-color="#050911"/>
     </radialGradient>
   </defs>
 
-  <rect width="64" height="64" rx="14" fill="#0e0806"/>
-  <circle cx="32" cy="32" r="26" fill="#91343d" opacity="0.14"/>
-  <circle cx="32" cy="32" r="22.5" fill="url(#disc)" stroke="url(#oxblood)" stroke-width="2.5"/>
-  <circle cx="32" cy="32" r="18.25" fill="none" stroke="#91343d" stroke-opacity="0.25" stroke-width="1"/>
+  <rect width="64" height="64" rx="14" fill="#050911"/>
+  <circle cx="32" cy="32" r="26" fill="#32618e" opacity="0.14"/>
+  <circle cx="32" cy="32" r="22.5" fill="url(#disc)" stroke="url(#steel)" stroke-width="2.5"/>
+  <circle cx="32" cy="32" r="18.25" fill="none" stroke="#32618e" stroke-opacity="0.25" stroke-width="1"/>
 
   <!-- Architectural B: solid pillar + twin bowls -->
   <path
@@ -24,10 +24,10 @@
   />
 
   <!-- Systems constellation accent -->
-  <g stroke="url(#oxblood)" stroke-width="1.5" stroke-linecap="round" fill="none">
+  <g stroke="url(#steel)" stroke-width="1.5" stroke-linecap="round" fill="none">
     <path d="M44.8 22.2 L48.6 28 L45.2 34.2"/>
   </g>
-  <g fill="#b46767">
+  <g fill="#608ab5">
     <circle cx="44.8" cy="22.2" r="2.1"/>
     <circle cx="48.6" cy="28" r="2.1"/>
     <circle cx="45.2" cy="34.2" r="2.1"/>

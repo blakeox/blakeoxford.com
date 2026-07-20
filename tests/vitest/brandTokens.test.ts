@@ -5,9 +5,9 @@ import { resolve } from 'node:path';
 const themeCss = readFileSync(resolve(__dirname, '../../src/styles/theme.css'), 'utf8');
 
 describe('brand token contract', () => {
-  it('keeps espresso ink primary (hue 40) and oxblood accent (hue 18)', () => {
-    expect(themeCss).toMatch(/--brand-primary:\s*oklch\([^)]*40\)/);
-    expect(themeCss).toMatch(/--brand-accent:\s*oklch\([^)]*18\)/);
+  it('keeps navy ink primary (hue 255) and steel accent (hue 250)', () => {
+    expect(themeCss).toMatch(/--brand-primary:\s*oklch\([^)]*255\)/);
+    expect(themeCss).toMatch(/--brand-accent:\s*oklch\([^)]*250\)/);
   });
 
   it('uses cool fog paper (hue 95) for light surfaces', () => {
