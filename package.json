@@ -87,7 +87,7 @@
     "chrome-launcher": "^1.2.1",
     "eslint": "^10.7.0",
     "eslint-plugin-astro": "^3.0.1",
-    "eslint-plugin-better-tailwindcss": "^4.6.1",
+    "eslint-plugin-better-tailwindcss": "^4.7.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-mdx": "^3.8.1",
     "happy-dom": "^20.11.1",
