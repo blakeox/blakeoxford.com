@@ -31,7 +31,7 @@ const portraitWebp = '/assets/images/optimized/webp/Blake-O-scaled@768w.webp';
   containerPadding={false}
   class="home-hero-bleed"
 >
-  <div class="home-hero-stage relative flex w-full flex-1 flex-col md:block">
+  <div class="home-hero-stage">
     <div class="home-hero-media" aria-hidden="true">
       <picture>
         <source srcset={portraitAvif} type="image/avif" />
@@ -50,10 +50,8 @@ const portraitWebp = '/assets/images/optimized/webp/Blake-O-scaled@768w.webp';
       <div class="home-hero-scrim"></div>
     </div>
 
-    <div
-      class="hero-entrance home-hero-copy layout-gutter relative z-10 flex flex-1 flex-col justify-end pb-12 pt-10 sm:pb-14 md:absolute md:inset-0 md:justify-center md:py-16 lg:py-20"
-    >
-      <div class="flex w-full max-w-xl flex-col items-start gap-6 md:max-w-lg lg:max-w-xl">
+    <div class="hero-entrance home-hero-copy layout-gutter">
+      <div class="home-hero-copy-inner">
         <IntroCopy
           kicker={content.kicker}
           title={author}
@@ -88,14 +86,18 @@ const portraitWebp = '/assets/images/optimized/webp/Blake-O-scaled@768w.webp';
   }
 
   .home-hero-stage {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     min-height: min(36rem, calc(100svh - var(--nav-height)));
   }
 
   .home-hero-media {
     position: relative;
+    order: 1;
     overflow: hidden;
     width: 100%;
-    height: min(46vh, 22rem);
+    height: min(48vh, 24rem);
     background: var(--color-surface-subtle);
   }
 
@@ -104,8 +106,7 @@ const portraitWebp = '/assets/images/optimized/webp/Blake-O-scaled@768w.webp';
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 50% 12%;
-    transform: scale(1.02);
+    object-position: 50% 14%;
   }
 
   .home-hero-scrim {
@@ -113,62 +114,90 @@ const portraitWebp = '/assets/images/optimized/webp/Blake-O-scaled@768w.webp';
     inset: 0;
     background: linear-gradient(
       180deg,
-      transparent 40%,
-      color-mix(in oklch, var(--color-background) 40%, transparent) 70%,
+      transparent 45%,
+      color-mix(in oklch, var(--color-background) 35%, transparent) 72%,
       var(--color-background) 100%
     );
   }
 
   .home-hero-copy {
+    order: 2;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-block: 2.5rem 3rem;
     background: var(--color-background);
+  }
+
+  .home-hero-copy-inner {
+    display: flex;
+    width: 100%;
+    max-width: 36rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
   }
 
   @media (width >= 768px) {
     .home-hero-stage {
+      display: grid;
+      grid-template-columns: minmax(22rem, 1fr) minmax(22rem, 1.05fr);
       min-height: calc(100svh - var(--nav-height));
     }
 
     .home-hero-media {
-      position: absolute;
-      inset: 0;
-      inset-inline-start: 38%;
-      height: auto;
+      order: 2;
+      height: 100%;
+      min-height: 100%;
     }
 
     .home-hero-photo {
-      object-position: 58% 10%;
+      object-position: 50% 12%;
     }
 
     .home-hero-scrim {
       background: linear-gradient(
         90deg,
         var(--color-background) 0%,
-        color-mix(in oklch, var(--color-background) 78%, transparent) 18%,
-        color-mix(in oklch, var(--color-background) 18%, transparent) 42%,
-        transparent 62%
+        color-mix(in oklch, var(--color-background) 55%, transparent) 10%,
+        transparent 28%
       );
     }
 
     .home-hero-copy {
+      order: 1;
+      justify-content: center;
+      padding-block: 4rem;
       background: transparent;
+    }
+
+    .home-hero-copy-inner {
+      max-width: 28rem;
+    }
+  }
+
+  @media (width >= 1024px) {
+    .home-hero-copy-inner {
+      max-width: 32rem;
     }
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .home-hero-photo {
-      animation: home-hero-photo-settle 1.4s var(--ease-decelerate) both;
+      animation: home-hero-photo-settle 1.25s var(--ease-decelerate) both;
     }
   }
 
   @keyframes home-hero-photo-settle {
     from {
-      opacity: 0.55;
-      transform: scale(1.08);
+      opacity: 0.7;
+      transform: scale(1.04);
     }
 
     to {
       opacity: 1;
-      transform: scale(1.04);
+      transform: scale(1);
     }
   }
 
