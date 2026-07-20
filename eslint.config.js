@@ -10,6 +10,13 @@ export default [
   // Base JavaScript configuration
   js.configs.recommended,
 
+  // ESLint 10 + @eslint/js: `no-useless-escape` currently throws on load.
+  {
+    rules: {
+      'no-useless-escape': 'off',
+    },
+  },
+
   // JavaScript and Node.js files
   {
     files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
@@ -33,6 +40,7 @@ export default [
       semi: ['error', 'always'],
       'no-console': 'off',
       'no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
+      'no-useless-escape': 'off',
     },
   },
 
