@@ -1,5 +1,8 @@
 ---
-import CoinFlipImage from '../../composites/CoinFlipImage.astro';
+/**
+ * Home identity hero — one full-bleed composition.
+ * Brand, one supporting line, one CTA group, one photographic plane.
+ */
 import PageHero from '../../composites/PageHero.astro';
 import IntroCopy from '../../composites/IntroCopy.astro';
 import Button from '../../primitives/Button.astro';
@@ -14,82 +17,172 @@ interface Props {
 }
 
 const { author, description, content } = Astro.props as Props;
+
+const portraitSrc = content.portrait.frontSrc;
+const portraitAvif = '/assets/images/optimized/avif/Blake-O-scaled@768w.avif';
+const portraitWebp = '/assets/images/optimized/webp/Blake-O-scaled@768w.webp';
 ---
 
-{
-  /**
-   * Identity lockup: coin + name share one axis.
-   * Mobile — stacked, centered. Desktop — coin beside copy, group centered as a unit.
-   */
-}
-<PageHero id="about-me" includeBlurOrbs={false}>
-  <div
-    class="hero-entrance relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center gap-7 text-center lg:flex-row lg:items-center lg:justify-center lg:gap-12 lg:text-left xl:gap-14"
-  >
-    <div class="relative shrink-0 pb-4 lg:pb-5">
-      <div
-        class="relative rounded-full ring-1 ring-accent/30 ring-offset-2 ring-offset-background sm:ring-offset-4"
-      >
-        <CoinFlipImage
-          frontSrc={content.portrait.frontSrc}
-          backSrc={content.portrait.backSrc}
-          alt={content.portrait.alt}
-          altBack={content.portrait.altBack}
-          size={300}
-          flipMultipleTimes
+<PageHero
+  id="about-me"
+  flush
+  includeBlurOrbs={false}
+  containerSize="full"
+  containerPadding={false}
+  class="home-hero-bleed"
+>
+  <div class="home-hero-stage relative flex w-full flex-1 flex-col md:block">
+    <div class="home-hero-media" aria-hidden="true">
+      <picture>
+        <source srcset={portraitAvif} type="image/avif" />
+        <source srcset={portraitWebp} type="image/webp" />
+        <img
+          src={portraitSrc}
+          alt=""
+          width="800"
+          height="800"
+          class="home-hero-photo"
           loading="eager"
-          fetchPriority="high"
-          decoding="auto"
-          class="home-coin-flip"
+          fetchpriority="high"
+          decoding="async"
         />
-      </div>
+      </picture>
+      <div class="home-hero-scrim"></div>
     </div>
 
-    <div class="flex max-w-xl min-w-0 flex-col items-center gap-5 lg:items-start">
-      <IntroCopy
-        kicker={content.kicker}
-        title={author}
-        description={description}
-        size="identity"
-        descriptionTone="strong"
-        class="w-full items-center lg:items-start lg:text-left"
-      />
-      <ButtonGroup align="center" responsive class="lg:justify-start">
-        <Button
-          variant="primary"
-          size="lg"
-          href={content.primaryCta.href}
-          data-test="home-cta-connect"
-          data-analytics="hero-cta"
-          data-prefetch-contact
-        >
-          {content.primaryCta.label}
-        </Button>
-        <Button variant="outline" size="lg" href={content.secondaryCta.href}>
-          {content.secondaryCta.label}
-        </Button>
-      </ButtonGroup>
+    <div
+      class="hero-entrance home-hero-copy layout-gutter relative z-10 flex flex-1 flex-col justify-end pb-12 pt-10 sm:pb-14 md:absolute md:inset-0 md:justify-center md:py-16 lg:py-20"
+    >
+      <div class="flex w-full max-w-xl flex-col items-start gap-6 md:max-w-lg lg:max-w-xl">
+        <IntroCopy
+          kicker={content.kicker}
+          title={author}
+          description={description}
+          size="identity"
+          descriptionTone="strong"
+          class="w-full items-start"
+        />
+        <ButtonGroup align="start" responsive>
+          <Button
+            variant="primary"
+            size="lg"
+            href={content.primaryCta.href}
+            data-test="home-cta-connect"
+            data-analytics="hero-cta"
+            data-prefetch-contact
+          >
+            {content.primaryCta.label}
+          </Button>
+          <Button variant="ghost" size="lg" href={content.secondaryCta.href}>
+            {content.secondaryCta.label}
+          </Button>
+        </ButtonGroup>
+      </div>
     </div>
   </div>
 </PageHero>
 
-<style is:global>
-  .home-coin-flip.coin-flip {
-    width: 11.5rem !important;
-    height: 11.5rem !important;
+<style>
+  .home-hero-bleed.page-hero-shell {
+    background: var(--color-background);
   }
 
-  @media (width >= 640px) {
-    .home-coin-flip.coin-flip {
-      width: 14rem !important;
-      height: 14rem !important;
+  .home-hero-stage {
+    min-height: min(36rem, calc(100svh - var(--nav-height)));
+  }
+
+  .home-hero-media {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: min(46vh, 22rem);
+    background: var(--color-surface-subtle);
+  }
+
+  .home-hero-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 18%;
+    transform: scale(1.04);
+  }
+
+  .home-hero-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      transparent 35%,
+      color-mix(in oklch, var(--color-background) 55%, transparent) 72%,
+      var(--color-background) 100%
+    );
+  }
+
+  .home-hero-copy {
+    background: var(--color-background);
+  }
+
+  @media (width >= 768px) {
+    .home-hero-stage {
+      min-height: calc(100svh - var(--nav-height));
+    }
+
+    .home-hero-media {
+      position: absolute;
+      inset: 0;
+      height: auto;
+    }
+
+    .home-hero-photo {
+      object-position: 72% 16%;
+    }
+
+    .home-hero-scrim {
+      background:
+        linear-gradient(
+          90deg,
+          var(--color-background) 0%,
+          color-mix(in oklch, var(--color-background) 92%, transparent) 34%,
+          color-mix(in oklch, var(--color-background) 35%, transparent) 58%,
+          transparent 78%
+        ),
+        linear-gradient(
+          180deg,
+          color-mix(in oklch, var(--color-background) 28%, transparent) 0%,
+          transparent 28%,
+          transparent 72%,
+          color-mix(in oklch, var(--color-background) 40%, transparent) 100%
+        );
+    }
+
+    .home-hero-copy {
+      background: transparent;
     }
   }
 
-  @media (width >= 1024px) {
-    .home-coin-flip.coin-flip {
-      width: 17.5rem !important;
-      height: 17.5rem !important;
+  @media (prefers-reduced-motion: no-preference) {
+    .home-hero-photo {
+      animation: home-hero-photo-settle 1.4s var(--ease-decelerate) both;
+    }
+  }
+
+  @keyframes home-hero-photo-settle {
+    from {
+      opacity: 0.55;
+      transform: scale(1.08);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-hero-photo {
+      animation: none;
+      transform: none;
     }
   }
 </style>

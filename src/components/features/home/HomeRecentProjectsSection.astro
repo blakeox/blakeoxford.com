@@ -28,7 +28,41 @@ const { projects, content } = Astro.props as Props;
     actionHref={content.cta.href}
     actionLabel={content.cta.label}
   />
-  <Grid cols="3" gap="md">
+  <Grid cols="3" gap="lg" class="project-teaser-grid">
     {projects.map((project) => <ProjectCard project={project} compact />)}
   </Grid>
 </Section>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    .project-teaser-grid > :global(*) {
+      animation: project-teaser-rise 700ms var(--ease-decelerate) both;
+    }
+
+    .project-teaser-grid > :global(*:nth-child(2)) {
+      animation-delay: 80ms;
+    }
+
+    .project-teaser-grid > :global(*:nth-child(3)) {
+      animation-delay: 160ms;
+    }
+  }
+
+  @keyframes project-teaser-rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-teaser-grid > :global(*) {
+      animation: none;
+    }
+  }
+</style>

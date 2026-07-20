@@ -1,7 +1,8 @@
 ---
 /**
- * ProjectCard — portfolio showcase card.
- * Compact: home teaser. Full: Selected work library with stronger visual weight.
+ * ProjectCard — portfolio showcase.
+ * Compact: cardless media teaser for home.
+ * Full: Selected work library with BaseCard weight.
  */
 import BaseCard from '../../primitives/BaseCard.astro';
 import OptimizedImage from '../../primitives/OptimizedImage.astro';
@@ -9,6 +10,7 @@ import Flex from '../../primitives/Flex.astro';
 import Badge from '../../primitives/Badge.astro';
 import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
 import GradientOverlay from '../../primitives/GradientOverlay.astro';
+import { headingSizeClass } from '../../../lib/typeScale';
 import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
 
 const { project, compact = false } =
@@ -38,131 +40,160 @@ const dateISO = project.data.date ? formatDateISO(project.data.date) : undefined
 const dateLabel = project.data.date ? formatDateShort(project.data.date) : undefined;
 ---
 
-<article class="group @container relative flex h-full flex-col">
-  <BaseCard variant="elevated" hover="lift" padding="none" rounded="xl" class="h-full">
-    <a
-      href={`/projects/${slug}/`}
-      class="relative flex h-full flex-col overflow-hidden focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-      aria-labelledby={`project-card-${slug}`}
-    >
-      <GradientOverlay variant="hover-card" direction="br" />
-
-      <figure
-        class:list={[
-          'relative overflow-hidden',
-          compact ? 'aspect-[16/10]' : 'aspect-[16/11] @md:aspect-[16/10]',
-        ]}
+{
+  compact ? (
+    <article class="group @container relative flex h-full flex-col">
+      <a
+        href={`/projects/${slug}/`}
+        class="relative flex h-full flex-col gap-4 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
+        aria-labelledby={`project-card-${slug}`}
       >
-        <OptimizedImage
-          src={image}
-          alt={`${title} preview`}
-          width={960}
-          height={540}
-          class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.04]"
-          loading="lazy"
-          quality={80}
-        />
-        <GradientOverlay variant="image-fade" direction="t" />
-      </figure>
+        <figure class="relative aspect-[16/10] overflow-hidden bg-surface-subtle">
+          <OptimizedImage
+            src={image}
+            alt={`${title} preview`}
+            width={960}
+            height={540}
+            class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.03]"
+            loading="lazy"
+            quality={80}
+          />
+        </figure>
 
-      <div
-        class:list={[
-          'relative z-[1] flex flex-1 flex-col',
-          compact
-            ? 'gap-3 px-5 pt-4 pb-5 @sm:px-6 @sm:pt-5 @sm:pb-6'
-            : 'gap-4 px-5 pt-5 pb-6 @sm:gap-4 @sm:px-6 @sm:pt-6 @sm:pb-7 @md:px-7',
-        ]}
-      >
-        <div class="space-y-2.5">
-          <Flex
-            wrap
-            align="center"
-            gap="sm"
-            class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
-          >
-            {
-              primaryCategory && (
-                <Badge variant="pill" size="xs" class="bg-accent-subtle text-accent ring-accent/20">
-                  {primaryCategory}
-                </Badge>
-              )
-            }
-            {
-              !compact && supportingCategory && (
-                <Badge variant="pill" size="xs">
-                  {supportingCategory}
-                </Badge>
-              )
-            }
-            {dateISO && dateLabel && <time datetime={dateISO}>{dateLabel}</time>}
-          </Flex>
+        <div class="flex flex-1 flex-col gap-2.5">
+          <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">
+            {primaryCategory}
+            {dateISO && dateLabel ? (
+              <>
+                <span aria-hidden="true"> · </span>
+                <time datetime={dateISO}>{dateLabel}</time>
+              </>
+            ) : null}
+          </p>
 
           <h3
             id={`project-card-${slug}`}
             class:list={[
-              'font-heading leading-snug font-semibold text-pretty text-foreground',
-              compact ? 'text-lg @sm:text-xl' : 'text-xl @sm:text-2xl',
+              'font-heading font-semibold tracking-tight text-pretty text-foreground',
+              headingSizeClass('subtitle'),
             ]}
           >
             {title}
           </h3>
 
-          {
-            proofLine && (
-              <p class="border-l-2 border-accent/50 pl-3.5 text-sm leading-snug font-semibold text-foreground/90 @md:text-base">
-                {proofLine}
-              </p>
-            )
-          }
+          {proofLine && (
+            <p class="text-sm leading-snug text-muted-foreground @md:text-base">{proofLine}</p>
+          )}
 
-          {
-            !compact && (hasDescription || valueSummary) && valueSummary !== proofLine && (
-              <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:3] @md:text-base">
-                {valueSummary}
-              </p>
-            )
-          }
-        </div>
-
-        {
-          !compact && (visibleTags.length > 0 || extraTagCount > 0) && (
-            <Flex
-              as="ul"
-              wrap
-              align="center"
-              gap="xs"
-              class="text-xxs font-semibold tracking-wide text-subtle-foreground uppercase"
-              aria-label="Project focus areas"
-            >
-              {visibleTags.map((tag) => (
-                <li>
-                  <Badge variant="pill" size="xs">
-                    {tag}
-                  </Badge>
-                </li>
-              ))}
-              {extraTagCount > 0 && (
-                <li>
-                  <Badge variant="pill" size="xs" class="text-subtle-foreground">
-                    +{extraTagCount}
-                  </Badge>
-                </li>
-              )}
-            </Flex>
-          )
-        }
-
-        <div class="mt-auto flex items-center justify-end gap-4 pt-1">
-          <span
-            class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis transition-all duration-normal group-hover:gap-3"
-          >
-            {compact ? 'View case study' : 'Read the case study'}
-            <ArrowRightIcon
-              class="opacity-90 transition-transform duration-normal group-hover:translate-x-0.5"
-            />
+          <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-accent-emphasis transition-all duration-normal group-hover:gap-3">
+            View case study
+            <ArrowRightIcon class="opacity-90 transition-transform duration-normal group-hover:translate-x-0.5" />
           </span>
         </div>
-      </div>
-    </a>
-  </BaseCard>
-</article>
+      </a>
+    </article>
+  ) : (
+    <article class="group @container relative flex h-full flex-col">
+      <BaseCard variant="elevated" hover="lift" padding="none" rounded="xl" class="h-full">
+        <a
+          href={`/projects/${slug}/`}
+          class="relative flex h-full flex-col overflow-hidden focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
+          aria-labelledby={`project-card-${slug}`}
+        >
+          <GradientOverlay variant="hover-card" direction="br" />
+
+          <figure class="relative aspect-[16/11] overflow-hidden @md:aspect-[16/10]">
+            <OptimizedImage
+              src={image}
+              alt={`${title} preview`}
+              width={960}
+              height={540}
+              class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.04]"
+              loading="lazy"
+              quality={80}
+            />
+            <GradientOverlay variant="image-fade" direction="t" />
+          </figure>
+
+          <div class="relative z-[1] flex flex-1 flex-col gap-4 px-5 pt-5 pb-6 @sm:gap-4 @sm:px-6 @sm:pt-6 @sm:pb-7 @md:px-7">
+            <div class="space-y-2.5">
+              <Flex
+                wrap
+                align="center"
+                gap="sm"
+                class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
+              >
+                {primaryCategory && (
+                  <Badge variant="pill" size="xs" class="bg-accent-subtle text-accent ring-accent/20">
+                    {primaryCategory}
+                  </Badge>
+                )}
+                {supportingCategory && (
+                  <Badge variant="pill" size="xs">
+                    {supportingCategory}
+                  </Badge>
+                )}
+                {dateISO && dateLabel && <time datetime={dateISO}>{dateLabel}</time>}
+              </Flex>
+
+              <h3
+                id={`project-card-${slug}`}
+                class:list={[
+                  'font-heading font-semibold tracking-tight text-pretty text-foreground',
+                  headingSizeClass('title'),
+                ]}
+              >
+                {title}
+              </h3>
+
+              {proofLine && (
+                <p class="border-l-2 border-accent/50 pl-3.5 text-sm leading-snug font-semibold text-foreground/90 @md:text-base">
+                  {proofLine}
+                </p>
+              )}
+
+              {(hasDescription || valueSummary) && valueSummary !== proofLine && (
+                <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:3] @md:text-base">
+                  {valueSummary}
+                </p>
+              )}
+            </div>
+
+            {(visibleTags.length > 0 || extraTagCount > 0) && (
+              <Flex
+                as="ul"
+                wrap
+                align="center"
+                gap="xs"
+                class="text-xxs font-semibold tracking-wide text-subtle-foreground uppercase"
+                aria-label="Project focus areas"
+              >
+                {visibleTags.map((tag) => (
+                  <li>
+                    <Badge variant="pill" size="xs">
+                      {tag}
+                    </Badge>
+                  </li>
+                ))}
+                {extraTagCount > 0 && (
+                  <li>
+                    <Badge variant="pill" size="xs" class="text-subtle-foreground">
+                      +{extraTagCount}
+                    </Badge>
+                  </li>
+                )}
+              </Flex>
+            )}
+
+            <div class="mt-auto flex items-center justify-end gap-4 pt-1">
+              <span class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis transition-all duration-normal group-hover:gap-3">
+                Read the case study
+                <ArrowRightIcon class="opacity-90 transition-transform duration-normal group-hover:translate-x-0.5" />
+              </span>
+            </div>
+          </div>
+        </a>
+      </BaseCard>
+    </article>
+  )
+}

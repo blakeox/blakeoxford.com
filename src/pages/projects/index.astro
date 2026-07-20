@@ -2,7 +2,6 @@
 import Layout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/composites/PageHero.astro';
 import IntroCopy from '../../components/composites/IntroCopy.astro';
-import DotMetaList from '../../components/composites/DotMetaList.astro';
 import Button from '../../components/primitives/Button.astro';
 import ButtonGroup from '../../components/composites/ButtonGroup.astro';
 import ProjectsCapabilitiesSection from '../../components/features/projects/ProjectsCapabilitiesSection.astro';
@@ -28,7 +27,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 {
   /*
   Portfolio showcase arc:
-  capability claim → what I deliver → featured proof → full range → cross-case results → convert.
+  claim → featured proof → full range → capabilities → cross-case results → convert.
 */
 }
 <Layout title={title} description={description} url={canonicalUrl} wide>
@@ -39,7 +38,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     id="projects-hero"
     shell="projects-hero-inner"
   >
-    <div class="flex w-full flex-col items-center gap-7">
+    <div class="flex w-full flex-col items-center gap-6">
       <IntroCopy
         kicker={meta.hero.kicker}
         title={meta.hero.title}
@@ -47,31 +46,17 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
         description={meta.hero.subtitle}
         align="center"
         size="hero"
-      >
-        <DotMetaList
-          items={meta.hero.capabilities}
-          label="Capability focus"
-          align="center"
-          class="pt-1"
-        />
-      </IntroCopy>
+      />
       <ButtonGroup align="center" responsive>
         <Button variant="primary" href={meta.hero.primaryCta.href}>
           {meta.hero.primaryCta.label}
         </Button>
-        <Button variant="outline" href={meta.hero.secondaryCta.href}>
+        <Button variant="ghost" href={meta.hero.secondaryCta.href}>
           {meta.hero.secondaryCta.label}
         </Button>
       </ButtonGroup>
     </div>
   </PageHero>
-
-  <ProjectsCapabilitiesSection
-    kicker={meta.capabilities.kicker}
-    title={meta.capabilities.title}
-    description={meta.capabilities.description}
-    items={meta.capabilities.items}
-  />
 
   {
     featuredProject && deepCut && (
@@ -90,6 +75,13 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     kicker={meta.library.kicker}
     title={meta.library.title}
     description={meta.library.description}
+  />
+
+  <ProjectsCapabilitiesSection
+    kicker={meta.capabilities.kicker}
+    title={meta.capabilities.title}
+    description={meta.capabilities.description}
+    items={meta.capabilities.items}
   />
 
   <ProjectsFindingsSection
