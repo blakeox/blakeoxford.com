@@ -17,7 +17,9 @@ const __dirname = dirname(__filename);
 
 /** Lazy-load Sentry only for real production builds (skip `astro check`, which sets NODE_ENV=production). */
 const sentryIntegrations = [];
-const isAstroCheck = process.argv.some((arg) => arg === 'check' || /\/check$/.test(arg));
+const isAstroCheck = process.argv.some(
+  (arg) => arg === 'check' || arg.endsWith('/check') || arg.endsWith('\\check')
+);
 if (
   process.env.NODE_ENV === 'production' &&
   process.env.PUBLIC_SENTRY_DSN &&
