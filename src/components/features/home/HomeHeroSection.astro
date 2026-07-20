@@ -22,21 +22,11 @@ const { author, description, content } = Astro.props as Props;
    * Mobile — stacked, centered. Desktop — coin beside copy, group centered as a unit.
    */
 }
-<PageHero
-  id="about-me"
-  class="hero-gradient-animated hero-with-atmosphere"
-  includeBlurOrbs={false}
-  style={`--hero-atmosphere-image: url('${content.portrait.frontSrc}')`}
->
+<PageHero id="about-me" includeBlurOrbs={false}>
   <div
     class="hero-entrance relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center gap-7 text-center lg:flex-row lg:items-center lg:justify-center lg:gap-12 lg:text-left xl:gap-14"
   >
     <div class="relative shrink-0 pb-4 lg:pb-5">
-      <div
-        class="pointer-events-none absolute -inset-[12%] rounded-full bg-accent-subtle blur-3xl"
-        aria-hidden="true"
-      >
-      </div>
       <div
         class="relative rounded-full ring-1 ring-accent/30 ring-offset-2 ring-offset-background sm:ring-offset-4"
       >

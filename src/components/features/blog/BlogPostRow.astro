@@ -10,6 +10,7 @@ import GradientOverlay from '../../primitives/GradientOverlay.astro';
 import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
 import { formatDateISO, formatDateShort } from '../../../utils/index.js';
 import { cn } from '../../../utils/cn';
+import { headingSizeClass } from '../../../lib/typeScale';
 
 const { post, align = 'left' } = Astro.props as BlogPostRowProps;
 const { id: slug, data } = post;
@@ -70,7 +71,10 @@ const { id: slug, data } = post;
         </Flex>
 
         <h2
-          class="font-heading text-2xl leading-tight font-semibold text-pretty text-foreground transition-colors duration-moderate group-hover:text-accent-emphasis sm:text-3xl lg:text-4xl"
+          class:list={[
+            'font-heading font-semibold text-pretty text-foreground transition-colors duration-moderate group-hover:text-accent-emphasis',
+            headingSizeClass('section'),
+          ]}
         >
           <a
             href={`/blog/${slug}/`}

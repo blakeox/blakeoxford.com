@@ -4,6 +4,7 @@
  */
 import Section from '../../primitives/Section.astro';
 import SectionHeader from '../../composites/SectionHeader.astro';
+import { headingSizeClass } from '../../../lib/typeScale';
 
 export interface AboutEducationContent {
   kicker: string;
@@ -41,7 +42,12 @@ const { content } = Astro.props;
       <p class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
         Education
       </p>
-      <h3 class="font-heading text-2xl leading-snug font-semibold tracking-tight text-foreground">
+      <h3
+        class:list={[
+          'font-heading font-semibold tracking-tight text-foreground',
+          headingSizeClass('title'),
+        ]}
+      >
         {content.degree}
       </h3>
       <p class="text-base font-semibold text-accent-emphasis">{content.institution}</p>
