@@ -14,8 +14,8 @@ export const DARK_CLASS = 'dark';
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 /** Static hex fallbacks for platform chrome (meta theme-color, manifest). */
-export const THEME_COLOR_LIGHT = '#91343d';
-export const THEME_COLOR_DARK = '#0e0806';
+export const THEME_COLOR_LIGHT = '#32618e';
+export const THEME_COLOR_DARK = '#050911';
 
 const CYCLE_ORDER: ThemePreference[] = ['light', 'dark', 'system'];
 
