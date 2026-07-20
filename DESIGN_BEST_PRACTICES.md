@@ -60,7 +60,9 @@ Article/MDX body: wrap with `Prose` (`src/components/primitives/Prose.astro`). T
 
 Live token docs at `/design/tokens` auto-list public utilities by parsing `@theme inline` via `src/lib/designTokens.ts`, and show browser-resolved values plus live WCAG contrast pairs.
 
-Heading sizes: use the shared ladder in `src/lib/typeScale.ts` (`identity` → `hero` → `display` → `section` → `title` → `subtitle`) via `IntroCopy` / `SectionHeading`. Section vertical padding uses `--space-section-*` / `py-section-*`. Prefer Tailwind’s default spacing scale for local gaps and padding.
+Heading sizes: use the shared ladder in `src/lib/typeScale.ts` (`identity` → `hero` → `display` → `section` → `title` → `subtitle`) via `IntroCopy` / `SectionHeading` / `headingSizeClass()`. Section vertical padding uses `--space-section-*` / `py-section-*`. Prefer Tailwind’s default spacing scale for local gaps and padding.
+
+`design:lint` also enforces: no decorative blur orbs outside `PageHero`’s opt-in; no `BadgePill` imports (use `Badge variant="pill"`); no DIY elevated card shells when `BaseCard` is available; no ad-hoc `font-heading` + `text-2xl+` ladders outside the typeScale allowlist.
 
 ### Guidelines
 

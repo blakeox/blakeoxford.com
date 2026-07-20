@@ -1083,7 +1083,7 @@ export const componentDocs: ComponentDoc[] = [
     name: 'FeatureCard',
     category: 'Composites',
     description:
-      'Semantic feature surface with token-backed color variants. Use for marketing/feature grids instead of page-specific card styles.',
+      'Semantic feature surface with token-backed color variants. Use for marketing/feature grids instead of page-specific card styles. Prefer text titles — no emoji icon prop.',
     filePath: 'src/components/composites/FeatureCard.astro',
     props: [
       {

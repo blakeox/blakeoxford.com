@@ -7,6 +7,7 @@ import Button from '../../primitives/Button.astro';
 import Badge from '../../primitives/Badge.astro';
 import BaseCard from '../../primitives/BaseCard.astro';
 import { BlogPostRow } from './index';
+import { headingSizeClass } from '../../../lib/typeScale';
 
 interface Props {
   posts: CollectionEntry<'blog'>[];
@@ -59,7 +60,7 @@ const { posts } = Astro.props as Props;
           <span class="section-kicker w-fit">Archive</span>
           <h2
             id="blog-posts-heading"
-            class="font-heading text-2xl font-semibold text-foreground sm:text-3xl md:text-4xl"
+            class:list={['font-heading font-semibold text-foreground', headingSizeClass('section')]}
           >
             Latest insights
           </h2>
@@ -78,7 +79,12 @@ const { posts } = Astro.props as Props;
           ))
         ) : (
           <BaseCard variant="elevated" hover="none" rounded="3xl" padding="lg" class="text-center">
-            <h2 class="mb-4 font-heading text-2xl font-semibold text-foreground sm:text-3xl">
+            <h2
+              class:list={[
+                'mb-4 font-heading font-semibold text-foreground',
+                headingSizeClass('title'),
+              ]}
+            >
               Articles are on the way
             </h2>
             <p class="text-sm leading-relaxed text-muted-foreground">

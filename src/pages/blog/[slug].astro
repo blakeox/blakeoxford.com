@@ -12,6 +12,7 @@ import {
   createBreadcrumbListSchema,
   defaultAuthor,
 } from '../../utils/structuredData';
+import { headingSizeClass } from '../../lib/typeScale';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);
@@ -91,7 +92,10 @@ const structuredData = [articleSchema, breadcrumbSchema];
           }
         </Flex>
         <h1
-          class="font-heading text-4xl leading-tight font-bold text-foreground sm:text-5xl md:text-6xl"
+          class:list={[
+            'font-heading font-semibold tracking-tight text-foreground',
+            headingSizeClass('hero'),
+          ]}
         >
           {post.data.title}
         </h1>
