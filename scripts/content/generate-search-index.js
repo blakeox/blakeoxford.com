@@ -7,8 +7,9 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const pnpmCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 
-const sync = spawnSync('npx', ['astro', 'sync'], {
+const sync = spawnSync(pnpmCommand, ['exec', 'astro', 'sync'], {
   stdio: 'inherit',
   shell: false,
 });

@@ -41,7 +41,11 @@ describe('navLinks derived from nav.json', () => {
 
     for (const link of navConfig.socialLinks ?? []) {
       expect(link.external).toBe(true);
-      expect(link.target).toBe('_blank');
+      if (/^https?:\/\//.test(link.href)) {
+        expect(link.target).toBe('_blank');
+      } else {
+        expect(link.target).toBeUndefined();
+      }
     }
   });
 

@@ -5,13 +5,13 @@ import { resolve } from 'node:path';
 const themeCss = readFileSync(resolve(__dirname, '../../src/styles/theme.css'), 'utf8');
 
 describe('brand token contract', () => {
-  it('keeps navy ink primary (hue 255) and steel accent (hue 250)', () => {
-    expect(themeCss).toMatch(/--brand-primary:\s*oklch\([^)]*255\)/);
-    expect(themeCss).toMatch(/--brand-accent:\s*oklch\([^)]*250\)/);
+  it('keeps navy ink primary (hue 250) and warm orange accent (hue 48)', () => {
+    expect(themeCss).toMatch(/--brand-primary:\s*oklch\([^)]*250\)/);
+    expect(themeCss).toMatch(/--brand-accent:\s*oklch\([^)]*48\)/);
   });
 
-  it('uses cool fog paper (hue 95) for light surfaces', () => {
-    expect(themeCss).toMatch(/--palette-background:\s*oklch\([^)]*95\)/);
+  it('uses cool blue paper (hue 230) for light surfaces', () => {
+    expect(themeCss).toMatch(/--palette-background:\s*oklch\([^)]*230\)/);
   });
 
   it('bridges section spacing rhythm', () => {

@@ -105,12 +105,12 @@ features/
 
 ### Islands (`src/components/islands/`)
 
-**Purpose**: Client-side interactive React components
+**Purpose**: Small client-side React mounts (forms and similar)
 
 **Examples**:
-- `AIChatIsland.tsx` - AI chat widget
-- `ContactFormIsland.tsx` - Contact form with validation
-- `ChatLauncherIsland.tsx` - Chat launcher entry point
+- `ContactFormIsland.tsx` / `ContactFormClient.tsx` — Contact form with validation
+
+**Larger interactive products** (Ask chat, Find command center, shared overlay) live under `src/features/` — not here. See `src/features/chat/` and `src/features/command-center/`.
 
 **Characteristics**:
 - React components (`.tsx`)

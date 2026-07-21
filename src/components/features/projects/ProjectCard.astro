@@ -124,7 +124,11 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
                 class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
               >
                 {primaryCategory && (
-                  <Badge variant="pill" size="xs" class="bg-accent-subtle text-accent ring-accent/20">
+                  <Badge
+                    variant="pill"
+                    size="xs"
+                    class="bg-accent-subtle text-accent ring-accent/20"
+                  >
                     {primaryCategory}
                   </Badge>
                 )}

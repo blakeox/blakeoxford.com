@@ -1,6 +1,6 @@
 ---
 description: AI features, chat widget, and RAG implementation
-applyTo: '{src/components/{AIChatWidget.astro,chat/**,islands/AIChatIsland.tsx},functions/ConversationDO.js,src/lib/{ai-search.ts,chat-*}}'
+applyTo: '{src/components/composites/AIChatWidget.astro,src/features/chat/**,functions/ConversationDO.ts,src/lib/{ai-search.ts,chat/**}}'
 ---
 
 # AI Features Instructions
@@ -13,14 +13,15 @@ Guidelines for developing AI-powered features including the chat widget, RAG sys
 
 ### AI Chat Components
 
-- **AIChatWidget.astro** - Main chat interface (Astro component)
-- **AIChatIsland.tsx** - React island for client-side interactivity
-- **MessageBubble.tsx** - Individual message rendering with citations
-- **ErrorBoundary.tsx** - Error handling for chat widget
+- **AIChatWidget.astro** — Astro mount (`src/components/composites/`)
+- **AIChatIsland.tsx** / **ChatLauncherIsland.tsx** — React entry points under `src/features/chat/`
+- **features/chat/components/** — Message UI, header, input, status
+- **features/command-center/** — Find overlay (handoff into Ask)
+- **features/overlay/** — Shared overlay shell + suggestion chips
 
 ### Backend Services
 
-- **ConversationDO.js** - Durable Object for stateful conversations
+- **ConversationDO.ts** - Durable Object for stateful conversations
 - **Workers AI** - On-edge LLM inference
 - **Vectorize** - Semantic search over content
 - **Analytics Engine** - Usage tracking
@@ -28,11 +29,8 @@ Guidelines for developing AI-powered features including the chat widget, RAG sys
 ### Library Files
 
 - `src/lib/ai-search.ts` - AI search utilities
-- `src/lib/chat-types.ts` - TypeScript types
-- `src/lib/chat-helpers.ts` - Helper functions
-- `src/lib/chat-constants.ts` - Configuration constants
-- `src/lib/conversation-utils.ts` - Conversation management
-- `src/lib/conversation-ws.ts` - WebSocket utilities
+- `src/lib/chat/` - Types, helpers, constants, conversation/WS utilities
+- `src/lib/hooks/` - Chat controller and related React hooks
 
 ---
 

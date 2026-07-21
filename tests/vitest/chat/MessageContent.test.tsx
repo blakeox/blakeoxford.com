@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import {
   MessageContent,
   QualityIndicator,
-} from '../../../src/components/islands/chat/MessageContent';
-import type { ChatMessage } from '../../../src/components/islands/chat/types';
+} from '../../../src/features/chat/components/MessageContent';
+import type { ChatMessage } from '../../../src/features/chat/types';
 
 // Mock quality-utils
 vi.mock('../../../src/lib/quality-utils', () => ({

@@ -88,7 +88,7 @@ A blazing-fast, modern portfolio site built with [Astro](https://astro.build), d
 
 ### Prerequisites
 
-- Node.js v22+
+- Node.js v24 LTS
 
 - Corepack enabled: `corepack enable`
 
@@ -323,6 +323,7 @@ export default defineConfig({
 
 - The performance budget script validates bundle sizes and computes totals from referenced assets only. It scans built HTML/JS/CSS for references to /_astro and /assets files, then sums sizes for those exact files plus HTML. This avoids counting unreferenced hashed artifacts.
 - Images are optimized prebuild. Scripts generate AVIF/WebP for carousel, projects, and public images. Runtime components prefer AVIF > WebP > JPEG/PNG, with PNG originals excluded from imports where possible.
+- Carousel masters live outside git at `~/Documents/blakeoxford-local/carousel-originals` (override with `CAROUSEL_ORIGINALS_DIR`). See `src/assets/images/carousel/ORIGINAL_MASTERS.md`. Run the optimize script (via `pnpm prebuild`) to write WebP/AVIF into `src/assets/images/carousel/`; commit only those outputs.
 - The budget warns on PNG/JPG without modern siblings, ignoring favicons/app icons and allowlisting optimized PNG derivatives under public/assets/images/optimized.
 - CSP, X-Frame-Options, and other headers enforced
 

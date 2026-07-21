@@ -180,6 +180,11 @@ export default [
         detectComponentClasses: true,
       },
     },
+    rules: {
+      ...betterTailwindcss.configs['correctness-warn'].rules,
+      // Astro-scoped styles and feature CSS intentionally define non-Tailwind hook classes.
+      'better-tailwindcss/no-unknown-classes': 'off',
+    },
   },
 
   // Reusable components must use semantic theme tokens, not raw dark: utilities

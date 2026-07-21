@@ -15,15 +15,21 @@ loadProjectEnv();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-/** Lazy-load Sentry only for real production builds (skip `astro check`, which sets NODE_ENV=production). */
+/** Lazy-load Sentry only for real production builds, not Astro utility commands. */
 const sentryIntegrations = [];
-const isAstroCheck = process.argv.some(
-  (arg) => arg === 'check' || arg.endsWith('/check') || arg.endsWith('\\check')
+const isAstroUtilityCommand = process.argv.some(
+  (arg) =>
+    arg === 'check' ||
+    arg === 'sync' ||
+    arg.endsWith('/check') ||
+    arg.endsWith('\\check') ||
+    arg.endsWith('/sync') ||
+    arg.endsWith('\\sync')
 );
 if (
   process.env.NODE_ENV === 'production' &&
   process.env.PUBLIC_SENTRY_DSN &&
-  !isAstroCheck
+  !isAstroUtilityCommand
 ) {
   try {
     const { default: sentry } = await import('@sentry/astro');
