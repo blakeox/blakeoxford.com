@@ -447,7 +447,7 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'Chat',
     description:
       'Message text content renderer with streaming indicators and quality badges. Displays chat message content with typing animations, quality scores, and citation health metrics.',
-    filePath: 'src/components/islands/chat/MessageContent.tsx',
+    filePath: 'src/features/chat/components/MessageContent.tsx',
     props: [
       {
         name: 'message',
@@ -510,7 +510,7 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'Chat',
     description:
       'Source citations and expandable source list display. Shows citation badges, primary source, and expandable detailed source list with metadata.',
-    filePath: 'src/components/islands/chat/MessageSources.tsx',
+    filePath: 'src/features/chat/components/MessageSources.tsx',
     props: [
       { name: 'sources', type: 'Source[]', required: true, description: 'Array of source objects' },
       {
@@ -561,7 +561,7 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'Chat',
     description:
       'Interactive action buttons for chat messages. Provides copy, share, feedback, and source viewing actions with analytics tracking.',
-    filePath: 'src/components/islands/chat/MessageActions.tsx',
+    filePath: 'src/features/chat/components/MessageActions.tsx',
     props: [
       { name: 'message', type: 'ChatMessage', required: true, description: 'Chat message object' },
       {
@@ -620,7 +620,7 @@ export const componentDocs: ComponentDoc[] = [
     subcategory: 'Chat',
     description:
       'Contextual call-to-actions and follow-up suggestions. Shows relevant CTAs based on query context and generates dynamic follow-up questions.',
-    filePath: 'src/components/islands/chat/MessageCTAs.tsx',
+    filePath: 'src/features/chat/components/MessageCTAs.tsx',
     props: [
       { name: 'message', type: 'ChatMessage', required: true, description: 'Chat message object' },
       {
@@ -1466,7 +1466,7 @@ export const componentDocs: ComponentDoc[] = [
     category: 'Islands',
     description:
       'React island powering the AI chat assistant with streaming responses and source citations.',
-    filePath: 'src/components/islands/AIChatIsland.tsx',
+    filePath: 'src/features/chat/AIChatIsland.tsx',
     examples: [{ title: 'AI chat', code: '<AIChatIsland client:load />' }],
     accessibility: ['Dialog with aria-modal', 'Keyboard shortcut support', 'Focus management'],
     tags: ['react', 'island', 'chat', 'ai'],

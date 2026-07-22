@@ -1,95 +1,410 @@
 ---
-import CoinFlipImage from '../../composites/CoinFlipImage.astro';
-import PageHero from '../../composites/PageHero.astro';
+/**
+ * Home identity hero — scroll reveals Work → Daring.
+ * Sticky stage; contained portrait panel crossfades with scroll (not full-bleed, not coin).
+ * First viewport: brand, one line, one CTA, portrait. Progress lives on the frame.
+ */
 import IntroCopy from '../../composites/IntroCopy.astro';
 import Button from '../../primitives/Button.astro';
-import ButtonGroup from '../../composites/ButtonGroup.astro';
 import type { HomePageContent } from '../../../content/home/pageTypes';
 
 interface Props {
   author: string;
-  /** Single supporting line under the name (promise or role). */
   description?: string;
   content: HomePageContent['hero'];
 }
 
-const { author, description, content } = Astro.props as Props;
+const { author, content } = Astro.props as Props;
+
+const workLine = 'Builds systems teams keep running.';
+const daringLine = 'Chases the edge cases that make them better.';
 ---
 
-{
-  /**
-   * Identity lockup: coin + name share one axis.
-   * Mobile — stacked, centered. Desktop — coin beside copy, group centered as a unit.
-   */
-}
-<PageHero id="about-me" includeBlurOrbs={false}>
-  <div
-    class="hero-entrance relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center gap-7 text-center lg:flex-row lg:items-center lg:justify-center lg:gap-12 lg:text-left xl:gap-14"
-  >
-    <div class="relative shrink-0 pb-4 lg:pb-5">
-      <div
-        class="relative rounded-full ring-1 ring-accent/30 ring-offset-2 ring-offset-background sm:ring-offset-4"
-      >
-        <CoinFlipImage
-          frontSrc={content.portrait.frontSrc}
-          backSrc={content.portrait.backSrc}
-          alt={content.portrait.alt}
-          altBack={content.portrait.altBack}
-          size={300}
-          flipMultipleTimes
-          loading="eager"
-          fetchPriority="high"
-          decoding="auto"
-          class="home-coin-flip"
-        />
+<section id="about-me" class="home-dual" data-home-dual aria-label="Blake Oxford — two sides">
+  <div class="home-dual-track">
+    <div class="home-dual-sticky">
+      <div class="home-dual-stage layout-gutter">
+        <div class="hero-entrance home-dual-copy relative z-20">
+          <div class="home-dual-lockup">
+            <span class="home-dual-mark" aria-hidden="true"></span>
+            <IntroCopy
+              kicker={content.kicker || 'Two sides'}
+              title={author}
+              size="identity"
+              class="w-full items-start"
+            />
+
+            <div class="home-dual-lines" aria-hidden="true">
+              <p class="home-dual-line" data-dual-line-work>{workLine}</p>
+              <p class="home-dual-line" data-dual-line-daring>{daringLine}</p>
+            </div>
+          </div>
+
+          <p class="sr-only" aria-live="polite" data-dual-live></p>
+
+          <Button
+            variant="primary"
+            size="lg"
+            href={content.primaryCta.href}
+            data-test="home-cta-connect"
+            data-analytics="hero-cta"
+            data-prefetch-contact
+          >
+            {content.primaryCta.label}
+          </Button>
+
+          <p class="home-dual-hint">Scroll to meet the other side</p>
+        </div>
+
+        <div class="home-dual-visual relative z-10" aria-hidden="true">
+          <div class="home-dual-visual-inner">
+            <div
+              class="home-dual-frame relative w-[min(16.5rem,58vw)] overflow-hidden rounded-xl bg-surface-subtle sm:w-[min(18rem,46vw)] md:w-[min(20.5rem,32vw)] lg:w-[min(22rem,28vw)]"
+              style="aspect-ratio: 4 / 5"
+            >
+              <img
+                src="/assets/images/optimized/avif/Blake-O-scaled@768w.avif"
+                alt=""
+                width="768"
+                height="768"
+                class="home-dual-face home-dual-face-work absolute inset-0 size-full object-cover"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+              />
+              <img
+                src="/assets/images/optimized/avif/china-profile-picture.avif"
+                alt=""
+                width="768"
+                height="768"
+                class="home-dual-face home-dual-face-daring absolute inset-0 size-full object-cover"
+                data-dual-daring
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="home-dual-frame-tick"></div>
+            </div>
+            <p class="home-dual-frame-caption" data-frame-caption>Work</p>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="flex max-w-xl min-w-0 flex-col items-center gap-5 lg:items-start">
-      <IntroCopy
-        kicker={content.kicker}
-        title={author}
-        description={description}
-        size="identity"
-        descriptionTone="strong"
-        class="w-full items-center lg:items-start lg:text-left"
-      />
-      <ButtonGroup align="center" responsive class="lg:justify-start">
-        <Button
-          variant="primary"
-          size="lg"
-          href={content.primaryCta.href}
-          data-test="home-cta-connect"
-          data-analytics="hero-cta"
-          data-prefetch-contact
-        >
-          {content.primaryCta.label}
-        </Button>
-        <Button variant="outline" size="lg" href={content.secondaryCta.href}>
-          {content.secondaryCta.label}
-        </Button>
-      </ButtonGroup>
-    </div>
   </div>
-</PageHero>
+</section>
 
-<style is:global>
-  .home-coin-flip.coin-flip {
-    width: 11.5rem !important;
-    height: 11.5rem !important;
+<style>
+  .home-dual {
+    position: relative;
+    background: var(--color-background);
   }
 
-  @media (width >= 640px) {
-    .home-coin-flip.coin-flip {
-      width: 14rem !important;
-      height: 14rem !important;
+  .home-dual-track {
+    position: relative;
+    height: 150vh;
+  }
+
+  .home-dual-sticky {
+    position: sticky;
+    top: var(--nav-height);
+    display: flex;
+    height: calc(100svh - var(--nav-height));
+    align-items: center;
+    overflow: hidden;
+    background:
+      radial-gradient(
+        ellipse 48% 52% at 78% 46%,
+        color-mix(
+            in oklch,
+            var(--color-accent) calc(8% + var(--dual-progress, 0) * 8%),
+            transparent
+          )
+          0%,
+        transparent 68%
+      ),
+      linear-gradient(
+        165deg,
+        color-mix(in oklch, var(--color-surface) 94%, transparent) 0%,
+        var(--color-background) 55%,
+        color-mix(in oklch, var(--color-accent) 4%, var(--color-background)) 100%
+      );
+  }
+
+  .home-dual-stage {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2.25rem;
+    padding-block: 2rem;
+  }
+
+  .home-dual-copy {
+    display: flex;
+    width: 100%;
+    max-width: 34rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .home-dual-lockup {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .home-dual-mark {
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    background: color-mix(in oklch, var(--color-accent) 70%, transparent);
+  }
+
+  .home-dual-lines {
+    position: relative;
+    width: 100%;
+    max-width: 28rem;
+    min-height: 3.2em;
+  }
+
+  .home-dual-line {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: clamp(1.15rem, 1rem + 0.55vw, 1.45rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+    color: var(--color-foreground);
+  }
+
+  .home-dual-line[data-dual-line-work] {
+    opacity: calc(1 - var(--dual-progress, 0));
+    transform: translateY(calc(var(--dual-progress, 0) * -0.35rem));
+  }
+
+  .home-dual-line[data-dual-line-daring] {
+    position: absolute;
+    inset: 0;
+    opacity: var(--dual-progress, 0);
+    transform: translateY(calc((1 - var(--dual-progress, 0)) * 0.35rem));
+  }
+
+  .home-dual-hint {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-smallcaps);
+    text-transform: uppercase;
+    color: var(--color-muted-foreground);
+    opacity: clamp(0, calc(1 - (var(--dual-progress, 0) * 7)), 1);
+    transition: opacity 0.2s ease;
+  }
+
+  .home-dual[data-hint='off'] .home-dual-hint {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .home-dual-visual {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .home-dual-visual-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .home-dual-frame {
+    aspect-ratio: 4 / 5;
+    box-shadow:
+      var(--shadow-lg),
+      0 0 0 1px
+        color-mix(
+          in oklch,
+          var(--color-accent) calc(18% + var(--dual-progress, 0) * 28%),
+          transparent
+        ),
+      0 0 calc(28px + var(--dual-progress, 0) * 28px)
+        color-mix(
+          in oklch,
+          var(--color-accent) calc(8% + var(--dual-progress, 0) * 14%),
+          transparent
+        );
+    transform: scale(calc(1 + (var(--dual-progress, 0) * 0.03)));
+    transform-origin: center center;
+  }
+
+  .home-dual-frame-tick {
+    position: absolute;
+    right: 0.65rem;
+    bottom: 0.65rem;
+    left: 0.65rem;
+    z-index: 2;
+    height: 2px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--color-background) 35%, transparent);
+  }
+
+  .home-dual-frame-tick::after {
+    content: '';
+    display: block;
+    width: calc(var(--dual-progress, 0) * 100%);
+    height: 100%;
+    border-radius: inherit;
+    background: color-mix(in oklch, var(--color-accent) 85%, white 10%);
+  }
+
+  .home-dual-frame-caption {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-accent-emphasis);
+    transition:
+      letter-spacing 0.35s ease,
+      color 0.35s ease;
+  }
+
+  .home-dual[data-settled='true'] .home-dual-frame {
+    box-shadow:
+      var(--shadow-lg),
+      0 0 0 1px color-mix(in oklch, var(--color-accent) 48%, transparent),
+      0 0 56px color-mix(in oklch, var(--color-accent) 22%, transparent);
+    transition:
+      box-shadow 0.55s var(--ease-decelerate, ease),
+      transform 0.55s var(--ease-decelerate, ease);
+  }
+
+  .home-dual[data-settled='true'] .home-dual-frame-caption {
+    letter-spacing: 0.14em;
+  }
+
+  .home-dual[data-settled='true'] .home-dual-sticky {
+    background:
+      radial-gradient(
+        ellipse 52% 56% at 78% 46%,
+        color-mix(in oklch, var(--color-accent) 16%, transparent) 0%,
+        transparent 70%
+      ),
+      linear-gradient(
+        165deg,
+        color-mix(in oklch, var(--color-surface) 94%, transparent) 0%,
+        var(--color-background) 58%,
+        color-mix(in oklch, var(--color-accent) 5%, var(--color-background)) 100%
+      );
+    transition: background 0.55s ease;
+  }
+
+  .home-dual-face {
+    will-change: opacity, transform, filter;
+  }
+
+  .home-dual-face-work {
+    object-position: 50% 16%;
+    opacity: calc(1 - var(--dual-progress, 0));
+    transform: scale(calc(1 + var(--dual-progress, 0) * 0.08));
+    filter: blur(calc(var(--dual-progress, 0) * 5px));
+  }
+
+  .home-dual-face-daring {
+    object-position: 48% 20%;
+    opacity: var(--dual-progress, 0);
+    transform: scale(calc(1.08 - var(--dual-progress, 0) * 0.08));
+    filter: blur(calc((1 - var(--dual-progress, 0)) * 5px));
+    clip-path: inset(0 0 calc((1 - var(--dual-progress, 0)) * 100%) 0);
+  }
+
+  @media (width >= 768px) {
+    .home-dual-track {
+      height: 175vh;
+    }
+
+    .home-dual-stage {
+      display: grid;
+      grid-template-columns: minmax(20rem, 1.05fr) minmax(16rem, 0.95fr);
+      align-items: center;
+      gap: 2.5rem 3rem;
+    }
+
+    .home-dual-visual {
+      justify-content: flex-end;
+    }
+
+    .home-dual-visual-inner {
+      align-items: flex-end;
     }
   }
 
   @media (width >= 1024px) {
-    .home-coin-flip.coin-flip {
-      width: 17.5rem !important;
-      height: 17.5rem !important;
+    .home-dual-stage {
+      gap: 3rem 4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-dual-track {
+      height: auto;
+    }
+
+    .home-dual-sticky {
+      position: relative;
+      top: auto;
+      height: auto;
+      min-height: calc(100svh - var(--nav-height));
+    }
+
+    .home-dual-hint {
+      display: none;
+    }
+
+    .home-dual-frame {
+      transform: none;
+    }
+
+    .home-dual-frame-tick {
+      display: none;
+    }
+
+    .home-dual-lines {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .home-dual-line[data-dual-line-work],
+    .home-dual-line[data-dual-line-daring] {
+      position: static;
+      opacity: 1;
+      transform: none;
+    }
+
+    .home-dual-line[data-dual-line-daring] {
+      color: var(--color-muted-foreground);
+      font-weight: 500;
+    }
+
+    .home-dual-face-work {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+
+    .home-dual-face-daring {
+      opacity: 0;
+      transform: none;
+      filter: none;
+      clip-path: none;
     }
   }
 </style>
@@ -115,6 +430,88 @@ const { author, description, content } = Astro.props as Props;
     cta.addEventListener('focus', prefetch, { once: true });
   }
 
-  bindContactPrefetch();
-  document.addEventListener('astro:page-load', bindContactPrefetch);
+  let homeDualAC: AbortController | null = null;
+
+  function teardownHomeDual() {
+    homeDualAC?.abort();
+    homeDualAC = null;
+  }
+
+  function bindHomeDual() {
+    const root = document.querySelector<HTMLElement>('[data-home-dual]');
+    if (!root || root.dataset.bound === 'true') return;
+
+    const track = root.querySelector<HTMLElement>('.home-dual-track');
+    const live = root.querySelector<HTMLElement>('[data-dual-live]');
+    const daringImg = root.querySelector<HTMLImageElement>('[data-dual-daring]');
+    const frameCaption = root.querySelector<HTMLElement>('[data-frame-caption]');
+    if (!track) return;
+
+    root.dataset.bound = 'true';
+    teardownHomeDual();
+    homeDualAC = new AbortController();
+    const { signal } = homeDualAC;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      root.style.setProperty('--dual-progress', '0');
+      root.setAttribute('data-side', 'work');
+      root.setAttribute('data-hint', 'off');
+      root.setAttribute('data-settled', 'false');
+      if (frameCaption) frameCaption.textContent = 'Work';
+      return;
+    }
+
+    let lastSide = 'work';
+    let warmed = false;
+    /** Fraction of track travel used for the Work→Daring scrub; remainder is settle. */
+    const SCRUB_END = 0.8;
+
+    const warmDaring = () => {
+      if (warmed || !daringImg) return;
+      warmed = true;
+      if (daringImg.loading === 'lazy') daringImg.loading = 'eager';
+    };
+
+    const update = () => {
+      const rect = track.getBoundingClientRect();
+      const view = window.innerHeight || 1;
+      const total = Math.max(1, rect.height - view);
+      const raw = Math.min(1, Math.max(0, -rect.top / total));
+      const settled = raw >= SCRUB_END;
+      const progress = settled ? 1 : raw / SCRUB_END;
+
+      root.style.setProperty('--dual-progress', progress.toFixed(4));
+      root.setAttribute('data-hint', progress > 0.12 ? 'off' : 'on');
+      root.setAttribute('data-settled', settled ? 'true' : 'false');
+
+      if (progress > 0.08) warmDaring();
+
+      const side = progress >= 0.5 ? 'daring' : 'work';
+      root.setAttribute('data-side', side);
+      if (frameCaption) {
+        frameCaption.textContent = settled || side === 'daring' ? 'Daring' : 'Work';
+      }
+      if (side !== lastSide && live) {
+        const message = side === 'daring' ? 'Daring side' : 'Work side';
+        live.textContent = message;
+        lastSide = side;
+        window.setTimeout(() => {
+          if (live.textContent === message) live.textContent = '';
+        }, 800);
+      }
+    };
+
+    update();
+    window.addEventListener('scroll', update, { passive: true, signal });
+    window.addEventListener('resize', update, { signal });
+  }
+
+  function bindHomeHero() {
+    bindContactPrefetch();
+    bindHomeDual();
+  }
+
+  bindHomeHero();
+  document.addEventListener('astro:page-load', bindHomeHero);
+  document.addEventListener('astro:before-swap', teardownHomeDual);
 </script>

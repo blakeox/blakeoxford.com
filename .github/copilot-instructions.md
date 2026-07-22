@@ -318,7 +318,8 @@ Always use the defined Zod schemas in `src/content/config.ts`:
    └─ No → Create in src/components/features/{feature-name}/
 
 2. Does it need client-side interactivity?
-   ├─ Yes → Create React island in src/components/islands/
+   ├─ Small form / one-off island → src/components/islands/
+   ├─ Product surface (Ask / Find / overlay) → src/features/<name>/
    └─ No → Create Astro component
 
 3. Before creating:
@@ -374,7 +375,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 - TypeScript for logic, JavaScript acceptable in Astro frontmatter
 - React components only when client-side interactivity needed (React 19.2.0+)
 - Use Astro Islands architecture (`client:load`, `client:only`, etc.) for hydration control
-- All React islands in `src/components/islands/` directory
+- Product React features (Ask / Find / overlay) live in `src/features/`; small form islands remain in `src/components/islands/`
 - Comprehensive testing coverage with property-based testing
 - Performance budgets enforced through automation
 

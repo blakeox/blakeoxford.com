@@ -42,10 +42,8 @@ Object.defineProperty(window, 'localStorage', {
 
 // --- Mock requestAnimationFrame & cancelAnimationFrame (animation timing) ---
 window.requestAnimationFrame = ((callback: FrameRequestCallback) =>
-   
   setTimeout(() => callback(Date.now()), 0)) as any;
 
- 
 window.cancelAnimationFrame = ((id: number) => clearTimeout(id)) as any;
 
 // --- Optional: Mock IntersectionObserver (for lazy loading, scroll tracking) ---

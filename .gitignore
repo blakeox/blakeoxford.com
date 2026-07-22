@@ -209,3 +209,12 @@ public/search/
 
 # Generated Zaraz config (contains measurement IDs)
 infra/zaraz/blakeoxford.com.json
+
+# Carousel master images live outside git (see ORIGINAL_MASTERS.md).
+# Ignore the directory and any local convenience symlink.
+src/assets/images/carousel/originals
+src/assets/images/carousel/originals/
+
+# Local design review screenshots (not site assets)
+redesign-home-desktop.png
+/redesign-*.png

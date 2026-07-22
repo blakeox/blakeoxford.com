@@ -1,5 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { JSDOM } from 'jsdom';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   applyTheme,
   applySystemTheme,
@@ -19,8 +18,6 @@ import {
 } from '../../src/lib/theme';
 
 describe('theme utilities', () => {
-  let dom: JSDOM;
-  let document: Document;
   let localStorageMock: {
     store: Record<string, string>;
     getItem: (key: string) => string | null;
@@ -30,12 +27,6 @@ describe('theme utilities', () => {
   };
 
   beforeEach(() => {
-    dom = new JSDOM('<!DOCTYPE html><html><head></head><body></body></html>', {
-      url: 'http://localhost:3000',
-      pretendToBeVisual: true,
-    });
-    document = dom.window.document;
-
     localStorageMock = {
       store: {},
       getItem: vi.fn((key: string) => localStorageMock.store[key] ?? null),
@@ -50,26 +41,19 @@ describe('theme utilities', () => {
       }),
     };
 
-    global.document = document;
-    global.localStorage = localStorageMock as unknown as Storage;
-    global.fetch = vi.fn().mockResolvedValue({ ok: true }) as unknown as typeof fetch;
-
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: vi.fn().mockImplementation(() => ({
-        matches: false,
-        media: '(prefers-color-scheme: dark)',
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      })),
-    });
+    vi.stubGlobal('localStorage', localStorageMock as unknown as Storage);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }) as unknown as typeof fetch);
 
     document.documentElement.className = '';
     document.documentElement.removeAttribute(THEME_ATTRIBUTE);
     document.documentElement.removeAttribute(THEME_PREFERENCE_ATTRIBUTE);
-    document.cookie = '';
+    document.cookie = `${THEME_STORAGE_KEY}=; Path=/; Max-Age=0`;
     localStorageMock.clear();
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('applyTheme sets data-theme, preference, class, and colorScheme', () => {

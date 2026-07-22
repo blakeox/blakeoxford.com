@@ -3,7 +3,7 @@
  * Semantic names are preferred; Tailwind size aliases map for back-compat.
  */
 export const HEADING_SIZE_CLASSES = {
-  identity: 'text-5xl leading-[1.05] sm:text-6xl md:text-7xl lg:text-[4.5rem]',
+  identity: 'text-5xl leading-[1.02] sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[5.5rem]',
   hero: 'text-4xl leading-[1.1] sm:text-5xl md:text-6xl',
   display: 'text-3xl leading-snug sm:text-4xl md:text-5xl',
   section: 'text-2xl leading-snug sm:text-3xl md:text-4xl',

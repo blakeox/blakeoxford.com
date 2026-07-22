@@ -4,8 +4,8 @@ import {
   MatchedCTA,
   FollowUpSuggestions,
   ContextualCTAs,
-} from '../../../src/components/islands/chat/MessageCTAs';
-import type { ChatMessage, Source } from '../../../src/components/islands/chat/types';
+} from '../../../src/features/chat/components/MessageCTAs';
+import type { ChatMessage, Source } from '../../../src/features/chat/types';
 import { autoragEvents } from '../../../src/lib/analytics';
 
 // Mock analytics - factory function to avoid hoisting issues
