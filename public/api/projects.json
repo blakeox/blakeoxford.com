@@ -148,7 +148,7 @@
       "Operations",
       "Automation"
     ],
-    "featured": true
+    "featured": false
   },
   {
     "slug": "google-workspace-migration",
@@ -177,7 +177,7 @@
       "Operations",
       "COVID-19 Response"
     ],
-    "featured": true
+    "featured": false
   },
   {
     "slug": "bank-projections-modeling",
@@ -204,7 +204,7 @@
       "Financial Intelligence",
       "Operations"
     ],
-    "featured": true
+    "featured": false
   },
   {
     "slug": "advancedmd-implementation",

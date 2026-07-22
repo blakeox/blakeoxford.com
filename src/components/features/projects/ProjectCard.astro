@@ -13,8 +13,12 @@ import GradientOverlay from '../../primitives/GradientOverlay.astro';
 import { headingSizeClass } from '../../../lib/typeScale';
 import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
 
-const { project, compact = false } =
-  Astro.props as import('../../../types/components').ProjectCardProps;
+const {
+  project,
+  compact = false,
+  featured = false,
+  sideLabel,
+} = Astro.props as import('../../../types/components').ProjectCardProps;
 const { id: slug, data } = project;
 
 const title = data.title ?? 'Case study';
@@ -42,27 +46,37 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
 
 {
   compact ? (
-    <article class="group @container relative flex h-full flex-col">
+    <article
+      class:list={[
+        'group @container relative flex h-full flex-col',
+        featured && 'project-card-featured',
+      ]}
+    >
       <a
         href={`/projects/${slug}/`}
         class="relative flex h-full flex-col gap-4 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
         aria-labelledby={`project-card-${slug}`}
       >
-        <figure class="relative aspect-[16/10] overflow-hidden bg-surface-subtle">
+        <figure
+          class:list={[
+            'relative overflow-hidden bg-surface-subtle',
+            featured ? 'aspect-[16/9] sm:aspect-[16/10] lg:aspect-[16/9]' : 'aspect-[16/10]',
+          ]}
+        >
           <OptimizedImage
             src={image}
             alt={`${title} preview`}
-            width={960}
-            height={540}
+            width={featured ? 1400 : 960}
+            height={featured ? 788 : 540}
             class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.03]"
             loading="lazy"
             quality={80}
           />
         </figure>
 
-        <div class="flex flex-1 flex-col gap-2.5">
+        <div class:list={['flex flex-1 flex-col', featured ? 'gap-3' : 'gap-2.5']}>
           <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">
-            {primaryCategory}
+            {sideLabel ? <span class="text-accent-emphasis">{sideLabel}</span> : primaryCategory}
             {dateISO && dateLabel ? (
               <>
                 <span aria-hidden="true"> · </span>
@@ -75,14 +89,21 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
             id={`project-card-${slug}`}
             class:list={[
               'font-heading font-semibold tracking-tight text-pretty text-foreground',
-              headingSizeClass('subtitle'),
+              headingSizeClass(featured ? 'title' : 'subtitle'),
             ]}
           >
             {title}
           </h3>
 
           {proofLine && (
-            <p class="text-sm leading-snug text-muted-foreground @md:text-base">{proofLine}</p>
+            <p
+              class:list={[
+                'leading-snug text-muted-foreground',
+                featured ? 'max-w-2xl text-base sm:text-lg' : 'text-sm @md:text-base',
+              ]}
+            >
+              {proofLine}
+            </p>
           )}
 
           <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-accent-emphasis transition-all duration-normal group-hover:gap-3">

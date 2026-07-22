@@ -34,13 +34,18 @@
     height: 4rem;
   }
 
+  /*
+   * Sticky lives on the parent <header>. Keep transform hide on `.nav-shell` only —
+   * `@container` (container-type) on the same node as `position: sticky` breaks sticky,
+   * so the bar scrolls out of the document and never returns on scroll-up.
+   */
+  .nav-shell {
+    z-index: var(--z-nav);
+  }
+
   .nav-shell--auto-hidden:not([data-menu-state='open']) {
     pointer-events: none;
     transform: translateY(-100%);
-  }
-
-  .nav-shell {
-    z-index: var(--z-nav);
   }
 
   @media (prefers-reduced-motion: reduce) {

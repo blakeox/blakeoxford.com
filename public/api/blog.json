@@ -1,5 +1,20 @@
 [
   {
+    "slug": "ethics-in-the-ai-age-semcacfe",
+    "title": "Ethics in the AI Age: Speaking at SEMCACFE",
+    "description": "Notes from co-presenting Ethics in the AI Age with UHY at SEMCACFE — why professional skepticism still beats confident AI output, and what changes when models start taking actions.",
+    "publishedAt": "2026-07-21",
+    "tags": [
+      "Speaking",
+      "AI Ethics",
+      "Agentic AI",
+      "Governance"
+    ],
+    "author": "Blake Oxford",
+    "draft": false,
+    "featured": true
+  },
+  {
     "slug": "ces-2026-ai-has-left-the-screen",
     "title": "CES 2026: AI Has Left the Screen — and That Changes Everything",
     "description": "At CES 2026, AI felt less like a chat demo and more like a system embedded in real workflows — from factories and cars to robotics and simulation.",
@@ -14,7 +29,7 @@
       "NVIDIA"
     ],
     "author": "Blake Oxford",
-    "draft": true,
+    "draft": false,
     "featured": false
   },
   {
@@ -32,8 +47,8 @@
       "macOS"
     ],
     "author": "Blake Oxford",
-    "draft": true,
-    "featured": false
+    "draft": false,
+    "featured": true
   },
   {
     "slug": "ai-statistics-future-decision-making",
@@ -50,8 +65,8 @@
       "Data Science"
     ],
     "author": "Blake Oxford",
-    "draft": true,
-    "featured": false
+    "draft": false,
+    "featured": true
   },
   {
     "slug": "combating-legal-ai-hallucinations",
@@ -64,7 +79,7 @@
       "Open Source"
     ],
     "author": "Blake Oxford",
-    "draft": true,
-    "featured": false
+    "draft": false,
+    "featured": true
   }
 ]
