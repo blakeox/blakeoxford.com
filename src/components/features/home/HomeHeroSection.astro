@@ -398,13 +398,14 @@ const daringLine = 'Chases the edge cases that make them better.';
       opacity: 1;
       transform: none;
       filter: none;
+      clip-path: inset(0 50% 0 0);
     }
 
     .home-dual-face-daring {
-      opacity: 0;
+      opacity: 1;
       transform: none;
       filter: none;
-      clip-path: none;
+      clip-path: inset(0 0 0 50%);
     }
   }
 </style>
@@ -442,6 +443,7 @@ const daringLine = 'Chases the edge cases that make them better.';
     if (!root || root.dataset.bound === 'true') return;
 
     const track = root.querySelector<HTMLElement>('.home-dual-track');
+    const sticky = root.querySelector<HTMLElement>('.home-dual-sticky');
     const live = root.querySelector<HTMLElement>('[data-dual-live]');
     const daringImg = root.querySelector<HTMLImageElement>('[data-dual-daring]');
     const frameCaption = root.querySelector<HTMLElement>('[data-frame-caption]');
@@ -454,10 +456,10 @@ const daringLine = 'Chases the edge cases that make them better.';
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       root.style.setProperty('--dual-progress', '0');
-      root.setAttribute('data-side', 'work');
+      root.setAttribute('data-side', 'both');
       root.setAttribute('data-hint', 'off');
       root.setAttribute('data-settled', 'false');
-      if (frameCaption) frameCaption.textContent = 'Work';
+      if (frameCaption) frameCaption.textContent = 'Two sides';
       return;
     }
 
@@ -474,7 +476,7 @@ const daringLine = 'Chases the edge cases that make them better.';
 
     const update = () => {
       const rect = track.getBoundingClientRect();
-      const view = window.innerHeight || 1;
+      const view = sticky?.getBoundingClientRect().height || window.innerHeight || 1;
       const total = Math.max(1, rect.height - view);
       const raw = Math.min(1, Math.max(0, -rect.top / total));
       const settled = raw >= SCRUB_END;
