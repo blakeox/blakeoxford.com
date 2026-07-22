@@ -36,22 +36,8 @@ const { content } = Astro.props;
           />
           <ButtonGroup align="start" responsive>
             <Button variant="primary" href="/contact/">Start a conversation</Button>
-            <Button variant="outline" href="/projects/">See the work</Button>
+            <Button variant="ghost" href="/projects/">See the work</Button>
           </ButtonGroup>
-          <ul
-            class="grid gap-3 border-t border-border/50 pt-6 text-sm text-foreground/85 sm:text-base"
-            role="list"
-            aria-label="How I show up in engagements"
-          >
-            {
-              content.proofPoints.map((point) => (
-                <li class="flex items-start gap-3">
-                  <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-                  <span>{point}</span>
-                </li>
-              ))
-            }
-          </ul>
         </div>
       </div>
 
@@ -59,7 +45,7 @@ const { content } = Astro.props;
         <div class="relative h-full w-full">
           <PhotoCarousel class="h-full w-full" />
           <div
-            class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background/50 via-background/15 to-transparent md:block"
+            class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background/55 via-background/15 to-transparent md:block"
             aria-hidden="true"
           >
           </div>
@@ -69,25 +55,43 @@ const { content } = Astro.props;
   </div>
 </PageHero>
 
+<section
+  class="border-y border-border/40 bg-surface-subtle/60"
+  aria-label="How I show up in engagements"
+>
+  <div class="layout-gutter mx-auto max-w-container-2xl py-8 sm:py-10">
+    <ul class="grid gap-4 sm:grid-cols-3 sm:gap-6" role="list">
+      {
+        content.proofPoints.map((point) => (
+          <li class="flex items-start gap-3 text-sm leading-snug text-foreground/88 sm:text-base">
+            <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+            <span>{point}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
 <style>
   .about-hero-media {
-    height: min(42vh, 20rem);
+    height: min(48vh, 24rem);
   }
 
   @media (width >= 640px) {
     .about-hero-media {
-      height: min(44vh, 22rem);
+      height: min(50vh, 26rem);
     }
   }
 
   @media (width >= 768px) {
     .about-hero-split {
-      min-height: min(36rem, calc(100svh - 4.5rem));
+      min-height: min(38rem, calc(100svh - 4.5rem));
     }
 
     .about-hero-media {
       height: 100%;
-      min-height: 28rem;
+      min-height: 30rem;
     }
   }
 </style>

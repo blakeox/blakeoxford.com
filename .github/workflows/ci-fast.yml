@@ -68,7 +68,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -160,7 +160,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -262,11 +262,17 @@ jobs:
           else
             echo "⚠️ Warning: Limited ARIA attributes detected"
           fi
-          # Check for alt attributes in HTML files only (exclude README.md and other docs)
-          ALT_MISSING=$(grep -r "<img" dist/ --include="*.html" | grep -v "alt=" | wc -l || echo "0")
-          if [ "$ALT_MISSING" -gt 0 ]; then
+          # Require an alt attribute on every <img>. Accept alt="", alt='', or boolean alt
+          # (Astro historically collapses empty alt="" to bare alt).
+          ALT_MISSING=$(
+            grep -rohE '<img\b[^>]*>' dist --include='*.html' \
+              | grep -vE '\balt(=|\s|/|>)' \
+              | wc -l \
+              | tr -d ' '
+          )
+          if [ "${ALT_MISSING:-0}" -gt 0 ]; then
             echo "❌ Found $ALT_MISSING images without alt attributes in HTML files"
-            grep -r "<img" dist/ --include="*.html" | grep -v "alt=" || true
+            grep -rohE '<img\b[^>]*>' dist --include='*.html' | grep -vE '\balt(=|\s|/|>)' || true
             exit 1
           else
             echo "✅ All images have alt attributes"
@@ -319,7 +325,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -381,8 +387,14 @@ jobs:
     name: Post PR Quality Summary
     runs-on: ubuntu-latest
     needs: [quick-validation, essential-e2e, essential-e2e-crossbrowser]
-    # Only attempt to comment for PRs from this repository (not forks)
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+    # Cross-browser E2E is PR-skipped; always() + result checks keep this job runnable.
+    if: |
+      always() &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.fork == false &&
+      needs.quick-validation.result == 'success' &&
+      needs.essential-e2e.result == 'success' &&
+      (needs.essential-e2e-crossbrowser.result == 'success' || needs.essential-e2e-crossbrowser.result == 'skipped')
     permissions:
       contents: read
       pull-requests: write
@@ -553,13 +565,19 @@ jobs:
   required-status-checks:
     name: Required Checks Gate
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    # Cross-browser E2E only runs on main/dispatch; treat skipped as OK on PRs.
+    if: |
+      always() &&
+      github.event_name == 'pull_request' &&
+      needs.quick-validation.result == 'success' &&
+      needs.essential-e2e.result == 'success' &&
+      (needs.essential-e2e-crossbrowser.result == 'success' || needs.essential-e2e-crossbrowser.result == 'skipped')
     needs: [quick-validation, essential-e2e, essential-e2e-crossbrowser]
     steps:
       - name: All required checks passed
         run: |
-          echo "✅ quick-validation"
-          echo "✅ essential-e2e (Chromium)"
-          echo "✅ essential-e2e-crossbrowser (Firefox/WebKit on macOS)"
+          echo "✅ quick-validation (${{ needs.quick-validation.result }})"
+          echo "✅ essential-e2e Chromium (${{ needs.essential-e2e.result }})"
+          echo "✅ essential-e2e-crossbrowser (${{ needs.essential-e2e-crossbrowser.result }})"
           echo "All required checks are green."
 

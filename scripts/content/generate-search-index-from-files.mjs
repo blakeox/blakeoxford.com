@@ -85,7 +85,7 @@ function getMarkdownFiles(dir) {
     const raw = fs.readFileSync(fullPath, 'utf-8');
     const { frontmatter, content } = parseFrontmatter(raw);
 
-    if (frontmatter.draft === 'true' || frontmatter.draft === true) continue;
+    if (toBoolean(frontmatter.draft)) continue;
 
     files.push({
       slug: item.replace(/\.(md|mdx)$/, ''),
@@ -95,6 +95,17 @@ function getMarkdownFiles(dir) {
   }
 
   return files;
+}
+
+function toBoolean(value, fallback = false) {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === 'true') return true;
+    if (normalized === 'false') return false;
+  }
+  if (value == null || value === '') return fallback;
+  return Boolean(value);
 }
 
 function toISODate(value) {
@@ -130,11 +141,11 @@ function build() {
     description: project.frontmatter.description ?? '',
     publishedAt: toISODate(project.frontmatter.date),
     tags: Array.isArray(project.frontmatter.tags) ? project.frontmatter.tags : [],
-    draft: Boolean(project.frontmatter.draft),
+    draft: toBoolean(project.frontmatter.draft),
     technologies: Array.isArray(project.frontmatter.tags) ? project.frontmatter.tags : [],
     image: project.frontmatter.heroImage ?? null,
     categories: Array.isArray(project.frontmatter.categories) ? project.frontmatter.categories : [],
-    featured: index < 3 || Boolean(project.frontmatter.featured),
+    featured: index < 3 || toBoolean(project.frontmatter.featured),
   }));
 
   const searchBlog = blogPosts.map((post) => ({
@@ -144,8 +155,8 @@ function build() {
     publishedAt: toISODate(post.frontmatter.pubDate),
     tags: Array.isArray(post.frontmatter.tags) ? post.frontmatter.tags : [],
     author: 'Blake Oxford',
-    draft: Boolean(post.frontmatter.draft),
-    featured: Boolean(post.frontmatter.featured),
+    draft: toBoolean(post.frontmatter.draft),
+    featured: toBoolean(post.frontmatter.featured),
   }));
 
   const searchIndex = [

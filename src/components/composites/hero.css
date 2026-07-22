@@ -6,36 +6,37 @@
 @layer components {
   .page-hero-shell {
     background: linear-gradient(
-      180deg,
-      color-mix(in oklch, var(--color-surface) 88%, transparent),
-      color-mix(in oklch, var(--color-background) 96%, transparent)
+      165deg,
+      color-mix(in oklch, var(--color-surface) 90%, transparent) 0%,
+      color-mix(in oklch, var(--color-background) 96%, transparent) 55%,
+      color-mix(in oklch, var(--color-accent) 4%, var(--color-background)) 100%
     );
   }
 
   .hero-entrance > * {
-    animation: hero-rise 700ms var(--ease-decelerate) both;
+    animation: hero-rise 720ms var(--ease-decelerate) both;
   }
 
   .hero-entrance > *:nth-child(2) {
-    animation-delay: 60ms;
+    animation-delay: 70ms;
   }
 
   .hero-entrance > *:nth-child(3) {
-    animation-delay: 120ms;
+    animation-delay: 140ms;
   }
 
   .hero-entrance > *:nth-child(4) {
-    animation-delay: 180ms;
+    animation-delay: 200ms;
   }
 
   .hero-entrance > *:nth-child(5) {
-    animation-delay: 240ms;
+    animation-delay: 260ms;
   }
 
   @keyframes hero-rise {
     from {
       opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(18px);
     }
 
     to {
@@ -53,6 +54,40 @@
   .home-cta-band {
     position: relative;
     overflow: hidden;
-    background-color: var(--color-surface-subtle);
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--color-accent) 12%, var(--color-surface-subtle)) 0%,
+      var(--color-surface-subtle) 42%,
+      color-mix(in oklch, var(--color-primary) 5%, var(--color-background)) 100%
+    );
+  }
+
+  .home-cta-band::before {
+    position: absolute;
+    inset: 0;
+    content: '';
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in oklch, var(--color-accent) 8%, transparent) 38%,
+      transparent 100%
+    );
+    opacity: 0.85;
+  }
+
+  .home-cta-band::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: min(18rem, 40%);
+    height: 1px;
+    content: '';
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--color-accent) 70%, transparent),
+      transparent
+    );
   }
 }

@@ -4,8 +4,8 @@
     "description": "Systems architect and workflow strategist turning complexity into opportunity-designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results."
   },
   "hero": {
-    "kicker": "Systems architecture",
-    "defaultTagline": "I design scalable systems, cut operational drag, and lead transformations that stick.",
+    "kicker": "Two sides",
+    "defaultTagline": "Work me builds systems that last. Daring me finds the edge.",
     "primaryCta": {
       "href": "/contact/",
       "label": "Start a conversation"
@@ -17,18 +17,20 @@
     "portrait": {
       "frontSrc": "/assets/images/Blake-O-scaled.jpg",
       "backSrc": "/assets/images/china-profile-picture.jpg",
-      "alt": "Blake Oxford",
-      "altBack": "Blake Oxford in China"
+      "alt": "Blake Oxford — work side",
+      "altBack": "Blake Oxford — daring side"
     }
   },
   "resumeHighlights": {
     "kicker": "Outcomes",
-    "title": "Proof from the work",
-    "description": "Hard results from migrations, automation, and decision systems.",
-    "cards": [
+    "title": "Proof from both sides",
+    "description": "Systems that hold under load — and the edge cases that make them better.",
+    "sides": [
       {
+        "side": "work",
+        "label": "Work",
         "metric": "180 users migrated",
-        "title": "Cloud & SaaS Transformations",
+        "title": "Cloud & SaaS transformations that stick",
         "items": [
           {
             "text": "Google Workspace \u2192 Microsoft 365 for 180 users"
@@ -42,32 +44,19 @@
         ]
       },
       {
+        "side": "daring",
+        "label": "Daring",
         "metric": "Multi-million $ overhead cut",
-        "title": "Automation & Savings",
+        "title": "Automation and decision systems at the edge",
         "items": [
           {
             "text": "Azure cloud infrastructure optimization"
           },
           {
-            "text": "Power BI analytics and real-time dashboarding"
-          },
-          {
             "text": "Custom OpenAI workflow integrations"
-          }
-        ]
-      },
-      {
-        "metric": "C-suite decision support",
-        "title": "Data Analytics",
-        "items": [
-          {
-            "text": "Real-time SQL/Power BI dashboards"
           },
           {
-            "text": "Predictive financial modeling systems"
-          },
-          {
-            "text": "Automated KPI tracking and visualization"
+            "text": "Real-time SQL/Power BI dashboards for C-suite calls"
           }
         ]
       }
@@ -76,7 +65,7 @@
   "recentProjects": {
     "kicker": "Projects",
     "title": "Work that shipped",
-    "description": "Systems, automation, and analytics built to survive real operating conditions.",
+    "description": "One side builds systems teams keep running. The other chases the edge cases that make them better.",
     "cta": {
       "href": "/projects/",
       "label": "All selected work"
@@ -93,7 +82,7 @@
   },
   "cta": {
     "title": "Bring the hardest bottleneck.",
-    "description": "Migration, automation, reporting, or AI-enabled workflow \u2014 start with the risk that matters most.",
+    "description": "Systems that must hold \u2014 or edge cases that need a sharper answer.",
     "button": {
       "href": "/contact/",
       "label": "Book a 20-minute bottleneck review"

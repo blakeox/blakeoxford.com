@@ -1,9 +1,11 @@
 # agent.md
 
-Last updated: 2025-09-11
+Last updated: 2026-07-21
 
 Changelog:
 
+- 2026-07-21: Pinned Node.js 24 LTS (engines + CI); carousel masters moved to local path; ESLint Tailwind unknown-class noise silenced; Vitest Playwright import leak fixed.
+- 2026-07-20: Refreshed directory map (features/, services/, middleware/); chat UI consolidated under `src/features/chat/`; carousel originals gitignored; design-lint duplicate `* 2.*` gate documented.
 - 2025-09-11: Initial version created for Phase 2 hardening baseline.
 - 2025-09-11: Added environment variable matrix, gate escalation rules, testing & performance guidance, markdown lint fixes.
 - 2025-09-11: Added mini-app / MCP integration guidelines (lease analysis, debt payoff, on-site agent patterns).
@@ -28,11 +30,11 @@ Primary audience: recruiters, collaborators, and technical peers evaluating arch
 - **Build system**: Astro SSG (`output: static`).
 - **Deployment**: Cloudflare Workers / static assets (Pages deprecated for this project).
 - **Routing**: File-based under `src/pages/` (kebab-case). Edge/API handlers live in `functions/` (Workers).
-- **Components**: Astro or minimal React in `src/components/` (PascalCase). React only for true interactivity.
+- **Components**: Astro UI layers in `src/components/` (PascalCase). Product React features (Ask, Find, overlay) live under `src/features/`. Contact form islands remain in `src/components/islands/`.
 - **Content**: Zod-driven schemas in `src/content.config.ts`; static JSON in `public/api/`.
 - **Styling**: Tailwind CSS v4 via `@tailwindcss/vite` (CSS-first). Tokens live in `src/styles/theme.css` (`@theme inline`); prefer utilities over bespoke CSS. Shared chrome belongs in `components.css`.
-- **Optimization scripts**: `scripts/optimization/` (image optimization, bundle analysis, critical CSS inlining, code splitting guidance).
-- **Quality tooling**: `scripts/quality/` orchestrates runtime checks (search relevance, accessibility via axe-core, dead link crawl, long-task probe) + summary.
+- **Optimization scripts**: `scripts/optimization/` (image optimization, bundle analysis, critical CSS inlining, code splitting guidance). Carousel masters live outside git at `~/Documents/blakeoxford-local/carousel-originals` (or `CAROUSEL_ORIGINALS_DIR`); commit only webp/avif outputs under `src/assets/images/carousel/`.
+- **Quality tooling**: `scripts/quality/` orchestrates runtime checks (search relevance, accessibility via axe-core, dead link crawl, long-task probe) + summary. `design:lint` also fails on Finder-style `* 2.*` duplicate artifacts.
 - **Testing**: Vitest (`tests/vitest/`), Playwright (`tests/playwright/`), plus performance & accessibility logs.
 - **Search**: Client-side index auto-generated on build (`localSearch`).
 - **Edge functions**: `functions/` (e.g., `send-email.ts`, `edge-computing.js`).
@@ -42,37 +44,48 @@ Directory highlights:
 
 ```text
 src/
-  components/        # UI building blocks (Astro/React)
-  pages/             # Routes & API endpoints
-  content/           # Structured content (if present)
-  utils/             # Pure utility helpers
-  scripts/           # Build / runtime / orchestration helpers
+  pages/             # File-based routes (kebab-case)
+  layouts/           # BaseLayout, ProjectDetailLayout
+  content/           # MDX collections + page JSON getters
+  components/        # Astro UI: primitives → composites → features → islands (forms)
+  features/          # Product React modules: chat, command-center, overlay
+  lib/               # Shared domain modules + hooks used by ≥2 features
+  utils/             # Pure helpers (cn, scrollLock, …)
+  services/          # I/O-facing clients (contact, AI search)
+  config/            # Site constants, nav, schemas
+  middleware/        # Astro middleware
+  integrations/      # Dev-only Astro integrations (proxies)
+  styles/            # theme.css + global chrome
+  scripts/           # Progressive-enhancement client controllers
 scripts/
-  optimization/      # Performance & code splitting helpers
-  quality/           # Runtime metrics + gating scripts
-public/              # Static assets (optimized images, search index, api data)
-functions/           # Cloudflare Worker scripts
-tests/               # Vitest + Playwright
+  optimization/      # Image optimize, favicons, quality gate helpers
+  quality/           # Runtime metrics + gating scripts (incl. design-lint)
+  content/           # Search index generation
+  build/ · ci/ · setup/
+public/              # Static assets, public/api JSON (search index generated)
+functions/           # Cloudflare Worker entry + Durable Objects
+tests/               # Vitest + Playwright + contracts
+infra/               # Zaraz templates
 ```
 
 ### Environment Variables & Quality Gates
 
-| Variable | Purpose | Typical Value | Gate Effect |
-|----------|---------|---------------|-------------|
-| `BASE_URL` | Canonical base for runtime checks/server | `http://localhost:xxxx` (dynamic) | All runtime fetches |
-| `MIN_TOPN_PASS_RATE` | Required top-N search relevance percentage | `80` | Fails run if below |
-| `SEARCH_TOP_N` | N for top-N acceptance window | `3` | Influences relevance scoring |
-| `A11Y_FAIL` | Boolean to fail on any accessibility issues if caps not set | `true/false` | Fallback gate if no caps |
-| `A11Y_MAX_PER_ROUTE` | Per-route max violation count (total) | `2` | Fails if any route exceeds |
-| `A11Y_MAX_TOTAL` | Global total violation cap | e.g. `10` | Fails if exceeded |
-| `A11Y_MAX_BY_ROUTE` | JSON map route→cap for granular overrides | `{"/projects":2}` | Per-route precedence |
-| `A11Y_ROUTES` | Comma list to override autodiscovery (planned) | `/,/about,/projects` | Limits scan scope |
-| `A11Y_BLOCK_IMPACTS` | CSV of Axe impacts to fail immediately | `serious,critical` | Immediate failure on match |
-| `DEADLINK_FAIL` | Fail build when dead links > 0 | `true` | Immediate failure |
-| `DEADLINK_EXTERNAL` | Also test external links | `false` | Expands crawl set |
-| `DEADLINK_ALLOWLIST` | Regex (\|) pattern of URLs to ignore | e.g. `^/api/legacy` | Prevent false positives |
-| `DEADLINK_MAX_CONCURRENCY` | Parallel HTTP validation limit | `8` | Performance control |
-| `A11Y_HISTORY_MAX` | Max retained entries in accessibility history log | `50` | Rotates oldest beyond cap |
+| Variable                   | Purpose                                                     | Typical Value                     | Gate Effect                  |
+| -------------------------- | ----------------------------------------------------------- | --------------------------------- | ---------------------------- |
+| `BASE_URL`                 | Canonical base for runtime checks/server                    | `http://localhost:xxxx` (dynamic) | All runtime fetches          |
+| `MIN_TOPN_PASS_RATE`       | Required top-N search relevance percentage                  | `80`                              | Fails run if below           |
+| `SEARCH_TOP_N`             | N for top-N acceptance window                               | `3`                               | Influences relevance scoring |
+| `A11Y_FAIL`                | Boolean to fail on any accessibility issues if caps not set | `true/false`                      | Fallback gate if no caps     |
+| `A11Y_MAX_PER_ROUTE`       | Per-route max violation count (total)                       | `2`                               | Fails if any route exceeds   |
+| `A11Y_MAX_TOTAL`           | Global total violation cap                                  | e.g. `10`                         | Fails if exceeded            |
+| `A11Y_MAX_BY_ROUTE`        | JSON map route→cap for granular overrides                   | `{"/projects":2}`                 | Per-route precedence         |
+| `A11Y_ROUTES`              | Comma list to override autodiscovery (planned)              | `/,/about,/projects`              | Limits scan scope            |
+| `A11Y_BLOCK_IMPACTS`       | CSV of Axe impacts to fail immediately                      | `serious,critical`                | Immediate failure on match   |
+| `DEADLINK_FAIL`            | Fail build when dead links > 0                              | `true`                            | Immediate failure            |
+| `DEADLINK_EXTERNAL`        | Also test external links                                    | `false`                           | Expands crawl set            |
+| `DEADLINK_ALLOWLIST`       | Regex (\|) pattern of URLs to ignore                        | e.g. `^/api/legacy`               | Prevent false positives      |
+| `DEADLINK_MAX_CONCURRENCY` | Parallel HTTP validation limit                              | `8`                               | Performance control          |
+| `A11Y_HISTORY_MAX`         | Max retained entries in accessibility history log           | `50`                              | Rotates oldest beyond cap    |
 
 Gate precedence (highest → lowest):
 

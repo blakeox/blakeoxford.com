@@ -23,7 +23,7 @@ function matrixTy(transform: string): number | null {
   // matrix(a, b, c, d, tx, ty) → extract ty
   const m = /matrix\(([^)]+)\)/.exec(transform);
   if (!m) return null;
-  const parts = m[1].split(',').map(s => parseFloat(s.trim()));
+  const parts = m[1].split(',').map((s) => parseFloat(s.trim()));
   if (parts.length === 6 && !Number.isNaN(parts[5])) return parts[5];
   return null;
 }
@@ -51,7 +51,9 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     expect(animDuration).toContain('45s');
 
     // Verify motion by comparing transform over time (skip if prefers-reduced-motion)
-    const mqlReduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const mqlReduced = await page.evaluate(
+      () => matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
     if (!mqlReduced) {
       const t0 = await getTransform(page, 'ul.photo-carousel-track--x');
       // Wait until transform changes instead of a raw timeout
@@ -93,7 +95,9 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     expect(downDur).toContain('60s');
 
     // Verify both columns animate (transforms change)
-    const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const reduced = await page.evaluate(
+      () => matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
     if (!reduced) {
       const upT0 = await getTransform(page, 'ul.photo-carousel-track--up');
       const downT0 = await getTransform(page, 'ul.photo-carousel-track--down');
@@ -126,8 +130,8 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
       const dn0 = matrixTy(downT0);
       const dn1 = matrixTy(downT1);
       if (up0 !== null && up1 !== null && dn0 !== null && dn1 !== null) {
-        const upDelta = up1 - up0;  // should be negative or positive depending on phase
-        const dnDelta = dn1 - dn0;  // opposite sign in steady state
+        const upDelta = up1 - up0; // should be negative or positive depending on phase
+        const dnDelta = dn1 - dn0; // opposite sign in steady state
         // Only assert that they are not the same direction (reduce flakiness)
         expect(Math.sign(upDelta)).not.toEqual(Math.sign(dnDelta));
       }
@@ -139,16 +143,19 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     await page.goto('/about');
 
     const region = page.getByRole('region', { name: /travel and work photo gallery/i });
-    const pause = region.getByRole('button', { name: /pause photo gallery motion/i });
-    await expect(pause).toBeVisible();
+    const pauseControl = region.locator('[data-carousel-pause]');
+    await expect(pauseControl).toBeVisible();
+    await expect(pauseControl).toHaveAttribute('aria-label', /pause photo gallery motion/i);
 
-    const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const reduced = await page.evaluate(
+      () => matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
     if (reduced) return;
 
-    await pause.click();
+    await pauseControl.click();
     await expect(region).toHaveAttribute('data-paused', 'true');
-    await expect(pause).toHaveAttribute('aria-pressed', 'true');
-    await expect(region.getByRole('button', { name: /play photo gallery motion/i })).toBeVisible();
+    await expect(pauseControl).toHaveAttribute('aria-pressed', 'true');
+    await expect(pauseControl).toHaveAttribute('aria-label', /play photo gallery motion/i);
 
     const pausedDuration = await page.evaluate(() => {
       const el = document.querySelector('ul.photo-carousel-track--up') as HTMLElement | null;
@@ -156,8 +163,10 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     });
     expect(pausedDuration).toBe('paused');
 
-    await region.getByRole('button', { name: /play photo gallery motion/i }).click();
+    await pauseControl.click();
     await expect(region).toHaveAttribute('data-paused', 'false');
+    await expect(pauseControl).toHaveAttribute('aria-pressed', 'false');
+    await expect(pauseControl).toHaveAttribute('aria-label', /pause photo gallery motion/i);
   });
 
   test('tablet (exactly md breakpoint): desktop columns show at 768px', async ({ page }) => {

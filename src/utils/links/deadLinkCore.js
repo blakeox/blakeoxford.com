@@ -15,19 +15,24 @@ const SKIP_PROTOCOLS = ['mailto:', 'tel:', 'data:'];
  */
 export function extractLinks(html, { includeExternal = false } = {}) {
   const links = new Map();
-  // Strip HTML comments to avoid catching commented-out attrs (e.g., //www.googletagmanager.com)
-  let withoutComments = html;
+  // Strip comments / script / style so JS template strings like href="${t}" are not treated as links.
+  let cleaned = html;
   let previous;
   do {
-    previous = withoutComments;
-    withoutComments = withoutComments.replace(/<!--([\s\S]*?)-->/g, '');
-  } while (withoutComments !== previous);
+    previous = cleaned;
+    cleaned = cleaned
+      .replace(/<!--([\s\S]*?)-->/g, '')
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
+  } while (cleaned !== previous);
   const attrRe = /(href|src)=["']([^"']+)["']/gi;
   let m;
-  while ((m = attrRe.exec(withoutComments))) {
+  while ((m = attrRe.exec(cleaned))) {
     const url = m[2];
     if (!url) continue;
     if (url.startsWith('#')) continue;
+    // Ignore uninterpolated template literals that leaked into attribute text.
+    if (url.includes('${')) continue;
     if (SKIP_PROTOCOLS.some((p) => url.startsWith(p))) continue;
     // Protocol-relative URLs '//' should be considered external
     const isProtocolRelative = url.startsWith('//');

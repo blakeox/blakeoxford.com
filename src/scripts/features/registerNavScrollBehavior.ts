@@ -1,7 +1,8 @@
 type CleanupFn = () => void;
 
 const SCROLL_COMPACT_THRESHOLD = 80;
-const SCROLL_DIRECTION_DELTA = 12;
+/** Downward travel before auto-hide engages. */
+const SCROLL_HIDE_DELTA = 12;
 
 function isCommandCenterOpen(): boolean {
   return document.getElementById('search-overlay')?.getAttribute('data-state') === 'open';
@@ -9,6 +10,7 @@ function isCommandCenterOpen(): boolean {
 
 /**
  * Compact header on scroll and auto-hide when scrolling down.
+ * Reveals again on any upward scroll (sticky `top` offset — never transform).
  */
 export function registerNavScrollBehavior(): CleanupFn {
   const shell = document.querySelector<HTMLElement>('.nav-shell');
@@ -20,7 +22,7 @@ export function registerNavScrollBehavior(): CleanupFn {
   let lastScrollY = window.scrollY;
 
   const handleScroll = () => {
-    const scrollY = window.scrollY;
+    const scrollY = Math.max(0, window.scrollY);
     const compact = scrollY > SCROLL_COMPACT_THRESHOLD;
     const menuOpen = shell.getAttribute('data-menu-state') === 'open';
 
@@ -32,13 +34,20 @@ export function registerNavScrollBehavior(): CleanupFn {
 
     if (shouldBlockHide) {
       shell.classList.remove('nav-shell--auto-hidden');
-    } else if (scrollY > lastScrollY + SCROLL_DIRECTION_DELTA) {
-      shell.classList.add('nav-shell--auto-hidden');
-    } else if (scrollY < lastScrollY - SCROLL_DIRECTION_DELTA) {
-      shell.classList.remove('nav-shell--auto-hidden');
+      lastScrollY = scrollY;
+      return;
     }
 
-    lastScrollY = scrollY;
+    // Only advance the baseline when a hide/show decision fires so trackpad
+    // micro-steps accumulate instead of resetting every frame.
+    if (scrollY > lastScrollY + SCROLL_HIDE_DELTA) {
+      shell.classList.add('nav-shell--auto-hidden');
+      lastScrollY = scrollY;
+    } else if (scrollY < lastScrollY) {
+      // Any upward movement restores the bar.
+      shell.classList.remove('nav-shell--auto-hidden');
+      lastScrollY = scrollY;
+    }
   };
 
   const resetOnNavigation = () => {

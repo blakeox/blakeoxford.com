@@ -1,5 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { JSDOM } from 'jsdom';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 /**
  * Theme Toggle Logic Tests
@@ -9,49 +8,15 @@ import { JSDOM } from 'jsdom';
  */
 
 describe('Theme Toggle Logic', () => {
-  let dom: JSDOM;
-  let document: Document;
-  let localStorage: Storage;
-
   beforeEach(() => {
-    // Create a fresh DOM for each test
-    dom = new JSDOM(
-      '<!DOCTYPE html><html><head></head><body><button id="theme-toggle"></button></body></html>',
-      {
-        url: 'http://localhost:3000',
-        pretendToBeVisual: true,
-      }
-    );
-    document = dom.window.document;
-
-    // Create a proper localStorage mock that works in CI
-    const localStorageMock = {
-      store: {} as Record<string, string>,
-      getItem: vi.fn((key: string) => localStorageMock.store[key] || null),
-      setItem: vi.fn((key: string, value: string) => {
-        localStorageMock.store[key] = value;
-      }),
-      removeItem: vi.fn((key: string) => {
-        delete localStorageMock.store[key];
-      }),
-      clear: vi.fn(() => {
-        localStorageMock.store = {};
-      }),
-      length: 0,
-      key: vi.fn(() => null),
-    };
-
-    localStorage = localStorageMock as unknown as Storage;
-
-    // Mock global objects
-    global.document = document;
-    global.localStorage = localStorage;
-
-    // Clear localStorage
+    document.body.innerHTML = '<button id="theme-toggle"></button>';
     localStorage.clear();
-    // Reset document class
     document.documentElement.className = '';
     vi.clearAllTimers();
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
   });
 
   it('should initialize with light theme by default', () => {

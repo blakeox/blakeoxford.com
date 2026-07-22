@@ -1,5 +1,4 @@
 /* eslint quotes:["warn","single",{allowTemplateLiterals:true}] */
-/* eslint-disable no-useless-escape */
 /**
  * Cloudflare Worker: Edge app with asset serving, security headers, caching, audit-mode, and utilities
  */
@@ -49,14 +48,16 @@ function buildOfflineHtml(reqId) {
  */
 function buildApiCorsHeaders(request, options = {}) {
   const requestOrigin = request.headers.get('origin');
-  const allowOrigin = requestOrigin && requestOrigin !== 'null' ? requestOrigin : new URL(request.url).origin;
+  const allowOrigin =
+    requestOrigin && requestOrigin !== 'null' ? requestOrigin : new URL(request.url).origin;
   return {
     'access-control-allow-origin': allowOrigin,
     'access-control-allow-credentials': 'true',
     'access-control-allow-methods': options.methods || 'POST, OPTIONS',
-    'access-control-allow-headers': options.allowHeaders || 'content-type, authorization, x-session-id',
+    'access-control-allow-headers':
+      options.allowHeaders || 'content-type, authorization, x-session-id',
     'access-control-expose-headers': API_EXPOSE_HEADERS,
-    'vary': 'Origin',
+    vary: 'Origin',
     ...(options.extra || {}),
   };
 }
@@ -74,31 +75,60 @@ class EdgeCacheManager {
 
     // Text files with special semantics
     if (lower === '/robots.txt') {
-      return { ttl: CACHE_DURATIONS.pages.robots, headers: { 'Cache-Control': `public, max-age=${CACHE_DURATIONS.pages.robots}, no-transform` } };
+      return {
+        ttl: CACHE_DURATIONS.pages.robots,
+        headers: {
+          'Cache-Control': `public, max-age=${CACHE_DURATIONS.pages.robots}, no-transform`,
+        },
+      };
     }
     if (lower === '/sw.js' || lower === '/service-worker.js') {
       // Ensure clients revalidate on each navigation to pick up new SW quickly
       return { ttl: 0, headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' } };
     }
     if (lower.endsWith('/manifest.webmanifest') || lower === '/manifest.webmanifest') {
-      return { ttl: CACHE_DURATIONS.pages.manifest, headers: { 'Cache-Control': `public, max-age=${CACHE_DURATIONS.pages.manifest}` } };
+      return {
+        ttl: CACHE_DURATIONS.pages.manifest,
+        headers: { 'Cache-Control': `public, max-age=${CACHE_DURATIONS.pages.manifest}` },
+      };
     }
-    if (lower.endsWith('/sitemap.xml') || lower.endsWith('/sitemap-index.xml') || /\/sitemap-\d+\.xml$/.test(lower) || lower.endsWith('/rss.xml') || lower.endsWith('/feed.xml')) {
-      return { ttl: CACHE_DURATIONS.pages.sitemap, headers: { 'Cache-Control': `public, max-age=${CACHE_DURATIONS.pages.sitemap}, no-transform` } };
+    if (
+      lower.endsWith('/sitemap.xml') ||
+      lower.endsWith('/sitemap-index.xml') ||
+      /\/sitemap-\d+\.xml$/.test(lower) ||
+      lower.endsWith('/rss.xml') ||
+      lower.endsWith('/feed.xml')
+    ) {
+      return {
+        ttl: CACHE_DURATIONS.pages.sitemap,
+        headers: {
+          'Cache-Control': `public, max-age=${CACHE_DURATIONS.pages.sitemap}, no-transform`,
+        },
+      };
     }
     if (lower.endsWith('/search-index.json')) {
       const ttl = CACHE_DURATIONS.pages.searchIndex;
-      return { ttl, headers: { 'Cache-Control': `public, max-age=${ttl}, stale-while-revalidate=3600` } };
+      return {
+        ttl,
+        headers: { 'Cache-Control': `public, max-age=${ttl}, stale-while-revalidate=3600` },
+      };
     }
 
     // APIs
     if (lower.startsWith('/api/')) {
       const ttl = CACHE_DURATIONS.api.default;
-      return { ttl, headers: { 'Cache-Control': `public, max-age=${ttl}, stale-while-revalidate=3600` } };
+      return {
+        ttl,
+        headers: { 'Cache-Control': `public, max-age=${ttl}, stale-while-revalidate=3600` },
+      };
     }
 
     // Static assets
-    if (['js', 'css', 'png', 'jpg', 'jpeg', 'webp', 'avif', 'svg', 'ico', 'woff2', 'pdf'].includes(extension)) {
+    if (
+      ['js', 'css', 'png', 'jpg', 'jpeg', 'webp', 'avif', 'svg', 'ico', 'woff2', 'pdf'].includes(
+        extension
+      )
+    ) {
       if (isHashedPath(lower)) {
         const ttl = CACHE_DURATIONS.static.hashed;
         return { ttl, headers: { 'Cache-Control': `public, max-age=${ttl}, immutable` } };
@@ -110,15 +140,20 @@ class EdgeCacheManager {
 
     // HTML and everything else: prefer freshness at the browser with CDN leeway
     const ttl = CACHE_DURATIONS.pages.html;
-    return { ttl, headers: { 'Cache-Control': `public, max-age=0, must-revalidate, stale-while-revalidate=${CACHE_DURATIONS.pages.htmlStaleWhileRevalidate}` } };
+    return {
+      ttl,
+      headers: {
+        'Cache-Control': `public, max-age=0, must-revalidate, stale-while-revalidate=${CACHE_DURATIONS.pages.htmlStaleWhileRevalidate}`,
+      },
+    };
   }
 }
 
 const SOURCE_CATEGORY_ICONS = {
-  'Project': '🛠️',
+  Project: '🛠️',
   'Case Study': '📊',
   'Blog Post': '📝',
-  'Page': '📎'
+  Page: '📎',
 };
 
 function normalizeDateToIso(value) {
@@ -147,7 +182,7 @@ function pickSummaryCandidate(entry, attributes, metadata) {
     attributes?.description,
     entry?.summary,
     entry?.description,
-    entry?.headline
+    entry?.headline,
   ];
   for (const candidate of candidates) {
     if (typeof candidate === 'string' && candidate.trim()) {
@@ -160,8 +195,10 @@ function pickSummaryCandidate(entry, attributes, metadata) {
 function buildSourceMetadata(rawUrl, entry) {
   try {
     const url = new URL(rawUrl, 'https://blakeoxford.com');
-    const attributes = entry?.attributes && typeof entry.attributes === 'object' ? entry.attributes : {};
-    const metadata = attributes?.metadata && typeof attributes.metadata === 'object' ? attributes.metadata : {};
+    const attributes =
+      entry?.attributes && typeof entry.attributes === 'object' ? entry.attributes : {};
+    const metadata =
+      attributes?.metadata && typeof attributes.metadata === 'object' ? attributes.metadata : {};
     const fileMeta = attributes?.file && typeof attributes.file === 'object' ? attributes.file : {};
     const publishedCandidate =
       metadata?.publishedAt ||
@@ -174,13 +211,17 @@ function buildSourceMetadata(rawUrl, entry) {
       entry?.created_at ||
       entry?.date;
     const summary = pickSummaryCandidate(entry, attributes, metadata);
-    const collection = metadata?.collection || attributes?.collection || inferCollectionFromPath(url.pathname);
-    const icon = SOURCE_CATEGORY_ICONS[collection] || SOURCE_CATEGORY_ICONS[inferCollectionFromPath(url.pathname)] || '📎';
+    const collection =
+      metadata?.collection || attributes?.collection || inferCollectionFromPath(url.pathname);
+    const icon =
+      SOURCE_CATEGORY_ICONS[collection] ||
+      SOURCE_CATEGORY_ICONS[inferCollectionFromPath(url.pathname)] ||
+      '📎';
     return {
       collection,
       icon,
       publishedAt: normalizeDateToIso(publishedCandidate),
-      summary
+      summary,
     };
   } catch {
     return { collection: 'Page', icon: '📎', publishedAt: undefined, summary: undefined };
@@ -191,18 +232,32 @@ const WorkerApp = {
   isAuditRequest(req) {
     try {
       const ua = (req.headers.get('user-agent') || '').toLowerCase();
-      const flag = (req.headers.get('x-audit-mode') || req.headers.get('x-lighthouse') || '').toString().toLowerCase();
+      const flag = (req.headers.get('x-audit-mode') || req.headers.get('x-lighthouse') || '')
+        .toString()
+        .toLowerCase();
       const cookie = req.headers.get('cookie') || '';
       const hasAuditCookie = /(^|;)\s*audit=1\s*(;|$)/.test(cookie);
-      return ua.includes('lighthouse') || ua.includes('chrome-lighthouse') || ua.includes('headlesschrome') || flag === '1' || flag === 'true' || flag === 'lighthouse' || hasAuditCookie;
-    } catch { return false; }
+      return (
+        ua.includes('lighthouse') ||
+        ua.includes('chrome-lighthouse') ||
+        ua.includes('headlesschrome') ||
+        flag === '1' ||
+        flag === 'true' ||
+        flag === 'lighthouse' ||
+        hasAuditCookie
+      );
+    } catch {
+      return false;
+    }
   },
   generateNonce() {
     try {
       if (crypto && typeof crypto.getRandomValues === 'function') {
         const bytes = new Uint8Array(16);
         crypto.getRandomValues(bytes);
-        return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+        return Array.from(bytes)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
       }
     } catch {
       // fallback below
@@ -227,12 +282,18 @@ const WorkerApp = {
       try {
         const h = request.headers.get('cf-request-id') || request.headers.get('x-request-id');
         if (h) return h;
-      } catch { /* no-op */ }
+      } catch {
+        /* no-op */
+      }
       try {
         const bytes = new Uint8Array(8);
         crypto.getRandomValues(bytes);
-        return Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
-      } catch { return Math.random().toString(36).slice(2, 10); }
+        return Array.from(bytes)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
+      } catch {
+        return Math.random().toString(36).slice(2, 10);
+      }
     })();
 
     // HTTPS + apex canonicalization
@@ -275,10 +336,17 @@ const WorkerApp = {
         headers.set('x-request-id', reqId);
         headers.set('x-route-kind', 'asset');
         headers.set('x-cache-policy', headers.get('cache-control') || '');
-        return new Response(icon.body, { status: icon.status, statusText: icon.statusText, headers });
+        return new Response(icon.body, {
+          status: icon.status,
+          statusText: icon.statusText,
+          headers,
+        });
       } catch {
         // fallback: not found favicon
-        return new Response(null, { status: 404, headers: { 'x-request-id': reqId, 'x-route-kind': 'asset', 'x-cache-policy': 'no-store' } });
+        return new Response(null, {
+          status: 404,
+          headers: { 'x-request-id': reqId, 'x-route-kind': 'asset', 'x-cache-policy': 'no-store' },
+        });
       }
     }
 
@@ -297,18 +365,29 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         headers: {
           'content-type': 'text/plain; charset=utf-8',
           'cache-control': 'public, max-age=300, no-transform',
-          'cf-robots-txt': 'bypass',  // Attempt to bypass Cloudflare injection
-          'x-robots-tag': 'none',     // Prevent additional bot control
+          'cf-robots-txt': 'bypass', // Attempt to bypass Cloudflare injection
+          'x-robots-tag': 'none', // Prevent additional bot control
           'x-request-id': reqId,
           'x-route-kind': 'asset',
-          'x-cache-policy': 'public, max-age=300, no-transform'
-        }
+          'x-cache-policy': 'public, max-age=300, no-transform',
+        },
       });
     }
 
     // Health endpoint (moved off /metrics to avoid third-party collisions)
     if (url.pathname === '/_healthz' || url.pathname === '/_healthz/') {
-      return new Response(null, { status: 204, headers: { 'cache-control': 'no-store, no-cache, must-revalidate', 'content-type': 'text/plain; charset=utf-8', 'content-length': '0', 'x-content-type-options': 'nosniff', 'x-request-id': reqId, 'x-route-kind': 'health', 'x-cache-policy': 'no-store, no-cache, must-revalidate' } });
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'cache-control': 'no-store, no-cache, must-revalidate',
+          'content-type': 'text/plain; charset=utf-8',
+          'content-length': '0',
+          'x-content-type-options': 'nosniff',
+          'x-request-id': reqId,
+          'x-route-kind': 'health',
+          'x-cache-policy': 'no-store, no-cache, must-revalidate',
+        },
+      });
     }
 
     // Debug route: intentionally trigger a test error to verify Sentry (edge)
@@ -318,16 +397,18 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           category: 'debug',
           message: 'Triggering Sentry edge test error',
           level: 'info',
-          data: { reqId }
+          data: { reqId },
         });
         throw new Error('Sentry Edge Test: manual trigger from /debug/edge-sentry-test');
       } catch (err) {
         try {
           Sentry.captureException(err, {
             tags: { route: 'debug-edge-sentry-test' },
-            extra: { reqId, path: url.pathname, method }
+            extra: { reqId, path: url.pathname, method },
           });
-        } catch { /* swallow */ }
+        } catch {
+          /* swallow */
+        }
         return new Response('Edge test error captured. Check Sentry project for an event.', {
           status: 200,
           headers: {
@@ -335,15 +416,26 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
             'cache-control': 'no-store',
             'x-request-id': reqId,
             'x-route-kind': 'debug',
-            'x-cache-policy': 'no-store'
-          }
+            'x-cache-policy': 'no-store',
+          },
         });
       }
     }
 
     // Legacy no-op for previous metrics path
     if (url.pathname === '/metrics/' || url.pathname === '/metrics') {
-      return new Response(null, { status: 204, headers: { 'cache-control': 'no-store, no-cache, must-revalidate', 'content-type': 'text/plain; charset=utf-8', 'content-length': '0', 'x-content-type-options': 'nosniff', 'x-request-id': reqId, 'x-route-kind': 'health', 'x-cache-policy': 'no-store, no-cache, must-revalidate' } });
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'cache-control': 'no-store, no-cache, must-revalidate',
+          'content-type': 'text/plain; charset=utf-8',
+          'content-length': '0',
+          'x-content-type-options': 'nosniff',
+          'x-request-id': reqId,
+          'x-route-kind': 'health',
+          'x-cache-policy': 'no-store, no-cache, must-revalidate',
+        },
+      });
     }
 
     if (url.pathname === '/send-email' && request.method === 'POST') {
@@ -355,8 +447,14 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         const cc = h.get('cache-control') || 'no-store';
         h.set('cache-control', cc);
         h.set('x-cache-policy', cc);
-        return new Response(res.body, { status: res.status, statusText: res.statusText, headers: h });
-      } catch { return res; }
+        return new Response(res.body, {
+          status: res.status,
+          statusText: res.statusText,
+          headers: h,
+        });
+      } catch {
+        return res;
+      }
     }
 
     if (url.pathname === '/api/ai-search') {
@@ -378,35 +476,53 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
       }
 
       if (request.method !== 'POST') {
-        return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: baseCorsHeaders });
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+          status: 405,
+          headers: baseCorsHeaders,
+        });
       }
 
       let payload;
       try {
         payload = await request.json();
       } catch {
-        return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), { status: 400, headers: baseCorsHeaders });
+        return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), {
+          status: 400,
+          headers: baseCorsHeaders,
+        });
       }
 
-      const query = typeof payload?.query === 'string'
-        ? payload.query.trim()
-        : typeof payload?.prompt === 'string'
-          ? payload.prompt.trim()
-          : typeof payload?.question === 'string'
-            ? payload.question.trim()
-            : '';
+      const query =
+        typeof payload?.query === 'string'
+          ? payload.query.trim()
+          : typeof payload?.prompt === 'string'
+            ? payload.prompt.trim()
+            : typeof payload?.question === 'string'
+              ? payload.question.trim()
+              : '';
       if (!query) {
-        return new Response(JSON.stringify({ error: 'Query is required' }), { status: 400, headers: baseCorsHeaders });
+        return new Response(JSON.stringify({ error: 'Query is required' }), {
+          status: 400,
+          headers: baseCorsHeaders,
+        });
       }
 
       // Optional page context from the docked Ask companion (generation hint only — never retrieval)
-      const pageContext = payload?.pageContext && typeof payload.pageContext === 'object'
-        ? {
-            title: typeof payload.pageContext.title === 'string' ? payload.pageContext.title.trim() : '',
-            pathname: typeof payload.pageContext.pathname === 'string' ? payload.pageContext.pathname.trim() : '',
-            url: typeof payload.pageContext.url === 'string' ? payload.pageContext.url.trim() : '',
-          }
-        : null;
+      const pageContext =
+        payload?.pageContext && typeof payload.pageContext === 'object'
+          ? {
+              title:
+                typeof payload.pageContext.title === 'string'
+                  ? payload.pageContext.title.trim()
+                  : '',
+              pathname:
+                typeof payload.pageContext.pathname === 'string'
+                  ? payload.pageContext.pathname.trim()
+                  : '',
+              url:
+                typeof payload.pageContext.url === 'string' ? payload.pageContext.url.trim() : '',
+            }
+          : null;
 
       /**
        * Rewrite conversational questions into retrieval-friendly portfolio queries.
@@ -423,14 +539,18 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           .replace(/\b(you|your)\b/gi, 'Blake Oxford');
 
         const aboutPage = /\b(this page|this project|this post|here)\b/i.test(raw) && ctx?.title;
-        const strengthAsk = /\b(do well|good at|strength|excel|best at|specialize|known for|stand out|great at)\b/i.test(lower);
+        const strengthAsk =
+          /\b(do well|good at|strength|excel|best at|specialize|known for|stand out|great at)\b/i.test(
+            lower
+          );
         const whoAsk = /\b(who is|who are|about blake|tell me about)\b/i.test(lower);
         const skillAsk = /\b(skill|experien|tech|stack|proficien|expertise)\b/i.test(lower);
         const projectAsk = /\b(project|case study|portfolio|built|work)\b/i.test(lower);
 
         let complexity = 'simple';
         if (skillAsk || projectAsk || strengthAsk || whoAsk) complexity = 'medium';
-        if (/\b(compare|versus|vs\.?|difference|how did|how does|analyze)\b/i.test(lower)) complexity = 'complex';
+        if (/\b(compare|versus|vs\.?|difference|how did|how does|analyze)\b/i.test(lower))
+          complexity = 'complex';
 
         // Build a clean retrieval query AutoRAG can match against the index
         let retrievalQuery = text;
@@ -439,9 +559,9 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
         } else if (aboutPage) {
           retrievalQuery = `${ctx.title} ${text}`;
         } else if (
-          !/\bblake\b/i.test(retrievalQuery)
-          && retrievalQuery.length < 48
-          && !/^(hi|hello|hey|thanks|thank you|ok|okay)\b/i.test(retrievalQuery)
+          !/\bblake\b/i.test(retrievalQuery) &&
+          retrievalQuery.length < 48 &&
+          !/^(hi|hello|hey|thanks|thank you|ok|okay)\b/i.test(retrievalQuery)
         ) {
           // Short questions without an explicit subject — bias toward Blake's portfolio
           retrievalQuery = `Blake Oxford ${retrievalQuery}`;
@@ -455,7 +575,12 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
 
         const shouldUseCache = !/\b(latest|recent|current|now|today)\b/i.test(lower);
 
-        return { retrievalQuery: retrievalQuery.trim(), generationQuery, complexity, shouldUseCache };
+        return {
+          retrievalQuery: retrievalQuery.trim(),
+          generationQuery,
+          complexity,
+          shouldUseCache,
+        };
       };
 
       const {
@@ -505,10 +630,16 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
           }
 
           sessionCount.count++;
-          await env.RATE_LIMIT_KV.put(sessionKey, JSON.stringify(sessionCount), { expirationTtl: 120 });
+          await env.RATE_LIMIT_KV.put(sessionKey, JSON.stringify(sessionCount), {
+            expirationTtl: 120,
+          });
 
           if (sessionCount.count > 30) {
-            return { limited: true, reason: 'session', resetIn: Math.ceil((sessionCount.reset - now) / 1000) };
+            return {
+              limited: true,
+              reason: 'session',
+              resetIn: Math.ceil((sessionCount.reset - now) / 1000),
+            };
           }
         }
 
@@ -517,23 +648,32 @@ Sitemap: https://blakeoxford.com/sitemap.xml`;
 
       const rateLimit = await rateLimitCheck();
       if (rateLimit.limited) {
-        return new Response(JSON.stringify({
-          error: 'Rate limit exceeded. Please wait a moment before trying again.',
-          resetIn: rateLimit.resetIn
-        }), {
-          status: 429,
-          headers: {
-            ...baseCorsHeaders,
-            'retry-after': String(rateLimit.resetIn),
-            'x-rate-limit-reason': rateLimit.reason,
-            'x-rate-limit-remaining': '0',
+        return new Response(
+          JSON.stringify({
+            error: 'Rate limit exceeded. Please wait a moment before trying again.',
+            resetIn: rateLimit.resetIn,
+          }),
+          {
+            status: 429,
+            headers: {
+              ...baseCorsHeaders,
+              'retry-after': String(rateLimit.resetIn),
+              'x-rate-limit-reason': rateLimit.reason,
+              'x-rate-limit-remaining': '0',
+            },
           }
-        });
+        );
       }
 
       const history = Array.isArray(payload?.history)
         ? payload.history
-            .filter((entry) => entry && typeof entry === 'object' && typeof entry.role === 'string' && typeof entry.content === 'string')
+            .filter(
+              (entry) =>
+                entry &&
+                typeof entry === 'object' &&
+                typeof entry.role === 'string' &&
+                typeof entry.content === 'string'
+            )
             .slice(-10)
         : [];
 
@@ -564,31 +704,32 @@ Guidelines:
 3. Do not invent employers, clients, or projects that are not listed.
 4. Keep answers to 2–5 short sentences unless the user asks for more detail.
 5. Warm, professional tone — like a knowledgeable colleague, not a legal disclaimer.
-6. Plain text only. Do not use markdown: no **bold**, no *italics*, no # headings, no code fences. Use short sentences or simple "- " bullets if listing points.`
+6. Plain text only. Do not use markdown: no **bold**, no *italics*, no # headings, no code fences. Use short sentences or simple "- " bullets if listing points.`,
             },
             ...hist.slice(-3),
-            { role: 'user', content: userQuestion }
+            { role: 'user', content: userQuestion },
           ];
 
           // llama-3.1-8b-instruct was deprecated 2026-05-30; use the active -fast variant
           const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
             messages,
             max_tokens: 420,
-            temperature: 0.65
+            temperature: 0.65,
           });
 
-          const text = typeof response?.response === 'string'
-            ? response.response
-            : typeof response === 'string'
-              ? response
-              : '';
+          const text =
+            typeof response?.response === 'string'
+              ? response.response
+              : typeof response === 'string'
+                ? response
+                : '';
 
           if (text.trim()) {
             return {
               message: text.trim(),
               sources: [],
               fromWorkersAI: true,
-              model: 'llama-3.1-8b-instruct-fast'
+              model: 'llama-3.1-8b-instruct-fast',
             };
           }
 
@@ -601,7 +742,8 @@ Guidelines:
 
       // Normalize query for caching
       const normalizeForCache = (q) => {
-        return q.toLowerCase()
+        return q
+          .toLowerCase()
           .replace(/\s+/g, ' ')
           .replace(/[^\w\s]/g, '')
           .trim()
@@ -609,27 +751,31 @@ Guidelines:
       };
 
       const cacheKey = `ai:response:v4:${normalizeForCache(query)}`;
-      const cacheEnabled = !query.toLowerCase().includes('latest') &&
-                          !query.toLowerCase().includes('recent') &&
-                          !query.toLowerCase().includes('now') &&
-                          !query.toLowerCase().includes('today');
-      
+      const cacheEnabled =
+        !query.toLowerCase().includes('latest') &&
+        !query.toLowerCase().includes('recent') &&
+        !query.toLowerCase().includes('now') &&
+        !query.toLowerCase().includes('today');
+
       // Update cache enabled based on edge enhancement
       const finalCacheEnabled = cacheEnabled && enhancedCacheFlag;
 
       // Conversational Blake-profile questions: answer with Workers AI from verified expertise.
       // AutoRAG retrieval often fails on pronouns / soft phrasing ("What does he do well").
-      const conversationalProfileAsk = /\b(do well|good at|strength|excel|best at|specialize|known for|stand out|great at|who is|who are|about blake|tell me about)\b/i.test(query);
+      const conversationalProfileAsk =
+        /\b(do well|good at|strength|excel|best at|specialize|known for|stand out|great at|who is|who are|about blake|tell me about)\b/i.test(
+          query
+        );
       if ((complexity === 'simple' || conversationalProfileAsk) && env.AI) {
         const workersAIResult = await handleSimpleQueryWithWorkersAI(generationQuery, history, env);
-        
+
         if (workersAIResult) {
           const responseHeaders = {
             ...baseCorsHeaders,
             'x-query-complexity': complexity,
             'x-ai-provider': 'workers-ai',
             'x-cache-status': 'N/A',
-            'x-response-time': String(Date.now() - startTime)
+            'x-response-time': String(Date.now() - startTime),
           };
 
           // Log to analytics
@@ -641,14 +787,14 @@ Guidelines:
                   'WORKERS_AI',
                   anonymizeClientIp(clientIp),
                   sessionId || 'anonymous',
-                  complexity
+                  complexity,
                 ],
                 doubles: [
                   0, // No sources from Workers AI
                   workersAIResult.message?.length || 0,
-                  Date.now() - startTime
+                  Date.now() - startTime,
                 ],
-                indexes: ['workers_ai', `complexity_${complexity}`]
+                indexes: ['workers_ai', `complexity_${complexity}`],
               });
             } catch {
               // Silently fail - analytics is non-critical
@@ -657,7 +803,7 @@ Guidelines:
 
           return new Response(JSON.stringify(workersAIResult), {
             status: 200,
-            headers: responseHeaders
+            headers: responseHeaders,
           });
         }
       }
@@ -666,12 +812,13 @@ Guidelines:
       if (finalCacheEnabled && env.AI_RESPONSE_CACHE) {
         try {
           const cached = await env.AI_RESPONSE_CACHE.get(cacheKey, 'json');
-          if (cached && cached.message && Date.now() - cached.timestamp < 7*24*60*60*1000) { // 7 days
+          if (cached && cached.message && Date.now() - cached.timestamp < 7 * 24 * 60 * 60 * 1000) {
+            // 7 days
             const responseData = {
               message: cached.message,
               sources: cached.sources || [],
               fromCache: true,
-              cachedAt: cached.timestamp
+              cachedAt: cached.timestamp,
             };
 
             const cacheHeaders = {
@@ -679,7 +826,7 @@ Guidelines:
               'x-cache-status': 'HIT',
               'x-cache-age': String(Math.floor((Date.now() - cached.timestamp) / 1000)),
               'x-query-complexity': complexity,
-              'x-ai-provider': 'autorag-cached'
+              'x-ai-provider': 'autorag-cached',
             };
 
             // Log cache hit to analytics
@@ -691,14 +838,14 @@ Guidelines:
                     'CACHE_HIT',
                     anonymizeClientIp(clientIp),
                     sessionId || 'anonymous',
-                    complexity || 'unknown'
+                    complexity || 'unknown',
                   ],
                   doubles: [
                     cached.sources?.length || 0,
                     cached.message?.length || 0,
-                    Date.now() - startTime
+                    Date.now() - startTime,
                   ],
-                  indexes: ['cache_hit', `complexity_${complexity}`]
+                  indexes: ['cache_hit', `complexity_${complexity}`],
                 });
               } catch {
                 // Silently fail - analytics is non-critical
@@ -707,7 +854,7 @@ Guidelines:
 
             return new Response(JSON.stringify(responseData), {
               status: 200,
-              headers: cacheHeaders
+              headers: cacheHeaders,
             });
           }
         } catch {
@@ -718,30 +865,33 @@ Guidelines:
       const upstreamEndpoint = env.AI_SEARCH_API_ENDPOINT;
       const upstreamToken = env.AI_SEARCH_API_TOKEN || env['search-api'];
 
-      const wantsStream = payload?.stream === true || ((request.headers.get('accept') || '')
-        .toLowerCase()
-        .includes('text/event-stream'));
+      const wantsStream =
+        payload?.stream === true ||
+        (request.headers.get('accept') || '').toLowerCase().includes('text/event-stream');
 
       if (!upstreamEndpoint || !upstreamToken) {
-        return new Response(JSON.stringify({ error: 'AI search service not configured' }), { status: 503, headers: baseCorsHeaders });
+        return new Response(JSON.stringify({ error: 'AI search service not configured' }), {
+          status: 503,
+          headers: baseCorsHeaders,
+        });
       }
 
       try {
         const requestBody = { query: enhancedQuery, history };
-        
+
         // Optional AI Gateway: attach observability headers when configured.
         // Keep the AutoRAG endpoint URL (gateway URL rewrite is provider-specific).
         // Enable by setting AI_GATEWAY_ID + AI_GATEWAY_ACCOUNT_ID in wrangler.toml.
         let fetchUrl = upstreamEndpoint;
         const fetchHeaders = {
           'content-type': 'application/json',
-          'authorization': `Bearer ${upstreamToken}`
+          authorization: `Bearer ${upstreamToken}`,
         };
-        
+
         if (env.AI_GATEWAY_ID && env.AI_GATEWAY_ACCOUNT_ID) {
           fetchHeaders['cf-aig-cache-ttl'] = '3600';
-          fetchHeaders['cf-aig-metadata'] = JSON.stringify({ 
-            user: sessionId || 'anonymous', 
+          fetchHeaders['cf-aig-metadata'] = JSON.stringify({
+            user: sessionId || 'anonymous',
             source: 'website-chat',
             complexity,
             enhanced: query !== enhancedQuery,
@@ -749,12 +899,12 @@ Guidelines:
             account: env.AI_GATEWAY_ACCOUNT_ID,
           });
         }
-        
+
         const upstreamResponse = await fetch(fetchUrl, {
           method: 'POST',
           headers: fetchHeaders,
           body: JSON.stringify(requestBody),
-          cf: { cacheTtl: 0, cacheEverything: false }
+          cf: { cacheTtl: 0, cacheEverything: false },
         });
 
         if (!upstreamResponse.ok) {
@@ -768,48 +918,74 @@ Guidelines:
             const upstreamText = await upstreamResponse.text();
             if (upstreamText) errorDetail = upstreamText.slice(0, 200);
           }
-          return new Response(JSON.stringify({ error: errorDetail }), { status: upstreamResponse.status, headers: baseCorsHeaders });
+          return new Response(JSON.stringify({ error: errorDetail }), {
+            status: upstreamResponse.status,
+            headers: baseCorsHeaders,
+          });
         }
 
         let upstreamData;
         try {
           upstreamData = await upstreamResponse.json();
         } catch {
-          return new Response(JSON.stringify({ error: 'Invalid response from AI service' }), { status: 502, headers: baseCorsHeaders });
+          return new Response(JSON.stringify({ error: 'Invalid response from AI service' }), {
+            status: 502,
+            headers: baseCorsHeaders,
+          });
         }
 
         if (upstreamData && typeof upstreamData === 'object' && upstreamData.success === false) {
-          const upstreamError = typeof upstreamData?.errors?.[0]?.message === 'string' ? upstreamData.errors[0].message : 'AI search service reported an error';
-          return new Response(JSON.stringify({ error: upstreamError }), { status: 502, headers: baseCorsHeaders });
+          const upstreamError =
+            typeof upstreamData?.errors?.[0]?.message === 'string'
+              ? upstreamData.errors[0].message
+              : 'AI search service reported an error';
+          return new Response(JSON.stringify({ error: upstreamError }), {
+            status: 502,
+            headers: baseCorsHeaders,
+          });
         }
 
-        const result = upstreamData?.result && typeof upstreamData.result === 'object' ? upstreamData.result : upstreamData;
-        const message = typeof result?.response === 'string'
-          ? result.response.trim()
-          : typeof upstreamData?.response === 'string'
-            ? upstreamData.response.trim()
-            : '';
+        const result =
+          upstreamData?.result && typeof upstreamData.result === 'object'
+            ? upstreamData.result
+            : upstreamData;
+        const message =
+          typeof result?.response === 'string'
+            ? result.response.trim()
+            : typeof upstreamData?.response === 'string'
+              ? upstreamData.response.trim()
+              : '';
 
         const sources = Array.isArray(result?.data)
           ? result.data
               .map((entry, index) => {
                 if (!entry || typeof entry !== 'object') return null;
-                const attributes = entry.attributes && typeof entry.attributes === 'object' ? entry.attributes : {};
-                const fileMeta = attributes.file && typeof attributes.file === 'object' ? attributes.file : {};
-                const rawUrl = typeof entry.filename === 'string' && entry.filename
-                  ? entry.filename
-                  : typeof attributes.folder === 'string'
-                    ? attributes.folder
-                    : '';
+                const attributes =
+                  entry.attributes && typeof entry.attributes === 'object' ? entry.attributes : {};
+                const fileMeta =
+                  attributes.file && typeof attributes.file === 'object' ? attributes.file : {};
+                const rawUrl =
+                  typeof entry.filename === 'string' && entry.filename
+                    ? entry.filename
+                    : typeof attributes.folder === 'string'
+                      ? attributes.folder
+                      : '';
                 if (!rawUrl) return null;
-                const titleCandidate = typeof fileMeta.title === 'string' && fileMeta.title.trim()
-                  ? fileMeta.title.trim()
-                  : typeof attributes.folder === 'string' && attributes.folder.trim()
-                    ? attributes.folder.trim()
-                    : `Source ${index + 1}`;
+                const titleCandidate =
+                  typeof fileMeta.title === 'string' && fileMeta.title.trim()
+                    ? fileMeta.title.trim()
+                    : typeof attributes.folder === 'string' && attributes.folder.trim()
+                      ? attributes.folder.trim()
+                      : `Source ${index + 1}`;
                 let snippet;
                 if (Array.isArray(entry.content)) {
-                  const contentItem = entry.content.find((item) => item && typeof item === 'object' && typeof item.text === 'string' && item.text.trim());
+                  const contentItem = entry.content.find(
+                    (item) =>
+                      item &&
+                      typeof item === 'object' &&
+                      typeof item.text === 'string' &&
+                      item.text.trim()
+                  );
                   if (contentItem && typeof contentItem.text === 'string') {
                     snippet = contentItem.text.trim().slice(0, 320);
                   }
@@ -844,11 +1020,18 @@ Guidelines:
           : [];
 
         if (!message) {
-          return new Response(JSON.stringify({ error: 'AI service returned no message' }), { status: 502, headers: baseCorsHeaders });
+          return new Response(JSON.stringify({ error: 'AI service returned no message' }), {
+            status: 502,
+            headers: baseCorsHeaders,
+          });
         }
 
         // AutoRAG empty-retrieval refusals → conversational Workers AI fallback
-        const looksLikeEmptyRetrieval = sources.length === 0 && /\b(don'?t have that information|no documents|not (found|available) in|cannot provide an answer based on)\b/i.test(message);
+        const looksLikeEmptyRetrieval =
+          sources.length === 0 &&
+          /\b(don'?t have that information|no documents|not (found|available) in|cannot provide an answer based on)\b/i.test(
+            message
+          );
         if (looksLikeEmptyRetrieval && env.AI) {
           const fallback = await handleSimpleQueryWithWorkersAI(generationQuery, history, env);
           if (fallback?.message) {
@@ -877,9 +1060,10 @@ Guidelines:
           streamHeaders.set('x-ai-provider', 'autorag');
 
           const encoder = new globalThis.TextEncoder();
-          const sleep = (ms) => (typeof globalThis.setTimeout === 'function'
-            ? new Promise((resolve) => globalThis.setTimeout(resolve, ms))
-            : Promise.resolve());
+          const sleep = (ms) =>
+            typeof globalThis.setTimeout === 'function'
+              ? new Promise((resolve) => globalThis.setTimeout(resolve, ms))
+              : Promise.resolve();
           const stream = new globalThis.ReadableStream({
             async start(controller) {
               const send = (eventName, data) => {
@@ -902,11 +1086,15 @@ Guidelines:
               // Cache and log after streaming completes
               if (finalCacheEnabled && env.AI_RESPONSE_CACHE && message) {
                 try {
-                  await env.AI_RESPONSE_CACHE.put(cacheKey, JSON.stringify({
-                    message,
-                    sources,
-                    timestamp: Date.now()
-                  }), { expirationTtl: 7 * 24 * 60 * 60 });
+                  await env.AI_RESPONSE_CACHE.put(
+                    cacheKey,
+                    JSON.stringify({
+                      message,
+                      sources,
+                      timestamp: Date.now(),
+                    }),
+                    { expirationTtl: 7 * 24 * 60 * 60 }
+                  );
                 } catch {
                   // Cache write failed, continue anyway
                 }
@@ -921,14 +1109,10 @@ Guidelines:
                       'API_CALL_STREAM',
                       anonymizeClientIp(clientIp),
                       sessionId || 'anonymous',
-                      complexity || 'unknown'
+                      complexity || 'unknown',
                     ],
-                    doubles: [
-                      sources.length,
-                      message.length,
-                      responseTime
-                    ],
-                    indexes: ['ai_query', `complexity_${complexity}`]
+                    doubles: [sources.length, message.length, responseTime],
+                    indexes: ['ai_query', `complexity_${complexity}`],
                   });
                 } catch {
                   // Analytics write failed, continue anyway
@@ -937,7 +1121,7 @@ Guidelines:
             },
             cancel() {
               return undefined;
-            }
+            },
           });
           return new Response(stream, { status: 200, headers: streamHeaders });
         }
@@ -947,11 +1131,15 @@ Guidelines:
         // Cache the response for future queries
         if (finalCacheEnabled && env.AI_RESPONSE_CACHE && message) {
           try {
-            await env.AI_RESPONSE_CACHE.put(cacheKey, JSON.stringify({
-              message,
-              sources,
-              timestamp: Date.now()
-            }), { expirationTtl: 7 * 24 * 60 * 60 }); // 7 days
+            await env.AI_RESPONSE_CACHE.put(
+              cacheKey,
+              JSON.stringify({
+                message,
+                sources,
+                timestamp: Date.now(),
+              }),
+              { expirationTtl: 7 * 24 * 60 * 60 }
+            ); // 7 days
           } catch {
             // Cache write failed, continue anyway
           }
@@ -967,14 +1155,10 @@ Guidelines:
                 'API_CALL',
                 anonymizeClientIp(clientIp),
                 sessionId || 'anonymous',
-                complexity || 'unknown'
+                complexity || 'unknown',
               ],
-              doubles: [
-                sources.length,
-                message.length,
-                responseTime
-              ],
-              indexes: ['ai_query', `complexity_${complexity}`]
+              doubles: [sources.length, message.length, responseTime],
+              indexes: ['ai_query', `complexity_${complexity}`],
             });
           } catch {
             // Analytics write failed, continue anyway
@@ -987,7 +1171,7 @@ Guidelines:
           'x-response-time': String(Date.now() - startTime),
           'x-query-complexity': complexity,
           'x-query-enhanced': String(query !== enhancedQuery),
-          'x-ai-provider': 'autorag'
+          'x-ai-provider': 'autorag',
         };
 
         return new Response(responsePayload, { status: 200, headers: responseHeaders });
@@ -996,7 +1180,10 @@ Guidelines:
         if (error instanceof Error && error.name === 'AbortError') {
           errorMessage = 'AI search request timed out';
         }
-        return new Response(JSON.stringify({ error: errorMessage }), { status: 504, headers: baseCorsHeaders });
+        return new Response(JSON.stringify({ error: errorMessage }), {
+          status: 504,
+          headers: baseCorsHeaders,
+        });
       }
     }
 
@@ -1007,23 +1194,26 @@ Guidelines:
         const conversationId = url.searchParams.get('id') || 'default';
         const id = env.CONVERSATION_DO.idFromName(conversationId);
         const stub = env.CONVERSATION_DO.get(id);
-        
+
         // Forward request to Durable Object
         return stub.fetch(request);
-        } catch (error) {
+      } catch (error) {
         console.error('Edge Worker: conversation Durable Object unavailable', error);
         const origin = request.headers.get('origin') || '*';
-        return new Response(JSON.stringify({ 
-          error: 'Conversation service unavailable',
-          fallback: 'Use HTTP endpoints instead'
-        }), { 
-          status: 503,
-          headers: {
-            'content-type': 'application/json',
-            'access-control-allow-origin': origin,
-            'access-control-allow-credentials': 'true'
+        return new Response(
+          JSON.stringify({
+            error: 'Conversation service unavailable',
+            fallback: 'Use HTTP endpoints instead',
+          }),
+          {
+            status: 503,
+            headers: {
+              'content-type': 'application/json',
+              'access-control-allow-origin': origin,
+              'access-control-allow-credentials': 'true',
+            },
           }
-        });
+        );
       }
     }
 
@@ -1049,9 +1239,9 @@ Guidelines:
       }
 
       if (request.method !== 'POST') {
-        return new Response(JSON.stringify({ error: 'Method not allowed' }), { 
-          status: 405, 
-          headers: baseCorsHeaders 
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+          status: 405,
+          headers: baseCorsHeaders,
         });
       }
 
@@ -1073,18 +1263,21 @@ Guidelines:
           await env.RATE_LIMIT_KV.put(ipKey, JSON.stringify(ipCount), { expirationTtl: 120 });
           if (ipCount.count > 60) {
             const resetIn = Math.ceil((ipCount.reset - now) / 1000);
-            return new Response(JSON.stringify({
-              error: 'Search rate limit exceeded. Please wait a moment.',
-              resetIn,
-            }), {
-              status: 429,
-              headers: {
-                ...baseCorsHeaders,
-                'retry-after': String(resetIn),
-                'x-rate-limit-reason': 'ip',
-                'x-rate-limit-remaining': '0',
-              },
-            });
+            return new Response(
+              JSON.stringify({
+                error: 'Search rate limit exceeded. Please wait a moment.',
+                resetIn,
+              }),
+              {
+                status: 429,
+                headers: {
+                  ...baseCorsHeaders,
+                  'retry-after': String(resetIn),
+                  'x-rate-limit-reason': 'ip',
+                  'x-rate-limit-remaining': '0',
+                },
+              }
+            );
           }
         }
 
@@ -1093,47 +1286,53 @@ Guidelines:
         if (!query || typeof query !== 'string') {
           return new Response(JSON.stringify({ error: 'Query is required' }), {
             status: 400,
-            headers: baseCorsHeaders
+            headers: baseCorsHeaders,
           });
         }
 
         // Check if Vectorize is available
         if (!env.VECTORIZE) {
-          return new Response(JSON.stringify({ 
-            error: 'Semantic search not configured',
-            fallback: 'using-keyword-search' 
-          }), {
-            status: 503,
-            headers: baseCorsHeaders
-          });
+          return new Response(
+            JSON.stringify({
+              error: 'Semantic search not configured',
+              fallback: 'using-keyword-search',
+            }),
+            {
+              status: 503,
+              headers: baseCorsHeaders,
+            }
+          );
         }
 
         // Generate embedding for query using Workers AI
         let queryEmbedding;
         try {
           const embeddingResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
-            text: [query]
+            text: [query],
           });
           queryEmbedding = embeddingResponse.data[0];
         } catch (error) {
-          return new Response(JSON.stringify({ 
-            error: 'Failed to generate query embedding',
-            details: error.message 
-          }), {
-            status: 500,
-            headers: baseCorsHeaders
-          });
+          return new Response(
+            JSON.stringify({
+              error: 'Failed to generate query embedding',
+              details: error.message,
+            }),
+            {
+              status: 500,
+              headers: baseCorsHeaders,
+            }
+          );
         }
 
         // Query Vectorize index
         const vectorizeResults = await env.VECTORIZE.query(queryEmbedding, {
           topK: Math.min(limit, 10),
           returnMetadata: true,
-          returnValues: false
+          returnValues: false,
         });
 
         // Format results
-        const results = vectorizeResults.matches.map(match => ({
+        const results = vectorizeResults.matches.map((match) => ({
           id: match.id,
           score: match.score,
           title: match.metadata?.title || '',
@@ -1141,7 +1340,7 @@ Guidelines:
           url: match.metadata?.url || '',
           collection: match.metadata?.collection || '',
           tags: match.metadata?.tags ? match.metadata.tags.split(',') : [],
-          date: match.metadata?.date || ''
+          date: match.metadata?.date || '',
         }));
 
         const topScore = results[0]?.score ?? 0;
@@ -1150,17 +1349,8 @@ Guidelines:
         if (env.AI_ANALYTICS) {
           try {
             env.AI_ANALYTICS.writeDataPoint({
-              blobs: [
-                query.slice(0, 50),
-                'VECTORIZE',
-                anonymizeClientIp(clientIp),
-                'anonymous',
-              ],
-              doubles: [
-                results.length,
-                topScore,
-                latency,
-              ],
+              blobs: [query.slice(0, 50), 'VECTORIZE', anonymizeClientIp(clientIp), 'anonymous'],
+              doubles: [results.length, topScore, latency],
               indexes: ['semantic_search'],
             });
           } catch {
@@ -1168,29 +1358,34 @@ Guidelines:
           }
         }
 
-        return new Response(JSON.stringify({ 
-          query,
-          results,
-          count: results.length,
-          provider: 'vectorize',
-          topScore,
-        }), {
-          status: 200,
-          headers: {
-            ...baseCorsHeaders,
-            'x-response-time': String(latency),
-            'x-search-provider': 'vectorize',
+        return new Response(
+          JSON.stringify({
+            query,
+            results,
+            count: results.length,
+            provider: 'vectorize',
+            topScore,
+          }),
+          {
+            status: 200,
+            headers: {
+              ...baseCorsHeaders,
+              'x-response-time': String(latency),
+              'x-search-provider': 'vectorize',
+            },
           }
-        });
-
+        );
       } catch (error) {
-        return new Response(JSON.stringify({ 
-          error: 'Semantic search failed',
-          details: error.message 
-        }), {
-          status: 500,
-          headers: baseCorsHeaders
-        });
+        return new Response(
+          JSON.stringify({
+            error: 'Semantic search failed',
+            details: error.message,
+          }),
+          {
+            status: 500,
+            headers: baseCorsHeaders,
+          }
+        );
       }
     }
 
@@ -1201,12 +1396,12 @@ Guidelines:
         'access-control-allow-credentials': 'true',
         'access-control-allow-methods': 'POST, OPTIONS',
         'access-control-allow-headers': 'content-type',
-        'vary': 'Origin',
+        vary: 'Origin',
         'cache-control': 'no-store',
         'content-type': 'application/json; charset=utf-8',
         'x-request-id': reqId,
         'x-route-kind': 'api',
-        'x-cache-policy': 'no-store'
+        'x-cache-policy': 'no-store',
       };
 
       if (request.method === 'OPTIONS') {
@@ -1214,23 +1409,36 @@ Guidelines:
       }
 
       if (request.method !== 'POST') {
-        return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders });
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+          status: 405,
+          headers: corsHeaders,
+        });
       }
 
       let payload;
       try {
         payload = await request.json();
       } catch {
-        return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), { status: 400, headers: corsHeaders });
+        return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), {
+          status: 400,
+          headers: corsHeaders,
+        });
       }
 
       const messageId = typeof payload?.messageId === 'string' ? payload.messageId.trim() : '';
-      const sentiment = payload?.sentiment === 'positive' || payload?.sentiment === 'negative' ? payload.sentiment : undefined;
+      const sentiment =
+        payload?.sentiment === 'positive' || payload?.sentiment === 'negative'
+          ? payload.sentiment
+          : undefined;
       const query = typeof payload?.query === 'string' ? payload.query.slice(0, 500) : undefined;
-      const metadata = payload?.metadata && typeof payload.metadata === 'object' ? payload.metadata : {};
+      const metadata =
+        payload?.metadata && typeof payload.metadata === 'object' ? payload.metadata : {};
 
       if (!messageId || !sentiment) {
-        return new Response(JSON.stringify({ error: 'Feedback submission missing data' }), { status: 400, headers: corsHeaders });
+        return new Response(JSON.stringify({ error: 'Feedback submission missing data' }), {
+          status: 400,
+          headers: corsHeaders,
+        });
       }
 
       const record = {
@@ -1238,13 +1446,15 @@ Guidelines:
         sentiment,
         query,
         metadata,
-        ts: Date.now()
+        ts: Date.now(),
       };
 
       try {
         if (env.AI_FEEDBACK_KV && typeof env.AI_FEEDBACK_KV.put === 'function') {
           const key = `feedback:${record.ts}:${record.id}`;
-          await env.AI_FEEDBACK_KV.put(key, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 30 });
+          await env.AI_FEEDBACK_KV.put(key, JSON.stringify(record), {
+            expirationTtl: 60 * 60 * 24 * 30,
+          });
         } else {
           console.log('AI feedback event', JSON.stringify(record));
         }
@@ -1263,31 +1473,48 @@ Guidelines:
         'access-control-allow-credentials': 'true',
         'access-control-allow-methods': 'POST, OPTIONS',
         'access-control-allow-headers': 'content-type',
-        'vary': 'Origin',
+        vary: 'Origin',
         'cache-control': 'no-store',
         'content-type': 'application/json; charset=utf-8',
         'x-request-id': reqId,
         'x-route-kind': 'api',
-        'x-cache-policy': 'no-store'
+        'x-cache-policy': 'no-store',
       };
 
       if (request.method === 'OPTIONS') {
         return new Response(null, { status: 204, headers: corsHeaders });
       }
       if (request.method !== 'POST') {
-        return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders });
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+          status: 405,
+          headers: corsHeaders,
+        });
       }
 
       let payload;
-      try { payload = await request.json(); } catch { return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), { status: 400, headers: corsHeaders }); }
+      try {
+        payload = await request.json();
+      } catch {
+        return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
 
-      const theme = (typeof payload?.theme === 'string' && (payload.theme === 'light' || payload.theme === 'dark' || payload.theme === 'system')) ? payload.theme : null;
+      const theme =
+        typeof payload?.theme === 'string' &&
+        (payload.theme === 'light' || payload.theme === 'dark' || payload.theme === 'system')
+          ? payload.theme
+          : null;
       if (!theme) {
-        return new Response(JSON.stringify({ error: 'Invalid theme value' }), { status: 400, headers: corsHeaders });
+        return new Response(JSON.stringify({ error: 'Invalid theme value' }), {
+          status: 400,
+          headers: corsHeaders,
+        });
       }
 
       try {
-        const maxAge = 60*60*24*365;
+        const maxAge = 60 * 60 * 24 * 365;
         const isProd = url.hostname && url.hostname.endsWith('blakeoxford.com');
         const secureFlag = isProd ? '; Secure' : '';
         const cookie = `theme=${encodeURIComponent(theme)}; Path=/; Max-Age=${maxAge}; SameSite=Lax; HttpOnly${secureFlag}`;
@@ -1295,14 +1522,20 @@ Guidelines:
         headers.append('Set-Cookie', cookie);
         return new Response(JSON.stringify({ status: 'ok', theme }), { status: 200, headers });
       } catch {
-        return new Response(JSON.stringify({ error: 'Failed to set theme cookie' }), { status: 500, headers: corsHeaders });
+        return new Response(JSON.stringify({ error: 'Failed to set theme cookie' }), {
+          status: 500,
+          headers: corsHeaders,
+        });
       }
     }
 
     // Image path remaps
     if (url.pathname === '/assets/images/optimized/avif/china-profile-picture@640w.avif') {
       try {
-        const img320 = new URL('/assets/images/optimized/avif/china-profile-picture@320w.avif', url.origin);
+        const img320 = new URL(
+          '/assets/images/optimized/avif/china-profile-picture@320w.avif',
+          url.origin
+        );
         const imgReq = new Request(img320.toString(), request);
         const imgRes = await env.ASSETS.fetch(imgReq);
         if (imgRes.ok) {
@@ -1320,7 +1553,10 @@ Guidelines:
     }
     if (url.pathname === '/assets/images/optimized/avif/china-profile-picture@320w.avif') {
       try {
-        const base = new URL('/assets/images/optimized/avif/china-profile-picture.avif', url.origin);
+        const base = new URL(
+          '/assets/images/optimized/avif/china-profile-picture.avif',
+          url.origin
+        );
         const baseReq = new Request(base.toString(), request);
         const baseRes = await env.ASSETS.fetch(baseReq);
         if (baseRes.ok) {
@@ -1348,19 +1584,26 @@ Guidelines:
 
     try {
       const startTs = Date.now();
-      console.log('\u27a1\ufe0f Request start', JSON.stringify({ id: reqId, method, path: url.pathname }));
+      console.log(
+        '\u27a1\ufe0f Request start',
+        JSON.stringify({ id: reqId, method, path: url.pathname })
+      );
 
       // Add breadcrumb for request tracking
       addEdgeBreadcrumb({
         category: 'http',
         message: `${method} ${url.pathname}`,
         level: 'info',
-        data: { reqId, method, path: url.pathname }
+        data: { reqId, method, path: url.pathname },
       });
 
       let originResponse = await env.ASSETS.fetch(request);
 
-      if (originResponse.status === 404 && !url.pathname.includes('.') && !url.pathname.endsWith('/index.html')) {
+      if (
+        originResponse.status === 404 &&
+        !url.pathname.includes('.') &&
+        !url.pathname.endsWith('/index.html')
+      ) {
         const altUrl = new URL(url);
         altUrl.pathname = url.pathname.replace(/\/$/, '') + '/index.html';
         originResponse = await env.ASSETS.fetch(new Request(altUrl.toString(), request));
@@ -1370,12 +1613,29 @@ Guidelines:
         if (originResponse.status >= 500) {
           const cached = await caches.default.match(request);
           if (cached) return cached;
-          const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
+          const isHtmlRoute =
+            request.headers.get('accept')?.includes('text/html') ||
+            url.pathname.endsWith('/') ||
+            !url.pathname.includes('.');
           if (isHtmlRoute) {
             const offlineHtml = buildOfflineHtml(reqId);
-            const headers = { 'content-type': 'text/html; charset=utf-8', 'x-request-id': reqId, 'x-route-kind': 'html', 'cache-control': 'no-store', 'x-cache-policy': 'no-store' };
+            const headers = {
+              'content-type': 'text/html; charset=utf-8',
+              'x-request-id': reqId,
+              'x-route-kind': 'html',
+              'cache-control': 'no-store',
+              'x-cache-policy': 'no-store',
+            };
             const resp = new Response(offlineHtml, { status: 200, headers });
-            console.log('\u26a0\ufe0f Fallback html', JSON.stringify({ id: reqId, status: resp.status, path: url.pathname, dur: Date.now() - startTs }));
+            console.log(
+              '\u26a0\ufe0f Fallback html',
+              JSON.stringify({
+                id: reqId,
+                status: resp.status,
+                path: url.pathname,
+                dur: Date.now() - startTs,
+              })
+            );
             return resp;
           }
           // Graceful fallbacks for non-HTML requests during transient failures
@@ -1383,7 +1643,16 @@ Guidelines:
           // API endpoints: return empty array/object to avoid UI hard-fail during outages
           if (pathname.startsWith('/api/')) {
             const empty = pathname.endsWith('.json') ? '[]' : '';
-            return new Response(empty, { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-request-id': reqId, 'x-route-kind': 'api', 'x-cache-policy': 'no-store' } });
+            return new Response(empty, {
+              status: 200,
+              headers: {
+                'content-type': 'application/json; charset=utf-8',
+                'cache-control': 'no-store',
+                'x-request-id': reqId,
+                'x-route-kind': 'api',
+                'x-cache-policy': 'no-store',
+              },
+            });
           }
           // Images: serve a lightweight placeholder if possible
           if (/^\/assets\/images\//.test(pathname)) {
@@ -1400,9 +1669,19 @@ Guidelines:
                 headers.set('x-cache-policy', headers.get('cache-control') || '');
                 return new Response(phRes.body, { status: 200, headers });
               }
-            } catch { /* ignore and fall through */ }
+            } catch {
+              /* ignore and fall through */
+            }
             // As last resort, return 204 to prevent noisy console errors
-            return new Response(null, { status: 204, headers: { 'cache-control': 'no-store', 'x-request-id': reqId, 'x-route-kind': 'asset', 'x-cache-policy': 'no-store' } });
+            return new Response(null, {
+              status: 204,
+              headers: {
+                'cache-control': 'no-store',
+                'x-request-id': reqId,
+                'x-route-kind': 'asset',
+                'x-cache-policy': 'no-store',
+              },
+            });
           }
         }
         // For non-5xx errors (e.g., 404), still attach diagnostics headers
@@ -1410,11 +1689,22 @@ Guidelines:
           const h = new Headers(originResponse.headers);
           h.set('x-request-id', reqId);
           const pathLower = url.pathname.toLowerCase();
-          const routeKind = pathLower.startsWith('/api/') ? 'api' : (pathLower.endsWith('.js') || pathLower.endsWith('.css') || pathLower.startsWith('/_astro/') || pathLower.startsWith('/assets/')) ? 'asset' : 'html';
+          const routeKind = pathLower.startsWith('/api/')
+            ? 'api'
+            : pathLower.endsWith('.js') ||
+                pathLower.endsWith('.css') ||
+                pathLower.startsWith('/_astro/') ||
+                pathLower.startsWith('/assets/')
+              ? 'asset'
+              : 'html';
           h.set('x-route-kind', routeKind);
           const cc = h.get('cache-control') || 'no-store';
           h.set('x-cache-policy', cc);
-          return new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers: h });
+          return new Response(originResponse.body, {
+            status: originResponse.status,
+            statusText: originResponse.statusText,
+            headers: h,
+          });
         } catch {
           return originResponse;
         }
@@ -1423,29 +1713,50 @@ Guidelines:
       const contentType = originResponse.headers.get('content-type') || '';
       if (!contentType) {
         const pathLower = url.pathname.toLowerCase();
-        const guess = pathLower.endsWith('.css') ? 'text/css; charset=utf-8'
-          : pathLower.endsWith('.js') ? 'application/javascript; charset=utf-8'
-          : pathLower.endsWith('.json') ? 'application/json; charset=utf-8'
-          : pathLower.endsWith('.svg') ? 'image/svg+xml'
-          : pathLower.endsWith('.xml') ? 'application/xml; charset=utf-8'
-          : pathLower.endsWith('.txt') ? 'text/plain; charset=utf-8'
-          : pathLower.endsWith('.ico') ? 'image/x-icon' : '';
+        const guess = pathLower.endsWith('.css')
+          ? 'text/css; charset=utf-8'
+          : pathLower.endsWith('.js')
+            ? 'application/javascript; charset=utf-8'
+            : pathLower.endsWith('.json')
+              ? 'application/json; charset=utf-8'
+              : pathLower.endsWith('.svg')
+                ? 'image/svg+xml'
+                : pathLower.endsWith('.xml')
+                  ? 'application/xml; charset=utf-8'
+                  : pathLower.endsWith('.txt')
+                    ? 'text/plain; charset=utf-8'
+                    : pathLower.endsWith('.ico')
+                      ? 'image/x-icon'
+                      : '';
         if (guess) {
           const fixedHeaders = new Headers(originResponse.headers);
           fixedHeaders.set('content-type', guess);
-          originResponse = new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers: fixedHeaders });
+          originResponse = new Response(originResponse.body, {
+            status: originResponse.status,
+            statusText: originResponse.statusText,
+            headers: fixedHeaders,
+          });
         }
       }
 
       const pathLower = url.pathname.toLowerCase();
       const routeKind = (() => {
         if (pathLower.startsWith('/api/')) return 'api';
-        if (pathLower.endsWith('.js') || pathLower.endsWith('.css') || pathLower.startsWith('/_astro/') || pathLower.startsWith('/assets/')) return 'asset';
+        if (
+          pathLower.endsWith('.js') ||
+          pathLower.endsWith('.css') ||
+          pathLower.startsWith('/_astro/') ||
+          pathLower.startsWith('/assets/')
+        )
+          return 'asset';
         return 'html';
       })();
       if (method === 'GET') {
         const isHtml = originResponse.headers.get('content-type')?.includes('text/html');
-        const isAssetExt = /\.(?:js|css|png|jpg|jpeg|webp|avif|svg|ico|woff2|pdf)$/.test(pathLower) || pathLower.startsWith('/assets/') || pathLower.startsWith('/_astro/');
+        const isAssetExt =
+          /\.(?:js|css|png|jpg|jpeg|webp|avif|svg|ico|woff2|pdf)$/.test(pathLower) ||
+          pathLower.startsWith('/assets/') ||
+          pathLower.startsWith('/_astro/');
         const isHashed = isHashedPath(pathLower);
         const headers = new Headers(originResponse.headers);
 
@@ -1455,18 +1766,43 @@ Guidelines:
 
         if (pathLower === '/sw.js' || pathLower === '/service-worker.js') {
           headers.set('cache-control', 'no-cache, no-store, must-revalidate');
-          originResponse = new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers });
-        } else if (pathLower.endsWith('/manifest.webmanifest') || pathLower === '/manifest.webmanifest') {
+          originResponse = new Response(originResponse.body, {
+            status: originResponse.status,
+            statusText: originResponse.statusText,
+            headers,
+          });
+        } else if (
+          pathLower.endsWith('/manifest.webmanifest') ||
+          pathLower === '/manifest.webmanifest'
+        ) {
           headers.set('cache-control', `public, max-age=${CACHE_DURATIONS.pages.manifest}`);
-          originResponse = new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers });
+          originResponse = new Response(originResponse.body, {
+            status: originResponse.status,
+            statusText: originResponse.statusText,
+            headers,
+          });
         } else if (isAssetExt) {
           const ttl = isHashed ? CACHE_DURATIONS.static.hashed : CACHE_DURATIONS.assets.default;
-          headers.set('cache-control', isHashed ? `public, max-age=${ttl}, immutable` : `public, max-age=${ttl}`);
-          originResponse = new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers });
+          headers.set(
+            'cache-control',
+            isHashed ? `public, max-age=${ttl}, immutable` : `public, max-age=${ttl}`
+          );
+          originResponse = new Response(originResponse.body, {
+            status: originResponse.status,
+            statusText: originResponse.statusText,
+            headers,
+          });
         } else if (isHtml) {
           // Keep HTML fresh on clients; CDN can still keep for short periods
-          headers.set('cache-control', `public, max-age=0, must-revalidate, stale-while-revalidate=${CACHE_DURATIONS.pages.htmlStaleWhileRevalidate}`);
-          originResponse = new Response(originResponse.body, { status: originResponse.status, statusText: originResponse.statusText, headers });
+          headers.set(
+            'cache-control',
+            `public, max-age=0, must-revalidate, stale-while-revalidate=${CACHE_DURATIONS.pages.htmlStaleWhileRevalidate}`
+          );
+          originResponse = new Response(originResponse.body, {
+            status: originResponse.status,
+            statusText: originResponse.statusText,
+            headers,
+          });
         }
       }
 
@@ -1475,11 +1811,21 @@ Guidelines:
 
       if (method === 'GET' && cacheStrategy.ttl > 0 && finalResponse.body) {
         const cacheHeaders = new Headers(finalResponse.headers);
-        Object.entries(cacheStrategy.headers).forEach(([key, value]) => cacheHeaders.set(key, value));
+        Object.entries(cacheStrategy.headers).forEach(([key, value]) =>
+          cacheHeaders.set(key, value)
+        );
         const [forCache, forReturn] = finalResponse.body.tee();
-        const cacheResponse = new Response(forCache, { status: finalResponse.status, statusText: finalResponse.statusText, headers: cacheHeaders });
+        const cacheResponse = new Response(forCache, {
+          status: finalResponse.status,
+          statusText: finalResponse.statusText,
+          headers: cacheHeaders,
+        });
         ctx.waitUntil(caches.default.put(request, cacheResponse));
-        finalResponse = new Response(forReturn, { status: finalResponse.status, statusText: finalResponse.statusText, headers: finalResponse.headers });
+        finalResponse = new Response(forReturn, {
+          status: finalResponse.status,
+          statusText: finalResponse.statusText,
+          headers: finalResponse.headers,
+        });
       }
 
       // Personalize HTML based on 'theme' cookie (if present)
@@ -1511,10 +1857,16 @@ Guidelines:
             newHeaders.set('vary', existingVary ? `${existingVary}, Cookie` : 'Cookie');
             newHeaders.set('cache-control', 'private, max-age=0, must-revalidate');
             newHeaders.delete('content-length');
-            finalResponse = new Response(html, { status: finalResponse.status, statusText: finalResponse.statusText, headers: newHeaders });
+            finalResponse = new Response(html, {
+              status: finalResponse.status,
+              statusText: finalResponse.statusText,
+              headers: newHeaders,
+            });
           }
         }
-      } catch { /* noop personalization */ }
+      } catch {
+        /* noop personalization */
+      }
 
       // Edge analytics disabled
       try {
@@ -1523,13 +1875,28 @@ Guidelines:
         h.set('x-route-kind', routeKind);
         const cc = h.get('cache-control');
         if (cc) h.set('x-cache-policy', cc);
-        finalResponse = new Response(finalResponse.body, { status: finalResponse.status, statusText: finalResponse.statusText, headers: h });
-      } catch { /* no-op */ }
+        finalResponse = new Response(finalResponse.body, {
+          status: finalResponse.status,
+          statusText: finalResponse.statusText,
+          headers: h,
+        });
+      } catch {
+        /* no-op */
+      }
       const dur = Date.now() - startTs;
       const cachePolicy = finalResponse.headers.get('cache-control') || undefined;
-      console.log('\u2705 Request done', JSON.stringify({ id: reqId, status: finalResponse.status, path: url.pathname, routeKind, dur, cachePolicy }));
+      console.log(
+        '\u2705 Request done',
+        JSON.stringify({
+          id: reqId,
+          status: finalResponse.status,
+          path: url.pathname,
+          routeKind,
+          dur,
+          cachePolicy,
+        })
+      );
       return finalResponse;
-
     } catch (error) {
       const errStart = Date.now();
 
@@ -1547,7 +1914,10 @@ Guidelines:
       });
 
       // Keep existing console.error for Cloudflare logs
-      console.error('Edge processing error:', JSON.stringify({ id: reqId, error: String(error), stack: error?.stack, path: url.pathname }));
+      console.error(
+        'Edge processing error:',
+        JSON.stringify({ id: reqId, error: String(error), stack: error?.stack, path: url.pathname })
+      );
 
       // For API routes, return JSON errors instead of HTML
       if (url.pathname.startsWith('/api/')) {
@@ -1555,7 +1925,7 @@ Guidelines:
           error: 'Internal server error',
           message: error?.message || String(error),
           path: url.pathname,
-          requestId: reqId
+          requestId: reqId,
         };
         return new Response(JSON.stringify(errorPayload), {
           status: 500,
@@ -1563,22 +1933,48 @@ Guidelines:
             'content-type': 'application/json',
             'x-request-id': reqId,
             'x-route-kind': 'api-error',
-            'cache-control': 'no-store'
-          }
+            'cache-control': 'no-store',
+          },
         });
       }
 
       const staleResponse = await caches.default.match(request);
       if (staleResponse) return staleResponse;
-      const isHtmlRoute = request.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('/') || !url.pathname.includes('.');
+      const isHtmlRoute =
+        request.headers.get('accept')?.includes('text/html') ||
+        url.pathname.endsWith('/') ||
+        !url.pathname.includes('.');
       if (isHtmlRoute) {
         const offlineHtml = buildOfflineHtml(reqId);
-        const headers = { 'content-type': 'text/html; charset=utf-8', 'x-request-id': reqId, 'x-route-kind': 'html', 'cache-control': 'no-store', 'x-cache-policy': 'no-store' };
+        const headers = {
+          'content-type': 'text/html; charset=utf-8',
+          'x-request-id': reqId,
+          'x-route-kind': 'html',
+          'cache-control': 'no-store',
+          'x-cache-policy': 'no-store',
+        };
         const resp = new Response(offlineHtml, { status: 200, headers });
-        console.log('\u26a0\ufe0f Fallback html', JSON.stringify({ id: reqId, status: resp.status, path: url.pathname, dur: Date.now() - errStart }));
+        console.log(
+          '\u26a0\ufe0f Fallback html',
+          JSON.stringify({
+            id: reqId,
+            status: resp.status,
+            path: url.pathname,
+            dur: Date.now() - errStart,
+          })
+        );
         return resp;
       }
-      return new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8', 'x-request-id': reqId, 'x-route-kind': 'asset', 'cache-control': 'no-store', 'x-cache-policy': 'no-store' } });
+      return new Response('Not found', {
+        status: 404,
+        headers: {
+          'content-type': 'text/plain; charset=utf-8',
+          'x-request-id': reqId,
+          'x-route-kind': 'asset',
+          'cache-control': 'no-store',
+          'x-cache-policy': 'no-store',
+        },
+      });
     }
   },
 
@@ -1599,17 +1995,22 @@ Guidelines:
         /<script[^>]*>[\s\S]*?cdn-cgi\/challenge-platform[\s\S]*?<\/script>/gi,
         /<script[^>]*>[\s\S]*?zaraz[\s\S]*?<\/script>/gi,
         /<script[^>]*>[\s\S]*?__CF\$cv[\s\S]*?<\/script>/gi,
-        /<script[^>]*src=['"][^'"]*\/cdn-cgi\/challenge-platform\/[\s\S]*?>\s*<\/script>/gi
+        /<script[^>]*src=['"][^'"]*\/cdn-cgi\/challenge-platform\/[\s\S]*?>\s*<\/script>/gi,
       ];
       for (const rx of patterns) stripped = stripped.replace(rx, '');
       // Rename variable to avoid any potential duplicate identifier issues
       const auditBootstrapHtml = `<script${nonce ? ` nonce="${nonce}"` : ''}>(function(){try{window.__AUDIT__=true;window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){};var _sb=navigator.sendBeacon;navigator.sendBeacon=function(){return true};var _xf=window.fetch;window.fetch=function(u,o){try{if(typeof u==="string"&&(u.includes("challenges.cloudflare.com")||u.includes("/cdn-cgi/challenge-platform/")||u.includes("google-analytics.com")||u.includes("googletagmanager.com")||u.includes("static.cloudflareinsights.com")||u.includes("cloudflareinsights.com")||/\\/metrics\\/?(?:$|\\?|#)/.test(u))){return Promise.resolve(new Response("",{status:204}))}}catch  { void 0; }return _xf.apply(this,arguments)};var _create=document.createElement;document.createElement=function(t){var el=_create.call(document,t);if((t||"").toLowerCase()==="script"){try{var _set=el.setAttribute;el.setAttribute=function(k,v){try{if(String(k).toLowerCase()==="src"){var vv=String(v||"");if(vv.includes("/cdn-cgi/challenge-platform/")||/\\/metrics\\/?(?:$|\\?|#)/.test(vv)){return}}}catch  { void 0; }return _set.apply(el,arguments)}}catch  { void 0; }}return el};var _append=Element.prototype.appendChild;Element.prototype.appendChild=function(n){try{if(n&&n.tagName==="SCRIPT"){var s=String(n.src||"");if(s.includes("/cdn-cgi/challenge-platform/")||/\\/metrics\\/?(?:$|\\?|#)/.test(s)){return n}}}catch  { void 0; }return _append.call(this,n)};}catch  { void 0; }})();</script>`;
       const headClose = /<\/head>/i;
-      if (headClose.test(stripped)) stripped = stripped.replace(headClose, auditBootstrapHtml + '</head>');
+      if (headClose.test(stripped))
+        stripped = stripped.replace(headClose, auditBootstrapHtml + '</head>');
       else stripped = auditBootstrapHtml + stripped;
       const newHeaders = new Headers(originalHeaders);
       newHeaders.append('set-cookie', 'audit=1; Path=/; Max-Age=300; SameSite=Lax');
-      return new Response(stripped, { status: response.status, statusText: response.statusText, headers: newHeaders });
+      return new Response(stripped, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: newHeaders,
+      });
     } catch (e) {
       console.error('stripAuditOnlyScripts error:', e);
       return response;
@@ -1622,7 +2023,7 @@ Guidelines:
 
   async trackEdgeAnalytics() {
     // no-op
-  }
+  },
 };
 
 export default WorkerApp;

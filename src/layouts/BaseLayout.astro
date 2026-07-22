@@ -81,7 +81,7 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
       Back to top
     </a>
 
-    <header transition:persist="nav">
+    <header class="sticky top-0 z-nav" transition:persist="nav">
       <NavBar />
     </header>
     <main id="main-content" tabindex="-1" class={mainClasses} transition:animate="slide">

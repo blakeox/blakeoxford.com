@@ -7,7 +7,9 @@ export type HomeResumeHighlightItem = {
   text: string;
 };
 
-export type HomeResumeHighlightCard = {
+export type HomeResumeHighlightSide = {
+  side: 'work' | 'daring';
+  label: string;
   metric: string;
   title: string;
   items: HomeResumeHighlightItem[];
@@ -34,7 +36,7 @@ export type HomePageContent = {
     kicker: string;
     title: string;
     description: string;
-    cards: HomeResumeHighlightCard[];
+    sides: HomeResumeHighlightSide[];
   };
   recentProjects: {
     kicker?: string;

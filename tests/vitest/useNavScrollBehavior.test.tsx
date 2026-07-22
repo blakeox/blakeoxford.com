@@ -46,6 +46,21 @@ describe('registerNavScrollBehavior', () => {
     expect(document.querySelector('.nav-shell--auto-hidden')).toBeFalsy();
   });
 
+  it('restores after accumulated micro upward scrolls', () => {
+    window.scrollY = 200;
+    window.dispatchEvent(new Event('scroll'));
+    window.scrollY = 280;
+    window.dispatchEvent(new Event('scroll'));
+
+    expect(document.querySelector('.nav-shell--auto-hidden')).toBeTruthy();
+
+    // Any upward step restores
+    window.scrollY = 278;
+    window.dispatchEvent(new Event('scroll'));
+
+    expect(document.querySelector('.nav-shell--auto-hidden')).toBeFalsy();
+  });
+
   it('does not auto-hide while the mobile menu is open', () => {
     document.querySelector('.nav-shell')?.setAttribute('data-menu-state', 'open');
 

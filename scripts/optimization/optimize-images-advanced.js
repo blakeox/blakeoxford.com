@@ -34,6 +34,39 @@ async function ensureDirectory(dir) {
   }
 }
 
+async function fileExists(filePath) {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function responsiveWidths(originalWidth) {
+  if (!originalWidth || originalWidth <= 640) return [];
+  return RESPONSIVE_SIZES.filter((width) => width < originalWidth);
+}
+
+async function optimizedOutputsExist(nameWithoutExt, originalWidth) {
+  const widths = responsiveWidths(originalWidth);
+  const needed = [];
+
+  for (const format of Object.keys(FORMATS)) {
+    needed.push(path.join(OUTPUT_DIR, format, `${nameWithoutExt}.${format}`));
+    for (const width of widths) {
+      needed.push(path.join(OUTPUT_DIR, format, `${nameWithoutExt}@${width}w.${format}`));
+    }
+  }
+
+  needed.push(path.join(OUTPUT_DIR, `${nameWithoutExt}.json`));
+
+  for (const filePath of needed) {
+    if (!(await fileExists(filePath))) return false;
+  }
+  return true;
+}
+
 async function optimizeImage(inputPath, filename) {
   const nameWithoutExt = path.parse(filename).name;
 
@@ -48,6 +81,12 @@ async function optimizeImage(inputPath, filename) {
     const image = sharp(inputPath);
     const metadata = await image.metadata();
     const originalWidth = metadata.width;
+    const force = process.env.FORCE_OPTIMIZE === '1';
+
+    if (!force && (await optimizedOutputsExist(nameWithoutExt, originalWidth))) {
+      console.log('   ⏭️  Outputs exist — skipping (set FORCE_OPTIMIZE=1 to regenerate)');
+      return;
+    }
 
     // Generate responsive sizes for each format
     for (const format of Object.keys(FORMATS)) {
@@ -59,17 +98,13 @@ async function optimizeImage(inputPath, filename) {
       await image.clone()[format](FORMATS[format]).toFile(originalOutputPath);
 
       // Responsive sizes (only if image is large enough)
-      if (originalWidth > 640) {
-        for (const width of RESPONSIVE_SIZES) {
-          if (width < originalWidth) {
-            const responsiveOutputPath = path.join(formatDir, `${nameWithoutExt}@${width}w.${format}`);
-            await image.clone()
-              .resize(width, null, { withoutEnlargement: true })
-              // eslint-disable-next-line no-unexpected-multiline
-              [format](FORMATS[format])
-              .toFile(responsiveOutputPath);
-          }
-        }
+      for (const width of responsiveWidths(originalWidth)) {
+        const responsiveOutputPath = path.join(formatDir, `${nameWithoutExt}@${width}w.${format}`);
+        await image.clone()
+          .resize(width, null, { withoutEnlargement: true })
+          // eslint-disable-next-line no-unexpected-multiline
+          [format](FORMATS[format])
+          .toFile(responsiveOutputPath);
       }
     }
 
@@ -77,7 +112,7 @@ async function optimizeImage(inputPath, filename) {
     const srcsetData = {
       original: filename,
       formats: Object.keys(FORMATS),
-      sizes: RESPONSIVE_SIZES.filter(size => size < originalWidth),
+      sizes: responsiveWidths(originalWidth),
       width: originalWidth,
       height: metadata.height
     };

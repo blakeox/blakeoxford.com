@@ -3,7 +3,6 @@ import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
-import sentry from '@sentry/astro';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
@@ -16,6 +15,47 @@ loadProjectEnv();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+/** Lazy-load Sentry only for real production builds, not Astro utility commands. */
+const sentryIntegrations = [];
+const isAstroUtilityCommand = process.argv.some(
+  (arg) =>
+    arg === 'check' ||
+    arg === 'sync' ||
+    arg.endsWith('/check') ||
+    arg.endsWith('\\check') ||
+    arg.endsWith('/sync') ||
+    arg.endsWith('\\sync')
+);
+if (
+  process.env.NODE_ENV === 'production' &&
+  process.env.PUBLIC_SENTRY_DSN &&
+  !isAstroUtilityCommand
+) {
+  try {
+    const { default: sentry } = await import('@sentry/astro');
+    sentryIntegrations.push(
+      sentry({
+        telemetry: false,
+        sourcemaps: {
+          disable: !process.env.SENTRY_AUTH_TOKEN,
+        },
+        ...(process.env.SENTRY_AUTH_TOKEN
+          ? {
+              authToken: process.env.SENTRY_AUTH_TOKEN,
+              project: process.env.SENTRY_PROJECT || 'blakeoxford-browser',
+              org: process.env.SENTRY_ORG || 'your-sentry-org',
+            }
+          : {}),
+      })
+    );
+  } catch (error) {
+    console.warn(
+      '[astro.config] Skipping Sentry integration:',
+      error instanceof Error ? error.message : error
+    );
+  }
+}
+
 export default defineConfig({
   output: 'static',
   envPrefix: 'PUBLIC_',
@@ -24,23 +64,7 @@ export default defineConfig({
     react(),
     mdx(),
     sitemap(),
-    ...(process.env.NODE_ENV === 'production' && process.env.PUBLIC_SENTRY_DSN
-      ? [
-          sentry({
-            telemetry: false,
-            sourcemaps: {
-              disable: !process.env.SENTRY_AUTH_TOKEN,
-            },
-            ...(process.env.SENTRY_AUTH_TOKEN
-              ? {
-                  authToken: process.env.SENTRY_AUTH_TOKEN,
-                  project: process.env.SENTRY_PROJECT || 'blakeoxford-browser',
-                  org: process.env.SENTRY_ORG || 'your-sentry-org',
-                }
-              : {}),
-          }),
-        ]
-      : []),
+    ...sentryIntegrations,
     ...(process.env.ENABLE_ASTRO_COMPRESS === 'true' ? [compress()] : []),
   ],
   image: {

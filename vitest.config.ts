@@ -8,7 +8,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   resolve: {
     alias: [
-      { find: /^astro:content$/, replacement: path.resolve(__dirname, 'tests/__mocks__/astro-content.ts') },
+      {
+        find: /^astro:content$/,
+        replacement: path.resolve(__dirname, 'tests/__mocks__/astro-content.ts'),
+      },
     ],
   },
   plugins: [react()],
@@ -16,17 +19,17 @@ export default defineConfig({
     environment: 'happy-dom',
     globals: true,
     setupFiles: './vitest.setup.ts',
-  include: ['tests/**/*.test.{ts,tsx}'],
-  exclude: [
-    '**/node_modules/**',
-    '**/dist/**',
-    '**/cypress/**',
-    '**/.{idea,git,cache,output,temp}/**',
-    '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
-    '**/*.skip.test.{ts,tsx}', // Explicitly exclude .skip.test files
-  ],
-  retry: 1, // enable single retry to surface flaky tests (tracked by custom reporter)
-  reporters: [ 'default', './tests/reporters/flakinessReporter.ts' ],
+    include: ['tests/**/*.test.{ts,tsx}'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/cypress/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+      '**/*.skip.test.{ts,tsx}', // Explicitly exclude .skip.test files
+    ],
+    retry: 1, // enable single retry to surface flaky tests (tracked by custom reporter)
+    reporters: ['default', './tests/reporters/flakinessReporter.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -36,10 +39,10 @@ export default defineConfig({
         'src/config/navLinks.ts',
         'src/config/searchPages.ts',
         'src/lib/theme.ts',
-        'src/components/islands/chat/MessageActions.tsx',
-        'src/components/islands/chat/MessageCTAs.tsx',
-        'src/components/islands/chat/MessageContent.tsx',
-        'src/components/islands/chat/MessageSources.tsx',
+        'src/features/chat/components/MessageActions.tsx',
+        'src/features/chat/components/MessageCTAs.tsx',
+        'src/features/chat/components/MessageContent.tsx',
+        'src/features/chat/components/MessageSources.tsx',
       ],
       exclude: [
         'node_modules/**',
