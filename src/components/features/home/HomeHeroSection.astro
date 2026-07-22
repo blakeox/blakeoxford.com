@@ -1,5 +1,8 @@
 ---
-import CoinFlipImage from '../../composites/CoinFlipImage.astro';
+/**
+ * Home identity hero — one full-bleed composition.
+ * Brand, one supporting line, one CTA group, one photographic plane.
+ */
 import PageHero from '../../composites/PageHero.astro';
 import IntroCopy from '../../composites/IntroCopy.astro';
 import Button from '../../primitives/Button.astro';
@@ -14,82 +17,194 @@ interface Props {
 }
 
 const { author, description, content } = Astro.props as Props;
+
+const portraitSrc = content.portrait.frontSrc;
+const portraitAvif = '/assets/images/optimized/avif/Blake-O-scaled@768w.avif';
+const portraitWebp = '/assets/images/optimized/webp/Blake-O-scaled@768w.webp';
 ---
 
-{
-  /**
-   * Identity lockup: coin + name share one axis.
-   * Mobile — stacked, centered. Desktop — coin beside copy, group centered as a unit.
-   */
-}
-<PageHero id="about-me" includeBlurOrbs={false}>
-  <div
-    class="hero-entrance relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center gap-7 text-center lg:flex-row lg:items-center lg:justify-center lg:gap-12 lg:text-left xl:gap-14"
-  >
-    <div class="relative shrink-0 pb-4 lg:pb-5">
-      <div
-        class="relative rounded-full ring-1 ring-accent/30 ring-offset-2 ring-offset-background sm:ring-offset-4"
-      >
-        <CoinFlipImage
-          frontSrc={content.portrait.frontSrc}
-          backSrc={content.portrait.backSrc}
-          alt={content.portrait.alt}
-          altBack={content.portrait.altBack}
-          size={300}
-          flipMultipleTimes
+<PageHero
+  id="about-me"
+  flush
+  includeBlurOrbs={false}
+  containerSize="full"
+  containerPadding={false}
+  class="home-hero-bleed"
+>
+  <div class="home-hero-stage">
+    <div class="home-hero-media" aria-hidden="true">
+      <picture>
+        <source srcset={portraitAvif} type="image/avif" />
+        <source srcset={portraitWebp} type="image/webp" />
+        <img
+          src={portraitSrc}
+          alt=""
+          width="800"
+          height="800"
+          class="home-hero-photo"
           loading="eager"
-          fetchPriority="high"
-          decoding="auto"
-          class="home-coin-flip"
+          fetchpriority="high"
+          decoding="async"
         />
-      </div>
+      </picture>
+      <div class="home-hero-scrim"></div>
     </div>
 
-    <div class="flex max-w-xl min-w-0 flex-col items-center gap-5 lg:items-start">
-      <IntroCopy
-        kicker={content.kicker}
-        title={author}
-        description={description}
-        size="identity"
-        descriptionTone="strong"
-        class="w-full items-center lg:items-start lg:text-left"
-      />
-      <ButtonGroup align="center" responsive class="lg:justify-start">
-        <Button
-          variant="primary"
-          size="lg"
-          href={content.primaryCta.href}
-          data-test="home-cta-connect"
-          data-analytics="hero-cta"
-          data-prefetch-contact
-        >
-          {content.primaryCta.label}
-        </Button>
-        <Button variant="outline" size="lg" href={content.secondaryCta.href}>
-          {content.secondaryCta.label}
-        </Button>
-      </ButtonGroup>
+    <div class="hero-entrance home-hero-copy layout-gutter">
+      <div class="home-hero-copy-inner">
+        <IntroCopy
+          kicker={content.kicker}
+          title={author}
+          description={description}
+          size="identity"
+          descriptionTone="strong"
+          class="w-full items-start"
+        />
+        <ButtonGroup align="start" responsive>
+          <Button
+            variant="primary"
+            size="lg"
+            href={content.primaryCta.href}
+            data-test="home-cta-connect"
+            data-analytics="hero-cta"
+            data-prefetch-contact
+          >
+            {content.primaryCta.label}
+          </Button>
+          <Button variant="ghost" size="lg" href={content.secondaryCta.href}>
+            {content.secondaryCta.label}
+          </Button>
+        </ButtonGroup>
+      </div>
     </div>
   </div>
 </PageHero>
 
-<style is:global>
-  .home-coin-flip.coin-flip {
-    width: 11.5rem !important;
-    height: 11.5rem !important;
+<style>
+  .home-hero-bleed.page-hero-shell {
+    background: var(--color-background);
   }
 
-  @media (width >= 640px) {
-    .home-coin-flip.coin-flip {
-      width: 14rem !important;
-      height: 14rem !important;
+  .home-hero-stage {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: min(36rem, calc(100svh - var(--nav-height)));
+  }
+
+  .home-hero-media {
+    position: relative;
+    order: 1;
+    overflow: hidden;
+    width: 100%;
+    height: min(48vh, 24rem);
+    background: var(--color-surface-subtle);
+  }
+
+  .home-hero-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 14%;
+  }
+
+  .home-hero-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      transparent 45%,
+      color-mix(in oklch, var(--color-background) 35%, transparent) 72%,
+      var(--color-background) 100%
+    );
+  }
+
+  .home-hero-copy {
+    order: 2;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-block: 2.5rem 3rem;
+    background: var(--color-background);
+  }
+
+  .home-hero-copy-inner {
+    display: flex;
+    width: 100%;
+    max-width: 36rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  @media (width >= 768px) {
+    .home-hero-stage {
+      display: grid;
+      grid-template-columns: minmax(22rem, 1fr) minmax(22rem, 1.05fr);
+      min-height: calc(100svh - var(--nav-height));
+    }
+
+    .home-hero-media {
+      order: 2;
+      height: 100%;
+      min-height: 100%;
+    }
+
+    .home-hero-photo {
+      object-position: 50% 12%;
+    }
+
+    .home-hero-scrim {
+      background: linear-gradient(
+        90deg,
+        var(--color-background) 0%,
+        color-mix(in oklch, var(--color-background) 55%, transparent) 10%,
+        transparent 28%
+      );
+    }
+
+    .home-hero-copy {
+      order: 1;
+      justify-content: center;
+      padding-block: 4rem;
+      background: transparent;
+    }
+
+    .home-hero-copy-inner {
+      max-width: 28rem;
     }
   }
 
   @media (width >= 1024px) {
-    .home-coin-flip.coin-flip {
-      width: 17.5rem !important;
-      height: 17.5rem !important;
+    .home-hero-copy-inner {
+      max-width: 32rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home-hero-photo {
+      animation: home-hero-photo-settle 1.25s var(--ease-decelerate) both;
+    }
+  }
+
+  @keyframes home-hero-photo-settle {
+    from {
+      opacity: 0.7;
+      transform: scale(1.04);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-hero-photo {
+      animation: none;
+      transform: none;
     }
   }
 </style>

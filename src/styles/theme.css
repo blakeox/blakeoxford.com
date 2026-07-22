@@ -7,32 +7,32 @@
 :root {
   color-scheme: light;
 
-  /* Static brand — cool fog paper + navy ink + steel accent (tech × finance) */
-  --brand-primary: oklch(0.22 0.03 255);
-  --brand-primary-light: oklch(0.36 0.04 255);
-  --brand-primary-dark: oklch(0.16 0.025 255);
-  --brand-accent: oklch(0.48 0.09 250);
-  --brand-accent-light: oklch(0.62 0.08 250);
-  --brand-accent-dark: oklch(0.38 0.085 250);
+  /* Static brand — cool bone paper + ink + burnished copper signal */
+  --brand-primary: oklch(0.2 0.02 250);
+  --brand-primary-light: oklch(0.34 0.03 250);
+  --brand-primary-dark: oklch(0.14 0.02 250);
+  --brand-accent: oklch(0.55 0.14 48);
+  --brand-accent-light: oklch(0.7 0.12 52);
+  --brand-accent-dark: oklch(0.42 0.13 42);
 
   /* Static palette */
-  --palette-background: oklch(0.972 0.004 95);
-  --palette-surface: oklch(0.99 0.002 95);
-  --palette-surface-subtle: oklch(0.94 0.006 95);
-  --palette-background-dark: oklch(0.14 0.02 255);
-  --palette-surface-dark: oklch(0.18 0.02 255);
-  --palette-surface-dark-subtle: oklch(0.21 0.022 255);
-  --palette-surface-elevated-dark: oklch(0.24 0.024 255);
-  --palette-foreground: oklch(0.22 0.025 255);
-  --palette-foreground-strong: oklch(0.16 0.025 255);
-  --palette-foreground-light: oklch(0.97 0.005 95);
-  --palette-muted-foreground: oklch(0.4 0.02 255);
-  --palette-subtle-foreground: oklch(0.46 0.02 255);
-  --palette-border: oklch(0.22 0.03 255 / 0.14);
-  --palette-border-dark: oklch(0.82 0.02 255 / 0.22);
-  --palette-on-accent: oklch(0.98 0.005 95);
-  --palette-on-primary: oklch(0.98 0.005 95);
-  --palette-on-dark: oklch(0.98 0.005 95);
+  --palette-background: oklch(0.975 0.006 230);
+  --palette-surface: oklch(0.995 0.003 230);
+  --palette-surface-subtle: oklch(0.945 0.01 230);
+  --palette-background-dark: oklch(0.15 0.018 250);
+  --palette-surface-dark: oklch(0.19 0.02 250);
+  --palette-surface-dark-subtle: oklch(0.22 0.022 250);
+  --palette-surface-elevated-dark: oklch(0.25 0.024 250);
+  --palette-foreground: oklch(0.2 0.02 250);
+  --palette-foreground-strong: oklch(0.14 0.02 250);
+  --palette-foreground-light: oklch(0.975 0.005 230);
+  --palette-muted-foreground: oklch(0.4 0.018 250);
+  --palette-subtle-foreground: oklch(0.46 0.016 250);
+  --palette-border: oklch(0.2 0.02 250 / 0.14);
+  --palette-border-dark: oklch(0.84 0.015 230 / 0.22);
+  --palette-on-accent: oklch(0.98 0.01 95);
+  --palette-on-primary: oklch(0.98 0.005 230);
+  --palette-on-dark: oklch(0.98 0.005 230);
   --palette-success: oklch(0.68 0.14 150);
   --palette-success-light: oklch(0.76 0.12 150);
   --palette-success-dark: oklch(0.52 0.12 150);
@@ -216,9 +216,10 @@
   &.dark {
     color-scheme: dark;
 
-    --runtime-accent: oklch(0.7 0.08 250);
-    --runtime-on-accent: oklch(0.16 0.025 255);
-    --runtime-accent-emphasis: var(--brand-accent-light);
+    --runtime-accent: oklch(0.76 0.12 52);
+    --runtime-on-accent: oklch(0.16 0.02 250);
+    /* Lighter than brand-accent-light so body-size accent text clears AA on dark surfaces */
+    --runtime-accent-emphasis: oklch(0.84 0.11 52);
     --runtime-primary-emphasis: var(--brand-primary-light);
     --runtime-success-emphasis: var(--palette-success-light);
     --runtime-warning-emphasis: var(--palette-warning-light);

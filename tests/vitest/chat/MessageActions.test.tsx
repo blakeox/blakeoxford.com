@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MessageActions } from '../../../src/components/islands/chat/MessageActions';
-import type { ChatMessage, Source } from '../../../src/components/islands/chat/types';
+import { MessageActions } from '../../../src/features/chat/components/MessageActions';
+import type { ChatMessage, Source } from '../../../src/features/chat/types';
 
 // Mock analytics
 vi.mock('../../../src/lib/analytics', () => ({

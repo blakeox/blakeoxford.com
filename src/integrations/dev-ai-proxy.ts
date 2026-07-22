@@ -3,12 +3,12 @@ import {
   extractMessage,
   parseQueryPayload,
   parseSources,
-} from '../lib/dev-proxy/payload-parser';
+} from '../lib/dev-proxy/payload-parser.js';
 import {
   sendErrorResponse,
   sendSuccessResponse,
   setCORSHeaders,
-} from '../lib/dev-proxy/response-helpers';
+} from '../lib/dev-proxy/response-helpers.js';
 
 type ConnectNext = (error?: unknown) => void;
 

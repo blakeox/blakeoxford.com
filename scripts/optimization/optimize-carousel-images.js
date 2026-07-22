@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'fs/promises';
+import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import sharp from 'sharp';
@@ -8,29 +9,67 @@ import sharp from 'sharp';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const SRC_DIR = path.join(__dirname, '../../src/assets/images/carousel');
+const OUT_DIR = path.join(__dirname, '../../src/assets/images/carousel');
+const DEFAULT_LOCAL_ORIGINALS = path.join(
+  os.homedir(),
+  'Documents/blakeoxford-local/carousel-originals'
+);
+const IN_REPO_ORIGINALS = path.join(OUT_DIR, 'originals');
 
 // Target max dimensions for carousel usage (desktop uses 640x640)
-const TARGET_WIDTH = 1280;   // Generate crisp assets; Astro will downscale further as needed
+const TARGET_WIDTH = 1280; // Generate crisp assets; Astro will downscale further as needed
 const TARGET_HEIGHT = 1280;
 
 async function ensureDir(dir) {
-  try { await fs.mkdir(dir, { recursive: true }); } catch { /* dir exists */ }
+  try {
+    await fs.mkdir(dir, { recursive: true });
+  } catch {
+    /* dir exists */
+  }
 }
 
 async function fileExists(p) {
-  try { await fs.access(p); return true; } catch { return false; }
+  try {
+    await fs.access(p);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-async function optimizeOne(file) {
+async function resolveSourceDirectory() {
+  const candidates = [
+    process.env.CAROUSEL_ORIGINALS_DIR,
+    DEFAULT_LOCAL_ORIGINALS,
+    IN_REPO_ORIGINALS,
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    try {
+      const stat = await fs.stat(candidate);
+      if (stat.isDirectory()) return path.resolve(candidate);
+    } catch {
+      // Try the next source location.
+    }
+  }
+
+  return null;
+}
+
+async function optimizeOne(sourceDirectory, file) {
   const ext = path.extname(file).toLowerCase();
   if (!['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) return null;
 
-  const srcPath = path.join(SRC_DIR, file);
+  const srcPath = path.join(sourceDirectory, file);
   const base = path.basename(file, ext);
-  const avifPath = path.join(SRC_DIR, `${base}.avif`);
-  const webpPath = path.join(SRC_DIR, `${base}.webp`);
-  const originalsDir = path.join(SRC_DIR, 'originals');
+  const avifPath = path.join(OUT_DIR, `${base}.avif`);
+  const webpPath = path.join(OUT_DIR, `${base}.webp`);
+  const [hasAvif, hasWebp] = await Promise.all([fileExists(avifPath), fileExists(webpPath)]);
+
+  if (hasAvif && hasWebp) {
+    console.log(`Outputs exist: ${base}.avif, ${base}.webp`);
+    return { base, srcPath, avifPath, webpPath };
+  }
 
   const input = sharp(srcPath, { limitInputPixels: false });
   const meta = await input.metadata();
@@ -44,57 +83,60 @@ async function optimizeOne(file) {
   });
 
   // Create WebP if missing
-  if (!(await fileExists(webpPath))) {
+  if (!hasWebp) {
     const webpBuf = await resized.clone().webp({ quality: 78 }).toBuffer();
     await fs.writeFile(webpPath, webpBuf);
-    console.log(`✅ WebP: ${path.basename(webpPath)} (${Math.round(webpBuf.length/1024)}KB)`);
+    console.log(`WebP: ${path.basename(webpPath)} (${Math.round(webpBuf.length / 1024)}KB)`);
   } else {
-    console.log(`ℹ️  WebP exists: ${path.basename(webpPath)}`);
+    console.log(`WebP exists: ${path.basename(webpPath)}`);
   }
 
   // Create AVIF if missing
-  if (!(await fileExists(avifPath))) {
+  if (!hasAvif) {
     const avifBuf = await resized.clone().avif({ quality: 55 }).toBuffer();
     await fs.writeFile(avifPath, avifBuf);
-    console.log(`✅ AVIF: ${path.basename(avifPath)} (${Math.round(avifBuf.length/1024)}KB)`);
+    console.log(`AVIF: ${path.basename(avifPath)} (${Math.round(avifBuf.length / 1024)}KB)`);
   } else {
-    console.log(`ℹ️  AVIF exists: ${path.basename(avifPath)}`);
+    console.log(`AVIF exists: ${path.basename(avifPath)}`);
   }
-
-  // If the original is a very large PNG/JPG (> 2MB), move it out of the import path
-  try {
-    const stat = await fs.stat(srcPath);
-    const isOriginalFormat = ['.png', '.jpg', '.jpeg'].includes(ext);
-    if (isOriginalFormat && stat.size > 2 * 1024 * 1024 && !srcPath.includes(`${path.sep}originals${path.sep}`)) {
-      await ensureDir(originalsDir);
-      const dest = path.join(originalsDir, path.basename(srcPath));
-      await fs.rename(srcPath, dest);
-      console.log(`📦 Moved large original to originals/: ${path.basename(srcPath)} (${Math.round(stat.size/1024)}KB)`);
-    }
-  } catch { /* ignore move errors */ }
 
   return { base, srcPath, avifPath, webpPath };
 }
 
 async function run() {
-  await ensureDir(SRC_DIR);
-  const files = await fs.readdir(SRC_DIR);
-  const targets = files.filter(f => /\.(png|jpg|jpeg|webp)$/i.test(f));
-  if (targets.length === 0) {
-    console.log(`No carousel images found in ${SRC_DIR}`);
+  await ensureDir(OUT_DIR);
+
+  const sourceDirectory = await resolveSourceDirectory();
+  if (!sourceDirectory) {
+    console.log(
+      `No carousel masters found. Place them in ${DEFAULT_LOCAL_ORIGINALS} ` +
+        'or set CAROUSEL_ORIGINALS_DIR. Skipping.'
+    );
     return;
   }
-  console.log(`🔧 Optimizing ${targets.length} carousel images in ${SRC_DIR}`);
+
+  const files = await fs.readdir(sourceDirectory);
+  const targets = files.filter((file) => /\.(png|jpg|jpeg|webp)$/i.test(file));
+  if (targets.length === 0) {
+    console.log(`No carousel masters found in ${sourceDirectory}`);
+    return;
+  }
+
+  console.log(`Optimizing ${targets.length} carousel masters from ${sourceDirectory}`);
   let created = 0;
-  for (const f of targets) {
+  let failed = 0;
+  for (const file of targets) {
     try {
-      const res = await optimizeOne(f);
+      const res = await optimizeOne(sourceDirectory, file);
       if (res) created++;
-    } catch (e) {
-      console.error(`❌ Failed to optimize ${f}:`, e.message);
+    } catch (error) {
+      failed++;
+      console.error(`Failed to optimize ${file}:`, error.message);
     }
   }
-  console.log(`🏁 Carousel optimization complete (${created} processed).`);
+
+  console.log(`Carousel optimization complete (${created} processed, ${failed} failed).`);
+  if (failed > 0) process.exitCode = 1;
 }
 
 run();

@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 // Deterministic wait helpers to replace arbitrary timeouts
 export async function waitForIdle(page: Page) {
@@ -7,21 +7,29 @@ export async function waitForIdle(page: Page) {
 }
 
 export async function waitForVisible(locator: Locator) {
-  await expect(locator).toBeVisible();
+  await locator.waitFor({ state: 'visible' });
   return locator;
 }
 
 export async function waitForTransitionEnd(page: Page, selector: string, timeout = 2000) {
-  await page.evaluate(({ sel, to }) => {
-    return new Promise(resolve => {
-      const el = document.querySelector(sel);
-      if (!el) return resolve(null);
-      let done = false;
-      const finish = () => { if (!done) { done = true; resolve(null); } };
-      el.addEventListener('transitionend', finish, { once: true });
-      setTimeout(finish, to);
-    });
-  }, { sel: selector, to: timeout });
+  await page.evaluate(
+    ({ sel, to }) => {
+      return new Promise((resolve) => {
+        const el = document.querySelector(sel);
+        if (!el) return resolve(null);
+        let done = false;
+        const finish = () => {
+          if (!done) {
+            done = true;
+            resolve(null);
+          }
+        };
+        el.addEventListener('transitionend', finish, { once: true });
+        setTimeout(finish, to);
+      });
+    },
+    { sel: selector, to: timeout }
+  );
 }
 
 // Wait for the search overlay/input logic to be ready by probing for the input after triggering
@@ -39,11 +47,11 @@ export async function waitForSearchResultItem(page: Page, timeout = 2000) {
 
 // Wait for data-theme attribute toggle (light/dark)
 export async function waitForTheme(page: Page, theme: 'light' | 'dark', timeout = 2000) {
-  await page.waitForFunction(
-    (t) => document.documentElement.getAttribute('data-theme') === t,
-    theme,
-    { timeout }
-  ).catch(() => {}); // Non-fatal if theme system not present
+  await page
+    .waitForFunction((t) => document.documentElement.getAttribute('data-theme') === t, theme, {
+      timeout,
+    })
+    .catch(() => {}); // Non-fatal if theme system not present
 }
 
 // Poll for layout stability by ensuring two consecutive animation frames with matching dimensions
@@ -75,7 +83,12 @@ export async function waitForLayoutStability(page: Page, cycles = 2, timeout = 3
 }
 
 // Generic condition waiter
-export async function waitForCondition(page: Page, predicate: () => Promise<boolean> | boolean, timeout = 2000, interval = 50) {
+export async function waitForCondition(
+  page: Page,
+  predicate: () => Promise<boolean> | boolean,
+  timeout = 2000,
+  interval = 50
+) {
   const start = Date.now();
   while (Date.now() - start < timeout) {
     if (await predicate()) return true;
@@ -85,23 +98,28 @@ export async function waitForCondition(page: Page, predicate: () => Promise<bool
 }
 
 // Mobile menu state helper — prefers data-state, falls back to computed visibility
-export async function waitForMenuState(page: Page, selector: string, open: boolean, timeout = 2000) {
+export async function waitForMenuState(
+  page: Page,
+  selector: string,
+  open: boolean,
+  timeout = 2000
+) {
   await waitForCondition(
     page,
     async () => {
       return page.evaluate(
         ({ sel, shouldBeOpen }) => {
           const el = document.querySelector<HTMLElement>(sel);
-            if (!el) return false;
-            const dataState = el.getAttribute('data-state');
-            if (dataState === 'open' || dataState === 'closed') {
-              return shouldBeOpen ? dataState === 'open' : dataState === 'closed';
-            }
-            const styles = window.getComputedStyle(el);
-            const isVisible = styles.visibility !== 'hidden' && styles.display !== 'none';
-            const offscreen = styles.right === '-100vw' || styles.transform.includes('-100');
-            const computedOpen = isVisible && !offscreen;
-            return shouldBeOpen ? computedOpen : !computedOpen;
+          if (!el) return false;
+          const dataState = el.getAttribute('data-state');
+          if (dataState === 'open' || dataState === 'closed') {
+            return shouldBeOpen ? dataState === 'open' : dataState === 'closed';
+          }
+          const styles = window.getComputedStyle(el);
+          const isVisible = styles.visibility !== 'hidden' && styles.display !== 'none';
+          const offscreen = styles.right === '-100vw' || styles.transform.includes('-100');
+          const computedOpen = isVisible && !offscreen;
+          return shouldBeOpen ? computedOpen : !computedOpen;
         },
         { sel: selector, shouldBeOpen: open }
       );
@@ -110,8 +128,17 @@ export async function waitForMenuState(page: Page, selector: string, open: boole
   );
 }
 
-export async function waitForAriaExpanded(locator: Locator, value: 'true' | 'false') {
-  await expect(locator).toHaveAttribute('aria-expanded', value);
+export async function waitForAriaExpanded(
+  locator: Locator,
+  value: 'true' | 'false',
+  timeout = 2000
+) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    if ((await locator.getAttribute('aria-expanded')) === value) return;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  throw new Error(`Timed out waiting for aria-expanded="${value}"`);
 }
 
 // Wait for scroll completion by monitoring scroll position stability
@@ -134,12 +161,18 @@ export async function waitForScrollSettled(page: Page, timeout = 2000, interval 
 }
 
 // Wait until a selector's child count stops changing (e.g., dynamic results lists)
-export async function waitForDynamicListSettled(page: Page, selector: string, timeout = 3000, interval = 100, stableCycles = 3) {
+export async function waitForDynamicListSettled(
+  page: Page,
+  selector: string,
+  timeout = 3000,
+  interval = 100,
+  stableCycles = 3
+) {
   const start = Date.now();
   let lastCount = -1;
   let stable = 0;
   while (Date.now() - start < timeout) {
-    const count = await page.evaluate(sel => {
+    const count = await page.evaluate((sel) => {
       const el = document.querySelector(sel);
       return el ? el.children.length : -1;
     }, selector);
@@ -161,7 +194,9 @@ export async function waitForPostInteractionNetworkIdle(page: Page, idleMs = 300
   const end = Date.now() + timeout;
   let lastActivity = Date.now();
   const listeners: any[] = [];
-  const record = () => { lastActivity = Date.now(); };
+  const record = () => {
+    lastActivity = Date.now();
+  };
   listeners.push(page.on('request', record));
   listeners.push(page.on('response', record));
   while (Date.now() < end) {

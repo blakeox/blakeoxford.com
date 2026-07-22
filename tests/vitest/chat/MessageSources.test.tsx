@@ -4,8 +4,8 @@ import { createRef } from 'react';
 import {
   filterDisplaySources,
   MessageSources,
-} from '../../../src/components/islands/chat/MessageSources';
-import type { Source } from '../../../src/components/islands/chat/types';
+} from '../../../src/features/chat/components/MessageSources';
+import type { Source } from '../../../src/features/chat/types';
 
 const sources: Source[] = [
   { title: 'Microsoft Fabric', url: '/projects/microsoft-fabric/', score: 0.91 },

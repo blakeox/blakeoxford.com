@@ -51,6 +51,21 @@ describe('deadLinkCore', () => {
     expect(urls).toContain('https://example.com/remote');
   });
 
+  it('ignores href patterns inside inline scripts', () => {
+    const withScript = `
+<html><body>
+  <a href="/contact/">Contact</a>
+  <script>
+    const href = "/about/";
+    if (document.querySelector(\`link[rel="prefetch"][href="\${href}"]\`)) return;
+  </script>
+</body></html>`;
+    const urls = extractLinks(withScript, { includeExternal: false }).map((l) => l.raw);
+    expect(urls).toContain('/contact/');
+    expect(urls).not.toContain('${href}');
+    expect(urls).not.toContain('/${href}');
+  });
+
   it('buildLinkTasks normalizes relative paths', () => {
     setup();
     const tasks = buildLinkTasks([pageFile], distDir, { includeExternal: false });

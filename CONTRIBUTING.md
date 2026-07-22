@@ -97,13 +97,14 @@ Format check (`pnpm format:check`) enforces Prettier + Tailwind class sorting on
 
 ### Creating New Components
 
-Follow the documented standards in `docs/COMPONENT_DOCUMENTATION_GUIDE.md`:
+Follow the component taxonomy below (and keep `src/data/componentDocs.ts` in sync when you add documented UI).
 
 1. **Choose the Right Category**:
    - **Primitives** (`src/components/primitives/`): Low-level building blocks (Button, Badge, Flex, Grid)
    - **Composites** (`src/components/composites/`): Mid-level composed components (PageHero, FeatureCard, SectionHeader)
-   - **Features** (`src/components/features/`): Domain-specific components (BlogPostRow, ProjectCard, SearchOverlay)
-   - **Islands** (`src/components/islands/`): React hydrated interactive components (AIChatIsland, ContactFormIsland)
+   - **Page features** (`src/components/features/`): Domain Astro sections (BlogPostRow, ProjectCard, home/about/projects sections)
+   - **Form islands** (`src/components/islands/`): Small React hydrated forms (ContactFormIsland)
+   - **Product features** (`src/features/`): Larger interactive products — `chat/` (Ask), `command-center/` (Find), `overlay/` (shared shell). Prefer this layout: entry + `components/` + optional `hooks/` + `lib/` + `index.ts` (see `command-center` as the reference).
 
 2. **Component Structure**:
 
