@@ -28,18 +28,14 @@ function sideOf(project: CollectionEntry<'projects'>): 'Work' | 'Daring' {
   return SIDE_BY_SLUG[project.id] ?? 'Work';
 }
 
-const workProject =
-  projects.find((project) => sideOf(project) === 'Work') ?? projects[0] ?? null;
+const workProject = projects.find((project) => sideOf(project) === 'Work') ?? projects[0] ?? null;
 const daringProject =
-  projects.find(
-    (project) => sideOf(project) === 'Daring' && project.id !== workProject?.id
-  ) ??
+  projects.find((project) => sideOf(project) === 'Daring' && project.id !== workProject?.id) ??
   projects.find((project) => project.id !== workProject?.id) ??
   null;
 const moreProject =
-  projects.find(
-    (project) => project.id !== workProject?.id && project.id !== daringProject?.id
-  ) ?? null;
+  projects.find((project) => project.id !== workProject?.id && project.id !== daringProject?.id) ??
+  null;
 ---
 
 <Section

@@ -139,11 +139,9 @@ const ariaLabel =
 <button
   type="button"
   class={cn('coin-flip focus-ring-interactive', fluid && 'coin-flip-fluid', customClass)}
-  style={
-    fluid
-      ? `--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`
-      : `--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`
-  }
+  style={fluid
+    ? `--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`
+    : `--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`}
   aria-pressed="false"
   aria-label={ariaLabel}
   id={`${uniqueId}-root`}

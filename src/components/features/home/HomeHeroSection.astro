@@ -20,12 +20,7 @@ const workLine = 'Builds systems teams keep running.';
 const daringLine = 'Chases the edge cases that make them better.';
 ---
 
-<section
-  id="about-me"
-  class="home-dual"
-  data-home-dual
-  aria-label="Blake Oxford — two sides"
->
+<section id="about-me" class="home-dual" data-home-dual aria-label="Blake Oxford — two sides">
   <div class="home-dual-track">
     <div class="home-dual-sticky">
       <div class="home-dual-stage layout-gutter">
@@ -118,7 +113,12 @@ const daringLine = 'Chases the edge cases that make them better.';
     background:
       radial-gradient(
         ellipse 48% 52% at 78% 46%,
-        color-mix(in oklch, var(--color-accent) calc(8% + var(--dual-progress, 0) * 8%), transparent) 0%,
+        color-mix(
+            in oklch,
+            var(--color-accent) calc(8% + var(--dual-progress, 0) * 8%),
+            transparent
+          )
+          0%,
         transparent 68%
       ),
       linear-gradient(
@@ -270,7 +270,9 @@ const daringLine = 'Chases the edge cases that make them better.';
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-accent-emphasis);
-    transition: letter-spacing 0.35s ease, color 0.35s ease;
+    transition:
+      letter-spacing 0.35s ease,
+      color 0.35s ease;
   }
 
   .home-dual[data-settled='true'] .home-dual-frame {

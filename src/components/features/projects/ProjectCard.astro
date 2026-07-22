@@ -13,8 +13,12 @@ import GradientOverlay from '../../primitives/GradientOverlay.astro';
 import { headingSizeClass } from '../../../lib/typeScale';
 import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
 
-const { project, compact = false, featured = false, sideLabel } =
-  Astro.props as import('../../../types/components').ProjectCardProps;
+const {
+  project,
+  compact = false,
+  featured = false,
+  sideLabel,
+} = Astro.props as import('../../../types/components').ProjectCardProps;
 const { id: slug, data } = project;
 
 const title = data.title ?? 'Case study';
@@ -72,11 +76,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
 
         <div class:list={['flex flex-1 flex-col', featured ? 'gap-3' : 'gap-2.5']}>
           <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">
-            {sideLabel ? (
-              <span class="text-accent-emphasis">{sideLabel}</span>
-            ) : (
-              primaryCategory
-            )}
+            {sideLabel ? <span class="text-accent-emphasis">{sideLabel}</span> : primaryCategory}
             {dateISO && dateLabel ? (
               <>
                 <span aria-hidden="true"> · </span>
