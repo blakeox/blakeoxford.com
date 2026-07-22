@@ -430,16 +430,27 @@ const daringLine = 'Chases the edge cases that make them better.';
     cta.addEventListener('focus', prefetch, { once: true });
   }
 
+  let homeDualAC: AbortController | null = null;
+
+  function teardownHomeDual() {
+    homeDualAC?.abort();
+    homeDualAC = null;
+  }
+
   function bindHomeDual() {
     const root = document.querySelector<HTMLElement>('[data-home-dual]');
     if (!root || root.dataset.bound === 'true') return;
-    root.dataset.bound = 'true';
 
     const track = root.querySelector<HTMLElement>('.home-dual-track');
     const live = root.querySelector<HTMLElement>('[data-dual-live]');
     const daringImg = root.querySelector<HTMLImageElement>('[data-dual-daring]');
     const frameCaption = root.querySelector<HTMLElement>('[data-frame-caption]');
     if (!track) return;
+
+    root.dataset.bound = 'true';
+    teardownHomeDual();
+    homeDualAC = new AbortController();
+    const { signal } = homeDualAC;
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       root.style.setProperty('--dual-progress', '0');
@@ -491,8 +502,8 @@ const daringLine = 'Chases the edge cases that make them better.';
     };
 
     update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
+    window.addEventListener('scroll', update, { passive: true, signal });
+    window.addEventListener('resize', update, { signal });
   }
 
   function bindHomeHero() {
@@ -502,4 +513,5 @@ const daringLine = 'Chases the edge cases that make them better.';
 
   bindHomeHero();
   document.addEventListener('astro:page-load', bindHomeHero);
+  document.addEventListener('astro:before-swap', teardownHomeDual);
 </script>
