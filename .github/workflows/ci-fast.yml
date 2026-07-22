@@ -262,11 +262,17 @@ jobs:
           else
             echo "⚠️ Warning: Limited ARIA attributes detected"
           fi
-          # Check for alt attributes in HTML files only (exclude README.md and other docs)
-          ALT_MISSING=$(grep -r "<img" dist/ --include="*.html" | grep -v "alt=" | wc -l || echo "0")
-          if [ "$ALT_MISSING" -gt 0 ]; then
+          # Require an alt attribute on every <img>. Accept alt="", alt='', or boolean alt
+          # (Astro historically collapses empty alt="" to bare alt).
+          ALT_MISSING=$(
+            grep -rohE '<img\b[^>]*>' dist --include='*.html' \
+              | grep -vE '\balt(=|\s|/|>)' \
+              | wc -l \
+              | tr -d ' '
+          )
+          if [ "${ALT_MISSING:-0}" -gt 0 ]; then
             echo "❌ Found $ALT_MISSING images without alt attributes in HTML files"
-            grep -r "<img" dist/ --include="*.html" | grep -v "alt=" || true
+            grep -rohE '<img\b[^>]*>' dist --include='*.html' | grep -vE '\balt(=|\s|/|>)' || true
             exit 1
           else
             echo "✅ All images have alt attributes"
