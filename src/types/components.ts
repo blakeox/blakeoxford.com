@@ -23,4 +23,6 @@ export interface ProjectCardProps {
   showTags?: boolean;
   /** Homepage-dense card: image, title, proof, CTA — no tag/meta chrome. */
   compact?: boolean;
+  /** Optional Work/Daring label for home duality teasers. */
+  sideLabel?: 'Work' | 'Daring';
 }

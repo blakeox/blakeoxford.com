@@ -26,6 +26,11 @@ interface Props {
   loading?: 'lazy' | 'eager';
   fetchPriority?: 'low' | 'high' | 'auto';
   decoding?: 'async' | 'sync' | 'auto';
+  /**
+   * When true, `--coin-size` is not inlined so the parent can drive fluid sizing
+   * (e.g. home hero). `size` still guides srcset selection.
+   */
+  fluid?: boolean;
 }
 
 const {
@@ -45,6 +50,7 @@ const {
   loading = 'lazy',
   fetchPriority = 'low',
   decoding = 'async',
+  fluid = false,
 } = Astro.props as Props;
 
 const axis = flipAxis === 'x' ? 'X' : 'Y';
@@ -132,8 +138,12 @@ const ariaLabel =
 
 <button
   type="button"
-  class={cn('coin-flip focus-ring-interactive', customClass)}
-  style={`--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`}
+  class={cn('coin-flip focus-ring-interactive', fluid && 'coin-flip-fluid', customClass)}
+  style={
+    fluid
+      ? `--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`
+      : `--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`
+  }
   aria-pressed="false"
   aria-label={ariaLabel}
   id={`${uniqueId}-root`}

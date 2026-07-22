@@ -36,15 +36,15 @@ const {
   data-layout-section={layoutSection}
 >
   <Container size="xl" class="relative z-10">
-    <div class="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
-      <div class="flex flex-col items-center gap-2.5">
-        {kicker && <span class="section-kicker mx-auto">{kicker}</span>}
+    <div class="home-cta-lockup flex max-w-3xl flex-col items-start gap-6 text-left">
+      <div class="flex flex-col items-start gap-2.5">
+        {kicker && <span class="section-kicker">{kicker}</span>}
         <SectionHeading id={titleId} size="4xl">{title}</SectionHeading>
-        <p class="pt-0.5 text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">
+        <p class="max-w-2xl pt-0.5 text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">
           {description}
         </p>
       </div>
-      <ButtonGroup align="center" responsive>
+      <ButtonGroup align="start" responsive>
         <Button variant="primary" size="lg" href={primary.href}>
           {primary.label}
         </Button>

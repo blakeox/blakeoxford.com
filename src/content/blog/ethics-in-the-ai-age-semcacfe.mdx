@@ -1,0 +1,116 @@
+---
+title: 'Ethics in the AI Age: Speaking at SEMCACFE'
+description: 'Notes from co-presenting Ethics in the AI Age with UHY at SEMCACFE — why professional skepticism still beats confident AI output, and what changes when models start taking actions.'
+pubDate: 2026-07-21
+heroImage: '/assets/images/blog/ethics-in-the-ai-age-hero.webp'
+tags:
+  - Speaking
+  - AI Ethics
+  - Agentic AI
+  - Governance
+draft: false
+featured: true
+---
+
+import { Image } from 'astro:assets';
+import FeatureCard from '../../components/composites/FeatureCard.astro';
+import SemcacfeStage from '@/assets/images/carousel/SEMCACFE-Ethics-AI-Age.webp';
+import SemcacfePodium from '@/assets/images/carousel/SEMCACFE-Ethics-AI-Age-podium.webp';
+
+I spoke at **SEMCACFE** — the Southeast Michigan Chapter of the Association of Certified Fraud Examiners — at Schoolcraft College’s VisTaTech Center for **Ethics in the AI Age**, co-presenting with Chris Peterson of UHY.
+
+This was not an AI hype talk. The promise was practical: leave with a usable risk lens, and language you can put in a policy, around judgment, evidence quality, confidentiality, and professional responsibility.
+
+<FeatureCard
+  titleLevel={2}
+  variant="accent"
+  title="AI’s confident tone is not evidence"
+  class="my-12"
+>
+  <p class="text-lg leading-relaxed text-foreground/90">
+    Professional skepticism is the control. A faster bad answer is still a bad answer — the edge for
+    CFEs and CPAs remains skepticism plus evidence, not typing speed.
+  </p>
+</FeatureCard>
+
+## Leverage is real. Evidence standards do not change.
+
+AI helps surface duplicate vendors, unusual journal entries, contract summaries, and side-agreement signals. Before you allege vendor fraud, you still need documents, approvals, payments, bank data, and ownership links. A risk score is not a fraud conclusion.
+
+## From rules to agents
+
+The room needed a short arc — not model jargon — so we used the same timeline on the slide behind me:
+
+<ol class="not-prose my-10 space-y-0 border-l border-border/60 pl-0 list-none">
+  <li class="relative border-b border-border/40 py-4 pl-8 last:border-b-0">
+    <span class="absolute top-5 left-0 size-2.5 -translate-x-[calc(50%+0.5px)] rounded-full bg-accent" aria-hidden="true"></span>
+    <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">1950s–80s</p>
+    <p class="mt-1 text-base font-semibold text-foreground">Rules-based expert systems</p>
+  </li>
+  <li class="relative border-b border-border/40 py-4 pl-8 last:border-b-0">
+    <span class="absolute top-5 left-0 size-2.5 -translate-x-[calc(50%+0.5px)] rounded-full bg-accent" aria-hidden="true"></span>
+    <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">1990s–2010s</p>
+    <p class="mt-1 text-base font-semibold text-foreground">Machine learning &amp; prediction</p>
+  </li>
+  <li class="relative border-b border-border/40 py-4 pl-8 last:border-b-0">
+    <span class="absolute top-5 left-0 size-2.5 -translate-x-[calc(50%+0.5px)] rounded-full bg-accent" aria-hidden="true"></span>
+    <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">2010s</p>
+    <p class="mt-1 text-base font-semibold text-foreground">Deep learning &amp; pattern recognition</p>
+  </li>
+  <li class="relative border-b border-border/40 py-4 pl-8 last:border-b-0">
+    <span class="absolute top-5 left-0 size-2.5 -translate-x-[calc(50%+0.5px)] rounded-full bg-accent" aria-hidden="true"></span>
+    <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">2022–2025</p>
+    <p class="mt-1 text-base font-semibold text-foreground">Generative AI at scale</p>
+  </li>
+  <li class="relative py-4 pl-8">
+    <span class="absolute top-5 left-0 size-2.5 -translate-x-[calc(50%+0.5px)] rounded-full bg-primary-emphasis ring-4 ring-primary/20" aria-hidden="true"></span>
+    <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">Now</p>
+    <p class="mt-1 text-base font-semibold text-foreground">Agentic AI: AI takes actions</p>
+    <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+      Systems that use tools and take multi-step actions — where automation level drives control
+      level, and tool choice is a risk decision, not a preference.
+    </p>
+  </li>
+</ol>
+
+For agentic workflows, approval gates and access limits are how you keep a professional opinion defensible.
+
+## What attendees can actually use
+
+1. **Right-size governance.** Small firms still need a simple version — ownership, approved use cases, testing, and escalation — not a binder nobody reads.
+2. **Borrow from NIST AI RMF.** Govern, Map, Measure, Manage translates cleanly into firm policy language.
+3. **Treat material AI use like workpapers.** Keep prompts that shaped the analysis; preserve outputs you relied on. If you would not explain it in deposition, do not build your opinion on it.
+4. **Ask hard vendor questions.** If a tool cannot answer who can access data, how outputs are logged, and how the model was evaluated for your use case, it is not ready for sensitive professional work.
+
+<div class="not-prose my-12 grid gap-4 sm:grid-cols-2">
+  <figure class="overflow-hidden rounded-2xl">
+    <Image
+      src={SemcacfeStage}
+      alt="Blake Oxford presenting the AI history timeline at SEMCACFE"
+      class="aspect-[4/3] w-full object-cover"
+      widths={[480, 720, 960]}
+      sizes="(max-width: 640px) 100vw, 360px"
+    />
+    <figcaption class="mt-2 text-sm text-foreground/60">
+      The timeline on screen — rules to agents.
+    </figcaption>
+  </figure>
+  <figure class="overflow-hidden rounded-2xl">
+    <Image
+      src={SemcacfePodium}
+      alt="Blake Oxford speaking from the Schoolcraft College podium"
+      class="aspect-[4/3] w-full object-cover"
+      widths={[480, 720, 960]}
+      sizes="(max-width: 640px) 100vw, 360px"
+    />
+    <figcaption class="mt-2 text-sm text-foreground/60">
+      VisTaTech Center, Schoolcraft College.
+    </figcaption>
+  </figure>
+</div>
+
+## The point is not to avoid AI
+
+The job is to use the tool in a way the profession can defend — verify, document, and be ready to explain the method. That same evidence discipline shows up in work like [grounding legal AI in real court data](/blog/combating-legal-ai-hallucinations/).
+
+If you are building AI into fraud, audit, or advisory workflows and want a second set of eyes on controls and implementation, [get in touch](/contact/).

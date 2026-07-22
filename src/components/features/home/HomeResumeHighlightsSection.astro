@@ -1,10 +1,9 @@
 ---
 /**
- * Outcomes — metric-led editorial list.
+ * Outcomes — Work / Daring proof split that continues the home thesis.
  */
 import Section from '../../primitives/Section.astro';
 import SectionHeader from '../../composites/SectionHeader.astro';
-import EditorialList from '../../composites/EditorialList.astro';
 import type { HomePageContent } from '../../../content/home/pageTypes';
 
 interface Props {
@@ -12,20 +11,120 @@ interface Props {
 }
 
 const { content } = Astro.props as Props;
-
-const rows = content.cards.map((card) => ({
-  kicker: card.metric,
-  title: card.title,
-  bullets: card.items.map((item) => item.text),
-}));
 ---
 
-<Section id="resume-highlights" padding="lg" container="lg">
+<Section id="resume-highlights" padding="xl" container="lg" class="home-proof">
   <SectionHeader
-    align="center"
+    align="start"
     kicker={content.kicker}
     title={content.title}
     description={content.description}
   />
-  <EditorialList rows={rows} numbered={false} kickerAside={false} class="mx-auto max-w-3xl" />
+
+  <div class="home-proof-split">
+    {
+      content.sides.map((side) => (
+        <article class="home-proof-side" data-proof-side={side.side}>
+          <p class="home-proof-label">{side.label}</p>
+          <p class="home-proof-metric">{side.metric}</p>
+          <h3 class="home-proof-title">{side.title}</h3>
+          <ul class="home-proof-items">
+            {side.items.map((item) => (
+              <li>{item.text}</li>
+            ))}
+          </ul>
+        </article>
+      ))
+    }
+  </div>
 </Section>
+
+<style>
+  .home-proof :global(.section-header) {
+    margin-bottom: 2.75rem;
+  }
+
+  .home-proof-split {
+    display: grid;
+    gap: 0;
+    border-block: 1px solid color-mix(in oklch, var(--color-border) 70%, transparent);
+  }
+
+  .home-proof-side {
+    padding-block: 1.75rem;
+  }
+
+  .home-proof-side + .home-proof-side {
+    border-top: 1px solid color-mix(in oklch, var(--color-border) 70%, transparent);
+  }
+
+  .home-proof-label {
+    margin: 0 0 0.85rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-accent-emphasis);
+  }
+
+  .home-proof-metric {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-heading);
+    font-size: clamp(1.35rem, 1.1rem + 0.85vw, 1.85rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--color-foreground);
+  }
+
+  .home-proof-title {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-muted-foreground);
+  }
+
+  .home-proof-items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .home-proof-items li {
+    position: relative;
+    padding-left: 0.95rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--color-foreground);
+  }
+
+  .home-proof-items li::before {
+    content: '';
+    position: absolute;
+    top: 0.55em;
+    left: 0;
+    width: 0.35rem;
+    height: 1px;
+    background: color-mix(in oklch, var(--color-accent) 65%, transparent);
+  }
+
+  @media (width >= 768px) {
+    .home-proof-split {
+      grid-template-columns: 1fr 1fr;
+      gap: 0 3rem;
+    }
+
+    .home-proof-side {
+      padding-block: 2rem;
+    }
+
+    .home-proof-side + .home-proof-side {
+      border-top: 0;
+      border-left: 1px solid color-mix(in oklch, var(--color-border) 70%, transparent);
+      padding-left: 3rem;
+    }
+  }
+</style>

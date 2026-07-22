@@ -97,7 +97,9 @@ const homeResumeHighlightItemSchema = z.object({
   text: z.string(),
 });
 
-const homeResumeHighlightCardSchema = z.object({
+const homeResumeHighlightSideSchema = z.object({
+  side: z.enum(['work', 'daring']),
+  label: z.string(),
   metric: z.string(),
   title: z.string(),
   items: z.array(homeResumeHighlightItemSchema).max(3),
@@ -205,7 +207,7 @@ const home = defineCollection({
       kicker: z.string(),
       title: z.string(),
       description: z.string(),
-      cards: z.array(homeResumeHighlightCardSchema),
+      sides: z.array(homeResumeHighlightSideSchema).length(2),
     }),
     recentProjects: z.object({
       kicker: z.string().optional(),

@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Section from '../../primitives/Section.astro';
-import Grid from '../../primitives/Grid.astro';
 import SectionHeader from '../../composites/SectionHeader.astro';
 import ProjectCard from '../projects/ProjectCard.astro';
 import type { HomePageContent } from '../../../content/home/pageTypes';
@@ -12,6 +11,35 @@ interface Props {
 }
 
 const { projects, content } = Astro.props as Props;
+
+/** Home-only thesis map — keep schema lean; duality is a presentation concern. */
+const SIDE_BY_SLUG: Record<string, 'Work' | 'Daring'> = {
+  'microsoft-fabric': 'Work',
+  'google-workspace-migration': 'Work',
+  'advancedmd-implementation': 'Work',
+  'adp-workforcenow': 'Work',
+  'bank-projections-modeling': 'Work',
+  'fanalyx-deterministic-finance-platform': 'Daring',
+  'ferment-app': 'Daring',
+  'llm-note-coaching': 'Daring',
+};
+
+function sideOf(project: CollectionEntry<'projects'>): 'Work' | 'Daring' {
+  return SIDE_BY_SLUG[project.id] ?? 'Work';
+}
+
+const workProject =
+  projects.find((project) => sideOf(project) === 'Work') ?? projects[0] ?? null;
+const daringProject =
+  projects.find(
+    (project) => sideOf(project) === 'Daring' && project.id !== workProject?.id
+  ) ??
+  projects.find((project) => project.id !== workProject?.id) ??
+  null;
+const moreProject =
+  projects.find(
+    (project) => project.id !== workProject?.id && project.id !== daringProject?.id
+  ) ?? null;
 ---
 
 <Section
@@ -24,31 +52,80 @@ const { projects, content } = Astro.props as Props;
   <SectionHeader
     kicker={content.kicker}
     title={content.title}
+    description={content.description}
     titleId="recent-projects-title"
     actionHref={content.cta.href}
     actionLabel={content.cta.label}
   />
-  <Grid cols="3" gap="lg" class="project-teaser-grid">
-    {projects.map((project) => <ProjectCard project={project} compact />)}
-  </Grid>
+
+  {
+    workProject || daringProject ? (
+      <div class="project-dual">
+        {workProject && (
+          <div class="project-dual-col" data-side="work">
+            <ProjectCard project={workProject} compact featured sideLabel="Work" />
+          </div>
+        )}
+        {daringProject && (
+          <div class="project-dual-col" data-side="daring">
+            <ProjectCard project={daringProject} compact featured sideLabel="Daring" />
+            {moreProject && (
+              <div class="project-dual-more">
+                <ProjectCard project={moreProject} compact sideLabel={sideOf(moreProject)} />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    ) : null
+  }
 </Section>
 
 <style>
-  @media (prefers-reduced-motion: no-preference) {
-    .project-teaser-grid > :global(*) {
-      animation: project-teaser-rise 700ms var(--ease-decelerate) both;
+  .project-dual {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .project-dual-col {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .project-dual-more {
+    padding-top: 0.25rem;
+    opacity: 0.92;
+  }
+
+  @media (width >= 900px) {
+    .project-dual {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: 0 2.75rem;
     }
 
-    .project-teaser-grid > :global(*:nth-child(2)) {
-      animation-delay: 80ms;
-    }
-
-    .project-teaser-grid > :global(*:nth-child(3)) {
-      animation-delay: 160ms;
+    .project-dual-col[data-side='daring'] {
+      border-left: 1px solid color-mix(in oklch, var(--color-border) 70%, transparent);
+      padding-left: 2.75rem;
     }
   }
 
-  @keyframes project-teaser-rise {
+  @media (prefers-reduced-motion: no-preference) {
+    .project-dual-col {
+      animation: project-dual-rise 700ms var(--ease-decelerate) both;
+    }
+
+    .project-dual-col[data-side='daring'] {
+      animation-delay: 80ms;
+    }
+
+    .project-dual-more {
+      animation: project-dual-rise 700ms var(--ease-decelerate) both;
+      animation-delay: 140ms;
+    }
+  }
+
+  @keyframes project-dual-rise {
     from {
       opacity: 0;
       transform: translateY(16px);
@@ -61,7 +138,8 @@ const { projects, content } = Astro.props as Props;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .project-teaser-grid > :global(*) {
+    .project-dual-col,
+    .project-dual-more {
       animation: none;
     }
   }

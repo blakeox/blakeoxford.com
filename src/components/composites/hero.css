@@ -56,9 +56,9 @@
     overflow: hidden;
     background: linear-gradient(
       135deg,
-      color-mix(in oklch, var(--color-accent) 8%, var(--color-surface-subtle)) 0%,
-      var(--color-surface-subtle) 48%,
-      color-mix(in oklch, var(--color-primary) 4%, var(--color-background)) 100%
+      color-mix(in oklch, var(--color-accent) 12%, var(--color-surface-subtle)) 0%,
+      var(--color-surface-subtle) 42%,
+      color-mix(in oklch, var(--color-primary) 5%, var(--color-background)) 100%
     );
   }
 
@@ -70,9 +70,24 @@
     background: linear-gradient(
       90deg,
       transparent 0%,
-      color-mix(in oklch, var(--color-accent) 6%, transparent) 50%,
+      color-mix(in oklch, var(--color-accent) 8%, transparent) 38%,
       transparent 100%
     );
-    opacity: 0.7;
+    opacity: 0.85;
+  }
+
+  .home-cta-band::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: min(18rem, 40%);
+    height: 1px;
+    content: '';
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--color-accent) 70%, transparent),
+      transparent
+    );
   }
 }
