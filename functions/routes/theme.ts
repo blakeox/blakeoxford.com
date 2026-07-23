@@ -1,4 +1,5 @@
 import type { RouteContext } from '../shared/route-context';
+import { isBlakeOxfordHostname } from '../shared/hostname';
 
 export async function handleTheme({
   request,
@@ -57,7 +58,7 @@ export async function handleTheme({
 
   try {
     const maxAge = 60 * 60 * 24 * 365;
-    const isProd = url.hostname && url.hostname.endsWith('blakeoxford.com');
+    const isProd = Boolean(url.hostname && isBlakeOxfordHostname(url.hostname));
     const secureFlag = isProd ? '; Secure' : '';
     const cookie = `theme=${encodeURIComponent(theme)}; Path=/; Max-Age=${maxAge}; SameSite=Lax; HttpOnly${secureFlag}`;
     const headers = new Headers(corsHeaders);

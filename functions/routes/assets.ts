@@ -409,7 +409,6 @@ export async function handleAssets({
     if (url.pathname.startsWith('/api/')) {
       const errorPayload = {
         error: 'Internal server error',
-        message: err.message || String(error),
         path: url.pathname,
         requestId: reqId,
       };
