@@ -129,16 +129,11 @@ export async function handleSemanticSearch({
       }
       queryEmbedding = embeddingData;
     } catch (error) {
-      return new Response(
-        JSON.stringify({
-          error: 'Failed to generate query embedding',
-          details: error instanceof Error ? error.message : String(error),
-        }),
-        {
-          status: 500,
-          headers: baseCorsHeaders,
-        }
-      );
+      console.error('Failed to generate query embedding', error);
+      return new Response(JSON.stringify({ error: 'Failed to generate query embedding' }), {
+        status: 500,
+        headers: baseCorsHeaders,
+      });
     }
 
     // Query Vectorize index
@@ -203,15 +198,10 @@ export async function handleSemanticSearch({
       }
     );
   } catch (error) {
-    return new Response(
-      JSON.stringify({
-        error: 'Semantic search failed',
-        details: error instanceof Error ? error.message : String(error),
-      }),
-      {
-        status: 500,
-        headers: baseCorsHeaders,
-      }
-    );
+    console.error('Semantic search failed', error);
+    return new Response(JSON.stringify({ error: 'Semantic search failed' }), {
+      status: 500,
+      headers: baseCorsHeaders,
+    });
   }
 }
