@@ -47,7 +47,7 @@ jobs:
             else if (isDev && toTesting) { allowed = true; rule = 'development -> testing'; }
             else if (isTesting && toMain) { allowed = true; rule = 'testing -> main'; }
             else if (isHotfix && toMain) { allowed = true; rule = 'hotfix/* -> main'; }
-            else if (isMain && (toDev || toTesting)) { allowed = true; rule = 'main -> development/testing (back-merge)'; }
+            else if (isMain && (toDev || toTesting) && pr.head.repo.fork === false) { allowed = true; rule = 'main -> development/testing (back-merge)'; }
 
             if (!allowed) {
               core.setFailed(`Invalid branch flow: '${head}' -> '${base}'.\nAllowed flows:\n- feature/*, sprint/*, or cursor/* -> development\n- development -> testing\n- testing -> main\n- hotfix/* -> main\n- main -> development or testing (back-merge after ship)\n`);
