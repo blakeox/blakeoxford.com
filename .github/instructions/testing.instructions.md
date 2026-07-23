@@ -126,7 +126,8 @@ test.describe('Feature Name', () => {
 
 Tag critical paths with `@essential` for fast CI runs:
 ```bash
-pnpm test:e2e:essential  # Run only essential tests
+pnpm test:e2e:essential:chromium  # Run essential e2e tests (Chromium)
+pnpm quality fast                 # Local fast gate (typecheck/lint/vitest/e2e/perf)
 ```
 
 ---
@@ -191,8 +192,8 @@ Includes:
 
 ### CI/CD Workflows
 
-- **Fast CI**: `pnpm ci:fast` - Essential tests only
-- **Full CI**: `pnpm ci:full` - Comprehensive validation
+- **Fast CI**: `pnpm quality fast` — Essential local gate
+- **Full CI**: `pnpm quality full` — Comprehensive local gate
 - **Act Local**: `act -W .github/workflows/act-local.yml` — optional local Actions runner (script aliases removed in script diet)
 
 ---
@@ -228,7 +229,8 @@ Includes:
 ```bash
 pnpm perf:test      # Run Lighthouse performance tests
 ./scripts/build/performance-budget.sh  # Size/bundle budget gate (CI)
-pnpm perf:summary   # Generate summary report
+pnpm quality perf:summary   # Generate performance summary
+pnpm quality long-tasks     # Analyze JavaScript execution
 ```
 
 ### Performance Budgets
@@ -242,7 +244,7 @@ pnpm perf:summary   # Generate summary report
 ### Long Task Analysis
 
 ```bash
-pnpm perf:long-tasks  # Analyze JavaScript execution
+pnpm quality long-tasks  # Analyze JavaScript execution
 ```
 
 ---
@@ -281,12 +283,12 @@ pnpm test                 # Run Vitest tests
 pnpm test:coverage        # With coverage report
 
 # E2E Testing  
-pnpm test:e2e            # Full Playwright suite
-pnpm test:e2e:essential  # Essential tests only
-pnpm test:e2e:ui         # Interactive UI mode
+pnpm test:e2e                     # Full Playwright suite
+pnpm test:e2e:essential:chromium  # Essential Chromium tests
+pnpm quality fast                 # Local fast gate
 
 # Quality Checks
-pnpm test:ci             # Both test suites
+pnpm quality full        # Full local gate
 pnpm test -- --run       # Unit tests
 pnpm flakiness:track     # Track flaky tests
 pnpm flakiness:check     # Validate thresholds

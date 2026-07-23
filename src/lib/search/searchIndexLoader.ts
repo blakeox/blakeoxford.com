@@ -78,14 +78,14 @@ export async function loadSearchCorpus(signal?: AbortSignal): Promise<SearchReco
 
     try {
       const [projectJson, blogJson] = await Promise.all([
-        fetchJson<ApiProject[]>('/api/projects.json', signal),
-        fetchJson<ApiBlog[]>('/api/blog.json', signal),
+        fetchJson<ApiProject[]>('/search/projects.json', signal),
+        fetchJson<ApiBlog[]>('/search/blog.json', signal),
       ]);
 
       projects = projectJson.filter((item) => !item.draft).map(toProjectRecord);
       blogs = blogJson.filter((item) => !item.draft).map(toBlogRecord);
     } catch (error) {
-      console.warn('[search] Failed to load API indexes, using nav pages only', error);
+      console.warn('[search] Failed to load search indexes, using nav pages only', error);
     }
 
     cachedCorpus = [...pages, ...projects, ...blogs];

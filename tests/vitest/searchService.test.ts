@@ -50,7 +50,7 @@ describe('runSearch', () => {
   it('falls back to local search when Cloudflare semantic search is unavailable', async () => {
     vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const url = String(input);
-      if (url.includes('/api/projects.json')) {
+      if (url.includes('/search/projects.json')) {
         return new Response(
           JSON.stringify([
             {
@@ -63,7 +63,7 @@ describe('runSearch', () => {
           { status: 200 }
         );
       }
-      if (url.includes('/api/blog.json')) {
+      if (url.includes('/search/blog.json')) {
         return new Response(JSON.stringify([]), { status: 200 });
       }
       if (url.includes('/api/semantic-search')) {
@@ -82,10 +82,10 @@ describe('runSearch', () => {
   it('uses Cloudflare semantic search when available', async () => {
     vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const url = String(input);
-      if (url.includes('/api/projects.json')) {
+      if (url.includes('/search/projects.json')) {
         return new Response(JSON.stringify([]), { status: 200 });
       }
-      if (url.includes('/api/blog.json')) {
+      if (url.includes('/search/blog.json')) {
         return new Response(JSON.stringify([]), { status: 200 });
       }
       if (url.includes('/api/semantic-search')) {
@@ -117,7 +117,7 @@ describe('runSearch', () => {
   it('falls back to local search when semantic returns empty results', async () => {
     vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const url = String(input);
-      if (url.includes('/api/projects.json')) {
+      if (url.includes('/search/projects.json')) {
         return new Response(
           JSON.stringify([
             {
@@ -130,7 +130,7 @@ describe('runSearch', () => {
           { status: 200 }
         );
       }
-      if (url.includes('/api/blog.json')) {
+      if (url.includes('/search/blog.json')) {
         return new Response(JSON.stringify([]), { status: 200 });
       }
       if (url.includes('/api/semantic-search')) {
@@ -147,7 +147,7 @@ describe('runSearch', () => {
   it('drops noisy hub pages for keyword queries when semantic returns them', async () => {
     vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const url = String(input);
-      if (url.includes('/api/projects.json')) {
+      if (url.includes('/search/projects.json')) {
         return new Response(
           JSON.stringify([
             {
@@ -160,7 +160,7 @@ describe('runSearch', () => {
           { status: 200 }
         );
       }
-      if (url.includes('/api/blog.json')) {
+      if (url.includes('/search/blog.json')) {
         return new Response(JSON.stringify([]), { status: 200 });
       }
       if (url.includes('/api/semantic-search')) {

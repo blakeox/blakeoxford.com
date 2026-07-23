@@ -79,7 +79,7 @@ for (const file of Object.keys(baseline.files ?? {})) {
 
 if (errors.length) {
   console.error('[blog-mdx-dark-baseline] FAILED:\n' + errors.map((e) => `  - ${e}`).join('\n'));
-  console.error('\nRun: pnpm design:blog-mdx-dark --write');
+  console.error('\nRun: pnpm quality blog-mdx-dark');
   console.error(
     'Then: node scripts/quality/check-blog-mdx-dark-baseline.js --update (if intentional)'
   );
