@@ -24,7 +24,7 @@ Core commands:
 | Build static site                       | `pnpm build`            |
 | Unit tests (Vitest)                     | `pnpm test`             |
 | E2E tests (Playwright)                  | `pnpm test:e2e`         |
-| Comprehensive quality (CI parity)       | `pnpm test:ci`          |
+| Comprehensive quality (local)           | `pnpm quality full`     |
 | Flakiness track                         | `pnpm flakiness:track`  |
 | Flakiness gate                          | `pnpm flakiness:check`  |
 | Generate quality summary                | `pnpm quality:summary`  |

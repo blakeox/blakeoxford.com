@@ -1,5 +1,6 @@
 import { anonymizeClientIp } from '../../shared/ip';
 import { buildApiCorsHeaders } from '../../shared/cors';
+import { writeAiAnalytics } from '../../shared/ai-analytics';
 import type { RouteContext } from '../../shared/route-context';
 import type { Env } from '../../types';
 import { parseAiSources } from './parse-sources';
@@ -125,28 +126,17 @@ export async function handleAiSearch({
         'x-response-time': String(Date.now() - startTime),
       };
 
-      // Log to analytics
-      if (env.AI_ANALYTICS) {
-        try {
-          env.AI_ANALYTICS.writeDataPoint({
-            blobs: [
-              query.slice(0, 50),
-              'WORKERS_AI',
-              anonymizeClientIp(clientIp),
-              sessionId || 'anonymous',
-              complexity,
-            ],
-            doubles: [
-              0, // No sources from Workers AI
-              workersAIResult.message?.length || 0,
-              Date.now() - startTime,
-            ],
-            indexes: ['workers_ai', `complexity_${complexity}`],
-          });
-        } catch {
-          // Silently fail - analytics is non-critical
-        }
-      }
+      writeAiAnalytics(env, {
+        blobs: [
+          query.slice(0, 50),
+          'WORKERS_AI',
+          anonymizeClientIp(clientIp),
+          sessionId || 'anonymous',
+          complexity,
+        ],
+        doubles: [0, workersAIResult.message?.length || 0, Date.now() - startTime],
+        indexes: ['workers_ai', `complexity_${complexity}`],
+      });
 
       return new Response(JSON.stringify(workersAIResult), {
         status: 200,
@@ -183,28 +173,21 @@ export async function handleAiSearch({
           'x-ai-provider': 'autorag-cached',
         };
 
-        // Log cache hit to analytics
-        if (env.AI_ANALYTICS) {
-          try {
-            env.AI_ANALYTICS.writeDataPoint({
-              blobs: [
-                query.slice(0, 50),
-                'CACHE_HIT',
-                anonymizeClientIp(clientIp),
-                sessionId || 'anonymous',
-                complexity || 'unknown',
-              ],
-              doubles: [
-                Array.isArray(cached.sources) ? cached.sources.length : 0,
-                cached.message.length || 0,
-                Date.now() - startTime,
-              ],
-              indexes: ['cache_hit', `complexity_${complexity}`],
-            });
-          } catch {
-            // Silently fail - analytics is non-critical
-          }
-        }
+        writeAiAnalytics(env, {
+          blobs: [
+            query.slice(0, 50),
+            'CACHE_HIT',
+            anonymizeClientIp(clientIp),
+            sessionId || 'anonymous',
+            complexity || 'unknown',
+          ],
+          doubles: [
+            Array.isArray(cached.sources) ? cached.sources.length : 0,
+            cached.message.length || 0,
+            Date.now() - startTime,
+          ],
+          indexes: ['cache_hit', `complexity_${complexity}`],
+        });
 
         return new Response(JSON.stringify(responseData), {
           status: 200,
@@ -280,9 +263,7 @@ export async function handleAiSearch({
     if (upstreamData && typeof upstreamData === 'object' && upstreamData.success === false) {
       const errors = Array.isArray(upstreamData.errors) ? upstreamData.errors : [];
       const firstError =
-        errors[0] && typeof errors[0] === 'object'
-          ? (errors[0] as { message?: unknown })
-          : null;
+        errors[0] && typeof errors[0] === 'object' ? (errors[0] as { message?: unknown }) : null;
       const upstreamError =
         typeof firstError?.message === 'string'
           ? firstError.message
@@ -368,25 +349,17 @@ export async function handleAiSearch({
       }
     }
 
-    // Log successful query to analytics
-    if (env.AI_ANALYTICS) {
-      try {
-        const responseTime = Date.now() - startTime;
-        env.AI_ANALYTICS.writeDataPoint({
-          blobs: [
-            query.slice(0, 50),
-            'API_CALL',
-            anonymizeClientIp(clientIp),
-            sessionId || 'anonymous',
-            complexity || 'unknown',
-          ],
-          doubles: [sources.length, message.length, responseTime],
-          indexes: ['ai_query', `complexity_${complexity}`],
-        });
-      } catch {
-        // Analytics write failed, continue anyway
-      }
-    }
+    writeAiAnalytics(env, {
+      blobs: [
+        query.slice(0, 50),
+        'API_CALL',
+        anonymizeClientIp(clientIp),
+        sessionId || 'anonymous',
+        complexity || 'unknown',
+      ],
+      doubles: [sources.length, message.length, Date.now() - startTime],
+      indexes: ['ai_query', `complexity_${complexity}`],
+    });
 
     const responseHeaders = {
       ...baseCorsHeaders,

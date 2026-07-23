@@ -1,5 +1,6 @@
 import { anonymizeClientIp } from '../shared/ip';
 import { buildApiCorsHeaders } from '../shared/cors';
+import { writeAiAnalytics } from '../shared/ai-analytics';
 import type { RouteContext } from '../shared/route-context';
 
 type RateLimitBucket = { count: number; reset: number };
@@ -168,17 +169,11 @@ export async function handleSemanticSearch({
     const topScore = results[0]?.score ?? 0;
     const latency = Date.now() - startTime;
 
-    if (env.AI_ANALYTICS) {
-      try {
-        env.AI_ANALYTICS.writeDataPoint({
-          blobs: [query.slice(0, 50), 'VECTORIZE', anonymizeClientIp(clientIp), 'anonymous'],
-          doubles: [results.length, topScore, latency],
-          indexes: ['semantic_search'],
-        });
-      } catch {
-        // Analytics is non-critical
-      }
-    }
+    writeAiAnalytics(env, {
+      blobs: [query.slice(0, 50), 'VECTORIZE', anonymizeClientIp(clientIp), 'anonymous'],
+      doubles: [results.length, topScore, latency],
+      indexes: ['semantic_search'],
+    });
 
     return new Response(
       JSON.stringify({

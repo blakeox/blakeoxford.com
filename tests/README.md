@@ -20,7 +20,7 @@ Current interim structure will be migrated incrementally.
 ## Tagging Conventions (Playwright)
 
 - @smoke @essential – Fast core health
-- @extended – Heavy/slow suites (chaos, bundle analysis, full visual matrix); opt in via `PLAYWRIGHT_EXTENDED=true` or `pnpm run test:e2e:extended`
+- @extended – Heavy/slow suites (chaos, bundle analysis, full visual matrix); opt in via `PLAYWRIGHT_EXTENDED=true` or `pnpm run test:e2e:extended:chromium`
 - @journey – Primary user flows
 - @accessibility-core / @accessibility-contrast / @accessibility-extended
 - @perf-budget / @perf-regression
@@ -57,7 +57,7 @@ Current interim structure will be migrated incrementally.
 
 Implemented in this phase:
 
-- contracts/api/projects.contract.test.ts & blog.contract.test.ts (Zod validation of public JSON outputs)
+- contracts/api/projects.contract.test.ts & blog.contract.test.ts (Zod validation of `public/search/*.json`)
 - integration/searchIndex.integration.test.ts (executes real generation script)
 - playwright/accessibility/axe-core.spec.ts (automated WCAG A/AA scan)
 - playwright/functional/navigation-search.journey.spec.ts (merged core nav + search actions)

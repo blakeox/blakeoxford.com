@@ -23,10 +23,10 @@ pnpm dev          # http://localhost:4321
 pnpm build
 pnpm check        # typecheck + design-lint + lint + format + unit tests
 pnpm test:e2e     # Playwright
-pnpm deploy       # Wrangler → Workers
+pnpm deploy:worker # Wrangler → Workers
 ```
 
-Primary npm scripts: `dev`, `build`, `check`, `test`, `test:e2e`, `deploy`, `quality`. Additional gates live under `quality:*`, `test:e2e:*`, `ci:*`, and `scripts/`.
+Primary npm scripts: `dev`, `build`, `check`, `test`, `test:e2e`, `deploy:worker`, `quality`. Specialist gates live under `quality:*` / `pnpm quality <cmd>` and `test:e2e:*`.
 
 ## Layout
 

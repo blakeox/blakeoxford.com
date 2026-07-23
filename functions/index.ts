@@ -14,6 +14,7 @@ import { handleConversation } from './routes/conversation';
 import { handleSemanticSearch } from './routes/semantic-search';
 import { handleAiFeedback } from './routes/ai-feedback';
 import { handleTheme } from './routes/theme';
+import { handleLegacySearchRedirect } from './routes/legacy-search-redirect';
 import { handleAssets } from './routes/assets';
 
 export { ConversationDurableObject } from './ConversationDO.ts';
@@ -60,6 +61,7 @@ const WorkerApp = {
     const routeCtx: RouteContext = { request, env, ctx, url, reqId, method, Sentry };
 
     const handlers = [
+      handleLegacySearchRedirect,
       handleRobotsFavicon,
       handleHealth,
       handleEmail,

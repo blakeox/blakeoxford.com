@@ -4,6 +4,7 @@ Last updated: 2026-07-23
 
 Changelog:
 
+- 2026-07-23: Hygiene — shared `writeAiAnalytics` helper; Worker-level `/api`→`/search` redirects (`run_worker_first` safe); docs aligned to search canon + current scripts.
 - 2026-07-23: Stretch — all four KV bindings on dedicated namespaces; retire `/api` search mirrors (redirects); Ask leaf hooks under `hooks/internal/`.
 - 2026-07-23: Phase 0–4 complete for A+ — RATE_LIMIT KV physically split; AI Gateway `default` on Workers AI; Ask client contract; HomeHero split; search loader → `/search/*`; public scripts ≤40 via quality CLI.
 - 2026-07-22: Mandate `@/` path aliases for `src/` imports (codemod ~342); prefer deep `@/utils/<module>` over the utils barrel. Aggressive structural refactor — modular Worker (`functions/index.ts` + routes), domain unification (AI search service, CollectionEntry page types, features/contact), chat hooks under `features/chat/hooks`, component-docs split, README/hygiene pass.
@@ -34,7 +35,7 @@ Primary audience: recruiters, collaborators, and technical peers evaluating arch
 - **Deployment**: Cloudflare Workers / static assets (Pages deprecated for this project).
 - **Routing**: File-based under `src/pages/` (kebab-case). Edge/API handlers live in `functions/` (Workers).
 - **Components**: Astro UI layers in `src/components/` (PascalCase). Product React features (Ask, Find, overlay, contact form) live under `src/features/`.
-- **Content**: Zod-driven schemas in `src/content.config.ts`; static JSON in `public/api/`.
+- **Content**: Zod-driven schemas in `src/content.config.ts`; search indexes in `public/search/` (canonical).
 - **Styling**: Tailwind CSS v4 via `@tailwindcss/vite` (CSS-first). Tokens live in `src/styles/theme.css` (`@theme inline`); prefer utilities over bespoke CSS. Shared chrome belongs in `components.css`.
 - **Optimization scripts**: `scripts/optimization/` (image optimization, bundle analysis, critical CSS inlining, code splitting guidance). Carousel masters live outside git at `~/Documents/blakeoxford-local/carousel-originals` (or `CAROUSEL_ORIGINALS_DIR`); commit only webp/avif outputs under `src/assets/images/carousel/`.
 - **Quality tooling**: `scripts/quality/` orchestrates runtime checks (search relevance, accessibility via axe-core, dead link crawl, long-task probe) + summary. `design:lint` also fails on Finder-style `* 2.*` duplicate artifacts.
@@ -65,7 +66,7 @@ scripts/
   quality/           # Runtime metrics + gating scripts (incl. design-lint)
   content/           # Search index generation
   build/ · ci/ · setup/
-public/              # Static assets, public/api JSON (search index generated)
+public/              # Static assets; search indexes under public/search/
 functions/           # Cloudflare Worker entry (index.ts) + Durable Objects
 tests/               # Vitest + Playwright + contracts
 infra/               # Zaraz templates
@@ -316,7 +317,7 @@ Guardrails (avoid):
 
 - Blocking network calls in build steps.
 - Long-running synchronous loops in Cloudflare functions.
-- Inline large JSON blobs in Astro pages (prefer external static JSON in `public/api/`).
+- Inline large JSON blobs in Astro pages (prefer external static JSON in `public/search/`).
 - Unbounded history/log growth (rotate / cap arrays).
 
 Security & Data Handling:
