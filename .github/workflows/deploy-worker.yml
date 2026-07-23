@@ -1,5 +1,10 @@
 name: Deploy Worker
 
+# Primary production deploys come from Cloudflare Workers Builds (Git integration).
+# This workflow is a secondary Wrangler path; it soft-fails while CLOUDFLARE_API_TOKEN
+# is rotated so main pushes stay green. Re-harden after:
+#   CLOUDFLARE_API_TOKEN='…' ./scripts/setup/github-cloudflare-deploy.sh
+
 on:
   push:
     branches:
@@ -41,13 +46,21 @@ jobs:
         run: pnpm build
 
       - name: Deploy to Cloudflare Workers
+        id: wrangler_deploy
+        continue-on-error: true
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
 
+      - name: Note soft-fail (Workers Builds is primary)
+        if: steps.wrangler_deploy.outcome == 'failure'
+        run: |
+          echo "::warning::GHA Wrangler deploy failed (often invalid CLOUDFLARE_API_TOKEN). Production should still ship via Cloudflare Workers Builds. Rotate the token with scripts/setup/github-cloudflare-deploy.sh when ready."
+
       - name: Refresh Vectorize index
+        if: steps.wrangler_deploy.outcome == 'success'
         continue-on-error: true
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
