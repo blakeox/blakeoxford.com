@@ -8,8 +8,8 @@ import type {
   ConversationWebSocket,
   LoadingPhase,
   SearchFallback,
-} from '../../lib/chat';
-import type { AIChatSource } from '../../lib/ai-search';
+} from '@/lib/chat';
+import type { AIChatSource } from '@/lib/ai-search';
 
 // Re-export types for components that need them
 export type { ChatMessage, ChatState, LoadingPhase, SearchFallback };

@@ -103,8 +103,8 @@ Follow the component taxonomy below (and keep `src/data/componentDocs.ts` in syn
    - **Primitives** (`src/components/primitives/`): Low-level building blocks (Button, Badge, Flex, Grid)
    - **Composites** (`src/components/composites/`): Mid-level composed components (PageHero, FeatureCard, SectionHeader)
    - **Page features** (`src/components/features/`): Domain Astro sections (BlogPostRow, ProjectCard, home/about/projects sections)
-   - **Form islands** (`src/components/islands/`): Small React hydrated forms (ContactFormIsland)
-   - **Product features** (`src/features/`): Larger interactive products — `chat/` (Ask), `command-center/` (Find), `overlay/` (shared shell). Prefer this layout: entry + `components/` + optional `hooks/` + `lib/` + `index.ts` (see `command-center` as the reference).
+   - **Form / contact** (`src/features/contact/`): React hydrated ContactFormIsland
+   - **Product features** (`src/features/`): Larger interactive products — `chat/` (Ask), `command-center/` (Find), `overlay/` (shared shell), `contact/`. Prefer this layout: entry + `components/` + optional `hooks/` + `lib/` + `index.ts` (see `command-center` as the reference).
 
 2. **Component Structure**:
 

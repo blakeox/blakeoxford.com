@@ -1,8 +1,8 @@
 /**
  * ChatAdvancedControls — quiet session settings for Ask overlay.
  */
-import type { ChatAdvancedControlsProps } from '../types';
-import { SECTION_LABEL } from '../../overlay/overlayStyles';
+import type { ChatAdvancedControlsProps } from '@/features/chat/types';
+import { SECTION_LABEL } from '@/features/overlay/overlayStyles';
 
 export function ChatAdvancedControls({
   showAdvancedControls,

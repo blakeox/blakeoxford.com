@@ -1,6 +1,10 @@
 /**
  * Utility Functions Library
- * Centralized utilities for date formatting, string manipulation, and common operations
+ * Centralized utilities for date formatting, string manipulation, and common operations.
+ *
+ * Prefer deep imports (`@/utils/<module>`) over this barrel when possible —
+ * e.g. `@/utils/errors`, `@/utils/cn` — to keep dependency graphs explicit.
+ * Error helpers live in `./errors` (not the removed `lib/error-utils`).
  */
 
 // ─── Date Formatting Utilities ───────────────────────────────────────

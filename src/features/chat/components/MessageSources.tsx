@@ -3,8 +3,8 @@
  * No Vectorize jargon, scores, or dock-stealing chrome.
  */
 import { memo, type RefObject } from 'react';
-import { decodeHtmlEntities, decodeMimeEncodedWords } from '../../../lib/string-utils';
-import type { Source } from '../types';
+import { decodeHtmlEntities, decodeMimeEncodedWords } from '@/lib/string-utils';
+import type { Source } from '@/features/chat/types';
 
 const MIN_SOURCE_SCORE = 0.55;
 

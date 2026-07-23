@@ -6,5 +6,5 @@ export async function getHomePage(): Promise<HomePageContent> {
   if (!entry) {
     throw new Error('Home page content not found at src/content/home/page.json');
   }
-  return entry.data as HomePageContent;
+  return entry.data;
 }

@@ -9,8 +9,8 @@
  */
 import type { GetStaticPaths } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
-import ProjectDetailLayout from '../../layouts/ProjectDetailLayout.astro';
-import CTASection from '../../components/composites/CTASection.astro';
+import ProjectDetailLayout from '@/layouts/ProjectDetailLayout.astro';
+import CTASection from '@/components/composites/CTASection.astro';
 
 export const getStaticPaths = (async () => {
   const projects = await getCollection('projects');

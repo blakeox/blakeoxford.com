@@ -2,7 +2,7 @@
  * ChatInput — calm composer for the Ask dock.
  */
 import { memo, useCallback } from 'react';
-import type { ChatInputProps } from '../types';
+import type { ChatInputProps } from '@/features/chat/types';
 
 export const ChatInput = memo(function ChatInput({
   inputValue,

@@ -2,7 +2,7 @@
  * Constants and configuration for AI Chat Island
  */
 
-import type { AIChatSource } from '../ai-search';
+import type { AIChatSource } from '@/lib/ai-search';
 
 // Storage keys
 export const CONVERSATION_STORAGE_KEY = 'ai-chat:conversation';

@@ -213,8 +213,10 @@ function scanDuplicates() {
 function expectedComponentCategory(filePath) {
   if (filePath.startsWith('src/components/layout/')) return 'Layout';
   if (filePath.startsWith('src/components/features/')) return 'Features';
-  if (filePath.startsWith('src/components/islands/')) return 'Islands';
   if (filePath.startsWith('src/features/chat/')) return 'Islands';
+  if (filePath.startsWith('src/features/contact/')) return 'Islands';
+  if (filePath.startsWith('src/features/command-center/')) return 'Islands';
+  if (filePath.startsWith('src/features/overlay/')) return 'Islands';
   if (filePath.startsWith('src/components/primitives/')) return 'Primitives';
   if (filePath.startsWith('src/components/composites/')) return 'Composites';
   // Progressive-enhancement scripts and theme FOUC helpers documented alongside islands
@@ -241,47 +243,63 @@ function scanComponentRoot() {
 }
 
 function scanComponentDocs() {
-  const docsPath = path.join(root, 'src/data/componentDocs.ts');
-  if (!fs.existsSync(docsPath)) return;
+  const docsDir = path.join(root, 'src/data/component-docs');
+  const docsFiles = fs.existsSync(docsDir)
+    ? fs
+        .readdirSync(docsDir)
+        .filter(
+          (name) =>
+            name.endsWith('.ts') &&
+            !['index.ts', 'types.ts', 'helpers.ts', 'catalog.ts'].includes(name)
+        )
+        .map((name) => path.join(docsDir, name))
+    : [];
+  const shimPath = path.join(root, 'src/data/componentDocs.ts');
+  if (fs.existsSync(shimPath)) docsFiles.push(shimPath);
+  if (docsFiles.length === 0) return;
 
-  const content = fs.readFileSync(docsPath, 'utf8');
   const seenNames = new Set();
-  COMPONENT_DOC_ENTRY_REGEX.lastIndex = 0;
-  let match;
 
-  while ((match = COMPONENT_DOC_ENTRY_REGEX.exec(content))) {
-    const [, name, category, filePath] = match;
-    const absoluteFilePath = path.join(root, filePath);
-    const expectedCategory = expectedComponentCategory(filePath);
+  for (const docsPath of docsFiles) {
+    const content = fs.readFileSync(docsPath, 'utf8');
+    const relDocs = rel(docsPath);
+    COMPONENT_DOC_ENTRY_REGEX.lastIndex = 0;
+    let match;
 
-    if (seenNames.has(name)) {
-      findings.componentDocs.push({
-        file: 'src/data/componentDocs.ts',
-        value: `${name}: duplicate component doc name`,
-      });
-    }
-    seenNames.add(name);
+    while ((match = COMPONENT_DOC_ENTRY_REGEX.exec(content))) {
+      const [, name, category, filePath] = match;
+      const absoluteFilePath = path.join(root, filePath);
+      const expectedCategory = expectedComponentCategory(filePath);
 
-    if (!fs.existsSync(absoluteFilePath)) {
-      findings.componentDocs.push({
-        file: 'src/data/componentDocs.ts',
-        value: `${name}: missing ${filePath}`,
-      });
-    }
+      if (seenNames.has(name)) {
+        findings.componentDocs.push({
+          file: relDocs,
+          value: `${name}: duplicate component doc name`,
+        });
+      }
+      seenNames.add(name);
 
-    if (!expectedCategory) {
-      findings.componentDocs.push({
-        file: 'src/data/componentDocs.ts',
-        value: `${name}: non-canonical component path ${filePath}`,
-      });
-      continue;
-    }
+      if (!fs.existsSync(absoluteFilePath)) {
+        findings.componentDocs.push({
+          file: relDocs,
+          value: `${name}: missing ${filePath}`,
+        });
+      }
 
-    if (category !== expectedCategory) {
-      findings.componentDocs.push({
-        file: 'src/data/componentDocs.ts',
-        value: `${name}: category ${category} should be ${expectedCategory} for ${filePath}`,
-      });
+      if (!expectedCategory) {
+        findings.componentDocs.push({
+          file: relDocs,
+          value: `${name}: non-canonical component path ${filePath}`,
+        });
+        continue;
+      }
+
+      if (category !== expectedCategory) {
+        findings.componentDocs.push({
+          file: relDocs,
+          value: `${name}: category ${category} should be ${expectedCategory} for ${filePath}`,
+        });
+      }
     }
   }
 }
@@ -307,6 +325,7 @@ function scanSourceFile(file) {
 
   if (
     relPath === 'src/data/componentDocs.ts' ||
+    relPath.startsWith('src/data/component-docs/') ||
     relPath.startsWith('src/pages/design/') ||
     relPath.startsWith('src/pages/docs/')
   ) {

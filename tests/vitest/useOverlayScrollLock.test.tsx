@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, act } from '@testing-library/react';
 import { useState } from 'react';
 
-import { useOverlayScrollLock } from '../../src/hooks/useOverlayScrollLock';
+import { useOverlayScrollLock } from '../../src/lib/hooks/useOverlayScrollLock';
 import {
   acquireScrollLock,
   isScrollLocked,

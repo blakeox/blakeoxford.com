@@ -4,7 +4,7 @@ import {
   getThemePreference,
   updateThemeToggleButton,
   readThemePreference,
-} from '../../lib/theme';
+} from '@/lib/theme';
 
 type ElementHandle<T extends HTMLElement> =
   T | null | undefined | { current: T | null | undefined };

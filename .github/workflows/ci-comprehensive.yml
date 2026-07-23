@@ -279,12 +279,10 @@ jobs:
       - name: Validate Cloudflare Functions
         run: |
           echo "☁️ Validating Cloudflare Edge Functions..."
-          if [ -f "functions/edge-computing.js" ] && [ -f "functions/send-email.ts" ]; then
+          if [ -f "functions/index.ts" ] && [ -f "functions/send-email.ts" ]; then
             echo "✅ Edge functions found and ready for deployment"
-            # Basic syntax check for the main JS entry point
-            node -c functions/edge-computing.js
-            # TypeScript files are validated by the typecheck step
-            echo "✅ Edge functions syntax validation passed"
+            # TypeScript entry is validated by the typecheck / wrangler bundle step
+            echo "✅ Edge functions present (functions/index.ts)"
           else
             echo "⚠️ Warning: Some edge functions may be missing"
           fi

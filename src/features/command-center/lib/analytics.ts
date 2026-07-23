@@ -1,4 +1,4 @@
-import { trackEvent } from '../../../lib/analytics';
+import { trackEvent } from '@/lib/analytics';
 
 export type CommandCenterOpenSource = 'shortcut' | 'nav' | 'api' | 'unknown';
 

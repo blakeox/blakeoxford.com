@@ -1,10 +1,10 @@
-import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollLock';
+import { acquireScrollLock, releaseScrollLock } from '@/utils/scrollLock';
 import {
   closeSearch,
   registerEscapeHandler,
   registerMobileMenuClose,
-} from '../../utils/headerController';
-import { createFocusTrap, type FocusTrap } from '../../utils/focusTrap';
+} from '@/utils/headerController';
+import { createFocusTrap, type FocusTrap } from '@/utils/focusTrap';
 
 export const MENU_LABEL_OPEN = 'Open navigation menu';
 export const MENU_LABEL_CLOSED = 'Close navigation menu';

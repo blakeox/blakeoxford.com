@@ -1,4 +1,4 @@
-import type { SearchCategory } from '../../lib/search/types';
+import type { SearchCategory } from '@/lib/search/types';
 
 export type CommandItemKind = 'page' | 'project' | 'blog';
 

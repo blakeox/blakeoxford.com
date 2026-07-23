@@ -1,11 +1,11 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import Container from '../../primitives/Container.astro';
-import OptimizedImage from '../../primitives/OptimizedImage.astro';
-import Button from '../../primitives/Button.astro';
-import IntroCopy from '../../composites/IntroCopy.astro';
-import DotMetaList from '../../composites/DotMetaList.astro';
-import type { ProjectDeepCut } from '../../../content/projects/getProjectInsights';
+import Container from '@/components/primitives/Container.astro';
+import OptimizedImage from '@/components/primitives/OptimizedImage.astro';
+import Button from '@/components/primitives/Button.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
+import DotMetaList from '@/components/composites/DotMetaList.astro';
+import type { ProjectDeepCut } from '@/content/projects/getProjectInsights';
 
 interface Props {
   project: CollectionEntry<'projects'>;

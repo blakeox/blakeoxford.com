@@ -103,14 +103,14 @@ features/
 - May include business logic
 - Localized to feature area
 
-### Islands (`src/components/islands/`)
+### Product features (`src/features/`)
 
-**Purpose**: Small client-side React mounts (forms and similar)
+**Purpose**: Interactive React products (Ask chat, Find command center, contact form, overlay)
 
 **Examples**:
-- `ContactFormIsland.tsx` / `ContactFormClient.tsx` — Contact form with validation
-
-**Larger interactive products** (Ask chat, Find command center, shared overlay) live under `src/features/` — not here. See `src/features/chat/` and `src/features/command-center/`.
+- `src/features/contact/ContactFormIsland.tsx` — Contact form with validation
+- `src/features/chat/` — Ask companion
+- `src/features/command-center/` — Find (⌘K)
 
 **Characteristics**:
 - React components (`.tsx`)

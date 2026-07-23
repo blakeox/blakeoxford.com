@@ -180,7 +180,7 @@ pnpm a11y:trend            # Track accessibility trends
   - `scripts/quality/` - Quality metrics and contrast audits
   - `scripts/build/` - Build-time scripts and performance testing
   - `scripts/content/` - Content processing (search index generation)
-- `functions/` - Cloudflare Workers (edge-computing.js, send-email.js, ConversationDO.js)
+- `functions/` - Cloudflare Workers (functions/index.ts, send-email.js, ConversationDO.js)
 
 ---
 
@@ -318,8 +318,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
    └─ No → Create in src/components/features/{feature-name}/
 
 2. Does it need client-side interactivity?
-   ├─ Small form / one-off island → src/components/islands/
-   ├─ Product surface (Ask / Find / overlay) → src/features/<name>/
+   ├─ Product surface (Ask / Find / contact / overlay) → src/features/<name>/
    └─ No → Create Astro component
 
 3. Before creating:
@@ -375,7 +374,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 - TypeScript for logic, JavaScript acceptable in Astro frontmatter
 - React components only when client-side interactivity needed (React 19.2.0+)
 - Use Astro Islands architecture (`client:load`, `client:only`, etc.) for hydration control
-- Product React features (Ask / Find / overlay) live in `src/features/`; small form islands remain in `src/components/islands/`
+- Product React features (Ask / Find / contact / overlay) live in `src/features/`
 - Comprehensive testing coverage with property-based testing
 - Performance budgets enforced through automation
 
@@ -606,7 +605,7 @@ DEBUG=astro:* pnpm build 2>&1 | grep -i "slow\\|warn"
 
 ### Cloudflare Services
 
-- **Workers**: Edge runtime for routing, CSP reporting, security headers, rate limiting, and caching (functions/edge-computing.js)
+- **Workers**: Edge runtime for routing, CSP reporting, security headers, rate limiting, and caching (functions/index.ts)
 - **ASSETS binding**: Serves the static build (dist/) from Workers
 - **KV**: Contact form storage, AI response caching, rate limiting, and CSP report storage
 - **Durable Objects**: ConversationDurableObject for stateful AI chat with WebSocket support, typing indicators, and presence tracking

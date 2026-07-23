@@ -2,7 +2,7 @@
  * ChatLauncher component
  * The floating button that opens/closes the chat panel
  */
-import type { ChatLauncherProps } from '../types';
+import type { ChatLauncherProps } from '@/features/chat/types';
 
 export function ChatLauncher({ isOpen, launcherRef, openChat, closeChat }: ChatLauncherProps) {
   return (

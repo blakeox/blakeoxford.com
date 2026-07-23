@@ -1,12 +1,13 @@
 ---
-import Layout from '../layouts/BaseLayout.astro';
-import AboutHeroSection from '../components/features/about/AboutHeroSection.astro';
-import AboutProofSection from '../components/features/about/AboutProofSection.astro';
-import AboutTimelineSection from '../components/features/about/AboutTimelineSection.astro';
-import AboutEducationSkillsSection from '../components/features/about/AboutEducationSkillsSection.astro';
-import CtaBand from '../components/composites/CtaBand.astro';
-import { getAboutPage } from '../content/about/getAboutPage';
-import { CANONICAL_URLS } from '../config/constants';
+import Layout from '@/layouts/BaseLayout.astro';
+import AboutHeroSection from '@/components/features/about/AboutHeroSection.astro';
+import AboutProofSection from '@/components/features/about/AboutProofSection.astro';
+import AboutTimelineSection from '@/components/features/about/AboutTimelineSection.astro';
+import AboutEducationSkillsSection from '@/components/features/about/AboutEducationSkillsSection.astro';
+import CtaBand from '@/components/composites/CtaBand.astro';
+import { getAboutPage } from '@/content/about/getAboutPage';
+import type { AboutSocialLink } from '@/content/about/pageTypes';
+import { CANONICAL_URLS } from '@/config/constants';
 
 const page = await getAboutPage();
 const canonicalUrl = CANONICAL_URLS.about;
@@ -17,7 +18,7 @@ const personSchema = {
   name: 'Blake Oxford',
   url: 'https://blakeoxford.com',
   jobTitle: 'Systems Architect',
-  sameAs: page.social.links.map((link) => link.url),
+  sameAs: page.social.links.map((link: AboutSocialLink) => link.url),
   description: page.meta.description,
   image: '/assets/images/Blake-O-scaled.jpg',
 };
@@ -69,7 +70,7 @@ const personSchema = {
       aria-label={page.social.title}
     >
       {
-        page.social.links.map((link) => (
+        page.social.links.map((link: AboutSocialLink) => (
           <li>
             <a
               href={link.url}

@@ -1,5 +1,5 @@
-import type { CommandCategory } from '../types';
-import type { CommandGroup, CommandItem } from '../types';
+import type { CommandCategory } from '@/features/command-center/types';
+import type { CommandGroup, CommandItem } from '@/features/command-center/types';
 
 const GROUP_ORDER: Array<{ id: string; label: string; kinds: CommandItem['kind'][] }> = [
   { id: 'pages', label: 'Pages', kinds: ['page'] },

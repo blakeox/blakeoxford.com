@@ -185,11 +185,17 @@ function build() {
   ensureDir(outSearchDir);
   ensureDir(outApiDir);
 
-  fs.writeFileSync(path.join(outSearchDir, 'projects.json'), JSON.stringify(searchProjects, null, 2));
-  fs.writeFileSync(path.join(outSearchDir, 'blog.json'), JSON.stringify(searchBlog, null, 2));
-  fs.writeFileSync(path.join(outSearchDir, 'index.json'), JSON.stringify(searchIndex, null, 2));
-  fs.writeFileSync(path.join(outApiDir, 'projects.json'), JSON.stringify(searchProjects, null, 2));
-  fs.writeFileSync(path.join(outApiDir, 'blog.json'), JSON.stringify(searchBlog, null, 2));
+  // Canonical search artifacts live under public/search/.
+  // public/api/{blog,projects}.json are compatibility mirrors of the same payloads.
+  const projectsJson = JSON.stringify(searchProjects, null, 2);
+  const blogJson = JSON.stringify(searchBlog, null, 2);
+  const indexJson = JSON.stringify(searchIndex, null, 2);
+
+  fs.writeFileSync(path.join(outSearchDir, 'projects.json'), projectsJson);
+  fs.writeFileSync(path.join(outSearchDir, 'blog.json'), blogJson);
+  fs.writeFileSync(path.join(outSearchDir, 'index.json'), indexJson);
+  fs.writeFileSync(path.join(outApiDir, 'projects.json'), projectsJson);
+  fs.writeFileSync(path.join(outApiDir, 'blog.json'), blogJson);
 
   try {
     const distDir = path.join(projectRoot, 'dist');

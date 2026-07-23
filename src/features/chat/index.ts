@@ -8,3 +8,4 @@ export { default as ChatLauncherIsland } from './ChatLauncherIsland';
 export { ChatDock } from './ChatDock';
 export * from './chatStyles';
 export type * from './types';
+export * from './hooks';
