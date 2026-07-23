@@ -71,15 +71,24 @@ export function getOrCreateAiSessionId(): string {
   try {
     const existing = window.localStorage.getItem(SESSION_STORAGE_KEY);
     if (existing && existing.length >= 8) return existing;
-    const created =
-      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-        ? crypto.randomUUID()
-        : `sess_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    const created = createAiSessionId();
     window.localStorage.setItem(SESSION_STORAGE_KEY, created);
     return created;
   } catch {
     return `sess_${Date.now().toString(36)}`;
   }
+}
+
+function createAiSessionId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    const bytes = new Uint8Array(8);
+    crypto.getRandomValues(bytes);
+    return `sess_${Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')}`;
+  }
+  return `sess_${Date.now().toString(36)}`;
 }
 
 export function readAISearchMeta(response: Response): AISearchMeta {

@@ -3,6 +3,7 @@
  */
 import { initEdgeSentry } from '../sentry.edge.config.js';
 import type { Env } from './types';
+import { isBlakeOxfordHostname } from './shared/hostname';
 import { generateRequestId } from './shared/request-id';
 import type { RouteContext } from './shared/route-context';
 import { handleRobotsFavicon } from './routes/robots-favicon';
@@ -70,7 +71,7 @@ const WorkerApp = {
     try {
       const host = url.hostname;
       const isGetLike = request.method === 'GET' || request.method === 'HEAD';
-      const isProdDomain = host.endsWith('blakeoxford.com');
+      const isProdDomain = isBlakeOxfordHostname(host);
       if (isProdDomain && url.protocol === 'http:' && isGetLike) {
         url.protocol = 'https:';
         const r = Response.redirect(url.toString(), 308);
