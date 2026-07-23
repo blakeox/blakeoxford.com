@@ -249,8 +249,7 @@ pnpm dev  # Starts Astro with AI search proxy
 ### Deployment
 
 ```bash
-pnpm deploy:worker       # Deploy to Cloudflare
-pnpm edge:deploy         # Alternative command
+pnpm deploy:worker       # Deploy to Cloudflare Workers (+ ASSETS)
 pnpm edge:validate       # Validate configuration
 ```
 

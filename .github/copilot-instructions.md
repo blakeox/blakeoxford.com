@@ -127,7 +127,6 @@ pnpm vectorize:index       # Index content in Cloudflare Vectorize
 
 ```bash
 pnpm deploy:worker         # Deploy Worker to Cloudflare
-pnpm edge:deploy           # Alternative deployment command
 pnpm edge:validate         # Validate edge configuration
 ```
 
@@ -995,7 +994,6 @@ pnpm quality:badges        # Generate quality badges
 ```bash
 # Deployment
 pnpm deploy:worker          # Deploy Worker to Cloudflare
-pnpm edge:deploy           # Alternative deploy command
 pnpm edge:validate         # Validate edge configuration
 
 # AI & Search

@@ -234,26 +234,14 @@ export async function handleAiSearch({
   try {
     const requestBody = { query: enhancedQuery, history };
 
-    // Optional AI Gateway: attach observability headers when configured.
-    // Keep the AutoRAG endpoint URL (gateway URL rewrite is provider-specific).
-    // Enable by setting AI_GATEWAY_ID + AI_GATEWAY_ACCOUNT_ID in wrangler.toml.
+    // AutoRAG stays on the direct AI Search endpoint — do not attach AI Gateway
+    // cache headers here (index/retrieval caching fights freshness). Workers AI
+    // observability goes through env.AI.run gateway options in workers-ai.ts.
     const fetchUrl = upstreamEndpoint;
     const fetchHeaders: Record<string, string> = {
       'content-type': 'application/json',
       authorization: `Bearer ${upstreamToken}`,
     };
-
-    if (env.AI_GATEWAY_ID && env.AI_GATEWAY_ACCOUNT_ID) {
-      fetchHeaders['cf-aig-cache-ttl'] = '3600';
-      fetchHeaders['cf-aig-metadata'] = JSON.stringify({
-        user: sessionId || 'anonymous',
-        source: 'website-chat',
-        complexity,
-        enhanced: query !== enhancedQuery,
-        gateway: env.AI_GATEWAY_ID,
-        account: env.AI_GATEWAY_ACCOUNT_ID,
-      });
-    }
 
     const upstreamResponse = await fetch(fetchUrl, {
       method: 'POST',

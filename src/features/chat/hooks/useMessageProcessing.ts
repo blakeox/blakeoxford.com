@@ -5,9 +5,9 @@ import {
   finalizeMessageQuality,
   removeStorageItem,
   CONVERSATION_STORAGE_KEY,
-  SEMANTIC_SEARCH_URL,
   INITIAL_ASSISTANT_MESSAGE,
 } from '@/lib/chat';
+import { getChatFallbackSuggestions } from '@/lib/chat/fallback-search';
 import { autoragEvents, conversionEvents } from '@/lib/analytics';
 
 /**
@@ -139,61 +139,8 @@ export function useMessageProcessing(
    */
   const updateFallbackSuggestions = useCallback(
     async (query: string) => {
-      const normalized = query.toLowerCase().trim();
-      if (!normalized) {
-        setFallbackResults([]);
-        return;
-      }
-
-      // Use Vectorize semantic search instead of keyword matching
-      try {
-        const response = await fetch(SEMANTIC_SEARCH_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({ query: normalized }),
-        });
-
-        if (!response.ok) {
-          setFallbackResults([]);
-          return;
-        }
-
-        const data = await response.json();
-
-        // Transform Vectorize results to SearchFallback format
-        if (data.results && Array.isArray(data.results)) {
-          const ranked = data.results
-            .slice(0, 6)
-            .map(
-              (result: {
-                title?: string;
-                id: string;
-                url?: string;
-                description?: string;
-                score?: number;
-              }) => ({
-                title: result.title || result.id,
-                url: result.url || `/${result.id}`,
-                excerpt: result.description || '',
-                score: result.score || 0,
-              })
-            )
-            .filter(
-              (result: { title: string; url: string; excerpt: string; score: number }) =>
-                result.score >= 0.62
-            )
-            .slice(0, 3);
-          setFallbackResults(ranked);
-        } else {
-          setFallbackResults([]);
-        }
-      } catch (err) {
-        console.error('Semantic search failed:', err);
-        setFallbackResults([]);
-      }
+      const ranked = await getChatFallbackSuggestions(query);
+      setFallbackResults(ranked);
     },
     [setFallbackResults]
   );

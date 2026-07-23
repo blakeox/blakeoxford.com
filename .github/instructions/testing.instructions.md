@@ -193,7 +193,7 @@ Includes:
 
 - **Fast CI**: `pnpm ci:fast` - Essential tests only
 - **Full CI**: `pnpm ci:full` - Comprehensive validation
-- **Act Local**: `pnpm act:e2e` - Test GitHub Actions locally
+- **Act Local**: `act -W .github/workflows/act-local.yml` — optional local Actions runner (script aliases removed in script diet)
 
 ---
 

@@ -3,7 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import Section from '@/components/primitives/Section.astro';
 import SectionHeader from '@/components/composites/SectionHeader.astro';
 import type { HomePageContent } from '@/content/home/pageTypes';
-import { formatDateISO } from '@/utils/index.js';
+import { formatDateISO } from '@/utils/date';
 
 interface Props {
   posts: CollectionEntry<'blog'>[];

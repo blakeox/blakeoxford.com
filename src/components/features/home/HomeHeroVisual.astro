@@ -1,0 +1,37 @@
+---
+/**
+ * Home hero portrait — Work/Daring crossfade frame + caption.
+ */
+---
+
+<div class="home-dual-visual relative z-10" aria-hidden="true">
+  <div class="home-dual-visual-inner">
+    <div
+      class="home-dual-frame relative w-[min(16.5rem,58vw)] overflow-hidden rounded-xl bg-surface-subtle sm:w-[min(18rem,46vw)] md:w-[min(20.5rem,32vw)] lg:w-[min(22rem,28vw)]"
+      style="aspect-ratio: 4 / 5"
+    >
+      <img
+        src="/assets/images/optimized/avif/Blake-O-scaled@768w.avif"
+        alt=""
+        width="768"
+        height="768"
+        class="home-dual-face home-dual-face-work absolute inset-0 size-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <img
+        src="/assets/images/optimized/avif/china-profile-picture.avif"
+        alt=""
+        width="768"
+        height="768"
+        class="home-dual-face home-dual-face-daring absolute inset-0 size-full object-cover"
+        data-dual-daring
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="home-dual-frame-tick"></div>
+    </div>
+    <p class="home-dual-frame-caption" data-frame-caption>Work</p>
+  </div>
+</div>

@@ -4,7 +4,7 @@ Last updated: 2026-07-23
 
 Changelog:
 
-- 2026-07-23: Phase 0+2 progress — Worker dispatch-only; Env ↔ wrangler; drop `@astrojs/cloudflare` + dead `ChatContext` + root `playwright/`; pnpm Playwright preview; Ask hooks collapsed to 4 composed surfaces (+ controller); GHA deploy-worker manual-only (Workers Builds primary); fix agent.md refs.
+- 2026-07-23: Phase 0–4 progress — Worker dispatch-only; Env ↔ wrangler; Ask 4 composed hooks; chat client contract (no raw fetch); HomeHero split; deep `@/utils/date|array`; Workers AI gateway option; script/CI diet; GHA deploy manual-only.
 - 2026-07-22: Mandate `@/` path aliases for `src/` imports (codemod ~342); prefer deep `@/utils/<module>` over the utils barrel. Aggressive structural refactor — modular Worker (`functions/index.ts` + routes), domain unification (AI search service, CollectionEntry page types, features/contact), chat hooks under `features/chat/hooks`, component-docs split, README/hygiene pass.
 - 2026-07-21: Pinned Node.js 24 LTS (engines + CI); carousel masters moved to local path; ESLint Tailwind unknown-class noise silenced; Vitest Playwright import leak fixed.
 - 2026-07-20: Refreshed directory map (features/, services/, middleware/); chat UI consolidated under `src/features/chat/`; carousel originals gitignored; design-lint duplicate `* 2.*` gate documented.
@@ -360,7 +360,7 @@ Accessibility Pitfalls:
 | `ASSETS` | Static `./dist` |
 | `TURNSTILE_SECRET_KEY` | Contact / abuse gate |
 | `AI_SEARCH_API_TOKEN`, `AI_SEARCH_API_ENDPOINT` | AutoRAG upstream |
-| `AI_GATEWAY_ID`, `AI_GATEWAY_ACCOUNT_ID` | Optional Workers AI Gateway (not AutoRAG index cache) |
+| `AI_GATEWAY_ID`, `AI_GATEWAY_ACCOUNT_ID` | Optional Workers AI Gateway on `env.AI.run` only (leave commented until gateway exists; AutoRAG stays ungated) |
 | `SENTRY_DSN_EDGE`, `ENVIRONMENT`, `GIT_COMMIT` | Edge Sentry context |
 
 Do not declare unbound KV names on `Env` (e.g. retired `CONVERSATION_CACHE_KV`).
