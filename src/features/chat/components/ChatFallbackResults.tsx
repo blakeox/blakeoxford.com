@@ -2,7 +2,7 @@
  * ChatFallbackResults — compact related links after an Ask failure.
  * Collapsed by default so the transcript stays readable.
  */
-import type { ChatFallbackResultsProps } from '../types';
+import type { ChatFallbackResultsProps } from '@/features/chat/types';
 
 export function ChatFallbackResults({
   fallbackResults,

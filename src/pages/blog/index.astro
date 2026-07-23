@@ -2,9 +2,9 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
-import Layout from '../../layouts/BaseLayout.astro';
-import BlogIndexHeroSection from '../../components/features/blog/BlogIndexHeroSection.astro';
-import BlogIndexContentSection from '../../components/features/blog/BlogIndexContentSection.astro';
+import Layout from '@/layouts/BaseLayout.astro';
+import BlogIndexHeroSection from '@/components/features/blog/BlogIndexHeroSection.astro';
+import BlogIndexContentSection from '@/components/features/blog/BlogIndexContentSection.astro';
 
 const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);
 const sortedPosts = posts

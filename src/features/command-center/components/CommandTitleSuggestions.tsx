@@ -1,5 +1,5 @@
-import { SECTION_LABEL } from '../../overlay/overlayStyles';
-import type { CommandItem } from '../types';
+import { SECTION_LABEL } from '@/features/overlay/overlayStyles';
+import type { CommandItem } from '@/features/command-center/types';
 
 type CommandTitleSuggestionsProps = {
   query: string;

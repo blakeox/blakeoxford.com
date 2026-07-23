@@ -3,10 +3,10 @@
  */
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { OVERLAY_ICON_BUTTON } from '../../overlay/overlayStyles';
-import { CHAT_ACCENT_CHIP, CHAT_TOGGLE_ACTIVE } from '../chatStyles';
-import { cn } from '../../../utils/cn';
-import type { ChatHeaderProps } from '../types';
+import { OVERLAY_ICON_BUTTON } from '@/features/overlay/overlayStyles';
+import { CHAT_ACCENT_CHIP, CHAT_TOGGLE_ACTIVE } from '@/features/chat/chatStyles';
+import { cn } from '@/utils/cn';
+import type { ChatHeaderProps } from '@/features/chat/types';
 
 function MenuButton({
   children,

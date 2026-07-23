@@ -13,8 +13,10 @@ const root = resolve(__dirname, '../..');
 function expectedCategory(filePath: string) {
   if (filePath.startsWith('src/components/layout/')) return 'Layout';
   if (filePath.startsWith('src/components/features/')) return 'Features';
-  if (filePath.startsWith('src/components/islands/')) return 'Islands';
   if (filePath.startsWith('src/features/chat/')) return 'Islands';
+  if (filePath.startsWith('src/features/contact/')) return 'Islands';
+  if (filePath.startsWith('src/features/command-center/')) return 'Islands';
+  if (filePath.startsWith('src/features/overlay/')) return 'Islands';
   if (filePath.startsWith('src/components/primitives/')) return 'Primitives';
   if (filePath.startsWith('src/components/composites/')) return 'Composites';
   // Progressive-enhancement scripts and theme helpers live alongside islands docs

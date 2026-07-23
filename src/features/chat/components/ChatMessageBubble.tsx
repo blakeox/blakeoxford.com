@@ -3,12 +3,12 @@
  * Citations sit under the bubble; Workers AI answers skip fake citation chrome.
  */
 import { memo } from 'react';
-import { cleanAssistantResponse } from '../../../lib/string-utils';
-import { formatAISearchProvenance } from '../../../lib/ai-search';
+import { cleanAssistantResponse } from '@/lib/string-utils';
+import { formatAISearchProvenance } from '@/lib/ai-search';
 import { MessageSources } from './MessageSources';
 import { MessageActions } from './MessageActions';
 import { MatchedCTA } from './MessageCTAs';
-import type { ChatMessageBubbleProps } from '../types';
+import type { ChatMessageBubbleProps } from '@/features/chat/types';
 
 export const ChatMessageBubble = memo(function ChatMessageBubble({
   message,

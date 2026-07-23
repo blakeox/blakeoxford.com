@@ -2,7 +2,7 @@
  * ChatDigest component
  * Displays conversation summary/digest
  */
-import type { ChatDigestProps } from '../types';
+import type { ChatDigestProps } from '@/features/chat/types';
 
 export function ChatDigest({ show, digest }: ChatDigestProps) {
   if (!show || digest.length === 0) return null;

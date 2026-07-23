@@ -218,3 +218,16 @@ src/assets/images/carousel/originals/
 # Local design review screenshots (not site assets)
 redesign-home-desktop.png
 /redesign-*.png
+
+# Scratch / generated run artifacts (keep quality-snapshots/ intentional)
+playwright-full-run.log
+snapshot-update.log
+*-full-run.log
+accessibility-history.json
+flakiness-history.json
+dead-links-report.json
+deployment-summary.json
+search-relevance-results.json
+test-results.json
+vectorize-data.json
+.vectorize-temp-input.json

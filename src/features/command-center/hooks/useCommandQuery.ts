@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { runSearch } from '../../../lib/search/searchService';
-import type { SearchCategory } from '../../../lib/search/types';
-import { buildBrowseGroups, groupCommandItems } from '../lib/groupResults';
-import { mapSearchResults } from '../lib/toCommandItem';
-import { enrichCommandItems } from '../lib/rankResults';
-import { commandCenterEvents } from '../lib/analytics';
-import type { CommandGroup } from '../types';
+import { runSearch } from '@/lib/search/searchService';
+import type { SearchCategory } from '@/lib/search/types';
+import { buildBrowseGroups, groupCommandItems } from '@/features/command-center/lib/groupResults';
+import { mapSearchResults } from '@/features/command-center/lib/toCommandItem';
+import { enrichCommandItems } from '@/features/command-center/lib/rankResults';
+import { commandCenterEvents } from '@/features/command-center/lib/analytics';
+import type { CommandGroup } from '@/features/command-center/types';
 
 const DEBOUNCE_MS = 150;
 const LOADING_DELAY_MS = 150;

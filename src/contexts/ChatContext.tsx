@@ -17,7 +17,7 @@ import {
   type Dispatch,
 } from 'react';
 
-import type { ChatMessage, ChatState, LoadingPhase, SearchFallback } from '../lib/chat';
+import type { ChatMessage, ChatState, LoadingPhase, SearchFallback } from '@/lib/chat';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

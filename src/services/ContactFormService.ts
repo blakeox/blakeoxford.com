@@ -8,7 +8,7 @@
  */
 
 import { z } from 'zod';
-import { AppError, ErrorCodes, createApiErrorFromResponse } from '../utils/errors';
+import { AppError, ErrorCodes, createApiErrorFromResponse } from '@/utils/errors';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

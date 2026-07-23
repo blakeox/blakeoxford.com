@@ -1,4 +1,4 @@
-import { getNavSearchPages } from '../../config/navSearchPages';
+import { getNavSearchPages } from '@/config/navSearchPages';
 import type { SearchCategory, SearchRecord } from './types';
 
 type ApiProject = {

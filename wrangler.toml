@@ -6,8 +6,8 @@ compatibility_date = "2026-07-02"
 compatibility_flags = ["nodejs_compat"]
 
 # Switch to Workers: serve static assets from ./dist via an assets binding,
-# and use a single Worker entry (functions/edge-computing.js).
-main = "functions/edge-computing.js"
+# and use a single Worker entry (functions/index.ts).
+main = "functions/index.ts"
 
 [assets]
 binding = "ASSETS"
@@ -74,7 +74,7 @@ AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24a
 PUBLIC_CLARITY_PROJECT_ID = "tqngpokfgs"
 
 # Phase 2: AI Gateway (optional — uncomment after creating a gateway in the dashboard).
-# Attaches cf-aig-* observability metadata on AutoRAG upstream calls in edge-computing.js.
+# Attaches cf-aig-* observability metadata on AutoRAG upstream calls in functions/routes/ai-search/.
 # Docs: https://developers.cloudflare.com/ai-gateway/
 # AI_GATEWAY_ID = "blakeoxford-ai-gateway"
 # AI_GATEWAY_ACCOUNT_ID = "cc3bb24ae3c87cff38c2be85df3dab29"

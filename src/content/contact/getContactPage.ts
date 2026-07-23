@@ -6,5 +6,5 @@ export async function getContactPage(): Promise<ContactPageContent> {
   if (!entry) {
     throw new Error('Contact page content not found at src/content/contact/page.json');
   }
-  return entry.data as ContactPageContent;
+  return entry.data;
 }

@@ -19,7 +19,7 @@ export type {
   ChatFallbackResultsProps,
   ChatNewChatPromptProps,
   ChatLauncherProps,
-} from '../types';
+} from '@/features/chat/types';
 
 export { ChatHeader } from './ChatHeader';
 export { ChatAdvancedControls } from './ChatAdvancedControls';

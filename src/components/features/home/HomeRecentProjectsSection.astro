@@ -1,9 +1,9 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import Section from '../../primitives/Section.astro';
-import SectionHeader from '../../composites/SectionHeader.astro';
-import ProjectCard from '../projects/ProjectCard.astro';
-import type { HomePageContent } from '../../../content/home/pageTypes';
+import Section from '@/components/primitives/Section.astro';
+import SectionHeader from '@/components/composites/SectionHeader.astro';
+import ProjectCard from '@/components/features/projects/ProjectCard.astro';
+import type { HomePageContent } from '@/content/home/pageTypes';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];

@@ -1,6 +1,6 @@
 ---
 description: AI features, chat widget, and RAG implementation
-applyTo: '{src/components/composites/AIChatWidget.astro,src/features/chat/**,functions/ConversationDO.ts,src/lib/{ai-search.ts,chat/**}}'
+applyTo: '{src/components/composites/AIChatWidget.astro,src/features/chat/**,functions/ConversationDO.ts,functions/routes/ai-search/**,src/lib/{ai-search.ts,ai-search-types.ts,chat/**},src/services/AISearchService.ts}'
 ---
 
 # AI Features Instructions
@@ -28,10 +28,16 @@ Guidelines for developing AI-powered features including the chat widget, RAG sys
 
 ### Library Files
 
-- `src/lib/ai-search.ts` - AI search utilities
+- `src/lib/ai-search.ts` / `src/lib/ai-search-types.ts` - thin Ask client + shared types
+- `src/services/AISearchService.ts` - HTTP/streaming client for `/api/ai-search`
 - `src/lib/chat/` - Types, helpers, constants, conversation/WS utilities
-- `src/lib/hooks/` - Chat controller and related React hooks
+- `src/features/chat/hooks/` - Chat controller and orchestration hooks
+- `src/lib/hooks/` - Shared DOM/browser hooks (compat re-exports for chat hooks)
 
+### Edge Worker
+
+- Entry: `functions/index.ts` (routes under `functions/routes/`, shared under `functions/shared/`)
+- Ask API: `functions/routes/ai-search/`
 ---
 
 ## 2. Chat Widget Integration
@@ -40,7 +46,7 @@ Guidelines for developing AI-powered features including the chat widget, RAG sys
 
 ```astro
 ---
-import AIChatWidget from '@/components/AIChatWidget.astro';
+import AIChatWidget from '@/components/composites/AIChatWidget.astro';
 ---
 
 <AIChatWidget />
@@ -206,7 +212,7 @@ checkRateLimit(userId) {
 
 ### Global Rate Limiting
 
-Edge Worker (`functions/edge-computing.js`) implements:
+Edge Worker (`functions/index.ts`) implements:
 - Per-IP limits
 - Per-session limits
 - Configurable windows and thresholds

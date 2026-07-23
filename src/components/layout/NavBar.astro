@@ -6,7 +6,7 @@
  * ModernNavBar wires theme, mobile menu, scroll, and search on the client.
  * No-JS: details.mobile-nav-fallback remains available until data-js-nav is set.
  */
-import navLinks, { normalizeNavPath } from '../../config/navLinks';
+import navLinks, { normalizeNavPath } from '@/config/navLinks';
 
 const currentPath = normalizeNavPath(Astro.url.pathname);
 const logo = {
@@ -392,7 +392,7 @@ function isActive(href: string): boolean {
 </script>
 
 <script>
-  import { initModernNavBar } from '../../scripts/features/ModernNavBar';
+  import { initModernNavBar } from '@/scripts/features/ModernNavBar';
 
   initModernNavBar();
 </script>

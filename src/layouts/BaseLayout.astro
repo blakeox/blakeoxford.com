@@ -6,15 +6,15 @@ import '@fontsource/space-grotesk/latin-500.css';
 import '@fontsource/space-grotesk/latin-600.css';
 import '@fontsource/space-grotesk/latin-700.css';
 import '../styles/global.css';
-import NavBar from '../components/layout/NavBar.astro';
-import AIChatWidget from '../components/composites/AIChatWidget.astro';
-import Footer from '../components/layout/Footer.astro';
-import SkipLink from '../components/primitives/SkipLink.astro';
-import SearchOverlay from '../components/features/search/SearchOverlay.astro';
-import DocumentMeta from '../components/head/DocumentMeta.astro';
-import StructuredData from '../components/head/StructuredData.astro';
-import SiteClientScripts from '../components/head/SiteClientScripts.astro';
-import { getThemeFoucPreventionScript } from '../lib/theme';
+import NavBar from '@/components/layout/NavBar.astro';
+import AIChatWidget from '@/components/composites/AIChatWidget.astro';
+import Footer from '@/components/layout/Footer.astro';
+import SkipLink from '@/components/primitives/SkipLink.astro';
+import SearchOverlay from '@/components/features/search/SearchOverlay.astro';
+import DocumentMeta from '@/components/head/DocumentMeta.astro';
+import StructuredData from '@/components/head/StructuredData.astro';
+import SiteClientScripts from '@/components/head/SiteClientScripts.astro';
+import { getThemeFoucPreventionScript } from '@/lib/theme';
 
 const themeFoucScript = getThemeFoucPreventionScript();
 

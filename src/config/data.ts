@@ -1,5 +1,5 @@
 // Site metadata and configuration
-import type { SiteConfig } from '../types/index';
+import type { SiteConfig } from '@/types/index';
 
 export const siteConfig: SiteConfig = {
   name: 'Blake Oxford Portfolio',

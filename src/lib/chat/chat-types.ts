@@ -5,7 +5,7 @@
  * All other files should import from here (or via the barrel export).
  */
 
-import type { AIChatSource, AISearchMeta } from '../ai-search';
+import type { AIChatSource, AISearchMeta } from '@/lib/ai-search';
 
 // ─── Core Chat Types ──────────────────────────────────────────────
 

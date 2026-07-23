@@ -1,7 +1,15 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "target": "ESNext",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleDetection": "force",
@@ -16,7 +24,10 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
-    "types": ["astro/client", "node"],
+    "types": [
+      "astro/client",
+      "node"
+    ],
     "forceConsistentCasingInFileNames": true,
     "jsxImportSource": "react",
     "skipLibCheck": true
@@ -30,6 +41,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "public"
+    "public",
+    "functions"
   ]
 }

@@ -1,5 +1,5 @@
-import { closeAllHeaderOverlays } from '../../utils/headerController';
-import { forceReleaseScrollLock } from '../../utils/scrollLock';
+import { closeAllHeaderOverlays } from '@/utils/headerController';
+import { forceReleaseScrollLock } from '@/utils/scrollLock';
 
 type CleanupFn = () => void;
 

@@ -1,9 +1,10 @@
 # agent.md
 
-Last updated: 2026-07-21
+Last updated: 2026-07-22
 
 Changelog:
 
+- 2026-07-22: Mandate `@/` path aliases for `src/` imports (codemod ~342); prefer deep `@/utils/<module>` over the utils barrel. Aggressive structural refactor — modular Worker (`functions/index.ts` + routes), domain unification (AI search service, CollectionEntry page types, features/contact), chat hooks under `features/chat/hooks`, component-docs split, README/hygiene pass.
 - 2026-07-21: Pinned Node.js 24 LTS (engines + CI); carousel masters moved to local path; ESLint Tailwind unknown-class noise silenced; Vitest Playwright import leak fixed.
 - 2026-07-20: Refreshed directory map (features/, services/, middleware/); chat UI consolidated under `src/features/chat/`; carousel originals gitignored; design-lint duplicate `* 2.*` gate documented.
 - 2025-09-11: Initial version created for Phase 2 hardening baseline.
@@ -30,15 +31,16 @@ Primary audience: recruiters, collaborators, and technical peers evaluating arch
 - **Build system**: Astro SSG (`output: static`).
 - **Deployment**: Cloudflare Workers / static assets (Pages deprecated for this project).
 - **Routing**: File-based under `src/pages/` (kebab-case). Edge/API handlers live in `functions/` (Workers).
-- **Components**: Astro UI layers in `src/components/` (PascalCase). Product React features (Ask, Find, overlay) live under `src/features/`. Contact form islands remain in `src/components/islands/`.
+- **Components**: Astro UI layers in `src/components/` (PascalCase). Product React features (Ask, Find, overlay, contact form) live under `src/features/`.
 - **Content**: Zod-driven schemas in `src/content.config.ts`; static JSON in `public/api/`.
 - **Styling**: Tailwind CSS v4 via `@tailwindcss/vite` (CSS-first). Tokens live in `src/styles/theme.css` (`@theme inline`); prefer utilities over bespoke CSS. Shared chrome belongs in `components.css`.
 - **Optimization scripts**: `scripts/optimization/` (image optimization, bundle analysis, critical CSS inlining, code splitting guidance). Carousel masters live outside git at `~/Documents/blakeoxford-local/carousel-originals` (or `CAROUSEL_ORIGINALS_DIR`); commit only webp/avif outputs under `src/assets/images/carousel/`.
 - **Quality tooling**: `scripts/quality/` orchestrates runtime checks (search relevance, accessibility via axe-core, dead link crawl, long-task probe) + summary. `design:lint` also fails on Finder-style `* 2.*` duplicate artifacts.
 - **Testing**: Vitest (`tests/vitest/`), Playwright (`tests/playwright/`), plus performance & accessibility logs.
 - **Search**: Client-side index auto-generated on build (`localSearch`).
-- **Edge functions**: `functions/` (e.g., `send-email.ts`, `edge-computing.js`).
+- **Edge functions**: `functions/` (e.g., `send-email.ts`, `functions/index.ts`).
 - **Config conventions**: Minimal global state; prefer pure functions; ESM modules.
+- **Import paths**: Use `@/` aliases for anything under `src/` (e.g. `@/features/chat/...`, `@/utils/errors`). Avoid deep relative `../../../` imports.
 
 Directory highlights:
 
@@ -47,13 +49,12 @@ src/
   pages/             # File-based routes (kebab-case)
   layouts/           # BaseLayout, ProjectDetailLayout
   content/           # MDX collections + page JSON getters
-  components/        # Astro UI: primitives → composites → features → islands (forms)
-  features/          # Product React modules: chat, command-center, overlay
+  components/        # Astro UI: primitives → composites → features → layout/head
+  features/          # Product React modules: chat, command-center, overlay, contact
   lib/               # Shared domain modules + hooks used by ≥2 features
   utils/             # Pure helpers (cn, scrollLock, …)
   services/          # I/O-facing clients (contact, AI search)
   config/            # Site constants, nav, schemas
-  middleware/        # Astro middleware
   integrations/      # Dev-only Astro integrations (proxies)
   styles/            # theme.css + global chrome
   scripts/           # Progressive-enhancement client controllers
@@ -63,7 +64,7 @@ scripts/
   content/           # Search index generation
   build/ · ci/ · setup/
 public/              # Static assets, public/api JSON (search index generated)
-functions/           # Cloudflare Worker entry + Durable Objects
+functions/           # Cloudflare Worker entry (index.ts) + Durable Objects
 tests/               # Vitest + Playwright + contracts
 infra/               # Zaraz templates
 ```
@@ -228,7 +229,7 @@ Common tasks:
 
 ### Add an API route
 
-- Add a Worker route in `functions/edge-computing.js` (preferred) or a static JSON under `public/`.
+- Add a Worker route in `functions/index.ts` (preferred) or a static JSON under `public/`.
 - Export HTTP verb handlers (e.g., POST); validate inputs (Zod preferred).
 - Ensure no secret leakage; log minimal metadata.
 
@@ -282,7 +283,7 @@ Objective: Provide an on-site assistant that can leverage curated internal APIs 
 
 Pattern:
 
-1. Prefer a Worker route in `functions/edge-computing.js`, or static JSON under `public/`, exposing a manifest of available tools (search index query wrapper, project metadata fetch, calculator invocation).
+1. Prefer a Worker route in `functions/index.ts`, or static JSON under `public/`, exposing a manifest of available tools (search index query wrapper, project metadata fetch, calculator invocation).
 2. Run the MCP server off-repo or as a dev-only module; never bundle server logic into client runtime.
 3. The client-side agent UI is a lazy-loaded React island (`AgentConsole.tsx`) rendering only on explicit user interaction (button click) to avoid layout shift.
 4. Communications: Use fetch calls to internal API endpoints; avoid WebSocket unless justified—prefer stateless requests for determinism.
