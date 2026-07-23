@@ -24,9 +24,9 @@ const cfToken = import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN?.trim() ?? '';
 </script>
 
 <script>
-  import { initClarity } from '../../lib/clarity';
-  import { initWebVitals } from '../../lib/webVitals';
-  import { initMotionAccessibility } from '../../scripts/modules/MotionAccessibility';
+  import { initClarity } from '@/lib/clarity';
+  import { initWebVitals } from '@/lib/webVitals';
+  import { initMotionAccessibility } from '@/scripts/modules/MotionAccessibility';
 
   const SKIP_LINK_SELECTOR = 'a.skip-link[href="#main-content"]';
   const MAIN_CONTENT_ID = 'main-content';

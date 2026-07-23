@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { SECTION_LABEL } from '../../overlay/overlayStyles';
+import { SECTION_LABEL } from '@/features/overlay/overlayStyles';
 
 type CommandGroupProps = {
   label: string;

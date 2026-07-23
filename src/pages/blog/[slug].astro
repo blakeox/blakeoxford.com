@@ -1,18 +1,18 @@
 ---
-import Layout from '../../layouts/BaseLayout.astro';
-import OptimizedImage from '../../components/primitives/OptimizedImage.astro';
-import Container from '../../components/primitives/Container.astro';
-import Stack from '../../components/primitives/Stack.astro';
-import Flex from '../../components/primitives/Flex.astro';
-import Prose from '../../components/primitives/Prose.astro';
+import Layout from '@/layouts/BaseLayout.astro';
+import OptimizedImage from '@/components/primitives/OptimizedImage.astro';
+import Container from '@/components/primitives/Container.astro';
+import Stack from '@/components/primitives/Stack.astro';
+import Flex from '@/components/primitives/Flex.astro';
+import Prose from '@/components/primitives/Prose.astro';
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import {
   createArticleSchema,
   createBreadcrumbListSchema,
   defaultAuthor,
-} from '../../utils/structuredData';
-import { headingSizeClass } from '../../lib/typeScale';
+} from '@/utils/structuredData';
+import { headingSizeClass } from '@/lib/typeScale';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);

@@ -26,7 +26,7 @@ import {
   resolveTheme,
   type ResolvedTheme,
   type ThemePreference,
-} from '../lib/theme';
+} from '@/lib/theme';
 
 export type Theme = ThemePreference;
 
@@ -128,4 +128,4 @@ export function useIsDark(): boolean {
 }
 
 export { getCurrentTheme, readThemePreference, getThemePreference };
-export type { ResolvedTheme, ThemePreference } from '../lib/theme';
+export type { ResolvedTheme, ThemePreference } from '@/lib/theme';

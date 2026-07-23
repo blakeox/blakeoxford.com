@@ -1,11 +1,11 @@
 ---
-import Layout from '../layouts/BaseLayout.astro';
-import ContactChannels from '../components/features/contact/ContactChannels.astro';
-import ContactHeroSection from '../components/features/contact/ContactHeroSection.astro';
-import ContactMessageSection from '../components/features/contact/ContactMessageSection.astro';
-import ContactFormClient from '../components/islands/ContactFormClient';
-import { getContactPage } from '../content/contact/getContactPage';
-import { CANONICAL_URLS } from '../config/constants';
+import Layout from '@/layouts/BaseLayout.astro';
+import ContactChannels from '@/components/features/contact/ContactChannels.astro';
+import ContactHeroSection from '@/components/features/contact/ContactHeroSection.astro';
+import ContactMessageSection from '@/components/features/contact/ContactMessageSection.astro';
+import ContactFormIsland from '@/features/contact/ContactFormIsland';
+import { getContactPage } from '@/content/contact/getContactPage';
+import { CANONICAL_URLS } from '@/config/constants';
 
 const page = await getContactPage();
 const canonicalUrl = CANONICAL_URLS.contact;
@@ -20,5 +20,5 @@ const canonicalUrl = CANONICAL_URLS.contact;
   <ContactHeroSection content={page.hero} />
   <ContactMessageSection sidebar={page.hero.sidebar} />
   <ContactChannels channels={page.channels} />
-  <ContactFormClient client:only="react" />
+  <ContactFormIsland client:only="react" />
 </Layout>

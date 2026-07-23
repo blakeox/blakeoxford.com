@@ -4,9 +4,9 @@ type ElementHandle<T extends HTMLElement> =
 import { registerNavTheme } from './registerNavTheme';
 import { registerNavScrollBehavior } from './registerNavScrollBehavior';
 import { registerHeaderOverlayLifecycle } from './registerHeaderOverlayLifecycle';
-import { openCommandCenter } from '../../features/command-center/lib/commandEvents';
-import { registerMobileMenuClose } from '../../utils/headerController';
-import { acquireScrollLock, releaseScrollLock } from '../../utils/scrollLock';
+import { openCommandCenter } from '@/features/command-center/lib/commandEvents';
+import { registerMobileMenuClose } from '@/utils/headerController';
+import { acquireScrollLock, releaseScrollLock } from '@/utils/scrollLock';
 
 type ModernNavBarOptions = {
   navBar?: ElementHandle<HTMLElement>;
@@ -65,7 +65,7 @@ export function registerModernNavBar(options?: ModernNavBarOptions): CleanupFn {
   };
   document.addEventListener('click', onSearch);
 
-  void import('../modules/MotionAccessibility')
+  void import('@/scripts/modules/MotionAccessibility')
     .then(({ initMotionAccessibility }) => {
       if ((window as BoNavWindow).__motionAccessibilityInit) {
         return;

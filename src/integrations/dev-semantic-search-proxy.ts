@@ -1,4 +1,4 @@
-import { sendErrorResponse, setCORSHeaders } from '../lib/dev-proxy/response-helpers.js';
+import { sendErrorResponse, setCORSHeaders } from '@/lib/dev-proxy/response-helpers.js';
 
 type ConnectNext = (error?: unknown) => void;
 

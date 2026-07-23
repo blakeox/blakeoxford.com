@@ -3,7 +3,7 @@
  * Edit nav.json; social links get external/target metadata applied here.
  */
 
-import navJson from '../content/navigation/nav.json';
+import navJson from '@/content/navigation/nav.json';
 
 export interface NavLink {
   href: string;

@@ -1,5 +1,5 @@
-import type { SearchRecord } from '../../../lib/search/types';
-import type { CommandItem, CommandItemKind } from '../types';
+import type { SearchRecord } from '@/lib/search/types';
+import type { CommandItem, CommandItemKind } from '@/features/command-center/types';
 
 function kindFromType(type: SearchRecord['type']): CommandItemKind {
   if (type === 'blog') return 'blog';

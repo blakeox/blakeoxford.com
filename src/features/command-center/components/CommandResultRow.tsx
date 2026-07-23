@@ -1,6 +1,6 @@
-import { formatRelativeDate } from '../../../lib/string-utils';
-import type { CommandItem } from '../types';
-import { RESULT_ROW_ACTIVE, RESULT_ROW_BASE, RESULT_ROW_IDLE } from '../../overlay/overlayStyles';
+import { formatRelativeDate } from '@/lib/string-utils';
+import type { CommandItem } from '@/features/command-center/types';
+import { RESULT_ROW_ACTIVE, RESULT_ROW_BASE, RESULT_ROW_IDLE } from '@/features/overlay/overlayStyles';
 
 function escapeRegExp(input: string): string {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

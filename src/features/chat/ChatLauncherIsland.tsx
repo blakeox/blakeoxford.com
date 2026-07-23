@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { cn } from '../../utils/cn';
+import { cn } from '@/utils/cn';
 import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED, CHAT_LAUNCHER_OPEN } from './chatStyles';
 
 /**

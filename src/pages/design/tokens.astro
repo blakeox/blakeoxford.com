@@ -1,13 +1,13 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Container from '../../components/primitives/Container.astro';
-import Section from '../../components/primitives/Section.astro';
-import Badge from '../../components/primitives/Badge.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/primitives/Container.astro';
+import Section from '@/components/primitives/Section.astro';
+import Badge from '@/components/primitives/Badge.astro';
 import {
   SEMANTIC_COLOR_USAGE,
   getPublicThemeTokens,
   groupTokensByCategory,
-} from '../../lib/designTokens';
+} from '@/lib/designTokens';
 
 const tokens = getPublicThemeTokens();
 const grouped = groupTokensByCategory(tokens);
@@ -267,7 +267,7 @@ const rules = [
   </Section>
 
   <script>
-    import { initTokenLiveValues } from '../../scripts/features/tokenLiveValues';
+    import { initTokenLiveValues } from '@/scripts/features/tokenLiveValues';
     initTokenLiveValues();
   </script>
 </BaseLayout>

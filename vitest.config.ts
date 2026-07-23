@@ -12,6 +12,10 @@ export default defineConfig({
         find: /^astro:content$/,
         replacement: path.resolve(__dirname, 'tests/__mocks__/astro-content.ts'),
       },
+      {
+        find: '@',
+        replacement: path.resolve(__dirname, './src'),
+      },
     ],
   },
   plugins: [react()],
@@ -29,7 +33,13 @@ export default defineConfig({
       '**/*.skip.test.{ts,tsx}', // Explicitly exclude .skip.test files
     ],
     retry: 1, // enable single retry to surface flaky tests (tracked by custom reporter)
-    reporters: ['default', './tests/reporters/flakinessReporter.ts'],
+    reporters: process.env.CI ? ['default', './tests/reporters/flakinessReporter.ts'] : ['default'],
+    // Vitest 4: pool options are top-level (singleFork avoids worker IPC hangs in some environments)
+    pool: 'forks',
+    fileParallelism: false,
+    singleFork: true,
+    testTimeout: 20000,
+    hookTimeout: 20000,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

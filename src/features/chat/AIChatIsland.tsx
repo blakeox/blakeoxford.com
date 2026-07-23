@@ -6,8 +6,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { ChatDock } from './ChatDock';
-import { formatPageContextLabel, getPageContext } from '../../lib/chat';
-import { useAIChatController } from '../../lib/hooks';
+import { formatPageContextLabel, getPageContext } from '@/lib/chat';
+import { useAIChatController } from './hooks';
 import {
   ChatHeader,
   ChatAdvancedControls,

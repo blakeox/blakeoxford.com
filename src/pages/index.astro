@@ -2,16 +2,16 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
-import Layout from '../layouts/BaseLayout.astro';
-import HomeHeroSection from '../components/features/home/HomeHeroSection.astro';
-import HomeResumeHighlightsSection from '../components/features/home/HomeResumeHighlightsSection.astro';
-import HomeRecentProjectsSection from '../components/features/home/HomeRecentProjectsSection.astro';
-import HomeLatestPostsSection from '../components/features/home/HomeLatestPostsSection.astro';
-import HomeCTASection from '../components/features/home/HomeCTASection.astro';
-import { getProjectsSorted } from '../content/projects/getProjects';
-import { getHomePage } from '../content/home/getHomePage';
-import { siteConfig } from '../config/data';
-import { take } from '../utils/index.js';
+import Layout from '@/layouts/BaseLayout.astro';
+import HomeHeroSection from '@/components/features/home/HomeHeroSection.astro';
+import HomeResumeHighlightsSection from '@/components/features/home/HomeResumeHighlightsSection.astro';
+import HomeRecentProjectsSection from '@/components/features/home/HomeRecentProjectsSection.astro';
+import HomeLatestPostsSection from '@/components/features/home/HomeLatestPostsSection.astro';
+import HomeCTASection from '@/components/features/home/HomeCTASection.astro';
+import { getProjectsSorted } from '@/content/projects/getProjects';
+import { getHomePage } from '@/content/home/getHomePage';
+import { siteConfig } from '@/config/data';
+import { take } from '@/utils/index.js';
 
 const page = await getHomePage();
 

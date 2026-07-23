@@ -1,12 +1,12 @@
 ---
-import Layout from '../layouts/BaseLayout.astro';
-import AboutHeroSection from '../components/features/about/AboutHeroSection.astro';
-import AboutProofSection from '../components/features/about/AboutProofSection.astro';
-import AboutTimelineSection from '../components/features/about/AboutTimelineSection.astro';
-import AboutEducationSkillsSection from '../components/features/about/AboutEducationSkillsSection.astro';
-import CtaBand from '../components/composites/CtaBand.astro';
-import { getAboutPage } from '../content/about/getAboutPage';
-import { CANONICAL_URLS } from '../config/constants';
+import Layout from '@/layouts/BaseLayout.astro';
+import AboutHeroSection from '@/components/features/about/AboutHeroSection.astro';
+import AboutProofSection from '@/components/features/about/AboutProofSection.astro';
+import AboutTimelineSection from '@/components/features/about/AboutTimelineSection.astro';
+import AboutEducationSkillsSection from '@/components/features/about/AboutEducationSkillsSection.astro';
+import CtaBand from '@/components/composites/CtaBand.astro';
+import { getAboutPage } from '@/content/about/getAboutPage';
+import { CANONICAL_URLS } from '@/config/constants';
 
 const page = await getAboutPage();
 const canonicalUrl = CANONICAL_URLS.about;

@@ -1,8 +1,8 @@
 /**
  * ChatRecentQueries — compact recent chips for Ask empty state.
  */
-import type { ChatRecentQueriesProps } from '../types';
-import { SECTION_LABEL } from '../../overlay/overlayStyles';
+import type { ChatRecentQueriesProps } from '@/features/chat/types';
+import { SECTION_LABEL } from '@/features/overlay/overlayStyles';
 
 export function ChatRecentQueries({ queries, onReplayQuery }: ChatRecentQueriesProps) {
   if (queries.length === 0) return null;

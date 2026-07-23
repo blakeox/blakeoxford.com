@@ -3,8 +3,8 @@
  * Displays guided prompt suggestions for new users
  */
 import { memo } from 'react';
-import { GUIDED_PROMPTS } from '../../../lib/chat';
-import type { ChatGuidedPromptsProps } from '../types';
+import { GUIDED_PROMPTS } from '@/lib/chat';
+import type { ChatGuidedPromptsProps } from '@/features/chat/types';
 
 export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({
   visible,

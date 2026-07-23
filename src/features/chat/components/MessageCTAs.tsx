@@ -64,9 +64,9 @@
  * - Contextual CTA engagement measured
  */
 import { memo } from 'react';
-import { autoragEvents } from '../../../lib/analytics';
-import { CONTEXTUAL_CTAS, generateContextualCTAs } from '../../../lib/chat';
-import type { ChatMessage, Source } from '../types';
+import { autoragEvents } from '@/lib/analytics';
+import { CONTEXTUAL_CTAS, generateContextualCTAs } from '@/lib/chat';
+import type { ChatMessage, Source } from '@/features/chat/types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

@@ -2,7 +2,7 @@
  * ChatNewChatPrompt component
  * Displays prompt to start a new chat conversation
  */
-import type { ChatNewChatPromptProps } from '../types';
+import type { ChatNewChatPromptProps } from '@/features/chat/types';
 
 export function ChatNewChatPrompt({ canStartNewChat, startNewChat }: ChatNewChatPromptProps) {
   if (!canStartNewChat) return null;

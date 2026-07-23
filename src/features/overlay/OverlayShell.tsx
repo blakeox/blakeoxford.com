@@ -1,6 +1,6 @@
 import type { ReactNode, RefObject } from 'react';
 
-import { cn } from '../../utils/cn';
+import { cn } from '@/utils/cn';
 import {
   OVERLAY_BACKDROP,
   OVERLAY_DRAG_HANDLE,

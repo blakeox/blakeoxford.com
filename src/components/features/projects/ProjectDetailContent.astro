@@ -3,9 +3,9 @@ import type { CollectionEntry } from 'astro:content';
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import ProjectDetailSection from './ProjectDetailSection.astro';
 import ProjectTags from './ProjectTags.astro';
-import MetricsTable from '../../composites/MetricsTable.astro';
-import EditorialList from '../../composites/EditorialList.astro';
-import Container from '../../primitives/Container.astro';
+import MetricsTable from '@/components/composites/MetricsTable.astro';
+import EditorialList from '@/components/composites/EditorialList.astro';
+import Container from '@/components/primitives/Container.astro';
 
 interface Props {
   data: CollectionEntry<'projects'>['data'];

@@ -1,14 +1,21 @@
 /**
- * AI Search Service
+ * AI Search Service — edge AI chat/search client (POST /api/ai-search).
  *
- * Service layer for AI-powered search and chat functionality.
- * Encapsulates all API interactions with the AI search backend.
+ * Local Find / command-center keyword + optional Vectorize search lives in
+ * `src/lib/search/`. This service is the sole HTTP client for Ask / edge AI.
  *
  * @module services/AISearchService
  */
 
-import { AppError, ErrorCodes, createApiErrorFromResponse } from '../utils/errors';
-import type { SearchFallback } from '../lib/chat';
+import { AppError, ErrorCodes, createApiErrorFromResponse } from '@/utils/errors';
+import type { SearchFallback } from '@/lib/chat';
+import {
+  AISearchError,
+  getOrCreateAiSessionId,
+  readAISearchMeta,
+  type AIChatResponse,
+  type SearchWithAIOptions,
+} from '@/lib/ai-search-types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -53,16 +60,148 @@ export interface AISearchConfig {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const DEFAULT_CONFIG: Required<AISearchConfig> = {
-  endpoint: '/ai-search',
-  timeout: 30000,
+  endpoint: '/api/ai-search',
+  timeout: 45000,
   maxRetries: 3,
   enableStreaming: true,
 };
 
+const REQUEST_TIMEOUT_MS = 45000;
+
+function withTimeout(signal?: AbortSignal, ms = REQUEST_TIMEOUT_MS): AbortSignal {
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    const timeoutSignal = AbortSignal.timeout(ms);
+    if (!signal) return timeoutSignal;
+    const controller = new AbortController();
+    const onAbort = () => controller.abort();
+    signal.addEventListener('abort', onAbort, { once: true });
+    timeoutSignal.addEventListener('abort', onAbort, { once: true });
+    return controller.signal;
+  }
+  return signal ?? new AbortController().signal;
+}
+
+function normalizeSources(raw: unknown): AIChatResponse['sources'] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((entry) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const e = entry as Record<string, unknown>;
+      const title = typeof e.title === 'string' ? e.title : '';
+      const url = typeof e.url === 'string' ? e.url : '';
+      if (!title || !url) return null;
+      return {
+        title,
+        url,
+        snippet: typeof e.snippet === 'string' ? e.snippet : undefined,
+        score: typeof e.score === 'number' ? e.score : undefined,
+        collection: typeof e.collection === 'string' ? e.collection : undefined,
+        publishedAt: typeof e.publishedAt === 'string' ? e.publishedAt : undefined,
+        summary: typeof e.summary === 'string' ? e.summary : undefined,
+        icon: typeof e.icon === 'string' ? e.icon : undefined,
+      };
+    })
+    .filter((v): v is NonNullable<typeof v> => Boolean(v));
+}
+
+async function consumeEventStream(
+  response: Response,
+  options: {
+    onToken?: (token: string) => void;
+    onCompletion?: (message: string) => void;
+    onSources?: (sources: AIChatResponse['sources']) => void;
+  }
+): Promise<AIChatResponse> {
+  const reader = response.body?.getReader();
+  if (!reader) {
+    throw new AISearchError('AI search stream has no body', response.status);
+  }
+
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let assembledMessage = '';
+  let collectedSources: AIChatResponse['sources'] = [];
+
+  const processEvent = (raw: string) => {
+    const lines = raw.split(/\r?\n/);
+    let eventName = 'message';
+    const dataLines: string[] = [];
+    for (const line of lines) {
+      if (line.startsWith('event:')) eventName = line.slice(6).trim();
+      else if (line.startsWith('data:')) dataLines.push(line.slice(5).trim());
+    }
+    const dataRaw = dataLines.join('\n');
+    if (!dataRaw) {
+      if (eventName === 'ready') return;
+      return;
+    }
+    let parsed: unknown = dataRaw;
+    try {
+      parsed = JSON.parse(dataRaw);
+    } catch {
+      /* keep string */
+    }
+
+    if (eventName === 'token') {
+      const text =
+        typeof parsed === 'object' &&
+        parsed &&
+        typeof (parsed as { text?: unknown }).text === 'string'
+          ? (parsed as { text: string }).text
+          : typeof parsed === 'string'
+            ? parsed
+            : '';
+      if (text) {
+        assembledMessage += text;
+        options.onToken?.(text);
+      }
+      return;
+    }
+    if (eventName === 'sources') {
+      collectedSources = normalizeSources(parsed);
+      options.onSources?.(collectedSources);
+      return;
+    }
+    if (eventName === 'done') {
+      if (
+        typeof parsed === 'object' &&
+        parsed &&
+        typeof (parsed as { message?: unknown }).message === 'string'
+      ) {
+        assembledMessage = (parsed as { message: string }).message;
+      }
+    }
+  };
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let boundary = buffer.indexOf('\n\n');
+    while (boundary !== -1) {
+      const chunk = buffer.slice(0, boundary);
+      buffer = buffer.slice(boundary + 2);
+      processEvent(chunk);
+      boundary = buffer.indexOf('\n\n');
+    }
+  }
+
+  if (buffer.trim()) {
+    processEvent(buffer);
+  }
+
+  options.onCompletion?.(assembledMessage);
+  if (!assembledMessage) {
+    throw new AISearchError('AI search stream ended without message', response.status);
+  }
+
+  return { message: assembledMessage, sources: collectedSources };
+}
+
 // ─── Service Class ────────────────────────────────────────────────────────────
 
 /**
- * Service for interacting with the AI search API
+ * Service for interacting with the AI search API at /api/ai-search.
  */
 export class AISearchService {
   private config: Required<AISearchConfig>;
@@ -73,46 +212,136 @@ export class AISearchService {
   }
 
   /**
-   * Send a query and get a streamed response
+   * Canonical Ask companion search (streaming when onToken is provided).
    */
-  async queryStream(request: AISearchRequest, callbacks: AISearchStreamCallbacks): Promise<void> {
-    // Abort any existing request
+  async search(prompt: string, options?: SearchWithAIOptions): Promise<AIChatResponse> {
+    if (!prompt?.trim()) {
+      throw new AISearchError('Prompt is required');
+    }
+
     this.abort();
     this.abortController = new AbortController();
 
-    const { query, history = [], useMemory = true, sessionId } = request;
+    const preferStream = Boolean(options?.onToken) && typeof ReadableStream !== 'undefined';
+    const payload = {
+      query: prompt.trim(),
+      history: options?.history ?? [],
+      stream: preferStream,
+      ...(options?.pageContext
+        ? {
+            pageContext: {
+              url: options.pageContext.url,
+              title: options.pageContext.title,
+              pathname: options.pageContext.pathname,
+            },
+          }
+        : {}),
+    };
 
-    try {
-      const response = await fetch(this.config.endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'text/event-stream',
-        },
-        body: JSON.stringify({
-          query,
-          history,
-          useMemory,
-          sessionId,
-          stream: true,
-        }),
-        signal: this.abortController.signal,
-      });
+    const outerSignal = preferStream ? options?.signal : withTimeout(options?.signal);
+    const signal = this.abortController.signal;
+    if (outerSignal) {
+      if (outerSignal.aborted) this.abortController.abort();
+      else outerSignal.addEventListener('abort', () => this.abortController?.abort(), { once: true });
+    }
 
-      if (!response.ok) {
-        const error = await createApiErrorFromResponse(response);
-        callbacks.onError?.(error);
-        throw error;
+    const sessionId = getOrCreateAiSessionId();
+
+    const response = await fetch(this.config.endpoint, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-session-id': sessionId,
+        ...(preferStream ? { accept: 'text/event-stream' } : {}),
+      },
+      body: JSON.stringify(payload),
+      signal,
+    });
+
+    if (!response.ok) {
+      let errorMessage = 'Failed to reach AI search service';
+      let resetIn: number | undefined;
+      try {
+        const errorData = (await response.json()) as { error?: unknown; resetIn?: unknown };
+        if (typeof errorData.error === 'string') {
+          errorMessage = errorData.error;
+        }
+        if (typeof errorData.resetIn === 'number' && Number.isFinite(errorData.resetIn)) {
+          resetIn = errorData.resetIn;
+        }
+      } catch {
+        // ignore JSON parse issues
       }
+      const retryHeader = response.headers.get('retry-after');
+      const retryAfterSec =
+        resetIn ??
+        (retryHeader && Number.isFinite(Number(retryHeader)) ? Number(retryHeader) : undefined);
+      const rateLimitReason = response.headers.get('x-rate-limit-reason') ?? undefined;
+      throw new AISearchError(errorMessage, response.status, { retryAfterSec, rateLimitReason });
+    }
 
-      await this.processStream(response, callbacks);
+    const contentType = response.headers.get('content-type') || '';
+    const meta = readAISearchMeta(response);
+    if (Object.keys(meta).length > 0) {
+      options?.onMeta?.(meta);
+    }
+
+    if (preferStream && contentType.includes('text/event-stream')) {
+      const streamed = await consumeEventStream(response, {
+        onToken: options?.onToken,
+        onCompletion: options?.onCompletion,
+        onSources: options?.onSources,
+      });
+      return { ...streamed, meta: Object.keys(meta).length ? meta : undefined };
+    }
+
+    const data = (await response.json()) as { message?: unknown; sources?: unknown };
+    const message = typeof data.message === 'string' ? data.message : '';
+    const sources = normalizeSources(data.sources);
+
+    if (!message) {
+      throw new AISearchError('AI search response did not include a message');
+    }
+
+    if (message && options?.onToken) {
+      options.onToken(message);
+    }
+    if (options?.onCompletion) {
+      options.onCompletion(message);
+    }
+    if (sources.length > 0 && options?.onSources) {
+      options.onSources(sources);
+    }
+
+    return {
+      message,
+      sources,
+      meta: Object.keys(meta).length ? meta : undefined,
+    };
+  }
+
+  /**
+   * Send a query and get a streamed response (class-style callbacks API).
+   */
+  async queryStream(request: AISearchRequest, callbacks: AISearchStreamCallbacks): Promise<void> {
+    try {
+      const result = await this.search(request.query, {
+        history: request.history,
+        onToken: callbacks.onChunk,
+        onSources: (sources) => callbacks.onSources?.(sources),
+      });
+      callbacks.onComplete?.({
+        answer: result.message,
+        sources: result.sources,
+      });
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
-        // Request was cancelled, don't report as error
         return;
       }
-
-      const appError = AppError.from(error, ErrorCodes.AI_INFERENCE_ERROR);
+      const appError =
+        error instanceof AISearchError
+          ? AppError.from(error, ErrorCodes.AI_INFERENCE_ERROR)
+          : AppError.from(error, ErrorCodes.AI_INFERENCE_ERROR);
       callbacks.onError?.(appError);
       throw appError;
     }
@@ -122,44 +351,27 @@ export class AISearchService {
    * Send a query and get a complete response (non-streaming)
    */
   async query(request: AISearchRequest): Promise<AISearchResponse> {
-    this.abort();
-    this.abortController = new AbortController();
-
-    const { query, history = [], useMemory = true, sessionId } = request;
-
     try {
-      const response = await fetch(this.config.endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          history,
-          useMemory,
-          sessionId,
-          stream: false,
-        }),
-        signal: this.abortController.signal,
+      const result = await this.search(request.query, {
+        history: request.history,
       });
-
-      if (!response.ok) {
-        throw await createApiErrorFromResponse(response);
-      }
-
-      const data = await response.json();
-      return this.normalizeResponse(data);
+      return {
+        answer: result.message,
+        sources: result.sources,
+      };
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         throw new AppError('Request cancelled', ErrorCodes.CHAT_TIMEOUT);
+      }
+      if (error instanceof AISearchError && error.status) {
+        throw await createApiErrorFromResponse(
+          new Response(JSON.stringify({ error: error.message }), { status: error.status })
+        ).catch(() => AppError.from(error, ErrorCodes.AI_INFERENCE_ERROR));
       }
       throw AppError.from(error, ErrorCodes.AI_INFERENCE_ERROR);
     }
   }
 
-  /**
-   * Abort the current request
-   */
   abort(): void {
     if (this.abortController) {
       this.abortController.abort();
@@ -167,167 +379,16 @@ export class AISearchService {
     }
   }
 
-  /**
-   * Check if the service is available
-   */
   async healthCheck(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.config.endpoint}/health`, {
+      const response = await fetch('/_healthz', {
         method: 'GET',
         signal: AbortSignal.timeout(5000),
       });
-      return response.ok;
+      return response.ok || response.status === 204;
     } catch {
       return false;
     }
-  }
-
-  // ─── Private Methods ──────────────────────────────────────────────────────
-
-  private async processStream(
-    response: Response,
-    callbacks: AISearchStreamCallbacks
-  ): Promise<void> {
-    const reader = response.body?.getReader();
-    if (!reader) {
-      throw new AppError('No response body', ErrorCodes.AI_INFERENCE_ERROR);
-    }
-
-    const decoder = new TextDecoder();
-    let buffer = '';
-    let fullResponse: AISearchResponse = { answer: '' };
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-
-        // Process complete SSE events delimited by double-newline (\n\n or \r\n\r\n)
-        let boundaryIdx = buffer.indexOf('\n\n');
-        if (boundaryIdx === -1) boundaryIdx = buffer.indexOf('\r\n\r\n');
-        while (boundaryIdx !== -1) {
-          const eventBlock = buffer.slice(0, boundaryIdx);
-          buffer = buffer.slice(boundaryIdx + (buffer[boundaryIdx] === '\r' ? 4 : 2));
-
-          // Extract data: lines
-          const lines = eventBlock.split(/\r?\n/);
-          let dataPayload = '';
-          for (const l of lines) {
-            if (/^data:\s*/i.test(l)) {
-              dataPayload += l.slice(l.indexOf(':') + 1) + '\n';
-            } else if (l.trim()) {
-              // accept other non-empty lines as potential payload fragments
-              dataPayload += l + '\n';
-            }
-          }
-          dataPayload = dataPayload.trim();
-
-          if (!dataPayload) {
-            boundaryIdx = buffer.indexOf('\n\n');
-            if (boundaryIdx === -1) boundaryIdx = buffer.indexOf('\r\n\r\n');
-            continue;
-          }
-
-          if (dataPayload === '[DONE]') {
-            callbacks.onComplete?.(fullResponse);
-            return;
-          }
-
-          // Attempt to parse permissively: find first JSON bracket and try to parse
-          let parsed: unknown = null;
-          try {
-            const firstIdx = Math.min(
-              ...['{', '['].map((ch) => dataPayload.indexOf(ch)).filter((i) => i >= 0)
-            );
-            if (!Number.isNaN(firstIdx) && firstIdx >= 0) {
-              const candidate = dataPayload.slice(firstIdx).trim();
-              try {
-                parsed = JSON.parse(candidate);
-              } catch (e1) {
-                const cleaned = dataPayload
-                  .replace(/event:\s*[^\r\n]+/gi, '')
-                  .replace(/^[^{[]*/s, '')
-                  .trim();
-                if (cleaned && (cleaned.startsWith('{') || cleaned.startsWith('['))) {
-                  try {
-                    parsed = JSON.parse(cleaned);
-                  } catch (e2) {
-                    /* leave null */
-                  }
-                }
-              }
-            } else if (dataPayload.startsWith('{') || dataPayload.startsWith('[')) {
-              try {
-                parsed = JSON.parse(dataPayload);
-              } catch (e3) {
-                /* leave null */
-              }
-            }
-          } catch (outer) {
-            // permissive parse failed; parsed stays null
-          }
-
-          if (parsed) {
-            this.handleStreamEvent(parsed as Record<string, unknown>, callbacks, fullResponse);
-          } else {
-            // Not JSON, treat as raw text chunk. Log payload for test triage.
-            try {
-              console.debug('AI stream: non-JSON payload received', { dataPayload });
-            } catch (e) {
-              // ignore logging errors
-            }
-            callbacks.onChunk(dataPayload);
-            fullResponse.answer += dataPayload;
-          }
-
-          boundaryIdx = buffer.indexOf('\n\n');
-          if (boundaryIdx === -1) boundaryIdx = buffer.indexOf('\r\n\r\n');
-        }
-      }
-
-      callbacks.onComplete?.(fullResponse);
-    } finally {
-      reader.releaseLock();
-    }
-  }
-
-  private handleStreamEvent(
-    event: Record<string, unknown>,
-    callbacks: AISearchStreamCallbacks,
-    fullResponse: AISearchResponse
-  ): void {
-    if (event.type === 'chunk' && typeof event.content === 'string') {
-      callbacks.onChunk(event.content);
-      fullResponse.answer += event.content;
-    } else if (event.type === 'sources' && Array.isArray(event.sources)) {
-      fullResponse.sources = event.sources as AISearchResponse['sources'];
-      callbacks.onSources?.(fullResponse.sources);
-    } else if (event.type === 'fallback' && Array.isArray(event.results)) {
-      fullResponse.fallbackResults = event.results as SearchFallback[];
-    } else if (event.type === 'metadata') {
-      fullResponse.metadata = event.data as AISearchResponse['metadata'];
-    }
-  }
-
-  private normalizeResponse(data: unknown): AISearchResponse {
-    if (typeof data !== 'object' || data === null) {
-      throw new AppError('Invalid response format', ErrorCodes.AI_INFERENCE_ERROR);
-    }
-
-    const response = data as Record<string, unknown>;
-    return {
-      answer: typeof response.answer === 'string' ? response.answer : '',
-      sources: Array.isArray(response.sources) ? response.sources : undefined,
-      fallbackResults: Array.isArray(response.fallbackResults)
-        ? response.fallbackResults
-        : undefined,
-      metadata:
-        typeof response.metadata === 'object'
-          ? (response.metadata as AISearchResponse['metadata'])
-          : undefined,
-    };
   }
 }
 
@@ -335,9 +396,6 @@ export class AISearchService {
 
 let instance: AISearchService | null = null;
 
-/**
- * Get the singleton AI search service instance
- */
 export function getAISearchService(config?: AISearchConfig): AISearchService {
   if (!instance || config) {
     instance = new AISearchService(config);
@@ -345,9 +403,6 @@ export function getAISearchService(config?: AISearchConfig): AISearchService {
   return instance;
 }
 
-/**
- * Reset the singleton instance (useful for testing)
- */
 export function resetAISearchService(): void {
   instance?.abort();
   instance = null;

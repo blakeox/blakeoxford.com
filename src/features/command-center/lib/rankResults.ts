@@ -1,4 +1,4 @@
-import type { CommandItem } from '../types';
+import type { CommandItem } from '@/features/command-center/types';
 
 const HUB_TITLES = new Set(['home', 'about', 'projects', 'blog', 'contact', 'pages']);
 

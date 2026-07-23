@@ -1,49 +1,15 @@
 /**
- * Hooks Module - Consolidated exports for React hooks
+ * Shared React hooks (DOM / browser utilities).
  *
- * This barrel file provides a single import point for all chat-related hooks,
- * eliminating deep imports and improving code organization.
+ * Chat orchestration hooks live under `@/features/chat/hooks`.
+ * This barrel re-exports them for backward compatibility.
  *
  * @example
  * ```ts
- * import {
- *   useAIChatController,
- *   useChatStorage,
- *   useVoiceRecognition
- * } from '@/lib/hooks';
+ * import { useMediaQuery, useOverlayScrollLock } from '@/lib/hooks';
+ * import { useAIChatController } from '@/features/chat/hooks';
  * ```
  */
-
-// ─── Main Controller ──────────────────────────────────────────────
-export { useAIChatController } from './useAIChatController';
-
-// ─── Core Chat Hooks ──────────────────────────────────────────────
-export { useChatEffects } from './useChatEffects';
-export { useChatLifecycle } from './useChatLifecycle';
-export { useChatStorage } from './useChatStorage';
-
-// ─── Message Handling ─────────────────────────────────────────────
-export { useMessageActions } from './useMessageActions';
-export { useMessageProcessing } from './useMessageProcessing';
-export { useQueryManagement } from './useQueryManagement';
-
-// ─── UI State & Interactions ──────────────────────────────────────
-export { useUIState } from './useUIState';
-export { useInputHandlers } from './useInputHandlers';
-export { useScrollManagement } from './useScrollManagement';
-export { useTouchGestures } from './useTouchGestures';
-export { useKeyboardShortcuts } from './useKeyboardShortcuts';
-
-// ─── Computed Values & Analytics ──────────────────────────────────
-export { useComputedValues } from './useComputedValues';
-export { useConversationAnalytics } from './useConversationAnalytics';
-
-// ─── Real-time Features ───────────────────────────────────────────
-export { useConversationWebSocket } from './useConversationWebSocket';
-export { useVoiceRecognition } from './useVoiceRecognition';
-
-// ─── Utilities ────────────────────────────────────────────────────
-export { useCopyFeedback } from './useCopyFeedback';
 
 // ─── DOM & Browser Utilities ──────────────────────────────────────
 export {
@@ -68,3 +34,26 @@ export {
   useLazyLoad,
   type UseIntersectionObserverOptions,
 } from './useIntersectionObserver';
+export { useOverlayScrollLock } from './useOverlayScrollLock';
+export { useTouchGestures } from './useTouchGestures';
+
+// ─── Chat hooks (compat re-exports) ───────────────────────────────
+export {
+  useAIChatController,
+  useChatEffects,
+  useChatLifecycle,
+  useChatStorage,
+  useMessageActions,
+  useMessageProcessing,
+  useQueryManagement,
+  useUIState,
+  useInputHandlers,
+  useScrollManagement,
+  useKeyboardShortcuts,
+  useComputedValues,
+  useConversationAnalytics,
+  useConversationWebSocket,
+  useVoiceRecognition,
+  useCopyFeedback,
+  useAiChatBridge,
+} from '@/features/chat/hooks';

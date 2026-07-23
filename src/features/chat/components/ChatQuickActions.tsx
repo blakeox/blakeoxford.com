@@ -2,11 +2,11 @@
  * ChatQuickActions — calm empty Ask state: two starters + Find handoff.
  */
 import { memo } from 'react';
-import { QUICK_ACTIONS } from '../../../lib/chat';
-import { autoragEvents } from '../../../lib/analytics';
-import { openCommandCenter } from '../../command-center/lib/commandEvents';
-import { SuggestionChip } from '../../overlay/SuggestionChip';
-import type { ChatQuickActionsProps } from '../types';
+import { QUICK_ACTIONS } from '@/lib/chat';
+import { autoragEvents } from '@/lib/analytics';
+import { openCommandCenter } from '@/features/command-center/lib/commandEvents';
+import { SuggestionChip } from '@/features/overlay/SuggestionChip';
+import type { ChatQuickActionsProps } from '@/features/chat/types';
 
 export const ChatQuickActions = memo(function ChatQuickActions({
   pageLabel,

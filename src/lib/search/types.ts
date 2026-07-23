@@ -1,4 +1,10 @@
+/**
+ * Local Find / command-center search types (client-side index + optional Vectorize).
+ * Edge AI chat (`/api/ai-search`) is `src/services/AISearchService.ts` + `src/lib/ai-search.ts`.
+ */
+
 export type SearchContentType = 'page' | 'project' | 'blog';
+
 
 export type SearchCategory = 'all' | 'projects' | 'pages' | 'blog';
 

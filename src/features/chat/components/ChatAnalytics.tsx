@@ -2,8 +2,8 @@
  * ChatAnalytics component
  * Displays conversation analytics and insights
  */
-import { calculateConversationAnalytics as calculateAnalytics } from '../../../lib/chat';
-import type { ChatAnalyticsProps } from '../types';
+import { calculateConversationAnalytics as calculateAnalytics } from '@/lib/chat';
+import type { ChatAnalyticsProps } from '@/features/chat/types';
 
 export function ChatAnalytics({
   show,
