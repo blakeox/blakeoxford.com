@@ -2,10 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { ChatMessage, ConversationWebSocket, MutableRef, SearchFallback } from '@/lib/chat';
 
 import { useComputedValues } from './useComputedValues';
-import {
-  useConversationAnalytics,
-  type FeedbackAnalytics,
-} from './useConversationAnalytics';
+import { useConversationAnalytics, type FeedbackAnalytics } from './useConversationAnalytics';
 import { useConversationWebSocket } from './useConversationWebSocket';
 import { useMessageActions } from './useMessageActions';
 

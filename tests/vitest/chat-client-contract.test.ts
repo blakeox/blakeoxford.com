@@ -82,10 +82,7 @@ describe('submitAIFeedback', () => {
   });
 
   it('swallows network failures', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockRejectedValue(new Error('offline'))
-    );
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
     await expect(
       submitAIFeedback({ messageId: 'msg-1', sentiment: 'negative' })
     ).resolves.toBeNull();

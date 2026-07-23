@@ -20,11 +20,7 @@
   background:
     radial-gradient(
       ellipse 48% 52% at 78% 46%,
-      color-mix(
-          in oklch,
-          var(--color-accent) calc(8% + var(--dual-progress, 0) * 8%),
-          transparent
-        )
+      color-mix(in oklch, var(--color-accent) calc(8% + var(--dual-progress, 0) * 8%), transparent)
         0%,
       transparent 68%
     ),
@@ -140,11 +136,7 @@
         transparent
       ),
     0 0 calc(28px + var(--dual-progress, 0) * 28px)
-      color-mix(
-        in oklch,
-        var(--color-accent) calc(8% + var(--dual-progress, 0) * 14%),
-        transparent
-      );
+      color-mix(in oklch, var(--color-accent) calc(8% + var(--dual-progress, 0) * 14%), transparent);
   transform: scale(calc(1 + (var(--dual-progress, 0) * 0.03)));
   transform-origin: center center;
 }
