@@ -1,17 +1,17 @@
 ---
-import Layout from '../../layouts/BaseLayout.astro';
-import PageHero from '../../components/composites/PageHero.astro';
-import IntroCopy from '../../components/composites/IntroCopy.astro';
-import Button from '../../components/primitives/Button.astro';
-import ButtonGroup from '../../components/composites/ButtonGroup.astro';
-import ProjectsCapabilitiesSection from '../../components/features/projects/ProjectsCapabilitiesSection.astro';
-import ProjectsFeaturedSection from '../../components/features/projects/ProjectsFeaturedSection.astro';
-import ProjectsLibrarySection from '../../components/features/projects/ProjectsLibrarySection.astro';
-import ProjectsFindingsSection from '../../components/features/projects/ProjectsFindingsSection.astro';
-import ProjectsCTASection from '../../components/features/projects/ProjectsCTASection.astro';
-import { getProjectInsights } from '../../content/projects/getProjectInsights';
+import Layout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/composites/PageHero.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
+import Button from '@/components/primitives/Button.astro';
+import ButtonGroup from '@/components/composites/ButtonGroup.astro';
+import ProjectsCapabilitiesSection from '@/components/features/projects/ProjectsCapabilitiesSection.astro';
+import ProjectsFeaturedSection from '@/components/features/projects/ProjectsFeaturedSection.astro';
+import ProjectsLibrarySection from '@/components/features/projects/ProjectsLibrarySection.astro';
+import ProjectsFindingsSection from '@/components/features/projects/ProjectsFindingsSection.astro';
+import ProjectsCTASection from '@/components/features/projects/ProjectsCTASection.astro';
+import { getProjectInsights } from '@/content/projects/getProjectInsights';
 
-const meta = (await import('../../content/projects/_meta.json')).default;
+const meta = (await import('@/content/projects/_meta.json')).default;
 const { findings, projects, deepCut } = await getProjectInsights();
 
 const featuredProject = deepCut

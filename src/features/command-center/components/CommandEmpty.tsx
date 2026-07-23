@@ -1,6 +1,6 @@
-import { SuggestionChip } from '../../overlay/SuggestionChip';
-import { OVERLAY_FOOTER, SECTION_LABEL } from '../../overlay/overlayStyles';
-import { SUGGESTED_QUERIES } from '../types';
+import { SuggestionChip } from '@/features/overlay/SuggestionChip';
+import { OVERLAY_FOOTER, SECTION_LABEL } from '@/features/overlay/overlayStyles';
+import { SUGGESTED_QUERIES } from '@/features/command-center/types';
 
 const IDLE_RECENT_LIMIT = 3;
 

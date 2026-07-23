@@ -35,7 +35,7 @@
     "deploy:zaraz": "node scripts/setup/deploy-zaraz.mjs",
     "deploy:zaraz:dry-run": "node scripts/setup/deploy-zaraz.mjs --dry-run",
     "validate:zaraz": "node scripts/setup/validate-zaraz.mjs",
-    "edge:deploy": "corepack pnpm exec wrangler deploy functions/edge-computing.js",
+    "edge:deploy": "corepack pnpm exec wrangler deploy functions/index.ts",
     "deploy:worker": "corepack pnpm exec wrangler deploy",
     "deploy:worker:latest": "corepack pnpm dlx wrangler@latest deploy",
     "wrangler:version": "corepack pnpm exec wrangler --version && corepack pnpm dlx wrangler@latest --version",
@@ -160,6 +160,7 @@
     "stylelint-order": "^8.1.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
+    "vite": "8.1.5",
     "vitest": "^4.1.10",
     "wrangler": "^4.111.0"
   },

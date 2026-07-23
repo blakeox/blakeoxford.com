@@ -4,21 +4,21 @@
  * Compact: cardless media teaser for home.
  * Full: Selected work library with BaseCard weight.
  */
-import BaseCard from '../../primitives/BaseCard.astro';
-import OptimizedImage from '../../primitives/OptimizedImage.astro';
-import Flex from '../../primitives/Flex.astro';
-import Badge from '../../primitives/Badge.astro';
-import ArrowRightIcon from '../../primitives/icons/ArrowRightIcon.astro';
-import GradientOverlay from '../../primitives/GradientOverlay.astro';
-import { headingSizeClass } from '../../../lib/typeScale';
-import { formatDateISO, formatDateShort, take } from '../../../utils/index.js';
+import BaseCard from '@/components/primitives/BaseCard.astro';
+import OptimizedImage from '@/components/primitives/OptimizedImage.astro';
+import Flex from '@/components/primitives/Flex.astro';
+import Badge from '@/components/primitives/Badge.astro';
+import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
+import GradientOverlay from '@/components/primitives/GradientOverlay.astro';
+import { headingSizeClass } from '@/lib/typeScale';
+import { formatDateISO, formatDateShort, take } from '@/utils/index.js';
 
 const {
   project,
   compact = false,
   featured = false,
   sideLabel,
-} = Astro.props as import('../../../types/components').ProjectCardProps;
+} = Astro.props as import('@/types/components').ProjectCardProps;
 const { id: slug, data } = project;
 
 const title = data.title ?? 'Case study';

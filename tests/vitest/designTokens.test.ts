@@ -57,7 +57,7 @@ describe('Prose primitive', () => {
 
   it('is used by the blog slug page', () => {
     const slug = readFileSync(resolve(__dirname, '../../src/pages/blog/[slug].astro'), 'utf8');
-    expect(slug).toContain("import Prose from '../../components/primitives/Prose.astro'");
+    expect(slug).toContain("import Prose from '@/components/primitives/Prose.astro'");
     expect(slug).toContain('<Prose>');
     expect(slug).not.toContain('prose-h1:text-5xl');
   });

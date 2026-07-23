@@ -1,6 +1,6 @@
 import type { ReactNode, RefObject } from 'react';
 
-import { cn } from '../../utils/cn';
+import { cn } from '@/utils/cn';
 import {
   CHAT_DOCK_BACKDROP,
   CHAT_DOCK_DRAG_HANDLE,

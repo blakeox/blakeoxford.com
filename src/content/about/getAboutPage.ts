@@ -6,5 +6,5 @@ export async function getAboutPage(): Promise<AboutPageContent> {
   if (!entry) {
     throw new Error('About page content not found at src/content/about/page.json');
   }
-  return entry.data as AboutPageContent;
+  return entry.data;
 }

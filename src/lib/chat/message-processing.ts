@@ -2,7 +2,7 @@
  * Message processing utilities for chat functionality
  */
 
-import type { AIChatMessage, AIChatSource } from '../ai-search';
+import type { AIChatMessage, AIChatSource } from '@/lib/ai-search';
 import type { ChatMessage } from './chat-types';
 import {
   DEEP_CONVERSATION_THRESHOLD,

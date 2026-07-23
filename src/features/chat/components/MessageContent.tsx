@@ -46,8 +46,8 @@
  * - QualityIndicator also memoized separately
  */
 import { memo } from 'react';
-import { getConfidenceIndicator, getCitationHealthIndicator } from '../../../lib/quality-utils';
-import type { ChatMessage } from '../types';
+import { getConfidenceIndicator, getCitationHealthIndicator } from '@/lib/quality-utils';
+import type { ChatMessage } from '@/features/chat/types';
 
 /**
  * Props for MessageContent component

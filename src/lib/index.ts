@@ -21,7 +21,7 @@ export {
 export { trackEvent, autoragEvents, conversionEvents } from './analytics';
 
 // Error Utilities
-export { categorizeError, getRetryDelay } from './error-utils';
+export { categorizeError, getRetryDelay } from '@/utils/errors';
 
 // String Utilities
 export {

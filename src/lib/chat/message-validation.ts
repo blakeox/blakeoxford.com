@@ -3,7 +3,7 @@
  * Handles safe restoration of chat messages from storage
  */
 
-import type { AIChatSource } from '../ai-search';
+import type { AIChatSource } from '@/lib/ai-search';
 import type { ChatMessage } from './chat-types';
 
 /**

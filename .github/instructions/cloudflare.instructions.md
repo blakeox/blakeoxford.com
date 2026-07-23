@@ -13,9 +13,10 @@ Guidelines for developing and deploying Cloudflare Workers, Durable Objects, and
 
 ### Entry Point
 
-- **Main Worker**: `functions/edge-computing.js`
-- **Email Handler**: `functions/send-email.js`
-- **Durable Object**: `functions/ConversationDO.js`
+- **Main Worker**: `functions/index.ts`
+- **Email Handler**: `functions/send-email.ts` (wired via `functions/routes/email.ts`)
+- **Durable Object**: `functions/ConversationDO.ts`
+- **AI search**: `functions/routes/ai-search/` (handler + rewrite/rate-limit/Workers AI helpers)
 - **Configuration**: `wrangler.toml`
 
 ### Bindings
@@ -47,9 +48,9 @@ All bindings configured in `wrangler.toml`:
 
 ### Cache Manager
 
-Located in `functions/edge-computing.js`:
+Located in `functions/shared/cache.ts` (wired from `functions/index.ts`):
 
-```javascript
+```typescript
 class EdgeCacheManager {
   getCacheStrategy() {
     // Returns { ttl, headers } based on path
@@ -90,7 +91,7 @@ class EdgeCacheManager {
 
 ### Content Security Policy (CSP)
 
-Implemented in `functions/edge-computing.js`:
+Implemented in `functions/index.ts`:
 
 ```javascript
 const cspHeader = [
@@ -365,7 +366,9 @@ Cloudflare Git integration also builds on push; the GitHub Action provides an ex
 ## Reference Documents
 
 - `wrangler.toml` - Worker configuration
-- `functions/edge-computing.js` - Main Worker
+- `functions/index.ts` - Main Worker entry (route dispatch)
+- `functions/routes/` - Per-endpoint handlers
+- `functions/shared/` - Cache, CORS, IP, request helpers
 - `functions/ConversationDO.js` - Durable Object implementation
 - `src/config/constants.ts` - Cache durations and constants
 - Cloudflare Docs: https://developers.cloudflare.com/workers/

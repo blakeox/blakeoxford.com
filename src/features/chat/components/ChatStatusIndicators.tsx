@@ -2,9 +2,9 @@
  * ChatStatusIndicators — quiet loading / error chrome for Ask.
  * On failure, hand off to Find (⌘K) instead of stacking search results in the dock.
  */
-import { autoragEvents } from '../../../lib/analytics';
-import { openCommandCenter } from '../../command-center/lib/commandEvents';
-import type { ChatStatusIndicatorsProps } from '../types';
+import { autoragEvents } from '@/lib/analytics';
+import { openCommandCenter } from '@/features/command-center/lib/commandEvents';
+import type { ChatStatusIndicatorsProps } from '@/features/chat/types';
 
 function loadingCopy(phase: ChatStatusIndicatorsProps['loadingPhase']): string {
   switch (phase) {

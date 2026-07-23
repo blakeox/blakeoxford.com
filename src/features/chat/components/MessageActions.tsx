@@ -2,8 +2,8 @@
  * MessageActions — copy + feedback by default; share/source demoted.
  */
 import { memo } from 'react';
-import { autoragEvents } from '../../../lib/analytics';
-import type { ChatMessage, Source } from '../types';
+import { autoragEvents } from '@/lib/analytics';
+import type { ChatMessage, Source } from '@/features/chat/types';
 
 interface MessageActionsProps {
   message: ChatMessage;

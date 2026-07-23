@@ -1,6 +1,6 @@
-import type { CommandCategory } from '../types';
-import { CATEGORY_LABELS } from '../types';
-import { cn } from '../../../utils/cn';
+import type { CommandCategory } from '@/features/command-center/types';
+import { CATEGORY_LABELS } from '@/features/command-center/types';
+import { cn } from '@/utils/cn';
 
 const FILTERS: CommandCategory[] = ['all', 'projects', 'blog', 'pages'];
 
