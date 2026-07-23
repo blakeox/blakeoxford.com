@@ -242,7 +242,8 @@ export class AISearchService {
     const signal = this.abortController.signal;
     if (outerSignal) {
       if (outerSignal.aborted) this.abortController.abort();
-      else outerSignal.addEventListener('abort', () => this.abortController?.abort(), { once: true });
+      else
+        outerSignal.addEventListener('abort', () => this.abortController?.abort(), { once: true });
     }
 
     const sessionId = getOrCreateAiSessionId();

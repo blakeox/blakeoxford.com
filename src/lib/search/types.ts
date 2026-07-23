@@ -5,7 +5,6 @@
 
 export type SearchContentType = 'page' | 'project' | 'blog';
 
-
 export type SearchCategory = 'all' | 'projects' | 'pages' | 'blog';
 
 export type SearchRecord = {

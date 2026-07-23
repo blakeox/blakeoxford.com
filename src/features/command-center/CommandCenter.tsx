@@ -1,7 +1,11 @@
 import { createPortal } from 'react-dom';
 
 import { OverlayShell } from '@/features/overlay';
-import { OVERLAY_CLOSE_BUTTON, OVERLAY_FIELD, OVERLAY_HEADER } from '@/features/overlay/overlayStyles';
+import {
+  OVERLAY_CLOSE_BUTTON,
+  OVERLAY_FIELD,
+  OVERLAY_HEADER,
+} from '@/features/overlay/overlayStyles';
 import { CommandCategoryFilters } from './components/CommandCategoryFilters';
 import {
   CommandDestinationList,

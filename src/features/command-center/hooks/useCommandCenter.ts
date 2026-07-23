@@ -4,7 +4,10 @@ import { handoffToAiChat } from '@/lib/chat/ai-chat-bridge';
 import { useOverlayScrollLock } from '@/lib/hooks/useOverlayScrollLock';
 import { useTouchGestures } from '@/lib/hooks/useTouchGestures';
 import { createFocusTrap } from '@/utils/focusTrap';
-import { commandCenterEvents, type CommandCenterHandoffSource } from '@/features/command-center/lib/analytics';
+import {
+  commandCenterEvents,
+  type CommandCenterHandoffSource,
+} from '@/features/command-center/lib/analytics';
 import { flattenGroups } from '@/features/command-center/lib/groupResults';
 import type { CommandCategory, CommandItem } from '@/features/command-center/types';
 import { useCommandHistory } from './useCommandHistory';
@@ -23,7 +26,12 @@ export function useCommandCenterShell() {
  * Keeps CommandCenter.tsx mostly presentational.
  */
 export function useCommandCenter() {
-  const { isOpen, close: closeCommandCenter, seedQuery, clearSeedQuery } = useCommandCenterOpenState();
+  const {
+    isOpen,
+    close: closeCommandCenter,
+    seedQuery,
+    clearSeedQuery,
+  } = useCommandCenterOpenState();
   const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
   const { recentQueries, recentDestinations, pushQuery, pushDestination, clearHistory } =
     useCommandHistory();
