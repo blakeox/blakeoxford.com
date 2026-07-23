@@ -283,7 +283,9 @@ Before requesting review:
 
 ## Production deploy (Cloudflare Workers)
 
-Pushes to `main` trigger `.github/workflows/deploy-worker.yml`, which runs `pnpm build` and `wrangler deploy`.
+**Primary:** Cloudflare Workers Builds (Git integration) deploys `blakeoxford-com` on pushes to `main` / tracked branches.
+
+**Secondary:** Pushes to `main` also run `.github/workflows/deploy-worker.yml` (`pnpm build` + `wrangler deploy`). That job soft-fails if `CLOUDFLARE_API_TOKEN` is invalid so it does not block the repo while Workers Builds remains healthy.
 
 If **Deploy Worker** fails with `Invalid access token [code: 9109]` or `Authentication error [code: 10000]`, rotate GitHub credentials:
 
