@@ -4,7 +4,11 @@
  */
 import Section from '@/components/primitives/Section.astro';
 import SectionHeader from '@/components/composites/SectionHeader.astro';
-import type { HomePageContent } from '@/content/home/pageTypes';
+import type {
+  HomePageContent,
+  HomeResumeHighlightItem,
+  HomeResumeHighlightSide,
+} from '@/content/home/pageTypes';
 
 interface Props {
   content: HomePageContent['resumeHighlights'];
@@ -23,13 +27,13 @@ const { content } = Astro.props as Props;
 
   <div class="home-proof-split">
     {
-      content.sides.map((side) => (
+      content.sides.map((side: HomeResumeHighlightSide) => (
         <article class="home-proof-side" data-proof-side={side.side}>
           <p class="home-proof-label">{side.label}</p>
           <p class="home-proof-metric">{side.metric}</p>
           <h3 class="home-proof-title">{side.title}</h3>
           <ul class="home-proof-items">
-            {side.items.map((item) => (
+            {side.items.map((item: HomeResumeHighlightItem) => (
               <li>{item.text}</li>
             ))}
           </ul>
