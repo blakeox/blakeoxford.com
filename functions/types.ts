@@ -4,9 +4,8 @@
  */
 
 export interface Env {
-  // KV Namespaces — RATE_LIMIT_KV is a dedicated physical namespace;
-  // message/cache/feedback share the portfolio KV with disjoint prefixes.
-  RATE_LIMIT_KV: KVNamespace;
+	// KV Namespaces — each binding maps to its own physical namespace.
+	RATE_LIMIT_KV: KVNamespace;
   CONTACT_MESSAGES: KVNamespace;
   AI_RESPONSE_CACHE: KVNamespace;
   AI_FEEDBACK_KV: KVNamespace;

@@ -2,13 +2,13 @@ import type { Dispatch, RefObject, SetStateAction } from 'react';
 import type { ChatMessage, ChatState, MutableRef } from '@/lib/chat';
 import { useTouchGestures } from '@/lib/hooks/useTouchGestures';
 
-import { useAiChatBridge } from './useAiChatBridge';
-import { useCopyFeedback } from './useCopyFeedback';
-import { useInputHandlers } from './useInputHandlers';
-import { useKeyboardShortcuts } from './useKeyboardShortcuts';
-import { useScrollManagement } from './useScrollManagement';
-import { useUIState } from './useUIState';
-import { useVoiceRecognition } from './useVoiceRecognition';
+import { useAiChatBridge } from './internal/useAiChatBridge';
+import { useCopyFeedback } from './internal/useCopyFeedback';
+import { useInputHandlers } from './internal/useInputHandlers';
+import { useKeyboardShortcuts } from './internal/useKeyboardShortcuts';
+import { useScrollManagement } from './internal/useScrollManagement';
+import { useUIState } from './internal/useUIState';
+import { useVoiceRecognition } from './internal/useVoiceRecognition';
 
 /**
  * Options for the composed chat interaction hook.

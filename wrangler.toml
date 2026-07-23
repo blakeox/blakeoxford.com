@@ -26,27 +26,21 @@ zone_name = "blakeoxford.com"
 
 
 [[kv_namespaces]]
-# Rate-limit counters are physically isolated so eviction from caches/messages
-# cannot wipe Ask/Find/contact throttles. Other bindings still share the
-# portfolio namespace (prefix-disjoint) until further splits are justified.
-#   ratelimit:*     → RATE_LIMIT_KV (this namespace)
-#   msg:*           → CONTACT_MESSAGES
-#   ai:response:*   → AI_RESPONSE_CACHE
-#   feedback:*      → AI_FEEDBACK_KV
+# Each binding has its own physical namespace so eviction and growth stay isolated.
 binding = "RATE_LIMIT_KV"
 id      = "28bd20259b60413f8ae8fc1cfd85218e"
 
 [[kv_namespaces]]
 binding = "CONTACT_MESSAGES"
-id      = "65439bda285f486f9b07fc2a30bc5099"
+id      = "2e073b87d4e54f578872ea8f0810ac33"
 
 [[kv_namespaces]]
 binding = "AI_RESPONSE_CACHE"
-id      = "65439bda285f486f9b07fc2a30bc5099"
+id      = "88ac13a34f474753bd44450267bd2206"
 
 [[kv_namespaces]]
 binding = "AI_FEEDBACK_KV"
-id      = "65439bda285f486f9b07fc2a30bc5099"
+id      = "eb24b6927f49428e8f386d7660f021f9"
 
 # Contact form delivery is restricted to this sender and verified destination.
 [[send_email]]

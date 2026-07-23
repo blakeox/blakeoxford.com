@@ -4,6 +4,7 @@ Last updated: 2026-07-23
 
 Changelog:
 
+- 2026-07-23: Stretch — all four KV bindings on dedicated namespaces; retire `/api` search mirrors (redirects); Ask leaf hooks under `hooks/internal/`.
 - 2026-07-23: Phase 0–4 complete for A+ — RATE_LIMIT KV physically split; AI Gateway `default` on Workers AI; Ask client contract; HomeHero split; search loader → `/search/*`; public scripts ≤40 via quality CLI.
 - 2026-07-22: Mandate `@/` path aliases for `src/` imports (codemod ~342); prefer deep `@/utils/<module>` over the utils barrel. Aggressive structural refactor — modular Worker (`functions/index.ts` + routes), domain unification (AI search service, CollectionEntry page types, features/contact), chat hooks under `features/chat/hooks`, component-docs split, README/hygiene pass.
 - 2026-07-21: Pinned Node.js 24 LTS (engines + CI); carousel masters moved to local path; ESLint Tailwind unknown-class noise silenced; Vitest Playwright import leak fixed.
@@ -351,18 +352,20 @@ Accessibility Pitfalls:
 
 ### Edge Env (must match wrangler)
 
-| Binding / secret                                          | Role                                                                                |
-| --------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `RATE_LIMIT_KV`                                           | Dedicated physical NS `blakeoxford-rate-limit` (`28bd2025…`)                        |
-| `CONTACT_MESSAGES`, `AI_RESPONSE_CACHE`, `AI_FEEDBACK_KV` | Shared portfolio KV (prefix-disjoint; further split optional)                       |
-| `CONVERSATION_DO`                                         | Durable Object for live conversation                                                |
-| `AI`, `VECTORIZE`, `AI_ANALYTICS`                         | Workers AI, Vectorize, Analytics Engine                                             |
-| `CONTACT_EMAIL`                                           | Email Workers binding                                                               |
-| `ASSETS`                                                  | Static `./dist`                                                                     |
-| `TURNSTILE_SECRET_KEY`                                    | Contact / abuse gate                                                                |
-| `AI_SEARCH_API_TOKEN`, `AI_SEARCH_API_ENDPOINT`           | AutoRAG upstream                                                                    |
-| `AI_GATEWAY_ID`, `AI_GATEWAY_ACCOUNT_ID`                  | Workers AI Gateway on `env.AI.run` (`AI_GATEWAY_ID=default`); AutoRAG stays ungated |
-| `SENTRY_DSN_EDGE`, `ENVIRONMENT`, `GIT_COMMIT`            | Edge Sentry context                                                                 |
+| Binding / secret                                | Role                                                                                |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `RATE_LIMIT_KV`                                 | Dedicated NS `blakeoxford-rate-limit` (`28bd2025…`)                                 |
+| `CONTACT_MESSAGES`                              | Dedicated NS `blakeoxford-contact-messages` (`2e073b87…`)                           |
+| `AI_RESPONSE_CACHE`                             | Dedicated NS `blakeoxford-ai-response-cache` (`88ac13a3…`)                          |
+| `AI_FEEDBACK_KV`                                | Dedicated NS `blakeoxford-ai-feedback` (`eb24b692…`)                                |
+| `CONVERSATION_DO`                               | Durable Object for live conversation                                                |
+| `AI`, `VECTORIZE`, `AI_ANALYTICS`               | Workers AI, Vectorize, Analytics Engine                                             |
+| `CONTACT_EMAIL`                                 | Email Workers binding                                                               |
+| `ASSETS`                                        | Static `./dist`                                                                     |
+| `TURNSTILE_SECRET_KEY`                          | Contact / abuse gate                                                                |
+| `AI_SEARCH_API_TOKEN`, `AI_SEARCH_API_ENDPOINT` | AutoRAG upstream                                                                    |
+| `AI_GATEWAY_ID`, `AI_GATEWAY_ACCOUNT_ID`        | Workers AI Gateway on `env.AI.run` (`AI_GATEWAY_ID=default`); AutoRAG stays ungated |
+| `SENTRY_DSN_EDGE`, `ENVIRONMENT`, `GIT_COMMIT`  | Edge Sentry context                                                                 |
 
 Do not declare unbound KV names on `Env` (e.g. retired `CONVERSATION_CACHE_KV`).
 

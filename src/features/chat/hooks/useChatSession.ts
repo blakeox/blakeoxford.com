@@ -1,10 +1,13 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { ChatMessage, ConversationWebSocket, MutableRef, SearchFallback } from '@/lib/chat';
 
-import { useComputedValues } from './useComputedValues';
-import { useConversationAnalytics, type FeedbackAnalytics } from './useConversationAnalytics';
-import { useConversationWebSocket } from './useConversationWebSocket';
-import { useMessageActions } from './useMessageActions';
+import { useComputedValues } from './internal/useComputedValues';
+import {
+  useConversationAnalytics,
+  type FeedbackAnalytics,
+} from './internal/useConversationAnalytics';
+import { useConversationWebSocket } from './internal/useConversationWebSocket';
+import { useMessageActions } from './internal/useMessageActions';
 
 /**
  * Options for the composed chat session hook.

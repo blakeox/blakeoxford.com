@@ -1,9 +1,9 @@
 import type { RefObject } from 'react';
 import type { ChatMessage, ChatState, MutableRef, SearchFallback } from '@/lib/chat';
 
-import { useChatEffects } from './useChatEffects';
-import { useChatLifecycle } from './useChatLifecycle';
-import { useChatStorage } from './useChatStorage';
+import { useChatEffects } from './internal/useChatEffects';
+import { useChatLifecycle } from './internal/useChatLifecycle';
+import { useChatStorage } from './internal/useChatStorage';
 
 /**
  * Options for the composed chat persistence hook.

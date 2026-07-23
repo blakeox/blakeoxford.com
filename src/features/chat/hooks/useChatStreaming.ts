@@ -1,8 +1,8 @@
 import { buildHistoryForRequest } from '@/lib/chat';
 import type { ChatMessage, ChatState, LoadingPhase, MutableRef, SearchFallback } from '@/lib/chat';
 
-import { useMessageProcessing } from './useMessageProcessing';
-import { useQueryManagement } from './useQueryManagement';
+import { useMessageProcessing } from './internal/useMessageProcessing';
+import { useQueryManagement } from './internal/useQueryManagement';
 
 /**
  * Options for the composed chat streaming hook.

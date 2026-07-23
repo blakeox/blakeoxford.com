@@ -6,14 +6,14 @@ For architecture, quality gates, and agent conventions see [`agent.md`](agent.md
 
 ## Stack
 
-| Layer | Choice |
-|--------|--------|
-| Framework | Astro 7 SSG (`output: 'static'`) |
-| Islands | React 19 (`chat`, `command-center`, `contact`, `overlay`) |
-| Styling | Tailwind CSS v4 + tokens in `src/styles/theme.css` |
-| Content | Astro Content Collections + MDX / JSON (Zod in `src/content.config.ts`) |
-| Edge | Cloudflare Worker (`functions/index.ts`) — assets, AI search, email, Durable Objects |
-| Quality | Vitest, Playwright, design-lint, Lighthouse CI, Sentry |
+| Layer     | Choice                                                                               |
+| --------- | ------------------------------------------------------------------------------------ |
+| Framework | Astro 7 SSG (`output: 'static'`)                                                     |
+| Islands   | React 19 (`chat`, `command-center`, `contact`, `overlay`)                            |
+| Styling   | Tailwind CSS v4 + tokens in `src/styles/theme.css`                                   |
+| Content   | Astro Content Collections + MDX / JSON (Zod in `src/content.config.ts`)              |
+| Edge      | Cloudflare Worker (`functions/index.ts`) — assets, AI search, email, Durable Objects |
+| Quality   | Vitest, Playwright, design-lint, Lighthouse CI, Sentry                               |
 
 ## Quick start
 
@@ -55,7 +55,7 @@ Routed by `functions/index.ts`:
 
 - Blog / projects: MDX in `src/content/`
 - Page copy: JSON collections (`home`, `about`, `contact`)
-- Search index: generated on `prebuild` into `public/search/` (canonical); `public/api/{blog,projects}.json` mirrors for compatibility
+- Search index: generated on `prebuild` into `public/search/` (canonical); legacy `/api/{blog,projects}.json` redirect to `/search/*`
 
 ## Docs
 

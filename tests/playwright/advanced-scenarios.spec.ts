@@ -3,7 +3,7 @@ import { test, expect } from './fixtures';
 test.describe('Advanced Test Scenarios @extended', () => {
   test.describe('API Error Handling', () => {
     test('should handle API failures gracefully', async ({ page }) => {
-      await page.route('**/api/projects.json', (route) => {
+      await page.route('**/search/projects.json', (route) => {
         route.fulfill({ status: 404, body: JSON.stringify({ error: 'Not Found' }) });
       });
 
@@ -13,7 +13,7 @@ test.describe('Advanced Test Scenarios @extended', () => {
     });
 
     test('should handle slow API responses', async ({ page }) => {
-      await page.route('**/api/projects.json', async (route) => {
+      await page.route('**/search/projects.json', async (route) => {
         await new Promise(resolve => setTimeout(resolve, 3000));
         route.fulfill({
           status: 200,

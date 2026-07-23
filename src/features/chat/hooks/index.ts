@@ -1,7 +1,12 @@
 /**
  * Chat feature hooks — orchestration for the Ask companion.
  *
- * Prefer importing from `@/features/chat/hooks` (or the feature barrel).
+ * Public surface (only these five):
+ *   useAIChatController, useChatInteraction, useChatPersistence,
+ *   useChatStreaming, useChatSession
+ *
+ * Leaf implementations live under `./internal/` and are not part of the
+ * supported import surface. Prefer `@/features/chat/hooks`.
  * Shared DOM utilities remain under `@/lib/hooks`.
  */
 

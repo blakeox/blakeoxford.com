@@ -1,2 +1,4 @@
 /docs/components/ /design/components/ 301
 /service-worker.js /sw.js 301
+/api/projects.json /search/projects.json 301
+/api/blog.json /search/blog.json 301
