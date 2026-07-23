@@ -77,7 +77,7 @@ export default defineConfig({
   ],
   webServer: {
     // Keep preview on the same baseURL port; strictPort prevents silent drift to 4331+.
-    command: 'npm run preview -- --port 4330 --strictPort',
+    command: 'pnpm run preview -- --port 4330 --strictPort',
     port: 4330,
     // Reuse an existing local preview when available to avoid baseURL/preview races.
     reuseExistingServer: !isCI,

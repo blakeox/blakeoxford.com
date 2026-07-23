@@ -4,32 +4,26 @@ import type { ChatMessage, ChatState, LoadingPhase, SearchFallback } from '@/lib
 import {
   INITIAL_ASSISTANT_MESSAGE,
   PREFERENCES_STORAGE_KEY,
-  buildHistoryForRequest,
   getBooleanPreference,
 } from '@/lib/chat';
 
-// Local hook imports (not using barrel to avoid circular dependency)
-import { useConversationAnalytics } from './useConversationAnalytics';
-import { useConversationWebSocket } from './useConversationWebSocket';
-import { useCopyFeedback } from './useCopyFeedback';
-import { useChatEffects } from './useChatEffects';
-import { useChatLifecycle } from './useChatLifecycle';
-import { useChatStorage } from './useChatStorage';
-import { useComputedValues } from './useComputedValues';
-import { useInputHandlers } from './useInputHandlers';
-import { useKeyboardShortcuts } from './useKeyboardShortcuts';
-import { useMessageActions } from './useMessageActions';
-import { useMessageProcessing } from './useMessageProcessing';
-import { useQueryManagement } from './useQueryManagement';
-import { useScrollManagement } from './useScrollManagement';
-import { useTouchGestures } from '@/lib/hooks/useTouchGestures';
-import { useUIState } from './useUIState';
-import { useVoiceRecognition } from './useVoiceRecognition';
-import { useAiChatBridge } from './useAiChatBridge';
+import { useChatInteraction } from './useChatInteraction';
+import { useChatPersistence } from './useChatPersistence';
+import { useChatSession } from './useChatSession';
+import { useChatStreaming } from './useChatStreaming';
 
 /**
  * Central controller hook that encapsulates all chat state, effects, and actions.
  * Consolidating this logic keeps the island component focused on rendering.
+ *
+ * Composed surfaces (4 hook calls):
+ * 1. interaction — voice, UI, scroll, keyboard, copy, input, touch, bridge
+ * 2. persistence — storage, lifecycle, effects (needs voice + UI from interaction)
+ * 3. streaming — query + message processing
+ * 4. session — websocket, analytics, message actions, computed values
+ *
+ * Lifecycle/streaming callbacks are deferred via refs so interaction can run
+ * before persistence and streaming without circular hook order.
  */
 export function useAIChatController() {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,171 +57,64 @@ export function useAIChatController() {
   const messagesRef = useRef(messages);
   const activeRequestRef = useRef<AbortController | null>(null);
   const typingTimeoutRef = useRef<number | null>(null);
+  const sourceRefs = useRef<HTMLAnchorElement[]>([]);
 
-  const { voiceSupported, isListening, interimTranscript, toggleListening } = useVoiceRecognition({
-    onTranscript: (transcript) => {
-      setInputValue((prev) => {
-        const existing = prev.trim();
-        const combined = existing ? `${existing} ${transcript}` : transcript;
-        return combined.trim();
-      });
-    },
-    language: 'en-US',
-    continuous: false,
-    interimResults: true,
-    maxAlternatives: 1,
-  });
+  // Deferred lifecycle / streaming so interaction can run first (voice + UI).
+  const openChatRef = useRef<() => void>(() => {});
+  const closeChatRef = useRef<() => void>(() => {});
+  const focusInputRef = useRef<() => void>(() => {});
+  const sendQueryRef = useRef<(query: string) => Promise<void>>(async () => {});
 
-  const { wsConnected, activeUsers, isOtherUserTyping, wsRef } = useConversationWebSocket({
-    conversationId: 'default',
-    userId: 'anonymous',
+  const interaction = useChatInteraction({
     isOpen,
-    connectDelay: 1000,
+    messages,
+    chatState,
+    setUseMemory,
+    setInputValue,
+    panelRef,
+    scrollContainerRef,
+    openChat: () => openChatRef.current(),
+    closeChat: () => closeChatRef.current(),
+    focusInput: () => focusInputRef.current(),
+    sourceRefs,
+    sendQuery: (query) => sendQueryRef.current(query),
   });
 
-  const {
-    showDigest,
-    showAnalytics,
-    showAdvancedControls,
-    showFallbackSuggestions,
-    composerFocused,
-    showScrollToLatest,
-    expandedSources,
-    expandedIndividualSources,
-    toggleDigest,
-    toggleAnalytics,
-    toggleAdvancedControls,
-    setShowFallbackSuggestions,
-    setComposerFocused,
-    setShowScrollToLatest,
-    toggleExpandedSource,
-    toggleIndividualSource,
-    setExpandedSources,
-  } = useUIState();
-
-  useChatStorage({
+  const { openChat, closeChat, focusInput, canRetry, lastQueryValue } = useChatPersistence({
     messages,
     useMemory,
     onMessagesRestored: setMessages,
     maxRestoreMessages: 30,
-  });
-
-  const { openChat, closeChat, focusInput, dispatchState } = useChatLifecycle({
     isOpen,
     setIsOpen,
     setError,
     setChatState,
-    isListening,
-    toggleListening,
+    isListening: interaction.isListening,
+    toggleListening: interaction.toggleListening,
     inputRef,
     lastFocusedElementRef: lastFocusedElement,
-  });
-
-  const { touchStartY, touchCurrentY, handleTouchStart, handleTouchMove, handleTouchEnd } =
-    useTouchGestures({
-      onSwipeDown: closeChat,
-      swipeThreshold: 100,
-      enabled: isOpen,
-    });
-
-  const { canRetry, lastQueryValue, sourceRefs } = useChatEffects({
-    isOpen,
-    messages,
     fallbackResults,
     chatState,
-    focusInput,
-    dispatchState,
-    setShowFallbackSuggestions,
-    closeChat,
+    setShowFallbackSuggestions: interaction.setShowFallbackSuggestions,
     launcherRef,
     messagesRef,
     activeRequestRef,
     lastQueryRef,
-  });
-
-  useKeyboardShortcuts({
-    enabled: isOpen,
-    onClose: closeChat,
-    panelRef,
     sourceRefs,
   });
 
-  const { scrollToLatest } = useScrollManagement({
-    containerRef: scrollContainerRef,
-    enabled: isOpen,
-    scrollTrigger: messages,
-    showScrollButton: showScrollToLatest,
-    onScrollButtonChange: setShowScrollToLatest,
-    scrollThreshold: 48,
-  });
+  openChatRef.current = openChat;
+  closeChatRef.current = closeChat;
+  focusInputRef.current = focusInput;
 
   const {
-    recentQueries,
-    conversationDigest,
-    feedbackAnalytics,
-    guidedPromptVisible,
-    composerHasValue,
-    floatingLabelActive,
-    canStartNewChat,
-  } = useConversationAnalytics({
-    messages,
-    interimTranscript,
-    inputValue,
-    composerFocused,
-  });
-
-  const { copiedMessageId, copiedShareUrl, copyWithFeedback } = useCopyFeedback({
-    resetDelay: 2000,
-  });
-
-  const {
-    appendAssistantChunk,
-    finalizeAssistantMessage,
-    assignAssistantSources,
-    assignAssistantProvenance,
+    sendQuery,
+    handleSubmit,
+    handleReplayQuery,
+    handleGuidedPrompt,
     clearConversation,
     startNewChat,
-  } = useMessageProcessing({
-    setMessages,
-    setError,
-    setStreamingMessageId,
-    setFallbackResults,
-    setInputValue,
-    messagesRef,
-    lastQueryRef,
-    showDigest,
-    showAnalytics,
-    toggleDigest,
-    toggleAnalytics,
-    setShowFallbackSuggestions,
-    setExpandedSources,
-    setComposerFocused,
-    setShowScrollToLatest,
-    focusInput,
-  });
-
-  const { handleFeedback, handleCopyMessage, handleOpenPrimarySource, handleExportConversation } =
-    useMessageActions({
-      messages,
-      setMessages,
-      lastQueryRef,
-      messagesRef,
-      copyWithFeedback,
-    });
-
-  const { toggleMemory, toggleVoiceInput, handleTextareaKeyDown } = useInputHandlers({
-    chatState,
-    voiceSupported,
-    setUseMemory,
-    openChat,
-    toggleListening,
-  });
-
-  const { sendQuery, handleSubmit, handleReplayQuery, handleGuidedPrompt } = useQueryManagement({
-    inputValue,
-    setInputValue,
-    openChat,
-    focusInput,
+  } = useChatStreaming({
     chatState,
     setChatState,
     setLoadingPhase,
@@ -243,25 +130,34 @@ export function useAIChatController() {
     messagesRef,
     activeRequestRef,
     scrollContainerRef,
-    setShowScrollToLatest,
-    appendAssistantChunk,
-    assignAssistantSources,
-    assignAssistantProvenance,
-    finalizeAssistantMessage,
-    buildHistoryForRequest,
-  });
-
-  const { visibleFallbackResults, hasMoreFallbackResults } = useComputedValues({
-    showFallbackSuggestions,
-    fallbackResults,
-  });
-
-  useAiChatBridge({
-    openChat,
-    closeChat,
+    setShowScrollToLatest: interaction.setShowScrollToLatest,
+    inputValue,
     setInputValue,
-    sendQuery,
+    openChat,
     focusInput,
+    showDigest: interaction.showDigest,
+    showAnalytics: interaction.showAnalytics,
+    toggleDigest: interaction.toggleDigest,
+    toggleAnalytics: interaction.toggleAnalytics,
+    setShowFallbackSuggestions: interaction.setShowFallbackSuggestions,
+    setExpandedSources: interaction.setExpandedSources,
+    setComposerFocused: interaction.setComposerFocused,
+  });
+
+  sendQueryRef.current = sendQuery;
+
+  const session = useChatSession({
+    isOpen,
+    messages,
+    setMessages,
+    interimTranscript: interaction.interimTranscript,
+    inputValue,
+    composerFocused: interaction.composerFocused,
+    showFallbackSuggestions: interaction.showFallbackSuggestions,
+    fallbackResults,
+    lastQueryRef,
+    messagesRef,
+    copyWithFeedback: interaction.copyWithFeedback,
   });
 
   return {
@@ -287,67 +183,67 @@ export function useAIChatController() {
     launcherRef,
     messagesRef,
     typingTimeoutRef,
-    voiceSupported,
-    isListening,
-    interimTranscript,
-    toggleListening,
-    wsConnected,
-    activeUsers,
-    isOtherUserTyping,
-    wsRef,
-    showDigest,
-    showAnalytics,
-    showAdvancedControls,
-    showFallbackSuggestions,
-    composerFocused,
-    showScrollToLatest,
-    expandedSources,
-    expandedIndividualSources,
-    toggleDigest,
-    toggleAnalytics,
-    toggleAdvancedControls,
-    setShowFallbackSuggestions,
+    voiceSupported: interaction.voiceSupported,
+    isListening: interaction.isListening,
+    interimTranscript: interaction.interimTranscript,
+    toggleListening: interaction.toggleListening,
+    wsConnected: session.wsConnected,
+    activeUsers: session.activeUsers,
+    isOtherUserTyping: session.isOtherUserTyping,
+    wsRef: session.wsRef,
+    showDigest: interaction.showDigest,
+    showAnalytics: interaction.showAnalytics,
+    showAdvancedControls: interaction.showAdvancedControls,
+    showFallbackSuggestions: interaction.showFallbackSuggestions,
+    composerFocused: interaction.composerFocused,
+    showScrollToLatest: interaction.showScrollToLatest,
+    expandedSources: interaction.expandedSources,
+    expandedIndividualSources: interaction.expandedIndividualSources,
+    toggleDigest: interaction.toggleDigest,
+    toggleAnalytics: interaction.toggleAnalytics,
+    toggleAdvancedControls: interaction.toggleAdvancedControls,
+    setShowFallbackSuggestions: interaction.setShowFallbackSuggestions,
     setFallbackResults,
-    setComposerFocused,
-    setShowScrollToLatest,
-    toggleExpandedSource,
-    toggleIndividualSource,
+    setComposerFocused: interaction.setComposerFocused,
+    setShowScrollToLatest: interaction.setShowScrollToLatest,
+    toggleExpandedSource: interaction.toggleExpandedSource,
+    toggleIndividualSource: interaction.toggleIndividualSource,
     openChat,
     closeChat,
     focusInput,
-    touchStartY,
-    touchCurrentY,
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
+    touchStartY: interaction.touchStartY,
+    touchCurrentY: interaction.touchCurrentY,
+    handleTouchStart: interaction.handleTouchStart,
+    handleTouchMove: interaction.handleTouchMove,
+    handleTouchEnd: interaction.handleTouchEnd,
     canRetry,
     lastQueryValue,
     sourceRefs,
-    scrollToLatest,
-    recentQueries,
-    conversationDigest,
-    feedbackAnalytics,
-    guidedPromptVisible,
-    composerHasValue,
-    floatingLabelActive,
-    canStartNewChat,
-    copiedMessageId,
-    copiedShareUrl,
-    copyWithFeedback,
+    scrollToLatest: interaction.scrollToLatest,
+    recentQueries: session.recentQueries,
+    conversationDigest: session.conversationDigest,
+    feedbackAnalytics: session.feedbackAnalytics,
+    guidedPromptVisible: session.guidedPromptVisible,
+    composerHasValue: session.composerHasValue,
+    floatingLabelActive: session.floatingLabelActive,
+    canStartNewChat: session.canStartNewChat,
+    copiedMessageId: interaction.copiedMessageId,
+    copiedShareUrl: interaction.copiedShareUrl,
+    copyWithFeedback: interaction.copyWithFeedback,
     clearConversation,
     startNewChat,
-    handleFeedback,
-    handleCopyMessage,
-    handleOpenPrimarySource,
-    handleExportConversation,
-    toggleMemory,
-    toggleVoiceInput,
-    handleTextareaKeyDown,
+    handleFeedback: session.handleFeedback,
+    handleCopyMessage: session.handleCopyMessage,
+    handleOpenPrimarySource: session.handleOpenPrimarySource,
+    handleExportConversation: session.handleExportConversation,
+    toggleMemory: interaction.toggleMemory,
+    toggleVoiceInput: interaction.toggleVoiceInput,
+    handleTextareaKeyDown: interaction.handleTextareaKeyDown,
     sendQuery,
     handleSubmit,
     handleReplayQuery,
     handleGuidedPrompt,
-    visibleFallbackResults,
-    hasMoreFallbackResults,
+    visibleFallbackResults: session.visibleFallbackResults,
+    hasMoreFallbackResults: session.hasMoreFallbackResults,
   };
 }

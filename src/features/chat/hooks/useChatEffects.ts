@@ -29,6 +29,8 @@ interface UseChatEffectsOptions {
   activeRequestRef: MutableRef<AbortController | null>;
   /** Reference to last query */
   lastQueryRef: MutableRef<string | null>;
+  /** Optional shared source refs (reset each render). When omitted, a fresh ref is created. */
+  sourceRefs?: MutableRef<HTMLAnchorElement[]>;
 }
 
 /**
@@ -97,6 +99,7 @@ export function useChatEffects(options: UseChatEffectsOptions): UseChatEffectsRe
     messagesRef,
     activeRequestRef,
     lastQueryRef,
+    sourceRefs: sourceRefsOption,
   } = options;
 
   // Auto-focus input when chat opens
@@ -153,8 +156,9 @@ export function useChatEffects(options: UseChatEffectsOptions): UseChatEffectsRe
     };
   }, [activeRequestRef]);
 
-  // Source refs array - reset on each render
-  const sourceRefs: MutableRef<HTMLAnchorElement[]> = { current: [] };
+  // Source refs array — reset on each render (shared or local)
+  const sourceRefs: MutableRef<HTMLAnchorElement[]> = sourceRefsOption ?? { current: [] };
+  sourceRefs.current = [];
 
   // Compute retry capability
   const lastQueryValue = lastQueryRef.current;

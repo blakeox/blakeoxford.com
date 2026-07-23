@@ -1,9 +1,10 @@
 # agent.md
 
-Last updated: 2026-07-22
+Last updated: 2026-07-23
 
 Changelog:
 
+- 2026-07-23: Phase 0+2 progress — Worker dispatch-only; Env ↔ wrangler; drop `@astrojs/cloudflare` + dead `ChatContext` + root `playwright/`; pnpm Playwright preview; Ask hooks collapsed to 4 composed surfaces (+ controller); GHA deploy-worker manual-only (Workers Builds primary); fix agent.md refs.
 - 2026-07-22: Mandate `@/` path aliases for `src/` imports (codemod ~342); prefer deep `@/utils/<module>` over the utils barrel. Aggressive structural refactor — modular Worker (`functions/index.ts` + routes), domain unification (AI search service, CollectionEntry page types, features/contact), chat hooks under `features/chat/hooks`, component-docs split, README/hygiene pass.
 - 2026-07-21: Pinned Node.js 24 LTS (engines + CI); carousel masters moved to local path; ESLint Tailwind unknown-class noise silenced; Vitest Playwright import leak fixed.
 - 2026-07-20: Refreshed directory map (features/, services/, middleware/); chat UI consolidated under `src/features/chat/`; carousel originals gitignored; design-lint duplicate `* 2.*` gate documented.
@@ -337,15 +338,32 @@ Accessibility Pitfalls:
 
 ## 7. External References
 
-- `README.md`: Setup, scripts, performance philosophy.
-- `agent.md` (this file): Operational guidance.
-- `BUNDLE_OPTIMIZATION_SUMMARY.md`: Before/after optimization notes.
-- `PLAYWRIGHT_*` docs: Browser test and CI fix summaries.
-- `lighthouse-reports/`: Performance baselines and budgets.
-- Cloudflare Workers: See `functions/` for patterns.
+- `README.md`: Setup, scripts, stack overview.
+- `agent.md` (this file): Operational guidance for agents.
+- `CONTRIBUTING.md`: Branching, component layers, tests, deploy.
+- `DESIGN_BEST_PRACTICES.md`: Design system rules.
+- `tests/playwright/README.md`: Browser E2E conventions (canonical suite under `tests/playwright/`).
+- `lighthouserc.json` / Lighthouse CI: Performance budgets.
+- Cloudflare Workers: `functions/` + `wrangler.toml` (Pages adapter removed; Workers + ASSETS only).
 - Search index generation: `scripts/content/generate-search-index.js`.
 - Performance scripts: `scripts/optimization/*`.
 - Quality orchestrator: `scripts/quality/run-runtime-metrics.js`.
+
+### Edge Env (must match wrangler)
+
+| Binding / secret | Role |
+| ---------------- | ---- |
+| `RATE_LIMIT_KV`, `CONTACT_MESSAGES`, `AI_RESPONSE_CACHE`, `AI_FEEDBACK_KV` | KV (shared physical ID today — split planned) |
+| `CONVERSATION_DO` | Durable Object for live conversation |
+| `AI`, `VECTORIZE`, `AI_ANALYTICS` | Workers AI, Vectorize, Analytics Engine |
+| `CONTACT_EMAIL` | Email Workers binding |
+| `ASSETS` | Static `./dist` |
+| `TURNSTILE_SECRET_KEY` | Contact / abuse gate |
+| `AI_SEARCH_API_TOKEN`, `AI_SEARCH_API_ENDPOINT` | AutoRAG upstream |
+| `AI_GATEWAY_ID`, `AI_GATEWAY_ACCOUNT_ID` | Optional Workers AI Gateway (not AutoRAG index cache) |
+| `SENTRY_DSN_EDGE`, `ENVIRONMENT`, `GIT_COMMIT` | Edge Sentry context |
+
+Do not declare unbound KV names on `Env` (e.g. retired `CONVERSATION_CACHE_KV`).
 
 ## 8. Maintenance & Evolution
 

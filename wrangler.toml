@@ -73,12 +73,12 @@ script_name = "blakeoxford-com"
 AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/autorag/rags/bold-heart-18e4/ai-search"
 PUBLIC_CLARITY_PROJECT_ID = "tqngpokfgs"
 
-# Phase 2: AI Gateway (optional — uncomment after creating a gateway in the dashboard).
-# Attaches cf-aig-* observability metadata on AutoRAG upstream calls in functions/routes/ai-search/.
+# Phase 1 planned: enable AI Gateway for Workers AI (`env.AI.run`) observability.
+# Do NOT enable caching/rate-limits on a gateway used for AutoRAG/AI Search indexing.
+# Attaches cf-aig-* metadata when set — see functions/routes/ai-search/.
 # Docs: https://developers.cloudflare.com/ai-gateway/
 # AI_GATEWAY_ID = "blakeoxford-ai-gateway"
 # AI_GATEWAY_ACCOUNT_ID = "cc3bb24ae3c87cff38c2be85df3dab29"
-# OPENAI_BACKUP_ENABLED = "false"
 
 # Note: PUBLIC_CF_WEB_ANALYTICS_TOKEN is an Astro build-time public env (CI),
 # not a Worker [vars] binding. Pass it in the Deploy Worker workflow build step.

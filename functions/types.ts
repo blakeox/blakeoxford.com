@@ -1,13 +1,12 @@
 /**
  * Cloudflare Workers Environment Bindings
- * Type definitions for all KV namespaces, Durable Objects, AI bindings, and secrets
+ * Must stay aligned with wrangler.toml bindings + documented secrets.
  */
 
 export interface Env {
-	// KV Namespaces
+	// KV Namespaces (shared physical ID today — split planned in Phase 1)
 	RATE_LIMIT_KV: KVNamespace;
 	CONTACT_MESSAGES: KVNamespace;
-	CONVERSATION_CACHE_KV: KVNamespace;
 	AI_RESPONSE_CACHE: KVNamespace;
 	AI_FEEDBACK_KV: KVNamespace;
 
@@ -26,18 +25,21 @@ export interface Env {
 	// Cloudflare Email Service
 	CONTACT_EMAIL: SendEmailBinding;
 
-	// Secrets
+	// Secrets / vars
 	TURNSTILE_SECRET_KEY: string;
 	AI_SEARCH_API_TOKEN?: string;
 	AI_SEARCH_API_ENDPOINT?: string;
 	AI_GATEWAY_ID?: string;
 	AI_GATEWAY_ACCOUNT_ID?: string;
+	PUBLIC_CLARITY_PROJECT_ID?: string;
+
+	// Observability (wrangler secret put)
+	SENTRY_DSN_EDGE?: string;
+	ENVIRONMENT?: string;
+	GIT_COMMIT?: string;
 
 	// Assets binding (for static site)
 	ASSETS: Fetcher;
-
-	// Sentry
-	SENTRY_DSN?: string;
 }
 
 export interface SendEmailBinding {
