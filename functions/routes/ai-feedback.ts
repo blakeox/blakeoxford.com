@@ -83,6 +83,4 @@ export async function handleAiFeedback({
   }
 
   return new Response(JSON.stringify({ status: 'ok' }), { status: 200, headers: corsHeaders });
-
-  return null;
 }

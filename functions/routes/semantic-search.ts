@@ -214,6 +214,4 @@ export async function handleSemanticSearch({
       }
     );
   }
-
-  return null;
 }

@@ -69,6 +69,4 @@ export async function handleTheme({
       headers: corsHeaders,
     });
   }
-
-  return null;
 }
