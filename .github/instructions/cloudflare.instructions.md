@@ -385,6 +385,6 @@ gh workflow run deploy-worker.yml
 - `functions/index.ts` - Main Worker entry (route dispatch)
 - `functions/routes/` - Per-endpoint handlers
 - `functions/shared/` - Cache, CORS, IP, request helpers
-- `functions/ConversationDO.js` - Durable Object implementation
+- `functions/ConversationDO.ts` - Durable Object implementation
 - `src/config/constants.ts` - Cache durations and constants
 - Cloudflare Docs: https://developers.cloudflare.com/workers/
