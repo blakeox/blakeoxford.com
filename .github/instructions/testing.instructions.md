@@ -179,7 +179,7 @@ pnpm test           # Unit tests
 ### Pre-Deployment
 
 ```bash
-pnpm deploy:quality-gate  # Comprehensive quality check
+pnpm check  # Comprehensive quality check
 ```
 
 Includes:
