@@ -352,9 +352,11 @@ Required for:
 
 ## GitHub Actions Deploy
 
-The `Deploy Worker` workflow (`.github/workflows/deploy-worker.yml`) runs on pushes to `main` using `cloudflare/wrangler-action@v3`.
+**Primary:** Cloudflare Workers Builds (Git integration) deploys on pushes to tracked production branches.
 
-Required GitHub configuration:
+**Backup:** The `Deploy Worker` workflow (`.github/workflows/deploy-worker.yml`) is **manual only** (`workflow_dispatch`) via `cloudflare/wrangler-action@v4`. It does not run on push.
+
+Required GitHub configuration (for the backup workflow):
 
 - **Secret** `CLOUDFLARE_API_TOKEN` — API token with Workers deploy permissions
 - **Variable** `CLOUDFLARE_ACCOUNT_ID` — `cc3bb24ae3c87cff38c2be85df3dab29` (also in `wrangler.toml`)
@@ -374,8 +376,6 @@ Manual deploy trigger:
 ```bash
 gh workflow run deploy-worker.yml
 ```
-
-Cloudflare Git integration also builds on push; the GitHub Action provides an explicit Wrangler deploy path when the secret is configured.
 
 ---
 

@@ -4,7 +4,7 @@ Last updated: 2026-07-24
 
 Changelog:
 
-- 2026-07-24: Ask hooks public surface is `useAIChatController` only; docs/tasks point at `pnpm quality` after the script floor.
+- 2026-07-24: Docs: Deploy Worker is manual-only (`workflow_dispatch`); Ask hooks public surface is `useAIChatController` only; docs/tasks point at `pnpm quality` after the script floor.
 - 2026-07-23: Hygiene — shared `writeAiAnalytics` helper; Worker-level `/api`→`/search` redirects (`run_worker_first` safe); docs aligned to search canon + current scripts.
 - 2026-07-23: Stretch — all four KV bindings on dedicated namespaces; retire `/api` search mirrors (redirects); Ask leaf hooks under `hooks/internal/`.
 - 2026-07-23: Phase 0–4 complete for A+ — RATE_LIMIT KV physically split; AI Gateway `default` on Workers AI; Ask client contract; HomeHero split; search loader → `/search/*`; public scripts ≤40 via quality CLI.

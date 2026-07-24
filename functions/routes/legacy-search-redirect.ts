@@ -7,7 +7,9 @@ const LEGACY_SEARCH_REDIRECTS: Readonly<Record<string, string>> = {
 };
 
 export function legacySearchRedirectTarget(pathname: string): string | null {
-  return LEGACY_SEARCH_REDIRECTS[pathname] ?? null;
+  const normalized =
+    pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+  return LEGACY_SEARCH_REDIRECTS[normalized] ?? null;
 }
 
 export async function handleLegacySearchRedirect({
