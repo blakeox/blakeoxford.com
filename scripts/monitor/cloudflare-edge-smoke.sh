@@ -7,6 +7,8 @@ set -euo pipefail
 
 BASE_URL="${EDGE_BASE_URL:-https://blakeoxford.com}"
 TIMEOUT_SECONDS="${EDGE_TIMEOUT_SECONDS:-20}"
+RETRY_ATTEMPTS="${EDGE_RETRY_ATTEMPTS:-3}"
+USER_AGENT="${EDGE_USER_AGENT:-blakeoxford-edge-monitor/1.0 (+https://blakeoxford.com/)}"
 
 if [[ ! "$BASE_URL" =~ ^https://[^/]+$ ]]; then
   echo "EDGE_BASE_URL must be an HTTPS origin without a trailing path" >&2
@@ -20,10 +22,16 @@ request_status() {
 
   local actual
   actual="$(curl --silent --show-error --location --max-time "$TIMEOUT_SECONDS" \
-    --output /dev/null --write-out '%{http_code}' "$@")"
+    --retry "$RETRY_ATTEMPTS" --retry-all-errors --retry-delay 2 \
+    --user-agent "$USER_AGENT" --output /dev/null --write-out '%{http_code}' "$@")"
 
   if [[ "$actual" != "$expected" ]]; then
     echo "FAIL $label: expected HTTP $expected, received HTTP $actual" >&2
+    echo "Response metadata:" >&2
+    curl --silent --show-error --location --max-time "$TIMEOUT_SECONDS" \
+      --retry 1 --retry-delay 1 --user-agent "$USER_AGENT" \
+      --dump-header - --output /dev/null "$@" \
+      | awk -F': ' 'tolower($1) ~ /^(cf-ray|cf-cache-status|content-type|location|retry-after|server|x-request-id)$/ { print }' >&2 || true
     return 1
   fi
 
@@ -32,7 +40,8 @@ request_status() {
 
 request_headers() {
   curl --silent --show-error --location --max-time "$TIMEOUT_SECONDS" \
-    --dump-header - --output /dev/null "$BASE_URL/"
+    --retry "$RETRY_ATTEMPTS" --retry-all-errors --retry-delay 2 \
+    --user-agent "$USER_AGENT" --dump-header - --output /dev/null "$BASE_URL/"
 }
 
 request_status "homepage" 200 "$BASE_URL/"
