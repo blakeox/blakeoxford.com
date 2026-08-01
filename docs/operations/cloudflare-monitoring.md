@@ -47,13 +47,15 @@ protection` rule is active.
 ## Failure handling
 
 - **Monitor failure:** inspect the failed step and run the same script locally
-  with `EDGE_BASE_URL=https://blakeoxford.com`. Do not disable the monitor to
-  clear a red status.
+  with `EDGE_BASE_URL=https://blakeoxford.com`. The monitor identifies its
+  requests, retries transient edge denials, and prints only safe response
+  metadata when the failure persists. Do not disable the monitor to clear a
+  red status.
 - **Worker exception burst:** use Workers Logs/Traces and Sentry, then roll back
   the Worker to the last known-good deployment if customer impact is active.
-- **False-positive rate limiting:** temporarily disable the `API burst
-  protection` rule, retain the application-level limits, and restore the rule
-  after adjusting its threshold.
+- **False-positive rate limiting:** temporarily disable the `API burst protection`
+  rule, retain the application-level limits, and restore it after adjusting its
+  threshold.
 - **Secret failure:** disable the affected feature or route, rotate the secret,
   redeploy through the normal branch flow, and retest the route.
 
