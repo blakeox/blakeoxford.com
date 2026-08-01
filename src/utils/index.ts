@@ -3,64 +3,20 @@
  * Centralized utilities for date formatting, string manipulation, and common operations.
  *
  * Prefer deep imports (`@/utils/<module>`) over this barrel when possible —
- * e.g. `@/utils/errors`, `@/utils/cn` — to keep dependency graphs explicit.
+ * e.g. `@/utils/date`, `@/utils/array`, `@/utils/errors`, `@/utils/cn` —
+ * to keep dependency graphs explicit.
  * Error helpers live in `./errors` (not the removed `lib/error-utils`).
  */
 
-// ─── Date Formatting Utilities ───────────────────────────────────────
+export {
+  formatDateISO,
+  formatDateShort,
+  formatDateFull,
+  formatDateBlog,
+  safeParseDate,
+} from './date';
 
-/**
- * Format a date as ISO string for datetime attributes
- * @example formatDateISO(new Date()) // "2025-10-10T15:30:00.000Z"
- */
-export function formatDateISO(date: Date | string | number): string {
-  return new Date(date).toISOString();
-}
-
-/**
- * Format a date for display (e.g., "Oct 2025")
- * @example formatDateShort(new Date()) // "Oct 2025"
- */
-export function formatDateShort(date: Date | string | number): string {
-  return new Date(date).toLocaleDateString(undefined, {
-    month: 'short',
-    year: 'numeric',
-  });
-}
-
-/**
- * Format a date with full details (e.g., "October 10, 2025")
- * @example formatDateFull(new Date()) // "October 10, 2025"
- */
-export function formatDateFull(date: Date | string | number): string {
-  return new Date(date).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
-/**
- * Format a date with day for blog posts (e.g., "Oct 10, 2025")
- * @example formatDateBlog(new Date()) // "Oct 10, 2025"
- */
-export function formatDateBlog(date: Date | string | number): string {
-  return new Date(date).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
-/**
- * Parse a date, returning current date as fallback
- * @example safeParseDate(data.date) // Date object or new Date()
- */
-export function safeParseDate(date?: Date | string | number | null): Date {
-  if (!date) return new Date();
-  const parsed = new Date(date);
-  return isNaN(parsed.getTime()) ? new Date() : parsed;
-}
+export { take, shuffle, groupBy } from './array';
 
 // ─── String Manipulation Utilities ───────────────────────────────────
 
@@ -110,45 +66,6 @@ export function slugify(text: string): string {
  */
 export function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-// ─── Array Utilities ──────────────────────────────────────────────────
-
-/**
- * Get first N items from array
- * @example take([1,2,3,4,5], 3) // [1,2,3]
- */
-export function take<T>(array: T[], count: number): T[] {
-  return array.slice(0, count);
-}
-
-/**
- * Shuffle array using Fisher-Yates algorithm
- * @example shuffle([1,2,3,4,5]) // [3,1,5,2,4]
- */
-export function shuffle<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
-/**
- * Group array items by key
- * @example groupBy([{type: 'a', val: 1}], item => item.type) // {a: [{type: 'a', val: 1}]}
- */
-export function groupBy<T>(array: T[], keyFn: (item: T) => string): Record<string, T[]> {
-  return array.reduce(
-    (groups, item) => {
-      const key = keyFn(item);
-      groups[key] = groups[key] || [];
-      groups[key].push(item);
-      return groups;
-    },
-    {} as Record<string, T[]>
-  );
 }
 
 // ─── Number Utilities ─────────────────────────────────────────────────

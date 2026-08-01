@@ -113,7 +113,8 @@ export const featureDocs: ComponentDoc[] = [
     name: 'HomeHeroSection',
     category: 'Features',
     subcategory: 'Home',
-    description: 'Homepage hero with CoinFlip portrait, promise line, and primary CTAs.',
+    description:
+      'Homepage dual-identity hero shell — Work→Daring scroll scrub composing copy + portrait pieces.',
     filePath: 'src/components/features/home/HomeHeroSection.astro',
     examples: [
       {
@@ -123,7 +124,34 @@ export const featureDocs: ComponentDoc[] = [
     ],
     tags: ['home', 'hero', 'landing'],
     visualTier: 'expressive',
-    tokenDependencies: ['--gradient-primary', '--color-foreground', '--fs-h1'],
+    tokenDependencies: ['--color-background', '--color-accent', '--color-foreground'],
+  },
+  {
+    name: 'HomeHeroCopy',
+    category: 'Features',
+    subcategory: 'Home',
+    description: 'Home hero brand lockup, dual lines, primary CTA, and scroll hint.',
+    filePath: 'src/components/features/home/HomeHeroCopy.astro',
+    examples: [
+      {
+        title: 'Hero copy',
+        code: '<HomeHeroCopy author={author} content={page.hero} workLine={work} daringLine={daring} />',
+      },
+    ],
+    tags: ['home', 'hero', 'copy'],
+    visualTier: 'expressive',
+    tokenDependencies: ['--font-heading', '--color-foreground', '--color-accent'],
+  },
+  {
+    name: 'HomeHeroVisual',
+    category: 'Features',
+    subcategory: 'Home',
+    description: 'Home hero Work/Daring portrait frame with progress tick and caption.',
+    filePath: 'src/components/features/home/HomeHeroVisual.astro',
+    examples: [{ title: 'Hero visual', code: '<HomeHeroVisual />' }],
+    tags: ['home', 'hero', 'portrait'],
+    visualTier: 'expressive',
+    tokenDependencies: ['--color-accent', '--shadow-lg', '--color-surface-subtle'],
   },
   {
     name: 'HomeCTASection',

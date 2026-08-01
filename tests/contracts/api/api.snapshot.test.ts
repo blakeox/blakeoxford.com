@@ -60,7 +60,7 @@ function normalizeEntries(entries: any[]) {
 
 describe('API Snapshot Baselines', () => {
   const cases = [
-    { name: 'projects', rel: 'public/api/projects.json', schema: ProjectsApiSchema }
+    { name: 'projects', rel: 'public/search/projects.json', schema: ProjectsApiSchema }
   ];
 
   for (const c of cases) {

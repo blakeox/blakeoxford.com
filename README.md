@@ -6,14 +6,14 @@ For architecture, quality gates, and agent conventions see [`agent.md`](agent.md
 
 ## Stack
 
-| Layer | Choice |
-|--------|--------|
-| Framework | Astro 7 SSG (`output: 'static'`) |
-| Islands | React 19 (`chat`, `command-center`, `contact`, `overlay`) |
-| Styling | Tailwind CSS v4 + tokens in `src/styles/theme.css` |
-| Content | Astro Content Collections + MDX / JSON (Zod in `src/content.config.ts`) |
-| Edge | Cloudflare Worker (`functions/index.ts`) — assets, AI search, email, Durable Objects |
-| Quality | Vitest, Playwright, design-lint, Lighthouse CI, Sentry |
+| Layer     | Choice                                                                               |
+| --------- | ------------------------------------------------------------------------------------ |
+| Framework | Astro 7 SSG (`output: 'static'`)                                                     |
+| Islands   | React 19 (`chat`, `command-center`, `contact`, `overlay`)                            |
+| Styling   | Tailwind CSS v4 + tokens in `src/styles/theme.css`                                   |
+| Content   | Astro Content Collections + MDX / JSON (Zod in `src/content.config.ts`)              |
+| Edge      | Cloudflare Worker (`functions/index.ts`) — assets, AI search, email, Durable Objects |
+| Quality   | Vitest, Playwright, design-lint, Lighthouse CI, Sentry                               |
 
 ## Quick start
 
@@ -23,10 +23,10 @@ pnpm dev          # http://localhost:4321
 pnpm build
 pnpm check        # typecheck + design-lint + lint + format + unit tests
 pnpm test:e2e     # Playwright
-pnpm deploy       # Wrangler → Workers
+pnpm deploy:worker # Wrangler → Workers
 ```
 
-Primary npm scripts: `dev`, `build`, `check`, `test`, `test:e2e`, `deploy`, `quality`. Additional gates live under `quality:*`, `test:e2e:*`, `ci:*`, and `scripts/`.
+Primary npm scripts: `dev`, `build`, `check`, `test`, `test:e2e`, `deploy:worker`, `quality`. Specialist gates live under `quality:*` / `pnpm quality <cmd>` and `test:e2e:*`.
 
 ## Layout
 
@@ -55,7 +55,7 @@ Routed by `functions/index.ts`:
 
 - Blog / projects: MDX in `src/content/`
 - Page copy: JSON collections (`home`, `about`, `contact`)
-- Search index: generated on `prebuild` into `public/search/` (canonical); `public/api/{blog,projects}.json` mirrors for compatibility
+- Search index: generated on `prebuild` into `public/search/` (canonical); legacy `/api/{blog,projects}.json` redirect to `/search/*`
 
 ## Docs
 

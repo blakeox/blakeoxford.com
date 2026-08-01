@@ -1,5 +1,6 @@
 import { anonymizeClientIp } from '../../shared/ip';
 import { buildApiCorsHeaders } from '../../shared/cors';
+import { writeAiAnalytics } from '../../shared/ai-analytics';
 import type { RouteContext } from '../../shared/route-context';
 import type { Env } from '../../types';
 import { parseAiSources } from './parse-sources';
@@ -19,6 +20,9 @@ import {
   type AiSearchPayload,
 } from './types';
 import { handleSimpleQueryWithWorkersAI, looksLikeEmptyRetrieval } from './workers-ai';
+
+const MAX_REQUEST_BYTES = 32 * 1024;
+const MAX_QUERY_LENGTH = 4000;
 
 export async function handleAiSearch({
   request,
@@ -54,6 +58,14 @@ export async function handleAiSearch({
     });
   }
 
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > MAX_REQUEST_BYTES) {
+    return new Response(JSON.stringify({ error: 'Request is too large' }), {
+      status: 413,
+      headers: baseCorsHeaders,
+    });
+  }
+
   let payload: AiSearchPayload;
   try {
     payload = (await request.json()) as AiSearchPayload;
@@ -65,7 +77,7 @@ export async function handleAiSearch({
   }
 
   const query = extractQuery(payload);
-  if (!query) {
+  if (!query || query.length > MAX_QUERY_LENGTH) {
     return new Response(JSON.stringify({ error: 'Query is required' }), {
       status: 400,
       headers: baseCorsHeaders,
@@ -125,28 +137,17 @@ export async function handleAiSearch({
         'x-response-time': String(Date.now() - startTime),
       };
 
-      // Log to analytics
-      if (env.AI_ANALYTICS) {
-        try {
-          env.AI_ANALYTICS.writeDataPoint({
-            blobs: [
-              query.slice(0, 50),
-              'WORKERS_AI',
-              anonymizeClientIp(clientIp),
-              sessionId || 'anonymous',
-              complexity,
-            ],
-            doubles: [
-              0, // No sources from Workers AI
-              workersAIResult.message?.length || 0,
-              Date.now() - startTime,
-            ],
-            indexes: ['workers_ai', `complexity_${complexity}`],
-          });
-        } catch {
-          // Silently fail - analytics is non-critical
-        }
-      }
+      writeAiAnalytics(env, {
+        blobs: [
+          query.slice(0, 50),
+          'WORKERS_AI',
+          anonymizeClientIp(clientIp),
+          sessionId || 'anonymous',
+          complexity,
+        ],
+        doubles: [0, workersAIResult.message?.length || 0, Date.now() - startTime],
+        indexes: ['workers_ai', `complexity_${complexity}`],
+      });
 
       return new Response(JSON.stringify(workersAIResult), {
         status: 200,
@@ -183,28 +184,21 @@ export async function handleAiSearch({
           'x-ai-provider': 'autorag-cached',
         };
 
-        // Log cache hit to analytics
-        if (env.AI_ANALYTICS) {
-          try {
-            env.AI_ANALYTICS.writeDataPoint({
-              blobs: [
-                query.slice(0, 50),
-                'CACHE_HIT',
-                anonymizeClientIp(clientIp),
-                sessionId || 'anonymous',
-                complexity || 'unknown',
-              ],
-              doubles: [
-                Array.isArray(cached.sources) ? cached.sources.length : 0,
-                cached.message.length || 0,
-                Date.now() - startTime,
-              ],
-              indexes: ['cache_hit', `complexity_${complexity}`],
-            });
-          } catch {
-            // Silently fail - analytics is non-critical
-          }
-        }
+        writeAiAnalytics(env, {
+          blobs: [
+            query.slice(0, 50),
+            'CACHE_HIT',
+            anonymizeClientIp(clientIp),
+            sessionId || 'anonymous',
+            complexity || 'unknown',
+          ],
+          doubles: [
+            Array.isArray(cached.sources) ? cached.sources.length : 0,
+            cached.message.length || 0,
+            Date.now() - startTime,
+          ],
+          indexes: ['cache_hit', `complexity_${complexity}`],
+        });
 
         return new Response(JSON.stringify(responseData), {
           status: 200,
@@ -234,26 +228,14 @@ export async function handleAiSearch({
   try {
     const requestBody = { query: enhancedQuery, history };
 
-    // Optional AI Gateway: attach observability headers when configured.
-    // Keep the AutoRAG endpoint URL (gateway URL rewrite is provider-specific).
-    // Enable by setting AI_GATEWAY_ID + AI_GATEWAY_ACCOUNT_ID in wrangler.toml.
+    // AutoRAG stays on the direct AI Search endpoint — do not attach AI Gateway
+    // cache headers here (index/retrieval caching fights freshness). Workers AI
+    // observability goes through env.AI.run gateway options in workers-ai.ts.
     const fetchUrl = upstreamEndpoint;
     const fetchHeaders: Record<string, string> = {
       'content-type': 'application/json',
       authorization: `Bearer ${upstreamToken}`,
     };
-
-    if (env.AI_GATEWAY_ID && env.AI_GATEWAY_ACCOUNT_ID) {
-      fetchHeaders['cf-aig-cache-ttl'] = '3600';
-      fetchHeaders['cf-aig-metadata'] = JSON.stringify({
-        user: sessionId || 'anonymous',
-        source: 'website-chat',
-        complexity,
-        enhanced: query !== enhancedQuery,
-        gateway: env.AI_GATEWAY_ID,
-        account: env.AI_GATEWAY_ACCOUNT_ID,
-      });
-    }
 
     const upstreamResponse = await fetch(fetchUrl, {
       method: 'POST',
@@ -292,9 +274,7 @@ export async function handleAiSearch({
     if (upstreamData && typeof upstreamData === 'object' && upstreamData.success === false) {
       const errors = Array.isArray(upstreamData.errors) ? upstreamData.errors : [];
       const firstError =
-        errors[0] && typeof errors[0] === 'object'
-          ? (errors[0] as { message?: unknown })
-          : null;
+        errors[0] && typeof errors[0] === 'object' ? (errors[0] as { message?: unknown }) : null;
       const upstreamError =
         typeof firstError?.message === 'string'
           ? firstError.message
@@ -380,25 +360,17 @@ export async function handleAiSearch({
       }
     }
 
-    // Log successful query to analytics
-    if (env.AI_ANALYTICS) {
-      try {
-        const responseTime = Date.now() - startTime;
-        env.AI_ANALYTICS.writeDataPoint({
-          blobs: [
-            query.slice(0, 50),
-            'API_CALL',
-            anonymizeClientIp(clientIp),
-            sessionId || 'anonymous',
-            complexity || 'unknown',
-          ],
-          doubles: [sources.length, message.length, responseTime],
-          indexes: ['ai_query', `complexity_${complexity}`],
-        });
-      } catch {
-        // Analytics write failed, continue anyway
-      }
-    }
+    writeAiAnalytics(env, {
+      blobs: [
+        query.slice(0, 50),
+        'API_CALL',
+        anonymizeClientIp(clientIp),
+        sessionId || 'anonymous',
+        complexity || 'unknown',
+      ],
+      doubles: [sources.length, message.length, Date.now() - startTime],
+      indexes: ['ai_query', `complexity_${complexity}`],
+    });
 
     const responseHeaders = {
       ...baseCorsHeaders,

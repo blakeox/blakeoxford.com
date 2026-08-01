@@ -14,48 +14,45 @@ import { handleConversation } from './routes/conversation';
 import { handleSemanticSearch } from './routes/semantic-search';
 import { handleAiFeedback } from './routes/ai-feedback';
 import { handleTheme } from './routes/theme';
+import { handleLegacySearchRedirect } from './routes/legacy-search-redirect';
+import { handleDebug } from './routes/debug';
 import { handleAssets } from './routes/assets';
 
 export { ConversationDurableObject } from './ConversationDO.ts';
 
+const CONTENT_SECURITY_POLICY =
+  "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' https://www.clarity.ms https://static.cloudflareinsights.com https://cdn-cgi/ https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; font-src 'self' data:; connect-src 'self' https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://static.cloudflareinsights.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'";
+
+function applySecurityHeaders(response: Response, reqId: string, hostname: string): Response {
+  if (response.status === 101) return response;
+
+  const headers = new Headers(response.headers);
+  headers.set('x-content-type-options', 'nosniff');
+  headers.set('x-frame-options', 'SAMEORIGIN');
+  headers.set('referrer-policy', 'strict-origin-when-cross-origin');
+  headers.set(
+    'permissions-policy',
+    'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()'
+  );
+  headers.set('x-request-id', headers.get('x-request-id') || reqId);
+
+  if (isBlakeOxfordHostname(hostname)) {
+    headers.set('strict-transport-security', 'max-age=31536000; includeSubDomains; preload');
+  }
+
+  const contentType = headers.get('content-type') || '';
+  if (contentType.includes('text/html') && !headers.has('content-security-policy')) {
+    headers.set('content-security-policy', CONTENT_SECURITY_POLICY);
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 const WorkerApp = {
-  isAuditRequest(req: Request): boolean {
-    try {
-      const ua = (req.headers.get('user-agent') || '').toLowerCase();
-      const flag = (req.headers.get('x-audit-mode') || req.headers.get('x-lighthouse') || '')
-        .toString()
-        .toLowerCase();
-      const cookie = req.headers.get('cookie') || '';
-      const hasAuditCookie = /(^|;)\s*audit=1\s*(;|$)/.test(cookie);
-      return (
-        ua.includes('lighthouse') ||
-        ua.includes('chrome-lighthouse') ||
-        ua.includes('headlesschrome') ||
-        flag === '1' ||
-        flag === 'true' ||
-        flag === 'lighthouse' ||
-        hasAuditCookie
-      );
-    } catch {
-      return false;
-    }
-  },
-
-  generateNonce(): string {
-    try {
-      if (crypto && typeof crypto.getRandomValues === 'function') {
-        const bytes = new Uint8Array(16);
-        crypto.getRandomValues(bytes);
-        return Array.from(bytes)
-          .map((b) => b.toString(16).padStart(2, '0'))
-          .join('');
-      }
-    } catch {
-      // fallback below
-    }
-    return Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-  },
-
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const Sentry = initEdgeSentry(env);
     const url = new URL(request.url);
@@ -79,7 +76,11 @@ const WorkerApp = {
         h.set('x-request-id', reqId);
         h.set('x-route-kind', 'redirect');
         h.set('x-cache-policy', 'no-store');
-        return new Response(r.body, { status: r.status, statusText: r.statusText, headers: h });
+        return applySecurityHeaders(
+          new Response(r.body, { status: r.status, statusText: r.statusText, headers: h }),
+          reqId,
+          url.hostname
+        );
       }
       if (isProdDomain && host.startsWith('www.') && isGetLike) {
         url.hostname = host.replace(/^www\./, '');
@@ -88,7 +89,11 @@ const WorkerApp = {
         h.set('x-request-id', reqId);
         h.set('x-route-kind', 'redirect');
         h.set('x-cache-policy', 'no-store');
-        return new Response(r.body, { status: r.status, statusText: r.statusText, headers: h });
+        return applySecurityHeaders(
+          new Response(r.body, { status: r.status, statusText: r.statusText, headers: h }),
+          reqId,
+          url.hostname
+        );
       }
     } catch {
       // ignore canonicalization errors
@@ -97,6 +102,7 @@ const WorkerApp = {
     const routeCtx: RouteContext = { request, env, ctx, url, reqId, method, Sentry };
 
     const handlers = [
+      handleLegacySearchRedirect,
       handleRobotsFavicon,
       handleHealth,
       handleEmail,
@@ -105,60 +111,15 @@ const WorkerApp = {
       handleSemanticSearch,
       handleAiFeedback,
       handleTheme,
+      handleDebug,
     ] as const;
 
     for (const handler of handlers) {
       const response = await handler(routeCtx);
-      if (response) return response;
+      if (response) return applySecurityHeaders(response, reqId, url.hostname);
     }
 
-    return handleAssets(routeCtx);
-  },
-
-  async stripAuditOnlyScripts(response: Response): Promise<Response> {
-    try {
-      const originalHeaders = new Headers(response.headers);
-      const nonce = originalHeaders.get('X-CSP-Nonce') || '';
-      let stripped = await response.text();
-      const patterns = [
-        /<script[^>]*src="https:\/\/challenges\.cloudflare\.com\/turnstile\/v0\/api\.js[^"]*"[^>]*>\s*<\/script>/gi,
-        /<iframe[^>]*src="https?:\/\/challenges\.cloudflare\.com[^"]*"[^>]*>\s*<\/iframe>/gi,
-        /<script[^>]*src="https:\/\/static\.cloudflareinsights\.com[^"]*"[^>]*>\s*<\/script>/gi,
-        /<script[^>]*src="https?:\/\/www\.googletagmanager\.com[^"]*"[^>]*>\s*<\/script>/gi,
-        /<script[^>]*src="https?:\/\/www\.google-analytics\.com[^"]*"[^>]*>\s*<\/script>/gi,
-        /<noscript>[\s\S]*?googletagmanager[\s\S]*?<\/noscript>/gi,
-        /<script[^>]*data-cf-beacon[^>]*>\s*<\/script>/gi,
-        /<script[^>]*>[\s\S]*?turnstile\/v0\/api\.js[\s\S]*?<\/script>/gi,
-        /<script[^>]*>[\s\S]*?cdn-cgi\/challenge-platform[\s\S]*?<\/script>/gi,
-        /<script[^>]*>[\s\S]*?zaraz[\s\S]*?<\/script>/gi,
-        /<script[^>]*>[\s\S]*?__CF\$cv[\s\S]*?<\/script>/gi,
-        /<script[^>]*src=['"][^'"]*\/cdn-cgi\/challenge-platform\/[\s\S]*?>\s*<\/script>/gi,
-      ];
-      for (const rx of patterns) stripped = stripped.replace(rx, '');
-      const auditBootstrapHtml = `<script${nonce ? ` nonce="${nonce}"` : ''}>(function(){try{window.__AUDIT__=true;window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){};var _sb=navigator.sendBeacon;navigator.sendBeacon=function(){return true};var _xf=window.fetch;window.fetch=function(u,o){try{if(typeof u==="string"&&(u.includes("challenges.cloudflare.com")||u.includes("/cdn-cgi/challenge-platform/")||u.includes("google-analytics.com")||u.includes("googletagmanager.com")||u.includes("static.cloudflareinsights.com")||u.includes("cloudflareinsights.com")||/\\/metrics\\/?(?:$|\\?|#)/.test(u))){return Promise.resolve(new Response("",{status:204}))}}catch  { void 0; }return _xf.apply(this,arguments)};var _create=document.createElement;document.createElement=function(t){var el=_create.call(document,t);if((t||"").toLowerCase()==="script"){try{var _set=el.setAttribute;el.setAttribute=function(k,v){try{if(String(k).toLowerCase()==="src"){var vv=String(v||"");if(vv.includes("/cdn-cgi/challenge-platform/")||/\\/metrics\\/?(?:$|\\?|#)/.test(vv)){return}}}catch  { void 0; }return _set.apply(el,arguments)}}catch  { void 0; }}return el};var _append=Element.prototype.appendChild;Element.prototype.appendChild=function(n){try{if(n&&n.tagName==="SCRIPT"){var s=String(n.src||"");if(s.includes("/cdn-cgi/challenge-platform/")||/\\/metrics\\/?(?:$|\\?|#)/.test(s)){return n}}}catch  { void 0; }return _append.call(this,n)};}catch  { void 0; }})();</script>`;
-      const headClose = /<\/head>/i;
-      if (headClose.test(stripped))
-        stripped = stripped.replace(headClose, auditBootstrapHtml + '</head>');
-      else stripped = auditBootstrapHtml + stripped;
-      const newHeaders = new Headers(originalHeaders);
-      newHeaders.append('set-cookie', 'audit=1; Path=/; Max-Age=300; SameSite=Lax');
-      return new Response(stripped, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: newHeaders,
-      });
-    } catch (e) {
-      console.error('stripAuditOnlyScripts error:', e);
-      return response;
-    }
-  },
-
-  async applyPersonalization(response: Response): Promise<Response> {
-    return response;
-  },
-
-  async trackEdgeAnalytics(): Promise<void> {
-    // no-op
+    return applySecurityHeaders(await handleAssets(routeCtx), reqId, url.hostname);
   },
 };
 

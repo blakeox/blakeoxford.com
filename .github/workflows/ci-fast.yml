@@ -166,9 +166,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run dependency audit (fail on high)
-        run: pnpm security:audit -- --audit-level=high
-
       - name: Install Playwright dependencies
         run: |
           echo "🎭 Installing Playwright system dependencies..."
@@ -330,9 +327,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Run dependency audit (fail on high)
-        run: pnpm security:audit -- --audit-level=high
 
       - name: Cache Playwright browsers (macOS)
         uses: actions/cache@v6

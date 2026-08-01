@@ -26,17 +26,17 @@ describe('Search Utilities Integration', () => {
         json: () => Promise.resolve(mockProjectsData),
       });
 
-      const response = await fetch('/api/projects.json');
+      const response = await fetch('/search/projects.json');
       const data = await response.json();
 
-      expect(fetch).toHaveBeenCalledWith('/api/projects.json');
+      expect(fetch).toHaveBeenCalledWith('/search/projects.json');
       expect(data).toEqual(mockProjectsData);
     });
 
     it('should handle fetch errors gracefully', async () => {
       (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
-      await expect(fetch('/api/projects.json')).rejects.toThrow('Network error');
+      await expect(fetch('/search/projects.json')).rejects.toThrow('Network error');
     });
   });
 

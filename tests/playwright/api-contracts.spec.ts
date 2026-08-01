@@ -20,7 +20,7 @@ type Project = z.infer<typeof ProjectSchema>;
 test.describe('API Contract Testing', () => {
   test.describe('Projects API Contract', () => {
     test('projects API should maintain expected schema', async ({ request }) => {
-      const response = await request.get('/api/projects.json');
+      const response = await request.get('/search/projects.json');
       
       expect(response.status()).toBe(200);
       expect(response.headers()['content-type']).toContain('application/json');
@@ -43,7 +43,7 @@ test.describe('API Contract Testing', () => {
     });
 
     test('projects API should return projects in chronological order', async ({ request }) => {
-      const response = await request.get('/api/projects.json');
+      const response = await request.get('/search/projects.json');
       const data = await response.json();
       
       // Should have projects with valid dates
@@ -64,7 +64,7 @@ test.describe('API Contract Testing', () => {
   test.describe('Individual Content API Contracts', () => {
     test('individual projects should be accessible', async ({ request }) => {
       // Get list of projects
-      const listResponse = await request.get('/api/projects.json');
+      const listResponse = await request.get('/search/projects.json');
       const projects = await listResponse.json();
       
       if (projects.length > 0) {
@@ -88,7 +88,7 @@ test.describe('API Contract Testing', () => {
   test.describe('API Performance Contracts', () => {
     test('APIs should respond within performance budgets', async ({ request }) => {
       const apis = [
-        '/api/projects.json'
+        '/search/projects.json'
       ];
 
       for (const apiPath of apis) {
@@ -107,7 +107,7 @@ test.describe('API Contract Testing', () => {
 
     test('APIs should handle concurrent requests gracefully', async ({ request }) => {
       const concurrentRequests = 10;
-      const apiPath = '/api/projects.json';
+      const apiPath = '/search/projects.json';
       
       const startTime = Date.now();
       
@@ -144,7 +144,7 @@ test.describe('API Contract Testing', () => {
 
     test('malformed requests should be handled gracefully', async ({ request }) => {
       // Test with invalid query parameters
-      const response = await request.get('/api/projects.json?invalid=true&malformed[]=test');
+      const response = await request.get('/search/projects.json?invalid=true&malformed[]=test');
       
       // Should still return 200 (graceful degradation) or proper error
       expect([200, 400].includes(response.status())).toBe(true);
@@ -160,7 +160,7 @@ test.describe('API Contract Testing', () => {
 
   test.describe('Data Integrity Contracts', () => {
     test('projects should have unique slugs', async ({ request }) => {
-      const response = await request.get('/api/projects.json');
+      const response = await request.get('/search/projects.json');
       const projects = await response.json();
       
       const slugs = projects.map((project: Project) => project.slug);
@@ -172,7 +172,7 @@ test.describe('API Contract Testing', () => {
     });
 
     test('content should not contain sensitive data', async ({ request }) => {
-      const apis = ['/api/projects.json'];
+      const apis = ['/search/projects.json'];
       
       for (const apiPath of apis) {
         const response = await request.get(apiPath);

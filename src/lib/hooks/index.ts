@@ -1,8 +1,8 @@
 /**
  * Shared React hooks (DOM / browser utilities).
  *
- * Chat orchestration hooks live under `@/features/chat/hooks`.
- * This barrel re-exports them for backward compatibility.
+ * Chat orchestration hooks live under `@/features/chat/hooks` — do not
+ * re-export them from this barrel.
  *
  * @example
  * ```ts
@@ -36,24 +36,3 @@ export {
 } from './useIntersectionObserver';
 export { useOverlayScrollLock } from './useOverlayScrollLock';
 export { useTouchGestures } from './useTouchGestures';
-
-// ─── Chat hooks (compat re-exports) ───────────────────────────────
-export {
-  useAIChatController,
-  useChatEffects,
-  useChatLifecycle,
-  useChatStorage,
-  useMessageActions,
-  useMessageProcessing,
-  useQueryManagement,
-  useUIState,
-  useInputHandlers,
-  useScrollManagement,
-  useKeyboardShortcuts,
-  useComputedValues,
-  useConversationAnalytics,
-  useConversationWebSocket,
-  useVoiceRecognition,
-  useCopyFeedback,
-  useAiChatBridge,
-} from '@/features/chat/hooks';
