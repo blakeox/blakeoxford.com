@@ -30,6 +30,7 @@
     "optimize:images": "node scripts/optimization/optimize-images-advanced.js",
     "validate:zaraz": "node scripts/setup/validate-zaraz.mjs",
     "deploy:worker": "corepack pnpm exec wrangler deploy",
+    "monitor:edge": "bash scripts/monitor/cloudflare-edge-smoke.sh",
     "lh:ci": "lhci autorun",
     "perf:test": "node scripts/build/performance-test.js",
     "security:audit": "node scripts/quality/run-dependency-audit.js",

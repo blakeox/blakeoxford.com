@@ -24,6 +24,10 @@ overrides:
   uuid: '11.1.1'
   qs: '6.15.3'
   '@opentelemetry/core': '2.8.0'
+  body-parser: '1.20.6'
+  fast-uri: '3.1.4'
+  sharp: '0.35.3'
+  svgo: '4.0.2'
   # Vite 8 + picomatch 4 interop can throw parse.fastpaths; pin patched 2.x (GHSA-c2c7-rcm5-vvqj)
   picomatch: '2.3.2'
 
