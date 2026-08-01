@@ -1,4 +1,5 @@
 import { anonymizeClientIp } from '../../shared/ip';
+import { writeAiAnalytics } from '../../shared/ai-analytics';
 import type { Env } from '../../types';
 import type { AiSourcePayload } from './types';
 
@@ -81,24 +82,17 @@ export function buildAiSearchStreamResponse({
         }
       }
 
-      if (env.AI_ANALYTICS) {
-        try {
-          const responseTime = Date.now() - startTime;
-          env.AI_ANALYTICS.writeDataPoint({
-            blobs: [
-              query.slice(0, 50),
-              'API_CALL_STREAM',
-              anonymizeClientIp(clientIp),
-              sessionId || 'anonymous',
-              complexity || 'unknown',
-            ],
-            doubles: [sources.length, message.length, responseTime],
-            indexes: ['ai_query', `complexity_${complexity}`],
-          });
-        } catch {
-          // Analytics write failed, continue anyway
-        }
-      }
+      writeAiAnalytics(env, {
+        blobs: [
+          query.slice(0, 50),
+          'API_CALL_STREAM',
+          anonymizeClientIp(clientIp),
+          sessionId || 'anonymous',
+          complexity || 'unknown',
+        ],
+        doubles: [sources.length, message.length, Date.now() - startTime],
+        indexes: ['ai_query', `complexity_${complexity}`],
+      });
     },
     cancel() {
       return undefined;

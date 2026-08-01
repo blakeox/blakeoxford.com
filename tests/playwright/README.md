@@ -12,9 +12,9 @@ This doc covers the essential E2E suite, the new Timeline checks on `/about`, an
 Run locally:
 
 ```sh
-pnpm test:e2e:essential              # all default projects
+pnpm test:e2e:essential:chromium              # all default projects
 pnpm test:e2e:essential:chromium     # chromium only
-PLAYWRIGHT_JOBS=1 pnpm test:e2e:essential  # serial if debugging
+PLAYWRIGHT_JOBS=1 pnpm test:e2e:essential:chromium  # serial if debugging
 ```
 
 ## Timeline tests (`@timeline`)
@@ -63,6 +63,6 @@ await expect(page.locator('.timeline-mobile')).toBeHidden();
 ## Useful scripts
 
 - Install browsers: `pnpm test:e2e:install`
-- Check what browsers are available: `pnpm test:e2e:check`
+- Check what browsers are available: `node scripts/build/check-playwright-browsers.cjs`
 - Update visual snapshots: `pnpm test:e2e:visual`
 

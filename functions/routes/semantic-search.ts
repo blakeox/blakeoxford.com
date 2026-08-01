@@ -1,6 +1,10 @@
 import { anonymizeClientIp } from '../shared/ip';
 import { buildApiCorsHeaders } from '../shared/cors';
+import { writeAiAnalytics } from '../shared/ai-analytics';
 import type { RouteContext } from '../shared/route-context';
+
+const MAX_REQUEST_BYTES = 8 * 1024;
+const MAX_QUERY_LENGTH = 500;
 
 type RateLimitBucket = { count: number; reset: number };
 
@@ -49,6 +53,14 @@ export async function handleSemanticSearch({
     });
   }
 
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > MAX_REQUEST_BYTES) {
+    return new Response(JSON.stringify({ error: 'Request is too large' }), {
+      status: 413,
+      headers: baseCorsHeaders,
+    });
+  }
+
   try {
     const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
 
@@ -88,10 +100,11 @@ export async function handleSemanticSearch({
     }
 
     const body = (await request.json()) as { query?: unknown; limit?: unknown };
-    const query = body.query;
-    const limit = typeof body.limit === 'number' ? body.limit : 5;
+    const query = typeof body.query === 'string' ? body.query.trim() : '';
+    const requestedLimit = typeof body.limit === 'number' ? body.limit : 5;
+    const limit = Math.max(1, Math.min(requestedLimit, 10));
 
-    if (!query || typeof query !== 'string') {
+    if (!query || query.length > MAX_QUERY_LENGTH) {
       return new Response(JSON.stringify({ error: 'Query is required' }), {
         status: 400,
         headers: baseCorsHeaders,
@@ -168,17 +181,11 @@ export async function handleSemanticSearch({
     const topScore = results[0]?.score ?? 0;
     const latency = Date.now() - startTime;
 
-    if (env.AI_ANALYTICS) {
-      try {
-        env.AI_ANALYTICS.writeDataPoint({
-          blobs: [query.slice(0, 50), 'VECTORIZE', anonymizeClientIp(clientIp), 'anonymous'],
-          doubles: [results.length, topScore, latency],
-          indexes: ['semantic_search'],
-        });
-      } catch {
-        // Analytics is non-critical
-      }
-    }
+    writeAiAnalytics(env, {
+      blobs: [query.slice(0, 50), 'VECTORIZE', anonymizeClientIp(clientIp), 'anonymous'],
+      doubles: [results.length, topScore, latency],
+      indexes: ['semantic_search'],
+    });
 
     return new Response(
       JSON.stringify({

@@ -1,5 +1,5 @@
 {
-  "source": "public/api/blog.json",
+  "source": "public/search/blog.json",
   "schemaVersion": 1,
   "entries": []
 }

@@ -15,7 +15,7 @@ test.describe('Performance and Load', () => {
     // Simulate 10 rapid requests to the blog API
     const responses = await Promise.all(
       Array.from({ length: 10 }).map(() =>
-        request.get('/api/blog.json')
+        request.get('/search/blog.json')
       )
     );
     for (const res of responses) {

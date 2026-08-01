@@ -77,7 +77,7 @@ function suggestTestCommands(result) {
     } else if (result.installedBrowsers.includes('chromium')) {
       log(colors.yellow, '   Limited browsers available - run Chromium-only tests:');
       log(colors.blue, '   pnpm exec playwright test --project=chromium');
-      log(colors.blue, '   pnpm test:e2e:essential');
+      log(colors.blue, '   pnpm test:e2e:essential:chromium');
     } else {
       log(colors.yellow, `   Run tests with available browser: ${result.installedBrowsers[0]}`);
       log(colors.blue, `   pnpm exec playwright test --project=${result.installedBrowsers[0]}`);

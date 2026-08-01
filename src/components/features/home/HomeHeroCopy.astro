@@ -1,0 +1,49 @@
+---
+/**
+ * Home hero copy column — brand lockup, dual lines, CTA, scroll hint.
+ */
+import IntroCopy from '@/components/composites/IntroCopy.astro';
+import Button from '@/components/primitives/Button.astro';
+import type { HomePageContent } from '@/content/home/pageTypes';
+
+interface Props {
+  author: string;
+  content: HomePageContent['hero'];
+  workLine: string;
+  daringLine: string;
+}
+
+const { author, content, workLine, daringLine } = Astro.props as Props;
+---
+
+<div class="hero-entrance home-dual-copy relative z-20">
+  <div class="home-dual-lockup">
+    <span class="home-dual-mark" aria-hidden="true"></span>
+    <IntroCopy
+      kicker={content.kicker || 'Two sides'}
+      title={author}
+      size="identity"
+      class="w-full items-start"
+    />
+
+    <div class="home-dual-lines" aria-hidden="true">
+      <p class="home-dual-line" data-dual-line-work>{workLine}</p>
+      <p class="home-dual-line" data-dual-line-daring>{daringLine}</p>
+    </div>
+  </div>
+
+  <p class="sr-only" aria-live="polite" data-dual-live></p>
+
+  <Button
+    variant="primary"
+    size="lg"
+    href={content.primaryCta.href}
+    data-test="home-cta-connect"
+    data-analytics="hero-cta"
+    data-prefetch-contact
+  >
+    {content.primaryCta.label}
+  </Button>
+
+  <p class="home-dual-hint">Scroll to meet the other side</p>
+</div>

@@ -1,28 +1,31 @@
 import type { RouteContext } from '../shared/route-context';
 import { isBlakeOxfordHostname } from '../shared/hostname';
+import { buildApiCorsHeaders, isAllowedApiOrigin } from '../shared/cors';
 
-export async function handleTheme({
-  request,
-  url,
-  reqId,
-}: RouteContext): Promise<Response | null> {
+export async function handleTheme({ request, url, reqId }: RouteContext): Promise<Response | null> {
   if (url.pathname !== '/api/set-theme') {
     return null;
   }
 
-  const origin = request.headers.get('origin') || '*';
   const corsHeaders = {
-    'access-control-allow-origin': origin,
-    'access-control-allow-credentials': 'true',
-    'access-control-allow-methods': 'POST, OPTIONS',
-    'access-control-allow-headers': 'content-type',
-    vary: 'Origin',
-    'cache-control': 'no-store',
-    'content-type': 'application/json; charset=utf-8',
-    'x-request-id': reqId,
-    'x-route-kind': 'api',
-    'x-cache-policy': 'no-store',
+    ...buildApiCorsHeaders(request, {
+      allowHeaders: 'content-type',
+      extra: {
+        'cache-control': 'no-store',
+        'content-type': 'application/json; charset=utf-8',
+        'x-request-id': reqId,
+        'x-route-kind': 'api',
+        'x-cache-policy': 'no-store',
+      },
+    }),
   };
+
+  if (!isAllowedApiOrigin(request)) {
+    return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
+      status: 403,
+      headers: corsHeaders,
+    });
+  }
 
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });

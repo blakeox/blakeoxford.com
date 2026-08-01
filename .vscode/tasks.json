@@ -4,7 +4,7 @@
 		{
 			"label": "Build site and run quality gate",
 			"type": "shell",
-			"command": "pnpm clean && pnpm install --frozen-lockfile && pnpm build && pnpm deploy:quality-gate",
+			"command": "pnpm quality clean && pnpm install --frozen-lockfile && pnpm build && pnpm check",
 			"problemMatcher": [
 				"$eslint-stylish"
 			],
@@ -13,25 +13,25 @@
 		{
 			"label": "Build site and run quality gate",
 			"type": "shell",
-			"command": "pnpm clean && pnpm install --frozen-lockfile && pnpm build && pnpm deploy:quality-gate",
+			"command": "pnpm quality clean && pnpm install --frozen-lockfile && pnpm build && pnpm check",
 			"group": "build"
 		},
 		{
 			"label": "Build site and run quality gate",
 			"type": "shell",
-			"command": "pnpm clean && pnpm install --frozen-lockfile && pnpm build && pnpm deploy:quality-gate",
+			"command": "pnpm quality clean && pnpm install --frozen-lockfile && pnpm build && pnpm check",
 			"group": "build"
 		},
 		{
 			"label": "Build site and run quality gate",
 			"type": "shell",
-			"command": "pnpm clean && pnpm install --frozen-lockfile && pnpm build && pnpm deploy:quality-gate",
+			"command": "pnpm quality clean && pnpm install --frozen-lockfile && pnpm build && pnpm check",
 			"group": "build"
 		},
 		{
 			"label": "Build site and run quality gate",
 			"type": "shell",
-			"command": "pnpm clean && pnpm install --frozen-lockfile && pnpm build && pnpm deploy:quality-gate",
+			"command": "pnpm quality clean && pnpm install --frozen-lockfile && pnpm build && pnpm check",
 			"group": "build"
 		}
 	]

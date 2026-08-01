@@ -64,6 +64,8 @@ const CATALOG_ORDER = [
   'MetricsTable',
   'ButtonGroup',
   'HomeHeroSection',
+  'HomeHeroCopy',
+  'HomeHeroVisual',
   'HomeCTASection',
   'HomeRecentProjectsSection',
   'HomeLatestPostsSection',

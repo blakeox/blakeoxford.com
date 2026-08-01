@@ -24,7 +24,7 @@ Core commands:
 | Build static site                       | `pnpm build`            |
 | Unit tests (Vitest)                     | `pnpm test`             |
 | E2E tests (Playwright)                  | `pnpm test:e2e`         |
-| Comprehensive quality (CI parity)       | `pnpm test:ci`          |
+| Comprehensive quality (local)           | `pnpm quality full`     |
 | Flakiness track                         | `pnpm flakiness:track`  |
 | Flakiness gate                          | `pnpm flakiness:check`  |
 | Generate quality summary                | `pnpm quality:summary`  |
@@ -283,11 +283,11 @@ Before requesting review:
 
 ## Production deploy (Cloudflare Workers)
 
-**Primary:** Cloudflare Workers Builds (Git integration) deploys `blakeoxford-com` on pushes to `main` / tracked branches.
+**Primary:** Cloudflare Workers Builds (Git integration) deploys `blakeoxford-com` on pushes to tracked production branches (`main` / as configured in the Cloudflare dashboard).
 
-**Secondary:** Pushes to `main` also run `.github/workflows/deploy-worker.yml` (`pnpm build` + `wrangler deploy`). That job soft-fails if `CLOUDFLARE_API_TOKEN` is invalid so it does not block the repo while Workers Builds remains healthy.
+**Secondary (manual only):** `.github/workflows/deploy-worker.yml` is `workflow_dispatch` — a Wrangler backup when you need an explicit deploy outside Workers Builds. It does **not** run on push.
 
-If **Deploy Worker** fails with `Invalid access token [code: 9109]` or `Authentication error [code: 10000]`, rotate GitHub credentials:
+If a manual **Deploy Worker** run fails with `Invalid access token [code: 9109]` or `Authentication error [code: 10000]`, rotate GitHub credentials:
 
 ```bash
 # Preferred: dedicated API token (Cloudflare dashboard → Edit Cloudflare Workers)
@@ -297,13 +297,13 @@ CLOUDFLARE_API_TOKEN='your-token' ./scripts/setup/github-cloudflare-deploy.sh
 ./scripts/setup/github-cloudflare-deploy.sh --from-wrangler
 ```
 
-Then re-run deploy:
+Then trigger the backup deploy:
 
 ```bash
 gh workflow run deploy-worker.yml
 ```
 
-Cloudflare Git integration may also build on push; the GitHub Action is the explicit Wrangler deploy path when `CLOUDFLARE_API_TOKEN` is configured. See `.github/instructions/cloudflare.instructions.md` for Worker bindings and secrets.
+See `.github/instructions/cloudflare.instructions.md` for Worker bindings and secrets.
 
 ## Release Cadence
 

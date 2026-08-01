@@ -6,18 +6,6 @@
  * @module contexts
  */
 
-// Chat Context
-export {
-  ChatProvider,
-  useChatContext,
-  useChatState,
-  useChatDispatch,
-  type ChatContextState,
-  type ChatAction,
-  type ChatContextValue,
-  type ChatProviderProps,
-} from './ChatContext';
-
 // Theme Context
 export {
   ThemeProvider,

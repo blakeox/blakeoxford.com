@@ -30,3 +30,11 @@ export {
   type ContactFormConfig,
   type ValidationErrors,
 } from './ContactFormService';
+
+// ─── AI Feedback Service ──────────────────────────────────────────────────────
+export {
+  submitAIFeedback,
+  type AIFeedbackPayload,
+  type AIFeedbackSentiment,
+  type AIFeedbackConfig,
+} from './AIFeedbackService';

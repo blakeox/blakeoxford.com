@@ -9,18 +9,14 @@ function loadJson(rel: string) {
   return JSON.parse(raw);
 }
 
-describe('Projects API Contract', () => {
-  it('public/api/projects.json matches contract', () => {
-    const data = loadJson('public/api/projects.json');
-  const parsed = ProjectsApiSchema.parse(data);
-    expect(parsed.length).toBeGreaterThan(0);
-    // Projects should be sorted by most recent first
-    const hasValidDates = parsed.every(p => p.publishedAt && /\d{4}-\d{2}-\d{2}/.test(p.publishedAt));
-    expect(hasValidDates).toBe(true);
-  });
-
-  it('search/projects.json matches contract', () => {
+describe('Projects search index contract', () => {
+  it('public/search/projects.json matches contract', () => {
     const data = loadJson('public/search/projects.json');
-  ProjectsApiSchema.parse(data);
+    const parsed = ProjectsApiSchema.parse(data);
+    expect(parsed.length).toBeGreaterThan(0);
+    const hasValidDates = parsed.every(
+      (p) => p.publishedAt && /\d{4}-\d{2}-\d{2}/.test(p.publishedAt)
+    );
+    expect(hasValidDates).toBe(true);
   });
 });
