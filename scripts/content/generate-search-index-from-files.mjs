@@ -181,12 +181,10 @@ function build() {
   ];
 
   const outSearchDir = path.join(projectRoot, 'public/search');
-  const outApiDir = path.join(projectRoot, 'public/api');
   ensureDir(outSearchDir);
-  ensureDir(outApiDir);
 
-  // Canonical search artifacts live under public/search/.
-  // public/api/{blog,projects}.json are compatibility mirrors of the same payloads.
+  // Canonical search artifacts live under public/search/ only.
+  // Legacy /api/{blog,projects}.json URLs redirect to /search/* (see _redirects).
   const projectsJson = JSON.stringify(searchProjects, null, 2);
   const blogJson = JSON.stringify(searchBlog, null, 2);
   const indexJson = JSON.stringify(searchIndex, null, 2);
@@ -194,21 +192,16 @@ function build() {
   fs.writeFileSync(path.join(outSearchDir, 'projects.json'), projectsJson);
   fs.writeFileSync(path.join(outSearchDir, 'blog.json'), blogJson);
   fs.writeFileSync(path.join(outSearchDir, 'index.json'), indexJson);
-  fs.writeFileSync(path.join(outApiDir, 'projects.json'), projectsJson);
-  fs.writeFileSync(path.join(outApiDir, 'blog.json'), blogJson);
 
   try {
     const distDir = path.join(projectRoot, 'dist');
     if (fs.existsSync(distDir)) {
       const distSearchDir = path.join(distDir, 'search');
-      const distApiDir = path.join(distDir, 'api');
       ensureDir(distSearchDir);
-      ensureDir(distApiDir);
       fs.writeFileSync(path.join(distDir, 'search-index.json'), JSON.stringify(searchIndex, null, 2));
       fs.writeFileSync(path.join(distSearchDir, 'index.json'), JSON.stringify(searchIndex, null, 2));
       fs.writeFileSync(path.join(distSearchDir, 'blog.json'), JSON.stringify(searchBlog, null, 2));
-      fs.writeFileSync(path.join(distApiDir, 'projects.json'), JSON.stringify(searchProjects, null, 2));
-      fs.writeFileSync(path.join(distApiDir, 'blog.json'), JSON.stringify(searchBlog, null, 2));
+      fs.writeFileSync(path.join(distSearchDir, 'projects.json'), JSON.stringify(searchProjects, null, 2));
     }
   } catch (error) {
     console.warn('[search-index] Skipped writing dist/*:', error?.message ?? error);

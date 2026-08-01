@@ -1,2 +1,6 @@
 /docs/components/ /design/components/ 301
 /service-worker.js /sw.js 301
+# Mirrored in functions/routes/legacy-search-redirect.ts — Workers `run_worker_first`
+# means static _redirects alone are not enough for these paths.
+/api/projects.json /search/projects.json 301
+/api/blog.json /search/blog.json 301

@@ -91,17 +91,17 @@ This is a **performance-first Astro SSG** deployed on Cloudflare Workers with co
 ```bash
 pnpm dev                    # Development server with AI search dev proxy
 pnpm build                  # Full build with search index generation
-pnpm build:prod             # Production build with git commit tracking
+pnpm build             # Production build with git commit tracking
 pnpm preview                # Preview built site
-pnpm preview:prod           # Build and preview production version
+pnpm build && pnpm preview           # Build and preview production version
 pnpm lint                   # ESLint all files (.js,.ts,.astro,.mdx)
-pnpm lint:fix               # Auto-fix ESLint issues
+pnpm exec eslint . --ext .js,.ts,.astro,.mdx --fix               # Auto-fix ESLint issues
 pnpm typecheck              # TypeScript type checking with Astro
 pnpm test                   # Vitest unit tests
 pnpm test:coverage          # Run tests with coverage report
 pnpm test:e2e              # Playwright e2e tests
-pnpm test:e2e:essential    # Run essential e2e tests only (faster)
-pnpm test:ci               # Run both test suites (CI)
+pnpm test:e2e:essential:chromium    # Run essential e2e tests only (faster)
+pnpm quality full               # Run both test suites (CI)
 pnpm test -- --run           # Unit tests
 ```
 
@@ -113,13 +113,13 @@ pnpm perf:test             # Performance testing with Lighthouse
 ./scripts/build/performance-budget.sh  # Size/bundle budget gate
 pnpm perf:summary          # Generate performance summary
 pnpm perf:long-tasks       # Analyze long tasks
-pnpm deploy:quality-gate   # Run comprehensive quality gate
+pnpm check   # Run comprehensive quality gate
 ```
 
 ### AI & Search Features
 
 ```bash
-pnpm generate:search-index # Generate client search index
+pnpm build  # search index via prebuild # Generate client search index
 pnpm vectorize:index       # Index content in Cloudflare Vectorize
 ```
 
@@ -127,8 +127,7 @@ pnpm vectorize:index       # Index content in Cloudflare Vectorize
 
 ```bash
 pnpm deploy:worker         # Deploy Worker to Cloudflare
-pnpm edge:deploy           # Alternative deployment command
-pnpm edge:validate         # Validate edge configuration
+pnpm quality edge:validate         # Validate edge configuration
 ```
 
 ### Quality & Security
@@ -294,7 +293,7 @@ Always use the defined Zod schemas in `src/content/config.ts`:
 - Use `any` type in TypeScript (prefer `unknown` and narrow with guards)
 - Write custom CSS when Tailwind utilities exist
 - Ignore ESLint warnings (fix or document suppressions)
-- Deploy without running quality gates (`pnpm deploy:quality-gate`)
+- Deploy without running quality gates (`pnpm check`)
 - Use Cloudflare Pages APIs (deprecated; use Workers flow)
 - Increase test retry counts to mask flakiness (fix root cause)
 
@@ -471,7 +470,7 @@ git log -5 --oneline
 git diff HEAD~1
 
 # 2. Try clean build
-pnpm clean && pnpm install --frozen-lockfile && pnpm build
+pnpm quality clean && pnpm install --frozen-lockfile && pnpm build
 
 # 3. Check for errors
 pnpm typecheck
@@ -491,7 +490,7 @@ pnpm exec wrangler tail
 # Visit: https://sentry.io/organizations/[org]/issues/
 
 # 3. Verify environment bindings
-pnpm edge:validate
+pnpm quality edge:validate
 cat wrangler.toml  # Check KV, DO, AI bindings
 
 # 4. Test locally
@@ -666,8 +665,8 @@ For detailed guidance on specific areas, refer to:
 ```bash
 pnpm dev                   # Start development
 pnpm build                 # Build for production
-pnpm test:ci              # Run all tests
-pnpm deploy:quality-gate  # Pre-deployment validation
+pnpm quality full              # Run all tests
+pnpm check  # Pre-deployment validation
 pnpm deploy:worker        # Deploy to Cloudflare
 ```
 
@@ -676,7 +675,7 @@ pnpm deploy:worker        # Deploy to Cloudflare
 2. Follow established patterns in similar components
 3. Run `pnpm lint && pnpm typecheck` before committing
 4. Add/update tests for new functionality
-5. Check quality gates: `pnpm deploy:quality-gate`
+5. Check quality gates: `pnpm check`
 
 ### Need Help?
 - Check instruction files for domain-specific guidance
@@ -693,7 +692,7 @@ pnpm deploy:worker        # Deploy to Cloudflare
 2. Follow established patterns in similar components
 3. Run `pnpm lint && pnpm typecheck` before committing
 4. Add/update tests for new functionality
-5. Check quality gates: `pnpm deploy:quality-gate`
+5. Check quality gates: `pnpm check`
 
 ### Need Help?
 - Check instruction files for domain-specific guidance
@@ -744,10 +743,10 @@ pnpm test:e2e
 
 ```bash
 # 1. Full quality check
-pnpm deploy:quality-gate
+pnpm check
 
 # 2. Build production
-pnpm build:prod
+pnpm build
 
 # 3. Deploy to edge
 pnpm deploy:worker
@@ -769,7 +768,7 @@ pnpm typecheck --verbose  # See detailed errors
 
 **Lint errors**:
 ```bash
-pnpm lint:fix  # Auto-fix many issues
+pnpm exec eslint . --ext .js,.ts,.astro,.mdx --fix  # Auto-fix many issues
 ```
 
 **Test failures**:
@@ -798,7 +797,7 @@ pnpm perf:summary  # Compare against budgets
 
 **Worker not deploying**:
 ```bash
-pnpm edge:validate  # Check configuration
+pnpm quality edge:validate  # Check configuration
 pnpm exec wrangler tail  # View live logs
 ```
 
@@ -861,7 +860,7 @@ node scripts/quality/report-flaky-tests.js
 
 ### Integration
 - [ ] Lint and typecheck passing (`pnpm lint && pnpm typecheck`)
-- [ ] Quality gate passes: `pnpm deploy:quality-gate`
+- [ ] Quality gate passes: `pnpm check`
 - [ ] Edge deployment validated (if Worker changes)
 - [ ] Environment variables documented (if new ones added)
 - [ ] Documentation updated (if new patterns)
@@ -869,10 +868,10 @@ node scripts/quality/report-flaky-tests.js
 ### Pre-Deployment Checklist
 ```bash
 # Run this before every commit
-pnpm lint && pnpm typecheck && pnpm test:ci
+pnpm lint && pnpm typecheck && pnpm quality full
 
 # Run this before deployment
-pnpm deploy:quality-gate
+pnpm check
 
 # Check specific areas if changed
 pnpm audit:contrast        # If colors changed
@@ -902,7 +901,7 @@ pnpm test:e2e             # If interactive features changed
 
 ### Integration
 - [ ] Lint and typecheck passing (`pnpm lint && pnpm typecheck`)
-- [ ] Quality gate passes: `pnpm deploy:quality-gate`
+- [ ] Quality gate passes: `pnpm check`
 - [ ] Edge deployment validated (if Worker changes)
 - [ ] Environment variables documented (if new ones added)
 - [ ] Documentation updated (if new patterns)
@@ -910,10 +909,10 @@ pnpm test:e2e             # If interactive features changed
 ### Pre-Deployment Checklist
 ```bash
 # Run this before every commit
-pnpm lint && pnpm typecheck && pnpm test:ci
+pnpm lint && pnpm typecheck && pnpm quality full
 
 # Run this before deployment
-pnpm deploy:quality-gate
+pnpm check
 
 # Check specific areas if changed
 pnpm audit:contrast        # If colors changed
@@ -946,11 +945,11 @@ pnpm preview                  # Preview build locally
 # Pre-Commit Checks (run before every commit)
 pnpm lint && pnpm typecheck   # Static analysis
 pnpm test                     # Unit tests
-pnpm test:e2e:essential      # Fast e2e tests (~2 min)
+pnpm test:e2e:essential:chromium      # Fast e2e tests (~2 min)
 
 # Full Validation (run before PR/deploy)
-pnpm test:ci                  # All tests (unit + e2e)
-pnpm deploy:quality-gate      # Complete quality checks
+pnpm quality full                  # All tests (unit + e2e)
+pnpm check      # Complete quality checks
 ```
 
 ### Testing & Quality
@@ -963,7 +962,7 @@ pnpm test -- --watch          # Watch mode
 
 # E2E Testing (Playwright)
 pnpm test:e2e                # All browsers (Chromium, Firefox, WebKit)
-pnpm test:e2e:essential      # Essential tests only (faster)
+pnpm test:e2e:essential:chromium      # Essential tests only (faster)
 pnpm test:e2e:ui             # Interactive UI mode (debugging)
 pnpm test:e2e -- --headed    # See browser
 pnpm test:e2e -- --debug     # Debug mode with Playwright Inspector
@@ -986,7 +985,7 @@ pnpm perf:long-tasks        # Analyze JS long tasks (>50ms)
 
 # Optimization
 pnpm optimize:images        # Advanced image optimization (AVIF/WebP)
-pnpm build:prod            # Production build with git tracking
+pnpm build            # Production build with git tracking
 pnpm quality:summary       # Quality metrics dashboard
 pnpm quality:badges        # Generate quality badges
 ```
@@ -995,11 +994,10 @@ pnpm quality:badges        # Generate quality badges
 ```bash
 # Deployment
 pnpm deploy:worker          # Deploy Worker to Cloudflare
-pnpm edge:deploy           # Alternative deploy command
-pnpm edge:validate         # Validate edge configuration
+pnpm quality edge:validate         # Validate edge configuration
 
 # AI & Search
-pnpm generate:search-index  # Generate client search index
+pnpm build  # search index via prebuild  # Generate client search index
 pnpm vectorize:index       # Index content in Vectorize (RAG)
 
 # Debugging
@@ -1012,13 +1010,13 @@ pnpm exec wrangler dev     # Local Worker dev mode
 ```bash
 # Linting
 pnpm lint                   # ESLint (.js,.ts,.astro,.mdx)
-pnpm lint:fix              # Auto-fix issues
+pnpm exec eslint . --ext .js,.ts,.astro,.mdx --fix              # Auto-fix issues
 pnpm typecheck             # TypeScript + Astro type checking
 
 # Build Variants
-pnpm clean                 # Remove dist/, .astro/, node_modules/.vite
+pnpm quality clean         # Remove dist/, .astro/, node_modules/.vite
 pnpm build                 # Standard build
-pnpm build:prod           # Production build (with git commit ID)
+pnpm build           # Production build (with git commit ID)
 export ENABLE_ASTRO_COMPRESS=false && pnpm build  # Fast dev build
 ```
 
@@ -1060,8 +1058,8 @@ pnpm audit:contrast && pnpm test:e2e
 pnpm test && pnpm test:e2e
 
 # Deploy Changes
-pnpm deploy:quality-gate    # Full validation
-pnpm build:prod            # Production build
+pnpm check    # Full validation
+pnpm build            # Production build
 pnpm deploy:worker         # Deploy to edge
 curl -I https://blakeoxford.com  # Verify
 ```
@@ -1070,7 +1068,7 @@ curl -I https://blakeoxford.com  # Verify
 ```bash
 # Rollback Deployment
 git revert HEAD
-pnpm build:prod && pnpm deploy:worker
+pnpm build && pnpm deploy:worker
 
 # Force Clean Build
 rm -rf node_modules .astro dist

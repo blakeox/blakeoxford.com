@@ -262,6 +262,7 @@ async function indexContent(items) {
   const token = await getAuthToken();
   
   const vectors = [];
+  const failures = [];
   
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
@@ -304,12 +305,17 @@ async function indexContent(items) {
       
     } catch (error) {
       console.error(`  ✗ Error processing ${collection}/${slug}:`, error.message);
+      failures.push(`${collection}/${slug}`);
     }
+  }
+
+  if (failures.length > 0) {
+    throw new Error(`Vector generation incomplete; failed items: ${failures.join(', ')}`);
   }
   
   console.log(`\n✓ Generated ${vectors.length} vectors\n`);
   
-  // Save vectors to NDJSON file for wrangler vectorize insert
+  // Save vectors to NDJSON file for wrangler vectorize upsert
   // Vectorize expects newline-delimited JSON (one object per line)
   const outputPath = join(__dirname, '../vectorize-data.json');
   const fs = await import('fs/promises');
@@ -318,7 +324,7 @@ async function indexContent(items) {
   
   console.log(`✓ Saved vectors to: ${outputPath}`);
   console.log('\n📦 To upload to Vectorize, run:\n');
-  console.log(`   wrangler vectorize insert ${VECTORIZE_INDEX_NAME} --file=vectorize-data.json\n`);
+  console.log(`   wrangler vectorize upsert ${VECTORIZE_INDEX_NAME} --file=vectorize-data.json\n`);
   
   return vectors;
 }

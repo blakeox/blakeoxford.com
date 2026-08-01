@@ -24,6 +24,7 @@ interface MockOpts {
   existingHits?: number;
   emailSendError?: boolean;
   acceptJson?: boolean;
+  rateLimitError?: boolean;
 }
 
 function mockContext({
@@ -33,6 +34,7 @@ function mockContext({
   existingHits,
   emailSendError,
   acceptJson = false,
+  rateLimitError = false,
 }: MockOpts = {}) {
   const headers = new Headers({
     'content-type': json ? 'application/json' : 'application/x-www-form-urlencoded',
@@ -48,6 +50,7 @@ function mockContext({
     RATE_LIMIT_KV: {
       store: existingHits ? { 'ip:1.2.3.4': existingHits.toString() } : {},
       async get(k: string) {
+        if (rateLimitError) throw new Error('KV unavailable');
         return (this as any).store[k] || null;
       },
       async put(k: string, v: string) {
@@ -90,6 +93,28 @@ describe('send-email edge function', () => {
     });
     const res = await onRequestPost(ctx);
     expect(res.status).toBe(429);
+  });
+  it('fails closed when rate-limit storage is unavailable', async () => {
+    const ctx = mockContext({
+      body: { name: 'A', email: 'a@b.com', message: 'Hi', 'cf-turnstile-response': 't' },
+      rateLimitError: true,
+    });
+    const res = await onRequestPost(ctx);
+    expect(res.status).toBe(503);
+    expect(ctx.env.CONTACT_EMAIL.send).not.toHaveBeenCalled();
+  });
+  it('rejects oversized contact messages', async () => {
+    const ctx = mockContext({
+      body: {
+        name: 'A',
+        email: 'a@b.com',
+        message: 'x'.repeat(5001),
+        'cf-turnstile-response': 't',
+      },
+    });
+    const res = await onRequestPost(ctx);
+    expect(res.status).toBe(400);
+    expect(ctx.env.CONTACT_EMAIL.send).not.toHaveBeenCalled();
   });
   it('blocks failed turnstile', async () => {
     const ctx = mockContext({

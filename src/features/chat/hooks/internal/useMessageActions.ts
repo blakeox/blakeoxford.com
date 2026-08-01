@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import type { ChatMessage, MutableRef } from '@/lib/chat';
 import { decodeMimeEncodedWords, decodeHtmlEntities } from '@/lib/string-utils';
 import { autoragEvents } from '@/lib/analytics';
+import { submitAIFeedback } from '@/services/AIFeedbackService';
 
 /**
  * Options for the message actions hook
@@ -94,24 +95,14 @@ export function useMessageActions(options: UseMessageActionsOptions): UseMessage
         message_id: messageId,
       });
 
-      // Submit feedback to API
-      try {
-        await fetch('/api/ai-feedback', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({
-            messageId,
-            sentiment: resolvedSentiment,
-            query: lastQueryRef.current,
-            metadata: {
-              conversationLength: messagesRef.current.length,
-            },
-          }),
-          keepalive: true,
-        });
-      } catch {
-        /* ignore feedback errors - non-critical */
-      }
+      await submitAIFeedback({
+        messageId,
+        sentiment: resolvedSentiment,
+        query: lastQueryRef.current,
+        metadata: {
+          conversationLength: messagesRef.current.length,
+        },
+      });
     },
     [lastQueryRef, messagesRef, setMessages]
   );

@@ -1,6 +1,33 @@
 import type { Env } from '../../types';
 import type { AiSourcePayload, HistoryEntry } from './types';
 
+type WorkersAiRunOptions = {
+  gateway?: {
+    id: string;
+    skipCache?: boolean;
+    metadata?: Record<string, unknown>;
+  };
+};
+
+/**
+ * Optional AI Gateway options for Workers AI (`env.AI.run` only).
+ * Enable by setting AI_GATEWAY_ID in wrangler — AutoRAG indexing stays ungated.
+ */
+function workersAiGatewayOptions(aiEnv: Env): WorkersAiRunOptions | undefined {
+  if (!aiEnv.AI_GATEWAY_ID) return undefined;
+  return {
+    gateway: {
+      id: aiEnv.AI_GATEWAY_ID,
+      // Conversational answers should stay fresh; use gateway for observability.
+      skipCache: true,
+      metadata: {
+        source: 'website-chat',
+        path: 'workers-ai',
+      },
+    },
+  };
+}
+
 /**
  * Conversational Workers AI path — answers from verified Blake expertise.
  * Do NOT pass SYSTEM/retrieval-junk as the user message.
@@ -39,11 +66,27 @@ export async function handleSimpleQueryWithWorkersAI(
     ];
 
     // llama-3.1-8b-instruct was deprecated 2026-05-30; use the active -fast variant
-    const response = await aiEnv.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
-      messages,
-      max_tokens: 420,
-      temperature: 0.65,
-    });
+    // Gateway options are supported by Workers AI bindings; installed workers-types
+    // may lag the third-argument overload — cast keeps Env typing honest.
+    const gatewayOptions = workersAiGatewayOptions(aiEnv);
+    const runWorkersAi = aiEnv.AI.run as (
+      model: string,
+      inputs: {
+        messages: Array<{ role: string; content: string }>;
+        max_tokens: number;
+        temperature: number;
+      },
+      options?: WorkersAiRunOptions
+    ) => Promise<unknown>;
+    const response = await runWorkersAi(
+      '@cf/meta/llama-3.1-8b-instruct-fast',
+      {
+        messages,
+        max_tokens: 420,
+        temperature: 0.65,
+      },
+      gatewayOptions
+    );
 
     const responseObj =
       response && typeof response === 'object' ? (response as { response?: unknown }) : null;

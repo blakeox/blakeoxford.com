@@ -106,3 +106,6 @@ export {
 
 // ─── WebSocket & Real-time ────────────────────────────────────────
 export { ConversationWebSocket, ConversationHTTP, type WSMessage } from './conversation-ws';
+
+// ─── Fallback search (Ask suggestions) ────────────────────────────
+export { getChatFallbackSuggestions } from './fallback-search';
