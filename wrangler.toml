@@ -104,3 +104,9 @@ new_sqlite_classes = ["ConversationDurableObject"]
 
 [observability.logs]
 enabled = true
+
+# Low-volume request traces for production diagnosis. Workers Paid includes a
+# monthly event allowance; keep sampling bounded and review usage before raising it.
+[observability.traces]
+enabled = true
+head_sampling_rate = 0.05
