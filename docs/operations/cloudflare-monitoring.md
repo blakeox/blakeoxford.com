@@ -1,22 +1,26 @@
 # Cloudflare Operations Runbook
 
 This runbook is the low-maintenance operating contract for the production
-Worker `blakeoxford-com`. It uses Cloudflare-native observability, Sentry, and
-GitHub Actions. No additional monitoring vendor or secret is required.
+Worker `blakeoxford-com`. It uses Cloudflare Synthetic Monitoring, Cloudflare
+native observability, Sentry, and the local smoke script. No additional
+monitoring vendor or secret is required.
 
 ## Signals and owners
 
-| Signal            | Leading indicator                    | Action threshold                                           | Owner                 |
-| ----------------- | ------------------------------------ | ---------------------------------------------------------- | --------------------- |
-| Edge availability | `Edge Availability Monitor` workflow | Any failed scheduled run                                   | Repository maintainer |
-| Worker failures   | Workers Logs / Traces and Sentry     | Any sustained error burst or repeated exception            | Repository maintainer |
-| API abuse         | Cloudflare WAF/rate-limit events     | Repeated hits on `API burst protection` or customer impact | Repository maintainer |
-| API contract      | CORS/debug/header smoke checks       | Any failed smoke check                                     | Repository maintainer |
-| Secret health     | Secret review checklist below        | Unknown age, suspected exposure, or failed integration     | Repository maintainer |
+| Signal            | Leading indicator                           | Action threshold                                           | Owner                 |
+| ----------------- | ------------------------------------------- | ---------------------------------------------------------- | --------------------- |
+| Edge availability | Cloudflare weekly Synthetic Monitoring test | Any failed test or missing result                          | Repository maintainer |
+| Worker failures   | Workers Logs / Traces and Sentry            | Any sustained error burst or repeated exception            | Repository maintainer |
+| API abuse         | Cloudflare WAF/rate-limit events            | Repeated hits on `API burst protection` or customer impact | Repository maintainer |
+| API contract      | CORS/debug/header smoke checks              | Any failed smoke check                                     | Repository maintainer |
+| Secret health     | Secret review checklist below               | Unknown age, suspected exposure, or failed integration     | Repository maintainer |
 
-The lagging availability indicator is the percentage of scheduled monitor runs
-that pass. The target is 100%; any failure is investigated before it is treated
-as noise.
+The lagging availability indicator is the percentage of Cloudflare Synthetic
+Monitoring tests that pass. The target is 100%; any failure is investigated
+before it is treated as noise. The GitHub-hosted curl monitor was retired after
+Cloudflare Bot Fight Mode correctly issued managed challenges to shared GitHub
+runner IPs. Do not weaken Bot Fight Mode or add a broad runner allowlist to
+restore it.
 
 ## Routine checks
 
@@ -24,10 +28,12 @@ as noise.
 
 1. Confirm the Workers Build completed successfully for the deployed `main`
    SHA.
-2. Run the monitor manually from GitHub Actions.
+2. Run `pnpm monitor:edge` from a trusted local environment.
 3. Check `/_healthz`, the homepage, CORS rejection, and the blocked debug route.
-4. Review Workers Logs/Traces and Sentry for exceptions from the new release.
-5. Record the deployment SHA and Worker version in the release handoff.
+4. Confirm the Cloudflare Synthetic Monitoring one-time test for the homepage
+   completes successfully.
+5. Review Workers Logs/Traces and Sentry for exceptions from the new release.
+6. Record the deployment SHA and Worker version in the release handoff.
 
 ### Quarterly or after an incident
 
@@ -46,11 +52,11 @@ protection` rule is active.
 
 ## Failure handling
 
-- **Monitor failure:** inspect the failed step and run the same script locally
-  with `EDGE_BASE_URL=https://blakeoxford.com`. The monitor identifies its
-  requests, retries transient edge denials, and prints only safe response
-  metadata when the failure persists. Do not disable the monitor to clear a
-  red status.
+- **Synthetic monitor failure:** inspect the Cloudflare Security Events and
+  Workers Logs/Traces for the same time window, then run
+  `EDGE_BASE_URL=https://blakeoxford.com pnpm monitor:edge` locally. A
+  Cloudflare-managed probe is authoritative for public availability; do not
+  weaken Bot Fight Mode to make a GitHub-hosted request pass.
 - **Worker exception burst:** use Workers Logs/Traces and Sentry, then roll back
   the Worker to the last known-good deployment if customer impact is active.
 - **False-positive rate limiting:** temporarily disable the `API burst protection`
@@ -61,8 +67,9 @@ protection` rule is active.
 
 ## Kill switches and rollback
 
-- **Edge monitor:** disable only the scheduled workflow if its own execution is
-  broken; this does not affect production traffic.
+- **Synthetic monitor:** end the weekly test in Cloudflare; this does not affect
+  production traffic. Keep the local smoke script available for deployment
+  validation.
 - **Worker:** roll back to the previous successful Workers deployment.
 - **Rate-limit rule:** disable `API burst protection` in Cloudflare; rule ID is
   `cac8413d409f444eaef771183818a449`.
