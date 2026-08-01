@@ -10,6 +10,13 @@ export const API_EXPOSE_HEADERS = [
   'retry-after',
 ].join(',');
 
+const ALLOWED_API_ORIGINS = new Set(['https://blakeoxford.com', 'https://www.blakeoxford.com']);
+
+export function isAllowedApiOrigin(request: Request): boolean {
+  const origin = request.headers.get('origin');
+  return !origin || ALLOWED_API_ORIGINS.has(origin);
+}
+
 /**
  * Same-origin friendly CORS headers. Never pairs `*` with credentials.
  */
@@ -22,11 +29,7 @@ export function buildApiCorsHeaders(
   } = {}
 ): Record<string, string> {
   const requestOrigin = request.headers.get('origin');
-  const allowOrigin =
-    requestOrigin && requestOrigin !== 'null' ? requestOrigin : new URL(request.url).origin;
-  return {
-    'access-control-allow-origin': allowOrigin,
-    'access-control-allow-credentials': 'true',
+  const headers: Record<string, string> = {
     'access-control-allow-methods': options.methods || 'POST, OPTIONS',
     'access-control-allow-headers':
       options.allowHeaders || 'content-type, authorization, x-session-id',
@@ -34,4 +37,11 @@ export function buildApiCorsHeaders(
     vary: 'Origin',
     ...(options.extra || {}),
   };
+
+  if (requestOrigin && ALLOWED_API_ORIGINS.has(requestOrigin)) {
+    headers['access-control-allow-origin'] = requestOrigin;
+    headers['access-control-allow-credentials'] = 'true';
+  }
+
+  return headers;
 }

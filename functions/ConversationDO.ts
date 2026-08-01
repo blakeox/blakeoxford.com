@@ -10,6 +10,17 @@
  */
 
 import type { Env, ConversationState, WSMessage, RateLimitData } from './types';
+import { buildApiCorsHeaders, isAllowedApiOrigin } from './shared/cors';
+
+const MAX_REQUEST_BYTES = 32 * 1024;
+
+function conversationCorsHeaders(request: Request): Record<string, string> {
+	return buildApiCorsHeaders(request, {
+		methods: 'GET, POST, OPTIONS',
+		allowHeaders: 'content-type, x-session-id',
+		extra: { 'content-type': 'application/json; charset=utf-8' },
+	});
+}
 
 interface SessionData {
 	socket: WebSocket;
@@ -53,6 +64,22 @@ export class ConversationDurableObject {
 
 	async fetch(request: Request): Promise<Response> {
 		const url = new URL(request.url);
+		const corsHeaders = conversationCorsHeaders(request);
+
+		if (!isAllowedApiOrigin(request)) {
+			return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
+				status: 403,
+				headers: corsHeaders,
+			});
+		}
+
+		const contentLength = Number(request.headers.get('content-length') || 0);
+		if (contentLength > MAX_REQUEST_BYTES) {
+			return new Response(JSON.stringify({ error: 'Request body too large' }), {
+				status: 413,
+				headers: corsHeaders,
+			});
+		}
 		
 		// WebSocket upgrade request
 		if (request.headers.get('Upgrade') === 'websocket') {
@@ -61,7 +88,7 @@ export class ConversationDurableObject {
 
 		// HTTP endpoints for fallback/management
 		if (url.pathname.endsWith('/state')) {
-			return this.handleGetState();
+			return this.handleGetState(request);
 		}
 
 		if (url.pathname.endsWith('/message')) {
@@ -72,7 +99,7 @@ export class ConversationDurableObject {
 			return this.handleTyping(request);
 		}
 
-		return new Response('Not found', { status: 404 });
+		return new Response('Not found', { status: 404, headers: corsHeaders });
 	}
 
 	/**
@@ -284,18 +311,13 @@ export class ConversationDurableObject {
 	/**
 	 * Handle HTTP GET state (fallback)
 	 */
-	private async handleGetState(): Promise<Response> {
+	private async handleGetState(request: Request): Promise<Response> {
 		return new Response(JSON.stringify({
 			state: this.conversationState,
 			activeSessions: this.sessions.size,
 			typingCount: this.typingUsers.size
 		}), {
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-				'Access-Control-Allow-Headers': 'Content-Type'
-			}
+			headers: conversationCorsHeaders(request)
 		});
 	}
 
@@ -303,14 +325,9 @@ export class ConversationDurableObject {
 	 * Handle HTTP POST message (fallback)
 	 */
 	private async handlePostMessage(request: Request): Promise<Response> {
+		const corsHeaders = conversationCorsHeaders(request);
 		if (request.method === 'OPTIONS') {
-			return new Response(null, {
-				headers: {
-					'Access-Control-Allow-Origin': '*',
-					'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-					'Access-Control-Allow-Headers': 'Content-Type'
-				}
-			});
+			return new Response(null, { status: 204, headers: corsHeaders });
 		}
 
 		try {
@@ -321,26 +338,23 @@ export class ConversationDurableObject {
 			if (!this.checkRateLimit(userId)) {
 				return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {
 					status: 429,
-					headers: { 'Content-Type': 'application/json' }
+					headers: corsHeaders
 				});
 			}
 
 			await this.handleNewMessage(sessionId, userId, data as WSMessage);
 
-			return new Response(JSON.stringify({
-				success: true,
-				state: this.conversationState
-			}), {
-				headers: {
-					'Content-Type': 'application/json',
-					'Access-Control-Allow-Origin': '*'
-				}
-			});
+				return new Response(JSON.stringify({
+					success: true,
+					state: this.conversationState
+				}), {
+					headers: corsHeaders
+				});
 		} catch (err) {
 			const error = err as Error;
 			return new Response(JSON.stringify({ error: error.message }), {
 				status: 400,
-				headers: { 'Content-Type': 'application/json' }
+				headers: corsHeaders
 			});
 		}
 	}
@@ -349,33 +363,25 @@ export class ConversationDurableObject {
 	 * Handle typing indicator via HTTP (fallback)
 	 */
 	private async handleTyping(request: Request): Promise<Response> {
+		const corsHeaders = conversationCorsHeaders(request);
 		if (request.method === 'OPTIONS') {
-			return new Response(null, {
-				headers: {
-					'Access-Control-Allow-Origin': '*',
-					'Access-Control-Allow-Methods': 'POST, OPTIONS',
-					'Access-Control-Allow-Headers': 'Content-Type'
-				}
-			});
+			return new Response(null, { status: 204, headers: corsHeaders });
 		}
 
 		try {
 			const data = await request.json() as { sessionId?: string; isTyping: boolean };
 			const sessionId = data.sessionId || crypto.randomUUID();
 			
-			this.handleTypingIndicator(sessionId, data.isTyping);
+				this.handleTypingIndicator(sessionId, data.isTyping);
 
-			return new Response(JSON.stringify({ success: true }), {
-				headers: {
-					'Content-Type': 'application/json',
-					'Access-Control-Allow-Origin': '*'
-				}
-			});
+				return new Response(JSON.stringify({ success: true }), {
+					headers: corsHeaders
+				});
 		} catch (err) {
 			const error = err as Error;
 			return new Response(JSON.stringify({ error: error.message }), {
 				status: 400,
-				headers: { 'Content-Type': 'application/json' }
+				headers: corsHeaders
 			});
 		}
 	}

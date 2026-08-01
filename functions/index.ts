@@ -15,9 +15,42 @@ import { handleSemanticSearch } from './routes/semantic-search';
 import { handleAiFeedback } from './routes/ai-feedback';
 import { handleTheme } from './routes/theme';
 import { handleLegacySearchRedirect } from './routes/legacy-search-redirect';
+import { handleDebug } from './routes/debug';
 import { handleAssets } from './routes/assets';
 
 export { ConversationDurableObject } from './ConversationDO.ts';
+
+const CONTENT_SECURITY_POLICY =
+  "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' https://www.clarity.ms https://static.cloudflareinsights.com https://cdn-cgi/ https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; font-src 'self' data:; connect-src 'self' https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://static.cloudflareinsights.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'";
+
+function applySecurityHeaders(response: Response, reqId: string, hostname: string): Response {
+  if (response.status === 101) return response;
+
+  const headers = new Headers(response.headers);
+  headers.set('x-content-type-options', 'nosniff');
+  headers.set('x-frame-options', 'SAMEORIGIN');
+  headers.set('referrer-policy', 'strict-origin-when-cross-origin');
+  headers.set(
+    'permissions-policy',
+    'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()'
+  );
+  headers.set('x-request-id', headers.get('x-request-id') || reqId);
+
+  if (isBlakeOxfordHostname(hostname)) {
+    headers.set('strict-transport-security', 'max-age=31536000; includeSubDomains; preload');
+  }
+
+  const contentType = headers.get('content-type') || '';
+  if (contentType.includes('text/html') && !headers.has('content-security-policy')) {
+    headers.set('content-security-policy', CONTENT_SECURITY_POLICY);
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
 
 const WorkerApp = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -43,7 +76,11 @@ const WorkerApp = {
         h.set('x-request-id', reqId);
         h.set('x-route-kind', 'redirect');
         h.set('x-cache-policy', 'no-store');
-        return new Response(r.body, { status: r.status, statusText: r.statusText, headers: h });
+        return applySecurityHeaders(
+          new Response(r.body, { status: r.status, statusText: r.statusText, headers: h }),
+          reqId,
+          url.hostname
+        );
       }
       if (isProdDomain && host.startsWith('www.') && isGetLike) {
         url.hostname = host.replace(/^www\./, '');
@@ -52,7 +89,11 @@ const WorkerApp = {
         h.set('x-request-id', reqId);
         h.set('x-route-kind', 'redirect');
         h.set('x-cache-policy', 'no-store');
-        return new Response(r.body, { status: r.status, statusText: r.statusText, headers: h });
+        return applySecurityHeaders(
+          new Response(r.body, { status: r.status, statusText: r.statusText, headers: h }),
+          reqId,
+          url.hostname
+        );
       }
     } catch {
       // ignore canonicalization errors
@@ -70,14 +111,15 @@ const WorkerApp = {
       handleSemanticSearch,
       handleAiFeedback,
       handleTheme,
+      handleDebug,
     ] as const;
 
     for (const handler of handlers) {
       const response = await handler(routeCtx);
-      if (response) return response;
+      if (response) return applySecurityHeaders(response, reqId, url.hostname);
     }
 
-    return handleAssets(routeCtx);
+    return applySecurityHeaders(await handleAssets(routeCtx), reqId, url.hostname);
   },
 };
 

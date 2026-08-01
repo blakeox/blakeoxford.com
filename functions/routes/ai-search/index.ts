@@ -21,6 +21,9 @@ import {
 } from './types';
 import { handleSimpleQueryWithWorkersAI, looksLikeEmptyRetrieval } from './workers-ai';
 
+const MAX_REQUEST_BYTES = 32 * 1024;
+const MAX_QUERY_LENGTH = 4000;
+
 export async function handleAiSearch({
   request,
   env,
@@ -55,6 +58,14 @@ export async function handleAiSearch({
     });
   }
 
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > MAX_REQUEST_BYTES) {
+    return new Response(JSON.stringify({ error: 'Request is too large' }), {
+      status: 413,
+      headers: baseCorsHeaders,
+    });
+  }
+
   let payload: AiSearchPayload;
   try {
     payload = (await request.json()) as AiSearchPayload;
@@ -66,7 +77,7 @@ export async function handleAiSearch({
   }
 
   const query = extractQuery(payload);
-  if (!query) {
+  if (!query || query.length > MAX_QUERY_LENGTH) {
     return new Response(JSON.stringify({ error: 'Query is required' }), {
       status: 400,
       headers: baseCorsHeaders,

@@ -8,6 +8,7 @@ compatibility_flags = ["nodejs_compat"]
 # Switch to Workers: serve static assets from ./dist via an assets binding,
 # and use a single Worker entry (functions/index.ts).
 main = "functions/index.ts"
+workers_dev = false
 
 [assets]
 binding = "ASSETS"
@@ -61,10 +62,15 @@ script_name = "blakeoxford-com"
 # GIT_COMMIT            - Current git commit SHA (set in CI/CD)
 # ENVIRONMENT           - Deployment environment (production/staging)
 
+[secrets]
+# AI Search is currently stored under this legacy secret name; the route reads
+# it through bracket notation until the credential can be rotated safely.
+required = ["TURNSTILE_SECRET_KEY", "search-api"]
+
 [vars]
 # Public variables (not sensitive)
 # Add ENVIRONMENT variable for Sentry context
-# ENVIRONMENT = "production"
+ENVIRONMENT = "production"
 AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/autorag/rags/bold-heart-18e4/ai-search"
 PUBLIC_CLARITY_PROJECT_ID = "tqngpokfgs"
 
