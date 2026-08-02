@@ -5,6 +5,14 @@ Worker `blakeoxford-com`. It uses Cloudflare Synthetic Monitoring, Cloudflare
 native observability, Sentry, and the local smoke script. No additional
 monitoring vendor or secret is required.
 
+Cloudflare Health Checks are intentionally not configured: the current
+`blakeoxford.com` zone is on the Free plan, and the dashboard requires Pro /
+Smart Shield for that feature. Do not upgrade billing or weaken existing
+protections to create a duplicate check. The approved Free-plan availability
+signal is the weekly Synthetic Monitoring test plus the local edge smoke
+script; an email alert for Health Check status changes does not currently
+exist.
+
 ## Signals and owners
 
 | Signal            | Leading indicator                           | Action threshold                                           | Owner                 |
