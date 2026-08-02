@@ -63,9 +63,9 @@ script_name = "blakeoxford-com"
 # ENVIRONMENT           - Deployment environment (production/staging)
 
 [secrets]
-# AI Search is currently stored under this legacy secret name; the route reads
-# it through bracket notation until the credential can be rotated safely.
-required = ["TURNSTILE_SECRET_KEY", "search-api"]
+# Keep the required declaration aligned with the deployed secret name. The
+# route retains a legacy fallback for backwards compatibility during rotation.
+required = ["TURNSTILE_SECRET_KEY", "AI_SEARCH_API_TOKEN"]
 
 [vars]
 # Public variables (not sensitive)
