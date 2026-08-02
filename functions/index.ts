@@ -53,6 +53,10 @@ function applySecurityHeaders(response: Response, reqId: string, hostname: strin
   });
 }
 
+export function isProductionScheduledPath(pathname: string, environment?: string): boolean {
+  return environment === 'production' && pathname === '/__scheduled';
+}
+
 const WorkerApp = {
   async scheduled(controller: ScheduledController, env: Env): Promise<void> {
     const Sentry = initEdgeSentry(env);
@@ -78,6 +82,17 @@ const WorkerApp = {
 
     const method = request.method || 'GET';
     const reqId = generateRequestId(request);
+
+    if (isProductionScheduledPath(url.pathname, env.ENVIRONMENT)) {
+      return applySecurityHeaders(
+        new Response('Not Found', {
+          status: 404,
+          headers: { 'cache-control': 'no-store', 'x-route-kind': 'blocked-internal' },
+        }),
+        reqId,
+        url.hostname
+      );
+    }
 
     // HTTPS + apex canonicalization
     try {
