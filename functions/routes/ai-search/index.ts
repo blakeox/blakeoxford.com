@@ -2,7 +2,6 @@ import { anonymizeClientIp } from '../../shared/ip';
 import { buildApiCorsHeaders } from '../../shared/cors';
 import { writeAiAnalytics } from '../../shared/ai-analytics';
 import type { RouteContext } from '../../shared/route-context';
-import type { Env } from '../../types';
 import { parseAiSources } from './parse-sources';
 import { checkAiSearchRateLimit } from './rate-limit';
 import {
