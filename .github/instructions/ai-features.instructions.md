@@ -347,7 +347,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 Required for AI features:
 
-- `AI_SEARCH_API_ENDPOINT` - Vectorize endpoint
+- `AI_SEARCH_API_ENDPOINT` - Cloudflare AI Search Chat Completions endpoint
 - `AI_SEARCH_API_TOKEN` - Authentication token
 - `PUBLIC_ENABLE_AI_CHAT` - Feature flag
 

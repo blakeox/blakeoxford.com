@@ -69,7 +69,7 @@ required = ["TURNSTILE_SECRET_KEY", "AI_SEARCH_API_TOKEN"]
 # Public variables (not sensitive)
 # Add ENVIRONMENT variable for Sentry context
 ENVIRONMENT = "production"
-AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/autorag/rags/bold-heart-18e4/ai-search"
+AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/ai-search/instances/bold-heart-18e4/chat/completions"
 PUBLIC_CLARITY_PROJECT_ID = "tqngpokfgs"
 
 # AI Gateway for Workers AI (`env.AI.run` in workers-ai.ts).

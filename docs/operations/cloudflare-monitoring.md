@@ -5,6 +5,12 @@ Worker `blakeoxford-com`. It uses Cloudflare Synthetic Monitoring, Cloudflare
 native observability, Sentry, and the local smoke script. No additional
 monitoring vendor or secret is required.
 
+The Worker now uses Cloudflare's current AI Search Chat Completions REST
+endpoint (`/ai-search/instances/.../chat/completions`) with the dedicated
+`AI_SEARCH_API_TOKEN` secret. The public `/api/ai-search` response and SSE
+contract remain unchanged. The prior AutoRAG endpoint remains the rollback
+target if the new upstream contract has an incident.
+
 Cloudflare Health Checks are intentionally not configured: the current
 `blakeoxford.com` zone is on the Free plan, and the dashboard requires Pro /
 Smart Shield for that feature. Do not upgrade billing or weaken existing
@@ -57,6 +63,8 @@ protection` rule is active.
 5. Review trace volume and sampling. Current production sampling is 5%; keep
    it bounded unless the extra diagnostic value is justified.
 6. Verify the previous Worker deployment remains available for rollback.
+7. Confirm the AI Search route returns a non-empty message and that streamed
+   requests emit `ready`, `token`, and `done` events.
 
 ## Failure handling
 
@@ -72,6 +80,9 @@ protection` rule is active.
   threshold.
 - **Secret failure:** disable the affected feature or route, rotate the secret,
   redeploy through the normal branch flow, and retest the route.
+- **AI Search contract failure:** restore the prior AutoRAG endpoint in
+  `AI_SEARCH_API_ENDPOINT`, redeploy the last known-good code version, and
+  validate both JSON and SSE responses before investigating a second cutover.
 
 ## Kill switches and rollback
 

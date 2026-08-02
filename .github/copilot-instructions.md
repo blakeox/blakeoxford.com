@@ -803,9 +803,10 @@ pnpm exec wrangler tail  # View live logs
 
 **AI features not working**:
 ```bash
-# Check environment variables
-echo $AI_SEARCH_API_TOKEN
-echo $AI_SEARCH_API_ENDPOINT
+# Check secret names only; never print secret values
+pnpm exec wrangler secret list --name blakeoxford-com
+# The endpoint is non-secret and is defined in wrangler.toml.
+rg -n "AI_SEARCH_API_ENDPOINT" wrangler.toml
 
 # Test locally with dev proxy
 pnpm dev
