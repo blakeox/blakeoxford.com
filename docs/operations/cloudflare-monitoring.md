@@ -51,7 +51,7 @@ protection` rule is active.
    and blocked-event volume. Change it only with a documented reason and a
    rollback value.
 3. Confirm required secrets exist without printing their values:
-   `TURNSTILE_SECRET_KEY` and the legacy `search-api` credential.
+   `TURNSTILE_SECRET_KEY` and `AI_SEARCH_API_TOKEN`.
 4. Rotate a secret if it may have been exposed, its owner is unclear, or its
    provider requires rotation. Validate the affected route immediately after.
 5. Review trace volume and sampling. Current production sampling is 5%; keep

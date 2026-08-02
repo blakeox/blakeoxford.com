@@ -211,8 +211,7 @@ export async function handleAiSearch({
   }
 
   const upstreamEndpoint = env.AI_SEARCH_API_ENDPOINT;
-  const upstreamToken =
-    env.AI_SEARCH_API_TOKEN || (env as Env & { 'search-api'?: string })['search-api'];
+  const upstreamToken = env.AI_SEARCH_API_TOKEN;
 
   const wantsStream =
     payload.stream === true ||
