@@ -2,7 +2,6 @@ import { anonymizeClientIp } from '../../shared/ip';
 import { buildApiCorsHeaders } from '../../shared/cors';
 import { writeAiAnalytics } from '../../shared/ai-analytics';
 import type { RouteContext } from '../../shared/route-context';
-import type { Env } from '../../types';
 import { parseAiSources } from './parse-sources';
 import { checkAiSearchRateLimit } from './rate-limit';
 import {
@@ -211,8 +210,7 @@ export async function handleAiSearch({
   }
 
   const upstreamEndpoint = env.AI_SEARCH_API_ENDPOINT;
-  const upstreamToken =
-    env.AI_SEARCH_API_TOKEN || (env as Env & { 'search-api'?: string })['search-api'];
+  const upstreamToken = env.AI_SEARCH_API_TOKEN;
 
   const wantsStream =
     payload.stream === true ||
