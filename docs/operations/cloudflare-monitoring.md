@@ -11,6 +11,10 @@ endpoint (`/ai-search/instances/.../chat/completions`) with the dedicated
 contract remain unchanged. The prior AutoRAG endpoint remains the rollback
 target if the new upstream contract has an incident.
 
+An every-six-hours Cron Trigger runs a fixed, timestamped AI Search canary. It
+records only success/error, latency, and response length in Analytics Engine;
+it does not include user prompts or response text.
+
 Cloudflare Health Checks are intentionally not configured: the current
 `blakeoxford.com` zone is on the Free plan, and the dashboard requires Pro /
 Smart Shield for that feature. Do not upgrade billing or weaken existing
@@ -65,6 +69,8 @@ protection` rule is active.
 6. Verify the previous Worker deployment remains available for rollback.
 7. Confirm the AI Search route returns a non-empty message and that streamed
    requests emit `ready`, `token`, and `done` events.
+8. Review scheduled canary failures and latency in Workers Logs/Sentry and the
+   `ai_search_canary` Analytics Engine index.
 
 ## Failure handling
 
@@ -94,6 +100,9 @@ protection` rule is active.
   `cac8413d409f444eaef771183818a449`.
 - **Traces:** set `[observability.traces].enabled = false` and redeploy if
   trace volume or cost becomes abnormal.
+- **Scheduled canary:** remove the `[triggers]` block from `wrangler.toml` and
+  redeploy. This disables only the canary; it does not disable AI Search or
+  public traffic.
 
 Never place secret values, client IPs, request bodies, or contact-form content
 in this runbook, workflow output, or incident notes.

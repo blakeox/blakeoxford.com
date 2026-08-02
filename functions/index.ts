@@ -17,6 +17,7 @@ import { handleTheme } from './routes/theme';
 import { handleLegacySearchRedirect } from './routes/legacy-search-redirect';
 import { handleDebug } from './routes/debug';
 import { handleAssets } from './routes/assets';
+import { runAiSearchCanary } from './scheduled/ai-search-canary';
 
 export { ConversationDurableObject } from './ConversationDO.ts';
 
@@ -53,6 +54,20 @@ function applySecurityHeaders(response: Response, reqId: string, hostname: strin
 }
 
 const WorkerApp = {
+  async scheduled(controller: ScheduledController, env: Env): Promise<void> {
+    const Sentry = initEdgeSentry(env);
+    try {
+      await runAiSearchCanary(env, controller.scheduledTime);
+    } catch (error) {
+      controller.noRetry();
+      Sentry.captureException(error, {
+        tags: { runtime: 'scheduled', check: 'ai-search-canary' },
+      });
+      console.error('AI Search scheduled canary failed', error);
+      throw error;
+    }
+  },
+
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const Sentry = initEdgeSentry(env);
     const url = new URL(request.url);

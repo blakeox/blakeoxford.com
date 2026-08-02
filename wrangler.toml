@@ -10,6 +10,11 @@ compatibility_flags = ["nodejs_compat"]
 main = "functions/index.ts"
 workers_dev = false
 
+# Low-frequency canary for the public AI Search route. Remove this block and
+# redeploy to disable the scheduled check without affecting request traffic.
+[triggers]
+crons = ["0 */6 * * *"]
+
 [assets]
 binding = "ASSETS"
 directory = "./dist"
