@@ -50,7 +50,7 @@ export function getFieldLabel(field: HTMLElement, fallback: string): string {
   const labelArray = Array.from(labels);
   if (labelArray.length > 0) {
     const raw = labelArray[0]?.textContent ?? '';
-    return raw.replace('*', '').trim() || fallback;
+    return raw.replaceAll('*', '').trim() || fallback;
   }
   const ariaLabel = field.getAttribute('aria-label');
   if (ariaLabel) return ariaLabel.trim();
