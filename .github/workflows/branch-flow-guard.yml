@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [opened, synchronize, edited, reopened, ready_for_review]
 
+permissions:
+  pull-requests: read
+
 jobs:
   guard:
     name: Enforce Branch Flow
