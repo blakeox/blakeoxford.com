@@ -68,6 +68,7 @@ script_name = "blakeoxford-com"
 # ENVIRONMENT           - Deployment environment (production/staging)
 
 [secrets]
+# Keep the required declaration aligned with the deployed secret name.
 required = ["TURNSTILE_SECRET_KEY", "AI_SEARCH_API_TOKEN"]
 
 [vars]
