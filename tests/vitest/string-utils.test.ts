@@ -20,4 +20,13 @@ describe('cleanAssistantResponse', () => {
       cleanAssistantResponse('See [Microsoft Fabric](/projects/microsoft-fabric/) and `Power BI`.')
     ).toBe('See Microsoft Fabric and Power BI.');
   });
+
+  it('strips fenced code blocks without changing their inner text', () => {
+    expect(cleanAssistantResponse('```ts\nconst value = 1;\n```')).toBe('const value = 1;');
+  });
+
+  it('leaves an unterminated fenced block unchanged', () => {
+    const input = '```ts\nconst value = 1;';
+    expect(cleanAssistantResponse(input)).toBe(input);
+  });
 });
