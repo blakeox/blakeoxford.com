@@ -66,6 +66,18 @@ describe('deadLinkCore', () => {
     expect(urls).not.toContain('/${href}');
   });
 
+  it('ignores links inside comments and case-insensitive script/style blocks', () => {
+    const withNonContent = `
+<html><body>
+  <!-- <a href="/commented-out">Comment</a> -->
+  <a href="/visible">Visible</a>
+  <SCRIPT data-test="true">const href = "/script-only";</SCRIPT >
+  <style>.link::after { content: "href='/style-only'"; }</style>
+</body></html>`;
+    const urls = extractLinks(withNonContent, { includeExternal: false }).map((l) => l.raw);
+    expect(urls).toEqual(['/visible']);
+  });
+
   it('buildLinkTasks normalizes relative paths', () => {
     setup();
     const tasks = buildLinkTasks([pageFile], distDir, { includeExternal: false });

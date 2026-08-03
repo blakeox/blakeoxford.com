@@ -9,6 +9,68 @@ import path from 'path';
 
 const SKIP_PROTOCOLS = ['mailto:', 'tel:', 'data:'];
 
+function findTagStart(lowerHtml, tagName, fromIndex) {
+  const marker = `<${tagName}`;
+  let start = lowerHtml.indexOf(marker, fromIndex);
+  while (start !== -1) {
+    const boundary = lowerHtml[start + marker.length];
+    if (
+      boundary === undefined ||
+      boundary === '>' ||
+      boundary === '/' ||
+      boundary === ' ' ||
+      boundary === '\t' ||
+      boundary === '\r' ||
+      boundary === '\n'
+    ) {
+      return start;
+    }
+    start = lowerHtml.indexOf(marker, start + 1);
+  }
+  return -1;
+}
+
+function stripNonContentRegions(html) {
+  const lowerHtml = html.toLowerCase();
+  let cursor = 0;
+  let output = '';
+
+  while (cursor < html.length) {
+    const candidates = [
+      { start: lowerHtml.indexOf('<!--', cursor), type: 'comment' },
+      { start: findTagStart(lowerHtml, 'script', cursor), type: 'script' },
+      { start: findTagStart(lowerHtml, 'style', cursor), type: 'style' },
+    ].filter(({ start }) => start !== -1);
+
+    if (candidates.length === 0) break;
+
+    const next = candidates.reduce((earliest, candidate) =>
+      candidate.start < earliest.start ? candidate : earliest
+    );
+    output += html.slice(cursor, next.start);
+
+    if (next.type === 'comment') {
+      const end = lowerHtml.indexOf('-->', next.start + 4);
+      if (end === -1) return output + html.slice(next.start);
+      cursor = end + 3;
+      continue;
+    }
+
+    const tagName = next.type;
+    const openingEnd = lowerHtml.indexOf('>', next.start + tagName.length + 1);
+    if (openingEnd === -1) return output + html.slice(next.start);
+
+    const closingStart = lowerHtml.indexOf(`</${tagName}`, openingEnd + 1);
+    if (closingStart === -1) return output + html.slice(next.start);
+
+    const closingEnd = lowerHtml.indexOf('>', closingStart + tagName.length + 2);
+    if (closingEnd === -1) return output + html.slice(next.start);
+    cursor = closingEnd + 1;
+  }
+
+  return output + html.slice(cursor);
+}
+
 /**
  * Extract URLs (internal + optionally external) from an HTML string.
  * Returns array of objects: { raw, isExternal }
@@ -16,15 +78,7 @@ const SKIP_PROTOCOLS = ['mailto:', 'tel:', 'data:'];
 export function extractLinks(html, { includeExternal = false } = {}) {
   const links = new Map();
   // Strip comments / script / style so JS template strings like href="${t}" are not treated as links.
-  let cleaned = html;
-  let previous;
-  do {
-    previous = cleaned;
-    cleaned = cleaned
-      .replace(/<!--([\s\S]*?)-->/g, '')
-      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
-      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
-  } while (cleaned !== previous);
+  const cleaned = stripNonContentRegions(html);
   const attrRe = /(href|src)=["']([^"']+)["']/gi;
   let m;
   while ((m = attrRe.exec(cleaned))) {
