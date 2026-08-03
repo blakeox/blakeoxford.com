@@ -13,13 +13,12 @@ export type AiSearchPayload = {
 
 export type PageContext = { title: string; pathname: string; url: string } | null;
 
-export type HistoryEntry = { role: string; content: string };
+export type HistoryEntry = { role: 'user' | 'assistant'; content: string };
 
 export type RateLimitBucket = { count: number; reset: number };
 
 export type RateLimitResult =
-  | { limited: false }
-  | { limited: true; reason: string; resetIn: number };
+  { limited: false } | { limited: true; reason: string; resetIn: number };
 
 export type CachedAiResponse = {
   message?: string;
@@ -74,7 +73,7 @@ export function parseHistory(raw: unknown): HistoryEntry[] {
       (entry): entry is HistoryEntry =>
         !!entry &&
         typeof entry === 'object' &&
-        typeof (entry as HistoryEntry).role === 'string' &&
+        ((entry as HistoryEntry).role === 'user' || (entry as HistoryEntry).role === 'assistant') &&
         typeof (entry as HistoryEntry).content === 'string'
     )
     .slice(-10);

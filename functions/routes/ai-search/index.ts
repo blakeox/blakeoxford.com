@@ -2,7 +2,6 @@ import { anonymizeClientIp } from '../../shared/ip';
 import { buildApiCorsHeaders } from '../../shared/cors';
 import { writeAiAnalytics } from '../../shared/ai-analytics';
 import type { RouteContext } from '../../shared/route-context';
-import type { Env } from '../../types';
 import { parseAiSources } from './parse-sources';
 import { checkAiSearchRateLimit } from './rate-limit';
 import {
@@ -19,6 +18,12 @@ import {
   parsePageContext,
   type AiSearchPayload,
 } from './types';
+import {
+  buildAiSearchRequest,
+  extractAiSearchError,
+  extractAiSearchMessage,
+  extractAiSearchSourceData,
+} from './upstream';
 import { handleSimpleQueryWithWorkersAI, looksLikeEmptyRetrieval } from './workers-ai';
 
 const MAX_REQUEST_BYTES = 32 * 1024;
@@ -211,8 +216,7 @@ export async function handleAiSearch({
   }
 
   const upstreamEndpoint = env.AI_SEARCH_API_ENDPOINT;
-  const upstreamToken =
-    env.AI_SEARCH_API_TOKEN || (env as Env & { 'search-api'?: string })['search-api'];
+  const upstreamToken = env.AI_SEARCH_API_TOKEN;
 
   const wantsStream =
     payload.stream === true ||
@@ -226,9 +230,9 @@ export async function handleAiSearch({
   }
 
   try {
-    const requestBody = { query: enhancedQuery, history };
+    const requestBody = buildAiSearchRequest(enhancedQuery, history);
 
-    // AutoRAG stays on the direct AI Search endpoint — do not attach AI Gateway
+    // AI Search stays on the direct endpoint — do not attach AI Gateway
     // cache headers here (index/retrieval caching fights freshness). Workers AI
     // observability goes through env.AI.run gateway options in workers-ai.ts.
     const fetchUrl = upstreamEndpoint;
@@ -247,13 +251,10 @@ export async function handleAiSearch({
     if (!upstreamResponse.ok) {
       let errorDetail = 'Upstream service error';
       try {
-        const upstreamError = (await upstreamResponse.json()) as { error?: unknown };
-        if (typeof upstreamError?.error === 'string') {
-          errorDetail = upstreamError.error;
-        }
+        const upstreamError = await upstreamResponse.json();
+        errorDetail = extractAiSearchError(upstreamError) || errorDetail;
       } catch {
-        const upstreamText = await upstreamResponse.text();
-        if (upstreamText) errorDetail = upstreamText.slice(0, 200);
+        // Keep the public error bounded and generic if the provider sends invalid JSON.
       }
       return new Response(JSON.stringify({ error: errorDetail }), {
         status: upstreamResponse.status,
@@ -276,27 +277,18 @@ export async function handleAiSearch({
       const firstError =
         errors[0] && typeof errors[0] === 'object' ? (errors[0] as { message?: unknown }) : null;
       const upstreamError =
-        typeof firstError?.message === 'string'
+        extractAiSearchError(upstreamData) ||
+        (typeof firstError?.message === 'string'
           ? firstError.message
-          : 'AI search service reported an error';
+          : 'AI search service reported an error');
       return new Response(JSON.stringify({ error: upstreamError }), {
         status: 502,
         headers: baseCorsHeaders,
       });
     }
 
-    const result =
-      upstreamData.result && typeof upstreamData.result === 'object'
-        ? (upstreamData.result as Record<string, unknown>)
-        : upstreamData;
-    const message =
-      typeof result.response === 'string'
-        ? result.response.trim()
-        : typeof upstreamData.response === 'string'
-          ? upstreamData.response.trim()
-          : '';
-
-    const resultData = Array.isArray(result.data) ? result.data : [];
+    const message = extractAiSearchMessage(upstreamData);
+    const resultData = extractAiSearchSourceData(upstreamData);
     const sources = parseAiSources(resultData);
 
     if (!message) {

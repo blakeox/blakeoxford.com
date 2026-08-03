@@ -285,7 +285,8 @@ In `wrangler.toml`:
 
 ```toml
 [vars]
-AI_SEARCH_API_ENDPOINT = "https://..."
+# Current Cloudflare AI Search Chat Completions endpoint.
+AI_SEARCH_API_ENDPOINT = "https://.../ai-search/instances/.../chat/completions"
 ENVIRONMENT = "production"
 ```
 
