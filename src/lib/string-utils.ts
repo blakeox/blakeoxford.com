@@ -56,6 +56,32 @@ export function cleanSnippet(snippet: string): string {
     .trim();
 }
 
+function stripFencedCodeBlocks(value: string): string {
+  const fence = '```';
+  let cursor = 0;
+  let result = '';
+
+  while (cursor < value.length) {
+    const openingStart = value.indexOf(fence, cursor);
+    if (openingStart === -1) return result + value.slice(cursor);
+
+    result += value.slice(cursor, openingStart);
+    const contentStart = openingStart + fence.length;
+    const closingStart = value.indexOf(fence, contentStart);
+    if (closingStart === -1) return result + value.slice(openingStart);
+
+    const languageLineEnd = value.indexOf('\n', contentStart);
+    const bodyStart =
+      languageLineEnd !== -1 && languageLineEnd < closingStart
+        ? languageLineEnd + 1
+        : contentStart;
+    result += value.slice(bodyStart, closingStart);
+    cursor = closingStart + fence.length;
+  }
+
+  return result;
+}
+
 /**
  * Clean assistant response text for plain-text chat bubbles.
  * Models often emit markdown (**bold**, headers) that looks broken when not rendered.
@@ -73,7 +99,7 @@ export function cleanAssistantResponse(content: string): string {
   }
 
   // Fenced code blocks → inner text
-  cleaned = cleaned.replace(/```[\w-]*\n?([\s\S]*?)```/g, '$1');
+  cleaned = stripFencedCodeBlocks(cleaned);
 
   // Headings: "## Title" → "Title"
   cleaned = cleaned.replace(/^#{1,6}\s+/gm, '');
