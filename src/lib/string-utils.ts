@@ -72,9 +72,7 @@ function stripFencedCodeBlocks(value: string): string {
 
     const languageLineEnd = value.indexOf('\n', contentStart);
     const bodyStart =
-      languageLineEnd !== -1 && languageLineEnd < closingStart
-        ? languageLineEnd + 1
-        : contentStart;
+      languageLineEnd !== -1 && languageLineEnd < closingStart ? languageLineEnd + 1 : contentStart;
     result += value.slice(bodyStart, closingStart);
     cursor = closingStart + fence.length;
   }
