@@ -6,6 +6,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { getButtonClasses, getContainerClasses } from '../../src/lib/design-system/recipes';
 
 describe('Badge Component', () => {
   let fileContent: string;
@@ -55,7 +56,7 @@ describe('Button Component', () => {
   });
 
   it('should have interactive states', () => {
-    expect(fileContent).toContain('hover:');
+    expect(getButtonClasses({ variant: 'primary' })).toContain('hover:');
   });
 
   it('should support disabled state', () => {
@@ -63,7 +64,7 @@ describe('Button Component', () => {
   });
 
   it('should have focus-visible styles', () => {
-    expect(fileContent).toContain('focus-visible:');
+    expect(getButtonClasses({ variant: 'primary' })).toContain('focus-visible:');
   });
 
   it('should support href prop for link buttons', () => {
@@ -123,7 +124,7 @@ describe('Container Component', () => {
   });
 
   it('should have max-width constraint', () => {
-    expect(fileContent).toMatch(/max-w-/);
+    expect(getContainerClasses({ size: 'lg' })).toContain('max-w-6xl');
   });
 
   it('should use tokenized layout gutter padding', () => {
@@ -131,7 +132,7 @@ describe('Container Component', () => {
   });
 
   it('should center content', () => {
-    expect(fileContent).toMatch(/mx-auto/);
+    expect(getContainerClasses({ center: true })).toContain('mx-auto');
   });
 
   it('should support slot for children', () => {

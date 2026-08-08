@@ -65,77 +65,12 @@
     border-inline-start: 3px solid var(--color-success);
   }
 
-  .command-center .overlay-panel {
-    box-shadow: var(--shadow-xl);
-  }
-
-  .ai-chat-panel {
-    box-shadow: var(--shadow-2xl);
-  }
-
-  .ai-chat-launcher[aria-expanded='true'] {
-    transform: scale(0.96);
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .command-center .overlay-panel[data-panel] {
-      animation: command-panel-in var(--duration-normal) var(--ease-decelerate);
-    }
-
-    .ai-chat-panel[data-ai-visible='true'] {
-      transform-origin: bottom right;
-      animation: chat-panel-in 280ms var(--ease-decelerate);
-    }
-
-    .ai-chat-launcher {
-      transition:
-        transform var(--duration-fast) var(--ease-standard),
-        background-color var(--duration-fast) var(--ease-standard),
-        color var(--duration-fast) var(--ease-standard),
-        box-shadow var(--duration-fast) var(--ease-standard),
-        border-color var(--duration-fast) var(--ease-standard);
-    }
-  }
-
-  @keyframes command-panel-in {
-    from {
-      opacity: 0;
-      transform: translateY(12px) scale(0.98);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  @keyframes chat-panel-in {
-    from {
-      opacity: 0;
-      transform: translateY(18px) scale(0.96);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
   @media (hover: none) and (pointer: coarse) {
     button,
     a[role='button'],
     [role='button'] {
       min-width: 44px;
       min-height: 44px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .overlay-panel,
-    .ai-chat-panel,
-    #search-overlay {
-      transition: none !important;
-      animation: none !important;
     }
   }
 }

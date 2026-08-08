@@ -4,8 +4,8 @@
  */
 
 export interface Env {
-	// KV Namespaces — each binding maps to its own physical namespace.
-	RATE_LIMIT_KV: KVNamespace;
+  // KV Namespaces — each binding maps to its own physical namespace.
+  RATE_LIMIT_KV: KVNamespace;
   CONTACT_MESSAGES: KVNamespace;
   AI_RESPONSE_CACHE: KVNamespace;
   AI_FEEDBACK_KV: KVNamespace;
@@ -32,6 +32,8 @@ export interface Env {
   AI_GATEWAY_ID?: string;
   AI_GATEWAY_ACCOUNT_ID?: string;
   PUBLIC_CLARITY_PROJECT_ID?: string;
+  /** Disabled until a server-issued capability/authentication contract exists. */
+  CONVERSATION_PERSISTENCE_ENABLED?: string;
 
   // Observability (wrangler secret put)
   SENTRY_DSN_EDGE?: string;

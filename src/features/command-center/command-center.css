@@ -1,0 +1,48 @@
+@layer components {
+  .search-overlay-mount {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: visible;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .search-overlay-mount[data-state='open'] {
+    visibility: visible;
+  }
+
+  .search-overlay-mount > .overlay-root {
+    pointer-events: auto;
+  }
+
+  .command-center .overlay-panel {
+    box-shadow: var(--shadow-xl);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .command-center .overlay-panel[data-panel] {
+      animation: command-panel-in var(--duration-normal) var(--ease-decelerate);
+    }
+  }
+
+  @keyframes command-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .overlay-panel,
+    #search-overlay {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}

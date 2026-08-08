@@ -8,6 +8,18 @@ import BaseCard from '@/components/primitives/BaseCard.astro';
 import FeatureCard from '@/components/composites/FeatureCard.astro';
 import { PRIMITIVE_PROP_CONTRACT, COMPONENT_AUTHORING_CHECKLIST } from '@/data/componentDocs';
 import ComponentCatalog from '@/components/features/design/ComponentCatalog.astro';
+import {
+  componentVariantMatrix,
+  getComponentVariantCases,
+} from '@/data/design-system/variantMatrix';
+import type {
+  BaseCardHover,
+  BaseCardVariant,
+  BadgeVariant,
+  ButtonVariant,
+  FeatureCardVariant,
+  SectionBackground,
+} from '@/lib/design-system/recipes';
 
 const canonicalExamples = [
   {
@@ -31,12 +43,32 @@ const canonicalExamples = [
     path: 'src/components/composites/FeatureCard.astro',
   },
 ];
+
+const baseCardVariants = getComponentVariantCases('BaseCard').filter(
+  (entry) => entry.recipe === 'baseCardRecipe'
+);
+const baseCardHoverVariants = getComponentVariantCases('BaseCard').filter(
+  (entry) => entry.recipe === 'baseCardRecipe.hover'
+);
+const badgeVariants = getComponentVariantCases('Badge').filter(
+  (entry) => entry.recipe === 'badgeRecipe.variant'
+);
+const buttonVariants = getComponentVariantCases('Button').filter(
+  (entry) => entry.recipe === 'buttonRecipe.variant'
+);
+const featureCardVariants = getComponentVariantCases('FeatureCard').filter(
+  (entry) => entry.recipe === 'featureCardRecipe.variant'
+);
+const sectionBackgrounds = getComponentVariantCases('Section').filter(
+  (entry) => entry.recipe === 'sectionRecipe.background'
+);
 ---
 
 <BaseLayout
   title="Design Components"
   description="Operational component contracts and searchable catalog for the Blake Oxford design system."
   canonicalUrl="https://blakeoxford.com/design/components/"
+  noindex={true}
   wide={true}
 >
   <Section padding="xl">
@@ -48,7 +80,7 @@ const canonicalExamples = [
           This page documents canonical component paths, live examples, and the full searchable
           catalog generated from
           <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm break-all"
-            >src/data/componentDocs.ts</code
+            >src/data/component-docs/manifest.ts</code
           >.
         </p>
       </header>
@@ -59,13 +91,13 @@ const canonicalExamples = [
       >
         {
           canonicalExamples.map((item) => (
-            <article class="min-w-0 rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
+            <BaseCard as="article" variant="subtle" hover="none" padding="md" class="min-w-0">
               <h2 class="text-lg font-semibold text-foreground">{item.name}</h2>
               <p class="mt-2 text-sm text-muted-foreground">{item.contract}</p>
               <code class="mt-4 block rounded-lg bg-surface-subtle p-3 text-xs break-all text-muted-foreground">
                 {item.path}
               </code>
-            </article>
+            </BaseCard>
           ))
         }
       </section>
@@ -95,24 +127,173 @@ const canonicalExamples = [
           </BaseCard>
 
           <FeatureCard
-            title="Feature Card"
-            description="Semantic variants use the shared token contract."
+            title="Accent Feature"
+            description="Expressive treatments use only accent and primary variants."
             variant="accent"
             hover={false}
           />
           <FeatureCard
-            title="Status Feature"
-            description="Success, warning, info, and error map to tokens instead of raw palettes."
-            variant="success"
+            title="Primary Feature"
+            description="Use Badge or a stateful component when the meaning is status."
+            variant="primary"
             hover={false}
           />
         </div>
       </section>
 
+      <section
+        class="mt-16"
+        aria-labelledby="canonical-variant-matrix"
+        data-variant-case-count={componentVariantMatrix.length}
+      >
+        <h2 id="canonical-variant-matrix" class="text-2xl font-bold text-foreground">
+          Canonical Variant Matrix
+        </h2>
+        <p class="mt-3 max-w-3xl text-muted-foreground">
+          Every public visual recipe key is rendered here for bounded light/dark, desktop/mobile,
+          focus, and reduced-motion checks. Structural keys remain contract-tested without adding
+          screenshot volume.
+        </p>
+
+        <div class="mt-6 grid gap-6 lg:grid-cols-2">
+          <BaseCard
+            as="section"
+            variant="subtle"
+            hover="none"
+            padding="md"
+            aria-label="BaseCard variants"
+          >
+            <h3 class="text-lg font-semibold text-foreground">BaseCard variants</h3>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+              {
+                baseCardVariants.map((entry) => (
+                  <div
+                    data-variant-component="BaseCard"
+                    data-variant-recipe={entry.recipe}
+                    data-variant-key={entry.variant}
+                  >
+                    <BaseCard variant={entry.variant as BaseCardVariant} hover="none" padding="sm">
+                      <span class="text-sm text-foreground">{entry.variant}</span>
+                    </BaseCard>
+                  </div>
+                ))
+              }
+              {
+                baseCardHoverVariants.map((entry) => (
+                  <div
+                    data-variant-component="BaseCard"
+                    data-variant-recipe={entry.recipe}
+                    data-variant-key={entry.variant}
+                  >
+                    <BaseCard variant="subtle" hover={entry.variant as BaseCardHover} padding="sm">
+                      <span class="text-sm text-foreground">hover: {entry.variant}</span>
+                    </BaseCard>
+                  </div>
+                ))
+              }
+            </div>
+          </BaseCard>
+
+          <BaseCard
+            as="section"
+            variant="subtle"
+            hover="none"
+            padding="md"
+            aria-label="Button variants"
+          >
+            <h3 class="text-lg font-semibold text-foreground">Button variants</h3>
+            <div class="mt-4 flex flex-wrap gap-3">
+              {
+                buttonVariants.map((entry) => (
+                  <div
+                    data-variant-component="Button"
+                    data-variant-recipe={entry.recipe}
+                    data-variant-key={entry.variant}
+                  >
+                    <Button variant={entry.variant as ButtonVariant}>{entry.variant}</Button>
+                  </div>
+                ))
+              }
+            </div>
+          </BaseCard>
+
+          <BaseCard
+            as="section"
+            variant="subtle"
+            hover="none"
+            padding="md"
+            aria-label="Badge variants"
+          >
+            <h3 class="text-lg font-semibold text-foreground">Badge variants</h3>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {
+                badgeVariants.map((entry) => (
+                  <div
+                    data-variant-component="Badge"
+                    data-variant-recipe={entry.recipe}
+                    data-variant-key={entry.variant}
+                  >
+                    <Badge variant={entry.variant as BadgeVariant}>{entry.variant}</Badge>
+                  </div>
+                ))
+              }
+            </div>
+          </BaseCard>
+
+          <BaseCard
+            as="section"
+            variant="subtle"
+            hover="none"
+            padding="md"
+            aria-label="FeatureCard variants"
+          >
+            <h3 class="text-lg font-semibold text-foreground">FeatureCard variants</h3>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+              {
+                featureCardVariants.map((entry) => (
+                  <div
+                    data-variant-component="FeatureCard"
+                    data-variant-recipe={entry.recipe}
+                    data-variant-key={entry.variant}
+                  >
+                    <FeatureCard
+                      title={entry.variant}
+                      description="Canonical expressive recipe coverage."
+                      variant={entry.variant as FeatureCardVariant}
+                      hover={false}
+                    />
+                  </div>
+                ))
+              }
+            </div>
+          </BaseCard>
+        </div>
+
+        <div class="mt-6 grid gap-3 sm:grid-cols-2">
+          {
+            sectionBackgrounds.map((entry) => (
+              <Section
+                padding="sm"
+                background={entry.variant as SectionBackground}
+                data-variant-component="Section"
+                data-variant-recipe={entry.recipe}
+                data-variant-key={entry.variant}
+              >
+                <p class="text-sm font-semibold text-foreground">section: {entry.variant}</p>
+              </Section>
+            ))
+          }
+        </div>
+      </section>
+
       <ComponentCatalog />
 
-      <section
-        class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm"
+      <BaseCard
+        as="section"
+        variant="subtle"
+        hover="none"
+        padding="lg"
+        class="mt-16"
         aria-labelledby="authoring-checklist"
       >
         <h2 id="authoring-checklist" class="text-2xl font-bold text-foreground">
@@ -120,7 +301,7 @@ const canonicalExamples = [
         </h2>
         <p class="mt-3 text-sm text-muted-foreground">
           Follow this list before merging a new component. The catalog at <code
-            >src/data/componentDocs.ts</code
+            >src/data/component-docs/manifest.ts</code
           > is the searchable source of truth.
         </p>
         <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
@@ -149,7 +330,7 @@ const canonicalExamples = [
                   PRIMITIVE_PROP_CONTRACT.map((entry) => (
                     <tr>
                       <td class="py-3 pr-4">
-                        <code class="text-accent">{entry.prop}</code>
+                        <code class="text-accent-emphasis">{entry.prop}</code>
                       </td>
                       <td class="py-3 pr-4 text-muted-foreground">{entry.when}</td>
                       <td class="py-3 text-muted-foreground">{entry.notes ?? '—'}</td>
@@ -160,10 +341,14 @@ const canonicalExamples = [
             </table>
           </div>
         </div>
-      </section>
+      </BaseCard>
 
-      <section
-        class="mt-16 rounded-2xl border border-border/40 bg-surface p-6 shadow-sm"
+      <BaseCard
+        as="section"
+        variant="subtle"
+        hover="none"
+        padding="lg"
+        class="mt-16"
         aria-labelledby="anti-patterns"
       >
         <h2 id="anti-patterns" class="text-2xl font-bold text-foreground">Anti-Patterns</h2>
@@ -185,7 +370,7 @@ const canonicalExamples = [
             Do not create duplicate files with a <code>* 2.*</code> suffix; the lint gate blocks them.
           </li>
         </ul>
-      </section>
+      </BaseCard>
     </Container>
   </Section>
 </BaseLayout>

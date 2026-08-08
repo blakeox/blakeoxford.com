@@ -53,7 +53,6 @@ export interface AISearchStreamCallbacks {
 export interface AISearchConfig {
   endpoint?: string;
   timeout?: number;
-  maxRetries?: number;
   enableStreaming?: boolean;
 }
 
@@ -62,7 +61,6 @@ export interface AISearchConfig {
 const DEFAULT_CONFIG: Required<AISearchConfig> = {
   endpoint: '/api/ai-search',
   timeout: 45000,
-  maxRetries: 3,
   enableStreaming: true,
 };
 
@@ -122,6 +120,23 @@ async function consumeEventStream(
   let assembledMessage = '';
   let collectedSources: AIChatResponse['sources'] = [];
 
+  const readWithIdleTimeout = async (): Promise<ReadableStreamReadResult<Uint8Array>> => {
+    let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+    try {
+      return await Promise.race([
+        reader.read(),
+        new Promise<never>((_, reject) => {
+          timeoutHandle = setTimeout(
+            () => reject(new AISearchError('AI search stream timed out', response.status)),
+            15000
+          );
+        }),
+      ]);
+    } finally {
+      if (timeoutHandle) clearTimeout(timeoutHandle);
+    }
+  };
+
   const processEvent = (raw: string) => {
     const lines = raw.split(/\r?\n/);
     let eventName = 'message';
@@ -174,7 +189,7 @@ async function consumeEventStream(
   };
 
   while (true) {
-    const { done, value } = await reader.read();
+    const { done, value } = await readWithIdleTimeout();
     if (done) break;
     buffer += decoder.decode(value, { stream: true });
     let boundary = buffer.indexOf('\n\n');
@@ -238,7 +253,7 @@ export class AISearchService {
         : {}),
     };
 
-    const outerSignal = preferStream ? options?.signal : withTimeout(options?.signal);
+    const outerSignal = withTimeout(options?.signal, this.config.timeout);
     const signal = this.abortController.signal;
     if (outerSignal) {
       if (outerSignal.aborted) this.abortController.abort();

@@ -111,9 +111,11 @@ function registerNavMenuScrollLock(): CleanupFn {
   sync();
   const observer = new MutationObserver(sync);
   observer.observe(shell, { attributes: true, attributeFilter: ['data-menu-state'] });
+  document.addEventListener('bo:mobile-menu-state', sync);
 
   return () => {
     observer.disconnect();
+    document.removeEventListener('bo:mobile-menu-state', sync);
     if (held) {
       releaseScrollLock();
       held = false;

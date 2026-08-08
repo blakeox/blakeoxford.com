@@ -11,11 +11,12 @@ import type { GetStaticPaths } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import ProjectDetailLayout from '@/layouts/ProjectDetailLayout.astro';
 import CTASection from '@/components/composites/CTASection.astro';
+import { isPublished } from '@/lib/content/publication-contract.mjs';
 
 export const getStaticPaths = (async () => {
   const projects = await getCollection('projects');
   return projects
-    .filter((project: CollectionEntry<'projects'>) => !project.data.draft)
+    .filter((project: CollectionEntry<'projects'>) => isPublished(project))
     .map((project: CollectionEntry<'projects'>) => ({
       params: { slug: project.id },
       props: { project },

@@ -148,10 +148,10 @@ export const compositeDocs: ComponentDoc[] = [
     props: [
       {
         name: 'variant',
-        type: "'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error'",
+        type: "'accent' | 'primary'",
         required: false,
         default: "'accent'",
-        description: 'Semantic color variant',
+        description: 'Expressive treatment; use Badge or a stateful component for status semantics',
       },
       { name: 'title', type: 'string', required: false, description: 'Card heading' },
       { name: 'description', type: 'string', required: false, description: 'Supporting copy' },
@@ -174,7 +174,7 @@ export const compositeDocs: ComponentDoc[] = [
     visualTier: 'elevated',
     tokenDependencies: [
       '--color-accent',
-      '--color-success',
+      '--color-primary',
       '--color-surface',
       'rounded-2xl',
       'shadow-sm',

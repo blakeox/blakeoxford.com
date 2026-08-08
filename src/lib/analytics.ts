@@ -18,6 +18,7 @@ interface DataLayerWindow {
 
 const CLARITY_TAG_KEYS = new Set([
   'source',
+  'acquisition_source',
   'mode',
   'backend',
   'provider',
@@ -37,6 +38,56 @@ const CLARITY_TAG_KEYS = new Set([
   'query_length',
   'semantic_hit_count',
 ]);
+
+export type AcquisitionSource = 'organic' | 'referral' | 'direct' | 'internal' | 'unknown';
+
+const SEARCH_ENGINE_HOSTS = new Set([
+  'baidu.com',
+  'bing.com',
+  'brave.com',
+  'duckduckgo.com',
+  'ecosia.org',
+  'google.com',
+  'search.yahoo.com',
+  'yandex.com',
+]);
+
+function isSearchEngineHost(hostname: string): boolean {
+  return (
+    SEARCH_ENGINE_HOSTS.has(hostname) ||
+    [...SEARCH_ENGINE_HOSTS].some((host) => hostname.endsWith(`.${host}`)) ||
+    hostname.startsWith('google.') ||
+    hostname.startsWith('search.yahoo.') ||
+    hostname.startsWith('yandex.')
+  );
+}
+
+/**
+ * Classify acquisition without retaining the referrer URL or its query string.
+ * The host list is deliberately bounded so analytics receives a low-cardinality value.
+ */
+export function classifyAcquisitionSource(referrer: string): AcquisitionSource {
+  const value = referrer.trim();
+  if (!value) return 'direct';
+
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return 'unknown';
+
+    const hostname = url.hostname.toLowerCase().replace(/^www\./, '');
+    if (hostname === 'blakeoxford.com') return 'internal';
+    if (isSearchEngineHost(hostname)) {
+      return 'organic';
+    }
+    return 'referral';
+  } catch {
+    return 'unknown';
+  }
+}
+
+export function getAcquisitionSource(): AcquisitionSource {
+  return typeof document === 'undefined' ? 'unknown' : classifyAcquisitionSource(document.referrer);
+}
 
 function mirrorToClarity(event: string, props?: AnalyticsProps): void {
   trackClarityEvent(event);
@@ -80,11 +131,18 @@ export function trackEvent(event: string, props?: AnalyticsProps): void {
 
 /** High-intent conversion events (GA4-friendly snake_case). */
 export const conversionEvents = {
-  generateLead: (data?: { method?: string; form?: string }) =>
-    trackEvent('generate_lead', {
+  generateLead: (data?: {
+    method?: string;
+    form?: string;
+    acquisition_source?: AcquisitionSource;
+  }) => {
+    const props: AnalyticsProps = {
       method: data?.method ?? 'contact_form',
       form: data?.form ?? 'contact',
-    }),
+    };
+    if (data?.acquisition_source) props.acquisition_source = data.acquisition_source;
+    trackEvent('generate_lead', props);
+  },
 
   chatEngagement: (data: { user_messages: number; total_messages: number }) =>
     trackEvent('chat_engagement', data),

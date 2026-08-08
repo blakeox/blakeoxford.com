@@ -19,18 +19,33 @@ function conversationRequest(
 }
 
 function durableObjectState(): DurableObjectState {
+  const alarms: number[] = [];
   return {
     storage: {
       get: async () => undefined,
       put: async () => undefined,
+      setAlarm: async (timestamp: number) => {
+        alarms.push(timestamp);
+      },
     },
     blockConcurrencyWhile: (callback) => {
       void callback();
     },
+    alarms,
   } as unknown as DurableObjectState;
 }
 
 describe('conversation route hardening', () => {
+  it('fails closed while persistence has no authenticated capability contract', async () => {
+    const response = await handleConversation({
+      request: conversationRequest('https://blakeoxford.com'),
+      env: {} as any,
+      url: new URL('https://blakeoxford.com/api/conversation/default/state'),
+    } as any);
+
+    expect(response?.status).toBe(410);
+  });
+
   it('rejects arbitrary origins before reaching the Durable Object', async () => {
     const response = await handleConversation({
       request: conversationRequest('https://evil.example'),
@@ -46,6 +61,7 @@ describe('conversation route hardening', () => {
     const response = await handleConversation({
       request: conversationRequest('https://blakeoxford.com'),
       env: {
+        CONVERSATION_PERSISTENCE_ENABLED: 'true',
         CONVERSATION_DO: {
           idFromName: () => {
             throw new Error('unavailable');
@@ -60,7 +76,9 @@ describe('conversation route hardening', () => {
   });
 
   it('uses the exact allowlist for Durable Object fallback endpoints', async () => {
-    const object = new ConversationDurableObject(durableObjectState(), {} as any);
+    const object = new ConversationDurableObject(durableObjectState(), {
+      CONVERSATION_PERSISTENCE_ENABLED: 'true',
+    } as any);
     const allowed = await object.fetch(
       conversationRequest('https://www.blakeoxford.com', undefined, { method: 'OPTIONS' })
     );
@@ -75,7 +93,9 @@ describe('conversation route hardening', () => {
   });
 
   it('rejects oversized Durable Object fallback requests', async () => {
-    const object = new ConversationDurableObject(durableObjectState(), {} as any);
+    const object = new ConversationDurableObject(durableObjectState(), {
+      CONVERSATION_PERSISTENCE_ENABLED: 'true',
+    } as any);
     const response = await object.fetch(
       conversationRequest('https://blakeoxford.com', undefined, {
         method: 'POST',
@@ -85,5 +105,15 @@ describe('conversation route hardening', () => {
     );
 
     expect(response.status).toBe(413);
+  });
+
+  it('schedules cleanup when a Durable Object is constructed', async () => {
+    const state = durableObjectState();
+    new ConversationDurableObject(state, {
+      CONVERSATION_PERSISTENCE_ENABLED: 'true',
+    } as any);
+
+    await Promise.resolve();
+    expect((state as any).alarms).toHaveLength(1);
   });
 });

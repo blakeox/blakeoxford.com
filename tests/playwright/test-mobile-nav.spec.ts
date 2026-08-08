@@ -218,6 +218,7 @@ test.describe('Mobile Navigation Visual Test', () => {
         function openMenu() {
             navToggle.classList.add('active');
             navToggle.setAttribute('aria-expanded', 'true');
+            mobileMenu.classList.add('active');
             mobileMenu.setAttribute('data-state', 'open');
             document.body.style.overflow = 'hidden';
         }
@@ -225,6 +226,7 @@ test.describe('Mobile Navigation Visual Test', () => {
         function closeMenu() {
             navToggle.classList.remove('active');
             navToggle.setAttribute('aria-expanded', 'false');
+            mobileMenu.classList.remove('active');
             mobileMenu.setAttribute('data-state', 'closed');
             document.body.style.overflow = '';
         }

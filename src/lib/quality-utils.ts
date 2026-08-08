@@ -61,74 +61,14 @@ export async function evaluateResponseWithLLM(
   relevance: number;
   reasoning: string;
 } | null> {
-  try {
-    const evaluationPrompt = `You are an AI quality evaluator. Evaluate this response on a scale of 0-100 for each criterion:
-
-User Query: "${userQuery}"
-
-Response: "${response.substring(0, 1000)}"
-
-Sources Used: ${sources.length} sources from ${new Set(sources.map((s) => s.collection)).size} collections
-
-Evaluate on these criteria:
-1. **Completeness** (0-100): Does it fully answer the question?
-2. **Citation Accuracy** (0-100): Are sources relevant and properly used?
-3. **Conciseness** (0-100): Is it clear and to-the-point?
-4. **Relevance** (0-100): Does it address the user's actual need?
-
-Respond ONLY with valid JSON:
-{
- "completeness": 85,
- "citation_accuracy": 90,
- "conciseness": 75,
- "relevance": 95,
- "reasoning": "Brief explanation of scores"
-}`;
-
-    const evaluationResponse = await fetch('/api/ai-search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: evaluationPrompt,
-        useRAG: false, // Direct LLM call
-      }),
-    });
-
-    if (!evaluationResponse.ok) {
-      throw new Error('Evaluation API call failed');
-    }
-
-    const data = await evaluationResponse.json();
-    const evaluationText = data.response || '';
-
-    // Extract JSON from response (handle markdown code blocks)
-    const jsonMatch = evaluationText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('No JSON found in evaluation response');
-    }
-
-    const scores = JSON.parse(jsonMatch[0]);
-
-    // Calculate weighted overall score
-    const overall = Math.round(
-      scores.completeness * 0.3 +
-        scores.citation_accuracy * 0.3 +
-        scores.conciseness * 0.2 +
-        scores.relevance * 0.2
-    );
-
-    return {
-      overall,
-      completeness: scores.completeness,
-      citationAccuracy: scores.citation_accuracy,
-      conciseness: scores.conciseness,
-      relevance: scores.relevance,
-      reasoning: scores.reasoning || 'No reasoning provided',
-    };
-  } catch (error) {
-    console.error('LLM evaluation failed:', error);
-    return null;
-  }
+  // Deliberately disabled: the previous implementation made a second client
+  // request with an unsupported payload and duplicated user content into logs.
+  // Keep the API as a compatibility shim for older callers while quality
+  // scoring remains deterministic and local.
+  void userQuery;
+  void response;
+  void sources;
+  return null;
 }
 
 /**

@@ -15,6 +15,14 @@ import DocumentMeta from '@/components/head/DocumentMeta.astro';
 import StructuredData from '@/components/head/StructuredData.astro';
 import SiteClientScripts from '@/components/head/SiteClientScripts.astro';
 import { getThemeFoucPreventionScript } from '@/lib/theme';
+import { runtimeSurfaceFlags } from '@/lib/runtimeSurfaceFlags';
+import { SEO_DESCRIPTION_MAX_LENGTH } from '@/config/seo-policy';
+import { SEO } from '@/config/constants';
+import { normalizeMetaText } from '@/lib/seo/meta.mjs';
+import {
+  DEFAULT_SOCIAL_IMAGE_DIMENSIONS,
+  getLocalImageDimensions,
+} from '@/lib/seo/image-metadata.mjs';
 
 const themeFoucScript = getThemeFoucPreventionScript();
 
@@ -26,13 +34,14 @@ const {
   noindex = false,
   keywords = '',
   image,
+  imageAlt = 'Blake Oxford Portfolio',
+  ogType = 'website',
+  seoTitle = title,
+  seoDescription = description,
+  structuredData = [],
 } = Astro.props;
 
-const metaDescription = String(description || '')
-  .replace(/\s+/g, ' ')
-  .replace(/—/g, '-')
-  .replace(/‑/g, '-')
-  .trim();
+const metaDescription = normalizeMetaText(seoDescription, SEO_DESCRIPTION_MAX_LENGTH);
 
 const siteHref = (Astro.site?.href ?? 'https://blakeoxford.com').replace(/\/$/, '');
 const canonicalUrl =
@@ -43,7 +52,9 @@ const ogImage = image
   ? image.startsWith('http')
     ? image
     : `${siteHref}${image.startsWith('/') ? image : `/${image}`}`
-  : `${siteHref}/assets/images/og-image.jpg`;
+  : `${siteHref}${SEO.defaultImage}`;
+const socialImageDimensions =
+  (await getLocalImageDimensions(image ?? SEO.defaultImage)) ?? DEFAULT_SOCIAL_IMAGE_DIMENSIONS;
 
 // Neutral site shell — apply Prose intentionally on article pages, not globally
 const mainClasses = wide
@@ -57,20 +68,53 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
   <head>
     <script is:inline set:html={themeFoucScript} />
     <DocumentMeta
-      title={title}
+      title={seoTitle}
       metaDescription={metaDescription}
       canonicalUrl={canonicalUrl}
       ogImage={ogImage}
+      ogImageWidth={socialImageDimensions.width}
+      ogImageHeight={socialImageDimensions.height}
+      ogImageAlt={imageAlt}
+      ogType={ogType}
       keywords={keywords}
       noindex={noindex}
       googleSiteVerification={googleSiteVerification}
     />
-    <StructuredData siteHref={siteHref} description={description} ogImage={ogImage} />
+    <StructuredData
+      siteHref={siteHref}
+      description={description}
+      ogImage={ogImage}
+      structuredData={structuredData}
+    />
     <SiteClientScripts />
     <slot name="head" />
   </head>
   <body id="top" class="min-h-screen bg-background text-foreground">
-    <SearchOverlay />
+    {
+      runtimeSurfaceFlags.siteSearch ? (
+        <SearchOverlay />
+      ) : (
+        <aside
+          class="mx-auto max-w-3xl px-4 py-3 text-sm text-muted-foreground"
+          data-runtime-fallback="site-search"
+          aria-label="Site search status"
+        >
+          Site search is temporarily unavailable. Browse
+          <a class="ml-1 text-accent underline" href="/projects/">
+            projects
+          </a>
+          ,
+          <a class="ml-1 text-accent underline" href="/blog/">
+            blog
+          </a>
+          , or
+          <a class="ml-1 text-accent underline" href="/contact/">
+            contact
+          </a>
+          .
+        </aside>
+      )
+    }
 
     <SkipLink href="#main-content" text="Skip to main content" />
     <SkipLink href="#footer" text="Skip to footer" />
@@ -88,6 +132,26 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
       <slot />
     </main>
     <Footer transition:persist="footer" />
-    <AIChatWidget transition:persist="chat" />
+    {
+      runtimeSurfaceFlags.aiAssistant ? (
+        <AIChatWidget transition:persist="chat" />
+      ) : (
+        <aside
+          class="mx-auto max-w-3xl px-4 py-3 text-sm text-muted-foreground"
+          data-runtime-fallback="ai-assistant"
+          aria-label="AI assistant status"
+        >
+          The AI assistant is temporarily unavailable. Search the
+          <a class="ml-1 text-accent underline" href="/blog/">
+            blog
+          </a>{' '}
+          or
+          <a class="ml-1 text-accent underline" href="/contact/">
+            contact Blake
+          </a>
+          .
+        </aside>
+      )
+    }
   </body>
 </html>

@@ -34,17 +34,27 @@ async function optimizePng(filePath) {
     }
   } catch (e) {
     console.error(`❌ Failed to optimize ${filePath}:`, e.message);
+    throw e;
   }
 }
 
 async function run() {
   const files = await fs.readdir(PROJECTS_DIR);
-  const pngs = files.filter(f => f.toLowerCase().endsWith('.png'));
+  const pngs = files.filter((f) => f.toLowerCase().endsWith('.png'));
+  let failures = 0;
   console.log(`🔧 Optimizing ${pngs.length} project PNGs in ${PROJECTS_DIR}`);
   for (const f of pngs) {
-    await optimizePng(path.join(PROJECTS_DIR, f));
+    try {
+      await optimizePng(path.join(PROJECTS_DIR, f));
+    } catch {
+      failures += 1;
+    }
   }
+  if (failures > 0) throw new Error(`Project image optimization failed for ${failures} file(s)`);
   console.log('🏁 Project image optimization complete.');
 }
 
-run();
+run().catch((error) => {
+  console.error(error.message);
+  process.exitCode = 1;
+});

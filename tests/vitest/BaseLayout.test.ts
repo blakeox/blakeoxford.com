@@ -26,8 +26,13 @@ describe('BaseLayout.astro file', () => {
     expect(content).toContain('<slot />');
   });
 
-  it('should use dynamic title prop in DocumentMeta', () => {
-    expect(content).toContain('title={title}');
+  it('should use the resolved SEO title prop in DocumentMeta', () => {
+    expect(content).toContain('title={seoTitle}');
+  });
+
+  it('should use the centralized social-image constant for the default preview', () => {
+    expect(content).toContain("import { SEO } from '@/config/constants'");
+    expect(content).toContain('`${siteHref}${SEO.defaultImage}`');
   });
 
   it('should use a neutral main shell without global prose', () => {

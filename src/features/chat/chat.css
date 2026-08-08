@@ -1,0 +1,46 @@
+@layer components {
+  .ai-chat-panel {
+    box-shadow: var(--shadow-2xl);
+  }
+
+  .ai-chat-launcher[aria-expanded='true'] {
+    transform: scale(0.96);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ai-chat-panel[data-ai-visible='true'] {
+      transform-origin: bottom right;
+      animation: chat-panel-in 280ms var(--ease-decelerate);
+    }
+
+    .ai-chat-launcher {
+      transition:
+        transform var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard),
+        color var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard);
+    }
+  }
+
+  @keyframes chat-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-chat-panel {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}

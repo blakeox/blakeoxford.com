@@ -1,4 +1,4 @@
-import { cpSync, existsSync, writeFileSync, readdirSync, statSync, unlinkSync } from 'node:fs';
+import { cpSync, existsSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const dist = join(process.cwd(), 'dist');
@@ -20,7 +20,8 @@ try {
   /* noop */
 }
 
-// Remove oversized PNG artifacts that could exceed Cloudflare's 25 MiB asset limit
+// Never delete generated assets after HTML generation. Fail instead so a referenced
+// asset cannot disappear silently from the deployment artifact.
 try {
   const astroDir = join(dist, '_astro');
   if (existsSync(astroDir)) {
@@ -31,14 +32,16 @@ try {
         const sizeBytes = statSync(filePath).size;
         const sizeMiB = sizeBytes / (1024 * 1024);
         if (sizeMiB > 10) {
-          unlinkSync(filePath);
-          console.log(`Removed oversized PNG asset: ${name} (${sizeMiB.toFixed(1)} MiB)`);
+          throw new Error(
+            `Oversized PNG asset requires explicit optimization: ${name} (${sizeMiB.toFixed(1)} MiB)`
+          );
         }
       }
     }
   }
-} catch {
-  // ignore cleanup errors
+} catch (error) {
+  console.error(error.message);
+  process.exitCode = 1;
 }
 
 console.log('Postbuild complete');

@@ -57,6 +57,57 @@ export function isProductionScheduledPath(pathname: string, environment?: string
   return environment === 'production' && pathname === '/__scheduled';
 }
 
+const CANONICAL_SLASH_ROUTE_PREFIXES = [
+  '/about',
+  '/blog',
+  '/contact',
+  '/projects',
+  '/accessibility',
+  '/components',
+  '/design',
+  '/docs',
+] as const;
+
+export function canonicalSlashPath(pathname: string): string | null {
+  if (
+    pathname === '/' ||
+    pathname.endsWith('/') ||
+    pathname.includes('.') ||
+    pathname.startsWith('/api/')
+  ) {
+    return null;
+  }
+
+  return CANONICAL_SLASH_ROUTE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  )
+    ? `${pathname}/`
+    : null;
+}
+
+export function canonicalRequestUrl(requestUrl: URL): URL | null {
+  const target = new URL(requestUrl);
+  const isProdDomain = isBlakeOxfordHostname(target.hostname);
+  let changed = false;
+
+  if (isProdDomain && target.protocol === 'http:') {
+    target.protocol = 'https:';
+    changed = true;
+  }
+  if (isProdDomain && target.hostname.startsWith('www.')) {
+    target.hostname = target.hostname.replace(/^www\./, '');
+    changed = true;
+  }
+
+  const slashPath = canonicalSlashPath(target.pathname);
+  if (slashPath) {
+    target.pathname = slashPath;
+    changed = true;
+  }
+
+  return changed ? target : null;
+}
+
 const WorkerApp = {
   async scheduled(controller: ScheduledController, env: Env): Promise<void> {
     const Sentry = initEdgeSentry(env);
@@ -94,39 +145,23 @@ const WorkerApp = {
       );
     }
 
-    // HTTPS + apex canonicalization
-    try {
-      const host = url.hostname;
-      const isGetLike = request.method === 'GET' || request.method === 'HEAD';
-      const isProdDomain = isBlakeOxfordHostname(host);
-      if (isProdDomain && url.protocol === 'http:' && isGetLike) {
-        url.protocol = 'https:';
-        const r = Response.redirect(url.toString(), 308);
-        const h = new Headers(r.headers);
-        h.set('x-request-id', reqId);
-        h.set('x-route-kind', 'redirect');
-        h.set('x-cache-policy', 'no-store');
-        return applySecurityHeaders(
-          new Response(r.body, { status: r.status, statusText: r.statusText, headers: h }),
-          reqId,
-          url.hostname
-        );
-      }
-      if (isProdDomain && host.startsWith('www.') && isGetLike) {
-        url.hostname = host.replace(/^www\./, '');
-        const r = Response.redirect(url.toString(), 308);
-        const h = new Headers(r.headers);
-        h.set('x-request-id', reqId);
-        h.set('x-route-kind', 'redirect');
-        h.set('x-cache-policy', 'no-store');
-        return applySecurityHeaders(
-          new Response(r.body, { status: r.status, statusText: r.statusText, headers: h }),
-          reqId,
-          url.hostname
-        );
-      }
-    } catch {
-      // ignore canonicalization errors
+    const isGetLike = request.method === 'GET' || request.method === 'HEAD';
+    const canonicalUrl = isGetLike ? canonicalRequestUrl(url) : null;
+    if (canonicalUrl) {
+      const redirect = Response.redirect(canonicalUrl.toString(), 308);
+      const headers = new Headers(redirect.headers);
+      headers.set('x-request-id', reqId);
+      headers.set('x-route-kind', 'redirect');
+      headers.set('x-cache-policy', 'no-store');
+      return applySecurityHeaders(
+        new Response(redirect.body, {
+          status: redirect.status,
+          statusText: redirect.statusText,
+          headers,
+        }),
+        reqId,
+        url.hostname
+      );
     }
 
     const routeCtx: RouteContext = { request, env, ctx, url, reqId, method, Sentry };

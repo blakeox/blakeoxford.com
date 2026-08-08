@@ -37,6 +37,7 @@ jobs:
 
       - name: Build site
         env:
+          GIT_COMMIT: ${{ github.sha }}
           PUBLIC_CLARITY_PROJECT_ID: tqngpokfgs
           PUBLIC_CF_WEB_ANALYTICS_TOKEN: ${{ secrets.PUBLIC_CF_WEB_ANALYTICS_TOKEN }}
         run: pnpm build
@@ -57,4 +58,22 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+          command: deploy --var GIT_COMMIT:${{ github.sha }}
+
+      - name: Verify deployed provenance
+        env:
+          EXPECTED_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          response=$(curl --fail --silent --show-error --retry 10 --retry-delay 3 https://blakeoxford.com/__version)
+          deployed=$(printf '%s' "$response" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("commit") or "")')
+          if [ "$deployed" != "$EXPECTED_COMMIT" ]; then
+            echo "❌ Deployed commit $deployed does not match $EXPECTED_COMMIT"
+            exit 1
+          fi
+          echo "✅ Production reports the intended commit $deployed"
+
+      - name: Verify deployed SEO and redirect contract
+        env:
+          EDGE_EXPECTED_COMMIT: ${{ github.sha }}
+        run: pnpm monitor:seo

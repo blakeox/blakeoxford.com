@@ -6,6 +6,17 @@ import path from 'path';
 describe('Contact form validation', () => {
   let form: HTMLFormElement;
 
+  it('keeps delivery infrastructure neutral until a verified or submitted state exists', () => {
+    const sectionPath = path.resolve(
+      __dirname,
+      '../../src/components/features/contact/ContactMessageSection.astro'
+    );
+    const sectionSource = fs.readFileSync(sectionPath, 'utf-8');
+
+    expect(sectionSource).toContain('Cloudflare delivery');
+    expect(sectionSource).not.toContain('text-success-emphasis');
+  });
+
   beforeEach(() => {
     // Read the contact form markup from the file
     const contactPagePath = path.resolve(__dirname, '../../src/pages/contact.astro');

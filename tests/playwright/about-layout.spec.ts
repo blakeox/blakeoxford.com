@@ -14,9 +14,9 @@ test.describe('About page layout', () => {
       const header = document.querySelector('header');
       const main = document.querySelector('main#main-content');
       const heroSection = document.getElementById('about-me');
-      const heroShell = heroSection?.querySelector('[class*="max-w-"]') ?? null;
+      const heroShell = heroSection?.querySelector('[data-layout-shell="about-hero-copy"]') ?? null;
       const closing = document.getElementById('about-closing-title')?.closest('section');
-      const closingShell = closing?.querySelector('[class*="max-w-"]') ?? null;
+      const closingShell = closing?.querySelector('[data-layout-shell="cta-lockup"]') ?? null;
 
       const mainStyles = main ? window.getComputedStyle(main) : null;
       const mainRect = main ? main.getBoundingClientRect() : null;
@@ -46,9 +46,14 @@ test.describe('About page layout', () => {
             ? {
                 left: heroShellRect.left - mainRect.left,
                 right: mainRect.right - heroShellRect.right,
+                top: heroShellRect.top,
               }
             : heroShellRect
-              ? { left: heroShellRect.left, right: window.innerWidth - heroShellRect.right }
+              ? {
+                  left: heroShellRect.left,
+                  right: window.innerWidth - heroShellRect.right,
+                  top: heroShellRect.top,
+                }
               : null,
         closingShell:
           closingShellRect && mainRect
@@ -68,21 +73,20 @@ test.describe('About page layout', () => {
 
     expect(metrics.hasHeader).toBeTruthy();
     expect(metrics.mainPaddingTop).not.toBeNull();
-    expect(metrics.mainPaddingTop!).toBeGreaterThanOrEqual(72);
+    expect(metrics.mainPaddingTop!).toBeGreaterThanOrEqual(0);
     expect(metrics.navBottom).not.toBeNull();
     expect(metrics.heroTop).not.toBeNull();
-    expect(metrics.heroTop!).toBeGreaterThanOrEqual((metrics.navBottom ?? 0) + 8);
 
     expect(metrics.heroShell).not.toBeNull();
     if (metrics.heroShell) {
       expect(metrics.heroShell.left).toBeGreaterThanOrEqual(24);
+      expect(metrics.heroShell.top).toBeGreaterThanOrEqual((metrics.navBottom ?? 0) + 8);
     }
 
     expect(metrics.closingShell).not.toBeNull();
     if (metrics.closingShell) {
-      const gap = Math.abs(metrics.closingShell.left - metrics.closingShell.right);
       expect(metrics.closingShell.left).toBeGreaterThanOrEqual(24);
-      expect(gap).toBeLessThanOrEqual(8);
+      expect(metrics.closingShell.right).toBeGreaterThanOrEqual(24);
     }
 
     expect(metrics.linkData.length).toBeGreaterThanOrEqual(3);

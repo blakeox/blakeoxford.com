@@ -4,22 +4,20 @@ name: Fast CI
 on:
   workflow_dispatch:
   pull_request:
-    branches: ["**"]
+    branches: ['**']
   push:
-    branches: ["**"]
+    branches: ['**']
     paths-ignore:
-      - "**.md"
-      - ".github/dependabot.yml"
-      - "assets-source/**"
-      - "lighthouse-reports/**"
-      - "optimization-reports/**"
-      - "coverage/**"
+      - '**.md'
+      - '.github/dependabot.yml'
+      - 'assets-source/**'
+      - 'lighthouse-reports/**'
+      - 'optimization-reports/**'
+      - 'coverage/**'
 
-# Explicit token permissions: default org policy is read-only; we need write to comment on PRs
+# This workflow only reads source and publishes artifacts.
 permissions:
   contents: read
-  pull-requests: write
-  issues: write
 
 # Cancel in-progress runs for the same workflow on the same branch
 concurrency:
@@ -95,6 +93,9 @@ jobs:
       - name: Build the application
         run: pnpm run build
 
+      - name: Validate emitted SEO contract
+        run: pnpm quality:seo
+
       - name: Run performance budget validation
         run: ./scripts/build/performance-budget.sh
 
@@ -131,8 +132,6 @@ jobs:
           name: quality-summary
           path: quality-summary.md
           retention-days: 14
-
-
 
   # Essential E2E tests - just the critical user paths
   essential-e2e:
@@ -199,11 +198,11 @@ jobs:
       - name: Run runtime quality gate (search/a11y/long-tasks)
         run: pnpm quality:runtime
         env:
-          MIN_TOPN_PASS_RATE: "80"
-          A11Y_FAIL: "true"
-          SEARCH_TOP_N: "3"
-          A11Y_MAX_PER_ROUTE: "2"
-          DEADLINK_FAIL: "true"
+          MIN_TOPN_PASS_RATE: '80'
+          A11Y_FAIL: 'true'
+          SEARCH_TOP_N: '3'
+          A11Y_MAX_PER_ROUTE: '2'
+          DEADLINK_FAIL: 'true'
 
       - name: Upload runtime quality artifacts
         if: always()
@@ -221,7 +220,7 @@ jobs:
       - name: Run essential Playwright tests (Chromium only)
         run: pnpm run test:e2e:essential:chromium
         env:
-          COMPREHENSIVE_TESTS: "false"
+          COMPREHENSIVE_TESTS: 'false'
 
       - name: Run nav visual baselines (Chromium)
         run: pnpm run test:e2e:visual:chromium
@@ -345,8 +344,8 @@ jobs:
       - name: Run essential tests on Firefox/WebKit
         run: pnpm exec playwright test --grep="@essential" --project=firefox --project=webkit
         env:
-          COMPREHENSIVE_TESTS: "false"
-          PLAYWRIGHT_OPTIONAL_BROWSERS: "true"
+          COMPREHENSIVE_TESTS: 'false'
+          PLAYWRIGHT_OPTIONAL_BROWSERS: 'true'
 
       - name: Track flakiness (Playwright JSON)
         if: always()
@@ -574,4 +573,3 @@ jobs:
           echo "✅ essential-e2e Chromium (${{ needs.essential-e2e.result }})"
           echo "✅ essential-e2e-crossbrowser (${{ needs.essential-e2e-crossbrowser.result }})"
           echo "All required checks are green."
-

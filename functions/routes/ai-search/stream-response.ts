@@ -9,8 +9,8 @@ type StreamAiResponseOptions = {
   baseCorsHeaders: Record<string, string>;
   startTime: number;
   complexity: string;
-  query: string;
-  enhancedQuery: string;
+  telemetryId: string;
+  queryEnhanced: boolean;
   finalCacheEnabled: boolean;
   cacheKey: string;
   clientIp: string;
@@ -24,8 +24,8 @@ export function buildAiSearchStreamResponse({
   baseCorsHeaders,
   startTime,
   complexity,
-  query,
-  enhancedQuery,
+  telemetryId,
+  queryEnhanced,
   finalCacheEnabled,
   cacheKey,
   clientIp,
@@ -38,7 +38,7 @@ export function buildAiSearchStreamResponse({
   streamHeaders.set('x-cache-status', 'MISS');
   streamHeaders.set('x-response-time', String(Date.now() - startTime));
   streamHeaders.set('x-query-complexity', complexity);
-  streamHeaders.set('x-query-enhanced', String(query !== enhancedQuery));
+  streamHeaders.set('x-query-enhanced', String(queryEnhanced));
   streamHeaders.set('x-ai-provider', 'autorag');
 
   const encoder = new globalThis.TextEncoder();
@@ -84,7 +84,7 @@ export function buildAiSearchStreamResponse({
 
       writeAiAnalytics(env, {
         blobs: [
-          query.slice(0, 50),
+          telemetryId,
           'API_CALL_STREAM',
           anonymizeClientIp(clientIp),
           sessionId || 'anonymous',

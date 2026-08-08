@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { trackEvent, autoragEvents, conversionEvents } from '../../src/lib/analytics';
+import {
+  classifyAcquisitionSource,
+  trackEvent,
+  autoragEvents,
+  conversionEvents,
+} from '../../src/lib/analytics';
 import { __resetClarityForTests } from '../../src/lib/clarity';
 
 describe('trackEvent routing', () => {
@@ -11,6 +16,17 @@ describe('trackEvent routing', () => {
       gtag: undefined,
       clarity: undefined,
     });
+  });
+
+  it.each([
+    ['', 'direct'],
+    ['https://www.google.com/search?q=private-query', 'organic'],
+    ['https://www.google.co.uk/search?q=private-query', 'organic'],
+    ['https://example.org/article', 'referral'],
+    ['https://blakeoxford.com/blog/', 'internal'],
+    ['not a URL', 'unknown'],
+  ] as const)('classifies %s as %s without retaining URL data', (referrer, expected) => {
+    expect(classifyAcquisitionSource(referrer)).toBe(expected);
   });
 
   afterEach(() => {
@@ -72,6 +88,7 @@ describe('trackEvent routing', () => {
 
     autoragEvents.feedback({ sentiment: 'positive', message_id: 'm1' });
     conversionEvents.generateLead();
+    conversionEvents.generateLead({ acquisition_source: 'organic' });
     conversionEvents.chatEngagement({ user_messages: 2, total_messages: 5 });
 
     expect(track).toHaveBeenCalledWith('autorag_feedback', {
@@ -81,6 +98,11 @@ describe('trackEvent routing', () => {
     expect(track).toHaveBeenCalledWith('generate_lead', {
       method: 'contact_form',
       form: 'contact',
+    });
+    expect(track).toHaveBeenCalledWith('generate_lead', {
+      method: 'contact_form',
+      form: 'contact',
+      acquisition_source: 'organic',
     });
     expect(track).toHaveBeenCalledWith('chat_engagement', {
       user_messages: 2,

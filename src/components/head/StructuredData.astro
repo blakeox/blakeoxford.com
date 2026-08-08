@@ -2,13 +2,16 @@
 /**
  * JSON-LD for WebSite + Person.
  */
+import { AUTHOR_IDENTITY, SITE_BRAND_NAME } from '@/config/constants';
+
 interface Props {
   siteHref: string;
   description: string;
   ogImage: string;
+  structuredData?: Array<Record<string, unknown>>;
 }
 
-const { siteHref, description, ogImage } = Astro.props;
+const { siteHref, description, ogImage, structuredData = [] } = Astro.props;
 
 const websitePersonJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -16,23 +19,21 @@ const websitePersonJsonLd = JSON.stringify({
     {
       '@type': 'WebSite',
       url: siteHref,
-      name: 'Blake Oxford Portfolio',
+      name: SITE_BRAND_NAME,
       description,
       inLanguage: 'en-US',
       publisher: {
         '@type': 'Person',
-        name: 'Blake Oxford',
-        url: siteHref,
+        ...AUTHOR_IDENTITY,
       },
     },
     {
       '@type': 'Person',
-      name: 'Blake Oxford',
-      url: siteHref,
+      ...AUTHOR_IDENTITY,
       image: ogImage,
       description,
-      sameAs: ['https://www.linkedin.com/in/blake-oxford', 'https://github.com/blakeox'],
     },
+    ...structuredData,
   ],
 });
 ---

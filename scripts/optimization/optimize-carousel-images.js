@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import fs from 'fs/promises';
-import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import sharp from 'sharp';
@@ -10,10 +9,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const OUT_DIR = path.join(__dirname, '../../src/assets/images/carousel');
-const DEFAULT_LOCAL_ORIGINALS = path.join(
-  os.homedir(),
-  'Documents/blakeoxford-local/carousel-originals'
-);
 const IN_REPO_ORIGINALS = path.join(OUT_DIR, 'originals');
 
 // Target max dimensions for carousel usage (desktop uses 640x640)
@@ -38,11 +33,7 @@ async function fileExists(p) {
 }
 
 async function resolveSourceDirectory() {
-  const candidates = [
-    process.env.CAROUSEL_ORIGINALS_DIR,
-    DEFAULT_LOCAL_ORIGINALS,
-    IN_REPO_ORIGINALS,
-  ].filter(Boolean);
+  const candidates = [process.env.CAROUSEL_ORIGINALS_DIR, IN_REPO_ORIGINALS].filter(Boolean);
 
   for (const candidate of candidates) {
     try {
@@ -109,8 +100,7 @@ async function run() {
   const sourceDirectory = await resolveSourceDirectory();
   if (!sourceDirectory) {
     console.log(
-      `No carousel masters found. Place them in ${DEFAULT_LOCAL_ORIGINALS} ` +
-        'or set CAROUSEL_ORIGINALS_DIR. Skipping.'
+      `No carousel masters found. Add them under ${IN_REPO_ORIGINALS} or set CAROUSEL_ORIGINALS_DIR. Skipping.`
     );
     return;
   }

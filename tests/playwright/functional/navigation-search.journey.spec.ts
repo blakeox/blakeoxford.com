@@ -25,9 +25,11 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
     try {
       await Promise.all([
         page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {}),
-        page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {})
+        page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {}),
       ]);
-    } catch (e) { console.error('Fallback reload failed', e); }
+    } catch (e) {
+      console.error('Fallback reload failed', e);
+    }
 
     // Diagnostic: if overlay remains visible, log relevant attributes and wait deterministically for closed state
     const overlay = page.locator('#search-overlay');
@@ -36,19 +38,32 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
         const el = document.getElementById('search-overlay');
         if (!el) return;
         const styles = window.getComputedStyle(el as HTMLElement);
-         
-        console.log('Overlay still visible after close attempt:', { classList: Array.from((el as HTMLElement).classList), dataset: { ...(el as any).dataset }, display: styles.display, visibility: styles.visibility, opacity: styles.opacity });
+
+        console.log('Overlay still visible after close attempt:', {
+          classList: Array.from((el as HTMLElement).classList),
+          dataset: { ...(el as any).dataset },
+          display: styles.display,
+          visibility: styles.visibility,
+          opacity: styles.opacity,
+        });
       });
     }
 
     // Wait for deterministic closed state (dataset and styles reconcile)
     try {
-      await page.waitForFunction(() => {
-        const el = document.getElementById('search-overlay');
-        if (!el) return true;
-        const style = window.getComputedStyle(el as HTMLElement);
-        return el.dataset.state === 'closed' || style.display === 'none' || el.classList.contains('hidden');
-      }, { timeout: 8000 });
+      await page.waitForFunction(
+        () => {
+          const el = document.getElementById('search-overlay');
+          if (!el) return true;
+          const style = window.getComputedStyle(el as HTMLElement);
+          return (
+            el.dataset.state === 'closed' ||
+            style.display === 'none' ||
+            el.classList.contains('hidden')
+          );
+        },
+        { timeout: 8000 }
+      );
     } catch (err) {
       // If the page was closed, skip diagnostics that require page context
       if (page.isClosed && page.isClosed()) {
@@ -63,7 +78,11 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
 
         try {
           const cors = await page.evaluate(() => {
-            try { return (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []; } catch (e) { return []; }
+            try {
+              return (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || [];
+            } catch (e) {
+              return [];
+            }
           });
           console.log('Client __PLAYWRIGHT_CONSOLE_CAPTURE:', JSON.stringify(cors.slice(-200)));
         } catch (e) {
@@ -74,10 +93,27 @@ test.describe('@essential @smoke @journey Navigation & Search Journey', () => {
         try {
           const html = await page.content();
           console.log('Client HTML snapshot length:', html && html.length);
-        } catch(e) { console.log('Failed to fetch page content for snapshot', e); }
+        } catch (e) {
+          console.log('Failed to fetch page content for snapshot', e);
+        }
       }
     }
 
     await expect(overlay).not.toBeVisible();
+  });
+});
+
+test.describe('No-JavaScript fallbacks', () => {
+  test.use({ javaScriptEnabled: false });
+
+  test('keeps search fallback links available', async ({ page }) => {
+    const response = await page.request.get('/');
+    expect(response.ok()).toBe(true);
+
+    const html = await response.text();
+    expect(html).toContain('Search requires JavaScript. Browse');
+    expect(html).toContain('href="/projects/"');
+    expect(html).toContain('href="/blog/"');
+    expect(html).toContain('href="/contact/"');
   });
 });

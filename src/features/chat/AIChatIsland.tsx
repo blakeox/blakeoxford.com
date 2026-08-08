@@ -28,6 +28,13 @@ export default function AIChatIsland() {
   const [freshNotice, setFreshNotice] = useState(false);
   const freshTimerRef = useRef<number | null>(null);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      window.dispatchEvent(new Event('ai-chat:hydrated'));
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const {
     isOpen,
     messages,

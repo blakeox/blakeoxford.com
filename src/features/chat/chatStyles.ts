@@ -17,9 +17,6 @@ export const CHAT_DOCK_DRAG_HANDLE =
 export const CHAT_LAUNCHER_BASE =
   'ai-chat-launcher touch-target focus-ring-interactive pointer-events-auto inline-flex size-12 items-center justify-center rounded-full shadow-lg transition duration-normal ease-standard motion-safe:hover:-translate-y-0.5 hover:shadow-lg motion-safe:active:translate-y-0 motion-reduce:transition-none sm:size-14';
 
-export const CHAT_LAUNCHER_OPEN =
-  'border border-border/70 bg-surface/95 text-foreground backdrop-blur';
-
 export const CHAT_LAUNCHER_CLOSED = 'border border-accent/30 bg-accent text-on-accent';
 
 export const CHAT_ACCENT_CHIP =

@@ -358,7 +358,7 @@ test.describe('Enhanced Accessibility Testing', () => {
       const pages = [
         { path: '/', expectedTitlePattern: /portfolio|blake oxford|welcome|home|your site/i },
         { path: '/about', expectedTitlePattern: /about|your site/i },
-        { path: '/projects', expectedTitlePattern: /projects|your site/i },
+        { path: '/projects', expectedTitlePattern: /projects|selected work|your site/i },
         { path: '/contact', expectedTitlePattern: /contact|your site/i },
         // Accept updated blog index title copy
         { path: '/blog', expectedTitlePattern: /blog|insights|updates|your site/i }

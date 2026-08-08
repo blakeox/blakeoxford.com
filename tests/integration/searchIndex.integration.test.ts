@@ -35,7 +35,9 @@ describe('Search Index Integration', () => {
 
   it('public/search/projects.json is sorted by date', () => {
     const projects = readJSON('public/search/projects.json');
-    const hasValidDates = projects.every((p: { publishedAt?: string }) => p.publishedAt && /\d{4}-\d{2}-\d{2}/.test(p.publishedAt));
+    const hasValidDates = projects.every(
+      (p: { publishedAt?: string }) => p.publishedAt && /\d{4}-\d{2}-\d{2}/.test(p.publishedAt)
+    );
     expect(hasValidDates).toBe(true);
   });
 
@@ -44,6 +46,18 @@ describe('Search Index Integration', () => {
     const sample = projects[0];
     expect(sample).toHaveProperty('slug');
     expect(sample).toHaveProperty('title');
+    expect(sample.description).toBeTruthy();
     expect(sample).toHaveProperty('publishedAt');
+  });
+
+  it('published blog records include content-owned authorship and descriptions', () => {
+    const blog = readJSON('public/search/blog.json');
+    expect(blog.length).toBeGreaterThan(0);
+    expect(
+      blog.every(
+        (post: { author?: string; description?: string }) =>
+          Boolean(post.author?.trim()) && Boolean(post.description?.trim())
+      )
+    ).toBe(true);
   });
 });

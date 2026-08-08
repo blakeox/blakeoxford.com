@@ -7,11 +7,9 @@ on:
   workflow_dispatch:
     # Allow manual triggering for comprehensive testing
 
-# Add permissions for the workflow
+# Read-only validation; publishing/deployment is a separate controlled workflow.
 permissions:
-  contents: write
-  pull-requests: write
-  checks: write
+  contents: read
 
 # Cancel in-progress runs for the same workflow on the same branch
 concurrency:
@@ -30,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
-      fail-fast: false  # Continue other tests even if one fails
+      fail-fast: false # Continue other tests even if one fails
       matrix:
         test-group: ${{ fromJSON(github.event_name == 'workflow_dispatch' && '["unit","e2e","performance"]' || '["unit","e2e"]') }}
     steps:
@@ -61,7 +59,7 @@ jobs:
         if: matrix.test-group == 'e2e' || matrix.test-group == 'performance'
         run: |
           echo "🎭 Installing Playwright browsers with intelligent fallback..."
-          
+
           # Try installing all browsers first
           if pnpm exec playwright install; then
             echo "✅ All browsers installed successfully"
@@ -90,6 +88,10 @@ jobs:
 
       - name: Build the application
         run: pnpm run build
+
+      - name: Validate emitted SEO contract
+        if: matrix.test-group == 'unit'
+        run: pnpm quality:seo
 
       - name: Run deployment readiness check
         if: matrix.test-group == 'unit'
@@ -141,18 +143,18 @@ jobs:
         if: matrix.test-group == 'performance'
         run: |
           echo "🚀 Validating Astro static site generation..."
-          
+
           # Check for hydration directives (should be minimal)
           HYDRATION_COUNT=$(grep -r "client:" src/ | wc -l || echo "0")
           echo "Client-side hydration directives found: $HYDRATION_COUNT"
-          
+
           # Check for proper image optimization
           if [ -d "dist/_astro" ]; then
             echo "✅ Astro asset optimization detected"
           else
             echo "⚠️ Warning: Astro asset optimization may not be working"
           fi
-          
+
           # Verify static output
           if [ -f "dist/index.html" ]; then
             echo "✅ Static HTML generation confirmed"
@@ -177,7 +179,6 @@ jobs:
         run: pnpm lh:ci
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-        continue-on-error: true
 
       - name: Stop dev server
         if: always() && matrix.test-group == 'performance'

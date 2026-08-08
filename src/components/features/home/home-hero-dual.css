@@ -67,13 +67,14 @@
 }
 
 .home-dual-lines {
-  position: relative;
+  display: grid;
   width: 100%;
   max-width: 28rem;
   min-height: 3.2em;
 }
 
 .home-dual-line {
+  grid-area: 1 / 1;
   margin: 0;
   font-family: var(--font-heading);
   font-size: clamp(1.15rem, 1rem + 0.55vw, 1.45rem);
@@ -81,18 +82,32 @@
   letter-spacing: -0.02em;
   line-height: 1.35;
   color: var(--color-foreground);
+  transition:
+    opacity 0.18s var(--ease-standard, ease),
+    transform 0.18s var(--ease-standard, ease);
 }
 
 .home-dual-line[data-dual-line-work] {
-  opacity: calc(1 - var(--dual-progress, 0));
-  transform: translateY(calc(var(--dual-progress, 0) * -0.35rem));
+  opacity: 1;
+  transform: none;
 }
 
 .home-dual-line[data-dual-line-daring] {
-  position: absolute;
-  inset: 0;
-  opacity: var(--dual-progress, 0);
-  transform: translateY(calc((1 - var(--dual-progress, 0)) * 0.35rem));
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(0.35rem);
+}
+
+.home-dual[data-side='daring'] .home-dual-line[data-dual-line-work] {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-0.35rem);
+}
+
+.home-dual[data-side='daring'] .home-dual-line[data-dual-line-daring] {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
 }
 
 .home-dual-hint {
@@ -284,6 +299,7 @@
   .home-dual-line[data-dual-line-work],
   .home-dual-line[data-dual-line-daring] {
     position: static;
+    visibility: visible;
     opacity: 1;
     transform: none;
   }

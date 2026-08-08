@@ -302,7 +302,27 @@ test.describe('Advanced Test Scenarios @extended', () => {
           // Should be valid JSON
           const structuredData = JSON.parse(jsonLdContent!);
           expect(structuredData['@context']).toBeTruthy();
-          expect(structuredData['@type']).toBeTruthy();
+          expect(structuredData['@type'] || structuredData['@graph']).toBeTruthy();
+        }
+      }
+    });
+
+    test('should expose page-specific structured data on dynamic content routes', async ({ page }) => {
+      const routeExpectations = [
+        { path: '/blog/ai-statistics-future-decision-making/', types: ['Article', 'BreadcrumbList'] },
+        { path: '/projects/adp-workforcenow/', types: ['CreativeWork', 'BreadcrumbList'] },
+      ];
+
+      for (const { path, types } of routeExpectations) {
+        await page.goto(path);
+        const jsonLdScripts = page.locator('script[type="application/ld+json"]');
+        const structuredData = JSON.parse((await jsonLdScripts.first().textContent()) ?? '{}');
+        const graphTypes = (structuredData['@graph'] ?? [])
+          .map((node: { '@type'?: string }) => node['@type'])
+          .filter(Boolean);
+
+        for (const type of types) {
+          expect(graphTypes).toContain(type);
         }
       }
     });

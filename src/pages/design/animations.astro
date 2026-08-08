@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/primitives/Container.astro';
 import Section from '@/components/primitives/Section.astro';
 import Badge from '@/components/primitives/Badge.astro';
+import BaseCard from '@/components/primitives/BaseCard.astro';
 
 const motionRules = [
   {
@@ -37,6 +38,7 @@ const motionRules = [
   title="Design Motion"
   description="Operational motion rules for the Blake Oxford design system."
   canonicalUrl="https://blakeoxford.com/design/animations/"
+  noindex={true}
   wide={true}
 >
   <Section padding="xl">
@@ -53,7 +55,7 @@ const motionRules = [
       <section class="mt-12 grid gap-4 lg:grid-cols-2" aria-label="Motion contracts">
         {
           motionRules.map((rule) => (
-            <article class="min-w-0 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm">
+            <BaseCard as="article" variant="subtle" hover="none" padding="md" class="min-w-0">
               <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <h2 class="text-xl font-semibold text-foreground">{rule.name}</h2>
@@ -67,13 +69,17 @@ const motionRules = [
                 {rule.contract}
               </code>
               <p class="mt-4 text-sm text-muted-foreground">{rule.example}</p>
-            </article>
+            </BaseCard>
           ))
         }
       </section>
 
-      <section
-        class="mt-16 rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm sm:p-6"
+      <BaseCard
+        as="section"
+        variant="subtle"
+        hover="none"
+        padding="lg"
+        class="mt-16"
         aria-labelledby="motion-boundary"
       >
         <h2 id="motion-boundary" class="text-2xl font-bold text-foreground">Boundary</h2>
@@ -86,7 +92,7 @@ const motionRules = [
             input.
           </li>
         </ul>
-      </section>
+      </BaseCard>
 
       <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
         <a

@@ -5,6 +5,8 @@
 import { memo } from 'react';
 import { GUIDED_PROMPTS } from '@/lib/chat';
 import type { ChatGuidedPromptsProps } from '@/features/chat/types';
+import { crossRendererSurfaceRecipe } from '@/lib/design-system/recipes';
+import { cn } from '@/utils/cn';
 
 export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({
   visible,
@@ -25,7 +27,10 @@ export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({
           <button
             key={prompt.id}
             type="button"
-            className="group flex h-full flex-col items-start gap-2 rounded-2xl border border-border/30 bg-surface/70 px-3 py-3 text-left transition hover:border-accent/50 hover:bg-surface/90 focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none"
+            className={cn(
+              'group flex h-full flex-col items-start gap-2 px-3 py-3 text-left',
+              crossRendererSurfaceRecipe.interactive
+            )}
             onClick={() => onSelectPrompt(prompt.prompt)}
             title={prompt.prompt}
           >
