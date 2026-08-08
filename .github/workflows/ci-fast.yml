@@ -74,6 +74,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate IndexNow ownership contract
+        run: pnpm quality:indexnow
+
       - name: Run dependency audit (fail on high)
         run: pnpm security:audit -- --audit-level=high
 
@@ -574,4 +577,3 @@ jobs:
           echo "✅ essential-e2e Chromium (${{ needs.essential-e2e.result }})"
           echo "✅ essential-e2e-crossbrowser (${{ needs.essential-e2e-crossbrowser.result }})"
           echo "All required checks are green."
-
