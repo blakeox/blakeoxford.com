@@ -72,6 +72,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate IndexNow ownership contract
+        run: pnpm quality:indexnow
+
       - name: Run dependency audit (fail on high)
         run: pnpm security:audit -- --audit-level=high
 

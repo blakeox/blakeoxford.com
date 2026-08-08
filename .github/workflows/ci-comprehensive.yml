@@ -55,6 +55,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate IndexNow ownership contract
+        if: matrix.test-group == 'unit'
+        run: pnpm quality:indexnow
+
       - name: Install Playwright browsers with enhanced fallback
         if: matrix.test-group == 'e2e' || matrix.test-group == 'performance'
         run: |
