@@ -27,6 +27,7 @@
     "format": "prettier --write \"src\" \"tests/vitest\" \"scripts/quality\" \"eslint.config.js\" \"package.json\" \"CONTRIBUTING.md\" \"DESIGN_BEST_PRACTICES.md\" \".github/instructions/design.instructions.md\" \".prettierrc\"",
     "format:check": "prettier --check \"src\" \"tests/vitest\" \"scripts/quality\" \"eslint.config.js\" \"package.json\" \"CONTRIBUTING.md\" \"DESIGN_BEST_PRACTICES.md\" \".github/instructions/design.instructions.md\" \".prettierrc\"",
     "vectorize:index": "node scripts/vectorize-content.mjs",
+    "indexnow:submit": "node scripts/seo/indexnow-submit.mjs",
     "optimize:images": "node scripts/optimization/optimize-images-advanced.js",
     "validate:zaraz": "node scripts/setup/validate-zaraz.mjs",
     "deploy:worker": "corepack pnpm exec wrangler deploy",
