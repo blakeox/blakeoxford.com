@@ -92,7 +92,9 @@ export function validateUrl(value, label = 'URL') {
     url.password ||
     url.hash
   ) {
-    throw new Error(`${label} must be an HTTPS URL on ${SITE_HOST} without credentials or fragments`);
+    throw new Error(
+      `${label} must be an HTTPS URL on ${SITE_HOST} without credentials or fragments`
+    );
   }
   return url.toString();
 }
@@ -114,7 +116,7 @@ async function urlsFromSitemap(sitemapValue) {
   const sitemapUrl = validateUrl(sitemapValue, 'sitemap URL');
   const response = await fetch(sitemapUrl, {
     headers: { accept: 'application/xml,text/xml;q=0.9,*/*;q=0.1' },
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    signal: globalThis.AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!response.ok) throw new Error(`sitemap fetch failed with HTTP ${response.status}`);
 
@@ -162,12 +164,13 @@ async function submitBatch(payload) {
         method: 'POST',
         headers: { 'content-type': 'application/json; charset=utf-8' },
         body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        signal: globalThis.AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       });
     } catch (error) {
       if (attempt === MAX_RETRIES) {
         throw new Error(
-          `IndexNow submission failed after ${MAX_RETRIES + 1} attempts: ${error instanceof Error ? error.message : error}`
+          `IndexNow submission failed after ${MAX_RETRIES + 1} attempts: ${error instanceof Error ? error.message : error}`,
+          { cause: error }
         );
       }
       await sleep(Math.min(1_000 * 2 ** attempt, 30_000));
@@ -223,7 +226,8 @@ export async function main(argv = process.argv.slice(2)) {
   }
 }
 
-const isDirectExecution = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+const isDirectExecution =
+  process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isDirectExecution) {
   main().then((exitCode) => {
     process.exitCode = exitCode;
