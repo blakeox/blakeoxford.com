@@ -55,6 +55,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate analytics contract
+        if: matrix.test-group == 'unit'
+        run: pnpm quality:analytics
+
       - name: Validate IndexNow ownership contract
         if: matrix.test-group == 'unit'
         run: pnpm quality:indexnow

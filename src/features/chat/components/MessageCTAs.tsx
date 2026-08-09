@@ -118,7 +118,6 @@ export const MatchedCTA = memo(function MatchedCTA({
           autoragEvents.ctaClick({
             type: 'quality-suggestion',
             label: matchedCTA.ctaText,
-            source: userQuery,
           });
         }}
       >
@@ -147,7 +146,6 @@ export const MatchedCTA = memo(function MatchedCTA({
           autoragEvents.ctaClick({
             type: 'quality-suggestion',
             label: matchedCTA.ctaText,
-            source: userQuery,
           });
         }}
       >

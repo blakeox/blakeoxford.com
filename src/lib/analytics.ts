@@ -8,6 +8,28 @@ import { setClarityTags, trackClarityEvent } from './clarity';
 
 export type AnalyticsProps = Record<string, string | number | boolean>;
 
+const BLOCKED_ANALYTICS_KEYS = new Set([
+  'email',
+  'href',
+  'ip',
+  'message',
+  'message_id',
+  'metric_id',
+  'name',
+  'password',
+  'prompt',
+  'query',
+  'referrer',
+  'response',
+  'session_id',
+  'token',
+  'url',
+  'user_id',
+]);
+
+const MAX_ANALYTICS_KEY_LENGTH = 40;
+const MAX_ANALYTICS_STRING_LENGTH = 100;
+
 interface ZarazClient {
   track?: (event: string, props?: Record<string, unknown>) => void | Promise<void>;
 }
@@ -89,6 +111,47 @@ export function getAcquisitionSource(): AcquisitionSource {
   return typeof document === 'undefined' ? 'unknown' : classifyAcquisitionSource(document.referrer);
 }
 
+/**
+ * Keep analytics payloads bounded and free of direct identifiers or content.
+ * This is intentionally applied at the shared boundary so new callers inherit
+ * the same privacy contract without depending on each vendor's configuration.
+ */
+export function sanitizeAnalyticsProps(props?: AnalyticsProps): AnalyticsProps | undefined {
+  if (!props) return undefined;
+
+  const safeProps: AnalyticsProps = {};
+  for (const [key, value] of Object.entries(props)) {
+    if (
+      !key ||
+      key.length > MAX_ANALYTICS_KEY_LENGTH ||
+      BLOCKED_ANALYTICS_KEYS.has(key.toLowerCase())
+    ) {
+      continue;
+    }
+
+    if (typeof value === 'string') {
+      const normalized = [...value]
+        .filter((character) => {
+          const code = character.charCodeAt(0);
+          return (code >= 0x20 && code !== 0x7f) || code === 0x09;
+        })
+        .join('')
+        .trim();
+      if (normalized) safeProps[key] = normalized.slice(0, MAX_ANALYTICS_STRING_LENGTH);
+      continue;
+    }
+
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      safeProps[key] = value;
+      continue;
+    }
+
+    if (typeof value === 'boolean') safeProps[key] = value;
+  }
+
+  return Object.keys(safeProps).length > 0 ? safeProps : undefined;
+}
+
 function mirrorToClarity(event: string, props?: AnalyticsProps): void {
   trackClarityEvent(event);
   if (!props) return;
@@ -108,6 +171,7 @@ function mirrorToClarity(event: string, props?: AnalyticsProps): void {
  */
 export function trackEvent(event: string, props?: AnalyticsProps): void {
   try {
+    const safeProps = sanitizeAnalyticsProps(props);
     const win = window as Window &
       DataLayerWindow & {
         zaraz?: ZarazClient;
@@ -115,14 +179,18 @@ export function trackEvent(event: string, props?: AnalyticsProps): void {
       };
 
     if (win.zaraz?.track) {
-      void win.zaraz.track(event, props);
+      void win.zaraz.track(event, safeProps);
     } else if (Array.isArray(win.dataLayer)) {
-      win.dataLayer.push({ event, ...props });
+      win.dataLayer.push({ event, ...safeProps });
     } else if (typeof win.gtag === 'function') {
-      win.gtag('event', event, props);
+      win.gtag('event', event, safeProps);
+    } else {
+      // Queue events for a late-loaded Zaraz/dataLayer integration.
+      win.dataLayer = [];
+      win.dataLayer.push({ event, ...safeProps });
     }
 
-    mirrorToClarity(event, props);
+    mirrorToClarity(event, safeProps);
   } catch (error) {
     // Analytics should never break functionality
     console.debug('Analytics tracking failed:', error);
@@ -178,18 +246,13 @@ export const autoragEvents = {
   errorRetry: (data: { category: string; attempt: number; user_initiated?: boolean }) =>
     trackEvent('autorag_error_retry', data),
 
-  error: (data: {
-    category: string;
-    severity: string;
-    message?: string;
-    retry_available?: boolean;
-  }) => trackEvent('autorag_error', data),
+  error: (data: { category: string; severity: string; retry_available?: boolean }) =>
+    trackEvent('autorag_error', data),
 
   quickAction: (data: { action: string; category?: string }) =>
     trackEvent('autorag_quick_action', data),
 
-  ctaClick: (data: { type: string; label: string; source?: string }) =>
-    trackEvent('autorag_cta_click', data),
+  ctaClick: (data: { type: string; label: string }) => trackEvent('autorag_cta_click', data),
 
   suggestedQuery: (data: { query: string; position?: number }) =>
     trackEvent('autorag_suggested_query', {
@@ -199,14 +262,9 @@ export const autoragEvents = {
 
   share: (method: 'native' | 'clipboard') => trackEvent('autorag_share', { method }),
 
-  manualRetry: (data: { error_category?: string; message_id: string }) =>
-    trackEvent('autorag_manual_retry', {
-      error_category: data.error_category ?? 'unknown',
-      message_id: data.message_id,
-    }),
+  manualRetry: () => trackEvent('autorag_manual_retry', { error_category: 'unknown' }),
 
-  feedback: (data: { sentiment: 'positive' | 'negative'; message_id: string }) =>
-    trackEvent('autorag_feedback', data),
+  feedback: (data: { sentiment: 'positive' | 'negative' }) => trackEvent('autorag_feedback', data),
 
   responseMeta: (data: { provider: string; cache_status: string; complexity: string }) =>
     trackEvent('autorag_response_meta', data),

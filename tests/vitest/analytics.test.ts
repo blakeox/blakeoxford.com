@@ -4,6 +4,7 @@ import {
   trackEvent,
   autoragEvents,
   conversionEvents,
+  sanitizeAnalyticsProps,
 } from '../../src/lib/analytics';
 import { __resetClarityForTests } from '../../src/lib/clarity';
 
@@ -86,14 +87,13 @@ describe('trackEvent routing', () => {
     const track = vi.fn();
     vi.stubGlobal('window', { zaraz: { track }, clarity: vi.fn() });
 
-    autoragEvents.feedback({ sentiment: 'positive', message_id: 'm1' });
+    autoragEvents.feedback({ sentiment: 'positive' });
     conversionEvents.generateLead();
     conversionEvents.generateLead({ acquisition_source: 'organic' });
     conversionEvents.chatEngagement({ user_messages: 2, total_messages: 5 });
 
     expect(track).toHaveBeenCalledWith('autorag_feedback', {
       sentiment: 'positive',
-      message_id: 'm1',
     });
     expect(track).toHaveBeenCalledWith('generate_lead', {
       method: 'contact_form',
@@ -108,5 +108,16 @@ describe('trackEvent routing', () => {
       user_messages: 2,
       total_messages: 5,
     });
+  });
+
+  it('drops content and identifiers while retaining bounded dimensions', () => {
+    expect(
+      sanitizeAnalyticsProps({
+        query: 'private question',
+        message_id: 'message-1',
+        source: 'nav',
+        count: 2,
+      })
+    ).toEqual({ source: 'nav', count: 2 });
   });
 });

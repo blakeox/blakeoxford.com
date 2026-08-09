@@ -42,6 +42,11 @@ jobs:
           PUBLIC_CF_WEB_ANALYTICS_TOKEN: ${{ secrets.PUBLIC_CF_WEB_ANALYTICS_TOKEN }}
         run: pnpm build
 
+      - name: Verify analytics activation contract
+        env:
+          PUBLIC_CLARITY_PROJECT_ID: tqngpokfgs
+        run: pnpm quality:analytics -- --require-clarity
+
       - name: Validate Worker configuration
         run: pnpm exec wrangler deploy --dry-run
 

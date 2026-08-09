@@ -19,6 +19,7 @@
     "test:e2e:visual:chromium": "playwright test tests/playwright/visual-smoke.spec.ts tests/playwright/component-visual-baselines.spec.ts --project=chromium",
     "quality": "node scripts/quality/cli.mjs",
     "quality:indexnow": "node scripts/quality/check-indexnow.mjs",
+    "quality:analytics": "node scripts/quality/check-analytics.mjs",
     "prepare": "husky",
     "prebuild": "node scripts/content/generate-search-index.js",
     "postbuild": "node scripts/build/postbuild-copy.js",

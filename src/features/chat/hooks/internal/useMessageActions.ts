@@ -92,7 +92,6 @@ export function useMessageActions(options: UseMessageActionsOptions): UseMessage
 
       autoragEvents.feedback({
         sentiment: resolvedSentiment,
-        message_id: messageId,
       });
 
       await submitAIFeedback({

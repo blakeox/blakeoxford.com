@@ -93,6 +93,9 @@ jobs:
       - name: Validate Zaraz analytics template
         run: pnpm run validate:zaraz
 
+      - name: Validate analytics contract
+        run: pnpm quality:analytics
+
       - name: Build the application
         run: pnpm run build
 
