@@ -8,9 +8,10 @@
 
 import BaseCard from '@/components/primitives/BaseCard.astro';
 import { headingSizeClass } from '@/lib/typeScale';
+import { featureCardRecipe, type FeatureCardVariant } from '@/lib/design-system/recipes';
 
 interface Props {
-  variant?: 'accent' | 'primary' | 'success' | 'warning' | 'info' | 'error';
+  variant?: FeatureCardVariant;
   title?: string;
   titleLevel?: 2 | 3;
   description?: string;
@@ -29,36 +30,9 @@ const {
   class: className = '',
 } = Astro.props;
 
-const variantClasses = {
-  accent: 'from-accent/10 to-accent/5 border-accent/30',
-  primary: 'from-primary/10 to-primary/5 border-primary/30',
-  success: 'from-success/10 to-success/5 border-success/30',
-  warning: 'from-warning/15 to-warning/5 border-warning/40',
-  info: 'from-info/10 to-info/5 border-info/30',
-  error: 'from-error/10 to-error/5 border-error/30',
-};
-
-const variantTextColors = {
-  accent: 'text-accent-emphasis',
-  primary: 'text-primary-emphasis',
-  success: 'text-success-emphasis',
-  warning: 'text-warning-emphasis',
-  info: 'text-info-emphasis',
-  error: 'text-error-emphasis',
-};
-
-const badgeColors = {
-  accent: 'bg-accent text-on-accent',
-  primary: 'bg-primary text-on-primary',
-  success: 'bg-success-dark text-on-primary',
-  warning: 'bg-warning text-foreground',
-  info: 'bg-info-dark text-on-primary',
-  error: 'bg-error-dark text-on-primary',
-};
-
 const classes = [
   'bg-gradient-to-br backdrop-blur-sm @container @md:p-10',
-  variantClasses[variant],
+  featureCardRecipe.variants[variant].surface,
   className,
 ]
   .filter(Boolean)
@@ -77,7 +51,7 @@ const TitleTag = titleLevel === 2 ? 'h2' : 'h3';
   {
     badge && (
       <div
-        class={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full @sm:h-12 @sm:w-12 ${badgeColors[variant]} text-lg font-bold shadow-sm @sm:text-xl`}
+        class={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full @sm:h-12 @sm:w-12 ${featureCardRecipe.variants[variant].badge} text-lg font-bold shadow-sm @sm:text-xl`}
       >
         {badge}
       </div>
@@ -90,7 +64,7 @@ const TitleTag = titleLevel === 2 ? 'h2' : 'h3';
         class:list={[
           'mb-2 font-heading font-semibold @sm:mb-3',
           headingSizeClass('title'),
-          variantTextColors[variant],
+          featureCardRecipe.variants[variant].text,
         ]}
       >
         {title}

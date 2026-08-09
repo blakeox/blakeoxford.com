@@ -11,14 +11,18 @@
  * <Badge variant="pill" showDot>Case Study</Badge>
  */
 
-import { cn } from '@/utils/cn';
+import {
+  getBadgeClasses,
+  badgeRecipe,
+  type BadgeSize,
+  type BadgeVariant,
+} from '@/lib/design-system/recipes';
 
 export interface Props {
   /** Badge visual variant */
-  variant?:
-    'primary' | 'secondary' | 'outline' | 'subtle' | 'pill' | 'success' | 'warning' | 'error';
+  variant?: BadgeVariant;
   /** Badge size */
-  size?: 'xs' | 'sm' | 'md';
+  size?: BadgeSize;
   /** Decorative accent dot (pill variant) */
   showDot?: boolean;
   /** Additional CSS classes */
@@ -27,38 +31,14 @@ export interface Props {
 
 const { variant = 'secondary', size = 'sm', showDot = false, class: className = '' } = Astro.props;
 
-const variantStyles = {
-  primary: 'bg-accent text-on-accent border border-accent/40 font-medium',
-  secondary: 'bg-surface text-foreground border border-border/40 font-medium',
-  outline: 'bg-transparent text-foreground border border-border/60 font-medium',
-  subtle: 'bg-surface-subtle text-muted-foreground border border-border/25 font-medium',
-  pill: 'bg-surface-subtle text-subtle-foreground ring-1 ring-border/40 border-0 font-semibold uppercase tracking-smallcaps',
-  success: 'bg-success-subtle text-success-emphasis border border-success/30 font-medium',
-  warning: 'bg-warning-subtle text-warning-emphasis border border-warning/30 font-medium',
-  error: 'bg-error-subtle text-error-emphasis border border-error/30 font-medium',
-} as const;
-
-const sizeStyles = {
-  xs: variant === 'pill' ? 'gap-2 px-3 py-1 text-xxs' : 'px-2 py-0.5 text-xxs',
-  sm: variant === 'pill' ? 'gap-2 px-4 py-2 text-xs' : 'px-2 py-1 text-xs',
-  md: variant === 'pill' ? 'gap-2 px-5 py-2 text-sm' : 'px-3 py-1.5 text-sm',
-} as const;
-
-const dotSizes = {
-  xs: 'h-1 w-1',
-  sm: 'h-1.5 w-1.5',
-  md: 'h-2 w-2',
-} as const;
-
-const classes = cn(
-  'inline-flex items-center rounded-full',
-  variantStyles[variant],
-  sizeStyles[size],
-  className
-);
+const classes = getBadgeClasses({ variant, size, className });
 ---
 
 <span class={classes}>
-  {showDot && <span class={`rounded-full bg-accent ${dotSizes[size]}`} aria-hidden="true" />}
+  {
+    showDot && (
+      <span class={`rounded-full bg-accent ${badgeRecipe.dotSizes[size]}`} aria-hidden="true" />
+    )
+  }
   <slot />
 </span>

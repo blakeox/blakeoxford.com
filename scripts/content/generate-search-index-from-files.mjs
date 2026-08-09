@@ -5,6 +5,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  isPublished,
+  comparePublishedEntries,
+  requireDescription,
+  requireAuthor,
+} from '../../src/lib/content/publication-contract.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -85,7 +91,7 @@ function getMarkdownFiles(dir) {
     const raw = fs.readFileSync(fullPath, 'utf-8');
     const { frontmatter, content } = parseFrontmatter(raw);
 
-    if (toBoolean(frontmatter.draft)) continue;
+    if (!isPublished({ frontmatter })) continue;
 
     files.push({
       slug: item.replace(/\.(md|mdx)$/, ''),
@@ -127,34 +133,31 @@ function stripMarkdown(text) {
 }
 
 function build() {
-  const blogPosts = getMarkdownFiles(BLOG_DIR).sort(
-    (a, b) => new Date(b.frontmatter.pubDate ?? 0).getTime() - new Date(a.frontmatter.pubDate ?? 0).getTime(),
-  );
+  const blogPosts = getMarkdownFiles(BLOG_DIR).sort(comparePublishedEntries);
 
-  const projects = getMarkdownFiles(PROJECTS_DIR).sort(
-    (a, b) => new Date(b.frontmatter.date ?? 0).getTime() - new Date(a.frontmatter.date ?? 0).getTime(),
-  );
+  const projects = getMarkdownFiles(PROJECTS_DIR).sort(comparePublishedEntries);
 
-  const searchProjects = projects.map((project, index) => ({
+  const searchProjects = projects.map((project) => ({
     slug: project.slug,
     title: project.frontmatter.title ?? project.slug,
-    description: project.frontmatter.description ?? '',
+    description: requireDescription(project),
     publishedAt: toISODate(project.frontmatter.date),
     tags: Array.isArray(project.frontmatter.tags) ? project.frontmatter.tags : [],
     draft: toBoolean(project.frontmatter.draft),
     technologies: Array.isArray(project.frontmatter.tags) ? project.frontmatter.tags : [],
     image: project.frontmatter.heroImage ?? null,
     categories: Array.isArray(project.frontmatter.categories) ? project.frontmatter.categories : [],
-    featured: index < 3 || toBoolean(project.frontmatter.featured),
+    featured: toBoolean(project.frontmatter.featured),
   }));
 
   const searchBlog = blogPosts.map((post) => ({
     slug: post.slug,
     title: post.frontmatter.title ?? post.slug,
-    description: post.frontmatter.description ?? '',
+    description: requireDescription(post),
     publishedAt: toISODate(post.frontmatter.pubDate),
     tags: Array.isArray(post.frontmatter.tags) ? post.frontmatter.tags : [],
-    author: 'Blake Oxford',
+    author: requireAuthor(post),
+    ...(post.frontmatter.updatedDate ? { updatedAt: toISODate(post.frontmatter.updatedDate) } : {}),
     draft: toBoolean(post.frontmatter.draft),
     featured: toBoolean(post.frontmatter.featured),
   }));
@@ -164,7 +167,7 @@ function build() {
       type: 'project',
       slug: project.slug,
       title: project.frontmatter.title ?? project.slug,
-      description: project.frontmatter.description ?? '',
+      description: requireDescription(project),
       body: stripMarkdown(project.content).slice(0, 2000),
       publishedAt: toISODate(project.frontmatter.date),
       tags: Array.isArray(project.frontmatter.tags) ? project.frontmatter.tags : [],
@@ -173,9 +176,13 @@ function build() {
       type: 'blog',
       slug: post.slug,
       title: post.frontmatter.title ?? post.slug,
-      description: post.frontmatter.description ?? '',
+      description: requireDescription(post),
       body: stripMarkdown(post.content).slice(0, 2000),
       publishedAt: toISODate(post.frontmatter.pubDate),
+      author: requireAuthor(post),
+      ...(post.frontmatter.updatedDate
+        ? { updatedAt: toISODate(post.frontmatter.updatedDate) }
+        : {}),
       tags: Array.isArray(post.frontmatter.tags) ? post.frontmatter.tags : [],
     })),
   ];
@@ -198,16 +205,27 @@ function build() {
     if (fs.existsSync(distDir)) {
       const distSearchDir = path.join(distDir, 'search');
       ensureDir(distSearchDir);
-      fs.writeFileSync(path.join(distDir, 'search-index.json'), JSON.stringify(searchIndex, null, 2));
-      fs.writeFileSync(path.join(distSearchDir, 'index.json'), JSON.stringify(searchIndex, null, 2));
+      fs.writeFileSync(
+        path.join(distDir, 'search-index.json'),
+        JSON.stringify(searchIndex, null, 2)
+      );
+      fs.writeFileSync(
+        path.join(distSearchDir, 'index.json'),
+        JSON.stringify(searchIndex, null, 2)
+      );
       fs.writeFileSync(path.join(distSearchDir, 'blog.json'), JSON.stringify(searchBlog, null, 2));
-      fs.writeFileSync(path.join(distSearchDir, 'projects.json'), JSON.stringify(searchProjects, null, 2));
+      fs.writeFileSync(
+        path.join(distSearchDir, 'projects.json'),
+        JSON.stringify(searchProjects, null, 2)
+      );
     }
   } catch (error) {
     console.warn('[search-index] Skipped writing dist/*:', error?.message ?? error);
   }
 
-  console.log(`🔍 Generated search indexes (${projects.length} projects, ${blogPosts.length} blog posts)`);
+  console.log(
+    `🔍 Generated search indexes (${projects.length} projects, ${blogPosts.length} blog posts)`
+  );
 }
 
 build();

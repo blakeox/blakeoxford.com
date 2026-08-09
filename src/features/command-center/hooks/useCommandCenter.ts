@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { handoffToAiChat } from '@/lib/chat/ai-chat-bridge';
-import { useOverlayScrollLock } from '@/lib/hooks/useOverlayScrollLock';
 import { useTouchGestures } from '@/lib/hooks/useTouchGestures';
 import { createFocusTrap } from '@/utils/focusTrap';
 import {
@@ -32,7 +31,6 @@ export function useCommandCenter() {
     seedQuery,
     clearSeedQuery,
   } = useCommandCenterOpenState();
-  const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
   const { recentQueries, recentDestinations, pushQuery, pushDestination, clearHistory } =
     useCommandHistory();
   const { query, setQuery, category, setCategory, groups, isLoading, error, searchSource } =
@@ -72,10 +70,9 @@ export function useCommandCenter() {
   const hasResults = flatItems.length > 0;
 
   const close = useCallback(() => {
-    releaseScrollLockNow();
     focusTrapRef.current?.deactivate();
     closeCommandCenter();
-  }, [closeCommandCenter, releaseScrollLockNow]);
+  }, [closeCommandCenter]);
 
   const { handleTouchStart, handleTouchMove, handleTouchEnd } = useTouchGestures({
     enabled: isOpen,

@@ -4,19 +4,9 @@
  * Interactive UI (chat, search, forms) stays as islands elsewhere.
  */
 const clarityId = import.meta.env.PUBLIC_CLARITY_PROJECT_ID?.trim() ?? '';
-const cfToken = import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN?.trim() ?? '';
 ---
 
-<script is:inline define:vars={{ clarityId, cfToken }}>
-  // Cloudflare Web Analytics — plain script tag, not a React root
-  if (cfToken && !document.querySelector('script[data-cf-beacon]')) {
-    const script = document.createElement('script');
-    script.defer = true;
-    script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-    script.setAttribute('data-cf-beacon', JSON.stringify({ token: cfToken }));
-    document.head.appendChild(script);
-  }
-
+<script is:inline define:vars={{ clarityId }}>
   // Stash Clarity id for the module script below
   if (clarityId) {
     document.documentElement.dataset.clarityId = clarityId;

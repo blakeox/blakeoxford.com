@@ -50,7 +50,7 @@ test.describe('Page layout after overlays @essential', () => {
 
   test('command center does not leave body fixed after close', async ({ page }) => {
     await page.locator('#search-toggle').click();
-    await page.locator('#search-overlay').waitFor({ state: 'attached', timeout: 10000 });
+    await expect(page.locator('#search-overlay')).toHaveAttribute('data-state', 'open');
 
     const open = await readLayout(page);
     expect(open.bodyPosition).toBe('fixed');
@@ -70,7 +70,7 @@ test.describe('Page layout after overlays @essential', () => {
 
     await page.locator('#search-toggle').click();
     await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'closed');
-    await page.locator('#search-overlay').waitFor({ state: 'attached', timeout: 10000 });
+    await expect(page.locator('#search-overlay')).toHaveAttribute('data-state', 'open');
 
     const duringSearch = await readLayout(page);
     expect(duringSearch.bodyPosition).toBe('fixed');

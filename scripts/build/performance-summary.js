@@ -55,7 +55,7 @@ console.log('   • Build Output: Clean production artifacts\n');
 
 console.log('⚡ CORE WEB VITALS OPTIMIZATIONS:');
 console.log('   • LCP: Hero image preloading + critical CSS');
-console.log('   • FID: Progressive JS loading + lazy features');
+console.log('   • INP: Progressive JS loading + lazy features');
 console.log('   • CLS: Critical CSS prevents layout shifts');
 console.log('   • TTFB: CDN headers + efficient caching\n');
 

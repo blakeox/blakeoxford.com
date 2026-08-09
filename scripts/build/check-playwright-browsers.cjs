@@ -15,7 +15,7 @@ const colors = {
   red: '\x1b[31m',
   blue: '\x1b[34m',
   reset: '\x1b[0m',
-  bold: '\x1b[1m'
+  bold: '\x1b[1m',
 };
 
 function log(color, message) {
@@ -32,37 +32,54 @@ function checkBrowserInstallation() {
   for (const browser of browsers) {
     try {
       // Try to run a simple test with the specific browser
-      const testResult = execSync(`${pnpmExecPrefix} exec playwright test --project=${browser} --list 2>&1`, { 
-        stdio: 'pipe', 
-        encoding: 'utf8' 
-      });
-      
+      const testResult = execSync(
+        `PLAYWRIGHT_OPTIONAL_BROWSERS=true ${pnpmExecPrefix} exec playwright test --project=${browser} --list 2>&1`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        }
+      );
+
       // If the command succeeds and doesn't contain error messages about missing browsers
-      if (!testResult.includes('Executable doesn\'t exist') && 
-          !testResult.includes('browserType.launch:') && 
-          !testResult.includes('Error:')) {
+      if (
+        !testResult.includes("Executable doesn't exist") &&
+        !testResult.includes('browserType.launch:') &&
+        !testResult.includes('Error:')
+      ) {
         installedBrowsers.push(browser);
         log(colors.green, `✅ ${browser.charAt(0).toUpperCase() + browser.slice(1)} is installed`);
       } else {
         missingBrowsers.push(browser);
-        log(colors.yellow, `⚠️  ${browser.charAt(0).toUpperCase() + browser.slice(1)} is not installed or not working`);
+        log(
+          colors.yellow,
+          `⚠️  ${browser.charAt(0).toUpperCase() + browser.slice(1)} is not installed or not working`
+        );
       }
     } catch {
       missingBrowsers.push(browser);
-      log(colors.red, `❌ ${browser.charAt(0).toUpperCase() + browser.slice(1)} installation check failed`);
+      log(
+        colors.red,
+        `❌ ${browser.charAt(0).toUpperCase() + browser.slice(1)} installation check failed`
+      );
     }
   }
 
   log(colors.blue, '\n📊 Summary:');
-  log(colors.green, `   Installed: ${installedBrowsers.length} browsers (${installedBrowsers.join(', ')})`);
+  log(
+    colors.green,
+    `   Installed: ${installedBrowsers.length} browsers (${installedBrowsers.join(', ')})`
+  );
   if (missingBrowsers.length > 0) {
-    log(colors.yellow, `   Missing: ${missingBrowsers.length} browsers (${missingBrowsers.join(', ')})`);
+    log(
+      colors.yellow,
+      `   Missing: ${missingBrowsers.length} browsers (${missingBrowsers.join(', ')})`
+    );
   }
 
   return {
     installedBrowsers,
     missingBrowsers,
-    canRunTests: installedBrowsers.length > 0
+    canRunTests: installedBrowsers.length > 0,
   };
 }
 
@@ -89,7 +106,10 @@ function suggestTestCommands(result) {
 
   if (result.missingBrowsers.length > 0) {
     log(colors.yellow, '\n📦 To install missing browsers:');
-    log(colors.blue, `   pnpm exec playwright install ${result.missingBrowsers.join(' ')} --with-deps`);
+    log(
+      colors.blue,
+      `   pnpm exec playwright install ${result.missingBrowsers.join(' ')} --with-deps`
+    );
   }
 }
 

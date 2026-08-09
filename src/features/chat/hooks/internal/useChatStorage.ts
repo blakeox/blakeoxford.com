@@ -12,6 +12,7 @@ import type { ChatMessage } from '@/lib/chat';
 import {
   getStorageItem,
   setStorageItem,
+  removeStorageItem,
   restoreMessages,
   CONVERSATION_STORAGE_KEY,
   PREFERENCES_STORAGE_KEY,
@@ -70,6 +71,12 @@ export function useChatStorage(options: UseChatStorageOptions): UseChatStorageRe
 
   // Restore conversation from storage on mount
   useEffect(() => {
+    if (!useMemory) {
+      removeStorageItem(CONVERSATION_STORAGE_KEY);
+      conversationHydratedRef.current = true;
+      return;
+    }
+
     const stored = getStorageItem(CONVERSATION_STORAGE_KEY, null);
     if (!stored) {
       conversationHydratedRef.current = true;
@@ -81,7 +88,7 @@ export function useChatStorage(options: UseChatStorageOptions): UseChatStorageRe
       onMessagesRestored(restored);
     }
     conversationHydratedRef.current = true;
-  }, [maxRestoreMessages, onMessagesRestored]); // Only run on mount
+  }, [maxRestoreMessages, onMessagesRestored, useMemory]);
 
   // Persist messages to storage when they change (after hydration)
   useEffect(() => {
@@ -89,8 +96,12 @@ export function useChatStorage(options: UseChatStorageOptions): UseChatStorageRe
     if (!conversationHydratedRef.current) {
       return;
     }
-    setStorageItem(CONVERSATION_STORAGE_KEY, messages);
-  }, [messages]);
+    if (useMemory) {
+      setStorageItem(CONVERSATION_STORAGE_KEY, messages);
+    } else {
+      removeStorageItem(CONVERSATION_STORAGE_KEY);
+    }
+  }, [messages, useMemory]);
 
   // Persist preferences when memory setting changes
   useEffect(() => {

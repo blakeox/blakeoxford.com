@@ -1,14 +1,30 @@
 ---
+import '@fontsource/source-sans-3/latin-400.css';
+import '@fontsource/source-sans-3/latin-600.css';
+import '@fontsource/source-sans-3/latin-700.css';
+import '@fontsource/space-grotesk/latin-500.css';
+import '@fontsource/space-grotesk/latin-600.css';
+import '@fontsource/space-grotesk/latin-700.css';
+import '../../styles/global.css';
 import NavBar from '@/components/layout/NavBar.astro';
+import { getThemeFoucPreventionScript } from '@/lib/theme';
+
+const themeFoucScript = getThemeFoucPreventionScript();
 ---
 
 <html lang="en">
   <head>
+    <script is:inline set:html={themeFoucScript} />
     <meta charset="utf-8" />
     <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Internal navigation component preview." />
+    <link rel="canonical" href="https://blakeoxford.com/components/nav-preview/" />
     <title>Nav Preview</title>
   </head>
-  <body class="min-h-screen">
-    <NavBar />
+  <body class="min-h-screen bg-background text-foreground">
+    <main id="main-content">
+      <h1 class="sr-only">Navigation preview</h1>
+      <NavBar />
+    </main>
   </body>
 </html>

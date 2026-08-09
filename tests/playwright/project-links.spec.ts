@@ -246,5 +246,28 @@ test.describe('Project Links Validation', () => {
       expect(found).toBe(true);
     }
   });
-});
 
+  test('authoritative sitemap should exclude generated and noindex routes', async ({ page }) => {
+    const response = await page.request.get('/sitemap.xml');
+    expect(response.status()).toBe(200);
+
+    const sitemapContent = await response.text();
+    const excludedRoutes = [
+      '/accessibility/keyboard-shortcuts/',
+      '/components/nav-preview/',
+      '/components/project-card-preview/',
+      '/design/animations/',
+      '/design/components/',
+      '/design/patterns/',
+      '/design/tokens/',
+      '/docs/components/',
+    ];
+
+    for (const route of excludedRoutes) {
+      expect(sitemapContent).not.toContain(`https://blakeoxford.com${route}`);
+    }
+
+    const generatedSitemapResponse = await page.request.get('/sitemap-index.xml');
+    expect(generatedSitemapResponse.status()).toBe(404);
+  });
+});

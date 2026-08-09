@@ -38,10 +38,7 @@ export async function handleAssets({
   }
   if (url.pathname === '/assets/images/optimized/avif/china-profile-picture@320w.avif') {
     try {
-      const base = new URL(
-        '/assets/images/optimized/avif/china-profile-picture.avif',
-        url.origin
-      );
+      const base = new URL('/assets/images/optimized/avif/china-profile-picture.avif', url.origin);
       const baseReq = new Request(base.toString(), request);
       const baseRes = await env.ASSETS.fetch(baseReq);
       if (baseRes.ok) {
@@ -61,8 +58,10 @@ export async function handleAssets({
   // Serve from ASSETS
   const cacheManager = new EdgeCacheManager(request, env);
   const cacheStrategy = cacheManager.getCacheStrategy();
+  const themeCookie = request.headers.get('cookie')?.match(/(^|;\s*)theme=([^;]+)/)?.[2];
+  const personalizedThemeRequest = Boolean(themeCookie && themeCookie !== 'system');
 
-  if (method === 'GET') {
+  if (method === 'GET' && !personalizedThemeRequest) {
     const cacheResponse = await caches.default.match(request, { ignoreMethod: false });
     if (cacheResponse) return cacheResponse;
   }
@@ -98,6 +97,22 @@ export async function handleAssets({
       if (originResponse.status >= 500) {
         const cached = await caches.default.match(request);
         if (cached) return cached;
+        if (url.pathname.startsWith('/api/')) {
+          const headers = new Headers(originResponse.headers);
+          headers.set(
+            'content-type',
+            headers.get('content-type') || 'application/json; charset=utf-8'
+          );
+          headers.set('cache-control', 'no-store');
+          headers.set('x-request-id', reqId);
+          headers.set('x-route-kind', 'api');
+          headers.set('x-cache-policy', 'no-store');
+          return new Response(originResponse.body, {
+            status: originResponse.status,
+            statusText: originResponse.statusText,
+            headers,
+          });
+        }
         const isHtmlRoute =
           request.headers.get('accept')?.includes('text/html') ||
           url.pathname.endsWith('/') ||
@@ -125,20 +140,6 @@ export async function handleAssets({
         }
         // Graceful fallbacks for non-HTML requests during transient failures
         const pathname = url.pathname;
-        // API endpoints: return empty array/object to avoid UI hard-fail during outages
-        if (pathname.startsWith('/api/')) {
-          const empty = pathname.endsWith('.json') ? '[]' : '';
-          return new Response(empty, {
-            status: 200,
-            headers: {
-              'content-type': 'application/json; charset=utf-8',
-              'cache-control': 'no-store',
-              'x-request-id': reqId,
-              'x-route-kind': 'api',
-              'x-cache-policy': 'no-store',
-            },
-          });
-        }
         // Images: serve a lightweight placeholder if possible
         if (/^\/assets\/images\//.test(pathname)) {
           try {
@@ -294,11 +295,14 @@ export async function handleAssets({
     // Removed legacy edge optimization and personalization
     let finalResponse = originResponse;
 
-    if (method === 'GET' && cacheStrategy.ttl > 0 && finalResponse.body) {
+    if (
+      method === 'GET' &&
+      !personalizedThemeRequest &&
+      cacheStrategy.ttl > 0 &&
+      finalResponse.body
+    ) {
       const cacheHeaders = new Headers(finalResponse.headers);
-      Object.entries(cacheStrategy.headers).forEach(([key, value]) =>
-        cacheHeaders.set(key, value)
-      );
+      Object.entries(cacheStrategy.headers).forEach(([key, value]) => cacheHeaders.set(key, value));
       const [forCache, forReturn] = finalResponse.body.tee();
       const cacheResponse = new Response(forCache, {
         status: finalResponse.status,
@@ -315,24 +319,26 @@ export async function handleAssets({
 
     // Personalize HTML based on 'theme' cookie (if present)
     try {
-      const cookieHeader = request.headers.get('cookie') || '';
-      const m = cookieHeader.match(/(^|;\s*)theme=([^;]+)/);
-      if (m && m[2]) {
-        const themeCookie = decodeURIComponent(m[2]);
+      if (themeCookie) {
+        const decodedThemeCookie = decodeURIComponent(themeCookie);
         const contentType = finalResponse.headers.get('content-type') || '';
-        if (contentType.includes('text/html') && themeCookie !== 'system') {
+        if (contentType.includes('text/html') && decodedThemeCookie !== 'system') {
           let html = await finalResponse.text();
           html = html.replace(/<html([^>]*)>/i, (full, attrs) => {
             let newAttrs = attrs || '';
-            if (!/data-theme=/.test(newAttrs)) newAttrs += ` data-theme="${themeCookie}"`;
+            if (!/data-theme=/.test(newAttrs)) newAttrs += ` data-theme="${decodedThemeCookie}"`;
             if (/class=(\"|\')(.*?)\1/.test(newAttrs)) {
-              newAttrs = newAttrs.replace(/class=(\"|\')(.*?)\1/, (_cm: string, q: string, cls: string) => {
-                const clsList = cls.split(/\s+/).filter(Boolean);
-                if (themeCookie === 'dark' && !clsList.includes('dark')) clsList.push('dark');
-                return `class=${q}${clsList.join(' ')}${q}`;
-              });
+              newAttrs = newAttrs.replace(
+                /class=(\"|\')(.*?)\1/,
+                (_cm: string, q: string, cls: string) => {
+                  const clsList = cls.split(/\s+/).filter(Boolean);
+                  if (decodedThemeCookie === 'dark' && !clsList.includes('dark'))
+                    clsList.push('dark');
+                  return `class=${q}${clsList.join(' ')}${q}`;
+                }
+              );
             } else {
-              if (themeCookie === 'dark') newAttrs += ' class="dark"';
+              if (decodedThemeCookie === 'dark') newAttrs += ' class="dark"';
             }
             return `<html${newAttrs}>`;
           });

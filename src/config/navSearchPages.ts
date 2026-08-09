@@ -2,6 +2,7 @@
  * Search index entries derived from navLinks — single source for page search results.
  */
 import navLinks, { getNavQuickLinks } from './navLinks';
+import pageSearchMeta from './nav-search-pages.json';
 
 export type NavSearchPage = {
   type: 'page';
@@ -11,28 +12,9 @@ export type NavSearchPage = {
   tags: string[];
 };
 
-const PAGE_SEARCH_META: Record<string, { description: string; tags: string[] }> = {
-  '/': {
-    description: 'Portfolio overview and signature programs.',
-    tags: ['home', 'overview'],
-  },
-  '/about/': {
-    description: 'Credentials, achievements, and professional journey.',
-    tags: ['about', 'biography', 'achievements'],
-  },
-  '/projects/': {
-    description: 'Selected case studies across automation, analytics, and change enablement.',
-    tags: ['projects', 'case studies'],
-  },
-  '/blog/': {
-    description: 'Articles on systems architecture, automation, and cloud strategy.',
-    tags: ['blog', 'articles', 'writing'],
-  },
-  '/contact/': {
-    description: 'Start a working session or send a note.',
-    tags: ['contact', 'connect'],
-  },
-};
+const PAGE_SEARCH_META = Object.fromEntries(
+  pageSearchMeta.map((page) => [page.href, { description: page.description, tags: page.tags }])
+);
 
 export function getNavSearchPages(): NavSearchPage[] {
   return navLinks.map((link) => {

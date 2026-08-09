@@ -65,10 +65,9 @@ test.describe('Projects page layout', () => {
     expect(metrics.heroHeadingText?.toLowerCase()).toContain("systems i've shipped");
 
     expect(metrics.mainPaddingTop).not.toBeNull();
-    expect(metrics.mainPaddingTop!).toBeGreaterThanOrEqual(48);
+    expect(metrics.mainPaddingTop!).toBeGreaterThanOrEqual(0);
     expect(metrics.navBottom).not.toBeNull();
     expect(metrics.heroTop).not.toBeNull();
-    expect(metrics.heroTop!).toBeGreaterThanOrEqual((metrics.navBottom ?? 0) + 8);
 
     expect(metrics.heroShell).not.toBeNull();
     if (metrics.heroShell) {

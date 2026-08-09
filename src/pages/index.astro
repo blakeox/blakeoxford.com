@@ -12,12 +12,13 @@ import { getProjectsSorted } from '@/content/projects/getProjects';
 import { getHomePage } from '@/content/home/getHomePage';
 import { siteConfig } from '@/config/data';
 import { take } from '@/utils/array';
+import { isPublished } from '@/lib/content/publication-contract.mjs';
 
 const page = await getHomePage();
 
 const allBlogPosts: CollectionEntry<'blog'>[] = await getCollection('blog');
 const publishedPosts = allBlogPosts
-  .filter((entry: CollectionEntry<'blog'>) => !entry.data.draft)
+  .filter((entry: CollectionEntry<'blog'>) => isPublished(entry))
   .slice()
   .sort(
     (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>

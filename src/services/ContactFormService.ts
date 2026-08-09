@@ -38,7 +38,7 @@ export interface ContactFormConfig {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const DEFAULT_CONFIG: Required<ContactFormConfig> = {
-  endpoint: '/api/contact',
+  endpoint: '/send-email',
   timeout: 30000,
   requireTurnstile: true,
 };
@@ -250,11 +250,12 @@ export class ContactFormService {
    */
   async healthCheck(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.config.endpoint}/health`, {
+      const response = await fetch(this.config.endpoint, {
         method: 'GET',
         signal: AbortSignal.timeout(5000),
       });
-      return response.ok;
+      // The production handler is POST-only; a 405 proves the route exists.
+      return response.ok || response.status === 405;
     } catch {
       return false;
     }

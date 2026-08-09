@@ -5,55 +5,81 @@ import { z } from 'astro/zod';
 // Blog collection schema
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    pubDate: z.date(),
-    updatedDate: z.date().optional(),
-    tags: z.array(z.string()).default([]),
-    heroImage: z.string().optional(),
-    draft: z.boolean().default(false),
-    featured: z.boolean().default(false),
-  }),
+  schema: z
+    .object({
+      title: z.string(),
+      description: z.string().min(1),
+      author: z.string().trim().min(1),
+      seoTitle: z.string().trim().min(1).optional(),
+      seoDescription: z.string().trim().min(1).optional(),
+      pubDate: z.date(),
+      updatedDate: z.date().optional(),
+      tags: z.array(z.string()).default([]),
+      heroImage: z.string().optional(),
+      draft: z.boolean().default(false),
+      featured: z.boolean().default(false),
+    })
+    .superRefine((data, context) => {
+      if (data.updatedDate && data.updatedDate <= data.pubDate) {
+        context.addIssue({
+          code: 'custom',
+          path: ['updatedDate'],
+          message: 'updatedDate must be later than pubDate',
+        });
+      }
+    }),
 });
 
 // Projects collection schema
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/projects' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    date: z.coerce.date(),
-    tags: z.array(z.string()).default([]),
-    heroImage: z.string().optional(),
-    highlights: z.array(z.string()).default([]),
-    categories: z.array(z.string()).default([]),
-    impact: z.array(z.string()).default([]),
-    metrics: z
-      .array(
-        z.object({
-          metric: z.string(),
-          result: z.string(),
-          timeline: z.string(),
-        })
-      )
-      .default([]),
-    journey: z.array(z.string()).default([]),
-    lessons: z
-      .array(
-        z.object({
-          title: z.string(),
-          description: z.string(),
-        })
-      )
-      .default([]),
-    reflection: z.string().optional(),
-    ctaHeading: z.string().optional(),
-    ctaDescription: z.string().optional(),
-    link: z.url().optional(),
-    featured: z.boolean().default(false),
-    draft: z.boolean().default(false),
-  }),
+  schema: z
+    .object({
+      title: z.string(),
+      description: z.string().min(1),
+      seoTitle: z.string().trim().min(1).optional(),
+      seoDescription: z.string().trim().min(1).optional(),
+      date: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      tags: z.array(z.string()).default([]),
+      heroImage: z.string().optional(),
+      highlights: z.array(z.string()).default([]),
+      categories: z.array(z.string()).default([]),
+      impact: z.array(z.string()).default([]),
+      metrics: z
+        .array(
+          z.object({
+            metric: z.string(),
+            result: z.string(),
+            timeline: z.string(),
+          })
+        )
+        .default([]),
+      journey: z.array(z.string()).default([]),
+      lessons: z
+        .array(
+          z.object({
+            title: z.string(),
+            description: z.string(),
+          })
+        )
+        .default([]),
+      reflection: z.string().optional(),
+      ctaHeading: z.string().optional(),
+      ctaDescription: z.string().optional(),
+      link: z.url().optional(),
+      featured: z.boolean().default(false),
+      draft: z.boolean().default(false),
+    })
+    .superRefine((data, context) => {
+      if (data.updatedDate && data.updatedDate <= data.date) {
+        context.addIssue({
+          code: 'custom',
+          path: ['updatedDate'],
+          message: 'updatedDate must be later than date',
+        });
+      }
+    }),
 });
 
 const navigationLink = z.object({

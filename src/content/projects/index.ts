@@ -1,3 +1,8 @@
+/**
+ * @deprecated The Astro `projects` collection and publication contract are
+ * canonical. Keep this compatibility export only for legacy imports; do not
+ * add projects here.
+ */
 import adp from './adp-workforcenow.mdx';
 import advancedmd from './advancedmd-implementation.mdx';
 import bank from './bank-projections-modeling.mdx';

@@ -7,6 +7,7 @@ import {
   getPublicThemeTokens,
   parsePublicThemeTokens,
 } from '../../src/lib/designTokens';
+import { getProseClasses } from '../../src/lib/design-system/recipes';
 
 describe('design token parser', () => {
   const themeCss = readFileSync(resolve(__dirname, '../../src/styles/theme.css'), 'utf8');
@@ -50,9 +51,9 @@ describe('Prose primitive', () => {
       resolve(__dirname, '../../src/components/primitives/Prose.astro'),
       'utf8'
     );
-    expect(prose).toContain('prose-headings:font-heading');
-    expect(prose).toContain('prose-a:text-accent-emphasis');
-    expect(prose).toContain("size = 'xl'");
+    expect(getProseClasses('xl')).toContain('prose-headings:font-heading');
+    expect(getProseClasses('xl')).toContain('prose-a:text-accent-emphasis');
+    expect(prose).toContain('getProseClasses');
   });
 
   it('is used by the blog slug page', () => {

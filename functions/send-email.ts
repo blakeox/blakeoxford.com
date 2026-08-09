@@ -13,7 +13,8 @@ const CONFIG = {
     to: 'blakepoxford@outlook.com',
   },
   storage: {
-    messageTtl: 60 * 60 * 24 * 90, // 90 days
+    // User-facing contact disclosure must remain aligned with this TTL.
+    messageTtl: 60 * 60 * 24 * 90,
   },
   turnstile: {
     verifyUrl: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',

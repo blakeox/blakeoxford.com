@@ -1,0 +1,56 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { handleAssets } from '../../../functions/routes/assets';
+
+function context(pathname: string, response: Response, headers?: HeadersInit) {
+  const cacheMatch = vi.fn().mockResolvedValue(null);
+  const cachePut = vi.fn().mockResolvedValue(undefined);
+  vi.stubGlobal('caches', { default: { match: cacheMatch, put: cachePut } });
+  const request = new Request(`https://blakeoxford.com${pathname}`, { headers });
+  if (headers && 'cookie' in headers) {
+    Object.defineProperty(request, 'headers', {
+      value: new Headers({ cookie: String((headers as Record<string, unknown>).cookie) }),
+    });
+  }
+  return {
+    request,
+    env: { ASSETS: { fetch: vi.fn().mockResolvedValue(response) } },
+    ctx: { waitUntil: vi.fn() },
+    url: new URL(`https://blakeoxford.com${pathname}`),
+    reqId: 'asset-test',
+    method: 'GET',
+    Sentry: { captureException: vi.fn() },
+    cacheMatch,
+    cachePut,
+  } as any;
+}
+
+describe('asset route cache and failure contract', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('preserves API origin failures instead of returning an empty 200 response', async () => {
+    const ctx = context('/api/missing', new Response('{"error":"origin"}', { status: 502 }));
+    const response = await handleAssets(ctx);
+
+    expect(response.status).toBe(502);
+    expect(await response.text()).toContain('origin');
+  });
+
+  it('does not read or write shared HTML cache for a theme-personalized request', async () => {
+    const ctx = context(
+      '/about/',
+      new Response('<html><head></head><body>about</body></html>', {
+        headers: { 'content-type': 'text/html; charset=utf-8' },
+      }),
+      { cookie: 'theme=dark' }
+    );
+    expect(ctx.request.headers.get('cookie')).toBe('theme=dark');
+
+    const response = await handleAssets(ctx);
+    const html = await response.text();
+
+    expect(html).toContain('data-theme="dark"');
+    expect(ctx.cacheMatch).not.toHaveBeenCalled();
+    expect(ctx.cachePut).not.toHaveBeenCalled();
+    expect(response.headers.get('cache-control')).toContain('private');
+  });
+});

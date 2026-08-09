@@ -69,10 +69,11 @@ const HARD_GUTTER_REGEX = /\bpx-4(?:\s+(?:sm|md|lg|xl|2xl):px-\d+)+\b/g;
 const HARD_GUTTER_NEAR_MISS_REGEX =
   /\bpx-4\b(?:(?!["'`\n])[\s\S]){0,100}?\b(?:sm|md|lg|xl|2xl):px-(?:6|8|10|12)\b/g;
 const DIRECT_CONTAINER_REGEX = /\bcontainer\s+mx-auto\b/g;
+/** Feature-owned overlay styles must not drift back into the shared stylesheet. */
+const SHARED_FEATURE_SELECTOR_REGEX =
+  /\.command-center\b|\.ai-chat-panel\b|\.ai-chat-launcher\b|#search-overlay\b|command-panel-in\b|chat-panel-in\b/g;
 const LEGACY_COMPONENT_PATH_REGEX =
   /src\/components\/(?:chat|common|composite|config|debug|media|ui)\b|components\/(?:chat|common|composite|config|debug|media|ui)\b|\.\.\/(?:common|composite|media|ui)\//g;
-const COMPONENT_DOC_ENTRY_REGEX =
-  /^  {\s*\n\s{4}name:\s*'([^']+)'[\s\S]*?\n\s{4}category:\s*'([^']+)'[\s\S]*?\n\s{4}filePath:\s*'([^']+)'/gm;
 const STALE_DECORATIVE_DOC_REGEX =
   /glass-morphism|glass morphism|Frosted Glass|Rotating Gradient|Pulse Scale|Continuous gradient|shadow animations|gradient overlay/g;
 /** Decorative blur orbs / washes (rounded-full + heavy blur). */
@@ -144,7 +145,6 @@ const findings = {
   opacity: [],
   taxonomy: [],
   componentRoot: [],
-  componentDocs: [],
   docsLanguage: [],
   palette: [],
   elevation: [],
@@ -152,6 +152,7 @@ const findings = {
   shell: [],
   gutter: [],
   container: [],
+  featureOwnership: [],
   blurOrb: [],
   badgePill: [],
   diyCard: [],
@@ -210,21 +211,6 @@ function scanDuplicates() {
   });
 }
 
-function expectedComponentCategory(filePath) {
-  if (filePath.startsWith('src/components/layout/')) return 'Layout';
-  if (filePath.startsWith('src/components/features/')) return 'Features';
-  if (filePath.startsWith('src/features/chat/')) return 'Islands';
-  if (filePath.startsWith('src/features/contact/')) return 'Islands';
-  if (filePath.startsWith('src/features/command-center/')) return 'Islands';
-  if (filePath.startsWith('src/features/overlay/')) return 'Islands';
-  if (filePath.startsWith('src/components/primitives/')) return 'Primitives';
-  if (filePath.startsWith('src/components/composites/')) return 'Composites';
-  // Progressive-enhancement scripts and theme FOUC helpers documented alongside islands
-  if (filePath.startsWith('src/scripts/features/')) return 'Islands';
-  if (filePath === 'src/lib/theme.ts') return 'Islands';
-  return null;
-}
-
 function scanComponentRoot() {
   const componentsDir = path.join(root, 'src/components');
   if (!fs.existsSync(componentsDir)) return;
@@ -242,71 +228,13 @@ function scanComponentRoot() {
   }
 }
 
-function scanComponentDocs() {
-  const docsDir = path.join(root, 'src/data/component-docs');
-  const docsFiles = fs.existsSync(docsDir)
-    ? fs
-        .readdirSync(docsDir)
-        .filter(
-          (name) =>
-            name.endsWith('.ts') &&
-            !['index.ts', 'types.ts', 'helpers.ts', 'catalog.ts'].includes(name)
-        )
-        .map((name) => path.join(docsDir, name))
-    : [];
-  const shimPath = path.join(root, 'src/data/componentDocs.ts');
-  if (fs.existsSync(shimPath)) docsFiles.push(shimPath);
-  if (docsFiles.length === 0) return;
-
-  const seenNames = new Set();
-
-  for (const docsPath of docsFiles) {
-    const content = fs.readFileSync(docsPath, 'utf8');
-    const relDocs = rel(docsPath);
-    COMPONENT_DOC_ENTRY_REGEX.lastIndex = 0;
-    let match;
-
-    while ((match = COMPONENT_DOC_ENTRY_REGEX.exec(content))) {
-      const [, name, category, filePath] = match;
-      const absoluteFilePath = path.join(root, filePath);
-      const expectedCategory = expectedComponentCategory(filePath);
-
-      if (seenNames.has(name)) {
-        findings.componentDocs.push({
-          file: relDocs,
-          value: `${name}: duplicate component doc name`,
-        });
-      }
-      seenNames.add(name);
-
-      if (!fs.existsSync(absoluteFilePath)) {
-        findings.componentDocs.push({
-          file: relDocs,
-          value: `${name}: missing ${filePath}`,
-        });
-      }
-
-      if (!expectedCategory) {
-        findings.componentDocs.push({
-          file: relDocs,
-          value: `${name}: non-canonical component path ${filePath}`,
-        });
-        continue;
-      }
-
-      if (category !== expectedCategory) {
-        findings.componentDocs.push({
-          file: relDocs,
-          value: `${name}: category ${category} should be ${expectedCategory} for ${filePath}`,
-        });
-      }
-    }
-  }
-}
-
 function scanSourceFile(file) {
   const relPath = rel(file);
   const content = fs.readFileSync(file, 'utf8');
+
+  if (relPath === 'src/styles/components.css') {
+    addRegexFindings(findings.featureOwnership, relPath, content, SHARED_FEATURE_SELECTOR_REGEX);
+  }
 
   if (!TOKEN_ALLOW_PATH.test(relPath)) {
     addRegexFindings(findings.hex, relPath, content, HEX_REGEX);
@@ -399,6 +327,7 @@ function scanSourceFile(file) {
 export const DESIGN_LINT_GUTTER_PATTERNS = {
   HARD_GUTTER_REGEX,
   HARD_GUTTER_NEAR_MISS_REGEX,
+  SHARED_FEATURE_SELECTOR_REGEX,
 };
 
 function printFindings(title, list, limit = 50) {
@@ -413,7 +342,6 @@ function printFindings(title, list, limit = 50) {
 if (isDirectRun) {
   scanDuplicates();
   scanComponentRoot();
-  scanComponentDocs();
   collectSourceFiles('src').forEach(scanSourceFile);
 
   printFindings('Duplicate artifact files detected', findings.duplicate);
@@ -423,7 +351,6 @@ if (isDirectRun) {
   printFindings('Unsupported opacity suffixes detected', findings.opacity);
   printFindings('Legacy component taxonomy references detected', findings.taxonomy);
   printFindings('Root-level component files detected', findings.componentRoot);
-  printFindings('Component documentation drift detected', findings.componentDocs);
   printFindings('Stale decorative design documentation detected', findings.docsLanguage);
   printFindings('Raw palette utilities detected in reusable surfaces', findings.palette);
   printFindings(
@@ -440,6 +367,10 @@ if (isDirectRun) {
     findings.gutter
   );
   printFindings('Direct container shell usage detected', findings.container);
+  printFindings(
+    'Feature-specific selectors detected in shared stylesheet',
+    findings.featureOwnership
+  );
   printFindings(
     'Decorative blur orbs detected (use PageHero includeBlurOrbs or remove)',
     findings.blurOrb

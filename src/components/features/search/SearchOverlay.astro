@@ -1,10 +1,20 @@
 ---
 /**
  * Command Center mount — site search UI (Cloudflare Vectorize + local fallback).
- * Client logic lives in CommandCenterMount island (React portal).
+ * The trigger shell is server-rendered; the React surface loads on first use.
  */
-import CommandCenterMount from '@/features/command-center/CommandCenterMount';
+import '@/features/command-center/command-center.css';
 ---
+
+<div
+  id="search-overlay"
+  class="search-overlay-mount"
+  data-state="closed"
+  data-ready="false"
+  aria-hidden="true"
+  inert
+>
+</div>
 
 <noscript>
   <!-- Exception: bare px-4 on a noscript fallback shell (not a page padding ladder). -->
@@ -16,4 +26,120 @@ import CommandCenterMount from '@/features/command-center/CommandCenterMount';
   </div>
 </noscript>
 
-<CommandCenterMount client:only="react" />
+<script>
+  import {
+    acquireClaimableOverlayScrollLock,
+    forceReleaseScrollLock,
+    releaseClaimableOverlayScrollLock,
+  } from '@/utils/scrollLock';
+
+  type CommandCenterDetail = { query?: string };
+
+  let mountedRoot: HTMLElement | null = null;
+  let mountPromise: Promise<void> | null = null;
+  let pendingOpen: CommandCenterDetail | undefined;
+  let shellLockHeld = false;
+
+  const getRoot = () => document.getElementById('search-overlay');
+
+  const acquireShellLock = () => {
+    if (shellLockHeld) return;
+    (window as Window & { __boCloseNavMenu?: () => void }).__boCloseNavMenu?.();
+    acquireClaimableOverlayScrollLock();
+    shellLockHeld = true;
+  };
+
+  const releaseShellLock = () => {
+    if (!shellLockHeld) return;
+    releaseClaimableOverlayScrollLock();
+    shellLockHeld = false;
+  };
+
+  const cleanupClosedSearchLock = () => {
+    releaseShellLock();
+    const menuClosed =
+      document.getElementById('nav-mobile-links')?.getAttribute('data-state') !== 'open';
+    const chatClosed = document.querySelector('[data-ai-chat-open="true"]') === null;
+    if (menuClosed && chatClosed) forceReleaseScrollLock();
+  };
+
+  const replayOpen = () => {
+    const detail = pendingOpen;
+    pendingOpen = undefined;
+    window.dispatchEvent(new CustomEvent('command-center:open', { detail }));
+  };
+
+  const afterReactMount = () =>
+    new Promise<void>((resolve) => {
+      const onHydrated = () => {
+        window.clearTimeout(timeout);
+        resolve();
+      };
+      const timeout = window.setTimeout(() => {
+        window.removeEventListener('command-center:hydrated', onHydrated);
+        resolve();
+      }, 1000);
+      window.addEventListener('command-center:hydrated', onHydrated, { once: true });
+    });
+
+  const mount = () => {
+    const root = getRoot();
+    if (!root || mountedRoot === root) return mountPromise ?? Promise.resolve();
+
+    mountPromise = import('@/features/command-center/commandCenterLoader')
+      .then(({ mountCommandCenter }) => {
+        mountedRoot = root;
+        mountCommandCenter(root);
+      })
+      .then(() => afterReactMount())
+      .then(() => replayOpen())
+      .catch(() => {
+        mountPromise = null;
+        root.dataset.error = 'true';
+        releaseShellLock();
+      });
+
+    return mountPromise;
+  };
+
+  const requestMount = (detail?: CommandCenterDetail) => {
+    pendingOpen = detail;
+    acquireShellLock();
+    void mount();
+  };
+
+  const onOpenRequest = (event: Event) => {
+    const detail = (event as CustomEvent<CommandCenterDetail>).detail;
+    if (mountedRoot === getRoot()) return;
+    requestMount(detail);
+  };
+
+  const onClick = (event: MouseEvent) => {
+    const target = event.target;
+    if (!(target instanceof Element) || !target.closest('#search-toggle')) return;
+    requestMount();
+  };
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    const active = document.activeElement as HTMLElement | null;
+    if (active && ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName)) return;
+    const isSlash = event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey;
+    const isCommandK = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k';
+    if (!isSlash && !isCommandK) return;
+    event.preventDefault();
+    requestMount();
+  };
+
+  window.addEventListener('command-center:open', onOpenRequest);
+  window.addEventListener('command-center:close', releaseShellLock);
+  window.addEventListener('command-center:closed', cleanupClosedSearchLock);
+  document.addEventListener('click', onClick);
+  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('astro:page-load', () => {
+    if (mountedRoot !== getRoot()) {
+      mountedRoot = null;
+      mountPromise = null;
+      releaseShellLock();
+    }
+  });
+</script>

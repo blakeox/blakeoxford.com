@@ -14,6 +14,7 @@ onlyBuiltDependencies:
   - workerd
 
 overrides:
+  nanoid: '3.3.17'
   minimatch: '10.2.3'
   brace-expansion: '>=5.0.8'
   rollup: '4.59.0'
@@ -28,6 +29,8 @@ overrides:
   fast-uri: '3.1.4'
   sharp: '0.35.3'
   svgo: '4.0.2'
+  # Keep the transitive PostCSS advisory out of all toolchain paths.
+  postcss: '8.5.25'
   # Vite 8 + picomatch 4 interop can throw parse.fastpaths; pin patched 2.x (GHSA-c2c7-rcm5-vvqj)
   picomatch: '2.3.2'
 

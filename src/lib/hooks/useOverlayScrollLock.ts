@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { acquireScrollLock, releaseScrollLock } from '@/utils/scrollLock';
+import { acquireScrollLock, claimOverlayScrollLock, releaseScrollLock } from '@/utils/scrollLock';
 
 /**
  * Reference-counted scroll lock for a single overlay owner.
@@ -18,7 +18,7 @@ export function useOverlayScrollLock(enabled: boolean) {
   useEffect(() => {
     if (enabled) {
       if (!heldRef.current) {
-        acquireScrollLock();
+        if (!claimOverlayScrollLock()) acquireScrollLock();
         heldRef.current = true;
       }
     } else {

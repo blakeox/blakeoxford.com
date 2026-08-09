@@ -40,6 +40,28 @@ export type ComponentDoc = {
   visualBaseline?: ComponentVisualBaselineKey;
 };
 
+export type ComponentRecipeReference = {
+  recipe:
+    | 'baseCardRecipe'
+    | 'baseCardRecipe.hover'
+    | 'baseCardRecipe.padding'
+    | 'badgeRecipe.variant'
+    | 'badgeRecipe.size'
+    | 'buttonRecipe.variant'
+    | 'buttonRecipe.size'
+    | 'containerRecipe.size'
+    | 'featureCardRecipe.variant'
+    | 'proseRecipe.size'
+    | 'sectionRecipe.padding'
+    | 'sectionRecipe.background';
+  keys: readonly string[];
+};
+
+export type ComponentManifestEntry = ComponentDoc & {
+  accessibilityRequirements: readonly string[];
+  recipeReferences?: readonly ComponentRecipeReference[];
+};
+
 /** Checklist for authoring new components — surfaced on /design/components */
 export const COMPONENT_AUTHORING_CHECKLIST = [
   'Place the file in the correct layer folder (primitives, composites, features, layout, islands).',

@@ -21,7 +21,13 @@
       "name": "All Pages",
       "description": "Initial and SPA pageviews",
       "system": "pageload",
-      "loadRules": [],
+      "loadRules": [
+        {
+          "match": "{{ client.__zarazTrack }}",
+          "op": "EQUALS",
+          "value": "Pageview"
+        }
+      ],
       "excludeRules": []
     },
     "tAllEvents": {
@@ -29,10 +35,22 @@
       "description": "Matches zaraz.track() and dataLayer.push() events",
       "loadRules": [
         {
-          "id": "rEventName",
-          "match": "Event Name",
-          "op": "MATCH_REGEX",
-          "value": ".+"
+          "id": "rul1",
+          "match": "{{ client.__zarazTrack }}",
+          "op": "NOT_MATCH_REGEX",
+          "value": "^__zaraz.*"
+        },
+        {
+          "id": "rul2",
+          "match": "{{ client.__zarazEcommerce }}",
+          "op": "NOT_MATCH_REGEX",
+          "value": "true"
+        },
+        {
+          "id": "pgv2",
+          "match": "{{ client.__zarazTrack }}",
+          "op": "NOT_MATCH_REGEX",
+          "value": "^Pageview$"
         }
       ],
       "excludeRules": []
@@ -43,13 +61,10 @@
     "toolGa4": {
       "enabled": true,
       "name": "Google Analytics 4",
-      "component": "google-analytics-4",
+      "component": "google-analytics_v4",
       "type": "component",
       "blockingTriggers": [],
-      "permissions": [
-        "access_client_kv",
-        "server_network_requests"
-      ],
+      "permissions": ["access_client_kv", "server_network_requests"],
       "settings": {
         "tid": "__GA4_MEASUREMENT_ID__",
         "baseDomain": "blakeoxford.com",
@@ -79,10 +94,7 @@
       "component": "google-conversion-linker",
       "type": "component",
       "blockingTriggers": [],
-      "permissions": [
-        "access_client_kv",
-        "server_network_requests"
-      ],
+      "permissions": ["access_client_kv", "server_network_requests"],
       "settings": {
         "baseDomain": "blakeoxford.com"
       },

@@ -43,16 +43,22 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      // Only measure modules exercised by unit tests (avoid 0% Astro islands skewing totals).
+      // Measure the tested production contracts, including Worker routes. The
+      // full browser/UI surface is covered by Playwright rather than silently
+      // excluded from the release signal.
       all: false,
       include: [
         'src/config/navLinks.ts',
-        'src/config/searchPages.ts',
+        'src/config/navSearchPages.ts',
         'src/lib/theme.ts',
         'src/features/chat/components/MessageActions.tsx',
         'src/features/chat/components/MessageCTAs.tsx',
         'src/features/chat/components/MessageContent.tsx',
         'src/features/chat/components/MessageSources.tsx',
+        'functions/routes/ai-search/types.ts',
+        'functions/routes/conversation.ts',
+        'functions/ConversationDO.ts',
+        'functions/shared/cors.ts',
       ],
       exclude: [
         'node_modules/**',
@@ -64,7 +70,6 @@ export default defineConfig({
         'dist/**',
         '.astro/**',
         'public/**',
-        'functions/**',
         'scripts/**',
         '**/*.config.*',
         '**/debug-*.js',
