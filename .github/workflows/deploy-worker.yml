@@ -69,7 +69,7 @@ jobs:
           EXPECTED_COMMIT: ${{ github.sha }}
         run: |
           set -euo pipefail
-          response=$(curl --fail --silent --show-error --retry 10 --retry-delay 3 https://blakeoxford.com/__version)
+          response=$(curl -4 --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors https://blakeoxford.com/__version)
           deployed=$(printf '%s' "$response" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("commit") or "")')
           if [ "$deployed" != "$EXPECTED_COMMIT" ]; then
             echo "❌ Deployed commit $deployed does not match $EXPECTED_COMMIT"

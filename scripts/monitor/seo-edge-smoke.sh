@@ -15,7 +15,11 @@ if [[ ! "$BASE_URL" =~ ^https://[^/]+$ ]]; then
   exit 2
 fi
 
-curl_args=(--silent --show-error --max-time "$TIMEOUT_SECONDS" --user-agent "$USER_AGENT")
+# GitHub-hosted runners can reach different Cloudflare edges over IPv6 than
+# the production smoke environment. Keep the validation path deterministic.
+# Retry all transport/edge failures because Cloudflare may briefly return a
+# transient response while a route deployment propagates.
+curl_args=(-4 --silent --show-error --max-time "$TIMEOUT_SECONDS" --retry 3 --retry-delay 2 --retry-all-errors --user-agent "$USER_AGENT")
 
 header_value() {
   local headers="$1"
