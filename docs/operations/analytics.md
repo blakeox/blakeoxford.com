@@ -25,8 +25,13 @@ cover the required product and reliability signals.
 
 All browser events pass through `src/lib/analytics.ts`:
 
-- Event names are lowercase `snake_case`.
+- Event names are lowercase `snake_case` and invalid names are dropped at
+  runtime before reaching any analytics vendor.
 - Strings are trimmed, control characters are removed, and values are capped.
+- Only reviewed event parameters cross the shared boundary; unknown keys fail
+  closed until they are added to the analytics contract and tested.
+- Finite categorical fields use explicit vocabularies, and CTA display copy is
+  not sent as an analytics parameter.
 - Direct identifiers and content fields are dropped centrally, including email,
   prompts, queries, responses, message IDs, session IDs, user IDs, URLs, and
   referrers.
@@ -41,6 +46,31 @@ The primary product events are `generate_lead`, `chat_engagement`,
 `command_center_*`, `autorag_*`, and `web_vitals`. Add an event only when it
 changes a product or reliability decision and document its owner and action
 threshold here.
+
+## GA4 custom definitions
+
+The GA4 property registers only bounded event parameters that support a named
+decision. The source-controlled registry is
+`config/analytics/ga4-custom-definitions.json`; the current event-scoped
+definitions are:
+
+| Definition      | Parameter         | Reporting use                         |
+| --------------- | ----------------- | ------------------------------------- |
+| Form            | `form`            | Lead-path segmentation                |
+| Method          | `method`          | Conversion method comparison          |
+| Metric name     | `metric_name`     | Core Web Vital breakdown              |
+| Metric rating   | `metric_rating`   | Core Web Vital quality buckets        |
+| Navigation type | `navigation_type` | Navigation-related performance checks |
+| Backend         | `backend`         | Command Center backend comparison     |
+| Provider        | `provider`        | AI provider category comparison       |
+| Cache status    | `cache_status`    | Response cache effectiveness          |
+| Complexity      | `complexity`      | Request complexity comparison         |
+| Source          | `source`          | Bounded UI-source segmentation        |
+
+Do not register raw URLs, referrers, queries, terms, message identifiers, or
+other high-cardinality values. Acquisition source remains intentionally
+deferred until the property observes the emitted parameter; do not submit a
+synthetic lead to populate a reporting picker.
 
 ## Measurement model
 
@@ -90,6 +120,8 @@ business outcomes.
   deployment explicitly enables Clarity.
 - Confirm no analytics request contains prompts, responses, contact fields,
   raw URLs, referrers, or message identifiers.
+- Confirm vendor Promise rejections are logged without creating unhandled
+  rejections or blocking navigation, chat, or contact submission.
 - Review Sentry and Cloudflare logs after deployment; analytics failures must
   never block navigation, chat, or contact submission.
 

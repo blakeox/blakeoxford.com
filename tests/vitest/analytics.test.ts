@@ -47,6 +47,19 @@ describe('trackEvent routing', () => {
     expect(clarity).toHaveBeenCalledWith('set', 'source', 'nav');
   });
 
+  it('drops invalid event names before routing', () => {
+    const track = vi.fn();
+    const clarity = vi.fn();
+    vi.stubGlobal('window', { zaraz: { track }, clarity });
+
+    trackEvent('private query', { source: 'nav' });
+    trackEvent('valid_event', { source: 'nav' });
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith('valid_event', { source: 'nav' });
+    expect(clarity).toHaveBeenCalledWith('event', 'valid_event');
+  });
+
   it('falls back to dataLayer when zaraz is missing', () => {
     const dataLayer: Array<Record<string, unknown>> = [];
     vi.stubGlobal('window', { dataLayer, clarity: vi.fn() });
@@ -83,6 +96,17 @@ describe('trackEvent routing', () => {
     expect(debug).toHaveBeenCalled();
   });
 
+  it('handles rejected async analytics clients without an unhandled rejection', async () => {
+    const debug = vi.spyOn(console, 'debug').mockImplementation(() => {});
+    const track = vi.fn().mockRejectedValue(new Error('async boom'));
+    vi.stubGlobal('window', { zaraz: { track }, clarity: vi.fn() });
+
+    expect(() => trackEvent('autorag_error', { category: 'network' })).not.toThrow();
+    await Promise.resolve();
+
+    expect(debug).toHaveBeenCalledWith('Analytics tracking failed:', expect.any(Error));
+  });
+
   it('autorag and conversion helpers emit snake_case events', () => {
     const track = vi.fn();
     vi.stubGlobal('window', { zaraz: { track }, clarity: vi.fn() });
@@ -116,8 +140,18 @@ describe('trackEvent routing', () => {
         query: 'private question',
         message_id: 'message-1',
         source: 'nav',
-        count: 2,
+        unreviewed_field: 'must not cross the boundary',
       })
-    ).toEqual({ source: 'nav', count: 2 });
+    ).toEqual({ source: 'nav' });
+  });
+
+  it('drops unapproved categorical values', () => {
+    expect(
+      sanitizeAnalyticsProps({
+        acquisition_source: 'private-referrer',
+        metric_rating: 'unknown',
+        sentiment: 'positive',
+      })
+    ).toEqual({ sentiment: 'positive' });
   });
 });

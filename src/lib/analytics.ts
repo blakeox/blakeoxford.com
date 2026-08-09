@@ -27,8 +27,73 @@ const BLOCKED_ANALYTICS_KEYS = new Set([
   'user_id',
 ]);
 
+/**
+ * Only reviewed, bounded dimensions may cross the analytics boundary.
+ * Unknown keys fail closed so a new caller cannot silently add content or
+ * identifiers to a vendor payload without updating this contract.
+ */
+const ALLOWED_ANALYTICS_KEYS = new Set([
+  'acquisition_source',
+  'action',
+  'assistant_messages',
+  'attempt',
+  'auto_send',
+  'avg_quality_score',
+  'avg_response_time_ms',
+  'backend',
+  'cache_status',
+  'category',
+  'citation_accuracy',
+  'citation_health',
+  'complexity',
+  'conciseness',
+  'completeness',
+  'error_category',
+  'format',
+  'form',
+  'href_path',
+  'item_kind',
+  'kind',
+  'method',
+  'metric_name',
+  'metric_rating',
+  'navigation_type',
+  'overall_score',
+  'position',
+  'provider',
+  'query_length',
+  'relevance',
+  'response_time_ms',
+  'result_count',
+  'retry_available',
+  'semantic_hit_count',
+  'sentiment',
+  'severity',
+  'source',
+  'source_count',
+  'tag_length',
+  'top_score',
+  'total_messages',
+  'total_sources',
+  'type',
+  'user_initiated',
+  'user_messages',
+  'value',
+  'word_count',
+]);
+
+const ALLOWED_ANALYTICS_VALUES = new Map([
+  ['acquisition_source', new Set(['organic', 'referral', 'direct', 'internal', 'unknown'])],
+  ['format', new Set(['markdown', 'json'])],
+  ['metric_rating', new Set(['good', 'needs_improvement', 'poor'])],
+  ['method', new Set(['contact_form', 'native', 'clipboard'])],
+  ['navigation_type', new Set(['navigate', 'reload', 'back_forward', 'prerender'])],
+  ['sentiment', new Set(['positive', 'negative'])],
+]);
+
 const MAX_ANALYTICS_KEY_LENGTH = 40;
 const MAX_ANALYTICS_STRING_LENGTH = 100;
+const MAX_ANALYTICS_EVENT_LENGTH = 64;
 
 interface ZarazClient {
   track?: (event: string, props?: Record<string, unknown>) => void | Promise<void>;
@@ -124,7 +189,8 @@ export function sanitizeAnalyticsProps(props?: AnalyticsProps): AnalyticsProps |
     if (
       !key ||
       key.length > MAX_ANALYTICS_KEY_LENGTH ||
-      BLOCKED_ANALYTICS_KEYS.has(key.toLowerCase())
+      BLOCKED_ANALYTICS_KEYS.has(key.toLowerCase()) ||
+      !ALLOWED_ANALYTICS_KEYS.has(key.toLowerCase())
     ) {
       continue;
     }
@@ -137,6 +203,8 @@ export function sanitizeAnalyticsProps(props?: AnalyticsProps): AnalyticsProps |
         })
         .join('')
         .trim();
+      const allowedValues = ALLOWED_ANALYTICS_VALUES.get(key.toLowerCase());
+      if (allowedValues && !allowedValues.has(normalized)) continue;
       if (normalized) safeProps[key] = normalized.slice(0, MAX_ANALYTICS_STRING_LENGTH);
       continue;
     }
@@ -166,11 +234,23 @@ function mirrorToClarity(event: string, props?: AnalyticsProps): void {
   }
 }
 
+function reportAnalyticsFailure(error: unknown): void {
+  console.debug('Analytics tracking failed:', error);
+}
+
 /**
  * Track an analytics event via Zaraz (preferred) or legacy shims.
  */
 export function trackEvent(event: string, props?: AnalyticsProps): void {
   try {
+    if (
+      typeof event !== 'string' ||
+      event.length > MAX_ANALYTICS_EVENT_LENGTH ||
+      !/^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/.test(event)
+    ) {
+      return;
+    }
+
     const safeProps = sanitizeAnalyticsProps(props);
     const win = window as Window &
       DataLayerWindow & {
@@ -179,7 +259,7 @@ export function trackEvent(event: string, props?: AnalyticsProps): void {
       };
 
     if (win.zaraz?.track) {
-      void win.zaraz.track(event, safeProps);
+      void Promise.resolve(win.zaraz.track(event, safeProps)).catch(reportAnalyticsFailure);
     } else if (Array.isArray(win.dataLayer)) {
       win.dataLayer.push({ event, ...safeProps });
     } else if (typeof win.gtag === 'function') {
@@ -193,7 +273,7 @@ export function trackEvent(event: string, props?: AnalyticsProps): void {
     mirrorToClarity(event, safeProps);
   } catch (error) {
     // Analytics should never break functionality
-    console.debug('Analytics tracking failed:', error);
+    reportAnalyticsFailure(error);
   }
 }
 
@@ -252,7 +332,7 @@ export const autoragEvents = {
   quickAction: (data: { action: string; category?: string }) =>
     trackEvent('autorag_quick_action', data),
 
-  ctaClick: (data: { type: string; label: string }) => trackEvent('autorag_cta_click', data),
+  ctaClick: (data: { type: string }) => trackEvent('autorag_cta_click', data),
 
   suggestedQuery: (data: { query: string; position?: number }) =>
     trackEvent('autorag_suggested_query', {
