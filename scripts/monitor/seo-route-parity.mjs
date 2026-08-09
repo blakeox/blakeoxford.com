@@ -124,6 +124,25 @@ async function inspectRoute(url) {
   const h1Count = (html.match(/<h1\b[^>]*>/gi) ?? []).length;
   if (h1Count !== 1) problems.push(`h1 count=${h1Count}`);
 
+  const queryUrl = new URL(url);
+  queryUrl.searchParams.set('seo_audit', 'query-policy');
+  try {
+    const queryResponse = await fetchWithTimeout(queryUrl);
+    const queryContentType = queryResponse.headers.get('content-type')?.toLowerCase() ?? '';
+    const queryRobots = queryResponse.headers.get('x-robots-tag')?.toLowerCase() ?? '';
+    if (queryResponse.status !== 200) problems.push(`query HTTP ${queryResponse.status}`);
+    if (!queryContentType.includes('text/html')) {
+      problems.push(`query content-type=${queryContentType || '<missing>'}`);
+    }
+    if (queryRobots !== 'noindex, nofollow') {
+      problems.push(`query x-robots-tag=${queryRobots || '<missing>'}`);
+    }
+  } catch (error) {
+    problems.push(
+      `query request failed: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+
   return { url, problems };
 }
 
