@@ -14,12 +14,14 @@ function walk(directory) {
 }
 
 function decodeEntities(value) {
-  return value
-    .replace(/&amp;/g, '&')
-    .replace(/&#39;/g, "'")
-    .replace(/&quot;/g, '"')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
+  const entities = {
+    '&amp;': '&',
+    '&#39;': "'",
+    '&quot;': '"',
+    '&lt;': '<',
+    '&gt;': '>',
+  };
+  return value.replace(/&amp;|&#39;|&quot;|&lt;|&gt;/g, (entity) => entities[entity]);
 }
 
 function tags(html, name) {
