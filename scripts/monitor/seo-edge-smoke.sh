@@ -125,6 +125,7 @@ while IFS= read -r sitemap_url; do
   ((sitemap_url_count += 1))
 done <<<"$sitemap_urls"
 echo "PASS sitemap URLs: $sitemap_url_count canonical URLs returned direct 200"
+node scripts/monitor/seo-route-parity.mjs
 
 project_html="$(curl "${curl_args[@]}" --fail "$BASE_URL/projects/adp-workforcenow/")"
 if ! grep -q '<meta name="description" content="[^"].*"' <<<"$project_html"; then

@@ -35,6 +35,7 @@
     "deploy:worker": "corepack pnpm exec wrangler deploy",
     "monitor:edge": "bash scripts/monitor/cloudflare-edge-smoke.sh",
     "monitor:seo": "bash scripts/monitor/seo-edge-smoke.sh",
+    "monitor:seo:routes": "node scripts/monitor/seo-route-parity.mjs",
     "lh:ci": "lhci autorun",
     "perf:test": "node scripts/build/performance-test.js",
     "security:audit": "node scripts/quality/run-dependency-audit.js",

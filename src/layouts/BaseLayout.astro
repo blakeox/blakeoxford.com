@@ -16,7 +16,7 @@ import StructuredData from '@/components/head/StructuredData.astro';
 import SiteClientScripts from '@/components/head/SiteClientScripts.astro';
 import { getThemeFoucPreventionScript } from '@/lib/theme';
 import { runtimeSurfaceFlags } from '@/lib/runtimeSurfaceFlags';
-import { SEO_DESCRIPTION_MAX_LENGTH } from '@/config/seo-policy';
+import { SEO_DESCRIPTION_MAX_LENGTH, isNoindexUrl } from '@/config/seo-policy';
 import { SEO } from '@/config/constants';
 import { normalizeMetaText } from '@/lib/seo/meta.mjs';
 import {
@@ -48,6 +48,7 @@ const canonicalUrl =
   typeof url === 'string' && url.length > 0
     ? url
     : (Astro.url?.href ?? `${siteHref}${Astro.url.pathname}`);
+const effectiveNoindex = noindex || isNoindexUrl(Astro.url);
 const ogImage = image
   ? image.startsWith('http')
     ? image
@@ -77,7 +78,7 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
       ogImageAlt={imageAlt}
       ogType={ogType}
       keywords={keywords}
-      noindex={noindex}
+      noindex={effectiveNoindex}
       googleSiteVerification={googleSiteVerification}
     />
     <StructuredData

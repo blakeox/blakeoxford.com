@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validateMetadataQuality } from '@/config/seo-policy.mjs';
+import { isNoindexUrl, validateMetadataQuality } from '@/config/seo-policy.mjs';
 
 describe('SEO metadata policy', () => {
   it('accepts accurate metadata without imposing character ceilings', () => {
@@ -18,5 +18,12 @@ describe('SEO metadata policy', () => {
     expect(validateMetadataQuality({ title: 'Valid', description: '   ' })).toEqual([
       'description is empty',
     ]);
+  });
+
+  it('noindexes query-bearing URLs without changing clean route policy', () => {
+    expect(isNoindexUrl('https://blakeoxford.com/projects/?filter=mdm')).toBe(true);
+    expect(isNoindexUrl('https://blakeoxford.com/contact/?success=true')).toBe(true);
+    expect(isNoindexUrl('https://blakeoxford.com/projects/')).toBe(false);
+    expect(isNoindexUrl('https://blakeoxford.com/design/tokens/')).toBe(true);
   });
 });

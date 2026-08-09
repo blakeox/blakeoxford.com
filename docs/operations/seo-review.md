@@ -12,6 +12,7 @@ pnpm build
 pnpm quality:seo
 pnpm typecheck
 pnpm lint
+pnpm exec vitest run tests/vitest/contentArchitecture.test.ts
 ```
 
 `quality:seo` checks the emitted HTML and sitemap for canonical URLs, indexability, titles,
@@ -20,12 +21,18 @@ Metadata length is editorial guidance, not a blocking SEO invariant; the gate bl
 duplicate, malformed, or mismatched metadata instead. The renderer still bounds generated
 description output at the shared maximum.
 
+The content architecture contract checks that every indexable acquisition route has a documented
+intent, contextual relationship, and bounded topic/query entry. Query themes are editorial planning
+inputs only; they are not emitted as `meta keywords` and must be reconciled against Search Console
+evidence before content priorities are changed.
+
 ## Live review checklist
 
 - [ ] Confirm the deployed commit through `/__version`.
 - [ ] Fetch `/robots.txt` and `/sitemap.xml`; confirm robots has exactly one canonical sitemap directive and `/sitemap-index.xml` and `/sitemap-0.xml` are 404/410.
 - [ ] Verify HTTP apex, HTTP `www`, and HTTPS `www` requests each return one permanent 308 redirect to the HTTPS apex slash URL.
 - [ ] Verify every URL emitted by the canonical sitemap returns a direct 200 response without a redirect.
+- [ ] Run `pnpm monitor:seo`; confirm route-wide live HTML parity for every sitemap URL, including canonical, metadata, robots, schema, and H1 checks.
 - [ ] Submit the canonical sitemap in Google Search Console.
 - [ ] Verify or explicitly defer Bing Webmaster Tools and record the reason.
 - [ ] After the IndexNow key file is deployed, submit only added, updated, or deleted URLs with `pnpm indexnow:submit -- --url <url>`; use `--sitemap` only for an intentional bulk submission.
@@ -54,6 +61,43 @@ implementation does not send or retain the referrer URL, search query, form cont
 address. Use this event as the aggregate organic-contact conversion measure after the analytics
 property is verified.
 
+## Latest recorded measurement state: 2026-08-09
+
+Reviewed 2026-08-09 against production commit `cc228629` and the authenticated personal Search
+Console property:
+
+- Technical live gates are green: `pnpm monitor:seo` passes all redirect, robots, sitemap,
+  route-wide HTML parity, metadata, and provenance checks across 18 canonical sitemap URLs.
+- Google Search Console personal-site property is accessible. The canonical sitemap was submitted,
+  last read on the review date, with 18 discovered pages and 0 videos.
+- Initial Search Console overview baseline: 9 total web-search clicks, 16 indexed pages,
+  13 not-indexed pages, 10 HTTPS URLs, 0 non-HTTPS URLs, and no Core Web Vitals data yet.
+- Search Console Performance (Web, 3 months, 2026-05-08 through 2026-08-07; updated four hours
+  before review): 737 impressions, 9 clicks, 1.2% average CTR, and 16.7 average position. The
+  query and landing-page tables were reviewed without copying raw search queries or personal data
+  into this repository.
+- Search Console Page indexing (last updated 2026-08-04) reports 13 not-indexed pages across five
+  reasons: two expected canonical redirects, two expected query-filter canonical alternates, one
+  404, one other 4xx, and seven crawled-but-currently-not-indexed URLs. The historical query
+  surfaces are tracked in #500; the 404/4xx examples remain an external coverage follow-up.
+- Search Console Unparsable structured data (last updated 2026-08-07) reports two historical
+  parsing errors affecting `/projects/ferment-app` and `/blog/building-my-own-local-llm-stack/`.
+  Current production JSON-LD parses successfully for both URLs; Search Console validation remains
+  pending under #501.
+- Bing Webmaster Tools personal property is selected and the canonical sitemap is submitted;
+  status is `Processing` with 0 errors, 0 warnings, and 1 known sitemap. Bing has not yet
+  crawled or discovered URLs.
+- Qualified organic contact counts and Bing performance data are still pending. The Search Console
+  aggregate performance baseline is now recorded, but do not treat it as a complete conversion or
+  cross-engine baseline until the remaining fields are captured.
+
+The current branch also adds an edge-level `X-Robots-Tag: noindex, nofollow` response for
+query-bearing HTML requests, addressing the legacy `?filter=` crawl surface tracked in #500. This
+control is not a production receipt until deployed and live-verified.
+
+Facebook validation is intentionally out of scope. X/Twitter card validation remains a separate
+provider-authenticated check.
+
 ## Performance targets and ownership
 
 Engineering owns the repository and lab gates; the site owner owns the Search Console, analytics,
@@ -68,7 +112,7 @@ and field-data review. The shared targets are:
 The thresholds are intentionally aligned with `scripts/build/performance-test.js`; any change to
 them must update this contract and the relevant CI test in the same change.
 
-## Baseline snapshot: 2026-08-04
+## Historical lab baseline snapshot: 2026-08-04
 
 The following is a reproducible Lighthouse 13 lab snapshot against the currently deployed
 production build. It is a release baseline, not field data and not a validation of the current
@@ -86,5 +130,6 @@ form factor, and audit configuration.
 The mobile homepage result came from the multi-route performance run; that run terminated with
 a Lighthouse browser target crash on a later route. The standalone desktop homepage run completed
 successfully. The PageSpeed Insights API returned HTTP 429 quota exhaustion during this review, so
-no field LCP, INP, or CLS values are claimed here. Re-run after deployment and append the field
-values and Search Console property date before closing the performance and measurement issues.
+no field LCP, INP, or CLS values are claimed here. Retain this as the historical lab comparator;
+append fresh field values and Search Console property dates before closing the performance and
+measurement issues.

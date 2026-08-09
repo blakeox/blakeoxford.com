@@ -9,7 +9,6 @@ test.describe('WCAG Compliance Tests', () => {
     // Check for proper document structure
     const docTitle = await page.title();
     expect(docTitle.length).toBeGreaterThan(5);
-    expect(docTitle.length).toBeLessThan(60);
     
     // Check for main landmark
     const main = page.locator('main, [role="main"]').first();

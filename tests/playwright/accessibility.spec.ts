@@ -371,7 +371,6 @@ test.describe('Enhanced Accessibility Testing', () => {
         // Allow generic titles like "Your Site" for development/testing
         expect(title).toMatch(expectedTitlePattern);
         expect(title.length).toBeGreaterThan(3); // Very basic title requirement
-        expect(title.length).toBeLessThan(100); // Not too long for SEO
       }
     });
 

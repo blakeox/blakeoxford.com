@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { CONTENT_INTENTS, CONTENT_RELATIONSHIPS } from '../../src/config/content-architecture';
+import {
+  CONTENT_INTENTS,
+  CONTENT_RELATIONSHIPS,
+  CONTENT_TOPICS,
+} from '../../src/config/content-architecture';
 
 const projectRoutes = [
   '/projects/adp-workforcenow/',
@@ -44,5 +48,40 @@ describe('content architecture contract', () => {
         expect(CONTENT_INTENTS[link.href], `${route} links to an undocumented route`).toBeTruthy();
       }
     }
+  });
+
+  it('keeps one bounded, unique topic map for every acquisition route', () => {
+    const requiredRoutes = [
+      '/',
+      '/about/',
+      '/blog/',
+      '/projects/',
+      '/contact/',
+      ...projectRoutes,
+      ...articleRoutes,
+    ];
+    const primaryTopics = requiredRoutes.map((route) => {
+      const topic = CONTENT_TOPICS[route];
+
+      expect(topic, `${route} is missing a topic map entry`).toBeTruthy();
+      expect(topic.primaryTopic.trim(), `${route} is missing a primary topic`).not.toBe('');
+      expect(
+        topic.queryThemes.length,
+        `${route} needs bounded query themes`
+      ).toBeGreaterThanOrEqual(2);
+      expect(topic.queryThemes.length, `${route} has too many query themes`).toBeLessThanOrEqual(4);
+
+      for (const queryTheme of topic.queryThemes) {
+        expect(queryTheme.trim(), `${route} has an empty query theme`).not.toBe('');
+        expect(queryTheme.length, `${route} has an overlong query theme`).toBeLessThanOrEqual(80);
+      }
+
+      return topic.primaryTopic;
+    });
+
+    expect(new Set(primaryTopics).size, 'primary topics must remain route-specific').toBe(
+      requiredRoutes.length
+    );
+    expect(Object.keys(CONTENT_TOPICS).sort()).toEqual(requiredRoutes.slice().sort());
   });
 });

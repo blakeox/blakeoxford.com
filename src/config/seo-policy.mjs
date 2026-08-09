@@ -15,3 +15,9 @@ export function isNoindexRoute(pathname) {
     (prefix) => normalized === prefix.slice(0, -1) || normalized.startsWith(prefix)
   );
 }
+
+export function isNoindexUrl(input) {
+  const url =
+    input instanceof globalThis.URL ? input : new globalThis.URL(String(input), SITE_ORIGIN);
+  return url.search.length > 0 || isNoindexRoute(url.pathname);
+}

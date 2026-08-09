@@ -24,7 +24,16 @@ export { ConversationDurableObject } from './ConversationDO.ts';
 const CONTENT_SECURITY_POLICY =
   "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' https://www.clarity.ms https://static.cloudflareinsights.com https://cdn-cgi/ https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; font-src 'self' data:; connect-src 'self' https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://static.cloudflareinsights.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'";
 
-function applySecurityHeaders(response: Response, reqId: string, hostname: string): Response {
+export function shouldNoindexQueryResponse(url: URL, contentType: string): boolean {
+  return url.search.length > 0 && contentType.toLowerCase().includes('text/html');
+}
+
+export function applySecurityHeaders(
+  response: Response,
+  reqId: string,
+  hostname: string,
+  requestUrl?: URL
+): Response {
   if (response.status === 101) return response;
 
   const headers = new Headers(response.headers);
@@ -44,6 +53,9 @@ function applySecurityHeaders(response: Response, reqId: string, hostname: strin
   const contentType = headers.get('content-type') || '';
   if (contentType.includes('text/html') && !headers.has('content-security-policy')) {
     headers.set('content-security-policy', CONTENT_SECURITY_POLICY);
+  }
+  if (requestUrl && shouldNoindexQueryResponse(requestUrl, contentType)) {
+    headers.set('x-robots-tag', 'noindex, nofollow');
   }
 
   return new Response(response.body, {
@@ -141,7 +153,8 @@ const WorkerApp = {
           headers: { 'cache-control': 'no-store', 'x-route-kind': 'blocked-internal' },
         }),
         reqId,
-        url.hostname
+        url.hostname,
+        url
       );
     }
 
@@ -160,7 +173,8 @@ const WorkerApp = {
           headers,
         }),
         reqId,
-        url.hostname
+        url.hostname,
+        url
       );
     }
 
@@ -181,10 +195,10 @@ const WorkerApp = {
 
     for (const handler of handlers) {
       const response = await handler(routeCtx);
-      if (response) return applySecurityHeaders(response, reqId, url.hostname);
+      if (response) return applySecurityHeaders(response, reqId, url.hostname, url);
     }
 
-    return applySecurityHeaders(await handleAssets(routeCtx), reqId, url.hostname);
+    return applySecurityHeaders(await handleAssets(routeCtx), reqId, url.hostname, url);
   },
 };
 
