@@ -1,5 +1,15 @@
 ---
+import '@fontsource/source-sans-3/latin-400.css';
+import '@fontsource/source-sans-3/latin-600.css';
+import '@fontsource/source-sans-3/latin-700.css';
+import '@fontsource/space-grotesk/latin-500.css';
+import '@fontsource/space-grotesk/latin-600.css';
+import '@fontsource/space-grotesk/latin-700.css';
+import '../../styles/global.css';
 import ProjectCard from '@/components/features/projects/ProjectCard.astro';
+import { getThemeFoucPreventionScript } from '@/lib/theme';
+
+const themeFoucScript = getThemeFoucPreventionScript();
 // Provide a ProjectData-shaped sample
 const sample = {
   id: 'microsoft-fabric',
@@ -16,13 +26,19 @@ const sample = {
 
 <html lang="en">
   <head>
+    <script is:inline set:html={themeFoucScript} />
     <meta charset="utf-8" />
     <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Internal project card component preview." />
+    <link rel="canonical" href="https://blakeoxford.com/components/project-card-preview/" />
     <title>Project Card Preview</title>
   </head>
-  <body class="min-h-screen p-6">
-    <div class="max-w-sm">
-      <ProjectCard project={sample} />
-    </div>
+  <body class="min-h-screen bg-background p-6 text-foreground">
+    <main id="main-content">
+      <h1 class="sr-only">Project card preview</h1>
+      <div class="max-w-sm">
+        <ProjectCard project={sample} />
+      </div>
+    </main>
   </body>
 </html>

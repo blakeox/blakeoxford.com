@@ -151,7 +151,7 @@ test.describe('Enhanced Performance Monitoring', () => {
 
       // Test form validation performance
       const validationStart = Date.now();
-      await page.locator('button[type="submit"]').click();
+      await page.locator('#contact-form button[type="submit"]').click();
       const validationTime = Date.now() - validationStart;
 
       expect(validationTime).toBeLessThan(500); // Form validation should be quick

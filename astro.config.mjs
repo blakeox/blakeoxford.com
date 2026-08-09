@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
-import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'url';
@@ -63,7 +62,6 @@ export default defineConfig({
   integrations: [
     react(),
     mdx(),
-    sitemap(),
     ...sentryIntegrations,
     ...(process.env.ENABLE_ASTRO_COMPRESS === 'true' ? [compress()] : []),
   ],

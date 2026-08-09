@@ -1,5 +1,6 @@
 ---
 import Badge from '@/components/primitives/Badge.astro';
+import BaseCard from '@/components/primitives/BaseCard.astro';
 import { componentDocs, getCategories, getAllTags, type ComponentDoc } from '@/data/componentDocs';
 import { componentVisualBaselines } from '@/data/componentVisualBaselines';
 
@@ -27,6 +28,17 @@ const allTags = getAllTags();
       placeholder="Search components by name, description, or tag..."
       class="w-full rounded-xl border border-border px-6 py-4 text-lg transition focus:ring-2 focus:ring-accent focus:outline-none"
     />
+    <p
+      id="component-results"
+      class="mt-3 text-sm text-muted-foreground"
+      role="status"
+      aria-live="polite"
+    >
+      Showing {componentDocs.length} components.
+    </p>
+    <p id="component-empty" class="mt-3 hidden text-sm text-warning-emphasis" role="status">
+      No components match those filters. Try a different term or choose All.
+    </p>
   </div>
 
   <div class="mb-12">
@@ -35,16 +47,18 @@ const allTags = getAllTags();
     </h3>
     <div class="flex flex-wrap gap-2">
       <button
-        class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
+        class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:outline-none"
         data-tag="all"
+        aria-pressed="false"
       >
         All
       </button>
       {
         allTags.map((tag) => (
           <button
-            class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
+            class="tag-filter rounded-full border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:outline-none"
             data-tag={tag}
+            aria-pressed="false"
           >
             {tag}
           </button>
@@ -65,207 +79,216 @@ const allTags = getAllTags();
 
         <div class="space-y-8">
           {components.map((component: ComponentDoc) => (
-            <article
-              class="component-card min-w-0 overflow-hidden rounded-2xl border border-border/40 bg-surface/70 p-5 shadow-sm transition-colors hover:border-accent/40 sm:p-8"
+            <BaseCard
+              as="article"
+              variant="subtle"
+              hover="none"
+              padding="none"
+              class="component-card min-w-0 overflow-hidden transition-colors hover:border-accent/40"
               data-component-name={component.name.toLowerCase()}
               data-component-tags={component.tags?.join(',') || ''}
             >
-              <header class="mb-6">
-                <div class="flex items-start justify-between gap-4">
-                  <div>
-                    <h4 class="text-2xl font-bold text-foreground">{component.name}</h4>
-                    {component.subcategory && (
-                      <p class="mt-1 text-sm text-subtle-foreground">
-                        {component.category} › {component.subcategory}
-                      </p>
-                    )}
+              <div class="p-5 sm:p-8">
+                <header class="mb-6">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <h4 class="text-2xl font-bold text-foreground">{component.name}</h4>
+                      {component.subcategory && (
+                        <p class="mt-1 text-sm text-subtle-foreground">
+                          {component.category} › {component.subcategory}
+                        </p>
+                      )}
+                    </div>
+                    <a
+                      href={`https://github.com/blakeox/blakeoxford.com/blob/main/${component.filePath}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
+                    >
+                      View Source
+                    </a>
                   </div>
-                  <a
-                    href={`https://github.com/blakeox/blakeoxford.com/blob/main/${component.filePath}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition hover:border-accent hover:bg-accent-subtle"
-                  >
-                    View Source
-                  </a>
-                </div>
 
-                <p class="mt-4 text-muted-foreground">{component.description}</p>
+                  <p class="mt-4 text-muted-foreground">{component.description}</p>
 
-                {component.visualTier && (
-                  <p class="mt-3 text-sm">
-                    <span class="font-semibold text-foreground">Visual tier:</span>{' '}
-                    <Badge class="bg-surface-subtle text-xs text-foreground">
-                      {component.visualTier}
-                    </Badge>
-                  </p>
+                  {component.visualTier && (
+                    <p class="mt-3 text-sm">
+                      <span class="font-semibold text-foreground">Visual tier:</span>{' '}
+                      <Badge class="bg-surface-subtle text-xs text-foreground">
+                        {component.visualTier}
+                      </Badge>
+                    </p>
+                  )}
+
+                  {component.tokenDependencies && component.tokenDependencies.length > 0 && (
+                    <div class="mt-3">
+                      <p class="text-sm font-semibold text-foreground">Token dependencies</p>
+                      <div class="mt-2 flex flex-wrap gap-2">
+                        {component.tokenDependencies.map((token) => (
+                          <code class="rounded bg-accent-subtle px-2 py-1 text-xs text-accent-emphasis">
+                            {token}
+                          </code>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {component.visualBaseline && (
+                    <p class="mt-3 text-sm text-muted-foreground">
+                      <span class="font-semibold text-foreground">Visual baseline:</span> Playwright
+                      snapshot{' '}
+                      <code class="text-accent-emphasis">
+                        {componentVisualBaselines[component.visualBaseline].snapshotFile}
+                      </code>
+                      on <code>{componentVisualBaselines[component.visualBaseline].route}</code>
+                    </p>
+                  )}
+
+                  {component.tags && component.tags.length > 0 && (
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      {component.tags.map((tag) => (
+                        <Badge class="bg-accent-subtle text-xs text-accent-emphasis">{tag}</Badge>
+                      ))}
+                    </div>
+                  )}
+                </header>
+
+                {component.props && component.props.length > 0 && (
+                  <div class="mb-6">
+                    <h5 class="mb-3 text-lg font-semibold text-foreground">Props</h5>
+                    <div class="max-w-full overflow-x-auto" tabindex="0">
+                      <table class="w-full text-sm">
+                        <thead class="border-b border-border">
+                          <tr class="text-left">
+                            <th class="pr-4 pb-2 font-semibold">Name</th>
+                            <th class="pr-4 pb-2 font-semibold">Type</th>
+                            <th class="pr-4 pb-2 font-semibold">Default</th>
+                            <th class="pb-2 font-semibold">Description</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                          {component.props.map((prop) => (
+                            <tr>
+                              <td class="py-3 pr-4">
+                                <code class="rounded bg-accent-subtle px-2 py-1 text-accent-emphasis">
+                                  {prop.name}
+                                  {prop.required && <span class="text-error">*</span>}
+                                </code>
+                              </td>
+                              <td class="py-3 pr-4">
+                                <code class="text-muted-foreground">{prop.type}</code>
+                              </td>
+                              <td class="py-3 pr-4">
+                                {prop.default ? (
+                                  <code class="text-muted-foreground">{prop.default}</code>
+                                ) : (
+                                  <span class="text-subtle-foreground/80">—</span>
+                                )}
+                              </td>
+                              <td class="py-3 text-muted-foreground">{prop.description}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 )}
 
-                {component.tokenDependencies && component.tokenDependencies.length > 0 && (
-                  <div class="mt-3">
-                    <p class="text-sm font-semibold text-foreground">Token dependencies</p>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                      {component.tokenDependencies.map((token) => (
-                        <code class="rounded bg-accent-subtle px-2 py-1 text-xs text-accent">
-                          {token}
-                        </code>
+                {component.examples && component.examples.length > 0 && (
+                  <div class="mb-6">
+                    <h5 class="mb-3 text-lg font-semibold text-foreground">Examples</h5>
+                    <div class="space-y-4">
+                      {component.examples.map((example) => (
+                        <div>
+                          {example.title && (
+                            <p class="mb-2 text-sm font-medium text-muted-foreground">
+                              {example.title}
+                            </p>
+                          )}
+                          {example.description && (
+                            <p class="mb-2 text-sm text-subtle-foreground">{example.description}</p>
+                          )}
+                          <pre
+                            class="max-w-full overflow-x-auto rounded-xl bg-code-surface p-4 text-sm text-code-foreground"
+                            tabindex="0"
+                          >
+                            <code>{example.code}</code>
+                          </pre>
+                        </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {component.visualBaseline && (
-                  <p class="mt-3 text-sm text-muted-foreground">
-                    <span class="font-semibold text-foreground">Visual baseline:</span> Playwright
-                    snapshot{' '}
-                    <code class="text-accent">
-                      {componentVisualBaselines[component.visualBaseline].snapshotFile}
-                    </code>
-                    on <code>{componentVisualBaselines[component.visualBaseline].route}</code>
-                  </p>
-                )}
-
-                {component.tags && component.tags.length > 0 && (
-                  <div class="mt-4 flex flex-wrap gap-2">
-                    {component.tags.map((tag) => (
-                      <Badge class="bg-accent-subtle text-xs text-accent">{tag}</Badge>
-                    ))}
+                {component.accessibility && component.accessibility.length > 0 && (
+                  <div class="mb-6">
+                    <h5 class="mb-3 text-lg font-semibold text-foreground">Accessibility</h5>
+                    <ul class="space-y-2">
+                      {component.accessibility.map((feature) => (
+                        <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                          <span class="mt-1 text-success">✓</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
-              </header>
 
-              {component.props && component.props.length > 0 && (
-                <div class="mb-6">
-                  <h5 class="mb-3 text-lg font-semibold text-foreground">Props</h5>
-                  <div class="max-w-full overflow-x-auto" tabindex="0">
-                    <table class="w-full text-sm">
-                      <thead class="border-b border-border">
-                        <tr class="text-left">
-                          <th class="pr-4 pb-2 font-semibold">Name</th>
-                          <th class="pr-4 pb-2 font-semibold">Type</th>
-                          <th class="pr-4 pb-2 font-semibold">Default</th>
-                          <th class="pb-2 font-semibold">Description</th>
-                        </tr>
-                      </thead>
-                      <tbody class="divide-y divide-border">
-                        {component.props.map((prop) => (
-                          <tr>
-                            <td class="py-3 pr-4">
-                              <code class="rounded bg-accent-subtle px-2 py-1 text-accent">
-                                {prop.name}
-                                {prop.required && <span class="text-error">*</span>}
-                              </code>
-                            </td>
-                            <td class="py-3 pr-4">
-                              <code class="text-muted-foreground">{prop.type}</code>
-                            </td>
-                            <td class="py-3 pr-4">
-                              {prop.default ? (
-                                <code class="text-muted-foreground">{prop.default}</code>
-                              ) : (
-                                <span class="text-subtle-foreground/80">—</span>
-                              )}
-                            </td>
-                            <td class="py-3 text-muted-foreground">{prop.description}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                {component.performance && component.performance.length > 0 && (
+                  <div>
+                    <h5 class="mb-3 text-lg font-semibold text-foreground">Performance</h5>
+                    <ul class="space-y-2">
+                      {component.performance.map((feature) => (
+                        <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                          <span class="mt-1 text-info">⚡</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-              )}
-
-              {component.examples && component.examples.length > 0 && (
-                <div class="mb-6">
-                  <h5 class="mb-3 text-lg font-semibold text-foreground">Examples</h5>
-                  <div class="space-y-4">
-                    {component.examples.map((example) => (
-                      <div>
-                        {example.title && (
-                          <p class="mb-2 text-sm font-medium text-muted-foreground">
-                            {example.title}
-                          </p>
-                        )}
-                        {example.description && (
-                          <p class="mb-2 text-sm text-subtle-foreground">{example.description}</p>
-                        )}
-                        <pre
-                          class="max-w-full overflow-x-auto rounded-xl bg-code-surface p-4 text-sm text-code-foreground"
-                          tabindex="0"
-                        >
-                          <code>{example.code}</code>
-                        </pre>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {component.accessibility && component.accessibility.length > 0 && (
-                <div class="mb-6">
-                  <h5 class="mb-3 text-lg font-semibold text-foreground">Accessibility</h5>
-                  <ul class="space-y-2">
-                    {component.accessibility.map((feature) => (
-                      <li class="flex items-start gap-2 text-sm text-muted-foreground">
-                        <span class="mt-1 text-success">✓</span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {component.performance && component.performance.length > 0 && (
-                <div>
-                  <h5 class="mb-3 text-lg font-semibold text-foreground">Performance</h5>
-                  <ul class="space-y-2">
-                    {component.performance.map((feature) => (
-                      <li class="flex items-start gap-2 text-sm text-muted-foreground">
-                        <span class="mt-1 text-info">⚡</span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </article>
+                )}
+              </div>
+            </BaseCard>
           ))}
         </div>
       </section>
     ))
   }
 
-  <footer
-    class="mt-16 rounded-2xl border border-border/40 bg-surface/70 p-5 text-center shadow-sm sm:p-8"
-  >
-    <h3 class="mb-4 text-2xl font-bold text-foreground">Documentation Statistics</h3>
-    <div class="grid gap-6 sm:grid-cols-3">
-      <div>
-        <p class="text-4xl font-bold text-accent">{componentDocs.length}</p>
-        <p class="mt-1 text-sm text-subtle-foreground">Components Documented</p>
-      </div>
-      <div>
-        <p class="text-4xl font-bold text-accent">{categories.length}</p>
-        <p class="mt-1 text-sm text-subtle-foreground">Categories</p>
-      </div>
-      <div>
-        <p class="text-4xl font-bold text-accent">{allTags.length}</p>
-        <p class="mt-1 text-sm text-subtle-foreground">Unique Tags</p>
+  <BaseCard as="footer" variant="subtle" hover="none" padding="none" class="mt-16 text-center">
+    <div class="p-5 sm:p-8">
+      <h3 class="mb-4 text-2xl font-bold text-foreground">Documentation Statistics</h3>
+      <div class="grid gap-6 sm:grid-cols-3">
+        <div>
+          <p class="text-4xl font-bold text-accent">{componentDocs.length}</p>
+          <p class="mt-1 text-sm text-subtle-foreground">Components Documented</p>
+        </div>
+        <div>
+          <p class="text-4xl font-bold text-accent">{categories.length}</p>
+          <p class="mt-1 text-sm text-subtle-foreground">Categories</p>
+        </div>
+        <div>
+          <p class="text-4xl font-bold text-accent">{allTags.length}</p>
+          <p class="mt-1 text-sm text-subtle-foreground">Unique Tags</p>
+        </div>
       </div>
     </div>
-  </footer>
+  </BaseCard>
 </section>
 
 <script>
   const searchInput = document.getElementById('component-search') as HTMLInputElement;
   const componentCards = document.querySelectorAll('.component-card');
   const tagFilters = document.querySelectorAll('.tag-filter');
+  const resultStatus = document.getElementById('component-results');
+  const emptyState = document.getElementById('component-empty');
 
   let currentTag = 'all';
 
   function filterComponents() {
     const searchTerm = searchInput?.value.toLowerCase() || '';
 
+    let visibleCount = 0;
     componentCards.forEach((card) => {
       const tags = card.getAttribute('data-component-tags') || '';
       const tagList = tags ? tags.split(',') : [];
@@ -275,10 +298,15 @@ const allTags = getAllTags();
 
       if (matchesSearch && matchesTag) {
         (card as HTMLElement).style.display = 'block';
+        visibleCount += 1;
       } else {
         (card as HTMLElement).style.display = 'none';
       }
     });
+    if (resultStatus) {
+      resultStatus.textContent = `Showing ${visibleCount} of ${componentCards.length} components.`;
+    }
+    emptyState?.classList.toggle('hidden', visibleCount > 0);
   }
 
   searchInput?.addEventListener('input', filterComponents);
@@ -286,16 +314,18 @@ const allTags = getAllTags();
   tagFilters.forEach((button) => {
     button.addEventListener('click', () => {
       tagFilters.forEach((btn) =>
-        btn.classList.remove('bg-accent', 'text-on-accent', 'border-accent')
+        btn.classList.remove('bg-primary', 'text-on-primary', 'border-primary')
       );
-      button.classList.add('bg-accent', 'text-on-accent', 'border-accent');
+      tagFilters.forEach((btn) => btn.setAttribute('aria-pressed', String(btn === button)));
+      button.classList.add('bg-primary', 'text-on-primary', 'border-primary');
       currentTag = button.getAttribute('data-tag') || 'all';
       filterComponents();
     });
   });
 
   const allButton = document.querySelector('[data-tag="all"]');
-  allButton?.classList.add('bg-accent', 'text-on-accent', 'border-accent');
+  allButton?.classList.add('bg-primary', 'text-on-primary', 'border-primary');
+  allButton?.setAttribute('aria-pressed', 'true');
 </script>
 
 <style>

@@ -7,6 +7,5 @@ export type RouteContext = {
   url: URL;
   reqId: string;
   method: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Sentry?: any;
 };

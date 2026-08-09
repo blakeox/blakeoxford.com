@@ -7,7 +7,7 @@
  * @module hooks/useChatLifecycle
  */
 
-import { useCallback, type RefObject } from 'react';
+import { useCallback, useEffect, type RefObject } from 'react';
 import type { ChatState } from '@/lib/chat/chat-types';
 
 export interface UseChatLifecycleOptions {
@@ -100,6 +100,10 @@ export function useChatLifecycle(options: UseChatLifecycleOptions): UseChatLifec
     window.dispatchEvent(new CustomEvent('ai-chat:state', { detail: { open } }));
   }, []);
 
+  useEffect(() => {
+    dispatchState(isOpen);
+  }, [dispatchState, isOpen]);
+
   /**
    * Focuses the input field with cursor at end
    * Uses requestAnimationFrame for reliable focus
@@ -140,7 +144,6 @@ export function useChatLifecycle(options: UseChatLifecycleOptions): UseChatLifec
     setIsOpen(true);
     setError(null);
     setChatState((state) => (state === 'idle' ? 'ready' : state));
-    dispatchState(true);
 
     // Ensure the input is focused shortly after opening.
     // Use a small timeout to allow downstream refs to be assigned
@@ -168,7 +171,6 @@ export function useChatLifecycle(options: UseChatLifecycleOptions): UseChatLifec
     }
     setIsOpen(false);
     setError(null);
-    dispatchState(false);
     if (
       lastFocusedElementRef.current &&
       typeof lastFocusedElementRef.current.focus === 'function'

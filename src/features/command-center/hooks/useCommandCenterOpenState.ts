@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { useOverlayScrollLock } from '@/lib/hooks/useOverlayScrollLock';
 import {
   closeMobileMenu,
   registerEscapeHandler,
@@ -19,6 +20,7 @@ import { commandCenterEvents } from '@/features/command-center/lib/analytics';
 export function useCommandCenterOpenState() {
   const [isOpen, setIsOpen] = useState(false);
   const [seedQuery, setSeedQuery] = useState<string | null>(null);
+  const { releaseNow: releaseScrollLockNow } = useOverlayScrollLock(isOpen);
 
   const open = useCallback((source: 'shortcut' | 'nav' | 'api' | 'unknown' = 'unknown') => {
     closeMobileMenu();
@@ -29,9 +31,11 @@ export function useCommandCenterOpenState() {
   const clearSeedQuery = useCallback(() => setSeedQuery(null), []);
 
   const close = useCallback(() => {
+    releaseScrollLockNow();
     setIsOpen(false);
     commandCenterEvents.close();
-  }, []);
+    window.dispatchEvent(new Event('command-center:closed'));
+  }, [releaseScrollLockNow]);
 
   const toggle = useCallback(() => {
     setIsOpen((prev) => {
@@ -39,11 +43,13 @@ export function useCommandCenterOpenState() {
         closeMobileMenu();
         commandCenterEvents.open('shortcut');
       } else {
+        releaseScrollLockNow();
         commandCenterEvents.close();
+        window.dispatchEvent(new Event('command-center:closed'));
       }
       return !prev;
     });
-  }, []);
+  }, [releaseScrollLockNow]);
 
   useEffect(() => {
     const onOpen = (event: Event) => {
@@ -68,12 +74,18 @@ export function useCommandCenterOpenState() {
   }, [open, close, toggle]);
 
   useEffect(() => {
+    const mountRoot = document.getElementById('search-overlay');
     const toggleButton = document.getElementById('search-toggle');
     const setExpanded = (expanded: boolean) => {
       toggleButton?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
     };
 
     setExpanded(isOpen);
+    mountRoot?.setAttribute('data-state', isOpen ? 'open' : 'closed');
+    mountRoot?.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    if (isOpen) mountRoot?.removeAttribute('inert');
+    else mountRoot?.setAttribute('inert', '');
+    mountRoot?.setAttribute('data-ready', 'true');
     toggleButton?.setAttribute('aria-controls', 'search-overlay');
     document.body.dataset.commandCenterReady = 'true';
 
@@ -94,12 +106,17 @@ export function useCommandCenterOpenState() {
     win.commandCenter = api;
     win.searchOverlay = api;
     win.enhancedSearchOverlay = api;
+    window.dispatchEvent(new Event('command-center:hydrated'));
 
     return () => {
       if (win.commandCenter === api) delete win.commandCenter;
       if (win.searchOverlay === api) delete win.searchOverlay;
       if (win.enhancedSearchOverlay === api) delete win.enhancedSearchOverlay;
       setExpanded(false);
+      mountRoot?.setAttribute('data-state', 'closed');
+      mountRoot?.setAttribute('aria-hidden', 'true');
+      mountRoot?.setAttribute('inert', '');
+      mountRoot?.setAttribute('data-ready', 'false');
       toggleButton?.removeAttribute('aria-controls');
       delete document.body.dataset.commandCenterReady;
     };

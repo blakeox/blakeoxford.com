@@ -31,6 +31,10 @@ function toRoute(urlStr: string): string | null {
 }
 
 test('@sitemap-sweep contrast ratios acceptable across sitemap pages', async ({ page, request, baseURL }) => {
+  // The sweep covers up to 16 routes in both themes; keep the assertion budget
+  // independent from the default per-test interaction timeout.
+  test.setTimeout(120_000);
+
   // 1) Discover routes from sitemap(s)
   const candidates = ['/sitemap-index.xml', '/sitemap.xml'];
   let locs: string[] = [];

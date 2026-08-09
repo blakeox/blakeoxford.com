@@ -1,41 +1,42 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { isPublished } from '@/lib/content/publication-contract.mjs';
 
 type SitemapEntry = {
   loc: string;
-  changefreq: string;
-  priority: number;
+  lastmod?: string;
 };
 
 export async function GET() {
   const site = 'https://blakeoxford.com';
   const staticUrls: SitemapEntry[] = [
-    { loc: '/', changefreq: 'weekly', priority: 1.0 },
-    { loc: '/about/', changefreq: 'monthly', priority: 0.8 },
-    { loc: '/blog/', changefreq: 'weekly', priority: 0.9 },
-    { loc: '/projects/', changefreq: 'monthly', priority: 0.7 },
-    { loc: '/contact/', changefreq: 'yearly', priority: 0.5 },
+    { loc: '/' },
+    { loc: '/about/' },
+    { loc: '/blog/' },
+    { loc: '/projects/' },
+    { loc: '/contact/' },
   ];
 
   // Individual project pages - dynamically load from content collection
-  const projectEntries = await getCollection('projects');
+  const projectEntries = await getCollection('projects', (entry: CollectionEntry<'projects'>) =>
+    isPublished(entry)
+  );
   const projectPages: SitemapEntry[] = projectEntries.map(
     (project: CollectionEntry<'projects'>) => ({
       loc: `/projects/${project.id}/`,
-      changefreq: 'monthly',
-      priority: 0.6,
+      ...(project.data.updatedDate
+        ? { lastmod: new Date(project.data.updatedDate).toISOString() }
+        : {}),
     })
   );
 
   // Individual blog post pages from content collection
-  const blogEntries = await getCollection(
-    'blog',
-    (entry: CollectionEntry<'blog'>) => !entry.data.draft
+  const blogEntries = await getCollection('blog', (entry: CollectionEntry<'blog'>) =>
+    isPublished(entry)
   );
   const blogPages: SitemapEntry[] = blogEntries.map((post: CollectionEntry<'blog'>) => ({
     loc: `/blog/${post.id}/`,
-    changefreq: 'monthly',
-    priority: 0.7,
+    lastmod: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
   }));
 
   const urls = [
@@ -56,7 +57,7 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
     .map(
       (u) =>
-        `  <url>\n    <loc>${u.loc}</loc>\n    <changefreq>${u.changefreq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`
+        `  <url>\n    <loc>${u.loc}</loc>${u.lastmod ? `\n    <lastmod>${u.lastmod}</lastmod>` : ''}\n  </url>`
     )
     .join('\n')}\n</urlset>`;
 

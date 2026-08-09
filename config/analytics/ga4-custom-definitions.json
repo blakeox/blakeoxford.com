@@ -1,0 +1,61 @@
+{
+  "scope": "event",
+  "definitions": [
+    {
+      "name": "Form",
+      "parameter": "form",
+      "description": "Contact form identifier for lead reporting."
+    },
+    {
+      "name": "Method",
+      "parameter": "method",
+      "description": "Bounded conversion method."
+    },
+    {
+      "name": "Metric name",
+      "parameter": "metric_name",
+      "description": "Core Web Vital metric name."
+    },
+    {
+      "name": "Metric rating",
+      "parameter": "metric_rating",
+      "description": "Core Web Vital rating bucket."
+    },
+    {
+      "name": "Navigation type",
+      "parameter": "navigation_type",
+      "description": "Browser navigation type for Web Vitals."
+    },
+    {
+      "name": "Backend",
+      "parameter": "backend",
+      "description": "Bounded Command Center search backend."
+    },
+    {
+      "name": "Provider",
+      "parameter": "provider",
+      "description": "Bounded AI provider category."
+    },
+    {
+      "name": "Cache status",
+      "parameter": "cache_status",
+      "description": "Bounded AI response cache status."
+    },
+    {
+      "name": "Complexity",
+      "parameter": "complexity",
+      "description": "Bounded AI request complexity."
+    },
+    {
+      "name": "Source",
+      "parameter": "source",
+      "description": "Bounded UI event source."
+    }
+  ],
+  "deferred": [
+    {
+      "parameter": "acquisition_source",
+      "reason": "Register after the real parameter appears in the GA4 property; do not generate synthetic leads."
+    }
+  ]
+}

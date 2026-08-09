@@ -15,24 +15,25 @@ import net from 'net';
 
 class PerformanceTestRunner {
   constructor(options = {}) {
-  this.baseUrl = options.baseUrl || process.env.BASE_URL || 'http://127.0.0.1:4321';
+    this.baseUrl = options.baseUrl || process.env.BASE_URL || 'http://127.0.0.1:4321';
     this.outputDir = options.outputDir || './lighthouse-reports';
     this.budgets = this.normalizeBudgets(options.budgets || this.getDefaultBudgets());
     this.thresholds = options.thresholds || this.getDefaultThresholds();
     this.serverProcess = null;
-  this.serverPort = null;
+    this.serverPort = null;
     this.isExternalServer = !!process.env.BASE_URL;
   }
 
   async findAvailablePort(start = 4321, attempts = 10) {
-    const tryPort = (port) => new Promise((resolve) => {
-      const server = net.createServer();
-      server.unref();
-      server.on('error', () => resolve(null));
-      server.listen(port, '127.0.0.1', () => {
-        server.close(() => resolve(port));
+    const tryPort = (port) =>
+      new Promise((resolve) => {
+        const server = net.createServer();
+        server.unref();
+        server.on('error', () => resolve(null));
+        server.listen(port, '127.0.0.1', () => {
+          server.close(() => resolve(port));
+        });
       });
-    });
     for (let i = 0; i < attempts; i++) {
       const port = start + i;
       const open = await tryPort(port);
@@ -68,10 +69,10 @@ class PerformanceTestRunner {
   getDefaultBudgets() {
     return {
       performance: 95,
-  accessibility: 99,
+      accessibility: 99,
       // Use Lighthouse category id "best-practices" (kebab-case)
-  'best-practices': 90,
-      seo: 90  // Adjusted from 95: meta-description audit has known issues with certain Unicode characters
+      'best-practices': 90,
+      seo: 90, // Adjusted from 95: meta-description audit has known issues with certain Unicode characters
     };
   }
 
@@ -79,20 +80,21 @@ class PerformanceTestRunner {
     return {
       // Core Web Vitals
       'largest-contentful-paint': 2500,
-      'max-potential-fid': 100, // FID equivalent
+      // Lighthouse exposes INP when available; TBT remains the lab responsiveness proxy.
+      'interaction-to-next-paint': 200,
       'cumulative-layout-shift': 0.1,
 
       // Other key metrics
       'first-contentful-paint': 1800,
       'speed-index': 3000,
-      'interactive': 3800, // TTI
+      interactive: 3800, // TTI
       'total-blocking-time': 200,
 
       // Resource budgets
       'total-byte-weight': 1048576, // 1MiB
       'dom-size': 1500,
       'unused-javascript': 51200, // 50KB unused JS
-      'render-blocking-resources': 0
+      'render-blocking-resources': 0,
     };
   }
 
@@ -107,18 +109,19 @@ class PerformanceTestRunner {
           cpuSlowdownMultiplier: 1,
           requestLatencyMs: 0,
           downloadThroughputKbps: 0,
-          uploadThroughputKbps: 0
+          uploadThroughputKbps: 0,
         },
-  screenEmulation: {
+        screenEmulation: {
           mobile: true,
           width: 375,
           height: 667,
           deviceScaleFactor: 2,
-          disabled: false
+          disabled: false,
         },
-  // Include Lighthouse token in UA to make audit detection reliable at the edge
-  emulatedUserAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1 Lighthouse'
-      }
+        // Include Lighthouse token in UA to make audit detection reliable at the edge
+        emulatedUserAgent:
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1 Lighthouse',
+      },
       // Removed custom audits array - using default Lighthouse audits
     };
   }
@@ -143,18 +146,20 @@ class PerformanceTestRunner {
             reject(new Error('Request timeout'));
           });
         });
-        
+
         console.log('✅ Server is ready');
         return true;
       } catch {
         // Server not ready yet
       }
-      
+
       console.log(`⏳ Waiting for server... (${i + 1}/${maxRetries})`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
-    
-    throw new Error(`Server at ${url} did not become ready within ${maxRetries * delay / 1000} seconds`);
+
+    throw new Error(
+      `Server at ${url} did not become ready within ${(maxRetries * delay) / 1000} seconds`
+    );
   }
 
   async startDevServer() {
@@ -179,11 +184,19 @@ class PerformanceTestRunner {
       try {
         if (!this.serverProcess?.pid) return;
         if (process.platform === 'win32') {
-          spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], { stdio: 'ignore' });
+          spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], {
+            stdio: 'ignore',
+          });
         } else {
-          try { process.kill(-this.serverProcess.pid, 'SIGTERM'); } catch { /* ignore */ }
+          try {
+            process.kill(-this.serverProcess.pid, 'SIGTERM');
+          } catch {
+            /* ignore */
+          }
         }
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     };
 
     // Prefer `astro preview` (accurate multi-page routing). Fall back to `serve` (without SPA mode).
@@ -196,7 +209,11 @@ class PerformanceTestRunner {
         env: { ...process.env },
       }
     );
-    try { this.serverProcess.unref(); } catch { /* ignore */ }
+    try {
+      this.serverProcess.unref();
+    } catch {
+      /* ignore */
+    }
 
     try {
       await this.waitForServer(this.baseUrl, 30, 1000);
@@ -213,7 +230,11 @@ class PerformanceTestRunner {
           env: { ...process.env },
         }
       );
-      try { this.serverProcess.unref(); } catch { /* ignore */ }
+      try {
+        this.serverProcess.unref();
+      } catch {
+        /* ignore */
+      }
 
       await this.waitForServer(this.baseUrl, 30, 1000);
     }
@@ -225,16 +246,27 @@ class PerformanceTestRunner {
       try {
         if (process.platform === 'win32') {
           // Force kill the process tree on Windows
-          spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], { stdio: 'ignore' });
+          spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], {
+            stdio: 'ignore',
+          });
         } else {
           // Gracefully terminate the process group
           const pgid = -this.serverProcess.pid;
-          try { process.kill(pgid, 'SIGTERM'); } catch { /* ignore */ }
+          try {
+            process.kill(pgid, 'SIGTERM');
+          } catch {
+            /* ignore */
+          }
 
           // Wait briefly for clean shutdown
-          const wait = (ms) => new Promise(r => setTimeout(r, ms));
+          const wait = (ms) => new Promise((r) => setTimeout(r, ms));
           const isAlive = (pid) => {
-            try { process.kill(pid, 0); return true; } catch { return false; }
+            try {
+              process.kill(pid, 0);
+              return true;
+            } catch {
+              return false;
+            }
           };
           let attempts = 0;
           while (attempts < 10 && isAlive(this.serverProcess.pid)) {
@@ -244,15 +276,23 @@ class PerformanceTestRunner {
 
           // Force kill if still alive
           if (isAlive(this.serverProcess.pid)) {
-            try { process.kill(pgid, 'SIGKILL'); } catch { /* ignore */ }
-            try { process.kill(this.serverProcess.pid, 'SIGKILL'); } catch { /* ignore */ }
+            try {
+              process.kill(pgid, 'SIGKILL');
+            } catch {
+              /* ignore */
+            }
+            try {
+              process.kill(this.serverProcess.pid, 'SIGKILL');
+            } catch {
+              /* ignore */
+            }
           }
         }
       } finally {
         // Best-effort small delay to let the OS reap the process
         await new Promise((r) => setTimeout(r, 200));
         this.serverProcess = null;
-  console.log('✅ Dev server stopped');
+        console.log('✅ Dev server stopped');
       }
     }
   }
@@ -272,7 +312,7 @@ class PerformanceTestRunner {
         { url: `${this.baseUrl}/about`, name: 'about' },
         { url: `${this.baseUrl}/projects`, name: 'projects' },
         { url: `${this.baseUrl}/blog`, name: 'blog' },
-        { url: `${this.baseUrl}/contact`, name: 'contact' }
+        { url: `${this.baseUrl}/contact`, name: 'contact' },
       ];
 
       const results = [];
@@ -292,7 +332,6 @@ class PerformanceTestRunner {
           // Check budgets
           const budgetCheck = this.checkBudgets(result, page.name);
           if (!budgetCheck.passed) hasBudgetFailures = true;
-
         } catch (error) {
           console.error(`❌ Failed to test ${page.name}:`, error.message);
           results.push({ page: page.name, error: error.message });
@@ -312,7 +351,6 @@ class PerformanceTestRunner {
 
       console.log('\n✅ Performance testing completed!');
       return results;
-
     } catch (error) {
       console.error('❌ Performance testing failed:', error.message);
       throw error;
@@ -324,7 +362,7 @@ class PerformanceTestRunner {
 
   async runLighthouseTest(page) {
     const chrome = await chromeLauncher.launch({
-      chromeFlags: ['--headless', '--no-sandbox', '--disable-dev-shm-usage']
+      chromeFlags: ['--headless', '--no-sandbox', '--disable-dev-shm-usage'],
     });
 
     try {
@@ -337,8 +375,8 @@ class PerformanceTestRunner {
         // Inject custom headers to signal audit mode to the Worker
         extraHeaders: {
           'x-audit-mode': '1',
-          'cookie': 'audit=1'
-        }
+          cookie: 'audit=1',
+        },
       };
 
       const config = this.getLighthouseConfig();
@@ -350,9 +388,8 @@ class PerformanceTestRunner {
         scores: runnerResult.lhr.categories,
         audits: runnerResult.lhr.audits,
         timing: runnerResult.lhr.timing,
-        report: runnerResult.report
+        report: runnerResult.report,
       };
-
     } finally {
       await chrome.kill();
     }
@@ -387,7 +424,7 @@ class PerformanceTestRunner {
       console.log(`✅ ${pageName}: All budgets passed`);
     } else {
       console.log(`❌ ${pageName}: Budget failures:`);
-      failures.forEach(failure => console.log(`   - ${failure}`));
+      failures.forEach((failure) => console.log(`   - ${failure}`));
     }
 
     return { passed: budgetPassed, failures };
@@ -412,7 +449,7 @@ class PerformanceTestRunner {
       totalPages: results.length,
       passed: 0,
       failed: 0,
-      results: results.map(result => {
+      results: results.map((result) => {
         if (result.error) {
           return { page: result.page, status: 'error', error: result.error };
         }
@@ -428,17 +465,18 @@ class PerformanceTestRunner {
           ),
           coreWebVitals: {
             LCP: result.audits['largest-contentful-paint']?.numericValue,
-            FID: result.audits['max-potential-fid']?.numericValue, // FID is not directly available in Lighthouse
-            CLS: result.audits['cumulative-layout-shift']?.numericValue
+            INP: result.audits['interaction-to-next-paint']?.numericValue,
+            TBT: result.audits['total-blocking-time']?.numericValue,
+            CLS: result.audits['cumulative-layout-shift']?.numericValue,
           },
-          budgetFailures: budgetCheck.failures
+          budgetFailures: budgetCheck.failures,
         };
-      })
+      }),
     };
 
     // Compute pass/fail counts based on mapped results
-    summary.passed = summary.results.filter(r => r.status === 'passed').length;
-    summary.failed = summary.results.filter(r => r.status === 'failed').length;
+    summary.passed = summary.results.filter((r) => r.status === 'passed').length;
+    summary.failed = summary.results.filter((r) => r.status === 'failed').length;
 
     const summaryPath = path.join(this.outputDir, 'summary.json');
     await fs.writeFile(summaryPath, JSON.stringify(summary, null, 2));
@@ -463,7 +501,7 @@ class PerformanceTestRunner {
 
     markdown += '## Results by Page\n\n';
 
-    summary.results.forEach(result => {
+    summary.results.forEach((result) => {
       const status = result.status === 'passed' ? '✅' : result.status === 'failed' ? '❌' : '⚠️';
       markdown += `### ${status} ${result.page}\n\n`;
 
@@ -481,12 +519,13 @@ class PerformanceTestRunner {
 
       markdown += '**Core Web Vitals:**\n';
       markdown += `- LCP: ${result.coreWebVitals.LCP?.toFixed(1) || 'N/A'}ms\n`;
-      markdown += `- FID: ${result.coreWebVitals.FID?.toFixed(1) || 'N/A'}ms\n`;
+      markdown += `- INP (lab): ${result.coreWebVitals.INP?.toFixed(1) || 'N/A'}ms\n`;
+      markdown += `- TBT (lab proxy): ${result.coreWebVitals.TBT?.toFixed(1) || 'N/A'}ms\n`;
       markdown += `- CLS: ${result.coreWebVitals.CLS?.toFixed(3) || 'N/A'}\n\n`;
 
       if (result.budgetFailures?.length > 0) {
         markdown += '**Budget Failures:**\n';
-        result.budgetFailures.forEach(failure => {
+        result.budgetFailures.forEach((failure) => {
           markdown += `- ${failure}\n`;
         });
         markdown += '\n';
@@ -501,10 +540,10 @@ class PerformanceTestRunner {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const runner = new PerformanceTestRunner({
     baseUrl: process.env.BASE_URL || 'http://localhost:4321',
-    outputDir: process.env.OUTPUT_DIR || './lighthouse-reports'
+    outputDir: process.env.OUTPUT_DIR || './lighthouse-reports',
   });
 
-  runner.runTests().catch(error => {
+  runner.runTests().catch((error) => {
     console.error('Performance testing failed:', error);
     process.exit(1);
   });

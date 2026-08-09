@@ -1,14 +1,114 @@
 ---
 /**
  * AIChatWidget — Ask overlay (shared shell with Find) + FAB launcher.
+ * Keep the launcher server-rendered and load the conversational React surface on demand.
  */
-import AIChatIsland from '@/features/chat/AIChatIsland';
-import ChatLauncherIsland from '@/features/chat/ChatLauncherIsland';
+import '@/features/chat/chat.css';
+import { cn } from '@/utils/cn';
+import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED } from '@/features/chat/chatStyles';
 ---
 
 <div data-ai-chat-widget>
   <div class="ai-chat-wrapper" data-ai-chat-open="false">
-    <ChatLauncherIsland client:only="react" />
-    <AIChatIsland client:only="react" />
+    <div class="pointer-events-none fixed right-4 bottom-4 z-chat-launcher sm:right-6 sm:bottom-6">
+      <button
+        class={cn(CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED)}
+        aria-label="Open AI search assistant"
+        aria-expanded="false"
+        data-ai-launcher
+        data-ai-action="open"
+        type="button"
+      >
+        <svg
+          class="size-5 sm:size-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M8 10h8m-8 3h5.5M21 11.5c0 4.418-4.03 8-9 8-1.15 0-2.26-.19-3.29-.54L3 21l1.1-3.3A8.35 8.35 0 0 1 3 11.5c0-4.418 4.03-8 9-8s9 3.582 9 8Z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+    <div data-ai-chat-mount aria-hidden="true"></div>
   </div>
 </div>
+
+<script>
+  let mountedRoot: HTMLElement | null = null;
+  let mountPromise: Promise<void> | null = null;
+  let pendingEvent: { type: string; detail?: unknown } | null = null;
+
+  const getRoot = () => document.querySelector<HTMLElement>('[data-ai-chat-mount]');
+
+  const replayPendingEvent = () => {
+    if (!pendingEvent) return;
+    const event = pendingEvent;
+    pendingEvent = null;
+    if (event.type === 'ai-chat:ask') {
+      window.dispatchEvent(new CustomEvent(event.type, { detail: event.detail }));
+    }
+    window.dispatchEvent(new CustomEvent('ai-chat:state', { detail: { open: true } }));
+  };
+
+  const afterReactMount = () =>
+    new Promise<void>((resolve) => {
+      const onHydrated = () => {
+        window.clearTimeout(timeout);
+        resolve();
+      };
+      const timeout = window.setTimeout(() => {
+        window.removeEventListener('ai-chat:hydrated', onHydrated);
+        resolve();
+      }, 1000);
+      window.addEventListener('ai-chat:hydrated', onHydrated, { once: true });
+    });
+
+  const mount = () => {
+    const root = getRoot();
+    if (!root || mountedRoot === root) return mountPromise ?? Promise.resolve();
+
+    mountPromise = import('@/features/chat/chatLoader')
+      .then(({ mountAIChat }) => {
+        mountedRoot = root;
+        mountAIChat(root);
+      })
+      .then(() => afterReactMount())
+      .then(() => replayPendingEvent())
+      .catch(() => {
+        mountPromise = null;
+        root.dataset.error = 'true';
+      });
+
+    return mountPromise;
+  };
+
+  const requestMount = (type: string, detail?: unknown) => {
+    pendingEvent = { type, detail };
+    void mount();
+  };
+
+  const onChatEvent = (event: Event) => {
+    const custom = event as CustomEvent;
+    const detail = custom.detail as { open?: boolean } | undefined;
+    if (custom.type === 'ai-chat:state' && !detail?.open) return;
+    if (mountedRoot === getRoot()) return;
+    requestMount(custom.type, custom.detail);
+  };
+
+  window.addEventListener('ai-chat:open', onChatEvent);
+  window.addEventListener('ai-chat:toggle', onChatEvent);
+  window.addEventListener('ai-chat:ask', onChatEvent);
+  window.addEventListener('ai-chat:state', onChatEvent);
+  document.addEventListener('astro:page-load', () => {
+    if (mountedRoot !== getRoot()) {
+      mountedRoot = null;
+      mountPromise = null;
+    }
+  });
+</script>

@@ -9,6 +9,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ConversationWebSocket, type WSMessage, type MutableRef } from '@/lib/chat';
+import { runtimeSurfaceFlags } from '@/lib/runtimeSurfaceFlags';
 
 export interface UseConversationWebSocketOptions {
   /** Unique conversation identifier */
@@ -77,6 +78,14 @@ export function useConversationWebSocket(
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    if (!runtimeSurfaceFlags.conversationPresence) {
+      setWsConnected(false);
+      setActiveUsers(0);
+      setIsOtherUserTyping(false);
+      wsRef.current = null;
+      return;
+    }
 
     // Only connect WebSocket when chat is open
     if (!isOpen) return;

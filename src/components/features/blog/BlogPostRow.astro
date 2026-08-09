@@ -5,8 +5,6 @@ import OptimizedImage from '@/components/primitives/OptimizedImage.astro';
 import Flex from '@/components/primitives/Flex.astro';
 import Button from '@/components/primitives/Button.astro';
 import Badge from '@/components/primitives/Badge.astro';
-import BaseCard from '@/components/primitives/BaseCard.astro';
-import GradientOverlay from '@/components/primitives/GradientOverlay.astro';
 import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
 import { formatDateISO, formatDateShort } from '@/utils/date';
 import { cn } from '@/utils/cn';
@@ -16,44 +14,31 @@ const { post, align = 'left' } = Astro.props as BlogPostRowProps;
 const { id: slug, data } = post;
 ---
 
-<BaseCard
-  as="article"
-  variant="elevated"
-  hover="lift"
-  rounded="3xl"
-  padding="none"
-  class="w-full overflow-hidden"
+<article
+  class="group w-full border-y border-border/50 py-5 transition-colors duration-normal hover:bg-surface-subtle/40 sm:py-6"
 >
-  <GradientOverlay variant="hover-card" direction="br" />
-
   <div
     class={cn(
-      'relative z-[1] flex w-full flex-col items-start gap-6 md:gap-8 lg:flex-row lg:gap-12 xl:gap-16',
+      'flex w-full flex-col items-start gap-6 md:gap-8 lg:flex-row lg:gap-12 xl:gap-16',
       align === 'right' && 'lg:flex-row-reverse'
     )}
   >
     {
       data.heroImage && (
         <div class="w-full flex-shrink-0 lg:w-2/5 xl:w-1/2">
-          <div class="relative aspect-[16/10] overflow-hidden lg:aspect-[4/3] xl:aspect-[16/10]">
+          <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-subtle lg:aspect-[4/3] xl:aspect-[16/10]">
             <OptimizedImage
               src={data.heroImage}
               alt={`Hero image for ${data.title}`}
               class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.04]"
               loading="lazy"
             />
-            <GradientOverlay variant="image-fade" direction="t" class="lg:hidden" />
           </div>
         </div>
       )
     }
 
-    <div
-      class={cn(
-        'relative z-[1] flex flex-1 flex-col gap-6 px-7 pt-7 pb-8 sm:px-8',
-        !data.heroImage && 'w-full'
-      )}
-    >
+    <div class={cn('flex flex-1 flex-col gap-6', !data.heroImage && 'w-full')}>
       <div class="space-y-4">
         <Flex
           wrap
@@ -132,4 +117,4 @@ const { id: slug, data } = post;
       </div>
     </div>
   </div>
-</BaseCard>
+</article>

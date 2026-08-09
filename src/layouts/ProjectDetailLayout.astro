@@ -16,6 +16,8 @@ import {
 } from '@/utils/structuredData';
 import ProjectHero from '@/components/features/projects/ProjectHero.astro';
 import ProjectDetailContent from '@/components/features/projects/ProjectDetailContent.astro';
+import RelatedContent from '@/components/features/content/RelatedContent.astro';
+import { CONTENT_RELATIONSHIPS } from '@/config/content-architecture';
 
 interface Props {
   slug: string;
@@ -92,9 +94,13 @@ const structuredData = [projectSchema, breadcrumbSchema];
 
 <Layout
   title={title}
+  seoTitle={data.seoTitle ?? title}
   description={description}
+  seoDescription={data.seoDescription ?? description}
   url={canonicalUrl}
   image={projectImage}
+  imageAlt={`${title} — Blake Oxford case study`}
+  ogType="article"
   structuredData={structuredData}
   wide
 >
@@ -120,4 +126,5 @@ const structuredData = [projectSchema, breadcrumbSchema];
   >
     <slot name="cta" slot="cta" />
   </ProjectDetailContent>
+  <RelatedContent links={CONTENT_RELATIONSHIPS[`/projects/${entry.id}/`] ?? []} />
 </Layout>

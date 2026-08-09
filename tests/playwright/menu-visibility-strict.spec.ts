@@ -73,10 +73,11 @@ test.describe('Menu visibility (production-faithful)', () => {
         ok: Boolean(hit?.closest('#nav-mobile-links')),
         hitTag: hit?.tagName ?? null,
         menuZ: getComputedStyle(document.getElementById('nav-mobile-links')!).zIndex,
+        navZ: getComputedStyle(document.querySelector('.nav-shell')!).zIndex,
       };
     });
     expect(hitTest.ok).toBe(true);
-    expect(Number.parseInt(hitTest.menuZ, 10)).toBeGreaterThanOrEqual(1000);
+    expect(Number.parseInt(hitTest.menuZ, 10)).toBeGreaterThanOrEqual(Number.parseInt(hitTest.navZ, 10));
   });
 
   test('chat overflow menu is visible when opened', async ({ page }) => {

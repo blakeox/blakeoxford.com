@@ -11,7 +11,6 @@ interface VitalMetric {
   name: VitalName;
   value: number;
   rating: 'good' | 'needs_improvement' | 'poor';
-  id: string;
   navigationType: string;
 }
 
@@ -33,10 +32,6 @@ function ratingFor(name: VitalName, value: number): VitalMetric['rating'] {
   return 'poor';
 }
 
-function metricId(name: VitalName): string {
-  return `${name}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
 function navigationType(): string {
   try {
     const entry = performance.getEntriesByType('navigation')[0] as
@@ -56,14 +51,12 @@ function report(name: VitalName, value: number, once = true): void {
     name,
     value: name === 'CLS' ? Number(value.toFixed(4)) : Math.round(value),
     rating: ratingFor(name, value),
-    id: metricId(name),
     navigationType: navigationType(),
   };
 
   trackEvent('web_vitals', {
     metric_name: metric.name,
     value: metric.value,
-    metric_id: metric.id,
     metric_rating: metric.rating,
     navigation_type: metric.navigationType,
   });

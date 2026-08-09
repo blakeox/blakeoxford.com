@@ -13,6 +13,11 @@ export type AiSearchPayload = {
 
 export type PageContext = { title: string; pathname: string; url: string } | null;
 
+const MAX_HISTORY_ENTRIES = 10;
+const MAX_HISTORY_ENTRY_LENGTH = 2000;
+const MAX_HISTORY_TOTAL_LENGTH = 12000;
+const MAX_PAGE_CONTEXT_LENGTH = 240;
+
 export type HistoryEntry = { role: 'user' | 'assistant'; content: string };
 
 export type RateLimitBucket = { count: number; reset: number };
@@ -53,9 +58,10 @@ export function isCachedAiResponse(value: unknown): value is CachedAiResponse {
 export function parsePageContext(raw: AiSearchPayload['pageContext']): PageContext {
   if (!raw || typeof raw !== 'object') return null;
   return {
-    title: typeof raw.title === 'string' ? raw.title.trim() : '',
-    pathname: typeof raw.pathname === 'string' ? raw.pathname.trim() : '',
-    url: typeof raw.url === 'string' ? raw.url.trim() : '',
+    title: typeof raw.title === 'string' ? raw.title.trim().slice(0, MAX_PAGE_CONTEXT_LENGTH) : '',
+    pathname:
+      typeof raw.pathname === 'string' ? raw.pathname.trim().slice(0, MAX_PAGE_CONTEXT_LENGTH) : '',
+    url: typeof raw.url === 'string' ? raw.url.trim().slice(0, MAX_PAGE_CONTEXT_LENGTH) : '',
   };
 }
 
@@ -68,7 +74,7 @@ export function extractQuery(payload: AiSearchPayload): string {
 
 export function parseHistory(raw: unknown): HistoryEntry[] {
   if (!Array.isArray(raw)) return [];
-  return raw
+  const entries = raw
     .filter(
       (entry): entry is HistoryEntry =>
         !!entry &&
@@ -76,5 +82,15 @@ export function parseHistory(raw: unknown): HistoryEntry[] {
         ((entry as HistoryEntry).role === 'user' || (entry as HistoryEntry).role === 'assistant') &&
         typeof (entry as HistoryEntry).content === 'string'
     )
-    .slice(-10);
+    .slice(-MAX_HISTORY_ENTRIES)
+    .map((entry) => ({
+      role: entry.role,
+      content: entry.content.trim().slice(0, MAX_HISTORY_ENTRY_LENGTH),
+    }));
+
+  let totalLength = 0;
+  return entries.filter((entry) => {
+    totalLength += entry.content.length;
+    return totalLength <= MAX_HISTORY_TOTAL_LENGTH;
+  });
 }

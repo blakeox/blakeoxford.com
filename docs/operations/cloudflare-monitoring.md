@@ -5,6 +5,10 @@ Worker `blakeoxford-com`. It uses Cloudflare Synthetic Monitoring, Cloudflare
 native observability, Sentry, and the local smoke script. No additional
 monitoring vendor or secret is required.
 
+Browser measurement and vendor activation are documented separately in
+[`analytics.md`](./analytics.md); this runbook owns edge, Worker, and AI
+operational signals.
+
 The Worker now uses Cloudflare's current AI Search Chat Completions REST
 endpoint (`/ai-search/instances/.../chat/completions`) with the dedicated
 `AI_SEARCH_API_TOKEN` secret. The public `/api/ai-search` response and SSE

@@ -1,0 +1,35 @@
+---
+import BaseCard from '@/components/primitives/BaseCard.astro';
+import type { ContentLink } from '@/config/content-architecture';
+
+interface Props {
+  links: ContentLink[];
+}
+
+const { links } = Astro.props;
+---
+
+{
+  links.length > 0 && (
+    <section class="mt-12" aria-labelledby="related-content-heading">
+      <h2 id="related-content-heading" class="text-2xl font-bold text-foreground">
+        Continue exploring
+      </h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        {links.map((link) => (
+          <BaseCard as="article" variant="subtle" hover="lift" padding="md">
+            <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">
+              {link.kind === 'project' ? 'Case study' : 'Article'}
+            </p>
+            <a
+              class="mt-2 block font-semibold text-accent-emphasis underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              href={link.href}
+            >
+              {link.label}
+            </a>
+          </BaseCard>
+        ))}
+      </div>
+    </section>
+  )
+}

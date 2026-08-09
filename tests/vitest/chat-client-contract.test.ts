@@ -1,6 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getChatFallbackSuggestions } from '@/lib/chat/fallback-search';
+import { ConversationWebSocket } from '@/lib/chat/conversation-ws';
 import { submitAIFeedback } from '@/services/AIFeedbackService';
+
+describe('ConversationWebSocket readiness', () => {
+  it('treats sends before connection as a quiet no-op', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const client = new ConversationWebSocket();
+
+    expect(client.send({ type: 'typing', isTyping: true })).toBe(false);
+    expect(consoleError).not.toHaveBeenCalled();
+
+    consoleError.mockRestore();
+  });
+});
 
 describe('getChatFallbackSuggestions', () => {
   afterEach(() => {

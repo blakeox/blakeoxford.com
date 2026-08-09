@@ -72,9 +72,7 @@ export function ChatStatusIndicators({
                   setError(null);
                   setRetryCount(0);
                   sendQuery(queryToRetry);
-                  autoragEvents.manualRetry({
-                    message_id: lastFailedQuery ?? undefined,
-                  });
+                  autoragEvents.manualRetry();
                 }
               }}
               disabled={!canRetry && !lastFailedQuery}

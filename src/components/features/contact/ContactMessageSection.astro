@@ -22,11 +22,12 @@ const { sidebar } = Astro.props as Props;
 ---
 
 <Section
-  id="message"
+  id="contact-message-section"
   padding="xl"
   container="xl"
   background="surface"
   aria-labelledby="message-form"
+  data-chat-avoid-launcher
 >
   <div
     class="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-12"
@@ -73,7 +74,7 @@ const { sidebar } = Astro.props as Props;
           </p>
           <p class="mt-1 text-sm text-muted-foreground">All fields are required.</p>
         </div>
-        <p class="text-xs font-semibold tracking-tight text-success-emphasis">
+        <p class="text-xs font-semibold tracking-tight text-subtle-foreground">
           Cloudflare delivery
         </p>
       </div>
@@ -109,7 +110,8 @@ const { sidebar } = Astro.props as Props;
         </p>
         <p id="contact-form-help" class="sr-only">
           All fields are required. Your message is protected by Cloudflare Turnstile and delivered
-          through Cloudflare Email Service.
+          through Cloudflare Email Service. Contact submissions are retained for up to 90 days for
+          follow-up and abuse review, then automatically expire.
         </p>
 
         <div class="grid gap-5 sm:grid-cols-2">

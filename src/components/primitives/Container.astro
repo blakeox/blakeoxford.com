@@ -11,11 +11,11 @@
  * </Container>
  */
 
-import { cn } from '@/utils/cn';
+import { getContainerClasses, type ContainerSize } from '@/lib/design-system/recipes';
 
 export interface Props {
   /** Container max-width */
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  size?: ContainerSize;
   /** Apply tokenized horizontal padding */
   padding?: boolean;
   /** Center content */
@@ -36,23 +36,8 @@ const {
   class: className = '',
 } = props;
 
-const sizeStyles = {
-  sm: 'max-w-2xl',
-  md: 'max-w-4xl',
-  lg: 'max-w-6xl',
-  xl: 'max-w-7xl',
-  full: 'max-w-none',
-} as const;
-
 const sizeKey = size ?? 'lg';
-
-const classes = cn(
-  center && 'mx-auto',
-  'w-full',
-  sizeStyles[sizeKey],
-  padding && 'layout-gutter',
-  className
-);
+const classes = getContainerClasses({ size: sizeKey, padding, center, className });
 ---
 
 <Element class={classes}>

@@ -23,7 +23,6 @@ test.describe('AI chat assistant', () => {
     // without depending on a real server during Playwright tests. This prevents
     // handshake 404 errors and keeps client-side state deterministic.
     await page.addInitScript(() => {
-       
       function makeStub() {
         class FakeWebSocket {
           url: string;
@@ -39,7 +38,13 @@ test.describe('AI chat assistant', () => {
             // simulate async open
             setTimeout(() => {
               this.readyState = 1; // OPEN
-              try { if (this.onopen) { this.onopen({}); } } catch { /* noop */ }
+              try {
+                if (this.onopen) {
+                  this.onopen({});
+                }
+              } catch {
+                /* noop */
+              }
               this.dispatchEvent('open', {});
             }, 10);
           }
@@ -50,14 +55,26 @@ test.describe('AI chat assistant', () => {
               const msg = typeof data === 'string' ? data : JSON.stringify(data);
               // For diagnostics, send back a simple acknowledgment
               setTimeout(() => {
-                if (this.onmessage) { this.onmessage({ data: JSON.stringify({ type: 'ack', payload: msg }) }); }
-                this.dispatchEvent('message', { data: JSON.stringify({ type: 'ack', payload: msg }) });
+                if (this.onmessage) {
+                  this.onmessage({ data: JSON.stringify({ type: 'ack', payload: msg }) });
+                }
+                this.dispatchEvent('message', {
+                  data: JSON.stringify({ type: 'ack', payload: msg }),
+                });
               }, 20);
-            } catch { /* noop */ }
+            } catch {
+              /* noop */
+            }
           }
           close(code?: number, reason?: string) {
             this.readyState = 3; // CLOSED
-            try { if (this.onclose) { this.onclose({ code, reason }); } } catch { /* noop */ }
+            try {
+              if (this.onclose) {
+                this.onclose({ code, reason });
+              }
+            } catch {
+              /* noop */
+            }
             this.dispatchEvent('close', { code, reason });
           }
           addEventListener(event: string, fn: (payload?: any) => void) {
@@ -70,14 +87,22 @@ test.describe('AI chat assistant', () => {
           dispatchEvent(event: string, payload: any) {
             const arr = this._listeners[event] || [];
             for (const fn of arr.slice()) {
-              try { fn.call(this, payload); } catch { /* noop */ }
+              try {
+                fn.call(this, payload);
+              } catch {
+                /* noop */
+              }
             }
           }
         }
         // @ts-expect-error - intentional stub for WebSocket in Playwright tests
         (window as any).WebSocket = FakeWebSocket;
       }
-      try { makeStub(); } catch { /* noop */ }
+      try {
+        makeStub();
+      } catch {
+        /* noop */
+      }
     });
     page.on('pageerror', (error) => {
       console.error('AI chat page error:', error); // aids diagnosing hydration failures
@@ -129,18 +154,20 @@ test.describe('AI chat assistant', () => {
 
     await launcher.click();
 
-  const panel = page.locator('[data-ai-chat-panel]');
-  await expect(panel).toHaveAttribute('data-ai-visible', 'true');
+    const panel = page.locator('[data-ai-chat-panel]');
+    await expect(panel).toHaveAttribute('data-ai-visible', 'true');
+    await expect(widget.getByRole('button', { name: /close/i })).toHaveCount(0);
+    await expect(panel.getByRole('button', { name: 'Close assistant' })).toHaveCount(1);
 
     const composer = panel.getByRole('textbox', { name: /Ask about this page or the site/i });
-		
-		// Verify composer is visible and interactive (accessibility requirement)
-		// Note: Programmatic focus in headless/headed browsers may not reliably set document.activeElement
-		// due to focus policies, so we verify the composer can receive focus rather than asserting it's pre-focused
-		await expect(composer).toBeVisible();
-		await expect(composer).toBeEditable();
-		await composer.focus(); // Explicitly focus for subsequent tests
-		await expect(composer).toBeFocused();
+
+    // Verify composer is visible and interactive (accessibility requirement)
+    // Note: Programmatic focus in headless/headed browsers may not reliably set document.activeElement
+    // due to focus policies, so we verify the composer can receive focus rather than asserting it's pre-focused
+    await expect(composer).toBeVisible();
+    await expect(composer).toBeEditable();
+    await composer.focus(); // Explicitly focus for subsequent tests
+    await expect(composer).toBeFocused();
 
     // Close via header close button to use the real user path
     const closeBtn = panel.getByRole('button', { name: 'Close assistant' });
@@ -171,8 +198,14 @@ test.describe('AI chat assistant', () => {
 
     const transcript = panel.locator('[data-ai-chat-transcript]');
     // Allow more time for streamed tokens to assemble in CI/headless environments
-    await expect(transcript.locator('[data-ai-message-role="user"]', { hasText: 'Tell me about the latest project' })).toBeVisible({ timeout: 10000 });
-    await expect(transcript.locator('[data-ai-message-role="assistant"]', { hasText: /Hello\s*from\s*AI/i })).toBeVisible({ timeout: 10000 });
+    await expect(
+      transcript.locator('[data-ai-message-role="user"]', {
+        hasText: 'Tell me about the latest project',
+      })
+    ).toBeVisible({ timeout: 10000 });
+    await expect(
+      transcript.locator('[data-ai-message-role="assistant"]', { hasText: /Hello\s*from\s*AI/i })
+    ).toBeVisible({ timeout: 10000 });
 
     const primarySource = panel.getByRole('link', { name: 'Demo Case Study' });
     await expect(primarySource).toBeVisible();
@@ -183,7 +216,7 @@ test.describe('AI chat assistant', () => {
     await page.keyboard.press('Enter');
 
     await expect(panel.getByRole('button', { name: 'Start new chat' })).toBeHidden();
-    await expect(transcript.locator('[data-ai-message-role="assistant"]', { hasText: 'Hi! I\'m the AI search assistant.' })).toBeVisible();
+    await expect(transcript.locator('[data-ai-message-role="assistant"]')).toHaveCount(0);
     await expect(composer).toHaveValue('');
     await expect(composer).toBeFocused();
   });
@@ -194,20 +227,15 @@ test.describe('AI chat assistant', () => {
     await widget.getByRole('button', { name: 'Open AI search assistant' }).click();
     await expect(panel).toHaveAttribute('data-ai-visible', 'true');
 
-    const advancedToggle = panel.getByRole('button', { name: 'Show advanced controls' });
-    await advancedToggle.focus();
-    await page.keyboard.press('Enter');
+    await panel.getByRole('button', { name: 'Assistant options' }).click();
+    const menu = page.getByRole('menu');
+    await menu.getByRole('menuitem', { name: 'Session settings' }).click();
 
-  await expect(panel.getByRole('button', { name: /(Disable|Enable) conversation memory/ })).toBeVisible();
-  await expect(panel.getByRole('button', { name: /(Show|Hide) conversation digest/ })).toBeVisible();
-  await expect(panel.getByRole('button', { name: /(Show|Hide) insights/ })).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Hide session settings' })).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Memory on' })).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Clear chat' })).toBeDisabled();
 
-    const clearButton = panel.getByRole('button', { name: 'Clear' });
-    await clearButton.focus();
-    await page.keyboard.press('Enter');
-
-    const transcript = panel.locator('[data-ai-chat-transcript]');
-    await expect(transcript.locator('[data-ai-message-role="assistant"]', { hasText: 'Hi! I\'m the AI search assistant.' })).toBeVisible();
-  await expect(panel.getByRole('button', { name: /(Show|Hide) advanced controls/ })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
   });
 });

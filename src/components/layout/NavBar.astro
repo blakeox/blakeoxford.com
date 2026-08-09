@@ -315,6 +315,7 @@ function isActive(href: string): boolean {
         e.status.textContent = next ? 'Navigation menu opened' : 'Navigation menu closed';
       }
       document.body.classList.toggle('scroll-locked', next);
+      document.dispatchEvent(new Event('bo:mobile-menu-state'));
     }
 
     // Bridge for module-side closeMobileMenu() / search open / overlay lifecycle

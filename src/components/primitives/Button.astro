@@ -10,13 +10,13 @@
  * <Button variant="outline" size="sm">Learn More</Button>
  */
 
-import { cn } from '@/utils/cn';
+import { getButtonClasses, type ButtonSize, type ButtonVariant } from '@/lib/design-system/recipes';
 
 export interface Props {
   /** Button visual variant */
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
+  variant?: ButtonVariant;
   /** Button size */
-  size?: 'sm' | 'md' | 'lg';
+  size?: ButtonSize;
   /** Render as link (when href provided) or button */
   href?: string;
   /** Button type (when rendered as button) */
@@ -48,35 +48,13 @@ const {
   ...rest
 } = Astro.props;
 
-const variantStyles = {
-  primary:
-    'border border-button-primary-bg bg-button-primary-bg text-button-primary-fg hover:bg-button-primary-bg-hover hover:border-button-primary-border-hover focus-visible:ring-accent/60',
-  secondary: 'border border-border bg-surface text-foreground hover:bg-surface-subtle',
-  outline:
-    'border border-foreground/30 bg-transparent text-foreground hover:border-accent hover:text-accent-emphasis focus-visible:ring-accent/60',
-  ghost: 'border border-transparent bg-transparent text-foreground/85 hover:text-accent-emphasis',
-  link: 'border border-transparent bg-transparent px-0 text-accent-emphasis hover:text-accent hover:underline',
-} as const;
+const classes = getButtonClasses({ variant, size, fullWidth, disabled, className });
 
-const sizeStyles = {
-  sm: 'min-h-[2.25rem] px-3.5 py-1.5 text-sm',
-  md: 'min-h-[2.75rem] px-5 py-2.5 text-sm',
-  lg: 'min-h-[3.25rem] px-6 py-3 text-base',
-} as const;
-
-const classes = cn(
-  'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-[color,background-color,border-color,transform,box-shadow] duration-normal focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none',
-  variantStyles[variant],
-  variant === 'link' ? 'p-0 text-sm' : sizeStyles[size],
-  fullWidth && 'w-full',
-  disabled && 'cursor-not-allowed opacity-50',
-  className
-);
-
-const Element = href ? 'a' : 'button';
-const elementProps = href
-  ? { href, 'aria-label': ariaLabel, 'data-testid': dataTestId, ...rest }
-  : { type, disabled, 'aria-label': ariaLabel, 'data-testid': dataTestId, ...rest };
+const Element = href && !disabled ? 'a' : 'button';
+const elementProps =
+  href && !disabled
+    ? { href, 'aria-label': ariaLabel, 'data-testid': dataTestId, ...rest }
+    : { type, disabled, 'aria-label': ariaLabel, 'data-testid': dataTestId, ...rest };
 ---
 
 <Element class={classes} {...elementProps}>

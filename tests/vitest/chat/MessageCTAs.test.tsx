@@ -158,8 +158,6 @@ describe('MatchedCTA', () => {
 
     expect(autoragEvents.ctaClick).toHaveBeenCalledWith({
       type: 'quality-suggestion',
-      label: "Let's work together",
-      source: 'I want to hire you',
     });
   });
 });

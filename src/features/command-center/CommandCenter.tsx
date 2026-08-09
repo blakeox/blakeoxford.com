@@ -22,7 +22,11 @@ import { useCommandCenter } from './hooks/useCommandCenter';
  * Site search — navigate pages, projects, and posts.
  * Ask lives in the corner companion; search stays search-like.
  */
-export default function CommandCenter() {
+type CommandCenterProps = {
+  mountRoot?: HTMLElement;
+};
+
+export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
   const {
     isOpen,
     close,
@@ -68,7 +72,7 @@ export default function CommandCenter() {
 
   const overlay = (
     <OverlayShell
-      id="search-overlay"
+      id={mountRoot ? undefined : 'search-overlay'}
       isOpen={isOpen}
       onClose={close}
       labelledBy="command-center-title"
@@ -101,6 +105,9 @@ export default function CommandCenter() {
               d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
             />
           </svg>
+          <label className="sr-only" htmlFor="search-input">
+            Search site content
+          </label>
           <input
             ref={inputRef}
             id="search-input"
@@ -276,5 +283,5 @@ export default function CommandCenter() {
     </OverlayShell>
   );
 
-  return createPortal(overlay, document.body);
+  return mountRoot ? overlay : createPortal(overlay, document.body);
 }
