@@ -62,20 +62,33 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --var GIT_COMMIT:${{ github.sha }}
+          command: deploy --var GIT_COMMIT:${{ github.sha }} --message commit:${{ github.sha }}
 
       - name: Verify deployed provenance
         env:
           EXPECTED_COMMIT: ${{ github.sha }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          response=$(curl -4 --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors https://blakeoxford.com/__version)
-          deployed=$(printf '%s' "$response" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("commit") or "")')
-          if [ "$deployed" != "$EXPECTED_COMMIT" ]; then
-            echo "❌ Deployed commit $deployed does not match $EXPECTED_COMMIT"
-            exit 1
-          fi
-          echo "✅ Production reports the intended commit $deployed"
+          response=$(curl --fail --silent --show-error --retry 5 --retry-delay 2 \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/blakeoxford-com/deployments")
+          EXPECTED_COMMIT="$EXPECTED_COMMIT" RESPONSE="$response" python3 - <<'PY'
+          import json
+          import os
+          import sys
+
+          payload = json.loads(os.environ['RESPONSE'])
+          deployments = payload.get('result', {}).get('deployments', [])
+          expected = f"commit:{os.environ['EXPECTED_COMMIT']}"
+          active = deployments[0] if deployments else {}
+          message = active.get('annotations', {}).get('workers/message', '')
+          if message != expected:
+              print(f"❌ Active deployment message {message!r} does not match {expected!r}")
+              sys.exit(1)
+          print(f"✅ Cloudflare reports the active deployment for {os.environ['EXPECTED_COMMIT']}")
+          PY
 
       - name: Verify deployed SEO and redirect contract
         env:
