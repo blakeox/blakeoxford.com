@@ -117,16 +117,16 @@ export class ConversationWebSocket {
    * Send message through WebSocket
    */
   send(data: any): boolean {
-    if (this.ws?.readyState === WebSocket.OPEN) {
-      try {
-        this.ws.send(JSON.stringify(data));
-        return true;
-      } catch (error) {
-        console.error('Failed to send WebSocket message:', error);
-        return false;
-      }
+    const socket = this.ws;
+    if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+
+    try {
+      socket.send(JSON.stringify(data));
+      return true;
+    } catch (error) {
+      console.error('Failed to send WebSocket message:', error);
+      return false;
     }
-    return false;
   }
 
   /**

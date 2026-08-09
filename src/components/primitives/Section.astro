@@ -1,6 +1,11 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 import Container from './Container.astro';
+import {
+  getSectionClasses,
+  type SectionBackground,
+  type SectionPadding,
+} from '@/lib/design-system/recipes';
 
 /**
  * Section - Semantic section component with consistent spacing
@@ -17,11 +22,11 @@ import Container from './Container.astro';
 
 export interface Props extends HTMLAttributes<'section'> {
   /** Vertical padding size */
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  padding?: SectionPadding;
   /** Container size (false for full width) */
   container?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | false;
   /** Background color */
-  background?: 'default' | 'surface' | 'gradient' | 'glass';
+  background?: SectionBackground;
   /** HTML element type */
   as?: 'section' | 'div' | 'article' | 'aside' | 'main';
   /** Additional CSS classes */
@@ -40,32 +45,12 @@ const {
   ...rest
 } = Astro.props as Props;
 
-// Padding styles — vertical rhythm from --space-section-* / py-section-*
-const paddingStyles = {
-  none: '',
-  sm: 'py-section-sm sm:py-section-md',
-  md: 'py-section-md sm:py-section-lg',
-  lg: 'py-section-lg sm:py-section-xl',
-  xl: 'py-section-lg sm:py-section-xl lg:py-section-2xl',
-} as const;
-
-// Background styles
-const backgroundStyles = {
-  default: '',
-  surface: 'bg-surface/50',
-  gradient: 'bg-gradient-to-r from-background via-surface to-background',
-  glass:
-    'border border-border/40 bg-glass/85 shadow-md backdrop-blur supports-[backdrop-filter]:bg-glass/75',
-} as const;
-
-const classes = [
-  paddingStyles[padding],
-  backgroundStyles[background],
-  !container && 'w-full',
+const classes = getSectionClasses({
+  padding,
+  background,
+  fullWidth: !container,
   className,
-]
-  .filter(Boolean)
-  .join(' ');
+});
 ---
 
 <Element class={classes} aria-labelledby={ariaLabelledby} {...rest}>

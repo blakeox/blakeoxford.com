@@ -8,6 +8,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/primitives/Container.astro';
 import Section from '@/components/primitives/Section.astro';
+import { crossRendererSurfaceRecipe } from '@/lib/design-system/recipes';
 
 const shortcuts = [
   {
@@ -64,6 +65,8 @@ const shortcuts = [
 <BaseLayout
   title="Keyboard Shortcuts - Blake Oxford"
   description="Complete guide to keyboard navigation and shortcuts for improved accessibility on blakeoxford.com"
+  canonicalUrl="https://blakeoxford.com/accessibility/keyboard-shortcuts/"
+  noindex={true}
   keywords="keyboard shortcuts, accessibility, navigation, WCAG, a11y"
 >
   <Section padding="xl">
@@ -103,7 +106,7 @@ const shortcuts = [
       </div>
 
       <!-- Additional Information -->
-      <div class="mt-16 rounded-xl border border-border bg-surface p-6">
+      <div class:list={['mt-16', crossRendererSurfaceRecipe.structural]}>
         <h2 class="mb-4 text-xl font-semibold text-foreground-strong">Accessibility Features</h2>
         <ul class="space-y-3 text-foreground">
           <li class="flex items-start gap-3">

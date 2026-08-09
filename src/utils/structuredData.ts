@@ -4,6 +4,7 @@
  * Generates JSON-LD structured data for SEO and rich snippets.
  * Supports Article, Project, BreadcrumbList, and other schema.org types.
  */
+import { AUTHOR_IDENTITY } from '@/config/constants';
 
 export interface Person {
   '@type': 'Person';
@@ -141,9 +142,7 @@ export function createBreadcrumbListSchema(
  */
 export const defaultAuthor: Person = {
   '@type': 'Person',
-  name: 'Blake Oxford',
-  url: 'https://blakeoxford.com',
-  sameAs: ['https://www.linkedin.com/in/blake-oxford', 'https://github.com/blakeox'],
+  ...AUTHOR_IDENTITY,
 };
 
 /**

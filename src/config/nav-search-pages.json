@@ -1,0 +1,32 @@
+[
+  {
+    "href": "/",
+    "title": "Home",
+    "description": "Portfolio overview and signature programs.",
+    "tags": ["home", "overview"]
+  },
+  {
+    "href": "/about/",
+    "title": "About",
+    "description": "Credentials, achievements, and professional journey.",
+    "tags": ["about", "biography", "achievements"]
+  },
+  {
+    "href": "/projects/",
+    "title": "Projects",
+    "description": "Selected case studies across automation, analytics, and change enablement.",
+    "tags": ["projects", "case studies"]
+  },
+  {
+    "href": "/blog/",
+    "title": "Blog",
+    "description": "Articles on systems architecture, automation, and cloud strategy.",
+    "tags": ["blog", "articles", "writing"]
+  },
+  {
+    "href": "/contact/",
+    "title": "Contact",
+    "description": "Start a working session or send a note.",
+    "tags": ["contact", "connect"]
+  }
+]

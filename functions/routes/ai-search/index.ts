@@ -29,6 +29,15 @@ import { handleSimpleQueryWithWorkersAI, looksLikeEmptyRetrieval } from './worke
 const MAX_REQUEST_BYTES = 32 * 1024;
 const MAX_QUERY_LENGTH = 4000;
 
+function telemetryId(value: string): string {
+  let hash = 2166136261;
+  for (const character of value) {
+    hash ^= character.codePointAt(0) ?? 0;
+    hash = Math.imul(hash, 16777619);
+  }
+  return `q_${(hash >>> 0).toString(16)}`;
+}
+
 export async function handleAiSearch({
   request,
   env,
@@ -73,7 +82,14 @@ export async function handleAiSearch({
 
   let payload: AiSearchPayload;
   try {
-    payload = (await request.json()) as AiSearchPayload;
+    const body = await request.arrayBuffer();
+    if (body.byteLength > MAX_REQUEST_BYTES) {
+      return new Response(JSON.stringify({ error: 'Request is too large' }), {
+        status: 413,
+        headers: baseCorsHeaders,
+      });
+    }
+    payload = JSON.parse(new TextDecoder().decode(body)) as AiSearchPayload;
   } catch {
     return new Response(JSON.stringify({ error: 'Invalid JSON payload' }), {
       status: 400,
@@ -105,6 +121,12 @@ export async function handleAiSearch({
   const sessionId = request.headers.get('x-session-id') || null;
 
   const rateLimit = await checkAiSearchRateLimit(env, clientIp, sessionId);
+  if (rateLimit.limited && rateLimit.reason === 'storage-unavailable') {
+    return new Response(JSON.stringify({ error: 'AI search service temporarily unavailable' }), {
+      status: 503,
+      headers: baseCorsHeaders,
+    });
+  }
   if (rateLimit.limited) {
     return new Response(
       JSON.stringify({
@@ -126,7 +148,9 @@ export async function handleAiSearch({
   const history = parseHistory(payload.history);
 
   const cacheKey = `ai:response:v4:${normalizeForCache(query)}`;
-  const finalCacheEnabled = isCacheEligibleQuery(query) && enhancedCacheFlag;
+  const finalCacheEnabled =
+    isCacheEligibleQuery(query) && enhancedCacheFlag && history.length === 0 && !pageContext;
+  const queryTelemetryId = telemetryId(query);
 
   // Conversational Blake-profile questions: answer with Workers AI from verified expertise.
   // AutoRAG retrieval often fails on pronouns / soft phrasing ("What does he do well").
@@ -144,7 +168,7 @@ export async function handleAiSearch({
 
       writeAiAnalytics(env, {
         blobs: [
-          query.slice(0, 50),
+          queryTelemetryId,
           'WORKERS_AI',
           anonymizeClientIp(clientIp),
           sessionId || 'anonymous',
@@ -191,7 +215,7 @@ export async function handleAiSearch({
 
         writeAiAnalytics(env, {
           blobs: [
-            query.slice(0, 50),
+            queryTelemetryId,
             'CACHE_HIT',
             anonymizeClientIp(clientIp),
             sessionId || 'anonymous',
@@ -241,12 +265,23 @@ export async function handleAiSearch({
       authorization: `Bearer ${upstreamToken}`,
     };
 
-    const upstreamResponse = await fetch(fetchUrl, {
-      method: 'POST',
-      headers: fetchHeaders,
-      body: JSON.stringify(requestBody),
-      cf: { cacheTtl: 0, cacheEverything: false },
-    });
+    const upstreamController = new AbortController();
+    const upstreamTimeout = setTimeout(() => upstreamController.abort(), 30000);
+    const onRequestAbort = () => upstreamController.abort();
+    request.signal.addEventListener('abort', onRequestAbort, { once: true });
+    let upstreamResponse: Response;
+    try {
+      upstreamResponse = await fetch(fetchUrl, {
+        method: 'POST',
+        headers: fetchHeaders,
+        body: JSON.stringify(requestBody),
+        cf: { cacheTtl: 0, cacheEverything: false },
+        signal: upstreamController.signal,
+      });
+    } finally {
+      clearTimeout(upstreamTimeout);
+      request.signal.removeEventListener('abort', onRequestAbort);
+    }
 
     if (!upstreamResponse.ok) {
       let errorDetail = 'Upstream service error';
@@ -323,8 +358,8 @@ export async function handleAiSearch({
         baseCorsHeaders,
         startTime,
         complexity,
-        query,
-        enhancedQuery,
+        telemetryId: queryTelemetryId,
+        queryEnhanced: query !== enhancedQuery,
         finalCacheEnabled,
         cacheKey,
         clientIp,
@@ -354,7 +389,7 @@ export async function handleAiSearch({
 
     writeAiAnalytics(env, {
       blobs: [
-        query.slice(0, 50),
+        queryTelemetryId,
         'API_CALL',
         anonymizeClientIp(clientIp),
         sessionId || 'anonymous',

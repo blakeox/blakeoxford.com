@@ -87,13 +87,34 @@ async function deployConfig(config, token) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(config),
-    },
+    }
   );
 
   const body = await response.json();
   if (!response.ok || !body.success) {
     const message = body.errors?.map((err) => err.message).join('; ') || response.statusText;
     throw new Error(`Zaraz deploy failed (${response.status}): ${message}`);
+  }
+  return body.result;
+}
+
+async function publishConfig(token) {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/zones/${zoneId}/settings/zaraz/publish`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify('Publish analytics configuration'),
+    }
+  );
+
+  const body = await response.json();
+  if (!response.ok || !body.success) {
+    const message = body.errors?.map((err) => err.message).join('; ') || response.statusText;
+    throw new Error(`Zaraz publish failed (${response.status}): ${message}`);
   }
   return body.result;
 }
@@ -107,8 +128,8 @@ function printManualSteps() {
   console.log('5. Publish the configuration');
   console.log('\nGoogle Search Console is not a Zaraz tool. Verify the domain via DNS or add');
   console.log('PUBLIC_GOOGLE_SITE_VERIFICATION to .env for the HTML meta tag in BaseLayout.');
-  console.log('\nOptional: set PUBLIC_CF_WEB_ANALYTICS_TOKEN for Cloudflare Web Analytics beacon.');
-  console.log('Enable the site in Analytics → Web Analytics, then copy the token into .env / wrangler.');
+  console.log('\nCloudflare Web Analytics is managed separately from Zaraz.');
+  console.log('Use the existing auto-install site configuration; do not add a second beacon.');
 }
 
 async function main() {
@@ -130,7 +151,7 @@ async function main() {
   const token = resolveToken();
   if (!token) {
     console.error(
-      'No CLOUDFLARE_API_TOKEN set. Create a token with Zone > Zaraz > Edit, or pass --write-only / --dry-run.',
+      'No CLOUDFLARE_API_TOKEN set. Create a token with Zone > Zaraz > Edit, or pass --write-only / --dry-run.'
     );
     printManualSteps();
     process.exit(1);
@@ -138,12 +159,15 @@ async function main() {
 
   try {
     await deployConfig(config, token);
-    console.log(`Zaraz configuration deployed to ${zoneName} (${zoneId}).`);
-    console.log('Verify in Tag Management → Monitoring, then test with ?zarazDebug=true on the site.');
+    await publishConfig(token);
+    console.log(`Zaraz configuration published to ${zoneName} (${zoneId}).`);
+    console.log(
+      'Verify in Tag Management → Monitoring, then test with ?zarazDebug=true on the site.'
+    );
   } catch (error) {
     console.error(String(error));
     console.error(
-      '\nYour token may lack Zaraz permissions. Re-run with --write-only and import via the dashboard.',
+      '\nYour token may lack Zaraz permissions. Re-run with --write-only and import via the dashboard.'
     );
     printManualSteps();
     process.exit(1);

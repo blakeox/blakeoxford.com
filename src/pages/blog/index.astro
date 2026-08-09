@@ -5,8 +5,9 @@ import type { CollectionEntry } from 'astro:content';
 import Layout from '@/layouts/BaseLayout.astro';
 import BlogIndexHeroSection from '@/components/features/blog/BlogIndexHeroSection.astro';
 import BlogIndexContentSection from '@/components/features/blog/BlogIndexContentSection.astro';
+import { isPublished } from '@/lib/content/publication-contract.mjs';
 
-const posts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => !data.draft);
+const posts = await getCollection('blog', (entry: CollectionEntry<'blog'>) => isPublished(entry));
 const sortedPosts = posts
   .slice()
   .sort(

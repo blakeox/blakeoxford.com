@@ -12,7 +12,7 @@ import {
 import type { FormValidationConfig } from './form/FormHelpers';
 import { getContactFormService } from '@/services/ContactFormService';
 import { AppError, isAppError, getUserMessage } from '@/utils/errors';
-import { conversionEvents } from '@/lib/analytics';
+import { conversionEvents, getAcquisitionSource } from '@/lib/analytics';
 
 declare global {
   interface Window {
@@ -298,7 +298,7 @@ function setupContactForm(): CleanupFn | void {
 
       // Use ContactFormService for submission
       const contactService = getContactFormService({
-        endpoint: form.action || '/api/contact/submit',
+        endpoint: form.action || '/send-email',
         requireTurnstile: true,
       });
 
@@ -308,7 +308,11 @@ function setupContactForm(): CleanupFn | void {
 
       if (result.success) {
         showStatusMessage(statusElement ?? null, SUCCESS_MESSAGE, 'success');
-        conversionEvents.generateLead({ method: 'contact_form', form: 'contact' });
+        conversionEvents.generateLead({
+          method: 'contact_form',
+          form: 'contact',
+          acquisition_source: getAcquisitionSource(),
+        });
         form.reset();
         updateMessageCount();
         statusElement?.focus();

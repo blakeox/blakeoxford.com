@@ -5,7 +5,7 @@
 import type { ChatMessage } from './chat-types';
 import { autoragEvents } from '@/lib/analytics';
 import { checkCitationHealth } from './chat-helpers';
-import { calculateResponseQuality, evaluateResponseWithLLM } from '@/lib/quality-utils';
+import { calculateResponseQuality } from '@/lib/quality-utils';
 
 /**
  * Finalize assistant message with quality scoring and citation health
@@ -21,6 +21,7 @@ export async function finalizeMessageQuality(
   messages: ChatMessage[],
   userQuery: string
 ): Promise<Partial<ChatMessage> | null> {
+  void userQuery;
   const message = messages.find((m) => m.id === messageId);
   if (!message) return null;
 
@@ -39,40 +40,17 @@ export async function finalizeMessageQuality(
     citationHealth,
   };
 
-  // Try LLM evaluation asynchronously
-  try {
-    const llmEvaluation = await evaluateResponseWithLLM(userQuery, content, message.sources || []);
-
-    if (llmEvaluation) {
-      // Track quality metric with detailed breakdown
-      autoragEvents.qualityScore({
-        overall_score: llmEvaluation.overall,
-        completeness: llmEvaluation.completeness,
-        citation_accuracy: llmEvaluation.citationAccuracy,
-        conciseness: llmEvaluation.conciseness,
-        relevance: llmEvaluation.relevance,
-        source_count: message.sources?.length || 0,
-        word_count: content.trim().split(/\s+/).length,
-        citation_health: citationHealth,
-        response_time_ms: responseTime,
-      });
-
-      return {
-        ...baseUpdate,
-        qualityScore: llmEvaluation.overall,
-        qualityDetails: {
-          completeness: llmEvaluation.completeness,
-          citationAccuracy: llmEvaluation.citationAccuracy,
-          conciseness: llmEvaluation.conciseness,
-          relevance: llmEvaluation.relevance,
-          reasoning: llmEvaluation.reasoning,
-        },
-      };
-    }
-  } catch (error) {
-    console.error('LLM evaluation failed, using heuristic score:', error);
-    // Return the heuristic score
-  }
+  autoragEvents.qualityScore({
+    overall_score: heuristicScore,
+    completeness: heuristicScore,
+    citation_accuracy: heuristicScore,
+    conciseness: heuristicScore,
+    relevance: heuristicScore,
+    source_count: message.sources?.length || 0,
+    word_count: content.trim().split(/\s+/).length,
+    citation_health: citationHealth,
+    response_time_ms: responseTime,
+  });
 
   return baseUpdate;
 }

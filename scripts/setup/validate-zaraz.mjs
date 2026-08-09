@@ -41,26 +41,30 @@ assert(config.settings?.hideQueryParams === true, 'hideQueryParams should be ena
 assert(config.settings?.cookieDomain === 'blakeoxford.com', 'cookieDomain must be blakeoxford.com');
 
 assert(config.triggers?.tPageview?.system === 'pageload', 'missing tPageview pageload trigger');
-assert(config.triggers?.tAllEvents?.loadRules?.length > 0, 'missing tAllEvents custom-event trigger');
+assert(config.triggers?.tPageview?.loadRules?.length > 0, 'missing tPageview load rule');
+assert(
+  config.triggers?.tAllEvents?.loadRules?.length > 0,
+  'missing tAllEvents custom-event trigger'
+);
 
 const ga4 = config.tools?.toolGa4;
 assert(ga4?.enabled === true, 'toolGa4 must be enabled');
-assert(ga4?.component === 'google-analytics-4', 'toolGa4 must be google-analytics-4');
+assert(ga4?.component === 'google-analytics_v4', 'toolGa4 must be google-analytics_v4');
 assert(
   ga4?.settings?.tid === '__GA4_MEASUREMENT_ID__',
-  'toolGa4.tid must remain the __GA4_MEASUREMENT_ID__ placeholder',
+  'toolGa4.tid must remain the __GA4_MEASUREMENT_ID__ placeholder'
 );
 assert(ga4?.actions?.aGa4Pageview?.actionType === 'pageview', 'missing GA4 pageview action');
 assert(ga4?.actions?.aGa4Event?.actionType === 'event', 'missing GA4 event action');
 assert(
   Array.isArray(ga4?.actions?.aGa4Pageview?.firingTriggers) &&
     ga4.actions.aGa4Pageview.firingTriggers.includes('tPageview'),
-  'GA4 pageview must fire on tPageview',
+  'GA4 pageview must fire on tPageview'
 );
 assert(
   Array.isArray(ga4?.actions?.aGa4Event?.firingTriggers) &&
     ga4.actions.aGa4Event.firingTriggers.includes('tAllEvents'),
-  'GA4 event must fire on tAllEvents',
+  'GA4 event must fire on tAllEvents'
 );
 
 const linker = config.tools?.toolConversionLinker;

@@ -5,51 +5,27 @@
     {
       "slug": "adp-workforcenow",
       "title": "ADP Workforce Now Implementation",
-      "description": "",
+      "description": "Integrated payroll, benefits, finance, and workforce reporting into one automation-led operating system.",
       "publishedAt": "2021-01-01",
-      "tags": [
-        "HCM",
-        "Recruiting",
-        "ADP Workforce Now",
-        "Sage Intacct",
-        "PowerBI"
-      ],
+      "tags": ["HCM", "Recruiting", "ADP Workforce Now", "Sage Intacct", "PowerBI"],
       "draft": false,
-      "technologies": [
-        "HCM",
-        "Recruiting",
-        "ADP Workforce Now",
-        "Sage Intacct",
-        "PowerBI"
-      ],
+      "technologies": ["HCM", "Recruiting", "ADP Workforce Now", "Sage Intacct", "PowerBI"],
       "image": "/assets/projects/adp-automation.png"
     },
     {
       "slug": "advancedmd-implementation",
       "title": "AdvancedMD Implementation & Evolution",
-      "description": "",
+      "description": "Modernized healthcare operations with connected billing, reporting, workflows, and governance.",
       "publishedAt": "2017-12-01",
-      "tags": [
-        "EHR",
-        "Digital Transformation",
-        "Automation",
-        "Healthcare IT",
-        "SQL"
-      ],
+      "tags": ["EHR", "Digital Transformation", "Automation", "Healthcare IT", "SQL"],
       "draft": false,
-      "technologies": [
-        "EHR",
-        "Digital Transformation",
-        "Automation",
-        "Healthcare IT",
-        "SQL"
-      ],
+      "technologies": ["EHR", "Digital Transformation", "Automation", "Healthcare IT", "SQL"],
       "image": "/assets/projects/advancedMD-project.png"
     },
     {
       "slug": "bank-projections-modeling",
       "title": "Bank Projections and Financial Modeling",
-      "description": "",
+      "description": "Built scenario-driven financial models and reporting packages that helped lenders make faster decisions.",
       "publishedAt": "2020-01-01",
       "tags": [
         "Financial Modeling",
@@ -71,7 +47,7 @@
     {
       "slug": "fanalyx-deterministic-finance-platform",
       "title": "Fanalyx Deterministic Finance Platform",
-      "description": "",
+      "description": "A typed, reproducible finance platform that keeps calculations authoritative across dashboards, APIs, and MCP.",
       "publishedAt": "2025-03-01",
       "tags": [
         "Financial Modeling",
@@ -97,16 +73,9 @@
     {
       "slug": "ferment-app",
       "title": "Ferment App – Mobile Recipe Management",
-      "description": "",
+      "description": "Designed an offline-first mobile product for fermentation tracking, reminders, recipes, and community sharing.",
       "publishedAt": "2024-01-15",
-      "tags": [
-        "Swift",
-        "SwiftUI",
-        "Firebase",
-        "SwiftData",
-        "Mobile Development",
-        "Fermentation"
-      ],
+      "tags": ["Swift", "SwiftUI", "Firebase", "SwiftData", "Mobile Development", "Fermentation"],
       "draft": false,
       "technologies": [
         "Swift",
@@ -121,7 +90,7 @@
     {
       "slug": "google-workspace-migration",
       "title": "Google Workspace → Microsoft 365 Migration & Endpoint Management",
-      "description": "",
+      "description": "Moved a distributed workforce to Microsoft 365 with secure endpoints, adoption playbooks, and measurable cutover control.",
       "publishedAt": "2020-01-15",
       "tags": [
         "Microsoft 365",
@@ -145,7 +114,7 @@
     {
       "slug": "llm-note-coaching",
       "title": "OpenAI-Powered Documentation Quality Feedback System",
-      "description": "",
+      "description": "Delivered privacy-aware AI coaching that helped healthcare teams improve documentation quality inside existing workflows.",
       "publishedAt": "2023-11-01",
       "tags": [
         "OpenAI",
@@ -171,7 +140,7 @@
     {
       "slug": "microsoft-fabric",
       "title": "Microsoft Fabric – Operational Intelligence & Workflow Automation",
-      "description": "",
+      "description": "Connected finance, operations, and change data into an owned cadence for automation and executive decision-making.",
       "publishedAt": "2024-02-20",
       "tags": [
         "Microsoft Fabric",

@@ -6,6 +6,7 @@
 // ─── Site Configuration ──────────────────────────────────────────
 export const SITE_URL = 'https://blakeoxford.com';
 export const SITE_NAME = 'Blake Oxford';
+export const SITE_BRAND_NAME = 'Blake Oxford Portfolio';
 export const SITE_TITLE = 'Blake Oxford - Enterprise Systems Architect & Technology Leader';
 export const SITE_DESCRIPTION =
   'Innovative technology leader specializing in enterprise systems architecture, healthcare IT, cloud infrastructure, and business intelligence solutions.';
@@ -64,11 +65,17 @@ export const CACHE_DURATIONS = {
 
 // ─── SEO & Meta Configuration ────────────────────────────────────
 export const SEO = {
-  defaultImage: '/assets/images/Blake-O-scaled.jpg',
+  defaultImage: '/assets/images/og-image.jpg',
   twitterHandle: '@blakeoxford',
   locale: 'en_US',
   type: 'website',
 } as const;
+
+export const AUTHOR_IDENTITY = {
+  name: SITE_NAME,
+  url: SITE_URL,
+  sameAs: ['https://www.linkedin.com/in/blake-oxford', 'https://github.com/blakeox'],
+};
 
 // ─── Animation & Transition Constants ────────────────────────────
 // Prefer Tailwind semantic duration utilities (duration-fast, duration-normal,

@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/primitives/Container.astro';
 import Section from '@/components/primitives/Section.astro';
 import Badge from '@/components/primitives/Badge.astro';
+import BaseCard from '@/components/primitives/BaseCard.astro';
 import {
   SEMANTIC_COLOR_USAGE,
   getPublicThemeTokens,
@@ -46,7 +47,7 @@ const rules = [
   'Use bg-overlay-scrim for modal backdrops and bg-code-surface for always-dark code blocks. Scrim dismiss layers are decorative — mark with data-a11y-allow-color-contrast.',
   'Motion: duration-fast | duration-normal | duration-moderate | duration-slow (not duration-200).',
   'Do not use bg-[color:var(--…)] for tokens that already have utilities.',
-  'Shared chrome (nav, overlays, hero motion) lives in components.css; page layout stays in Tailwind.',
+  'Shared multi-use contracts live in components.css; feature-owned overlay styles live with chat and command-center owners.',
   'Page gutters: Container or layout-gutter — not hard-coded px-4 sm:px-6 lg:px-8.',
   'Plugins and variants live in global.css (@plugin typography, @custom-variant). No JS tailwind.config.',
   'Article MDX: wrap with the Prose primitive instead of scattering prose-* modifiers.',
@@ -56,6 +57,9 @@ const rules = [
 <BaseLayout
   title="Design Tokens"
   description="Operational reference for the Blake Oxford design token contract."
+  canonicalUrl="https://blakeoxford.com/design/tokens/"
+  noindex={true}
+  wide={true}
 >
   <Section padding="xl">
     <Container size="xl">
@@ -78,7 +82,7 @@ const rules = [
       </header>
 
       <div class="mt-12 grid gap-4 md:grid-cols-3">
-        <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
+        <BaseCard variant="subtle" hover="none" padding="lg">
           <p class="text-sm font-semibold tracking-label text-subtle-foreground uppercase">
             Source
           </p>
@@ -86,8 +90,8 @@ const rules = [
           <p class="mt-2 text-sm text-muted-foreground">
             OKLCH palette, motion, glass, and dark swaps.
           </p>
-        </div>
-        <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
+        </BaseCard>
+        <BaseCard variant="subtle" hover="none" padding="lg">
           <p class="text-sm font-semibold tracking-label text-subtle-foreground uppercase">
             Bridge
           </p>
@@ -95,14 +99,14 @@ const rules = [
           <p class="mt-2 text-sm text-muted-foreground">
             Generates semantic Tailwind utilities from tokens.
           </p>
-        </div>
-        <div class="rounded-2xl border border-border/40 bg-surface p-6 shadow-sm">
+        </BaseCard>
+        <BaseCard variant="subtle" hover="none" padding="lg">
           <p class="text-sm font-semibold tracking-label text-subtle-foreground uppercase">Entry</p>
           <p class="mt-3 text-xl font-semibold text-foreground">global.css</p>
           <p class="mt-2 text-sm text-muted-foreground">
             Tailwind import, typography plugin, and custom variants.
           </p>
-        </div>
+        </BaseCard>
       </div>
 
       <section class="mt-16" aria-labelledby="brand-palette">
@@ -114,15 +118,15 @@ const rules = [
           <strong>255°</strong>, steel accent at <strong>250°</strong> — institutional tech × finance.
         </p>
         <div class="mt-6 grid gap-4 md:grid-cols-3">
-          <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
+          <BaseCard as="article" variant="subtle" hover="none" padding="md">
             <div class="mb-4 h-16 rounded-xl bg-primary"></div>
             <h3 class="font-semibold text-foreground">primary</h3>
             <p class="mt-1 text-sm text-subtle-foreground">255° · <code>--color-primary</code></p>
             <p class="mt-2 text-sm text-muted-foreground">
               Navy ink — secondary brand surfaces and emphasis
             </p>
-          </article>
-          <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
+          </BaseCard>
+          <BaseCard as="article" variant="subtle" hover="none" padding="md">
             <div
               class="mb-4 flex h-16 items-center justify-center rounded-xl bg-accent px-4 font-semibold text-on-accent"
             >
@@ -135,8 +139,8 @@ const rules = [
             <p class="mt-2 text-sm text-muted-foreground">
               Steel signal — CTAs, focus rings, interactive chrome (AA with on-accent)
             </p>
-          </article>
-          <article class="rounded-2xl border border-border/40 bg-surface p-5 shadow-sm">
+          </BaseCard>
+          <BaseCard as="article" variant="subtle" hover="none" padding="md">
             <div class="mb-4 h-16 rounded-xl bg-accent-subtle"></div>
             <h3 class="font-semibold text-foreground">accent-subtle</h3>
             <p class="mt-1 text-sm text-subtle-foreground">
@@ -145,7 +149,7 @@ const rules = [
             <p class="mt-2 text-sm text-muted-foreground">
               Soft accent washes for panels and chips
             </p>
-          </article>
+          </BaseCard>
         </div>
       </section>
 
@@ -157,7 +161,12 @@ const rules = [
           Computed in the browser from the active theme cascade. Toggle light/dark in the nav to
           refresh ratios.
         </p>
-        <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm">
+        <div
+          class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm"
+          role="region"
+          aria-label="Live contrast pairs table"
+          tabindex="0"
+        >
           <table class="min-w-full text-left text-sm">
             <thead class="border-b border-border/40 bg-surface-subtle/60 text-subtle-foreground">
               <tr>
@@ -187,7 +196,12 @@ const rules = [
             >@theme inline</code
           >. Resolved values update with the active theme.
         </p>
-        <div class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm">
+        <div
+          class="mt-6 overflow-x-auto rounded-2xl border border-border/40 bg-surface shadow-sm"
+          role="region"
+          aria-label="Semantic color utilities table"
+          tabindex="0"
+        >
           <table class="min-w-full text-left text-sm">
             <thead class="border-b border-border/40 bg-surface-subtle/60 text-subtle-foreground">
               <tr>

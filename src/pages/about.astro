@@ -7,7 +7,7 @@ import AboutEducationSkillsSection from '@/components/features/about/AboutEducat
 import CtaBand from '@/components/composites/CtaBand.astro';
 import { getAboutPage } from '@/content/about/getAboutPage';
 import type { AboutSocialLink } from '@/content/about/pageTypes';
-import { CANONICAL_URLS } from '@/config/constants';
+import { AUTHOR_IDENTITY, CANONICAL_URLS } from '@/config/constants';
 
 const page = await getAboutPage();
 const canonicalUrl = CANONICAL_URLS.about;
@@ -15,10 +15,9 @@ const canonicalUrl = CANONICAL_URLS.about;
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'Blake Oxford',
-  url: 'https://blakeoxford.com',
+  ...AUTHOR_IDENTITY,
   jobTitle: 'Systems Architect',
-  sameAs: page.social.links.map((link: AboutSocialLink) => link.url),
+  sameAs: AUTHOR_IDENTITY.sameAs,
   description: page.meta.description,
   image: '/assets/images/Blake-O-scaled.jpg',
 };

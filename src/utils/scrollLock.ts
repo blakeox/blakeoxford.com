@@ -8,6 +8,7 @@ const SCROLL_LOCK_CLASS = 'scroll-locked';
 
 let lockCount = 0;
 let savedScrollY = 0;
+let claimableOverlayLock = false;
 
 function getScrollbarWidth(): number {
   return Math.max(0, window.innerWidth - document.documentElement.clientWidth);
@@ -56,6 +57,27 @@ export function acquireScrollLock(): void {
   lockCount += 1;
 }
 
+/** Acquire a lock that the lazily mounted overlay hook may claim without incrementing twice. */
+export function acquireClaimableOverlayScrollLock(): void {
+  acquireScrollLock();
+  claimableOverlayLock = true;
+}
+
+/** Transfer the shell lock to the mounted overlay hook, if one is waiting. */
+export function claimOverlayScrollLock(): boolean {
+  if (!claimableOverlayLock) return false;
+  claimableOverlayLock = false;
+  return true;
+}
+
+/** Release a shell lock only when it has not already been transferred. */
+export function releaseClaimableOverlayScrollLock(): boolean {
+  if (!claimableOverlayLock) return false;
+  claimableOverlayLock = false;
+  releaseScrollLock();
+  return true;
+}
+
 export function releaseScrollLock(): void {
   if (typeof document === 'undefined') return;
   if (lockCount <= 0) return;
@@ -74,12 +96,14 @@ export function isScrollLocked(): boolean {
 export function forceReleaseScrollLock(): void {
   if (typeof document === 'undefined') return;
   lockCount = 0;
+  claimableOverlayLock = false;
   clearScrollLockStyles();
 }
 
 export function resetScrollLockForTests(): void {
   lockCount = 0;
   savedScrollY = 0;
+  claimableOverlayLock = false;
   if (typeof document !== 'undefined') {
     clearScrollLockStyles();
   }

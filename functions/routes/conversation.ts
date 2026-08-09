@@ -23,8 +23,24 @@ export async function handleConversation({
     });
   }
 
+  // The current client has no authenticated identity or server-issued capability.
+  // Fail closed instead of routing arbitrary IDs into shared Durable Objects.
+  if (env.CONVERSATION_PERSISTENCE_ENABLED !== 'true') {
+    return new Response(JSON.stringify({ error: 'Conversation persistence is disabled' }), {
+      status: 410,
+      headers: { ...corsHeaders, 'cache-control': 'no-store' },
+    });
+  }
+
   try {
-    const conversationId = url.searchParams.get('id') || 'default';
+    const pathConversationId = url.pathname.match(/^\/api\/conversation\/([^/]+)/)?.[1];
+    const conversationId = url.searchParams.get('id') || pathConversationId;
+    if (!conversationId || !/^[a-zA-Z0-9_-]{1,96}$/.test(conversationId)) {
+      return new Response(JSON.stringify({ error: 'Conversation id is required' }), {
+        status: 400,
+        headers: corsHeaders,
+      });
+    }
     const id = env.CONVERSATION_DO.idFromName(conversationId);
     const stub = env.CONVERSATION_DO.get(id);
     return stub.fetch(request);

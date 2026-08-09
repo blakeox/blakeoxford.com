@@ -13,7 +13,8 @@
   --brand-primary-dark: oklch(0.14 0.02 250);
   --brand-accent: oklch(0.55 0.14 48);
   --brand-accent-light: oklch(0.7 0.12 52);
-  --brand-accent-dark: oklch(0.42 0.13 42);
+  /* Text/emphasis copper must clear 4.5:1 on the light canvas. */
+  --brand-accent-dark: oklch(0.26 0.07 42);
 
   /* Static palette */
   --palette-background: oklch(0.975 0.006 230);
@@ -26,8 +27,8 @@
   --palette-foreground: oklch(0.2 0.02 250);
   --palette-foreground-strong: oklch(0.14 0.02 250);
   --palette-foreground-light: oklch(0.975 0.005 230);
-  --palette-muted-foreground: oklch(0.4 0.018 250);
-  --palette-subtle-foreground: oklch(0.46 0.016 250);
+  --palette-muted-foreground: oklch(0.32 0.018 250);
+  --palette-subtle-foreground: oklch(0.36 0.016 250);
   --palette-border: oklch(0.2 0.02 250 / 0.14);
   --palette-border-dark: oklch(0.84 0.015 230 / 0.22);
   --palette-on-accent: oklch(0.98 0.01 95);
@@ -35,10 +36,10 @@
   --palette-on-dark: oklch(0.98 0.005 230);
   --palette-success: oklch(0.68 0.14 150);
   --palette-success-light: oklch(0.76 0.12 150);
-  --palette-success-dark: oklch(0.52 0.12 150);
+  --palette-success-dark: oklch(0.42 0.12 150);
   --palette-warning: oklch(0.82 0.14 85);
   --palette-warning-light: oklch(0.88 0.12 85);
-  --palette-warning-dark: oklch(0.6 0.14 85);
+  --palette-warning-dark: oklch(0.48 0.14 85);
   --palette-error: oklch(0.55 0.2 28);
   --palette-error-light: oklch(0.65 0.18 28);
   --palette-error-dark: oklch(0.42 0.18 28);

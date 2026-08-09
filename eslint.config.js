@@ -325,6 +325,7 @@ export default [
       'dist/',
       'dist 2/',
       'node_modules/',
+      '.wrangler/',
       '.astro/',
       '.astro 2/',
       // Don't ignore public JS so we can lint SW and utility scripts

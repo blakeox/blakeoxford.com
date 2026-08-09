@@ -22,7 +22,7 @@ async function ensureSiblings(filePath) {
   } catch {
     const buf = await sharp(filePath).webp({ quality: 80 }).toBuffer();
     await fs.writeFile(webpPath, buf);
-    console.log(`✅ public webp: ${path.basename(webpPath)} (${Math.round(buf.length/1024)}KB)`);
+    console.log(`✅ public webp: ${path.basename(webpPath)} (${Math.round(buf.length / 1024)}KB)`);
   }
 
   try {
@@ -30,7 +30,7 @@ async function ensureSiblings(filePath) {
   } catch {
     const buf = await sharp(filePath).avif({ quality: 55 }).toBuffer();
     await fs.writeFile(avifPath, buf);
-    console.log(`✅ public avif: ${path.basename(avifPath)} (${Math.round(buf.length/1024)}KB)`);
+    console.log(`✅ public avif: ${path.basename(avifPath)} (${Math.round(buf.length / 1024)}KB)`);
   }
   return true;
 }
@@ -38,16 +38,28 @@ async function ensureSiblings(filePath) {
 async function run() {
   try {
     const entries = await fs.readdir(PUBLIC_DIR, { withFileTypes: true });
-    const files = entries.filter(e => e.isFile()).map(e => path.join(PUBLIC_DIR, e.name));
+    const files = entries.filter((e) => e.isFile()).map((e) => path.join(PUBLIC_DIR, e.name));
     let processed = 0;
+    let failures = 0;
     for (const f of files) {
-      try { if (await ensureSiblings(f)) processed++; } catch (e) { console.error('❌ public optimize failed:', e.message); }
+      try {
+        if (await ensureSiblings(f)) processed++;
+      } catch (e) {
+        failures++;
+        console.error('❌ public optimize failed:', e.message);
+      }
     }
+    if (failures > 0) throw new Error(`Public image optimization failed for ${failures} file(s)`);
     console.log(`🏁 Public image optimization complete (${processed} processed).`);
-  } catch {
+  } catch (error) {
     // directory may not exist in some builds
-    console.log('ℹ️  No public/assets/images directory found. Skipping.');
+    if (error?.code === 'ENOENT')
+      console.log('ℹ️  No public/assets/images directory found. Skipping.');
+    else throw error;
   }
 }
 
-run();
+run().catch((error) => {
+  console.error(error.message);
+  process.exitCode = 1;
+});
