@@ -39,7 +39,6 @@ jobs:
         env:
           GIT_COMMIT: ${{ github.sha }}
           PUBLIC_CLARITY_PROJECT_ID: tqngpokfgs
-          PUBLIC_CF_WEB_ANALYTICS_TOKEN: ${{ secrets.PUBLIC_CF_WEB_ANALYTICS_TOKEN }}
         run: pnpm build
 
       - name: Verify analytics activation contract

@@ -86,9 +86,6 @@ AI_GATEWAY_ID = "default"
 # AI_GATEWAY_ACCOUNT_ID unused by the Workers AI binding path (kept for ops notes).
 # AI_GATEWAY_ACCOUNT_ID = "cc3bb24ae3c87cff38c2be85df3dab29"
 
-# Note: PUBLIC_CF_WEB_ANALYTICS_TOKEN is an Astro build-time public env (CI),
-# not a Worker [vars] binding. Pass it in the Deploy Worker workflow build step.
-
 [[analytics_engine_datasets]]
 binding = "AI_ANALYTICS"
 

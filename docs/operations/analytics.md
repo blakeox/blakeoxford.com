@@ -7,13 +7,13 @@ content.
 
 ## Platform roles
 
-| Platform | Role | Data boundary | Owner | Kill switch |
-| --- | --- | --- | --- | --- |
-| Cloudflare Web Analytics | Aggregate traffic, SPA navigation, and real-user performance | Privacy-first aggregate RUM; no custom content | Repository maintainer | Remove `PUBLIC_CF_WEB_ANALYTICS_TOKEN` from the production build or disable the site in Cloudflare |
-| GA4 through Cloudflare Zaraz | Acquisition, page views, and conversion funnels | Bounded event names and dimensions only; query parameters and IP/user agent hidden in Zaraz | Repository maintainer | Disable the GA4 tool in Zaraz; leave the app event contract intact |
-| Microsoft Clarity | UX diagnostics and session replay for interaction problems | Low-cardinality event names/tags only; no prompts, responses, IDs, or form content | Repository maintainer | Remove `PUBLIC_CLARITY_PROJECT_ID` from the build or disable the project |
-| Sentry | Browser and Worker exceptions | Error diagnostics governed by Sentry configuration; no analytics payloads | Repository maintainer | Disable the affected Sentry integration or reduce sampling |
-| Cloudflare Analytics Engine | AI Search canary and operational telemetry | Success/error, latency, response length, and bounded dimensions; no prompts or responses | Repository maintainer | Remove the Cron Trigger or set the operational telemetry path to no-op |
+| Platform                     | Role                                                         | Data boundary                                                                               | Owner                 | Kill switch                                                              |
+| ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------ |
+| Cloudflare Web Analytics     | Aggregate traffic, SPA navigation, and real-user performance | Privacy-first aggregate RUM; no custom content; Cloudflare edge auto-install                | Repository maintainer | Disable the `blakeoxford.com` Web Analytics site in Cloudflare           |
+| GA4 through Cloudflare Zaraz | Acquisition, page views, and conversion funnels              | Bounded event names and dimensions only; query parameters and IP/user agent hidden in Zaraz | Repository maintainer | Disable the GA4 tool in Zaraz; leave the app event contract intact       |
+| Microsoft Clarity            | UX diagnostics and session replay for interaction problems   | Low-cardinality event names/tags only; no prompts, responses, IDs, or form content          | Repository maintainer | Remove `PUBLIC_CLARITY_PROJECT_ID` from the build or disable the project |
+| Sentry                       | Browser and Worker exceptions                                | Error diagnostics governed by Sentry configuration; no analytics payloads                   | Repository maintainer | Disable the affected Sentry integration or reduce sampling               |
+| Cloudflare Analytics Engine  | AI Search canary and operational telemetry                   | Success/error, latency, response length, and bounded dimensions; no prompts or responses    | Repository maintainer | Remove the Cron Trigger or set the operational telemetry path to no-op   |
 
 Do not add Plausible, Google Tag Manager, Mixpanel, or another general-purpose
 platform without replacing an existing role. Each would add consent, schema,
@@ -44,13 +44,13 @@ threshold here.
 
 ## Measurement model
 
-| Decision | Leading indicator | Lagging indicator | Owner |
-| --- | --- | --- | --- |
-| Are qualified visitors finding the right path? | Organic/referral share and command-center handoffs | Contact submissions by acquisition source | Repository maintainer |
-| Is the contact path working? | Form starts, validation failures, and Turnstile failures | Successful `generate_lead` events and delivered contact messages | Repository maintainer |
-| Is Ask useful? | Suggested-action clicks, retries, response metadata, and bounded quality scores | Positive/negative feedback rate and completed chat engagement | Repository maintainer |
-| Is the site fast enough? | LCP, INP, CLS, FCP, and TTFB ratings | Search visibility and conversion completion | Repository maintainer |
-| Is the system reliable? | Sentry errors, Worker failures, and AI canary latency | Availability and incident count | Repository maintainer |
+| Decision                                       | Leading indicator                                                               | Lagging indicator                                                | Owner                 |
+| ---------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------- | --------------------- |
+| Are qualified visitors finding the right path? | Organic/referral share and command-center handoffs                              | Contact submissions by acquisition source                        | Repository maintainer |
+| Is the contact path working?                   | Form starts, validation failures, and Turnstile failures                        | Successful `generate_lead` events and delivered contact messages | Repository maintainer |
+| Is Ask useful?                                 | Suggested-action clicks, retries, response metadata, and bounded quality scores | Positive/negative feedback rate and completed chat engagement    | Repository maintainer |
+| Is the site fast enough?                       | LCP, INP, CLS, FCP, and TTFB ratings                                            | Search visibility and conversion completion                      | Repository maintainer |
+| Is the system reliable?                        | Sentry errors, Worker failures, and AI canary latency                           | Availability and incident count                                  | Repository maintainer |
 
 Do not treat platform dashboards as proof that a conversion completed. Pair
 browser events with server-side contact delivery and Worker/Sentry evidence.
@@ -62,28 +62,25 @@ business outcomes.
 ### Foundation
 
 1. Keep the event contract and `pnpm quality:analytics` green.
-2. Configure `PUBLIC_CLARITY_PROJECT_ID` in the production build environment.
+2. Confirm the Cloudflare Web Analytics site for `blakeoxford.com` remains
+   enabled with edge auto-install. Do not add a second application beacon or
+   a build-time token; that would duplicate collection.
+3. Configure `PUBLIC_CLARITY_PROJECT_ID` in the production build environment.
    The repository already has the intended project ID in the deploy workflow;
    local builds may intentionally omit it.
-3. Create or enable the `blakeoxford.com` site in Cloudflare Web Analytics and
-   store its site token in the approved deployment secret
-   `PUBLIC_CF_WEB_ANALYTICS_TOKEN`. The current Wrangler OAuth identity does
-   not have the account permission required to create or list RUM sites, so use
-   the Cloudflare dashboard or an explicitly approved narrowly scoped token.
 
 ### Core functionality
 
-1. If GA4 reporting is required, obtain the real `G-...` Measurement ID through
-   approved secret/configuration management. Never commit it as a placeholder.
-2. Generate the Zaraz import with:
+1. Use the real `G-...` Measurement ID for the Blake Oxford web stream. Never
+   commit a placeholder.
+2. Generate and publish the Zaraz configuration with:
 
    ```sh
-   GA4_MEASUREMENT_ID=G-XXXXXXXXXX pnpm exec node scripts/setup/deploy-zaraz.mjs --write-only
+   GA4_MEASUREMENT_ID=G-XXXXXXXXXX pnpm exec node scripts/setup/deploy-zaraz.mjs
    ```
 
-3. Import and publish the generated configuration in Cloudflare Zaraz, then
-   verify one page view, `generate_lead`, and one bounded chat event. Do not
-   enable GA4 until the ID and Zaraz permission are both present.
+3. Verify one page view, `generate_lead`, and one bounded chat event. The
+   Zaraz API update must be followed by an explicit publish operation.
 
 ### Stabilization and hardening
 
