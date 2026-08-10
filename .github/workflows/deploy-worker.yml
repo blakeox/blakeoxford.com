@@ -90,7 +90,20 @@ jobs:
           print(f"✅ Cloudflare reports the active deployment for {os.environ['EXPECTED_COMMIT']}")
           PY
 
+  seo-monitor:
+    name: Verify deployed SEO and redirect contract (NUC)
+    needs: deploy
+    runs-on: [self-hosted, linux, x64, nuc, seo]
+    timeout-minutes: 15
+    env:
+      # The automation NUC intentionally exposes the pinned Node runtime only
+      # to trusted repository workflows; this smoke does not receive secrets.
+      PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
       - name: Verify deployed SEO and redirect contract
         env:
           EDGE_EXPECTED_COMMIT: ${{ github.sha }}
-        run: pnpm monitor:seo
+        run: bash scripts/monitor/seo-edge-smoke.sh
