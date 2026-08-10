@@ -61,39 +61,42 @@ implementation does not send or retain the referrer URL, search query, form cont
 address. Use this event as the aggregate organic-contact conversion measure after the analytics
 property is verified.
 
-## Latest recorded measurement state: 2026-08-09
+## Latest recorded measurement state: 2026-08-10
 
-Reviewed 2026-08-09 against production commit `cc228629` and the authenticated personal Search
-Console property:
+Reviewed 2026-08-10 against production commit `1834ffb56f0bbfe15d9d43b449a4adc8b460d107`,
+the authenticated personal Search Console property, and the Cloudflare Zaraz control plane:
 
-- Technical live gates are green: `pnpm monitor:seo` passes all redirect, robots, sitemap,
-  route-wide HTML parity, metadata, and provenance checks across 18 canonical sitemap URLs.
+- Technical live gates are green in [workflow 31346176288](https://github.com/blakeox/blakeoxford.com/actions/runs/31346176288): hosted deployment, provenance, and the repo-scoped NUC smoke pass all redirect, robots, sitemap, route-wide HTML parity, metadata, and provenance checks across 18 canonical sitemap URLs.
 - Google Search Console personal-site property is accessible. The canonical sitemap was submitted,
-  last read on the review date, with 18 discovered pages and 0 videos.
+  with 18 discovered pages and 0 videos in the recorded sitemap receipt.
 - Initial Search Console overview baseline: 9 total web-search clicks, 16 indexed pages,
-  13 not-indexed pages, 10 HTTPS URLs, 0 non-HTTPS URLs, and no Core Web Vitals data yet.
-- Search Console Performance (Web, 3 months, 2026-05-08 through 2026-08-07; updated four hours
-  before review): 737 impressions, 9 clicks, 1.2% average CTR, and 16.7 average position. The
+  14 not-indexed pages, 10 HTTPS URLs, 0 non-HTTPS URLs, and no Core Web Vitals data yet.
+- Search Console Performance (Web, 3 months, 2026-05-08 through 2026-08-07; refreshed 2026-08-10):
+  737 impressions, 9 clicks, 1.2% average CTR, and 16.7 average position. The
   query and landing-page tables were reviewed without copying raw search queries or personal data
   into this repository.
-- Search Console Page indexing (last updated 2026-08-04) reports 13 not-indexed pages across five
+- Search Console Page indexing (last updated 2026-08-06) reports 14 not-indexed pages across five
   reasons: two expected canonical redirects, two expected query-filter canonical alternates, one
-  404, one other 4xx, and seven crawled-but-currently-not-indexed URLs. The historical query
-  surfaces are tracked in #500; the 404/4xx examples remain an external coverage follow-up.
+  404, one other 4xx, and eight crawled-but-currently-not-indexed URLs. The historical query
+  surfaces remain under provider validation in #500; the 404/4xx examples remain an external
+  coverage follow-up.
 - Search Console Unparsable structured data (last updated 2026-08-07) reports two historical
   parsing errors affecting `/projects/ferment-app` and `/blog/building-my-own-local-llm-stack/`.
-  Current production JSON-LD parses successfully for both URLs; Search Console validation remains
-  pending under #501.
-- Bing Webmaster Tools personal property is selected and the canonical sitemap is submitted;
-  status is `Processing` with 0 errors, 0 warnings, and 1 known sitemap. Bing has not yet
-  crawled or discovered URLs.
+  Current production JSON-LD parses successfully for both URLs; provider validation remains
+  `Started` under #501.
+- Bing's connected Microsoft property set currently does not expose `blakeoxford.com`; the earlier
+  personal-property sitemap receipt remains `Processing` with 0 errors, 0 warnings, and 1 known
+  sitemap. No new Bing crawl or performance data is claimed.
+- Cloudflare Zaraz has the GA4 tool enabled with privacy settings that hide IP addresses, user
+  agents, query parameters, and external referrers; the latest configuration publish was
+  2026-08-09. This proves collection is configured, not that a qualified organic lead occurred.
 - Qualified organic contact counts and Bing performance data are still pending. The Search Console
-  aggregate performance baseline is now recorded, but do not treat it as a complete conversion or
+  aggregate performance baseline is recorded, but do not treat it as a complete conversion or
   cross-engine baseline until the remaining fields are captured.
 
-The current branch also adds an edge-level `X-Robots-Tag: noindex, nofollow` response for
-query-bearing HTML requests, addressing the legacy `?filter=` crawl surface tracked in #500. This
-control is not a production receipt until deployed and live-verified.
+The production release also enforces an edge-level `X-Robots-Tag: noindex, nofollow` response for
+query-bearing HTML requests, addressing the legacy `?filter=` crawl surface tracked in #500. The
+control is deployed and live-verified by the NUC smoke; provider exclusion validation remains open.
 
 Facebook validation is intentionally out of scope. X/Twitter card validation remains a separate
 provider-authenticated check.
