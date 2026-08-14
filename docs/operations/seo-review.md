@@ -61,49 +61,42 @@ implementation does not send or retain the referrer URL, search query, form cont
 address. Use this event as the aggregate organic-contact conversion measure after the analytics
 property is verified.
 
-## Latest recorded production and measurement state: 2026-08-13
+## Latest recorded measurement state: 2026-08-10
 
-Reviewed against production merge `0278cca7b5bf60475460ca55b82f25c2955b69e5`, the
-Cloudflare deployment surface, the protected GitHub release receipts, and the latest available
-authenticated provider snapshot:
+Reviewed 2026-08-10 against production commit `1834ffb56f0bbfe15d9d43b449a4adc8b460d107`,
+the authenticated personal Search Console property, and the Cloudflare Zaraz control plane:
 
-- Protected promotion completed through [PR #516](https://github.com/blakeox/blakeoxford.com/pull/516),
-  [PR #517](https://github.com/blakeox/blakeoxford.com/pull/517), and
-  [PR #518](https://github.com/blakeox/blakeoxford.com/pull/518).
-- Main [Comprehensive CI run 31760658256](https://github.com/blakeox/blakeoxford.com/actions/runs/31760658256)
-  passed the full test suites, emitted SEO contract, E2E, performance/Lighthouse, and the
-  validation-only Optimization Tasks job. Optimization Tasks passed advanced optimization,
-  Cloudflare Functions validation, validation report generation, and artifact upload without
-  pushing a repository commit.
-- Main [Deployment Status Check 31760658199](https://github.com/blakeox/blakeoxford.com/actions/runs/31760658199),
-  [Push on main 31760657750](https://github.com/blakeox/blakeoxford.com/actions/runs/31760657750),
-  [Fast CI 31760658319](https://github.com/blakeox/blakeoxford.com/actions/runs/31760658319),
-  CodeQL, Security/Dependency Scan, NUC-backed Act Local, and Act Essential all passed.
-- Live smoke returned HTTP 200 for `/`, `/robots.txt`, `/sitemap.xml`,
-  `/projects/?filter=microsoft-fabric`, `/projects/ferment-app`, and
-  `/blog/building-my-own-local-llm-stack/`. Robots points to the canonical `/sitemap.xml`;
-  the filtered project URL emits `noindex`; both historical routes emit JSON-LD.
-- The latest authenticated Google Search Console snapshot remains the 2026-08-10 receipt:
-  the personal-site property had 18 discovered sitemap pages; Performance (2026-05-08 through
-  2026-08-07) showed 737 impressions, 9 clicks, 1.2% average CTR, and 16.7 average position.
-  Page indexing showed 16 indexed and 14 not indexed, including two historical query alternates.
-- Search Console's latest available structured-data receipt still reported two historical parsing
-  errors for `/projects/ferment-app` and `/blog/building-my-own-local-llm-stack/`; current
-  production JSON-LD is valid and #501 remains open for the refreshed provider result.
-- Bing's available property state remains the prior personal-property sitemap receipt in
-  `Processing`, with 0 errors, 0 warnings, and 1 known sitemap; no new Bing crawl or performance
-  data is claimed without an authenticated property receipt.
-- Cloudflare Zaraz remains configured for GA4 with privacy controls that hide IP addresses, user
-  agents, query parameters, and external referrers. This proves collection configuration, not a
-  qualified organic lead. Qualified organic contact counts remain pending.
-- #515 is closed because the production optimization job now validates and uploads artifacts
-  without mutating the repository. #482, #483, #500, and #501 remain open only for their
-  Search Console, Bing, or qualified-organic-measurement acceptance evidence.
+- Technical live gates are green in [workflow 31346176288](https://github.com/blakeox/blakeoxford.com/actions/runs/31346176288): hosted deployment, provenance, and the repo-scoped NUC smoke pass all redirect, robots, sitemap, route-wide HTML parity, metadata, and provenance checks across 18 canonical sitemap URLs.
+- Google Search Console personal-site property is accessible. The canonical sitemap was submitted,
+  with 18 discovered pages and 0 videos in the recorded sitemap receipt.
+- Initial Search Console overview baseline: 9 total web-search clicks, 16 indexed pages,
+  14 not-indexed pages, 10 HTTPS URLs, 0 non-HTTPS URLs, and no Core Web Vitals data yet.
+- Search Console Performance (Web, 3 months, 2026-05-08 through 2026-08-07; refreshed 2026-08-10):
+  737 impressions, 9 clicks, 1.2% average CTR, and 16.7 average position. The
+  query and landing-page tables were reviewed without copying raw search queries or personal data
+  into this repository.
+- Search Console Page indexing (last updated 2026-08-06) reports 14 not-indexed pages across five
+  reasons: two expected canonical redirects, two expected query-filter canonical alternates, one
+  404, one other 4xx, and eight crawled-but-currently-not-indexed URLs. The historical query
+  surfaces remain under provider validation in #500; the 404/4xx examples remain an external
+  coverage follow-up.
+- Search Console Unparsable structured data (last updated 2026-08-07) reports two historical
+  parsing errors affecting `/projects/ferment-app` and `/blog/building-my-own-local-llm-stack/`.
+  Current production JSON-LD parses successfully for both URLs; provider validation remains
+  `Started` under #501.
+- Bing's connected Microsoft property set currently does not expose `blakeoxford.com`; the earlier
+  personal-property sitemap receipt remains `Processing` with 0 errors, 0 warnings, and 1 known
+  sitemap. No new Bing crawl or performance data is claimed.
+- Cloudflare Zaraz has the GA4 tool enabled with privacy settings that hide IP addresses, user
+  agents, query parameters, and external referrers; the latest configuration publish was
+  2026-08-09. This proves collection is configured, not that a qualified organic lead occurred.
+- Qualified organic contact counts and Bing performance data are still pending. The Search Console
+  aggregate performance baseline is recorded, but do not treat it as a complete conversion or
+  cross-engine baseline until the remaining fields are captured.
 
-The production release enforces an edge-level `X-Robots-Tag: noindex, nofollow` response for
-query-bearing HTML requests, addressing the legacy `?filter=` crawl surface tracked in #500.
-The control is deployed and live-verified; Search Console exclusion/re-crawl confirmation remains
-the provider gate.
+The production release also enforces an edge-level `X-Robots-Tag: noindex, nofollow` response for
+query-bearing HTML requests, addressing the legacy `?filter=` crawl surface tracked in #500. The
+control is deployed and live-verified by the NUC smoke; provider exclusion validation remains open.
 
 Facebook validation is intentionally out of scope. X/Twitter card validation remains a separate
 provider-authenticated check.
