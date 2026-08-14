@@ -267,22 +267,21 @@ jobs:
 
       - name: Run advanced optimizations
         run: pnpm optimize:images
+        env:
+          OPTIMIZATION_OUTPUT_DIR: ${{ runner.temp }}/blakeoxford-optimized-images
 
       - name: Snapshot quality baseline (main only)
         run: pnpm quality:snapshot || true
         if: github.ref == 'refs/heads/main'
 
-      - name: Commit quality snapshot index (if changed)
+      - name: Report quality snapshot changes
         if: github.ref == 'refs/heads/main'
         run: |
           if git diff --quiet quality-snapshots/INDEX.md; then
             echo "No snapshot index changes"
           else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add quality-snapshots/INDEX.md
-            git commit -m "chore(ci): update quality snapshot index [skip ci]" || true
-            git push || echo "Snapshot push race condition; safe to ignore"
+            echo "::notice::Quality snapshot changed in the isolated CI workspace; persistence requires a reviewed pull request."
+            git diff --stat -- quality-snapshots/INDEX.md
           fi
 
       - name: Validate Cloudflare Functions
@@ -296,10 +295,24 @@ jobs:
             echo "⚠️ Warning: Some edge functions may be missing"
           fi
 
-      - name: Commit optimized assets
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: '🚀 Automated optimizations [skip ci]'
-          file_pattern: 'public/assets/images/** src/assets/**'
+      - name: Write optimization validation report
+        run: |
+          report_dir="${RUNNER_TEMP}/optimization-report"
+          output_dir="${OPTIMIZATION_OUTPUT_DIR}"
+          mkdir -p "$report_dir"
+          test -d "$output_dir"
+          find "$output_dir" -type f -print0 | sort -z | xargs -0 shasum -a 256 > "$report_dir/files.sha256"
+          find "$output_dir" -type f | wc -l > "$report_dir/file-count.txt"
+          du -sh "$output_dir" > "$report_dir/size.txt"
+          printf 'Optimization output is validation-only. Generated assets are not pushed by CI.\n' > "$report_dir/README.txt"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPTIMIZATION_OUTPUT_DIR: ${{ runner.temp }}/blakeoxford-optimized-images
+
+      - name: Upload optimization validation report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: optimized-assets-validation-${{ github.sha }}
+          path: ${{ runner.temp }}/optimization-report
+          retention-days: 30
+          if-no-files-found: error

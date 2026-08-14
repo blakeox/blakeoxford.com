@@ -13,15 +13,19 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const INPUT_DIR = path.join(__dirname, '../../public/assets/images');
-const OUTPUT_DIR = path.join(__dirname, '../../public/assets/images/optimized');
+const INPUT_DIR = process.env.OPTIMIZATION_INPUT_DIR
+  ? path.resolve(process.env.OPTIMIZATION_INPUT_DIR)
+  : path.join(__dirname, '../../public/assets/images');
+const OUTPUT_DIR = process.env.OPTIMIZATION_OUTPUT_DIR
+  ? path.resolve(process.env.OPTIMIZATION_OUTPUT_DIR)
+  : path.join(__dirname, '../../public/assets/images/optimized');
 
 // Image optimization configurations
 const FORMATS = {
   avif: { quality: 80, effort: 4 },
   webp: { quality: 85, effort: 4 },
   jpeg: { quality: 85, progressive: true },
-  png: { compressionLevel: 9 }
+  png: { compressionLevel: 9 },
 };
 
 const RESPONSIVE_SIZES = [320, 640, 768, 1024, 1280, 1536, 1920];
@@ -100,7 +104,8 @@ async function optimizeImage(inputPath, filename) {
       // Responsive sizes (only if image is large enough)
       for (const width of responsiveWidths(originalWidth)) {
         const responsiveOutputPath = path.join(formatDir, `${nameWithoutExt}@${width}w.${format}`);
-        await image.clone()
+        await image
+          .clone()
           .resize(width, null, { withoutEnlargement: true })
           // eslint-disable-next-line no-unexpected-multiline
           [format](FORMATS[format])
@@ -114,14 +119,13 @@ async function optimizeImage(inputPath, filename) {
       formats: Object.keys(FORMATS),
       sizes: responsiveWidths(originalWidth),
       width: originalWidth,
-      height: metadata.height
+      height: metadata.height,
     };
 
     const manifestPath = path.join(OUTPUT_DIR, `${nameWithoutExt}.json`);
     await fs.writeFile(manifestPath, JSON.stringify(srcsetData, null, 2));
 
     console.log(`   ✅ Generated ${Object.keys(FORMATS).length} formats with responsive variants`);
-
   } catch (error) {
     console.error(`   ❌ Error processing ${filename}:`, error.message);
   }
@@ -134,9 +138,8 @@ async function generateOptimizedImages() {
 
   try {
     const files = await fs.readdir(INPUT_DIR);
-    const imageFiles = files.filter(file =>
-      /\.(jpg|jpeg|png|webp)$/i.test(file) &&
-      !file.includes('.optimized.')
+    const imageFiles = files.filter(
+      (file) => /\.(jpg|jpeg|png|webp)$/i.test(file) && !file.includes('.optimized.')
     );
 
     console.log(`📂 Found ${imageFiles.length} images to process\n`);
@@ -189,7 +192,6 @@ Use the generated JSON manifests to automate picture element generation.
     console.log(`   Output directory: ${OUTPUT_DIR}`);
     console.log(`   Formats generated: ${Object.keys(FORMATS).join(', ')}`);
     console.log(`   Responsive breakpoints: ${RESPONSIVE_SIZES.join(', ')}`);
-
   } catch (error) {
     console.error('❌ Error during image optimization:', error);
   }
