@@ -61,7 +61,7 @@ implementation does not send or retain the referrer URL, search query, form cont
 address. Use this event as the aggregate organic-contact conversion measure after the analytics
 property is verified.
 
-## Latest recorded production and measurement state: 2026-08-13
+## Historical production and measurement state: 2026-08-13
 
 Reviewed against production merge `0278cca7b5bf60475460ca55b82f25c2955b69e5`, the
 Cloudflare deployment surface, the protected GitHub release receipts, and the latest available
@@ -107,6 +107,21 @@ the provider gate.
 
 Facebook validation is intentionally out of scope. X/Twitter card validation remains a separate
 provider-authenticated check.
+
+## Final provider acceptance and current production state: 2026-08-15
+
+Reviewed against production commit `5a51a4d6365a60a4a15b3d1d8e64d42e38c793ce`, the protected GitHub release receipts, Cloudflare live smoke, authenticated Google Search Console, Google Analytics, and the current Bing Webmaster Tools session:
+
+- Protected promotion completed through [PR #526](https://github.com/blakeox/blakeoxford.com/pull/526), [PR #527](https://github.com/blakeox/blakeoxford.com/pull/527), and [PR #528](https://github.com/blakeox/blakeoxford.com/pull/528). Main [Comprehensive CI 31886850716](https://github.com/blakeox/blakeoxford.com/actions/runs/31886850716), [Deployment Status Check 31886850687](https://github.com/blakeox/blakeoxford.com/actions/runs/31886850687), [Push on main 31886850448](https://github.com/blakeox/blakeoxford.com/actions/runs/31886850448), [Act Essential 31886850711](https://github.com/blakeox/blakeoxford.com/actions/runs/31886850711), [NUC-backed Act Local 31886850681](https://github.com/blakeox/blakeoxford.com/actions/runs/31886850681), and [Security/Dependency Scan 31886850677](https://github.com/blakeox/blakeoxford.com/actions/runs/31886850677) passed.
+- `/__version` reports the production commit above. Live smoke returned 200 for `/`, `/robots.txt`, `/sitemap.xml`, `/__version`, the filtered project route, and both representative historical JSON-LD routes. Query-bearing HTML returns `X-Robots-Tag: noindex, nofollow`; robots names the canonical `/sitemap.xml`.
+- Google Search Console sitemap receipt: `https://blakeoxford.com/sitemap.xml`, submitted 2026-08-08, last read 2026-08-11, Success, 18 discovered pages, 0 videos.
+- Google Search Console Web Performance receipt (2026-05-14 through 2026-08-13; report updated within the current review): 708 impressions, 8 clicks, 1.1% average CTR, average position 18.8. Page indexing shows 16 indexed and 14 not indexed. The two legacy filter URLs are explicitly not indexed or served and are classified as Alternate page with proper canonical tag; their last crawls are 2026-08-08 and 2026-08-04; Duplicate without user-selected canonical is 0.
+- Google Search Console structured-data receipt (last updated 2026-08-13): Invalid 0; the historical `Parsing error: Missing '}' or object member name` rule is Passed with 0 pages.
+- Google Analytics lead receipt (2026-07-18 through 2026-08-14): one `generate_lead` event/new lead, attributed to Direct; Organic Search = 0, Qualified leads = 0, Converted leads = 0. The event contract contains only bounded acquisition categories and no query strings, contact fields, or personal data.
+- Bing Webmaster Tools recognizes the `blakeoxford.com/` property through the current Microsoft session, but its Sitemaps and Search Performance views report that the session is unauthorized to access the site. The existing canonical sitemap/defer operating decision remains in place; no duplicate property or manual URL submission was created.
+- SEO issues #482, #483, #500, #501, and #502 are closed with the receipts above; rollup #485 is closed. Facebook validation remains intentionally out of scope.
+
+The provider gates are complete for the current release. Continue the recurring review for future changes, especially Search Console index coverage, organic lead attribution, Bing authorization, and field Core Web Vitals.
 
 ## Performance targets and ownership
 
