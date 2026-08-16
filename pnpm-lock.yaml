@@ -74,8 +74,8 @@ importers:
         specifier: ^1.61.1
         version: 1.61.1
       '@rollup/rollup-linux-x64-gnu':
-        specifier: ^4.62.2
-        version: 4.62.2
+        specifier: ^4.62.4
+        version: 4.62.4
       '@sentry/cli':
         specifier: ^3.6.1
         version: 3.6.1
@@ -1667,8 +1667,8 @@ packages:
       rollup:
         optional: true
 
-  '@rollup/rollup-linux-x64-gnu@4.62.2':
-    resolution: {integrity: sha512-5BqxR/pshjey51iliyzTD5Xi3EN0aLmQ2lZ3lvefVV9c82BvrLo2/6OT55iifpWBufs6kdwWbuOKS841DrmK9A==}
+  '@rollup/rollup-linux-x64-gnu@4.62.4':
+    resolution: {integrity: sha512-W69hukhZ3KKNRCaMIEzKvcFye42hh0FE1+YoYaf5+Ikacuftoco6yO/xouz0hc5d5W/s3yBro5jRiuEE/Q5vUw==}
     cpu: [x64]
     os: [linux]
 
@@ -8266,7 +8266,7 @@ snapshots:
       estree-walker: 2.0.2
       picomatch: 2.3.2
 
-  '@rollup/rollup-linux-x64-gnu@4.62.2': {}
+  '@rollup/rollup-linux-x64-gnu@4.62.4': {}
 
   '@sentry-internal/tracing@7.120.4':
     dependencies:
