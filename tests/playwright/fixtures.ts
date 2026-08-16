@@ -105,7 +105,13 @@ export const test = base.extend({
             selectors.forEach((sel) => {
               document.querySelectorAll(sel).forEach((el) => {
                 try {
-                  if (el.id === 'nav-mobile-links' || el.id === 'search-overlay') return;
+                  if (
+                    el.id === 'nav-mobile-links' ||
+                    el.id === 'search-overlay' ||
+                    el.closest('#search-overlay')
+                  ) {
+                    return;
+                  }
                   const text = (el.textContent || '').toLowerCase();
                   if (
                     sel !== 'dialog' ||
