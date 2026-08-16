@@ -61,7 +61,7 @@ jobs:
             astro-build-${{ runner.os }}-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@v6.0.9
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -158,7 +158,7 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@v6.0.9
         with:
           package_json_file: package.json
 
@@ -320,7 +320,7 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@v6.0.9
         with:
           package_json_file: package.json
 
