@@ -74,7 +74,7 @@
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.61.1",
     "@rollup/rollup-linux-x64-gnu": "^4.62.4",
-    "@sentry/cli": "^3.6.1",
+    "@sentry/cli": "^3.6.2",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "^6.9.1",
