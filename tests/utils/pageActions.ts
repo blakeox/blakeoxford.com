@@ -117,6 +117,10 @@ export async function openSearchOverlay(page: Page) {
 
 export async function fillSearch(page: Page, query: string) {
   const input = page.locator('#search-input');
+  // The command center is intentionally lazy-mounted. Firefox can take longer
+  // than Chromium/WebKit to commit the first React render after the overlay
+  // shell opens, so wait for the actual control before mutating its state.
+  await input.waitFor({ state: 'attached', timeout: 10000 });
   // Ensure input is visible and enabled; some overlays toggle attributes asynchronously
   await page.evaluate(() => {
     try {
@@ -131,7 +135,8 @@ export async function fillSearch(page: Page, query: string) {
       input.setAttribute('aria-expanded', 'true');
     } catch (e) { console.error('ensure input visible failed', e); }
   }).catch(() => {});
-  await input.fill(query);
+  await expect(input).toBeVisible({ timeout: 10000 });
+  await input.fill(query, { timeout: 10000 });
   const results = page.locator('[data-search-result], .search-result, .search-overlay [role="listbox"] [role="option"]');
   // Wait for at least one visible result to avoid strict mode multiple element error
   await page.waitForFunction(() => {
