@@ -88,7 +88,7 @@
     "@vitest/coverage-v8": "^4.1.10",
     "astro": "^7.2.2",
     "astro-compress": "^2.4.1",
-    "astro-eslint-parser": "^3.0.0",
+    "astro-eslint-parser": "^3.1.0",
     "chrome-launcher": "^1.2.1",
     "eslint": "^10.7.0",
     "eslint-plugin-astro": "^3.1.0",
