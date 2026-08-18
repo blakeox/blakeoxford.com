@@ -114,7 +114,7 @@
     "typescript": "^6.0.3",
     "vite": "8.2.1",
     "vitest": "^4.1.10",
-    "wrangler": "^4.118.0"
+    "wrangler": "^4.123.0"
   },
   "packageManager": "pnpm@10.34.5+sha256.ccb5c479cab1b00621325bfe7d4c9a8a8031e7a525d7249e275ecbec81b08db2"
 }
