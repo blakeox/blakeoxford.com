@@ -10,6 +10,8 @@ Thank you for investing time in improving this project. This guide covers workfl
   - `main` → production
   - Hotfixes: `hotfix/*` → PR to `main`, then back-merge to `development` and `testing`
 
+- Protected promotion order is `feature/*` → `development` → `testing` → `main`. For a back-merge into an older protected branch, create a `chore/*` reconciliation branch from the target lineage, resolve conflicts in favor of the validated source tree, and promote it through this same order. Do not force-push protected branches.
+
 - Use feature branches; prefix with area if helpful (e.g. `feat/search-index`, `quality/flakiness-metrics`). Create from `development` unless it is a hotfix.
 - Conventional commits: `feat:`, `fix:`, `docs:`, `test:`, `ci:`, `refactor:`, `chore:`.
 - Keep commits atomic; separate logic, tests, and large refactors where possible.
