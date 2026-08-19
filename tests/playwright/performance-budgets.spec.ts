@@ -66,20 +66,15 @@ test.describe('Performance Budget Enforcement', () => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
 
-      const BUDGETS = {
-        totalCSS: 200 * 1024, // 200KB total CSS (increased for component styles)
-        singleStylesheet: 200 * 1024, // Shared token/runtime stylesheet stays within total budget
-      };
-
       const totalCSSSize = cssResources.reduce((sum, resource) => sum + resource.size, 0);
 
-      expect(totalCSSSize).toBeLessThan(BUDGETS.totalCSS);
+      expect(totalCSSSize).toBeLessThan(budgets.bundleSizes.cssTotalBytes);
       console.log(
-        `🎨 Total CSS size: ${(totalCSSSize / 1024).toFixed(2)}KB (Budget: ${BUDGETS.totalCSS / 1024}KB)`
+        `🎨 Total CSS size: ${(totalCSSSize / 1024).toFixed(2)}KB (Budget: ${budgets.bundleSizes.cssTotalBytes / 1024}KB)`
       );
 
       cssResources.forEach((resource) => {
-        expect(resource.size).toBeLessThan(BUDGETS.singleStylesheet);
+        expect(resource.size).toBeLessThan(budgets.bundleSizes.cssSingleBytes);
       });
     });
   });
