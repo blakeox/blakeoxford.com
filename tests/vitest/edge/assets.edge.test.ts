@@ -63,9 +63,9 @@ describe('asset route cache and failure contract', () => {
     const response = await handleAssets(ctx);
 
     expect(response.status).toBe(200);
-    expect(response.headers.get('cache-control')).toMatch(/^public, max-age=\d+/);
+    expect(response.headers.get('cache-control')).toBe('public, max-age=31536000, immutable');
     expect(response.headers.get('x-route-kind')).toBe('asset');
-    expect(response.headers.get('x-cache-policy')).toContain('public, max-age=');
+    expect(response.headers.get('x-cache-policy')).toBe('public, max-age=31536000, immutable');
     expect(ctx.cachePut).toHaveBeenCalledOnce();
   });
 });
