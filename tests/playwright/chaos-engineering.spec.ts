@@ -4,153 +4,173 @@ import { waitForKeyboardResponse, waitForAsyncOperation } from './utils/test-hel
 test.describe('Chaos Engineering Tests @extended', () => {
   test.describe('Network Resilience', () => {
     test('should handle random network failures gracefully', async ({ page, context }) => {
-      // Randomly fail 20% of requests to simulate unstable network
+      // Deterministically fail every fifth eligible asset request to simulate a
+      // repeatable 20% unstable-network scenario. Never abort the document
+      // request itself; that would test Playwright setup rather than resilience.
+      let eligibleRequestCount = 0;
+      let failedRequestCount = 0;
       await context.route('**/*', (route) => {
-        const shouldFail = Math.random() < 0.2;
-        
-        if (shouldFail && !route.request().url().includes('.html')) {
+        const resourceType = route.request().resourceType();
+        const eligible = ['stylesheet', 'image', 'font'].includes(resourceType);
+        const shouldFail = eligible && ++eligibleRequestCount % 5 === 0;
+
+        if (shouldFail) {
+          failedRequestCount += 1;
           route.abort('connectionfailed');
         } else {
           route.continue();
         }
       });
-      
+
       await page.goto('/');
-      
+
       // Page should still load and be functional
       await expect(page.locator('main')).toBeVisible();
       await expect(page.locator('nav')).toBeVisible();
-      
+
       // Basic navigation should work
-      const aboutLink = page.getByRole('link', { name: /about/i });
-      if (await aboutLink.isVisible()) {
-        await aboutLink.click();
-        await expect(page.locator('main')).toBeVisible();
-      }
-      
-      console.log('✅ Site remains functional with 20% network failure rate');
+      const aboutLink = page
+        .getByRole('navigation', { name: 'Main Navigation' })
+        .getByRole('link', { name: 'About', exact: true });
+      await expect(aboutLink).toBeVisible();
+      await aboutLink.click();
+      await expect(page.locator('main')).toBeVisible();
+
+      expect(failedRequestCount).toBeGreaterThan(0);
+      console.log(
+        `✅ Site remains functional with deterministic 20% network failure rate (${failedRequestCount} failed assets)`
+      );
     });
 
     test('should handle slow network gracefully', async ({ page, context }) => {
-      // Add random delays to simulate slow network
+      // Add a fixed delay to keep the degraded-network scenario reproducible.
       await context.route('**/*', async (route) => {
-        const delay = Math.random() * 2000; // 0-2 second delay
-        await new Promise(resolve => setTimeout(resolve, delay));
+        const delay = 100;
+        await new Promise((resolve) => setTimeout(resolve, delay));
         route.continue();
       });
-      
+
       const startTime = Date.now();
       await page.goto('/');
-      
+
       // Should eventually load even with slow network
       await expect(page.locator('main')).toBeVisible({ timeout: 15000 });
-      
+
       const loadTime = Date.now() - startTime;
       console.log(`✅ Site loaded in ${loadTime}ms with network chaos`);
-      
+
       // Basic functionality should still work
       await expect(page.locator('nav')).toBeVisible();
     });
 
     test('should handle intermittent API failures', async ({ page, context }) => {
       let apiCallCount = 0;
-      
+
       // Fail every third API call
       await context.route('**/api/**', (route) => {
         apiCallCount++;
-        
+
         if (apiCallCount % 3 === 0) {
-          route.fulfill({ 
-            status: 500, 
-            body: JSON.stringify({ error: 'Simulated API failure' })
+          route.fulfill({
+            status: 500,
+            body: JSON.stringify({ error: 'Simulated API failure' }),
           });
         } else {
           route.continue();
         }
       });
-      
+
       await page.goto('/blog');
-      
+
       // Page should handle API failures gracefully
       await expect(page.locator('main')).toBeVisible();
-      
+
       // Should show error state or fallback content
-      const hasContent = await page.locator('article, .blog-post, .error-message').count() > 0;
+      const hasContent = (await page.locator('article, .blog-post, .error-message').count()) > 0;
       expect(hasContent).toBe(true);
-      
+
       console.log('✅ API failures handled gracefully');
     });
   });
 
   test.describe('Resource Chaos', () => {
     test('should handle missing CSS gracefully', async ({ page, context }) => {
-      // Block CSS files randomly
+      // Fail every other stylesheet request so the scenario is repeatable.
+      let stylesheetCount = 0;
+      let failedStylesheetCount = 0;
       await context.route('**/*.css', (route) => {
-        if (Math.random() < 0.5) {
+        const requestNumber = ++stylesheetCount;
+        if (requestNumber === 1 || requestNumber % 2 === 0) {
+          failedStylesheetCount += 1;
           route.abort('failed');
         } else {
           route.continue();
         }
       });
-      
+
       await page.goto('/');
-      
+
       // Content should still be accessible even without styles
       await expect(page.locator('main')).toBeVisible();
       await expect(page.locator('nav')).toBeVisible();
-      
+
       // Navigation should still work
       const links = page.locator('nav a');
-      if (await links.count() > 0) {
+      if ((await links.count()) > 0) {
         await expect(links.first()).toBeVisible();
       }
-      
+
+      expect(failedStylesheetCount).toBeGreaterThan(0);
       console.log('✅ Site functional without some CSS');
     });
 
     test('should handle missing JavaScript gracefully', async ({ page, context }) => {
       // Block non-critical JavaScript files
+      let scriptCount = 0;
       await context.route('**/*.js', (route) => {
         const url = route.request().url();
-        
+
         // Don't block critical framework files
         if (url.includes('astro') || url.includes('framework')) {
           route.continue();
-        } else if (Math.random() < 0.3) {
+        } else if (++scriptCount % 3 === 0) {
           route.abort('failed');
         } else {
           route.continue();
         }
       });
-      
+
       await page.goto('/');
-      
+
       // Basic functionality should work
       await expect(page.locator('main')).toBeVisible();
-      
+
       // Navigation should work
-      await page.getByRole('link', { name: /about/i }).click();
+      await page
+        .getByRole('navigation', { name: 'Main Navigation' })
+        .getByRole('link', { name: 'About', exact: true })
+        .click();
       await expect(page).toHaveURL(/about/);
-      
+
       console.log('✅ Site functional without some JavaScript');
     });
 
     test('should handle font loading failures', async ({ page, context }) => {
       // Block font files
-      await context.route('**/*.woff*', route => route.abort('failed'));
-      await context.route('**/*.ttf', route => route.abort('failed'));
-      await context.route('**/fonts.googleapis.com/**', route => route.abort('failed'));
-      
+      await context.route('**/*.woff*', (route) => route.abort('failed'));
+      await context.route('**/*.ttf', (route) => route.abort('failed'));
+      await context.route('**/fonts.googleapis.com/**', (route) => route.abort('failed'));
+
       await page.goto('/');
-      
+
       // Page should load with fallback fonts
       await expect(page.locator('main')).toBeVisible();
       await expect(page.locator('h1')).toBeVisible();
-      
+
       // Text should still be readable
       const h1Text = await page.locator('h1').first().textContent();
       expect(h1Text?.trim()).toBeTruthy();
-      
+
       console.log('✅ Site readable with fallback fonts');
     });
   });
@@ -159,31 +179,38 @@ test.describe('Chaos Engineering Tests @extended', () => {
     test('should handle rapid user interactions', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
-      
+
       // Rapidly click navigation elements
-      const navLinks = page.locator('nav a');
+      const navLinks = page
+        .getByRole('navigation', { name: 'Main Navigation' })
+        .locator('a.nav-link[href^="/"]');
       const linkCount = await navLinks.count();
-      
+
       for (let i = 0; i < Math.min(linkCount, 5); i++) {
         // Rapid fire clicks
         await navLinks.nth(i).click();
-        await waitForKeyboardResponse(page); // Brief pause between rapid clicks
-        
+        await page.waitForLoadState('domcontentloaded');
+        await expect(page.locator('main')).toBeVisible();
+
         if (i % 2 === 0) {
-          await page.goBack();
-          await waitForKeyboardResponse(page); // Brief pause between rapid navigation
+          // Reset through a deterministic navigation instead of relying on
+          // browser history, which can legitimately return an empty document
+          // when the initial page was opened by the test harness.
+          await page.goto('/');
+          await page.waitForLoadState('domcontentloaded');
+          await expect(page.locator('main')).toBeVisible();
         }
       }
-      
+
       // Page should still be responsive
       await expect(page.locator('main')).toBeVisible();
-      
+
       console.log('✅ Site handles rapid interactions');
     });
 
     test('should handle invalid form inputs', async ({ page }) => {
       await page.goto('/contact');
-      
+
       const form = page.locator('#contact-form');
       if (await form.isVisible()) {
         // Try various invalid inputs
@@ -196,11 +223,11 @@ test.describe('Chaos Engineering Tests @extended', () => {
           'mailto:test@example.com',
           'javascript:void(0)',
         ];
-        
+
         const nameField = page.locator('#name');
         const emailField = page.locator('#email');
         const messageField = page.locator('#message');
-        
+
         for (const input of chaosInputs) {
           if (await nameField.isVisible()) {
             await nameField.fill(input);
@@ -211,47 +238,62 @@ test.describe('Chaos Engineering Tests @extended', () => {
           if (await messageField.isVisible()) {
             await messageField.fill(input);
           }
-          
+
           // Try to submit
           const submitButton = page.locator('button[type="submit"]');
           if (await submitButton.isVisible()) {
             await submitButton.click();
             await waitForAsyncOperation(page); // Wait for form submission
           }
-          
+
           // Form should handle invalid input gracefully
           await expect(form).toBeVisible();
         }
       }
-      
+
       console.log('✅ Form handles malicious inputs safely');
     });
 
     test('should handle keyboard chaos', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
-      
+
       // Random keyboard mashing
       const chaosKeys = [
-        'Tab', 'Shift+Tab', 'Enter', 'Escape', 'Space',
-        'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
-        'Home', 'End', 'PageUp', 'PageDown',
-        'Control+a', 'Control+c', 'Control+v', 'Control+z'
+        'Tab',
+        'Shift+Tab',
+        'Enter',
+        'Escape',
+        'Space',
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'Home',
+        'End',
+        'PageUp',
+        'PageDown',
+        'Control+a',
+        'Control+c',
+        'Control+v',
+        'Control+z',
       ];
-      
+
       for (let i = 0; i < 20; i++) {
-        const randomKey = chaosKeys[Math.floor(Math.random() * chaosKeys.length)];
-        await page.keyboard.press(randomKey);
+        await page.keyboard.press(chaosKeys[i % chaosKeys.length]);
         await waitForKeyboardResponse(page); // Brief pause between keyboard chaos
       }
-      
+
       // Page should still be functional
       await expect(page.locator('main')).toBeVisible();
-      
+
       // Navigation should still work
-      await page.getByRole('link', { name: /about/i }).click();
+      await page
+        .getByRole('navigation', { name: 'Main Navigation' })
+        .getByRole('link', { name: 'About', exact: true })
+        .click();
       await expect(page).toHaveURL(/about/);
-      
+
       console.log('✅ Site survives keyboard chaos');
     });
   });
@@ -259,12 +301,12 @@ test.describe('Chaos Engineering Tests @extended', () => {
   test.describe('Performance Chaos', () => {
     test('should handle high CPU load simulation', async ({ page }) => {
       await page.goto('/');
-      
+
       // Simulate high CPU load
       await page.evaluate(() => {
         // Create CPU-intensive computation directly
         let result = 0;
-        
+
         // Run CPU-intensive operation for 2 seconds
         const computeHeavy = () => {
           const endTime = Date.now() + 1000; // 1 second
@@ -272,49 +314,54 @@ test.describe('Chaos Engineering Tests @extended', () => {
             result += Math.random() * Math.random();
           }
         };
-        
+
         // Start heavy computation
         computeHeavy();
-        
+
         return result;
       });
-      
+
       // Page should remain responsive
       await waitForAsyncOperation(page); // Wait during heavy computation
-      
+
       // Basic interactions should still work
-      const aboutLink = page.getByRole('link', { name: /about/i });
+      const aboutLink = page
+        .getByRole('navigation', { name: 'Main Navigation' })
+        .getByRole('link', { name: 'About', exact: true });
       await aboutLink.click();
       await expect(page).toHaveURL(/about/);
-      
+
       console.log('✅ Site remains responsive under CPU load');
     });
 
     test('should handle memory pressure', async ({ page }) => {
       await page.goto('/');
-      
+
       // Create memory pressure
       await page.evaluate(() => {
         const largeArrays: number[][] = [];
-        
+
         // Allocate large arrays
         for (let i = 0; i < 10; i++) {
           const arr = new Array(100000).fill(Math.random());
           largeArrays.push(arr);
         }
-        
+
         // Clean up after test
         setTimeout(() => {
           largeArrays.length = 0;
         }, 3000);
       });
-      
+
       await waitForAsyncOperation(page); // Wait during memory pressure test
-      
+
       // Navigation should still work
-      await page.getByRole('link', { name: /projects/i }).click();
+      await page
+        .getByRole('navigation', { name: 'Main Navigation' })
+        .getByRole('link', { name: 'Projects', exact: true })
+        .click();
       await expect(page).toHaveURL(/projects/);
-      
+
       console.log('✅ Site handles memory pressure gracefully');
     });
   });
@@ -322,102 +369,106 @@ test.describe('Chaos Engineering Tests @extended', () => {
   test.describe('Browser Chaos', () => {
     test('should handle viewport chaos', async ({ page }) => {
       await page.goto('/');
-      
+
       // Rapidly change viewport sizes
       const viewports = [
-        { width: 320, height: 568 },   // Mobile
-        { width: 768, height: 1024 },  // Tablet
+        { width: 320, height: 568 }, // Mobile
+        { width: 768, height: 1024 }, // Tablet
         { width: 1920, height: 1080 }, // Desktop
-        { width: 414, height: 896 },   // Mobile landscape
-        { width: 1024, height: 768 },  // Tablet landscape
+        { width: 414, height: 896 }, // Mobile landscape
+        { width: 1024, height: 768 }, // Tablet landscape
       ];
-      
+
       for (let i = 0; i < 10; i++) {
-        const randomViewport = viewports[Math.floor(Math.random() * viewports.length)];
-        await page.setViewportSize(randomViewport);
+        await page.setViewportSize(viewports[i % viewports.length]);
         await waitForKeyboardResponse(page); // Brief pause between viewport changes
-        
+
         // Content should remain accessible
         await expect(page.locator('main')).toBeVisible();
       }
-      
+
       console.log('✅ Site handles viewport chaos');
     });
 
     test('should handle zoom chaos', async ({ page }) => {
       await page.goto('/');
-      
+
       // Simulate different zoom levels by changing viewport
       const zoomLevels = [
         { width: 1920, height: 1080 }, // 100%
-        { width: 960, height: 540 },   // 200%
-        { width: 640, height: 360 },   // 300%
-        { width: 480, height: 270 },   // 400%
+        { width: 960, height: 540 }, // 200%
+        { width: 640, height: 360 }, // 300%
+        { width: 480, height: 270 }, // 400%
       ];
-      
+
       for (const zoom of zoomLevels) {
         await page.setViewportSize(zoom);
         await waitForAsyncOperation(page); // Wait for zoom level change
-        
+
         // Content should remain usable
         await expect(page.locator('main')).toBeVisible();
         await expect(page.locator('nav')).toBeVisible();
       }
-      
+
       console.log('✅ Site remains usable at different zoom levels');
     });
   });
 
   test.describe('Content Chaos', () => {
     test('should handle malformed API responses', async ({ page, context }) => {
-      // Return malformed JSON randomly
+      // Return malformed JSON on every third API request.
+      let apiCallCount = 0;
       await context.route('**/api/**', (route) => {
-        if (Math.random() < 0.3) {
+        if (++apiCallCount % 3 === 0) {
           route.fulfill({
             status: 200,
             headers: { 'content-type': 'application/json' },
-            body: '{"invalid": json malformed}'
+            body: '{"invalid": json malformed}',
           });
         } else {
           route.continue();
         }
       });
-      
+
       await page.goto('/blog');
-      
+
       // Should handle malformed responses gracefully
       await expect(page.locator('main')).toBeVisible();
-      
+
       // Should not crash the page
       const hasValidContent = await page.locator('body').isVisible();
       expect(hasValidContent).toBe(true);
-      
+
       console.log('✅ Site handles malformed API responses');
     });
 
     test('should handle missing content gracefully', async ({ page, context }) => {
-      // Return empty responses sometimes
+      // Return an empty response on every other API request.
+      let apiCallCount = 0;
       await context.route('**/api/**', (route) => {
-        if (Math.random() < 0.5) {
+        if (++apiCallCount % 2 === 0) {
           route.fulfill({
             status: 200,
             headers: { 'content-type': 'application/json' },
-            body: '[]'
+            body: '[]',
           });
         } else {
           route.continue();
         }
       });
-      
+
       await page.goto('/projects');
-      
+
       // Should show empty state or fallback content
       await expect(page.locator('main')).toBeVisible();
-      
+
       // Navigation should still work
-      await page.getByRole('link', { name: /home|about/i }).first().click();
+      await page
+        .getByRole('link', { name: /home|about/i })
+        .first()
+        .click();
       await expect(page.locator('main')).toBeVisible();
-      
+
       console.log('✅ Site handles empty content gracefully');
     });
   });

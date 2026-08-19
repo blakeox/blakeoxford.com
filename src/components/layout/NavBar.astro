@@ -297,9 +297,48 @@ function isActive(href: string): boolean {
       return shell.getAttribute('data-menu-state') === 'open';
     }
 
+    function getMenuFocusable(menu) {
+      return Array.prototype.filter.call(
+        menu.querySelectorAll(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ),
+        function (element) {
+          var styles = window.getComputedStyle(element);
+          return styles.display !== 'none' && styles.visibility !== 'hidden';
+        }
+      );
+    }
+
+    function focusFirstMenuItem(menu) {
+      var first = getMenuFocusable(menu)[0];
+      if (first && typeof first.focus === 'function') first.focus();
+      else if (typeof menu.focus === 'function') menu.focus();
+    }
+
+    function keepMenuFocus(event) {
+      if (event.key !== 'Tab') return;
+      var e = els();
+      if (!e.menu || !e.shell || !isOpen(e.shell)) return;
+      var focusable = getMenuFocusable(e.menu);
+      if (!focusable.length) {
+        event.preventDefault();
+        return;
+      }
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
     function setOpen(next) {
       var e = els();
       if (!e.shell || !e.menu || !e.burger) return;
+      var shouldReturnFocus = !next && e.menu.contains(document.activeElement);
       e.shell.setAttribute('data-menu-state', next ? 'open' : 'closed');
       e.burger.setAttribute('aria-expanded', next ? 'true' : 'false');
       e.burger.setAttribute('aria-label', next ? 'Close navigation menu' : 'Open navigation menu');
@@ -316,6 +355,16 @@ function isActive(href: string): boolean {
       }
       document.body.classList.toggle('scroll-locked', next);
       document.dispatchEvent(new Event('bo:mobile-menu-state'));
+
+      if (next) {
+        window.requestAnimationFrame(function () {
+          var current = els();
+          if (current.menu && current.shell && isOpen(current.shell))
+            focusFirstMenuItem(current.menu);
+        });
+      } else {
+        if (shouldReturnFocus) e.burger.focus();
+      }
     }
 
     // Bridge for module-side closeMobileMenu() / search open / overlay lifecycle
@@ -340,6 +389,9 @@ function isActive(href: string): boolean {
     }
 
     wireBurger();
+
+    var initialMenu = document.getElementById('nav-mobile-links');
+    if (initialMenu) initialMenu.addEventListener('keydown', keepMenuFocus, { signal: signal });
 
     document.addEventListener(
       'click',

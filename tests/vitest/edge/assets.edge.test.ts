@@ -53,4 +53,19 @@ describe('asset route cache and failure contract', () => {
     expect(ctx.cachePut).not.toHaveBeenCalled();
     expect(response.headers.get('cache-control')).toContain('private');
   });
+
+  it('applies the public cache contract to static assets', async () => {
+    const ctx = context(
+      '/_astro/app.abc123.css',
+      new Response('body', { headers: { 'content-type': 'text/css' } })
+    );
+
+    const response = await handleAssets(ctx);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('cache-control')).toBe('public, max-age=31536000, immutable');
+    expect(response.headers.get('x-route-kind')).toBe('asset');
+    expect(response.headers.get('x-cache-policy')).toBe('public, max-age=31536000, immutable');
+    expect(ctx.cachePut).toHaveBeenCalledOnce();
+  });
 });
