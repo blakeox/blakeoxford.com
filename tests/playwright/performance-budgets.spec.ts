@@ -1,5 +1,18 @@
 import { test, expect } from './fixtures';
 import { waitForAsyncOperation } from './utils/test-helpers';
+import fs from 'fs';
+import path from 'path';
+
+const budgets = JSON.parse(
+  fs.readFileSync(path.join(process.cwd(), 'tests/config/performance-budgets.json'), 'utf8')
+) as {
+  bundleSizes: {
+    jsTotalBytes: number;
+    jsSingleBytes: number;
+    cssTotalBytes: number;
+    cssSingleBytes: number;
+  };
+};
 
 test.describe('Performance Budget Enforcement', () => {
   test.describe('Bundle Size Budgets', () => {
@@ -24,23 +37,16 @@ test.describe('Performance Budget Enforcement', () => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
 
-      // Performance budgets (updated for enhanced application with optimization tools)
-      const BUDGETS = {
-        totalJS: 3 * 1024 * 1024, // 3MB total (increased for optimization tools)
-        singleBundle: 1 * 1024 * 1024, // 1MB per bundle (increased for complex bundles)
-        criticalJS: 500 * 1024, // 500KB for critical path (increased)
-      };
-
       const totalJSSize = jsResources.reduce((sum, resource) => sum + resource.size, 0);
 
-      expect(totalJSSize).toBeLessThan(BUDGETS.totalJS);
+      expect(totalJSSize).toBeLessThan(budgets.bundleSizes.jsTotalBytes);
       console.log(
-        `✅ Total JS size: ${(totalJSSize / 1024).toFixed(2)}KB (Budget: ${BUDGETS.totalJS / 1024}KB)`
+        `✅ Total JS size: ${(totalJSSize / 1024).toFixed(2)}KB (Budget: ${budgets.bundleSizes.jsTotalBytes / 1024}KB)`
       );
 
       // Individual bundle size check
       jsResources.forEach((resource) => {
-        expect(resource.size).toBeLessThan(BUDGETS.singleBundle);
+        expect(resource.size).toBeLessThan(budgets.bundleSizes.jsSingleBytes);
         console.log(`📦 ${resource.url}: ${(resource.size / 1024).toFixed(2)}KB`);
       });
     });
