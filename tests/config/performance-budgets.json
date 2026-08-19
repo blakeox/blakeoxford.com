@@ -11,5 +11,11 @@
     "js": 30,
     "css": 12,
     "images": 70
+  },
+  "bundleSizes": {
+    "jsTotalBytes": 3145728,
+    "jsSingleBytes": 1048576,
+    "cssTotalBytes": 307200,
+    "cssSingleBytes": 204800
   }
 }
