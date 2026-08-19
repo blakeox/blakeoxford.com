@@ -9,6 +9,8 @@ const performanceBudgets = JSON.parse(
   bundleSizes: {
     jsTotalBytes: number;
     jsSingleBytes: number;
+    cssTotalBytes: number;
+    cssSingleBytes: number;
   };
 };
 
@@ -424,8 +426,11 @@ test.describe('Performance and Monitoring @extended', () => {
       if (cssResources.length > 0) {
         const totalCSSSize = cssResources.reduce((total, resource) => total + resource.size, 0);
 
-        // Total CSS should be under 200KB
-        expect(totalCSSSize).toBeLessThan(200 * 1024);
+        // Keep CSS checks aligned with the central production-informed budget.
+        expect(totalCSSSize).toBeLessThan(performanceBudgets.bundleSizes.cssTotalBytes);
+        cssResources.forEach((resource) => {
+          expect(resource.size).toBeLessThan(performanceBudgets.bundleSizes.cssSingleBytes);
+        });
       }
     });
   });
