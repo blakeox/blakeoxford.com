@@ -506,10 +506,6 @@ test.describe('Performance and Monitoring @extended', () => {
           const firstContentfulPaint =
             window.performance.getEntriesByName('first-contentful-paint')[0]?.startTime || 0;
 
-          if (!domContentLoaded && !loadComplete && !firstPaint && !firstContentfulPaint) {
-            return null;
-          }
-
           return {
             domContentLoaded,
             loadComplete,
