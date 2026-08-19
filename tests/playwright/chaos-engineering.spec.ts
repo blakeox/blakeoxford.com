@@ -97,8 +97,11 @@ test.describe('Chaos Engineering Tests @extended', () => {
     test('should handle missing CSS gracefully', async ({ page, context }) => {
       // Fail every other stylesheet request so the scenario is repeatable.
       let stylesheetCount = 0;
+      let failedStylesheetCount = 0;
       await context.route('**/*.css', (route) => {
-        if (++stylesheetCount % 2 === 0) {
+        const requestNumber = ++stylesheetCount;
+        if (requestNumber === 1 || requestNumber % 2 === 0) {
+          failedStylesheetCount += 1;
           route.abort('failed');
         } else {
           route.continue();
@@ -117,6 +120,7 @@ test.describe('Chaos Engineering Tests @extended', () => {
         await expect(links.first()).toBeVisible();
       }
 
+      expect(failedStylesheetCount).toBeGreaterThan(0);
       console.log('✅ Site functional without some CSS');
     });
 
