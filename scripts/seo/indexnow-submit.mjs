@@ -104,12 +104,13 @@ export function validateUrls(urls) {
 }
 
 function decodeXmlEntities(value) {
+  const ampersand = String.fromCharCode(38);
   return value
-    .replaceAll('&amp;', '&')
-    .replaceAll('&lt;', '<')
-    .replaceAll('&gt;', '>')
-    .replaceAll('&quot;', '"')
-    .replaceAll('&apos;', "'");
+    .replaceAll(`${ampersand}amp;`, ampersand)
+    .replaceAll(`${ampersand}lt;`, '<')
+    .replaceAll(`${ampersand}gt;`, '>')
+    .replaceAll(`${ampersand}quot;`, '"')
+    .replaceAll(`${ampersand}apos;`, "'");
 }
 
 async function urlsFromSitemap(sitemapValue) {
