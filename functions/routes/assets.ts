@@ -210,13 +210,16 @@ export async function handleAssets({
         h.set('x-route-kind', routeKind);
         const cc = h.get('cache-control') || 'no-store';
         h.set('x-cache-policy', cc);
-        return new Response(originResponse.body, {
-          status: originResponse.status,
-          statusText: originResponse.statusText,
-          headers: h,
-        });
+        return addQueryNoindexMeta(
+          new Response(originResponse.body, {
+            status: originResponse.status,
+            statusText: originResponse.statusText,
+            headers: h,
+          }),
+          url
+        );
       } catch {
-        return originResponse;
+        return addQueryNoindexMeta(originResponse, url);
       }
     }
 
