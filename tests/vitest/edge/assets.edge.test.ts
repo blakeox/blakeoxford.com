@@ -68,7 +68,6 @@ describe('asset route cache and failure contract', () => {
     expect(response.headers.get('x-cache-policy')).toBe('public, max-age=31536000, immutable');
     expect(ctx.cachePut).toHaveBeenCalledOnce();
   });
-
   it('aligns query-bearing HTML metadata with the edge noindex header policy', async () => {
     const ctx = context(
       '/projects/?filter=healthcare-it',
@@ -100,4 +99,4 @@ describe('asset route cache and failure contract', () => {
 
     expect(await response.text()).toContain('<meta name="robots" content="noindex, nofollow" />');
   });
-});
+  });
