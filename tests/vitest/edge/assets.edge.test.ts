@@ -100,6 +100,31 @@ describe('asset route cache and failure contract', () => {
     expect(await response.text()).toContain('<meta name="robots" content="noindex, nofollow" />');
   });
 
+  it('rewrites offline HTML returned for query-bearing origin failures', async () => {
+    const ctx = context(
+      '/projects/?filter=healthcare-it',
+      new Response('origin unavailable', { status: 503 })
+    );
+
+    const response = await handleAssets(ctx);
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain('<meta name="robots" content="noindex, nofollow" />');
+  });
+
+  it('rewrites offline HTML returned after an asset fetch exception', async () => {
+    const ctx = context(
+      '/projects/?filter=healthcare-it',
+      new Response('<html><head><meta name="robots" content="index, follow"></head></html>')
+    );
+    ctx.env.ASSETS.fetch.mockRejectedValue(new Error('origin unavailable'));
+
+    const response = await handleAssets(ctx);
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain('<meta name="robots" content="noindex, nofollow" />');
+  });
+
   it('clears entity headers even when the query robots tag is already correct', async () => {
     const response = await addQueryNoindexMeta(
       new Response('<html><head><meta name="robots" content="noindex, nofollow" /></head></html>', {

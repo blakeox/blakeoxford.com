@@ -160,7 +160,7 @@ export async function handleAssets({
               dur: Date.now() - startTs,
             })
           );
-          return resp;
+          return addQueryNoindexMeta(resp, url);
         }
         // Graceful fallbacks for non-HTML requests during transient failures
         const pathname = url.pathname;
@@ -478,7 +478,7 @@ export async function handleAssets({
           dur: Date.now() - errStart,
         })
       );
-      return resp;
+      return addQueryNoindexMeta(resp, url);
     }
     return new Response('Not found', {
       status: 404,
