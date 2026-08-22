@@ -106,11 +106,11 @@ export function validateUrls(urls) {
 function decodeXmlEntities(value) {
   const ampersand = String.fromCharCode(38);
   return value
-    .replaceAll(`${ampersand}amp;`, ampersand)
     .replaceAll(`${ampersand}lt;`, '<')
     .replaceAll(`${ampersand}gt;`, '>')
     .replaceAll(`${ampersand}quot;`, '"')
-    .replaceAll(`${ampersand}apos;`, "'");
+    .replaceAll(`${ampersand}apos;`, "'")
+    .replaceAll(`${ampersand}amp;`, ampersand);
 }
 
 async function urlsFromSitemap(sitemapValue) {
