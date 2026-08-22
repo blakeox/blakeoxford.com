@@ -10,7 +10,13 @@ const ROBOTS_META_PATTERN = /<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>/i;
 /** Keep query-bearing HTML crawl policy consistent in both headers and markup. */
 export async function addQueryNoindexMeta(response: Response, url: URL): Promise<Response> {
   const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
-  if (!url.search || !contentType.includes('text/html') || !response.body) return response;
+  if (
+    !url.search ||
+    response.status === 206 ||
+    !contentType.includes('text/html') ||
+    !response.body
+  )
+    return response;
 
   const html = await response.text();
   const rewritten = ROBOTS_META_PATTERN.test(html)
@@ -210,13 +216,14 @@ export async function handleAssets({
         h.set('x-route-kind', routeKind);
         const cc = h.get('cache-control') || 'no-store';
         h.set('x-cache-policy', cc);
-        return new Response(originResponse.body, {
+        const response = new Response(originResponse.body, {
           status: originResponse.status,
           statusText: originResponse.statusText,
           headers: h,
         });
+        return addQueryNoindexMeta(response, url);
       } catch {
-        return originResponse;
+        return addQueryNoindexMeta(originResponse, url);
       }
     }
 
