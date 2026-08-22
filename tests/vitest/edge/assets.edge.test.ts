@@ -99,4 +99,23 @@ describe('asset route cache and failure contract', () => {
 
     expect(await response.text()).toContain('<meta name="robots" content="noindex, nofollow" />');
   });
+
+  it('clears entity headers even when the query robots tag is already correct', async () => {
+    const response = await addQueryNoindexMeta(
+      new Response('<html><head><meta name="robots" content="noindex, nofollow" /></head></html>', {
+        headers: {
+          'content-type': 'text/html; charset=utf-8',
+          'content-encoding': 'gzip',
+          'content-length': '88',
+          etag: 'stale',
+        },
+      }),
+      new URL('https://blakeoxford.com/projects/?filter=healthcare-it')
+    );
+
+    expect(await response.text()).toContain('noindex, nofollow');
+    expect(response.headers.get('content-encoding')).toBeNull();
+    expect(response.headers.get('content-length')).toBeNull();
+    expect(response.headers.get('etag')).toBeNull();
+  });
 });

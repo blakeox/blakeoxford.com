@@ -17,8 +17,6 @@ export async function addQueryNoindexMeta(response: Response, url: URL): Promise
     ? html.replace(ROBOTS_META_PATTERN, ROBOTS_META_TAG)
     : html.replace(/<head\b[^>]*>/i, (head) => `${head}\n    ${ROBOTS_META_TAG}`);
 
-  if (rewritten === html) return new Response(html, response);
-
   const headers = new Headers(response.headers);
   headers.delete('content-encoding');
   headers.delete('content-length');
