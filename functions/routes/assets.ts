@@ -4,6 +4,36 @@ import { EdgeCacheManager } from '../shared/cache';
 import { buildOfflineHtml } from '../shared/offline-html';
 import type { RouteContext } from '../shared/route-context';
 
+const ROBOTS_META_TAG = '<meta name="robots" content="noindex, nofollow" />';
+const ROBOTS_META_PATTERN = /<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>/i;
+
+/** Keep query-bearing HTML crawl policy consistent in both headers and markup. */
+export async function addQueryNoindexMeta(response: Response, url: URL): Promise<Response> {
+  const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
+  if (
+    !url.search ||
+    response.status === 206 ||
+    !contentType.includes('text/html') ||
+    !response.body
+  )
+    return response;
+
+  const html = await response.text();
+  const rewritten = ROBOTS_META_PATTERN.test(html)
+    ? html.replace(ROBOTS_META_PATTERN, ROBOTS_META_TAG)
+    : html.replace(/<head\b[^>]*>/i, (head) => `${head}\n    ${ROBOTS_META_TAG}`);
+
+  const headers = new Headers(response.headers);
+  headers.delete('content-encoding');
+  headers.delete('content-length');
+  headers.delete('etag');
+  return new Response(rewritten, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 /** Asset remaps, ASSETS fetch, caching, theme personalization, error fallbacks. Always handles. */
 export async function handleAssets({
   request,
@@ -63,7 +93,7 @@ export async function handleAssets({
 
   if (method === 'GET' && !personalizedThemeRequest) {
     const cacheResponse = await caches.default.match(request, { ignoreMethod: false });
-    if (cacheResponse) return cacheResponse;
+    if (cacheResponse) return addQueryNoindexMeta(cacheResponse, url);
   }
 
   try {
@@ -96,7 +126,7 @@ export async function handleAssets({
     if (!originResponse.ok) {
       if (originResponse.status >= 500) {
         const cached = await caches.default.match(request);
-        if (cached) return cached;
+        if (cached) return addQueryNoindexMeta(cached, url);
         if (url.pathname.startsWith('/api/')) {
           const headers = new Headers(originResponse.headers);
           headers.set(
@@ -136,7 +166,7 @@ export async function handleAssets({
               dur: Date.now() - startTs,
             })
           );
-          return resp;
+          return addQueryNoindexMeta(resp, url);
         }
         // Graceful fallbacks for non-HTML requests during transient failures
         const pathname = url.pathname;
@@ -186,13 +216,14 @@ export async function handleAssets({
         h.set('x-route-kind', routeKind);
         const cc = h.get('cache-control') || 'no-store';
         h.set('x-cache-policy', cc);
-        return new Response(originResponse.body, {
+        const response = new Response(originResponse.body, {
           status: originResponse.status,
           statusText: originResponse.statusText,
           headers: h,
         });
+        return addQueryNoindexMeta(response, url);
       } catch {
-        return originResponse;
+        return addQueryNoindexMeta(originResponse, url);
       }
     }
 
@@ -293,7 +324,7 @@ export async function handleAssets({
     }
 
     // Removed legacy edge optimization and personalization
-    let finalResponse = originResponse;
+    let finalResponse = await addQueryNoindexMeta(originResponse, url);
 
     if (
       method === 'GET' &&
@@ -322,7 +353,11 @@ export async function handleAssets({
       if (themeCookie) {
         const decodedThemeCookie = decodeURIComponent(themeCookie);
         const contentType = finalResponse.headers.get('content-type') || '';
-        if (contentType.includes('text/html') && decodedThemeCookie !== 'system') {
+        if (
+          contentType.includes('text/html') &&
+          decodedThemeCookie !== 'system' &&
+          finalResponse.status !== 206
+        ) {
           let html = await finalResponse.text();
           html = html.replace(/<html([^>]*)>/i, (full, attrs) => {
             let newAttrs = attrs || '';
@@ -430,7 +465,7 @@ export async function handleAssets({
     }
 
     const staleResponse = await caches.default.match(request);
-    if (staleResponse) return staleResponse;
+    if (staleResponse) return addQueryNoindexMeta(staleResponse, url);
     const isHtmlRoute =
       request.headers.get('accept')?.includes('text/html') ||
       url.pathname.endsWith('/') ||
@@ -454,7 +489,7 @@ export async function handleAssets({
           dur: Date.now() - errStart,
         })
       );
-      return resp;
+      return addQueryNoindexMeta(resp, url);
     }
     return new Response('Not found', {
       status: 404,
