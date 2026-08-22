@@ -125,6 +125,59 @@ describe('asset route cache and failure contract', () => {
     expect(await response.text()).toContain('<meta name="robots" content="noindex, nofollow" />');
   });
 
+  it('rewrites query-bearing HTML returned as a non-5xx origin error', async () => {
+    const ctx = context(
+      '/projects/?filter=healthcare-it',
+      new Response('<html><head><meta name="robots" content="index, follow"></head></html>', {
+        status: 404,
+        headers: { 'content-type': 'text/html; charset=utf-8' },
+      })
+    );
+
+    const response = await handleAssets(ctx);
+
+    expect(response.status).toBe(404);
+    expect(await response.text()).toContain('<meta name="robots" content="noindex, nofollow" />');
+  });
+
+  it('does not rewrite partial HTML responses', async () => {
+    const response = await addQueryNoindexMeta(
+      new Response('<html><head><meta name="robots" content="index, follow"></head></html>', {
+        status: 206,
+        headers: {
+          'content-type': 'text/html; charset=utf-8',
+          'content-range': 'bytes 0-10/80',
+        },
+      }),
+      new URL('https://blakeoxford.com/projects/?filter=healthcare-it')
+    );
+
+    expect(response.status).toBe(206);
+    expect(response.headers.get('content-range')).toBe('bytes 0-10/80');
+    expect(await response.text()).toContain('content="index, follow"');
+  });
+
+  it('does not personalize partial HTML responses', async () => {
+    const ctx = context(
+      '/projects/?filter=healthcare-it',
+      new Response('<html><head></head><body>partial</body></html>', {
+        status: 206,
+        headers: {
+          'content-type': 'text/html; charset=utf-8',
+          'content-range': 'bytes 0-10/45',
+        },
+      }),
+      { cookie: 'theme=dark' }
+    );
+
+    const response = await handleAssets(ctx);
+
+    expect(response.status).toBe(206);
+    expect(response.headers.get('content-range')).toBe('bytes 0-10/45');
+    expect(response.headers.get('cache-control')).not.toContain('private');
+    expect(await response.text()).not.toContain('data-theme="dark"');
+  });
+
   it('clears entity headers even when the query robots tag is already correct', async () => {
     const response = await addQueryNoindexMeta(
       new Response('<html><head><meta name="robots" content="noindex, nofollow" /></head></html>', {
