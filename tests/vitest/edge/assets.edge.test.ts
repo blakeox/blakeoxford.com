@@ -99,4 +99,4 @@ describe('asset route cache and failure contract', () => {
 
     expect(await response.text()).toContain('<meta name="robots" content="noindex, nofollow" />');
   });
-  });
+});
