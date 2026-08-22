@@ -353,7 +353,11 @@ export async function handleAssets({
       if (themeCookie) {
         const decodedThemeCookie = decodeURIComponent(themeCookie);
         const contentType = finalResponse.headers.get('content-type') || '';
-        if (contentType.includes('text/html') && decodedThemeCookie !== 'system') {
+        if (
+          contentType.includes('text/html') &&
+          decodedThemeCookie !== 'system' &&
+          finalResponse.status !== 206
+        ) {
           let html = await finalResponse.text();
           html = html.replace(/<html([^>]*)>/i, (full, attrs) => {
             let newAttrs = attrs || '';
