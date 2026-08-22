@@ -122,7 +122,7 @@ export async function handleAssets({
     if (!originResponse.ok) {
       if (originResponse.status >= 500) {
         const cached = await caches.default.match(request);
-        if (cached) return cached;
+        if (cached) return addQueryNoindexMeta(cached, url);
         if (url.pathname.startsWith('/api/')) {
           const headers = new Headers(originResponse.headers);
           headers.set(
@@ -456,7 +456,7 @@ export async function handleAssets({
     }
 
     const staleResponse = await caches.default.match(request);
-    if (staleResponse) return staleResponse;
+    if (staleResponse) return addQueryNoindexMeta(staleResponse, url);
     const isHtmlRoute =
       request.headers.get('accept')?.includes('text/html') ||
       url.pathname.endsWith('/') ||
