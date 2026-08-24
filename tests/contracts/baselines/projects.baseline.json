@@ -5,7 +5,7 @@
     {
       "slug": "adp-workforcenow",
       "title": "ADP Workforce Now Implementation",
-      "description": "Integrated payroll, benefits, finance, and workforce reporting into one automation-led operating system.",
+      "description": "Unified payroll, benefits, finance, and workforce reporting in ADP Workforce Now with automation and shared data that teams could run confidently.",
       "publishedAt": "2021-01-01",
       "tags": ["HCM", "Recruiting", "ADP Workforce Now", "Sage Intacct", "PowerBI"],
       "draft": false,
@@ -25,7 +25,7 @@
     {
       "slug": "bank-projections-modeling",
       "title": "Bank Projections and Financial Modeling",
-      "description": "Built scenario-driven financial models and reporting packages that helped lenders make faster decisions.",
+      "description": "Built scenario-driven bank projections and financial reporting packages that gave lenders faster decisions, clearer assumptions, and defensible planning.",
       "publishedAt": "2020-01-01",
       "tags": [
         "Financial Modeling",
@@ -47,7 +47,7 @@
     {
       "slug": "fanalyx-deterministic-finance-platform",
       "title": "Fanalyx Deterministic Finance Platform",
-      "description": "A typed, reproducible finance platform that keeps calculations authoritative across dashboards, APIs, and MCP.",
+      "description": "Built a typed, reproducible finance platform that keeps calculations authoritative across dashboards, APIs, and MCP with explainable, audit-ready results.",
       "publishedAt": "2025-03-01",
       "tags": [
         "Financial Modeling",
@@ -73,7 +73,7 @@
     {
       "slug": "ferment-app",
       "title": "Ferment App – Mobile Recipe Management",
-      "description": "Designed an offline-first mobile product for fermentation tracking, reminders, recipes, and community sharing.",
+      "description": "Designed an offline-first mobile recipe and fermentation app for tracking, reminders, recipes, and community sharing when connectivity dropped.",
       "publishedAt": "2024-01-15",
       "tags": ["Swift", "SwiftUI", "Firebase", "SwiftData", "Mobile Development", "Fermentation"],
       "draft": false,
@@ -90,7 +90,7 @@
     {
       "slug": "google-workspace-migration",
       "title": "Google Workspace → Microsoft 365 Migration & Endpoint Management",
-      "description": "Moved a distributed workforce to Microsoft 365 with secure endpoints, adoption playbooks, and measurable cutover control.",
+      "description": "Moved a distributed workforce from Google Workspace to Microsoft 365 with secure endpoints, adoption playbooks, identity controls, and governed cutover.",
       "publishedAt": "2020-01-15",
       "tags": [
         "Microsoft 365",
@@ -114,7 +114,7 @@
     {
       "slug": "llm-note-coaching",
       "title": "OpenAI-Powered Documentation Quality Feedback System",
-      "description": "Delivered privacy-aware AI coaching that helped healthcare teams improve documentation quality inside existing workflows.",
+      "description": "Delivered privacy-aware AI coaching inside healthcare workflows to improve documentation quality, support clinical oversight, and make adoption measurable.",
       "publishedAt": "2023-11-01",
       "tags": [
         "OpenAI",
@@ -140,7 +140,7 @@
     {
       "slug": "microsoft-fabric",
       "title": "Microsoft Fabric – Operational Intelligence & Workflow Automation",
-      "description": "Connected finance, operations, and change data into an owned cadence for automation and executive decision-making.",
+      "description": "Connected finance, operations, and change data in Microsoft Fabric for workflow automation, adoption measurement, and executive decisions.",
       "publishedAt": "2024-02-20",
       "tags": [
         "Microsoft Fabric",
