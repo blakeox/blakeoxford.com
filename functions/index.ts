@@ -15,6 +15,7 @@ import { handleSemanticSearch } from './routes/semantic-search';
 import { handleAiFeedback } from './routes/ai-feedback';
 import { handleTheme } from './routes/theme';
 import { handleLegacySearchRedirect } from './routes/legacy-search-redirect';
+import { handleLegacyProjectRedirect } from './routes/legacy-project-redirect';
 import { handleDebug } from './routes/debug';
 import { handleAssets } from './routes/assets';
 import { runAiSearchCanary } from './scheduled/ai-search-canary';
@@ -181,6 +182,7 @@ const WorkerApp = {
     const routeCtx: RouteContext = { request, env, ctx, url, reqId, method, Sentry };
 
     const handlers = [
+      handleLegacyProjectRedirect,
       handleLegacySearchRedirect,
       handleRobotsFavicon,
       handleHealth,
