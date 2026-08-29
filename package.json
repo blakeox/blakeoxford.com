@@ -56,7 +56,7 @@
     "contrast:report": "node scripts/quality/contrast-report.js --limit 10"
   },
   "dependencies": {
-    "@astrojs/react": "^6.0.1",
+    "@astrojs/react": "^6.0.4",
     "@fontsource/source-sans-3": "^5.3.0",
     "@fontsource/space-grotesk": "^5.3.0",
     "@sentry/astro": "^10.70.0",
