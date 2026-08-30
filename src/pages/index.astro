@@ -33,9 +33,6 @@ const recentBlogPosts: CollectionEntry<'blog'>[] = take(
 );
 
 const recentProjects = take(await getProjectsSorted(), 3);
-
-const heroDescription =
-  (siteConfig?.tagline ?? '').replace(/\s+/g, ' ').trim() || page.hero.defaultTagline;
 ---
 
 <Layout title={page.meta.title} description={page.meta.description} wide={true}>
@@ -56,7 +53,7 @@ const heroDescription =
   */
   }
   <div class="flex flex-col">
-    <HomeHeroSection author={siteConfig.author} description={heroDescription} content={page.hero} />
+    <HomeHeroSection author={siteConfig.author} content={page.hero} />
     <HomeResumeHighlightsSection content={page.resumeHighlights} />
     <HomeRecentProjectsSection projects={recentProjects} content={page.recentProjects} />
     <HomeLatestPostsSection posts={recentBlogPosts} content={page.latestPosts} />
