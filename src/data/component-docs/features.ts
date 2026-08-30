@@ -119,7 +119,7 @@ export const featureDocs: ComponentDoc[] = [
     examples: [
       {
         title: 'Home hero',
-        code: '<HomeHeroSection author={siteConfig.author} description={tagline} content={page.hero} />',
+        code: '<HomeHeroSection author={siteConfig.author} content={page.hero} />',
       },
     ],
     tags: ['home', 'hero', 'landing'],
