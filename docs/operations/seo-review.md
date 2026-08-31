@@ -3,6 +3,18 @@
 This is the repeatable review for the public acquisition surface. It deliberately keeps
 repository evidence separate from live search and field evidence.
 
+## Current release follow-up: 2026-08-31
+
+The protected release is live at production commit
+`24bbcc4bae3416a370b6f0d5a11d23cadca8f85f`. The deployed `/__version`, canonical sitemap,
+route-wide SEO smoke, and edge smoke checks passed. The public IndexNow key contract passed,
+the key endpoint returned HTTP 200, and IndexNow accepted the canonical sitemap submission for
+18 URLs in one batch.
+
+These receipts confirm deployment and notification acceptance only. They do not confirm that
+Google Search Console or Bing has crawled or indexed the URLs. Search Console sitemap/index
+coverage and Bing Webmaster Tools status remain owner-side follow-up gates.
+
 ## Repository gate
 
 Run from the repository root:
