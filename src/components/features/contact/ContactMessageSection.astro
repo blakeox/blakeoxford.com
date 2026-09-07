@@ -34,7 +34,6 @@ const { sidebar } = Astro.props as Props;
   >
     <div class="lg:sticky lg:top-28">
       <SectionHeader
-        kicker="Primary path"
         title="Send the project brief"
         titleId="message-form"
         description="Share the friction, the systems involved, and the outcome you need. I’ll use that to decide whether a focused working session is the right next move."
@@ -65,18 +64,11 @@ const { sidebar } = Astro.props as Props;
     </div>
 
     <div class="border border-border/50 bg-background p-5 sm:p-7 lg:p-8">
-      <div
-        class="mb-6 flex flex-col gap-1.5 border-b border-border/50 pb-5 sm:flex-row sm:items-end sm:justify-between"
-      >
-        <div>
-          <p class="font-heading text-xl font-semibold tracking-tight text-foreground">
-            Project inquiry
-          </p>
-          <p class="mt-1 text-sm text-muted-foreground">All fields are required.</p>
-        </div>
-        <p class="text-xs font-semibold tracking-tight text-subtle-foreground">
-          Cloudflare delivery
+      <div class="mb-6 border-b border-border/50 pb-5">
+        <p class="font-heading text-xl font-semibold tracking-tight text-foreground">
+          Project inquiry
         </p>
+        <p class="mt-1 text-sm text-muted-foreground">All fields are required.</p>
       </div>
 
       <div
@@ -207,7 +199,7 @@ const { sidebar } = Astro.props as Props;
         </div>
 
         <Button type="submit" variant="primary" size="lg" fullWidth>
-          <span id="btn-label">Send brief · book a review</span>
+          <span id="btn-label">Send project brief</span>
           <svg
             id="spinner"
             class="hidden size-5 animate-spin"
@@ -227,6 +219,9 @@ const { sidebar } = Astro.props as Props;
               stroke-linecap="round"></path></svg
           >
         </Button>
+        <p class="text-center text-sm leading-relaxed text-muted-foreground">
+          I’ll review your brief and follow up by email about next steps.
+        </p>
         <p class="text-center text-xs leading-relaxed text-subtle-foreground">
           Your details are used to respond to your inquiry and protect this form from abuse.
         </p>

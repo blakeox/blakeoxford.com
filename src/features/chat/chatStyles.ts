@@ -17,7 +17,9 @@ export const CHAT_DOCK_DRAG_HANDLE =
 export const CHAT_LAUNCHER_BASE =
   'ai-chat-launcher touch-target focus-ring-interactive pointer-events-auto inline-flex size-12 items-center justify-center rounded-full shadow-lg transition duration-normal ease-standard motion-safe:hover:-translate-y-0.5 hover:shadow-lg motion-safe:active:translate-y-0 motion-reduce:transition-none sm:size-14';
 
-export const CHAT_LAUNCHER_CLOSED = 'border border-accent/30 bg-accent text-on-accent';
+// Keep the secondary launcher discoverable without competing with page CTAs.
+export const CHAT_LAUNCHER_CLOSED =
+  'border border-border/60 bg-glass/95 text-foreground backdrop-blur supports-[backdrop-filter]:bg-glass/90';
 
 export const CHAT_ACCENT_CHIP =
   'inline-flex items-center gap-1 rounded-full bg-accent-subtle px-2 py-0.5 text-xxs font-medium text-accent';

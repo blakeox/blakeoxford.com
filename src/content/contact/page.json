@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Contact Blake Oxford | Start a Conversation",
-    "description": "Book a 20-minute bottleneck review with Blake Oxford for migrations, automation, analytics, and AI-enabled workflows that need durable operational discipline."
+    "description": "Discuss your bottleneck with Blake Oxford. Send a project brief about migrations, automation, analytics, or AI-enabled workflows to start the conversation."
   },
   "hero": {
     "kicker": "Contact",
@@ -12,7 +12,7 @@
       "Automation that has to hold under real operating load",
       "Reporting or controls executives need to trust"
     ],
-    "primaryCta": { "href": "#contact-form", "label": "Open the brief" },
+    "primaryCta": { "href": "#contact-form", "label": "Write a project brief" },
     "secondaryCta": { "href": "/projects/", "label": "See the work" },
     "sidebar": {
       "heading": "What to include",

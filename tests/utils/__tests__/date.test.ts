@@ -14,6 +14,17 @@ import {
 describe('Date Utilities', () => {
   const testDate = new Date('2025-10-13T15:30:00.000Z');
 
+  it.each([
+    ['2025-03-01T00:00:00.000Z', 'Mar 2025', 'March 1, 2025', 'Mar 1, 2025'],
+    ['2025-01-01', 'Jan 2025', 'January 1, 2025', 'Jan 1, 2025'],
+    ['2025-10-25', 'Oct 2025', 'October 25, 2025', 'Oct 25, 2025'],
+    ['2025-12-31T23:59:59.000Z', 'Dec 2025', 'December 31, 2025', 'Dec 31, 2025'],
+  ])('preserves the UTC publication date for %s', (input, short, full, blog) => {
+    expect(formatDateShort(input)).toBe(short);
+    expect(formatDateFull(input)).toBe(full);
+    expect(formatDateBlog(input)).toBe(blog);
+  });
+
   describe('formatDateISO', () => {
     it('formats Date object as ISO string', () => {
       const result = formatDateISO(testDate);
