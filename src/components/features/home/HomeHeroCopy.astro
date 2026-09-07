@@ -1,6 +1,6 @@
 ---
 /**
- * Home hero copy column — brand lockup, dual lines, CTA, scroll hint.
+ * Home hero copy column — brand lockup, dual lines, CTA.
  */
 import IntroCopy from '@/components/composites/IntroCopy.astro';
 import Button from '@/components/primitives/Button.astro';
@@ -18,7 +18,6 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
 
 <div class="hero-entrance home-dual-copy relative z-20">
   <div class="home-dual-lockup">
-    <span class="home-dual-mark" aria-hidden="true"></span>
     <IntroCopy
       kicker={content.kicker || 'Two sides'}
       title={author}
@@ -32,7 +31,7 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
     </div>
   </div>
 
-  <p class="sr-only" aria-live="polite" data-dual-live></p>
+  <p class="sr-only">{workLine} {daringLine}</p>
 
   <Button
     variant="primary"
@@ -44,6 +43,4 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
   >
     {content.primaryCta.label}
   </Button>
-
-  <p class="home-dual-hint">Scroll to meet the other side</p>
 </div>

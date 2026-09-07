@@ -23,4 +23,10 @@ describe('SEO social image metadata', () => {
       getLocalImageDimensions('https://third-party.example/assets/images/og-image.jpg')
     ).resolves.toBeNull();
   });
+
+  it('measures the Fanalyx project cover for social previews', async () => {
+    await expect(
+      getLocalImageDimensions('/assets/projects/fanalyx-finance-platform.png')
+    ).resolves.toEqual({ width: 1600, height: 1200 });
+  });
 });
