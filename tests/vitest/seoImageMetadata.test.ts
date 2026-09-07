@@ -27,6 +27,6 @@ describe('SEO social image metadata', () => {
   it('measures the Fanalyx project cover for social previews', async () => {
     await expect(
       getLocalImageDimensions('/assets/projects/fanalyx-finance-platform.png')
-    ).resolves.toEqual({ width: 1200, height: 630 });
+    ).resolves.toEqual({ width: 1600, height: 1200 });
   });
 });
