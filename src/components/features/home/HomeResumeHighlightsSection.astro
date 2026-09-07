@@ -19,6 +19,7 @@ const { content } = Astro.props as Props;
 
 <Section id="resume-highlights" padding="xl" container="lg" class="home-proof">
   <SectionHeader
+    class="home-proof-heading"
     align="start"
     kicker={content.kicker}
     title={content.title}
@@ -44,8 +45,8 @@ const { content } = Astro.props as Props;
 </Section>
 
 <style>
-  .home-proof :global(.section-header) {
-    margin-bottom: 2.75rem;
+  :global(.home-proof-heading) {
+    margin-bottom: 2.25rem;
   }
 
   .home-proof-split {
@@ -66,8 +67,7 @@ const { content } = Astro.props as Props;
     margin: 0 0 0.85rem;
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--color-accent-emphasis);
   }
 
@@ -98,21 +98,9 @@ const { content } = Astro.props as Props;
   }
 
   .home-proof-items li {
-    position: relative;
-    padding-left: 0.95rem;
     font-size: 0.95rem;
     line-height: 1.45;
     color: var(--color-foreground);
-  }
-
-  .home-proof-items li::before {
-    content: '';
-    position: absolute;
-    top: 0.55em;
-    left: 0;
-    width: 0.35rem;
-    height: 1px;
-    background: color-mix(in oklch, var(--color-accent) 65%, transparent);
   }
 
   @media (width >= 768px) {

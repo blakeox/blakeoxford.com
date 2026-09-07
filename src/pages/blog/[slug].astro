@@ -16,6 +16,7 @@ import { headingSizeClass } from '@/lib/typeScale';
 import { isPublished } from '@/lib/content/publication-contract.mjs';
 import RelatedContent from '@/components/features/content/RelatedContent.astro';
 import { CONTENT_RELATIONSHIPS } from '@/config/content-architecture';
+import { formatDateFull } from '@/utils/date';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', (entry: CollectionEntry<'blog'>) => isPublished(entry));
@@ -40,11 +41,7 @@ const { Content } = await render(post);
 const heroImage = post.data.heroImage;
 const siteOrigin = Astro.site?.origin ?? 'https://blakeoxford.com';
 const canonicalUrl = `${siteOrigin.replace(/\/$/, '')}/blog/${post.id}/`;
-const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const formattedDate = formatDateFull(post.data.pubDate);
 const hasMaterialUpdate =
   post.data.updatedDate && post.data.updatedDate.getTime() > post.data.pubDate.getTime();
 
@@ -122,12 +119,7 @@ const structuredData = [articleSchema, breadcrumbSchema];
               <>
                 <span aria-hidden="true">·</span>
                 <time datetime={post.data.updatedDate.toISOString()}>
-                  Updated on{' '}
-                  {post.data.updatedDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                  Updated on {formatDateFull(post.data.updatedDate)}
                 </time>
               </>
             )

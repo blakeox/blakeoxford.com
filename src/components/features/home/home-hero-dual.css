@@ -7,7 +7,8 @@
 
 .home-dual-track {
   position: relative;
-  height: 150vh;
+  /* Keep enough travel for the identity crossfade without creating a dead zone. */
+  height: 120vh;
 }
 
 .home-dual-sticky {
@@ -59,13 +60,6 @@
   gap: 0.75rem;
 }
 
-.home-dual-mark {
-  display: block;
-  width: 2.5rem;
-  height: 1px;
-  background: color-mix(in oklch, var(--color-accent) 70%, transparent);
-}
-
 .home-dual-lines {
   display: grid;
   width: 100%;
@@ -108,22 +102,6 @@
   visibility: visible;
   opacity: 1;
   transform: none;
-}
-
-.home-dual-hint {
-  margin: 0;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: var(--tracking-smallcaps);
-  text-transform: uppercase;
-  color: var(--color-muted-foreground);
-  opacity: clamp(0, calc(1 - (var(--dual-progress, 0) * 7)), 1);
-  transition: opacity 0.2s ease;
-}
-
-.home-dual[data-hint='off'] .home-dual-hint {
-  opacity: 0;
-  pointer-events: none;
 }
 
 .home-dual-visual {
@@ -240,7 +218,7 @@
 
 @media (width >= 768px) {
   .home-dual-track {
-    height: 175vh;
+    height: 135vh;
   }
 
   .home-dual-stage {
@@ -265,7 +243,8 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* Short viewports need normal document flow so the copy and portrait cannot be clipped. */
+@media (prefers-reduced-motion: reduce), (max-height: 700px) {
   .home-dual-track {
     height: auto;
   }
@@ -277,12 +256,9 @@
     min-height: calc(100svh - var(--nav-height));
   }
 
-  .home-dual-hint {
-    display: none;
-  }
-
   .home-dual-frame {
     transform: none;
+    transition: none;
   }
 
   .home-dual-frame-tick {
@@ -302,6 +278,7 @@
     visibility: visible;
     opacity: 1;
     transform: none;
+    transition: none;
   }
 
   .home-dual-line[data-dual-line-daring] {

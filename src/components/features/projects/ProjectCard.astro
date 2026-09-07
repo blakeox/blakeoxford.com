@@ -18,7 +18,6 @@ const {
   project,
   compact = false,
   featured = false,
-  sideLabel,
 } = Astro.props as import('@/types/components').ProjectCardProps;
 const { id: slug, data } = project;
 
@@ -69,15 +68,15 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
             alt={`${title} preview`}
             width={featured ? 1400 : 960}
             height={featured ? 788 : 540}
-            class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.03]"
+            class="h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.03]"
             loading="lazy"
             quality={80}
           />
         </figure>
 
         <div class:list={['flex flex-1 flex-col', featured ? 'gap-3' : 'gap-2.5']}>
-          <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">
-            {sideLabel ? <span class="text-accent-emphasis">{sideLabel}</span> : primaryCategory}
+          <p class="project-card-meta text-xs font-semibold tracking-label text-subtle-foreground uppercase">
+            {primaryCategory}
             {dateISO && dateLabel ? (
               <>
                 <span aria-hidden="true"> · </span>
@@ -107,9 +106,9 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
             </p>
           )}
 
-          <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-accent-emphasis transition-all duration-normal group-hover:gap-3">
+          <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-accent-emphasis transition-all duration-normal motion-safe:group-hover:gap-3">
             View case study
-            <ArrowRightIcon class="opacity-90 transition-transform duration-normal group-hover:translate-x-0.5" />
+            <ArrowRightIcon class="opacity-90 transition-transform duration-normal motion-safe:group-hover:translate-x-0.5" />
           </span>
         </div>
       </a>
@@ -130,7 +129,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
               alt={`${title} preview`}
               width={960}
               height={540}
-              class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.04]"
+              class="h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.04]"
               loading="lazy"
               quality={80}
             />
@@ -212,9 +211,9 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
             )}
 
             <div class="mt-auto flex items-center justify-end gap-4 pt-1">
-              <span class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis transition-all duration-normal group-hover:gap-3">
+              <span class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis transition-all duration-normal motion-safe:group-hover:gap-3">
                 Read the case study
-                <ArrowRightIcon class="opacity-90 transition-transform duration-normal group-hover:translate-x-0.5" />
+                <ArrowRightIcon class="opacity-90 transition-transform duration-normal motion-safe:group-hover:translate-x-0.5" />
               </span>
             </div>
           </div>

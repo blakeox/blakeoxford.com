@@ -1,6 +1,7 @@
 /**
  * Date formatting helpers.
  * Prefer `@/utils/date` over the utils barrel.
+ * Publication labels use UTC and the site's English locale, never the build host's defaults.
  */
 
 /**
@@ -16,7 +17,8 @@ export function formatDateISO(date: Date | string | number): string {
  * @example formatDateShort(new Date()) // "Oct 2025"
  */
 export function formatDateShort(date: Date | string | number): string {
-  return new Date(date).toLocaleDateString(undefined, {
+  return new Date(date).toLocaleDateString('en-US', {
+    timeZone: 'UTC',
     month: 'short',
     year: 'numeric',
   });
@@ -27,7 +29,8 @@ export function formatDateShort(date: Date | string | number): string {
  * @example formatDateFull(new Date()) // "October 10, 2025"
  */
 export function formatDateFull(date: Date | string | number): string {
-  return new Date(date).toLocaleDateString(undefined, {
+  return new Date(date).toLocaleDateString('en-US', {
+    timeZone: 'UTC',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -39,7 +42,8 @@ export function formatDateFull(date: Date | string | number): string {
  * @example formatDateBlog(new Date()) // "Oct 10, 2025"
  */
 export function formatDateBlog(date: Date | string | number): string {
-  return new Date(date).toLocaleDateString(undefined, {
+  return new Date(date).toLocaleDateString('en-US', {
+    timeZone: 'UTC',
     year: 'numeric',
     month: 'short',
     day: 'numeric',
