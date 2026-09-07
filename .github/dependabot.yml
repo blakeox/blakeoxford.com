@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # Scheduled version updates enter the protected release flow.
   - package-ecosystem: "npm"
     directory: "/"
     target-branch: "development"
@@ -9,12 +10,32 @@ updates:
     commit-message:
       prefix: "chore(deps)"
     reviewers:
-      - blakepowell
+      - blakeox
     labels:
       - dependencies
     ignore:
       - dependency-name: "astro"
         versions: ["latest"]
+
+  # Security updates always open against the default branch (main).
+  # open-pull-requests-limit: 0 disables version updates here while preserving
+  # reviewer/label/commit-message metadata for security PRs.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "chore(deps)"
+    reviewers:
+      - blakeox
+    labels:
+      - dependencies
+      - security
+    ignore:
+      - dependency-name: "astro"
+        versions: ["latest"]
+
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "development"
@@ -24,6 +45,19 @@ updates:
     commit-message:
       prefix: "chore(actions)"
     reviewers:
-      - blakepowell
+      - blakeox
     labels:
       - dependencies
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "chore(actions)"
+    reviewers:
+      - blakeox
+    labels:
+      - dependencies
+      - security
