@@ -13,7 +13,8 @@ describe('Contact form validation', () => {
     );
     const sectionSource = fs.readFileSync(sectionPath, 'utf-8');
 
-    expect(sectionSource).toContain('Cloudflare delivery');
+    expect(sectionSource).toContain('delivered through Cloudflare Email Service.');
+    expect(sectionSource).not.toContain('Cloudflare delivery');
     expect(sectionSource).not.toContain('text-success-emphasis');
   });
 

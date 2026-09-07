@@ -48,4 +48,10 @@ describe('ProjectCard.astro file', () => {
     expect(content).toContain('View case study');
     expect(content).not.toContain('aria-label={`View ${data.title}`}');
   });
+
+  it('gates image and CTA movement on motion preference', () => {
+    const movements = content.match(/[^\s"]*group-hover:(?:scale|translate|gap)-[^\s"]*/g);
+    expect(movements).toHaveLength(6);
+    expect(movements?.every((movement) => movement.startsWith('motion-safe:'))).toBe(true);
+  });
 });

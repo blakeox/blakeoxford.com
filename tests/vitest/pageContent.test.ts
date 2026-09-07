@@ -22,6 +22,10 @@ describe('About, Contact, and Home page content', () => {
 
     expect(contact.meta.title).toBeTruthy();
     expect(contact.hero.scenarios.length).toBe(3);
+    expect(contact.hero.primaryCta).toEqual({
+      href: '#contact-form',
+      label: 'Write a project brief',
+    });
     expect(contact.channels.items.length).toBeGreaterThan(0);
     expect(contact.channels.items.some((item: { icon: string }) => item.icon === 'email')).toBe(
       true
@@ -48,9 +52,22 @@ describe('About, Contact, and Home page content', () => {
     ).toBe(true);
     expect(home.recentProjects.cta.href).toBe('/projects/');
     expect(home.cta.button.href).toBe('/contact/');
-    expect(home.cta.button.label).toMatch(/bottleneck/i);
+    expect(home.cta.button.label).toBe('Discuss your bottleneck');
     expect(home.cta.description).toMatch(/edge cases/i);
     expect(home.latestPosts.kicker).toBeUndefined();
     expect(home.cta.kicker).toBeUndefined();
+  });
+
+  it('describes contact entry points as inquiries rather than confirmed bookings', () => {
+    const files = [
+      'src/content/projects/_meta.json',
+      'src/pages/about.astro',
+      'src/components/composites/CTASection.astro',
+    ];
+    for (const file of files) {
+      const source = readFileSync(path.join(process.cwd(), file), 'utf8');
+      expect(source).toContain('Discuss your bottleneck');
+      expect(source).not.toContain('Book a 20-minute bottleneck review');
+    }
   });
 });
