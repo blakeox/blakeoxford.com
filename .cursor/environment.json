@@ -1,0 +1,22 @@
+{
+  "name": "blakeoxford.com",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "user": "node",
+  "install": "corepack prepare pnpm@10.34.5 --activate && pnpm install --frozen-lockfile",
+  "terminals": [
+    {
+      "name": "astro-dev",
+      "command": "pnpm dev --host",
+      "description": "Astro dev server for blakeoxford.com on http://localhost:4321"
+    }
+  ],
+  "ports": [
+    {
+      "name": "astro-dev",
+      "port": 4321
+    }
+  ]
+}
