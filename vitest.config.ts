@@ -34,7 +34,7 @@ export default defineConfig({
     ],
     retry: 1, // enable single retry to surface flaky tests (tracked by custom reporter)
     reporters: process.env.CI ? ['default', './tests/reporters/flakinessReporter.ts'] : ['default'],
-    // Vitest 4: pool options are top-level (singleFork avoids worker IPC hangs in some environments)
+    // Keep forks single-threaded to avoid worker IPC hangs in some environments
     pool: 'forks',
     fileParallelism: false,
     singleFork: true,
