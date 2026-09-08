@@ -85,7 +85,7 @@
     "@typescript-eslint/eslint-plugin": "^8.70.0",
     "@typescript-eslint/parser": "^8.70.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "^5.0.0",
     "astro": "^7.3.1",
     "astro-compress": "^2.4.3",
     "astro-eslint-parser": "^3.1.0",
@@ -113,7 +113,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vite": "8.2.2",
-    "vitest": "^4.1.10",
+    "vitest": "^5.0.0",
     "wrangler": "^4.129.1"
   },
   "packageManager": "pnpm@10.34.5+sha256.ccb5c479cab1b00621325bfe7d4c9a8a8031e7a525d7249e275ecbec81b08db2"
