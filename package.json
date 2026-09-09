@@ -53,7 +53,8 @@
     "contrast:history": "CONTRAST_JSON=1 playwright test tests/playwright/accessibility/contrast-ratio.spec.ts --project=chromium | node scripts/quality/contrast-history-aggregator.js",
     "contrast:badge": "node scripts/quality/contrast-sparkline-badge.js",
     "contrast:check": "node scripts/quality/contrast-alert-check.js",
-    "contrast:report": "node scripts/quality/contrast-report.js --limit 10"
+    "contrast:report": "node scripts/quality/contrast-report.js --limit 10",
+    "tsc:version": "tsc --version && tsc6 --version"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",
@@ -67,7 +68,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@astrojs/mdx": "^8.0.0",
+    "@astrojs/mdx": "^8.0.1",
     "@astrojs/rss": "^4.0.19",
     "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
@@ -84,9 +85,10 @@
     "@types/react-dom": "^19.2.7",
     "@typescript-eslint/eslint-plugin": "^8.70.0",
     "@typescript-eslint/parser": "^8.70.0",
+    "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "^6.1.1",
     "@vitest/coverage-v8": "^5.0.0",
-    "astro": "^7.3.1",
+    "astro": "^7.3.2",
     "astro-compress": "^2.4.3",
     "astro-eslint-parser": "^3.1.0",
     "chrome-launcher": "^1.2.1",
@@ -111,10 +113,10 @@
     "stylelint-config-tailwindcss": "^1.0.1",
     "stylelint-order": "^8.1.1",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vite": "8.2.2",
     "vitest": "^5.0.0",
-    "wrangler": "^4.129.1"
+    "wrangler": "^4.130.0"
   },
   "packageManager": "pnpm@10.34.5+sha256.ccb5c479cab1b00621325bfe7d4c9a8a8031e7a525d7249e275ecbec81b08db2"
 }
