@@ -18,33 +18,31 @@ const { channels } = Astro.props as { channels: ContactChannels };
   />
 
   <ul class="divide-y divide-border/50 border-y border-border/50" role="list">
-    {
-      channels.items.map((channel) => (
-        <li>
-          <a
-            href={channel.href}
-            target={channel.icon === 'linkedin' ? '_blank' : undefined}
-            rel={channel.icon === 'linkedin' ? 'noopener noreferrer' : undefined}
-            class="group grid gap-2 py-5 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 sm:py-6"
-            aria-label={`${channel.title}: ${channel.label}`}
-          >
-            <span class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
-              {channel.title}
+    {channels.items.map((channel) => (
+      <li>
+        <a
+          href={channel.href}
+          target={channel.icon === 'linkedin' ? '_blank' : undefined}
+          rel={channel.icon === 'linkedin' ? 'noopener noreferrer' : undefined}
+          class="group grid gap-2 py-5 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 sm:py-6"
+          aria-label={`${channel.title}: ${channel.label}`}
+        >
+          <span class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
+            {channel.title}
+          </span>
+          <span class="min-w-0 space-y-1">
+            <span class="block font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-accent-emphasis">
+              {channel.label}
             </span>
-            <span class="min-w-0 space-y-1">
-              <span class="block font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-accent-emphasis">
-                {channel.label}
+            {channel.description && (
+              <span class="block text-sm leading-relaxed text-muted-foreground">
+                {channel.description}
               </span>
-              {channel.description && (
-                <span class="block text-sm leading-relaxed text-muted-foreground">
-                  {channel.description}
-                </span>
-              )}
-            </span>
-            <span class="text-sm font-semibold text-accent-emphasis sm:text-right">Open</span>
-          </a>
-        </li>
-      ))
-    }
+            )}
+          </span>
+          <span class="text-sm font-semibold text-accent-emphasis sm:text-right">Open</span>
+        </a>
+      </li>
+    ))}
   </ul>
 </Section>

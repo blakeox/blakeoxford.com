@@ -99,48 +99,44 @@ const commonProps = {
 };
 ---
 
-{
-  !isHidden && (
-    <div class="form-group flex flex-col gap-2">
-      <label for={id} class="text-sm font-semibold text-foreground">
-        {label}
-        {required && (
-          <span class="text-error-emphasis" aria-hidden="true">
-            *
-          </span>
-        )}
-      </label>
-
-      {isTextarea ? (
-        <textarea {...commonProps} rows={rows} />
-      ) : (
-        <input type={type} {...commonProps} />
+{!isHidden && (
+  <div class="form-group flex flex-col gap-2">
+    <label for={id} class="text-sm font-semibold text-foreground">
+      {label}
+      {required && (
+        <span class="text-error-emphasis" aria-hidden="true">
+          *
+        </span>
       )}
+    </label>
 
-      {helpText && (
-        <small id={`${id}-help`} class="text-xs leading-relaxed text-muted-foreground">
-          {helpText}
-        </small>
-      )}
+    {isTextarea ? (
+      <textarea {...commonProps} rows={rows}></textarea>
+    ) : (
+      <input type={type} {...commonProps} />
+    )}
 
-      <div
-        id={`${id}-error`}
-        class="hidden text-xs font-medium text-error-emphasis"
-        role="alert"
-        aria-live="polite"
-        aria-atomic="true"
-      />
-    </div>
-  )
-}
+    {helpText && (
+      <small id={`${id}-help`} class="text-xs leading-relaxed text-muted-foreground">
+        {helpText}
+      </small>
+    )}
 
-{
-  isHidden && (
-    <>
-      <label for={id} class="sr-only">
-        {label || id}
-      </label>
-      <input type="hidden" id={id} name={fieldName} value={value} aria-hidden="true" />
-    </>
-  )
-}
+    <div
+      id={`${id}-error`}
+      class="hidden text-xs font-medium text-error-emphasis"
+      role="alert"
+      aria-live="polite"
+      aria-atomic="true"
+    />
+  </div>
+)}
+
+{isHidden && (
+  <>
+    <label for={id} class="sr-only">
+      {label || id}
+    </label>
+    <input type="hidden" id={id} name={fieldName} value={value} aria-hidden="true" />
+  </>
+)}

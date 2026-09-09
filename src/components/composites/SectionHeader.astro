@@ -47,22 +47,20 @@ const isCentered = align === 'center';
 >
   <div class:list={['max-w-2xl space-y-2', isCentered ? 'text-center' : 'text-left']}>
     {kicker && <span class:list={['section-kicker', isCentered && 'mx-auto']}>{kicker}</span>}
-    <SectionHeading id={titleId} size={size}>{title}</SectionHeading>
-    {
-      description && (
-        <p class="pt-1 text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
-      )
-    }
+    <SectionHeading id={titleId} size={size}>
+      {title}
+    </SectionHeading>
+    {description && (
+      <p class="pt-1 text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
+    )}
   </div>
-  {
-    actionHref && actionLabel && (
-      <Button
-        variant={actionVariant}
-        href={actionHref}
-        class:list={['shrink-0', isCentered ? 'self-center' : 'self-start md:self-auto']}
-      >
-        {actionLabel}
-      </Button>
-    )
-  }
+  {actionHref && actionLabel && (
+    <Button
+      variant={actionVariant}
+      href={actionHref}
+      class:list={['shrink-0', isCentered ? 'self-center' : 'self-start md:self-auto']}
+    >
+      {actionLabel}
+    </Button>
+  )}
 </div>

@@ -54,13 +54,11 @@ const classes = getSectionClasses({
 ---
 
 <Element class={classes} aria-labelledby={ariaLabelledby} {...rest}>
-  {
-    container ? (
-      <Container size={container}>
-        <slot />
-      </Container>
-    ) : (
+  {container ? (
+    <Container size={container}>
       <slot />
-    )
-  }
+    </Container>
+  ) : (
+    <slot />
+  )}
 </Element>

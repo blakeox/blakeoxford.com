@@ -38,65 +38,51 @@ const highlightRows = (data.highlights ?? []).map((item: string) => ({ body: ite
 <article class="relative isolate py-14 sm:py-16 lg:py-20">
   <Container size="lg" class="relative flex flex-col gap-12 sm:gap-14 lg:gap-16">
     <ProjectDetailSection title="Overview" eyebrow="Context" description={data.description}>
-      <div
-        class="prose-case max-w-none space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg"
-      >
+      <div class="prose-case max-w-none space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
         <Content />
       </div>
     </ProjectDetailSection>
 
-    {
-      hasImpact || hasMetrics ? (
-        <ProjectDetailSection title="Impact" eyebrow="Proof">
-          <div class="flex flex-col gap-8">
-            {hasMetrics ? <MetricsTable metrics={metrics} /> : null}
-            {hasImpact ? <EditorialList rows={impactRows} numbered={false} /> : null}
-          </div>
-        </ProjectDetailSection>
-      ) : null
-    }
+    {hasImpact || hasMetrics ? (
+      <ProjectDetailSection title="Impact" eyebrow="Proof">
+        <div class="flex flex-col gap-8">
+          {hasMetrics ? <MetricsTable metrics={metrics} /> : null}
+          {hasImpact ? <EditorialList rows={impactRows} numbered={false} /> : null}
+        </div>
+      </ProjectDetailSection>
+    ) : null}
 
-    {
-      hasHighlights ? (
-        <ProjectDetailSection title="What shipped" eyebrow="Highlights">
-          <EditorialList rows={highlightRows} numbered={false} />
-        </ProjectDetailSection>
-      ) : null
-    }
+    {hasHighlights ? (
+      <ProjectDetailSection title="What shipped" eyebrow="Highlights">
+        <EditorialList rows={highlightRows} numbered={false} />
+      </ProjectDetailSection>
+    ) : null}
 
-    {
-      hasJourney ? (
-        <ProjectDetailSection title="Journey" eyebrow="How it unfolded">
-          <EditorialList rows={journeyRows} />
-        </ProjectDetailSection>
-      ) : null
-    }
+    {hasJourney ? (
+      <ProjectDetailSection title="Journey" eyebrow="How it unfolded">
+        <EditorialList rows={journeyRows} />
+      </ProjectDetailSection>
+    ) : null}
 
-    {
-      hasLessons ? (
-        <ProjectDetailSection title="Lessons" eyebrow="What stuck">
-          <EditorialList rows={lessonRows} numbered={false} />
-        </ProjectDetailSection>
-      ) : null
-    }
+    {hasLessons ? (
+      <ProjectDetailSection title="Lessons" eyebrow="What stuck">
+        <EditorialList rows={lessonRows} numbered={false} />
+      </ProjectDetailSection>
+    ) : null}
 
-    {
-      reflection ? (
-        <ProjectDetailSection title="Reflection" eyebrow="Personal note">
-          <blockquote class="max-w-2xl border-l-2 border-accent/60 pl-5 text-lg leading-relaxed text-foreground/90 italic sm:pl-6 sm:text-xl">
-            {reflection}
-          </blockquote>
-        </ProjectDetailSection>
-      ) : null
-    }
+    {reflection ? (
+      <ProjectDetailSection title="Reflection" eyebrow="Personal note">
+        <blockquote class="max-w-2xl border-l-2 border-accent/60 pl-5 text-lg leading-relaxed text-foreground/90 italic sm:pl-6 sm:text-xl">
+          {reflection}
+        </blockquote>
+      </ProjectDetailSection>
+    ) : null}
 
-    {
-      hasCtaSlot ? (
-        <ProjectDetailSection title="Next steps" eyebrow="Continue the conversation">
-          <slot name="cta" />
-        </ProjectDetailSection>
-      ) : null
-    }
+    {hasCtaSlot ? (
+      <ProjectDetailSection title="Next steps" eyebrow="Continue the conversation">
+        <slot name="cta" />
+      </ProjectDetailSection>
+    ) : null}
 
     <ProjectTags tags={data.tags ?? []} />
   </Container>

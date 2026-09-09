@@ -30,7 +30,9 @@ const { projects, content } = Astro.props as Props;
   />
 
   <div class="project-grid">
-    {projects.map((project) => <ProjectCard project={project} compact featured />)}
+    {projects.map((project) => (
+      <ProjectCard project={project} compact featured />
+    ))}
   </div>
 </Section>
 

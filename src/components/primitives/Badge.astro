@@ -35,10 +35,8 @@ const classes = getBadgeClasses({ variant, size, className });
 ---
 
 <span class={classes}>
-  {
-    showDot && (
-      <span class={`rounded-full bg-accent ${badgeRecipe.dotSizes[size]}`} aria-hidden="true" />
-    )
-  }
+  {showDot && (
+    <span class={`rounded-full bg-accent ${badgeRecipe.dotSizes[size]}`} aria-hidden="true" />
+  )}
   <slot />
 </span>
