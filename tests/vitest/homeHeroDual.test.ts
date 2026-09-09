@@ -26,7 +26,7 @@ afterEach(() => {
 describe('home hero static layout', () => {
   it('exposes both taglines without scroll-triggered live announcements', () => {
     const source = readFileSync('src/components/features/home/HomeHeroCopy.astro', 'utf8');
-    expect(source).toContain('<p class="sr-only">{workLine} {daringLine}</p>');
+    expect(source).toMatch(/<p class="sr-only">\s*\{workLine\} \{daringLine\}\s*<\/p>/);
     expect(source).not.toContain('aria-live');
     expect(source).not.toContain('data-dual-live');
   });

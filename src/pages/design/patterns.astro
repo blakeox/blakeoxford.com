@@ -98,26 +98,26 @@ const cardMatrix = [
       </header>
 
       <section class="mt-16" aria-labelledby="visual-tiers-heading">
-        <h2 id="visual-tiers-heading" class="text-2xl font-bold text-foreground">Visual tiers</h2>
+        <h2 id="visual-tiers-heading" class="text-2xl font-bold text-foreground">
+          Visual tiers
+        </h2>
         <p class="mt-3 max-w-3xl text-muted-foreground">
           Three intentional levels unify homepage restraint and blog expressiveness without
           splitting the token system.
         </p>
         <div class="mt-8 grid gap-4 lg:grid-cols-3">
-          {
-            visualTiers.map((item) => (
-              <BaseCard as="article" variant="subtle" hover="none" padding="md">
-                <Badge variant="outline" size="xs">
-                  {item.tier}
-                </Badge>
-                <p class="mt-3 text-sm font-semibold text-foreground">{item.usage}</p>
-                <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{item.treatment}</p>
-                <p class="mt-3 text-xs text-subtle-foreground">
-                  {item.componentCount} documented components
-                </p>
-              </BaseCard>
-            ))
-          }
+          {visualTiers.map((item) => (
+            <BaseCard as="article" variant="subtle" hover="none" padding="md">
+              <Badge variant="outline" size="xs">
+                {item.tier}
+              </Badge>
+              <p class="mt-3 text-sm font-semibold text-foreground">{item.usage}</p>
+              <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{item.treatment}</p>
+              <p class="mt-3 text-xs text-subtle-foreground">
+                {item.componentCount} documented components
+              </p>
+            </BaseCard>
+          ))}
         </div>
         <div class="mt-8 grid gap-6 lg:grid-cols-3">
           <BaseCard variant="subtle" hover="none">
@@ -142,7 +142,9 @@ const cardMatrix = [
       </section>
 
       <section class="mt-16" aria-labelledby="card-matrix-heading">
-        <h2 id="card-matrix-heading" class="text-2xl font-bold text-foreground">Card matrix</h2>
+        <h2 id="card-matrix-heading" class="text-2xl font-bold text-foreground">
+          Card matrix
+        </h2>
         <p class="mt-3 max-w-3xl text-muted-foreground">
           Compose from this hierarchy instead of inline card markup in feature pages.
         </p>
@@ -155,43 +157,39 @@ const cardMatrix = [
               </tr>
             </thead>
             <tbody>
-              {
-                cardMatrix.map((row) => (
-                  <tr class="border-b border-border/20 last:border-b-0">
-                    <td class="px-4 py-3 font-mono text-xs text-accent-emphasis">{row.layer}</td>
-                    <td class="px-4 py-3 text-muted-foreground">{row.role}</td>
-                  </tr>
-                ))
-              }
+              {cardMatrix.map((row) => (
+                <tr class="border-b border-border/20 last:border-b-0">
+                  <td class="px-4 py-3 font-mono text-xs text-accent-emphasis">{row.layer}</td>
+                  <td class="px-4 py-3 text-muted-foreground">{row.role}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       </section>
 
       <section class="mt-16 grid gap-4 lg:grid-cols-2" aria-label="Design patterns">
-        {
-          patterns.map((pattern) => (
-            <BaseCard as="article" variant="subtle" hover="none" padding="md" class="min-w-0">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <h2 class="text-xl font-semibold text-foreground">{pattern.name}</h2>
-                  <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {pattern.description}
-                  </p>
-                </div>
-                <Badge variant="outline" size="xs">
-                  {pattern.category}
-                </Badge>
+        {patterns.map((pattern) => (
+          <BaseCard as="article" variant="subtle" hover="none" padding="md" class="min-w-0">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 class="text-xl font-semibold text-foreground">{pattern.name}</h2>
+                <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {pattern.description}
+                </p>
               </div>
-              <pre
-                class="mt-5 max-w-full overflow-x-auto rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground"
-                tabindex="0"
-              >
+              <Badge variant="outline" size="xs">
+                {pattern.category}
+              </Badge>
+            </div>
+            <pre
+              class="mt-5 max-w-full overflow-x-auto rounded-lg bg-surface-subtle p-3 text-xs text-muted-foreground"
+              tabindex="0"
+            >
                 <code>{pattern.code}</code>
               </pre>
-            </BaseCard>
-          ))
-        }
+          </BaseCard>
+        ))}
       </section>
 
       <section
@@ -201,21 +199,15 @@ const cardMatrix = [
         <div>
           <h2 class="text-2xl font-bold text-foreground">Stack Example</h2>
           <Stack space="md" class="mt-5">
-            <BaseCard hover="none"
-              ><p class="text-sm text-muted-foreground">
-                One spacing rule controls this group.
-              </p></BaseCard
-            >
-            <BaseCard hover="none"
-              ><p class="text-sm text-muted-foreground">
-                No local margin decisions are needed.
-              </p></BaseCard
-            >
-            <BaseCard hover="none"
-              ><p class="text-sm text-muted-foreground">
-                The pattern remains readable on mobile.
-              </p></BaseCard
-            >
+            <BaseCard hover="none">
+              <p class="text-sm text-muted-foreground">One spacing rule controls this group.</p>
+            </BaseCard>
+            <BaseCard hover="none">
+              <p class="text-sm text-muted-foreground">No local margin decisions are needed.</p>
+            </BaseCard>
+            <BaseCard hover="none">
+              <p class="text-sm text-muted-foreground">The pattern remains readable on mobile.</p>
+            </BaseCard>
           </Stack>
         </div>
 
@@ -242,16 +234,22 @@ const cardMatrix = [
       <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
         <a
           class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark"
-          href="/design/components/">Component contracts</a
+          href="/design/components/"
         >
+          Component contracts
+        </a>
         <a
           class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent"
-          href="/design/animations/">Motion rules</a
+          href="/design/animations/"
         >
+          Motion rules
+        </a>
         <a
           class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent"
-          href="/design/tokens/">Tokens</a
+          href="/design/tokens/"
         >
+          Tokens
+        </a>
       </nav>
     </Container>
   </Section>

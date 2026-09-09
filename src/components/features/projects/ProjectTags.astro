@@ -16,24 +16,22 @@ const normalizedTags = Array.isArray(tags)
   : [];
 ---
 
-{
-  normalizedTags.length > 0 && (
-    <aside class="border-t border-border/50 pt-10" aria-labelledby="case-stack-heading">
-      <div class="max-w-2xl space-y-2">
-        <h2
-          id="case-stack-heading"
-          class:list={[
-            'font-heading font-semibold tracking-tight text-foreground',
-            headingSizeClass('title'),
-          ]}
-        >
-          Stack & focus
-        </h2>
-        <p class="text-sm leading-relaxed text-muted-foreground">
-          Tools and domains this engagement relied on.
-        </p>
-      </div>
-      <DotMetaList items={normalizedTags} label="Stack and focus areas" class="mt-5" />
-    </aside>
-  )
-}
+{normalizedTags.length > 0 && (
+  <aside class="border-t border-border/50 pt-10" aria-labelledby="case-stack-heading">
+    <div class="max-w-2xl space-y-2">
+      <h2
+        id="case-stack-heading"
+        class:list={[
+          'font-heading font-semibold tracking-tight text-foreground',
+          headingSizeClass('title'),
+        ]}
+      >
+        Stack & focus
+      </h2>
+      <p class="text-sm leading-relaxed text-muted-foreground">
+        Tools and domains this engagement relied on.
+      </p>
+    </div>
+    <DotMetaList items={normalizedTags} label="Stack and focus areas" class="mt-5" />
+  </aside>
+)}

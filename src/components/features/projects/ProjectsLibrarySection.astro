@@ -36,7 +36,9 @@ const libraryProjects = excludeSlug
     />
 
     <Grid cols="3" gap="md">
-      {libraryProjects.map((project) => <ProjectCard project={project} />)}
+      {libraryProjects.map((project) => (
+        <ProjectCard project={project} />
+      ))}
     </Grid>
   </div>
 </Section>

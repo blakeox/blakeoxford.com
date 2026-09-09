@@ -24,12 +24,10 @@ const description =
 const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
-{
-  /*
+{/*
   Portfolio showcase arc:
   claim → featured proof → full range → capabilities → cross-case results → convert.
-*/
-}
+*/}
 <Layout title={title} description={description} url={canonicalUrl} wide>
   <PageHero
     fullScreen={false}
@@ -58,16 +56,14 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     </div>
   </PageHero>
 
-  {
-    featuredProject && deepCut && (
-      <ProjectsFeaturedSection
-        project={featuredProject}
-        deepCut={deepCut}
-        kicker={meta.featured.kicker}
-        ctaLabel={meta.featured.ctaLabel}
-      />
-    )
-  }
+  {featuredProject && deepCut && (
+    <ProjectsFeaturedSection
+      project={featuredProject}
+      deepCut={deepCut}
+      kicker={meta.featured.kicker}
+      ctaLabel={meta.featured.ctaLabel}
+    />
+  )}
 
   <ProjectsLibrarySection
     projects={projects}

@@ -14,29 +14,25 @@ const { post, align = 'left' } = Astro.props as BlogPostRowProps;
 const { id: slug, data } = post;
 ---
 
-<article
-  class="group w-full border-y border-border/50 py-5 transition-colors duration-normal hover:bg-surface-subtle/40 sm:py-6"
->
+<article class="group w-full border-y border-border/50 py-5 transition-colors duration-normal hover:bg-surface-subtle/40 sm:py-6">
   <div
     class={cn(
       'flex w-full flex-col items-start gap-6 md:gap-8 lg:flex-row lg:gap-12 xl:gap-16',
       align === 'right' && 'lg:flex-row-reverse'
     )}
   >
-    {
-      data.heroImage && (
-        <div class="w-full flex-shrink-0 lg:w-2/5 xl:w-1/2">
-          <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-subtle lg:aspect-[4/3] xl:aspect-[16/10]">
-            <OptimizedImage
-              src={data.heroImage}
-              alt={`Hero image for ${data.title}`}
-              class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.04]"
-              loading="lazy"
-            />
-          </div>
+    {data.heroImage && (
+      <div class="w-full flex-shrink-0 lg:w-2/5 xl:w-1/2">
+        <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-subtle lg:aspect-[4/3] xl:aspect-[16/10]">
+          <OptimizedImage
+            src={data.heroImage}
+            alt={`Hero image for ${data.title}`}
+            class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.04]"
+            loading="lazy"
+          />
         </div>
-      )
-    }
+      </div>
+    )}
 
     <div class={cn('flex flex-1 flex-col gap-6', !data.heroImage && 'w-full')}>
       <div class="space-y-4">
@@ -46,13 +42,11 @@ const { id: slug, data } = post;
           gap="sm"
           class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
         >
-          {
-            data.pubDate && (
-              <time class="inline-flex items-center" datetime={formatDateISO(data.pubDate)}>
-                {formatDateShort(data.pubDate)}
-              </time>
-            )
-          }
+          {data.pubDate && (
+            <time class="inline-flex items-center" datetime={formatDateISO(data.pubDate)}>
+              {formatDateShort(data.pubDate)}
+            </time>
+          )}
         </Flex>
 
         <h2
@@ -69,42 +63,38 @@ const { id: slug, data } = post;
           </a>
         </h2>
 
-        {
-          data.description && (
-            <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:4]">
-              {data.description}
-            </p>
-          )
-        }
+        {data.description && (
+          <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:4]">
+            {data.description}
+          </p>
+        )}
       </div>
 
-      {
-        data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
-          <Flex
-            as="ul"
-            wrap
-            align="center"
-            gap="xs"
-            class="text-xxs font-semibold tracking-wide text-subtle-foreground uppercase"
-            aria-label="Post tags"
-          >
-            {data.tags.slice(0, 3).map((tag: string) => (
-              <li>
-                <Badge variant="pill" size="xs">
-                  {tag}
-                </Badge>
-              </li>
-            ))}
-            {data.tags.length > 3 && (
-              <li>
-                <Badge variant="pill" size="xs" class="text-subtle-foreground">
-                  +{data.tags.length - 3}
-                </Badge>
-              </li>
-            )}
-          </Flex>
-        )
-      }
+      {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
+        <Flex
+          as="ul"
+          wrap
+          align="center"
+          gap="xs"
+          class="text-xxs font-semibold tracking-wide text-subtle-foreground uppercase"
+          aria-label="Post tags"
+        >
+          {data.tags.slice(0, 3).map((tag: string) => (
+            <li>
+              <Badge variant="pill" size="xs">
+                {tag}
+              </Badge>
+            </li>
+          ))}
+          {data.tags.length > 3 && (
+            <li>
+              <Badge variant="pill" size="xs" class="text-subtle-foreground">
+                +{data.tags.length - 3}
+              </Badge>
+            </li>
+          )}
+        </Flex>
+      )}
 
       <div class="mt-auto flex items-center justify-between gap-4">
         <span class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">

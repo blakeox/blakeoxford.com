@@ -79,9 +79,10 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
         <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
           This page documents canonical component paths, live examples, and the full searchable
           catalog generated from
-          <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm break-all"
-            >src/data/component-docs/manifest.ts</code
-          >.
+          <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm break-all">
+            src/data/component-docs/manifest.ts
+          </code>
+          .
         </p>
       </header>
 
@@ -89,21 +90,21 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
         class="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
         aria-label="Canonical examples"
       >
-        {
-          canonicalExamples.map((item) => (
-            <BaseCard as="article" variant="subtle" hover="none" padding="md" class="min-w-0">
-              <h2 class="text-lg font-semibold text-foreground">{item.name}</h2>
-              <p class="mt-2 text-sm text-muted-foreground">{item.contract}</p>
-              <code class="mt-4 block rounded-lg bg-surface-subtle p-3 text-xs break-all text-muted-foreground">
-                {item.path}
-              </code>
-            </BaseCard>
-          ))
-        }
+        {canonicalExamples.map((item) => (
+          <BaseCard as="article" variant="subtle" hover="none" padding="md" class="min-w-0">
+            <h2 class="text-lg font-semibold text-foreground">{item.name}</h2>
+            <p class="mt-2 text-sm text-muted-foreground">{item.contract}</p>
+            <code class="mt-4 block rounded-lg bg-surface-subtle p-3 text-xs break-all text-muted-foreground">
+              {item.path}
+            </code>
+          </BaseCard>
+        ))}
       </section>
 
       <section class="mt-16" aria-labelledby="live-examples">
-        <h2 id="live-examples" class="text-2xl font-bold text-foreground">Live Examples</h2>
+        <h2 id="live-examples" class="text-2xl font-bold text-foreground">
+          Live Examples
+        </h2>
         <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <BaseCard variant="elevated" hover="none">
             <h3 class="text-xl font-semibold text-foreground">Buttons</h3>
@@ -165,32 +166,28 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
           >
             <h3 class="text-lg font-semibold text-foreground">BaseCard variants</h3>
             <div class="mt-4 grid gap-3 sm:grid-cols-2">
-              {
-                baseCardVariants.map((entry) => (
-                  <div
-                    data-variant-component="BaseCard"
-                    data-variant-recipe={entry.recipe}
-                    data-variant-key={entry.variant}
-                  >
-                    <BaseCard variant={entry.variant as BaseCardVariant} hover="none" padding="sm">
-                      <span class="text-sm text-foreground">{entry.variant}</span>
-                    </BaseCard>
-                  </div>
-                ))
-              }
-              {
-                baseCardHoverVariants.map((entry) => (
-                  <div
-                    data-variant-component="BaseCard"
-                    data-variant-recipe={entry.recipe}
-                    data-variant-key={entry.variant}
-                  >
-                    <BaseCard variant="subtle" hover={entry.variant as BaseCardHover} padding="sm">
-                      <span class="text-sm text-foreground">hover: {entry.variant}</span>
-                    </BaseCard>
-                  </div>
-                ))
-              }
+              {baseCardVariants.map((entry) => (
+                <div
+                  data-variant-component="BaseCard"
+                  data-variant-recipe={entry.recipe}
+                  data-variant-key={entry.variant}
+                >
+                  <BaseCard variant={entry.variant as BaseCardVariant} hover="none" padding="sm">
+                    <span class="text-sm text-foreground">{entry.variant}</span>
+                  </BaseCard>
+                </div>
+              ))}
+              {baseCardHoverVariants.map((entry) => (
+                <div
+                  data-variant-component="BaseCard"
+                  data-variant-recipe={entry.recipe}
+                  data-variant-key={entry.variant}
+                >
+                  <BaseCard variant="subtle" hover={entry.variant as BaseCardHover} padding="sm">
+                    <span class="text-sm text-foreground">hover: {entry.variant}</span>
+                  </BaseCard>
+                </div>
+              ))}
             </div>
           </BaseCard>
 
@@ -203,17 +200,15 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
           >
             <h3 class="text-lg font-semibold text-foreground">Button variants</h3>
             <div class="mt-4 flex flex-wrap gap-3">
-              {
-                buttonVariants.map((entry) => (
-                  <div
-                    data-variant-component="Button"
-                    data-variant-recipe={entry.recipe}
-                    data-variant-key={entry.variant}
-                  >
-                    <Button variant={entry.variant as ButtonVariant}>{entry.variant}</Button>
-                  </div>
-                ))
-              }
+              {buttonVariants.map((entry) => (
+                <div
+                  data-variant-component="Button"
+                  data-variant-recipe={entry.recipe}
+                  data-variant-key={entry.variant}
+                >
+                  <Button variant={entry.variant as ButtonVariant}>{entry.variant}</Button>
+                </div>
+              ))}
             </div>
           </BaseCard>
 
@@ -226,17 +221,15 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
           >
             <h3 class="text-lg font-semibold text-foreground">Badge variants</h3>
             <div class="mt-4 flex flex-wrap gap-2">
-              {
-                badgeVariants.map((entry) => (
-                  <div
-                    data-variant-component="Badge"
-                    data-variant-recipe={entry.recipe}
-                    data-variant-key={entry.variant}
-                  >
-                    <Badge variant={entry.variant as BadgeVariant}>{entry.variant}</Badge>
-                  </div>
-                ))
-              }
+              {badgeVariants.map((entry) => (
+                <div
+                  data-variant-component="Badge"
+                  data-variant-recipe={entry.recipe}
+                  data-variant-key={entry.variant}
+                >
+                  <Badge variant={entry.variant as BadgeVariant}>{entry.variant}</Badge>
+                </div>
+              ))}
             </div>
           </BaseCard>
 
@@ -249,40 +242,36 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
           >
             <h3 class="text-lg font-semibold text-foreground">FeatureCard variants</h3>
             <div class="mt-4 grid gap-3 sm:grid-cols-2">
-              {
-                featureCardVariants.map((entry) => (
-                  <div
-                    data-variant-component="FeatureCard"
-                    data-variant-recipe={entry.recipe}
-                    data-variant-key={entry.variant}
-                  >
-                    <FeatureCard
-                      title={entry.variant}
-                      description="Canonical expressive recipe coverage."
-                      variant={entry.variant as FeatureCardVariant}
-                      hover={false}
-                    />
-                  </div>
-                ))
-              }
+              {featureCardVariants.map((entry) => (
+                <div
+                  data-variant-component="FeatureCard"
+                  data-variant-recipe={entry.recipe}
+                  data-variant-key={entry.variant}
+                >
+                  <FeatureCard
+                    title={entry.variant}
+                    description="Canonical expressive recipe coverage."
+                    variant={entry.variant as FeatureCardVariant}
+                    hover={false}
+                  />
+                </div>
+              ))}
             </div>
           </BaseCard>
         </div>
 
         <div class="mt-6 grid gap-3 sm:grid-cols-2">
-          {
-            sectionBackgrounds.map((entry) => (
-              <Section
-                padding="sm"
-                background={entry.variant as SectionBackground}
-                data-variant-component="Section"
-                data-variant-recipe={entry.recipe}
-                data-variant-key={entry.variant}
-              >
-                <p class="text-sm font-semibold text-foreground">section: {entry.variant}</p>
-              </Section>
-            ))
-          }
+          {sectionBackgrounds.map((entry) => (
+            <Section
+              padding="sm"
+              background={entry.variant as SectionBackground}
+              data-variant-component="Section"
+              data-variant-recipe={entry.recipe}
+              data-variant-key={entry.variant}
+            >
+              <p class="text-sm font-semibold text-foreground">section: {entry.variant}</p>
+            </Section>
+          ))}
         </div>
       </section>
 
@@ -300,19 +289,16 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
           New Component Checklist
         </h2>
         <p class="mt-3 text-sm text-muted-foreground">
-          Follow this list before merging a new component. The catalog at <code
-            >src/data/component-docs/manifest.ts</code
-          > is the searchable source of truth.
+          Follow this list before merging a new component. The catalog at{' '}
+          <code>src/data/component-docs/manifest.ts</code> is the searchable source of truth.
         </p>
         <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
-          {
-            COMPONENT_AUTHORING_CHECKLIST.map((item) => (
-              <li class="flex items-start gap-2">
-                <span class="mt-0.5 text-success">✓</span>
-                <span>{item}</span>
-              </li>
-            ))
-          }
+          {COMPONENT_AUTHORING_CHECKLIST.map((item) => (
+            <li class="flex items-start gap-2">
+              <span class="mt-0.5 text-success">✓</span>
+              <span>{item}</span>
+            </li>
+          ))}
         </ul>
         <div class="mt-8">
           <h3 class="text-lg font-semibold text-foreground">Standard primitive props</h3>
@@ -326,17 +312,15 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
                 </tr>
               </thead>
               <tbody class="divide-y divide-border">
-                {
-                  PRIMITIVE_PROP_CONTRACT.map((entry) => (
-                    <tr>
-                      <td class="py-3 pr-4">
-                        <code class="text-accent-emphasis">{entry.prop}</code>
-                      </td>
-                      <td class="py-3 pr-4 text-muted-foreground">{entry.when}</td>
-                      <td class="py-3 text-muted-foreground">{entry.notes ?? '—'}</td>
-                    </tr>
-                  ))
-                }
+                {PRIMITIVE_PROP_CONTRACT.map((entry) => (
+                  <tr>
+                    <td class="py-3 pr-4">
+                      <code class="text-accent-emphasis">{entry.prop}</code>
+                    </td>
+                    <td class="py-3 pr-4 text-muted-foreground">{entry.when}</td>
+                    <td class="py-3 text-muted-foreground">{entry.notes ?? '—'}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -351,7 +335,9 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
         class="mt-16"
         aria-labelledby="anti-patterns"
       >
-        <h2 id="anti-patterns" class="text-2xl font-bold text-foreground">Anti-Patterns</h2>
+        <h2 id="anti-patterns" class="text-2xl font-bold text-foreground">
+          Anti-Patterns
+        </h2>
         <ul class="mt-5 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
           <li>Do not add new component folders for one-off wrappers.</li>
           <li>
@@ -367,7 +353,8 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
             Do not use raw green, red, blue, gray, white, or black utilities in reusable components.
           </li>
           <li>
-            Do not create duplicate files with a <code>* 2.*</code> suffix; the lint gate blocks them.
+            Do not create duplicate files with a <code>* 2.*</code> suffix; the lint gate blocks
+            them.
           </li>
         </ul>
       </BaseCard>

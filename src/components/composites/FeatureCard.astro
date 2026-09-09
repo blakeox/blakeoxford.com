@@ -48,35 +48,29 @@ const TitleTag = titleLevel === 2 ? 'h2' : 'h3';
   padding="md"
   class={classes}
 >
-  {
-    badge && (
-      <div
-        class={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full @sm:h-12 @sm:w-12 ${featureCardRecipe.variants[variant].badge} text-lg font-bold shadow-sm @sm:text-xl`}
-      >
-        {badge}
-      </div>
-    )
-  }
+  {badge && (
+    <div
+      class={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full @sm:h-12 @sm:w-12 ${featureCardRecipe.variants[variant].badge} text-lg font-bold shadow-sm @sm:text-xl`}
+    >
+      {badge}
+    </div>
+  )}
 
-  {
-    title && (
-      <TitleTag
-        class:list={[
-          'mb-2 font-heading font-semibold @sm:mb-3',
-          headingSizeClass('title'),
-          featureCardRecipe.variants[variant].text,
-        ]}
-      >
-        {title}
-      </TitleTag>
-    )
-  }
+  {title && (
+    <TitleTag
+      class:list={[
+        'mb-2 font-heading font-semibold @sm:mb-3',
+        headingSizeClass('title'),
+        featureCardRecipe.variants[variant].text,
+      ]}
+    >
+      {title}
+    </TitleTag>
+  )}
 
-  {
-    description && (
-      <p class="text-base leading-relaxed text-muted-foreground @sm:text-lg">{description}</p>
-    )
-  }
+  {description && (
+    <p class="text-base leading-relaxed text-muted-foreground @sm:text-lg">{description}</p>
+  )}
 
   <slot />
 </BaseCard>
