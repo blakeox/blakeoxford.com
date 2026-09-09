@@ -97,9 +97,7 @@ Heading sizes: use the shared ladder in `src/lib/typeScale.ts` (`identity` → `
 
 ```astro
 <div class="@container">
-  <Card>
-    <!-- Card adapts to container width -->
-  </Card>
+  <Card><!-- Card adapts to container width --></Card>
 </div>
 ```
 

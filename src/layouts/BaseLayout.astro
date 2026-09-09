@@ -67,7 +67,7 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
 
 <html lang="en" class="scroll-smooth bg-background text-foreground">
   <head>
-    <script is:inline set:html={themeFoucScript} />
+    <script is:inline set:html={themeFoucScript}></script>
     <DocumentMeta
       title={seoTitle}
       metaDescription={metaDescription}
@@ -91,31 +91,29 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
     <slot name="head" />
   </head>
   <body id="top" class="min-h-screen bg-background text-foreground">
-    {
-      runtimeSurfaceFlags.siteSearch ? (
-        <SearchOverlay />
-      ) : (
-        <aside
-          class="mx-auto max-w-3xl px-4 py-3 text-sm text-muted-foreground"
-          data-runtime-fallback="site-search"
-          aria-label="Site search status"
-        >
-          Site search is temporarily unavailable. Browse
-          <a class="ml-1 text-accent underline" href="/projects/">
-            projects
-          </a>
-          ,
-          <a class="ml-1 text-accent underline" href="/blog/">
-            blog
-          </a>
-          , or
-          <a class="ml-1 text-accent underline" href="/contact/">
-            contact
-          </a>
-          .
-        </aside>
-      )
-    }
+    {runtimeSurfaceFlags.siteSearch ? (
+      <SearchOverlay />
+    ) : (
+      <aside
+        class="mx-auto max-w-3xl px-4 py-3 text-sm text-muted-foreground"
+        data-runtime-fallback="site-search"
+        aria-label="Site search status"
+      >
+        Site search is temporarily unavailable. Browse
+        <a class="ml-1 text-accent underline" href="/projects/">
+          projects
+        </a>
+        ,
+        <a class="ml-1 text-accent underline" href="/blog/">
+          blog
+        </a>
+        , or
+        <a class="ml-1 text-accent underline" href="/contact/">
+          contact
+        </a>
+        .
+      </aside>
+    )}
 
     <SkipLink href="#main-content" text="Skip to main content" />
     <SkipLink href="#footer" text="Skip to footer" />
@@ -133,26 +131,24 @@ const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.
       <slot />
     </main>
     <Footer transition:persist="footer" />
-    {
-      runtimeSurfaceFlags.aiAssistant ? (
-        <AIChatWidget transition:persist="chat" />
-      ) : (
-        <aside
-          class="mx-auto max-w-3xl px-4 py-3 text-sm text-muted-foreground"
-          data-runtime-fallback="ai-assistant"
-          aria-label="AI assistant status"
-        >
-          The AI assistant is temporarily unavailable. Search the
-          <a class="ml-1 text-accent underline" href="/blog/">
-            blog
-          </a>{' '}
-          or
-          <a class="ml-1 text-accent underline" href="/contact/">
-            contact Blake
-          </a>
-          .
-        </aside>
-      )
-    }
+    {runtimeSurfaceFlags.aiAssistant ? (
+      <AIChatWidget transition:persist="chat" />
+    ) : (
+      <aside
+        class="mx-auto max-w-3xl px-4 py-3 text-sm text-muted-foreground"
+        data-runtime-fallback="ai-assistant"
+        aria-label="AI assistant status"
+      >
+        The AI assistant is temporarily unavailable. Search the
+        <a class="ml-1 text-accent underline" href="/blog/">
+          blog
+        </a>{' '}
+        or
+        <a class="ml-1 text-accent underline" href="/contact/">
+          contact Blake
+        </a>
+        .
+      </aside>
+    )}
   </body>
 </html>

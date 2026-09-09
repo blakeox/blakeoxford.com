@@ -29,9 +29,7 @@ const { sidebar } = Astro.props as Props;
   aria-labelledby="message-form"
   data-chat-avoid-launcher
 >
-  <div
-    class="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-12"
-  >
+  <div class="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-12">
     <div class="lg:sticky lg:top-28">
       <SectionHeader
         title="Send the project brief"
@@ -42,19 +40,17 @@ const { sidebar } = Astro.props as Props;
       <div class="border-t border-border/50 pt-5">
         <p class="text-sm font-semibold tracking-tight text-foreground">{sidebar.heading}</p>
         <ol class="mt-3 space-y-2.5" role="list">
-          {
-            sidebar.items.map((item, index) => (
-              <li class="flex gap-3 text-sm leading-relaxed text-muted-foreground">
-                <span
-                  class="font-heading text-sm font-semibold text-accent tabular-nums"
-                  aria-hidden="true"
-                >
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-                <span>{item}</span>
-              </li>
-            ))
-          }
+          {sidebar.items.map((item, index) => (
+            <li class="flex gap-3 text-sm leading-relaxed text-muted-foreground">
+              <span
+                class="font-heading text-sm font-semibold text-accent tabular-nums"
+                aria-hidden="true"
+              >
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span>{item}</span>
+            </li>
+          ))}
         </ol>
         <p class="mt-5 text-sm leading-relaxed text-foreground/85">{sidebar.note}</p>
         <p class="mt-3 text-xs leading-relaxed text-subtle-foreground">
@@ -78,8 +74,7 @@ const { sidebar } = Astro.props as Props;
         aria-atomic="true"
         tabindex="-1"
         class="mb-5 hidden text-sm font-semibold"
-      >
-      </div>
+      ></div>
 
       <form
         id="contact-form"
@@ -90,7 +85,9 @@ const { sidebar } = Astro.props as Props;
       >
         <FormField id="form-name" type="hidden" label="form-name-hidden" value="contact" />
         <p class="sr-only" aria-hidden="true">
-          <label for="bot-field" class="sr-only">Don&apos;t fill this out</label>
+          <label for="bot-field" class="sr-only">
+            Don&apos;t fill this out
+          </label>
           <input
             id="bot-field"
             name="bot-field"
@@ -142,11 +139,9 @@ const { sidebar } = Astro.props as Props;
         />
 
         <div class="-mt-4 flex justify-end text-xs text-subtle-foreground" aria-live="polite">
-          <span id="message-count">0</span><span aria-hidden="true"> / 2,000</span><span
-            class="sr-only"
-          >
-            characters used</span
-          >
+          <span id="message-count">0</span>
+          <span aria-hidden="true"> / 2,000</span>
+          <span class="sr-only">characters used</span>
         </div>
 
         <div class="border-t border-border/50 pt-5">
@@ -168,24 +163,28 @@ const { sidebar } = Astro.props as Props;
                     d="M12 3 5 6v5c0 4.6 2.9 8.2 7 10 4.1-1.8 7-5.4 7-10V6l-7-3Z"
                     stroke="currentColor"
                     stroke-width="1.8"
-                    stroke-linejoin="round"></path>
+                    stroke-linejoin="round"
+                  ></path>
                   <path
                     d="m9 12 2 2 4-4"
                     stroke="currentColor"
                     stroke-width="1.8"
                     stroke-linecap="round"
-                    stroke-linejoin="round"></path>
+                    stroke-linejoin="round"
+                  ></path>
                 </svg>
               </span>
               <span class="min-w-0">
                 <span
                   id="turnstile-status"
                   class="block text-sm font-semibold text-foreground"
-                  aria-live="polite">Secure verification ready</span
+                  aria-live="polite"
                 >
-                <span class="mt-0.5 block text-xs text-muted-foreground"
-                  >Protected by Cloudflare</span
-                >
+                  Secure verification ready
+                </span>
+                <span class="mt-0.5 block text-xs text-muted-foreground">
+                  Protected by Cloudflare
+                </span>
               </span>
             </div>
             <div
@@ -193,8 +192,7 @@ const { sidebar } = Astro.props as Props;
               class="z-10 col-start-1 row-start-1 flex w-full min-w-0 items-start justify-start [&>iframe]:max-w-full"
               role="group"
               aria-label="Human verification challenge"
-            >
-            </div>
+            ></div>
           </div>
         </div>
 
@@ -205,19 +203,23 @@ const { sidebar } = Astro.props as Props;
             class="hidden size-5 animate-spin"
             viewBox="0 0 24 24"
             aria-hidden="true"
-            ><circle
+          >
+            <circle
               cx="12"
               cy="12"
               r="10"
               stroke="currentColor"
               stroke-width="3"
               fill="none"
-              opacity=".3"></circle><path
+              opacity=".3"
+            ></circle>
+            <path
               d="M22 12a10 10 0 0 0-10-10"
               stroke="currentColor"
               stroke-width="3"
-              stroke-linecap="round"></path></svg
-          >
+              stroke-linecap="round"
+            ></path>
+          </svg>
         </Button>
         <p class="text-center text-sm leading-relaxed text-muted-foreground">
           I’ll review your brief and follow up by email about next steps.
