@@ -22,39 +22,37 @@ const { posts, content } = Astro.props as Props;
     size="3xl"
   />
 
-  {
-    posts.length > 0 ? (
-      <ul class="divide-y divide-border/50 border-y border-border/50" role="list">
-        {posts.map((post) => (
-          <li role="listitem">
-            <a
-              href={`/blog/${post.id}/`}
-              class="group grid gap-1 py-5 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:items-baseline sm:gap-8 sm:py-6"
+  {posts.length > 0 ? (
+    <ul class="divide-y divide-border/50 border-y border-border/50" role="list">
+      {posts.map((post) => (
+        <li role="listitem">
+          <a
+            href={`/blog/${post.id}/`}
+            class="group grid gap-1 py-5 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:items-baseline sm:gap-8 sm:py-6"
+          >
+            <time
+              class="text-xs font-semibold tracking-[0.04em] text-subtle-foreground"
+              datetime={formatDateISO(post.data.pubDate)}
             >
-              <time
-                class="text-xs font-semibold tracking-[0.04em] text-subtle-foreground"
-                datetime={formatDateISO(post.data.pubDate)}
-              >
-                {formatDateBlog(post.data.pubDate)}
-              </time>
-              <div class="min-w-0 space-y-1.5">
-                <h3 class="font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-accent-emphasis sm:text-xl">
-                  {post.data.title}
-                </h3>
-                {post.data.description && (
-                  <p class="line-clamp-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                    {post.data.description}
-                  </p>
-                )}
-              </div>
-            </a>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p class="border border-dashed border-border/50 px-6 py-8 text-center text-sm text-muted-foreground">
-        {content.emptyMessage}
-      </p>
-    )
-  }
+              {formatDateBlog(post.data.pubDate)}
+            </time>
+            <div class="min-w-0 space-y-1.5">
+              <h3 class="font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-accent-emphasis sm:text-xl">
+                {post.data.title}
+              </h3>
+              {post.data.description && (
+                <p class="line-clamp-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                  {post.data.description}
+                </p>
+              )}
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="border border-dashed border-border/50 px-6 py-8 text-center text-sm text-muted-foreground">
+      {content.emptyMessage}
+    </p>
+  )}
 </Section>

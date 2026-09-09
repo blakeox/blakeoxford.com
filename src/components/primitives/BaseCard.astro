@@ -73,21 +73,17 @@ const classes = getBaseCardClasses({
   data-card-rounded={roundedKey}
   {...rest}
 >
-  {
-    Astro.slots.has('header') && (
-      <header class={getBaseCardPadding(paddingKey)}>
-        <slot name="header" />
-      </header>
-    )
-  }
+  {Astro.slots.has('header') && (
+    <header class={getBaseCardPadding(paddingKey)}>
+      <slot name="header" />
+    </header>
+  )}
 
-  {
-    Astro.slots.has('image') && (
-      <div class="overflow-hidden">
-        <slot name="image" />
-      </div>
-    )
-  }
+  {Astro.slots.has('image') && (
+    <div class="overflow-hidden">
+      <slot name="image" />
+    </div>
+  )}
 
   <div
     class={cn(
@@ -99,11 +95,9 @@ const classes = getBaseCardClasses({
     <slot />
   </div>
 
-  {
-    Astro.slots.has('footer') && (
-      <footer class={cn(getBaseCardPadding(paddingKey), 'border-t border-border/20 pt-4')}>
-        <slot name="footer" />
-      </footer>
-    )
-  }
+  {Astro.slots.has('footer') && (
+    <footer class={cn(getBaseCardPadding(paddingKey), 'border-t border-border/20 pt-4')}>
+      <slot name="footer" />
+    </footer>
+  )}
 </Element>

@@ -63,25 +63,21 @@ const descriptionToneClasses = {
   >
     {title}
   </Tag>
-  {
-    emphasis && (
-      <p class="font-heading text-lg font-semibold tracking-tight text-accent-emphasis sm:text-xl">
-        {emphasis}
-      </p>
-    )
-  }
-  {
-    description && (
-      <p
-        class:list={[
-          descriptionSizeClasses[bodySize],
-          descriptionToneClasses[descriptionTone],
-          isCentered ? 'max-w-2xl' : size === 'identity' ? '' : 'max-w-xl',
-        ]}
-      >
-        {description}
-      </p>
-    )
-  }
+  {emphasis && (
+    <p class="font-heading text-lg font-semibold tracking-tight text-accent-emphasis sm:text-xl">
+      {emphasis}
+    </p>
+  )}
+  {description && (
+    <p
+      class:list={[
+        descriptionSizeClasses[bodySize],
+        descriptionToneClasses[descriptionTone],
+        isCentered ? 'max-w-2xl' : size === 'identity' ? '' : 'max-w-xl',
+      ]}
+    >
+      {description}
+    </p>
+  )}
   <slot />
 </div>

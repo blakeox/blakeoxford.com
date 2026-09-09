@@ -23,11 +23,9 @@ const personSchema = {
 };
 ---
 
-{
-  /*
+{/*
   Hire-path arc: who / how I show up → judgment proof → track record → background → convert.
-*/
-}
+*/}
 <Layout
   title={page.meta.title}
   description={page.meta.description}
@@ -35,8 +33,7 @@ const personSchema = {
   url={canonicalUrl}
   wide={true}
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)} />
-
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)}></script>
   <AboutHeroSection content={page.hero} />
 
   <AboutProofSection
@@ -68,20 +65,18 @@ const personSchema = {
       role="list"
       aria-label={page.social.title}
     >
-      {
-        page.social.links.map((link: AboutSocialLink) => (
-          <li>
-            <a
-              href={link.url}
-              class="font-semibold text-accent-emphasis transition-colors hover:text-accent"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {link.name}
-            </a>
-          </li>
-        ))
-      }
+      {page.social.links.map((link: AboutSocialLink) => (
+        <li>
+          <a
+            href={link.url}
+            class="font-semibold text-accent-emphasis transition-colors hover:text-accent"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {link.name}
+          </a>
+        </li>
+      ))}
     </ul>
   </CtaBand>
 </Layout>

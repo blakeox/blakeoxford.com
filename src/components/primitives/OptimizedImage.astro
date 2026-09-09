@@ -73,36 +73,32 @@ const isLocalPath =
   (props.src.startsWith('/') || props.src.startsWith('../') || props.src.startsWith('./'));
 ---
 
-{
-  typeof props.src === 'object' ? (
-    <Image src={props.src} alt={alt} class={className} loading={imageLoading} />
-  ) : isLocalPath ? (
-    <img
-      src={props.src}
-      alt={alt}
-      width={width}
-      height={height}
-      class={className}
-      loading={imageLoading}
-      decoding="async"
-    />
-  ) : (
-    <Image
-      src={props.src}
-      alt={alt}
-      width={width}
-      height={height}
-      format="avif"
-      quality={quality}
-      loading={imageLoading}
-      class={className}
-      inferSize={true}
-    />
-  )
-}
+{typeof props.src === 'object' ? (
+  <Image src={props.src} alt={alt} class={className} loading={imageLoading} />
+) : isLocalPath ? (
+  <img
+    src={props.src}
+    alt={alt}
+    width={width}
+    height={height}
+    class={className}
+    loading={imageLoading}
+    decoding="async"
+  />
+) : (
+  <Image
+    src={props.src}
+    alt={alt}
+    width={width}
+    height={height}
+    format="avif"
+    quality={quality}
+    loading={imageLoading}
+    class={className}
+    inferSize={true}
+  />
+)}
 
-{
-  priority && typeof props.src === 'string' && (
-    <link rel="preload" as="image" href={props.src} type="image/avif" />
-  )
-}
+{priority && typeof props.src === 'string' && (
+  <link rel="preload" as="image" href={props.src} type="image/avif" />
+)}

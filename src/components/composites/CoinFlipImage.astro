@@ -139,9 +139,11 @@ const ariaLabel =
 <button
   type="button"
   class={cn('coin-flip focus-ring-interactive', fluid && 'coin-flip-fluid', customClass)}
-  style={fluid
-    ? `--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`
-    : `--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`}
+  style={
+    fluid
+      ? `--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`
+      : `--coin-size:${size}px;--coin-duration:${duration}ms;--coin-ease:${flipEase};--coin-multi-duration:${multiFlipDuration}ms;--coin-multi-ease:${multiFlipEase};`
+  }
   aria-pressed="false"
   aria-label={ariaLabel}
   id={`${uniqueId}-root`}
@@ -191,7 +193,9 @@ const ariaLabel =
       <div class="coin-flip-highlight" aria-hidden="true"></div>
     </div>
   </div>
-  <span class="coin-flip-hint" aria-hidden="true">Flip</span>
+  <span class="coin-flip-hint" aria-hidden="true">
+    Flip
+  </span>
   <span id={`${uniqueId}-live`} class="sr-only" aria-live="polite" data-coin-live></span>
 </button>
 

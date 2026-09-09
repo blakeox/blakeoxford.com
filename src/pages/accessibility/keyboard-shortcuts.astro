@@ -84,25 +84,23 @@ const shortcuts = [
 
       <!-- Shortcuts by Category -->
       <div class="space-y-12">
-        {
-          shortcuts.map((section) => (
-            <div>
-              <h2 class="mb-6 border-b border-border pb-2 text-2xl font-semibold text-foreground-strong">
-                {section.category}
-              </h2>
-              <div class="grid gap-4">
-                {section.items.map((shortcut) => (
-                  <div class="flex flex-col gap-3 rounded-lg border border-border bg-surface p-4 transition-colors hover:border-accent sm:flex-row sm:items-start">
-                    <kbd class="inline-flex min-w-[120px] items-center justify-center rounded border border-border bg-background px-3 py-1.5 font-mono text-sm font-semibold whitespace-nowrap shadow-sm">
-                      {shortcut.key}
-                    </kbd>
-                    <p class="flex-1 text-foreground">{shortcut.description}</p>
-                  </div>
-                ))}
-              </div>
+        {shortcuts.map((section) => (
+          <div>
+            <h2 class="mb-6 border-b border-border pb-2 text-2xl font-semibold text-foreground-strong">
+              {section.category}
+            </h2>
+            <div class="grid gap-4">
+              {section.items.map((shortcut) => (
+                <div class="flex flex-col gap-3 rounded-lg border border-border bg-surface p-4 transition-colors hover:border-accent sm:flex-row sm:items-start">
+                  <kbd class="inline-flex min-w-[120px] items-center justify-center rounded border border-border bg-background px-3 py-1.5 font-mono text-sm font-semibold whitespace-nowrap shadow-sm">
+                    {shortcut.key}
+                  </kbd>
+                  <p class="flex-1 text-foreground">{shortcut.description}</p>
+                </div>
+              ))}
             </div>
-          ))
-        }
+          </div>
+        ))}
       </div>
 
       <!-- Additional Information -->
@@ -111,32 +109,40 @@ const shortcuts = [
         <ul class="space-y-3 text-foreground">
           <li class="flex items-start gap-3">
             <span class="mt-1 text-accent">✓</span>
-            <span><strong>WCAG AA Compliant:</strong> All colors meet 4.5:1 contrast ratio</span>
+            <span>
+              <strong>WCAG AA Compliant:</strong> All colors meet 4.5:1 contrast ratio
+            </span>
           </li>
           <li class="flex items-start gap-3">
             <span class="mt-1 text-accent">✓</span>
-            <span
-              ><strong>Enhanced Focus Indicators:</strong> 3px outlines with shadow for clear visibility</span
-            >
+            <span>
+              <strong>Enhanced Focus Indicators:</strong> 3px outlines with shadow for clear
+              visibility
+            </span>
           </li>
           <li class="flex items-start gap-3">
             <span class="mt-1 text-accent">✓</span>
-            <span
-              ><strong>Screen Reader Support:</strong> Semantic HTML and ARIA labels throughout</span
-            >
+            <span>
+              <strong>Screen Reader Support:</strong> Semantic HTML and ARIA labels throughout
+            </span>
           </li>
           <li class="flex items-start gap-3">
             <span class="mt-1 text-accent">✓</span>
-            <span><strong>Skip Links:</strong> Bypass navigation and jump to key content areas</span
-            >
+            <span>
+              <strong>Skip Links:</strong> Bypass navigation and jump to key content areas
+            </span>
           </li>
           <li class="flex items-start gap-3">
             <span class="mt-1 text-accent">✓</span>
-            <span><strong>Reduced Motion:</strong> Respects prefers-reduced-motion settings</span>
+            <span>
+              <strong>Reduced Motion:</strong> Respects prefers-reduced-motion settings
+            </span>
           </li>
           <li class="flex items-start gap-3">
             <span class="mt-1 text-accent">✓</span>
-            <span><strong>High Contrast Mode:</strong> Windows High Contrast Mode support</span>
+            <span>
+              <strong>High Contrast Mode:</strong> Windows High Contrast Mode support
+            </span>
           </li>
         </ul>
       </div>

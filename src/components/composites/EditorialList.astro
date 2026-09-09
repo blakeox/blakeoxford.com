@@ -49,88 +49,86 @@ const Tag = listAs ?? (numbered ? 'ol' : 'ul');
 ---
 
 <Tag class:list={['divide-y divide-border/50 border-y border-border/50', className]} role="list">
-  {
-    rows.map((row: EditorialRow, index: number) => {
-      const showInlineKicker = Boolean(row.kicker) && (numbered || !useAsideKicker);
+  {rows.map((row: EditorialRow, index: number) => {
+    const showInlineKicker = Boolean(row.kicker) && (numbered || !useAsideKicker);
 
-      return (
-        <li
-          class:list={[
-            'grid gap-2 py-5 sm:gap-6 sm:py-6',
-            numbered
-              ? 'sm:grid-cols-[3.5rem_minmax(0,1fr)]'
-              : useAsideKicker && row.kicker
-                ? 'sm:grid-cols-[5.5rem_minmax(0,1fr)]'
-                : '',
-          ]}
-        >
-          {numbered ? (
-            <span
-              class="font-heading text-sm font-semibold text-accent tabular-nums sm:pt-0.5"
-              aria-hidden="true"
-            >
-              {String(index + 1).padStart(2, '0')}
-            </span>
-          ) : useAsideKicker && row.kicker ? (
-            <p class="font-heading text-sm font-semibold tracking-tight text-accent-emphasis tabular-nums sm:pt-0.5">
+    return (
+      <li
+        class:list={[
+          'grid gap-2 py-5 sm:gap-6 sm:py-6',
+          numbered
+            ? 'sm:grid-cols-[3.5rem_minmax(0,1fr)]'
+            : useAsideKicker && row.kicker
+              ? 'sm:grid-cols-[5.5rem_minmax(0,1fr)]'
+              : '',
+        ]}
+      >
+        {numbered ? (
+          <span
+            class="font-heading text-sm font-semibold text-accent tabular-nums sm:pt-0.5"
+            aria-hidden="true"
+          >
+            {String(index + 1).padStart(2, '0')}
+          </span>
+        ) : useAsideKicker && row.kicker ? (
+          <p class="font-heading text-sm font-semibold tracking-tight text-accent-emphasis tabular-nums sm:pt-0.5">
+            {row.kicker}
+          </p>
+        ) : null}
+
+        <div class="min-w-0 space-y-2">
+          {showInlineKicker && (
+            <p class="font-heading text-base font-semibold tracking-tight text-accent-emphasis sm:text-lg">
               {row.kicker}
             </p>
+          )}
+          {row.title && (
+            <h3
+              class:list={[
+                'font-heading font-semibold tracking-tight text-foreground',
+                headingSizeClass('title'),
+              ]}
+            >
+              {row.title}
+            </h3>
+          )}
+          {row.bodyHtml ? (
+            <p
+              class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
+              set:html={row.bodyHtml}
+            />
+          ) : row.body ? (
+            <p class="max-w-2xl text-base leading-relaxed text-foreground/90 sm:text-lg">
+              {row.body}
+            </p>
           ) : null}
-
-          <div class="min-w-0 space-y-2">
-            {showInlineKicker && (
-              <p class="font-heading text-base font-semibold tracking-tight text-accent-emphasis sm:text-lg">
-                {row.kicker}
-              </p>
-            )}
-            {row.title && (
-              <h3
-                class:list={[
-                  'font-heading font-semibold tracking-tight text-foreground',
-                  headingSizeClass('title'),
-                ]}
-              >
-                {row.title}
-              </h3>
-            )}
-            {row.bodyHtml ? (
-              <p
-                class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
-                set:html={row.bodyHtml}
-              />
-            ) : row.body ? (
-              <p class="max-w-2xl text-base leading-relaxed text-foreground/90 sm:text-lg">
-                {row.body}
-              </p>
-            ) : null}
-            {row.meta && <p class="text-sm leading-snug text-subtle-foreground">{row.meta}</p>}
-            {row.bullets && row.bullets.length > 0 && (
-              <ul
-                class="space-y-1.5 pt-0.5 text-sm leading-relaxed text-foreground/85 sm:text-base"
-                role="list"
-              >
-                {row.bullets.map((item: string) => (
-                  <li class="flex gap-3">
-                    <span
-                      class="mt-2 size-1 shrink-0 rounded-full bg-foreground/40"
-                      aria-hidden="true"
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {row.href && row.linkLabel && (
-              <a
-                href={row.href}
-                class="inline-flex pt-0.5 text-sm font-semibold text-accent-emphasis transition-colors hover:text-accent"
-              >
-                {row.linkLabel}
-              </a>
-            )}
-          </div>
-        </li>
-      );
-    })
-  }
+          {row.meta && <p class="text-sm leading-snug text-subtle-foreground">{row.meta}</p>}
+          {row.bullets && row.bullets.length > 0 && (
+            <ul
+              class="space-y-1.5 pt-0.5 text-sm leading-relaxed text-foreground/85 sm:text-base"
+              role="list"
+            >
+              {row.bullets.map((item: string) => (
+                <li class="flex gap-3">
+                  <span
+                    class="mt-2 size-1 shrink-0 rounded-full bg-foreground/40"
+                    aria-hidden="true"
+                  />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {row.href && row.linkLabel && (
+            <a
+              href={row.href}
+              class="inline-flex pt-0.5 text-sm font-semibold text-accent-emphasis transition-colors hover:text-accent"
+            >
+              {row.linkLabel}
+            </a>
+          )}
+        </div>
+      </li>
+    );
+  })}
 </Tag>

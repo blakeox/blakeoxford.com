@@ -94,13 +94,11 @@ const structuredData = [articleSchema, breadcrumbSchema];
           gap="xs"
           class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
         >
-          {
-            post.data.tags?.map((tag: string) => (
-              <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/40">
-                {tag}
-              </span>
-            ))
-          }
+          {post.data.tags?.map((tag: string) => (
+            <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/40">
+              {tag}
+            </span>
+          ))}
         </Flex>
         <h1
           class:list={[
@@ -114,30 +112,26 @@ const structuredData = [articleSchema, breadcrumbSchema];
           <span>By {post.data.author}</span>
           <span aria-hidden="true">·</span>
           <time datetime={post.data.pubDate.toISOString()}>Published on {formattedDate}</time>
-          {
-            hasMaterialUpdate && post.data.updatedDate && (
-              <>
-                <span aria-hidden="true">·</span>
-                <time datetime={post.data.updatedDate.toISOString()}>
-                  Updated on {formatDateFull(post.data.updatedDate)}
-                </time>
-              </>
-            )
-          }
+          {hasMaterialUpdate && post.data.updatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <time datetime={post.data.updatedDate.toISOString()}>
+                Updated on {formatDateFull(post.data.updatedDate)}
+              </time>
+            </>
+          )}
         </div>
-        {
-          heroImage && (
-            <div class="mt-10">
-              <OptimizedImage
-                src={heroImage}
-                alt={`Hero image for ${post.data.title}`}
-                class="max-h-[500px] w-full rounded-2xl object-cover lg:max-h-[600px]"
-                loading="eager"
-                priority={true}
-              />
-            </div>
-          )
-        }
+        {heroImage && (
+          <div class="mt-10">
+            <OptimizedImage
+              src={heroImage}
+              alt={`Hero image for ${post.data.title}`}
+              class="max-h-[500px] w-full rounded-2xl object-cover lg:max-h-[600px]"
+              loading="eager"
+              priority={true}
+            />
+          </div>
+        )}
       </Stack>
 
       <Prose>

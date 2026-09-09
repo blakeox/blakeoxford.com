@@ -26,12 +26,18 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
     />
 
     <div class="home-dual-lines" aria-hidden="true">
-      <p class="home-dual-line" data-dual-line-work>{workLine}</p>
-      <p class="home-dual-line" data-dual-line-daring>{daringLine}</p>
+      <p class="home-dual-line" data-dual-line-work>
+        {workLine}
+      </p>
+      <p class="home-dual-line" data-dual-line-daring>
+        {daringLine}
+      </p>
     </div>
   </div>
 
-  <p class="sr-only">{workLine} {daringLine}</p>
+  <p class="sr-only">
+    {workLine} {daringLine}
+  </p>
 
   <Button
     variant="primary"

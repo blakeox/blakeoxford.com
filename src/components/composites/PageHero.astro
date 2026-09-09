@@ -48,37 +48,33 @@ const isCentered = align === 'center';
     className
   )}
 >
-  {
-    includeBlurOrbs && (
-      <>
-        <div
-          class="pointer-events-none absolute top-0 right-0 size-96 rounded-full bg-accent-subtle blur-3xl"
-          aria-hidden="true"
-        />
-        <div
-          class="pointer-events-none absolute bottom-0 left-0 size-64 rounded-full bg-primary-subtle blur-3xl"
-          aria-hidden="true"
-        />
-      </>
-    )
-  }
+  {includeBlurOrbs && (
+    <>
+      <div
+        class="pointer-events-none absolute top-0 right-0 size-96 rounded-full bg-accent-subtle blur-3xl"
+        aria-hidden="true"
+      />
+      <div
+        class="pointer-events-none absolute bottom-0 left-0 size-64 rounded-full bg-primary-subtle blur-3xl"
+        aria-hidden="true"
+      />
+    </>
+  )}
 
   <Container
     size={containerSize}
     padding={containerPadding}
     class={cn('relative z-10', flush && 'flex w-full flex-1 flex-col')}
   >
-    {
-      isCentered ? (
-        <div
-          class="mx-auto flex w-full max-w-3xl flex-col items-center text-center"
-          data-layout-shell={shell}
-        >
-          <slot />
-        </div>
-      ) : (
+    {isCentered ? (
+      <div
+        class="mx-auto flex w-full max-w-3xl flex-col items-center text-center"
+        data-layout-shell={shell}
+      >
         <slot />
-      )
-    }
+      </div>
+    ) : (
+      <slot />
+    )}
   </Container>
 </section>

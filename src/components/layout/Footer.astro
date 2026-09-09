@@ -70,18 +70,16 @@ function socialLinkRel(link: NavLink): string | undefined {
           Quick Links
         </div>
         <ul class="flex flex-col gap-1.5">
-          {
-            quickLinks.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  class="rounded text-sm font-medium text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))
-          }
+          {quickLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="rounded text-sm font-medium text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -95,30 +93,30 @@ function socialLinkRel(link: NavLink): string | undefined {
           Connect with Me
         </div>
         <ul class="m-0 flex list-none flex-row gap-5 p-0">
-          {
-            socialLinks.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  target={link.target}
-                  rel={socialLinkRel(link)}
-                  aria-label={link.label}
-                  class="group inline-flex items-center justify-center"
-                >
-                  <SocialIcon
-                    icon={resolveSocialIcon(link.icon)}
-                    class="h-7 w-7 text-primary transition-colors duration-normal group-hover:text-accent group-focus:text-accent"
-                  />
-                </a>
-              </li>
-            ))
-          }
+          {socialLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                target={link.target}
+                rel={socialLinkRel(link)}
+                aria-label={link.label}
+                class="group inline-flex items-center justify-center"
+              >
+                <SocialIcon
+                  icon={resolveSocialIcon(link.icon)}
+                  class="h-7 w-7 text-primary transition-colors duration-normal group-hover:text-accent group-focus:text-accent"
+                />
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 
       <!-- Info -->
       <div class="flex flex-col items-center text-xs text-foreground md:items-end md:text-sm">
-        <p class="mb-0.5">© {year} {siteTitle}. All rights reserved.</p>
+        <p class="mb-0.5">
+          © {year} {siteTitle}. All rights reserved.
+        </p>
         <p>
           Built with
           <a
@@ -126,16 +124,19 @@ function socialLinkRel(link: NavLink): string | undefined {
             target="_blank"
             rel="noopener"
             class="rounded text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-            >Astro</a
           >
+            Astro
+          </a>
           &
           <a
             href="https://cloudflare.com/pages"
             target="_blank"
             rel="noopener"
             class="rounded text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-            >Cloudflare Workers</a
-          >.
+          >
+            Cloudflare Workers
+          </a>
+          .
         </p>
       </div>
     </div>
