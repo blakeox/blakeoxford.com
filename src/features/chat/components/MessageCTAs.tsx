@@ -228,7 +228,9 @@ export const ContextualCTAs = memo(function ContextualCTAs({
 
   return (
     <div className="mt-3 space-y-2">
-      <p className="text-xs font-medium tracking-wide text-foreground/50 uppercase">Take action</p>
+      <p className="text-xxs font-semibold tracking-label text-subtle-foreground uppercase">
+        Take action
+      </p>
       <div className="flex flex-col gap-2">
         {ctas.map((cta, index) => (
           <a

@@ -379,13 +379,18 @@ export const primitiveDocs: ComponentDoc[] = [
     ],
     tags: ['form', 'input', 'accessibility', 'primitive'],
     visualTier: 'quiet',
-    tokenDependencies: ['--color-border', '--color-foreground', '--color-error'],
+    tokenDependencies: [
+      '--color-border',
+      '--color-foreground',
+      '--color-error',
+      '--color-field-bg',
+    ],
   },
   {
     name: 'BaseCard',
     category: 'Primitives',
     description:
-      'Canonical card primitive. Owns border, surface, elevation, hover, and slot structure (header, image, footer). Prefer this over ad-hoc card classes.',
+      'Canonical card primitive. Owns border, surface, elevation, hover, and slot structure. Default hover is none — set hover="lift" only when the whole card is the hit target.',
     filePath: 'src/components/primitives/BaseCard.astro',
     props: [
       {
@@ -399,8 +404,9 @@ export const primitiveDocs: ComponentDoc[] = [
         name: 'hover',
         type: "'none' | 'lift' | 'scale'",
         required: false,
-        default: "'lift'",
-        description: 'Motion-safe hover treatment',
+        default: "'none'",
+        description:
+          'Motion-safe hover treatment — opt into lift/scale only when the card is the hit target',
       },
       {
         name: 'rounded',

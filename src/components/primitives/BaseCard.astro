@@ -45,7 +45,7 @@ const props = Astro.props as Props;
 
 const {
   variant = 'default',
-  hover = 'lift',
+  hover = 'none',
   rounded = '2xl',
   padding = 'md',
   as: Element = 'div',
@@ -54,7 +54,7 @@ const {
 } = props;
 
 const variantKey = variant ?? 'default';
-const hoverKey = hover ?? 'lift';
+const hoverKey = hover ?? 'none';
 const roundedKey = rounded ?? '2xl';
 const paddingKey = padding ?? 'md';
 

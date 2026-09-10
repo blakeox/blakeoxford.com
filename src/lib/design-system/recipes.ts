@@ -50,7 +50,7 @@ export type BaseCardPadding = keyof typeof baseCardRecipe.variants.padding;
 
 export function getBaseCardClasses({
   variant = 'default',
-  hover = 'lift',
+  hover = 'none',
   rounded = '2xl',
   className = '',
 }: {
