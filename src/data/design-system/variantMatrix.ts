@@ -40,13 +40,7 @@ const coverageByRecipe: Record<ComponentRecipeReference['recipe'], VariantCovera
 };
 
 /** Canonical owners of visual screenshots; composites that reuse recipes stay structural. */
-const VISUAL_OWNER_COMPONENTS = new Set([
-  'BaseCard',
-  'Badge',
-  'Button',
-  'FeatureCard',
-  'Section',
-]);
+const VISUAL_OWNER_COMPONENTS = new Set(['BaseCard', 'Badge', 'Button', 'FeatureCard', 'Section']);
 
 function resolveCoverage(
   component: string,
