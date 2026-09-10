@@ -76,7 +76,7 @@ const ariaRequired: 'true' | undefined = required ? 'true' : undefined;
 
 const inputClasses = getFieldClasses(className);
 
-const commonProps = {
+const sharedFieldProps = {
   id,
   name: fieldName,
   required,
@@ -88,6 +88,10 @@ const commonProps = {
   'aria-describedby':
     [helpText && `${id}-help`, `${id}-error`].filter(Boolean).join(' ') || undefined,
   class: inputClasses,
+};
+
+const inputProps = {
+  ...sharedFieldProps,
   value,
 };
 ---
@@ -104,9 +108,11 @@ const commonProps = {
     </label>
 
     {isTextarea ? (
-      <textarea {...commonProps} rows={rows}></textarea>
+      <textarea {...sharedFieldProps} rows={rows}>
+        {value}
+      </textarea>
     ) : (
-      <input type={type} {...commonProps} />
+      <input type={type} {...inputProps} />
     )}
 
     {helpText && (
