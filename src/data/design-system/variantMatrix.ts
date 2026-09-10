@@ -39,10 +39,30 @@ const coverageByRecipe: Record<ComponentRecipeReference['recipe'], VariantCovera
   crossRendererSurfaceRecipe: 'structural',
 };
 
+/** Canonical owners of visual screenshots; composites that reuse recipes stay structural. */
+const VISUAL_OWNER_COMPONENTS = new Set([
+  'BaseCard',
+  'Badge',
+  'Button',
+  'FeatureCard',
+  'Section',
+]);
+
+function resolveCoverage(
+  component: string,
+  recipe: ComponentRecipeReference['recipe']
+): VariantCoverage {
+  const recipeCoverage = coverageByRecipe[recipe];
+  if (recipeCoverage === 'visual' && !VISUAL_OWNER_COMPONENTS.has(component)) {
+    return 'structural';
+  }
+  return recipeCoverage;
+}
+
 export const componentVariantMatrix: ComponentVariantCase[] = componentManifest.flatMap((doc) =>
   (doc.recipeReferences ?? []).flatMap((reference) =>
     reference.keys.map((variant) => {
-      const coverage = coverageByRecipe[reference.recipe];
+      const coverage = resolveCoverage(doc.name, reference.recipe);
       return {
         id: `${doc.name}:${reference.recipe}:${variant}`,
         component: doc.name,
