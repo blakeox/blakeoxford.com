@@ -6,6 +6,7 @@ import Button from '@/components/primitives/Button.astro';
 import Badge from '@/components/primitives/Badge.astro';
 import BaseCard from '@/components/primitives/BaseCard.astro';
 import FeatureCard from '@/components/composites/FeatureCard.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
 import { PRIMITIVE_PROP_CONTRACT, COMPONENT_AUTHORING_CHECKLIST } from '@/data/componentDocs';
 import ComponentCatalog from '@/components/features/design/ComponentCatalog.astro';
 import {
@@ -74,16 +75,12 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
   <Section padding="xl">
     <Container size="xl">
       <header class="max-w-3xl">
-        <Badge variant="subtle">Design system</Badge>
-        <h1 class="mt-5 text-4xl font-bold text-foreground sm:text-5xl">Component Contracts</h1>
-        <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
-          This page documents canonical component paths, live examples, and the full searchable
-          catalog generated from
-          <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm break-all">
-            src/data/component-docs/manifest.ts
-          </code>
-          .
-        </p>
+        <IntroCopy
+          kicker="Design system"
+          title="Component Contracts"
+          description="This page documents canonical component paths, live examples, and the full searchable catalog generated from src/data/component-docs/manifest.ts."
+          size="display"
+        />
       </header>
 
       <section
@@ -113,6 +110,12 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
               <Button variant="secondary">Secondary</Button>
               <Button variant="outline">Outline</Button>
               <Button variant="ghost">Ghost</Button>
+              <Button variant="primary" disabled>
+                Disabled
+              </Button>
+              <Button variant="primary" loading>
+                Loading
+              </Button>
             </div>
           </BaseCard>
 

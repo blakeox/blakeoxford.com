@@ -29,7 +29,7 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 
 - Brand / semantic: `primary`, `accent`, `success`, `warning`, `error`, `info` (+ light/dark/emphasis/subtle where needed)
 - Surfaces: `background`, `surface`, `surface-subtle`, `surface-elevated`, `glass`, `glass-xl`
-- Text: `foreground`, `foreground-strong`, `muted-foreground`, `subtle-foreground`
+- Text: `foreground`, `foreground-strong`, `muted-foreground` (secondary body), `subtle-foreground` (captions/meta/small-caps only)
 - Always-dark helpers (not remapped): `overlay-scrim`, `code-surface`, `code-foreground`
 - **Never** use parallel utilities like `bg-background-dark` or `text-foreground-light` in markup
 - Dark mode: prefer remapped semantic utilities — avoid spraying `dark:` color pairs
@@ -47,10 +47,11 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 - Cards: elevated surfaces go through `BaseCard` (not DIY `rounded-3xl` + `shadow-lg`)
 - Badges: `Badge variant="pill"` — do not import `BadgePill` in new code
 - Atmosphere: no decorative blur orbs outside `PageHero` `includeBlurOrbs` (default off)
-- Radius: `rounded-sm` … `rounded-2xl` from `--radius-*`
+- Radius: `rounded-sm` … `rounded-2xl` from `--radius-*` (no `rounded-3xl` in recipes)
 - Shadows: `shadow-sm` … `shadow-2xl`, plus `shadow-overlay` for modal panels
-- Motion: `duration-fast` (100ms), `duration-normal` (200ms), `duration-moderate` (300ms), `duration-slow` (500ms)
+- Motion: `duration-instant` (100ms), `duration-fast` / `duration-normal` (200ms), `duration-moderate` (300ms), `duration-slow` (500ms)
 - Easing: `ease-standard`, `ease-emphasized`, `ease-decelerate`
+- Focus: use `.focus-ring-interactive` or recipe `focus-visible:ring-*` (both set `outline-none`); do not stack both on one control
 
 ### Token creation policy
 

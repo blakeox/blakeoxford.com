@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/BaseLayout.astro';
 import OptimizedImage from '@/components/primitives/OptimizedImage.astro';
+import Badge from '@/components/primitives/Badge.astro';
 import Container from '@/components/primitives/Container.astro';
 import Stack from '@/components/primitives/Stack.astro';
 import Flex from '@/components/primitives/Flex.astro';
@@ -86,7 +87,7 @@ const structuredData = [articleSchema, breadcrumbSchema];
   structuredData={structuredData}
   wide={true}
 >
-  <Container size="xl" class="py-16 sm:py-20 lg:py-24">
+  <Container size="xl" class="py-section-lg sm:py-section-xl lg:py-section-2xl">
     <Stack space="3xl">
       <Stack space="lg" as="header">
         <Flex
@@ -95,9 +96,9 @@ const structuredData = [articleSchema, breadcrumbSchema];
           class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
         >
           {post.data.tags?.map((tag: string) => (
-            <span class="rounded-full bg-surface-subtle px-3 py-1 ring-1 ring-border/40">
+            <Badge variant="pill" size="xs">
               {tag}
-            </span>
+            </Badge>
           ))}
         </Flex>
         <h1

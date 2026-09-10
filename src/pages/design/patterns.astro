@@ -5,8 +5,11 @@ import Section from '@/components/primitives/Section.astro';
 import Stack from '@/components/primitives/Stack.astro';
 import Badge from '@/components/primitives/Badge.astro';
 import BaseCard from '@/components/primitives/BaseCard.astro';
+import Button from '@/components/primitives/Button.astro';
 import FeatureCard from '@/components/composites/FeatureCard.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
 import { componentManifest } from '@/data/component-docs/manifest';
+import { getFieldClasses } from '@/lib/design-system/recipes';
 
 const patterns = [
   {
@@ -89,12 +92,12 @@ const cardMatrix = [
   <Section padding="xl">
     <Container size="xl">
       <header class="max-w-3xl">
-        <Badge variant="subtle">Design system</Badge>
-        <h1 class="mt-5 text-4xl font-bold text-foreground sm:text-5xl">Patterns</h1>
-        <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
-          Patterns define repeatable layout, visual tier, and card behavior. They should reduce
-          decisions, not add new decorative treatments.
-        </p>
+        <IntroCopy
+          kicker="Design system"
+          title="Patterns"
+          description="Patterns define repeatable layout, visual tier, and card behavior. They should reduce decisions, not add new decorative treatments."
+          size="display"
+        />
       </header>
 
       <section class="mt-16" aria-labelledby="visual-tiers-heading">
@@ -222,7 +225,7 @@ const cardMatrix = [
               type="email"
               required
               placeholder="name@example.com"
-              class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground transition outline-none focus:border-accent focus:ring-2 focus:ring-accent/30"
+              class={getFieldClasses('mt-2')}
             />
             <p class="mt-3 text-xs text-subtle-foreground">
               The parent can reflect local input state without adding a component variant.
@@ -232,24 +235,15 @@ const cardMatrix = [
       </section>
 
       <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
-        <a
-          class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark"
-          href="/design/components/"
-        >
+        <Button variant="primary" href="/design/components/">
           Component contracts
-        </a>
-        <a
-          class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent"
-          href="/design/animations/"
-        >
+        </Button>
+        <Button variant="outline" href="/design/animations/">
           Motion rules
-        </a>
-        <a
-          class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent"
-          href="/design/tokens/"
-        >
+        </Button>
+        <Button variant="outline" href="/design/tokens/">
           Tokens
-        </a>
+        </Button>
       </nav>
     </Container>
   </Section>

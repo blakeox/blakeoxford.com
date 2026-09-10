@@ -68,7 +68,7 @@ export const primitiveDocs: ComponentDoc[] = [
     name: 'Badge',
     category: 'Primitives',
     description:
-      'Simple badge component for tags, labels, and semantic status indicators. Prefer variant="pill" for uppercase meta tags (BadgePill is a thin preset).',
+      'Simple badge component for tags, labels, and semantic status indicators. Prefer variant="pill" for uppercase meta tags (avoid the deprecated BadgePill wrapper).',
     filePath: 'src/components/primitives/Badge.astro',
     props: [
       {
@@ -112,7 +112,7 @@ export const primitiveDocs: ComponentDoc[] = [
     name: 'Button',
     category: 'Primitives',
     description:
-      'Flexible button/link primitive with tokenized variants, stable sizes, and accessible focus states.',
+      'Flexible button/link primitive with tokenized variants, stable sizes, accessible focus states, and loading/disabled busy states.',
     filePath: 'src/components/primitives/Button.astro',
     props: [
       {
@@ -131,10 +131,10 @@ export const primitiveDocs: ComponentDoc[] = [
       },
       {
         name: 'size',
-        type: "'sm' | 'md' | 'lg'",
+        type: "'sm' | 'md' | 'lg' | 'icon'",
         required: false,
         default: "'md'",
-        description: 'Button size preset',
+        description: 'Button size preset — icon is square for icon-only controls',
       },
       {
         name: 'disabled',
@@ -142,6 +142,13 @@ export const primitiveDocs: ComponentDoc[] = [
         required: false,
         default: 'false',
         description: 'Disabled state',
+      },
+      {
+        name: 'loading',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Busy/submitting state — sets aria-busy and shows a spinner',
       },
       {
         name: 'href',
@@ -174,6 +181,10 @@ export const primitiveDocs: ComponentDoc[] = [
       {
         title: 'Primary button',
         code: '<Button variant="primary" data-testid="submit-cta">Click me</Button>',
+      },
+      {
+        title: 'Loading submit',
+        code: '<Button type="submit" loading>Saving…</Button>',
       },
     ],
     accessibility: [
@@ -393,10 +404,10 @@ export const primitiveDocs: ComponentDoc[] = [
       },
       {
         name: 'rounded',
-        type: "'lg' | 'xl' | '2xl' | '3xl'",
+        type: "'lg' | 'xl' | '2xl'",
         required: false,
         default: "'2xl'",
-        description: 'Border radius preset',
+        description: 'Border radius preset — capped at tokenized rounded-2xl',
       },
       {
         name: 'padding',

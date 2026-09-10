@@ -4,10 +4,12 @@ import {
   badgeRecipe,
   buttonRecipe,
   featureCardRecipe,
+  fieldRecipe,
   getBadgeClasses,
   getBaseCardClasses,
   getButtonClasses,
   getContainerClasses,
+  getFieldClasses,
   getProseClasses,
   getSectionClasses,
   proseRecipe,
@@ -35,9 +37,17 @@ describe('typed design recipes', () => {
       'ghost',
       'link',
     ]);
+    expect(Object.keys(buttonRecipe.sizes)).toEqual(['sm', 'md', 'lg', 'icon']);
     const classes = getButtonClasses({ variant: 'link', size: 'lg' });
     expect(classes).toContain('p-0');
     expect(classes).not.toContain('min-h-[3.25rem]');
+    expect(getButtonClasses({ loading: true })).toContain('pointer-events-none');
+    expect(getButtonClasses({ size: 'icon' })).toContain('size-8');
+  });
+
+  it('centralizes field styling including invalid state', () => {
+    expect(fieldRecipe.base).toContain('bg-field-bg');
+    expect(getFieldClasses()).toContain('aria-invalid:border-error');
   });
 
   it('keeps semantic badge states separate from pill metadata sizing', () => {

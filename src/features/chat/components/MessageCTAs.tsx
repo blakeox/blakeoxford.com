@@ -67,6 +67,8 @@ import { memo } from 'react';
 import { autoragEvents } from '@/lib/analytics';
 import { CONTEXTUAL_CTAS, generateContextualCTAs } from '@/lib/chat';
 import type { ChatMessage, Source } from '@/features/chat/types';
+import { getButtonClasses } from '@/lib/design-system/recipes';
+import { cn } from '@/utils/cn';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -140,7 +142,7 @@ export const MatchedCTA = memo(function MatchedCTA({
       <p className="mb-2 text-sm text-muted-foreground">{matchedCTA.message}</p>
       <a
         href={matchedCTA.ctaLink}
-        className="focus-ring-interactive inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-on-accent transition hover:bg-accent-dark"
+        className={cn(getButtonClasses({ variant: 'primary', size: 'sm' }), 'gap-2')}
         onClick={() => {
           autoragEvents.ctaClick({
             type: 'quality-suggestion',
