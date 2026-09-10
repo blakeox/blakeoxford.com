@@ -67,7 +67,7 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 
 - Contrast: ≥4.5:1 body text, ≥3:1 large headings
 - Run `pnpm audit:contrast` before committing visual changes
-- Use dedicated state tokens instead of opacity alone for disabled UI
+- Use dedicated state tokens (`button-disabled-*`) instead of opacity alone for disabled UI
 
 ### Interactive elements
 

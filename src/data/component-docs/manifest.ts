@@ -13,6 +13,7 @@ import {
   buttonRecipe,
   containerRecipe,
   featureCardRecipe,
+  fieldRecipe,
   proseRecipe,
   sectionRecipe,
 } from '@/lib/design-system/recipes';
@@ -135,10 +136,20 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
   FeatureCard: [
     { recipe: 'featureCardRecipe.variant', keys: Object.keys(featureCardRecipe.variants) },
   ],
+  FormField: [{ recipe: 'fieldRecipe', keys: Object.keys(fieldRecipe) }],
   Prose: [{ recipe: 'proseRecipe.size', keys: Object.keys(proseRecipe.sizes) }],
   Section: [
     { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
     { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
+  ProjectCard: [
+    { recipe: 'baseCardRecipe', keys: Object.keys(baseCardRecipe.variants.variant) },
+    { recipe: 'baseCardRecipe.hover', keys: Object.keys(baseCardRecipe.variants.hover) },
+    { recipe: 'badgeRecipe.variant', keys: Object.keys(badgeRecipe.variants) },
+  ],
+  MessageCTAs: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
   ],
 };
 

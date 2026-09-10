@@ -14,6 +14,22 @@ describe('brand token contract', () => {
     expect(themeCss).toMatch(/--palette-background:\s*oklch\([^)]*230\)/);
   });
 
+  it('keeps muted stronger than subtle on both themes for caption hierarchy', () => {
+    expect(themeCss).toMatch(/--palette-muted-foreground:\s*oklch\(0\.3 /);
+    expect(themeCss).toMatch(/--palette-subtle-foreground:\s*oklch\(0\.48 /);
+    expect(themeCss).toMatch(/--runtime-muted-foreground:\s*oklch\(0\.86 /);
+    expect(themeCss).toMatch(/--runtime-subtle-foreground:\s*oklch\(0\.8 /);
+  });
+
+  it('exposes dedicated button-disabled tokens bridged for utilities', () => {
+    expect(themeCss).toContain('--runtime-button-disabled-bg');
+    expect(themeCss).toContain('--color-button-disabled-bg');
+    const themeBridgeStart = themeCss.indexOf('@theme inline {');
+    const themeBridge = themeCss.slice(themeBridgeStart);
+    expect(themeBridge).toContain('--color-button-disabled-fg');
+    expect(themeBridge).toContain('--color-button-disabled-border');
+  });
+
   it('bridges section spacing rhythm', () => {
     expect(themeCss).toContain('--space-section-sm');
     expect(themeCss).toContain('--spacing-section-sm');

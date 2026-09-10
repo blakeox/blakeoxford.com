@@ -32,9 +32,11 @@ const coverageByRecipe: Record<ComponentRecipeReference['recipe'], VariantCovera
   'buttonRecipe.size': 'structural',
   'containerRecipe.size': 'structural',
   'featureCardRecipe.variant': 'visual',
+  fieldRecipe: 'structural',
   'proseRecipe.size': 'structural',
   'sectionRecipe.padding': 'structural',
   'sectionRecipe.background': 'visual',
+  crossRendererSurfaceRecipe: 'structural',
 };
 
 export const componentVariantMatrix: ComponentVariantCase[] = componentManifest.flatMap((doc) =>

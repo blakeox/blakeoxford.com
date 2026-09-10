@@ -51,9 +51,11 @@ export type ComponentRecipeReference = {
     | 'buttonRecipe.size'
     | 'containerRecipe.size'
     | 'featureCardRecipe.variant'
+    | 'fieldRecipe'
     | 'proseRecipe.size'
     | 'sectionRecipe.padding'
-    | 'sectionRecipe.background';
+    | 'sectionRecipe.background'
+    | 'crossRendererSurfaceRecipe';
   keys: readonly string[];
 };
 

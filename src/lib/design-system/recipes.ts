@@ -114,7 +114,8 @@ export function getButtonClasses({
     buttonRecipe.variants[variant],
     variant === 'link' ? 'p-0 text-sm' : buttonRecipe.sizes[size],
     fullWidth && 'w-full',
-    (disabled || loading) && 'pointer-events-none cursor-not-allowed opacity-50',
+    (disabled || loading) &&
+      'pointer-events-none cursor-not-allowed border-button-disabled-border bg-button-disabled-bg text-button-disabled-fg hover:border-button-disabled-border hover:bg-button-disabled-bg hover:text-button-disabled-fg',
     loading && 'aria-busy:cursor-wait',
     className
   );
