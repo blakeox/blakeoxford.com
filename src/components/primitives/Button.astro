@@ -79,7 +79,13 @@ const elementProps =
 <Element class={classes} {...elementProps}>
   <slot />
   {loading && (
-    <svg class="size-5 animate-spin" viewBox="0 0 24 24" aria-hidden="true" data-button-spinner>
+    <svg
+      class="size-5 animate-spin"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      data-button-spinner
+    >
       <circle
         cx="12"
         cy="12"
@@ -91,6 +97,7 @@ const elementProps =
       />
       <path
         d="M22 12a10 10 0 0 0-10-10"
+        fill="none"
         stroke="currentColor"
         stroke-width="3"
         stroke-linecap="round"

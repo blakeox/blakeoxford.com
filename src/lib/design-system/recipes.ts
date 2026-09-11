@@ -109,13 +109,17 @@ export function getButtonClasses({
   loading?: boolean;
   className?: string;
 }) {
+  // Disabled/loading must exclude active variant color utilities — Tailwind
+  // source order (not class-string order) wins, so appending disabled tokens
+  // alongside primary/secondary colors leaves the active fill winning.
+  const isInactive = disabled || loading;
   return cn(
     buttonRecipe.base,
-    buttonRecipe.variants[variant],
+    isInactive
+      ? 'pointer-events-none cursor-not-allowed border border-button-disabled-border bg-button-disabled-bg text-button-disabled-fg'
+      : buttonRecipe.variants[variant],
     variant === 'link' ? 'p-0 text-sm' : buttonRecipe.sizes[size],
     fullWidth && 'w-full',
-    (disabled || loading) &&
-      'pointer-events-none cursor-not-allowed border-button-disabled-border bg-button-disabled-bg text-button-disabled-fg hover:border-button-disabled-border hover:bg-button-disabled-bg hover:text-button-disabled-fg',
     loading && 'aria-busy:cursor-wait',
     className
   );

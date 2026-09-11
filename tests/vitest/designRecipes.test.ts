@@ -43,6 +43,11 @@ describe('typed design recipes', () => {
     expect(classes).not.toContain('min-h-[3.25rem]');
     expect(getButtonClasses({ loading: true })).toContain('pointer-events-none');
     expect(getButtonClasses({ loading: true })).toContain('bg-button-disabled-bg');
+    expect(getButtonClasses({ loading: true })).toMatch(/(?:^|\s)border(?:\s|$)/);
+    expect(getButtonClasses({ loading: true, variant: 'primary' })).not.toContain(
+      'bg-button-primary-bg'
+    );
+    expect(getButtonClasses({ disabled: true, variant: 'secondary' })).not.toContain('bg-surface');
     expect(getButtonClasses({ size: 'icon' })).toContain('size-8');
   });
 
