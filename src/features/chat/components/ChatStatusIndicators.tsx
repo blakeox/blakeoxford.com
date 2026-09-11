@@ -4,6 +4,8 @@
  */
 import { autoragEvents } from '@/lib/analytics';
 import { openCommandCenter } from '@/features/command-center/lib/commandEvents';
+import { disabledControlClasses } from '@/lib/design-system/recipes';
+import { cn } from '@/utils/cn';
 import type { ChatStatusIndicatorsProps } from '@/features/chat/types';
 
 function loadingCopy(phase: ChatStatusIndicatorsProps['loadingPhase']): string {
@@ -65,7 +67,10 @@ export function ChatStatusIndicators({
           <div className="mt-2 flex flex-wrap gap-2">
             <button
               type="button"
-              className="focus-ring-interactive rounded-full border border-border/60 px-3 py-1 text-xs font-medium text-foreground transition hover:border-accent hover:text-accent disabled:opacity-50"
+              className={cn(
+                'focus-ring-interactive rounded-full border border-border/60 px-3 py-1 text-xs font-medium text-foreground transition hover:border-accent hover:text-accent',
+                disabledControlClasses
+              )}
               onClick={() => {
                 const queryToRetry = lastFailedQuery || lastQueryValue;
                 if (queryToRetry) {

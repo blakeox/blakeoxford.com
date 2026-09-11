@@ -5,6 +5,7 @@ import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { OVERLAY_ICON_BUTTON } from '@/features/overlay/overlayStyles';
 import { CHAT_ACCENT_CHIP, CHAT_TOGGLE_ACTIVE } from '@/features/chat/chatStyles';
+import { disabledControlClasses } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 import type { ChatHeaderProps } from '@/features/chat/types';
 
@@ -22,7 +23,10 @@ function MenuButton({
       type="button"
       role="menuitem"
       disabled={disabled}
-      className="focus-ring-interactive flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-50"
+      className={cn(
+        'focus-ring-interactive flex w-full items-center gap-2 rounded-lg border border-transparent px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle',
+        disabledControlClasses
+      )}
       onClick={onClick}
     >
       {children}

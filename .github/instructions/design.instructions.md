@@ -45,7 +45,7 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 
 - Spacing: Tailwind default scale for local gaps; section rhythm via `--space-section-*` → `py-section-*` on `Section`
 - Cards: elevated surfaces go through `BaseCard` (not DIY `rounded-3xl` + `shadow-lg`)
-- Badges: `Badge variant="pill"` — do not import `BadgePill` in new code
+- Badges: `Badge variant="pill"` — do not import a BadgePill wrapper
 - Atmosphere: no decorative blur orbs outside `PageHero` `includeBlurOrbs` (default off)
 - Radius: `rounded-sm` … `rounded-2xl` from `--radius-*` (no `rounded-3xl` in recipes)
 - Shadows: `shadow-sm` … `shadow-2xl`, plus `shadow-overlay` for modal panels

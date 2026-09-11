@@ -130,11 +130,16 @@ export const fieldRecipe = {
     'w-full rounded-xl border border-border bg-field-bg px-4 py-3.5 text-base text-foreground shadow-sm',
     'placeholder:text-subtle-foreground/80',
     'hover:border-accent/40 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25',
-    'disabled:cursor-not-allowed disabled:opacity-60',
+    // Reuse button-disabled-* (dedicated state tokens — never opacity alone).
+    'disabled:cursor-not-allowed disabled:border-button-disabled-border disabled:bg-button-disabled-bg disabled:text-button-disabled-fg',
     'aria-invalid:border-error aria-invalid:ring-2 aria-invalid:ring-error/25',
     'transition-[border-color,box-shadow,background-color]',
   ].join(' '),
 } as const;
+
+/** Shared inactive paint for DIY controls that are not Button/FormField. */
+export const disabledControlClasses =
+  'disabled:cursor-not-allowed disabled:border-button-disabled-border disabled:bg-button-disabled-bg disabled:text-button-disabled-fg';
 
 export function getFieldClasses(className = '') {
   return cn(fieldRecipe.base, className);
