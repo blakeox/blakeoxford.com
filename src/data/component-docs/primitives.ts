@@ -68,7 +68,7 @@ export const primitiveDocs: ComponentDoc[] = [
     name: 'Badge',
     category: 'Primitives',
     description:
-      'Simple badge component for tags, labels, and semantic status indicators. Prefer variant="pill" for uppercase meta tags (avoid the deprecated BadgePill wrapper).',
+      'Simple badge component for tags, labels, and semantic status indicators. Use variant="pill" for uppercase meta tags.',
     filePath: 'src/components/primitives/Badge.astro',
     props: [
       {

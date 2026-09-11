@@ -142,7 +142,8 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
             <h3 class="font-heading text-xl font-semibold text-foreground">Form field states</h3>
             <p class="mt-2 text-sm text-muted-foreground">
               Fields use <code class="text-accent-emphasis">bg-field-bg</code>. Invalid paint is
-              driven by <code class="text-accent-emphasis">aria-invalid</code>.
+              driven by <code class="text-accent-emphasis">aria-invalid</code>. Disabled paint uses
+              <code class="text-accent-emphasis">button-disabled-*</code> tokens (not opacity).
             </p>
             <div class="mt-5 space-y-4">
               <FormField
