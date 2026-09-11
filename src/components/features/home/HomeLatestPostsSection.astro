@@ -31,7 +31,7 @@ const { posts, content } = Astro.props as Props;
             class="group grid gap-1 py-5 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:items-baseline sm:gap-8 sm:py-6"
           >
             <time
-              class="text-xs font-semibold tracking-[0.04em] text-subtle-foreground"
+              class="text-xs font-semibold tracking-label text-subtle-foreground"
               datetime={formatDateISO(post.data.pubDate)}
             >
               {formatDateBlog(post.data.pubDate)}

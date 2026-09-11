@@ -33,7 +33,6 @@ export const baseCardRecipe = {
       lg: 'rounded-lg',
       xl: 'rounded-xl',
       '2xl': 'rounded-2xl',
-      '3xl': 'rounded-3xl',
     },
     padding: {
       none: 'p-0',
@@ -51,7 +50,7 @@ export type BaseCardPadding = keyof typeof baseCardRecipe.variants.padding;
 
 export function getBaseCardClasses({
   variant = 'default',
-  hover = 'lift',
+  hover = 'none',
   rounded = '2xl',
   className = '',
 }: {
@@ -88,6 +87,7 @@ export const buttonRecipe = {
     sm: 'min-h-[2.25rem] px-3.5 py-1.5 text-sm',
     md: 'min-h-[2.75rem] px-5 py-2.5 text-sm',
     lg: 'min-h-[3.25rem] px-6 py-3 text-base',
+    icon: 'size-8 min-h-8 min-w-8 p-0',
   },
 } as const;
 
@@ -99,22 +99,45 @@ export function getButtonClasses({
   size = 'md',
   fullWidth = false,
   disabled = false,
+  loading = false,
   className = '',
 }: {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
   disabled?: boolean;
+  loading?: boolean;
   className?: string;
 }) {
+  // Disabled/loading must exclude active variant color utilities — Tailwind
+  // source order (not class-string order) wins, so appending disabled tokens
+  // alongside primary/secondary colors leaves the active fill winning.
+  const isInactive = disabled || loading;
   return cn(
     buttonRecipe.base,
-    buttonRecipe.variants[variant],
+    isInactive
+      ? 'pointer-events-none cursor-not-allowed border border-button-disabled-border bg-button-disabled-bg text-button-disabled-fg'
+      : buttonRecipe.variants[variant],
     variant === 'link' ? 'p-0 text-sm' : buttonRecipe.sizes[size],
     fullWidth && 'w-full',
-    disabled && 'cursor-not-allowed opacity-50',
+    loading && 'aria-busy:cursor-wait',
     className
   );
+}
+
+export const fieldRecipe = {
+  base: [
+    'w-full rounded-xl border border-border bg-field-bg px-4 py-3.5 text-base text-foreground shadow-sm',
+    'placeholder:text-subtle-foreground/80',
+    'hover:border-accent/40 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25',
+    'disabled:cursor-not-allowed disabled:opacity-60',
+    'aria-invalid:border-error aria-invalid:ring-2 aria-invalid:ring-error/25',
+    'transition-[border-color,box-shadow,background-color]',
+  ].join(' '),
+} as const;
+
+export function getFieldClasses(className = '') {
+  return cn(fieldRecipe.base, className);
 }
 
 export const badgeRecipe = {

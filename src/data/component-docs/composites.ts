@@ -209,7 +209,7 @@ export const compositeDocs: ComponentDoc[] = [
     ],
     tags: ['cta', 'conversion', 'composite'],
     visualTier: 'expressive',
-    tokenDependencies: ['--gradient-accent', '--color-on-accent', 'rounded-3xl'],
+    tokenDependencies: ['--gradient-accent', '--color-on-accent', 'rounded-2xl'],
   },
   {
     name: 'SectionHeader',

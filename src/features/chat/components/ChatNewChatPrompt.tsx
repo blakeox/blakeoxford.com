@@ -3,16 +3,18 @@
  * Displays prompt to start a new chat conversation
  */
 import type { ChatNewChatPromptProps } from '@/features/chat/types';
+import { getButtonClasses } from '@/lib/design-system/recipes';
+import { cn } from '@/utils/cn';
 
 export function ChatNewChatPrompt({ canStartNewChat, startNewChat }: ChatNewChatPromptProps) {
   if (!canStartNewChat) return null;
 
   return (
-    <div className="flex items-center justify-between gap-2 border-t border-border/40 bg-surface-subtle/40 px-4 py-2 text-[0.7rem] text-foreground/65">
+    <div className="flex items-center justify-between gap-2 border-t border-border/40 bg-surface-subtle/40 px-4 py-2 text-xxs text-muted-foreground">
       <span className="truncate pr-2">Want to start fresh?</span>
       <button
         type="button"
-        className="inline-flex items-center gap-1.5 rounded-full border border-border/40 px-3 py-1 text-[0.65rem] font-medium text-foreground/70 transition hover:border-accent/40 hover:text-accent focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none"
+        className={cn(getButtonClasses({ variant: 'outline', size: 'sm' }), 'text-xxs')}
         onClick={startNewChat}
       >
         <span>Start new chat</span>

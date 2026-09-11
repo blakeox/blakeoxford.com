@@ -10,7 +10,6 @@
 
 export { default as BaseCard } from './BaseCard.astro';
 export { default as Badge } from './Badge.astro';
-export { default as BadgePill } from './BadgePill.astro';
 export { default as Button } from './Button.astro';
 export { default as Container } from './Container.astro';
 export { default as Flex } from './Flex.astro';

@@ -27,7 +27,7 @@
   }
 
   .nav-kbd {
-    @apply items-center rounded-md border border-border/70 bg-surface-subtle/90 px-1.5 py-0.5 font-mono text-[0.65rem] font-medium text-muted-foreground;
+    @apply items-center rounded-md border border-border/70 bg-surface-subtle/90 px-1.5 py-0.5 font-mono text-xxs font-medium text-muted-foreground;
   }
 
   .nav-shell--scrolled #navbar {

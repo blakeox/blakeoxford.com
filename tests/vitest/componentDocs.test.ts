@@ -12,7 +12,9 @@ import {
   baseCardRecipe,
   buttonRecipe,
   containerRecipe,
+  crossRendererSurfaceRecipe,
   featureCardRecipe,
+  fieldRecipe,
   proseRecipe,
   sectionRecipe,
 } from '../../src/lib/design-system/recipes';
@@ -79,7 +81,7 @@ describe('component documentation catalog', () => {
   });
 
   it('keeps manifest recipe references aligned with the typed recipes', () => {
-    const recipeKeys = {
+    const recipeKeys: Record<string, string[]> = {
       baseCardRecipe: Object.keys(baseCardRecipe.variants.variant),
       'baseCardRecipe.hover': Object.keys(baseCardRecipe.variants.hover),
       'baseCardRecipe.padding': Object.keys(baseCardRecipe.variants.padding),
@@ -89,9 +91,11 @@ describe('component documentation catalog', () => {
       'buttonRecipe.size': Object.keys(buttonRecipe.sizes),
       'containerRecipe.size': Object.keys(containerRecipe.sizes),
       'featureCardRecipe.variant': Object.keys(featureCardRecipe.variants),
+      fieldRecipe: Object.keys(fieldRecipe),
       'proseRecipe.size': Object.keys(proseRecipe.sizes),
       'sectionRecipe.padding': Object.keys(sectionRecipe.padding),
       'sectionRecipe.background': Object.keys(sectionRecipe.background),
+      crossRendererSurfaceRecipe: Object.keys(crossRendererSurfaceRecipe),
     };
 
     for (const doc of componentManifest) {

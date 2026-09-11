@@ -86,10 +86,7 @@ export const MessageContent = memo(function MessageContent({
       ) : null}
 
       {isAssistant && isStreaming && (
-        <span
-          className="flex items-center gap-1 text-[0.75rem] text-foreground/60"
-          aria-live="polite"
-        >
+        <span className="flex items-center gap-1 text-xs text-muted-foreground" aria-live="polite">
           <span className="sr-only">Assistant is responding</span>
           <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-accent/60" />
           <span
@@ -122,20 +119,20 @@ export const QualityIndicator = memo(function QualityIndicator({
 }) {
   const indicator = getConfidenceIndicator(message.qualityScore ?? 0);
   return (
-    <div className="flex flex-wrap items-center gap-1.5 text-[0.65rem]">
+    <div className="flex flex-wrap items-center gap-1.5 text-xxs">
       <span className={`font-medium ${indicator.color}`} aria-label={`Quality: ${indicator.label}`}>
         <span aria-hidden="true">{indicator.emoji}</span> {indicator.label}
       </span>
-      <span className="text-foreground/40">·</span>
+      <span className="text-subtle-foreground">·</span>
       <span
-        className="text-foreground/50"
+        className="text-subtle-foreground"
         title={`Response quality score: ${message.qualityScore}/100`}
       >
         {message.qualityScore}/100
       </span>
       {message.citationHealth && totalSources > 0 && (
         <>
-          <span className="text-foreground/40">·</span>
+          <span className="text-subtle-foreground">·</span>
           {(() => {
             const healthIndicator = getCitationHealthIndicator(message.citationHealth);
             return (
