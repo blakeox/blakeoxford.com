@@ -62,7 +62,7 @@ Live token docs at `/design/tokens` auto-list public utilities by parsing `@them
 
 Heading sizes: use the shared ladder in `src/lib/typeScale.ts` (`identity` → `hero` → `display` → `section` → `title` → `subtitle`) via `IntroCopy` / `SectionHeading` / `headingSizeClass()`. Section vertical padding uses `--space-section-*` / `py-section-*`. Prefer Tailwind’s default spacing scale for local gaps and padding.
 
-`design:lint` also enforces: no decorative blur orbs outside `PageHero`’s opt-in; no `BadgePill` imports (use `Badge variant="pill"`); no DIY elevated card shells when `BaseCard` is available; no ad-hoc `font-heading` + `text-2xl+` ladders outside the typeScale allowlist.
+`design:lint` also enforces: no decorative blur orbs outside `PageHero`’s opt-in; no `BadgePill` imports (use `Badge variant="pill"`; the wrapper file is removed); no DIY elevated card shells when `BaseCard` is available; no ad-hoc `font-heading` + `text-2xl+` ladders outside the typeScale allowlist.
 
 ### Guidelines
 

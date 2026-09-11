@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { getButtonClasses, getContainerClasses } from '../../src/lib/design-system/recipes';
 
@@ -230,33 +230,13 @@ describe('Section Component', () => {
   });
 });
 
-describe('BadgePill Component (deprecated wrapper)', () => {
-  let fileContent: string;
-
-  beforeAll(() => {
+describe('BadgePill retirement', () => {
+  it('should not keep a BadgePill wrapper file or re-export', () => {
     const filePath = resolve(__dirname, '../../src/components/primitives/BadgePill.astro');
-    fileContent = readFileSync(filePath, 'utf-8');
-  });
-
-  it('should exist as a thin Badge pill preset (not re-exported)', () => {
-    expect(fileContent).toBeDefined();
-    expect(fileContent.length).toBeGreaterThan(0);
+    expect(existsSync(filePath)).toBe(false);
     const indexPath = resolve(__dirname, '../../src/components/primitives/index.ts');
     const indexContent = readFileSync(indexPath, 'utf-8');
     expect(indexContent).not.toMatch(/BadgePill/);
-  });
-
-  it('should have pill/rounded styling', () => {
-    expect(fileContent).toMatch(/rounded-full|pill/);
-  });
-
-  it('should support size variants', () => {
-    expect(fileContent).toMatch(/size|text-xs|text-sm/);
-  });
-
-  it('should delegate to Badge pill variant', () => {
-    expect(fileContent).toMatch(/Badge/);
-    expect(fileContent).toMatch(/variant=["']pill["']/);
   });
 });
 
