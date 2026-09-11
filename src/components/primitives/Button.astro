@@ -8,6 +8,7 @@
  * @example
  * <Button variant="primary" href="/projects">View Projects</Button>
  * <Button variant="outline" size="sm">Learn More</Button>
+ * <Button type="submit" loading>Saving…</Button>
  */
 
 import { getButtonClasses, type ButtonSize, type ButtonVariant } from '@/lib/design-system/recipes';
@@ -23,6 +24,8 @@ export interface Props {
   type?: 'button' | 'submit' | 'reset';
   /** Disabled state */
   disabled?: boolean;
+  /** Busy / submitting state — disables interaction and sets aria-busy */
+  loading?: boolean;
   /** Full width button */
   fullWidth?: boolean;
   /** Additional CSS classes */
@@ -41,6 +44,7 @@ const {
   href,
   type = 'button',
   disabled = false,
+  loading = false,
   fullWidth = false,
   class: className = '',
   'aria-label': ariaLabel,
@@ -48,15 +52,56 @@ const {
   ...rest
 } = Astro.props;
 
-const classes = getButtonClasses({ variant, size, fullWidth, disabled, className });
+const isDisabled = disabled || loading;
+const classes = getButtonClasses({
+  variant,
+  size,
+  fullWidth,
+  disabled: isDisabled,
+  loading,
+  className,
+});
 
-const Element = href && !disabled ? 'a' : 'button';
+const Element = href && !isDisabled ? 'a' : 'button';
 const elementProps =
-  href && !disabled
+  href && !isDisabled
     ? { href, 'aria-label': ariaLabel, 'data-testid': dataTestId, ...rest }
-    : { type, disabled, 'aria-label': ariaLabel, 'data-testid': dataTestId, ...rest };
+    : {
+        type,
+        disabled: isDisabled,
+        'aria-busy': loading ? ('true' as const) : undefined,
+        'aria-label': ariaLabel,
+        'data-testid': dataTestId,
+        ...rest,
+      };
 ---
 
 <Element class={classes} {...elementProps}>
   <slot />
+  {loading && (
+    <svg
+      class="size-5 animate-spin"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      data-button-spinner
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="3"
+        fill="none"
+        opacity=".3"
+      />
+      <path
+        d="M22 12a10 10 0 0 0-10-10"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
+    </svg>
+  )}
 </Element>

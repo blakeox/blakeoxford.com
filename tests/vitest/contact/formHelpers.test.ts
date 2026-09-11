@@ -36,10 +36,12 @@ describe('contact submission labels', () => {
 
     setSubmittingState(form, true);
     expect(button.disabled).toBe(true);
+    expect(button.getAttribute('aria-busy')).toBe('true');
     expect(label.textContent).toBe('Sending securely…');
 
     setSubmittingState(form, false);
     expect(button.disabled).toBe(false);
+    expect(button.getAttribute('aria-busy')).toBe('false');
     expect(label.textContent).toBe(initialLabel);
   });
 });

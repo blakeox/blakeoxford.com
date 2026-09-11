@@ -27,8 +27,9 @@
   --palette-foreground: oklch(0.2 0.02 250);
   --palette-foreground-strong: oklch(0.14 0.02 250);
   --palette-foreground-light: oklch(0.975 0.005 230);
-  --palette-muted-foreground: oklch(0.32 0.018 250);
-  --palette-subtle-foreground: oklch(0.36 0.016 250);
+  --palette-muted-foreground: oklch(0.3 0.018 250);
+  /* Captions/meta — clearly weaker than muted, still ≥4.5:1 on paper (~6:1). */
+  --palette-subtle-foreground: oklch(0.48 0.014 250);
   --palette-border: oklch(0.2 0.02 250 / 0.14);
   --palette-border-dark: oklch(0.84 0.015 230 / 0.22);
   --palette-on-accent: oklch(0.98 0.01 95);
@@ -75,6 +76,9 @@
   --runtime-button-primary-fg: var(--runtime-on-accent);
   --runtime-button-primary-bg-hover: var(--brand-accent-dark);
   --runtime-button-primary-border-hover: var(--brand-accent-dark);
+  --runtime-button-disabled-bg: var(--runtime-surface-subtle);
+  --runtime-button-disabled-fg: var(--runtime-muted-foreground);
+  --runtime-button-disabled-border: var(--runtime-border);
   --runtime-field-bg: var(--runtime-background);
   --runtime-glass: color-mix(in oklch, var(--runtime-surface) 78%, transparent);
   --runtime-glass-xl: color-mix(in oklch, var(--runtime-surface) 92%, transparent);
@@ -132,6 +136,9 @@
   --color-button-primary-fg: var(--runtime-button-primary-fg);
   --color-button-primary-bg-hover: var(--runtime-button-primary-bg-hover);
   --color-button-primary-border-hover: var(--runtime-button-primary-border-hover);
+  --color-button-disabled-bg: var(--runtime-button-disabled-bg);
+  --color-button-disabled-fg: var(--runtime-button-disabled-fg);
+  --color-button-disabled-border: var(--runtime-button-disabled-border);
   --color-field-bg: var(--runtime-field-bg);
   --color-glass: var(--runtime-glass);
   --color-glass-xl: var(--runtime-glass-xl);
@@ -232,8 +239,9 @@
     --runtime-surface: var(--palette-surface-dark);
     --runtime-surface-subtle: var(--palette-surface-dark-subtle);
     --runtime-surface-elevated: var(--palette-surface-elevated-dark);
-    --runtime-muted-foreground: oklch(0.82 0.015 255);
-    --runtime-subtle-foreground: oklch(0.78 0.015 255);
+    --runtime-muted-foreground: oklch(0.86 0.015 255);
+    /* Captions/meta — weaker than muted, still ≥ oklch 0.80 for AA on dark surfaces */
+    --runtime-subtle-foreground: oklch(0.8 0.015 255);
     --runtime-border: var(--palette-border-dark);
     --runtime-shadow-color: oklch(0 0 0 / 0.45);
     --runtime-glass: color-mix(in oklch, var(--palette-surface-dark) 75%, transparent);
@@ -244,6 +252,9 @@
     --runtime-button-primary-fg: var(--runtime-on-accent);
     --runtime-button-primary-bg-hover: var(--brand-accent-light);
     --runtime-button-primary-border-hover: var(--brand-accent-light);
+    --runtime-button-disabled-bg: var(--palette-surface-dark-subtle);
+    --runtime-button-disabled-fg: var(--runtime-subtle-foreground);
+    --runtime-button-disabled-border: var(--palette-border-dark);
     --runtime-field-bg: var(--palette-surface-dark);
   }
 }
@@ -386,6 +397,9 @@
   --color-button-primary-fg: var(--runtime-button-primary-fg);
   --color-button-primary-bg-hover: var(--runtime-button-primary-bg-hover);
   --color-button-primary-border-hover: var(--runtime-button-primary-border-hover);
+  --color-button-disabled-bg: var(--runtime-button-disabled-bg);
+  --color-button-disabled-fg: var(--runtime-button-disabled-fg);
+  --color-button-disabled-border: var(--runtime-button-disabled-border);
   --color-field-bg: var(--runtime-field-bg);
 
   --font-sans: var(--family-sans);

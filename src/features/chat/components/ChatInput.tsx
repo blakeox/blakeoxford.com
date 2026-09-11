@@ -3,6 +3,8 @@
  */
 import { memo, useCallback } from 'react';
 import type { ChatInputProps } from '@/features/chat/types';
+import { getButtonClasses } from '@/lib/design-system/recipes';
+import { cn } from '@/utils/cn';
 
 export const ChatInput = memo(function ChatInput({
   inputValue,
@@ -67,8 +69,17 @@ export const ChatInput = memo(function ChatInput({
         />
         <button
           type="submit"
-          className="focus-ring-interactive absolute right-1.5 bottom-1.5 inline-flex size-8 items-center justify-center rounded-lg bg-accent text-on-accent transition hover:bg-accent-dark disabled:opacity-40"
+          className={cn(
+            getButtonClasses({
+              variant: 'primary',
+              size: 'icon',
+              disabled: isLoading || !inputValue.trim(),
+              loading: isLoading,
+            }),
+            'absolute right-1.5 bottom-1.5'
+          )}
           aria-label={isLoading ? 'Sending message' : 'Send message'}
+          aria-busy={isLoading}
           disabled={isLoading || !inputValue.trim()}
         >
           {isLoading ? (

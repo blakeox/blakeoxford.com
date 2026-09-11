@@ -8,6 +8,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/primitives/Container.astro';
 import Section from '@/components/primitives/Section.astro';
+import Button from '@/components/primitives/Button.astro';
 import { crossRendererSurfaceRecipe } from '@/lib/design-system/recipes';
 
 const shortcuts = [
@@ -150,12 +151,9 @@ const shortcuts = [
       <!-- Feedback -->
       <div class="mt-12 text-center">
         <p class="mb-4 text-foreground">Have suggestions for improving accessibility?</p>
-        <a
-          href="/contact/"
-          class="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-semibold text-on-accent transition-colors hover:bg-accent-dark focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-        >
+        <Button variant="primary" size="lg" href="/contact/">
           Get in Touch
-        </a>
+        </Button>
       </div>
     </Container>
   </Section>

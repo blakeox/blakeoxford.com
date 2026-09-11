@@ -230,7 +230,7 @@ describe('Section Component', () => {
   });
 });
 
-describe('BadgePill Component', () => {
+describe('BadgePill Component (deprecated wrapper)', () => {
   let fileContent: string;
 
   beforeAll(() => {
@@ -238,9 +238,12 @@ describe('BadgePill Component', () => {
     fileContent = readFileSync(filePath, 'utf-8');
   });
 
-  it('should exist and be readable', () => {
+  it('should exist as a thin Badge pill preset (not re-exported)', () => {
     expect(fileContent).toBeDefined();
     expect(fileContent.length).toBeGreaterThan(0);
+    const indexPath = resolve(__dirname, '../../src/components/primitives/index.ts');
+    const indexContent = readFileSync(indexPath, 'utf-8');
+    expect(indexContent).not.toMatch(/BadgePill/);
   });
 
   it('should have pill/rounded styling', () => {

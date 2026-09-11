@@ -251,7 +251,7 @@ Designer / reviewer action: If sentinel counts rise or badge slope trends upward
 ## 7. Interaction & Motion
 
 - Respect `prefers-reduced-motion` (no essential information conveyed only via motion)
-- Use semantic duration tokens: `duration-fast` (100ms), `duration-normal` (200ms), `duration-moderate` (300ms), `duration-slow` (500ms)
+- Use semantic duration tokens: `duration-instant` (100ms), `duration-fast` / `duration-normal` (200ms), `duration-moderate` (300ms), `duration-slow` (500ms)
 - Use semantic easing: `ease-standard`, `ease-emphasized`, `ease-decelerate`
 - Prefer transform/opacity for performance; avoid layout-affecting animations
 - Always provide a visible focus ring (never remove outline without replacement)
@@ -486,7 +486,7 @@ Focus indicators must be **immediately visible** to keyboard users with:
 }
 ```
 
-Uses accent color (cyan) for better contrast in dark mode.
+Uses the copper accent token for better contrast in dark mode.
 
 ### Element-Specific Patterns
 
