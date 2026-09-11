@@ -116,7 +116,7 @@ export function getButtonClasses({
   return cn(
     buttonRecipe.base,
     isInactive
-      ? 'pointer-events-none cursor-not-allowed border-button-disabled-border bg-button-disabled-bg text-button-disabled-fg'
+      ? 'pointer-events-none cursor-not-allowed border border-button-disabled-border bg-button-disabled-bg text-button-disabled-fg'
       : buttonRecipe.variants[variant],
     variant === 'link' ? 'p-0 text-sm' : buttonRecipe.sizes[size],
     fullWidth && 'w-full',
