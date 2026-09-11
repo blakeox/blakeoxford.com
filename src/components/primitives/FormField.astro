@@ -140,6 +140,13 @@ const inputProps = {
     <label for={id} class="sr-only">
       {label || id}
     </label>
-    <input type="hidden" id={id} name={fieldName} value={value} aria-hidden="true" />
+    <input
+      type="hidden"
+      id={id}
+      name={fieldName}
+      value={value}
+      disabled={disabled || undefined}
+      aria-hidden="true"
+    />
   </>
 )}
