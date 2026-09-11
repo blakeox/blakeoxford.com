@@ -3,6 +3,7 @@ import {
   baseCardRecipe,
   badgeRecipe,
   buttonRecipe,
+  disabledControlClasses,
   featureCardRecipe,
   fieldRecipe,
   getBadgeClasses,
@@ -53,7 +54,10 @@ describe('typed design recipes', () => {
 
   it('centralizes field styling including invalid state', () => {
     expect(fieldRecipe.base).toContain('bg-field-bg');
+    expect(fieldRecipe.base).toContain('disabled:bg-button-disabled-bg');
+    expect(fieldRecipe.base).not.toContain('disabled:opacity');
     expect(getFieldClasses()).toContain('aria-invalid:border-error');
+    expect(disabledControlClasses).toContain('disabled:text-button-disabled-fg');
   });
 
   it('keeps semantic badge states separate from pill metadata sizing', () => {

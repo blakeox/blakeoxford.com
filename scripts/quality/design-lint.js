@@ -96,7 +96,6 @@ const allowedComponentRootFiles = new Set(['src/components/index.ts']);
 const blurOrbAllowPaths = new Set(['src/components/composites/PageHero.astro']);
 
 const badgePillAllowPaths = new Set([
-  'src/components/primitives/BadgePill.astro',
   'src/components/primitives/index.ts',
   'tests/vitest/primitives.test.ts',
 ]);

@@ -38,7 +38,7 @@ export const ChatInput = memo(function ChatInput({
         <textarea
           id="ai-chat-input"
           ref={inputRef}
-          className="max-h-[7.5rem] min-h-[2.5rem] w-full resize-none bg-transparent py-1 pr-11 text-sm leading-relaxed text-foreground outline-none placeholder:text-subtle-foreground/65 disabled:opacity-60"
+          className="max-h-[7.5rem] min-h-[2.5rem] w-full resize-none bg-transparent py-1 pr-11 text-sm leading-relaxed text-foreground outline-none placeholder:text-subtle-foreground/65 disabled:cursor-not-allowed disabled:text-button-disabled-fg"
           placeholder="Ask about this page or the site…"
           value={inputValue}
           onChange={(event) => {
