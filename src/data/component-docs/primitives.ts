@@ -364,6 +364,13 @@ export const primitiveDocs: ComponentDoc[] = [
       },
       { name: 'error', type: 'string', required: false, description: 'Error message' },
       { name: 'helperText', type: 'string', required: false, description: 'Helper text' },
+      {
+        name: 'disabled',
+        type: 'boolean',
+        required: false,
+        default: 'false',
+        description: 'Disabled state — uses button-disabled-* tokens via fieldRecipe',
+      },
     ],
     examples: [
       {

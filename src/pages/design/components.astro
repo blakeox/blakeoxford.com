@@ -162,6 +162,14 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
                 rows={3}
                 value="too short"
               />
+              <FormField
+                id="design-demo-disabled"
+                label="Read-only context"
+                type="text"
+                disabled
+                value="Disabled uses button-disabled-* tokens"
+                helpText="Native disabled attribute forwarded through FormField."
+              />
             </div>
             <script>
               const invalid = document.getElementById('design-demo-invalid');
