@@ -6,7 +6,10 @@ import Button from '@/components/primitives/Button.astro';
 import Badge from '@/components/primitives/Badge.astro';
 import BaseCard from '@/components/primitives/BaseCard.astro';
 import FeatureCard from '@/components/composites/FeatureCard.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
+import FormField from '@/components/primitives/FormField.astro';
 import { PRIMITIVE_PROP_CONTRACT, COMPONENT_AUTHORING_CHECKLIST } from '@/data/componentDocs';
+import { headingSizeClass } from '@/lib/typeScale';
 import ComponentCatalog from '@/components/features/design/ComponentCatalog.astro';
 import {
   componentVariantMatrix,
@@ -74,16 +77,12 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
   <Section padding="xl">
     <Container size="xl">
       <header class="max-w-3xl">
-        <Badge variant="subtle">Design system</Badge>
-        <h1 class="mt-5 text-4xl font-bold text-foreground sm:text-5xl">Component Contracts</h1>
-        <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
-          This page documents canonical component paths, live examples, and the full searchable
-          catalog generated from
-          <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm break-all">
-            src/data/component-docs/manifest.ts
-          </code>
-          .
-        </p>
+        <IntroCopy
+          kicker="Design system"
+          title="Component Contracts"
+          description="This page documents canonical component paths, live examples, and the full searchable catalog generated from src/data/component-docs/manifest.ts."
+          size="display"
+        />
       </header>
 
       <section
@@ -102,29 +101,78 @@ const sectionBackgrounds = getComponentVariantCases('Section').filter(
       </section>
 
       <section class="mt-16" aria-labelledby="live-examples">
-        <h2 id="live-examples" class="text-2xl font-bold text-foreground">
+        <h2
+          id="live-examples"
+          class:list={['font-heading font-semibold text-foreground', headingSizeClass('title')]}
+        >
           Live Examples
         </h2>
         <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <BaseCard variant="elevated" hover="none">
-            <h3 class="text-xl font-semibold text-foreground">Buttons</h3>
+            <h3 class="font-heading text-xl font-semibold text-foreground">Buttons</h3>
             <div class="mt-5 flex flex-wrap gap-3">
               <Button variant="primary">Primary</Button>
               <Button variant="secondary">Secondary</Button>
               <Button variant="outline">Outline</Button>
               <Button variant="ghost">Ghost</Button>
+              <Button variant="primary" disabled>
+                Disabled
+              </Button>
+              <Button variant="primary" loading>
+                Loading
+              </Button>
             </div>
           </BaseCard>
 
           <BaseCard variant="elevated" hover="none">
-            <h3 class="text-xl font-semibold text-foreground">Badges</h3>
+            <h3 class="font-heading text-xl font-semibold text-foreground">Badges</h3>
             <div class="mt-5 flex flex-wrap gap-2">
               <Badge variant="secondary">Default</Badge>
               <Badge variant="primary">Primary</Badge>
               <Badge variant="success">Success</Badge>
               <Badge variant="warning">Warning</Badge>
               <Badge variant="error">Error</Badge>
+              <Badge variant="pill" size="xs" showDot>
+                Case Study
+              </Badge>
             </div>
+          </BaseCard>
+
+          <BaseCard variant="elevated" hover="none" padding="md">
+            <h3 class="font-heading text-xl font-semibold text-foreground">Form field states</h3>
+            <p class="mt-2 text-sm text-muted-foreground">
+              Fields use <code class="text-accent-emphasis">bg-field-bg</code>. Invalid paint is
+              driven by <code class="text-accent-emphasis">aria-invalid</code>.
+            </p>
+            <div class="mt-5 space-y-4">
+              <FormField
+                id="design-demo-email"
+                label="Email"
+                type="email"
+                required
+                helpText="Default + focus use the field recipe."
+                placeholder="name@example.com"
+              />
+              <FormField
+                id="design-demo-invalid"
+                label="Project brief"
+                type="textarea"
+                required
+                rows={3}
+                value="too short"
+              />
+            </div>
+            <script>
+              const invalid = document.getElementById('design-demo-invalid');
+              const error = document.getElementById('design-demo-invalid-error');
+              if (invalid instanceof HTMLElement) {
+                invalid.setAttribute('aria-invalid', 'true');
+              }
+              if (error) {
+                error.textContent = 'must be at least 20 characters long.';
+                error.classList.remove('hidden');
+              }
+            </script>
           </BaseCard>
 
           <FeatureCard

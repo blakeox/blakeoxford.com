@@ -210,7 +210,7 @@ export const featureDocs: ComponentDoc[] = [
     examples: [{ title: 'Project hero', code: '<ProjectHero project={entry} />' }],
     tags: ['project', 'hero', 'detail'],
     visualTier: 'expressive',
-    tokenDependencies: ['--color-foreground', '--gradient-primary', 'rounded-3xl'],
+    tokenDependencies: ['--color-foreground', '--gradient-primary', 'rounded-2xl'],
   },
   {
     name: 'ProjectDetailContent',

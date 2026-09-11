@@ -93,7 +93,6 @@ export function validateField(
 export function showError(field: HTMLElement, message: string): void {
   const errorContainer = document.getElementById(`${field.id}-error`);
   field.setAttribute('aria-invalid', 'true');
-  field.classList.add('border-error');
   if (errorContainer) {
     errorContainer.textContent = message;
     errorContainer.classList.remove('hidden');
@@ -103,7 +102,6 @@ export function showError(field: HTMLElement, message: string): void {
 export function clearError(field: HTMLElement): void {
   const errorContainer = document.getElementById(`${field.id}-error`);
   field.setAttribute('aria-invalid', 'false');
-  field.classList.remove('border-error');
   if (errorContainer) {
     errorContainer.textContent = '';
     errorContainer.classList.add('hidden');
@@ -118,6 +116,7 @@ export function setSubmittingState(form: HTMLFormElement, isSubmitting: boolean)
   if (!submitButton) return;
 
   submitButton.disabled = isSubmitting;
+  submitButton.setAttribute('aria-busy', isSubmitting ? 'true' : 'false');
 
   if (buttonLabel) {
     buttonLabel.textContent = isSubmitting ? 'Sending securely…' : 'Send project brief';

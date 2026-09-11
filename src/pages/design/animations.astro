@@ -4,6 +4,8 @@ import Container from '@/components/primitives/Container.astro';
 import Section from '@/components/primitives/Section.astro';
 import Badge from '@/components/primitives/Badge.astro';
 import BaseCard from '@/components/primitives/BaseCard.astro';
+import Button from '@/components/primitives/Button.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
 
 const motionRules = [
   {
@@ -44,12 +46,12 @@ const motionRules = [
   <Section padding="xl">
     <Container size="xl">
       <header class="max-w-3xl">
-        <Badge variant="subtle">Design system</Badge>
-        <h1 class="mt-5 text-4xl font-bold text-foreground sm:text-5xl">Motion Rules</h1>
-        <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
-          Motion exists to clarify state, focus, and hierarchy. Continuous decorative animation is
-          not part of the core component contract.
-        </p>
+        <IntroCopy
+          kicker="Design system"
+          title="Motion Rules"
+          description="Motion exists to clarify state, focus, and hierarchy. Continuous decorative animation is not part of the core component contract."
+          size="display"
+        />
       </header>
 
       <section class="mt-12 grid gap-4 lg:grid-cols-2" aria-label="Motion contracts">
@@ -95,18 +97,12 @@ const motionRules = [
       </BaseCard>
 
       <nav class="mt-12 flex flex-wrap gap-3" aria-label="Design documentation">
-        <a
-          class="rounded-lg bg-accent px-4 py-2 font-semibold text-on-accent transition hover:bg-accent-dark"
-          href="/design/components/"
-        >
+        <Button variant="primary" href="/design/components/">
           Component contracts
-        </a>
-        <a
-          class="rounded-lg border border-border px-4 py-2 font-semibold text-foreground transition hover:border-accent"
-          href="/design/tokens/"
-        >
+        </Button>
+        <Button variant="outline" href="/design/tokens/">
           Tokens
-        </a>
+        </Button>
       </nav>
     </Container>
   </Section>

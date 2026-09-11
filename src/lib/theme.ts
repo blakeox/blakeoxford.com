@@ -13,9 +13,10 @@ export const THEME_ATTRIBUTE = 'data-theme';
 export const DARK_CLASS = 'dark';
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
-/** Static hex fallbacks for platform chrome (meta theme-color, manifest). */
-export const THEME_COLOR_LIGHT = '#32618e';
-export const THEME_COLOR_DARK = '#050911';
+/** Static hex fallbacks for platform chrome (meta theme-color, manifest).
+ * Light mirrors --brand-accent (oklch 0.55 0.14 48); dark mirrors --palette-background-dark. */
+export const THEME_COLOR_LIGHT = '#b05315';
+export const THEME_COLOR_DARK = '#060c13';
 
 const CYCLE_ORDER: ThemePreference[] = ['light', 'dark', 'system'];
 

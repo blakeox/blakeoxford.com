@@ -35,7 +35,7 @@ const lessonRows = lessons.map((lesson: { title: string; description: string }) 
 const highlightRows = (data.highlights ?? []).map((item: string) => ({ body: item }));
 ---
 
-<article class="relative isolate py-14 sm:py-16 lg:py-20">
+<article class="relative isolate py-section-md sm:py-section-lg lg:py-section-xl">
   <Container size="lg" class="relative flex flex-col gap-12 sm:gap-14 lg:gap-16">
     <ProjectDetailSection title="Overview" eyebrow="Context" description={data.description}>
       <div class="prose-case max-w-none space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">

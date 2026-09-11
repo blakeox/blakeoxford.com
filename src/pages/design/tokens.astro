@@ -2,13 +2,13 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/primitives/Container.astro';
 import Section from '@/components/primitives/Section.astro';
-import Badge from '@/components/primitives/Badge.astro';
 import BaseCard from '@/components/primitives/BaseCard.astro';
 import {
   SEMANTIC_COLOR_USAGE,
   getPublicThemeTokens,
   groupTokensByCategory,
 } from '@/lib/designTokens';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
 
 const tokens = getPublicThemeTokens();
 const grouped = groupTokensByCategory(tokens);
@@ -44,8 +44,11 @@ const rules = [
   'Prefer theme-aware utilities (bg-surface, text-accent-emphasis, bg-accent-subtle). Never use bg-background-dark / text-foreground-light.',
   'Pair bg-accent with text-on-accent (or button-primary-*). Light mode uses near-white on-accent; dark mode remaps to dark ink because the accent lightens.',
   'Dark muted/subtle foregrounds stay ≥ oklch 0.80 so small-caps labels clear WCAG AA 4.5:1.',
+  'text-muted-foreground = secondary body (stronger); text-subtle-foreground = captions/meta/small-caps only (weaker, still AA).',
+  'Disabled controls use button-disabled-* tokens — never opacity alone.',
   'Use bg-overlay-scrim for modal backdrops and bg-code-surface for always-dark code blocks. Scrim dismiss layers are decorative — mark with data-a11y-allow-color-contrast.',
-  'Motion: duration-fast | duration-normal | duration-moderate | duration-slow (not duration-200).',
+  'Motion: duration-instant (100ms) | duration-fast (200ms) | duration-normal (alias of fast) | duration-moderate (300ms) | duration-slow (500ms).',
+  'Focus: interactive chrome uses .focus-ring-interactive or recipe focus-visible:ring-*; both set outline-none so the global :focus-visible outline does not double up.',
   'Do not use bg-[color:var(--…)] for tokens that already have utilities.',
   'Shared multi-use contracts live in components.css; feature-owned overlay styles live with chat and command-center owners.',
   'Page gutters: Container or layout-gutter — not hard-coded px-4 sm:px-6 lg:px-8.',
@@ -64,21 +67,12 @@ const rules = [
   <Section padding="xl">
     <Container size="xl">
       <header class="max-w-3xl">
-        <Badge variant="subtle">Design system</Badge>
-        <h1 class="mt-5 font-heading text-4xl font-bold text-foreground sm:text-5xl">
-          Token contract
-        </h1>
-        <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
-          Tokens live in{' '}
-          <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">src/styles/theme.css</code>.
-          Shared classes live in{' '}
-          <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">components.css</code>. Dark
-          mode remaps semantic tokens on{' '}
-          <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">:root</code> — components
-          should not restate dark variants. Public utilities below are generated from{' '}
-          <code class="rounded bg-surface-subtle px-1.5 py-0.5 text-sm">@theme inline</code> (
-          {tokens.length} tokens).
-        </p>
+        <IntroCopy
+          kicker="Design system"
+          title="Token contract"
+          description={`Tokens live in src/styles/theme.css. Shared classes live in components.css. Dark mode remaps semantic tokens on :root — components should not restate dark variants. Public utilities below are generated from @theme inline (${tokens.length} tokens).`}
+          size="display"
+        />
       </header>
 
       <div class="mt-12 grid gap-4 md:grid-cols-3">
@@ -114,15 +108,16 @@ const rules = [
           Brand palette
         </h2>
         <p class="mt-3 max-w-3xl text-muted-foreground">
-          Cool fog paper (hue <strong>95°</strong>), navy ink primary at <strong>255°</strong>,
-          steel accent at <strong>250°</strong> — institutional tech × finance.
+          Cool bone paper (hue <strong>230°</strong>), navy ink primary at <strong>250°</strong>,
+          burnished copper accent at <strong>48°</strong> — institutional tech × finance with a warm
+          signal.
         </p>
         <div class="mt-6 grid gap-4 md:grid-cols-3">
           <BaseCard as="article" variant="subtle" hover="none" padding="md">
             <div class="mb-4 h-16 rounded-xl bg-primary"></div>
             <h3 class="font-semibold text-foreground">primary</h3>
             <p class="mt-1 text-sm text-subtle-foreground">
-              255° · <code>--color-primary</code>
+              250° · <code>--color-primary</code>
             </p>
             <p class="mt-2 text-sm text-muted-foreground">
               Navy ink — secondary brand surfaces and emphasis
@@ -134,10 +129,10 @@ const rules = [
             </div>
             <h3 class="font-semibold text-foreground">accent</h3>
             <p class="mt-1 text-sm text-subtle-foreground">
-              250° · <code>--color-accent</code> + <code>--color-on-accent</code>
+              48° · <code>--color-accent</code> + <code>--color-on-accent</code>
             </p>
             <p class="mt-2 text-sm text-muted-foreground">
-              Steel signal — CTAs, focus rings, interactive chrome (AA with on-accent)
+              Copper signal — CTAs, focus rings, interactive chrome (AA with on-accent)
             </p>
           </BaseCard>
           <BaseCard as="article" variant="subtle" hover="none" padding="md">

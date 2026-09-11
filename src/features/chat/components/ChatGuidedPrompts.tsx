@@ -15,10 +15,12 @@ export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({
   if (!visible) return null;
 
   return (
-    <div className="border-b border-border/20 bg-surface-subtle/20 px-4 py-3 text-[0.75rem] text-foreground/70">
+    <div className="border-b border-border/20 bg-surface-subtle/20 px-4 py-3 text-xs text-muted-foreground">
       <div className="flex flex-col gap-0.5">
-        <span className="text-[0.7rem] tracking-wide text-foreground/50 uppercase">Jump in</span>
-        <span className="text-foreground/60">
+        <span className="text-xxs font-semibold tracking-label text-subtle-foreground uppercase">
+          Jump in
+        </span>
+        <span className="text-muted-foreground">
           Choose a suggested prompt to get a rich, sourced answer.
         </span>
       </div>
@@ -40,7 +42,7 @@ export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({
             <span className="text-sm font-semibold text-foreground group-hover:text-accent-emphasis">
               {prompt.label}
             </span>
-            <span className="text-[0.7rem] text-foreground/65">{prompt.description}</span>
+            <span className="text-xxs text-muted-foreground">{prompt.description}</span>
           </button>
         ))}
       </div>
