@@ -233,7 +233,12 @@ export const featureDocs: ComponentDoc[] = [
     examples: [{ title: 'Related links', code: '<RelatedContent links={links} />' }],
     tags: ['content', 'related', 'navigation'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-accent-emphasis', 'baseCardRecipe'],
+    tokenDependencies: [
+      '--color-surface-subtle',
+      '--color-border',
+      'shadow-lg',
+      '--color-accent-emphasis',
+    ],
   },
   {
     name: 'ProjectHero',
