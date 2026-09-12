@@ -168,6 +168,26 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
     { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
     { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
   ],
+  HomeHeroCopy: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+  ],
+  HomeCTASection: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+  ],
+  ProjectHero: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+  ],
+  AboutHeroSection: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+  ],
+  ContactHeroSection: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+  ],
 };
 
 export const componentManifest: ComponentManifestEntry[] = CATALOG_ORDER.map((name) => {
