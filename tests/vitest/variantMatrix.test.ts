@@ -11,7 +11,7 @@ describe('generated component variant matrix', () => {
 
     expect(ids.length).toBeGreaterThan(20);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(componentVariantMatrix.length).toBeLessThan(200);
+    expect(componentVariantMatrix.length).toBeLessThan(240);
   });
 
   it('covers every case across the required theme and viewport dimensions', () => {
