@@ -188,6 +188,22 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
     { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
     { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
   ],
+  SectionHeader: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+  ],
+  ContactChannels: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
+  HomeLatestPostsSection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
+  HomeRecentProjectsSection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
 };
 
 export const componentManifest: ComponentManifestEntry[] = CATALOG_ORDER.map((name) => {
