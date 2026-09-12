@@ -95,6 +95,7 @@ const CATALOG_ORDER = [
   'HomeHeroCopy',
   'HomeHeroVisual',
   'HomeCTASection',
+  'HomeResumeHighlightsSection',
   'HomeRecentProjectsSection',
   'HomeLatestPostsSection',
   'BlogIndexHeroSection',
@@ -106,6 +107,8 @@ const CATALOG_ORDER = [
   'ProjectsCapabilitiesSection',
   'ProjectsFindingsSection',
   'ProjectsLibrarySection',
+  'ProjectsCTASection',
+  'ProjectDetailSection',
   'ProjectDetailContent',
   'AboutHeroSection',
   'ContactHeroSection',
@@ -263,6 +266,14 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
     { recipe: 'baseCardRecipe', keys: Object.keys(baseCardRecipe.variants.variant) },
     { recipe: 'baseCardRecipe.hover', keys: Object.keys(baseCardRecipe.variants.hover) },
     { recipe: 'badgeRecipe.variant', keys: Object.keys(badgeRecipe.variants) },
+  ],
+  HomeResumeHighlightsSection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
+  ProjectsCTASection: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
   ],
 };
 

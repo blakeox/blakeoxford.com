@@ -203,6 +203,29 @@ export const featureDocs: ComponentDoc[] = [
     tokenDependencies: ['--gradient-accent', '--color-on-accent'],
   },
   {
+    name: 'HomeResumeHighlightsSection',
+    category: 'Features',
+    subcategory: 'Home',
+    description:
+      'Homepage Work/Daring proof split — metrics and outcome lists continuing the thesis.',
+    filePath: 'src/components/features/home/HomeResumeHighlightsSection.astro',
+    examples: [
+      {
+        title: 'Resume highlights',
+        code: '<HomeResumeHighlightsSection content={page.resumeHighlights} />',
+      },
+    ],
+    tags: ['home', 'proof', 'resume'],
+    visualTier: 'quiet',
+    tokenDependencies: [
+      '--color-border',
+      '--color-accent-emphasis',
+      '--font-heading',
+      '--color-foreground',
+      '--color-muted-foreground',
+    ],
+  },
+  {
     name: 'HomeRecentProjectsSection',
     category: 'Features',
     subcategory: 'Home',
@@ -352,6 +375,39 @@ export const featureDocs: ComponentDoc[] = [
     tags: ['project', 'library', 'listing'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-foreground', '--color-border'],
+  },
+  {
+    name: 'ProjectsCTASection',
+    category: 'Features',
+    subcategory: 'Projects',
+    description: 'Projects index conversion band wrapping CtaBand with a primary contact CTA.',
+    filePath: 'src/components/features/projects/ProjectsCTASection.astro',
+    examples: [
+      {
+        title: 'Projects CTA',
+        code: '<ProjectsCTASection title="…" description="…" button={{ href: "/contact/", label: "Book a review" }} />',
+      },
+    ],
+    tags: ['project', 'cta', 'conversion'],
+    visualTier: 'expressive',
+    tokenDependencies: ['home-cta-band', '--color-accent'],
+  },
+  {
+    name: 'ProjectDetailSection',
+    category: 'Features',
+    subcategory: 'Projects',
+    description:
+      'Editorial chrome for project detail subsections — kicker, heading, optional lead, and slotted body.',
+    filePath: 'src/components/features/projects/ProjectDetailSection.astro',
+    examples: [
+      {
+        title: 'Detail subsection',
+        code: '<ProjectDetailSection eyebrow="Journey" title="What we built" description="…">{/* body */}</ProjectDetailSection>',
+      },
+    ],
+    tags: ['project', 'detail', 'editorial'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-foreground', '--color-muted-foreground', '--font-heading'],
   },
   {
     name: 'ProjectDetailContent',
