@@ -424,6 +424,18 @@ export const featureDocs: ComponentDoc[] = [
     tokenDependencies: ['--color-foreground', 'prose'],
   },
   {
+    name: 'ProjectTags',
+    category: 'Features',
+    subcategory: 'Projects',
+    description:
+      'Project detail stack & focus labels via DotMetaList — display only, no filter links.',
+    filePath: 'src/components/features/projects/ProjectTags.astro',
+    examples: [{ title: 'Stack tags', code: '<ProjectTags tags={project.data.tags} />' }],
+    tags: ['project', 'tags', 'meta'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-foreground', '--color-muted-foreground', '--color-border'],
+  },
+  {
     name: 'AboutHeroSection',
     category: 'Features',
     subcategory: 'About',
