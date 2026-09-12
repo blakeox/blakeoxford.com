@@ -58,6 +58,8 @@ const CATALOG_ORDER = [
   'SearchOverlay',
   'AIChatWidget',
   'AboutTimelineSection',
+  'AboutEducationSkillsSection',
+  'AboutProofSection',
   'ContactChannels',
   'PhotoCarousel',
   'CoinFlipImage',
@@ -101,6 +103,9 @@ const CATALOG_ORDER = [
   'RelatedContent',
   'ProjectHero',
   'ProjectsFeaturedSection',
+  'ProjectsCapabilitiesSection',
+  'ProjectsFindingsSection',
+  'ProjectsLibrarySection',
   'ProjectDetailContent',
   'AboutHeroSection',
   'ContactHeroSection',
@@ -229,6 +234,35 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
     { recipe: 'baseCardRecipe', keys: Object.keys(baseCardRecipe.variants.variant) },
     { recipe: 'baseCardRecipe.hover', keys: Object.keys(baseCardRecipe.variants.hover) },
     { recipe: 'baseCardRecipe.padding', keys: Object.keys(baseCardRecipe.variants.padding) },
+  ],
+  AboutTimelineSection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
+  AboutEducationSkillsSection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
+  AboutProofSection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+  ],
+  ProjectsCapabilitiesSection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
+  ProjectsFindingsSection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
+  ProjectsLibrarySection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+    { recipe: 'baseCardRecipe', keys: Object.keys(baseCardRecipe.variants.variant) },
+    { recipe: 'baseCardRecipe.hover', keys: Object.keys(baseCardRecipe.variants.hover) },
+    { recipe: 'badgeRecipe.variant', keys: Object.keys(badgeRecipe.variants) },
   ],
 };
 
