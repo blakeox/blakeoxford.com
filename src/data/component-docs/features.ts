@@ -234,9 +234,9 @@ export const featureDocs: ComponentDoc[] = [
     tags: ['content', 'related', 'navigation'],
     visualTier: 'elevated',
     tokenDependencies: [
-      '--color-surface',
+      '--color-surface-subtle',
       '--color-border',
-      'shadow-sm',
+      'shadow-lg',
       '--color-accent-emphasis',
     ],
   },
