@@ -202,6 +202,18 @@ export const featureDocs: ComponentDoc[] = [
     tokenDependencies: ['--color-foreground', '--fs-h1'],
   },
   {
+    name: 'BlogIndexContentSection',
+    category: 'Features',
+    subcategory: 'Blog',
+    description:
+      'Blog index listing shell with article count pill, search CTA, and post rows on BaseCard.',
+    filePath: 'src/components/features/blog/BlogIndexContentSection.astro',
+    examples: [{ title: 'Blog listing', code: '<BlogIndexContentSection posts={posts} />' }],
+    tags: ['blog', 'index', 'listing'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-surface-subtle', '--color-border', 'py-section-md'],
+  },
+  {
     name: 'ProjectHero',
     category: 'Features',
     subcategory: 'Projects',
@@ -211,6 +223,22 @@ export const featureDocs: ComponentDoc[] = [
     tags: ['project', 'hero', 'detail'],
     visualTier: 'expressive',
     tokenDependencies: ['--color-foreground', '--gradient-primary', 'rounded-2xl'],
+  },
+  {
+    name: 'ProjectsFeaturedSection',
+    category: 'Features',
+    subcategory: 'Projects',
+    description: 'Projects index featured case study band with proof copy and primary CTA.',
+    filePath: 'src/components/features/projects/ProjectsFeaturedSection.astro',
+    examples: [
+      {
+        title: 'Featured project',
+        code: '<ProjectsFeaturedSection project={entry} deepCut={deepCut} kicker="Featured" ctaLabel="Read case study" />',
+      },
+    ],
+    tags: ['project', 'featured', 'index'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-surface', 'py-section-md'],
   },
   {
     name: 'ProjectDetailContent',

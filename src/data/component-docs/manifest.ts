@@ -96,7 +96,9 @@ const CATALOG_ORDER = [
   'HomeRecentProjectsSection',
   'HomeLatestPostsSection',
   'BlogIndexHeroSection',
+  'BlogIndexContentSection',
   'ProjectHero',
+  'ProjectsFeaturedSection',
   'ProjectDetailContent',
   'AboutHeroSection',
   'ContactHeroSection',
@@ -203,6 +205,18 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
   HomeRecentProjectsSection: [
     { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
     { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+  ],
+  BlogIndexContentSection: [
+    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
+    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+    { recipe: 'badgeRecipe.variant', keys: Object.keys(badgeRecipe.variants) },
+    { recipe: 'baseCardRecipe', keys: Object.keys(baseCardRecipe.variants.variant) },
+  ],
+  ProjectsFeaturedSection: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
   ],
 };
 
