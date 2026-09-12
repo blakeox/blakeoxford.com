@@ -79,7 +79,7 @@ const STALE_DECORATIVE_DOC_REGEX =
 /** Decorative blur orbs / washes (rounded-full + heavy blur). */
 const BLUR_ORB_REGEX =
   /(?:rounded-full[^\n"'`]{0,100}blur-(?:2xl|3xl)|blur-(?:2xl|3xl)[^\n"'`]{0,100}rounded-full)/g;
-/** Prefer Badge variant="pill" — BadgePill is a deprecated thin wrapper. */
+/** Prefer Badge variant="pill" — BadgePill wrapper has been removed. */
 const BADGE_PILL_IMPORT_REGEX =
   /\bimport\s+BadgePill\b|from\s+['"][^'"]*BadgePill(?:\.astro)?['"]/g;
 /** Elevated DIY cards that should use BaseCard. */
@@ -96,7 +96,7 @@ const allowedComponentRootFiles = new Set(['src/components/index.ts']);
 const blurOrbAllowPaths = new Set(['src/components/composites/PageHero.astro']);
 
 const badgePillAllowPaths = new Set([
-  'src/components/primitives/index.ts',
+  // Retirement assertion mentions the former filename; no imports allowed elsewhere.
   'tests/vitest/primitives.test.ts',
 ]);
 
