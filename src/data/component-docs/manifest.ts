@@ -110,6 +110,7 @@ const CATALOG_ORDER = [
   'ProjectsCTASection',
   'ProjectDetailSection',
   'ProjectDetailContent',
+  'ProjectTags',
   'AboutHeroSection',
   'ContactHeroSection',
   'ContactMessageSection',
