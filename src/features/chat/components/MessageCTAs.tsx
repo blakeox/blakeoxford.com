@@ -243,7 +243,7 @@ export const ContextualCTAs = memo(function ContextualCTAs({
                 type: cta.type,
               });
             }}
-            className="group inline-flex items-center gap-2.5 rounded-xl border border-accent/30 bg-gradient-to-br from-accent/10 to-accent/5 px-4 py-3 text-sm font-medium text-accent-emphasis shadow-sm transition-all duration-normal hover:border-accent/50 hover:bg-accent/15 hover:shadow-md focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none"
+            className="group inline-flex items-center gap-2.5 rounded-xl border border-accent/30 bg-accent-subtle px-4 py-3 text-sm font-medium text-accent-emphasis shadow-sm transition-colors duration-normal hover:border-accent/50 hover:bg-accent/15 focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none"
           >
             <span className="text-lg" aria-hidden="true">
               {cta.icon}
