@@ -81,7 +81,8 @@ export const featureDocs: ComponentDoc[] = [
     name: 'AboutEducationSkillsSection',
     category: 'Features',
     subcategory: 'About',
-    description: 'Quiet education + working-toolkit band — degree copy and skill list, not elevated cards.',
+    description:
+      'Quiet education + working-toolkit band — degree copy and skill list, not elevated cards.',
     filePath: 'src/components/features/about/AboutEducationSkillsSection.astro',
     examples: [
       {
