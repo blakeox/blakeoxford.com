@@ -9,10 +9,10 @@ draft: false
 featured: true
 ---
 
-<div className="relative my-12 overflow-hidden rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/10 via-primary/5 to-accent/10 p-12 md:p-16">
+<div className="relative my-12 overflow-hidden rounded-2xl border border-accent/20 bg-surface-subtle p-12 md:p-16">
   <div className="relative text-center">
     <div className="mb-6 text-7xl">📊</div>
-    <h2 className="mb-6 bg-gradient-to-r from-accent-emphasis to-primary-emphasis bg-clip-text text-4xl font-black text-transparent md:text-5xl">
+    <h2 className="mb-6 text-4xl font-bold text-accent-emphasis md:text-5xl">
       AI, Statistics, and the Future of Decision-Making
     </h2>
     <p className="mx-auto max-w-4xl text-xl leading-relaxed opacity-90 md:text-2xl">
@@ -22,7 +22,7 @@ featured: true
 </div>
 
 <div className="grid gap-6 my-12">
-  <div className="bg-error-subtle rounded-2xl p-8 border-l-4 border-error shadow-lg transition-all duration-300">
+  <div className="bg-error-subtle rounded-2xl p-8 border-l-4 border-error shadow-lg">
     <div className="flex items-start gap-4">
       <div className="text-4xl flex-shrink-0">⚠️</div>
       <div>
@@ -32,7 +32,7 @@ featured: true
     </div>
   </div>
 
-<div className="rounded-2xl border-l-4 border-success bg-success-subtle p-8 shadow-lg transition-all duration-300">
+<div className="rounded-2xl border-l-4 border-success bg-success-subtle p-8 shadow-lg">
   <div className="flex items-start gap-4">
     <div className="flex-shrink-0 text-4xl">✅</div>
     <div>
@@ -45,7 +45,7 @@ featured: true
   </div>
 </div>
 
-<div className="rounded-2xl border-l-4 border-accent bg-gradient-to-br from-accent/5 to-primary/5 p-8 shadow-lg transition-all duration-300">
+<div className="rounded-2xl border-l-4 border-accent bg-accent/5 p-8 shadow-lg">
   <div className="flex items-start gap-4">
     <div className="flex-shrink-0 text-4xl">🔗</div>
     <div>
@@ -57,7 +57,7 @@ featured: true
   </div>
 </div>
 
-<div className="rounded-2xl border-l-4 border-primary bg-gradient-to-br from-primary/5 to-accent/5 p-8 shadow-lg transition-all duration-300">
+<div className="rounded-2xl border-l-4 border-primary bg-surface-subtle p-8 shadow-lg">
   <div className="flex items-start gap-4">
     <div className="flex-shrink-0 text-4xl">🚀</div>
     <div>
@@ -70,7 +70,7 @@ featured: true
   </div>
 </div>
 
-  <div className="bg-gradient-to-br from-accent/5 to-primary/5 rounded-2xl p-8 border-l-4 border-accent shadow-lg transition-all duration-300">
+  <div className="bg-accent/5 rounded-2xl p-8 border-l-4 border-accent shadow-lg">
     <div className="flex items-start gap-4">
       <div className="text-4xl flex-shrink-0">👥</div>
       <div>
@@ -84,11 +84,11 @@ featured: true
 ---
 
 <div className="my-20 text-center">
-  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/10 px-8 py-4">
+  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-accent/30 bg-accent-subtle px-8 py-4">
     <div className="text-4xl">🔬</div>
     <span className="text-xl font-semibold text-accent-emphasis">Research Findings</span>
   </div>
-  <h2 className="text-4xl font-black text-foreground md:text-5xl">What Our Study Found</h2>
+  <h2 className="text-4xl font-bold text-foreground md:text-5xl">What Our Study Found</h2>
   <p className="mt-4 text-xl italic opacity-70">
     Confirming SPSS Results With GPT-4 and o3-mini Models
   </p>
@@ -102,24 +102,24 @@ featured: true
 </div>
 
 <div className="grid md:grid-cols-3 gap-6 my-16">
-  <div className="bg-gradient-to-br from-success to-success-dark text-on-dark p-8 rounded-2xl shadow-lg transition-all duration-300">
+  <div className="rounded-2xl border border-success/30 bg-success-subtle p-8 shadow-sm">
     <div className="text-5xl mb-4">💪</div>
-    <h3 className="text-2xl font-bold mb-4">Strong on Fundamentals</h3>
+    <h3 className="mb-4 text-2xl font-bold text-success-emphasis">Strong on Fundamentals</h3>
     <p className="opacity-90 leading-relaxed">GPT-4 generally matched SPSS on correlations, t-tests, and regressions, with only minor rounding issues.</p>
   </div>
 
-<div className="rounded-2xl bg-gradient-to-br from-warning to-warning-dark p-8 text-on-dark shadow-lg transition-all duration-300">
+<div className="rounded-2xl border border-warning/30 bg-warning-subtle p-8 shadow-sm">
   <div className="mb-4 text-5xl">⚠️</div>
-  <h3 className="mb-4 text-2xl font-bold">Weakness in Complexity</h3>
+  <h3 className="mb-4 text-2xl font-bold text-warning-emphasis">Weakness in Complexity</h3>
   <p className="leading-relaxed opacity-90">
     In MANOVA and factorial ANOVA, errors appeared: wrong degrees of freedom, inflated coefficients,
     and "significant" results where none existed.
   </p>
 </div>
 
-  <div className="bg-gradient-to-br from-error to-error-dark text-on-dark p-8 rounded-2xl shadow-lg transition-all duration-300">
+  <div className="rounded-2xl border border-error/30 bg-error-subtle p-8 shadow-sm">
     <div className="text-5xl mb-4">🎯</div>
-    <h3 className="text-2xl font-bold mb-4">Risk of Error</h3>
+    <h3 className="mb-4 text-2xl font-bold text-error-emphasis">Risk of Error</h3>
     <p className="opacity-90 leading-relaxed">These aren't trivial differences — in regulated domains, a single misreported p-value could have serious consequences.</p>
   </div>
 </div>
@@ -140,7 +140,7 @@ featured: true
     <div className="text-4xl">🔄</div>
     <span className="text-xl font-semibold text-success-emphasis">Evolution</span>
   </div>
-  <h2 className="text-4xl font-black text-foreground md:text-5xl">Beyond the Study</h2>
+  <h2 className="text-4xl font-bold text-foreground md:text-5xl">Beyond the Study</h2>
   <p className="mt-4 text-xl opacity-70">What's Changed Since Then</p>
 </div>
 
@@ -151,7 +151,7 @@ featured: true
 
   <div className="grid md:grid-cols-2 gap-8">
     {/* RAG Card */}
-    <div className="relative overflow-hidden bg-gradient-to-br from-accent/10 to-primary/10 rounded-2xl p-8 border border-accent/40 shadow-lg">
+    <div className="relative overflow-hidden bg-accent/5 rounded-2xl p-8 border border-accent/40 shadow-lg">
       <div className="relative">
         <div className="flex items-center gap-3 mb-6">
           <div className="text-5xl">📚</div>
@@ -176,7 +176,7 @@ featured: true
     </div>
 
     {/* CAG Card */}
-    <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl p-8 border border-primary/40 shadow-lg">
+    <div className="relative overflow-hidden bg-surface-subtle rounded-2xl p-8 border border-primary/40 shadow-lg">
       <div className="relative">
         <div className="flex items-center gap-3 mb-6">
           <div className="text-5xl">💾</div>
@@ -211,8 +211,8 @@ featured: true
 </div>
 
   <div className="mt-10 text-center">
-    <div className="inline-block bg-gradient-to-r from-accent-emphasis to-primary-emphasis text-on-dark px-10 py-6 rounded-2xl shadow-lg">
-      <p className="text-2xl font-bold"><span className="text-info-light">RAG</span> reduces hallucination risk, while <span className="text-warning-light">CAG</span> enforces repeatability.</p>
+    <div className="inline-block bg-accent text-on-accent px-10 py-6 rounded-2xl shadow-lg">
+      <p className="text-2xl font-bold"><span className="font-bold">RAG</span> reduces hallucination risk, while <span className="font-bold">CAG</span> enforces repeatability.</p>
     </div>
   </div>
 </div>
@@ -220,42 +220,42 @@ featured: true
 ---
 
 <div className="my-20 text-center">
-  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-primary/30 bg-gradient-to-r from-primary/10 to-accent/10 px-8 py-4">
+  <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-primary/30 bg-surface-subtle px-8 py-4">
     <div className="text-4xl">🔗</div>
     <span className="text-xl font-semibold text-primary-emphasis">Integration</span>
   </div>
-  <h2 className="text-4xl font-black text-foreground md:text-5xl">The Power of Integration</h2>
+  <h2 className="text-4xl font-bold text-foreground md:text-5xl">The Power of Integration</h2>
   <p className="mt-4 text-xl opacity-70">Natural Language Meets Complex Software</p>
 </div>
 
-<div className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-primary/10 to-accent/10 rounded-2xl p-12 md:p-16 my-16 border border-accent/40 shadow-lg">
+<div className="relative overflow-hidden bg-surface-subtle rounded-2xl p-12 md:p-16 my-16 border border-accent/40 shadow-lg">
   
   <div className="relative text-center mb-10">
-    <div className="inline-block bg-surface/90 backdrop-blur-sm rounded-2xl px-8 py-4 border border-accent/30 shadow-lg mb-8">
+    <div className="inline-block bg-surface/90 rounded-2xl px-8 py-4 border border-accent/30 shadow-lg mb-8">
       <p className="text-3xl font-bold text-accent-emphasis">Model Context Protocol (MCP)</p>
     </div>
     <p className="text-2xl leading-relaxed font-medium opacity-90">Bridges natural language and technical precision</p>
   </div>
 
 <div className="mb-10 grid gap-6 md:grid-cols-3">
-  <div className="rounded-xl border border-on-dark/20 bg-surface/10 p-6 backdrop-blur-sm">
+  <div className="rounded-xl border border-on-dark/20 bg-surface/10 p-6">
     <div className="mb-3 text-4xl">💬</div>
     <p className="mb-2 text-lg font-semibold">Users ask in English</p>
     <p className="text-sm opacity-75">Natural, conversational queries</p>
   </div>
-  <div className="rounded-xl border border-on-dark/20 bg-surface/10 p-6 backdrop-blur-sm">
+  <div className="rounded-xl border border-on-dark/20 bg-surface/10 p-6">
     <div className="mb-3 text-4xl">⚙️</div>
     <p className="mb-2 text-lg font-semibold">Execute Real Code</p>
     <p className="text-sm opacity-75">R, Python, or SAS execution</p>
   </div>
-  <div className="rounded-xl border border-on-dark/20 bg-surface/10 p-6 backdrop-blur-sm">
+  <div className="rounded-xl border border-on-dark/20 bg-surface/10 p-6">
     <div className="mb-3 text-4xl">📋</div>
     <p className="mb-2 text-lg font-semibold">Audit-Friendly</p>
     <p className="text-sm opacity-75">Reproducible, verified outputs</p>
   </div>
 </div>
 
-  <div className="bg-gradient-to-r from-surface/20 to-surface/10 backdrop-blur-md rounded-2xl p-8 border border-border/40 shadow-lg text-center">
+  <div className="bg-surface/20 rounded-2xl p-8 border border-border/40 shadow-lg text-center">
     <p className="text-2xl md:text-3xl font-bold italic">
       This is the future of analytics: <span className="text-accent-emphasis">human-friendly interaction</span> with <span className="text-primary-emphasis">machine-verified results</span>.
     </p>
@@ -264,15 +264,15 @@ featured: true
 
 ---
 
-<div className="relative my-20 overflow-hidden rounded-2xl bg-gradient-to-r from-accent-emphasis to-primary-emphasis p-12 shadow-lg md:p-16">
-  <div className="relative mx-auto max-w-5xl text-center text-on-dark">
-    <p className="mb-8 text-4xl leading-tight font-black drop-shadow-lg md:text-6xl">
+<div className="relative my-20 overflow-hidden rounded-2xl bg-accent p-12 shadow-lg md:p-16">
+  <div className="relative mx-auto max-w-5xl text-center text-on-accent">
+    <p className="mb-8 text-4xl leading-tight font-bold drop-shadow-lg md:text-6xl">
       The next frontier isn't just <span className="text-warning-light">smarter models</span>
     </p>
-    <p className="text-4xl leading-tight font-black drop-shadow-lg md:text-6xl">
+    <p className="text-4xl leading-tight font-bold drop-shadow-lg md:text-6xl">
       it's <span className="text-success-light">smarter humans</span> empowered by them.
     </p>
-    <div className="mt-10 rounded-2xl border border-on-dark/30 bg-on-dark/15 p-8 shadow-lg backdrop-blur-md">
+    <div className="mt-10 rounded-2xl border border-on-dark/30 bg-on-dark/15 p-8 shadow-lg">
       <p className="text-2xl leading-relaxed font-bold md:text-3xl">
         <span className="text-success-light">Adopt boldly.</span>{' '}
         <span className="text-info-light">Govern wisely.</span>{' '}
@@ -283,7 +283,7 @@ featured: true
   </div>
 </div>
 
-<div className="relative overflow-hidden bg-gradient-to-br from-surface-subtle to-surface rounded-2xl p-12 md:p-16 my-16 border border-border/50 shadow-lg">
+<div className="relative overflow-hidden bg-surface-subtle rounded-2xl p-12 md:p-16 my-16 border border-border/50 shadow-lg">
   <div className="relative text-center">
     <div className="inline-block bg-accent-subtle px-6 py-3 rounded-full border border-accent/30 mb-6">
       <span className="text-sm font-bold uppercase tracking-wider text-accent-emphasis">About This Research</span>
@@ -294,7 +294,7 @@ featured: true
     </p>
 
     <div className="border-t border-border/50 pt-8 mt-8">
-      <div className="inline-flex items-center gap-4 bg-surface/80 backdrop-blur-sm px-8 py-5 rounded-2xl border border-border/50 shadow-lg">
+      <div className="inline-flex items-center gap-4 bg-surface/80 px-8 py-5 rounded-2xl border border-border/50 shadow-lg">
         <div className="text-5xl">👨‍💼</div>
         <div className="text-left">
           <p className="font-bold text-lg text-foreground">Blake Oxford</p>
