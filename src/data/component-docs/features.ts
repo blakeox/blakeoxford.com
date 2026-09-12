@@ -78,6 +78,44 @@ export const featureDocs: ComponentDoc[] = [
     tokenDependencies: ['--color-surface', '--color-accent', '--color-border'],
   },
   {
+    name: 'AboutEducationSkillsSection',
+    category: 'Features',
+    subcategory: 'About',
+    description:
+      'Quiet education + working-toolkit band — degree copy and skill list, not elevated cards.',
+    filePath: 'src/components/features/about/AboutEducationSkillsSection.astro',
+    examples: [
+      {
+        title: 'Background',
+        code: '<AboutEducationSkillsSection content={page.education} />',
+      },
+    ],
+    tags: ['about', 'education', 'skills'],
+    visualTier: 'quiet',
+    tokenDependencies: [
+      '--color-border',
+      '--color-accent',
+      '--color-accent-emphasis',
+      '--color-muted-foreground',
+    ],
+  },
+  {
+    name: 'AboutProofSection',
+    category: 'Features',
+    subcategory: 'About',
+    description: 'Hire-path editorial proof list with optional CTA into selected work.',
+    filePath: 'src/components/features/about/AboutProofSection.astro',
+    examples: [
+      {
+        title: 'Proof',
+        code: '<AboutProofSection kicker="Why hire" title="…" description="…" cards={page.proof.cards} />',
+      },
+    ],
+    tags: ['about', 'proof', 'editorial'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-foreground', '--color-muted-foreground', '--color-border'],
+  },
+  {
     name: 'ContactChannels',
     category: 'Features',
     subcategory: 'Contact',
@@ -266,6 +304,54 @@ export const featureDocs: ComponentDoc[] = [
     tags: ['project', 'featured', 'index'],
     visualTier: 'elevated',
     tokenDependencies: ['--color-surface', 'py-section-md'],
+  },
+  {
+    name: 'ProjectsCapabilitiesSection',
+    category: 'Features',
+    subcategory: 'Projects',
+    description: 'Projects index capabilities band as an editorial list of practice areas.',
+    filePath: 'src/components/features/projects/ProjectsCapabilitiesSection.astro',
+    examples: [
+      {
+        title: 'Capabilities',
+        code: '<ProjectsCapabilitiesSection kicker="Capabilities" title="…" description="…" items={page.capabilities} />',
+      },
+    ],
+    tags: ['project', 'capabilities', 'editorial'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-foreground', '--color-muted-foreground'],
+  },
+  {
+    name: 'ProjectsFindingsSection',
+    category: 'Features',
+    subcategory: 'Projects',
+    description: 'Cross-portfolio results band linking findings back to case studies.',
+    filePath: 'src/components/features/projects/ProjectsFindingsSection.astro',
+    examples: [
+      {
+        title: 'Findings',
+        code: '<ProjectsFindingsSection findings={findings} kicker="Results" title="…" description="…" />',
+      },
+    ],
+    tags: ['project', 'findings', 'editorial'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-surface', '--color-foreground'],
+  },
+  {
+    name: 'ProjectsLibrarySection',
+    category: 'Features',
+    subcategory: 'Projects',
+    description: 'Projects index card grid for the remaining library after the featured band.',
+    filePath: 'src/components/features/projects/ProjectsLibrarySection.astro',
+    examples: [
+      {
+        title: 'Library',
+        code: '<ProjectsLibrarySection projects={projects} kicker="Library" title="…" description="…" excludeSlug={featuredId} />',
+      },
+    ],
+    tags: ['project', 'library', 'listing'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-foreground', '--color-border'],
   },
   {
     name: 'ProjectDetailContent',
