@@ -1,5 +1,6 @@
-import { SECTION_LABEL } from '@/features/overlay/overlayStyles';
+import { OVERLAY_SOFT_ROW, SECTION_LABEL } from '@/features/overlay/overlayStyles';
 import type { CommandItem } from '@/features/command-center/types';
+import { cn } from '@/utils/cn';
 
 type CommandTitleSuggestionsProps = {
   query: string;
@@ -41,7 +42,7 @@ export function CommandTitleSuggestions({ query, items, onSelect }: CommandTitle
           <button
             key={`suggest-${item.id}`}
             type="button"
-            className="focus-ring-interactive flex items-center justify-between gap-2 rounded-lg px-3 py-1.5 text-left text-sm text-foreground transition hover:bg-surface-subtle"
+            className={cn(OVERLAY_SOFT_ROW, 'py-1.5')}
             onClick={() => onSelect(item.title)}
           >
             <span className="truncate">{item.title}</span>
