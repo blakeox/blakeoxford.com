@@ -60,3 +60,20 @@ export const RESULT_ROW_BASE = 'flex items-center gap-3 rounded-lg px-3 py-2 tra
 
 export const RESULT_ROW_ACTIVE = 'bg-accent-subtle ring-1 ring-inset ring-accent/25';
 export const RESULT_ROW_IDLE = 'hover:bg-surface-subtle';
+
+/** Quiet selectable rows in Find/Ask lists (recents, titles, fallback links). */
+export const OVERLAY_SOFT_ROW =
+  'focus-ring-interactive flex w-full items-center justify-between gap-2 rounded-lg text-left text-sm text-foreground transition hover:bg-surface-subtle';
+
+export const OVERLAY_SOFT_ROW_PAD = 'px-3 py-2';
+export const OVERLAY_SOFT_ROW_PAD_COMPACT = 'px-2 py-1.5';
+
+export function getOverlaySoftRowClasses(compact = false) {
+  return cn(OVERLAY_SOFT_ROW, compact ? OVERLAY_SOFT_ROW_PAD_COMPACT : OVERLAY_SOFT_ROW_PAD);
+}
+
+/** Compact dismiss control (no size-8 from OVERLAY_ICON_BUTTON). */
+export const OVERLAY_DISMISS_BUTTON = cn(
+  buttonRecipe.base,
+  'size-7 shrink-0 rounded-lg border-0 p-0 text-subtle-foreground hover:bg-surface-subtle hover:text-foreground'
+);

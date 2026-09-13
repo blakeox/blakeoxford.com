@@ -1,5 +1,9 @@
 import { SuggestionChip } from '@/features/overlay/SuggestionChip';
-import { OVERLAY_FOOTER, SECTION_LABEL } from '@/features/overlay/overlayStyles';
+import {
+  OVERLAY_FOOTER,
+  getOverlaySoftRowClasses,
+  SECTION_LABEL,
+} from '@/features/overlay/overlayStyles';
 import { SUGGESTED_QUERIES } from '@/features/command-center/types';
 
 const IDLE_RECENT_LIMIT = 3;
@@ -66,7 +70,7 @@ export function CommandRecentList({
           <button
             key={item}
             type="button"
-            className="focus-ring-interactive flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle"
+            className={getOverlaySoftRowClasses()}
             onClick={() => onSelect(item)}
           >
             <span className="truncate">{item}</span>
@@ -100,7 +104,7 @@ export function CommandDestinationList({
           <button
             key={item.href}
             type="button"
-            className="focus-ring-interactive flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle"
+            className={getOverlaySoftRowClasses()}
             onClick={() => onSelect(item)}
           >
             <span className="truncate">{item.title}</span>
