@@ -1,6 +1,5 @@
-import { OVERLAY_SOFT_ROW, SECTION_LABEL } from '@/features/overlay/overlayStyles';
+import { getOverlaySoftRowClasses, SECTION_LABEL } from '@/features/overlay/overlayStyles';
 import type { CommandItem } from '@/features/command-center/types';
-import { cn } from '@/utils/cn';
 
 type CommandTitleSuggestionsProps = {
   query: string;
@@ -42,7 +41,7 @@ export function CommandTitleSuggestions({ query, items, onSelect }: CommandTitle
           <button
             key={`suggest-${item.id}`}
             type="button"
-            className={cn(OVERLAY_SOFT_ROW, 'py-1.5')}
+            className={getOverlaySoftRowClasses(true)}
             onClick={() => onSelect(item.title)}
           >
             <span className="truncate">{item.title}</span>
