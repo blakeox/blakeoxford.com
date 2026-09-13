@@ -159,12 +159,12 @@ export function getFieldShellClasses(className = '') {
  * Prefer Button for primary commits; chips are secondary density controls.
  */
 export const chipRecipe = {
-  base: 'focus-ring-interactive inline-flex items-center transition',
+  base: 'focus-ring-interactive inline-flex items-center border transition',
   variants: {
     quiet:
-      'border border-border/60 bg-transparent text-muted-foreground hover:border-accent hover:text-accent',
+      'border-border/60 bg-transparent text-muted-foreground hover:border-accent hover:text-accent',
     accent:
-      'border border-accent/30 bg-accent-subtle font-medium text-accent-emphasis hover:bg-accent/15',
+      'border-accent/30 bg-accent-subtle font-medium text-accent-emphasis hover:bg-accent/15',
   },
   sizes: {
     xs: 'gap-1 px-2 py-1 text-xxs',

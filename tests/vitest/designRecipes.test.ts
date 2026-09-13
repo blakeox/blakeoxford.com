@@ -71,6 +71,7 @@ describe('typed design recipes', () => {
       'bg-accent-subtle'
     );
     expect(getChipClasses({ active: true })).toContain('border-accent/40');
+    expect(getChipClasses({ active: true })).toMatch(/(?:^|\s)border(?:\s|$)/);
   });
 
   it('keeps semantic badge states separate from pill metadata sizing', () => {
