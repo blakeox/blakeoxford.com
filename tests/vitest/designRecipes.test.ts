@@ -3,14 +3,17 @@ import {
   baseCardRecipe,
   badgeRecipe,
   buttonRecipe,
+  chipRecipe,
   disabledControlClasses,
   featureCardRecipe,
   fieldRecipe,
   getBadgeClasses,
   getBaseCardClasses,
   getButtonClasses,
+  getChipClasses,
   getContainerClasses,
   getFieldClasses,
+  getFieldShellClasses,
   getProseClasses,
   getSectionClasses,
   proseRecipe,
@@ -52,12 +55,22 @@ describe('typed design recipes', () => {
     expect(getButtonClasses({ size: 'icon' })).toContain('size-8');
   });
 
-  it('centralizes field styling including invalid state', () => {
+  it('centralizes field styling including invalid state and composer shell', () => {
     expect(fieldRecipe.base).toContain('bg-field-bg');
     expect(fieldRecipe.base).toContain('disabled:bg-button-disabled-bg');
     expect(fieldRecipe.base).not.toContain('disabled:opacity');
+    expect(fieldRecipe.shell).toContain('focus-within:ring-accent/25');
     expect(getFieldClasses()).toContain('aria-invalid:border-error');
+    expect(getFieldShellClasses()).toContain('bg-field-bg');
     expect(disabledControlClasses).toContain('disabled:text-button-disabled-fg');
+  });
+
+  it('centralizes soft chip vocabulary for island density controls', () => {
+    expect(Object.keys(chipRecipe.variants)).toEqual(['quiet', 'accent']);
+    expect(getChipClasses({ variant: 'accent', size: 'xs', shape: 'soft' })).toContain(
+      'bg-accent-subtle'
+    );
+    expect(getChipClasses({ active: true })).toContain('border-accent/40');
   });
 
   it('keeps semantic badge states separate from pill metadata sizing', () => {
@@ -77,6 +90,7 @@ describe('typed design recipes', () => {
 
   it('keeps FeatureCard variants limited to expressive treatments', () => {
     expect(Object.keys(featureCardRecipe.variants)).toEqual(['accent', 'primary']);
+    expect(featureCardRecipe.base).toContain('bg-gradient-to-br');
   });
 
   it('centralizes layout and typography recipe vocabularies', () => {

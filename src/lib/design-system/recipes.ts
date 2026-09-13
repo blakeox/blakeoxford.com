@@ -135,6 +135,11 @@ export const fieldRecipe = {
     'aria-invalid:border-error aria-invalid:ring-2 aria-invalid:ring-error/25',
     'transition-[border-color,box-shadow,background-color]',
   ].join(' '),
+  /** Focus-within wrapper for composers (Ask textarea, Find search). */
+  shell: [
+    'relative flex min-w-0 items-center gap-2 rounded-xl border border-border/55 bg-field-bg',
+    'transition-[border-color,box-shadow] focus-within:border-accent/55 focus-within:ring-2 focus-within:ring-accent/25',
+  ].join(' '),
 } as const;
 
 /** Shared inactive paint for DIY controls that are not Button/FormField. */
@@ -143,6 +148,61 @@ export const disabledControlClasses =
 
 export function getFieldClasses(className = '') {
   return cn(fieldRecipe.base, className);
+}
+
+export function getFieldShellClasses(className = '') {
+  return cn(fieldRecipe.shell, className);
+}
+
+/**
+ * Soft suggestion / session / action chips for islands.
+ * Prefer Button for primary commits; chips are secondary density controls.
+ */
+export const chipRecipe = {
+  base: 'focus-ring-interactive inline-flex items-center transition',
+  variants: {
+    quiet:
+      'border border-border/60 bg-transparent text-muted-foreground hover:border-accent hover:text-accent',
+    accent:
+      'border border-accent/30 bg-accent-subtle font-medium text-accent-emphasis hover:bg-accent/15',
+  },
+  sizes: {
+    xs: 'gap-1 px-2 py-1 text-xxs',
+    sm: 'gap-1.5 px-3 py-1.5 text-xs',
+    md: 'gap-2 px-4 py-3 text-sm',
+  },
+  shapes: {
+    soft: 'rounded-md',
+    pill: 'rounded-full',
+    panel: 'rounded-xl',
+  },
+  active: 'border-accent/40 bg-accent-subtle text-accent',
+} as const;
+
+export type ChipVariant = keyof typeof chipRecipe.variants;
+export type ChipSize = keyof typeof chipRecipe.sizes;
+export type ChipShape = keyof typeof chipRecipe.shapes;
+
+export function getChipClasses({
+  variant = 'quiet',
+  size = 'sm',
+  shape = 'pill',
+  active = false,
+  className = '',
+}: {
+  variant?: ChipVariant;
+  size?: ChipSize;
+  shape?: ChipShape;
+  active?: boolean;
+  className?: string;
+} = {}) {
+  return cn(
+    chipRecipe.base,
+    active ? chipRecipe.active : chipRecipe.variants[variant],
+    chipRecipe.sizes[size],
+    chipRecipe.shapes[shape],
+    className
+  );
 }
 
 export const badgeRecipe = {
@@ -197,6 +257,7 @@ export function getBadgeClasses({
 }
 
 export const featureCardRecipe = {
+  base: 'bg-gradient-to-br backdrop-blur-sm @container @md:p-10',
   variants: {
     accent: {
       surface: 'from-accent/10 to-accent/5 border-accent/30',

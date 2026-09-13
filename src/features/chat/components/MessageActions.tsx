@@ -4,6 +4,7 @@
 import { memo } from 'react';
 import { autoragEvents } from '@/lib/analytics';
 import type { ChatMessage, Source } from '@/features/chat/types';
+import { getChipClasses } from '@/lib/design-system/recipes';
 
 interface MessageActionsProps {
   message: ChatMessage;
@@ -20,8 +21,12 @@ interface MessageActionsProps {
   compact?: boolean;
 }
 
-const chip =
-  'focus-ring-interactive inline-flex items-center gap-1 rounded-md border border-border/50 px-2 py-1 text-xxs text-muted-foreground transition hover:border-accent/40 hover:text-accent';
+const chip = getChipClasses({
+  variant: 'quiet',
+  size: 'xs',
+  shape: 'soft',
+  className: 'border-border/50 hover:border-accent/40',
+});
 
 export const MessageActions = memo(function MessageActions({
   message,
@@ -85,7 +90,13 @@ export const MessageActions = memo(function MessageActions({
       <div className="ml-auto inline-flex items-center gap-1">
         <button
           type="button"
-          className={`${chip} size-7 justify-center px-0 ${isHelpful ? 'border-accent/40 bg-accent-subtle text-accent' : ''}`}
+          className={getChipClasses({
+            variant: 'quiet',
+            size: 'xs',
+            shape: 'soft',
+            active: isHelpful,
+            className: 'size-7 justify-center border-border/50 px-0 hover:border-accent/40',
+          })}
           aria-label={isHelpful ? 'Marked helpful' : 'Mark answer helpful'}
           onClick={() => handleFeedback(message.id, 'positive')}
         >
@@ -106,7 +117,13 @@ export const MessageActions = memo(function MessageActions({
         </button>
         <button
           type="button"
-          className={`${chip} size-7 justify-center px-0 ${isNotHelpful ? 'border-accent/40 bg-accent-subtle text-accent' : ''}`}
+          className={getChipClasses({
+            variant: 'quiet',
+            size: 'xs',
+            shape: 'soft',
+            active: isNotHelpful,
+            className: 'size-7 justify-center border-border/50 px-0 hover:border-accent/40',
+          })}
           aria-label={isNotHelpful ? 'Marked not helpful' : 'Mark answer not helpful'}
           onClick={() => handleFeedback(message.id, 'negative')}
         >

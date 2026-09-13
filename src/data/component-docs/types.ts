@@ -52,6 +52,7 @@ export type ComponentRecipeReference = {
     | 'containerRecipe.size'
     | 'featureCardRecipe.variant'
     | 'fieldRecipe'
+    | 'chipRecipe.variant'
     | 'proseRecipe.size'
     | 'sectionRecipe.padding'
     | 'sectionRecipe.background'
