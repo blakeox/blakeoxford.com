@@ -246,7 +246,7 @@ export const ChatHeader = memo(function ChatHeader({
 
         <button
           type="button"
-          className="focus-ring-interactive inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-surface-subtle hover:text-foreground"
+          className={OVERLAY_ICON_BUTTON}
           aria-label="Close assistant"
           onClick={closeChat}
         >
