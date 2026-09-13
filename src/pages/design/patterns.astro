@@ -53,6 +53,13 @@ const patterns = [
       'Ask textarea and Find search wrappers use fieldRecipe.shell via getFieldShellClasses (focus-within ring). Form controls still use getFieldClasses / FormField.',
     code: 'getFieldShellClasses() | OVERLAY_FIELD',
   },
+  {
+    name: 'Overlay icon controls',
+    category: 'Island',
+    description:
+      'Find/Ask close and header icon buttons use getButtonClasses (secondary/outline + icon) via OVERLAY_CLOSE_BUTTON / OVERLAY_ICON_BUTTON — do not DIY a third icon-button system.',
+    code: 'OVERLAY_CLOSE_BUTTON | OVERLAY_ICON_BUTTON',
+  },
 ];
 
 const visualTiers = [

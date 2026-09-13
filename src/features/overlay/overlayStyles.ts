@@ -1,6 +1,10 @@
 /** Shared class strings for Find (Command Center) and Ask (AI Chat) overlays. */
 
-import { getChipClasses, getFieldShellClasses } from '@/lib/design-system/recipes';
+import {
+  getButtonClasses,
+  getChipClasses,
+  getFieldShellClasses,
+} from '@/lib/design-system/recipes';
 
 export const OVERLAY_BACKDROP =
   'absolute inset-0 cursor-pointer bg-overlay-scrim/55 backdrop-blur-sm';
@@ -21,11 +25,18 @@ export const OVERLAY_HEADER = 'flex items-center gap-2 border-b border-border/60
 
 export const OVERLAY_FIELD = getFieldShellClasses('flex-1 gap-2.5 px-3.5 py-2.5');
 
-export const OVERLAY_CLOSE_BUTTON =
-  'touch-target focus-ring-interactive inline-flex size-10 shrink-0 items-center justify-center rounded-lg border border-border/80 bg-surface text-foreground transition hover:border-border';
+export const OVERLAY_CLOSE_BUTTON = getButtonClasses({
+  variant: 'secondary',
+  size: 'icon',
+  className: 'touch-target size-10 shrink-0 rounded-lg border-border/80',
+});
 
-export const OVERLAY_ICON_BUTTON =
-  'focus-ring-interactive inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/50 text-muted-foreground transition hover:border-accent/50 hover:text-accent';
+export const OVERLAY_ICON_BUTTON = getButtonClasses({
+  variant: 'outline',
+  size: 'icon',
+  className:
+    'shrink-0 rounded-lg border-border/50 text-muted-foreground hover:border-accent/50 hover:text-accent',
+});
 
 export const OVERLAY_FOOTER =
   'border-t border-border/40 px-4 py-2 text-xxs text-subtle-foreground sm:text-xs';
