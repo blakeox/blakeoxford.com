@@ -1,11 +1,6 @@
 /** Shared class strings for Find (Command Center) and Ask (AI Chat) overlays. */
 
-import {
-  buttonRecipe,
-  getButtonClasses,
-  getChipClasses,
-  getFieldShellClasses,
-} from '@/lib/design-system/recipes';
+import { buttonRecipe, getChipClasses, getFieldShellClasses } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 
 export const OVERLAY_BACKDROP =
@@ -34,12 +29,11 @@ export const OVERLAY_CLOSE_BUTTON = cn(
   'touch-target size-10 min-h-[2.75rem] min-w-[2.75rem] shrink-0 rounded-lg border-border/80 p-0'
 );
 
-export const OVERLAY_ICON_BUTTON = getButtonClasses({
-  variant: 'outline',
-  size: 'icon',
-  className:
-    'shrink-0 rounded-lg border-border/50 text-muted-foreground hover:border-accent/50 hover:text-accent',
-});
+/** Header icon control: recipe chrome without a bg fill so active toggles can paint. */
+export const OVERLAY_ICON_BUTTON = cn(
+  buttonRecipe.base,
+  'size-8 shrink-0 rounded-lg border border-border/50 p-0 text-muted-foreground hover:border-accent/50 hover:text-accent'
+);
 
 export const OVERLAY_FOOTER =
   'border-t border-border/40 px-4 py-2 text-xxs text-subtle-foreground sm:text-xs';
