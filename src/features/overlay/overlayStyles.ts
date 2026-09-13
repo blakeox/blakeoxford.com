@@ -60,3 +60,7 @@ export const RESULT_ROW_BASE = 'flex items-center gap-3 rounded-lg px-3 py-2 tra
 
 export const RESULT_ROW_ACTIVE = 'bg-accent-subtle ring-1 ring-inset ring-accent/25';
 export const RESULT_ROW_IDLE = 'hover:bg-surface-subtle';
+
+/** Quiet selectable rows in Find/Ask lists (recents, titles, fallback links). */
+export const OVERLAY_SOFT_ROW =
+  'focus-ring-interactive flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle';
