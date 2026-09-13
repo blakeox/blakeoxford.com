@@ -1,10 +1,12 @@
 /** Shared class strings for Find (Command Center) and Ask (AI Chat) overlays. */
 
 import {
+  buttonRecipe,
   getButtonClasses,
   getChipClasses,
   getFieldShellClasses,
 } from '@/lib/design-system/recipes';
+import { cn } from '@/utils/cn';
 
 export const OVERLAY_BACKDROP =
   'absolute inset-0 cursor-pointer bg-overlay-scrim/55 backdrop-blur-sm';
@@ -25,12 +27,12 @@ export const OVERLAY_HEADER = 'flex items-center gap-2 border-b border-border/60
 
 export const OVERLAY_FIELD = getFieldShellClasses('flex-1 gap-2.5 px-3.5 py-2.5');
 
-export const OVERLAY_CLOSE_BUTTON = getButtonClasses({
-  variant: 'secondary',
-  // md keeps utility-layer min-h-[2.75rem]; icon's min-h-8 would beat .touch-target.
-  size: 'md',
-  className: 'touch-target size-10 shrink-0 rounded-lg border-border/80 px-0 py-0',
-});
+/** Close control: recipe paint + explicit touch box (no size axis — avoids px/min conflicts). */
+export const OVERLAY_CLOSE_BUTTON = cn(
+  buttonRecipe.base,
+  buttonRecipe.variants.secondary,
+  'touch-target size-10 min-h-[2.75rem] min-w-[2.75rem] shrink-0 rounded-lg border-border/80 p-0'
+);
 
 export const OVERLAY_ICON_BUTTON = getButtonClasses({
   variant: 'outline',
