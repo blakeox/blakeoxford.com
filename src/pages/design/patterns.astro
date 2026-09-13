@@ -57,7 +57,7 @@ const patterns = [
     name: 'Overlay icon controls',
     category: 'Island',
     description:
-      'Find/Ask close and header icon buttons use getButtonClasses (secondary/outline + icon) via OVERLAY_CLOSE_BUTTON / OVERLAY_ICON_BUTTON — do not DIY a third icon-button system.',
+      'Find/Ask close and header icon buttons use buttonRecipe chrome via OVERLAY_CLOSE_BUTTON / OVERLAY_ICON_BUTTON (icon omits a default fill so active toggles can paint). Do not DIY a third icon-button system.',
     code: 'OVERLAY_CLOSE_BUTTON | OVERLAY_ICON_BUTTON',
   },
 ];
