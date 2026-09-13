@@ -1,6 +1,6 @@
 import type { CommandCategory } from '@/features/command-center/types';
 import { CATEGORY_LABELS } from '@/features/command-center/types';
-import { cn } from '@/utils/cn';
+import { getChipClasses } from '@/lib/design-system/recipes';
 
 const FILTERS: CommandCategory[] = ['all', 'projects', 'blog', 'pages'];
 
@@ -21,12 +21,12 @@ export function CommandCategoryFilters({ category, onChange }: CommandCategoryFi
             type="button"
             role="tab"
             aria-selected={active}
-            className={cn(
-              'focus-ring-interactive rounded-full px-2.5 py-1 text-xxs font-medium transition',
-              active
-                ? 'bg-accent-subtle text-accent'
-                : 'text-muted-foreground hover:bg-surface-subtle hover:text-foreground'
-            )}
+            className={getChipClasses({
+              variant: 'quiet',
+              size: 'xs',
+              shape: 'pill',
+              active,
+            })}
             onClick={() => onChange(value)}
           >
             {CATEGORY_LABELS[value]}

@@ -5,6 +5,8 @@
 import { memo } from 'react';
 import { GUIDED_PROMPTS } from '@/lib/chat';
 import type { ChatGuidedPromptsProps } from '@/features/chat/types';
+import { CHAT_ACCENT_ICON_WELL } from '@/features/chat/chatStyles';
+import { OVERLAY_SECTION_BAND, SECTION_LABEL } from '@/features/overlay/overlayStyles';
 import { crossRendererSurfaceRecipe } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 
@@ -15,11 +17,9 @@ export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({
   if (!visible) return null;
 
   return (
-    <div className="border-b border-border/20 bg-surface-subtle/20 px-4 py-3 text-xs text-muted-foreground">
+    <div className={OVERLAY_SECTION_BAND}>
       <div className="flex flex-col gap-0.5">
-        <span className="text-xxs font-semibold tracking-label text-subtle-foreground uppercase">
-          Jump in
-        </span>
+        <span className={SECTION_LABEL}>Jump in</span>
         <span className="text-muted-foreground">
           Choose a suggested prompt to get a rich, sourced answer.
         </span>
@@ -36,9 +36,7 @@ export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({
             onClick={() => onSelectPrompt(prompt.prompt)}
             title={prompt.prompt}
           >
-            <span className="inline-flex size-8 items-center justify-center rounded-full bg-accent-subtle text-base">
-              {prompt.icon}
-            </span>
+            <span className={CHAT_ACCENT_ICON_WELL}>{prompt.icon}</span>
             <span className="text-sm font-semibold text-foreground group-hover:text-accent-emphasis">
               {prompt.label}
             </span>

@@ -1,7 +1,13 @@
+import { getButtonClasses } from '@/lib/design-system/recipes';
+import { cn } from '@/utils/cn';
+
 export default function ScrollToLatestButton({ onClick }: { onClick: () => void }) {
   return (
     <button
-      className="absolute right-2 bottom-2 inline-flex items-center gap-2 rounded-md bg-surface/90 px-3 py-1 text-xs shadow"
+      className={cn(
+        getButtonClasses({ variant: 'secondary', size: 'sm' }),
+        'absolute right-2 bottom-2 text-xs shadow'
+      )}
       type="button"
       onClick={onClick}
     >

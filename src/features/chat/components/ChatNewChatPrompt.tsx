@@ -3,6 +3,7 @@
  * Displays prompt to start a new chat conversation
  */
 import type { ChatNewChatPromptProps } from '@/features/chat/types';
+import { OVERLAY_PROMPT_BAR } from '@/features/overlay/overlayStyles';
 import { getButtonClasses } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 
@@ -10,7 +11,7 @@ export function ChatNewChatPrompt({ canStartNewChat, startNewChat }: ChatNewChat
   if (!canStartNewChat) return null;
 
   return (
-    <div className="flex items-center justify-between gap-2 border-t border-border/40 bg-surface-subtle/40 px-4 py-2 text-xxs text-muted-foreground">
+    <div className={OVERLAY_PROMPT_BAR}>
       <span className="truncate pr-2">Want to start fresh?</span>
       <button
         type="button"
