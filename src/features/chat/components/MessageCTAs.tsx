@@ -68,6 +68,7 @@ import { autoragEvents } from '@/lib/analytics';
 import { CONTEXTUAL_CTAS, generateContextualCTAs } from '@/lib/chat';
 import type { ChatMessage, Source } from '@/features/chat/types';
 import { getButtonClasses, getChipClasses } from '@/lib/design-system/recipes';
+import { OVERLAY_ACCENT_PANEL } from '@/features/overlay/overlayStyles';
 import { cn } from '@/utils/cn';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -143,7 +144,7 @@ export const MatchedCTA = memo(function MatchedCTA({
   }
 
   return (
-    <div className="mt-2 rounded-lg border border-accent/25 bg-accent-subtle p-3">
+    <div className={`mt-2 ${OVERLAY_ACCENT_PANEL}`}>
       <p className="mb-2 text-sm text-muted-foreground">{matchedCTA.message}</p>
       <a
         href={matchedCTA.ctaLink}
