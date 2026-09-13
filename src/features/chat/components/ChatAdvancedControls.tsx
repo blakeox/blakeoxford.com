@@ -3,6 +3,7 @@
  */
 import type { ChatAdvancedControlsProps } from '@/features/chat/types';
 import { SECTION_LABEL } from '@/features/overlay/overlayStyles';
+import { getChipClasses } from '@/lib/design-system/recipes';
 
 export function ChatAdvancedControls({
   showAdvancedControls,
@@ -20,11 +21,13 @@ export function ChatAdvancedControls({
   if (!showAdvancedControls) return null;
 
   const chip = (active: boolean) =>
-    `focus-ring-interactive inline-flex items-center rounded-full border px-2.5 py-1 text-xxs font-medium transition ${
-      active
-        ? 'border-accent/40 bg-accent-subtle text-accent'
-        : 'border-border/50 text-muted-foreground hover:border-accent/50 hover:text-accent'
-    }`;
+    getChipClasses({
+      variant: 'quiet',
+      size: 'xs',
+      shape: 'pill',
+      active,
+      className: 'px-2.5 font-medium',
+    });
 
   return (
     <div className="border-b border-border/40 px-3 py-2.5 sm:px-4">

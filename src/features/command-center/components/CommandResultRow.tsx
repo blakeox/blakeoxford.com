@@ -5,6 +5,7 @@ import {
   RESULT_ROW_BASE,
   RESULT_ROW_IDLE,
 } from '@/features/overlay/overlayStyles';
+import { getChipClasses } from '@/lib/design-system/recipes';
 
 function escapeRegExp(input: string): string {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -183,7 +184,12 @@ export function CommandResultRow({
             <button
               key={`${item.id}-tag-${tag}`}
               type="button"
-              className="focus-ring-interactive rounded border border-border/50 px-1.5 py-0.5 text-xxs text-muted-foreground transition hover:border-accent/40 hover:text-accent"
+              className={getChipClasses({
+                variant: 'quiet',
+                size: 'xs',
+                shape: 'soft',
+                className: 'rounded border-border/50 px-1.5 py-0.5 hover:border-accent/40',
+              })}
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
@@ -201,7 +207,12 @@ export function CommandResultRow({
           {onCopyLink ? (
             <button
               type="button"
-              className="focus-ring-interactive rounded-md border border-border/50 px-2 py-1 text-xxs text-muted-foreground transition hover:border-accent/40 hover:text-accent"
+              className={getChipClasses({
+                variant: 'quiet',
+                size: 'xs',
+                shape: 'soft',
+                className: 'border-border/50 hover:border-accent/40',
+              })}
               aria-label={linkCopied ? 'Link copied' : `Copy link for ${item.title}`}
               title="Copy link (⌘C)"
               onClick={(event) => {
@@ -216,7 +227,12 @@ export function CommandResultRow({
           {onAsk ? (
             <button
               type="button"
-              className="focus-ring-interactive rounded-md border border-accent/30 bg-accent-subtle px-2 py-1 text-xxs font-medium text-accent transition hover:bg-accent/15"
+              className={getChipClasses({
+                variant: 'accent',
+                size: 'xs',
+                shape: 'soft',
+                className: 'text-accent',
+              })}
               aria-label={`Ask about ${item.title}`}
               onClick={(event) => {
                 event.preventDefault();

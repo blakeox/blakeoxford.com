@@ -3,6 +3,7 @@
  */
 import type { ChatRecentQueriesProps } from '@/features/chat/types';
 import { SECTION_LABEL } from '@/features/overlay/overlayStyles';
+import { getChipClasses } from '@/lib/design-system/recipes';
 
 export function ChatRecentQueries({ queries, onReplayQuery }: ChatRecentQueriesProps) {
   if (queries.length === 0) return null;
@@ -17,7 +18,12 @@ export function ChatRecentQueries({ queries, onReplayQuery }: ChatRecentQueriesP
           <button
             key={`recent-query-${index}`}
             type="button"
-            className="focus-ring-interactive max-w-[14rem] truncate rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground transition hover:border-accent hover:text-accent"
+            className={getChipClasses({
+              variant: 'quiet',
+              size: 'sm',
+              shape: 'pill',
+              className: 'max-w-[14rem] truncate',
+            })}
             onClick={() => onReplayQuery(query)}
             title={query}
           >
