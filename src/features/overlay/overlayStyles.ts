@@ -84,3 +84,27 @@ export const OVERLAY_INFO_PANEL =
 
 /** Accent callout panel for matched CTAs. */
 export const OVERLAY_ACCENT_PANEL = 'rounded-lg border border-accent/25 bg-accent-subtle p-3';
+
+/** Quiet Ask section band (analytics, digest, guided prompts). */
+export const OVERLAY_SECTION_BAND =
+  'border-b border-border/20 bg-surface-subtle/20 px-4 py-3 text-xs text-muted-foreground';
+
+/** Compact status strip (e.g. "Started fresh"). */
+export const OVERLAY_NOTICE_STRIP =
+  'shrink-0 border-b border-border/30 bg-surface-subtle/50 px-3.5 py-1.5 text-xxs text-muted-foreground sm:px-4';
+
+/** Nested metric / citation tiles inside Ask analytics. */
+export const OVERLAY_METRIC_TILE = 'rounded-xl border border-border/30 px-3 py-2';
+
+/** Floating options menu panel (Ask header). */
+export const OVERLAY_MENU_PANEL =
+  'fixed z-[1300] min-w-[11rem] overflow-hidden rounded-xl border border-border/60 bg-surface py-1 shadow-lg';
+
+/** Menu item rows inside OVERLAY_MENU_PANEL. */
+export const OVERLAY_MENU_ITEM = cn(
+  'focus-ring-interactive flex w-full items-center gap-2 rounded-lg border border-transparent px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle'
+);
+
+/** Footer prompt bar ("Want to start fresh?"). */
+export const OVERLAY_PROMPT_BAR =
+  'flex items-center justify-between gap-2 border-t border-border/40 bg-surface-subtle/40 px-4 py-2 text-xxs text-muted-foreground';
