@@ -30,11 +30,7 @@ const {
   class: className = '',
 } = Astro.props;
 
-const classes = [
-  featureCardRecipe.base,
-  featureCardRecipe.variants[variant].surface,
-  className,
-]
+const classes = [featureCardRecipe.base, featureCardRecipe.variants[variant].surface, className]
   .filter(Boolean)
   .join(' ');
 

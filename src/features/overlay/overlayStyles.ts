@@ -34,7 +34,8 @@ export const SUGGESTION_CHIP = getChipClasses({
   variant: 'quiet',
   size: 'sm',
   shape: 'pill',
-  className: 'border-border/55 bg-surface/40 hover:border-accent/40 hover:bg-accent-subtle hover:text-accent-emphasis',
+  className:
+    'border-border/55 bg-surface/40 hover:border-accent/40 hover:bg-accent-subtle hover:text-accent-emphasis',
 });
 
 export const SUGGESTION_CHIP_ACCENT = getChipClasses({
