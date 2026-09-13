@@ -27,8 +27,9 @@ export const OVERLAY_FIELD = getFieldShellClasses('flex-1 gap-2.5 px-3.5 py-2.5'
 
 export const OVERLAY_CLOSE_BUTTON = getButtonClasses({
   variant: 'secondary',
-  size: 'icon',
-  className: 'touch-target size-10 shrink-0 rounded-lg border-border/80',
+  // md keeps utility-layer min-h-[2.75rem]; icon's min-h-8 would beat .touch-target.
+  size: 'md',
+  className: 'touch-target size-10 shrink-0 rounded-lg border-border/80 px-0 py-0',
 });
 
 export const OVERLAY_ICON_BUTTON = getButtonClasses({
