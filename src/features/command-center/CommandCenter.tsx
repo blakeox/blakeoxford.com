@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { OverlayShell } from '@/features/overlay';
 import {
   OVERLAY_CLOSE_BUTTON,
+  OVERLAY_DISMISS_BUTTON,
   OVERLAY_FIELD,
   OVERLAY_HEADER,
   OVERLAY_INFO_PANEL,
@@ -134,7 +135,7 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
           {query ? (
             <button
               type="button"
-              className="rounded-md p-1 text-subtle-foreground hover:text-foreground"
+              className={OVERLAY_DISMISS_BUTTON}
               aria-label="Clear search"
               onClick={clearQuery}
             >
