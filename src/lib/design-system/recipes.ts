@@ -163,8 +163,7 @@ export const chipRecipe = {
   variants: {
     quiet:
       'border-border/60 bg-transparent text-muted-foreground hover:border-accent hover:text-accent',
-    accent:
-      'border-accent/30 bg-accent-subtle font-medium text-accent-emphasis hover:bg-accent/15',
+    accent: 'border-accent/30 bg-accent-subtle font-medium text-accent-emphasis hover:bg-accent/15',
   },
   sizes: {
     xs: 'gap-1 px-2 py-1 text-xxs',
