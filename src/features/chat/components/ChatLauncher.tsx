@@ -3,13 +3,15 @@
  * The floating button that opens/closes the chat panel
  */
 import type { ChatLauncherProps } from '@/features/chat/types';
+import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED } from '@/features/chat/chatStyles';
+import { cn } from '@/utils/cn';
 
 export function ChatLauncher({ isOpen, launcherRef, openChat, closeChat }: ChatLauncherProps) {
   return (
     <button
       ref={launcherRef}
       type="button"
-      className="ai-chat-launcher touch-target focus-ring-interactive pointer-events-auto inline-flex size-14 items-center justify-center rounded-full border border-border/60 bg-glass/95 text-foreground shadow-lg backdrop-blur supports-[backdrop-filter]:bg-glass/90"
+      className={cn(CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED)}
       aria-label={isOpen ? 'Close AI assistant' : 'Open AI assistant — conversational chat'}
       onClick={() => {
         if (isOpen) {
