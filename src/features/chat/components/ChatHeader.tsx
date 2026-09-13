@@ -3,7 +3,11 @@
  */
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { OVERLAY_ICON_BUTTON } from '@/features/overlay/overlayStyles';
+import {
+  OVERLAY_ICON_BUTTON,
+  OVERLAY_MENU_ITEM,
+  OVERLAY_MENU_PANEL,
+} from '@/features/overlay/overlayStyles';
 import { CHAT_ACCENT_CHIP, CHAT_TOGGLE_ACTIVE } from '@/features/chat/chatStyles';
 import { disabledControlClasses } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
@@ -23,10 +27,7 @@ function MenuButton({
       type="button"
       role="menuitem"
       disabled={disabled}
-      className={cn(
-        'focus-ring-interactive flex w-full items-center gap-2 rounded-lg border border-transparent px-3 py-2 text-left text-sm text-foreground transition hover:bg-surface-subtle',
-        disabledControlClasses
-      )}
+      className={cn(OVERLAY_MENU_ITEM, disabledControlClasses)}
       onClick={onClick}
     >
       {children}
@@ -117,7 +118,7 @@ export const ChatHeader = memo(function ChatHeader({
           <div
             ref={menuRef}
             role="menu"
-            className="fixed z-[1300] min-w-[11rem] overflow-hidden rounded-xl border border-border/60 bg-surface py-1 shadow-lg"
+            className={OVERLAY_MENU_PANEL}
             style={{ top: menuPosition.top, right: menuPosition.right }}
           >
             {voiceSupported ? (

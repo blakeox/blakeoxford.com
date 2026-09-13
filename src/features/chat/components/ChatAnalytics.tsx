@@ -6,6 +6,11 @@ import { calculateConversationAnalytics as calculateAnalytics } from '@/lib/chat
 import type { ChatAnalyticsProps } from '@/features/chat/types';
 import { getBadgeClasses } from '@/lib/design-system/recipes';
 import { CHAT_ACCENT_PILL } from '@/features/chat/chatStyles';
+import {
+  OVERLAY_METRIC_TILE,
+  OVERLAY_SECTION_BAND,
+  SECTION_LABEL,
+} from '@/features/overlay/overlayStyles';
 import { cn } from '@/utils/cn';
 
 export function ChatAnalytics({
@@ -29,18 +34,16 @@ export function ChatAnalytics({
   });
 
   return (
-    <div className="border-b border-border/20 bg-surface-subtle/20 px-4 py-3 text-xs text-muted-foreground">
-      <span className="mb-2 block text-xxs font-semibold tracking-label text-subtle-foreground uppercase">
-        Conversation Insights
-      </span>
+    <div className={OVERLAY_SECTION_BAND}>
+      <span className={cn(SECTION_LABEL, 'mb-2 block')}>Conversation Insights</span>
 
       {/* Core Metrics */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <div className="rounded-xl border border-border/30 px-3 py-2">
+        <div className={OVERLAY_METRIC_TILE}>
           <span className="block text-subtle-foreground">Messages</span>
           <span className="text-sm font-semibold text-foreground">{analytics.totalMessages}</span>
         </div>
-        <div className="rounded-xl border border-border/30 px-3 py-2">
+        <div className={OVERLAY_METRIC_TILE}>
           <span className="block text-subtle-foreground">Avg Quality</span>
           <span
             className={`text-sm font-semibold ${
@@ -54,13 +57,13 @@ export function ChatAnalytics({
             {analytics.avgQualityScore > 0 ? `${Math.round(analytics.avgQualityScore)}/100` : 'N/A'}
           </span>
         </div>
-        <div className="rounded-xl border border-border/30 px-3 py-2">
+        <div className={OVERLAY_METRIC_TILE}>
           <span className="block text-subtle-foreground">Session Time</span>
           <span className="text-sm font-semibold text-foreground">
             {sessionDuration < 1 ? '<1m' : `${sessionDuration}m`}
           </span>
         </div>
-        <div className="rounded-xl border border-border/30 px-3 py-2">
+        <div className={OVERLAY_METRIC_TILE}>
           <span className="block text-subtle-foreground">Topics</span>
           <span className="text-sm font-semibold text-foreground">{uniqueCollections.size}</span>
         </div>
@@ -96,9 +99,7 @@ export function ChatAnalytics({
       {/* Topics Explored */}
       {uniqueCollections.size > 0 && (
         <div className="mt-3">
-          <span className="mb-2 block text-xxs font-semibold tracking-label text-subtle-foreground uppercase">
-            Topics Explored
-          </span>
+          <span className={cn(SECTION_LABEL, 'mb-2 block')}>Topics Explored</span>
           <div className="flex flex-wrap gap-1.5">
             {Array.from(uniqueCollections).map((collection) => (
               <span key={String(collection)} className={CHAT_ACCENT_PILL}>
@@ -112,24 +113,22 @@ export function ChatAnalytics({
       {/* Feedback Analytics */}
       {feedbackAnalytics.totalAssistant > 0 && (
         <div className="mt-3 border-t border-border/30 pt-3">
-          <span className="mb-2 block text-xxs font-semibold tracking-label text-subtle-foreground uppercase">
-            User Feedback
-          </span>
+          <span className={cn(SECTION_LABEL, 'mb-2 block')}>User Feedback</span>
           <div className="flex flex-wrap gap-2">
-            <div className="rounded-xl border border-border/30 px-3 py-2">
+            <div className={OVERLAY_METRIC_TILE}>
               <span className="block text-subtle-foreground">Helpful</span>
               <span className="text-sm font-semibold text-accent-emphasis">
                 {feedbackAnalytics.positive}
               </span>
             </div>
-            <div className="rounded-xl border border-border/30 px-3 py-2">
+            <div className={OVERLAY_METRIC_TILE}>
               <span className="block text-subtle-foreground">Needs work</span>
               <span className="text-sm font-semibold text-error-emphasis">
                 {feedbackAnalytics.negative}
               </span>
             </div>
             {feedbackAnalytics.positiveRate !== null && (
-              <div className="rounded-xl border border-border/30 px-3 py-2">
+              <div className={OVERLAY_METRIC_TILE}>
                 <span className="block text-subtle-foreground">Satisfaction</span>
                 <span className="text-sm font-semibold text-foreground">
                   {feedbackAnalytics.positiveRate}%
@@ -143,23 +142,21 @@ export function ChatAnalytics({
       {/* Performance Metrics */}
       {analytics.avgResponseTimeMs > 0 && (
         <div className="mt-3 border-t border-border/30 pt-3">
-          <span className="mb-2 block text-xxs font-semibold tracking-label text-subtle-foreground uppercase">
-            Performance
-          </span>
+          <span className={cn(SECTION_LABEL, 'mb-2 block')}>Performance</span>
           <div className="flex flex-wrap gap-2">
-            <div className="rounded-xl border border-border/30 px-3 py-2">
+            <div className={OVERLAY_METRIC_TILE}>
               <span className="block text-subtle-foreground">Avg Response</span>
               <span className="text-sm font-semibold text-foreground">
                 {(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
               </span>
             </div>
-            <div className="rounded-xl border border-border/30 px-3 py-2">
+            <div className={OVERLAY_METRIC_TILE}>
               <span className="block text-subtle-foreground">Fastest</span>
               <span className="text-sm font-semibold text-success-emphasis">
                 {(analytics.avgResponseTimeMs / 1000).toFixed(1)}s
               </span>
             </div>
-            <div className="rounded-xl border border-border/30 px-3 py-2">
+            <div className={OVERLAY_METRIC_TILE}>
               <span className="block text-subtle-foreground">Slowest</span>
               <span className="text-sm font-semibold text-warning-emphasis">
                 {(analytics.avgResponseTimeMs / 1000).toFixed(1)}s

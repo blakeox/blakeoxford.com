@@ -1,5 +1,7 @@
 /** Shared class strings for the Ask corner companion (ChatDock + launcher). */
 
+import { getBadgeClasses, getChipClasses } from '@/lib/design-system/recipes';
+
 export const CHAT_DOCK_ROOT = 'ai-chat-overlay pointer-events-none fixed inset-0 z-chat';
 
 export const CHAT_DOCK_BACKDROP =
@@ -21,12 +23,21 @@ export const CHAT_LAUNCHER_BASE =
 export const CHAT_LAUNCHER_CLOSED =
   'border border-border/60 bg-glass/95 text-foreground backdrop-blur supports-[backdrop-filter]:bg-glass/90';
 
-export const CHAT_ACCENT_CHIP =
-  'inline-flex items-center gap-1 rounded-full bg-accent-subtle px-2 py-0.5 text-xxs font-medium text-accent';
+/** Listening / status chip — thin wrapper over chipRecipe active paint. */
+export const CHAT_ACCENT_CHIP = getChipClasses({
+  variant: 'quiet',
+  size: 'xs',
+  shape: 'pill',
+  active: true,
+  className: 'gap-1 border-0 px-2 py-0.5',
+});
 
-/** Prefer getBadgeClasses({ variant: 'subtle'|'success'|…, size: 'xs' }) for status chips. */
-export const CHAT_ACCENT_PILL =
-  'inline-flex items-center rounded-full bg-accent-subtle px-2.5 py-1 text-xxs font-medium text-accent-emphasis';
+/** Topic / collection pill — badgeRecipe subtle with accent emphasis. */
+export const CHAT_ACCENT_PILL = getBadgeClasses({
+  variant: 'subtle',
+  size: 'xs',
+  className: 'bg-accent-subtle text-accent-emphasis border-0',
+});
 
 export const CHAT_ACCENT_ICON_WELL =
   'inline-flex size-8 items-center justify-center rounded-full bg-accent-subtle text-base';
