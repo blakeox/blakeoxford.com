@@ -77,3 +77,10 @@ export const OVERLAY_DISMISS_BUTTON = cn(
   buttonRecipe.base,
   'size-7 shrink-0 rounded-lg border-0 p-0 text-subtle-foreground hover:bg-surface-subtle hover:text-foreground'
 );
+
+/** Quiet informational panels (errors, notices) inside Find/Ask. */
+export const OVERLAY_INFO_PANEL =
+  'rounded-lg border border-border/60 bg-surface-subtle/60 px-3 py-2 text-sm text-muted-foreground';
+
+/** Accent callout panel for matched CTAs. */
+export const OVERLAY_ACCENT_PANEL = 'rounded-lg border border-accent/25 bg-accent-subtle p-3';
