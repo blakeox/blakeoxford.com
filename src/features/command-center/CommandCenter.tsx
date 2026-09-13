@@ -5,6 +5,7 @@ import {
   OVERLAY_CLOSE_BUTTON,
   OVERLAY_FIELD,
   OVERLAY_HEADER,
+  OVERLAY_INFO_PANEL,
 } from '@/features/overlay/overlayStyles';
 import { CommandCategoryFilters } from './components/CommandCategoryFilters';
 import {
@@ -194,11 +195,7 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
                 : 'Start typing to search the site'}
         </p>
 
-        {error ? (
-          <div className="mb-3 rounded-lg border border-border/60 bg-surface/80 px-3 py-2.5 text-sm text-muted-foreground">
-            {error}
-          </div>
-        ) : null}
+        {error ? <div className={`mb-3 ${OVERLAY_INFO_PANEL}`}>{error}</div> : null}
 
         {findQuery ? (
           <CommandCategoryFilters category={category} onChange={handleCategoryChange} />
