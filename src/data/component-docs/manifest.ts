@@ -11,6 +11,7 @@ import {
   badgeRecipe,
   baseCardRecipe,
   buttonRecipe,
+  chipRecipe,
   containerRecipe,
   featureCardRecipe,
   fieldRecipe,
@@ -163,6 +164,7 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
   MessageCTAs: [
     { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
     { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
   ],
   CTASection: [
     { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
@@ -173,7 +175,7 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
     { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
   ],
   ContactMessageSection: [
-    { recipe: 'fieldRecipe', keys: Object.keys(fieldRecipe) },
+    { recipe: 'fieldRecipe', keys: ['base'] },
     { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
     { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
   ],
