@@ -81,6 +81,27 @@ const patterns = [
       'Find/Ask error and notice surfaces use OVERLAY_INFO_PANEL; matched CTA callouts use OVERLAY_ACCENT_PANEL — tokenized panels, not DIY bordered boxes.',
     code: 'OVERLAY_INFO_PANEL | OVERLAY_ACCENT_PANEL',
   },
+  {
+    name: 'Ask section bands & metrics',
+    category: 'Island',
+    description:
+      'Ask analytics/digest/guided strips use OVERLAY_SECTION_BAND; nested metric tiles use OVERLAY_METRIC_TILE; ephemeral notices use OVERLAY_NOTICE_STRIP.',
+    code: 'OVERLAY_SECTION_BAND | OVERLAY_METRIC_TILE | OVERLAY_NOTICE_STRIP',
+  },
+  {
+    name: 'Ask options menu',
+    category: 'Island',
+    description:
+      'Ask header overflow menu uses OVERLAY_MENU_PANEL + OVERLAY_MENU_ITEM. Category filters and Jump-to-latest use getChipClasses / getButtonClasses — not parallel DIY pills.',
+    code: 'OVERLAY_MENU_PANEL | getChipClasses({ active })',
+  },
+  {
+    name: 'Intentional exceptions',
+    category: 'Island',
+    description:
+      'Leave as named outsides: Ask FAB glass (CHAT_LAUNCHER_*), ChatDock panel twin, message bubbles/typing dots, spinners, and MDX/blog content chrome.',
+    code: 'CHAT_LAUNCHER_* | CHAT_DOCK_PANEL | bubbles | spinners | MDX',
+  },
 ];
 
 const visualTiers = [

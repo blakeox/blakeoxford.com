@@ -1,8 +1,0 @@
-**/*.astro
-node_modules/
-dist/
-public/
-src/styles/global.css
-src/styles/theme.css
-pnpm-lock.yaml
-_headers

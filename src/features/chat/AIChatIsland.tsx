@@ -20,6 +20,7 @@ import {
   TypingIndicator,
   ScrollToLatestButton,
 } from './components';
+import { OVERLAY_NOTICE_STRIP } from '@/features/overlay/overlayStyles';
 
 export default function AIChatIsland() {
   const controller = useAIChatController();
@@ -258,10 +259,7 @@ export default function AIChatIsland() {
       />
 
       {freshNotice ? (
-        <p
-          className="shrink-0 border-b border-border/30 bg-surface-subtle/50 px-3.5 py-1.5 text-xxs text-muted-foreground sm:px-4"
-          role="status"
-        >
+        <p className={OVERLAY_NOTICE_STRIP} role="status">
           Started fresh
         </p>
       ) : null}
