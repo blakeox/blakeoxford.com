@@ -3,6 +3,8 @@
  * Collapsed by default so the transcript stays readable.
  */
 import type { ChatFallbackResultsProps } from '@/features/chat/types';
+import { OVERLAY_DISMISS_BUTTON, getOverlaySoftRowClasses } from '@/features/overlay/overlayStyles';
+import { cn } from '@/utils/cn';
 
 export function ChatFallbackResults({
   fallbackResults,
@@ -19,7 +21,7 @@ export function ChatFallbackResults({
       <div className="flex items-center gap-2">
         <button
           type="button"
-          className="focus-ring-interactive flex min-w-0 flex-1 items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left transition hover:bg-surface-subtle"
+          className={cn(getOverlaySoftRowClasses(true), 'min-w-0 flex-1')}
           aria-expanded={showFallbackSuggestions}
           onClick={() => setShowFallbackSuggestions(!showFallbackSuggestions)}
         >
@@ -41,7 +43,7 @@ export function ChatFallbackResults({
         {onDismiss ? (
           <button
             type="button"
-            className="focus-ring-interactive inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-subtle-foreground transition hover:bg-surface-subtle hover:text-foreground"
+            className={OVERLAY_DISMISS_BUTTON}
             aria-label="Dismiss related pages"
             onClick={onDismiss}
           >
@@ -65,11 +67,11 @@ export function ChatFallbackResults({
             <li key={`fallback-${index}`}>
               <a
                 href={result.url}
-                className="focus-ring-interactive block truncate rounded-lg px-2 py-1.5 text-sm text-foreground transition hover:bg-surface-subtle"
+                className={getOverlaySoftRowClasses(true)}
                 target={result.url.startsWith('http') ? '_blank' : undefined}
                 rel={result.url.startsWith('http') ? 'noreferrer' : undefined}
               >
-                {result.title}
+                <span className="truncate">{result.title}</span>
               </a>
             </li>
           ))}

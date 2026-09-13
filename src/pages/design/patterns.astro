@@ -67,6 +67,13 @@ const patterns = [
       'Corner Ask FAB uses CHAT_LAUNCHER_BASE + CHAT_LAUNCHER_CLOSED from chatStyles — glass secondary chrome that stays discoverable without competing with page CTAs.',
     code: 'cn(CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED)',
   },
+  {
+    name: 'Overlay soft rows',
+    category: 'Island',
+    description:
+      'Find/Ask selectable list rows use getOverlaySoftRowClasses() / getOverlaySoftRowClasses(true) — one hover/focus contract with non-conflicting padding axes.',
+    code: 'getOverlaySoftRowClasses() | getOverlaySoftRowClasses(true)',
+  },
 ];
 
 const visualTiers = [
