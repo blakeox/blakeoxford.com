@@ -161,8 +161,7 @@ export function getFieldShellClasses(className = '') {
 export const chipRecipe = {
   base: 'focus-ring-interactive inline-flex items-center border transition',
   variants: {
-    quiet:
-      'border-border/60 bg-transparent text-muted-foreground hover:border-accent hover:text-accent',
+    quiet: 'border-border/60 text-muted-foreground hover:border-accent hover:text-accent',
     accent: 'border-accent/30 bg-accent-subtle font-medium text-accent-emphasis hover:bg-accent/15',
   },
   sizes: {

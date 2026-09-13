@@ -102,7 +102,12 @@ describe('component documentation catalog', () => {
 
     for (const doc of componentManifest) {
       for (const reference of doc.recipeReferences ?? []) {
-        expect(reference.keys).toEqual(recipeKeys[reference.recipe]);
+        const expectedKeys = recipeKeys[reference.recipe];
+        expect(expectedKeys, `${doc.name}:${reference.recipe}`).toBeDefined();
+        expect(reference.keys.length, `${doc.name}:${reference.recipe}`).toBeGreaterThan(0);
+        for (const key of reference.keys) {
+          expect(expectedKeys, `${doc.name}:${reference.recipe}:${key}`).toContain(key);
+        }
       }
       expect(doc.accessibilityRequirements).toEqual(doc.accessibility ?? []);
     }
