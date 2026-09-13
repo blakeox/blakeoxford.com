@@ -33,6 +33,7 @@ const coverageByRecipe: Record<ComponentRecipeReference['recipe'], VariantCovera
   'containerRecipe.size': 'structural',
   'featureCardRecipe.variant': 'visual',
   fieldRecipe: 'structural',
+  'chipRecipe.variant': 'structural',
   'proseRecipe.size': 'structural',
   'sectionRecipe.padding': 'structural',
   'sectionRecipe.background': 'visual',

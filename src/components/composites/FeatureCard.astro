@@ -30,11 +30,7 @@ const {
   class: className = '',
 } = Astro.props;
 
-const classes = [
-  'bg-gradient-to-br backdrop-blur-sm @container @md:p-10',
-  featureCardRecipe.variants[variant].surface,
-  className,
-]
+const classes = [featureCardRecipe.base, featureCardRecipe.variants[variant].surface, className]
   .filter(Boolean)
   .join(' ');
 

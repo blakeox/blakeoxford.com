@@ -43,8 +43,15 @@ const patterns = [
     name: 'Island chips',
     category: 'Island',
     description:
-      'Ask/Find suggestion chips live in overlayStyles (SUGGESTION_CHIP*). Prefer text-accent-emphasis and focus-ring-interactive; do not invent a third chip system.',
-    code: 'SUGGESTION_CHIP | SUGGESTION_CHIP_ACCENT',
+      'Soft Ask/Find chips use chipRecipe via getChipClasses (quiet|accent, sizes, shapes). overlayStyles SUGGESTION_CHIP* re-export that vocabulary — do not invent a third chip system.',
+    code: "getChipClasses({ variant: 'quiet' | 'accent' })",
+  },
+  {
+    name: 'Composer field shell',
+    category: 'Island',
+    description:
+      'Ask textarea and Find search wrappers use fieldRecipe.shell via getFieldShellClasses (focus-within ring). Form controls still use getFieldClasses / FormField.',
+    code: 'getFieldShellClasses() | OVERLAY_FIELD',
   },
 ];
 

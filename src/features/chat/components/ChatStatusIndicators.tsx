@@ -4,7 +4,7 @@
  */
 import { autoragEvents } from '@/lib/analytics';
 import { openCommandCenter } from '@/features/command-center/lib/commandEvents';
-import { disabledControlClasses } from '@/lib/design-system/recipes';
+import { disabledControlClasses, getChipClasses } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 import type { ChatStatusIndicatorsProps } from '@/features/chat/types';
 
@@ -68,7 +68,12 @@ export function ChatStatusIndicators({
             <button
               type="button"
               className={cn(
-                'focus-ring-interactive rounded-full border border-border/60 px-3 py-1 text-xs font-medium text-foreground transition hover:border-accent hover:text-accent',
+                getChipClasses({
+                  variant: 'quiet',
+                  size: 'sm',
+                  shape: 'pill',
+                  className: 'font-medium text-foreground',
+                }),
                 disabledControlClasses
               )}
               onClick={() => {
@@ -87,7 +92,7 @@ export function ChatStatusIndicators({
             {searchQuery ? (
               <button
                 type="button"
-                className="focus-ring-interactive rounded-full border border-border/60 px-3 py-1 text-xs text-muted-foreground transition hover:border-accent hover:text-accent"
+                className={getChipClasses({ variant: 'quiet', size: 'sm', shape: 'pill' })}
                 onClick={() => openCommandCenter(searchQuery)}
               >
                 Search the site

@@ -3,7 +3,7 @@
  */
 import { memo, useCallback } from 'react';
 import type { ChatInputProps } from '@/features/chat/types';
-import { getButtonClasses } from '@/lib/design-system/recipes';
+import { getButtonClasses, getFieldShellClasses } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 
 export const ChatInput = memo(function ChatInput({
@@ -34,7 +34,7 @@ export const ChatInput = memo(function ChatInput({
       <label className="sr-only" htmlFor="ai-chat-input">
         Ask about this page or the site
       </label>
-      <div className="relative flex items-end gap-2 rounded-xl border border-border/55 bg-field-bg px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition focus-within:border-accent/55 focus-within:ring-2 focus-within:ring-accent/25">
+      <div className={getFieldShellClasses('items-end gap-2 px-3 py-2')}>
         <textarea
           id="ai-chat-input"
           ref={inputRef}

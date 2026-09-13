@@ -67,7 +67,7 @@ import { memo } from 'react';
 import { autoragEvents } from '@/lib/analytics';
 import { CONTEXTUAL_CTAS, generateContextualCTAs } from '@/lib/chat';
 import type { ChatMessage, Source } from '@/features/chat/types';
-import { getButtonClasses } from '@/lib/design-system/recipes';
+import { getButtonClasses, getChipClasses } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -115,7 +115,12 @@ export const MatchedCTA = memo(function MatchedCTA({
     return (
       <a
         href={matchedCTA.ctaLink}
-        className="focus-ring-interactive inline-flex items-center gap-2 rounded-lg border border-accent/30 bg-accent-subtle px-3 py-2 text-xs font-medium text-accent transition hover:bg-accent/15"
+        className={getChipClasses({
+          variant: 'accent',
+          size: 'sm',
+          shape: 'soft',
+          className: 'gap-2 rounded-lg text-accent',
+        })}
         onClick={() => {
           autoragEvents.ctaClick({
             type: 'quality-suggestion',
@@ -207,7 +212,7 @@ export const FollowUpSuggestions = memo(function FollowUpSuggestions({
             setTimeout(() => sendQuery(suggestion.query), 100);
             autoragEvents.suggestedQuery({ query: suggestion.query });
           }}
-          className="focus-ring-interactive rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground transition hover:border-accent hover:text-accent"
+          className={getChipClasses({ variant: 'quiet', size: 'sm', shape: 'pill' })}
         >
           {suggestion.label}
         </button>
@@ -243,7 +248,13 @@ export const ContextualCTAs = memo(function ContextualCTAs({
                 type: cta.type,
               });
             }}
-            className="group inline-flex items-center gap-2.5 rounded-xl border border-accent/30 bg-accent-subtle px-4 py-3 text-sm font-medium text-accent-emphasis shadow-sm transition-colors duration-normal hover:border-accent/50 hover:bg-accent/15 focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none"
+            className={getChipClasses({
+              variant: 'accent',
+              size: 'md',
+              shape: 'panel',
+              className:
+                'group gap-2.5 shadow-sm transition-colors duration-normal hover:border-accent/50 focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none',
+            })}
           >
             <span className="text-lg" aria-hidden="true">
               {cta.icon}
