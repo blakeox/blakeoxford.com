@@ -60,6 +60,13 @@ const patterns = [
       'Find/Ask close and header icon buttons use buttonRecipe chrome via OVERLAY_CLOSE_BUTTON / OVERLAY_ICON_BUTTON (icon omits a default fill so active toggles can paint). Do not DIY a third icon-button system.',
     code: 'OVERLAY_CLOSE_BUTTON | OVERLAY_ICON_BUTTON',
   },
+  {
+    name: 'Ask launcher',
+    category: 'Island',
+    description:
+      'Corner Ask FAB uses CHAT_LAUNCHER_BASE + CHAT_LAUNCHER_CLOSED from chatStyles — glass secondary chrome that stays discoverable without competing with page CTAs.',
+    code: 'cn(CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED)',
+  },
 ];
 
 const visualTiers = [
