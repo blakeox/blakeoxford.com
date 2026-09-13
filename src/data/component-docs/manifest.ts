@@ -165,6 +165,8 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
     { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
     { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
     { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
+    { recipe: 'chipRecipe.size', keys: Object.keys(chipRecipe.sizes) },
+    { recipe: 'chipRecipe.shape', keys: Object.keys(chipRecipe.shapes) },
   ],
   CTASection: [
     { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },

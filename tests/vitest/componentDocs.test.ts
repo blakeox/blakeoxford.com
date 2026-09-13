@@ -94,6 +94,8 @@ describe('component documentation catalog', () => {
       'featureCardRecipe.variant': Object.keys(featureCardRecipe.variants),
       fieldRecipe: Object.keys(fieldRecipe),
       'chipRecipe.variant': Object.keys(chipRecipe.variants),
+      'chipRecipe.size': Object.keys(chipRecipe.sizes),
+      'chipRecipe.shape': Object.keys(chipRecipe.shapes),
       'proseRecipe.size': Object.keys(proseRecipe.sizes),
       'sectionRecipe.padding': Object.keys(sectionRecipe.padding),
       'sectionRecipe.background': Object.keys(sectionRecipe.background),
