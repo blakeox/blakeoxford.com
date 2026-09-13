@@ -5,6 +5,7 @@
 import { autoragEvents } from '@/lib/analytics';
 import { openCommandCenter } from '@/features/command-center/lib/commandEvents';
 import { disabledControlClasses, getChipClasses } from '@/lib/design-system/recipes';
+import { OVERLAY_INFO_PANEL } from '@/features/overlay/overlayStyles';
 import { cn } from '@/utils/cn';
 import type { ChatStatusIndicatorsProps } from '@/features/chat/types';
 
@@ -62,7 +63,7 @@ export function ChatStatusIndicators({
       ) : null}
 
       {error ? (
-        <div className="rounded-lg border border-border/60 bg-surface-subtle/60 px-3 py-2 text-xs text-muted-foreground">
+        <div className={OVERLAY_INFO_PANEL}>
           <p className="text-foreground">{error}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             <button
