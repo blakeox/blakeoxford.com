@@ -272,6 +272,75 @@ export const featureCardRecipe = {
 
 export type FeatureCardVariant = keyof typeof featureCardRecipe.variants;
 
+/** Semantic aside for blog/docs — status tones live here, not on FeatureCard. */
+export const calloutRecipe = {
+  base: 'rounded-2xl border-l-4 p-6 shadow-sm @sm:p-8',
+  variants: {
+    info: {
+      surface: 'border-info bg-info/10',
+      text: 'text-info-emphasis',
+    },
+    accent: {
+      surface: 'border-accent bg-accent-subtle',
+      text: 'text-accent-emphasis',
+    },
+    success: {
+      surface: 'border-success bg-success-subtle',
+      text: 'text-success-emphasis',
+    },
+    warning: {
+      surface: 'border-warning bg-warning-subtle',
+      text: 'text-warning-emphasis',
+    },
+    error: {
+      surface: 'border-error bg-error-subtle',
+      text: 'text-error-emphasis',
+    },
+  },
+} as const;
+
+export type CalloutVariant = keyof typeof calloutRecipe.variants;
+
+/** In-article section / statement band (not a marketing CtaBand). */
+export const contentBandRecipe = {
+  base: 'relative my-12 overflow-hidden rounded-2xl p-10 @md:p-12 @lg:p-16',
+  variants: {
+    subtle: 'border border-accent/20 bg-surface-subtle',
+    surface: 'border border-border/40 bg-surface',
+    accent: 'border border-accent/40 bg-accent text-on-accent',
+  },
+  align: {
+    start: 'text-left',
+    center: 'text-center',
+  },
+} as const;
+
+export type ContentBandVariant = keyof typeof contentBandRecipe.variants;
+export type ContentBandAlign = keyof typeof contentBandRecipe.align;
+
+/** Numbered vertical step rail for blog implementation journeys. */
+export const timelineRecipe = {
+  base: 'relative my-16',
+  connector: 'absolute bottom-0 left-6 top-0 hidden w-1 bg-accent-emphasis/20 md:block',
+  list: 'space-y-12',
+} as const;
+
+export const timelineItemRecipe = {
+  base: 'relative pl-0 md:pl-20',
+  marker:
+    'absolute left-0 top-0 hidden size-14 items-center justify-center rounded-full bg-accent text-xl font-bold text-on-accent shadow-lg md:flex',
+  body: {
+    accent: 'rounded-2xl border border-accent/30 bg-accent/5 p-8 shadow-lg @md:p-10',
+    primary: 'rounded-2xl border border-primary/30 bg-surface-subtle p-8 shadow-lg @md:p-10',
+  },
+  title: {
+    accent: 'text-accent-emphasis',
+    primary: 'text-primary-emphasis',
+  },
+} as const;
+
+export type TimelineItemVariant = keyof typeof timelineItemRecipe.body;
+
 export const containerRecipe = {
   sizes: {
     sm: 'max-w-2xl',

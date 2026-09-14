@@ -1,0 +1,76 @@
+---
+/**
+ * ContentBand — in-article section or statement band.
+ *
+ * Use for hero quotes, section intros, and accent statement blocks inside MDX.
+ * Prefer CtaBand for full-bleed marketing CTAs with buttons.
+ */
+
+import Badge from '@/components/primitives/Badge.astro';
+import { headingSizeClass } from '@/lib/typeScale';
+import {
+  contentBandRecipe,
+  type ContentBandAlign,
+  type ContentBandVariant,
+} from '@/lib/design-system/recipes';
+
+interface Props {
+  variant?: ContentBandVariant;
+  align?: ContentBandAlign;
+  kicker?: string;
+  title?: string;
+  titleLevel?: 2 | 3;
+  description?: string;
+  class?: string;
+}
+
+const {
+  variant = 'subtle',
+  align = 'start',
+  kicker,
+  title,
+  titleLevel = 2,
+  description,
+  class: className = '',
+} = Astro.props;
+
+const classes = [
+  contentBandRecipe.base,
+  contentBandRecipe.variants[variant],
+  contentBandRecipe.align[align],
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const TitleTag = titleLevel === 2 ? 'h2' : 'h3';
+const isAccent = variant === 'accent';
+const titleClass = isAccent ? 'text-on-accent' : 'text-foreground';
+const descClass = isAccent ? 'text-on-accent/90' : 'text-muted-foreground';
+---
+
+<section class={classes} data-content-band-variant={variant}>
+  {kicker && (
+    <div class:list={['mb-6', align === 'center' && 'flex justify-center']}>
+      <Badge
+        variant="pill"
+        size="md"
+        class={isAccent ? 'border-on-accent/30 bg-on-accent/15 text-on-accent' : ''}
+      >
+        {kicker}
+      </Badge>
+    </div>
+  )}
+
+  {title && (
+    <TitleTag class:list={['mb-3 font-heading font-bold', headingSizeClass('display'), titleClass]}>
+      {title}
+    </TitleTag>
+  )}
+
+  {description && (
+    <p class:list={['text-lg leading-relaxed @md:text-xl', descClass]}>{description}</p>
+  )}
+
+  <slot />
+</section>
