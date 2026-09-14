@@ -16,8 +16,11 @@ import {
   crossRendererSurfaceRecipe,
   featureCardRecipe,
   fieldRecipe,
+  kbdRecipe,
+  messageBubbleRecipe,
   proseRecipe,
   sectionRecipe,
+  spinnerRecipe,
 } from '../../src/lib/design-system/recipes';
 import {
   componentManifest,
@@ -100,6 +103,9 @@ describe('component documentation catalog', () => {
       'sectionRecipe.padding': Object.keys(sectionRecipe.padding),
       'sectionRecipe.background': Object.keys(sectionRecipe.background),
       crossRendererSurfaceRecipe: Object.keys(crossRendererSurfaceRecipe),
+      'messageBubbleRecipe.roles': Object.keys(messageBubbleRecipe.roles),
+      'spinnerRecipe.size': Object.keys(spinnerRecipe.sizes),
+      kbdRecipe: Object.keys(kbdRecipe),
     };
 
     for (const doc of componentManifest) {
