@@ -383,3 +383,46 @@ export const crossRendererSurfaceRecipe = {
 } as const;
 
 export type CrossRendererSurface = keyof typeof crossRendererSurfaceRecipe;
+
+/** Ask message bubbles — assistant quiet surface vs user accent. */
+export const messageBubbleRecipe = {
+  base: 'max-w-[92%] px-3.5 py-2.5 text-sm',
+  roles: {
+    assistant:
+      'rounded-2xl rounded-tl-md bg-surface-subtle/90 text-foreground ring-1 ring-border/30',
+    user: 'rounded-2xl rounded-tr-md bg-accent text-on-accent shadow-sm shadow-accent/20',
+  },
+} as const;
+
+export type MessageBubbleRole = keyof typeof messageBubbleRecipe.roles;
+
+export function getMessageBubbleClasses(role: MessageBubbleRole, className = '') {
+  return cn(messageBubbleRecipe.base, messageBubbleRecipe.roles[role], className);
+}
+
+/** Border-ring loading spinner shared by Find + Ask status chrome. */
+export const spinnerRecipe = {
+  base: 'shrink-0 animate-spin rounded-full border-2 border-accent/30 border-t-accent',
+  sizes: {
+    sm: 'size-3.5',
+    md: 'size-5',
+  },
+} as const;
+
+export type SpinnerSize = keyof typeof spinnerRecipe.sizes;
+
+export function getSpinnerClasses(size: SpinnerSize = 'sm', className = '') {
+  return cn(spinnerRecipe.base, spinnerRecipe.sizes[size], className);
+}
+
+/** Streaming / typing pulse dots. */
+export const TYPING_DOT = 'size-1.5 animate-pulse rounded-full bg-accent/60';
+export const STATUS_PULSE_DOT = 'size-1.5 animate-pulse rounded-full bg-accent';
+
+/** Keyboard hint chrome shared by Nav, Find, and Ask footers. */
+export const kbdRecipe =
+  'rounded-md border border-border/70 bg-surface-subtle/90 px-1 py-0.5 font-mono text-xxs text-subtle-foreground';
+
+export function getKbdClasses(className = '') {
+  return cn(kbdRecipe, className);
+}
