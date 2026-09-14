@@ -4,7 +4,7 @@ import BaseCard from '@/components/primitives/BaseCard.astro';
 import Button from '@/components/primitives/Button.astro';
 import { componentDocs, getCategories, getAllTags, type ComponentDoc } from '@/data/componentDocs';
 import { componentVisualBaselines } from '@/data/componentVisualBaselines';
-import { getButtonClasses } from '@/lib/design-system/recipes';
+import { getButtonClasses, getFieldClasses } from '@/lib/design-system/recipes';
 import { headingSizeClass } from '@/lib/typeScale';
 
 const categories = getCategories();
@@ -51,7 +51,7 @@ const tagFilterActive = getButtonClasses({
       type="search"
       id="component-search"
       placeholder="Search components by name, description, or tag..."
-      class="w-full rounded-xl border border-border bg-field-bg px-6 py-4 text-lg text-foreground transition focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/25 focus-visible:outline-none"
+      class={getFieldClasses('w-full px-6 py-4 text-lg')}
     />
     <p
       id="component-results"

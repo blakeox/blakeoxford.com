@@ -61,10 +61,17 @@ const patterns = [
     code: 'OVERLAY_CLOSE_BUTTON | OVERLAY_ICON_BUTTON',
   },
   {
+    name: 'Overlay surface glass',
+    category: 'Island',
+    description:
+      'Find modal, Ask modal, and Ask dock panels share OVERLAY_SURFACE_GLASS paint. Dock keeps layout axes in CHAT_DOCK_PANEL; FAB closed state uses OVERLAY_FAB_GLASS via CHAT_LAUNCHER_CLOSED.',
+    code: 'OVERLAY_SURFACE_GLASS | OVERLAY_FAB_GLASS | CHAT_DOCK_PANEL',
+  },
+  {
     name: 'Ask launcher',
     category: 'Island',
     description:
-      'Corner Ask FAB uses CHAT_LAUNCHER_BASE + CHAT_LAUNCHER_CLOSED from chatStyles — glass secondary chrome that stays discoverable without competing with page CTAs.',
+      'Corner Ask FAB uses CHAT_LAUNCHER_BASE + CHAT_LAUNCHER_CLOSED (OVERLAY_FAB_GLASS) — secondary glass that stays discoverable without competing with page CTAs.',
     code: 'cn(CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED)',
   },
   {
@@ -96,11 +103,11 @@ const patterns = [
     code: 'OVERLAY_MENU_PANEL | getChipClasses({ active })',
   },
   {
-    name: 'Intentional exceptions',
+    name: 'Remaining closeouts',
     category: 'Island',
     description:
-      'Leave as named outsides: Ask FAB glass (CHAT_LAUNCHER_*), ChatDock panel twin, message bubbles/typing dots, spinners, and MDX/blog content chrome.',
-    code: 'CHAT_LAUNCHER_* | CHAT_DOCK_PANEL | bubbles | spinners | MDX',
+      'Still recipe-bound next: message bubbles/typing dots, spinner token, Find skeleton/thumb/kbd, blog MDX callout/timeline composites. Not permanent outsides.',
+    code: 'bubbles | spinners | skeleton | kbd | MDX composites',
   },
 ];
 
