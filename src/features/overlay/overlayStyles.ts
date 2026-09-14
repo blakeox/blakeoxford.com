@@ -123,3 +123,13 @@ export const OVERLAY_MENU_ITEM = cn(
 /** Footer prompt bar ("Want to start fresh?"). */
 export const OVERLAY_PROMPT_BAR =
   'flex items-center justify-between gap-2 border-t border-border/40 bg-surface-subtle/40 px-4 py-2 text-xxs text-muted-foreground';
+
+/** Result thumbnail / icon well. */
+export const OVERLAY_THUMB_WELL =
+  'flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-surface-subtle';
+
+/** Loading skeleton row shell (Find results). */
+export const OVERLAY_SKELETON_ROW = 'flex animate-pulse items-center gap-3 rounded-lg px-3 py-2.5';
+
+export const OVERLAY_SKELETON_THUMB = 'size-8 shrink-0 rounded-md bg-surface-subtle';
+export const OVERLAY_SKELETON_LINE = 'h-3 rounded bg-surface-subtle';

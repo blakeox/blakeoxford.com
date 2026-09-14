@@ -14,8 +14,12 @@ import {
   getContainerClasses,
   getFieldClasses,
   getFieldShellClasses,
+  getKbdClasses,
+  getMessageBubbleClasses,
   getProseClasses,
   getSectionClasses,
+  getSpinnerClasses,
+  messageBubbleRecipe,
   proseRecipe,
   sectionRecipe,
 } from '../../src/lib/design-system/recipes';
@@ -72,6 +76,14 @@ describe('typed design recipes', () => {
     );
     expect(getChipClasses({ active: true })).toContain('border-accent/40');
     expect(getChipClasses({ active: true })).toMatch(/(?:^|\s)border(?:\s|$)/);
+  });
+
+  it('centralizes message bubbles, spinners, and kbd chrome', () => {
+    expect(Object.keys(messageBubbleRecipe.roles)).toEqual(['assistant', 'user']);
+    expect(getMessageBubbleClasses('assistant')).toContain('bg-surface-subtle/90');
+    expect(getMessageBubbleClasses('user')).toContain('bg-accent');
+    expect(getSpinnerClasses('sm')).toContain('animate-spin');
+    expect(getKbdClasses()).toContain('font-mono');
   });
 
   it('keeps semantic badge states separate from pill metadata sizing', () => {

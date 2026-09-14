@@ -5,9 +5,11 @@
 import { memo } from 'react';
 import { cleanAssistantResponse } from '@/lib/string-utils';
 import { formatAISearchProvenance } from '@/lib/ai-search';
+import { getMessageBubbleClasses } from '@/lib/design-system/recipes';
 import { MessageSources } from './MessageSources';
 import { MessageActions } from './MessageActions';
 import { MatchedCTA } from './MessageCTAs';
+import { TypingDots } from './TypingDots';
 import type { ChatMessageBubbleProps } from '@/features/chat/types';
 
 export const ChatMessageBubble = memo(function ChatMessageBubble({
@@ -49,13 +51,7 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
       className={`flex flex-col gap-1.5 ${isAssistant ? 'items-start' : 'items-end'}`}
       data-ai-message-role={message.role}
     >
-      <div
-        className={`max-w-[92%] px-3.5 py-2.5 text-sm ${
-          isAssistant
-            ? 'rounded-2xl rounded-tl-md bg-surface-subtle/90 text-foreground ring-1 ring-border/30'
-            : 'rounded-2xl rounded-tr-md bg-accent text-on-accent shadow-sm shadow-accent/20'
-        }`}
-      >
+      <div className={getMessageBubbleClasses(isAssistant ? 'assistant' : 'user')}>
         {bubbleContent ? (
           <span
             className={`break-words whitespace-pre-wrap ${isAssistant ? 'leading-relaxed' : 'leading-snug'}`}
@@ -65,20 +61,7 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
         ) : isAssistant && !isStreaming ? (
           <span className="text-muted-foreground">Thinking…</span>
         ) : null}
-        {isAssistant && isStreaming ? (
-          <span className="mt-1 flex items-center gap-1" aria-live="polite">
-            <span className="sr-only">Assistant is responding</span>
-            <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-accent/60" />
-            <span
-              aria-hidden="true"
-              className="size-1.5 animate-pulse rounded-full bg-accent/60 [animation-delay:150ms]"
-            />
-            <span
-              aria-hidden="true"
-              className="size-1.5 animate-pulse rounded-full bg-accent/60 [animation-delay:300ms]"
-            />
-          </span>
-        ) : null}
+        {isAssistant && isStreaming ? <TypingDots className="mt-1" /> : null}
       </div>
 
       {showCitations && !isWorkersAi ? (

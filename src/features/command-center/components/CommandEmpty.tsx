@@ -4,6 +4,7 @@ import {
   getOverlaySoftRowClasses,
   SECTION_LABEL,
 } from '@/features/overlay/overlayStyles';
+import { getKbdClasses } from '@/lib/design-system/recipes';
 import { SUGGESTED_QUERIES } from '@/features/command-center/types';
 
 const IDLE_RECENT_LIMIT = 3;
@@ -150,16 +151,15 @@ export function CommandFooter({
     <div className={OVERLAY_FOOTER} data-search-backend={searchSource || undefined}>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <span className="hidden text-subtle-foreground/90 sm:inline">
-          <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">↑↓</kbd> ·{' '}
-          <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">↵</kbd> open ·{' '}
-          <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">⌘↵</kbd> new tab
+          <kbd className={getKbdClasses()}>↑↓</kbd> · <kbd className={getKbdClasses()}>↵</kbd> open
+          · <kbd className={getKbdClasses()}>⌘↵</kbd> new tab
           {showCopyHint ? (
             <>
               {' '}
-              · <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">⌘C</kbd> copy
+              · <kbd className={getKbdClasses()}>⌘C</kbd> copy
             </>
           ) : null}{' '}
-          · <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">esc</kbd>
+          · <kbd className={getKbdClasses()}>esc</kbd>
         </span>
         <span className="text-subtle-foreground/80 sm:hidden">Tap to open</span>
       </div>
