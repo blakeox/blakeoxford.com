@@ -1,0 +1,24 @@
+---
+/**
+ * Timeline — numbered vertical step rail for blog implementation journeys.
+ *
+ * Slot TimelineItem children. Connector + spacing come from timelineRecipe.
+ */
+
+import { timelineRecipe } from '@/lib/design-system/recipes';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+
+const classes = [timelineRecipe.base, className].filter(Boolean).join(' ');
+---
+
+<div class={classes} data-timeline>
+  <div class={timelineRecipe.connector} aria-hidden="true"></div>
+  <div class={timelineRecipe.list}>
+    <slot />
+  </div>
+</div>
