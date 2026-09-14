@@ -73,7 +73,7 @@ export const islandChatDocs: ComponentDoc[] = [
     category: 'Islands',
     subcategory: 'Chat',
     description:
-      'Source citations and expandable source list display. Shows citation badges, primary source, and expandable detailed source list with metadata.',
+      'Compact citation links under an assistant answer (1–2 titled sources). Quiet text links — not chip chrome.',
     filePath: 'src/features/chat/components/MessageSources.tsx',
     props: [
       { name: 'sources', type: 'Source[]', required: true, description: 'Array of source objects' },

@@ -46,7 +46,9 @@ describe('cross-renderer surface contract', () => {
 
     expect(legalMdx).toContain('import FeatureCard');
     expect(legalMdx).not.toMatch(/<div[^>]*rounded-(?:xl|2xl)[^>]*bg-surface/);
-    expect(ethicsMdx).toContain('<ol');
+    expect(ethicsMdx).toContain('import EditorialList');
+    expect(ethicsMdx).toContain('<EditorialList');
+    expect(ethicsMdx).not.toMatch(/border-l border-border\/60/);
     expect(ethicsMdx).not.toContain('<FeatureCard variant="success"');
   });
 });

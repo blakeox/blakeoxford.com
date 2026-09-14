@@ -43,7 +43,7 @@ export const CHAT_ACCENT_PILL = getBadgeClasses({
   className: 'bg-accent-subtle text-accent-emphasis border-0',
 });
 
-export const CHAT_ACCENT_ICON_WELL =
-  'inline-flex size-8 items-center justify-center rounded-full bg-accent-subtle text-base';
+/** @deprecated Prefer OVERLAY_ACCENT_ICON_WELL from overlayStyles. */
+export { OVERLAY_ACCENT_ICON_WELL as CHAT_ACCENT_ICON_WELL } from '@/features/overlay/overlayStyles';
 
 export const CHAT_TOGGLE_ACTIVE = 'border-accent/40 bg-accent-subtle text-accent';
