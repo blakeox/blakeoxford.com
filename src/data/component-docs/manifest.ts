@@ -15,8 +15,11 @@ import {
   containerRecipe,
   featureCardRecipe,
   fieldRecipe,
+  kbdRecipe,
+  messageBubbleRecipe,
   proseRecipe,
   sectionRecipe,
+  spinnerRecipe,
 } from '@/lib/design-system/recipes';
 import type { ComponentDoc, ComponentManifestEntry, ComponentRecipeReference } from './types';
 import { compositeDocs } from './composites';
@@ -279,6 +282,44 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
   ProjectsCTASection: [
     { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
     { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+  ],
+  SearchOverlay: [
+    { recipe: 'fieldRecipe', keys: ['shell'] },
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
+    { recipe: 'chipRecipe.size', keys: Object.keys(chipRecipe.sizes) },
+    { recipe: 'chipRecipe.shape', keys: Object.keys(chipRecipe.shapes) },
+    { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
+    { recipe: 'kbdRecipe', keys: ['base'] },
+  ],
+  AIChatIsland: [
+    { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
+    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
+    { recipe: 'chipRecipe.size', keys: Object.keys(chipRecipe.sizes) },
+    { recipe: 'chipRecipe.shape', keys: Object.keys(chipRecipe.shapes) },
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+    { recipe: 'fieldRecipe', keys: ['shell'] },
+    { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
+    { recipe: 'kbdRecipe', keys: ['base'] },
+  ],
+  AIChatWidget: [
+    { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
+    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
+  ],
+  MessageContent: [
+    { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
+  ],
+  MessageActions: [
+    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
+    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
+    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
+  ],
+  MessageSources: [
+    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
+    { recipe: 'chipRecipe.size', keys: Object.keys(chipRecipe.sizes) },
   ],
 };
 
