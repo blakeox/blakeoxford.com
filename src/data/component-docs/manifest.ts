@@ -302,12 +302,14 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
     { recipe: 'fieldRecipe', keys: ['shell'] },
     { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
     { recipe: 'kbdRecipe', keys: Object.keys(kbdRecipe) },
+    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
   ],
   AIChatIsland: [
     { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
     { recipe: 'fieldRecipe', keys: ['shell'] },
     { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
     { recipe: 'kbdRecipe', keys: Object.keys(kbdRecipe) },
+    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
   ],
   AIChatWidget: [
     { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
