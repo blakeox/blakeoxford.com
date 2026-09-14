@@ -1,6 +1,7 @@
 import { formatRelativeDate } from '@/lib/string-utils';
 import type { CommandItem } from '@/features/command-center/types';
 import {
+  OVERLAY_THUMB_WELL,
   RESULT_ROW_ACTIVE,
   RESULT_ROW_BASE,
   RESULT_ROW_IDLE,
@@ -136,7 +137,7 @@ export function CommandResultRow({
             onSelect(item);
           }}
         >
-          <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-surface-subtle">
+          <div className={OVERLAY_THUMB_WELL}>
             {item.image ? (
               <img
                 src={item.image}

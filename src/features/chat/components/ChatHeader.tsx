@@ -9,7 +9,7 @@ import {
   OVERLAY_MENU_PANEL,
 } from '@/features/overlay/overlayStyles';
 import { CHAT_ACCENT_CHIP, CHAT_TOGGLE_ACTIVE } from '@/features/chat/chatStyles';
-import { disabledControlClasses } from '@/lib/design-system/recipes';
+import { disabledControlClasses, STATUS_PULSE_DOT } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 import type { ChatHeaderProps } from '@/features/chat/types';
 
@@ -172,7 +172,7 @@ export const ChatHeader = memo(function ChatHeader({
           </p>
           {isListening ? (
             <span className={CHAT_ACCENT_CHIP}>
-              <span className="size-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
+              <span className={STATUS_PULSE_DOT} aria-hidden="true" />
               Listening
             </span>
           ) : (

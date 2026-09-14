@@ -3,7 +3,7 @@
  */
 import { memo, useCallback } from 'react';
 import type { ChatInputProps } from '@/features/chat/types';
-import { getButtonClasses, getFieldShellClasses } from '@/lib/design-system/recipes';
+import { getButtonClasses, getFieldShellClasses, getKbdClasses } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 
 export const ChatInput = memo(function ChatInput({
@@ -112,8 +112,8 @@ export const ChatInput = memo(function ChatInput({
         </button>
       </div>
       <p className="mt-2 hidden text-xxs text-subtle-foreground/80 sm:block">
-        <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">↵</kbd> send ·{' '}
-        <kbd className="rounded border border-border/70 px-1 py-0.5 font-sans">⌘K</kbd> search
+        <kbd className={getKbdClasses()}>↵</kbd> send · <kbd className={getKbdClasses()}>⌘K</kbd>{' '}
+        search
       </p>
     </form>
   );
