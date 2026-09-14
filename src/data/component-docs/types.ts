@@ -58,7 +58,10 @@ export type ComponentRecipeReference = {
     | 'proseRecipe.size'
     | 'sectionRecipe.padding'
     | 'sectionRecipe.background'
-    | 'crossRendererSurfaceRecipe';
+    | 'crossRendererSurfaceRecipe'
+    | 'messageBubbleRecipe.roles'
+    | 'spinnerRecipe.size'
+    | 'kbdRecipe';
   keys: readonly string[];
 };
 

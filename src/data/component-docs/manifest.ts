@@ -15,8 +15,11 @@ import {
   containerRecipe,
   featureCardRecipe,
   fieldRecipe,
+  kbdRecipe,
+  messageBubbleRecipe,
   proseRecipe,
   sectionRecipe,
+  spinnerRecipe,
 } from '@/lib/design-system/recipes';
 import type { ComponentDoc, ComponentManifestEntry, ComponentRecipeReference } from './types';
 import { compositeDocs } from './composites';
@@ -280,6 +283,25 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
     { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
     { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
   ],
+  SearchOverlay: [
+    { recipe: 'fieldRecipe', keys: ['shell'] },
+    { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
+    { recipe: 'kbdRecipe', keys: Object.keys(kbdRecipe) },
+  ],
+  AIChatIsland: [
+    { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
+    { recipe: 'fieldRecipe', keys: ['shell'] },
+    { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
+    { recipe: 'kbdRecipe', keys: Object.keys(kbdRecipe) },
+  ],
+  AIChatWidget: [
+    { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
+  ],
+  MessageContent: [
+    { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
+  ],
+  MessageActions: [{ recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) }],
+  MessageSources: [{ recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) }],
 };
 
 export const componentManifest: ComponentManifestEntry[] = CATALOG_ORDER.map((name) => {
