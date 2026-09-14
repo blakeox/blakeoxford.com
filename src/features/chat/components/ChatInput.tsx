@@ -3,7 +3,12 @@
  */
 import { memo, useCallback } from 'react';
 import type { ChatInputProps } from '@/features/chat/types';
-import { getButtonClasses, getFieldShellClasses, getKbdClasses } from '@/lib/design-system/recipes';
+import {
+  getButtonClasses,
+  getFieldShellClasses,
+  getKbdClasses,
+  getSpinnerClasses,
+} from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 
 export const ChatInput = memo(function ChatInput({
@@ -83,20 +88,7 @@ export const ChatInput = memo(function ChatInput({
           disabled={isLoading || !inputValue.trim()}
         >
           {isLoading ? (
-            <svg
-              className="size-3.5 animate-spin"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.8}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364 6.364-2.121-2.121M8.757 8.757 6.636 6.636m12.728 0-2.121 2.121M8.757 15.243l-2.121 2.121"
-              />
-            </svg>
+            <span className={getSpinnerClasses('sm')} aria-hidden="true" />
           ) : (
             <svg
               className="size-3.5"

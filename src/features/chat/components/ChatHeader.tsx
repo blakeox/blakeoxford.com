@@ -9,7 +9,7 @@ import {
   OVERLAY_MENU_PANEL,
 } from '@/features/overlay/overlayStyles';
 import { CHAT_ACCENT_CHIP, CHAT_TOGGLE_ACTIVE } from '@/features/chat/chatStyles';
-import { disabledControlClasses, STATUS_PULSE_DOT } from '@/lib/design-system/recipes';
+import { disabledControlClasses, STATUS_DOT, STATUS_PULSE_DOT } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 import type { ChatHeaderProps } from '@/features/chat/types';
 
@@ -180,7 +180,7 @@ export const ChatHeader = memo(function ChatHeader({
               className="inline-flex min-w-0 items-center gap-1.5 truncate text-xxs text-muted-foreground"
               title={pageLabel}
             >
-              <span className="size-1.5 shrink-0 rounded-full bg-accent/80" aria-hidden="true" />
+              <span className={STATUS_DOT} aria-hidden="true" />
               <span className="truncate">
                 <span className="text-subtle-foreground">Viewing</span>{' '}
                 <span className="font-medium text-foreground/85">{pageLabel}</span>

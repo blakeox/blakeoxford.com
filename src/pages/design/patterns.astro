@@ -113,8 +113,8 @@ const patterns = [
     name: 'Find skeleton, thumb & kbd',
     category: 'Island',
     description:
-      'Find loading rows use OVERLAY_SKELETON_*; result thumbs use OVERLAY_THUMB_WELL; footer/composer hints use getKbdClasses().',
-    code: 'OVERLAY_SKELETON_ROW | OVERLAY_THUMB_WELL | getKbdClasses()',
+      'Find loading rows use OVERLAY_SKELETON_*; result thumbs use OVERLAY_THUMB_WELL; Ask guided prompts use OVERLAY_ACCENT_ICON_WELL; footer/composer hints use getKbdClasses().',
+    code: 'OVERLAY_SKELETON_ROW | OVERLAY_THUMB_WELL | OVERLAY_ACCENT_ICON_WELL | getKbdClasses()',
   },
   {
     name: 'Ask/Find recipeReferences',
@@ -127,8 +127,8 @@ const patterns = [
     name: 'Blog MDX composites',
     category: 'Expressive',
     description:
-      'Blog posts use FeatureCard (expressive), Callout (status asides), ContentBand (section/statement bands), and Timeline / TimelineItem (numbered journeys). DIY blog chrome is closed out.',
-    code: 'FeatureCard | Callout | ContentBand | Timeline | TimelineItem',
+      'Blog posts use FeatureCard (expressive), Callout (status asides), ContentBand (section/statement bands), Timeline / TimelineItem (numbered journeys), and EditorialList (year/era rails). No DIY elevated shells.',
+    code: 'FeatureCard | Callout | ContentBand | Timeline | TimelineItem | EditorialList',
   },
 ];
 

@@ -5,8 +5,11 @@
 import { memo } from 'react';
 import { GUIDED_PROMPTS } from '@/lib/chat';
 import type { ChatGuidedPromptsProps } from '@/features/chat/types';
-import { CHAT_ACCENT_ICON_WELL } from '@/features/chat/chatStyles';
-import { OVERLAY_SECTION_BAND, SECTION_LABEL } from '@/features/overlay/overlayStyles';
+import {
+  OVERLAY_ACCENT_ICON_WELL,
+  OVERLAY_SECTION_BAND,
+  SECTION_LABEL,
+} from '@/features/overlay/overlayStyles';
 import { crossRendererSurfaceRecipe } from '@/lib/design-system/recipes';
 import { cn } from '@/utils/cn';
 
@@ -36,7 +39,7 @@ export const ChatGuidedPrompts = memo(function ChatGuidedPrompts({
             onClick={() => onSelectPrompt(prompt.prompt)}
             title={prompt.prompt}
           >
-            <span className={CHAT_ACCENT_ICON_WELL}>{prompt.icon}</span>
+            <span className={OVERLAY_ACCENT_ICON_WELL}>{prompt.icon}</span>
             <span className="text-sm font-semibold text-foreground group-hover:text-accent-emphasis">
               {prompt.label}
             </span>
