@@ -120,7 +120,7 @@ const patterns = [
     name: 'Ask/Find recipeReferences',
     category: 'Island',
     description:
-      'Catalog shells AIChatIsland, AIChatWidget, SearchOverlay, and Message* declare recipeReferences for bubbles, chips, field shell, spinner, and kbd — no sparse Ask/Find gaps.',
+      'Catalog shells SearchOverlay and AIChatIsland declare recipeReferences for field shell, spinner, kbd, and chips; AIChatWidget/MessageContent bubbles live on ChatMessageBubble via AIChatIsland; MessageActions/MessageCTAs own chip actions — no sparse Ask/Find gaps.',
     code: 'manifest recipeReferences → messageBubble | chip | field | spinner | kbd',
   },
   {
