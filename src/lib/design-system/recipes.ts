@@ -420,9 +420,10 @@ export const TYPING_DOT = 'size-1.5 animate-pulse rounded-full bg-accent/60';
 export const STATUS_PULSE_DOT = 'size-1.5 animate-pulse rounded-full bg-accent';
 
 /** Keyboard hint chrome shared by Nav, Find, and Ask footers. */
-export const kbdRecipe =
-  'rounded-md border border-border/70 bg-surface-subtle/90 px-1 py-0.5 font-mono text-xxs text-subtle-foreground';
+export const kbdRecipe = {
+  base: 'rounded-md border border-border/70 bg-surface-subtle/90 px-1 py-0.5 font-mono text-xxs text-subtle-foreground',
+} as const;
 
 export function getKbdClasses(className = '') {
-  return cn(kbdRecipe, className);
+  return cn(kbdRecipe.base, className);
 }

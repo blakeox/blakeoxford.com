@@ -19,6 +19,7 @@ import {
   getProseClasses,
   getSectionClasses,
   getSpinnerClasses,
+  kbdRecipe,
   messageBubbleRecipe,
   proseRecipe,
   sectionRecipe,
@@ -84,6 +85,7 @@ describe('typed design recipes', () => {
     expect(getMessageBubbleClasses('user')).toContain('bg-accent');
     expect(getSpinnerClasses('sm')).toContain('animate-spin');
     expect(getKbdClasses()).toContain('font-mono');
+    expect(Object.keys(kbdRecipe)).toEqual(['base']);
   });
 
   it('keeps semantic badge states separate from pill metadata sizing', () => {

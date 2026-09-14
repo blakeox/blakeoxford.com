@@ -117,11 +117,18 @@ const patterns = [
     code: 'OVERLAY_SKELETON_ROW | OVERLAY_THUMB_WELL | getKbdClasses()',
   },
   {
-    name: 'Remaining closeouts',
+    name: 'Ask/Find recipeReferences',
     category: 'Island',
     description:
-      'Still recipe-bound next: blog MDX callout/timeline composites and fuller recipeReferences on Ask/Find shells.',
-    code: 'MDX composites | recipeReferences',
+      'Catalog shells AIChatIsland, AIChatWidget, SearchOverlay, and Message* declare recipeReferences for bubbles, chips, field shell, spinner, and kbd — no sparse Ask/Find gaps.',
+    code: 'manifest recipeReferences → messageBubble | chip | field | spinner | kbd',
+  },
+  {
+    name: 'Blog MDX closeout',
+    category: 'Expressive',
+    description:
+      'Remaining: migrate DIY-heavy blog posts onto FeatureCard / Callout / Timeline composites (mirror combating-legal-ai-hallucinations.mdx).',
+    code: 'FeatureCard | Callout | Timeline | ContentBand',
   },
 ];
 
