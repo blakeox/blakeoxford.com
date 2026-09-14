@@ -325,12 +325,13 @@ import TimelineItem from '@/components/composites/TimelineItem.astro';
       hover={false}
     />
   </div>
-  <div class="rounded-2xl border border-border/40 bg-surface/20 p-10 text-center shadow-lg">
-    <p class="mb-4 text-3xl font-bold text-accent-emphasis md:text-4xl">
-      Hands-on DevOps meets Applied AI
-    </p>
-    <p class="text-xl opacity-90">Built to demonstrate privacy, reliability, and craftsmanship.</p>
-  </div>
+  <FeatureCard
+    variant="accent"
+    title="Hands-on DevOps meets Applied AI"
+    description="Built to demonstrate privacy, reliability, and craftsmanship."
+    hover={false}
+    class="text-center"
+  />
 </ContentBand>
 
 <ContentBand align="center" kicker="Future Roadmap" title="What's Next" class="my-16" />

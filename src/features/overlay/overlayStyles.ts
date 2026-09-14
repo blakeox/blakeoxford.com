@@ -128,6 +128,10 @@ export const OVERLAY_PROMPT_BAR =
 export const OVERLAY_THUMB_WELL =
   'flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-surface-subtle';
 
+/** Accent icon well for guided prompts / soft suggestion tiles. */
+export const OVERLAY_ACCENT_ICON_WELL =
+  'inline-flex size-8 items-center justify-center rounded-full bg-accent-subtle text-base';
+
 /** Loading skeleton row shell (Find results). */
 export const OVERLAY_SKELETON_ROW = 'flex animate-pulse items-center gap-3 rounded-lg px-3 py-2.5';
 

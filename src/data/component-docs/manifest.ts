@@ -312,11 +312,7 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
   AIChatWidget: [
     { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
   ],
-  MessageContent: [
-    { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
-  ],
   MessageActions: [{ recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) }],
-  MessageSources: [{ recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) }],
 };
 
 export const componentManifest: ComponentManifestEntry[] = CATALOG_ORDER.map((name) => {
