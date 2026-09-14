@@ -40,6 +40,9 @@ const coverageByRecipe: Record<ComponentRecipeReference['recipe'], VariantCovera
   'sectionRecipe.padding': 'structural',
   'sectionRecipe.background': 'visual',
   crossRendererSurfaceRecipe: 'structural',
+  'messageBubbleRecipe.roles': 'structural',
+  'spinnerRecipe.size': 'structural',
+  kbdRecipe: 'structural',
 };
 
 /** Canonical owners of visual screenshots; composites that reuse recipes stay structural. */

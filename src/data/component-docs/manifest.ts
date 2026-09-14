@@ -285,42 +285,23 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
   ],
   SearchOverlay: [
     { recipe: 'fieldRecipe', keys: ['shell'] },
-    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
-    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
-    { recipe: 'chipRecipe.size', keys: Object.keys(chipRecipe.sizes) },
-    { recipe: 'chipRecipe.shape', keys: Object.keys(chipRecipe.shapes) },
     { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
-    { recipe: 'kbdRecipe', keys: ['base'] },
+    { recipe: 'kbdRecipe', keys: Object.keys(kbdRecipe) },
   ],
   AIChatIsland: [
     { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
-    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
-    { recipe: 'chipRecipe.size', keys: Object.keys(chipRecipe.sizes) },
-    { recipe: 'chipRecipe.shape', keys: Object.keys(chipRecipe.shapes) },
-    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
-    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
     { recipe: 'fieldRecipe', keys: ['shell'] },
     { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
-    { recipe: 'kbdRecipe', keys: ['base'] },
+    { recipe: 'kbdRecipe', keys: Object.keys(kbdRecipe) },
   ],
   AIChatWidget: [
     { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
-    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
-    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
-    { recipe: 'spinnerRecipe.size', keys: Object.keys(spinnerRecipe.sizes) },
   ],
   MessageContent: [
     { recipe: 'messageBubbleRecipe.roles', keys: Object.keys(messageBubbleRecipe.roles) },
   ],
-  MessageActions: [
-    { recipe: 'buttonRecipe.variant', keys: Object.keys(buttonRecipe.variants) },
-    { recipe: 'buttonRecipe.size', keys: Object.keys(buttonRecipe.sizes) },
-    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
-  ],
-  MessageSources: [
-    { recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) },
-    { recipe: 'chipRecipe.size', keys: Object.keys(chipRecipe.sizes) },
-  ],
+  MessageActions: [{ recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) }],
+  MessageSources: [{ recipe: 'chipRecipe.variant', keys: Object.keys(chipRecipe.variants) }],
 };
 
 export const componentManifest: ComponentManifestEntry[] = CATALOG_ORDER.map((name) => {
