@@ -181,6 +181,130 @@ export const compositeDocs: ComponentDoc[] = [
     ],
   },
   {
+    name: 'Callout',
+    category: 'Composites',
+    description:
+      'Semantic aside for blog and docs. Status tones (info/success/warning/error) live here — keep FeatureCard expressive-only.',
+    filePath: 'src/components/composites/Callout.astro',
+    props: [
+      {
+        name: 'variant',
+        type: "'info' | 'accent' | 'success' | 'warning' | 'error'",
+        required: false,
+        default: "'info'",
+        description: 'Semantic surface treatment with left accent border',
+      },
+      { name: 'title', type: 'string', required: false, description: 'Callout heading' },
+      {
+        name: 'titleLevel',
+        type: '2 | 3',
+        required: false,
+        default: '3',
+        description: 'Heading level for the title',
+      },
+      { name: 'description', type: 'string', required: false, description: 'Supporting copy' },
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+    ],
+    examples: [
+      {
+        title: 'Warning callout',
+        code: '<Callout variant="warning" title="Real talk" description="Local models trade depth for independence." />',
+      },
+    ],
+    tags: ['callout', 'aside', 'status', 'blog', 'composite'],
+    visualTier: 'elevated',
+    tokenDependencies: [
+      '--color-info',
+      '--color-success',
+      '--color-warning',
+      '--color-error',
+      '--color-accent',
+      'rounded-2xl',
+    ],
+  },
+  {
+    name: 'ContentBand',
+    category: 'Composites',
+    description:
+      'In-article section or statement band with optional kicker. Prefer CtaBand for full-bleed marketing CTAs with buttons.',
+    filePath: 'src/components/composites/ContentBand.astro',
+    props: [
+      {
+        name: 'variant',
+        type: "'subtle' | 'surface' | 'accent'",
+        required: false,
+        default: "'subtle'",
+        description: 'Band surface; accent uses on-accent text',
+      },
+      {
+        name: 'align',
+        type: "'start' | 'center'",
+        required: false,
+        default: "'start'",
+        description: 'Text alignment',
+      },
+      { name: 'kicker', type: 'string', required: false, description: 'Optional pill label' },
+      { name: 'title', type: 'string', required: false, description: 'Band heading' },
+      { name: 'description', type: 'string', required: false, description: 'Supporting copy' },
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+    ],
+    examples: [
+      {
+        title: 'Centered section intro',
+        code: '<ContentBand align="center" kicker="Architecture" title="ChatGPT power" description="Zero cloud dependency." />',
+      },
+    ],
+    tags: ['band', 'section', 'blog', 'composite'],
+    visualTier: 'expressive',
+    tokenDependencies: ['--color-accent', '--color-surface', 'rounded-2xl'],
+  },
+  {
+    name: 'Timeline',
+    category: 'Composites',
+    description:
+      'Numbered vertical step rail for blog implementation journeys. Slot TimelineItem children.',
+    filePath: 'src/components/composites/Timeline.astro',
+    props: [
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+    ],
+    examples: [
+      {
+        title: 'Implementation steps',
+        code: '<Timeline>\n  <TimelineItem step={1} title="Hardening SSH">…</TimelineItem>\n</Timeline>',
+      },
+    ],
+    tags: ['timeline', 'steps', 'blog', 'composite'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-accent', 'rounded-2xl'],
+  },
+  {
+    name: 'TimelineItem',
+    category: 'Composites',
+    description: 'One numbered step inside Timeline with accent or primary body treatment.',
+    filePath: 'src/components/composites/TimelineItem.astro',
+    props: [
+      { name: 'step', type: 'number | string', required: true, description: 'Marker label' },
+      { name: 'title', type: 'string', required: false, description: 'Step heading' },
+      {
+        name: 'variant',
+        type: "'accent' | 'primary'",
+        required: false,
+        default: "'accent'",
+        description: 'Body surface treatment',
+      },
+      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
+    ],
+    examples: [
+      {
+        title: 'Accent step',
+        code: '<TimelineItem step={1} variant="accent" title="Making Ollama a managed service" />',
+      },
+    ],
+    tags: ['timeline', 'steps', 'blog', 'composite'],
+    visualTier: 'elevated',
+    tokenDependencies: ['--color-accent', '--color-primary', 'rounded-2xl'],
+  },
+  {
     name: 'PageHero',
     category: 'Composites',
     description: 'Page-level hero with kicker, title, description, and optional actions slot.',
