@@ -487,6 +487,8 @@ export function getSpinnerClasses(size: SpinnerSize = 'sm', className = '') {
 /** Streaming / typing pulse dots. */
 export const TYPING_DOT = 'size-1.5 animate-pulse rounded-full bg-accent/60';
 export const STATUS_PULSE_DOT = 'size-1.5 animate-pulse rounded-full bg-accent';
+/** Static accent status marker (e.g. page-context chip). */
+export const STATUS_DOT = 'size-1.5 shrink-0 rounded-full bg-accent';
 
 /** Keyboard hint chrome shared by Nav, Find, and Ask footers. */
 export const kbdRecipe = {
