@@ -71,7 +71,7 @@ export function ChatAnalytics({
 
       {/* Citation Health */}
       {healthyResponses + warningResponses + errorResponses > 0 && (
-        <div className="mt-3 rounded-xl border border-border/30 p-3">
+        <div className={cn(OVERLAY_METRIC_TILE, 'mt-3')}>
           <span className="mb-2 block text-subtle-foreground">Citation Health</span>
           <div className="flex flex-wrap gap-2">
             {healthyResponses > 0 && (

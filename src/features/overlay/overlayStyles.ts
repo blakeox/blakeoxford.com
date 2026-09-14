@@ -6,11 +6,26 @@ import { cn } from '@/utils/cn';
 export const OVERLAY_BACKDROP =
   'absolute inset-0 cursor-pointer bg-overlay-scrim/55 backdrop-blur-sm';
 
-export const OVERLAY_PANEL =
-  'overlay-panel flex max-h-[85dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-border/50 bg-surface/95 shadow-overlay backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:rounded-2xl motion-reduce:transition-none';
+/**
+ * Shared Find/Ask panel glass paint — one surface contract for modal + dock shells.
+ * Layout axes (max-h, width, motion) stay on the panel/dock constants below.
+ */
+export const OVERLAY_SURFACE_GLASS =
+  'border border-border/50 bg-surface/95 shadow-overlay backdrop-blur-xl';
 
-export const OVERLAY_PANEL_ASK =
-  'overlay-panel flex max-h-[88dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-border/60 bg-surface/95 shadow-lg backdrop-blur-xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard sm:max-h-[85dvh] sm:rounded-2xl motion-reduce:transition-none';
+/** Secondary FAB glass — discoverable without competing with page CTAs. */
+export const OVERLAY_FAB_GLASS =
+  'border border-border/60 bg-glass/95 text-foreground backdrop-blur supports-[backdrop-filter]:bg-glass/90';
+
+export const OVERLAY_PANEL = cn(
+  'overlay-panel flex max-h-[85dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard motion-reduce:transition-none sm:rounded-2xl',
+  OVERLAY_SURFACE_GLASS
+);
+
+export const OVERLAY_PANEL_ASK = cn(
+  'overlay-panel flex max-h-[88dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl motion-safe:transition-transform motion-safe:duration-normal motion-safe:ease-standard motion-reduce:transition-none sm:max-h-[85dvh] sm:rounded-2xl',
+  OVERLAY_SURFACE_GLASS
+);
 
 export const OVERLAY_FRAME =
   'relative flex min-h-full w-full items-end justify-center sm:items-start sm:px-4 sm:pb-8 sm:pt-16 md:pt-20 lg:pt-24';
