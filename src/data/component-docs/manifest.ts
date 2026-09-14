@@ -13,6 +13,8 @@ import {
   buttonRecipe,
   chipRecipe,
   containerRecipe,
+  calloutRecipe,
+  contentBandRecipe,
   featureCardRecipe,
   fieldRecipe,
   kbdRecipe,
@@ -20,6 +22,8 @@ import {
   proseRecipe,
   sectionRecipe,
   spinnerRecipe,
+  timelineItemRecipe,
+  timelineRecipe,
 } from '@/lib/design-system/recipes';
 import type { ComponentDoc, ComponentManifestEntry, ComponentRecipeReference } from './types';
 import { compositeDocs } from './composites';
@@ -84,6 +88,10 @@ const CATALOG_ORDER = [
   'BaseCard',
   'Stack',
   'FeatureCard',
+  'Callout',
+  'ContentBand',
+  'Timeline',
+  'TimelineItem',
   'SectionHeading',
   'SkipLink',
   'PageHero',
@@ -153,6 +161,13 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
   FeatureCard: [
     { recipe: 'featureCardRecipe.variant', keys: Object.keys(featureCardRecipe.variants) },
   ],
+  Callout: [{ recipe: 'calloutRecipe.variant', keys: Object.keys(calloutRecipe.variants) }],
+  ContentBand: [
+    { recipe: 'contentBandRecipe.variant', keys: Object.keys(contentBandRecipe.variants) },
+    { recipe: 'contentBandRecipe.align', keys: Object.keys(contentBandRecipe.align) },
+  ],
+  Timeline: [{ recipe: 'timelineRecipe', keys: Object.keys(timelineRecipe) }],
+  TimelineItem: [{ recipe: 'timelineItemRecipe.body', keys: Object.keys(timelineItemRecipe.body) }],
   FormField: [{ recipe: 'fieldRecipe', keys: Object.keys(fieldRecipe) }],
   Prose: [{ recipe: 'proseRecipe.size', keys: Object.keys(proseRecipe.sizes) }],
   Section: [

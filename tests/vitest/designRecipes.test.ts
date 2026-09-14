@@ -6,6 +6,10 @@ import {
   chipRecipe,
   disabledControlClasses,
   featureCardRecipe,
+  calloutRecipe,
+  contentBandRecipe,
+  timelineRecipe,
+  timelineItemRecipe,
   fieldRecipe,
   getBadgeClasses,
   getBaseCardClasses,
@@ -106,6 +110,23 @@ describe('typed design recipes', () => {
   it('keeps FeatureCard variants limited to expressive treatments', () => {
     expect(Object.keys(featureCardRecipe.variants)).toEqual(['accent', 'primary']);
     expect(featureCardRecipe.base).toContain('bg-gradient-to-br');
+  });
+
+  it('owns semantic status tones on Callout, not FeatureCard', () => {
+    expect(Object.keys(calloutRecipe.variants)).toEqual([
+      'info',
+      'accent',
+      'success',
+      'warning',
+      'error',
+    ]);
+    expect(calloutRecipe.base).toContain('border-l-4');
+  });
+
+  it('defines ContentBand and Timeline recipes for blog MDX', () => {
+    expect(Object.keys(contentBandRecipe.variants)).toEqual(['subtle', 'surface', 'accent']);
+    expect(timelineRecipe.connector).toContain('bg-accent-emphasis');
+    expect(Object.keys(timelineItemRecipe.body)).toEqual(['accent', 'primary']);
   });
 
   it('centralizes layout and typography recipe vocabularies', () => {

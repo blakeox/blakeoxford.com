@@ -1,0 +1,41 @@
+---
+/**
+ * TimelineItem — one numbered step inside Timeline.
+ */
+
+import { headingSizeClass } from '@/lib/typeScale';
+import { timelineItemRecipe, type TimelineItemVariant } from '@/lib/design-system/recipes';
+
+interface Props {
+  step: number | string;
+  title?: string;
+  titleLevel?: 2 | 3;
+  variant?: TimelineItemVariant;
+  class?: string;
+}
+
+const { step, title, titleLevel = 3, variant = 'accent', class: className = '' } = Astro.props;
+
+const classes = [timelineItemRecipe.base, className].filter(Boolean).join(' ');
+const TitleTag = titleLevel === 2 ? 'h2' : 'h3';
+---
+
+<div class={classes} data-timeline-item-variant={variant}>
+  <div class={timelineItemRecipe.marker} aria-hidden="true">
+    {step}
+  </div>
+  <div class={timelineItemRecipe.body[variant]}>
+    {title && (
+      <TitleTag
+        class:list={[
+          'mb-4 font-heading font-bold',
+          headingSizeClass('title'),
+          timelineItemRecipe.title[variant],
+        ]}
+      >
+        {title}
+      </TitleTag>
+    )}
+    <slot />
+  </div>
+</div>

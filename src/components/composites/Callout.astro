@@ -1,0 +1,47 @@
+---
+/**
+ * Callout — semantic aside for blog/docs content.
+ *
+ * Status tones (success/warning/error/info) belong here; FeatureCard stays
+ * expressive-only (accent | primary).
+ */
+
+import { headingSizeClass } from '@/lib/typeScale';
+import { calloutRecipe, type CalloutVariant } from '@/lib/design-system/recipes';
+
+interface Props {
+  variant?: CalloutVariant;
+  title?: string;
+  titleLevel?: 2 | 3;
+  description?: string;
+  class?: string;
+}
+
+const { variant = 'info', title, titleLevel = 3, description, class: className = '' } = Astro.props;
+
+const classes = [calloutRecipe.base, calloutRecipe.variants[variant].surface, className]
+  .filter(Boolean)
+  .join(' ');
+
+const TitleTag = titleLevel === 2 ? 'h2' : 'h3';
+---
+
+<aside class={classes} data-callout-variant={variant}>
+  {title && (
+    <TitleTag
+      class:list={[
+        'mb-3 font-heading font-semibold',
+        headingSizeClass('title'),
+        calloutRecipe.variants[variant].text,
+      ]}
+    >
+      {title}
+    </TitleTag>
+  )}
+
+  {description && (
+    <p class="text-base leading-relaxed text-foreground/90 @sm:text-lg">{description}</p>
+  )}
+
+  <slot />
+</aside>
