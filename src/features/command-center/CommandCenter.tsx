@@ -8,6 +8,7 @@ import {
   OVERLAY_HEADER,
   OVERLAY_INFO_PANEL,
 } from '@/features/overlay/overlayStyles';
+import { getSpinnerClasses } from '@/lib/design-system/recipes';
 import { CommandCategoryFilters } from './components/CommandCategoryFilters';
 import {
   CommandDestinationList,
@@ -151,12 +152,7 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
               </svg>
             </button>
           ) : null}
-          {isLoading ? (
-            <span
-              className="size-3.5 shrink-0 animate-spin rounded-full border-2 border-accent/30 border-t-accent"
-              aria-hidden="true"
-            />
-          ) : null}
+          {isLoading ? <span className={getSpinnerClasses('sm')} aria-hidden="true" /> : null}
         </div>
         <button
           id="close-search"

@@ -103,11 +103,25 @@ const patterns = [
     code: 'OVERLAY_MENU_PANEL | getChipClasses({ active })',
   },
   {
+    name: 'Message bubbles & motion',
+    category: 'Island',
+    description:
+      'Ask bubbles use getMessageBubbleClasses(role). Streaming/listening dots use TypingDots / STATUS_PULSE_DOT. Find/Ask loaders use getSpinnerClasses.',
+    code: "getMessageBubbleClasses('assistant'|'user') | TypingDots | getSpinnerClasses()",
+  },
+  {
+    name: 'Find skeleton, thumb & kbd',
+    category: 'Island',
+    description:
+      'Find loading rows use OVERLAY_SKELETON_*; result thumbs use OVERLAY_THUMB_WELL; footer/composer hints use getKbdClasses().',
+    code: 'OVERLAY_SKELETON_ROW | OVERLAY_THUMB_WELL | getKbdClasses()',
+  },
+  {
     name: 'Remaining closeouts',
     category: 'Island',
     description:
-      'Still recipe-bound next: message bubbles/typing dots, spinner token, Find skeleton/thumb/kbd, blog MDX callout/timeline composites. Not permanent outsides.',
-    code: 'bubbles | spinners | skeleton | kbd | MDX composites',
+      'Still recipe-bound next: blog MDX callout/timeline composites and fuller recipeReferences on Ask/Find shells.',
+    code: 'MDX composites | recipeReferences',
   },
 ];
 

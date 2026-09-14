@@ -48,6 +48,7 @@
 import { memo } from 'react';
 import { getConfidenceIndicator, getCitationHealthIndicator } from '@/lib/quality-utils';
 import type { ChatMessage } from '@/features/chat/types';
+import { TypingDots } from './TypingDots';
 
 /**
  * Props for MessageContent component
@@ -85,20 +86,7 @@ export const MessageContent = memo(function MessageContent({
         <span className={`break-words whitespace-pre-wrap ${messageTextClasses}`}>Thinking…</span>
       ) : null}
 
-      {isAssistant && isStreaming && (
-        <span className="flex items-center gap-1 text-xs text-muted-foreground" aria-live="polite">
-          <span className="sr-only">Assistant is responding</span>
-          <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-accent/60" />
-          <span
-            aria-hidden="true"
-            className="size-1.5 animate-pulse rounded-full bg-accent/60 [animation-delay:150ms]"
-          />
-          <span
-            aria-hidden="true"
-            className="size-1.5 animate-pulse rounded-full bg-accent/60 [animation-delay:300ms]"
-          />
-        </span>
-      )}
+      {isAssistant && isStreaming && <TypingDots className="text-xs text-muted-foreground" />}
 
       {isAssistant && !isStreaming && message.qualityScore !== undefined && (
         <QualityIndicator message={message} totalSources={totalSources} />

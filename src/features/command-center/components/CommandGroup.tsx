@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react';
 
-import { SECTION_LABEL } from '@/features/overlay/overlayStyles';
+import {
+  OVERLAY_SKELETON_LINE,
+  OVERLAY_SKELETON_ROW,
+  OVERLAY_SKELETON_THUMB,
+  SECTION_LABEL,
+} from '@/features/overlay/overlayStyles';
 
 type CommandGroupProps = {
   label: string;
@@ -20,11 +25,11 @@ export function CommandSkeletonList({ count = 3 }: { count?: number }) {
   return (
     <div className="flex flex-col gap-1" aria-hidden="true">
       {Array.from({ length: count }).map((_, index) => (
-        <div key={index} className="flex animate-pulse items-center gap-3 rounded-lg px-3 py-2.5">
-          <div className="size-8 rounded-md bg-surface-subtle" />
+        <div key={index} className={OVERLAY_SKELETON_ROW}>
+          <div className={OVERLAY_SKELETON_THUMB} />
           <div className="flex flex-1 flex-col gap-1.5">
-            <div className="h-3 w-2/3 rounded bg-surface-subtle" />
-            <div className="h-2 w-1/2 rounded bg-surface-subtle" />
+            <div className={`${OVERLAY_SKELETON_LINE} w-2/3`} />
+            <div className={`${OVERLAY_SKELETON_LINE} h-2 w-1/2`} />
           </div>
         </div>
       ))}
