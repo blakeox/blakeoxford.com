@@ -54,7 +54,9 @@ const linkAttrs = href ? { href, 'aria-label': label ?? caption } : {};
     class:list={[
       'max-w-xs text-pretty',
       size === 'card' ? 'text-sm leading-snug sm:text-base' : 'text-lg leading-snug sm:text-xl',
-      figure ? 'text-muted-foreground' : 'font-heading font-semibold tracking-tight text-foreground',
+      figure
+        ? 'text-muted-foreground'
+        : 'font-heading font-semibold tracking-tight text-foreground',
       !figure && size !== 'card' && 'text-2xl sm:text-3xl',
     ]}
   >

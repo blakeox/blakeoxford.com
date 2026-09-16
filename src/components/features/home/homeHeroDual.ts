@@ -109,7 +109,7 @@ function bindHomeDual() {
       if (!hoverFine.matches) return;
       onEnter();
     },
-    { signal },
+    { signal }
   );
   frame.addEventListener(
     'pointerleave',
@@ -117,7 +117,7 @@ function bindHomeDual() {
       if (!hoverFine.matches) return;
       onLeave();
     },
-    { signal },
+    { signal }
   );
   frame.addEventListener(
     'click',
@@ -125,7 +125,7 @@ function bindHomeDual() {
       if (hoverFine.matches) return;
       onToggle();
     },
-    { signal },
+    { signal }
   );
   frame.addEventListener('focus', onEnter, { signal });
   frame.addEventListener('blur', onLeave, { signal });
@@ -134,7 +134,7 @@ function bindHomeDual() {
     () => {
       if (!syncStatic()) setSide('work');
     },
-    { signal },
+    { signal }
   );
 }
 

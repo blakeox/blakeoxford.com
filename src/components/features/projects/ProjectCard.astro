@@ -88,11 +88,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
           />
         </figure>
       ) : proofPlaque ? (
-        <ProofPlaque
-          figure={proofPlaque.figure}
-          caption={proofPlaque.caption}
-          size="card"
-        />
+        <ProofPlaque figure={proofPlaque.figure} caption={proofPlaque.caption} size="card" />
       ) : null}
 
       <div class:list={['flex flex-1 flex-col', featured ? 'gap-3' : 'gap-2.5']}>

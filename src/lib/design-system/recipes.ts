@@ -80,7 +80,8 @@ export const buttonRecipe = {
     secondary: 'border border-border bg-surface text-foreground hover:bg-surface-subtle',
     outline:
       'border border-border bg-transparent text-foreground hover:border-accent hover:text-accent-emphasis focus-visible:ring-accent/60',
-    ghost: 'border border-transparent bg-transparent text-muted-foreground hover:text-accent-emphasis',
+    ghost:
+      'border border-transparent bg-transparent text-muted-foreground hover:text-accent-emphasis',
     link: 'border border-transparent bg-transparent px-0 text-accent-emphasis hover:text-accent hover:underline',
   },
   sizes: {

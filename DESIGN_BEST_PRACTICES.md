@@ -182,17 +182,17 @@ Use for:
 
 To ensure global theming agility and hardened accessibility, direct Tailwind grayscale utilities for body or heading text (e.g., `text-gray-600/700/800/900` and dark variants) are deprecated. Always express textual color via semantic tokens:
 
-| Intent                    | Utility Pattern                           | Backed Token              |
-| ------------------------- | ----------------------------------------- | ------------------------- |
-| Primary text              | `text-foreground`                         | `--color-foreground`      |
-| Muted / secondary         | `text-muted-foreground`                   | `--color-muted-foreground` |
+| Intent                    | Utility Pattern                           | Backed Token                |
+| ------------------------- | ----------------------------------------- | --------------------------- |
+| Primary text              | `text-foreground`                         | `--color-foreground`        |
+| Muted / secondary         | `text-muted-foreground`                   | `--color-muted-foreground`  |
 | Captions / meta           | `text-subtle-foreground`                  | `--color-subtle-foreground` |
-| Strong emphasis           | `text-foreground` with font-weight change | `--color-foreground`      |
-| Inverse (on dark surface) | `text-foreground` on dark surfaces        | `--color-foreground`      |
-| Surface background        | `bg-surface` (theme-aware)                | `--color-surface`         |
-| Accent text               | `text-accent-emphasis` (theme-aware)      | `--color-accent-emphasis` |
-| Page background           | `bg-background` (theme-aware)             | `--color-background`      |
-| Border                    | `border-border` (theme-aware)             | `--color-border`          |
+| Strong emphasis           | `text-foreground` with font-weight change | `--color-foreground`        |
+| Inverse (on dark surface) | `text-foreground` on dark surfaces        | `--color-foreground`        |
+| Surface background        | `bg-surface` (theme-aware)                | `--color-surface`           |
+| Accent text               | `text-accent-emphasis` (theme-aware)      | `--color-accent-emphasis`   |
+| Page background           | `bg-background` (theme-aware)             | `--color-background`        |
+| Border                    | `border-border` (theme-aware)             | `--color-border`            |
 
 Rules:
 
