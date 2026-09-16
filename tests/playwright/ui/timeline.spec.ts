@@ -22,6 +22,6 @@ test.describe('@essential @timeline About Page - Timeline', () => {
     const section = page.locator('section#about-timeline');
     await expect(section).toBeVisible();
     await expect(section).toContainText('2019');
-    await expect(section).toContainText('Cloud migration');
+    await expect(section).toContainText('Cloud platforms and endpoints');
   });
 });

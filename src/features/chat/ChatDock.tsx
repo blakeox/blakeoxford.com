@@ -47,7 +47,7 @@ export function ChatDock({
       <button
         type="button"
         className={CHAT_DOCK_BACKDROP}
-        aria-label="Close assistant"
+        aria-label="Close Ask"
         tabIndex={-1}
         onClick={onClose}
         data-a11y-allow-color-contrast=""

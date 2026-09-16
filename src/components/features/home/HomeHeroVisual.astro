@@ -1,18 +1,27 @@
 ---
 /**
- * Home hero portrait — Work/Daring crossfade frame + caption.
+ * Home hero portrait — Work face by default; Daring on hover/focus.
  */
+interface Props {
+  workAlt: string;
+  daringAlt: string;
+}
+
+const { workAlt, daringAlt } = Astro.props as Props;
 ---
 
-<div class="home-dual-visual relative z-10" aria-hidden="true">
+<div class="home-dual-visual relative z-10" data-chat-avoid-launcher>
   <div class="home-dual-visual-inner">
     <div
-      class="home-dual-frame relative w-[min(16.5rem,58vw)] overflow-hidden rounded-xl bg-surface-subtle sm:w-[min(18rem,46vw)] md:w-[min(20.5rem,32vw)] lg:w-[min(22rem,28vw)]"
+      class="home-dual-frame relative w-[min(16.5rem,58vw)] rounded-xl sm:w-[min(18rem,46vw)] md:w-[min(20.5rem,32vw)] lg:w-[min(22rem,28vw)]"
       style="aspect-ratio: 4 / 5"
+      tabindex="0"
+      role="img"
+      aria-label={`${workAlt}. ${daringAlt}. Hover or tap to switch.`}
     >
       <img
         src="/assets/images/optimized/avif/Blake-O-scaled@768w.avif"
-        alt="Portrait of Blake Oxford"
+        alt=""
         width="768"
         height="768"
         class="home-dual-face home-dual-face-work absolute inset-0 size-full object-cover"
@@ -22,7 +31,7 @@
       />
       <img
         src="/assets/images/optimized/avif/china-profile-picture.avif"
-        alt="Blake Oxford on a high-rise observation walkway"
+        alt=""
         width="768"
         height="768"
         class="home-dual-face home-dual-face-daring absolute inset-0 size-full object-cover"
@@ -30,7 +39,6 @@
         loading="lazy"
         decoding="async"
       />
-      <div class="home-dual-frame-tick"></div>
     </div>
     <p class="home-dual-frame-caption" data-frame-caption>
       Work

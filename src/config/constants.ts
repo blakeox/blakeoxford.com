@@ -78,7 +78,7 @@ export const AUTHOR_IDENTITY = {
 };
 
 // ─── Animation & Transition Constants ────────────────────────────
-// Prefer Tailwind semantic duration utilities (duration-fast, duration-normal,
+// Prefer Tailwind semantic duration utilities (duration-normal,
 // duration-moderate, duration-slow) backed by theme.css tokens.
 export const ANIMATION = {
   durations: {

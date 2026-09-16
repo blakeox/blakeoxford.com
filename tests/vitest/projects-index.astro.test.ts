@@ -16,9 +16,10 @@ describe('projects/index.astro', () => {
     expect(fileContent).toContain('getProjectInsights');
   });
 
-  it('should keep results as supporting proof', () => {
-    expect(fileContent).toContain('ProjectsFindingsSection');
+  it('should keep conversion on the closing band', () => {
     expect(fileContent).toContain('ProjectsCTASection');
+    expect(fileContent).not.toContain('ProjectsFindingsSection');
+    expect(fileContent).not.toContain('meta.results');
   });
 
   it('should have accessible hero landmarks', () => {

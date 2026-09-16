@@ -1,21 +1,20 @@
 ---
 /**
- * SectionHeader — shared kicker + title + optional description/action.
- * Used across home, work, about, and contact section intros.
+ * SectionHeader — IntroCopy preset with an optional trailing action.
  */
-import SectionHeading from '@/components/primitives/SectionHeading.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
 import Button from '@/components/primitives/Button.astro';
+import type { HeadingSizeInput } from '@/lib/typeScale';
 
 export interface Props {
   title: string;
   titleId?: string;
   kicker?: string;
   description?: string;
-  size?: 'section' | 'display' | '3xl' | '4xl';
+  size?: HeadingSizeInput;
   actionHref?: string;
   actionLabel?: string;
   actionVariant?: 'outline' | 'ghost' | 'primary';
-  /** Center the intro block (e.g. Outcomes on home). */
   align?: 'start' | 'center';
   class?: string;
 }
@@ -45,15 +44,16 @@ const isCentered = align === 'center';
     className,
   ]}
 >
-  <div class:list={['max-w-2xl space-y-2', isCentered ? 'text-center' : 'text-left']}>
-    {kicker && <span class:list={['section-kicker', isCentered && 'mx-auto']}>{kicker}</span>}
-    <SectionHeading id={titleId} size={size}>
-      {title}
-    </SectionHeading>
-    {description && (
-      <p class="pt-1 text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
-    )}
-  </div>
+  <IntroCopy
+    kicker={kicker}
+    title={title}
+    titleId={titleId}
+    description={description}
+    as="h2"
+    size={size}
+    align={align}
+    class={isCentered ? '' : 'max-w-2xl'}
+  />
   {actionHref && actionLabel && (
     <Button
       variant={actionVariant}

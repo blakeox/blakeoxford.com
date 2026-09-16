@@ -57,8 +57,8 @@ export interface Props {
 - `FeatureCard.astro` - Feature highlight cards
 - `SectionHeader.astro` - Section intros (kicker, title, description)
 - `CtaBand.astro` - Full-bleed closing CTA
-- `CoinFlipImage.astro` - Interactive image flipper
-- `CTASection.astro` - Case-study next-steps actions
+- `ProofPlaque.astro` - Typographic evidence lockup
+- `CTASection.astro` - Article-density CtaBand for case-study next steps
 
 **Characteristics**:
 - Composed from primitives

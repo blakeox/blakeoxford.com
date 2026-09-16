@@ -13,7 +13,7 @@ import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED } from '@/features/chat/chatSt
     <div class="pointer-events-none fixed right-4 bottom-4 z-chat-launcher sm:right-6 sm:bottom-6">
       <button
         class={cn(CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED)}
-        aria-label="Open AI search assistant"
+        aria-label="Open Ask"
         aria-expanded="false"
         data-ai-launcher
         data-ai-action="open"
@@ -111,4 +111,40 @@ import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED } from '@/features/chat/chatSt
       mountPromise = null;
     }
   });
+
+  const fabCollision = () => {
+    const compact = window.matchMedia('(min-width: 640px)').matches;
+    const inset = compact ? 24 : 16;
+    const size = compact ? 56 : 48;
+    return {
+      left: window.innerWidth - inset - size,
+      top: window.innerHeight - inset - size,
+      right: window.innerWidth - inset,
+      bottom: window.innerHeight - inset,
+    };
+  };
+
+  const syncAskOcclusion = () => {
+    const launcher = document.querySelector<HTMLElement>('[data-ai-launcher]');
+    if (!launcher) return;
+    if (document.body.dataset.hideAskLauncher === 'true') {
+      launcher.dataset.occluded = 'true';
+      return;
+    }
+    const target = document.querySelector<HTMLElement>('[data-chat-avoid-launcher]');
+    if (!target) {
+      delete launcher.dataset.occluded;
+      return;
+    }
+    const a = target.getBoundingClientRect();
+    const b = fabCollision();
+    const overlaps = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    if (overlaps) launcher.dataset.occluded = 'true';
+    else delete launcher.dataset.occluded;
+  };
+
+  window.addEventListener('scroll', syncAskOcclusion, { passive: true });
+  window.addEventListener('resize', syncAskOcclusion);
+  document.addEventListener('astro:page-load', syncAskOcclusion);
+  syncAskOcclusion();
 </script>

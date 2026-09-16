@@ -98,14 +98,14 @@ const Tag = listAs ?? (numbered ? 'ol' : 'ul');
               set:html={row.bodyHtml}
             />
           ) : row.body ? (
-            <p class="max-w-2xl text-base leading-relaxed text-foreground/90 sm:text-lg">
+            <p class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               {row.body}
             </p>
           ) : null}
           {row.meta && <p class="text-sm leading-snug text-subtle-foreground">{row.meta}</p>}
           {row.bullets && row.bullets.length > 0 && (
             <ul
-              class="space-y-1.5 pt-0.5 text-sm leading-relaxed text-foreground/85 sm:text-base"
+              class="space-y-1.5 pt-0.5 text-sm leading-relaxed text-muted-foreground sm:text-base"
               role="list"
             >
               {row.bullets.map((item: string) => (

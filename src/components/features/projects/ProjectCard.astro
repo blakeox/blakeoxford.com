@@ -13,6 +13,9 @@ import GradientOverlay from '@/components/primitives/GradientOverlay.astro';
 import { headingSizeClass } from '@/lib/typeScale';
 import { take } from '@/utils/array';
 import { formatDateISO, formatDateShort } from '@/utils/date';
+import ProofPlaque from '@/components/composites/ProofPlaque.astro';
+import { resolvePublicImage } from '@/lib/media/publicAssetExists';
+import { splitProofFigure } from '@/lib/content/splitProofFigure';
 
 const {
   project,
@@ -22,7 +25,7 @@ const {
 const { id: slug, data } = project;
 
 const title = data.title ?? 'Case study';
-const image = data?.heroImage ?? '/assets/images/blake-logo-fallback.png';
+const image = resolvePublicImage(data?.heroImage);
 const description = data.description ?? '';
 const categories = Array.isArray(data.categories) ? data.categories.filter(Boolean) : [];
 const highlights = Array.isArray(data.highlights) ? data.highlights.filter(Boolean) : [];
@@ -39,6 +42,17 @@ const valueSummary =
   impact[0] ||
   'Operational change delivered through systems, automation, and enablement.';
 const proofLine = impact[0] || highlights[1] || highlights[0];
+const metrics = Array.isArray(data.metrics) ? data.metrics : [];
+const metricLine = metrics[0] ? `${metrics[0].result} ${metrics[0].metric}` : '';
+const fromImpact = proofLine ? splitProofFigure(proofLine) : { figure: '', caption: '' };
+const fromMetric = metricLine ? splitProofFigure(metricLine) : { figure: '', caption: '' };
+const proofPlaque = fromImpact.figure
+  ? fromImpact
+  : fromMetric.figure
+    ? fromMetric
+    : fromImpact.caption
+      ? fromImpact
+      : null;
 
 const dateISO = project.data.date ? formatDateISO(project.data.date) : undefined;
 const dateLabel = project.data.date ? formatDateShort(project.data.date) : undefined;
@@ -56,22 +70,26 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
       class="relative flex h-full flex-col gap-4 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
       aria-labelledby={`project-card-${slug}`}
     >
-      <figure
-        class:list={[
-          'relative overflow-hidden bg-surface-subtle',
-          featured ? 'aspect-[16/9] sm:aspect-[16/10] lg:aspect-[16/9]' : 'aspect-[16/10]',
-        ]}
-      >
-        <OptimizedImage
-          src={image}
-          alt={`${title} preview`}
-          width={featured ? 1400 : 960}
-          height={featured ? 788 : 540}
-          class="h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.03]"
-          loading="lazy"
-          quality={80}
-        />
-      </figure>
+      {image ? (
+        <figure
+          class:list={[
+            'relative overflow-hidden bg-surface-subtle',
+            featured ? 'aspect-[16/9] sm:aspect-[16/10] lg:aspect-[16/9]' : 'aspect-[16/10]',
+          ]}
+        >
+          <OptimizedImage
+            src={image}
+            alt={`${title} preview`}
+            width={featured ? 1400 : 960}
+            height={featured ? 788 : 540}
+            class="h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.03]"
+            loading="lazy"
+            quality={80}
+          />
+        </figure>
+      ) : proofPlaque ? (
+        <ProofPlaque figure={proofPlaque.figure} caption={proofPlaque.caption} size="card" />
+      ) : null}
 
       <div class:list={['flex flex-1 flex-col', featured ? 'gap-3' : 'gap-2.5']}>
         <p class="project-card-meta text-xs font-semibold tracking-label text-subtle-foreground uppercase">
@@ -94,7 +112,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
           {title}
         </h3>
 
-        {proofLine && (
+        {proofLine && image ? (
           <p
             class:list={[
               'leading-snug text-muted-foreground',
@@ -103,7 +121,7 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
           >
             {proofLine}
           </p>
-        )}
+        ) : null}
 
         <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-accent-emphasis transition-all duration-normal motion-safe:group-hover:gap-3">
           View case study
@@ -122,18 +140,27 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
       >
         <GradientOverlay variant="hover-card" direction="br" />
 
-        <figure class="relative aspect-[16/11] overflow-hidden @md:aspect-[16/10]">
-          <OptimizedImage
-            src={image}
-            alt={`${title} preview`}
-            width={960}
-            height={540}
-            class="h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.04]"
-            loading="lazy"
-            quality={80}
+        {image ? (
+          <figure class="relative aspect-[16/11] overflow-hidden @md:aspect-[16/10]">
+            <OptimizedImage
+              src={image}
+              alt={`${title} preview`}
+              width={960}
+              height={540}
+              class="h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.04]"
+              loading="lazy"
+              quality={80}
+            />
+            <GradientOverlay variant="image-fade" direction="t" />
+          </figure>
+        ) : proofPlaque ? (
+          <ProofPlaque
+            figure={proofPlaque.figure}
+            caption={proofPlaque.caption}
+            size="card"
+            class="rounded-none ring-0"
           />
-          <GradientOverlay variant="image-fade" direction="t" />
-        </figure>
+        ) : null}
 
         <div class="relative z-[1] flex flex-1 flex-col gap-4 px-5 pt-5 pb-6 @sm:gap-4 @sm:px-6 @sm:pt-6 @sm:pb-7 @md:px-7">
           <div class="space-y-2.5">
@@ -166,11 +193,11 @@ const dateLabel = project.data.date ? formatDateShort(project.data.date) : undef
               {title}
             </h3>
 
-            {proofLine && (
-              <p class="border-l-2 border-accent/50 pl-3.5 text-sm leading-snug font-semibold text-foreground/90 @md:text-base">
+            {proofLine && image ? (
+              <p class="border-l-2 border-accent/50 pl-3.5 text-sm leading-snug font-semibold text-foreground @md:text-base">
                 {proofLine}
               </p>
-            )}
+            ) : null}
 
             {(hasDescription || valueSummary) && valueSummary !== proofLine && (
               <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:3] @md:text-base">

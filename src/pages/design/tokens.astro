@@ -47,7 +47,7 @@ const rules = [
   'text-muted-foreground = secondary body (stronger); text-subtle-foreground = captions/meta/small-caps only (weaker, still AA).',
   'Disabled controls use button-disabled-* tokens — never opacity alone.',
   'Use bg-overlay-scrim for modal backdrops and bg-code-surface for always-dark code blocks. Scrim dismiss layers are decorative — mark with data-a11y-allow-color-contrast.',
-  'Motion: duration-instant (100ms) | duration-fast (200ms) | duration-normal (alias of fast) | duration-moderate (300ms) | duration-slow (500ms).',
+  'Motion: duration-instant (100ms) | duration-normal (200ms; duration-fast is the backing token) | duration-moderate (300ms) | duration-slow (500ms).',
   'Focus: interactive chrome uses .focus-ring-interactive or recipe focus-visible:ring-*; both set outline-none so the global :focus-visible outline does not double up.',
   'Do not use bg-[color:var(--…)] for tokens that already have utilities.',
   'Shared multi-use contracts live in components.css; feature-owned overlay styles live with chat and command-center owners.',
