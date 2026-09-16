@@ -210,10 +210,10 @@ Always use the defined Zod schemas in `src/content/config.ts`:
   - Why: Handles AVIF/WebP/JPEG generation, lazy loading, responsive sizes
   - Props: `src`, `alt`, `width`, `height`, `loading="lazy"`
   
-- **CoinFlipImage.astro**: Interactive image flipper with proper accessibility
-  - When: Need front/back image transition (team photos, cards)
-  - Why: Accessible click/keyboard flip with live announcement; hover multi-spin optional
-  - Props: `frontSrc`, `backSrc`, `alt`, `altBack`, `size`, `flipMultipleTimes`, `flipOnClick`, `flipAxis`
+- **ProofPlaque.astro**: Typographic evidence when photography is not available
+  - When: Featured work, project cards, and case-study heroes without a real photo
+  - Why: Reads in light and dark; never mint clip-art or logo placeholders
+  - Props: `figure`, `caption`, `size`, `href`
 
 **Search & Navigation**:
 - **SearchOverlay.astro**: Client-side search over a generated index

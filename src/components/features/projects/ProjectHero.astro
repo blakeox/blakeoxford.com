@@ -5,15 +5,17 @@ import OptimizedImage, {
 import Container from '@/components/primitives/Container.astro';
 import Button from '@/components/primitives/Button.astro';
 import DotMetaList from '@/components/composites/DotMetaList.astro';
+import ProofPlaque from '@/components/composites/ProofPlaque.astro';
 import ArrowLeftIcon from '@/components/primitives/icons/ArrowLeftIcon.astro';
 import ExternalLinkIcon from '@/components/primitives/icons/ExternalLinkIcon.astro';
 import { headingSizeClass } from '@/lib/typeScale';
+import { splitProofFigure } from '@/lib/content/splitProofFigure';
 
 export interface Props {
   title: string;
   description: string;
   date: Date;
-  image: OptimizedImageProps['src'];
+  image?: OptimizedImageProps['src'];
   link?: string;
   categories?: string[];
   /** Lead result — what this engagement proved. */
@@ -21,6 +23,7 @@ export interface Props {
 }
 
 const { title, description, date, image, link, categories = [], outcome } = Astro.props;
+const proofPlaque = !image && outcome ? splitProofFigure(outcome) : null;
 
 const formattedDate = date.toLocaleDateString('en-US', {
   timeZone: 'UTC',
@@ -59,11 +62,11 @@ const dateISO = date.toISOString();
           >
             {title}
           </h1>
-          {outcome && (
+          {outcome && image ? (
             <p class="font-heading text-lg font-semibold tracking-tight text-accent-emphasis sm:text-xl">
               {outcome}
             </p>
-          )}
+          ) : null}
           {description && (
             <p class="max-w-xl pt-0.5 text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">
               {description}
@@ -83,18 +86,26 @@ const dateISO = date.toISOString();
         )}
       </div>
 
-      <figure class="relative">
-        <div class="overflow-hidden ring-1 ring-border/40">
-          <OptimizedImage
-            src={image}
-            alt={title}
-            width={960}
-            height={720}
-            class="aspect-[4/3] h-full w-full object-cover"
-            priority={true}
-          />
-        </div>
-      </figure>
+      {image ? (
+        <figure class="relative">
+          <div class="overflow-hidden ring-1 ring-border/40">
+            <OptimizedImage
+              src={image}
+              alt={title}
+              width={960}
+              height={720}
+              class="aspect-[4/3] h-full w-full object-cover"
+              priority={true}
+            />
+          </div>
+        </figure>
+      ) : proofPlaque ? (
+        <ProofPlaque
+          figure={proofPlaque.figure}
+          caption={proofPlaque.caption}
+          size="hero"
+        />
+      ) : null}
     </div>
   </Container>
 </section>

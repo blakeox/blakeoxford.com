@@ -66,80 +66,6 @@ export const compositeDocs: ComponentDoc[] = [
     tokenDependencies: ['shadow-lg', 'rounded-2xl', 'duration-normal'],
   },
   {
-    name: 'CoinFlipImage',
-    category: 'Composites',
-    description:
-      'Interactive 3D coin flip portrait. Flip state is CSS `data-flipped`; optional multi-spin flourish on hover. Click toggles faces with a polite live announcement. Back face loads lazily.',
-    filePath: 'src/components/composites/CoinFlipImage.astro',
-    props: [
-      { name: 'frontSrc', type: 'string', required: true, description: 'Front image source URL' },
-      { name: 'backSrc', type: 'string', required: true, description: 'Back image source URL' },
-      { name: 'alt', type: 'string', required: true, description: 'Front image alt text' },
-      { name: 'altBack', type: 'string', required: true, description: 'Back image alt text' },
-      {
-        name: 'size',
-        type: 'number',
-        required: false,
-        default: '144',
-        description: 'Image size in pixels',
-      },
-      {
-        name: 'flipMultipleTimes',
-        type: 'boolean',
-        required: false,
-        default: 'false',
-        description: 'Enable multi-spin flourish on hover when not flipped',
-      },
-      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
-      {
-        name: 'duration',
-        type: 'number',
-        required: false,
-        default: '700',
-        description: 'Flip animation duration in ms',
-      },
-      {
-        name: 'flipOnClick',
-        type: 'boolean',
-        required: false,
-        default: 'true',
-        description: 'Enable click-to-flip',
-      },
-      {
-        name: 'flipAxis',
-        type: "'x'|'y'",
-        required: false,
-        default: "'y'",
-        description: 'Flip axis (horizontal or vertical)',
-      },
-    ],
-    examples: [
-      {
-        title: 'Basic coin flip',
-        code: '<CoinFlipImage frontSrc="/front.jpg" backSrc="/back.jpg" alt="Front image" altBack="Back image" />',
-      },
-      {
-        title: 'Hero portrait with hover spin',
-        code: '<CoinFlipImage frontSrc="/front.jpg" backSrc="/back.jpg" alt="Front" altBack="Back" size={300} flipMultipleTimes loading="eager" fetchPriority="high" />',
-      },
-    ],
-    accessibility: [
-      'Button with descriptive aria-label from alt texts',
-      'aria-pressed + polite live region on toggle',
-      'Native keyboard activation (Enter/Space)',
-      'focus-ring-interactive + reduced-motion disables transition',
-      'Visible Flip hint until first interaction',
-    ],
-    performance: [
-      'Front loading configurable; back face always lazy until warmed',
-      'Optimized AVIF/WebP srcsets from image manifests',
-      'CSS transform only (no React island)',
-    ],
-    tags: ['interactive', 'animation', '3d', 'flip', 'images'],
-    visualTier: 'expressive',
-    tokenDependencies: ['--color-surface', 'rounded-full', '--ease-emphasized', 'shadow-lg'],
-  },
-  {
     name: 'FeatureCard',
     category: 'Composites',
     description:
@@ -323,17 +249,17 @@ export const compositeDocs: ComponentDoc[] = [
     name: 'CTASection',
     category: 'Composites',
     description:
-      'Conversion-focused call-to-action band with heading, description, and button group.',
+      'Article-density alias of CtaBand for case-study next steps. Same lockup, tighter padding, no full-bleed band.',
     filePath: 'src/components/composites/CTASection.astro',
     examples: [
       {
         title: 'Contact CTA',
-        code: '<CTASection heading="Get in touch" href="/contact/">Contact</CTASection>',
+        code: '<CTASection heading="Get in touch" description="…" />',
       },
     ],
     tags: ['cta', 'conversion', 'composite'],
     visualTier: 'expressive',
-    tokenDependencies: ['--gradient-accent', '--color-on-accent', 'rounded-2xl'],
+    tokenDependencies: ['--color-accent', '--font-heading'],
   },
   {
     name: 'SectionHeader',
@@ -358,7 +284,7 @@ export const compositeDocs: ComponentDoc[] = [
     examples: [
       {
         title: 'Closing CTA',
-        code: '<CtaBand title="…" description="…" primary={{ href: "/contact/", label: "Book a review" }} />',
+        code: '<CtaBand title="…" description="…" primary={{ href: "/contact/", label: "Discuss your bottleneck" }} />',
       },
     ],
     tags: ['cta', 'band', 'composite'],
@@ -431,6 +357,22 @@ export const compositeDocs: ComponentDoc[] = [
     tags: ['list', 'editorial', 'composite'],
     visualTier: 'quiet',
     tokenDependencies: ['--color-border', '--color-accent'],
+  },
+  {
+    name: 'ProofPlaque',
+    category: 'Composites',
+    description:
+      'Typographic evidence lockup for featured work and case studies when photography is not available. Number-led; reads in light and dark.',
+    filePath: 'src/components/composites/ProofPlaque.astro',
+    examples: [
+      {
+        title: 'Featured proof',
+        code: '<ProofPlaque figure="200" caption="teammates enabled" href="/projects/fabric/" />',
+      },
+    ],
+    tags: ['proof', 'media', 'composite'],
+    visualTier: 'expressive',
+    tokenDependencies: ['--color-surface-elevated', '--color-foreground', '--font-heading'],
   },
   {
     name: 'MetricsTable',

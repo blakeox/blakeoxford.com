@@ -66,7 +66,6 @@ type CleanupFn = () => void;
 function setupTurnstile(isAudit: boolean): CleanupFn | void {
   const container = document.getElementById('turnstile-container');
   const shell = document.getElementById('turnstile-shell');
-  const placeholder = document.getElementById('turnstile-placeholder');
   const status = document.getElementById('turnstile-status');
   if (!container) return;
 
@@ -76,10 +75,6 @@ function setupTurnstile(isAudit: boolean): CleanupFn | void {
     message: string
   ) => {
     shell?.setAttribute('data-turnstile-state', state);
-    if (shell)
-      shell.style.minHeight =
-        state === 'interactive' && widgetSize === 'compact' ? '140px' : '65px';
-    placeholder?.classList.toggle('invisible', state === 'interactive');
     if (status) status.textContent = message;
   };
 

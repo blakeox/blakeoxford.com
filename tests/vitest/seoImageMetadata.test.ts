@@ -9,11 +9,10 @@ describe('SEO social image metadata', () => {
     });
   });
 
-  it('measures a page-specific project image', async () => {
-    await expect(getLocalImageDimensions('/assets/projects/adp-automation.png')).resolves.toEqual({
-      width: 1400,
-      height: 933,
-    });
+  it('measures a photographic portrait used on the site', async () => {
+    const dims = await getLocalImageDimensions('/assets/images/Blake-O-scaled.jpg');
+    expect(dims?.width).toBeGreaterThan(400);
+    expect(dims?.height).toBeGreaterThan(400);
   });
 
   it('returns null for missing or unsafe assets', async () => {
@@ -22,11 +21,5 @@ describe('SEO social image metadata', () => {
     await expect(
       getLocalImageDimensions('https://third-party.example/assets/images/og-image.jpg')
     ).resolves.toBeNull();
-  });
-
-  it('measures the Fanalyx project cover for social previews', async () => {
-    await expect(
-      getLocalImageDimensions('/assets/projects/fanalyx-finance-platform.png')
-    ).resolves.toEqual({ width: 1600, height: 1200 });
   });
 });

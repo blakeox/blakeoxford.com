@@ -1,8 +1,6 @@
 ---
 /**
- * Home identity hero — scroll reveals Work → Daring.
- * Sticky stage; contained portrait panel crossfades with scroll (not full-bleed, not coin).
- * First viewport: brand, one line, one CTA, portrait. Progress lives on the frame.
+ * Home identity hero — brand, both theses, portrait, two actions in one viewport.
  */
 import HomeHeroCopy from '@/components/features/home/HomeHeroCopy.astro';
 import HomeHeroVisual from '@/components/features/home/HomeHeroVisual.astro';
@@ -20,19 +18,24 @@ const workLine = 'Builds systems teams keep running.';
 const daringLine = 'Chases the edge cases that make them better.';
 ---
 
-<section id="about-me" class="home-dual" data-home-dual aria-label="Blake Oxford — two sides">
-  <div class="home-dual-track">
-    <div class="home-dual-sticky">
-      <div class="home-dual-stage layout-gutter">
-        <HomeHeroCopy
-          author={author}
-          content={content}
-          workLine={workLine}
-          daringLine={daringLine}
-        />
-        <HomeHeroVisual />
-      </div>
-    </div>
+<section
+  id="about-me"
+  class="home-dual"
+  data-home-dual
+  data-side="work"
+  aria-label="Blake Oxford — two sides"
+>
+  <div class="home-dual-stage layout-gutter">
+    <HomeHeroCopy
+      author={author}
+      content={content}
+      workLine={workLine}
+      daringLine={daringLine}
+    />
+    <HomeHeroVisual
+      workAlt={content.portrait.alt}
+      daringAlt={content.portrait.altBack}
+    />
   </div>
 </section>
 

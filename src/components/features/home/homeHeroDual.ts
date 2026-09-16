@@ -1,6 +1,9 @@
 /**
- * Home dual-identity hero — scroll scrub, reduced-motion, CTA prefetch.
+ * Home dual-identity hero — contact prefetch + portrait hover (fine) or tap (coarse).
+ * Copy always shows both theses; scroll no longer invents a second viewport.
  */
+
+type DualSide = 'work' | 'daring' | 'both';
 
 function bindContactPrefetch() {
   const cta = document.querySelector<HTMLAnchorElement>('[data-prefetch-contact]');
@@ -33,64 +36,106 @@ function bindHomeDual() {
   const root = document.querySelector<HTMLElement>('[data-home-dual]');
   if (!root || root.dataset.bound === 'true') return;
 
-  const track = root.querySelector<HTMLElement>('.home-dual-track');
-  const sticky = root.querySelector<HTMLElement>('.home-dual-sticky');
+  const frame = root.querySelector<HTMLElement>('.home-dual-frame');
   const daringImg = root.querySelector<HTMLImageElement>('[data-dual-daring]');
   const frameCaption = root.querySelector<HTMLElement>('[data-frame-caption]');
-  if (!track) return;
+  if (!frame) return;
 
   root.dataset.bound = 'true';
   teardownHomeDual();
   homeDualAC = new AbortController();
   const { signal } = homeDualAC;
 
-  // Keep this query aligned with the static layout in home-hero-dual.css.
-  const staticLayout = window.matchMedia('(prefers-reduced-motion: reduce), (max-height: 700px)');
+  const staticLayout = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const hoverFine = window.matchMedia('(hover: hover) and (pointer: fine)');
   signal.addEventListener('abort', () => delete root.dataset.bound, { once: true });
 
   let warmed = false;
-  /** Fraction of track travel used for the Work→Daring scrub; remainder is settle. */
-  const SCRUB_END = 0.8;
-
   const warmDaring = () => {
     if (warmed || !daringImg) return;
     warmed = true;
     if (daringImg.loading === 'lazy') daringImg.loading = 'eager';
   };
 
-  const update = () => {
-    if (staticLayout.matches) {
-      root.style.setProperty('--dual-progress', '0');
-      root.setAttribute('data-side', 'both');
-      root.setAttribute('data-settled', 'false');
-      if (frameCaption) frameCaption.textContent = 'Two sides';
-      warmDaring();
-      return;
-    }
-
-    const rect = track.getBoundingClientRect();
-    const view = sticky?.getBoundingClientRect().height || window.innerHeight || 1;
-    const total = Math.max(1, rect.height - view);
-    const raw = Math.min(1, Math.max(0, -rect.top / total));
-    const settled = raw >= SCRUB_END;
-    const progress = settled ? 1 : raw / SCRUB_END;
-
-    root.style.setProperty('--dual-progress', progress.toFixed(4));
-    root.setAttribute('data-settled', settled ? 'true' : 'false');
-
-    if (progress > 0.08) warmDaring();
-
-    const side = progress >= 0.5 ? 'daring' : 'work';
+  const setSide = (side: DualSide) => {
     root.setAttribute('data-side', side);
-    if (frameCaption) {
-      frameCaption.textContent = settled || side === 'daring' ? 'Daring' : 'Work';
+    if (!frameCaption) return;
+    switch (side) {
+      case 'both':
+        frameCaption.textContent = 'Two sides';
+        break;
+      case 'daring':
+        frameCaption.textContent = 'Daring';
+        break;
+      case 'work':
+        frameCaption.textContent = 'Work';
+        break;
+      default: {
+        const _exhaustive: never = side;
+        return _exhaustive;
+      }
     }
   };
 
-  update();
-  staticLayout.addEventListener('change', update, { signal });
-  window.addEventListener('scroll', update, { passive: true, signal });
-  window.addEventListener('resize', update, { signal });
+  const syncStatic = () => {
+    if (staticLayout.matches) {
+      setSide('both');
+      warmDaring();
+      return true;
+    }
+    return false;
+  };
+
+  if (!syncStatic()) setSide('work');
+
+  const onEnter = () => {
+    if (syncStatic()) return;
+    warmDaring();
+    setSide('daring');
+  };
+  const onLeave = () => {
+    if (syncStatic()) return;
+    setSide('work');
+  };
+  const onToggle = () => {
+    if (syncStatic()) return;
+    warmDaring();
+    setSide(root.getAttribute('data-side') === 'daring' ? 'work' : 'daring');
+  };
+
+  frame.addEventListener(
+    'pointerenter',
+    () => {
+      if (!hoverFine.matches) return;
+      onEnter();
+    },
+    { signal },
+  );
+  frame.addEventListener(
+    'pointerleave',
+    () => {
+      if (!hoverFine.matches) return;
+      onLeave();
+    },
+    { signal },
+  );
+  frame.addEventListener(
+    'click',
+    () => {
+      if (hoverFine.matches) return;
+      onToggle();
+    },
+    { signal },
+  );
+  frame.addEventListener('focus', onEnter, { signal });
+  frame.addEventListener('blur', onLeave, { signal });
+  staticLayout.addEventListener(
+    'change',
+    () => {
+      if (!syncStatic()) setSide('work');
+    },
+    { signal },
+  );
 }
 
 export function bindHomeHero() {

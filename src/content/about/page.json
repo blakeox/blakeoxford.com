@@ -8,41 +8,41 @@
     "title": "I build the operating middle that strategy slides skip",
     "description": "Based in Michigan. Organizations bring me in when platforms, reporting, and adoption have to move together\u2014and the blast radius has to stay contained. The work is systems architecture with change enablement baked in, not bolted on. I also speak with professional audiences on AI ethics, controls, and agentic risk.",
     "proofPoints": [
-      "Migrations and platforms that hold adoption",
-      "Automation and AI that cut lasting operational drag",
-      "Decision systems leaders trust week after week"
+      "I stay through cutover, not just the architecture deck",
+      "I put the new system in the tools people already open",
+      "I measure the week after go-live, not the launch party"
     ]
   },
   "achievements": {
-    "kicker": "Why teams bring me in",
+    "kicker": "How I work",
     "title": "Judgment under operating pressure",
-    "description": "Representative proof\u2014not a full resume. Open Selected work for the case studies behind each line.",
+    "description": "The habits that keep migrations, automation, and decision systems alive after launch. Open Selected work for the cases behind them.",
     "cards": [
       {
-        "title": "Enterprise transformation",
-        "description": "Led Google Workspace \u2192 Microsoft 365 for 180+ staff with zero downtime, consolidating legacy systems and driving full adoption.",
+        "title": "Contain the blast radius",
+        "description": "Cutover plans, identity, and rollback so the business keeps running while the stack changes.",
         "achievements": [
-          "Zero downtime during migration",
-          "5 legacy systems consolidated",
-          "100% employee adoption"
+          "Governed cutovers with a named rollback",
+          "Identity and endpoints treated as part of the migration",
+          "Playbooks ship with the platform, not after it"
         ]
       },
       {
-        "title": "Financial analytics",
-        "description": "Built Power BI forecasting that surfaced $1.2M in unbilled services and tightened financial accuracy for leadership.",
+        "title": "Adoption is the deliverable",
+        "description": "A live system nobody runs is a failed project. I design for the week after go-live.",
         "achievements": [
-          "$1.2M in unbilled services identified",
-          "Real-time forecast dashboards",
-          "25% improved financial accuracy"
+          "Scorecards that replace slide decks as the source of truth",
+          "Workflows inside the tools people already open",
+          "Support load measured after the first 60 days"
         ]
       },
       {
-        "title": "AI-enabled operations",
-        "description": "Shipped AI coaching and analytics layers that cut reporting delay and put compliance feedback inside daily tooling.",
+        "title": "Decisions, not dashboards",
+        "description": "Models and coaching loops built for the questions executives actually ask.",
         "achievements": [
-          "30+ AI-enhanced dashboards across 6 departments",
-          "50% faster reporting with predictive models",
-          "Unified KPIs for real-time decisions"
+          "Forecasts and exceptions on one cadence",
+          "Audit-ready numbers with a named owner",
+          "AI that sits in the workflow, not a side chat"
         ]
       }
     ]
@@ -90,38 +90,38 @@
     "items": [
       {
         "year": "2019",
-        "title": "System integration & optimization",
+        "title": "Finance systems integration",
         "achievements": [
-          "Integrated Sage Intacct and ADP across departmental handoffs",
-          "Cut manual data entry ~80% with custom API work",
-          "Automated reconciliation; month-end close shortened by 3 days"
+          "Sage Intacct and ADP across departmental handoffs",
+          "Custom APIs replacing spreadsheet reconciliation",
+          "Month-end close as an operating rhythm, not a fire drill"
         ]
       },
       {
         "year": "2020",
-        "title": "Cloud migration & digital transformation",
+        "title": "Cloud platforms and endpoints",
         "achievements": [
-          "Google Workspace \u2192 Microsoft 365 for 180 staff, zero downtime",
-          "Sage Intacct and ADP Workforce Now; 5 legacy systems consolidated",
-          "Disaster recovery protocols that cut potential data-loss window ~90%"
+          "Identity, mail, and device management as one cutover",
+          "Legacy finance and HR stacks retired behind the new platforms",
+          "Disaster recovery written into the operating model"
         ]
       },
       {
         "year": "2023",
-        "title": "Analytics & process innovation",
+        "title": "Analytics inside the operating cadence",
         "achievements": [
-          "Power BI dashboards for real-time financial forecasting",
-          "SOPs and training for AdvancedMD revenue-cycle work",
-          "$1.2M unbilled services surfaced via SQL reporting"
+          "Forecasting and exception reporting for leadership decisions",
+          "Revenue-cycle playbooks the team could run without me",
+          "SQL reporting that made unbilled work visible in time to act"
         ]
       },
       {
         "year": "2024",
-        "title": "AI-powered compliance & workflow",
+        "title": "AI in the daily workflow",
         "achievements": [
-          "Azure OpenAI auditing for clinical notes before submission",
-          "Automated coaching that improved documentation quality",
-          "AI in daily workflows for appeals and process optimization"
+          "Clinical-note review before submission, not after the audit",
+          "Coaching loops that improved documentation quality in place",
+          "Appeals and process work inside the tools already open"
         ]
       }
     ]

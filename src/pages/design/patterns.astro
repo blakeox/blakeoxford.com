@@ -163,13 +163,13 @@ const visualTiers = [
 
 const cardMatrix = [
   { layer: 'BaseCard', role: 'Primitive contract — variants, hover, radius, padding' },
-  { layer: 'FeatureCard', role: 'Expressive tier — gradient semantic variants' },
+  { layer: 'FeatureCard', role: 'Expressive tier — accent and primary surfaces' },
   { layer: 'BlogPostRow', role: 'Blog index listings — editorial row link' },
   { layer: 'ProjectCard', role: 'Case study listings — BaseCard + media' },
   { layer: 'SectionHeader', role: 'Shared section intro (kicker, title, description, action)' },
   { layer: 'CtaBand', role: 'Full-bleed closing CTA across marketing pages' },
   { layer: 'EditorialList', role: 'Numbered / divided proof and capability rows' },
-  { layer: 'CTASection', role: 'Case-study next-steps actions inside project detail' },
+  { layer: 'CTASection', role: 'Article-density CtaBand for case-study next steps' },
 ];
 ---
 
@@ -229,7 +229,7 @@ const cardMatrix = [
           <FeatureCard
             variant="accent"
             title="Expressive"
-            description="Gradient highlight for hero features and CTAs."
+            description="Accent surface for hero features and CTAs."
             hover={true}
           />
         </div>

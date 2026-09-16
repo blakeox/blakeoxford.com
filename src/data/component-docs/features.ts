@@ -152,7 +152,7 @@ export const featureDocs: ComponentDoc[] = [
     category: 'Features',
     subcategory: 'Home',
     description:
-      'Homepage dual-identity hero shell — Work→Daring scroll scrub composing copy + portrait pieces.',
+      'Homepage dual-identity hero — brand, both theses, portrait, and two actions in one viewport.',
     filePath: 'src/components/features/home/HomeHeroSection.astro',
     examples: [
       {
@@ -168,7 +168,7 @@ export const featureDocs: ComponentDoc[] = [
     name: 'HomeHeroCopy',
     category: 'Features',
     subcategory: 'Home',
-    description: 'Home hero brand lockup, dual lines, primary CTA, and scroll hint.',
+    description: 'Home hero brand lockup, dual lines, and primary + proof CTAs.',
     filePath: 'src/components/features/home/HomeHeroCopy.astro',
     examples: [
       {
@@ -184,9 +184,14 @@ export const featureDocs: ComponentDoc[] = [
     name: 'HomeHeroVisual',
     category: 'Features',
     subcategory: 'Home',
-    description: 'Home hero Work/Daring portrait frame with progress tick and caption.',
+    description: 'Home hero Work/Daring portrait frame. Work by default; Daring on hover or focus.',
     filePath: 'src/components/features/home/HomeHeroVisual.astro',
-    examples: [{ title: 'Hero visual', code: '<HomeHeroVisual />' }],
+    examples: [
+      {
+        title: 'Hero visual',
+        code: '<HomeHeroVisual workAlt="Work portrait" daringAlt="Daring portrait" />',
+      },
+    ],
     tags: ['home', 'hero', 'portrait'],
     visualTier: 'expressive',
     tokenDependencies: ['--color-accent', '--shadow-lg', '--color-surface-subtle'],
@@ -345,22 +350,6 @@ export const featureDocs: ComponentDoc[] = [
     tokenDependencies: ['--color-foreground', '--color-muted-foreground'],
   },
   {
-    name: 'ProjectsFindingsSection',
-    category: 'Features',
-    subcategory: 'Projects',
-    description: 'Cross-portfolio results band linking findings back to case studies.',
-    filePath: 'src/components/features/projects/ProjectsFindingsSection.astro',
-    examples: [
-      {
-        title: 'Findings',
-        code: '<ProjectsFindingsSection findings={findings} kicker="Results" title="…" description="…" />',
-      },
-    ],
-    tags: ['project', 'findings', 'editorial'],
-    visualTier: 'quiet',
-    tokenDependencies: ['--color-surface', '--color-foreground'],
-  },
-  {
     name: 'ProjectsLibrarySection',
     category: 'Features',
     subcategory: 'Projects',
@@ -385,7 +374,7 @@ export const featureDocs: ComponentDoc[] = [
     examples: [
       {
         title: 'Projects CTA',
-        code: '<ProjectsCTASection title="…" description="…" button={{ href: "/contact/", label: "Book a review" }} />',
+        code: '<ProjectsCTASection title="…" description="…" button={{ href: "/contact/", label: "Discuss your bottleneck" }} />',
       },
     ],
     tags: ['project', 'cta', 'conversion'],
@@ -447,23 +436,13 @@ export const featureDocs: ComponentDoc[] = [
     tokenDependencies: ['--color-foreground', '--fs-h1'],
   },
   {
-    name: 'ContactHeroSection',
-    category: 'Features',
-    subcategory: 'Contact',
-    description: 'Contact page hero with title and introductory messaging.',
-    filePath: 'src/components/features/contact/ContactHeroSection.astro',
-    examples: [{ title: 'Contact hero', code: '<ContactHeroSection content={page.hero} />' }],
-    tags: ['contact', 'hero'],
-    visualTier: 'expressive',
-    tokenDependencies: ['--color-foreground', '--fs-h1'],
-  },
-  {
     name: 'ContactMessageSection',
     category: 'Features',
     subcategory: 'Contact',
-    description: 'Contact form section wrapping the ContactFormIsland React component.',
+    description:
+      'Contact page as the brief: claim, sequencing, and form in one section. Channels stay tertiary.',
     filePath: 'src/components/features/contact/ContactMessageSection.astro',
-    examples: [{ title: 'Contact form', code: '<ContactMessageSection />' }],
+    examples: [{ title: 'Contact form', code: '<ContactMessageSection content={page.hero} />' }],
     tags: ['contact', 'form'],
     visualTier: 'quiet',
     tokenDependencies: ['--color-surface', '--color-border', '--color-field-bg'],

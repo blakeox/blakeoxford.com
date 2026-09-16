@@ -18,6 +18,8 @@ import ProjectHero from '@/components/features/projects/ProjectHero.astro';
 import ProjectDetailContent from '@/components/features/projects/ProjectDetailContent.astro';
 import RelatedContent from '@/components/features/content/RelatedContent.astro';
 import { CONTENT_RELATIONSHIPS } from '@/config/content-architecture';
+import { SEO } from '@/config/constants';
+import { resolvePublicImage } from '@/lib/media/publicAssetExists';
 
 interface Props {
   slug: string;
@@ -35,7 +37,7 @@ const title = data.title;
 const description = data.description ?? '';
 const date = data.date ? new Date(data.date) : new Date();
 const canonicalUrl = `https://blakeoxford.com/projects/${entry.id}/`;
-const heroImage = (data as any).heroImage ?? '/assets/images/blake-logo-fallback.png';
+const heroImage = resolvePublicImage(data.heroImage);
 
 // Optional sections with runtime guards
 const hasMetrics =
@@ -67,9 +69,10 @@ const { Content } = await render(entry);
 
 // Generate structured data
 const siteOrigin = 'https://blakeoxford.com';
-const projectImage = heroImage.startsWith('http')
-  ? heroImage
-  : `${siteOrigin}${heroImage.startsWith('/') ? heroImage : `/${heroImage}`}`;
+const ogSource = heroImage ?? SEO.defaultImage;
+const projectImage = ogSource.startsWith('http')
+  ? ogSource
+  : `${siteOrigin}${ogSource.startsWith('/') ? ogSource : `/${ogSource}`}`;
 
 const projectSchema = createProjectSchema(title, defaultAuthor, date, {
   description: description || undefined,

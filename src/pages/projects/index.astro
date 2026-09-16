@@ -2,17 +2,15 @@
 import Layout from '@/layouts/BaseLayout.astro';
 import PageHero from '@/components/composites/PageHero.astro';
 import IntroCopy from '@/components/composites/IntroCopy.astro';
-import Button from '@/components/primitives/Button.astro';
-import ButtonGroup from '@/components/composites/ButtonGroup.astro';
+import DotMetaList from '@/components/composites/DotMetaList.astro';
 import ProjectsCapabilitiesSection from '@/components/features/projects/ProjectsCapabilitiesSection.astro';
 import ProjectsFeaturedSection from '@/components/features/projects/ProjectsFeaturedSection.astro';
 import ProjectsLibrarySection from '@/components/features/projects/ProjectsLibrarySection.astro';
-import ProjectsFindingsSection from '@/components/features/projects/ProjectsFindingsSection.astro';
 import ProjectsCTASection from '@/components/features/projects/ProjectsCTASection.astro';
 import { getProjectInsights } from '@/content/projects/getProjectInsights';
 
 const meta = (await import('@/content/projects/_meta.json')).default;
-const { findings, projects, deepCut } = await getProjectInsights();
+const { projects, deepCut } = await getProjectInsights();
 
 const featuredProject = deepCut
   ? projects.find((project) => project.id === deepCut.projectSlug)
@@ -26,7 +24,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 
 {/*
   Portfolio showcase arc:
-  claim → featured proof → full range → capabilities → cross-case results → convert.
+  claim → featured proof → full range → capabilities → convert.
 */}
 <Layout title={title} description={description} url={canonicalUrl} wide>
   <PageHero
@@ -45,14 +43,12 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
         align="center"
         size="hero"
       />
-      <ButtonGroup align="center" responsive>
-        <Button variant="primary" href={meta.hero.primaryCta.href}>
-          {meta.hero.primaryCta.label}
-        </Button>
-        <Button variant="ghost" href={meta.hero.secondaryCta.href}>
-          {meta.hero.secondaryCta.label}
-        </Button>
-      </ButtonGroup>
+      <DotMetaList
+        items={meta.hero.capabilities}
+        label="What this work covers"
+        align="center"
+        class="max-w-3xl"
+      />
     </div>
   </PageHero>
 
@@ -78,13 +74,6 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     title={meta.capabilities.title}
     description={meta.capabilities.description}
     items={meta.capabilities.items}
-  />
-
-  <ProjectsFindingsSection
-    findings={findings}
-    kicker={meta.results.kicker}
-    title={meta.results.title}
-    description={meta.results.description}
   />
 
   <ProjectsCTASection

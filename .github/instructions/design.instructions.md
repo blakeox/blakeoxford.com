@@ -49,7 +49,7 @@ Compose class lists with `cn()` from `src/utils/cn.ts` in primitives.
 - Atmosphere: no decorative blur orbs outside `PageHero` `includeBlurOrbs` (default off)
 - Radius: `rounded-sm` … `rounded-2xl` from `--radius-*` (no `rounded-3xl` in recipes)
 - Shadows: `shadow-sm` … `shadow-2xl`, plus `shadow-overlay` for modal panels
-- Motion: `duration-instant` (100ms), `duration-fast` / `duration-normal` (200ms), `duration-moderate` (300ms), `duration-slow` (500ms)
+- Motion: `duration-instant` (100ms), `duration-normal` (200ms; `--duration-fast` is the backing token), `duration-moderate` (300ms), `duration-slow` (500ms)
 - Easing: `ease-standard`, `ease-emphasized`, `ease-decelerate`
 - Focus: use `.focus-ring-interactive` or recipe `focus-visible:ring-*` (both set `outline-none`); do not stack both on one control
 

@@ -7,9 +7,7 @@
       "Platform migrations that hold adoption",
       "Automation that cuts lasting drag",
       "Decision systems leaders actually use"
-    ],
-    "primaryCta": { "href": "#featured", "label": "See featured work" },
-    "secondaryCta": { "href": "#library", "label": "Browse all work" }
+    ]
   },
   "capabilities": {
     "kicker": "What I deliver",
@@ -41,11 +39,6 @@
     "kicker": "Portfolio",
     "title": "More of the work",
     "description": "Each study covers the problem, what I built, the proof, and what I’d repeat."
-  },
-  "results": {
-    "kicker": "Proof across engagements",
-    "title": "Results that show up more than once",
-    "description": "A sample of outcomes from the portfolio—each links to the case behind it."
   },
   "cta": {
     "title": "Have a bottleneck that looks like this work?",

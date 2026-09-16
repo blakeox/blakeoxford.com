@@ -44,3 +44,8 @@
     }
   }
 }
+
+body[data-hide-ask-launcher='true'] [data-ai-launcher],
+[data-ai-launcher][data-occluded='true'] {
+  display: none !important;
+}

@@ -1,9 +1,10 @@
 ---
 /**
- * Home hero copy column — brand lockup, dual lines, CTA.
+ * Home hero copy column — brand lockup, dual lines, primary + proof CTAs.
  */
 import IntroCopy from '@/components/composites/IntroCopy.astro';
 import Button from '@/components/primitives/Button.astro';
+import ButtonGroup from '@/components/composites/ButtonGroup.astro';
 import type { HomePageContent } from '@/content/home/pageTypes';
 
 interface Props {
@@ -25,7 +26,7 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
       class="w-full items-start"
     />
 
-    <div class="home-dual-lines" aria-hidden="true">
+    <div class="home-dual-lines">
       <p class="home-dual-line" data-dual-line-work>
         {workLine}
       </p>
@@ -35,18 +36,19 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
     </div>
   </div>
 
-  <p class="sr-only">
-    {workLine} {daringLine}
-  </p>
-
-  <Button
-    variant="primary"
-    size="lg"
-    href={content.primaryCta.href}
-    data-test="home-cta-connect"
-    data-analytics="hero-cta"
-    data-prefetch-contact
-  >
-    {content.primaryCta.label}
-  </Button>
+  <ButtonGroup align="start" responsive class="pt-0">
+    <Button
+      variant="primary"
+      size="lg"
+      href={content.primaryCta.href}
+      data-test="home-cta-connect"
+      data-analytics="hero-cta"
+      data-prefetch-contact
+    >
+      {content.primaryCta.label}
+    </Button>
+    <Button variant="outline" size="lg" href={content.secondaryCta.href} data-test="home-cta-work">
+      {content.secondaryCta.label}
+    </Button>
+  </ButtonGroup>
 </div>

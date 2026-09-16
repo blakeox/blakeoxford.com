@@ -79,15 +79,15 @@ export const buttonRecipe = {
       'border border-button-primary-bg bg-button-primary-bg text-button-primary-fg hover:bg-button-primary-bg-hover hover:border-button-primary-border-hover focus-visible:ring-accent/60',
     secondary: 'border border-border bg-surface text-foreground hover:bg-surface-subtle',
     outline:
-      'border border-foreground/30 bg-transparent text-foreground hover:border-accent hover:text-accent-emphasis focus-visible:ring-accent/60',
-    ghost: 'border border-transparent bg-transparent text-foreground/85 hover:text-accent-emphasis',
+      'border border-border bg-transparent text-foreground hover:border-accent hover:text-accent-emphasis focus-visible:ring-accent/60',
+    ghost: 'border border-transparent bg-transparent text-muted-foreground hover:text-accent-emphasis',
     link: 'border border-transparent bg-transparent px-0 text-accent-emphasis hover:text-accent hover:underline',
   },
   sizes: {
     sm: 'min-h-[2.25rem] px-3.5 py-1.5 text-sm',
     md: 'min-h-[2.75rem] px-5 py-2.5 text-sm',
     lg: 'min-h-[3.25rem] px-6 py-3 text-base',
-    icon: 'size-8 min-h-8 min-w-8 p-0',
+    icon: 'size-11 min-h-11 min-w-11 p-0',
   },
 } as const;
 
@@ -128,7 +128,7 @@ export function getButtonClasses({
 export const fieldRecipe = {
   base: [
     'w-full rounded-xl border border-border bg-field-bg px-4 py-3.5 text-base text-foreground shadow-sm',
-    'placeholder:text-subtle-foreground/80',
+    'placeholder:text-subtle-foreground',
     'hover:border-accent/40 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25',
     // Reuse button-disabled-* (dedicated state tokens — never opacity alone).
     'disabled:cursor-not-allowed disabled:border-button-disabled-border disabled:bg-button-disabled-bg disabled:text-button-disabled-fg',
@@ -255,15 +255,15 @@ export function getBadgeClasses({
 }
 
 export const featureCardRecipe = {
-  base: 'bg-gradient-to-br backdrop-blur-sm @container @md:p-10',
+  base: '@container @md:p-10',
   variants: {
     accent: {
-      surface: 'from-accent/10 to-accent/5 border-accent/30',
+      surface: 'border-accent/30 bg-accent-subtle',
       text: 'text-accent-emphasis',
       badge: 'bg-accent text-on-accent',
     },
     primary: {
-      surface: 'from-primary/10 to-primary/5 border-primary/30',
+      surface: 'border-primary/30 bg-primary-subtle',
       text: 'text-primary-emphasis',
       badge: 'bg-primary text-on-primary',
     },
@@ -424,8 +424,8 @@ export const proseRecipe = {
     'prose-h1:mb-8 prose-h1:text-5xl',
     'prose-h2:mt-16 prose-h2:mb-8 prose-h2:text-4xl',
     'prose-h3:mt-10 prose-h3:mb-5 prose-h3:text-3xl',
-    'prose-p:mb-6 prose-p:text-lg prose-p:leading-relaxed prose-p:text-foreground/90',
-    'prose-li:text-lg prose-li:leading-relaxed prose-li:text-foreground/90',
+    'prose-p:mb-6 prose-p:text-lg prose-p:leading-relaxed prose-p:text-foreground',
+    'prose-li:text-lg prose-li:leading-relaxed prose-li:text-foreground',
     'prose-a:text-accent-emphasis prose-a:no-underline hover:prose-a:underline',
     'prose-strong:font-semibold prose-strong:text-foreground',
     'prose-pre:bg-code-surface prose-pre:text-code-foreground',
