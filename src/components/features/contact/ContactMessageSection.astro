@@ -1,12 +1,13 @@
 ---
 /**
- * Contact brief — same editorial calm as Selected work / About.
- * Form behavior and Turnstile wiring preserved.
+ * Contact brief — the page is the form.
+ * Claim, sequencing, and Turnstile wiring live in one section.
  */
 import Section from '@/components/primitives/Section.astro';
 import FormField from '@/components/primitives/FormField.astro';
 import Button from '@/components/primitives/Button.astro';
-import SectionHeader from '@/components/composites/SectionHeader.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
+import DotMetaList from '@/components/composites/DotMetaList.astro';
 
 interface Sidebar {
   heading: string;
@@ -14,11 +15,20 @@ interface Sidebar {
   note: string;
 }
 
-interface Props {
+interface ContactBrief {
+  kicker: string;
+  title: string;
+  description: string;
+  scenarios: string[];
   sidebar: Sidebar;
 }
 
-const { sidebar } = Astro.props as Props;
+interface Props {
+  content: ContactBrief;
+}
+
+const { content } = Astro.props as Props;
+const { sidebar } = content;
 ---
 
 <Section
@@ -26,16 +36,20 @@ const { sidebar } = Astro.props as Props;
   padding="xl"
   container="xl"
   background="surface"
-  aria-labelledby="message-form"
+  aria-labelledby="contact-title"
   data-chat-avoid-launcher
 >
   <div class="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-12">
-    <div class="lg:sticky lg:top-28">
-      <SectionHeader
-        title="Send the project brief"
-        titleId="message-form"
-        description="Share the friction, the systems involved, and the outcome you need. I’ll use that to decide whether a focused working session is the right next move."
+    <div class="flex flex-col gap-8 lg:sticky lg:top-28">
+      <IntroCopy
+        kicker={content.kicker}
+        title={content.title}
+        titleId="contact-title"
+        description={content.description}
+        size="hero"
+        descriptionSize="md"
       />
+      <DotMetaList items={content.scenarios} label="Best-fit scenarios" />
 
       <div class="border-t border-border/50 pt-5">
         <p class="text-sm font-semibold tracking-tight text-foreground">{sidebar.heading}</p>
@@ -52,7 +66,7 @@ const { sidebar } = Astro.props as Props;
             </li>
           ))}
         </ol>
-        <p class="mt-5 text-sm leading-relaxed text-foreground/85">{sidebar.note}</p>
+        <p class="mt-5 text-sm leading-relaxed text-muted-foreground">{sidebar.note}</p>
         <p class="mt-3 text-xs leading-relaxed text-subtle-foreground">
           Protected by Cloudflare Turnstile; delivered through Cloudflare Email Service.
         </p>
@@ -60,12 +74,7 @@ const { sidebar } = Astro.props as Props;
     </div>
 
     <div class="border border-border/50 bg-background p-5 sm:p-7 lg:p-8">
-      <div class="mb-6 border-b border-border/50 pb-5">
-        <p class="font-heading text-xl font-semibold tracking-tight text-foreground">
-          Project inquiry
-        </p>
-        <p class="mt-1 text-sm text-muted-foreground">All fields are required.</p>
-      </div>
+      <p class="mb-6 text-sm text-muted-foreground">All fields are required.</p>
 
       <div
         id="form-status"
@@ -84,18 +93,8 @@ const { sidebar } = Astro.props as Props;
         aria-describedby="contact-form-help"
       >
         <FormField id="form-name" type="hidden" label="form-name-hidden" value="contact" />
-        <p class="sr-only" aria-hidden="true">
-          <label for="bot-field" class="sr-only">
-            Don&apos;t fill this out
-          </label>
-          <input
-            id="bot-field"
-            name="bot-field"
-            type="hidden"
-            aria-hidden="true"
-            tabindex="-1"
-            aria-label="bot-field-hidden"
-          />
+        <p hidden>
+          <input id="bot-field" name="bot-field" type="text" tabindex="-1" autocomplete="off" />
         </p>
         <p id="contact-form-help" class="sr-only">
           All fields are required. Your message is protected by Cloudflare Turnstile and delivered
@@ -144,56 +143,18 @@ const { sidebar } = Astro.props as Props;
           <span class="sr-only">characters used</span>
         </div>
 
-        <div class="border-t border-border/50 pt-5">
+        <div
+          id="turnstile-shell"
+          class="min-h-0 data-[turnstile-state=error]:min-h-10 data-[turnstile-state=interactive]:min-h-[65px]"
+          data-turnstile-state="idle"
+        >
+          <p id="turnstile-status" class="sr-only" aria-live="polite"></p>
           <div
-            id="turnstile-shell"
-            class="relative grid min-h-[65px] w-full overflow-hidden border border-border/50 bg-surface-subtle/40 transition-[min-height,border-color,background-color] duration-normal data-[turnstile-state=error]:border-error/40 data-[turnstile-state=interactive]:bg-background data-[turnstile-state=verified]:border-success/30"
-            data-turnstile-state="idle"
-          >
-            <div
-              id="turnstile-placeholder"
-              class="col-start-1 row-start-1 flex h-[65px] items-center gap-3 px-4 transition-opacity"
-            >
-              <span
-                class="flex size-9 shrink-0 items-center justify-center border border-accent/25 bg-accent-subtle text-accent"
-                aria-hidden="true"
-              >
-                <svg class="size-4" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 3 5 6v5c0 4.6 2.9 8.2 7 10 4.1-1.8 7-5.4 7-10V6l-7-3Z"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linejoin="round"
-                  ></path>
-                  <path
-                    d="m9 12 2 2 4-4"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>
-                </svg>
-              </span>
-              <span class="min-w-0">
-                <span
-                  id="turnstile-status"
-                  class="block text-sm font-semibold text-foreground"
-                  aria-live="polite"
-                >
-                  Secure verification ready
-                </span>
-                <span class="mt-0.5 block text-xs text-muted-foreground">
-                  Protected by Cloudflare
-                </span>
-              </span>
-            </div>
-            <div
-              id="turnstile-container"
-              class="z-10 col-start-1 row-start-1 flex w-full min-w-0 items-start justify-start [&>iframe]:max-w-full"
-              role="group"
-              aria-label="Human verification challenge"
-            ></div>
-          </div>
+            id="turnstile-container"
+            class="flex w-full min-w-0 items-start justify-start [&>iframe]:max-w-full"
+            role="group"
+            aria-label="Human verification challenge"
+          ></div>
         </div>
 
         <Button type="submit" variant="primary" size="lg" fullWidth>

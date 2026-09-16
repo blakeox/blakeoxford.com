@@ -3,7 +3,7 @@
  * IntroCopy — kicker + heading + optional description with a tight type rhythm.
  * Use in heroes and featured lockups so stacks don't drift page-to-page.
  */
-import { headingSizeClass, type HeadingSize } from '@/lib/typeScale';
+import { headingSizeClass, resolveHeadingSize, type HeadingSizeInput } from '@/lib/typeScale';
 
 export interface Props {
   kicker?: string;
@@ -12,7 +12,7 @@ export interface Props {
   description?: string;
   as?: 'h1' | 'h2';
   /** Heading size ladder — shared with SectionHeading via typeScale */
-  size?: HeadingSize;
+  size?: HeadingSizeInput;
   align?: 'start' | 'center';
   /** Optional proof / outcome line between title and description */
   emphasis?: string;
@@ -38,7 +38,9 @@ const {
 } = Astro.props as Props;
 
 const isCentered = align === 'center';
-const bodySize = descriptionSize ?? (size === 'identity' ? 'xl' : size === 'hero' ? 'lg' : 'md');
+const resolvedSize = resolveHeadingSize(size);
+const bodySize =
+  descriptionSize ?? (resolvedSize === 'identity' ? 'xl' : resolvedSize === 'hero' ? 'lg' : 'md');
 
 const descriptionSizeClasses = {
   md: 'pt-0.5 text-base leading-relaxed text-pretty sm:text-lg',
@@ -48,7 +50,7 @@ const descriptionSizeClasses = {
 
 const descriptionToneClasses = {
   muted: 'text-muted-foreground',
-  strong: 'text-foreground/90',
+  strong: 'text-foreground',
 } as const;
 ---
 
@@ -73,7 +75,7 @@ const descriptionToneClasses = {
       class:list={[
         descriptionSizeClasses[bodySize],
         descriptionToneClasses[descriptionTone],
-        isCentered ? 'max-w-2xl' : size === 'identity' ? '' : 'max-w-xl',
+        isCentered ? 'max-w-2xl' : resolvedSize === 'identity' ? '' : 'max-w-xl',
       ]}
     >
       {description}

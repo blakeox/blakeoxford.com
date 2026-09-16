@@ -192,8 +192,6 @@ const contact = defineCollection({
       title: z.string(),
       description: z.string(),
       scenarios: z.array(z.string()),
-      primaryCta: z.object({ href: z.string(), label: z.string() }),
-      secondaryCta: z.object({ href: z.string(), label: z.string() }),
       sidebar: z.object({
         heading: z.string(),
         items: z.array(z.string()),

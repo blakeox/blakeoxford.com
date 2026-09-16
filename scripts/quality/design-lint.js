@@ -51,6 +51,8 @@ const ARBITRARY_SPACING_PX_REGEX =
 const UNDEFINED_DESIGN_REGEX =
   /(?:from|via|to|bg|text|border|ring)-tertiary(?:-[\w/.[\]]+)?|var\(--color-(?:foreground-rgb|foreground-light-rgb)\)/g;
 const UNSUPPORTED_OPACITY_REGEX = /\/(?:35|45)(?=[\s"'`}\]])/g;
+const OPACITY_TEXT_REGEX =
+  /\btext-(?:foreground|muted-foreground|subtle-foreground|accent|primary)\/\d+\b/g;
 const RAW_PALETTE_REGEX =
   /\b(?:text|bg|border|ring|from|via|to)-(?:gray|green|red|blue|yellow|amber|purple|pink|orange|emerald|rose|indigo|cyan)-(?:50|100|200|300|400|500|600|700|800|900|950)(?:\/\d+)?\b/g;
 const RAW_WHITE_BLACK_REGEX =
@@ -248,6 +250,17 @@ function scanSourceFile(file) {
 
   addRegexFindings(findings.undefined, relPath, content, UNDEFINED_DESIGN_REGEX);
   addRegexFindings(findings.opacity, relPath, content, UNSUPPORTED_OPACITY_REGEX);
+
+  if (
+    (relPath.startsWith('src/components/') ||
+      relPath.startsWith('src/features/') ||
+      relPath.startsWith('src/pages/')) &&
+    !relPath.startsWith('src/pages/design/') &&
+    !relPath.startsWith('src/pages/docs/') &&
+    !relPath.startsWith('src/pages/debug/')
+  ) {
+    addRegexFindings(findings.opacity, relPath, content, OPACITY_TEXT_REGEX);
+  }
   addRegexFindings(findings.taxonomy, relPath, content, LEGACY_COMPONENT_PATH_REGEX);
 
   if (

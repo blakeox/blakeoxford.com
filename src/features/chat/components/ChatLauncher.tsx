@@ -12,7 +12,7 @@ export function ChatLauncher({ isOpen, launcherRef, openChat, closeChat }: ChatL
       ref={launcherRef}
       type="button"
       className={cn(CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED)}
-      aria-label={isOpen ? 'Close AI assistant' : 'Open AI assistant — conversational chat'}
+      aria-label={isOpen ? 'Close Ask' : 'Open Ask'}
       onClick={() => {
         if (isOpen) {
           closeChat();

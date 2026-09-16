@@ -2,8 +2,6 @@
 import PageHero from '@/components/composites/PageHero.astro';
 import PhotoCarousel from '@/components/composites/PhotoCarousel.astro';
 import IntroCopy from '@/components/composites/IntroCopy.astro';
-import Button from '@/components/primitives/Button.astro';
-import ButtonGroup from '@/components/composites/ButtonGroup.astro';
 
 export interface AboutHeroContent {
   kicker: string;
@@ -21,10 +19,10 @@ const { content } = Astro.props;
 
 <PageHero id="about-me" flush containerSize="full" containerPadding={false} includeBlurOrbs={false}>
   <div class="relative z-10 flex w-full flex-1 flex-col">
-    <div class="about-hero-split flex flex-col md:grid md:grid-cols-2 md:gap-0">
-      <div class="layout-gutter order-1 flex flex-col justify-center pt-24 pb-10 md:order-1 md:py-14 md:pr-6 lg:pr-10 xl:pr-14">
+    <div class="about-hero-split flex flex-1 flex-col md:grid md:grid-cols-2 md:gap-0">
+      <div class="layout-gutter order-1 flex flex-col justify-center pt-24 pb-10 md:py-14 md:pr-6 lg:pr-10 xl:pr-14">
         <div
-          class="mx-auto flex w-full max-w-2xl flex-col gap-6 md:mx-0"
+          class="mx-auto flex w-full max-w-2xl flex-col gap-8 md:mx-0"
           data-layout-shell="about-hero-copy"
         >
           <IntroCopy
@@ -35,18 +33,25 @@ const { content } = Astro.props;
             size="hero"
             descriptionSize="md"
           />
-          <ButtonGroup align="start" responsive>
-            <Button variant="primary" href="/contact/">
-              Start a conversation
-            </Button>
-            <Button variant="ghost" href="/projects/">
-              See the work
-            </Button>
-          </ButtonGroup>
+          <ul
+            class="flex flex-col gap-3 border-t border-border/40 pt-5"
+            role="list"
+            aria-label="How I show up in engagements"
+          >
+            {content.proofPoints.map((point) => (
+              <li class="flex items-start gap-3 text-sm leading-snug text-foreground sm:text-base">
+                <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      <div class="about-hero-media order-2 w-full overflow-hidden md:order-2 md:h-full">
+      <div
+        class="about-hero-media order-2 w-full overflow-hidden md:h-full"
+        data-chat-avoid-launcher
+      >
         <div class="relative h-full w-full">
           <PhotoCarousel class="h-full w-full" />
           <div
@@ -59,25 +64,16 @@ const { content } = Astro.props;
   </div>
 </PageHero>
 
-<section
-  class="border-y border-border/40 bg-surface-subtle/60"
-  aria-label="How I show up in engagements"
->
-  <div class="layout-gutter mx-auto max-w-container-2xl py-8 sm:py-10">
-    <ul class="grid gap-4 sm:grid-cols-3 sm:gap-6" role="list">
-      {content.proofPoints.map((point) => (
-        <li class="flex items-start gap-3 text-sm leading-snug text-foreground/88 sm:text-base">
-          <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-          <span>{point}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
-</section>
-
 <style>
   .about-hero-media {
     height: min(48vh, 24rem);
+  }
+
+  @media (width < 768px) {
+    .about-hero-split > .layout-gutter {
+      min-height: calc(100svh - var(--nav-height));
+      padding-bottom: 4.5rem;
+    }
   }
 
   @media (width >= 640px) {
@@ -88,12 +84,12 @@ const { content } = Astro.props;
 
   @media (width >= 768px) {
     .about-hero-split {
-      min-height: min(38rem, calc(100svh - 4.5rem));
+      min-height: calc(100svh - var(--nav-height));
     }
 
     .about-hero-media {
       height: 100%;
-      min-height: 30rem;
+      min-height: 0;
     }
   }
 </style>

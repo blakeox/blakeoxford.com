@@ -183,7 +183,7 @@ export const ChatHeader = memo(function ChatHeader({
               <span className={STATUS_DOT} aria-hidden="true" />
               <span className="truncate">
                 <span className="text-subtle-foreground">Viewing</span>{' '}
-                <span className="font-medium text-foreground/85">{pageLabel}</span>
+                <span className="font-medium text-foreground">{pageLabel}</span>
               </span>
             </span>
           )}
@@ -248,7 +248,7 @@ export const ChatHeader = memo(function ChatHeader({
         <button
           type="button"
           className={OVERLAY_ICON_BUTTON}
-          aria-label="Close assistant"
+          aria-label="Close Ask"
           onClick={closeChat}
         >
           <svg

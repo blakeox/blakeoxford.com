@@ -3,8 +3,18 @@
  */
 
 @layer components {
+  .brand-avatar {
+    object-position: 50% 28%;
+  }
+
+  :root[data-theme='dark'] .brand-avatar,
+  html.dark .brand-avatar {
+    object-position: 50% 30%;
+    filter: brightness(1.12) contrast(1.04);
+  }
+
   .nav-utility-button {
-    @apply inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-border/60 bg-surface/75 text-foreground/80 transition-colors;
+    @apply inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-border/60 bg-surface/75 text-muted-foreground transition-colors;
   }
 
   .nav-utility-button.search-toggle {

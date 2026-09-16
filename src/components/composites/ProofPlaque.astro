@@ -1,0 +1,65 @@
+---
+/**
+ * ProofPlaque — typographic evidence when photography isn't available.
+ * Number-led lockup that reads in light and dark without clip-art wash.
+ */
+import { headingSizeClass } from '@/lib/typeScale';
+
+export interface Props {
+  figure?: string;
+  caption: string;
+  size?: 'card' | 'feature' | 'hero';
+  href?: string;
+  label?: string;
+  class?: string;
+}
+
+const {
+  figure,
+  caption,
+  size = 'feature',
+  href,
+  label,
+  class: className = '',
+} = Astro.props as Props;
+
+const Wrapper = href ? 'a' : 'div';
+const linkAttrs = href ? { href, 'aria-label': label ?? caption } : {};
+---
+
+<Wrapper
+  {...linkAttrs}
+  class:list={[
+    'proof-plaque relative flex flex-col justify-end bg-surface-elevated ring-1 ring-border/50',
+    size === 'card' && 'min-h-44 gap-2 p-6 sm:min-h-48',
+    size === 'feature' && 'min-h-72 gap-4 p-8 sm:min-h-80 sm:p-10',
+    size === 'hero' && 'min-h-72 gap-4 p-8 sm:min-h-96 sm:p-10',
+    href &&
+      'transition-colors duration-normal focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none',
+    className,
+  ]}
+>
+  {figure ? (
+    <p
+      class:list={[
+        'font-heading font-semibold tracking-tight text-pretty text-foreground',
+        size === 'card' && 'text-4xl leading-none sm:text-5xl',
+        size !== 'card' && headingSizeClass('identity'),
+      ]}
+    >
+      {figure}
+    </p>
+  ) : null}
+  <p
+    class:list={[
+      'max-w-xs text-pretty',
+      size === 'card' ? 'text-sm leading-snug sm:text-base' : 'text-lg leading-snug sm:text-xl',
+      figure
+        ? 'text-muted-foreground'
+        : 'font-heading font-semibold tracking-tight text-foreground',
+      !figure && size !== 'card' && 'text-2xl sm:text-3xl',
+    ]}
+  >
+    {caption}
+  </p>
+</Wrapper>

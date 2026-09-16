@@ -131,7 +131,7 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
             aria-label="Search site content"
             autoComplete="off"
             spellCheck={false}
-            className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground/70 focus:outline-none"
+            className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground focus:outline-none"
           />
           {query ? (
             <button

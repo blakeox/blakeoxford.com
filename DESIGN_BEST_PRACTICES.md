@@ -48,7 +48,7 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 | Section rhythm | `--space-section-sm` … `--space-section-2xl`                      | `py-section-sm` … `py-section-2xl` via `Section`         |
 | Radius         | `--radius` … `--radius-2xl`                                       | `rounded`, `rounded-xl`                                  |
 | Shadows        | `--shadow-sm` … `--shadow-2xl`, `--shadow-overlay`                | `shadow-md`, `shadow-overlay`                            |
-| Motion         | `--duration-fast` … `--duration-slow`                             | `duration-fast`, `duration-moderate`                     |
+| Motion         | `--duration-instant` … `--duration-slow`                          | `duration-normal`, `duration-moderate`                   |
 | Z-index        | `--z-nav`, `--z-chat`, `--z-chat-launcher`, `--z-search`          | `z-nav`, `z-chat`, `z-chat-launcher`, `z-search`         |
 | Layout         | `--container-padding*`, `--layout-max-2xl`, `--nav-height`        | `layout-gutter` (via `Container`), `max-w-container-2xl` |
 
@@ -182,21 +182,22 @@ Use for:
 
 To ensure global theming agility and hardened accessibility, direct Tailwind grayscale utilities for body or heading text (e.g., `text-gray-600/700/800/900` and dark variants) are deprecated. Always express textual color via semantic tokens:
 
-| Intent                    | Utility Pattern                           | Backed Token              |
-| ------------------------- | ----------------------------------------- | ------------------------- |
-| Primary text              | `text-foreground`                         | `--color-foreground`      |
-| Muted / secondary         | `text-foreground/80` (or /70)             | same + opacity layer      |
-| Strong emphasis           | `text-foreground` with font-weight change | `--color-foreground`      |
-| Inverse (on dark surface) | `text-foreground` on dark surfaces        | `--color-foreground`      |
-| Surface background        | `bg-surface` (theme-aware)                | `--color-surface`         |
-| Accent text               | `text-accent-emphasis` (theme-aware)      | `--color-accent-emphasis` |
-| Page background           | `bg-background` (theme-aware)             | `--color-background`      |
-| Border                    | `border-border` (theme-aware)             | `--color-border`          |
+| Intent                    | Utility Pattern                           | Backed Token                |
+| ------------------------- | ----------------------------------------- | --------------------------- |
+| Primary text              | `text-foreground`                         | `--color-foreground`        |
+| Muted / secondary         | `text-muted-foreground`                   | `--color-muted-foreground`  |
+| Captions / meta           | `text-subtle-foreground`                  | `--color-subtle-foreground` |
+| Strong emphasis           | `text-foreground` with font-weight change | `--color-foreground`        |
+| Inverse (on dark surface) | `text-foreground` on dark surfaces        | `--color-foreground`        |
+| Surface background        | `bg-surface` (theme-aware)                | `--color-surface`           |
+| Accent text               | `text-accent-emphasis` (theme-aware)      | `--color-accent-emphasis`   |
+| Page background           | `bg-background` (theme-aware)             | `--color-background`        |
+| Border                    | `border-border` (theme-aware)             | `--color-border`            |
 
 Rules:
 
 - Never reintroduce raw `text-gray-*` for prose or headings. Exception: temporary experimental component prototypes (remove before merge).
-- Prefer opacity suffixes (`/90`, `/80`, `/70`) over inventing new near-identical tokens for hierarchy.
+- Prefer `text-muted-foreground` and `text-subtle-foreground` over opacity suffixes (`/80`, `/70`) on `text-foreground`. Opacity-only hierarchy fails WCAG on dark surfaces.
 - If a new semantic meaning (e.g., `success`, `warning`) emerges, add a token + Tailwind mapping; do not approximate with a random green/yellow hex.
 - Background layers should use `background` (page), `surface` (cards/sections), and `surface-subtle` instead of arbitrary gray steps.
 - Contrast drift monitoring is enforced via the Playwright contrast spec with a non-failing sentinel (see `tests/playwright/accessibility/contrast-ratio.spec.ts`).
@@ -251,7 +252,7 @@ Designer / reviewer action: If sentinel counts rise or badge slope trends upward
 ## 7. Interaction & Motion
 
 - Respect `prefers-reduced-motion` (no essential information conveyed only via motion)
-- Use semantic duration tokens: `duration-instant` (100ms), `duration-fast` / `duration-normal` (200ms), `duration-moderate` (300ms), `duration-slow` (500ms)
+- Use semantic duration tokens: `duration-instant` (100ms), `duration-normal` (200ms; `--duration-fast` is the backing token), `duration-moderate` (300ms), `duration-slow` (500ms)
 - Use semantic easing: `ease-standard`, `ease-emphasized`, `ease-decelerate`
 - Prefer transform/opacity for performance; avoid layout-affecting animations
 - Always provide a visible focus ring (never remove outline without replacement)

@@ -150,7 +150,7 @@ export function CommandFooter({
   return (
     <div className={OVERLAY_FOOTER} data-search-backend={searchSource || undefined}>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <span className="hidden text-subtle-foreground/90 sm:inline">
+        <span className="hidden text-subtle-foreground sm:inline">
           <kbd className={getKbdClasses()}>↑↓</kbd> · <kbd className={getKbdClasses()}>↵</kbd> open
           · <kbd className={getKbdClasses()}>⌘↵</kbd> new tab
           {showCopyHint ? (
@@ -161,7 +161,7 @@ export function CommandFooter({
           ) : null}{' '}
           · <kbd className={getKbdClasses()}>esc</kbd>
         </span>
-        <span className="text-subtle-foreground/80 sm:hidden">Tap to open</span>
+        <span className="text-subtle-foreground sm:hidden">Tap to open</span>
       </div>
     </div>
   );

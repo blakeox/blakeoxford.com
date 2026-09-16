@@ -26,30 +26,47 @@ export default function ChatLauncherIsland() {
 
     window.addEventListener('ai-chat:state', onStateEvent);
 
-    let avoidObserver: IntersectionObserver | null = null;
-    const observeAvoidTarget = () => {
-      avoidObserver?.disconnect();
-      const target = document.querySelector<HTMLElement>('[data-chat-avoid-launcher]');
+    const onContactPage = () =>
+      document.body.dataset.hideAskLauncher === 'true' ||
+      /\/contact\/?$/.test(window.location.pathname);
 
-      if (!target || typeof IntersectionObserver === 'undefined') {
-        setIsOccluded(false);
-        return;
-      }
-
-      avoidObserver = new IntersectionObserver(
-        ([entry]) => setIsOccluded(Boolean(entry?.isIntersecting)),
-        { threshold: 0.01 }
-      );
-      avoidObserver.observe(target);
+    const fabCollisionRect = () => {
+      const compact = window.matchMedia('(min-width: 640px)').matches;
+      const inset = compact ? 24 : 16;
+      const size = compact ? 56 : 48;
+      return {
+        left: window.innerWidth - inset - size,
+        top: window.innerHeight - inset - size,
+        right: window.innerWidth - inset,
+        bottom: window.innerHeight - inset,
+      };
     };
 
-    observeAvoidTarget();
-    document.addEventListener('astro:page-load', observeAvoidTarget);
+    const overlapsFab = (target: HTMLElement) => {
+      const a = target.getBoundingClientRect();
+      const b = fabCollisionRect();
+      return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    };
+
+    const syncOcclusion = () => {
+      if (onContactPage()) {
+        setIsOccluded(true);
+        return;
+      }
+      const target = document.querySelector<HTMLElement>('[data-chat-avoid-launcher]');
+      setIsOccluded(Boolean(target && overlapsFab(target)));
+    };
+
+    syncOcclusion();
+    window.addEventListener('scroll', syncOcclusion, { passive: true });
+    window.addEventListener('resize', syncOcclusion);
+    document.addEventListener('astro:page-load', syncOcclusion);
 
     return () => {
       window.removeEventListener('ai-chat:state', onStateEvent);
-      document.removeEventListener('astro:page-load', observeAvoidTarget);
-      avoidObserver?.disconnect();
+      window.removeEventListener('scroll', syncOcclusion);
+      window.removeEventListener('resize', syncOcclusion);
+      document.removeEventListener('astro:page-load', syncOcclusion);
     };
   }, []);
 
@@ -64,7 +81,7 @@ export default function ChatLauncherIsland() {
       {!isOpen && !isOccluded && (
         <button
           className={cn(CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED)}
-          aria-label="Open AI search assistant"
+          aria-label="Open Ask"
           aria-expanded={false}
           data-ai-launcher
           data-ai-action="open"

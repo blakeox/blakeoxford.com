@@ -112,9 +112,7 @@ const inputProps = {
     </label>
 
     {isTextarea ? (
-      <textarea {...sharedFieldProps} rows={rows}>
-        {value}
-      </textarea>
+      <textarea {...sharedFieldProps} rows={rows}>{value ?? ''}</textarea>
     ) : (
       <input type={type} {...inputProps} />
     )}
@@ -136,17 +134,5 @@ const inputProps = {
 )}
 
 {isHidden && (
-  <>
-    <label for={id} class="sr-only">
-      {label || id}
-    </label>
-    <input
-      type="hidden"
-      id={id}
-      name={fieldName}
-      value={value}
-      disabled={disabled || undefined}
-      aria-hidden="true"
-    />
-  </>
+  <input type="hidden" id={id} name={fieldName} value={value} disabled={disabled || undefined} />
 )}

@@ -3,7 +3,7 @@
  * CtaBand — full-bleed closing CTA used on home, work, and about.
  */
 import Container from '@/components/primitives/Container.astro';
-import SectionHeading from '@/components/primitives/SectionHeading.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
 import Button from '@/components/primitives/Button.astro';
 import ButtonGroup from './ButtonGroup.astro';
 
@@ -14,6 +14,8 @@ export interface Props {
   kicker?: string;
   primary: { href: string; label: string };
   secondary?: { href: string; label: string };
+  /** Full-bleed page closer vs in-article next steps. */
+  density?: 'band' | 'article';
   class?: string;
   'data-layout-section'?: string;
 }
@@ -25,44 +27,75 @@ const {
   kicker,
   primary,
   secondary,
+  density = 'band',
   class: className = '',
   'data-layout-section': layoutSection,
 } = Astro.props;
+
+const isArticle = density === 'article';
 ---
 
-<section
-  class:list={[
-    'home-cta-band w-full border-y border-border/40 py-section-lg sm:py-section-xl lg:py-section-2xl',
-    className,
-  ]}
-  aria-labelledby={titleId}
-  data-layout-section={layoutSection}
->
-  <Container size="xl" class="relative z-10">
-    <div
-      class="home-cta-lockup flex max-w-3xl flex-col items-start gap-6 text-left"
-      data-layout-shell="cta-lockup"
-    >
-      <div class="flex flex-col items-start gap-2.5">
-        {kicker && <span class="section-kicker">{kicker}</span>}
-        <SectionHeading id={titleId} size="4xl">
-          {title}
-        </SectionHeading>
-        <p class="max-w-2xl pt-0.5 text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">
-          {description}
-        </p>
-      </div>
-      <ButtonGroup align="start" responsive>
-        <Button variant="primary" size="lg" href={primary.href}>
-          {primary.label}
+{isArticle ? (
+  <div
+    class:list={['flex max-w-3xl flex-col items-start gap-6 text-left', className]}
+    data-layout-shell="cta-lockup"
+  >
+    <IntroCopy
+      kicker={kicker}
+      title={title}
+      titleId={titleId}
+      description={description}
+      as="h2"
+      size="title"
+      descriptionSize="md"
+    />
+    <ButtonGroup align="start" responsive>
+      <Button variant="primary" href={primary.href}>
+        {primary.label}
+      </Button>
+      {secondary && (
+        <Button variant="outline" href={secondary.href}>
+          {secondary.label}
         </Button>
-        {secondary && (
-          <Button variant="outline" size="lg" href={secondary.href}>
-            {secondary.label}
+      )}
+    </ButtonGroup>
+    <slot />
+  </div>
+) : (
+  <section
+    class:list={[
+      'home-cta-band w-full border-y border-border/40 py-section-lg sm:py-section-xl lg:py-section-2xl',
+      className,
+    ]}
+    aria-labelledby={titleId}
+    data-layout-section={layoutSection}
+  >
+    <Container size="xl" class="relative z-10">
+      <div
+        class="home-cta-lockup flex max-w-3xl flex-col items-start gap-6 text-left"
+        data-layout-shell="cta-lockup"
+      >
+        <IntroCopy
+          kicker={kicker}
+          title={title}
+          titleId={titleId}
+          description={description}
+          as="h2"
+          size="display"
+          descriptionSize="lg"
+        />
+        <ButtonGroup align="start" responsive>
+          <Button variant="primary" size="lg" href={primary.href}>
+            {primary.label}
           </Button>
-        )}
-      </ButtonGroup>
-      <slot />
-    </div>
-  </Container>
-</section>
+          {secondary && (
+            <Button variant="outline" size="lg" href={secondary.href}>
+              {secondary.label}
+            </Button>
+          )}
+        </ButtonGroup>
+        <slot />
+      </div>
+    </Container>
+  </section>
+)}

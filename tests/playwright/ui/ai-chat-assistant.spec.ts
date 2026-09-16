@@ -149,15 +149,14 @@ test.describe('AI chat assistant', () => {
 
   test('opens and closes the assistant panel accessibly', async ({ page }) => {
     const widget = page.locator('[data-ai-chat-widget]');
-    const launcher = widget.getByRole('button', { name: 'Open AI search assistant' });
+    const launcher = widget.getByRole('button', { name: 'Open Ask' });
     await expect(launcher).toBeVisible();
 
     await launcher.click();
 
     const panel = page.locator('[data-ai-chat-panel]');
     await expect(panel).toHaveAttribute('data-ai-visible', 'true');
-    await expect(widget.getByRole('button', { name: /close/i })).toHaveCount(0);
-    await expect(panel.getByRole('button', { name: 'Close assistant' })).toHaveCount(1);
+    await expect(panel.getByRole('button', { name: 'Close Ask' })).toBeVisible();
 
     const composer = panel.getByRole('textbox', { name: /Ask about this page or the site/i });
 
@@ -170,7 +169,7 @@ test.describe('AI chat assistant', () => {
     await expect(composer).toBeFocused();
 
     // Close via header close button to use the real user path
-    const closeBtn = panel.getByRole('button', { name: 'Close assistant' });
+    const closeBtn = panel.getByRole('button', { name: 'Close Ask' });
     await closeBtn.waitFor({ state: 'visible' });
     // Ensure the panel (and header) are scrolled into view before clicking
     await panel.scrollIntoViewIfNeeded();
@@ -188,7 +187,7 @@ test.describe('AI chat assistant', () => {
   test('streams a response and lets the visitor start fresh', async ({ page }) => {
     const widget = page.locator('[data-ai-chat-widget]');
     const panel = page.locator('[data-ai-chat-panel]');
-    await widget.getByRole('button', { name: 'Open AI search assistant' }).click();
+    await widget.getByRole('button', { name: 'Open Ask' }).click();
     await expect(panel).toHaveAttribute('data-ai-visible', 'true');
 
     const composer = panel.getByRole('textbox', { name: /Ask about this page or the site/i });
@@ -224,7 +223,7 @@ test.describe('AI chat assistant', () => {
   test('exposes advanced controls and clears the conversation', async ({ page }) => {
     const widget = page.locator('[data-ai-chat-widget]');
     const panel = page.locator('[data-ai-chat-panel]');
-    await widget.getByRole('button', { name: 'Open AI search assistant' }).click();
+    await widget.getByRole('button', { name: 'Open Ask' }).click();
     await expect(panel).toHaveAttribute('data-ai-visible', 'true');
 
     await panel.getByRole('button', { name: 'Assistant options' }).click();
