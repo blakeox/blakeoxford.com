@@ -1,41 +1,14 @@
-/* Home dual-identity hero — shared with HomeHero* pieces */
+/* Home dual-identity hero — one viewport, both theses, portrait hover. */
 
 .home-dual {
   position: relative;
   background: var(--color-background);
 }
 
-.home-dual-track {
-  position: relative;
-  /* Keep enough travel for the identity crossfade without creating a dead zone. */
-  height: 120vh;
-}
-
-.home-dual-sticky {
-  position: sticky;
-  top: var(--nav-height);
-  display: flex;
-  height: calc(100svh - var(--nav-height));
-  align-items: center;
-  overflow: hidden;
-  background:
-    radial-gradient(
-      ellipse 48% 52% at 78% 46%,
-      color-mix(in oklch, var(--color-accent) calc(8% + var(--dual-progress, 0) * 8%), transparent)
-        0%,
-      transparent 68%
-    ),
-    linear-gradient(
-      165deg,
-      color-mix(in oklch, var(--color-surface) 94%, transparent) 0%,
-      var(--color-background) 55%,
-      color-mix(in oklch, var(--color-accent) 4%, var(--color-background)) 100%
-    );
-}
-
 .home-dual-stage {
   display: flex;
   width: 100%;
+  min-height: calc(100svh - var(--nav-height));
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
@@ -61,14 +34,14 @@
 }
 
 .home-dual-lines {
-  display: grid;
+  display: flex;
   width: 100%;
   max-width: 28rem;
-  min-height: 3.2em;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
 .home-dual-line {
-  grid-area: 1 / 1;
   margin: 0;
   font-family: var(--font-heading);
   font-size: clamp(1.15rem, 1rem + 0.55vw, 1.45rem);
@@ -76,32 +49,11 @@
   letter-spacing: -0.02em;
   line-height: 1.35;
   color: var(--color-foreground);
-  transition:
-    opacity 0.18s var(--ease-standard, ease),
-    transform 0.18s var(--ease-standard, ease);
-}
-
-.home-dual-line[data-dual-line-work] {
-  opacity: 1;
-  transform: none;
 }
 
 .home-dual-line[data-dual-line-daring] {
-  visibility: hidden;
-  opacity: 0;
-  transform: translateY(0.35rem);
-}
-
-.home-dual[data-side='daring'] .home-dual-line[data-dual-line-work] {
-  visibility: hidden;
-  opacity: 0;
-  transform: translateY(-0.35rem);
-}
-
-.home-dual[data-side='daring'] .home-dual-line[data-dual-line-daring] {
-  visibility: visible;
-  opacity: 1;
-  transform: none;
+  color: var(--color-muted-foreground);
+  font-weight: 500;
 }
 
 .home-dual-visual {
@@ -119,40 +71,60 @@
 }
 
 .home-dual-frame {
+  position: relative;
+  overflow: hidden;
   aspect-ratio: 4 / 5;
+  cursor: pointer;
+  background: var(--color-surface-elevated);
   box-shadow:
     var(--shadow-lg),
-    0 0 0 1px
-      color-mix(
-        in oklch,
-        var(--color-accent) calc(18% + var(--dual-progress, 0) * 28%),
-        transparent
-      ),
-    0 0 calc(28px + var(--dual-progress, 0) * 28px)
-      color-mix(in oklch, var(--color-accent) calc(8% + var(--dual-progress, 0) * 14%), transparent);
-  transform: scale(calc(1 + (var(--dual-progress, 0) * 0.03)));
-  transform-origin: center center;
+    0 0 0 1px color-mix(in oklch, var(--color-foreground) 14%, transparent);
 }
 
-.home-dual-frame-tick {
-  position: absolute;
-  right: 0.65rem;
-  bottom: 0.65rem;
-  left: 0.65rem;
-  z-index: 2;
-  height: 2px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: color-mix(in oklch, var(--color-background) 35%, transparent);
-}
-
-.home-dual-frame-tick::after {
+.home-dual-frame::after {
   content: '';
-  display: block;
-  width: calc(var(--dual-progress, 0) * 100%);
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   border-radius: inherit;
-  background: color-mix(in oklch, var(--color-accent) 85%, white 10%);
+}
+
+.home-dual-frame:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.home-dual-face {
+  will-change: opacity;
+}
+
+.home-dual-face-work {
+  object-position: 50% 22%;
+}
+
+.home-dual-face-daring {
+  object-position: 48% 22%;
+  opacity: 0;
+}
+
+.home-dual[data-side='daring'] .home-dual-face-daring,
+.home-dual-frame:focus-within .home-dual-face-daring {
+  opacity: 1;
+}
+
+.home-dual[data-side='daring'] .home-dual-face-work,
+.home-dual-frame:focus-within .home-dual-face-work {
+  opacity: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-dual-frame:hover .home-dual-face-daring {
+    opacity: 1;
+  }
+
+  .home-dual-frame:hover .home-dual-face-work {
+    opacity: 0;
+  }
 }
 
 .home-dual-frame-caption {
@@ -162,65 +134,9 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--color-accent-emphasis);
-  transition:
-    letter-spacing 0.35s ease,
-    color 0.35s ease;
-}
-
-.home-dual[data-settled='true'] .home-dual-frame {
-  box-shadow:
-    var(--shadow-lg),
-    0 0 0 1px color-mix(in oklch, var(--color-accent) 48%, transparent),
-    0 0 56px color-mix(in oklch, var(--color-accent) 22%, transparent);
-  transition:
-    box-shadow 0.55s var(--ease-decelerate, ease),
-    transform 0.55s var(--ease-decelerate, ease);
-}
-
-.home-dual[data-settled='true'] .home-dual-frame-caption {
-  letter-spacing: 0.14em;
-}
-
-.home-dual[data-settled='true'] .home-dual-sticky {
-  background:
-    radial-gradient(
-      ellipse 52% 56% at 78% 46%,
-      color-mix(in oklch, var(--color-accent) 16%, transparent) 0%,
-      transparent 70%
-    ),
-    linear-gradient(
-      165deg,
-      color-mix(in oklch, var(--color-surface) 94%, transparent) 0%,
-      var(--color-background) 58%,
-      color-mix(in oklch, var(--color-accent) 5%, var(--color-background)) 100%
-    );
-  transition: background 0.55s ease;
-}
-
-.home-dual-face {
-  will-change: opacity, transform, filter;
-}
-
-.home-dual-face-work {
-  object-position: 50% 16%;
-  opacity: calc(1 - var(--dual-progress, 0));
-  transform: scale(calc(1 + var(--dual-progress, 0) * 0.08));
-  filter: blur(calc(var(--dual-progress, 0) * 5px));
-}
-
-.home-dual-face-daring {
-  object-position: 48% 20%;
-  opacity: var(--dual-progress, 0);
-  transform: scale(calc(1.08 - var(--dual-progress, 0) * 0.08));
-  filter: blur(calc((1 - var(--dual-progress, 0)) * 5px));
-  clip-path: inset(0 0 calc((1 - var(--dual-progress, 0)) * 100%) 0);
 }
 
 @media (width >= 768px) {
-  .home-dual-track {
-    height: 135vh;
-  }
-
   .home-dual-stage {
     display: grid;
     grid-template-columns: minmax(20rem, 1.05fr) minmax(16rem, 0.95fr);
@@ -243,60 +159,65 @@
   }
 }
 
-/* Short viewports need normal document flow so the copy and portrait cannot be clipped. */
-@media (prefers-reduced-motion: reduce), (max-height: 700px) {
-  .home-dual-track {
-    height: auto;
-  }
+:root[data-theme='dark'] .home-dual-face-work,
+html.dark .home-dual-face-work {
+  object-position: 50% 24%;
+  filter: brightness(1.14) contrast(1.06);
+}
 
-  .home-dual-sticky {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: calc(100svh - var(--nav-height));
-  }
+:root[data-theme='dark'] .home-dual-frame,
+html.dark .home-dual-frame {
+  box-shadow:
+    var(--shadow-lg),
+    0 0 0 1px color-mix(in oklch, var(--color-foreground) 28%, transparent),
+    0 0 0 8px color-mix(in oklch, var(--color-surface-elevated) 70%, transparent);
+}
 
-  .home-dual-frame {
-    transform: none;
-    transition: none;
-  }
+:root[data-theme='dark'] .home-dual-frame::after,
+html.dark .home-dual-frame::after {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--color-background) 22%, transparent) 0%,
+    transparent 26%,
+    transparent 58%,
+    color-mix(in oklch, var(--color-background) 32%, transparent) 100%
+  );
+}
 
-  .home-dual-frame-tick {
-    display: none;
-  }
-
-  .home-dual-lines {
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .home-dual-line[data-dual-line-work],
-  .home-dual-line[data-dual-line-daring] {
-    position: static;
-    visibility: visible;
+@media (prefers-reduced-motion: reduce) {
+  .home-dual-face-work,
+  .home-dual-face-daring,
+  .home-dual[data-side='daring'] .home-dual-face-work,
+  .home-dual[data-side='daring'] .home-dual-face-daring,
+  .home-dual-frame:hover .home-dual-face-work,
+  .home-dual-frame:hover .home-dual-face-daring,
+  .home-dual-frame:focus-within .home-dual-face-work,
+  .home-dual-frame:focus-within .home-dual-face-daring {
     opacity: 1;
+    filter: none;
     transform: none;
-    transition: none;
-  }
-
-  .home-dual-line[data-dual-line-daring] {
-    color: var(--color-muted-foreground);
-    font-weight: 500;
   }
 
   .home-dual-face-work {
-    opacity: 1;
-    transform: none;
-    filter: none;
     clip-path: inset(0 50% 0 0);
   }
 
   .home-dual-face-daring {
-    opacity: 1;
-    transform: none;
-    filter: none;
     clip-path: inset(0 0 0 50%);
+  }
+}
+
+@media (max-height: 700px) {
+  .home-dual-stage {
+    min-height: 0;
+  }
+}
+
+@media (width < 768px) {
+  .home-dual-stage {
+    min-height: 0;
+    justify-content: flex-start;
+    gap: 1.5rem;
+    padding-block: 1.25rem 4.5rem;
   }
 }

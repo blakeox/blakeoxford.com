@@ -61,7 +61,7 @@ describe('typed design recipes', () => {
       'bg-button-primary-bg'
     );
     expect(getButtonClasses({ disabled: true, variant: 'secondary' })).not.toContain('bg-surface');
-    expect(getButtonClasses({ size: 'icon' })).toContain('size-8');
+    expect(getButtonClasses({ size: 'icon' })).toContain('size-11');
   });
 
   it('centralizes field styling including invalid state and composer shell', () => {
@@ -109,7 +109,8 @@ describe('typed design recipes', () => {
 
   it('keeps FeatureCard variants limited to expressive treatments', () => {
     expect(Object.keys(featureCardRecipe.variants)).toEqual(['accent', 'primary']);
-    expect(featureCardRecipe.base).toContain('bg-gradient-to-br');
+    expect(featureCardRecipe.base).toContain('@container');
+    expect(featureCardRecipe.base).not.toContain('bg-gradient-to-br');
   });
 
   it('owns semantic status tones on Callout, not FeatureCard', () => {

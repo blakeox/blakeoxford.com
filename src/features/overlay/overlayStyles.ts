@@ -47,7 +47,7 @@ export const OVERLAY_CLOSE_BUTTON = cn(
 /** Header icon control: recipe chrome without a bg fill so active toggles can paint. */
 export const OVERLAY_ICON_BUTTON = cn(
   buttonRecipe.base,
-  'size-8 shrink-0 rounded-lg border border-border/50 p-0 text-muted-foreground hover:border-accent/50 hover:text-accent'
+  'touch-target size-11 min-h-[2.75rem] min-w-[2.75rem] shrink-0 rounded-lg border border-border/50 p-0 text-muted-foreground hover:border-accent/50 hover:text-accent'
 );
 
 export const OVERLAY_FOOTER =

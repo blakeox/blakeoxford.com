@@ -23,12 +23,12 @@
   },
   "resumeHighlights": {
     "kicker": "Outcomes",
-    "title": "Proof from both sides",
-    "description": "Systems that hold under load — and the edge cases that make them better.",
+    "title": "What held after launch",
+    "description": "Migrations, automation, and decision systems that teams kept running.",
     "sides": [
       {
         "side": "work",
-        "label": "Work",
+        "label": "Platforms",
         "metric": "180 users migrated",
         "title": "Cloud & SaaS transformations that stick",
         "items": [
@@ -45,7 +45,7 @@
       },
       {
         "side": "daring",
-        "label": "Daring",
+        "label": "Automation",
         "metric": "Multi-million $ overhead cut",
         "title": "Automation and decision systems at the edge",
         "items": [
@@ -65,7 +65,7 @@
   "recentProjects": {
     "kicker": "Projects",
     "title": "Work that shipped",
-    "description": "One side builds systems teams keep running. The other chases the edge cases that make them better.",
+    "description": "Case studies with the problem, what shipped, and the proof.",
     "cta": {
       "href": "/projects/",
       "label": "All selected work"
@@ -82,7 +82,7 @@
   },
   "cta": {
     "title": "Bring the hardest bottleneck.",
-    "description": "Systems that must hold \u2014 or edge cases that need a sharper answer.",
+    "description": "Migration, automation, reporting, or AI-enabled workflow — bring the constraint that’s costing you the most.",
     "button": {
       "href": "/contact/",
       "label": "Discuss your bottleneck"

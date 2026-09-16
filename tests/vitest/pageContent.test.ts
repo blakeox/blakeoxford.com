@@ -13,19 +13,35 @@ describe('About, Contact, and Home page content', () => {
     expect(about.achievements.cards.length).toBe(3);
     expect(about.timeline.items.length).toBeGreaterThan(0);
     expect(about.education.skills.length).toBeGreaterThan(0);
+
+    const recap = JSON.stringify(about.achievements) + JSON.stringify(about.timeline);
+    expect(recap).not.toMatch(/180/);
+    expect(recap).not.toMatch(/\$1\.2M/);
+    expect(recap).not.toMatch(/Google Workspace/);
+    expect(JSON.stringify(about.hero.proofPoints)).not.toMatch(/Platform migrations/);
   });
 
-  it('contact page.json includes channels and hero CTAs', () => {
+  it('keeps about operating habits in the hero copy, not a second recap band', () => {
+    const source = readFileSync(
+      path.join(process.cwd(), 'src/components/features/about/AboutHeroSection.astro'),
+      'utf8'
+    );
+
+    expect(source).toContain('content.proofPoints');
+    expect(source).toContain('How I show up in engagements');
+    expect(source).not.toContain('bg-surface-subtle');
+  });
+
+  it('contact page.json includes channels and a bottleneck claim', () => {
     const contact = JSON.parse(
       readFileSync(path.join(process.cwd(), 'src/content/contact/page.json'), 'utf8')
     );
 
     expect(contact.meta.title).toBeTruthy();
+    expect(contact.hero.title).toMatch(/bottleneck/i);
     expect(contact.hero.scenarios.length).toBe(3);
-    expect(contact.hero.primaryCta).toEqual({
-      href: '#contact-form',
-      label: 'Write a project brief',
-    });
+    expect(contact.hero.primaryCta).toBeUndefined();
+    expect(contact.hero.secondaryCta).toBeUndefined();
     expect(contact.channels.items.length).toBeGreaterThan(0);
     expect(contact.channels.items.some((item: { icon: string }) => item.icon === 'email')).toBe(
       true
@@ -53,7 +69,7 @@ describe('About, Contact, and Home page content', () => {
     expect(home.recentProjects.cta.href).toBe('/projects/');
     expect(home.cta.button.href).toBe('/contact/');
     expect(home.cta.button.label).toBe('Discuss your bottleneck');
-    expect(home.cta.description).toMatch(/edge cases/i);
+    expect(home.cta.description).toMatch(/constraint/i);
     expect(home.latestPosts.kicker).toBeUndefined();
     expect(home.cta.kicker).toBeUndefined();
   });

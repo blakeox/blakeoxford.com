@@ -1,10 +1,8 @@
 ---
 /**
- * Case-study CTA — matches home / projects closing band language.
+ * Case-study CTA — article-density CtaBand so closers share one lockup.
  */
-import Button from '@/components/primitives/Button.astro';
-import ButtonGroup from '@/components/composites/ButtonGroup.astro';
-import { headingSizeClass } from '@/lib/typeScale';
+import CtaBand from '@/components/composites/CtaBand.astro';
 
 interface Props {
   heading: string;
@@ -25,22 +23,10 @@ const {
 } = Astro.props;
 ---
 
-<div class="flex max-w-2xl flex-col gap-5">
-  <h3
-    class:list={[
-      'font-heading font-semibold tracking-tight text-foreground',
-      headingSizeClass('title'),
-    ]}
-  >
-    {heading}
-  </h3>
-  <p class="text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p>
-  <ButtonGroup align="start" responsive class="pt-1">
-    <Button variant="primary" href={primaryHref}>
-      {primaryLabel}
-    </Button>
-    <Button variant="outline" href={secondaryHref}>
-      {secondaryLabel}
-    </Button>
-  </ButtonGroup>
-</div>
+<CtaBand
+  density="article"
+  title={heading}
+  description={description}
+  primary={{ href: primaryHref, label: primaryLabel }}
+  secondary={{ href: secondaryHref, label: secondaryLabel }}
+/>

@@ -32,7 +32,6 @@ const routeContracts = [
       'ProjectsFeaturedSection',
       'ProjectsLibrarySection',
       'ProjectsCapabilitiesSection',
-      'ProjectsFindingsSection',
       'ProjectsCTASection',
     ],
   },
@@ -42,7 +41,7 @@ const routeContracts = [
   },
   {
     file: 'src/pages/contact.astro',
-    sections: ['ContactHeroSection', 'ContactMessageSection', 'ContactChannels'],
+    sections: ['ContactMessageSection', 'ContactChannels'],
   },
 ];
 

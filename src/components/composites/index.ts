@@ -2,7 +2,6 @@
 export { default as AIChatWidget } from './AIChatWidget.astro';
 export { default as ButtonGroup } from './ButtonGroup.astro';
 export { default as Callout } from './Callout.astro';
-export { default as CoinFlipImage } from './CoinFlipImage.astro';
 export { default as ContentBand } from './ContentBand.astro';
 export { default as CtaBand } from './CtaBand.astro';
 export { default as DotMetaList } from './DotMetaList.astro';
@@ -13,6 +12,7 @@ export { default as PageHero } from './PageHero.astro';
 export { default as CTASection } from './CTASection.astro';
 export { default as MetricsTable } from './MetricsTable.astro';
 export { default as PhotoCarousel } from './PhotoCarousel.astro';
+export { default as ProofPlaque } from './ProofPlaque.astro';
 export { default as SectionHeader } from './SectionHeader.astro';
 export { default as Timeline } from './Timeline.astro';
 export { default as TimelineItem } from './TimelineItem.astro';

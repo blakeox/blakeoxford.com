@@ -1,7 +1,6 @@
 ---
 import Layout from '@/layouts/BaseLayout.astro';
 import ContactChannels from '@/components/features/contact/ContactChannels.astro';
-import ContactHeroSection from '@/components/features/contact/ContactHeroSection.astro';
 import ContactMessageSection from '@/components/features/contact/ContactMessageSection.astro';
 import ContactFormIsland from '@/features/contact/ContactFormIsland';
 import { getContactPage } from '@/content/contact/getContactPage';
@@ -12,11 +11,10 @@ const canonicalUrl = CANONICAL_URLS.contact;
 ---
 
 {/*
-  Hire-path close: claim the bottleneck → send the brief → alternate channels.
+  Hire-path close: the form is the page. Alternate channels stay tertiary.
 */}
 <Layout title={page.meta.title} description={page.meta.description} url={canonicalUrl} wide={true}>
-  <ContactHeroSection content={page.hero} />
-  <ContactMessageSection sidebar={page.hero.sidebar} />
+  <ContactMessageSection content={page.hero} />
   <ContactChannels channels={page.channels} />
   <ContactFormIsland client:only="react" />
 </Layout>
