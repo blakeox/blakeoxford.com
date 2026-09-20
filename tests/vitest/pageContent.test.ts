@@ -19,9 +19,9 @@ describe('About, Contact, and Home page content', () => {
     expect(recap).not.toMatch(/\$1\.2M/);
     expect(recap).not.toMatch(/Google Workspace/);
     expect(JSON.stringify(about.hero.proofPoints)).not.toMatch(/Platform migrations/);
-    expect(about.hero.description.split(/(?<=[.!?])\s+/).filter(Boolean).length).toBeLessThanOrEqual(
-      2
-    );
+    expect(
+      about.hero.description.split(/(?<=[.!?])\s+/).filter(Boolean).length
+    ).toBeLessThanOrEqual(2);
   });
 
   it('keeps about operating habits in the hero copy, not a second recap band', () => {

@@ -166,16 +166,6 @@ function bindHomeDual() {
       },
       { signal }
     );
-    el.addEventListener(
-      'focus',
-      () => {
-        if (staticLayout.matches) return;
-        const choice = readChoice(el.getAttribute('data-dual-select'));
-        if (!choice) return;
-        choose(choice);
-      },
-      { signal }
-    );
   }
 
   window.addEventListener('scroll', syncScroll, { signal, passive: true });

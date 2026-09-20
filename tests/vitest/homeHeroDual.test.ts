@@ -117,6 +117,16 @@ describe('home hero static layout', () => {
     expect(root.dataset.side).toBe('daring');
   });
 
+  it('does not lock a side when a Work/Daring control only receives focus', () => {
+    vi.useFakeTimers();
+    const { root } = setup();
+    bindHomeHero();
+    root.querySelector('[data-dual-select="daring"]')?.dispatchEvent(new Event('focus'));
+    expect(root.dataset.side).toBe('work');
+    vi.advanceTimersByTime(HOME_DUAL_INTRO_MS);
+    expect(root.dataset.side).toBe('daring');
+  });
+
   it('commits Daring as the portrait scrolls away and does not rewind', () => {
     vi.useFakeTimers();
     const { root, visual } = setup();
