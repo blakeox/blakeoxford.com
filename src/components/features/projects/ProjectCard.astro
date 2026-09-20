@@ -2,14 +2,11 @@
 /**
  * ProjectCard — portfolio showcase.
  * Compact: cardless media teaser for home.
- * Full: Selected work library with BaseCard weight.
+ * Full: Selected work library, still cardless — plaque or photo, then proof copy.
  */
-import BaseCard from '@/components/primitives/BaseCard.astro';
 import OptimizedImage from '@/components/primitives/OptimizedImage.astro';
 import Flex from '@/components/primitives/Flex.astro';
-import Badge from '@/components/primitives/Badge.astro';
 import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
-import GradientOverlay from '@/components/primitives/GradientOverlay.astro';
 import { headingSizeClass } from '@/lib/typeScale';
 import { take } from '@/utils/array';
 import { formatDateISO, formatDateShort } from '@/utils/date';
@@ -35,12 +32,6 @@ const visibleTags = take(tags, 3);
 const extraTagCount = Math.max(tags.length - visibleTags.length, 0);
 const hasDescription = Boolean(description.trim());
 const primaryCategory = categories[0] ?? 'Case study';
-const supportingCategory = categories[1];
-const valueSummary =
-  description.trim() ||
-  highlights[0] ||
-  impact[0] ||
-  'Operational change delivered through systems, automation, and enablement.';
 const proofLine = impact[0] || highlights[1] || highlights[0];
 const metrics = Array.isArray(data.metrics) ? data.metrics : [];
 const metricLine = metrics[0] ? `${metrics[0].result} ${metrics[0].metric}` : '';
@@ -56,190 +47,109 @@ const proofPlaque = fromImpact.figure
 
 const dateISO = project.data.date ? formatDateISO(project.data.date) : undefined;
 const dateLabel = project.data.date ? formatDateShort(project.data.date) : undefined;
+const valueSummary =
+  description.trim() ||
+  highlights[0] ||
+  impact[0] ||
+  'Operational change delivered through systems, automation, and enablement.';
 ---
 
-{compact ? (
-  <article
-    class:list={[
-      'group @container relative flex h-full flex-col',
-      featured && 'project-card-featured',
-    ]}
+<article
+  class:list={[
+    'group @container relative flex h-full flex-col',
+    featured && 'project-card-featured',
+  ]}
+>
+  <a
+    href={`/projects/${slug}/`}
+    class="relative flex h-full flex-col gap-4 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
+    aria-labelledby={`project-card-${slug}`}
   >
-    <a
-      href={`/projects/${slug}/`}
-      class="relative flex h-full flex-col gap-4 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-      aria-labelledby={`project-card-${slug}`}
+    {image ? (
+      <figure
+        class:list={[
+          'relative overflow-hidden bg-surface-subtle',
+          compact
+            ? featured
+              ? 'aspect-[16/9] sm:aspect-[16/10] lg:aspect-[16/9]'
+              : 'aspect-[16/10]'
+            : 'aspect-[16/11] @md:aspect-[16/10]',
+        ]}
+      >
+        <OptimizedImage
+          src={image}
+          alt={`${title} preview`}
+          width={featured ? 1400 : 960}
+          height={featured ? 788 : 540}
+          class="h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.03]"
+          loading="lazy"
+          quality={80}
+        />
+      </figure>
+    ) : proofPlaque ? (
+      <ProofPlaque figure={proofPlaque.figure} caption={proofPlaque.caption} size="card" />
+    ) : null}
+
+    <div
+      class:list={['flex flex-1 flex-col', compact ? (featured ? 'gap-3' : 'gap-2.5') : 'gap-3']}
     >
-      {image ? (
-        <figure
+      <p class="project-card-meta text-xs font-semibold tracking-label text-subtle-foreground uppercase">
+        {primaryCategory}
+        {dateISO && dateLabel ? (
+          <>
+            <span aria-hidden="true"> · </span>
+            <time datetime={dateISO}>{dateLabel}</time>
+          </>
+        ) : null}
+      </p>
+
+      <h3
+        id={`project-card-${slug}`}
+        class:list={[
+          'font-heading font-semibold tracking-tight text-pretty text-foreground',
+          headingSizeClass(compact && !featured ? 'subtitle' : 'title'),
+        ]}
+      >
+        {title}
+      </h3>
+
+      {proofLine && image ? (
+        <p
           class:list={[
-            'relative overflow-hidden bg-surface-subtle',
-            featured ? 'aspect-[16/9] sm:aspect-[16/10] lg:aspect-[16/9]' : 'aspect-[16/10]',
+            'leading-snug text-muted-foreground',
+            compact && featured ? 'max-w-2xl text-base sm:text-lg' : 'text-sm @md:text-base',
           ]}
         >
-          <OptimizedImage
-            src={image}
-            alt={`${title} preview`}
-            width={featured ? 1400 : 960}
-            height={featured ? 788 : 540}
-            class="h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.03]"
-            loading="lazy"
-            quality={80}
-          />
-        </figure>
-      ) : proofPlaque ? (
-        <ProofPlaque figure={proofPlaque.figure} caption={proofPlaque.caption} size="card" />
+          {proofLine}
+        </p>
       ) : null}
 
-      <div class:list={['flex flex-1 flex-col', featured ? 'gap-3' : 'gap-2.5']}>
-        <p class="project-card-meta text-xs font-semibold tracking-label text-subtle-foreground uppercase">
-          {primaryCategory}
-          {dateISO && dateLabel ? (
-            <>
-              <span aria-hidden="true"> · </span>
-              <time datetime={dateISO}>{dateLabel}</time>
-            </>
-          ) : null}
+      {!compact && hasDescription && valueSummary !== proofLine ? (
+        <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:3] @md:text-base">
+          {valueSummary}
         </p>
+      ) : null}
 
-        <h3
-          id={`project-card-${slug}`}
-          class:list={[
-            'font-heading font-semibold tracking-tight text-pretty text-foreground',
-            headingSizeClass(featured ? 'title' : 'subtitle'),
-          ]}
+      {!compact && (visibleTags.length > 0 || extraTagCount > 0) ? (
+        <Flex
+          as="ul"
+          wrap
+          align="center"
+          gap="xs"
+          class="text-xxs font-semibold tracking-wide text-subtle-foreground uppercase"
+          aria-label="Project focus areas"
         >
-          {title}
-        </h3>
+          {visibleTags.map((tag) => (
+            <li>{tag}</li>
+          ))}
+          {extraTagCount > 0 && <li>+{extraTagCount}</li>}
+        </Flex>
+      ) : null}
 
-        {proofLine && image ? (
-          <p
-            class:list={[
-              'leading-snug text-muted-foreground',
-              featured ? 'max-w-2xl text-base sm:text-lg' : 'text-sm @md:text-base',
-            ]}
-          >
-            {proofLine}
-          </p>
-        ) : null}
-
-        <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-accent-emphasis transition-all duration-normal motion-safe:group-hover:gap-3">
-          View case study
-          <ArrowRightIcon class="opacity-90 transition-transform duration-normal motion-safe:group-hover:translate-x-0.5" />
-        </span>
-      </div>
-    </a>
-  </article>
-) : (
-  <article class="group @container relative flex h-full flex-col">
-    <BaseCard variant="elevated" hover="lift" padding="none" rounded="xl" class="h-full">
-      <a
-        href={`/projects/${slug}/`}
-        class="relative flex h-full flex-col overflow-hidden focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-        aria-labelledby={`project-card-${slug}`}
-      >
-        <GradientOverlay variant="hover-card" direction="br" />
-
-        {image ? (
-          <figure class="relative aspect-[16/11] overflow-hidden @md:aspect-[16/10]">
-            <OptimizedImage
-              src={image}
-              alt={`${title} preview`}
-              width={960}
-              height={540}
-              class="h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.04]"
-              loading="lazy"
-              quality={80}
-            />
-            <GradientOverlay variant="image-fade" direction="t" />
-          </figure>
-        ) : proofPlaque ? (
-          <ProofPlaque
-            figure={proofPlaque.figure}
-            caption={proofPlaque.caption}
-            size="card"
-            class="rounded-none ring-0"
-          />
-        ) : null}
-
-        <div class="relative z-[1] flex flex-1 flex-col gap-4 px-5 pt-5 pb-6 @sm:gap-4 @sm:px-6 @sm:pt-6 @sm:pb-7 @md:px-7">
-          <div class="space-y-2.5">
-            <Flex
-              wrap
-              align="center"
-              gap="sm"
-              class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
-            >
-              {primaryCategory && (
-                <Badge variant="pill" size="xs" class="bg-accent-subtle text-accent ring-accent/20">
-                  {primaryCategory}
-                </Badge>
-              )}
-              {supportingCategory && (
-                <Badge variant="pill" size="xs">
-                  {supportingCategory}
-                </Badge>
-              )}
-              {dateISO && dateLabel && <time datetime={dateISO}>{dateLabel}</time>}
-            </Flex>
-
-            <h3
-              id={`project-card-${slug}`}
-              class:list={[
-                'font-heading font-semibold tracking-tight text-pretty text-foreground',
-                headingSizeClass('title'),
-              ]}
-            >
-              {title}
-            </h3>
-
-            {proofLine && image ? (
-              <p class="border-l-2 border-accent/50 pl-3.5 text-sm leading-snug font-semibold text-foreground @md:text-base">
-                {proofLine}
-              </p>
-            ) : null}
-
-            {(hasDescription || valueSummary) && valueSummary !== proofLine && (
-              <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:3] @md:text-base">
-                {valueSummary}
-              </p>
-            )}
-          </div>
-
-          {(visibleTags.length > 0 || extraTagCount > 0) && (
-            <Flex
-              as="ul"
-              wrap
-              align="center"
-              gap="xs"
-              class="text-xxs font-semibold tracking-wide text-subtle-foreground uppercase"
-              aria-label="Project focus areas"
-            >
-              {visibleTags.map((tag) => (
-                <li>
-                  <Badge variant="pill" size="xs">
-                    {tag}
-                  </Badge>
-                </li>
-              ))}
-              {extraTagCount > 0 && (
-                <li>
-                  <Badge variant="pill" size="xs" class="text-subtle-foreground">
-                    +{extraTagCount}
-                  </Badge>
-                </li>
-              )}
-            </Flex>
-          )}
-
-          <div class="mt-auto flex items-center justify-end gap-4 pt-1">
-            <span class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis transition-all duration-normal motion-safe:group-hover:gap-3">
-              Read the case study
-              <ArrowRightIcon class="opacity-90 transition-transform duration-normal motion-safe:group-hover:translate-x-0.5" />
-            </span>
-          </div>
-        </div>
-      </a>
-    </BaseCard>
-  </article>
-)}
+      <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-accent-emphasis transition-all duration-normal motion-safe:group-hover:gap-3">
+        View case study
+        <ArrowRightIcon class="opacity-90 transition-transform duration-normal motion-safe:group-hover:translate-x-0.5" />
+      </span>
+    </div>
+  </a>
+</article>

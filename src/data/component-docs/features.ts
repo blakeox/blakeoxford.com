@@ -10,7 +10,7 @@ export const featureDocs: ComponentDoc[] = [
     category: 'Features',
     subcategory: 'Projects',
     description:
-      'Project listing card for repeated project summaries. Displays hero image, title, description, date, tags, and link while keeping card styling on the shared token contract.',
+      'Cardless project teaser: proof plaque or photo, title, and a single case-study action.',
     filePath: 'src/components/features/projects/ProjectCard.astro',
     props: [
       {
@@ -168,7 +168,8 @@ export const featureDocs: ComponentDoc[] = [
     name: 'HomeHeroCopy',
     category: 'Features',
     subcategory: 'Home',
-    description: 'Home hero brand lockup, dual lines, and primary + proof CTAs.',
+    description:
+      'Home hero brand lockup, Work/Daring theses that track the portrait, and primary + proof CTAs.',
     filePath: 'src/components/features/home/HomeHeroCopy.astro',
     examples: [
       {
@@ -184,7 +185,8 @@ export const featureDocs: ComponentDoc[] = [
     name: 'HomeHeroVisual',
     category: 'Features',
     subcategory: 'Home',
-    description: 'Home hero Work/Daring portrait frame. Work by default; Daring on hover or focus.',
+    description:
+      'Home hero Work/Daring photographic plane. Detroit riverfront dissolves once to the skywalk, then rests; scrolling the portrait away can play that reveal early.',
     filePath: 'src/components/features/home/HomeHeroVisual.astro',
     examples: [
       {
@@ -194,7 +196,7 @@ export const featureDocs: ComponentDoc[] = [
     ],
     tags: ['home', 'hero', 'portrait'],
     visualTier: 'expressive',
-    tokenDependencies: ['--color-accent', '--shadow-lg', '--color-surface-subtle'],
+    tokenDependencies: ['--color-accent', '--color-background'],
   },
   {
     name: 'HomeCTASection',
@@ -260,7 +262,8 @@ export const featureDocs: ComponentDoc[] = [
     name: 'BlogIndexHeroSection',
     category: 'Features',
     subcategory: 'Blog',
-    description: 'Blog index page hero with title and introductory copy.',
+    description:
+      'Blog index hero: writing claim in the gutter, latest photographic post filling the other column when one exists.',
     filePath: 'src/components/features/blog/BlogIndexHeroSection.astro',
     examples: [{ title: 'Blog hero', code: '<BlogIndexHeroSection />' }],
     tags: ['blog', 'hero', 'index'],
@@ -271,8 +274,7 @@ export const featureDocs: ComponentDoc[] = [
     name: 'BlogIndexContentSection',
     category: 'Features',
     subcategory: 'Blog',
-    description:
-      'Blog index listing shell with article count pill, search CTA, and post rows on BaseCard.',
+    description: 'Blog index archive of post rows. Find lives in the nav; this section lists.',
     filePath: 'src/components/features/blog/BlogIndexContentSection.astro',
     examples: [{ title: 'Blog listing', code: '<BlogIndexContentSection posts={posts} />' }],
     tags: ['blog', 'index', 'listing'],
@@ -283,7 +285,7 @@ export const featureDocs: ComponentDoc[] = [
     name: 'BlogPostRow',
     category: 'Features',
     subcategory: 'Blog',
-    description: 'Single blog index row with hero media, pill tags, and outline read CTA.',
+    description: 'Cardless writing-index row: date, title, excerpt, and optional flush photo.',
     filePath: 'src/components/features/blog/BlogPostRow.astro',
     examples: [{ title: 'Post row', code: '<BlogPostRow post={entry} />' }],
     tags: ['blog', 'listing', 'row'],
@@ -310,18 +312,20 @@ export const featureDocs: ComponentDoc[] = [
     name: 'ProjectHero',
     category: 'Features',
     subcategory: 'Projects',
-    description: 'Project detail page hero with title, description, tags, and hero image.',
+    description:
+      'Project detail page hero as a flush split: copy in the gutter, photography or a proof plaque filling the other column.',
     filePath: 'src/components/features/projects/ProjectHero.astro',
     examples: [{ title: 'Project hero', code: '<ProjectHero project={entry} />' }],
     tags: ['project', 'hero', 'detail'],
     visualTier: 'expressive',
-    tokenDependencies: ['--color-foreground', '--gradient-primary', 'rounded-2xl'],
+    tokenDependencies: ['--color-foreground', '--color-surface'],
   },
   {
     name: 'ProjectsFeaturedSection',
     category: 'Features',
     subcategory: 'Projects',
-    description: 'Projects index featured case study band with proof copy and primary CTA.',
+    description:
+      'Projects index featured case study as a flush split: thesis in the gutter, typographic proof filling the other column.',
     filePath: 'src/components/features/projects/ProjectsFeaturedSection.astro',
     examples: [
       {
@@ -428,7 +432,8 @@ export const featureDocs: ComponentDoc[] = [
     name: 'AboutHeroSection',
     category: 'Features',
     subcategory: 'About',
-    description: 'About page hero introducing background and professional summary.',
+    description:
+      'About page hero: one claim, one short sentence, operating habits, and the in-situ gallery.',
     filePath: 'src/components/features/about/AboutHeroSection.astro',
     examples: [{ title: 'About hero', code: '<AboutHeroSection content={page.hero} />' }],
     tags: ['about', 'hero'],

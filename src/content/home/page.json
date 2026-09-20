@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Blake Oxford - Leadership & Portfolio",
+    "title": "Blake Oxford - Systems Architect",
     "description": "Systems architect and workflow strategist turning complexity into opportunity-designing scalable systems, streamlining operations, and leading high-stakes transformations that deliver lasting results."
   },
   "hero": {
@@ -8,17 +8,17 @@
     "defaultTagline": "Work me builds systems that last. Daring me finds the edge.",
     "primaryCta": {
       "href": "/contact/",
-      "label": "Start a conversation"
+      "label": "Discuss your bottleneck"
     },
     "secondaryCta": {
       "href": "/projects/",
       "label": "See the work"
     },
     "portrait": {
-      "frontSrc": "/assets/images/Blake-O-scaled.jpg",
-      "backSrc": "/assets/images/china-profile-picture.jpg",
-      "alt": "Blake Oxford — work side",
-      "altBack": "Blake Oxford — daring side"
+      "frontSrc": "/assets/images/optimized/avif/blake_detroit_skyline_bell_isle.avif",
+      "backSrc": "/assets/images/optimized/avif/china-profile-picture-hero.avif",
+      "alt": "Blake Oxford on the Detroit riverfront, skyline behind him",
+      "altBack": "Blake Oxford on a skyscraper skywalk above a city at sunset"
     }
   },
   "resumeHighlights": {
@@ -46,7 +46,7 @@
       {
         "side": "daring",
         "label": "Automation",
-        "metric": "Multi-million $ overhead cut",
+        "metric": "$M+ overhead cut",
         "title": "Automation and decision systems at the edge",
         "items": [
           {
