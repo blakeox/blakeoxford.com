@@ -62,7 +62,7 @@ describe('typed design recipes', () => {
     );
     expect(getButtonClasses({ disabled: true, variant: 'secondary' })).not.toContain('bg-surface');
     expect(getButtonClasses({ size: 'icon' })).toContain('size-11');
-    expect(getButtonClasses({ variant: 'outline' })).toContain('border-foreground/35');
+    expect(getButtonClasses({ variant: 'outline' })).toContain('border-foreground/40');
     expect(getButtonClasses({ variant: 'outline' })).not.toMatch(/(?:^|\s)border-border(?:\s|$)/);
   });
 
