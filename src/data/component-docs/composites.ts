@@ -362,7 +362,7 @@ export const compositeDocs: ComponentDoc[] = [
     name: 'ProofPlaque',
     category: 'Composites',
     description:
-      'Typographic evidence lockup for featured work and case studies when photography is not available. Number-led; reads in light and dark.',
+      'Typographic evidence lockup for featured work and case studies when photography is not available. Number-led; flush size fills a split column instead of a ringed card.',
     filePath: 'src/components/composites/ProofPlaque.astro',
     examples: [
       {

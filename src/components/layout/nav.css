@@ -4,13 +4,13 @@
 
 @layer components {
   .brand-avatar {
-    object-position: 50% 28%;
+    object-position: 50% 18%;
   }
 
   :root[data-theme='dark'] .brand-avatar,
   html.dark .brand-avatar {
-    object-position: 50% 30%;
-    filter: brightness(1.12) contrast(1.04);
+    object-position: 50% 18%;
+    filter: brightness(1.08) contrast(1.04);
   }
 
   .nav-utility-button {

@@ -40,6 +40,14 @@ for (const r of routes) {
     await expect(page.locator('main')).toBeVisible();
     await expect(page.locator('h1')).toBeVisible();
 
+    // Pin Work before capture — the dual-hero timer is JS, not CSS, so
+    // animations:'disabled' alone cannot stop Work→Daring mid-settle.
+    if (r.name === 'home') {
+      const hero = page.locator('[data-home-dual]');
+      await hero.getByRole('button', { name: 'Work', exact: true }).click();
+      await expect(hero).toHaveAttribute('data-side', 'work');
+    }
+
     await expect(page).toHaveScreenshot(`${r.name}.png`, {
       fullPage: false,
       animations: 'disabled',

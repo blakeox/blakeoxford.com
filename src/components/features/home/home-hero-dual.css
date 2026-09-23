@@ -1,4 +1,4 @@
-/* Home dual-identity hero — one viewport, both theses, portrait hover. */
+/* Home dual-identity hero — one dissolve to Daring, then rest. */
 
 .home-dual {
   position: relative;
@@ -7,13 +7,16 @@
 
 .home-dual-stage {
   display: flex;
-  width: 100%;
   min-height: calc(100svh - var(--nav-height));
   flex-direction: column;
-  align-items: flex-start;
+}
+
+.home-dual-copy-shell {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
   justify-content: center;
-  gap: 2.25rem;
-  padding-block: 2rem;
+  padding-block: 1.25rem 1.5rem;
 }
 
 .home-dual-copy {
@@ -42,167 +45,219 @@
 }
 
 .home-dual-line {
+  appearance: none;
+  display: block;
+  width: 100%;
   margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
   font-family: var(--font-heading);
   font-size: clamp(1.15rem, 1rem + 0.55vw, 1.45rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.35;
   color: var(--color-foreground);
+  transition: color var(--duration-normal) var(--ease-out-standard);
 }
 
-.home-dual-line[data-dual-line-daring] {
+.home-dual-line[aria-pressed='false'] {
   color: var(--color-muted-foreground);
   font-weight: 500;
 }
 
-.home-dual-visual {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-}
-
-.home-dual-visual-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.home-dual-frame {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 4 / 5;
-  cursor: pointer;
-  background: var(--color-surface-elevated);
-  box-shadow:
-    var(--shadow-lg),
-    0 0 0 1px color-mix(in oklch, var(--color-foreground) 14%, transparent);
-}
-
-.home-dual-frame::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-.home-dual-frame:focus-visible {
+.home-dual-line:focus-visible {
   outline: var(--focus-ring-width) solid var(--focus-ring-color);
   outline-offset: var(--focus-ring-offset);
 }
 
+.home-dual-visual {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 18rem;
+  overflow: hidden;
+}
+
+.home-dual-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
 .home-dual-face {
-  will-change: opacity;
+  pointer-events: none;
+  transition: opacity var(--duration-slow) var(--ease-out-decelerate);
 }
 
 .home-dual-face-work {
-  object-position: 50% 22%;
+  object-position: 50% 20%;
 }
 
 .home-dual-face-daring {
-  object-position: 48% 22%;
+  object-position: 64% 26%;
   opacity: 0;
 }
 
 .home-dual[data-side='daring'] .home-dual-face-daring,
-.home-dual-frame:focus-within .home-dual-face-daring {
+.home-dual[data-side='both'] .home-dual-face-daring {
   opacity: 1;
 }
 
-.home-dual[data-side='daring'] .home-dual-face-work,
-.home-dual-frame:focus-within .home-dual-face-work {
+.home-dual[data-side='daring'] .home-dual-face-work {
   opacity: 0;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .home-dual-frame:hover .home-dual-face-daring {
-    opacity: 1;
-  }
-
-  .home-dual-frame:hover .home-dual-face-work {
-    opacity: 0;
-  }
+.home-dual-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--color-background) 18%, transparent) 0%,
+    transparent 28%
+  );
 }
 
-.home-dual-frame-caption {
+.home-dual-ask-pad {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 5.5rem;
+  height: 5.5rem;
+  pointer-events: none;
+}
+
+.home-dual-switch {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.home-dual-switch-sep {
+  color: color-mix(in oklch, var(--color-foreground) 55%, transparent);
+  text-shadow: 0 0 18px var(--color-background);
+}
+
+.home-dual-switch button {
+  appearance: none;
   margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+  color: color-mix(in oklch, var(--color-foreground) 78%, transparent);
+  text-shadow: 0 0 18px var(--color-background);
+  transition: color var(--duration-normal) var(--ease-out-standard);
+}
+
+.home-dual-switch button[aria-pressed='true'] {
   color: var(--color-accent-emphasis);
+}
+
+.home-dual-switch button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
 }
 
 @media (width >= 768px) {
   .home-dual-stage {
     display: grid;
-    grid-template-columns: minmax(20rem, 1.05fr) minmax(16rem, 0.95fr);
-    align-items: center;
-    gap: 2.5rem 3rem;
+    grid-template-columns: minmax(20rem, 0.92fr) minmax(22rem, 1.08fr);
+  }
+
+  .home-dual-copy-shell {
+    flex: initial;
+    padding-block: 2rem;
   }
 
   .home-dual-visual {
-    justify-content: flex-end;
+    flex: initial;
+    min-height: 0;
+    height: 100%;
   }
 
-  .home-dual-visual-inner {
-    align-items: flex-end;
+  .home-dual-veil {
+    background: linear-gradient(
+      90deg,
+      var(--color-background) 0%,
+      color-mix(in oklch, var(--color-background) 55%, transparent) 18%,
+      transparent 48%
+    );
+  }
+
+  .home-dual-switch {
+    left: 1.5rem;
   }
 }
 
 @media (width >= 1024px) {
-  .home-dual-stage {
-    gap: 3rem 4rem;
+  .home-dual-copy-shell {
+    padding-block: 2.5rem;
   }
 }
 
 :root[data-theme='dark'] .home-dual-face-work,
 html.dark .home-dual-face-work {
-  object-position: 50% 24%;
-  filter: brightness(1.14) contrast(1.06);
+  object-position: 50% 20%;
+  filter: brightness(1.06) contrast(1.04);
 }
 
-:root[data-theme='dark'] .home-dual-frame,
-html.dark .home-dual-frame {
-  box-shadow:
-    var(--shadow-lg),
-    0 0 0 1px color-mix(in oklch, var(--color-foreground) 28%, transparent),
-    0 0 0 8px color-mix(in oklch, var(--color-surface-elevated) 70%, transparent);
+:root[data-theme='dark'] .home-dual-face-daring,
+html.dark .home-dual-face-daring {
+  filter: brightness(1.12) contrast(1.06);
 }
 
-:root[data-theme='dark'] .home-dual-frame::after,
-html.dark .home-dual-frame::after {
+:root[data-theme='dark'] .home-dual-veil,
+html.dark .home-dual-veil {
   background: linear-gradient(
     180deg,
-    color-mix(in oklch, var(--color-background) 22%, transparent) 0%,
-    transparent 26%,
-    transparent 58%,
-    color-mix(in oklch, var(--color-background) 32%, transparent) 100%
+    color-mix(in oklch, var(--color-background) 28%, transparent) 0%,
+    transparent 22%
   );
 }
 
+@media (width >= 768px) {
+  :root[data-theme='dark'] .home-dual-veil,
+  html.dark .home-dual-veil {
+    background: linear-gradient(
+      90deg,
+      var(--color-background) 0%,
+      color-mix(in oklch, var(--color-background) 40%, transparent) 10%,
+      transparent 26%
+    );
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .home-dual-face-work,
-  .home-dual-face-daring,
-  .home-dual[data-side='daring'] .home-dual-face-work,
-  .home-dual[data-side='daring'] .home-dual-face-daring,
-  .home-dual-frame:hover .home-dual-face-work,
-  .home-dual-frame:hover .home-dual-face-daring,
-  .home-dual-frame:focus-within .home-dual-face-work,
-  .home-dual-frame:focus-within .home-dual-face-daring {
-    opacity: 1;
-    filter: none;
-    transform: none;
+  .home-dual-face,
+  .home-dual-line,
+  .home-dual-switch button {
+    transition: none;
   }
 
-  .home-dual-face-work {
+  .home-dual[data-side='both'] .home-dual-face-work,
+  .home-dual[data-side='both'] .home-dual-face-daring {
+    opacity: 1;
+    filter: none;
+  }
+
+  .home-dual[data-side='both'] .home-dual-face-work {
     clip-path: inset(0 50% 0 0);
   }
 
-  .home-dual-face-daring {
+  .home-dual[data-side='both'] .home-dual-face-daring {
     clip-path: inset(0 0 0 50%);
   }
 }
@@ -211,13 +266,8 @@ html.dark .home-dual-frame::after {
   .home-dual-stage {
     min-height: 0;
   }
-}
 
-@media (width < 768px) {
-  .home-dual-stage {
-    min-height: 0;
-    justify-content: flex-start;
-    gap: 1.5rem;
-    padding-block: 1.25rem 4.5rem;
+  .home-dual-visual {
+    min-height: 16rem;
   }
 }

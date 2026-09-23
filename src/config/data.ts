@@ -7,10 +7,10 @@ export const siteConfig: SiteConfig = {
   author: 'Blake Oxford',
   description: 'Systems Architect · Workflow Strategist · Action-Oriented Leader',
   tagline: 'Work me builds systems that last. Daring me finds the edge.',
-  email: 'contact@blakeoxford.com',
+  email: 'blakepoxford@outlook.com',
   social: {
     twitter: '@blakeoxford',
     github: 'https://github.com/blakeox',
-    linkedin: 'https://linkedin.com/in/blakeoxford',
+    linkedin: 'https://linkedin.com/in/blake-oxford',
   },
 };
