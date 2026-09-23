@@ -19,6 +19,9 @@ describe('About, Contact, and Home page content', () => {
     expect(recap).not.toMatch(/\$1\.2M/);
     expect(recap).not.toMatch(/Google Workspace/);
     expect(JSON.stringify(about.hero.proofPoints)).not.toMatch(/Platform migrations/);
+    expect(
+      about.hero.description.split(/(?<=[.!?])\s+/).filter(Boolean).length
+    ).toBeLessThanOrEqual(2);
   });
 
   it('keeps about operating habits in the hero copy, not a second recap band', () => {
@@ -63,7 +66,9 @@ describe('About, Contact, and Home page content', () => {
     expect(
       home.resumeHighlights.sides.every(
         (side: { metric: string; items: unknown[] }) =>
-          Boolean(side.metric) && side.items.length === 3
+          Boolean(side.metric) &&
+          side.metric.trim().split(/\s+/).length <= 4 &&
+          side.items.length === 3
       )
     ).toBe(true);
     expect(home.recentProjects.cta.href).toBe('/projects/');
@@ -72,6 +77,13 @@ describe('About, Contact, and Home page content', () => {
     expect(home.cta.description).toMatch(/constraint/i);
     expect(home.latestPosts.kicker).toBeUndefined();
     expect(home.cta.kicker).toBeUndefined();
+  });
+
+  it('keeps page headlines short enough for the type', () => {
+    const projects = JSON.parse(
+      readFileSync(path.join(process.cwd(), 'src/content/projects/_meta.json'), 'utf8')
+    );
+    expect(projects.hero.title.trim().split(/\s+/).length).toBeLessThanOrEqual(4);
   });
 
   it('describes contact entry points as inquiries rather than confirmed bookings', () => {

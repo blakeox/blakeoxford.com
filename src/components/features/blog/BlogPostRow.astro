@@ -1,110 +1,68 @@
 ---
-// BlogPostRow.astro
 import type { BlogPostRowProps } from '@/types/components';
 import OptimizedImage from '@/components/primitives/OptimizedImage.astro';
-import Flex from '@/components/primitives/Flex.astro';
-import Button from '@/components/primitives/Button.astro';
-import Badge from '@/components/primitives/Badge.astro';
-import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
 import { formatDateISO, formatDateShort } from '@/utils/date';
 import { cn } from '@/utils/cn';
 import { headingSizeClass } from '@/lib/typeScale';
 
 const { post, align = 'left' } = Astro.props as BlogPostRowProps;
 const { id: slug, data } = post;
+const tags = Array.isArray(data.tags) ? data.tags.slice(0, 3) : [];
 ---
 
 <article class="group w-full border-y border-border/50 py-5 transition-colors duration-normal hover:bg-surface-subtle/40 sm:py-6">
-  <div
+  <a
+    href={`/blog/${slug}/`}
     class={cn(
-      'flex w-full flex-col items-start gap-6 md:gap-8 lg:flex-row lg:gap-12 xl:gap-16',
+      'flex w-full flex-col items-start gap-6 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none md:gap-8 lg:flex-row lg:gap-12',
       align === 'right' && 'lg:flex-row-reverse'
     )}
   >
     {data.heroImage && (
-      <div class="w-full flex-shrink-0 lg:w-2/5 xl:w-1/2">
-        <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-subtle lg:aspect-[4/3] xl:aspect-[16/10]">
-          <OptimizedImage
-            src={data.heroImage}
-            alt={`Hero image for ${data.title}`}
-            class="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.04]"
-            loading="lazy"
-          />
-        </div>
+      <div class="w-full flex-shrink-0 overflow-hidden bg-surface-subtle lg:w-2/5 xl:w-1/2">
+        <OptimizedImage
+          src={data.heroImage}
+          alt=""
+          class="aspect-[16/10] h-full w-full object-cover transition-transform duration-slow motion-safe:group-hover:scale-[1.03] lg:aspect-[4/3] xl:aspect-[16/10]"
+          loading="lazy"
+        />
       </div>
     )}
 
-    <div class={cn('flex flex-1 flex-col gap-6', !data.heroImage && 'w-full')}>
-      <div class="space-y-4">
-        <Flex
-          wrap
-          align="center"
-          gap="sm"
+    <div class={cn('flex flex-1 flex-col gap-4', !data.heroImage && 'w-full')}>
+      {data.pubDate && (
+        <time
           class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
+          datetime={formatDateISO(data.pubDate)}
         >
-          {data.pubDate && (
-            <time class="inline-flex items-center" datetime={formatDateISO(data.pubDate)}>
-              {formatDateShort(data.pubDate)}
-            </time>
-          )}
-        </Flex>
-
-        <h2
-          class:list={[
-            'font-heading font-semibold text-pretty text-foreground transition-colors duration-moderate group-hover:text-accent-emphasis',
-            headingSizeClass('section'),
-          ]}
-        >
-          <a
-            href={`/blog/${slug}/`}
-            class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          >
-            {data.title}
-          </a>
-        </h2>
-
-        {data.description && (
-          <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:4]">
-            {data.description}
-          </p>
-        )}
-      </div>
-
-      {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
-        <Flex
-          as="ul"
-          wrap
-          align="center"
-          gap="xs"
-          class="text-xxs font-semibold tracking-wide text-subtle-foreground uppercase"
-          aria-label="Post tags"
-        >
-          {data.tags.slice(0, 3).map((tag: string) => (
-            <li>
-              <Badge variant="pill" size="xs">
-                {tag}
-              </Badge>
-            </li>
-          ))}
-          {data.tags.length > 3 && (
-            <li>
-              <Badge variant="pill" size="xs" class="text-subtle-foreground">
-                +{data.tags.length - 3}
-              </Badge>
-            </li>
-          )}
-        </Flex>
+          {formatDateShort(data.pubDate)}
+        </time>
       )}
 
-      <div class="mt-auto flex items-center justify-between gap-4">
-        <span class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">
-          Read article
-        </span>
-        <Button variant="outline" href={`/blog/${slug}/`}>
-          Explore
-          <ArrowRightIcon class="opacity-90" />
-        </Button>
-      </div>
+      <h2
+        class:list={[
+          'font-heading font-semibold text-pretty text-foreground transition-colors duration-moderate group-hover:text-accent-emphasis',
+          headingSizeClass('section'),
+        ]}
+      >
+        {data.title}
+      </h2>
+
+      {data.description && (
+        <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:3]">
+          {data.description}
+        </p>
+      )}
+
+      {tags.length > 0 && (
+        <p class="text-xs font-semibold tracking-wide text-subtle-foreground uppercase">
+          {tags.join(' · ')}
+        </p>
+      )}
+
+      <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-accent-emphasis">
+        Read article
+      </span>
     </div>
-  </div>
+  </a>
 </article>

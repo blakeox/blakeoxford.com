@@ -12,9 +12,8 @@ const currentPath = normalizeNavPath(Astro.url.pathname);
 const logo = {
   name: 'Blake Oxford',
   avatar: {
-    jpg: '/assets/images/Blake-O-scaled.jpg',
-    webp: '/assets/images/optimized/webp/Blake-O-scaled@640w.webp',
-    avif: '/assets/images/optimized/avif/Blake-O-scaled@640w.avif',
+    jpg: '/assets/images/blake_detroit_skyline_bell_isle.jpg',
+    avif: '/assets/images/optimized/avif/blake_detroit_skyline_bell_isle.avif',
   },
 };
 
@@ -44,14 +43,13 @@ function isActive(href: string): boolean {
       >
         <picture class="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60">
           {logo.avatar.avif && <source srcset={logo.avatar.avif} type="image/avif" />}
-          {logo.avatar.webp && <source srcset={logo.avatar.webp} type="image/webp" />}
           <img
-            src={logo.avatar.avif || logo.avatar.webp || logo.avatar.jpg}
+            src={logo.avatar.jpg}
             alt="Blake Oxford"
             aria-hidden="true"
             class="brand-avatar size-9 object-cover"
-            width={640}
-            height={640}
+            width={853}
+            height={853}
             loading="eager"
             fetchpriority="high"
             decoding="async"

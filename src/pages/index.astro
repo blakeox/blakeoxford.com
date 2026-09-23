@@ -35,12 +35,18 @@ const recentBlogPosts: CollectionEntry<'blog'>[] = take(
 const recentProjects = take(await getProjectsSorted(), 3);
 ---
 
-<Layout title={page.meta.title} description={page.meta.description} wide={true}>
+<Layout
+  title={page.meta.title}
+  description={page.meta.description}
+  image="/assets/images/blake_detroit_og.jpg"
+  imageAlt="Blake Oxford on the Detroit riverfront, skyline behind him"
+  wide={true}
+>
   <link
     slot="head"
     rel="preload"
     as="image"
-    href="/assets/images/optimized/avif/Blake-O-scaled@768w.avif"
+    href="/assets/images/optimized/avif/blake_detroit_skyline_bell_isle.avif"
     type="image/avif"
     fetchpriority="high"
   />

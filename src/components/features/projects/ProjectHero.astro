@@ -2,7 +2,6 @@
 import OptimizedImage, {
   type Props as OptimizedImageProps,
 } from '@/components/primitives/OptimizedImage.astro';
-import Container from '@/components/primitives/Container.astro';
 import Button from '@/components/primitives/Button.astro';
 import DotMetaList from '@/components/composites/DotMetaList.astro';
 import ProofPlaque from '@/components/composites/ProofPlaque.astro';
@@ -24,6 +23,7 @@ export interface Props {
 
 const { title, description, date, image, link, categories = [], outcome } = Astro.props;
 const proofPlaque = !image && outcome ? splitProofFigure(outcome) : null;
+const hasVisual = Boolean(image || proofPlaque);
 
 const formattedDate = date.toLocaleDateString('en-US', {
   timeZone: 'UTC',
@@ -33,10 +33,15 @@ const formattedDate = date.toLocaleDateString('en-US', {
 const dateISO = date.toISOString();
 ---
 
-<section class="relative isolate overflow-hidden border-b border-border/40 py-section-lg sm:py-section-xl lg:py-section-2xl">
-  <Container size="xl" class="relative z-10">
-    <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
-      <div class="flex flex-col gap-5">
+<section class="relative isolate overflow-hidden border-b border-border/40">
+  <div
+    class:list={[
+      'flex flex-col',
+      hasVisual && 'lg:grid lg:min-h-[calc(100svh-var(--nav-height))] lg:grid-cols-2',
+    ]}
+  >
+    <div class="layout-gutter flex flex-col justify-center py-section-lg sm:py-section-xl lg:py-section-2xl">
+      <div class="flex max-w-xl flex-col gap-5">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
           <a
             href="/projects/"
@@ -68,7 +73,7 @@ const dateISO = date.toISOString();
             </p>
           ) : null}
           {description && (
-            <p class="max-w-xl pt-0.5 text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">
+            <p class="pt-0.5 text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">
               {description}
             </p>
           )}
@@ -85,23 +90,25 @@ const dateISO = date.toISOString();
           </div>
         )}
       </div>
-
-      {image ? (
-        <figure class="relative">
-          <div class="overflow-hidden ring-1 ring-border/40">
-            <OptimizedImage
-              src={image}
-              alt={title}
-              width={960}
-              height={720}
-              class="aspect-[4/3] h-full w-full object-cover"
-              priority={true}
-            />
-          </div>
-        </figure>
-      ) : proofPlaque ? (
-        <ProofPlaque figure={proofPlaque.figure} caption={proofPlaque.caption} size="hero" />
-      ) : null}
     </div>
-  </Container>
+
+    {image ? (
+      <figure class="relative min-h-72 overflow-hidden lg:h-full">
+        <OptimizedImage
+          src={image}
+          alt={title}
+          width={960}
+          height={1200}
+          class="size-full min-h-72 object-cover lg:absolute lg:inset-0 lg:h-full lg:min-h-full"
+          priority={true}
+        />
+        <div
+          class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background via-background/20 to-transparent lg:block"
+          aria-hidden="true"
+        ></div>
+      </figure>
+    ) : proofPlaque ? (
+      <ProofPlaque figure={proofPlaque.figure} caption={proofPlaque.caption} size="hero" flush />
+    ) : null}
+  </div>
 </section>

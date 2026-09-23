@@ -18,6 +18,7 @@ import { isPublished } from '@/lib/content/publication-contract.mjs';
 import RelatedContent from '@/components/features/content/RelatedContent.astro';
 import { CONTENT_RELATIONSHIPS } from '@/config/content-architecture';
 import { formatDateFull } from '@/utils/date';
+import { resolvePublicImage } from '@/lib/media/publicAssetExists';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', (entry: CollectionEntry<'blog'>) => isPublished(entry));
@@ -40,6 +41,7 @@ if (!post) {
 }
 const { Content } = await render(post);
 const heroImage = post.data.heroImage;
+const photo = resolvePublicImage(heroImage);
 const siteOrigin = Astro.site?.origin ?? 'https://blakeoxford.com';
 const canonicalUrl = `${siteOrigin.replace(/\/$/, '')}/blog/${post.id}/`;
 const formattedDate = formatDateFull(post.data.pubDate);
@@ -87,54 +89,71 @@ const structuredData = [articleSchema, breadcrumbSchema];
   structuredData={structuredData}
   wide={true}
 >
+  <header class="relative isolate overflow-hidden border-b border-border/40">
+    <div
+      class:list={[
+        'flex flex-col',
+        photo && 'lg:grid lg:min-h-[calc(100svh-var(--nav-height))] lg:grid-cols-2',
+      ]}
+    >
+      <div class="layout-gutter flex flex-col justify-center py-section-lg sm:py-section-xl lg:py-section-2xl">
+        <Stack space="lg" class="max-w-xl">
+          <Flex
+            wrap
+            gap="xs"
+            class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
+          >
+            {post.data.tags?.map((tag: string) => (
+              <Badge variant="pill" size="xs">
+                {tag}
+              </Badge>
+            ))}
+          </Flex>
+          <h1
+            class:list={[
+              'font-heading font-semibold tracking-tight text-foreground',
+              headingSizeClass('hero'),
+            ]}
+          >
+            {post.data.title}
+          </h1>
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+            <span>By {post.data.author}</span>
+            <span aria-hidden="true">·</span>
+            <time datetime={post.data.pubDate.toISOString()}>Published on {formattedDate}</time>
+            {hasMaterialUpdate && post.data.updatedDate && (
+              <>
+                <span aria-hidden="true">·</span>
+                <time datetime={post.data.updatedDate.toISOString()}>
+                  Updated on {formatDateFull(post.data.updatedDate)}
+                </time>
+              </>
+            )}
+          </div>
+        </Stack>
+      </div>
+      {photo && (
+        <figure class="relative min-h-72 overflow-hidden lg:h-full">
+          <OptimizedImage
+            src={photo}
+            alt={`Hero image for ${post.data.title}`}
+            width={960}
+            height={1200}
+            class="size-full min-h-72 object-cover lg:absolute lg:inset-0 lg:h-full lg:min-h-full"
+            loading="eager"
+            priority={true}
+          />
+          <div
+            class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background via-background/20 to-transparent lg:block"
+            aria-hidden="true"
+          ></div>
+        </figure>
+      )}
+    </div>
+  </header>
+
   <Container size="xl" class="py-section-lg sm:py-section-xl lg:py-section-2xl">
     <Stack space="3xl">
-      <Stack space="lg" as="header">
-        <Flex
-          wrap
-          gap="xs"
-          class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
-        >
-          {post.data.tags?.map((tag: string) => (
-            <Badge variant="pill" size="xs">
-              {tag}
-            </Badge>
-          ))}
-        </Flex>
-        <h1
-          class:list={[
-            'font-heading font-semibold tracking-tight text-foreground',
-            headingSizeClass('hero'),
-          ]}
-        >
-          {post.data.title}
-        </h1>
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-          <span>By {post.data.author}</span>
-          <span aria-hidden="true">·</span>
-          <time datetime={post.data.pubDate.toISOString()}>Published on {formattedDate}</time>
-          {hasMaterialUpdate && post.data.updatedDate && (
-            <>
-              <span aria-hidden="true">·</span>
-              <time datetime={post.data.updatedDate.toISOString()}>
-                Updated on {formatDateFull(post.data.updatedDate)}
-              </time>
-            </>
-          )}
-        </div>
-        {heroImage && (
-          <div class="mt-10">
-            <OptimizedImage
-              src={heroImage}
-              alt={`Hero image for ${post.data.title}`}
-              class="max-h-[500px] w-full rounded-2xl object-cover lg:max-h-[600px]"
-              loading="eager"
-              priority={true}
-            />
-          </div>
-        )}
-      </Stack>
-
       <Prose>
         <Content />
       </Prose>

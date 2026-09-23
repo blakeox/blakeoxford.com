@@ -24,6 +24,8 @@ describe('PhotoCarousel.astro', () => {
     expect(content).toMatch(/function loop/);
     expect(content).not.toContain('Math.random()');
     expect(content).not.toContain('seededShuffle');
+    expect(content).not.toContain('Blake-O-scaled');
+    expect(content).toContain('blake_detroit_skyline_bell_isle');
   });
 
   it('pauses motion for reduced-motion, hover, and an explicit control', () => {

@@ -9,6 +9,8 @@ export interface Props {
   figure?: string;
   caption: string;
   size?: 'card' | 'feature' | 'hero';
+  /** Edge-to-edge typographic plane instead of a ringed card. */
+  flush?: boolean;
   href?: string;
   label?: string;
   class?: string;
@@ -18,6 +20,7 @@ const {
   figure,
   caption,
   size = 'feature',
+  flush = false,
   href,
   label,
   class: className = '',
@@ -30,10 +33,19 @@ const linkAttrs = href ? { href, 'aria-label': label ?? caption } : {};
 <Wrapper
   {...linkAttrs}
   class:list={[
-    'proof-plaque relative flex flex-col justify-end bg-surface-elevated ring-1 ring-border/50',
+    'proof-plaque relative flex flex-col',
+    flush ? 'justify-center' : 'justify-end',
+    flush
+      ? 'h-full w-full border-t border-border/40 bg-surface lg:border-t-0 lg:border-l'
+      : size === 'card'
+        ? 'bg-transparent'
+        : 'bg-surface-elevated ring-1 ring-border/50',
     size === 'card' && 'min-h-44 gap-2 p-6 sm:min-h-48',
     size === 'feature' && 'min-h-72 gap-4 p-8 sm:min-h-80 sm:p-10',
-    size === 'hero' && 'min-h-72 gap-4 p-8 sm:min-h-96 sm:p-10',
+    size === 'hero' &&
+      (flush
+        ? 'min-h-72 gap-6 p-10 sm:p-14 lg:min-h-full'
+        : 'min-h-72 gap-4 p-8 sm:min-h-96 sm:p-10'),
     href &&
       'transition-colors duration-normal focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none',
     className,

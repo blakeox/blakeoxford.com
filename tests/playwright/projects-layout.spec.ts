@@ -8,7 +8,7 @@ test.describe('Projects page layout', () => {
     const heroSection = page.locator('section[data-layout-section="projects-hero"]');
     await expect(heroSection).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: /Systems I've shipped/i })
+      page.getByRole('heading', { name: /Shipped under pressure/i })
     ).toBeVisible();
     await expect(page.getByRole('heading', { name: /Hire me for the hard middle/i })).toBeVisible();
 
@@ -62,7 +62,7 @@ test.describe('Projects page layout', () => {
     expect(metrics.hasGridShell).toBeTruthy();
 
     expect(metrics.heroHeadingText).not.toBeNull();
-    expect(metrics.heroHeadingText?.toLowerCase()).toContain("systems i've shipped");
+    expect(metrics.heroHeadingText?.toLowerCase()).toContain('shipped under pressure');
 
     expect(metrics.mainPaddingTop).not.toBeNull();
     expect(metrics.mainPaddingTop!).toBeGreaterThanOrEqual(0);
