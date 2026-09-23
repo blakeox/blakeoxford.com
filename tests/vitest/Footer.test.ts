@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 import { describe, it, expect, beforeAll } from 'vitest';
 import navJson from '../../src/content/navigation/nav.json';
 
-// ESM __dirname shim
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const filePath = path.resolve(__dirname, '../../src/components/layout/Footer.astro');
 let content: string;
@@ -18,12 +17,15 @@ describe('Footer.astro file', () => {
     expect(content).toContain('<footer');
   });
 
-  it('should have a navigation section with aria-label "Footer Quick Links"', () => {
+  it('should have a navigation section labeled Footer', () => {
     expect(content).toContain('role="navigation"');
-    expect(content).toContain('aria-label="Footer Quick Links"');
+    expect(content).toContain('aria-label="Footer"');
+    expect(content).not.toContain('Quick Links');
+    expect(content).not.toContain('Connect with Me');
+    expect(content).not.toContain('Made with');
   });
 
-  it('should source quick links and social links from nav.json via navLinks', () => {
+  it('should source page and social links from nav.json via navLinks', () => {
     expect(content).toContain('getNavQuickLinks()');
     expect(content).toContain('navConfig.socialLinks');
 
@@ -45,10 +47,12 @@ describe('Footer.astro file', () => {
 
   it('should include copyright notice with dynamic year', () => {
     expect(content).toContain('© {year}');
+    expect(content).toContain('Blake Oxford');
+    expect(content).not.toContain("Blake Oxford's portfolio");
   });
 
   it('should include a back-to-top link with aria-label', () => {
     expect(content).toContain('href="#top"');
-    expect(content).toContain('aria-label="Back to Top"');
+    expect(content).toContain('aria-label="Back to top"');
   });
 });

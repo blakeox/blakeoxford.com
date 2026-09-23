@@ -1,6 +1,6 @@
 ---
 /**
- * Home hero portrait — Work face by default; Daring on hover/focus.
+ * Home hero portrait — flush photographic plane. Work holds, then one dissolve to Daring.
  */
 interface Props {
   workAlt: string;
@@ -10,38 +10,42 @@ interface Props {
 const { workAlt, daringAlt } = Astro.props as Props;
 ---
 
-<div class="home-dual-visual relative z-10" data-chat-avoid-launcher>
-  <div class="home-dual-visual-inner">
-    <div
-      class="home-dual-frame relative w-[min(16.5rem,58vw)] rounded-xl sm:w-[min(18rem,46vw)] md:w-[min(20.5rem,32vw)] lg:w-[min(22rem,28vw)]"
-      style="aspect-ratio: 4 / 5"
-      tabindex="0"
-      role="img"
-      aria-label={`${workAlt}. ${daringAlt}. Hover or tap to switch.`}
-    >
-      <img
-        src="/assets/images/optimized/avif/Blake-O-scaled@768w.avif"
-        alt=""
-        width="768"
-        height="768"
-        class="home-dual-face home-dual-face-work absolute inset-0 size-full object-cover"
-        loading="eager"
-        fetchpriority="high"
-        decoding="async"
-      />
-      <img
-        src="/assets/images/optimized/avif/china-profile-picture.avif"
-        alt=""
-        width="768"
-        height="768"
-        class="home-dual-face home-dual-face-daring absolute inset-0 size-full object-cover"
-        data-dual-daring
-        loading="lazy"
-        decoding="async"
-      />
+<div class="home-dual-visual">
+  <div class="home-dual-frame">
+    <img
+      src="/assets/images/optimized/avif/blake_detroit_skyline_bell_isle.avif"
+      alt=""
+      width="853"
+      height="853"
+      class="home-dual-face home-dual-face-work absolute inset-0 size-full object-cover"
+      data-dual-work
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <img
+      src="/assets/images/optimized/avif/china-profile-picture-hero.avif"
+      alt=""
+      width="900"
+      height="1200"
+      class="home-dual-face home-dual-face-daring absolute inset-0 size-full object-cover"
+      data-dual-daring
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="home-dual-veil" aria-hidden="true"></div>
+    <!-- Mobile-only: hide Ask when it would sit on the portrait. Desktop keeps Ask. -->
+    <div class="home-dual-ask-pad md:hidden" data-chat-avoid-launcher aria-hidden="true"></div>
+    <div class="home-dual-switch" role="group" aria-label={`Two sides. ${workAlt}. ${daringAlt}.`}>
+      <button type="button" data-dual-select="work" aria-pressed="true">
+        Work
+      </button>
+      <span class="home-dual-switch-sep" aria-hidden="true">
+        ·
+      </span>
+      <button type="button" data-dual-select="daring" aria-pressed="false">
+        Daring
+      </button>
     </div>
-    <p class="home-dual-frame-caption" data-frame-caption>
-      Work
-    </p>
   </div>
 </div>

@@ -6,6 +6,7 @@ import Layout from '@/layouts/BaseLayout.astro';
 import BlogIndexHeroSection from '@/components/features/blog/BlogIndexHeroSection.astro';
 import BlogIndexContentSection from '@/components/features/blog/BlogIndexContentSection.astro';
 import { isPublished } from '@/lib/content/publication-contract.mjs';
+import { resolvePublicImage } from '@/lib/media/publicAssetExists';
 
 const posts = await getCollection('blog', (entry: CollectionEntry<'blog'>) => isPublished(entry));
 const sortedPosts = posts
@@ -14,13 +15,26 @@ const sortedPosts = posts
     (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
       b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
   );
+
+const featuredVisual = (() => {
+  for (const post of sortedPosts) {
+    const src = resolvePublicImage(post.data.heroImage);
+    if (!src) continue;
+    return {
+      src,
+      caption: post.data.title,
+      href: `/blog/${post.id}/`,
+    };
+  }
+  return undefined;
+})();
 ---
 
 <Layout
-  title="Insights, Articles & Updates | Blake Oxford"
+  title="Notes from the field | Blake Oxford"
   description="Practical notes on automation, analytics, AI, and leadership—grounded in shipped systems, hard lessons, and takeaways teams can use in their own work."
   wide
 >
-  <BlogIndexHeroSection />
+  <BlogIndexHeroSection visual={featuredVisual} />
   <BlogIndexContentSection posts={sortedPosts} />
 </Layout>

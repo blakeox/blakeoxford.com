@@ -1,6 +1,6 @@
 ---
 /**
- * Home hero copy column — brand lockup, dual lines, primary + proof CTAs.
+ * Home hero copy column — brand lockup, theses that track the portrait, primary + proof CTAs.
  */
 import IntroCopy from '@/components/composites/IntroCopy.astro';
 import Button from '@/components/primitives/Button.astro';
@@ -27,12 +27,24 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
     />
 
     <div class="home-dual-lines">
-      <p class="home-dual-line" data-dual-line-work>
+      <button
+        type="button"
+        class="home-dual-line"
+        data-dual-select="work"
+        data-dual-line-work
+        aria-pressed="true"
+      >
         {workLine}
-      </p>
-      <p class="home-dual-line" data-dual-line-daring>
+      </button>
+      <button
+        type="button"
+        class="home-dual-line"
+        data-dual-select="daring"
+        data-dual-line-daring
+        aria-pressed="false"
+      >
         {daringLine}
-      </p>
+      </button>
     </div>
   </div>
 

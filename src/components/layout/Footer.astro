@@ -1,10 +1,7 @@
 ---
 /**
- * Footer - Site footer with navigation and social links
- *
- * Displays site footer with quick links, social media links,
- * copyright information, and back-to-top button.
- * Quick links and social links are sourced from nav.json via navLinks.ts.
+ * Footer — site close: pages, elsewhere, copyright, back to top.
+ * Links come from nav.json via navLinks.ts.
  *
  * @component
  * @category Layout
@@ -17,31 +14,22 @@
  * @accessibility
  * - role="contentinfo" landmark
  * - aria-label for footer region
- * - role="navigation" for link sections
- * - Proper heading hierarchy with aria-level
- * - Social links with descriptive aria-labels
+ * - role="navigation" for page links
+ * - Social links use visible text
  */
 import Container from '@/components/primitives/Container.astro';
-import SocialIcon from '@/components/primitives/SocialIcon.astro';
 import { getNavQuickLinks, navConfig, type NavLink } from '@/config/navLinks';
 
 const year = new Date().getFullYear();
-const siteTitle = "Blake Oxford's portfolio";
 const quickLinks = getNavQuickLinks();
 const socialLinks = navConfig.socialLinks ?? [];
-
-type SocialIconName = 'linkedin' | 'github' | 'email' | 'microsoft-learn';
-
-function resolveSocialIcon(icon?: string): SocialIconName {
-  if (icon === 'linkedin' || icon === 'github' || icon === 'email' || icon === 'microsoft-learn') {
-    return icon;
-  }
-  return 'github';
-}
 
 function socialLinkRel(link: NavLink): string | undefined {
   return link.external ? 'noopener noreferrer' : undefined;
 }
+
+const linkClass =
+  'rounded font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none';
 ---
 
 <footer
@@ -49,120 +37,42 @@ function socialLinkRel(link: NavLink): string | undefined {
   role="contentinfo"
   aria-label="Site footer"
   tabindex="-1"
-  class="relative border-t border-border bg-surface py-6 pb-1.5 text-foreground"
+  class="relative border-t border-border bg-surface pt-10 pb-24 text-foreground sm:pb-10"
 >
   <Container size="xl" padding={true}>
-    <!-- Upper footer with main content -->
-    <div class="mb-4 grid grid-cols-1 gap-6 md:grid-cols-3">
-      <!-- Quick Links -->
-      <div
-        aria-labelledby="footer-links-heading"
-        role="navigation"
-        aria-label="Footer Quick Links"
-        class="flex flex-col items-center md:items-start"
-      >
-        <div
-          id="footer-links-heading"
-          class="mb-2 text-base font-semibold tracking-wide text-foreground-strong"
-          role="heading"
-          aria-level="2"
-        >
-          Quick Links
-        </div>
-        <ul class="flex flex-col gap-1.5">
+    <div class="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
+      <nav aria-label="Footer" role="navigation">
+        <ul class="m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
           {quickLinks.map((link) => (
             <li>
-              <a
-                href={link.href}
-                class="rounded text-sm font-medium text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-              >
+              <a href={link.href} class:list={[linkClass, 'text-sm']}>
                 {link.label}
               </a>
             </li>
           ))}
         </ul>
-      </div>
+      </nav>
 
-      <!-- Social Media -->
-      <div class="flex flex-col items-center">
-        <div
-          class="mb-2 text-base font-semibold tracking-wide text-foreground-strong"
-          role="heading"
-          aria-level="2"
-        >
-          Connect with Me
-        </div>
-        <ul class="m-0 flex list-none flex-row gap-5 p-0">
-          {socialLinks.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                target={link.target}
-                rel={socialLinkRel(link)}
-                aria-label={link.label}
-                class="group inline-flex items-center justify-center"
-              >
-                <SocialIcon
-                  icon={resolveSocialIcon(link.icon)}
-                  class="h-7 w-7 text-primary transition-colors duration-normal group-hover:text-accent group-focus:text-accent"
-                />
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <!-- Info -->
-      <div class="flex flex-col items-center text-xs text-foreground md:items-end md:text-sm">
-        <p class="mb-0.5">
-          © {year} {siteTitle}. All rights reserved.
-        </p>
-        <p>
-          Built with
-          <a
-            href="https://astro.build/"
-            target="_blank"
-            rel="noopener"
-            class="rounded text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-          >
-            Astro
-          </a>
-          &
-          <a
-            href="https://cloudflare.com/pages"
-            target="_blank"
-            rel="noopener"
-            class="rounded text-foreground underline-offset-2 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-          >
-            Cloudflare Workers
-          </a>
-          .
-        </p>
-      </div>
+      <ul class="m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0" aria-label="Elsewhere">
+        {socialLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              target={link.target}
+              rel={socialLinkRel(link)}
+              class:list={[linkClass, 'text-sm']}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
 
-    <!-- Lower footer with divider and back to top button -->
-    <div class="relative flex items-center justify-between border-t border-border pt-3">
-      <p class="text-xs text-muted-foreground">Made with ☕ by Blake Oxford</p>
-      <a
-        href="#top"
-        class="group flex items-center gap-0.5 rounded-md text-xs text-muted-foreground transition-colors duration-normal hover:text-accent focus:text-accent focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
-        aria-label="Back to Top"
-      >
-        <span>Back to Top</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-3.5 w-3.5 transition-transform duration-normal group-hover:-translate-y-0.5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path d="m18 15-6-6-6 6"></path>
-        </svg>
+    <div class="mt-8 flex flex-col items-start gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-xs text-muted-foreground">© {year} Blake Oxford</p>
+      <a href="#top" class:list={[linkClass, 'text-xs']} aria-label="Back to top">
+        Back to top
       </a>
     </div>
   </Container>

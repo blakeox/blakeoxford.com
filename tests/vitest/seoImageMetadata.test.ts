@@ -10,9 +10,10 @@ describe('SEO social image metadata', () => {
   });
 
   it('measures a photographic portrait used on the site', async () => {
-    const dims = await getLocalImageDimensions('/assets/images/Blake-O-scaled.jpg');
-    expect(dims?.width).toBeGreaterThan(400);
-    expect(dims?.height).toBeGreaterThan(400);
+    await expect(getLocalImageDimensions('/assets/images/blake_detroit_og.jpg')).resolves.toEqual({
+      width: 1200,
+      height: 630,
+    });
   });
 
   it('returns null for missing or unsafe assets', async () => {

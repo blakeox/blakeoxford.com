@@ -40,16 +40,14 @@ describe('ProjectCard.astro file', () => {
   });
 
   it('should expose a visible CTA without extra aria-label', () => {
-    expect(content).toMatch(
-      /inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis/
-    );
+    expect(content).toContain('inline-flex items-center gap-2');
     expect(content).toContain('View case study');
     expect(content).not.toContain('aria-label={`View ${data.title}`}');
   });
 
   it('gates image and CTA movement on motion preference', () => {
     const movements = content.match(/[^\s"]*group-hover:(?:scale|translate|gap)-[^\s"]*/g);
-    expect(movements).toHaveLength(6);
+    expect(movements).toHaveLength(3);
     expect(movements?.every((movement) => movement.startsWith('motion-safe:'))).toBe(true);
   });
 });

@@ -12,6 +12,11 @@ import { AUTHOR_IDENTITY, CANONICAL_URLS } from '@/config/constants';
 const page = await getAboutPage();
 const canonicalUrl = CANONICAL_URLS.about;
 
+const portrait = {
+  src: '/assets/images/blake_detroit_og.jpg',
+  alt: 'Blake Oxford on the Detroit riverfront, skyline behind him',
+};
+
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -19,7 +24,7 @@ const personSchema = {
   jobTitle: 'Systems Architect',
   sameAs: AUTHOR_IDENTITY.sameAs,
   description: page.meta.description,
-  image: '/assets/images/Blake-O-scaled.jpg',
+  image: portrait.src,
 };
 ---
 
@@ -29,7 +34,8 @@ const personSchema = {
 <Layout
   title={page.meta.title}
   description={page.meta.description}
-  image="/assets/images/Blake-O-scaled.jpg"
+  image={portrait.src}
+  imageAlt={portrait.alt}
   url={canonicalUrl}
   wide={true}
 >

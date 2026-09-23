@@ -10,7 +10,6 @@ import { Image } from 'astro:assets';
 import { cn } from '@/utils/cn';
 
 import Appalatia from '@/assets/images/carousel/Appalatia.webp';
-import BlakeOScaled from '@/assets/images/carousel/Blake-O-scaled.webp';
 import CES from '@/assets/images/carousel/CES.webp';
 import CESFront from '@/assets/images/carousel/CES_Front.webp';
 import CESInside from '@/assets/images/carousel/CES_Inside.webp';
@@ -63,14 +62,7 @@ const travelImages: ImageMetadata[] = [
   IMG5981,
 ];
 
-const lifeImages: ImageMetadata[] = [
-  BlakeOScaled,
-  BlakeDetroit,
-  Appalatia,
-  IMG0729,
-  IMG2579,
-  IMG2790,
-];
+const lifeImages: ImageMetadata[] = [BlakeDetroit, Appalatia, IMG0729, IMG2579, IMG2790];
 
 function loop<T>(items: T[]): T[] {
   return items.length ? [...items, ...items] : items;
