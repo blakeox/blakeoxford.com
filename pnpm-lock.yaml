@@ -47,8 +47,8 @@ importers:
         specifier: ^10.74.0
         version: 10.74.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(astro@7.3.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.5.1)(jiti@2.7.0)(terser@5.49.2)(yaml@2.8.3))
       '@sentry/cloudflare':
-        specifier: ^10.74.0
-        version: 10.74.0(wrangler@4.131.1(@types/node@26.5.1))
+        specifier: ^10.75.1
+        version: 10.75.1(wrangler@4.131.1(@types/node@26.5.1))
       react:
         specifier: ^19.3.0
         version: 19.3.0
@@ -1756,8 +1756,8 @@ packages:
     engines: {node: '>= 18'}
     hasBin: true
 
-  '@sentry/cloudflare@10.74.0':
-    resolution: {integrity: sha512-7TgISdDF306CETi4iYEhKK8f5wY7ldLrYriFDrSQRvfGByBytleW8eduBpEgmtAFZQl8WDk8vRzqk0RZ9is0gA==}
+  '@sentry/cloudflare@10.75.1':
+    resolution: {integrity: sha512-4DHNxZBGDP1BrAIk67bZzS7Iqi0u1GY7gir8Hix4xbvfO9aOmiZVmpUjELlZdfkAjlbRvZCl29wlRqLvkFlrFA==}
     engines: {node: '>=18'}
     peerDependencies:
       '@cloudflare/workers-types': ^4.x || ^5.x
@@ -1778,6 +1778,10 @@ packages:
 
   '@sentry/core@10.74.0':
     resolution: {integrity: sha512-u9rY8vcZfktccwm6LznfCZlqP5C9A+p76r4/pFS1grqpuTO0m21Cl8rosnlESrDGP/Xd9tfr91rWYk0jPH8jeQ==}
+    engines: {node: '>=18'}
+
+  '@sentry/core@10.75.1':
+    resolution: {integrity: sha512-+/+UanewqPK+oJvDQIHWKLUqnsa0iymEThOPCaFBA8ulbQh9k8lsz8V+NtJwP4G3ncclfzp15tzqVwn6iugV4Q==}
     engines: {node: '>=18'}
 
   '@sentry/feedback@10.74.0':
@@ -1864,6 +1868,10 @@ packages:
 
   '@sentry/server-utils@10.74.0':
     resolution: {integrity: sha512-AHmPIGE8yVRyywpZRhAkm/H0cHTgsQSPhFZFbaeQLcYHFE/eOP9bAMh8Nj/Apr7WMagFXYHd04tR/63BxtLgKw==}
+    engines: {node: '>=18'}
+
+  '@sentry/server-utils@10.75.1':
+    resolution: {integrity: sha512-HuA/bCtthA5x/AjYD5WUbG6CBcYJb0WAWKNgrgNkUWtll6eMqG3+7LO4PBcGRbZtlg1OFgClJm4iQFgRN7+ZZg==}
     engines: {node: '>=18'}
 
   '@sentry/vite-plugin@5.4.0':
@@ -7768,11 +7776,11 @@ snapshots:
       '@sentry/cli-win32-i686': 3.8.0
       '@sentry/cli-win32-x64': 3.8.0
 
-  '@sentry/cloudflare@10.74.0(wrangler@4.131.1(@types/node@26.5.1))':
+  '@sentry/cloudflare@10.75.1(wrangler@4.131.1(@types/node@26.5.1))':
     dependencies:
       '@opentelemetry/api': 1.9.1
-      '@sentry/core': 10.74.0
-      '@sentry/server-utils': 10.74.0
+      '@sentry/core': 10.75.1
+      '@sentry/server-utils': 10.75.1
       magic-string: 0.30.21
     optionalDependencies:
       wrangler: 4.131.1(@types/node@26.5.1)
@@ -7784,6 +7792,10 @@ snapshots:
       '@sentry/conventions': 0.16.0
 
   '@sentry/core@10.74.0':
+    dependencies:
+      '@sentry/conventions': 0.16.0
+
+  '@sentry/core@10.75.1':
     dependencies:
       '@sentry/conventions': 0.16.0
 
@@ -7887,6 +7899,11 @@ snapshots:
     dependencies:
       '@sentry/conventions': 0.16.0
       '@sentry/core': 10.74.0
+
+  '@sentry/server-utils@10.75.1':
+    dependencies:
+      '@sentry/conventions': 0.16.0
+      '@sentry/core': 10.75.1
 
   '@sentry/vite-plugin@5.4.0':
     dependencies:
