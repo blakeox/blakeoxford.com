@@ -64,7 +64,7 @@
     "@sentry/cloudflare": "^10.75.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "zod": "^4.6.3"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
