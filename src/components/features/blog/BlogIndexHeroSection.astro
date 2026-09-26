@@ -17,7 +17,7 @@ const { visual } = Astro.props as Props;
   <section
     id="blog-hero"
     data-layout-section="blog-hero"
-    class="relative flex min-h-[calc(100svh-var(--nav-height))] flex-col overflow-hidden md:grid md:grid-cols-2"
+    class="relative flex flex-col overflow-hidden md:grid md:min-h-[calc(100svh-var(--nav-height))] md:grid-cols-2"
   >
     <div class="layout-gutter flex flex-col justify-center py-section-lg sm:py-section-xl lg:py-section-2xl">
       <IntroCopy
