@@ -9,6 +9,7 @@ import HomeRecentProjectsSection from '@/components/features/home/HomeRecentProj
 import HomeLatestPostsSection from '@/components/features/home/HomeLatestPostsSection.astro';
 import HomeCTASection from '@/components/features/home/HomeCTASection.astro';
 import { getProjectsSorted } from '@/content/projects/getProjects';
+import { leadProjects, leadStudies } from '@/content/projects/hirePath';
 import { getHomePage } from '@/content/home/getHomePage';
 import { siteConfig } from '@/config/data';
 import { take } from '@/utils/array';
@@ -32,7 +33,9 @@ const recentBlogPosts: CollectionEntry<'blog'>[] = take(
   2
 );
 
-const recentProjects = take(await getProjectsSorted(), 3);
+const publishedProjects = await getProjectsSorted();
+const proofStudies = leadStudies(publishedProjects);
+const recentProjects = leadProjects(publishedProjects);
 ---
 
 <Layout
@@ -58,7 +61,7 @@ const recentProjects = take(await getProjectsSorted(), 3);
   */}
   <div class="flex flex-col">
     <HomeHeroSection author={siteConfig.author} content={page.hero} />
-    <HomeResumeHighlightsSection content={page.resumeHighlights} />
+    <HomeResumeHighlightsSection content={page.resumeHighlights} studies={proofStudies} />
     <HomeRecentProjectsSection projects={recentProjects} content={page.recentProjects} />
     <HomeLatestPostsSection posts={recentBlogPosts} content={page.latestPosts} />
     <HomeCTASection content={page.cta} />

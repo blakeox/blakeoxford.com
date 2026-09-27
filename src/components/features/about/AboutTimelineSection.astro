@@ -10,6 +10,7 @@ interface TimelineItem {
   year: string;
   title: string;
   achievements: string[];
+  studyHref?: string;
 }
 
 interface Props {
@@ -25,6 +26,8 @@ const rows = items.map((item) => ({
   kicker: item.year,
   title: item.title,
   bullets: item.achievements,
+  href: item.studyHref,
+  linkLabel: item.studyHref ? 'Read the study' : undefined,
 }));
 ---
 

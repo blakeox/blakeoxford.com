@@ -351,7 +351,7 @@ export const compositeDocs: ComponentDoc[] = [
       },
       {
         title: 'Metric-led outcomes',
-        code: '<EditorialList numbered={false} kickerAside={false} rows={[{ kicker: "180 users migrated", title: "…", bullets: [] }]} />',
+        code: '<EditorialList numbered={false} kickerAside={false} rows={[{ kicker: "99.99% uptime", title: "…", bullets: [] }]} />',
       },
     ],
     tags: ['list', 'editorial', 'composite'],

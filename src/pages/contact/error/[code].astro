@@ -1,0 +1,38 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '@/layouts/BaseLayout.astro';
+import ContactChannels from '@/components/features/contact/ContactChannels.astro';
+import ContactMessageSection from '@/components/features/contact/ContactMessageSection.astro';
+import ContactFormIsland from '@/features/contact/ContactFormIsland';
+import { getContactPage } from '@/content/contact/getContactPage';
+import { CANONICAL_URLS } from '@/config/constants';
+import {
+  CONTACT_ERROR_CODES,
+  CONTACT_ERROR_COPY,
+  isContactErrorCode,
+} from '@/content/contact/contactErrors';
+
+export const getStaticPaths = (() => {
+  return CONTACT_ERROR_CODES.map((code) => ({
+    params: { code },
+  }));
+}) satisfies GetStaticPaths;
+
+const page = await getContactPage();
+const code = Astro.params.code ?? '';
+if (!isContactErrorCode(code)) {
+  throw new Error(`Unknown contact error: ${code}`);
+}
+---
+
+<Layout
+  title={page.meta.title}
+  description={page.meta.description}
+  url={`${CANONICAL_URLS.contact}error/${code}/`}
+  wide={true}
+  noindex={true}
+>
+  <ContactMessageSection content={page.hero} errorMessage={CONTACT_ERROR_COPY[code]} />
+  <ContactChannels channels={page.channels} />
+  <ContactFormIsland client:only="react" />
+</Layout>

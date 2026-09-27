@@ -6,9 +6,10 @@ import { memo } from 'react';
 import { cleanAssistantResponse } from '@/lib/string-utils';
 import { formatAISearchProvenance } from '@/lib/ai-search';
 import { getMessageBubbleClasses } from '@/lib/design-system/recipes';
+import { generateContextualCTAs } from '@/lib/chat';
 import { MessageSources } from './MessageSources';
 import { MessageActions } from './MessageActions';
-import { MatchedCTA } from './MessageCTAs';
+import { ContextualCTAs, MatchedCTA } from './MessageCTAs';
 import { TypingDots } from './TypingDots';
 import type { ChatMessageBubbleProps } from '@/features/chat/types';
 
@@ -45,6 +46,15 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
   const showCitations = isAssistant && !isStreaming && totalSources > 0;
   const provider = message.provenance?.provider ?? '';
   const isWorkersAi = provider === 'workers-ai';
+  const contextualCtas =
+    isAssistant && !isStreaming && !isWorkersAi
+      ? generateContextualCTAs(
+          sources,
+          siteHostname,
+          messages.length,
+          typeof window === 'undefined' ? undefined : window.location.pathname
+        )
+      : [];
 
   return (
     <div
@@ -80,7 +90,20 @@ export const ChatMessageBubble = memo(function ChatMessageBubble({
         </span>
       ) : null}
 
-      {isAssistant && isLatestAssistant && !isStreaming && showCitations && !isWorkersAi ? (
+      {isAssistant && isLatestAssistant && contextualCtas.length > 0 ? (
+        <ContextualCTAs
+          sources={sources}
+          siteHostname={siteHostname}
+          messagesCount={messages.length}
+        />
+      ) : null}
+
+      {isAssistant &&
+      isLatestAssistant &&
+      contextualCtas.length === 0 &&
+      !isStreaming &&
+      showCitations &&
+      !isWorkersAi ? (
         <MatchedCTA message={message} messages={messages} sources={sources} compact />
       ) : null}
 

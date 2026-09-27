@@ -35,6 +35,7 @@ import '@/features/command-center/command-center.css';
 </noscript>
 
 <script>
+  import { ensureReactRefreshPreamble } from '@/lib/dev/ensureReactRefreshPreamble';
   import {
     acquireClaimableOverlayScrollLock,
     forceReleaseScrollLock,
@@ -94,6 +95,8 @@ import '@/features/command-center/command-center.css';
     const root = getRoot();
     if (!root || mountedRoot === root) return mountPromise ?? Promise.resolve();
 
+    ensureReactRefreshPreamble();
+
     mountPromise = import('@/features/command-center/commandCenterLoader')
       .then(({ mountCommandCenter }) => {
         mountedRoot = root;
@@ -101,7 +104,8 @@ import '@/features/command-center/command-center.css';
       })
       .then(() => afterReactMount())
       .then(() => replayOpen())
-      .catch(() => {
+      .catch((error: unknown) => {
+        console.error('Command center failed to mount', error);
         mountPromise = null;
         root.dataset.error = 'true';
         releaseShellLock();

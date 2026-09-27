@@ -120,7 +120,7 @@
   );
 }
 
-@media (width >= 768px) {
+@media (width > 64rem) {
   .home-dual-stage {
     display: grid;
     grid-template-columns: minmax(20rem, 0.92fr) minmax(22rem, 1.08fr);
@@ -173,7 +173,7 @@ html.dark .home-dual-veil {
   );
 }
 
-@media (width >= 768px) {
+@media (width > 64rem) {
   :root[data-theme='dark'] .home-dual-veil,
   html.dark .home-dual-veil {
     background: linear-gradient(

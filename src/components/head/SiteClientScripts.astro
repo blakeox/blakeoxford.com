@@ -14,6 +14,7 @@ const clarityId = import.meta.env.PUBLIC_CLARITY_PROJECT_ID?.trim() ?? '';
 </script>
 
 <script>
+  import { conversionEvents } from '@/lib/analytics';
   import { initClarity } from '@/lib/clarity';
   import { initWebVitals } from '@/lib/webVitals';
   import { initMotionAccessibility } from '@/scripts/modules/MotionAccessibility';
@@ -102,6 +103,25 @@ const clarityId = import.meta.env.PUBLIC_CLARITY_PROJECT_ID?.trim() ?? '';
     /* non-fatal */
   }
 
+  function setupCtaSelect(): void {
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const control = target.closest('[data-cta-id]');
+      if (!(control instanceof HTMLElement)) return;
+      const ctaId = control.dataset.ctaId;
+      if (
+        ctaId === 'hero_primary' ||
+        ctaId === 'hero_secondary' ||
+        ctaId === 'contact_submit' ||
+        ctaId === 'study_cta'
+      ) {
+        conversionEvents.ctaSelect({ cta_id: ctaId });
+      }
+    });
+  }
+
+  setupCtaSelect();
   setupSkipLinkFocus();
   setupFocusVisibleState();
   retireServiceWorker();

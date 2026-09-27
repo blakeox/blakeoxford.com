@@ -50,6 +50,16 @@
       "name": "Source",
       "parameter": "source",
       "description": "Bounded UI event source."
+    },
+    {
+      "name": "CTA id",
+      "parameter": "cta_id",
+      "description": "Closed CTA: hero_primary, hero_secondary, contact_submit, study_cta."
+    },
+    {
+      "name": "Failure reason",
+      "parameter": "failure_reason",
+      "description": "Closed contact failure: validation, turnstile, network."
     }
   ],
   "deferred": [

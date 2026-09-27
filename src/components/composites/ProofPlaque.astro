@@ -55,8 +55,8 @@ const linkAttrs = href ? { href, 'aria-label': label ?? caption } : {};
     <p
       class:list={[
         'font-heading font-semibold tracking-tight text-pretty text-foreground',
-        size === 'card' && 'text-4xl leading-none sm:text-5xl',
-        size !== 'card' && headingSizeClass('identity'),
+        size === 'card' && 'text-2xl leading-none sm:text-3xl',
+        size !== 'card' && headingSizeClass('section'),
       ]}
     >
       {figure}

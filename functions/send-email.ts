@@ -127,14 +127,24 @@ async function storeMessage(env: Env, { name, email, message }: MessageData): Pr
 
 // ─── Error Response Helpers ─────────────────────────────────────
 
-function errorResponse(status: number, message: string, isJson: boolean): Response {
+type ContactDocumentError = 'verification' | 'rate' | 'unavailable' | 'invalid';
+
+function errorResponse(
+  status: number,
+  message: string,
+  isJson: boolean,
+  code: ContactDocumentError
+): Response {
   if (isJson) {
     return new Response(JSON.stringify({ success: false, error: message }), {
       status,
       headers: { 'Content-Type': 'application/json' },
     });
   }
-  return new Response(message, { status, headers: { 'Content-Type': 'text/plain' } });
+  return new Response(null, {
+    status: 303,
+    headers: { Location: `/contact/error/${code}/` },
+  });
 }
 
 function jsonOrRedirect(data: { success: boolean }, isJson: boolean): Response {
@@ -145,7 +155,7 @@ function jsonOrRedirect(data: { success: boolean }, isJson: boolean): Response {
   }
   return new Response(null, {
     status: 303,
-    headers: { Location: '/contact/?success=true' },
+    headers: { Location: '/contact/sent/' },
   });
 }
 
@@ -182,7 +192,7 @@ export async function onRequestPost(
   try {
     const contentLength = Number(context.request.headers.get('content-length') || 0);
     if (contentLength > 16 * 1024) {
-      return errorResponse(413, 'Request is too large.', wantsJsonResponse);
+      return errorResponse(413, 'Request is too large.', wantsJsonResponse, 'unavailable');
     }
 
     // ─── Parse incoming data ─────────────────────────
@@ -230,26 +240,26 @@ export async function onRequestPost(
       message.length > 5000 ||
       token.length > 4096
     ) {
-      return errorResponse(400, ERROR_MESSAGES.missingFields, wantsJsonResponse);
+      return errorResponse(400, ERROR_MESSAGES.missingFields, wantsJsonResponse, 'invalid');
     }
     if (!context.env.TURNSTILE_SECRET_KEY) {
       console.error('TURNSTILE_SECRET_KEY is not configured');
-      return errorResponse(503, 'Contact service unavailable.', wantsJsonResponse);
+      return errorResponse(503, 'Contact service unavailable.', wantsJsonResponse, 'unavailable');
     }
 
     // ─── Rate‐limit per IP via KV ────────────────────
     const rateLimit = await checkRateLimit(context.env, ip);
     if (rateLimit === 'limited') {
-      return errorResponse(429, ERROR_MESSAGES.rateLimited, wantsJsonResponse);
+      return errorResponse(429, ERROR_MESSAGES.rateLimited, wantsJsonResponse, 'rate');
     }
     if (rateLimit === 'unavailable') {
-      return errorResponse(503, 'Contact service unavailable.', wantsJsonResponse);
+      return errorResponse(503, 'Contact service unavailable.', wantsJsonResponse, 'unavailable');
     }
 
     // ─── Verify Turnstile ────────────────────────────
     const isVerified = await verifyTurnstile(context.env.TURNSTILE_SECRET_KEY, token, ip);
     if (!isVerified) {
-      return errorResponse(403, ERROR_MESSAGES.botVerificationFailed, wantsJsonResponse);
+      return errorResponse(403, ERROR_MESSAGES.botVerificationFailed, wantsJsonResponse, 'verification');
     }
 
     // ─── Send email via Cloudflare Email Service ─────
@@ -283,6 +293,6 @@ export async function onRequestPost(
 
     // Keep existing console.error for Cloudflare logs
     console.error('💥 send-email error:', err);
-    return errorResponse(500, 'Internal server error.', wantsJsonResponse);
+    return errorResponse(500, 'Internal server error.', wantsJsonResponse, 'unavailable');
   }
 }

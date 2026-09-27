@@ -144,43 +144,26 @@ export async function runSearch(options: SearchQueryOptions): Promise<SearchQuer
       return withMeta(localAll, 'local-fallback');
     }
 
-    // Short keyword queries: prefer local title/tag hits; only keep semantic results
-    // that share a query term or score highly (avoids noisy "fabric" → blog dumps).
-    const termCount = trimmed.split(/\s+/).filter(Boolean).length;
-    const isKeywordQuery = termCount <= 3;
-    if (isKeywordQuery && localAll.length > 0) {
-      const terms = trimmed.toLowerCase().split(/\s+/).filter(Boolean);
-      const relevantSemantic = hydrated.filter((record) => {
-        if (hasQueryTermOverlap(record, terms)) return true;
-        // Extremely strong semantic only when the hit is not a bare hub page.
-        return (record.score ?? 0) >= 0.85 && record.type !== 'page';
-      });
-      return withMeta(
-        hydrateRecordsFromCorpus(
-          filterNoisyHubRecords(mergeResults(localAll, relevantSemantic, limit), trimmed),
-          corpus
-        ),
-        'cloudflare-vectorize'
-      );
+    // Keep a semantic hit only when it shares a query term or scores at the
+    // strong-match floor. Weak neighbors of a no-term query stay out of the list.
+    const terms = trimmed.toLowerCase().split(/\s+/).filter(Boolean);
+    const relevantSemantic = hydrated.filter((record) => {
+      if (hasQueryTermOverlap(record, terms)) return true;
+      return (record.score ?? 0) >= 0.85 && record.type !== 'page';
+    });
+    const keywordSide = category === 'all' ? mergeResults(localAll, localPages, limit) : localAll;
+
+    if (!keywordSide.length && !relevantSemantic.length) {
+      return withMeta([], 'cloudflare-vectorize');
     }
 
-    if (category === 'all') {
-      // Local keyword matches first so title hits aren't buried by weak semantic noise.
-      return withMeta(
-        hydrateRecordsFromCorpus(
-          filterNoisyHubRecords(
-            mergeResults(localAll, mergeResults(localPages, hydrated, limit), limit),
-            trimmed
-          ),
-          corpus
-        ),
-        'cloudflare-vectorize'
-      );
+    if (!relevantSemantic.length) {
+      return withMeta(keywordSide, 'local-fallback');
     }
 
     return withMeta(
       hydrateRecordsFromCorpus(
-        filterNoisyHubRecords(mergeResults(localAll, hydrated, limit), trimmed),
+        filterNoisyHubRecords(mergeResults(keywordSide, relevantSemantic, limit), trimmed),
         corpus
       ),
       'cloudflare-vectorize'
