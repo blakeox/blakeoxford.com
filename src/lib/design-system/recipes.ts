@@ -73,11 +73,12 @@ export function getBaseCardPadding(padding: BaseCardPadding) {
 }
 
 export const buttonRecipe = {
-  base: 'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-[color,background-color,border-color,transform,box-shadow] duration-normal focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none',
+  base: 'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-[color,background-color,border-color,transform,box-shadow] duration-normal focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
   variants: {
     primary:
-      'border border-button-primary-bg bg-button-primary-bg text-button-primary-fg hover:bg-button-primary-bg-hover hover:border-button-primary-border-hover focus-visible:ring-accent/60',
-    secondary: 'border border-border bg-surface text-foreground hover:bg-surface-subtle',
+      'button-primary border border-button-primary-bg bg-button-primary-bg text-button-primary-fg hover:bg-button-primary-bg-hover hover:border-button-primary-border-hover focus-visible:ring-accent/60',
+    secondary:
+      'button-secondary border border-border bg-surface text-foreground hover:bg-surface-subtle focus-visible:ring-accent/60',
     outline:
       'border border-foreground/40 bg-transparent text-foreground hover:border-accent hover:text-accent-emphasis focus-visible:ring-accent/60',
     ghost:

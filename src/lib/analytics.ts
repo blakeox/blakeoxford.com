@@ -48,7 +48,9 @@ const ALLOWED_ANALYTICS_KEYS = new Set([
   'complexity',
   'conciseness',
   'completeness',
+  'cta_id',
   'error_category',
+  'failure_reason',
   'format',
   'form',
   'href_path',
@@ -86,6 +88,8 @@ const ALLOWED_ANALYTICS_VALUES = new Map([
   ['acquisition_source', new Set(['organic', 'referral', 'direct', 'internal', 'unknown'])],
   ['format', new Set(['markdown', 'json'])],
   ['metric_rating', new Set(['good', 'needs_improvement', 'poor'])],
+  ['cta_id', new Set(['hero_primary', 'hero_secondary', 'contact_submit', 'study_cta'])],
+  ['failure_reason', new Set(['validation', 'turnstile', 'network'])],
   ['method', new Set(['contact_form', 'native', 'clipboard'])],
   ['navigation_type', new Set(['navigate', 'reload', 'back_forward', 'prerender'])],
   ['sentiment', new Set(['positive', 'negative'])],
@@ -114,6 +118,8 @@ const CLARITY_TAG_KEYS = new Set([
   'kind',
   'format',
   'category',
+  'cta_id',
+  'failure_reason',
   'severity',
   'action',
   'type',
@@ -291,6 +297,13 @@ export const conversionEvents = {
     if (data?.acquisition_source) props.acquisition_source = data.acquisition_source;
     trackEvent('generate_lead', props);
   },
+
+  ctaSelect: (data: {
+    cta_id: 'hero_primary' | 'hero_secondary' | 'contact_submit' | 'study_cta';
+  }) => trackEvent('cta_select', data),
+
+  formFailure: (data: { failure_reason: 'validation' | 'turnstile' | 'network' }) =>
+    trackEvent('form_failure', data),
 
   chatEngagement: (data: { user_messages: number; total_messages: number }) =>
     trackEvent('chat_engagement', data),

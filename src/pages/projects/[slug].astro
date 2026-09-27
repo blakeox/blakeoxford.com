@@ -10,7 +10,7 @@
 import type { GetStaticPaths } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import ProjectDetailLayout from '@/layouts/ProjectDetailLayout.astro';
-import CTASection from '@/components/composites/CTASection.astro';
+import Button from '@/components/primitives/Button.astro';
 import { isPublished } from '@/lib/content/publication-contract.mjs';
 
 export const getStaticPaths = (async () => {
@@ -28,10 +28,16 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { ctaHeading, ctaDescription } = project.data;
-const showCTA = ctaHeading && ctaDescription;
+const { ctaDescription } = project.data;
 ---
 
 <ProjectDetailLayout slug={project.id}>
-  {showCTA && <CTASection slot="cta" heading={ctaHeading} description={ctaDescription} />}
+  {ctaDescription && (
+    <div slot="cta" class="flex flex-col items-start gap-4">
+      <p class="max-w-xl text-base leading-relaxed text-muted-foreground">{ctaDescription}</p>
+      <Button href="/contact/" variant="primary" data-cta-id="contact_submit">
+        Discuss your bottleneck
+      </Button>
+    </div>
+  )}
 </ProjectDetailLayout>

@@ -10,10 +10,12 @@ describe('projects/index.astro', () => {
   });
 
   it('should frame the page as a portfolio showcase', () => {
-    expect(fileContent).toContain('ProjectsCapabilitiesSection');
-    expect(fileContent).toContain('ProjectsFeaturedSection');
+    expect(fileContent).toContain('HIRE_GROUPS');
+    expect(fileContent).toContain('ALSO_BUILT');
     expect(fileContent).toContain('ProjectsLibrarySection');
     expect(fileContent).toContain('getProjectInsights');
+    expect(fileContent).not.toContain('ProjectsCapabilitiesSection');
+    expect(fileContent).not.toContain('ProjectsFeaturedSection');
   });
 
   it('should keep conversion on the closing band', () => {
@@ -24,7 +26,8 @@ describe('projects/index.astro', () => {
 
   it('should have accessible hero landmarks', () => {
     expect(fileContent).toContain('id="projects-hero"');
-    expect(fileContent).toContain('shell="projects-hero-inner"');
+    expect(fileContent).toContain('titleId="projects-title"');
+    expect(fileContent).not.toContain('shell="projects-hero-inner"');
   });
 
   it('should not use deprecated getCollection pattern', () => {

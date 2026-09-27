@@ -1,20 +1,20 @@
 ---
 /**
- * Outcomes — shipped proof, without restating the identity thesis.
+ * Outcomes — one lead figure, then the other hire studies as linked sentences.
+ * Each line is copied from that study's first impact line.
  */
 import Section from '@/components/primitives/Section.astro';
 import SectionHeader from '@/components/composites/SectionHeader.astro';
-import type {
-  HomePageContent,
-  HomeResumeHighlightItem,
-  HomeResumeHighlightSide,
-} from '@/content/home/pageTypes';
+import type { HomePageContent } from '@/content/home/pageTypes';
+import type { HireStudyLink } from '@/content/projects/hirePath';
 
 interface Props {
   content: HomePageContent['resumeHighlights'];
+  studies: HireStudyLink[];
 }
 
-const { content } = Astro.props as Props;
+const { content, studies } = Astro.props as Props;
+const [lead, ...rest] = studies;
 ---
 
 <Section id="resume-highlights" padding="xl" container="lg" class="home-proof">
@@ -26,20 +26,22 @@ const { content } = Astro.props as Props;
     description={content.description}
   />
 
-  <div class="home-proof-split">
-    {content.sides.map((side: HomeResumeHighlightSide) => (
-      <article class="home-proof-side" data-proof-side={side.side}>
-        <p class="home-proof-label">{side.label}</p>
-        <p class="home-proof-metric">{side.metric}</p>
-        <h3 class="home-proof-title">{side.title}</h3>
-        <ul class="home-proof-items">
-          {side.items.map((item: HomeResumeHighlightItem) => (
-            <li>{item.text}</li>
-          ))}
-        </ul>
-      </article>
-    ))}
-  </div>
+  {lead ? (
+    <div class="home-proof-list">
+      <a class="home-proof-lead" href={lead.href} data-cta-id="study_cta">
+        <p class="home-proof-group">{lead.group}</p>
+        <p class="home-proof-metric">{lead.line}</p>
+        <p class="home-proof-study">{lead.title}</p>
+      </a>
+      {rest.map((study) => (
+        <a class="home-proof-row" href={study.href} data-cta-id="study_cta">
+          <p class="home-proof-group">{study.group}</p>
+          <p class="home-proof-line">{study.line}</p>
+          <p class="home-proof-study">{study.title}</p>
+        </a>
+      ))}
+    </div>
+  ) : null}
 </Section>
 
 <style>
@@ -47,30 +49,41 @@ const { content } = Astro.props as Props;
     margin-bottom: 2.25rem;
   }
 
-  .home-proof-split {
-    display: grid;
-    gap: 0;
+  .home-proof-list {
     border-block: 1px solid color-mix(in oklch, var(--color-border) 70%, transparent);
   }
 
-  .home-proof-side {
-    padding-block: 1.75rem;
+  .home-proof-lead,
+  .home-proof-row {
+    display: block;
+    padding-block: 1.5rem;
+    color: inherit;
+    text-decoration: none;
   }
 
-  .home-proof-side + .home-proof-side {
+  .home-proof-lead + .home-proof-row,
+  .home-proof-row + .home-proof-row {
     border-top: 1px solid color-mix(in oklch, var(--color-border) 70%, transparent);
   }
 
-  .home-proof-label {
-    margin: 0 0 0.85rem;
+  .home-proof-lead:focus-visible,
+  .home-proof-row:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .home-proof-group,
+  .home-proof-study {
+    margin: 0;
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.08em;
-    color: var(--color-accent-emphasis);
+    text-transform: uppercase;
+    color: var(--color-muted-foreground);
   }
 
   .home-proof-metric {
-    margin: 0 0 0.4rem;
+    margin: 0.65rem 0 0.35rem;
     font-family: var(--font-heading);
     font-size: clamp(1.35rem, 1.1rem + 0.85vw, 1.85rem);
     font-weight: 650;
@@ -80,42 +93,17 @@ const { content } = Astro.props as Props;
     color: var(--color-foreground);
   }
 
-  .home-proof-title {
-    margin: 0 0 1rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--color-muted-foreground);
-  }
-
-  .home-proof-items {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-  }
-
-  .home-proof-items li {
-    font-size: 0.95rem;
-    line-height: 1.45;
+  .home-proof-line {
+    margin: 0.4rem 0 0.25rem;
+    font-size: 1.05rem;
+    line-height: 1.4;
     color: var(--color-foreground);
   }
 
-  @media (width >= 768px) {
-    .home-proof-split {
-      grid-template-columns: 1fr 1fr;
-      gap: 0 3rem;
-    }
-
-    .home-proof-side {
-      padding-block: 2rem;
-    }
-
-    .home-proof-side + .home-proof-side {
-      border-top: 0;
-      border-left: 1px solid color-mix(in oklch, var(--color-border) 70%, transparent);
-      padding-left: 3rem;
-    }
+  .home-proof-study {
+    margin-top: 0.35rem;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    font-size: 0.875rem;
   }
 </style>

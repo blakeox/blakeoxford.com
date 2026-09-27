@@ -11,7 +11,7 @@ interface Props {
   data: CollectionEntry<'projects'>['data'];
   Content: AstroComponentFactory;
   metrics: Array<{ metric: string; result: string; timeline: string }>;
-  journey: string[];
+  journey: Array<{ title: string; body: string }>;
   lessons: Array<{ title: string; description: string }>;
   reflection?: string;
   hasMetrics: boolean;
@@ -27,7 +27,7 @@ const hasHighlights = Boolean(data.highlights?.length);
 const hasCtaSlot = Astro.slots.has('cta');
 
 const impactRows = (data.impact ?? []).map((item: string) => ({ body: item }));
-const journeyRows = journey.map((item: string) => ({ bodyHtml: item }));
+const journeyRows = journey.map((item) => ({ title: item.title, body: item.body }));
 const lessonRows = lessons.map((lesson: { title: string; description: string }) => ({
   title: lesson.title,
   body: lesson.description,

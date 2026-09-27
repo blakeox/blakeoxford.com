@@ -75,7 +75,10 @@ function setupTurnstile(isAudit: boolean): CleanupFn | void {
     message: string
   ) => {
     shell?.setAttribute('data-turnstile-state', state);
-    if (status) status.textContent = message;
+    if (status) {
+      status.textContent = message;
+      status.classList.toggle('sr-only', state !== 'error');
+    }
   };
 
   if (isAudit) {
@@ -272,7 +275,7 @@ function setupContactForm(): CleanupFn | void {
     const hasErrors = Object.keys(errors).length > 0;
 
     if (hasErrors) {
-      // analytics removed; no-op
+      conversionEvents.formFailure({ failure_reason: 'validation' });
       const firstErrorField = FORM_VALIDATION_CONFIG.fields.find(({ id }) => errors[id]);
       if (firstErrorField) {
         const field = fields[firstErrorField.id] as HTMLElement | null;
@@ -280,6 +283,8 @@ function setupContactForm(): CleanupFn | void {
       }
       return;
     }
+
+    conversionEvents.ctaSelect({ cta_id: 'contact_submit' });
 
     const formData = new FormData(form);
     const controller = new AbortController();
@@ -321,6 +326,8 @@ function setupContactForm(): CleanupFn | void {
         : 'Your message could not be sent. Please try again or email blakepoxford@outlook.com directly.';
 
       console.error('Form submission failed', error);
+      const failureReason = /verif/i.test(errorMessage) ? 'turnstile' : 'network';
+      conversionEvents.formFailure({ failure_reason: failureReason });
       showStatusMessage(statusElement ?? null, errorMessage, 'error');
     } finally {
       globalThis.clearTimeout(timeoutId);
@@ -330,10 +337,6 @@ function setupContactForm(): CleanupFn | void {
 
   form.addEventListener('submit', handleSubmit);
   cleanupFns.push(() => form.removeEventListener('submit', handleSubmit));
-
-  if (new URLSearchParams(window.location.search).get('success') === 'true') {
-    showStatusMessage(statusElement ?? null, SUCCESS_MESSAGE, 'success');
-  }
 
   return () => {
     cleanupFns.forEach((fn) => fn());

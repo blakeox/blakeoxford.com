@@ -27,7 +27,7 @@
   }
 
   .section-kicker {
-    @apply inline-flex items-center gap-3 text-xs font-semibold tracking-label text-accent-emphasis uppercase;
+    @apply inline-flex items-center gap-3 text-xs font-semibold tracking-label text-muted-foreground uppercase;
   }
 
   .section-kicker::before {
@@ -35,7 +35,7 @@
     width: 1.5rem;
     height: 1px;
     content: '';
-    background: color-mix(in oklch, var(--color-accent) 70%, transparent);
+    background: var(--color-border);
   }
 
   .section-intro {
@@ -48,6 +48,21 @@
 
   .focus-ring-interactive:focus-visible {
     @apply ring-2 ring-accent/60 ring-offset-2 ring-offset-background outline-none;
+  }
+
+  .button-primary:hover {
+    background-color: var(--color-button-primary-bg-hover);
+    border-color: var(--color-button-primary-border-hover);
+  }
+
+  .button-secondary:hover {
+    background-color: var(--color-surface-subtle);
+  }
+
+  .button-primary:focus-visible,
+  .button-secondary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
   }
 
   .touch-target {

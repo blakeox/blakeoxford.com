@@ -63,7 +63,9 @@ const mainClasses = wide
   : 'mx-auto w-full max-w-3xl layout-gutter pt-24 text-base leading-relaxed text-foreground';
 
 const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() ?? '';
-const hideAskLauncher = Astro.url.pathname.replace(/\/+$/, '').endsWith('/contact');
+const normalizedPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const hideAskLauncher =
+  normalizedPath === '/' || normalizedPath === '/contact' || normalizedPath.startsWith('/contact/');
 ---
 
 <html lang="en" class="scroll-smooth bg-background text-foreground">
@@ -130,7 +132,7 @@ const hideAskLauncher = Astro.url.pathname.replace(/\/+$/, '').endsWith('/contac
     <main id="main-content" tabindex="-1" class={mainClasses} transition:animate="slide">
       <slot />
     </main>
-    <Footer transition:persist="footer" />
+    <Footer transition:persist="footer" reserveLauncher={!hideAskLauncher} />
     {runtimeSurfaceFlags.aiAssistant ? (
       <AIChatWidget transition:persist="chat" />
     ) : (

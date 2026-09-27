@@ -27,13 +27,7 @@ const routeContracts = [
   },
   {
     file: 'src/pages/projects/index.astro',
-    sections: [
-      'PageHero',
-      'ProjectsFeaturedSection',
-      'ProjectsLibrarySection',
-      'ProjectsCapabilitiesSection',
-      'ProjectsCTASection',
-    ],
+    sections: ['ProjectsLibrarySection', 'ProjectsCTASection', 'HIRE_GROUPS'],
   },
   {
     file: 'src/pages/blog/index.astro',

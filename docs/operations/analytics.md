@@ -42,10 +42,10 @@ All browser events pass through `src/lib/analytics.ts`:
   metric IDs are intentionally excluded because they do not support aggregate
   decisions.
 
-The primary product events are `generate_lead`, `chat_engagement`,
-`command_center_*`, `autorag_*`, and `web_vitals`. Add an event only when it
-changes a product or reliability decision and document its owner and action
-threshold here.
+The primary product events are `generate_lead`, `cta_select`, `form_failure`,
+`chat_engagement`, `command_center_*`, `autorag_*`, and `web_vitals`. Add an
+event only when it changes a product or reliability decision and document its
+owner and action threshold here.
 
 ## GA4 custom definitions
 
@@ -66,6 +66,8 @@ definitions are:
 | Cache status    | `cache_status`    | Response cache effectiveness          |
 | Complexity      | `complexity`      | Request complexity comparison         |
 | Source          | `source`          | Bounded UI-source segmentation        |
+| CTA id          | `cta_id`          | Which hire-path control was used      |
+| Failure reason  | `failure_reason`  | Contact failure: validation, Turnstile, or network |
 
 Do not register raw URLs, referrers, queries, terms, message identifiers, or
 other high-cardinality values. Acquisition source remains intentionally
