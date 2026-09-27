@@ -32,6 +32,8 @@ describe('About, Contact, and Home page content', () => {
 
     expect(source).toContain('content.proofPoints');
     expect(source).toContain('How I show up in engagements');
+    expect(source).toContain('data-test="about-cta-connect"');
+    expect(source).toContain('data-test="about-cta-work"');
     expect(source).not.toContain('bg-surface-subtle');
   });
 

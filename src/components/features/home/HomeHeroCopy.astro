@@ -59,7 +59,12 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
     >
       {content.primaryCta.label}
     </Button>
-    <Button variant="outline" size="lg" href={content.secondaryCta.href} data-test="home-cta-work">
+    <Button
+      variant="secondary"
+      size="lg"
+      href={content.secondaryCta.href}
+      data-test="home-cta-work"
+    >
       {content.secondaryCta.label}
     </Button>
   </ButtonGroup>

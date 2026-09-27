@@ -3,6 +3,7 @@ import OptimizedImage, {
   type Props as OptimizedImageProps,
 } from '@/components/primitives/OptimizedImage.astro';
 import Button from '@/components/primitives/Button.astro';
+import ButtonGroup from '@/components/composites/ButtonGroup.astro';
 import DotMetaList from '@/components/composites/DotMetaList.astro';
 import ProofPlaque from '@/components/composites/ProofPlaque.astro';
 import ArrowLeftIcon from '@/components/primitives/icons/ArrowLeftIcon.astro';
@@ -40,7 +41,7 @@ const dateISO = date.toISOString();
       hasVisual && 'lg:grid lg:min-h-[calc(100svh-var(--nav-height))] lg:grid-cols-2',
     ]}
   >
-    <div class="layout-gutter flex flex-col justify-center py-section-lg sm:py-section-xl lg:py-section-2xl">
+    <div class="project-hero-copy layout-gutter flex flex-col justify-center py-section-lg sm:py-section-xl lg:py-section-2xl">
       <div class="flex max-w-xl flex-col gap-5">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
           <a
@@ -62,7 +63,7 @@ const dateISO = date.toISOString();
           <h1
             class:list={[
               'font-heading font-semibold tracking-tight text-pretty text-foreground',
-              headingSizeClass('hero'),
+              headingSizeClass('section'),
             ]}
           >
             {title}
@@ -81,19 +82,28 @@ const dateISO = date.toISOString();
 
         <DotMetaList items={categories} label="Focus areas" />
 
-        {link && (
-          <div>
-            <Button variant="outline" href={link} target="_blank" rel="noopener noreferrer">
+        <ButtonGroup align="start" responsive>
+          <Button variant="primary" size="lg" href="/contact/" data-test="project-cta-connect">
+            Discuss your bottleneck
+          </Button>
+          {link && (
+            <Button
+              variant="secondary"
+              size="lg"
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Visit project
               <ExternalLinkIcon />
             </Button>
-          </div>
-        )}
+          )}
+        </ButtonGroup>
       </div>
     </div>
 
     {image ? (
-      <figure class="relative min-h-72 overflow-hidden lg:h-full">
+      <figure class="relative min-h-72 overflow-hidden lg:h-full" data-chat-avoid-launcher>
         <OptimizedImage
           src={image}
           alt={title}
@@ -108,7 +118,32 @@ const dateISO = date.toISOString();
         ></div>
       </figure>
     ) : proofPlaque ? (
-      <ProofPlaque figure={proofPlaque.figure} caption={proofPlaque.caption} size="hero" flush />
+      <div class="project-hero-proof min-h-0 lg:h-full lg:min-h-72" data-chat-avoid-launcher>
+        <ProofPlaque figure={proofPlaque.figure} caption={proofPlaque.caption} size="hero" flush />
+      </div>
     ) : null}
   </div>
 </section>
+
+<style>
+  @media (width < 1024px) {
+    .project-hero-copy {
+      padding-bottom: 0.75rem;
+    }
+
+    .project-hero-proof :global(.proof-plaque) {
+      gap: 0.25rem;
+      padding: 0.75rem 1.5rem 1rem;
+    }
+
+    .project-hero-proof :global(.proof-plaque > p:first-child) {
+      font-size: 3rem;
+      line-height: 1;
+    }
+
+    .project-hero-proof :global(.proof-plaque > p:last-child) {
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+  }
+</style>

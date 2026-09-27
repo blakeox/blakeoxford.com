@@ -1,16 +1,11 @@
 ---
 /**
  * Home hero portrait — flush photographic plane. Work holds, then one dissolve to Daring.
+ * The portrait itself keeps Ask off the face while it occupies the launcher corner.
  */
-interface Props {
-  workAlt: string;
-  daringAlt: string;
-}
-
-const { workAlt, daringAlt } = Astro.props as Props;
 ---
 
-<div class="home-dual-visual">
+<div class="home-dual-visual" data-chat-avoid-launcher>
   <div class="home-dual-frame">
     <img
       src="/assets/images/optimized/avif/blake_detroit_skyline_bell_isle.avif"
@@ -34,18 +29,5 @@ const { workAlt, daringAlt } = Astro.props as Props;
       decoding="async"
     />
     <div class="home-dual-veil" aria-hidden="true"></div>
-    <!-- Mobile-only: hide Ask when it would sit on the portrait. Desktop keeps Ask. -->
-    <div class="home-dual-ask-pad md:hidden" data-chat-avoid-launcher aria-hidden="true"></div>
-    <div class="home-dual-switch" role="group" aria-label={`Two sides. ${workAlt}. ${daringAlt}.`}>
-      <button type="button" data-dual-select="work" aria-pressed="true">
-        Work
-      </button>
-      <span class="home-dual-switch-sep" aria-hidden="true">
-        ·
-      </span>
-      <button type="button" data-dual-select="daring" aria-pressed="false">
-        Daring
-      </button>
-    </div>
   </div>
 </div>

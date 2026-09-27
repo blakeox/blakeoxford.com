@@ -31,6 +31,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     fullScreen={false}
     includeBlurOrbs={false}
     align="center"
+    pad="snug"
     id="projects-hero"
     shell="projects-hero-inner"
   >
@@ -82,3 +83,12 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     button={meta.cta.button}
   />
 </Layout>
+
+<style>
+  @media (height <= 700px) {
+    :global(#projects-hero) {
+      padding-top: 1.25rem;
+      padding-bottom: 0.5rem;
+    }
+  }
+</style>

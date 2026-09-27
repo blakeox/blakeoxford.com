@@ -4,6 +4,7 @@
  *
  * Mobile: horizontal marquee. Desktop (md+): three vertical columns (work / travel / life).
  * Motion pauses via explicit control, hover, and prefers-reduced-motion.
+ * Photos load eagerly: the tracks move by transform inside overflow:hidden, so lazy never requests them.
  * Not an interactive slideshow (no prev/next / lightbox).
  */
 import { Image } from 'astro:assets';
@@ -112,9 +113,8 @@ const columnCLoop = loop(columnC);
               class="absolute inset-0 h-full w-full object-cover"
               width={CONFIG.mobileSize.width}
               height={CONFIG.mobileSize.height}
-              loading="lazy"
+              loading="eager"
               decoding="async"
-              fetchpriority="low"
             />
           </div>
         </li>
@@ -145,9 +145,8 @@ const columnCLoop = loop(columnC);
                 class="absolute inset-0 h-full w-full object-cover"
                 width={CONFIG.desktopSize.width}
                 height={CONFIG.desktopSize.height}
-                loading="lazy"
+                loading="eager"
                 decoding="async"
-                fetchpriority="low"
               />
             </div>
           </li>

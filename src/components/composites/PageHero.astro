@@ -19,6 +19,8 @@ interface Props {
   id?: string;
   /** Optional layout shell marker for tests / centering wrapper */
   shell?: string;
+  /** Snug keeps the claim short enough that the next proof stays in the first screen. */
+  pad?: 'default' | 'snug';
 }
 
 const {
@@ -32,7 +34,13 @@ const {
   style,
   id = 'hero',
   shell,
+  pad = 'default',
 } = Astro.props as Props;
+
+const padClass =
+  pad === 'snug'
+    ? 'items-center py-6 sm:py-8 lg:py-8'
+    : 'items-center py-section-lg sm:py-section-xl lg:py-section-2xl';
 
 const isCentered = align === 'center';
 ---
@@ -44,7 +52,7 @@ const isCentered = align === 'center';
   class={cn(
     'page-hero-shell relative flex overflow-hidden',
     fullScreen ? 'min-h-[calc(100svh-var(--nav-height))]' : 'min-h-0',
-    flush ? 'items-stretch py-0' : 'items-center py-section-lg sm:py-section-xl lg:py-section-2xl',
+    flush ? 'items-stretch py-0' : padClass,
     className
   )}
 >
