@@ -191,7 +191,7 @@ export const featureDocs: ComponentDoc[] = [
     examples: [
       {
         title: 'Hero visual',
-        code: '<HomeHeroVisual workAlt="Work portrait" daringAlt="Daring portrait" />',
+        code: '<HomeHeroVisual />',
       },
     ],
     tags: ['home', 'hero', 'portrait'],

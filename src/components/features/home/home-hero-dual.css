@@ -63,9 +63,8 @@
   transition: color var(--duration-normal) var(--ease-out-standard);
 }
 
-.home-dual-line[aria-pressed='false'] {
-  color: var(--color-muted-foreground);
-  font-weight: 500;
+.home-dual-line[aria-pressed='true'] {
+  color: var(--color-accent-emphasis);
 }
 
 .home-dual-line:focus-visible {
@@ -121,56 +120,6 @@
   );
 }
 
-.home-dual-ask-pad {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  width: 5.5rem;
-  height: 5.5rem;
-  pointer-events: none;
-}
-
-.home-dual-switch {
-  position: absolute;
-  bottom: 1.25rem;
-  left: 1.25rem;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.home-dual-switch-sep {
-  color: color-mix(in oklch, var(--color-foreground) 55%, transparent);
-  text-shadow: 0 0 18px var(--color-background);
-}
-
-.home-dual-switch button {
-  appearance: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: color-mix(in oklch, var(--color-foreground) 78%, transparent);
-  text-shadow: 0 0 18px var(--color-background);
-  transition: color var(--duration-normal) var(--ease-out-standard);
-}
-
-.home-dual-switch button[aria-pressed='true'] {
-  color: var(--color-accent-emphasis);
-}
-
-.home-dual-switch button:focus-visible {
-  outline: var(--focus-ring-width) solid var(--focus-ring-color);
-  outline-offset: var(--focus-ring-offset);
-}
-
 @media (width >= 768px) {
   .home-dual-stage {
     display: grid;
@@ -197,9 +146,6 @@
     );
   }
 
-  .home-dual-switch {
-    left: 1.5rem;
-  }
 }
 
 @media (width >= 1024px) {
@@ -242,8 +188,7 @@ html.dark .home-dual-veil {
 
 @media (prefers-reduced-motion: reduce) {
   .home-dual-face,
-  .home-dual-line,
-  .home-dual-switch button {
+  .home-dual-line {
     transition: none;
   }
 

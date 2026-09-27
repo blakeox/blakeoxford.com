@@ -35,6 +35,11 @@ describe('PhotoCarousel.astro', () => {
     expect(content).toContain('data-paused');
   });
 
+  it('loads photos eagerly so the overflow marquee is not an empty frame', () => {
+    expect(content).toContain('loading="eager"');
+    expect(content).not.toContain('loading="lazy"');
+  });
+
   it('does not claim prev/next controls or fake hover zoom', () => {
     expect(content).not.toMatch(/prev-btn|next-btn|carousel-controls/);
     expect(content).not.toContain('hover:scale-105');

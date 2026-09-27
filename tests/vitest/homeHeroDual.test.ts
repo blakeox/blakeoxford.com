@@ -41,8 +41,6 @@ function setup({ reducedMotion = false } = {}) {
     <div class="home-dual-visual">
       <button data-dual-select="work" data-dual-line-work aria-pressed="true">Work line</button>
       <button data-dual-select="daring" data-dual-line-daring aria-pressed="false">Daring line</button>
-      <button data-dual-select="work" aria-pressed="true">Work</button>
-      <button data-dual-select="daring" aria-pressed="false">Daring</button>
       <img data-dual-daring loading="lazy" />
     </div>
   </section>`;
@@ -77,12 +75,11 @@ describe('home hero static layout', () => {
     expect(section).toContain('layout-gutter');
     expect(section).not.toMatch(/home-dual-stage layout-gutter/);
     expect(visual).not.toContain('rounded-xl');
-    expect(visual).toContain('home-dual-ask-pad');
     expect(visual).toContain('data-chat-avoid-launcher');
-    expect(visual).toMatch(/home-dual-ask-pad[^>]*md:hidden[^>]*data-chat-avoid-launcher/);
-    expect(visual).not.toMatch(/home-dual-visual[^>]*data-chat-avoid-launcher/);
+    expect(visual).toMatch(/home-dual-visual[^>]*data-chat-avoid-launcher/);
+    expect(visual).not.toContain('home-dual-ask-pad');
+    expect(visual).not.toContain('home-dual-switch');
     expect(visual).toContain('home-dual-veil');
-    expect(visual).toContain('home-dual-switch');
     expect(visual).toContain('blake_detroit_skyline_bell_isle');
     expect(visual).toContain('china-profile-picture-hero');
     expect(visual).not.toContain('Hover or tap');

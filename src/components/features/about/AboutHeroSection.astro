@@ -2,6 +2,8 @@
 import PageHero from '@/components/composites/PageHero.astro';
 import PhotoCarousel from '@/components/composites/PhotoCarousel.astro';
 import IntroCopy from '@/components/composites/IntroCopy.astro';
+import Button from '@/components/primitives/Button.astro';
+import ButtonGroup from '@/components/composites/ButtonGroup.astro';
 
 export interface AboutHeroContent {
   kicker: string;
@@ -19,10 +21,10 @@ const { content } = Astro.props;
 
 <PageHero id="about-me" flush containerSize="full" containerPadding={false} includeBlurOrbs={false}>
   <div class="relative z-10 flex w-full flex-1 flex-col">
-    <div class="about-hero-split flex flex-1 flex-col md:grid md:grid-cols-2 md:gap-0">
-      <div class="layout-gutter order-1 flex flex-col justify-center pt-24 pb-10 md:py-14 md:pr-6 lg:pr-10 xl:pr-14">
+    <div class="about-hero-split flex flex-1 flex-col xl:grid xl:grid-cols-2 xl:gap-0">
+      <div class="layout-gutter order-1 flex flex-col justify-center pt-24 pb-6 md:pt-10 md:pb-4 md:pr-6 lg:pr-10 xl:py-14 xl:pr-14">
         <div
-          class="mx-auto flex w-full max-w-2xl flex-col gap-8 md:mx-0"
+          class="about-hero-copy mx-auto flex w-full max-w-2xl flex-col gap-4 md:mx-0 xl:gap-6"
           data-layout-shell="about-hero-copy"
         >
           <IntroCopy
@@ -45,17 +47,30 @@ const { content } = Astro.props;
               </li>
             ))}
           </ul>
+          <ButtonGroup align="start" responsive>
+            <Button
+              variant="primary"
+              size="lg"
+              href="/contact/"
+              data-test="about-cta-connect"
+            >
+              Discuss your bottleneck
+            </Button>
+            <Button variant="secondary" size="lg" href="/projects/" data-test="about-cta-work">
+              See the work
+            </Button>
+          </ButtonGroup>
         </div>
       </div>
 
       <div
-        class="about-hero-media order-2 w-full overflow-hidden md:h-full"
+        class="about-hero-media order-2 w-full overflow-hidden xl:h-full"
         data-chat-avoid-launcher
       >
         <div class="relative h-full w-full">
           <PhotoCarousel class="h-full w-full" />
           <div
-            class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background/55 via-background/15 to-transparent md:block"
+            class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background/55 via-background/15 to-transparent xl:block"
             aria-hidden="true"
           ></div>
         </div>
@@ -75,13 +90,31 @@ const { content } = Astro.props;
     }
   }
 
+  @media (width < 768px) and (height <= 700px) {
+    .about-hero-split > .layout-gutter {
+      padding-top: 1.5rem;
+      padding-bottom: 0.75rem;
+    }
+  }
+
   @media (width >= 640px) {
     .about-hero-media {
       height: min(50vh, 26rem);
     }
   }
 
-  @media (width >= 768px) {
+  @media (width >= 1280px) and (height <= 700px) {
+    .about-hero-split > .layout-gutter {
+      padding-top: 1.5rem;
+      padding-bottom: 1rem;
+    }
+
+    .about-hero-copy {
+      gap: 1rem;
+    }
+  }
+
+  @media (width >= 1280px) {
     .about-hero-split {
       min-height: calc(100svh - var(--nav-height));
     }
