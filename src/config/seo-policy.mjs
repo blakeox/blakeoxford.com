@@ -1,6 +1,13 @@
 export const SITE_ORIGIN = 'https://blakeoxford.com';
 export const SEO_DESCRIPTION_MAX_LENGTH = 160;
-export const NOINDEX_ROUTE_PREFIXES = ['/accessibility/', '/components/', '/design/', '/docs/'];
+export const NOINDEX_ROUTE_PREFIXES = [
+  '/accessibility/',
+  '/components/',
+  '/design/',
+  '/docs/',
+  '/contact/sent/',
+  '/contact/error/',
+];
 
 export function validateMetadataQuality({ title, description }) {
   const errors = [];

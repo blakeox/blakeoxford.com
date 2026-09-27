@@ -2,6 +2,7 @@
  * Message processing utilities for chat functionality
  */
 
+import { SITE_URL } from '@/config/constants';
 import type { AIChatMessage, AIChatSource } from '@/lib/ai-search';
 import type { ChatMessage } from './chat-types';
 import {
@@ -103,10 +104,44 @@ export function buildHistoryForRequest(
 /**
  * Generate contextual CTAs based on message sources
  */
+const CANONICAL_HOST = new URL(SITE_URL).hostname;
+
+function isSiteHost(hostname: string, siteHostname: string): boolean {
+  return hostname === siteHostname || hostname === CANONICAL_HOST;
+}
+
+function projectPathname(url: string, siteHostname: string): string | null {
+  try {
+    const parsed = new URL(url, `https://${siteHostname}`);
+    if (!isSiteHost(parsed.hostname, siteHostname)) return null;
+    const pathname = parsed.pathname.replace(/\/+$/, '') || '/';
+    return pathname === '/projects' || pathname.startsWith('/projects/') ? pathname : null;
+  } catch {
+    return null;
+  }
+}
+
+function isProjectSource(source: AIChatSource, siteHostname: string): boolean {
+  return source.collection === 'projects' || projectPathname(source.url, siteHostname) !== null;
+}
+
+function sameSitePath(url: string, currentPath: string | undefined, siteHostname: string): boolean {
+  if (!currentPath) return false;
+  try {
+    const parsed = new URL(url, `https://${siteHostname}`);
+    const normalized = parsed.pathname.replace(/\/+$/, '') || '/';
+    const current = currentPath.replace(/\/+$/, '') || '/';
+    return normalized === current;
+  } catch {
+    return false;
+  }
+}
+
 export function generateContextualCTAs(
   sources: AIChatSource[],
   siteHostname: string,
-  messageCount: number
+  messageCount: number,
+  currentPath?: string
 ): Array<{ label: string; url: string; icon: string; type: string }> {
   if (!sources || sources.length === 0) return [];
 
@@ -117,19 +152,25 @@ export function generateContextualCTAs(
   const internalSources = sources.filter((s) => {
     try {
       const url = new URL(s.url, `https://${siteHostname}`);
-      return url.hostname === siteHostname;
+      return isSiteHost(url.hostname, siteHostname);
     } catch {
       return !s.url.startsWith('http');
     }
   });
 
   // Group by collection type
-  const projectSources = internalSources.filter((s) => s.collection === 'projects');
+  const projectSources = internalSources.filter((source) => isProjectSource(source, siteHostname));
   const blogSources = internalSources.filter((s) => s.collection === 'blog');
 
-  // Add project CTA (prioritize highest relevance)
-  if (projectSources.length > 0) {
-    const topProject = projectSources[0];
+  const otherProjects = projectSources.filter((source) => {
+    const pathname = projectPathname(source.url, siteHostname);
+    if (pathname === '/projects') return false;
+    return !sameSitePath(source.url, currentPath, siteHostname);
+  });
+
+  // A cited project that is only the page already open is not a next step.
+  if (otherProjects.length > 0) {
+    const topProject = otherProjects[0];
     if (!seenUrls.has(topProject.url)) {
       ctas.push({
         label: 'View Project Details',
@@ -139,6 +180,16 @@ export function generateContextualCTAs(
       });
       seenUrls.add(topProject.url);
     }
+  }
+
+  if (projectSources.length > 0 && !seenUrls.has('/contact/')) {
+    ctas.push({
+      label: 'Discuss this work',
+      url: '/contact/',
+      icon: '💬',
+      type: 'contact',
+    });
+    seenUrls.add('/contact/');
   }
 
   // Add blog CTA (prioritize highest relevance)
@@ -175,11 +226,18 @@ export function generateContextualCTAs(
     });
   }
 
-  // Add contact CTA if conversation is deep
-  if (messageCount > DEEP_CONVERSATION_THRESHOLD && ctas.length > 0 && ctas.length < MAX_CTAS) {
+  // Contact for a cited project is appended above. Deep chats without a project
+  // still get one path to the brief.
+  if (
+    projectSources.length === 0 &&
+    messageCount > DEEP_CONVERSATION_THRESHOLD &&
+    ctas.length > 0 &&
+    ctas.length < MAX_CTAS &&
+    !seenUrls.has('/contact/')
+  ) {
     ctas.push({
-      label: 'Get in Touch',
-      url: '/contact',
+      label: 'Discuss this work',
+      url: '/contact/',
       icon: '💬',
       type: 'contact',
     });

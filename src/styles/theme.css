@@ -74,8 +74,9 @@
   --runtime-error-subtle: color-mix(in oklch, var(--palette-error) 10%, transparent);
   --runtime-button-primary-bg: var(--runtime-accent);
   --runtime-button-primary-fg: var(--runtime-on-accent);
-  --runtime-button-primary-bg-hover: var(--brand-accent-dark);
-  --runtime-button-primary-border-hover: var(--brand-accent-dark);
+  /* Darken the button fill. Text copper (--brand-accent-dark) is not a fill. */
+  --runtime-button-primary-bg-hover: oklch(0.48 0.15 48);
+  --runtime-button-primary-border-hover: oklch(0.48 0.15 48);
   --runtime-button-disabled-bg: var(--runtime-surface-subtle);
   --runtime-button-disabled-fg: var(--runtime-muted-foreground);
   --runtime-button-disabled-border: var(--runtime-border);

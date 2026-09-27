@@ -40,6 +40,8 @@ import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED } from '@/features/chat/chatSt
 </div>
 
 <script>
+  import { ensureReactRefreshPreamble } from '@/lib/dev/ensureReactRefreshPreamble';
+
   let mountedRoot: HTMLElement | null = null;
   let mountPromise: Promise<void> | null = null;
   let pendingEvent: { type: string; detail?: unknown } | null = null;
@@ -72,6 +74,8 @@ import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED } from '@/features/chat/chatSt
   const mount = () => {
     const root = getRoot();
     if (!root || mountedRoot === root) return mountPromise ?? Promise.resolve();
+
+    ensureReactRefreshPreamble();
 
     mountPromise = import('@/features/chat/chatLoader')
       .then(({ mountAIChat }) => {

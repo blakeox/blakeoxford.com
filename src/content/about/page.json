@@ -91,6 +91,7 @@
       {
         "year": "2019",
         "title": "Finance systems integration",
+        "studyHref": "/projects/adp-workforcenow/",
         "achievements": [
           "Sage Intacct and ADP across departmental handoffs",
           "Custom APIs replacing spreadsheet reconciliation",
@@ -100,6 +101,7 @@
       {
         "year": "2020",
         "title": "Cloud platforms and endpoints",
+        "studyHref": "/projects/google-workspace-migration/",
         "achievements": [
           "Identity, mail, and device management as one cutover",
           "Legacy finance and HR stacks retired behind the new platforms",
@@ -108,9 +110,15 @@
       },
       {
         "year": "2023",
-        "title": "Analytics inside the operating cadence",
+        "title": "Forecasts for the committee",
+        "studyHref": "/projects/bank-projections-modeling/",
+        "achievements": ["Forecasting and exception reporting for leadership decisions"]
+      },
+      {
+        "year": "2023",
+        "title": "Revenue-cycle reporting",
+        "studyHref": "/projects/advancedmd-implementation/",
         "achievements": [
-          "Forecasting and exception reporting for leadership decisions",
           "Revenue-cycle playbooks the team could run without me",
           "SQL reporting that made unbilled work visible in time to act"
         ]
@@ -118,6 +126,7 @@
       {
         "year": "2024",
         "title": "AI in the daily workflow",
+        "studyHref": "/projects/llm-note-coaching/",
         "achievements": [
           "Clinical-note review before submission, not after the audit",
           "Coaching loops that improved documentation quality in place",

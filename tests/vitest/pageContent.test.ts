@@ -60,19 +60,9 @@ describe('About, Contact, and Home page content', () => {
 
     expect(home.meta.title).toBeTruthy();
     expect(home.hero.defaultTagline).toBeTruthy();
-    expect(home.resumeHighlights.sides.length).toBe(2);
-    expect(home.resumeHighlights.sides.map((s: { side: string }) => s.side)).toEqual([
-      'work',
-      'daring',
-    ]);
-    expect(
-      home.resumeHighlights.sides.every(
-        (side: { metric: string; items: unknown[] }) =>
-          Boolean(side.metric) &&
-          side.metric.trim().split(/\s+/).length <= 4 &&
-          side.items.length === 3
-      )
-    ).toBe(true);
+    expect(home.resumeHighlights.title).toBeTruthy();
+    expect(JSON.stringify(home)).not.toMatch(/180 users/);
+    expect(JSON.stringify(home)).not.toMatch(/\$M\+/);
     expect(home.recentProjects.cta.href).toBe('/projects/');
     expect(home.cta.button.href).toBe('/contact/');
     expect(home.cta.button.label).toBe('Discuss your bottleneck');

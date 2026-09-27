@@ -1,0 +1,20 @@
+---
+import Layout from '@/layouts/BaseLayout.astro';
+import ContactChannels from '@/components/features/contact/ContactChannels.astro';
+import ContactMessageSection from '@/components/features/contact/ContactMessageSection.astro';
+import { getContactPage } from '@/content/contact/getContactPage';
+import { CANONICAL_URLS } from '@/config/constants';
+
+const page = await getContactPage();
+---
+
+<Layout
+  title={page.meta.title}
+  description={page.meta.description}
+  url={`${CANONICAL_URLS.contact}sent/`}
+  wide={true}
+  noindex={true}
+>
+  <ContactMessageSection content={page.hero} sent={true} />
+  <ContactChannels channels={page.channels} />
+</Layout>

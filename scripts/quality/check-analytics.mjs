@@ -37,6 +37,8 @@ const allowedGa4DimensionParameters = new Set([
   'cache_status',
   'category',
   'complexity',
+  'cta_id',
+  'failure_reason',
   'form',
   'kind',
   'method',

@@ -1,6 +1,6 @@
 ---
 /**
- * Home identity hero — one Work/Daring dissolve, both theses, two actions in one viewport.
+ * Home identity hero — one portrait, one sentence, two actions.
  */
 import HomeHeroCopy from '@/components/features/home/HomeHeroCopy.astro';
 import HomeHeroVisual from '@/components/features/home/HomeHeroVisual.astro';
@@ -13,30 +13,13 @@ interface Props {
 }
 
 const { author, content } = Astro.props as Props;
-
-const workLine = 'Builds systems teams keep running.';
-const daringLine = 'Chases the edge cases that make them better.';
 ---
 
-<section
-  id="about-me"
-  class="home-dual"
-  data-home-dual
-  data-side="work"
-  aria-label="Blake Oxford — two sides"
->
+<section id="about-me" class="home-dual" aria-label="Blake Oxford">
   <div class="home-dual-stage">
     <div class="home-dual-copy-shell layout-gutter">
-      <HomeHeroCopy author={author} content={content} workLine={workLine} daringLine={daringLine} />
+      <HomeHeroCopy author={author} content={content} />
     </div>
     <HomeHeroVisual />
   </div>
 </section>
-
-<script>
-  import { bindHomeHero, teardownHomeDual } from './homeHeroDual';
-
-  bindHomeHero();
-  document.addEventListener('astro:page-load', bindHomeHero);
-  document.addEventListener('astro:before-swap', teardownHomeDual);
-</script>

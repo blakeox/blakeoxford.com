@@ -20,6 +20,11 @@
 import Container from '@/components/primitives/Container.astro';
 import { getNavQuickLinks, navConfig, type NavLink } from '@/config/navLinks';
 
+interface Props {
+  reserveLauncher?: boolean;
+}
+
+const { reserveLauncher = true } = Astro.props;
 const year = new Date().getFullYear();
 const quickLinks = getNavQuickLinks();
 const socialLinks = navConfig.socialLinks ?? [];
@@ -37,7 +42,10 @@ const linkClass =
   role="contentinfo"
   aria-label="Site footer"
   tabindex="-1"
-  class="relative border-t border-border bg-surface pt-10 pb-24 text-foreground sm:pb-10"
+  class:list={[
+    'relative border-t border-border bg-surface pt-10 text-foreground',
+    reserveLauncher ? 'pb-24 sm:pb-10' : 'pb-10',
+  ]}
 >
   <Container size="xl" padding={true}>
     <div class="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">

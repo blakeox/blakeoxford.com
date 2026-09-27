@@ -1,6 +1,6 @@
 ---
 /**
- * Home hero copy column — brand lockup, theses that track the portrait, primary + proof CTAs.
+ * Home hero copy — name, one sentence, primary and proof actions.
  */
 import IntroCopy from '@/components/composites/IntroCopy.astro';
 import Button from '@/components/primitives/Button.astro';
@@ -10,42 +10,17 @@ import type { HomePageContent } from '@/content/home/pageTypes';
 interface Props {
   author: string;
   content: HomePageContent['hero'];
-  workLine: string;
-  daringLine: string;
 }
 
-const { author, content, workLine, daringLine } = Astro.props as Props;
+const { author, content } = Astro.props as Props;
 ---
 
 <div class="hero-entrance home-dual-copy relative z-20">
   <div class="home-dual-lockup">
-    <IntroCopy
-      kicker={content.kicker || 'Two sides'}
-      title={author}
-      size="identity"
-      class="w-full items-start"
-    />
-
-    <div class="home-dual-lines">
-      <button
-        type="button"
-        class="home-dual-line"
-        data-dual-select="work"
-        data-dual-line-work
-        aria-pressed="true"
-      >
-        {workLine}
-      </button>
-      <button
-        type="button"
-        class="home-dual-line"
-        data-dual-select="daring"
-        data-dual-line-daring
-        aria-pressed="false"
-      >
-        {daringLine}
-      </button>
-    </div>
+    <IntroCopy kicker={content.kicker} title={author} size="identity" class="w-full items-start" />
+    <p class="max-w-md text-lg leading-snug font-semibold tracking-tight text-foreground sm:text-xl">
+      {content.defaultTagline}
+    </p>
   </div>
 
   <ButtonGroup align="start" responsive class="pt-0">
@@ -54,7 +29,7 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
       size="lg"
       href={content.primaryCta.href}
       data-test="home-cta-connect"
-      data-analytics="hero-cta"
+      data-cta-id="hero_primary"
       data-prefetch-contact
     >
       {content.primaryCta.label}
@@ -64,6 +39,7 @@ const { author, content, workLine, daringLine } = Astro.props as Props;
       size="lg"
       href={content.secondaryCta.href}
       data-test="home-cta-work"
+      data-cta-id="hero_secondary"
     >
       {content.secondaryCta.label}
     </Button>

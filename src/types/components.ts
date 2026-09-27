@@ -23,4 +23,6 @@ export interface ProjectCardProps {
   showTags?: boolean;
   /** Homepage-dense card: image, title, proof, CTA — no tag/meta chrome. */
   compact?: boolean;
+  /** Home lists the figure once above the cards. */
+  showPlaque?: boolean;
 }
