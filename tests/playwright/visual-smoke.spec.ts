@@ -44,7 +44,7 @@ for (const r of routes) {
     // animations:'disabled' alone cannot stop Work→Daring mid-settle.
     if (r.name === 'home') {
       const hero = page.locator('[data-home-dual]');
-      await hero.getByRole('button', { name: 'Work', exact: true }).click();
+      await hero.locator('[data-dual-select="work"]').click();
       await expect(hero).toHaveAttribute('data-side', 'work');
     }
 

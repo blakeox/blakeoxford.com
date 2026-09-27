@@ -44,7 +44,7 @@ const linkAttrs = href ? { href, 'aria-label': label ?? caption } : {};
     size === 'feature' && 'min-h-72 gap-4 p-8 sm:min-h-80 sm:p-10',
     size === 'hero' &&
       (flush
-        ? 'min-h-72 gap-6 p-10 sm:p-14 lg:min-h-full'
+        ? 'min-h-0 gap-2 px-6 py-4 sm:gap-3 sm:px-10 sm:py-8 lg:min-h-full lg:gap-6 lg:p-14'
         : 'min-h-72 gap-4 p-8 sm:min-h-96 sm:p-10'),
     href &&
       'transition-colors duration-normal focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none',

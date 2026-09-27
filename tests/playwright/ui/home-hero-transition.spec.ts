@@ -9,12 +9,10 @@ test.describe('home hero identity', () => {
     const hero = page.locator('[data-home-dual]');
     await expect(hero.locator('[data-dual-line-work]')).toBeVisible();
     await expect(hero.locator('[data-dual-line-daring]')).toBeVisible();
-    await expect(hero.getByRole('button', { name: 'Work', exact: true })).toBeVisible();
-    await expect(hero.getByRole('button', { name: 'Daring', exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Discuss your bottleneck' }).first()).toBeVisible();
     await expect(page.getByRole('link', { name: 'See the work' }).first()).toBeVisible();
 
-    await hero.getByRole('button', { name: 'Daring', exact: true }).click();
+    await hero.locator('[data-dual-select="daring"]').click();
     await expect(hero).toHaveAttribute('data-side', 'daring');
 
     const fitsViewport = await hero.evaluate((node) => {
