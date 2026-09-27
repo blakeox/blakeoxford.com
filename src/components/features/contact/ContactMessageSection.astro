@@ -1,13 +1,12 @@
 ---
 /**
- * Contact brief — the page is the form.
- * Claim, sequencing, and Turnstile wiring live in one section.
+ * Contact brief — title, one next step, and the form.
+ * A successful send replaces the form. A document POST error stays on this page.
  */
 import Section from '@/components/primitives/Section.astro';
 import FormField from '@/components/primitives/FormField.astro';
 import Button from '@/components/primitives/Button.astro';
 import IntroCopy from '@/components/composites/IntroCopy.astro';
-import DotMetaList from '@/components/composites/DotMetaList.astro';
 
 interface Sidebar {
   heading: string;
@@ -25,191 +24,165 @@ interface ContactBrief {
 
 interface Props {
   content: ContactBrief;
+  sent?: boolean;
+  errorMessage?: string;
 }
 
-const { content } = Astro.props as Props;
-const { sidebar } = content;
+const { content, sent = false, errorMessage } = Astro.props as Props;
+const SUCCESS_MESSAGE = 'Your project brief was sent. I’ll review it and follow up by email.';
 ---
 
 <Section
   id="contact-message-section"
   padding="lg"
-  container="xl"
+  container="lg"
   background="surface"
   aria-labelledby="contact-title"
   data-chat-avoid-launcher
 >
-  <div class="contact-brief-grid grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-12">
-    <div class="order-1 lg:col-start-1 lg:row-start-1">
-      <IntroCopy
-        kicker={content.kicker}
-        title={content.title}
-        titleId="contact-title"
-        description={content.description}
-        size="hero"
-        descriptionSize="md"
-      />
-    </div>
+  <div class="mx-auto flex max-w-xl flex-col gap-8">
+    <IntroCopy
+      kicker={content.kicker}
+      title={content.title}
+      titleId="contact-title"
+      description={content.description}
+      size="section"
+      descriptionSize="md"
+    />
 
-    <div class="order-2 border border-border/50 bg-background p-5 sm:p-7 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:p-6">
-      <p class="contact-brief-required mb-6 text-sm text-muted-foreground">
-        All fields are required.
-      </p>
-
-      <div
+    {sent ? (
+      <p
         id="form-status"
         role="status"
-        aria-live="polite"
-        aria-atomic="true"
         tabindex="-1"
-        class="mb-5 hidden text-sm font-semibold"
-      ></div>
-
-      <form
-        id="contact-form"
-        method="POST"
-        action="/send-email"
-        class="space-y-5"
-        aria-describedby="contact-form-help"
+        class="border border-border/50 bg-background px-5 py-6 text-base leading-relaxed text-foreground"
       >
-        <FormField id="form-name" type="hidden" label="form-name-hidden" value="contact" />
-        <p hidden>
-          <input id="bot-field" name="bot-field" type="text" tabindex="-1" autocomplete="off" />
-        </p>
-        <p id="contact-form-help" class="sr-only">
-          All fields are required. Your message is protected by Cloudflare Turnstile and delivered
-          through Cloudflare Email Service. Contact submissions are retained for up to 90 days for
-          follow-up and abuse review, then automatically expire.
-        </p>
-
-        <div class="grid gap-5 sm:grid-cols-2">
-          <FormField
-            id="name"
-            label="Name"
-            type="text"
-            required
-            autocomplete="name"
-            minlength={2}
-            maxlength={100}
-            placeholder="Your name"
-          />
-
-          <FormField
-            id="email"
-            label="Work email"
-            type="email"
-            required
-            autocomplete="email"
-            maxlength={254}
-            placeholder="you@company.com"
-          />
-        </div>
-
-        <FormField
-          id="message"
-          label="What bottleneck should we attack first?"
-          type="textarea"
-          required
-          rows={6}
-          minlength={10}
-          maxlength={2000}
-          placeholder="Describe the problem, the systems or teams involved, and the outcome you need."
-          helpText="10 character minimum · 2,000 character maximum"
-        />
-
-        <div class="-mt-4 flex justify-end text-xs text-subtle-foreground" aria-live="polite">
-          <span id="message-count">0</span>
-          <span aria-hidden="true"> / 2,000</span>
-          <span class="sr-only">characters used</span>
-        </div>
-
-        <div
-          id="turnstile-shell"
-          class="min-h-0 data-[turnstile-state=error]:min-h-10 data-[turnstile-state=interactive]:min-h-[65px]"
-          data-turnstile-state="idle"
-        >
-          <p id="turnstile-status" class="sr-only" aria-live="polite"></p>
-          <div
-            id="turnstile-container"
-            class="flex w-full min-w-0 items-start justify-start [&>iframe]:max-w-full"
-            role="group"
-            aria-label="Human verification challenge"
-          ></div>
-        </div>
-
-        <Button type="submit" variant="primary" size="lg" fullWidth>
-          <span id="btn-label">Send project brief</span>
-          <svg
-            id="spinner"
-            class="hidden size-5 animate-spin"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+        {SUCCESS_MESSAGE}
+      </p>
+    ) : (
+      <div class="border border-border/50 bg-background p-5 sm:p-7">
+        {errorMessage ? (
+          <p
+            id="form-status"
+            role="alert"
+            tabindex="-1"
+            class="mb-5 text-sm font-semibold text-error"
           >
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="3"
-              fill="none"
-              opacity=".3"
-            ></circle>
-            <path
-              d="M22 12a10 10 0 0 0-10-10"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-            ></path>
-          </svg>
-        </Button>
-        <p class="text-center text-sm leading-relaxed text-muted-foreground">
-          I’ll review your brief and follow up by email about next steps.
-        </p>
-        <p class="text-center text-xs leading-relaxed text-subtle-foreground">
-          Your details are used to respond to your inquiry and protect this form from abuse.
-        </p>
-      </form>
-    </div>
+            {errorMessage}
+          </p>
+        ) : (
+          <div
+            id="form-status"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            tabindex="-1"
+            class="mb-5 hidden text-sm font-semibold"
+          />
+        )}
 
-    <div class="order-3 lg:col-start-1 lg:row-start-2">
-      <DotMetaList items={content.scenarios} label="Best-fit scenarios" />
-    </div>
+        <form id="contact-form" method="POST" action="/send-email" class="space-y-5" novalidate>
+          <FormField id="form-name" type="hidden" label="form-name-hidden" value="contact" />
+          <p hidden>
+            <input id="bot-field" name="bot-field" type="text" tabindex="-1" autocomplete="off" />
+          </p>
 
-    <div class="order-4 border-t border-border/50 pt-5 lg:col-start-1 lg:row-start-3">
-      <p class="text-sm font-semibold tracking-tight text-foreground">{sidebar.heading}</p>
-      <ol class="mt-3 space-y-2.5" role="list">
-        {sidebar.items.map((item, index) => (
-          <li class="flex gap-3 text-sm leading-relaxed text-muted-foreground">
-            <span
-              class="font-heading text-sm font-semibold text-accent-emphasis tabular-nums"
+          <div class="grid gap-5 sm:grid-cols-2">
+            <FormField
+              id="name"
+              label="Name"
+              type="text"
+              required
+              autocomplete="name"
+              minlength={2}
+              maxlength={100}
+              placeholder="Your name"
+            />
+
+            <FormField
+              id="email"
+              label="Work email"
+              type="email"
+              required
+              autocomplete="email"
+              maxlength={254}
+              placeholder="you@company.com"
+            />
+          </div>
+
+          <FormField
+            id="message"
+            label="What bottleneck should we attack first?"
+            type="textarea"
+            required
+            rows={6}
+            minlength={10}
+            maxlength={2000}
+            placeholder="Describe the problem, the systems or teams involved, and the outcome you need."
+          />
+
+          <div
+            id="turnstile-shell"
+            class="min-h-0 data-[turnstile-state=error]:min-h-10 data-[turnstile-state=interactive]:min-h-[65px]"
+            data-turnstile-state="idle"
+          >
+            <p
+              id="turnstile-status"
+              class="sr-only text-sm font-semibold text-error"
+              aria-live="polite"
+            ></p>
+            <div
+              id="turnstile-container"
+              class="flex w-full min-w-0 items-start justify-start [&>iframe]:max-w-full"
+              role="group"
+              aria-label="Human verification challenge"
+            />
+          </div>
+
+          <Button type="submit" variant="primary" size="lg" fullWidth>
+            <span id="btn-label">Send project brief</span>
+            <svg
+              id="spinner"
+              class="hidden size-5 animate-spin"
+              viewBox="0 0 24 24"
               aria-hidden="true"
             >
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <span>{item}</span>
-          </li>
-        ))}
-      </ol>
-      <p class="mt-5 text-sm leading-relaxed text-muted-foreground">{sidebar.note}</p>
-      <p class="mt-3 text-xs leading-relaxed text-subtle-foreground">
-        Protected by Cloudflare Turnstile; delivered through Cloudflare Email Service.
-      </p>
-    </div>
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="3"
+                fill="none"
+                opacity=".3"
+              />
+              <path
+                d="M22 12a10 10 0 0 0-10-10"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+            </svg>
+          </Button>
+          <p class="text-center text-sm leading-relaxed text-muted-foreground">
+            I’ll review your brief and follow up by email about next steps.
+          </p>
+        </form>
+      </div>
+    )}
   </div>
 </Section>
 
 <style>
-  @media (width < 768px) and (height <= 700px) {
-    :global(#contact-message-section) {
-      padding-top: 1rem;
-    }
-
-    .contact-brief-grid {
-      gap: 0.75rem;
-    }
-
-    .contact-brief-required {
-      margin-bottom: 0;
-    }
+  #turnstile-shell[data-turnstile-state='error'] #turnstile-status {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
   }
 </style>

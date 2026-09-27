@@ -7,32 +7,35 @@ import ProjectCard from './ProjectCard.astro';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
-  kicker: string;
+  kicker?: string;
   title: string;
   description: string;
+  id?: string;
   /** Featured slug to de-emphasize or skip if already shown above. */
   excludeSlug?: string;
 }
 
-const { projects, kicker, title, description, excludeSlug } = Astro.props as Props;
+const { projects, kicker, title, description, id = 'library', excludeSlug } = Astro.props as Props;
+const headingId = `${id}-heading`;
 const libraryProjects = excludeSlug
   ? projects.filter((project) => project.id !== excludeSlug)
   : projects;
 ---
 
 <Section
-  id="library"
+  id={id}
   padding="xl"
   container="xl"
-  aria-labelledby="library-heading"
+  aria-labelledby={headingId}
   data-layout-section="projects-grid"
 >
   <div data-layout-shell="projects-grid-inner">
     <SectionHeader
       kicker={kicker}
       title={title}
-      titleId="library-heading"
+      titleId={headingId}
       description={description}
+      size="section"
     />
 
     <Grid cols="3" gap="md">

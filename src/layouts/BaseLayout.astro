@@ -63,7 +63,9 @@ const mainClasses = wide
   : 'mx-auto w-full max-w-3xl layout-gutter pt-24 text-base leading-relaxed text-foreground';
 
 const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() ?? '';
-const hideAskLauncher = Astro.url.pathname.replace(/\/+$/, '').endsWith('/contact');
+const normalizedPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const hideAskLauncher =
+  normalizedPath === '/' || normalizedPath === '/contact' || normalizedPath.startsWith('/contact/');
 ---
 
 <html lang="en" class="scroll-smooth bg-background text-foreground">

@@ -14,8 +14,6 @@ export type EditorialRow = {
   kicker?: string;
   title?: string;
   body?: string;
-  /** HTML body (e.g. journey steps with bold labels). Prefer plain `body` when possible. */
-  bodyHtml?: string;
   href?: string;
   linkLabel?: string;
   bullets?: string[];
@@ -65,20 +63,20 @@ const Tag = listAs ?? (numbered ? 'ol' : 'ul');
       >
         {numbered ? (
           <span
-            class="font-heading text-sm font-semibold text-accent-emphasis tabular-nums sm:pt-0.5"
+            class="font-heading text-sm font-semibold text-muted-foreground tabular-nums sm:pt-0.5"
             aria-hidden="true"
           >
             {String(index + 1).padStart(2, '0')}
           </span>
         ) : useAsideKicker && row.kicker ? (
-          <p class="font-heading text-sm font-semibold tracking-tight text-accent-emphasis tabular-nums sm:pt-0.5">
+          <p class="font-heading text-sm font-semibold tracking-tight text-muted-foreground tabular-nums sm:pt-0.5">
             {row.kicker}
           </p>
         ) : null}
 
         <div class="min-w-0 space-y-2">
           {showInlineKicker && (
-            <p class="font-heading text-base font-semibold tracking-tight text-accent-emphasis sm:text-lg">
+            <p class="font-heading text-base font-semibold tracking-tight text-muted-foreground sm:text-lg">
               {row.kicker}
             </p>
           )}
@@ -92,12 +90,7 @@ const Tag = listAs ?? (numbered ? 'ol' : 'ul');
               {row.title}
             </h3>
           )}
-          {row.bodyHtml ? (
-            <p
-              class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
-              set:html={row.bodyHtml}
-            />
-          ) : row.body ? (
+          {row.body ? (
             <p class="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               {row.body}
             </p>
@@ -122,7 +115,7 @@ const Tag = listAs ?? (numbered ? 'ol' : 'ul');
           {row.href && row.linkLabel && (
             <a
               href={row.href}
-              class="inline-flex pt-0.5 text-sm font-semibold text-accent-emphasis transition-colors hover:text-accent"
+              class="inline-flex pt-0.5 text-sm font-semibold text-foreground underline decoration-border underline-offset-4"
             >
               {row.linkLabel}
             </a>

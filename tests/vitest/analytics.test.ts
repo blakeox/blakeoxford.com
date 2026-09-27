@@ -145,6 +145,38 @@ describe('trackEvent routing', () => {
     ).toEqual({ source: 'nav' });
   });
 
+  it('keeps the closed CTA and form-failure vocabulary', () => {
+    expect(sanitizeAnalyticsProps({ cta_id: 'hero_primary' })).toEqual({ cta_id: 'hero_primary' });
+    expect(sanitizeAnalyticsProps({ cta_id: 'hero_secondary' })).toEqual({
+      cta_id: 'hero_secondary',
+    });
+    expect(sanitizeAnalyticsProps({ cta_id: 'contact_submit' })).toEqual({
+      cta_id: 'contact_submit',
+    });
+    expect(sanitizeAnalyticsProps({ cta_id: 'study_cta' })).toEqual({ cta_id: 'study_cta' });
+    expect(sanitizeAnalyticsProps({ failure_reason: 'validation' })).toEqual({
+      failure_reason: 'validation',
+    });
+    expect(sanitizeAnalyticsProps({ failure_reason: 'turnstile' })).toEqual({
+      failure_reason: 'turnstile',
+    });
+    expect(sanitizeAnalyticsProps({ failure_reason: 'network' })).toEqual({
+      failure_reason: 'network',
+    });
+    expect(sanitizeAnalyticsProps({ cta_id: 'hero-cta', failure_reason: 'email' })).toBeUndefined();
+  });
+
+  it('emits cta_select and form_failure through the closed contract', () => {
+    const track = vi.fn();
+    vi.stubGlobal('window', { zaraz: { track }, clarity: vi.fn() });
+
+    conversionEvents.ctaSelect({ cta_id: 'study_cta' });
+    conversionEvents.formFailure({ failure_reason: 'validation' });
+
+    expect(track).toHaveBeenNthCalledWith(1, 'cta_select', { cta_id: 'study_cta' });
+    expect(track).toHaveBeenNthCalledWith(2, 'form_failure', { failure_reason: 'validation' });
+  });
+
   it('drops unapproved categorical values', () => {
     expect(
       sanitizeAnalyticsProps({

@@ -1,81 +1,53 @@
 ---
 import Layout from '@/layouts/BaseLayout.astro';
-import PageHero from '@/components/composites/PageHero.astro';
+import Section from '@/components/primitives/Section.astro';
 import IntroCopy from '@/components/composites/IntroCopy.astro';
-import DotMetaList from '@/components/composites/DotMetaList.astro';
-import ProjectsCapabilitiesSection from '@/components/features/projects/ProjectsCapabilitiesSection.astro';
-import ProjectsFeaturedSection from '@/components/features/projects/ProjectsFeaturedSection.astro';
 import ProjectsLibrarySection from '@/components/features/projects/ProjectsLibrarySection.astro';
 import ProjectsCTASection from '@/components/features/projects/ProjectsCTASection.astro';
 import { getProjectInsights } from '@/content/projects/getProjectInsights';
+import { ALSO_BUILT, HIRE_GROUPS, projectsForSlugs } from '@/content/projects/hirePath';
 
 const meta = (await import('@/content/projects/_meta.json')).default;
-const { projects, deepCut } = await getProjectInsights();
+const { projects } = await getProjectInsights();
 
-const featuredProject = deepCut
-  ? projects.find((project) => project.id === deepCut.projectSlug)
-  : undefined;
+const groups = [
+  ...HIRE_GROUPS.map((group) => ({
+    ...group,
+    projects: projectsForSlugs(projects, group.slugs),
+  })),
+  {
+    ...ALSO_BUILT,
+    projects: projectsForSlugs(projects, ALSO_BUILT.slugs),
+  },
+];
 
 const title = 'Selected Work & Case Studies | Blake Oxford';
 const description =
-  'Portfolio of migrations, automation, analytics, and AI-enabled workflows shipped under pressure, with adoption, governance, and measurable outcomes.';
+  'Migrations, automation, and decision systems shipped under pressure, with the result that held after launch.';
 const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
-{/*
-  Portfolio showcase arc:
-  claim → featured proof → full range → capabilities → convert.
-*/}
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <PageHero
-    fullScreen={false}
-    includeBlurOrbs={false}
-    align="center"
-    pad="snug"
-    id="projects-hero"
-    shell="projects-hero-inner"
-  >
-    <div class="flex w-full flex-col items-center gap-6">
-      <IntroCopy
-        kicker={meta.hero.kicker}
-        title={meta.hero.title}
-        titleId="projects-title"
-        description={meta.hero.subtitle}
-        align="center"
-        size="hero"
-      />
-      <DotMetaList
-        items={meta.hero.capabilities}
-        label="What this work covers"
-        align="center"
-        class="max-w-3xl"
-      />
-    </div>
-  </PageHero>
-
-  {featuredProject && deepCut && (
-    <ProjectsFeaturedSection
-      project={featuredProject}
-      deepCut={deepCut}
-      kicker={meta.featured.kicker}
-      ctaLabel={meta.featured.ctaLabel}
+  <Section id="projects-hero" padding="lg" container="xl">
+    <IntroCopy
+      title="Selected work"
+      titleId="projects-title"
+      description={description}
+      align="start"
+      size="section"
     />
+  </Section>
+
+  {groups.map((group) =>
+    group.projects.length > 0 ? (
+      <ProjectsLibrarySection
+        id={group.id}
+        projects={group.projects}
+        title={group.title}
+        description={group.description}
+      />
+    ) : null
   )}
-
-  <ProjectsLibrarySection
-    projects={projects}
-    excludeSlug={deepCut?.projectSlug}
-    kicker={meta.library.kicker}
-    title={meta.library.title}
-    description={meta.library.description}
-  />
-
-  <ProjectsCapabilitiesSection
-    kicker={meta.capabilities.kicker}
-    title={meta.capabilities.title}
-    description={meta.capabilities.description}
-    items={meta.capabilities.items}
-  />
 
   <ProjectsCTASection
     title={meta.cta.title}
@@ -83,12 +55,3 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     button={meta.cta.button}
   />
 </Layout>
-
-<style>
-  @media (height <= 700px) {
-    :global(#projects-hero) {
-      padding-top: 1.25rem;
-      padding-bottom: 0.5rem;
-    }
-  }
-</style>

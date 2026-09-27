@@ -207,6 +207,84 @@ describe('runSearch', () => {
     expect(result.records.some((record) => record.title === 'Blog')).toBe(false);
     expect(result.records[0]?.href).toContain('microsoft-fabric');
   });
+
+  it('returns no results when a query has no keyword hit and no strong semantic hit', async () => {
+    vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
+      const url = String(input);
+      if (url.includes('/search/projects.json') || url.includes('/search/blog.json')) {
+        return new Response(JSON.stringify([]), { status: 200 });
+      }
+      if (url.includes('/api/semantic-search')) {
+        return new Response(
+          JSON.stringify({
+            results: [
+              {
+                id: 'project-neighbor',
+                score: 0.54,
+                title: 'Fanalyx',
+                description: 'Deterministic finance',
+                url: 'https://blakeoxford.com/projects/fanalyx-deterministic-finance-platform/',
+                collection: 'projects',
+                tags: ['finance'],
+              },
+            ],
+          }),
+          { status: 200 }
+        );
+      }
+      return new Response('{}', { status: 404 });
+    });
+
+    const result = await runSearch({ query: 'zzzz-no-match', category: 'all', limit: 8 });
+    expect(result.records).toEqual([]);
+  });
+
+  it('keeps a keyword hit for migration even when semantic neighbors are weak', async () => {
+    vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
+      const url = String(input);
+      if (url.includes('/search/projects.json')) {
+        return new Response(
+          JSON.stringify([
+            {
+              slug: 'google-workspace-migration',
+              title: 'Google Workspace migration',
+              description: 'Mailbox cutover',
+              tags: ['migration'],
+            },
+          ]),
+          { status: 200 }
+        );
+      }
+      if (url.includes('/search/blog.json')) {
+        return new Response(JSON.stringify([]), { status: 200 });
+      }
+      if (url.includes('/api/semantic-search')) {
+        return new Response(
+          JSON.stringify({
+            results: [
+              {
+                id: 'project-weak',
+                score: 0.51,
+                title: 'Ferment',
+                description: 'Batch tracking',
+                url: 'https://blakeoxford.com/projects/ferment-app/',
+                collection: 'projects',
+                tags: ['mobile'],
+              },
+            ],
+          }),
+          { status: 200 }
+        );
+      }
+      return new Response('{}', { status: 404 });
+    });
+
+    const result = await runSearch({ query: 'migration', category: 'all', limit: 8 });
+    expect(
+      result.records.some((record) => record.href.includes('google-workspace-migration'))
+    ).toBe(true);
+    expect(result.records.some((record) => record.href.includes('ferment-app'))).toBe(false);
+  });
 });
 
 describe('filterNoisyHubRecords', () => {

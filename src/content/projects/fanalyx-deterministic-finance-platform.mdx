@@ -26,11 +26,16 @@ impact:
   - 'Finance teams ship board-ready forecasts 6x faster than their legacy spreadsheet process.'
   - 'Visibility upgrades cut audit review cycles from weeks to days thanks to immutable request IDs and change tracking.'
 journey:
-  - 'Mapped the existing Fanalyx workflows with finance directors to isolate the deterministic core from presentation logic.'
-  - 'Implemented ingestion pipelines with Zod validation so CSV, JSON, and API inputs are normalized once and tracked via schema revisions.'
-  - 'Authored Workers-based modeling engines that capture every assumption, attach request IDs, and replay instantly for audits.'
-  - 'Built MCP connectors and CLI tooling so analysts can trigger scenarios from their terminal or automation pipelines.'
-  - 'Layered in observability with persistent request tracing, SLO dashboards, and self-serve status reporting.'
+  - title: Map the deterministic core
+    body: Mapped the existing Fanalyx workflows with finance directors to isolate the deterministic core from presentation logic.
+  - title: Normalize every input once
+    body: Implemented ingestion pipelines with Zod validation so CSV, JSON, and API inputs are normalized once and tracked via schema revisions.
+  - title: Replayable modeling engines
+    body: Authored Workers-based modeling engines that capture every assumption, attach request IDs, and replay instantly for audits.
+  - title: Trigger from the tools they use
+    body: Built MCP connectors and CLI tooling so analysts can trigger scenarios from their terminal or automation pipelines.
+  - title: Trace every request
+    body: Layered in observability with persistent request tracing, SLO dashboards, and self-serve status reporting.
 lessons:
   - title: Determinism builds trust
     description: Finance teams adopt faster when every run produces byte-for-byte identical results, even under load.

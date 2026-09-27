@@ -37,7 +37,7 @@ const linkClass =
   role="contentinfo"
   aria-label="Site footer"
   tabindex="-1"
-  class="relative border-t border-border bg-surface pt-10 pb-24 text-foreground sm:pb-10"
+  class="relative border-t border-border bg-surface pt-10 pb-10 text-foreground"
 >
   <Container size="xl" padding={true}>
     <div class="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
@@ -77,3 +77,13 @@ const linkClass =
     </div>
   </Container>
 </footer>
+
+<style>
+  /* The footer is persisted across client navigations, so launcher clearance
+     follows the current page's body attribute instead of a baked-in class. */
+  @media (width < 40rem) {
+    :global(body:not([data-hide-ask-launcher='true'])) #footer {
+      padding-bottom: 6rem;
+    }
+  }
+</style>

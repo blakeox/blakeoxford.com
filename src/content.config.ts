@@ -55,7 +55,14 @@ const projects = defineCollection({
           })
         )
         .default([]),
-      journey: z.array(z.string()).default([]),
+      journey: z
+        .array(
+          z.object({
+            title: z.string().trim().min(1),
+            body: z.string().trim().min(1),
+          })
+        )
+        .default([]),
       lessons: z
         .array(
           z.object({
@@ -99,6 +106,7 @@ const timelineItemSchema = z.object({
   year: z.string(),
   title: z.string(),
   achievements: z.array(z.string()),
+  studyHref: z.string().optional(),
 });
 
 const socialLinkSchema = z.object({
@@ -117,18 +125,6 @@ const contactChannelSchema = z.object({
 const ctaLinkSchema = z.object({
   href: z.string(),
   label: z.string(),
-});
-
-const homeResumeHighlightItemSchema = z.object({
-  text: z.string(),
-});
-
-const homeResumeHighlightSideSchema = z.object({
-  side: z.enum(['work', 'daring']),
-  label: z.string(),
-  metric: z.string(),
-  title: z.string(),
-  items: z.array(homeResumeHighlightItemSchema).max(3),
 });
 
 // About page content
@@ -231,7 +227,6 @@ const home = defineCollection({
       kicker: z.string(),
       title: z.string(),
       description: z.string(),
-      sides: z.array(homeResumeHighlightSideSchema).length(2),
     }),
     recentProjects: z.object({
       kicker: z.string().optional(),

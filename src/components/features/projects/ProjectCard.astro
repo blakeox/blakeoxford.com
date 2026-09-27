@@ -18,6 +18,7 @@ const {
   project,
   compact = false,
   featured = false,
+  showPlaque = true,
 } = Astro.props as import('@/types/components').ProjectCardProps;
 const { id: slug, data } = project;
 
@@ -62,7 +63,8 @@ const valueSummary =
 >
   <a
     href={`/projects/${slug}/`}
-    class="relative flex h-full flex-col gap-4 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none"
+    class="relative flex h-full flex-col gap-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    data-cta-id="study_cta"
     aria-labelledby={`project-card-${slug}`}
   >
     {image ? (
@@ -86,7 +88,7 @@ const valueSummary =
           quality={80}
         />
       </figure>
-    ) : proofPlaque ? (
+    ) : showPlaque && proofPlaque ? (
       <ProofPlaque figure={proofPlaque.figure} caption={proofPlaque.caption} size="card" />
     ) : null}
 
@@ -146,7 +148,7 @@ const valueSummary =
         </Flex>
       ) : null}
 
-      <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-accent-emphasis transition-all duration-normal motion-safe:group-hover:gap-3">
+      <span class="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-foreground transition-all duration-normal motion-safe:group-hover:gap-3">
         View case study
         <ArrowRightIcon class="opacity-90 transition-transform duration-normal motion-safe:group-hover:translate-x-0.5" />
       </span>

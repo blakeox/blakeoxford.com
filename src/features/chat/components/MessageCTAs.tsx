@@ -229,7 +229,12 @@ export const ContextualCTAs = memo(function ContextualCTAs({
   siteHostname,
   messagesCount,
 }: ContextualCTAsProps) {
-  const ctas = generateContextualCTAs(sources, siteHostname, messagesCount);
+  const ctas = generateContextualCTAs(
+    sources,
+    siteHostname,
+    messagesCount,
+    typeof window === 'undefined' ? undefined : window.location.pathname
+  );
   if (ctas.length === 0) return null;
 
   return (

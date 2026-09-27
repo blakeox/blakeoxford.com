@@ -23,6 +23,9 @@ describe('SEO metadata policy', () => {
   it('noindexes query-bearing URLs without changing clean route policy', () => {
     expect(isNoindexUrl('https://blakeoxford.com/projects/?filter=mdm')).toBe(true);
     expect(isNoindexUrl('https://blakeoxford.com/contact/?success=true')).toBe(true);
+    expect(isNoindexUrl('https://blakeoxford.com/contact/sent/')).toBe(true);
+    expect(isNoindexUrl('https://blakeoxford.com/contact/error/invalid/')).toBe(true);
+    expect(isNoindexUrl('https://blakeoxford.com/contact/')).toBe(false);
     expect(isNoindexUrl('https://blakeoxford.com/projects/')).toBe(false);
     expect(isNoindexUrl('https://blakeoxford.com/design/tokens/')).toBe(true);
   });

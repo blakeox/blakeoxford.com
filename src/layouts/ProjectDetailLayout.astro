@@ -47,7 +47,7 @@ const metrics = hasMetrics
   : [];
 const hasJourney =
   'journey' in data && Array.isArray((data as any).journey) && (data as any).journey.length > 0;
-const journey = hasJourney ? ((data as any).journey as string[]) : [];
+const journey = hasJourney ? ((data as any).journey as Array<{ title: string; body: string }>) : [];
 const hasLessons =
   'lessons' in data && Array.isArray((data as any).lessons) && (data as any).lessons.length > 0;
 const lessons = hasLessons
