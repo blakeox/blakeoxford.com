@@ -132,7 +132,7 @@ const hideAskLauncher =
     <main id="main-content" tabindex="-1" class={mainClasses} transition:animate="slide">
       <slot />
     </main>
-    <Footer transition:persist="footer" reserveLauncher={!hideAskLauncher} />
+    <Footer transition:persist="footer" />
     {runtimeSurfaceFlags.aiAssistant ? (
       <AIChatWidget transition:persist="chat" />
     ) : (
