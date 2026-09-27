@@ -11,7 +11,7 @@ import {
 } from './form/FormHelpers';
 import type { FormValidationConfig } from './form/FormHelpers';
 import { getContactFormService } from '@/services/ContactFormService';
-import { AppError, isAppError, getUserMessage } from '@/utils/errors';
+import { ErrorCodes, isAppError, getUserMessage } from '@/utils/errors';
 import { conversionEvents, getAcquisitionSource } from '@/lib/analytics';
 
 declare global {
@@ -60,6 +60,31 @@ const FORM_VALIDATION_CONFIG: FormValidationConfig = {
 };
 
 const SUCCESS_MESSAGE = 'Your project brief was sent. I’ll review it and follow up by email.';
+const SEND_FAILURE_MESSAGE =
+  'Your message could not be sent. Please try again or email blakepoxford@outlook.com directly.';
+
+export function contactSubmissionFailure(error: unknown): {
+  reason: 'turnstile' | 'network';
+  message: string;
+} {
+  if (!isAppError(error)) {
+    return { reason: 'network', message: SEND_FAILURE_MESSAGE };
+  }
+
+  const status = error.details?.status;
+  if (status === 403 || error.code === ErrorCodes.API_FORBIDDEN) {
+    return {
+      reason: 'turnstile',
+      message: 'Verification failed. Complete the check and try again.',
+    };
+  }
+
+  if (/verif/i.test(`${error.message} ${error.userMessage}`)) {
+    return { reason: 'turnstile', message: getUserMessage(error) };
+  }
+
+  return { reason: 'network', message: getUserMessage(error) };
+}
 
 type CleanupFn = () => void;
 
@@ -320,15 +345,10 @@ function setupContactForm(): CleanupFn | void {
     } catch (error) {
       globalThis.clearTimeout(timeoutId);
 
-      // Use centralized error handling
-      const errorMessage = isAppError(error)
-        ? getUserMessage(error as AppError)
-        : 'Your message could not be sent. Please try again or email blakepoxford@outlook.com directly.';
-
       console.error('Form submission failed', error);
-      const failureReason = /verif/i.test(errorMessage) ? 'turnstile' : 'network';
-      conversionEvents.formFailure({ failure_reason: failureReason });
-      showStatusMessage(statusElement ?? null, errorMessage, 'error');
+      const failure = contactSubmissionFailure(error);
+      conversionEvents.formFailure({ failure_reason: failure.reason });
+      showStatusMessage(statusElement ?? null, failure.message, 'error');
     } finally {
       globalThis.clearTimeout(timeoutId);
       setSubmittingState(form, false);
