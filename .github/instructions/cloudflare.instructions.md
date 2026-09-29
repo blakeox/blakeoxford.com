@@ -274,7 +274,7 @@ Set via `wrangler secret put`:
 
 - `SENTRY_DSN_EDGE` - Edge error tracking
 - `SENTRY_AUTH_TOKEN` - Source map uploads
-- `AI_SEARCH_API_TOKEN` - AI search authentication
+- `AI_SEARCH` binding - production Ask calls instance `bold-heart-18e4` directly
 - `CONTACT_EMAIL` - Cloudflare Email Service binding configured in `wrangler.toml`
 - `GIT_COMMIT` - Deployment version
 - `ENVIRONMENT` - Deployment environment

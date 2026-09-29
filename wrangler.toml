@@ -1,6 +1,6 @@
 name = "blakeoxford-com"
 account_id = "cc3bb24ae3c87cff38c2be85df3dab29"
-compatibility_date = "2026-07-02"
+compatibility_date = "2026-09-25"
 
 # Enable Node.js compatibility for dependencies that rely on Node built-ins (e.g., @sentry/cloudflare)
 compatibility_flags = ["nodejs_compat"]
@@ -69,12 +69,15 @@ script_name = "blakeoxford-com"
 
 [secrets]
 # Keep the required declaration aligned with the deployed secret name.
-required = ["TURNSTILE_SECRET_KEY", "AI_SEARCH_API_TOKEN"]
+required = ["TURNSTILE_SECRET_KEY"]
 
 [vars]
 # Public variables (not sensitive)
 # Add ENVIRONMENT variable for Sentry context
 ENVIRONMENT = "production"
+# One-release rollback target for the previous Worker version. Production Ask
+# uses the AI_SEARCH binding below. Roll back by deploying the previous Worker
+# version; do not point this URL at the retired AutoRAG API.
 AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/ai-search/instances/bold-heart-18e4/chat/completions"
 PUBLIC_CLARITY_PROJECT_ID = "tqngpokfgs"
 
@@ -92,6 +95,12 @@ binding = "AI_ANALYTICS"
 # Workers AI for on-edge inference (simple queries)
 [ai]
 binding = "AI"
+
+# Direct instance binding. Scoped so this Worker cannot create or delete instances.
+[[ai_search]]
+binding = "AI_SEARCH"
+instance_name = "bold-heart-18e4"
+remote = true
 
 # Vectorize for semantic search fallback
 [[vectorize]]
@@ -111,3 +120,54 @@ enabled = true
 [observability.traces]
 enabled = true
 head_sampling_rate = 0.05
+
+# Worker Previews do not inherit production bindings. KV and email stay off the
+# production resources. Vectorize and AI Search stay shared because those paths
+# only read published content. Durable Objects are isolated per preview.
+# Set TURNSTILE_SECRET_KEY once with:
+#   wrangler preview base-config secret put TURNSTILE_SECRET_KEY
+[previews.vars]
+ENVIRONMENT = "preview"
+AI_GATEWAY_ID = "default"
+PUBLIC_CLARITY_PROJECT_ID = "tqngpokfgs"
+AI_SEARCH_API_ENDPOINT = "https://api.cloudflare.com/client/v4/accounts/cc3bb24ae3c87cff38c2be85df3dab29/ai-search/instances/bold-heart-18e4/chat/completions"
+
+[previews.ai]
+binding = "AI"
+
+[[previews.ai_search]]
+binding = "AI_SEARCH"
+instance_name = "bold-heart-18e4"
+remote = true
+
+[[previews.vectorize]]
+binding = "VECTORIZE"
+index_name = "blakeoxford-content"
+
+[[previews.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "b1e48f3c6ef64010b435082d04435536"
+
+[[previews.kv_namespaces]]
+binding = "CONTACT_MESSAGES"
+id = "728c2829569b4cfb8f926824a0c8d59f"
+
+[[previews.kv_namespaces]]
+binding = "AI_RESPONSE_CACHE"
+id = "f48c68af7f21462e8a68f84418a64498"
+
+[[previews.kv_namespaces]]
+binding = "AI_FEEDBACK_KV"
+id = "e573df95437742e9820c05eef1bd8ad6"
+
+[[previews.durable_objects.bindings]]
+name = "CONVERSATION_DO"
+class_name = "ConversationDurableObject"
+script_name = "blakeoxford-com"
+
+[previews.observability.logs]
+enabled = true
+
+[previews.observability.traces]
+enabled = true
+head_sampling_rate = 1
