@@ -9,11 +9,11 @@ Browser measurement and vendor activation are documented separately in
 [`analytics.md`](./analytics.md); this runbook owns edge, Worker, and AI
 operational signals.
 
-The Worker now uses Cloudflare's current AI Search Chat Completions REST
-endpoint (`/ai-search/instances/.../chat/completions`) with the dedicated
-`AI_SEARCH_API_TOKEN` secret. The public `/api/ai-search` response and SSE
-contract remain unchanged. The prior AutoRAG endpoint remains the rollback
-target if the new upstream contract has an incident.
+Production Ask calls AI Search instance `bold-heart-18e4` through the
+`AI_SEARCH` Workers binding. The public `/api/ai-search` response and SSE
+contract are unchanged. `AI_SEARCH_API_ENDPOINT` remains only so the previous
+Worker version can still reach that instance. Roll back by deploying the
+previous Worker version. Do not point the endpoint at the retired AutoRAG API.
 
 An every-six-hours Cron Trigger runs a fixed, timestamped AI Search canary. It
 records only success/error, latency, and response length in Analytics Engine;
@@ -56,6 +56,16 @@ restore it.
    completes successfully.
 5. Review Workers Logs/Traces and Sentry for exceptions from the new release.
 6. Record the deployment SHA and Worker version in the release handoff.
+7. Confirm `pnpm ai-search:refresh` ran after the deploy. That syncs
+   `bold-heart-18e4`, waits for the indexing job to finish, then purges the
+   similarity cache and deletes production `ai:response:v4:` KV answers so the
+   seven-day app cache does not keep the previous content.
+   Workers Builds is the primary deploy path. Its production deploy command is
+   `pnpm deploy:worker -- --var "GIT_COMMIT:$WORKERS_CI_COMMIT_SHA" --message "commit:$WORKERS_CI_COMMIT_SHA" && pnpm ai-search:refresh`.
+   The Builds API token and the manual workflow token
+   `blakeoxford-github-actions-seo-2026-v2` both include Account AI Search Write
+   and AI Search Run for that refresh. Non-production branches use Worker
+   Previews (`npx wrangler preview`).
 
 ### Quarterly or after an incident
 
@@ -65,7 +75,10 @@ protection` rule is active.
    and blocked-event volume. Change it only with a documented reason and a
    rollback value.
 3. Confirm required secrets exist without printing their values:
-   `TURNSTILE_SECRET_KEY` and `AI_SEARCH_API_TOKEN`.
+   `TURNSTILE_SECRET_KEY`. Also confirm the Worker Preview base secret of the
+   same name exists (`wrangler preview base-config secret put
+   TURNSTILE_SECRET_KEY`) so preview contact forms can verify Turnstile
+   without using production KV or email.
 4. Rotate a secret if it may have been exposed, its owner is unclear, or its
    provider requires rotation. Validate the affected route immediately after.
 5. Review trace volume and sampling. Current production sampling is 5%; keep
@@ -90,9 +103,9 @@ protection` rule is active.
   threshold.
 - **Secret failure:** disable the affected feature or route, rotate the secret,
   redeploy through the normal branch flow, and retest the route.
-- **AI Search contract failure:** restore the prior AutoRAG endpoint in
-  `AI_SEARCH_API_ENDPOINT`, redeploy the last known-good code version, and
+- **AI Search contract failure:** roll back to the previous Worker version and
   validate both JSON and SSE responses before investigating a second cutover.
+  The `AI_SEARCH` binding is the production path.
 
 ## Kill switches and rollback
 

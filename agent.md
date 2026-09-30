@@ -366,7 +366,7 @@ Accessibility Pitfalls:
 | `CONTACT_EMAIL`                                 | Email Workers binding                                                               |
 | `ASSETS`                                        | Static `./dist`                                                                     |
 | `TURNSTILE_SECRET_KEY`                          | Contact / abuse gate                                                                |
-| `AI_SEARCH_API_TOKEN`, `AI_SEARCH_API_ENDPOINT` | AutoRAG upstream                                                                    |
+| `AI_SEARCH`, `AI_SEARCH_API_ENDPOINT`           | AI Search instance binding; endpoint is the one-release rollback URL               |
 | `AI_GATEWAY_ID`, `AI_GATEWAY_ACCOUNT_ID`        | Workers AI Gateway on `env.AI.run` (`AI_GATEWAY_ID=default`); AutoRAG stays ungated |
 | `SENTRY_DSN_EDGE`, `ENVIRONMENT`, `GIT_COMMIT`  | Edge Sentry context                                                                 |
 

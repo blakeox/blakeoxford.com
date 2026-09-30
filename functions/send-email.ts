@@ -242,8 +242,8 @@ export async function onRequestPost(
     ) {
       return errorResponse(400, ERROR_MESSAGES.missingFields, wantsJsonResponse, 'invalid');
     }
-    if (!context.env.TURNSTILE_SECRET_KEY) {
-      console.error('TURNSTILE_SECRET_KEY is not configured');
+    if (!context.env.TURNSTILE_SECRET_KEY || !context.env.CONTACT_EMAIL) {
+      console.error('Contact delivery is not configured');
       return errorResponse(503, 'Contact service unavailable.', wantsJsonResponse, 'unavailable');
     }
 
@@ -259,7 +259,12 @@ export async function onRequestPost(
     // ─── Verify Turnstile ────────────────────────────
     const isVerified = await verifyTurnstile(context.env.TURNSTILE_SECRET_KEY, token, ip);
     if (!isVerified) {
-      return errorResponse(403, ERROR_MESSAGES.botVerificationFailed, wantsJsonResponse, 'verification');
+      return errorResponse(
+        403,
+        ERROR_MESSAGES.botVerificationFailed,
+        wantsJsonResponse,
+        'verification'
+      );
     }
 
     // ─── Send email via Cloudflare Email Service ─────

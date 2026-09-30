@@ -347,8 +347,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 Required for AI features:
 
-- `AI_SEARCH_API_ENDPOINT` - Cloudflare AI Search Chat Completions endpoint
-- `AI_SEARCH_API_TOKEN` - Authentication token
+- `AI_SEARCH` - Workers binding for instance `bold-heart-18e4`
+- `AI_SEARCH_API_ENDPOINT` - rollback URL for the previous Worker version
 - `PUBLIC_ENABLE_AI_CHAT` - Feature flag
 
 ### Testing Strategies
