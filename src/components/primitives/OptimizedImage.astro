@@ -74,7 +74,13 @@ const isLocalPath =
 ---
 
 {typeof props.src === 'object' ? (
-  <Image src={props.src} alt={alt} class={className} loading={imageLoading} />
+  <Image
+    src={props.src}
+    alt={alt}
+    class={className}
+    loading={imageLoading}
+    {...(priority ? { fetchpriority: 'high' as const } : {})}
+  />
 ) : isLocalPath ? (
   <img
     src={props.src}
@@ -84,6 +90,7 @@ const isLocalPath =
     class={className}
     loading={imageLoading}
     decoding="async"
+    fetchpriority={priority ? 'high' : undefined}
   />
 ) : (
   <Image
@@ -96,6 +103,7 @@ const isLocalPath =
     loading={imageLoading}
     class={className}
     inferSize={true}
+    {...(priority ? { fetchpriority: 'high' as const } : {})}
   />
 )}
 
