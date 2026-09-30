@@ -122,3 +122,13 @@ interface RequestInit {
 interface ResponseInit {
   webSocket?: WebSocket;
 }
+
+declare module 'cloudflare:workers' {
+  export const tracing: {
+    getActiveSpan():
+      | {
+          setAttributes(attributes: Record<string, string | number | boolean>): unknown;
+        }
+      | undefined;
+  };
+}
