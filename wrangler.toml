@@ -9,6 +9,8 @@ compatibility_flags = ["nodejs_compat"]
 # and use a single Worker entry (functions/index.ts).
 main = "functions/index.ts"
 workers_dev = false
+# Production stays off workers.dev. Branch previews still need a public URL.
+preview_urls = true
 
 # Low-frequency canary for the public AI Search route. Remove this block and
 # redeploy to disable the scheduled check without affecting request traffic.
