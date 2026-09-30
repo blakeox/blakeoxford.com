@@ -81,8 +81,8 @@ importers:
         specifier: ^1.63.0
         version: 1.63.0
       '@rollup/rollup-linux-x64-gnu':
-        specifier: ^4.63.1
-        version: 4.63.1
+        specifier: ^4.63.5
+        version: 4.63.5
       '@sentry/cli':
         specifier: ^3.8.0
         version: 3.8.0
@@ -1637,8 +1637,8 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@rollup/rollup-linux-x64-gnu@4.63.1':
-    resolution: {integrity: sha512-gfI5T24WLLuFfSKw7Go/zDXjAAV0fny0swTaDv+WjK7vqcw4cRhFfdsyKL1n+ukI+ooBxn3bVQnyrn06WpI50w==}
+  '@rollup/rollup-linux-x64-gnu@4.63.5':
+    resolution: {integrity: sha512-3W9bTFcQNJn71cSJVM9RKIiZOy8DO/XLDii8Uv/Pm6WKqDRj7JV3ZfuXIEfyuy5LXpIzAbB/1M4Ukp9GKNa7nA==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
@@ -7675,7 +7675,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@rollup/rollup-linux-x64-gnu@4.63.1': {}
+  '@rollup/rollup-linux-x64-gnu@4.63.5': {}
 
   '@sentry/astro@10.74.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(astro@7.3.5(@types/node@26.6.2)(jiti@2.7.0)(terser@5.49.2)(yaml@2.8.3))':
     dependencies:
