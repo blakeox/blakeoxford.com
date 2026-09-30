@@ -2,9 +2,9 @@
  * Re-index the public site in AI Search and drop cached answers so a content
  * deploy is not served from the previous crawl.
  *
- * Clears the platform similarity cache and the application's seven-day
- * `ai:response:v4:` KV entries. Conversation backups use a different prefix
- * and stay in place.
+ * Waits for the indexing job to finish, then clears the platform similarity
+ * cache and the application's seven-day `ai:response:v4:` KV entries.
+ * Conversation backups use a different prefix and stay in place.
  *
  * Uses CLOUDFLARE_API_TOKEN in CI. Locally, falls back to the Wrangler OAuth
  * token without printing it.
@@ -19,6 +19,8 @@ const INSTANCE = 'bold-heart-18e4';
 const ACCOUNT_ID = 'cc3bb24ae3c87cff38c2be85df3dab29';
 const AI_RESPONSE_CACHE_ID = '88ac13a34f474753bd44450267bd2206';
 const AI_RESPONSE_KEY_PREFIX = 'ai:response:v4:';
+const INDEX_JOB_TIMEOUT_MS = 10 * 60 * 1000;
+const INDEX_JOB_POLL_MS = 5000;
 
 function readOAuthToken() {
   const candidates = [
@@ -99,14 +101,75 @@ export async function purgeAiResponseCache({
   return keys.length;
 }
 
+export function indexingJobState(job) {
+  if (!job?.ended_at) return 'running';
+  if (job.end_reason) return 'failed';
+  return 'completed';
+}
+
+export async function waitForIndexingJob({
+  getJob,
+  timeoutMs = INDEX_JOB_TIMEOUT_MS,
+  intervalMs = INDEX_JOB_POLL_MS,
+  sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  now = Date.now,
+}) {
+  const started = now();
+  for (;;) {
+    const job = await getJob();
+    const state = indexingJobState(job);
+    if (state === 'completed') return job;
+    if (state === 'failed') {
+      throw new Error(`AI Search indexing job failed: ${job.end_reason}`);
+    }
+    if (now() - started > timeoutMs) {
+      throw new Error('AI Search indexing job timed out before the cache purge.');
+    }
+    await sleep(intervalMs);
+  }
+}
+
+function readWranglerJson(result, command) {
+  if (result.status !== 0) {
+    const detail = (result.stderr || result.stdout || '').trim();
+    throw new Error(detail || `${command} failed`);
+  }
+  const start = result.stdout.indexOf('{');
+  if (start < 0) throw new Error(`${command} did not return JSON`);
+  return JSON.parse(result.stdout.slice(start));
+}
+
 async function main() {
-  const job = spawnSync(
-    'pnpm',
-    ['exec', 'wrangler', 'ai-search', 'jobs', 'create', INSTANCE],
-    { stdio: 'inherit' }
-  );
-  if (job.status !== 0) {
-    process.exit(job.status ?? 1);
+  let created;
+  try {
+    created = readWranglerJson(
+      spawnSync(
+        'pnpm',
+        ['exec', 'wrangler', 'ai-search', 'jobs', 'create', INSTANCE, '--json'],
+        { encoding: 'utf8' }
+      ),
+      'wrangler ai-search jobs create'
+    );
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : 'AI Search indexing job failed to start.');
+    process.exit(1);
+  }
+
+  try {
+    await waitForIndexingJob({
+      getJob: () =>
+        readWranglerJson(
+          spawnSync(
+            'pnpm',
+            ['exec', 'wrangler', 'ai-search', 'jobs', 'get', INSTANCE, created.id, '--json'],
+            { encoding: 'utf8' }
+          ),
+          'wrangler ai-search jobs get'
+        ),
+    });
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : 'AI Search indexing job did not finish.');
+    process.exit(1);
   }
 
   const token = apiToken();
@@ -129,7 +192,7 @@ async function main() {
   try {
     const deleted = await purgeAiResponseCache({ token });
     console.log(
-      `AI Search sync queued, similarity cache purged, and ${deleted} cached answers deleted for ${INSTANCE}.`
+      `AI Search index completed, similarity cache purged, and ${deleted} cached answers deleted for ${INSTANCE}.`
     );
   } catch (error) {
     console.error(error instanceof Error ? error.message : 'AI response cache purge failed.');
