@@ -71,7 +71,11 @@ describe('waitForIndexingJob', () => {
   it('stops when the job fails', async () => {
     await expect(
       waitForIndexingJob({
-        getJob: async () => ({ id: 'job', ended_at: '2026-09-30 01:09:50', end_reason: 'crawl error' }),
+        getJob: async () => ({
+          id: 'job',
+          ended_at: '2026-09-30 01:09:50',
+          end_reason: 'crawl error',
+        }),
         sleep: async () => {},
         now: () => 0,
       })
