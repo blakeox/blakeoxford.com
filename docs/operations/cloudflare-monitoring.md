@@ -56,10 +56,10 @@ restore it.
    completes successfully.
 5. Review Workers Logs/Traces and Sentry for exceptions from the new release.
 6. Record the deployment SHA and Worker version in the release handoff.
-7. Confirm `pnpm ai-search:refresh` ran after the deploy. That queues an AI
-   Search sync for `bold-heart-18e4`, purges the instance similarity cache, and
-   deletes production `ai:response:v4:` KV answers so the seven-day app cache
-   does not keep the previous content.
+7. Confirm `pnpm ai-search:refresh` ran after the deploy. That syncs
+   `bold-heart-18e4`, waits for the indexing job to finish, then purges the
+   similarity cache and deletes production `ai:response:v4:` KV answers so the
+   seven-day app cache does not keep the previous content.
    Workers Builds is the primary deploy path. Its production deploy command is
    `pnpm deploy:worker -- --var "GIT_COMMIT:$WORKERS_CI_COMMIT_SHA" --message "commit:$WORKERS_CI_COMMIT_SHA" && pnpm ai-search:refresh`.
    The Builds API token and the manual workflow token

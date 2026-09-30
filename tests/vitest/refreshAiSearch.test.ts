@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { purgeAiResponseCache } from '../../scripts/deploy/refresh-ai-search.mjs';
+import {
+  purgeAiResponseCache,
+  waitForIndexingJob,
+} from '../../scripts/deploy/refresh-ai-search.mjs';
 
 describe('purgeAiResponseCache', () => {
   it('deletes only paginated answer keys', async () => {
@@ -48,5 +51,50 @@ describe('purgeAiResponseCache', () => {
       'ai:response:v4:fabric',
     ]);
     expect(calls.some((call) => call.url.includes('conversation:backup'))).toBe(false);
+  });
+});
+
+describe('waitForIndexingJob', () => {
+  it('returns after the job finishes', async () => {
+    const jobs = [{ id: 'job' }, { id: 'job', ended_at: '2026-09-30 01:09:50', end_reason: null }];
+    const result = await waitForIndexingJob({
+      getJob: async () => jobs.shift(),
+      sleep: async () => {},
+      now: (() => {
+        let time = 0;
+        return () => time++;
+      })(),
+    });
+    expect(result.ended_at).toBe('2026-09-30 01:09:50');
+  });
+
+  it('stops when the job fails', async () => {
+    await expect(
+      waitForIndexingJob({
+        getJob: async () => ({
+          id: 'job',
+          ended_at: '2026-09-30 01:09:50',
+          end_reason: 'crawl error',
+        }),
+        sleep: async () => {},
+        now: () => 0,
+      })
+    ).rejects.toThrow('crawl error');
+  });
+
+  it('stops when the job does not finish in time', async () => {
+    let time = 0;
+    await expect(
+      waitForIndexingJob({
+        getJob: async () => ({ id: 'job' }),
+        timeoutMs: 1000,
+        sleep: async () => {},
+        now: () => {
+          const current = time;
+          time += 1001;
+          return current;
+        },
+      })
+    ).rejects.toThrow('timed out');
   });
 });
