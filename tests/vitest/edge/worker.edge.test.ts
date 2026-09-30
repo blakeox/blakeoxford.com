@@ -3,9 +3,11 @@ import {
   applySecurityHeaders,
   canonicalRequestUrl,
   canonicalSlashPath,
+  ensureHtmlCharset,
   isProductionScheduledPath,
   shouldNoindexQueryResponse,
 } from '../../../functions/index';
+import { CONTENT_SECURITY_POLICY } from '../../../src/config/content-security-policy.ts';
 
 describe('production scheduled endpoint hardening', () => {
   it('blocks the local scheduled trigger endpoint in production', () => {
@@ -55,6 +57,19 @@ describe('query URL crawl policy', () => {
         'application/json'
       )
     ).toBe(false);
+  });
+
+  it('allows Google Tag Manager and Analytics in the CSP', () => {
+    expect(CONTENT_SECURITY_POLICY).toContain('https://www.googletagmanager.com');
+    expect(CONTENT_SECURITY_POLICY).toContain('https://www.google-analytics.com');
+    expect(CONTENT_SECURITY_POLICY).not.toContain('https://cdn-cgi/');
+  });
+
+  it('adds charset=utf-8 to HTML responses missing a charset', () => {
+    const response = ensureHtmlCharset(
+      new Response('<html></html>', { headers: { 'content-type': 'text/html' } })
+    );
+    expect(response.headers.get('content-type')).toBe('text/html; charset=utf-8');
   });
 
   it('emits x-robots-tag only for query-bearing HTML responses', () => {
