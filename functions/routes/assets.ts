@@ -7,6 +7,40 @@ import type { RouteContext } from '../shared/route-context';
 const ROBOTS_META_TAG = '<meta name="robots" content="noindex, nofollow" />';
 const ROBOTS_META_PATTERN = /<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>/i;
 
+function isHtmlRouteRequest(request: Request, url: URL): boolean {
+  return (
+    request.headers.get('accept')?.includes('text/html') ||
+    url.pathname.endsWith('/') ||
+    !url.pathname.includes('.')
+  );
+}
+
+/** Serve the built Astro 404 page with a 404 status for missing HTML routes. */
+export async function serveNotFoundPage(
+  request: Request,
+  env: RouteContext['env'],
+  url: URL,
+  reqId: string
+): Promise<Response | null> {
+  if (!isHtmlRouteRequest(request, url)) return null;
+
+  for (const path of ['/404.html', '/404/']) {
+    const notFoundUrl = new URL(path, url.origin);
+    const notFoundResponse = await env.ASSETS.fetch(new Request(notFoundUrl.toString(), request));
+    if (!notFoundResponse.ok || !notFoundResponse.body) continue;
+
+    const headers = new Headers(notFoundResponse.headers);
+    headers.set('content-type', 'text/html; charset=utf-8');
+    headers.set('cache-control', 'no-store');
+    headers.set('x-request-id', reqId);
+    headers.set('x-route-kind', 'html');
+    headers.set('x-cache-policy', 'no-store');
+    return new Response(notFoundResponse.body, { status: 404, headers });
+  }
+
+  return null;
+}
+
 /** Keep query-bearing HTML crawl policy consistent in both headers and markup. */
 export async function addQueryNoindexMeta(response: Response, url: URL): Promise<Response> {
   const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
@@ -124,6 +158,13 @@ export async function handleAssets({
     }
 
     if (!originResponse.ok) {
+      if (originResponse.status === 404) {
+        const notFound = await serveNotFoundPage(request, env, url, reqId);
+        if (notFound) {
+          return addQueryNoindexMeta(notFound, url);
+        }
+      }
+
       if (originResponse.status >= 500) {
         const cached = await caches.default.match(request);
         if (cached) return addQueryNoindexMeta(cached, url);
