@@ -39,6 +39,9 @@ const { visual } = Astro.props as Props;
         width="960"
         height="1200"
         class="absolute inset-0 size-full object-cover"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
       />
       <div
         class="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/15 to-transparent md:bg-gradient-to-r md:from-background md:via-background/25 md:to-transparent"

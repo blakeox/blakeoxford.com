@@ -19,11 +19,23 @@ import { handleLegacyProjectRedirect } from './routes/legacy-project-redirect';
 import { handleDebug } from './routes/debug';
 import { handleAssets } from './routes/assets';
 import { runAiSearchCanary } from './scheduled/ai-search-canary';
+import { CONTENT_SECURITY_POLICY } from '../src/config/content-security-policy.ts';
 
 export { ConversationDurableObject } from './ConversationDO.ts';
 
-const CONTENT_SECURITY_POLICY =
-  "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' https://www.clarity.ms https://static.cloudflareinsights.com https://cdn-cgi/ https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; font-src 'self' data:; connect-src 'self' https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://static.cloudflareinsights.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'";
+export function ensureHtmlCharset(response: Response): Response {
+  const contentType = response.headers.get('content-type') ?? '';
+  if (!contentType.toLowerCase().includes('text/html') || /charset=/i.test(contentType)) {
+    return response;
+  }
+  const headers = new Headers(response.headers);
+  headers.set('content-type', `${contentType.split(';')[0].trim()}; charset=utf-8`);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
 
 export function shouldNoindexQueryResponse(url: URL, contentType: string): boolean {
   return url.search.length > 0 && contentType.toLowerCase().includes('text/html');
@@ -54,6 +66,9 @@ export function applySecurityHeaders(
   const contentType = headers.get('content-type') || '';
   if (contentType.includes('text/html') && !headers.has('content-security-policy')) {
     headers.set('content-security-policy', CONTENT_SECURITY_POLICY);
+  }
+  if (contentType.includes('text/html') && !/charset=/i.test(contentType)) {
+    headers.set('content-type', `${contentType.split(';')[0].trim()}; charset=utf-8`);
   }
   if (requestUrl && shouldNoindexQueryResponse(requestUrl, contentType)) {
     headers.set('x-robots-tag', 'noindex, nofollow');

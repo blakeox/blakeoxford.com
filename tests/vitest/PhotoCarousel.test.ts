@@ -35,9 +35,9 @@ describe('PhotoCarousel.astro', () => {
     expect(content).toContain('data-paused');
   });
 
-  it('loads photos eagerly so the overflow marquee is not an empty frame', () => {
-    expect(content).toContain('loading="eager"');
-    expect(content).not.toContain('loading="lazy"');
+  it('prioritizes the first visible tile and lazy-loads the rest of the marquee', () => {
+    expect(content).toContain("index === 0 ? 'eager' : 'lazy'");
+    expect(content).toContain("fetchpriority: 'high'");
   });
 
   it('does not claim prev/next controls or fake hover zoom', () => {

@@ -26,11 +26,11 @@ describe('ProjectCard.astro file', () => {
     expect(content).toContain('loading="lazy"');
   });
 
-  it('should include project title link with aria-labelledby pattern', () => {
+  it('should include project title link with visible title text', () => {
     expect(content).toMatch(/id=\{`project-card-\$\{slug\}`\}/);
     expect(content).toContain('href={`/projects/${slug}/`}');
     expect(content).toContain('{title}');
-    expect(content).toContain('aria-labelledby={`project-card-${slug}`}');
+    expect(content).not.toContain('aria-labelledby={`project-card-${slug}`}');
   });
 
   it('should render tags list with descriptive aria-label', () => {
