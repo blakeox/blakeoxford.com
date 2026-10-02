@@ -35,6 +35,9 @@ const featuredVisual = (() => {
   description="Practical notes on automation, analytics, AI, and leadership—grounded in shipped systems, hard lessons, and takeaways teams can use in their own work."
   wide
 >
+  {featuredVisual ? (
+    <link slot="head" rel="preload" as="image" href={featuredVisual.src} fetchpriority="high" />
+  ) : null}
   <BlogIndexHeroSection visual={featuredVisual} />
   <BlogIndexContentSection posts={sortedPosts} />
 </Layout>

@@ -1,0 +1,38 @@
+---
+import Layout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/primitives/Button.astro';
+import ButtonGroup from '@/components/composites/ButtonGroup.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
+---
+
+<Layout
+  title="Page not found | Blake Oxford"
+  description="That URL is not on this site. Head home, browse projects and writing, or get in touch."
+  noindex={true}
+  wide={true}
+>
+  <section class="layout-gutter py-section-xl sm:py-section-2xl">
+    <IntroCopy
+      kicker="404"
+      title="This page is not here"
+      titleId="not-found-title"
+      description="The link may be outdated, or the page moved. Try one of these paths instead."
+      size="hero"
+      class="max-w-2xl"
+    />
+    <ButtonGroup align="start" responsive class="mt-8">
+      <Button variant="primary" size="lg" href="/">
+        Back to home
+      </Button>
+      <Button variant="secondary" size="lg" href="/projects/">
+        View projects
+      </Button>
+      <Button variant="secondary" size="lg" href="/blog/">
+        Read the blog
+      </Button>
+      <Button variant="secondary" size="lg" href="/contact/">
+        Contact
+      </Button>
+    </ButtonGroup>
+  </section>
+</Layout>

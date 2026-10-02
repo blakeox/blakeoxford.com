@@ -62,7 +62,7 @@ const articleAuthor =
 
 const articleSchema = createArticleSchema(post.data.title, articleAuthor, post.data.pubDate, {
   description: post.data.description ?? undefined,
-  dateModified: post.data.updatedDate,
+  dateModified: post.data.updatedDate ?? post.data.pubDate,
   image: articleImage,
   url: canonicalUrl,
   publisher: defaultAuthor,

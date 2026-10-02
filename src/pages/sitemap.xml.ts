@@ -9,18 +9,40 @@ type SitemapEntry = {
 
 export async function GET() {
   const site = 'https://blakeoxford.com';
-  const staticUrls: SitemapEntry[] = [
-    { loc: '/' },
-    { loc: '/about/' },
-    { loc: '/blog/' },
-    { loc: '/projects/' },
-    { loc: '/contact/' },
-  ];
 
-  // Individual project pages - dynamically load from content collection
   const projectEntries = await getCollection('projects', (entry: CollectionEntry<'projects'>) =>
     isPublished(entry)
   );
+  const blogEntries = await getCollection('blog', (entry: CollectionEntry<'blog'>) =>
+    isPublished(entry)
+  );
+
+  const latestBlogMod = blogEntries.reduce((latest: number, post: CollectionEntry<'blog'>) => {
+    const stamp = (post.data.updatedDate ?? post.data.pubDate).getTime();
+    return stamp > latest ? stamp : latest;
+  }, 0);
+
+  const latestProjectMod = projectEntries.reduce(
+    (latest: number, project: CollectionEntry<'projects'>) => {
+      if (!project.data.updatedDate) return latest;
+      const stamp = new Date(project.data.updatedDate).getTime();
+      return stamp > latest ? stamp : latest;
+    },
+    0
+  );
+
+  const staticUrls: SitemapEntry[] = [
+    { loc: '/' },
+    { loc: '/about/' },
+    { loc: '/contact/' },
+    ...(latestBlogMod
+      ? [{ loc: '/blog/', lastmod: new Date(latestBlogMod).toISOString() }]
+      : [{ loc: '/blog/' }]),
+    ...(latestProjectMod
+      ? [{ loc: '/projects/', lastmod: new Date(latestProjectMod).toISOString() }]
+      : [{ loc: '/projects/' }]),
+  ];
+
   const projectPages: SitemapEntry[] = projectEntries.map(
     (project: CollectionEntry<'projects'>) => ({
       loc: `/projects/${project.id}/`,
@@ -30,10 +52,6 @@ export async function GET() {
     })
   );
 
-  // Individual blog post pages from content collection
-  const blogEntries = await getCollection('blog', (entry: CollectionEntry<'blog'>) =>
-    isPublished(entry)
-  );
   const blogPages: SitemapEntry[] = blogEntries.map((post: CollectionEntry<'blog'>) => ({
     loc: `/blog/${post.id}/`,
     lastmod: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
