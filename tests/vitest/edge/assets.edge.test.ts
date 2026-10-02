@@ -188,7 +188,8 @@ describe('asset route cache and failure contract', () => {
     const response = await handleAssets(ctx);
 
     expect(response.status).toBe(404);
-    expect(response.headers.get('content-type')).not.toContain('text/html');
+    const contentType = response.headers.get('content-type') ?? '';
+    expect(contentType).not.toContain('text/html');
   });
 
   it('serves the built 404 page for missing HTML routes', async () => {
