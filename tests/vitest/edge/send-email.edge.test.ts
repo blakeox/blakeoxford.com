@@ -25,6 +25,7 @@ interface MockOpts {
   emailSendError?: boolean;
   acceptJson?: boolean;
   rateLimitError?: boolean;
+  omitEmail?: boolean;
 }
 
 function mockContext({
@@ -35,6 +36,7 @@ function mockContext({
   emailSendError,
   acceptJson = false,
   rateLimitError = false,
+  omitEmail = false,
 }: MockOpts = {}) {
   const headers = new Headers({
     'content-type': json ? 'application/json' : 'application/x-www-form-urlencoded',
@@ -59,12 +61,14 @@ function mockContext({
     },
     CONTACT_MESSAGES: { async put() {} },
     TURNSTILE_SECRET_KEY: 'secret',
-    CONTACT_EMAIL: {
-      send: vi.fn(async () => {
-        if (emailSendError) throw new Error('Cloudflare email send failed');
-        return { messageId: 'test-message-id' };
-      }),
-    },
+    CONTACT_EMAIL: omitEmail
+      ? undefined
+      : {
+          send: vi.fn(async () => {
+            if (emailSendError) throw new Error('Cloudflare email send failed');
+            return { messageId: 'test-message-id' };
+          }),
+        },
     SENTRY_DSN_EDGE: 'https://test@test.ingest.sentry.io/test',
   };
   global.fetch = vi.fn(async (url) => {
@@ -93,6 +97,14 @@ describe('send-email edge function', () => {
     });
     const res = await onRequestPost(ctx);
     expect(res.status).toBe(429);
+  });
+  it('does not send mail when the email binding is absent', async () => {
+    const ctx = mockContext({
+      body: { name: 'A', email: 'a@b.com', message: 'Hi', 'cf-turnstile-response': 't' },
+      omitEmail: true,
+    });
+    const res = await onRequestPost(ctx);
+    expect(res.status).toBe(503);
   });
   it('fails closed when rate-limit storage is unavailable', async () => {
     const ctx = mockContext({

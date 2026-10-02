@@ -1,7 +1,9 @@
 import { anonymizeClientIp } from '../../shared/ip';
 import { buildApiCorsHeaders } from '../../shared/cors';
 import { writeAiAnalytics } from '../../shared/ai-analytics';
+import { annotateAskSpan } from '../../shared/ask-trace';
 import type { RouteContext } from '../../shared/route-context';
+import type { Env } from '../../types';
 import { parseAiSources } from './parse-sources';
 import { checkAiSearchRateLimit } from './rate-limit';
 import {
@@ -177,6 +179,11 @@ export async function handleAiSearch({
         doubles: [0, workersAIResult.message?.length || 0, Date.now() - startTime],
         indexes: ['workers_ai', `complexity_${complexity}`],
       });
+      annotateAskSpan({
+        provider: 'workers-ai',
+        cacheStatus: 'N/A',
+        latencyMs: Date.now() - startTime,
+      });
 
       return new Response(JSON.stringify(workersAIResult), {
         status: 200,
@@ -228,6 +235,11 @@ export async function handleAiSearch({
           ],
           indexes: ['cache_hit', `complexity_${complexity}`],
         });
+        annotateAskSpan({
+          provider: 'autorag-cached',
+          cacheStatus: 'HIT',
+          latencyMs: Date.now() - startTime,
+        });
 
         return new Response(JSON.stringify(responseData), {
           status: 200,
@@ -239,14 +251,11 @@ export async function handleAiSearch({
     }
   }
 
-  const upstreamEndpoint = env.AI_SEARCH_API_ENDPOINT;
-  const upstreamToken = env.AI_SEARCH_API_TOKEN;
-
   const wantsStream =
     payload.stream === true ||
     (request.headers.get('accept') || '').toLowerCase().includes('text/event-stream');
 
-  if (!upstreamEndpoint || !upstreamToken) {
+  if (!env.AI_SEARCH && (!env.AI_SEARCH_API_ENDPOINT || !env.AI_SEARCH_API_TOKEN)) {
     return new Response(JSON.stringify({ error: 'AI search service not configured' }), {
       status: 503,
       headers: baseCorsHeaders,
@@ -256,55 +265,26 @@ export async function handleAiSearch({
   try {
     const requestBody = buildAiSearchRequest(enhancedQuery, history);
 
-    // AI Search stays on the direct endpoint — do not attach AI Gateway
-    // cache headers here (index/retrieval caching fights freshness). Workers AI
-    // observability goes through env.AI.run gateway options in workers-ai.ts.
-    const fetchUrl = upstreamEndpoint;
-    const fetchHeaders: Record<string, string> = {
-      'content-type': 'application/json',
-      authorization: `Bearer ${upstreamToken}`,
-    };
-
+    // The instance binding is the production path. The REST endpoint remains
+    // only so a previous Worker version can still authenticate during rollback.
     const upstreamController = new AbortController();
     const upstreamTimeout = setTimeout(() => upstreamController.abort(), 30000);
     const onRequestAbort = () => upstreamController.abort();
     request.signal.addEventListener('abort', onRequestAbort, { once: true });
-    let upstreamResponse: Response;
+    let upstreamData: Record<string, unknown>;
     try {
-      upstreamResponse = await fetch(fetchUrl, {
-        method: 'POST',
-        headers: fetchHeaders,
-        body: JSON.stringify(requestBody),
-        cf: { cacheTtl: 0, cacheEverything: false },
-        signal: upstreamController.signal,
-      });
+      upstreamData = await loadAiSearchCompletion(env, requestBody, upstreamController.signal);
+    } catch (error) {
+      if (isAiSearchHttpError(error)) {
+        return new Response(JSON.stringify({ error: error.detail }), {
+          status: error.status,
+          headers: baseCorsHeaders,
+        });
+      }
+      throw error;
     } finally {
       clearTimeout(upstreamTimeout);
       request.signal.removeEventListener('abort', onRequestAbort);
-    }
-
-    if (!upstreamResponse.ok) {
-      let errorDetail = 'Upstream service error';
-      try {
-        const upstreamError = await upstreamResponse.json();
-        errorDetail = extractAiSearchError(upstreamError) || errorDetail;
-      } catch {
-        // Keep the public error bounded and generic if the provider sends invalid JSON.
-      }
-      return new Response(JSON.stringify({ error: errorDetail }), {
-        status: upstreamResponse.status,
-        headers: baseCorsHeaders,
-      });
-    }
-
-    let upstreamData: Record<string, unknown>;
-    try {
-      upstreamData = (await upstreamResponse.json()) as Record<string, unknown>;
-    } catch {
-      return new Response(JSON.stringify({ error: 'Invalid response from AI service' }), {
-        status: 502,
-        headers: baseCorsHeaders,
-      });
     }
 
     if (upstreamData && typeof upstreamData === 'object' && upstreamData.success === false) {
@@ -337,6 +317,11 @@ export async function handleAiSearch({
     if (looksLikeEmptyRetrieval(message, sources.length) && env.AI) {
       const fallback = await handleSimpleQueryWithWorkersAI(generationQuery, history, env);
       if (fallback?.message) {
+        annotateAskSpan({
+          provider: 'workers-ai',
+          cacheStatus: 'MISS',
+          latencyMs: Date.now() - startTime,
+        });
         return new Response(JSON.stringify(fallback), {
           status: 200,
           headers: {
@@ -352,6 +337,11 @@ export async function handleAiSearch({
     }
 
     if (wantsStream) {
+      annotateAskSpan({
+        provider: 'autorag',
+        cacheStatus: 'MISS',
+        latencyMs: Date.now() - startTime,
+      });
       return buildAiSearchStreamResponse({
         message,
         sources,
@@ -408,6 +398,11 @@ export async function handleAiSearch({
       'x-ai-provider': 'autorag',
     };
 
+    annotateAskSpan({
+      provider: 'autorag',
+      cacheStatus: 'MISS',
+      latencyMs: Date.now() - startTime,
+    });
     return new Response(responsePayload, { status: 200, headers: responseHeaders });
   } catch (error) {
     let errorMessage = 'AI search request failed';
@@ -418,5 +413,84 @@ export async function handleAiSearch({
       status: 504,
       headers: baseCorsHeaders,
     });
+  }
+}
+
+class AiSearchHttpError extends Error {
+  status: number;
+  detail: string;
+
+  constructor(status: number, detail: string) {
+    super(detail);
+    this.name = 'AiSearchHttpError';
+    this.status = status;
+    this.detail = detail;
+  }
+}
+
+function isAiSearchHttpError(error: unknown): error is AiSearchHttpError {
+  return error instanceof AiSearchHttpError;
+}
+
+function abortError(): Error {
+  const error = new Error('aborted');
+  error.name = 'AbortError';
+  return error;
+}
+
+function raceAbort<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {
+  if (signal.aborted) return Promise.reject(abortError());
+  return new Promise((resolve, reject) => {
+    const onAbort = () => reject(abortError());
+    signal.addEventListener('abort', onAbort, { once: true });
+    operation.then(
+      (value) => {
+        signal.removeEventListener('abort', onAbort);
+        resolve(value);
+      },
+      (error: unknown) => {
+        signal.removeEventListener('abort', onAbort);
+        reject(error);
+      }
+    );
+  });
+}
+
+async function loadAiSearchCompletion(
+  env: Pick<Env, 'AI_SEARCH' | 'AI_SEARCH_API_ENDPOINT' | 'AI_SEARCH_API_TOKEN'>,
+  requestBody: ReturnType<typeof buildAiSearchRequest>,
+  signal: AbortSignal
+): Promise<Record<string, unknown>> {
+  if (env.AI_SEARCH) {
+    const completion = await raceAbort(env.AI_SEARCH.chatCompletions(requestBody), signal);
+    if (!completion || typeof completion !== 'object') {
+      throw new AiSearchHttpError(502, 'Invalid response from AI service');
+    }
+    return completion as Record<string, unknown>;
+  }
+
+  const response = await fetch(env.AI_SEARCH_API_ENDPOINT ?? '', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${env.AI_SEARCH_API_TOKEN}`,
+    },
+    body: JSON.stringify(requestBody),
+    cf: { cacheTtl: 0, cacheEverything: false },
+    signal,
+  });
+  if (!response.ok) {
+    let detail = 'Upstream service error';
+    try {
+      detail = extractAiSearchError(await response.json()) || detail;
+    } catch {
+      // Keep the public error bounded and generic if the provider sends invalid JSON.
+    }
+    throw new AiSearchHttpError(response.status, detail);
+  }
+  try {
+    return (await response.json()) as Record<string, unknown>;
+  } catch {
+    throw new AiSearchHttpError(502, 'Invalid response from AI service');
   }
 }

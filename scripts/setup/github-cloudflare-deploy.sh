@@ -4,6 +4,7 @@
 # Usage (recommended — create a dedicated API token in Cloudflare dashboard):
 #   1. https://dash.cloudflare.com/profile/api-tokens
 #   2. Use template "Edit Cloudflare Workers" scoped to account cc3bb24ae3c87cff38c2be85df3dab29
+#      and add Account > AI Search Edit plus AI Search Run for the post-deploy index refresh
 #   3. CLOUDFLARE_API_TOKEN='your-token' ./scripts/setup/github-cloudflare-deploy.sh
 #
 # Or bootstrap from local wrangler login (short-lived OAuth-derived token):
