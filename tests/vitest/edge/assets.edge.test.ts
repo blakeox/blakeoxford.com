@@ -178,6 +178,19 @@ describe('asset route cache and failure contract', () => {
     expect(await response.text()).not.toContain('data-theme="dark"');
   });
 
+  it('does not serve HTML 404 for missing API routes', async () => {
+    const fetch = vi.fn(async () => new Response('', { status: 404 }));
+    const ctx = context('/api/missing', new Response('', { status: 404 }), {
+      accept: 'application/json',
+    });
+    ctx.env.ASSETS.fetch = fetch;
+
+    const response = await handleAssets(ctx);
+
+    expect(response.status).toBe(404);
+    expect(response.headers.get('content-type')).not.toContain('text/html');
+  });
+
   it('serves the built 404 page for missing HTML routes', async () => {
     const fetch = vi.fn(async (req: Request) => {
       const pathname = new URL(req.url).pathname;

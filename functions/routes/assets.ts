@@ -8,6 +8,7 @@ const ROBOTS_META_TAG = '<meta name="robots" content="noindex, nofollow" />';
 const ROBOTS_META_PATTERN = /<meta\b(?=[^>]*\bname=["']robots["'])[^>]*>/i;
 
 function isHtmlRouteRequest(request: Request, url: URL): boolean {
+  if (url.pathname.startsWith('/api/')) return false;
   return (
     request.headers.get('accept')?.includes('text/html') ||
     url.pathname.endsWith('/') ||

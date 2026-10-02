@@ -1,5 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { isPublished } from '@/lib/content/publication-contract.mjs';
@@ -8,11 +6,6 @@ type SitemapEntry = {
   loc: string;
   lastmod?: string;
 };
-
-function contentFileLastMod(relativePath: string): string {
-  const filePath = path.join(process.cwd(), relativePath);
-  return fs.statSync(filePath).mtime.toISOString();
-}
 
 export async function GET() {
   const site = 'https://blakeoxford.com';
@@ -31,18 +24,17 @@ export async function GET() {
 
   const latestProjectMod = projectEntries.reduce(
     (latest: number, project: CollectionEntry<'projects'>) => {
-      const raw = project.data.updatedDate ?? project.data.date;
-      if (!raw) return latest;
-      const stamp = new Date(raw).getTime();
+      if (!project.data.updatedDate) return latest;
+      const stamp = new Date(project.data.updatedDate).getTime();
       return stamp > latest ? stamp : latest;
     },
     0
   );
 
   const staticUrls: SitemapEntry[] = [
-    { loc: '/', lastmod: contentFileLastMod('src/content/home/page.json') },
-    { loc: '/about/', lastmod: contentFileLastMod('src/content/about/page.json') },
-    { loc: '/contact/', lastmod: contentFileLastMod('src/content/contact/page.json') },
+    { loc: '/' },
+    { loc: '/about/' },
+    { loc: '/contact/' },
     ...(latestBlogMod
       ? [{ loc: '/blog/', lastmod: new Date(latestBlogMod).toISOString() }]
       : [{ loc: '/blog/' }]),
@@ -56,9 +48,7 @@ export async function GET() {
       loc: `/projects/${project.id}/`,
       ...(project.data.updatedDate
         ? { lastmod: new Date(project.data.updatedDate).toISOString() }
-        : project.data.date
-          ? { lastmod: new Date(project.data.date).toISOString() }
-          : {}),
+        : {}),
     })
   );
 
