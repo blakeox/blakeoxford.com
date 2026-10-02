@@ -24,8 +24,9 @@ export async function GET() {
 
   const latestProjectMod = projectEntries.reduce(
     (latest: number, project: CollectionEntry<'projects'>) => {
-      if (!project.data.updatedDate) return latest;
-      const stamp = new Date(project.data.updatedDate).getTime();
+      const raw = project.data.updatedDate ?? project.data.date;
+      if (!raw) return latest;
+      const stamp = new Date(raw).getTime();
       return stamp > latest ? stamp : latest;
     },
     0

@@ -25,7 +25,7 @@ export async function serveNotFoundPage(
 ): Promise<Response | null> {
   if (!isHtmlRouteRequest(request, url)) return null;
 
-  for (const path of ['/404.html', '/404/']) {
+  for (const path of ['/404', '/404/', '/404.html']) {
     const notFoundUrl = new URL(path, url.origin);
     const notFoundResponse = await env.ASSETS.fetch(new Request(notFoundUrl.toString(), request));
     if (!notFoundResponse.ok || !notFoundResponse.body) continue;
