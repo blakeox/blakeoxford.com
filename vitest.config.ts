@@ -13,6 +13,10 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'tests/__mocks__/astro-content.ts'),
       },
       {
+        find: 'cloudflare:workers',
+        replacement: path.resolve(__dirname, 'tests/__mocks__/cloudflare-workers.ts'),
+      },
+      {
         find: '@',
         replacement: path.resolve(__dirname, './src'),
       },

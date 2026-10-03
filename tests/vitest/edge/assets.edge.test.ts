@@ -178,6 +178,41 @@ describe('asset route cache and failure contract', () => {
     expect(await response.text()).not.toContain('data-theme="dark"');
   });
 
+  it('does not serve HTML 404 for missing API routes', async () => {
+    const fetch = vi.fn(async () => new Response('', { status: 404 }));
+    const ctx = context('/api/missing', new Response('', { status: 404 }), {
+      accept: 'application/json',
+    });
+    ctx.env.ASSETS.fetch = fetch;
+
+    const response = await handleAssets(ctx);
+
+    expect(response.status).toBe(404);
+    const contentType = response.headers.get('content-type') ?? '';
+    expect(contentType).not.toContain('text/html');
+  });
+
+  it('serves the built 404 page for missing HTML routes', async () => {
+    const fetch = vi.fn(async (req: Request) => {
+      const pathname = new URL(req.url).pathname;
+      if (pathname === '/404.html') {
+        return new Response('<html><body><h1>404</h1></body></html>', {
+          status: 200,
+          headers: { 'content-type': 'text/html' },
+        });
+      }
+      return new Response('', { status: 404 });
+    });
+    const ctx = context('/thispagedoesnotexist', new Response('', { status: 404 }));
+    ctx.env.ASSETS.fetch = fetch;
+
+    const response = await handleAssets(ctx);
+
+    expect(response.status).toBe(404);
+    expect(await response.text()).toContain('404');
+    expect(response.headers.get('content-type')).toBe('text/html; charset=utf-8');
+  });
+
   it('clears entity headers even when the query robots tag is already correct', async () => {
     const response = await addQueryNoindexMeta(
       new Response('<html><head><meta name="robots" content="noindex, nofollow" /></head></html>', {

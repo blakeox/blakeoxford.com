@@ -2,6 +2,7 @@ import type { Env } from '../../types';
 import type { AiSourcePayload, HistoryEntry } from './types';
 
 type WorkersAiRunOptions = {
+  rejectIfBusy?: boolean;
   gateway?: {
     id: string;
     skipCache?: boolean;
@@ -13,9 +14,11 @@ type WorkersAiRunOptions = {
  * Optional AI Gateway options for Workers AI (`env.AI.run` only).
  * Enable by setting AI_GATEWAY_ID in wrangler — AutoRAG indexing stays ungated.
  */
-function workersAiGatewayOptions(aiEnv: Env): WorkersAiRunOptions | undefined {
-  if (!aiEnv.AI_GATEWAY_ID) return undefined;
+function workersAiRunOptions(aiEnv: Env): WorkersAiRunOptions {
+  const options: WorkersAiRunOptions = { rejectIfBusy: true };
+  if (!aiEnv.AI_GATEWAY_ID) return options;
   return {
+    ...options,
     gateway: {
       id: aiEnv.AI_GATEWAY_ID,
       // Conversational answers should stay fresh; use gateway for observability.
@@ -68,7 +71,7 @@ export async function handleSimpleQueryWithWorkersAI(
     // llama-3.1-8b-instruct was deprecated 2026-05-30; use the active -fast variant
     // Gateway options are supported by Workers AI bindings; installed workers-types
     // may lag the third-argument overload — cast keeps Env typing honest.
-    const gatewayOptions = workersAiGatewayOptions(aiEnv);
+    const gatewayOptions = workersAiRunOptions(aiEnv);
     const runWorkersAi = aiEnv.AI.run as (
       model: string,
       inputs: {

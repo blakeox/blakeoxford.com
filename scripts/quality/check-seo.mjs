@@ -354,8 +354,14 @@ for (const entry of sitemapEntries) {
   if (!Number.isFinite(timestamp)) fail(errors, route, `invalid sitemap lastmod ${lastmod}`);
   if (timestamp > Date.now() + 86_400_000)
     fail(errors, route, `sitemap lastmod is in the future: ${lastmod}`);
-  if (!route.startsWith('/blog/') && !route.startsWith('/projects/'))
+  const coreStaticRoutes = new Set(['/', '/about/', '/blog/', '/projects/', '/contact/']);
+  if (
+    !route.startsWith('/blog/') &&
+    !route.startsWith('/projects/') &&
+    !coreStaticRoutes.has(route)
+  ) {
     fail(errors, route, 'static route has an unsupported lastmod value');
+  }
 }
 for (const route of sitemapRoutes) {
   if (!pages.has(route)) fail(errors, route, 'sitemap URL has no built HTML page');

@@ -77,7 +77,7 @@ export function createArticleSchema(
     description,
     author,
     datePublished: datePublished.toISOString(),
-    dateModified: dateModified?.toISOString(),
+    dateModified: (dateModified ?? datePublished).toISOString(),
     image: image ? (Array.isArray(image) ? image : [image]) : undefined,
     url,
     publisher,

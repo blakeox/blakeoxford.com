@@ -16,14 +16,17 @@ export interface Env {
   // Workers AI
   AI: Ai;
 
+  // AI Search instance binding. REST endpoint + token remain a one-release fallback.
+  AI_SEARCH?: AiSearchInstance;
+
   // Vectorize
   VECTORIZE: VectorizeIndex;
 
   // Analytics Engine
   AI_ANALYTICS: AnalyticsEngineDataset;
 
-  // Cloudflare Email Service
-  CONTACT_EMAIL: SendEmailBinding;
+  // Cloudflare Email Service. Absent on Worker Previews so they cannot send mail.
+  CONTACT_EMAIL?: SendEmailBinding;
 
   // Secrets / vars
   TURNSTILE_SECRET_KEY: string;
@@ -42,6 +45,15 @@ export interface Env {
 
   // Assets binding (for static site)
   ASSETS: Fetcher;
+}
+
+export interface AiSearchChatMessage {
+  role: string;
+  content: string;
+}
+
+export interface AiSearchInstance {
+  chatCompletions(input: { messages: AiSearchChatMessage[] }): Promise<unknown>;
 }
 
 export interface SendEmailBinding {
