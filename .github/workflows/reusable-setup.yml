@@ -13,6 +13,10 @@ on:
         description: 'Whether the pnpm install cache was hit'
         value: ${{ jobs.setup.outputs.install-cache-hit }}
 
+concurrency:
+  group: nuc-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   setup:
     name: Setup Environment
@@ -27,8 +31,10 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
+        with:
+          dest: ${{ runner.temp }}/pnpm-tooling
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: ${{ inputs.node-version }}

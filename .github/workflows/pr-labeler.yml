@@ -9,8 +9,9 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: nuc-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 
 jobs:
   label:

@@ -12,8 +12,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-worker-${{ github.ref }}
+  group: nuc-${{ github.repository }}-deploy-worker
   cancel-in-progress: false
+
 
 jobs:
   deploy:
@@ -27,8 +28,10 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
+        with:
+          dest: ${{ runner.temp }}/pnpm-tooling
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: '24.18.0'

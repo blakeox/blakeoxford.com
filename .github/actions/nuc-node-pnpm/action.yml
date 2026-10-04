@@ -1,0 +1,26 @@
+name: NUC Node + pnpm setup
+description: Pin Node on automation-nuc and isolate pnpm tooling per job (avoids shared ~/setup-pnpm races).
+
+runs:
+  using: composite
+  steps:
+    - name: Setup pnpm (isolated dest per job)
+      uses: pnpm/action-setup@v6.1.0
+      with:
+        dest: ${{ runner.temp }}/pnpm-tooling
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v7
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+
+inputs:
+  node-version:
+    description: Node.js version
+    required: false
+    default: '24'
+  cache-pnpm:
+    description: Enable pnpm cache via setup-node
+    required: false
+    default: 'true'

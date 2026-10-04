@@ -11,8 +11,9 @@ permissions:
   actions: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: nuc-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 
 jobs:
   analyze:

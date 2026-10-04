@@ -13,8 +13,9 @@ permissions:
 
 # High priority, fast execution
 concurrency:
-  group: status-check-${{ github.ref }}
+  group: nuc-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 
 jobs:
   deployment-gate:

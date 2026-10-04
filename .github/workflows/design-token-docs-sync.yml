@@ -10,8 +10,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: nuc-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 
 env:
   PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
