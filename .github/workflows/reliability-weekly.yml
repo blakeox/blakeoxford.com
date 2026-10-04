@@ -8,11 +8,23 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+env:
+  PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 jobs:
   essential-reliability:
     name: Essential + device matrix
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 30
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-jammy
+      options: --user 1001:1001
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -27,11 +39,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build site
         run: pnpm build
-      - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
-      - name: Install Firefox
-        if: github.event_name == 'workflow_dispatch'
-        run: pnpm exec playwright install --with-deps firefox
+      - name: Verify Playwright
+        run: pnpm exec playwright --version
       - name: Run essential tests (Chromium)
         run: npx playwright test --grep "@essential" --project=chromium --reporter=line,json --output=test-results/chromium
       - name: Run extended device matrix (Chromium)
@@ -60,8 +69,13 @@ jobs:
 
   extended-reliability:
     name: Extended suite (Chromium)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 60
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-jammy
+      options: --user 1001:1001
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -76,8 +90,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build site
         run: pnpm build
-      - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Verify Playwright
+        run: pnpm exec playwright --version
       - name: Run extended tests (Chromium)
         run: pnpm run test:e2e:extended:chromium
       - name: Upload artifacts

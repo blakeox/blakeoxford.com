@@ -9,10 +9,18 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 jobs:
   theme-docs-sync:
     name: Verify token docs sync
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
+    if: github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 5
     steps:
       - name: Checkout

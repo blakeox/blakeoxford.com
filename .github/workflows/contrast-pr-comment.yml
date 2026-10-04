@@ -8,10 +8,22 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 jobs:
   contrast-pr:
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-contrast') }}
-    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository && !contains(github.event.pull_request.labels.*.name, 'skip-contrast')
+    runs-on: [self-hosted, nuc, seo]
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-jammy
+      options: --user 1001:1001
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0

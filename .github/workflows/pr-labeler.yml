@@ -8,9 +8,15 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   label:
-    runs-on: ubuntu-latest
+    # Never execute pull_request_target automation for fork PRs on the self-hosted NUC.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, nuc, seo]
     steps:
       - name: Apply labels based on changed files
         uses: actions/labeler@v7

@@ -17,7 +17,9 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
+    env:
+      PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -99,7 +101,7 @@ jobs:
   seo-monitor:
     name: Verify deployed SEO and redirect contract (NUC)
     needs: deploy
-    runs-on: [self-hosted, linux, x64, nuc, seo]
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 15
     env:
       # The automation NUC intentionally exposes the pinned Node runtime only
