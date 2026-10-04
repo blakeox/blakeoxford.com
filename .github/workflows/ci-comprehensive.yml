@@ -13,10 +13,13 @@ permissions:
 
 # Cancel in-progress runs for the same workflow on the same branch
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+
+
 env:
+  PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   # Global flakiness thresholds (stricter for comprehensive runs)
   FLAKINESS_MAX_CURRENT_FLAKY: 0
   FLAKINESS_MAX_RETRY_INTENSITY: 0.03
@@ -25,8 +28,13 @@ env:
 jobs:
   comprehensive-tests:
     name: Full Test Suite
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 45
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-jammy
+      options: --user 1001:1001
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     strategy:
       fail-fast: false # Continue other tests even if one fails
       matrix:
@@ -45,8 +53,10 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
+        with:
+          dest: ${{ runner.temp }}/pnpm-tooling
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: '24'
@@ -63,20 +73,9 @@ jobs:
         if: matrix.test-group == 'unit'
         run: pnpm quality:indexnow
 
-      - name: Install Playwright browsers with enhanced fallback
+      - name: Verify Playwright (browsers preinstalled in container)
         if: matrix.test-group == 'e2e' || matrix.test-group == 'performance'
-        run: |
-          echo "🎭 Installing Playwright browsers with intelligent fallback..."
-
-          # Try installing all browsers first
-          if pnpm exec playwright install; then
-            echo "✅ All browsers installed successfully"
-          else
-            echo "⚠️ Full browser installation failed, installing Chromium only..."
-            pnpm exec playwright install chromium || echo "Chromium installation completed with warnings"
-            echo "BROWSER_INSTALL_FAILED=true" >> $GITHUB_ENV
-            echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> $GITHUB_ENV
-          fi
+        run: pnpm exec playwright --version
 
       - name: Run linting
         if: matrix.test-group == 'unit'
@@ -244,7 +243,7 @@ jobs:
 
   optimization-tasks:
     name: Optimization Tasks
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 15
     needs: comprehensive-tests
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event_name != 'schedule'
@@ -255,8 +254,10 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
+        with:
+          dest: ${{ runner.temp }}/pnpm-tooling
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: '24'

@@ -7,10 +7,17 @@ on:
 permissions:
   pull-requests: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+
+
 jobs:
   guard:
     name: Enforce Branch Flow
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
+    if: github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 5
     steps:
       - name: Validate PR source/target

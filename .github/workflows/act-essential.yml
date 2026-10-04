@@ -3,25 +3,42 @@ name: Act Essential Tests
 # Minimal workflow for testing our essential E2E optimizations with act
 on:
   push:
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+
+
+env:
+  PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 jobs:
   essential-test:
     name: Essential Tests (Act)
-    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 20
-    
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-jammy
+      options: --user 1001:1001
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
+        with:
+          dest: ${{ runner.temp }}/pnpm-tooling
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: '24'
@@ -30,10 +47,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright browsers (Chromium only)
-        run: |
-          echo "🎭 Installing Chromium browser for act testing..."
-          pnpm exec playwright install chromium --with-deps
+      - name: Verify Playwright (browsers preinstalled in container)
+        run: pnpm exec playwright --version
 
       - name: Build the application
         run: pnpm run build

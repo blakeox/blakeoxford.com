@@ -21,10 +21,14 @@ permissions:
 
 # Cancel in-progress runs for the same workflow on the same branch
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+
+
 env:
+  # Pinned Node on automation-nuc (github-runner uid 1001); no sudo on the runner host.
+  PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   # Flakiness thresholds (adjust as project stabilizes)
   FLAKINESS_MAX_CURRENT_FLAKY: 0
   FLAKINESS_MAX_RETRY_INTENSITY: 0.05
@@ -35,7 +39,8 @@ jobs:
   # Quick validation that code builds and basic tests pass
   quick-validation:
     name: Quick Validation
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 15
     steps:
       - name: Checkout repository
@@ -62,8 +67,10 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
+        with:
+          dest: ${{ runner.temp }}/pnpm-tooling
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: '24'
@@ -142,9 +149,15 @@ jobs:
   # Essential E2E tests - just the critical user paths
   essential-e2e:
     name: Essential E2E Tests
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 15
     needs: quick-validation # Wait for basic validation to pass first
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-jammy
+      options: --user 1001:1001
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -160,6 +173,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
         with:
+          dest: ${{ runner.temp }}/pnpm-tooling
           package_json_file: package.json
 
       - name: Setup Node.js
@@ -171,32 +185,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright dependencies
-        run: |
-          echo "🎭 Installing Playwright system dependencies..."
-          # Install system dependencies for browsers, but don't download browsers
-          sudo npx playwright install-deps
-          echo "✅ System dependencies installed"
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-browsers-
-
-      - name: Install Playwright browsers (full with Chromium fallback)
-        run: |
-          echo "Attempting full Playwright browser install (chromium, firefox, webkit)..."
-          if pnpm exec playwright install; then
-            echo "✅ Playwright browsers installed"
-            echo "PLAYWRIGHT_BROWSERS_LIMITED=false" >> $GITHUB_ENV
-          else
-            echo "⚠️ Full Playwright install failed; falling back to Chromium-only"
-            pnpm exec playwright install chromium
-            echo "PLAYWRIGHT_BROWSERS_LIMITED=true" >> $GITHUB_ENV
-          fi
+      - name: Verify Playwright (browsers preinstalled in container)
+        run: pnpm exec playwright --version
 
       - name: Build the application
         run: pnpm run build
@@ -300,10 +290,10 @@ jobs:
           path: badges/
           retention-days: 14
 
-  # Cross-browser essential E2E (Firefox + WebKit) on macOS to keep Linux fast
+  # Cross-browser essential E2E (Firefox + WebKit) on macOS — requires GitHub-hosted minutes (disabled by default).
   essential-e2e-crossbrowser:
     name: Essential E2E (Firefox/WebKit on macOS)
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: vars.ENABLE_HOSTED_BUILDS == 'true' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
     runs-on: macos-latest
     timeout-minutes: 20
     needs: quick-validation
@@ -322,6 +312,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
         with:
+          dest: ${{ runner.temp }}/pnpm-tooling
           package_json_file: package.json
 
       - name: Setup Node.js
@@ -384,13 +375,13 @@ jobs:
 
   post-quality-comment:
     name: Post PR Quality Summary
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
     needs: [quick-validation, essential-e2e, essential-e2e-crossbrowser]
     # Cross-browser E2E is PR-skipped; always() + result checks keep this job runnable.
     if: |
       always() &&
       github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.fork == false &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
       needs.quick-validation.result == 'success' &&
       needs.essential-e2e.result == 'success' &&
       (needs.essential-e2e-crossbrowser.result == 'success' || needs.essential-e2e-crossbrowser.result == 'skipped')
@@ -563,11 +554,12 @@ jobs:
   # Single required status check that aggregates fast CI jobs
   required-status-checks:
     name: Required Checks Gate
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
     # Cross-browser E2E only runs on main/dispatch; treat skipped as OK on PRs.
     if: |
       always() &&
       github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
       needs.quick-validation.result == 'success' &&
       needs.essential-e2e.result == 'success' &&
       (needs.essential-e2e-crossbrowser.result == 'success' || needs.essential-e2e-crossbrowser.result == 'skipped')

@@ -11,8 +11,10 @@ permissions:
   actions: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
+
 
 jobs:
   analyze:
@@ -20,9 +22,12 @@ jobs:
     # Only run this custom CodeQL when explicitly enabled via repo variable.
     # Default GitHub "Code scanning default setup" is enabled on this repo,
     # and running both causes: "advanced configurations cannot be processed when default setup is enabled".
+    # Self-hosted: requires CodeQL CLI/bundle on automation-nuc; may fail if the runner lacks CodeQL tooling.
     if: ${{ vars.USE_CUSTOM_CODEQL == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 30
+    env:
+      PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     strategy:
       fail-fast: false
       matrix:

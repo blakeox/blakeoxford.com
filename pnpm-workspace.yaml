@@ -44,6 +44,8 @@ overrides:
   postcss: '8.5.25'
   # Vite 8 + picomatch 4 interop can throw parse.fastpaths; pin patched 2.x (GHSA-c2c7-rcm5-vvqj)
   picomatch: '2.3.2'
+  # GHSA-ch52-4w7c-c8xp: astro pulls http-cache-semantics@4.2.0; 4.3.0 contains the fix.
+  http-cache-semantics: '4.3.0'
 
 peerDependencyRules:
   allowedVersions:
