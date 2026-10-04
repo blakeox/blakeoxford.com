@@ -23,7 +23,7 @@ jobs:
     # Default GitHub "Code scanning default setup" is enabled on this repo,
     # and running both causes: "advanced configurations cannot be processed when default setup is enabled".
     # Self-hosted: requires CodeQL CLI/bundle on automation-nuc; may fail if the runner lacks CodeQL tooling.
-    if: ${{ vars.USE_CUSTOM_CODEQL == 'true' }}
+    if: ${{ vars.USE_CUSTOM_CODEQL == 'true' && github.actor != 'dependabot[bot]' && (((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.pull_request.head.repo.full_name == github.repository) || ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') && (github.actor == github.repository_owner || contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))) }}
     runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 30
     env:

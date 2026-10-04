@@ -26,7 +26,15 @@ jobs:
   security-scan:
     name: Security & Dependencies
     runs-on: [self-hosted, nuc, seo]
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
     timeout-minutes: 10
     steps:
       - name: Checkout repository

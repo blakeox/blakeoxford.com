@@ -20,10 +20,19 @@ env:
 
 jobs:
   contrast:
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
     runs-on: [self-hosted, nuc, seo]
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-jammy
-      options: --user 1001:1001
+      options: --user 1001:1001 --ipc=host
     env:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:

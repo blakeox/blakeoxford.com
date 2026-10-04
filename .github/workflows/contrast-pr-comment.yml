@@ -12,17 +12,19 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-
 env:
   PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 jobs:
   contrast-run:
-    if: github.event.pull_request.head.repo.full_name == github.repository && !contains(github.event.pull_request.labels.*.name, 'skip-contrast')
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-contrast')
     runs-on: [self-hosted, nuc, seo]
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-jammy
-      options: --user 1001:1001
+      options: --user 1001:1001 --ipc=host
     env:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
@@ -41,6 +43,35 @@ jobs:
           CONTRAST_JSON: 1
       - name: Generate markdown report (7 days)
         run: pnpm contrast:report -- --markdown --limit 7 > pr-contrast.md 2>&1 || true
+      - name: Upload contrast PR artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: contrast-pr-artifacts
+          path: |
+            quality-snapshots/contrast-history.json
+            pr-contrast.md
+          if-no-files-found: ignore
+
+  contrast-comment:
+    name: contrast-pr
+    needs: contrast-run
+    if: |
+      always() &&
+      needs.contrast-run.result != 'cancelled' &&
+      github.actor != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-contrast')
+    runs-on: [self-hosted, nuc, seo]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Download contrast artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: contrast-pr-artifacts
+          path: .
+        continue-on-error: true
       - name: Build PR comment body
         run: |
           {
@@ -69,25 +100,6 @@ jobs:
             echo ''
             echo '<!-- contrast-pr-summary-marker -->'
           } > pr-comment-body.txt
-      - name: Upload contrast PR artifacts
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: contrast-pr-artifacts
-          path: pr-comment-body.txt
-          if-no-files-found: error
-
-  contrast-comment:
-    name: contrast-pr
-    needs: contrast-run
-    if: always() && needs.contrast-run.result != 'cancelled' && github.event.pull_request.head.repo.full_name == github.repository && !contains(github.event.pull_request.labels.*.name, 'skip-contrast')
-    runs-on: [self-hosted, nuc, seo]
-    steps:
-      - name: Download contrast comment body
-        uses: actions/download-artifact@v8
-        with:
-          name: contrast-pr-artifacts
-          path: .
       - name: Create or update comment
         uses: actions/github-script@v9
         with:
@@ -117,4 +129,3 @@ jobs:
                 body,
               });
             }
-

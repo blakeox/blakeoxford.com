@@ -40,7 +40,15 @@ jobs:
   quick-validation:
     name: Quick Validation
     runs-on: [self-hosted, nuc, seo]
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
     timeout-minutes: 15
     steps:
       - name: Checkout repository
@@ -150,12 +158,20 @@ jobs:
   essential-e2e:
     name: Essential E2E Tests
     runs-on: [self-hosted, nuc, seo]
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
     timeout-minutes: 15
     needs: quick-validation # Wait for basic validation to pass first
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-jammy
-      options: --user 1001:1001
+      options: --user 1001:1001 --ipc=host
     env:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     steps:
@@ -380,6 +396,7 @@ jobs:
     # Cross-browser E2E is PR-skipped; always() + result checks keep this job runnable.
     if: |
       always() &&
+      github.actor != 'dependabot[bot]' &&
       github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       needs.quick-validation.result == 'success' &&
@@ -558,6 +575,7 @@ jobs:
     # Cross-browser E2E only runs on main/dispatch; treat skipped as OK on PRs.
     if: |
       always() &&
+      github.actor != 'dependabot[bot]' &&
       github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       needs.quick-validation.result == 'success' &&

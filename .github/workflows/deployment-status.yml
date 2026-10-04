@@ -22,7 +22,15 @@ jobs:
   deployment-gate:
     name: Deployment Ready
     runs-on: [self-hosted, nuc, seo]
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
     timeout-minutes: 3
     outputs:
       deployment-ready: ${{ steps.check.outputs.ready }}
@@ -80,7 +88,15 @@ jobs:
   syntax-check:
     name: Syntax Check
     runs-on: [self-hosted, nuc, seo]
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
     timeout-minutes: 2
     steps:
       - name: Checkout
@@ -125,7 +141,10 @@ jobs:
     runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 1
     needs: [deployment-gate, syntax-check]
-    if: always()
+    if: |
+      always() &&
+      github.actor != 'dependabot[bot]' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     steps:
       - name: Report status
         run: |
@@ -138,7 +157,11 @@ jobs:
           echo "🚀 Deployment Gate: $DEPLOYMENT_STATUS"
           echo "🔍 Syntax Check: $SYNTAX_STATUS"
 
-          if [ "$DEPLOYMENT_STATUS" = "success" ] && [ "$SYNTAX_STATUS" = "success" ]; then
+          job_ok() {
+            case "$1" in success|skipped) return 0 ;; *) return 1 ;; esac
+          }
+
+          if job_ok "$DEPLOYMENT_STATUS" && job_ok "$SYNTAX_STATUS"; then
             echo "✅ All checks passed - Ready for deployment!"
             echo "status=success" >> $GITHUB_OUTPUT
           else

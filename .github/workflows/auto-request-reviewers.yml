@@ -17,7 +17,15 @@ concurrency:
 jobs:
   request:
     # Never execute pull_request_target automation for fork PRs on the self-hosted NUC.
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
     runs-on: [self-hosted, nuc, seo]
     steps:
       - name: Auto-request reviewers from CODEOWNERS
