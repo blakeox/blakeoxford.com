@@ -15,9 +15,22 @@ concurrency:
   group: deploy-worker-${{ github.ref }}
   cancel-in-progress: false
 
+
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
+    runs-on: [self-hosted, nuc, seo]
+    env:
+      PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -25,8 +38,10 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
+        with:
+          dest: ${{ runner.temp }}/pnpm-tooling
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: '24.18.0'
@@ -99,7 +114,16 @@ jobs:
   seo-monitor:
     name: Verify deployed SEO and redirect contract (NUC)
     needs: deploy
-    runs-on: [self-hosted, linux, x64, nuc, seo]
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 15
     env:
       # The automation NUC intentionally exposes the pinned Node runtime only
