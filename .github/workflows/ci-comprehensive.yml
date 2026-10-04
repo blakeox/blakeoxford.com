@@ -13,8 +13,9 @@ permissions:
 
 # Cancel in-progress runs for the same workflow on the same branch
 concurrency:
-  group: nuc-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 
 
 env:

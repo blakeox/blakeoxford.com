@@ -12,8 +12,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: nuc-${{ github.repository }}-deploy-worker
+  group: deploy-worker-${{ github.ref }}
   cancel-in-progress: false
+
 
 
 jobs:
