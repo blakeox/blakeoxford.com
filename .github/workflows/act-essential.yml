@@ -1,7 +1,9 @@
 name: Act Essential Tests
 
-# Minimal workflow for testing our essential E2E optimizations with act (manual only; avoids duplicating Fast CI on every push).
+# Minimal workflow for testing our essential E2E optimizations with act
 on:
+  push:
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -19,6 +21,7 @@ env:
 jobs:
   essential-test:
     name: Essential Tests (Act)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 20
     container:

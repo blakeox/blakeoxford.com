@@ -1,7 +1,10 @@
 name: Act Local Testing
 
-# Optimized for local testing with act — manual dispatch only (no push trigger on shared NUC).
+# This workflow is optimized for local testing with act
+# It handles the preview server startup more reliably for local development
 on:
+  push:
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -19,6 +22,7 @@ env:
 jobs:
   local-test:
     name: Local E2E Test Debug
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 30
     container:
