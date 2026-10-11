@@ -85,6 +85,10 @@ export function isProductionScheduledPath(pathname: string, environment?: string
   return environment === 'production' && pathname === '/__scheduled';
 }
 
+export function isUnmatchedApiPath(pathname: string): boolean {
+  return pathname === '/api' || pathname.startsWith('/api/');
+}
+
 const CANONICAL_SLASH_ROUTE_PREFIXES = [
   '/about',
   '/blog',
@@ -213,6 +217,18 @@ const WorkerApp = {
     for (const handler of handlers) {
       const response = await handler(routeCtx);
       if (response) return applySecurityHeaders(response, reqId, url.hostname, url);
+    }
+
+    if (isUnmatchedApiPath(url.pathname)) {
+      return applySecurityHeaders(
+        new Response(JSON.stringify({ error: 'Not Found' }), {
+          status: 404,
+          headers: { 'cache-control': 'no-store', 'content-type': 'application/json; charset=utf-8' },
+        }),
+        reqId,
+        url.hostname,
+        url
+      );
     }
 
     return applySecurityHeaders(await handleAssets(routeCtx), reqId, url.hostname, url);
