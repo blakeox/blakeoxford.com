@@ -89,6 +89,18 @@ export function isUnmatchedApiPath(pathname: string): boolean {
   return pathname === '/api' || pathname.startsWith('/api/');
 }
 
+export function createUnmatchedApiResponse(): Response {
+  return new Response(JSON.stringify({ error: 'Not Found' }), {
+    status: 404,
+    headers: {
+      'cache-control': 'no-store',
+      'content-type': 'application/json; charset=utf-8',
+      'x-route-kind': 'api',
+      'x-cache-policy': 'no-store',
+    },
+  });
+}
+
 const CANONICAL_SLASH_ROUTE_PREFIXES = [
   '/about',
   '/blog',
@@ -220,15 +232,7 @@ const WorkerApp = {
     }
 
     if (isUnmatchedApiPath(url.pathname)) {
-      return applySecurityHeaders(
-        new Response(JSON.stringify({ error: 'Not Found' }), {
-          status: 404,
-          headers: { 'cache-control': 'no-store', 'content-type': 'application/json; charset=utf-8' },
-        }),
-        reqId,
-        url.hostname,
-        url
-      );
+      return applySecurityHeaders(createUnmatchedApiResponse(), reqId, url.hostname, url);
     }
 
     return applySecurityHeaders(await handleAssets(routeCtx), reqId, url.hostname, url);

@@ -3,6 +3,7 @@ import {
   applySecurityHeaders,
   canonicalRequestUrl,
   canonicalSlashPath,
+  createUnmatchedApiResponse,
   ensureHtmlCharset,
   isProductionScheduledPath,
   isUnmatchedApiPath,
@@ -28,6 +29,15 @@ describe('unmatched API paths', () => {
     expect(isUnmatchedApiPath('/api')).toBe(true);
     expect(isUnmatchedApiPath('/apiary')).toBe(false);
     expect(isUnmatchedApiPath('/projects/')).toBe(false);
+  });
+
+  it('preserves API route and no-store diagnostic headers on the 404', () => {
+    const response = createUnmatchedApiResponse();
+
+    expect(response.status).toBe(404);
+    expect(response.headers.get('x-route-kind')).toBe('api');
+    expect(response.headers.get('x-cache-policy')).toBe('no-store');
+    expect(response.headers.get('cache-control')).toBe('no-store');
   });
 });
 
