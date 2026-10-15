@@ -1,5 +1,25 @@
 # Cloudflare modernization review — October 14, 2026
 
+## October 15 continuation
+
+The user approved including the queued changes, repairing Ask, retrying
+1Password signing, and continuing the protected release after checks pass.
+Signing now succeeds: commit `2495ba54e9aa8c66debbd33787874f55cc59d6a6`
+verifies with a good SSH signature. The earlier pending-decision sections
+below are historical checkpoints.
+
+Ask's first lazy mount can open, but subsequent launcher activations fail:
+the public launcher emits `ai-chat:open` without `detail.open`, whereas the
+mounted panel accepts a boolean `open` value. The fix adds `open: true` to
+that existing open-event payload, preserving the source and toggle contract.
+Two regression tests execute the real launcher script and cover repeated
+open/close cycles and replacement after Astro navigation. Both failed before
+the patch and pass afterward. This change introduces no dependency, provider,
+storage, authentication, or conversation-persistence change.
+
+The combined release remains subject to exact signed-preview validation and
+all protected checks before development → testing → main promotion.
+
 ## Decision and baseline
 
 Keep Astro static generation plus the existing Worker. Upgrade only the
