@@ -17,6 +17,18 @@ open/close cycles and replacement after Astro navigation. Both failed before
 the patch and pass afterward. This change introduces no dependency, provider,
 storage, authentication, or conversation-persistence change.
 
+The essential browser test now exercises Projects (the launcher is
+intentionally hidden on Home), closes the mounted panel, and reopens it by
+keyboard. Live signed preview `779c5e0f-122b-4748-a403-2aa449ec78b5` at commit
+`a39e79688ad9cc0fba08ac875bde9532f2744b60` passes initial open, close, and
+keyboard reopen. The full local check passes 715 tests with one existing skip.
+
+The deferred launcher URL now includes a build-time SHA-256 content version.
+This avoids retaining the old event payload in day-long browser/edge caches;
+the URL updates automatically whenever the script changes. The emitted Home,
+Projects, and Contact HTML was checked against the script's calculated hash.
+No zone-wide cache purge is required.
+
 The combined release remains subject to exact signed-preview validation and
 all protected checks before development → testing → main promotion.
 
