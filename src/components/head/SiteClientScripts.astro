@@ -3,6 +3,13 @@
  * Global client bootstraps — plain modules, not React islands.
  * Interactive UI (chat, search, forms) stays as islands elsewhere.
  */
+import { createHash } from 'node:crypto';
+import askLauncherSource from '../../../public/js/ai-chat-launcher.js?raw';
+
+const askLauncherVersion = createHash('sha256')
+  .update(askLauncherSource)
+  .digest('hex')
+  .slice(0, 12);
 const clarityId = import.meta.env.PUBLIC_CLARITY_PROJECT_ID?.trim() ?? '';
 ---
 
@@ -127,4 +134,4 @@ const clarityId = import.meta.env.PUBLIC_CLARITY_PROJECT_ID?.trim() ?? '';
   retireServiceWorker();
 </script>
 
-<script is:inline src="/js/ai-chat-launcher.js" defer></script>
+<script is:inline src={`/js/ai-chat-launcher.js?v=${askLauncherVersion}`} defer></script>
