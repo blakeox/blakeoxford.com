@@ -33,6 +33,7 @@
     "validate:zaraz": "node scripts/setup/validate-zaraz.mjs",
     "indexnow:submit": "node scripts/seo/indexnow-submit.mjs",
     "deploy:worker": "corepack pnpm exec wrangler deploy",
+    "validate:worker": "pnpm exec wrangler deploy --dry-run",
     "ai-search:refresh": "node scripts/deploy/refresh-ai-search.mjs",
     "monitor:edge": "bash scripts/monitor/cloudflare-edge-smoke.sh",
     "monitor:seo": "bash scripts/monitor/seo-edge-smoke.sh",
@@ -117,7 +118,7 @@
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vite": "8.3.1",
     "vitest": "^5.0.0",
-    "wrangler": "^4.142.0"
+    "wrangler": "4.151.0"
   },
   "packageManager": "pnpm@10.34.5+sha256.ccb5c479cab1b00621325bfe7d4c9a8a8031e7a525d7249e275ecbec81b08db2"
 }

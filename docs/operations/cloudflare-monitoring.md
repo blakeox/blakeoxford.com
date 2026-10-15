@@ -65,7 +65,11 @@ restore it.
    The Builds API token and the manual workflow token
    `blakeoxford-github-actions-seo-2026-v2` both include Account AI Search Write
    and AI Search Run for that refresh. Non-production branches use Worker
-   Previews (`npx wrangler preview`).
+   Previews (`pnpm exec wrangler preview`). The manual backup workflow accepts
+   only `main`, checks the configured account ID before remote writes, and
+   deploys with the project-pinned Wrangler through `pnpm deploy:worker`.
+   CI runs `pnpm validate:worker` after building; this is a local dry run and
+   does not prove preview bindings, email delivery, or production health.
 
 ### Quarterly or after an incident
 
@@ -77,7 +81,7 @@ protection` rule is active.
 3. Confirm required secrets exist without printing their values:
    `TURNSTILE_SECRET_KEY`. Also confirm the Worker Preview base secret of the
    same name exists (`wrangler preview base-config secret put
-   TURNSTILE_SECRET_KEY`) so preview contact forms can verify Turnstile
+TURNSTILE_SECRET_KEY`) so preview contact forms can verify Turnstile
    without using production KV or email.
 4. Rotate a secret if it may have been exposed, its owner is unclear, or its
    provider requires rotation. Validate the affected route immediately after.
