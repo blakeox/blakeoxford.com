@@ -355,7 +355,7 @@ Required for:
 
 **Primary:** Cloudflare Workers Builds (Git integration) deploys on pushes to tracked production branches.
 
-**Backup:** The `Deploy Worker` workflow (`.github/workflows/deploy-worker.yml`) is **manual only** (`workflow_dispatch`) via `cloudflare/wrangler-action@v4`. It does not run on push.
+**Backup:** The `Deploy Worker` workflow (`.github/workflows/deploy-worker.yml`) is **manual only** (`workflow_dispatch`) from `main`, using `pnpm deploy:worker` and the lockfile-pinned Wrangler. It rejects other branches and an account ID that differs from `wrangler.toml` before any remote writes. It does not run on push. `pnpm validate:worker` validates the built bundle without uploading it.
 
 Required GitHub configuration (for the backup workflow):
 
