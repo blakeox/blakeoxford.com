@@ -158,7 +158,7 @@ jobs:
           echo "🔍 Syntax Check: $SYNTAX_STATUS"
 
           job_ok() {
-            case "$1" in success|skipped) return 0 ;; *) return 1 ;; esac
+            case "$1" in success) return 0 ;; *) return 1 ;; esac
           }
 
           if job_ok "$DEPLOYMENT_STATUS" && job_ok "$SYNTAX_STATUS"; then
