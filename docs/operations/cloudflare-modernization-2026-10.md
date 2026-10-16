@@ -32,6 +32,15 @@ No zone-wide cache purge is required.
 The combined release remains subject to exact signed-preview validation and
 all protected checks before development → testing → main promotion.
 
+Scheduled maintenance admits the `schedule` event independently of the stored
+cron editor's account. Manual maintenance remains limited to authorized actors
+on `main`; the optional custom CodeQL workflow still requires its enable flag.
+All workflows invoked by `scripts/local-ci.sh` accept act's default local actor
+and select its standard runner and PATH. Real protected-branch pushes retain
+the NUC runtime, and pull-request jobs retain their hosted-runner isolation.
+Regression cases execute the event conditions and runner expressions, including
+non-owner schedule actors, local commands, and rejected manual feature refs.
+
 ## Decision and baseline
 
 Keep Astro static generation plus the existing Worker. Upgrade only the

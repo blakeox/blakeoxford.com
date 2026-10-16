@@ -59,8 +59,70 @@ const jobCondition = (name: string, job: string) => {
   const block = workflow(name)
     .split(`  ${job}:\n`)[1]
     ?.split(/\n\x20{2}[a-z0-9_-]+:\n/)[0];
-  return block?.match(/^\x20{4}if: \|\n((?:\x20{6}.+\n)+)/m)?.[1];
+  return (
+    block?.match(/^\x20{4}if: \|\n((?:\x20{6}.+\n)+)/m)?.[1] ??
+    block?.match(/^\x20{4}if: \$\{\{ (.+) \}\}$/m)?.[1]
+  );
 };
+
+const workflowContext = (actor: string, event_name: string, ref = 'refs/heads/main') => ({
+  github: {
+    actor,
+    event_name,
+    ref,
+    repository: 'blakeox/blakeoxford.com',
+    repository_owner: 'blakeox',
+    event: { pull_request: { head: { repo: { full_name: 'external/fork' } } } },
+  },
+  vars: { USE_CUSTOM_CODEQL: 'true' },
+  contains: (list: string[], value: string) => list.includes(value),
+  fromJSON: JSON.parse,
+});
+
+describe('scheduled default-branch maintenance', () => {
+  it.each([
+    ['contrast-nightly', 'contrast'],
+    ['contrast-maintenance', 'auto-close'],
+    ['reliability-weekly', 'essential-reliability'],
+    ['reliability-weekly', 'extended-reliability'],
+    ['security', 'security-scan'],
+    ['codeql', 'analyze'],
+  ])('%s/%s runs independently of the stored schedule actor', (name, job) => {
+    const condition = jobCondition(name, job);
+    expect(condition).toBeDefined();
+    for (const actor of ['blakeox', 'admin-collaborator', 'dependabot[bot]']) {
+      expect(runInNewContext(condition!, workflowContext(actor, 'schedule'))).toBe(true);
+    }
+    if (name === 'codeql') {
+      const context = workflowContext('admin-collaborator', 'schedule');
+      context.vars.USE_CUSTOM_CODEQL = 'false';
+      expect(runInNewContext(condition!, context)).toBe(false);
+    }
+  });
+});
+
+describe('documented local CI commands', () => {
+  it.each([
+    ['ci-comprehensive', 'comprehensive-tests'],
+    ['ci-fast', 'quick-validation'],
+    ['ci-fast', 'essential-e2e'],
+    ['security', 'security-scan'],
+  ])('%s/%s executes local act on its standard runner', (name, job) => {
+    const context = workflowContext('nektos/act', 'push');
+    const condition = jobCondition(name, job);
+    expect(condition).toBeDefined();
+    expect(runInNewContext(condition!, context)).toBe(true);
+    const block = workflow(name)
+      .split(`  ${job}:\n`)[1]
+      ?.split(/\n\x20{2}[a-z0-9_-]+:\n/)[0];
+    const runner = block?.match(/^\x20{4}runs-on: \$\{\{ (.+) \}\}$/m)?.[1];
+    expect(runner).toBeDefined();
+    expect(runInNewContext(runner!, context)).toEqual(['ubuntu-latest']);
+    const path = workflow(name).match(/^\x20{2}PATH: \$\{\{ (.+) \}\}$/m)?.[1];
+    expect(path).toBeDefined();
+    expect(runInNewContext(path!, context)).not.toContain('/home/github-runner/');
+  });
+});
 
 describe('required PR checks include Dependabot', () => {
   it.each([
@@ -185,12 +247,17 @@ describe('pull request jobs stay off the deployment NUC', () => {
     ['codeql', 'analyze'],
     ['deploy-worker', 'deploy'],
   ])('%s/%s rejects manual refs outside main before checkout', (name, job) => {
-    const block = workflow(name)
-      .split(`  ${job}:\n`)[1]
-      ?.split(/\n\x20{2}[a-z0-9_-]+:\n/)[0];
-    expect(block).toContain("github.ref == 'refs/heads/main'");
-    if (name !== 'deploy-worker') {
-      expect(block).toContain("github.event_name != 'workflow_dispatch'");
-    }
+    const condition = jobCondition(name, job);
+    expect(condition).toBeDefined();
+    expect(runInNewContext(condition!, workflowContext('blakeox', 'workflow_dispatch'))).toBe(true);
+    expect(
+      runInNewContext(
+        condition!,
+        workflowContext('blakeox', 'workflow_dispatch', 'refs/heads/feature/untrusted')
+      )
+    ).toBe(false);
+    expect(runInNewContext(condition!, workflowContext('collaborator', 'workflow_dispatch'))).toBe(
+      false
+    );
   });
 });
