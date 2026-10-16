@@ -56,9 +56,6 @@ overrides:
   # GHSA-ch52-4w7c-c8xp: astro pulls http-cache-semantics@4.2.0; 4.3.0 contains the fix.
   http-cache-semantics: '4.3.0'
 
-patchedDependencies:
-  braces@3.0.3: patches/braces@3.0.3.patch
-
 peerDependencyRules:
   allowedVersions:
     'eslint-plugin-jsx-a11y>eslint': '10'

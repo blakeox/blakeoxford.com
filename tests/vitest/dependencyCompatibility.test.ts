@@ -9,9 +9,6 @@ const require = createRequire(import.meta.url);
 const lhciRequire = createRequire(require.resolve('@lhci/cli/package.json'));
 const utilsRequire = createRequire(lhciRequire.resolve('@lhci/utils/package.json'));
 const yamlRequire = createRequire(utilsRequire.resolve('js-yaml/package.json'));
-const stylelintRequire = createRequire(require.resolve('stylelint'));
-const micromatchRequire = createRequire(stylelintRequire.resolve('micromatch'));
-const braces = micromatchRequire('braces');
 const expressRequire = createRequire(lhciRequire.resolve('express'));
 const qs = expressRequire('qs');
 const proxyRequire = createRequire(lhciRequire.resolve('proxy-agent'));
@@ -43,39 +40,6 @@ describe('security override compatibility', () => {
     } finally {
       client.close();
     }
-  });
-
-  it.each(['parse', 'compile', 'expand', 'stringify'])(
-    'bounds malicious nesting in braces.%s',
-    (method) => {
-      const pattern = '{'.repeat(256) + 'value' + '}'.repeat(256);
-      expect(() => braces[method](pattern)).toThrow(SyntaxError);
-      expect(() => braces[method](pattern)).toThrow(/nesting.*depth/i);
-    }
-  );
-
-  it.each(['compile', 'expand', 'stringify'])(
-    'bounds direct AST nesting in braces.%s',
-    (method) => {
-      let node: Record<string, unknown> = { type: 'text', value: 'value' };
-      for (let depth = 0; depth < 256; depth++) {
-        node = { type: 'brace', open: true, close: true, commas: 0, ranges: 0, nodes: [node] };
-      }
-      expect(() => braces[method]({ type: 'root', nodes: [node] })).toThrow(SyntaxError);
-    }
-  );
-
-  it('preserves normal brace expansion and regex compilation', () => {
-    expect(braces.expand('src/{pages,lib}/file-{1..2}.ts')).toEqual([
-      'src/pages/file-1.ts',
-      'src/pages/file-2.ts',
-      'src/lib/file-1.ts',
-      'src/lib/file-2.ts',
-    ]);
-    expect(
-      new RegExp(`^${braces.compile('src/{pages,lib}/file.ts')}$`).test('src/pages/file.ts')
-    ).toBe(true);
-    expect(braces.stringify(braces.parse('src/{pages,lib}/*.ts'))).toBe('src/{pages,lib}/*.ts');
   });
 
   it('loads Lighthouse CI YAML configuration through its installed parser', () => {
