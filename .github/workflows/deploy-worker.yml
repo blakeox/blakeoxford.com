@@ -12,21 +12,43 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-worker-${{ github.ref }}
+  group: deploy-worker-production
   cancel-in-progress: false
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      ) && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, nuc, seo]
+    env:
+      PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     timeout-minutes: 20
     steps:
+      - name: Require the production branch
+        env:
+          DEPLOY_REF: ${{ github.ref }}
+        run: |
+          if [ "$DEPLOY_REF" != "refs/heads/main" ]; then
+            echo "::error::Production backup deployments must run from main. Use Worker Previews for other branches."
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
+        with:
+          dest: ${{ runner.temp }}/pnpm-tooling
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: '24.18.0'
@@ -47,7 +69,16 @@ jobs:
         run: pnpm quality:analytics -- --require-clarity
 
       - name: Validate Worker configuration
-        run: pnpm exec wrangler deploy --dry-run
+        run: pnpm validate:worker
+
+      - name: Verify the deployment account
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ "$CLOUDFLARE_ACCOUNT_ID" != "cc3bb24ae3c87cff38c2be85df3dab29" ]; then
+            echo "::error::Deployment account does not match wrangler.toml. Stop before modifying indexes or deploying."
+            exit 1
+          fi
 
       - name: Refresh Vectorize index
         env:
@@ -58,11 +89,11 @@ jobs:
           pnpm exec wrangler vectorize upsert blakeoxford-content --file=vectorize-data.json
 
       - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --var GIT_COMMIT:${{ github.sha }} --message commit:${{ github.sha }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
+          DEPLOY_COMMIT: ${{ github.sha }}
+        run: pnpm deploy:worker --var "GIT_COMMIT:$DEPLOY_COMMIT" --message "commit:$DEPLOY_COMMIT"
 
       - name: Refresh AI Search index and purge similarity cache
         env:
@@ -99,7 +130,16 @@ jobs:
   seo-monitor:
     name: Verify deployed SEO and redirect contract (NUC)
     needs: deploy
-    runs-on: [self-hosted, linux, x64, nuc, seo]
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
+          (github.actor == github.repository_owner ||
+            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
+      )
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 15
     env:
       # The automation NUC intentionally exposes the pinned Node runtime only

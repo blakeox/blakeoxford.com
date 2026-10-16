@@ -3,8 +3,10 @@ import {
   applySecurityHeaders,
   canonicalRequestUrl,
   canonicalSlashPath,
+  createUnmatchedApiResponse,
   ensureHtmlCharset,
   isProductionScheduledPath,
+  isUnmatchedApiPath,
   shouldNoindexQueryResponse,
 } from '../../../functions/index';
 import { CONTENT_SECURITY_POLICY } from '../../../src/config/content-security-policy.ts';
@@ -17,6 +19,25 @@ describe('production scheduled endpoint hardening', () => {
   it('does not block the path outside production', () => {
     expect(isProductionScheduledPath('/__scheduled', 'development')).toBe(false);
     expect(isProductionScheduledPath('/healthz', 'production')).toBe(false);
+  });
+});
+
+describe('unmatched API paths', () => {
+  it('routes unknown API requests to a 404 boundary before static assets', () => {
+    expect(isUnmatchedApiPath('/api/graphql')).toBe(true);
+    expect(isUnmatchedApiPath('/api/unknown')).toBe(true);
+    expect(isUnmatchedApiPath('/api')).toBe(true);
+    expect(isUnmatchedApiPath('/apiary')).toBe(false);
+    expect(isUnmatchedApiPath('/projects/')).toBe(false);
+  });
+
+  it('preserves API route and no-store diagnostic headers on the 404', () => {
+    const response = createUnmatchedApiResponse();
+
+    expect(response.status).toBe(404);
+    expect(response.headers.get('x-route-kind')).toBe('api');
+    expect(response.headers.get('x-cache-policy')).toBe('no-store');
+    expect(response.headers.get('cache-control')).toBe('no-store');
   });
 });
 
