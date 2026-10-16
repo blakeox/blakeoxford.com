@@ -46,7 +46,11 @@ function extractChoiceMessage(value: unknown): string {
     .trim();
 }
 
-export function buildAiSearchRequest(query: string, history: HistoryEntry[]) {
+export function buildAiSearchRequest(
+  query: string,
+  history: HistoryEntry[],
+  originalQuery = query
+) {
   const prior = history
     .map(({ role, content }, index) => {
       const previous = history[index - 1];
@@ -64,7 +68,7 @@ export function buildAiSearchRequest(query: string, history: HistoryEntry[]) {
       };
     })
     .filter(({ content }) => content);
-  if (prior.at(-1)?.role === 'user' && prior.at(-1)?.content === query.trim()) prior.pop();
+  if (prior.at(-1)?.role === 'user' && prior.at(-1)?.content === originalQuery.trim()) prior.pop();
   const messages: AiSearchMessage[] = [
     {
       role: 'system',
