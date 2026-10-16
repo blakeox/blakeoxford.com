@@ -271,7 +271,7 @@ export async function handleAiSearch({
   }
 
   try {
-    const requestBody = buildAiSearchRequest(enhancedQuery, history);
+    const requestBody = buildAiSearchRequest(enhancedQuery, history, query);
 
     // The instance binding is the production path. The REST endpoint remains
     // only so a previous Worker version can still authenticate during rollback.

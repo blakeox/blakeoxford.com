@@ -8,6 +8,17 @@ import {
 } from '../../functions/routes/ai-search/upstream';
 
 describe('Cloudflare AI Search upstream adapter', () => {
+  it('deduplicates the original current question when retrieval rewrites it', () => {
+    const request = buildAiSearchRequest(
+      'Blake Oxford What changed?',
+      [{ role: 'user', content: 'What changed?' }],
+      'What changed?'
+    );
+    expect(request.messages.slice(1)).toEqual([
+      { role: 'user', content: 'Blake Oxford What changed?' },
+    ]);
+  });
+
   it.each(['Which projects has Blake Oxford built', 'Should I contact Blake Oxford'])(
     'removes an unpunctuated question echo: %s',
     (query) => {
