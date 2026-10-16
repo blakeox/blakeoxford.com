@@ -160,7 +160,11 @@ export async function handleAiSearch({
   if ((complexity === 'simple' || isConversationalProfileAsk(query)) && env.AI) {
     const workersAIResult = await handleSimpleQueryWithWorkersAI(generationQuery, history, env);
     if (workersAIResult) {
-      workersAIResult.message = removeLeadingQuestionEcho(workersAIResult.message, query);
+      workersAIResult.message = removeLeadingQuestionEcho(
+        workersAIResult.message,
+        query,
+        generationQuery
+      );
     }
 
     if (workersAIResult?.message) {
@@ -306,7 +310,7 @@ export async function handleAiSearch({
       });
     }
 
-    const message = extractAiSearchMessage(upstreamData, query);
+    const message = extractAiSearchMessage(upstreamData, query, enhancedQuery);
     const resultData = extractAiSearchSourceData(upstreamData);
     const sources = parseAiSources(resultData);
 
@@ -320,7 +324,8 @@ export async function handleAiSearch({
     // AutoRAG empty-retrieval refusals → conversational Workers AI fallback
     if (looksLikeEmptyRetrieval(message, sources.length) && env.AI) {
       const fallback = await handleSimpleQueryWithWorkersAI(generationQuery, history, env);
-      if (fallback) fallback.message = removeLeadingQuestionEcho(fallback.message, query);
+      if (fallback)
+        fallback.message = removeLeadingQuestionEcho(fallback.message, query, generationQuery);
       if (fallback?.message) {
         annotateAskSpan({
           provider: 'workers-ai',

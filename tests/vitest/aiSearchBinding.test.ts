@@ -25,7 +25,7 @@ describe('AI Search instance binding', () => {
           RATE_LIMIT_KV: { get: async () => null, put: async () => undefined },
           AI: {
             run: async () => ({
-              response: `${query} ${query} He automates operational workflows.`,
+              response: `What does Blake Oxford do well? ${query} He automates operational workflows.`,
             }),
           },
         }
@@ -93,7 +93,7 @@ describe('AI Search instance binding', () => {
   it.each([false, true])(
     'removes question echoes before returning a stream=%s answer',
     async (stream) => {
-      const query = 'What outcomes did the Microsoft Fabric project achieve?';
+      const query = 'What projects has he built?';
       const answer = 'It enabled 200 teammates.';
       const response = await handleAiSearch(
         searchContext(
@@ -105,8 +105,10 @@ describe('AI Search instance binding', () => {
           {
             RATE_LIMIT_KV: { get: async () => null, put: async () => undefined },
             AI_SEARCH: {
-              chatCompletions: async () => ({
-                choices: [{ message: { content: `${query} ${query} ${answer}` } }],
+              chatCompletions: async ({ messages }: { messages: Array<{ content: string }> }) => ({
+                choices: [
+                  { message: { content: `${messages.at(-1)!.content} ${query} ${answer}` } },
+                ],
                 chunks: [
                   {
                     text: 'Fabric case study',

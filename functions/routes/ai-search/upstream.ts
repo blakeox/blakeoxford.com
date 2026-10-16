@@ -2,13 +2,27 @@ import type { HistoryEntry } from './types';
 
 type AiSearchMessage = { role: 'system' | 'user' | 'assistant'; content: string };
 
-export function removeLeadingQuestionEcho(message: string, query: string): string {
-  const question = query.trim();
+export function removeLeadingQuestionEcho(message: string, ...queries: string[]): string {
   let answer = message.trim();
-  if (!question) return answer;
-  const escaped = question.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
-  const prefix = new RegExp(`^${escaped}(?=\\s|$)`, 'i');
-  while (prefix.test(answer)) answer = answer.replace(prefix, '').trimStart();
+  const prefixes = queries
+    .map((query) => query.trim())
+    .filter(
+      (question) =>
+        /[?？]/.test(question) ||
+        /^(who|what|when|where|why|how|is|are|do|does|can|could|would|will|tell me|show me|explain|describe)\b/i.test(
+          question
+        )
+    )
+    .sort((a, b) => b.length - a.length)
+    .map((question) => {
+      const escaped = question.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+      return new RegExp(`^${escaped}(?=\\s|$)`, 'i');
+    });
+  let previous: string;
+  do {
+    previous = answer;
+    for (const prefix of prefixes) answer = answer.replace(prefix, '').trimStart();
+  } while (answer !== previous);
   return answer.trim();
 }
 
@@ -54,17 +68,21 @@ export function buildAiSearchRequest(query: string, history: HistoryEntry[]) {
   return { messages };
 }
 
-export function extractAiSearchMessage(payload: Record<string, unknown>, query = ''): string {
+export function extractAiSearchMessage(
+  payload: Record<string, unknown>,
+  ...queries: string[]
+): string {
   const choices = Array.isArray(payload.choices) ? payload.choices : [];
   const chatMessage = extractChoiceMessage(choices[0]);
-  if (chatMessage) return removeLeadingQuestionEcho(chatMessage, query);
+  if (chatMessage) return removeLeadingQuestionEcho(chatMessage, ...queries);
 
   const result = asRecord(payload.result);
   const resultResponse = result?.response;
-  if (typeof resultResponse === 'string') return removeLeadingQuestionEcho(resultResponse, query);
+  if (typeof resultResponse === 'string')
+    return removeLeadingQuestionEcho(resultResponse, ...queries);
 
   return typeof payload.response === 'string'
-    ? removeLeadingQuestionEcho(payload.response, query)
+    ? removeLeadingQuestionEcho(payload.response, ...queries)
     : '';
 }
 

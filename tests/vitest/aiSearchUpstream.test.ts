@@ -8,6 +8,23 @@ import {
 } from '../../functions/routes/ai-search/upstream';
 
 describe('Cloudflare AI Search upstream adapter', () => {
+  it('preserves an answer beginning with a non-question search phrase', () => {
+    const answer = 'Blake Oxford is an enterprise systems specialist.';
+    expect(extractAiSearchMessage({ response: answer }, 'Blake Oxford')).toBe(answer);
+  });
+
+  it('removes mixed original and rewritten question echoes', () => {
+    expect(
+      extractAiSearchMessage(
+        {
+          response: 'What projects has Blake Oxford built? What projects has he built? Automation.',
+        },
+        'What projects has he built?',
+        'What projects has Blake Oxford built?'
+      )
+    ).toBe('Automation.');
+  });
+
   it('does not feed echoed answers or duplicate in-flight questions back into history', () => {
     const request = buildAiSearchRequest('Current question?', [
       { role: 'user', content: 'Earlier question?' },

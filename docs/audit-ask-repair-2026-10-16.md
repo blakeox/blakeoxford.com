@@ -25,12 +25,9 @@ this is a locally remediated finding, not an upstream advisory closure or a clea
 raw audit. No audit advisory is ignored or dismissed. Production audit is checked
 separately.
 
-The [supported pnpm patch mechanism](https://pnpm.io/10.x/cli/patch) records an
-exact version and patch hash in the workspace and lockfile. Frozen installs must
-apply it; patch failure/unused-patch allowances are not enabled. Blake owns removal
-of this patch when a patched upstream release is available. Retain the regression
-tests during that replacement so a version-only update cannot silently drop the
-depth protection.
+The [pnpm patch](https://pnpm.io/10.x/cli/patch) pins an exact version/hash and must
+apply on frozen installs. Failure/unused-patch allowances are disabled. Blake owns
+replacing it with a patched upstream release while retaining the regression tests.
 
 ## Ask evidence and behavior
 
@@ -39,11 +36,10 @@ substantive answer. The upstream adapter forwarded those prefixes unchanged into
 JSON and simulated SSE output; old assistant history could also retain them. Local
 regressions reproduce these paths without calling a model.
 
-The adapter now asks for a direct grounded answer, removes only repeated leading
-copies of the submitted question, and cleans those same prefixes from assistant
-history. It preserves questions quoted later in an answer. Question-only output
-is rejected through the existing empty-answer response rather than displayed as
-success. The conversational Workers AI path uses the same response guard.
+The adapter requests a direct grounded answer and removes leading question echoes
+from answers and history, matching both original and rewritten prompts. It preserves
+non-question subjects and questions quoted later in an answer. Question-only output
+is rejected. Workers AI uses the same guard.
 
 System messages are supported by the current [Cloudflare chat-completions
 API](https://developers.cloudflare.com/changelog/post/2026-03-23-ai-search-new-rest-api/).
