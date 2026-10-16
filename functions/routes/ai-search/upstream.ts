@@ -1,4 +1,5 @@
 import type { HistoryEntry } from './types';
+import { rewriteAskQuery } from './rewrite-query';
 
 type AiSearchMessage = { role: 'system' | 'user' | 'assistant'; content: string };
 
@@ -9,7 +10,7 @@ export function removeLeadingQuestionEcho(message: string, ...queries: string[])
     .filter(
       (question) =>
         /[?？]/.test(question) ||
-        /^(who|what|when|where|why|how|is|are|do|does|can|could|would|will|tell me|show me|explain|describe)\b/i.test(
+        /^(who|whom|whose|what|which|when|where|why|how|am|is|are|was|were|do|does|did|have|has|had|can|could|should|shall|may|might|would|will|tell me|show me|explain|describe)\b/i.test(
           question
         )
     )
@@ -47,13 +48,21 @@ function extractChoiceMessage(value: unknown): string {
 
 export function buildAiSearchRequest(query: string, history: HistoryEntry[]) {
   const prior = history
-    .map(({ role, content }, index) => ({
-      role,
-      content:
-        role === 'assistant' && history[index - 1]?.role === 'user'
-          ? removeLeadingQuestionEcho(content, history[index - 1].content)
-          : content.trim(),
-    }))
+    .map(({ role, content }, index) => {
+      const previous = history[index - 1];
+      if (role !== 'assistant' || previous?.role !== 'user')
+        return { role, content: content.trim() };
+      const rewritten = rewriteAskQuery(previous.content, null);
+      return {
+        role,
+        content: removeLeadingQuestionEcho(
+          content,
+          previous.content,
+          rewritten.retrievalQuery,
+          rewritten.generationQuery
+        ),
+      };
+    })
     .filter(({ content }) => content);
   if (prior.at(-1)?.role === 'user' && prior.at(-1)?.content === query.trim()) prior.pop();
   const messages: AiSearchMessage[] = [

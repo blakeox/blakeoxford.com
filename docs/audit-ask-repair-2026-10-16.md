@@ -1,69 +1,43 @@
 # Development audit and Ask repair
 
-## Dependency evidence and remediation
-
-Checked October 16, 2026 against npm registry metadata and the current GitHub
-advisories. Direct dependencies, Wrangler, and runtime compatibility settings are
-unchanged.
+Checked October 16, 2026 against registry metadata and GitHub advisories. Direct
+dependencies, Wrangler, compatibility settings, credentials and models are unchanged.
 
 | Finding | Resolution |
 | --- | --- |
-| qs bracket-key comma array-limit bypass, GHSA-x5fp-wj9c-mxmx | Raise the existing override from 6.15.3 to compatible patched 6.16.1. Test the malicious bracketed comma-list input. |
-| qs attacker-controlled isBuffer, GHSA-4mjr-xmp4-gh2g | Same upgrade. Test a query parse/stringify round-trip with the reported constructor/isBuffer keys. |
-| basic-ftp listing-parser complexity, GHSA-c475-qrg2-pj4r | Scope patched 6.2.3 to get-uri. Verify the installed listing parser and Client API consumed by that parent. |
-| braces recursive AST exhaustion, GHSA-vfj7-8cjw-p6xm | Apply an exact-version pnpm patch to 3.0.3, bounding parser nesting and compile/expand/stringify walkers to 128 levels. Test string and direct AST entry points through the actual stylelint → micromatch dependency path. |
+| qs comma array-limit bypass, GHSA-x5fp-wj9c-mxmx | Existing override raised from 6.15.3 to patched 6.16.1; malicious bracketed comma-list regression. |
+| qs attacker-controlled isBuffer, GHSA-4mjr-xmp4-gh2g | Same upgrade; parse/stringify regression using constructor/isBuffer keys. |
+| basic-ftp listing-parser complexity, GHSA-c475-qrg2-pj4r | Scope patched 6.2.3 to get-uri; exercise installed parser and parent-consumed Client API. |
+| braces recursive AST exhaustion, GHSA-vfj7-8cjw-p6xm | Exact-version 3.0.3 pnpm patch bounds parser and compile/expand/stringify depth to 128; string/direct-AST regressions and normal glob checks. |
 
-The [braces advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) has no
-patched upstream release. Removing the optional compressor would leave other
-braces consumers installed. The tracked patch implements the depth-bound approach
-described in [the upstream report](https://github.com/micromatch/braces/issues/70),
-while preserving ordinary glob alternation and ranges.
+The [braces advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) has no patched
+release. Removing the optional compressor leaves other consumers. The tracked patch
+uses the depth bound described in the [upstream report](https://github.com/micromatch/braces/issues/70).
+**Full raw audit remains nonzero:** registry audit identifies upstream braces without
+inspecting local patches. This is local remediation, not upstream closure. No advisory
+is suppressed. Production audit is separate. The [pnpm patch](https://pnpm.io/10.x/cli/patch)
+pins version/hash and must apply on frozen installs; failure/unused allowances are off.
+Blake owns replacing it with an upstream fix while retaining the regression tests.
 
-**Raw full audit remains nonzero:** npm identifies the upstream version as
-vulnerable without inspecting local patches. It still reports the braces advisory;
-this is a locally remediated finding, not an upstream advisory closure or a clean
-raw audit. No audit advisory is ignored or dismissed. Production audit is checked
-separately.
+## Ask behavior
 
-The [pnpm patch](https://pnpm.io/10.x/cli/patch) pins an exact version/hash and must
-apply on frozen installs. Failure/unused-patch allowances are disabled. Blake owns
-replacing it with a patched upstream release while retaining the regression tests.
+Preview exposed duplicate user bubbles during retries; the completed assistant answer
+was direct. Provider-prefix and contaminated-history behavior are independently covered
+by deterministic regressions. The adapter removes question echoes against original and
+rewritten prompts, including saved history, and preserves non-question subjects and
+embedded quotes. Question-only output is rejected. Workers AI uses the same guard.
+The supported [system message](https://developers.cloudflare.com/changelog/post/2026-03-23-ai-search-new-rest-api/)
+requests direct grounded answers. Citation metadata and retrieval sources are preserved.
+Answer-cache v5 avoids old replies; refresh clears all `ai:response:` generations while
+preserving unrelated conversation backups. These caches are regenerable.
 
-## Ask evidence and behavior
+## Validation and recovery
 
-The previous live probe returned repeated copies of its question before the
-substantive answer. The upstream adapter forwarded those prefixes unchanged into
-JSON and simulated SSE output; old assistant history could also retain them. Local
-regressions reproduce these paths without calling a model.
-
-The adapter requests a direct grounded answer and removes leading question echoes
-from answers and history, matching both original and rewritten prompts. It preserves
-non-question subjects and questions quoted later in an answer. Question-only output
-is rejected. Workers AI uses the same guard.
-
-System messages are supported by the current [Cloudflare chat-completions
-API](https://developers.cloudflare.com/changelog/post/2026-03-23-ai-search-new-rest-api/).
-This change does not alter provider credentials, instance configuration, models,
-retrieval sources, or citation metadata.
-
-A new answer-cache generation avoids reusing previously echoed answers. Existing
-deployment refresh now clears all `ai:response:` versions; tests preserve unrelated
-conversation backups. These are regenerable answer caches, not contact records.
-
-## Validation and operational limits
-
-Before repair, eleven focused regression cases fail. After repair, validate the
-focused tests, frozen install, full application checks, build, Worker dry run,
-preview, hosted CI and production separately. Local deterministic tests do not
-prove future model output quality; preview/live probes must verify a completed
-answer, no leading question echo, citations, and Ask reopening with history.
-
-The intentional new input limit rejects extremely deep glob/AST inputs with a
-controlled SyntaxError before stack exhaustion. No real FTP server acceptance is
-claimed by the listing-parser/API test.
-
-Kill switch: stop the active build/promotion. Record the active compatible Worker
-version before main merge and restore it if live acceptance fails. Blake owns
-recovery; report sanitized failures in the release chat and existing GitHub/provider
-logs. No storage migration is introduced. Worker rollback does not undo index or
-answer-cache refresh writes; those are rebuilt by the existing refresh operation.
+Keep frozen install, full checks, build/dry run, rendered preview, hosted CI and live
+runtime evidence separate. Verify complete answers, one question, citations and history
+on reopen; deterministic tests do not guarantee future model quality. Deep glob/AST
+inputs now raise controlled SyntaxError. Real FTP-server acceptance is not claimed.
+Stop build/promotion on failed validation. Record the active Worker before main merge
+and restore it if acceptance fails. Blake owns recovery, with sanitized failures in
+this release chat and GitHub/provider logs. No storage migration is introduced. Worker
+rollback does not undo regenerable index/cache refresh writes.
