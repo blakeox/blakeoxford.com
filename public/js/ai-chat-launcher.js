@@ -10,7 +10,8 @@
   const STATE_EVENT = 'ai-chat:state';
 
   const dispatch = (type) => {
-    window.dispatchEvent(new CustomEvent(type, { detail: { source: 'launcher' } }));
+    const detail = { source: 'launcher', ...(type === OPEN_EVENT ? { open: true } : {}) };
+    window.dispatchEvent(new CustomEvent(type, { detail }));
   };
 
   const handleLauncherClick = (event) => {

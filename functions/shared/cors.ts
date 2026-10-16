@@ -12,9 +12,19 @@ export const API_EXPOSE_HEADERS = [
 
 const ALLOWED_API_ORIGINS = new Set(['https://blakeoxford.com', 'https://www.blakeoxford.com']);
 
+function isSameOriginAsRequest(request: Request, origin: string): boolean {
+  try {
+    return origin === new URL(request.url).origin;
+  } catch {
+    return false;
+  }
+}
+
 export function isAllowedApiOrigin(request: Request): boolean {
   const origin = request.headers.get('origin');
-  return !origin || ALLOWED_API_ORIGINS.has(origin);
+  if (!origin) return true;
+  if (ALLOWED_API_ORIGINS.has(origin)) return true;
+  return isSameOriginAsRequest(request, origin);
 }
 
 /**
@@ -38,7 +48,7 @@ export function buildApiCorsHeaders(
     ...(options.extra || {}),
   };
 
-  if (requestOrigin && ALLOWED_API_ORIGINS.has(requestOrigin)) {
+  if (requestOrigin && isAllowedApiOrigin(request)) {
     headers['access-control-allow-origin'] = requestOrigin;
     headers['access-control-allow-credentials'] = 'true';
   }

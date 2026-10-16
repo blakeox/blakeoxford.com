@@ -26,4 +26,17 @@ describe('Worker API CORS policy', () => {
     expect(headers['access-control-allow-origin']).toBeUndefined();
     expect(headers['access-control-allow-credentials']).toBeUndefined();
   });
+
+  it('allows a Workers preview origin when it matches the request URL', () => {
+    const previewOrigin = 'https://testing-blakeoxford-com.blakeoxford.workers.dev';
+    const request = {
+      headers: new Headers({ origin: previewOrigin }),
+      url: `${previewOrigin}/api/set-theme`,
+    } as Request;
+    const headers = buildApiCorsHeaders(request);
+
+    expect(isAllowedApiOrigin(request)).toBe(true);
+    expect(headers['access-control-allow-origin']).toBe(previewOrigin);
+    expect(headers['access-control-allow-credentials']).toBe('true');
+  });
 });

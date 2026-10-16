@@ -287,7 +287,7 @@ Before requesting review:
 
 **Primary:** Cloudflare Workers Builds (Git integration) deploys `blakeoxford-com` on pushes to tracked production branches (`main` / as configured in the Cloudflare dashboard).
 
-**Secondary (manual only):** `.github/workflows/deploy-worker.yml` is `workflow_dispatch` — a Wrangler backup when you need an explicit deploy outside Workers Builds. It does **not** run on push.
+**Secondary (manual only):** `.github/workflows/deploy-worker.yml` is `workflow_dispatch` — a Wrangler backup from `main` when you need an explicit deploy outside Workers Builds. It uses the project's pinned Wrangler and rejects other branches or a mismatched account ID before remote writes. It does **not** run on push. Build first, then run `pnpm validate:worker` for a local bundle/configuration check without uploading.
 
 If a manual **Deploy Worker** run fails with `Invalid access token [code: 9109]` or `Authentication error [code: 10000]`, rotate GitHub credentials:
 

@@ -141,13 +141,13 @@ test.describe('AI chat assistant', () => {
       await route.fulfill({ status: 200, body: '{}' });
     });
 
-    await page.goto('/');
+    await page.goto('/projects/');
     const widget = page.locator('[data-ai-chat-widget]');
     await widget.waitFor({ state: 'attached' });
     await widget.locator('.ai-chat-launcher').waitFor({ state: 'attached' });
   });
 
-  test('opens and closes the assistant panel accessibly', async ({ page }) => {
+  test('@essential opens, closes, and reopens the assistant panel accessibly', async ({ page }) => {
     const widget = page.locator('[data-ai-chat-widget]');
     const launcher = widget.getByRole('button', { name: 'Open Ask' });
     await expect(launcher).toBeVisible();
@@ -182,6 +182,11 @@ test.describe('AI chat assistant', () => {
     // Wait for the panel to be marked closed by the UI
     await expect(panel).toHaveAttribute('data-ai-visible', 'false', { timeout: 3000 });
     await expect(launcher).toBeVisible();
+
+    await launcher.press('Enter');
+    await expect(panel).toHaveAttribute('data-ai-visible', 'true');
+    await expect(composer).toBeVisible();
+    await expect(composer).toBeFocused();
   });
 
   test('streams a response and lets the visitor start fresh', async ({ page }) => {
