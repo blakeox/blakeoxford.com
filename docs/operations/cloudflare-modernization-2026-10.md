@@ -41,6 +41,12 @@ the NUC runtime, and pull-request jobs retain their hosted-runner isolation.
 Regression cases execute the event conditions and runner expressions, including
 non-owner schedule actors, local commands, and rejected manual feature refs.
 
+Deployment commands pass flags directly after `pnpm deploy:worker`. A paired
+project-pinned Wrangler dry run proves that an intervening `--` discards the
+commit variable and deployment message; removing it supplies `GIT_COMMIT`.
+The backup workflow and primary Workers Builds command must use the corrected
+form before production acceptance can require a matching runtime commit.
+
 ## Decision and baseline
 
 Keep Astro static generation plus the existing Worker. Upgrade only the
