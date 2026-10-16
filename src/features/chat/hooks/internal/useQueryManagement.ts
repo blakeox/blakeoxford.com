@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import type { ChatMessage, ChatState, LoadingPhase, MutableRef } from '@/lib/chat';
 import { enhanceQuery, getPageContext } from '@/lib/chat';
 import { searchWithAI } from '@/lib/ai-search';
@@ -122,7 +122,6 @@ export function useQueryManagement(
     setFallbackResults,
     setRetryCount,
     setLastFailedQuery,
-    retryCount,
     useMemory,
     lastQueryRef,
     messagesRef,
@@ -140,21 +139,42 @@ export function useQueryManagement(
     focusInput,
   } = options;
 
+  const requestGenerationRef = useRef(0);
+  useEffect(
+    () => () => {
+      requestGenerationRef.current += 1;
+    },
+    []
+  );
+
   /**
    * Send a query to the AI
    * Handles the complete request lifecycle from message creation to response streaming
    */
   const sendQuery = useCallback(
-    async (query: string) => {
+    async (
+      query: string,
+      retry?: { attempt: number; userMessageId: string; generation: number }
+    ): Promise<void> => {
+      const generation = retry?.generation ?? ++requestGenerationRef.current;
+      if (generation !== requestGenerationRef.current) return;
+      const attempt = retry?.attempt ?? 0;
+      if (!retry) setRetryCount(0);
       setChatState('loading');
       setLoadingPhase('searching');
       setError(null);
       setFallbackResults([]);
       lastQueryRef.current = query;
 
+      // A manual retry reuses the latest unanswered question, just like an automatic retry.
+      const latest = messagesRef.current.at(-1);
+      const existingUserId =
+        retry?.userMessageId ??
+        (latest?.role === 'user' && latest.content === query ? latest.id : undefined);
+
       // Create user message
       const userMessage: ChatMessage = {
-        id: createId(),
+        id: existingUserId ?? createId(),
         role: 'user',
         content: query,
         timestamp: Date.now(),
@@ -164,7 +184,7 @@ export function useQueryManagement(
       // Add messages to state
       setMessages((prev) => [
         ...prev,
-        userMessage,
+        ...(existingUserId ? [] : [userMessage]),
         {
           id: assistantId,
           role: 'assistant',
@@ -182,7 +202,10 @@ export function useQueryManagement(
       }
       activeRequestRef.current = controller;
 
-      const historyPayload = buildHistoryForRequest(messagesRef.current, useMemory);
+      const historyPayload = buildHistoryForRequest(
+        messagesRef.current.filter((message) => message.id !== userMessage.id),
+        useMemory
+      );
 
       // Enhance the query with analytical context to guide better responses
       const enhancedQuery = useMemory ? enhanceQuery(query, historyPayload.length > 0) : query;
@@ -266,13 +289,14 @@ export function useQueryManagement(
         setStreamingMessageId(null);
         setLoadingPhase(null);
         setChatState('ready');
+        setRetryCount(0);
         // Successful answers own the dock — Find (⌘K) owns browsing matches.
         setFallbackResults([]);
         void sawMeta;
       } catch (err) {
         clearTimeout(searchingTimer);
         clearTimeout(analyzingTimer);
-        if (controller.signal.aborted) {
+        if (controller.signal.aborted || generation !== requestGenerationRef.current) {
           setLoadingPhase(null);
           return;
         }
@@ -283,23 +307,27 @@ export function useQueryManagement(
 
         const errorInfo = categorizeError(err);
         const shouldRetry =
-          errorInfo.category !== 'rate-limit' && errorInfo.retryable && retryCount < 2;
+          errorInfo.category !== 'rate-limit' && errorInfo.retryable && attempt < 2;
 
         if (shouldRetry) {
-          const delay = Math.min(1000 * Math.pow(2, retryCount), 5000);
+          const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
           setError(
-            `${errorInfo.userMessage} Retrying in ${Math.ceil(delay / 1000)}s... (${retryCount + 1}/2)`
+            `${errorInfo.userMessage} Retrying in ${Math.ceil(delay / 1000)}s... (${attempt + 1}/2)`
           );
-          setRetryCount((prev) => prev + 1);
+          setRetryCount(attempt + 1);
           setLastFailedQuery(query);
 
           autoragEvents.errorRetry({
             category: errorInfo.category,
-            attempt: retryCount + 1,
+            attempt: attempt + 1,
           });
           setTimeout(() => {
-            if (lastQueryRef.current === query) {
-              sendQuery(query);
+            if (generation === requestGenerationRef.current && lastQueryRef.current === query) {
+              void sendQuery(query, {
+                attempt: attempt + 1,
+                userMessageId: userMessage.id,
+                generation,
+              });
             }
           }, delay);
           return;
@@ -318,7 +346,7 @@ export function useQueryManagement(
         // Browse recovery lives in Find (⌘K), not a second results panel in Ask.
         setFallbackResults([]);
       } finally {
-        activeRequestRef.current = null;
+        if (activeRequestRef.current === controller) activeRequestRef.current = null;
       }
     },
     [
@@ -328,7 +356,6 @@ export function useQueryManagement(
       buildHistoryForRequest,
       finalizeAssistantMessage,
       useMemory,
-      retryCount,
       setChatState,
       setLoadingPhase,
       setError,
