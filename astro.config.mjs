@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
-import compress from 'astro-compress';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
@@ -63,7 +62,6 @@ export default defineConfig({
     react(),
     mdx(),
     ...sentryIntegrations,
-    ...(process.env.ENABLE_ASTRO_COMPRESS === 'true' ? [compress()] : []),
   ],
   image: {
     domains: ['blakeoxford.com'],
