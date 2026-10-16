@@ -166,9 +166,15 @@ export function useQueryManagement(
       setFallbackResults([]);
       lastQueryRef.current = query;
 
+      // A manual retry reuses the latest unanswered question, just like an automatic retry.
+      const latest = messagesRef.current.at(-1);
+      const existingUserId =
+        retry?.userMessageId ??
+        (latest?.role === 'user' && latest.content === query ? latest.id : undefined);
+
       // Create user message
       const userMessage: ChatMessage = {
-        id: retry?.userMessageId ?? createId(),
+        id: existingUserId ?? createId(),
         role: 'user',
         content: query,
         timestamp: Date.now(),
@@ -178,7 +184,7 @@ export function useQueryManagement(
       // Add messages to state
       setMessages((prev) => [
         ...prev,
-        ...(retry ? [] : [userMessage]),
+        ...(existingUserId ? [] : [userMessage]),
         {
           id: assistantId,
           role: 'assistant',

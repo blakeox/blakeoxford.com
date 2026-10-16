@@ -90,6 +90,46 @@ describe('Ask request retries', () => {
     expect(result.current.retryCount).toBe(0);
   });
 
+  it('reuses the unanswered question when manually retrying after exhaustion', async () => {
+    vi.mocked(searchWithAI).mockRejectedValue(timeout());
+    const { result } = renderHook(useHarness);
+    await act(async () => {
+      await result.current.sendQuery('What shipped?');
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+    });
+    const userId = result.current.messages[0].id;
+    vi.mocked(searchWithAI).mockResolvedValue({ message: 'Recovered.', sources: [] });
+    await act(async () => {
+      await result.current.sendQuery('What shipped?');
+    });
+    expect(searchWithAI).toHaveBeenCalledTimes(4);
+    expect(result.current.messages.filter((m) => m.role === 'user')).toEqual([
+      expect.objectContaining({ id: userId, content: 'What shipped?' }),
+    ]);
+    expect(vi.mocked(searchWithAI).mock.calls[3][1]?.history).toEqual([]);
+  });
+
+  it('preserves an unanswered question when a different question is submitted', async () => {
+    vi.mocked(searchWithAI).mockRejectedValue(timeout());
+    const { result } = renderHook(useHarness);
+    await act(async () => {
+      await result.current.sendQuery('What shipped?');
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+    });
+    vi.mocked(searchWithAI).mockResolvedValue({ message: 'Recovered.', sources: [] });
+    await act(async () => {
+      await result.current.sendQuery('What changed?');
+    });
+    expect(result.current.messages.filter((m) => m.role === 'user').map((m) => m.content)).toEqual([
+      'What shipped?',
+      'What changed?',
+    ]);
+  });
+
   it('does not revive an old retry after a new submission of the same question', async () => {
     vi.mocked(searchWithAI)
       .mockRejectedValueOnce(timeout())
