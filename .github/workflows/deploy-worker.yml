@@ -93,7 +93,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
           DEPLOY_COMMIT: ${{ github.sha }}
-        run: pnpm deploy:worker -- --var "GIT_COMMIT:$DEPLOY_COMMIT" --message "commit:$DEPLOY_COMMIT"
+        run: pnpm deploy:worker --var "GIT_COMMIT:$DEPLOY_COMMIT" --message "commit:$DEPLOY_COMMIT"
 
       - name: Refresh AI Search index and purge similarity cache
         env:

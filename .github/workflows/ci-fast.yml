@@ -26,7 +26,7 @@ concurrency:
 
 env:
   # PR and manually selected refs run on isolated hosted runners; trusted pushes keep the pinned NUC runtime.
-  PATH: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' || '/home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' }}
+  PATH: ${{ (github.actor == 'nektos/act' || github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' || '/home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' }}
   # Flakiness thresholds (adjust as project stabilizes)
   FLAKINESS_MAX_CURRENT_FLAKY: 0
   FLAKINESS_MAX_RETRY_INTENSITY: 0.05
@@ -37,13 +37,13 @@ jobs:
   # Quick validation that code builds and basic tests pass
   quick-validation:
     name: Quick Validation
-    runs-on: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
+    runs-on: ${{ (github.actor == 'nektos/act' || github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     if: |
       (
         ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
           github.event.pull_request.head.repo.full_name == github.repository) ||
         ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
-          (github.actor == github.repository_owner ||
+          (github.actor == github.repository_owner || github.actor == 'nektos/act' ||
             contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
       )
     timeout-minutes: 15
@@ -157,13 +157,13 @@ jobs:
   # Essential E2E tests - just the critical user paths
   essential-e2e:
     name: Essential E2E Tests
-    runs-on: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
+    runs-on: ${{ (github.actor == 'nektos/act' || github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     if: |
       (
         ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
           github.event.pull_request.head.repo.full_name == github.repository) ||
         ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
-          (github.actor == github.repository_owner ||
+          (github.actor == github.repository_owner || github.actor == 'nektos/act' ||
             contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
       )
     timeout-minutes: 15
@@ -390,7 +390,7 @@ jobs:
 
   post-quality-comment:
     name: Post PR Quality Summary
-    runs-on: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
+    runs-on: ${{ (github.actor == 'nektos/act' || github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     needs: [quick-validation, essential-e2e, essential-e2e-crossbrowser]
     # Cross-browser E2E is PR-skipped; always() + result checks keep this job runnable.
     if: |
@@ -570,7 +570,7 @@ jobs:
   # Single required status check that aggregates fast CI jobs
   required-status-checks:
     name: Required Checks Gate
-    runs-on: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
+    runs-on: ${{ (github.actor == 'nektos/act' || github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     # Cross-browser E2E only runs on main/dispatch; treat skipped as OK on PRs.
     if: |
       always() &&

@@ -21,15 +21,10 @@ jobs:
   essential-reliability:
     name: Essential + device matrix
     if: |
-      github.actor != 'dependabot[bot]' &&
-      (
-        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
-          github.event.pull_request.head.repo.full_name == github.repository) ||
-        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
-          (github.actor == github.repository_owner ||
-            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
-      ) &&
-      (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' &&
+        (github.actor == github.repository_owner ||
+          contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
     runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 30
     container:
@@ -84,15 +79,10 @@ jobs:
   extended-reliability:
     name: Extended suite (Chromium)
     if: |
-      github.actor != 'dependabot[bot]' &&
-      (
-        ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
-          github.event.pull_request.head.repo.full_name == github.repository) ||
-        ((github.event_name != 'pull_request' && github.event_name != 'pull_request_target') &&
-          (github.actor == github.repository_owner ||
-            contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
-      ) &&
-      (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' &&
+        (github.actor == github.repository_owner ||
+          contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
     runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 60
     container:

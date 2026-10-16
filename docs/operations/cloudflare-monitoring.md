@@ -61,7 +61,7 @@ restore it.
    similarity cache and deletes production `ai:response:v4:` KV answers so the
    seven-day app cache does not keep the previous content.
    Workers Builds is the primary deploy path. Its production deploy command is
-   `pnpm deploy:worker -- --var "GIT_COMMIT:$WORKERS_CI_COMMIT_SHA" --message "commit:$WORKERS_CI_COMMIT_SHA" && pnpm ai-search:refresh`.
+   `pnpm deploy:worker --var "GIT_COMMIT:$WORKERS_CI_COMMIT_SHA" --message "commit:$WORKERS_CI_COMMIT_SHA" && pnpm ai-search:refresh`.
    The Builds API token and the manual workflow token
    `blakeoxford-github-actions-seo-2026-v2` both include Account AI Search Write
    and AI Search Run for that refresh. Non-production branches use Worker
