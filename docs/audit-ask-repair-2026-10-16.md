@@ -1,5 +1,7 @@
 # Development audit and Ask repair
 
+The braces patch described here is superseded by the [dependency-removal follow-up](./braces-dependency-removal-2026-10-16.md); this document retains the original repair evidence.
+
 Checked October 16, 2026. Direct dependencies, Wrangler, compatibility settings, credentials and models are unchanged.
 
 | Finding | Resolution |
