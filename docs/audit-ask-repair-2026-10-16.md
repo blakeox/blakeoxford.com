@@ -21,6 +21,16 @@ rejects question-only output, and deduplicates the original current question. Wo
 A supported [system message](https://developers.cloudflare.com/changelog/post/2026-03-23-ai-search-new-rest-api/) requests grounded answers.
 Citations/retrieval are preserved. Cache v5 avoids old replies; refresh clears all answer generations, preserving conversation backups.
 
+## Browser retry lifecycle
+
+Rendered preview acceptance exposed a second cause of repeated questions: each
+retry added another user bubble, while a stale callback captured the original
+retry counter and could exceed its retry budget. Three hook-level regression tests
+failed before repair. Retries now carry an explicit attempt count, reuse the
+original question, omit that in-flight question from history, and stop after two
+retries. A new submission or unmount invalidates pending retry callbacks. A
+successful answer resets the displayed retry count.
+
 Validate frozen install, full checks, build/dry run, preview, CI and live runtime separately. Verify complete answers, one question,
 citations and history on reopen. Deterministic tests do not guarantee model quality. Deep inputs now raise controlled SyntaxError;
 real FTP-server acceptance is not claimed. Stop failed build/promotion, restore the recorded prior Worker if acceptance fails.
