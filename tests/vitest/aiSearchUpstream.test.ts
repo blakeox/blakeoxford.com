@@ -18,6 +18,18 @@ describe('Cloudflare AI Search upstream adapter', () => {
     }
   );
 
+  it.each([
+    "Summarize Blake's core technical skills and current focus areas.",
+    'Summarize what this page is about and why it matters.',
+  ])('cleans built-in imperative prompt echoes: %s', (query) => {
+    expect(extractAiSearchMessage({ response: `${query} Answer.` }, query)).toBe('Answer.');
+    const request = buildAiSearchRequest('Next question?', [
+      { role: 'user', content: query },
+      { role: 'assistant', content: `${query} Answer.` },
+    ]);
+    expect(request.messages[2].content).toBe('Answer.');
+  });
+
   it('deduplicates the original current question when retrieval rewrites it', () => {
     const request = buildAiSearchRequest(
       'Blake Oxford What changed?',

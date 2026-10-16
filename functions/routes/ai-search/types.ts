@@ -72,21 +72,23 @@ export function extractQuery(payload: AiSearchPayload): string {
   return '';
 }
 
-export function parseHistory(raw: unknown): HistoryEntry[] {
+export function parseHistory(raw: unknown, currentQuery = ''): HistoryEntry[] {
   if (!Array.isArray(raw)) return [];
-  const entries = raw
-    .filter(
-      (entry): entry is HistoryEntry =>
-        !!entry &&
-        typeof entry === 'object' &&
-        ((entry as HistoryEntry).role === 'user' || (entry as HistoryEntry).role === 'assistant') &&
-        typeof (entry as HistoryEntry).content === 'string'
-    )
-    .slice(-MAX_HISTORY_ENTRIES)
-    .map((entry) => ({
-      role: entry.role,
-      content: entry.content.trim().slice(0, MAX_HISTORY_ENTRY_LENGTH),
-    }));
+  const validEntries = raw.filter(
+    (entry): entry is HistoryEntry =>
+      !!entry &&
+      typeof entry === 'object' &&
+      ((entry as HistoryEntry).role === 'user' || (entry as HistoryEntry).role === 'assistant') &&
+      typeof (entry as HistoryEntry).content === 'string' &&
+      !!(entry as HistoryEntry).content.trim()
+  );
+  const last = validEntries.at(-1);
+  if (currentQuery.trim() && last?.role === 'user' && last.content.trim() === currentQuery.trim())
+    validEntries.pop();
+  const entries = validEntries.slice(-MAX_HISTORY_ENTRIES).map((entry) => ({
+    role: entry.role,
+    content: entry.content.trim().slice(0, MAX_HISTORY_ENTRY_LENGTH),
+  }));
 
   let totalLength = 0;
   return entries.filter((entry) => {

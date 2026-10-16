@@ -148,7 +148,7 @@ export async function handleAiSearch({
     );
   }
 
-  const history = parseHistory(payload.history);
+  const history = parseHistory(payload.history, query);
 
   const cacheKey = `ai:response:v5:${normalizeForCache(query)}`;
   const finalCacheEnabled =

@@ -10,7 +10,7 @@ export function removeLeadingQuestionEcho(message: string, ...queries: string[])
     .filter(
       (question) =>
         /[?？]/.test(question) ||
-        /^(who|whom|whose|what|which|when|where|why|how|am|is|are|was|were|do|does|did|have|has|had|can|could|should|shall|may|might|would|will|tell me|show me|explain|describe)\b/i.test(
+        /^(who|whom|whose|what|which|when|where|why|how|am|is|are|was|were|do|does|did|have|has|had|can|could|should|shall|may|might|would|will|tell me|show me|explain|describe|summarize)\b/i.test(
           question
         )
     )
