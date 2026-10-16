@@ -31,10 +31,11 @@ replacing it with a patched upstream release while retaining the regression test
 
 ## Ask evidence and behavior
 
-The previous live probe returned repeated copies of its question before the
-substantive answer. The upstream adapter forwarded those prefixes unchanged into
-JSON and simulated SSE output; old assistant history could also retain them. Local
-regressions reproduce these paths without calling a model.
+Rendered preview showed repeated user-question bubbles before a completed answer.
+Automatic retries appended a new user message each time, while a stale callback
+could exceed the retry budget. This was browser repetition, not evidence of a
+provider echo. Deterministic adapter regressions separately reproduce echoed
+provider prefixes and contaminated history without calling a model.
 
 The adapter requests a direct grounded answer and removes leading question echoes
 from answers and history, matching both original and rewritten prompts. It preserves
@@ -49,6 +50,16 @@ retrieval sources, or citation metadata.
 A new answer-cache generation avoids reusing previously echoed answers. Existing
 deployment refresh now clears all `ai:response:` versions; tests preserve unrelated
 conversation backups. These are regenerable answer caches, not contact records.
+
+## Browser retry lifecycle
+
+Rendered preview acceptance exposed a second cause of repeated questions: each
+retry added another user bubble, while a stale callback captured the original
+retry counter and could exceed its retry budget. Three hook-level regression tests
+failed before repair. Retries now carry an explicit attempt count, reuse the
+original question, omit that in-flight question from history, and stop after two
+retries. A new submission or unmount invalidates pending retry callbacks. A
+successful answer resets the displayed retry count.
 
 ## Validation and operational limits
 
