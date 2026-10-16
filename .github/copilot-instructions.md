@@ -582,8 +582,7 @@ test('component renders in dark mode', async ({ page }) => {
 
 **Build Performance (>60s)**:
 ```bash
-# Disable compression for dev builds
-export ENABLE_ASTRO_COMPRESS=false
+# Use the standard Astro/Vite build
 pnpm build
 
 # Check for bottlenecks
@@ -630,7 +629,7 @@ Note: Cloudflare Pages is deprecated for this project. Do not use `wrangler page
 - **Vite**: Build tool with React plugin for client components, Lightning CSS minification
 - **Sharp**: Image optimization with AVIF/WebP/JPEG format support
 - **Lightning CSS**: CSS minification in the Astro/Vite pipeline (no PostCSS Tailwind config)
-- **astro-compress**: HTML/CSS/JS compression (conditionally enabled via `ENABLE_ASTRO_COMPRESS=true`)
+- **Built-in compression**: Astro HTML compression and Vite/Lightning CSS minification; no optional compression integration.
 
 **Important**: Use `pnpm` as the package manager (pnpm@11.9.0+). Do not add new dependencies without explicit discussion - the stack is intentionally minimal.
 
@@ -781,8 +780,7 @@ pnpm test:e2e --debug  # Debug Playwright tests
 
 **Slow builds**:
 ```bash
-# Disable compression for faster dev builds
-export ENABLE_ASTRO_COMPRESS=false
+# Use the standard build
 pnpm build
 ```
 
@@ -1018,7 +1016,7 @@ pnpm typecheck             # TypeScript + Astro type checking
 pnpm quality clean         # Remove dist/, .astro/, node_modules/.vite
 pnpm build                 # Standard build
 pnpm build           # Production build (with git commit ID)
-export ENABLE_ASTRO_COMPRESS=false && pnpm build  # Fast dev build
+pnpm build                 # Uses built-in HTML/CSS/JS minification
 ```
 
 ### Debugging & Diagnostics
