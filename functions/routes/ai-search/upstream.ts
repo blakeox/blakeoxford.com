@@ -1,6 +1,16 @@
 import type { HistoryEntry } from './types';
 
-type AiSearchMessage = { role: 'user' | 'assistant'; content: string };
+type AiSearchMessage = { role: 'system' | 'user' | 'assistant'; content: string };
+
+export function removeLeadingQuestionEcho(message: string, query: string): string {
+  const question = query.trim();
+  let answer = message.trim();
+  if (!question) return answer;
+  const escaped = question.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+  const prefix = new RegExp(`^${escaped}(?=\\s|$)`, 'i');
+  while (prefix.test(answer)) answer = answer.replace(prefix, '').trimStart();
+  return answer.trim();
+}
 
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === 'object' ? (value as Record<string, unknown>) : null;
@@ -22,23 +32,40 @@ function extractChoiceMessage(value: unknown): string {
 }
 
 export function buildAiSearchRequest(query: string, history: HistoryEntry[]) {
+  const prior = history
+    .map(({ role, content }, index) => ({
+      role,
+      content:
+        role === 'assistant' && history[index - 1]?.role === 'user'
+          ? removeLeadingQuestionEcho(content, history[index - 1].content)
+          : content.trim(),
+    }))
+    .filter(({ content }) => content);
+  if (prior.at(-1)?.role === 'user' && prior.at(-1)?.content === query.trim()) prior.pop();
   const messages: AiSearchMessage[] = [
-    ...history.map(({ role, content }) => ({ role, content })),
+    {
+      role: 'system',
+      content:
+        'Answer the current question directly using the retrieved context. Do not repeat or restate the question before answering. Do not invent facts or sources.',
+    },
+    ...prior,
     { role: 'user', content: query },
   ];
   return { messages };
 }
 
-export function extractAiSearchMessage(payload: Record<string, unknown>): string {
+export function extractAiSearchMessage(payload: Record<string, unknown>, query = ''): string {
   const choices = Array.isArray(payload.choices) ? payload.choices : [];
   const chatMessage = extractChoiceMessage(choices[0]);
-  if (chatMessage) return chatMessage;
+  if (chatMessage) return removeLeadingQuestionEcho(chatMessage, query);
 
   const result = asRecord(payload.result);
   const resultResponse = result?.response;
-  if (typeof resultResponse === 'string') return resultResponse.trim();
+  if (typeof resultResponse === 'string') return removeLeadingQuestionEcho(resultResponse, query);
 
-  return typeof payload.response === 'string' ? payload.response.trim() : '';
+  return typeof payload.response === 'string'
+    ? removeLeadingQuestionEcho(payload.response, query)
+    : '';
 }
 
 export function extractAiSearchSourceData(payload: Record<string, unknown>): unknown[] {

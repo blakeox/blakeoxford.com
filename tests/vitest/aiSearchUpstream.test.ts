@@ -8,6 +8,50 @@ import {
 } from '../../functions/routes/ai-search/upstream';
 
 describe('Cloudflare AI Search upstream adapter', () => {
+  it('does not feed echoed answers or duplicate in-flight questions back into history', () => {
+    const request = buildAiSearchRequest('Current question?', [
+      { role: 'user', content: 'Earlier question?' },
+      { role: 'assistant', content: 'Earlier question? Earlier question? Earlier answer.' },
+      { role: 'user', content: 'Current question?' },
+      { role: 'assistant', content: '' },
+    ]);
+    expect(request.messages.slice(1)).toEqual([
+      { role: 'user', content: 'Earlier question?' },
+      { role: 'assistant', content: 'Earlier answer.' },
+      { role: 'user', content: 'Current question?' },
+    ]);
+  });
+
+  it('treats question punctuation as literal text when removing echoes', () => {
+    const query = 'What are C++ [x] costs ($)?';
+    expect(extractAiSearchMessage({ response: `${query} Actual answer.` }, query)).toBe(
+      'Actual answer.'
+    );
+  });
+
+  it('removes repeated leading copies of the submitted question from the answer', () => {
+    const question = 'What outcomes did the Microsoft Fabric project achieve?';
+    const answer = 'It enabled 200 teammates across 10 departments.';
+    expect(
+      extractAiSearchMessage(
+        { choices: [{ message: { content: `${question}\n${question} ${answer}` } }] },
+        question
+      )
+    ).toBe(answer);
+  });
+
+  it('preserves a question quoted within a substantive answer', () => {
+    const question = 'What changed?';
+    const answer = `The project automated reporting. The team asked “${question}” during reviews.`;
+    expect(extractAiSearchMessage({ response: answer }, question)).toBe(answer);
+  });
+
+  it('does not accept a response containing only the question as an answer', () => {
+    expect(
+      extractAiSearchMessage({ response: 'What changed? What changed?' }, 'What changed?')
+    ).toBe('');
+  });
+
   it('builds the new chat-completions request from bounded conversation history', () => {
     expect(
       buildAiSearchRequest('current question', [
@@ -16,6 +60,10 @@ describe('Cloudflare AI Search upstream adapter', () => {
       ])
     ).toEqual({
       messages: [
+        expect.objectContaining({
+          role: 'system',
+          content: expect.stringContaining('Do not repeat'),
+        }),
         { role: 'user', content: 'earlier question' },
         { role: 'assistant', content: 'earlier answer' },
         { role: 'user', content: 'current question' },

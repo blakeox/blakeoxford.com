@@ -25,6 +25,7 @@ import {
   extractAiSearchError,
   extractAiSearchMessage,
   extractAiSearchSourceData,
+  removeLeadingQuestionEcho,
 } from './upstream';
 import { handleSimpleQueryWithWorkersAI, looksLikeEmptyRetrieval } from './workers-ai';
 
@@ -149,7 +150,7 @@ export async function handleAiSearch({
 
   const history = parseHistory(payload.history);
 
-  const cacheKey = `ai:response:v4:${normalizeForCache(query)}`;
+  const cacheKey = `ai:response:v5:${normalizeForCache(query)}`;
   const finalCacheEnabled =
     isCacheEligibleQuery(query) && enhancedCacheFlag && history.length === 0 && !pageContext;
   const queryTelemetryId = telemetryId(query);
@@ -158,8 +159,11 @@ export async function handleAiSearch({
   // AutoRAG retrieval often fails on pronouns / soft phrasing ("What does he do well").
   if ((complexity === 'simple' || isConversationalProfileAsk(query)) && env.AI) {
     const workersAIResult = await handleSimpleQueryWithWorkersAI(generationQuery, history, env);
-
     if (workersAIResult) {
+      workersAIResult.message = removeLeadingQuestionEcho(workersAIResult.message, query);
+    }
+
+    if (workersAIResult?.message) {
       const responseHeaders = {
         ...baseCorsHeaders,
         'x-query-complexity': complexity,
@@ -302,7 +306,7 @@ export async function handleAiSearch({
       });
     }
 
-    const message = extractAiSearchMessage(upstreamData);
+    const message = extractAiSearchMessage(upstreamData, query);
     const resultData = extractAiSearchSourceData(upstreamData);
     const sources = parseAiSources(resultData);
 
@@ -316,6 +320,7 @@ export async function handleAiSearch({
     // AutoRAG empty-retrieval refusals → conversational Workers AI fallback
     if (looksLikeEmptyRetrieval(message, sources.length) && env.AI) {
       const fallback = await handleSimpleQueryWithWorkersAI(generationQuery, history, env);
+      if (fallback) fallback.message = removeLeadingQuestionEcho(fallback.message, query);
       if (fallback?.message) {
         annotateAskSpan({
           provider: 'workers-ai',
