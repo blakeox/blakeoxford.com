@@ -132,10 +132,11 @@ describe('pull request jobs stay off the deployment NUC', () => {
     const evaluate = (
       expression: string,
       event_name: string,
-      ref = 'refs/heads/feature/ci-check'
+      ref = 'refs/heads/feature/ci-check',
+      actor = 'blakeox'
     ) =>
       runInNewContext(expression, {
-        github: { event_name, ref },
+        github: { event_name, ref, actor },
         fromJSON: JSON.parse,
         contains: (list: string[], value: string) => list.includes(value),
       });
@@ -144,6 +145,11 @@ describe('pull request jobs stay off the deployment NUC', () => {
       if (['ci-fast', 'act-essential', 'act-local'].includes(name)) {
         expect(evaluate(expression, 'workflow_dispatch')).toEqual(['ubuntu-latest']);
         expect(evaluate(expression, 'push')).toEqual(['ubuntu-latest']);
+      }
+      if (['act-essential', 'act-local'].includes(name)) {
+        expect(evaluate(expression, 'push', 'refs/heads/main', 'nektos/act')).toEqual([
+          'ubuntu-latest',
+        ]);
       }
       for (const ref of ['refs/heads/main', 'refs/heads/development', 'refs/heads/testing']) {
         expect(evaluate(expression, 'push', ref)).toEqual(['self-hosted', 'nuc', 'seo']);
