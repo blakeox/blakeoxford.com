@@ -247,7 +247,8 @@ before checkout. Required validation accepts same-repository Dependabot PRs
 while fork PR code remains excluded. Protected branch pushes and scheduled
 scans retain the NUC runner; unprotected branch pushes use hosted runners. The
 main-only manual Cloudflare deploy remains there. No PR code runs on the
-deployment host.
+deployment host. Local `act` executions use the standard `ubuntu-latest` label,
+so they do not need a custom self-hosted platform mapping.
 
 Promotion carries queued changes outside the Cloudflare patch: the NUC
 workflow migration, API 404 handling, dependency patches, and preview CORS.
