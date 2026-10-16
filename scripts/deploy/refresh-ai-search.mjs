@@ -3,7 +3,7 @@
  * deploy is not served from the previous crawl.
  *
  * Waits for the indexing job to finish, then clears the platform similarity
- * cache and the application's seven-day `ai:response:v4:` KV entries.
+ * cache and the application's seven-day `ai:response:` KV entries across versions.
  * Conversation backups use a different prefix and stay in place.
  *
  * Uses CLOUDFLARE_API_TOKEN in CI. Locally, falls back to the Wrangler OAuth
@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 const INSTANCE = 'bold-heart-18e4';
 const ACCOUNT_ID = 'cc3bb24ae3c87cff38c2be85df3dab29';
 const AI_RESPONSE_CACHE_ID = '88ac13a34f474753bd44450267bd2206';
-const AI_RESPONSE_KEY_PREFIX = 'ai:response:v4:';
+const AI_RESPONSE_KEY_PREFIX = 'ai:response:';
 const INDEX_JOB_TIMEOUT_MS = 10 * 60 * 1000;
 const INDEX_JOB_POLL_MS = 5000;
 

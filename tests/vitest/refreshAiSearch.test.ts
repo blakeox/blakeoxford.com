@@ -18,6 +18,7 @@ describe('purgeAiResponseCache', () => {
             success: true,
             result: [
               { name: 'ai:response:v4:hirepath' },
+              { name: 'ai:response:v5:answer' },
               { name: 'conversation:backup:should-stay' },
             ],
             result_info: { cursor: 'next' },
@@ -43,11 +44,12 @@ describe('purgeAiResponseCache', () => {
       fetchImpl,
     });
 
-    expect(deleted).toBe(2);
+    expect(deleted).toBe(3);
     const deleteCall = calls.find((call) => call.url.endsWith('/bulk/delete'));
     expect(deleteCall?.method).toBe('POST');
     expect(JSON.parse(deleteCall?.body || '[]')).toEqual([
       'ai:response:v4:hirepath',
+      'ai:response:v5:answer',
       'ai:response:v4:fabric',
     ]);
     expect(calls.some((call) => call.url.includes('conversation:backup'))).toBe(false);

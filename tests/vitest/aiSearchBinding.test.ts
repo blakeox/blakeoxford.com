@@ -12,6 +12,122 @@ function searchContext(request: Request, env: Record<string, unknown>) {
 }
 
 describe('AI Search instance binding', () => {
+  it('also removes leading question echoes from the conversational Workers AI path', async () => {
+    const query = 'What does he do well?';
+    const response = await handleAiSearch(
+      searchContext(
+        new Request('https://blakeoxford.com/api/ai-search', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ query }),
+        }),
+        {
+          RATE_LIMIT_KV: { get: async () => null, put: async () => undefined },
+          AI: {
+            run: async () => ({
+              response: `What does Blake Oxford do well? ${query} He automates operational workflows.`,
+            }),
+          },
+        }
+      )
+    );
+    expect(response?.status).toBe(200);
+    expect((await response!.json()).message).toBe('He automates operational workflows.');
+  });
+
+  it('does not reuse answers from the previous cache generation', async () => {
+    const query = 'What outcomes did the Microsoft Fabric project achieve?';
+    const response = await handleAiSearch(
+      searchContext(
+        new Request('https://blakeoxford.com/api/ai-search', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ query }),
+        }),
+        {
+          RATE_LIMIT_KV: { get: async () => null, put: async () => undefined },
+          AI_RESPONSE_CACHE: {
+            get: async (key: string) =>
+              key.startsWith('ai:response:v4:')
+                ? { message: `${query} Stale echoed answer.`, sources: [], timestamp: Date.now() }
+                : null,
+            put: async () => undefined,
+          },
+          AI_SEARCH: {
+            chatCompletions: async () => ({
+              choices: [{ message: { content: 'Fresh answer.' } }],
+              chunks: [],
+            }),
+          },
+        }
+      )
+    );
+    expect(response?.status).toBe(200);
+    expect((await response!.json()).message).toBe('Fresh answer.');
+  });
+
+  it('rejects a question-only response instead of returning an empty answer', async () => {
+    const query = 'What outcomes did the Microsoft Fabric project achieve?';
+    const response = await handleAiSearch(
+      searchContext(
+        new Request('https://blakeoxford.com/api/ai-search', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ query }),
+        }),
+        {
+          RATE_LIMIT_KV: { get: async () => null, put: async () => undefined },
+          AI_SEARCH: {
+            chatCompletions: async () => ({
+              choices: [{ message: { content: `${query} ${query}` } }],
+              chunks: [],
+            }),
+          },
+        }
+      )
+    );
+    expect(response?.status).toBe(502);
+    expect((await response!.json()).error).toBe('AI service returned no message');
+  });
+
+  it.each([false, true])(
+    'removes question echoes before returning a stream=%s answer',
+    async (stream) => {
+      const query = 'What projects has he built?';
+      const answer = 'It enabled 200 teammates.';
+      const response = await handleAiSearch(
+        searchContext(
+          new Request('https://blakeoxford.com/api/ai-search', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ query, stream }),
+          }),
+          {
+            RATE_LIMIT_KV: { get: async () => null, put: async () => undefined },
+            AI_SEARCH: {
+              chatCompletions: async ({ messages }: { messages: Array<{ content: string }> }) => ({
+                choices: [
+                  { message: { content: `${messages.at(-1)!.content} ${query} ${answer}` } },
+                ],
+                chunks: [
+                  {
+                    text: 'Fabric case study',
+                    item: { key: '/projects/microsoft-fabric/', metadata: { title: 'Fabric' } },
+                  },
+                ],
+              }),
+            },
+          }
+        )
+      );
+      expect(response?.status).toBe(200);
+      const body = await response!.text();
+      expect(body).not.toContain(query);
+      expect(body).toContain(answer);
+      expect(body).toContain('/projects/microsoft-fabric/');
+    }
+  );
+
   it('returns JSON from the binding without calling the REST endpoint', async () => {
     const chatCompletions = vi.fn(async () => ({
       choices: [{ message: { content: 'Bound answer' } }],
