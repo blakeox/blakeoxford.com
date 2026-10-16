@@ -17,13 +17,12 @@ concurrency:
 
 
 env:
-  PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  PATH: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' || '/home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' }}
 
 jobs:
   local-test:
     name: Local E2E Test Debug
     if: |
-      github.actor != 'dependabot[bot]' &&
       (
         ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
           github.event.pull_request.head.repo.full_name == github.repository) ||
@@ -31,7 +30,7 @@ jobs:
           (github.actor == github.repository_owner || github.actor == 'nektos/act' ||
             contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
       )
-    runs-on: [self-hosted, nuc, seo]
+    runs-on: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     timeout-minutes: 30
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-jammy

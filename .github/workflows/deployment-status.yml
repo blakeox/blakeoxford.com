@@ -21,9 +21,8 @@ concurrency:
 jobs:
   deployment-gate:
     name: Deployment Ready
-    runs-on: [self-hosted, nuc, seo]
+    runs-on: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     if: |
-      github.actor != 'dependabot[bot]' &&
       (
         ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
           github.event.pull_request.head.repo.full_name == github.repository) ||
@@ -87,9 +86,8 @@ jobs:
   # Super fast syntax validation
   syntax-check:
     name: Syntax Check
-    runs-on: [self-hosted, nuc, seo]
+    runs-on: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     if: |
-      github.actor != 'dependabot[bot]' &&
       (
         ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
           github.event.pull_request.head.repo.full_name == github.repository) ||
@@ -138,13 +136,15 @@ jobs:
   # Report final status
   status-summary:
     name: Status Summary
-    runs-on: [self-hosted, nuc, seo]
+    runs-on: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     timeout-minutes: 1
     needs: [deployment-gate, syntax-check]
     if: |
       always() &&
-      github.actor != 'dependabot[bot]' &&
-      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+      (
+        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
+        (github.event_name != 'pull_request' && github.actor != 'dependabot[bot]')
+      )
     steps:
       - name: Report status
         run: |

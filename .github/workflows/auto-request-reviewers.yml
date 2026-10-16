@@ -26,7 +26,7 @@ jobs:
           (github.actor == github.repository_owner ||
             contains(fromJSON('["github-actions[bot]","cursor[bot]"]'), github.actor)))
       )
-    runs-on: [self-hosted, nuc, seo]
+    runs-on: ubuntu-latest
     steps:
       - name: Auto-request reviewers from CODEOWNERS
         uses: necojackarc/auto-request-review@v0.14.0
