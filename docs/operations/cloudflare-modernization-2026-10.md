@@ -240,6 +240,15 @@ Current protected refs at inspection were development `a010d30c`, testing
 `319bff41`, main `37b2816e`. No existing development-to-testing or
 testing-to-main promotion PR was found.
 
+PR trust boundary: every PR and `pull_request_target` job now uses a fresh
+GitHub-hosted runner. CI workflows that accept arbitrary manual refs use hosted
+runners; other manual workflows that need the NUC are restricted to `main`
+before checkout. Required validation accepts same-repository Dependabot PRs
+while fork PR code remains excluded. Protected branch pushes and scheduled
+scans retain the NUC runner; unprotected branch pushes use hosted runners. The
+main-only manual Cloudflare deploy remains there. No PR code runs on the
+deployment host.
+
 Promotion carries queued changes outside the Cloudflare patch: the NUC
 workflow migration, API 404 handling, dependency patches, and preview CORS.
 The user was asked to select the combined release or a task limited to the
