@@ -8,6 +8,16 @@ import {
 } from '../../functions/routes/ai-search/upstream';
 
 describe('Cloudflare AI Search upstream adapter', () => {
+  it.each(['?', ':', '？', '：'])(
+    'removes separator punctuation added to an echoed question: %s',
+    (separator) => {
+      const query = 'Which projects has Blake Oxford built';
+      expect(extractAiSearchMessage({ response: `${query}${separator} Answer.` }, query)).toBe(
+        'Answer.'
+      );
+    }
+  );
+
   it('deduplicates the original current question when retrieval rewrites it', () => {
     const request = buildAiSearchRequest(
       'Blake Oxford What changed?',

@@ -17,7 +17,7 @@ export function removeLeadingQuestionEcho(message: string, ...queries: string[])
     .sort((a, b) => b.length - a.length)
     .map((question) => {
       const escaped = question.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
-      return new RegExp(`^${escaped}(?=\\s|$)`, 'i');
+      return new RegExp(`^${escaped}[?？:：]*(?=\\s|$)`, 'i');
     });
   let previous: string;
   do {
