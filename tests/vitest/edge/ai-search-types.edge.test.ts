@@ -17,6 +17,30 @@ describe('AI search request bounds', () => {
     );
   });
 
+  it.each([2001, 4000])(
+    'deduplicates a %i-character current question before truncating',
+    (length) => {
+      const query = `What ${'x'.repeat(length - 5)}`;
+      expect(parseHistory([{ role: 'user', content: ` ${query} ` }], query)).toEqual([]);
+      expect(
+        parseHistory(
+          [
+            { role: 'user', content: query },
+            { role: 'assistant', content: ' ' },
+          ],
+          query
+        )
+      ).toEqual([]);
+    }
+  );
+
+  it('retains a different long historical question sharing the current prefix', () => {
+    const prefix = `What ${'x'.repeat(2100)}`;
+    expect(parseHistory([{ role: 'user', content: `${prefix} earlier` }], `${prefix} now`)).toEqual(
+      [{ role: 'user', content: prefix.slice(0, 2000) }]
+    );
+  });
+
   it('bounds page context fields', () => {
     const context = parsePageContext({
       title: 't'.repeat(500),
