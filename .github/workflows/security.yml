@@ -54,10 +54,8 @@ jobs:
       - name: Install dependencies (lockfile only)
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Run pnpm audit
-        run: |
-          echo "🔒 Running pnpm security audit (prod)..."
-          pnpm audit --audit-level=moderate --prod || echo "⚠️ Security vulnerabilities found"
+      - name: Run full dependency audit (all severities)
+        run: pnpm security:audit
 
       - name: Check for secrets in code
         run: |
