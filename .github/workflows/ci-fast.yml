@@ -87,8 +87,8 @@ jobs:
       - name: Validate IndexNow ownership contract
         run: pnpm quality:indexnow
 
-      - name: Run dependency audit (fail on high)
-        run: pnpm security:audit -- --audit-level=high
+      - name: Run full dependency audit (all severities)
+        run: pnpm security:audit
 
       - name: Run ESLint
         run: pnpm run lint
