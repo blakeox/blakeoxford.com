@@ -67,7 +67,7 @@ export default defineConfig({
     },
     // Run Firefox/WebKit only when explicitly requested. This keeps local QA
     // reliable when Playwright's optional browser binaries drift out of sync.
-    ...(runOptionalBrowsers && !(isCI && (isLinux || browsersLimited))
+    ...(runOptionalBrowsers && !browsersLimited
       ? [
           {
             name: 'firefox',

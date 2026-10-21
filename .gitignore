@@ -32,6 +32,12 @@ tests/playwright/visual-regression.spec.ts-snapshots/
 !tests/playwright/visual/dark-mode-routes.spec.ts-snapshots/**
 !tests/playwright/visual/component-visual.spec.ts-snapshots/
 !tests/playwright/visual/component-visual.spec.ts-snapshots/**
+!tests/playwright/visual/app-visual.spec.ts-snapshots/
+!tests/playwright/visual/app-visual.spec.ts-snapshots/**
+!tests/playwright/visual/content-visual.spec.ts-snapshots/
+!tests/playwright/visual/content-visual.spec.ts-snapshots/**
+!tests/playwright/visual/sectional-about-timeline.spec.ts-snapshots/
+!tests/playwright/visual/sectional-about-timeline.spec.ts-snapshots/**
 
 # Runtime data
 pids

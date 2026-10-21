@@ -26,7 +26,9 @@ test.describe('Chaos Engineering Tests @extended', () => {
 
       // Page should still load and be functional
       await expect(page.locator('main')).toBeVisible();
-      await expect(page.locator('nav')).toBeVisible();
+      await expect(
+        page.getByRole('navigation', { name: 'Main Navigation', exact: true })
+      ).toBeVisible();
 
       // Basic navigation should work
       const aboutLink = page
@@ -60,7 +62,9 @@ test.describe('Chaos Engineering Tests @extended', () => {
       console.log(`✅ Site loaded in ${loadTime}ms with network chaos`);
 
       // Basic functionality should still work
-      await expect(page.locator('nav')).toBeVisible();
+      await expect(
+        page.getByRole('navigation', { name: 'Main Navigation', exact: true })
+      ).toBeVisible();
     });
 
     test('should handle intermittent API failures', async ({ page, context }) => {
@@ -112,10 +116,14 @@ test.describe('Chaos Engineering Tests @extended', () => {
 
       // Content should still be accessible even without styles
       await expect(page.locator('main')).toBeVisible();
-      await expect(page.locator('nav')).toBeVisible();
+      await expect(
+        page.getByRole('navigation', { name: 'Main Navigation', exact: true })
+      ).toBeVisible();
 
       // Navigation should still work
-      const links = page.locator('nav a');
+      const links = page
+        .getByRole('navigation', { name: 'Main Navigation', exact: true })
+        .getByRole('link');
       if ((await links.count()) > 0) {
         await expect(links.first()).toBeVisible();
       }
@@ -407,7 +415,9 @@ test.describe('Chaos Engineering Tests @extended', () => {
 
         // Content should remain usable
         await expect(page.locator('main')).toBeVisible();
-        await expect(page.locator('nav')).toBeVisible();
+        await expect(
+          page.getByRole('navigation', { name: 'Main Navigation', exact: true })
+        ).toBeVisible();
       }
 
       console.log('✅ Site remains usable at different zoom levels');
