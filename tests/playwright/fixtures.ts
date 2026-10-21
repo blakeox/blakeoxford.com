@@ -5,13 +5,16 @@ import { test as base, expect } from '@playwright/test';
 
 const testOverridesCss = fs.readFileSync(
   path.join(path.dirname(fileURLToPath(import.meta.url)), 'fixtures/test-overrides.css'),
-  'utf8',
+  'utf8'
 );
 
 export const test = base.extend({
   page: async ({ page }, use, testInfo) => {
     await page.addInitScript({
-      path: path.join(path.dirname(fileURLToPath(import.meta.url)), '../utils/colorResolver.browser.js'),
+      path: path.join(
+        path.dirname(fileURLToPath(import.meta.url)),
+        '../utils/colorResolver.browser.js'
+      ),
     });
 
     await page.addInitScript((css: string) => {
@@ -28,7 +31,8 @@ export const test = base.extend({
 
     await page.addInitScript(() => {
       try {
-        (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE = (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || [];
+        (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE =
+          (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || [];
         const wrapConsole = (level: string) => {
           const orig = console[level as keyof Console] as (...args: unknown[]) => void;
           // @ts-expect-error console index assignment
@@ -44,7 +48,11 @@ export const test = base.extend({
                 return String(a);
               });
               try {
-                (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE.push({ level, args: serialized, ts: Date.now() });
+                (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE.push({
+                  level,
+                  args: serialized,
+                  ts: Date.now(),
+                });
               } catch {
                 void 0;
               }
@@ -76,9 +84,8 @@ export const test = base.extend({
       try {
         const style = document.createElement('style');
         style.id = '__pw_font_override';
-        style.innerHTML =
-          '* { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important; line-height: 1.15 !important; box-sizing: border-box !important; }\n' +
-          'dialog[aria-label*="AI Portfolio Assistant"], dialog[role="dialog"], .ai-assistant, #ai-assistant, .search-overlay { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }';
+        style.textContent =
+          '* { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial !important; line-height: 1.15 !important; box-sizing: border-box !important; }';
         document.documentElement.appendChild(style);
         try {
           (window as any).__TEST_FONT_PRIMED = true;
@@ -87,56 +94,6 @@ export const test = base.extend({
         }
       } catch {
         /* noop */
-      }
-    });
-
-    await page.addInitScript(() => {
-      try {
-        const removeAssistantNodes = () => {
-          try {
-            const selectors = [
-              'dialog',
-              '[id*="ai-assistant"]',
-              '[class*="ai-assistant"]',
-              '[class*="search-overlay"]',
-              '[aria-label*="AI Portfolio Assistant"]',
-              '[role="dialog"]',
-            ];
-            selectors.forEach((sel) => {
-              document.querySelectorAll(sel).forEach((el) => {
-                try {
-                  if (
-                    el.id === 'nav-mobile-links' ||
-                    el.id === 'search-overlay' ||
-                    el.closest('#search-overlay')
-                  ) {
-                    return;
-                  }
-                  const text = (el.textContent || '').toLowerCase();
-                  if (
-                    sel !== 'dialog' ||
-                    text.includes('ai portfolio') ||
-                    el.id === 'ai-assistant' ||
-                    sel.includes('ai-assistant')
-                  ) {
-                    el.remove();
-                  }
-                } catch {
-                  void 0;
-                }
-              });
-            });
-          } catch {
-            void 0;
-          }
-        };
-        removeAssistantNodes();
-        const observer = new MutationObserver(removeAssistantNodes);
-        observer.observe(document.documentElement, { childList: true, subtree: true });
-        const interval = setInterval(removeAssistantNodes, 500);
-        setTimeout(() => clearInterval(interval), 10000);
-      } catch {
-        void 0;
       }
     });
 
@@ -154,21 +111,32 @@ export const test = base.extend({
 
     try {
       const data = await page.evaluate(() => (window as any).__TEST_EVENT_LOG || []);
-      await testInfo.attach('client-test-event-log.json', { body: JSON.stringify(data), contentType: 'application/json' });
+      await testInfo.attach('client-test-event-log.json', {
+        body: JSON.stringify(data),
+        contentType: 'application/json',
+      });
     } catch {
       void 0;
     }
 
     try {
-      const captured = await page.evaluate(() => (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []);
-      await testInfo.attach('client-console.json', { body: JSON.stringify(captured), contentType: 'application/json' });
+      const captured = await page.evaluate(
+        () => (window as any).__PLAYWRIGHT_CONSOLE_CAPTURE || []
+      );
+      await testInfo.attach('client-console.json', {
+        body: JSON.stringify(captured),
+        contentType: 'application/json',
+      });
     } catch {
       void 0;
     }
 
     try {
       const nodeConsole = (page as any)._consoleCapture || [];
-      await testInfo.attach('node-console.json', { body: JSON.stringify(nodeConsole), contentType: 'application/json' });
+      await testInfo.attach('node-console.json', {
+        body: JSON.stringify(nodeConsole),
+        contentType: 'application/json',
+      });
     } catch {
       void 0;
     }
