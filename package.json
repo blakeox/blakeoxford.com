@@ -90,7 +90,7 @@
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "^6.1.1",
     "@vitest/coverage-v8": "^5.0.0",
-    "astro": "^7.3.5",
+    "astro": "^7.4.0",
     "astro-eslint-parser": "^3.1.0",
     "chrome-launcher": "^1.2.1",
     "eslint": "^10.11.0",
