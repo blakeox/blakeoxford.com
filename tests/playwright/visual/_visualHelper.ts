@@ -29,12 +29,22 @@ export async function snapshotRoute(
   opts: { mask?: string[]; diff?: DiffCfg; theme?: VisualTheme } = {}
 ) {
   const theme = opts.theme ?? 'light';
+  if (route === '/contact/') {
+    // Capture a stable form layout without third-party challenge network timing.
+    // Submission and verification behavior are covered by their dedicated tests.
+    await page.addInitScript(() => {
+      (window as Window & { __AUDIT__?: boolean }).__AUDIT__ = true;
+    });
+  }
   // Avoid networkidle on most pages with lazy widgets; DOMContentLoaded is enough for static capture
   await page.goto(route, { waitUntil: 'domcontentloaded' });
   // Pages that include large images or layout-critical assets should wait for full load
   // so visual snapshots are taken after all resources have been applied.
   if (route === '/contact/' || route === '/about/' || route === '/projects/' || route === '/blog/') {
     await page.waitForLoadState('load');
+  }
+  if (route === '/contact/') {
+    await expect(page.locator('#turnstile-shell')).toHaveAttribute('data-turnstile-state', 'audit');
   }
   // Ensure web fonts are fully loaded before we check for layout stability, otherwise
   // Playwright will wait for fonts during screenshot and the page height can change after
