@@ -20,7 +20,9 @@ test.describe('@extended @timeline About Timeline - Sectional Visual', () => {
     await expect(header).toBeVisible();
     await header.scrollIntoViewIfNeeded();
 
-    const image = await header.screenshot({ animations: 'disabled' });
-    expect(image).toMatchSnapshot('about-timeline-header.png', { maxDiffPixelRatio: 0.02 });
+    await expect(header).toHaveScreenshot('about-timeline-header.png', {
+      animations: 'disabled',
+      maxDiffPixelRatio: 0.02,
+    });
   });
 });
