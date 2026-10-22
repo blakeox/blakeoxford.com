@@ -101,7 +101,7 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
     if (!reduced) {
       const upT0 = await getTransform(page, 'ul.photo-carousel-track--up');
       const downT0 = await getTransform(page, 'ul.photo-carousel-track--down');
-      // Wait until either column's transform changes instead of a raw timeout
+      // Wait until both columns move before asserting motion for each one.
       await page.waitForFunction(
         ({ upSel, dnSel, upInitial, dnInitial }) => {
           const up = document.querySelector(upSel) as HTMLElement | null;
@@ -109,7 +109,7 @@ test.describe('@essential @carousel PhotoCarousel responsive behavior', () => {
           if (!up || !dn) return false;
           const upT = getComputedStyle(up).transform;
           const dnT = getComputedStyle(dn).transform;
-          return upT !== upInitial || dnT !== dnInitial;
+          return upT !== upInitial && dnT !== dnInitial;
         },
         {
           upSel: 'ul.photo-carousel-track--up',
