@@ -1,7 +1,7 @@
 /**
  * Cloudflare Worker entry: route dispatch, canonicalization, asset fallback.
  */
-import { initEdgeSentry } from '../sentry.edge.config.js';
+import { getEdgeSentryOptions, initEdgeSentry, withEdgeSentry } from '../sentry.edge.config.js';
 import type { Env } from './types';
 import { isBlakeOxfordHostname } from './shared/hostname';
 import { generateRequestId } from './shared/request-id';
@@ -239,4 +239,4 @@ const WorkerApp = {
   },
 };
 
-export default WorkerApp;
+export default withEdgeSentry(getEdgeSentryOptions, WorkerApp);
