@@ -12,9 +12,3 @@ export function addEdgeBreadcrumb(breadcrumb: {
   level?: string;
   data?: Record<string, unknown>;
 }): void;
-
-export function getEdgeSentryOptions(env: {
-  SENTRY_DSN_EDGE?: string;
-  ENVIRONMENT?: string;
-  GIT_COMMIT?: string;
-}): import('@sentry/cloudflare').CloudflareOptions;
