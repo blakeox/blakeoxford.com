@@ -18,3 +18,5 @@ export function getEdgeSentryOptions(env: {
   ENVIRONMENT?: string;
   GIT_COMMIT?: string;
 }): import('@sentry/cloudflare').CloudflareOptions;
+
+export const withEdgeSentry: typeof import('@sentry/cloudflare').withSentry;

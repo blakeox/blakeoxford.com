@@ -3,7 +3,12 @@
  * Optimized for free tier with conservative sample rates
  */
 import * as Sentry from '@sentry/cloudflare';
-import { createSentrySampler, sentryDataCollection } from './src/lib/sentry-options.ts';
+import { wrapRequestHandler } from '@sentry/cloudflare/request';
+import {
+  createSentrySampler,
+  scrubSentrySpan,
+  sentryDataCollection,
+} from './src/lib/sentry-options.ts';
 
 /** Options consumed by withSentry for each Worker invocation. */
 export function getEdgeSentryOptions(env) {
@@ -13,6 +18,7 @@ export function getEdgeSentryOptions(env) {
     release: env.GIT_COMMIT || 'unknown',
     tracesSampler: createSentrySampler(0.05),
     dataCollection: sentryDataCollection,
+    beforeSendSpan: scrubSentrySpan,
     beforeSend(event) {
       if (event.exception?.values?.[0]?.value?.includes('Turnstile')) {
         return null;
@@ -31,6 +37,34 @@ export function getEdgeSentryOptions(env) {
       return event;
     },
   };
+}
+
+/** Initialize isolated error reporting even for methods withSentry skips. */
+export function withEdgeSentry(optionsCallback, handler) {
+  if (!handler.fetch) return Sentry.withSentry(optionsCallback, handler);
+  const fetchHandler = handler.fetch;
+  return Sentry.withSentry(optionsCallback, {
+    ...handler,
+    fetch(request, env, context) {
+      const run = () => fetchHandler.call(handler, request, env, context);
+      if (request.method === 'HEAD' || request.method === 'OPTIONS') {
+        const options = optionsCallback(env);
+        return wrapRequestHandler(
+          {
+            options: {
+              ...options,
+              defaultIntegrations:
+                options.defaultIntegrations ?? Sentry.getDefaultIntegrations(options),
+            },
+            request,
+            context,
+          },
+          run
+        );
+      }
+      return run();
+    },
+  });
 }
 
 /** Return the SDK initialized and isolated by the Worker's withSentry wrapper. */

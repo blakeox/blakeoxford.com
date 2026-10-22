@@ -12,6 +12,13 @@ export const sentryDataCollection = {
   graphQL: { document: false, variables: false },
 };
 
+export function scrubSentrySpan<T extends { attributes: Record<string, unknown> }>(span: T): T {
+  // These semantic attributes bypass the SDK's HTTP-header collection policy.
+  delete span.attributes['user_agent.original'];
+  delete span.attributes['http.user_agent'];
+  return span;
+}
+
 interface SamplingContext {
   attributes?: Record<string, unknown>;
   normalizedRequest?: { headers?: Record<string, unknown> };
