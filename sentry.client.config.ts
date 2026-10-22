@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/astro';
-import { createSentrySampler, sentryDataCollection } from './src/lib/sentry-options';
+import { createSentrySampler, scrubSentrySpan, sentryDataCollection } from './src/lib/sentry-options';
 
 Sentry.init({
   dsn: import.meta.env.PUBLIC_SENTRY_DSN,
@@ -8,6 +8,7 @@ Sentry.init({
   environment: import.meta.env.MODE, // 'development' or 'production'
   release: `blakeoxford.com@${import.meta.env.PUBLIC_GIT_COMMIT || 'dev'}`,
   dataCollection: sentryDataCollection,
+  beforeSendSpan: scrubSentrySpan,
   tracePropagationTargets: ['blakeoxford.com', /^\//],
   
   // Performance Monitoring - optimized for FREE TIER
