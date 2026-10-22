@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
+  addBreadcrumb,
   captureException,
   CloudflareClient,
   requestDataIntegration,
-  withSentry,
 } from '@sentry/cloudflare';
-import { createSentrySampler } from '../../src/lib/sentry-options';
-import { getEdgeSentryOptions } from '../../sentry.edge.config.js';
+import { createSentrySampler, scrubSentrySpan } from '../../src/lib/sentry-options';
+import { getEdgeSentryOptions, withEdgeSentry } from '../../sentry.edge.config.js';
 
 describe('Sentry 11 privacy and sampling', () => {
-  it('delivers an error through the Worker wrapper without private request data', async () => {
+  it('isolates breadcrumbs between HEAD and OPTIONS invocations', async () => {
     const envelopes: unknown[] = [];
     const pending: Promise<unknown>[] = [];
-    const worker = withSentry(
+    const worker = withEdgeSentry(
       () => ({
         ...getEdgeSentryOptions({ SENTRY_DSN_EDGE: 'https://public@example.test/1' }),
         cacheClient: false,
@@ -25,32 +25,100 @@ describe('Sentry 11 privacy and sampling', () => {
         }),
       }),
       {
-        async fetch() {
-          captureException(new Error('fixture diagnostic'));
+        async fetch(request: Request) {
+          addBreadcrumb({ message: `only-${request.method}` });
+          captureException(new Error(`error-${request.method}`));
           return new Response(null, { status: 204 });
         },
       }
     );
-    const response = await worker.fetch(
-      new Request('https://example.test/contact?email=private-query', {
-        method: 'POST',
-        headers: { cookie: 'session=private-cookie', authorization: 'Bearer private-token' },
-        body: 'private-body',
-      }),
-      {},
-      {
-        waitUntil: (promise: Promise<unknown>) => pending.push(promise),
-        passThroughOnException() {},
-      }
-    );
-    await Promise.all(pending);
-    expect(response.status).toBe(204);
-    const payload = JSON.stringify(envelopes);
-    expect(payload).toContain('fixture diagnostic');
-    for (const secret of ['private-query', 'private-cookie', 'private-token', 'private-body']) {
-      expect(payload).not.toContain(secret);
+    for (const method of ['HEAD', 'OPTIONS']) {
+      envelopes.length = 0;
+      await worker.fetch(
+        new Request('https://example.test/', { method }),
+        {},
+        {
+          waitUntil: (promise: Promise<unknown>) => pending.push(promise),
+          passThroughOnException() {},
+        }
+      );
+      await Promise.all(pending);
+      const payload = JSON.stringify(envelopes);
+      expect(payload).toContain(`error-${method}`);
+      expect(payload).toContain(`only-${method}`);
+      expect(payload).not.toContain(`only-${method === 'HEAD' ? 'OPTIONS' : 'HEAD'}`);
     }
   });
+
+  it.each(['POST', 'HEAD', 'OPTIONS'])(
+    'reports %s errors without private request data',
+    async (method) => {
+      const envelopes: unknown[] = [];
+      let sampledUserAgent: unknown;
+      let scrubbedSpans = 0;
+      const pending: Promise<unknown>[] = [];
+      const worker = withEdgeSentry(
+        () => ({
+          ...getEdgeSentryOptions({ SENTRY_DSN_EDGE: 'https://public@example.test/1' }),
+          cacheClient: false,
+          tracesSampler: (context) => {
+            sampledUserAgent = context.attributes?.['user_agent.original'];
+            return createSentrySampler(1)(context);
+          },
+          beforeSendSpan: (span) => {
+            scrubbedSpans++;
+            return scrubSentrySpan(span);
+          },
+          transport: () => ({
+            send: async (envelope: unknown) => {
+              envelopes.push(envelope);
+              return { statusCode: 200 };
+            },
+            flush: async () => true,
+          }),
+        }),
+        {
+          async fetch() {
+            captureException(new Error('fixture diagnostic'));
+            return new Response(null, { status: 204 });
+          },
+        }
+      );
+      const response = await worker.fetch(
+        new Request('https://example.test/contact?email=private-query', {
+          method,
+          headers: {
+            cookie: 'session=private-cookie',
+            authorization: 'Bearer private-token',
+            'user-agent': 'private-user-agent',
+          },
+          ...(method === 'POST' ? { body: 'private-body' } : {}),
+        }),
+        {},
+        {
+          waitUntil: (promise: Promise<unknown>) => pending.push(promise),
+          passThroughOnException() {},
+        }
+      );
+      await Promise.all(pending);
+      expect(response.status).toBe(204);
+      const payload = JSON.stringify(envelopes);
+      expect(payload).toContain('fixture diagnostic');
+      if (method === 'POST') {
+        expect(sampledUserAgent).toBe('private-user-agent');
+        expect(scrubbedSpans).toBeGreaterThan(0);
+      }
+      for (const secret of [
+        'private-query',
+        'private-cookie',
+        'private-token',
+        'private-body',
+        'private-user-agent',
+      ]) {
+        expect(payload).not.toContain(secret);
+      }
+    }
+  );
 
   it('filters request identifiers through the real SDK request processor', async () => {
     const client = new CloudflareClient({
