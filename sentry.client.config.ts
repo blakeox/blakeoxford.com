@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/astro';
+import { createSentrySampler, scrubSentrySpan, sentryDataCollection } from './src/lib/sentry-options';
 
 Sentry.init({
   dsn: import.meta.env.PUBLIC_SENTRY_DSN,
@@ -6,13 +7,13 @@ Sentry.init({
   // Environment & Release tracking
   environment: import.meta.env.MODE, // 'development' or 'production'
   release: `blakeoxford.com@${import.meta.env.PUBLIC_GIT_COMMIT || 'dev'}`,
+  dataCollection: sentryDataCollection,
+  beforeSendSpan: scrubSentrySpan,
+  tracePropagationTargets: ['blakeoxford.com', /^\//],
   
   // Performance Monitoring - optimized for FREE TIER
   integrations: [
-    Sentry.browserTracingIntegration({
-      // Track navigation and interactions
-      tracePropagationTargets: ['blakeoxford.com', /^\//],
-    }),
+    Sentry.browserTracingIntegration(),
     Sentry.replayIntegration({
       // Privacy-first session replay
       maskAllText: true, // Hide all user input text
@@ -22,7 +23,7 @@ Sentry.init({
   ],
   
   // FREE TIER OPTIMIZATION: Low sample rates to stay under free quotas
-  tracesSampleRate: 0.1, // 10% of transactions for performance monitoring
+  tracesSampler: createSentrySampler(0.1, () => globalThis.navigator?.userAgent || ''),
   // Clarity owns continuous session replay; Sentry only records on errors
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 0.5, // 50% of sessions with errors
@@ -91,15 +92,4 @@ Sentry.init({
     /https?:\/\/(.+\.)?blakeoxford\.com/,
   ],
   
-  // Deny known bot/crawler user agents
-  beforeSendTransaction(event) {
-    const userAgent = event.request?.headers?.['user-agent'] || '';
-    const isBot = /bot|crawler|spider|headless|lighthouse|gtmetrix|pagespeed/i.test(userAgent);
-    
-    if (isBot) {
-      return null; // Don't track bots (saves quota)
-    }
-    
-    return event;
-  },
 });
