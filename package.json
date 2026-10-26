@@ -62,10 +62,10 @@
     "@astrojs/react": "^7.1.0",
     "@fontsource/source-sans-3": "^5.3.0",
     "@fontsource/space-grotesk": "^5.3.0",
-    "@sentry/astro": "^11.8.0",
-    "@sentry/cloudflare": "^11.8.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
+    "@sentry/astro": "^11.9.0",
+    "@sentry/cloudflare": "^11.9.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -76,7 +76,7 @@
     "@eslint/js": "^10.0.1",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.63.0",
-    "@rollup/rollup-linux-x64-gnu": "^4.64.9",
+    "@rollup/rollup-linux-x64-gnu": "^4.65.1",
     "@sentry/cli": "^3.8.0",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
@@ -109,7 +109,7 @@
     "sharp": "0.35.5",
     "tailwindcss": "^4.3.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vite": "8.3.4",
+    "vite": "8.3.5",
     "vitest": "^5.0.3",
     "wrangler": "4.151.0"
   },
