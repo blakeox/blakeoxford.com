@@ -91,7 +91,7 @@
     "@vitejs/plugin-react": "^6.1.2",
     "@vitest/coverage-v8": "^5.0.3",
     "astro": "^7.4.0",
-    "astro-eslint-parser": "^3.1.0",
+    "astro-eslint-parser": "^3.2.0",
     "chrome-launcher": "^1.2.1",
     "eslint": "^10.11.0",
     "eslint-plugin-astro": "^3.2.1",
