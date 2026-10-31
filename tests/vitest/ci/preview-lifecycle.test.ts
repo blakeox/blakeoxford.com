@@ -1,5 +1,7 @@
 import { EventEmitter } from 'node:events';
 import { get } from 'node:http';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn() }));
@@ -192,4 +194,87 @@ server.listen(0, '127.0.0.1', () => console.log(JSON.stringify({port: server.add
       }
     }
   );
+});
+
+describe('interrupted preview cleanup', () => {
+  it.skipIf(process.platform === 'win32').each([
+    ['SIGINT', 130],
+    ['SIGTERM', 143],
+  ] as const)('stops its detached preview on %s before exiting', async (signal, expectedCode) => {
+    const { spawn: realSpawn } =
+      await vi.importActual<typeof import('node:child_process')>('child_process');
+    const moduleUrl = pathToFileURL(resolve('scripts/quality/run-runtime-metrics.js')).href;
+    const serverCode = `const server = require('node:http').createServer((req,res)=>res.end('fixture'));
+server.listen(0,'127.0.0.1',()=>console.log(JSON.stringify({port:server.address().port})));`;
+    const taskCode = `const {spawn}=await import('node:child_process');
+const {registerPreviewSignalHandlers}=await import(${JSON.stringify(moduleUrl)});
+const preview=spawn(process.execPath,['-e',${JSON.stringify(serverCode)}],{detached:true,stdio:['ignore','pipe','inherit']});
+console.log(JSON.stringify({pid:preview.pid}));
+registerPreviewSignalHandlers(preview);
+preview.stdout.on('data',chunk=>process.stdout.write(chunk));`;
+    const task = realSpawn(process.execPath, ['--input-type=module', '-e', taskCode], {
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let previewPid: number | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const deadline = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error('Interrupt fixture timed out')), 5000);
+    });
+    const ready = new Promise<number>((resolve, reject) => {
+      let output = '';
+      task.stdout.on('data', (chunk) => {
+        output += chunk.toString();
+        let end;
+        while ((end = output.indexOf('\n')) >= 0) {
+          const item = JSON.parse(output.slice(0, end));
+          output = output.slice(end + 1);
+          if (item.pid) previewPid = item.pid;
+          if (item.port) resolve(item.port);
+        }
+      });
+      task.once('error', reject);
+    });
+    const exited = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>(
+      (resolve, reject) => {
+        task.once('exit', (code, signal) => resolve({ code, signal }));
+        task.once('error', reject);
+      }
+    );
+    const cleanup = () => {
+      clearTimeout(timer);
+      if (task.exitCode === null && task.signalCode === null) task.kill('SIGKILL');
+      if (previewPid) {
+        try {
+          process.kill(-previewPid, 'SIGKILL');
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+        }
+      }
+      task.stdout.destroy();
+      task.stderr.destroy();
+    };
+    try {
+      const port = await Promise.race([ready, deadline]);
+      const status = () =>
+        new Promise<number | undefined>((resolve, reject) => {
+          const req = get(`http://127.0.0.1:${port}/`, (res) => {
+            res.resume();
+            resolve(res.statusCode);
+          });
+          req.on('error', reject);
+          req.setTimeout(1000, () => req.destroy(new Error('Fixture request timed out')));
+        });
+      expect(await status()).toBe(200);
+      expect(task.kill(signal)).toBe(true);
+      expect(await Promise.race([exited, deadline])).toEqual({ code: expectedCode, signal: null });
+      await vi.waitFor(
+        async () => {
+          await expect(status()).rejects.toThrow();
+        },
+        { timeout: 3000, interval: 50 }
+      );
+    } finally {
+      cleanup();
+    }
+  });
 });

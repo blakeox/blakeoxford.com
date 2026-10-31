@@ -68,8 +68,36 @@ export async function stopRuntimePreview(child, platform = process.platform) {
   }
 }
 
+export function registerPreviewSignalHandlers(child) {
+  let stopping = false;
+  const handlers = new Map();
+  const remove = () => {
+    for (const [signal, handler] of handlers) process.off(signal, handler);
+  };
+  for (const [signal, code] of [
+    ['SIGINT', 130],
+    ['SIGTERM', 143],
+  ]) {
+    const handler = async () => {
+      if (stopping) return;
+      stopping = true;
+      try {
+        await stopRuntimePreview(child);
+      } catch (error) {
+        console.error('[runtime] interrupted preview teardown failed:', error.message);
+      }
+      remove();
+      process.exit(code);
+    };
+    handlers.set(signal, handler);
+    process.once(signal, handler);
+  }
+  return remove;
+}
+
 async function main() {
   let serverProc;
+  let removeSignalHandlers = () => {};
   try {
     console.log('[runtime] build');
     await run(pnpmCommand, [...pnpmArgs, 'build']);
@@ -91,6 +119,7 @@ async function main() {
       [...pnpmArgs, 'preview', '--ignore-lock', '--host', '127.0.0.1', '--port', String(port)],
       { stdio: 'inherit', detached: process.platform !== 'win32' }
     );
+    removeSignalHandlers = registerPreviewSignalHandlers(serverProc);
     serverProc.on('error', (error) => {
       console.error('[runtime] preview failed:', error.message);
       process.exitCode = 1;
@@ -161,6 +190,7 @@ async function main() {
     console.error('[runtime] failed', e.message);
     process.exitCode = 1;
   } finally {
+    removeSignalHandlers();
     try {
       await stopRuntimePreview(serverProc);
     } catch (error) {
