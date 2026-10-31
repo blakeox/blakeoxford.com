@@ -25,9 +25,15 @@ describe('Sentry browser transport policy', () => {
     const workers = policy.match(/worker-src ([^;]+)/)?.[1]?.split(/\s+/) || [];
     const scripts = policy.match(/script-src ([^;]+)/)?.[1]?.split(/\s+/) || [];
 
-    expect(connections.filter((source) => source.includes('sentry.io'))).toEqual([
-      'https://o4512297421897728.ingest.us.sentry.io',
-    ]);
+    const sentryConnections = connections.filter((source) => {
+      try {
+        const hostname = new URL(source).hostname;
+        return hostname === 'sentry.io' || hostname.endsWith('.sentry.io');
+      } catch {
+        return false;
+      }
+    });
+    expect(sentryConnections).toEqual(['https://o4512297421897728.ingest.us.sentry.io']);
     expect(workers).toEqual(["'self'", 'blob:']);
     expect(scripts).not.toContain("'unsafe-eval'");
   });
