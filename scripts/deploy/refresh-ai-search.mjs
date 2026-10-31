@@ -139,19 +139,43 @@ function readWranglerJson(result, command) {
   return JSON.parse(result.stdout.slice(start));
 }
 
+// Cloudflare rejects sync creation for 30 seconds after a previous sync (7020).
+// Retry only that documented cooldown; authentication and other errors stay fatal.
+export async function createIndexingJob({
+  createJob,
+  sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+}) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await createJob();
+    } catch (error) {
+      if (!(error instanceof Error) || !/\[code:\s*7020\]/.test(error.message) || attempt >= 3) {
+        throw error;
+      }
+      console.warn(`[ai-search] Sync cooldown; retrying in 30 seconds (attempt ${attempt + 1}/3).`);
+      await sleep(30000);
+    }
+  }
+}
+
 async function main() {
   let created;
   try {
-    created = readWranglerJson(
-      spawnSync(
-        'pnpm',
-        ['exec', 'wrangler', 'ai-search', 'jobs', 'create', INSTANCE, '--json'],
-        { encoding: 'utf8' }
-      ),
-      'wrangler ai-search jobs create'
-    );
+    created = await createIndexingJob({
+      createJob: () =>
+        readWranglerJson(
+          spawnSync(
+            'pnpm',
+            ['exec', 'wrangler', 'ai-search', 'jobs', 'create', INSTANCE, '--json'],
+            { encoding: 'utf8' }
+          ),
+          'wrangler ai-search jobs create'
+        ),
+    });
   } catch (error) {
-    console.error(error instanceof Error ? error.message : 'AI Search indexing job failed to start.');
+    console.error(
+      error instanceof Error ? error.message : 'AI Search indexing job failed to start.'
+    );
     process.exit(1);
   }
 
@@ -168,7 +192,9 @@ async function main() {
         ),
     });
   } catch (error) {
-    console.error(error instanceof Error ? error.message : 'AI Search indexing job did not finish.');
+    console.error(
+      error instanceof Error ? error.message : 'AI Search indexing job did not finish.'
+    );
     process.exit(1);
   }
 

@@ -68,6 +68,12 @@ restore it.
    Previews (`pnpm exec wrangler preview`). The manual backup workflow accepts
    only `main`, checks the configured account ID before remote writes, and
    deploys with the project-pinned Wrangler through `pnpm deploy:worker`.
+   AI Search sync creation retries only the documented `7020 sync_in_cooldown`
+   response: at most three attempts, separated by 30 seconds. Authentication,
+   other errors, and exhausted retries fail the build. See the
+   [official error codes](https://developers.cloudflare.com/ai-search/troubleshooting/api-error-codes/).
+   If refresh fails after deployment, first inspect the active Worker version:
+   the new code may already serve traffic even though the overall build failed.
    CI runs `pnpm validate:worker` after building; this is a local dry run and
    does not prove preview bindings, email delivery, or production health.
 
