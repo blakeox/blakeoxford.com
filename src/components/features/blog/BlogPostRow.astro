@@ -5,21 +5,20 @@ import { formatDateISO, formatDateShort } from '@/utils/date';
 import { cn } from '@/utils/cn';
 import { headingSizeClass } from '@/lib/typeScale';
 
-const { post, align = 'left' } = Astro.props as BlogPostRowProps;
+const { post } = Astro.props as BlogPostRowProps;
 const { id: slug, data } = post;
 const tags = Array.isArray(data.tags) ? data.tags.slice(0, 3) : [];
 ---
 
-<article class="group w-full border-y border-border/50 py-5 transition-colors duration-normal hover:bg-surface-subtle/40 sm:py-6">
+<article class="group w-full border-b border-border py-5 transition-colors duration-normal hover:bg-surface-subtle/40 sm:py-6">
   <a
     href={`/blog/${slug}/`}
     class={cn(
-      'flex w-full flex-col items-start gap-6 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none md:gap-8 lg:flex-row lg:gap-12',
-      align === 'right' && 'lg:flex-row-reverse'
+      'flex w-full flex-col items-start gap-6 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none md:gap-8 lg:flex-row lg:gap-8'
     )}
   >
     {data.heroImage && (
-      <div class="w-full flex-shrink-0 overflow-hidden bg-surface-subtle lg:w-2/5 xl:w-1/2">
+      <div class="w-full flex-shrink-0 overflow-hidden rounded-lg bg-surface-subtle lg:w-1/3">
         <OptimizedImage
           src={data.heroImage}
           alt=""
@@ -42,7 +41,7 @@ const tags = Array.isArray(data.tags) ? data.tags.slice(0, 3) : [];
       <h2
         class:list={[
           'font-heading font-semibold text-pretty text-foreground transition-colors duration-moderate group-hover:text-accent-emphasis',
-          headingSizeClass('section'),
+          headingSizeClass('title'),
         ]}
       >
         {data.title}

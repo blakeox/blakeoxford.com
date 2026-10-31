@@ -59,7 +59,12 @@ const justify = justifyMap[align];
 const responsiveBreakpoint = responsive ? breakpoint : undefined;
 
 // Additional styling for button groups
-const buttonGroupClasses = 'pt-2';
+const rowAlignment = {
+  sm: 'sm:items-center',
+  md: 'md:items-center',
+  lg: 'lg:items-center',
+} as const;
+const buttonGroupClasses = `pt-2 ${responsive ? rowAlignment[breakpoint] : ''}`;
 
 const combinedClasses = `${buttonGroupClasses} ${className}`.trim();
 ---
@@ -69,7 +74,7 @@ const combinedClasses = `${buttonGroupClasses} ${className}`.trim();
   responsive={responsiveBreakpoint}
   gap={gap}
   justify={justify}
-  align="center"
+  align={responsive ? align : 'center'}
   class={combinedClasses}
   role={role}
   {...rest}

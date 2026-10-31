@@ -1,3 +1,5 @@
+import { isolateModal } from './modalIsolation';
+
 /**
  * Focus Trap Utility
  *
@@ -5,7 +7,7 @@
  * Ensures keyboard users can navigate within the trap and cannot tab outside.
  *
  * Features:
- * - WCAG 2.4.3 compliant focus management
+ * - Keyboard focus management for modal dialogs
  * - Tab/Shift+Tab cycling within trap
  * - Prevents focus escape on outside clicks
  * - Supports initial focus, return focus, and fallback focus
@@ -44,7 +46,7 @@
  */
 
 /**
- * Focusable element selectors (WCAG compliant)
+ * Candidate focusable element selectors; eligibility is checked against the rendered DOM.
  */
 const FOCUSABLE_SELECTORS = [
   'a[href]',
@@ -61,9 +63,11 @@ const FOCUSABLE_SELECTORS = [
  */
 function getFocusableElements(container: HTMLElement): HTMLElement[] {
   return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)).filter((el) => {
-    // Filter out hidden elements
+    if (el.tabIndex < 0 || el.closest('[hidden], [inert], [aria-hidden="true"]')) return false;
     const style = window.getComputedStyle(el);
-    return style.display !== 'none' && style.visibility !== 'hidden';
+    return (
+      style.display !== 'none' && style.visibility !== 'hidden' && el.getClientRects().length > 0
+    );
   });
 }
 
@@ -86,6 +90,7 @@ export interface FocusTrap {
 export function createFocusTrap(
   container: HTMLElement | null,
   options: {
+    modalRoot?: HTMLElement | null;
     initialFocus?: HTMLElement | null;
     returnFocus?: HTMLElement | null;
     fallbackFocus?: HTMLElement | null;
@@ -104,14 +109,19 @@ export function createFocusTrap(
 
   let previousActiveElement: HTMLElement | null = null;
   let isActive = false;
-  let firstFocusableElement: HTMLElement | null = null;
-  let lastFocusableElement: HTMLElement | null = null;
+  let releaseIsolation: (() => void) | undefined;
 
   /**
    * Handle Tab key to cycle focus within trap
    */
   function handleKeyDown(event: KeyboardEvent): void {
-    if (!isActive || event.key !== 'Tab' || !container) {
+    if (
+      !isActive ||
+      event.defaultPrevented ||
+      event.key !== 'Tab' ||
+      !container ||
+      !container.contains(event.target as Node)
+    ) {
       return;
     }
 
@@ -121,22 +131,18 @@ export function createFocusTrap(
       return;
     }
 
-    firstFocusableElement = focusableElements[0];
-    lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-    if (event.shiftKey) {
-      // Shift + Tab: move backward
-      if (document.activeElement === firstFocusableElement) {
-        event.preventDefault();
-        lastFocusableElement?.focus();
-      }
-    } else {
-      // Tab: move forward
-      if (document.activeElement === lastFocusableElement) {
-        event.preventDefault();
-        firstFocusableElement?.focus();
-      }
-    }
+    // Own the complete modal Tab sequence. WebKit's platform tab preference may
+    // otherwise skip buttons and leave the dialog before reaching our boundary.
+    event.preventDefault();
+    const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
+    const nextIndex =
+      currentIndex < 0
+        ? event.shiftKey
+          ? focusableElements.length - 1
+          : 0
+        : (currentIndex + (event.shiftKey ? -1 : 1) + focusableElements.length) %
+          focusableElements.length;
+    focusableElements[nextIndex]?.focus();
   }
 
   /**
@@ -168,10 +174,11 @@ export function createFocusTrap(
     isActive = true;
     previousActiveElement = document.activeElement as HTMLElement;
 
+    if (options.modalRoot) releaseIsolation = isolateModal(options.modalRoot);
+
     // Get focusable elements
     const focusableElements = getFocusableElements(container);
-    firstFocusableElement = focusableElements[0] || null;
-    lastFocusableElement = focusableElements[focusableElements.length - 1] || null;
+    const firstFocusableElement = focusableElements[0] || null;
 
     // Set initial focus
     const elementToFocus = initialFocus || firstFocusableElement || fallbackFocus || container;
@@ -180,7 +187,8 @@ export function createFocusTrap(
     }
 
     // Add event listeners
-    container.addEventListener('keydown', handleKeyDown);
+    // React/inner widgets get to handle Tab (for example title completion) first.
+    document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('click', handleClick, true);
   }
 
@@ -195,8 +203,11 @@ export function createFocusTrap(
     isActive = false;
 
     // Remove event listeners
-    container.removeEventListener('keydown', handleKeyDown);
+    document.removeEventListener('keydown', handleKeyDown);
     document.removeEventListener('click', handleClick, true);
+
+    releaseIsolation?.();
+    releaseIsolation = undefined;
 
     // Return focus to previous element
     const elementToFocus = returnFocus || previousActiveElement;
@@ -205,8 +216,6 @@ export function createFocusTrap(
     }
 
     previousActiveElement = null;
-    firstFocusableElement = null;
-    lastFocusableElement = null;
   }
 
   /**
@@ -218,8 +227,9 @@ export function createFocusTrap(
     }
 
     const focusableElements = getFocusableElements(container);
-    firstFocusableElement = focusableElements[0] || null;
-    lastFocusableElement = focusableElements[focusableElements.length - 1] || null;
+    if (!container.contains(document.activeElement)) {
+      (focusableElements[0] || fallbackFocus || container).focus();
+    }
   }
 
   return {

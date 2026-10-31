@@ -24,7 +24,7 @@ const libraryProjects = excludeSlug
 
 <Section
   id={id}
-  padding="xl"
+  padding="md"
   container="xl"
   aria-labelledby={headingId}
   data-layout-section="projects-grid"
@@ -38,7 +38,10 @@ const libraryProjects = excludeSlug
       size="section"
     />
 
-    <Grid cols="3" gap="md">
+    <Grid
+      cols={libraryProjects.length >= 3 ? '3' : libraryProjects.length === 2 ? '2' : '1'}
+      gap="lg"
+    >
       {libraryProjects.map((project) => (
         <ProjectCard project={project} />
       ))}

@@ -36,7 +36,11 @@ function imageBoost(item: CommandItem): number {
   return item.image ? 0.04 : 0;
 }
 
-export function enrichCommandItems(items: CommandItem[], query: string): CommandItem[] {
+export function enrichCommandItems(
+  items: CommandItem[],
+  query: string,
+  { includeHubMatches = false }: { includeHubMatches?: boolean } = {}
+): CommandItem[] {
   const terms = normalize(query).split(/\s+/).filter(Boolean);
   if (!terms.length) return items;
 
@@ -55,7 +59,7 @@ export function enrichCommandItems(items: CommandItem[], query: string): Command
             descBoost +
             overlap.length * 0.05 +
             imageBoost(item) +
-            hubPenalty(item, terms)
+            (includeHubMatches ? 0 : hubPenalty(item, terms))
         )
       );
 
@@ -70,7 +74,7 @@ export function enrichCommandItems(items: CommandItem[], query: string): Command
     .filter((item) => {
       if (item.kind !== 'page') return true;
       if (!HUB_TITLES.has(normalize(item.title))) return true;
-      return terms.some((term) => normalize(item.title).includes(term));
+      return includeHubMatches || terms.some((term) => normalize(item.title).includes(term));
     })
     .sort((a, b) => {
       const scoreDelta = (b.score ?? 0) - (a.score ?? 0);

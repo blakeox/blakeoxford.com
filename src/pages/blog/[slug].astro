@@ -1,4 +1,6 @@
 ---
+import Button from '@/components/primitives/Button.astro';
+import ArrowLeftIcon from '@/components/primitives/icons/ArrowLeftIcon.astro';
 import Layout from '@/layouts/BaseLayout.astro';
 import OptimizedImage from '@/components/primitives/OptimizedImage.astro';
 import Badge from '@/components/primitives/Badge.astro';
@@ -92,27 +94,23 @@ const structuredData = [articleSchema, breadcrumbSchema];
   <header class="relative isolate overflow-hidden border-b border-border/40">
     <div
       class:list={[
-        'flex flex-col',
-        photo && 'lg:grid lg:min-h-[calc(100svh-var(--nav-height))] lg:grid-cols-2',
+        'mx-auto flex max-w-container-2xl flex-col',
+        photo && 'editorial-hero-grid lg:grid lg:grid-cols-2',
       ]}
     >
       <div class="layout-gutter flex flex-col justify-center py-section-lg sm:py-section-xl lg:py-section-2xl">
-        <Stack space="lg" class="max-w-xl">
-          <Flex
-            wrap
-            gap="xs"
-            class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
+        <Stack space="lg" class={photo ? 'max-w-xl' : 'max-w-4xl'}>
+          <a
+            href="/blog/"
+            class="focus-ring-interactive inline-flex min-h-11 w-fit items-center gap-2 rounded text-xs font-semibold tracking-smallcaps text-accent-emphasis uppercase"
           >
-            {post.data.tags?.map((tag: string) => (
-              <Badge variant="pill" size="xs">
-                {tag}
-              </Badge>
-            ))}
-          </Flex>
+            <ArrowLeftIcon />
+            All writing
+          </a>
           <h1
             class:list={[
               'font-heading font-semibold tracking-tight text-foreground',
-              headingSizeClass('hero'),
+              headingSizeClass('display'),
             ]}
           >
             {post.data.title}
@@ -130,6 +128,17 @@ const structuredData = [articleSchema, breadcrumbSchema];
               </>
             )}
           </div>
+          <Flex
+            wrap
+            gap="xs"
+            class="text-xs font-semibold tracking-label text-subtle-foreground uppercase"
+          >
+            {post.data.tags?.map((tag: string) => (
+              <Badge variant="pill" size="xs">
+                {tag}
+              </Badge>
+            ))}
+          </Flex>
         </Stack>
       </div>
       {photo && (
@@ -139,7 +148,7 @@ const structuredData = [articleSchema, breadcrumbSchema];
             alt={`Hero image for ${post.data.title}`}
             width={960}
             height={1200}
-            class="size-full min-h-72 object-cover lg:absolute lg:inset-0 lg:h-full lg:min-h-full"
+            class="aspect-[4/3] w-full object-cover lg:absolute lg:inset-0 lg:h-full lg:min-h-full"
             loading="eager"
             priority={true}
           />
@@ -152,12 +161,32 @@ const structuredData = [articleSchema, breadcrumbSchema];
     </div>
   </header>
 
-  <Container size="xl" class="py-section-lg sm:py-section-xl lg:py-section-2xl">
+  <Container size="md" class="py-section-lg sm:py-section-xl lg:py-section-2xl">
     <Stack space="3xl">
       <Prose>
         <Content />
       </Prose>
-      <RelatedContent links={CONTENT_RELATIONSHIPS[canonicalUrl.replace(siteOrigin, '')] ?? []} />
+      <section class="border-t border-border pt-8" aria-labelledby="enterprise-ai-next-step">
+        <p class="section-kicker mb-3">Put it into practice</p>
+        <h2
+          id="enterprise-ai-next-step"
+          class:list={['font-heading font-semibold text-foreground', headingSizeClass('title')]}
+        >
+          From AI questions to enterprise adoption
+        </h2>
+        <p class="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
+          I help companies identify practical AI uses, connect them to existing systems, and plan
+          for adoption at enterprise scale. Bring the workflow or operating challenge you are
+          working through.
+        </p>
+        <Button href="/contact/" variant="primary" class="mt-6" data-chat-avoid-launcher>
+          Discuss your AI roadmap
+        </Button>
+      </section>
+      <RelatedContent
+        contained={false}
+        links={CONTENT_RELATIONSHIPS[canonicalUrl.replace(siteOrigin, '')] ?? []}
+      />
     </Stack>
   </Container>
 </Layout>

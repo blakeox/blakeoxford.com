@@ -1,4 +1,7 @@
-import type { ReactNode, RefObject } from 'react';
+import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
+import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
+import { useOverlayScrollLock } from '@/lib/hooks/useOverlayScrollLock';
+import { createFocusTrap } from '@/utils/focusTrap';
 
 import { cn } from '@/utils/cn';
 import {
@@ -35,6 +38,24 @@ export function ChatDock({
   onTouchMove,
   onTouchEnd,
 }: ChatDockProps) {
+  const localPanelRef = useRef<HTMLDivElement>(null);
+  const activePanelRef = panelRef ?? localPanelRef;
+  const isModal = useMediaQuery('(max-width: 639px)');
+  useOverlayScrollLock(isOpen && isModal);
+
+  useEffect(() => {
+    if (!isOpen || !isModal || !activePanelRef.current) return;
+    const panel = activePanelRef.current;
+    const trap = createFocusTrap(panel, {
+      modalRoot: panel.closest<HTMLElement>('[data-ai-chat-overlay]'),
+      initialFocus: panel.querySelector<HTMLTextAreaElement>('textarea'),
+      returnFocus: document.querySelector<HTMLElement>('[data-ai-launcher]:not([data-occluded])'),
+      fallbackFocus: panel,
+    });
+    trap.activate();
+    return () => trap.deactivate();
+  }, [isOpen, isModal, activePanelRef]);
+
   return (
     <div
       role="presentation"
@@ -55,9 +76,9 @@ export function ChatDock({
 
       <div className={CHAT_DOCK_FRAME}>
         <div
-          ref={panelRef}
+          ref={activePanelRef}
           role="dialog"
-          aria-modal="false"
+          aria-modal={isModal}
           aria-labelledby={labelledBy}
           data-panel
           data-ai-chat-panel

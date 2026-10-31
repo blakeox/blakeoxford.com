@@ -45,7 +45,6 @@ for (const r of routes) {
       animations: 'disabled',
       maxDiffPixelRatio: smokeTolerance(r.path, r.name === 'contact' ? 0.015 : 0.01),
       mask: [
-        page.locator('.photo-carousel'),
         page.locator('[name="cf-turnstile-response"]'),
         page.locator('#turnstile-container iframe'),
         page.locator('time'),

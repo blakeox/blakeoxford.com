@@ -38,7 +38,7 @@ describe('typed design recipes', () => {
       'subtle',
     ]);
     expect(getBaseCardClasses({ variant: 'elevated', hover: 'none', rounded: 'xl' })).toContain(
-      'shadow-lg'
+      'shadow-md'
     );
   });
 
@@ -135,7 +135,7 @@ describe('typed design recipes', () => {
   it('centralizes layout and typography recipe vocabularies', () => {
     expect(Object.keys(sectionRecipe.padding)).toEqual(['none', 'sm', 'md', 'lg', 'xl']);
     expect(getSectionClasses({ padding: 'xl', fullWidth: false })).toContain('py-section-2xl');
-    expect(getContainerClasses({ size: 'xl' })).toContain('max-w-7xl');
+    expect(getContainerClasses({ size: 'xl' })).toContain('max-w-container-2xl');
     expect(Object.keys(proseRecipe.sizes)).toEqual(['base', 'lg', 'xl']);
     expect(getProseClasses('xl')).toContain('prose-headings:font-heading');
   });

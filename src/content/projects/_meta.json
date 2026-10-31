@@ -1,8 +1,8 @@
 {
   "hero": {
     "kicker": "Selected work",
-    "title": "Shipped under pressure",
-    "subtitle": "Migrations, automation, analytics, and AI-enabled workflows—built so teams keep running them after launch.",
+    "title": "Foundations for enterprise AI",
+    "subtitle": "Systems, automation, and decision work that informs practical AI adoption and enterprise scaling.",
     "capabilities": [
       "Platform migrations that hold adoption",
       "Automation that cuts lasting drag",
@@ -41,8 +41,11 @@
     "description": "Each study covers the problem, what I built, the proof, and what I’d repeat."
   },
   "cta": {
-    "title": "Have a bottleneck that looks like this work?",
-    "description": "Migration, automation, reporting, or AI-enabled workflow—bring the constraint that’s costing you the most.",
-    "button": { "href": "/contact/", "label": "Discuss your bottleneck" }
+    "title": "Bring this operating discipline to your AI roadmap",
+    "description": "Whether you are choosing a use case or scaling across teams, connect the AI ambition to the systems, people, and operating constraints behind it.",
+    "button": {
+      "href": "/contact/",
+      "label": "Discuss your bottleneck"
+    }
   }
 }

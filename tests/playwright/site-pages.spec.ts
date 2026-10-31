@@ -24,16 +24,15 @@ test.describe('About Page', () => {
 
 test.describe('Contact Page', () => {
   test('should display contact form', async ({ page }) => {
+    await page.addInitScript(() => {
+      (window as any).__AUDIT__ = true;
+    });
     await page.goto('/contact');
-    await expect(
-      page.getByRole('heading', { name: /bring the hardest bottleneck/i })
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: /AI bottleneck/i })).toBeVisible();
     const contactForm = page.locator('#contact-form');
     await expect(contactForm).toBeVisible();
     await expect(contactForm).toHaveAttribute('action', '/send-email');
-    await expect(page.getByText('Cloudflare delivery', { exact: true })).toBeVisible();
-    await expect(page.locator('#turnstile-shell')).toBeVisible();
-    await expect(page.getByText('Protected by Cloudflare', { exact: true })).toBeVisible();
+    await expect(page.locator('#turnstile-shell')).toHaveAttribute('data-turnstile-state', 'audit');
     await expect(page.locator('#contact-message-section')).toBeVisible();
     await expect(page.locator('#message')).toHaveCount(1);
 
@@ -84,8 +83,10 @@ test.describe('Cross-renderer surfaces', () => {
       await expect(page.getByText('Ground legal AI in verified source material')).toBeVisible();
 
       await page.goto('/accessibility/keyboard-shortcuts/');
-      await expect(page.getByRole('heading', { name: 'Keyboard Shortcuts' })).toBeVisible();
-      await expect(page.getByText('Accessibility Features', { exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Keyboard shortcuts' })).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: 'Display preferences', exact: true })
+      ).toBeVisible();
     });
   }
 });

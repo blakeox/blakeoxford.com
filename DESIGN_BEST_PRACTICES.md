@@ -4,16 +4,16 @@ Opinionated, performance-focused guidance for evolving the visual & interaction 
 
 ---
 
-## 1. Core Principles
+## Core Principles
 
 - Ship intent, not pixels: favor semantic tokens (spacing, color, typography) over hard values.
-- Zero-layout shift: avoid late-loading fonts, images without dimensions, or DOM reflows caused by JS.
+- Minimize measured layout shift: reserve image dimensions, load fonts deliberately, and avoid unnecessary DOM reflows.
 - Progressive enhancement: core content & navigation usable with CSS off / JS off.
 - Accessibility is non‑negotiable: color contrast, focus visibility, reduced motion, keyboard reach.
 - Minimize client JS: prefer static/SSR HTML + CSS; hydrate only interactive islands.
 - Consistency via tokens + utilities; avoid bespoke component CSS unless reusable.
 
-## 2. Design Tokens (Source of Truth)
+## Design Tokens (Source of Truth)
 
 **Single source:** `src/styles/theme.css`
 
@@ -80,9 +80,9 @@ Heading sizes: use the shared ladder in `src/lib/typeScale.ts` (`identity` → `
 
 **Remap-first dark mode**: one utility, two themes.
 
-## 3. Responsive Design Strategy
+## Responsive Design Strategy
 
-### 3.1 Modern Container Queries (2026)
+### Modern Container Queries (2026)
 
 **Component-based responsive design** - Components adapt to their container width, not the viewport.
 
@@ -152,7 +152,7 @@ Heading sizes: use the shared ladder in `src/lib/typeScale.ts` (`identity` → `
 
 ---
 
-### 3.2 Viewport-Based Breakpoints (For Page Layouts)
+### Viewport-Based Breakpoints (For Page Layouts)
 
 For page-level layouts that should respond to viewport:
 
@@ -160,7 +160,7 @@ For page-level layouts that should respond to viewport:
 - `md`: 768px
 - `lg`: 1024px
 - `xl`: 1280px
-- `2xl`: 1440px (project container screen; not Tailwind’s default 1536px)
+- `2xl`: 1536px (Tailwind default; `max-w-container-2xl` is a separate 80rem width token).
 
 Use for:
 
@@ -171,14 +171,14 @@ Use for:
 
 ---
 
-## 4. Color & Contrast
+## Color & Contrast
 
 - Maintain WCAG AA contrast for text (≥4.5:1 body, 3:1 large headings). Use existing contrast audit script.
 - Avoid using opacity to “disable” elements; prefer semantic state colors.
-- Gradients: store as CSS var if reused (`--gradient-primary`), apply with `bg-gradient-to-*` utilities.
+- Prefer solid semantic surfaces for structure. Keep any necessary media veil local to its component; do not reference undeclared gradient tokens.
 - Reserve high-chroma accent sparingly (CTAs, interactive focus) to reinforce visual hierarchy.
 
-### 3.1 Semantic Color Tokens (Policy)
+### Semantic Color Tokens (Policy)
 
 To ensure global theming agility and hardened accessibility, direct Tailwind grayscale utilities for body or heading text (e.g., `text-gray-600/700/800/900` and dark variants) are deprecated. Always express textual color via semantic tokens:
 
@@ -204,29 +204,29 @@ Rules:
 
 Migration Guidance:
 
-1. Replace `text-gray-*` with `text-foreground` plus optional opacity.
+1. Replace `text-gray-*` with `text-foreground`, `text-muted-foreground`, or `text-subtle-foreground` according to meaning.
 2. Replace `dark:text-gray-*` with `text-muted-foreground` or `text-subtle-foreground`.
 3. Replace gray backgrounds (`bg-gray-50`, `dark:bg-gray-800`) with `bg-surface` or `bg-background` (theme-aware — no `dark:` pair needed).
-4. Adjust perceived hierarchy with weight/size/spacing first; only then apply an opacity tweak if required.
+4. Adjust perceived hierarchy with weight, size, spacing, and the appropriate semantic text token.
 
 Review Process:
 
-- PRs adding prohibited utilities should fail design lint once a rule is added (planned enhancement).
+- The existing design lint rejects prohibited raw palettes and opacity-only text hierarchy.
 - During code review, flag any raw hex / gray utilities touching text contexts.
 
 Rationale:
 
 - Centralized control allows global color palette evolution (e.g., shifting hue or luminance) without multi-file refactors.
 - Reduces risk of subtle contrast regressions when balancing light/dark palettes.
-- Enables future algorithmic theme adjustments (e.g., adaptive contrast in high-ambient-light conditions) by editing tokens only.
+- Keeps theme adjustments in one maintainable source; validate changes against actual rendered surfaces.
 
-### 3.2 Dynamic Contrast Monitoring
+### Dynamic Contrast Monitoring
 
 Nightly CI randomly augments the fixed contrast audit route set with sampled project & blog pages (script: `scripts/quality/contrast-route-rotator.js`). These are injected through the `CONTRAST_EXTRA_ROUTES` env var consumed by the Playwright contrast spec. A sentinel captures “near miss” ratios within a configurable band (`CONTRAST_SENTINEL_BAND`, default +0.10 over the WCAG AA threshold) to flag drift early without red builds. Trend data accumulates in `contrast-history.json` (with 7‑day rolling average + slope fields) and is visualized via `badges/contrast.svg` (now includes rolling overlay + slope arrow). Optional slope gating via `CONTRAST_SLOPE_ALERT` can escalate accelerating regression before counts breach absolute threshold.
 
 Designer / reviewer action: If sentinel counts rise or badge slope trends upward for borderline elements, prefer adjusting token luminance (single-point change) over ad-hoc per-component overrides.
 
-## 4. Typography
+## Typography
 
 - Pair semantic HTML with Tailwind type utilities (`text-sm` … `text-5xl`) plus `font-heading` / `font-sans`
 - Use `text-xxs`, `tracking-label`, and `tracking-smallcaps` for labels/meta
@@ -235,21 +235,39 @@ Designer / reviewer action: If sentinel counts rise or badge slope trends upward
 - Prevent FOIT/FOUT: self-host via `@fontsource` in `BaseLayout.astro` with `font-display: swap`
 - Test typography at mobile (375px) and desktop (1440px)
 
-## 5. Spacing & Layout Rhythm
+## Spacing & Layout Rhythm
 
 - Use a 4/8-based scale; avoid one-off pixel values.
 - Apply consistent section padding wrappers; keep vertical rhythm multiples aligned.
 - Choose appropriate max width by context (marketing vs. reading).
 - Use grid utilities & gap tokens; avoid manual percentage widths.
 
-## 6. Component Composition
+### Site layout rules
+
+- Shared navigation and wide sections use the 80rem `--layout-max-2xl` ceiling.
+- `.layout-gutter` uses a fluid gutter from 1.25rem to 3rem; do not add breakpoint-specific page gutters.
+- Split interior heroes use `.editorial-hero-grid` with a 36rem desktop minimum. Keep single-column introductions content-sized; reserve the larger identity treatment for home.
+- Article bodies use the `md` container. Archive titles use the `title` type step; page introductions use `hero`.
+- Project cards use one bordered surface with a quiet hover border. Results sit above a divider; avoid empty metric panels or lifting the entire card on hover.
+- Use solid semantic surfaces for page and closing bands. Reserve shadows for elevated controls and overlays.
+
+### Reading and photography
+
+- The About introduction uses three static, captioned photographs with responsive image sources. Use the tower portrait as the full-pose anchor, with Detroit and speaking photographs as smaller supporting images. Preserve the tower photograph’s 3:4 frame; verify rendered crops after image processing.
+- Case studies use section rails on wide screens and a single reading column on small screens. Do not repeat the hero summary immediately under Overview.
+- A media-free article still uses the shared outer shell; give long titles enough measure to avoid a narrow tower of text.
+- Prose colors are owned by typography variables, including contextual `text-on-accent` surfaces. Do not force foreground colors on every paragraph or strong element; that overrides the surrounding surface's readable text color.
+- The phone Ask sheet is modal with focus containment and a scroll lock. The desktop companion remains nonmodal. Closing either must preserve keyboard continuity.
+- A confirmed contact delivery replaces the editable form with a focused confirmation. A failed request preserves the draft and gives an actionable recovery path.
+
+## Component Composition
 
 - Favor headless structure + Tailwind utilities.
 - Promote repeated patterns (buttons, badges) into variants/components after 3+ uses.
 - Prefer composing from `BaseCard` / `FeatureCard` over inline card markup.
 - Prefer utilities & tokens; shared chrome in `components.css` over new scoped style islands.
 
-## 7. Interaction & Motion
+## Interaction & Motion
 
 - Respect `prefers-reduced-motion` (no essential information conveyed only via motion)
 - Use semantic duration tokens: `duration-instant` (100ms), `duration-normal` (200ms; `--duration-fast` is the backing token), `duration-moderate` (300ms), `duration-slow` (500ms)
@@ -259,45 +277,29 @@ Designer / reviewer action: If sentinel counts rise or badge slope trends upward
 - Use `--focus-ring-width` and `--focus-ring-offset` tokens for consistency
 - Prefer `.focus-ring-interactive` for shared chrome controls
 - Prefer `shadow-overlay` for modal panels instead of arbitrary `shadow-[…]` rgba values
-- Apply interactive state overlays using `--hover-overlay` and `--active-overlay` tokens
+- Use the actual recipe hover/active states in `src/lib/design-system/recipes.ts`; do not reference undeclared overlay tokens.
 
-### 7.1 View Transitions (Astro)
+### Document navigation and progressive enhancement
 
-Native smooth page transitions using Astro's built-in View Transitions API:
+The current `BaseLayout.astro` uses normal document navigation. It contains transition attributes but does not mount an Astro client router, so do not assume SPA persistence or animated page transitions are active.
 
-- **Implementation**: `<ViewTransitions />` in BaseLayout.astro
-- **Persistence**: Use `transition:persist` for elements that stay across pages (nav, footer, chat)
-- **Animation**: Use `transition:animate="slide|fade"` for content areas
-- **Benefits**: Premium SPA-like UX without JavaScript bundle cost
-- **Browser Support**: Chrome 111+, Safari 18+, Firefox (in development)
+- Keep navigation and contact markup usable before island hydration.
+- Validate keyboard focus and theme preference across full navigations.
+- Do not introduce a client router solely for visual polish; it adds lifecycle and focus-management work.
+- Respect reduced-motion preferences in all actual component animation.
 
-**Guidelines**:
-
-- Persist shared UI elements (navigation, footer, widgets)
-- Animate main content areas for smooth transitions
-- Test across different page types (blog, projects, contact)
-- Respect `prefers-reduced-motion` (Astro handles automatically)
-
-## 8. Accessibility Integration
+## Accessibility Integration
 
 - Minimum interactive size ≥44x44px (mobile & touch contexts).
 - Use semantic elements first; supplement with ARIA where needed.
 
-### 8.1 Modern :has() Selector Patterns
+### Modern :has() Selector Patterns
 
 Parent state styling based on child conditions eliminates JavaScript for common patterns:
 
-**Form Validation**:
+**Form validation**:
 
-```css
-.form-group:has(input:invalid:not(:placeholder-shown)) {
-  border-inline-start: 3px solid var(--color-error);
-}
-
-.form-group:has(input:valid:not(:placeholder-shown)) {
-  border-inline-start: 3px solid var(--color-success);
-}
-```
+Drive visible validation from the field's explicit `aria-invalid` state and associated error text after blur or submission. Do not style a group from native `:invalid` while the user is still typing; it can contradict the announced state and shift the control geometry. Successful fields do not need a green border.
 
 **Card Selection**:
 
@@ -353,21 +355,21 @@ section:has(.error)::before {
 - Maintain parity across light/dark themes—audit both backgrounds.
 - Skip link + logical heading order (no level skipping for visual style).
 
-## 9. Media & Imagery
+## Media & Imagery
 
 - Include width/height (prevents CLS) and responsive sources (`<picture>` or `srcset`).
 - Serve AVIF/WebP with fallbacks; rely on pipeline optimization scripts.
 - Lazy-load non-critical images (`loading="lazy"`).
 - Provide meaningful alt text or empty alt for decorative imagery.
 
-## 10. Performance & Delivery
+## Performance & Delivery
 
 - Avoid global high-specificity selectors; maximize purge efficiency.
 - Defer or hydrate only critical interactive islands.
 - Keep critical CSS minimal (automation handles inlining).
 - Limit custom classes; lean on utilities & tokens.
 
-## 11. Theming & Mode Strategy
+## Theming & Mode Strategy
 
 - Derive user preference via `prefers-color-scheme`; persist after first paint.
 - Let tokens drive differences—avoid duplicating structural markup/styles for dark mode.
@@ -397,30 +399,30 @@ Rules:
 - Ask companion: `ChatDock` uses the same `data-state` + `block`/`hidden` pattern; shared strings live in `src/features/chat/chatStyles.ts`.
 - The only remaining `!important` in `components.css` lives in `prefers-reduced-motion` blocks, where forcibly killing motion is the intended, accessible behavior.
 
-## 12. Content Formatting
+## Content Formatting
 
 - Use `prose` for markdown; override only essential elements.
 - Enforce line length restrictions for readability.
 - Use spacing & weight for hierarchy (not color alone).
 
-## 13. Iconography
+## Iconography
 
 - Standardize on one icon set; size consistently (`w-5 h-5`).
 - Apply styling via utilities directly on the `<svg>`; avoid inline styles.
 
-## 14. Audit & Maintenance
+## Audit & Maintenance
 
 - Quarterly prune unused tokens; consolidate near-duplicates.
 - Run contrast & performance audits after major UI changes.
 - Watch bundle reports for emergent CSS bloat.
 
-## 15. Extension Patterns
+## Extension Patterns
 
 - Add token → map in Tailwind → use via utility (no raw values in components).
 - Introduce semantic variants only after proven reuse.
 - Build small recipes (utility clusters) before promoting to full components.
 
-## 16. Anti‑Patterns to Avoid
+## Anti‑Patterns to Avoid
 
 - Deep descendant selectors or chaining.
 - Excess `!important` usage (temporary TODOs only).
@@ -428,7 +430,7 @@ Rules:
 - Duplicated gradient/color hex values.
 - Mixing inline styles with overlapping utility classes.
 
-## 17. Quick Reference Checklist
+## Quick Reference Checklist
 
 - [ ] Semantic tokens used (no stray hex)
 - [ ] Heading order logical
@@ -441,7 +443,7 @@ Rules:
 
 ---
 
-## 18. @property Custom Properties (optional)
+## @property Custom Properties (optional)
 
 CSS Houdini `@property` can register typed, animatable custom properties. **Not used in `theme.css` today** — tokens rely on normal custom properties + Tailwind utilities. Prefer that path unless you need interpolating a custom property (e.g. animated gradient angle).
 
@@ -449,137 +451,20 @@ If you introduce `@property`, keep it next to the consuming animation in `compon
 
 ---
 
-## 19. Enhanced Focus Indicators (WCAG AAA)
+## Focus indicators and verification
 
-### Philosophy
+The implementation uses `--focus-ring-width`, `--focus-ring-offset`, and `--focus-ring-color` in `theme.css`. Shared chrome uses `.focus-ring-interactive`; fields and buttons use explicit recipe states. Preserve visible outlines or rings when overriding browser defaults.
 
-Focus indicators must be **immediately visible** to keyboard users with:
+- Check focus against the actual surrounding surface in both themes. Under forced colors, use the utility-layer system `Highlight` outline in `components.css`; box shadows alone disappear.
+- Keep focused targets clear of the sticky navigation and floating assistant.
+- Search results use listbox options for navigation. Keep topic filters, Copy, and Ask in a labeled action group outside the listbox so their button semantics remain available to assistive technology. Preserve native modified-click behavior on result links and ordinary text-copy behavior when text is selected. See the [W3C listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/).
+- Search is modal. Ask is modal below 640px and nonmodal on desktop; test each behavior rather than applying one keyboard expectation everywhere.
+- Modal Tab traversal must exclude hidden, inert, and negative-tabindex controls. Let inner controls handle Tab completion first, then cycle eligible controls explicitly; verify Chromium and WebKit.
+- Escape must close overlays, restore a usable focus position, and release scroll locks.
+- Skip links target the main content, footer, and top; verify the resulting focus and scroll position.
+- A ring class, an outline width, or a screenshot alone does not establish WCAG conformance. Record measured contrast, keyboard behavior, assistive-technology coverage, and remaining gaps in the living plan.
 
-- High contrast against all backgrounds
-- Sufficient size (3px minimum)
-- Clear offset from element
-- Shadow for depth perception
-
-### Default Enhanced Focus
-
-```css
-:focus-visible {
-  outline: 3px solid var(--color-primary);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 6px color-mix(in oklch, var(--color-primary) 15%, transparent);
-  border-radius: var(--radius-sm, 0.25rem);
-}
-```
-
-**Features**:
-
-- 3px solid outline (WCAG AAA)
-- 3px offset for breathing room
-- 6px shadow for visibility on any background
-- Rounded corners for visual polish
-
-### Dark Mode Adaptation
-
-```css
-:root.dark :focus-visible {
-  outline-color: var(--color-accent);
-  box-shadow: 0 0 0 6px color-mix(in oklch, var(--color-accent) 20%, transparent);
-}
-```
-
-Uses the copper accent token for better contrast in dark mode.
-
-### Element-Specific Patterns
-
-#### Buttons
-
-```css
-button:focus-visible {
-  outline-width: 3px;
-  outline-offset: 2px;
-  /* Tighter offset for compact elements */
-}
-```
-
-#### Links
-
-```css
-a:focus-visible {
-  outline-width: 2px;
-  outline-offset: 3px;
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
-}
-```
-
-#### Form Inputs
-
-```css
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline-width: 2px;
-  outline-offset: 0;
-  box-shadow: 0 0 0 4px color-mix(in oklch, var(--color-primary) 20%, transparent);
-}
-```
-
-### Skip Links
-
-**Multiple skip links** for comprehensive navigation:
-
-```astro
-<SkipLink href="#main-content" text="Skip to main content" />
-<SkipLink href="#footer" text="Skip to footer" />
-<a href="#top">Back to top</a>
-```
-
-**Visual on Focus**:
-
-- Position: absolute, top-left
-- Z-index: 50 (above all content)
-- High contrast background (accent color)
-- Large padding (px-4 py-2)
-- Clear shadow and ring
-
-### Testing Focus Indicators
-
-**Manual Test**:
-
-1. Press Tab repeatedly from page top
-2. Verify focus visible on every interactive element
-3. Check contrast in both light/dark modes
-4. Test on complex backgrounds (images, gradients)
-
-**Automated Test**:
-
-```typescript
-test('focus indicators visible', async ({ page }) => {
-  await page.goto('/');
-
-  // Tab through elements
-  for (let i = 0; i < 10; i++) {
-    await page.keyboard.press('Tab');
-    const focused = page.locator(':focus-visible');
-    await expect(focused).toBeVisible();
-
-    // Verify outline exists
-    const outline = await focused.evaluate((el) => getComputedStyle(el).outlineWidth);
-    expect(parseInt(outline)).toBeGreaterThan(0);
-  }
-});
-```
-
-### Accessibility Compliance
-
-✅ **WCAG 2.4.7 Focus Visible (Level AA)**: All interactive elements have visible focus  
-✅ **WCAG 2.4.11 Focus Not Obscured (Level AAA)**: Focus indicators not hidden by other content  
-✅ **WCAG 1.4.11 Non-text Contrast (Level AA)**: 3:1 contrast ratio for UI components
-
----
-
-## 20. Keyboard Navigation & Documentation
+## Keyboard Navigation & Documentation
 
 ### Keyboard Shortcuts Page
 
@@ -612,12 +497,6 @@ Link from footer or about page:
 
 ---
 
-## 21. Future Opportunities
+## Continuous improvement
 
-- Automated lint for raw hex & arbitrary spacing.
-- Visual regression gating on critical components.
-- System font stack fallback automation.
-- ARIA audit tooling integration
-- Advanced @property animations (theme transitions)
-
-Align design changes with these practices to keep the interface cohesive, fast, and maintainable.
+Use [the living design plan](docs/design-improvement-plan.md) for current findings, quality gates, and validation evidence. Existing design lint, visual regression, contrast, and accessibility tests are already present; extend their meaningful coverage instead of listing them as hypothetical future tooling. Add dependencies or animations only when they solve an evidenced problem and their maintenance cost is justified.

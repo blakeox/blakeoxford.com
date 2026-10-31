@@ -5,11 +5,12 @@
  * Renders individual project pages using MDX content from the projects collection.
  * Replaces 8 duplicate .astro files with a single dynamic route.
  *
- * CTA sections are optional and configured via frontmatter (ctaHeading, ctaDescription).
+ * Historical delivery stays in the study; the next step connects it to the current enterprise AI practice.
  */
 import type { GetStaticPaths } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import ProjectDetailLayout from '@/layouts/ProjectDetailLayout.astro';
+import { PROJECT_AI_CONTEXT } from '@/content/projects/hirePath';
 import Button from '@/components/primitives/Button.astro';
 import { isPublished } from '@/lib/content/publication-contract.mjs';
 
@@ -28,16 +29,19 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { ctaDescription } = project.data;
+const context =
+  PROJECT_AI_CONTEXT[project.id] ??
+  'Enterprise AI needs connected systems, reliable data, and clear operating ownership. This work informs the practical approach I bring to adoption and scale.';
 ---
 
 <ProjectDetailLayout slug={project.id}>
-  {ctaDescription && (
-    <div slot="cta" class="flex flex-col items-start gap-4">
-      <p class="max-w-xl text-base leading-relaxed text-muted-foreground">{ctaDescription}</p>
-      <Button href="/contact/" variant="primary">
-        Discuss your bottleneck
-      </Button>
-    </div>
-  )}
+  <div slot="cta" class="flex flex-col items-start gap-4">
+    <h3 class="font-heading text-xl font-semibold text-foreground">
+      From this work to enterprise AI
+    </h3>
+    <p class="max-w-xl text-base leading-relaxed text-muted-foreground">{context}</p>
+    <Button href="/contact/" variant="primary">
+      Discuss your bottleneck
+    </Button>
+  </div>
 </ProjectDetailLayout>

@@ -138,7 +138,7 @@ export function showStatusMessage(
   element.classList.remove('hidden');
 
   if (type === 'success') {
-    element.classList.remove('text-error', 'bg-error-subtle', 'border-error/30');
+    element.classList.remove('text-error-emphasis', 'bg-error-subtle', 'border-error/30');
     element.classList.add(
       'text-success-emphasis',
       'bg-success-subtle',
@@ -150,7 +150,7 @@ export function showStatusMessage(
   } else {
     element.classList.remove('text-success-emphasis', 'bg-success-subtle', 'border-success/30');
     element.classList.add(
-      'text-error',
+      'text-error-emphasis',
       'bg-error-subtle',
       'border',
       'border-error/30',
@@ -171,7 +171,7 @@ export function clearStatusMessage(element: HTMLElement | null): void {
     'border-success/30',
     'rounded-xl',
     'p-4',
-    'text-error',
+    'text-error-emphasis',
     'bg-error-subtle',
     'border-error/30'
   );

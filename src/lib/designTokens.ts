@@ -60,6 +60,7 @@ export const SEMANTIC_COLOR_USAGE: Record<string, string> = {
   'button-disabled-fg': 'Disabled control text',
   'button-disabled-border': 'Disabled control border',
   'field-bg': 'Form and overlay field backgrounds',
+  'field-border': 'Visible boundaries for input and search controls in either theme',
   'accent-subtle': 'Soft accent washes (theme-aware)',
   'accent-emphasis': 'Theme-aware accent text — prefer over dark: pairs',
   'primary-subtle': 'Soft primary washes (blur orbs)',

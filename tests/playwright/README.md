@@ -46,7 +46,7 @@ await expect(page.locator('.timeline-mobile')).toBeHidden();
 
 ## Visual stability tips
 
-- The About hero carousel is masked via `.photo-carousel` in `tests/playwright/visual/config.ts`.
+- The About photo story is static and intentionally remains visible in visual baselines; the remaining smoke masks cover timestamps and verification content.
 - Prefer locator-based screenshots for sectional visuals (e.g., heading locators) to avoid clip drift.
 - Keep `maxDiffPixelRatio` conservative and update baselines only after human review.
 
@@ -65,4 +65,3 @@ await expect(page.locator('.timeline-mobile')).toBeHidden();
 - Install browsers: `pnpm test:e2e:install`
 - Check what browsers are available: `node scripts/build/check-playwright-browsers.cjs`
 - Update visual snapshots: `pnpm test:e2e:visual`
-

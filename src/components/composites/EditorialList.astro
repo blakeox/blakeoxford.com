@@ -16,6 +16,7 @@ export type EditorialRow = {
   body?: string;
   href?: string;
   linkLabel?: string;
+  linkAccessibleLabel?: string;
   bullets?: string[];
   /** Extra muted line under body (e.g. capability examples). */
   meta?: string;
@@ -115,7 +116,8 @@ const Tag = listAs ?? (numbered ? 'ol' : 'ul');
           {row.href && row.linkLabel && (
             <a
               href={row.href}
-              class="inline-flex pt-0.5 text-sm font-semibold text-foreground underline decoration-border underline-offset-4"
+              aria-label={row.linkAccessibleLabel}
+              class="focus-ring-interactive inline-flex min-h-11 items-center rounded pt-0.5 text-sm font-semibold text-foreground underline decoration-border underline-offset-4"
             >
               {row.linkLabel}
             </a>

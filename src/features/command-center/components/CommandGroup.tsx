@@ -14,8 +14,10 @@ type CommandGroupProps = {
 
 export function CommandGroupSection({ label, children }: CommandGroupProps) {
   return (
-    <section className="flex flex-col gap-0.5">
-      <h3 className={`${SECTION_LABEL} px-3 pb-1`}>{label}</h3>
+    <section role="group" aria-label={label} className="flex flex-col gap-0.5">
+      <h3 aria-hidden="true" className={`${SECTION_LABEL} px-3 pb-1`}>
+        {label}
+      </h3>
       <div className="flex flex-col">{children}</div>
     </section>
   );
