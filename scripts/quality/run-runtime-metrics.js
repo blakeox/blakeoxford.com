@@ -46,7 +46,7 @@ async function waitForOk(url, timeoutMs = 10000) {
 export async function stopRuntimePreview(child, platform = process.platform) {
   if (!child?.pid) return;
   const hasExited = () => child.exitCode !== null || child.signalCode !== null;
-  if (hasExited()) return;
+  if (platform === 'win32' && hasExited()) return;
   try {
     if (platform === 'win32') {
       await run('taskkill', ['/pid', String(child.pid), '/t', '/f']);
@@ -54,12 +54,15 @@ export async function stopRuntimePreview(child, platform = process.platform) {
       process.kill(-child.pid, 'SIGTERM');
     }
   } catch (error) {
-    if (hasExited() || error.code === 'ESRCH') return;
-    // taskkill has no ESRCH code; check whether the owned process disappeared.
-    try {
-      process.kill(child.pid, 0);
-    } catch (probeError) {
-      if (probeError.code === 'ESRCH') return;
+    if (error.code === 'ESRCH') return;
+    if (platform === 'win32') {
+      if (hasExited()) return;
+      // taskkill has no ESRCH code; check whether the owned process disappeared.
+      try {
+        process.kill(child.pid, 0);
+      } catch (probeError) {
+        if (probeError.code === 'ESRCH') return;
+      }
     }
     throw error;
   }

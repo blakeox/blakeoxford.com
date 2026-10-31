@@ -1,4 +1,5 @@
 import { EventEmitter } from 'node:events';
+import { get } from 'node:http';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn() }));
@@ -108,4 +109,87 @@ describe('runtime preview teardown', () => {
     expect(kill).toHaveBeenCalledExactlyOnceWith(-45678, 'SIGTERM');
     expect(spawn).not.toHaveBeenCalled();
   });
+});
+
+describe('POSIX preview descendants', () => {
+  it('does not hide a process-group permission failure after the launcher exits', async () => {
+    const denied = Object.assign(new Error('Group termination denied'), { code: 'EPERM' });
+    const kill = vi.spyOn(process, 'kill').mockImplementation(() => {
+      throw denied;
+    });
+    await expect(
+      stopRuntimePreview({ pid: 45678, exitCode: 0, signalCode: null }, 'linux')
+    ).rejects.toBe(denied);
+    expect(kill).toHaveBeenCalledExactlyOnceWith(-45678, 'SIGTERM');
+  });
+
+  it.skipIf(process.platform === 'win32')(
+    'stops a real descendant server after its launcher exits',
+    async () => {
+      const { spawn: realSpawn } =
+        await vi.importActual<typeof import('node:child_process')>('child_process');
+      const serverCode = `const server = require('node:http').createServer((req,res) => res.end('fixture'));
+server.listen(0, '127.0.0.1', () => console.log(JSON.stringify({port: server.address().port})));`;
+      const launcherCode = `const child = require('node:child_process').spawn(process.execPath, ['-e', ${JSON.stringify(serverCode)}], {stdio:['ignore','inherit','inherit']}); child.unref();`;
+      const child = realSpawn(process.execPath, ['-e', launcherCode], {
+        detached: true,
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const ready = new Promise<number>((resolve, reject) => {
+        let output = '';
+        timer = setTimeout(() => reject(new Error('Descendant startup timed out')), 5000);
+        child.stdout.on('data', (chunk) => {
+          output += chunk.toString();
+          if (output.includes('\n')) {
+            clearTimeout(timer);
+            resolve(JSON.parse(output.split('\n')[0]).port);
+          }
+        });
+        child.once('error', reject);
+      });
+      const exited = new Promise<void>((resolve, reject) => {
+        child.once('exit', (code) =>
+          code === 0 ? resolve() : reject(new Error(`Launcher exited ${code}`))
+        );
+        child.once('error', reject);
+      });
+      const cleanup = () => {
+        clearTimeout(timer);
+        if (child.pid) {
+          try {
+            process.kill(-child.pid, 'SIGKILL');
+          } catch (error) {
+            if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+          }
+        }
+        child.stdout.destroy();
+        child.stderr.destroy();
+      };
+      try {
+        const [port] = await Promise.all([ready, exited]);
+        const url = `http://127.0.0.1:${port}/`;
+        const status = () =>
+          new Promise<number | undefined>((resolve, reject) => {
+            const request = get(url, (response) => {
+              response.resume();
+              resolve(response.statusCode);
+            });
+            request.on('error', reject);
+            request.setTimeout(1000, () => request.destroy(new Error('Fixture request timed out')));
+          });
+        expect(child.exitCode).toBe(0);
+        expect(await status()).toBe(200);
+        await stopRuntimePreview(child);
+        await vi.waitFor(
+          async () => {
+            await expect(status()).rejects.toThrow();
+          },
+          { timeout: 3000, interval: 50 }
+        );
+      } finally {
+        cleanup();
+      }
+    }
+  );
 });
