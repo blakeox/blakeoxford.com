@@ -105,7 +105,6 @@
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.0",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "serve": "^14.2.6",
     "sharp": "0.35.5",
     "tailwindcss": "^4.3.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
