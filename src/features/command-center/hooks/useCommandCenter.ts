@@ -109,6 +109,7 @@ export function useCommandCenter() {
 
     const toggleButton = document.getElementById('search-toggle');
     focusTrapRef.current = createFocusTrap(panelRef.current, {
+      modalRoot: panelRef.current?.closest<HTMLElement>('.overlay-root'),
       initialFocus: inputRef.current,
       returnFocus: toggleButton,
       fallbackFocus: panelRef.current,
@@ -217,7 +218,10 @@ export function useCommandCenter() {
       const meta = event.metaKey || event.ctrlKey;
       if (!meta || event.key.toLowerCase() !== 'c') return;
       const selection = window.getSelection()?.toString();
-      if (selection && selection.length > 0 && document.activeElement === inputRef.current) {
+      const input = inputRef.current;
+      const hasInputSelection =
+        input && document.activeElement === input && input.selectionStart !== input.selectionEnd;
+      if (selection || hasInputSelection) {
         return;
       }
       if (activeIndex < 0 || !flatItems[activeIndex]) return;

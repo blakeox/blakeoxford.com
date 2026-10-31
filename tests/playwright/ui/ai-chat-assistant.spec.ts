@@ -141,7 +141,7 @@ test.describe('AI chat assistant', () => {
       await route.fulfill({ status: 200, body: '{}' });
     });
 
-    await page.goto('/projects/');
+    await page.goto('/blog/');
     const widget = page.locator('[data-ai-chat-widget]');
     await widget.waitFor({ state: 'attached' });
     await widget.locator('.ai-chat-launcher').waitFor({ state: 'attached' });

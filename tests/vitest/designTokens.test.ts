@@ -52,7 +52,10 @@ describe('Prose primitive', () => {
       'utf8'
     );
     expect(getProseClasses('xl')).toContain('prose-headings:font-heading');
-    expect(getProseClasses('xl')).toContain('prose-a:text-accent-emphasis');
+    const styles = readFileSync(resolve(__dirname, '../../src/styles/global.css'), 'utf8');
+    expect(styles).toContain('--tw-prose-links: var(--color-accent-emphasis)');
+    expect(styles).toContain('--tw-prose-links: var(--color-on-accent)');
+    expect(getProseClasses('xl')).not.toContain('prose-a:text-accent-emphasis');
     expect(prose).toContain('getProseClasses');
   });
 

@@ -171,14 +171,19 @@ export function useChatLifecycle(options: UseChatLifecycleOptions): UseChatLifec
     }
     setIsOpen(false);
     setError(null);
-    if (
-      lastFocusedElementRef.current &&
-      typeof lastFocusedElementRef.current.focus === 'function'
-    ) {
-      requestAnimationFrame(() => {
-        lastFocusedElementRef.current?.focus();
-      });
-    }
+    requestAnimationFrame(() => {
+      const previous = lastFocusedElementRef.current;
+      const previousIsAvailable =
+        previous?.isConnected &&
+        previous !== document.body &&
+        !previous.closest('[inert], [hidden], [aria-hidden="true"]') &&
+        previous.getClientRects().length > 0;
+      // Hydration replaces the SSR launcher; Safari pointer activation may leave body focused.
+      const target = previousIsAvailable
+        ? previous
+        : document.querySelector<HTMLElement>('[data-ai-launcher]:not([data-occluded])');
+      target?.focus();
+    });
   }, [
     dispatchState,
     isListening,

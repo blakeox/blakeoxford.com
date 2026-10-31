@@ -6,7 +6,6 @@ import {
   RESULT_ROW_BASE,
   RESULT_ROW_IDLE,
 } from '@/features/overlay/overlayStyles';
-import { getChipClasses } from '@/lib/design-system/recipes';
 
 function escapeRegExp(input: string): string {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -88,10 +87,6 @@ type CommandResultRowProps = {
   hideKindLabel?: boolean;
   onSelect: (item: CommandItem) => void;
   onHover: (index: number) => void;
-  onAsk?: (item: CommandItem) => void;
-  onCopyLink?: (item: CommandItem) => void;
-  onTagClick?: (tag: string) => void;
-  linkCopied?: boolean;
 };
 
 export function CommandResultRow({
@@ -102,17 +97,21 @@ export function CommandResultRow({
   hideKindLabel = true,
   onSelect,
   onHover,
-  onAsk,
-  onCopyLink,
-  onTagClick,
-  linkCopied = false,
 }: CommandResultRowProps) {
-  const drillTags = onTagClick ? item.tags.slice(0, 2) : [];
-  const subtitle = buildSubtitle(item, drillTags.length === 0);
+  const subtitle = buildSubtitle(item, true);
   const showFeatured = Boolean(item.featured && item.kind === 'project');
 
   return (
-    <div
+    <a
+      href={item.href}
+      tabIndex={-1}
+      onClick={(event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        onSelect(item);
+      }}
+      aria-labelledby={`command-title-${index}`}
+      aria-describedby={subtitle ? `command-subtitle-${index}` : undefined}
       id={`command-result-${index}`}
       role="option"
       aria-selected={isActive}
@@ -124,20 +123,12 @@ export function CommandResultRow({
           ? String(item.score)
           : undefined
       }
-      className={`${RESULT_ROW_BASE} ${isActive ? RESULT_ROW_ACTIVE : RESULT_ROW_IDLE}`}
+      className={`search-result focus-ring-interactive ${RESULT_ROW_BASE} ${isActive ? RESULT_ROW_ACTIVE : RESULT_ROW_IDLE}`}
       onMouseEnter={() => onHover(index)}
     >
       <div className="flex min-w-0 flex-1 items-start gap-3">
-        <a
-          href={item.href}
-          tabIndex={-1}
-          className="search-result focus-ring-interactive flex min-w-0 flex-1 items-center gap-3"
-          onClick={(event) => {
-            event.preventDefault();
-            onSelect(item);
-          }}
-        >
-          <div className={OVERLAY_THUMB_WELL}>
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className={OVERLAY_THUMB_WELL} aria-hidden="true">
             {item.image ? (
               <img
                 src={item.image}
@@ -157,7 +148,10 @@ export function CommandResultRow({
 
           <div className="min-w-0 flex-1">
             <span className="flex min-w-0 items-center gap-2">
-              <span className="truncate text-sm font-medium text-foreground">
+              <span
+                id={`command-title-${index}`}
+                className="truncate text-sm font-medium text-foreground"
+              >
                 <HighlightText text={item.title} query={query} />
               </span>
               {showFeatured ? (
@@ -165,7 +159,10 @@ export function CommandResultRow({
               ) : null}
             </span>
             {subtitle ? (
-              <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+              <span
+                id={`command-subtitle-${index}`}
+                className="mt-0.5 block truncate text-xs text-muted-foreground"
+              >
                 <HighlightText text={subtitle} query={query} />
               </span>
             ) : null}
@@ -176,80 +173,12 @@ export function CommandResultRow({
               {item.kind}
             </span>
           ) : null}
-        </a>
+        </div>
       </div>
 
-      {drillTags.length > 0 ? (
-        <div className="flex shrink-0 flex-wrap items-center gap-1 self-center">
-          {drillTags.map((tag) => (
-            <button
-              key={`${item.id}-tag-${tag}`}
-              type="button"
-              className={getChipClasses({
-                variant: 'quiet',
-                size: 'xs',
-                shape: 'soft',
-                className: 'rounded border-border/50 px-1.5 py-0.5 hover:border-accent/40',
-              })}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                onTagClick?.(tag);
-              }}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-      ) : null}
-
-      {isActive ? (
-        <div className="flex shrink-0 items-center gap-1 self-center">
-          {onCopyLink ? (
-            <button
-              type="button"
-              className={getChipClasses({
-                variant: 'quiet',
-                size: 'xs',
-                shape: 'soft',
-                className: 'border-border/50 hover:border-accent/40',
-              })}
-              aria-label={linkCopied ? 'Link copied' : `Copy link for ${item.title}`}
-              title="Copy link (⌘C)"
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                onCopyLink(item);
-              }}
-            >
-              {linkCopied ? 'Copied' : 'Copy'}
-            </button>
-          ) : null}
-          {onAsk ? (
-            <button
-              type="button"
-              className={getChipClasses({
-                variant: 'accent',
-                size: 'xs',
-                shape: 'soft',
-                className: 'text-accent',
-              })}
-              aria-label={`Ask about ${item.title}`}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                onAsk(item);
-              }}
-            >
-              Ask
-            </button>
-          ) : (
-            <span className="text-xxs text-subtle-foreground" aria-hidden="true">
-              ↵
-            </span>
-          )}
-        </div>
-      ) : null}
-    </div>
+      <span className="self-center text-xxs text-subtle-foreground" aria-hidden="true">
+        ↵
+      </span>
+    </a>
   );
 }

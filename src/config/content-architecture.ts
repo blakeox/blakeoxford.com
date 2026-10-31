@@ -11,11 +11,11 @@ export type ContentTopic = {
 
 /** Primary intent and contextual evidence map for every indexable acquisition route. */
 export const CONTENT_INTENTS: Record<string, string> = {
-  '/': 'Systems architecture and workflow transformation overview',
+  '/': 'AI adoption and enterprise scaling grounded in systems architecture',
   '/about/': 'Professional credibility and delivery background',
   '/blog/': 'Practical guidance on AI, automation, analytics, and leadership',
-  '/projects/': 'Case-study hub for shipped systems and operational change',
-  '/contact/': 'Qualified consultation and bottleneck-review conversion',
+  '/projects/': 'Operating foundations and case studies informing enterprise AI adoption',
+  '/contact/': 'AI use-case, pilot integration, and enterprise adoption consultation',
   '/projects/adp-workforcenow/': 'Workforce operations and reporting automation',
   '/projects/advancedmd-implementation/': 'Healthcare IT modernization and workflow governance',
   '/projects/bank-projections-modeling/': 'Finance analytics and scenario modeling',
@@ -38,11 +38,11 @@ export const CONTENT_INTENTS: Record<string, string> = {
 /** Bounded editorial topic map; query themes are planning inputs, not meta keywords. */
 export const CONTENT_TOPICS: Record<string, ContentTopic> = {
   '/': {
-    primaryTopic: 'Systems architecture and workflow transformation',
+    primaryTopic: 'AI adoption and enterprise scaling',
     queryThemes: ['workflow automation', 'systems architecture', 'operational transformation'],
   },
   '/about/': {
-    primaryTopic: 'Systems architect and workflow strategist profile',
+    primaryTopic: 'Systems architect helping companies navigate AI',
     queryThemes: ['systems architect', 'workflow strategist', 'technology delivery leadership'],
   },
   '/blog/': {
@@ -50,7 +50,7 @@ export const CONTENT_TOPICS: Record<string, ContentTopic> = {
     queryThemes: ['AI automation insights', 'analytics leadership', 'AI governance'],
   },
   '/projects/': {
-    primaryTopic: 'Systems architecture and workflow case studies',
+    primaryTopic: 'Systems and workflow foundations for enterprise AI',
     queryThemes: [
       'workflow automation case studies',
       'systems architecture projects',
@@ -58,7 +58,7 @@ export const CONTENT_TOPICS: Record<string, ContentTopic> = {
     ],
   },
   '/contact/': {
-    primaryTopic: 'Systems architecture and automation consultation',
+    primaryTopic: 'AI adoption and enterprise scaling consultation',
     queryThemes: [
       'workflow bottleneck review',
       'automation strategy consultation',

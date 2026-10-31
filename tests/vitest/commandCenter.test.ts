@@ -73,4 +73,22 @@ describe('enrichCommandItems', () => {
     expect(ranked[0]?.kind).toBe('project');
     expect(ranked.some((item) => item.href === '/projects/')).toBe(false);
   });
+  it('retains keyword-matched hub pages when Pages is explicitly selected', () => {
+    const items: CommandItem[] = [
+      {
+        id: '/contact/',
+        kind: 'page',
+        title: 'Contact',
+        subtitle: 'Discuss enterprise AI adoption',
+        href: '/contact/',
+        tags: ['enterprise'],
+        source: 'local',
+        score: 1,
+      },
+    ];
+    expect(enrichCommandItems(items, 'enterprise')).toEqual([]);
+    expect(
+      enrichCommandItems(items, 'enterprise', { includeHubMatches: true }).map((item) => item.href)
+    ).toEqual(['/contact/']);
+  });
 });

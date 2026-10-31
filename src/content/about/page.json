@@ -1,48 +1,48 @@
 {
   "meta": {
     "title": "About Blake Oxford | Systems Architect",
-    "description": "Systems architect and workflow strategist\u2014hired for migrations, automation, and decision systems that teams keep running after launch."
+    "description": "Systems architect helping companies navigate AI, connect platforms, and scale from practical use cases to enterprise adoption."
   },
   "hero": {
     "kicker": "About",
     "title": "I build the operating middle that strategy slides skip",
-    "description": "Based in Michigan. Hired when platforms, reporting, and adoption have to move together.",
+    "description": "Based in Michigan. I help companies connect AI, platforms, and people—from early use cases to enterprise adoption.",
     "proofPoints": [
-      "I stay through cutover, not just the architecture deck",
-      "I put the new system in the tools people already open",
-      "I measure the week after go-live, not the launch party"
+      "I start with the work people need to get done",
+      "I connect new capabilities to the systems teams already use",
+      "I plan for ownership, adoption, and ongoing operation"
     ]
   },
   "achievements": {
     "kicker": "How I work",
-    "title": "Judgment under operating pressure",
-    "description": "The habits that keep migrations, automation, and decision systems alive after launch. Open Selected work for the cases behind them.",
+    "title": "Practical AI, grounded in operating experience",
+    "description": "The same discipline that connects finance, cloud platforms, and workflows applies to AI: start with a real need, make it usable, and build for what comes next.",
     "cards": [
       {
-        "title": "Contain the blast radius",
-        "description": "Cutover plans, identity, and rollback so the business keeps running while the stack changes.",
+        "title": "Start with the constraint",
+        "description": "Clarify the business problem before choosing a platform, model, or automation.",
         "achievements": [
-          "Governed cutovers with a named rollback",
-          "Identity and endpoints treated as part of the migration",
-          "Playbooks ship with the platform, not after it"
+          "Use cases tied to real decisions and handoffs",
+          "Existing systems and data considered early",
+          "Clear boundaries for what to automate"
         ]
       },
       {
-        "title": "Adoption is the deliverable",
-        "description": "A live system nobody runs is a failed project. I design for the week after go-live.",
+        "title": "Make adoption part of the build",
+        "description": "The work continues after a tool goes live. Teams need a usable workflow and a clear owner.",
         "achievements": [
-          "Scorecards that replace slide decks as the source of truth",
-          "Workflows inside the tools people already open",
-          "Support load measured after the first 60 days"
+          "AI in the tools people already open",
+          "Human review where judgment matters",
+          "Operating guidance alongside implementation"
         ]
       },
       {
-        "title": "Decisions, not dashboards",
-        "description": "Models and coaching loops built for the questions executives actually ask.",
+        "title": "Build for enterprise scale",
+        "description": "Enterprise AI needs more than a successful pilot. Integration, access, and ongoing operation have to work together.",
         "achievements": [
-          "Forecasts and exceptions on one cadence",
-          "Audit-ready numbers with a named owner",
-          "AI that sits in the workflow, not a side chat"
+          "Connections to enterprise platforms",
+          "Governance and access designed in",
+          "Rollout and adoption treated as connected work"
         ]
       }
     ]
@@ -66,27 +66,27 @@
   },
   "education": {
     "kicker": "Background",
-    "title": "Finance training, systems craft",
-    "description": "Formal grounding in finance, paired with the toolkit I use to ship durable operational change.",
+    "title": "Finance context. Systems craft. AI in practice.",
+    "description": "A foundation in finance informs how I approach technology: understand the decision, connect the systems, and keep the operating consequences in view.",
     "institution": "Calvin College",
     "degree": "Bachelor of Arts in Finance",
-    "educationDescription": "Finance with complementary study in Mandarin Chinese and development economics\u2014modeling, international business, and structured decision-making under constraint.",
-    "skillsIntro": "Practical capabilities oriented around reliable execution and measurable operational change.",
+    "educationDescription": "Finance with complementary study in Mandarin Chinese and development economics—modeling, international business, and structured decision-making under constraint.",
+    "skillsIntro": "The capabilities I bring together when a technology decision needs to become a working part of the business.",
     "skills": [
-      "Systems Architecture",
-      "Process Automation",
-      "Cloud: Azure / M365",
-      "Data Analytics (Power BI)",
-      "APIs & Integrations",
-      "AI-Assisted Workflows",
-      "Financial Operations",
-      "Security & Compliance"
+      "Systems architecture",
+      "Enterprise AI adoption",
+      "Workflow automation",
+      "APIs & integrations",
+      "Azure & Microsoft 365",
+      "Data & decision systems",
+      "Governance & access",
+      "Financial operations"
     ]
   },
   "timeline": {
     "kicker": "Track record",
-    "title": "Where the judgment was forged",
-    "description": "A condensed path through the environments that shaped how I run migrations, automation, and analytics programs.",
+    "title": "From connected systems to enterprise AI",
+    "description": "Finance and cloud integration built the foundation. The next chapter is helping companies navigate AI and scale it across the enterprise.",
     "items": [
       {
         "year": "2019",
@@ -94,8 +94,7 @@
         "studyHref": "/projects/adp-workforcenow/",
         "achievements": [
           "Sage Intacct and ADP across departmental handoffs",
-          "Custom APIs replacing spreadsheet reconciliation",
-          "Month-end close as an operating rhythm, not a fire drill"
+          "Custom APIs replacing spreadsheet reconciliation"
         ]
       },
       {
@@ -104,7 +103,6 @@
         "studyHref": "/projects/google-workspace-migration/",
         "achievements": [
           "Identity, mail, and device management as one cutover",
-          "Legacy finance and HR stacks retired behind the new platforms",
           "Disaster recovery written into the operating model"
         ]
       },
@@ -129,15 +127,30 @@
         "studyHref": "/projects/llm-note-coaching/",
         "achievements": [
           "Clinical-note review before submission, not after the audit",
-          "Coaching loops that improved documentation quality in place",
-          "Appeals and process work inside the tools already open"
+          "Coaching loops that improved documentation quality in place"
+        ]
+      },
+      {
+        "year": "2025",
+        "title": "Helping companies navigate AI",
+        "achievements": [
+          "Helping teams identify practical AI use cases and evaluate their options",
+          "Connecting tool selection and adoption planning to the way the business works"
+        ]
+      },
+      {
+        "year": "2026",
+        "title": "Scaling AI across the enterprise",
+        "achievements": [
+          "Scaling AI across teams, workflows, and enterprise systems",
+          "Bringing integration, governance, and operational ownership into the same plan"
         ]
       }
     ]
   },
   "closing": {
     "kicker": "Next step",
-    "title": "If the bottleneck looks familiar, let's map it",
-    "description": "Migration, automation, reporting, or AI-enabled workflow\u2014start with the constraint costing you the most."
+    "title": "From the next AI use case to enterprise scale",
+    "description": "Working out where to begin, or how to scale what already works? Start with the workflow, system, or adoption challenge in front of your team."
   }
 }

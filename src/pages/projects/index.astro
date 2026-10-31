@@ -23,19 +23,39 @@ const groups = [
 
 const title = 'Selected Work & Case Studies | Blake Oxford';
 const description =
-  'Migrations, automation, and decision systems shipped under pressure, with the result that held after launch.';
+  'The systems, automation, and decision work behind my approach to helping companies navigate AI and scale it across the enterprise.';
 const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
   <Section id="projects-hero" padding="lg" container="xl">
     <IntroCopy
+      kicker="Projects"
       title="Selected work"
       titleId="projects-title"
       description={description}
       align="start"
-      size="section"
+      size="hero"
     />
+    <nav class="mt-8 border-t border-border pt-5" aria-label="Project categories">
+      <ul class="flex flex-wrap gap-x-6 gap-y-2" role="list">
+        {groups
+          .filter((group) => group.projects.length > 0)
+          .map((group) => (
+            <li>
+              <a
+                class="focus-ring-interactive inline-flex min-h-11 items-center gap-3 rounded text-sm font-semibold text-muted-foreground transition-colors hover:text-accent-emphasis"
+                href={`#${group.id}`}
+              >
+                {group.title}
+                <span class="font-mono text-xs text-subtle-foreground">
+                  {String(group.projects.length).padStart(2, '0')}
+                </span>
+              </a>
+            </li>
+          ))}
+      </ul>
+    </nav>
   </Section>
 
   {groups.map((group) =>

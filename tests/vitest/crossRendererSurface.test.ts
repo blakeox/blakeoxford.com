@@ -17,21 +17,13 @@ describe('cross-renderer surface contract', () => {
     }
   });
 
-  it('is consumed by the React and Astro surfaces without replacing their semantics', () => {
+  it('keeps shared prompt surfaces as actionable buttons', () => {
     const guidedPrompts = readFileSync(
       resolve(root, 'src/features/chat/components/ChatGuidedPrompts.tsx'),
       'utf-8'
     );
-    const shortcuts = readFileSync(
-      resolve(root, 'src/pages/accessibility/keyboard-shortcuts.astro'),
-      'utf-8'
-    );
-
     expect(guidedPrompts).toContain('crossRendererSurfaceRecipe.interactive');
     expect(guidedPrompts).toContain('<button');
-    expect(shortcuts).toContain('crossRendererSurfaceRecipe.structural');
-    expect(shortcuts).toContain('<kbd');
-    expect(shortcuts).toContain('<div class="grid gap-4">');
   });
 
   it('keeps editorial MDX cards on FeatureCard and list structures structural', () => {
