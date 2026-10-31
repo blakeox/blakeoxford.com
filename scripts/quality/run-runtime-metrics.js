@@ -6,6 +6,7 @@
 import { spawn } from 'child_process';
 import fs from 'fs';
 import http from 'http';
+import { pathToFileURL } from 'node:url';
 
 const pnpmCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
 const pnpmArgs = ['pnpm'];
@@ -13,6 +14,7 @@ const pnpmArgs = ['pnpm'];
 function run(cmd, args = [], opts = {}) {
   return new Promise((resolve, reject) => {
     const p = spawn(cmd, args, { stdio: 'inherit', ...opts });
+    p.on('error', reject);
     p.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(cmd + ' exited ' + code))));
   });
 }
@@ -41,7 +43,32 @@ async function waitForOk(url, timeoutMs = 10000) {
   return false;
 }
 
-(async () => {
+export async function stopRuntimePreview(child, platform = process.platform) {
+  if (!child?.pid) return;
+  const hasExited = () => child.exitCode !== null || child.signalCode !== null;
+  if (platform === 'win32' && hasExited()) return;
+  try {
+    if (platform === 'win32') {
+      await run('taskkill', ['/pid', String(child.pid), '/t', '/f']);
+    } else {
+      process.kill(-child.pid, 'SIGTERM');
+    }
+  } catch (error) {
+    if (error.code === 'ESRCH') return;
+    if (platform === 'win32') {
+      if (hasExited()) return;
+      // taskkill has no ESRCH code; check whether the owned process disappeared.
+      try {
+        process.kill(child.pid, 0);
+      } catch (probeError) {
+        if (probeError.code === 'ESRCH') return;
+      }
+    }
+    throw error;
+  }
+}
+
+async function main() {
   let serverProc;
   try {
     console.log('[runtime] build');
@@ -57,9 +84,17 @@ async function waitForOk(url, timeoutMs = 10000) {
     while (!(await isFree(port)) && port < 6000) port++;
     if (port >= 6000) throw new Error('No free port found 5000-5999');
 
-    process.env.BASE_URL = process.env.BASE_URL || `http://localhost:${port}`;
-    console.log('[runtime] serve dist on', process.env.BASE_URL);
-    serverProc = spawn('npx', ['serve', 'dist', '-l', String(port)], { stdio: 'inherit' });
+    process.env.BASE_URL = process.env.BASE_URL || `http://127.0.0.1:${port}`;
+    console.log('[runtime] preview on', process.env.BASE_URL);
+    serverProc = spawn(
+      pnpmCommand,
+      [...pnpmArgs, 'preview', '--ignore-lock', '--host', '127.0.0.1', '--port', String(port)],
+      { stdio: 'inherit', detached: process.platform !== 'win32' }
+    );
+    serverProc.on('error', (error) => {
+      console.error('[runtime] preview failed:', error.message);
+      process.exitCode = 1;
+    });
 
     const healthy = await waitForOk(`${process.env.BASE_URL}/`);
     if (!healthy) throw new Error('Server health check failed');
@@ -126,6 +161,15 @@ async function waitForOk(url, timeoutMs = 10000) {
     console.error('[runtime] failed', e.message);
     process.exitCode = 1;
   } finally {
-    if (serverProc && !serverProc.killed) serverProc.kill('SIGTERM');
+    try {
+      await stopRuntimePreview(serverProc);
+    } catch (error) {
+      console.error('[runtime] preview teardown failed:', error.message);
+      process.exitCode = 1;
+    }
   }
-})();
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  void main();
+}

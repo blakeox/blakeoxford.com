@@ -60,7 +60,7 @@ console.log('   • CLS: Critical CSS prevents layout shifts');
 console.log('   • TTFB: CDN headers + efficient caching\n');
 
 console.log('🔧 DEVELOPMENT WORKFLOW:');
-console.log('   • Production testing: npm run build + npx serve dist');
+console.log('   • Production testing: pnpm build + pnpm preview');
 console.log('   • Lighthouse CI: Test against localhost:3000');
 console.log('   • Bundle optimization: npm run optimize-bundles');
 console.log('   • Critical CSS: Auto-generated and inlined\n');

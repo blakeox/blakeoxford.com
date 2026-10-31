@@ -175,34 +175,16 @@ class PerformanceTestRunner {
 
     // Pick a free port and update baseUrl to match
     const chosen = await this.findAvailablePort(4321, 10);
-    const port = chosen || 4321;
+    if (!chosen) throw new Error('No free preview port found 4321-4330');
+    const port = chosen;
     this.serverPort = port;
     this.baseUrl = `http://127.0.0.1:${port}`;
     console.log(`🔌 Using port ${port} for preview server`);
 
-    const killSpawned = async () => {
-      try {
-        if (!this.serverProcess?.pid) return;
-        if (process.platform === 'win32') {
-          spawn('taskkill', ['/pid', String(this.serverProcess.pid), '/t', '/f'], {
-            stdio: 'ignore',
-          });
-        } else {
-          try {
-            process.kill(-this.serverProcess.pid, 'SIGTERM');
-          } catch {
-            /* ignore */
-          }
-        }
-      } catch {
-        /* ignore */
-      }
-    };
-
-    // Prefer `astro preview` (accurate multi-page routing). Fall back to `serve` (without SPA mode).
+    // Keep preview in the foreground so teardown owns its process group.
     this.serverProcess = spawn(
       pnpmCmd,
-      [...pnpmArgs, 'preview', '--host', '127.0.0.1', '--port', String(port)],
+      [...pnpmArgs, 'preview', '--ignore-lock', '--host', '127.0.0.1', '--port', String(port)],
       {
         detached: true,
         stdio: 'ignore',
@@ -217,26 +199,9 @@ class PerformanceTestRunner {
 
     try {
       await this.waitForServer(this.baseUrl, 30, 1000);
-    } catch {
-      console.warn('⚠️ `astro preview` did not become ready, falling back to `serve`...');
-      await killSpawned();
-
-      this.serverProcess = spawn(
-        pnpmCmd,
-        [...pnpmArgs, 'exec', 'serve', 'dist', '-l', String(port)],
-        {
-          detached: true,
-          stdio: 'ignore',
-          env: { ...process.env },
-        }
-      );
-      try {
-        this.serverProcess.unref();
-      } catch {
-        /* ignore */
-      }
-
-      await this.waitForServer(this.baseUrl, 30, 1000);
+    } catch (error) {
+      await this.stopDevServer();
+      throw error;
     }
   }
 
