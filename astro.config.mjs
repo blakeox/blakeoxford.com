@@ -5,10 +5,14 @@ import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import { loadProjectEnv } from './src/lib/env.ts';
+import { resolveSentryBuildMetadata } from './src/lib/sentry-build.ts';
 import { createDevSemanticSearchProxy } from './src/integrations/dev-semantic-search-proxy.ts';
 import { createDevAISearchProxy } from './src/integrations/dev-ai-proxy.ts';
 
 loadProjectEnv();
+const sentryBuild = resolveSentryBuildMetadata(process.env);
+if (sentryBuild.commit) process.env.PUBLIC_GIT_COMMIT = sentryBuild.commit;
+if (sentryBuild.environment) process.env.PUBLIC_SENTRY_ENVIRONMENT = sentryBuild.environment;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -29,40 +33,30 @@ if (
   process.env.PUBLIC_SENTRY_DSN &&
   !isAstroUtilityCommand
 ) {
-  try {
-    const { default: sentry } = await import('@sentry/astro');
-    sentryIntegrations.push(
-      sentry({
-        telemetry: false,
-        sourcemaps: {
-          disable: !process.env.SENTRY_AUTH_TOKEN,
-        },
-        ...(process.env.SENTRY_AUTH_TOKEN
-          ? {
-              authToken: process.env.SENTRY_AUTH_TOKEN,
-              project: process.env.SENTRY_PROJECT || 'blakeoxford-browser',
-              org: process.env.SENTRY_ORG || 'your-sentry-org',
-            }
-          : {}),
-      })
-    );
-  } catch (error) {
-    console.warn(
-      '[astro.config] Skipping Sentry integration:',
-      error instanceof Error ? error.message : error
-    );
-  }
+  const { default: sentry } = await import('@sentry/astro');
+  sentryIntegrations.push(
+    sentry({
+      telemetry: false,
+      sourcemaps: {
+        disable: !process.env.SENTRY_AUTH_TOKEN,
+        filesToDeleteAfterUpload: ['./dist/**/*.map'],
+      },
+      ...(process.env.SENTRY_AUTH_TOKEN
+        ? {
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            project: process.env.SENTRY_PROJECT || 'blakeoxford-com',
+            org: process.env.SENTRY_ORG || 'accelerise-consulting',
+          }
+        : {}),
+    })
+  );
 }
 
 export default defineConfig({
   output: 'static',
   envPrefix: 'PUBLIC_',
   site: 'https://blakeoxford.com',
-  integrations: [
-    react(),
-    mdx(),
-    ...sentryIntegrations,
-  ],
+  integrations: [react(), mdx(), ...sentryIntegrations],
   image: {
     domains: ['blakeoxford.com'],
     formats: ['avif', 'webp', 'jpeg'],
