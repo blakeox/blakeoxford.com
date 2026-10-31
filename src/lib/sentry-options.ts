@@ -12,6 +12,21 @@ export const sentryDataCollection = {
   graphQL: { document: false, variables: false },
 };
 
+/** Restrict reports and trace headers to this site's owned deployments. */
+export function createSentryAllowedUrls(environment: string) {
+  const production = /^https:\/\/(?:www\.)?blakeoxford\.com(?:\/|$)/i;
+  if (environment === 'preview') {
+    return [
+      production,
+      /^https:\/\/[a-z0-9-]+-blakeoxford-com\.blakeoxford\.workers\.dev(?:\/|$)/i,
+    ];
+  }
+  if (environment === 'verification') {
+    return [production, /^http:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?(?:\/|$)/i];
+  }
+  return [production];
+}
+
 export function scrubSentrySpan<T extends { attributes: Record<string, unknown> }>(span: T): T {
   // These semantic attributes bypass the SDK's HTTP-header collection policy.
   delete span.attributes['user_agent.original'];

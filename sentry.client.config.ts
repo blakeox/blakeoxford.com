@@ -1,16 +1,24 @@
 import * as Sentry from '@sentry/astro';
-import { createSentrySampler, scrubSentrySpan, sentryDataCollection } from './src/lib/sentry-options';
+import {
+  createSentrySampler,
+  createSentryAllowedUrls,
+  scrubSentrySpan,
+  sentryDataCollection,
+} from './src/lib/sentry-options';
+
+const environment = import.meta.env.PUBLIC_SENTRY_ENVIRONMENT || import.meta.env.MODE;
+const allowedUrls = createSentryAllowedUrls(environment);
 
 Sentry.init({
   dsn: import.meta.env.PUBLIC_SENTRY_DSN,
-  
+
   // Environment & Release tracking
-  environment: import.meta.env.MODE, // 'development' or 'production'
+  environment,
   release: `blakeoxford.com@${import.meta.env.PUBLIC_GIT_COMMIT || 'dev'}`,
   dataCollection: sentryDataCollection,
   beforeSendSpan: scrubSentrySpan,
-  tracePropagationTargets: ['blakeoxford.com', /^\//],
-  
+  tracePropagationTargets: [...allowedUrls, /^\//],
+
   // Performance Monitoring - optimized for FREE TIER
   integrations: [
     Sentry.browserTracingIntegration(),
@@ -21,13 +29,13 @@ Sentry.init({
       maskAllInputs: true, // Extra protection for form fields
     }),
   ],
-  
+
   // FREE TIER OPTIMIZATION: Low sample rates to stay under free quotas
   tracesSampler: createSentrySampler(0.1, () => globalThis.navigator?.userAgent || ''),
   // Clarity owns continuous session replay; Sentry only records on errors
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 0.5, // 50% of sessions with errors
-  
+
   // Privacy & Security
   beforeSend(event) {
     // Don't send events in development
@@ -35,7 +43,7 @@ Sentry.init({
       console.log('Sentry event (dev only):', event);
       return null;
     }
-    
+
     // Scrub sensitive data from requests
     if (event.request) {
       // Remove cookies and auth headers
@@ -46,7 +54,7 @@ Sentry.init({
         delete event.request.headers['X-CSRF-Token'];
       }
     }
-    
+
     // Scrub email addresses and potential PII from breadcrumbs
     if (event.breadcrumbs) {
       event.breadcrumbs = event.breadcrumbs.map((breadcrumb) => {
@@ -60,10 +68,10 @@ Sentry.init({
         return breadcrumb;
       });
     }
-    
+
     return event;
   },
-  
+
   // Ignore known browser noise and extension errors
   ignoreErrors: [
     // Browser/Extension errors
@@ -86,10 +94,7 @@ Sentry.init({
     // Cloudflare Turnstile expected errors
     'Turnstile',
   ],
-  
-  // Only capture from your domain (prevent abuse)
-  allowUrls: [
-    /https?:\/\/(.+\.)?blakeoxford\.com/,
-  ],
-  
+
+  // Restrict reports to production and this app's previews.
+  allowUrls: allowedUrls,
 });

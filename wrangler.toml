@@ -65,7 +65,7 @@ script_name = "blakeoxford-com"
 # Sentry Configuration
 # Set these secrets via: wrangler secret put <NAME>
 # SENTRY_DSN_EDGE       - DSN for edge function errors (from Sentry dashboard)
-# SENTRY_AUTH_TOKEN     - Auth token for source map uploads (optional)
+# Source-map upload credentials belong in build secrets, not Worker bindings.
 # GIT_COMMIT            - Current git commit SHA (set in CI/CD)
 # ENVIRONMENT           - Deployment environment (production/staging)
 
