@@ -6,6 +6,7 @@
 import { spawn } from 'child_process';
 import fs from 'fs';
 import http from 'http';
+import { pathToFileURL } from 'node:url';
 
 const pnpmCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
 const pnpmArgs = ['pnpm'];
@@ -42,7 +43,32 @@ async function waitForOk(url, timeoutMs = 10000) {
   return false;
 }
 
-(async () => {
+export async function stopRuntimePreview(child, platform = process.platform) {
+  if (!child?.pid) return;
+  const hasExited = () => child.exitCode !== null || child.signalCode !== null;
+  if (platform === 'win32' && hasExited()) return;
+  try {
+    if (platform === 'win32') {
+      await run('taskkill', ['/pid', String(child.pid), '/t', '/f']);
+    } else {
+      process.kill(-child.pid, 'SIGTERM');
+    }
+  } catch (error) {
+    if (error.code === 'ESRCH') return;
+    if (platform === 'win32') {
+      if (hasExited()) return;
+      // taskkill has no ESRCH code; check whether the owned process disappeared.
+      try {
+        process.kill(child.pid, 0);
+      } catch (probeError) {
+        if (probeError.code === 'ESRCH') return;
+      }
+    }
+    throw error;
+  }
+}
+
+async function main() {
   let serverProc;
   try {
     console.log('[runtime] build');
@@ -135,19 +161,15 @@ async function waitForOk(url, timeoutMs = 10000) {
     console.error('[runtime] failed', e.message);
     process.exitCode = 1;
   } finally {
-    if (serverProc?.pid) {
-      try {
-        if (process.platform === 'win32') {
-          await run('taskkill', ['/pid', String(serverProc.pid), '/t', '/f']);
-        } else {
-          process.kill(-serverProc.pid, 'SIGTERM');
-        }
-      } catch (error) {
-        if (error.code !== 'ESRCH') {
-          console.error('[runtime] preview teardown failed:', error.message);
-          process.exitCode = 1;
-        }
-      }
+    try {
+      await stopRuntimePreview(serverProc);
+    } catch (error) {
+      console.error('[runtime] preview teardown failed:', error.message);
+      process.exitCode = 1;
     }
   }
-})();
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  void main();
+}
