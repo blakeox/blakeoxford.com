@@ -9,6 +9,7 @@ vi.mock('child_process', async (importOriginal) => {
 vi.mock('lighthouse', () => ({ default: vi.fn() }));
 vi.mock('chrome-launcher', () => ({ launch: vi.fn() }));
 import PerformanceTestRunner from '../../../scripts/build/performance-test.js';
+import { stopRuntimePreview } from '../../../scripts/quality/run-runtime-metrics.js';
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -62,6 +63,49 @@ describe('performance preview lifecycle', () => {
     vi.mocked(instance.findAvailablePort).mockResolvedValue(null);
 
     await expect(instance.startDevServer()).rejects.toThrow('No free preview port');
+    expect(spawn).not.toHaveBeenCalled();
+  });
+});
+
+describe('runtime preview teardown', () => {
+  const running = () => ({ pid: 45678, exitCode: null, signalCode: null });
+
+  it('does not taskkill a Windows preview that already exited', async () => {
+    const kill = vi.spyOn(process, 'kill').mockReturnValue(true);
+    await stopRuntimePreview({ ...running(), exitCode: 0 }, 'win32');
+    expect(spawn).not.toHaveBeenCalled();
+    expect(kill).not.toHaveBeenCalled();
+  });
+
+  it('tolerates a Windows process disappearing before taskkill completes', async () => {
+    const command = new EventEmitter();
+    spawn.mockImplementation(() => {
+      queueMicrotask(() => command.emit('exit', 128));
+      return command;
+    });
+    vi.spyOn(process, 'kill').mockImplementation(() => {
+      throw Object.assign(new Error('Process already exited'), { code: 'ESRCH' });
+    });
+
+    await expect(stopRuntimePreview(running(), 'win32')).resolves.toBeUndefined();
+    expect(spawn.mock.calls[0][0]).toBe('taskkill');
+  });
+
+  it('preserves Windows termination failures while the process is still alive', async () => {
+    const command = new EventEmitter();
+    spawn.mockImplementation(() => {
+      queueMicrotask(() => command.emit('exit', 5));
+      return command;
+    });
+    vi.spyOn(process, 'kill').mockReturnValue(true);
+
+    await expect(stopRuntimePreview(running(), 'win32')).rejects.toThrow('taskkill exited 5');
+  });
+
+  it('terminates only the owned foreground process group on POSIX', async () => {
+    const kill = vi.spyOn(process, 'kill').mockReturnValue(true);
+    await stopRuntimePreview(running(), 'linux');
+    expect(kill).toHaveBeenCalledExactlyOnceWith(-45678, 'SIGTERM');
     expect(spawn).not.toHaveBeenCalled();
   });
 });
