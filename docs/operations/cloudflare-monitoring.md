@@ -133,3 +133,48 @@ TURNSTILE_SECRET_KEY`) so preview contact forms can verify Turnstile
 
 Never place secret values, client IPs, request bodies, or contact-form content
 in this runbook, workflow output, or incident notes.
+
+## Sentry application wiring
+
+Use the existing `accelerise-consulting` team and the `blakeoxford-com` Sentry
+project for browser and edge diagnostics. Environment tags separate production,
+preview, and controlled verification. Blake owns the configuration and error review.
+
+- **Build configuration:** `PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, and `SENTRY_PROJECT`
+  identify the project. Store `SENTRY_AUTH_TOKEN` only as a protected build secret
+  for source-map uploads. A Worker secret cannot supply a build-time credential.
+- **Runtime configuration:** `SENTRY_DSN_EDGE` supplies the edge DSN. Keep the
+  existing `ENVIRONMENT` separation in production and Worker Previews. Never put
+  the upload credential in `PUBLIC_*`, source code, or new Worker bindings.
+- **Release identity:** the browser uses `blakeoxford.com@<commit>`; the edge uses
+  the raw commit. Workers Builds supplies the exact revision. Non-main browser
+  builds are tagged `preview`, even though Astro compiles them in production mode.
+- **Privacy and volume:** preserve the existing request-data exclusions, masked
+  error replays, 10% browser trace sampling, and 5% edge trace sampling. Creating a
+  project does not prove ingestion or justify enabling additional signals.
+- **Source maps:** upload against this project and remove uploaded browser maps
+  from `dist` before deployment. Confirm a newly triggered error has readable
+  original-source frames; an older event is not repaired by a later upload.
+
+Before activation, run the normal build, full audit, unit, browser, preview, and
+protected promotion gates. Verify one uniquely named error through the running
+application's actual initialization, then find that exact issue in Sentry. Keep
+temporary failure triggers out of every published artifact. Record the issue URL,
+environment, release, Worker version, and sanitized check results. Review
+production errors separately from the verification marker; an empty new project
+does not establish that an earlier release had no errors.
+
+The leading indicator is a confirmed verification event with readable frames;
+the lagging indicator is unexpected production exceptions for the exact release.
+The initial baseline is unknown until real production telemetry arrives. Blake
+reviews failures in the existing release handoff; do not assume an email alert
+exists or create a second monitor to compensate.
+
+For immediate ingestion shutdown, disable the project's client key in Sentry;
+this stops both clients without interrupting site traffic. For rollback, restore
+the recorded Worker version and the previous build-variable configuration.
+Build variables are independent of Worker versions: remove newly added Sentry
+build settings before another automatic build, and verify runtime secret/version
+restoration separately. Removing `PUBLIC_SENTRY_DSN` takes effect only after a
+new build; already open browser tabs may continue until the key is disabled.
+Retain existing Cloudflare logs and report any failed activation to Blake.
