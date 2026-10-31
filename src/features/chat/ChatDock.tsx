@@ -40,7 +40,7 @@ export function ChatDock({
 }: ChatDockProps) {
   const localPanelRef = useRef<HTMLDivElement>(null);
   const activePanelRef = panelRef ?? localPanelRef;
-  const isModal = useMediaQuery('(max-width: 639px)');
+  const isModal = useMediaQuery('(width < 40rem)');
   useOverlayScrollLock(isOpen && isModal);
 
   useEffect(() => {
