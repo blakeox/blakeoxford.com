@@ -8,7 +8,7 @@ export const CONTENT_SECURITY_POLICY =
   "script-src 'self' 'unsafe-inline' https://www.clarity.ms https://static.cloudflareinsights.com https://www.googletagmanager.com https://challenges.cloudflare.com; " +
   "style-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; " +
   "font-src 'self' data:; " +
-  "connect-src 'self' https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com; " +
+  "connect-src 'self' https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://o4512297421897728.ingest.us.sentry.io; " +
   'frame-src https://challenges.cloudflare.com https://www.googletagmanager.com; ' +
-  "worker-src 'self'; " +
+  "worker-src 'self' blob:; " +
   "manifest-src 'self'";

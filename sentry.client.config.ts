@@ -1,19 +1,23 @@
 import * as Sentry from '@sentry/astro';
 import {
   createSentrySampler,
+  createSentryAllowedUrls,
   scrubSentrySpan,
   sentryDataCollection,
 } from './src/lib/sentry-options';
+
+const environment = import.meta.env.PUBLIC_SENTRY_ENVIRONMENT || import.meta.env.MODE;
+const allowedUrls = createSentryAllowedUrls(environment);
 
 Sentry.init({
   dsn: import.meta.env.PUBLIC_SENTRY_DSN,
 
   // Environment & Release tracking
-  environment: import.meta.env.PUBLIC_SENTRY_ENVIRONMENT || import.meta.env.MODE,
+  environment,
   release: `blakeoxford.com@${import.meta.env.PUBLIC_GIT_COMMIT || 'dev'}`,
   dataCollection: sentryDataCollection,
   beforeSendSpan: scrubSentrySpan,
-  tracePropagationTargets: ['blakeoxford.com', /^\//],
+  tracePropagationTargets: [...allowedUrls, /^\//],
 
   // Performance Monitoring - optimized for FREE TIER
   integrations: [
@@ -91,6 +95,6 @@ Sentry.init({
     'Turnstile',
   ],
 
-  // Only capture from your domain (prevent abuse)
-  allowUrls: [/https?:\/\/(.+\.)?blakeoxford\.com/],
+  // Restrict reports to production and this app's previews.
+  allowUrls: allowedUrls,
 });

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   applySecurityHeaders,
   canonicalRequestUrl,
@@ -10,6 +11,40 @@ import {
   shouldNoindexQueryResponse,
 } from '../../../functions/index';
 import { CONTENT_SECURITY_POLICY } from '../../../src/config/content-security-policy.ts';
+
+describe('Sentry browser transport policy', () => {
+  it('allows the app ingest origin and replay workers without broader script execution', () => {
+    const response = applySecurityHeaders(
+      new Response('<html></html>', { headers: { 'content-type': 'text/html' } }),
+      'sentry-csp',
+      'blakeoxford.com',
+      new URL('https://blakeoxford.com/')
+    );
+    const policy = response.headers.get('content-security-policy') || '';
+    const connections = policy.match(/connect-src ([^;]+)/)?.[1]?.split(/\s+/) || [];
+    const workers = policy.match(/worker-src ([^;]+)/)?.[1]?.split(/\s+/) || [];
+    const scripts = policy.match(/script-src ([^;]+)/)?.[1]?.split(/\s+/) || [];
+
+    const sentryConnections = connections.filter((source) => {
+      try {
+        const hostname = new URL(source).hostname;
+        return hostname === 'sentry.io' || hostname.endsWith('.sentry.io');
+      } catch {
+        return false;
+      }
+    });
+    expect(sentryConnections).toEqual(['https://o4512297421897728.ingest.us.sentry.io']);
+    expect(workers).toEqual(["'self'", 'blob:']);
+    expect(scripts).not.toContain("'unsafe-eval'");
+  });
+
+  it('keeps the static asset policy identical to the Worker policy', () => {
+    const staticHeaders = readFileSync('_headers', 'utf8');
+    expect(staticHeaders.match(/^\s*Content-Security-Policy:\s*(.+)$/m)?.[1]).toBe(
+      CONTENT_SECURITY_POLICY
+    );
+  });
+});
 
 describe('production scheduled endpoint hardening', () => {
   it('blocks the local scheduled trigger endpoint in production', () => {
