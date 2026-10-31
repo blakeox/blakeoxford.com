@@ -61,7 +61,7 @@ restore it.
    similarity cache and deletes production `ai:response:v4:` KV answers so the
    seven-day app cache does not keep the previous content.
    Workers Builds is the primary deploy path. Its production deploy command is
-   `pnpm deploy:worker --var "GIT_COMMIT:$WORKERS_CI_COMMIT_SHA" --message "commit:$WORKERS_CI_COMMIT_SHA" && pnpm ai-search:refresh`.
+   `pnpm deploy:worker --var "GIT_COMMIT:$WORKERS_CI_COMMIT_SHA" --message "commit:$WORKERS_CI_COMMIT_SHA" && pnpm ai-search:refresh && pnpm sentry:upload:worker`.
    The Builds API token and the manual workflow token
    `blakeoxford-github-actions-seo-2026-v2` both include Account AI Search Write
    and AI Search Run for that refresh. Non-production branches use Worker
@@ -155,6 +155,19 @@ preview, and controlled verification. Blake owns the configuration and error rev
 - **Source maps:** upload against this project and remove uploaded browser maps
   from `dist` before deployment. Confirm a newly triggered error has readable
   original-source frames; an older event is not repaired by a later upload.
+  Worker bundles/maps stay in ignored `.wrangler/sentry`, outside public assets.
+  After deployment and AI Search refresh, `pnpm sentry:upload:worker` validates
+  matching maps, uploads against the raw deployed revision, and waits for Sentry
+  processing. Its credential remains in build environment storage. If this final
+  upload fails, inspect the active Worker before retrying; retry the map upload
+  without redeploying when the exact retained bundle is available.
+  Preview browser reports and trace headers are limited to this Worker under
+  `blakeoxford.workers.dev`. The CSP admits only this project's ingest origin
+  and local blob replay workers; the Worker/static policies have a drift test.
+  A local instrumented build may explicitly set
+  `PUBLIC_SENTRY_ENVIRONMENT=verification` to report loopback JavaScript errors.
+  Production and preview URL filters reject loopback; never set this local
+  verification override in shared Cloudflare build configuration.
 
 Before activation, run the normal build, full audit, unit, browser, preview, and
 protected promotion gates. Verify one uniquely named error through the running
