@@ -162,7 +162,7 @@ export function getFieldShellClasses(className = '') {
 export const chipRecipe = {
   base: 'focus-ring-interactive inline-flex items-center border transition',
   variants: {
-    quiet: 'border-border/60 text-muted-foreground hover:border-accent hover:text-accent',
+    quiet: 'border-border/60 text-muted-foreground hover:border-accent hover:text-accent-emphasis',
     accent: 'border-accent/30 bg-accent-subtle font-medium text-accent-emphasis hover:bg-accent/15',
   },
   sizes: {
@@ -175,7 +175,7 @@ export const chipRecipe = {
     pill: 'rounded-full',
     panel: 'rounded-xl',
   },
-  active: 'border-accent/40 bg-accent-subtle text-accent',
+  active: 'border-accent/40 bg-accent-subtle text-accent-emphasis',
 } as const;
 
 export type ChipVariant = keyof typeof chipRecipe.variants;

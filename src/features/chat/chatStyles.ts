@@ -14,7 +14,7 @@ export const CHAT_DOCK_FRAME =
 
 /** Dock layout on shared overlay glass paint — not a second panel system. */
 export const CHAT_DOCK_PANEL = cn(
-  'ai-chat-panel pointer-events-auto flex max-h-[min(82dvh,40rem)] w-full flex-col overflow-hidden rounded-t-2xl sm:max-h-[min(72dvh,36rem)] sm:w-[min(100vw-3rem,26rem)] sm:rounded-2xl',
+  'ai-chat-panel pointer-events-auto relative flex max-h-[min(82dvh,40rem)] w-full flex-col overflow-hidden rounded-t-2xl sm:max-h-[min(72dvh,36rem)] sm:w-[min(100vw-3rem,26rem)] sm:rounded-2xl',
   OVERLAY_SURFACE_GLASS
 );
 

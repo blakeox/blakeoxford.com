@@ -84,23 +84,24 @@ export function useChatPersistence(options: UseChatPersistenceOptions): UseChatP
     maxRestoreMessages,
   });
 
-  const { openChat, closeChat, focusInput, dispatchState } = useChatLifecycle({
-    isOpen,
-    setIsOpen,
-    setError,
-    setChatState,
-    isListening,
-    toggleListening,
-    inputRef,
-    lastFocusedElementRef,
-  });
+  const { openChat, closeChat, focusInput, focusInputIfUnclaimed, dispatchState } =
+    useChatLifecycle({
+      isOpen,
+      setIsOpen,
+      setError,
+      setChatState,
+      isListening,
+      toggleListening,
+      inputRef,
+      lastFocusedElementRef,
+    });
 
   const { canRetry, lastQueryValue, sourceRefs } = useChatEffects({
     isOpen,
     messages,
     fallbackResults,
     chatState,
-    focusInput,
+    focusInput: focusInputIfUnclaimed,
     dispatchState,
     setShowFallbackSuggestions,
     closeChat,
