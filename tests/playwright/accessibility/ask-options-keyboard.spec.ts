@@ -2,15 +2,21 @@ import AxeBuilder from '@axe-core/playwright';
 import { test, expect } from '../fixtures';
 
 for (const viewport of [
-  { width: 390, height: 844 },
-  { width: 600, height: 320 },
-  { width: 1440, height: 1000 },
+  { width: 390, height: 844, textScale: 1 },
+  { width: 600, height: 320, textScale: 1 },
+  { width: 1440, height: 1000, textScale: 1 },
+  { width: 320, height: 844, textScale: 2 },
 ]) {
   test(`Ask options remain reachable by keyboard at ${viewport.width}px @essential`, async ({
     page,
   }) => {
-    await page.setViewportSize(viewport);
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto('/blog/');
+    if (viewport.textScale !== 1) {
+      await page.evaluate((scale) => {
+        document.documentElement.style.fontSize = `${scale * 100}%`;
+      }, viewport.textScale);
+    }
     await page.getByRole('button', { name: 'Open Ask' }).click();
     const dialog = page.getByRole('dialog', { name: 'Ask', exact: true });
     const toggle = dialog.getByRole('button', { name: 'Assistant options' });

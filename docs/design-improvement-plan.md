@@ -380,4 +380,4 @@ Application code is unchanged in this closure, so the prior 713-unit, 78-browser
 
 ## Production review follow-up
 
-The release review exposed Ask options outside the mobile focus scope. Options now stay inside the dialog, support keyboard navigation and nested dismissal, and scroll within the available panel height. Automatic opening focus preserves a control already in use. Session text and selected chips use stronger semantic foregrounds. Coverage includes portrait, short-height, and desktop layouts, open-menu and session-settings accessibility scans, and delayed-focus regressions.
+The release review exposed Ask options outside the mobile focus scope. Options now stay inside the dialog, support keyboard navigation and nested dismissal, and fit the available panel width and height, including 320px layouts with 200% text. Automatic opening focus preserves a control already in use. Session text and selected chips use stronger semantic foregrounds. Coverage includes portrait, short-height, and desktop layouts, open-menu and session-settings accessibility scans, and delayed-focus regressions.

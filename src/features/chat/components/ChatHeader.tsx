@@ -45,7 +45,6 @@ function MenuButton({
 
 type MenuPosition = {
   top: number;
-  right: number;
   maxHeight: number;
 };
 
@@ -90,11 +89,9 @@ export const ChatHeader = memo(function ChatHeader({
     if (!panel) return;
     const bounds = panel.getBoundingClientRect();
     const topEdge = bounds.top + panel.clientTop;
-    const rightEdge = bounds.right - panel.clientLeft;
     const bottomEdge = bounds.bottom - panel.clientTop;
     setMenuPosition({
       top: rect.bottom - topEdge + 6,
-      right: Math.max(8, rightEdge - rect.right),
       maxHeight: Math.max(0, bottomEdge - rect.bottom - 14),
     });
   }, []);
@@ -176,7 +173,7 @@ export const ChatHeader = memo(function ChatHeader({
         aria-label="Assistant options"
         onKeyDownCapture={handleMenuKeyDown}
         className={OVERLAY_MENU_PANEL}
-        style={{ ...menuPosition, position: 'absolute', overflowY: 'auto' }}
+        style={{ ...menuPosition, overflowY: 'auto' }}
       >
         {voiceSupported ? (
           <MenuButton
