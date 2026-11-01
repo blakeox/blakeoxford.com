@@ -43,10 +43,15 @@ import '@/features/command-center/command-center.css';
   } from '@/utils/scrollLock';
 
   type CommandCenterDetail = { query?: string };
+  const startupWindow = window as Window & {
+    __boSearchLoaderReady?: boolean;
+    __boSearchOpenPending?: boolean;
+  };
 
   let mountedRoot: HTMLElement | null = null;
   let mountPromise: Promise<void> | null = null;
   let pendingOpen: CommandCenterDetail | undefined;
+  let openRequested = false;
   let shellLockHeld = false;
 
   const getRoot = () => document.getElementById('search-overlay');
@@ -73,6 +78,8 @@ import '@/features/command-center/command-center.css';
   };
 
   const replayOpen = () => {
+    if (!openRequested) return;
+    openRequested = false;
     const detail = pendingOpen;
     pendingOpen = undefined;
     window.dispatchEvent(new CustomEvent('command-center:open', { detail }));
@@ -115,9 +122,16 @@ import '@/features/command-center/command-center.css';
   };
 
   const requestMount = (detail?: CommandCenterDetail) => {
+    openRequested = true;
     pendingOpen = detail;
     acquireShellLock();
     void mount();
+  };
+
+  const cancelPendingOpen = () => {
+    openRequested = false;
+    pendingOpen = undefined;
+    releaseShellLock();
   };
 
   const onOpenRequest = (event: Event) => {
@@ -133,6 +147,10 @@ import '@/features/command-center/command-center.css';
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      if (openRequested) cancelPendingOpen();
+      return;
+    }
     const active = document.activeElement as HTMLElement | null;
     if (active && ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName)) return;
     const isSlash = event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey;
@@ -143,7 +161,7 @@ import '@/features/command-center/command-center.css';
   };
 
   window.addEventListener('command-center:open', onOpenRequest);
-  window.addEventListener('command-center:close', releaseShellLock);
+  window.addEventListener('command-center:close', cancelPendingOpen);
   window.addEventListener('command-center:closed', cleanupClosedSearchLock);
   document.addEventListener('click', onClick);
   document.addEventListener('keydown', onKeyDown);
@@ -154,4 +172,10 @@ import '@/features/command-center/command-center.css';
       releaseShellLock();
     }
   });
+
+  startupWindow.__boSearchLoaderReady = true;
+  if (startupWindow.__boSearchOpenPending) {
+    startupWindow.__boSearchOpenPending = false;
+    requestMount();
+  }
 </script>
