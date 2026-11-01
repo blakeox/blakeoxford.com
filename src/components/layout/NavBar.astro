@@ -31,14 +31,14 @@ function isActive(href: string): boolean {
 
   <nav
     id="navbar"
-    class="layout-gutter relative z-10 mx-auto flex h-[var(--nav-height,4.5rem)] w-full max-w-container-2xl items-center justify-between gap-4 text-foreground motion-safe:transition-[height,box-shadow] motion-safe:duration-normal"
+    class="layout-gutter relative z-10 mx-auto flex h-[var(--nav-height,4.5rem)] w-full max-w-container-2xl items-center justify-between gap-4 text-foreground @max-xs:gap-2 motion-safe:transition-[height,box-shadow] motion-safe:duration-normal"
     role="navigation"
     aria-label="Main Navigation"
   >
     <div class="brand-section flex items-center gap-2">
       <a
         href="/"
-        class="brand-link focus-ring-interactive flex items-center gap-3 rounded-full px-2 py-1 text-foreground"
+        class="brand-link focus-ring-interactive flex items-center gap-3 rounded-full px-2 py-1 text-foreground @max-xs:px-0"
         aria-label={logo.name}
       >
         <picture class="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60">
@@ -55,7 +55,7 @@ function isActive(href: string): boolean {
             decoding="async"
           />
         </picture>
-        <span class="brand-text flex flex-col leading-none">
+        <span class="brand-text flex flex-col leading-none @max-xs:hidden">
           <span class="text-sm font-semibold tracking-tight text-foreground">{logo.name}</span>
           <span class="hidden text-xxs font-medium tracking-label text-subtle-foreground uppercase sm:block">
             Systems architect
@@ -64,7 +64,7 @@ function isActive(href: string): boolean {
       </a>
     </div>
 
-    <ul class="desktop-nav hidden gap-1 md:flex md:flex-1 md:justify-center">
+    <ul class="desktop-nav hidden gap-1 @3xl:flex @3xl:flex-1 @3xl:justify-center">
       {navLinks.map((link) => {
         const external = Boolean(link.external);
         const active = !external && isActive(link.href);
@@ -89,18 +89,18 @@ function isActive(href: string): boolean {
       })}
     </ul>
 
-    <div class="action-buttons flex shrink-0 items-center gap-2">
+    <div class="action-buttons flex shrink-0 items-center gap-2 @max-xs:gap-1">
       <button
         id="search-toggle"
         type="button"
-        class="nav-utility-button search-toggle gap-1.5 px-3"
+        class="nav-utility-button search-toggle gap-1.5 px-[12px]"
         aria-label="Open site search (Command K)"
         aria-haspopup="dialog"
         aria-expanded="false"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="size-5 shrink-0"
+          class="size-[20px] shrink-0"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -114,8 +114,8 @@ function isActive(href: string): boolean {
             d="M21 21l-4.8-4.8M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
           ></path>
         </svg>
-        <span class="hidden text-xs font-medium text-muted-foreground lg:inline">Search</span>
-        <kbd class="nav-kbd hidden lg:inline-flex">⌘K</kbd>
+        <span class="hidden text-xs font-medium text-muted-foreground @5xl:inline">Search</span>
+        <kbd class="nav-kbd hidden @5xl:inline-flex">⌘K</kbd>
       </button>
 
       <button
@@ -126,10 +126,10 @@ function isActive(href: string): boolean {
         aria-pressed="false"
         data-theme-preference="system"
       >
-        <span class="pointer-events-none relative block size-6" aria-hidden="true">
+        <span class="pointer-events-none relative block size-[24px]" aria-hidden="true">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="sun-icon absolute inset-0 size-6"
+            class="sun-icon absolute inset-0 size-[24px]"
             data-icon="light"
             viewBox="0 0 24 24"
             fill="none"
@@ -145,7 +145,7 @@ function isActive(href: string): boolean {
           </svg>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="moon-icon absolute inset-0 size-6 translate-x-px"
+            class="moon-icon absolute inset-0 size-[24px] translate-x-px"
             data-icon="dark"
             viewBox="0 0 24 24"
             fill="none"
@@ -161,7 +161,7 @@ function isActive(href: string): boolean {
           </svg>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="system-icon absolute inset-0 size-6"
+            class="system-icon absolute inset-0 size-[24px]"
             data-icon="system"
             viewBox="0 0 24 24"
             fill="none"
@@ -181,7 +181,7 @@ function isActive(href: string): boolean {
       <button
         id="nav-toggle"
         type="button"
-        class="nav-utility-button burger-menu-button md:hidden"
+        class="nav-utility-button burger-menu-button @3xl:hidden"
         aria-label="Open navigation menu"
         aria-controls="nav-mobile-links"
         aria-expanded="false"
@@ -197,13 +197,13 @@ function isActive(href: string): boolean {
 
   <div
     id="nav-mobile-backdrop"
-    class="mobile-menu-backdrop md:hidden"
+    class="mobile-menu-backdrop @3xl:hidden"
     data-state="closed"
     aria-hidden="true"
   ></div>
 
   <!-- No-JS mobile fallback — hidden once ModernNavBar sets data-js-nav on #navbar -->
-  <details class="mobile-nav-fallback border-t border-border/40 bg-surface/98 px-4 py-3 md:hidden">
+  <details class="mobile-nav-fallback border-t border-border/40 bg-surface px-4 py-3 @3xl:hidden">
     <summary class="cursor-pointer text-sm font-semibold text-foreground">Menu</summary>
     <ul class="mt-2 flex flex-col gap-1">
       {navLinks.map((link) => {
@@ -226,7 +226,7 @@ function isActive(href: string): boolean {
 
   <div
     id="nav-mobile-links"
-    class="mobile-menu border-t border-border bg-surface/98 shadow-lg md:hidden"
+    class="mobile-menu border-t border-border bg-surface shadow-lg @3xl:hidden"
     role="dialog"
     aria-modal="true"
     aria-labelledby="nav-mobile-menu-title"
@@ -405,21 +405,25 @@ function isActive(href: string): boolean {
       function (event) {
         if (event.key !== 'Escape') return;
         var shell = document.querySelector('.nav-shell');
-        if (shell && isOpen(shell)) setOpen(false);
+        if (shell && isOpen(shell)) {
+          setOpen(false);
+          var burger = document.getElementById('nav-toggle');
+          if (burger) burger.focus();
+        }
       },
       { signal: signal }
     );
 
-    var mq = window.matchMedia('(min-width: 768px)');
-    if (mq.addEventListener) {
-      mq.addEventListener(
-        'change',
-        function (event) {
-          if (event.matches) setOpen(false);
-        },
-        { signal: signal }
-      );
-    }
+    // Follow the rendered breakpoint, including enlarged default text.
+    var resizeObserver = new ResizeObserver(function () {
+      var current = els();
+      if (current.burger && getComputedStyle(current.burger).display === 'none') setOpen(false);
+    });
+    var initialShell = els().shell;
+    if (initialShell) resizeObserver.observe(initialShell);
+    signal.addEventListener('abort', function () {
+      resizeObserver.disconnect();
+    });
 
     // Re-wire after late DOM swaps (HMR / persist) and close on client navigations
     document.addEventListener(
@@ -435,6 +439,22 @@ function isActive(href: string): boolean {
 
 <script>
   import { initModernNavBar } from '@/scripts/features/ModernNavBar';
+  import { isolateModal } from '@/utils/modalIsolation';
+
+  let releaseIsolation: (() => void) | undefined;
+  const syncIsolation = () => {
+    releaseIsolation?.();
+    releaseIsolation = undefined;
+    const shell = document.querySelector<HTMLElement>('.nav-shell');
+    if (shell?.dataset.menuState === 'open') releaseIsolation = isolateModal(shell);
+  };
+  document.addEventListener('bo:mobile-menu-state', syncIsolation);
+  document.addEventListener('astro:before-swap', () => {
+    releaseIsolation?.();
+    releaseIsolation = undefined;
+  });
+  document.addEventListener('astro:page-load', syncIsolation);
+  syncIsolation();
 
   initModernNavBar();
 </script>

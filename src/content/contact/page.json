@@ -1,25 +1,25 @@
 {
   "meta": {
-    "title": "Contact Blake Oxford | Discuss your bottleneck",
-    "description": "Discuss your bottleneck with Blake Oxford. Send a project brief about migrations, automation, analytics, or AI-enabled workflows."
+    "title": "Contact Blake Oxford | AI Adoption & Enterprise Scale",
+    "description": "Discuss how to navigate AI adoption, connect a useful pilot to existing systems, or scale AI across the enterprise."
   },
   "hero": {
     "kicker": "Contact",
-    "title": "Bring the hardest bottleneck",
-    "description": "Migration, automation, reporting, or AI-enabled workflow—start with the constraint costing you the most. A short note is enough to decide if a focused working session is the right next move.",
+    "title": "Turn your AI bottleneck into a plan",
+    "description": "Whether you are deciding where AI fits or scaling it across the enterprise, start with the workflow, system, or adoption challenge in front of your team.",
     "scenarios": [
-      "Cross-system change that needs sequencing and adoption",
-      "Automation that has to hold under real operating load",
-      "Reporting or controls executives need to trust"
+      "Choosing practical AI use cases and evaluating the options",
+      "Connecting AI pilots to enterprise systems and workflows",
+      "Scaling adoption with governance and clear operating ownership"
     ],
     "sidebar": {
       "heading": "What to include",
       "items": [
-        "The problem creating drag, risk, or avoidable manual work",
-        "The systems, teams, or approvals involved",
-        "The outcome you need and the constraint that matters most"
+        "Where you are today: exploring, piloting, or scaling AI",
+        "The workflow, systems, data, and teams involved",
+        "The outcome you need and the constraint holding it back"
       ],
-      "note": "Typical next step: a 20-minute bottleneck review to map dependencies, risk, and a contained first move."
+      "note": "The next step is a focused conversation about fit, dependencies, and a contained way forward."
     }
   },
   "channels": {

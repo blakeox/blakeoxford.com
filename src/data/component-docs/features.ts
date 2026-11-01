@@ -6,11 +6,33 @@ import type { ComponentDoc } from './types';
 
 export const featureDocs: ComponentDoc[] = [
   {
+    name: 'AboutPhotoStory',
+    category: 'Features',
+    subcategory: 'About',
+    description:
+      'A static portrait and two captioned photographs establishing work and travel context without automatic motion.',
+    filePath: 'src/components/features/about/AboutPhotoStory.astro',
+    props: [],
+    examples: [{ title: 'About photographs', code: '<AboutPhotoStory />' }],
+    accessibility: [
+      'Meaningful alt text and visible figure captions',
+      'No automatic motion or duplicated images',
+    ],
+    performance: [
+      'Three responsive astro:assets images with reserved dimensions',
+      'Only the lead portrait is eager-loaded',
+    ],
+    tags: ['photos', 'about', 'editorial'],
+    visualTier: 'quiet',
+    tokenDependencies: ['--color-subtle-foreground', 'rounded-xl'],
+  },
+
+  {
     name: 'ProjectCard',
     category: 'Features',
     subcategory: 'Projects',
     description:
-      'Cardless project teaser: proof plaque or photo, title, and a single case-study action.',
+      'Bordered project summary: proof figure or photo, title, and a single case-study action; adapts to the available container width.',
     filePath: 'src/components/features/projects/ProjectCard.astro',
     props: [
       {
@@ -35,7 +57,7 @@ export const featureDocs: ComponentDoc[] = [
     ],
     tags: ['project', 'card', 'listing', 'summary'],
     visualTier: 'elevated',
-    tokenDependencies: ['--color-surface', '--color-border', 'shadow-lg', 'rounded-2xl'],
+    tokenDependencies: ['--color-surface', '--color-border', 'rounded-xl'],
   },
   {
     name: 'SearchOverlay',

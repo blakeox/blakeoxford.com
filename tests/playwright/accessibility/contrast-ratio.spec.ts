@@ -29,28 +29,10 @@ test.describe('@accessibility-contrast Contrast Ratios', () => {
       test(`contrast ratios acceptable ${route} (${theme} mode)`, async ({ page }) => {
         await page.goto(route, { waitUntil: 'domcontentloaded' });
         await page.waitForLoadState('networkidle');
-        await page.waitForFunction(() => (window as { __navHydrated?: boolean }).__navHydrated === true).catch(() => undefined);
+        await page
+          .waitForFunction(() => (window as { __navHydrated?: boolean }).__navHydrated === true)
+          .catch(() => undefined);
         await applyThemeOnPage(page, theme);
-
-        if (route.includes('combating-legal-ai-hallucinations')) {
-          await page.evaluate(() => {
-            document
-              .querySelectorAll('.bg-red-50, .bg-yellow-50, [role="alert"]')
-              .forEach((el) => {
-                (el as HTMLElement).setAttribute('data-a11y-allow-color-contrast', '');
-              });
-          });
-        }
-
-        // Blog index cards use bg-surface/95; Linux headless color-mix resolution can
-        // mis-report h2 contrast against layered surfaces (fg/bg both ~rgb(0,0,0)).
-        if (route === '/blog/' && theme === 'dark') {
-          await page.evaluate(() => {
-            document.querySelectorAll('article.group').forEach((el) => {
-              (el as HTMLElement).setAttribute('data-a11y-allow-color-contrast', '');
-            });
-          });
-        }
 
         if (route === '/') {
           await assertHeroCtaContrast(page, route, theme);
@@ -60,15 +42,17 @@ test.describe('@accessibility-contrast Contrast Ratios', () => {
 
         if (borderline.length) {
           console.log(
-            `[contrast][borderline] theme=${theme} route=${route} count=${borderline.length} sampled=${sampled}`,
+            `[contrast][borderline] theme=${theme} route=${route} count=${borderline.length} sampled=${sampled}`
           );
           for (const b of borderline) {
             console.log(
-              `  near-threshold sel=${b.sel} ratio=${b.ratio.toFixed(2)} min=${b.min} large=${b.large} classes="${b.classes}"`,
+              `  near-threshold sel=${b.sel} ratio=${b.ratio.toFixed(2)} min=${b.min} large=${b.large} classes="${b.classes}"`
             );
           }
         } else {
-          console.log(`[contrast] theme=${theme} route=${route} all-passing-with-buffer sampled=${sampled}`);
+          console.log(
+            `[contrast] theme=${theme} route=${route} all-passing-with-buffer sampled=${sampled}`
+          );
         }
 
         if (process.env.CONTRAST_JSON) {

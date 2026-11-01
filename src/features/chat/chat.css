@@ -45,6 +45,8 @@
   }
 }
 
+/* Keep the modal navigation as the only active mobile layer. Applies before and after hydration. */
+body:has(.nav-shell[data-menu-state='open']) [data-ai-launcher],
 body[data-hide-ask-launcher='true'] [data-ai-launcher],
 [data-ai-launcher][data-occluded='true'] {
   display: none !important;

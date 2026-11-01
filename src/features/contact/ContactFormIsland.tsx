@@ -11,6 +11,7 @@ import {
 } from './form/FormHelpers';
 import type { FormValidationConfig } from './form/FormHelpers';
 import { getContactFormService } from '@/services/ContactFormService';
+import { CONTACT_ERROR_COPY } from '@/content/contact/contactErrors';
 import { ErrorCodes, isAppError, getUserMessage } from '@/utils/errors';
 import { conversionEvents, getAcquisitionSource } from '@/lib/analytics';
 
@@ -83,7 +84,10 @@ export function contactSubmissionFailure(error: unknown): {
     return { reason: 'turnstile', message: getUserMessage(error) };
   }
 
-  return { reason: 'network', message: getUserMessage(error) };
+  return {
+    reason: 'network',
+    message: status === 429 ? CONTACT_ERROR_COPY.rate : SEND_FAILURE_MESSAGE,
+  };
 }
 
 type CleanupFn = () => void;
@@ -339,6 +343,7 @@ function setupContactForm(): CleanupFn | void {
           acquisition_source: getAcquisitionSource(),
         });
         form.reset();
+        form.hidden = true;
         updateMessageCount();
         statusElement?.focus();
       }

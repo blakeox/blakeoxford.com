@@ -21,10 +21,21 @@ function smokeTolerance(path: string, fallback = 0.01) {
 
 for (const r of routes) {
   test(`visual smoke: ${r.name} @visual-smoke`, async ({ page }) => {
+    if (r.path === '/contact/') {
+      await page.addInitScript(() => {
+        window.__AUDIT__ = true;
+      });
+    }
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(r.path, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('main');
+    if (r.path === '/contact/') {
+      await expect(page.locator('#turnstile-shell')).toHaveAttribute(
+        'data-turnstile-state',
+        'audit'
+      );
+    }
     await page.evaluate(async () => {
       try {
         if (document.fonts && 'ready' in document.fonts) {
@@ -45,7 +56,6 @@ for (const r of routes) {
       animations: 'disabled',
       maxDiffPixelRatio: smokeTolerance(r.path, r.name === 'contact' ? 0.015 : 0.01),
       mask: [
-        page.locator('.photo-carousel'),
         page.locator('[name="cf-turnstile-response"]'),
         page.locator('#turnstile-container iframe'),
         page.locator('time'),

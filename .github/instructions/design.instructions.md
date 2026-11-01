@@ -128,7 +128,7 @@ Alternate section weight on each page so consecutive editorial blocks don’t fe
 
 ## 4. Responsive design
 
-- Page layouts: viewport breakpoints (`sm` 640 → `2xl` 1440 in this project’s container screens)
+- Page layouts: viewport breakpoints (`sm` 640 → `2xl` 1536, Tailwind defaults; the 80rem container token is a separate width)
 - Reusable cards/widgets: prefer `@container` + `@sm:` / `@md:` where already used
 - Mobile-first; touch targets ≥44×44px
 

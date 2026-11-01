@@ -69,7 +69,7 @@ const CATALOG_ORDER = [
   'AboutEducationSkillsSection',
   'AboutProofSection',
   'ContactChannels',
-  'PhotoCarousel',
+  'AboutPhotoStory',
   'OptimizedImage',
   'Nav enhancement scripts',
   'MessageContent',

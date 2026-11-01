@@ -7,7 +7,9 @@
 
 .home-dual-stage {
   display: flex;
-  min-height: calc(100svh - var(--nav-height));
+  min-height: min(42rem, calc(100svh - var(--nav-height)));
+  max-width: var(--layout-max-2xl);
+  margin-inline: auto;
   flex-direction: column;
 }
 
@@ -16,7 +18,7 @@
   flex: 0 0 auto;
   flex-direction: column;
   justify-content: center;
-  padding-block: 1.25rem 1.5rem;
+  padding-block: 2.5rem;
 }
 
 .home-dual-copy {

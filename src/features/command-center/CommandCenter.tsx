@@ -17,6 +17,7 @@ import {
   CommandRecentList,
 } from './components/CommandEmpty';
 import { CommandGroupSection, CommandSkeletonList } from './components/CommandGroup';
+import { CommandResultActions } from './components/CommandResultActions';
 import { CommandResultRow } from './components/CommandResultRow';
 import { CommandTitleSuggestions } from './components/CommandTitleSuggestions';
 import { useCommandCenter } from './hooks/useCommandCenter';
@@ -71,6 +72,7 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
 
   if (typeof document === 'undefined') return null;
 
+  const activeItem = flatItems[activeIndex];
   let resultIndex = -1;
 
   const overlay = (
@@ -257,12 +259,6 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
                         isActive={index === activeIndex}
                         onSelect={(selected) => navigateTo(selected)}
                         onHover={setActiveIndex}
-                        onAsk={askAboutItemWithContext}
-                        onCopyLink={(selected) => {
-                          void copyActiveLink(selected);
-                        }}
-                        onTagClick={handleTagClick}
-                        linkCopied={copiedHref === item.href}
                       />
                     );
                   })}
@@ -273,6 +269,17 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
         ) : null}
       </div>
 
+      {hasResults && activeItem ? (
+        <CommandResultActions
+          item={activeItem}
+          copied={copiedHref === activeItem.href}
+          onCopy={(item) => {
+            void copyActiveLink(item);
+          }}
+          onAsk={askAboutItemWithContext}
+          onTagClick={handleTagClick}
+        />
+      ) : null}
       <CommandFooter searchSource={searchSource} showCopyHint={hasResults} />
     </OverlayShell>
   );

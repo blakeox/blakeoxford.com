@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { cn } from '@/utils/cn';
+import { isAskLauncherOccluded } from './launcherOcclusion';
 import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED } from './chatStyles';
 
 /**
@@ -26,36 +27,7 @@ export default function ChatLauncherIsland() {
 
     window.addEventListener('ai-chat:state', onStateEvent);
 
-    const onContactPage = () =>
-      document.body.dataset.hideAskLauncher === 'true' ||
-      /\/contact\/?$/.test(window.location.pathname);
-
-    const fabCollisionRect = () => {
-      const compact = window.matchMedia('(min-width: 640px)').matches;
-      const inset = compact ? 24 : 16;
-      const size = compact ? 56 : 48;
-      return {
-        left: window.innerWidth - inset - size,
-        top: window.innerHeight - inset - size,
-        right: window.innerWidth - inset,
-        bottom: window.innerHeight - inset,
-      };
-    };
-
-    const overlapsFab = (target: HTMLElement) => {
-      const a = target.getBoundingClientRect();
-      const b = fabCollisionRect();
-      return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
-    };
-
-    const syncOcclusion = () => {
-      if (onContactPage()) {
-        setIsOccluded(true);
-        return;
-      }
-      const target = document.querySelector<HTMLElement>('[data-chat-avoid-launcher]');
-      setIsOccluded(Boolean(target && overlapsFab(target)));
-    };
+    const syncOcclusion = () => setIsOccluded(isAskLauncherOccluded());
 
     syncOcclusion();
     window.addEventListener('scroll', syncOcclusion, { passive: true });

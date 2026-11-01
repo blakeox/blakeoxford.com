@@ -1,11 +1,11 @@
 {
   "meta": {
-    "title": "Blake Oxford - Systems Architect",
-    "description": "Systems architect and workflow strategist who designs scalable systems, streamlines operations, and leads high-stakes transformations with lasting results."
+    "title": "Blake Oxford | AI Adoption & Enterprise Scale",
+    "description": "Helping companies navigate AI and scale it across the enterprise, grounded in systems architecture, workflow design, and operational adoption."
   },
   "hero": {
     "kicker": "Systems architect",
-    "defaultTagline": "Builds systems teams keep running.",
+    "defaultTagline": "Helping companies navigate AI—and scale it across the enterprise.",
     "primaryCta": {
       "href": "/contact/",
       "label": "Discuss your bottleneck"
@@ -23,30 +23,30 @@
   },
   "resumeHighlights": {
     "kicker": "Outcomes",
-    "title": "What held after launch",
-    "description": "Each line is the first result on that case study."
+    "title": "The operating foundations behind enterprise AI",
+    "description": "Connected systems, reliable data, and workflows teams can run. These studies show the foundations I bring to AI adoption."
   },
   "recentProjects": {
     "kicker": "Projects",
-    "title": "Work that shipped",
-    "description": "Case studies with the problem, what shipped, and the proof.",
+    "title": "Experience that connects strategy to operation",
+    "description": "Systems, automation, and decision work that informs how I help companies put AI into practice.",
     "cta": {
       "href": "/projects/",
       "label": "All selected work"
     }
   },
   "latestPosts": {
-    "title": "Notes from the field",
-    "description": "Essays on automation, analytics, governance, and operational improvement.",
-    "emptyMessage": "Blog posts are on the way-check back soon for new case studies and playbooks.",
+    "title": "Making sense of AI in practice",
+    "description": "Practical perspectives on AI choices, trust, adoption, and the systems work it takes to scale.",
+    "emptyMessage": "Notes on AI adoption and enterprise systems are on the way.",
     "cta": {
       "href": "/blog/",
       "label": "All writing"
     }
   },
   "cta": {
-    "title": "Bring the hardest bottleneck.",
-    "description": "Migration, automation, reporting, or AI-enabled workflow — bring the constraint that’s costing you the most.",
+    "title": "Find your next practical step with AI.",
+    "description": "Choosing where to begin, connecting a useful pilot, or scaling across teams—start with the constraint your business needs to resolve.",
     "button": {
       "href": "/contact/",
       "label": "Discuss your bottleneck"

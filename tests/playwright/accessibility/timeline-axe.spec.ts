@@ -11,18 +11,16 @@ test.describe('@essential @timeline @accessibility About Timeline - Axe scan', (
 
     // Ensure the timeline section and heading are present
     await expect(page.locator('section#about-timeline')).toBeVisible();
-    await expect(
-      page.getByRole('heading', { name: /where the judgment was forged/i })
-    ).toBeVisible();
+    await expect(page.locator('#about-timeline-heading')).toBeVisible();
 
     // Scope Axe to the timeline section to keep this fast and stable
     const results = await new AxeBuilder({ page })
       .include('section#about-timeline')
+      .include('section#about-background')
       .withTags(['wcag2a', 'wcag2aa'])
       .analyze();
 
-    // Optionally filter out known dynamic color tokens if needed
-    const violations = results.violations.filter(v => !['color-contrast'].includes(v.id));
+    const violations = results.violations;
 
     expect.soft(violations).toEqual([]);
   });
@@ -35,10 +33,11 @@ test.describe('@essential @timeline @accessibility About Timeline - Axe scan', (
 
     const results = await new AxeBuilder({ page })
       .include('section#about-timeline')
+      .include('section#about-background')
       .withTags(['wcag2a', 'wcag2aa'])
       .analyze();
 
-    const violations = results.violations.filter(v => !['color-contrast'].includes(v.id));
+    const violations = results.violations;
 
     expect.soft(violations).toEqual([]);
   });

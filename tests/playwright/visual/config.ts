@@ -8,7 +8,7 @@ export const VISUAL_ROUTE_CONFIG: Record<string, RouteCfg> = {
   '/': { diff: { maxDiffPixelRatio: 0.008 } },
   '/projects/': { diff: { maxDiffPixelRatio: 0.008 } },
   '/blog/': { diff: { maxDiffPixelRatio: 0.012 } },
-  '/about/': { mask: ['.photo-carousel'], diff: { maxDiffPixelRatio: 0.015 } },
+  '/about/': { mask: [], diff: { maxDiffPixelRatio: 0.015 } },
   '/contact/': {
     mask: ['[name="cf-turnstile-response"]', '#turnstile-container iframe'],
     diff: { maxDiffPixelRatio: 0.015 },
@@ -23,4 +23,7 @@ export const MAX_ALLOWED_TOLERANCE = 0.03; // do not exceed 3%
 export const VISUAL_SMOKE_CI_TOLERANCE = 0.07;
 
 /** Nav component baselines: text-heavy; allow Linux/macOS font raster variance. */
-export const NAV_COMPONENT_DIFF: DiffCfg = { maxDiffPixelRatio: MAX_ALLOWED_TOLERANCE, threshold: 0.02 };
+export const NAV_COMPONENT_DIFF: DiffCfg = {
+  maxDiffPixelRatio: MAX_ALLOWED_TOLERANCE,
+  threshold: 0.02,
+};

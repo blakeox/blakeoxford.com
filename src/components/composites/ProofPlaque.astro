@@ -38,9 +38,10 @@ const linkAttrs = href ? { href, 'aria-label': label ?? caption } : {};
     flush
       ? 'h-full w-full border-t border-border/40 bg-surface lg:border-t-0 lg:border-l'
       : size === 'card'
-        ? 'bg-transparent'
+        ? 'border-b border-border bg-transparent'
         : 'bg-surface-elevated ring-1 ring-border/50',
-    size === 'card' && 'min-h-44 gap-2 p-6 sm:min-h-48',
+    size === 'card' &&
+      'min-h-28 gap-2 pb-5 @2xl:justify-center @2xl:border-r @2xl:border-b-0 @2xl:pr-8 @2xl:pb-0',
     size === 'feature' && 'min-h-72 gap-4 p-8 sm:min-h-80 sm:p-10',
     size === 'hero' &&
       (flush
@@ -56,7 +57,7 @@ const linkAttrs = href ? { href, 'aria-label': label ?? caption } : {};
       class:list={[
         'font-heading font-semibold tracking-tight text-pretty text-foreground',
         size === 'card' && 'text-2xl leading-none sm:text-3xl',
-        size !== 'card' && headingSizeClass('section'),
+        size !== 'card' && headingSizeClass(size === 'hero' ? 'hero' : 'section'),
       ]}
     >
       {figure}

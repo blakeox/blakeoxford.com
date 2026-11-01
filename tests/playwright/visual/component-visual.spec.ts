@@ -8,28 +8,10 @@ import {
 import { captureNavBaselineScreenshot, setupNavVisual } from './_navVisualSetup';
 import { waitForViewportSettle } from '../utils/deterministic-waits';
 
-async function normalizeCommandCenterOverlay(page: Page) {
-  const overlay = page.locator('#search-overlay').first();
-  await overlay.evaluate((el) => {
-    el.setAttribute('data-state', 'open');
-    el.classList.add('active');
-    el.removeAttribute('inert');
-    (el as HTMLElement).style.visibility = 'visible';
-    (el as HTMLElement).style.opacity = '1';
-    (el as HTMLElement).style.pointerEvents = 'auto';
-    (el as HTMLElement).style.display = 'block';
-  });
-  await page.evaluate(() => {
-    const overlay = document.querySelector('#search-overlay');
-    if (overlay && overlay.contains(document.activeElement)) {
-      (document.activeElement as HTMLElement).blur();
-    }
-  });
-  return overlay;
-}
-
 async function openCommandCenter(page: Page) {
-  const toggle = page.locator('#search-toggle, [data-test="open-search"], button:has-text("Search")').first();
+  const toggle = page
+    .locator('#search-toggle, [data-test="open-search"], button:has-text("Search")')
+    .first();
   if (await toggle.isVisible()) {
     await toggle.click();
   } else {
@@ -38,8 +20,9 @@ async function openCommandCenter(page: Page) {
 
   const overlay = page.locator('#search-overlay').first();
   await overlay.waitFor({ state: 'attached', timeout: 10000 });
-  await normalizeCommandCenterOverlay(page);
+  await expect(overlay).toHaveAttribute('data-state', 'open');
   await expect(overlay).toBeVisible();
+  await expect(overlay.getByRole('dialog', { name: 'Search', exact: true })).toBeVisible();
 }
 
 async function setupCommandCenter(page: Page, setup: CommandCenterVisualSetup) {
@@ -49,11 +32,17 @@ async function setupCommandCenter(page: Page, setup: CommandCenterVisualSetup) {
 
   if (setup === 'results') {
     await input.fill('fabric');
-    await page.locator('[data-search-result]').first().waitFor({ state: 'visible', timeout: 15000 });
+    await page
+      .locator('[data-search-result]')
+      .first()
+      .waitFor({ state: 'visible', timeout: 15000 });
     await waitForViewportSettle(page, 300);
   } else if (setup === 'empty') {
     await input.fill('zzzzno-results-visual-test-xyz');
-    await page.getByText(/No results for/i).first().waitFor({ state: 'visible', timeout: 15000 });
+    await page
+      .getByText(/No results for/i)
+      .first()
+      .waitFor({ state: 'visible', timeout: 15000 });
     await waitForViewportSettle(page, 300);
   } else {
     await waitForViewportSettle(page, 300);

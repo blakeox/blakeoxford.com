@@ -3,13 +3,14 @@
  * Single source of truth for URLs, metadata, and common values
  */
 
+import { siteConfig } from './data';
+
 // ─── Site Configuration ──────────────────────────────────────────
 export const SITE_URL = 'https://blakeoxford.com';
 export const SITE_NAME = 'Blake Oxford';
 export const SITE_BRAND_NAME = 'Blake Oxford Portfolio';
-export const SITE_TITLE = 'Blake Oxford - Enterprise Systems Architect & Technology Leader';
-export const SITE_DESCRIPTION =
-  'Innovative technology leader specializing in enterprise systems architecture, healthcare IT, cloud infrastructure, and business intelligence solutions.';
+export const SITE_TITLE = 'Blake Oxford - AI Adoption & Enterprise Systems';
+export const SITE_DESCRIPTION = siteConfig.description;
 
 // ─── Contact Information ─────────────────────────────────────────
 export const CONTACT_EMAIL = 'blakepoxford@outlook.com';

@@ -63,11 +63,13 @@ export const componentVisualBaselines: Record<ComponentVisualBaselineKey, Compon
       key: 'navbarMobileOpen',
       route: '/',
       selector: 'header .nav-shell',
-      description: 'Mobile navigation with drawer and backdrop open',
+      description: 'Mobile navigation drawer and backdrop across the full viewport',
       snapshotFile: 'navbarMobileOpen.png',
       tags: ['@visual-essential', '@visual-components'],
       viewport: { width: 390, height: 844 },
       openMobileMenu: true,
+      // The drawer is absolutely positioned outside the nav-shell box.
+      screenshotClip: { x: 0, y: 0, width: 390, height: 844 },
     },
     navbarScrolled: {
       key: 'navbarScrolled',
@@ -103,7 +105,7 @@ export const componentVisualBaselines: Record<ComponentVisualBaselineKey, Compon
       key: 'footer',
       route: '/',
       selector: 'footer',
-      description: 'Site footer with links and social icons',
+      description: 'Site footer with identity, page navigation, and elsewhere links',
       snapshotFile: 'footer.png',
       tags: ['@visual-essential', '@visual-components'],
     },
@@ -136,7 +138,7 @@ export const componentVisualBaselines: Record<ComponentVisualBaselineKey, Compon
     },
     chatDock: {
       key: 'chatDock',
-      route: '/',
+      route: '/blog/',
       selector: '[data-ai-chat-panel]',
       description: 'Corner Ask companion dock (open, empty)',
       snapshotFile: 'chatDock.png',

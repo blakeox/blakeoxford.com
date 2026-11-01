@@ -40,6 +40,7 @@ import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED } from '@/features/chat/chatSt
 </div>
 
 <script>
+  import { isAskLauncherOccluded } from '@/features/chat/launcherOcclusion';
   import { ensureReactRefreshPreamble } from '@/lib/dev/ensureReactRefreshPreamble';
 
   let mountedRoot: HTMLElement | null = null;
@@ -116,34 +117,10 @@ import { CHAT_LAUNCHER_BASE, CHAT_LAUNCHER_CLOSED } from '@/features/chat/chatSt
     }
   });
 
-  const fabCollision = () => {
-    const compact = window.matchMedia('(min-width: 640px)').matches;
-    const inset = compact ? 24 : 16;
-    const size = compact ? 56 : 48;
-    return {
-      left: window.innerWidth - inset - size,
-      top: window.innerHeight - inset - size,
-      right: window.innerWidth - inset,
-      bottom: window.innerHeight - inset,
-    };
-  };
-
   const syncAskOcclusion = () => {
     const launcher = document.querySelector<HTMLElement>('[data-ai-launcher]');
     if (!launcher) return;
-    if (document.body.dataset.hideAskLauncher === 'true') {
-      launcher.dataset.occluded = 'true';
-      return;
-    }
-    const target = document.querySelector<HTMLElement>('[data-chat-avoid-launcher]');
-    if (!target) {
-      delete launcher.dataset.occluded;
-      return;
-    }
-    const a = target.getBoundingClientRect();
-    const b = fabCollision();
-    const overlaps = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
-    if (overlaps) launcher.dataset.occluded = 'true';
+    if (isAskLauncherOccluded()) launcher.dataset.occluded = 'true';
     else delete launcher.dataset.occluded;
   };
 

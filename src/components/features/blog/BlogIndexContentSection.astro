@@ -28,12 +28,11 @@ const { posts } = Astro.props as Props;
     )}
     <Stack space="xl">
       {posts.length > 0 ? (
-        posts.map((post, index) => (
-          <BlogPostRow post={post} align={index % 2 === 0 ? 'left' : 'right'} />
-        ))
+        posts.map((post) => <BlogPostRow post={post} />)
       ) : (
         <BaseCard variant="elevated" hover="none" rounded="2xl" padding="lg" class="text-center">
           <h2
+            id="blog-posts-heading"
             class:list={[
               'mb-4 font-heading font-semibold text-foreground',
               headingSizeClass('title'),

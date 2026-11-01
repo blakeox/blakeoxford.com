@@ -28,6 +28,7 @@ const rows = items.map((item) => ({
   bullets: item.achievements,
   href: item.studyHref,
   linkLabel: item.studyHref ? 'Read the study' : undefined,
+  linkAccessibleLabel: item.studyHref ? `Read the study: ${item.title}` : undefined,
 }));
 ---
 

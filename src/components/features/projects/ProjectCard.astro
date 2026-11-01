@@ -57,19 +57,20 @@ const valueSummary =
 
 <article
   class:list={[
-    'group @container relative flex h-full flex-col',
+    'group @container relative flex h-full flex-col rounded-xl border border-border bg-surface p-5 transition-colors hover:border-accent/50 focus-within:border-accent sm:p-6',
     featured && 'project-card-featured',
   ]}
 >
   <a
     href={`/projects/${slug}/`}
-    class="relative flex h-full flex-col gap-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    class="relative flex h-full flex-col gap-4 @2xl:grid @2xl:grid-cols-2 @2xl:gap-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     data-cta-id="study_cta"
+    data-chat-avoid-launcher
   >
     {image ? (
       <figure
         class:list={[
-          'relative overflow-hidden bg-surface-subtle',
+          'relative overflow-hidden rounded-lg bg-surface-subtle',
           compact
             ? featured
               ? 'aspect-[16/9] sm:aspect-[16/10] lg:aspect-[16/9]'

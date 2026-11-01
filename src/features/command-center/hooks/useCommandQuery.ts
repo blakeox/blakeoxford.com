@@ -69,7 +69,9 @@ export function useCommandQuery(isOpen: boolean) {
         // Idle browse: featured + posts. CommandCenter drops posts when Recent searches exist.
         setGroups(buildBrowseGroups(featured, recent, []));
       } else {
-        const enriched = enrichCommandItems(items, searchQuery);
+        const enriched = enrichCommandItems(items, searchQuery, {
+          includeHubMatches: searchCategory === 'pages',
+        });
         setGroups(groupCommandItems(enriched, searchCategory));
       }
 
