@@ -273,6 +273,7 @@ Designer / reviewer action: If sentinel counts rise or badge slope trends upward
 ## Interaction & Motion
 
 - Respect `prefers-reduced-motion` (no essential information conveyed only via motion)
+- Server-rendered controls must retain activation while their module scripts load. Let Escape cancel a pending overlay request, and preserve normal focus return after it opens.
 - Use semantic duration tokens: `duration-instant` (100ms), `duration-normal` (200ms; `--duration-fast` is the backing token), `duration-moderate` (300ms), `duration-slow` (500ms)
 - Use semantic easing: `ease-standard`, `ease-emphasized`, `ease-decelerate`
 - Prefer transform/opacity for performance; avoid layout-affecting animations
