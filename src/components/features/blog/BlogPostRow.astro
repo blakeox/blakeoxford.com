@@ -38,14 +38,14 @@ const tags = Array.isArray(data.tags) ? data.tags.slice(0, 3) : [];
         </time>
       )}
 
-      <h2
+      <h3
         class:list={[
           'font-heading font-semibold text-pretty text-foreground transition-colors duration-moderate group-hover:text-accent-emphasis',
           headingSizeClass('title'),
         ]}
       >
         {data.title}
-      </h2>
+      </h3>
 
       {data.description && (
         <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:3]">
