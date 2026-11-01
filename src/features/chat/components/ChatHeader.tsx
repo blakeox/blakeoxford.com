@@ -1,8 +1,16 @@
 /**
  * ChatHeader — Ask companion chrome with page context + New chat.
  */
-import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
-import { createPortal } from 'react-dom';
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
+} from 'react';
 import {
   OVERLAY_ICON_BUTTON,
   OVERLAY_MENU_ITEM,
@@ -38,9 +46,11 @@ function MenuButton({
 type MenuPosition = {
   top: number;
   right: number;
+  maxHeight: number;
 };
 
 export const ChatHeader = memo(function ChatHeader({
+  isOpen,
   pageLabel = 'Site assistant',
   wsConnected,
   activeUsers,
@@ -60,22 +70,38 @@ export const ChatHeader = memo(function ChatHeader({
 }: ChatHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
+  const menuId = useId();
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-  const ignoreNextOutsideClickRef = useRef(false);
+  const closeMenu = useCallback(() => {
+    // Exclude closing commands before the outer dialog handles the same Tab.
+    menuRef.current?.setAttribute('inert', '');
+    setMenuOpen(false);
+    toggleRef.current?.focus();
+  }, []);
 
-  const syncMenuPosition = () => {
+  const syncMenuPosition = useCallback(() => {
     const toggle = toggleRef.current;
     if (!toggle) return;
     const rect = toggle.getBoundingClientRect();
+    // Keep menu semantics and focus inside the dialog, accounting for the
+    // glass panel's containing block and the space available below the trigger.
+    const panel = toggle.closest<HTMLElement>('[data-ai-chat-panel]');
+    if (!panel) return;
+    const bounds = panel.getBoundingClientRect();
+    const topEdge = bounds.top + panel.clientTop;
+    const rightEdge = bounds.right - panel.clientLeft;
+    const bottomEdge = bounds.bottom - panel.clientTop;
     setMenuPosition({
-      top: rect.bottom + 6,
-      right: Math.max(8, window.innerWidth - rect.right),
+      top: rect.bottom - topEdge + 6,
+      right: Math.max(8, rightEdge - rect.right),
+      maxHeight: Math.max(0, bottomEdge - rect.bottom - 14),
     });
-  };
+  }, []);
 
   useEffect(() => {
-    if (!menuOpen) {
+    if (!isOpen || !menuOpen) {
+      setMenuOpen(false);
       setMenuPosition(null);
       return;
     }
@@ -84,81 +110,110 @@ export const ChatHeader = memo(function ChatHeader({
     const onResize = () => syncMenuPosition();
     window.addEventListener('resize', onResize);
     window.addEventListener('scroll', onResize, true);
+    const panel = toggleRef.current?.closest('[data-ai-chat-panel]');
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize);
+    if (panel) observer?.observe(panel);
 
     const onEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false);
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopPropagation();
+      closeMenu();
     };
     const onDocClick = (event: MouseEvent) => {
-      if (ignoreNextOutsideClickRef.current) {
-        ignoreNextOutsideClickRef.current = false;
-        return;
-      }
       const target = event.target as Node;
       if (!menuRef.current?.contains(target) && !toggleRef.current?.contains(target)) {
         setMenuOpen(false);
       }
     };
 
-    document.addEventListener('keydown', onEscape);
+    document.addEventListener('keydown', onEscape, true);
     document.addEventListener('click', onDocClick, true);
 
     return () => {
+      observer?.disconnect();
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', onResize, true);
-      document.removeEventListener('keydown', onEscape);
+      document.removeEventListener('keydown', onEscape, true);
       document.removeEventListener('click', onDocClick, true);
     };
-  }, [menuOpen]);
+  }, [isOpen, menuOpen, syncMenuPosition, closeMenu]);
 
-  const closeMenu = () => setMenuOpen(false);
+  const menuReady = isOpen && menuOpen && menuPosition !== null;
+  useEffect(() => {
+    if (menuReady)
+      menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]:not(:disabled)')?.focus();
+  }, [menuReady]);
+
+  const handleMenuKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Tab') {
+      // Resume the dialog's Tab sequence from the disclosure button.
+      closeMenu();
+      return;
+    }
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const items = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>('[role="menuitem"]:not(:disabled)')
+    );
+    const current = items.indexOf(document.activeElement as HTMLElement);
+    const next =
+      event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? items.length - 1
+          : (current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+    items[next]?.focus();
+  };
 
   const menuPanel =
-    menuOpen && menuPosition && typeof document !== 'undefined'
-      ? createPortal(
-          <div
-            ref={menuRef}
-            role="menu"
-            className={OVERLAY_MENU_PANEL}
-            style={{ top: menuPosition.top, right: menuPosition.right }}
+    menuReady && menuPosition ? (
+      <div
+        ref={menuRef}
+        id={menuId}
+        role="menu"
+        aria-label="Assistant options"
+        onKeyDownCapture={handleMenuKeyDown}
+        className={OVERLAY_MENU_PANEL}
+        style={{ ...menuPosition, position: 'absolute', overflowY: 'auto' }}
+      >
+        {voiceSupported ? (
+          <MenuButton
+            onClick={() => {
+              toggleVoiceInput();
+              closeMenu();
+            }}
           >
-            {voiceSupported ? (
-              <MenuButton
-                onClick={() => {
-                  toggleVoiceInput();
-                  closeMenu();
-                }}
-              >
-                {isListening ? 'Stop voice input' : 'Voice input'}
-              </MenuButton>
-            ) : null}
-            <MenuButton onClick={() => toggleMemory()}>
-              {useMemory ? 'Memory on' : 'Memory off'}
-            </MenuButton>
-            <MenuButton onClick={() => toggleAdvancedControls()}>
-              {showAdvancedControls ? 'Hide session settings' : 'Session settings'}
-            </MenuButton>
-            <MenuButton
-              disabled={!hasMessages}
-              onClick={() => {
-                handleExportConversation();
-                closeMenu();
-              }}
-            >
-              Export chat
-            </MenuButton>
-            <MenuButton
-              disabled={!hasMessages}
-              onClick={() => {
-                clearConversation();
-                closeMenu();
-              }}
-            >
-              Clear chat
-            </MenuButton>
-          </div>,
-          document.body
-        )
-      : null;
+            {isListening ? 'Stop voice input' : 'Voice input'}
+          </MenuButton>
+        ) : null}
+        <MenuButton onClick={() => toggleMemory()}>
+          {useMemory ? 'Memory on' : 'Memory off'}
+        </MenuButton>
+        <MenuButton onClick={() => toggleAdvancedControls()}>
+          {showAdvancedControls ? 'Hide session settings' : 'Session settings'}
+        </MenuButton>
+        <MenuButton
+          disabled={!hasMessages}
+          onClick={() => {
+            handleExportConversation();
+            closeMenu();
+          }}
+        >
+          Export chat
+        </MenuButton>
+        <MenuButton
+          disabled={!hasMessages}
+          onClick={() => {
+            clearConversation();
+            closeMenu();
+          }}
+        >
+          Clear chat
+        </MenuButton>
+      </div>
+    ) : null;
 
   return (
     <div className="flex shrink-0 items-center gap-2 border-b border-border/40 px-3.5 py-2.5 sm:px-4 sm:py-3">
@@ -224,10 +279,10 @@ export const ChatHeader = memo(function ChatHeader({
           aria-label="Assistant options"
           aria-expanded={menuOpen}
           aria-haspopup="menu"
+          aria-controls={menuReady ? menuId : undefined}
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            ignoreNextOutsideClickRef.current = true;
             setMenuOpen((open) => !open);
           }}
         >

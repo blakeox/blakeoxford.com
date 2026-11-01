@@ -46,9 +46,13 @@ export function ChatDock({
   useEffect(() => {
     if (!isOpen || !isModal || !activePanelRef.current) return;
     const panel = activePanelRef.current;
+    const activeControl = document.activeElement;
     const trap = createFocusTrap(panel, {
       modalRoot: panel.closest<HTMLElement>('[data-ai-chat-overlay]'),
-      initialFocus: panel.querySelector<HTMLTextAreaElement>('textarea'),
+      initialFocus:
+        activeControl instanceof HTMLElement && panel.contains(activeControl)
+          ? activeControl
+          : panel.querySelector<HTMLTextAreaElement>('textarea'),
       returnFocus: document.querySelector<HTMLElement>('[data-ai-launcher]:not([data-occluded])'),
       fallbackFocus: panel,
     });

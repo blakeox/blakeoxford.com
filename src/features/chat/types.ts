@@ -32,6 +32,7 @@ export interface FeedbackAnalytics {
  * Props for ChatHeader component
  */
 export interface ChatHeaderProps {
+  isOpen: boolean;
   pageLabel?: string;
   wsConnected: boolean;
   activeUsers: number;
