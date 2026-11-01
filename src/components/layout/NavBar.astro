@@ -378,7 +378,23 @@ function isActive(href: string): boolean {
       if (nav) nav.setAttribute('data-js-nav', 'true');
     }
 
+    function wireSearchTrigger() {
+      // The visible shell can receive input before module listeners exist.
+      var search = document.getElementById('search-toggle');
+      if (!search) return;
+      search.onclick = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (window.__boSearchLoaderReady) {
+          window.dispatchEvent(new CustomEvent('command-center:open'));
+        } else {
+          window.__boSearchOpenPending = true;
+        }
+      };
+    }
+
     wireBurger();
+    wireSearchTrigger();
 
     var initialMenu = document.getElementById('nav-mobile-links');
     if (initialMenu) initialMenu.addEventListener('keydown', keepMenuFocus, { signal: signal });
@@ -405,6 +421,7 @@ function isActive(href: string): boolean {
       'keydown',
       function (event) {
         if (event.key !== 'Escape') return;
+        window.__boSearchOpenPending = false;
         var shell = document.querySelector('.nav-shell');
         if (shell && isOpen(shell)) {
           setOpen(false);
@@ -431,6 +448,7 @@ function isActive(href: string): boolean {
       'astro:page-load',
       function () {
         wireBurger();
+        wireSearchTrigger();
         setOpen(false);
       },
       { signal: signal }

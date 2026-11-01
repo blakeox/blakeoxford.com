@@ -43,6 +43,10 @@ import '@/features/command-center/command-center.css';
   } from '@/utils/scrollLock';
 
   type CommandCenterDetail = { query?: string };
+  const startupWindow = window as Window & {
+    __boSearchLoaderReady?: boolean;
+    __boSearchOpenPending?: boolean;
+  };
 
   let mountedRoot: HTMLElement | null = null;
   let mountPromise: Promise<void> | null = null;
@@ -154,4 +158,10 @@ import '@/features/command-center/command-center.css';
       releaseShellLock();
     }
   });
+
+  startupWindow.__boSearchLoaderReady = true;
+  if (startupWindow.__boSearchOpenPending) {
+    startupWindow.__boSearchOpenPending = false;
+    requestMount();
+  }
 </script>
