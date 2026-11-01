@@ -6,6 +6,19 @@ test.describe('home hero identity', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const hero = page.locator('#about-me');
+    // Identity and actions must be readable immediately, including with motion allowed.
+    const fadingContent = await page
+      .locator('.home-dual-copy')
+      .evaluate((node) =>
+        node
+          .getAnimations({ subtree: true })
+          .some((animation) =>
+            (animation.effect as KeyframeEffect)
+              .getKeyframes()
+              .some((frame) => frame.opacity !== undefined && Number(frame.opacity) < 1)
+          )
+      );
+    expect(fadingContent).toBe(false);
     await expect(hero.getByRole('heading', { name: 'Blake Oxford' })).toBeVisible();
     await expect(
       hero.getByText('Helping companies navigate AI—and scale it across the enterprise.')

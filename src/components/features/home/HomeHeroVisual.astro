@@ -2,12 +2,17 @@
 /**
  * Home hero portrait — one photograph. Ask stays off this plane.
  */
+import { getHomePortrait, homePortraitSizes } from '@/lib/homePortrait';
+
+const portrait = await getHomePortrait();
 ---
 
 <div class="home-dual-visual" data-chat-avoid-launcher>
   <div class="home-dual-frame">
     <img
-      src="/assets/images/optimized/avif/blake_detroit_skyline_bell_isle.avif"
+      src={portrait.src}
+      srcset={portrait.srcSet.attribute}
+      sizes={homePortraitSizes}
       alt=""
       width="853"
       height="853"
