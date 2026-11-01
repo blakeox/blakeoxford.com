@@ -113,7 +113,7 @@ export const OVERLAY_METRIC_TILE = 'rounded-xl border border-border/30 px-3 py-2
 
 /** Floating options menu panel (Ask header). */
 export const OVERLAY_MENU_PANEL =
-  'fixed z-[1300] min-w-[11rem] overflow-hidden rounded-xl border border-border/60 bg-surface py-1 shadow-lg';
+  'absolute right-2 z-[1300] w-44 max-w-[calc(100%-1rem)] overflow-hidden rounded-xl border border-border/60 bg-surface py-1 shadow-lg';
 
 /** Menu item rows inside OVERLAY_MENU_PANEL. */
 export const OVERLAY_MENU_ITEM = cn(
