@@ -126,7 +126,7 @@ test('larger default text keeps mobile navigation within reach across pages', as
       expect(rect.height).toBeGreaterThanOrEqual(44);
     }
     await expect(
-      page.getByRole('link', { name: 'Blake Oxford', exact: true }).first()
+      page.locator('#navbar').getByRole('link', { name: 'Blake Oxford', exact: true })
     ).toBeVisible();
     await page.locator('#nav-toggle').click();
     await expect(page.locator('#nav-mobile-links')).toHaveAttribute('data-state', 'open');

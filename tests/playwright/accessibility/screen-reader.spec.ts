@@ -1,6 +1,31 @@
 import { test, expect } from '../fixtures';
+import AxeBuilder from '@axe-core/playwright';
 
 test.describe('Accessible structure and announcements (not a native screen-reader run)', () => {
+  for (const width of [320, 1440]) {
+    test(`header names match visible labels at ${width}px @essential`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/');
+      await expect(page.locator('.brand-link')).toHaveAccessibleName(
+        width >= 640 ? 'Blake Oxford Systems architect' : 'Blake Oxford'
+      );
+      const search = page.locator('#search-toggle');
+      await expect(search).toHaveAttribute('aria-keyshortcuts', 'Meta+K Control+K');
+      const audit = await new AxeBuilder({ page })
+        .include('#navbar')
+        .withRules(['label-content-name-mismatch'])
+        .analyze();
+      expect(audit.violations).toEqual([]);
+      for (const shortcut of ['Control+k', 'Meta+k']) {
+        await search.focus();
+        await page.keyboard.press(shortcut);
+        await expect(page.getByRole('dialog', { name: 'Search', exact: true })).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(search).toBeFocused();
+      }
+    });
+  }
+
   test('should have proper ARIA landmarks structure', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
