@@ -377,3 +377,7 @@ Native Safari was then reloaded on the final local source. Observed Search remov
 All native cleanup dependencies from iteration 13 are now resolved: VoiceOver read back **off** (its initial state), the unchanged caption preference remains enabled, VoiceOver Utility read back **not running**, System Settings is back on the original Software Update pane, and only the task-owned Safari tab was closed. The original Start Page remains active with one tab.
 
 Application code is unchanged in this closure, so the prior 713-unit, 78-browser, 21-visual and route/axe results remain the applicable local evidence. Full observations are in `design-review/iteration13/native-safari-final.md`; the machine summary and current review status have been updated. Physical mobile devices, real OS Dynamic Type, Firefox, exhaustive VoiceOver coverage and live CAPTCHA/provider completion are not newly established. No deployment occurred. No universal 10/10 or WCAG conformance claim is made.
+
+## Production review follow-up
+
+The release review exposed Ask options outside the mobile focus scope. Options now stay inside the dialog, support keyboard navigation and nested dismissal, and fit the available panel width and height, including 320px layouts with 200% text. Automatic opening focus preserves a control already in use. Session text and selected chips use stronger semantic foregrounds. Coverage includes portrait, short-height, and desktop layouts, open-menu and session-settings accessibility scans, and delayed-focus regressions.

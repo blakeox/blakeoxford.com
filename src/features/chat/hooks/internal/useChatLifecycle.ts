@@ -36,6 +36,8 @@ export interface UseChatLifecycleReturn {
   closeChat: () => void;
   /** Focuses the input field */
   focusInput: () => void;
+  /** Focuses the composer only if no dialog control has claimed focus. */
+  focusInputIfUnclaimed: () => void;
   /** Dispatches chat state event */
   dispatchState: (open: boolean) => void;
 }
@@ -109,23 +111,30 @@ export function useChatLifecycle(options: UseChatLifecycleOptions): UseChatLifec
    * Uses requestAnimationFrame for reliable focus
    * Sets data-ai-chat-focused attribute for deterministic testing
    */
-  const focusInput = useCallback(() => {
-    if (!inputRef.current) return;
-    requestAnimationFrame(() => {
-      const inputEl = inputRef.current!;
-      inputEl.focus();
-      inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+  const focusInput = useCallback(
+    (preserveDialogFocus = false) => {
+      if (!inputRef.current) return;
+      requestAnimationFrame(() => {
+        const inputEl = inputRef.current;
+        if (!inputEl || inputEl.closest('[inert], [aria-hidden="true"]')) return;
+        const panel = inputEl.closest('[data-ai-chat-panel]');
+        if (preserveDialogFocus && panel?.contains(document.activeElement)) return;
+        inputEl.focus();
+        inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
 
-      // Set deterministic focus signal for accessibility testing
-      if (document.activeElement === inputEl) {
-        const panel = inputEl.closest('[data-ai-chat-panel]') as HTMLElement | null;
-        if (panel) {
-          panel.setAttribute('data-ai-chat-focused', 'true');
-          window.dispatchEvent(new CustomEvent('ai-chat:focused', { detail: { focused: true } }));
+        // Set deterministic focus signal for accessibility testing
+        if (document.activeElement === inputEl) {
+          if (panel) {
+            panel.setAttribute('data-ai-chat-focused', 'true');
+            window.dispatchEvent(new CustomEvent('ai-chat:focused', { detail: { focused: true } }));
+          }
         }
-      }
-    });
-  }, [inputRef]);
+      });
+    },
+    [inputRef]
+  );
+
+  const focusInputIfUnclaimed = useCallback(() => focusInput(true), [focusInput]);
 
   /**
    * Opens the chat panel
@@ -150,12 +159,22 @@ export function useChatLifecycle(options: UseChatLifecycleOptions): UseChatLifec
     // during React hydration/mount.
     try {
       setTimeout(() => {
-        focusInput();
+        // Hydration fallback must not steal focus from controls already in use.
+        focusInputIfUnclaimed();
       }, 50);
     } catch (e) {
       // non-fatal
     }
-  }, [dispatchState, focusInput, isOpen, setIsOpen, setError, setChatState, lastFocusedElementRef]);
+  }, [
+    dispatchState,
+    focusInput,
+    focusInputIfUnclaimed,
+    isOpen,
+    setIsOpen,
+    setError,
+    setChatState,
+    lastFocusedElementRef,
+  ]);
 
   /**
    * Closes the chat panel
@@ -198,6 +217,7 @@ export function useChatLifecycle(options: UseChatLifecycleOptions): UseChatLifec
     openChat,
     closeChat,
     focusInput,
+    focusInputIfUnclaimed,
     dispatchState,
   };
 }

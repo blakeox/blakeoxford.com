@@ -240,6 +240,7 @@ export default function AIChatIsland() {
       onTouchEnd={handleTouchEnd}
     >
       <ChatHeader
+        isOpen={isOpen}
         pageLabel={pageLabel}
         wsConnected={wsConnected}
         activeUsers={activeUsers}
