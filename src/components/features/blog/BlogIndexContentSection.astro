@@ -8,43 +8,47 @@ import { headingSizeClass } from '@/lib/typeScale';
 
 interface Props {
   posts: CollectionEntry<'blog'>[];
+  hasFeatured?: boolean;
 }
 
-const { posts } = Astro.props as Props;
+const { posts, hasFeatured = false } = Astro.props as Props;
 ---
 
-<Section
-  padding="lg"
-  container="lg"
-  class="border-t border-border/20 bg-background"
-  role="region"
-  aria-labelledby="blog-posts-heading"
->
-  <Stack space="xl" class="text-pretty">
-    {posts.length > 0 && (
-      <h2 id="blog-posts-heading" class="section-kicker w-fit">
-        Archive
-      </h2>
-    )}
-    <Stack space="xl">
-      {posts.length > 0 ? (
-        posts.map((post) => <BlogPostRow post={post} />)
-      ) : (
-        <BaseCard variant="elevated" hover="none" rounded="2xl" padding="lg" class="text-center">
-          <h2
-            id="blog-posts-heading"
-            class:list={[
-              'mb-4 font-heading font-semibold text-foreground',
-              headingSizeClass('title'),
-            ]}
-          >
-            Articles are on the way
-          </h2>
-          <p class="text-sm leading-relaxed text-muted-foreground">
-            Check back soon for breakdowns of recent programs, playbooks, and technical deep dives.
-          </p>
-        </BaseCard>
+{(posts.length > 0 || !hasFeatured) && (
+  <Section
+    padding="lg"
+    container="lg"
+    class="border-t border-border/20 bg-background"
+    role="region"
+    aria-labelledby="blog-posts-heading"
+  >
+    <Stack space="xl" class="text-pretty">
+      {posts.length > 0 && (
+        <h2 id="blog-posts-heading" class="section-kicker w-fit">
+          {hasFeatured ? 'More writing' : 'Archive'}
+        </h2>
       )}
+      <Stack space="xl">
+        {posts.length > 0 ? (
+          posts.map((post) => <BlogPostRow post={post} />)
+        ) : (
+          <BaseCard variant="elevated" hover="none" rounded="2xl" padding="lg" class="text-center">
+            <h2
+              id="blog-posts-heading"
+              class:list={[
+                'mb-4 font-heading font-semibold text-foreground',
+                headingSizeClass('title'),
+              ]}
+            >
+              Articles are on the way
+            </h2>
+            <p class="text-sm leading-relaxed text-muted-foreground">
+              Check back soon for breakdowns of recent programs, playbooks, and technical deep
+              dives.
+            </p>
+          </BaseCard>
+        )}
+      </Stack>
     </Stack>
-  </Stack>
-</Section>
+  </Section>
+)}

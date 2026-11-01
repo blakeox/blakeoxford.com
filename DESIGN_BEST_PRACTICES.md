@@ -256,9 +256,12 @@ Designer / reviewer action: If sentinel counts rise or badge slope trends upward
 - The About introduction uses three static, captioned photographs with responsive image sources. Use the tower portrait as the full-pose anchor, with Detroit and speaking photographs as smaller supporting images. Preserve the tower photograph’s 3:4 frame; verify rendered crops after image processing.
 - Case studies use section rails on wide screens and a single reading column on small screens. Do not repeat the hero summary immediately under Overview.
 - A media-free article still uses the shared outer shell; give long titles enough measure to avoid a narrow tower of text.
+- Writing leads with the newest published essay, whether it has an image or not. Show each essay once; omit an empty archive below a single lead essay.
+- Author informative article photographs with `heroImageAlt`. Decorative linked previews use empty alternatives; avoid repeating a neighboring title as a photograph description.
 - Prose colors are owned by typography variables, including contextual `text-on-accent` surfaces. Do not force foreground colors on every paragraph or strong element; that overrides the surrounding surface's readable text color.
 - The phone Ask sheet is modal with focus containment and a scroll lock. The desktop companion remains nonmodal. Closing either must preserve keyboard continuity.
 - A confirmed contact delivery replaces the editable form with a focused confirmation. A failed request preserves the draft and gives an actionable recovery path.
+- Direct contact links name their action (email, call, or profile). Keep the visible text in the accessible name and associate longer context with `aria-describedby`.
 
 ## Component Composition
 

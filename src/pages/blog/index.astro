@@ -1,33 +1,15 @@
 ---
 import { getCollection } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
 
 import Layout from '@/layouts/BaseLayout.astro';
 import BlogIndexHeroSection from '@/components/features/blog/BlogIndexHeroSection.astro';
 import BlogIndexContentSection from '@/components/features/blog/BlogIndexContentSection.astro';
-import { isPublished } from '@/lib/content/publication-contract.mjs';
+import { getBlogListing } from '@/content/blog/getBlogListing';
 import { resolvePublicImage } from '@/lib/media/publicAssetExists';
 
-const posts = await getCollection('blog', (entry: CollectionEntry<'blog'>) => isPublished(entry));
-const sortedPosts = posts
-  .slice()
-  .sort(
-    (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
-      b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
-
-const featuredVisual = (() => {
-  for (const post of sortedPosts) {
-    const src = resolvePublicImage(post.data.heroImage);
-    if (!src) continue;
-    return {
-      src,
-      caption: post.data.title,
-      href: `/blog/${post.id}/`,
-    };
-  }
-  return undefined;
-})();
+const posts = await getCollection('blog');
+const { featuredPost, archivePosts } = getBlogListing(posts);
+const featuredImage = resolvePublicImage(featuredPost?.data.heroImage);
 ---
 
 <Layout
@@ -35,9 +17,9 @@ const featuredVisual = (() => {
   description="Practical writing on navigating AI, building trust, and connecting adoption to enterprise systems and everyday work."
   wide
 >
-  {featuredVisual ? (
-    <link slot="head" rel="preload" as="image" href={featuredVisual.src} fetchpriority="high" />
+  {featuredImage ? (
+    <link slot="head" rel="preload" as="image" href={featuredImage} fetchpriority="high" />
   ) : null}
-  <BlogIndexHeroSection visual={featuredVisual} />
-  <BlogIndexContentSection posts={sortedPosts} />
+  <BlogIndexHeroSection post={featuredPost} imageSrc={featuredImage} />
+  <BlogIndexContentSection posts={archivePosts} hasFeatured={Boolean(featuredPost)} />
 </Layout>

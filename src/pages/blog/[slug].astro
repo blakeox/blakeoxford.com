@@ -86,7 +86,7 @@ const structuredData = [articleSchema, breadcrumbSchema];
   seoDescription={post.data.seoDescription ?? post.data.description}
   url={canonicalUrl}
   image={articleImage}
-  imageAlt={`${post.data.title} — Blake Oxford`}
+  imageAlt={post.data.heroImageAlt ?? post.data.title}
   ogType="article"
   structuredData={structuredData}
   wide={true}
@@ -145,7 +145,7 @@ const structuredData = [articleSchema, breadcrumbSchema];
         <figure class="relative min-h-72 overflow-hidden lg:h-full">
           <OptimizedImage
             src={photo}
-            alt={`Hero image for ${post.data.title}`}
+            alt={post.data.heroImageAlt ?? ''}
             width={960}
             height={1200}
             class="aspect-[4/3] w-full object-cover lg:absolute lg:inset-0 lg:h-full lg:min-h-full"
