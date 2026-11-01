@@ -5,8 +5,15 @@
 import type { ContactChannels } from './types';
 import Section from '@/components/primitives/Section.astro';
 import SectionHeader from '@/components/composites/SectionHeader.astro';
+import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
+import ExternalLinkIcon from '@/components/primitives/icons/ExternalLinkIcon.astro';
 
 const { channels } = Astro.props as { channels: ContactChannels };
+const actions: Record<string, string> = {
+  email: 'Send email',
+  phone: 'Call Blake',
+  linkedin: 'View profile',
+};
 ---
 
 <Section padding="lg" container="lg" aria-labelledby="contact-channels-heading">
@@ -18,30 +25,37 @@ const { channels } = Astro.props as { channels: ContactChannels };
   />
 
   <ul class="divide-y divide-border/50 border-y border-border/50" role="list">
-    {channels.items.map((channel) => (
-      <li>
+    {channels.items.map((channel, index) => (
+      <li class="grid py-5 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-x-6 sm:py-6">
         <a
           href={channel.href}
           target={channel.icon === 'linkedin' ? '_blank' : undefined}
           rel={channel.icon === 'linkedin' ? 'noopener noreferrer' : undefined}
-          class="group grid gap-2 py-5 focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 sm:py-6"
-          aria-label={`${channel.title}: ${channel.label}`}
+          class="focus-ring-interactive group grid min-h-11 gap-2 rounded sm:col-span-2 sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6"
+          aria-describedby={
+            channel.description ? `contact-channel-${index}-description` : undefined
+          }
         >
           <span class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
             {channel.title}
           </span>
-          <span class="min-w-0 space-y-1">
-            <span class="block font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-accent-emphasis">
-              {channel.label}
-            </span>
-            {channel.description && (
-              <span class="block text-sm leading-relaxed text-muted-foreground">
-                {channel.description}
-              </span>
-            )}
+          <span class="min-w-0 font-heading text-lg font-semibold break-words text-foreground transition-colors group-hover:text-accent-emphasis">
+            {channel.label}
           </span>
-          <span class="text-sm font-semibold text-accent-emphasis sm:text-right">Open</span>
+          <span class="inline-flex items-center gap-2 text-sm font-semibold text-accent-emphasis sm:justify-end">
+            {actions[channel.icon] ?? 'Visit link'}
+            {channel.icon === 'linkedin' ? <ExternalLinkIcon /> : <ArrowRightIcon />}
+            {channel.icon === 'linkedin' && <span class="sr-only">(opens in a new tab)</span>}
+          </span>
         </a>
+        {channel.description && (
+          <p
+            id={`contact-channel-${index}-description`}
+            class="mt-2 text-sm leading-relaxed text-muted-foreground sm:col-start-2"
+          >
+            {channel.description}
+          </p>
+        )}
       </li>
     ))}
   </ul>

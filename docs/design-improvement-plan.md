@@ -1,6 +1,23 @@
 # Design improvement plan
 
-Status: Blake approved the reviewed direction and baseline refresh on 2026-10-31, then requested the Chinese tower photograph. That follow-up is implemented and the source visual gate now passes. Continue toward the full quality objective from this approved direction. The target is a distinctive, coherent, usable portfolio across every public page and state. A passing build is necessary; it is not evidence of excellent design.
+Status: active, 2026-11-01. The approved ink/paper/copper direction and China tower photograph are published through baseline `33fe27b6`. Iteration 15 implements the editorial/contact refinements below and passes the local source, browser and visual gates. Delivery status is recorded separately in the protected PR and provider/live evidence; local checks never establish publication or a numerical design score.
+
+## Current acceptance ledger
+
+This ledger is current; iteration logs below preserve the evidence and limits at the time of each pass. Earlier counts and open-state wording are historical, not outstanding release failures.
+
+| Requirement | Evidence needed | Current state / next action |
+| --- | --- | --- |
+| Distinct identity and deliberate hierarchy | Inspect full pages and first viewports for all seven primary templates, plus recovery pages, in phone/desktop and both themes | Before/after captures cover eight templates in phone/desktop and both themes. D34/D35 are locally verified; retain the approved system. |
+| Every published piece has one clear place in the journey | Latest writing, archive, case studies and related links lead to complete content without accidental repetition | D34 resolved locally: newest published essay leads once, with the remaining archive in order. Unit cases and 24 temporary rendered fixture contexts cover no-image, empty and single-post collections. |
+| Clear, usable controls and complete states | Keyboard/touch activation, visible intent, focus return, loading/error/success and mocked form recovery | D35 resolved locally: specific actions, natural link names and associated descriptions. Both engines pass 320px/200% root-text wrapping, targets and label checks; existing mocked contact recovery still passes. |
+| Meaningful content and media | Truthful dates/metrics, contextual captions, deliberate crops and useful alternatives | Tower and AI chronology retained. D36 resolved locally with descriptions based on the two actual photographs; browser checks verify rendered hero and social alternatives. |
+| Consistent system and mobile reading | Shared gutters/type/surfaces; 320–1440px, enlarged text, no lost controls or clipped copy | Current local sweep: 496 checks across 31 routes, four widths, two themes and both engines. No horizontal overflow or broken loaded images. |
+| Accessibility and performance | Axe plus manual focus, contrast, motion/text checks; stable dimensions, responsive images and measured load | 56 tagged route scans and focused enlarged-text/contact scans report no violations. Four Turnstile cross-frame diagnostics are retained separately; no unknown application errors. Prior measured performance evidence remains historical. Native VoiceOver acceptance is human-reported, not a fresh speech transcript. |
+| Reviewable delivery and release integrity | Scoped diff, screenshots, current plan, source/browser gates, normal protected promotion and live revision proof | Baseline `33fe27b6` and rollback version reverified. Candidate passes 898 unit tests (one existing skip), 40 browser checks and four visual smoke checks. Protected promotion and new provider/live revision proof remain separate gates. CORS patch is unchanged. |
+| Final design acceptance | No open material findings against these requirements, complete review package and Blake's visual acceptance | Open. Do not replace this with a Lighthouse score or an unsupported 10/10 claim. |
+
+The interface's job is to make identity, evidence, practical AI work and the next conversation clear. World-class craft means the whole journey is intentional: one dominant story per screen, one primary next step, truthful proof, readable mobile content and equally considered failure/recovery states. It does not require adding more animation, cards or interface layers.
 
 ## Direction and scope
 
@@ -395,3 +412,23 @@ The two desktop navigation visual references are refreshed after reviewing their
 Cloudflare's managed script storage deprecation, Turnstile frame diagnostics and rapid-navigation Sentry transport messages remain vendor-origin findings. Do not weaken security controls, change the unrelated CORS patch, discard diagnostics or disable error reporting to improve a score. Current source work is limited to static UI, image output and regressions; no API, role, provider setting, binding or migration changes.
 
 What I did not evaluate: physical mobile hardware, fresh native VoiceOver speech, live email delivery or a paid/live AI submission. Automated semantics and viewport checks do not establish universal accessibility conformance or a numerical 10/10.
+
+## Iteration 15 — editorial sequence and contact clarity
+
+**Direction: tighten it.** Fresh captures of Home, About, Work, Writing, Contact, a case study, an article and 404 at 390px light/dark and 1440px light show that the shared system holds. The remaining material findings are specific content/interaction decisions, not a reason to replace the approved design.
+
+| ID | Evidence | Decision | State |
+| --- | --- | --- | --- |
+| D34 | `src/pages/blog/index.astro:19–42` chooses the first post with media for a card labeled Latest article, then renders every post again. The 1440px and 390px captures repeat the lead title/image directly below the hero. | Feature the actual newest published post, with date and context; exclude it from More writing. Preserve newest-first order and every published link. Support no-image, empty and single-post states. | Implemented; local verification passes |
+| D35 | `src/components/features/contact/ContactChannels.astro:23–43` uses Open for mail, phone and LinkedIn, and overrides the visible link content with an abbreviated accessible label. | Use Send email, Call Blake and View profile; keep descriptions outside link names, retain generous targets and explicit external cues. Preserve destinations and form behavior. | Implemented; local verification passes |
+| D36 | `src/pages/blog/[slug].astro:148` announces Hero image for followed by the title. Both illustrated essays use informative event photographs. | Add optional authored hero-image alternative metadata and use verified descriptions for the two photographs, including social image metadata. Linked preview images remain decorative where the adjacent title already names the destination. | Implemented; local verification passes |
+
+Execution order: (1) reconcile the plan and capture baseline evidence; (2) correct listing selection, semantics and contact presentation; (3) inspect phone/desktop/theme compositions; (4) test complete listing coverage, keyboard names/targets, enlarged text and form recovery; (5) run source/visual gates and update this ledger from results. No new dependency, service, provider control, form field or customer-data flow is introduced. Changes are reversible source/content edits.
+
+Likely failure: accidentally omit an essay while removing duplication; verify the listing's unique links equal the published set. Highest-impact failure: damage a contact destination or form flow; assert protocols/targets and exercise mocked validation/delivery/recovery without opening mail, dialing or sending real messages. Silent failure: an alternative misidentifies a pictured person; describe only what is visibly established, without guessing identities.
+
+Evidence folder: `design-review/iteration15-editorial`. This pass has not yet established final visual acceptance or new native speech/hardware/provider acceptance.
+
+Local verification: production build and full project check pass (898 unit tests, one existing skip; no type/lint warnings). The 40 Chromium/WebKit journeys and four unchanged visual smoke baselines pass. The current 31-route matrix covers 496 combinations with 56 tagged axe scans and no reported violations. Its first strict assessment incorrectly treated 180 cache revalidations and two intentional noindex component previews as application failures; raw output is retained alongside the corrected, independently checked assessment. Four Turnstile frame diagnostics remain visible in the report; unknown application errors are zero. Temporary fixture source was preserved outside the repository and the final 32-page build contains no fixture routes.
+
+Measured mobile page height: Writing 3796 → 3351px and Contact 2444 → 2363px at 390px. These are document-height measurements, not load-time or conversion claims. The test reference uses the independent generated published-content corpus, so publishing another essay does not require maintaining a fixed five-link expectation. The authored design guide now records the listing, image-alternative and contact-label contracts. No new dependency, provider setting or customer flow was introduced.

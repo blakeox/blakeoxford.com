@@ -19,8 +19,8 @@ describe('Blog Index Page', () => {
   });
 
   it('should load posts from content collections', () => {
-    expect(fileContent).toContain("await getCollection('blog',");
-    expect(fileContent).toContain('const sortedPosts = posts');
+    expect(fileContent).toContain("await getCollection('blog')");
+    expect(fileContent).toContain('getBlogListing(posts)');
   });
 
   it('should render structured blog layout regions', () => {
