@@ -24,8 +24,8 @@
   },
   "channels": {
     "heading": "Other channels",
-    "title": "Prefer email, phone, or LinkedIn?",
-    "description": "Use the brief for scoped project inquiries. These channels work when you already know how you want to connect.",
+    "title": "Connect directly",
+    "description": "For introductions, scheduling, and follow-up.",
     "items": [
       {
         "icon": "email",
