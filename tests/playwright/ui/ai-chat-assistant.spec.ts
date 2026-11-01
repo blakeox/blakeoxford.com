@@ -141,7 +141,7 @@ test.describe('AI chat assistant', () => {
       await route.fulfill({ status: 200, body: '{}' });
     });
 
-    await page.goto('/projects/');
+    await page.goto('/blog/');
     const widget = page.locator('[data-ai-chat-widget]');
     await widget.waitFor({ state: 'attached' });
     await widget.locator('.ai-chat-launcher').waitFor({ state: 'attached' });
@@ -189,7 +189,9 @@ test.describe('AI chat assistant', () => {
     await expect(composer).toBeFocused();
   });
 
-  test('streams a response and lets the visitor start fresh', async ({ page }) => {
+  test('streams a response, keeps menu commands reachable, and starts fresh @essential', async ({
+    page,
+  }) => {
     const widget = page.locator('[data-ai-chat-widget]');
     const panel = page.locator('[data-ai-chat-panel]');
     await widget.getByRole('button', { name: 'Open Ask' }).click();
@@ -213,6 +215,21 @@ test.describe('AI chat assistant', () => {
 
     const primarySource = panel.getByRole('link', { name: 'Demo Case Study' });
     await expect(primarySource).toBeVisible();
+
+    // A populated transcript also installs citation arrow-key handling.
+    const options = panel.getByRole('button', { name: 'Assistant options' });
+    await options.focus();
+    await page.keyboard.press('Enter');
+    const menu = panel.getByRole('menu');
+    await expect(menu.locator('[role="menuitem"]:focus')).toHaveCount(1);
+    await page.keyboard.press('End');
+    await expect(menu.getByRole('menuitem', { name: 'Clear chat', exact: true })).toBeEnabled();
+    await expect(menu.getByRole('menuitem', { name: 'Clear chat', exact: true })).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await expect(menu.getByRole('menuitem', { name: 'Export chat', exact: true })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    await expect(options).toBeFocused();
 
     const newChatButton = panel.getByRole('button', { name: 'Start new chat' });
     await expect(newChatButton).toBeVisible();

@@ -81,6 +81,7 @@
   --runtime-button-disabled-fg: var(--runtime-muted-foreground);
   --runtime-button-disabled-border: var(--runtime-border);
   --runtime-field-bg: var(--runtime-background);
+  --runtime-field-border: oklch(0.56 0.015 250);
   --runtime-glass: color-mix(in oklch, var(--runtime-surface) 78%, transparent);
   --runtime-glass-xl: color-mix(in oklch, var(--runtime-surface) 92%, transparent);
   --runtime-shadow-color: oklch(0.22 0.025 255 / 0.1);
@@ -141,6 +142,7 @@
   --color-button-disabled-fg: var(--runtime-button-disabled-fg);
   --color-button-disabled-border: var(--runtime-button-disabled-border);
   --color-field-bg: var(--runtime-field-bg);
+  --color-field-border: var(--runtime-field-border);
   --color-glass: var(--runtime-glass);
   --color-glass-xl: var(--runtime-glass-xl);
   --color-overlay-scrim: oklch(0.14 0.02 255);
@@ -171,9 +173,9 @@
   --animation-duration: var(--duration-standard);
   --transition-duration: var(--duration-standard);
 
-  --container-padding: 1rem;
+  --container-padding: 1.25rem;
   --container-padding-sm: 2rem;
-  --container-padding-lg: 4rem;
+  --container-padding-lg: 3rem;
   --container-padding-xl: 5rem;
   --container-padding-2xl: 6rem;
   /* Section vertical rhythm — bridged as spacing-* for py-section-* utilities */
@@ -182,7 +184,7 @@
   --space-section-lg: 4rem;
   --space-section-xl: 5rem;
   --space-section-2xl: 6rem;
-  --layout-max-2xl: min(100%, 110rem);
+  --layout-max-2xl: min(100%, 80rem);
   --nav-height: 4.5rem;
   --z-nav: 40;
   --z-nav-drawer: 45;
@@ -218,7 +220,7 @@
   --font-mono: var(--family-mono);
 
   --text-xxs: 0.7rem;
-  --tracking-label: 0.18em;
+  --tracking-label: 0.12em;
   --tracking-smallcaps: 0.08em;
 
   &[data-theme='dark'],
@@ -229,11 +231,11 @@
     --runtime-on-accent: oklch(0.16 0.02 250);
     /* Lighter than brand-accent-light so body-size accent text clears AA on dark surfaces */
     --runtime-accent-emphasis: oklch(0.84 0.11 52);
-    --runtime-primary-emphasis: var(--brand-primary-light);
+    --runtime-primary-emphasis: var(--palette-foreground-light);
     --runtime-success-emphasis: var(--palette-success-light);
     --runtime-warning-emphasis: var(--palette-warning-light);
     --runtime-error-emphasis: var(--palette-error-light);
-    --runtime-info-emphasis: var(--palette-info-light);
+    --runtime-info-emphasis: oklch(0.75 0.055 250);
     --runtime-foreground: var(--palette-foreground-light);
     --runtime-foreground-strong: var(--palette-foreground-light);
     --runtime-background: var(--palette-background-dark);
@@ -315,11 +317,6 @@
     textarea {
       border: 1px solid CanvasText;
     }
-
-    :focus-visible {
-      outline: 2px solid Highlight;
-      outline-offset: 2px;
-    }
   }
 }
 
@@ -379,12 +376,13 @@
   --color-button-disabled-fg: var(--runtime-button-disabled-fg);
   --color-button-disabled-border: var(--runtime-button-disabled-border);
   --color-field-bg: var(--runtime-field-bg);
+  --color-field-border: var(--runtime-field-border);
 
   --font-sans: var(--family-sans);
   --font-heading: var(--family-heading);
   --font-mono: var(--family-mono);
   --text-xxs: 0.7rem;
-  --tracking-label: 0.18em;
+  --tracking-label: 0.12em;
   --tracking-smallcaps: 0.08em;
 
   --radius-sm: var(--size-radius-sm);

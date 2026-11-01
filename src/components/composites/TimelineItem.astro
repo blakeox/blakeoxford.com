@@ -25,6 +25,12 @@ const TitleTag = titleLevel === 2 ? 'h2' : 'h3';
     {step}
   </div>
   <div class={timelineItemRecipe.body[variant]}>
+    <span
+      class="mb-3 block text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase md:hidden"
+      aria-hidden="true"
+    >
+      Step {step}
+    </span>
     {title && (
       <TitleTag
         class:list={[

@@ -20,7 +20,7 @@ export const compositeDocs: ComponentDoc[] = [
     ],
     accessibility: [
       'Launcher button with aria-expanded sync',
-      'Non-modal dialog (aria-modal="false") so the page stays readable and interactive on desktop',
+      'Non-modal dialog on desktop; modal bottom sheet with focus containment and scroll lock below 640px',
       'Escape key closes the assistant',
       'Sources rendered as accessible link list',
     ],
@@ -32,38 +32,6 @@ export const compositeDocs: ComponentDoc[] = [
     tags: ['ai', 'assistant', 'search', 'chat'],
     visualTier: 'expressive',
     tokenDependencies: ['--color-surface', '--color-accent', 'shadow-lg'],
-  },
-  {
-    name: 'PhotoCarousel',
-    category: 'Composites',
-    description:
-      'Decorative scrolling photo collage for the About hero. Horizontal marquee on mobile; three vertical columns on desktop. Includes a pause control; also pauses on hover and when reduced motion is preferred.',
-    filePath: 'src/components/composites/PhotoCarousel.astro',
-    props: [
-      { name: 'class', type: 'string', required: false, description: 'Additional CSS classes' },
-    ],
-    examples: [
-      {
-        title: 'Default collage',
-        code: '<PhotoCarousel class="h-full w-full" />',
-      },
-    ],
-    accessibility: [
-      'role="region" with descriptive aria-label',
-      'Decorative tracks marked aria-hidden',
-      'Empty alt on collage images (region label carries meaning)',
-      'Focusable pause/play control for keyboard users',
-      'Motion gated by prefers-reduced-motion; pauses on hover',
-    ],
-    performance: [
-      'Lazy loading',
-      'astro:assets Image',
-      'GPU translate3d marquees',
-      'Capped image budget',
-    ],
-    tags: ['carousel', 'photos', 'marquee', 'decorative'],
-    visualTier: 'elevated',
-    tokenDependencies: ['shadow-lg', 'rounded-2xl', 'duration-normal'],
   },
   {
     name: 'FeatureCard',

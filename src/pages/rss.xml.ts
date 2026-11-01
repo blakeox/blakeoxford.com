@@ -31,7 +31,8 @@ export async function GET(context: APIContext) {
 
   return rss({
     title: 'Blake Oxford - Blog',
-    description: "Blake Oxford's thoughts on technology, consulting, and digital transformation",
+    description:
+      "Blake Oxford's practical notes on navigating AI, enterprise adoption, and the systems behind it",
     site: context.site!,
     items: blog.map((post: CollectionEntry<'blog'>) => ({
       title: post.data.title,

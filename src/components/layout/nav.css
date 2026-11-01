@@ -14,7 +14,13 @@
   }
 
   .nav-utility-button {
-    @apply inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-border/60 bg-surface/75 text-muted-foreground transition-colors;
+    @apply inline-flex shrink-0 items-center justify-center rounded-full border border-border/60 bg-surface/75 text-muted-foreground transition-colors;
+  }
+
+  /* Pictorial controls keep their physical touch size as text grows. */
+  .nav-utility-button {
+    height: 44px;
+    min-width: 44px;
   }
 
   .nav-utility-button.search-toggle {
@@ -23,7 +29,7 @@
 
   .nav-utility-button.theme-toggle,
   .nav-utility-button.burger-menu-button {
-    @apply w-11;
+    width: 44px;
 
     touch-action: manipulation;
   }
@@ -81,10 +87,10 @@
   .burger-icon {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 4px;
     justify-content: center;
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 20px;
+    height: 20px;
   }
 
   .burger-line {
@@ -185,7 +191,7 @@
     display: block;
     visibility: visible;
     width: 100%;
-    max-height: min(80dvh, 32rem);
+    max-height: min(32rem, calc(100dvh - var(--nav-height) - env(safe-area-inset-bottom, 0px)));
     overflow-y: auto;
     overscroll-behavior: contain;
     pointer-events: auto;

@@ -17,6 +17,7 @@
  * - role="navigation" for page links
  * - Social links use visible text
  */
+import { siteConfig } from '@/config/data';
 import Container from '@/components/primitives/Container.astro';
 import { getNavQuickLinks, navConfig, type NavLink } from '@/config/navLinks';
 
@@ -29,20 +30,40 @@ function socialLinkRel(link: NavLink): string | undefined {
 }
 
 const linkClass =
-  'rounded font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none';
+  'inline-flex min-h-11 items-center rounded font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none';
 ---
 
 <footer
   id="footer"
+  data-chat-avoid-launcher
   role="contentinfo"
   aria-label="Site footer"
   tabindex="-1"
-  class="relative border-t border-border bg-surface pt-10 pb-10 text-foreground"
+  class="relative @container border-t border-border bg-surface pt-10 pb-10 text-foreground"
 >
   <Container size="xl" padding={true}>
-    <div class="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
+    <div class="grid grid-cols-1 gap-x-8 gap-y-10 @xs:grid-cols-2 @3xl:grid-cols-[minmax(0,1fr)_auto_auto] @3xl:gap-x-16">
+      <div class="col-span-full space-y-3 @3xl:col-span-1">
+        <a
+          href="/"
+          class="focus-ring-interactive inline-flex min-h-11 items-center rounded font-heading text-xl font-semibold tracking-tight text-foreground"
+        >
+          Blake Oxford
+          <span class="ml-1 text-accent" aria-hidden="true">
+            .
+          </span>
+        </a>
+        <p class="max-w-xs text-base leading-relaxed text-muted-foreground">
+          Systems architect.
+          <br />
+          {siteConfig.tagline}
+        </p>
+      </div>
       <nav aria-label="Footer" role="navigation">
-        <ul class="m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
+        <p class="mb-3 text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
+          Explore
+        </p>
+        <ul class="m-0 grid list-none gap-0 p-0">
           {quickLinks.map((link) => (
             <li>
               <a href={link.href} class:list={[linkClass, 'text-sm']}>
@@ -52,21 +73,28 @@ const linkClass =
           ))}
         </ul>
       </nav>
-
-      <ul class="m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0" aria-label="Elsewhere">
-        {socialLinks.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              target={link.target}
-              rel={socialLinkRel(link)}
-              class:list={[linkClass, 'text-sm']}
-            >
-              {link.label}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <div>
+        <p class="mb-3 text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
+          Elsewhere
+        </p>
+        <ul class="m-0 grid list-none gap-0 p-0" aria-label="Elsewhere">
+          {socialLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                target={link.target}
+                rel={socialLinkRel(link)}
+                class:list={[linkClass, 'text-sm']}
+              >
+                {link.label}
+                <span class="ml-2 text-subtle-foreground" aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
 
     <div class="mt-8 flex flex-col items-start gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">

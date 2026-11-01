@@ -7,7 +7,9 @@ test.describe('home hero identity', () => {
 
     const hero = page.locator('#about-me');
     await expect(hero.getByRole('heading', { name: 'Blake Oxford' })).toBeVisible();
-    await expect(hero.getByText('Builds systems teams keep running.')).toBeVisible();
+    await expect(
+      hero.getByText('Helping companies navigate AI—and scale it across the enterprise.')
+    ).toBeVisible();
     await expect(page.getByRole('link', { name: 'Discuss your bottleneck' }).first()).toBeVisible();
     await expect(page.getByRole('link', { name: 'See the work' }).first()).toBeVisible();
     await expect(hero.locator('[data-dual-select]')).toHaveCount(0);

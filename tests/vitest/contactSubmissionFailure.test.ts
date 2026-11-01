@@ -20,6 +20,18 @@ describe('contactSubmissionFailure', () => {
       details: { status: 503 },
     });
 
-    expect(contactSubmissionFailure(error).reason).toBe('network');
+    expect(contactSubmissionFailure(error)).toEqual({
+      reason: 'network',
+      message:
+        'Your message could not be sent. Please try again or email blakepoxford@outlook.com directly.',
+    });
+  });
+  it('retains a rate limit recovery instruction', () => {
+    const error = new AppError('Rate limited.', ErrorCodes.API_SERVER_ERROR, {
+      details: { status: 429 },
+    });
+    expect(contactSubmissionFailure(error).message).toBe(
+      'Too many attempts just now. Wait a moment, then send the brief again.'
+    );
   });
 });

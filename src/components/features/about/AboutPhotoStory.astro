@@ -1,0 +1,60 @@
+---
+/** Three authored photographs, with a portrait anchor and two supporting moments. */
+import { Image } from 'astro:assets';
+import tower from '@/assets/images/carousel/china-profile-picture.webp';
+import portrait from '@/assets/images/carousel/blake_detroit_skyline_bell_isle.webp';
+import speaking from '@/assets/images/carousel/SEMCACFE-Ethics-AI-Age-podium.webp';
+---
+
+<div
+  class="about-photo-story grid grid-cols-2 items-start gap-5"
+  role="group"
+  aria-label="Work and travel photographs"
+>
+  <figure class="row-span-2 min-w-0">
+    <Image
+      src={tower}
+      alt="Blake Oxford on an outdoor tower walkway above a city in China"
+      widths={[240, 360, 540, 720]}
+      sizes="(min-width: 1024px) 20vw, 45vw"
+      width={720}
+      height={960}
+      class="aspect-[3/4] w-full rounded-xl object-cover"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <figcaption class="mt-3 text-xs leading-relaxed text-subtle-foreground">
+      Above the city · China
+    </figcaption>
+  </figure>
+  <figure class="min-w-0">
+    <Image
+      src={portrait}
+      alt="Blake Oxford on the Detroit riverfront"
+      widths={[240, 360, 540]}
+      sizes="(min-width: 1024px) 20vw, 45vw"
+      width={540}
+      height={540}
+      class="aspect-[16/9] w-full rounded-lg object-cover object-[50%_15%]"
+      loading="lazy"
+    />
+    <figcaption class="mt-3 text-xs leading-relaxed text-subtle-foreground">
+      Detroit, Michigan
+    </figcaption>
+  </figure>
+  <figure class="min-w-0">
+    <Image
+      src={speaking}
+      alt="A presentation and audience at Ethics in the AI Age"
+      widths={[240, 360, 540]}
+      sizes="(min-width: 1024px) 20vw, 45vw"
+      width={540}
+      height={304}
+      class="aspect-[16/9] w-full rounded-lg object-cover"
+      loading="lazy"
+    />
+    <figcaption class="mt-3 text-xs leading-relaxed text-subtle-foreground">
+      Ethics in the AI Age
+    </figcaption>
+  </figure>
+</div>

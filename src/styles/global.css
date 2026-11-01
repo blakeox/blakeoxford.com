@@ -46,6 +46,18 @@
 }
 
 @layer components {
+  /* Contextual prose colors must follow an accent surface, including nested MDX. */
+  .prose .text-on-accent {
+    --tw-prose-body: var(--color-on-accent);
+    --tw-prose-headings: var(--color-on-accent);
+    --tw-prose-links: var(--color-on-accent);
+    --tw-prose-bold: var(--color-on-accent);
+    --tw-prose-bullets: var(--color-on-accent);
+    --tw-prose-counters: var(--color-on-accent);
+    --tw-prose-quotes: var(--color-on-accent);
+    --tw-prose-captions: var(--color-on-accent);
+  }
+
   /* Shiki emits inline theme colors that are not reliable on every surface. */
   .prose pre.astro-code .line > span {
     color: var(--color-code-foreground) !important;
@@ -62,5 +74,15 @@
     padding-inline: 0.375rem;
     padding-block: 0.125rem;
     color: var(--color-accent-emphasis);
+  }
+}
+
+@layer base {
+  main {
+    overflow-wrap: anywhere;
+  }
+
+  :where(main [id]) {
+    scroll-margin-top: calc(var(--nav-height) + 1.5rem);
   }
 }

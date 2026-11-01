@@ -2,31 +2,31 @@
   {
     "href": "/",
     "title": "Home",
-    "description": "Portfolio overview and signature programs.",
-    "tags": ["home", "overview"]
+    "description": "Helping companies navigate AI and scale it across the enterprise.",
+    "tags": ["home", "overview", "AI", "enterprise", "adoption"]
   },
   {
     "href": "/about/",
     "title": "About",
-    "description": "Credentials, achievements, and professional journey.",
-    "tags": ["about", "biography", "achievements"]
+    "description": "Systems and finance experience applied to AI adoption and enterprise scaling.",
+    "tags": ["about", "biography", "achievements", "AI", "enterprise", "experience"]
   },
   {
     "href": "/projects/",
     "title": "Projects",
-    "description": "Selected case studies across automation, analytics, and change enablement.",
-    "tags": ["projects", "case studies"]
+    "description": "Case studies showing the systems, data, and workflow foundations behind enterprise AI.",
+    "tags": ["projects", "case studies", "AI", "enterprise"]
   },
   {
     "href": "/blog/",
     "title": "Blog",
-    "description": "Articles on systems architecture, automation, and cloud strategy.",
-    "tags": ["blog", "articles", "writing"]
+    "description": "Practical writing on AI choices, trust, adoption, and enterprise systems.",
+    "tags": ["blog", "articles", "writing", "AI", "enterprise"]
   },
   {
     "href": "/contact/",
     "title": "Contact",
-    "description": "Start a working session or send a note.",
-    "tags": ["contact", "connect"]
+    "description": "Discuss AI use cases, pilot integration, and scaling adoption across the enterprise.",
+    "tags": ["contact", "connect", "AI", "enterprise", "roadmap"]
   }
 ]

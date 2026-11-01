@@ -11,7 +11,6 @@ export { default as IntroCopy } from './IntroCopy.astro';
 export { default as PageHero } from './PageHero.astro';
 export { default as CTASection } from './CTASection.astro';
 export { default as MetricsTable } from './MetricsTable.astro';
-export { default as PhotoCarousel } from './PhotoCarousel.astro';
 export { default as ProofPlaque } from './ProofPlaque.astro';
 export { default as SectionHeader } from './SectionHeader.astro';
 export { default as Timeline } from './Timeline.astro';

@@ -1,33 +1,50 @@
 ---
-import BaseCard from '@/components/primitives/BaseCard.astro';
+import Container from '@/components/primitives/Container.astro';
+import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
+import { headingSizeClass } from '@/lib/typeScale';
 import type { ContentLink } from '@/config/content-architecture';
 
 interface Props {
   links: ContentLink[];
+  /** False when a reading-width parent already owns the page gutter. */
+  contained?: boolean;
 }
 
-const { links } = Astro.props;
+const { links, contained = true } = Astro.props;
 ---
 
 {links.length > 0 && (
-  <section class="mt-12" aria-labelledby="related-content-heading">
-    <h2 id="related-content-heading" class="text-2xl font-bold text-foreground">
-      Continue exploring
-    </h2>
-    <div class="mt-4 grid gap-4 sm:grid-cols-2">
-      {links.map((link) => (
-        <BaseCard as="article" variant="subtle" hover="lift" padding="md">
-          <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">
-            {link.kind === 'project' ? 'Case study' : 'Article'}
-          </p>
-          <a
-            class="mt-2 block font-semibold text-accent-emphasis underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            href={link.href}
-          >
-            {link.label}
-          </a>
-        </BaseCard>
-      ))}
-    </div>
+  <section class="border-t border-border py-section-lg" aria-labelledby="related-content-heading">
+    <Container size={contained ? 'xl' : 'full'} padding={contained}>
+      <h2
+        id="related-content-heading"
+        class:list={[
+          'font-heading font-semibold tracking-tight text-foreground',
+          headingSizeClass('title'),
+        ]}
+      >
+        Continue exploring
+      </h2>
+      <ul class="mt-6 grid gap-4 sm:grid-cols-2" role="list">
+        {links.map((link) => (
+          <li class="min-w-0">
+            <a
+              class="focus-ring-interactive group flex h-full flex-col gap-3 rounded-xl border border-border bg-surface p-6 transition-colors hover:border-accent/50"
+              href={link.href}
+            >
+              <p class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
+                {link.kind === 'project' ? 'Case study' : 'Article'}
+              </p>
+              <span class="font-heading text-lg font-semibold leading-snug text-foreground group-hover:text-accent-emphasis">
+                {link.label}
+              </span>
+              <span class="mt-auto pt-2 text-accent-emphasis" aria-hidden="true">
+                <ArrowRightIcon />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </Container>
   </section>
 )}

@@ -46,7 +46,7 @@ const SUCCESS_MESSAGE = 'Your project brief was sent. I’ll review it and follo
       title={content.title}
       titleId="contact-title"
       description={content.description}
-      size="section"
+      size="hero"
       descriptionSize="md"
     />
 
@@ -55,18 +55,18 @@ const SUCCESS_MESSAGE = 'Your project brief was sent. I’ll review it and follo
         id="form-status"
         role="status"
         tabindex="-1"
-        class="border border-border/50 bg-background px-5 py-6 text-base leading-relaxed text-foreground"
+        class="rounded-xl border border-border bg-surface px-5 py-6 text-base leading-relaxed text-foreground"
       >
         {SUCCESS_MESSAGE}
       </p>
     ) : (
-      <div class="border border-border/50 bg-background p-5 sm:p-7">
+      <div class="rounded-xl border border-border bg-surface p-5 sm:p-7">
         {errorMessage ? (
           <p
             id="form-status"
             role="alert"
             tabindex="-1"
-            class="mb-5 text-sm font-semibold text-error"
+            class="mb-5 text-sm font-semibold text-error-emphasis"
           >
             {errorMessage}
           </p>
@@ -112,13 +112,13 @@ const SUCCESS_MESSAGE = 'Your project brief was sent. I’ll review it and follo
 
           <FormField
             id="message"
-            label="What bottleneck should we attack first?"
+            label="Where do you want to take AI next?"
             type="textarea"
             required
             rows={6}
             minlength={10}
             maxlength={2000}
-            placeholder="Describe the problem, the systems or teams involved, and the outcome you need."
+            placeholder="Share the AI use case or scaling challenge, your current stage, the systems or teams involved, and the outcome you need."
           />
 
           <div
@@ -128,7 +128,7 @@ const SUCCESS_MESSAGE = 'Your project brief was sent. I’ll review it and follo
           >
             <p
               id="turnstile-status"
-              class="sr-only text-sm font-semibold text-error"
+              class="sr-only text-sm font-semibold text-error-emphasis"
               aria-live="polite"
             ></p>
             <div

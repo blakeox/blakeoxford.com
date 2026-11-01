@@ -12,9 +12,12 @@ test.describe('Menu visibility (production-faithful)', () => {
   test('mobile nav links are visible when menu is open', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForFunction(() => (window as Window & { __navHydrated?: boolean }).__navHydrated === true, {
-      timeout: 5000,
-    });
+    await page.waitForFunction(
+      () => (window as Window & { __navHydrated?: boolean }).__navHydrated === true,
+      {
+        timeout: 5000,
+      }
+    );
 
     const menu = page.locator('#nav-mobile-links');
     const firstLink = menu.locator('.mobile-nav-link').first();
@@ -63,7 +66,9 @@ test.describe('Menu visibility (production-faithful)', () => {
 
     // Menu links must sit above hero content (Safari sticky/absolute stacking bug).
     const hitTest = await page.evaluate(() => {
-      const link = document.querySelector('#nav-mobile-links .mobile-nav-link') as HTMLElement | null;
+      const link = document.querySelector(
+        '#nav-mobile-links .mobile-nav-link'
+      ) as HTMLElement | null;
       if (!link) return { ok: false, reason: 'missing-link' };
       const rect = link.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
@@ -77,20 +82,27 @@ test.describe('Menu visibility (production-faithful)', () => {
       };
     });
     expect(hitTest.ok).toBe(true);
-    expect(Number.parseInt(hitTest.menuZ, 10)).toBeGreaterThanOrEqual(Number.parseInt(hitTest.navZ, 10));
+    expect(Number.parseInt(hitTest.menuZ, 10)).toBeGreaterThanOrEqual(
+      Number.parseInt(hitTest.navZ, 10)
+    );
   });
 
   test('chat overflow menu is visible when opened', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/blog/');
     await page.waitForLoadState('domcontentloaded');
 
     await page.locator('.ai-chat-launcher').click();
-    await expect(page.locator('[data-ai-chat-panel][data-ai-visible="true"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-ai-chat-panel][data-ai-visible="true"]')).toBeVisible({
+      timeout: 5000,
+    });
 
     await page.getByRole('button', { name: 'Assistant options' }).click();
-    await expect(page.getByRole('button', { name: 'Assistant options' })).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.getByRole('button', { name: 'Assistant options' })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    );
 
-    const menu = page.locator('body > [role="menu"]');
+    const menu = page.getByRole('dialog', { name: 'Ask', exact: true }).getByRole('menu');
     await expect(menu).toBeVisible();
     await expect(menu.getByRole('menuitem', { name: /Memory/i })).toBeVisible();
 

@@ -45,6 +45,8 @@ test.describe('Contact conversion contract', () => {
     await expect(page.locator('#form-status')).toHaveText(
       'Your project brief was sent. I’ll review it and follow up by email.'
     );
+    await expect(contactForm).toBeHidden();
+    await expect(page.locator('#form-status')).toBeFocused();
     expect(submittedBodies).toHaveLength(1);
     expect(submittedBodies[0]).toContain('Playwright Contract Test');
     expect(submittedBodies[0]).toContain('contract-test@example.com');

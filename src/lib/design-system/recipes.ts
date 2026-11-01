@@ -13,20 +13,19 @@ export const baseCardRecipe = {
     'focus-within:ring-2 focus-within:ring-accent/25 focus-within:ring-offset-2 focus-within:ring-offset-background',
     'focus-visible:outline-none',
     'transition-colors duration-normal motion-safe:transition-transform motion-safe:duration-normal',
-    'supports-[backdrop-filter]:backdrop-saturate-150',
     'transform-gpu',
   ].join(' '),
   variants: {
     variant: {
-      default: 'border border-border/30 bg-surface/95 shadow-sm',
+      default: 'border border-border bg-surface shadow-none',
       glass:
         'border border-border/40 bg-glass/85 shadow-md backdrop-blur supports-[backdrop-filter]:bg-glass/75',
-      elevated: 'border border-border/30 bg-surface shadow-lg',
+      elevated: 'border border-border bg-surface shadow-md',
       subtle: 'border border-border/25 bg-surface-subtle/50 shadow-none',
     },
     hover: {
       none: '',
-      lift: 'motion-safe:hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg',
+      lift: 'hover:border-accent/50 hover:shadow-md focus-within:shadow-md',
       scale: 'motion-safe:hover:scale-[1.02] focus-within:scale-[1.01]',
     },
     rounded: {
@@ -129,9 +128,9 @@ export function getButtonClasses({
 
 export const fieldRecipe = {
   base: [
-    'w-full rounded-xl border border-border bg-field-bg px-4 py-3.5 text-base text-foreground shadow-sm',
+    'w-full rounded-md border border-field-border bg-field-bg px-4 py-3 text-base text-foreground shadow-none',
     'placeholder:text-subtle-foreground',
-    'hover:border-accent/40 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25',
+    'hover:border-accent focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25',
     // Reuse button-disabled-* (dedicated state tokens — never opacity alone).
     'disabled:cursor-not-allowed disabled:border-button-disabled-border disabled:bg-button-disabled-bg disabled:text-button-disabled-fg',
     'aria-invalid:border-error aria-invalid:ring-2 aria-invalid:ring-error/25',
@@ -139,8 +138,8 @@ export const fieldRecipe = {
   ].join(' '),
   /** Focus-within wrapper for composers (Ask textarea, Find search). */
   shell: [
-    'relative flex min-w-0 items-center gap-2 rounded-xl border border-border/55 bg-field-bg',
-    'transition-[border-color,box-shadow] focus-within:border-accent/55 focus-within:ring-2 focus-within:ring-accent/25',
+    'relative flex min-w-0 items-center gap-2 rounded-xl border border-field-border bg-field-bg',
+    'transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/25',
   ].join(' '),
 } as const;
 
@@ -163,7 +162,7 @@ export function getFieldShellClasses(className = '') {
 export const chipRecipe = {
   base: 'focus-ring-interactive inline-flex items-center border transition',
   variants: {
-    quiet: 'border-border/60 text-muted-foreground hover:border-accent hover:text-accent',
+    quiet: 'border-border/60 text-muted-foreground hover:border-accent hover:text-accent-emphasis',
     accent: 'border-accent/30 bg-accent-subtle font-medium text-accent-emphasis hover:bg-accent/15',
   },
   sizes: {
@@ -176,7 +175,7 @@ export const chipRecipe = {
     pill: 'rounded-full',
     panel: 'rounded-xl',
   },
-  active: 'border-accent/40 bg-accent-subtle text-accent',
+  active: 'border-accent/40 bg-accent-subtle text-accent-emphasis',
 } as const;
 
 export type ChipVariant = keyof typeof chipRecipe.variants;
@@ -257,7 +256,7 @@ export function getBadgeClasses({
 }
 
 export const featureCardRecipe = {
-  base: '@container @md:p-10',
+  base: '@container',
   variants: {
     accent: {
       surface: 'border-accent/30 bg-accent-subtle',
@@ -276,7 +275,7 @@ export type FeatureCardVariant = keyof typeof featureCardRecipe.variants;
 
 /** Semantic aside for blog/docs — status tones live here, not on FeatureCard. */
 export const calloutRecipe = {
-  base: 'rounded-2xl border-l-4 p-6 shadow-sm @sm:p-8',
+  base: 'rounded-xl border-l-4 p-4 @sm:p-6 @md:p-8',
   variants: {
     info: {
       surface: 'border-info bg-info/10',
@@ -305,7 +304,7 @@ export type CalloutVariant = keyof typeof calloutRecipe.variants;
 
 /** In-article section / statement band (not a marketing CtaBand). */
 export const contentBandRecipe = {
-  base: 'relative my-12 overflow-hidden rounded-2xl p-10 @md:p-12 @lg:p-16',
+  base: 'relative my-12 overflow-hidden rounded-xl p-5 sm:p-8 @md:p-12 @lg:p-16',
   variants: {
     subtle: 'border border-accent/20 bg-surface-subtle',
     surface: 'border border-border/40 bg-surface',
@@ -332,8 +331,8 @@ export const timelineItemRecipe = {
   marker:
     'absolute left-0 top-0 hidden size-14 items-center justify-center rounded-full bg-accent text-xl font-bold text-on-accent shadow-lg md:flex',
   body: {
-    accent: 'rounded-2xl border border-accent/30 bg-accent/5 p-8 shadow-lg @md:p-10',
-    primary: 'rounded-2xl border border-primary/30 bg-surface-subtle p-8 shadow-lg @md:p-10',
+    accent: 'rounded-xl border border-accent/30 bg-accent/5 p-5 sm:p-8 @md:p-10',
+    primary: 'rounded-xl border border-primary/30 bg-surface-subtle p-5 sm:p-8 @md:p-10',
   },
   title: {
     accent: 'text-accent-emphasis',
@@ -348,7 +347,7 @@ export const containerRecipe = {
     sm: 'max-w-2xl',
     md: 'max-w-4xl',
     lg: 'max-w-6xl',
-    xl: 'max-w-7xl',
+    xl: 'max-w-container-2xl',
     full: 'max-w-none',
   },
 } as const;
@@ -422,14 +421,14 @@ export const proseRecipe = {
   },
   base: [
     'max-w-none text-foreground',
-    'prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground',
+    'prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tight',
     'prose-h1:mb-8 prose-h1:text-5xl',
-    'prose-h2:mt-16 prose-h2:mb-8 prose-h2:text-4xl',
-    'prose-h3:mt-10 prose-h3:mb-5 prose-h3:text-3xl',
-    'prose-p:mb-6 prose-p:text-lg prose-p:leading-relaxed prose-p:text-foreground',
-    'prose-li:text-lg prose-li:leading-relaxed prose-li:text-foreground',
-    'prose-a:text-accent-emphasis prose-a:no-underline hover:prose-a:underline',
-    'prose-strong:font-semibold prose-strong:text-foreground',
+    'prose-h2:mt-12 prose-h2:mb-6 prose-h2:text-2xl sm:prose-h2:text-3xl',
+    'prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-xl sm:prose-h3:text-2xl',
+    'prose-p:mb-6 prose-p:text-lg prose-p:leading-relaxed',
+    'prose-li:text-lg prose-li:leading-relaxed',
+    'prose-a:no-underline hover:prose-a:underline',
+    'prose-strong:font-semibold',
     'prose-pre:bg-code-surface prose-pre:text-code-foreground',
   ].join(' '),
 } as const;
