@@ -14,8 +14,10 @@ import { getHomePage } from '@/content/home/getHomePage';
 import { siteConfig } from '@/config/data';
 import { take } from '@/utils/array';
 import { isPublished } from '@/lib/content/publication-contract.mjs';
+import { getHomePortrait, homePortraitSizes } from '@/lib/homePortrait';
 
 const page = await getHomePage();
+const portrait = await getHomePortrait();
 
 const allBlogPosts: CollectionEntry<'blog'>[] = await getCollection('blog');
 const publishedPosts = allBlogPosts
@@ -49,7 +51,9 @@ const recentProjects = leadProjects(publishedProjects);
     slot="head"
     rel="preload"
     as="image"
-    href="/assets/images/optimized/avif/blake_detroit_skyline_bell_isle.avif"
+    href={portrait.src}
+    imagesrcset={portrait.srcSet.attribute}
+    imagesizes={homePortraitSizes}
     type="image/avif"
     fetchpriority="high"
   />

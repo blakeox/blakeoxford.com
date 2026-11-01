@@ -7,14 +7,12 @@
  * No-JS: details.mobile-nav-fallback remains available until data-js-nav is set.
  */
 import navLinks, { normalizeNavPath } from '@/config/navLinks';
+import { Image } from 'astro:assets';
+import portrait from '@/assets/images/carousel/blake_detroit_skyline_bell_isle.webp';
 
 const currentPath = normalizeNavPath(Astro.url.pathname);
 const logo = {
   name: 'Blake Oxford',
-  avatar: {
-    jpg: '/assets/images/blake_detroit_skyline_bell_isle.jpg',
-    avif: '/assets/images/optimized/avif/blake_detroit_skyline_bell_isle.avif',
-  },
 };
 
 function isActive(href: string): boolean {
@@ -39,25 +37,26 @@ function isActive(href: string): boolean {
       <a
         href="/"
         class="brand-link focus-ring-interactive flex items-center gap-3 rounded-full px-2 py-1 text-foreground @max-xs:px-0"
-        aria-label={logo.name}
       >
-        <picture class="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60">
-          {logo.avatar.avif && <source srcset={logo.avatar.avif} type="image/avif" />}
-          <img
-            src={logo.avatar.jpg}
-            alt="Blake Oxford"
+        <span class="brand-avatar-container size-9 overflow-hidden rounded-full border border-border/60">
+          <Image
+            src={portrait}
+            alt=""
             aria-hidden="true"
             class="brand-avatar size-9 object-cover"
-            width={853}
-            height={853}
+            width={36}
+            height={36}
+            densities={[1, 2, 3]}
+            format="avif"
             loading="eager"
-            fetchpriority="high"
             decoding="async"
           />
-        </picture>
+        </span>
+        <span class="sr-only @xs:hidden">{logo.name}</span>
         <span class="brand-text flex flex-col leading-none @max-xs:hidden">
           <span class="text-sm font-semibold tracking-tight text-foreground">{logo.name}</span>
           <span class="hidden text-xxs font-medium tracking-label text-subtle-foreground uppercase sm:block">
+            {' '}
             Systems architect
           </span>
         </span>
@@ -94,7 +93,10 @@ function isActive(href: string): boolean {
         id="search-toggle"
         type="button"
         class="nav-utility-button search-toggle gap-1.5 px-[12px]"
-        aria-label="Open site search (Command K)"
+        aria-label="Search"
+        aria-description="Open site search. Shortcut: Command K or Control K."
+        aria-keyshortcuts="Meta+K Control+K"
+        title="Search (Command K or Control K)"
         aria-haspopup="dialog"
         aria-expanded="false"
       >
@@ -115,7 +117,6 @@ function isActive(href: string): boolean {
           ></path>
         </svg>
         <span class="hidden text-xs font-medium text-muted-foreground @5xl:inline">Search</span>
-        <kbd class="nav-kbd hidden @5xl:inline-flex">⌘K</kbd>
       </button>
 
       <button

@@ -42,10 +42,6 @@
     @apply ring-2 ring-accent/60 ring-offset-2 ring-offset-background outline-none;
   }
 
-  .nav-kbd {
-    @apply items-center rounded-md border border-border/70 bg-surface-subtle/90 px-1.5 py-0.5 font-mono text-xxs font-medium text-muted-foreground;
-  }
-
   .nav-shell--scrolled #navbar {
     height: 4rem;
   }
