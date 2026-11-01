@@ -383,6 +383,7 @@ function isActive(href: string): boolean {
       var search = document.getElementById('search-toggle');
       if (!search) return;
       search.onclick = function (event) {
+        if (search.getAttribute('data-search-trigger-ready') === 'true') return;
         event.preventDefault();
         event.stopPropagation();
         if (window.__boSearchLoaderReady) {

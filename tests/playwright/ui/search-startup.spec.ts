@@ -56,9 +56,30 @@ for (const width of [390, 1440]) {
           await page.keyboard.press('Escape');
           await expect(trigger).toBeFocused();
           await expect(page.locator('main')).not.toHaveAttribute('inert', '');
+          await page.evaluate(() => {
+            const win = window as Window & {
+              __searchOpenEvents?: Array<{ event: string; source?: unknown }>;
+              zaraz?: { track: (event: string, props?: Record<string, unknown>) => void };
+            };
+            win.__searchOpenEvents = [];
+            win.zaraz = {
+              track: (event, props) => {
+                if (event === 'command_center_open') {
+                  win.__searchOpenEvents?.push({ event, source: props?.source });
+                }
+              },
+            };
+          });
           if (width < 768) await trigger.tap();
           else await trigger.click();
           await expect(page.getByRole('dialog', { name: 'Search', exact: true })).toBeVisible();
+          await expect
+            .poll(() =>
+              page.evaluate(
+                () => (window as Window & { __searchOpenEvents?: unknown[] }).__searchOpenEvents
+              )
+            )
+            .toEqual([{ event: 'command_center_open', source: 'nav' }]);
           await page.keyboard.press('Escape');
           await expect(trigger).toBeFocused();
         } finally {
