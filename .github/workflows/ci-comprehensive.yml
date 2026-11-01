@@ -88,11 +88,8 @@ jobs:
       - name: Resolve Chromium path for Lighthouse
         if: matrix.test-group == 'performance'
         run: |
-          CHROME_PATH="$(find /ms-playwright -path '*/chrome-linux/chrome' -type f 2>/dev/null | head -1)"
-          if [ -z "$CHROME_PATH" ]; then
-            CHROME_PATH="$(pnpm exec node --input-type=module -e "import { chromium } from 'playwright'; console.log(chromium.executablePath());")"
-          fi
-          test -n "$CHROME_PATH"
+          CHROME_PATH="$(pnpm exec node --input-type=module -e "import { chromium } from '@playwright/test'; console.log(chromium.executablePath());")"
+          test -x "$CHROME_PATH"
           echo "CHROME_PATH=$CHROME_PATH" >> "$GITHUB_ENV"
 
       - name: Run linting
