@@ -2,6 +2,7 @@
 
 interface ImportMetaEnv {
   readonly PUBLIC_SENTRY_DSN?: string;
+  readonly PUBLIC_SENTRY_ENVIRONMENT?: string;
   readonly PUBLIC_GIT_COMMIT?: string;
   readonly PUBLIC_CLARITY_PROJECT_ID?: string;
   readonly PUBLIC_ENABLE_SITE_SEARCH?: string;
