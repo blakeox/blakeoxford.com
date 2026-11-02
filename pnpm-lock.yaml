@@ -91,8 +91,8 @@ importers:
         specifier: ^1.63.0
         version: 1.63.0
       '@rollup/rollup-linux-x64-gnu':
-        specifier: ^4.65.1
-        version: 4.65.1
+        specifier: ^4.66.0
+        version: 4.66.0
       '@sentry/cli':
         specifier: ^3.8.0
         version: 3.8.0
@@ -1173,6 +1173,7 @@ packages:
   '@opentelemetry/sdk-trace-base@2.11.0':
     resolution: {integrity: sha512-H19x/TX/LZdqiYOjM7fqtSxwlplC5pgelavqbQdHbhdq0q/AI/TGkM2dfGuuynTXmJPeF2HoZVoPDu+TGoW78A==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.3.0 <1.10.0'
 
@@ -1552,10 +1553,11 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@rollup/rollup-linux-x64-gnu@4.65.1':
-    resolution: {integrity: sha512-44IKzBPqXXVm0kt1O+F5eW4juR5FyIxGNlFkpP8qwIDzucBsjM1HCbdYUQrQw8rU/g6HRl/tfBm0+Qq4H4Ro3w==}
+  '@rollup/rollup-linux-x64-gnu@4.66.0':
+    resolution: {integrity: sha512-E46rnZgp7J84Qwe8RMlF+rgimnDo/9fuiGbUArGB0ZkMWf97O7yeSCfKls5x/YJOF0RcuSe9RctuKe1hlxICiA==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@sentry/astro@11.9.0':
     resolution: {integrity: sha512-TF0+Uk/X2ILGJl/qzG8r0cp4YPbjKlNha1SvIqdw3Q55/gg6L/vhdEslZbiUGXZoEECxgnoAeWwOxfXt1wjWZw==}
@@ -6773,7 +6775,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@rollup/rollup-linux-x64-gnu@4.65.1': {}
+  '@rollup/rollup-linux-x64-gnu@4.66.0': {}
 
   '@sentry/astro@11.9.0(astro@7.4.0(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.2)(yaml@2.8.3))':
     dependencies:
