@@ -12,11 +12,13 @@ export function toCommandItem(
   source: CommandItem['source'] = 'local'
 ): CommandItem {
   const resolvedSource: CommandItem['source'] =
-    record.retrieval === 'semantic'
-      ? 'vectorize'
-      : record.retrieval === 'keyword'
-        ? 'local'
-        : source;
+    record.retrieval === 'hybrid'
+      ? 'ai-search'
+      : record.retrieval === 'semantic'
+        ? 'vectorize'
+        : record.retrieval === 'keyword'
+          ? 'local'
+          : source;
 
   return {
     id: record.href,

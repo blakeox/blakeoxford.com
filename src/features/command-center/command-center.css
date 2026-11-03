@@ -5,44 +5,107 @@
     height: 1px;
     overflow: visible;
     pointer-events: none;
-    visibility: hidden;
+    display: none;
   }
-
   .search-overlay-mount[data-state='open'] {
-    visibility: visible;
+    display: block;
   }
-
   .search-overlay-mount > .overlay-root {
     pointer-events: auto;
   }
+}
 
+@layer utilities {
+  .command-center > div:last-child {
+    align-items: flex-start;
+    pointer-events: none;
+    padding: clamp(32px, 10dvh, 96px) 16px 24px;
+  }
   .command-center .overlay-panel {
+    width: 100%;
+    pointer-events: auto;
+    max-width: 560px;
+    height: auto;
+    max-height: min(480px, calc(100dvh - 128px));
+    border-radius: 12px;
+    background: var(--color-surface);
     box-shadow: var(--shadow-xl);
   }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .command-center .overlay-panel[data-panel] {
-      animation: command-panel-in var(--duration-normal) var(--ease-decelerate);
+  .command-center .overlay-panel > [aria-hidden='true']:first-child {
+    display: none;
+  }
+  .command-center .search-field-row {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 8px;
+    min-height: 68px;
+    padding: 8px 12px 8px 16px;
+  }
+  .command-center #close-search {
+    width: 44px;
+    height: 44px;
+  }
+  .search-field-row button {
+    min-height: 44px;
+  }
+  .search-field-row:focus-within {
+    box-shadow: inset 0 -2px var(--color-accent);
+  }
+  .search-field {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+    gap: 12px;
+  }
+  .command-center .search-content {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px;
+    border-top: 1px solid var(--color-border);
+  }
+  .command-center .search-result {
+    min-height: 68px;
+    align-items: center;
+    gap: 12px;
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .search-message,
+  .search-notice {
+    padding: 16px 12px;
+    overflow-wrap: anywhere;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-muted-foreground);
+  }
+  .search-notice {
+    padding-block: 8px;
+    font-size: 0.75rem;
+  }
+  @media (max-width: 639px) {
+    .command-center > div:last-child {
+      padding: max(12px, env(safe-area-inset-top)) 12px 12px;
+    }
+    .command-center .overlay-panel {
+      max-height: min(480px, calc(100dvh - 24px));
     }
   }
-
-  @keyframes command-panel-in {
-    from {
-      opacity: 0;
-      transform: translateY(12px) scale(0.98);
+  @media (max-height: 520px) and (min-width: 640px) {
+    .command-center > div:last-child {
+      padding-block: 16px;
     }
-
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
+    .command-center .overlay-panel {
+      max-height: calc(100dvh - 32px);
     }
   }
-
   @media (prefers-reduced-motion: reduce) {
-    .overlay-panel,
-    #search-overlay {
-      transition: none !important;
-      animation: none !important;
+    .command-center,
+    .command-center .overlay-panel {
+      animation: none;
+      transition: none;
     }
   }
 }

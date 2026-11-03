@@ -1,9 +1,19 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { enrichCommandItems } from '../../src/features/command-center/lib/rankResults';
+import { mapSearchResults } from '../../src/features/command-center/lib/toCommandItem';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { resetSearchCorpusCache } from '../../src/lib/search/searchIndexLoader';
+import { loadSearchCorpus, resetSearchCorpusCache } from '../../src/lib/search/searchIndexLoader';
 import { searchLocalCorpus } from '../../src/lib/search/localSearch';
-import { filterNoisyHubRecords, runSearch } from '../../src/lib/search/searchService';
+import {
+  filterNoisyHubRecords,
+  hydrateRecordsFromCorpus,
+  runSearch,
+} from '../../src/lib/search/searchService';
 import type { SearchRecord } from '../../src/lib/search/types';
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 const sampleCorpus: SearchRecord[] = [
   {
@@ -311,3 +321,195 @@ describe('filterNoisyHubRecords', () => {
     expect(filtered[0]?.type).toBe('project');
   });
 });
+
+describe('progressive managed retrieval', () => {
+  it('shows local matches while pending, then trusts managed conceptual matches', async () => {
+    resetSearchCorpusCache();
+    let resolveRemote!: (value: Response) => void;
+    const remote = new Promise<Response>((resolve) => {
+      resolveRemote = resolve;
+    });
+    vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
+      if (String(input).includes('/api/semantic-search')) return remote;
+      return new Response(
+        JSON.stringify(
+          String(input).includes('/search/projects.json')
+            ? [
+                {
+                  slug: 'automation',
+                  title: 'Workflow automation',
+                  description: 'Automation',
+                  tags: [],
+                },
+              ]
+            : []
+        )
+      );
+    });
+    const onLocalResults = vi.fn();
+    const pending = runSearch({ query: 'workflow', category: 'all', onLocalResults });
+    await vi.waitFor(() => expect(onLocalResults).toHaveBeenCalled());
+    expect(onLocalResults.mock.calls[0][0][0].title).toBe('Workflow automation');
+    resolveRemote(
+      new Response(
+        JSON.stringify({
+          provider: 'ai-search',
+          results: [
+            {
+              id: 'concept',
+              score: 0.94,
+              title: 'Operational intelligence',
+              description: 'Connected systems',
+              excerpt: 'A matching indexed passage',
+              url: '/projects/fabric/',
+              collection: 'project',
+              tags: [],
+            },
+          ],
+        })
+      )
+    );
+    const result = await pending;
+    expect(result.source).toBe('cloudflare-ai-search');
+    expect(
+      result.records.some(
+        (item) => item.href === '/projects/fabric/' && item.retrieval === 'hybrid'
+      )
+    ).toBe(true);
+  });
+  it('propagates a cancelled query without displaying a fallback', async () => {
+    resetSearchCorpusCache();
+    const controller = new AbortController();
+    vi.spyOn(global, 'fetch').mockImplementation(async () => new Response('[]'));
+    controller.abort();
+    await expect(
+      runSearch({ query: 'fabric', category: 'all', signal: controller.signal })
+    ).rejects.toThrow();
+  });
+});
+
+describe('shared search corpus recovery', () => {
+  it('retries an unavailable content index instead of caching page links forever', async () => {
+    resetSearchCorpusCache();
+    let available = false;
+    vi.spyOn(global, 'fetch').mockImplementation(
+      async (input) =>
+        new Response(
+          JSON.stringify(
+            String(input).includes('projects')
+              ? [{ slug: 'recovered', title: 'Recovered', tags: [] }]
+              : []
+          ),
+          { status: available ? 200 : 503 }
+        )
+    );
+    expect((await loadSearchCorpus()).some((item) => item.type === 'project')).toBe(false);
+    available = true;
+    expect((await loadSearchCorpus()).some((item) => item.href === '/projects/recovered/')).toBe(
+      true
+    );
+  });
+  it('does not poison a shared index load when one query is cancelled', async () => {
+    resetSearchCorpusCache();
+    const cancelled = new AbortController();
+    cancelled.abort();
+    const fetcher = vi.spyOn(global, 'fetch').mockImplementation(async () => new Response('[]'));
+    const [first, second] = await Promise.all([
+      loadSearchCorpus(cancelled.signal),
+      loadSearchCorpus(),
+    ]);
+    expect(first).toEqual(second);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(fetcher.mock.calls.every((call) => call[1]?.signal && !call[1].signal.aborted)).toBe(
+      true
+    );
+  });
+});
+
+it('bounds a stalled shared corpus load and permits the next load to recover', async () => {
+  resetSearchCorpusCache();
+  vi.useFakeTimers();
+  const fetcher = vi.spyOn(global, 'fetch').mockImplementation(
+    (_url, options) =>
+      new Promise((_resolve, reject) => {
+        options?.signal?.addEventListener(
+          'abort',
+          () => reject(new DOMException('Aborted', 'AbortError')),
+          { once: true }
+        );
+      })
+  );
+  const pending = loadSearchCorpus();
+  await vi.advanceTimersByTimeAsync(3000);
+  expect((await pending).some((record) => record.type === 'page')).toBe(true);
+  fetcher.mockImplementation(async (input) =>
+    Response.json(
+      String(input).includes('projects')
+        ? [{ slug: 'recovered', title: 'Recovered', tags: [] }]
+        : []
+    )
+  );
+  expect((await loadSearchCorpus()).some((record) => record.href === '/projects/recovered/')).toBe(
+    true
+  );
+});
+
+it.each([
+  ['projects', 'Work', '/projects/'],
+  ['blog', 'Writing', '/blog/'],
+  ['work', 'Work', '/projects/'],
+  ['writing', 'Writing', '/blog/'],
+])('retains the %s landing page alias through both ranking filters', (query, title, href) => {
+  const records: SearchRecord[] = [{ type: 'page', title, href, description: 'Browse', tags: [] }];
+  const filtered = filterNoisyHubRecords(records, query);
+  expect(filtered).toHaveLength(1);
+  expect(enrichCommandItems(mapSearchResults(filtered, 'local'), query)).toHaveLength(1);
+});
+
+it('corrects stale provider collection types before hub filtering', () => {
+  const local: SearchRecord = {
+    type: 'page',
+    title: 'Work',
+    href: '/projects/',
+    description: 'Browse automation',
+    tags: [],
+  };
+  const hydrated = hydrateRecordsFromCorpus([{ ...local, type: 'project' }], [local]);
+  expect(hydrated[0].type).toBe('page');
+  expect(filterNoisyHubRecords(hydrated, 'automation')).toEqual([]);
+  expect(filterNoisyHubRecords(hydrated, 'projects')).toHaveLength(1);
+});
+
+it.each([
+  ['projects', '/projects/'],
+  ['blog', '/blog/'],
+  ['work', '/projects/'],
+  ['writing', '/blog/'],
+])(
+  'prioritizes the %s navigation alias even when all managed result slots are full',
+  async (query, href) => {
+    resetSearchCorpusCache();
+    vi.spyOn(global, 'fetch').mockImplementation(async (input) =>
+      Response.json(
+        String(input).includes('/api/semantic-search')
+          ? {
+              provider: 'ai-search',
+              results: Array.from({ length: 8 }, (_, i) => ({
+                id: String(i),
+                url: `/projects/example-${i}/`,
+                title: `Example ${i}`,
+                collection: 'project',
+                tags: [],
+                score: 0.99,
+              })),
+            }
+          : []
+      )
+    );
+    const result = await runSearch({ query, category: 'all', limit: 8 });
+    expect(result.records[0].href).toBe(href);
+    expect(enrichCommandItems(mapSearchResults(result.records, 'ai-search'), query)[0].href).toBe(
+      href
+    );
+  }
+);

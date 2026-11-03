@@ -1,4 +1,4 @@
-import { anonymizeClientIp } from '../shared/ip';
+import { retrieveSiteSearch, SearchRetrievalError, type SiteSearchMatch } from './search-retrieval';
 import { buildApiCorsHeaders } from '../shared/cors';
 import { writeAiAnalytics } from '../shared/ai-analytics';
 import type { RouteContext } from '../shared/route-context';
@@ -37,7 +37,7 @@ export async function handleSemanticSearch({
         'x-request-id': reqId,
         'x-route-kind': 'api',
         'x-cache-policy': 'no-store',
-        'x-search-provider': 'vectorize',
+        'x-search-provider': 'unavailable',
       },
     }),
   };
@@ -50,6 +50,24 @@ export async function handleSemanticSearch({
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
       headers: baseCorsHeaders,
+    });
+  }
+
+  function searchResponse(results: SiteSearchMatch[], provider: 'ai-search' | 'vectorize') {
+    const latency = Date.now() - startTime;
+    const topScore = results[0]?.score ?? 0;
+    writeAiAnalytics(env, {
+      blobs: ['', provider, '', 'anonymous'],
+      doubles: [results.length, topScore, latency],
+      indexes: ['site_search'],
+    });
+    return new Response(JSON.stringify({ results, count: results.length, provider, topScore }), {
+      status: 200,
+      headers: {
+        ...baseCorsHeaders,
+        'x-search-provider': provider,
+        'x-response-time': String(latency),
+      },
     });
   }
 
@@ -99,16 +117,53 @@ export async function handleSemanticSearch({
       }
     }
 
-    const body = (await request.json()) as { query?: unknown; limit?: unknown };
+    const bytes = await request.arrayBuffer();
+    if (bytes.byteLength > MAX_REQUEST_BYTES)
+      return new Response(JSON.stringify({ error: 'Request is too large' }), {
+        status: 413,
+        headers: baseCorsHeaders,
+      });
+    let body: { query?: unknown; limit?: unknown };
+    try {
+      const parsed: unknown = JSON.parse(new TextDecoder().decode(bytes));
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed))
+        throw new Error('Invalid JSON');
+      body = parsed;
+    } catch {
+      return new Response(JSON.stringify({ error: 'Invalid search request' }), {
+        status: 400,
+        headers: baseCorsHeaders,
+      });
+    }
     const query = typeof body.query === 'string' ? body.query.trim() : '';
-    const requestedLimit = typeof body.limit === 'number' ? body.limit : 5;
-    const limit = Math.max(1, Math.min(requestedLimit, 10));
+    const requestedLimit =
+      typeof body.limit === 'number' && Number.isFinite(body.limit) ? Math.floor(body.limit) : 5;
+    const limit = Math.max(1, Math.min(requestedLimit, 12));
 
     if (!query || query.length > MAX_QUERY_LENGTH) {
       return new Response(JSON.stringify({ error: 'Query is required' }), {
         status: 400,
         headers: baseCorsHeaders,
       });
+    }
+
+    if (env.SEARCH_PROVIDER === 'local') {
+      return new Response(JSON.stringify({ error: 'Broader search is temporarily unavailable' }), {
+        status: 503,
+        headers: baseCorsHeaders,
+      });
+    }
+    if (env.AI_SEARCH?.search && env.SEARCH_PROVIDER !== 'vectorize') {
+      try {
+        const results = await retrieveSiteSearch(env.AI_SEARCH, query, limit);
+        return searchResponse(results, 'ai-search');
+      } catch (error) {
+        console.warn('[search] Managed retrieval unavailable; trying fallback', {
+          reqId,
+          reason: error instanceof SearchRetrievalError ? error.reason : 'provider_error',
+          elapsedMs: Date.now() - startTime,
+        });
+      }
     }
 
     // Check if Vectorize is available
@@ -142,7 +197,7 @@ export async function handleSemanticSearch({
       }
       queryEmbedding = embeddingData;
     } catch (error) {
-      console.error('Failed to generate query embedding', error);
+      console.warn('[search] Fallback embedding unavailable', { reqId });
       return new Response(JSON.stringify({ error: 'Failed to generate query embedding' }), {
         status: 500,
         headers: baseCorsHeaders,
@@ -178,34 +233,9 @@ export async function handleSemanticSearch({
       };
     });
 
-    const topScore = results[0]?.score ?? 0;
-    const latency = Date.now() - startTime;
-
-    writeAiAnalytics(env, {
-      blobs: [query.slice(0, 50), 'VECTORIZE', anonymizeClientIp(clientIp), 'anonymous'],
-      doubles: [results.length, topScore, latency],
-      indexes: ['semantic_search'],
-    });
-
-    return new Response(
-      JSON.stringify({
-        query,
-        results,
-        count: results.length,
-        provider: 'vectorize',
-        topScore,
-      }),
-      {
-        status: 200,
-        headers: {
-          ...baseCorsHeaders,
-          'x-response-time': String(latency),
-          'x-search-provider': 'vectorize',
-        },
-      }
-    );
+    return searchResponse(results, 'vectorize');
   } catch (error) {
-    console.error('Semantic search failed', error);
+    console.warn('[search] Retrieval failed', { reqId });
     return new Response(JSON.stringify({ error: 'Semantic search failed' }), {
       status: 500,
       headers: baseCorsHeaders,
