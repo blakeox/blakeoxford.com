@@ -52,7 +52,7 @@ function plainExcerpt(value: unknown): string {
   return value
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-    .replace(/<[^>]*>/g, '')
+    .replace(/<[^>]*>/g, ' ')
     .replace(/[<>]/g, '')
     .replace(/[#*_`>|]/g, '')
     .replace(/&(amp|quot|#39);/g, (_match, entity: string) =>
