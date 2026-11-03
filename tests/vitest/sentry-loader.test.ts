@@ -135,9 +135,11 @@ describe('deferred Sentry install and flush', () => {
 
   it('initializes once and flushes queued errors', () => {
     const early = new Error('before-init');
+    const reason = { name: 'AbortError', message: 'stopped' };
     window.__boSentryEarly = [
       { kind: 'error', value: early },
       { kind: 'rejection', value: 'rejected-string' },
+      { kind: 'rejection', value: reason },
     ];
 
     initDeferredSentry('https://public@o4512297421897728.ingest.us.sentry.io/0');
@@ -151,6 +153,7 @@ describe('deferred Sentry install and flush', () => {
       maskAllInputs: true,
     });
     expect(captureException).toHaveBeenCalledWith(early);
+    expect(captureException).toHaveBeenCalledWith(reason);
     expect(captureMessage).toHaveBeenCalledWith('rejected-string');
     expect(window.__boSentryEarly).toBeUndefined();
     expect(consumeEarlySentryEvents()).toEqual([]);

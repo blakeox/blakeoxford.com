@@ -9,15 +9,13 @@ import { consumeEarlySentryEvents, type EarlySentryEvent } from './sentry-early'
 
 function reportEarlySentryEvent(event: EarlySentryEvent): void {
   const { value } = event;
-  if (value instanceof Error) {
-    Sentry.captureException(value);
-    return;
-  }
   if (typeof value === 'string' && value.length > 0) {
     Sentry.captureMessage(value);
     return;
   }
-  Sentry.captureException(new Error('Unclassified browser exception'));
+  // Keep objects, DOMExceptions, and cross-realm errors intact. Replacing them
+  // drops the message and stack that Sentry's own handler would have kept.
+  Sentry.captureException(value);
 }
 
 /**
