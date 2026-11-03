@@ -459,6 +459,8 @@ it.each([
   ['blog', 'Writing', '/blog/'],
   ['work', 'Work', '/projects/'],
   ['writing', 'Writing', '/blog/'],
+  ['email', 'Contact', '/contact/'],
+  ['talk', 'Contact', '/contact/'],
 ])('retains the %s landing page alias through both ranking filters', (query, title, href) => {
   const records: SearchRecord[] = [{ type: 'page', title, href, description: 'Browse', tags: [] }];
   const filtered = filterNoisyHubRecords(records, query);
@@ -485,6 +487,8 @@ it.each([
   ['blog', '/blog/'],
   ['work', '/projects/'],
   ['writing', '/blog/'],
+  ['email', '/contact/'],
+  ['talk', '/contact/'],
 ])(
   'prioritizes the %s navigation alias even when all managed result slots are full',
   async (query, href) => {
