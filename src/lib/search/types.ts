@@ -18,7 +18,8 @@ export type SearchRecord = {
   publishedAt?: string;
   image?: string;
   /** How this hit was retrieved — drives Find trust UI. */
-  retrieval?: 'semantic' | 'keyword' | 'browse';
+  retrieval?: 'semantic' | 'hybrid' | 'keyword' | 'browse';
+  excerpt?: string;
 };
 
 export type SemanticSearchMatch = {
@@ -30,6 +31,7 @@ export type SemanticSearchMatch = {
   collection: string;
   tags: string[];
   date?: string;
+  excerpt?: string;
 };
 
 export type SearchQueryOptions = {
@@ -37,12 +39,14 @@ export type SearchQueryOptions = {
   category: SearchCategory;
   limit?: number;
   signal?: AbortSignal;
+  onLocalResults?: (records: SearchRecord[]) => void;
 };
 
 export type SearchQueryResult = {
   records: SearchRecord[];
-  source: 'cloudflare-vectorize' | 'local-fallback' | 'browse';
+  source: 'cloudflare-ai-search' | 'cloudflare-vectorize' | 'local-fallback' | 'browse';
   meta?: {
+    degraded?: boolean;
     provider?: string;
     semanticCount?: number;
     topScore?: number;

@@ -1,6 +1,15 @@
 import type { CommandItem } from '@/features/command-center/types';
 
-const HUB_TITLES = new Set(['home', 'about', 'projects', 'blog', 'contact', 'pages']);
+const HUB_TITLES = new Set([
+  'home',
+  'about',
+  'projects',
+  'blog',
+  'contact',
+  'pages',
+  'work',
+  'writing',
+]);
 
 function normalize(text: string): string {
   return text.toLowerCase().trim();
@@ -44,24 +53,32 @@ export function enrichCommandItems(
   const terms = normalize(query).split(/\s+/).filter(Boolean);
   if (!terms.length) return items;
 
+  const hasManagedResults = items.some((item) => item.source === 'ai-search');
   return items
     .map((item) => {
       const overlap = tagOverlap(item, terms);
       const boost = titleBoost(item, terms);
       const descBoost = descriptionBoost(item, terms);
       const baseScore = item.score ?? 0;
-      const score = Math.min(
-        1,
-        Math.max(
-          0,
-          baseScore +
-            boost +
-            descBoost +
-            overlap.length * 0.05 +
-            imageBoost(item) +
-            (includeHubMatches ? 0 : hubPenalty(item, terms))
-        )
-      );
+      const score =
+        item.source === 'ai-search'
+          ? baseScore
+          : hasManagedResults
+            ? normalize(item.title).includes(normalize(query))
+              ? 1
+              : Math.min(0.5, baseScore)
+            : Math.min(
+                1,
+                Math.max(
+                  0,
+                  baseScore +
+                    boost +
+                    descBoost +
+                    overlap.length * 0.05 +
+                    imageBoost(item) +
+                    (includeHubMatches ? 0 : hubPenalty(item, terms))
+                )
+              );
 
       // Only surface human-useful reasons — never "Semantic match".
       let matchReason: string | undefined;

@@ -60,36 +60,41 @@ async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export async function loadSearchCorpus(signal?: AbortSignal): Promise<SearchRecord[]> {
+export async function loadSearchCorpus(_signal?: AbortSignal): Promise<SearchRecord[]> {
   if (cachedCorpus) return cachedCorpus;
   if (loadPromise) return loadPromise;
 
   loadPromise = (async () => {
     const pages: SearchRecord[] = getNavSearchPages().map((page) => ({
       type: 'page',
-      title: page.title,
+      title: page.href === '/projects/' ? 'Work' : page.href === '/blog/' ? 'Writing' : page.title,
       description: page.description,
       href: page.href,
-      tags: page.tags,
+      tags: [
+        ...page.tags,
+        ...(page.href === '/projects/'
+          ? ['work', 'portfolio']
+          : page.href === '/contact/'
+            ? ['email', 'talk']
+            : []),
+      ],
     }));
-
-    let projects: SearchRecord[] = [];
-    let blogs: SearchRecord[] = [];
 
     try {
       const [projectJson, blogJson] = await Promise.all([
-        fetchJson<ApiProject[]>('/search/projects.json', signal),
-        fetchJson<ApiBlog[]>('/search/blog.json', signal),
+        fetchJson<ApiProject[]>('/search/projects.json'),
+        fetchJson<ApiBlog[]>('/search/blog.json'),
       ]);
 
-      projects = projectJson.filter((item) => !item.draft).map(toProjectRecord);
-      blogs = blogJson.filter((item) => !item.draft).map(toBlogRecord);
+      const projects = projectJson.filter((item) => !item.draft).map(toProjectRecord);
+      const blogs = blogJson.filter((item) => !item.draft).map(toBlogRecord);
+      cachedCorpus = [...pages, ...projects, ...blogs];
+      return cachedCorpus;
     } catch (error) {
-      console.warn('[search] Failed to load search indexes, using nav pages only', error);
+      console.warn('[search] Content index temporarily unavailable; keeping page navigation');
+      loadPromise = null;
+      return pages;
     }
-
-    cachedCorpus = [...pages, ...projects, ...blogs];
-    return cachedCorpus;
   })();
 
   return loadPromise;

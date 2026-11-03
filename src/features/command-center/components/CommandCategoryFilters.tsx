@@ -12,20 +12,20 @@ type CommandCategoryFiltersProps = {
 /** Progressive type filters — only render while the user is searching. */
 export function CommandCategoryFilters({ category, onChange }: CommandCategoryFiltersProps) {
   return (
-    <div className="flex flex-wrap gap-1.5 px-1 pb-2" role="tablist" aria-label="Filter by type">
+    <div className="search-filters" role="group" aria-label="Filter by type">
       {FILTERS.map((value) => {
         const active = category === value;
         return (
           <button
             key={value}
             type="button"
-            role="tab"
-            aria-selected={active}
+            aria-pressed={active}
             className={getChipClasses({
               variant: 'quiet',
-              size: 'xs',
+              size: 'sm',
               shape: 'pill',
               active,
+              className: 'min-h-11',
             })}
             onClick={() => onChange(value)}
           >
