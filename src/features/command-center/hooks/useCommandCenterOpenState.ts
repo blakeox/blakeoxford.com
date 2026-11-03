@@ -132,7 +132,11 @@ export function useCommandCenterOpenState() {
     const toggleButton = document.getElementById('search-toggle');
     toggleButton?.addEventListener('click', handleToggleClick, { passive: false });
 
-    return () => toggleButton?.removeEventListener('click', handleToggleClick);
+    toggleButton?.setAttribute('data-search-trigger-ready', 'true');
+    return () => {
+      toggleButton?.removeEventListener('click', handleToggleClick);
+      toggleButton?.removeAttribute('data-search-trigger-ready');
+    };
   }, [open]);
 
   useEffect(() => {
