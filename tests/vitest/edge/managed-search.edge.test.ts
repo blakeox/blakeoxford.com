@@ -56,6 +56,15 @@ describe('managed site search', () => {
     expect(data.results[0].score).toBe(0.95);
     expect(data.results[0].excerpt).toBe('Matched workflow passage');
   });
+  it('keeps malformed markup and nested entities as plain text', () => {
+    const value = {
+      ...chunk('/projects/fabric/'),
+      text: '<b>workflow</b> <<script>left> &quot;quote&quot; &amp;quot;literal',
+    };
+    const excerpt = mapAiSearchChunks({ chunks: [value] }, 5)[0].excerpt;
+    expect(excerpt).toBe('workflow left "quote" &quot;literal');
+    expect(excerpt).not.toMatch(/[<>]/);
+  });
   it('accepts a genuine empty result without making a second provider request', async () => {
     const run = vi.fn();
     const response = await request({

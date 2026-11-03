@@ -53,10 +53,11 @@ function plainExcerpt(value: unknown): string {
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
     .replace(/<[^>]*>/g, '')
+    .replace(/[<>]/g, '')
     .replace(/[#*_`>|]/g, '')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
+    .replace(/&(amp|quot|#39);/g, (_match, entity: string) =>
+      entity === 'amp' ? '&' : entity === 'quot' ? '"' : "'"
+    )
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, 320);
