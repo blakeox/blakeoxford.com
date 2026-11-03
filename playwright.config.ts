@@ -84,7 +84,8 @@ export default defineConfig({
     // Keep preview on the same baseURL port; strictPort prevents silent drift to 4331+.
     // Use `pnpm exec astro` (not `pnpm run preview -- --port`) so the port flags
     // reach Astro — a stray `--` makes Astro fall back to 4321 and Playwright times out.
-    command: 'pnpm exec astro preview --port 4330 --strictPort',
+    // Agent detection on macOS otherwise backgrounds Astro before Playwright is ready.
+    command: 'pnpm exec astro preview --ignore-lock --port 4330 --strictPort',
     port: 4330,
     // Never reuse a stale local process; the suite must exercise the current build.
     reuseExistingServer: false,
