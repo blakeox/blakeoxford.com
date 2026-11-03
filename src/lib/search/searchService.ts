@@ -80,6 +80,7 @@ export function hydrateRecordsFromCorpus(
     if (!local) return record;
     return {
       ...record,
+      type: local.type,
       title: local.title || record.title,
       image: record.image || local.image,
       featured: record.featured ?? local.featured,

@@ -4,7 +4,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { loadSearchCorpus, resetSearchCorpusCache } from '../../src/lib/search/searchIndexLoader';
 import { searchLocalCorpus } from '../../src/lib/search/localSearch';
-import { filterNoisyHubRecords, runSearch } from '../../src/lib/search/searchService';
+import {
+  filterNoisyHubRecords,
+  hydrateRecordsFromCorpus,
+  runSearch,
+} from '../../src/lib/search/searchService';
 import type { SearchRecord } from '../../src/lib/search/types';
 
 afterEach(() => {
@@ -460,4 +464,18 @@ it.each([
   const filtered = filterNoisyHubRecords(records, query);
   expect(filtered).toHaveLength(1);
   expect(enrichCommandItems(mapSearchResults(filtered, 'local'), query)).toHaveLength(1);
+});
+
+it('corrects stale provider collection types before hub filtering', () => {
+  const local: SearchRecord = {
+    type: 'page',
+    title: 'Work',
+    href: '/projects/',
+    description: 'Browse automation',
+    tags: [],
+  };
+  const hydrated = hydrateRecordsFromCorpus([{ ...local, type: 'project' }], [local]);
+  expect(hydrated[0].type).toBe('page');
+  expect(filterNoisyHubRecords(hydrated, 'automation')).toEqual([]);
+  expect(filterNoisyHubRecords(hydrated, 'projects')).toHaveLength(1);
 });

@@ -65,6 +65,25 @@ describe('managed site search', () => {
     expect(excerpt).toBe('workflow left "quote" &quot;literal');
     expect(excerpt).not.toMatch(/[<>]/);
   });
+  it('classifies collection landing pages separately from their content', () => {
+    const results = mapAiSearchChunks(
+      {
+        chunks: [
+          chunk('/projects/'),
+          chunk('/blog/'),
+          chunk('/projects/fabric/'),
+          chunk('/blog/automation/'),
+        ],
+      },
+      5
+    );
+    expect(Object.fromEntries(results.map((result) => [result.url, result.collection]))).toEqual({
+      '/projects/': 'page',
+      '/blog/': 'page',
+      '/projects/fabric/': 'project',
+      '/blog/automation/': 'blog',
+    });
+  });
   it('accepts a genuine empty result without making a second provider request', async () => {
     const run = vi.fn();
     const response = await request({

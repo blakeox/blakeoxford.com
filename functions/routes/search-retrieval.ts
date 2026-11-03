@@ -94,11 +94,12 @@ export function mapAiSearchChunks(payload: unknown, limit: number): SiteSearchMa
       description: plainExcerpt(meta.description),
       ...(excerpt ? { excerpt } : {}),
       url: path,
-      collection: path.startsWith('/projects/')
-        ? 'project'
-        : path.startsWith('/blog/')
-          ? 'blog'
-          : 'page',
+      collection:
+        path !== '/projects/' && path.startsWith('/projects/')
+          ? 'project'
+          : path !== '/blog/' && path.startsWith('/blog/')
+            ? 'blog'
+            : 'page',
       tags: Array.isArray(meta.tags)
         ? meta.tags.filter((tag): tag is string => typeof tag === 'string')
         : [],
