@@ -121,3 +121,28 @@ describe('managed ranking', () => {
     expect(ranked.map((result) => result.id)).toEqual(['/best/', '/next/', '/local/']);
   });
 });
+
+it('keeps exact Work navigation above an equally scored featured Workflow case study', () => {
+  const items: CommandItem[] = [
+    {
+      id: 'fabric',
+      kind: 'project',
+      title: 'Workflow Automation',
+      href: '/projects/fabric/',
+      tags: ['work'],
+      source: 'local',
+      score: 1,
+      featured: true,
+    },
+    {
+      id: 'work',
+      kind: 'page',
+      title: 'Work',
+      href: '/projects/',
+      tags: ['work'],
+      source: 'local',
+      score: 1,
+    },
+  ];
+  expect(enrichCommandItems(items, 'work')[0].href).toBe('/projects/');
+});

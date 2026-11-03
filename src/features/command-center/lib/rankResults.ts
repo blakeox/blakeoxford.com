@@ -81,6 +81,9 @@ export function enrichCommandItems(
       return includeHubMatches || !isNoisyHubPage(item.title, item.href, terms);
     })
     .sort((a, b) => {
+      const navigationOrder =
+        Number(isDirectHubQuery(b.href, query)) - Number(isDirectHubQuery(a.href, query));
+      if (navigationOrder !== 0) return navigationOrder;
       const scoreDelta = (b.score ?? 0) - (a.score ?? 0);
       if (scoreDelta !== 0) return scoreDelta;
       return Number(Boolean(b.featured)) - Number(Boolean(a.featured));

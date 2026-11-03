@@ -122,11 +122,16 @@ export async function runSearch(options: SearchQueryOptions): Promise<SearchQuer
             ((record.score ?? 0) >= 0.85 && record.type !== 'page')
         );
     // Exact title destinations stay predictable; Cloudflare orders the remaining broader matches.
-    const direct = local.filter(
-      (record) =>
-        record.title.toLowerCase().includes(trimmed.toLowerCase()) ||
-        (record.type === 'page' && isDirectHubQuery(record.href, trimmed))
-    );
+    const direct = local
+      .filter(
+        (record) =>
+          record.title.toLowerCase().includes(trimmed.toLowerCase()) ||
+          (record.type === 'page' && isDirectHubQuery(record.href, trimmed))
+      )
+      .sort(
+        (a, b) =>
+          Number(isDirectHubQuery(b.href, trimmed)) - Number(isDirectHubQuery(a.href, trimmed))
+      );
     const records = filterNoisyHubRecords(
       mergeResults(
         direct,

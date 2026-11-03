@@ -126,7 +126,16 @@ for (const width of [390, 1440]) {
       ['work', '/projects/'],
       ['writing', '/blog/'],
     ]) {
+      const response = page.waitForResponse(
+        (r) =>
+          r.url().endsWith('/api/semantic-search') && r.request().postDataJSON()?.query === query
+      );
       await dialog.getByRole('combobox').fill(query);
+      await response;
+      await expect(page.locator('[data-command-center]')).toHaveAttribute(
+        'data-search-loading',
+        'false'
+      );
       await expect(dialog.locator(`[role="option"][href="${href}"]`)).toBeVisible();
       await expect(dialog.getByRole('option').first()).toHaveAttribute('href', href);
     }
