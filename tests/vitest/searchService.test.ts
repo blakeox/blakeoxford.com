@@ -479,3 +479,37 @@ it('corrects stale provider collection types before hub filtering', () => {
   expect(filterNoisyHubRecords(hydrated, 'automation')).toEqual([]);
   expect(filterNoisyHubRecords(hydrated, 'projects')).toHaveLength(1);
 });
+
+it.each([
+  ['projects', '/projects/'],
+  ['blog', '/blog/'],
+  ['work', '/projects/'],
+  ['writing', '/blog/'],
+])(
+  'prioritizes the %s navigation alias even when all managed result slots are full',
+  async (query, href) => {
+    resetSearchCorpusCache();
+    vi.spyOn(global, 'fetch').mockImplementation(async (input) =>
+      Response.json(
+        String(input).includes('/api/semantic-search')
+          ? {
+              provider: 'ai-search',
+              results: Array.from({ length: 8 }, (_, i) => ({
+                id: String(i),
+                url: `/projects/example-${i}/`,
+                title: `Example ${i}`,
+                collection: 'project',
+                tags: [],
+                score: 0.99,
+              })),
+            }
+          : []
+      )
+    );
+    const result = await runSearch({ query, category: 'all', limit: 8 });
+    expect(result.records[0].href).toBe(href);
+    expect(enrichCommandItems(mapSearchResults(result.records, 'ai-search'), query)[0].href).toBe(
+      href
+    );
+  }
+);

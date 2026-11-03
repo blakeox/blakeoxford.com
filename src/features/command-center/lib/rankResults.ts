@@ -1,4 +1,4 @@
-import { isNoisyHubPage } from '@/lib/search/hubPages';
+import { isDirectHubQuery, isNoisyHubPage } from '@/lib/search/hubPages';
 import type { CommandItem } from '@/features/command-center/types';
 
 function normalize(text: string): string {
@@ -51,7 +51,8 @@ export function enrichCommandItems(
         item.source === 'ai-search'
           ? baseScore
           : hasManagedResults
-            ? normalize(item.title).includes(normalize(query))
+            ? normalize(item.title).includes(normalize(query)) ||
+              (item.kind === 'page' && isDirectHubQuery(item.href, query))
               ? 1
               : Math.min(0.5, baseScore)
             : Math.min(

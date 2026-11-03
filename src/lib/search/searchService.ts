@@ -1,4 +1,4 @@
-import { isNoisyHubPage } from './hubPages';
+import { isDirectHubQuery, isNoisyHubPage } from './hubPages';
 import { loadSearchCorpus, filterByCategory } from './searchIndexLoader';
 import { searchLocalCorpus } from './localSearch';
 import { queryCloudflareSemanticSearch } from './semanticSearch';
@@ -122,8 +122,10 @@ export async function runSearch(options: SearchQueryOptions): Promise<SearchQuer
             ((record.score ?? 0) >= 0.85 && record.type !== 'page')
         );
     // Exact title destinations stay predictable; Cloudflare orders the remaining broader matches.
-    const direct = local.filter((record) =>
-      record.title.toLowerCase().includes(trimmed.toLowerCase())
+    const direct = local.filter(
+      (record) =>
+        record.title.toLowerCase().includes(trimmed.toLowerCase()) ||
+        (record.type === 'page' && isDirectHubQuery(record.href, trimmed))
     );
     const records = filterNoisyHubRecords(
       mergeResults(

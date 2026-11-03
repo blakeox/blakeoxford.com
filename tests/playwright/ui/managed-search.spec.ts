@@ -108,7 +108,14 @@ for (const width of [390, 1440]) {
   test(`familiar landing-page names survive compact ranking at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });
     await page.route('**/api/semantic-search', (route) =>
-      route.fulfill({ json: { provider: 'ai-search', results: [] } })
+      route.fulfill({
+        json: {
+          provider: 'ai-search',
+          results: Array.from({ length: 8 }, (_, i) =>
+            result(`/projects/example-${i}/`, `Example ${i}`, 0.99)
+          ),
+        },
+      })
     );
     await page.goto('/blog/');
     await page.locator('#search-toggle').click();
@@ -121,6 +128,7 @@ for (const width of [390, 1440]) {
     ]) {
       await dialog.getByRole('combobox').fill(query);
       await expect(dialog.locator(`[role="option"][href="${href}"]`)).toBeVisible();
+      await expect(dialog.getByRole('option').first()).toHaveAttribute('href', href);
     }
   });
 }

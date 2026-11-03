@@ -23,7 +23,7 @@ for (const mobile of [false, true]) {
       const dialog = page.getByRole('dialog', { name: 'Search', exact: true });
       const input = dialog.getByRole('combobox');
       await expect(input).toBeFocused();
-      const search = async (query: string) => {
+      const search = async (query: string, requireManagedRows = true) => {
         const started = Date.now();
         const responsePromise = page.waitForResponse(
           (r) =>
@@ -53,7 +53,7 @@ for (const mobile of [false, true]) {
           'data-search-loading',
           'false'
         );
-        if (body.results.some((r: { url: string }) => r.url !== '/')) {
+        if (requireManagedRows && body.results.some((r: { url: string }) => r.url !== '/')) {
           await expect(page.locator('[data-search-backend="cloudflare-ai-search"]')).toBeVisible();
         }
         return body;
@@ -78,6 +78,13 @@ for (const mobile of [false, true]) {
       await search('purpleplatypusorchestra');
       await expect(dialog.getByRole('option')).toHaveCount(0);
       await expect(dialog.getByText(/No matches/i)).toBeVisible();
+      for (const [query, href] of [
+        ['projects', '/projects/'],
+        ['blog', '/blog/'],
+      ]) {
+        await search(query, false);
+        await expect(dialog.getByRole('option').first()).toHaveAttribute('href', href);
+      }
       // Deliberate local fault injection; this is recovery evidence, not a provider outage.
       await page.route('**/api/semantic-search', (route) =>
         route.fulfill({ status: 503, json: { error: 'Validation fault injection' } })
