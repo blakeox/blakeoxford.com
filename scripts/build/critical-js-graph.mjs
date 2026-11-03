@@ -20,7 +20,7 @@ export const CONTENT_PAGES = [
 export const CRITICAL_JS_GZIP_LIMIT = 64 * 1024;
 
 export const FORBIDDEN_CRITICAL_MARKERS = [
-  'ingest.us.sentry.io',
+  'replaysOnErrorSampleRate',
   'rendererPackageName',
   'ZodError',
 ];

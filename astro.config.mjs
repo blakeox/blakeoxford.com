@@ -113,6 +113,13 @@ export default defineConfig({
                 minSize: 0,
                 minShareCount: 1,
               },
+              {
+                name: 'vendor-fonts',
+                test: (id) => vendorChunkName(id) === 'vendor-fonts',
+                priority: 15,
+                minSize: 0,
+                minShareCount: 1,
+              },
             ],
           },
         },

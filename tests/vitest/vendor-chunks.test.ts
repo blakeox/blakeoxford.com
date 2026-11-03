@@ -22,6 +22,14 @@ describe('vendor chunk names', () => {
     expect(vendorChunkName(id)).toBe(chunk);
   });
 
+  it('keeps fontsource CSS in its own chunk so it can stay inlined', () => {
+    expect(
+      vendorChunkName(
+        '/workspace/node_modules/.pnpm/@fontsource+source-sans-3@5.2.5/node_modules/@fontsource/source-sans-3/latin-400.css'
+      )
+    ).toBe('vendor-fonts');
+  });
+
   it('leaves the Astro React renderer and virtual modules out of the React package chunk', () => {
     expect(vendorChunkName(astroReact)).toBeUndefined();
     expect(vendorChunkName('\0astro:react:opts')).toBeUndefined();

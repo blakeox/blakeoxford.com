@@ -33,10 +33,7 @@ describe('critical JS graph', () => {
     const astro = join(dist, '_astro');
     mkdirSync(astro, { recursive: true });
     writeFileSync(join(astro, 'page.js'), 'import "./vendor-sentry.js";');
-    writeFileSync(
-      join(astro, 'vendor-sentry.js'),
-      'dsn:"https://public@o4512297421897728.ingest.us.sentry.io/0"'
-    );
+    writeFileSync(join(astro, 'vendor-sentry.js'), 'replaysOnErrorSampleRate:0.5');
     const html = '<script type="module" src="/_astro/page.js"></script>';
     for (const page of [
       'index.html',
@@ -50,7 +47,7 @@ describe('critical JS graph', () => {
     }
 
     const { failures } = auditCriticalJs(dist);
-    expect(failures.some((failure) => failure.includes('ingest.us.sentry.io'))).toBe(true);
+    expect(failures.some((failure) => failure.includes('replaysOnErrorSampleRate'))).toBe(true);
     expect(failures.some((failure) => failure.includes(String(CRITICAL_JS_GZIP_LIMIT)))).toBe(
       false
     );
@@ -63,7 +60,7 @@ describe('critical JS graph', () => {
     writeFileSync(join(astro, 'page.js'), 'import("./sentry-browser.js");');
     writeFileSync(
       join(astro, 'sentry-browser.js'),
-      'ingest.us.sentry.io rendererPackageName ZodError'
+      'replaysOnErrorSampleRate rendererPackageName ZodError'
     );
     const html = '<script type="module" src="/_astro/page.js"></script>';
     for (const page of [
