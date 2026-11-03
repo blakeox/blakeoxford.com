@@ -1,9 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { enrichCommandItems } from '../../src/features/command-center/lib/rankResults';
+import { mapSearchResults } from '../../src/features/command-center/lib/toCommandItem';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { loadSearchCorpus, resetSearchCorpusCache } from '../../src/lib/search/searchIndexLoader';
 import { searchLocalCorpus } from '../../src/lib/search/localSearch';
 import { filterNoisyHubRecords, runSearch } from '../../src/lib/search/searchService';
 import type { SearchRecord } from '../../src/lib/search/types';
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 const sampleCorpus: SearchRecord[] = [
   {
@@ -410,6 +416,48 @@ describe('shared search corpus recovery', () => {
     ]);
     expect(first).toEqual(second);
     expect(fetcher).toHaveBeenCalledTimes(2);
-    expect(fetcher.mock.calls.every((call) => !call[1]?.signal)).toBe(true);
+    expect(fetcher.mock.calls.every((call) => call[1]?.signal && !call[1].signal.aborted)).toBe(
+      true
+    );
   });
+});
+
+it('bounds a stalled shared corpus load and permits the next load to recover', async () => {
+  resetSearchCorpusCache();
+  vi.useFakeTimers();
+  const fetcher = vi.spyOn(global, 'fetch').mockImplementation(
+    (_url, options) =>
+      new Promise((_resolve, reject) => {
+        options?.signal?.addEventListener(
+          'abort',
+          () => reject(new DOMException('Aborted', 'AbortError')),
+          { once: true }
+        );
+      })
+  );
+  const pending = loadSearchCorpus();
+  await vi.advanceTimersByTimeAsync(3000);
+  expect((await pending).some((record) => record.type === 'page')).toBe(true);
+  fetcher.mockImplementation(async (input) =>
+    Response.json(
+      String(input).includes('projects')
+        ? [{ slug: 'recovered', title: 'Recovered', tags: [] }]
+        : []
+    )
+  );
+  expect((await loadSearchCorpus()).some((record) => record.href === '/projects/recovered/')).toBe(
+    true
+  );
+});
+
+it.each([
+  ['projects', 'Work', '/projects/'],
+  ['blog', 'Writing', '/blog/'],
+  ['work', 'Work', '/projects/'],
+  ['writing', 'Writing', '/blog/'],
+])('retains the %s landing page alias through both ranking filters', (query, title, href) => {
+  const records: SearchRecord[] = [{ type: 'page', title, href, description: 'Browse', tags: [] }];
+  const filtered = filterNoisyHubRecords(records, query);
+  expect(filtered).toHaveLength(1);
+  expect(enrichCommandItems(mapSearchResults(filtered, 'local'), query)).toHaveLength(1);
 });

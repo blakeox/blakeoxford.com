@@ -52,12 +52,28 @@ function toBlogRecord(item: ApiBlog): SearchRecord {
   };
 }
 
-async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(url, { signal });
-  if (!response.ok) {
-    throw new Error(`Failed to load ${url} (${response.status})`);
+const CORPUS_REQUEST_TIMEOUT_MS = 3000;
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      (async () => {
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error(`Failed to load ${url} (${response.status})`);
+        return response.json() as Promise<T>;
+      })(),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          controller.abort();
+          reject(new Error('Search index deadline exceeded'));
+        }, CORPUS_REQUEST_TIMEOUT_MS);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
   }
-  return response.json() as Promise<T>;
 }
 
 export async function loadSearchCorpus(_signal?: AbortSignal): Promise<SearchRecord[]> {

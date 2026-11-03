@@ -1,3 +1,4 @@
+import { isNoisyHubPage } from './hubPages';
 import { loadSearchCorpus, filterByCategory } from './searchIndexLoader';
 import { searchLocalCorpus } from './localSearch';
 import { queryCloudflareSemanticSearch } from './semanticSearch';
@@ -31,17 +32,6 @@ function markRetrieval(
   return records.map((record) => ({ ...record, retrieval: record.retrieval ?? retrieval }));
 }
 
-const HUB_PAGE_TITLES = new Set([
-  'home',
-  'about',
-  'projects',
-  'blog',
-  'contact',
-  'pages',
-  'work',
-  'writing',
-]);
-
 function normalizeHrefKey(href: string): string {
   if (!href) return '/';
   try {
@@ -65,10 +55,11 @@ function hasQueryTermOverlap(record: SearchRecord, terms: string[]): boolean {
 /** Nav hub pages without a title hit are almost never the intent for keyword search. */
 export function isNoisyHubRecord(record: SearchRecord, query: string): boolean {
   if (record.type !== 'page') return false;
-  const title = record.title.trim().toLowerCase();
-  if (!HUB_PAGE_TITLES.has(title)) return false;
-  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
-  return !terms.some((term) => title.includes(term));
+  return isNoisyHubPage(
+    record.title,
+    record.href,
+    query.toLowerCase().split(/\s+/).filter(Boolean)
+  );
 }
 
 export function filterNoisyHubRecords(records: SearchRecord[], query: string): SearchRecord[] {

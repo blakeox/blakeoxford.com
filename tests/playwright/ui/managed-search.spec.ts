@@ -103,3 +103,24 @@ test('keyboard selection survives managed result refinement', async ({ page }) =
     page.locator('[role="option"][aria-selected="true"] [id^="command-title-"]')
   ).toHaveText(selectedTitle!);
 });
+
+for (const width of [390, 1440]) {
+  test(`familiar landing-page names survive compact ranking at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.route('**/api/semantic-search', (route) =>
+      route.fulfill({ json: { provider: 'ai-search', results: [] } })
+    );
+    await page.goto('/blog/');
+    await page.locator('#search-toggle').click();
+    const dialog = page.getByRole('dialog', { name: 'Search', exact: true });
+    for (const [query, href] of [
+      ['projects', '/projects/'],
+      ['blog', '/blog/'],
+      ['work', '/projects/'],
+      ['writing', '/blog/'],
+    ]) {
+      await dialog.getByRole('combobox').fill(query);
+      await expect(dialog.locator(`[role="option"][href="${href}"]`)).toBeVisible();
+    }
+  });
+}

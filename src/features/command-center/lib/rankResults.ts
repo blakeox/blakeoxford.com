@@ -1,15 +1,5 @@
+import { isNoisyHubPage } from '@/lib/search/hubPages';
 import type { CommandItem } from '@/features/command-center/types';
-
-const HUB_TITLES = new Set([
-  'home',
-  'about',
-  'projects',
-  'blog',
-  'contact',
-  'pages',
-  'work',
-  'writing',
-]);
 
 function normalize(text: string): string {
   return text.toLowerCase().trim();
@@ -35,10 +25,7 @@ function tagOverlap(item: CommandItem, terms: string[]): string[] {
 
 function hubPenalty(item: CommandItem, terms: string[]): number {
   if (item.kind !== 'page') return 0;
-  const title = normalize(item.title);
-  if (!HUB_TITLES.has(title)) return 0;
-  if (terms.some((term) => title.includes(term))) return 0;
-  return -0.55;
+  return isNoisyHubPage(item.title, item.href, terms) ? -0.55 : 0;
 }
 
 function imageBoost(item: CommandItem): number {
@@ -90,8 +77,7 @@ export function enrichCommandItems(
     })
     .filter((item) => {
       if (item.kind !== 'page') return true;
-      if (!HUB_TITLES.has(normalize(item.title))) return true;
-      return includeHubMatches || terms.some((term) => normalize(item.title).includes(term));
+      return includeHubMatches || !isNoisyHubPage(item.title, item.href, terms);
     })
     .sort((a, b) => {
       const scoreDelta = (b.score ?? 0) - (a.score ?? 0);
