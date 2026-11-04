@@ -39,6 +39,7 @@ export function siteSearchPath(value: unknown): string | null {
     )
       return null;
     const path = url.pathname;
+    if (path.startsWith('//')) return null;
     if (/^\/(api|assets|components|design|search)(\/|$)/.test(path) || /\.[a-z0-9]+$/i.test(path))
       return null;
     return path === '/' ? path : `${path.replace(/\/+$/, '')}/`;
