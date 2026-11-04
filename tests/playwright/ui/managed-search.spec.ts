@@ -125,6 +125,8 @@ for (const width of [390, 1440]) {
       ['blog', '/blog/'],
       ['work', '/projects/'],
       ['writing', '/blog/'],
+      ['email', '/contact/'],
+      ['talk', '/contact/'],
     ]) {
       const response = page.waitForResponse(
         (r) =>
@@ -141,3 +143,51 @@ for (const width of [390, 1440]) {
     }
   });
 }
+
+test('trailing spaces preserve results without repeating the managed query', async ({ page }) => {
+  let calls = 0;
+  await page.route('**/api/semantic-search', (route) => {
+    calls++;
+    return route.fulfill({
+      json: {
+        provider: 'ai-search',
+        results: [result('/projects/microsoft-fabric/', 'Microsoft Fabric')],
+      },
+    });
+  });
+  await page.goto('/blog/');
+  await page.locator('#search-toggle').click();
+  const dialog = page.getByRole('dialog', { name: 'Search', exact: true });
+  const response = page.waitForResponse((r) => r.url().endsWith('/api/semantic-search'));
+  await dialog.getByRole('combobox').fill('fabric');
+  await response;
+  await expect(page.locator('[data-command-center]')).toHaveAttribute(
+    'data-search-loading',
+    'false'
+  );
+  await page.clock.install();
+  await dialog.getByRole('combobox').fill('fabric   ');
+  await expect(dialog.getByRole('option').first()).toContainText('Microsoft Fabric');
+  // Advance beyond the debounce window without a wall-clock sleep.
+  await page.clock.runFor(500);
+  expect(calls).toBe(1);
+  await expect(page.locator('[data-command-center]')).toHaveAttribute(
+    'data-search-loading',
+    'false'
+  );
+});
+
+test('empty degraded search does not claim to show keyword matches', async ({ page }) => {
+  await page.route('**/api/semantic-search', (route) =>
+    route.fulfill({ status: 503, json: { error: 'Unavailable' } })
+  );
+  await page.goto('/blog/');
+  await page.locator('#search-toggle').click();
+  const dialog = page.getByRole('dialog', { name: 'Search', exact: true });
+  await dialog.getByRole('combobox').fill('purpleplatypusorchestra');
+  await expect(
+    dialog.getByText('Broader search is temporarily unavailable. Try a different keyword.')
+  ).toBeVisible();
+  await expect(dialog.getByText(/Showing keyword matches/)).toHaveCount(0);
+  await expect(dialog.getByRole('option')).toHaveCount(0);
+});

@@ -19,6 +19,7 @@ function sourceFromResult(
 
 export function useCommandQuery(isOpen: boolean) {
   const [query, setQuery] = useState('');
+  const normalizedQuery = query.trim();
   const [groups, setGroups] = useState<CommandGroup[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +53,9 @@ export function useCommandQuery(isOpen: boolean) {
       setSearchSource(result.source);
       setError(
         result.meta?.degraded
-          ? 'Showing keyword matches. Broader search is temporarily unavailable.'
+          ? result.records.length
+            ? 'Showing keyword matches. Broader search is temporarily unavailable.'
+            : 'Broader search is temporarily unavailable. Try a different keyword.'
           : null
       );
       commandCenterEvents.searchResults({
@@ -80,7 +83,7 @@ export function useCommandQuery(isOpen: boolean) {
     abortRef.current?.abort();
     setGroups([]);
     setError(null);
-    const trimmed = query.trim();
+    const trimmed = normalizedQuery;
     setIsLoading(isOpen && !!trimmed);
     if (!isOpen) {
       setQuery('');
@@ -98,7 +101,7 @@ export function useCommandQuery(isOpen: boolean) {
       clearTimeout(timer);
       abortRef.current?.abort();
     };
-  }, [isOpen, query, executeSearch]);
+  }, [isOpen, normalizedQuery, executeSearch]);
 
   return { query, setQuery, groups, isLoading, error, searchSource };
 }

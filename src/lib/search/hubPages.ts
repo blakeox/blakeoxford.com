@@ -4,7 +4,7 @@ const HUB_ALIASES: Record<string, string[]> = {
   '/about/': ['about'],
   '/projects/': ['projects', 'work', 'portfolio'],
   '/blog/': ['blog', 'writing'],
-  '/contact/': ['contact'],
+  '/contact/': ['contact', 'email', 'talk'],
 };
 
 function aliasesForHref(href: string): string[] | undefined {
