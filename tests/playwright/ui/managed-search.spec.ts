@@ -165,10 +165,11 @@ test('trailing spaces preserve results without repeating the managed query', asy
     'data-search-loading',
     'false'
   );
+  await page.clock.install();
   await dialog.getByRole('combobox').fill('fabric   ');
   await expect(dialog.getByRole('option').first()).toContainText('Microsoft Fabric');
-  // Wait beyond the debounce window to prove no duplicate provider request was scheduled.
-  await page.waitForTimeout(500);
+  // Advance beyond the debounce window without a wall-clock sleep.
+  await page.clock.runFor(500);
   expect(calls).toBe(1);
   await expect(page.locator('[data-command-center]')).toHaveAttribute(
     'data-search-loading',
