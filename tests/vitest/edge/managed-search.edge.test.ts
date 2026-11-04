@@ -34,6 +34,7 @@ describe('managed site search', () => {
         chunk('https://blakeoxford.com/projects/fabric/', 0.8),
         chunk('https://blakeoxford.com/projects/fabric/?duplicate=1', 0.95),
         chunk('https://elsewhere.example/projects/fabric/'),
+        chunk('https://blakeoxford.com//ignored.example//attacker.example/path'),
         chunk('javascript:alert(1)'),
         chunk('/api/private'),
         chunk('/assets/file.pdf'),
