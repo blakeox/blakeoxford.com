@@ -13,7 +13,7 @@ export type CommandItem = {
   score?: number;
   publishedAt?: string;
   image?: string;
-  source: 'vectorize' | 'local' | 'curated' | 'history';
+  source: 'ai-search' | 'vectorize' | 'local' | 'curated' | 'history';
   matchReason?: string;
 };
 
@@ -27,12 +27,10 @@ export type CommandCategory = SearchCategory;
 
 export const CATEGORY_LABELS: Record<CommandCategory, string> = {
   all: 'All',
-  projects: 'Projects',
+  projects: 'Work',
   pages: 'Pages',
-  blog: 'Blog',
+  blog: 'Writing',
 };
 
-/** Discovery terms only — keep the idle/empty search surface calm.
- * Lead with a known-good corpus hit so empty-state examples always work.
- */
-export const SUGGESTED_QUERIES = ['Microsoft Fabric', 'automation', 'CES 2026'] as const;
+/** Visitor intent suggestions use the same language as the portfolio. */
+export const SUGGESTED_QUERIES = ['AI adoption', 'Automation', 'Systems integration'] as const;

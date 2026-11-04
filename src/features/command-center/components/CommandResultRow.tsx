@@ -1,11 +1,5 @@
 import { formatRelativeDate } from '@/lib/string-utils';
 import type { CommandItem } from '@/features/command-center/types';
-import {
-  OVERLAY_THUMB_WELL,
-  RESULT_ROW_ACTIVE,
-  RESULT_ROW_BASE,
-  RESULT_ROW_IDLE,
-} from '@/features/overlay/overlayStyles';
 
 function escapeRegExp(input: string): string {
   return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -21,7 +15,11 @@ export function HighlightText({ text, query }: { text: string; query: string }) 
 
   if (!tokens.length) return <>{text}</>;
 
-  const regex = new RegExp(`(${tokens.map(escapeRegExp).join('|')})`, 'gi');
+  const patterns = tokens.map((token) => {
+    const escaped = escapeRegExp(token);
+    return /^[a-z0-9]{2}$/i.test(token) ? `\\b${escaped}\\b` : escaped;
+  });
+  const regex = new RegExp(`(${patterns.join('|')})`, 'gi');
   const parts = text.split(regex);
 
   return (
@@ -38,32 +36,6 @@ export function HighlightText({ text, query }: { text: string; query: string }) 
         return <span key={`${part}-${index}`}>{part}</span>;
       })}
     </>
-  );
-}
-
-function kindGlyph(kind: CommandItem['kind']): string {
-  if (kind === 'blog') return 'B';
-  if (kind === 'page') return 'Pg';
-  return 'P';
-}
-
-function PageIcon() {
-  return (
-    <svg
-      className="size-4 text-subtle-foreground"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M6 4h8l4 4v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"
-      />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M14 4v4h4" />
-    </svg>
   );
 }
 
@@ -84,7 +56,6 @@ type CommandResultRowProps = {
   index: number;
   query: string;
   isActive: boolean;
-  hideKindLabel?: boolean;
   onSelect: (item: CommandItem) => void;
   onHover: (index: number) => void;
 };
@@ -94,12 +65,10 @@ export function CommandResultRow({
   index,
   query,
   isActive,
-  hideKindLabel = true,
   onSelect,
   onHover,
 }: CommandResultRowProps) {
   const subtitle = buildSubtitle(item, true);
-  const showFeatured = Boolean(item.featured && item.kind === 'project');
 
   return (
     <a
@@ -118,67 +87,43 @@ export function CommandResultRow({
       data-index={index}
       data-search-result
       data-search-source={item.source}
+      data-search-score={typeof item.score === 'number' ? String(item.score) : undefined}
       data-vectorize-score={
         item.source === 'vectorize' && typeof item.score === 'number'
           ? String(item.score)
           : undefined
       }
-      className={`search-result focus-ring-interactive ${RESULT_ROW_BASE} ${isActive ? RESULT_ROW_ACTIVE : RESULT_ROW_IDLE}`}
+      className={`search-result focus-ring-interactive flex border-l-2 transition-colors ${isActive ? 'border-accent/60 bg-surface-subtle' : 'border-transparent hover:bg-surface-subtle'}`}
       onMouseEnter={() => onHover(index)}
     >
-      <div className="flex min-w-0 flex-1 items-start gap-3">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <div className={OVERLAY_THUMB_WELL} aria-hidden="true">
-            {item.image ? (
-              <img
-                src={item.image}
-                alt=""
-                className="size-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            ) : item.kind === 'page' ? (
-              <PageIcon />
-            ) : (
-              <span className="text-xxs font-bold text-subtle-foreground uppercase">
-                {kindGlyph(item.kind)}
-              </span>
-            )}
-          </div>
-
-          <div className="min-w-0 flex-1">
-            <span className="flex min-w-0 items-center gap-2">
-              <span
-                id={`command-title-${index}`}
-                className="truncate text-sm font-medium text-foreground"
-              >
-                <HighlightText text={item.title} query={query} />
-              </span>
-              {showFeatured ? (
-                <span className="shrink-0 text-xxs text-subtle-foreground">Featured</span>
-              ) : null}
-            </span>
-            {subtitle ? (
-              <span
-                id={`command-subtitle-${index}`}
-                className="mt-0.5 block truncate text-xs text-muted-foreground"
-              >
-                <HighlightText text={subtitle} query={query} />
-              </span>
-            ) : null}
-          </div>
-
-          {!hideKindLabel ? (
-            <span className="shrink-0 text-xxs font-medium text-subtle-foreground capitalize">
-              {item.kind}
-            </span>
-          ) : null}
-        </div>
+      <div className="min-w-0 flex-1">
+        <span
+          id={`command-title-${index}`}
+          className="line-clamp-2 text-sm leading-snug font-medium [overflow-wrap:anywhere] text-foreground"
+        >
+          <HighlightText text={item.title} query={query} />
+        </span>
+        {subtitle ? (
+          <span
+            id={`command-subtitle-${index}`}
+            className="mt-1 line-clamp-1 text-xs leading-normal [overflow-wrap:anywhere] text-muted-foreground"
+          >
+            <HighlightText text={subtitle} query={query} />
+          </span>
+        ) : null}
       </div>
-
-      <span className="self-center text-xxs text-subtle-foreground" aria-hidden="true">
-        ↵
-      </span>
+      <svg
+        className="shrink-0 self-center text-muted-foreground"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        aria-hidden="true"
+      >
+        <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
     </a>
   );
 }

@@ -1,6 +1,5 @@
+import { isDirectHubQuery, isNoisyHubPage } from '@/lib/search/hubPages';
 import type { CommandItem } from '@/features/command-center/types';
-
-const HUB_TITLES = new Set(['home', 'about', 'projects', 'blog', 'contact', 'pages']);
 
 function normalize(text: string): string {
   return text.toLowerCase().trim();
@@ -26,10 +25,7 @@ function tagOverlap(item: CommandItem, terms: string[]): string[] {
 
 function hubPenalty(item: CommandItem, terms: string[]): number {
   if (item.kind !== 'page') return 0;
-  const title = normalize(item.title);
-  if (!HUB_TITLES.has(title)) return 0;
-  if (terms.some((term) => title.includes(term))) return 0;
-  return -0.55;
+  return isNoisyHubPage(item.title, item.href, terms) ? -0.55 : 0;
 }
 
 function imageBoost(item: CommandItem): number {
@@ -44,24 +40,33 @@ export function enrichCommandItems(
   const terms = normalize(query).split(/\s+/).filter(Boolean);
   if (!terms.length) return items;
 
+  const hasManagedResults = items.some((item) => item.source === 'ai-search');
   return items
     .map((item) => {
       const overlap = tagOverlap(item, terms);
       const boost = titleBoost(item, terms);
       const descBoost = descriptionBoost(item, terms);
       const baseScore = item.score ?? 0;
-      const score = Math.min(
-        1,
-        Math.max(
-          0,
-          baseScore +
-            boost +
-            descBoost +
-            overlap.length * 0.05 +
-            imageBoost(item) +
-            (includeHubMatches ? 0 : hubPenalty(item, terms))
-        )
-      );
+      const score =
+        item.source === 'ai-search'
+          ? baseScore
+          : hasManagedResults
+            ? normalize(item.title).includes(normalize(query)) ||
+              (item.kind === 'page' && isDirectHubQuery(item.href, query))
+              ? 1
+              : Math.min(0.5, baseScore)
+            : Math.min(
+                1,
+                Math.max(
+                  0,
+                  baseScore +
+                    boost +
+                    descBoost +
+                    overlap.length * 0.05 +
+                    imageBoost(item) +
+                    (includeHubMatches ? 0 : hubPenalty(item, terms))
+                )
+              );
 
       // Only surface human-useful reasons — never "Semantic match".
       let matchReason: string | undefined;
@@ -73,10 +78,12 @@ export function enrichCommandItems(
     })
     .filter((item) => {
       if (item.kind !== 'page') return true;
-      if (!HUB_TITLES.has(normalize(item.title))) return true;
-      return includeHubMatches || terms.some((term) => normalize(item.title).includes(term));
+      return includeHubMatches || !isNoisyHubPage(item.title, item.href, terms);
     })
     .sort((a, b) => {
+      const navigationOrder =
+        Number(isDirectHubQuery(b.href, query)) - Number(isDirectHubQuery(a.href, query));
+      if (navigationOrder !== 0) return navigationOrder;
       const scoreDelta = (b.score ?? 0) - (a.score ?? 0);
       if (scoreDelta !== 0) return scoreDelta;
       return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
