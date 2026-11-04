@@ -55,10 +55,5 @@ export { siteConfig } from './data';
 // ─── Navigation ───────────────────────────────────────────────────
 export { default as navLinks, navConfig, type NavLink, type NavConfig } from './navLinks';
 
-// ─── API Schemas ──────────────────────────────────────────────────
-export {
-  ProjectApiSchema,
-  ProjectsApiSchema,
-  BlogApiSchema,
-  BlogApiSchemaArray,
-} from './apiSchemas';
+// API zod schemas stay in `./apiSchemas` so a client import of this barrel
+// cannot pull zod into a shared chunk.

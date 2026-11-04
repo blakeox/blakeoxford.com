@@ -90,6 +90,16 @@ JS_GZIP_LIMIT=150
 
 echo "✅ JavaScript referenced bundles: ${JS_GZIP_SIZE}KB gzip (${JS_RAW_SIZE}KB raw)"
 
+# Static module graph for content pages. HTML script tags omit transitive
+# imports, which is how the eager Sentry SDK hid a ~300KB shared chunk.
+echo "🧠 Checking critical-path JavaScript graph..."
+if node scripts/build/critical-js-graph.mjs "$BUILD_DIR"; then
+    echo "✅ Critical-path JavaScript is within budget"
+else
+    echo "❌ Critical-path JavaScript exceeds budget"
+    FAILED=true
+fi
+
 if [ "$JS_GZIP_SIZE" -gt "$JS_GZIP_LIMIT" ]; then
     echo "❌ JavaScript bundle too large (gzip): ${JS_GZIP_SIZE}KB (limit: ${JS_GZIP_LIMIT}KB)"
     FAILED=true
