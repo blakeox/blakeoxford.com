@@ -92,3 +92,57 @@ describe('enrichCommandItems', () => {
     ).toEqual(['/contact/']);
   });
 });
+
+describe('managed ranking', () => {
+  it('preserves managed relevance over partial local tag boosts', () => {
+    const item = (
+      id: string,
+      source: CommandItem['source'],
+      score: number,
+      title: string
+    ): CommandItem => ({
+      id,
+      href: id,
+      source,
+      score,
+      title,
+      kind: 'project',
+      subtitle: 'connected workflow automation',
+      tags: ['connected', 'workflow', 'automation'],
+    });
+    const ranked = enrichCommandItems(
+      [
+        item('/local/', 'local', 0.5, 'Workflow toolbox'),
+        item('/best/', 'ai-search', 0.94, 'Operational intelligence'),
+        item('/next/', 'ai-search', 0.84, 'Automation foundation'),
+      ],
+      'connected workflow automation'
+    );
+    expect(ranked.map((result) => result.id)).toEqual(['/best/', '/next/', '/local/']);
+  });
+});
+
+it('keeps exact Work navigation above an equally scored featured Workflow case study', () => {
+  const items: CommandItem[] = [
+    {
+      id: 'fabric',
+      kind: 'project',
+      title: 'Workflow Automation',
+      href: '/projects/fabric/',
+      tags: ['work'],
+      source: 'local',
+      score: 1,
+      featured: true,
+    },
+    {
+      id: 'work',
+      kind: 'page',
+      title: 'Work',
+      href: '/projects/',
+      tags: ['work'],
+      source: 'local',
+      score: 1,
+    },
+  ];
+  expect(enrichCommandItems(items, 'work')[0].href).toBe('/projects/');
+});

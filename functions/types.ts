@@ -32,6 +32,8 @@ export interface Env {
   TURNSTILE_SECRET_KEY: string;
   AI_SEARCH_API_TOKEN?: string;
   AI_SEARCH_API_ENDPOINT?: string;
+  /** Disable managed Find without changing Ask or removing bindings. */
+  SEARCH_PROVIDER?: 'ai-search' | 'vectorize' | 'local';
   AI_GATEWAY_ID?: string;
   AI_GATEWAY_ACCOUNT_ID?: string;
   PUBLIC_CLARITY_PROJECT_ID?: string;
@@ -52,7 +54,17 @@ export interface AiSearchChatMessage {
   content: string;
 }
 
+export interface AiSearchRetrievalInput {
+  messages: AiSearchChatMessage[];
+  ai_search_options: {
+    retrieval: { retrieval_type: 'hybrid'; max_num_results: number };
+    query_rewrite: { enabled: false };
+    reranking: { enabled: true };
+  };
+}
+
 export interface AiSearchInstance {
+  search?(input: AiSearchRetrievalInput): Promise<unknown>;
   chatCompletions(input: { messages: AiSearchChatMessage[] }): Promise<unknown>;
 }
 

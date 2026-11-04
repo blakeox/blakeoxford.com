@@ -39,11 +39,12 @@ export function mapSemanticMatch(match: SemanticSearchMatch): SearchRecord {
   return {
     type,
     title: match.title || 'Untitled',
-    description: match.description || '',
+    description: match.excerpt || match.description || '',
     href,
     tags: Array.isArray(match.tags) ? match.tags : [],
     score: match.score,
     publishedAt: match.date,
+    ...(match.excerpt ? { excerpt: match.excerpt } : {}),
   };
 }
 
@@ -52,42 +53,52 @@ export async function queryCloudflareSemanticSearch(
   limit = 10,
   signal?: AbortSignal
 ): Promise<SemanticSearchResult> {
-  const response = await fetch(SEMANTIC_SEARCH_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, limit }),
-    signal,
-  });
+  const controller = new AbortController();
+  const abort = () => controller.abort(signal?.reason);
+  signal?.addEventListener('abort', abort, { once: true });
+  if (signal?.aborted) abort();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetch(SEMANTIC_SEARCH_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, limit }),
+      signal: controller.signal,
+    });
 
-  if (!response.ok) {
-    const payload = await response.json().catch(() => ({}));
-    const message =
-      typeof payload?.error === 'string'
-        ? payload.error
-        : `Semantic search failed (${response.status})`;
-    throw new Error(message);
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      const message =
+        typeof payload?.error === 'string'
+          ? payload.error
+          : `Semantic search failed (${response.status})`;
+      throw new Error(message);
+    }
+
+    const data = (await response.json()) as {
+      results?: SemanticSearchMatch[];
+      count?: number;
+      provider?: string;
+      topScore?: number;
+    };
+    const records = (data.results ?? []).map(mapSemanticMatch);
+    const responseTimeHeader = response.headers.get('x-response-time');
+    const responseTimeMs =
+      responseTimeHeader && Number.isFinite(Number(responseTimeHeader))
+        ? Number(responseTimeHeader)
+        : undefined;
+
+    return {
+      records,
+      meta: {
+        provider: data.provider || response.headers.get('x-search-provider') || 'vectorize',
+        count: typeof data.count === 'number' ? data.count : records.length,
+        topScore: typeof data.topScore === 'number' ? data.topScore : records[0]?.score,
+        ...(responseTimeMs !== undefined ? { responseTimeMs } : {}),
+      },
+    };
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', abort);
   }
-
-  const data = (await response.json()) as {
-    results?: SemanticSearchMatch[];
-    count?: number;
-    provider?: string;
-    topScore?: number;
-  };
-  const records = (data.results ?? []).map(mapSemanticMatch);
-  const responseTimeHeader = response.headers.get('x-response-time');
-  const responseTimeMs =
-    responseTimeHeader && Number.isFinite(Number(responseTimeHeader))
-      ? Number(responseTimeHeader)
-      : undefined;
-
-  return {
-    records,
-    meta: {
-      provider: data.provider || response.headers.get('x-search-provider') || 'vectorize',
-      count: typeof data.count === 'number' ? data.count : records.length,
-      topScore: typeof data.topScore === 'number' ? data.topScore : records[0]?.score,
-      ...(responseTimeMs !== undefined ? { responseTimeMs } : {}),
-    },
-  };
 }
