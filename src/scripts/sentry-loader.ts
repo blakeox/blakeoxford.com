@@ -74,21 +74,26 @@ export function installDeferredSentry(load: () => Promise<void> = defaultLoadSen
   if (typeof window === 'undefined' || window.__boSentryInstall) return;
   window.__boSentryInstall = true;
 
-  let loading = false;
+  let inFlight: Promise<void> | null = null;
   const start = (): Promise<void> => {
-    if (window.__boSentryReady || loading) return Promise.resolve();
-    loading = true;
-    return load().then(
+    if (window.__boSentryReady) return Promise.resolve();
+    if (inFlight) return inFlight;
+    inFlight = load().then(
       () => {
-        loading = false;
+        inFlight = null;
       },
       (error: unknown) => {
-        loading = false;
+        inFlight = null;
         throw error;
       }
     );
+    return inFlight;
   };
 
-  if (hasQueuedSentryEvents()) start();
+  if (hasQueuedSentryEvents()) {
+    void start().catch(() => {
+      // The scheduler still retries on the next interaction or idle.
+    });
+  }
   scheduleDeferredSentry(start, window);
 }

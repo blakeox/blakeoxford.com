@@ -138,6 +138,22 @@ describe('deferred Sentry install and flush', () => {
     delete window.__boSentryEarly;
   });
 
+  it('retries a failed queued download on the next interaction', async () => {
+    window.__boSentryEarly = [{ kind: 'error', value: new Error('boom') }];
+    const load = vi
+      .fn<() => Promise<void>>()
+      .mockRejectedValueOnce(new Error('network'))
+      .mockResolvedValueOnce(undefined);
+    installDeferredSentry(load);
+
+    await flushMicrotasks();
+    expect(load).toHaveBeenCalledOnce();
+
+    window.dispatchEvent(new Event('pointerdown'));
+    await flushMicrotasks();
+    expect(load).toHaveBeenCalledTimes(2);
+  });
+
   it('loads immediately when an error was already queued', async () => {
     window.__boSentryEarly = [{ kind: 'error', value: new Error('boom') }];
     const load = vi.fn(() => Promise.resolve());
