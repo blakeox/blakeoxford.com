@@ -1,3 +1,4 @@
+import { isDirectHubQuery, isNoisyHubPage } from './hubPages';
 import { loadSearchCorpus, filterByCategory } from './searchIndexLoader';
 import { searchLocalCorpus } from './localSearch';
 import { queryCloudflareSemanticSearch } from './semanticSearch';
@@ -31,8 +32,6 @@ function markRetrieval(
   return records.map((record) => ({ ...record, retrieval: record.retrieval ?? retrieval }));
 }
 
-const HUB_PAGE_TITLES = new Set(['home', 'about', 'projects', 'blog', 'contact', 'pages']);
-
 function normalizeHrefKey(href: string): string {
   if (!href) return '/';
   try {
@@ -56,10 +55,11 @@ function hasQueryTermOverlap(record: SearchRecord, terms: string[]): boolean {
 /** Nav hub pages without a title hit are almost never the intent for keyword search. */
 export function isNoisyHubRecord(record: SearchRecord, query: string): boolean {
   if (record.type !== 'page') return false;
-  const title = record.title.trim().toLowerCase();
-  if (!HUB_PAGE_TITLES.has(title)) return false;
-  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
-  return !terms.some((term) => title.includes(term));
+  return isNoisyHubPage(
+    record.title,
+    record.href,
+    query.toLowerCase().split(/\s+/).filter(Boolean)
+  );
 }
 
 export function filterNoisyHubRecords(records: SearchRecord[], query: string): SearchRecord[] {
@@ -80,10 +80,11 @@ export function hydrateRecordsFromCorpus(
     if (!local) return record;
     return {
       ...record,
+      type: local.type,
       title: local.title || record.title,
       image: record.image || local.image,
       featured: record.featured ?? local.featured,
-      description: local.description || record.description,
+      description: record.excerpt || local.description || record.description,
       tags: local.tags.length ? local.tags : record.tags,
       publishedAt: record.publishedAt || local.publishedAt,
     };
@@ -91,88 +92,79 @@ export function hydrateRecordsFromCorpus(
 }
 
 export async function runSearch(options: SearchQueryOptions): Promise<SearchQueryResult> {
-  const { query, category, limit = 10, signal } = options;
+  const { query, category, limit = 10, signal, onLocalResults } = options;
   const trimmed = query.trim();
-  const corpus = await loadSearchCorpus(signal);
-
-  if (!trimmed) {
-    return {
-      records: searchLocalCorpus(corpus, '', category, limit),
-      source: 'browse',
-    };
-  }
-
-  const localAll = markRetrieval(searchLocalCorpus(corpus, trimmed, category, limit), 'keyword');
-  const localPages = markRetrieval(searchLocalCorpus(corpus, trimmed, 'pages', 5), 'keyword');
-
-  if (category === 'pages') {
-    return {
-      records: searchLocalCorpus(corpus, trimmed, 'pages', limit),
-      source: 'local-fallback',
-    };
-  }
+  const corpus = await loadSearchCorpus();
+  signal?.throwIfAborted();
+  const local = markRetrieval(searchLocalCorpus(corpus, trimmed, category, limit), 'keyword');
+  if (!trimmed)
+    return { records: searchLocalCorpus(corpus, '', category, limit), source: 'browse' };
+  if (category === 'pages') return { records: local, source: 'local-fallback' };
+  onLocalResults?.(filterNoisyHubRecords(local, trimmed));
 
   try {
     const semantic = await queryCloudflareSemanticSearch(trimmed, limit, signal);
-    const semanticResults = semantic.records;
-    const semanticMeta = semantic.meta;
-    const filteredSemantic = filterByCategory(
-      semanticResults,
-      category === 'all' ? 'all' : category
-    );
-    const hydrated = filterNoisyHubRecords(
-      markRetrieval(hydrateRecordsFromCorpus(filteredSemantic, corpus), 'semantic'),
+    signal?.throwIfAborted();
+    const managed = semantic.meta.provider === 'ai-search';
+    const remote = filterNoisyHubRecords(
+      markRetrieval(
+        hydrateRecordsFromCorpus(filterByCategory(semantic.records, category), corpus),
+        managed ? 'hybrid' : 'semantic'
+      ),
       trimmed
     );
-
-    const withMeta = (
-      records: SearchRecord[],
-      source: SearchQueryResult['source']
-    ): SearchQueryResult => ({
-      records,
-      source,
-      meta: {
-        provider: semanticMeta.provider,
-        semanticCount: semanticMeta.count,
-        topScore: semanticMeta.topScore,
-        responseTimeMs: semanticMeta.responseTimeMs,
-      },
-    });
-
-    // Empty Vectorize success must still surface keyword matches (projects/blog/pages).
-    if (!hydrated.length) {
-      return withMeta(localAll, 'local-fallback');
-    }
-
-    // Keep a semantic hit only when it shares a query term or scores at the
-    // strong-match floor. Weak neighbors of a no-term query stay out of the list.
     const terms = trimmed.toLowerCase().split(/\s+/).filter(Boolean);
-    const relevantSemantic = hydrated.filter((record) => {
-      if (hasQueryTermOverlap(record, terms)) return true;
-      return (record.score ?? 0) >= 0.85 && record.type !== 'page';
-    });
-    const keywordSide = category === 'all' ? mergeResults(localAll, localPages, limit) : localAll;
-
-    if (!keywordSide.length && !relevantSemantic.length) {
-      return withMeta([], 'cloudflare-vectorize');
-    }
-
-    if (!relevantSemantic.length) {
-      return withMeta(keywordSide, 'local-fallback');
-    }
-
-    return withMeta(
-      hydrateRecordsFromCorpus(
-        filterNoisyHubRecords(mergeResults(keywordSide, relevantSemantic, limit), trimmed),
-        corpus
+    const relevant = managed
+      ? remote
+      : remote.filter(
+          (record) =>
+            hasQueryTermOverlap(record, terms) ||
+            ((record.score ?? 0) >= 0.85 && record.type !== 'page')
+        );
+    // Exact title destinations stay predictable; Cloudflare orders the remaining broader matches.
+    const direct = local
+      .filter(
+        (record) =>
+          record.title.toLowerCase().includes(trimmed.toLowerCase()) ||
+          (record.type === 'page' && isDirectHubQuery(record.href, trimmed))
+      )
+      .sort(
+        (a, b) =>
+          Number(isDirectHubQuery(b.href, trimmed)) - Number(isDirectHubQuery(a.href, trimmed))
+      );
+    const records = filterNoisyHubRecords(
+      mergeResults(
+        direct,
+        mergeResults(
+          relevant,
+          local.map((record) => ({ ...record, score: Math.min(0.5, (record.score ?? 0) * 0.5) })),
+          limit
+        ),
+        limit
       ),
-      'cloudflare-vectorize'
+      trimmed
     );
-  } catch (error) {
-    console.warn('[search] Cloudflare semantic search unavailable, using local fallback', error);
     return {
-      records: localAll,
+      records,
+      source: relevant.length
+        ? managed
+          ? 'cloudflare-ai-search'
+          : 'cloudflare-vectorize'
+        : 'local-fallback',
+      meta: {
+        provider: semantic.meta.provider,
+        semanticCount: relevant.length,
+        topScore: semantic.meta.topScore,
+        responseTimeMs: semantic.meta.responseTimeMs,
+      },
+    };
+  } catch (error) {
+    signal?.throwIfAborted();
+    console.warn('[search] Broader search unavailable; showing keyword matches');
+    return {
+      records: filterNoisyHubRecords(local, trimmed),
       source: 'local-fallback',
+      meta: { degraded: true },
     };
   }
 }

@@ -1,35 +1,15 @@
 import type { CommandCategory } from '@/features/command-center/types';
 import type { CommandGroup, CommandItem } from '@/features/command-center/types';
 
-const GROUP_ORDER: Array<{ id: string; label: string; kinds: CommandItem['kind'][] }> = [
-  { id: 'pages', label: 'Pages', kinds: ['page'] },
-  { id: 'projects', label: 'Projects', kinds: ['project'] },
-  { id: 'blog', label: 'Blog', kinds: ['blog'] },
-];
-
-function groupLabel(category: CommandCategory, count: number, base: string): string {
-  if (category !== 'all') return base;
-  return count > 0 ? `${base} (${count})` : base;
-}
-
 export function groupCommandItems(items: CommandItem[], category: CommandCategory): CommandGroup[] {
   if (category !== 'all') {
-    const label = category === 'projects' ? 'Projects' : category === 'blog' ? 'Blog' : 'Pages';
+    const label = category === 'projects' ? 'Work' : category === 'blog' ? 'Writing' : 'Pages';
     return items.length ? [{ id: category, label, items }] : [];
   }
 
-  const groups: CommandGroup[] = [];
-
-  for (const spec of GROUP_ORDER) {
-    const grouped = items.filter((item) => spec.kinds.includes(item.kind));
-    if (grouped.length) {
-      groups.push({
-        id: spec.id,
-        label: groupLabel(category, grouped.length, spec.label),
-        items: grouped,
-      });
-    }
-  }
+  const groups: CommandGroup[] = items.length
+    ? [{ id: 'matches', label: `Best matches (${items.length})`, items }]
+    : [];
 
   return groups;
 }

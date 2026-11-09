@@ -1,34 +1,10 @@
 import { createPortal } from 'react-dom';
-
 import { OverlayShell } from '@/features/overlay';
-import {
-  OVERLAY_CLOSE_BUTTON,
-  OVERLAY_DISMISS_BUTTON,
-  OVERLAY_FIELD,
-  OVERLAY_HEADER,
-  OVERLAY_INFO_PANEL,
-} from '@/features/overlay/overlayStyles';
 import { getSpinnerClasses } from '@/lib/design-system/recipes';
-import { CommandCategoryFilters } from './components/CommandCategoryFilters';
-import {
-  CommandDestinationList,
-  CommandEmpty,
-  CommandFooter,
-  CommandRecentList,
-} from './components/CommandEmpty';
-import { CommandGroupSection, CommandSkeletonList } from './components/CommandGroup';
-import { CommandResultActions } from './components/CommandResultActions';
 import { CommandResultRow } from './components/CommandResultRow';
-import { CommandTitleSuggestions } from './components/CommandTitleSuggestions';
 import { useCommandCenter } from './hooks/useCommandCenter';
 
-/**
- * Site search — navigate pages, projects, and posts.
- * Ask lives in the corner companion; search stays search-like.
- */
-type CommandCenterProps = {
-  mountRoot?: HTMLElement;
-};
+type CommandCenterProps = { mountRoot?: HTMLElement };
 
 export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
   const {
@@ -36,44 +12,22 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
     close,
     query,
     setQuery,
-    category,
     findQuery,
     isLoading,
     error,
     searchSource,
-    recentQueries,
-    recentDestinations,
-    clearHistory,
-    flatBrowseGroups,
     flatItems,
     hasResults,
     activeIndex,
     setActiveIndex,
-    copiedHref,
     inputRef,
     panelRef,
     listRef,
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
     handleInputKeyDown,
-    handleCategoryChange,
     navigateTo,
-    copyActiveLink,
-    askAboutItemWithContext,
-    handleTagClick,
-    askAi,
     clearQuery,
-    selectRecentQuery,
-    selectDestination,
-    selectEmptySuggestion,
-    selectTitleSuggestion,
   } = useCommandCenter();
-
   if (typeof document === 'undefined') return null;
-
-  const activeItem = flatItems[activeIndex];
-  let resultIndex = -1;
 
   const overlay = (
     <OverlayShell
@@ -85,19 +39,20 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
       variant="find"
       rootProps={{
         'data-command-center': true,
+        'data-search-has-query': !!findQuery,
         'data-search-loading': isLoading ? 'true' : 'false',
-        // Visibility + layout come from OverlayShell (.overlay-root, data-state).
-        className: 'command-center group',
+        'data-search-backend': searchSource,
+        className: 'command-center',
       }}
       onPanelClick={(event) => event.stopPropagation()}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
     >
-      <div className={OVERLAY_HEADER}>
-        <div className={OVERLAY_FIELD}>
+      <h2 id="command-center-title" className="sr-only">
+        Search
+      </h2>
+      <div className="search-field-row">
+        <div className="search-field">
           <svg
-            className="size-4 shrink-0 text-subtle-foreground"
+            className="size-4 shrink-0 text-muted-foreground"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -117,49 +72,38 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
             ref={inputRef}
             id="search-input"
             type="search"
+            maxLength={500}
             role="combobox"
             inputMode="search"
-            enterKeyHint="search"
+            enterKeyHint="go"
             aria-expanded={hasResults}
-            aria-controls="search-results"
+            aria-controls={hasResults ? 'search-results' : undefined}
             aria-autocomplete="list"
             aria-activedescendant={activeIndex >= 0 ? `command-result-${activeIndex}` : undefined}
             value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
-            }}
+            onChange={(event) => setQuery(event.target.value)}
             onKeyDown={handleInputKeyDown}
-            placeholder="Search pages, projects, and posts…"
-            aria-label="Search site content"
+            placeholder="Search the site…"
             autoComplete="off"
             spellCheck={false}
-            className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-subtle-foreground focus:outline-none"
+            className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none [&::-webkit-search-cancel-button]:hidden"
           />
+          {isLoading ? <span className={getSpinnerClasses('sm')} aria-hidden="true" /> : null}
           {query ? (
             <button
               type="button"
-              className={OVERLAY_DISMISS_BUTTON}
+              className="focus-ring-interactive flex min-h-11 shrink-0 items-center rounded px-2 text-xs text-muted-foreground hover:text-foreground"
               aria-label="Clear search"
               onClick={clearQuery}
             >
-              <svg
-                className="size-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
+              Clear
             </button>
           ) : null}
-          {isLoading ? <span className={getSpinnerClasses('sm')} aria-hidden="true" /> : null}
         </div>
         <button
           id="close-search"
           type="button"
-          className={OVERLAY_CLOSE_BUTTON}
+          className="focus-ring-interactive flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:bg-surface-subtle hover:text-foreground"
           aria-label="Close search"
           onClick={close}
         >
@@ -173,116 +117,63 @@ export default function CommandCenter({ mountRoot }: CommandCenterProps = {}) {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={1.6}
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>
         </button>
       </div>
-
-      <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3 sm:px-4" ref={listRef}>
-        <h2 id="command-center-title" className="sr-only">
-          Search
-        </h2>
-        <p className="sr-only" aria-live="polite" aria-atomic="true">
-          {isLoading
+      <p className="sr-only" role="status" aria-atomic="true">
+        {!findQuery
+          ? 'Start typing to search the site'
+          : isLoading
             ? 'Searching…'
             : hasResults
-              ? `${flatItems.length} results${findQuery ? ` for ${findQuery}` : ''}`
-              : findQuery
-                ? `No results for ${findQuery}`
-                : 'Start typing to search the site'}
-        </p>
-
-        {error ? <div className={`mb-3 ${OVERLAY_INFO_PANEL}`}>{error}</div> : null}
-
-        {findQuery ? (
-          <CommandCategoryFilters category={category} onChange={handleCategoryChange} />
-        ) : null}
-
-        {!findQuery && recentQueries.length > 0 ? (
-          <CommandRecentList
-            recentQueries={recentQueries}
-            onSelect={selectRecentQuery}
-            onClear={clearHistory}
-          />
-        ) : null}
-
-        {!findQuery && recentDestinations.length > 0 ? (
-          <CommandDestinationList destinations={recentDestinations} onSelect={selectDestination} />
-        ) : null}
-
-        {isLoading && !hasResults ? <CommandSkeletonList /> : null}
-
-        {!isLoading && findQuery && !hasResults ? (
-          <CommandEmpty
-            query={findQuery}
-            onSuggestion={selectEmptySuggestion}
-            onAskAi={(value) => askAi(value, 'empty_state')}
-          />
-        ) : null}
-
-        {findQuery && hasResults ? (
-          <CommandTitleSuggestions
-            query={findQuery}
-            items={flatItems}
-            onSelect={selectTitleSuggestion}
-          />
-        ) : null}
-
-        {hasResults ? (
-          <div
-            id="search-results"
-            role="listbox"
-            aria-label="Search results"
-            data-results
-            className="flex flex-col gap-3"
-          >
-            {findQuery ? (
-              <p className="sr-only">
-                Use arrow keys to navigate results. Press Enter to open. Press Command C to copy the
-                active link.
-              </p>
-            ) : null}
-            <div data-results-container className="flex flex-col gap-3">
-              {flatBrowseGroups.map((group) => (
-                <CommandGroupSection key={group.id} label={group.label}>
-                  {group.items.map((item) => {
-                    resultIndex += 1;
-                    const index = resultIndex;
-                    return (
-                      <CommandResultRow
-                        key={item.id}
-                        item={item}
-                        index={index}
-                        query={findQuery}
-                        isActive={index === activeIndex}
-                        onSelect={(selected) => navigateTo(selected)}
-                        onHover={setActiveIndex}
-                      />
-                    );
-                  })}
-                </CommandGroupSection>
+              ? `${flatItems.length} result${flatItems.length === 1 ? '' : 's'} for ${findQuery}`
+              : `No results for ${findQuery}`}
+      </p>
+      {findQuery ? (
+        <div
+          className="search-content focus-ring-interactive [overflow-anchor:none]"
+          ref={listRef}
+          tabIndex={0}
+          role="region"
+          aria-label="Search content"
+        >
+          {error ? (
+            <p className="search-notice" role="status">
+              {error}
+            </p>
+          ) : null}
+          {isLoading && !hasResults ? (
+            <p className="search-message" aria-hidden="true">
+              Searching…
+            </p>
+          ) : null}
+          {!isLoading && !hasResults ? (
+            <div className="search-message">
+              <p className="font-medium text-foreground">No matches found.</p>
+              <p className="mt-1 text-muted-foreground">Try a name or a broader keyword.</p>
+            </div>
+          ) : null}
+          {hasResults ? (
+            <div id="search-results" role="listbox" aria-label="Search results" data-results>
+              {flatItems.map((item, index) => (
+                <CommandResultRow
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  query={findQuery}
+                  isActive={index === activeIndex}
+                  onSelect={(selected) => navigateTo(selected)}
+                  onHover={setActiveIndex}
+                />
               ))}
             </div>
-          </div>
-        ) : null}
-      </div>
-
-      {hasResults && activeItem ? (
-        <CommandResultActions
-          item={activeItem}
-          copied={copiedHref === activeItem.href}
-          onCopy={(item) => {
-            void copyActiveLink(item);
-          }}
-          onAsk={askAboutItemWithContext}
-          onTagClick={handleTagClick}
-        />
+          ) : null}
+        </div>
       ) : null}
-      <CommandFooter searchSource={searchSource} showCopyHint={hasResults} />
     </OverlayShell>
   );
-
   return mountRoot ? overlay : createPortal(overlay, document.body);
 }
