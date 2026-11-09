@@ -2,10 +2,12 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
+import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
+import { dirname, join, resolve } from 'path';
 import { loadProjectEnv } from './src/lib/env.ts';
 import { resolveSentryBuildMetadata } from './src/lib/sentry-build.ts';
+import { vendorChunkName } from './src/lib/vendor-chunks.ts';
 import { createDevSemanticSearchProxy } from './src/integrations/dev-semantic-search-proxy.ts';
 import { createDevAISearchProxy } from './src/integrations/dev-ai-proxy.ts';
 
@@ -16,6 +18,36 @@ if (sentryBuild.environment) process.env.PUBLIC_SENTRY_ENVIRONMENT = sentryBuild
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const CSS_LAYER_ORDER =
+  '<style data-bo-layer-order>@layer properties, theme, base, components, utilities;</style>';
+
+/** Chunk order can open `@layer components` before theme.css and let the base reset win. */
+function lockCssLayerOrder() {
+  const stampHtml = (directory) => {
+    for (const entry of readdirSync(directory)) {
+      const path = join(directory, entry);
+      if (statSync(path).isDirectory()) {
+        stampHtml(path);
+        continue;
+      }
+      if (!entry.endsWith('.html') || !statSync(path).isFile()) continue;
+      const html = readFileSync(path, 'utf8');
+      if (html.includes('data-bo-layer-order')) continue;
+      const next = html.replace(/<head[^>]*>/, (head) => `${head}${CSS_LAYER_ORDER}`);
+      if (next !== html) writeFileSync(path, next);
+    }
+  };
+
+  return {
+    name: 'lock-css-layer-order',
+    hooks: {
+      'astro:build:done': ({ dir }) => {
+        stampHtml(fileURLToPath(dir));
+      },
+    },
+  };
+}
 
 /** Lazy-load Sentry only for real production builds, not Astro utility commands. */
 const sentryIntegrations = [];
@@ -56,7 +88,7 @@ export default defineConfig({
   output: 'static',
   envPrefix: 'PUBLIC_',
   site: 'https://blakeoxford.com',
-  integrations: [react(), mdx(), ...sentryIntegrations],
+  integrations: [react(), mdx(), lockCssLayerOrder(), ...sentryIntegrations],
   image: {
     domains: ['blakeoxford.com'],
     formats: ['avif', 'webp', 'jpeg'],
@@ -79,22 +111,47 @@ export default defineConfig({
     },
     build: {
       cssMinify: 'lightningcss',
-      rollupOptions: {
+      modulePreload: {
+        resolveDependencies(_filename, deps) {
+          // The deferred Sentry import must not be fetched during first paint.
+          return deps.filter(
+            (dep) => !dep.includes('vendor-sentry') && !dep.includes('sentry-browser')
+          );
+        },
+      },
+      rolldownOptions: {
         output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (
-                /node_modules\/(?:react|react-dom|scheduler)\//.test(id) ||
-                /node_modules\/\.pnpm\/(?:react|react-dom|scheduler)@/.test(id)
-              ) {
-                return 'vendor-react';
-              }
-              if (id.includes('@sentry') || id.includes('sentry')) {
-                return 'vendor-sentry';
-              }
-              return 'vendor';
-            }
-            return undefined;
+          codeSplitting: {
+            groups: [
+              {
+                name: 'vendor-react',
+                test: (id) => vendorChunkName(id) === 'vendor-react',
+                priority: 30,
+                minSize: 0,
+                minShareCount: 1,
+              },
+              {
+                name: 'vendor-sentry',
+                test: (id) => vendorChunkName(id) === 'vendor-sentry',
+                priority: 25,
+                minSize: 0,
+                minShareCount: 1,
+              },
+              {
+                name: 'vendor-zod',
+                test: (id) => vendorChunkName(id) === 'vendor-zod',
+                priority: 20,
+                minSize: 0,
+                minShareCount: 1,
+              },
+              {
+                name: 'vendor-fonts',
+                test: (id) => vendorChunkName(id) === 'vendor-fonts',
+                priority: 15,
+                minSize: 0,
+                minShareCount: 1,
+              },
+            ],
           },
         },
       },
