@@ -27,18 +27,30 @@ async function defaultLoadSentry(): Promise<void> {
   mod.initDeferredSentry();
 }
 
-export function scheduleDeferredSentry(start: () => void, host: SentryLoadHost): void {
-  let started = false;
+export function scheduleDeferredSentry(
+  start: () => void | Promise<void>,
+  host: SentryLoadHost
+): void {
+  let pending = false;
+  let settled = false;
   const run = () => {
-    if (started) return;
-    started = true;
-    start();
+    if (pending || settled) return;
+    pending = true;
+    Promise.resolve()
+      .then(() => start())
+      .then(() => {
+        settled = true;
+      })
+      .catch(() => {
+        // A failed download must not consume the only interaction or idle chance.
+        pending = false;
+      });
   };
 
-  host.addEventListener('error', run, { once: true });
-  host.addEventListener('unhandledrejection', run, { once: true });
+  host.addEventListener('error', run);
+  host.addEventListener('unhandledrejection', run);
   for (const type of INTERACTION_EVENTS) {
-    host.addEventListener(type, run, { once: true, passive: true });
+    host.addEventListener(type, run, { passive: true });
   }
 
   const armIdle = () => {
@@ -63,12 +75,18 @@ export function installDeferredSentry(load: () => Promise<void> = defaultLoadSen
   window.__boSentryInstall = true;
 
   let loading = false;
-  const start = () => {
-    if (loading || window.__boSentryReady) return;
+  const start = (): Promise<void> => {
+    if (window.__boSentryReady || loading) return Promise.resolve();
     loading = true;
-    void load().catch(() => {
-      loading = false;
-    });
+    return load().then(
+      () => {
+        loading = false;
+      },
+      (error: unknown) => {
+        loading = false;
+        throw error;
+      }
+    );
   };
 
   if (hasQueuedSentryEvents()) start();

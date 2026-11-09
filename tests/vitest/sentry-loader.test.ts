@@ -66,8 +66,12 @@ function createHost(readyState = 'loading', withIdle = true): FakeHost {
   };
 }
 
+async function flushMicrotasks(): Promise<void> {
+  for (let step = 0; step < 5; step += 1) await Promise.resolve();
+}
+
 describe('deferred Sentry scheduling', () => {
-  it('waits until load settles, then uses requestIdleCallback', () => {
+  it('waits until load settles, then uses requestIdleCallback', async () => {
     const start = vi.fn();
     const fake = createHost('loading');
     scheduleDeferredSentry(start, fake.host);
@@ -82,10 +86,11 @@ describe('deferred Sentry scheduling', () => {
     expect(start).not.toHaveBeenCalled();
 
     fake.idles[0]?.cb();
+    await flushMicrotasks();
     expect(start).toHaveBeenCalledOnce();
   });
 
-  it('falls back to setTimeout when requestIdleCallback is missing', () => {
+  it('falls back to setTimeout when requestIdleCallback is missing', async () => {
     const start = vi.fn();
     const fake = createHost('complete', false);
     scheduleDeferredSentry(start, fake.host);
@@ -94,16 +99,34 @@ describe('deferred Sentry scheduling', () => {
     fake.timeouts[0]?.cb();
     expect(fake.timeouts[1]?.ms).toBe(SENTRY_IDLE_TIMEOUT_MS);
     fake.timeouts[1]?.cb();
+    await flushMicrotasks();
     expect(start).toHaveBeenCalledOnce();
   });
 
-  it.each(['pointerdown', 'keydown', 'error'])('starts on %s before idle', (type) => {
+  it.each(['pointerdown', 'keydown', 'error'])('starts on %s before idle', async (type) => {
     const start = vi.fn();
     const fake = createHost('loading');
     scheduleDeferredSentry(start, fake.host);
     fake.fire(type);
     fake.fire(type);
+    await Promise.resolve();
     expect(start).toHaveBeenCalledOnce();
+  });
+
+  it('retries after a failed download on the next interaction', async () => {
+    const start = vi
+      .fn<() => Promise<void>>()
+      .mockRejectedValueOnce(new Error('network'))
+      .mockResolvedValueOnce(undefined);
+    const fake = createHost('loading');
+    scheduleDeferredSentry(start, fake.host);
+
+    fake.fire('pointerdown');
+    await flushMicrotasks();
+    fake.fire('pointerdown');
+    await flushMicrotasks();
+
+    expect(start).toHaveBeenCalledTimes(2);
   });
 });
 
