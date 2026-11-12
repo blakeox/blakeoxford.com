@@ -1,5 +1,44 @@
 import { describe, expect, it } from 'vitest';
-import { createSentryAllowedUrls } from '../../src/lib/sentry-options';
+import {
+  createSentryAllowedUrls,
+  resolveBrowserSentryEnvironment,
+} from '../../src/lib/sentry-options';
+
+describe('resolveBrowserSentryEnvironment', () => {
+  it('prefers the configured Workers Build environment', () => {
+    expect(
+      resolveBrowserSentryEnvironment({
+        configured: 'verification',
+        mode: 'production',
+        hostname: 'testing-blakeoxford-com.blakeoxford.workers.dev',
+      })
+    ).toBe('verification');
+  });
+
+  it('treats workers.dev hosts as preview when MODE is production', () => {
+    expect(
+      resolveBrowserSentryEnvironment({
+        mode: 'production',
+        hostname: 'testing-blakeoxford-com.blakeoxford.workers.dev',
+      })
+    ).toBe('preview');
+  });
+
+  it('keeps production hostnames on production when MODE is production', () => {
+    expect(
+      resolveBrowserSentryEnvironment({
+        mode: 'production',
+        hostname: 'blakeoxford.com',
+      })
+    ).toBe('production');
+  });
+
+  it('falls back to MODE when the host is unrecognized', () => {
+    expect(resolveBrowserSentryEnvironment({ mode: 'development', hostname: 'localhost' })).toBe(
+      'development'
+    );
+  });
+});
 
 describe('Sentry owned deployment URLs', () => {
   it.each(['http://127.0.0.1:65029/app.js', 'http://localhost:4321/app.js'])(
