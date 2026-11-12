@@ -14,6 +14,25 @@ export const sentryDataCollection = {
   graphQL: { document: false, variables: false },
 };
 
+/**
+ * Prefer the Workers Build env, then hostname, then Vite MODE.
+ * Preview production builds still use MODE=production; hostname keeps
+ * workers.dev hosts on preview allowed URLs when the build env is missing.
+ */
+export function resolveBrowserSentryEnvironment(options: {
+  configured?: string;
+  mode?: string;
+  hostname?: string;
+}): string {
+  if (options.configured) return options.configured;
+
+  const hostname = options.hostname ?? '';
+  if (/(?:^|\.)blakeoxford\.workers\.dev$/i.test(hostname)) return 'preview';
+  if (/^(?:www\.)?blakeoxford\.com$/i.test(hostname)) return 'production';
+
+  return options.mode || 'development';
+}
+
 /** Restrict reports and trace headers to this site's owned deployments. */
 export function createSentryAllowedUrls(environment: string) {
   const production = /^https:\/\/(?:www\.)?blakeoxford\.com(?:\/|$)/i;
