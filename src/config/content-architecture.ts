@@ -14,7 +14,7 @@ export const CONTENT_INTENTS: Record<string, string> = {
   '/': 'AI adoption and enterprise scaling grounded in systems architecture',
   '/about/': 'Professional credibility and delivery background',
   '/blog/': 'Practical guidance on AI, automation, analytics, and leadership',
-  '/projects/': 'Operating foundations and case studies informing enterprise AI adoption',
+  '/projects/': 'Work: operating foundations and case studies informing enterprise AI adoption',
   '/contact/': 'AI use-case, pilot integration, and enterprise adoption consultation',
   '/projects/adp-workforcenow/': 'Workforce operations and reporting automation',
   '/projects/advancedmd-implementation/': 'Healthcare IT modernization and workflow governance',

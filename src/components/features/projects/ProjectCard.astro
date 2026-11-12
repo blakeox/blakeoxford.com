@@ -1,8 +1,8 @@
 ---
 /**
  * ProjectCard — portfolio showcase.
- * Compact: cardless media teaser for home.
- * Full: Selected work library, still cardless — plaque or photo, then proof copy.
+ * Compact: media teaser for dense lists.
+ * Full: Selected work library — cardless plaque or photo, then proof copy.
  */
 import OptimizedImage from '@/components/primitives/OptimizedImage.astro';
 import Flex from '@/components/primitives/Flex.astro';
@@ -13,24 +13,27 @@ import { formatDateISO, formatDateShort } from '@/utils/date';
 import ProofPlaque from '@/components/composites/ProofPlaque.astro';
 import { resolvePublicImage } from '@/lib/media/publicAssetExists';
 import { splitProofFigure } from '@/lib/content/splitProofFigure';
+import { WORK_PROOF_LABELS } from '@/content/projects/hirePath';
 
 const {
   project,
   compact = false,
   featured = false,
   showPlaque = true,
+  density = 'primary',
 } = Astro.props as import('@/types/components').ProjectCardProps;
 const { id: slug, data } = project;
 
 const title = data.title ?? 'Case study';
+const hireLabel = WORK_PROOF_LABELS[slug];
 const image = resolvePublicImage(data?.heroImage);
 const description = data.description ?? '';
 const categories = Array.isArray(data.categories) ? data.categories.filter(Boolean) : [];
 const highlights = Array.isArray(data.highlights) ? data.highlights.filter(Boolean) : [];
 const impact = Array.isArray(data.impact) ? data.impact.filter(Boolean) : [];
 const tags = Array.isArray(data.tags) ? data.tags.filter(Boolean) : [];
-const visibleTags = take(tags, 3);
-const extraTagCount = Math.max(tags.length - visibleTags.length, 0);
+const visibleTags = density === 'supporting' ? [] : take(tags, 3);
+const extraTagCount = density === 'supporting' ? 0 : Math.max(tags.length - visibleTags.length, 0);
 const hasDescription = Boolean(description.trim());
 const primaryCategory = categories[0] ?? 'Case study';
 const proofLine = impact[0] || highlights[1] || highlights[0];
@@ -53,24 +56,35 @@ const valueSummary =
   highlights[0] ||
   impact[0] ||
   'Operational change delivered through systems, automation, and enablement.';
+const isSupporting = density === 'supporting';
 ---
 
 <article
   class:list={[
-    'group @container relative flex h-full flex-col rounded-xl border border-border bg-surface p-5 transition-colors hover:border-foreground/20 focus-within:border-foreground/40 sm:p-6',
+    'project-card group @container relative flex h-full flex-col border-b border-border/60 pb-7 transition-colors sm:pb-8',
     featured && 'project-card-featured',
+    isSupporting && 'project-card-supporting opacity-95',
   ]}
 >
   <a
     href={`/projects/${slug}/`}
-    class="relative flex h-full flex-col gap-4 @2xl:grid @2xl:grid-cols-2 @2xl:gap-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    class:list={[
+      'relative flex h-full flex-col focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+      compact
+        ? featured
+          ? 'gap-3'
+          : 'gap-2.5'
+        : isSupporting
+          ? 'gap-3 @2xl:grid @2xl:grid-cols-2 @2xl:gap-8'
+          : 'gap-4 @2xl:grid @2xl:grid-cols-2 @2xl:gap-10',
+    ]}
     data-cta-id="study_cta"
     data-chat-avoid-launcher
   >
     {image ? (
       <figure
         class:list={[
-          'relative overflow-hidden rounded-lg bg-surface-subtle',
+          'relative overflow-hidden bg-surface-subtle',
           compact
             ? featured
               ? 'aspect-[16/9] sm:aspect-[16/10] lg:aspect-[16/9]'
@@ -105,11 +119,19 @@ const valueSummary =
         ) : null}
       </p>
 
+      {hireLabel ? (
+        <p class="font-heading text-base font-semibold tracking-tight text-accent-emphasis sm:text-lg">
+          {hireLabel}
+        </p>
+      ) : null}
+
       <h3
         id={`project-card-${slug}`}
         class:list={[
           'font-heading font-semibold tracking-tight text-pretty text-foreground',
-          headingSizeClass(compact && !featured ? 'subtitle' : 'title'),
+          headingSizeClass(
+            compact && !featured ? 'subtitle' : isSupporting || hireLabel ? 'subtitle' : 'title'
+          ),
         ]}
       >
         {title}
@@ -126,8 +148,8 @@ const valueSummary =
         </p>
       ) : null}
 
-      {!compact && hasDescription && valueSummary !== proofLine ? (
-        <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:3] @md:text-base">
+      {!compact && !isSupporting && hasDescription && valueSummary !== proofLine ? (
+        <p class="[display:-webkit-box] overflow-hidden text-sm leading-relaxed text-muted-foreground [-webkit-box-orient:vertical] [-webkit-line-clamp:2] @md:text-base">
           {valueSummary}
         </p>
       ) : null}

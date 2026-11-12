@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CollectionEntry } from 'astro:content';
-import { leadStudies } from '../../src/content/projects/hirePath';
+import { leadStudies, WORK_PROOF_LABELS } from '../../src/content/projects/hirePath';
 
 function project(id: string, impact: string[]): CollectionEntry<'projects'> {
   return {
@@ -36,5 +36,13 @@ describe('leadStudies', () => {
       '/projects/microsoft-fabric/',
       '/projects/bank-projections-modeling/',
     ]);
+  });
+
+  it('keeps hire-facing labels for every published study slug', () => {
+    expect(WORK_PROOF_LABELS['llm-note-coaching']).toMatch(/coaching/i);
+    expect(WORK_PROOF_LABELS['ferment-app']).toMatch(/offline/i);
+    expect(WORK_PROOF_LABELS['fanalyx-deterministic-finance-platform']).toMatch(/finance/i);
+    expect(WORK_PROOF_LABELS['adp-workforcenow']).toMatch(/payroll|headcount/i);
+    expect(WORK_PROOF_LABELS['advancedmd-implementation']).toMatch(/claims|EHR/i);
   });
 });

@@ -366,7 +366,7 @@ test.describe('Chaos Engineering Tests @extended', () => {
       // Navigation should still work
       await page
         .getByRole('navigation', { name: 'Main Navigation' })
-        .getByRole('link', { name: 'Projects', exact: true })
+        .getByRole('link', { name: 'Work', exact: true })
         .click();
       await expect(page).toHaveURL(/projects/);
 

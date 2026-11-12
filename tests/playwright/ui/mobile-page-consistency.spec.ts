@@ -90,10 +90,12 @@ test('case-study proof and return link share the mobile reading gutter', async (
   const title = page.getByRole('heading', { level: 1 });
   const proof = page.locator('.project-hero-proof .proof-plaque > p').first();
   expect(Math.abs((await title.boundingBox())!.x - (await proof.boundingBox())!.x)).toBeLessThan(1);
-  const back = page.getByRole('link', { name: 'Back to selected work' });
+  const back = page.getByRole('link', { name: 'Back to work' });
   expect((await back.boundingBox())!.height).toBeGreaterThanOrEqual(44);
   await back.click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Selected work');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Foundations for enterprise AI'
+  );
 });
 
 test('larger default text keeps mobile navigation within reach across pages', async ({ page }) => {

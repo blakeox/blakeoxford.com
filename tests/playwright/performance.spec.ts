@@ -38,7 +38,7 @@ test.describe('Enhanced Performance Monitoring', () => {
       const pages = [
         { path: '/', name: 'Homepage' },
         { path: '/about', name: 'About' },
-        { path: '/projects', name: 'Projects' },
+        { path: '/projects', name: 'Work' },
         { path: '/contact', name: 'Contact' },
         { path: '/blog', name: 'Blog' }
       ];

@@ -11,7 +11,7 @@ for (const width of [390, 1440]) {
       hero.getByRole('heading', { name: 'Foundations for enterprise AI', exact: true })
     ).toBeVisible();
     await expect(hero).toContainText('practical AI adoption');
-    const categories = hero.getByRole('navigation', { name: 'Project categories' });
+    const categories = hero.getByRole('navigation', { name: 'Work categories' });
     for (const link of await categories.getByRole('link').all()) {
       const href = await link.getAttribute('href');
       expect(href).toMatch(/^#/);

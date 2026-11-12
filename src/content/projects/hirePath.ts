@@ -32,7 +32,7 @@ export const HIRE_GROUPS: readonly HireGroup[] = [
 export const ALSO_BUILT: HireGroup = {
   id: 'also',
   title: 'Also built',
-  description: 'Product engineering experience that keeps usability and reliability in view.',
+  description: 'Supporting product work—usable, reliable, and secondary to the hire path.',
   slugs: ['ferment-app', 'fanalyx-deterministic-finance-platform'],
 };
 
@@ -46,12 +46,20 @@ export interface HireStudyLink {
   line: string;
 }
 
-/** Home outcome strip labels — hire language, not project product titles. */
-export const HOME_PROOF_LABELS: Readonly<Record<string, string>> = {
+/** Hire-facing labels — plain language for home proof and the work library. */
+export const WORK_PROOF_LABELS: Readonly<Record<string, string>> = {
   'google-workspace-migration': 'Cutover with recovery built in',
   'microsoft-fabric': 'Shared ops data teams can run',
   'bank-projections-modeling': 'Lending calls on clear inputs',
+  'advancedmd-implementation': 'Claims ops on a governed EHR',
+  'adp-workforcenow': 'Payroll and headcount on one record',
+  'llm-note-coaching': 'AI coaching inside the workflow',
+  'ferment-app': 'Offline-first product craft',
+  'fanalyx-deterministic-finance-platform': 'Deterministic finance at the edge',
 };
+
+/** @deprecated Prefer WORK_PROOF_LABELS — kept as the home subset alias. */
+export const HOME_PROOF_LABELS = WORK_PROOF_LABELS;
 
 export function projectsForSlugs(
   projects: CollectionEntry<'projects'>[],
@@ -75,7 +83,7 @@ export function leadStudies(projects: CollectionEntry<'projects'>[]): HireStudyL
         slug: project.id,
         href: `/projects/${project.id}/`,
         title: project.data.title,
-        linkLabel: HOME_PROOF_LABELS[project.id] ?? project.data.title,
+        linkLabel: WORK_PROOF_LABELS[project.id] ?? project.data.title,
         group: group.title,
         line,
       },

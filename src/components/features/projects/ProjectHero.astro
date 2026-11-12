@@ -10,6 +10,7 @@ import ArrowLeftIcon from '@/components/primitives/icons/ArrowLeftIcon.astro';
 import ExternalLinkIcon from '@/components/primitives/icons/ExternalLinkIcon.astro';
 import { headingSizeClass } from '@/lib/typeScale';
 import { splitProofFigure } from '@/lib/content/splitProofFigure';
+import { WORK_PROOF_LABELS } from '@/content/projects/hirePath';
 
 export interface Props {
   title: string;
@@ -20,11 +21,14 @@ export interface Props {
   categories?: string[];
   /** Lead result — what this engagement proved. */
   outcome?: string;
+  /** Project slug for hire-facing emphasis. */
+  slug?: string;
 }
 
-const { title, description, date, image, link, categories = [], outcome } = Astro.props;
+const { title, description, date, image, link, categories = [], outcome, slug } = Astro.props;
 const proofPlaque = !image && outcome ? splitProofFigure(outcome) : null;
 const hasVisual = Boolean(image || proofPlaque);
+const hireLabel = slug ? WORK_PROOF_LABELS[slug] : undefined;
 
 const formattedDate = date.toLocaleDateString('en-US', {
   timeZone: 'UTC',
@@ -34,7 +38,7 @@ const formattedDate = date.toLocaleDateString('en-US', {
 const dateISO = date.toISOString();
 ---
 
-<section class="relative isolate overflow-hidden border-b border-border/40">
+<section class="project-hero relative isolate overflow-hidden border-b border-border/40">
   <div
     class:list={[
       'mx-auto flex max-w-container-2xl flex-col',
@@ -47,10 +51,10 @@ const dateISO = date.toISOString();
           <a
             href="/projects/"
             class="focus-ring-interactive inline-flex min-h-11 items-center gap-2 rounded text-accent-emphasis transition-colors hover:text-accent"
-            aria-label="Back to selected work"
+            aria-label="Back to work"
           >
             <ArrowLeftIcon />
-            Selected work
+            Work
           </a>
           <span aria-hidden="true" class="text-border">
             ·
@@ -60,6 +64,11 @@ const dateISO = date.toISOString();
 
         <div class="space-y-2.5">
           <p class="section-kicker">Case study</p>
+          {hireLabel ? (
+            <p class="font-heading text-lg font-semibold tracking-tight text-accent-emphasis sm:text-xl">
+              {hireLabel}
+            </p>
+          ) : null}
           <h1
             class:list={[
               'font-heading font-semibold tracking-tight text-pretty text-foreground',
@@ -82,11 +91,8 @@ const dateISO = date.toISOString();
 
         <DotMetaList items={categories} label="Focus areas" />
 
-        <ButtonGroup align="start" responsive>
-          <Button variant="primary" size="lg" href="/contact/" data-test="project-cta-connect">
-            Discuss your bottleneck
-          </Button>
-          {link && (
+        {link ? (
+          <ButtonGroup align="start" responsive>
             <Button
               variant="secondary"
               size="lg"
@@ -97,8 +103,17 @@ const dateISO = date.toISOString();
               Visit project
               <ExternalLinkIcon />
             </Button>
-          )}
-        </ButtonGroup>
+          </ButtonGroup>
+        ) : (
+          <p class="text-sm text-muted-foreground">
+            <a
+              href="#case-next-steps"
+              class="focus-ring-interactive font-semibold text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+            >
+              Jump to next steps
+            </a>
+          </p>
+        )}
       </div>
     </div>
 
@@ -129,6 +144,31 @@ const dateISO = date.toISOString();
 </section>
 
 <style>
+  @keyframes project-hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.7rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .project-hero-copy > div,
+    .project-hero-proof,
+    .project-hero figure {
+      animation: project-hero-rise 700ms var(--ease-decelerate) both;
+    }
+
+    .project-hero-proof,
+    .project-hero figure {
+      animation-delay: 90ms;
+    }
+  }
+
   @media (width < 1024px) {
     .project-hero-copy {
       padding-bottom: 0.75rem;

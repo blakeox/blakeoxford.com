@@ -29,7 +29,7 @@ export function buildBrowseGroups(
     groups.push({ id: 'quick', label: 'Quick links', items: quickLinks });
   }
   if (featuredProjects.length) {
-    groups.push({ id: 'featured', label: 'Featured projects', items: featuredProjects });
+    groups.push({ id: 'featured', label: 'Featured work', items: featuredProjects });
   }
   if (recentPosts.length) {
     groups.push({ id: 'recent', label: 'Recent posts', items: recentPosts });

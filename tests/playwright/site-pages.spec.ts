@@ -7,7 +7,7 @@ test.describe('Homepage', () => {
     const mainNav = page.getByRole('navigation', { name: 'Main Navigation' });
     await expect(mainNav.getByRole('link', { name: 'About', exact: true })).toBeVisible();
     await expect(mainNav.getByRole('link', { name: 'Blog', exact: true })).toBeVisible();
-    await expect(mainNav.getByRole('link', { name: 'Projects', exact: true })).toBeVisible();
+    await expect(mainNav.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
     await expect(mainNav.getByRole('link', { name: 'Contact', exact: true })).toBeVisible();
   });
 });

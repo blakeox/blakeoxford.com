@@ -22,11 +22,25 @@ interface Props {
 const { data, Content, metrics, journey, lessons, reflection, hasMetrics, hasJourney, hasLessons } =
   Astro.props as Props;
 
-const hasImpact = Boolean(data.impact?.length);
 const hasHighlights = Boolean(data.highlights?.length);
 const hasCtaSlot = Astro.slots.has('cta');
 
-const impactRows = (data.impact ?? []).map((item: string) => ({ body: item }));
+/** When metrics already carry the proof, skip impact rows that restate those figures. */
+const impactRows = (data.impact ?? [])
+  .filter((item: string) => {
+    if (!hasMetrics) return true;
+    const normalized = item.toLowerCase();
+    return !metrics.some((row) => {
+      const result = row.result.toLowerCase();
+      const metric = row.metric.toLowerCase();
+      return normalized.includes(result) || normalized.includes(metric);
+    });
+  })
+  .map((item: string) => ({ body: item }));
+
+const showImpactList = impactRows.length > 0;
+const showProof = hasMetrics || showImpactList;
+
 const journeyRows = journey.map((item) => ({ title: item.title, body: item.body }));
 const lessonRows = lessons.map((lesson: { title: string; description: string }) => ({
   title: lesson.title,
@@ -43,12 +57,22 @@ const highlightRows = (data.highlights ?? []).map((item: string) => ({ body: ite
       </div>
     </ProjectDetailSection>
 
-    {hasImpact || hasMetrics ? (
+    {showProof ? (
       <ProjectDetailSection title="Impact" eyebrow="Proof">
         <div class="flex flex-col gap-8">
           {hasMetrics ? <MetricsTable metrics={metrics} /> : null}
-          {hasImpact ? <EditorialList rows={impactRows} numbered={false} /> : null}
+          {showImpactList ? <EditorialList rows={impactRows} numbered={false} /> : null}
         </div>
+      </ProjectDetailSection>
+    ) : null}
+
+    {hasCtaSlot ? (
+      <ProjectDetailSection
+        id="case-next-steps"
+        title="Next steps"
+        eyebrow="Continue the conversation"
+      >
+        <slot name="cta" />
       </ProjectDetailSection>
     ) : null}
 
@@ -75,12 +99,6 @@ const highlightRows = (data.highlights ?? []).map((item: string) => ({ body: ite
         <blockquote class="max-w-2xl border-l-2 border-accent/60 pl-5 text-lg leading-relaxed text-foreground italic sm:pl-6 sm:text-xl">
           {reflection}
         </blockquote>
-      </ProjectDetailSection>
-    ) : null}
-
-    {hasCtaSlot ? (
-      <ProjectDetailSection title="Next steps" eyebrow="Continue the conversation">
-        <slot name="cta" />
       </ProjectDetailSection>
     ) : null}
 

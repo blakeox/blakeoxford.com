@@ -13,21 +13,34 @@ interface Props {
   id?: string;
   /** Featured slug to de-emphasize or skip if already shown above. */
   excludeSlug?: string;
+  /** Primary hire-path rows vs supporting / also-built density. */
+  density?: 'primary' | 'supporting';
 }
 
-const { projects, kicker, title, description, id = 'library', excludeSlug } = Astro.props as Props;
+const {
+  projects,
+  kicker,
+  title,
+  description,
+  id = 'library',
+  excludeSlug,
+  density = 'primary',
+} = Astro.props as Props;
 const headingId = `${id}-heading`;
 const libraryProjects = excludeSlug
   ? projects.filter((project) => project.id !== excludeSlug)
   : projects;
+const isSupporting = density === 'supporting';
 ---
 
 <Section
   id={id}
-  padding="md"
+  padding={isSupporting ? 'sm' : 'md'}
   container="xl"
   aria-labelledby={headingId}
   data-layout-section="projects-grid"
+  data-density={density}
+  class="work-library"
 >
   <div data-layout-shell="projects-grid-inner">
     <SectionHeader
@@ -35,16 +48,31 @@ const libraryProjects = excludeSlug
       title={title}
       titleId={headingId}
       description={description}
-      size="section"
+      size={isSupporting ? 'title' : 'section'}
     />
 
     <Grid
       cols={libraryProjects.length >= 3 ? '3' : libraryProjects.length === 2 ? '2' : '1'}
-      gap="lg"
+      gap={isSupporting ? 'md' : 'lg'}
+      class="work-library-grid"
     >
       {libraryProjects.map((project) => (
-        <ProjectCard project={project} />
+        <ProjectCard project={project} density={density} />
       ))}
     </Grid>
   </div>
 </Section>
+
+<style>
+  /* Keep library rows paint-visible; motion is hover affordance on the card CTA. */
+  .work-library :global(.project-card a) {
+    transition: background-color var(--duration-fast) var(--ease-standard);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .work-library :global(.project-card a:hover),
+    .work-library :global(.project-card a:focus-visible) {
+      background-color: color-mix(in oklch, var(--color-surface) 70%, transparent);
+    }
+  }
+</style>

@@ -13,7 +13,7 @@ test('enterprise AI search connects the site story to a project conversation', a
   await dialog.getByRole('combobox').fill('enterprise');
   await dialog.getByRole('tab', { name: 'Pages', exact: true }).click();
   const results = dialog.getByRole('listbox', { name: 'Search results' });
-  for (const title of ['About', 'Projects', 'Blog', 'Contact']) {
+  for (const title of ['About', 'Work', 'Blog', 'Contact']) {
     await expect(results.getByRole('option', { name: title, exact: true })).toBeVisible();
   }
   await results.getByRole('option', { name: 'Contact', exact: true }).click();

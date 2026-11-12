@@ -16,7 +16,7 @@ test.describe('Navigation', () => {
     await expect(page.locator('main h1, h1:has-text("blog")').first()).toBeVisible();
     
     // Navigate to Projects
-    await mainNav.getByRole('link', { name: 'Projects', exact: true }).click();
+    await mainNav.getByRole('link', { name: 'Work', exact: true }).click();
     await page.waitForURL(/.*projects/, { timeout: 10000 });
     await expect(page.locator('main h1, h1:has-text("projects")').first()).toBeVisible();
     

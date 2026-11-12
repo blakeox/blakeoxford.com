@@ -25,4 +25,6 @@ export interface ProjectCardProps {
   compact?: boolean;
   /** Home lists the figure once above the cards. */
   showPlaque?: boolean;
+  /** Primary hire-path rows vs supporting / also-built density. */
+  density?: 'primary' | 'supporting';
 }

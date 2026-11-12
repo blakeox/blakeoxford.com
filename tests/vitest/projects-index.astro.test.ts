@@ -9,13 +9,14 @@ describe('projects/index.astro', () => {
     fileContent = readFileSync(filePath, 'utf-8');
   });
 
-  it('should frame the page as a portfolio showcase', () => {
+  it('should frame the page as a portfolio showcase with a featured lead', () => {
     expect(fileContent).toContain('HIRE_GROUPS');
     expect(fileContent).toContain('ALSO_BUILT');
     expect(fileContent).toContain('ProjectsLibrarySection');
+    expect(fileContent).toContain('ProjectsFeaturedSection');
     expect(fileContent).toContain('getProjectInsights');
+    expect(fileContent).toContain('deepCut');
     expect(fileContent).not.toContain('ProjectsCapabilitiesSection');
-    expect(fileContent).not.toContain('ProjectsFeaturedSection');
   });
 
   it('should keep conversion on the closing band', () => {

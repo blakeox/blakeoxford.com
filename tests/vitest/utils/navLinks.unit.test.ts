@@ -21,7 +21,7 @@ describe('navLinks utility functions', () => {
 
         expect(link.href).toMatch(/^\/.*$/); // Should start with /
         expect(link.label.length).toBeGreaterThan(0);
-        expect(['Home', 'About', 'Projects', 'Blog', 'Contact']).toContain(link.label);
+        expect(['Home', 'About', 'Work', 'Blog', 'Contact']).toContain(link.label);
       });
     });
 
@@ -107,7 +107,7 @@ describe('navLinks utility functions', () => {
       const activeLink = getActiveNavLink();
       expect(activeLink).toBeDefined();
       expect(activeLink?.href).toBe('/projects/');
-      expect(activeLink?.label).toBe('Projects');
+      expect(activeLink?.label).toBe('Work');
 
       // Test with non-nav page
       mockLocation.pathname = '/some-random-page/';

@@ -2,32 +2,46 @@
 import Layout from '@/layouts/BaseLayout.astro';
 import Section from '@/components/primitives/Section.astro';
 import IntroCopy from '@/components/composites/IntroCopy.astro';
+import ProjectsFeaturedSection from '@/components/features/projects/ProjectsFeaturedSection.astro';
 import ProjectsLibrarySection from '@/components/features/projects/ProjectsLibrarySection.astro';
 import ProjectsCTASection from '@/components/features/projects/ProjectsCTASection.astro';
 import { getProjectInsights } from '@/content/projects/getProjectInsights';
 import { ALSO_BUILT, HIRE_GROUPS, projectsForSlugs } from '@/content/projects/hirePath';
 
 const meta = (await import('@/content/projects/_meta.json')).default;
-const { projects } = await getProjectInsights();
+const { projects, deepCut } = await getProjectInsights();
+const featuredSlug = deepCut?.projectSlug;
+const featuredProject = featuredSlug
+  ? projects.find((project) => project.id === featuredSlug)
+  : undefined;
 
 const groups = [
   ...HIRE_GROUPS.map((group) => ({
     ...group,
+    density: 'primary' as const,
     projects: projectsForSlugs(projects, group.slugs),
   })),
   {
     ...ALSO_BUILT,
+    density: 'supporting' as const,
     projects: projectsForSlugs(projects, ALSO_BUILT.slugs),
   },
 ];
 
-const title = 'Selected Work & Case Studies | Blake Oxford';
+const jumpGroups = groups.filter((group) => {
+  const visible = featuredSlug
+    ? group.projects.filter((project) => project.id !== featuredSlug)
+    : group.projects;
+  return visible.length > 0;
+});
+
+const title = 'Work & Case Studies | Blake Oxford';
 const description = meta.hero.subtitle;
 const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <Section id="projects-hero" padding="lg" container="xl">
+  <Section id="projects-hero" padding="md" container="xl" class="work-index-hero">
     <IntroCopy
       kicker={meta.hero.kicker}
       title={meta.hero.title}
@@ -36,37 +50,71 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
       align="start"
       size="hero"
     />
-    <nav class="mt-8 border-t border-border pt-5" aria-label="Project categories">
-      <ul class="flex flex-wrap gap-x-6 gap-y-2" role="list">
-        {groups
-          .filter((group) => group.projects.length > 0)
-          .map((group) => (
-            <li>
-              <a
-                class="focus-ring-interactive inline-flex min-h-11 items-center gap-3 rounded text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
-                href={`#${group.id}`}
-              >
-                {group.title}
-                <span class="font-mono text-xs text-subtle-foreground">
-                  {String(group.projects.length).padStart(2, '0')}
-                </span>
-              </a>
-            </li>
-          ))}
-      </ul>
-    </nav>
+    {
+      jumpGroups.length > 0 ? (
+        <nav
+          class="work-jump mt-6 border-t border-border pt-4"
+          aria-label="Work categories"
+        >
+          <ul class="flex gap-x-5 gap-y-1 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="list">
+            {jumpGroups.map((group) => {
+              const count = featuredSlug
+                ? group.projects.filter((project) => project.id !== featuredSlug).length
+                : group.projects.length;
+              return (
+                <li class="shrink-0">
+                  <a
+                    class:list={[
+                      'focus-ring-interactive inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold transition-colors hover:text-foreground',
+                      group.density === 'supporting'
+                        ? 'text-subtle-foreground'
+                        : 'text-muted-foreground',
+                    ]}
+                    href={`#${group.id}`}
+                  >
+                    {group.title}
+                    <span class="font-mono text-xs text-subtle-foreground">
+                      {String(count).padStart(2, '0')}
+                    </span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      ) : null
+    }
   </Section>
 
-  {groups.map((group) =>
-    group.projects.length > 0 ? (
-      <ProjectsLibrarySection
-        id={group.id}
-        projects={group.projects}
-        title={group.title}
-        description={group.description}
+  {
+    featuredProject && deepCut ? (
+      <ProjectsFeaturedSection
+        project={featuredProject}
+        deepCut={deepCut}
+        kicker={meta.featured.kicker}
+        ctaLabel={meta.featured.ctaLabel}
       />
     ) : null
-  )}
+  }
+
+  {
+    groups.map((group) => {
+      const visible = featuredSlug
+        ? group.projects.filter((project) => project.id !== featuredSlug)
+        : group.projects;
+      if (visible.length === 0) return null;
+      return (
+        <ProjectsLibrarySection
+          id={group.id}
+          projects={group.projects}
+          title={group.title}
+          description={group.description}
+          excludeSlug={featuredSlug}
+          density={group.density}
+        />
+      );
+    })
+  }
 
   <ProjectsCTASection
     title={meta.cta.title}
@@ -74,3 +122,33 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     button={meta.cta.button}
   />
 </Layout>
+
+<style>
+  @keyframes work-hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.6rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .work-index-hero :global(#projects-title),
+    .work-index-hero :global(#projects-title + p),
+    .work-jump {
+      animation: work-hero-rise 650ms var(--ease-decelerate) both;
+    }
+
+    .work-index-hero :global(#projects-title + p) {
+      animation-delay: 70ms;
+    }
+
+    .work-jump {
+      animation-delay: 120ms;
+    }
+  }
+</style>

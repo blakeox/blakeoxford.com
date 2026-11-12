@@ -1,13 +1,8 @@
 {
   "hero": {
-    "kicker": "Selected work",
+    "kicker": "Work",
     "title": "Foundations for enterprise AI",
-    "subtitle": "Systems, automation, and decision work that informs practical AI adoption and enterprise scaling.",
-    "capabilities": [
-      "Platform migrations that hold adoption",
-      "Automation that cuts lasting drag",
-      "Decision systems leaders actually use"
-    ]
+    "subtitle": "Proof from systems, automation, and decision work that informs practical AI adoption."
   },
   "capabilities": {
     "kicker": "What I deliver",

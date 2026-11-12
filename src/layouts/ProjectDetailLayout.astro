@@ -83,7 +83,7 @@ const projectSchema = createProjectSchema(title, defaultAuthor, date, {
 
 const breadcrumbSchema = createBreadcrumbListSchema([
   { name: 'Home', url: `${siteOrigin}/` },
-  { name: 'Selected work', url: `${siteOrigin}/projects/` },
+  { name: 'Work', url: `${siteOrigin}/projects/` },
   { name: title, url: canonicalUrl },
 ]);
 
@@ -115,6 +115,7 @@ const structuredData = [projectSchema, breadcrumbSchema];
     link={externalLink}
     categories={categories}
     outcome={primaryOutcome}
+    slug={entry.id}
   />
   <ProjectDetailContent
     data={data}

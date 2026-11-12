@@ -209,7 +209,7 @@ export function generateContextualCTAs(
   // If multiple projects mentioned, add "Browse All Projects"
   if (projectSources.length > MULTIPLE_SOURCES_THRESHOLD) {
     ctas.push({
-      label: 'Browse All Projects',
+      label: 'Browse the work',
       url: '/projects',
       icon: '🗂️',
       type: 'collection',

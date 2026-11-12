@@ -26,7 +26,12 @@ const routeContracts = [
   },
   {
     file: 'src/pages/projects/index.astro',
-    sections: ['ProjectsLibrarySection', 'ProjectsCTASection', 'HIRE_GROUPS'],
+    sections: [
+      'ProjectsFeaturedSection',
+      'ProjectsLibrarySection',
+      'ProjectsCTASection',
+      'HIRE_GROUPS',
+    ],
   },
   {
     file: 'src/pages/blog/index.astro',
