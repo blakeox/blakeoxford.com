@@ -37,7 +37,7 @@ const { posts, content } = Astro.props as Props;
               {formatDateBlog(post.data.pubDate)}
             </time>
             <div class="min-w-0 space-y-1.5">
-              <h3 class="font-heading text-lg font-semibold text-foreground transition-colors group-hover:underline group-hover:decoration-foreground/35 sm:text-xl">
+              <h3 class="font-heading text-lg font-semibold text-foreground transition-colors group-hover:underline group-hover:decoration-border sm:text-xl">
                 {post.data.title}
               </h3>
               {post.data.description && (
