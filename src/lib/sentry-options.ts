@@ -10,6 +10,7 @@ export const sentryDataCollection = {
   urlQueryParams: false,
   genAI: { inputs: false, outputs: false },
   databaseQueryData: false,
+  queues: false,
   graphQL: { document: false, variables: false },
 };
 
