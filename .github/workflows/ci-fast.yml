@@ -71,7 +71,7 @@ jobs:
             astro-build-${{ runner.os }}-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6.1.0
+        uses: pnpm/action-setup@v6.1.1
         with:
           dest: ${{ runner.temp }}/pnpm-tooling
 
@@ -169,7 +169,7 @@ jobs:
     timeout-minutes: 15
     needs: quick-validation # Wait for basic validation to pass first
     container:
-      image: mcr.microsoft.com/playwright:v1.63.0-jammy
+      image: mcr.microsoft.com/playwright:v1.65.0-jammy
       options: --user 1001:1001 --ipc=host
     env:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
@@ -186,7 +186,7 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6.1.0
+        uses: pnpm/action-setup@v6.1.1
         with:
           dest: ${{ runner.temp }}/pnpm-tooling
           package_json_file: package.json
@@ -325,7 +325,7 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6.1.0
+        uses: pnpm/action-setup@v6.1.1
         with:
           dest: ${{ runner.temp }}/pnpm-tooling
           package_json_file: package.json
