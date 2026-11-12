@@ -1,12 +1,12 @@
 {
   "meta": {
     "title": "About Blake Oxford | Systems Architect",
-    "description": "Systems architect helping companies navigate AI, connect platforms, and scale from practical use cases to enterprise adoption."
+    "description": "Systems architect helping companies move AI from pilots into the systems people already run."
   },
   "hero": {
     "kicker": "About",
     "title": "I build the operating middle that strategy slides skip",
-    "description": "Based in Michigan. I help companies connect AI, platforms, and people—from early use cases to enterprise adoption.",
+    "description": "Based in Michigan. I help companies move AI from pilots into the systems people already run—connecting platforms, workflows, and ownership.",
     "proofPoints": [
       "I start with the work people need to get done",
       "I connect new capabilities to the systems teams already use",
@@ -86,7 +86,7 @@
   "timeline": {
     "kicker": "Track record",
     "title": "From connected systems to enterprise AI",
-    "description": "Finance and cloud integration built the foundation. The next chapter is helping companies navigate AI and scale it across the enterprise.",
+    "description": "Finance and cloud integration built the foundation. The next chapter is moving AI from pilots into production systems—and scaling what works.",
     "items": [
       {
         "year": "2019",
@@ -132,7 +132,7 @@
       },
       {
         "year": "2025",
-        "title": "Helping companies navigate AI",
+        "title": "Moving AI from pilots into systems",
         "achievements": [
           "Helping teams identify practical AI use cases and evaluate their options",
           "Connecting tool selection and adoption planning to the way the business works"

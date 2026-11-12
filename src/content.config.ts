@@ -229,17 +229,13 @@ const home = defineCollection({
       title: z.string(),
       description: z.string(),
     }),
-    recentProjects: z.object({
-      kicker: z.string().optional(),
-      title: z.string(),
-      description: z.string(),
-      cta: ctaLinkSchema,
-    }),
     latestPosts: z.object({
       kicker: z.string().optional(),
       title: z.string(),
       description: z.string(),
       emptyMessage: z.string(),
+      /** Explicit home pins — hire-path notes, not whichever posts are featured. */
+      postIds: z.array(z.string()).max(2).optional(),
       cta: ctaLinkSchema,
     }),
     cta: z.object({

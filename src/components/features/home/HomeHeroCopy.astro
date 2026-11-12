@@ -18,7 +18,7 @@ const { author, content } = Astro.props as Props;
 <div class="home-dual-copy relative z-20">
   <div class="home-dual-lockup">
     <IntroCopy kicker={content.kicker} title={author} size="identity" class="w-full items-start" />
-    <p class="max-w-md text-lg leading-snug font-semibold tracking-tight text-foreground sm:text-xl">
+    <p class="max-w-md text-lg leading-relaxed text-pretty text-muted-foreground sm:text-xl">
       {content.defaultTagline}
     </p>
   </div>

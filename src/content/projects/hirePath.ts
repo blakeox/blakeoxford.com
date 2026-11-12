@@ -40,9 +40,18 @@ export interface HireStudyLink {
   slug: string;
   href: string;
   title: string;
+  /** Plain-language home link; full study title stays on /projects/. */
+  linkLabel: string;
   group: string;
   line: string;
 }
+
+/** Home outcome strip labels — hire language, not project product titles. */
+export const HOME_PROOF_LABELS: Readonly<Record<string, string>> = {
+  'google-workspace-migration': 'Cutover with recovery built in',
+  'microsoft-fabric': 'Shared ops data teams can run',
+  'bank-projections-modeling': 'Lending calls on clear inputs',
+};
 
 export function projectsForSlugs(
   projects: CollectionEntry<'projects'>[],
@@ -66,17 +75,12 @@ export function leadStudies(projects: CollectionEntry<'projects'>[]): HireStudyL
         slug: project.id,
         href: `/projects/${project.id}/`,
         title: project.data.title,
+        linkLabel: HOME_PROOF_LABELS[project.id] ?? project.data.title,
         group: group.title,
         line,
       },
     ];
   });
-}
-
-export function leadProjects(
-  projects: CollectionEntry<'projects'>[]
-): CollectionEntry<'projects'>[] {
-  return HIRE_GROUPS.flatMap((group) => projectsForSlugs(projects, [group.slugs[0]]));
 }
 
 /** Present-day relevance without relabeling historical delivery as AI work. */

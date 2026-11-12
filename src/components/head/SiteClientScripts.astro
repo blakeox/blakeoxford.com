@@ -11,7 +11,28 @@ const askLauncherVersion = createHash('sha256')
   .digest('hex')
   .slice(0, 12);
 const clarityId = import.meta.env.PUBLIC_CLARITY_PROJECT_ID?.trim() ?? '';
+const sentryBrowserEnabled = Boolean(import.meta.env.PUBLIC_SENTRY_DSN);
 ---
+
+{sentryBrowserEnabled && <script is:inline>
+  (function () {
+    if (window.__boSentryQueueReady) return;
+    window.__boSentryQueueReady = true;
+    window.__boSentryEarly = [];
+    var limit = 20;
+    function push(kind, value) {
+      var current = window.__boSentryEarly;
+      if (!current || current.length >= limit) return;
+      current.push({ kind: kind, value: value });
+    }
+    window.addEventListener('error', function (event) {
+      push('error', event.error || event.message);
+    });
+    window.addEventListener('unhandledrejection', function (event) {
+      push('rejection', event.reason);
+    });
+  })();
+</script>}
 
 <script is:inline define:vars={{ clarityId }}>
   // Stash Clarity id for the module script below

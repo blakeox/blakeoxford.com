@@ -3,8 +3,10 @@
 export const sentryDataCollection = {
   userInfo: false,
   cookies: false,
-  httpHeaders: false,
-  httpBodies: [],
+  httpHeaders: { request: false, response: false },
+  httpBodies: [] as Array<
+    'incomingRequest' | 'outgoingRequest' | 'incomingResponse' | 'outgoingResponse'
+  >,
   urlQueryParams: false,
   genAI: { inputs: false, outputs: false },
   databaseQueryData: false,
@@ -27,10 +29,12 @@ export function createSentryAllowedUrls(environment: string) {
   return [production];
 }
 
-export function scrubSentrySpan<T extends { attributes: Record<string, unknown> }>(span: T): T {
+export function scrubSentrySpan<T extends { attributes?: Record<string, unknown> }>(span: T): T {
   // These semantic attributes bypass the SDK's HTTP-header collection policy.
-  delete span.attributes['user_agent.original'];
-  delete span.attributes['http.user_agent'];
+  if (span.attributes) {
+    delete span.attributes['user_agent.original'];
+    delete span.attributes['http.user_agent'];
+  }
   return span;
 }
 

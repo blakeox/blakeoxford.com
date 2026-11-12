@@ -5,11 +5,10 @@ import type { CollectionEntry } from 'astro:content';
 import Layout from '@/layouts/BaseLayout.astro';
 import HomeHeroSection from '@/components/features/home/HomeHeroSection.astro';
 import HomeResumeHighlightsSection from '@/components/features/home/HomeResumeHighlightsSection.astro';
-import HomeRecentProjectsSection from '@/components/features/home/HomeRecentProjectsSection.astro';
 import HomeLatestPostsSection from '@/components/features/home/HomeLatestPostsSection.astro';
 import HomeCTASection from '@/components/features/home/HomeCTASection.astro';
 import { getProjectsSorted } from '@/content/projects/getProjects';
-import { leadProjects, leadStudies } from '@/content/projects/hirePath';
+import { leadStudies } from '@/content/projects/hirePath';
 import { getHomePage } from '@/content/home/getHomePage';
 import { siteConfig } from '@/config/data';
 import { take } from '@/utils/array';
@@ -29,15 +28,20 @@ const publishedPosts = allBlogPosts
   );
 
 const featuredPosts = publishedPosts.filter((entry) => entry.data.featured);
-/** Two notes keep Writing a quiet beat after the project grid. */
+const postsById = new Map(publishedPosts.map((entry) => [entry.id, entry]));
+const pinnedPosts = (page.latestPosts.postIds ?? [])
+  .map((id: string) => postsById.get(id))
+  .filter((entry: CollectionEntry<'blog'> | undefined): entry is CollectionEntry<'blog'> =>
+    Boolean(entry)
+  );
+/** Two hire-path notes after proof; pinned IDs win over featured. */
 const recentBlogPosts: CollectionEntry<'blog'>[] = take(
-  featuredPosts.length > 0 ? featuredPosts : publishedPosts,
+  pinnedPosts.length > 0 ? pinnedPosts : featuredPosts.length > 0 ? featuredPosts : publishedPosts,
   2
 );
 
 const publishedProjects = await getProjectsSorted();
 const proofStudies = leadStudies(publishedProjects);
-const recentProjects = leadProjects(publishedProjects);
 ---
 
 <Layout
@@ -58,13 +62,12 @@ const recentProjects = leadProjects(publishedProjects);
     fetchpriority="high"
   />
   {/*
-    Page arc: identity → proof → shipped work → voice → convert.
-    Alternating surfaces and widths create rhythm without repeating one section template.
+    Page arc: identity → proof → writing → convert.
+    The outcome strip is the only study module; Work holds the full index.
   */}
   <div class="flex flex-col">
     <HomeHeroSection author={siteConfig.author} content={page.hero} />
     <HomeResumeHighlightsSection content={page.resumeHighlights} studies={proofStudies} />
-    <HomeRecentProjectsSection projects={recentProjects} content={page.recentProjects} />
     <HomeLatestPostsSection posts={recentBlogPosts} content={page.latestPosts} />
     <HomeCTASection content={page.cta} />
   </div>

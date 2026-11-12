@@ -108,7 +108,6 @@ const CATALOG_ORDER = [
   'HomeHeroVisual',
   'HomeCTASection',
   'HomeResumeHighlightsSection',
-  'HomeRecentProjectsSection',
   'HomeLatestPostsSection',
   'BlogIndexHeroSection',
   'BlogIndexContentSection',
@@ -226,10 +225,6 @@ const recipeReferences: Record<string, readonly ComponentRecipeReference[]> = {
     { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
   ],
   HomeLatestPostsSection: [
-    { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
-    { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
-  ],
-  HomeRecentProjectsSection: [
     { recipe: 'sectionRecipe.padding', keys: Object.keys(sectionRecipe.padding) },
     { recipe: 'sectionRecipe.background', keys: Object.keys(sectionRecipe.background) },
   ],

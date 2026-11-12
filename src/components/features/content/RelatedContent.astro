@@ -29,16 +29,16 @@ const { links, contained = true } = Astro.props;
         {links.map((link) => (
           <li class="min-w-0">
             <a
-              class="focus-ring-interactive group flex h-full flex-col gap-3 rounded-xl border border-border bg-surface p-6 transition-colors hover:border-accent/50"
+              class="focus-ring-interactive group flex h-full flex-col gap-3 rounded-xl border border-border bg-surface p-6 transition-colors hover:border-foreground/20"
               href={link.href}
             >
               <p class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
                 {link.kind === 'project' ? 'Case study' : 'Article'}
               </p>
-              <span class="font-heading text-lg font-semibold leading-snug text-foreground group-hover:text-accent-emphasis">
+              <span class="font-heading text-lg font-semibold leading-snug text-foreground group-hover:underline group-hover:decoration-border">
                 {link.label}
               </span>
-              <span class="mt-auto pt-2 text-accent-emphasis" aria-hidden="true">
+              <span class="mt-auto pt-2 text-foreground" aria-hidden="true">
                 <ArrowRightIcon />
               </span>
             </a>
