@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { buildApiCorsHeaders, isAllowedApiOrigin } from '../../../functions/shared/cors';
 
-function requestWithOrigin(origin?: string): Request {
+function requestWithOrigin(
+  origin?: string,
+  url = 'https://blakeoxford.com/api/ai-search'
+): Request {
   return {
     headers: new Headers(origin ? { origin } : undefined),
-    url: 'https://blakeoxford.com/api/ai-search',
+    url,
   } as Request;
 }
 
@@ -29,14 +32,19 @@ describe('Worker API CORS policy', () => {
 
   it('allows a Workers preview origin when it matches the request URL', () => {
     const previewOrigin = 'https://testing-blakeoxford-com.blakeoxford.workers.dev';
-    const request = {
-      headers: new Headers({ origin: previewOrigin }),
-      url: `${previewOrigin}/api/set-theme`,
-    } as Request;
+    const request = requestWithOrigin(previewOrigin, `${previewOrigin}/api/set-theme`);
     const headers = buildApiCorsHeaders(request);
 
     expect(isAllowedApiOrigin(request)).toBe(true);
     expect(headers['access-control-allow-origin']).toBe(previewOrigin);
     expect(headers['access-control-allow-credentials']).toBe('true');
+  });
+
+  it('does not let a preview origin call the production API', () => {
+    const preview = 'https://feat-ai-search-binding-blakeoxford-com.blakeoxford.workers.dev';
+    const request = requestWithOrigin(preview);
+
+    expect(isAllowedApiOrigin(request)).toBe(false);
+    expect(buildApiCorsHeaders(request)['access-control-allow-origin']).toBeUndefined();
   });
 });
