@@ -14,6 +14,8 @@ onlyBuiltDependencies:
   - workerd
 
 overrides:
+  '@emnapi/core': '1.11.3'
+  '@emnapi/runtime': '1.11.3'
   nanoid: '3.3.18'
   # GHSA-g3hv-75wg-m249: preserve CJS/ESM exports with the patched matcher.
   minimatch: '11.0.1'
