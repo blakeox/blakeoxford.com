@@ -20,7 +20,7 @@ jobs:
       !contains(github.event.pull_request.labels.*.name, 'skip-contrast')
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.63.0-jammy
+      image: mcr.microsoft.com/playwright:v1.65.0-jammy
       options: --user 1001:1001 --ipc=host
     env:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1

@@ -32,7 +32,7 @@ jobs:
     runs-on: ${{ (github.actor == 'nektos/act' || github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(fromJSON('["refs/heads/main","refs/heads/development","refs/heads/testing"]'), github.ref))) && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     timeout-minutes: 20
     container:
-      image: mcr.microsoft.com/playwright:v1.63.0-jammy
+      image: mcr.microsoft.com/playwright:v1.65.0-jammy
       options: --user 1001:1001 --ipc=host
     env:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
