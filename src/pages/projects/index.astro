@@ -50,71 +50,65 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
       align="start"
       size="hero"
     />
-    {
-      jumpGroups.length > 0 ? (
-        <nav
-          class="work-jump mt-6 border-t border-border pt-4"
-          aria-label="Work categories"
+    {jumpGroups.length > 0 ? (
+      <nav class="work-jump mt-6 border-t border-border pt-4" aria-label="Work categories">
+        <ul
+          class="flex gap-x-5 gap-y-1 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          role="list"
         >
-          <ul class="flex gap-x-5 gap-y-1 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="list">
-            {jumpGroups.map((group) => {
-              const count = featuredSlug
-                ? group.projects.filter((project) => project.id !== featuredSlug).length
-                : group.projects.length;
-              return (
-                <li class="shrink-0">
-                  <a
-                    class:list={[
-                      'focus-ring-interactive inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold transition-colors hover:text-foreground',
-                      group.density === 'supporting'
-                        ? 'text-subtle-foreground'
-                        : 'text-muted-foreground',
-                    ]}
-                    href={`#${group.id}`}
-                  >
-                    {group.title}
-                    <span class="font-mono text-xs text-subtle-foreground">
-                      {String(count).padStart(2, '0')}
-                    </span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      ) : null
-    }
+          {jumpGroups.map((group) => {
+            const count = featuredSlug
+              ? group.projects.filter((project) => project.id !== featuredSlug).length
+              : group.projects.length;
+            return (
+              <li class="shrink-0">
+                <a
+                  class:list={[
+                    'focus-ring-interactive inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold transition-colors hover:text-foreground',
+                    group.density === 'supporting'
+                      ? 'text-subtle-foreground'
+                      : 'text-muted-foreground',
+                  ]}
+                  href={`#${group.id}`}
+                >
+                  {group.title}
+                  <span class="font-mono text-xs text-subtle-foreground">
+                    {String(count).padStart(2, '0')}
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    ) : null}
   </Section>
 
-  {
-    featuredProject && deepCut ? (
-      <ProjectsFeaturedSection
-        project={featuredProject}
-        deepCut={deepCut}
-        kicker={meta.featured.kicker}
-        ctaLabel={meta.featured.ctaLabel}
-      />
-    ) : null
-  }
+  {featuredProject && deepCut ? (
+    <ProjectsFeaturedSection
+      project={featuredProject}
+      deepCut={deepCut}
+      kicker={meta.featured.kicker}
+      ctaLabel={meta.featured.ctaLabel}
+    />
+  ) : null}
 
-  {
-    groups.map((group) => {
-      const visible = featuredSlug
-        ? group.projects.filter((project) => project.id !== featuredSlug)
-        : group.projects;
-      if (visible.length === 0) return null;
-      return (
-        <ProjectsLibrarySection
-          id={group.id}
-          projects={group.projects}
-          title={group.title}
-          description={group.description}
-          excludeSlug={featuredSlug}
-          density={group.density}
-        />
-      );
-    })
-  }
+  {groups.map((group) => {
+    const visible = featuredSlug
+      ? group.projects.filter((project) => project.id !== featuredSlug)
+      : group.projects;
+    if (visible.length === 0) return null;
+    return (
+      <ProjectsLibrarySection
+        id={group.id}
+        projects={group.projects}
+        title={group.title}
+        description={group.description}
+        excludeSlug={featuredSlug}
+        density={group.density}
+      />
+    );
+  })}
 
   <ProjectsCTASection
     title={meta.cta.title}
