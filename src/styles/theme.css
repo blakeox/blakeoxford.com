@@ -185,7 +185,7 @@
   --space-section-xl: 5rem;
   --space-section-2xl: 6rem;
   --layout-max-2xl: min(100%, 80rem);
-  --nav-height: 4.5rem;
+  --nav-height: 4rem;
   --z-nav: 40;
   --z-nav-drawer: 45;
   --z-chat: 50;
@@ -426,4 +426,10 @@
   --spacing-section-lg: var(--space-section-lg);
   --spacing-section-xl: var(--space-section-xl);
   --spacing-section-2xl: var(--space-section-2xl);
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --nav-height: 5.5rem;
+  }
 }

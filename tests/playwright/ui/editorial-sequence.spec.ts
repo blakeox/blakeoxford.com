@@ -76,7 +76,10 @@ for (const theme of ['light', 'dark']) {
     await page.evaluate(() => {
       document.documentElement.style.fontSize = '200%';
     });
-    const channels = page.getByRole('region', { name: 'Connect directly', exact: true });
+    const channels = page.getByRole('region', {
+      name: 'Prefer email, phone, or LinkedIn?',
+      exact: true,
+    });
     const email = channels.getByRole('link', { name: /Send email/ });
     const phone = channels.getByRole('link', { name: /Call Blake/ });
     const profile = channels.getByRole('link', { name: /View profile/ });

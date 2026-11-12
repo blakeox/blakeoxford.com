@@ -7,8 +7,10 @@ for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/projects/');
     const hero = page.locator('#projects-hero');
-    await expect(hero.getByRole('heading', { name: 'Selected work', exact: true })).toBeVisible();
-    await expect(hero).toContainText('navigate AI');
+    await expect(
+      hero.getByRole('heading', { name: 'Foundations for enterprise AI', exact: true })
+    ).toBeVisible();
+    await expect(hero).toContainText('practical AI adoption');
     const categories = hero.getByRole('navigation', { name: 'Project categories' });
     for (const link of await categories.getByRole('link').all()) {
       const href = await link.getAttribute('href');
@@ -25,7 +27,7 @@ for (const width of [390, 1440]) {
     );
     await page.locator('[data-cta-id="study_cta"]').first().click();
     await expect(
-      page.getByRole('heading', { name: 'From this work to enterprise AI', exact: true })
+      page.getByRole('heading', { name: 'From this work to AI in production', exact: true })
     ).toBeVisible();
     await page.getByRole('link', { name: 'Discuss your bottleneck', exact: true }).last().click();
     await expect(page).toHaveURL(/\/contact\/$/);

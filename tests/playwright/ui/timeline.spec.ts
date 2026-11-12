@@ -11,7 +11,7 @@ test.describe('@essential @timeline About Page - Timeline', () => {
     await expect(section).toContainText('2019');
     await expect(section).toContainText('2024');
     await expect(
-      section.getByRole('heading', { name: 'Helping companies navigate AI', exact: true })
+      section.getByRole('heading', { name: 'Moving AI from pilots into systems', exact: true })
     ).toBeVisible();
     await expect(
       section.getByRole('heading', { name: 'Scaling AI across the enterprise', exact: true })

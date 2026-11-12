@@ -22,16 +22,15 @@ const groups = [
 ];
 
 const title = 'Selected Work & Case Studies | Blake Oxford';
-const description =
-  'The systems, automation, and decision work behind my approach to helping companies navigate AI and scale it across the enterprise.';
+const description = meta.hero.subtitle;
 const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
   <Section id="projects-hero" padding="lg" container="xl">
     <IntroCopy
-      kicker="Projects"
-      title="Selected work"
+      kicker={meta.hero.kicker}
+      title={meta.hero.title}
       titleId="projects-title"
       description={description}
       align="start"
@@ -44,7 +43,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
           .map((group) => (
             <li>
               <a
-                class="focus-ring-interactive inline-flex min-h-11 items-center gap-3 rounded text-sm font-semibold text-muted-foreground transition-colors hover:text-accent-emphasis"
+                class="focus-ring-interactive inline-flex min-h-11 items-center gap-3 rounded text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
                 href={`#${group.id}`}
               >
                 {group.title}

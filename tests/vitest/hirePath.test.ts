@@ -26,6 +26,11 @@ describe('leadStudies', () => {
       '200 teammates enabled across 10 departments',
       '$12M+ closed across lending programs',
     ]);
+    expect(studies.map((study) => study.linkLabel)).toEqual([
+      'Cutover with recovery built in',
+      'Shared ops data teams can run',
+      'Lending calls on clear inputs',
+    ]);
     expect(studies.map((study) => study.href)).toEqual([
       '/projects/google-workspace-migration/',
       '/projects/microsoft-fabric/',

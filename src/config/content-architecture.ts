@@ -42,7 +42,8 @@ export const CONTENT_TOPICS: Record<string, ContentTopic> = {
     queryThemes: ['workflow automation', 'systems architecture', 'operational transformation'],
   },
   '/about/': {
-    primaryTopic: 'Systems architect helping companies navigate AI',
+    primaryTopic:
+      'Systems architect helping companies move AI from pilots into the systems people already run',
     queryThemes: ['systems architect', 'workflow strategist', 'technology delivery leadership'],
   },
   '/blog/': {
