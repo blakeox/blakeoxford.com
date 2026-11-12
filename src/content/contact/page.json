@@ -1,12 +1,12 @@
 {
   "meta": {
     "title": "Contact Blake Oxford | AI Adoption & Enterprise Scale",
-    "description": "Discuss how to navigate AI adoption, connect a useful pilot to existing systems, or scale AI across the enterprise."
+    "description": "Discuss how to move AI from a pilot into existing systems, or scale adoption across the enterprise."
   },
   "hero": {
     "kicker": "Contact",
     "title": "Turn your AI bottleneck into a plan",
-    "description": "Whether you are deciding where AI fits or scaling it across the enterprise, start with the workflow, system, or adoption challenge in front of your team.",
+    "description": "Whether you are choosing where AI fits or scaling what already works, start with the workflow, system, or adoption constraint in front of your team.",
     "scenarios": [
       "Choosing practical AI use cases and evaluating the options",
       "Connecting AI pilots to enterprise systems and workflows",
@@ -24,8 +24,8 @@
   },
   "channels": {
     "heading": "Other channels",
-    "title": "Connect directly",
-    "description": "For introductions, scheduling, and follow-up.",
+    "title": "Prefer email, phone, or LinkedIn?",
+    "description": "Use the brief for scoped project inquiries. These channels work when you already know how you want to connect.",
     "items": [
       {
         "icon": "email",

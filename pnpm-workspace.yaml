@@ -60,6 +60,8 @@ overrides:
   picomatch: '2.3.2'
   # GHSA-ch52-4w7c-c8xp: astro pulls http-cache-semantics@4.2.0; 4.3.0 contains the fix.
   http-cache-semantics: '4.3.0'
+  # GHSA-474x-hrwr-fgx4: quadratic stop-node scan via @astrojs/rss.
+  fast-xml-parser: '5.12.0'
 
 peerDependencyRules:
   allowedVersions:

@@ -63,11 +63,18 @@ describe('About, Contact, and Home page content', () => {
     expect(home.resumeHighlights.title).toBeTruthy();
     expect(JSON.stringify(home)).not.toMatch(/180 users/);
     expect(JSON.stringify(home)).not.toMatch(/\$M\+/);
-    expect(home.recentProjects.cta.href).toBe('/projects/');
+    expect(home.recentProjects).toBeUndefined();
+    expect(home.hero.secondaryCta.href).toBe('/projects/');
     expect(home.cta.button.href).toBe('/contact/');
     expect(home.cta.button.label).toBe('Discuss your bottleneck');
     expect(home.cta.description).toMatch(/constraint/i);
-    expect(home.latestPosts.kicker).toBeUndefined();
+    expect(home.latestPosts.kicker).toBe('Writing');
+    expect(home.latestPosts.postIds).toEqual([
+      'ethics-in-the-ai-age-semcacfe',
+      'combating-legal-ai-hallucinations',
+    ]);
+    expect(home.resumeHighlights.title).toMatch(/production/i);
+    expect(home.hero.defaultTagline).toMatch(/pilots/i);
     expect(home.cta.kicker).toBeUndefined();
   });
 
