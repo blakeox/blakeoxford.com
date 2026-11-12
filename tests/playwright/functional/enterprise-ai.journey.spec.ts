@@ -5,7 +5,9 @@ test('enterprise AI search connects the site story to a project conversation', a
     (window as any).__AUDIT__ = true;
   });
   await page.goto('/');
-  await expect(page.locator('#about-me')).toContainText('Helping companies navigate AI');
+  await expect(page.locator('#about-me')).toContainText(
+    'Helping companies move AI from pilots into the systems people already run'
+  );
   await page.locator('#search-toggle').click();
   const dialog = page.getByRole('dialog', { name: 'Search', exact: true });
   await dialog.getByRole('combobox').fill('enterprise');

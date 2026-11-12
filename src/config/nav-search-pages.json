@@ -2,31 +2,31 @@
   {
     "href": "/",
     "title": "Home",
-    "description": "Helping companies navigate AI and scale it across the enterprise.",
+    "description": "Helping companies move AI from pilots into the systems people already run.",
     "tags": ["home", "overview", "AI", "enterprise", "adoption"]
   },
   {
     "href": "/about/",
     "title": "About",
-    "description": "Systems and finance experience applied to AI adoption and enterprise scaling.",
+    "description": "Systems architect helping companies move AI from pilots into the systems people already run.",
     "tags": ["about", "biography", "achievements", "AI", "enterprise", "experience"]
   },
   {
     "href": "/projects/",
     "title": "Projects",
-    "description": "Case studies showing the systems, data, and workflow foundations behind enterprise AI.",
+    "description": "Systems, automation, and decision work that informs practical AI adoption and enterprise scaling.",
     "tags": ["projects", "case studies", "AI", "enterprise"]
   },
   {
     "href": "/blog/",
     "title": "Blog",
-    "description": "Practical writing on AI choices, trust, adoption, and enterprise systems.",
+    "description": "Judgment, evidence, and trust when AI enters real work.",
     "tags": ["blog", "articles", "writing", "AI", "enterprise"]
   },
   {
     "href": "/contact/",
     "title": "Contact",
-    "description": "Discuss AI use cases, pilot integration, and scaling adoption across the enterprise.",
+    "description": "Discuss moving AI from a pilot into existing systems, or scaling adoption across the enterprise.",
     "tags": ["contact", "connect", "AI", "enterprise", "roadmap"]
   }
 ]

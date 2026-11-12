@@ -1,11 +1,11 @@
 {
   "meta": {
     "title": "Blake Oxford | AI Adoption & Enterprise Scale",
-    "description": "Helping companies navigate AI and scale it across the enterprise, grounded in systems architecture, workflow design, and operational adoption."
+    "description": "Helping companies move AI from pilots into the systems people already run—grounded in systems architecture, workflow design, and operational adoption."
   },
   "hero": {
     "kicker": "Systems architect",
-    "defaultTagline": "Helping companies navigate AI—and scale it across the enterprise.",
+    "defaultTagline": "Helping companies move AI from pilots into the systems people already run.",
     "primaryCta": {
       "href": "/contact/",
       "label": "Discuss your bottleneck"
@@ -23,22 +23,15 @@
   },
   "resumeHighlights": {
     "kicker": "Outcomes",
-    "title": "The operating foundations behind enterprise AI",
-    "description": "Connected systems, reliable data, and workflows teams can run. These studies show the foundations I bring to AI adoption."
-  },
-  "recentProjects": {
-    "kicker": "Projects",
-    "title": "Experience that connects strategy to operation",
-    "description": "Systems, automation, and decision work that informs how I help companies put AI into practice.",
-    "cta": {
-      "href": "/projects/",
-      "label": "All selected work"
-    }
+    "title": "Proof from production delivery",
+    "description": "Cutover reliability, team enablement, and decision systems—measured where work happens."
   },
   "latestPosts": {
-    "title": "Making sense of AI in practice",
-    "description": "Practical perspectives on AI choices, trust, adoption, and the systems work it takes to scale.",
+    "kicker": "Writing",
+    "title": "Notes from the field",
+    "description": "Judgment, evidence, and trust when AI enters real work.",
     "emptyMessage": "Notes on AI adoption and enterprise systems are on the way.",
+    "postIds": ["ethics-in-the-ai-age-semcacfe", "combating-legal-ai-hallucinations"],
     "cta": {
       "href": "/blog/",
       "label": "All writing"
@@ -46,7 +39,7 @@
   },
   "cta": {
     "title": "Find your next practical step with AI.",
-    "description": "Choosing where to begin, connecting a useful pilot, or scaling across teams—start with the constraint your business needs to resolve.",
+    "description": "Start with the constraint your business needs to resolve—pilot, connection, or scale.",
     "button": {
       "href": "/contact/",
       "label": "Discuss your bottleneck"

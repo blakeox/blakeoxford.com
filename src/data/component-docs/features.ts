@@ -255,19 +255,6 @@ export const featureDocs: ComponentDoc[] = [
     ],
   },
   {
-    name: 'HomeRecentProjectsSection',
-    category: 'Features',
-    subcategory: 'Home',
-    description: 'Homepage section listing recent project cards with link to full projects index.',
-    filePath: 'src/components/features/home/HomeRecentProjectsSection.astro',
-    examples: [
-      { title: 'Recent projects', code: '<HomeRecentProjectsSection projects={recentProjects} />' },
-    ],
-    tags: ['home', 'projects', 'listing'],
-    visualTier: 'elevated',
-    tokenDependencies: ['--color-foreground', 'gap-6'],
-  },
-  {
     name: 'HomeLatestPostsSection',
     category: 'Features',
     subcategory: 'Home',

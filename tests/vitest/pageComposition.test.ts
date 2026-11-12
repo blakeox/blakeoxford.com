@@ -10,7 +10,6 @@ const routeContracts = [
     sections: [
       'HomeHeroSection',
       'HomeResumeHighlightsSection',
-      'HomeRecentProjectsSection',
       'HomeLatestPostsSection',
       'HomeCTASection',
     ],

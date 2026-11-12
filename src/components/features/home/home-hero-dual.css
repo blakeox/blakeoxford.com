@@ -7,7 +7,7 @@
 
 .home-dual-stage {
   display: flex;
-  min-height: min(42rem, calc(100svh - var(--nav-height)));
+  min-height: calc(100svh - var(--nav-height));
   max-width: var(--layout-max-2xl);
   margin-inline: auto;
   flex-direction: column;
@@ -77,7 +77,8 @@
 .home-dual-visual {
   position: relative;
   flex: 1 1 auto;
-  min-height: 18rem;
+  min-height: clamp(14rem, 38svh, 22rem);
+  max-height: 42svh;
   overflow: hidden;
 }
 
@@ -94,7 +95,7 @@
 }
 
 .home-dual-face-work {
-  object-position: 50% 20%;
+  object-position: 50% 18%;
 }
 
 .home-dual-face-daring {
@@ -122,7 +123,7 @@
   );
 }
 
-@media (width > 64rem) {
+@media (min-width: 64rem) {
   .home-dual-stage {
     display: grid;
     grid-template-columns: minmax(20rem, 0.92fr) minmax(22rem, 1.08fr);
@@ -136,7 +137,12 @@
   .home-dual-visual {
     flex: initial;
     min-height: 0;
+    max-height: none;
     height: 100%;
+  }
+
+  .home-dual-face-work {
+    object-position: 50% 20%;
   }
 
   .home-dual-veil {
@@ -175,7 +181,7 @@ html.dark .home-dual-veil {
   );
 }
 
-@media (width > 64rem) {
+@media (min-width: 64rem) {
   :root[data-theme='dark'] .home-dual-veil,
   html.dark .home-dual-veil {
     background: linear-gradient(

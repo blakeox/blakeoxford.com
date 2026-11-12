@@ -1,5 +1,5 @@
 ---
-/** Outcome strip — comparable figures with direct access to the supporting studies. */
+/** Outcome strip — comparable figures with the study title as the link. */
 import Section from '@/components/primitives/Section.astro';
 import SectionHeader from '@/components/composites/SectionHeader.astro';
 import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
@@ -16,7 +16,7 @@ const { content, studies } = Astro.props as Props;
 const outcomes = studies.map((study) => ({ ...study, ...splitProofFigure(study.line) }));
 ---
 
-<Section id="resume-highlights" padding="lg" container="xl" aria-labelledby="outcomes-title">
+<Section id="outcomes" padding="lg" container="xl" aria-labelledby="outcomes-title">
   <SectionHeader
     kicker={content.kicker}
     title={content.title}
@@ -28,14 +28,14 @@ const outcomes = studies.map((study) => ({ ...study, ...splitProofFigure(study.l
     {outcomes.map((study) => (
       <li>
         <a class="outcome-link focus-ring-interactive" href={study.href} data-cta-id="study_cta">
-          <p class="text-xs font-semibold tracking-smallcaps text-subtle-foreground uppercase">
+          <p class="text-xs font-semibold tracking-label text-subtle-foreground uppercase">
             {study.group}
           </p>
           <p class="outcome-figure">{study.figure || study.line}</p>
           {study.figure && <p class="outcome-caption">{study.caption}</p>}
-          <p class="outcome-study">{study.title}</p>
-          <span class="mt-auto inline-flex items-center gap-2 pt-3 text-sm font-semibold text-accent-emphasis">
-            Explore case study <ArrowRightIcon />
+          <span class="outcome-study">
+            <span class="outcome-study-title">{study.linkLabel}</span>
+            <ArrowRightIcon class="outcome-study-arrow" />
           </span>
         </a>
       </li>
@@ -65,6 +65,16 @@ const outcomes = studies.map((study) => ({ ...study, ...splitProofFigure(study.l
     background: var(--color-surface);
   }
 
+  .outcome-link:hover .outcome-study-title,
+  .outcome-link:focus-visible .outcome-study-title {
+    text-decoration-color: color-mix(in oklch, var(--color-foreground) 40%, transparent);
+  }
+
+  .outcome-link:hover .outcome-study-arrow,
+  .outcome-link:focus-visible .outcome-study-arrow {
+    transform: translateX(0.2rem);
+  }
+
   .outcome-figure {
     margin-block: 1.25rem 0.5rem;
     font-family: var(--font-heading);
@@ -84,11 +94,70 @@ const outcomes = studies.map((study) => ({ ...study, ...splitProofFigure(study.l
   }
 
   .outcome-study {
-    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1rem;
     max-width: 36ch;
     font-size: 0.875rem;
+    font-weight: 600;
     line-height: 1.5;
-    color: var(--color-muted-foreground);
+    color: var(--color-foreground);
+  }
+
+  .outcome-study-title {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklch, var(--color-border) 90%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    transition: text-decoration-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .outcome-study-arrow {
+    flex-shrink: 0;
+    transition: transform var(--duration-fast) var(--ease-standard);
+  }
+
+  @keyframes outcome-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .outcome-link {
+        animation: outcome-rise 700ms var(--ease-decelerate) both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 40%;
+      }
+
+      .outcome-strip > li:nth-child(2) .outcome-link {
+        animation-delay: 60ms;
+      }
+
+      .outcome-strip > li:nth-child(3) .outcome-link {
+        animation-delay: 120ms;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .outcome-study-arrow {
+      transition: none;
+    }
+
+    .outcome-link:hover .outcome-study-arrow,
+    .outcome-link:focus-visible .outcome-study-arrow {
+      transform: none;
+    }
   }
 
   @media (width >= 768px) {

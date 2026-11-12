@@ -5,8 +5,9 @@ export const siteConfig: SiteConfig = {
   name: 'Blake Oxford Portfolio',
   domain: 'https://blakeoxford.com',
   author: 'Blake Oxford',
-  description: 'Systems architect helping companies navigate AI and scale it across the enterprise',
-  tagline: 'Helping companies navigate AI and scale it across the enterprise.',
+  description:
+    'Systems architect helping companies move AI from pilots into the systems people already run',
+  tagline: 'Helping companies move AI from pilots into the systems people already run.',
   email: 'blakepoxford@outlook.com',
   social: {
     twitter: '@blakeoxford',
