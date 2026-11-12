@@ -30,8 +30,10 @@ const publishedPosts = allBlogPosts
 const featuredPosts = publishedPosts.filter((entry) => entry.data.featured);
 const postsById = new Map(publishedPosts.map((entry) => [entry.id, entry]));
 const pinnedPosts = (page.latestPosts.postIds ?? [])
-  .map((id) => postsById.get(id))
-  .filter((entry): entry is CollectionEntry<'blog'> => Boolean(entry));
+  .map((id: string) => postsById.get(id))
+  .filter((entry: CollectionEntry<'blog'> | undefined): entry is CollectionEntry<'blog'> =>
+    Boolean(entry)
+  );
 /** Two hire-path notes after proof; pinned IDs win over featured. */
 const recentBlogPosts: CollectionEntry<'blog'>[] = take(
   pinnedPosts.length > 0 ? pinnedPosts : featuredPosts.length > 0 ? featuredPosts : publishedPosts,
