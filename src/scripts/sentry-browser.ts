@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/astro';
 import {
   createSentryAllowedUrls,
   createSentrySampler,
+  resolveBrowserSentryEnvironment,
   scrubSentrySpan,
   sentryDataCollection,
 } from '@/lib/sentry-options';
@@ -26,7 +27,11 @@ export function initDeferredSentry(dsn = import.meta.env.PUBLIC_SENTRY_DSN): voi
   if (typeof window === 'undefined' || window.__boSentryReady) return;
   if (!dsn) return;
 
-  const environment = import.meta.env.PUBLIC_SENTRY_ENVIRONMENT || import.meta.env.MODE;
+  const environment = resolveBrowserSentryEnvironment({
+    configured: import.meta.env.PUBLIC_SENTRY_ENVIRONMENT,
+    mode: import.meta.env.MODE,
+    hostname: window.location.hostname,
+  });
   const allowedUrls = createSentryAllowedUrls(environment);
 
   Sentry.init({
