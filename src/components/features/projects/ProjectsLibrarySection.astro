@@ -1,17 +1,17 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Section from '@/components/primitives/Section.astro';
-import Grid from '@/components/primitives/Grid.astro';
 import SectionHeader from '@/components/composites/SectionHeader.astro';
-import ProjectCard from './ProjectCard.astro';
+import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
+import { splitProofFigure } from '@/lib/content/splitProofFigure';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
   kicker?: string;
   title: string;
-  description: string;
+  description?: string;
   id?: string;
-  /** Featured slug to de-emphasize or skip if already shown above. */
+  /** Omit a study already shown elsewhere on the page. */
   excludeSlug?: string;
 }
 
@@ -20,31 +20,70 @@ const headingId = `${id}-heading`;
 const libraryProjects = excludeSlug
   ? projects.filter((project) => project.id !== excludeSlug)
   : projects;
+
+const shortTitles: Partial<Record<string, string>> = {
+  'google-workspace-migration': 'Microsoft 365 migration',
+  'advancedmd-implementation': 'AdvancedMD implementation',
+  'adp-workforcenow': 'ADP Workforce Now implementation',
+  'microsoft-fabric': 'Workflow automation with Microsoft Fabric',
+  'llm-note-coaching': 'AI coaching for clinical documentation',
+  'bank-projections-modeling': 'Bank projections and financial modeling',
+  'ferment-app': 'Ferment recipe management app',
+  'fanalyx-deterministic-finance-platform': 'Fanalyx finance platform',
+};
 ---
 
-<Section
-  id={id}
-  padding="md"
-  container="xl"
-  aria-labelledby={headingId}
-  data-layout-section="projects-grid"
->
-  <div data-layout-shell="projects-grid-inner">
-    <SectionHeader
-      kicker={kicker}
-      title={title}
-      titleId={headingId}
-      description={description}
-      size="section"
-    />
+<Section id={id} padding="none" container="xl" class="pb-10 sm:pb-12" aria-labelledby={headingId}>
+  <SectionHeader
+    kicker={kicker}
+    title={title}
+    titleId={headingId}
+    description={description}
+    size="title"
+  />
 
-    <Grid
-      cols={libraryProjects.length >= 3 ? '3' : libraryProjects.length === 2 ? '2' : '1'}
-      gap="lg"
-    >
-      {libraryProjects.map((project) => (
-        <ProjectCard project={project} />
-      ))}
-    </Grid>
-  </div>
+  <ul class="mt-3 divide-y divide-border border-y border-border" role="list">
+    {libraryProjects.map(({ id: slug, data }) => {
+      const titleId = `project-row-${slug}`;
+      const outcome = data.impact?.find((line: string) => line.trim()) ?? data.description;
+      const { figure } = splitProofFigure(outcome);
+      const figureIndex = figure ? outcome.indexOf(figure) : -1;
+
+      return (
+        <li>
+          <a
+            href={`/projects/${slug}/`}
+            aria-labelledby={titleId}
+            class="group relative grid gap-y-1.5 px-2 py-4 transition-colors hover:bg-surface focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-accent-emphasis md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)_auto] md:items-baseline md:gap-x-6 md:px-3 md:py-5"
+            data-cta-id="study_cta"
+            data-chat-avoid-launcher
+          >
+            <h3
+              id={titleId}
+              class="font-heading text-lg leading-snug font-semibold text-foreground md:text-xl"
+            >
+              {shortTitles[slug] ?? data.title}
+            </h3>
+            <p class="text-base leading-snug text-muted-foreground">
+              {figureIndex < 0 ? (
+                outcome
+              ) : (
+                <Fragment>
+                  {outcome.slice(0, figureIndex)}
+                  <strong class="font-semibold text-foreground">{figure}</strong>
+                  {outcome.slice(figureIndex + figure.length)}
+                </Fragment>
+              )}
+            </p>
+            <span
+              aria-hidden="true"
+              class="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-emphasis underline-offset-4 group-hover:underline group-focus-visible:underline md:mt-0"
+            >
+              Read case study <ArrowRightIcon size={16} class="shrink-0" />
+            </span>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
 </Section>
