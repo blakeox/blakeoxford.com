@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Section from '@/components/primitives/Section.astro';
-import SectionHeader from '@/components/composites/SectionHeader.astro';
+import IntroCopy from '@/components/composites/IntroCopy.astro';
 import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
 import { splitProofFigure } from '@/lib/content/splitProofFigure';
 
@@ -10,12 +10,21 @@ interface Props {
   kicker?: string;
   title: string;
   description?: string;
+  background?: 'default' | 'surface';
   id?: string;
   /** Omit a study already shown elsewhere on the page. */
   excludeSlug?: string;
 }
 
-const { projects, kicker, title, description, id = 'library', excludeSlug } = Astro.props as Props;
+const {
+  projects,
+  kicker,
+  title,
+  description,
+  background = 'default',
+  id = 'library',
+  excludeSlug,
+} = Astro.props as Props;
 const headingId = `${id}-heading`;
 const libraryProjects = excludeSlug
   ? projects.filter((project) => project.id !== excludeSlug)
@@ -33,57 +42,67 @@ const shortTitles: Partial<Record<string, string>> = {
 };
 ---
 
-<Section id={id} padding="none" container="xl" class="pb-10 sm:pb-12" aria-labelledby={headingId}>
-  <SectionHeader
-    kicker={kicker}
-    title={title}
-    titleId={headingId}
-    description={description}
-    size="title"
-  />
+<Section
+  id={id}
+  padding="none"
+  container="xl"
+  background={background}
+  class="border-t border-border py-5 sm:py-8"
+  aria-labelledby={headingId}
+>
+  <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-8">
+    <IntroCopy
+      kicker={kicker}
+      title={title}
+      titleId={headingId}
+      description={description}
+      as="h2"
+      size="title"
+    />
 
-  <ul class="mt-3 divide-y divide-border border-y border-border" role="list">
-    {libraryProjects.map(({ id: slug, data }) => {
-      const titleId = `project-row-${slug}`;
-      const outcome = data.impact?.find((line: string) => line.trim()) ?? data.description;
-      const { figure } = splitProofFigure(outcome);
-      const figureIndex = figure ? outcome.indexOf(figure) : -1;
+    <ul class="divide-y divide-border" role="list">
+      {libraryProjects.map(({ id: slug, data }) => {
+        const titleId = `project-row-${slug}`;
+        const outcome = data.impact?.find((line: string) => line.trim()) ?? data.description;
+        const { figure } = splitProofFigure(outcome);
+        const figureIndex = figure ? outcome.indexOf(figure) : -1;
 
-      return (
-        <li>
-          <a
-            href={`/projects/${slug}/`}
-            aria-labelledby={titleId}
-            class="group relative grid gap-y-1.5 px-2 py-4 transition-colors hover:bg-surface focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-accent-emphasis md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)_auto] md:items-baseline md:gap-x-6 md:px-3 md:py-5"
-            data-cta-id="study_cta"
-            data-chat-avoid-launcher
-          >
-            <h3
-              id={titleId}
-              class="font-heading text-lg leading-snug font-semibold text-foreground md:text-xl"
+        return (
+          <li>
+            <a
+              href={`/projects/${slug}/`}
+              aria-labelledby={titleId}
+              class="group relative grid gap-y-1.5 rounded px-2 py-3 transition-colors hover:bg-surface-subtle focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-accent-emphasis md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)_auto] md:items-baseline md:gap-x-4 md:px-3 md:py-4"
+              data-cta-id="study_cta"
+              data-chat-avoid-launcher
             >
-              {shortTitles[slug] ?? data.title}
-            </h3>
-            <p class="text-base leading-snug text-muted-foreground">
-              {figureIndex < 0 ? (
-                outcome
-              ) : (
-                <Fragment>
-                  {outcome.slice(0, figureIndex)}
-                  <strong class="font-semibold text-foreground">{figure}</strong>
-                  {outcome.slice(figureIndex + figure.length)}
-                </Fragment>
-              )}
-            </p>
-            <span
-              aria-hidden="true"
-              class="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-emphasis underline-offset-4 group-hover:underline group-focus-visible:underline md:mt-0"
-            >
-              Read case study <ArrowRightIcon size={16} class="shrink-0" />
-            </span>
-          </a>
-        </li>
-      );
-    })}
-  </ul>
+              <h3
+                id={titleId}
+                class="font-heading text-lg leading-snug font-semibold text-foreground md:text-xl"
+              >
+                {shortTitles[slug] ?? data.title}
+              </h3>
+              <p class="text-base leading-snug text-muted-foreground">
+                {figureIndex < 0 ? (
+                  outcome
+                ) : (
+                  <Fragment>
+                    {outcome.slice(0, figureIndex)}
+                    <strong class="font-semibold text-accent-emphasis">{figure}</strong>
+                    {outcome.slice(figureIndex + figure.length)}
+                  </Fragment>
+                )}
+              </p>
+              <span
+                aria-hidden="true"
+                class="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground underline-offset-4 group-hover:underline group-focus-visible:underline md:mt-0"
+              >
+                Read case study <ArrowRightIcon size={16} class="shrink-0" />
+              </span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
 </Section>
