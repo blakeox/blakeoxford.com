@@ -35,7 +35,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <Section id="projects-hero" padding="none" container="xl" class="py-8 sm:py-12">
+  <Section id="projects-hero" padding="none" container="xl" class="pt-7 pb-5 sm:pt-10 sm:pb-8">
     <IntroCopy
       kicker={meta.hero.kicker}
       title={meta.hero.title}
@@ -45,7 +45,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
       size="hero"
       descriptionSize="md"
     />
-    <nav class="mt-5 border-t border-border pt-2" aria-label="Project categories">
+    <nav class="mt-4" aria-label="Project categories">
       <ul class="grid grid-cols-2 gap-x-3 sm:flex sm:flex-wrap sm:gap-x-6" role="list">
         {groups.map((group) => (
           <li>
@@ -53,7 +53,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
               class="focus-ring-interactive inline-flex min-h-11 items-center gap-1.5 rounded text-sm leading-tight font-semibold text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
               href={`#${group.id}`}
             >
-              <ArrowRightIcon size={14} class="shrink-0 rotate-90" />
+              <ArrowRightIcon size={14} class="shrink-0 rotate-90 text-accent-emphasis" />
               <span>{group.title}</span>
             </a>
           </li>
@@ -62,8 +62,14 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
     </nav>
   </Section>
 
-  {groups.map((group) => (
-    <ProjectsLibrarySection id={group.id} projects={group.projects} title={group.title} />
+  {groups.map((group, index) => (
+    <ProjectsLibrarySection
+      id={group.id}
+      projects={group.projects}
+      title={group.title}
+      description={group.description}
+      background={index % 2 === 0 ? 'surface' : 'default'}
+    />
   ))}
 
   <ProjectsCTASection
