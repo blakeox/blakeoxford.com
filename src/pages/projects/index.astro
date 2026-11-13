@@ -2,24 +2,32 @@
 import Layout from '@/layouts/BaseLayout.astro';
 import Section from '@/components/primitives/Section.astro';
 import IntroCopy from '@/components/composites/IntroCopy.astro';
+import ArrowRightIcon from '@/components/primitives/icons/ArrowRightIcon.astro';
 import ProjectsLibrarySection from '@/components/features/projects/ProjectsLibrarySection.astro';
 import ProjectsCTASection from '@/components/features/projects/ProjectsCTASection.astro';
 import { getProjectInsights } from '@/content/projects/getProjectInsights';
-import { ALSO_BUILT, HIRE_GROUPS, projectsForSlugs } from '@/content/projects/hirePath';
+import {
+  ALSO_BUILT,
+  HIRE_GROUPS,
+  projectsForSlugs,
+  type HireGroup,
+} from '@/content/projects/hirePath';
 
 const meta = (await import('@/content/projects/_meta.json')).default;
 const { projects } = await getProjectInsights();
 
-const groups = [
-  ...HIRE_GROUPS.map((group) => ({
+const groupTitles: Partial<Record<HireGroup['id'], string>> = {
+  migrations: 'Migrations & platforms',
+  also: 'Product engineering',
+};
+
+const groups = [...HIRE_GROUPS, ALSO_BUILT]
+  .map((group) => ({
     ...group,
+    title: groupTitles[group.id] ?? group.title,
     projects: projectsForSlugs(projects, group.slugs),
-  })),
-  {
-    ...ALSO_BUILT,
-    projects: projectsForSlugs(projects, ALSO_BUILT.slugs),
-  },
-];
+  }))
+  .filter((group) => group.projects.length > 0);
 
 const title = 'Selected Work & Case Studies | Blake Oxford';
 const description = meta.hero.subtitle;
@@ -27,7 +35,7 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
 ---
 
 <Layout title={title} description={description} url={canonicalUrl} wide>
-  <Section id="projects-hero" padding="lg" container="xl">
+  <Section id="projects-hero" padding="none" container="xl" class="py-8 sm:py-12">
     <IntroCopy
       kicker={meta.hero.kicker}
       title={meta.hero.title}
@@ -35,38 +43,28 @@ const canonicalUrl = 'https://blakeoxford.com/projects/';
       description={description}
       align="start"
       size="hero"
+      descriptionSize="md"
     />
-    <nav class="mt-8 border-t border-border pt-5" aria-label="Project categories">
-      <ul class="flex flex-wrap gap-x-6 gap-y-2" role="list">
-        {groups
-          .filter((group) => group.projects.length > 0)
-          .map((group) => (
-            <li>
-              <a
-                class="focus-ring-interactive inline-flex min-h-11 items-center gap-3 rounded text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
-                href={`#${group.id}`}
-              >
-                {group.title}
-                <span class="font-mono text-xs text-subtle-foreground">
-                  {String(group.projects.length).padStart(2, '0')}
-                </span>
-              </a>
-            </li>
-          ))}
+    <nav class="mt-5 border-t border-border pt-2" aria-label="Project categories">
+      <ul class="grid grid-cols-2 gap-x-3 sm:flex sm:flex-wrap sm:gap-x-6" role="list">
+        {groups.map((group) => (
+          <li>
+            <a
+              class="focus-ring-interactive inline-flex min-h-11 items-center gap-1.5 rounded text-sm leading-tight font-semibold text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              href={`#${group.id}`}
+            >
+              <ArrowRightIcon size={14} class="shrink-0 rotate-90" />
+              <span>{group.title}</span>
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
   </Section>
 
-  {groups.map((group) =>
-    group.projects.length > 0 ? (
-      <ProjectsLibrarySection
-        id={group.id}
-        projects={group.projects}
-        title={group.title}
-        description={group.description}
-      />
-    ) : null
-  )}
+  {groups.map((group) => (
+    <ProjectsLibrarySection id={group.id} projects={group.projects} title={group.title} />
+  ))}
 
   <ProjectsCTASection
     title={meta.cta.title}
