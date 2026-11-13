@@ -7,7 +7,7 @@ on:
         description: 'Node.js version to use'
         required: false
         type: string
-        default: '24'
+        default: ''
     outputs:
       install-cache-hit:
         description: 'Whether the pnpm install cache was hit'
@@ -32,7 +32,7 @@ jobs:
       )
     runs-on: [self-hosted, nuc, seo]
     env:
-      PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     outputs:
       install-cache-hit: ${{ steps.install.outputs.cache-hit }}
     steps:
@@ -48,6 +48,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: ${{ inputs.node-version }}
+          node-version-file: .node-version
           cache: 'pnpm'
 
       - name: Install dependencies

@@ -14,13 +14,14 @@ runs:
       uses: actions/setup-node@v7
       with:
         node-version: ${{ inputs.node-version }}
+        node-version-file: .node-version
         cache: 'pnpm'
 
 inputs:
   node-version:
     description: Node.js version
     required: false
-    default: '24'
+    default: ''
   cache-pnpm:
     description: Enable pnpm cache via setup-node
     required: false
