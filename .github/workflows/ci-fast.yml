@@ -69,16 +69,16 @@ jobs:
           restore-keys: |
             astro-build-${{ runner.os }}-
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6.1.1
-        with:
-          dest: ${{ runner.temp }}/pnpm-tooling
-
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6.1.1
+        with:
+          dest: ${{ runner.temp }}/pnpm-tooling
+          cache: true
 
       - name: Verify build Node version
         run: |
@@ -191,17 +191,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.1
         with:
           dest: ${{ runner.temp }}/pnpm-tooling
           package_json_file: package.json
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .node-version
-          cache: 'pnpm'
+          cache: true
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -330,17 +330,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.1
         with:
           dest: ${{ runner.temp }}/pnpm-tooling
           package_json_file: package.json
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .node-version
-          cache: 'pnpm'
+          cache: true
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

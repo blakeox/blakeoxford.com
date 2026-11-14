@@ -4,18 +4,18 @@ description: Pin Node on automation-nuc and isolate pnpm tooling per job (avoids
 runs:
   using: composite
   steps:
-    - name: Setup pnpm (isolated dest per job)
-      uses: pnpm/action-setup@v6.1.0
-      with:
-        dest: ${{ runner.temp }}/pnpm-tooling
-        package_json_file: package.json
-
     - name: Setup Node.js
       uses: actions/setup-node@v7
       with:
         node-version: ${{ inputs.node-version }}
         node-version-file: .node-version
-        cache: 'pnpm'
+
+    - name: Setup pnpm (isolated dest per job)
+      uses: pnpm/action-setup@v6.1.0
+      with:
+        dest: ${{ runner.temp }}/pnpm-tooling
+        package_json_file: package.json
+        cache: true
 
 inputs:
   node-version:
