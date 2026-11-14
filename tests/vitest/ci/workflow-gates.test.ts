@@ -118,9 +118,10 @@ describe('documented local CI commands', () => {
     const runner = block?.match(/^\x20{4}runs-on: \$\{\{ (.+) \}\}$/m)?.[1];
     expect(runner).toBeDefined();
     expect(runInNewContext(runner!, context)).toEqual(['ubuntu-latest']);
-    const path = workflow(name).match(/^\x20{2}PATH: \$\{\{ (.+) \}\}$/m)?.[1];
+    const path = workflow(name).match(/^\x20{2}PATH: (.+)$/m)?.[1];
     expect(path).toBeDefined();
-    expect(runInNewContext(path!, context)).not.toContain('/home/github-runner/');
+    expect(path).not.toContain('/home/github-runner/');
+    expect(block).toContain('node-version-file: .node-version');
   });
 });
 
@@ -235,7 +236,7 @@ describe('pull request jobs stay off the deployment NUC', () => {
   it('sets up the supported Node runtime on the hosted token-docs job', () => {
     const source = workflow('design-token-docs-sync');
     expect(source).toContain('uses: actions/setup-node@v7');
-    expect(source).toContain("node-version: '24'");
+    expect(source).toContain('node-version-file: .node-version');
   });
 
   it.each([
