@@ -28,7 +28,7 @@ jobs:
       ) && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, nuc, seo]
     env:
-      PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     timeout-minutes: 20
     steps:
       - name: Require the production branch
@@ -43,16 +43,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.1
         with:
           dest: ${{ runner.temp }}/pnpm-tooling
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: '24.18.0'
-          cache: 'pnpm'
+          cache: true
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -142,12 +142,15 @@ jobs:
     runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 15
     env:
-      # The automation NUC intentionally exposes the pinned Node runtime only
-      # to trusted repository workflows; this smoke does not receive secrets.
-      PATH: /home/github-runner/.local/node-v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
 
       - name: Verify deployed SEO and redirect contract
         env:

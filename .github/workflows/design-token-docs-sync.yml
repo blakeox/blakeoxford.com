@@ -38,7 +38,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: '24'
+          node-version-file: .node-version
 
       - name: Verify theme.css changes include token docs
         run: node scripts/quality/check-theme-docs-sync.js
