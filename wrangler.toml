@@ -162,10 +162,10 @@ id = "f48c68af7f21462e8a68f84418a64498"
 binding = "AI_FEEDBACK_KV"
 id = "e573df95437742e9820c05eef1bd8ad6"
 
+# Resolve the class within this preview so Cloudflare provisions its own namespace.
 [[previews.durable_objects.bindings]]
 name = "CONVERSATION_DO"
 class_name = "ConversationDurableObject"
-script_name = "blakeoxford-com"
 
 [previews.observability.logs]
 enabled = true
