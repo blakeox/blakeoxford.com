@@ -1,5 +1,6 @@
 ---
 import CtaBand from '@/components/composites/CtaBand.astro';
+import Section from '@/components/primitives/Section.astro';
 
 interface Props {
   title: string;
@@ -10,10 +11,19 @@ interface Props {
 const { title, description, button } = Astro.props as Props;
 ---
 
-<CtaBand
-  titleId="projects-cta-heading"
-  title={title}
-  description={description}
-  primary={button}
+<Section
+  aria-labelledby="projects-cta-heading"
+  background="surface"
+  class="border-t border-border py-7 sm:py-9"
+  container="xl"
   data-layout-section="projects-cta"
-/>
+  padding="none"
+>
+  <CtaBand
+    density="article"
+    titleId="projects-cta-heading"
+    title={title}
+    description={description}
+    primary={button}
+  />
+</Section>

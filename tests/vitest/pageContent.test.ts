@@ -86,14 +86,14 @@ describe('About, Contact, and Home page content', () => {
   });
 
   it('describes contact entry points as inquiries rather than confirmed bookings', () => {
-    const files = [
-      'src/content/projects/_meta.json',
-      'src/pages/about.astro',
-      'src/components/composites/CTASection.astro',
-    ];
-    for (const file of files) {
+    const entryPoints = {
+      'src/content/projects/_meta.json': '"label": "Contact"',
+      'src/pages/about.astro': 'Discuss your bottleneck',
+      'src/components/composites/CTASection.astro': 'Discuss your bottleneck',
+    };
+    for (const [file, label] of Object.entries(entryPoints)) {
       const source = readFileSync(path.join(process.cwd(), file), 'utf8');
-      expect(source).toContain('Discuss your bottleneck');
+      expect(source).toContain(label);
       expect(source).not.toContain('Book a 20-minute bottleneck review');
     }
   });
