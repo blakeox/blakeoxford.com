@@ -1,8 +1,7 @@
 {
   "hero": {
-    "kicker": "Selected work",
-    "title": "Foundations for enterprise AI",
-    "subtitle": "Case studies in platform migrations, automation, and decision systems that inform practical AI adoption.",
+    "title": "Selected case studies",
+    "subtitle": "Lessons from migrations, automation, and decision systems for practical AI adoption.",
     "capabilities": [
       "Platform migrations that hold adoption",
       "Automation that cuts lasting drag",
@@ -41,11 +40,11 @@
     "description": "Each study covers the problem, what I built, the proof, and what I’d repeat."
   },
   "cta": {
-    "title": "Bring this operating discipline to your AI roadmap",
-    "description": "Whether you are choosing a use case or scaling across teams, connect the AI ambition to the systems, people, and operating constraints behind it.",
+    "title": "Talk about your project",
+    "description": "Tell me what you’re trying to improve and where the work is getting stuck.",
     "button": {
       "href": "/contact/",
-      "label": "Discuss your bottleneck"
+      "label": "Contact"
     }
   }
 }
