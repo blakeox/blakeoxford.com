@@ -17,7 +17,7 @@ concurrency:
 jobs:
   pr-size-check:
     name: PR Size Validation
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, nuc, seo]
     if: |
       (
         ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&

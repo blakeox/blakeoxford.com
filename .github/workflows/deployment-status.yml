@@ -21,7 +21,7 @@ concurrency:
 jobs:
   deployment-gate:
     name: Deployment Ready
-    runs-on: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
+    runs-on: [self-hosted, nuc, seo]
     if: |
       (
         ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
@@ -86,7 +86,7 @@ jobs:
   # Super fast syntax validation
   syntax-check:
     name: Syntax Check
-    runs-on: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
+    runs-on: [self-hosted, nuc, seo]
     if: |
       (
         ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
@@ -136,7 +136,7 @@ jobs:
   # Report final status
   status-summary:
     name: Status Summary
-    runs-on: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
+    runs-on: [self-hosted, nuc, seo]
     timeout-minutes: 1
     needs: [deployment-gate, syntax-check]
     if: |

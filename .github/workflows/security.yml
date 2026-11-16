@@ -25,7 +25,7 @@ env:
 jobs:
   security-scan:
     name: Security & Dependencies
-    runs-on: ${{ (github.actor == 'nektos/act' || github.event_name == 'pull_request') && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
+    runs-on: ${{ github.actor == 'nektos/act' && fromJSON('["ubuntu-latest"]') || fromJSON('["self-hosted","nuc","seo"]') }}
     if: |
       github.event_name == 'schedule' ||
       (
