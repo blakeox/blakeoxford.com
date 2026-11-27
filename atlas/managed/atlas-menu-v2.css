@@ -1,0 +1,32 @@
+.atlas-header .bo-masthead-inner { gap:.5rem 1.25rem; }
+.atlas-header .bo-brand { gap:.55rem; }
+.atlas-header .bo-brand-name { font-size:clamp(.86rem, 2.7vw, 1.05rem); line-height:1.18; }
+.atlas-header .bo-brand-desc { margin-top:.18rem; font-size:.69rem; text-transform:none; letter-spacing:.03em; }
+.atlas-header .bo-brand img { flex:none; }
+.atlas-menu { display:flex; gap:.2rem; align-items:center; }
+.atlas-menu > a, .atlas-menu summary, #atlas-menu-toggle { display:flex; align-items:center; gap:.45rem; min-height:44px; padding:.35rem .72rem; border-radius:var(--size-radius-sm); color:var(--runtime-muted-foreground); font:600 .95rem/1.2 var(--family-sans); text-decoration:none; }
+.atlas-menu summary, #atlas-menu-toggle { cursor:pointer; }
+.atlas-menu summary { list-style:none; }
+.atlas-menu summary::-webkit-details-marker { display:none; }
+.atlas-chevron { width:.42rem; height:.42rem; border:solid currentColor; border-width:0 1.5px 1.5px 0; transform:translateY(-2px) rotate(45deg); }
+.atlas-menu details[open] > summary .atlas-chevron { transform:translateY(2px) rotate(225deg); }
+.atlas-menu :is(a,summary):hover, .atlas-menu :is([aria-current=page],.atlas-menu-current > summary,details[open] > summary) { background:var(--runtime-accent-subtle); color:var(--runtime-accent-emphasis); }
+.atlas-menu [aria-current=page] { box-shadow:inset 3px 0 var(--runtime-accent); }
+.atlas-menu details { position:relative; }
+.atlas-menu ul { position:absolute; z-index:20; top:calc(100% + .35rem); left:0; width:17.5rem; margin:0; padding:.38rem; border:1px solid var(--runtime-border); border-radius:var(--size-radius-lg); background:var(--runtime-surface); box-shadow:0 10px 28px var(--runtime-shadow-color); list-style:none; }
+.atlas-menu li a { min-height:44px; display:flex; flex-direction:column; justify-content:center; gap:.1rem; padding:.44rem .64rem; border-radius:var(--size-radius-sm); color:var(--runtime-foreground); font-weight:600; text-decoration:none; }
+.atlas-menu li small { color:var(--runtime-subtle-foreground); font-size:.8rem; font-weight:400; line-height:1.2; }
+.atlas-menu-theme { display:flex; align-items:center; gap:.4rem; margin-left:.5rem; padding-left:.65rem; border-left:1px solid var(--runtime-border); }
+.atlas-menu-theme label { color:var(--runtime-muted-foreground); font-size:.84rem; }
+#atlas-menu-toggle { display:none; }
+@media (max-width: 850px) {
+  .atlas-header .bo-masthead-inner { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.5rem; }
+  .atlas-header .bo-brand img { width:30px; height:30px; }
+  #atlas-menu-toggle:not([hidden]) { display:flex; background:var(--runtime-surface); border:1px solid var(--runtime-border); }
+  .atlas-menu { grid-column:1/-1; display:grid; gap:.18rem; border-top:1px solid var(--runtime-border); padding-top:.35rem; }
+  .atlas-menu[hidden] { display:none; }
+  .atlas-menu summary { justify-content:space-between; }
+  .atlas-menu ul { position:static; width:auto; margin:.15rem 0 .35rem .75rem; padding:0 0 0 .38rem; border:0; border-left:1px solid var(--runtime-border); border-radius:0; box-shadow:none; }
+  .atlas-menu-theme { justify-content:space-between; border-left:0; border-top:1px solid var(--runtime-border); margin:.15rem 0 0; padding:.38rem .72rem 0; }
+}
+@media (max-width: 365px) { .atlas-header .bo-brand img { display:none; } }
