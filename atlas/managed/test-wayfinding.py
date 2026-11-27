@@ -1,0 +1,55 @@
+"""Country wayfinding end-to-end against the Cloudflare development runtime."""
+import os
+import sys
+from playwright.sync_api import sync_playwright, expect
+base=sys.argv[1] if len(sys.argv)>1 else 'http://127.0.0.1:8291'
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path=os.environ.get('CHROMIUM_BIN'),args=['--no-sandbox'])
+    for width in (320,390,1050,1280):
+        q=b.new_page(viewport={'width':width,'height':844},has_touch=width<500)
+        errors=[]
+        q.on('pageerror',lambda e:errors.append(str(e)))
+        q.goto(base+'/')
+        q.get_by_role('link',name='Explore the map',exact=True).click()
+        expect(q.locator('.map-click-help')).to_contain_text('open its election history')
+        q.get_by_role('link',name='Open Brazil election history',exact=False).locator('path').click()
+        expect(q.locator('h1')).to_have_text('Brazil')
+        assert q.url.endswith('/countries/bra')
+        expect(q.get_by_role('navigation',name='Breadcrumb')).to_contain_text('All countries')
+        expect(q.locator('#presidential')).to_contain_text('Presidential history')
+        q.get_by_role('link',name='Show Brazil on map').click()
+        expect(q.locator('#map-selection')).to_contain_text('Highlighted: Brazil')
+        expect(q.locator('#map [data-country=BRA]')).to_have_attribute('aria-current','true')
+        q.get_by_role('link',name='Open Brazil profile').first.click()
+        assert q.url.endswith('/countries/bra')
+        q.get_by_role('navigation',name='Breadcrumb').get_by_role('link',name='All countries').click()
+        box=q.get_by_role('searchbox',name='Find a country')
+        box.fill('Brasil')
+        expect(q.locator('.ct-directory li[data-country]:visible')).to_have_count(1)
+        expect(q.locator('#ct-country-count')).to_have_text('1 country')
+        box.press('Enter')
+        expect(q.locator('h1')).to_have_text('Brazil')
+        q.goto(base+'/countries')
+        box.fill('méxi')
+        expect(q.locator('.ct-directory li[data-country]:visible')).to_have_count(1)
+        box.fill('zzzz')
+        expect(q.locator('#ct-country-empty')).to_be_visible()
+        box.fill('')
+        expect(q.locator('.ct-directory li[data-country]:visible')).to_have_count(23)
+        q.get_by_role('link',name='Browse on the map').click()
+        mex=q.get_by_role('link',name='Open Mexico election history',exact=False)
+        mex.focus()
+        mex.press('Enter')
+        expect(q.locator('h1')).to_have_text('Mexico')
+        assert q.evaluate('document.documentElement.scrollWidth <= innerWidth+1')
+        assert not errors,errors
+        if width==390:
+            q.screenshot(path='/tmp/atlas-wayfinding-profile-after.png')
+            q.goto(base+'/countries')
+            q.screenshot(path='/tmp/atlas-wayfinding-directory-after.png')
+            q.goto(base+'/regional')
+            q.locator('#map a').first.wait_for(state='attached')
+            q.screenshot(path='/tmp/atlas-wayfinding-map-after.png')
+        q.close()
+    b.close()
+print('Country wayfinding verified on four sizes: map tap and keyboard, real profile, return to highlighted country, directory search and back links.')

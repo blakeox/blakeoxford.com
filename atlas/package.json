@@ -1,0 +1,15 @@
+{
+  "name": "blakeoxford-election-atlas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["mcp", "managed"],
+  "engines": {"node": ">=22.18"},
+  "scripts": {
+    "build": "npm run build --workspace blakeoxford-atlas-managed",
+    "dev": "npm run dev --workspace blakeoxford-atlas-managed",
+    "test": "npm run build && node managed/test.mjs",
+    "test:live": "node managed/test.mjs --live",
+    "deploy": "npm run deploy --workspace blakeoxford-atlas-managed"
+  }
+}
